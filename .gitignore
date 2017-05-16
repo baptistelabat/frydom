@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# Mesh files
+*.vtp
+*.avi
+*.mp4
+
 # Distribution / packaging
 .Python
 env/
@@ -91,3 +96,13 @@ ENV/
 
 # Pycharm project settings
 .idea
+
+# Nemoh results exemples
+frydom/tests/hydrodynamics/data_nemoh
+Kochin.*.dat
+
+# C++ compiled files
+*.o
+*.d
+*.a
+*.so
