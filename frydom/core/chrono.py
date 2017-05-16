@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #  -*- coding: utf-8 -*-
 
+__all__ = ['engine', 'fea', 'irrlicht', 'postprocessing']
+
 import os
 import sys
-
-__all__ = ['engine', 'fea', 'irrlicht', 'postprocessing']
 
 
 class ImportChronoError(Exception):
