@@ -1,3 +1,3 @@
 [submodule "frydom/core/chrono"]
-	path = frydom/core/chrono
+	path = frydom/core/chrono_tmp
 	url = https://github.com/projectchrono/chrono.git
