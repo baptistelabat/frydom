@@ -106,3 +106,12 @@ Kochin.*.dat
 *.d
 *.a
 *.so
+
+# chrono
+chrono_refman
+RESUME_FEATHERSTONE
+*.pyhdb
+*.pptx
+*.pdf
+
+.vscode
