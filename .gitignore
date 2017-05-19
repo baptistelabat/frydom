@@ -115,3 +115,5 @@ RESUME_FEATHERSTONE
 *.pdf
 
 .vscode
+.cproject
+.project
