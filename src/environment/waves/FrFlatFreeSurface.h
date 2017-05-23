@@ -20,14 +20,14 @@
 
 namespace frydom {
 
-    class FrFlatFreeSurface : FrFreeSurface {
+    class FrFlatFreeSurface : public FrFreeSurface {  // le public permet de rendre les methodes de la classe de base publiques
 
       public:
         FrFlatFreeSurface(double p_mean_height);
 
         /// Get the free surface elevation at specified (x,y) location.
         /// Currently returns the mean height passed at construction
-        virtual double GetHeight(double x, double y, double t);
+        virtual double GetHeight(double x, double y, double t) const;
 
 
       protected:

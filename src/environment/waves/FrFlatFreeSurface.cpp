@@ -18,10 +18,10 @@
 
 namespace frydom {
 
-    FrFlatFreeSurface::FrFlatFreeSurface(double p_mean_height):FrFreeSurface(p_mean_height) {
+    FrFlatFreeSurface::FrFlatFreeSurface(double p_mean_height) : FrFreeSurface(p_mean_height) {
     }
 
-    double FrFlatFreeSurface::GetHeight(double x, double y, double t) {
+    double FrFlatFreeSurface::GetHeight(double x, double y, double t) const{
         return m_mean_height;
     }
 

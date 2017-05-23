@@ -23,7 +23,7 @@
 
 namespace frydom{
 
-    /// Base class for a free surface system.
+    /// Pure Virtual Base class for a free surface system.
     class FrFreeSurface {
 
       public:
@@ -33,26 +33,45 @@ namespace frydom{
 
         virtual ~FrFreeSurface() {};
 
-        /// Get the mean height of the free surface's plane
-        virtual double GetMeanHeight();
+        /// Update the state of the free surface at the specified time.
+        virtual void Synchronize(double time) {}
 
-        /// Set the mean height of the free surface's plane
-        virtual void SetMeanHeight(double p_mean_height);
+        /// Advance the state of the free surface by the specified duration.
+        virtual void Advance(double step) {}
 
-        /// Get the free surface elevation at specified
-        virtual double GetHeight(double x, double y, double t) = 0;
+        /// Get the mean height of the free surface's plane.
+        virtual double getMeanHeight() const;
+
+        /// Get the free surface elevation at specified.
+        virtual double GetHeight(double x, double y, double t) const = 0;
+
+        /// Initializes the free surface system
+        /// In any case, a mesh grid is used.
+        /// this version concerns a rectangular grid
+        void Initialize(double xmin,
+                        double xmax,
+                        double dx,
+                        double ymin,
+                        double ymax,
+                        double dy
+                        );
+
+        /// Initializes the free surface system
+        /// In any case, a mesh grid is used.
+        /// this version concerns a polar grid
+        void Initialize(double center_x,
+                        double center_y,
+                        double radius,
+                        double dtheta,
+                        double dr
+                        );
 
 
       protected:
         FrFreeSurface() {};
 
-        chrono::ChCoordsys<> plane;  /// The reference plane of the free surface
-        std::shared_ptr<chrono::ChFunction> height_function;
-
         double m_mean_height;
-
-
-
+        chrono::ChCoordsys<> plane;  /// The reference plane of the free surface
 
     };
 
