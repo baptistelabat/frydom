@@ -18,49 +18,44 @@
 
 #include "chrono/physics/ChSystem.h"
 #include "chrono/core/ChCoordsys.h"
-#include "chrono/core/ChFunction.h"
+#include "chrono/motion_functions/ChFunction.h"
+
 
 namespace frydom{
-namespace chrono{
 
-/// Base class for a free surface system.
-class FrFreeSurface {
-  public:
-    FrFreeSurface() {}
-    FrFreeSurface(double height);
-    
-    virtual ~FrFreeSurface() {}
+    /// Base class for a free surface system.
+    class FrFreeSurface {
 
-    void SetHeightFunction(ChFunction height_fcn);
+      public:
 
-    void SetHeight(double height);
+        /// Class constructor
+        FrFreeSurface(double p_mean_height);
 
-    double GetHeight();
+        virtual ~FrFreeSurface() {};
+
+        /// Get the mean height of the free surface's plane
+        virtual double GetMeanHeight();
+
+        /// Set the mean height of the free surface's plane
+        virtual void SetMeanHeight(double p_mean_height);
+
+        /// Get the free surface elevation at specified
+        virtual double GetHeight(double x, double y, double t) = 0;
+
+
+      protected:
+        FrFreeSurface() {};
+
+        chrono::ChCoordsys<> plane;  /// The reference plane of the free surface
+        std::shared_ptr<chrono::ChFunction> height_function;
+
+        double m_mean_height;
 
 
 
-    /// Update the state of the free surface at the specified time.
-    virtual void Synchronize(double time) {}
 
-    /// Advance the state of the free surface system by the specified duration.
-    virtual void Advance(double step) {}
+    };
 
-    /// Get the free surface height at the specified (x, y) location.
-    virtual double GetHeight(double x, double y) const = 0;
-
-    /// Get the water pressure at the specified (x,y,z) location
-    virtual double GetPressure(double x, double y, double z)
-
-    /// get the water velocity at the specified (x,y,z) location
-    virtual double GetVelocity(double x, double y, double z)
-  
-  private:
-    ChCoordsys<> plane;  /// The reference plane of the free surface
-    ChFunction height_function;
-};
-
-}  // end namespace chrono
 }  // end namespace frydom
-
 
 #endif

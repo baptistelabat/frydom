@@ -117,3 +117,4 @@ RESUME_FEATHERSTONE
 .vscode
 .cproject
 .project
+/Debug/

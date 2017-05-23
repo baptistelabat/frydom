@@ -13,15 +13,16 @@
 //
 // =============================================================================
 
+//#include "FrFreeSurface.h"  // besoin ???
 #include "FrFlatFreeSurface.h"
 
 namespace frydom {
-namespace chrono {
 
-FrFlatFreeSurface::FrFlatFreeSurface(double height) : fs_height(height) {
-}
+    FrFlatFreeSurface::FrFlatFreeSurface(double p_mean_height):FrFreeSurface(p_mean_height) {
+    }
 
-FrFlatFreeSurface::GetPressure()
+    double FrFlatFreeSurface::GetHeight(double x, double y, double t) {
+        return m_mean_height;
+    }
 
-}  // end namespace chrono
 }  // end namespace frydom

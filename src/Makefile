@@ -14,6 +14,3 @@ SHELL = /bin/sh
 # The command to remove a file.
 RM = /bin/rm -f
 
-# Escaping for special characters.
-EQUALS = =
-

@@ -13,9 +13,20 @@
 //
 // =============================================================================
 
-# include "FrFreeSurface.h"
+#include "FrFreeSurface.h"
 
 namespace frydom {
-namespace chrono {
-}  // end namespace chrono
+
+    FrFreeSurface::FrFreeSurface(double p_mean_height) : m_mean_height(p_mean_height) {
+    }
+
+    double FrFreeSurface::GetMeanHeight() {
+       return m_mean_height;
+    }
+
+    void FrFreeSurface::SetMeanHeight(double p_mean_height) {
+        m_mean_height = p_mean_height;
+    }
+
+
 }  // end namespace frydom
