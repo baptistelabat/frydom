@@ -44,7 +44,25 @@ int main(int argc, char* argv[]) {
     // Creating the free surface
     frydom::FrFlatFreeSurface free_surface(2);
 
-    free_surface.Initialize(0, 10, 0.1);
+    free_surface.Initialize(0, 100, 0.5);
+
+
+    chrono::geometry::ChTriangleMeshConnected mesh = free_surface.getMesh();
+
+    chrono::ChVector<>* vertex;
+
+//    int nv = mesh.getCoordsVertices().size();
+
+    // TODO : voir iterator
+
+
+//    for (int k = 0; k < mesh.getCoordsVertices().size(); k++){
+//        vertex = &mesh.m_vertices[k];
+////        std::cout << vertex[0] << "\t" << vertex[1] << "\t" << vertex[2] << std::endl;
+//    }
+
+
+
 
 //    // Creating the irrlicht 3D application
 //    ChIrrApp application(&system, L"Demo_FlatFreeSurface",

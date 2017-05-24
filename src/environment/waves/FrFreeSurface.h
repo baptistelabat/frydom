@@ -65,6 +65,8 @@ namespace frydom{
                         double dl
                         );
 
+        chrono::geometry::ChTriangleMeshConnected getMesh(void) const;
+
       protected:
         FrFreeSurface() {};
 
