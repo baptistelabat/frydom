@@ -19,6 +19,7 @@
 #include "chrono/physics/ChSystem.h"
 #include "chrono/core/ChCoordsys.h"
 #include "chrono/motion_functions/ChFunction.h"
+#include "chrono/geometry/ChTriangleMeshConnected.h"
 
 
 namespace frydom{
@@ -58,21 +59,18 @@ namespace frydom{
 
         /// Initializes the free surface system
         /// In any case, a mesh grid is used.
-        /// this version concerns a polar grid
-        void Initialize(double center_x,
-                        double center_y,
-                        double radius,
-                        double dtheta,
-                        double dr
+        /// this version concerns a square grid
+        void Initialize(double lmin,
+                        double lmax,
+                        double dl
                         );
-
 
       protected:
         FrFreeSurface() {};
 
         double m_mean_height;
         chrono::ChCoordsys<> plane;  /// The reference plane of the free surface
-
+        chrono::geometry::ChTriangleMeshConnected mesh;
     };
 
 }  // end namespace frydom

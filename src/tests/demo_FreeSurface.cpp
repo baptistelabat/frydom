@@ -1,6 +1,17 @@
+// =============================================================================
+// PROJECT FRyDoM
 //
-// Created by frongere on 20/05/17.
+// Copyright (c) 2017 Ecole Centrale de Nantes
+// All right reserved.
 //
+//
+// =============================================================================
+// Authors: Francois Rongere
+// =============================================================================
+//
+// demo code for free surface definition
+//
+// =============================================================================
 
 #include <iostream>
 #include <unistd.h>
@@ -33,10 +44,7 @@ int main(int argc, char* argv[]) {
     // Creating the free surface
     frydom::FrFlatFreeSurface free_surface(2);
 
-
-    std::cout << free_surface.GetHeight(0, 0, 0);
-    // FIXME: pourquoi j'ai pas access a free_surface.getMeanHeight() ??
-    std::cout << free_surface.getMeanHeight();
+    free_surface.Initialize(0, 10, 0.1);
 
 //    // Creating the irrlicht 3D application
 //    ChIrrApp application(&system, L"Demo_FlatFreeSurface",
