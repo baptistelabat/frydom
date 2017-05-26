@@ -17,6 +17,7 @@
 #include "FrFlatFreeSurface.h"
 
 namespace frydom {
+namespace environment{
 
     FrFlatFreeSurface::FrFlatFreeSurface(double p_mean_height) : FrFreeSurface(p_mean_height) {
     }
@@ -25,4 +26,5 @@ namespace frydom {
         return m_mean_height;
     }
 
+}  // end namespace environment
 }  // end namespace frydom

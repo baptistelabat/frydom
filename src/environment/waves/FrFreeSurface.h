@@ -23,6 +23,7 @@
 
 
 namespace frydom{
+namespace environment{
 
     /// Pure Virtual Base class for a free surface system.
     class FrFreeSurface {
@@ -72,9 +73,16 @@ namespace frydom{
 
         double m_mean_height;
         chrono::ChCoordsys<> plane;  /// The reference plane of the free surface
-        chrono::geometry::ChTriangleMeshConnected mesh;
+        chrono::geometry::ChTriangleMeshConnected m_mesh;
+
+      private:
+        bool m_vis_enabled;
+
+
+//        chrono::geometry::ChTriangleMeshConnected void build_mesh_grid();
     };
 
+}  // end namespace environment
 }  // end namespace frydom
 
 #endif

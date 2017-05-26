@@ -19,6 +19,7 @@
 #include "FrFreeSurface.h"
 
 namespace frydom {
+namespace environment{
 
     class FrFlatFreeSurface : public FrFreeSurface {  // le public permet de rendre les methodes de la classe de base publiques
 
@@ -34,4 +35,5 @@ namespace frydom {
         FrFlatFreeSurface() {};
     };
 
+} // end namespace environment
 } // end namespace frydom

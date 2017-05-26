@@ -14,9 +14,11 @@
 // =============================================================================
 
 //#include <math.h>
+#include <chrono/assets/ChTriangleMeshShape.h>
 #include "FrFreeSurface.h"
 
 namespace frydom {
+namespace environment{
 
     FrFreeSurface::FrFreeSurface(double p_mean_height) : m_mean_height(p_mean_height){
         plane.pos[1] = p_mean_height;  // The free surface plane reference has the altitude the mean FS height
@@ -29,7 +31,7 @@ namespace frydom {
     void FrFreeSurface::Initialize(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
         // Making sure the mesh is clean
-        mesh.Clear();
+        m_mesh.Clear();
 
         const std::size_t nv_x = std::size_t((xmax - xmin) / dx) + 1;
         const std::size_t nv_y = std::size_t((ymax - ymin) / dy) + 1;
@@ -65,11 +67,17 @@ namespace frydom {
                 auto v2 = grid[iy+1][ix+1];
                 auto v3 = grid[iy+1][ix];
 
-                mesh.addTriangle(chrono::geometry::ChTriangle(v0, v1, v2));
-                mesh.addTriangle(chrono::geometry::ChTriangle(v0, v2, v3));
+                m_mesh.addTriangle(chrono::geometry::ChTriangle(v0, v1, v2));
+                m_mesh.addTriangle(chrono::geometry::ChTriangle(v0, v2, v3));
 
                 // TODO: voir si on calcule les normales
             }
+        }
+
+        if (m_vis_enabled) {
+            auto mesh_shape = std::make_shared<chrono::ChTriangleMeshShape>();
+            mesh_shape->SetMesh(m_mesh);
+            mesh_shape->SetName("Free surface");
         }
 
     }
@@ -79,8 +87,9 @@ namespace frydom {
     }
 
     chrono::geometry::ChTriangleMeshConnected FrFreeSurface::getMesh(void) const {
-        return mesh;
+        return m_mesh;
     }
 
 
+}  // end namespace environment
 }  // end namespace frydom
