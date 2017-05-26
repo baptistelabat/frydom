@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
     // Creating the free surface
     frydom::FrFlatFreeSurface free_surface(2);
 
-    free_surface.Initialize(0, 100, 0.5);
+    free_surface.Initialize(0, 1000, 1);
 
 
     chrono::geometry::ChTriangleMeshConnected mesh = free_surface.getMesh();
