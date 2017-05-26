@@ -13,7 +13,6 @@
 //
 // =============================================================================
 
-//#include <math.h>
 #include <chrono/assets/ChTriangleMeshShape.h>
 #include "FrFreeSurface.h"
 
@@ -32,6 +31,30 @@ namespace environment{
 
         // Making sure the mesh is clean
         m_mesh.Clear();
+
+        // Building the grid
+        m_mesh = build_mesh_grid(xmin, xmax, dx, ymin, ymax, dy);
+
+        if (m_vis_enabled) {
+            auto mesh_shape = std::make_shared<chrono::ChTriangleMeshShape>();
+            mesh_shape->SetMesh(m_mesh);
+            mesh_shape->SetName("Free surface");
+        }
+
+    }
+
+    void FrFreeSurface::Initialize(double lmin, double lmax, double dl){
+        FrFreeSurface::Initialize(lmin, lmax, dl, lmin, lmax, dl);
+    }
+
+    chrono::geometry::ChTriangleMeshConnected FrFreeSurface::getMesh(void) const {
+        return m_mesh;
+    }
+
+    chrono::geometry::ChTriangleMeshConnected FrFreeSurface::build_mesh_grid(double xmin, double xmax, double dx,
+                                                                             double ymin, double ymax, double dy) {
+
+        chrono::geometry::ChTriangleMeshConnected mesh;
 
         const std::size_t nv_x = std::size_t((xmax - xmin) / dx) + 1;
         const std::size_t nv_y = std::size_t((ymax - ymin) / dy) + 1;
@@ -67,27 +90,14 @@ namespace environment{
                 auto v2 = grid[iy+1][ix+1];
                 auto v3 = grid[iy+1][ix];
 
-                m_mesh.addTriangle(chrono::geometry::ChTriangle(v0, v1, v2));
-                m_mesh.addTriangle(chrono::geometry::ChTriangle(v0, v2, v3));
+                mesh.addTriangle(chrono::geometry::ChTriangle(v0, v1, v2));
+                mesh.addTriangle(chrono::geometry::ChTriangle(v0, v2, v3));
 
                 // TODO: voir si on calcule les normales
             }
+
+        return mesh;
         }
-
-        if (m_vis_enabled) {
-            auto mesh_shape = std::make_shared<chrono::ChTriangleMeshShape>();
-            mesh_shape->SetMesh(m_mesh);
-            mesh_shape->SetName("Free surface");
-        }
-
-    }
-
-    void FrFreeSurface::Initialize(double lmin, double lmax, double dl){
-        FrFreeSurface::Initialize(lmin, lmax, dl, lmin, lmax, dl);
-    }
-
-    chrono::geometry::ChTriangleMeshConnected FrFreeSurface::getMesh(void) const {
-        return m_mesh;
     }
 
 

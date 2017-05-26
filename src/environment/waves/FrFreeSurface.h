@@ -79,7 +79,8 @@ namespace environment{
         bool m_vis_enabled;
 
 
-//        chrono::geometry::ChTriangleMeshConnected void build_mesh_grid();
+        chrono::geometry::ChTriangleMeshConnected build_mesh_grid(double xmin, double xmax, double dx,
+                                                                  double ymin, double ymax, double dy);
     };
 
 }  // end namespace environment
