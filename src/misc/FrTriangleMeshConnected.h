@@ -13,10 +13,6 @@ namespace frydom {
     class FrTriangleMeshConnected : public chrono::geometry::ChTriangleMeshConnected {
 
       public:
-//        void addTriangle(const chrono::ChVector<> &vertex0,
-//                         const chrono::ChVector<> &vertex1,
-//                         const chrono::ChVector<> &vertex2) override;
-
         /// Add a vertex to the mesh
         void addVertex(chrono::ChVector<double> vertex);
 

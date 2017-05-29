@@ -55,9 +55,6 @@ namespace environment{
     void FrFreeSurface::build_mesh_grid(double xmin, double xmax, double dx,
                                         double ymin, double ymax, double dy) {
 
-        // FIXME: Une instance de amillage a deja ete cree a l'instanciation de la classe FrFreeSurface... Il faut la
-        // remplir directement
-
         int nx(int((xmax - xmin) / dx) + 1);
         int ny(int((ymax - ymin) / dy) + 1);
 
@@ -81,14 +78,25 @@ namespace environment{
         // Building faces of the cartesian grid
         std::vector<chrono::ChVector<int>> triangles;
         for (int iy = 0; iy < ny - 1; iy++) {
+            bool reverse(false);
             for (int ix = 0; ix < nx - 1; ix++) {
                 int i0(iy * nx + ix);
                 int i1(i0 + 1);
                 int i2(i1 + nx);
-                int i3(i2 + 1);
+                int i3(i2 - 1);
 
-                chrono::ChVector<int> triangle_1(i0, i1, i2);
-                chrono::ChVector<int> triangle_2(i0, i2, i3);
+                chrono::ChVector<int> triangle_1, triangle_2;
+
+                if (reverse) {
+                    triangle_1 = chrono::ChVector<int>(i0, i1, i2);
+                    triangle_2 = chrono::ChVector<int>(i0, i2, i3);
+                    reverse = false;
+                }
+                else {
+                    triangle_1 = chrono::ChVector<int>(i0, i1, i3);
+                    triangle_2 = chrono::ChVector<int>(i1, i2, i3);
+                    reverse = true;
+                }
 
                 triangles.push_back(triangle_1);
                 triangles.push_back(triangle_2);
@@ -96,11 +104,6 @@ namespace environment{
         }
         // Adding the triangle list to the mesh
         m_mesh.addTriangle(triangles);
-
-        std::cout << m_mesh.m_vertices.size() << std::endl;
-        std::cout << m_mesh.RepairDuplicateVertexes() << std::endl;
-        std::cout << m_mesh.m_vertices.size() << std::endl;
-        std::cout << m_mesh.getNumTriangles();
 
     }
 
