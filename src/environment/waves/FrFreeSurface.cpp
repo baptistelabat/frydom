@@ -15,7 +15,6 @@
 
 #include <chrono/assets/ChTriangleMeshShape.h>
 #include "FrFreeSurface.h"
-#include "../../misc/FrTriangleMeshConnected.h"
 
 namespace frydom {
 namespace environment{
@@ -55,16 +54,15 @@ namespace environment{
     void FrFreeSurface::build_mesh_grid(double xmin, double xmax, double dx,
                                         double ymin, double ymax, double dy) {
 
-        int nx(int((xmax - xmin) / dx) + 1);
-        int ny(int((ymax - ymin) / dy) + 1);
+        int nvx(int((xmax - xmin) / dx) + 1);
+        int nvy(int((ymax - ymin) / dy) + 1);
 
         // Building the vertices list
         std::vector<chrono::ChVector<double>> vertices;
-        double xi = xmin,
-                yi = ymin;
+        double xi = xmin, yi = ymin;
 
-        for (int iy = 0; iy < ny; iy++) {
-            for (int ix = 0; ix < nx; ix++) {
+        for (int iy = 0; iy < nvy; iy++) {
+            for (int ix = 0; ix < nvx; ix++) {
                 chrono::ChVector<double> vertex(xi, yi, m_mean_height);
                 vertices.push_back(vertex);
                 xi += dx;
@@ -77,12 +75,12 @@ namespace environment{
 
         // Building faces of the cartesian grid
         std::vector<chrono::ChVector<int>> triangles;
-        for (int iy = 0; iy < ny - 1; iy++) {
+        for (int iy = 0; iy < nvy - 1; iy++) {
             bool reverse(false);
-            for (int ix = 0; ix < nx - 1; ix++) {
-                int i0(iy * nx + ix);
+            for (int ix = 0; ix < nvx - 1; ix++) {
+                int i0(iy * nvx + ix);
                 int i1(i0 + 1);
-                int i2(i1 + nx);
+                int i2(i1 + nvx);
                 int i3(i2 - 1);
 
                 chrono::ChVector<int> triangle_1, triangle_2;

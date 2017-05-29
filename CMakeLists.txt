@@ -61,12 +61,16 @@ endif()
 #--------------------------------------------------------------
 # TODO : faire en sorte de declarer les target dans un CMakeLists.txt separe par target !!
 set(SOURCE_FILES
+
         src/environment/waves/FrFreeSurface.h
         src/environment/waves/FrFreeSurface.cpp
         src/environment/waves/FrFlatFreeSurface.h
         src/environment/waves/FrFlatFreeSurface.cpp
         src/misc/FrTriangleMeshConnected.h
         src/misc/FrTriangleMeshConnected.cpp
+
+        src/core/FrOffshoreSystem.h
+        src/core/FrOffshoreSystem.cpp
 
         src/tests/demo_FreeSurface.cpp)
 

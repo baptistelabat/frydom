@@ -16,11 +16,12 @@
 #ifndef FR_FREE_SURFACE_H
 #define FR_FREE_SURFACE_H
 
-#include "chrono/physics/ChSystem.h"
 #include "chrono/core/ChCoordsys.h"
 #include "chrono/motion_functions/ChFunction.h"
-//#include "chrono/geometry/ChTriangleMeshConnected.h"
+
+#include "../../core/FrOffshoreSystem.h"
 #include "../../misc/FrTriangleMeshConnected.h"
+
 
 
 namespace frydom{
@@ -30,17 +31,25 @@ namespace environment{
     class FrFreeSurface {
 
       public:
+        enum Type {
+            FLAT,
+            AIRY_REGULAR,
+            AIRY_IRREGULAR,
+            AIRY_IRREGULAR_DIR,
+            NL_RIENECKER_FENTON,
+            NL_HOS
+        };
 
-        /// Class constructor
+        /// Construct a default Free surface
         FrFreeSurface(double p_mean_height);
 
         virtual ~FrFreeSurface() {};
 
         /// Update the state of the free surface at the specified time.
-        virtual void Synchronize(double time) {}
+        virtual void Synchronize(double time) {};
 
         /// Advance the state of the free surface by the specified duration.
-        virtual void Advance(double step) {}
+        virtual void Advance(double step) {};
 
         /// Get the mean height of the free surface's plane.
         virtual double getMeanHeight() const;
@@ -87,4 +96,4 @@ namespace environment{
 }  // end namespace environment
 }  // end namespace frydom
 
-#endif
+#endif // FR_FREE_SURFACE_H

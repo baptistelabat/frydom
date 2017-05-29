@@ -13,13 +13,13 @@
 //
 // =============================================================================
 
-//#include "FrFreeSurface.h"  // besoin ???
 #include "FrFlatFreeSurface.h"
 
 namespace frydom {
 namespace environment{
 
-    FrFlatFreeSurface::FrFlatFreeSurface(double p_mean_height) : FrFreeSurface(p_mean_height) {
+    FrFlatFreeSurface::FrFlatFreeSurface(double p_mean_height) :
+            FrFreeSurface(p_mean_height) {
     }
 
     double FrFlatFreeSurface::GetHeight(double x, double y, double t) const{

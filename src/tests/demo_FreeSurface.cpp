@@ -13,28 +13,35 @@
 //
 // =============================================================================
 
-//#include <iostream>
-//#include <unistd.h>
-
 #include "chrono/physics/ChSystemNSC.h"
+
 #include "chrono_irrlicht/ChIrrApp.h"
 
 #include "../environment/waves/FrFlatFreeSurface.h"
+#include "../core/FrOffshoreSystem.h"
 
+#include <irrlicht.h>
 
 int main(int argc, char* argv[]) {
     // Creating the system
-    chrono::ChSystemNSC system;
+    frydom::FrOffshoreSystem system;
 
     // Creating the free surface
-    frydom::environment::FrFlatFreeSurface free_surface(2);
+//    frydom::environment::FrFlatFreeSurface free_surface(&system, 2);
+//    free_surface.Initialize(0, 100, 1);
 
-    free_surface.Initialize(0, 100, 1);
+
+    // Trying to view it into irrlicht
+//    chrono::irrlicht::ChIrrApp app(&system, L"Visu free surface", irr::core::dimension2d<irr::u32>(800, 600), false, true);
 
 
-    chrono::geometry::ChTriangleMeshConnected mesh = free_surface.getMesh();
+    // Converting into Irrlicht meshes the assets that have been added
+//    app.AssetUpdate()
 
-    chrono::ChVector<>* vertex;
+
+
+
+
 
     return 0;
 

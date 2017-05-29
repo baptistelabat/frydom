@@ -18,6 +18,8 @@ namespace frydom{
         }
     }
 
+
+    // FIXME: calculer aussi les normales, les uv_coords... voir DeformableTerrain.cpp ligne 222
     void FrTriangleMeshConnected::addTriangle(chrono::ChVector<int> triangle) {
         m_face_v_indices.push_back(triangle);
     }
