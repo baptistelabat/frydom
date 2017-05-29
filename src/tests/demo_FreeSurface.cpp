@@ -22,12 +22,15 @@
 #include <irrlicht.h>
 
 int main(int argc, char* argv[]) {
+
     // Creating the system
     frydom::FrOffshoreSystem system;
 
     // Getting the default free surface
     std::shared_ptr<frydom::environment::FrFreeSurface> fs = system.getFreeSurface();
 
+    // Changing the default free surface
+    // TODO !!
 
     fs->Initialize(0, 10, 1);
 

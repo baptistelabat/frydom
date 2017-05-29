@@ -15,6 +15,7 @@
 
 #include <chrono/assets/ChTriangleMeshShape.h>
 #include "FrFreeSurface.h"
+#include "../../core/FrOffshoreSystem.h"
 
 namespace frydom {
 namespace environment{
@@ -103,6 +104,7 @@ namespace environment{
         // Adding the triangle list to the mesh
         m_mesh.addTriangle(triangles);
 
+        // TODO: initialiser les normales et autres champs de ChTriangleMeshConnected
     }
 
 }  // end namespace environment

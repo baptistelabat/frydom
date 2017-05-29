@@ -20,19 +20,21 @@
 #include "../../misc/FrTriangleMeshConnected.h"
 
 
-
 namespace frydom{
 namespace environment{
+
+class FrOffshoreSystem;  // FORWARD DECLARATION: FrOffshoreSystem may now be included into FrFreeSurface.cpp without cyclic include
 
     /// Pure Virtual Base class for a free surface system.
     class FrFreeSurface {
 
       public:
+        /// Enum type for free surface models
         enum Type {
             FLAT,
-            AIRY_REGULAR,
-            AIRY_IRREGULAR,
-            AIRY_IRREGULAR_DIR,
+            LIN_AIRY_REGULAR,
+            LIN_AIRY_IRREGULAR,
+            LIN_AIRY_IRREGULAR_DIR,
             NL_RIENECKER_FENTON,
             NL_HOS
         };
@@ -73,16 +75,19 @@ namespace environment{
                         double dl
                         );
 
+        /// Get the free surface's mesh
         FrTriangleMeshConnected getMesh(void) const;
 
       protected:
-        FrFreeSurface() {};  // Disallow the default constructor to be used externally
+        /// void constructor that should not be publicly used.
+        FrFreeSurface() {};  // Disallow the default constructor to be used as a publid method
 
         double m_mean_height;
-        chrono::ChCoordsys<> plane;  /// The reference plane of the free surface
+        chrono::ChCoordsys<> plane;  // The reference plane of the free surface
         FrTriangleMeshConnected m_mesh;
 
       private:
+        /// Flag to specify if the free surface has to be rendered in a visualization application.
         bool m_vis_enabled;
 
         /// Private method in charge of the building of the free surface mesh.
