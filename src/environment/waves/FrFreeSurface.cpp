@@ -15,6 +15,7 @@
 
 #include <chrono/assets/ChTriangleMeshShape.h>
 #include "FrFreeSurface.h"
+#include "../../misc/FrTriangleMeshConnected.h"
 
 namespace frydom {
 namespace environment{
@@ -33,7 +34,7 @@ namespace environment{
         m_mesh.Clear();
 
         // Building the grid
-        m_mesh = build_mesh_grid(xmin, xmax, dx, ymin, ymax, dy);
+        build_mesh_grid(xmin, xmax, dx, ymin, ymax, dy);
 
         if (m_vis_enabled) {
             auto mesh_shape = std::make_shared<chrono::ChTriangleMeshShape>();
@@ -47,59 +48,61 @@ namespace environment{
         FrFreeSurface::Initialize(lmin, lmax, dl, lmin, lmax, dl);
     }
 
-    chrono::geometry::ChTriangleMeshConnected FrFreeSurface::getMesh(void) const {
+    FrTriangleMeshConnected FrFreeSurface::getMesh(void) const {
         return m_mesh;
     }
 
-    chrono::geometry::ChTriangleMeshConnected FrFreeSurface::build_mesh_grid(double xmin, double xmax, double dx,
-                                                                             double ymin, double ymax, double dy) {
+    void FrFreeSurface::build_mesh_grid(double xmin, double xmax, double dx,
+                                        double ymin, double ymax, double dy) {
 
-        chrono::geometry::ChTriangleMeshConnected mesh;
+        // FIXME: Une instance de amillage a deja ete cree a l'instanciation de la classe FrFreeSurface... Il faut la
+        // remplir directement
 
-        const std::size_t nv_x = std::size_t((xmax - xmin) / dx) + 1;
-        const std::size_t nv_y = std::size_t((ymax - ymin) / dy) + 1;
+        int nx(int((xmax - xmin) / dx) + 1);
+        int ny(int((ymax - ymin) / dy) + 1);
 
-        uint nb_vertices = uint(nv_x * nv_y);
+        // Building the vertices list
+        std::vector<chrono::ChVector<double>> vertices;
+        double xi = xmin,
+                yi = ymin;
 
-        std::cout << "Nb vertices: " << nb_vertices << std::endl;
-
-        std::vector<std::vector<chrono::ChVector<>>>
-                grid(nv_y, std::vector<chrono::ChVector<>>(nv_x, chrono::ChVector<>()));
-
-        double xi = xmin, yj = ymin;
-        for (auto& row: grid){
-            for (auto& vertex: row){
-                vertex.Set(xi, yj, m_mean_height);
+        for (int iy = 0; iy < ny; iy++) {
+            for (int ix = 0; ix < nx; ix++) {
+                chrono::ChVector<double> vertex(xi, yi, m_mean_height);
+                vertices.push_back(vertex);
                 xi += dx;
             }
-            yj += dy;
+            yi += dy;
             xi = xmin;
         }
+        // Adding the vertices list to the mesh
+        m_mesh.addVertex(vertices);
 
+        // Building faces of the cartesian grid
+        std::vector<chrono::ChVector<int>> triangles;
+        for (int iy = 0; iy < ny - 1; iy++) {
+            for (int ix = 0; ix < nx - 1; ix++) {
+                int i0(iy * nx + ix);
+                int i1(i0 + 1);
+                int i2(i1 + nx);
+                int i3(i2 + 1);
 
-        // Adding faces to the mesh based on vertices generated above
-        std::size_t nb_faces = 2* (nv_x-1) * (nv_y-1);
+                chrono::ChVector<int> triangle_1(i0, i1, i2);
+                chrono::ChVector<int> triangle_2(i0, i2, i3);
 
-        std::cout << "Nb faces: " << nb_faces << std::endl;
-
-        for (int iy = 0; iy < nv_y-1; iy++){
-            for (int ix = 0; ix < nv_x-1; ix++){
-                // TODO: voir si on ne peut pas creer des pointeurs et pas reinstancier les vertex a chaque fois
-                auto v0 = grid[iy][ix];
-                auto v1 = grid[iy][ix+1];
-                auto v2 = grid[iy+1][ix+1];
-                auto v3 = grid[iy+1][ix];
-
-                mesh.addTriangle(chrono::geometry::ChTriangle(v0, v1, v2));
-                mesh.addTriangle(chrono::geometry::ChTriangle(v0, v2, v3));
-
-                // TODO: voir si on calcule les normales
+                triangles.push_back(triangle_1);
+                triangles.push_back(triangle_2);
             }
-
-        return mesh;
         }
-    }
+        // Adding the triangle list to the mesh
+        m_mesh.addTriangle(triangles);
 
+        std::cout << m_mesh.m_vertices.size() << std::endl;
+        std::cout << m_mesh.RepairDuplicateVertexes() << std::endl;
+        std::cout << m_mesh.m_vertices.size() << std::endl;
+        std::cout << m_mesh.getNumTriangles();
+
+    }
 
 }  // end namespace environment
 }  // end namespace frydom

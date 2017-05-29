@@ -19,7 +19,8 @@
 #include "chrono/physics/ChSystem.h"
 #include "chrono/core/ChCoordsys.h"
 #include "chrono/motion_functions/ChFunction.h"
-#include "chrono/geometry/ChTriangleMeshConnected.h"
+//#include "chrono/geometry/ChTriangleMeshConnected.h"
+#include "../../misc/FrTriangleMeshConnected.h"
 
 
 namespace frydom{
@@ -66,21 +67,21 @@ namespace environment{
                         double dl
                         );
 
-        chrono::geometry::ChTriangleMeshConnected getMesh(void) const;
+        FrTriangleMeshConnected getMesh(void) const;
 
       protected:
-        FrFreeSurface() {};
+        FrFreeSurface() {};  // Disallow the default constructor to be used externally
 
         double m_mean_height;
         chrono::ChCoordsys<> plane;  /// The reference plane of the free surface
-        chrono::geometry::ChTriangleMeshConnected m_mesh;
+        FrTriangleMeshConnected m_mesh;
 
       private:
         bool m_vis_enabled;
 
-
-        chrono::geometry::ChTriangleMeshConnected build_mesh_grid(double xmin, double xmax, double dx,
-                                                                  double ymin, double ymax, double dy);
+        /// Private method in charge of the building of the free surface mesh.
+        void build_mesh_grid(double xmin, double xmax, double dx,
+                             double ymin, double ymax, double dy);
     };
 
 }  // end namespace environment
