@@ -1,0 +1,2127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="frydom">
+      <UniqueIdentifier>{0d9bb057-c1d0-41b9-be62-6f6e2219a7f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\core">
+      <UniqueIdentifier>{3ae7b786-70f6-4971-8141-769518e2a539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\environment">
+      <UniqueIdentifier>{67439f46-5adb-4b67-bb98-a56d685f8d5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\misc">
+      <UniqueIdentifier>{ced0d1fe-625c-478f-9a02-49834d1f8a6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\tests">
+      <UniqueIdentifier>{09d4aec9-5fa4-4e58-9cc1-2fd3419c7dbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono">
+      <UniqueIdentifier>{0e35c4dd-faaa-4fca-9599-c530875a65df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\core">
+      <UniqueIdentifier>{04ce1782-0c33-4d8c-a41d-9c8cd9f0d7e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\geometry">
+      <UniqueIdentifier>{9b92690c-20b5-4e0a-956e-41798ff23a33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\utils">
+      <UniqueIdentifier>{6d909d0b-cb86-4d5f-837f-c66195e9ff45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\timestepper">
+      <UniqueIdentifier>{27cbcaf6-04c4-498d-a3df-05f33d4bc3bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\solver">
+      <UniqueIdentifier>{1162ec57-3c42-4398-84d2-342b96241678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\physics">
+      <UniqueIdentifier>{ad1c1557-fa26-49d5-a113-5fd08ba7f5d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\particleFactory">
+      <UniqueIdentifier>{a7be7956-eb1b-457e-bc5e-5c5295bacbdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\parallel">
+      <UniqueIdentifier>{c0a512ce-cdcf-4b54-9238-5dc750f19e69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\motion_function">
+      <UniqueIdentifier>{ebbbbd3d-ac33-43b0-897a-ea0ecb4906ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\assets">
+      <UniqueIdentifier>{92d26fa0-8bba-4fd4-a9de-1cf862a9216e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\collision">
+      <UniqueIdentifier>{46dfbb2b-e564-485d-99d0-10bb4dabac79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\collision\bullet">
+      <UniqueIdentifier>{f88bb14b-2efa-4def-9043-4c5c9ddca371}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\collision\bullet\broadphase">
+      <UniqueIdentifier>{3f9793a6-a3f1-4e72-9d8e-d98d033b978d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\collision\bullet\collisionDispatch">
+      <UniqueIdentifier>{98812fbe-ea4e-4a5b-912d-d0386e3cfa3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\collision\bullet\collisionShapes">
+      <UniqueIdentifier>{47d41c66-b914-4af2-93f5-8072f51b8256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\chrono\collision\bullet\narrowPhase">
+      <UniqueIdentifier>{b74645cb-98bb-492b-b353-a0a62c417de9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\misc\FrTriangleMeshConnected.cpp">
+      <Filter>frydom\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tests\test_ch_system.cpp">
+      <Filter>frydom\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\environment\waves\FrFlatFreeSurface.cpp">
+      <Filter>frydom\environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\environment\waves\FrFreeSurface.cpp">
+      <Filter>frydom\environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\FrOffshoreSystem.cpp">
+      <Filter>frydom\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChQuadrature.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChQuaternion.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChStream.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChVector.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChBezierCurve.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChClassFactory.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChCoordsys.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChCSR3Matrix.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChCubicSpline.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChFilePS.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChFileutils.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChLinkedListMatrix.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChLog.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChMapMatrix.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChMathematics.cpp">
+      <Filter>frydom\chrono\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLineSegment.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChRoundedBox.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChRoundedCone.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChRoundedCylinder.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChSphere.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChTriangle.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChTriangleMeshConnected.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChTriangleMeshSoup.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChBox.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChCapsule.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChCone.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChCylinder.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChEllipsoid.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChGeometry.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLine.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLineArc.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLineBezier.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLineCam.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLinePath.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLinePoly.cpp">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tests\demo_FreeSurface.cpp">
+      <Filter>frydom\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChCompositeInertia.cpp">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChFilters.cpp">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChProfiler.cpp">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsChaseCamera.cpp">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsCreators.cpp">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsGenerators.cpp">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsInputOutput.cpp">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsValidation.cpp">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\timestepper\ChAssemblyAnalysis.cpp">
+      <Filter>frydom\chrono\timestepper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\timestepper\ChIntegrable.cpp">
+      <Filter>frydom\chrono\timestepper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\timestepper\ChTimestepper.cpp">
+      <Filter>frydom\chrono\timestepper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\timestepper\ChTimestepperHHT.cpp">
+      <Filter>frydom\chrono\timestepper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraint.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintThree.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintThreeBBShaft.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintThreeGeneric.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwo.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwoBodies.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwoGeneric.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwoGenericBoxed.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChKblockGeneric.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolver.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverAPGD.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverBB.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverJacobi.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverMINRES.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverPCG.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverPMINRES.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverSMC.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverSOR.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverSORmultithread.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverSymmSOR.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSystemDescriptor.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariables.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesBody.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesBodyOwnMass.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesBodySharedMass.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesGeneric.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesGenericDiagonalMass.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesNode.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesShaft.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\solver\Empty.cpp">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChAssembly.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChBody.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChBodyAuxRef.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChBodyFrame.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContactContainer.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContactContainerNSC.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContactContainerSMC.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContinuumMaterial.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChController.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChControls.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChConveyor.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChForce.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChFx.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChGenericConstraint.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChGlobal.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChIndexedNodes.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChIndexedParticles.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChIterative.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLimit.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLink.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkBase.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkBrake.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkBushing.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkClearance.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkDistance.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkEngine.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkForce.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkGear.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkLinActuator.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkLock.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkMarkers.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkMask.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkMasked.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkMate.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkPneumaticActuator.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkPointSpline.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkPulley.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkRackpinion.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkRevolute.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkRevoluteSpherical.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkRevoluteTranslational.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkRotSpringCB.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkScrew.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkSpring.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkSpringCB.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkTrajectory.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkUniversal.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLoadContainer.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChMarker.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChMaterialSurfaceNSC.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChMaterialSurfaceSMC.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChMatterSPH.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChNlsolver.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChNodeBase.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChNodeXYZ.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChObject.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChParticlesClones.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChPhysicsItem.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChProbe.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChProximityContainer.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChProximityContainerSPH.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChRef.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaft.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsBody.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsClutch.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsGear.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsGearbox.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsGearboxAngled.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsMotor.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsPlanetary.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsThermalEngine.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsTorque.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsTorqueBase.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsTorqueConverter.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsTorsionSpring.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChSolvmin.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChSystem.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChSystemNSC.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChSystemSMC.cpp">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\parallel\ChThreads.cpp">
+      <Filter>frydom\chrono\parallel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\parallel\ChThreadsPOSIX.cpp">
+      <Filter>frydom\chrono\parallel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\parallel\ChThreadsWIN32.cpp">
+      <Filter>frydom\chrono\parallel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Matlab.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Mirror.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Mocap.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Noise.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Operation.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Oscilloscope.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Poly.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Poly345.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Ramp.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Recorder.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Repeat.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Sequence.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Sigma.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Sine.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Base.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Const.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_ConstAcc.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Derive.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Fillet3.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Integrate.cpp">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChAsset.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChAssetLevel.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChBoxShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChCamera.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChCapsuleShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChColor.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChColorAsset.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChConeShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChCylinderShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChEllipsoidShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChEmitterAsset.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChGlyphs.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChLineShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChObjShapeFile.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChPathShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChPointPointDrawing.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChRoundedBoxShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChRoundedConeShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChRoundedCylinderShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChSphereShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChTexture.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChTriangleMeshShape.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChVisualization.cpp">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCCollisionModel.cpp">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCCollisionSystemBullet.cpp">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCCollisionSystemSpheres.cpp">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCCollisionUtils.cpp">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCConvexDecomposition.cpp">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCModelBullet.cpp">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCModelSphereSet.cpp">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCModelSphereSetBody.cpp">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCModelSphereSetDEM.cpp">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btBroadphaseProxy.cpp">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btDbvt.cpp">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btDbvtBroadphase.cpp">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btDispatcher.cpp">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btMultiSapBroadphase.cpp">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btOverlappingPairCache.cpp">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btQuantizedBvh.cpp">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btSimpleBroadphase.cpp">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btActivatingCollisionAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btBox2dBox2dCollisionAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btBoxBoxDetector.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btCollisionDispatcher.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btCollisionObject.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btCollisionWorld.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btCompoundCollisionAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btConvex2dConvex2dAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btConvexConcaveCollisionAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btConvexConvexAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btConvexPlaneCollisionAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btDefaultCollisionConfiguration.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btEmptyCollisionAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btGhostObject.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btInternalEdgeUtility.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btManifoldResult.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btSimulationIslandManager.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btSphereBoxCollisionAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btSphereSphereCollisionAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btSphereTriangleCollisionAlgorithm.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btUnionFind.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\SphereTriangleDetector.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\bt2DShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btBarrelShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btBox2dShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btBoxShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btBvhTriangleMeshShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btCapsuleShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btCEtriangleShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btCollisionShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btCompoundShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConcaveShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConeShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvex2dShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvexHullShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvexInternalShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvexPointCloudShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvexShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvexTriangleMeshShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btCylinderShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btEmptyShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btMinkowskiSumShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btMultimaterialTriangleMeshShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btMultiSphereShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btOptimizedBvh.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btPolyhedralConvexShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btShapeHull.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btSphereShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btStaticPlaneShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btStridingMeshInterface.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTetrahedronShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleBuffer.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleCallback.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleIndexVertexArray.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleIndexVertexMaterialArray.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleMesh.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleMeshShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btUniformScalingShape.cpp">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btContinuousConvexCollision.cpp">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btConvexCast.cpp">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btGjkConvexCast.cpp">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btGjkEpa2.cpp">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btGjkEpaPenetrationDepthSolver.cpp">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btGjkPairDetector.cpp">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btMinkowskiPenetrationDepthSolver.cpp">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btPersistentManifold.cpp">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btRaycastCallback.cpp">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.cpp">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.cpp">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\misc\FrTriangleMeshConnected.h">
+      <Filter>frydom\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\environment\waves\FrFlatFreeSurface.h">
+      <Filter>frydom\environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\environment\waves\FrFreeSurface.h">
+      <Filter>frydom\environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\core\FrOffshoreSystem.h">
+      <Filter>frydom\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChPlatform.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChQuadrature.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChQuaternion.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChRealtimeStep.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChSparseMatrix.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChStream.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChTemplateExpressions.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChTimer.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChTransform.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChVector.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChVector2.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChVectorDynamic.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChAlignedAllocator.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChApiCE.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChBezierCurve.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChBitmaskEnums.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChChrono.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChClassFactory.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChCoordsys.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChCSR3Matrix.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChCubicSpline.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChDistribution.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChException.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChFilePS.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChFileutils.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChFrame.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChFrameMoving.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChLinearAlgebra.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChLinkedListMatrix.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChLists.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChLog.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChMapMatrix.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChMath.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChMathematics.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChMatrix.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChMatrix33.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChMatrixDynamic.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChMatrixNM.h">
+      <Filter>frydom\chrono\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLinePoly.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLineSegment.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChRoundedBox.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChRoundedCone.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChRoundedCylinder.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChSphere.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChTriangle.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChTriangleMesh.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChTriangleMeshConnected.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChTriangleMeshSoup.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChBox.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChCapsule.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChCone.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChCylinder.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChEllipsoid.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChGeometry.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLine.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLineArc.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLineBezier.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLineCam.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\geometry\ChLinePath.h">
+      <Filter>frydom\chrono\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChCompositeInertia.h">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChFilters.h">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChProfiler.h">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsChaseCamera.h">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsCreators.h">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsGenerators.h">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsGeometry.h">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsInputOutput.h">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsSamplers.h">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsValidation.h">
+      <Filter>frydom\chrono\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\timestepper\ChAssemblyAnalysis.h">
+      <Filter>frydom\chrono\timestepper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\timestepper\ChIntegrable.h">
+      <Filter>frydom\chrono\timestepper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\timestepper\ChState.h">
+      <Filter>frydom\chrono\timestepper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\timestepper\ChStaticAnalysis.h">
+      <Filter>frydom\chrono\timestepper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\timestepper\ChTimestepper.h">
+      <Filter>frydom\chrono\timestepper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\timestepper\ChTimestepperHHT.h">
+      <Filter>frydom\chrono\timestepper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\timestepper\ChUpdateFlags.h">
+      <Filter>frydom\chrono\timestepper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraint.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintThree.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintThreeBBShaft.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintThreeGeneric.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTuple.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwo.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwoBodies.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwoGeneric.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwoGenericBoxed.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwoTuples.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwoTuplesContactN.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwoTuplesFrictionT.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwoTuplesRollingN.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChConstraintTwoTuplesRollingT.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChIterativeSolver.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChKblock.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChKblockGeneric.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolver.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverAPGD.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverBB.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverJacobi.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverMINRES.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverPCG.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverPMINRES.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverSMC.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverSOR.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverSORmultithread.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSolverSymmSOR.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChSystemDescriptor.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariables.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesBody.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesBodyOwnMass.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesBodySharedMass.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesGeneric.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesGenericDiagonalMass.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesNode.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\solver\ChVariablesShaft.h">
+      <Filter>frydom\chrono\solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChAssembly.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChBody.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChBodyAuxRef.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChBodyEasy.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChBodyFrame.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContactable.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContactContainer.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContactContainerNSC.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContactContainerSMC.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContactNSC.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContactNSCrolling.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContactSMC.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContactTuple.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChContinuumMaterial.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChController.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChControls.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChConveyor.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChForce.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChFx.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChGenericConstraint.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChGlobal.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChIndexedNodes.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChIndexedParticles.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChInertiaUtils.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChIterative.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLimit.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLink.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkBase.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkBrake.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkBushing.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkClearance.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkDistance.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkEngine.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkForce.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkGear.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkLinActuator.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkLock.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkMarkers.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkMask.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkMasked.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkMate.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkPneumaticActuator.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkPointSpline.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkPulley.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkRackpinion.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkRevolute.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkRevoluteSpherical.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkRevoluteTranslational.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkRotSpringCB.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinksAll.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkScrew.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkSpring.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkSpringCB.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkTrajectory.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLinkUniversal.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLoad.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLoadable.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLoadBodyMesh.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLoadContainer.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLoader.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLoaderU.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLoaderUV.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLoaderUVW.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLoadsBody.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChLoadsXYZnode.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChMarker.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChMaterialSurface.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChMaterialSurfaceNSC.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChMaterialSurfaceSMC.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChMatterSPH.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChNlsolver.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChNodeBase.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChNodeXYZ.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChObject.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChParticlesClones.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChPhysicsItem.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChProbe.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChProximityContainer.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChProximityContainerSPH.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChRef.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaft.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsBody.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsClutch.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsCouple.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsGear.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsGearbox.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsGearboxAngled.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsMotor.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsPlanetary.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsThermalEngine.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsTorque.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsTorqueBase.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsTorqueConverter.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChShaftsTorsionSpring.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChSolvmin.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChSystem.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChSystemNSC.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChSystemSMC.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\physics\ChTensors.h">
+      <Filter>frydom\chrono\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\particlefactory\ChParticleEmitter.h">
+      <Filter>frydom\chrono\particleFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\particlefactory\ChParticleEventTrigger.h">
+      <Filter>frydom\chrono\particleFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\particlefactory\ChParticleProcessEvent.h">
+      <Filter>frydom\chrono\particleFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\particlefactory\ChParticleProcessor.h">
+      <Filter>frydom\chrono\particleFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\particlefactory\ChParticleRemover.h">
+      <Filter>frydom\chrono\particleFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\particlefactory\ChRandomParticleAlignment.h">
+      <Filter>frydom\chrono\particleFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\particlefactory\ChRandomParticlePosition.h">
+      <Filter>frydom\chrono\particleFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\particlefactory\ChRandomParticleVelocity.h">
+      <Filter>frydom\chrono\particleFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\particlefactory\ChRandomShapeCreator.h">
+      <Filter>frydom\chrono\particleFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\parallel\ChOpenMP.h">
+      <Filter>frydom\chrono\parallel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\parallel\ChThreads.h">
+      <Filter>frydom\chrono\parallel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\parallel\ChThreadsFunct.h">
+      <Filter>frydom\chrono\parallel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\parallel\ChThreadsPOSIX.h">
+      <Filter>frydom\chrono\parallel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\parallel\ChThreadsSync.h">
+      <Filter>frydom\chrono\parallel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\parallel\ChThreadsWIN32.h">
+      <Filter>frydom\chrono\parallel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Lambda.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Matlab.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Mirror.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Mocap.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Noise.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Operation.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Oscilloscope.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Poly.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Poly345.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Ramp.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Recorder.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Repeat.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Sequence.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Sigma.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Sine.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Base.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Const.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_ConstAcc.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Derive.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Fillet3.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\motion_functions\ChFunction_Integrate.h">
+      <Filter>frydom\chrono\motion_function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChAsset.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChAssetLevel.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChBoxShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChCamera.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChCapsuleShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChColor.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChColorAsset.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChConeShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChCylinderShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChEllipsoidShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChEmitterAsset.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChGlyphs.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChLineShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChMaterial.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChObjShapeFile.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChPathShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChPointPointDrawing.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChRoundedBoxShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChRoundedConeShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChRoundedCylinderShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChSphereShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChTexture.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChTriangleMeshShape.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\assets\ChVisualization.h">
+      <Filter>frydom\chrono\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCCollisionInfo.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCCollisionModel.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCCollisionPair.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCCollisionSystem.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCCollisionSystemBullet.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCCollisionSystemSpheres.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCCollisionUtils.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCConvexDecomposition.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCModelBullet.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCModelSphereSet.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCModelSphereSetBody.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\ChCModelSphereSetDEM.h">
+      <Filter>frydom\chrono\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btAxisSweep3.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btBroadphaseInterface.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btBroadphaseProxy.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btDbvt.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btDbvtBroadphase.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btDispatcher.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btMultiSapBroadphase.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btOverlappingPairCache.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btOverlappingPairCallback.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btQuantizedBvh.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\BroadphaseCollision\btSimpleBroadphase.h">
+      <Filter>frydom\chrono\collision\bullet\broadphase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btActivatingCollisionAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btBox2dBox2dCollisionAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btBoxBoxDetector.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btCollisionConfiguration.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btCollisionCreateFunc.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btCollisionDispatcher.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btCollisionObject.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btCollisionWorld.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btCompoundCollisionAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btConvex2dConvex2dAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btConvexConcaveCollisionAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btConvexConvexAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btConvexPlaneCollisionAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btDefaultCollisionConfiguration.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btEmptyCollisionAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btGhostObject.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btInternalEdgeUtility.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btManifoldResult.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btSimulationIslandManager.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btSphereBoxCollisionAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btSphereSphereCollisionAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btSphereTriangleCollisionAlgorithm.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\btUnionFind.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionDispatch\SphereTriangleDetector.h">
+      <Filter>frydom\chrono\collision\bullet\collisionDispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\bt2DShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btBarrelShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btBox2dShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btBoxShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btBvhTriangleMeshShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btCapsuleShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btCEtriangleShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btCollisionMargin.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btCollisionShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btCompoundShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConcaveShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConeShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvex2dShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvexHullShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvexInternalShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvexPointCloudShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvexShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btConvexTriangleMeshShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btCylinderShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btEmptyShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btMaterial.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btMinkowskiSumShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btMultimaterialTriangleMeshShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btMultiSphereShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btOptimizedBvh.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btPolyhedralConvexShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btShapeHull.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btSphereShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btStaticPlaneShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btStridingMeshInterface.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTetrahedronShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleBuffer.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleCallback.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleIndexVertexArray.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleIndexVertexMaterialArray.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleInfoMap.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleMesh.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleMeshShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btTriangleShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\CollisionShapes\btUniformScalingShape.h">
+      <Filter>frydom\chrono\collision\bullet\collisionShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btContinuousConvexCollision.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btConvexCast.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btConvexPenetrationDepthSolver.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btDiscreteCollisionDetectorInterface.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btGjkConvexCast.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btGjkEpa2.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btGjkEpaPenetrationDepthSolver.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btGjkPairDetector.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btManifoldPoint.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btMinkowskiPenetrationDepthSolver.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btPersistentManifold.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btPointCollector.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btRaycastCallback.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btSimplexSolverInterface.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.h">
+      <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\btBulletCollisionCommon.h">
+      <Filter>frydom\chrono\collision\bullet</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
