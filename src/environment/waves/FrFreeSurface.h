@@ -17,9 +17,6 @@
 #define FR_FREE_SURFACE_H
 
 #include "chrono/core/ChCoordsys.h"
-#include "chrono/motion_functions/ChFunction.h"
-
-#include "../../core/FrOffshoreSystem.h"
 #include "../../misc/FrTriangleMeshConnected.h"
 
 

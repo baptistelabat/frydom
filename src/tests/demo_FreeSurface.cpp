@@ -17,7 +17,6 @@
 
 #include "chrono_irrlicht/ChIrrApp.h"
 
-#include "../environment/waves/FrFlatFreeSurface.h"
 #include "../core/FrOffshoreSystem.h"
 
 #include <irrlicht.h>
@@ -25,6 +24,16 @@
 int main(int argc, char* argv[]) {
     // Creating the system
     frydom::FrOffshoreSystem system;
+
+    // Getting the default free surface
+    std::shared_ptr<frydom::environment::FrFreeSurface> fs = system.getFreeSurface();
+
+
+    fs->Initialize(0, 10, 1);
+
+    std::cout << fs->getMesh().getNumTriangles();
+    fs->getMesh().Clear();
+    std::cout << fs->getMesh().getNumTriangles();
 
     // Creating the free surface
 //    frydom::environment::FrFlatFreeSurface free_surface(&system, 2);
