@@ -23,7 +23,7 @@
 namespace frydom{
 namespace environment{
 
-class FrOffshoreSystem;  // FORWARD DECLARATION: FrOffshoreSystem may now be included into FrFreeSurface.cpp without cyclic include
+    class FrOffshoreSystem;  // FORWARD DECLARATION: FrOffshoreSystem may now be included into FrFreeSurface.cpp without cyclic include
 
     /// Pure Virtual Base class for a free surface system.
     class FrFreeSurface {
@@ -41,6 +41,9 @@ class FrOffshoreSystem;  // FORWARD DECLARATION: FrOffshoreSystem may now be inc
 
         /// Construct a default Free surface
         FrFreeSurface(double p_mean_height);
+
+        FrFreeSurface(std::shared_ptr<FrOffshoreSystem> system,
+                      double p_mean_height);
 
         virtual ~FrFreeSurface() {};
 
@@ -86,9 +89,15 @@ class FrOffshoreSystem;  // FORWARD DECLARATION: FrOffshoreSystem may now be inc
         chrono::ChCoordsys<> plane;  // The reference plane of the free surface
         FrTriangleMeshConnected m_mesh;
 
+        /// The system to which belongs the free surface.
+        std::shared_ptr<FrOffshoreSystem> m_system;
+
+
       private:
         /// Flag to specify if the free surface has to be rendered in a visualization application.
         bool m_vis_enabled;
+
+
 
         /// Private method in charge of the building of the free surface mesh.
         void build_mesh_grid(double xmin, double xmax, double dx,

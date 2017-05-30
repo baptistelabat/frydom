@@ -2,11 +2,11 @@
 // Created by frongere on 29/05/17.
 //
 
+
 #include "FrTriangleMeshConnected.h"
 
 
 namespace frydom{
-
 
     void FrTriangleMeshConnected::addVertex(chrono::ChVector<double> vertex) {
         m_vertices.push_back(vertex);
@@ -18,7 +18,6 @@ namespace frydom{
         }
     }
 
-
     // FIXME: calculer aussi les normales, les uv_coords... voir DeformableTerrain.cpp ligne 222
     void FrTriangleMeshConnected::addTriangle(chrono::ChVector<int> triangle) {
         m_face_v_indices.push_back(triangle);
@@ -29,4 +28,5 @@ namespace frydom{
             m_face_v_indices.push_back(triangles[i]);
         }
     }
+
 }

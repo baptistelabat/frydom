@@ -20,11 +20,11 @@ namespace frydom {
         ~FrOffshoreSystem() {};
 
         /// Get the wave field model from the offshore system.
-        std::shared_ptr<environment::FrFreeSurface> getFreeSurface();
+//        std::unique_ptr<environment::FrFreeSurface> getFreeSurface();
 
       private:
         /// The free surface's mesh that is a cartesian grid.
-        std::shared_ptr<environment::FrFreeSurface> m_free_surface;
+        std::unique_ptr<environment::FrFreeSurface> m_free_surface;
 
     };
 

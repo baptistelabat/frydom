@@ -27,16 +27,16 @@ int main(int argc, char* argv[]) {
     frydom::FrOffshoreSystem system;
 
     // Getting the default free surface
-    std::shared_ptr<frydom::environment::FrFreeSurface> fs = system.getFreeSurface();
+//    std::shared_ptr<frydom::environment::FrFreeSurface> fs = system.getFreeSurface();
 
     // Changing the default free surface
     // TODO !!
 
-    fs->Initialize(0, 10, 1);
-
-    std::cout << fs->getMesh().getNumTriangles();
-    fs->getMesh().Clear();
-    std::cout << fs->getMesh().getNumTriangles();
+//    fs->Initialize(0, 10, 1);
+//
+//    std::cout << fs->getMesh().getNumTriangles();
+//    fs->getMesh().Clear();
+//    std::cout << fs->getMesh().getNumTriangles();
 
     // Creating the free surface
 //    frydom::environment::FrFlatFreeSurface free_surface(&system, 2);

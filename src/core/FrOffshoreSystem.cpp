@@ -8,10 +8,11 @@
 namespace frydom {
 
     FrOffshoreSystem::FrOffshoreSystem() {
-        m_free_surface = std::make_shared<environment::FrFlatFreeSurface>(2);
+//        auto system_ptr = std::make_shared(this);
+        m_free_surface = std::make_unique<environment::FrFlatFreeSurface>(2);
     }
 
-    std::shared_ptr<environment::FrFreeSurface> FrOffshoreSystem::getFreeSurface() {
-        return m_free_surface;
-    }
+//    std::unique_ptr<environment::FrFreeSurface> FrOffshoreSystem::getFreeSurface() {
+//        return m_free_surface;
+//    }
 }

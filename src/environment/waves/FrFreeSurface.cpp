@@ -17,12 +17,16 @@
 #include "FrFreeSurface.h"
 #include "../../core/FrOffshoreSystem.h"
 
+
 namespace frydom {
 namespace environment{
 
     FrFreeSurface::FrFreeSurface(double p_mean_height) : m_mean_height(p_mean_height){
         plane.pos[1] = p_mean_height;  // The free surface plane reference has the altitude the mean FS height
     }
+
+    FrFreeSurface::FrFreeSurface(std::shared_ptr<FrOffshoreSystem> system,
+                                 double p_mean_height) : m_mean_height(p_mean_height), m_system(system){}
 
     double FrFreeSurface::getMeanHeight() const {
        return m_mean_height;
@@ -106,6 +110,8 @@ namespace environment{
 
         // TODO: initialiser les normales et autres champs de ChTriangleMeshConnected
     }
+
+
 
 }  // end namespace environment
 }  // end namespace frydom
