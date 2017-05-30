@@ -10,8 +10,11 @@
 
 namespace frydom {
 
+//    class FrFreeSurface;  // forward declaration
+
     // TODO: voir aussi a deriver de ChSystemSMC pour comparer les 2 ? Avoir une classe de base virtuelle derivant de ChSystem ???
     class FrOffshoreSystem : public chrono::ChSystemNSC {
+
       public:
         /// Default constructor
         FrOffshoreSystem();
@@ -21,6 +24,9 @@ namespace frydom {
 
         /// Get the wave field model from the offshore system.
 //        std::unique_ptr<environment::FrFreeSurface> getFreeSurface();
+
+//        /// Get a shared pointer from the system
+//        std::shared_ptr<FrOffshoreSystem> getShared(void);
 
       private:
         /// The free surface's mesh that is a cartesian grid.

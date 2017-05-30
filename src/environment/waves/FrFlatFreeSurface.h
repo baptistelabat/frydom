@@ -19,17 +19,20 @@
 #include "FrFreeSurface.h"
 
 namespace frydom {
+
+    // Forward declaration
+    class FrOffshoreSystem;
+
 namespace environment{
 
-    class FrOffshoreSystem;
+
 
     class FrFlatFreeSurface : public FrFreeSurface {  // le public permet de rendre les methodes de la classe de base publiques
 
       public:
         FrFlatFreeSurface(double p_mean_height);
 
-        FrFlatFreeSurface(std::shared_ptr<FrOffshoreSystem> system,
-                          double p_mean_height);
+        FrFlatFreeSurface(FrOffshoreSystem* system, double p_mean_height);
 
         /// Get the free surface elevation at specified (x,y) location.
         /// Currently returns the mean height passed at construction

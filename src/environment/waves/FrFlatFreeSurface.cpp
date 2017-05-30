@@ -23,7 +23,7 @@ namespace environment{
             FrFreeSurface(p_mean_height) {
     }
 
-    FrFlatFreeSurface::FrFlatFreeSurface(std::shared_ptr<FrOffshoreSystem> system, double p_mean_height) :
+    FrFlatFreeSurface::FrFlatFreeSurface(FrOffshoreSystem* system, double p_mean_height) :
         FrFreeSurface(system, p_mean_height){}
 
 
