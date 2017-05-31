@@ -26,10 +26,6 @@ int main(int argc, char* argv[]) {
     // Creating the system
     frydom::FrOffshoreSystem system;
 
-//    auto ptr = system.shared_from_this();
-
-//    auto sys_ptr = system.getShared();
-
     // Getting the default free surface
 //    std::shared_ptr<frydom::environment::FrFreeSurface> fs = system.getFreeSurface();
 
