@@ -48,7 +48,7 @@ namespace environment{
         /// Construct a default Free surface
         FrFreeSurface(double mean_height);
 
-        virtual ~FrFreeSurface() {};
+        virtual ~FrFreeSurface() {std::cout << "Free surface deleted" << "\n";};
 
         /// Update the state of the free surface at the specified time.
         virtual void Synchronize(double time) {};

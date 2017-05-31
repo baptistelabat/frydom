@@ -27,17 +27,16 @@ namespace frydom {
         };
 
         /// Default destructor
-        ~FrOffshoreSystem() {};
+        ~FrOffshoreSystem() {std::cout << "OffshoreSystem deleted" << "\n";};
 
         /// Get a shared pointer from the system
         std::shared_ptr<FrOffshoreSystem> getPtr();
 
         /// Add a free surface model to the system
-//        template<typename FS_type>
         void setFreeSurface(environment::FrFreeSurface* freeSurface);
 
         /// Get the free surface model from the offshore system.
-        std::unique_ptr<environment::FrFreeSurface> getFreeSurface() { return 0; };
+        environment::FrFreeSurface* getFreeSurface();
 
     private:
         /// The free surface's mesh that is a cartesian grid.

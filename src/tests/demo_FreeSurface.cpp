@@ -26,33 +26,18 @@ int main(int argc, char* argv[]) {
 
     // Creating the system
     auto system = frydom::FrOffshoreSystem();
-//    auto system = std::make_shared<frydom::FrOffshoreSystem>();
 
-//    frydom::FrOffshoreSystem* system = new frydom::FrOffshoreSystem();
-
-    // Creating the free surface
-//    auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(2.);
+    // Creating the free surface and assigning it to a unique pointer as we should have only one free surface
     auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(2.);
-    free_surface->Initialize(100, 100, 1);
+    free_surface->Initialize(0, 1000, 1);
 
-    system.setFreeSurface(free_surface.release());
+    // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
+    system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
 
+    auto ptr_fs = system.getFreeSurface();
+    // FIXME: manifestement, la reference a system dans ptr_fs est le pointeur null !!! (debugger)
 
-    // Getting the default free surface
-//    std::shared_ptr<frydom::environment::FrFreeSurface> fs = system.getFreeSurface();
-
-    // Changing the default free surface
-    // TODO !!
-
-//    fs->Initialize(0, 10, 1);
-//
-//    std::cout << fs->getMesh().getNumTriangles();
-//    fs->getMesh().Clear();
-//    std::cout << fs->getMesh().getNumTriangles();
-
-    // Creating the free surface
-//    frydom::environment::FrFlatFreeSurface free_surface(&system, 2);
-//    free_surface.Initialize(0, 100, 1);
+    auto vertices = ptr_fs->getMesh().m_vertices;
 
 
     // Trying to view it into irrlicht
@@ -63,10 +48,7 @@ int main(int argc, char* argv[]) {
 //    app.AssetUpdate()
 
 
-
-
-
-
+    std::cout << "LEAVING MAIN PROGRAM" << "\n";
     return 0;
 
 }
