@@ -34,7 +34,7 @@ namespace frydom {
 
         /// Add a free surface model to the system
 //        template<typename FS_type>
-        void setFreeSurface(environment::FrFreeSurface& freeSurface);
+        void setFreeSurface(environment::FrFreeSurface* freeSurface);
 
         /// Get the free surface model from the offshore system.
         std::unique_ptr<environment::FrFreeSurface> getFreeSurface() { return 0; };

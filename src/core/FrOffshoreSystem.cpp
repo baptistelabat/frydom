@@ -18,9 +18,8 @@ namespace frydom {
     }
 
 //    template<>
-    void FrOffshoreSystem::setFreeSurface(environment::FrFreeSurface& freeSurface) {
-
-//        m_free_surface = std::make_unique<environment::FrFreeSurface>(freeSurface);
+    void FrOffshoreSystem::setFreeSurface(environment::FrFreeSurface* freeSurface) {
+        m_free_surface.reset(freeSurface);
 
     }
 

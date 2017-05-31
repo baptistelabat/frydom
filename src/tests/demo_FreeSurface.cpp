@@ -32,10 +32,10 @@ int main(int argc, char* argv[]) {
 
     // Creating the free surface
 //    auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(2.);
-    auto free_surface = frydom::environment::FrFlatFreeSurface(2.);
-    free_surface.Initialize(100, 100, 1);
+    auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(2.);
+    free_surface->Initialize(100, 100, 1);
 
-    system.setFreeSurface(free_surface);
+    system.setFreeSurface(free_surface.release());
 
 
     // Getting the default free surface
