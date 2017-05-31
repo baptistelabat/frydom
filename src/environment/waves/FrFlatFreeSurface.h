@@ -23,25 +23,24 @@ namespace frydom {
     // Forward declaration
     class FrOffshoreSystem;
 
-namespace environment{
+    namespace environment{
 
 
 
-    class FrFlatFreeSurface : public FrFreeSurface {  // le public permet de rendre les methodes de la classe de base publiques
+        class FrFlatFreeSurface : public FrFreeSurface {
 
-      public:
-        FrFlatFreeSurface(double p_mean_height);
+          public:
+            /// Default constructor
+            FrFlatFreeSurface(double mean_height);
 
-        FrFlatFreeSurface(FrOffshoreSystem* system, double p_mean_height);
-
-        /// Get the free surface elevation at specified (x,y) location.
-        /// Currently returns the mean height passed at construction
-        virtual double GetHeight(double x, double y, double t) const;
+            /// Get the free surface elevation at specified (x,y) location.
+            /// Currently returns the mean height passed at construction
+            virtual double GetHeight(double x, double y, double t) const;
 
 
-      protected:
-        FrFlatFreeSurface() {};
-    };
+          protected:
+            FrFlatFreeSurface() {};
+        };
 
-} // end namespace environment
+    } // end namespace environment
 } // end namespace frydom

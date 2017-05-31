@@ -40,10 +40,11 @@ namespace environment{
             NL_HOS
         };
 
-        /// Construct a default Free surface
-        FrFreeSurface(double p_mean_height);
+        /// void constructor that should not be publicly used.
+        FrFreeSurface();
 
-        FrFreeSurface(FrOffshoreSystem* system, double p_mean_height);
+        /// Construct a default Free surface
+        FrFreeSurface(double mean_height);
 
         virtual ~FrFreeSurface() {};
 
@@ -81,17 +82,16 @@ namespace environment{
         /// Get the free surface's mesh
         FrTriangleMeshConnected getMesh(void) const;
 
-        /// void constructor that should not be publicly used.
-        FrFreeSurface() {}
 
-    protected:;  // Disallow the default constructor to be used as a publid method
+
+      protected:;  // Disallow the default constructor to be used as a publid method
 
         double m_mean_height;
         chrono::ChCoordsys<> plane;  // The reference plane of the free surface
         FrTriangleMeshConnected m_mesh;
 
         /// The system to which belongs the free surface.
-        FrOffshoreSystem* m_system;
+        std::shared_ptr<FrOffshoreSystem> m_system;
 
 
       private:

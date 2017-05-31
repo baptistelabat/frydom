@@ -17,19 +17,15 @@
 #include "../../core/FrOffshoreSystem.h"
 
 namespace frydom {
-namespace environment{
-
-    FrFlatFreeSurface::FrFlatFreeSurface(double p_mean_height) :
-            FrFreeSurface(p_mean_height) {
-    }
-
-    FrFlatFreeSurface::FrFlatFreeSurface(FrOffshoreSystem* system, double p_mean_height) :
-        FrFreeSurface(system, p_mean_height){}
+    namespace environment{
 
 
-    double FrFlatFreeSurface::GetHeight(double x, double y, double t) const{
-        return m_mean_height;
-    }
+        FrFlatFreeSurface::FrFlatFreeSurface(double mean_height) : FrFreeSurface(mean_height){}
 
-}  // end namespace environment
+
+        double FrFlatFreeSurface::GetHeight(double x, double y, double t) const{
+            return m_mean_height;
+        }
+
+    }  // end namespace environment
 }  // end namespace frydom

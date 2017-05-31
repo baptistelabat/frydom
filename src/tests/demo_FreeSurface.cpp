@@ -18,13 +18,20 @@
 #include "chrono_irrlicht/ChIrrApp.h"
 
 #include "../core/FrOffshoreSystem.h"
+#include "../environment/waves/FrFlatFreeSurface.h"
 
 #include <irrlicht.h>
 
 int main(int argc, char* argv[]) {
 
     // Creating the system
-    frydom::FrOffshoreSystem system;
+    auto system = frydom::FrOffshoreSystem();
+
+    // Creating the free surface
+//    auto free_surface = frydom::environment::FrFlatFreeSurface(2.);
+
+
+
 
     // Getting the default free surface
 //    std::shared_ptr<frydom::environment::FrFreeSurface> fs = system.getFreeSurface();

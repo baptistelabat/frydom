@@ -21,12 +21,13 @@
 namespace frydom {
 namespace environment{
 
-    FrFreeSurface::FrFreeSurface(double p_mean_height) : m_mean_height(p_mean_height){
-        plane.pos[1] = p_mean_height;  // The free surface plane reference has the altitude the mean FS height
+    FrFreeSurface::FrFreeSurface() : m_mean_height(0) {
+        plane.pos[1] = m_mean_height;
     }
 
-    FrFreeSurface::FrFreeSurface(FrOffshoreSystem* system, double p_mean_height) :
-            m_mean_height(p_mean_height), m_system(system){}
+    FrFreeSurface::FrFreeSurface(double mean_height) : m_mean_height(mean_height) {
+        plane.pos[1] = m_mean_height;
+    }
 
     double FrFreeSurface::getMeanHeight() const {
        return m_mean_height;
