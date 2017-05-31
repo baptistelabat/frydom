@@ -25,7 +25,13 @@
 int main(int argc, char* argv[]) {
 
     // Creating the system
-    auto system = frydom::FrOffshoreSystem();
+//    frydom::FrOffshoreSystem system = frydom::FrOffshoreSystem();
+    auto system = std::make_shared<frydom::FrOffshoreSystem>();
+
+
+
+
+
 
     // Creating the free surface
 //    auto free_surface = frydom::environment::FrFlatFreeSurface(2.);
