@@ -40,6 +40,8 @@ namespace environment{
             NL_HOS
         };
 
+        // TODO: placer les constructeurs en protected vu qu'on instanncie jamais cette classe directement...
+
         /// void constructor that should not be publicly used.
         FrFreeSurface();
 

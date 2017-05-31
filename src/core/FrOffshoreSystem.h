@@ -17,10 +17,14 @@ namespace frydom {
 
     public:
         /// Default constructor
-        FrOffshoreSystem();
+        FrOffshoreSystem(unsigned int max_objects = 16000,
+                         double scene_size = 500,
+                         bool init_sys = true);
 
-//        /// Copy constructor
-//        FrOffshoreSystem(const FrOffshoreSystem&) {};
+        /// Copy constructor
+        FrOffshoreSystem(const FrOffshoreSystem&) {
+//            FrOffshoreSystem* system = this;
+        };
 
         /// Default destructor
         ~FrOffshoreSystem() {};
@@ -29,7 +33,8 @@ namespace frydom {
         std::shared_ptr<FrOffshoreSystem> getPtr();
 
         /// Add a free surface model to the system
-        void setFreeSurface(std::unique_ptr<environment::FrFreeSurface>) {};
+//        template<typename FS_type>
+        void setFreeSurface(environment::FrFreeSurface& freeSurface);
 
         /// Get the free surface model from the offshore system.
         std::unique_ptr<environment::FrFreeSurface> getFreeSurface() { return 0; };

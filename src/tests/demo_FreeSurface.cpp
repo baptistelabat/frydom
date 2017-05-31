@@ -25,18 +25,17 @@
 int main(int argc, char* argv[]) {
 
     // Creating the system
-//    frydom::FrOffshoreSystem system = frydom::FrOffshoreSystem();
-    auto system = std::make_shared<frydom::FrOffshoreSystem>();
+    auto system = frydom::FrOffshoreSystem();
+//    auto system = std::make_shared<frydom::FrOffshoreSystem>();
 
-
-
-
-
+//    frydom::FrOffshoreSystem* system = new frydom::FrOffshoreSystem();
 
     // Creating the free surface
-//    auto free_surface = frydom::environment::FrFlatFreeSurface(2.);
+//    auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(2.);
+    auto free_surface = frydom::environment::FrFlatFreeSurface(2.);
+    free_surface.Initialize(100, 100, 1);
 
-
+    system.setFreeSurface(free_surface);
 
 
     // Getting the default free surface
