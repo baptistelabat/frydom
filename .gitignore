@@ -118,3 +118,5 @@ RESUME_FEATHERSTONE
 .cproject
 .project
 /Debug/
+
+cmake-build-debug

@@ -17,6 +17,9 @@
 #define FR_FREE_SURFACE_H
 
 #include "chrono/core/ChCoordsys.h"
+#include "chrono/physics/ChBody.h"
+#include "chrono/assets/ChColorAsset.h"
+
 #include "../../misc/FrTriangleMeshConnected.h"
 
 
@@ -84,21 +87,27 @@ namespace environment{
         /// Get the free surface's mesh
         FrTriangleMeshConnected getMesh(void) const;
 
+        /// get the body that represents the free surface
+        auto getBody() {return m_fs_body;}
 
 
       protected:;  // Disallow the default constructor to be used as a publid method
 
-        double m_mean_height;
-        chrono::ChCoordsys<> plane;  // The reference plane of the free surface
+        bool m_vis_enabled;
+        std::shared_ptr<chrono::ChBody> m_fs_body;
+        std::shared_ptr<chrono::ChColorAsset> m_color;
         FrTriangleMeshConnected m_mesh;
+        std::string m_mesh_name;
+        double m_mean_height;
+
+
+        chrono::ChCoordsys<> plane;  // The reference plane of the free surface
+
 
         /// The system to which belongs the free surface.
         std::shared_ptr<FrOffshoreSystem> m_system;
 
-
-      private:
         /// Flag to specify if the free surface has to be rendered in a visualization application.
-        bool m_vis_enabled;
 
 
 

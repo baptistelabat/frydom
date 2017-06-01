@@ -13,7 +13,9 @@ namespace frydom {
     class FrFreeSurface;  // forward declaration
 
     // TODO: voir aussi a deriver de ChSystemSMC pour comparer les 2 ? Avoir une classe de base virtuelle derivant de ChSystem ???
-    class FrOffshoreSystem : public chrono::ChSystemNSC, public std::enable_shared_from_this<FrOffshoreSystem> {
+    class FrOffshoreSystem :
+            public chrono::ChSystemNSC,
+            public std::enable_shared_from_this<FrOffshoreSystem> {
 
     public:
         /// Default constructor

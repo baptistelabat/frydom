@@ -14,6 +14,10 @@
 // =============================================================================
 
 #include <chrono/assets/ChTriangleMeshShape.h>
+#include <chrono/assets/ChColorAsset.h>
+#include "chrono/assets/ChTexture.h"
+
+
 #include "FrFreeSurface.h"
 #include "../../core/FrOffshoreSystem.h"
 
@@ -25,8 +29,34 @@ namespace environment{
         plane.pos[1] = m_mean_height;
     }
 
-    FrFreeSurface::FrFreeSurface(double mean_height) : m_mean_height(mean_height) {
+    FrFreeSurface::FrFreeSurface(double mean_height)
+            : m_mean_height(mean_height) {
         plane.pos[1] = m_mean_height;
+
+        // Create the free surface body used for visualization
+        m_fs_body = std::make_shared<chrono::ChBody>();
+        m_fs_body->SetIdentifier(-1);
+        m_fs_body->SetName("free_surface");
+        m_fs_body->SetPos(chrono::ChVector<>(0, 0, 0));
+        m_fs_body->SetBodyFixed(true);
+        m_fs_body->SetCollide(false);
+
+        m_color = std::make_shared<chrono::ChColorAsset>();
+        m_color->SetColor(chrono::ChColor(0, 41, 58, 0.5));
+        m_fs_body->AddAsset(m_color);
+
+        m_vis_enabled = true;
+//        // Create the mesh asset for m_fs_body
+//        auto mesh_asset = std::make_shared<chrono::ChTriangleMeshShape>();
+//        mesh_asset->SetMesh(m_mesh);
+//        m_fs_body->AddAsset(mesh_asset);
+//
+//        // Adding texture
+//        auto masset_texture = std::make_shared<chrono::ChTexture>();
+//        masset_texture->SetTextureFilename("../frydom/core/chrono/build/data/concrete.jpg");
+//        m_fs_body->AddAsset(masset_texture);
+
+
     }
 
     double FrFreeSurface::getMeanHeight() const {
@@ -41,10 +71,13 @@ namespace environment{
         // Building the grid
         build_mesh_grid(xmin, xmax, dx, ymin, ymax, dy);
 
+        m_mesh_name = "Free surface";
+
         if (m_vis_enabled) {
             auto mesh_shape = std::make_shared<chrono::ChTriangleMeshShape>();
             mesh_shape->SetMesh(m_mesh);
-            mesh_shape->SetName("Free surface");
+            mesh_shape->SetName(m_mesh_name);
+            m_fs_body->AddAsset(mesh_shape);
         }
 
     }
