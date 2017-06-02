@@ -29,20 +29,20 @@ int main(int argc, char* argv[]) {
 
     // Creating the free surface and assigning it to a unique pointer as we should have only one free surface
     auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(2.);
-    free_surface->Initialize(0, 50, 0.5);
+    free_surface->Initialize(-25, 25, 0.5);
 
     // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
     system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
 
 
     // Trying to view it into irrlicht
-    chrono::irrlicht::ChIrrApp app(&system, L"Visu free surface", irr::core::dimension2d<irr::u32>(800, 600), false, true);
+    chrono::irrlicht::ChIrrApp app(&system, L"Visu free surface", irr::core::dimension2d<irr::u32>(1250, 780), false, true);
 
     // Easy shortcuts to add camera, lights, sky in Irrlicht scene
     app.AddTypicalSky("../frydom/core/chrono/build/data/skybox/");
     app.AddTypicalLights();
-    app.AddTypicalCamera();
-//    app.AddTypicalCamera(irr::core::vector3df(0, 4, -6));
+//    app.AddTypicalCamera();
+    app.AddTypicalCamera(irr::core::vector3df(0, 100, 0), irr::core::vector3df(0, -1, 0));
 
 
 

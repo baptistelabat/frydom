@@ -72,6 +72,9 @@ set(SOURCE_FILES
         src/core/FrOffshoreSystem.h
         src/core/FrOffshoreSystem.cpp
 
+        src/utils/FrIrrApp.h
+        src/utils/FrIrrApp.cpp
+
         src/tests/demo_FreeSurface.cpp)
 
 
