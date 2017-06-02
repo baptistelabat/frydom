@@ -19,6 +19,7 @@
 
 #include "../core/FrOffshoreSystem.h"
 #include "../environment/waves/FrFlatFreeSurface.h"
+#include "../utils/FrIrrApp.h"
 
 #include <irrlicht.h>
 
@@ -35,15 +36,23 @@ int main(int argc, char* argv[]) {
     system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
 
 
-    // Trying to view it into irrlicht
-    chrono::irrlicht::ChIrrApp app(&system, L"Visu free surface", irr::core::dimension2d<irr::u32>(1250, 780), false, true);
 
-    // Easy shortcuts to add camera, lights, sky in Irrlicht scene
-    app.AddTypicalSky("../frydom/core/chrono/build/data/skybox/");
+
+
+//    // Trying to view it into irrlicht
+//    chrono::irrlicht::ChIrrApp app(&system, L"Visu free surface", irr::core::dimension2d<irr::u32>(1250, 780), false, true);
+//
+//    // Easy shortcuts to add camera, lights, sky in Irrlicht scene
+//    app.AddTypicalSky("../frydom/core/chrono/build/data/skybox/");
+//    app.AddTypicalLights();
+////    app.AddTypicalCamera();
+//    app.AddTypicalCamera(irr::core::vector3df(0, 100, 0), irr::core::vector3df(0, -1, 0));
+
+
+    // Using own class for irrlicht viz
+    frydom::FrIrrApp app(&system, L"Frydom vizualization based on Irrlicht");
     app.AddTypicalLights();
-//    app.AddTypicalCamera();
-    app.AddTypicalCamera(irr::core::vector3df(0, 100, 0), irr::core::vector3df(0, -1, 0));
-
+    app.AddTypicalCamera(irr::core::vector3df(0, 0, 100), irr::core::vector3df(0, 0, -1));
 
 
     app.AssetBindAll();

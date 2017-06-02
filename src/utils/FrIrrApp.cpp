@@ -12,6 +12,7 @@ namespace frydom {
                        irr::core::dimension2d<irr::u32> dimens)
         : chrono::irrlicht::ChIrrApp(system, title, dimens, false, false, true, irr::video::EDT_OPENGL){
 
+        SetSkyBox();
     }
 
     FrIrrApp::~FrIrrApp() {}
@@ -21,10 +22,11 @@ namespace frydom {
     // Note that the default ChIrrApp::AddTypicalSky() uses Y up.
     // -----------------------------------------------------------------------------
     void FrIrrApp::SetSkyBox() {
-        std::string mtexturedir = "data/skybox/";
+        std::string mtexturedir = "../data/skybox/";
         std::string str_lf = mtexturedir + "sky_lf.jpg";
         std::string str_up = mtexturedir + "sky_up.jpg";
         std::string str_dn = mtexturedir + "sky_dn.jpg";
+
         irr::video::ITexture* map_skybox_side = GetVideoDriver()->getTexture(str_lf.c_str());
         irr::scene::ISceneNode* mbox = GetSceneManager()->addSkyBoxSceneNode(
                 GetVideoDriver()->getTexture(str_up.c_str()),
