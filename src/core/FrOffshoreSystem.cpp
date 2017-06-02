@@ -13,7 +13,7 @@ namespace frydom {
 
             chrono::ChSystemNSC(max_objects, scene_size, init_sys) {
 
-        Set_G_acc(chrono::ChVector<>(0., 0., 9.81));
+        Set_G_acc(chrono::ChVector<>(0., 0., -9.81));
     }
 
     std::shared_ptr<FrOffshoreSystem> FrOffshoreSystem::getPtr() {

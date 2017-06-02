@@ -39,7 +39,7 @@ namespace environment{
         m_fs_body->SetName("free_surface");
         m_fs_body->SetPos(chrono::ChVector<>(0, 0, 0));
         m_fs_body->SetBodyFixed(true);
-        m_fs_body->SetCollide(false);
+        m_fs_body->SetCollide(false);  // set to false !!!
 
         m_color = std::make_shared<chrono::ChColorAsset>();
         m_color->SetColor(chrono::ChColor(0, 41, 58, 0.5));

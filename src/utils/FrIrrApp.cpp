@@ -36,6 +36,7 @@ namespace frydom {
                 map_skybox_side,
                 map_skybox_side
         );
+        // Turning around x to make z pointing up. Note that it is +90 as Irrlicht uses left-handed frames...c
         mbox->setRotation(irr::core::vector3df(90, 0, 0));
 
     };
