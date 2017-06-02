@@ -13,6 +13,7 @@
 //
 // =============================================================================
 
+#include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChSystemNSC.h"
 
 #include "chrono_irrlicht/ChIrrApp.h"
@@ -24,6 +25,7 @@
 #include <irrlicht.h>
 
 bool viz = true;
+float friction = 0.6f;
 
 int main(int argc, char* argv[]) {
 
@@ -42,19 +44,17 @@ int main(int argc, char* argv[]) {
     // Creating a body that has to be a floating body
     auto ship = std::make_shared<chrono::ChBody>(chrono::ChMaterialSurface::NSC);
     ship->SetIdentifier(1);
-    ship->SetMass(10);
-    ship->SetPos(chrono::ChVector<>(0, 0, 20));
+    ship->SetMass(5e6);
+    ship->SetPos(chrono::ChVector<>(0, 0, 9));
     ship->SetRot(chrono::ChQuaternion<>(1, 0, 0, 0));
-    ship->SetPos_dt(chrono::ChVector<>(0, 0, 0));
-    ship->SetBodyFixed(true); // TODO: debloquer
-    auto material = std::make_shared<chrono::ChMaterialSurfaceNSC>();
-    ship->SetMaterialSurface(material);
+    ship->SetPos_dt(chrono::ChVector<>(10, 10, 30));
+    ship->SetBodyFixed(false); // TODO: debloquer
+//    auto material = std::make_shared<chrono::ChMaterialSurfaceNSC>();
+//    ship->SetMaterialSurface(material);
+
+    ship->SetInertiaXX(chrono::ChVector<>(1e5, 2e5, 3e5));
 
 
-//    ship->
-    ship->SetCollide(false); // TODO: essayer avec...
-
-    ship->SetInertiaXX(chrono::ChVector<>(1, 2, 3));
 
     // Definig the shape
     auto mesh = chrono::geometry::ChTriangleMeshConnected();
@@ -62,6 +62,20 @@ int main(int argc, char* argv[]) {
     auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
     shape->SetMesh(mesh);
     ship->AddAsset(shape);
+
+
+    // Setting the collision model
+    ship->GetMaterialSurfaceNSC()->SetFriction(friction);
+
+
+
+
+    ship->GetCollisionModel()->ClearModel();
+    ship->GetCollisionModel()->AddTriangleMesh(mesh, false, false);
+    ship->GetCollisionModel()->SetDefaultSuggestedEnvelope(0.001);
+    ship->GetCollisionModel()->SetDefaultSuggestedMargin(0.0005);
+    ship->GetCollisionModel()->BuildModel();
+    ship->SetCollide(true); // TODO: essayer avec..
 
     // Adding a color to the ship
 //    auto color = std::make_shared<chrono::ChColorAsset>();
@@ -75,7 +89,7 @@ int main(int argc, char* argv[]) {
 
 
 
-
+//    system.SetSolverType();
 
     // Visualization with irrlicht
     if (viz) {
@@ -87,18 +101,21 @@ int main(int argc, char* argv[]) {
 
 
         app.AssetBindAll();
-
         app.AssetUpdateAll();
 
-        app.SetStepManage(true);
-        app.SetTimestep(0.01);
-        app.SetTryRealtime(true);
+
+//        app.SetStepManage(true);
+//        app.SetTimestep(0.01);
+//        app.SetTryRealtime(true);
+
+
 
         while (app.GetDevice()->run()) {
             app.BeginScene();
             app.DrawAll();
             app.DoStep();
             app.EndScene();
+            std::cout << "End step " << system.GetTimestepper()->GetTime() << std::endl;
         }
 
     }

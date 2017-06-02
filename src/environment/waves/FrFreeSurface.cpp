@@ -39,7 +39,26 @@ namespace environment{
         m_fs_body->SetName("free_surface");
         m_fs_body->SetPos(chrono::ChVector<>(0, 0, 0));
         m_fs_body->SetBodyFixed(true);
-        m_fs_body->SetCollide(false);  // set to false !!!
+
+
+
+
+        // ESSAI
+//        auto material = std::make_shared<chrono::ChMaterialSurfaceNSC>();
+//        m_fs_body->SetMaterialSurface(material);
+
+        m_fs_body->GetCollisionModel()->ClearModel();
+        m_fs_body->GetCollisionModel()->AddTriangleMesh(m_mesh, true, false);
+
+        m_fs_body->GetCollisionModel()->SetDefaultSuggestedEnvelope(0.001);
+        m_fs_body->GetCollisionModel()->SetDefaultSuggestedMargin(0.0005);
+
+
+        m_fs_body->GetCollisionModel()->BuildModel();
+        m_fs_body->SetCollide(true);  // set to false !!!
+
+
+        // FFIN ESSAI
 
         m_color = std::make_shared<chrono::ChColorAsset>();
         m_color->SetColor(chrono::ChColor(0, 41, 58, 0.5));
