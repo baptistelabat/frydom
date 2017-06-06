@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 
     // Creating the free surface and assigning it to a unique pointer as we should have only one free surface
     auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
-    free_surface->Initialize(-100, 100, 100);
+    free_surface->Initialize(-100, 100, 25, -20, 20, 20);
 
     // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
     system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
@@ -47,17 +47,20 @@ int main(int argc, char* argv[]) {
     ship->SetMass(5e6);
     ship->SetPos(chrono::ChVector<>(0, 0, 9));
     ship->SetRot(chrono::ChQuaternion<>(1, 0, 0, 0));
-    ship->SetPos_dt(chrono::ChVector<>(10, 10, 30));
+
+    ship->SetPos_dt(chrono::ChVector<>(10, 0, 30));
+    ship->SetRot_dt(chrono::ChQuaternion<>(0.3, chrono::ChVector<>(0, 1, 0)));
+
+
     ship->SetBodyFixed(false); // TODO: debloquer
 //    auto material = std::make_shared<chrono::ChMaterialSurfaceNSC>();
-//    ship->SetMaterialSurface(material);
+//    ship->SetMaterialSurface(material);auto
 
-    ship->SetInertiaXX(chrono::ChVector<>(1e5, 2e5, 3e5));
-
-
+    ship->SetInertiaXX(chrono::ChVector<>(1e5, 5e6, 5e6));
 
     // Definig the shape
     auto mesh = chrono::geometry::ChTriangleMeshConnected();
+//    mesh.RepairDuplicateVertexes();
     mesh.LoadWavefrontMesh("../data/ship/MagneViking.obj");
     auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
     shape->SetMesh(mesh);
@@ -97,7 +100,7 @@ int main(int argc, char* argv[]) {
         // Using own class for irrlicht viz
         frydom::FrIrrApp app(&system, L"Frydom vizualization based on Irrlicht");
         app.AddTypicalLights();
-        app.AddTypicalCamera(irr::core::vector3df(0, 0, 150), irr::core::vector3df(1, 0, -1));
+        app.AddTypicalCamera(irr::core::vector3df(0, 0, 300), irr::core::vector3df(1, 0, -1));
 
 
         app.AssetBindAll();
@@ -105,8 +108,8 @@ int main(int argc, char* argv[]) {
 
 
 //        app.SetStepManage(true);
-//        app.SetTimestep(0.01);
-//        app.SetTryRealtime(true);
+        app.SetTimestep(0.01);
+        app.SetTryRealtime(true);
 
 
 

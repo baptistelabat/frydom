@@ -7,11 +7,11 @@
 
 namespace frydom {
 
-    FrOffshoreSystem::FrOffshoreSystem(unsigned int max_objects,
-                                       double scene_size,
-                                       bool init_sys) :
+    FrOffshoreSystem::FrOffshoreSystem(bool use_material_properties,
+                                       unsigned int max_objects,
+                                       double scene_size) :
 
-            chrono::ChSystemNSC(max_objects, scene_size, init_sys) {
+            chrono::ChSystemSMC(use_material_properties, max_objects, scene_size) {
 
         Set_G_acc(chrono::ChVector<>(0., 0., -9.81));
     }

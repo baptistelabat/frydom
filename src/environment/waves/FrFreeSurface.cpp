@@ -31,6 +31,7 @@ namespace environment{
 
     FrFreeSurface::FrFreeSurface(double mean_height)
             : m_mean_height(mean_height) {
+        // FIXME: c'est pas ca !!! on est en ref z maintenant !!!
         plane.pos[1] = m_mean_height;
 
         // Create the free surface body used for visualization
@@ -39,8 +40,6 @@ namespace environment{
         m_fs_body->SetName("free_surface");
         m_fs_body->SetPos(chrono::ChVector<>(0, 0, 0));
         m_fs_body->SetBodyFixed(true);
-
-
 
 
         // ESSAI
