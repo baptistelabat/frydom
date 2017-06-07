@@ -120,3 +120,6 @@ RESUME_FEATHERSTONE
 /Debug/
 
 cmake-build-debug
+/visual/Debug
+/visual/visualFrydom.VC.db
+/visual/.vs
