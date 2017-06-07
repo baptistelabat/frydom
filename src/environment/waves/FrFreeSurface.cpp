@@ -31,8 +31,7 @@ namespace environment{
 
     FrFreeSurface::FrFreeSurface(double mean_height)
             : m_mean_height(mean_height) {
-        // FIXME: c'est pas ca !!! on est en ref z maintenant !!!
-        plane.pos[1] = m_mean_height;
+        plane.pos[2] = m_mean_height;
 
         // Create the free surface body used for visualization
         m_fs_body = std::make_shared<chrono::ChBody>();
@@ -41,39 +40,14 @@ namespace environment{
         m_fs_body->SetPos(chrono::ChVector<>(0, 0, 0));
         m_fs_body->SetBodyFixed(true);
 
+        m_fs_body->SetCollide(false);  // set to false !!!
 
-        // ESSAI
-//        auto material = std::make_shared<chrono::ChMaterialSurfaceNSC>();
-//        m_fs_body->SetMaterialSurface(material);
-
-        m_fs_body->GetCollisionModel()->ClearModel();
-        m_fs_body->GetCollisionModel()->AddTriangleMesh(m_mesh, true, false);
-
-        m_fs_body->GetCollisionModel()->SetDefaultSuggestedEnvelope(0.001);
-        m_fs_body->GetCollisionModel()->SetDefaultSuggestedMargin(0.0005);
-
-
-        m_fs_body->GetCollisionModel()->BuildModel();
-        m_fs_body->SetCollide(true);  // set to false !!!
-
-
-        // FFIN ESSAI
-
+        // Providing color
         m_color = std::make_shared<chrono::ChColorAsset>();
         m_color->SetColor(chrono::ChColor(0, 41, 58, 0.5));
         m_fs_body->AddAsset(m_color);
 
         m_vis_enabled = true;
-//        // Create the mesh asset for m_fs_body
-//        auto mesh_asset = std::make_shared<chrono::ChTriangleMeshShape>();
-//        mesh_asset->SetMesh(m_mesh);
-//        m_fs_body->AddAsset(mesh_asset);
-//
-//        // Adding texture
-//        auto masset_texture = std::make_shared<chrono::ChTexture>();
-//        masset_texture->SetTextureFilename("../frydom/core/chrono/build/data/concrete.jpg");
-//        m_fs_body->AddAsset(masset_texture);
-
 
     }
 

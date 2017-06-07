@@ -75,6 +75,9 @@ set(SOURCE_FILES
         src/utils/FrIrrApp.h
         src/utils/FrIrrApp.cpp
 
+        src/hydrodynamics/FrTryalForce.h
+        src/hydrodynamics/FrTryalForce.cpp
+
         src/tests/demo_FreeSurface.cpp)
 
 
