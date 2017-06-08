@@ -5,11 +5,11 @@
 #ifndef FRYDOM_FRTRYALFORCE_H
 #define FRYDOM_FRTRYALFORCE_H
 
-#include "chrono/physics/ChForce.h"
+#include "../core/FrForce.h"
 
 namespace frydom {
 
-    class FrTryalForce : public chrono::ChForce {
+    class FrTryalForce : public FrForce {
       public:
         FrTryalForce();
 

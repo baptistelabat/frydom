@@ -7,9 +7,14 @@
 namespace frydom {
 
     FrTryalForce::FrTryalForce()
-            : chrono::ChForce()
+            : FrForce() {
 
-    {
+        // Setting the force mode
+        SetMode(FORCE);
+
+        // Setting alignment method
+
+
 
     }
 

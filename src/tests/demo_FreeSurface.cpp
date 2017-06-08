@@ -53,12 +53,13 @@ int main(int argc, char* argv[]) {
     ship->SetName("my_ship");
 //    auto ship = std::make_shared<chrono::ChBody>(chrono::ChMaterialSurface::NSC);
     ship->SetIdentifier(1);
-    ship->SetMass(5e6);
+    double mass = 5e6;
+    ship->SetMass(mass);
     ship->SetPos(chrono::ChVector<>(0, 0, 0));
     ship->SetRot(chrono::ChQuaternion<>(1, 0, 0, 0));
 
-    ship->SetPos_dt(chrono::ChVector<>(10, 0, 30));
-    ship->SetRot_dt(chrono::ChQuaternion<>(0.3, chrono::ChVector<>(0, 1, 0)));
+//    ship->SetPos_dt(chrono::ChVector<>(10, 0, 30));
+//    ship->SetRot_dt(chrono::ChQuaternion<>(0.3, chrono::ChVector<>(0, 1, 0)));
 
 
     ship->SetBodyFixed(false); // TODO: debloquer
@@ -85,12 +86,10 @@ int main(int argc, char* argv[]) {
 
     // Creating a force
     auto force = std::make_shared<frydom::FrTryalForce>();
-
+    ship->AddForce(force); // Toujours ajouter la force au corps avant de la tuner !!!
     force->SetName("essai_force");
-
-//    force->
-
-    ship->AddForce(force);
+    force->SetMforce(9.81*mass);
+    force->SetDir(chrono::ChVector<>(0, 0, 1));
 
 
     // Adding the ship to the system

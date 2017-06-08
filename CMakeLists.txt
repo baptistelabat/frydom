@@ -72,6 +72,9 @@ set(SOURCE_FILES
         src/core/FrOffshoreSystem.h
         src/core/FrOffshoreSystem.cpp
 
+        src/core/FrForce.h
+        src/core/FrForce.cpp
+
         src/utils/FrIrrApp.h
         src/utils/FrIrrApp.cpp
 
