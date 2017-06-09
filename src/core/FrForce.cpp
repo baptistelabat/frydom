@@ -6,9 +6,8 @@
 
 namespace frydom{
 
-//    void FrForce::UpdateTime(double mytime) {
-//        ChTime = mytime;
-//        std::cout << mytime;
-//    }
+    void FrForce::UpdateTime(double mytime) {
+        ChTime = mytime;
+    }
 
 }  // end namespace frydom

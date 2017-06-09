@@ -8,13 +8,12 @@
 
 #include "chrono/physics/ChForce.h"
 
-
 namespace frydom {
 
     class FrForce : public chrono::ChForce {
 
     public:
-//        void UpdateTime(double mytime) override;
+        virtual void UpdateTime(double mytime) override;
 
     };
 
