@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     // Creating the free surface and assigning it to a unique pointer as we should have only one free surface that has to be owned by the OffshoreSystem
     auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
-    free_surface->Initialize(-100, 100, 25, -30, 30, 15);
+    free_surface->Initialize(-500, 500, 250, -30, 30, 15);
 
     // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
     system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
     ship->SetIdentifier(1);
     double mass = 5e6;
     ship->SetMass(mass);
-    ship->SetPos(chrono::ChVector<>(0, 0, 0));
+    ship->SetPos(chrono::ChVector<>(-400, 0, 0));
     ship->SetRot(chrono::ChQuaternion<>(1, 0, 0, 0));
 
 //    ship->SetPos_dt(chrono::ChVector<>(10, 0, 30));
@@ -78,6 +78,10 @@ int main(int argc, char* argv[]) {
 
 
     ship->SetCollide(false); // TODO: essayer avec..
+    // Adding the ship to the system
+    system.AddBody(ship);
+
+
 
     // Adding a color to the ship
 //    auto color = std::make_shared<chrono::ChColorAsset>();
@@ -91,9 +95,22 @@ int main(int argc, char* argv[]) {
     force->SetMforce(9.81*mass);
     force->SetDir(chrono::ChVector<>(0, 0, 1));
 
+    // Creating a force
+    auto force2 = std::make_shared<frydom::FrTryalForce>();
+    ship->AddForce(force2); // Toujours ajouter la force au corps avant de la tuner !!!
+    force2->SetName("essai_force");
+    force2->SetMforce(1e7);
+    force2->SetDir(chrono::ChVector<>(1, 0, 0));
 
-    // Adding the ship to the system
-    system.AddBody(ship);
+
+
+
+    // Creating a constraint plane/plane (Making the ship 3 DOF)
+    auto plane_constraint = std::make_shared<chrono::ChLinkLockPlanePlane>();
+    auto fs_body = system.getFreeSurface()->getBody();
+    plane_constraint->Initialize(ship, fs_body, chrono::ChCoordsys<>(chrono::ChVector<>(0, 0, 0)));
+    system.AddLink(plane_constraint);  // FIXME: ne fonctionne pas
+
 
 
     // Printing hierarchy
@@ -120,12 +137,13 @@ int main(int argc, char* argv[]) {
 
 
 
+
         while (app.GetDevice()->run()) {
             app.BeginScene();
             app.DrawAll();
             app.DoStep();
             app.EndScene();
-//            std::cout << "End step " << system.GetTimestepper()->GetTime() << std::endl;
+            std::cout << "End step " << system.GetTimestepper()->GetTime() << std::endl;
         }
 
     }
