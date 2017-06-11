@@ -117,6 +117,7 @@ int main(int argc, char* argv[]) {
 //    system.AddLink(plane_constraint);  // FIXME: ne fonctionne pas
 
     // Creating a constraint plane/plane (Making the ship 3 DOF)  LOCK FORMULATION
+    // TODO: avoir une methode make 3DOF pour la classe Ship
     auto plane_constraint = std::make_shared<chrono::ChLinkMatePlane>();
     auto fs_body = system.getFreeSurface()->getBody();
     plane_constraint->Initialize(ship, fs_body,
@@ -160,7 +161,7 @@ int main(int argc, char* argv[]) {
             app.DrawAll();
             app.DoStep();
             app.EndScene();
-            std::cout << "End step " << system.GetTimestepper()->GetTime() << std::endl;
+//            std::cout << "End step " << system.GetTimestepper()->GetTime() << std::endl;
         }
 
     }

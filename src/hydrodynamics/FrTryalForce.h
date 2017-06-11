@@ -11,7 +11,8 @@ namespace frydom {
 
     class FrTryalForce : public FrForce {
       public:
-        FrTryalForce();
+
+        void UpdateForce();
 
     };
 

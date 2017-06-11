@@ -6,13 +6,8 @@
 
 namespace frydom {
 
-    FrTryalForce::FrTryalForce()
-            : FrForce() {
+    void FrTryalForce::UpdateForce() {
 
-        // Setting the force mode
-        SetMode(FORCE);
-
-        // Setting alignment method
 
 
 
