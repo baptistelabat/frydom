@@ -13,15 +13,21 @@
 //
 // =============================================================================
 
+#include <math.h>
+
 #include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChSystemNSC.h"
+#include "chrono/physics/ChBody.h"
 
 #include "chrono_irrlicht/ChIrrApp.h"
 
 #include "../core/FrOffshoreSystem.h"
 #include "../environment/waves/FrFlatFreeSurface.h"
 #include "../utils/FrIrrApp.h"
+
+#include "../hydrodynamics/FrITTC57.h"
 #include "../hydrodynamics/FrTryalForce.h"
+
 
 #include <irrlicht.h>
 #include <chrono/physics/ChLinkMate.h>
@@ -29,7 +35,7 @@
 bool viz = true;
 float friction = 0.6f;
 double step_size = 1e-2;
-bool capture_video = true;
+bool capture_video = false;
 
 
 
@@ -58,9 +64,15 @@ int main(int argc, char* argv[]) {
     double mass = 5e6;
     ship->SetMass(mass);
     ship->SetPos(chrono::ChVector<>(-180, 0, 0));
-    ship->SetRot(chrono::ChQuaternion<>(1, 0, 0, 0));
 
-//    ship->SetPos_dt(chrono::ChVector<>(10, 0, 30));
+    auto rot = chrono::Q_from_AngAxis(45.*M_PI/180., chrono::ChVector<>(0, 0, 1));
+//    auto rot = chrono::ChQuaternion<>(, );
+
+
+    ship->SetRot(rot);
+
+    auto ship_velocity = ship->TransformDirectionLocalToParent(chrono::ChVector<>(4, 0, 0));
+    ship->SetPos_dt(ship_velocity);
 //    ship->SetRot_dt(chrono::ChQuaternion<>(0.3, chrono::ChVector<>(0, 1, 0)));
 
 
@@ -99,12 +111,21 @@ int main(int argc, char* argv[]) {
 //    force->SetMforce(9.81*mass);
 //    force->SetDir(chrono::ChVector<>(0, 0, 1));
 
-    // Creating a force
+    // Creating a "propulsion force"
     auto force2 = std::make_shared<frydom::FrTryalForce>();
     ship->AddForce(force2); // Toujours ajouter la force au corps avant de la tuner !!!
-    force2->SetName("essai_force");
-    force2->SetMforce(1e7);
-    force2->SetDir(chrono::ChVector<>(1, 0, 0));
+//    force2->SetName("essai_force");
+//    force2->SetMforce(1e7);
+//    force2->SetDir(chrono::ChVector<>(1, 0, 0));
+
+
+    // Creating an ITTC57 force
+    auto force_ittc = std::make_shared<frydom::FrITTC57>();
+    ship->AddForce(force_ittc);
+    force_ittc->SetCharacteristicLength(80.);
+    force_ittc->SetHullFormFactor(0.1);
+    force_ittc->SetHullWettedSurface(2700.);
+
 
     ///===========================================================================================================
     /// 3 DOF CONSTRAINT
@@ -124,8 +145,8 @@ int main(int argc, char* argv[]) {
                                  true,
                                  chrono::ChVector<>(),
                                  chrono::ChVector<>(),
-                                 chrono::ChVector<>(0, 0, 1),
-                                 chrono::ChVector<>(0, 0, -1));  // FIXME: pourquoi on est obliges de renverser la normale ?
+                                 chrono::ChVector<>(0, 0, -1),
+                                 chrono::ChVector<>(0, 0, 1));  // FIXME: pourquoi on est obliges de renverser la normale ?
 
     system.AddLink(plane_constraint);  // FIXME: ne fonctionne pas
 

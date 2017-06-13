@@ -9,10 +9,17 @@
 
 namespace frydom {
 
+
     class FrTryalForce : public FrForce {
+
+      private:
+        bool done;
+
       public:
 
-        void UpdateForce();
+        FrTryalForce();
+
+        void UpdateState() override;
 
     };
 

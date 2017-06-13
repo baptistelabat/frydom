@@ -81,6 +81,9 @@ set(SOURCE_FILES
         src/hydrodynamics/FrTryalForce.h
         src/hydrodynamics/FrTryalForce.cpp
 
+        src/hydrodynamics/FrITTC57.h
+        src/hydrodynamics/FrITTC57.cpp
+
         src/tests/demo_FreeSurface.cpp)
 
 
