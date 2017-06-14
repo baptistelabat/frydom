@@ -50,7 +50,11 @@ namespace frydom{
         force = Body->TransformDirectionLocalToParent(relforce);
 
 //        std::cout << force.x() << "\t" << force.y() << "\t" << force.z() << std::endl;
-        std::cout << "Time: " << ChTime << "vel: " << ux << std::endl;
+
+        auto force_verif = Body->TransformDirectionParentToLocal(force);
+
+
+        std::cout << "Time: " << ChTime << "\tvel: " << ux << std::endl;
     }
 
 

@@ -75,6 +75,9 @@ set(SOURCE_FILES
         src/core/FrForce.h
         src/core/FrForce.cpp
 
+        src/core/FrForceAsset.h
+        src/core/FrForceAsset.cpp
+
         src/utils/FrIrrApp.h
         src/utils/FrIrrApp.cpp
 

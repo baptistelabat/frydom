@@ -48,15 +48,15 @@ namespace frydom {
         void setFreeSurface(environment::FrFreeSurface* freeSurface);
 
         /// Get the free surface model from the offshore system.
-        environment::FrFreeSurface* getFreeSurface();
+        environment::FrFreeSurface* getFreeSurface() const;
 
         /// Get/Set the value of the acceleration of gravity
         /// It must be given positive, in m/s**2
         void SetGravityAcceleration(double grav);
-        double GetGravityAcceleration() { return m_g_acc_magnitude; }
+        double GetGravityAcceleration() const { return m_g_acc_magnitude; }
 
         /// Get NED frame
-        chrono::ChFrame<double> GetNEDFrame() { return NEDframe; }
+        chrono::ChFrame<double> GetNEDFrame() const { return NEDframe; }
 
     };
 

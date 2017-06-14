@@ -5,6 +5,9 @@
 #ifndef FRYDOM_FRTRYALFORCE_H
 #define FRYDOM_FRTRYALFORCE_H
 
+#include <iostream>
+#include <fstream>
+
 #include "../core/FrForce.h"
 
 namespace frydom {
@@ -14,10 +17,15 @@ namespace frydom {
 
       private:
         bool done;
+        std::ofstream myfile;
 
       public:
 
         FrTryalForce();
+        ~FrTryalForce() {
+            myfile.close();
+            std::cout << "fichier ferme" << std::endl;
+        }
 
         void UpdateState() override;
 

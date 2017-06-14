@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 
     // Creating the free surface and assigning it to a unique pointer as we should have only one free surface that has to be owned by the OffshoreSystem
     auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
-    free_surface->Initialize(-200, 200, 100, -30, 30, 15);
+    free_surface->Initialize(-800, 800, 400);
 
     // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
     system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
@@ -63,9 +63,9 @@ int main(int argc, char* argv[]) {
     ship->SetIdentifier(1);
     double mass = 5e6;
     ship->SetMass(mass);
-    ship->SetPos(chrono::ChVector<>(-180, 0, 0));
+    ship->SetPos(chrono::ChVector<>(-200, 0, 0));
 
-    auto rot = chrono::Q_from_AngAxis(45.*M_PI/180., chrono::ChVector<>(0, 0, 1));
+    auto rot = chrono::Q_from_AngAxis(30.*M_PI/180., chrono::ChVector<>(0, 0, 1));
 //    auto rot = chrono::ChQuaternion<>(, );
 
 
