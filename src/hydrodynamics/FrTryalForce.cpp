@@ -16,9 +16,9 @@ namespace frydom {
             : FrForce(),
               done(false) {
 
-        vrelpoint.x() = -40;  // position du point d'application
-        relforce.x() = 1e6;  // force propulsive
-        relforce.y() = 1e3;  // tel qu'on ait un couple cree...
+        vrelpoint.x() = -50;  // position du point d'application
+        relforce.x() = 0.13*1e6;  // force propulsive
+        relforce.y() = 1e1;  // tel qu'on ait un couple cree...
 
         myfile.open("output.csv");
 
@@ -27,46 +27,11 @@ namespace frydom {
 
     void FrTryalForce::UpdateState() {
 
-//        auto  var = Body->TransformDirectionParentToLocal(Body->GetPos_dt());
-//        auto var2 = Body->TransformPointParentToLocal(Body->GetPos_dt());
-//        auto rot = Body->GetRot();
-
-
-//        if ((ChTime > 10) && (!done)){
-//            relforce.y() = -relforce.y();
-//            done = true;
-//        }
-
-//        force = Body->TransformDirectionParentToLocal(relforce);
-        // On ajoute un amortissement en x et y
-//        auto vel = Body->coord_dt.pos;
-//        auto new_relforce = relforce;
-//        double alpha_y = 1e3;
-//
-//        new_relforce.y() -= alpha_y * vel[1];
-
 
         // Transformation de la force dans le repere absolu
         force = Body->TransformDirectionLocalToParent(relforce);
 
         moment = vrelpoint.Cross(relforce);
-
-
-        // On ajoute un amortissement en lacet
-//        auto Wvelpar = Body->GetWvel_par();
-//        double alpha = 1e6;
-//        moment.z() -= alpha * Wvelpar.z();
-
-
-
-
-//        moment.z() = 1e5;
-//        moment.z() = 0;
-//        std::cout << ChTime << std::endl;
-//        std::cout << "Velocity: "<< "\t" << var.x() << "\t" << var.y() << "\t" << var.z() << std::endl;
-//        std::cout << "force: "<< "\t" << force.x() << "\t" << force.y() << "\t" << force.z() << std::endl;
-//        std::cout << "relforce: "<< "\t" << relforce.x() << "\t" << relforce.y() << "\t" << relforce.z() << std::endl;
-//        std::cout << "moment: "<< "\t" << moment.x() << "\t" << moment.y() << "\t" << moment.z() << std::endl << std::endl;
 
 
         // Writing the file

@@ -24,6 +24,7 @@
 #include "../core/FrOffshoreSystem.h"
 #include "../environment/waves/FrFlatFreeSurface.h"
 #include "../utils/FrIrrApp.h"
+#include "../core/FrForceAsset.h"
 
 #include "../hydrodynamics/FrITTC57.h"
 #include "../hydrodynamics/FrTryalForce.h"
@@ -46,7 +47,7 @@ int main(int argc, char* argv[]) {
 
     // Creating the free surface and assigning it to a unique pointer as we should have only one free surface that has to be owned by the OffshoreSystem
     auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
-    free_surface->Initialize(-800, 800, 400);
+    free_surface->Initialize(-400, 400, 100);
 
     // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
     system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
@@ -117,6 +118,12 @@ int main(int argc, char* argv[]) {
 //    force2->SetName("essai_force");
 //    force2->SetMforce(1e7);
 //    force2->SetDir(chrono::ChVector<>(1, 0, 0));
+
+    auto force_asset = std::make_shared<frydom::FrForceAsset>(force2);
+//    force_asset->SetGlyphVector(0, chrono::ChVector<>(0, 0, 0), chrono::ChVector<>(0, 0, 20));
+
+    ship->AddAsset(force_asset);
+
 
 
     // Creating an ITTC57 force
