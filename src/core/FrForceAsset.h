@@ -19,27 +19,34 @@ namespace frydom {
 
     private:
         std::shared_ptr<FrForce> m_force;  //< The force that this asset represents
-        double adim_coeff;
+        double OrderOfMagnitude;
+        bool adaptive_OOM;
+
+        double CharacteristicLength;
+        bool inverse_direction;
+        // TODO ajouter flag pour dire si on affiche la force qui s'applique ou la force delivree pour la visu (propulseurs...)
 
     public:
         FrForceAsset(std::shared_ptr<FrForce> myforce)  // TODO: ajouter couleur
                 : m_force(myforce){
+            // TODO: migrer vers l'implementation dans le cpp
 
             SetDrawMode(eCh_GlyphType::GLYPH_VECTOR);
 
-            auto mass = myforce->GetBody()->GetMass();
-            adim_coeff = mass;
-
             auto point = myforce->GetVrelpoint();
             auto forcevect = myforce->GetRelForce();
-//            auto forcevect = myforce->GetRelForce() / adim_coeff;
             SetGlyphVector(0, point, forcevect);
+            SetGlyphsSize(20);  // Ne semble pas faire de difference avec Irrlicht
 
 
         }
 
-        void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) {
-            std::cout << "update asset" << std::endl;
+        void Update(chrono::ChPhysicsItem* updater,
+                    const chrono::ChCoordsys<>& coords) {
+
+            // Here, the asset point is automatically following the motion but the force has to be updated
+            SetGlyphVector(0, m_force->GetVpoint(), m_force->GetForce());
+
         }
 
     };

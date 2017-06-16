@@ -38,13 +38,13 @@ namespace environment{
         m_fs_body->SetIdentifier(-1);
         m_fs_body->SetName("free_surface");
         m_fs_body->SetPos(chrono::ChVector<>(0, 0, 0));
-        m_fs_body->SetBodyFixed(true);
+        m_fs_body->SetBodyFixed(true);  // Important, however we could add a ChFunction-like to emulate tidal height
 
         m_fs_body->SetCollide(false);  // set to false !!!
 
         // Providing color
         m_color = std::make_shared<chrono::ChColorAsset>();
-        m_color->SetColor(chrono::ChColor(0, 41, 58, 0.5));
+        m_color->SetColor(chrono::ChColor(0, 41, 58, 0));
         m_fs_body->AddAsset(m_color);
 
         m_vis_enabled = true;
@@ -69,6 +69,7 @@ namespace environment{
             auto mesh_shape = std::make_shared<chrono::ChTriangleMeshShape>();
             mesh_shape->SetMesh(m_mesh);
             mesh_shape->SetName(m_mesh_name);
+//            mesh_shape->SetFading(0.9);  // Ne fonctionne pas avec Irrlicht...
             m_fs_body->AddAsset(mesh_shape);
         }
 

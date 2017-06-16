@@ -54,7 +54,7 @@ namespace environment{
         virtual ~FrFreeSurface() {std::cout << "Free surface deleted" << "\n";};
 
         /// Update the state of the free surface at the specified time.
-        virtual void Synchronize(double time) {};
+        virtual void Synchronize(double time) {};  // Devra d'appeler UpdateTime pour rester sur les conventions chrono
 
         /// Advance the state of the free surface by the specified duration.
         virtual void Advance(double step) {};
