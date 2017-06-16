@@ -75,6 +75,11 @@ set(SOURCE_FILES
         src/core/FrForce.h
         src/core/FrForce.cpp
 
+        src/propeller/FrPropeller.h
+        src/propeller/FrPropeller.cpp
+        src/propeller/FrPropellerAzimuthal.h
+        src/propeller/FrPropellerAzimuthal.cpp
+
         src/core/FrForceAsset.h
         src/core/FrForceAsset.cpp
 
