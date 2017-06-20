@@ -66,6 +66,10 @@ set(SOURCE_FILES
         src/environment/waves/FrFreeSurface.cpp
         src/environment/waves/FrFlatFreeSurface.h
         src/environment/waves/FrFlatFreeSurface.cpp
+
+        src/environment/current/FrCurrent.h
+        src/environment/current/FrCurrent.cpp
+
         src/misc/FrTriangleMeshConnected.h
         src/misc/FrTriangleMeshConnected.cpp
 
