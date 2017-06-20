@@ -13,6 +13,7 @@ namespace frydom {
 
             chrono::ChSystemSMC(use_material_properties, max_objects, scene_size),
             m_g_acc_magnitude(9.81),
+            m_water_density(1025.),
             NEDframe(chrono::VNULL, M_PI, chrono::VECT_X) {
 
         Set_G_acc(chrono::ChVector<>(0., 0., -m_g_acc_magnitude));

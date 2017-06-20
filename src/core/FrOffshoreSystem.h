@@ -24,11 +24,11 @@ namespace frydom {
 
     private:
         double m_g_acc_magnitude;  ///< The local acceleration of gravity
+        double m_water_density;
 
         std::unique_ptr<environment::FrFreeSurface> m_free_surface;  ///< The free surface's mesh that is a cartesian grid.
         std::unique_ptr<environment::FrCurrent> m_current;           ///< The current field model
         chrono::ChFrame<double> NEDframe;                            ///< Frame that has Z pointing down to have a well defined heading
-
 
 
     public:
@@ -62,6 +62,10 @@ namespace frydom {
         /// It must be given positive, in m/s**2
         void SetGravityAcceleration(double grav);
         double GetGravityAcceleration() const { return m_g_acc_magnitude; }
+
+        /// Get/Set the water density
+        double GetWaterDensity() { return m_water_density; }
+        void SetWaterDensity(double rho) { m_water_density = rho; }
 
         /// Get NED frame
         chrono::ChFrame<double> GetNEDFrame() const { return NEDframe; }
