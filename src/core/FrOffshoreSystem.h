@@ -10,6 +10,7 @@
 #include "chrono/core/ChMatrixNM.h"
 #include "chrono/core/ChMatrix33.h"
 #include "../environment/waves/FrFreeSurface.h"
+#include "../environment/current/FrCurrent.h"
 
 namespace frydom {
 
@@ -25,6 +26,7 @@ namespace frydom {
         double m_g_acc_magnitude;  ///< The local acceleration of gravity
 
         std::unique_ptr<environment::FrFreeSurface> m_free_surface;  ///< The free surface's mesh that is a cartesian grid.
+        std::unique_ptr<environment::FrCurrent> m_current;           ///< The current field model
         chrono::ChFrame<double> NEDframe;                            ///< Frame that has Z pointing down to have a well defined heading
 
 
@@ -47,8 +49,14 @@ namespace frydom {
         /// Add a free surface model to the system
         void setFreeSurface(environment::FrFreeSurface* freeSurface);
 
+        /// Add a current field to the system
+        void setCurrent(environment::FrCurrent* current_field);
+
         /// Get the free surface model from the offshore system.
         environment::FrFreeSurface* getFreeSurface() const;
+
+        /// get the current field model from the offshore system
+        environment::FrCurrent* getCurrent() const;
 
         /// Get/Set the value of the acceleration of gravity
         /// It must be given positive, in m/s**2

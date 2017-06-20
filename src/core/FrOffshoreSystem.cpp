@@ -30,9 +30,18 @@ namespace frydom {
 
     }
 
+    void FrOffshoreSystem::setCurrent(environment::FrCurrent* current_field) {
+        m_current.reset(current_field);
+    }
+
+
     environment::FrFreeSurface* FrOffshoreSystem::getFreeSurface() const {
         return m_free_surface.get();  // FIXME: on ne devrait pas avoir besoin d'acceder au raw pointeur...
         // FIXME: comment directement acceder a m_free_surface via des indirections ????
+    }
+
+    environment::FrCurrent* FrOffshoreSystem::getCurrent() const {
+        return m_current.get();
     }
 
     void FrOffshoreSystem::SetGravityAcceleration(double grav) {

@@ -17,12 +17,14 @@
 
 #include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChSystemNSC.h"
-#include "chrono/physics/ChBody.h"
+//#include "chrono/physics/ChBody.h"
 
 #include "chrono_irrlicht/ChIrrApp.h"
 
 #include "../core/FrOffshoreSystem.h"
 #include "../environment/waves/FrFlatFreeSurface.h"
+#include "../environment/current/FrCurrent.h"
+
 #include "../utils/FrIrrApp.h"
 #include "../core/FrForceAsset.h"
 
@@ -51,6 +53,18 @@ int main(int argc, char* argv[]) {
 
     // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
     system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
+
+    // Creating a current field
+    auto current_field = std::make_unique<frydom::environment::FrCurrent>(frydom::environment::FrCurrent::E,
+                                                                          5,
+                                                                          frydom::environment::FrCurrent::KNOT);
+    system.setCurrent(current_field.release());
+
+
+
+    auto current = system.getCurrent();
+    auto dir_ned = current->getDirection(frydom::environment::FrCurrent::NED);
+    auto dir_nwu = current->getDirection(frydom::environment::FrCurrent::NWU);
 
 
     // Contact method
