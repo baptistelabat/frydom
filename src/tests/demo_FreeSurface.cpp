@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
     ship->SetMass(mass);
     ship->SetPos(chrono::ChVector<>(-200, 0, 0));
 
-    auto rot = chrono::Q_from_AngAxis(0.*M_PI/180., chrono::ChVector<>(0, 0, 1));
+    auto rot = chrono::Q_from_AngAxis(20.*M_PI/180., chrono::ChVector<>(0, 0, 1));
 //    auto rot = chrono::ChQuaternion<>(, );
 
 
@@ -139,32 +139,13 @@ int main(int argc, char* argv[]) {
 
 
     // Creating a current force
-    auto current_force = std::make_shared<frydom::FrCurrentForce>();
-    ship->AddForce(current_force);
+//    auto current_force = std::make_shared<frydom::FrCurrentForce>();
+//    ship->AddForce(current_force);
 
 
     ///===========================================================================================================
     /// 3 DOF CONSTRAINT
     ///===========================================================================================================
-
-//    // Creating a constraint plane/plane (Making the ship 3 DOF)  LOCK FORMULATION
-//    auto plane_constraint = std::make_shared<chrono::ChLinkLockPlanePlane>();
-//    auto fs_body = system.getFreeSurface()->getBody();
-//    plane_constraint->Initialize(ship, fs_body, chrono::ChCoordsys<>(chrono::ChVector<>(0, 0, 0)));
-//    system.AddLink(plane_constraint);  // FIXME: ne fonctionne pas
-
-    // Creating a constraint plane/plane (Making the ship 3 DOF)  LOCK FORMULATION
-    // TODO: avoir une methode make 3DOF pour la classe Ship
-//    auto plane_constraint = std::make_shared<chrono::ChLinkMatePlane>();
-//    auto fs_body = system.getFreeSurface()->getBody();
-//    plane_constraint->Initialize(ship, fs_body,
-//                                 true,
-//                                 chrono::ChVector<>(),
-//                                 chrono::ChVector<>(),
-//                                 chrono::ChVector<>(0, 0, -1),
-//                                 chrono::ChVector<>(0, 0, 1));  // FIXME: pourquoi on est obliges de renverser la normale ?
-//
-//    system.AddLink(plane_constraint);
 
     ship->Set3DOF_ON();
 
@@ -173,6 +154,10 @@ int main(int argc, char* argv[]) {
     system.ShowHierarchy(chrono::GetLog());
 
 //    system.SetSolverType();
+
+    ///===========================================================================================================
+    /// VISUALIZATION WITH IRRLICHT
+    ///===========================================================================================================
 
     // Visualization with irrlicht
     if (viz) {
@@ -199,6 +184,9 @@ int main(int argc, char* argv[]) {
             app.DrawAll();
             app.DoStep();
             app.EndScene();
+
+            std::cout << ship->GetPos_dt().x() << std::endl;
+
 //            std::cout << "End step " << system.GetTimestepper()->GetTime() << std::endl;
         }
 
