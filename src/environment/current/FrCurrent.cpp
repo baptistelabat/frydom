@@ -38,9 +38,6 @@ namespace frydom {
 
             if (frame == NED) {
                 m_velocity_vector = swap_NED_NWU(m_velocity_vector);
-//                m_velocity_vector = NED2NWU(m_velocity_vector);
-//                m_velocity_vector.y() = -m_velocity_vector.y();
-//                m_velocity_vector.z() = -m_velocity_vector.z();
             }
         }
 
@@ -100,19 +97,19 @@ namespace frydom {
 
         }
 
-        FrCurrent::FrCurrent(FrDirectionQuadrant const quadrant,
-                             double const velocity,
-                             FrSpeedUnit speedUnit) {
-
-            auto udir = quadrantToDir(quadrant);
-
-            if (speedUnit == KNOT) {
-                // Converting into m/s
-                m_velocity_vector = velocity * M_KNOT * udir;
-            } else {
-                m_velocity_vector = velocity * udir;
-            }
-        }
+//        FrCurrent::FrCurrent(FrDirectionQuadrant const quadrant,
+//                             double const velocity,
+//                             FrSpeedUnit speedUnit) {
+//
+////            auto udir = quadrantToDir(quadrant);
+//
+//            if (speedUnit == KNOT) {
+//                // Converting into m/s
+//                m_velocity_vector = velocity * M_KNOT * udir;
+//            } else {
+//                m_velocity_vector = velocity * udir;
+//            }
+//        }
 
         double FrCurrent::getVelocity(FrSpeedUnit speedUnit) {
             double vx = m_velocity_vector.x();
@@ -146,13 +143,11 @@ namespace frydom {
         chrono::ChVector<> FrCurrent::getDirection(FrFrame frame) {
             auto vel = getVelocity(MS);
 
-            auto udir = m_velocity_vector / vel;
+            auto udir = m_velocity_vector / vel;  // Expressed in NWU
 
             if (frame == NED) {
                 // Expressing the direction into NED frame
-                udir = swap_NED_NWU(udir);
-//                udir.y() = -udir.y();
-//                udir.z() = -udir.z();
+                udir = NWU2NED(udir);
                 return udir;
             } else {
                 return udir;
@@ -180,8 +175,6 @@ namespace frydom {
 
             if (frame == NED) {
                 m_velocity_vector = swap_NED_NWU(m_velocity_vector);
-//                m_velocity_vector.y() = -m_velocity_vector.y();
-//                m_velocity_vector.z() = -m_velocity_vector.z();
             }
 
         }
@@ -195,17 +188,8 @@ namespace frydom {
 
             if (frame == NED) {
                 m_velocity_vector = swap_NED_NWU(m_velocity_vector);
-//                m_velocity_vector.y() = -m_velocity_vector.y();
-//                m_velocity_vector.z() = -m_velocity_vector.z();
             }
 
-        }
-
-        void FrCurrent::setDirection(FrDirectionQuadrant const quadrant) {
-            // Getting current module
-            auto velocity = getVelocity(MS);
-
-            m_velocity_vector = velocity * quadrantToDir(quadrant);
         }
 
         void FrCurrent::Initialize(chrono::ChVector<> const velocity_vector,
@@ -214,8 +198,6 @@ namespace frydom {
             m_velocity_vector = velocity_vector;
             if (frame == NED) {
                 m_velocity_vector = swap_NED_NWU(m_velocity_vector);
-//                m_velocity_vector.y() = -m_velocity_vector.y();
-//                m_velocity_vector.z() = -m_velocity_vector.z();
             }
         }
 
@@ -257,14 +239,6 @@ namespace frydom {
 
         }
 
-        void FrCurrent::Initialize(FrDirectionQuadrant const quadrant,
-                                   double const velocity,
-                                   FrSpeedUnit speedUnit) {
-
-            Initialize(quadrantToDir(quadrant), velocity, speedUnit, NWU);
-
-        }
-
         void FrCurrent::get(chrono::ChVector<> &velocity_vector,
                             FrFrame frame) {
             // FIXME : tout foutu !!
@@ -284,39 +258,6 @@ namespace frydom {
             velocity = getVelocity(speedUnit);
 
         }
-
-
-        chrono::ChVector<> FrCurrent::quadrantToDir(FrDirectionQuadrant quadrant) {
-            switch (quadrant) {
-                case N:
-                    return NORTH;
-                case NE:
-                    return NORTH_EAST;
-                case E:
-                    return EAST;
-                case SE:
-                    return SOUTH_EAST;
-                case S:
-                    return SOUTH;
-                case SW:
-                    return SOUTH_WEST;
-                case W:
-                    return WEST;
-                case NW:
-                    return NORTH_WEST;
-            }
-        }
-
-
-        // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME
-        const chrono::ChVector<double> NORTH(1, 0, 0);
-        const chrono::ChVector<double> NORTH_EAST(SQRT_2_2, SQRT_2_2, 0);
-        const chrono::ChVector<double> EAST(0, 1, 0);
-        const chrono::ChVector<double> SOUTH_EAST(-SQRT_2_2, SQRT_2_2, 0);
-        const chrono::ChVector<double> SOUTH(-1, 0, 0);
-        const chrono::ChVector<double> SOUTH_WEST(-SQRT_2_2, -SQRT_2_2, 0);
-        const chrono::ChVector<double> WEST(0, -1, 0);
-        const chrono::ChVector<double> NORTH_WEST(SQRT_2_2, -SQRT_2_2, 0);
 
     }  // end namespace environment
 }  // end namespace frydom

@@ -54,18 +54,6 @@ namespace frydom {
                 KNOT  ///< nautical knot
             };
 
-            // FIXME: inutile maintenant qu'on a les NORTH, EAST... -> seulement les methodes en ChVector udir
-            enum FrDirectionQuadrant {
-                N,
-                NE,
-                E,
-                SE,
-                S,
-                SW,
-                W,
-                NW,
-            };
-
         private:
             // FIXME: ce vecteur doit representer le flux. Par contre, les informations d'angle sont courant porte vers et non vient de
             // FIXME: Corriger les information d'angle qui ne sont pas consistantes.
@@ -85,10 +73,7 @@ namespace frydom {
             /// Constructor from a direction vector and a strength
             FrCurrent(chrono::ChVector<> const unit_direction, double const velocity, FrSpeedUnit= KNOT, FrFrame= NED);
 
-            /// Constructor from a standard direction and a strength
-            FrCurrent(FrDirectionQuadrant const quadrant, double const velocity, FrSpeedUnit= KNOT);
-
-            /// Destrcutor
+            /// Destructor
             ~FrCurrent() {}
 
             /// Get the strength of the current
@@ -106,9 +91,6 @@ namespace frydom {
             /// Set the current's direction given a unit direction vector (not checked !)
             void setDirection(chrono::ChVector<> const unit_vector, FrFrame= NED);
 
-            /// Set the current's direction given a standard direction vector
-            void setDirection(FrDirectionQuadrant const quadrant);
-
             /// Initialize the current field with a velocity vector embedding direction and strength
             void Initialize(chrono::ChVector<> const velocity_vector, FrFrame= NED);
 
@@ -120,32 +102,13 @@ namespace frydom {
             void
             Initialize(chrono::ChVector<> const unit_direction, double const velocity, FrSpeedUnit= KNOT, FrFrame= NED);
 
-            /// Initialize the current field with a standard direction and a velocity strength
-            void Initialize(FrDirectionQuadrant const quadrant, double const velocity, FrSpeedUnit= KNOT);
-
             /// Get the current velocity vector
             void get(chrono::ChVector<> &velocity_vector, FrFrame= NWU);
 
             /// Get the current unit direction and velocity of the current
             void get(chrono::ChVector<> &unit_vector, double &velocity, FrFrame= NWU, FrSpeedUnit= MS);
 
-
-        private:
-            // Definir cette fonction pratique directement dans le namespace environment !!
-            // FIXME: encore utile ?
-            chrono::ChVector<> quadrantToDir(FrDirectionQuadrant quadrant);
-
         };
-
-        // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME (please not forget the NED aspect !)
-        extern const chrono::ChVector<double> NORTH;        ///< Current to the north
-        extern const chrono::ChVector<double> NORTH_EAST;   ///< Current to the north/east
-        extern const chrono::ChVector<double> EAST;         ///< Current to the east
-        extern const chrono::ChVector<double> SOUTH_EAST;   ///< Current to the south/east
-        extern const chrono::ChVector<double> SOUTH;        ///< Current to the south
-        extern const chrono::ChVector<double> SOUTH_WEST;   ///< Current to the south/west
-        extern const chrono::ChVector<double> WEST;         ///< Current to the west
-        extern const chrono::ChVector<double> NORTH_WEST;   ///< Current to the north/west
 
     }  // end namespace environment
 }  // end namespace frydom

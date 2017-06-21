@@ -71,10 +71,28 @@ namespace frydom {
         /// Get NED frame
         chrono::ChFrame<double> GetNEDFrame() const { return NEDframe; }
 
+        /// Updates all the auxiliary data and children of
+        /// bodies, forces, links, given their current state
+        /// as well as environment prior to everything.
+        virtual void Update(bool update_assets = true) override;
+
     };
 
-    // UTILITY FUNCTIONS
+    // =================================================================================================================
+    // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME (please not forget the NED aspect !)
+    // =================================================================================================================
+    extern const chrono::ChVector<double> NORTH;        ///< Current to the north
+    extern const chrono::ChVector<double> NORTH_EAST;   ///< Current to the north/east
+    extern const chrono::ChVector<double> EAST;         ///< Current to the east
+    extern const chrono::ChVector<double> SOUTH_EAST;   ///< Current to the south/east
+    extern const chrono::ChVector<double> SOUTH;        ///< Current to the south
+    extern const chrono::ChVector<double> SOUTH_WEST;   ///< Current to the south/west
+    extern const chrono::ChVector<double> WEST;         ///< Current to the west
+    extern const chrono::ChVector<double> NORTH_WEST;   ///< Current to the north/west
 
+    // =================================================================================================================
+    // UTILITY FUNCTIONS
+    // =================================================================================================================
     /// Transform either a NED vector into a NWU vector or a NWU vector into a NED vector (inline)
     template <class Real=double>
     inline chrono::ChVector<Real> swap_NED_NWU(chrono::ChVector<Real> const vect) {
@@ -96,25 +114,6 @@ namespace frydom {
         return swap_NED_NWU(vect);
     }
 
-
-
-
 } // end namespace frydom
-
-/// Class to tranform vectors from world csys to NED csys
-template <class Real>
-chrono::ChVector<Real> TransformDirectionWorldToNED(const chrono::ChFrame<Real>& NEDFrame,
-                                                    const chrono::ChVector<Real>& myvec) {
-    return NEDFrame.GetA().MatrT_x_Vect(myvec);
-}
-
-/// Class to transform vectors from NED csys to world csys
-template <class Real>
-chrono::ChVector<Real> TransformDirectionNEDToWorld(const chrono::ChFrame<Real>& NEDFrame,
-                                                    const chrono::ChVector<Real>& myvec) {
-    return NEDFrame.GetA().Matr_x_Vect(myvec);
-}
-
-
 
 #endif //FRYDOM_FROFFSHORESYSTEM_H

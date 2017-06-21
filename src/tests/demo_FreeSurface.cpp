@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     // CURRENT
     // =================================================================================================================
     // Creating a current field
-    auto current_field = std::make_unique<frydom::environment::FrCurrent>(frydom::environment::FrCurrent::E,
+    auto current_field = std::make_unique<frydom::environment::FrCurrent>(frydom::EAST,
                                                                           5,
                                                                           frydom::environment::FrCurrent::KNOT);
     system.setCurrent(current_field.release());

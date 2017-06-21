@@ -51,15 +51,34 @@ namespace frydom {
         Set_G_acc(chrono::ChVector<>(0., 0., -m_g_acc_magnitude));
     }
 
+    void FrOffshoreSystem::Update(bool update_assets) {
+        timer_update.start();  // Timer for profiling
 
-//    template <class Real>
-//    chrono::ChVector<Real> TransformDirectionWorldToNED(const chrono::ChVector<Real>& myvec){
-//        return
-//    }
-//
-//    template <class Real>
-//    chrono::ChVector<Real> TransformDirectionNEDToWorld(const chrono::ChVector<Real>& myvec){
-//
-//    }
+        // TODO: Mettre ici a jour tous les elements de l'environnement
+        // Update all environment models (waves, wind, current...)
+
+
+        // Executes the "forUpdate" in all controls of controlslist
+        ExecuteControlsForUpdate();
+
+        // Inherit parent class (recursively update sub objects bodies, links, etc)
+        chrono::ChAssembly::Update(update_assets);
+
+        // Update all contacts, if any
+        contact_container->Update(ChTime, update_assets);
+
+        timer_update.stop();
+    }
+
+    // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME
+    const chrono::ChVector<double> NORTH(1, 0, 0);
+    const chrono::ChVector<double> NORTH_EAST(SQRT_2_2, SQRT_2_2, 0);
+    const chrono::ChVector<double> EAST(0, 1, 0);
+    const chrono::ChVector<double> SOUTH_EAST(-SQRT_2_2, SQRT_2_2, 0);
+    const chrono::ChVector<double> SOUTH(-1, 0, 0);
+    const chrono::ChVector<double> SOUTH_WEST(-SQRT_2_2, -SQRT_2_2, 0);
+    const chrono::ChVector<double> WEST(0, -1, 0);
+    const chrono::ChVector<double> NORTH_WEST(SQRT_2_2, -SQRT_2_2, 0);
+
 
 }  // end namespace frydom
