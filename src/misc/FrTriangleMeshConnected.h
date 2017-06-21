@@ -13,6 +13,11 @@ namespace frydom {
     class FrTriangleMeshConnected : public chrono::geometry::ChTriangleMeshConnected {
 
       public:
+
+        ~FrTriangleMeshConnected() {
+            std::cout << "Mesh has been destroyed" << std::endl;
+        }
+
         /// Add a vertex to the mesh
         void addVertex(chrono::ChVector<double> vertex);
 

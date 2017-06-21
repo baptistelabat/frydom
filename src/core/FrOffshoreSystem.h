@@ -6,6 +6,7 @@
 #define FRYDOM_FROFFSHORESYSTEM_H
 
 //#include "chrono/physics/ChSystemNSC.h"
+//#include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/core/ChMatrixNM.h"
 #include "chrono/core/ChMatrix33.h"
@@ -56,7 +57,7 @@ namespace frydom {
         environment::FrFreeSurface* getFreeSurface() const;
 
         /// get the current field model from the offshore system
-        environment::FrCurrent* getCurrent() const;
+        environment::FrCurrent* GetCurrent() const;
 
         /// Get/Set the value of the acceleration of gravity
         /// It must be given positive, in m/s**2
@@ -71,6 +72,32 @@ namespace frydom {
         chrono::ChFrame<double> GetNEDFrame() const { return NEDframe; }
 
     };
+
+    // UTILITY FUNCTIONS
+
+    /// Transform either a NED vector into a NWU vector or a NWU vector into a NED vector (inline)
+    template <class Real=double>
+    inline chrono::ChVector<Real> swap_NED_NWU(chrono::ChVector<Real> const vect) {
+        auto new_vect = vect;
+        new_vect.y() = - new_vect.y();
+        new_vect.z() = - new_vect.z();
+        return new_vect;
+    }
+
+    /// Transform a NED vector into NWU
+    template <class Real=double>
+    inline chrono::ChVector<Real> NED2NWU(chrono::ChVector<Real> const vect) {
+        return swap_NED_NWU(vect);
+    }
+
+    /// Transform a NWU vector into NED
+    template <class Real=double>
+    inline chrono::ChVector<Real> NWU2NED(chrono::ChVector<Real> const vect) {
+        return swap_NED_NWU(vect);
+    }
+
+
+
 
 } // end namespace frydom
 

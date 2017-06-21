@@ -69,6 +69,9 @@ set(SOURCE_FILES
 
         src/environment/current/FrCurrent.h
         src/environment/current/FrCurrent.cpp
+        src/environment/current/FrCurrentForce.h
+        src/environment/current/FrCurrentForce.cpp
+
 
         src/misc/FrTriangleMeshConnected.h
         src/misc/FrTriangleMeshConnected.cpp
@@ -76,8 +79,15 @@ set(SOURCE_FILES
         src/core/FrOffshoreSystem.h
         src/core/FrOffshoreSystem.cpp
 
+        src/core/FrHydroBody.h
+        src/core/FrHydroBody.cpp
+
+        src/core/FrShip.h
+        src/core/FrShip.cpp
+
         src/core/FrForce.h
         src/core/FrForce.cpp
+
 
         src/propeller/FrPropeller.h
         src/propeller/FrPropeller.cpp

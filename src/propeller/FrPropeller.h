@@ -244,11 +244,11 @@ namespace frydom {
       public:
         FrPropeller()
                 : w_unit(RPM),
-        gear_ratio(1.),
-        engine_torque(0.),
-        propeller_torque(0.),
-        gearbox_efficiency(1.),
-        engine_power(1e6),
+                  gear_ratio(1.),
+                  engine_torque(0.),
+                  propeller_torque(0.),
+                  gearbox_efficiency(1.),
+                  engine_power(1e6),
                   propeller_shaft_power(0.),
                   propeller_diameter(1.),
                   water_speed(0.),

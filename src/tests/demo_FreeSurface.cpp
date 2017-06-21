@@ -17,13 +17,14 @@
 
 #include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChSystemNSC.h"
-//#include "chrono/physics/ChBody.h"
 
 #include "chrono_irrlicht/ChIrrApp.h"
 
 #include "../core/FrOffshoreSystem.h"
+#include "../core/FrShip.h"
 #include "../environment/waves/FrFlatFreeSurface.h"
-#include "../environment/current/FrCurrent.h"
+
+#include "../environment/current/FrCurrentForce.h"
 
 #include "../utils/FrIrrApp.h"
 #include "../core/FrForceAsset.h"
@@ -44,9 +45,14 @@ bool capture_video = false;
 
 int main(int argc, char* argv[]) {
 
-    // Creating the system
+    // =================================================================================================================
+    // OFFSHORE SYSTEM
+    // =================================================================================================================
     auto system = frydom::FrOffshoreSystem();
 
+    // =================================================================================================================
+    // FREE SURFACE
+    // =================================================================================================================
     // Creating the free surface and assigning it to a unique pointer as we should have only one free surface that has to be owned by the OffshoreSystem
     auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
     free_surface->Initialize(-400, 400, 100);
@@ -54,6 +60,9 @@ int main(int argc, char* argv[]) {
     // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
     system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
 
+    // =================================================================================================================
+    // CURRENT
+    // =================================================================================================================
     // Creating a current field
     auto current_field = std::make_unique<frydom::environment::FrCurrent>(frydom::environment::FrCurrent::E,
                                                                           5,
@@ -62,7 +71,7 @@ int main(int argc, char* argv[]) {
 
 
 
-    auto current = system.getCurrent();
+    auto current = system.GetCurrent();
     auto dir_ned = current->getDirection(frydom::environment::FrCurrent::NED);
     auto dir_nwu = current->getDirection(frydom::environment::FrCurrent::NWU);
 
@@ -70,9 +79,13 @@ int main(int argc, char* argv[]) {
     // Contact method
 //    chrono::ChMaterialSurface::ContactMethod contactMethod = chrono::ChMaterialSurface::SMC;
 
-
+    // =================================================================================================================
+    // SHIP
+    // =================================================================================================================
     // Creating a body that has to be a floating body
-    auto ship = std::make_shared<chrono::ChBody>();
+    auto ship = std::make_shared<frydom::FrShip>();
+
+//    auto ship = std::make_shared<chrono::ChBody>();
     ship->SetName("my_ship");
 //    auto ship = std::make_shared<chrono::ChBody>(chrono::ChMaterialSurface::NSC);
     ship->SetIdentifier(1);
@@ -80,7 +93,7 @@ int main(int argc, char* argv[]) {
     ship->SetMass(mass);
     ship->SetPos(chrono::ChVector<>(-200, 0, 0));
 
-    auto rot = chrono::Q_from_AngAxis(30.*M_PI/180., chrono::ChVector<>(0, 0, 1));
+    auto rot = chrono::Q_from_AngAxis(0.*M_PI/180., chrono::ChVector<>(0, 0, 1));
 //    auto rot = chrono::ChQuaternion<>(, );
 
 
@@ -97,55 +110,37 @@ int main(int argc, char* argv[]) {
 
     ship->SetInertiaXX(chrono::ChVector<>(1e5, 5e6, 5e6));
 
-    // Definig the shape
-    auto mesh = chrono::geometry::ChTriangleMeshConnected();
-//    mesh.RepairDuplicateVertexes();
-    mesh.LoadWavefrontMesh("../data/ship/MagneViking.obj");
-    auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
-    shape->SetMesh(mesh);
-    ship->AddAsset(shape);
+    // Defining the hydro mesh and as an asset
+    ship->SetHydroMesh("../data/ship/MagneViking.obj", true);
 
 
     ship->SetCollide(false); // TODO: essayer avec..
     // Adding the ship to the system
     system.AddBody(ship);
 
-    ///===========================================================================================================
-    /// FORCES
-    ///===========================================================================================================
-
-    // Adding a color to the ship
-//    auto color = std::make_shared<chrono::ChColorAsset>();
-//    color->SetColor(chrono::ChColor(255, 255, 0));
-//    ship->AddAsset(color);
-
-    // Creating a force
-//    auto force = std::make_shared<frydom::FrTryalForce>();
-//    ship->AddForce(force); // Toujours ajouter la force au corps avant de la tuner !!!
-//    force->SetName("essai_force");
-//    force->SetMforce(9.81*mass);
-//    force->SetDir(chrono::ChVector<>(0, 0, 1));
+    // =================================================================================================================
+    // FORCES
+    // =================================================================================================================
 
     // Creating a "propulsion force"
-    auto force2 = std::make_shared<frydom::FrTryalForce>();
-    ship->AddForce(force2); // Toujours ajouter la force au corps avant de la tuner !!!
-//    force2->SetName("essai_force");
-//    force2->SetMforce(1e7);
-//    force2->SetDir(chrono::ChVector<>(1, 0, 0));
-
-    auto force_asset = std::make_shared<frydom::FrForceAsset>(force2);
-//    force_asset->SetGlyphVector(0, chrono::ChVector<>(0, 0, 0), chrono::ChVector<>(0, 0, 20));
-
-    ship->AddAsset(force_asset);
+//    auto force2 = std::make_shared<frydom::FrTryalForce>();
+//    ship->AddForce(force2); // Toujours ajouter la force au corps avant de la tuner !!!
+//    auto force_asset = std::make_shared<frydom::FrForceAsset>(force2);
+//    ship->AddAsset(force_asset);
 
 
 
     // Creating an ITTC57 force
-    auto force_ittc = std::make_shared<frydom::FrITTC57>();
-    ship->AddForce(force_ittc);
-    force_ittc->SetCharacteristicLength(80.);
-    force_ittc->SetHullFormFactor(0.1);
-    force_ittc->SetHullWettedSurface(2700.);
+//    auto force_ittc = std::make_shared<frydom::FrITTC57>();
+//    ship->AddForce(force_ittc);
+//    force_ittc->SetCharacteristicLength(80.);
+//    force_ittc->SetHullFormFactor(0.1);
+//    force_ittc->SetHullWettedSurface(2700.);
+
+
+    // Creating a current force
+    auto current_force = std::make_shared<frydom::FrCurrentForce>();
+    ship->AddForce(current_force);
 
 
     ///===========================================================================================================

@@ -18,11 +18,12 @@
 #include "chrono/core/ChVector.h"
 
 #include "FrCurrent.h"
+#include "../../core/FrOffshoreSystem.h"
 
 #define M_ONE_MILE 1852.                        ///> NUMBER OF METER IN ONE NAUTICAL MILE
 #define M_ONE_MINUTE 60.                        ///> NUMBER OF SECONDS IN ONE MINUTE
-#define M_ONE_HOUR M_ONE_MINUTE*60.             ///> NUMBER OF SECONDS IN ONE HOUR
-#define M_KNOT M_ONE_MILE/M_ONE_HOUR            ///> Conversion coeff knot -> m/s
+#define M_ONE_HOUR (M_ONE_MINUTE*60.)             ///> NUMBER OF SECONDS IN ONE HOUR
+#define M_KNOT (M_ONE_MILE/M_ONE_HOUR)            ///> Conversion coeff knot -> m/s
 
 #define M_DEG M_PI/180.                         ///> Conversion DEG->RAD
 
@@ -267,12 +268,10 @@ namespace frydom {
         void FrCurrent::get(chrono::ChVector<> &velocity_vector,
                             FrFrame frame) {
             // FIXME : tout foutu !!
-            velocity_vector.x() = m_velocity_vector.x();
             if (frame == NED) {
-                m_velocity_vector = swap_NED_NWU(m_velocity_vector);
+                velocity_vector = swap_NED_NWU(m_velocity_vector);
             } else {
-                velocity_vector.y() = m_velocity_vector.y();
-                velocity_vector.z() = m_velocity_vector.z();
+                velocity_vector = m_velocity_vector;
             }
         }
 

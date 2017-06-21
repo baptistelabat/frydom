@@ -147,28 +147,6 @@ namespace frydom {
         extern const chrono::ChVector<double> WEST;         ///< Current to the west
         extern const chrono::ChVector<double> NORTH_WEST;   ///< Current to the north/west
 
-
-        /// Transform either a NED vector into a NWU vector or a NWU vector into a NED vector (inline)
-        template <class Real=double>
-        inline chrono::ChVector<Real> swap_NED_NWU(chrono::ChVector<Real> const vect) {
-            auto new_vect = vect;
-            new_vect.y() = - new_vect.y();
-            new_vect.z() = - new_vect.z();
-            return new_vect;
-        }
-
-        /// Transform a NED vector into NWU
-        template <class Real=double>
-        chrono::ChVector<Real> NED2NWU(chrono::ChVector<Real> const vect) {
-            return swap_NED_NWU(vect);
-        }
-
-        /// Transform a NWU vector into NED
-        template <class Real=double>
-        chrono::ChVector<Real> NWU2NED(chrono::ChVector<Real> const vect) {
-            return swap_NED_NWU(vect);
-        }
-
     }  // end namespace environment
 }  // end namespace frydom
 

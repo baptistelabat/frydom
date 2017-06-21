@@ -41,7 +41,7 @@ namespace frydom {
         // FIXME: comment directement acceder a m_free_surface via des indirections ????
     }
 
-    environment::FrCurrent* FrOffshoreSystem::getCurrent() const {
+    environment::FrCurrent* FrOffshoreSystem::GetCurrent() const {
         return m_current.get();
     }
 
