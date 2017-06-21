@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRSHIP_H
 #define FRYDOM_FRSHIP_H
 
-//#include "chrono/physics/ChBodyAuxRef.h"
+#include "chrono/physics/ChLinkMate.h"
 #include "FrHydroBody.h"
 
 namespace frydom {
@@ -19,6 +19,7 @@ namespace frydom {
         std::vector<std::shared_ptr<FrPropeller>> propellerlist;
 
         bool is3DOF;
+        std::shared_ptr<chrono::ChLinkMatePlane> constraint3DOF;
 
     public:
         FrShip() {}
@@ -32,9 +33,9 @@ namespace frydom {
         int GetNbPropellers() { return int(propellerlist.size()); }
 
         bool Get3DOF() const { return is3DOF; };
-        void Set3DOF(bool flag) {};
-        void Set3DOF_ON() {};
-        void Set3DOF_OFF() {};
+        void Set3DOF(bool flag);
+        void Set3DOF_ON();
+        void Set3DOF_OFF();
 
 
         chrono::ChVector<double> GetShipVelocity() const ;

@@ -30,4 +30,8 @@ namespace frydom {
         mesh->LoadWavefrontMesh(filename);
         SetHydroMesh(mesh, as_asset);
     }
+
+    std::shared_ptr<FrHydroBody> FrHydroBody::GetShared() {
+        return shared_from_this();
+    }
 }  // end namespace frydom

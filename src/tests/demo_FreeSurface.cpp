@@ -155,17 +155,18 @@ int main(int argc, char* argv[]) {
 
     // Creating a constraint plane/plane (Making the ship 3 DOF)  LOCK FORMULATION
     // TODO: avoir une methode make 3DOF pour la classe Ship
-    auto plane_constraint = std::make_shared<chrono::ChLinkMatePlane>();
-    auto fs_body = system.getFreeSurface()->getBody();
-    plane_constraint->Initialize(ship, fs_body,
-                                 true,
-                                 chrono::ChVector<>(),
-                                 chrono::ChVector<>(),
-                                 chrono::ChVector<>(0, 0, -1),
-                                 chrono::ChVector<>(0, 0, 1));  // FIXME: pourquoi on est obliges de renverser la normale ?
+//    auto plane_constraint = std::make_shared<chrono::ChLinkMatePlane>();
+//    auto fs_body = system.getFreeSurface()->getBody();
+//    plane_constraint->Initialize(ship, fs_body,
+//                                 true,
+//                                 chrono::ChVector<>(),
+//                                 chrono::ChVector<>(),
+//                                 chrono::ChVector<>(0, 0, -1),
+//                                 chrono::ChVector<>(0, 0, 1));  // FIXME: pourquoi on est obliges de renverser la normale ?
+//
+//    system.AddLink(plane_constraint);
 
-    system.AddLink(plane_constraint);  // FIXME: ne fonctionne pas
-
+    ship->Set3DOF_ON();
 
 
     // Printing hierarchy

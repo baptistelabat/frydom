@@ -12,13 +12,16 @@ namespace frydom {
 
     class ChTriangleMeshConnected;
 
-    class FrHydroBody : public chrono::ChBodyAuxRef {
+    class FrHydroBody : public chrono::ChBodyAuxRef,
+                        public std::enable_shared_from_this<FrHydroBody>{
 
     private:
         std::shared_ptr<FrTriangleMeshConnected> hydro_mesh;
         std::shared_ptr<FrTriangleMeshConnected> visu_mesh;
 
     public:
+
+        std::shared_ptr<FrHydroBody> GetShared();
 
         void SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset=true);
         void SetHydroMesh(std::string filename, bool as_asset=true);
