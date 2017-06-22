@@ -108,6 +108,7 @@ namespace frydom {
             /// Get the current unit direction and velocity of the current
             void get(chrono::ChVector<> &unit_vector, double &velocity, FrFrame= NWU, FrSpeedUnit= MS);
 
+            chrono::ChVector<double> GetVelocityVector(FrFrame=NWU);
         };
 
     }  // end namespace environment

@@ -9,7 +9,6 @@
 
 namespace frydom {
 
-
     void FrShip::AddPropeller(std::shared_ptr<FrPropeller> propeller) {
 
         // Adding propeller to the propeller list
@@ -55,8 +54,8 @@ namespace frydom {
                                      true,
                                      chrono::ChVector<>(),
                                      chrono::ChVector<>(),
-                                     chrono::ChVector<>(0, 0, -1),
-                                     chrono::ChVector<>(0, 0, 1));
+                                     chrono::ChVector<>(0, 0, 1),
+                                     chrono::ChVector<>(0, 0, -1));
         system->AddLink(plane_constraint);
         constraint3DOF = plane_constraint;
         is3DOF = true;

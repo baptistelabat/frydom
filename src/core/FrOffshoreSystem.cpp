@@ -51,6 +51,7 @@ namespace frydom {
         Set_G_acc(chrono::ChVector<>(0., 0., -m_g_acc_magnitude));
     }
 
+
     void FrOffshoreSystem::Update(bool update_assets) {
         timer_update.start();  // Timer for profiling
 

@@ -93,13 +93,13 @@ int main(int argc, char* argv[]) {
     ship->SetMass(mass);
     ship->SetPos(chrono::ChVector<>(-200, 0, 0));
 
-    auto rot = chrono::Q_from_AngAxis(20.*M_PI/180., chrono::ChVector<>(0, 0, 1));
+    auto rot = chrono::Q_from_AngAxis(0.*M_PI/180., chrono::ChVector<>(0, 0, 1));
 //    auto rot = chrono::ChQuaternion<>(, );
 
 
     ship->SetRot(rot);
 
-    auto ship_velocity = ship->TransformDirectionLocalToParent(chrono::ChVector<>(4, 0, 0));
+    auto ship_velocity = ship->TransformDirectionLocalToParent(chrono::ChVector<>(5, 0, 0));
     ship->SetPos_dt(ship_velocity);
 //    ship->SetRot_dt(chrono::ChQuaternion<>(0.3, chrono::ChVector<>(0, 1, 0)));
 
@@ -148,12 +148,6 @@ int main(int argc, char* argv[]) {
     ///===========================================================================================================
 
     ship->Set3DOF_ON();
-
-
-    // Printing hierarchy
-    system.ShowHierarchy(chrono::GetLog());
-
-//    system.SetSolverType();
 
     ///===========================================================================================================
     /// VISUALIZATION WITH IRRLICHT

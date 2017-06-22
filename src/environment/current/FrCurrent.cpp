@@ -20,6 +20,7 @@
 #include "FrCurrent.h"
 #include "../../core/FrOffshoreSystem.h"
 
+// TODO: placer ces macros dans le header de FrOffshoreSystem !!! C'est d'utilite publique...
 #define M_ONE_MILE 1852.                        ///> NUMBER OF METER IN ONE NAUTICAL MILE
 #define M_ONE_MINUTE 60.                        ///> NUMBER OF SECONDS IN ONE MINUTE
 #define M_ONE_HOUR (M_ONE_MINUTE*60.)             ///> NUMBER OF SECONDS IN ONE HOUR
@@ -90,26 +91,10 @@ namespace frydom {
 
             if (frame == NED) {
                 // Converting direction to E frame
-                m_velocity_vector = swap_NED_NWU(m_velocity_vector);
-//                m_velocity_vector.x() = -m_velocity_vector.x();
-//                m_velocity_vector.z() = -m_velocity_vector.z();
+                m_velocity_vector = NED2NWU(m_velocity_vector);
             }
 
         }
-
-//        FrCurrent::FrCurrent(FrDirectionQuadrant const quadrant,
-//                             double const velocity,
-//                             FrSpeedUnit speedUnit) {
-//
-////            auto udir = quadrantToDir(quadrant);
-//
-//            if (speedUnit == KNOT) {
-//                // Converting into m/s
-//                m_velocity_vector = velocity * M_KNOT * udir;
-//            } else {
-//                m_velocity_vector = velocity * udir;
-//            }
-//        }
 
         double FrCurrent::getVelocity(FrSpeedUnit speedUnit) {
             double vx = m_velocity_vector.x();
@@ -194,7 +179,7 @@ namespace frydom {
 
         void FrCurrent::Initialize(chrono::ChVector<> const velocity_vector,
                                    FrFrame frame) {
-
+            // TODO: double if
             m_velocity_vector = velocity_vector;
             if (frame == NED) {
                 m_velocity_vector = swap_NED_NWU(m_velocity_vector);
@@ -243,7 +228,7 @@ namespace frydom {
                             FrFrame frame) {
             // FIXME : tout foutu !!
             if (frame == NED) {
-                velocity_vector = swap_NED_NWU(m_velocity_vector);
+                velocity_vector = NWU2NED(m_velocity_vector);
             } else {
                 velocity_vector = m_velocity_vector;
             }
@@ -257,6 +242,14 @@ namespace frydom {
             unit_vector = getDirection(frame);
             velocity = getVelocity(speedUnit);
 
+        }
+
+        chrono::ChVector<double> FrCurrent::GetVelocityVector(FrCurrent::FrFrame frame) {
+            if (frame == NED) {
+                return NWU2NED(m_velocity_vector);
+            } else {
+                return m_velocity_vector;
+            }
         }
 
     }  // end namespace environment
