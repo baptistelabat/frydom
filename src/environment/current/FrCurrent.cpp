@@ -13,20 +13,15 @@
 //
 // =============================================================================
 
-#include <math.h>
+//#include <math.h>
+#include <cmath>
 
 #include "chrono/core/ChVector.h"
 
 #include "FrCurrent.h"
-//#include "../../core/FrOffshoreSystem.h"
 
 // TODO: placer ces macros dans le header de FrOffshoreSystem !!! C'est d'utilite publique...
-#define M_ONE_MILE 1852.                        ///> NUMBER OF METER IN ONE NAUTICAL MILE
-#define M_ONE_MINUTE 60.                        ///> NUMBER OF SECONDS IN ONE MINUTE
-#define M_ONE_HOUR (M_ONE_MINUTE*60.)             ///> NUMBER OF SECONDS IN ONE HOUR
-#define M_KNOT (M_ONE_MILE/M_ONE_HOUR)            ///> Conversion coeff knot -> m/s
 
-#define M_DEG M_PI/180.                         ///> Conversion DEG->RAD
 
 namespace frydom {
     namespace environment {
@@ -34,12 +29,13 @@ namespace frydom {
         FrCurrent::FrCurrent() : m_velocity_vector(chrono::VNULL) {}
 
         FrCurrent::FrCurrent(chrono::ChVector<> const velocity_vector, FrFrame frame) {
-            m_velocity_vector.SetNull();
-            m_velocity_vector = velocity_vector;
 
             if (frame == NED) {
-                m_velocity_vector = swap_NED_NWU(m_velocity_vector);
+                m_velocity_vector = NED2NWU(velocity_vector);
+            } else {
+                m_velocity_vector = velocity_vector;
             }
+
         }
 
         FrCurrent::FrCurrent(double const angle,

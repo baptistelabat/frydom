@@ -5,15 +5,18 @@
 #ifndef FRYDOM_FRHYDROBODY_H
 #define FRYDOM_FRHYDROBODY_H
 
-#include "chrono/physics/ChBodyAuxRef.h"
+//#include "chrono/physics/ChBodyAuxRef.h"
 #include "../misc/FrTriangleMeshConnected.h"
+
+// Forward declaration
+namespace chrono {
+    class ChBodyAuxRef;
+}
 
 namespace frydom {
 
-    class ChTriangleMeshConnected;
-
     class FrHydroBody : public chrono::ChBodyAuxRef,
-                        public std::enable_shared_from_this<FrHydroBody>{
+                        public std::enable_shared_from_this<FrHydroBody> {
 
     private:
         std::shared_ptr<FrTriangleMeshConnected> hydro_mesh;

@@ -2,10 +2,8 @@
 // Created by frongere on 23/06/17.
 //
 
-#include "FrConstants.h"
 #include <chrono/core/ChVector.h>
-
-#define SQRT_2_2 sqrt(2.)/2.
+#include "FrConstants.h"
 
 namespace frydom {
 

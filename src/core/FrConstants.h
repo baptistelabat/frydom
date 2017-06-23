@@ -5,9 +5,25 @@
 #ifndef FRYDOM_CONSTANTS_H
 #define FRYDOM_CONSTANTS_H
 
-#include "chrono/core/ChVector.h"
+//#include "chrono/core/ChVector.h"
+
+// Forward declaration
+namespace chrono {
+    template <class Real>
+    class ChVector;
+}
 
 namespace frydom {
+
+    #define SQRT_2_2 sqrt(2.)/2.
+
+    #define M_ONE_MILE 1852.                        ///> NUMBER OF METER IN ONE NAUTICAL MILE
+    #define M_ONE_MINUTE 60.                        ///> NUMBER OF SECONDS IN ONE MINUTE
+    #define M_ONE_HOUR (M_ONE_MINUTE*60.)             ///> NUMBER OF SECONDS IN ONE HOUR
+    #define M_KNOT (M_ONE_MILE/M_ONE_HOUR)            ///> Conversion coeff knot -> m/s
+
+    #define M_DEG M_PI/180.                         ///> Conversion DEG->RAD
+
 
     // =================================================================================================================
     // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME (please not forget the NED aspect !)

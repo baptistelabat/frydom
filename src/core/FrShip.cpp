@@ -2,7 +2,8 @@
 // Created by frongere on 21/06/17.
 //
 
-#include <chrono/physics/ChLinkMate.h>
+#include "chrono/physics/ChBodyAuxRef.h"
+#include "chrono/physics/ChLinkMate.h"
 #include "FrShip.h"
 #include "../propeller/FrPropeller.h"
 #include "FrOffshoreSystem.h"

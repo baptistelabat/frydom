@@ -2,7 +2,7 @@
 // Created by frongere on 21/06/17.
 //
 
-
+#include "chrono/physics/ChBodyAuxRef.h"
 #include <chrono/assets/ChTriangleMeshShape.h>
 
 #include "FrHydroBody.h"

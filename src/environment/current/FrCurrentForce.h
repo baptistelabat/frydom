@@ -7,7 +7,6 @@
 
 #include "../../core/FrForce.h"
 #include "FrCurrent.h"
-#include "../../core/FrHydroBody.h"
 
 namespace frydom {
 

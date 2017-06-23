@@ -8,6 +8,14 @@
 
 #include "chrono/physics/ChForce.h"
 
+// Forward declaration
+//namespace chrono {
+//    class ChForce;
+//
+//    template <class Real=double>
+//    class ChVector;
+//}
+
 namespace frydom {
 
     class FrForce : public chrono::ChForce {

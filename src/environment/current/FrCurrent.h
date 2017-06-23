@@ -18,7 +18,6 @@
 
 #include "../../core/FrConstants.h"
 
-
 // TODO: definir une classe de base pour le champ de courant et de vent (et de houle) afin de ne pas
 // repliquer le code concernant la gestion des unites de vitesse, des conventions de direction ("vient de")
 // et des reperes d'expression.

@@ -10,6 +10,7 @@
 
 namespace frydom {
 
+    // Forward declaration
     class FrPropeller;
 
     class FrShip : public FrHydroBody {
