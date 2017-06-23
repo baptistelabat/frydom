@@ -37,6 +37,7 @@ namespace frydom {
             /// Currently returns the mean height passed at construction
             virtual double GetHeight(double x, double y, double t) const;
 
+            virtual void Update(double mytime);
 
           protected:
             FrFlatFreeSurface() {};

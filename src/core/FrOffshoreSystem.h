@@ -76,43 +76,7 @@ namespace frydom {
         /// as well as environment prior to everything.
         virtual void Update(bool update_assets = true) override;
 
-    };
-
-    // =================================================================================================================
-    // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME (please not forget the NED aspect !)
-    // =================================================================================================================
-    extern const chrono::ChVector<double> NORTH;        ///< Current to the north
-    extern const chrono::ChVector<double> NORTH_EAST;   ///< Current to the north/east
-    extern const chrono::ChVector<double> EAST;         ///< Current to the east
-    extern const chrono::ChVector<double> SOUTH_EAST;   ///< Current to the south/east
-    extern const chrono::ChVector<double> SOUTH;        ///< Current to the south
-    extern const chrono::ChVector<double> SOUTH_WEST;   ///< Current to the south/west
-    extern const chrono::ChVector<double> WEST;         ///< Current to the west
-    extern const chrono::ChVector<double> NORTH_WEST;   ///< Current to the north/west
-
-    // =================================================================================================================
-    // UTILITY FUNCTIONS
-    // =================================================================================================================
-    /// Transform either a NED vector into a NWU vector or a NWU vector into a NED vector (inline)
-    template <class Real=double>
-    inline chrono::ChVector<Real> swap_NED_NWU(chrono::ChVector<Real> const vect) {
-        auto new_vect = vect;
-        new_vect.y() = - new_vect.y();
-        new_vect.z() = - new_vect.z();
-        return new_vect;
-    }
-
-    /// Transform a NED vector into NWU
-    template <class Real=double>
-    inline chrono::ChVector<Real> NED2NWU(chrono::ChVector<Real> const vect) {
-        return swap_NED_NWU(vect);
-    }
-
-    /// Transform a NWU vector into NED
-    template <class Real=double>
-    inline chrono::ChVector<Real> NWU2NED(chrono::ChVector<Real> const vect) {
-        return swap_NED_NWU(vect);
-    }
+    };  // class FrOffshoreSystem
 
 } // end namespace frydom
 

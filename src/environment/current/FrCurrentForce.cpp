@@ -24,7 +24,7 @@ namespace frydom {
         // 2- Recuperation du vecteur vitesse du courant dans le repere NED
 //        chrono::ChVector<double> current_velocity;
 //        GetCurrent()->get(current_velocity, environment::FrCurrent::NWU);
-        auto current_velocity = GetCurrent()->GetVelocityVector(environment::FrCurrent::NWU);
+        auto current_velocity = GetCurrent()->GetVelocityVector(NWU);
 
         // 3- Calcul de la vitesse relative
         auto relative_velocity = body_velocity - current_velocity;

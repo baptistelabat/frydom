@@ -96,6 +96,7 @@ namespace environment{
 
       protected:;  // Disallow the default constructor to be used as a publid method
 
+        double ChTime;
         bool m_vis_enabled;
         std::shared_ptr<chrono::ChBody> m_fs_body;
         std::shared_ptr<chrono::ChColorAsset> m_color;

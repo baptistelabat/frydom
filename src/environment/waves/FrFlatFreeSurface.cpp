@@ -27,5 +27,10 @@ namespace frydom {
             return m_mean_height;
         }
 
+        void FrFlatFreeSurface::Update(double mytime) {
+            ChTime = mytime;
+            std::cout << "Updating Free surface at time " << mytime << std::endl;
+        }
+
     }  // end namespace environment
 }  // end namespace frydom

@@ -18,7 +18,7 @@
 #include "chrono/core/ChVector.h"
 
 #include "FrCurrent.h"
-#include "../../core/FrOffshoreSystem.h"
+//#include "../../core/FrOffshoreSystem.h"
 
 // TODO: placer ces macros dans le header de FrOffshoreSystem !!! C'est d'utilite publique...
 #define M_ONE_MILE 1852.                        ///> NUMBER OF METER IN ONE NAUTICAL MILE
@@ -244,7 +244,7 @@ namespace frydom {
 
         }
 
-        chrono::ChVector<double> FrCurrent::GetVelocityVector(FrCurrent::FrFrame frame) {
+        chrono::ChVector<double> FrCurrent::GetVelocityVector(FrFrame frame) {
             if (frame == NED) {
                 return NWU2NED(m_velocity_vector);
             } else {

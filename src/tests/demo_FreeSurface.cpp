@@ -15,6 +15,8 @@
 
 #include <math.h>
 
+#include "../core/FrConstants.h"
+
 #include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChSystemNSC.h"
 
@@ -66,14 +68,16 @@ int main(int argc, char* argv[]) {
     // Creating a current field
     auto current_field = std::make_unique<frydom::environment::FrCurrent>(frydom::EAST,
                                                                           5,
-                                                                          frydom::environment::FrCurrent::KNOT);
+                                                                          frydom::KNOT);
+
+
     system.setCurrent(current_field.release());
 
 
 
-    auto current = system.GetCurrent();
-    auto dir_ned = current->getDirection(frydom::environment::FrCurrent::NED);
-    auto dir_nwu = current->getDirection(frydom::environment::FrCurrent::NWU);
+//    auto current = system.GetCurrent();
+//    auto dir_ned = current->getDirection(frydom::NED);
+//    auto dir_nwu = current->getDirection(frydom::NWU);
 
 
     // Contact method

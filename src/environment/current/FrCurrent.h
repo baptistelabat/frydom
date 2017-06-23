@@ -16,10 +16,8 @@
 #ifndef FRYDOM_FRCURRENT_H
 #define FRYDOM_FRCURRENT_H
 
-//#include <cmath>
+#include "../../core/FrConstants.h"
 
-#define SQRT_2_2 sqrt(2.)/2.
-#define KH 1000./3600.
 
 // TODO: definir une classe de base pour le champ de courant et de vent (et de houle) afin de ne pas
 // repliquer le code concernant la gestion des unites de vitesse, des conventions de direction ("vient de")
@@ -33,26 +31,6 @@ namespace frydom {
 
 
         class FrCurrent {
-
-        public:
-
-            // TODO: Cet enum aurait plus sa place directement dans le namespace frydom
-            enum FrFrame { // TODO: Renommer en FrDefaultInertialFrame
-                NWU,
-                NED
-            };
-            // TODO: question : doit-on rendre le choix NED/NWU global (reference dans FrOffshoreSystem) ???
-
-            // TODO: Cet enum aurait plus sa place directement dans le namespace frydom
-            enum FrAngleUnit {
-                DEG,
-                RAD
-            };
-            // TODO: Cet enum aurait plus sa place directement dans le namespace frydom
-            enum FrSpeedUnit {  // TODO: ajouter k/h ?
-                MS,   ///< m/s
-                KNOT  ///< nautical knot
-            };
 
         private:
             // FIXME: ce vecteur doit representer le flux. Par contre, les informations d'angle sont courant porte vers et non vient de
