@@ -47,7 +47,7 @@ namespace frydom {
 
     void FrShip::Set3DOF_ON() {
         if (is3DOF){ return; }
-
+        // TODO: voir si on peut pas faire quelque chose avec l'attribut flipped de ChLinkMate...
         auto plane_constraint = std::make_shared<chrono::ChLinkMatePlane>();
         auto free_surface_body = dynamic_cast<FrOffshoreSystem*>(GetSystem())->getFreeSurface()->getBody();
         plane_constraint->Initialize(shared_from_this(), free_surface_body,

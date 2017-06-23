@@ -87,6 +87,9 @@ namespace environment{
         /// Get the free surface's mesh
         FrTriangleMeshConnected getMesh(void) const;
 
+        /// Update the state of the free surface
+        virtual void Update(double ChTime) = 0;
+
         /// get the body that represents the free surface
         auto getBody() {return m_fs_body;}
 
