@@ -3,3 +3,8 @@
 //
 
 #include "FrInterpolator.h"
+
+namespace frydom {
+
+
+}

@@ -5,7 +5,6 @@
 #ifndef FRYDOM_CONSTANTS_H
 #define FRYDOM_CONSTANTS_H
 
-//#include "chrono/core/ChVector.h"
 
 // Forward declaration
 namespace chrono {

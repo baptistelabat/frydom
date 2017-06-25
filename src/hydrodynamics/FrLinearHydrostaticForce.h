@@ -6,9 +6,13 @@
 #define FRYDOM_FRLINEARHYDROSTATICFORCE_H
 
 
-class FrLinearHydrostaticForce {
+namespace frydom {
 
-};
+    class FrLinearHydrostaticForce {
+
+    };
+
+}  // end namespace frydom
 
 
 #endif //FRYDOM_FRLINEARHYDROSTATICFORCE_H

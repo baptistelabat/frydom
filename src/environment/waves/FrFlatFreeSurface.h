@@ -13,8 +13,8 @@
 //
 // =============================================================================
 
-
-#define FR_FLAT_FREE_SURFACE_H
+#ifndef FRYDOM_FR_FLAT_FREE_SURFACE_H
+#define FRYDOM_FR_FLAT_FREE_SURFACE_H
 
 #include "FrFreeSurface.h"
 
@@ -24,8 +24,6 @@ namespace frydom {
     class FrOffshoreSystem;
 
     namespace environment{
-
-
 
         class FrFlatFreeSurface : public FrFreeSurface {
 
@@ -45,3 +43,5 @@ namespace frydom {
 
     } // end namespace environment
 } // end namespace frydom
+
+#endif //FRYDOM_FR_FLAT_FREE_SURFACE_H

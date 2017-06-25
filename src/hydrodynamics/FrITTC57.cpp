@@ -8,8 +8,6 @@
 
 #include "FrITTC57.h"
 
-
-
 namespace frydom{
 
     FrITTC57::FrITTC57()
@@ -56,6 +54,5 @@ namespace frydom{
 
         std::cout << "Time: " << ChTime << "\tvel: " << ux << std::endl;
     }
-
 
 }  // end namespace frydom

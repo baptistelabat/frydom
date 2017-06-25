@@ -52,7 +52,7 @@ compilation flags as Chrono was complaining about it although there is no mentio
 
 To build Chrono as a dynamic library, you need first to configure the project using cmake::
 
-    >$ cd frydom/chrono/chrono
+    >$ cd frydom/core/chrono/chrono
     >$ cmake-gui
 
 This will open a cmake GUI allowing to tune the Chrono install. Please adapt the following configuration to your paths:

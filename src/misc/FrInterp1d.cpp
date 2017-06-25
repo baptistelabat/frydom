@@ -3,3 +3,9 @@
 //
 
 #include "FrInterp1d.h"
+
+
+namespace frydom {
+
+
+} // end namespace frydom

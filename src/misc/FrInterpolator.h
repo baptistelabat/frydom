@@ -6,9 +6,12 @@
 #define FRYDOM_FRINTERPOLATOR_H
 
 
-class FrInterpolator {
+namespace frydom {
 
-};
+    class FrInterpolator {
 
+    };
+
+}  // end namesapce frydom
 
 #endif //FRYDOM_FRINTERPOLATOR_H

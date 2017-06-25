@@ -16,16 +16,27 @@
 #ifndef FR_FREE_SURFACE_H
 #define FR_FREE_SURFACE_H
 
-#include "chrono/core/ChCoordsys.h"
-#include "chrono/physics/ChBody.h"
-#include "chrono/assets/ChColorAsset.h"
+//#include "chrono/core/ChCoordsys.h"
+//#include "chrono/physics/ChBody.h"
+//#include "chrono/assets/ChColorAsset.h"
 
 #include "../../misc/FrTriangleMeshConnected.h"
+
+// Forward declarations
+namespace chrono {
+    template <class Real>
+    class ChCoordsys;
+
+    class ChBody;
+
+    class ChColorAsset;
+}
 
 
 namespace frydom{
     // Forward declaration
     class FrOffshoreSystem;
+//    class FrTriangleMeshConnected;
 
 namespace environment{
 
@@ -34,14 +45,14 @@ namespace environment{
 
       public:
         /// Enum type for free surface models
-        enum Type {
-            FLAT,
-            LIN_AIRY_REGULAR,
-            LIN_AIRY_IRREGULAR,
-            LIN_AIRY_IRREGULAR_DIR,
-            NL_RIENECKER_FENTON,
-            NL_HOS
-        };
+//        enum Type {
+//            FLAT,
+//            LIN_AIRY_REGULAR,
+//            LIN_AIRY_IRREGULAR,
+//            LIN_AIRY_IRREGULAR_DIR,
+//            NL_RIENECKER_FENTON,
+//            NL_HOS
+//        };
 
         // TODO: placer les constructeurs en protected vu qu'on instanncie jamais cette classe directement...
 

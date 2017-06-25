@@ -25,10 +25,6 @@
 namespace frydom {
     namespace environment {
 
-        // Forward declaration
-//    class ChVector;
-
-
         class FrCurrent {
 
         private:

@@ -8,9 +8,10 @@
 #include "../propeller/FrPropeller.h"
 #include "FrOffshoreSystem.h"
 
+
 namespace frydom {
 
-    void FrShip::AddPropeller(std::shared_ptr<FrPropeller> propeller) {
+    void FrShip::AddPropeller(std::shared_ptr<FrPropeller> propeller) {  // FIXME : pourquoi le propeller serait shared ????
 
         // Adding propeller to the propeller list
         propellerlist.push_back(propeller);

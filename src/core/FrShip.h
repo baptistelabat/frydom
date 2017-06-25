@@ -17,7 +17,7 @@ namespace frydom {
 
     private:
         // Special attributes for ships
-        std::vector<std::shared_ptr<FrPropeller>> propellerlist;
+        std::vector<std::shared_ptr<FrPropeller>> propellerlist;  // FIXME pourquoi avoir des propeller shared ???
 
         bool is3DOF;
         std::shared_ptr<chrono::ChLinkMatePlane> constraint3DOF;
@@ -27,9 +27,9 @@ namespace frydom {
 
         ~FrShip() {}
 
-        void AddPropeller(std::shared_ptr<FrPropeller> propeller);
+        void AddPropeller(std::shared_ptr<FrPropeller> propeller); // FIXME: shared ?
 
-        void RemovePropeller(std::shared_ptr<FrPropeller> propeller);
+        void RemovePropeller(std::shared_ptr<FrPropeller> propeller); // FIXME: shared ?
 
         int GetNbPropellers() { return int(propellerlist.size()); }
 
