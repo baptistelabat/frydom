@@ -68,6 +68,9 @@ set(SOURCE_FILES
         src/core/FrOffshoreSystem.h
         src/core/FrOffshoreSystem.cpp
 
+        src/core/FrEulerAngles.h
+        src/core/FrEulerAngles.cpp
+
 
         src/environment/waves/FrFreeSurface.h
         src/environment/waves/FrFreeSurface.cpp

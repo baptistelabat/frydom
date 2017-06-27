@@ -17,31 +17,32 @@ def read(*parts):
 LONG_DESCRIPTION = read('README.rst')
 
 setup(
-    name = 'frydom',
-    version = '0.1',
-    url = 'https://', # TODO : A completer
-    author = 'Francois Rongere -- Ecole Centrale de Nantes',
-    author_email = 'Francois.Rongere@ec-nantes.fr',
-    description = """A framework for simulation of marine operations""",
-    long_description = LONG_DESCRIPTION,
-    license = 'Waiting for decision',
-    keywords = 'multibody dynamics, robotics, hydrodynamics, control',
-    packages = find_packages(exclude=['contrib', 'docs', 'tests*']),
-    setup_requires = ['pytest-runner'],
-    tests_require = ['pytest', 'pytest-cov'],
-    install_requires = [
+    name='frydom',
+    version='0.1',
+    url='https://', # TODO : A completer
+    author='Francois Rongere -- Ecole Centrale de Nantes',
+    author_email='Francois.Rongere@ec-nantes.fr',
+    description="""A framework for simulation of marine operations""",
+    long_description=LONG_DESCRIPTION,
+    license='Waiting for decision',
+    keywords='multibody dynamics, robotics, hydrodynamics, control',
+    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest', 'pytest-cov'],
+    install_requires=[
         'argparse',
         'argcomplete',
         'numpy',
         'sphinx-argparse',
         'sphinxcontrib-programoutput',
+        'matplotlib'
         ],
-    entry_points = {
+    entry_points={
         'console_scripts': [
             'meshmagick=meshmagick:main',
         ],
     },
-    classifiers = [
+    classifiers=[
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Development Status :: 4 - Beta',
