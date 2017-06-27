@@ -44,7 +44,11 @@ namespace frydom {
 
         // FIXME: le get position renvoie la position mais pas l'attitude !!!!
         // TODO: dupliquer tout ca pour l'attitude...
-        chrono::ChVector<double> GetPosition(FrFrame = NED) const { return chrono::VNULL; }
+        chrono::ChVector<double> GetPosition(FrFrame = NED) const;
+
+        chrono::ChQuaternion<double> GetAttitude(FrFrame = NED) const { return chrono::QUNIT; };
+
+
         void SetPosition(const double x, const double y, const double z, FrFrame = NED) {}
         void SetXPosition(const double x, FrFrame = NED) {}
         void SetYPosition(const double y, FrFrame = NED) {}

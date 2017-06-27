@@ -71,5 +71,14 @@ namespace frydom {
         is3DOF = false;
     }
 
+    chrono::ChVector<double> FrShip::GetPosition(FrFrame frame) const {
+        auto position = coord.pos;
+        if (frame == NED) {
+            return NWU2NED(position);
+        } else {
+            return position;
+        }
+    }
+
 
 }  // end namespace frydom
