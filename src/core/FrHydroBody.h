@@ -24,7 +24,10 @@ namespace frydom {
 
     public:
 
-        std::shared_ptr<FrHydroBody> GetShared();
+        FrHydroBody() : ChBodyAuxRef() {};
+
+
+        std::shared_ptr<FrHydroBody> GetShared() { return shared_from_this(); };
 
         void SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset=true);
         void SetHydroMesh(std::string filename, bool as_asset=true);

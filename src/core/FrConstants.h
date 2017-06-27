@@ -39,7 +39,8 @@ namespace frydom {
     // enum to specify between NWU and NED frames
     enum FrFrame {
         NWU,
-        NED
+        NED,
+        BODY
     };
 
     // enum

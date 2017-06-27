@@ -39,7 +39,7 @@ namespace frydom {
         return GetCoord_dt().pos;
     }
 
-    void FrShip::Set3DOF(bool flag) {
+    void FrShip::Set3DOF(const bool flag) {
         if (flag) {
             Set3DOF_ON();
         } else {

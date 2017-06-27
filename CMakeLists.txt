@@ -112,28 +112,22 @@ set(SOURCE_FILES
         src/hydrodynamics/FrTryalForce.cpp
 
         src/hydrodynamics/FrITTC57.h
-        src/hydrodynamics/FrITTC57.cpp
-
-        src/tests/demo_FreeSurface.cpp)
+        src/hydrodynamics/FrITTC57.cpp)
 
 
 # TODO: mettre dans un foreach !!
 # To add a target
-add_executable(demo_free_surface ${SOURCE_FILES})
-add_executable(test_ch_system
-        frydom/core/chrono/chrono/src/chrono/physics/ChSystemSMC.h
-        src/tests/test_ch_system.cpp
-        )
+add_executable(demo_free_surface ${SOURCE_FILES} src/tests/demo_FreeSurface.cpp)
 
+add_executable(demo_O3 ${SOURCE_FILES} src/tests/demo_O3_juin_2017.cpp)
 
-
-set_target_properties(test_ch_system PROPERTIES
-	    COMPILE_FLAGS "${CHRONO_CXX_FLAGS} ${EXTRA_COMPILE_FLAGS}"
-	    COMPILE_DEFINITIONS "CHRONO_DATA_DIR=\"${CHRONO_DATA_DIR}\""
-	    LINK_FLAGS "${CHRONO_LINKER_FLAGS}")
-
-target_link_libraries(test_ch_system ${CHRONO_LIBRARIES})
+#set_target_properties(test_ch_system PROPERTIES
+#	    COMPILE_FLAGS "${CHRONO_CXX_FLAGS} ${EXTRA_COMPILE_FLAGS}"
+#	    COMPILE_DEFINITIONS "CHRONO_DATA_DIR=\"${CHRONO_DATA_DIR}\""
+#	    LINK_FLAGS "${CHRONO_LINKER_FLAGS}")
+#
 target_link_libraries(demo_free_surface ${CHRONO_LIBRARIES})
+target_link_libraries(demo_O3 ${CHRONO_LIBRARIES})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===
