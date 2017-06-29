@@ -86,9 +86,11 @@ int main(int argc, char* argv[]) {
     auto quat11 = ship1->GetRot();
     auto quat22 = ship2->GetRot();
 
-
-
     auto quat__ = euler_to_quat(quat_to_euler(quat22, CARDAN, DEG), CARDAN, DEG);
+
+    // Essais axis_angle
+
+
 
     // VISU
     FrIrrApp app(&system, L"Viz");

@@ -12,40 +12,42 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
-    auto cardan_angles = ChVector<>(10, 20, 30);
-//    cardan_angles *= M_DEG;
+    auto cardan = ChVector<>(10, 20, 30);
 
-//    // A facon chrono
+    // euler -> quaternion
+    auto quat = euler_to_quat(cardan, CARDAN, DEG);
 
-    ChMatrix33<> mat1;
-    mat1.Set_A_Cardano(radians(cardan_angles));
-    auto quat1 = mat1.Get_A_quaternion();
-    auto cardan_angles2 = degrees(mat1.Get_A_Cardano());
-
-    // A facon frydom
-    auto mat2 = euler_to_mat(cardan_angles[0], cardan_angles[1], cardan_angles[2], CARDAN, DEG);
-
-//    auto quat2 = mat2.Get_A_quaternion();
-
-    auto quat2 = euler_to_quat(cardan_angles[0], cardan_angles[1], cardan_angles[2], CARDAN, DEG);
-    auto mat3 = quat_to_mat(quat2);
-    auto quat3 = mat_to_quat(mat2);
-
-    auto card_rec = quat_to_euler(quat2, CARDAN, DEG);
-
-    chrono::ChVector<> axis;
+    // quaternion -> axis angle
+    ChVector<> axis;
     double angle;
+    quat_to_axis_angle(quat, axis, angle, DEG);
 
-    quat_to_axis_angle(quat3, axis, angle, DEG);
+    // axis angle -> euler (verif)
+    auto cardan1 = axis_angle_to_euler(axis, angle, CARDAN, DEG);
+
+    // axis angle -> matrix
+    auto mat = axis_angle_to_mat(axis, angle, DEG);
+
+    // matrix -> euler (verif)
+    auto cardan2 = mat_to_euler(mat, CARDAN, DEG);
+
+    // euler -> axis angle (verif)
+    ChVector<> axis1;
+    double angle1;
+    euler_to_axis_angle(cardan2, axis1, angle1, CARDAN, DEG);
+
+    // matrix -> axis angle
+    ChVector<> axis2;
+    double angle2;
+    mat_to_axis_angle(mat, axis, angle, DEG);
+
+    // axis angle -> quaternion
+    auto quat1 = axis_angle_to_quat(axis2, angle2, DEG);
+
+    // quaternion -> euler (verif)
+    auto cardan3 = quat_to_euler(quat1, CARDAN, DEG);
 
 
-
-    auto quatz = axis_angle_to_quat(chrono::VECT_Z, 30, DEG);
-    auto quaty = axis_angle_to_quat(chrono::VECT_Y, 20, DEG);
-    auto quatx = axis_angle_to_quat(chrono::VECT_X, 10, DEG);
-
-    auto quat_total = quatx * quaty * quatz;
-    auto quat_total1 = quatz * quaty * quatx;
 
 
 
