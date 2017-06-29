@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     // matrix -> axis angle
     ChVector<> axis2;
     double angle2;
-    mat_to_axis_angle(mat, axis, angle, DEG);
+    mat_to_axis_angle(mat, axis, angle2, DEG);
 
     // axis angle -> quaternion
     auto quat1 = axis_angle_to_quat(axis2, angle2, DEG);
