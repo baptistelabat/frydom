@@ -21,8 +21,9 @@ namespace frydom {
     #define M_ONE_HOUR (M_ONE_MINUTE*60.)             ///> NUMBER OF SECONDS IN ONE HOUR
     #define M_KNOT (M_ONE_MILE/M_ONE_HOUR)            ///> Conversion coeff knot -> m/s
 
-    #define M_DEG M_PI/180.                         ///> Conversion DEG->RAD
-
+    #define M_PI_180 (M_PI/180.)
+    #define M_DEG M_PI_180                         ///> Conversion DEG->RAD
+    #define M_2PI (2.*M_PI)
 
     // =================================================================================================================
     // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME (please not forget the NED aspect !)
@@ -77,6 +78,29 @@ namespace frydom {
     inline chrono::ChVector<Real> NWU2NED(chrono::ChVector<Real> const vect) {
         return swap_NED_NWU(vect);
     }
+
+    template <class T>
+    inline T radians(const T a) {
+        return a * M_PI_180;
+    }
+
+    template <class T>
+    inline T degrees(const T a) {
+        return a / M_PI_180;
+    }
+
+    template <class Real=double>
+    inline Real modulo2pi(const Real a) {
+        return fmod(a, (Real)M_2PI);
+    }
+
+    template <class Real=double>
+    inline Real modulo360(const Real a) {
+        return fmod(a, (Real)360.);
+    }
+
+//    template <class Real=double>
+//    Real
 
 }  // end namespace frydom
 

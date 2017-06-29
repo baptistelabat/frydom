@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRHYDROBODY_H
 #define FRYDOM_FRHYDROBODY_H
 
-//#include "chrono/physics/ChBodyAuxRef.h"
+#include "chrono/physics/ChBodyAuxRef.h"
 #include "../misc/FrTriangleMeshConnected.h"
 
 // Forward declaration

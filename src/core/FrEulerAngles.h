@@ -8,9 +8,9 @@
 #include <cmath>
 
 #include "chrono/core/ChMatrix33.h"
+#include "../misc/FrMathUtils.h"
 #include "FrConstants.h"
 
-#define M_2PI 2.*M_PI
 
 // TODO: mettre les references utilisees (cf euler_angles.py)
 
@@ -36,6 +36,15 @@ namespace frydom {
     // =================================================================================================================
     // FUNCTIONS DECLARATIONS
     // =================================================================================================================
+
+    template <class Real=double>
+    void quat_to_axis_angle(const chrono::ChQuaternion<Real> quat,
+                            chrono::ChVector<Real>& axis, Real& angle,
+                            FrAngleUnit unit = DEG);
+
+    template <class Real=double>
+    chrono::ChQuaternion<Real> axis_angle_to_quat(const chrono::ChVector<Real> axis, const double angle,
+                                                  FrAngleUnit unit = DEG);
 
     template <class Real=double>
     chrono::ChMatrix33<Real> quat_to_mat(const chrono::ChQuaternion<Real> quat);
@@ -111,6 +120,46 @@ namespace frydom {
     // =================================================================================================================
 
     template <class Real=double>
+    void quat_to_axis_angle(const chrono::ChQuaternion<Real> quat,
+                            chrono::ChVector<Real>& axis, Real& angle,
+                            FrAngleUnit unit = DEG) {
+        Real q0 = quat.e0();
+        Real d = 1. - q0*q0;
+
+        if (is_close(d, 0.)) {
+            angle = 0.;
+            axis = chrono::VECT_Z; // by default, we say that a null rotation is around the z axis... May change
+        } else {
+            angle = 2. * acos(q0);
+            axis = quat.GetVector() / sqrt(d);
+
+            if (unit == DEG) {
+                angle = degrees(angle);
+            }
+        }
+    }
+
+    template <class Real=double>
+    chrono::ChQuaternion<Real> axis_angle_to_quat(const chrono::ChVector<Real> axis, const double angle,
+                                                  FrAngleUnit unit = DEG) {
+
+        Real half_angle = 0.5 * angle;
+        if (unit == DEG) {
+            half_angle = radians(half_angle);
+        }
+
+        auto vector = sin(half_angle) * axis / axis.Length();
+
+        chrono::ChQuaternion<Real> quat;
+        quat.e0() = cos(half_angle);
+        quat.e1() = vector[0];
+        quat.e2() = vector[1];
+        quat.e3() = vector[2];
+
+        return quat;
+    }
+
+    template <class Real=double>
     chrono::ChMatrix33<Real> quat_to_mat(const chrono::ChQuaternion<Real> quat) {
         auto rotmat = chrono::ChMatrix33<Real>();
         rotmat.Set_A_quaternion(quat);
@@ -138,18 +187,18 @@ namespace frydom {
 
         double phi_rad, theta_rad, psi_rad;
         if (unit == DEG) {
-            phi_rad = phi * M_DEG;
-            theta_rad = theta * M_DEG;
-            psi_rad = psi * M_DEG;
+            phi_rad = radians(phi);
+            theta_rad = radians(theta);
+            psi_rad = radians(psi);
         } else {
             phi_rad = phi;
             theta_rad = theta;
             psi_rad = psi;
         }
 
-        phi_rad = (Real) fmod(phi_rad, M_2PI);
-        theta_rad = (Real) fmod(theta_rad, M_2PI);
-        psi_rad = (Real) fmod(psi_rad, M_2PI);
+        phi_rad = (Real) modulo2pi(phi_rad);
+        theta_rad = (Real) modulo2pi(theta_rad);
+        psi_rad = (Real) modulo2pi(psi_rad);
 
         Real cphi = cos(phi_rad);
         Real sphi = sin(phi_rad);
@@ -232,9 +281,9 @@ namespace frydom {
         Real phi_2_rad, theta_2_rad, psi_2_rad;
 
         if (unit == DEG) {
-            phi_2_rad = phi * M_DEG * 0.5;
-            theta_2_rad = theta * M_DEG * 0.5;
-            psi_2_rad = psi * M_DEG * 0.5;
+            phi_2_rad = radians(phi) * 0.5;
+            theta_2_rad = radians(theta) * 0.5;
+            psi_2_rad = radians(psi) * 0.5;
         } else {
             phi_2_rad = phi * 0.5;
             theta_2_rad = theta * 0.5;
@@ -353,7 +402,7 @@ namespace frydom {
         }  // end switch (seq)
 
         if (unit == DEG) {
-            angles /= M_DEG;
+            angles = degrees(angles);
         }
 
         phi = angles.x();
