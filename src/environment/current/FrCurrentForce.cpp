@@ -9,9 +9,10 @@
 #include "../../core/FrOffshoreSystem.h"
 
 namespace frydom {
+namespace environment {
 
-    environment::FrCurrent* FrCurrentForce::GetCurrent() {
-        auto system = dynamic_cast<FrOffshoreSystem*>(GetBody()->GetSystem());  // Downcasting of a ChSystem
+    environment::FrCurrent *FrCurrentForce::GetCurrent() {
+        auto system = dynamic_cast<FrOffshoreSystem *>(GetBody()->GetSystem());  // Downcasting of a ChSystem
         return system->GetCurrent();
     }
 
@@ -30,9 +31,11 @@ namespace frydom {
         // 3- Calcul de la vitesse relative
         auto relative_velocity = body_velocity - current_velocity;
 
+        // 4- Computing the force
+
 
 
     }
 
-
+}  // end namespace environment
 }  // end namespace frydom

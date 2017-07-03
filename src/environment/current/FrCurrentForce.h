@@ -9,6 +9,7 @@
 #include "FrCurrent.h"
 
 namespace frydom {
+namespace environment {
 
     class FrCurrentForce : public FrForce {
 
@@ -16,11 +17,15 @@ namespace frydom {
 
         void UpdateState();
 
+        void SetPolarCoeffTable() {}; // TODO: mettre cela dans une classe derivee
+
+
     private:
-        environment::FrCurrent* GetCurrent();
+
+        environment::FrCurrent *GetCurrent();
 
     };
-
-}  // end namspace frydom
+}  // end namespace environment
+}  // end namespace frydom
 
 #endif //FRYDOM_FRCURRENTFORCE_H
