@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     // TODO: gerer une expression des angles d'euler tels que phi et theta \in ]-180, 180] et psi \in [0, 360[
 
 
-    auto cardan = ChVector<>(0, -90, 0);
+    auto cardan = ChVector<>(10, 20, 30);
 
     // euler -> quaternion
     auto quat = euler_to_quat(cardan, CARDAN, DEG);
@@ -58,8 +58,7 @@ int main(int argc, char* argv[]) {
     assert((is_close(axis[0], axis2[0]) &&
             is_close(axis[1], axis2[1]) &&
             is_close(axis[2], axis2[2]) &&
-            is_close(angle, angle2)
-           ));
+            is_close(angle, angle2)));
 
     // axis angle -> quaternion
     auto quat1 = axis_angle_to_quat(axis2, angle2, DEG);
@@ -85,27 +84,27 @@ int main(int argc, char* argv[]) {
     ChVector<double> axis3;
     double angle3;
     swap_NED_NWU(axis, angle, axis3, angle3);
+    auto quat3 = axis_angle_to_quat(axis3, angle3, DEG);
+    assert((is_close(quat3[0], quat2[0]) &&
+            is_close(quat3[1], quat2[1]) &&
+            is_close(quat3[2], quat2[2]) &&
+            is_close(quat3[3], quat2[3])));
 
     // cardan
     auto cardan4 = swap_NED_NWU(cardan, CARDAN);
+    auto quat4 = euler_to_quat(cardan4, CARDAN, DEG);
+    assert((is_close(quat4[0], quat2[0]) &&
+            is_close(quat4[1], quat2[1]) &&
+            is_close(quat4[2], quat2[2]) &&
+            is_close(quat4[3], quat2[3])));
 
     // matrix
     auto mat1 = swap_NED_NWU(mat);
-
-
-
-
-
-//    auto quat2inv = quat2.GetInverse();
-//    auto card = quat_to_euler(quat2inv, CARDAN, RAD);
-//
-//    auto mat3 = euler_to_mat(card, CARDAN, RAD);
-//    mat3.FastInvert(mat3);
-//    auto q = mat_to_quat(mat3);
-//    auto c = quat_to_euler(q, CARDAN, DEG);
-
-
-
+    auto quat5 = mat_to_quat(mat1);
+    assert((is_close(quat5[0], quat2[0]) &&
+            is_close(quat5[1], quat2[1]) &&
+            is_close(quat5[2], quat2[2]) &&
+            is_close(quat5[3], quat2[3])));
 
     return 0;
 

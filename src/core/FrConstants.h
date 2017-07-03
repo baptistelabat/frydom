@@ -100,9 +100,6 @@ namespace frydom {
         return fmod(a, (Real)360.);
     }
 
-//    template <class Real=double>
-//    Real
-
 }  // end namespace frydom
 
 

@@ -346,15 +346,15 @@ namespace frydom {
                             Real ctheta, Real stheta,
                             Real cpsi, Real spsi) {
 
-        rotmat.SetElement(0, 0, ctheta*cpsi);
-        rotmat.SetElement(0, 1, sphi*stheta*cpsi - cphi*spsi);
-        rotmat.SetElement(0, 2, cphi*stheta*cpsi + sphi*spsi);
-        rotmat.SetElement(1, 0, ctheta*spsi);
-        rotmat.SetElement(1, 1, sphi*stheta*spsi + cphi*cpsi);
-        rotmat.SetElement(1, 2, cphi*stheta*spsi - sphi*cpsi);
-        rotmat.SetElement(2, 0, -stheta);
-        rotmat.SetElement(2, 1, ctheta*sphi);
-        rotmat.SetElement(2, 2, ctheta*cphi);
+        rotmat.Set33Element(0, 0, ctheta*cpsi);
+        rotmat.Set33Element(0, 1, sphi*stheta*cpsi - cphi*spsi);
+        rotmat.Set33Element(0, 2, cphi*stheta*cpsi + sphi*spsi);
+        rotmat.Set33Element(1, 0, ctheta*spsi);
+        rotmat.Set33Element(1, 1, sphi*stheta*spsi + cphi*cpsi);
+        rotmat.Set33Element(1, 2, cphi*stheta*spsi - sphi*cpsi);
+        rotmat.Set33Element(2, 0, -stheta);
+        rotmat.Set33Element(2, 1, ctheta*sphi);
+        rotmat.Set33Element(2, 2, ctheta*cphi);
     }
 
 
@@ -544,15 +544,15 @@ namespace frydom {
                              Real& r00, Real& r01, Real& r02,
                              Real& r10, Real& r11, Real& r12,
                              Real& r20, Real& r21, Real& r22) {
-        r00 = mat.GetElement(0, 0);
-        r01 = mat.GetElement(0, 1);
-        r02 = mat.GetElement(0, 2);
-        r10 = mat.GetElement(1, 0);
-        r11 = mat.GetElement(1, 1);
-        r12 = mat.GetElement(1, 2);
-        r20 = mat.GetElement(2, 0);
-        r21 = mat.GetElement(2, 1);
-        r22 = mat.GetElement(2, 2);
+        r00 = mat.Get33Element(0, 0);
+        r01 = mat.Get33Element(0, 1);
+        r02 = mat.Get33Element(0, 2);
+        r10 = mat.Get33Element(1, 0);
+        r11 = mat.Get33Element(1, 1);
+        r12 = mat.Get33Element(1, 2);
+        r20 = mat.Get33Element(2, 0);
+        r21 = mat.Get33Element(2, 1);
+        r22 = mat.Get33Element(2, 2);
     }
 
 
@@ -596,9 +596,15 @@ namespace frydom {
     template <class Real=double>
     inline chrono::ChMatrix33<Real> swap_NED_NWU(const chrono::ChMatrix33<Real> mat) {
         chrono::ChMatrix33<Real> new_mat;
-        new_mat = mat;
-//        new_mat[1] = -new_mat[1];
-//        new_mat[2] = -new_mat[2];
+        new_mat.Set33Element(0, 0,  mat.Get33Element(0, 0));
+        new_mat.Set33Element(0, 1, -mat.Get33Element(0, 1));
+        new_mat.Set33Element(0, 2, -mat.Get33Element(0, 2));
+        new_mat.Set33Element(1, 0, -mat.Get33Element(1, 0));
+        new_mat.Set33Element(1, 1,  mat.Get33Element(1, 1));
+        new_mat.Set33Element(1, 2,  mat.Get33Element(1, 2));
+        new_mat.Set33Element(2, 0, -mat.Get33Element(2, 0));
+        new_mat.Set33Element(2, 1,  mat.Get33Element(2, 1));
+        new_mat.Set33Element(2, 2,  mat.Get33Element(2, 2));
         return new_mat;
     }
 
