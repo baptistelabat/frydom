@@ -58,6 +58,7 @@ namespace frydom {
     // =================================================================================================================
     // UTILITY FUNCTIONS
     // =================================================================================================================
+    // TODO : placer les fonctions de conversion NED/NWU dans FrEulerAngles.h
     /// Transform either a NED vector into a NWU vector or a NWU vector into a NED vector (inline)
     template <class Real=double>
     inline chrono::ChVector<Real> swap_NED_NWU(chrono::ChVector<Real> const vect) {

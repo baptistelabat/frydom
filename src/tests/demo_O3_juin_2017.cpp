@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
     ship1->SetMass(mass);
     ship1->SetPos(chrono::ChVector<>(-200, 50, 0));
 
-    auto rot = chrono::Q_from_AngAxis(-2.*M_PI/180., chrono::ChVector<>(0, 0, 1));
+    auto rot = chrono::Q_from_AngAxis(frydom::radians(-2.), chrono::ChVector<>(0, 0, 1));
 
     ship1->SetRot(rot);
 

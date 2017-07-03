@@ -77,7 +77,20 @@ int main(int argc, char* argv[]) {
             is_close(cardan[2], cardan3[2])));
 
 
+    // Tests for conversion between NED and NWU
+    // quaternion
+    auto quat2 = swap_NED_NWU(quat);
 
+    // Angle axis
+    ChVector<double> axis3;
+    double angle3;
+    swap_NED_NWU(axis, angle, axis3, angle3);
+
+    // cardan
+    auto cardan4 = swap_NED_NWU(cardan, CARDAN);
+
+    // matrix
+    auto mat1 = swap_NED_NWU(mat);
 
 
 
