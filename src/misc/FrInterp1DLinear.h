@@ -25,15 +25,16 @@ namespace frydom {
 
             FrInterp1d<Real>::Initialize(x, y);
 
+            Real xi, xii, yi, yii, xii_m_xi;
             for (unsigned int i=1; i < this->ndata; i++) {
 
-                Real xi = this->xcoord->at(i-1);
-                Real xii = this->xcoord->at(i);
+                xi = this->xcoord->at(i-1);
+                xii = this->xcoord->at(i);
 
-                Real yi = this->yval->at(i-1);
-                Real yii = this->yval->at(i);
+                yi = this->yval->at(i-1);
+                yii = this->yval->at(i);
 
-                Real xii_m_xi = xii - xi;
+                xii_m_xi = xii - xi;
 
                 a.push_back( (yii-yi) / xii_m_xi );
                 b.push_back( (yi*xii - xi*yii) / xii_m_xi );

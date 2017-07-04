@@ -12,7 +12,7 @@
 
 namespace frydom {
     template<class Real=double>
-    std::vector<Real> arange(Real stop, Real step = 1, Real start = 0) {
+    std::vector<Real> arange(Real start, Real stop, Real step=1) {
         assert (start < stop);
         assert (step > 0.);
 
@@ -34,29 +34,12 @@ namespace frydom {
 
 
     template<class Real=double>
-    std::vector<Real> linspace(Real stop, Real start, unsigned int num = 50, bool endpoint = true) {
-
-        assert(num >= 0);
+    std::vector<Real> linspace(Real start, Real stop, unsigned int num) {
+        assert(num > 1);
         assert(start <= stop);
 
-        Real div;
-        if (endpoint) {
-            div = num - 1;
-        } else {
-            div = num;
-        }
-
-        auto delta = stop - start;
-
-        Real step;
-        if (num > 1) {
-            step = delta / div;
-            if (endpoint) {
-                return arange(stop + step / 2, step, start);
-            } else {
-                return arange(stop, step, start);
-            }
-        }
+        Real step = (stop-start) / (num-1);
+        return arange(start, stop + step / 2, step);
 
     }
 }

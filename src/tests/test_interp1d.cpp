@@ -8,18 +8,18 @@
 #include "../misc/FrInterp1DLinear.h"
 #include "../misc/FrLinspace.h"
 
-#define N 101
+#define N 10001
 
 int main(int argc, char* argv[]) {
     // Building the x coords as a shared pointer
     auto x = std::make_shared<std::vector<double>>(
-            frydom::linspace(4*M_PI, M_PI, 1000, true)
+            frydom::linspace(M_PI, 4*M_PI, N-1)
     );
 
     // Building the data
     auto y = std::make_shared<std::vector<double>>();
     double val;
-    for (int i = 0; i < x->size(); i++) {
+    for (unsigned long i = 0; i < x->size(); i++) {
         val = sin(x->at(i));
         y->push_back( val );
     }
@@ -29,17 +29,17 @@ int main(int argc, char* argv[]) {
 
     interpolator.Initialize(x, y);
 
+    // Test of the Eval method for one scalar
     auto y0 = interpolator.Eval(5.3333);
+    // Test of the call operator for one scalar
     auto y1 = interpolator(5.3333);
-
-//    std::cout << y0 << std::endl;
-//    std::cout << interpolator(5.3333) << std::endl;
 
     assert(frydom::is_close(y0, y1));
     assert(frydom::is_close(y0, -0.8133409832926298));
 
     // Test for a vector of x coords
-    auto x_interp = frydom::linspace(4*M_PI, M_PI, 5000, true);
+    auto x_interp = frydom::linspace(M_PI, 4*M_PI, 1000*N);
+    // Using only the overloaded call operator for vector values
     auto y_interp = interpolator(x_interp);
 
 }
