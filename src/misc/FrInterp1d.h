@@ -27,6 +27,8 @@ namespace frydom {
         FrInterp1d() {};
         ~FrInterp1d() {};
 
+        // TODO: voir a separer l'implementation et la mettre en fin de fichier (pas directement dans le corps de la classe)
+
         virtual void Initialize(const std::shared_ptr<std::vector<Real>> x,
                                 const std::shared_ptr<std::vector<Real>> y) {
             assert( x->size() == y->size() );
@@ -40,9 +42,17 @@ namespace frydom {
 
         }
 
-        virtual Real Eval(Real x) = 0;
+        virtual Real Eval(const Real x) const = 0;
 
-        virtual std::vector<Real> Eval(const std::vector<Real> xvector) = 0;
+        virtual std::vector<Real> Eval(const std::vector<Real> xvector) const = 0;
+
+        Real operator() (const Real x) const {
+            return Eval(x);
+        }
+
+        std::vector<Real> operator() (const std::vector<Real> xvector) const {
+            return Eval(xvector);
+        }
 
     };
 

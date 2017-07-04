@@ -19,12 +19,12 @@ namespace frydom {
 
     public:
 
+        // TODO: voir a separer l'implementation et la mettre en fin de fichier (pas directement dans le corps de la classe)
         void Initialize(const std::shared_ptr<std::vector<Real>> x,
                         const std::shared_ptr<std::vector<Real>> y) {
 
             FrInterp1d<Real>::Initialize(x, y);
 
-//            unsigned long n = x->size();
             for (unsigned int i=1; i < this->ndata; i++) {
 
                 Real xi = this->xcoord->at(i-1);
@@ -41,14 +41,15 @@ namespace frydom {
             }
         }
 
-        Real Eval(Real x) {
+        Real Eval(const Real x) const {
             assert (x >= this->xmin &&
                     x <= this->xmax);
 
-            // First, binary search on the
-            auto lower = std::lower_bound(this->xcoord->begin(), this->xcoord->end(), x);
-            auto index = std::distance(this->xcoord->begin(), lower);
+            // First, binary search on the x coords
+            auto upper = std::upper_bound(this->xcoord->begin(), this->xcoord->end(), x);
+            auto index = std::distance(this->xcoord->begin(), upper);
 
+            // FIXME: bug quand on s'approche de la borne sup...
             Real a_ = a.at(index-1);
             Real b_ = b.at(index-1);
 
@@ -56,7 +57,17 @@ namespace frydom {
 
         }
 
-        std::vector<Real> Eval(const std::vector<Real> xvector) {};
+        std::vector<Real> Eval(const std::vector<Real> xvector) const {
+            std::vector<Real> out;
+            Real val;
+
+            auto n = xvector.size();
+            for (int i=0; i<n; i++) {
+                val = Eval(xvector.at(i));
+                out.push_back(val);
+            }
+            return out;
+        };
 
     };
 
