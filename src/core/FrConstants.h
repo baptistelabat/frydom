@@ -5,7 +5,6 @@
 #ifndef FRYDOM_CONSTANTS_H
 #define FRYDOM_CONSTANTS_H
 
-
 // Forward declaration
 namespace chrono {
     template <class Real>
@@ -18,15 +17,15 @@ namespace frydom {
 
     #define M_ONE_MILE 1852.                        ///> NUMBER OF METER IN ONE NAUTICAL MILE
     #define M_ONE_MINUTE 60.                        ///> NUMBER OF SECONDS IN ONE MINUTE
-    #define M_ONE_HOUR (M_ONE_MINUTE*60.)             ///> NUMBER OF SECONDS IN ONE HOUR
-    #define M_KNOT (M_ONE_MILE/M_ONE_HOUR)            ///> Conversion coeff knot -> m/s
+    #define M_ONE_HOUR (M_ONE_MINUTE*60.)           ///> NUMBER OF SECONDS IN ONE HOUR
+    #define M_KNOT (M_ONE_MILE/M_ONE_HOUR)          ///> Conversion coeff knot -> m/s
 
-    #define M_PI_180 (M_PI/180.)
-    #define M_DEG M_PI_180                         ///> Conversion DEG->RAD
-    #define M_2PI (2.*M_PI)
+    #define M_PI_180 (M_PI/180.)                    ///> Conversion DEF->RAD
+    #define M_DEG M_PI_180                          ///> Conversion DEG->RAD
+    #define M_2PI (2.*M_PI)                         ///> 2*PI
 
     // =================================================================================================================
-    // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME (please not forget the NED aspect !)
+    // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME (please do not forget the NED aspect !)
     // =================================================================================================================
     extern const chrono::ChVector<double> NORTH;        ///< North direction
     extern const chrono::ChVector<double> NORTH_EAST;   ///< North-East direction
@@ -51,8 +50,8 @@ namespace frydom {
     };
 
     enum FrSpeedUnit {  // TODO: ajouter k/h ?
-        MS,   ///< m/s
-        KNOT  ///< nautical knot
+        MS,   ///< M/S
+        KNOT  ///< NAUTICAL KNOTS
     };
 
     // =================================================================================================================
@@ -80,27 +79,31 @@ namespace frydom {
         return swap_NED_NWU(vect);
     }
 
+    // TODO: both two following functions should be realized as MACROS for performance
+    /// CONVERSION DEG->RAD
     template <class T>
     inline T radians(const T a) {
         return a * M_PI_180;
     }
 
+    /// CONVERSION RAD->DEG
     template <class T>
     inline T degrees(const T a) {
         return a / M_PI_180;
     }
 
+    /// Reminder of mod(2*pi) to put back an angle expressed in radian into [0, 2pi[
     template <class Real=double>
     inline Real modulo2pi(const Real a) {
         return fmod(a, (Real)M_2PI);
     }
 
+    /// Reminder of mod(360) to put back an angle expressed in degrees into [0, 360[
     template <class Real=double>
     inline Real modulo360(const Real a) {
         return fmod(a, (Real)360.);
     }
 
 }  // end namespace frydom
-
 
 #endif //FRYDOM_CONSTANTS_H

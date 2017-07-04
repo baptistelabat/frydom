@@ -15,8 +15,9 @@ int main(int argc, char* argv[]) {
     // TODO: gerer la requete d'expression des angles d'euler dans NWU et NED
     // TODO: gerer une expression des angles d'euler tels que phi et theta \in ]-180, 180] et psi \in [0, 360[
 
-
     auto cardan = ChVector<>(10, 20, 30);
+
+    // TODO: mettre ce qui suit en fonction et appeler pour differentes valeurs d'angle de cardan
 
     // euler -> quaternion
     auto quat = euler_to_quat(cardan, CARDAN, DEG);
@@ -48,8 +49,7 @@ int main(int argc, char* argv[]) {
     assert((is_close(axis[0], axis1[0]) &&
             is_close(axis[1], axis1[1]) &&
             is_close(axis[2], axis1[2]) &&
-            is_close(angle, angle1)
-           ));
+            is_close(angle, angle1)));
 
     // matrix -> axis angle
     ChVector<> axis2;
@@ -65,8 +65,7 @@ int main(int argc, char* argv[]) {
     assert((is_close(quat[0], quat1[0]) &&
             is_close(quat[1], quat1[1]) &&
             is_close(quat[2], quat1[2]) &&
-            is_close(quat[2], quat1[2])
-           ));
+            is_close(quat[2], quat1[2])));
 
 
     // quaternion -> euler (verif)
@@ -74,7 +73,6 @@ int main(int argc, char* argv[]) {
     assert((is_close(cardan[0], cardan3[0]) &&
             is_close(cardan[1], cardan3[1]) &&
             is_close(cardan[2], cardan3[2])));
-
 
     // Tests for conversion between NED and NWU
     // quaternion
@@ -106,6 +104,8 @@ int main(int argc, char* argv[]) {
             is_close(quat5[2], quat2[2]) &&
             is_close(quat5[3], quat2[3])));
 
+#ifdef Debug
+    std::cout << "happy" << std::endl;
+#endif
     return 0;
-
 }

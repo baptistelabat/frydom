@@ -18,6 +18,8 @@ namespace environment {
 
     void FrCurrentForce::UpdateState() {
 
+        // TODO: plutot travailler dans NED puis ensuite passer en NWU pour les forces...
+
         // 1- Recuperation du vecteur vitesse du bateau dans le repere NWU
         auto body_velocity = GetBody()->GetPos_dt();
 
