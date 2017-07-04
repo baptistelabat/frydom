@@ -74,8 +74,8 @@ set(SOURCE_FILES
         src/misc/FrMathUtils.h
         src/misc/FrInterp1d.h
         src/misc/FrInterp1d.cpp
-        src/misc/FrInterp1DLinear.h
-        src/misc/FrInterp1DLinear.cpp
+        src/misc/FrInterp1dLinear.h
+        src/misc/FrInterp1dLinear.cpp
 
         src/environment/waves/FrFreeSurface.h
         src/environment/waves/FrFreeSurface.cpp
@@ -125,7 +125,7 @@ set(SOURCE_FILES
 
 # TODO: mettre dans un foreach !!
 # To add a target
-add_executable(demo_free_surface ${SOURCE_FILES} src/tests/demo_FreeSurface.cpp src/misc/FrInterp1DLinear.cpp src/misc/FrInterp1DLinear.h)
+add_executable(demo_free_surface ${SOURCE_FILES} src/tests/demo_FreeSurface.cpp src/misc/FrInterp1dLinear.cpp src/misc/FrInterp1dLinear.h)
 
 add_executable(demo_O3 ${SOURCE_FILES} src/tests/demo_O3_juin_2017.cpp)
 

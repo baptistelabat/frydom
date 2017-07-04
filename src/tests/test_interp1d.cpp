@@ -5,7 +5,7 @@
 #include <math.h>
 
 #include "../misc/FrMathUtils.h"
-#include "../misc/FrInterp1DLinear.h"
+#include "../misc/FrInterp1dLinear.h"
 #include "../misc/FrLinspace.h"
 
 #define N 10001
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Create the interpolation
-    frydom::FrInterp1DLinear<double> interpolator;
+    frydom::FrInterp1dLinear<double> interpolator;
 
     interpolator.Initialize(x, y);
 

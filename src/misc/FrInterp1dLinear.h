@@ -11,7 +11,7 @@
 namespace frydom {
 
     template <class Real=double>
-    class FrInterp1DLinear : public FrInterp1d<Real> {
+    class FrInterp1dLinear : public FrInterp1d<Real> {
 
     private:
         std::vector<Real> a;
