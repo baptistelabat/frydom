@@ -42,4 +42,17 @@ namespace frydom {
         return arange(start, stop + step / 2, step);
 
     }
+
+    template <class Real=double>
+    std::vector<Real> logspace(Real start, Real stop, unsigned int num, Real base=10.) {
+        assert(num > 1);
+        assert(start <= stop);
+
+        auto out = linspace(start, stop, num);
+        for (unsigned int i = 0; i < out.size(); i++) {
+            out.at(i) = pow(base, out.at(i));
+        }
+        return out;
+    }
+
 }
