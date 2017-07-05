@@ -2,3 +2,6 @@
 [submodule "frydom/core/chrono/chrono"]
 	path = frydom/core/chrono/chrono
 	url = https://github.com/fronron/chrono.git
+[submodule "thirdparty/yaml-cpp"]
+	path = thirdparty/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git
