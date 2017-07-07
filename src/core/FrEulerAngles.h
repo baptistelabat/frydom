@@ -8,7 +8,7 @@
 #include <cmath>
 
 #include "chrono/core/ChMatrix33.h"
-#include "../misc/FrMathUtils.h"
+#include "misc/FrMathUtils.h"
 #include "FrConstants.h"
 
 

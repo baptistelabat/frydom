@@ -54,6 +54,17 @@ else()
     set(EXTRA_COMPILE_FLAGS "")
 endif()
 
+#--------------------------------------------------------------
+# Add the YAML-CPP project
+#--------------------------------------------------------------
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/yaml-cpp/include)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/yaml-cpp)  // Cette ligne charge le CMakeLists de yaml-cpp...
+set(YAML_CPP_LIB "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/yaml-cpp/build/libyaml-cpp.so")
+
+#--------------------------------------------------------------
+# Specifies frydom project
+#--------------------------------------------------------------
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 #--------------------------------------------------------------
 # Add the executable from the project and specify all C++
@@ -126,27 +137,33 @@ set(SOURCE_FILES
 # TODO: mettre dans un foreach !!
 # To add a target
 add_executable(demo_free_surface ${SOURCE_FILES} src/tests/demo_FreeSurface.cpp src/misc/FrInterp1dLinear.cpp src/misc/FrInterp1dLinear.h)
+target_link_libraries(demo_free_surface ${CHRONO_LIBRARIES})
 
 add_executable(demo_O3 ${SOURCE_FILES} src/tests/demo_O3_juin_2017.cpp)
+target_link_libraries(demo_O3 ${CHRONO_LIBRARIES})
 
 add_executable(demo_rotation ${SOURCE_FILES} src/tests/demo_rotation.cpp)
+target_link_libraries(demo_rotation ${CHRONO_LIBRARIES})
 
 add_executable(demo_ship_orientation ${SOURCE_FILES} src/tests/demo_ship_orientation.cpp)
+target_link_libraries(demo_ship_orientation ${CHRONO_LIBRARIES})
 
 add_executable(test_interp1d ${SOURCE_FILES} src/tests/test_interp1d.cpp)
+target_link_libraries(test_interp1d ${CHRONO_LIBRARIES})
 
 add_executable(test_linspace ${SOURCE_FILES} src/tests/test_linspace.cpp)
-#set_target_properties(test_ch_system PROPERTIES
-#	    COMPILE_FLAGS "${CHRONO_CXX_FLAGS} ${EXTRA_COMPILE_FLAGS}"
-#	    COMPILE_DEFINITIONS "CHRONO_DATA_DIR=\"${CHRONO_DATA_DIR}\""
-#	    LINK_FLAGS "${CHRONO_LINKER_FLAGS}")
-#
-target_link_libraries(demo_free_surface ${CHRONO_LIBRARIES})
-target_link_libraries(demo_O3 ${CHRONO_LIBRARIES})
-target_link_libraries(demo_rotation ${CHRONO_LIBRARIES})
-target_link_libraries(demo_ship_orientation ${CHRONO_LIBRARIES})
-target_link_libraries(test_interp1d ${CHRONO_LIBRARIES})
 target_link_libraries(test_linspace ${CHRONO_LIBRARIES})
+
+#add_executable(test_yaml ${SOURCE_FILES} src/tests/test_cpp_yaml.cpp)
+#target_link_libraries(test_yaml ${CHRONO_LIBRARIES} ${YAML_CPP_LIBS})
+add_executable(test_yaml src/tests/test_cpp_yaml.cpp)
+target_link_libraries(test_yaml ${YAML_CPP_LIB})
+
+#message(${CHRONO_LIBRARIES})
+
+
+
+
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===

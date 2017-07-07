@@ -15,28 +15,28 @@
 
 #include <math.h>
 
-#include "../core/FrConstants.h"
+#include "core/FrConstants.h"
 
 #include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChSystemNSC.h"
 
 #include "chrono_irrlicht/ChIrrApp.h"
 
-#include "../core/FrOffshoreSystem.h"
-#include "../core/FrShip.h"
-#include "../environment/waves/FrFlatFreeSurface.h"
+#include "core/FrOffshoreSystem.h"
+#include "core/FrShip.h"
+#include "environment/waves/FrFlatFreeSurface.h"
 
-#include "../environment/current/FrCurrentForce.h"
+#include "environment/current/FrCurrentForce.h"
 
-#include "../utils/FrIrrApp.h"
-#include "../core/FrForceAsset.h"
+#include "utils/FrIrrApp.h"
+#include "core/FrForceAsset.h"
 
-#include "../hydrodynamics/FrITTC57.h"
-#include "../hydrodynamics/FrTryalForce.h"
+#include "hydrodynamics/FrITTC57.h"
+#include "hydrodynamics/FrTryalForce.h"
 
 
-#include <irrlicht.h>
-#include <chrono/physics/ChLinkMate.h>
+#include "irrlicht.h"
+#include "chrono/physics/ChLinkMate.h"
 
 bool viz = true;
 float friction = 0.6f;

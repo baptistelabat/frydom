@@ -6,7 +6,7 @@
 
 #include "FrCurrentForce.h"
 
-#include "../../core/FrOffshoreSystem.h"
+#include "core/FrOffshoreSystem.h"
 
 namespace frydom {
 namespace environment {

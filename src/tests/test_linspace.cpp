@@ -2,7 +2,7 @@
 // Created by frongere on 04/07/17.
 //
 
-#include "../misc/FrLinspace.h"
+#include "misc/FrLinspace.h"
 
 int main(int argc, char* argv[]) {
 

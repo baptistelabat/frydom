@@ -6,7 +6,6 @@
 #include <chrono/assets/ChTriangleMeshShape.h>
 
 #include "FrHydroBody.h"
-//#include "../misc/FrTriangleMeshConnected.h"
 
 namespace frydom {
 

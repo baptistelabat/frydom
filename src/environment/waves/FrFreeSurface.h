@@ -20,7 +20,7 @@
 //#include "chrono/physics/ChBody.h"
 //#include "chrono/assets/ChColorAsset.h"
 
-#include "../../misc/FrTriangleMeshConnected.h"
+#include "misc/FrTriangleMeshConnected.h"
 
 // Forward declarations
 namespace chrono {

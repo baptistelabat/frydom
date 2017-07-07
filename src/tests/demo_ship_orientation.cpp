@@ -4,11 +4,11 @@
 
 
 // TODO: faire un header qui permet d'importer tout core (FrCore.h)
-#include "../core/FrShip.h"
-#include "../core/FrOffshoreSystem.h"
-#include "../environment/waves/FrFlatFreeSurface.h"
-#include "../core/FrEulerAngles.h"
-#include "../utils/FrIrrApp.h"
+#include "core/FrShip.h"
+#include "core/FrOffshoreSystem.h"
+#include "environment/waves/FrFlatFreeSurface.h"
+#include "core/FrEulerAngles.h"
+#include "utils/FrIrrApp.h"
 
 
 using namespace chrono;

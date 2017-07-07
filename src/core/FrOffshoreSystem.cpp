@@ -3,7 +3,7 @@
 //
 
 #include "FrOffshoreSystem.h"
-#include "../environment/waves/FrFlatFreeSurface.h"
+#include "environment/waves/FrFlatFreeSurface.h"
 
 namespace frydom {
 

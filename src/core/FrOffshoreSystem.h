@@ -10,8 +10,8 @@
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/core/ChMatrixNM.h"
 #include "chrono/core/ChMatrix33.h"
-#include "../environment/waves/FrFreeSurface.h"
-#include "../environment/current/FrCurrent.h"
+#include "environment/waves/FrFreeSurface.h"
+#include "environment/current/FrCurrent.h"
 
 namespace frydom {
 
