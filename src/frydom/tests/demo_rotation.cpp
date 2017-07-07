@@ -4,8 +4,8 @@
 
 #include "chrono/core/ChQuaternion.h"
 #include "chrono/core/ChMatrix33.h"
-#include "core/FrConstants.h"
-#include "core/FrEulerAngles.h"
+#include "frydom/core/FrConstants.h"
+#include "frydom/core/FrEulerAngles.h"
 
 using namespace chrono;
 using namespace frydom;

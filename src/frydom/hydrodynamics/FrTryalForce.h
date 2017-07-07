@@ -8,7 +8,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "core/FrForce.h"
+#include "frydom/core/FrForce.h"
 
 namespace frydom {
 

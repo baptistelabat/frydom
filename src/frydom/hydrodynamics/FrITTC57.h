@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRITTC57_H
 #define FRYDOM_FRITTC57_H
 
-#include "core/FrForce.h"
+#include "frydom/core/FrForce.h"
 
 
 namespace frydom {

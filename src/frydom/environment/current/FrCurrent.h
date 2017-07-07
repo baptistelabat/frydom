@@ -16,7 +16,7 @@
 #ifndef FRYDOM_FRCURRENT_H
 #define FRYDOM_FRCURRENT_H
 
-#include "core/FrConstants.h"
+#include "frydom/core/FrConstants.h"
 
 // TODO: definir une classe de base pour le champ de courant et de vent (et de houle) afin de ne pas
 // repliquer le code concernant la gestion des unites de vitesse, des conventions de direction ("vient de")

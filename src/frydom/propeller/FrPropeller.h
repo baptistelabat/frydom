@@ -6,7 +6,7 @@
 #define FRYDOM_FRPROPELLER_H
 
 
-#include "core/FrForce.h"
+#include "frydom/core/FrForce.h"
 
 
 

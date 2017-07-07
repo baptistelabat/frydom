@@ -14,7 +14,7 @@
 // =============================================================================
 
 #include "FrFlatFreeSurface.h"
-#include "core/FrOffshoreSystem.h"
+#include "frydom/core/FrOffshoreSystem.h"
 
 namespace frydom {
     namespace environment{

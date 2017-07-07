@@ -6,7 +6,7 @@
 #define FRYDOM_FRHYDROBODY_H
 
 #include "chrono/physics/ChBodyAuxRef.h"
-#include "misc/FrTriangleMeshConnected.h"
+#include "frydom/misc/FrTriangleMeshConnected.h"
 
 // Forward declaration
 namespace chrono {

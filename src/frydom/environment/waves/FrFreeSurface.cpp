@@ -19,7 +19,7 @@
 
 
 #include "FrFreeSurface.h"
-#include "core/FrOffshoreSystem.h"
+#include "frydom/core/FrOffshoreSystem.h"
 
 
 namespace frydom {

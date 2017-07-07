@@ -4,9 +4,9 @@
 
 #include <math.h>
 
-#include "misc/FrMathUtils.h"
-#include "misc/FrInterp1dLinear.h"
-#include "misc/FrLinspace.h"
+#include "frydom/misc/FrMathUtils.h"
+#include "frydom/misc/FrInterp1dLinear.h"
+#include "frydom/misc/FrLinspace.h"
 
 #define N 10001
 

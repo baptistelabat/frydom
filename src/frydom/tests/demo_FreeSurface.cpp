@@ -15,24 +15,24 @@
 
 #include <math.h>
 
-#include "core/FrConstants.h"
+#include "frydom/core/FrConstants.h"
 
 #include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChSystemNSC.h"
 
 #include "chrono_irrlicht/ChIrrApp.h"
 
-#include "core/FrOffshoreSystem.h"
-#include "core/FrShip.h"
-#include "environment/waves/FrFlatFreeSurface.h"
+#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/core/FrShip.h"
+#include "frydom/environment/waves/FrFlatFreeSurface.h"
 
-#include "environment/current/FrCurrentForce.h"
+#include "frydom/environment/current/FrCurrentForce.h"
 
-#include "utils/FrIrrApp.h"
-#include "core/FrForceAsset.h"
+#include "frydom/utils/FrIrrApp.h"
+#include "frydom/core/FrForceAsset.h"
 
-#include "hydrodynamics/FrITTC57.h"
-#include "hydrodynamics/FrTryalForce.h"
+#include "frydom/hydrodynamics/FrITTC57.h"
+#include "frydom/hydrodynamics/FrTryalForce.h"
 
 
 #include <irrlicht.h>
