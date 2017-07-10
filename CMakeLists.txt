@@ -154,6 +154,9 @@ target_link_libraries(test_interp1d ${CHRONO_LIBRARIES})
 add_executable(test_linspace ${SOURCE_FILES} src/frydom/tests/test_linspace.cpp)
 target_link_libraries(test_linspace ${CHRONO_LIBRARIES})
 
+add_executable(test_current_force ${SOURCE_FILES} src/frydom/tests/test_current_force.cpp)
+target_link_libraries(test_current_force ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
 #add_executable(test_yaml ${SOURCE_FILES} src/frydom/tests/test_cpp_yaml.cpp)
 #target_link_libraries(test_yaml ${CHRONO_LIBRARIES} ${YAML_CPP_LIBS})
 add_executable(test_yaml src/frydom/tests/test_cpp_yaml.cpp)

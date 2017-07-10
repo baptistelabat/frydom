@@ -16,6 +16,7 @@
 #ifndef FRYDOM_FRCURRENT_H
 #define FRYDOM_FRCURRENT_H
 
+#include "chrono/core/ChVector.h"
 #include "frydom/core/FrConstants.h"
 
 // TODO: definir une classe de base pour le champ de courant et de vent (et de houle) afin de ne pas
@@ -30,7 +31,7 @@ namespace frydom {
         private:
             // FIXME: ce vecteur doit representer le flux. Par contre, les informations d'angle sont courant porte vers et non vient de
             // FIXME: Corriger les information d'angle qui ne sont pas consistantes.
-            chrono::ChVector<> m_velocity_vector;  ///< the velocity vector as seen by a body in the flux, expressed in the e frame
+            chrono::ChVector<> m_velocity_vector;  ///< the velocity vector as seen by a body in the flux, expressed in the NWU frame
 
         public:
 

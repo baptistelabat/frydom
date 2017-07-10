@@ -7,7 +7,6 @@
 #include <algorithm>
 #include "yaml-cpp/yaml.h"
 
-//#include ""
 
 struct PolarCurrentCoeffs {
     std::vector<double> angles;
@@ -16,7 +15,7 @@ struct PolarCurrentCoeffs {
     std::vector<double> cz;
 };
 
-// TODO: A mettre dans le utilitaires...
+// TODO: A mettre dans les utilitaires...
 void to_upper(std::string& mystr) {
     std::transform(mystr.begin(), mystr.end(), mystr.begin(), ::toupper);
 }
@@ -28,7 +27,12 @@ void to_lower(std::string& mystr) {
 
 int main(int argc, char* argv[]) {
 
-    YAML::Node data = YAML::LoadFile("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
+    YAML::Node data;
+    try {
+        data = YAML::LoadFile("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
+    } catch (YAML::BadFile err) {
+        std::cout << "File not found" << std::endl;
+    }
 
     PolarCurrentCoeffs coeffs;
 

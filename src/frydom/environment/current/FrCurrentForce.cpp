@@ -20,20 +20,19 @@ namespace environment {
 
         // TODO: plutot travailler dans NED puis ensuite passer en NWU pour les forces...
 
-        // 1- Recuperation du vecteur vitesse du bateau dans le repere NWU
-        auto body_velocity = GetBody()->GetPos_dt();
+        // 1- Ship's velocity vector expressed in NED frame
+        auto body_velocity = NWU2NED(GetBody()->GetPos_dt());
 
-//        std::cout << "VITESSE CORPS NED: " << body_velocity.x() << std::endl;
+        // 2- Current vector in the NED frame
+        auto current_velocity = GetCurrent()->GetVelocityVector(NED);
 
-        // 2- Recuperation du vecteur vitesse du courant dans le repere NED
-//        chrono::ChVector<double> current_velocity;
-//        GetCurrent()->get(current_velocity, environment::FrCurrent::NWU);
-        auto current_velocity = GetCurrent()->GetVelocityVector(NWU);
-
-        // 3- Calcul de la vitesse relative
+        // 3- Relative velocity
         auto relative_velocity = body_velocity - current_velocity;
 
-        // 4- Computing the force
+        // 4- Direction
+        auto alpha = degrees(atan2(relative_velocity.y(), relative_velocity.x()));
+
+        // FIXME: TERMINER
 
 
 
