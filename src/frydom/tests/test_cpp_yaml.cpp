@@ -28,7 +28,7 @@ void to_lower(std::string& mystr) {
 
 int main(int argc, char* argv[]) {
 
-    YAML::Node data = YAML::LoadFile("../src/tests/PolarCurrentCoeffs.yml");
+    YAML::Node data = YAML::LoadFile("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
 
     PolarCurrentCoeffs coeffs;
 
