@@ -22,8 +22,8 @@ namespace frydom {
     class FrInterp1d {
 
     protected:
-        std::shared_ptr<std::vector<Real>> xcoord;
-        std::shared_ptr<std::vector<Real>> yval;
+        std::shared_ptr<const std::vector<Real>> xcoord;
+        std::shared_ptr<const std::vector<Real>> yval;
         unsigned long ndata;
         Real xmin;
         Real xmax;
@@ -34,14 +34,16 @@ namespace frydom {
 
         // TODO: voir a separer l'implementation et la mettre en fin de fichier (pas directement dans le corps de la classe)
 
-        virtual void Initialize(const std::shared_ptr<std::vector<Real>> x,
-                                const std::shared_ptr<std::vector<Real>> y) {
+        virtual void Initialize(std::shared_ptr<const std::vector<Real>> x,
+                                std::shared_ptr<const std::vector<Real>> y) {
+
             assert( x->size() == y->size() );
             assert (std::is_sorted(x->begin(), x->end()));
             ndata = x->size();
             xmin = x->at(0);
             xmax = x->at(ndata-1);
 
+            // TODO: finir
             xcoord = x;
             yval = y;
 
@@ -74,8 +76,8 @@ namespace frydom {
     public:
 
         // TODO: voir a separer l'implementation et la mettre en fin de fichier (pas directement dans le corps de la classe)
-        void Initialize(const std::shared_ptr<std::vector<Real>> x,
-                        const std::shared_ptr<std::vector<Real>> y) {
+        void Initialize(const std::shared_ptr<const std::vector<Real>> x,
+                        const std::shared_ptr<const std::vector<Real>> y) override {
 
             FrInterp1d<Real>::Initialize(x, y);
 
@@ -136,6 +138,9 @@ namespace frydom {
                 throw ("1D INTERPOLATION METHOD DOES NOT EXIST");
         }
     }
+
+
+
 
 
 

@@ -17,17 +17,16 @@
 namespace frydom {
 namespace environment {
 
-    // Forward declaration
-    class FrInterp1d;
 
     template <class Real=double>
     class FrPolarCoeffTable {
 
     private:
-        std::shared_ptr<Real> angles;
+//        std::shared_ptr<Real> angles;
 
         Interp1dMethod m_interp_method;
 
+//        std::unique_ptr<FrInterp1d> Cx_i;
 //        std::unique_ptr<FrInterp1d<Real>> Cx_i;
 //        FrInterp1d* Cy_i;
 //        FrInterp1d* Cpsi_i;
@@ -44,12 +43,36 @@ namespace environment {
         }
 
         /// To Initialize the table (may be overloaded following the way we load coefficients)
-        void Initialize(const std::vector<Real> angles,
-                        const std::vector<Real> cx,
-                        const std::vector<Real> cy,
-                        const std::vector<Real> cpsi) {
+        void Initialize(const std::vector<Real>& angles,
+                        const std::vector<Real>& cx,
+                        const std::vector<Real>& cy,
+                        const std::vector<Real>& cz) {
 
+
+
+            const std::vector<Real>* angles_ptr(&angles);
+            const std::vector<Real>* cx_ptr(&cx);
+            const std::vector<Real>* cy_ptr(&cy);
+            const std::vector<Real>* cz_ptr(&cz);
+
+            // Building shared angle
+            auto angles_shared = std::shared_ptr<const std::vector<Real>>(angles_ptr);
+
+            // Building interpolators
+            auto cx_unique = std::unique_ptr<const std::vector<Real>>(cx_ptr);
             auto interp_cx = FrInterp1d<Real>::MakeInterp1d(m_interp_method);
+            interp_cx->Initialize(angles_shared, std::move(cx_unique));
+
+            auto cy_unique = std::unique_ptr<const std::vector<Real>>(cy_ptr);
+            auto interp_cy = FrInterp1d<Real>::MakeInterp1d(m_interp_method);
+            interp_cy->Initialize(angles_shared, std::move(cy_unique));
+
+            auto cz_unique = std::unique_ptr<const std::vector<Real>>(cz_ptr);
+            auto interp_cz = FrInterp1d<Real>::MakeInterp1d(m_interp_method);
+            interp_cz->Initialize(angles_shared, std::move(cz_unique));
+
+            auto a = 1;
+
 
 
 
@@ -119,13 +142,18 @@ namespace environment {
     }
 
     template <class Real=double>
-    FrPolarCoeffTable<Real> MakePolarCoeffTable(const std::vector<Real> angles,
-                                                const std::vector<Real> cx,
-                                                const std::vector<Real> cy,
-                                                const std::vector<Real> cz) {
+    FrPolarCoeffTable<Real> MakePolarCoeffTable(const std::vector<Real>& angles,
+                                                const std::vector<Real>& cx,
+                                                const std::vector<Real>& cy,
+                                                const std::vector<Real>& cz) {
+
+//        assert( angles.size() == cx.size() );
+//        static_assert( angles.size() == cy.size() );
+//        static_assert( angles.size() == cz.size() );
+
+        // FIXME : on ne manipulera les shared et unique qu'ici ??
 
         FrPolarCoeffTable<Real> table;
-
         table.Initialize(angles, cx, cy, cz);
 
         return table;
