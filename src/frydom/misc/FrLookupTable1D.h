@@ -8,7 +8,7 @@
 
 #include <memory>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <iostream>
 
 #include "FrInterp1d.h"
@@ -23,7 +23,7 @@ namespace frydom {
         Interp1dMethod interp_method;
 
         std::shared_ptr<std::vector<Real>> Xcoords;
-        std::map<std::string, unsigned long> assoc;
+        std::unordered_map<std::string, unsigned long> assoc;
         std::vector<std::shared_ptr<std::vector<Real>>> Ydata;
         std::vector<std::unique_ptr<FrInterp1d<Real>>> interpolators;
 
@@ -49,10 +49,10 @@ namespace frydom {
         bool AddY(std::string name, std::vector<Real> Y);
 
         /// Evaluates the LUT giving the key of the serie and a value
-        Real Eval(std::string, Real x);
+        Real Eval(std::string name, Real x);
 
         /// Evaluates the LUT giving the key of the serie and a vector of values
-        std::vector<Real> Eval(std::string, std::vector<Real> xvect);
+        std::vector<Real> Eval(std::string name, std::vector<Real> xvect);
 
         /// Evaluates the LUT giving the index of the serie and a value
         Real Eval(unsigned long i, Real x);
@@ -61,11 +61,14 @@ namespace frydom {
         std::vector<Real> Eval(unsigned long i, std::vector<Real> xvect);
 
         /// Evaluates the LUT giving a value
-        std::map<std::string, Real> Eval(Real x);
+        std::unordered_map<std::string, Real> Eval(Real x);
 
         /// Evaluates the LUT giving a vector of values
-        std::map<std::string, std::vector<Real>> Eval(std::vector<Real> xvect);
+        std::unordered_map<std::string, std::vector<Real>> Eval(std::vector<Real> xvect);
 
+    private:
+        /// Get the index of the series from its name
+        inline unsigned long GetIndex(std::string name);
     };
 
     template <class Real>
@@ -119,28 +122,70 @@ namespace frydom {
     }
 
     template <class Real>
-    Real FrLookupTable1D<Real>::Eval(std::string, Real x) {
+    Real FrLookupTable1D<Real>::Eval(std::string name, Real x) {
+        return interpolators.at(GetIndex(name))->Eval(x);
     }
 
     template <class Real>
-    std::vector<Real> FrLookupTable1D<Real>::Eval(std::string, std::vector<Real> xvect) {
+    std::vector<Real> FrLookupTable1D<Real>::Eval(std::string name, std::vector<Real> xvect) {
+        return interpolators.at(GetIndex(name))->Eval(xvect);
     }
 
     template <class Real>
     Real FrLookupTable1D<Real>::Eval(unsigned long i, Real x) {
+        return interpolators.at(i)->Eval(x);
     }
 
     template <class Real>
     std::vector<Real> FrLookupTable1D<Real>::Eval(unsigned long i, std::vector<Real> xvect) {
+        return interpolators.at(i)->Eval(xvect);
     }
 
     template <class Real>
-    std::map<std::string, Real> FrLookupTable1D<Real>::Eval(Real x) {
-        return std::map<std::string, Real>();
+    std::unordered_map<std::string, Real> FrLookupTable1D<Real>::Eval(Real x) {
+
+        std::unordered_map<std::string, Real> out;
+        out.reserve(GetNbSeries());
+
+        std::string name;
+        unsigned long idx;
+
+        for (auto elt : assoc) {
+            name = elt.first;
+            idx = elt.second;
+
+            out[name] = interpolators[idx]->Eval(x);
+
+//            std::cout << "coucou" << std::endl;
+        }
+        return out;
+
     }
 
     template <class Real>
-    std::map<std::string, std::vector<Real>> FrLookupTable1D<Real>::Eval(std::vector<Real> xvect) {
+    std::unordered_map<std::string, std::vector<Real>> FrLookupTable1D<Real>::Eval(std::vector<Real> xvect) {
+
+        std::unordered_map<std::string, std::vector<Real>> out;
+        out.reserve(GetNbSeries());
+
+        std::string name;
+        unsigned long idx;
+
+        for (auto elt : assoc) {
+            name = elt.first;
+            idx = elt.second;
+
+            out[name] = interpolators[idx]->Eval(xvect);
+
+//            std::cout << "a";
+
+        }
+        return out;
+    }
+
+    template <class Real>
+    unsigned long FrLookupTable1D<Real>::GetIndex(std::string name) {
+        return assoc.at(name);
     }
 
 

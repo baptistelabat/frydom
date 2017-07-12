@@ -2,6 +2,7 @@
 // Created by frongere on 11/07/17.
 //
 
+#include "frydom/misc/FrLinspace.h"
 #include "frydom/misc/FrLookupTable1D.h"
 #include "yaml-cpp/yaml.h"
 
@@ -65,8 +66,25 @@ int main(int argc, char* argv[]) {
     is_added = table.AddY("cy", cy);
     is_added = table.AddY("cz", cz);
 
+    // Eval of LUT given a serie name and a scalar
+    auto res = table.Eval("cx", 80);
 
+    // Eval of LUT on a bad key
+    try {
+        auto res1 = table.Eval("bad_key", 80);
+    } catch (std::out_of_range err) {
+        std::cout << "Bad key : OK" << std::endl;
+    }
 
+    // Eval of LUT given a serie name and a vector
+    auto vector = linspace<double>(1.1, 72., 500);
+    auto res2 = table.Eval("cx", vector);
+
+    // Eval of LUT given only a scalar (all series are evaluated and an ordered map id returned with results)
+    auto res3 = table.Eval(80.2);
+
+    // Eval of LUT given only a vector
+    auto res4 = table.Eval(vector);
 
 
 

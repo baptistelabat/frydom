@@ -115,13 +115,14 @@ namespace frydom {
         }
 
         std::vector<Real> Eval(const std::vector<Real> xvector) const {
-            std::vector<Real> out;
-            Real val;
 
             auto n = xvector.size();
+
+            std::vector<Real> out;
+            out.reserve(n);
+
             for (int i=0; i<n; i++) {
-                val = Eval(xvector.at(i));
-                out.push_back(val);
+                out.push_back(Eval(xvector[i]));  // No boundchecking done here for performance as we are safe
             }
             return out;
         };
