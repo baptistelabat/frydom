@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Eval of LUT given a serie name and a vector
-    auto vector = linspace<double>(1.1, 72., 5000000);
+    auto vector = linspace<double>(0, 180, 3000);
     auto res2 = table.Eval("cx", vector);
 
     // Eval of LUT given only a scalar (all series are evaluated and an ordered map id returned with results)
@@ -85,8 +85,6 @@ int main(int argc, char* argv[]) {
 
     // Eval of LUT given only a vector
     auto res4 = table.Eval(vector);
-
-
 
 
     return 0;

@@ -46,30 +46,21 @@ namespace frydom {
         unsigned long GetNbSample() const { return Xcoords->size(); }
 
         /// Add a Serie to the LUT
-        bool AddY(std::string name, std::vector<Real> Y);
+        bool AddY(const std::string name, const std::vector<Real> Y);
 
         /// Evaluates the LUT giving the key of the serie and a value
-        Real Eval(std::string name, Real x);
+        Real Eval(const std::string name, const Real x) const;
 
         /// Evaluates the LUT giving the key of the serie and a vector of values
-        std::vector<Real> Eval(std::string name, std::vector<Real> xvect);
-
-        /// Evaluates the LUT giving the index of the serie and a value
-        Real Eval(unsigned long i, Real x);
-
-        /// Evaluates the LUT giving the index of the serie and a vector of values
-        std::vector<Real> Eval(unsigned long i, std::vector<Real> xvect);
+        std::vector<Real> Eval(const std::string name, const std::vector<Real>& xvect) const;
 
         /// Evaluates the LUT giving a value
         template <class T>
-        std::unordered_map<std::string, T> Eval(T x);
-
-//        /// Evaluates the LUT giving a vector of values
-//        std::unordered_map<std::string, std::vector<Real>> Eval(std::vector<Real> xvect);
+        std::unordered_map<std::string, T> Eval(const T x) const;
 
     private:
         /// Get the index of the series from its name
-        inline unsigned long GetIndex(std::string name);
+        inline unsigned long GetIndex(const std::string name) const;
     };
 
     template <class Real>
@@ -83,14 +74,13 @@ namespace frydom {
         interp_method = method;
     }
 
-
     template <class Real>
     void FrLookupTable1D<Real>::SetX(const std::vector<Real> X) {
         Xcoords = std::make_shared<std::vector<Real>>(X);
     }
 
     template <class Real>
-    bool FrLookupTable1D<Real>::AddY(std::string name, std::vector<Real> Y) {
+    bool FrLookupTable1D<Real>::AddY(const std::string name, const std::vector<Real> Y) {
         // TODO: verifier qu'on a le meme nombre d'elt que dans X...
         // Get the future position of the new Serie
         auto i = GetNbSeries();
@@ -123,28 +113,18 @@ namespace frydom {
     }
 
     template <class Real>
-    Real FrLookupTable1D<Real>::Eval(std::string name, Real x) {
+    Real FrLookupTable1D<Real>::Eval(const std::string name, const Real x) const {
         return interpolators.at(GetIndex(name))->Eval(x);
     }
 
     template <class Real>
-    std::vector<Real> FrLookupTable1D<Real>::Eval(std::string name, std::vector<Real> xvect) {
+    std::vector<Real> FrLookupTable1D<Real>::Eval(const std::string name, const std::vector<Real>& xvect) const {
         return interpolators.at(GetIndex(name))->Eval(xvect);
     }
 
     template <class Real>
-    Real FrLookupTable1D<Real>::Eval(unsigned long i, Real x) {
-        return interpolators.at(i)->Eval(x);
-    }
-
-    template <class Real>
-    std::vector<Real> FrLookupTable1D<Real>::Eval(unsigned long i, std::vector<Real> xvect) {
-        return interpolators.at(i)->Eval(xvect);
-    }
-
-    template <class Real>
     template <class T>
-    std::unordered_map<std::string, T> FrLookupTable1D<Real>::Eval(T x) {
+    std::unordered_map<std::string, T> FrLookupTable1D<Real>::Eval(const T x) const {
 
         std::unordered_map<std::string, T> out;
         out.reserve(GetNbSeries());
@@ -158,19 +138,17 @@ namespace frydom {
 
             out[name] = interpolators[idx]->Eval(x);
 
-//            std::cout << "coucou" << std::endl;
         }
         return out;
 
     }
 
     template <class Real>
-    unsigned long FrLookupTable1D<Real>::GetIndex(std::string name) {
+    unsigned long FrLookupTable1D<Real>::GetIndex(const std::string name) const {
         return assoc.at(name);
     }
 
-
-}
+}  // end namespace frydom
 
 
 #endif //FRYDOM_FRLOOKUPTABLE1D_H
