@@ -16,7 +16,6 @@
 
 namespace frydom {
 
-
     template <class Real=double>
     class FrLookupTable1D {
 
@@ -25,7 +24,7 @@ namespace frydom {
 
         std::shared_ptr<std::vector<Real>> Xcoords;
         std::map<std::string, unsigned long> assoc;
-        std::vector<std::shared_ptr<std::vector<Real>>> Ydata;  // TODO : tenir une map a part et donner la possibilite de manipulaer du non nomme
+        std::vector<std::shared_ptr<std::vector<Real>>> Ydata;
         std::vector<std::unique_ptr<FrInterp1d<Real>>> interpolators;
 
     public:
@@ -74,7 +73,8 @@ namespace frydom {
         // 2 cas: si on a deja des donnees dans Ydata (on reinitialise tous les interpolateurs)
 
         if (GetNbSeries() > 0) {
-            // TODO: reinitialiser tous les interpolateurs
+            // TODO: Reinitialiser tous les interpolateurs existants pour les adapter a la nouvelle methode
+            std::cout << "TODO: reinitialiser tous les interpolateurs" << std::endl;
         }
         interp_method = method;
     }
@@ -87,13 +87,14 @@ namespace frydom {
 
     template <class Real>
     bool FrLookupTable1D<Real>::AddY(std::string name, std::vector<Real> Y) {
-
-        // Get the position of the new Serie
+        // TODO: verifier qu'on a le meme nombre d'elt que dans X...
+        // Get the future position of the new Serie
         auto i = GetNbSeries();
 
+        // Trying to insert the new name/index into the association map
         auto res_pair = assoc.insert(std::pair<std::string, unsigned long>(name, i));
 
-        if (!res_pair.second) {
+        if (!res_pair.second) { // Name already exists into the map
             std::cout << "Data have not been added to the LUT" << std::endl;
 
         } else {
@@ -101,7 +102,7 @@ namespace frydom {
             auto Y_shared = std::make_shared<std::vector<Real>>(Y);
             Ydata.push_back(Y_shared);
 
-            // Building the interpolator based on the interpolation method of the LUT
+            // Building the interpolator based on the global interpolation method of the LUT
             auto interp_ptr = FrInterp1d<Real>::MakeInterp1d(interp_method);
             // FIXME: ICI, on ne recupere pas comme voulu un pointeur vers un objet FrInterp1dLinear
             // Du coup, la methode Initialize appelee apres n'est que celle de
@@ -117,7 +118,30 @@ namespace frydom {
         return res_pair.second;
     }
 
+    template <class Real>
+    Real FrLookupTable1D<Real>::Eval(std::string, Real x) {
+    }
 
+    template <class Real>
+    std::vector<Real> FrLookupTable1D<Real>::Eval(std::string, std::vector<Real> xvect) {
+    }
+
+    template <class Real>
+    Real FrLookupTable1D<Real>::Eval(unsigned long i, Real x) {
+    }
+
+    template <class Real>
+    std::vector<Real> FrLookupTable1D<Real>::Eval(unsigned long i, std::vector<Real> xvect) {
+    }
+
+    template <class Real>
+    std::map<std::string, Real> FrLookupTable1D<Real>::Eval(Real x) {
+        return std::map<std::string, Real>();
+    }
+
+    template <class Real>
+    std::map<std::string, std::vector<Real>> FrLookupTable1D<Real>::Eval(std::vector<Real> xvect) {
+    }
 
 
 }

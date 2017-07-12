@@ -2,6 +2,8 @@
 #
 # CMake configuration file for the main FRyDoM library.
 #
+# NOTE: THIS FILE IS NOT EXPLOITED FOR THE MOMENT. WAS JUST A LEARNING TRY !!!
+#
 #=============================================================================
 
 message(STATUS "==== ${CMAKE_PROJECT_NAME} core module ====")
