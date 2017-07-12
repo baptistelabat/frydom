@@ -61,10 +61,11 @@ namespace frydom {
         std::vector<Real> Eval(unsigned long i, std::vector<Real> xvect);
 
         /// Evaluates the LUT giving a value
-        std::unordered_map<std::string, Real> Eval(Real x);
+        template <class T>
+        std::unordered_map<std::string, T> Eval(T x);
 
-        /// Evaluates the LUT giving a vector of values
-        std::unordered_map<std::string, std::vector<Real>> Eval(std::vector<Real> xvect);
+//        /// Evaluates the LUT giving a vector of values
+//        std::unordered_map<std::string, std::vector<Real>> Eval(std::vector<Real> xvect);
 
     private:
         /// Get the index of the series from its name
@@ -142,9 +143,10 @@ namespace frydom {
     }
 
     template <class Real>
-    std::unordered_map<std::string, Real> FrLookupTable1D<Real>::Eval(Real x) {
+    template <class T>
+    std::unordered_map<std::string, T> FrLookupTable1D<Real>::Eval(T x) {
 
-        std::unordered_map<std::string, Real> out;
+        std::unordered_map<std::string, T> out;
         out.reserve(GetNbSeries());
 
         std::string name;
@@ -160,27 +162,6 @@ namespace frydom {
         }
         return out;
 
-    }
-
-    template <class Real>
-    std::unordered_map<std::string, std::vector<Real>> FrLookupTable1D<Real>::Eval(std::vector<Real> xvect) {
-
-        std::unordered_map<std::string, std::vector<Real>> out;
-        out.reserve(GetNbSeries());
-
-        std::string name;
-        unsigned long idx;
-
-        for (auto elt : assoc) {
-            name = elt.first;
-            idx = elt.second;
-
-            out[name] = interpolators[idx]->Eval(xvect);
-
-//            std::cout << "a";
-
-        }
-        return out;
     }
 
     template <class Real>
