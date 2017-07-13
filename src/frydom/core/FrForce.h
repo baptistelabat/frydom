@@ -21,12 +21,7 @@ namespace frydom {
     class FrForce : public chrono::ChForce {
 
     protected:
-//        ReferenceFrame frame;  ///< fix position in body csys or world csys
-//
-//        chrono::ChVector<> vpoint;     ///< absolute point of application
-//        chrono::ChVector<> vrelpoint;  ///< relative point of application
-//
-//        chrono::ChVector<> force;
+
         chrono::ChVector<> moment;
 
     public:
@@ -54,24 +49,6 @@ namespace frydom {
             body_torque = moment;
         }
 
-
-
-    private:
-//        // Making unused function private for them not to be accessible into child classes
-//        void SetMode(ForceType m_mode) override { mode = m_mode; }
-//        ForceType GetMode() const override { return mode; }
-//
-//        void SetAlign(AlignmentFrame m_align) override { align = m_align; }
-//        AlignmentFrame GetAlign() const override { return align; }
-//
-//        chrono::ChVector<> GetDir() const { return vdir; }
-//        chrono::ChVector<> GetRelDir() const { return vreldir; }
-//
-//        void SetDir(chrono::ChVector<> newf) override {};
-//        void SetRelDir(chrono::ChVector<> newf) override {};
-//
-//        virtual void SetMforce(double newf) override {};
-//        virtual double GetMforce() const override { return mforce; }
 
     };
 

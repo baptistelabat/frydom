@@ -6,6 +6,7 @@
 #include <chrono/assets/ChTriangleMeshShape.h>
 
 #include "FrHydroBody.h"
+#include "FrOffshoreSystem.h"
 
 namespace frydom {
 
@@ -28,6 +29,20 @@ namespace frydom {
         auto mesh = std::make_shared<FrTriangleMeshConnected>();
         mesh->LoadWavefrontMesh(filename);
         SetHydroMesh(mesh, as_asset);
+    }
+
+    chrono::ChVector<> FrHydroBody::GetCurrentFlow(FrFrame frame) {
+
+        // Get the body's velocity
+        auto body_velocity = GetPos_dt();
+
+        // Get the current velocity
+        auto mysystem = dynamic_cast<FrOffshoreSystem*>(system);
+        auto current_velocity = mysystem->GetCurrent()->GetVelocityVector();
+
+
+        auto current_flow = chrono::ChVector<>();
+        return current_flow;
     }
 
 

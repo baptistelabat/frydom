@@ -73,6 +73,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 # TODO : faire en sorte de declarer les target dans un CMakeLists.txt separe par target !!
 set(SOURCE_FILES
 
+#        src/frydom/core/FrCore.h
+
         src/frydom/core/FrConstants.h
         src/frydom/core/FrConstants.cpp
 
@@ -82,24 +84,28 @@ set(SOURCE_FILES
         src/frydom/core/FrEulerAngles.h
         src/frydom/core/FrEulerAngles.cpp
 
+        src/frydom/IO/FrLoader.h
+        src/frydom/IO/FrLoader.cpp
+
         src/frydom/misc/FrMathUtils.h
         src/frydom/misc/FrInterp1d.h
         src/frydom/misc/FrInterp1d.cpp
-        src/frydom/misc/FrInterp1dLinear.h
-        src/frydom/misc/FrInterp1dLinear.cpp
+#        src/frydom/misc/FrInterp1dLinear.h
+#        src/frydom/misc/FrInterp1dLinear.cpp
+        src/frydom/misc/FrLookupTable1D.h
 
         src/frydom/environment/waves/FrFreeSurface.h
         src/frydom/environment/waves/FrFreeSurface.cpp
         src/frydom/environment/waves/FrFlatFreeSurface.h
         src/frydom/environment/waves/FrFlatFreeSurface.cpp
 
-        src/frydom/environment/FrPolarCoeffTable.h
-        src/frydom/environment/FrPolarCoeffTable.cpp
 
         src/frydom/environment/current/FrCurrent.h
         src/frydom/environment/current/FrCurrent.cpp
         src/frydom/environment/current/FrCurrentForce.h
         src/frydom/environment/current/FrCurrentForce.cpp
+        src/frydom/environment/current/FrCurrentPolarCoeffs.h
+        src/frydom/environment/current/FrCurrentPolarCoeffs.cpp
 
         src/frydom/misc/FrLinspace.h
 
@@ -154,11 +160,14 @@ target_link_libraries(test_interp1d ${CHRONO_LIBRARIES})
 add_executable(test_linspace ${SOURCE_FILES} src/frydom/tests/test_linspace.cpp)
 target_link_libraries(test_linspace ${CHRONO_LIBRARIES})
 
-#add_executable(test_current_force ${SOURCE_FILES} src/frydom/tests/test_current_force.cpp)
-#target_link_libraries(test_current_force ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+add_executable(test_current_force ${SOURCE_FILES} src/frydom/tests/test_current_force.cpp)
+target_link_libraries(test_current_force ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(test_lookup_table ${SOURCE_FILES} src/frydom/tests/test_lookup_table.cpp)
 target_link_libraries(test_lookup_table ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
+add_executable(test_current_polar_coeffs ${SOURCE_FILES} src/frydom/tests/test_CurrentPolarCoeffs.cpp)
+target_link_libraries(test_current_polar_coeffs ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 #add_executable(test_yaml ${SOURCE_FILES} src/frydom/tests/test_cpp_yaml.cpp)
 #target_link_libraries(test_yaml ${CHRONO_LIBRARIES} ${YAML_CPP_LIBS})

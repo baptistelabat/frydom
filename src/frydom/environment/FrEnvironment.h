@@ -6,10 +6,10 @@
 #define FRYDOM_FRENVIRONMENT_H
 
 
-#include "FrPolarCoeffTable.h"
 
 // Current includes
 #include "current/FrCurrent.h"
+#include "current/FrCurrentPolarCoeffs.h"
 #include "current/FrCurrentForce.h"
 
 // Waves includes

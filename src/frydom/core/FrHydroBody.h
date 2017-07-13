@@ -7,6 +7,7 @@
 
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "frydom/misc/FrTriangleMeshConnected.h"
+#include "FrConstants.h"
 
 // Forward declaration
 namespace chrono {
@@ -32,6 +33,7 @@ namespace frydom {
         void SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset=true);
         void SetHydroMesh(std::string filename, bool as_asset=true);
 
+        chrono::ChVector<> GetCurrentFlow(FrFrame frame=NWU);
 
     };
 

@@ -2,7 +2,8 @@
 // Created by frongere on 10/07/17.
 //
 
-#include "frydom/environment/FrEnvironment.h"
+//#include "frydom/environment/FrEnvironment.h"
+#include "frydom/IO/FrLoader.h"
 
 using namespace frydom;
 
@@ -15,9 +16,9 @@ int main(int argc, char* argv[]) {
 
 
     // Building a coefficients table
-    auto table = environment::MakePolarCoeffTable("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
+    auto table = IO::MakeCurrentPolarCoeffTable("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
 
-    //
+
 
 
 

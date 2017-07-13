@@ -24,6 +24,7 @@ namespace frydom {
     }
 
     void FrOffshoreSystem::setFreeSurface(environment::FrFreeSurface* freeSurface) {
+        // TODO: accepter plutot directement le unique_ptr et faire std::move...
         m_free_surface.reset(freeSurface);  // TODO: y a t il un moyen de gerer avec la move semantic ???
         // FIXME: Pourquoi dans le debugger, m_free_surface pointe sur un FrFreeSurface alors que dans demo on a fournit un FrFlatFreeSurface ???
 
@@ -42,7 +43,12 @@ namespace frydom {
     }
 
     environment::FrCurrent* FrOffshoreSystem::GetCurrent() const {
-        return m_current.get();
+        if (m_current) {
+            return m_current.get();
+        } else {
+            // TODO: creer propre classe d'erreur frydom::no_current_field
+            throw std::runtime_error("Pas de courant");
+        }
     }
 
     void FrOffshoreSystem::SetGravityAcceleration(double grav) {

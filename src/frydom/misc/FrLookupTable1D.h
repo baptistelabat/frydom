@@ -19,8 +19,8 @@ namespace frydom {
     template <class Real=double>
     class FrLookupTable1D {
 
-    private:
-        Interp1dMethod interp_method;
+    protected:
+        Interp1dMethod interp_method = LINEAR;
 
         std::shared_ptr<std::vector<Real>> Xcoords;
         std::unordered_map<std::string, unsigned long> assoc;
@@ -28,8 +28,35 @@ namespace frydom {
         std::vector<std::unique_ptr<FrInterp1d<Real>>> interpolators;
 
     public:
-        FrLookupTable1D() : interp_method(LINEAR) {};
+        FrLookupTable1D() {};
         ~FrLookupTable1D() {};
+
+        // Le Code qui suit permet de regler le pb de l'utilisation des unique_ptr dans les interpolateurs !!!
+        // Voir:
+        // https://katyscode.wordpress.com/2012/10/04/c11-using-stdunique_ptr-as-a-class-member-initialization-move-semantics-and-custom-deleters/
+        // FIXME: mieux comprendre pourquoi cela fonctionne !!!
+        ///Deleting the inplace copy constructor
+        FrLookupTable1D(const FrLookupTable1D &) = delete;
+        /// Deleting the copy operator
+        FrLookupTable1D & operator = (const FrLookupTable1D &) = delete;
+
+        /// Move constructor allowing to move the interpolators vector storing unique_ptr instances
+        FrLookupTable1D & operator = (FrLookupTable1D &&table) {
+            if (this != &table) {
+                Xcoords = std::move(table.Xcoords);
+                assoc = std::move(table.assoc);
+                Ydata = std::move(table.Ydata);
+                interpolators = std::move(table.interpolators);
+            }
+            return *this;
+        }
+        /// Move operator
+        FrLookupTable1D(FrLookupTable1D &&table)
+                : Xcoords(std::move(table.Xcoords)),
+                  assoc(std::move(table.assoc)),
+                  Ydata(std::move(table.Ydata)),
+                  interpolators(std::move(table.interpolators)) {};
+        //
 
         /// Set interpolation method
         void SetInterpolationMethod(Interp1dMethod method);
