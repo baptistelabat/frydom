@@ -42,45 +42,45 @@ namespace frydom {
             FrCurrent();
 
             /// Constructor from an angle and a strength
-            FrCurrent(double const angle, double const magnitude,
+            FrCurrent(double angle, double magnitude,
                       FrAngleUnit= DEG, FrSpeedUnit= KNOT, FrFrame= NED);
 
             /// Constructor from a velocity vector embedding direction and strength
-            FrCurrent(chrono::ChVector<> const velocity_vector,
-                      FrFrame= NED, FrSpeedUnit= MS);
+            explicit FrCurrent(chrono::ChVector<> velocity_vector,
+                               FrFrame= NED, FrSpeedUnit= MS);
 
             /// Constructor from a direction vector and a strength
-            FrCurrent(chrono::ChVector<> const unit_direction, double const magnitude,
+            FrCurrent(chrono::ChVector<> unit_direction, double magnitude,
                       FrSpeedUnit= KNOT, FrFrame= NED);
 
             /// Destructor
-            ~FrCurrent() {}
+            ~FrCurrent() = default;
 
             /// Get the strength of the current
             double getVelocity(FrSpeedUnit= MS);
 
             /// Set the strength of the current, keeping the current direction
-            void setVelocity(double const velocity, FrSpeedUnit= KNOT);
+            void setVelocity(double velocity, FrSpeedUnit= KNOT);
 
             /// Get the direction of the current
             chrono::ChVector<> getDirection(FrFrame= NED);
 
             /// Set the current's direction given an angle
-            void setDirection(double const angle, FrAngleUnit= DEG, FrFrame= NED);
+            void setDirection(double angle, FrAngleUnit= DEG, FrFrame= NED);
 
             /// Set the current's direction given a unit direction vector (not checked !)
-            void setDirection(chrono::ChVector<> const unit_vector, FrFrame= NED);
+            void setDirection(chrono::ChVector<> unit_vector, FrFrame= NED);
 
             /// Initialize the current field with a velocity vector embedding direction and strength
-            void Initialize(chrono::ChVector<> const velocity_vector, FrFrame= NED);
+            void Initialize(chrono::ChVector<> velocity_vector, FrFrame= NED);
 
             /// Initialize the current field with an angle and a velocity strength
             void
-            Initialize(double const angle, double const velocity, FrAngleUnit= DEG, FrSpeedUnit= KNOT, FrFrame= NED);
+            Initialize(double angle, double velocity, FrAngleUnit= DEG, FrSpeedUnit= KNOT, FrFrame= NED);
 
             /// Initialize the current field with a unit vector direction and a velocity strength
             void
-            Initialize(chrono::ChVector<> const unit_direction, double const velocity, FrSpeedUnit= KNOT, FrFrame= NED);
+            Initialize(chrono::ChVector<> unit_direction, double velocity, FrSpeedUnit= KNOT, FrFrame= NED);
 
             /// Get the current velocity vector
             void get(chrono::ChVector<> &velocity_vector, FrFrame= NWU);

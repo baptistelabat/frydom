@@ -19,6 +19,8 @@
 #include "chrono/core/ChVector.h"
 
 #include "FrCurrent.h"
+#include "frydom/environment/FrConventions.h"
+
 
 // TODO: placer ces macros dans le header de FrOffshoreSystem !!! C'est d'utilite publique...
 
@@ -33,6 +35,16 @@ namespace environment {
                          FrAngleUnit angleUnit,
                          FrSpeedUnit speedUnit,
                          FrFrame frame) {
+
+        double ang, vel;
+
+        ang = angle;
+        vel = velocity;
+
+        // Converting angle in radians
+        if (angleUnit == DEG) {
+            ang = radians(ang);
+        }
 
 
 

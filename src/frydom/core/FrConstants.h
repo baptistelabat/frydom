@@ -63,38 +63,38 @@ namespace frydom {
     // =================================================================================================================
 
     /// Convert nautical knots into m/s
-    template <class Real>
-    inline Real KNOT2MS(Real velocity) {
+    template <class T>
+    inline T KNOT2MS(T velocity) {
         return velocity * M_KNOT;
     }
 
     /// Convert m/s into nautical knots
-    template <class Real>
-    inline Real MS2KNOT(Real velocity) {
+    template <class T>
+    inline T MS2KNOT(T velocity) {
         return velocity / M_KNOT;
     }
 
     /// Convert km/h into m/s
-    template <class Real>
-    inline Real KMH2MS(Real velocity) {
+    template <class T>
+    inline T KMH2MS(T velocity) {
         return velocity * M_KMH;
     }
 
     /// Convert m/s into km/h
-    template <class Real>
-    inline Real MS2KMH(Real velocity) {
+    template <class T>
+    inline T MS2KMH(T velocity) {
         return velocity / M_KMH;
     }
 
     /// Convert km/h into nautical knots
-    template <class Real>
-    inline Real KMH2KNOT(Real velocity) {
+    template <class T>
+    inline T KMH2KNOT(T velocity) {
         return MS2KNOT(KMH2MS(velocity));
     }
 
     /// Convert nautical knots into km/h
-    template <class Real>
-    inline Real KNOT2KMH(Real velocity) {
+    template <class T>
+    inline T KNOT2KMH(T velocity) {
         return MS2KMH(KNOT2MS(velocity));
     }
 
