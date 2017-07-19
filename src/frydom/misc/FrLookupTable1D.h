@@ -50,7 +50,7 @@ namespace frydom {
             }
             return *this;
         }
-        /// Move operator
+        /// Move operator allowing to move the interpolators vector storing unique_ptr instances
         FrLookupTable1D(FrLookupTable1D &&table)
                 : Xcoords(std::move(table.Xcoords)),
                   assoc(std::move(table.assoc)),

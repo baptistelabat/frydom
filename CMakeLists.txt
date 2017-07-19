@@ -90,8 +90,6 @@ set(SOURCE_FILES
         src/frydom/misc/FrMathUtils.h
         src/frydom/misc/FrInterp1d.h
         src/frydom/misc/FrInterp1d.cpp
-#        src/frydom/misc/FrInterp1dLinear.h
-#        src/frydom/misc/FrInterp1dLinear.cpp
         src/frydom/misc/FrLookupTable1D.h
 
         src/frydom/environment/waves/FrFreeSurface.h
@@ -143,22 +141,22 @@ set(SOURCE_FILES
 # TODO: mettre dans un foreach !!
 # To add a target
 add_executable(demo_free_surface ${SOURCE_FILES} src/frydom/tests/demo_FreeSurface.cpp src/frydom/misc/FrInterp1dLinear.cpp src/frydom/misc/FrInterp1dLinear.h)
-target_link_libraries(demo_free_surface ${CHRONO_LIBRARIES})
+target_link_libraries(demo_free_surface ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(demo_O3 ${SOURCE_FILES} src/frydom/tests/demo_O3_juin_2017.cpp)
-target_link_libraries(demo_O3 ${CHRONO_LIBRARIES})
+target_link_libraries(demo_O3 ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(demo_rotation ${SOURCE_FILES} src/frydom/tests/demo_rotation.cpp)
-target_link_libraries(demo_rotation ${CHRONO_LIBRARIES})
+target_link_libraries(demo_rotation ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(demo_ship_orientation ${SOURCE_FILES} src/frydom/tests/demo_ship_orientation.cpp)
-target_link_libraries(demo_ship_orientation ${CHRONO_LIBRARIES})
+target_link_libraries(demo_ship_orientation ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(test_interp1d ${SOURCE_FILES} src/frydom/tests/test_interp1d.cpp)
-target_link_libraries(test_interp1d ${CHRONO_LIBRARIES})
+target_link_libraries(test_interp1d ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(test_linspace ${SOURCE_FILES} src/frydom/tests/test_linspace.cpp)
-target_link_libraries(test_linspace ${CHRONO_LIBRARIES})
+target_link_libraries(test_linspace ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(test_current_force ${SOURCE_FILES} src/frydom/tests/test_current_force.cpp)
 target_link_libraries(test_current_force ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
@@ -173,10 +171,6 @@ target_link_libraries(test_current_polar_coeffs ${CHRONO_LIBRARIES} ${YAML_CPP_L
 #target_link_libraries(test_yaml ${CHRONO_LIBRARIES} ${YAML_CPP_LIBS})
 add_executable(test_yaml src/frydom/tests/test_cpp_yaml.cpp)
 target_link_libraries(test_yaml ${YAML_CPP_LIB})
-
-#message(${CHRONO_LIBRARIES})
-
-
 
 
 

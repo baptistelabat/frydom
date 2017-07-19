@@ -10,10 +10,12 @@
 
 #define N 10001
 
+using namespace frydom;
+
 int main(int argc, char* argv[]) {
     // Building the x coords as a shared pointer
     auto x = std::make_shared<std::vector<double>>(
-            frydom::linspace(M_PI, 4*M_PI, N-1)
+            linspace(M_PI, 4*M_PI, N-1)
     );
 
     // Building the data
@@ -25,7 +27,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Create the interpolation
-    frydom::FrInterp1dLinear<double> interpolator;
+    FrInterp1dLinear<double> interpolator;
 
     interpolator.Initialize(x, y);
 
@@ -34,11 +36,11 @@ int main(int argc, char* argv[]) {
     // Test of the call operator for one scalar
     auto y1 = interpolator(5.3333);
 
-    assert(frydom::is_close(y0, y1));
-    assert(frydom::is_close(y0, -0.8133409832926298));
+    assert(is_close(y0, y1));
+    assert(is_close(y0, -0.8133409832926298));
 
     // Test for a vector of x coords
-    auto x_interp = frydom::linspace(M_PI, 4*M_PI, 1000*N);
+    auto x_interp = linspace(M_PI, 4*M_PI, 1000*N);
     // Using only the overloaded call operator for vector values
     auto y_interp = interpolator(x_interp);
 

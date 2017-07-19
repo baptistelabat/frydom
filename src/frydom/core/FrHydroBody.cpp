@@ -25,9 +25,9 @@ namespace frydom {
         // TODO: Ajouter automatiquement un clipper
     }
 
-    void FrHydroBody::SetHydroMesh(std::string filename, bool as_asset) {
+    void FrHydroBody::SetHydroMesh(std::string obj_filename, bool as_asset) {
         auto mesh = std::make_shared<FrTriangleMeshConnected>();
-        mesh->LoadWavefrontMesh(filename);
+        mesh->LoadWavefrontMesh(obj_filename);
         SetHydroMesh(mesh, as_asset);
     }
 

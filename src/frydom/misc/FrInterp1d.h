@@ -77,13 +77,11 @@ namespace frydom {
 
     public:
 
-        // TODO: voir a separer l'implementation et la mettre en fin de fichier (pas directement dans le corps de la classe)
         void Initialize(const std::shared_ptr<const std::vector<Real>> x,
                         const std::shared_ptr<const std::vector<Real>> y) override;
 
         Real Eval(const Real x) const;
 
-        // TODO: plutot passer des references de xvector pour pas faire de copie !!
         std::vector<Real> Eval(const std::vector<Real>& xvector) const;
 
     };
@@ -125,7 +123,6 @@ namespace frydom {
 
         if (index == 0) index = 1;  // Bug fix for x == xmin
 
-        // FIXME: bug quand on s'approche de la borne sup...
         Real a_ = a.at(index-1);
         Real b_ = b.at(index-1);
 
