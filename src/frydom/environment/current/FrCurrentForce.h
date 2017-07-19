@@ -15,9 +15,13 @@ namespace environment {
 
     class FrCurrentPolarCoeffs;
 
+    class FrCurrent;
+
     class FrCurrentForce : public FrForce {
 
     private:
+//        FrHydroBody* Body;
+
         FrCurrentPolarCoeffs coeffs_table;
 
         // TODO: il manque les modeles de force et les pptes geometriques du flotteur
@@ -35,9 +39,9 @@ namespace environment {
         }
 
 
-//    private:
+    private:
 
-//        environment::FrCurrent *GetCurrent();
+        environment::FrCurrent* GetCurrentFlow();
 
     };
 

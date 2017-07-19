@@ -24,229 +24,233 @@
 
 
 namespace frydom {
-    namespace environment {
+namespace environment {
 
-        FrCurrent::FrCurrent() : m_velocity_vector(chrono::VNULL) {}
+    FrCurrent::FrCurrent() : angle(0.), magnitude(0.) {}
 
-        FrCurrent::FrCurrent(chrono::ChVector<> const velocity_vector, FrFrame frame) {
+    FrCurrent::FrCurrent(double const angle,
+                         double const velocity,
+                         FrAngleUnit angleUnit,
+                         FrSpeedUnit speedUnit,
+                         FrFrame frame) {
 
-            if (frame == NED) {
-                m_velocity_vector = NED2NWU(velocity_vector);
-            } else {
-                m_velocity_vector = velocity_vector;
-            }
 
-        }
 
-        FrCurrent::FrCurrent(double const angle,
-                             double const velocity,
-                             FrAngleUnit angleUnit,
-                             FrSpeedUnit speedUnit,
-                             FrFrame frame) {
 
-            double vel;
-            double ang;
+//        double vel;
+//        double ang;
+//
+//        if (speedUnit == KNOT) {
+//            // Converting in m/s
+//            vel = velocity * M_KNOT;
+//        } else {
+//            vel = velocity;
+//        }
+//
+//        if (angleUnit == DEG) {
+//            // Converting in RAD
+//            ang = angle * M_DEG;
+//        } else {
+//            ang = angle;
+//        }
+//
+//        if (frame == NED) {
+//            // Expressing the angle in the E frame
+//            ang = -ang;
+//        }
+//
+//        m_velocity_vector.SetNull();
+//
+//        m_velocity_vector.x() = -vel * cos(ang);
+//        m_velocity_vector.y() = -vel * sin(ang);
 
-            if (speedUnit == KNOT) {
-                // Converting in m/s
-                vel = velocity * M_KNOT;
-            } else {
-                vel = velocity;
-            }
+    }
 
-            if (angleUnit == DEG) {
-                // Converting in RAD
-                ang = angle * M_DEG;
-            } else {
-                ang = angle;
-            }
+    FrCurrent::FrCurrent(chrono::ChVector<> const velocity_vector,
+                         FrFrame frame, FrSpeedUnit speed_unit) {
 
-            if (frame == NED) {
-                // Expressing the angle in the E frame
-                ang = -ang;
-            }
+//            if (frame == NED) {
+//                m_velocity_vector = NED2NWU(velocity_vector);
+//            } else {
+//                m_velocity_vector = velocity_vector;
+//            }
 
-            m_velocity_vector.SetNull();
+    }
 
-            m_velocity_vector.x() = -vel * cos(ang);
-            m_velocity_vector.y() = -vel * sin(ang);
+    FrCurrent::FrCurrent(chrono::ChVector<> const udir,
+                         double const velocity,
+                         FrSpeedUnit speedUnit,
+                         FrFrame frame) {
 
-        }
+//            if (speedUnit == KNOT) {
+//                // Converting into m/s
+//                m_velocity_vector = velocity * M_KNOT * udir;
+//            } else {
+//                m_velocity_vector = velocity * udir;
+//            }
+//
+//            if (frame == NED) {
+//                // Converting direction to E frame
+//                m_velocity_vector = NED2NWU(m_velocity_vector);
+//            }
 
-        FrCurrent::FrCurrent(chrono::ChVector<> const udir,
-                             double const velocity,
-                             FrSpeedUnit speedUnit,
-                             FrFrame frame) {
+    }
 
-            if (speedUnit == KNOT) {
-                // Converting into m/s
-                m_velocity_vector = velocity * M_KNOT * udir;
-            } else {
-                m_velocity_vector = velocity * udir;
-            }
+    double FrCurrent::getVelocity(FrSpeedUnit speedUnit) {
+//            double vx = m_velocity_vector.x();
+//            double vy = m_velocity_vector.y();
+//            double vz = m_velocity_vector.z();
+//
+//            double vel_ms = sqrt(vx * vx + vy * vy + vz * vz);
+//
+//            if (speedUnit == KNOT) {
+//                return vel_ms / M_KNOT;
+//            } else {
+//                return vel_ms;
+//            }
+    }
 
-            if (frame == NED) {
-                // Converting direction to E frame
-                m_velocity_vector = NED2NWU(m_velocity_vector);
-            }
+    void FrCurrent::setVelocity(double const velocity, FrSpeedUnit speedUnit) {
 
-        }
+//            // Retrieving the current direction
+//            auto dir = getDirection(NWU);
+//            m_velocity_vector.SetNull();
+//
+//            // Converting velocity into M/S unit if needed
+//            if (speedUnit == KNOT) {
+//                m_velocity_vector = velocity * M_KNOT * dir;
+//            } else {
+//                m_velocity_vector = velocity * dir;
+//            }
 
-        double FrCurrent::getVelocity(FrSpeedUnit speedUnit) {
-            double vx = m_velocity_vector.x();
-            double vy = m_velocity_vector.y();
-            double vz = m_velocity_vector.z();
+    }
 
-            double vel_ms = sqrt(vx * vx + vy * vy + vz * vz);
+    chrono::ChVector<> FrCurrent::getDirection(FrFrame frame) {
+//            auto vel = getVelocity(MS);
+//
+//            auto udir = m_velocity_vector / vel;  // Expressed in NWU
+//
+//            if (frame == NED) {
+//                // Expressing the direction into NED frame
+//                udir = NWU2NED(udir);
+//                return udir;
+//            } else {
+//                return udir;
+//            }
+    }
 
-            if (speedUnit == KNOT) {
-                return vel_ms / M_KNOT;
-            } else {
-                return vel_ms;
-            }
-        }
+    void FrCurrent::setDirection(double const angle, FrAngleUnit angleUnit, FrFrame frame) {
 
-        void FrCurrent::setVelocity(double const velocity, FrSpeedUnit speedUnit) {
+//            // Getting current module
+//            auto velocity = getVelocity(MS);
+//
+//            // Converting angle into radians if needed
+//            double ang;
+//            if (angleUnit == DEG) {
+//                ang = angle * M_DEG;
+//            } else {
+//                ang = angle;
+//            }
+//
+//            // Building direction in E FRAME
+//            m_velocity_vector.SetNull();
+//
+//            m_velocity_vector.x() = velocity * cos(angle);
+//            m_velocity_vector.y() = velocity * sin(angle);
+//
+//            if (frame == NED) {
+//                m_velocity_vector = swap_NED_NWU(m_velocity_vector);
+//            }
 
-            // Retrieving the current direction
-            auto dir = getDirection(NWU);
-            m_velocity_vector.SetNull();
+    }
 
-            // Converting velocity into M/S unit if needed
-            if (speedUnit == KNOT) {
-                m_velocity_vector = velocity * M_KNOT * dir;
-            } else {
-                m_velocity_vector = velocity * dir;
-            }
+    void FrCurrent::setDirection(chrono::ChVector<> const unit_vector, FrFrame frame) {
+//            // Getting current module
+//            auto velocity = getVelocity(MS);
+//
+//            m_velocity_vector.SetNull();
+//            m_velocity_vector = velocity * unit_vector;
+//
+//            if (frame == NED) {
+//                m_velocity_vector = swap_NED_NWU(m_velocity_vector);
+//            }
 
-        }
+    }
 
-        chrono::ChVector<> FrCurrent::getDirection(FrFrame frame) {
-            auto vel = getVelocity(MS);
+    void FrCurrent::Initialize(chrono::ChVector<> const velocity_vector,
+                               FrFrame frame) {
+//            // TODO: double if
+//            m_velocity_vector = velocity_vector;
+//            if (frame == NED) {
+//                m_velocity_vector = swap_NED_NWU(m_velocity_vector);
+//            }
+    }
 
-            auto udir = m_velocity_vector / vel;  // Expressed in NWU
+    void FrCurrent::Initialize(double const angle,
+                               double const velocity,
+                               FrAngleUnit angleUnit,
+                               FrSpeedUnit speedUnit,
+                               FrFrame frame) {
+//            double ang;
+//            if (angleUnit == DEG) {
+//                ang = angle * M_DEG;
+//            } else {
+//                ang = angle;
+//            }
+//
+//            double vel;
+//            if (speedUnit == KNOT) {
+//                vel = velocity * M_KNOT;
+//            } else {
+//                vel = velocity;
+//            }
+//
+//            auto velocity_vector = chrono::ChVector<>(cos(ang), sin(ang), 0);
+//
+//            Initialize(velocity_vector, frame);
 
-            if (frame == NED) {
-                // Expressing the direction into NED frame
-                udir = NWU2NED(udir);
-                return udir;
-            } else {
-                return udir;
-            }
-        }
+    }
 
-        void FrCurrent::setDirection(double const angle, FrAngleUnit angleUnit, FrFrame frame) {
+    void FrCurrent::Initialize(chrono::ChVector<> const unit_direction,
+                               double const velocity,
+                               FrSpeedUnit speedUnit,
+                               FrFrame frame) {
 
-            // Getting current module
-            auto velocity = getVelocity(MS);
+//            if (speedUnit == KNOT) {
+//                Initialize(velocity * M_KNOT * unit_direction, frame);
+//            } else {
+//                Initialize(velocity * unit_direction, frame);
+//            }
 
-            // Converting angle into radians if needed
-            double ang;
-            if (angleUnit == DEG) {
-                ang = angle * M_DEG;
-            } else {
-                ang = angle;
-            }
+    }
 
-            // Building direction in E FRAME
-            m_velocity_vector.SetNull();
+    void FrCurrent::get(chrono::ChVector<> &velocity_vector,
+                        FrFrame frame) {
+//            // FIXME : tout foutu !!
+//            if (frame == NED) {
+//                velocity_vector = NWU2NED(m_velocity_vector);
+//            } else {
+//                velocity_vector = m_velocity_vector;
+//            }
+    }
 
-            m_velocity_vector.x() = velocity * cos(angle);
-            m_velocity_vector.y() = velocity * sin(angle);
+    void FrCurrent::get(chrono::ChVector<> &unit_vector,
+                        double &velocity,
+                        FrFrame frame,
+                        FrSpeedUnit speedUnit) {
 
-            if (frame == NED) {
-                m_velocity_vector = swap_NED_NWU(m_velocity_vector);
-            }
+//            unit_vector = getDirection(frame);
+//            velocity = getVelocity(speedUnit);
 
-        }
+    }
 
-        void FrCurrent::setDirection(chrono::ChVector<> const unit_vector, FrFrame frame) {
-            // Getting current module
-            auto velocity = getVelocity(MS);
+    chrono::ChVector<double> FrCurrent::GetVelocityVector(FrFrame frame) {
+//            if (frame == NED) {
+//                return NWU2NED(m_velocity_vector);
+//            } else {
+//                return m_velocity_vector;
+//            }
+    }
 
-            m_velocity_vector.SetNull();
-            m_velocity_vector = velocity * unit_vector;
-
-            if (frame == NED) {
-                m_velocity_vector = swap_NED_NWU(m_velocity_vector);
-            }
-
-        }
-
-        void FrCurrent::Initialize(chrono::ChVector<> const velocity_vector,
-                                   FrFrame frame) {
-            // TODO: double if
-            m_velocity_vector = velocity_vector;
-            if (frame == NED) {
-                m_velocity_vector = swap_NED_NWU(m_velocity_vector);
-            }
-        }
-
-        void FrCurrent::Initialize(double const angle,
-                                   double const velocity,
-                                   FrAngleUnit angleUnit,
-                                   FrSpeedUnit speedUnit,
-                                   FrFrame frame) {
-            double ang;
-            if (angleUnit == DEG) {
-                ang = angle * M_DEG;
-            } else {
-                ang = angle;
-            }
-
-            double vel;
-            if (speedUnit == KNOT) {
-                vel = velocity * M_KNOT;
-            } else {
-                vel = velocity;
-            }
-
-            auto velocity_vector = chrono::ChVector<>(cos(ang), sin(ang), 0);
-
-            Initialize(velocity_vector, frame);
-
-        }
-
-        void FrCurrent::Initialize(chrono::ChVector<> const unit_direction,
-                                   double const velocity,
-                                   FrSpeedUnit speedUnit,
-                                   FrFrame frame) {
-
-            if (speedUnit == KNOT) {
-                Initialize(velocity * M_KNOT * unit_direction, frame);
-            } else {
-                Initialize(velocity * unit_direction, frame);
-            }
-
-        }
-
-        void FrCurrent::get(chrono::ChVector<> &velocity_vector,
-                            FrFrame frame) {
-            // FIXME : tout foutu !!
-            if (frame == NED) {
-                velocity_vector = NWU2NED(m_velocity_vector);
-            } else {
-                velocity_vector = m_velocity_vector;
-            }
-        }
-
-        void FrCurrent::get(chrono::ChVector<> &unit_vector,
-                            double &velocity,
-                            FrFrame frame,
-                            FrSpeedUnit speedUnit) {
-
-            unit_vector = getDirection(frame);
-            velocity = getVelocity(speedUnit);
-
-        }
-
-        chrono::ChVector<double> FrCurrent::GetVelocityVector(FrFrame frame) {
-            if (frame == NED) {
-                return NWU2NED(m_velocity_vector);
-            } else {
-                return m_velocity_vector;
-            }
-        }
-
-    }  // end namespace environment
+}  // end namespace environment
 }  // end namespace frydom

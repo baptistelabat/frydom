@@ -7,6 +7,7 @@
 #include <frydom/core/FrConstants.h>
 #include <frydom/core/FrHydroBody.h>
 #include "FrCurrentForce.h"
+#include "FrCurrent.h"
 
 #include "frydom/IO/FrLoader.h"
 
@@ -20,38 +21,45 @@ namespace environment {
     }
 
 
-//    environment::FrCurrent *FrCurrentForce::GetCurrent() {
+    environment::FrCurrent* FrCurrentForce::GetCurrentFlow() {
 //        auto system = dynamic_cast<FrOffshoreSystem *>(GetBody()->GetSystem());  // Downcasting of a ChSystem
 //        return system->GetCurrent();
-//    }
+    }
 
     void FrCurrentForce::UpdateState() {
 
-        auto coucou = coeffs_table.Eval_cx(0.50);
+        std::cout << "Updating current force" << std::endl;
 
-        // TODO: plutot travailler dans NED puis ensuite passer en NWU pour les forces...
+        // Getting body's velocity with respect to water (including current effect)
+        auto mybody = dynamic_cast<FrHydroBody*> (Body);
+        auto relative_velocity = mybody->GetCurrentRelativeVelocity(NWU);
+        relative_velocity.z() = 0.; // FIXME: doit-on le faire ?
 
-        // 1- Ship's velocity vector expressed in NED frame
-        auto body = dynamic_cast<FrHydroBody*> (GetBody());
-        auto current_flow = body->GetCurrentFlow();
+        // Getting the angle between boat axis and velocity vector
+        auto alpha = degrees(atan2(relative_velocity.y(), relative_velocity.x()));
+        auto vel2 = relative_velocity.Length2();  // FIXME: ne prendre que la partie x, y, annuler le z...
+//        auto vel2 = vel * vel;
 
-//        auto body_velocity = NWU2NED(GetBody()->GetPos_dt());
+        auto coeffs = coeffs_table.Eval(alpha);
 
-        // TODO: c'est hydrobody qui doit avoir la capacite intrinseque de calculer le vecteur flux de courant relatif...
-        // Meme chose pour le vent
-
-        // 2- Current vector in the NED frame
-//        auto current_velocity = GetCurrent()->GetVelocityVector(NED);
-
-        // 3- Relative velocity
-//        auto relative_velocity = body_velocity - current_velocity;
-
-        // 4- Direction
-//        auto alpha = degrees(atan2(relative_velocity.y(), relative_velocity.x()));
-
-        // FIXME: TERMINER
+        // Getting water density
+        double rho_water = 1000.; // Aller chercher dans systeme !!
+        double transverse_area = 10.; // Aller chercher dans hydro_body ?
+        double lateral_area = 10.; // Aller chercher dans hydro_body ?
+        double lpp = 50.;
 
 
+        // FIXME: verifier ces valeurs !!!
+        auto fx = - 0.5 * rho_water * coeffs["cx"] * transverse_area * vel2;
+        auto fy = - 0.5 * rho_water * coeffs["cy"] * transverse_area * vel2;
+        auto mz = - 0.5 * rho_water * coeffs["cz"] * lateral_area * vel2 * lpp;
+
+        force.x() = fx;
+        force.y() = fy;
+        force.z() = 0.;
+        moment.x() = 0.;
+        moment.y() = 0.;
+        moment.z() = mz;
 
     }
 

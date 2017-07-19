@@ -21,6 +21,8 @@ namespace frydom {
     #define M_ONE_MINUTE 60.                        ///> NUMBER OF SECONDS IN ONE MINUTE
     #define M_ONE_HOUR (M_ONE_MINUTE*60.)           ///> NUMBER OF SECONDS IN ONE HOUR
     #define M_KNOT (M_ONE_MILE/M_ONE_HOUR)          ///> Conversion coeff knot -> m/s
+    #define M_ONE_KM 1000.                          ///> ONE KILOMETER
+    #define M_KMH (M_ONE_KM/M_ONE_HOUR)             ///> ONE KILOMETER BY HOUR
 
     #define M_PI_180 (M_PI/180.)                    ///> Conversion DEF->RAD
     #define M_DEG M_PI_180                          ///> Conversion DEG->RAD
@@ -59,6 +61,43 @@ namespace frydom {
     // =================================================================================================================
     // UTILITY FUNCTIONS
     // =================================================================================================================
+
+    /// Convert nautical knots into m/s
+    template <class Real>
+    inline Real KNOT2MS(Real velocity) {
+        return velocity * M_KNOT;
+    }
+
+    /// Convert m/s into nautical knots
+    template <class Real>
+    inline Real MS2KNOT(Real velocity) {
+        return velocity / M_KNOT;
+    }
+
+    /// Convert km/h into m/s
+    template <class Real>
+    inline Real KMH2MS(Real velocity) {
+        return velocity * M_KMH;
+    }
+
+    /// Convert m/s into km/h
+    template <class Real>
+    inline Real MS2KMH(Real velocity) {
+        return velocity / M_KMH;
+    }
+
+    /// Convert km/h into nautical knots
+    template <class Real>
+    inline Real KMH2KNOT(Real velocity) {
+        return MS2KNOT(KMH2MS(velocity));
+    }
+
+    /// Convert nautical knots into km/h
+    template <class Real>
+    inline Real KNOT2KMH(Real velocity) {
+        return MS2KMH(KNOT2MS(velocity));
+    }
+
     // TODO : placer les fonctions de conversion NED/NWU dans FrEulerAngles.h
     /// Transform either a NED vector into a NWU vector or a NWU vector into a NED vector (inline)
     template <class Real=double>

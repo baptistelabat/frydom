@@ -36,7 +36,7 @@ namespace frydom {
         void SetHydroMesh(std::string obj_filename, bool as_asset=true);
 
         /// Get the current vector flow as seen by the moving body on water
-        chrono::ChVector<> GetCurrentFlow(FrFrame frame=NWU);
+        chrono::ChVector<> GetCurrentRelativeVelocity(FrFrame frame=NWU);
 
     };
 

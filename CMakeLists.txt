@@ -92,6 +92,9 @@ set(SOURCE_FILES
         src/frydom/misc/FrInterp1d.cpp
         src/frydom/misc/FrLookupTable1D.h
 
+        src/frydom/environment/FrEnvironment.h
+        src/frydom/environment/FrConventions.h
+
         src/frydom/environment/waves/FrFreeSurface.h
         src/frydom/environment/waves/FrFreeSurface.cpp
         src/frydom/environment/waves/FrFlatFreeSurface.h
@@ -140,7 +143,7 @@ set(SOURCE_FILES
 
 # TODO: mettre dans un foreach !!
 # To add a target
-add_executable(demo_free_surface ${SOURCE_FILES} src/frydom/tests/demo_FreeSurface.cpp src/frydom/misc/FrInterp1dLinear.cpp src/frydom/misc/FrInterp1dLinear.h)
+add_executable(demo_free_surface ${SOURCE_FILES} src/frydom/tests/demo_FreeSurface.cpp)
 target_link_libraries(demo_free_surface ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(demo_O3 ${SOURCE_FILES} src/frydom/tests/demo_O3_juin_2017.cpp)

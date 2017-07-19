@@ -31,17 +31,21 @@ namespace frydom {
         SetHydroMesh(mesh, as_asset);
     }
 
-    chrono::ChVector<> FrHydroBody::GetCurrentFlow(FrFrame frame) {
+    chrono::ChVector<> FrHydroBody::GetCurrentRelativeVelocity(FrFrame frame) {
 
-        // Get the body's velocity
+        // Get the body's velocity (expressed in NWU)
         auto body_velocity = GetPos_dt();
 
         // Get the current velocity
         auto mysystem = dynamic_cast<FrOffshoreSystem*>(system);
-        auto current_velocity = mysystem->GetCurrent()->GetVelocityVector();
+        auto current_velocity = mysystem->GetCurrent()->GetVelocityVector(NWU);
 
+        auto current_flow = body_velocity - current_velocity;
 
-        auto current_flow = chrono::ChVector<>();
+        if (frame == NED) {
+            current_flow = NWU2NED(current_flow);
+        }
+
         return current_flow;
     }
 

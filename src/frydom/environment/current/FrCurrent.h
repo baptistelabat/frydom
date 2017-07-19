@@ -18,6 +18,7 @@
 
 #include "chrono/core/ChVector.h"
 #include "frydom/core/FrConstants.h"
+#include "frydom/environment/FrConventions.h"
 
 // TODO: definir une classe de base pour le champ de courant et de vent (et de houle) afin de ne pas
 // repliquer le code concernant la gestion des unites de vitesse, des conventions de direction ("vient de")
@@ -31,21 +32,26 @@ namespace frydom {
         private:
             // FIXME: ce vecteur doit representer le flux. Par contre, les informations d'angle sont courant porte vers et non vient de
             // FIXME: Corriger les information d'angle qui ne sont pas consistantes.
-            chrono::ChVector<> m_velocity_vector;  ///< the velocity vector as seen by a body in the flux, expressed in the NWU frame
+//            chrono::ChVector<> m_velocity_vector;  // On deprecie !! on stocke mainteant l'angle et la direction
+            double angle;       ///> the current angle in a NED frame following the GOTO convention (in RAD...)
+            double magnitude;   ///> the current magnitude in M/S
 
         public:
 
             /// Default constructor: No current
             FrCurrent();
 
-            /// Constructor from a velocity vector embedding direction and strength
-            FrCurrent(chrono::ChVector<> const velocity_vector, FrFrame= NED);
-
             /// Constructor from an angle and a strength
-            FrCurrent(double const angle, double const velocity, FrAngleUnit= DEG, FrSpeedUnit= KNOT, FrFrame= NED);
+            FrCurrent(double const angle, double const magnitude,
+                      FrAngleUnit= DEG, FrSpeedUnit= KNOT, FrFrame= NED);
+
+            /// Constructor from a velocity vector embedding direction and strength
+            FrCurrent(chrono::ChVector<> const velocity_vector,
+                      FrFrame= NED, FrSpeedUnit= MS);
 
             /// Constructor from a direction vector and a strength
-            FrCurrent(chrono::ChVector<> const unit_direction, double const velocity, FrSpeedUnit= KNOT, FrFrame= NED);
+            FrCurrent(chrono::ChVector<> const unit_direction, double const magnitude,
+                      FrSpeedUnit= KNOT, FrFrame= NED);
 
             /// Destructor
             ~FrCurrent() {}
