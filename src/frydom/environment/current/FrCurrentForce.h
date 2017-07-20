@@ -32,7 +32,7 @@ namespace environment {
 
         FrCurrentForce(std::string yaml_file);
 
-        void UpdateState();
+        void UpdateState() override;
 
         void SetCoeffs(FrCurrentPolarCoeffs table) {
             coeffs_table = std::move(table);

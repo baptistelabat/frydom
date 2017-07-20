@@ -35,9 +35,9 @@ namespace frydom {
         RemoveForce(propeller);
     }
 
-    chrono::ChVector<double> FrShip::GetShipVelocity() const {
-        return GetCoord_dt().pos;
-    }
+//    chrono::ChVector<double> FrShip::GetShipVelocity() const {
+//        return GetCoord_dt().pos;
+//    }
 
     void FrShip::Set3DOF(const bool flag) {
         if (flag) {
@@ -71,14 +71,14 @@ namespace frydom {
         is3DOF = false;
     }
 
-    chrono::ChVector<double> FrShip::GetPosition(FrFrame frame) const {
-        auto position = coord.pos;
-        if (frame == NED) {
-            return NWU2NED(position);
-        } else {
-            return position;
-        }
-    }
+//    chrono::ChVector<double> FrShip::GetPosition(FrFrame frame) const {
+//        auto position = coord.pos;
+//        if (frame == NED) {
+//            return NWU2NED(position);
+//        } else {
+//            return position;
+//        }
+//    }
 
 
 }  // end namespace frydom

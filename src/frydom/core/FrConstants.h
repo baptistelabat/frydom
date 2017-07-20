@@ -44,7 +44,6 @@ namespace frydom {
     enum FrFrame {
         NWU,
         NED,
-        BODY
     };
 
     // enum
@@ -54,8 +53,9 @@ namespace frydom {
     };
 
     enum FrSpeedUnit {  // TODO: ajouter k/h ?
-        MS,   ///< M/S
-        KNOT  ///< NAUTICAL KNOTS
+        MS,     ///> M/S
+        KNOT,   ///> NAUTICAL KNOTS
+        KMH     ///> KM/H
     };
 
     // =================================================================================================================
@@ -97,6 +97,36 @@ namespace frydom {
     inline T KNOT2KMH(T velocity) {
         return MS2KMH(KNOT2MS(velocity));
     }
+
+    /// Converts a velocity from a unit to another
+    template <class T>
+    inline T convert_velocity_unit(const T velocity, FrSpeedUnit current_unit, FrSpeedUnit new_unit= MS) {
+
+        T new_vel;
+        // Expressing in M/S
+        switch (current_unit) {
+            case MS:
+                new_vel = velocity;
+                break;
+            case KMH:
+                new_vel = KMH2MS(velocity);
+                break;
+            case KNOT:
+                new_vel = KNOT2MS(velocity);
+        }
+
+        // EXPRESSING IN NEW UNIT
+        switch (new_unit) {
+            case MS:
+                return new_vel;
+            case KMH:
+                return MS2KMH(new_vel);
+            case KNOT:
+                return MS2KNOT(new_vel);
+        }
+
+    }
+
 
     // TODO : placer les fonctions de conversion NED/NWU dans FrEulerAngles.h
     /// Transform either a NED vector into a NWU vector or a NWU vector into a NED vector (inline)

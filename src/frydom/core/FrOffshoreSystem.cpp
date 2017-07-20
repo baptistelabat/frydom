@@ -64,6 +64,13 @@ namespace frydom {
         // TODO: Mettre ici a jour tous les elements de l'environnement
         // Update all environment models (waves, wind, current...)
 
+        // Current model
+        m_current->Update(ChTime);
+
+        // Wind model
+
+        // Wave model
+
 
         // Executes the "forUpdate" in all controls of controlslist
         ExecuteControlsForUpdate();

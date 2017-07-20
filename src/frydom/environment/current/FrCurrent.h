@@ -45,63 +45,41 @@ namespace environment {
     private:
         // FIXME: ce vecteur doit representer le flux. Par contre, les informations d'angle sont courant porte vers et non vient de
         // FIXME: Corriger les information d'angle qui ne sont pas consistantes.
-//            chrono::ChVector<> m_velocity_vector;  // On deprecie !! on stocke mainteant l'angle et la direction
-        double angle;       ///> the current angle in a NED frame following the GOTO convention (in RAD...)
-        double magnitude;   ///> the current magnitude in M/S
+            chrono::ChVector<> m_current_vector;  ///< The flux velocity vector of the current expressed in the NWU frame (NWU/GOTO)
 
     public:
 
         /// Default constructor: No current
-        FrCurrent();
+        FrCurrent() : m_current_vector(chrono::VNULL) {}
 
-        /// Constructor from an angle and a strength
-        FrCurrent(double angle, double magnitude,
-                  FrAngleUnit= DEG, FrSpeedUnit= KNOT, FrFrame= NED);
+        /// Constructor from a velocity vector embedding direction and magnitude (in m/s)
+        explicit FrCurrent(chrono::ChVector<>  velocity_vector,
+                           FrFrame= NED, FrDirectionConvention= GOTO);
 
-        /// Constructor from a velocity vector embedding direction and strength
-        explicit FrCurrent(chrono::ChVector<> velocity_vector,
-                           FrFrame= NED, FrSpeedUnit= MS);
+        /// Constructor from an angle and a magnitude.
+        FrCurrent(double  angle, double  magnitude,
+                  FrAngleUnit= DEG, FrSpeedUnit= KNOT, FrFrame= NED, FrDirectionConvention= GOTO);
 
-        /// Constructor from a direction vector and a strength
-        FrCurrent(chrono::ChVector<> unit_direction, double magnitude,
-                  FrSpeedUnit= KNOT, FrFrame= NED);
+        /// Constructor from a direction vector and a magnitude
+        FrCurrent(chrono::ChVector<>  unit_direction, double  magnitude,
+                  FrSpeedUnit= KNOT, FrFrame= NED, FrDirectionConvention= GOTO);
 
-//            /// Destructor
-//            ~FrCurrent() = default;
+        void Update(double Time);
 
-        /// Get the strength of the current
-        double getVelocity(FrSpeedUnit= MS);
+        chrono::ChVector<> GetFluxVector(FrFrame= NWU);
 
-        /// Set the strength of the current, keeping the current direction
-        void setVelocity(double velocity, FrSpeedUnit= KNOT);
+        chrono::ChVector<> GetComeFromVector(FrFrame= NWU);
 
-        /// Get the direction of the current
-        chrono::ChVector<> getDirection(FrFrame= NED);
+        chrono::ChVector<> GetGoToVector(FrFrame= NWU);
 
-        /// Set the current's direction given an angle
-        void setDirection(double angle, FrAngleUnit= DEG, FrFrame= NED);
+        double GetAngle(FrDirectionConvention convention, FrFrame frame, FrAngleUnit= DEG);
 
-        /// Set the current's direction given a unit direction vector (not checked !)
-        void setDirection(chrono::ChVector<> unit_vector, FrFrame= NED);
+        double GetMagnitude();
 
-        /// Initialize the current field with a velocity vector embedding direction and strength
-        void Initialize(chrono::ChVector<> velocity_vector, FrFrame= NED);
+        double GetMagnitude2();
 
-        /// Initialize the current field with an angle and a velocity strength
-        void
-        Initialize(double angle, double velocity, FrAngleUnit= DEG, FrSpeedUnit= KNOT, FrFrame= NED);
 
-        /// Initialize the current field with a unit vector direction and a velocity strength
-        void
-        Initialize(chrono::ChVector<> unit_direction, double velocity, FrSpeedUnit= KNOT, FrFrame= NED);
 
-        /// Get the current velocity vector
-        void get(chrono::ChVector<> &velocity_vector, FrFrame= NWU);
-
-        /// Get the current unit direction and velocity of the current
-        void get(chrono::ChVector<> &unit_vector, double &velocity, FrFrame= NWU, FrSpeedUnit= MS);
-
-        chrono::ChVector<double> GetVelocityVector(FrFrame=NWU);
     };
 
 }  // end namespace environment
