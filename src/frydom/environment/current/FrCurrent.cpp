@@ -13,7 +13,6 @@
 //
 // =============================================================================
 
-//#include <math.h>
 #include <cmath>
 
 #include "chrono/core/ChVector.h"
