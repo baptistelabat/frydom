@@ -24,8 +24,9 @@ namespace frydom {
             public std::enable_shared_from_this<FrOffshoreSystem> {
 
     private:
-        double m_g_acc_magnitude;  ///< The local acceleration of gravity
-        double m_water_density;
+        double m_g_acc_magnitude = 9.81;  ///< The local acceleration of gravity
+        double m_water_density = 1026.;
+        double m_air_density = 1.204;
 
         std::unique_ptr<environment::FrFreeSurface> m_free_surface;  ///< The free surface's mesh that is a cartesian grid.
         std::unique_ptr<environment::FrCurrent> m_current;           ///< The current field model
@@ -34,15 +35,15 @@ namespace frydom {
 
     public:
         /// Default constructor
-        FrOffshoreSystem(bool use_material_properties = true,
-                         unsigned int max_objects = 16000,
-                         double scene_size = 500);
+        explicit FrOffshoreSystem(bool use_material_properties = true,
+                                  unsigned int max_objects = 16000,
+                                  double scene_size = 500);
 
         /// Copy constructor
-        FrOffshoreSystem(const FrOffshoreSystem&) {};
+        FrOffshoreSystem(const FrOffshoreSystem& system) {};
 
         /// Default destructor
-        ~FrOffshoreSystem() {std::cout << "OffshoreSystem deleted" << "\n";};
+        ~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
 
         /// Get a shared pointer from the system
         std::shared_ptr<FrOffshoreSystem> getPtr();

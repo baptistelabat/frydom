@@ -56,7 +56,6 @@ namespace frydom {
                   assoc(std::move(table.assoc)),
                   Ydata(std::move(table.Ydata)),
                   interpolators(std::move(table.interpolators)) {};
-        //
 
         /// Set interpolation method
         void SetInterpolationMethod(Interp1dMethod method);

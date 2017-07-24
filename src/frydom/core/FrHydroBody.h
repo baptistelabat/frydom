@@ -28,7 +28,13 @@ namespace frydom {
         double m_current_relative_angle;
         double m_heading;
         double m_course;
-//        double m_sideslip;
+
+        // Geometric properties of the hydro body
+        double transverse_area;
+        double lateral_area;
+        double length_between_perpendicular;
+
+        double wetted_surface;
 
     public:
 
@@ -110,7 +116,7 @@ namespace frydom {
             }
         }
 
-        /// Get the Sidesplip angle (or the dirft angle) defined as the angle between
+        /// Get the Sidesplip angle (or the drift angle) defined as the angle between
         /// the x axis of the body and the velocity vector
         double GetSideslipAngle(FrFrame frame, FrAngleUnit angleUnit= RAD) {
 
@@ -120,7 +126,7 @@ namespace frydom {
         }
 
         void SetNEDHeading(double heading_angle, FrAngleUnit angleUnit= DEG);
-
+        void SetNEDHeading(const chrono::ChVector<>& unit_vector);
 
         // ==========================================================================
         // METHODS ABOUT CURRENT
@@ -144,10 +150,6 @@ namespace frydom {
             }
 
         }
-
-        /// Get the current vector flow as seen by the moving body on water, the relative angle and the
-
-
 
     };
 

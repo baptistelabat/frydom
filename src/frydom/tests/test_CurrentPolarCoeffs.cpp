@@ -14,16 +14,21 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     // The current
-    auto current_field = std::make_unique<FrCurrent>(NORTH_EAST, 5, KNOT, NED, COMEFROM);
+    auto current_field = std::make_unique<FrCurrent>(WEST, 5, KNOT, NED, COMEFROM);
     // TODO: changer pour faire des move !!
     system.setCurrent(current_field.release());
 
     // A ship
     auto ship = std::make_shared<FrShip>();
-    ship->SetNEDHeading(45+180, DEG);
+//    ship->SetNEDHeading(45+180, DEG);
+    ship->SetNEDHeading(EAST);
 
-    auto ship_velocity = ship->TransformDirectionLocalToParent(chrono::ChVector<>(1, 0, 0));
-    ship->SetPos_dt(ship_velocity);  // TODO: ajouter des fonctions
+    auto ship_velocity = ship->TransformDirectionLocalToParent(chrono::ChVector<>(1, 0, 0)); // SetLocalVelocity
+    ship->SetPos_dt(ship_velocity);
+    // TODO: ajouter
+    // SetAbsoluteVelocity(FrFrame = NED)
+    // SetLocalVelocity(FrFrame = NED)
+
 
 //    ship.SetHydroMesh("");
     system.AddBody(ship);

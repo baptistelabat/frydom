@@ -52,7 +52,7 @@ namespace frydom {
         RAD
     };
 
-    enum FrSpeedUnit {  // TODO: ajouter k/h ?
+    enum FrSpeedUnit {
         MS,     ///> M/S
         KNOT,   ///> NAUTICAL KNOTS
         KMH     ///> KM/H

@@ -75,5 +75,11 @@ namespace frydom {
         SetRot(quaternion);
     }
 
+    void FrHydroBody::SetNEDHeading(const chrono::ChVector<>& unit_vector) {
+        // TODO: verifier qu'on a un vecteur unite
+        auto heading_angle = atan2(unit_vector.y(), unit_vector.x());
+        FrHydroBody::SetNEDHeading(heading_angle, RAD);
+    }
+
 
 }  // end namespace frydom

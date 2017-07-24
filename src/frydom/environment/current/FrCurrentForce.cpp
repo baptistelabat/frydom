@@ -37,9 +37,9 @@ namespace environment {
 
         // Getting the angle between boat axis and velocity vector
         auto alpha = mybody->GetCurrentRelativeAngle(NED, DEG);
-//        auto alpha = degrees(atan2(relative_velocity.y(), relative_velocity.x()));
         auto vel2 = relative_velocity.Length2();  // FIXME: ne prendre que la partie x, y, annuler le z...
 
+        // Querying the coefficient table
         auto coeffs = coeffs_table.Eval(fabs(alpha));  // FIXME: plutot que prendre fabs(alpha), rendre plus intelligente la table (symmetrie)
 
         // Getting water density
