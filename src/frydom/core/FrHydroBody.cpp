@@ -14,7 +14,7 @@ namespace frydom {
 
     void FrHydroBody::SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset) {
 
-        hydro_mesh = mesh;
+        m_hydro_mesh = mesh;
 
         if (as_asset) {
             // Registering the mesh as an asset
@@ -44,12 +44,8 @@ namespace frydom {
         auto body_velocity = GetVelocity(NWU);
         m_course = atan2(body_velocity.y(), body_velocity.x());
 
-//        // Update slideslip
-//        m_sideslip = m_course - m_heading;
-
         // Update current relative velocity
-        auto mysystem = dynamic_cast<FrOffshoreSystem*>(system);
-        auto current_velocity = mysystem->GetCurrent()->GetFluxVector(NWU);
+        auto current_velocity = GetSystem()->GetCurrent()->GetFluxVector(NWU);
         m_current_relative_velocity = body_velocity - current_velocity;
 
         // Update the current relative angle
@@ -79,6 +75,38 @@ namespace frydom {
         // TODO: verifier qu'on a un vecteur unite
         auto heading_angle = atan2(unit_vector.y(), unit_vector.x());
         FrHydroBody::SetNEDHeading(heading_angle, RAD);
+    }
+
+    double FrHydroBody::GetTransverseArea() const {
+        return m_transverse_area;
+    }
+
+    void FrHydroBody::SetTransverseArea(double transverse_area) {
+        FrHydroBody::m_transverse_area = transverse_area;
+    }
+
+    double FrHydroBody::GetLateralArea() const {
+        return m_lateral_area;
+    }
+
+    void FrHydroBody::SetLateralArea(double lateral_area) {
+        FrHydroBody::m_lateral_area = lateral_area;
+    }
+
+    double FrHydroBody::GetLpp() const {
+        return m_length_between_perpendicular;
+    }
+
+    void FrHydroBody::SetLpp(double lpp) {
+        FrHydroBody::m_length_between_perpendicular = lpp;
+    }
+
+    double FrHydroBody::GetWettedSurface() const {
+        return m_wetted_surface;
+    }
+
+    void FrHydroBody::SetWettedSurface(double wetted_surface) {
+        FrHydroBody::m_wetted_surface = wetted_surface;
     }
 
 

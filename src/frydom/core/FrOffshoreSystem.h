@@ -65,9 +65,17 @@ namespace frydom {
         void SetGravityAcceleration(double grav);
         double GetGravityAcceleration() const { return m_g_acc_magnitude; }
 
-        /// Get/Set the water density
-        double GetWaterDensity() { return m_water_density; }
-        void SetWaterDensity(double rho) { m_water_density = rho; }
+        /// Get the water density
+        double GetWaterDensity() const { return m_water_density; }
+
+        /// Set the water density
+        void SetWaterDensity(const double rho_water) { m_water_density = rho_water; }
+
+        ///Get the air density
+        double GetAirDensity() const { return m_air_density; }
+
+        /// Set the air density
+        void SetAirDensity(const double rho_air) { m_air_density = rho_air; }
 
         /// Get NED frame
         chrono::ChFrame<double> GetNEDFrame() const { return NEDframe; }
@@ -76,6 +84,9 @@ namespace frydom {
         /// bodies, forces, links, given their current state
         /// as well as environment prior to everything.
         virtual void Update(bool update_assets = true) override;
+
+
+
 
     };  // class FrOffshoreSystem
 

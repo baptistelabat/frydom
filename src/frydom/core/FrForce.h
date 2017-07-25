@@ -26,12 +26,11 @@ namespace frydom {
 
     public:
 
-        FrForce() : chrono::ChForce(),
-                    moment(chrono::VNULL) {};
+        FrForce() : moment(chrono::VNULL) {};
 
         /// Updates the time of the object and other stuff that are time-dependent
         /// into the object
-        virtual void UpdateTime(double mytime) override {
+        void UpdateTime(double mytime) override {
             ChTime = mytime;
 
             // ... put time-domain stuff here
@@ -39,7 +38,7 @@ namespace frydom {
 
         /// Update the force object.
         /// Must be implemented into the child classes.
-        virtual void UpdateState() override = 0;
+        void UpdateState() override = 0;
 
         /// Get the force-torque applied to rigid, body as force vector.
         /// The force must be returned in the absolute coordinates while the torque must be

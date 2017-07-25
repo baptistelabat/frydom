@@ -6,42 +6,34 @@
 #define FRYDOM_FRCURRENTFORCE_H
 
 #include "frydom/core/FrForce.h"
-//#include "FrCurrent.h"
-
 #include "FrCurrentPolarCoeffs.h"
 
 namespace frydom {
 namespace environment {
 
+    // Forward declarations
     class FrCurrentPolarCoeffs;
-
     class FrCurrent;
 
     class FrCurrentForce : public FrForce {
 
     private:
-//        FrHydroBody* Body;
 
         FrCurrentPolarCoeffs coeffs_table;
 
-        // TODO: il manque les modeles de force et les pptes geometriques du flotteur
-
     public:
 
-        FrCurrentForce() : FrForce() {};
+        FrCurrentForce() = default;
 
-        FrCurrentForce(std::string yaml_file);
+        explicit FrCurrentForce(std::string yaml_file);
+
+        virtual FrHydroBody* GetBody() { return dynamic_cast<FrHydroBody*>(Body); }
 
         void UpdateState() override;
 
         void SetCoeffs(FrCurrentPolarCoeffs table) {
             coeffs_table = std::move(table);
         }
-
-
-    private:
-
-        environment::FrCurrent* GetCurrentFlow();
 
     };
 

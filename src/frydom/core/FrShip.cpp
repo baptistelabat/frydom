@@ -35,10 +35,6 @@ namespace frydom {
         RemoveForce(propeller);
     }
 
-//    chrono::ChVector<double> FrShip::GetShipVelocity() const {
-//        return GetCoord_dt().pos;
-//    }
-
     void FrShip::Set3DOF(const bool flag) {
         if (flag) {
             Set3DOF_ON();
@@ -51,7 +47,7 @@ namespace frydom {
         if (is3DOF){ return; }
         // TODO: voir si on peut pas faire quelque chose avec l'attribut flipped de ChLinkMate...
         auto plane_constraint = std::make_shared<chrono::ChLinkMatePlane>();
-        auto free_surface_body = dynamic_cast<FrOffshoreSystem*>(GetSystem())->getFreeSurface()->getBody();
+        auto free_surface_body = GetSystem()->getFreeSurface()->getBody();
         plane_constraint->Initialize(shared_from_this(), free_surface_body,
                                      true,
                                      chrono::ChVector<>(),
@@ -70,15 +66,6 @@ namespace frydom {
         constraint3DOF->SetSystem(0);
         is3DOF = false;
     }
-
-//    chrono::ChVector<double> FrShip::GetPosition(FrFrame frame) const {
-//        auto position = coord.pos;
-//        if (frame == NED) {
-//            return NWU2NED(position);
-//        } else {
-//            return position;
-//        }
-//    }
 
 
 }  // end namespace frydom

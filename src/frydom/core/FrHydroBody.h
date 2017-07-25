@@ -9,6 +9,7 @@
 #include "frydom/misc/FrTriangleMeshConnected.h"
 #include "FrConstants.h"
 #include "FrEulerAngles.h"
+#include "FrOffshoreSystem.h"
 
 // Forward declaration
 namespace chrono {
@@ -21,8 +22,8 @@ namespace frydom {
                         public std::enable_shared_from_this<FrHydroBody> {
 
     private:
-        std::shared_ptr<FrTriangleMeshConnected> hydro_mesh;
-        std::shared_ptr<FrTriangleMeshConnected> visu_mesh;
+        std::shared_ptr<FrTriangleMeshConnected> m_hydro_mesh;
+        std::shared_ptr<FrTriangleMeshConnected> m_visu_mesh;
 
         chrono::ChVector<> m_current_relative_velocity;
         double m_current_relative_angle;
@@ -30,11 +31,11 @@ namespace frydom {
         double m_course;
 
         // Geometric properties of the hydro body
-        double transverse_area;
-        double lateral_area;
-        double length_between_perpendicular;
+        double m_transverse_area = 0.;
+        double m_lateral_area = 0.;
+        double m_length_between_perpendicular = 0.;
 
-        double wetted_surface;
+        double m_wetted_surface = 0.;
 
     public:
 
@@ -50,7 +51,8 @@ namespace frydom {
 
         void Update(bool update_assets = true) override;
 
-
+        /// Get the pointer to the parent ChSystem()
+        FrOffshoreSystem* GetSystem() const { return dynamic_cast<FrOffshoreSystem*>(system); }
 
         /// Get the body position
         chrono::ChVector<> GetPosition(FrFrame frame= NWU) {
@@ -125,8 +127,28 @@ namespace frydom {
             return course - heading;
         }
 
+        /// Set the heading in the NED frame
         void SetNEDHeading(double heading_angle, FrAngleUnit angleUnit= DEG);
+
+        /// Set the heading in the NED frame
         void SetNEDHeading(const chrono::ChVector<>& unit_vector);
+
+        /// Get the transverse area of the body
+        double GetTransverseArea() const;
+
+        void SetTransverseArea(double transverse_area);
+
+        double GetLateralArea() const;
+
+        void SetLateralArea(double lateral_area);
+
+        double GetLpp() const;
+
+        void SetLpp(double lpp);
+
+        double GetWettedSurface() const;
+
+        void SetWettedSurface(double wetted_surface);
 
         // ==========================================================================
         // METHODS ABOUT CURRENT

@@ -7,11 +7,10 @@
 #include <frydom/core/FrConstants.h>
 #include <frydom/core/FrHydroBody.h>
 #include "FrCurrentForce.h"
-#include "FrCurrent.h"
+//#include "FrCurrentPolarCoeffs.h"
 
 #include "frydom/IO/FrLoader.h"
 
-//#include "frydom/core/FrOffshoreSystem.h"
 
 namespace frydom {
 namespace environment {
@@ -21,17 +20,12 @@ namespace environment {
     }
 
 
-    environment::FrCurrent* FrCurrentForce::GetCurrentFlow() {
-//        auto system = dynamic_cast<FrOffshoreSystem *>(GetBody()->GetSystem());  // Downcasting of a ChSystem
-//        return system->GetCurrent();
-    }
-
     void FrCurrentForce::UpdateState() {
 
         std::cout << "Updating current force" << std::endl;
 
         // Getting body's velocity with respect to water (including current effect)
-        auto mybody = dynamic_cast<FrHydroBody*> (Body);
+        auto mybody = GetBody();
         auto relative_velocity = mybody->GetCurrentRelativeVelocity(NWU);
         relative_velocity.z() = 0.; // FIXME: doit-on le faire ?
 
@@ -42,12 +36,11 @@ namespace environment {
         // Querying the coefficient table
         auto coeffs = coeffs_table.Eval(fabs(alpha));  // FIXME: plutot que prendre fabs(alpha), rendre plus intelligente la table (symmetrie)
 
-        // Getting water density
-        double rho_water = 1000.; // Aller chercher dans systeme !!
-        double transverse_area = 10.; // Aller chercher dans hydro_body ?
-        double lateral_area = 10.; // Aller chercher dans hydro_body ?
-        double lpp = 50.;
 
+        auto rho_water = mybody->GetSystem()->GetWaterDensity();
+        auto transverse_area = mybody->GetTransverseArea();
+        auto lateral_area = mybody->GetLateralArea();
+        auto lpp = mybody->GetLpp();
 
         // FIXME: verifier ces valeurs !!!
         auto fx = - 0.5 * rho_water * coeffs["cx"] * transverse_area * vel2;
