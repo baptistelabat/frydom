@@ -24,7 +24,7 @@ namespace frydom {
     protected:
         std::shared_ptr<const std::vector<Real>> xcoord;
         std::shared_ptr<const std::vector<Real>> yval;
-        unsigned long ndata;
+        unsigned long ndata = 0;
         Real xmin;
         Real xmax;
 
