@@ -23,29 +23,37 @@ namespace environment {
     void FrCurrentForce::UpdateState() {
 
         std::cout << "Updating current force" << std::endl;
+        auto mybody = GetBody();
 
         // Getting body's velocity with respect to water (including current effect)
-        auto mybody = GetBody();
         auto relative_velocity = mybody->GetCurrentRelativeVelocity(NWU);
-        relative_velocity.z() = 0.; // FIXME: doit-on le faire ?
+        auto vx = relative_velocity.x();
+        auto vy = relative_velocity.y();
+        auto vel2 = vx*vx + vy*vy;
 
         // Getting the angle between boat axis and velocity vector
-        auto alpha = mybody->GetCurrentRelativeAngle(NED, DEG);
-        auto vel2 = relative_velocity.Length2();  // FIXME: ne prendre que la partie x, y, annuler le z...
+        auto alpha = mybody->GetCurrentRelativeAngle(NWU, DEG);
 
         // Querying the coefficient table
-        auto coeffs = coeffs_table.Eval(fabs(alpha));  // FIXME: plutot que prendre fabs(alpha), rendre plus intelligente la table (symmetrie)
+//        auto coeffs = coeffs_table.Eval(fabs(alpha));  // FIXME: plutot que prendre fabs(alpha), rendre plus intelligente la table (symmetrie)
 
-
+        // Retrieving hull underwater properties
         auto rho_water = mybody->GetSystem()->GetWaterDensity();
         auto transverse_area = mybody->GetTransverseArea();
         auto lateral_area = mybody->GetLateralArea();
         auto lpp = mybody->GetLpp();
 
-        // FIXME: verifier ces valeurs !!!
-        auto fx = - 0.5 * rho_water * coeffs["cx"] * transverse_area * vel2;
-        auto fy = - 0.5 * rho_water * coeffs["cy"] * transverse_area * vel2;
-        auto mz = - 0.5 * rho_water * coeffs["cz"] * lateral_area * vel2 * lpp;
+        // Attention, les valeurs sont valables pour du NED !!!
+        auto cx = coeffs_table.CX(alpha, NWU);
+        auto cy = coeffs_table.CY(alpha, NWU);
+        auto cz = coeffs_table.CZ(alpha, NWU);
+
+//        auto fx = - 0.5 * rho_water * coeffs["cx"] * transverse_area * vel2;
+//        auto fy = - 0.5 * rho_water * coeffs["cy"] * transverse_area * vel2;
+//        auto mz = - 0.5 * rho_water * coeffs["cz"] * lateral_area * vel2 * lpp;
+        auto fx = 0.5 * rho_water * cx * transverse_area * vel2;
+        auto fy = 0.5 * rho_water * cy * transverse_area * vel2;
+        auto mz = 0.5 * rho_water * cz * lateral_area * vel2 * lpp;
 
         force.x() = fx;
         force.y() = fy;

@@ -24,9 +24,11 @@ namespace frydom {
 
         chrono::ChVector<> moment;
 
+
     public:
 
         FrForce() : moment(chrono::VNULL) {};
+
 
         /// Updates the time of the object and other stuff that are time-dependent
         /// into the object
@@ -41,13 +43,12 @@ namespace frydom {
         void UpdateState() override = 0;
 
         /// Get the force-torque applied to rigid, body as force vector.
-        /// The force must be returned in the absolute coordinates while the torque must be
+        /// CAUTION !!!! : The force must be returned in the absolute coordinates while the torque must be
         /// expressed in body coordinates
-        virtual void GetBodyForceTorque(chrono::ChVector<>& body_force, chrono::ChVector<>& body_torque) const override {
+        void GetBodyForceTorque(chrono::ChVector<>& body_force, chrono::ChVector<>& body_torque) const override {
             body_force = force;
             body_torque = moment;
         }
-
 
     };
 

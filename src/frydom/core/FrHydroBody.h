@@ -136,11 +136,11 @@ namespace frydom {
         /// Get the transverse area of the body
         double GetTransverseArea() const;
 
-        void SetTransverseArea(double transverse_area);
+        void SetTransverseUnderWaterArea(double transverse_area);
 
         double GetLateralArea() const;
 
-        void SetLateralArea(double lateral_area);
+        void SetLateralUnderwaterArea(double lateral_area);
 
         double GetLpp() const;
 

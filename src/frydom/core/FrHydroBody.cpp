@@ -81,7 +81,7 @@ namespace frydom {
         return m_transverse_area;
     }
 
-    void FrHydroBody::SetTransverseArea(double transverse_area) {
+    void FrHydroBody::SetTransverseUnderWaterArea(double transverse_area) {
         FrHydroBody::m_transverse_area = transverse_area;
     }
 
@@ -89,7 +89,7 @@ namespace frydom {
         return m_lateral_area;
     }
 
-    void FrHydroBody::SetLateralArea(double lateral_area) {
+    void FrHydroBody::SetLateralUnderwaterArea(double lateral_area) {
         FrHydroBody::m_lateral_area = lateral_area;
     }
 
