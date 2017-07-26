@@ -25,10 +25,10 @@ namespace frydom {
         std::shared_ptr<FrTriangleMeshConnected> m_hydro_mesh;
         std::shared_ptr<FrTriangleMeshConnected> m_visu_mesh;
 
-        chrono::ChVector<> m_current_relative_velocity;
-        double m_current_relative_angle;
-        double m_heading;
-        double m_course;
+        chrono::ChVector<> m_current_relative_velocity = chrono::VNULL;
+        double m_current_relative_angle = 0.;
+        double m_heading = 0.;
+        double m_course = 0.;
 
         // Geometric properties of the hydro body
         double m_transverse_area = 0.;
@@ -39,8 +39,6 @@ namespace frydom {
 
     public:
 
-//        FrHydroBody() : ChBodyAuxRef() {};  // TODO: est-il utile d'appeler le constructeur par defaut de la classe mere ??
-
         std::shared_ptr<FrHydroBody> GetShared() { return shared_from_this(); };
 
         /// Set the hydrodynamic mesh from a mesh shared instance
@@ -49,6 +47,7 @@ namespace frydom {
         /// Set the hydrodynamic mesh from a wavefront obj file
         void SetHydroMesh(std::string obj_filename, bool as_asset=true);
 
+        /// Update hydrodynamics data relative to the hydro body then updates other body stuffs
         void Update(bool update_assets = true) override;
 
         /// Get the pointer to the parent ChSystem()
@@ -83,7 +82,6 @@ namespace frydom {
         chrono::ChVector<> GetAngularVelocity(FrFrame frame= NWU) {
             //TODO
         }
-
 
         /// Get the heading angle defined as the angle between the x axis of the
         /// absolute frame and the x axis of the body
@@ -127,34 +125,41 @@ namespace frydom {
             return course - heading;
         }
 
-        /// Set the heading in the NED frame
+        /// Set the heading of the body from angle in the NED frame
         void SetNEDHeading(double heading_angle, FrAngleUnit angleUnit= DEG);
 
-        /// Set the heading in the NED frame
+        /// Set the heading of the body from a unit direction in the NED frame
         void SetNEDHeading(const chrono::ChVector<>& unit_vector);
 
-        /// Get the transverse area of the body
-        double GetTransverseArea() const;
+        /// Get the transverse underwater area of the body
+        double GetTransverseUnderwaterArea() const;
 
-        void SetTransverseUnderWaterArea(double transverse_area);
+        /// Set the transverse underwater area of the body
+        void SetTransverseUnderwaterArea(double transverse_area);
 
-        double GetLateralArea() const;
+        /// Get the lateral underwater area of the body
+        double GetLateralUnderwaterArea() const;
 
+        /// Set the lateral underwater area of the body
         void SetLateralUnderwaterArea(double lateral_area);
 
+        /// Get the length between perpendicular of the body
         double GetLpp() const;
 
+        /// Set the length between perpendicular of the body
         void SetLpp(double lpp);
 
+        /// Get the wetted surface of the body
         double GetWettedSurface() const;
 
+        /// Set the wetted surface of the body
         void SetWettedSurface(double wetted_surface);
 
         // ==========================================================================
         // METHODS ABOUT CURRENT
         // ==========================================================================
 
-        /// Get the current vector flow as seen by the moving body on water
+        /// Get the relative velocity of the current field, taking into account the body's own velocity
         chrono::ChVector<> GetCurrentRelativeVelocity(FrFrame frame= NWU);
 
         /// Get the current relative angle

@@ -8,9 +8,7 @@
 #include "FrHydroBody.h"
 #include "FrOffshoreSystem.h"
 
-
 namespace frydom {
-
 
     void FrHydroBody::SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset) {
 
@@ -77,15 +75,15 @@ namespace frydom {
         FrHydroBody::SetNEDHeading(heading_angle, RAD);
     }
 
-    double FrHydroBody::GetTransverseArea() const {
+    double FrHydroBody::GetTransverseUnderwaterArea() const {
         return m_transverse_area;
     }
 
-    void FrHydroBody::SetTransverseUnderWaterArea(double transverse_area) {
+    void FrHydroBody::SetTransverseUnderwaterArea(double transverse_area) {
         FrHydroBody::m_transverse_area = transverse_area;
     }
 
-    double FrHydroBody::GetLateralArea() const {
+    double FrHydroBody::GetLateralUnderwaterArea() const {
         return m_lateral_area;
     }
 
@@ -108,6 +106,5 @@ namespace frydom {
     void FrHydroBody::SetWettedSurface(double wetted_surface) {
         FrHydroBody::m_wetted_surface = wetted_surface;
     }
-
 
 }  // end namespace frydom

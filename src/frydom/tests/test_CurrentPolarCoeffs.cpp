@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     // Building a ship
     auto ship = std::make_shared<FrShip>();
 
-    ship->SetTransverseUnderWaterArea(120.);
+    ship->SetTransverseUnderwaterArea(120.);
     ship->SetLateralUnderwaterArea(500.);
     ship->SetLpp(76.2);
 

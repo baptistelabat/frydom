@@ -39,8 +39,8 @@ namespace environment {
 
         // Retrieving hull underwater properties
         auto rho_water = mybody->GetSystem()->GetWaterDensity();
-        auto transverse_area = mybody->GetTransverseArea();
-        auto lateral_area = mybody->GetLateralArea();
+        auto transverse_area = mybody->GetTransverseUnderwaterArea();
+        auto lateral_area = mybody->GetLateralUnderwaterArea();
         auto lpp = mybody->GetLpp();
 
         // Attention, les valeurs sont valables pour du NED !!!
