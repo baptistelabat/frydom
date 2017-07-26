@@ -175,6 +175,48 @@ namespace frydom {
         return fmod(a, (Real)360.);
     }
 
+    /// Normalizes angles to [0, 360[ range
+    template <class Real>
+    inline Real Normalize_0_360(const Real a) {
+        Real angle = modulo360(a);
+        if (angle < 0) {
+            angle += 360;
+        }
+        return angle;
+    }
+
+    /// Normalizes angles to ]-180, 180]
+    template <class Real>
+    inline Real Normalize__180_180(const Real a) {
+        Real angle = modulo360(a + 180);
+        if (angle < 0) {
+            angle += 360;
+        }
+        return angle - 180;
+    }
+
+    /// Normalizes angles to [0, 2*PI[ range
+    template <class Real>
+    inline Real Normalize_0_2PI(const Real a) {
+        Real angle = modulo2pi(a);
+        if (angle < 0) {
+            angle += M_2PI;
+        }
+        return angle;
+    }
+
+    /// Normalizes angles to ]-PI, PI]
+    template <class Real>
+    inline Real Normalize__PI_PI(const Real a) {
+        Real angle = modulo2pi(a + M_PI);
+        if (angle < 0) {
+            angle += M_2PI;
+        }
+        return angle - M_PI;
+    }
+
+
+
 }  // end namespace frydom
 
 #endif //FRYDOM_CONSTANTS_H

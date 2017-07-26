@@ -23,12 +23,19 @@ namespace environment {
 
     public:
 
+        /// Default constructor
         FrCurrentForce() = default;
 
+        /// Constructor from a YAML file
         explicit FrCurrentForce(std::string yaml_file);
 
-        virtual FrHydroBody* GetBody() { return dynamic_cast<FrHydroBody*>(Body); }
+        /// Get the parent body that must be a FrHydroBody
+        FrHydroBody* GetBody() { return dynamic_cast<FrHydroBody*>(Body); }
 
+        /// Sets the parent body (the force belongs to this rigid body)
+//        void SetBody(FrHydroBody* newRB) { Body = newRB; }
+
+        /// Update the state of the force
         void UpdateState() override;
 
         void SetCoeffs(FrCurrentPolarCoeffs table) {

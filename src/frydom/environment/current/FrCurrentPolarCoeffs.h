@@ -46,7 +46,8 @@ namespace environment {
 
         double CX(const double angle, FrFrame frame = NWU) const {
             // CX coefficient is pair so CX(alpha) = CX(-alpha) + no difference between NED and NWU frames
-            auto cx = Eval("cx", fabs(angle));
+            double alpha = angle;
+            auto cx = Eval("cx", fabs(alpha));
             if (m_negate) cx = -cx;
             return cx;
         }

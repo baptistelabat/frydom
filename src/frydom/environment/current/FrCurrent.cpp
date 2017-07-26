@@ -106,7 +106,7 @@ namespace environment {
     }
 
     void FrCurrent::Update(double Time) {
-        std::cout << "Updating current model" << std::endl;
+//        std::cout << "Updating current model" << std::endl;
     }
 
     chrono::ChVector<> FrCurrent::GetFluxVector(FrFrame frame) {

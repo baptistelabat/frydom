@@ -6,7 +6,6 @@
 #include <chrono/assets/ChTriangleMeshShape.h>
 
 #include "FrHydroBody.h"
-#include "FrOffshoreSystem.h"
 
 namespace frydom {
 
@@ -32,15 +31,15 @@ namespace frydom {
 
     void FrHydroBody::Update(bool update_assets) {
 
-        std::cout << "Updating body"  << std::endl;
+//        std::cout << "Updating body"  << std::endl;
 
         // Update heading
         auto euler_angles = quat_to_euler(GetRot(), CARDAN, RAD);
-        m_heading = euler_angles.z();
+        m_heading = Normalize_0_2PI(euler_angles.z());
 
         // Update course
         auto body_velocity = GetVelocity(NWU);
-        m_course = atan2(body_velocity.y(), body_velocity.x());
+        m_course = Normalize_0_2PI(atan2(body_velocity.y(), body_velocity.x()));
 
         // Update current relative velocity
         auto current_velocity = GetSystem()->GetCurrent()->GetFluxVector(NWU);
@@ -49,7 +48,7 @@ namespace frydom {
         // Update the current relative angle
         auto relative_velocity_angle = atan2(m_current_relative_velocity.y(),
                                              m_current_relative_velocity.x());
-        m_current_relative_angle = relative_velocity_angle - m_heading;
+        m_current_relative_angle = Normalize__PI_PI(relative_velocity_angle - m_heading);
 
         // update parent class
         chrono::ChBodyAuxRef::Update(update_assets);

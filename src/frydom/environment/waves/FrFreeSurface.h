@@ -102,7 +102,7 @@ namespace environment{
         virtual void Update(double ChTime) = 0;
 
         /// get the body that represents the free surface
-        auto getBody() {return m_fs_body;}
+        std::shared_ptr<chrono::ChBody> getBody() {return m_fs_body;}
 
 
       protected:;  // Disallow the default constructor to be used as a publid method

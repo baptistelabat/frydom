@@ -87,6 +87,8 @@ set(SOURCE_FILES
         src/frydom/IO/FrLoader.h
         src/frydom/IO/FrLoader.cpp
 
+        src/frydom/misc/FrUtils.h
+        src/frydom/misc/FrUtils.cpp
         src/frydom/misc/FrMathUtils.h
         src/frydom/misc/FrInterp1d.h
         src/frydom/misc/FrInterp1d.cpp
