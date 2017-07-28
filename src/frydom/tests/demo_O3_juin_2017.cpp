@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
                                                                           frydom::KNOT);
 
 
-    system.setCurrent(current_field.release());
+    system.SetCurrent(current_field.release());
 
 
     // =================================================================================================================

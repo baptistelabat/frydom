@@ -24,7 +24,7 @@ namespace frydom {
             public std::enable_shared_from_this<FrOffshoreSystem> {
 
     private:
-        double m_g_acc_magnitude = 9.81;  ///< The local acceleration of gravity
+        double m_gravity_acc_magnitude = 9.81;  ///< The local acceleration of gravity
         double m_water_density = 1026.;
         double m_air_density = 1.204;
 
@@ -45,14 +45,11 @@ namespace frydom {
         /// Default destructor
         ~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
 
-        /// Get a shared pointer from the system
-        std::shared_ptr<FrOffshoreSystem> getPtr();
-
         /// Add a free surface model to the system
         void setFreeSurface(environment::FrFreeSurface* freeSurface);
 
         /// Add a current field to the system
-        void setCurrent(environment::FrCurrent* current_field);
+        void SetCurrent(environment::FrCurrent *current_field);
 
         /// Get the free surface model from the offshore system.
         environment::FrFreeSurface* getFreeSurface() const;
@@ -63,7 +60,7 @@ namespace frydom {
         /// Get/Set the value of the acceleration of gravity
         /// It must be given positive, in m/s**2
         void SetGravityAcceleration(double grav);
-        double GetGravityAcceleration() const { return m_g_acc_magnitude; }
+        double GetGravityAcceleration() const { return m_gravity_acc_magnitude; }
 
         /// Get the water density
         double GetWaterDensity() const { return m_water_density; }

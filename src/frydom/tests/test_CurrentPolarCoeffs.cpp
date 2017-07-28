@@ -17,13 +17,21 @@ int main(int argc, char* argv[]) {
     // ====================================================================================
     FrOffshoreSystem system;
 
+
+    // TODO: pour l'environnement, un environnement par defaut devrait etre cree, quitte a cree des classes derivees de
+    // OffshoreSystem... -> on devrait pouvoir creer un systeme en une ligne et ensuite tuner les parametres (ou le faire
+    // via un constructeur avec plein d'arguments par defaut ?).
+    // On peut avoir une methode de systeme du type SetFreeSurfaceModel qui connait une factory de free surface ?
+    // NON, ce sera au Python de savoir faire tout ça !!!
+
     // ====================================================================================
     // Defining the current
     // ====================================================================================
+    // TODO: avoir une factory de courant. Un courant nul par defaut devrait etre cree dans offshoreSystem
     auto current_field = std::make_unique<FrCurrent>(NORTH, 8, KNOT, NED, GOTO);
 
     // TODO: changer pour faire des move !!
-    system.setCurrent(current_field.release());
+    system.SetCurrent(current_field.release());
 
     // ====================================================================================
     // Defining the free surface
@@ -31,13 +39,15 @@ int main(int argc, char* argv[]) {
     auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
     free_surface->Initialize(-400, 400, 200, -100, 100, 100);
     system.setFreeSurface(free_surface.release());
-    // TODO: une surface libre par defaut devrait etre presente a l'instanciation de system
-    //
+    // TODO: une surface libre flat (200mx200m) par defaut devrait etre presente a l'instanciation de system
 
     // ====================================================================================
     // Building a ship
     // ====================================================================================
     auto ship = std::make_shared<FrShip>();  // TODO: avoir une factory make_ship.
+
+    system.AddBody(ship);  // TODO: avoir une factory make_hydro_body(system) ... qui renvoie un shared_ptr du bateau cree mais qui gere les differents pointages
+    ship->Set3DOF_ON(); // TODO: Attention, il faut que le corps soit deja renseigne dans system... permettre de differer ...
 
 
     // Ship propertie
@@ -69,12 +79,7 @@ int main(int argc, char* argv[]) {
     auto current_force = std::make_shared<FrCurrentForce>(filename);
     ship->AddForce(current_force);
 
-    system.AddBody(ship);
-    ship->Set3DOF_ON();
 
-//    system.Update();
-//
-////    ship->Update(true);
 
     // Using own class for irrlicht viz
     frydom::FrIrrApp app(&system, L"Frydom vizualization based on Irrlicht");
