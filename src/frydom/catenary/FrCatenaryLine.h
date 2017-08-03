@@ -8,6 +8,7 @@
 #include <chrono/physics/ChMarker.h>
 //#include <chrono/physics/ChNlsolver.h>
 #include "chrono/core/ChLinearAlgebra.h"
+#include "FrCatenaryNode.h"
 
 namespace frydom {
 
@@ -15,109 +16,135 @@ namespace frydom {
     class FrCatenaryLine {
 
     private:
-        chrono::ChMarker m_marker1;  // TODO: Voir si on ne cree pas de classe derivee frydom
-        chrono::ChMarker m_marker2;
-        double Lu = 0.;                 ///> unstretched length
-        double EA = 0.;                 ///> axial stiffness
-        double Cb = 0.;                 ///> cable-seabed friction coefficient
-        double w = 0.;                  ///>
-        double rho_line = 0.;                 ///> density of the line (kg/m**3)
 
-        chrono::ChMatrix33<double> rotmat;  ///> rotation matrice of the plane inwhich the element lies
-        double psi = 0.;                     ///> azimuthal angle of the vertical plane in which the line element lies
+        std::shared_ptr<FrCatenaryNode> m_starting_node;
+        std::shared_ptr<FrCatenaryNode> m_ending_node;
 
-        // Data updates
-        double L = 0.; ///> current line length
-        double HA = 0.;
-        double VA = 0.;
-        double l = 0.;
-        double h = 0.;
+        bool m_elastic = true;
 
-        // Data for Newton-Raphson solver
-        chrono::ChMatrixNM<double, 2, 1> solution;
-        chrono::ChMatrixNM<double, 2, 1> residual;
-        chrono::ChMatrixNM<double, 2, 2> jacobian;
-        chrono::ChMatrixNM<double, 2, 1> delta;
-        double tolerance = 1e-6;
-        unsigned int maxiter = 100;
+        double m_Lu = 0.;                 ///> unstretched length
+        double m_E = 1e12;                ///> young_modulus (default is near from infinite)
+        double m_A = 0.15;                ///> line section area
+//        double rho_line = 0.;           ///> density of the line (kg/m**3)
+
+
+        // Cache data
+        double m_EA; /// Axial stiffness
+
+
+        chrono::ChVector<double> starting_tension;  // t(0)
+        chrono::ChVector<double> ending_tension;    // t(L)
+
+
+
+//        // Data for Newton-Raphson solver
+//        chrono::ChMatrixNM<double, 2, 1> solution;
+//        chrono::ChMatrixNM<double, 2, 1> residual;
+//        chrono::ChMatrixNM<double, 2, 2> jacobian;
+//        chrono::ChMatrixNM<double, 2, 1> delta;
+//        double tolerance = 1e-6;
+//        unsigned int maxiter = 100;
 
     public:
 
+        FrCatenaryLine() = default;
+
+        FrCatenaryLine(std::shared_ptr<FrCatenaryNode>& starting_node,
+                       std::shared_ptr<FrCatenaryNode>& ending_node) {};
+
         /// Set the line axial stiffness from material stiffness and diameter
-        void SetAxialStiffness(double E, double A) { EA = E*A; }
+//        void SetAxialStiffness(double E, double A) { m_EA = E*A; }
+
+        void SetLineSectionArea(double A) {};
+
+        void SetYoungModulus(double E) {};
 
         /// Set the line axial stiffness from section stiffness
-        void SetAxialStiffness(double p_EA) {EA = p_EA; }
+//        void SetAxialStiffness(double p_EA) {m_EA = p_EA; }
 
         /// Set the unstretched length of the line element
-        void SetUnstretchedLength(double length) { Lu = length; }
+        void SetUnstretchedLength(double length) { m_Lu = length; }
 
-        /// Set the seabed-line friction coefficient
-        void SetFrictionCoeff(double p_Cb) { Cb = p_Cb; }
+        /// Set the line density (kg/m)
+        void SetLineLinearDensity(double linear_density) {};
 
-        /// Set the line density (kg/m**3)
-        void SetDensity(double rho_medium) {};
-
-        /// Compute l and h
-        void GetRelativePositions() {};
-
-        /// Compute x(s) and z(s)
-        void ComputePosition() {};
-
-        /// Compute tension at s curvilinear abscissa
-        double ComputeTension() {};
-
-        inline bool CheckCurvilinearAbscissa() {};
-
-        /// Solve the catenary equations for forces at boundaries
-        void Solve() {
-
-            // 1- Initializing solution with initial guess based on precedent solution for HA, VA
+        /// Set the line material density
+        void SetLineDensity(double density) {};
 
 
-            solution.FillElem(0.);  // FIXME: remplir avec le resultat precedent pour HA et VA
+        void SetStartingNode(std::shared_ptr<FrCatenaryNode>& starting_node) { m_starting_node = starting_node; };
+        void SetEndingNode(std::shared_ptr<FrCatenaryNode>& ending_node) { m_ending_node = ending_node; };
 
-            unsigned int iter = 0;
-            while (true) {
+        void SetNodes(std::shared_ptr<FrCatenaryNode>& starting_node,
+                      std::shared_ptr<FrCatenaryNode>& ending_node) {
+            m_starting_node = starting_node;
+            m_ending_node = ending_node;
+        };
 
-                if (iter >= maxiter) {
 
-                    break;
-                }
 
-                // Compute residuals
-                ComputeResiduals();
+        void AddConstantField(chrono::ChVector<double> qvect) {
 
-                // Convergence criteria
-                if (residual.NormInf() <= tolerance) {
+            // Ici on construit le champ q = qs * u avec qs > 0 et u direction unitaire. Ces donnees sont utilisees
 
-                    break;
-                }
+            // Adding a constant field to be merged with gravity and eventually water buoyancy... (mettre un flag pour ca !! inWater=true)
 
-                //Compute jacobian
-                ComputeJacobian();
 
-                // Solve LU for delta
-                chrono::ChLinearAlgebra::Solve_LinSys(jacobian, &solution, &delta);
-                delta.MatrNeg();
-                solution.MatrInc(delta);
-
-                iter++;
-
-            }  // end Newton-Raphson iterations
-
-        }; // utiliser chrono/physics/ChNLSolver.h (Newton Raphson)
-
-    private:
-
-        void ComputeResiduals() {
-            // 1- Computing h_cur and l_cur at s = L
-
-            // 2- Computing the residual
-            residual.FillElem(0.);  // Retirer et renseigner les valeurs
         }
 
-        void ComputeJacobian() {};
+        void UpdateConstantField() {
+
+            // Update de la matrice U = I - uu' et mise en cache
+
+            // Voir pour d'autre updates a faire ici et impactes par le champ de force distribue sur la ligne
+
+
+
+        }
+
+
+
+        // Real computations :
+
+        chrono::ChVector<double> GetTension(double s) {
+            // t(s)
+        }
+
+
+        chrono::ChVector<double> ComputeUnstrainedSolution(double s) {
+            // On calcule pc(s)
+        }
+
+        chrono::ChVector<double> ComputeElasticIncrement(double s) {
+            // pe(s)
+        }
+
+        chrono::ChVector<double> ComputePosition(double s) {
+            // p(s)
+        }
+
+        double GetStrainedLineLength() {
+            // L + dl
+
+            // with dl = \int_0^L \frac{t(s)}{EA} ds a calculer par trapeze...
+
+
+        }
+
+        chrono::ChVector<double> GetCatenaryResidual() {
+            // On evalue C(t, p) = ComputePosition(L) - position recuperee depuis le noeud ending (guess de position)
+
+        };
+
+
+
+        chrono::ChMatrix33<double> GetCatenaryJacobian() {};
+
+
+        void SolveCatenaryEquation() {};
+
+
+
 
 
 

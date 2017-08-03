@@ -140,7 +140,11 @@ set(SOURCE_FILES
         src/frydom/hydrodynamics/FrTryalForce.cpp
 
         src/frydom/hydrodynamics/FrITTC57.h
-        src/frydom/hydrodynamics/FrITTC57.cpp)
+        src/frydom/hydrodynamics/FrITTC57.cpp
+
+        src/frydom/catenary/FrCatenaryNode.h
+        src/frydom/catenary/FrCatenaryNode.cpp
+        )
 
 
 # TODO: mettre dans un foreach !!
@@ -176,6 +180,9 @@ target_link_libraries(test_current_polar_coeffs ${CHRONO_LIBRARIES} ${YAML_CPP_L
 #target_link_libraries(test_yaml ${CHRONO_LIBRARIES} ${YAML_CPP_LIBS})
 add_executable(test_yaml src/frydom/tests/test_cpp_yaml.cpp)
 target_link_libraries(test_yaml ${YAML_CPP_LIB})
+
+add_executable(test_catenary src/frydom/tests/test_catenary.cpp)
+target_link_libraries(test_catenary ${YAML_CPP_LIB})
 
 
 
