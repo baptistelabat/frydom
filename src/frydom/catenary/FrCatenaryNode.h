@@ -7,6 +7,8 @@
 
 #include <frydom/core/FrForce.h>
 #include <chrono/physics/ChMarker.h>
+#include "chrono/core/ChVector.h"
+
 
 namespace frydom {
 
@@ -31,20 +33,31 @@ namespace frydom {
     // TODO: creer une classe Anchor : FrCatenaryNode::ANCHOR ou un truc de ce type
 
     /// Abstract base class for FryDom Node involved in catenary cable modeling
-    class FrCatenaryNode : public chrono::ChCoordsys<double> {  // FIXME: non, pas la peine de faire deriver...
+    class FrCatenaryNode {  // FIXME: non, pas la peine de faire deriver...
 
     private:
         NodeType m_node_type = ANCHOR;
+        chrono::ChVector<double> m_position;
+
         std::shared_ptr<chrono::ChMarker> m_body_marker = nullptr;
 
 //        FrForce m_force;  // Force additionnelle sur le noeud (a updater !!!)
-        chrono::ChVector<double> m_TotalNodeForce = chrono::VNULL;  ///> Sum of forces on the node, exspressed in the absolute frame
+//        chrono::ChVector<double> m_TotalNodeForce = chrono::VNULL;  ///> Sum of forces on the node, exspressed in the absolute frame
 
 
     public:
+
+        FrCatenaryNode() = default;
+
+        FrCatenaryNode(const double x, const double y, const double z)
+                : m_position(chrono::ChVector<double>(x, y, z)){}
+
         chrono::ChVector<double> GetPos() {
             // Different wether the type of node
-
+            switch (m_node_type) {
+                case ANCHOR:
+                    return m_position;
+            }
         };
 
         /// Attach the node to a body

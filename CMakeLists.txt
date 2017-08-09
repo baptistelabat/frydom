@@ -144,6 +144,10 @@ set(SOURCE_FILES
 
         src/frydom/catenary/FrCatenaryNode.h
         src/frydom/catenary/FrCatenaryNode.cpp
+
+        src/frydom/catenary/FrCatenaryLine.h
+        src/frydom/catenary/FrCatenaryLine.cpp
+
         )
 
 
@@ -176,13 +180,11 @@ target_link_libraries(test_lookup_table ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 add_executable(test_current_polar_coeffs ${SOURCE_FILES} src/frydom/tests/test_CurrentPolarCoeffs.cpp)
 target_link_libraries(test_current_polar_coeffs ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
-#add_executable(test_yaml ${SOURCE_FILES} src/frydom/tests/test_cpp_yaml.cpp)
-#target_link_libraries(test_yaml ${CHRONO_LIBRARIES} ${YAML_CPP_LIBS})
 add_executable(test_yaml src/frydom/tests/test_cpp_yaml.cpp)
 target_link_libraries(test_yaml ${YAML_CPP_LIB})
 
 add_executable(test_catenary src/frydom/tests/test_catenary.cpp)
-target_link_libraries(test_catenary ${YAML_CPP_LIB})
+target_link_libraries(test_catenary ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 
 
