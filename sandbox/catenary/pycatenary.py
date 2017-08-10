@@ -78,7 +78,7 @@ class CatenaryCable(object):
     def get_residual(self):
         return self.get_position(self.L) - self.pL
     
-    def eval_jacobian(self, t0=None):
+    def eval_jacobian(self, t0=None): # FIXME: le pb est dans le calcul de cette matrice jacobienne
         t0_bak = self.t0.copy()
         
         if t0 is not None:
@@ -87,11 +87,13 @@ class CatenaryCable(object):
         jac = np.zeros((3, 3), dtype=np.float)
         
         res = self.get_residual()
-        
+
+        # [ -1.79981338e+02   1.86621682e-02   2.20008311e+02]
+
         for i in xrange(3):
             t0_temp = self.t0.copy()
             h = self._sqrt_eps * self.t0[i]
-            t0_temp += h
+            t0_temp[i] += h
             self.t0 = t0_temp
             res_temp = self.get_residual()
             jac[i] = (res_temp - res) / h
@@ -267,7 +269,9 @@ def newton_raphson(FUN, x, lambd=0.1, itermax=100, disp=False):
         h = sqrt(np.finfo(float).eps) * x[i]
         xtemp[i] += h
         JAC[i, :] = (FUN(xtemp) - F) / h
-        
+        # [[ 0.01831818 -0.00034276 -0.00093842]
+        #  [ 0.01797485  0.01797665 -0.00187302]
+        # [ 0.01704025  0.01704022 -0.00118828]]
     s = np.linalg.solve(JAC, -F)
     
     x += lambd*s
@@ -370,18 +374,23 @@ if __name__ == '__main__':
     # q = 0.1
     
     EA = 1.5708e9
-    
+
+
+
+
+
     cable = CatenaryCable(elastic=True, EA=EA, L=L, p0=p0, pL=pL, force_field=q*u, t0=t0)
-    
+
     cable.plot()
-    
+
     cable.solve()
-    
-    
-    
-    import sys
-    sys.exit(0)
-    
+
+    cable.plot()
+
+
+    # import sys
+    # sys.exit(0)
+    plot_cable(p0, L, t0, u, q, EA, elastic)
     
     # # Ploting the line
     # s = np.arange(0, L+0.5, 1)
@@ -428,33 +437,3 @@ if __name__ == '__main__':
     import sys
     sys.exit(0)
     
-    tol = 1e-3
-
-    itermax = 10000
-    iter = 1
-
-    while True:
-
-        residue = p(L, p0, t0, u, q, EA, elastic) - pL
-
-        # print np.linalg.norm(residue)
-
-        if iter == itermax:
-            print "No convergence obtained after %u iterations" % itermax
-            break
-
-        maxresidual = np.max(np.abs(residue))
-
-        print iter, maxresidual
-
-        if maxresidual < tol:
-            print "Convergence obtained in %u iteration" % iter
-            break
-
-        jac = jacobian(t0, u, q, L, EA, elastic)
-
-        delta_t0 = np.linalg.solve(jac, -residue)
-
-        t0 += delta_t0
-
-        iter += 1
