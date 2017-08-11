@@ -177,8 +177,10 @@ class CatenaryCable(object):
         
         res = self.get_residual()
 
+        ## Calculating the jacobian by finite difference
         # for i in xrange(3):
         #     t0_temp = self.t0.copy()
+        #     Computing the step scaled by machine accuracy
         #     h = self._sqrt_eps * self.t0[i]
         #     t0_temp[i] += h
         #     self.t0 = t0_temp
@@ -231,7 +233,7 @@ class CatenaryCable(object):
         self.t0 += self._relax * delta_t0
         
         res = self.get_residual()
-        err = sqrt((res*res).sum() / 3.)
+        err = sqrt((res*res).sum() / 3.)  # TODO: changer l'erreur et prendre une norme infinie
 
         # plt.ion() # TODO: a retirer
 
@@ -252,6 +254,8 @@ class CatenaryCable(object):
             delta_t0_temp = np.linalg.solve(jac, -res)
             # delta_t0_temp = np.dot(np.linalg.pinv(jac), -res)
 
+            # FIXME : Il n'y a a priori pas besoin de coeff de relaxation !!! Ce dernier converge tout de suite vers 1.0 !!!
+
             # if not np.fabs(self._relax * delta_t0_temp).max() < np.fabs(delta_t0).max():
             while np.fabs(delta_t0).max() < np.fabs(self._relax * delta_t0_temp).max():
                 self._relax *= 0.5
@@ -262,8 +266,9 @@ class CatenaryCable(object):
             delta_t0 = delta_t0_temp
             self.t0 += self._relax * delta_t0
             
-            self._relax = min([1., self._relax*2.])
+            self._relax = min([1., self._relax*2.])  # Avoiding having an upscaling of the solution
 
+            print "RELAX = %f "% self._relax
             res = self.get_residual()  # TODO: coupler avec le eval_jacobian
             err = sqrt((res*res).sum() / 3.)
             
@@ -273,14 +278,14 @@ class CatenaryCable(object):
             print "No convergence after %u iterations (maximum allowed)" % self._itermax
 
 
-    def get_cable_length(self):
-
-        s = np.arange(0., self.L, 0.1)
+    def get_cable_length(self, ds=0.1):
+        # TODO: vectoriser
+        ss = np.arange(ds, self.L, ds)
 
         cable_length = 0.
-        pos_prev = np.zeros(3, dtype=np.float)
-        for ss in s:
-            pos = self.get_position(ss)
+        pos_prev = self.get_position(0.)
+        for s in ss:
+            pos = self.get_position(s)
             cable_length += np.linalg.norm(pos-pos_prev)
             pos_prev = pos.copy()
 
@@ -330,14 +335,14 @@ if __name__ == '__main__':
 
     # Position des point d'ancrage
     p0 = np.zeros(3, dtype=np.float)
-    pL = np.array([180, 0, 30], dtype=np.float)
+    pL = np.array([180, 0, 0], dtype=np.float)
 
     L = 220 # Longueur cable
 
     # Premier guess de tension
     t0 = np.array([1, 1, 1], dtype=np.float)
 
-    #
+    # Definition du champ de force uniforme constant et distribue sur le cable
     u = np.array([0, 0, -1], dtype=np.float)
     q = 616.538
     # q = 0.1
@@ -347,7 +352,8 @@ if __name__ == '__main__':
 
     cable = CatenaryCable(elastic=True, EA=EA, L=L, p0=p0, pL=pL, force_field=q*u, t0=t0)
 
-    cable.solve()
+
+    # cable.solve()
 
     # cable.plot()
 
@@ -383,6 +389,8 @@ if __name__ == '__main__':
         cable.pL[0] = xl
         cable.solve()
 
+        # cable.plot()
+
         rho_0 = cable._rho(0)
         rho_s = cable._rho(L)
 
@@ -395,7 +403,7 @@ if __name__ == '__main__':
 
         pc = pc1 + pc2
 
-        yy.append(norm(pc))
+        yy.append(norm(pc)+norm(cable.get_elastic_increment(L)))
         yy1.append(norm(pc1[0]))
         yy2.append(norm(pc2[0]))
 
