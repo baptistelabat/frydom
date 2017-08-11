@@ -10,6 +10,11 @@
 #include "chrono/core/ChMatrix33.h"
 #include "FrCatenaryNode.h"
 
+#include <limits>
+
+#define SQRT_EPS sqrt(std::numeric_limits<double>::epsilon())
+
+
 namespace frydom {
 
 
@@ -25,322 +30,226 @@ namespace frydom {
         double m_Lu = 0.;                 ///> unstretched length
         double m_E = 1e12;                ///> young_modulus (default is near from infinite)
         double m_A = 0.15;                ///> line section area
+        double c_EA = 0.15e12;
 
-        // Field data
-        double m_qs = 9.81;  // FIXME: NON, ce n'est pas la bonne expression de la force de gravite !!!
-        chrono::ChVector<double> m_u = chrono::ChVector<double>(0, 0, -1);
-        chrono::ChMatrix33<double> m_Umat; // Mettre a jour lors d'une modif de champ
+        chrono::ChVector<double> m_t0 = {1, 1, 1};
+        chrono::ChVector<double> c_tL;
 
-        // Cache data
-        double c_EA = 1e12; /// Axial stiffness // TODO: mettre a jour les 2 pptes suivantes lors d'une modif de E ou A
-        double c_L_EA = 0.; // L/EA
+        double m_q = 50;
+        chrono::ChVector<double> m_u;
+        chrono::ChVector<double> c_qvec;
 
-        chrono::ChVector<double> m_t0;  // Tension at starting node (this is the main unknown !!)
-        chrono::ChVector<double> c_tL;    // Tension at ending node (tL = t0 - q*L)
-
-        chrono::ChVector<double> c_t0_qs; // t0 / qs
-        chrono::ChVector<double> c_Ut0_qs; // U t0 / qs
-
-        double c_t0_norm; // ||t0||
-        double c_tL_norm; // ||tL||
-
-        chrono::ChVector<double> c_t0_unit; // t0 / ||t0||
-        chrono::ChVector<double> c_tL_unit; // tL / ||tL||
-
-        double c_rho0 = 0.; // ||t0|| - u' t0
-        double c_rhoL = 0.; // ||tL|| - u' tL
-        double c_one_rho0 = 0.; // 1 / rho0
-        double c_one_rhoL = 0.; // 1 / rhoL
-        chrono::ChMatrix33<double> c_UxlnrhoL_rho0; // U log(rhoL / rho0)
-
+        chrono::ChMatrix33<double> c_Umat;
 
 
         // Data for Newton-Raphson solver
-        chrono::ChVector<double> m_residual;
-        chrono::ChMatrix33<double> m_jacobian;
+        double Lmin = 1e-10;
         double m_tolerance = 1e-6;
         unsigned int m_itermax = 100;
+        double relax = 0.1;
 
     public:
 
-        FrCatenaryLine() {
+//        FrCatenaryLine() {
+//
+//        }
 
-            UpdateConstantField();
-        }
 
         FrCatenaryLine(std::shared_ptr<FrCatenaryNode>& starting_node,
-                       std::shared_ptr<FrCatenaryNode>& ending_node)
-                : m_starting_node(starting_node), m_ending_node(ending_node) {
+                       std::shared_ptr<FrCatenaryNode>& ending_node,
+                       bool elastic,
+                       double EA,
+                       double L,
+                       double q,
+                       chrono::ChVector<double> u = {0, 0, -1}
+        )
+                : m_starting_node(starting_node), m_ending_node(ending_node),
+                  m_elastic(elastic),
+                  c_EA(EA),
+                  m_Lu(L),
+                  m_q(q),
+                  m_u(u),
+                  c_qvec(q*u)
+        {
 
-            // TODO: voir a regler automatiquement une longueur L de cable ie la distance entre les 2 marker
-            // + 10%...
+            // Initializing U matrix
+            c_Umat.Set33Identity();
+            c_Umat -= chrono::TensorProduct(u, u);
 
-
-            // Computing a default value for the line length
-            auto node_distance = (m_starting_node->GetPos() - m_ending_node->GetPos()).Length();
-            m_Lu = 1.1 * node_distance;
-
-            // First guess on the line tension
-//            m_t0 = 0.5 * m_qs * m_Lu * m_u;  // TODO: voir si on met ca dans une methode de first guess...
-
-            // Updating the constant field
-            UpdateConstantField();
-
+            //
+            c_tL = m_t0 - c_qvec * m_Lu;
 
         };
 
-        /// Set the line axial stiffness from material stiffness and diameter
-//        void SetAxialStiffness(double E, double A) { m_EA = E*A; }
+        double _rho(const double s) const {
+            auto t0_qS = m_t0 - c_qvec*s;
+            return t0_qS.Length() - chrono::Vdot(m_u, t0_qS);
+        }
 
-        void SetLineSectionArea(double A) {};
-
-        void SetYoungModulus(double E) {};
-
-        /// Set the line axial stiffness from section stiffness
-//        void SetAxialStiffness(double p_EA) {m_EA = p_EA; }
-
-        /// Set the unstretched length of the line element
-        void SetUnstretchedLength(double length) { m_Lu = length; }
-
-        /// Set the line density (kg/m)
-        void SetLineLinearDensity(double linear_density) {};
-
-        /// Set the line material density
-        void SetLineDensity(double density) {};
-
-
-        void SetStartingNode(std::shared_ptr<FrCatenaryNode>& starting_node) { m_starting_node = starting_node; };
-        void SetEndingNode(std::shared_ptr<FrCatenaryNode>& ending_node) { m_ending_node = ending_node; };
-
-        void SetNodes(std::shared_ptr<FrCatenaryNode>& starting_node,
-                      std::shared_ptr<FrCatenaryNode>& ending_node) {
-            m_starting_node = starting_node;
-            m_ending_node = ending_node;
-        };
-
-        void SetElastic(const bool flag) { m_elastic = flag; }
-        void SetElasticOn() { m_elastic = true; }
-        void SetElasticOff() { m_elastic = false; }
-
-
-        void ResetConstantFieldToGravityOnly() {}
-
-
-        void AddConstantField(chrono::ChVector<double> qvect) {
-
-            // Ici on construit le champ q = qs * u avec qs > 0 et u direction unitaire. Ces donnees sont utilisees
-
-            // Adding a constant field to be merged with gravity and eventually water buoyancy... (mettre un flag pour ca !! inWater=true)
-
+        chrono::ChVector<double> get_unstrained_chord(const double s) const {
+            auto rho_0 = _rho(0.);
+            auto rho_s = _rho(s);
+            return (c_Umat.Matr_x_Vect(m_t0) / m_q) * log(rho_s/rho_0)
+                   - (m_u/m_q) * ( (m_t0-c_qvec*s).Length() - m_t0.Length() );
 
         }
 
-        void UpdateConstantField() {
-
-            // Update de la matrice U = I - uu' et mise en cache
-
-            // Voir pour d'autre updates a faire ici et impactes par le champ de force distribue sur la ligne
-
-            m_Umat.Set33Identity();
-            m_Umat -= chrono::TensorProduct(m_u, m_u);
-
-        }
-
-
-
-        // Real computations :
-
-        chrono::ChVector<double> GetTension(double s) {
-            return m_t0 - s * m_qs * m_u;  // TODO: voir a stocker un vecteur complet q...
-        }
-
-
-        chrono::ChVector<double> ComputeUnstrainedSolution(double s) {
-
-            auto t0mqS = GetTension(s);
-            auto t0mqS_norm = t0mqS.Length();
-            auto rho_s = t0mqS_norm - m_u.Dot(t0mqS);
-
-            return m_Umat.Matr_x_Vect(c_t0_qs) * log(rho_s/c_rho0) - (m_u/m_qs) * (t0mqS_norm - c_t0_norm);
-
-        }
-
-        chrono::ChVector<double> ComputeElasticIncrement(double s) {
-            return (m_qs * s / c_EA) * (c_t0_qs - 0.5 * s * m_u);
-        }
-
-        chrono::ChVector<double> GetUnstrainedChord() { // Return pc(L)
-            // The computation is made quick by caching many values that are used both by evaluation and
-            // jacobian computation
-            return c_UxlnrhoL_rho0.Matr_x_Vect(c_t0_qs) - (c_tL_norm - c_t0_norm) / m_qs * m_u;
-        }
-
-        chrono::ChVector<double> GetEndingNodePosition() {
-
-            // Position of the starting node
-            auto pL = m_starting_node->GetPos();
-
-            // Adding line chord
-            pL += GetUnstrainedChord();
-
-            // Adding elasticity increment
+        chrono::ChVector<double> get_elastic_increment(const double s) const {
             if (m_elastic) {
-                pL += ComputeElasticIncrement(m_Lu);
+                return m_q * s * (m_t0 / m_q - 0.5 * m_u * s) / c_EA;
+            } else {
+                return chrono::VNULL;
             }
-
-            return pL;
-
         }
 
-        // TODO: donner la possibilite de rentrer aussi un vecteur
-        chrono::ChVector<double> ComputePosition(double s) {
-
-            // Position of the starting node
-            auto pS = m_starting_node->GetPos();
-
-            // Adding the unstrained solution
-            pS += ComputeUnstrainedSolution(s);
-
-            // If the line is elastic, adding the elastic increment
-            if (m_elastic) {
-                pS += ComputeElasticIncrement(s);
-            }
-
-            return pS;
-
+        chrono::ChVector<double> get_position(const double s) const {
+            auto pos = chrono::VNULL;
+            pos += m_starting_node->GetPos();
+            pos += get_unstrained_chord(s);
+            pos += get_elastic_increment(s);
+            return pos;
         }
 
-        double GetStrainedLineLength() { // TODO
-            // L + dl
-
-            // with dl = \int_0^L \frac{t(s)}{EA} ds a calculer par trapeze... eq (18)
-
-
+        chrono::ChVector<double> get_residual() const {
+            return get_position(m_Lu) - m_ending_node->GetPos();
         }
 
-        chrono::ChVector<double> GetCatenaryResidual() {
-            // On evalue C(t, p) = ComputePosition(L) - position recuperee depuis le noeud ending (guess de position)
+        chrono::ChMatrix33<double> numerical_jacobian() const {
+            auto jac = chrono::ChMatrix33<double>();
+            // TODO
+            return jac;
+        }
 
-            return GetEndingNodePosition() - m_ending_node->GetPos();
-        };
+        chrono::ChMatrix33<double> analytical_jacobian() const {
+            auto t0n = m_t0.Length();
+            auto rho_0 = _rho(0.);
+            auto tL = m_t0 - c_qvec * m_Lu;
+            auto tLn = tL.Length();
+            auto rho_L = _rho(m_Lu);
+            auto ln_q = log(rho_L/rho_0) / m_q;
+
+            auto jac = chrono::ChMatrix33<double>();
+
+            double L_EA = 0.;
+            if (m_elastic) L_EA = m_Lu / c_EA;
 
 
+            chrono::ChVector<double> Ui;
+            double Uit0;
+            double jac_ij;
+            double diff_ln;
 
-        chrono::ChMatrix33<double> GetCatenaryJacobian() {
-            // TODO: utiliser la fonction TensorProduct de ChMatrix33 !! --> outer product
+            for (uint i=0; i<3; ++i) {
+                Ui.x() = c_Umat(i, 0);
+                Ui.y() = c_Umat(i, 1);
+                Ui.z() = c_Umat(i, 2);
 
-            auto jac = c_UxlnrhoL_rho0 * (1./m_qs);
+                Uit0 = chrono::Vdot(Ui, m_t0) / m_q;
 
-            auto tmp = c_one_rhoL * c_tL_unit - c_one_rho0 * c_t0_unit + (c_one_rho0-c_one_rhoL)*m_u;
-            jac += chrono::TensorProduct(c_Ut0_qs, tmp);
-            jac += chrono::TensorProduct(m_u, c_t0_unit-c_tL_unit);
+                for (uint j=i; j<3; ++j) {
+                    jac_ij = c_Umat.Get33Element(i, j) * ln_q;
 
-            if (m_elastic) {
-                jac.Element(0, 0) += c_L_EA;
-                jac.Element(1, 1) += c_L_EA;
-                jac.Element(2, 2) += c_L_EA;
-            }
+                    diff_ln = (tL[j]/tLn - m_u[j]) / rho_L - (m_t0[j]/t0n - m_u[j]) / rho_0;
+                    jac_ij += Uit0 * diff_ln;
+
+                    jac_ij -= (tL[j]/tLn - m_t0[j]/t0n) * m_u[i] / m_q;
+
+                    if (i==j) {  // elasticity
+                        jac_ij += L_EA;
+                        jac.SetElement(i, j, jac_ij);
+                    } else {
+                        jac.SetElement(i, j, jac_ij);
+                        jac.SetElement(j, i, jac_ij);
+                    }
+                } // end for j
+            } // end for i
 
             return jac;
+        }
 
-        };
+        void solve() {
+            auto res = get_residual();
+            auto jac = analytical_jacobian();
 
+            chrono::ChVector<double> delta_t0;
+            chrono::ChMatrixNM<double, 3, 1> b;
+            chrono::ChMatrixNM<double, 3, 1> sol;
 
-        void SolveCatenaryEquation() {
-            // Using Newton-Raphson algorithm to solve for t0, considering position of both ending nodes
-            // are given. This is a one line solution. For solvng some free node, consider using a
-            // FrCatenaryNet object to enclose lines.
+            b.SetElement(0, 0, -res.x());
+            b.SetElement(1, 0, -res.y());
+            b.SetElement(2, 0, -res.z());
 
-            unsigned int iter = 1;
-            int code;
-            double maxresidual;
+            // Solving system
+            chrono::ChLinearAlgebra::Solve_LinSys(jac, &b, &sol);
 
-            chrono::ChMatrixNM<double, 3, 1> e;
-            chrono::ChMatrixNM<double, 3, 1> delta;
+            // Updating the tension
+            delta_t0.x() = sol.GetElement(0, 0);
+            delta_t0.y() = sol.GetElement(1, 0);
+            delta_t0.z() = sol.GetElement(2, 0);
 
+            m_t0 += relax * delta_t0;
 
-            while (true) {
+            res = get_residual();
+            double err = res.LengthInf();
 
-                // Updating the cache to make it up to date with respect to tension.
-                UpdateCache();
-
-                // Computing the residual
-                m_residual = GetCatenaryResidual();
-
-
-                if (iter == m_itermax) {
-                    code = 1; // itermax reached, no convergence
-                    break;
-                }
-
-                // Computing the max residual (Infinite norm of the residual)
-                // TODO
-                maxresidual = m_residual.LengthInf();
-
-                if (maxresidual < m_tolerance) {
-                    code = 0; // Convergence reached
-                    break;
-                }
-
-                // Computing the jacobian
-                m_jacobian = GetCatenaryJacobian();
-
-                // Solving the system J dX = -E(X)
-                e.Element(0, 0) = -m_residual.x();
-                e.Element(1, 0) = -m_residual.y();
-                e.Element(2, 0) = -m_residual.z();
-
-                chrono::ChLinearAlgebra::Solve_LinSys(m_jacobian, &e, &delta);
-
-                // Updating the solution
-                m_t0.x() += delta.Element(0, 0);
-                m_t0.y() += delta.Element(1, 0);
-                m_t0.z() += delta.Element(2, 0);
-
+            chrono::ChVector<double> delta_t0_temp;
+            uint iter = 1;
+            while ((err > m_tolerance) && (iter < m_itermax)) {
 
                 iter++;
 
+                res = get_residual();
+                jac = analytical_jacobian();
+
+                b.SetElement(0, 0, -res.x());
+                b.SetElement(1, 0, -res.y());
+                b.SetElement(2, 0, -res.z());
+
+                chrono::ChLinearAlgebra::Solve_LinSys(jac, &b, &sol);
+
+                delta_t0_temp.x() = sol.GetElement(0, 0);
+                delta_t0_temp.y() = sol.GetElement(1, 0);
+                delta_t0_temp.z() = sol.GetElement(2, 0);
+
+                while (delta_t0.LengthInf() < (relax*delta_t0_temp).LengthInf()) {
+                    relax *= 0.5;
+                    if (relax < Lmin) {
+                        std::cout << "DAMPING TOO STRONG. NO CATENARY CONVERGENCE." << std::endl;
+                    }
+                }
+
+                delta_t0 = delta_t0_temp;
+                m_t0 += relax * delta_t0;
+
+                relax = chrono::ChMin(1., relax*2.);
+
+                res = get_residual();
+                err = res.LengthInf();
+            }  // end while
+
+            if (iter < m_itermax) {
+                std::cout << "Convergence in " << iter << " iterations." << std::endl;
+            } else {
+                std::cout << "NO CONVERGENCE AFTER " << m_itermax << " iterations" << std::endl;
             }
-
-
         }
 
+        double get_cable_length(double n=1000) const {
+            double cl = 0.;
 
-        void UpdateCache() {
+            double ds = m_Lu / (n-1);
+            auto pos_prev = get_position(0.);
+            chrono::ChVector<double> pos;
+            double s;
 
-            // Attention ici. Si la tension t0 est dans le meme sens que q = qs u, on a une singularité et le câble ne
-            // peut être que droit et seul t0 ou tL possede une tension egale
-
-
-            // Updating every cache variables
-            c_tL = m_t0 - m_Lu * m_qs * m_u;
-
-            c_t0_qs = m_t0 / m_qs;
-
-            c_Ut0_qs = m_Umat.Matr_x_Vect(m_t0);
-
-            c_t0_norm = m_t0.Length();
-            c_tL_norm = c_tL.Length();
-
-            c_t0_unit = m_t0 / c_t0_norm;
-            c_tL_unit = c_tL / c_tL_norm;
-
-            c_rho0 = c_t0_norm - m_u.Dot(m_t0);
-            c_rhoL = c_tL_norm - m_u.Dot(c_tL);
-
-            c_one_rho0 = 1. / c_rho0;
-            c_one_rhoL = 1. / c_rhoL;
-
-            c_UxlnrhoL_rho0 = m_Umat * log(c_rhoL/c_rho0);
-
-
+            for (uint i=0; i<n; ++i) {
+                s = i*ds;
+                pos = get_position(s);
+                cl += (pos - pos_prev).Length();
+                pos_prev = pos;
+            }
+            return cl;
         }
-
-
-
-
-
-
 
     };
 

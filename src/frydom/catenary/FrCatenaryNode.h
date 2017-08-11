@@ -60,6 +60,12 @@ namespace frydom {
             }
         };
 
+        void SetPos(double x, double y, double z) {
+            m_position.x() = x;
+            m_position.y() = y;
+            m_position.z() = z;
+        }
+
         /// Attach the node to a body
         void AttachToBody(std::shared_ptr<chrono::ChBody>& body) {
             // On est alors automatiquement attache a un corps et donc en mode FAIRLEAD
