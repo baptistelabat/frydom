@@ -7,9 +7,9 @@
 
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "frydom/misc/FrTriangleMeshConnected.h"
+#include "FrBody.h"
 #include "FrConstants.h"
 #include "FrEulerAngles.h"
-#include "FrOffshoreSystem.h"
 
 // Forward declaration
 namespace chrono {
@@ -18,28 +18,29 @@ namespace chrono {
 
 namespace frydom {
 
-    class FrHydroBody : public chrono::ChBodyAuxRef,
-                        public std::enable_shared_from_this<FrHydroBody> {
+    class FrHydroBody : public FrBody {
 
     private:
-        std::shared_ptr<FrTriangleMeshConnected> m_hydro_mesh;
-        std::shared_ptr<FrTriangleMeshConnected> m_visu_mesh;
+        std::shared_ptr<FrTriangleMeshConnected> hydro_mesh;
+        std::shared_ptr<FrTriangleMeshConnected> visu_mesh;
 
-        chrono::ChVector<> m_current_relative_velocity = chrono::VNULL;
-        double m_current_relative_angle = 0.;
-        double m_heading = 0.;
-        double m_course = 0.;
+        chrono::ChVector<> m_current_relative_velocity;
+        double m_current_relative_angle;
+        double m_heading;
+        double m_course;
 
         // Geometric properties of the hydro body
-        double m_transverse_area = 0.;
-        double m_lateral_area = 0.;
-        double m_length_between_perpendicular = 0.;
+        double transverse_area;
+        double lateral_area;
+        double length_between_perpendicular;
 
-        double m_wetted_surface = 0.;
+        double wetted_surface;
 
     public:
 
-        std::shared_ptr<FrHydroBody> GetShared() { return shared_from_this(); };
+//        FrHydroBody() : ChBodyAuxRef() {};  // TODO: est-il utile d'appeler le constructeur par defaut de la classe mere ??
+
+//        std::shared_ptr<FrHydroBody> GetShared() { return shared_from_this(); };
 
         /// Set the hydrodynamic mesh from a mesh shared instance
         void SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset=true);
@@ -47,41 +48,40 @@ namespace frydom {
         /// Set the hydrodynamic mesh from a wavefront obj file
         void SetHydroMesh(std::string obj_filename, bool as_asset=true);
 
-        /// Update hydrodynamics data relative to the hydro body then updates other body stuffs
         void Update(bool update_assets = true) override;
 
-        /// Get the pointer to the parent ChSystem()
-        FrOffshoreSystem* GetSystem() const { return dynamic_cast<FrOffshoreSystem*>(system); }
 
-        /// Get the body position
-        chrono::ChVector<> GetPosition(FrFrame frame= NWU) {
-            switch (frame) {
-                case NWU:
-                    return GetPos();
-                case NED:
-                    return NWU2NED(GetPos());
-            }
-        }
 
-        /// Get the body orientation
-        chrono::ChVector<> GetOrientation(FrFrame frame= NWU) {
-            // TODO
-        }
+//        /// Get the body position
+//        chrono::ChVector<> GetPosition(FrFrame frame= NWU) {
+//            switch (frame) {
+//                case NWU:
+//                    return GetPos();
+//                case NED:
+//                    return NWU2NED(GetPos());
+//            }
+//        }
+//
+//        /// Get the body orientation
+//        chrono::ChVector<> GetOrientation(FrFrame frame= NWU) {
+//            // TODO
+//        }
+//
+//        /// Get the body velocity
+//        chrono::ChVector<> GetVelocity(FrFrame frame= NWU) {
+//            switch (frame) {
+//                case NWU:
+//                    return GetPos_dt();
+//                case NED:
+//                    return NWU2NED(GetPos_dt());
+//            }
+//        }
+//
+//        /// Get the body angular velocity
+//        chrono::ChVector<> GetAngularVelocity(FrFrame frame= NWU) {
+//            //TODO
+//        }
 
-        /// Get the body velocity
-        chrono::ChVector<> GetVelocity(FrFrame frame= NWU) {
-            switch (frame) {
-                case NWU:
-                    return GetPos_dt();
-                case NED:
-                    return NWU2NED(GetPos_dt());
-            }
-        }
-
-        /// Get the body angular velocity
-        chrono::ChVector<> GetAngularVelocity(FrFrame frame= NWU) {
-            //TODO
-        }
 
         /// Get the heading angle defined as the angle between the x axis of the
         /// absolute frame and the x axis of the body
@@ -125,41 +125,14 @@ namespace frydom {
             return course - heading;
         }
 
-        /// Set the heading of the body from angle in the NED frame
         void SetNEDHeading(double heading_angle, FrAngleUnit angleUnit= DEG);
-
-        /// Set the heading of the body from a unit direction in the NED frame
         void SetNEDHeading(const chrono::ChVector<>& unit_vector);
-
-        /// Get the transverse underwater area of the body
-        double GetTransverseUnderwaterArea() const;
-
-        /// Set the transverse underwater area of the body
-        void SetTransverseUnderwaterArea(double transverse_area);
-
-        /// Get the lateral underwater area of the body
-        double GetLateralUnderwaterArea() const;
-
-        /// Set the lateral underwater area of the body
-        void SetLateralUnderwaterArea(double lateral_area);
-
-        /// Get the length between perpendicular of the body
-        double GetLpp() const;
-
-        /// Set the length between perpendicular of the body
-        void SetLpp(double lpp);
-
-        /// Get the wetted surface of the body
-        double GetWettedSurface() const;
-
-        /// Set the wetted surface of the body
-        void SetWettedSurface(double wetted_surface);
 
         // ==========================================================================
         // METHODS ABOUT CURRENT
         // ==========================================================================
 
-        /// Get the relative velocity of the current field, taking into account the body's own velocity
+        /// Get the current vector flow as seen by the moving body on water
         chrono::ChVector<> GetCurrentRelativeVelocity(FrFrame frame= NWU);
 
         /// Get the current relative angle

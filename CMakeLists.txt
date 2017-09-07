@@ -115,6 +115,9 @@ set(SOURCE_FILES
         src/frydom/misc/FrTriangleMeshConnected.h
         src/frydom/misc/FrTriangleMeshConnected.cpp
 
+        src/frydom/core/FrBody.h
+        src/frydom/core/FrBody.cpp
+
         src/frydom/core/FrHydroBody.h
         src/frydom/core/FrHydroBody.cpp
 
@@ -185,6 +188,9 @@ target_link_libraries(test_yaml ${YAML_CPP_LIB})
 
 add_executable(test_catenary src/frydom/tests/test_catenary.cpp)
 target_link_libraries(test_catenary ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
+add_executable(test_tug src/frydom/tests/test_tug.cpp)
+target_link_libraries(test_tug ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 
 
