@@ -32,10 +32,10 @@ namespace frydom {
         double m_A = 0.15;                ///> line section area
         double c_EA = 0.15e12;
 
-        chrono::ChVector<double> m_t0;  // TODO: faire le first guess a l'instantiation
+        chrono::ChVector<double> m_t0;
 
-        double m_q = 50;  // TODO: voir a verifier cette valeur par defaut
-        chrono::ChVector<double> m_u = {0, 0, -1};  // TODO:
+        double m_q;
+        chrono::ChVector<double> m_u;
         chrono::ChVector<double> c_qvec;
 
         chrono::ChMatrix33<double> c_Umat;
@@ -98,6 +98,24 @@ namespace frydom {
 
             m_t0 = fu * m_u + fv * v;
         }
+
+        void set_elasticity(const double E, const double A) {
+            // TODO
+        }
+
+        void set_elasticity(const double EA) {
+            // TODO
+        }
+
+        double get_young_modulus() const {
+            // TODO
+        }
+
+        double get_cross_section_area() const {
+            // TODO
+        }
+
+        // TODO: accessors pour le champ de force distribue
 
         chrono::ChVector<double> get_tension(const double s) const {
             return m_t0 - c_qvec * s;
@@ -263,11 +281,11 @@ namespace frydom {
                 err = res.LengthInf();
             }  // end while
 
-//            if (iter < m_itermax) {
-//                std::cout << "Convergence in " << iter << " iterations." << std::endl;
-//            } else {
-//                std::cout << "NO CONVERGENCE AFTER " << m_itermax << " iterations" << std::endl;
-//            }
+            if (iter < m_itermax) {
+                std::cout << "Convergence in " << iter << " iterations." << std::endl;
+            } else {
+                std::cout << "NO CONVERGENCE AFTER " << m_itermax << " iterations" << std::endl;
+            }
         }
 
         double get_cable_length(double n=1000) const {

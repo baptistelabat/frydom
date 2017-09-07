@@ -61,7 +61,7 @@ class CatenaryCable(object):
         fv = 0.5 * self.q * sqrt(lx*lx + ly*ly) / lambda0
 
         self.t0 = fu * u + fv * v
-
+        self.solve()
 
         # TODO: calculer le residu a l'initialisation et chaque fois qu'on fait un update... --> methode update
         
@@ -129,11 +129,13 @@ class CatenaryCable(object):
         tL = self.t0 - self._qvec * self.L #ok
         tLn = np.linalg.norm(tL) #ok
 
-        rho_0 = t0n + self.t0[2]
+        # rho_0 = t0n + self.t0[2]  # FIXME: cette ligne differe du C++ qui fonctionne bien !!
+        rho_0 = self._rho(0.)
         ln_q = 0.
         rho_L = 0.
         if rho_0 > 0:
-            rho_L = tLn + tL[2]
+            # rho_L = tLn + tL[2]  # FIXME: cette ligne differe du C++ qui fonctionne bien !!
+            rho_L = self._rho(self.L) # FIXME: mieux a priori
             ln_q = np.log(rho_L/rho_0) / self.q
 
         L_EA = 0.
@@ -307,12 +309,12 @@ if __name__ == '__main__':
 
     # Position des point d'ancrage
     p0 = np.zeros(3, dtype=np.float)
-    pL = np.array([0, 0, -200], dtype=np.float)
+    pL = np.array([100, 0, 0], dtype=np.float)
 
-    L = 200 # Longueur cable
+    L = 220 # Longueur cable
 
     # Definition du champ de force uniforme constant et distribue sur le cable
-    u = np.array([0, 0, -1], dtype=np.float)
+    u = np.array([0, sqrt(3)/2., 0.5], dtype=np.float)
     q = 616.538
     # q = 0.1
 

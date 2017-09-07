@@ -12,11 +12,11 @@ int main(int argc, char* argv[]) {
 
     // Creating two nodes
     auto node1 = std::make_shared<FrCatenaryNode>();
-    auto node2 = std::make_shared<FrCatenaryNode>(0, 0, 200);
+    auto node2 = std::make_shared<FrCatenaryNode>(100, 0, 0);
 
     // Line properties
-    double Lu = 200;
-    auto u = chrono::ChVector<double>(0, 0, -1);
+    double Lu = 220;
+    auto u = chrono::ChVector<double>(0, sqrt(3)*0.5, 0.5);
     double q = 616.538;
     double EA = 1.5708e9;
 
