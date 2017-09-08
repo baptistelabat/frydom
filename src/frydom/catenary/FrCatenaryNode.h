@@ -30,19 +30,13 @@ namespace frydom {
 
 
 
-    // TODO: creer une classe Anchor : FrCatenaryNode::ANCHOR ou un truc de ce type
-
     /// Abstract base class for FryDom Node involved in catenary cable modeling
-    class FrCatenaryNode {  // FIXME: non, pas la peine de faire deriver...
+    class FrCatenaryNode : public chrono::ChMarker {  // FIXME: faire deriver de ChMarker de maniere a ce que la position soit update automatiquement ???
 
     private:
         NodeType m_node_type = ANCHOR;
         chrono::ChVector<double> m_position;
 
-        std::shared_ptr<chrono::ChMarker> m_body_marker = nullptr;
-
-//        FrForce m_force;  // Force additionnelle sur le noeud (a updater !!!)
-//        chrono::ChVector<double> m_TotalNodeForce = chrono::VNULL;  ///> Sum of forces on the node, exspressed in the absolute frame
 
 
     public:

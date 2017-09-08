@@ -84,6 +84,8 @@ set(SOURCE_FILES
         src/frydom/core/FrEulerAngles.h
         src/frydom/core/FrEulerAngles.cpp
 
+
+
         src/frydom/IO/FrLoader.h
         src/frydom/IO/FrLoader.cpp
 
@@ -121,6 +123,9 @@ set(SOURCE_FILES
         src/frydom/core/FrHydroBody.h
         src/frydom/core/FrHydroBody.cpp
 
+        src/frydom/core/FrNode.h
+        src/frydom/core/FrNode.cpp
+
         src/frydom/core/FrShip.h
         src/frydom/core/FrShip.cpp
 
@@ -145,11 +150,14 @@ set(SOURCE_FILES
         src/frydom/hydrodynamics/FrITTC57.h
         src/frydom/hydrodynamics/FrITTC57.cpp
 
-        src/frydom/catenary/FrCatenaryNode.h
-        src/frydom/catenary/FrCatenaryNode.cpp
+#        src/frydom/catenary/FrCatenaryNode.h
+#        src/frydom/catenary/FrCatenaryNode.cpp
 
         src/frydom/catenary/FrCatenaryLine.h
         src/frydom/catenary/FrCatenaryLine.cpp
+
+        src/frydom/catenary/FrCatenaryForce.h
+        src/frydom/catenary/FrCatenaryForce.cpp
 
         )
 
@@ -186,10 +194,10 @@ target_link_libraries(test_current_polar_coeffs ${CHRONO_LIBRARIES} ${YAML_CPP_L
 add_executable(test_yaml src/frydom/tests/test_cpp_yaml.cpp)
 target_link_libraries(test_yaml ${YAML_CPP_LIB})
 
-add_executable(test_catenary src/frydom/tests/test_catenary.cpp)
+add_executable(test_catenary ${SOURCE_FILES} src/frydom/tests/test_catenary.cpp)
 target_link_libraries(test_catenary ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
-add_executable(test_tug src/frydom/tests/test_tug.cpp)
+add_executable(test_tug ${SOURCE_FILES} src/frydom/tests/test_tug.cpp)
 target_link_libraries(test_tug ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 

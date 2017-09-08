@@ -8,11 +8,12 @@
 #include <chrono/physics/ChMarker.h>
 #include "chrono/core/ChLinearAlgebra.h"
 #include "chrono/core/ChMatrix33.h"
-#include "FrCatenaryNode.h"
+#include "FrCatenaryForce.h"
+#include "frydom/core/FrNode.h"
 
 #include <limits>
 
-#define SQRT_EPS sqrt(std::numeric_limits<double>::epsilon())
+//#define SQRT_EPS sqrt(std::numeric_limits<double>::epsilon())
 
 
 namespace frydom {
@@ -22,8 +23,8 @@ namespace frydom {
 
     private:
 
-        std::shared_ptr<FrCatenaryNode> m_starting_node;
-        std::shared_ptr<FrCatenaryNode> m_ending_node;
+        std::shared_ptr<FrNode> m_starting_node;
+        std::shared_ptr<FrNode> m_ending_node;
 
         bool m_elastic = true;
 
@@ -40,6 +41,10 @@ namespace frydom {
 
         chrono::ChMatrix33<double> c_Umat;
 
+        // Forces to apply to bodies
+        std::shared_ptr<FrCatenaryForce> m_starting_force;
+        std::shared_ptr<FrCatenaryForce> m_ending_force;
+
         // Data for Newton-Raphson solver
         double Lmin = 1e-10;
         double m_tolerance = 1e-6;
@@ -48,8 +53,8 @@ namespace frydom {
 
     public:
 
-        FrCatenaryLine(std::shared_ptr<FrCatenaryNode>& starting_node,
-                       std::shared_ptr<FrCatenaryNode>& ending_node,
+        FrCatenaryLine(std::shared_ptr<FrNode>& starting_node,
+                       std::shared_ptr<FrNode>& ending_node,
                        bool elastic,
                        double EA,
                        double L,
@@ -73,10 +78,38 @@ namespace frydom {
             guess_tension();
             solve();
 
+            // B uilding the catenary forces and adding them to bodies
+            m_starting_force = std::make_shared<FrCatenaryForce>(this, LINE_START);
+            auto starting_body = m_starting_node->GetBody();
+            starting_body->AddForce(m_starting_force);
+
+
+            m_ending_force = std::make_shared<FrCatenaryForce>(this, LINE_END);
+            auto ending_body = m_ending_node->GetBody();
+            ending_body->AddForce(m_ending_force);
+
+
+        }
+
+        std::shared_ptr<FrCatenaryForce> GetStartingForce() {
+            return m_starting_force;
+        }
+
+        std::shared_ptr<FrCatenaryForce> GetEndingForce() {
+            return m_ending_force;
+        }
+
+
+        chrono::ChVector<> GetPosStartingNode() const {
+            return m_starting_node->GetAbsPos();
+        }
+
+        chrono::ChVector<> GetPosEndingNode() const {
+            return m_ending_node->GetAbsPos();
         }
 
         void guess_tension() {
-            auto p0pL = m_ending_node->GetPos() - m_starting_node->GetPos();
+            auto p0pL = GetPosEndingNode() - GetPosStartingNode();
             auto lx = p0pL[0];
             auto ly = p0pL[1];
             auto lz = p0pL[2];
@@ -121,6 +154,14 @@ namespace frydom {
             return m_t0 - c_qvec * s;
         }
 
+        chrono::ChVector<double> get_starting_node_tension() const {
+            return m_t0;
+        }
+
+        chrono::ChVector<double> get_ending_node_tension() const {
+            return m_t0 - c_qvec * m_Lu;
+        }
+
         double _rho(const double s) const {
             // FIXME: cette fonction calcule le tension en s mais generalement, cette derniere doit etre accessible ailleurs...
             auto t0_qS = get_tension(s);
@@ -151,14 +192,14 @@ namespace frydom {
 
         chrono::ChVector<double> get_position(const double s) const {
             auto pos = chrono::VNULL;
-            pos += m_starting_node->GetPos();
+            pos += GetPosStartingNode();
             pos += get_unstrained_chord(s);
             pos += get_elastic_increment(s);
             return pos;
         }
 
         chrono::ChVector<double> get_residual() const {
-            return get_position(m_Lu) - m_ending_node->GetPos();
+            return get_position(m_Lu) - GetPosEndingNode();
         }
 
         chrono::ChMatrix33<double> numerical_jacobian() const {

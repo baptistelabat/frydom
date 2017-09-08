@@ -6,12 +6,21 @@
 #define FRYDOM_FRBODY_H
 
 
-#include <chrono/physics/ChBodyAuxRef.h>
+#include "chrono/physics/ChBodyAuxRef.h"
 #include "frydom/core/FrConstants.h"
+#include "frydom/core/FrForce.h"
+
 
 namespace frydom {
+
+    class FrNode;
+
     class FrBody : public chrono::ChBodyAuxRef,
                    public std::enable_shared_from_this<FrBody> {
+
+    protected:
+        std::vector<std::shared_ptr<FrForce>> external_force_list;
+
 
     public:
         /// Get the body absolute position (this of its reference point)
@@ -43,6 +52,13 @@ namespace frydom {
         chrono::ChVector<> GetAngularVelocity(FrFrame frame= NWU) {
             //TODO
         }
+
+        void AddNode(std::shared_ptr<FrNode> node);
+        // TODO: implementer aussi les removeMarker etc...
+
+
+        std::shared_ptr<FrNode> CreateNode();
+        std::shared_ptr<FrNode> CreateNode(const chrono::ChVector<double> relpos);
 
     };
 

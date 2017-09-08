@@ -28,6 +28,8 @@ namespace frydom {
         double m_water_density = 1026.;
         double m_air_density = 1.204;
 
+        std::shared_ptr<chrono::ChBody> world_body;
+
         std::unique_ptr<environment::FrFreeSurface> m_free_surface;  ///< The free surface's mesh that is a cartesian grid.
         std::unique_ptr<environment::FrCurrent> m_current;           ///< The current field model
         chrono::ChFrame<double> NEDframe;                            ///< Frame that has Z pointing down to have a well defined heading
@@ -76,6 +78,17 @@ namespace frydom {
 
         /// Get NED frame
         chrono::ChFrame<double> GetNEDFrame() const { return NEDframe; }
+
+        /// Get the world body
+        chrono::ChBody* GetWorldBodyPtr() const {
+            return world_body.get();
+        }
+
+        std::shared_ptr<chrono::ChBody> GetWorldBody() const {
+            return world_body;
+        }
+
+
 
         /// Updates all the auxiliary data and children of
         /// bodies, forces, links, given their current state

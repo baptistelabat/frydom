@@ -50,39 +50,6 @@ namespace frydom {
 
         void Update(bool update_assets = true) override;
 
-
-
-//        /// Get the body position
-//        chrono::ChVector<> GetPosition(FrFrame frame= NWU) {
-//            switch (frame) {
-//                case NWU:
-//                    return GetPos();
-//                case NED:
-//                    return NWU2NED(GetPos());
-//            }
-//        }
-//
-//        /// Get the body orientation
-//        chrono::ChVector<> GetOrientation(FrFrame frame= NWU) {
-//            // TODO
-//        }
-//
-//        /// Get the body velocity
-//        chrono::ChVector<> GetVelocity(FrFrame frame= NWU) {
-//            switch (frame) {
-//                case NWU:
-//                    return GetPos_dt();
-//                case NED:
-//                    return NWU2NED(GetPos_dt());
-//            }
-//        }
-//
-//        /// Get the body angular velocity
-//        chrono::ChVector<> GetAngularVelocity(FrFrame frame= NWU) {
-//            //TODO
-//        }
-
-
         /// Get the heading angle defined as the angle between the x axis of the
         /// absolute frame and the x axis of the body
         double GetHeadingAngle(FrFrame frame, FrAngleUnit angleUnit= RAD) {

@@ -2,17 +2,23 @@
 // Created by frongere on 03/08/17.
 //
 
+//#include "frydom/catenary/FrCatenaryNode.h"
 #include <frydom/catenary/FrCatenaryLine.h>
 #include "frydom/misc/FrLinspace.h"
+
+#include "frydom/core/FrCore.h"
 
 using namespace frydom;
 //using namespace environment;
 
 int main(int argc, char* argv[]) {
 
+    // Creating a support body for nodes
+    auto myBody = FrBody();
+
     // Creating two nodes
-    auto node1 = std::make_shared<FrCatenaryNode>();
-    auto node2 = std::make_shared<FrCatenaryNode>(100, 0, 0);
+    auto node1 = myBody.CreateNode(chrono::ChVector<>());
+    auto node2 = myBody.CreateNode(chrono::ChVector<>(100, 0, 0));
 
     // Line properties
     double Lu = 220;
@@ -23,6 +29,9 @@ int main(int argc, char* argv[]) {
     auto line = FrCatenaryLine(node1, node2, true, EA, Lu, q, u);
 
     line.solve();
+
+    myBody.UpdateForces(false);
+
 
     auto t0 = line.get_tension(0.);
     std::cout << t0[0] << std::endl;
