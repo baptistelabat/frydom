@@ -18,7 +18,7 @@ namespace frydom {
     public:
 
         FrNode() : chrono::ChMarker() {
-            SetMotionType(M_MOTION_EXTERNAL); // Hack to keep the relative position unchanged
+//            SetMotionType(M_MOTION_EXTERNAL); // Hack to keep the relative position unchanged
         }
 
 //        FrNode(char myname[], FrBody* myBody,

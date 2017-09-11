@@ -2,6 +2,8 @@
 // Created by frongere on 08/09/17.
 //
 
+#include "chrono/core/ChVector.h"
+
 #include "FrCatenaryForce.h"
 #include "FrCatenaryLine.h"
 
@@ -13,17 +15,23 @@ namespace frydom {
 
         m_line->solve();  // FIXME: ne pas le faire pour chacune des forces !! C'est juste un essai
 
+        chrono::ChVector<double> relpos;
         switch (m_line_side) {
             case LINE_START:
                 force = m_line->get_starting_node_tension();
+                relpos = m_line->GetStartingNode()->GetPos();
                 break;
             case LINE_END:
-                force = - m_line->get_ending_node_tension(); // Be carefull of the - sign
+                force = -m_line->GetEndingNodeTension(); // Be carefull of the - sign
+                relpos = m_line->GetEndingNode()->GetPos();
                 break;
         }
-        std::cout << force[0] << "\t" << force[1] << "\t" << m_line->get_cable_length() << std::endl;
+
+//        std::cout << (m_line->GetPosEndingNode() - m_line->GetPosStartingNode()).Length() << "\t" << m_line->get_cable_length() << std::endl;
 
         // FIXME: Calculer le moment par rapport au point de reference du corps ?
-        moment.SetNull();
+//        Body->Dir_World2Body(force);
+        moment = relpos.Cross(Body->Dir_World2Body(force));
+//        moment.SetNull();
     }
 }  // end namespace frydom

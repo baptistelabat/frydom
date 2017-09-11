@@ -74,8 +74,8 @@ namespace environment {
         force.x() = fx;
         force.y() = fy;
         force.z() = 0.;
-
-        force = mybody->TransformDirectionLocalToParent(force);
+        force = mybody->Dir_Body2World(force);
+//        force = mybody->TransformDirectionLocalToParent(force);
 
         moment.x() = 0.;
         moment.y() = 0.;

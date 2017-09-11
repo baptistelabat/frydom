@@ -150,6 +150,9 @@ set(SOURCE_FILES
         src/frydom/hydrodynamics/FrITTC57.h
         src/frydom/hydrodynamics/FrITTC57.cpp
 
+        src/frydom/hydrodynamics/FrLinearDamping.h
+        src/frydom/hydrodynamics/FrLinearDamping.cpp
+
 #        src/frydom/catenary/FrCatenaryNode.h
 #        src/frydom/catenary/FrCatenaryNode.cpp
 
