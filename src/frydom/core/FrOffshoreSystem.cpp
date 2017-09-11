@@ -12,22 +12,11 @@ namespace frydom {
                                        double scene_size) :
 
             chrono::ChSystemSMC(use_material_properties, max_objects, scene_size),
-            m_g_acc_magnitude(9.81),
+            m_gravity_acc_magnitude(9.81),
             m_water_density(1025.),
             NEDframe(chrono::VNULL, M_PI, chrono::VECT_X) {
 
-        // Convention for z orientation is upward
-        Set_G_acc(chrono::ChVector<>(0., 0., -m_g_acc_magnitude));
-
-        // The world body is a virtual body with no mass that is fixed and used to fix nodes in the absolute frame
-        world_body = std::make_shared<chrono::ChBody>();
-        world_body->SetBodyFixed(true);
-        world_body->SetName("WorldBody");
-
-    }
-
-    std::shared_ptr<FrOffshoreSystem> FrOffshoreSystem::getPtr() {
-        return shared_from_this();
+        Set_G_acc(chrono::ChVector<>(0., 0., -m_gravity_acc_magnitude));
     }
 
     void FrOffshoreSystem::setFreeSurface(environment::FrFreeSurface* freeSurface) {
@@ -39,7 +28,7 @@ namespace frydom {
 
     }
 
-    void FrOffshoreSystem::setCurrent(environment::FrCurrent* current_field) {
+    void FrOffshoreSystem::SetCurrent(environment::FrCurrent *current_field) {
         m_current.reset(current_field);
     }
 
@@ -60,8 +49,8 @@ namespace frydom {
 
     void FrOffshoreSystem::SetGravityAcceleration(double grav) {
         assert(grav > 0.);
-        m_g_acc_magnitude = grav;
-        Set_G_acc(chrono::ChVector<>(0., 0., -m_g_acc_magnitude));
+        m_gravity_acc_magnitude = grav;
+        Set_G_acc(chrono::ChVector<>(0., 0., -m_gravity_acc_magnitude));
     }
 
 
