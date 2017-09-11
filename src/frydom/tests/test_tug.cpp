@@ -26,33 +26,43 @@ int main(int argc, char* argv[]) {
 
     // Set the free surface
     auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
-    free_surface->Initialize(-400, 400, 200, -100, 100, 100);
+    free_surface->Initialize(-200, 200, 100, -200, 200, 100);
     system.setFreeSurface(free_surface.release());
 
 
     // The current
-    auto current_field = std::make_unique<FrCurrent>(WEST, 1, KNOT, NED, COMEFROM);
+    auto current_field = std::make_unique<FrCurrent>(NORTH, 10, KNOT, NED, COMEFROM);
     // TODO: changer pour faire des move plutot que des release...
-    system.setCurrent(current_field.release());
+    system.SetCurrent(current_field.release());
 
     // Building a TUG
     auto tug = std::make_shared<FrShip>();
     system.AddBody(tug);
+    tug->SetName("MyTug");
+    tug->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    tug->SetMass(5e9);  // TODO: plutot dans les 5e9...
+    tug->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
+//    tug->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
+
+    tug->SetTransverseUnderwaterArea(120.);
+    tug->SetLateralUnderwaterArea(500.);
+    tug->SetLpp(76.2);
+
     tug->SetPos(chrono::ChVector<>(0, 0, 0));
     tug->Set3DOF_ON();
-    tug->SetHydroMesh("../data/ship/MagneViking.obj", true);
+
     tug->SetPos_dt(chrono::ChVector<>(0, 0, 0));
-    tug->SetMass(5);
+
 
     // Adding a resistance
-//    std::string filename("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
-//    auto current_force = std::make_shared<FrCurrentForce>(filename);
-//    tug->AddForce(current_force);
+    std::string filename("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
+    auto current_force = std::make_shared<FrCurrentForce>(filename);
+    tug->AddForce(current_force);
 
 
 
     // Creating a fairlead on the tug
-    auto fairlead = tug->CreateNode(chrono::ChVector<>(-41, 0, 8.18));
+    auto fairlead = tug->CreateNode(chrono::ChVector<>(43, 0.0, 8));
     fairlead->SetName("Fairlead");
 
     // Creating an other node as an anchor
@@ -62,19 +72,28 @@ int main(int argc, char* argv[]) {
     auto anchor_pos = chrono::ChCoordsys<double>();
     anchor_pos.pos.x() = 100;
 
+    // TODO: imposer un mouvement de l'ancre avec une fonction pour emuler un remorquage a vitesse constante
     anchor->Impose_Abs_Coord(anchor_pos);
 
 
 
     // Creating a catenary line
-    double Lu = 220;
+    double Lu = 120;
     bool elastic = true;
     auto u = chrono::ChVector<double>(0, 0, -1);
-    double q = 616.538;
+//    double q = 616.538;
+    double q = 1000;
+//    double q = 100;
     double EA = 1.5708e9;
+//    double EA = 1e10;
     auto line = FrCatenaryLine(fairlead, anchor, elastic, EA, Lu, q, u);
 
-
+    // TODO: mettre la boucle suivante dans une fonction plutot que de recopier a chaque fois...
+    // Il faut:
+    // system
+    // step_size
+    // TryRealTime
+    // Des trucs a sortir a chaque pas de temps
     if (viz) {
 
         // Using own class for irrlicht viz
@@ -94,8 +113,8 @@ int main(int argc, char* argv[]) {
 //        app.SetVideoframeSave(capture_video);
 
 
-        auto fairlead_coords = fairlead->GetAbsPos();
-        std::cout << fairlead_coords[0] << "\t" << fairlead_coords[1] << std::endl;
+//        auto fairlead_coords = fairlead->GetAbsPos();
+//        std::cout << fairlead_coords[0] << "\t" << fairlead_coords[1] << std::endl;
 
         while (app.GetDevice()->run()) {
             app.BeginScene();
@@ -103,8 +122,11 @@ int main(int argc, char* argv[]) {
             app.DoStep();
             app.EndScene();
 
-            fairlead_coords = fairlead->GetAbsPos();
-            std::cout << fairlead_coords[0] << "\t" << fairlead_coords[1] << std::endl;
+
+
+
+//            fairlead_coords = fairlead->GetAbsPos();
+//            std::cout << fairlead_coords[0] << "\t" << fairlead_coords[1] << std::endl;
 
 //            std::cout << ship1->GetPos_dt().x() << std::endl;
 
