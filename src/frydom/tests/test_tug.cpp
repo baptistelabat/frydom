@@ -14,7 +14,7 @@ using namespace environment;
 
 bool viz = true;
 //float friction = 0.6f;
-double step_size = 1e-2;
+double step_size = 1e-1;
 bool capture_video = false;
 
 
@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 
 
     // The current
-    auto current_field = std::make_unique<FrCurrent>(NORTH, 10, KNOT, NED, COMEFROM);
+    auto current_field = std::make_unique<FrCurrent>(NORTH, 15, KNOT, NED, COMEFROM);
     // TODO: changer pour faire des move plutot que des release...
     system.SetCurrent(current_field.release());
 
@@ -84,8 +84,8 @@ int main(int argc, char* argv[]) {
 //    double q = 616.538;
     double q = 1000;
 //    double q = 100;
-    double EA = 1.5708e9;
-//    double EA = 1e10;
+//    double EA = 1.5708e9;
+    double EA = 1e10;
     auto line = FrCatenaryLine(fairlead, anchor, elastic, EA, Lu, q, u);
 
     // TODO: mettre la boucle suivante dans une fonction plutot que de recopier a chaque fois...
@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
 
 //        app.SetStepManage(true);
         app.SetTimestep(step_size);
-        app.SetTryRealtime(true);
+        app.SetTryRealtime(false);
 
 //        app.SetVideoframeSave(capture_video);
 
@@ -116,12 +116,17 @@ int main(int argc, char* argv[]) {
 //        auto fairlead_coords = fairlead->GetAbsPos();
 //        std::cout << fairlead_coords[0] << "\t" << fairlead_coords[1] << std::endl;
 
+        auto tug_pos = tug->GetPos();
+        std::cout << tug_pos[0] << "\t" << tug_pos[1] << std::endl;
+
         while (app.GetDevice()->run()) {
             app.BeginScene();
             app.DrawAll();
             app.DoStep();
             app.EndScene();
 
+//            tug_pos = tug->GetPos();
+//            std::cout << tug_pos[0] << "\t" << tug_pos[1] << std::endl;
 
 
 
