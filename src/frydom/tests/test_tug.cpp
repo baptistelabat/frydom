@@ -7,6 +7,8 @@
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/catenary/FrCatenaryLine.h"
 
+#include "frydom/hydrodynamics/FrTryalForce.h"
+
 #include "irrlicht.h"
 #include "frydom/utils/FrIrrApp.h"
 
@@ -21,12 +23,12 @@ int main(int argc, char* argv[]) {
 
     // Set the free surface
     auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
-    free_surface->Initialize(-200, 200, 50, -200, 200, 50);
+    free_surface->Initialize(-200, 200, 50, -200, 300, 50);
     system.setFreeSurface(free_surface.release());
 
 
     // The current
-    auto current_field = std::make_unique<FrCurrent>(WEST, 40, KNOT, NED, GOTO);
+    auto current_field = std::make_unique<FrCurrent>(WEST, 0, KNOT, NED, GOTO);
     // TODO: changer pour faire des move plutot que des release...
     system.SetCurrent(current_field.release());
 
@@ -42,34 +44,66 @@ int main(int argc, char* argv[]) {
     tug->SetLateralUnderwaterArea(500.);
     tug->SetLpp(76.2);
 
-    tug->SetPos(chrono::ChVector<>(-140, 0, 0));
+    tug->SetNEDHeading(WEST);
+    tug->SetPos(chrono::ChVector<>(0, -50, 0));
     tug->Set3DOF_ON();
 
-    tug->SetPos_dt(chrono::ChVector<>(5.*M_KNOT, 0, 0));
+    tug->SetPos_dt(chrono::ChVector<>(0*M_KNOT, 0, 0));
+
+    // Creating a ship to tug
+    auto ship = std::make_shared<FrShip>();
+    system.AddBody(ship);
+    ship->Set3DOF_ON();
+    ship->SetName("ship");
+    ship->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    ship->SetMass(5e7);  // TODO: plutot dans les 5e9...
+    ship->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
+
+    ship->SetTransverseUnderwaterArea(120.);
+    ship->SetLateralUnderwaterArea(500.);
+    ship->SetLpp(76.2);
+    ship->SetPos(chrono::ChVector<>(-70, -100, 0));
+
+
 
     // Adding a curent resistance
     std::string filename("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
-    auto current_force = std::make_shared<FrCurrentForce>(filename);
-    tug->AddForce(current_force);
+    auto current_force_tug = std::make_shared<FrCurrentForce>(filename);
+    tug->AddForce(current_force_tug);
 
     // Adding a linear damping
-    auto lin_damping_force = std::make_shared<FrLinearDamping>(1e7, 1e7, 1e8);
-    tug->AddForce(lin_damping_force);
+    auto lin_damping_force_tug = std::make_shared<FrLinearDamping>(1e7, 1e7, 1e8);
+    tug->AddForce(lin_damping_force_tug);
+
+
+    auto current_force_ship= std::make_shared<FrCurrentForce>(filename);
+    ship->AddForce(current_force_ship);
+
+    // Adding a linear damping
+    auto lin_damping_force_ship = std::make_shared<FrLinearDamping>(1e7, 1e7, 1e8);
+    ship->AddForce(lin_damping_force_ship);
+
+    // Adding a propulsion force to the ship
+    auto prop_force = std::make_shared<FrTryalForce>();
+    tug->AddForce(prop_force);
 
 
     // Creating a fairlead on the tug
-    auto fairlead = tug->CreateNode(chrono::ChVector<>(40, 0.0, 0));
-    fairlead->SetName("MyFairlead");
+    auto fairlead_tug = tug->CreateNode(chrono::ChVector<>(-40, 0.0, 0));
+    fairlead_tug->SetName("MyFairlead");
+
+    auto fairlead_ship = ship->CreateNode(chrono::ChVector<>(40, 0, 0));
+    fairlead_ship->SetName("Fairlead");
 
     // Creating an other node as an anchor
-    auto anchor = std::make_shared<FrNode>();
-    anchor->SetBody(system.GetWorldBodyPtr());  // Faire une classe anchor qui sait le faire toute seule
+//    auto anchor = std::make_shared<FrNode>();
+//    anchor->SetBody(system.GetWorldBodyPtr());  // Faire une classe anchor qui sait le faire toute seule
 
-    auto anchor_pos = chrono::ChCoordsys<double>();
-    anchor_pos.pos.x() = 0;
+//    auto anchor_pos = chrono::ChCoordsys<double>();
+//    anchor_pos.pos.x() = 0;
 
     // TODO: imposer un mouvement de l'ancre avec une fonction pour emuler un remorquage a vitesse constante
-    anchor->Impose_Abs_Coord(anchor_pos);
+//    anchor->Impose_Abs_Coord(anchor_pos);
 
 
 
@@ -84,7 +118,8 @@ int main(int argc, char* argv[]) {
 //    double EA = 1e10;
 //    double EA = 1.5708e9;
     double EA = 1e10;
-    auto line = FrCatenaryLine(fairlead, anchor, elastic, EA, Lu, q, u);
+//    auto line = FrCatenaryLine(fairlead_tug, anchor, elastic, EA, Lu, q, u);
+    auto line = FrCatenaryLine(fairlead_tug, fairlead_ship, elastic, EA, Lu, q, u);
 
 
 
@@ -92,7 +127,7 @@ int main(int argc, char* argv[]) {
     bool viz = true;
 //float friction = 0.6f;
     double step_size = 1e-1;
-    bool capture_video = false;
+    bool capture_video = true;
 
     // TODO: mettre la boucle suivante dans une fonction plutot que de recopier a chaque fois...
     // Il faut:
