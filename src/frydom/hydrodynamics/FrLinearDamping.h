@@ -25,13 +25,7 @@ namespace frydom {
 
         FrLinearDamping(const double Dx, const double Dy, const double Dwz) : m_Dx(Dx), m_Dy(Dy), m_Dwz(Dwz){};
 
-
-        void UpdateState() override {
-
-
-
-        }
-
+        void UpdateState() override;
 
     };
 

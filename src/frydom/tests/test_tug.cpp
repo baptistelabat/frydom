@@ -2,6 +2,7 @@
 // Created by frongere on 07/09/2017.
 //
 
+#include <frydom/hydrodynamics/FrLinearDamping.h>
 #include "frydom/core/FrCore.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/catenary/FrCatenaryLine.h"
@@ -13,22 +14,19 @@ using namespace frydom;
 using namespace environment;
 
 
-
-
-
 int main(int argc, char* argv[]) {
 
     // The system
     FrOffshoreSystem system;
 
     // Set the free surface
-    auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
-    free_surface->Initialize(-200, 200, 100, -200, 200, 100);
+    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
+    free_surface->Initialize(-200, 200, 50, -200, 200, 50);
     system.setFreeSurface(free_surface.release());
 
 
     // The current
-    auto current_field = std::make_unique<FrCurrent>(NORTH, 15, KNOT, NED, COMEFROM);
+    auto current_field = std::make_unique<FrCurrent>(WEST, 40, KNOT, NED, GOTO);
     // TODO: changer pour faire des move plutot que des release...
     system.SetCurrent(current_field.release());
 
@@ -39,35 +37,36 @@ int main(int argc, char* argv[]) {
     tug->SetHydroMesh("../data/ship/MagneViking.obj", true);
     tug->SetMass(5e7);  // TODO: plutot dans les 5e9...
     tug->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
-//    tug->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
 
     tug->SetTransverseUnderwaterArea(120.);
     tug->SetLateralUnderwaterArea(500.);
     tug->SetLpp(76.2);
 
-    tug->SetPos(chrono::ChVector<>(-40, 0, 0));
+    tug->SetPos(chrono::ChVector<>(-140, 0, 0));
     tug->Set3DOF_ON();
 
-    tug->SetPos_dt(chrono::ChVector<>(0.*M_KNOT, 0, 0));
+    tug->SetPos_dt(chrono::ChVector<>(5.*M_KNOT, 0, 0));
 
-
-    // Adding a resistance
+    // Adding a curent resistance
     std::string filename("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
     auto current_force = std::make_shared<FrCurrentForce>(filename);
     tug->AddForce(current_force);
 
+    // Adding a linear damping
+    auto lin_damping_force = std::make_shared<FrLinearDamping>(1e7, 1e7, 1e8);
+    tug->AddForce(lin_damping_force);
 
 
     // Creating a fairlead on the tug
     auto fairlead = tug->CreateNode(chrono::ChVector<>(40, 0.0, 0));
-    fairlead->SetName("Fairlead");
+    fairlead->SetName("MyFairlead");
 
     // Creating an other node as an anchor
     auto anchor = std::make_shared<FrNode>();
     anchor->SetBody(system.GetWorldBodyPtr());  // Faire une classe anchor qui sait le faire toute seule
 
     auto anchor_pos = chrono::ChCoordsys<double>();
-    anchor_pos.pos.x() = 100;
+    anchor_pos.pos.x() = 0;
 
     // TODO: imposer un mouvement de l'ancre avec une fonction pour emuler un remorquage a vitesse constante
     anchor->Impose_Abs_Coord(anchor_pos);
@@ -108,23 +107,18 @@ int main(int argc, char* argv[]) {
         app.AddTypicalLights();
         app.AddTypicalCamera(irr::core::vector3df(0, 0, 300), irr::core::vector3df(1, 0, -1));
 
+        // Adding the FRyDoM logo
+        auto device = app.GetDevice();
+        app.AddTypicalLogo("../src/frydom/tests/data/frydom_logo.png");
 
         app.AssetBindAll();
         app.AssetUpdateAll();
-
 
 //        app.SetStepManage(true);
         app.SetTimestep(step_size);
         app.SetTryRealtime(true);
 
-//        app.SetVideoframeSave(capture_video);
-
-
-//        auto fairlead_coords = fairlead->GetAbsPos();
-//        std::cout << fairlead_coords[0] << "\t" << fairlead_coords[1] << std::endl;
-
-//        auto tug_pos = tug->GetPos();
-//        std::cout << tug_pos[0] << "\t" << tug_pos[1] << std::endl;
+        app.SetVideoframeSave(capture_video);
 
         auto tug_force = tug->Get_Xforce();
 
@@ -134,24 +128,11 @@ int main(int argc, char* argv[]) {
             app.DoStep();
             app.EndScene();
 
-//            tug_pos = tug->GetPos();
-//            std::cout << tug_pos[0] << "\t" << tug_pos[1] << std::endl;
-//
             tug_force = tug->Get_Xforce();
             std::cout << tug_force[0] << "\t" << tug_force[1] << "\t" << tug_force[2] << std::endl;
-
-
-//            fairlead_coords = fairlead->GetAbsPos();
-//            std::cout << fairlead_coords[0] << "\t" << fairlead_coords[1] << std::endl;
-
-//            std::cout << ship1->GetPos_dt().x() << std::endl;
-
-//            std::cout << "End step " << system.GetTimestepper()->GetTime() << std::endl;
         }
     }
 
-
-
-
     return 0;
+
 }
