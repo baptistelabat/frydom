@@ -62,6 +62,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/yaml-cpp/include)
 set(YAML_CPP_LIB "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/yaml-cpp/build/libyaml-cpp.so")
 
 #--------------------------------------------------------------
+# Add the Eigen project
+#--------------------------------------------------------------
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/eigen")
+
+#--------------------------------------------------------------
 # Specifies frydom project
 #--------------------------------------------------------------
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -203,7 +208,7 @@ target_link_libraries(test_catenary ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 add_executable(test_tug ${SOURCE_FILES} src/frydom/tests/test_tug.cpp)
 target_link_libraries(test_tug ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
-
+add_executable(test_eigen src/frydom/tests/test_eigen.cpp)
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===
