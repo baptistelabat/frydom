@@ -5,3 +5,6 @@
 [submodule "thirdparty/yaml-cpp"]
 	path = thirdparty/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp.git
+[submodule "thirdparty/eigen"]
+	path = thirdparty/eigen
+	url = https://github.com/RLovelett/eigen.git
