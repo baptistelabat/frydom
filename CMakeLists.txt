@@ -76,8 +76,16 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 # files in the targets.
 #--------------------------------------------------------------
 # TODO : faire en sorte de declarer les target dans un CMakeLists.txt separe par target !!
+
+set(EIGEN_RELATED
+        src/frydom/misc/FrEigen.h
+        src/frydom/misc/FrEigen.cpp
+        )
+
+
 set(SOURCE_FILES
 
+        ${EIGEN_RELATED}
 #        src/frydom/core/FrCore.h
 
         src/frydom/core/FrConstants.h
@@ -88,8 +96,6 @@ set(SOURCE_FILES
 
         src/frydom/core/FrEulerAngles.h
         src/frydom/core/FrEulerAngles.cpp
-
-
 
         src/frydom/IO/FrLoader.h
         src/frydom/IO/FrLoader.cpp
@@ -170,6 +176,8 @@ set(SOURCE_FILES
         )
 
 
+
+
 # TODO: mettre dans un foreach !!
 # To add a target
 add_executable(demo_free_surface ${SOURCE_FILES} src/frydom/tests/demo_FreeSurface.cpp)
@@ -208,7 +216,8 @@ target_link_libraries(test_catenary ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 add_executable(test_tug ${SOURCE_FILES} src/frydom/tests/test_tug.cpp)
 target_link_libraries(test_tug ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
-add_executable(test_eigen src/frydom/tests/test_eigen.cpp)
+add_executable(test_eigen ${EIGEN_RELATED} src/frydom/tests/test_eigen.cpp)
+target_link_libraries(test_eigen ${CHRONO_LIBRARIES})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===

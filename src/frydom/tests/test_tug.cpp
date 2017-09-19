@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
     bool viz = true;
 //float friction = 0.6f;
     double step_size = 1e-1;
-    bool capture_video = true;
+    bool capture_video = false;
 
     // TODO: mettre la boucle suivante dans une fonction plutot que de recopier a chaque fois...
     // Il faut:
