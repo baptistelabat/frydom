@@ -128,91 +128,149 @@ namespace frydom {
     // Linear Algebra helpers
     // =================================================================================================================
 
-//    template <class T<class Real=double, int nbrows, int nbcols>>
-//    class QR_decomp {
-//
-//    private:
-//        Eigen::HouseholderQR<T> QR;
-//        bool thin_decomposition = true;
-//
-//    public:
-//        QR_decomp(const T& A) {
-//
-//            QR = Eigen::HouseholderQR<T>(A);
-//
-//        }
-//
-//    };
+    template <class Scalar>
+    class QR_decomposition {
 
+    private:
+        Eigen::HouseholderQR<Eigen::Matrix<Scalar, -1, -1>> QR;
 
-//    template <typename MatrixType>
-//    class QR_decomp {
-//
-//    private:
-//        Eigen::HouseholderQR<MatrixType> QR;
-//
-//    public:
-////        typedef _MatrixType MatrixType;
-//        template<typename InputType>
-//        explicit QR_decomp(const MatrixType& matrix) {
-//            std::cout << matrix;
-//        }
-//
-//    };
+    public:
+        explicit QR_decomposition(const Eigen::Matrix<Scalar, -1, -1>& A) {
+            assert(A.rows() >= A.cols());
+            QR = A.householderQr();
+        }
 
-    template <typename Derived>
-    void print(const Eigen::MatrixBase<Derived>& x) {
-        std::cout << x;
+        Eigen::Matrix<Scalar, -1, -1> GetQ() const {
+            Eigen::Matrix<Scalar, -1, -1> Q;
+            Q = QR.householderQ();
+            auto thinQ = Eigen::Matrix<Scalar, -1, -1>::Identity(QR.rows(), QR.cols());
+            return Q * thinQ;
+        }
+
+        Eigen::Matrix<Scalar, -1, -1> GetR() const {
+            Eigen::Matrix<Scalar, -1, -1> R;
+            R = QR.matrixQR().template triangularView<Eigen::Upper>();
+            return R.block(0, 0, QR.cols(), QR.cols());
+        }
+
+        Eigen::Matrix<Scalar, -1, -1> GetA() const {
+            return GetQ() * GetR();
+        };
+
+    };
+
+    template <class Scalar>
+    class LU_decomposition {
+
+    private:
+        Eigen::PartialPivLU<Eigen::Matrix<Scalar, -1, -1>> LU;
+    public:
+        explicit LU_decomposition(const Eigen::Matrix<Scalar, -1, -1>& A) {
+            assert(A.rows() == A.cols());
+            LU = A.partialPivLu();
+        }
+
+        Eigen::Matrix<Scalar, -1, -1> GetL() const {
+            Eigen::Matrix<Scalar, -1, -1> L;
+            L = LU.matrixLU().template triangularView<Eigen::StrictlyLower>();
+            return L + Eigen::Matrix<Scalar, -1, -1>::Identity(LU.rows(), LU.cols());
+        }
+
+        Eigen::Matrix<Scalar, -1, -1> GetU() const {
+            Eigen::Matrix<Scalar, -1, -1> U;
+            U = LU.matrixLU().template triangularView<Eigen::Upper>();
+            auto p = LU.permutationP();
+            return U;
+        }
+
+        Eigen::PermutationMatrix<-1, -1, int> GetPermutationP() const {
+            return LU.permutationP();
+        }
+
+        Eigen::Matrix<Scalar, -1, -1> GetA() const {
+            return LU.permutationP().inverse() * GetL() * GetU();
+        }
+    };
+
+    template <class Scalar>
+    class Cholesky_decomposition {
+
+    private:
+        Eigen::LLT<Eigen::Matrix<Scalar, -1, -1>> chol;
+
+    public:
+        explicit Cholesky_decomposition(const Eigen::Matrix<Scalar, -1, -1>& A) {
+            // FIXME: check also if the matrix is symmetric positive-definite !!
+            assert(A.rows() == A.cols());
+            chol = A.llt();
+            if (chol.info() == Eigen::NumericalIssue) {
+                throw std::runtime_error("Possibly non semi-positive definite matrix for Cholesky decomposition !");
+            }
+        }
+
+        Eigen::Matrix<Scalar, -1, -1> GetL() const {
+            return chol.matrixL();
+        }
+
+        Eigen::Matrix<Scalar, -1, -1> GetA() const {
+            auto L = GetL();
+            return L * L.transpose();
+        }
+    };
+
+    template <class Scalar>
+    class SVD_decomposition {
+
+    private:
+        Eigen::JacobiSVD<Eigen::Matrix<Scalar, -1, -1>> SVD;
+
+    public:
+        explicit SVD_decomposition(const Eigen::Matrix<Scalar, -1, -1>& A) {
+//            assert(A.rows() == A.cols());
+            SVD = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV);
+        }
+
+        Eigen::Matrix<Scalar, -1, 1> GetSingularValues() const {
+            return SVD.singularValues();
+        }
+
+        Eigen::Matrix<Scalar, -1, -1> GetU() const {
+            return SVD.matrixU();
+        }
+
+        Eigen::Matrix<Scalar, -1, -1> GetV() const {
+            return SVD.matrixV();
+        }
+
+        Eigen::Matrix<Scalar, -1, -1> GetA() const {
+            Eigen::DiagonalMatrix<Scalar, -1, -1> S(SVD.singularValues());
+            return GetU() * S * GetV().adjoint();
+        }
+    };
+
+    /// Moore-Penrose pseudo-inverse
+    template <class Scalar=double>
+    Eigen::Matrix<Scalar, -1, -1> pinv(const Eigen::Matrix<double, -1, -1>& mat, const Scalar tol=1e-6) {
+
+        auto svd = SVD_decomposition<Scalar>(mat);
+
+        auto sing_val_inv = svd.GetSingularValues();
+
+        for (long i=0; i < sing_val_inv.rows(); ++i) {
+            if (sing_val_inv(i) > tol) {
+                sing_val_inv(i) = 1. / sing_val_inv(i);
+            } else {
+                sing_val_inv(i) = 0.;
+            }
+        }
+
+        Eigen::Matrix<Scalar, -1, -1> pinv_mat = (svd.GetV() * sing_val_inv.asDiagonal() * svd.GetU().transpose());
+        return pinv_mat;
     }
-
-
-    template <class Real=double, int nbrows, int nbcols>
-    void QR_decomposition(const Eigen::Matrix<Real, nbrows, nbcols>& A,
-                          Eigen::Matrix<Real, nbrows, nbcols>& Q,
-                          Eigen::Matrix<Real, nbcols, nbcols>& R) {
-
-        auto thinQ = Eigen::Matrix<Real, nbrows, nbcols>(Eigen::Matrix<Real, nbrows, nbcols>::Identity(nbrows, nbcols));
-
-        Eigen::HouseholderQR<Eigen::Matrix<Real, nbrows, nbcols>> QR(A);
-
-        Q = QR.householderQ() * thinQ;
-
-//        Eigen::Matrix<Real, Eigen::Dynamic, Eigen::Dynamic> R_tmp = QR.matrixQR();
-
-//        Eigen::Matrix<Real> essai;
-//
-//        essai = R_tmp.triangularView<Eigen::Upper>();
-
-
-
-        std::cout << "coucou";
-//        Eigen::Matrix<Real, Eigen::Dynamic, Eigen::Dynamic> tv;
-//        tv = R_tmp.triangularView<Eigen::Upper>();
-//        R = tv.block(0, 0, nbcols, nbcols);
-
-    }
-
-
 
 
     /// Print functions for chrono
-//    template <class Real=double>
-//    void print(chrono::ChVector<Real>& vect) {
-//        std::cout << "\n" << vect.x() << "\n" << vect.y() << "\n" << vect.z() << std::endl;
-//    }
-//
-//    template <class Real=double>
-//    void print(chrono::ChMatrix<Real>& mat) {
-//        std::cout << "\n";
-//        for (int i=0; i<mat.GetRows(); ++i) {
-//            for (int j=0; j<mat.GetColumns(); j++) {
-//                std::cout << mat.GetElement(i, j) << "\t";
-//            }
-//            std::cout << std::endl;
-//        }
-//        std::cout << std::endl;
-//    }
-
+    // TODO: placer ces fonctions dans un utilitaire autre que FrEigen !!
     // TODO : utiliser sprintf...
     template <class Real=double>
     std::ostream& operator<<(std::ostream& os, const chrono::ChMatrix<Real>& mat) {
@@ -232,7 +290,6 @@ namespace frydom {
         os << std::endl << vect.x() << std::endl << vect.y() << std::endl << vect.z() << std::endl << std::endl;
         return os;
     }
-
 
 
 }  // end namespace frydom

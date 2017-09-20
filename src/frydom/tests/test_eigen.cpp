@@ -6,7 +6,7 @@
 #include <iostream>
 #include "frydom/misc/FrEigen.h"
 
-#include "Eigen/QR"
+//#include "Eigen/Dense"
 
 using namespace std;
 using namespace frydom;
@@ -74,131 +74,71 @@ void test_conversions() {
     cout << ChEig(mat_dyn_eigen);
 }
 
-
-//#define nbrows 4
-//#define nbcols 10
-
 void test_QR() {
-
-//    auto A = Eigen::Matrix<double, 5, 3>();
-//    A.setRandom();
-//
-//    auto Q = Eigen::Matrix<double, 5, 3>();
-//    auto R = Eigen::Matrix<double, 3, 3>();
-//
-//    QR_decomposition(A, Q, R);
-//
-//    cout << Q;
-
-
-//    auto QR = QR_decomp<Eigen::Matrix<double, 5, 3>>(A);
-
-
-//    auto QR = QR_decomp<Eigen::Matrix<double, 5, 3>>(A);
-
-
-//    QR_decomposition();
-
-
-    // A partir d'ici ca fonctionne
-
-    const int m = 10;
-    const int n = 3;
-
-//    MatrixXd A(m,n), Q, R, thinQ(MatrixXd::Identity(m, n)), coucou2;
-    MatrixXd A(m,n);
+    Eigen::MatrixXd A(5, 3);
     A.setRandom();
 
-//    print(A);
+    auto QR = QR_decomposition<double>(A);
 
-    auto qr = A.householderQr();
-//    auto q = qr.householderQ();
+    // Computing the infinite norm
+    auto norm_inf = (A - QR.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
 
-    Eigen::MatrixXd Q = qr.householderQ();
-
-    Eigen::MatrixXd R = qr.matrixQR();
-
-    Eigen::MatrixXd tp = qr.matrixQR().template triangularView<Eigen::Upper>();
-
-    cout << tp.block(0,0,3,3);
-
-//    cout << q;
-
-
-
-
-//    cout << "cout";
-
-//    std::cout << "A = \n" << A << "\n\n";
-//    HouseholderQR<Eigen::MatrixXd> qr(A);
-//
-//    Q = qr.householderQ();
-////    cout << Q << endl;
-////    cout << Q*thinQ << endl;
-//    R = qr.matrixQR();
-//
-//    coucou2 = R.triangularView<Upper>();
-//    auto coucou3 = coucou2.block(0, 0, n, n);
-//    cout << coucou3 << endl;
-//
-//
-////    cout << R << endl;
-//
-//    std::cout << Q << "\n\n" << R << "\n\n" << Q*thinQ * coucou3 - A << "\n";
-//
-//    Eigen::MatrixXd Q2;
-//    Eigen::MatrixXd R2;
-
-//    QR_decomposition(A, Q2, R2);
-
-
-
-////    int nbrows = 4;
-////    int nbcols = 10;
-//
-////    Eigen::Matrix<double, nbrows, nbcols> mat;
-//
-//    Eigen::MatrixXd mat(nbrows, nbcols), Q, R;
-////    Eigen::Matrix<double, nbrows, nbcols> R;
-////    auto mat = Eigen::Matrix<double, 3, 3>();
-//
-//    mat.setRandom();
-//
-//    Eigen::HouseholderQR<Eigen::MatrixXd> qr(mat);
-//    Q = qr.householderQ();
-//    R = qr.matrixQR().triangularView();
-//
-//    cout << mat << endl << endl;
-//    std::cout << Q << "\n\n" << R << "\n\n" << Q * R - mat << "\n";
-////    cout << R;
-////    auto qr = Eigen::ColPivHouseholderQR();
-
-
-
-
+    assert(norm_inf < 1e-12);
 
 }
 
 void test_LU() {
-    // TODO
+    Eigen::MatrixXd A(5, 5);
+    A.setRandom();
+
+    auto LU = LU_decomposition<double>(A);
+
+    // Computing the infinite norm
+    auto norm_inf = (A - LU.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
+
+    assert(norm_inf < 1e-12);
 }
 
 void test_SVD() {
-    // TODO
+    Eigen::MatrixXd A(5, 3);
+    A.setRandom();
+
+    auto SVD = SVD_decomposition<double>(A);
+
+    auto norm_inf = (A - SVD.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
+
+    assert(norm_inf < 1e-12);
+
 }
 
 void test_Cholesky() {
-    // TODO
+
+    Eigen::MatrixXd A(5, 5);
+    A.setRandom();
+    A = A * A.transpose();  // Making a symmetric matrix
+
+    auto chol = Cholesky_decomposition<double>(A);
+
+    auto norm_inf = (A - chol.GetA()).eval().cwiseAbs().rowwise().sum().maxCoeff();
+
+    assert(norm_inf < 1e-12);
 }
 
 void test_pinv() {
-    // TODO
+    Eigen::MatrixXd A(10, 5);
+    A.setRandom();
+
+    auto Apinv = pinv(A);
+
+    auto norm_inf = (A * Apinv * A - A).eval().cwiseAbs().rowwise().sum().maxCoeff();
+
+    assert(norm_inf < 1e-12);
+
 }
 
 void test_lsqec() {
     // TODO
 }
-
 
 void test_linear_algebra() {
 
@@ -212,78 +152,11 @@ void test_linear_algebra() {
 
 }
 
-
-
-
-
-template <class Scalar>
-class qr_dec {
-
-private:
-    Eigen::HouseholderQR<Eigen::Matrix<Scalar, -1, -1>> QR;
-
-public:
-    explicit qr_dec(const Eigen::Matrix<Scalar, -1, -1>& A) {
-        QR = A.householderQr();
-    }
-
-    Eigen::Matrix<Scalar, -1, -1> GetQ(const bool thin=true) const {
-        Eigen::Matrix<Scalar, -1, -1> Q;
-        Q = QR.householderQ();
-        if (thin) {
-            auto thinQ = Eigen::Matrix<Scalar, -1, -1>::Identity(QR.rows(), QR.cols());
-            Q *= thinQ;
-        }
-        return Q;
-    }
-
-    Eigen::Matrix<Scalar, -1, -1> GetR(const bool thin=true) const {
-        Eigen::Matrix<Scalar, -1, -1> R;
-        R = QR.matrixQR().template triangularView<Eigen::Upper>();
-//        cout << R;
-        if (thin) {
-            return R.block(0, 0, QR.cols(), QR.cols());
-        } else {
-            return R;
-        }
-
-    };
-
-};
-template <typename Derived, typename OtherDerived>
-void decompose(const Eigen::MatrixBase<Derived>& A, const Eigen::MatrixBase<Derived>& Q) {
-    cout << A;
-}
-
-
-
 int main(int argc, char* argv[]) {
-//    srand((unsigned int) time(0)); // seeding the standard library random number generator
+    srand((unsigned int) time(0)); // seeding the standard library random number generator
 
 //    test_conversions();
-//    test_linear_algebra();
-
-    Eigen::MatrixXd A(5, 3);
-    A.setRandom();
-    cout << A << "\n\n";
-
-    auto QR = qr_dec<double>(A);
-//    cout << QR.GetQ() << endl << endl;
-//    cout << QR.GetR();
-
-//    cout << A - QR.GetQ(true) * QR.GetR(true) << "\n\n";
-//    auto diff = A - QR.GetQ(false) * QR.GetR(false);
-    auto A2 = QR.GetQ() * QR.GetR();
-    cout << A2;
-//    cout << QR.GetQ() * QR.GetR();
-//    cout << diff;
-//    decompose<Eigen::Matrix<double, -1, -1>, Eigen::Matrix<double, -1, -1>>(A, Q, R);
-
-
-//    Eigen::MatrixXd qr = A.householderQr();
-
-//    auto qr = qr_dec<Eigen::MatrixXd>(A);
-
+    test_linear_algebra();
 
 
     return 0;
