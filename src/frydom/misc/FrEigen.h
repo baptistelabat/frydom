@@ -160,6 +160,10 @@ namespace frydom {
 //
 //    };
 
+    template <typename Derived>
+    void print(const Eigen::MatrixBase<Derived>& x) {
+        std::cout << x;
+    }
 
 
     template <class Real=double, int nbrows, int nbcols>
