@@ -135,10 +135,14 @@ namespace frydom {
         return (mat.rows() == mat.cols()) && ((mat.eigenvalues().real().array() > -epsilon).all());
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     template <class Scalar=double>
     bool is_positiveSemidefinite(const chrono::ChMatrixNM<Scalar>& mat) {
         return is_positiveSemidefinite(ChEig(mat));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     template <class Scalar>
     class QR_decomposition {
@@ -170,6 +174,8 @@ namespace frydom {
         };
 
     };
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     template <class Scalar>
     class LU_decomposition {
@@ -204,6 +210,8 @@ namespace frydom {
         }
     };
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     template <class Scalar>
     class Cholesky_decomposition {
 
@@ -233,6 +241,8 @@ namespace frydom {
             return L * L.transpose();
         }
     };
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     template <class Scalar>
     class SVD_decomposition {
@@ -274,6 +284,8 @@ namespace frydom {
             return GetV() * sing_val_inv.asDiagonal() * GetU().adjoint();
         }
     };
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     /// Moore-Penrose pseudo-inverse
     template <class Scalar=double>
