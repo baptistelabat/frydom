@@ -130,7 +130,7 @@ void test_pinv() {
 
     auto Apinv = pinv(A);
 
-    auto norm_inf = (A * Apinv * A - A).eval().cwiseAbs().rowwise().sum().maxCoeff();
+    auto norm_inf = (A * Apinv * A - A).cwiseAbs().rowwise().sum().maxCoeff();
 
     assert(norm_inf < 1e-12);
 
@@ -155,7 +155,7 @@ void test_linear_algebra() {
 int main(int argc, char* argv[]) {
     srand((unsigned int) time(0)); // seeding the standard library random number generator
 
-//    test_conversions();
+    test_conversions();
     test_linear_algebra();
 
 

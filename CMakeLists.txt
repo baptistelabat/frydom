@@ -67,6 +67,18 @@ set(YAML_CPP_LIB "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/yaml-cpp/build/libyaml-
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/eigen")
 
 #--------------------------------------------------------------
+# Add QuadProg++
+#--------------------------------------------------------------
+#include_directories("${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/quadprogc++")
+set(QUADPROGPP_SRC
+        thirdparty/quadprog++/QuadProg++.hh
+        thirdparty/quadprog++/QuadProg++.cc
+        )
+set(QUADPROG_RELATED
+        src/frydom/misc/FrQuadprogcpp.h
+        )
+
+#--------------------------------------------------------------
 # Specifies frydom project
 #--------------------------------------------------------------
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -218,6 +230,9 @@ target_link_libraries(test_tug ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(test_eigen ${EIGEN_RELATED} src/frydom/tests/test_eigen.cpp)
 target_link_libraries(test_eigen ${CHRONO_LIBRARIES})
+
+add_executable(test_quadprogcpp ${EIGEN_RELATED} ${QUADPROG_RELATED} ${QUADPROGPP_SRC} src/frydom/tests/test_quadprogcpp.cpp)
+
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===
