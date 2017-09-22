@@ -185,6 +185,7 @@ set(SOURCE_FILES
         src/frydom/catenary/FrCatenaryForce.h
         src/frydom/catenary/FrCatenaryForce.cpp
 
+        src/frydom/tests/FEAcables.h
         )
 
 
@@ -233,6 +234,11 @@ target_link_libraries(test_eigen ${CHRONO_LIBRARIES})
 
 add_executable(test_quadprogcpp ${EIGEN_RELATED} ${QUADPROG_RELATED} ${QUADPROGPP_SRC} src/frydom/tests/test_quadprogcpp.cpp)
 
+add_executable(demo_cable_ANCF ${SOURCE_FILES} src/frydom/tests/demo_cable_ANCF.cpp)
+target_link_libraries(demo_cable_ANCF ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
+add_executable(test_anchored_boat_current ${SOURCE_FILES} src/frydom/tests/test_anchored_boat_current.cpp)
+target_link_libraries(test_anchored_boat_current ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===
