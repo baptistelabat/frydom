@@ -127,6 +127,11 @@ set(SOURCE_FILES
         src/frydom/environment/waves/FrFlatFreeSurface.h
         src/frydom/environment/waves/FrFlatFreeSurface.cpp
 
+        src/frydom/environment/waves/FrWaveDispersionRelation.h
+        src/frydom/environment/waves/FrWaveDispersionRelation.cpp
+
+        src/frydom/environment/waves/FrWaveSpectrum.h
+        src/frydom/environment/waves/FrWaveSpectrum.cpp
 
         src/frydom/environment/current/FrCurrent.h
         src/frydom/environment/current/FrCurrent.cpp
@@ -134,6 +139,8 @@ set(SOURCE_FILES
         src/frydom/environment/current/FrCurrentForce.cpp
         src/frydom/environment/current/FrCurrentPolarCoeffs.h
         src/frydom/environment/current/FrCurrentPolarCoeffs.cpp
+
+
 
         src/frydom/misc/FrLinspace.h
 
@@ -239,6 +246,12 @@ target_link_libraries(demo_cable_ANCF ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(test_anchored_boat_current ${SOURCE_FILES} src/frydom/tests/test_anchored_boat_current.cpp)
 target_link_libraries(test_anchored_boat_current ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
+add_executable(test_dispersion_relation ${SOURCE_FILES} src/frydom/tests/test_dispersion_relation.cpp)
+target_link_libraries(test_dispersion_relation ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
+add_executable(test_wave_spectrum ${SOURCE_FILES} src/frydom/tests/test_wave_spectrum.cpp)
+target_link_libraries(test_wave_spectrum ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===

@@ -6,6 +6,7 @@
 #define FRYDOM_CONSTANTS_H
 
 #include <cmath>
+#include <iostream>
 
 // Forward declaration
 namespace chrono {
@@ -213,6 +214,74 @@ namespace frydom {
             angle += M_2PI;
         }
         return angle - M_PI;
+    }
+
+    /// Frequency conversion utilities
+    template <class Real=double>
+    inline Real HZ2RADS(const Real hz) {
+        return M_2PI * hz;
+    }
+
+    template <class Real=double>
+    inline Real RADS2HZ(const Real rads) {
+        return rads / M_2PI;
+    }
+
+    template <class Real=double>
+    inline Real HZ2S(const Real hz) {
+        return 1. / hz;
+    }
+
+    template <class Real=double>
+    inline Real S2HZ(const Real s) {
+        return 1. / s;
+    }
+
+    template <class Real=double>
+    inline Real RADS2S(const Real rads) {
+        return M_2PI / rads;
+    }
+
+    template <class Real=double>
+    inline Real S2RADS(const Real s) {
+        return M_2PI / s;
+    }
+
+    enum FREQ_UNIT {
+        HZ,
+        RADS,
+        S
+    };
+
+    template <class Real=double>
+    inline Real convert_frequency(const Real in, FREQ_UNIT src_unit, FREQ_UNIT target_unit) {
+
+        if (src_unit == target_unit) return in;
+
+        Real piv;  // Must be in Hz
+
+        switch (src_unit) {
+            case HZ:
+                piv = in;
+                break;
+            case RADS:
+                piv = RADS2HZ(in);
+                break;
+            case S:
+                piv = S2HZ(in);
+                break;
+        }
+
+        switch (target_unit) {
+            case RADS:
+                return HZ2RADS(piv);
+            case S:
+                return HZ2S(piv);
+            case HZ:
+                std::cout << "Impossible case in frequency conversion !!" << std::endl;
+                break;
+        }
+
     }
 
 

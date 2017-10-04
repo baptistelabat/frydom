@@ -80,7 +80,12 @@ namespace frydom {
 
         /// Get the body angular velocity
         chrono::ChVector<> GetAngularVelocity(FrFrame frame= NWU) {
-            //TODO
+            switch (frame) {
+                case NWU:
+                    return GetWvel_par();
+                case NED:
+                    return NWU2NED(GetWvel_par());
+            }
         }
 
         /// Get the heading angle defined as the angle between the x axis of the
@@ -94,9 +99,18 @@ namespace frydom {
 
             switch (frame) {
                 case NWU:
-                    return heading;
+                    if (angleUnit == DEG) {
+                        return Normalize_0_360(heading);
+                    } else {
+                        return Normalize_0_2PI(heading);
+                    }
                 case NED:
-                    return -heading;  // FIXME: assurer des angles entre 0 et 360...
+                    if (angleUnit == DEG) {
+                        return Normalize_0_360(-heading);
+                    } else {
+                        return Normalize_0_2PI(-heading);
+                    }
+//                    return -heading;  // FIXME: assurer des angles entre 0 et 360...
             }
         }
 
@@ -175,6 +189,23 @@ namespace frydom {
                 case NED:
                     return -angle;  // TODO: A verifier...
             }
+
+        }
+
+        // ==========================================================================
+        // METHODS ABOUT ADDED MASS
+        // ==========================================================================
+        void IntLoadResidual_Mv(const unsigned int off,      // offset in R residual
+                                        chrono::ChVectorDynamic<>& R,        // result: the R residual, R += c*M*v
+                                        const chrono::ChVectorDynamic<>& w,  // the w vector
+                                        const double c               // a scaling factor
+        ) {
+            R(off + 0) += c * GetMass() * w(off + 0);
+            R(off + 1) += c * GetMass() * w(off + 1);
+            R(off + 2) += c * GetMass() * w(off + 2);
+            chrono::ChVector<> Iw = this->GetInertia() * w.ClipVector(off + 3, 0);
+            Iw *= c;
+            R.PasteSumVector(Iw, off + 3, 0);
 
         }
 

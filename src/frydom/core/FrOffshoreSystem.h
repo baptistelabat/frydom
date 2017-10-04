@@ -13,6 +13,10 @@
 #include "frydom/environment/waves/FrFreeSurface.h"
 #include "frydom/environment/current/FrCurrent.h"
 
+// TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
+// vent, vagues, courant, fond...
+
+
 namespace frydom {
 
     /// Abstract base class for a free surface model including wave modeling
@@ -21,7 +25,7 @@ namespace frydom {
     // TODO: voir aussi a deriver de ChSystemSMC pour comparer les 2 ? Avoir une classe de base virtuelle derivant de ChSystem ???
     class FrOffshoreSystem :
             public chrono::ChSystemSMC,
-            public std::enable_shared_from_this<FrOffshoreSystem> {
+            public std::enable_shared_from_this<FrOffshoreSystem> {  // TODO: supprimer cette dependance !
 
     private:
         double m_gravity_acc_magnitude = 9.81;  ///< The local acceleration of gravity

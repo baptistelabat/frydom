@@ -5,9 +5,12 @@
 #ifndef FRYDOM_FRSHIP_H
 #define FRYDOM_FRSHIP_H
 
-#include "chrono/physics/ChLinkMate.h"
 #include "FrHydroBody.h"
-#include "FrConstants.h"
+
+// Forward declaration chrono
+namespace chrono {
+    class ChLinkMatePlane;
+}
 
 namespace frydom {
 
@@ -20,7 +23,7 @@ namespace frydom {
         // Special attributes for ships
         std::vector<std::shared_ptr<FrPropeller>> propellerlist;  // FIXME pourquoi avoir des propeller shared ???
 
-        bool is3DOF;
+        bool is3DOF = false;
         std::shared_ptr<chrono::ChLinkMatePlane> constraint3DOF;
 
     public:
