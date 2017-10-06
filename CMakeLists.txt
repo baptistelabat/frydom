@@ -133,6 +133,9 @@ set(SOURCE_FILES
         src/frydom/environment/waves/FrWaveSpectrum.h
         src/frydom/environment/waves/FrWaveSpectrum.cpp
 
+        src/frydom/environment/waves/FrWaveField.h
+        src/frydom/environment/waves/FrWaveField.cpp
+
         src/frydom/environment/current/FrCurrent.h
         src/frydom/environment/current/FrCurrent.cpp
         src/frydom/environment/current/FrCurrentForce.h
@@ -252,6 +255,9 @@ target_link_libraries(test_dispersion_relation ${CHRONO_LIBRARIES} ${YAML_CPP_LI
 
 add_executable(test_wave_spectrum ${SOURCE_FILES} src/frydom/tests/test_wave_spectrum.cpp)
 target_link_libraries(test_wave_spectrum ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
+add_executable(test_wave_field ${SOURCE_FILES} src/frydom/tests/test_wave_field.cpp)
+target_link_libraries(test_wave_field ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===
