@@ -12,29 +12,158 @@
 
 namespace frydom {
 
+    // =================================================================================================================
 
-    class FrGenericWaveSpectrum {
-    public:
-        virtual double Eval(const double x) const = 0;
+    enum WaveDirectionalModelType {
+        NONE,
+        COS2S
     };
 
+    // =================================================================================================================
 
-    class FrWaveSpectrum : public FrGenericWaveSpectrum {
+    class FrWaveDirectionalModel {
+    public:
+
+        virtual WaveDirectionalModelType GetType() const  = 0;
+
+        virtual void UpdateSpreadingFunction(const unsigned int nb_dir,
+                                             const double theta_min,
+                                             const double theta_max,
+                                             const double theta_mean) = 0;
+
+        virtual void UpdateSpreadingFunction(const std::vector<double>& thetaVect,
+                                             const double theta_mean) = 0;
+
+
+        virtual std::vector<double> GetSpreadingFunction() const = 0;
+
+    };
+
+    // =================================================================================================================
+
+    class FrCos2sDirectionalModel : public FrWaveDirectionalModel {
+
+    private:
+
+        double m_spreading_factor = 10.;
+
+        // Cached
+        std::vector<double> c_spreading_fcn;
+        double c_DTheta;
+
+        void CheckSpreadingFactor() {
+            // TODO: utiliser un warning ver la stderr
+            if (m_spreading_factor < 1. || m_spreading_factor > 100.) {
+                std::cout << "The spreading factor of a cos2s directional spectrum model should lie between 1. and 100." << std::endl;
+            }
+        }
+
+    public:
+
+        explicit FrCos2sDirectionalModel(const double spreading_factor=10.) : m_spreading_factor(spreading_factor) {
+            CheckSpreadingFactor();
+        }
+
+        WaveDirectionalModelType GetType() const { return COS2S; }
+
+        double GetSpreadingFactor() const { return m_spreading_factor; }
+
+        void SetSpreadingFactor(const double spreading_factor) {
+            m_spreading_factor = spreading_factor;
+            CheckSpreadingFactor();
+        }
+
+        void UpdateSpreadingFunction(const unsigned int nb_dir,
+                                     const double theta_min,
+                                     const double theta_max,
+                                     const double theta_mean) override {
+
+            UpdateSpreadingFunction(linspace(theta_min, theta_max, nb_dir), theta_mean);
+        }
+
+        void UpdateSpreadingFunction(const std::vector<double>& thetaVect, const double theta_mean) override {
+            c_spreading_fcn.clear();
+            c_spreading_fcn.reserve(thetaVect.size());
+
+            double s = m_spreading_factor;
+            double two_s = 2. * s;
+
+            double c_s = ( pow(2., two_s - 1.) / M_PI ) * pow(std::tgamma(s + 1.), 2.) / std::tgamma(two_s + 1.);
+
+            for (double theta: thetaVect) {
+                c_spreading_fcn.push_back(c_s * pow(cos(0.5 * (theta - theta_mean)), two_s));
+            }
+
+            c_DTheta = thetaVect[1] - thetaVect[0];
+        }
+
+        std::vector<double> GetSpreadingFunction() const override { return c_spreading_fcn; }
+
+        double GetDTheta() const {
+            return c_DTheta;
+        }
+
+    };
+
+    // =================================================================================================================
+
+    enum WaveSpectrumType {
+        JONSWAP
+    };
+
+    class FrWaveSpectrum {
 
     protected:
         double m_significant_height;
         double m_peak_pulsation;
 
+        WaveDirectionalModelType m_dir_model_type = NONE;
+        std::unique_ptr<FrWaveDirectionalModel> m_directional_model = nullptr;
+
+
     public:
 
+        /// Constructor
         FrWaveSpectrum(const double hs, const double tp, const FREQ_UNIT unit=S) :
                 m_significant_height(hs),
                 m_peak_pulsation(convert_frequency(tp, unit, RADS)) {}
 
-        FrWaveSpectrum(const FrWaveSpectrum& waveSpectrum) :
-                m_significant_height(waveSpectrum.m_significant_height),
-                m_peak_pulsation(waveSpectrum.m_peak_pulsation) {}  // Copy CTOR
+//        /// Copy constructor
+//        FrWaveSpectrum(const FrWaveSpectrum& waveSpectrum) :
+//                m_significant_height(waveSpectrum.m_significant_height),
+//                m_peak_pulsation(waveSpectrum.m_peak_pulsation) {}  // Copy CTOR
 
+        /// Set the directional model to use from type
+        void SetDirectionalModel(WaveDirectionalModelType model) {
+            switch (model) {
+                case NONE:
+                    DirectionalOFF();
+                    break;
+                case COS2S:
+                    m_dir_model_type = COS2S;
+                    m_directional_model = std::make_unique<FrCos2sDirectionalModel>();
+                    break;
+            }
+        }
+
+        /// Set the directional model to use from objetct
+        void SetDirectionalModel(FrWaveDirectionalModel* dir_model) {
+            m_dir_model_type = dir_model->GetType();
+            m_directional_model = std::unique_ptr<FrWaveDirectionalModel>(dir_model);
+        }
+
+        FrWaveDirectionalModel* GetDirectionalModel() const {
+            return m_directional_model.get();
+        }
+
+        void DirectionalON(WaveDirectionalModelType model=COS2S) {
+            SetDirectionalModel(model);
+        }
+
+        void DirectionalOFF() {
+            m_dir_model_type = NONE;
+            m_directional_model = nullptr;
+        }
 
         double GetHs() const { return m_significant_height; }
 
@@ -52,21 +181,78 @@ namespace frydom {
             // TODO
         }
 
-        virtual double Eval(const double x) const = 0;
+        /// Eval the spectrum at one frequency
+        /// Must be implemented into each wave spectrum
+        virtual double Eval(const double w) const = 0;
 
-        virtual std::vector<double> Eval(const std::vector<double> x) const = 0;  // TODO:utiliser un ChVectorDynamic
+        /// Eval the spectrum at a vector of frequencies
+        virtual std::vector<double> Eval(const std::vector<double> wVect) const {
+            std::vector<double> S_w;
+            auto nw = wVect.size();
+            S_w.reserve(nw);
+
+            for (double w: wVect) {
+                S_w.push_back(Eval(w));
+            }
+            return S_w;
+        }
 
 
+        /// Get the wave amplitudes for a given regular frequency discretization
+        virtual std::vector<double> GetWaveAmplitudes(const unsigned int nb_waves,
+                                                      const double wmin,
+                                                      const double wmax) {
 
-        std::vector<double> GetWaveAmplitudes(const unsigned int nb_waves,
-                                              const double wmin,
-                                              const double wmax,
-                                              FREQ_UNIT unit=RADS) const;
+            auto wVect = linspace(wmin, wmax, nb_waves);
+            double dw = wVect[1] - wVect[0];
 
-//        void ToDirectional() {} // TODO ?
+            std::vector<double> wave_ampl;
+            wave_ampl.reserve(nb_waves);
+            for (double w: wVect) {
+                wave_ampl.push_back(sqrt(2. * Eval(w) * dw));
+            }
+            return wave_ampl;
+        }
+
+        virtual std::vector<std::vector<double>> GetWaveAmplitudes(const unsigned int nb_waves,
+                                                                   const double wmin,
+                                                                   const double wmax,
+                                                                   const unsigned int nb_dir,
+                                                                   const double theta_min,
+                                                                   const double theta_max,
+                                                                   const double theta_mean) {
+
+            if (m_dir_model_type == NONE) {
+                // ERROR !!
+            }
+
+            auto wVect = linspace(wmin, wmax, nb_waves);
+            double dw = wVect[1] - wVect[0];
+
+            auto thetaVect = linspace(wmin, wmax, nb_dir);
+            double dtheta = thetaVect[1] - thetaVect[0];
+            m_directional_model->UpdateSpreadingFunction(thetaVect, theta_mean);
+            auto dir_func = m_directional_model->GetSpreadingFunction();  // TODO: les deux etapes sont inutiles...
+
+            std::vector<std::vector<double>> S_w_theta;
+            S_w_theta.reserve(nb_dir);
+
+            std::vector<double> S_w;
+            S_w.reserve(nb_waves);
+
+            for (double f_theta: dir_func) {
+                S_w.clear();
+                for (double w: wVect) {
+                    S_w.push_back(sqrt(2. * Eval(w) * f_theta * dtheta * dw));
+                }
+                S_w_theta.push_back(S_w);
+            }
+            return S_w_theta;
+        }
 
     };
 
+    // =================================================================================================================
 
     #define _SIGMA2_1_left (1/(0.07*0.07))
     #define _SIGMA2_1_right (1/(0.09*0.09))
@@ -84,12 +270,17 @@ namespace frydom {
             CheckGamma();
         }
 
-        FrJonswapWaveSpectrum(const FrJonswapWaveSpectrum& waveSpectrum) :
-                m_gamma(waveSpectrum.m_gamma),
-                FrWaveSpectrum(waveSpectrum)
-                {}  // Copy CTOR
+//        FrJonswapWaveSpectrum(const FrJonswapWaveSpectrum& waveSpectrum) :
+//                m_gamma(waveSpectrum.m_gamma),
+//                FrWaveSpectrum(waveSpectrum)
+//                {}  // Copy CTOR
 
-        void CheckGamma();
+        void CheckGamma() {
+            if (m_gamma < 1. || m_gamma > 10.) {
+                // TODO: utiliser un vrai warning sur stderr
+                std::cout << "WARNING: Valid values of gamma parameter in Jonswap wave spectrum are between 1 and 10. " << std::endl;
+            }
+        }
 
         double GetGamma() const { return m_gamma; }
 
@@ -98,96 +289,33 @@ namespace frydom {
             CheckGamma();
         }
 
-        double Eval(const double w) const;
+        double Eval(const double w) const {
 
-        std::vector<double> Eval(const std::vector<double> w) const;
+            double wp2 = m_peak_pulsation * m_peak_pulsation;
+            double wp4 = wp2 * wp2;
 
-    };
+            double w4_1 = pow(w, -4);
+            double w5_1 = w4_1 / w;
 
+            double hs2 = m_significant_height * m_significant_height;
 
-    class FrDirectionalWaveSpectrum : public FrGenericWaveSpectrum {
+            double S_w = 0.;
+            if (w > 0.) {
+                S_w = 0.3125 * hs2 * wp4 * w5_1 * exp(-1.25 * wp4 * w4_1) * (1 - 0.287 * log(m_gamma));
 
-    protected:
-        std::unique_ptr<FrWaveSpectrum> m_wave_spectrum;
+                double a = exp(-pow(w - m_peak_pulsation, 2) / (2. * wp2));
+                if (w <= m_peak_pulsation) {
+                    a = pow(a, _SIGMA2_1_left);
+                } else {
+                    a = pow(a, _SIGMA2_1_right);
+                }
+                S_w *= pow(m_gamma, a);
+            }
 
-    public:
-        explicit FrDirectionalWaveSpectrum(FrWaveSpectrum* waveSpectrum) : m_wave_spectrum(waveSpectrum) {}
-
-        double GetHs() const { return m_wave_spectrum->GetHs(); }
-
-        double GetTp() const { return m_wave_spectrum->GetTp(); }
-
-        double GetWp() const { return m_wave_spectrum->GetWp(); }
-
-        double GetFp() const { return m_wave_spectrum->GetFp(); }
-
-        double GetPeakFreq(FREQ_UNIT unit) const {
-            return m_wave_spectrum->GetPeakFreq(unit);
+            return S_w;
         }
 
-        virtual std::vector<double> Eval(const double w,
-                                         const std::vector<double>& theta,
-                                         const double theta_mean,
-                                         bool eval_spreading_fcn=true) = 0;
-
-        virtual std::vector<std::vector<double>> Eval(const std::vector<double>& wVect,
-                                                      const std::vector<double>& theta,
-                                                      const double theta_mean) = 0;
-
-        virtual std::vector<std::vector<double>> GetWaveAmplitudes(const unsigned int nb_waves,
-                                                                   const double wmin,
-                                                                   const double wmax,
-                                                                   const unsigned int nb_dir,
-                                                                   const double theta_min,
-                                                                   const double theta_max,
-                                                                   const double theta_mean) = 0;
     };
-
-
-    class FrCos2sDirectionalWaveSpectrum : public FrDirectionalWaveSpectrum {
-
-    private:
-        double m_spreading_factor = 10.;
-
-        std::vector<double> c_spreading_fcn;  // Cached
-
-        void CheckSpreadingFactor();
-
-        void EvalSpreadingFunction(const std::vector<double> &thetaVect, const double theta_mean);
-
-    public:
-
-        explicit FrCos2sDirectionalWaveSpectrum(FrWaveSpectrum* waveSpectrum, const double spreading_factor=10.) :
-                m_spreading_factor(spreading_factor),
-                FrDirectionalWaveSpectrum(waveSpectrum) {
-            CheckSpreadingFactor();
-        }
-
-        double GetSpreadingFactor() const { return m_spreading_factor; }
-
-        void SetSpreadingFactor(const double spreading_factor) {
-            m_spreading_factor = spreading_factor;
-            CheckSpreadingFactor();
-        }
-
-        std::vector<double> Eval(const double w,
-                                 const std::vector<double>& theta,
-                                 const double theta_mean, bool eval_spreading_fcn=true);
-
-        std::vector<std::vector<double>> Eval(const std::vector<double>& wVect,
-                                              const std::vector<double>& theta,
-                                              const double theta_mean);
-
-        std::vector<std::vector<double>> GetWaveAmplitudes(const unsigned int nb_waves,
-                                                           const double wmin,
-                                                           const double wmax,
-                                                           const unsigned int nb_dir,
-                                                           const double theta_min,
-                                                           const double theta_max,
-                                                           const double theta_mean);
-
-    };
-
 
 }  // end namespace frydom
 

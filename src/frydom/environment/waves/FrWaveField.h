@@ -323,19 +323,10 @@ namespace frydom {
         std::vector<std::complex<double>> GetCmplxFreeSurfaceElevation(const double x, const double y) const {
             auto steady_elev = GetSteadyElevation(x, y);
             return GetCmplxFreeSurfaceElevation(steady_elev);
-//            auto steady_elev = GetSteadyElevation(x, y);
-//
-//            std::vector<std::complex<double>> eta_cmplx;
-//            eta_cmplx.reserve(m_nb_freq);
-//
-//            for (uint iw=0; iw<m_nb_freq; iw++) {
-//                eta_cmplx.push_back(steady_elev[iw] * c_ejwt[iw]);
-//            }
-//            return eta_cmplx;
         }
 
         std::vector<std::complex<double>> GetCmplxFreeSurfaceElevation(std::vector<std::complex<double>>& steady_elevation) const {
-            // TODO: verifier la taille de steady_elevation !!
+            assert(steady_elevation.size() == m_nb_freq);
             std::vector<std::complex<double>> eta_cmplx;
             eta_cmplx.reserve(m_nb_freq);
 

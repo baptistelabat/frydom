@@ -14,16 +14,22 @@ int main(int argc, char* argv[]) {
     double tp = 9;
 
     auto spectrum = std::make_unique<FrJonswapWaveSpectrum>(hs, tp);
+    auto dir_model = std::make_unique<FrCos2sDirectionalModel>();
 
-    auto dir_spectrum = FrCos2sDirectionalWaveSpectrum(spectrum.release());
+    spectrum->SetDirectionalModel(dir_model.release());
 
-    auto w = linspace(0., 5., 1000);
-    auto theta = linspace(-M_PI, M_PI, 360);
+    uint nb_waves = 1000;
+    double wmin = 1e-2;
+    double wmax = 5.;
 
-    auto S_w_theta = dir_spectrum.Eval(w, theta, 0.);
+    auto S_w = spectrum->GetWaveAmplitudes(nb_waves, wmin, wmax);
 
+    uint nb_dir = 180;
+    double tmin = -M_PI;
+    double tmax = M_PI;
+    double tmean = 0.;
 
-    auto wave_ampl = dir_spectrum.GetWaveAmplitudes(100, 0.01, 3., 180, -M_PI, M_PI, 0.);
+    auto S_w_theta = spectrum->GetWaveAmplitudes(nb_waves, wmin, wmax, nb_dir, tmin, tmax, tmean);
 
 
 
