@@ -20,6 +20,10 @@ int main(int argc, char* argv[]) {
 //    regular_wave_field.UpdateTime(0.);
 //    auto fse = regular_wave_field.GetFreeSurfaceElevationGrid(xVect, yVect);
 
+    uint nb_waves = 100;
+    double wmin = 1e-2;
+    double wmax = 5.;
+
 
     // Irregular linear wave field
     auto jws = std::make_unique<FrJonswapWaveSpectrum>(3, 9); // FIXME: attention a l'ordre des arguments qui doit etre consistant !!
@@ -30,9 +34,22 @@ int main(int argc, char* argv[]) {
     std::cout << irregular_wave_field.GetFreeSurfaceElevation(0, 0);
 
 
+    uint nb_dir = 180;
+    double tmin = -M_PI;
+    double tmax = M_PI;
+    double tmean = 0.;
+
+
     // Directional wave field
-//    auto jws2 = std::make_unique<FrJonswapWaveSpectrum>(3, 9);
-//    auto dirjws = std::make_unique<FrDirectionalWaveSpectrum>(jws2.release());
+    auto jws2 = std::make_unique<FrJonswapWaveSpectrum>(3, 9);
+    auto dir_model = std::make_unique<FrCos2sDirectionalModel>();
+    jws2->SetDirectionalModel(dir_model.release());
+
+    auto dirjws = std::make_unique<FrDirectionalLinearWaveField>(nb_waves, wmin, wmax, tmean, nb_dir, tmin, tmax, jws2.release());
+
+
+
+
 
 
 

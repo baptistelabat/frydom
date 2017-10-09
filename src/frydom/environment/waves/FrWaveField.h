@@ -15,6 +15,8 @@
 
 namespace frydom {
 
+    // =================================================================================================================
+
     class FrWaveField {  // TODO: ajouter dans cette classe un modele de tidal...
 
     protected:
@@ -74,6 +76,7 @@ namespace frydom {
 
     };
 
+    // =================================================================================================================
 
     class FrLinearWaveField : public FrWaveField {
 
@@ -104,6 +107,7 @@ namespace frydom {
 
     };
 
+    // =================================================================================================================
 
     class FrRegularLinearWaveField : public FrLinearWaveField {
 
@@ -190,6 +194,7 @@ namespace frydom {
 
     };
 
+    // =================================================================================================================
 
     class FrIrregularLinearWaveField : public FrLinearWaveField {
 
@@ -348,60 +353,73 @@ namespace frydom {
     };
 
 
-//    class FrDirectionalLinearWaveField : public FrIrregularLinearWaveField {
-//
-//    protected:
-//        unsigned int m_nb_wave_dir;
-//        double m_dir_min;
-//        double m_dir_max;
-//
-//        std::vector<std::vector<double>> m_phases;
-//
+    class FrDirectionalLinearWaveField : public FrIrregularLinearWaveField {
+
+    protected:
+        unsigned int m_nb_wave_dir;
+        double m_dir_min;
+        double m_dir_max;
+
+        std::vector<std::vector<double>> m_phases;
+
 //        void Update_ejwt() override {
 //
 //        }
-//
-//    public:
-//        FrDirectionalLinearWaveField(const unsigned int nw,
-//                                     const double wmin,
-//                                     const double wmax,
-//                                     const double mean_wave_dir,
-//                                     const unsigned int nb_dir,
-//                                     const double dir_min,
-//                                     const double dir_max,
-//                                     FrDirectionalWaveSpectrum* waveSpectrum) :
-//                m_nb_wave_dir(nb_dir),
-//                m_dir_min(dir_min),
-//                m_dir_max(dir_max),
-//                FrIrregularLinearWaveField(nw, wmin, wmax, mean_wave_dir, waveSpectrum) {
-//
-//
-//
-//        }
-////
-//////        void GenerateRandomPhases() override { // TODO: verifier
-//////            std::random_device rd;
-//////            std::mt19937 gen(rd());
-//////            std::uniform_real_distribution<double> dis(0., M_2PI);
-//////
-//////            m_phases.clear();
-//////            m_phases.reserve(m_nb_wave_dir);
-//////
-//////            std::vector<double> phases;
-//////            phases.reserve(m_nb_freq);
-//////
-//////            for (uint idir=0; idir<m_nb_wave_dir; ++idir) {
-//////                phases.clear();
-//////                for (uint iw=0; iw<m_nb_freq; ++iw) {
-//////                    phases.push_back(dis(gen));
-//////                }
-//////                m_phases.push_back(phases);
-//////            }
-//////        }
-////
-////
-////
-//    };
+
+    public:
+        FrDirectionalLinearWaveField(const unsigned int nw,
+                                     const double wmin,
+                                     const double wmax,
+                                     const double mean_wave_dir,
+                                     const unsigned int nb_dir,
+                                     const double dir_min,
+                                     const double dir_max,
+                                     FrWaveSpectrum* waveSpectrum) :
+                m_nb_wave_dir(nb_dir),
+                m_dir_min(dir_min),
+                m_dir_max(dir_max),
+                FrIrregularLinearWaveField(nw, wmin, wmax, mean_wave_dir, waveSpectrum) {
+
+            // Random phases generation
+            GenerateRandomPhases();
+
+//            Update_ejwt();
+//            UpdateWaveNumber();
+
+
+        }
+
+        void GenerateRandomPhases() override { // TODO: verifier
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_real_distribution<double> dis(0., M_2PI);
+
+            m_phases.clear();
+            m_phases.reserve(m_nb_wave_dir);
+
+            std::vector<double> phases;
+            phases.reserve(m_nb_freq);
+
+            for (uint idir=0; idir<m_nb_wave_dir; ++idir) {
+                phases.clear();
+                for (uint iw=0; iw<m_nb_freq; ++iw) {
+                    phases.push_back(dis(gen));
+                }
+                m_phases.push_back(phases);
+            }
+        }
+
+        void SetWavePhases(const std::vector<std::vector<double>>& wavePhases) {
+            assert(wavePhases.size() == m_nb_wave_dir);
+            assert(wavePhases[0].size() == m_nb_freq);
+            m_phases = wavePhases;
+        }
+
+        
+
+
+
+    };
 
 
 
