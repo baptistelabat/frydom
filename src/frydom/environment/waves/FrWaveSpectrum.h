@@ -317,6 +317,27 @@ namespace frydom {
 
     };
 
+    class FrPiersonMoskowitzWaveSpectrum : public FrWaveSpectrum {
+
+    public:
+
+        FrPiersonMoskowitzWaveSpectrum(const double hs, const double tp, const FREQ_UNIT unit=S) :
+                FrWaveSpectrum(hs, tp, unit) {}
+
+        double Eval(const double w) const {
+
+            double Tz = RADS2S(m_peak_pulsation) / 1.408;  // Up-crossing period
+
+            double A = pow(M_2PI/Tz, 4) / (M_PI * pow(w, 4));
+
+            double Hs2 = m_significant_height * m_significant_height;
+
+            return 0.25 * A * (Hs2 / w) * exp(-A);
+
+        }
+
+    };
+
 }  // end namespace frydom
 
 
