@@ -13,7 +13,10 @@
 namespace frydom {
 
 
-    class FrGenericWaveSpectrum {};
+    class FrGenericWaveSpectrum {
+    public:
+        virtual double Eval(const double x) const = 0;
+    };
 
 
     class FrWaveSpectrum : public FrGenericWaveSpectrum {

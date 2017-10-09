@@ -131,6 +131,7 @@ namespace frydom {
 
     public:
         // TODO: permettre de specifier des degres pour la direction
+        // FIXME: ordre tp, hs non consistant !! (renverser)
         FrRegularLinearWaveField(const double wave_period, const double wave_height, const double mean_wave_dir) :
                 m_wave_period(wave_period),
                 m_wave_height(wave_height),
@@ -175,7 +176,11 @@ namespace frydom {
         }
 
         std::complex<double> GetCmplxFreeSurfaceElevation(const double x, const double y) const {
-            return GetSteadyElevation(x, y) * c_ejwt;
+            return GetCmplxFreeSurfaceElevation(GetSteadyElevation(x, y));
+        }
+
+        std::complex<double> GetCmplxFreeSurfaceElevation(std::complex<double> steady_elevation) const {
+            return steady_elevation * c_ejwt;
         }
 
         double GetFreeSurfaceElevation(const double x, const double y) const override {
@@ -317,12 +322,25 @@ namespace frydom {
 
         std::vector<std::complex<double>> GetCmplxFreeSurfaceElevation(const double x, const double y) const {
             auto steady_elev = GetSteadyElevation(x, y);
+            return GetCmplxFreeSurfaceElevation(steady_elev);
+//            auto steady_elev = GetSteadyElevation(x, y);
+//
+//            std::vector<std::complex<double>> eta_cmplx;
+//            eta_cmplx.reserve(m_nb_freq);
+//
+//            for (uint iw=0; iw<m_nb_freq; iw++) {
+//                eta_cmplx.push_back(steady_elev[iw] * c_ejwt[iw]);
+//            }
+//            return eta_cmplx;
+        }
 
+        std::vector<std::complex<double>> GetCmplxFreeSurfaceElevation(std::vector<std::complex<double>>& steady_elevation) const {
+            // TODO: verifier la taille de steady_elevation !!
             std::vector<std::complex<double>> eta_cmplx;
             eta_cmplx.reserve(m_nb_freq);
 
             for (uint iw=0; iw<m_nb_freq; iw++) {
-                eta_cmplx.push_back(steady_elev[iw] * c_ejwt[iw]);
+                eta_cmplx.push_back(steady_elevation[iw] * c_ejwt[iw]);
             }
             return eta_cmplx;
         }
@@ -339,60 +357,60 @@ namespace frydom {
     };
 
 
-    class FrDirectionalLinearWaveField : public FrIrregularLinearWaveField {
-
-    protected:
-        unsigned int m_nb_wave_dir;
-        double m_dir_min;
-        double m_dir_max;
-
-        std::vector<std::vector<double>> m_phases;
-
-        void Update_ejwt() override {
-
-        }
-
-    public:
-        FrDirectionalLinearWaveField(const unsigned int nw,
-                                     const double wmin,
-                                     const double wmax,
-                                     const double mean_wave_dir,
-                                     const unsigned int nb_dir,
-                                     const double dir_min,
-                                     const double dir_max,
-                                     FrDirectionalWaveSpectrum* waveSpectrum) :
-                m_nb_wave_dir(nb_dir),
-                m_dir_min(dir_min),
-                m_dir_max(dir_max),
-                FrIrregularLinearWaveField(nw, wmin, wmax, mean_wave_dir, waveSpectrum) {
-
-
-
-        }
+//    class FrDirectionalLinearWaveField : public FrIrregularLinearWaveField {
 //
-////        void GenerateRandomPhases() override { // TODO: verifier
-////            std::random_device rd;
-////            std::mt19937 gen(rd());
-////            std::uniform_real_distribution<double> dis(0., M_2PI);
+//    protected:
+//        unsigned int m_nb_wave_dir;
+//        double m_dir_min;
+//        double m_dir_max;
+//
+//        std::vector<std::vector<double>> m_phases;
+//
+//        void Update_ejwt() override {
+//
+//        }
+//
+//    public:
+//        FrDirectionalLinearWaveField(const unsigned int nw,
+//                                     const double wmin,
+//                                     const double wmax,
+//                                     const double mean_wave_dir,
+//                                     const unsigned int nb_dir,
+//                                     const double dir_min,
+//                                     const double dir_max,
+//                                     FrDirectionalWaveSpectrum* waveSpectrum) :
+//                m_nb_wave_dir(nb_dir),
+//                m_dir_min(dir_min),
+//                m_dir_max(dir_max),
+//                FrIrregularLinearWaveField(nw, wmin, wmax, mean_wave_dir, waveSpectrum) {
+//
+//
+//
+//        }
 ////
-////            m_phases.clear();
-////            m_phases.reserve(m_nb_wave_dir);
+//////        void GenerateRandomPhases() override { // TODO: verifier
+//////            std::random_device rd;
+//////            std::mt19937 gen(rd());
+//////            std::uniform_real_distribution<double> dis(0., M_2PI);
+//////
+//////            m_phases.clear();
+//////            m_phases.reserve(m_nb_wave_dir);
+//////
+//////            std::vector<double> phases;
+//////            phases.reserve(m_nb_freq);
+//////
+//////            for (uint idir=0; idir<m_nb_wave_dir; ++idir) {
+//////                phases.clear();
+//////                for (uint iw=0; iw<m_nb_freq; ++iw) {
+//////                    phases.push_back(dis(gen));
+//////                }
+//////                m_phases.push_back(phases);
+//////            }
+//////        }
 ////
-////            std::vector<double> phases;
-////            phases.reserve(m_nb_freq);
 ////
-////            for (uint idir=0; idir<m_nb_wave_dir; ++idir) {
-////                phases.clear();
-////                for (uint iw=0; iw<m_nb_freq; ++iw) {
-////                    phases.push_back(dis(gen));
-////                }
-////                m_phases.push_back(phases);
-////            }
-////        }
-//
-//
-//
-    };
+////
+//    };
 
 
 

@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 
 
     // Irregular linear wave field
-    auto jws = std::make_unique<FrJonswapWaveSpectrum>(3, 9);
+    auto jws = std::make_unique<FrJonswapWaveSpectrum>(3, 9); // FIXME: attention a l'ordre des arguments qui doit etre consistant !!
     auto irregular_wave_field = FrIrregularLinearWaveField(100, 0.01, 2.5, 0., jws.release());
 
     irregular_wave_field.UpdateTime(0.);
