@@ -103,7 +103,7 @@ namespace frydom {
 
     }
 
-    chrono::ChVector<double> FrCatenaryLine::GetPos(const double s) const {
+    chrono::ChVector<double> FrCatenaryLine::GetAbsPosition(const double s) const {
 
         auto pos = chrono::VNULL;
         pos += GetPosStartingNode();
@@ -114,7 +114,7 @@ namespace frydom {
     }
 
     chrono::ChVector<double> FrCatenaryLine::get_residual() const {
-        return GetPos(m_Lu) - GetPosEndingNode();
+        return GetAbsPosition(m_Lu) - GetPosEndingNode();
     }
 
     chrono::ChMatrix33<double> FrCatenaryLine::analytical_jacobian() const {
@@ -243,13 +243,13 @@ namespace frydom {
         double cl = 0.;
 
         double ds = m_Lu / (n-1);
-        auto pos_prev = GetPos(0.);
+        auto pos_prev = GetAbsPosition(0.);
         chrono::ChVector<double> pos;
         double s;
 
         for (uint i=0; i<n; ++i) {
             s = i*ds;
-            pos = GetPos(s);
+            pos = GetAbsPosition(s);
             cl += (pos - pos_prev).Length();
             pos_prev = pos;
         }

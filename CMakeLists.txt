@@ -143,8 +143,6 @@ set(SOURCE_FILES
         src/frydom/environment/current/FrCurrentPolarCoeffs.h
         src/frydom/environment/current/FrCurrentPolarCoeffs.cpp
 
-
-
         src/frydom/misc/FrLinspace.h
 
         src/frydom/misc/FrTriangleMeshConnected.h
@@ -186,16 +184,18 @@ set(SOURCE_FILES
         src/frydom/hydrodynamics/FrLinearDamping.h
         src/frydom/hydrodynamics/FrLinearDamping.cpp
 
-#        src/frydom/catenary/FrCatenaryNode.h
-#        src/frydom/catenary/FrCatenaryNode.cpp
+        src/frydom/cable/FrCable.h
+        src/frydom/cable/FrCable.cpp
 
-        src/frydom/catenary/FrCatenaryLine.h
-        src/frydom/catenary/FrCatenaryLine.cpp
+        src/frydom/cable/FrCatenaryLine.h
+        src/frydom/cable/FrCatenaryLine.cpp
+        src/frydom/cable/FrCatenaryForce.h
+        src/frydom/cable/FrCatenaryForce.cpp
 
-        src/frydom/catenary/FrCatenaryForce.h
-        src/frydom/catenary/FrCatenaryForce.cpp
+        src/frydom/cable/FrDynamicCable.h
+        src/frydom/cable/FrDynamicCable.cpp
 
-        src/frydom/tests/FEAcables.h
+        src/frydom/tests/FEAcables.h # TODO : A retirer
         )
 
 
