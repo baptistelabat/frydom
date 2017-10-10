@@ -20,7 +20,7 @@ namespace frydom {
     class FrWaveField {  // TODO: ajouter dans cette classe un modele de tidal...
 
     protected:
-        double m_time=0.;
+        double m_time = 0.;
 
         virtual void Update_ejwt() = 0;
 
@@ -129,7 +129,7 @@ namespace frydom {
             double water_height = 10.;
             double w = S2RADS(m_wave_period);
             double grav = 9.81;
-            c_wave_number = solve_dispersion_relation(water_height, w, grav);
+            c_wave_number = SolveWaveDispersionRelation(water_height, w, grav);
         }
 
 
@@ -206,16 +206,20 @@ namespace frydom {
 
         std::vector<double> m_phases;
 
+        std::vector<double> c_omega; // TODO: tenir a jour et utiliser plutot que d'appeler toujours linspace !!
+
         std::vector<double> c_wave_numbers;
         std::vector<std::complex<double>> c_ejwt;
 
-        virtual void Update_ejwt() override {
+        void Update_ejwt() override {
+
             c_ejwt.clear();
             c_ejwt.reserve(m_nb_freq);
             auto omega = GetWavePulsations();
             for (auto w: omega) {
                 c_ejwt.push_back(std::exp(-J * w * m_time));
             }
+
         }
 
         void UpdateWaveNumber() {
@@ -224,10 +228,11 @@ namespace frydom {
             double water_height = 10.;
             auto w = GetWavePulsations();
             double grav = 9.81;
-            c_wave_numbers = solve_dispersion_relation(water_height, w, grav);
+            c_wave_numbers = SolveWaveDispersionRelation(water_height, w, grav);
         }
 
     public:
+
         FrIrregularLinearWaveField(const unsigned int nw,
                                    const double wmin,
                                    const double wmax,
@@ -293,18 +298,20 @@ namespace frydom {
             auto dw_new = w_range / m_nb_freq;
             auto true_return_period = M_2PI / dw_new / 3600.;
 
-            std::cout << "Frequency discretization of the wave spectrum adjusted to get a return period of "
+            // TODO: passer a terme ce message en 0mq
+            std::cout << "Frequency discretization of the wave spectrum adjusted to get a wave return period of "
                       << true_return_period
                       << " s"
                       << std::endl;
         }
 
-        double GetReturnPeriod() const {
+        double GetReturnPeriod() const {  // TODO: donner la possibilite de fournir une unite de temps (s, m, h)
             auto dw = (m_wmax - m_wmin) / m_nb_freq;
             return M_2PI / dw;
         }
 
         std::vector<double> GetWaveAmplitudes() const override {
+            // FIXME: les amplitudes de vague (sqrt(2*...)) devraient etre calculees plutot dans le wavefield !! rien a voir avec le spectre...
             return m_wave_spectrum->GetWaveAmplitudes(m_nb_freq, m_wmin, m_wmax);
         }
 
@@ -330,7 +337,8 @@ namespace frydom {
             return GetCmplxFreeSurfaceElevation(steady_elev);
         }
 
-        std::vector<std::complex<double>> GetCmplxFreeSurfaceElevation(std::vector<std::complex<double>>& steady_elevation) const {
+        std::vector<std::complex<double>>
+        GetCmplxFreeSurfaceElevation(std::vector<std::complex<double>>& steady_elevation) const {
             assert(steady_elevation.size() == m_nb_freq);
             std::vector<std::complex<double>> eta_cmplx;
             eta_cmplx.reserve(m_nb_freq);
@@ -352,6 +360,7 @@ namespace frydom {
 
     };
 
+    // =================================================================================================================
 
     class FrDirectionalLinearWaveField : public FrIrregularLinearWaveField {
 
@@ -361,10 +370,6 @@ namespace frydom {
         double m_dir_max;
 
         std::vector<std::vector<double>> m_phases;
-
-//        void Update_ejwt() override {
-//
-//        }
 
     public:
         FrDirectionalLinearWaveField(const unsigned int nw,
@@ -415,9 +420,38 @@ namespace frydom {
             m_phases = wavePhases;
         }
 
-        
+    };
 
+    // =================================================================================================================
 
+    // FIXME: ne pas attacher a linearwaveField mais directement a la classe environment ?? (integrer la maree ??)
+    class FrLinearWaveProbe {  // TODO: faire deriver d'une classe FrSensor
+
+    private:
+        double m_x;
+        double m_y;
+
+        std::shared_ptr<FrLinearWaveField> m_wave_field = nullptr;
+
+    public:
+        FrLinearWaveProbe(const double x, const double y, std::shared_ptr<FrLinearWaveField> wave_field) :
+                m_x(x),
+                m_y(y),
+                m_wave_field(wave_field) {}
+
+        void SetPosition(const double x, const double y) {
+            m_x = x;
+            m_y = y;
+        }
+
+        void GetPosition(double& x, double& y) {
+            x = m_x;
+            y = m_y;
+        }
+
+        double GetValue() {
+            return m_wave_field->GetFreeSurfaceElevation(m_x, m_y);
+        }
 
     };
 

@@ -49,7 +49,7 @@ namespace frydom {
 
         // Cached
         std::vector<double> c_spreading_fcn;
-        double c_DTheta;
+        double c_DTheta = 0.;
 
         void CheckSpreadingFactor() {
             // TODO: utiliser un warning ver la stderr
@@ -64,7 +64,7 @@ namespace frydom {
             CheckSpreadingFactor();
         }
 
-        WaveDirectionalModelType GetType() const { return COS2S; }
+        WaveDirectionalModelType GetType() const override { return COS2S; }
 
         double GetSpreadingFactor() const { return m_spreading_factor; }
 
@@ -108,7 +108,8 @@ namespace frydom {
     // =================================================================================================================
 
     enum WaveSpectrumType {
-        JONSWAP
+        JONSWAP,
+        PIERSON_MOSKOWITZ
     };
 
     class FrWaveSpectrum {
@@ -127,11 +128,6 @@ namespace frydom {
         FrWaveSpectrum(const double hs, const double tp, const FREQ_UNIT unit=S) :
                 m_significant_height(hs),
                 m_peak_pulsation(convert_frequency(tp, unit, RADS)) {}
-
-//        /// Copy constructor
-//        FrWaveSpectrum(const FrWaveSpectrum& waveSpectrum) :
-//                m_significant_height(waveSpectrum.m_significant_height),
-//                m_peak_pulsation(waveSpectrum.m_peak_pulsation) {}  // Copy CTOR
 
         /// Set the directional model to use from type
         void SetDirectionalModel(WaveDirectionalModelType model) {
@@ -253,9 +249,9 @@ namespace frydom {
     };
 
     // =================================================================================================================
-
-    #define _SIGMA2_1_left (1/(0.07*0.07))
-    #define _SIGMA2_1_right (1/(0.09*0.09))
+    // FIXME: est-ce vraiment critique que d'avoir les 2 choses suivantes en macro ???
+    #define _SIGMA2_1_left (1/(pow(0.07, 2)))
+    #define _SIGMA2_1_right (1/(pow(0.09, 2)))
 
     class FrJonswapWaveSpectrum : public FrWaveSpectrum {
 
@@ -269,11 +265,6 @@ namespace frydom {
                 m_gamma(gamma) {
             CheckGamma();
         }
-
-//        FrJonswapWaveSpectrum(const FrJonswapWaveSpectrum& waveSpectrum) :
-//                m_gamma(waveSpectrum.m_gamma),
-//                FrWaveSpectrum(waveSpectrum)
-//                {}  // Copy CTOR
 
         void CheckGamma() {
             if (m_gamma < 1. || m_gamma > 10.) {
@@ -289,7 +280,7 @@ namespace frydom {
             CheckGamma();
         }
 
-        double Eval(const double w) const {
+        double Eval(const double w) const final {
 
             double wp2 = m_peak_pulsation * m_peak_pulsation;
             double wp4 = wp2 * wp2;
@@ -317,6 +308,8 @@ namespace frydom {
 
     };
 
+    // =================================================================================================================
+
     class FrPiersonMoskowitzWaveSpectrum : public FrWaveSpectrum {
 
     public:
@@ -324,7 +317,7 @@ namespace frydom {
         FrPiersonMoskowitzWaveSpectrum(const double hs, const double tp, const FREQ_UNIT unit=S) :
                 FrWaveSpectrum(hs, tp, unit) {}
 
-        double Eval(const double w) const {
+        double Eval(const double w) const final {
 
             double Tz = RADS2S(m_peak_pulsation) / 1.408;  // Up-crossing period
 

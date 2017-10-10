@@ -11,11 +11,13 @@
 
 namespace frydom {
 
-    double solve_dispersion_relation(const double water_height,
-                                     const double omega,
-                                     const double gravity);
+    double SolveWaveDispersionRelation(const double water_height,
+                                       const double omega,
+                                       const double gravity);
 
-    std::vector<double> solve_dispersion_relation(const double water_heigt, const std::vector<double> omega, const double gravity);
+    std::vector<double> SolveWaveDispersionRelation(const double water_heigt,
+                                                    const std::vector<double> omega,
+                                                    const double gravity);
 
 }  // end namespace frydom
 

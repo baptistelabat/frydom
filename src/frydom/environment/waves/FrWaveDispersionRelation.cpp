@@ -6,11 +6,14 @@
 
 namespace frydom {
 
-    double solve_dispersion_relation(const double water_height,
-                                     const double omega,
-                                     const double gravity) {
+    /// Solve the water waves dispersion relation in finite water depth
+    /// Solve the equation w**2 = gk * tanh(kh) <=>  A = w**2 * h /g = X * tanh(X) with X = kh along with the
+    /// Newton-Raphson algorithm
+    double SolveWaveDispersionRelation(const double water_height,
+                                       const double omega,
+                                       const double gravity) {
 
-        const double tol = 1e-6;
+        static const double tol = 1e-6;
 
         double wave_number;
 
@@ -21,18 +24,20 @@ namespace frydom {
             wave_number = w2_g;
 
         } else {
+            // Newton-Raphson iterations
 
             double A = w2_g * water_height;
-            double X = A; // Initial value
+            double X = A; // Initial value as deep water wave number (X = kh)
 
             double thX = tanh(X);
-            double residue = X - X * thX;
+            double residue = A - X * thX;
 
-            double Cdot;
+            double Cdot;  // Derivative
             while (fabs(residue) > tol) {
                 Cdot = -thX - X * (1 - thX * thX);
 
-                X -= residue / Cdot;
+                X -= residue / Cdot; // Update
+
                 thX = tanh(X);
                 residue = A - X * thX;
             }
@@ -42,18 +47,18 @@ namespace frydom {
         return wave_number;
     }
 
-    std::vector<double> solve_dispersion_relation(const double water_heigt,
-                                                  const std::vector<double> omega,
-                                                  const double gravity) {
+    std::vector<double> SolveWaveDispersionRelation(const double water_heigt,
+                                                    const std::vector<double> omega,
+                                                    const double gravity) {
 
-        std::vector<double> kk;
+        std::vector<double> kVect;
         double k;
         for (double w : omega) {
-            k = solve_dispersion_relation(water_heigt, w, gravity);
-            kk.push_back(k);
+            k = SolveWaveDispersionRelation(water_heigt, w, gravity);
+            kVect.push_back(k);
         }
 
-        return kk;
+        return kVect;
     }
 
 }  // end namespace frydom
