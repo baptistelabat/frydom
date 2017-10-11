@@ -24,46 +24,25 @@ using namespace chrono::fea;
 
 namespace frydom {
 
-    class FrDynamicCable : public FrCable {
+    class FrDynamicCable : public ChMesh, public FrCable {
 
     private:
 
-        double m_time;
-
-        std::shared_ptr<FrNode> m_starting_node;
-        std::shared_ptr<FrNode> m_ending_node;
-
-        std::shared_ptr<ChNodeFEAxyzD> m_starting_node_fea;
-        std::shared_ptr<ChNodeFEAxyzD> m_ending_node_fea;
-
-        std::shared_ptr<ChMesh> m_mesh;
         std::shared_ptr<ChBeamSectionCable> m_section;
 
-        std::shared_ptr<ChVisualizationFEAmesh> m_visu_mesh;
-
-        double m_E;  ///< Young Modulus
-        double m_A;  ///< section area
-        double c_EA; ///< stiffness coefficient
-        double m_rayleighDamping; ///< Rayleigh damping
-
-        double m_cableLength;
-
-//        std::unique_ptr<FrCatenaryLine> catenary_line;
-
-        unsigned int m_nb_elements;
-
-
+        double m_rayleighDamping;   ///< Rayleigh damping
+        unsigned int m_nbElements;  ///< Number of elements in the finite element cable model
 
     public:
         FrDynamicCable() = default;
 
         // TODO: faire constructeur par copie
 
-        void SetRayleighDamping(const double d) {}
+        void SetRayleighDamping(const double damping) { m_rayleighDamping = damping; }
 
-        double GetRayleighDamping() const {}
+        double GetRayleighDamping() const { return m_rayleighDamping; }
 
-        void SetNumberOfElements(const unsigned int nb_elements) {}
+        void SetNumberOfElements(const unsigned int nbElements) { m_nbElements = nbElements; }
 
         unsigned int GetNumberOfElements() const {}
 
@@ -85,78 +64,75 @@ namespace frydom {
         chrono::ChVector<double> GetEndingNodeTension() const {}
 
 
-
-
-        /// Initialize the finite element model
-        /// This method must be called after model parameter feeding and prior to any use of the cable model
+        /// Initialize the cable with given data
         void Initialize() {
+//            m_mesh = std::make_shared<ChMesh>();
 
-            // First, building a catenary line to initialize finite element mesh node positions
+            m_section = std::make_shared<ChBeamSectionCable>();
+            m_section->SetArea(m_sectionArea);
+            m_section->SetBeamRaleyghDamping(m_rayleighDamping);
+            m_section->SetDensity(GetDensity());
+            m_section->SetYoungModulus(m_youngModulus);
+            m_section->SetI(1.); // TODO: ajouter une inertie !!!
+
+        /// Initialize the cable with given data
+        void Initialize() {
+            // First, creating a catenary line to initialize finite element mesh node positions
             // TODO: comment on definit q ???
             double q = 600;
             auto catenary_line = FrCatenaryLine(m_starting_node,
                                                 m_ending_node,
                                                 true,
-                                                c_EA,
+                                                m_youngModulus * m_sectionArea,
                                                 m_cableLength,
                                                 q,
                                                 chrono::ChVector<double>(0, 0, -1));
 
-//            std::vector<std::shared_ptr<ChElementCableANCF> > elements;
-            std::vector<std::shared_ptr<ChNodeFEAxyzD> > nodes;
-
             // Now, creating the nodes
-            double ds = m_cableLength / m_nb_elements;
             double s = 0.;
+            double ds = m_cableLength / m_nbElements;
 
-            // FIXME: la direction n'est pas celle de la tension mais celle entre 2 noeuds qu'on doit recuperer
-            // a partir de la position des points de la ligne catenaire
-            auto positionA = catenary_line.GetAbsPosition(0.);
-            auto positionB = catenary_line.GetAbsPosition(ds);
+            auto direction = catenary_line.GetTension(s);
+            direction.Normalize();
+            auto position = m_starting_node->GetAbsPos();
+            auto nodeA = std::make_shared<ChNodeFEAxyzD>(position, direction);
+            AddNode(nodeA);
 
-            auto direction = (positionB - positionA).Normalize();
-
-            auto nodeA = std::make_shared<ChNodeFEAxyzD>(positionA, direction);
-            m_mesh->AddNode(nodeA);
-            nodes.push_back(nodeA);
-            m_starting_node_fea = nodeA;
-
-
-            // FIXME: attention: l'initialisatio suivante n'est pas fonctionnelle !!!
-            chrono::ChVector<double> next_positionB;
-            for (uint i = 1; i<= m_nb_elements; ++i) {
+            // Creating the specified number of ANCF Cable elements
+            for (uint i = 1; i<= m_nbElements; ++i) {
                 s += ds;
 
-                next_positionB = catenary_line.GetAbsPosition(s+ds);
+                direction = catenary_line.GetTension(s);
+                direction.Normalize();
+                position = catenary_line.GetAbsPosition(s);
 
-                // Direction of node B
-                direction = (next_positionB - positionB).Normalize();
-
-                auto nodeB = std::make_shared<ChNodeFEAxyzD>(positionB, direction);
-                m_mesh->AddNode(nodeB);
-                nodes.push_back(nodeB);
-
-                positionB = next_positionB;
+                auto nodeB = std::make_shared<ChNodeFEAxyzD>(position, direction);
+                AddNode(nodeB);
 
                 auto element = std::make_shared<ChElementCableANCF>();
-                m_mesh->AddElement(element);
-//                elements.push_back(element);
-
-                element->SetNodes(nodes[i-1], nodes[i]); // FIXME: indice a changer
+                element->SetNodes(nodeA, nodeB);
                 element->SetSection(m_section);
+                AddElement(element);
 
-            }
-            m_ending_node_fea = nodes[m_nb_elements];
+                nodeA = nodeB;
+
+        }
+
+            // Removing forces from catenary line that have been automatically created at instanciation
+            m_starting_node->GetBody()->RemoveForce(catenary_line.GetStartingForce());
+            m_ending_node->GetBody()->RemoveForce(catenary_line.GetEndingForce());
 
         }
 
-        void UpdateTime(double time) final {
-            m_time = time;
-        }
 
-        void UpdateState() final {
 
-        }
+//        void UpdateTime(double time) {
+//            m_time = time;
+//        }
+//
+//        void UpdateState() {
+//
+//        }
 
     };
 
