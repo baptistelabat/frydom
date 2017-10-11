@@ -9,7 +9,7 @@
 #include <frydom/core/FrConstants.h>
 #include "frydom/misc/FrLookupTable1D.h"
 
-
+// TODO: supprimer cette classe et utiliser directement la LUT dans la classe courant
 namespace frydom {
 namespace environment {
 
@@ -22,7 +22,6 @@ namespace environment {
         bool     m_negate    = false;
 
     public:
-
 
         void Initialize(const std::vector<double>& angles,
                         const std::vector<double>& cx,

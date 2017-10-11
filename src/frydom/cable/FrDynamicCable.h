@@ -24,27 +24,53 @@ using namespace chrono::fea;
 
 namespace frydom {
 
-    class FrDynamicCable : public ChMesh, public FrCable {
+    class FrDynamicCable : public FrCable {
 
     private:
 
+        double m_time;
+
+        std::shared_ptr<FrNode> m_starting_node;
+        std::shared_ptr<FrNode> m_ending_node;
+
+        std::shared_ptr<ChNodeFEAxyzD> m_starting_node_fea;
+        std::shared_ptr<ChNodeFEAxyzD> m_ending_node_fea;
+
+        std::shared_ptr<ChMesh> m_mesh;
         std::shared_ptr<ChBeamSectionCable> m_section;
 
-        double m_rayleighDamping;   ///< Rayleigh damping
-        unsigned int m_nbElements;  ///< Number of elements in the finite element cable model
+        std::shared_ptr<ChVisualizationFEAmesh> m_visu_mesh;
+
+        double m_E;  ///< Young Modulus
+        double m_A;  ///< section area
+        double c_EA; ///< stiffness coefficient
+        double m_rayleighDamping; ///< Rayleigh damping
+
+        double m_cableLength;
+
+//        std::unique_ptr<FrCatenaryLine> catenary_line;
+
+        unsigned int m_nb_elements;
+
+
 
     public:
         FrDynamicCable() = default;
 
         // TODO: faire constructeur par copie
 
-        void SetRayleighDamping(const double damping) { m_rayleighDamping = damping; }
+        void SetRayleighDamping(const double d) {}
 
-        double GetRayleighDamping() const { return m_rayleighDamping; }
+        double GetRayleighDamping() const {}
 
-        void SetNumberOfElements(const unsigned int nbElements) { m_nbElements = nbElements; }
+        void SetNumberOfElements(const unsigned int nb_elements) {}
 
-        unsigned int GetNumberOfElements() const { return m_nbElements; }
+        unsigned int GetNumberOfElements() const {}
+
+        void SetTargetElementLength() {
+            // TODO: on donne une longueur cible d'element fini et ca calcule une discretisation spatiale basee sur la
+            // longueur du cable ainsi qu'un nombre subsequent d'elements
+        }
 
         std::shared_ptr<FrForce> GetStartingForce() const {}
 
@@ -59,73 +85,78 @@ namespace frydom {
         chrono::ChVector<double> GetEndingNodeTension() const {}
 
 
-        /// Initialize the cable with given data
+
+
+        /// Initialize the finite element model
+        /// This method must be called after model parameter feeding and prior to any use of the cable model
         void Initialize() {
-//            m_mesh = std::make_shared<ChMesh>();
 
-            m_section = std::make_shared<ChBeamSectionCable>();
-            m_section->SetArea(m_sectionArea);
-            m_section->SetBeamRaleyghDamping(m_rayleighDamping);
-            m_section->SetDensity(GetDensity());
-            m_section->SetYoungModulus(m_youngModulus);
-            m_section->SetI(1.); // TODO: ajouter une inertie !!!
-
-            // First, creating a catenary line to initialize finite element mesh node positions
+            // First, building a catenary line to initialize finite element mesh node positions
             // TODO: comment on definit q ???
             double q = 600;
             auto catenary_line = FrCatenaryLine(m_starting_node,
                                                 m_ending_node,
                                                 true,
-                                                m_youngModulus * m_sectionArea,
+                                                c_EA,
                                                 m_cableLength,
                                                 q,
                                                 chrono::ChVector<double>(0, 0, -1));
 
+//            std::vector<std::shared_ptr<ChElementCableANCF> > elements;
+            std::vector<std::shared_ptr<ChNodeFEAxyzD> > nodes;
+
             // Now, creating the nodes
+            double ds = m_cableLength / m_nb_elements;
             double s = 0.;
-            double ds = m_cableLength / m_nbElements;
 
-            auto direction = catenary_line.GetTension(s);
-            direction.Normalize();
-            auto position = m_starting_node->GetAbsPos();
-            auto nodeA = std::make_shared<ChNodeFEAxyzD>(position, direction);
-            AddNode(nodeA);
+            // FIXME: la direction n'est pas celle de la tension mais celle entre 2 noeuds qu'on doit recuperer
+            // a partir de la position des points de la ligne catenaire
+            auto positionA = catenary_line.GetAbsPosition(0.);
+            auto positionB = catenary_line.GetAbsPosition(ds);
 
-            // Creating the specified number of ANCF Cable elements
-            for (uint i = 1; i<= m_nbElements; ++i) {
+            auto direction = (positionB - positionA).Normalize();
+
+            auto nodeA = std::make_shared<ChNodeFEAxyzD>(positionA, direction);
+            m_mesh->AddNode(nodeA);
+            nodes.push_back(nodeA);
+            m_starting_node_fea = nodeA;
+
+
+            // FIXME: attention: l'initialisatio suivante n'est pas fonctionnelle !!!
+            chrono::ChVector<double> next_positionB;
+            for (uint i = 1; i<= m_nb_elements; ++i) {
                 s += ds;
 
-                direction = catenary_line.GetTension(s);
-                direction.Normalize();
-                position = catenary_line.GetAbsPosition(s);
+                next_positionB = catenary_line.GetAbsPosition(s+ds);
 
-                auto nodeB = std::make_shared<ChNodeFEAxyzD>(position, direction);
-                AddNode(nodeB);
+                // Direction of node B
+                direction = (next_positionB - positionB).Normalize();
+
+                auto nodeB = std::make_shared<ChNodeFEAxyzD>(positionB, direction);
+                m_mesh->AddNode(nodeB);
+                nodes.push_back(nodeB);
+
+                positionB = next_positionB;
 
                 auto element = std::make_shared<ChElementCableANCF>();
-                element->SetNodes(nodeA, nodeB);
-                element->SetSection(m_section);
-                AddElement(element);
+                m_mesh->AddElement(element);
+//                elements.push_back(element);
 
-                nodeA = nodeB;
+                element->SetNodes(nodes[i-1], nodes[i]); // FIXME: indice a changer
+                element->SetSection(m_section);
 
             }
-
-            // Removing forces from catenary line that have been automatically created at instanciation
-            m_starting_node->GetBody()->RemoveForce(catenary_line.GetStartingForce());
-            m_ending_node->GetBody()->RemoveForce(catenary_line.GetEndingForce());
+            m_ending_node_fea = nodes[m_nb_elements];
 
         }
 
+        void UpdateTime(double time) final {
+            m_time = time;
+        }
 
+        void UpdateState() final {
 
-//        void UpdateTime(double time) {
-//            m_time = time;
-//        }
-//
-//        void UpdateState() {
-//
-//        }
+        }
 
     };
 
