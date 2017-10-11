@@ -91,14 +91,14 @@ namespace frydom {
 
         virtual chrono::ChVector<double> GetAbsPosition(const double s) const = 0;
 
-        void Update(const double time) {
-            UpdateTime(time);
-            UpdateState();
-        }
-
-        virtual void UpdateTime(const double time) = 0;
-
-        virtual void UpdateState() = 0;
+//        void Update(const double time) {
+//            UpdateTime(time);
+//            UpdateState();
+//        }
+//
+//        virtual void UpdateTime(const double time) = 0;
+//
+//        virtual void UpdateState() = 0;
 
     };
 
