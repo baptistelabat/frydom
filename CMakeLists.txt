@@ -259,6 +259,9 @@ target_link_libraries(test_wave_spectrum ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 add_executable(test_wave_field ${SOURCE_FILES} src/frydom/tests/test_wave_field.cpp)
 target_link_libraries(test_wave_field ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
+add_executable(test_dynamic_cable ${SOURCE_FILES} src/frydom/tests/test_dynamic_cable.cpp)
+target_link_libraries(test_dynamic_cable ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===
 # 

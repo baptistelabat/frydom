@@ -19,7 +19,7 @@ namespace frydom {
 
         // Creating the node and updating its position
         auto node = std::make_shared<FrNode>();
-        node->SetBody(this);
+        node->SetBody(this);  // FIXME: a priori, c'est deja fait dans AddMarker lors de l'appele a AddNode... A retirer
         node->UpdateState();  // TODO: voir s'il est besoin d'appeler l'update...
 
         AddNode(node);

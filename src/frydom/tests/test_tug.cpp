@@ -5,7 +5,7 @@
 #include <frydom/hydrodynamics/FrLinearDamping.h>
 #include "frydom/core/FrCore.h"
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/catenary/FrCatenaryLine.h"
+#include "frydom/cable/FrCatenaryLine.h"
 
 #include "frydom/hydrodynamics/FrTryalForce.h"
 

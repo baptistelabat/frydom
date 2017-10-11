@@ -19,11 +19,13 @@ namespace frydom {
         std::shared_ptr<FrNode> m_starting_node;
         std::shared_ptr<FrNode> m_ending_node;
 
-        double m_youngModulus = -1.; // FIXME: mettre des valeurs par defaut non verolees !!!
-        double m_sectionArea = -1.;
-        double m_cableLength = -1.;
+        double m_youngModulus; // FIXME: mettre des valeurs par defaut non verolees !!!
+        double m_sectionArea;
+        double m_cableLength;
 
-        double m_linearDensity = -1.; // in kg/m
+        double m_linearDensity; // in kg/m
+
+        bool m_initialized = false;
 
     public:
 

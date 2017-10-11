@@ -28,11 +28,6 @@ namespace frydom {
 
     private:
 
-        double m_time;
-
-        std::shared_ptr<FrNode> m_starting_node;
-        std::shared_ptr<FrNode> m_ending_node;
-
         std::shared_ptr<ChNodeFEAxyzD> m_starting_node_fea;
         std::shared_ptr<ChNodeFEAxyzD> m_ending_node_fea;
 
@@ -41,15 +36,7 @@ namespace frydom {
 
         std::shared_ptr<ChVisualizationFEAmesh> m_visu_mesh;
 
-        double m_E;  ///< Young Modulus
-        double m_A;  ///< section area
-        double c_EA; ///< stiffness coefficient
         double m_rayleighDamping; ///< Rayleigh damping
-
-        double m_cableLength;
-
-//        std::unique_ptr<FrCatenaryLine> catenary_line;
-
         unsigned int m_nb_elements;
 
 
@@ -59,13 +46,13 @@ namespace frydom {
 
         // TODO: faire constructeur par copie
 
-        void SetRayleighDamping(const double d) {}
+        void SetRayleighDamping(const double damping) { m_rayleighDamping = damping; }
 
-        double GetRayleighDamping() const {}
+        double GetRayleighDamping() const { return m_rayleighDamping; }
 
-        void SetNumberOfElements(const unsigned int nb_elements) {}
+        void SetNumberOfElements(const unsigned int nb_elements) { m_nb_elements = nb_elements; }
 
-        unsigned int GetNumberOfElements() const {}
+        unsigned int GetNumberOfElements() const { return m_nb_elements; }
 
         std::shared_ptr<FrForce> GetStartingForce() const {}
 
@@ -80,17 +67,24 @@ namespace frydom {
         chrono::ChVector<double> GetEndingNodeTension() const {}
 
 
-
-
         /// Initialize the cable with given data
         void Initialize() {
+            m_mesh = std::make_shared<ChMesh>();
+
+            m_section = std::make_shared<ChBeamSectionCable>();
+            m_section->SetArea(m_sectionArea);
+            m_section->SetBeamRaleyghDamping(m_rayleighDamping);
+            m_section->SetDensity(GetDensity());
+            m_section->SetYoungModulus(m_youngModulus);
+            m_section->SetI(1.); // TODO: ajouter une inertie !!!
+
             // First, creating a catenary line to initialize finite element mesh node positions
             // TODO: comment on definit q ???
             double q = 600;
             auto catenary_line = FrCatenaryLine(m_starting_node,
                                                 m_ending_node,
                                                 true,
-                                                c_EA,
+                                                m_youngModulus * m_sectionArea,
                                                 m_cableLength,
                                                 q,
                                                 chrono::ChVector<double>(0, 0, -1));
@@ -107,7 +101,8 @@ namespace frydom {
             auto positionA = catenary_line.GetAbsPosition(0.);
             auto positionB = catenary_line.GetAbsPosition(ds);
 
-            auto direction = (positionB - positionA).Normalize();
+            auto direction = (positionB - positionA);
+            direction.Normalize();
 
             auto nodeA = std::make_shared<ChNodeFEAxyzD>(positionA, direction);
             m_mesh->AddNode(nodeA);
@@ -130,6 +125,8 @@ namespace frydom {
                 nodes.push_back(nodeB);
 
                 positionB = next_positionB;
+
+                nodeA = nodeB;
 
                 auto element = std::make_shared<ChElementCableANCF>();
                 m_mesh->AddElement(element);
