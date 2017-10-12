@@ -14,6 +14,9 @@
 #include "FrShip.h"
 #include "FrForce.h"
 #include "FrForceAsset.h"
+#include "FrBodyEasy.h"
+
+//#include "frydom/misc/FrUtils.h"
 
 
 #endif //FRYDOM_FRCORE_H_H

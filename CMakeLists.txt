@@ -154,6 +154,9 @@ set(SOURCE_FILES
         src/frydom/core/FrHydroBody.h
         src/frydom/core/FrHydroBody.cpp
 
+        src/frydom/core/FrBodyEasy.h
+        src/frydom/core/FrBodyEasy.cpp
+
         src/frydom/core/FrNode.h
         src/frydom/core/FrNode.cpp
 
@@ -261,6 +264,12 @@ target_link_libraries(test_wave_field ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(test_dynamic_cable ${SOURCE_FILES} src/frydom/tests/test_dynamic_cable.cpp)
 target_link_libraries(test_dynamic_cable ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
+add_executable(test_anchored_boat_current_fea_cable ${SOURCE_FILES} src/frydom/tests/test_anchored_boat_current_fea_cable.cpp)
+target_link_libraries(test_anchored_boat_current_fea_cable ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
+add_executable(test_fea_cable_with_body ${SOURCE_FILES} src/frydom/tests/test_fea_cable_with_body.cpp)
+target_link_libraries(test_fea_cable_with_body ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===

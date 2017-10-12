@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include "frydom/misc/FrEigen.h"
+#include "frydom/misc/FrUtils.h"
 
 //#include "Eigen/Dense"
 

@@ -15,13 +15,13 @@
 #include "Eigen/Dense"
 
 
+// Forward declarations
 namespace chrono {
     template <class Real>
     class ChVector;
 
     template <class Real>
     class ChMatrix33;
-
 }
 
 namespace frydom {
@@ -127,6 +127,11 @@ namespace frydom {
     // =================================================================================================================
     // Linear Algebra helpers
     // =================================================================================================================
+
+    template <class Scalar>
+    Scalar norm_inf(const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>& mat) {
+        return mat.cwiseAbs().rowwise().sum().maxCoeff();
+    }
 
     template <class Scalar=double>
     bool is_positiveSemidefinite(const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>& mat,
@@ -290,42 +295,10 @@ namespace frydom {
     /// Moore-Penrose pseudo-inverse
     template <class Scalar=double>
     Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>
-        pinv(const Eigen::Matrix<double, Eigen::Dynamic,
-             Eigen::Dynamic>& mat, const Scalar tol=1e-6) {
+        pinv(const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& mat, const Scalar tol=1e-6) {
         
-        auto svd = SVD_decomposition<Scalar>(mat);
-        return svd.GetPinv(tol);
-    }
+        return SVD_decomposition<Scalar>(mat).GetPinv(tol);
 
-
-
-
-
-
-
-
-
-
-    /// Print functions for chrono
-    // TODO: placer ces fonctions dans un utilitaire autre que FrEigen !!
-    // TODO : utiliser sprintf...
-    template <class Real=double>
-    std::ostream& operator<<(std::ostream& os, const chrono::ChMatrix<Real>& mat) {
-        os << std::endl;
-        for (int i=0; i<mat.GetRows(); ++i) {
-            for (int j=0; j<mat.GetColumns(); j++) {
-                os << mat.GetElement(i, j) << "\t";
-            }
-            os << std::endl;
-        }
-        os << std::endl;
-        return os;
-    }
-
-    template <class Real=double>
-    std::ostream& operator<<(std::ostream& os, const chrono::ChVector<Real>& vect) {
-        os << std::endl << vect.x() << std::endl << vect.y() << std::endl << vect.z() << std::endl << std::endl;
-        return os;
     }
 
 

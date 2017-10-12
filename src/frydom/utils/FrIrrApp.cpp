@@ -4,7 +4,25 @@
 
 #include "FrIrrApp.h"
 
+#define SQ2_2 (sqrt(2.)/2.)
+
 namespace frydom {
+
+    FrIrrApp::FrIrrApp(FrOffshoreSystem& system, const double dist)
+            : chrono::irrlicht::ChIrrApp(&system,
+                                         L"FRyDoM viewer",
+                                         irr::core::dimension2d<irr::u32>(800, 600),
+                                         false,
+                                         false,
+                                         true,
+                                         irr::video::EDT_OPENGL){
+
+        SetSkyBox();
+        AddTypicalLights();
+        AddTypicalCamera(irr::core::vector3df(0, (irr::f32)dist, (irr::f32)dist),
+                         irr::core::vector3df(0, (irr::f32)SQ2_2, (irr::f32)SQ2_2));
+        AddTypicalLogo("../src/frydom/tests/data/frydom_logo.png");
+    }
 
 
     FrIrrApp::FrIrrApp(FrOffshoreSystem* system,
@@ -39,7 +57,9 @@ namespace frydom {
         // Turning around x to make z pointing up. Note that it is +90 as Irrlicht uses left-handed frames...c
         mbox->setRotation(irr::core::vector3df(90, 0, 0));
 
-    };
+    }
+
+
 
 
 

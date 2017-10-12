@@ -24,10 +24,10 @@ int main(int argc, char* argv[]) {
     system.AddBody(body1);
 
     auto cable = std::make_shared<FrDynamicCable>();
-    cable->SetCableLength(200);  // TODO: augmenter la taille et la discretisation une fois le cable attache...
+    cable->SetCableLength(300);  // TODO: augmenter la taille et la discretisation une fois le cable attache...
+    cable->SetNumberOfElements(100);
     cable->SetLinearDensity(30);
     cable->SetDiameter(0.05);
-    cable->SetNumberOfElements(50);
     cable->SetYoungModulus(1e9);
     cable->SetRayleighDamping(0.01);
 //    cable->Set
@@ -38,7 +38,8 @@ int main(int argc, char* argv[]) {
     cable->SetStartingNode(node1);
     cable->SetEndingNode(node2);
 
-    cable->SetDrawRadius(0.8);
+    cable->SetDrawRadius(0.2);
+    cable->SetDrawNodeSize(0.3);
 
     cable->Initialize();
     system.Add(cable);
@@ -68,8 +69,8 @@ int main(int argc, char* argv[]) {
 
     system.SetSolverType(chrono::ChSolver::Type::MINRES);  // TODO: voir si on peut regler ce solveur pour des simulations sans cable
     system.SetSolverWarmStarting(true);
-    system.SetMaxItersSolverSpeed(2000);
-    system.SetMaxItersSolverStab(400);
+    system.SetMaxItersSolverSpeed(200);
+    system.SetMaxItersSolverStab(200);
     system.SetTolForce(1e-13);
     auto msolver = std::static_pointer_cast<chrono::ChSolverMINRES>(system.GetSolver());
     msolver->SetVerbose(true);

@@ -14,14 +14,17 @@
 namespace frydom {
 
     class FrIrrApp : public chrono::irrlicht::ChIrrApp {
+    private:
+        bool m_verbose = true;
+
       public:
 
+        FrIrrApp(FrOffshoreSystem& system, const double dist=100);
+
         /// Create the application with Irrlicht context (3D view, device, etc.)
-        FrIrrApp(
-                FrOffshoreSystem* system,
-                const wchar_t* title = 0,
-                irr::core::dimension2d<irr::u32> dimens = irr::core::dimension2d<irr::u32>(800, 600)
-        );
+        FrIrrApp(FrOffshoreSystem* system,
+                 const wchar_t* title = 0,
+                 irr::core::dimension2d<irr::u32> dimens = irr::core::dimension2d<irr::u32>(800, 600));
 
         virtual ~FrIrrApp();
 
@@ -29,7 +32,28 @@ namespace frydom {
         /// Note that the default ChIrrApp::AddTypicalSky() uses Y up.
         void SetSkyBox();
 
+        void Run() {
+
+            AssetBindAll();
+            AssetUpdateAll();
+
+            while (GetDevice()->run()) {
+                BeginScene();
+                DrawAll();
+                DoStep();
+                EndScene();
+
+                if (m_verbose) {
+                    std::cout << "Time: " << GetSystem()->GetChTime() << "\n";
+                }
+            }
+
+        }
+
+
+
     };
+
 
 
 } // end namespace frydom

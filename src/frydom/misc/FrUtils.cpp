@@ -7,8 +7,4 @@
 namespace frydom {
 
 
-    void printvect(const chrono::ChVector<double> &vect) {
-        std::cout << vect.x() << "\t" << vect.y() << "\t" << vect.z();
-    }
-
 } // end namespace frydom

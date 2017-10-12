@@ -16,8 +16,19 @@ namespace frydom {
             m_water_density(1025.),
             NEDframe(chrono::VNULL, M_PI, chrono::VECT_X) {
 
+        // Convention for z orientation is upward
         Set_G_acc(chrono::ChVector<>(0., 0., -m_gravity_acc_magnitude));
+
+        // The world body is a virtual body with no mass that is fixed and used to fix nodes in the absolute frame
+        world_body = std::make_shared<FrBody>();
+        world_body->SetBodyFixed(true);
+        world_body->SetName("WorldBody");
+
     }
+
+//    std::shared_ptr<FrOffshoreSystem> FrOffshoreSystem::getPtr() {
+//        return shared_from_this();
+//    }
 
     void FrOffshoreSystem::setFreeSurface(environment::FrFreeSurface* freeSurface) {
         // TODO: accepter plutot directement le unique_ptr et faire std::move...

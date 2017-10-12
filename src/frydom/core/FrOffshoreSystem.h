@@ -12,6 +12,7 @@
 #include "chrono/core/ChMatrix33.h"
 #include "frydom/environment/waves/FrFreeSurface.h"
 #include "frydom/environment/current/FrCurrent.h"
+#include "frydom/core/FrBody.h"
 
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
 // vent, vagues, courant, fond...
@@ -31,6 +32,8 @@ namespace frydom {
         double m_gravity_acc_magnitude = 9.81;  ///< The local acceleration of gravity
         double m_water_density = 1026.;
         double m_air_density = 1.204;
+
+        std::shared_ptr<FrBody> world_body;
 
         std::unique_ptr<environment::FrFreeSurface> m_free_surface;  ///< The free surface's mesh that is a cartesian grid.
         std::unique_ptr<environment::FrCurrent> m_current;           ///< The current field model
@@ -80,6 +83,17 @@ namespace frydom {
 
         /// Get NED frame
         chrono::ChFrame<double> GetNEDFrame() const { return NEDframe; }
+
+        /// Get the world body
+        chrono::ChBody* GetWorldBodyPtr() const {
+            return world_body.get();
+        }
+
+        std::shared_ptr<chrono::ChBody> GetWorldBody() const {
+            return world_body;
+        }
+
+
 
         /// Updates all the auxiliary data and children of
         /// bodies, forces, links, given their current state
