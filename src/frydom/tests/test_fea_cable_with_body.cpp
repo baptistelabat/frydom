@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
     cable->SetLinearDensity(50);
     cable->SetRayleighDamping(0.1);
     cable->SetDrawRadius(0.1);
+    cable->SetDrawNodeSize(0.3);
 
     auto anchor = system.GetWorldBody()->CreateNode();
     cable->SetStartingNode(anchor);
@@ -69,7 +70,7 @@ int main(int argc, char* argv[]) {
     system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
 
 
-    auto app = FrIrrApp(system, 30);
+    auto app = FrIrrApp(system, 50);
 
     system.SetupInitial();
 
