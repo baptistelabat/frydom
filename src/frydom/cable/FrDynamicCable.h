@@ -28,6 +28,9 @@ namespace frydom {
 
     private:
 
+        std::shared_ptr<ChNodeFEAxyzD> m_starting_node_fea;
+        std::shared_ptr<ChNodeFEAxyzD> m_ending_node_fea;
+
         std::shared_ptr<ChBeamSectionCable> m_section;
 
         double m_rayleighDamping;   ///< Rayleigh damping
@@ -63,20 +66,23 @@ namespace frydom {
 
         chrono::ChVector<double> GetEndingNodeTension() const {}
 
+        std::shared_ptr<ChNodeFEAxyzD> GetStartingNodeFEA() const { return m_starting_node_fea; }
+        std::shared_ptr<ChNodeFEAxyzD> GetEndingNodeFEA() const { return m_ending_node_fea; }
 
         /// Initialize the cable with given data
         void Initialize() {
 //            m_mesh = std::make_shared<ChMesh>();
 
-            m_section = std::make_shared<ChBeamSectionCable>();
+            m_section = std::make_shared<ChBeamSectionCable>();  // Voir si on utilise pas directement la classe mere pour avoir de la torsion...
             m_section->SetArea(m_sectionArea);
             m_section->SetBeamRaleyghDamping(m_rayleighDamping);
             m_section->SetDensity(GetDensity());
             m_section->SetYoungModulus(m_youngModulus);
-            m_section->SetI(1.); // TODO: ajouter une inertie !!!
+//            m_section->SetI(1e5); // TODO: ajouter une inertie en parametre !!! --> NON, l'inertie est calculee automatiquement...
 
-        /// Initialize the cable with given data
-        void Initialize() {
+            // For drawing... TODO: a mettre ailleurs...
+            m_section->SetDrawCircularRadius(0.05);
+
             // First, creating a catenary line to initialize finite element mesh node positions
             // TODO: comment on definit q ???
             double q = 600;
@@ -86,7 +92,7 @@ namespace frydom {
                                                 m_youngModulus * m_sectionArea,
                                                 m_cableLength,
                                                 q,
-                                                chrono::ChVector<double>(0, 0, -1));
+                                                chrono::ChVector<double>(0, 0, 1));
 
             // Now, creating the nodes
             double s = 0.;
@@ -97,6 +103,7 @@ namespace frydom {
             auto position = m_starting_node->GetAbsPos();
             auto nodeA = std::make_shared<ChNodeFEAxyzD>(position, direction);
             AddNode(nodeA);
+            m_starting_node_fea = nodeA;
 
             // Creating the specified number of ANCF Cable elements
             for (uint i = 1; i<= m_nbElements; ++i) {
@@ -116,7 +123,8 @@ namespace frydom {
 
                 nodeA = nodeB;
 
-        }
+            }
+            m_ending_node_fea = nodeA;
 
             // Removing forces from catenary line that have been automatically created at instanciation
             m_starting_node->GetBody()->RemoveForce(catenary_line.GetStartingForce());

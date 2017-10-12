@@ -88,11 +88,11 @@ int main(int argc, char* argv[]) {
     // Change solver settings
     my_system.SetSolverType(ChSolver::Type::MINRES);
     my_system.SetSolverWarmStarting(true);  // this helps a lot to speedup convergence in this class of problems
-    my_system.SetMaxItersSolverSpeed(200);
+    my_system.SetMaxItersSolverSpeed(400);
     my_system.SetMaxItersSolverStab(200);
     my_system.SetTolForce(1e-13);
     auto msolver = std::static_pointer_cast<ChSolverMINRES>(my_system.GetSolver());
-    msolver->SetVerbose(false);
+    msolver->SetVerbose(true);
     msolver->SetDiagonalPreconditioning(true);
 
     // Change type of integrator:
