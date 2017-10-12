@@ -36,6 +36,11 @@ namespace frydom {
         double m_rayleighDamping;   ///< Rayleigh damping
         unsigned int m_nbElements;  ///< Number of elements in the finite element cable model
 
+        bool m_drawCableElements = true;
+        bool m_drawCableNodes = true;
+        double m_drawCableElementRadius = 0.05;
+        double m_drawCableNodeSize = 0.1;
+
     public:
         FrDynamicCable() = default;
 
@@ -69,30 +74,63 @@ namespace frydom {
         std::shared_ptr<ChNodeFEAxyzD> GetStartingNodeFEA() const { return m_starting_node_fea; }
         std::shared_ptr<ChNodeFEAxyzD> GetEndingNodeFEA() const { return m_ending_node_fea; }
 
-        /// Initialize the cable with given data
-        void Initialize() {
-//            m_mesh = std::make_shared<ChMesh>();
+        void SetDrawRadius(const double radius) {
+            m_drawCableElementRadius = radius;
+        }
 
+        void SetDrawNodeSize(const double size) {
+            m_drawCableNodeSize = size;
+        }
+
+        void GenerateAssets() {
+            // Assets for the cable visualisation
+            if (m_drawCableElements) {
+                auto elements_assets = std::make_shared<ChVisualizationFEAmesh>(*this);
+                elements_assets->SetFEMdataType(ChVisualizationFEAmesh::E_PLOT_ELEM_BEAM_MZ);
+                elements_assets->SetColorscaleMinMax(-0.4, 0.4);
+                elements_assets->SetSmoothFaces(true);
+                elements_assets->SetWireframe(false);
+                m_section->SetDrawCircularRadius(m_drawCableElementRadius);
+                AddAsset(elements_assets);
+            }
+
+            // Assets for the nodes
+            if (m_drawCableNodes) {
+                auto node_assets = std::make_shared<ChVisualizationFEAmesh>(*this);
+                node_assets->SetFEMglyphType(ChVisualizationFEAmesh::E_GLYPH_NODE_DOT_POS); // E_GLYPH_NODE_CSYS
+                node_assets->SetFEMdataType(ChVisualizationFEAmesh::E_PLOT_NONE);
+                node_assets->SetSymbolsThickness(m_drawCableNodeSize);
+                node_assets->SetSymbolsScale(0.01);
+                node_assets->SetZbufferHide(false);
+                AddAsset(node_assets);
+            }
+
+        }
+
+        void InitializeSection() {
             m_section = std::make_shared<ChBeamSectionCable>();  // Voir si on utilise pas directement la classe mere pour avoir de la torsion...
             m_section->SetArea(m_sectionArea);
             m_section->SetBeamRaleyghDamping(m_rayleighDamping);
             m_section->SetDensity(GetDensity());
             m_section->SetYoungModulus(m_youngModulus);
-//            m_section->SetI(1e5); // TODO: ajouter une inertie en parametre !!! --> NON, l'inertie est calculee automatiquement...
+        }
 
-            // For drawing... TODO: a mettre ailleurs...
-            m_section->SetDrawCircularRadius(0.05);
+        /// Initialize the cable with given data
+        void Initialize() {
+
+            InitializeSection();
 
             // First, creating a catenary line to initialize finite element mesh node positions
             // TODO: comment on definit q ???
             double q = 600;
-            auto catenary_line = FrCatenaryLine(m_starting_node,
-                                                m_ending_node,
+            auto catenary_line = FrCatenaryLine(m_startingNode,
+                                                m_endingNode,
                                                 true,
-                                                m_youngModulus * m_sectionArea,
+                                                m_youngModulus,
+                                                m_sectionArea,
                                                 m_cableLength,
                                                 q,
-                                                chrono::ChVector<double>(0, 0, 1));
+                                                chrono::ChVector<double>(0, 0, -1));
 
             // Now, creating the nodes
             double s = 0.;
@@ -100,7 +138,7 @@ namespace frydom {
 
             auto direction = catenary_line.GetTension(s);
             direction.Normalize();
-            auto position = m_starting_node->GetAbsPos();
+            auto position = m_startingNode->GetAbsPos();
             auto nodeA = std::make_shared<ChNodeFEAxyzD>(position, direction);
             AddNode(nodeA);
             m_starting_node_fea = nodeA;
@@ -127,8 +165,11 @@ namespace frydom {
             m_ending_node_fea = nodeA;
 
             // Removing forces from catenary line that have been automatically created at instanciation
-            m_starting_node->GetBody()->RemoveForce(catenary_line.GetStartingForce());
-            m_ending_node->GetBody()->RemoveForce(catenary_line.GetEndingForce());
+            m_startingNode->GetBody()->RemoveForce(catenary_line.GetStartingForce());
+            m_endingNode->GetBody()->RemoveForce(catenary_line.GetEndingForce());
+
+            // Generate assets for the cable
+            GenerateAssets();
 
         }
 

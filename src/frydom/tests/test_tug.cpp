@@ -118,8 +118,10 @@ int main(int argc, char* argv[]) {
 //    double EA = 1e10;
 //    double EA = 1.5708e9;
     double EA = 1e10;
+    double A = 0.05;
+    double E = EA/A;
 //    auto line = FrCatenaryLine(fairlead_tug, anchor, elastic, EA, Lu, q, u);
-    auto line = FrCatenaryLine(fairlead_tug, fairlead_ship, elastic, EA, Lu, q, u);
+    auto line = FrCatenaryLine(fairlead_tug, fairlead_ship, elastic, E, A, Lu, q, u);
 
 
 

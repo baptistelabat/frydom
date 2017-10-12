@@ -16,8 +16,8 @@ namespace frydom {
 
         double m_time = 0.;
 
-        std::shared_ptr<FrNode> m_starting_node;
-        std::shared_ptr<FrNode> m_ending_node;
+        std::shared_ptr<FrNode> m_startingNode;
+        std::shared_ptr<FrNode> m_endingNode;
 
         double m_youngModulus; // FIXME: mettre des valeurs par defaut non verolees !!!
         double m_sectionArea;
@@ -31,9 +31,16 @@ namespace frydom {
 
         FrCable() = default;
 
-        FrCable(std::shared_ptr<FrNode> starting_node,
-                std::shared_ptr<FrNode> ending_node,
-                const double cableLength) {}
+        FrCable(const std::shared_ptr<FrNode> startingNode,
+                const std::shared_ptr<FrNode> endingNode,
+                const double cableLength,
+                const double youngModulus,
+                const double sectionArea)
+                : m_startingNode(startingNode),
+                  m_endingNode(endingNode),
+                  m_cableLength(cableLength),
+                  m_youngModulus(youngModulus),
+                  m_sectionArea(sectionArea) {}
 
         void SetYoungModulus(const double E) { m_youngModulus = E; }
 
@@ -72,20 +79,24 @@ namespace frydom {
         }
 
         void SetStartingNode(std::shared_ptr<FrNode> startingNode) {
-            m_starting_node = startingNode;
+            // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
+            m_startingNode = startingNode;
         }
 
         std::shared_ptr<FrNode> GetStartingNode() const {
-            return m_starting_node;
+            return m_startingNode;
         }
 
         void SetEndingNode(std::shared_ptr<FrNode> endingNode) {
-            m_ending_node = endingNode;
+            // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
+            m_endingNode = endingNode;
         }
 
         std::shared_ptr<FrNode> GetEndingNode() const {
-            return m_ending_node;
+            return m_endingNode;
         }
+
+        virtual void Initialize() = 0;
 
         virtual chrono::ChVector<double> GetTension(const double s) const = 0;
 

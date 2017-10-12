@@ -2,10 +2,7 @@
 // Created by frongere on 03/08/17.
 //
 
-//#include "frydom/catenary/FrCatenaryNode.h"
-#include <frydom/catenary/FrCatenaryLine.h>
-#include "frydom/misc/FrLinspace.h"
-
+#include <frydom/cable/FrCatenaryLine.h>
 #include "frydom/core/FrCore.h"
 
 using namespace frydom;
@@ -25,12 +22,14 @@ int main(int argc, char* argv[]) {
     auto u = chrono::ChVector<double>(0, sqrt(3)*0.5, 0.5);
     double q = 616.538;
     double EA = 1.5708e9;
+    double A = 0.05;
+    double E = EA/A;
 
-    auto line = FrCatenaryLine(node1, node2, true, EA, Lu, q, u);
+    auto line = FrCatenaryLine(node1, node2, true, E, A, Lu, q, u);
 
     line.solve();
 
-    myBody.UpdateForces(false);
+    myBody.UpdateForces(false); // A quoi ca sert ??? (en plus ca semble pas etre un bool en param...)
 
 
     auto t0 = line.get_tension(0.);
@@ -50,7 +49,7 @@ int main(int argc, char* argv[]) {
 //        node2->SetPos(x, 0., 0.);
 //        line.solve();
 //
-//        std::cout << line.get_cable_length() << std::endl;
+//        std::cout << line.GetCableLength() << std::endl;
 //
 //        x += dx;
 //    }

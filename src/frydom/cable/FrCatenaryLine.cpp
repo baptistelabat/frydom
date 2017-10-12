@@ -8,15 +8,15 @@
 namespace frydom {
 
 
-    FrCatenaryLine::FrCatenaryLine(std::shared_ptr<FrNode> &starting_node, std::shared_ptr<FrNode> &ending_node,
-                                   bool elastic, double EA, double L, double q, chrono::ChVector<double> u)
-            : m_starting_node(starting_node), m_ending_node(ending_node),
-              m_elastic(elastic),
-              c_EA(EA),
-              m_Lu(L),
+    FrCatenaryLine::FrCatenaryLine(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
+                                   bool elastic, const double youngModulus, const double sectionArea,
+                                   const double cableLength,
+                                   const double q, const chrono::ChVector<double> u)
+            : m_elastic(elastic),
               m_q(q),
               m_u(u),
-              c_qvec(q*u)
+              c_qvec(q*u),
+              FrCable(startingNode, endingNode, cableLength, youngModulus, sectionArea)
     {
 
         // Initializing U matrix
@@ -28,14 +28,14 @@ namespace frydom {
         solve();
 
         // B uilding the catenary forces and adding them to bodies
-        m_starting_force = std::make_shared<FrCatenaryForce>(this, LINE_START);
-        auto starting_body = m_starting_node->GetBody();
-        starting_body->AddForce(m_starting_force);
+        m_startingForce = std::make_shared<FrCatenaryForce>(this, LINE_START);
+        auto starting_body = m_startingNode->GetBody();
+        starting_body->AddForce(m_startingForce);
 
 
-        m_ending_force = std::make_shared<FrCatenaryForce>(this, LINE_END);
-        auto ending_body = m_ending_node->GetBody();
-        ending_body->AddForce(m_ending_force);
+        m_endingForce = std::make_shared<FrCatenaryForce>(this, LINE_END);
+        auto ending_body = m_endingNode->GetBody();
+        ending_body->AddForce(m_endingForce);
 
     }
 
@@ -50,24 +50,18 @@ namespace frydom {
         auto v = m_u.Cross(p0pL/chord_length).Cross(m_u);
 
         double lambda = 0;
-        if (m_Lu <= chord_length) {
+        if (m_cableLength <= chord_length) {
             lambda = 0.2;
         } else if ( (m_u.Cross(p0pL)).Length() < 1e-4 ) {
             lambda = 1e6;
         } else {
-            lambda = sqrt(3. * (m_Lu*m_Lu - lz*lz) / (lx*lx + ly*ly));
+            lambda = sqrt(3. * (m_cableLength*m_cableLength - lz*lz) / (lx*lx + ly*ly));
         }
 
-        auto fu = - 0.5 * m_q * (lz / tanh(lambda) - m_Lu);
+        auto fu = - 0.5 * m_q * (lz / tanh(lambda) - m_cableLength);
         auto fv = 0.5 * m_q * sqrt(lx*lx + ly*ly) / lambda;
 
         m_t0 = fu * m_u + fv * v;
-    }
-
-    void FrCatenaryLine::SetEA(const double E, const double A) {
-        m_E = E;
-        m_A = A;
-        c_EA = E*A;
     }
 
     chrono::ChVector<double> FrCatenaryLine::GetTension(const double s) const {
@@ -75,7 +69,7 @@ namespace frydom {
     }
 
     chrono::ChVector<double> FrCatenaryLine::GetEndingNodeTension() const {
-        return m_t0 - c_qvec * m_Lu;
+        return m_t0 - c_qvec * m_cableLength;
     }
 
     chrono::ChVector<double> FrCatenaryLine::GetUnstrainedChord(const double s) const {
@@ -96,7 +90,7 @@ namespace frydom {
     chrono::ChVector<double> FrCatenaryLine::GetElasticIncrement(const double s) const {
 
         if (m_elastic) {
-            return m_q * s * (m_t0 / m_q - 0.5 * m_u * s) / c_EA;
+            return m_q * s * (m_t0 / m_q - 0.5 * m_u * s) / GetEA();
         } else {
             return chrono::VNULL;
         }
@@ -114,26 +108,25 @@ namespace frydom {
     }
 
     chrono::ChVector<double> FrCatenaryLine::get_residual() const {
-        return GetAbsPosition(m_Lu) - GetPosEndingNode();
+        return GetAbsPosition(m_cableLength) - GetPosEndingNode();
     }
 
     chrono::ChMatrix33<double> FrCatenaryLine::analytical_jacobian() const {
         auto t0n = m_t0.Length();
 
-        auto tL = m_t0 - c_qvec * m_Lu;
+        auto tL = m_t0 - c_qvec * m_cableLength;
         auto tLn = tL.Length();
 
         auto rho_0 = _rho(0.);  // TODO: calculer directement
         double ln_q = 0.;
         double rho_L = 0.;
         if (rho_0 > 0.) {
-            rho_L = _rho(m_Lu);  // TODO: calculer directement
+            rho_L = _rho(m_cableLength);  // TODO: calculer directement
             ln_q = log(rho_L/rho_0) / m_q;
         }
 
         double L_EA = 0.;
-        if (m_elastic) L_EA = m_Lu / c_EA;
-
+        if (m_elastic) L_EA = m_cableLength / GetEA();
 
         chrono::ChVector<double> Ui;
         double Uit0;
@@ -191,7 +184,7 @@ namespace frydom {
         delta_t0.y() = sol.GetElement(1, 0);
         delta_t0.z() = sol.GetElement(2, 0);
 
-        m_t0 += relax * delta_t0;
+        m_t0 += m_relax * delta_t0;
 
         res = get_residual();
         double err = res.LengthInf();
@@ -216,17 +209,17 @@ namespace frydom {
             delta_t0_temp.y() = sol.GetElement(1, 0);
             delta_t0_temp.z() = sol.GetElement(2, 0);
 
-            while (delta_t0.LengthInf() < (relax*delta_t0_temp).LengthInf()) {
-                relax *= 0.5;
-                if (relax < Lmin) {
+            while (delta_t0.LengthInf() < (m_relax*delta_t0_temp).LengthInf()) {
+                m_relax *= 0.5;
+                if (m_relax < Lmin) {
                     std::cout << "DAMPING TOO STRONG. NO CATENARY CONVERGENCE." << std::endl;
                 }
             }
 
             delta_t0 = delta_t0_temp;
-            m_t0 += relax * delta_t0;
+            m_t0 += m_relax * delta_t0;
 
-            relax = chrono::ChMin(1., relax*2.);
+            m_relax = chrono::ChMin(1., m_relax*2.);
 
             res = get_residual();
             err = res.LengthInf();
@@ -239,10 +232,10 @@ namespace frydom {
 //        }
     }
 
-    double FrCatenaryLine::get_cable_length(const double n) const {
+    double FrCatenaryLine::GetCableLength(const double n) const {
         double cl = 0.;
 
-        double ds = m_Lu / (n-1);
+        double ds = m_cableLength / (n-1);
         auto pos_prev = GetAbsPosition(0.);
         chrono::ChVector<double> pos;
         double s;

@@ -24,19 +24,21 @@ int main(int argc, char* argv[]) {
     system.AddBody(body1);
 
     auto cable = std::make_shared<FrDynamicCable>();
-    cable->SetCableLength(30);  // TODO: augmenter la taille et la discretisation une fois le cable attache...
+    cable->SetCableLength(200);  // TODO: augmenter la taille et la discretisation une fois le cable attache...
     cable->SetLinearDensity(30);
     cable->SetDiameter(0.05);
-    cable->SetNumberOfElements(40);
+    cable->SetNumberOfElements(50);
     cable->SetYoungModulus(1e9);
-    cable->SetRayleighDamping(0.5);
+    cable->SetRayleighDamping(0.01);
 //    cable->Set
 
     auto node1 = body1->CreateNode(chrono::ChVector<double>(0, 0, 0));  // TODO: rendre polymorphe pour specifier juste (x, y, z)... (position relative)
-    auto node2 = body1->CreateNode(chrono::ChVector<double>(20, 0, 0));
+    auto node2 = body1->CreateNode(chrono::ChVector<double>(100, 0, -100));
 
     cable->SetStartingNode(node1);
     cable->SetEndingNode(node2);
+
+    cable->SetDrawRadius(0.8);
 
     cable->Initialize();
     system.Add(cable);
@@ -50,21 +52,10 @@ int main(int argc, char* argv[]) {
     constraint_hinge2->Initialize(cable->GetEndingNodeFEA(), body1);
     system.Add(constraint_hinge2);  // FIXME : voir pourquoi cette contrainte ne semble pas active  ????...
 
-
-
-    // TODO: la visualisation doit pouvoir se regler directement dans l'objet...
-    auto visbeam = std::make_shared<ChVisualizationFEAmesh>(*cable.get());
-    visbeam->SetFEMdataType(ChVisualizationFEAmesh::E_PLOT_ELEM_BEAM_MZ);
-    visbeam->SetColorscaleMinMax(-0.4, 0.4);
-    visbeam->SetSmoothFaces(true);
-    visbeam->SetWireframe(false);
-    cable->AddAsset(visbeam);
-
-
     // VISUALISATION
     frydom::FrIrrApp app(&system, L"Frydom vizualization based on Irrlicht");
     app.AddTypicalLights();
-    app.AddTypicalCamera(irr::core::vector3df(0, 0, 30), irr::core::vector3df(1, 0, -1));
+    app.AddTypicalCamera(irr::core::vector3df(0, 0, 150), irr::core::vector3df(1, 0, -1));
     app.AddTypicalLogo("../src/frydom/tests/data/frydom_logo.png");
 
     app.AssetBindAll();
@@ -81,13 +72,12 @@ int main(int argc, char* argv[]) {
     system.SetMaxItersSolverStab(400);
     system.SetTolForce(1e-13);
     auto msolver = std::static_pointer_cast<chrono::ChSolverMINRES>(system.GetSolver());
-//    msolver->SetVerbose(true);
-    msolver->SetVerbose(false);
+    msolver->SetVerbose(true);
+//    msolver->SetVerbose(false);
     msolver->SetDiagonalPreconditioning(true);
 
-    system.SetTimestepperType(chrono::ChTimestepper::Type::HHT);
 //    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
-//    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED); // FONCTIONNE
+    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED); // FONCTIONNE
 //    system.SetTimestepperType(chrono::ChTimestepper::Type::HHT);
 
 //    app.SetVideoframeSave(capture_video);

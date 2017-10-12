@@ -53,7 +53,7 @@ namespace environment {
     public:
         FrEnvironment() {
 
-            m_free_surface = std::make_unique<FrFlatFreeSurface>();
+            m_free_surface = std::make_unique<FrFlatFreeSurface>(0.);
             m_tidal = std::make_unique<FrTidal>();
             m_current = std::make_unique<FrCurrent>();
             m_wind = std::make_unique<FrWind>();
@@ -66,10 +66,6 @@ namespace environment {
         FrCurrent* GetCurrent() const { return m_current.get(); }
         FrWind* GetWind() const { return m_wind.get(); }
         FrSeabed* GetSeabed() const { return m_seabed.get(); }
-
-
-
-
 
 
 

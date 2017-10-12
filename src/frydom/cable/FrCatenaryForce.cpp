@@ -18,7 +18,7 @@ namespace frydom {
         chrono::ChVector<double> relpos;
         switch (m_line_side) {
             case LINE_START:
-                force = m_line->get_starting_node_tension();
+                force = m_line->getStartingNodeTension();
                 relpos = m_line->GetStartingNode()->GetPos();
                 break;
             case LINE_END:
@@ -27,7 +27,7 @@ namespace frydom {
                 break;
         }
 
-//        std::cout << (m_line->GetPosEndingNode() - m_line->GetPosStartingNode()).Length() << "\t" << m_line->get_cable_length() << std::endl;
+//        std::cout << (m_line->GetPosEndingNode() - m_line->GetPosStartingNode()).Length() << "\t" << m_line->GetCableLength() << std::endl;
 
         // FIXME: Calculer le moment par rapport au point de reference du corps ?
 //        Body->Dir_World2Body(force);

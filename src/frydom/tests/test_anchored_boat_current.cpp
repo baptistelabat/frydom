@@ -5,7 +5,7 @@
 #include <frydom/hydrodynamics/FrLinearDamping.h>
 #include "frydom/core/FrCore.h"
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/catenary/FrCatenaryLine.h"
+#include "frydom/cable/FrCatenaryLine.h"
 
 #include "irrlicht.h"
 #include "frydom/utils/FrIrrApp.h"
@@ -84,7 +84,10 @@ int main(int argc, char* argv[]) {
 //    double EA = 1e10;
 //    double EA = 1.5708e9;
     double EA = 1e10;
-    auto line = FrCatenaryLine(fairlead, anchor, elastic, EA, Lu, q, u);
+    double A = 0.05;
+    double E = EA/A;
+
+    auto line = FrCatenaryLine(fairlead, anchor, elastic, E, A, Lu, q, u);
 
 
 
@@ -120,7 +123,7 @@ int main(int argc, char* argv[]) {
 
         app.SetVideoframeSave(capture_video);
 
-        auto tug_force = tug->Get_Xforce();
+//        auto tug_force = tug->Get_Xforce();
 
         while (app.GetDevice()->run()) {
             app.BeginScene();
@@ -128,8 +131,8 @@ int main(int argc, char* argv[]) {
             app.DoStep();
             app.EndScene();
 
-            tug_force = tug->Get_Xforce();
-            std::cout << tug_force[0] << "\t" << tug_force[1] << "\t" << tug_force[2] << std::endl;
+//            tug_force = tug->Get_Xforce();
+//            std::cout << tug_force[0] << "\t" << tug_force[1] << "\t" << tug_force[2] << std::endl;
         }
     }
 
