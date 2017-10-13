@@ -58,12 +58,12 @@ endif()
 # Add the YAML-CPP project
 #--------------------------------------------------------------
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/yaml-cpp/include)
-#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/yaml-cpp)  // Cette ligne charge le CMakeLists de yaml-cpp...
 set(YAML_CPP_LIB "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/yaml-cpp/build/libyaml-cpp.so")
 
 #--------------------------------------------------------------
 # Add the Eigen project
 #--------------------------------------------------------------
+# TODO: passer eigen en lib dynamique pour accelerer la compilation
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/eigen")
 
 #--------------------------------------------------------------
@@ -94,11 +94,10 @@ set(EIGEN_RELATED
         src/frydom/misc/FrEigen.cpp
         )
 
-
+# TODO: partitionner les sources en fichiers CMakeLists.txt par folder de frydom pour alleger le principal
 set(SOURCE_FILES
 
-        ${EIGEN_RELATED}
-#        src/frydom/core/FrCore.h
+        ${EIGEN_RELATED} # Est-ce utilse de faire une distinction ???
 
         src/frydom/core/FrConstants.h
         src/frydom/core/FrConstants.cpp

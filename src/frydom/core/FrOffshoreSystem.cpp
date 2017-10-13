@@ -21,6 +21,7 @@ namespace frydom {
 
         // The world body is a virtual body with no mass that is fixed and used to fix nodes in the absolute frame
         world_body = std::make_shared<FrBody>();
+        world_body->SetSystem(this);
         world_body->SetBodyFixed(true);
         world_body->SetName("WorldBody");
 
@@ -42,7 +43,6 @@ namespace frydom {
     void FrOffshoreSystem::SetCurrent(environment::FrCurrent *current_field) {
         m_current.reset(current_field);
     }
-
 
     environment::FrFreeSurface* FrOffshoreSystem::getFreeSurface() const {
         return m_free_surface.get();  // FIXME: on ne devrait pas avoir besoin d'acceder au raw pointeur...

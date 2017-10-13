@@ -12,7 +12,6 @@ namespace frydom {
         AddMarker(node);
         // TODO: PUT Force related stuff here
 
-
     }
 
     std::shared_ptr<FrNode> FrBody::CreateNode() {
@@ -25,7 +24,6 @@ namespace frydom {
         AddNode(node);
         return node;
     }
-
 
     std::shared_ptr<FrNode> FrBody::CreateNode(const chrono::ChVector<double> relpos) {
 

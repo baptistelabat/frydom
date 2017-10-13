@@ -14,8 +14,12 @@ namespace frydom {
 //    class FrBody;
 
     class FrNode : public chrono::ChMarker{
+//    private:
+//        FrBody* Body;
 
     public:
+
+//        FrBody* GetBody() const { return Body; }
 
         FrNode() : chrono::ChMarker() {
 //            SetMotionType(M_MOTION_EXTERNAL); // Hack to keep the relative position unchanged
@@ -29,6 +33,14 @@ namespace frydom {
 
         chrono::ChVector<double> GetAbsPos() {
             return GetAbsCoord().pos;
+        }
+
+//        std::shared_ptr<FrBody> GetSharedBody() {
+//            return Body->shared_from_this();
+//        }
+
+        chrono::Coordsys GetRelPos() const {
+            return GetRest_Coord();
         }
 
 

@@ -23,6 +23,11 @@ namespace frydom {
 
 
     public:
+
+        std::shared_ptr<FrBody> GetSharedPtr() {
+            return shared_from_this();
+        }
+
         /// Get the body absolute position (this of its reference point)
         chrono::ChVector<> GetPosition(FrFrame frame = NWU) {
             switch (frame) {
