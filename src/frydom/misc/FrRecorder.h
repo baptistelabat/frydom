@@ -15,14 +15,6 @@
 
 namespace frydom {
 
-
-//    Faire une classe CircularBuffer
-//
-//    et une class Recorder
-
-    // utiliser std::pair pour coupler le temps et la data
-    // Etre generique
-
     template <class T>
     class FrRecorder {
     private:
