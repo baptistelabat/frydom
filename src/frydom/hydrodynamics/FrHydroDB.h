@@ -92,14 +92,14 @@ namespace frydom {
 
 
     class FrRadiationIRFDB : FrDB {
-
+    // FIXME: a priori, la matrice est symmetrique, il faut en tenir compte...
     private:
         double m_tf = 0.;
         unsigned int m_nt = 0;
 
         double m_tCutoff = -1.;  // TODO: voir si on regle les cutoff time collectivement ou pour chaque signal...
 
-        std::vector<std::unique_ptr<std::vector<double>>> m_Kt;
+        std::vector<std::vector<double>> m_Kt;
 
     public:
 
@@ -107,7 +107,7 @@ namespace frydom {
             auto nbKernels = nbForce * nbDOF;
 
             // Memory allocation
-//            m_Kt.reserve(nbKernels);
+            m_Kt.reserve(nbKernels);
         };
 
         void SetTime(const double tf, const unsigned int nt) {
@@ -116,42 +116,42 @@ namespace frydom {
             m_tf = tf;
             m_nt = nt;
 
-            // Memory allocation
+            // Memory allocation for every mode
             auto nbKernels = m_nbForce * m_nbDOF;
 
-            m_Kt.reserve(nbKernels);
+            for (unsigned int ielt=0; ielt<nbKernels; ++ielt) {
+                auto Ktij = std::vector<double>();
+                Ktij.reserve(nt);
+                m_Kt.push_back(Ktij);
+            }
 
         }
 
-        void SetKernel(unsigned int ielt, const std::unique_ptr<std::vector<double>>& Ktij) {
+        void SetKernel(unsigned int ielt, const std::vector<double>& Ktij) {
             if (m_nt == 0) {
                 throw "Please set the time before feeding with data";
             }
 
-            assert(Ktij->size() == m_nt);
+            assert(Ktij.size() == m_nt);
 
-            m_Kt[ielt] = std::unique_ptr<std::vector<double>>(Ktij.get());
-
-//            for (auto val: Ktij) {
-//                m_Kt[ielt].push_back(val);
-//            }
+            m_Kt[ielt].assign(Ktij.begin(), Ktij.end());
 
         }
 
         void SetKernel(unsigned int iforce, unsigned int idof,
-                       const std::unique_ptr<std::vector<double>>& Ktij) {
+                       const std::vector<double>& Ktij) {
 
             auto ielt = iforce * m_nbDOF + idof;
             SetKernel(ielt, Ktij);
         }
 
-//        std::vector<double> GetKernel(unsigned int ielt) {
-//            return m_Kt[ielt];
-//        }
-//
-//        std::vector<double> GetKernel(unsigned int iforce, unsigned int idof) const {
-//            return m_Kt[iforce * m_nbDOF + idof];
-//        }
+        std::vector<double> GetKernel(unsigned int ielt) {
+            return m_Kt[ielt];
+        }
+
+        std::vector<double> GetKernel(unsigned int iforce, unsigned int idof) const {
+            return m_Kt[iforce * m_nbDOF + idof];
+        }
 
 
     };

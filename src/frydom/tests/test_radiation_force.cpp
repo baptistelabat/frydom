@@ -31,15 +31,15 @@ int main(int argc, char* argv[]) {
         std::cout << Ktij[i] << std::endl;
     }
 
+
+    // Populating the database --> A faire a la lecture d'un fichier de donnees
     IRFDB.SetTime(tf, nt);
 
     for (int i=0; i<6; ++i) {
         for (int j=0; j<6; ++j) {
-            IRFDB.SetKernel(i, j, std::unique_ptr<std::vector<double>>(&Ktij));
+            IRFDB.SetKernel(i, j, Ktij);
         }
     }
-
-
 
 
 //    IRFDB.
