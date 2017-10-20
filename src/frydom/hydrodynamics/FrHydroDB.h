@@ -95,11 +95,12 @@ namespace frydom {
         double m_tf = 0.;
         unsigned int m_nt = 0;
 
-        double m_tCutoff;
+        double m_tCutoff = -1.;  // TODO: voir si on regle les cutoff time collectivement ou pour chaque signal...
 
         std::vector<Eigen::VectorXd> m_Kt;
 
     public:
+
         FrRadiationIRFDB(unsigned int nbForce, unsigned int nbDOF) : FrDB(nbForce, nbDOF) {
             auto nbKernels = nbForce * nbDOF;
 
@@ -160,10 +161,23 @@ namespace frydom {
             auto nbDOF = node["nbForce"].as<unsigned int>();
             auto nt = node["nt"].as<unsigned int>();
             auto tf = node["tf"].as<double>();
+            auto dataFile = node["dataFile"].as<std::string>();
 
-            
+            // Opening the datafile
+            // FIXME --> pour le moment, on stocke les donnees de IRF 
+
+
+
+
+            // Instance of the DB
+            auto db = FrRadiationIRFDB(nbForce, nbDOF);
+
+            db.SetTime(tf, nt);
+
 
         }
+
+
 
 
     }
