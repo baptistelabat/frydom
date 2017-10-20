@@ -191,6 +191,9 @@ set(SOURCE_FILES
         src/frydom/hydrodynamics/FrLinearDamping.h
         src/frydom/hydrodynamics/FrLinearDamping.cpp
 
+        src/frydom/hydrodynamics/FrRadiationForce.h
+        src/frydom/hydrodynamics/FrRadiationForce.cpp
+
         src/frydom/cable/FrCable.h
         src/frydom/cable/FrCable.cpp
 
@@ -275,9 +278,11 @@ target_link_libraries(test_anchored_boat_current_fea_cable ${CHRONO_LIBRARIES} $
 add_executable(test_fea_cable_with_body ${SOURCE_FILES} src/frydom/tests/test_fea_cable_with_body.cpp)
 target_link_libraries(test_fea_cable_with_body ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
-
 add_executable(test_recorder ${SOURCE_FILES} src/frydom/tests/test_recorder.cpp)
 target_link_libraries(test_recorder ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
+add_executable(test_radiation_force ${SOURCE_FILES} src/frydom/tests/test_radiation_force.cpp)
+target_link_libraries(test_radiation_force ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===

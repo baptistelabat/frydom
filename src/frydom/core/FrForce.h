@@ -22,12 +22,13 @@ namespace frydom {
 
     protected:
 
-        chrono::ChVector<> moment;
+        chrono::ChVector<> moment = chrono::VNULL;
 
 
     public:
 
-        FrForce() : moment(chrono::VNULL) {};
+//        FrForce() : moment(chrono::VNULL) {};
+//        FrForce() = default;
 
 
         /// Updates the time of the object and other stuff that are time-dependent
