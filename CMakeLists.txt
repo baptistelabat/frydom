@@ -147,6 +147,11 @@ set(SOURCE_FILES
         src/frydom/misc/FrTriangleMeshConnected.h
         src/frydom/misc/FrTriangleMeshConnected.cpp
 
+
+        src/frydom/misc/FrRecorder.h
+        src/frydom/misc/FrRecorder.cpp
+
+
         src/frydom/core/FrBody.h
         src/frydom/core/FrBody.cpp
 
@@ -269,6 +274,10 @@ target_link_libraries(test_anchored_boat_current_fea_cable ${CHRONO_LIBRARIES} $
 
 add_executable(test_fea_cable_with_body ${SOURCE_FILES} src/frydom/tests/test_fea_cable_with_body.cpp)
 target_link_libraries(test_fea_cable_with_body ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
+
+add_executable(test_recorder ${SOURCE_FILES} src/frydom/tests/test_recorder.cpp)
+target_link_libraries(test_recorder ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===
