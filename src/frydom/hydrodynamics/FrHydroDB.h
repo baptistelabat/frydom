@@ -6,7 +6,7 @@
 #define FRYDOM_FRHYDRODB_H
 
 #include <vector>
-#include "Eigen/Dense"
+//#include "Eigen/Dense"
 
 #include "frydom/misc/FrLinspace.h"
 #include "frydom/misc/FrEigen.h"
@@ -35,6 +35,8 @@ namespace frydom {
         unsigned int GetNbDOF() const { return m_nbDOF; }
 
     };
+
+
 
 
     class FrFrequencyDomainDB {
@@ -97,7 +99,7 @@ namespace frydom {
 
         double m_tCutoff = -1.;  // TODO: voir si on regle les cutoff time collectivement ou pour chaque signal...
 
-        std::vector<Eigen::VectorXd> m_Kt;
+        std::vector<std::unique_ptr<std::vector<double>>> m_Kt;
 
     public:
 
@@ -105,7 +107,7 @@ namespace frydom {
             auto nbKernels = nbForce * nbDOF;
 
             // Memory allocation
-            m_Kt.reserve(nbKernels);
+//            m_Kt.reserve(nbKernels);
         };
 
         void SetTime(const double tf, const unsigned int nt) {
@@ -116,41 +118,46 @@ namespace frydom {
 
             // Memory allocation
             auto nbKernels = m_nbForce * m_nbDOF;
-            for (uint i=0; i<nbKernels; ++i) {
-                m_Kt[i] = Eigen::VectorXd();
-            }
+
+            m_Kt.reserve(nbKernels);
+
         }
 
-        void SetKernel(unsigned int ielt, const Eigen::VectorXd& Ktij) {
+        void SetKernel(unsigned int ielt, const std::unique_ptr<std::vector<double>>& Ktij) {
             if (m_nt == 0) {
                 throw "Please set the time before feeding with data";
             }
 
-            assert(Ktij.rows() == m_nt);
+            assert(Ktij->size() == m_nt);
 
-            m_Kt[ielt] = Ktij;
+            m_Kt[ielt] = std::unique_ptr<std::vector<double>>(Ktij.get());
+
+//            for (auto val: Ktij) {
+//                m_Kt[ielt].push_back(val);
+//            }
+
         }
 
-        void SetKernel(unsigned int iforce, unsigned int idof, const Eigen::VectorXd& Ktij) {
+        void SetKernel(unsigned int iforce, unsigned int idof,
+                       const std::unique_ptr<std::vector<double>>& Ktij) {
 
             auto ielt = iforce * m_nbDOF + idof;
             SetKernel(ielt, Ktij);
         }
 
-        Eigen::VectorXd GetKernel(unsigned int ielt) {
-            return m_Kt[ielt];
-        }
-
-        Eigen::VectorXd GetKernel(unsigned int iforce, unsigned int idof) const {
-            return m_Kt[iforce * m_nbDOF + idof];
-        }
+//        std::vector<double> GetKernel(unsigned int ielt) {
+//            return m_Kt[ielt];
+//        }
+//
+//        std::vector<double> GetKernel(unsigned int iforce, unsigned int idof) const {
+//            return m_Kt[iforce * m_nbDOF + idof];
+//        }
 
 
     };
 
 
     FrRadiationIRFDB LoadIRFData(std::string yaml_file, std::string key);
-
 
 
 
