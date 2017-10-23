@@ -17,13 +17,13 @@ namespace frydom {
             auto node = data["key"];
 
             auto nbForce = node["nbForce"].as<unsigned int>();
-            auto nbDOF = node["nbForce"].as<unsigned int>();
+            auto nbDOF = node["nbDOF"].as<unsigned int>();
             auto nt = node["nt"].as<unsigned int>();
             auto tf = node["tf"].as<double>();
             auto dataFile = node["dataFile"].as<std::string>();
 
             // Opening the datafile
-            // FIXME --> pour le moment, on stocke les donnees de IRF
+            // FIXME --> stocker les donnes IRF dans un fichier csv ?
 
 
 

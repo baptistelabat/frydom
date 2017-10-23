@@ -79,6 +79,12 @@ set(QUADPROG_RELATED
         )
 
 #--------------------------------------------------------------
+# Using HDF5 library
+#--------------------------------------------------------------
+find_package(HDF5 REQUIRED COMPONENTS CXX)
+include_directories(${HDF5_INCLUDE_DIRS})
+
+#--------------------------------------------------------------
 # Specifies frydom project
 #--------------------------------------------------------------
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -110,6 +116,9 @@ set(SOURCE_FILES
 
         src/frydom/IO/FrLoader.h
         src/frydom/IO/FrLoader.cpp
+
+        src/frydom/IO/FrHDF5.h
+        src/frydom/IO/FrHDF5.cpp
 
         src/frydom/misc/FrUtils.h
         src/frydom/misc/FrUtils.cpp
@@ -283,6 +292,9 @@ target_link_libraries(test_recorder ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(test_radiation_force ${SOURCE_FILES} src/frydom/tests/test_radiation_force.cpp)
 target_link_libraries(test_radiation_force ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+
+add_executable(test_HDF5 ${SOURCE_FILES} src/frydom/tests/test_HDF5.cpp)
+target_link_libraries(test_HDF5 ${CHRONO_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${YAML_CPP_LIB})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===

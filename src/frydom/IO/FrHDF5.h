@@ -1,0 +1,118 @@
+//
+// Created by frongere on 20/10/17.
+//
+
+#ifndef FRYDOM_FRHDF5_H
+#define FRYDOM_FRHDF5_H
+
+
+#include <memory>
+#include <iostream>
+#include "H5Cpp.h"
+
+#include "frydom/misc/FrEigen.h"
+
+
+#define R H5F_ACC_RDONLY
+#define RW H5F_ACC_RDWR
+
+using namespace H5;
+using namespace Eigen;
+
+namespace frydom {
+namespace IO {
+
+    class FrHDF5Reader {
+
+        typedef unsigned int MODE;
+//        enum MODE {
+//            R = H5F_ACC_RDONLY,
+//            RW = H5F_ACC_RDWR
+//        };
+
+    private:
+
+        MODE m_mode = R;
+
+        std::string m_filename;
+        std::unique_ptr<H5File> m_file;
+
+    public:
+
+        FrHDF5Reader() = default;
+
+        explicit FrHDF5Reader(const std::string &filename, MODE mode=R)
+                : m_filename(filename), m_file(std::make_unique<H5File>(filename, mode)) {}
+
+        ~FrHDF5Reader() {
+            m_file->close();
+//            std::cout << std::endl << "HDF5 file " << m_filename << " has been properly closed" << std::endl;
+        }
+
+        void SetFilename(const std::string& filename, MODE mode=R) {
+            m_filename = filename;
+            m_file.release();
+            m_file = std::make_unique<H5File>(filename, mode);
+        }
+
+        void Close() { m_file->close(); }
+
+        Matrix<double, Dynamic, Dynamic> ReadArray(std::string& h5Path) const {
+
+            DataSet dset = m_file->openDataSet(h5Path); // TODO: try
+            DataSpace dspace = dset.getSpace();
+            const int ndims = dspace.getSimpleExtentNdims();
+
+            if (ndims > 2) {
+                throw("Too much dimensions"); // TODO: better error msg
+            }
+
+            // Essai
+            auto dtype = dset.getDataType();
+
+            hsize_t dims[ndims];
+            dspace.getSimpleExtentDims(dims);
+
+            auto nb_rows = dims[0];
+            auto nb_cols = dims[1];
+            auto nb_elt = nb_rows * nb_cols;
+
+            Matrix<double, Dynamic, Dynamic> out(nb_rows, nb_cols);
+
+            auto* buffer = new double[nb_elt];
+
+            dset.read(buffer, dtype);
+
+            for (long irow=0; irow<nb_rows; ++irow) {
+                for (long icol=0; icol<nb_cols; ++icol) {
+                    out(irow, icol) = buffer[irow*nb_cols + icol];
+                }
+            }
+
+            delete [] buffer;
+
+            return out;
+        }
+
+        Matrix<std::complex, Dynamic, Dynamic> ReadCArray(std::string& h5Path) const {
+
+        }
+
+        void ReadReal() {}
+
+        void ReadString() {}
+
+        void CreateGroup() {}
+
+        void WriteDataset() {} // A rendre polymorphe pour les differents types de donnees
+
+        void SearchGroup() {}
+
+
+
+    };
+
+}  // end namesapce IO
+}  // end namespace frydom
+
+#endif //FRYDOM_FRHDF5_H
