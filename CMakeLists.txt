@@ -55,6 +55,12 @@ else()
 endif()
 
 #--------------------------------------------------------------
+# Add the Boost library
+#--------------------------------------------------------------
+find_package(Boost REQUIRED filesystem system)
+include_directories(${Boost_INCLUDE_DIRS})
+
+#--------------------------------------------------------------
 # Add the YAML-CPP project
 #--------------------------------------------------------------
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/yaml-cpp/include)
@@ -67,20 +73,9 @@ set(YAML_CPP_LIB "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/yaml-cpp/build/libyaml-
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/eigen")
 
 #--------------------------------------------------------------
-# Add QuadProg++
-#--------------------------------------------------------------
-#include_directories("${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/quadprogc++")
-set(QUADPROGPP_SRC
-        thirdparty/quadprog++/QuadProg++.hh
-        thirdparty/quadprog++/QuadProg++.cc
-        )
-set(QUADPROG_RELATED
-        src/frydom/misc/FrQuadprogcpp.h
-        )
-
-#--------------------------------------------------------------
 # Using HDF5 library
 #--------------------------------------------------------------
+#TODO: embarquer hdf5 dans les sous-modules...
 find_package(HDF5 REQUIRED COMPONENTS CXX)
 include_directories(${HDF5_INCLUDE_DIRS})
 
@@ -95,15 +90,18 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 #--------------------------------------------------------------
 # TODO : faire en sorte de declarer les target dans un CMakeLists.txt separe par target !!
 
-set(EIGEN_RELATED
-        src/frydom/misc/FrEigen.h
-        src/frydom/misc/FrEigen.cpp
+set(LIBS
+        ${CHRONO_LIBRARIES}
+        ${YAML_CPP_LIB}
+        ${HDF5_CXX_LIBRARIES}
+        ${Boost_LIBRARIES}
         )
 
 # TODO: partitionner les sources en fichiers CMakeLists.txt par folder de frydom pour alleger le principal
+
 set(SOURCE_FILES
 
-        ${EIGEN_RELATED} # Est-ce utilse de faire une distinction ???
+#        ${EIGEN_RELATED} # Est-ce utilse de faire une distinction ???
 
         src/frydom/core/FrConstants.h
         src/frydom/core/FrConstants.cpp
@@ -226,82 +224,80 @@ set(SOURCE_FILES
 # TODO: mettre dans un foreach !!
 # To add a target
 add_executable(demo_free_surface ${SOURCE_FILES} src/frydom/tests/demo_FreeSurface.cpp)
-target_link_libraries(demo_free_surface ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(demo_free_surface ${LIBS})
 
 add_executable(demo_O3 ${SOURCE_FILES} src/frydom/tests/demo_O3_juin_2017.cpp)
-target_link_libraries(demo_O3 ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(demo_O3 ${LIBS})
 
 add_executable(demo_rotation ${SOURCE_FILES} src/frydom/tests/demo_rotation.cpp)
-target_link_libraries(demo_rotation ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(demo_rotation ${LIBS})
 
 add_executable(demo_ship_orientation ${SOURCE_FILES} src/frydom/tests/demo_ship_orientation.cpp)
-target_link_libraries(demo_ship_orientation ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(demo_ship_orientation ${LIBS})
 
 add_executable(test_interp1d ${SOURCE_FILES} src/frydom/tests/test_interp1d.cpp)
-target_link_libraries(test_interp1d ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_interp1d ${LIBS})
 
 add_executable(test_linspace ${SOURCE_FILES} src/frydom/tests/test_linspace.cpp)
-target_link_libraries(test_linspace ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_linspace ${LIBS})
 
 add_executable(test_current_force ${SOURCE_FILES} src/frydom/tests/test_current_force.cpp)
-target_link_libraries(test_current_force ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_current_force ${LIBS})
 
 add_executable(test_lookup_table ${SOURCE_FILES} src/frydom/tests/test_lookup_table.cpp)
-target_link_libraries(test_lookup_table ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_lookup_table ${LIBS})
 
 add_executable(test_current_polar_coeffs ${SOURCE_FILES} src/frydom/tests/test_CurrentPolarCoeffs.cpp)
-target_link_libraries(test_current_polar_coeffs ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_current_polar_coeffs ${LIBS})
 
 add_executable(test_yaml src/frydom/tests/test_cpp_yaml.cpp)
-target_link_libraries(test_yaml ${YAML_CPP_LIB})
+target_link_libraries(test_yaml ${LIBS})
 
 add_executable(test_catenary ${SOURCE_FILES} src/frydom/tests/test_catenary.cpp)
-target_link_libraries(test_catenary ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_catenary ${LIBS})
 
 add_executable(test_tug ${SOURCE_FILES} src/frydom/tests/test_tug.cpp)
-target_link_libraries(test_tug ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_tug ${LIBS})
 
 add_executable(test_eigen ${EIGEN_RELATED} src/frydom/tests/test_eigen.cpp)
-target_link_libraries(test_eigen ${CHRONO_LIBRARIES})
-
-add_executable(test_quadprogcpp ${EIGEN_RELATED} ${QUADPROG_RELATED} ${QUADPROGPP_SRC} src/frydom/tests/test_quadprogcpp.cpp)
+target_link_libraries(test_eigen ${LIBS})
 
 add_executable(demo_cable_ANCF ${SOURCE_FILES} src/frydom/tests/demo_cable_ANCF.cpp)
-target_link_libraries(demo_cable_ANCF ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(demo_cable_ANCF ${LIBS})
 
 add_executable(test_anchored_boat_current ${SOURCE_FILES} src/frydom/tests/test_anchored_boat_current.cpp)
-target_link_libraries(test_anchored_boat_current ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_anchored_boat_current ${LIBS})
 
 add_executable(test_dispersion_relation ${SOURCE_FILES} src/frydom/tests/test_dispersion_relation.cpp)
-target_link_libraries(test_dispersion_relation ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_dispersion_relation ${LIBS})
 
 add_executable(test_wave_spectrum ${SOURCE_FILES} src/frydom/tests/test_wave_spectrum.cpp)
-target_link_libraries(test_wave_spectrum ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_wave_spectrum ${LIBS})
 
 add_executable(test_wave_field ${SOURCE_FILES} src/frydom/tests/test_wave_field.cpp)
-target_link_libraries(test_wave_field ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_wave_field ${LIBS})
 
 add_executable(test_dynamic_cable ${SOURCE_FILES} src/frydom/tests/test_dynamic_cable.cpp)
-target_link_libraries(test_dynamic_cable ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_dynamic_cable ${LIBS})
 
 add_executable(test_anchored_boat_current_fea_cable ${SOURCE_FILES} src/frydom/tests/test_anchored_boat_current_fea_cable.cpp)
-target_link_libraries(test_anchored_boat_current_fea_cable ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_anchored_boat_current_fea_cable ${LIBS})
 
 add_executable(test_fea_cable_with_body ${SOURCE_FILES} src/frydom/tests/test_fea_cable_with_body.cpp)
-target_link_libraries(test_fea_cable_with_body ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_fea_cable_with_body ${LIBS})
 
 add_executable(test_recorder ${SOURCE_FILES} src/frydom/tests/test_recorder.cpp)
-target_link_libraries(test_recorder ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_recorder ${LIBS})
 
 add_executable(test_radiation_force ${SOURCE_FILES} src/frydom/tests/test_radiation_force.cpp)
-target_link_libraries(test_radiation_force ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_radiation_force ${LIBS})
 
 add_executable(test_HDF5 ${SOURCE_FILES} src/frydom/tests/test_HDF5.cpp)
-target_link_libraries(test_HDF5 ${CHRONO_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${YAML_CPP_LIB})
+target_link_libraries(test_HDF5 ${LIBS})
 
 
 add_executable(test_load_HDB ${SOURCE_FILES} src/frydom/tests/test_load_HDB.cpp)
-target_link_libraries(test_load_HDB ${CHRONO_LIBRARIES} ${YAML_CPP_LIB} ${HDF5_CXX_LIBRARIES})
+target_link_libraries(test_load_HDB ${LIBS})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===
