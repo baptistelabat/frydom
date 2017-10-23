@@ -24,14 +24,17 @@ Dans ces bases de données hydrodynamiques, on trouve pour le premier ordre
 	
 	* Données de calcul BEM
 		+ Discrétisation en fréquence:
-			- nombre de pulsations
-			- pulsation min (rad/s)
-			- pulsation max (rad/s)
+			- nombre de pulsations (nw)
+			- pulsation min (rad/s) (wmin)
+			- pulsation max (rad/s) (wmax)
 		+ Discrétisation en angles de propagation de vague (pour la 
 		diffraction et Froude Krylov)
-			- nombre d'angles
-			- angle min (deg)
-			- angle max (deg)
+			- nombre d'angles (ntheta)
+			- angle min (deg) (theta_min)
+			- angle max (deg) (theta_max)
+		+ Discrétisation temporelle (réponses impulsionnelles de radiation)
+			- temps final (s) (tf)
+			- Nombre de pas de temps (nt)
 	* Pour chaque corps:
 		+ Nom du corps
 		+ ID du corps (entier unique)
@@ -65,8 +68,6 @@ Dans ces bases de données hydrodynamiques, on trouve pour le premier ordre
 			d'assurer une normale sortante. Les triangles sont représentés 
 			en répétant l'identifiant du premier vertex en fin de ligne.
 		+ Coefficients d'excitation de Froude-Kylov (optionnel)
-			- 
-			- Vecteur des pulsations (rad/s)
-			- 
-			
+			- angle[ia]
+				- 
 		
