@@ -203,6 +203,9 @@ set(SOURCE_FILES
         src/frydom/hydrodynamics/FrRadiationForce.h
         src/frydom/hydrodynamics/FrRadiationForce.cpp
 
+        src/frydom/hydrodynamics/FrHydroDB.h
+        src/frydom/hydrodynamics/FrHydroDB.cpp
+
         src/frydom/cable/FrCable.h
         src/frydom/cable/FrCable.cpp
 
@@ -295,6 +298,10 @@ target_link_libraries(test_radiation_force ${CHRONO_LIBRARIES} ${YAML_CPP_LIB})
 
 add_executable(test_HDF5 ${SOURCE_FILES} src/frydom/tests/test_HDF5.cpp)
 target_link_libraries(test_HDF5 ${CHRONO_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${YAML_CPP_LIB})
+
+
+add_executable(test_load_HDB ${SOURCE_FILES} src/frydom/tests/test_load_HDB.cpp)
+target_link_libraries(test_load_HDB ${CHRONO_LIBRARIES} ${YAML_CPP_LIB} ${HDF5_CXX_LIBRARIES})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===

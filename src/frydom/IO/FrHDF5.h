@@ -73,9 +73,25 @@ namespace IO {
             hsize_t dims[ndims];
             dspace.getSimpleExtentDims(dims);
 
-            auto nb_rows = dims[0];
-            auto nb_cols = dims[1];
-            auto nb_elt = nb_rows * nb_cols;
+            hsize_t nb_rows = 0;
+            hsize_t nb_cols = 0;
+            hsize_t nb_elt  = 0;
+
+            switch (ndims) {
+                case 1:
+                    nb_elt = dims[0];
+                    nb_rows = nb_elt;
+                    nb_cols = 1;
+                    break;
+                case 2:
+                    nb_rows = dims[0];
+                    nb_cols = dims[1];
+                    nb_elt = nb_rows * nb_cols;
+                    break;
+                default:
+                    std::cout << "Cannot read multidimensional array yet..." << std::endl;
+
+            }
 
             Matrix<double, Dynamic, Dynamic> out(nb_rows, nb_cols);
 
@@ -94,9 +110,9 @@ namespace IO {
             return out;
         }
 
-        Matrix<std::complex, Dynamic, Dynamic> ReadCArray(std::string& h5Path) const {
-
-        }
+//        Matrix<std::complex, Dynamic, Dynamic> ReadCArray(std::string& h5Path) const {
+//
+//        }
 
         void ReadReal() {}
 

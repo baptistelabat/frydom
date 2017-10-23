@@ -11,9 +11,6 @@
 #include "frydom/misc/FrLinspace.h"
 #include "frydom/misc/FrEigen.h"
 
-#include "yaml-cpp/yaml.h"
-
-
 namespace frydom {
 
     class FrDB {
@@ -157,8 +154,7 @@ namespace frydom {
     };
 
 
-    FrRadiationIRFDB LoadIRFData(std::string yaml_file, std::string key);
-
+    std::shared_ptr<FrRadiationIRFDB> LoadIRFData(std::string h5file, std::string key);
 
 
 
