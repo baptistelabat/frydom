@@ -89,11 +89,15 @@ Dans ces bases de données hydrodynamiques, on trouve pour le premier ordre
 		sur eau calme.):
 			- for body_motion_j in bodies:
 				- AddedMassZeroreq (nbForce x nb_dof_j)
+
+				
 		+ Coefficients de radiation fréquentielle:
 			- for body_motion_j in bodies:
 				- for dof_k in body_motion_j.dofs:
 					- AddedMass_j_k (nbForce x nw)
 					- WaveDamping_j_k (nbForce x nw)
+
+					
 		+ Réponse impulsionnelle:
 			- for body_motion_j in bodies:
 				- for dof_k in body_motion_j.dofs:

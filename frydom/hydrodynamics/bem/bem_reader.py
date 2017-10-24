@@ -45,7 +45,7 @@ class _BEMReader(object):  # TODO: le parametre n pour le nb de facette par lamb
         float
             Maximum edge length (meters)
         """
-        from frydom.environment.waves.linearwaves import LinearWaveField  # TODO: mettre get_wave_number a un endroit
+        # from frydom.environment.waves.linearwaves import LinearWaveField  # TODO: mettre get_wave_number a un endroit
         #  plus generaliste
         wave_number = solve_wave_dispersion_relation(omega, self.hydro_db.depth, self.hydro_db.grav)
         wave_length = 2. * pi / wave_number
@@ -159,7 +159,7 @@ class NemohReader(_BEMReader):
         
         self.dirname = ''
         
-        self.hydro_db = HydroDB()
+        # self.hydro_db = HydroDB()
         
         self.has_pressure = False
         
@@ -343,7 +343,7 @@ class NemohReader(_BEMReader):
             
             # Kochin function
             data = f.readline().split()[:3]
-            self.hydro_db.has_kochin = bool(int(data[0]))
+            self.hydro_db.has_kochin = bool(float(data[0]))
             if self.hydro_db.has_kochin:
                 self.hydro_db.nb_dir_kochin = int(data[0])
                 self.hydro_db.min_dir_kochin, self.hydro_db.max_dir_kochin = map(float, data[1:])
