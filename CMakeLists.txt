@@ -99,32 +99,54 @@ set(LIBS
 
 # TODO: partitionner les sources en fichiers CMakeLists.txt par folder de frydom pour alleger le principal
 
-set(SOURCE_FILES
+set(SOURCE_CABLE
+        src/frydom/cable/FrCable.h
+        src/frydom/cable/FrCable.cpp
 
-#        ${EIGEN_RELATED} # Est-ce utilse de faire une distinction ???
+        src/frydom/cable/FrCatenaryLine.h
+        src/frydom/cable/FrCatenaryLine.cpp
 
-        src/frydom/core/FrConstants.h
-        src/frydom/core/FrConstants.cpp
+        src/frydom/cable/FrCatenaryForce.h
+        src/frydom/cable/FrCatenaryForce.cpp
+
+        src/frydom/cable/FrDynamicCable.h
+        src/frydom/cable/FrDynamicCable.cpp
+        )
+
+set(SOURCE_CORE
 
         src/frydom/core/FrOffshoreSystem.h
         src/frydom/core/FrOffshoreSystem.cpp
 
+        src/frydom/core/FrConstants.h
+        src/frydom/core/FrConstants.cpp
+
         src/frydom/core/FrEulerAngles.h
         src/frydom/core/FrEulerAngles.cpp
 
-        src/frydom/IO/FrLoader.h
-        src/frydom/IO/FrLoader.cpp
+        src/frydom/core/FrBody.h
+        src/frydom/core/FrBody.cpp
 
-        src/frydom/IO/FrHDF5.h
-        src/frydom/IO/FrHDF5.cpp
+        src/frydom/core/FrHydroBody.h
+        src/frydom/core/FrHydroBody.cpp
 
-        src/frydom/misc/FrUtils.h
-        src/frydom/misc/FrUtils.cpp
-        src/frydom/misc/FrMathUtils.h
-        src/frydom/misc/FrInterp1d.h
-        src/frydom/misc/FrInterp1d.cpp
-        src/frydom/misc/FrLookupTable1D.h
+        src/frydom/core/FrBodyEasy.h
+        src/frydom/core/FrBodyEasy.cpp
 
+        src/frydom/core/FrNode.h
+        src/frydom/core/FrNode.cpp
+
+        src/frydom/core/FrShip.h
+        src/frydom/core/FrShip.cpp
+
+        src/frydom/core/FrForce.h
+        src/frydom/core/FrForce.cpp
+
+        src/frydom/core/FrForceAsset.h
+        src/frydom/core/FrForceAsset.cpp
+        )
+
+set (SOURCE_ENVIRONMENT # TODO: par repertoire...
         src/frydom/environment/FrEnvironment.h
         src/frydom/environment/FrConventions.h
 
@@ -148,47 +170,9 @@ set(SOURCE_FILES
         src/frydom/environment/current/FrCurrentForce.cpp
         src/frydom/environment/current/FrCurrentPolarCoeffs.h
         src/frydom/environment/current/FrCurrentPolarCoeffs.cpp
+        )
 
-        src/frydom/misc/FrLinspace.h
-
-        src/frydom/misc/FrTriangleMeshConnected.h
-        src/frydom/misc/FrTriangleMeshConnected.cpp
-
-
-        src/frydom/misc/FrRecorder.h
-        src/frydom/misc/FrRecorder.cpp
-
-
-        src/frydom/core/FrBody.h
-        src/frydom/core/FrBody.cpp
-
-        src/frydom/core/FrHydroBody.h
-        src/frydom/core/FrHydroBody.cpp
-
-        src/frydom/core/FrBodyEasy.h
-        src/frydom/core/FrBodyEasy.cpp
-
-        src/frydom/core/FrNode.h
-        src/frydom/core/FrNode.cpp
-
-        src/frydom/core/FrShip.h
-        src/frydom/core/FrShip.cpp
-
-        src/frydom/core/FrForce.h
-        src/frydom/core/FrForce.cpp
-
-
-        src/frydom/propeller/FrPropeller.h
-        src/frydom/propeller/FrPropeller.cpp
-        src/frydom/propeller/FrPropellerAzimuthal.h
-        src/frydom/propeller/FrPropellerAzimuthal.cpp
-
-        src/frydom/core/FrForceAsset.h
-        src/frydom/core/FrForceAsset.cpp
-
-        src/frydom/utils/FrIrrApp.h
-        src/frydom/utils/FrIrrApp.cpp
-
+set(SOURCE_HYDRODYNAMICS
         src/frydom/hydrodynamics/FrTryalForce.h
         src/frydom/hydrodynamics/FrTryalForce.cpp
 
@@ -203,21 +187,58 @@ set(SOURCE_FILES
 
         src/frydom/hydrodynamics/FrHydroDB.h
         src/frydom/hydrodynamics/FrHydroDB.cpp
-
-        src/frydom/cable/FrCable.h
-        src/frydom/cable/FrCable.cpp
-
-        src/frydom/cable/FrCatenaryLine.h
-        src/frydom/cable/FrCatenaryLine.cpp
-        src/frydom/cable/FrCatenaryForce.h
-        src/frydom/cable/FrCatenaryForce.cpp
-
-        src/frydom/cable/FrDynamicCable.h
-        src/frydom/cable/FrDynamicCable.cpp
-
-        src/frydom/tests/FEAcables.h # TODO : A retirer
         )
 
+set(SOURCE_IO
+        src/frydom/IO/FrLoader.h
+        src/frydom/IO/FrLoader.cpp
+
+        src/frydom/IO/FrHDF5.h
+        src/frydom/IO/FrHDF5.cpp
+        )
+
+set(SOURCE_MISC
+        src/frydom/misc/FrUtils.h
+        src/frydom/misc/FrUtils.cpp
+
+        src/frydom/misc/FrMathUtils.h
+
+        src/frydom/misc/FrInterp1d.h
+        src/frydom/misc/FrInterp1d.cpp
+
+        src/frydom/misc/FrLookupTable1D.h
+
+        src/frydom/misc/FrLinspace.h
+
+        src/frydom/misc/FrTriangleMeshConnected.h
+        src/frydom/misc/FrTriangleMeshConnected.cpp
+
+        src/frydom/misc/FrRecorder.h
+        src/frydom/misc/FrRecorder.cpp
+        )
+
+set(SOURCE_PROPELLER
+        src/frydom/propeller/FrPropeller.h
+        src/frydom/propeller/FrPropeller.cpp
+
+        src/frydom/propeller/FrPropellerAzimuthal.h
+        src/frydom/propeller/FrPropellerAzimuthal.cpp
+        )
+
+set(SOURCE_UTILS
+        src/frydom/utils/FrIrrApp.h
+        src/frydom/utils/FrIrrApp.cpp
+        )
+
+set(SOURCE_FILES
+        ${SOURCE_CORE}
+        ${SOURCE_ENVIRONMENT}
+        ${SOURCE_HYDRODYNAMICS}
+        ${SOURCE_IO}
+        ${SOURCE_MISC}
+        ${SOURCE_PROPELLER}
+        ${SOURCE_UTILS}
+        )
 
 
 
@@ -261,9 +282,6 @@ target_link_libraries(test_tug ${LIBS})
 
 add_executable(test_eigen ${EIGEN_RELATED} src/frydom/tests/test_eigen.cpp)
 target_link_libraries(test_eigen ${LIBS})
-
-add_executable(demo_cable_ANCF ${SOURCE_FILES} src/frydom/tests/demo_cable_ANCF.cpp)
-target_link_libraries(demo_cable_ANCF ${LIBS})
 
 add_executable(test_anchored_boat_current ${SOURCE_FILES} src/frydom/tests/test_anchored_boat_current.cpp)
 target_link_libraries(test_anchored_boat_current ${LIBS})
