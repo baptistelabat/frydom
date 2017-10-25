@@ -154,7 +154,7 @@ namespace frydom {
     };
 
 
-    std::shared_ptr<FrRadiationIRFDB> LoadIRFData(std::string h5file, std::string key);
+    FrHydroDB LoadHDB5(std::string h5file);
 
 
 

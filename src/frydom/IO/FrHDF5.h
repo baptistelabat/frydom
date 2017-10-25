@@ -46,7 +46,7 @@ namespace IO {
 
         ~FrHDF5Reader() {
             m_file->close();
-//            std::cout << std::endl << "HDF5 file " << m_filename << " has been properly closed" << std::endl;
+            std::cout << std::endl << "HDF5 file " << m_filename << " has been properly closed" << std::endl;
         }
 
         void SetFilename(const std::string& filename, MODE mode=R) {
@@ -57,7 +57,7 @@ namespace IO {
 
         void Close() { m_file->close(); }
 
-        Matrix<double, Dynamic, Dynamic> ReadArray(std::string& h5Path) const {
+        Matrix<double, Dynamic, Dynamic> ReadArray(std::string h5Path) const {
 
             DataSet dset = m_file->openDataSet(h5Path); // TODO: try
             DataSpace dspace = dset.getSpace();
@@ -110,19 +110,41 @@ namespace IO {
             return out;
         }
 
-//        Matrix<std::complex, Dynamic, Dynamic> ReadCArray(std::string& h5Path) const {
-//
-//        }
+        double ReadDouble(std::string h5Path) {
+            DataSet dset = m_file->openDataSet(h5Path);
 
-        void ReadReal() {}
+            double d[1];
+            dset.read(d, PredType::NATIVE_DOUBLE);
 
-        void ReadString() {}
+            return d[0];
+        }
 
-        void CreateGroup() {}
+        int ReadInt(std::string h5Path) {
+            DataSet dset = m_file->openDataSet(h5Path);
 
-        void WriteDataset() {} // A rendre polymorphe pour les differents types de donnees
+            int i[1];
+            dset.read(i, PredType::NATIVE_INT);
 
-        void SearchGroup() {}
+            return i[0];
+        }
+
+        std::string ReadString(std::string h5Path) {
+
+            StrType dtype(0, H5T_VARIABLE);
+            DataSpace dspace(H5S_SCALAR);
+            DataSet dset = m_file->openDataSet(h5Path);
+
+            std::string str;
+
+            return str;
+
+        }
+
+        void CreateGroup(std::string h5Path) {}
+
+        void CreateDataset(std::string h5Path) {} // A rendre polymorphe pour les differents types de donnees
+
+//        void SearchGroup(std::string& h5Path) {}
 
 
 

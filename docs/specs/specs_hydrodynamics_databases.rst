@@ -2,6 +2,7 @@
 Specification pour le stockage de base de données hydrodynamiques au format HDF5
 ================================================================================
 
+F. Rongère -- D-ICE ENGINEERING
 
 Preambule
 ---------
@@ -106,3 +107,4 @@ Dans ces bases de données hydrodynamiques, on trouve pour le premier ordre
 
 
 
+Les noms de dataset dans le fichier HDF5 seront tous en CamelCase.

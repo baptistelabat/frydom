@@ -7,7 +7,7 @@ import datetime
 
 from bemio.data_structures.bem import HydrodynamicData
 
-def export_hdf5(hydro_db, out_file=None):
+def write_hdb5(hydro_db, out_file=None):
     
     if out_file is None:
         out_file = 'frydom_hdb.h5'
@@ -217,7 +217,10 @@ def export_hdf5(hydro_db, out_file=None):
                 
                 
                 for imode, motion_mode_j in enumerate(body_j.motion_modes):
-                    
+                    # Infinite added mass
+
+
+
                     # Added mass
                     dset = f.create_dataset(rad_body_j_CM_group + "/Body_%u_DOF_%u" % (jbody, imode),
                                             data=added_mass[:, :, imode])
@@ -233,17 +236,14 @@ def export_hdf5(hydro_db, out_file=None):
                                                 "on body %u (nbForce x nw)" % (jbody, body.ibody)
                 
                 
-            
-            
-            
-            
-        
-        
-        
+
+# TODO: faire un outil en ligne de commande !!
+if __name__ == '__main__':
+
+    import argparse
+
     
 
-
-if __name__ == '__main__':
     
     from frydom.hydrodynamics.bem.bem_reader import NemohReader
     
@@ -253,24 +253,9 @@ if __name__ == '__main__':
     
     
     from bemio.io import nemoh
-    sim_dir = '/home/frongere/Documents/DEV_SOFTWARE/SOFTS/Nemoh_official/Verification/Cylinder'
-
-    # data = nemoh.NemohOutput(sim_dir=sim_dir,
-    #                       cal_file=sim_dir + "/Nemoh.cal",
-    #                       results_dir=sim_dir + "/results",
-    #                       mesh_dir=sim_dir + "/mesh",
-    #                       )
-    # for ibody in data.body:
-    #     data.body[ibody].calc_irf_radiation()
-    #     data.body[ibody].calc_irf_excitation()
-    #
-    # with open('hydro_db.pickle', 'wb') as f:
-    #     cPickle.dump(data, f)
+    sim_dir = '/home/frongere/Documents/Cylinder'
 
     reader = NemohReader(cal_file=sim_dir + "/Nemoh.cal")
     
-    # with open('hydro_db.pickle', 'rb') as f:
-    #     data = cPickle.load(f)
-    
-    
-    export_hdf5(reader.hydro_db)
+
+    write_hdb5(reader.hydro_db)
