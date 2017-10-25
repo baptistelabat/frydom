@@ -11,6 +11,8 @@
 #include "frydom/misc/FrLinspace.h"
 #include "frydom/misc/FrEigen.h"
 
+#define J std::complex<double>(0, 1)
+
 namespace frydom {
 
     class FrDB {
@@ -152,6 +154,99 @@ namespace frydom {
 
 
     };
+
+
+
+
+    class FrBEMForceMode {
+
+        enum TYPE {
+            FORCE,
+            MOMENT
+        };
+
+    private:
+        TYPE m_type;
+        Eigen::Vector3d m_direction;
+        Eigen::Vector3d m_point;
+
+    public:
+        FrBEMForceMode() = default;
+
+        void SetTypeFORCE() {
+            m_type = FORCE;
+            m_point.setZero();
+        }
+        void SetTypeMOMENT() { m_type = MOMENT; }
+
+        TYPE GetType() const { return m_type; }
+
+        void SetDirection(Eigen::Vector3d& direction) { m_direction = direction; }
+        Eigen::Vector3d GetDirection() const { return m_direction; }
+
+        void SetPoint(Eigen::Vector3d& point) { m_point = point; }
+        Eigen::Vector3d GetPoint() const {return m_point; }
+
+    };
+
+    class FrBEMMotionMode {
+
+        enum TYPE {
+            TRANSLATION,
+            ROTATION
+        };
+
+    private:
+        TYPE m_type;
+        Eigen::Vector3d m_direction;
+        Eigen::Vector3d m_point;
+
+    public:
+        FrBEMMotionMode() = default;
+
+        void SetTypeTRANSLATION() {
+            m_type = TRANSLATION;
+            m_point.setZero();
+        }
+
+        void SetTypeROTATION() { m_type = ROTATION; }
+
+        TYPE GetType() const { return m_type; }
+
+        void SetDirection(Eigen::Vector3d& direction) { m_direction = direction; }
+        Eigen::Vector3d GetDirection() const { return m_direction; }
+
+        void SetPoint(Eigen::Vector3d& point) { m_point = point; }
+        Eigen::Vector3d GetPoint() const {return m_point; }
+
+    };
+
+
+    class FrBEMBody {
+
+    private:
+        std::vector<FrBEMForceMode> m_ForceModes;
+        std::vector<FrBEMMotionMode> m_MotionModes;
+
+        // TODO: maillage du corps a importer egalement
+
+    public:
+
+        unsigned int GetNbForceMode() const { return (uint)m_ForceModes.size(); }
+        unsigned int GetNbMotionMode() const { return (uint)m_MotionModes.size(); }
+
+        void AddForceMode(FrBEMForceMode& mode) {
+            m_ForceModes.push_back(mode);
+        }
+        void AddMotionMode(FrBEMMotionMode& mode) {
+            m_MotionModes.push_back(mode);
+        }
+
+    };
+
+
+
+
 
 
     FrHydroDB LoadHDB5(std::string h5file);

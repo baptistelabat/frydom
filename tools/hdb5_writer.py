@@ -247,12 +247,7 @@ if __name__ == '__main__':
     
     from frydom.hydrodynamics.bem.bem_reader import NemohReader
     
-    import cPickle
-    
-    
-    
-    
-    from bemio.io import nemoh
+
     sim_dir = '/home/frongere/Documents/Cylinder'
 
     reader = NemohReader(cal_file=sim_dir + "/Nemoh.cal")

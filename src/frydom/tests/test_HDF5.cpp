@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     reader.SetFilename(filename);
 
     std::string inf_freq_path("/body1/hydro_coeffs/added_mass/inf_freq");
-    std::cout << reader.ReadArray(inf_freq_path);
+    std::cout << reader.ReadDoubleArray(inf_freq_path);
 
 //    auto reade = frydom::IO::FrHDF5Reader()
 

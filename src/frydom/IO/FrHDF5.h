@@ -57,7 +57,7 @@ namespace IO {
 
         void Close() { m_file->close(); }
 
-        Matrix<double, Dynamic, Dynamic> ReadArray(std::string h5Path) const {
+        Matrix<double, Dynamic, Dynamic> ReadDoubleArray(std::string h5Path) const {
 
             DataSet dset = m_file->openDataSet(h5Path); // TODO: try
             DataSpace dspace = dset.getSpace();
@@ -110,6 +110,61 @@ namespace IO {
             return out;
         }
 
+        Matrix<int, Dynamic, Dynamic> ReadIntArray(std::string h5Path) const {
+
+            DataSet dset = m_file->openDataSet(h5Path);
+            DataSpace dspace = dset.getSpace();
+            const int ndims = dspace.getSimpleExtentNdims();
+
+            if (ndims > 2) {
+                throw("Too much dimensions"); // TODO: better error msg
+            }
+
+            // Essai
+            auto dtype = dset.getDataType();
+
+            hsize_t dims[ndims];
+            dspace.getSimpleExtentDims(dims);
+
+            hsize_t nb_rows = 0;
+            hsize_t nb_cols = 0;
+            hsize_t nb_elt  = 0;
+
+            switch (ndims) {
+                case 1:
+                    nb_elt = dims[0];
+                    nb_rows = nb_elt;
+                    nb_cols = 1;
+                    break;
+                case 2:
+                    nb_rows = dims[0];
+                    nb_cols = dims[1];
+                    nb_elt = nb_rows * nb_cols;
+                    break;
+                default:
+                    std::cout << "Cannot read multidimensional array yet..." << std::endl;
+
+            }
+
+            Matrix<int, Dynamic, Dynamic> out(nb_rows, nb_cols);
+
+            auto* buffer = new int[nb_elt];
+
+            dset.read(buffer, PredType::NATIVE_INT);
+
+            hsize_t ielt;
+            int val;
+            for (long irow=0; irow<nb_rows; ++irow) {
+                for (long icol=0; icol<nb_cols; ++icol) {
+                    out(irow, icol) = buffer[irow*nb_cols + icol];
+                }
+            }
+
+            delete [] buffer;
+
+            return out;
+        }
+
         double ReadDouble(std::string h5Path) {
             DataSet dset = m_file->openDataSet(h5Path);
 
@@ -135,9 +190,9 @@ namespace IO {
             DataSet dset = m_file->openDataSet(h5Path);
 
             std::string str;
+            dset.read(str,dtype, dspace);
 
             return str;
-
         }
 
         void CreateGroup(std::string h5Path) {}
