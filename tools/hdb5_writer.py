@@ -14,7 +14,7 @@ def write_hdb5(hydro_db, out_file=None):
         out_file = 'frydom_hdb.h5'
         
     with h5py.File(out_file, 'w') as f:
-        
+
         # Date
         dset = f.create_dataset('CreationDate', data=str(datetime.datetime.now()))
         dset.attrs['Description'] = "Date of creation of this database"
@@ -48,36 +48,36 @@ def write_hdb5(hydro_db, out_file=None):
         dset.attrs['Description'] = 'Number of interacting bodies'
         
         # Frequency discretization
-        dis_group = "/discretizations"
-        f.create_group(dis_group)
-        freq_group = dis_group + "/frequency"
+        discretization_path = "/Discretizations"
+        f.create_group(discretization_path)
+        frequential_path = discretization_path + "/Frequency"
 
         nw = hydro_db.nb_frequencies
-        dset = f.create_dataset(freq_group + "/nbFrequencies", data=nw)
+        dset = f.create_dataset(frequential_path + "/NbFrequencies", data=nw)
         dset.attrs['Description'] = "Number of frequencies in the discretization"
 
-        dset = f.create_dataset(freq_group + "/minFrequency", data=hydro_db.min_frequency)
+        dset = f.create_dataset(frequential_path + "/MinFrequency", data=hydro_db.min_frequency)
         dset.attrs['Unit'] = "rad/s"
         dset.attrs['Description'] = "Minimum frequency specified for the computations"
 
-        dset = f.create_dataset(freq_group + "/maxFrequency", data=hydro_db.nb_frequencies)
+        dset = f.create_dataset(frequential_path + "/MaxFrequency", data=hydro_db.nb_frequencies)
         dset.attrs['Unit'] = "rad/s"
         dset.attrs['Description'] = "Maximum frequency specified for the computations"
         
         # Wave direction discretization
-        wave_dir_group = dis_group + "/wave_directions"
+        wave_direction_path = discretization_path + "/WaveDirections"
 
         nb_wave_dir = hydro_db.nb_wave_dir
-        dset = f.create_dataset(wave_dir_group + "/nbWaveDirections", data=nb_wave_dir)
+        dset = f.create_dataset(wave_direction_path + "/NbWaveDirections", data=nb_wave_dir)
         dset.attrs['Description'] = "Number of wave directions in the discretization"
 
         min_wave_dir = hydro_db.min_wave_dir
-        dset = f.create_dataset(wave_dir_group + "/minAngle", data=min_wave_dir)
+        dset = f.create_dataset(wave_direction_path + "/MinAngle", data=min_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Minimum angle specified for the computations"
 
         max_wave_dir = hydro_db.max_wave_dir
-        dset = f.create_dataset(wave_dir_group + "/maxAngle", data=max_wave_dir)
+        dset = f.create_dataset(wave_direction_path + "/MaxAngle", data=max_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Maximum angle specified for the computations"
 
@@ -85,13 +85,13 @@ def write_hdb5(hydro_db, out_file=None):
         irf_db = hydro_db.radiation_db.eval_impulse_response_function(tf=100, dt=0.1)
         
         # Time discretization
-        time_dir_group = dis_group + "/time"
+        irf_time_path = discretization_path + "/Time"
         time = irf_db.time
         nt = len(time)
-        dset = f.create_dataset(time_dir_group + "/nbTimeSample", data=nt)
+        dset = f.create_dataset(irf_time_path + "/NbTimeSample", data=nt)
         dset.attrs['Description'] = "Number of time samples"
         
-        dset = f.create_dataset(time_dir_group + "/finalTime", data=time[-1])
+        dset = f.create_dataset(irf_time_path + "/FinalTime", data=time[-1])
         dset.attrs['Unit'] = "s"
         dset.attrs['Description'] = "Final time for the impulse response function"
         
@@ -99,100 +99,104 @@ def write_hdb5(hydro_db, out_file=None):
         for body in hydro_db.body_mapper.bodies:
             # assert isinstance(body, HydrodynamicData)
             
-            group_name = '/Bodies/Body_%u' % body.ibody
+            body_path = '/Bodies/Body_%u' % body.ibody
             
-            dset = f.create_group(group_name)
+            dset = f.create_group(body_path)
 
             # Body name
-            dset = f.create_dataset(group_name + "/BodyName", data=body.mesh.name)
+            dset = f.create_dataset(body_path + "/BodyName", data=body.mesh.name)
             dset.attrs['Description'] = "Body name"
             
             # Id of the body
-            dset = f.create_dataset(group_name + "/ID", data=body.ibody)
+            dset = f.create_dataset(body_path + "/ID", data=body.ibody)
             dset.attrs['Description'] = "Body identifier"
             
             # Position of the body
-            dset = f.create_dataset(group_name + "/BodyPosition",
+            dset = f.create_dataset(body_path + "/BodyPosition",
                                     data=np.zeros(3, dtype=np.float))
             dset.attrs['Unit'] = 'm'
             dset.attrs['Description'] = "Position of the body in the absolute frame"
             
             # TODO: gerer ici la definition des modes de force et de mouvement
-            
-            dset = f.create_dataset(group_name + "/nbForceModes", data=body.nb_force_modes)
+
+            body_modes_path = body_path + "/Modes"
+            dset = f.create_dataset(body_modes_path + "/NbForceModes", data=body.nb_force_modes)
             dset.attrs['Description'] = "Number of force modes for body number %u" % body.ibody
             
             for imode, force_mode in enumerate(body.force_modes):
-                mode_group = group_name + "/force_modes/mode_%u" % imode
-                f.create_group(mode_group)
-                f.create_dataset(mode_group + "/direction", data=force_mode.direction)
+                mode_path = body_modes_path + "/ForceModes/Mode_%u" % imode
+                f.create_group(mode_path)
+                f.create_dataset(mode_path + "/Direction", data=force_mode.direction)
                 
                 if isinstance(force_mode, frydom.hydrodynamics.bem.hydro_db.ForceMode):
-                    f.create_dataset(mode_group + "/type", data='force')
+                    f.create_dataset(mode_path + "/Type", data='LINEAR')
                 
                 elif isinstance(force_mode, frydom.hydrodynamics.bem.hydro_db.MomentMode):
-                    f.create_dataset(mode_group + "/type", data='moment')
-                    f.create_dataset(mode_group + "/application_point", data=force_mode.point)
+                    f.create_dataset(mode_path + "/Type", data='ANGULAR')
+                    f.create_dataset(mode_path + "/Point", data=force_mode.point)
 
-            dset = f.create_dataset(group_name + "/nbMotionModes", data=body.nb_dof)
+            dset = f.create_dataset(body_modes_path + "/NbMotionModes", data=body.nb_dof)
             dset.attrs['Description'] = "Number of motion modes for body number %u" % body.ibody
             
             for idof, motion_mode in enumerate(body.motion_modes):
-                mode_group = group_name + "/motion_modes/mode_%u" % idof
-                f.create_group(mode_group)
-                f.create_dataset(mode_group + "/direction", data=motion_mode.direction)
+                mode_path = body_modes_path + "/MotionModes/Mode_%u" % idof
+                f.create_group(mode_path)
+                f.create_dataset(mode_path + "/Direction", data=motion_mode.direction)
                 
                 if isinstance(motion_mode, frydom.hydrodynamics.bem.hydro_db.TranslationMode):
-                    f.create_dataset(mode_group + "/type", data='translation')
+                    f.create_dataset(mode_path + "/Type", data='LINEAR')
                 
                 elif isinstance(motion_mode, frydom.hydrodynamics.bem.hydro_db.RotationMode):
-                    f.create_dataset(mode_group + "/type", data='rotation')
-                    f.create_dataset(mode_group + "/rotation_point", data=motion_mode.point)
+                    f.create_dataset(mode_path + "/Type", data='ANGULAR')
+                    f.create_dataset(mode_path + "/Point", data=motion_mode.point)
             
             # Mesh file
-            dset = f.create_dataset(group_name + "/mesh/nbVertices", data=body.mesh.nb_vertices)
-            dset = f.create_dataset(group_name + "/mesh/vertices", data=body.mesh.vertices)
-            dset = f.create_dataset(group_name + "/mesh/nbFaces", data=body.mesh.nb_faces)
-            dset = f.create_dataset(group_name + "/mesh/faces", data=body.mesh.faces)
+            mesh_path = body_path + "/Mesh"
+            dset = f.create_dataset(mesh_path + "/NbVertices", data=body.mesh.nb_vertices)
+            dset = f.create_dataset(mesh_path + "/Vertices", data=body.mesh.vertices)
+            dset = f.create_dataset(mesh_path + "/NbFaces", data=body.mesh.nb_faces)
+            dset = f.create_dataset(mesh_path + "/Faces", data=body.mesh.faces)
             
             # Froude-Krylov
+            excitation_path = body_path + "/Excitation"
+
             warn('FIXME: Problem in the Froude-Krylov computations')
             fk_db = hydro_db.froude_krylov_db
-            fk_group = group_name + "/excitation/froude_krylov"
+            fk_group = excitation_path + "/FroudeKrylov"
             f.create_group(fk_group)
             wave_dirs = np.linspace(min_wave_dir, max_wave_dir, nb_wave_dir)
             for idir, wave_dir in enumerate(wave_dirs):
-                fk_group_angle = fk_group + "/angle_%u" % idir
-                f.create_group(fk_group_angle)
-                dset = f.create_dataset(fk_group_angle + "/angle", data=wave_dir)
+                wave_dir_path = fk_group + "/Angle_%u" % idir
+                f.create_group(wave_dir_path)
+                dset = f.create_dataset(wave_dir_path + "/Angle", data=wave_dir)
                 dset.attrs['Unit'] = 'deg'
                 dset.attrs['Description'] = "Wave direction angle of the data"
 
-                dset = f.create_dataset(fk_group_angle + "/realCoeffs", data=fk_db.data[:, :, idir].real)
+                dset = f.create_dataset(wave_dir_path + "/RealCoeffs", data=fk_db.data[:, :, idir].real)
                 dset.attrs['Unit'] = ''
                 dset.attrs['Description'] = "Real part of the Froude-Krylov hydrodynamic coefficients for %u forces " \
                                             "on body %u as a function of frequency" % (body.nb_force_modes, body.ibody)
-                dset = f.create_dataset(fk_group_angle + "/imagCoeffs", data=fk_db.data[:, :, idir].imag)
+                dset = f.create_dataset(wave_dir_path + "/ImagCoeffs", data=fk_db.data[:, :, idir].imag)
                 dset.attrs['Unit'] = ''
                 dset.attrs['Description'] = "Imaginary part of the Froude-Krylov hydrodynamic coefficients for %u " \
                                             "forces on body %u as a function of frequency" % (body.nb_force_modes, body.ibody)
             
             # Diffraction excitation
             diff_db = hydro_db.diffraction_db
-            diff_group = group_name + "/excitation/diffraction"
-            f.create_group(diff_group)
+            diffraction_path = excitation_path + "/Diffraction"
+            f.create_group(diffraction_path)
             for idir, wave_dir in enumerate(wave_dirs):
-                diff_group_angle = diff_group + "/angle_%u" % idir
-                f.create_group(diff_group_angle)
-                f.create_dataset(diff_group_angle + "/angle", data=wave_dir)
+                wave_dir_path = diffraction_path + "/Angle_%u" % idir
+                f.create_group(wave_dir_path)
+                f.create_dataset(wave_dir_path + "/Angle", data=wave_dir)
                 dset.attrs['Unit'] = 'deg'
                 dset.attrs['Description'] = "Wave direction angle of the data"
                 
-                f.create_dataset(diff_group_angle + "/realCoeffs", data=diff_db.data[:, :, idir].real)
+                f.create_dataset(wave_dir_path + "/RealCoeffs", data=diff_db.data[:, :, idir].real)
                 dset.attrs['Unit'] = ''
                 dset.attrs['Description'] = "Real part of the diffraction hydrodynamic coefficients for %u forces " \
                                             "on body %u as a function of frequency" % (body.nb_force_modes, body.ibody)
-                f.create_dataset(diff_group_angle + "/imagCoeffs", data=diff_db.data[:, :, idir].imag)
+                f.create_dataset(wave_dir_path + "/ImagCoeffs", data=diff_db.data[:, :, idir].imag)
                 dset.attrs['Unit'] = ''
                 dset.attrs['Description'] = "Imaginary part of the diffraction hydrodynamic coefficients for %u forces " \
                                             "on body %u as a function of frequency" % (body.nb_force_modes, body.ibody)
@@ -200,13 +204,16 @@ def write_hdb5(hydro_db, out_file=None):
             # Radiation
             
             rad_db = hydro_db.radiation_db
-            rad_group = group_name + "/radiation"
-            f.create_group(rad_group)
+            radiation_path = body_path + "/Radiation"
+            f.create_group(radiation_path)
 
             rad_db.eval_infinite_added_mass()  # FIXME: ici on redeclenche un calcul de reponses impulsionnelles...
 
-            added_mass = rad_db.added_mass  # FIXME: ici, on veut recuperer la matrice pour le couple de corps i, j !!
-            wave_damping = rad_db.radiation_damping # FIXME: pareil ici !!
+            # added_mass = rad_db.added_mass  # FIXME: ici, on veut recuperer la matrice pour le couple de corps i, j !!
+            # wave_damping = rad_db.radiation_damping # FIXME: pareil ici !!
+
+
+
             # impulse_response_function = rad_db.irf # FIXME: pareil ici !!
             # irf_db.plot_array()
 
@@ -217,51 +224,57 @@ def write_hdb5(hydro_db, out_file=None):
 
 
 
-                rad_body_j_group = rad_group + "/Body_%u_motion" % jbody
+                radiation_body_motion_path = radiation_path + "/BodyMotion_%u" % jbody
                 
-                dg = f.create_group(rad_body_j_group)
+                dg = f.create_group(radiation_body_motion_path)
                 dg.attrs['Description'] = "Hydrodynamic coefficients for motion of body %u that radiates waves and " \
                                           "generate forces on body %u" % (jbody, body.ibody)
 
-                rad_body_j_CM_group = rad_body_j_group + "/added_mass"
-                dg = f.create_group(rad_body_j_CM_group)
+                added_mass_path = radiation_body_motion_path + "/AddedMass"
+                dg = f.create_group(added_mass_path)
                 dg.attrs['Description'] = "Added mass coefficients for acceleration of body %u that radiates waves " \
                                           "and generates forces on body %u" % (jbody, body.ibody)
 
-                rad_body_j_CA_group = rad_body_j_group + "/wave_damping"
-                dg = f.create_group(rad_body_j_CA_group)
+                radiation_damping_path = radiation_body_motion_path + "/RadiationDamping"
+                dg = f.create_group(radiation_damping_path)
                 dg.attrs['Description'] = "Wave damping coefficients for velocity of body %u that radiates waves " \
                                           "and generates forces on body %u" % (jbody, body.ibody)
 
-                rad_body_j_IRF_group = rad_body_j_group + "/impulse_response_function"
-                dg = f.create_group(rad_body_j_IRF_group)
+                irf_path = radiation_body_motion_path + "/ImpulseResponseFunction"
+                dg = f.create_group(irf_path)
                 dg.attrs['Description'] = "Impulse response function for velocity of body %u that radiates waves " \
                                           "and generates forces on body %u" % (jbody, body.ibody)
 
-                dset = f.create_dataset(rad_body_j_group + "/infinite_added_mass",
+                # Infinite added mass for body i and motion of body j
+                dset = f.create_dataset(radiation_body_motion_path + "/InfiniteAddedMass",
                                         data=rad_db.get_infinite_added_mass_matrix(body.ibody, jbody))
                 dset.attrs['Description'] = "Infinite added mass matrix that modifies the apparent mass of body %u from " \
                                             "acceleration of body %u" % (body.ibody, jbody)
 
+                added_mass = rad_db.get_added_mass(body.ibody, jbody)
+                radiation_damping = rad_db.get_radiation_damping(body.ibody, jbody)
+                impulse_response_function = irf_db.get_impulse_response(body.ibody, jbody)
+
                 for imode, motion_mode_j in enumerate(body_j.motion_modes):
 
                     # Added mass
-                    dset = f.create_dataset(rad_body_j_CM_group + "/Body_%u_DOF_%u" % (jbody, imode),
+                    dset = f.create_dataset(added_mass_path + "/DOF_%u" % (imode),
                                             data=added_mass[:, :, imode])
                     dset.attrs['Unit'] = ""
                     dset.attrs['Description'] = "Added mass coefficients for an acceleration of body %u and force on " \
                                                 "body %u (nbForce x nw)" % (jbody, body.ibody)
                     
                     # Wave damping
-                    dset = f.create_dataset(rad_body_j_CA_group + "/Body_%u_DOF_%u" % (jbody, imode),
-                                            data=wave_damping[:, :, imode])
+                    dset = f.create_dataset(radiation_damping_path + "/DOF_%u" % (imode),
+                                            data=radiation_damping[:, :, imode])
                     dset.attrs['Unit'] = ""
                     dset.attrs['Description'] = "Wave damping coefficients for an acceleration of body %u and force " \
                                                 "on body %u (nbForce x nw)" % (jbody, body.ibody)
 
                     # Impulse response function
-                    # dset = f.create_dataset(rad_body_j_IRF_group + "Body_%u_DOF_%u" % (jbody, imode),
-                    #                         data=irf.)
+                    dset = f.create_dataset(irf_path + "/DOF_%u" % (imode),
+                                            data=impulse_response_function[:, imode, :])
+                    dset.attrs['Description'] = "Impulse response functions"
                 
 
 # TODO: faire un outil en ligne de commande !!

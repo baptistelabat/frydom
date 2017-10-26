@@ -717,7 +717,14 @@ class RadiationDB(_FreqDB):
             return self.added_mass[iforce_gal, :, idof_gal]
         else:
             return np.zeros(self.nb_frequencies, dtype=np.float)
-    
+
+    def get_added_mass(self, ibody_force, ibody_motion):
+        idof_start, iforce_start = self.body_mapper.get_general_indexes(ibody_motion, 0, ibody_force, 0)
+        nb_force = self.body_mapper.get_body(ibody_force).nb_force_modes
+        nb_dof = self.body_mapper.get_body(ibody_motion).nb_dof
+        idof_end, iforce_end = self.body_mapper.get_general_indexes(ibody_motion, nb_dof-1, ibody_force, nb_force-1)
+        return self.added_mass[iforce_start:iforce_end+1, :, idof_start:idof_end+1]
+
     def get_radiation_damping_coeff(self, ibody_motion, idof, ibody_force, iforce):
         """Get the frequency dependent radiation damping coefficient
 
@@ -743,6 +750,13 @@ class RadiationDB(_FreqDB):
             return self.radiation_damping[iforce_gal, :, idof_gal]
         else:
             return np.zeros(self.nb_frequencies, dtype=np.float)
+
+    def get_radiation_damping(self, ibody_force, ibody_motion):
+        idof_start, iforce_start = self.body_mapper.get_general_indexes(ibody_motion, 0, ibody_force, 0)
+        nb_force = self.body_mapper.get_body(ibody_force).nb_force_modes
+        nb_dof = self.body_mapper.get_body(ibody_motion).nb_dof
+        idof_end, iforce_end = self.body_mapper.get_general_indexes(ibody_motion, nb_dof-1, ibody_force, nb_force-1)
+        return self.radiation_damping[iforce_start:iforce_end+1, :, idof_start:idof_end+1]
     
     def eval_impulse_response_function(self, tf=30., dt=None, full=True):
         """Computes the impulse response function
@@ -1147,6 +1161,15 @@ class RadiationIRFDB(object):
         iforce_gal = self.body_mapper.get_general_force_index(ibody_force, iforce)
 
         return self.data[iforce_gal, idof_gal, :]
+
+    def get_impulse_response(self, ibody_force, ibody_motion):
+        idof_start, iforce_start = self.body_mapper.get_general_indexes(ibody_motion, 0, ibody_force, 0)
+        nb_force = self.body_mapper.get_body(ibody_force).nb_force_modes
+        nb_dof = self.body_mapper.get_body(ibody_motion).nb_dof
+        idof_end, iforce_end = self.body_mapper.get_general_indexes(ibody_motion, nb_dof-1, ibody_force, nb_force-1)
+        return self.data[iforce_start:iforce_end+1, idof_start:idof_end+1, :]
+
+
 
     def plot(self, ibody_motion, idof, ibody_force, iforce, **kwargs):
         """Plots the impulse response function of a given modes set

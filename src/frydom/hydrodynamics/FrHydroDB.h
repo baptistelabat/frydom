@@ -8,6 +8,7 @@
 #include <vector>
 //#include "Eigen/Dense"
 
+#include "frydom/core/FrHydroBody.h"
 #include "frydom/misc/FrLinspace.h"
 #include "frydom/misc/FrEigen.h"
 
@@ -32,7 +33,7 @@ namespace frydom {
         double GetMax() const { return m_xmax; }
         void SetMax(double xmax) { m_xmax = xmax; }
 
-        double GetNbSample() const { return m_nx; }
+        unsigned int GetNbSample() const { return m_nx; }
         void SetNbSample(unsigned int nx) { m_nx = nx; }
 
         std::vector<double> GetVector() const {
@@ -40,159 +41,6 @@ namespace frydom {
         }
 
     };
-
-//    class FrDB {
-//
-//    protected:
-//        unsigned int m_nbForce;
-//        unsigned int m_nbDOF;
-//
-//    public:
-//
-//        FrDB(unsigned int nbForce, unsigned int nbDOF) : m_nbForce(nbForce), m_nbDOF(nbDOF) {}
-//
-//        void SetNbForce(const unsigned int nbForce) { m_nbForce = nbForce; }
-//
-//        unsigned int GetNbForce() const { return m_nbForce; }
-//
-//        void SetNbDOF(const unsigned int nbDOF) { m_nbDOF = nbDOF; }
-//
-//        unsigned int GetNbDOF() const { return m_nbDOF; }
-//
-//    };
-
-    // FIXME: cette architecture n'est pas la bonne
-    // Il faut pour une hdb considerer chaque corps comme appartenant a un groupe de corps en
-    // interaction hydrodynamique
-    // Chaque objet corps BEM possede des modes de force et de mouvement
-    // Chacun de ces modes peut etre actif ou pas --> contraintes de liaison
-    // Chque corps BEM possede des coefficients hydrodynamiques frequentiels et des reponses impulsionnelles
-    // Pour les excitations, seul le corps concerne subit des efforts suivant a la fois la direction
-    // de propagation de la houle et la frequence. Ceci est valable pour la diffraction et Froude-Krylov
-    // Pour la radiation, chaque corps est soumis a des efforts suivant ses modes de force en reaction
-    // a un mouvement de tous les corps (dont lui-meme) suivant leurs modes de mouvement
-    // Pour les modes de mouvement en vitesse, on a de l'amortissement de vague
-    // Pour les modes de mouvement en acceleration, on a de la masse ajoutee
-    // Pour l'amortissement de vague, on a aussi les reponses impulsionnelles qui donnent la reponse
-    // en effort suivant un des modes d'effort du corps considere etant donne un mode de mouvement
-    // d'un des corps en interaction (dont le corps subisant l'effort)
-
-
-//    class FrFrequencyDomainDB {
-//    protected:
-//        double m_minFrequency;
-//        double m_maxFrequency;
-//        unsigned int m_nbFrequencies;
-//
-//        int c_iwcut = -1;
-//
-//    public:
-//        FrFrequencyDomainDB() = default;
-//
-//        double GetMinFrequency() const { return m_minFrequency; }
-//        double GetMaxFrequency() const { return m_maxFrequency; }
-//        unsigned int GetNbFrequencies() const { return m_nbFrequencies; }
-//
-//        void SetCutoffFrequency(const double wc) {
-//            assert(wc <= m_maxFrequency && wc >= m_minFrequency);
-//            c_iwcut = (uint)(wc / GetDeltaOmega());  // TODO: verifier
-//        }
-//
-//        double GetDeltaOmega() const {
-//            return (m_maxFrequency - m_minFrequency) / (m_nbFrequencies - 1);
-//        }
-//
-//        double GetCutoffFrequency() const {
-//            if (c_iwcut < 0) {
-//                return m_maxFrequency;
-//            }
-//
-//            double dw = GetDeltaOmega();
-//            return c_iwcut * dw;
-//        }
-//
-//        void NoCutoff() {
-//            c_iwcut = -1;
-//        }
-//
-//        std::vector<double> GetOmega() const {
-//            return linspace(m_minFrequency, GetCutoffFrequency(), m_nbFrequencies);
-//        }
-//
-//        std::vector<double> GetFullOmega() const {
-//            return linspace(m_minFrequency, m_maxFrequency, m_nbFrequencies);
-//        }
-//
-//    };
-//
-    class FrHydroDB {
-
-    };
-//
-//
-//    class FrRadiationIRFDB : FrDB {
-//    // FIXME: a priori, la matrice est symmetrique, il faut en tenir compte...
-//    private:
-//        double m_tf = 0.;
-//        unsigned int m_nt = 0;
-//
-//        double m_tCutoff = -1.;  // TODO: voir si on regle les cutoff time collectivement ou pour chaque signal...
-//
-//        std::vector<std::vector<double>> m_Kt;
-//
-//    public:
-//
-//        FrRadiationIRFDB(unsigned int nbForce, unsigned int nbDOF) : FrDB(nbForce, nbDOF) {
-//            auto nbKernels = nbForce * nbDOF;
-//
-//            // Memory allocation
-//            m_Kt.reserve(nbKernels);
-//        };
-//
-//        void SetTime(const double tf, const unsigned int nt) {
-//            assert(tf > 0.);
-//
-//            m_tf = tf;
-//            m_nt = nt;
-//
-//            // Memory allocation for every mode
-//            auto nbKernels = m_nbForce * m_nbDOF;
-//
-//            for (unsigned int ielt=0; ielt<nbKernels; ++ielt) {
-//                auto Ktij = std::vector<double>();
-//                Ktij.reserve(nt);
-//                m_Kt.push_back(Ktij);
-//            }
-//
-//        }
-//
-//        void SetKernel(unsigned int ielt, const std::vector<double>& Ktij) {
-//            if (m_nt == 0) {
-//                throw "Please set the time before feeding with data";
-//            }
-//
-//            assert(Ktij.size() == m_nt);
-//
-//            m_Kt[ielt].assign(Ktij.begin(), Ktij.end());
-//
-//        }
-//
-//        void SetKernel(unsigned int iforce, unsigned int idof,
-//                       const std::vector<double>& Ktij) {
-//
-//            auto ielt = iforce * m_nbDOF + idof;
-//            SetKernel(ielt, Ktij);
-//        }
-//
-//        std::vector<double> GetKernel(unsigned int ielt) {
-//            return m_Kt[ielt];
-//        }
-//
-//        std::vector<double> GetKernel(unsigned int iforce, unsigned int idof) const {
-//            return m_Kt[iforce * m_nbDOF + idof];
-//        }
-//
-//    };
 
     class FrBEMMode {
 
@@ -235,16 +83,42 @@ namespace frydom {
     typedef FrBEMMode FrBEMForceMode; /// Force modes
     typedef FrBEMMode FrBEMMotionMode; /// Motion modes
 
+    class FrHydroDB;
 
     class FrBEMBody {
 
     private:
+        FrHydroBody* HydroBody;
+
+        FrHydroDB* m_HDB = nullptr;
+
+        unsigned int m_ID;
+        std::string m_BodyName;
+        Eigen::Vector3d m_BodyPosition;
+
+//        std::shared_ptr<FrMesh> mesh;
+
         std::vector<FrBEMForceMode> m_ForceModes;
         std::vector<FrBEMMotionMode> m_MotionModes;
 
-        // TODO: maillage du corps a importer egalement
+        std::vector<Eigen::MatrixXcd> m_Diffraction;
+        std::vector<Eigen::MatrixXcd> m_FroudeKrylov;
+
+        std::vector<Eigen::MatrixXcd> m_Excitation;
+
+        std::vector<Eigen::MatrixXd> m_InfiniteAddedMass;
+        std::vector<std::vector<Eigen::MatrixXd>> m_AddedMass;
+        std::vector<std::vector<Eigen::MatrixXd>> m_RadiationDamping;
+        std::vector<std::vector<Eigen::MatrixXd>> m_ImpulseResponseFunction;
 
     public:
+        FrBEMBody() = default;
+        FrBEMBody(unsigned int ID, std::string& BodyName) : m_ID(ID), m_BodyName(BodyName) {}
+
+        void SetName(const std::string& BodyName) { m_BodyName = BodyName; }
+        void SetBodyPosition(const Eigen::Vector3d& BodyPosition) { m_BodyPosition = BodyPosition; }
+
+        void SetHDB(FrHydroDB* HDB) { m_HDB = HDB; }
 
         unsigned int GetNbForceMode() const { return (uint)m_ForceModes.size(); }
         unsigned int GetNbMotionMode() const { return (uint)m_MotionModes.size(); }
@@ -256,9 +130,185 @@ namespace frydom {
             m_MotionModes.push_back(mode);
         }
 
+        void Initialize();
+
+        void Finalize() {
+            ComputeExcitation();
+        }
+
+        void SetDiffraction(const unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix) {
+            m_Diffraction[iangle] = diffractionMatrix;
+        }
+
+        void SetFroudeKrylov(const unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix) {
+            m_FroudeKrylov[iangle] = froudeKrylovMatrix;
+        }
+
+        void ComputeExcitation();
+
+        void SetInfiniteAddedMass(const unsigned int ibody, const Eigen::MatrixXd& CMInf) {
+            m_InfiniteAddedMass[ibody] = CMInf;
+        }
+
+        void SetAddedMass(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd& CM) {
+            m_AddedMass[ibody][idof] = CM;
+        }
+
+        void SetRadiationDamping(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd& CA) {
+            m_RadiationDamping[ibody][idof] = CA;
+        }
+
+        void SetImpulseResponseFunction(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd& IRF) {
+            m_ImpulseResponseFunction[ibody][idof] = IRF;
+        }
+
+        Eigen::MatrixXcd GetDiffraction(const unsigned int iangle) const {
+            return m_Diffraction[iangle];
+        }
+
+        Eigen::VectorXcd GetDiffraction(const unsigned int iangle, const unsigned iforce) const {
+            assert(iforce < GetNbForceMode());
+            return m_Diffraction[iangle].row(iforce);
+        }
+
+        Eigen::MatrixXcd GetFroudeKrylov(const unsigned int iangle) const {
+            return m_FroudeKrylov[iangle];
+        }
+
+        Eigen::VectorXcd GetFroudeKrylov(const unsigned int iangle, const unsigned iforce) const {
+            assert(iforce < GetNbForceMode());
+            return m_FroudeKrylov[iangle].row(iforce);
+        }
+
+        Eigen::MatrixXcd GetExcitation(const unsigned int iangle) const {
+            return m_Excitation[iangle];
+        }
+
+        Eigen::VectorXcd GetExcitation(const unsigned int iangle, const unsigned iforce) const {
+            assert(iforce < GetNbForceMode());
+            return m_Excitation[iangle].row(iforce);
+        }
+
+        Eigen::MatrixXd GetInfiniteAddedMass(const unsigned int ibody) const {
+            return m_InfiniteAddedMass[ibody];
+        }
+
+        Eigen::MatrixXd GetSelfInfiniteAddedMass() const {
+            return m_InfiniteAddedMass[m_ID];
+        }
+
+        Eigen::MatrixXd GetAddedMass(const unsigned int ibody, const unsigned int idof) const {
+            return m_AddedMass[ibody][idof];
+        }
+
+        Eigen::VectorXd GetAddedMass(const unsigned int ibody, const unsigned int idof, const unsigned int iforce) const {
+            return m_AddedMass[ibody][idof].row(iforce);
+        }
+
+        Eigen::MatrixXd GetSelfAddedMass(const unsigned int idof) const {
+            return GetAddedMass(m_ID, idof);
+        }
+
+        Eigen::VectorXd GetSelfAddedMass(const unsigned int idof, const unsigned int iforce) const {
+            return GetAddedMass(m_ID, idof, iforce);
+        }
+
+        Eigen::MatrixXd GetRadiationDamping(const unsigned int ibody, const unsigned int idof) const {
+            return m_RadiationDamping[ibody][idof];
+        }
+
+        Eigen::VectorXd GetRadiationDamping(const unsigned int ibody, const unsigned int idof, const unsigned int iforce) const {
+            return m_RadiationDamping[ibody][idof].row(iforce);
+        }
+
+        Eigen::MatrixXd GetSelfRadiationDamping(const unsigned int idof) const {
+            return GetAddedMass(m_ID, idof);
+        }
+
+        Eigen::VectorXd GetselfRadiationDamping(const unsigned int idof, const unsigned int iforce) const {
+            return GetAddedMass(m_ID, idof, iforce);
+        }
+
+        Eigen::MatrixXd GetImpulseResponseFunction(const unsigned int ibody, const unsigned int idof) const {
+            return m_ImpulseResponseFunction[ibody][idof];
+        }
+
+        Eigen::VectorXd GetImpulseResponseFunction(const unsigned int ibody, const unsigned int idof, const unsigned int iforce) const {
+            return m_ImpulseResponseFunction[ibody][idof].row(iforce);
+        }
+
+        Eigen::MatrixXd GetSelfImpulseResponseFunction(const unsigned int idof) const {
+            return GetAddedMass(m_ID, idof);
+        }
+
+        Eigen::VectorXd GetSelfImpulseResponseFunction(const unsigned int idof, const unsigned int iforce) const {
+            return GetAddedMass(m_ID, idof, iforce);
+        }
+
+
+
+
 
 
     };
+
+    class FrHydroDB {
+    private:
+        double m_GravityAcc;
+//        unsigned int m_NbBodies=0;
+        double m_NormalizationLength;
+        double m_WaterDensity;
+        double m_WaterDepth;
+        std::vector<std::shared_ptr<FrBEMBody>> m_Bodies;
+        FrDiscretization1D m_FrequencyDiscretization;
+        FrDiscretization1D m_WaveDirectionDiscretization;
+        FrDiscretization1D m_TimeDiscretization;
+
+    public:
+//        FrHydroDB() = default;
+
+        unsigned int GetNbBodies() const { return (unsigned int)m_Bodies.size(); }
+
+        void SetGravityAcc(const double GravityAcc) { m_GravityAcc = GravityAcc; }
+        void SetNormalizationLength(const double NormalizationLength) { m_NormalizationLength = NormalizationLength; }
+        void SetWaterDensity(const double WaterDensity) { m_WaterDensity = WaterDensity; }
+        void SetWaterDepth(const double WaterDepth) { m_WaterDepth = WaterDepth; }
+
+        void SetFrequencyDiscretization(const double MinFreq, const double MaxFreq, const unsigned int NbFreq) {
+            m_FrequencyDiscretization.SetMin(MinFreq);
+            m_FrequencyDiscretization.SetMax(MaxFreq);
+            m_FrequencyDiscretization.SetNbSample(NbFreq);
+        }
+
+        void SetWaveDirectionDiscretization(const double MinAngle, const double MaxAngle, const unsigned int NbAngle) {
+            m_WaveDirectionDiscretization.SetMin(MinAngle);
+            m_WaveDirectionDiscretization.SetMax(MaxAngle);
+            m_WaveDirectionDiscretization.SetNbSample(NbAngle);
+        }
+
+        void SetTimeDiscretization(const double FinalTime, const unsigned int NbTimeSamples) {
+            m_TimeDiscretization.SetMin(0.);
+            m_TimeDiscretization.SetMax(FinalTime);
+            m_TimeDiscretization.SetNbSample(NbTimeSamples);
+        }
+
+        unsigned int GetNbFrequencies() const { return m_FrequencyDiscretization.GetNbSample(); }
+        unsigned int GetNbWaveDirections() const { return m_WaveDirectionDiscretization.GetNbSample(); }
+        unsigned int GetNbTimeSamples() const { return m_TimeDiscretization.GetNbSample(); }
+
+        std::shared_ptr<FrBEMBody> NewBody(std::string BodyName) {
+            auto body = std::make_shared<FrBEMBody>(GetNbBodies(), BodyName);
+            body->SetHDB(this);
+            m_Bodies.push_back(body);
+            return body;
+        }
+
+        std::shared_ptr<FrBEMBody> GetBody(unsigned int ibody) { return m_Bodies[ibody]; }
+
+
+    };
+
+
 
 
 
