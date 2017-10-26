@@ -25,17 +25,17 @@ namespace frydom {
     private:
         FrRecorder<chrono::ChVector<double>> m_linearVelocityRecorder;
         FrRecorder<chrono::ChVector<double>> m_angularVelocityRecorder;
-        FrRadiationIRFDB m_IRFDB;
+//        FrRadiationIRFDB m_IRFDB;
 
     public:
 
 //        FrRadiationConvolutionForce() = default;
 
-        FrRadiationConvolutionForce(FrRadiationIRFDB DB) : m_IRFDB(DB) {}
-
-        void SetRadiationIRFDB(FrRadiationIRFDB DB) {
-            m_IRFDB = DB;
-        }
+//        FrRadiationConvolutionForce(FrRadiationIRFDB DB) : m_IRFDB(DB) {}
+//
+//        void SetRadiationIRFDB(FrRadiationIRFDB DB) {
+//            m_IRFDB = DB;
+//        }
 
 
         void UpdateState() override {

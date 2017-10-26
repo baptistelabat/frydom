@@ -6,6 +6,7 @@ import numpy as np
 import datetime
 
 from bemio.data_structures.bem import HydrodynamicData
+from warnings import warn
 
 def write_hdb5(hydro_db, out_file=None):
     
@@ -50,31 +51,38 @@ def write_hdb5(hydro_db, out_file=None):
         dis_group = "/discretizations"
         f.create_group(dis_group)
         freq_group = dis_group + "/frequency"
+
         nw = hydro_db.nb_frequencies
         dset = f.create_dataset(freq_group + "/nbFrequencies", data=nw)
         dset.attrs['Description'] = "Number of frequencies in the discretization"
+
         dset = f.create_dataset(freq_group + "/minFrequency", data=hydro_db.min_frequency)
         dset.attrs['Unit'] = "rad/s"
         dset.attrs['Description'] = "Minimum frequency specified for the computations"
+
         dset = f.create_dataset(freq_group + "/maxFrequency", data=hydro_db.nb_frequencies)
         dset.attrs['Unit'] = "rad/s"
         dset.attrs['Description'] = "Maximum frequency specified for the computations"
         
         # Wave direction discretization
         wave_dir_group = dis_group + "/wave_directions"
+
         nb_wave_dir = hydro_db.nb_wave_dir
         dset = f.create_dataset(wave_dir_group + "/nbWaveDirections", data=nb_wave_dir)
         dset.attrs['Description'] = "Number of wave directions in the discretization"
+
         min_wave_dir = hydro_db.min_wave_dir
         dset = f.create_dataset(wave_dir_group + "/minAngle", data=min_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Minimum angle specified for the computations"
+
         max_wave_dir = hydro_db.max_wave_dir
         dset = f.create_dataset(wave_dir_group + "/maxAngle", data=max_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Maximum angle specified for the computations"
-        
-        irf_db = hydro_db.radiation_db.eval_impulse_response_function(100, dt=0.1)
+
+        # TODO: regler dans le writer
+        irf_db = hydro_db.radiation_db.eval_impulse_response_function(tf=100, dt=0.1)
         
         # Time discretization
         time_dir_group = dis_group + "/time"
@@ -91,7 +99,7 @@ def write_hdb5(hydro_db, out_file=None):
         for body in hydro_db.body_mapper.bodies:
             # assert isinstance(body, HydrodynamicData)
             
-            group_name = 'Body_%u' % body.ibody
+            group_name = '/Bodies/Body_%u' % body.ibody
             
             dset = f.create_group(group_name)
 
@@ -148,6 +156,7 @@ def write_hdb5(hydro_db, out_file=None):
             dset = f.create_dataset(group_name + "/mesh/faces", data=body.mesh.faces)
             
             # Froude-Krylov
+            warn('FIXME: Problem in the Froude-Krylov computations')
             fk_db = hydro_db.froude_krylov_db
             fk_group = group_name + "/excitation/froude_krylov"
             f.create_group(fk_group)
@@ -193,12 +202,21 @@ def write_hdb5(hydro_db, out_file=None):
             rad_db = hydro_db.radiation_db
             rad_group = group_name + "/radiation"
             f.create_group(rad_group)
-            
-            added_mass = rad_db.added_mass
-            wave_damping = rad_db.radiation_damping
+
+            rad_db.eval_infinite_added_mass()  # FIXME: ici on redeclenche un calcul de reponses impulsionnelles...
+
+            added_mass = rad_db.added_mass  # FIXME: ici, on veut recuperer la matrice pour le couple de corps i, j !!
+            wave_damping = rad_db.radiation_damping # FIXME: pareil ici !!
+            # impulse_response_function = rad_db.irf # FIXME: pareil ici !!
+            # irf_db.plot_array()
+
             
             for body_j in hydro_db.body_mapper.bodies:
                 jbody = body_j.ibody
+
+
+
+
                 rad_body_j_group = rad_group + "/Body_%u_motion" % jbody
                 
                 dg = f.create_group(rad_body_j_group)
@@ -214,12 +232,18 @@ def write_hdb5(hydro_db, out_file=None):
                 dg = f.create_group(rad_body_j_CA_group)
                 dg.attrs['Description'] = "Wave damping coefficients for velocity of body %u that radiates waves " \
                                           "and generates forces on body %u" % (jbody, body.ibody)
-                
-                
+
+                rad_body_j_IRF_group = rad_body_j_group + "/impulse_response_function"
+                dg = f.create_group(rad_body_j_IRF_group)
+                dg.attrs['Description'] = "Impulse response function for velocity of body %u that radiates waves " \
+                                          "and generates forces on body %u" % (jbody, body.ibody)
+
+                dset = f.create_dataset(rad_body_j_group + "/infinite_added_mass",
+                                        data=rad_db.get_infinite_added_mass_matrix(body.ibody, jbody))
+                dset.attrs['Description'] = "Infinite added mass matrix that modifies the apparent mass of body %u from " \
+                                            "acceleration of body %u" % (body.ibody, jbody)
+
                 for imode, motion_mode_j in enumerate(body_j.motion_modes):
-                    # Infinite added mass
-
-
 
                     # Added mass
                     dset = f.create_dataset(rad_body_j_CM_group + "/Body_%u_DOF_%u" % (jbody, imode),
@@ -234,7 +258,10 @@ def write_hdb5(hydro_db, out_file=None):
                     dset.attrs['Unit'] = ""
                     dset.attrs['Description'] = "Wave damping coefficients for an acceleration of body %u and force " \
                                                 "on body %u (nbForce x nw)" % (jbody, body.ibody)
-                
+
+                    # Impulse response function
+                    # dset = f.create_dataset(rad_body_j_IRF_group + "Body_%u_DOF_%u" % (jbody, imode),
+                    #                         data=irf.)
                 
 
 # TODO: faire un outil en ligne de commande !!

@@ -25,10 +25,6 @@ namespace IO {
     class FrHDF5Reader {
 
         typedef unsigned int MODE;
-//        enum MODE {
-//            R = H5F_ACC_RDONLY,
-//            RW = H5F_ACC_RDWR
-//        };
 
     private:
 
@@ -46,7 +42,7 @@ namespace IO {
 
         ~FrHDF5Reader() {
             m_file->close();
-            std::cout << std::endl << "HDF5 file " << m_filename << " has been properly closed" << std::endl;
+//            std::cout << std::endl << "HDF5 file " << m_filename << " has been properly closed" << std::endl;
         }
 
         void SetFilename(const std::string& filename, MODE mode=R) {

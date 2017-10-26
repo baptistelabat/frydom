@@ -83,10 +83,10 @@ namespace frydom {
 
                 if (mode_type == "moment") {
                     point = reader.ReadDoubleArray(imode_path + "/application_point");
-                    mode.SetTypeMOMENT();
+                    mode.SetTypeANGULAR();
                     mode.SetPoint(point);
                 } else {
-                    mode.SetTypeFORCE();
+                    mode.SetTypeLINEAR();
                 }
 
                 // Adding the mode to the BEMBody
@@ -112,10 +112,10 @@ namespace frydom {
 
                 if (mode_type == "rotation") {
                     point = reader.ReadDoubleArray(imode_path + "/rotation_point");
-                    mode.SetTypeROTATION();
+                    mode.SetTypeANGULAR();
                     mode.SetPoint(point);
                 } else {
-                    mode.SetTypeTRANSLATION();
+                    mode.SetTypeLINEAR();
                 }
 
                 // Adding the mode to the BEMBody
