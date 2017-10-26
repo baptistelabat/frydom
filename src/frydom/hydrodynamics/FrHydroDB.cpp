@@ -17,18 +17,23 @@ namespace frydom {
         IO::FrHDF5Reader reader;
         reader.SetFilename(hdb5_file);
 
+        // Hydrodynamics Database creation
+        FrHydroDB HDB;
+
         auto GravityAcc = reader.ReadDouble("/GravityAcc");
+        HDB.SetGravityAcc(GravityAcc);
 
         auto WaterDensity = reader.ReadDouble("/WaterDensity");
+        HDB.SetWaterDensity(WaterDensity);
 
         auto NormalizationLength = reader.ReadDouble("/NormalizationLength");
+        HDB.SetNormalizationLength(NormalizationLength);
 
         auto WaterDepth = reader.ReadDouble("/WaterDepth");
+        HDB.SetWaterDepth(WaterDepth);
 
         auto NbBodies = reader.ReadInt("/NbBody");
 
-        std::vector<FrBEMBody> Bodies;
-        Bodies.reserve((uint)NbBodies);
 
         std::string discretization_path = "/Discretizations";
 
@@ -37,20 +42,23 @@ namespace frydom {
         auto NbFreq = reader.ReadInt(frequency_discretization_path + "/NbFrequencies");
         auto MinFreq = reader.ReadDouble(frequency_discretization_path + "/MinFrequency");
         auto MaxFreq = reader.ReadDouble(frequency_discretization_path + "/MaxFrequency");
-        auto omega = linspace<double>(MinFreq, MaxFreq, (uint)NbFreq);
+//        auto omega = linspace<double>(MinFreq, MaxFreq, (uint)NbFreq);
+        HDB.SetFrequencyDiscretization(MinFreq, MaxFreq, (uint)NbFreq);
 
         // Reading wave propagation direction discretization
         std::string wave_direction_discretization_path = discretization_path + "/WaveDirections";
         auto NbWaveDir = reader.ReadInt(wave_direction_discretization_path + "/NbWaveDirections");
         auto MinWaveDir = reader.ReadDouble(wave_direction_discretization_path + "/MinAngle");
         auto MaxWaveDir = reader.ReadDouble(wave_direction_discretization_path + "/MaxAngle");
-        auto WaveDirections = linspace<double>(MinWaveDir, MaxWaveDir, (uint)NbWaveDir);
+//        auto WaveDirections = linspace<double>(MinWaveDir, MaxWaveDir, (uint)NbWaveDir);
+        HDB.SetWaveDirectionDiscretization(MinWaveDir, MaxWaveDir, (uint)NbWaveDir);
 
         // Reading wave propagation direction discretization
         std::string time_discretization_path = discretization_path + "/Time";
         auto NbTimeSample = reader.ReadInt(time_discretization_path + "/NbTimeSample");
         auto FinalTime = reader.ReadDouble(time_discretization_path + "/FinalTime");
-        auto time = linspace<double>(0., FinalTime, (uint)NbTimeSample);
+//        auto time = linspace<double>(0., FinalTime, (uint)NbTimeSample);
+        HDB.SetTimeDiscretization(FinalTime, (uint)NbTimeSample);
 
         // Getting data from body
         std::string body_path("/Bodies/Body_");
@@ -62,12 +70,13 @@ namespace frydom {
             body_i_path = body_path + buffer;
 
             auto BodyName = reader.ReadString(body_i_path + "/BodyName");
+            auto body = HDB.NewBody(BodyName);
 
             auto BodyPosition = reader.ReadDoubleArray(body_i_path + "/BodyPosition");
+            body->SetBodyPosition(BodyPosition);
 
             auto ID = reader.ReadInt(body_i_path + "/ID");
-
-            FrBEMBody body;
+            assert(body->GetID() == ID);
 
             auto nbForceModes = reader.ReadInt(body_i_path + "/Modes/NbForceModes");
 
@@ -95,7 +104,7 @@ namespace frydom {
                 }
 
                 // Adding the mode to the BEMBody
-                body.AddForceMode(mode);
+                body->AddForceMode(mode);
 
             }  // end for iforce
 
@@ -124,7 +133,7 @@ namespace frydom {
                 }
 
                 // Adding the mode to the BEMBody
-                body.AddMotionMode(mode);
+                body->AddMotionMode(mode);
 
             }  // end for imotion
 
@@ -136,8 +145,10 @@ namespace frydom {
             auto nbFaces = reader.ReadInt(ibody_mesh_path + "/NbFaces");
             auto faces = reader.ReadIntArray(ibody_mesh_path + "/Faces");
 
-            Bodies.push_back(body);
+            // TODO: construire un objet maillage !!!!
 
+
+            body->Initialize();
 
         }  // end for ibody
 
@@ -146,8 +157,7 @@ namespace frydom {
 
             sprintf(buffer, "%d", ibody);
             body_i_path = body_path + buffer;
-
-            auto body = Bodies[ibody];
+            auto body = HDB.GetBody(ibody);
 
             // Reading the excitation hydrodynamic coefficients
             auto diffraction_path = body_i_path + "/Excitation/Diffraction";
@@ -164,6 +174,7 @@ namespace frydom {
 
                 Eigen::MatrixXcd diffractionCoeffs;
                 diffractionCoeffs = diffraction_realCoeffs + J * diffraction_imagCoeffs;
+                body->SetDiffraction(iwave_dir, diffractionCoeffs);
 
                 // Reading Froude-Krylov coefficients
                 fk_wave_dir_path = froude_kylov_path + buffer;
@@ -173,6 +184,7 @@ namespace frydom {
 
                 Eigen::MatrixXcd froudeKrylovCoeffs;
                 froudeKrylovCoeffs = fk_realCoeffs + J * fk_imagCoeffs;
+                body->SetFroudeKrylov(iwave_dir, froudeKrylovCoeffs);
 
             }
 
@@ -182,7 +194,7 @@ namespace frydom {
             for (unsigned int ibody_motion=0; ibody_motion<NbBodies; ++ibody_motion) {
                 sprintf(buffer, "/BodyMotion_%d", ibody_motion);
 
-                body_motion = Bodies[ibody];
+//                body_motion = Bodies[ibody];
 
                 auto body_i_added_mass_path = radiation_path + buffer + "/AddedMass";
                 auto body_i_radiation_damping_path = radiation_path + buffer + "/RadiationDamping";
@@ -241,24 +253,37 @@ namespace frydom {
             Eigen::MatrixXd InfAddedMassMat(nbForce, NbMotion);
             m_InfiniteAddedMass.push_back(InfAddedMassMat);
 
-            m_AddedMass[ibody].reserve(NbMotion);
-            m_RadiationDamping[ibody].reserve(NbMotion);
-            m_ImpulseResponseFunction[ibody].reserve(NbMotion);
+//            m_AddedMass[ibody].reserve(NbMotion);
+//            m_RadiationDamping[ibody].reserve(NbMotion);
+//            m_ImpulseResponseFunction[ibody].reserve(NbMotion);
+
+            std::vector<Eigen::MatrixXd> added_mass_vector;
+            added_mass_vector.reserve(NbMotion);  // TODO: voir si utile...
+            std::vector<Eigen::MatrixXd> radiation_damping_vector;
+            radiation_damping_vector.reserve(NbMotion);
+            std::vector<Eigen::MatrixXd> impulse_response_fcn_vector;
+            impulse_response_fcn_vector.reserve(NbMotion);
 
             for (unsigned int idof=0; idof<NbMotion; ++idof) {
+
                 Eigen::MatrixXd mat(nbForce, NbFreq);
-                m_AddedMass[ibody].push_back(mat);
-                m_RadiationDamping[ibody].push_back(mat);
+                added_mass_vector.push_back(mat);
+                radiation_damping_vector.push_back(mat);
+//                m_AddedMass[ibody].push_back(mat);
+//                m_RadiationDamping[ibody].push_back(mat);
 
                 Eigen::MatrixXd matTime(nbForce, NbTime);
-                m_ImpulseResponseFunction[ibody].push_back(matTime);
+                impulse_response_fcn_vector.push_back(matTime);
+//                m_ImpulseResponseFunction[ibody].push_back(matTime);
             }
+            m_AddedMass.push_back(added_mass_vector);
+            m_RadiationDamping.push_back(radiation_damping_vector);
+            m_ImpulseResponseFunction.push_back(impulse_response_fcn_vector);
 
-
+            added_mass_vector.clear();
+            radiation_damping_vector.clear();
+            impulse_response_fcn_vector.clear();
         }
-
-
-
 
     }
 

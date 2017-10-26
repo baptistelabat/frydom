@@ -60,7 +60,7 @@ def write_hdb5(hydro_db, out_file=None):
         dset.attrs['Unit'] = "rad/s"
         dset.attrs['Description'] = "Minimum frequency specified for the computations"
 
-        dset = f.create_dataset(frequential_path + "/MaxFrequency", data=hydro_db.nb_frequencies)
+        dset = f.create_dataset(frequential_path + "/MaxFrequency", data=hydro_db.max_frequency)
         dset.attrs['Unit'] = "rad/s"
         dset.attrs['Description'] = "Maximum frequency specified for the computations"
         

@@ -19,11 +19,13 @@ namespace frydom {
 
     class FrDiscretization1D {
     private:
-        double m_xmin;
-        double m_xmax;
-        unsigned int m_nx;
+        double m_xmin = 0.;
+        double m_xmax = 0.;
+        unsigned int m_nx = 0;
 
     public:
+        FrDiscretization1D() = default;
+
         FrDiscretization1D(double xmin, double xmax, unsigned int nx)
                 : m_xmin(xmin), m_xmax(xmax), m_nx(nx) {}
 
@@ -122,6 +124,8 @@ namespace frydom {
 
         unsigned int GetNbForceMode() const { return (uint)m_ForceModes.size(); }
         unsigned int GetNbMotionMode() const { return (uint)m_MotionModes.size(); }
+
+        unsigned int GetID() const { return m_ID; }
 
         void AddForceMode(FrBEMForceMode& mode) {
             m_ForceModes.push_back(mode);
@@ -248,8 +252,6 @@ namespace frydom {
 
 
 
-
-
     };
 
     class FrHydroDB {
@@ -265,7 +267,7 @@ namespace frydom {
         FrDiscretization1D m_TimeDiscretization;
 
     public:
-//        FrHydroDB() = default;
+        FrHydroDB() {};
 
         unsigned int GetNbBodies() const { return (unsigned int)m_Bodies.size(); }
 
