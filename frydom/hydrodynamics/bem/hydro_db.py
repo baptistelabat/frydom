@@ -852,6 +852,7 @@ class RadiationDB(_FreqDB):
         integral = np.einsum('ijk, j -> ijk', np.trapz(kernel, x=time, axis=3), 1. / w)  # is nint x nw x nrad
     
         self._cm_inf = (cm + integral).mean(axis=1)  # is nint x nrad
+        return self._cm_inf
 
     def get_infinite_added_mass_matrix(self, ibody_force=None, ibody_motion=None):
         """Get the infinite added mass matrix for forces on one body and motions of a possibly other body

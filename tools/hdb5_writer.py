@@ -156,7 +156,7 @@ def write_hdb5(hydro_db, out_file=None):
             dset = f.create_dataset(mesh_path + "/Vertices", data=body.mesh.vertices)
             dset = f.create_dataset(mesh_path + "/NbFaces", data=body.mesh.nb_faces)
             dset = f.create_dataset(mesh_path + "/Faces", data=body.mesh.faces)
-            
+
             # Froude-Krylov
             excitation_path = body_path + "/Excitation"
 
@@ -291,6 +291,24 @@ if __name__ == '__main__':
     sim_dir = '/home/frongere/Documents/Cylinder'
 
     reader = NemohReader(cal_file=sim_dir + "/Nemoh.cal")
-    
 
     write_hdb5(reader.hydro_db)
+
+    # cminf = reader.hydro_db.radiation_db.eval_infinite_added_mass()
+    # added_mass = reader.hydro_db.radiation_db.added_mass
+    #
+    # damping = reader.hydro_db.radiation_db.radiation_damping
+    #
+    #
+    # print "kjsdf"
+
+
+
+
+
+
+
+
+
+
+
