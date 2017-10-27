@@ -10,7 +10,7 @@ using namespace frydom;
 int main(int argc, char* argv[]) {
 
 
-    auto IRFDB = LoadHDB5("../tools/frydom_hdb.h5");
+    auto HDB = LoadHDB5("../tools/frydom_hdb.h5");
 
 
     return 0;

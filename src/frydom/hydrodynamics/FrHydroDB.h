@@ -55,7 +55,6 @@ namespace frydom {
         TYPE m_type;
         Eigen::Vector3d m_direction;
         Eigen::Vector3d m_point;
-        Eigen::Vector2d vec;
 
         bool m_active = true;
 
@@ -98,16 +97,17 @@ namespace frydom {
         std::string m_BodyName;
         Eigen::Vector3d m_BodyPosition;
 
-//        std::shared_ptr<FrMesh> mesh;
+//        std::shared_ptr<FrMesh> m_HydrodynamicMesh;
 
         std::vector<FrBEMForceMode> m_ForceModes;
         std::vector<FrBEMMotionMode> m_MotionModes;
 
+        Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> m_ExcitationMask;
         std::vector<Eigen::MatrixXcd> m_Diffraction;
         std::vector<Eigen::MatrixXcd> m_FroudeKrylov;
-
         std::vector<Eigen::MatrixXcd> m_Excitation;
 
+        std::vector<Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>> m_RadiationMask;
         std::vector<Eigen::MatrixXd> m_InfiniteAddedMass;
         std::vector<std::vector<Eigen::MatrixXd>> m_AddedMass;
         std::vector<std::vector<Eigen::MatrixXd>> m_RadiationDamping;
@@ -134,130 +134,75 @@ namespace frydom {
             m_MotionModes.push_back(mode);
         }
 
+        void FilterRadiation();
+
         void Initialize();
 
         void Finalize() {
             ComputeExcitation();
+            FilterRadiation();
         }
 
-        void SetDiffraction(const unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix) {
-            m_Diffraction[iangle] = diffractionMatrix;
-        }
+        void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
 
-        void SetFroudeKrylov(const unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix) {
-            m_FroudeKrylov[iangle] = froudeKrylovMatrix;
-        }
+        void SetFroudeKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix);
 
         void ComputeExcitation();
 
-        void SetInfiniteAddedMass(const unsigned int ibody, const Eigen::MatrixXd& CMInf) {
-            m_InfiniteAddedMass[ibody] = CMInf;
-        }
+        void SetInfiniteAddedMass(unsigned int ibody, const Eigen::MatrixXd& CMInf);
 
-        void SetAddedMass(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd& CM) {
-            m_AddedMass[ibody][idof] = CM;
-        }
+        void SetAddedMass(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CM);
 
-        void SetRadiationDamping(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd& CA) {
-            m_RadiationDamping[ibody][idof] = CA;
-        }
+        void SetRadiationDamping(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CA);
 
-        void SetImpulseResponseFunction(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd& IRF) {
-            m_ImpulseResponseFunction[ibody][idof] = IRF;
-        }
+        void SetImpulseResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
 
-        Eigen::MatrixXcd GetDiffraction(const unsigned int iangle) const {
-            return m_Diffraction[iangle];
-        }
+        Eigen::MatrixXcd GetDiffraction(unsigned int iangle) const;
 
-        Eigen::VectorXcd GetDiffraction(const unsigned int iangle, const unsigned iforce) const {
-            assert(iforce < GetNbForceMode());
-            return m_Diffraction[iangle].row(iforce);
-        }
+        Eigen::VectorXcd GetDiffraction(unsigned int iangle, unsigned int iforce) const;
 
-        Eigen::MatrixXcd GetFroudeKrylov(const unsigned int iangle) const {
-            return m_FroudeKrylov[iangle];
-        }
+        Eigen::MatrixXcd GetFroudeKrylov(unsigned int iangle) const;
 
-        Eigen::VectorXcd GetFroudeKrylov(const unsigned int iangle, const unsigned iforce) const {
-            assert(iforce < GetNbForceMode());
-            return m_FroudeKrylov[iangle].row(iforce);
-        }
+        Eigen::VectorXcd GetFroudeKrylov(unsigned int iangle, unsigned int iforce) const;
 
-        Eigen::MatrixXcd GetExcitation(const unsigned int iangle) const {
-            return m_Excitation[iangle];
-        }
+        Eigen::MatrixXcd GetExcitation(unsigned int iangle) const;
 
-        Eigen::VectorXcd GetExcitation(const unsigned int iangle, const unsigned iforce) const {
-            assert(iforce < GetNbForceMode());
-            return m_Excitation[iangle].row(iforce);
-        }
+        Eigen::VectorXcd GetExcitation(unsigned int iangle, unsigned int iforce) const;
 
-        Eigen::MatrixXd GetInfiniteAddedMass(const unsigned int ibody) const {
-            return m_InfiniteAddedMass[ibody];
-        }
+        Eigen::MatrixXd GetInfiniteAddedMass(unsigned int ibody) const;
 
-        Eigen::MatrixXd GetSelfInfiniteAddedMass() const {
-            return m_InfiniteAddedMass[m_ID];
-        }
+        Eigen::MatrixXd GetSelfInfiniteAddedMass() const;
 
-        Eigen::MatrixXd GetAddedMass(const unsigned int ibody, const unsigned int idof) const {
-            return m_AddedMass[ibody][idof];
-        }
+        Eigen::MatrixXd GetAddedMass(unsigned int ibody, unsigned int idof) const;
 
-        Eigen::VectorXd GetAddedMass(const unsigned int ibody, const unsigned int idof, const unsigned int iforce) const {
-            return m_AddedMass[ibody][idof].row(iforce);
-        }
+        Eigen::VectorXd GetAddedMass(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
 
-        Eigen::MatrixXd GetSelfAddedMass(const unsigned int idof) const {
-            return GetAddedMass(m_ID, idof);
-        }
+        Eigen::MatrixXd GetSelfAddedMass(unsigned int idof) const;
 
-        Eigen::VectorXd GetSelfAddedMass(const unsigned int idof, const unsigned int iforce) const {
-            return GetAddedMass(m_ID, idof, iforce);
-        }
+        Eigen::VectorXd GetSelfAddedMass(unsigned int idof, unsigned int iforce) const;
 
-        Eigen::MatrixXd GetRadiationDamping(const unsigned int ibody, const unsigned int idof) const {
-            return m_RadiationDamping[ibody][idof];
-        }
+        Eigen::MatrixXd GetRadiationDamping(unsigned int ibody, unsigned int idof) const;
 
-        Eigen::VectorXd GetRadiationDamping(const unsigned int ibody, const unsigned int idof, const unsigned int iforce) const {
-            return m_RadiationDamping[ibody][idof].row(iforce);
-        }
+        Eigen::VectorXd GetRadiationDamping(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
 
-        Eigen::MatrixXd GetSelfRadiationDamping(const unsigned int idof) const {
-            return GetAddedMass(m_ID, idof);
-        }
+        Eigen::MatrixXd GetSelfRadiationDamping(unsigned int idof) const;
 
-        Eigen::VectorXd GetselfRadiationDamping(const unsigned int idof, const unsigned int iforce) const {
-            return GetAddedMass(m_ID, idof, iforce);
-        }
+        Eigen::VectorXd GetselfRadiationDamping(unsigned int idof, unsigned int iforce) const;
 
-        Eigen::MatrixXd GetImpulseResponseFunction(const unsigned int ibody, const unsigned int idof) const {
-            return m_ImpulseResponseFunction[ibody][idof];
-        }
+        Eigen::MatrixXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof) const;
 
-        Eigen::VectorXd GetImpulseResponseFunction(const unsigned int ibody, const unsigned int idof, const unsigned int iforce) const {
-            return m_ImpulseResponseFunction[ibody][idof].row(iforce);
-        }
+        Eigen::VectorXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
 
-        Eigen::MatrixXd GetSelfImpulseResponseFunction(const unsigned int idof) const {
-            return GetAddedMass(m_ID, idof);
-        }
+        Eigen::MatrixXd GetSelfImpulseResponseFunction(unsigned int idof) const;
 
-        Eigen::VectorXd GetSelfImpulseResponseFunction(const unsigned int idof, const unsigned int iforce) const {
-            return GetAddedMass(m_ID, idof, iforce);
-        }
-
-
-
+        Eigen::VectorXd GetSelfImpulseResponseFunction(unsigned int idof, unsigned int iforce) const;
 
     };
+
 
     class FrHydroDB {
     private:
         double m_GravityAcc;
-//        unsigned int m_NbBodies=0;
         double m_NormalizationLength;
         double m_WaterDensity;
         double m_WaterDepth;
@@ -271,9 +216,16 @@ namespace frydom {
 
         unsigned int GetNbBodies() const { return (unsigned int)m_Bodies.size(); }
 
+        double GetGravityAcc() const { return m_GravityAcc; }
         void SetGravityAcc(const double GravityAcc) { m_GravityAcc = GravityAcc; }
+
+        double GetNormalizationLength() const { return m_NormalizationLength; }
         void SetNormalizationLength(const double NormalizationLength) { m_NormalizationLength = NormalizationLength; }
+
+        double GetWaterDensity() const { return m_WaterDensity; }
         void SetWaterDensity(const double WaterDensity) { m_WaterDensity = WaterDensity; }
+
+        double GetWaterDepth() const { return m_WaterDepth; }
         void SetWaterDepth(const double WaterDepth) { m_WaterDepth = WaterDepth; }
 
         void SetFrequencyDiscretization(const double MinFreq, const double MaxFreq, const unsigned int NbFreq) {
@@ -309,11 +261,6 @@ namespace frydom {
 
 
     };
-
-
-
-
-
 
 
 
