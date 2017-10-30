@@ -38,7 +38,7 @@ namespace frydom{
     class FrOffshoreSystem;
 //    class FrTriangleMeshConnected;
 
-namespace environment{
+namespace environment{  // TODO: supprimer le namespace environment ?? -> NON
 
     /// Pure Virtual Base class for a free surface system.
     class FrFreeSurface {
@@ -64,16 +64,16 @@ namespace environment{
 
         virtual ~FrFreeSurface() {std::cout << "Free surface deleted" << "\n";};
 
-        /// Update the state of the free surface at the specified time.
+        /// Update the state of the free surface at the specified time. --> FIXME: supprimer !!
         virtual void Synchronize(double time) {};  // Devra d'appeler UpdateTime pour rester sur les conventions chrono
 
-        /// Advance the state of the free surface by the specified duration.
+        /// Advance the state of the free surface by the specified duration. // FIXME: pas utile -->UpdateTime...
         virtual void Advance(double step) {};
 
-        /// Get the mean height of the free surface's plane.
+        /// Get the mean height of the free surface's plane. --> Donne par FrTidal !!
         virtual double getMeanHeight() const;
 
-        /// Get the free surface elevation at specified.
+        /// Get the free surface elevation at specified. // TODO: enlever le time (updateTime le fait) --> tidal + wave height
         virtual double GetHeight(double x, double y, double t) const = 0;
 
         /// Initializes the free surface system
@@ -105,7 +105,7 @@ namespace environment{
         std::shared_ptr<chrono::ChBody> getBody() {return m_fs_body;}
 
 
-      protected:;  // Disallow the default constructor to be used as a publid method
+      protected:;  // Disallow the default constructor to be used as a public method
 
         double ChTime;
         bool m_vis_enabled;

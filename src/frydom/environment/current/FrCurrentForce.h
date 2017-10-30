@@ -6,6 +6,7 @@
 #define FRYDOM_FRCURRENTFORCE_H
 
 #include "frydom/core/FrForce.h"
+#include "frydom/core/FrHydroBody.h"
 #include "FrCurrentPolarCoeffs.h"
 
 namespace frydom {

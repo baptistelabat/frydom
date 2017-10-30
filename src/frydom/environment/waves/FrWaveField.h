@@ -9,6 +9,7 @@
 #include <random>
 #include "FrWaveSpectrum.h"
 #include "FrWaveDispersionRelation.h"
+#include "FrWaveProbe.h"
 
 #define J std::complex<double>(0, 1)
 
@@ -19,8 +20,16 @@ namespace frydom {
 
     class FrWaveField {  // TODO: ajouter dans cette classe un modele de tidal...
 
+//        enum TYPE {
+//            LINEAR_REGULAR,
+//            LINEAR_IRREGULAR,
+//            LINEAR_IRREGULAR_DIRECTIONNAL
+//        };
+
     protected:
         double m_time = 0.;
+
+        std::vector<std::shared_ptr<FrWaveProbe>> m_waveProbes;
 
         virtual void Update_ejwt() = 0;
 
@@ -62,7 +71,8 @@ namespace frydom {
 
         void UpdateTime(const double time) {
             m_time = time;
-            Update_ejwt();
+            Update_ejwt();  // FIXME: ne doit pas apparaitre ici, c'est une methode propre a la houle d'Airy !!
+
         }
 
         void UpdateState() {
@@ -73,6 +83,9 @@ namespace frydom {
             UpdateTime(time);
             UpdateState();
         }
+
+        virtual std::shared_ptr<FrWaveProbe> NewWaveProbe(double x, double y) = 0;
+
 
     };
 
@@ -88,13 +101,13 @@ namespace frydom {
     public:
         FrLinearWaveField() = default;
 
-        explicit FrLinearWaveField(const double mean_wave_dir) : m_mean_wave_dir(mean_wave_dir) {};
+        explicit FrLinearWaveField(const double mean_wave_dir) : m_mean_wave_dir(mean_wave_dir*M_DEG) {};
 
         virtual std::vector<double> GetWaveDirections() const = 0;
 
         virtual std::vector<double> GetWavePulsations() const = 0;
 
-        virtual std::vector<double> GetWavePhases() const = 0;
+        virtual std::vector<std::vector<double>> GetWavePhases() const = 0;
 
         virtual void SetWavePhases(const std::vector<double>& wavePhases) = 0;
 
@@ -102,8 +115,9 @@ namespace frydom {
 //
 //        virtual std::vector<double> GetWaveLengths() const = 0;
 //
-        virtual std::vector<double> GetWaveAmplitudes() const = 0;
+        virtual std::vector<std::vector<double>> GetWaveAmplitudes() const = 0;
 
+        virtual std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const = 0;
 
     };
 
@@ -135,8 +149,11 @@ namespace frydom {
 
     public:
         // TODO: permettre de specifier des degres pour la direction
+        // TODO: ajouter un getter pour mean_wave_dir
         // FIXME: ordre tp, hs non consistant !! (renverser)
-        FrRegularLinearWaveField(const double wave_period, const double wave_height, const double mean_wave_dir) :
+        FrRegularLinearWaveField(const double wave_period,
+                                 const double wave_height,
+                                 const double mean_wave_dir) :  // Wave directions have to be given in degrees !
                 m_wave_period(wave_period),
                 m_wave_height(wave_height),
                 FrLinearWaveField(mean_wave_dir) {
@@ -157,30 +174,35 @@ namespace frydom {
             return omega;
         }
 
-        std::vector<double> GetWavePhases() const override {
-            std::vector<double> phases;
-            phases.push_back(0.);
+        std::vector<std::vector<double>> GetWavePhases() const override {
+            std::vector<std::vector<double>> phases;
+            std::vector<double> phi;
+            phi.push_back(0.);
+            phases.push_back(phi);
             return phases;
         }
 
         void SetWavePhases(const std::vector<double>& wavePhases) override {}
 
-        std::vector<double> GetWaveAmplitudes() const override {
+        std::vector<std::vector<double>> GetWaveAmplitudes() const override {
+            std::vector<std::vector<double>> amplitudes;
             std::vector<double> wave_ampl;
             wave_ampl.push_back(0.5 * m_wave_height);
-            return wave_ampl;
+            amplitudes.push_back(wave_ampl);
+            return amplitudes;
         }
 
-        std::complex<double> GetSteadyElevation(const double x, const double y) const {
+        std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const override {
 
             double w_ = x * cos(m_mean_wave_dir) + y * sin(m_mean_wave_dir);
-            std::complex<double> steady_elev = 0.5 * m_wave_height * std::exp(J*c_wave_number*w_);
+            std::complex<double> cmplx_elev = 0.5 * m_wave_height * std::exp(J*c_wave_number*w_);
+            std::vector<std::complex<double>> steady_elev;
+            steady_elev.push_back(cmplx_elev);
             return steady_elev;
-
         }
 
         std::complex<double> GetCmplxFreeSurfaceElevation(const double x, const double y) const {
-            return GetCmplxFreeSurfaceElevation(GetSteadyElevation(x, y));
+            return GetCmplxFreeSurfaceElevation(GetSteadyElevation(x, y)[0]);
         }
 
         std::complex<double> GetCmplxFreeSurfaceElevation(std::complex<double> steady_elevation) const {
@@ -190,6 +212,15 @@ namespace frydom {
         double GetFreeSurfaceElevation(const double x, const double y) const override {
             auto cmplx_elev = GetCmplxFreeSurfaceElevation(x, y);
             return std::imag(cmplx_elev);
+        }
+
+        std::shared_ptr<FrWaveProbe> NewWaveProbe(double x, double y) override {
+
+            auto waveProbe = std::make_shared<FrLinearRegularWaveProbe>(x, y);
+            waveProbe->SetWaveField(this);
+            waveProbe->Initialize();
+            m_waveProbes.push_back(waveProbe);
+            return waveProbe;
         }
 
     };
@@ -265,7 +296,11 @@ namespace frydom {
             }
         }
 
-        std::vector<double> GetWavePhases() const override { return m_phases; }
+        std::vector<std::vector<double>> GetWavePhases() const override {
+            std::vector<std::vector<double>> phases;
+            phases.push_back(m_phases);
+            return phases;
+        }
 
         void SetWavePhases(const std::vector<double>& wavePhases) override {
             assert(wavePhases.size() == m_nb_freq);
@@ -310,18 +345,20 @@ namespace frydom {
             return M_2PI / dw;
         }
 
-        std::vector<double> GetWaveAmplitudes() const override {
+        std::vector<std::vector<double>> GetWaveAmplitudes() const override {
             // FIXME: les amplitudes de vague (sqrt(2*...)) devraient etre calculees plutot dans le wavefield !! rien a voir avec le spectre...
-            return m_wave_spectrum->GetWaveAmplitudes(m_nb_freq, m_wmin, m_wmax);
+            std::vector<std::vector<double>> waveAmplitudes;
+            waveAmplitudes.push_back(m_wave_spectrum->GetWaveAmplitudes(m_nb_freq, m_wmin, m_wmax));
+            return waveAmplitudes;
         }
 
-        std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const {
+        std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const override {
             std::vector<std::complex<double>> steady_elevation;
             steady_elevation.reserve(m_nb_freq);
 
             double w_ = x * cos(m_mean_wave_dir) + y * sin(m_mean_wave_dir);
 
-            auto wave_ampl = GetWaveAmplitudes();
+            auto wave_ampl = GetWaveAmplitudes()[0];
 
             std::complex<double> val;
             for (uint iw=0; iw<m_nb_freq; iw++) {
@@ -358,6 +395,14 @@ namespace frydom {
             return sum;
         }
 
+        std::shared_ptr<FrWaveProbe> NewWaveProbe(double x, double y) override {
+            auto waveProbe = std::make_shared<FrLinearIrregularWaveProbe>(x, y);
+            waveProbe->SetWaveField(this);
+            waveProbe->Initialize();
+            m_waveProbes.push_back(waveProbe);
+            return waveProbe;
+        }
+
     };
 
     // =================================================================================================================
@@ -375,20 +420,20 @@ namespace frydom {
         FrDirectionalLinearWaveField(const unsigned int nw,
                                      const double wmin,
                                      const double wmax,
-                                     const double mean_wave_dir,
+                                     const double mean_wave_dir,  // DEG
                                      const unsigned int nb_dir,
-                                     const double dir_min,
-                                     const double dir_max,
+                                     const double dir_min,  // DEG
+                                     const double dir_max,  // DEG
                                      FrWaveSpectrum* waveSpectrum) :
                 m_nb_wave_dir(nb_dir),
-                m_dir_min(dir_min),
-                m_dir_max(dir_max),
+                m_dir_min(dir_min * M_DEG),
+                m_dir_max(dir_max * M_DEG),
                 FrIrregularLinearWaveField(nw, wmin, wmax, mean_wave_dir, waveSpectrum) {
 
             // Random phases generation
             GenerateRandomPhases();
 
-//            Update_ejwt();
+//            Update_ejwt();  // TODO: voir si utile ... (fait par le constructeur de la classe de base ?
 //            UpdateWaveNumber();
 
 
@@ -420,42 +465,81 @@ namespace frydom {
             m_phases = wavePhases;
         }
 
+        std::vector<std::vector<double>> GetWavePhases() const override {
+            return m_phases;
+        }
+
+        std::vector<double> GetWaveDirections() const override {
+            return linspace(m_dir_min, m_dir_max, m_nb_wave_dir);
+        }
+
+        std::vector<std::vector<double>> GetWaveAmplitudes() const override {
+            return m_wave_spectrum->GetWaveAmplitudes(m_nb_freq, m_wmin, m_wmax, m_nb_wave_dir,
+                                                      m_dir_min, m_dir_max, m_mean_wave_dir);
+        }
+
+        std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const override {
+            std::vector<std::complex<double>> steadyElevation;
+            steadyElevation.reserve(m_nb_freq);
+
+            std::vector<double> w_;
+            w_.reserve(m_nb_wave_dir);
+
+            double val;
+            auto wave_dirs = GetWaveDirections();
+            for (auto direction: wave_dirs) {
+                w_.push_back(x * cos(direction) + y * sin(direction));
+            }
+
+            auto waveAmplitudes = GetWaveAmplitudes(); // is ntheta x nw, ie wA[i] est de longueur
+
+            double ki;
+            std::complex<double> cval;
+            for (unsigned int iw=0; iw<m_nb_freq; ++iw) {
+                cval.imag(0.);
+                cval.real(0.);
+
+                ki = c_wave_numbers[iw];
+
+                for (unsigned int itheta=0; itheta<m_nb_wave_dir; ++itheta) {
+
+                    cval += waveAmplitudes[itheta][iw] * exp(J * (ki * w_[itheta] + m_phases[itheta][iw]));
+
+                }
+
+                steadyElevation.push_back(cval);
+
+            }
+
+            return steadyElevation;
+            // TODO: verifier !!!!
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        std::shared_ptr<FrWaveProbe> NewWaveProbe(double x, double y) override {
+//            // TODO
+//        }
+
     };
 
     // =================================================================================================================
-
-    // FIXME: ne pas attacher a linearwaveField mais directement a la classe environment ?? (integrer la maree ??)
-    class FrLinearWaveProbe {  // TODO: faire deriver d'une classe FrSensor
-
-    private:
-        double m_x;
-        double m_y;
-
-        std::shared_ptr<FrLinearWaveField> m_wave_field = nullptr;
-
-    public:
-        FrLinearWaveProbe(const double x, const double y, std::shared_ptr<FrLinearWaveField> wave_field) :
-                m_x(x),
-                m_y(y),
-                m_wave_field(wave_field) {}
-
-        void SetPosition(const double x, const double y) {
-            m_x = x;
-            m_y = y;
-        }
-
-        void GetPosition(double& x, double& y) {
-            x = m_x;
-            y = m_y;
-        }
-
-        double GetValue() {
-            return m_wave_field->GetFreeSurfaceElevation(m_x, m_y);
-        }
-
-    };
-
-
 
 
 

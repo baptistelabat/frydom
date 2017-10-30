@@ -14,7 +14,8 @@
 
 // Waves includes
 #include "waves/FrFlatFreeSurface.h"
-
+#include "waves/FrWaveSpectrum.h"
+#include "waves/FrWaveField.h"
 #include "tidal/FrTidalModel.h"
 
 // Wind includes

@@ -164,6 +164,9 @@ set (SOURCE_ENVIRONMENT # TODO: par repertoire...
         src/frydom/environment/waves/FrWaveField.h
         src/frydom/environment/waves/FrWaveField.cpp
 
+        src/frydom/environment/waves/FrWaveProbe.h
+        src/frydom/environment/waves/FrWaveProbe.cpp
+
         src/frydom/environment/current/FrCurrent.h
         src/frydom/environment/current/FrCurrent.cpp
         src/frydom/environment/current/FrCurrentForce.h
@@ -316,6 +319,9 @@ target_link_libraries(test_HDF5 ${LIBS})
 
 add_executable(test_load_HDB ${SOURCE_FILES} src/frydom/tests/test_load_HDB.cpp)
 target_link_libraries(test_load_HDB ${LIBS})
+
+add_executable(test_wave_excitation_force ${SOURCE_FILES} src/frydom/tests/test_wave_excitation_force.cpp)
+target_link_libraries(test_wave_excitation_force ${LIBS})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===
