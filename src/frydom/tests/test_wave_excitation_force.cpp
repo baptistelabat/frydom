@@ -53,6 +53,11 @@ int main(int argc, char* argv[]) {
     // Creating the irregular wave field
     auto waveSpectrum2 = std::make_unique<FrJonswapWaveSpectrum>(3, 9);
 
+    // Creating a directional model and registering it into the wave spectrum
+    auto directionalModel = std::make_unique<FrCos2sDirectionalModel>();
+    waveSpectrum2->SetDirectionalModel(directionalModel.release());
+
+    // Creating a directional wave field
     auto directionalWaveField = std::make_shared<FrDirectionalLinearWaveField>(80, 0.1, 2.,
                                                                                0.,
                                                                                40, -180, 175,
@@ -62,9 +67,11 @@ int main(int argc, char* argv[]) {
     auto waveProbe3 = directionalWaveField->NewWaveProbe(0, 0);
 
     // Testing
+    std::vector<double> elev3;
     for (auto t: time) {
-        irregularWaveField->UpdateTime(t);
+        directionalWaveField->UpdateTime(t);
         std::cout << waveProbe3->GetElevation() << std::endl;
+        elev3.push_back(waveProbe3->GetElevation());
     }
 
 

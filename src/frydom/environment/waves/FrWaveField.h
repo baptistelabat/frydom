@@ -321,7 +321,7 @@ namespace frydom {
         }
 
         std::vector<double> GetWavePulsations() const override {
-            return linspace(m_wmin, m_wmax, m_nb_freq);
+            return linspace(m_wmin, m_wmax, m_nb_freq);  // FIXME: mettre le vecteur pulsation en cache !
         }
 
         void SetReturnPeriod(const double period) {
