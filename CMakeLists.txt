@@ -80,9 +80,22 @@ find_package(HDF5 REQUIRED COMPONENTS CXX)
 include_directories(${HDF5_INCLUDE_DIRS})
 
 #--------------------------------------------------------------
+# Matplotlib-cpp
+#--------------------------------------------------------------
+find_package(PythonLibs 2.7)
+include_directories(${PYTHON_INCLUDE_DIRS})
+include_directories("thirdparty/matplotlib-cpp")
+#target_include_directories(myproject PRIVATE ${PYTHON_INCLUDE_DIRS})
+#target_link_libraries(myproject ${PYTHON_LIBRARIES})
+
+
+#--------------------------------------------------------------
 # Specifies frydom project
 #--------------------------------------------------------------
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+
+
 
 #--------------------------------------------------------------
 # Add the executable from the project and specify all C++
@@ -95,6 +108,7 @@ set(LIBS
         ${YAML_CPP_LIB}
         ${HDF5_CXX_LIBRARIES}
         ${Boost_LIBRARIES}
+        ${PYTHON_LIBRARIES}
         )
 
 # TODO: partitionner les sources en fichiers CMakeLists.txt par folder de frydom pour alleger le principal
@@ -241,6 +255,8 @@ set(SOURCE_FILES
         ${SOURCE_MISC}
         ${SOURCE_PROPELLER}
         ${SOURCE_UTILS}
+
+#        thirdparty/matplotlib-cpp/matplotlibcpp.h
         )
 
 

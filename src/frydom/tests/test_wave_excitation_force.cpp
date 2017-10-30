@@ -4,7 +4,9 @@
 
 #include "frydom/environment/waves/FrWaveField.h"
 //#include "frydom/environment/waves/FrWaveProbe.h"
+#include "matplotlibcpp.h"
 
+namespace plt = matplotlibcpp;
 
 using namespace frydom;
 
@@ -21,12 +23,17 @@ int main(int argc, char* argv[]) {
     auto waveProbe1 = regularWaveField->NewWaveProbe(0, 0);
 
     // Testing
-    auto time = linspace<double>(0., 10., 1000);
+    auto time = linspace<double>(0., 5000., 100000);
 
-//    for (auto t: time) {
-//        regularWaveField->UpdateTime(t);
+
+    std::vector<double> elev1;
+    for (auto t: time) {
+        regularWaveField->UpdateTime(t);
 //        std::cout << waveProbe1->GetElevation() << std::endl;
-//    }
+        elev1.push_back(waveProbe1->GetElevation());
+    }
+    plt::plot(time, elev1);
+//    plt::show();
 
     // =================================================================================================================
     // Irregular wave field
@@ -41,10 +48,14 @@ int main(int argc, char* argv[]) {
     auto waveProbe2 = irregularWaveField->NewWaveProbe(0, 0);
 
     // Testing
-//    for (auto t: time) {
-//        irregularWaveField->UpdateTime(t);
+    std::vector<double> elev2;
+    for (auto t: time) {
+        irregularWaveField->UpdateTime(t);
 //        std::cout << waveProbe2->GetElevation() << std::endl;
-//    }
+        elev2.push_back(waveProbe2->GetElevation());
+    }
+    plt::plot(time, elev2);
+//    plt::show();
 
     // =================================================================================================================
     // Irregular wave field with directional spreading
@@ -70,12 +81,12 @@ int main(int argc, char* argv[]) {
     std::vector<double> elev3;
     for (auto t: time) {
         directionalWaveField->UpdateTime(t);
-        std::cout << waveProbe3->GetElevation() << std::endl;
+//        std::cout << waveProbe3->GetElevation() << std::endl;
         elev3.push_back(waveProbe3->GetElevation());
     }
 
-
-
+    plt::plot(time, elev3);
+    plt::show();
 
 
     return 0;
