@@ -17,21 +17,23 @@ namespace frydom {
 
         std::shared_ptr<FrWaveProbe> m_waveProbe;
 
+        std::vector<std::complex<double>> m_steadyForce;
+
     public:
 
         void SetWaveProbe(std::shared_ptr<FrWaveProbe> waveProbe) { m_waveProbe = waveProbe; }
 
-
-
-
-
-
-
-
-
+        void Initialize() {
+            // TODO: creer une steady force !!
+        }
 
         void UpdateState() override {
-            // TODO
+
+            // Get the wave elevation
+//            auto cmplxElevation = m_waveProbe->GetCmplxElevation();
+//
+//            return;
+
         }
 
 

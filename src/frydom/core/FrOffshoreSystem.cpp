@@ -3,6 +3,7 @@
 //
 
 #include "FrOffshoreSystem.h"
+//#include "frydom/environment/current/FrCurrent.h"
 #include "frydom/environment/waves/FrFlatFreeSurface.h"
 
 namespace frydom {
@@ -27,10 +28,6 @@ namespace frydom {
 
     }
 
-//    std::shared_ptr<FrOffshoreSystem> FrOffshoreSystem::getPtr() {
-//        return shared_from_this();
-//    }
-
     void FrOffshoreSystem::setFreeSurface(environment::FrFreeSurface* freeSurface) {
         // TODO: accepter plutot directement le unique_ptr et faire std::move...
         m_free_surface.reset(freeSurface);  // TODO: y a t il un moyen de gerer avec la move semantic ???
@@ -51,12 +48,13 @@ namespace frydom {
     }
 
     environment::FrCurrent* FrOffshoreSystem::GetCurrent() const {
-        if (m_current) {
-            return m_current.get();
-        } else {
-            // TODO: creer propre classe d'erreur frydom::no_current_field
-            throw std::runtime_error("Pas de courant");
-        }
+//        if (m_current) {
+//            return m_current.get();
+//        } else {
+//            // TODO: creer propre classe d'erreur frydom::no_current_field
+//            throw std::runtime_error("Pas de courant");
+//        }
+        return m_current.get();
     }
 
     void FrOffshoreSystem::SetGravityAcceleration(double grav) {
@@ -73,12 +71,20 @@ namespace frydom {
         // Update all environment models (waves, wind, current...)
 
         // Current model
-        m_current->Update(ChTime);
+        if (m_current) {
+            m_current->Update(ChTime);
+        }
 
         // Wind model
 
-        // Wave model
 
+        // Wave model
+        if (m_free_surface) {
+            // TODO: Mettre a jour le wave field
+            if (m_free_surface->GetWaveField()) {
+                m_free_surface->GetWaveField()->Update(ChTime);
+            }
+        }
 
         // Executes the "forUpdate" in all controls of controlslist
         ExecuteControlsForUpdate();

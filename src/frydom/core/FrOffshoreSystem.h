@@ -20,6 +20,10 @@
 
 namespace frydom {
 
+//    namespace environment {
+//        class FrCurrent;
+//    }
+
     /// Abstract base class for a free surface model including wave modeling
 //    class FrFreeSurface;  // forward declaration
 
@@ -47,10 +51,10 @@ namespace frydom {
                                   double scene_size = 500);
 
         /// Copy constructor
-        FrOffshoreSystem(const FrOffshoreSystem& system) {};
+//        FrOffshoreSystem(const FrOffshoreSystem& system) {};
 
         /// Default destructor
-        ~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
+//        ~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
 
         /// Add a free surface model to the system
         void setFreeSurface(environment::FrFreeSurface* freeSurface);

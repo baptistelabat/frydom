@@ -18,8 +18,11 @@ namespace frydom {
         return std::imag(cmplx_elevation);
     }
 
-
-
+    std::vector<std::complex<double>> FrLinearRegularWaveProbe::GetCmplxElevation() const {
+        std::vector<std::complex<double>> cmplxElevation;
+        cmplxElevation.push_back(m_waveField->GetCmplxFreeSurfaceElevation(m_steadyElevation));
+        return cmplxElevation;
+    }
 
 
     void FrLinearIrregularWaveProbe::Initialize() {
@@ -27,12 +30,17 @@ namespace frydom {
     }
 
     double FrLinearIrregularWaveProbe::GetElevation() const {
-        auto steady = m_steadyElevation;  // TODO: pourquoi on ne peut pas directement place steady dans la methode ?
-        auto cmplx_elevation = m_waveField->GetCmplxFreeSurfaceElevation(steady);
+        auto cmplx_elevation = GetCmplxElevation();
         double elev = 0.;
         for (auto& val: cmplx_elevation) {
             elev += std::imag(val);
         }
         return elev;
     }
+
+    std::vector<std::complex<double>> FrLinearIrregularWaveProbe::GetCmplxElevation() const {
+        auto steady = m_steadyElevation;
+        return m_waveField->GetCmplxFreeSurfaceElevation(steady);
+    }
+
 }  // end namespace frydom

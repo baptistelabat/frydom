@@ -95,8 +95,6 @@ include_directories("thirdparty/matplotlib-cpp")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 
-
-
 #--------------------------------------------------------------
 # Add the executable from the project and specify all C++
 # files in the targets.
@@ -252,6 +250,7 @@ set(SOURCE_UTILS
 
 set(SOURCE_FILES
         ${SOURCE_CORE}
+        ${SOURCE_CABLE}
         ${SOURCE_ENVIRONMENT}
         ${SOURCE_HYDRODYNAMICS}
         ${SOURCE_IO}

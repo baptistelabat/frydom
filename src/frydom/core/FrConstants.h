@@ -25,8 +25,9 @@ namespace frydom {
     #define M_ONE_KM 1000.                          ///> ONE KILOMETER
     #define M_KMH (M_ONE_KM/M_ONE_HOUR)             ///> ONE KILOMETER BY HOUR
 
-    #define M_PI_180 (M_PI/180.)                    ///> Conversion DEF->RAD
+    #define M_PI_180 (M_PI/180.)                    ///> Conversion DEG->RAD
     #define M_DEG M_PI_180                          ///> Conversion DEG->RAD
+    #define M_RAD (180/M_PI)                        ///> Conversion RAD->DEG
     #define M_2PI (2.*M_PI)                         ///> 2*PI
 
     // =================================================================================================================

@@ -43,6 +43,7 @@ namespace frydom {
 
         virtual double GetElevation() const = 0;
 
+        virtual std::vector<std::complex<double>> GetCmplxElevation() const = 0;
     };
 
 
@@ -71,6 +72,9 @@ namespace frydom {
         void Initialize() override;
 
         double GetElevation() const override;
+
+        std::vector<std::complex<double>> GetCmplxElevation() const override;
+
     };
 
     class FrIrregularLinearWaveField;
@@ -97,6 +101,7 @@ namespace frydom {
 
         double GetElevation() const override;
 
+        std::vector<std::complex<double>> GetCmplxElevation() const override;
 
     };
 

@@ -16,11 +16,9 @@
 #ifndef FR_FREE_SURFACE_H
 #define FR_FREE_SURFACE_H
 
-//#include "chrono/core/ChCoordsys.h"
-//#include "chrono/physics/ChBody.h"
-//#include "chrono/assets/ChColorAsset.h"
 
 #include "frydom/misc/FrTriangleMeshConnected.h"
+#include "FrWaveField.h"
 
 // Forward declarations
 namespace chrono {
@@ -43,7 +41,34 @@ namespace environment{  // TODO: supprimer le namespace environment ?? -> NON
     /// Pure Virtual Base class for a free surface system.
     class FrFreeSurface {
 
-      public:
+    protected:;  // Disallow the default constructor to be used as a public method
+
+        double ChTime;
+        bool m_vis_enabled;
+        std::shared_ptr<chrono::ChBody> m_fs_body;
+        std::shared_ptr<chrono::ChColorAsset> m_color;
+        FrTriangleMeshConnected m_mesh;
+        std::string m_mesh_name;
+        double m_mean_height;
+
+        std::shared_ptr<FrWaveField> m_waveField;
+
+
+        chrono::ChCoordsys<> plane;  // The reference plane of the free surface
+
+
+        /// The system to which belongs the free surface.
+        std::shared_ptr<FrOffshoreSystem> m_system;
+
+        /// Flag to specify if the free surface has to be rendered in a visualization application.
+
+
+
+        /// Private method in charge of the building of the free surface mesh.
+        void build_mesh_grid(double xmin, double xmax, double dx,
+                             double ymin, double ymax, double dy);
+
+    public:
         /// Enum type for free surface models
 //        enum Type {
 //            FLAT,
@@ -104,31 +129,11 @@ namespace environment{  // TODO: supprimer le namespace environment ?? -> NON
         /// get the body that represents the free surface
         std::shared_ptr<chrono::ChBody> getBody() {return m_fs_body;}
 
+        void SetWaveField(std::shared_ptr<FrWaveField> waveField) { m_waveField = waveField; }
 
-      protected:;  // Disallow the default constructor to be used as a public method
-
-        double ChTime;
-        bool m_vis_enabled;
-        std::shared_ptr<chrono::ChBody> m_fs_body;
-        std::shared_ptr<chrono::ChColorAsset> m_color;
-        FrTriangleMeshConnected m_mesh;
-        std::string m_mesh_name;
-        double m_mean_height;
+        std::shared_ptr<FrWaveField> GetWaveField() const { return m_waveField; }
 
 
-        chrono::ChCoordsys<> plane;  // The reference plane of the free surface
-
-
-        /// The system to which belongs the free surface.
-        std::shared_ptr<FrOffshoreSystem> m_system;
-
-        /// Flag to specify if the free surface has to be rendered in a visualization application.
-
-
-
-        /// Private method in charge of the building of the free surface mesh.
-        void build_mesh_grid(double xmin, double xmax, double dx,
-                             double ymin, double ymax, double dy);
     };
 
 }  // end namespace environment
