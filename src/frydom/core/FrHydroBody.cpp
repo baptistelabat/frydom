@@ -3,8 +3,9 @@
 //
 
 #include "chrono/physics/ChBodyAuxRef.h"
-#include <chrono/assets/ChTriangleMeshShape.h>
+#include "chrono/assets/ChTriangleMeshShape.h"
 
+#include "frydom/hydrodynamics/FrHydroDB.h"
 #include "FrHydroBody.h"
 
 namespace frydom {
@@ -54,7 +55,7 @@ namespace frydom {
         chrono::ChBodyAuxRef::Update(update_assets);
     }
 
-    chrono::ChVector<> FrHydroBody::GetCurrentRelativeVelocity(FrFrame frame) {
+    chrono::ChVector<double> FrHydroBody::GetCurrentRelativeVelocity(FrFrame frame) {
         switch (frame) {  // TODO: avoir une fonction pour eviter la recopie systematique...
             case NWU:
                 return m_current_relative_velocity;
@@ -74,19 +75,19 @@ namespace frydom {
         FrHydroBody::SetNEDHeading(heading_angle, RAD);
     }
 
-    double FrHydroBody::GetTransverseUnderwaterArea() const {
+    double FrHydroBody::GetTransverseUnderWaterArea() const {
         return m_transverse_area;
     }
 
-    void FrHydroBody::SetTransverseUnderwaterArea(double transverse_area) {
+    void FrHydroBody::SetTransverseUnderWaterArea(double transverse_area) {
         FrHydroBody::m_transverse_area = transverse_area;
     }
 
-    double FrHydroBody::GetLateralUnderwaterArea() const {
+    double FrHydroBody::GetLateralUnderWaterArea() const {
         return m_lateral_area;
     }
 
-    void FrHydroBody::SetLateralUnderwaterArea(double lateral_area) {
+    void FrHydroBody::SetLateralUnderWaterArea(double lateral_area) {
         FrHydroBody::m_lateral_area = lateral_area;
     }
 
@@ -104,6 +105,14 @@ namespace frydom {
 
     void FrHydroBody::SetWettedSurface(double wetted_surface) {
         FrHydroBody::m_wetted_surface = wetted_surface;
+    }
+
+    void FrHydroBody::SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody) {
+        m_BEMBody = BEMBody;
+        BEMBody->SetHydroBody(this);
+
+        // TODO: Il faut renseigner les masses ajoutees a l'infini !!!!
+
     }
 
 }  // end namespace frydom

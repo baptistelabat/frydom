@@ -6,7 +6,9 @@
 #define FRYDOM_FRWAVEPROBE_H
 
 #include <memory>
-#include <chrono/core/ChVector.h>
+#include <complex>
+
+#include "chrono/core/ChVector.h"
 
 namespace frydom {
 

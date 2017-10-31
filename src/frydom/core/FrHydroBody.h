@@ -7,9 +7,11 @@
 
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "frydom/misc/FrTriangleMeshConnected.h"
+#include "FrBody.h"
 #include "FrConstants.h"
 #include "FrEulerAngles.h"
 #include "FrOffshoreSystem.h"
+
 
 // Forward declaration
 namespace chrono {
@@ -18,8 +20,10 @@ namespace chrono {
 
 namespace frydom {
 
-    class FrHydroBody : public chrono::ChBodyAuxRef,
-                        public std::enable_shared_from_this<FrHydroBody> {
+    // Forward declaration
+    class FrBEMBody;
+
+    class FrHydroBody : public FrBody {
 
     private:
         std::shared_ptr<FrTriangleMeshConnected> m_hydro_mesh;
@@ -37,9 +41,17 @@ namespace frydom {
 
         double m_wetted_surface = 0.;
 
+        std::shared_ptr<FrBEMBody> m_BEMBody;
+        bool m_UpdateHydroPosition = false;  // If true, the body position will be updated while moving in the horizontal plane
+                                            // It will slow down the simulation as linear steady elevation components
+                                            // of the wavefield will be updated and it may be really false in the case of
+                                            // several interacting bodies. For no interactions, it could be an easy
+                                            // way to take forward speed into account concerning the wave excitation...
+                                            // TODO: use it...
+
     public:
 
-        std::shared_ptr<FrHydroBody> GetShared() { return shared_from_this(); };
+        void SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody);
 
         /// Set the hydrodynamic mesh from a mesh shared instance
         void SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset=true);
@@ -146,16 +158,16 @@ namespace frydom {
         void SetNEDHeading(const chrono::ChVector<>& unit_vector);
 
         /// Get the transverse underwater area of the body
-        double GetTransverseUnderwaterArea() const;
+        double GetTransverseUnderWaterArea() const;
 
         /// Set the transverse underwater area of the body
-        void SetTransverseUnderwaterArea(double transverse_area);
+        void SetTransverseUnderWaterArea(double transverse_area);
 
         /// Get the lateral underwater area of the body
-        double GetLateralUnderwaterArea() const;
+        double GetLateralUnderWaterArea() const;
 
         /// Set the lateral underwater area of the body
-        void SetLateralUnderwaterArea(double lateral_area);
+        void SetLateralUnderWaterArea(double lateral_area);
 
         /// Get the length between perpendicular of the body
         double GetLpp() const;

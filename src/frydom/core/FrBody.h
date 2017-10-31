@@ -16,7 +16,7 @@ namespace frydom {
     class FrNode;
 
     class FrBody : public chrono::ChBodyAuxRef,
-                   public std::enable_shared_from_this<FrBody> {
+                   public std::enable_shared_from_this<FrBody> {  // TODO: voir a supprimer cet heritage...
 
     protected:
         std::vector<std::shared_ptr<FrForce>> external_force_list;

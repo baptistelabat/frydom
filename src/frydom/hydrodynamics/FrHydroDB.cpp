@@ -7,6 +7,7 @@
 #include "yaml-cpp/yaml.h"
 
 #include "FrHydroDB.h"
+#include "frydom/misc/FrLinspace.h"
 #include "frydom/IO/FrHDF5.h"
 
 
@@ -460,18 +461,22 @@ namespace frydom {
     }
 
     void FrBEMBody::FilterRadiation() {
-        for (unsigned int ibody=0; ibody<m_HDB->GetNbBodies(); ++ibody) {
-
-            auto CMinf = m_InfiniteAddedMass[ibody];
-            Eigen::Map<VectorXd> vect(CMinf.data(), CMinf.size());
-
-            vect = vect.cwiseAbs();
-//            std::cout << vect << std::endl;
-            std::sort(vect.data(), vect.data()+vect.size());
-
-            std::cout << vect << "\n\n";
-            // TODO : terminer
-        }
+        // TODO ...
+//        for (unsigned int ibody=0; ibody<m_HDB->GetNbBodies(); ++ibody) {
+//
+//            auto CMinf = m_InfiniteAddedMass[ibody];
+//            Eigen::Map<VectorXd> vect(CMinf.data(), CMinf.size());
+//
+//            vect = vect.cwiseAbs();
+////            std::cout << vect << std::endl;
+//            std::sort(vect.data(), vect.data()+vect.size());
+//
+//            std::cout << vect << "\n\n";
+//            // TODO : terminer
+//        }
     }
 
+    std::vector<double> FrDiscretization1D::GetVector() const {
+        return linspace<double>(m_xmin, m_xmax, m_nx);
+    }
 }  // end namespace frydom

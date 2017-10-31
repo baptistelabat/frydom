@@ -8,13 +8,15 @@
 #include <cassert>
 #include <frydom/misc/FrLookupTable1D.h>
 
-// TODO: voir si on garde les marees dans waves...
+// TODO: La hauteur de marée (+ sonde a recuperer de seabed) doivent etre retranscrite sur le corps embarque dans la
+// surface libre.
+
 
 namespace frydom {
 
     // FIXME: utiliser https://github.com/HowardHinnant/date comme sous module !!!
 
-
+    // TODO: utiliser boost ou une autre lib speciale pour la gestion des geoides
     class FrUTCTime {
     private:
         unsigned int m_hours = 0;
@@ -68,17 +70,17 @@ namespace frydom {
     };
 
 
-    enum TidalLevel {
-        LOW,
-        HIGH
-    };
-
-    enum TidalMode {
-        NONE,
-        TWELFTH_RULE
-    };
-
     class FrTidal {
+
+        enum TidalLevel {
+            LOW,
+            HIGH
+        };
+
+        enum TidalMode {
+            NONE,
+            TWELFTH_RULE
+        };
 
     private:
         double m_time = 0.;

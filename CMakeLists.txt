@@ -204,6 +204,9 @@ set(SOURCE_HYDRODYNAMICS
 
         src/frydom/hydrodynamics/FrHydroDB.h
         src/frydom/hydrodynamics/FrHydroDB.cpp
+
+        src/frydom/hydrodynamics/FrLinearExcitationForce.h
+        src/frydom/hydrodynamics/FrLinearExcitationForce.cpp
         )
 
 set(SOURCE_IO

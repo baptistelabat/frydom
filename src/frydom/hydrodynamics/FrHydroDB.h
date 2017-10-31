@@ -6,11 +6,9 @@
 #define FRYDOM_FRHYDRODB_H
 
 #include <vector>
-//#include "Eigen/Dense"
 
-#include "frydom/core/FrHydroBody.h"
-#include "frydom/misc/FrLinspace.h"
 #include "frydom/misc/FrEigen.h"
+
 
 #define J std::complex<double>(0, 1)
 
@@ -38,9 +36,7 @@ namespace frydom {
         unsigned int GetNbSample() const { return m_nx; }
         void SetNbSample(unsigned int nx) { m_nx = nx; }
 
-        std::vector<double> GetVector() const {
-            return linspace<double>(m_xmin, m_xmax, m_nx);
-        }
+        std::vector<double> GetVector() const;
 
     };
 
@@ -84,12 +80,13 @@ namespace frydom {
     typedef FrBEMMode FrBEMForceMode; /// Force modes
     typedef FrBEMMode FrBEMMotionMode; /// Motion modes
 
+    class FrHydroBody;
     class FrHydroDB;
 
     class FrBEMBody {
 
     private:
-        FrHydroBody* HydroBody;
+        FrHydroBody* m_hydroBody;  // TODO: est-ce qu'on utilise un pointeur vers un hydrobody ou bien une bimap dans la HDB ??
 
         FrHydroDB* m_HDB = nullptr;
 
@@ -116,6 +113,8 @@ namespace frydom {
     public:
         FrBEMBody() = default;
         FrBEMBody(unsigned int ID, std::string& BodyName) : m_ID(ID), m_BodyName(BodyName) {}
+
+        void SetHydroBody(FrHydroBody* hydroBody) { m_hydroBody = hydroBody; }  // TODO: Ne serait-il pas mieux que ce soit la HDB qui gere les relations BEMBody/HydroBody ???
 
         void SetName(const std::string& BodyName) { m_BodyName = BodyName; }
         void SetBodyPosition(const Eigen::Vector3d& BodyPosition) { m_BodyPosition = BodyPosition; }

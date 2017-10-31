@@ -38,8 +38,8 @@ int main(int argc, char* argv[]) {
     tug->SetMass(5e7);  // TODO: plutot dans les 5e9...
     tug->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
 
-    tug->SetTransverseUnderwaterArea(120.);
-    tug->SetLateralUnderwaterArea(500.);
+    tug->SetTransverseUnderWaterArea(120.);
+    tug->SetLateralUnderWaterArea(500.);
     tug->SetLpp(76.2);
 
     tug->SetPos(chrono::ChVector<>(-140, 0, 0));

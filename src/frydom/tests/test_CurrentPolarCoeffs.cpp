@@ -55,8 +55,8 @@ int main(int argc, char* argv[]) {
     ship->SetMass(7.7e6);
     ship->SetInertiaXX(chrono::ChVector<>(1e8, 5e9, 5e9));
 
-    ship->SetTransverseUnderwaterArea(120.);
-    ship->SetLateralUnderwaterArea(500.);
+    ship->SetTransverseUnderWaterArea(120.);
+    ship->SetLateralUnderWaterArea(500.);
     ship->SetLpp(76.2);
 
     // Ship initial position and orientation

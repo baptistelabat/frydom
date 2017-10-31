@@ -45,6 +45,7 @@ namespace frydom {
     }
 
     environment::FrFreeSurface* FrOffshoreSystem::getFreeSurface() const {
+        // TODO: gerer une erreur si la free surface n'est pas renseignee ...
         return m_free_surface.get();  // FIXME: on ne devrait pas avoir besoin d'acceder au raw pointeur...
         // FIXME: comment directement acceder a m_free_surface via des indirections ????
     }

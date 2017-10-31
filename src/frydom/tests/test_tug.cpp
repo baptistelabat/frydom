@@ -40,8 +40,8 @@ int main(int argc, char* argv[]) {
     tug->SetMass(5e7);  // TODO: plutot dans les 5e9...
     tug->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
 
-    tug->SetTransverseUnderwaterArea(120.);
-    tug->SetLateralUnderwaterArea(500.);
+    tug->SetTransverseUnderWaterArea(120.);
+    tug->SetLateralUnderWaterArea(500.);
     tug->SetLpp(76.2);
 
     tug->SetNEDHeading(WEST);
@@ -59,8 +59,8 @@ int main(int argc, char* argv[]) {
     ship->SetMass(5e7);  // TODO: plutot dans les 5e9...
     ship->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
 
-    ship->SetTransverseUnderwaterArea(120.);
-    ship->SetLateralUnderwaterArea(500.);
+    ship->SetTransverseUnderWaterArea(120.);
+    ship->SetLateralUnderWaterArea(500.);
     ship->SetLpp(76.2);
     ship->SetPos(chrono::ChVector<>(-70, -100, 0));
 

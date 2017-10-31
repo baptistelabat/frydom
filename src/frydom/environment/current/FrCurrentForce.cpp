@@ -36,8 +36,8 @@ namespace environment {
 
         // Retrieving hull underwater properties
         auto rho_water = mybody->GetSystem()->GetWaterDensity();
-        auto transverse_area = mybody->GetTransverseUnderwaterArea();
-        auto lateral_area = mybody->GetLateralUnderwaterArea();
+        auto transverse_area = mybody->GetTransverseUnderWaterArea();
+        auto lateral_area = mybody->GetLateralUnderWaterArea();
         auto lpp = mybody->GetLpp();
 
 //        printvect(relative_velocity);
