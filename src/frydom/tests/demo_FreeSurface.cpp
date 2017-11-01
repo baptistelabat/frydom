@@ -43,7 +43,7 @@ float friction = 0.6f;
 double step_size = 1e-2;
 bool capture_video = false;
 
-
+using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     // FREE SURFACE
     // =================================================================================================================
     // Creating the free surface and assigning it to a unique pointer as we should have only one free surface that has to be owned by the OffshoreSystem
-    auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
+    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
     free_surface->Initialize(-400, 400, 100);
 
     // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
     // CURRENT
     // =================================================================================================================
     // Creating a current field
-    auto current_field = std::make_unique<frydom::environment::FrCurrent>(frydom::EAST,
+    auto current_field = std::make_unique<FrCurrent>(frydom::EAST,
                                                                           5,
                                                                           frydom::KNOT);
 

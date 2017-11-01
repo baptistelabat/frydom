@@ -6,7 +6,6 @@
 #define FRYDOM_FRCONVENTIONS_H_H
 
 namespace frydom {
-namespace environment {
 
     enum FrDirectionConvention {
         GOTO,           ///> The field "propagates towards", "goes to", "brings to". This is a flux vector.
@@ -14,7 +13,6 @@ namespace environment {
     };
 
 
-}  // end namespace environment
 }  // end namespace frydom
 
 #endif //FRYDOM_FRCONVENTIONS_H_H

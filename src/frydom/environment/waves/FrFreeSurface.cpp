@@ -23,7 +23,6 @@
 
 
 namespace frydom {
-namespace environment{
 
     FrFreeSurface::FrFreeSurface() : m_mean_height(0) {
         plane.pos[1] = m_mean_height;
@@ -140,5 +139,4 @@ namespace environment{
 
 
 
-}  // end namespace environment
 }  // end namespace frydom

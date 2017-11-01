@@ -3,8 +3,9 @@
 //
 
 #include "FrOffshoreSystem.h"
-//#include "frydom/environment/current/FrCurrent.h"
-#include "frydom/environment/waves/FrFlatFreeSurface.h"
+//#include "frydom/environment/waves/FrFlatFreeSurface.h"
+
+#include "frydom/environment/FrEnvironment.h"
 
 namespace frydom {
 
@@ -26,9 +27,13 @@ namespace frydom {
         world_body->SetBodyFixed(true);
         world_body->SetName("WorldBody");
 
+
+        // TODO: creer l'environnement
+        auto m_environment = std::make_unique<FrEnvironment>();
+
     }
 
-    void FrOffshoreSystem::setFreeSurface(environment::FrFreeSurface* freeSurface) {
+    void FrOffshoreSystem::setFreeSurface(FrFreeSurface* freeSurface) {
         // TODO: accepter plutot directement le unique_ptr et faire std::move...
         m_free_surface.reset(freeSurface);  // TODO: y a t il un moyen de gerer avec la move semantic ???
         // FIXME: Pourquoi dans le debugger, m_free_surface pointe sur un FrFreeSurface alors que dans demo on a fournit un FrFlatFreeSurface ???
@@ -37,17 +42,17 @@ namespace frydom {
 
     }
 
-    void FrOffshoreSystem::SetCurrent(environment::FrCurrent *current_field) {
+    void FrOffshoreSystem::SetCurrent(FrCurrent *current_field) {
         m_current.reset(current_field);
     }
 
-    environment::FrFreeSurface* FrOffshoreSystem::getFreeSurface() const {
+    FrFreeSurface* FrOffshoreSystem::getFreeSurface() const {
         // TODO: gerer une erreur si la free surface n'est pas renseignee ...
         return m_free_surface.get();  // FIXME: on ne devrait pas avoir besoin d'acceder au raw pointeur...
         // FIXME: comment directement acceder a m_free_surface via des indirections ????
     }
 
-    environment::FrCurrent* FrOffshoreSystem::GetCurrent() const {
+    FrCurrent* FrOffshoreSystem::GetCurrent() const {
 //        if (m_current) {
 //            return m_current.get();
 //        } else {
@@ -97,6 +102,7 @@ namespace frydom {
 
         timer_update.stop();
     }
+
 
 
 }  // end namespace frydom

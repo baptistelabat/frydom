@@ -43,18 +43,20 @@ float friction = 0.6f;
 double step_size = 1e-2;
 bool capture_video = false;
 
+using namespace frydom;
+
 int main(int argc, char* argv[]) {
 
     // =================================================================================================================
     // OFFSHORE SYSTEM
     // =================================================================================================================
-    auto system = frydom::FrOffshoreSystem();
+    auto system = FrOffshoreSystem();
 
     // =================================================================================================================
     // FREE SURFACE
     // =================================================================================================================
     // Creating the free surface and assigning it to a unique pointer as we should have only one free surface that has to be owned by the OffshoreSystem
-    auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
+    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
     free_surface->Initialize(-400, 400, 200, -100, 100, 100);
 
     // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
@@ -64,9 +66,7 @@ int main(int argc, char* argv[]) {
     // CURRENT
     // =================================================================================================================
     // Creating a current field
-    auto current_field = std::make_unique<frydom::environment::FrCurrent>(frydom::EAST,
-                                                                          5,
-                                                                          frydom::KNOT);
+    auto current_field = std::make_unique<FrCurrent>(frydom::EAST, 5, KNOT);
 
 
     system.SetCurrent(current_field.release());
@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
     // ------------------------------------
 
     // Creating a body that has to be a floating body
-    auto ship1 = std::make_shared<frydom::FrShip>();
+    auto ship1 = std::make_shared<FrShip>();
 
 //    auto ship1 = std::make_shared<chrono::ChBody>();
     ship1->SetName("Ship1");
@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
     ship1->SetMass(mass);
     ship1->SetPos(chrono::ChVector<>(-200, 50, 0));
 
-    auto rot = chrono::Q_from_AngAxis(frydom::radians(-2.), chrono::ChVector<>(0, 0, 1));
+    auto rot = chrono::Q_from_AngAxis(radians(-2.), chrono::ChVector<>(0, 0, 1));
 
     ship1->SetRot(rot);
 
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
     // ------------------------------------
 
     // Creating a body that has to be a floating body
-    auto ship2 = std::make_shared<frydom::FrShip>();
+    auto ship2 = std::make_shared<FrShip>();
 
     ship2->SetName("Ship2");
     ship2->SetIdentifier(2);
@@ -152,7 +152,7 @@ int main(int argc, char* argv[]) {
     // ------------------------------------
 
     // Creating a body that has to be a floating body
-    auto ship3 = std::make_shared<frydom::FrShip>();
+    auto ship3 = std::make_shared<FrShip>();
 
     ship3->SetName("Ship3");
     ship3->SetIdentifier(5);
@@ -216,10 +216,12 @@ int main(int argc, char* argv[]) {
     ///===========================================================================================================
 
     // Visualization with irrlicht
+
+    // TODO: utiliser l'objet frydom pourla visu irrlicht
     if (viz) {
 
         // Using own class for irrlicht viz
-        frydom::FrIrrApp app(&system, L"Frydom vizualization based on Irrlicht");
+        FrIrrApp app(&system, L"Frydom vizualization based on Irrlicht");
         app.AddTypicalLights();
         app.AddTypicalCamera(irr::core::vector3df(0, 0, 300), irr::core::vector3df(1, 0, -1));
 

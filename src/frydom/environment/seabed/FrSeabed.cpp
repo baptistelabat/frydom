@@ -3,3 +3,8 @@
 //
 
 #include "FrSeabed.h"
+
+namespace frydom {
+
+
+}  // end namespace frydom

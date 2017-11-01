@@ -8,7 +8,6 @@
 
 using namespace chrono;
 using namespace frydom;
-using namespace environment;
 
 int main(int argc, char* argv[]) {
 
@@ -36,7 +35,7 @@ int main(int argc, char* argv[]) {
     // ====================================================================================
     // Defining the free surface
     // ====================================================================================
-    auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
+    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
     free_surface->Initialize(-400, 400, 200, -100, 100, 100);
     system.setFreeSurface(free_surface.release());
     // TODO: une surface libre flat (200mx200m) par defaut devrait etre presente a l'instanciation de system

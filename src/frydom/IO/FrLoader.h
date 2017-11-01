@@ -9,10 +9,11 @@
 #include <string>
 #include <vector>
 
-#include "frydom/environment/current/FrCurrentPolarCoeffs.h"
 
 namespace frydom {
-    using environment::FrCurrentPolarCoeffs;
+
+    class FrCurrentPolarCoeffs;
+
 namespace IO {
 
     //=======================================================================================================

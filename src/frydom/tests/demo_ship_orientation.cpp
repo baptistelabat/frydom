@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 
     // SYSTEM AND FREE SURFACE
     auto system = frydom::FrOffshoreSystem();
-    auto fs = std::make_unique<environment::FrFlatFreeSurface>(0.);
+    auto fs = std::make_unique<FrFlatFreeSurface>(0.);
     fs->Initialize(-50, 50, 50);
     system.setFreeSurface(fs.release());
 

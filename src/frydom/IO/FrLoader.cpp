@@ -3,13 +3,12 @@
 //
 
 #include "FrLoader.h"
-//#include "frydom/environment/current/FrCurrentPolarCoeffs.h"
+#include "frydom/environment/current/FrCurrentPolarCoeffs.h"
 
 #include "yaml-cpp/yaml.h"
 
 
 namespace frydom {
-    using environment::FrCurrentPolarCoeffs;
 namespace IO {
 
     FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string yaml_file) {

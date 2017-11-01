@@ -25,7 +25,6 @@
 // et des reperes d'expression.
 
 namespace frydom {
-namespace environment {
 
     class FrCurrent {  // TODO: renommer en FrCurrentField
 
@@ -83,7 +82,6 @@ namespace environment {
     };
 
 
-}  // end namespace environment
 }  // end namespace frydom
 
 #endif //FRYDOM_FRCURRENT_H

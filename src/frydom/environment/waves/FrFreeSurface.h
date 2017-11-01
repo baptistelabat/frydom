@@ -36,7 +36,6 @@ namespace frydom{
     class FrOffshoreSystem;
 //    class FrTriangleMeshConnected;
 
-namespace environment{  // TODO: supprimer le namespace environment ?? -> NON
 
     /// Pure Virtual Base class for a free surface system.
     class FrFreeSurface {
@@ -136,7 +135,6 @@ namespace environment{  // TODO: supprimer le namespace environment ?? -> NON
 
     };
 
-}  // end namespace environment
 }  // end namespace frydom
 
 #endif // FR_FREE_SURFACE_H

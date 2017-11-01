@@ -11,7 +11,6 @@
 
 // TODO: supprimer cette classe et utiliser directement la LUT dans la classe courant
 namespace frydom {
-namespace environment {
 
     class FrCurrentPolarCoeffs : public FrLookupTable1D<double> {
 
@@ -87,7 +86,6 @@ namespace environment {
         }
     };
 
-}  // end namespace environment
 }  // end namespace frydom
 
 

@@ -18,65 +18,82 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
+    // TODO
+    // 1 creer le systeme: il doit avoir une surface libre, un seabed, un modele de maree, un modele de courant, un modele de vent
+
+    // 2 creer un corps hydro
+
+    // Importer une base de donnees hydro
+
+    // Lier le corps BEM et le corps hydro
+
+    // Creer un modele de force d'excitation et l'ajouter au corps hydro
+
+    //
+
+
+
+
+
     // The system
     FrOffshoreSystem system; // TODO: lors de la creation d'un offshoresystem, il devrait y avoir par defaut une surface libre flat...
     // FIXME: -> comment faire pour le 3DOF dans le cas d'une SL non flat ? --> pa de sens pour le 3DOF a priori...
 
-    auto free_surface = std::make_unique<frydom::environment::FrFlatFreeSurface>(0.);
+    auto free_surface = std::make_unique<frydom::FrFlatFreeSurface>(0.);
     free_surface->Initialize(-400, 400, 200, -100, 100, 100);
 
     // Creating a regular wave field
-    auto regularWaveField = std::make_shared<FrRegularLinearWaveField>(9, 3, 0);
-
-    free_surface->SetWaveField(regularWaveField);
-
-    system.setFreeSurface(free_surface.release());
-
-
-
-    // TODO: Il faut que le wavefield soit integre a la free surface...
-
-
-    // Loading a hydrodynamic database
-    auto HDB = LoadHDB5("../tools/frydom_hdb.h5");
-
-    // Creating a hydrodynamic body
-    auto hydroBody = std::make_shared<FrShip>();
-
-    // Linking the HDB to physical body
-    hydroBody->SetBEMBody(HDB.GetBody(0));
-    system.AddBody(hydroBody);
-    hydroBody->Set3DOF_ON();
-
-    // =================================================================================================================
-    // Regular Wave field
-    // =================================================================================================================
-
-
-
-    // Creating a wave probe
-    auto waveProbe1 = regularWaveField->NewWaveProbe(0, 0);
-
-    // Testing
-    auto time = linspace<double>(0., 300., 1000);
-
-
-    std::vector<double> elev1;
-    for (auto t: time) {
-        regularWaveField->UpdateTime(t);
-//        std::cout << waveProbe1->GetElevation() << std::endl;
-        elev1.push_back(waveProbe1->GetElevation());
-    }
-
-    // Creating an excitation force
-    auto excForce = std::make_shared<FrLinearExcitationForce>();
-    hydroBody->AddForce(excForce);
-    excForce->SetWaveProbe(waveProbe1);
-
-    for (auto t: time) {
-        system.SetChTime(t);
-        system.Update();
-    }
+//    auto regularWaveField = std::make_shared<FrRegularLinearWaveField>(9, 3, 0);
+//
+//    free_surface->SetWaveField(regularWaveField);
+//
+//    system.setFreeSurface(free_surface.release());
+//
+//
+//
+//    // TODO: Il faut que le wavefield soit integre a la free surface...
+//
+//
+//    // Loading a hydrodynamic database
+//    auto HDB = LoadHDB5("../tools/frydom_hdb.h5");
+//
+//    // Creating a hydrodynamic body
+//    auto hydroBody = std::make_shared<FrShip>();
+//
+//    // Linking the HDB to physical body
+//    hydroBody->SetBEMBody(HDB.GetBody(0));
+//    system.AddBody(hydroBody);
+//    hydroBody->Set3DOF_ON();
+//
+//    // =================================================================================================================
+//    // Regular Wave field
+//    // =================================================================================================================
+//
+//
+//
+//    // Creating a wave probe
+//    auto waveProbe1 = regularWaveField->NewWaveProbe(0, 0);
+//
+//    // Testing
+//    auto time = linspace<double>(0., 300., 1000);
+//
+//
+//    std::vector<double> elev1;
+//    for (auto t: time) {
+//        regularWaveField->UpdateTime(t);
+////        std::cout << waveProbe1->GetElevation() << std::endl;
+//        elev1.push_back(waveProbe1->GetElevation());
+//    }
+//
+//    // Creating an excitation force
+//    auto excForce = std::make_shared<FrLinearExcitationForce>();
+//    hydroBody->AddForce(excForce);
+//    excForce->SetWaveProbe(waveProbe1);
+//
+//    for (auto t: time) {
+//        system.SetChTime(t);
+//        system.Update();
+//    }
 
 
 

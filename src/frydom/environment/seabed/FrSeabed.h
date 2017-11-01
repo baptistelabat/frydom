@@ -7,13 +7,11 @@
 
 
 namespace frydom {
-namespace environment {
 
     class FrSeabed {
 
     };
 
-}  // end namespace environment
 }  // end namespace frydom
 
 

@@ -25,7 +25,6 @@
 
 
 namespace frydom {
-namespace environment {
 
 
     FrCurrent::FrCurrent(chrono::ChVector<> const velocity_vector,
@@ -158,5 +157,4 @@ namespace environment {
     }
 
 
-}  // end namespace environment
 }  // end namespace frydom

@@ -39,8 +39,8 @@ namespace frydom {
 
         std::shared_ptr<FrBody> world_body;
 
-        std::unique_ptr<environment::FrFreeSurface> m_free_surface;  ///< The free surface's mesh that is a cartesian grid.
-        std::unique_ptr<environment::FrCurrent> m_current;           ///< The current field model
+        std::unique_ptr<FrFreeSurface> m_free_surface;  ///< The free surface's mesh that is a cartesian grid.
+        std::unique_ptr<FrCurrent> m_current;           ///< The current field model
         chrono::ChFrame<double> NEDframe;                            ///< Frame that has Z pointing down to have a well defined heading
 
 
@@ -57,16 +57,16 @@ namespace frydom {
 //        ~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
 
         /// Add a free surface model to the system
-        void setFreeSurface(environment::FrFreeSurface* freeSurface);
+        void setFreeSurface(FrFreeSurface* freeSurface);
 
         /// Add a current field to the system
-        void SetCurrent(environment::FrCurrent *current_field);
+        void SetCurrent(FrCurrent *current_field);
 
         /// Get the free surface model from the offshore system.
-        environment::FrFreeSurface* getFreeSurface() const;
+        FrFreeSurface* getFreeSurface() const;
 
         /// get the current field model from the offshore system
-        environment::FrCurrent* GetCurrent() const;
+        FrCurrent* GetCurrent() const;
 
         /// Get/Set the value of the acceleration of gravity
         /// It must be given positive, in m/s**2

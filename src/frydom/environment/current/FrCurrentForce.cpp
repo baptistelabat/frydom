@@ -13,7 +13,6 @@
 
 
 namespace frydom {
-namespace environment {
 
     FrCurrentForce::FrCurrentForce(std::string yaml_file) {
         coeffs_table = std::move(IO::MakeCurrentPolarCoeffTable(yaml_file));
@@ -86,5 +85,4 @@ namespace environment {
 
 
 
-    }  // end namespace environment
 }  // end namespace frydom

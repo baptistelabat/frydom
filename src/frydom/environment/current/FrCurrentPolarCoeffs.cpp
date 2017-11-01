@@ -6,7 +6,6 @@
 #include "frydom/IO/FrLoader.h"
 
 namespace frydom {
-namespace environment {
 
     void FrCurrentPolarCoeffs::Initialize(const std::vector<double> &angles,
                                           const std::vector<double> &cx,
@@ -32,5 +31,4 @@ namespace environment {
         FrCurrentPolarCoeffs::Initialize(angles, cx, cy, cz);
     }
 
-}  // end namespace environment
 }  // end namespace frydom

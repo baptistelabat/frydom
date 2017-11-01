@@ -8,11 +8,13 @@
 
 #include <vector>
 #include <complex>
+#include <random>
+
 #include "FrWaveSpectrum.h"
-#include "FrWaveProbe.h"
+//#include "FrWaveProbe.h"
 #include "FrWaveDispersionRelation.h"
 
-#define J std::complex<double>(0, 1)
+#define JJ std::complex<double>(0, 1)
 
 namespace frydom {
 
@@ -21,8 +23,14 @@ namespace frydom {
     protected:
         double m_time;
 
+    public:
+        void Update(const double time) {
+            m_time = time;
+        }
     };
 
+    // Forward declaration
+    class FrLinearWaveProbe;
 
     class FrLinearWaveField : public FrWaveField {
 
@@ -55,9 +63,11 @@ namespace frydom {
 
         std::vector<std::vector<double>> m_wavePhases; // Not used in regular wave field
 
+        std::vector<std::shared_ptr<FrLinearWaveProbe>> m_waveProbes;
+
     public:
 
-        FrLinearWaveField() {
+        FrLinearWaveField() : FrWaveField() {
             GenerateRandomWavePhases();
         }
 
@@ -155,6 +165,7 @@ namespace frydom {
         }
 
         void _ComputeWaveNumber() {
+            // TODO: aller chercher les infos dans FrOffshoreSystem
             double waterHeight = 10.;
             auto w = GetWavePulsations(RADS);
             double grav = 9.81;
@@ -227,27 +238,8 @@ namespace frydom {
             return waveAmplitudes;
         }
 
-        std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const {
-            auto cmplxElevation = GetCmplxElevation(x, y, true);
-            std::vector<std::complex<double>> steadyElevation(m_nbFreq);
-            // TODO: continuer 
-            for (unsigned int idir=0; idir<m_nbDir; ++idir) {
-                steadyElevation
-            }
-
-        }
-
-        FrWaveSpectrum* GetWaveSpectrum() const{ return m_waveSpectrum.get(); }
-
-        void SetReturnPeriod() {
-            // TODO
-        }
-
-        double GetReturnPeriod() const {
-            // TODO
-        }
-
-        std::vector<std::vector<std::complex<double>>> GetCmplxElevation(const double x, const double y, bool steady=false) const {
+        std::vector<std::vector<std::complex<double>>>
+        GetCmplxElevation(const double x, const double y, bool steady=false) const {
 
 
             std::vector<std::vector<std::complex<double>>> cmplxElevations(m_nbDir);  // is nbDir x nbFreq
@@ -278,11 +270,11 @@ namespace frydom {
                     wi_ = w_[ifreq];
                     phi_ik = m_wavePhases[idir][ifreq];
 
-                    val = aik * exp(J * (ki*wi_ + phi_ik));
+                    val = aik * exp(JJ * (ki*wi_ + phi_ik));
 
                     if (!steady) {
                         wi = waveFreqs[ifreq];
-                        val *= exp(-J*wi*m_time);
+                        val *= exp(-JJ*wi*m_time);
                     }
 
                     elev.push_back(val);
@@ -293,13 +285,44 @@ namespace frydom {
 
         }
 
-        std::shared_ptr<FrWaveProbe> NewWaveProbe() {
+        std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const {
+            auto cmplxElevation = GetCmplxElevation(x, y, true);
+
+            std::vector<std::complex<double>> steadyElevation(m_nbFreq);
+            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
+                steadyElevation.emplace_back(0.);
+            }
+
+            // TODO: continuer 
+            for (unsigned int idir=0; idir<m_nbDir; ++idir) {
+                for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
+                    steadyElevation[ifreq] += cmplxElevation[idir][ifreq];
+                }
+            }
+            return steadyElevation;
 
         }
 
+        FrWaveSpectrum* GetWaveSpectrum() const{ return m_waveSpectrum.get(); }
+
+        void SetReturnPeriod() {
+            // TODO
+        }
+
+        double GetReturnPeriod() const {
+            // TODO
+        }
+
+        std::shared_ptr<FrLinearWaveProbe> NewWaveProbe() {
+            // TODO
+        }
+
+        void Initialize() {
+            // TODO: pour initialiser les steady elevation et les tableaux d'elevation
+            // TODO: garder le tableau d'elevation (steady) en cache
+        }
+
     };
-
-
 
 
 }  // end namespace frydom

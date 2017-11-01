@@ -23,8 +23,6 @@ namespace frydom {
     // Forward declaration
     class FrOffshoreSystem;
 
-    namespace environment{
-
         class FrFlatFreeSurface : public FrFreeSurface {
 
           public:
@@ -41,7 +39,6 @@ namespace frydom {
             FrFlatFreeSurface() {};
         };
 
-    } // end namespace environment
 } // end namespace frydom
 
 #endif //FRYDOM_FR_FLAT_FREE_SURFACE_H

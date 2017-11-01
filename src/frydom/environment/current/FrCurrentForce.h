@@ -10,7 +10,6 @@
 #include "FrCurrentPolarCoeffs.h"
 
 namespace frydom {
-namespace environment {
 
     // Forward declarations
     class FrCurrentPolarCoeffs;
@@ -49,7 +48,6 @@ namespace environment {
 
 
 
-}  // end namespace environment
 }  // end namespace frydom
 
 #endif //FRYDOM_FRCURRENTFORCE_H

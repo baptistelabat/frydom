@@ -27,7 +27,6 @@
 
 
 namespace frydom {
-namespace environment {
     /// Class to store the different elements composing the offshore environment
     class FrEnvironment {
 
@@ -74,7 +73,6 @@ namespace environment {
 
     };
 
-}  // end namespace environment
 }  // end namespace frydom
 
 #endif //FRYDOM_FRENVIRONMENT_H

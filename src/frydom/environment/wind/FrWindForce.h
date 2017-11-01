@@ -6,7 +6,6 @@
 #define FRYDOM_FRWINDFORCE_H
 
 namespace frydom {
-namespace environment {
 
 
     class FrWindForce {
@@ -14,6 +13,5 @@ namespace environment {
     };
 
 
-}  // end namespace environment
 }  // end namespace frydom
 #endif //FRYDOM_FRWINDFORCE_H

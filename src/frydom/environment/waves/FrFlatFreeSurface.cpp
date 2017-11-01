@@ -17,7 +17,6 @@
 #include "frydom/core/FrOffshoreSystem.h"
 
 namespace frydom {
-    namespace environment{
 
 
         FrFlatFreeSurface::FrFlatFreeSurface(double mean_height) : FrFreeSurface(mean_height){}
@@ -32,5 +31,4 @@ namespace frydom {
             std::cout << "Updating Free surface at time " << mytime << std::endl;
         }
 
-    }  // end namespace environment
 }  // end namespace frydom

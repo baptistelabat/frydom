@@ -5,9 +5,7 @@
 #include "FrWind.h"
 
 namespace frydom {
-namespace environment {
 
 
 
-}  // end namespace environment
 }  // end namespace frydom

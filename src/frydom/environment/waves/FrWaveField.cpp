@@ -3,3 +3,8 @@
 //
 
 #include "FrWaveField.h"
+
+namespace frydom {
+
+
+}  // end namespace frydom
