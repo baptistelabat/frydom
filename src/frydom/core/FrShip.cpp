@@ -6,8 +6,8 @@
 #include "chrono/physics/ChLinkMate.h"
 #include "FrShip.h"
 #include "frydom/propeller/FrPropeller.h"
-#include "FrOffshoreSystem.h"
-
+//#include "FrOffshoreSystem.h"
+#include "frydom/environment/FrEnvironment.h"
 
 namespace frydom {
 
@@ -51,15 +51,15 @@ namespace frydom {
             if (!GetSystem()) {
                 throw std::string("The body must be added to a system before the plane constraint is set");
             }
-            if (!GetSystem()->getFreeSurface()) {
-                throw std::string("A free surface has to be created before setting a plane constraint for a body");
-            }
+//            if (!GetSystem()->getFreeSurface()) {
+//                throw std::string("A free surface has to be created before setting a plane constraint for a body");
+//            }
         } catch(std::string const& msg) {
             std::cerr << msg << std::endl;
         }
 
         auto plane_constraint = std::make_shared<chrono::ChLinkMatePlane>();
-        auto free_surface_body = GetSystem()->getFreeSurface()->getBody();
+        auto free_surface_body = GetSystem()->GetEnvironment()->GetFreeSurface()->GetBody();
         plane_constraint->Initialize(shared_from_this(), free_surface_body,
                                      true,
                                      chrono::ChVector<>(),

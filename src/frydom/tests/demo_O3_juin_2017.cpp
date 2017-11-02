@@ -15,6 +15,9 @@
 
 #include <math.h>
 
+
+#include "frydom/environment/FrEnvironment.h"
+
 #include "frydom/core/FrConstants.h"
 
 #include "chrono/physics/ChSystem.h"
@@ -38,6 +41,8 @@
 #include "irrlicht.h"
 #include "chrono/physics/ChLinkMate.h"
 
+
+
 bool viz = true;
 float friction = 0.6f;
 double step_size = 1e-2;
@@ -55,12 +60,7 @@ int main(int argc, char* argv[]) {
     // =================================================================================================================
     // FREE SURFACE
     // =================================================================================================================
-    // Creating the free surface and assigning it to a unique pointer as we should have only one free surface that has to be owned by the OffshoreSystem
-    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
-    free_surface->Initialize(-400, 400, 200, -100, 100, 100);
-
-    // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
-    system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
+    system.GetEnvironment()->GetFreeSurface()->Initialize(-200, 200, 50);
 
     // =================================================================================================================
     // CURRENT
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
     auto current_field = std::make_unique<FrCurrent>(frydom::EAST, 5, KNOT);
 
 
-    system.SetCurrent(current_field.release());
+    system.GetEnvironment()->SetCurrent(current_field.release());
 
 
     // =================================================================================================================

@@ -57,22 +57,22 @@ int main(int argc, char* argv[]) {
     // =================================================================================================================
     // Creating the free surface and assigning it to a unique pointer as we should have only one free surface that has to be owned by the OffshoreSystem
     auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
-    free_surface->Initialize(-400, 400, 100);
+//    free_surface->Initialize(-400, 400, 100);
+//
+//    // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
+//    system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
 
-    // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
-    system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
+    system.GetEnvironment()->GetFreeSurface()->Initialize(-400, 400, 100);
 
     // =================================================================================================================
     // CURRENT
     // =================================================================================================================
     // Creating a current field
-    auto current_field = std::make_unique<FrCurrent>(frydom::EAST,
-                                                                          5,
-                                                                          frydom::KNOT);
+    auto current_field = std::make_unique<FrCurrent>(frydom::EAST, 5, frydom::KNOT);
 
 
-    system.SetCurrent(current_field.release());
-
+//    system.SetCurrent(current_field.release());
+    system.GetEnvironment()->SetCurrent(current_field.release());
 
 
 //    auto current = system.GetCurrent();

@@ -25,35 +25,37 @@
 // Seabed includes
 #include "seabed/FrSeabed.h"
 
-
 namespace frydom {
     /// Class to store the different elements composing the offshore environment
     class FrEnvironment {
 
     private:
 
-        std::unique_ptr<FrFreeSurface> m_free_surface;
+        FrOffshoreSystem* m_system;
+
+        std::unique_ptr<FrFreeSurface> m_freeSurface;
         std::unique_ptr<FrTidal> m_tidal;
         std::unique_ptr<FrCurrent> m_current;
         std::unique_ptr<FrWind> m_wind;
         std::unique_ptr<FrSeabed> m_seabed;
 
-        double m_water_density = 1025.;
-        double m_air_density = 1.204;
-        double m_gravity_acceleration = 9.81;
+        double m_waterDensity = 1025.;
+        double m_airDensity = 1.204;
 
-        double m_sea_temperature = 15.;
-        double m_air_temperature = 20.;
+        double m_gravityAcceleration = 9.81;
 
-        double m_water_kinematic_viscosity;
+        double m_seaTemperature = 15.;
+        double m_airtemperature = 20.;
 
-        double m_atmospheric_pressure;
+        double m_waterKinematicViscosity;
+
+        double m_atmosphericPressure;
 
 
     public:
         FrEnvironment() {
 
-            m_free_surface = std::make_unique<FrFlatFreeSurface>(0.);
+            m_freeSurface = std::make_unique<FrFlatFreeSurface>(0.);
             m_tidal = std::make_unique<FrTidal>();
             m_current = std::make_unique<FrCurrent>();
             m_wind = std::make_unique<FrWind>();
@@ -61,15 +63,105 @@ namespace frydom {
 
         }
 
-        FrFreeSurface* GetFreeSurface() const { return m_free_surface.get(); }
-        FrTidal* GetTidal() const { return m_tidal.get(); }
-        FrCurrent* GetCurrent() const { return m_current.get(); }
-        FrWind* GetWind() const { return m_wind.get(); }
-        FrSeabed* GetSeabed() const { return m_seabed.get(); }
+        void SetSystem(FrOffshoreSystem* system) {
+            m_system = system;
+        }
 
+        FrOffshoreSystem* GetSystem() { return m_system; }
 
+        double GetWaterDensity() const {
+            return m_waterDensity;
+        }
 
-    friend class FrOffshoreSystem;
+        void SetWaterDensity(const double waterDensity) {
+            m_waterDensity = waterDensity;
+        }
+
+        double GetAirDensity() const {
+            return m_airDensity;
+        }
+
+        void SetAirDensity(double airDensity) {
+            m_airDensity = m_airDensity;
+        }
+
+        double GetGravityAcceleration() const {
+            return m_gravityAcceleration;
+        }
+
+        void SetGravityAcceleration(double gravityAcceleration) {
+            m_gravityAcceleration = m_gravityAcceleration;
+        }
+
+        double GetSeaTemperature() const {
+            return m_seaTemperature;
+        }
+
+        void SetSeaTemperature(double seaTemperature) {
+            m_seaTemperature = m_seaTemperature;
+        }
+
+        double GetAirtemperature() const {
+            return m_airtemperature;
+        }
+
+        void SetAirtemperature(double airtemperature) {
+            m_airtemperature = m_airtemperature;
+        }
+
+        double GetWaterKinematicViscosity() const {
+            return m_waterKinematicViscosity;
+        }
+
+        void SetWaterKinematicViscosity(double waterKinematicViscosity) {
+            m_waterKinematicViscosity = m_waterKinematicViscosity;
+        }
+
+        double GetAtmosphericPressure() const {
+            return m_atmosphericPressure;
+        }
+
+        void SetAtmosphericPressure(double atmosphericPressure) {
+            m_atmosphericPressure = m_atmosphericPressure;
+        }
+
+        FrFreeSurface* GetFreeSurface() const {
+            return m_freeSurface.get();
+        }
+
+        void SetFreeSurface(FrFreeSurface* freeSurface);
+
+        FrTidal* GetTidal() const {
+            return m_tidal.get();
+        }
+
+        void SetTidal(FrTidal* tidal) {
+            m_tidal = std::unique_ptr<FrTidal>(tidal);
+        }
+
+        FrCurrent* GetCurrent() const {
+            return m_current.get();
+        }
+
+        void SetCurrent(FrCurrent* current) {
+            m_current = std::unique_ptr<FrCurrent>(current);
+        }
+
+        FrWind* GetWind() const {
+            return m_wind.get();
+        }
+
+        void SetWind(FrWind* wind) {
+            m_wind = std::unique_ptr<FrWind>(wind);
+        }
+
+        FrSeabed* GetSeabed() const {
+            return m_seabed.get();
+        }
+
+        void SetSeabed(FrSeabed* seabed) {
+            m_seabed = std::unique_ptr<FrSeabed>(seabed);
+        }
 
     };
 

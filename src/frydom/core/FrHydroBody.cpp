@@ -5,9 +5,11 @@
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "chrono/assets/ChTriangleMeshShape.h"
 
-#include "frydom/environment/current/FrCurrent.h"
+//#include "frydom/environment/current/FrCurrent.h"
 #include "frydom/hydrodynamics/FrHydroDB.h"
 #include "FrHydroBody.h"
+
+#include "frydom/environment/FrEnvironment.h"
 
 namespace frydom {
 
@@ -44,13 +46,7 @@ namespace frydom {
         m_course = Normalize_0_2PI(atan2(body_velocity.y(), body_velocity.x()));
 
         // Update current relative velocity
-
-        chrono::ChVector<double> current_velocity;
-        if (GetSystem()->GetCurrent()) {
-            current_velocity = GetSystem()->GetCurrent()->GetFluxVector(NWU);
-        } else {
-            current_velocity.SetNull();
-        }
+        auto current_velocity = GetSystem()->GetEnvironment()->GetCurrent()->GetFluxVector(NWU);
 
         m_current_relative_velocity = body_velocity - current_velocity;
 

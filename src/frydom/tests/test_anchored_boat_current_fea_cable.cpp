@@ -14,7 +14,6 @@
 #include "frydom/utils/FrIrrApp.h"
 
 using namespace frydom;
-using namespace environment;
 
 
 int main(int argc, char* argv[]) {
@@ -23,15 +22,17 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     // Set the free surface
-    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
-    free_surface->Initialize(-200, 200, 50, -200, 200, 50);
-    system.setFreeSurface(free_surface.release());
+//    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
+//    free_surface->Initialize(-200, 200, 50, -200, 200, 50);
+//    system.setFreeSurface(free_surface.release());
+    system.GetEnvironment()->GetFreeSurface()->Initialize(-200, 200, 50, -200, 200, 50);
 
 
     // The current
     auto current_field = std::make_unique<FrCurrent>(WEST, 20, KNOT, NED, GOTO);
     // TODO: changer pour faire des move plutot que des release...
-    system.SetCurrent(current_field.release());
+//    system.SetCurrent(current_field.release());
+    system.GetEnvironment()->SetCurrent(current_field.release());
 
     // Building a TUG
     auto tug = std::make_shared<FrShip>();

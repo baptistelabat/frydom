@@ -115,7 +115,7 @@ namespace frydom {
 //
 //        virtual std::vector<double> GetWaveLengths() const = 0;
 //
-        virtual std::vector<std::vector<double>> GetWaveAmplitudes() const = 0;
+        virtual std::vector<std::vector<double>> _GetWaveAmplitudes() const = 0;
 
         virtual std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const = 0;
 
@@ -184,7 +184,7 @@ namespace frydom {
 
         void SetWavePhases(const std::vector<double>& wavePhases) override {}
 
-        std::vector<std::vector<double>> GetWaveAmplitudes() const override {
+        std::vector<std::vector<double>> _GetWaveAmplitudes() const override {
             std::vector<std::vector<double>> amplitudes;
             std::vector<double> wave_ampl;
             wave_ampl.push_back(0.5 * m_wave_height);
@@ -345,7 +345,7 @@ namespace frydom {
             return M_2PI / dw;
         }
 
-        std::vector<std::vector<double>> GetWaveAmplitudes() const override {
+        std::vector<std::vector<double>> _GetWaveAmplitudes() const override {
             // FIXME: les amplitudes de vague (sqrt(2*...)) devraient etre calculees plutot dans le wavefield !! rien a voir avec le spectre...
             std::vector<std::vector<double>> waveAmplitudes;
             waveAmplitudes.push_back(m_wave_spectrum->GetWaveAmplitudes(m_nb_freq, m_wmin, m_wmax));
@@ -358,7 +358,7 @@ namespace frydom {
 
             double w_ = x * cos(m_mean_wave_dir) + y * sin(m_mean_wave_dir);
 
-            auto wave_ampl = GetWaveAmplitudes()[0];
+            auto wave_ampl = _GetWaveAmplitudes()[0];
 
             std::complex<double> val;
             for (uint iw=0; iw<m_nb_freq; iw++) {
@@ -491,7 +491,7 @@ namespace frydom {
                 w_.push_back(x * cos(direction) + y * sin(direction));
             }
 
-            auto waveAmplitudes = GetWaveAmplitudes(); // is ntheta x nw, ie wA[i] est de longueur
+            auto waveAmplitudes = _GetWaveAmplitudes(); // is ntheta x nw, ie wA[i] est de longueur
 
             double ki;
             std::complex<double> cval;

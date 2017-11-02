@@ -31,9 +31,10 @@ int main(int argc, char* argv[]) {
 
     // SYSTEM AND FREE SURFACE
     auto system = frydom::FrOffshoreSystem();
-    auto fs = std::make_unique<FrFlatFreeSurface>(0.);
-    fs->Initialize(-50, 50, 50);
-    system.setFreeSurface(fs.release());
+//    auto fs = std::make_unique<FrFlatFreeSurface>(0.);
+//    fs->Initialize(-50, 50, 50);
+//    system.setFreeSurface(fs.release());
+    system.GetEnvironment()->GetFreeSurface()->Initialize(-50, 50, 50);
 
     // SHIP WITH CHRONO TOOLS FOR ORIENTATION
     auto ship1 = std::make_shared<FrShip>();

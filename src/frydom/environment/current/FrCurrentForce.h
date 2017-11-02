@@ -6,7 +6,7 @@
 #define FRYDOM_FRCURRENTFORCE_H
 
 #include "frydom/core/FrForce.h"
-#include "frydom/core/FrHydroBody.h"
+//#include "frydom/core/FrHydroBody.h"
 #include "FrCurrentPolarCoeffs.h"
 
 namespace frydom {
@@ -14,6 +14,7 @@ namespace frydom {
     // Forward declarations
     class FrCurrentPolarCoeffs;
     class FrCurrent;
+    class FrHydroBody;
 
     class FrCurrentForce : public FrForce {
 
@@ -30,7 +31,7 @@ namespace frydom {
         explicit FrCurrentForce(std::string yaml_file);
 
         /// Get the parent body that must be a FrHydroBody
-        FrHydroBody* GetBody() { return dynamic_cast<FrHydroBody*>(Body); }
+//        FrHydroBody* GetBody() override { return dynamic_cast<FrHydroBody*>(Body); }
 
         /// Sets the parent body (the force belongs to this rigid body)
 //        void SetBody(FrHydroBody* newRB) { Body = newRB; }

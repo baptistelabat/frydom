@@ -35,6 +35,7 @@ namespace frydom {
         double m_course = 0.;
 
         // Geometric properties of the hydro body
+        // TODO: creer classe de donnees geometriques
         double m_transverse_area = 0.;
         double m_lateral_area = 0.;
         double m_length_between_perpendicular = 0.;

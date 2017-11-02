@@ -4,6 +4,7 @@
 
 //#include "frydom/environment/FrEnvironment.h"
 #include "frydom/IO/FrLoader.h"
+#include "frydom/environment/current/FrCurrentPolarCoeffs.h"
 
 using namespace frydom;
 

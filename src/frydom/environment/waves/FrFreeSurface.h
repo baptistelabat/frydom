@@ -78,6 +78,9 @@ namespace frydom{
 //            NL_HOS
 //        };
 
+        // TODO: supprimer la classe flat free surface et n'avoir qu'une seule classe FrFreeSurface
+        // Cette classe foit contenir le maillage, le champ de vague et le mdoele de maree
+
         // TODO: placer les constructeurs en protected vu qu'on instanncie jamais cette classe directement...
 
         /// void constructor that should not be publicly used.
@@ -126,7 +129,7 @@ namespace frydom{
         virtual void Update(double ChTime) = 0;
 
         /// get the body that represents the free surface
-        std::shared_ptr<chrono::ChBody> getBody() {return m_fs_body;}
+        std::shared_ptr<chrono::ChBody> GetBody() {return m_fs_body;}
 
         void SetWaveField(std::shared_ptr<FrWaveField> waveField) { m_waveField = waveField; }
 

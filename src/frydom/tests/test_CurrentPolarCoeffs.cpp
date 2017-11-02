@@ -30,14 +30,17 @@ int main(int argc, char* argv[]) {
     auto current_field = std::make_unique<FrCurrent>(NORTH, 8, KNOT, NED, GOTO);
 
     // TODO: changer pour faire des move !!
-    system.SetCurrent(current_field.release());
+//    system.SetCurrent(current_field.release());
+    system.GetEnvironment()->SetCurrent(current_field.release());
 
     // ====================================================================================
     // Defining the free surface
     // ====================================================================================
-    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
-    free_surface->Initialize(-400, 400, 200, -100, 100, 100);
-    system.setFreeSurface(free_surface.release());
+//    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
+//    free_surface->Initialize(-400, 400, 200, -100, 100, 100);
+//    system.setFreeSurface(free_surface.release());
+//    system.GetEnvironment()->SetFreeSurface(free_surface.release());
+    system.GetEnvironment()->GetFreeSurface()->Initialize(-400, 400, 200, -100, 100, 100);
     // TODO: une surface libre flat (200mx200m) par defaut devrait etre presente a l'instanciation de system
 
     // ====================================================================================

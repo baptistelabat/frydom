@@ -11,7 +11,6 @@
 #include <random>
 
 #include "FrWaveSpectrum.h"
-//#include "FrWaveProbe.h"
 #include "FrWaveDispersionRelation.h"
 
 #define JJ std::complex<double>(0, 1)
@@ -23,32 +22,38 @@ namespace frydom {
     protected:
         double m_time;
 
+        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum = nullptr;
+
     public:
-        void Update(const double time) {
+
+        virtual void Update(double time) {
             m_time = time;
         }
+
+        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type) {
+            m_waveSpectrum = MakeWaveSpectrum(type);
+        }
+
     };
 
     // Forward declaration
     class FrLinearWaveProbe;
 
+    enum LINEAR_WAVE_TYPE {
+        REGULAR,
+        IRREGULAR,
+        DIRECTIONAL
+    };
+
     class FrLinearWaveField : public FrWaveField {
 
-        enum TYPE {
-            REGULAR,
-            IRREGULAR,
-            DIRECTIONAL
-        };
-
     private:
-        TYPE m_type = DIRECTIONAL;
-        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum = nullptr;
+        LINEAR_WAVE_TYPE m_type = DIRECTIONAL;
 
         double m_minFreq = 0.;
         double m_maxFreq = 2.;
         unsigned int m_nbFreq = 20;
 
-        FrAngleUnit angleUnit = DEG;
         double m_minDir = -180.*M_DEG;
         double m_maxDir = 165.*M_DEG;
         unsigned int m_nbDir = 20;
@@ -60,6 +65,7 @@ namespace frydom {
         double m_period = 0.;
 
         std::vector<double> c_waveNumbers;
+        std::vector<std::complex<double>> c_emjwt;
 
         std::vector<std::vector<double>> m_wavePhases; // Not used in regular wave field
 
@@ -67,15 +73,17 @@ namespace frydom {
 
     public:
 
-        FrLinearWaveField() : FrWaveField() {
+        explicit FrLinearWaveField(LINEAR_WAVE_TYPE type) {
+            SetType(type);
             GenerateRandomWavePhases();
+            Update(0.);
         }
 
-        TYPE GetType() const {
+        LINEAR_WAVE_TYPE GetType() const {
             return m_type;
         }
 
-        void SetType(TYPE type) {
+        void SetType(LINEAR_WAVE_TYPE type) {
             m_type = type;
 
             switch (type) {
@@ -90,6 +98,9 @@ namespace frydom {
                     m_nbDir = 1;
                     m_minDir = m_meanDir;
                     m_maxDir = m_meanDir;
+
+                    // Creating a default waveSpectrum
+                    SetWaveSpectrum(JONSWAP);
                     break;
                 case DIRECTIONAL:
                     
@@ -97,12 +108,20 @@ namespace frydom {
             }
         }
 
+        void SetRegularWaveHeight(double height) {
+            m_height = height;
+        }
+
+        void SetRegularWavePeriod(double period, FREQ_UNIT unit=S) {
+            m_period = convert_frequency(period, unit, S);
+        }
+
         double GetMeanWaveDirection(FrAngleUnit unit=DEG) const {
+            double meanWaveDir = m_meanDir;
             if (unit == DEG) {
-                return m_meanDir * M_RAD;
-            } else {
-                return m_meanDir;
+                meanWaveDir *= M_RAD;
             }
+            return meanWaveDir;
         }
 
         void SetMeanWaveDirection(const double meanDirection, FrAngleUnit unit=DEG) {
@@ -112,19 +131,20 @@ namespace frydom {
                 m_meanDir = meanDirection;
             }
 
-            if (!m_type == DIRECTIONAL) {
+            if (!(m_type == DIRECTIONAL)) {
                 m_minDir = m_meanDir;
                 m_maxDir = m_meanDir;
             }
         }
 
         std::vector<double> GetWaveDirections(FrAngleUnit unit=DEG) const {
+            std::vector<double> waveDirections;
             if (unit == DEG) {
-                return linspace(m_minDir*M_RAD, m_maxDir*M_RAD, m_nbDir);
+                waveDirections = linspace(m_minDir*M_RAD, m_maxDir*M_RAD, m_nbDir);
             } else {
-                return linspace(m_minDir, m_maxDir, m_nbDir);
+                waveDirections = linspace(m_minDir, m_maxDir, m_nbDir);
             }
-
+            return waveDirections;
         }
 
         void SetWaveDirections(const double minDir, const double maxDir, const unsigned int nbDir, FrAngleUnit unit=DEG) {
@@ -147,9 +167,16 @@ namespace frydom {
         }
 
         std::vector<double> GetWavePulsations(FREQ_UNIT unit=RADS) const {
-            return linspace(convert_frequency(m_minFreq, RADS, unit),
-                            convert_frequency(m_maxFreq, RADS, unit),
-                            m_nbFreq);
+
+            std::vector<double> omega;
+            if (m_type == REGULAR) {
+                omega.push_back(S2RADS(m_period));
+            } else {
+                omega = linspace(convert_frequency(m_minFreq, RADS, unit),
+                                 convert_frequency(m_maxFreq, RADS, unit),
+                                 m_nbFreq);
+            }
+            return omega;
         }
 
         void SetWavePulsations(const double minFreq, const double maxFreq, const unsigned int nbFreq, FREQ_UNIT unit=RADS) {
@@ -178,7 +205,7 @@ namespace frydom {
 
         void SetWavePhases(std::vector<std::vector<double>>& wavePhases) {
             assert(wavePhases.size() == m_nbDir);
-            for (auto w: wavePhases) {
+            for (auto& w: wavePhases) {
                 assert(w.size() == m_nbFreq);
             }
             m_wavePhases = wavePhases;
@@ -186,24 +213,27 @@ namespace frydom {
 
         void GenerateRandomWavePhases() {
 
-            if (m_type == REGULAR) return;
-
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            std::uniform_real_distribution<double> dis(0., M_2PI);
-
             m_wavePhases.clear();
             m_wavePhases.reserve(m_nbDir);
 
             std::vector<double> phases;
             phases.reserve(m_nbFreq);
 
-            for (uint idir=0; idir<m_nbDir; ++idir) {
-                phases.clear();
-                for (uint iw=0; iw<m_nbFreq; ++iw) {
-                    phases.push_back(dis(gen));
-                }
+            if (m_type == REGULAR) {
+                phases.push_back(0.);
                 m_wavePhases.push_back(phases);
+            } else {
+                std::random_device rd;
+                std::mt19937 gen(rd());
+                std::uniform_real_distribution<double> dis(0., M_2PI);
+
+                for (uint idir=0; idir<m_nbDir; ++idir) {
+                    phases.clear();
+                    for (uint iw=0; iw<m_nbFreq; ++iw) {
+                        phases.push_back(dis(gen));
+                    }
+                    m_wavePhases.push_back(phases);
+                }
             }
         }
 
@@ -215,7 +245,7 @@ namespace frydom {
             // TODO
         }
 
-        std::vector<std::vector<double>> GetWaveAmplitudes() const {
+        std::vector<std::vector<double>> _GetWaveAmplitudes() const {
             std::vector<std::vector<double>> waveAmplitudes;
             std::vector<double> ampl;
             switch (m_type) {
@@ -242,10 +272,13 @@ namespace frydom {
         GetCmplxElevation(const double x, const double y, bool steady=false) const {
 
 
-            std::vector<std::vector<std::complex<double>>> cmplxElevations(m_nbDir);  // is nbDir x nbFreq
-            std::vector<std::complex<double>> elev(m_nbFreq);
+            std::vector<std::vector<std::complex<double>>> cmplxElevations;  // is nbDir x nbFreq
+            cmplxElevations.reserve(m_nbDir);
+            std::vector<std::complex<double>> elev;
+            elev.reserve(m_nbFreq);
 
-            std::vector<double> w_(m_nbDir);
+            std::vector<double> w_;
+            w_.reserve(m_nbDir);
             if (m_type == DIRECTIONAL) {
                 auto wave_dirs = GetWaveDirections(RAD);
                 for (auto wave_dir: wave_dirs) {
@@ -255,7 +288,7 @@ namespace frydom {
                 w_.push_back(x * cos(m_meanDir) + y * sin(m_meanDir));
             }
 
-            std::vector<std::vector<double>> waveAmplitudes = GetWaveAmplitudes();
+            std::vector<std::vector<double>> waveAmplitudes = _GetWaveAmplitudes();
             std::vector<double> waveFreqs = GetWavePulsations(RADS);
 
             std::complex<double> aik, val;
@@ -288,7 +321,8 @@ namespace frydom {
         std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const {
             auto cmplxElevation = GetCmplxElevation(x, y, true);
 
-            std::vector<std::complex<double>> steadyElevation(m_nbFreq);
+            std::vector<std::complex<double>> steadyElevation;
+            steadyElevation.reserve(m_nbFreq);
             for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
                 steadyElevation.emplace_back(0.);
             }
@@ -321,6 +355,56 @@ namespace frydom {
             // TODO: pour initialiser les steady elevation et les tableaux d'elevation
             // TODO: garder le tableau d'elevation (steady) en cache
         }
+
+        void Update(double time) override {
+            m_time = time;
+
+            // Updating exp(-jwt)
+            std::vector<double> w = GetWavePulsations(RADS);
+            c_emjwt.clear();
+            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
+                c_emjwt.push_back(exp(-JJ*w[ifreq]*time));
+            }
+
+        }
+
+        double GetElevation(double x, double y) const {
+
+            auto steadyElevation =  GetSteadyElevation(x, y);
+
+            double elevation = 0.;
+            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
+                elevation += std::imag( steadyElevation[ifreq] * c_emjwt[ifreq] );
+            }
+            return elevation;
+        }
+
+        std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
+                                                      const std::vector<double>& yVect) const {
+
+            auto nx = xVect.size();
+            auto ny = yVect.size();
+
+            std::vector<std::vector<double>> elevations;
+            std::vector<double> elev;
+
+            elevations.reserve(nx);
+            elev.reserve(ny);
+
+            double eta, x, y;
+            for (unsigned int ix=0; ix<nx; ++ix) {
+                elev.clear();
+                x = xVect[ix];
+                for (unsigned int iy=0; iy<ny; ++iy) {
+                    y = yVect[iy];
+                    eta = GetElevation(x, y);
+                    elev.push_back(eta);
+                }
+                elevations.push_back(elev);
+            }
+            return elevations;
+        }
+
 
     };
 

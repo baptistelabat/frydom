@@ -107,7 +107,7 @@ namespace frydom {
 
     // =================================================================================================================
 
-    enum WaveSpectrumType {
+    enum WAVE_SPECTRUM_TYPE {
         JONSWAP,
         PIERSON_MOSKOWITZ
     };
@@ -115,14 +115,16 @@ namespace frydom {
     class FrWaveSpectrum {
 
     protected:
-        double m_significant_height;
-        double m_peak_pulsation;
+        double m_significant_height = 3.;
+        double m_peak_pulsation = 9.;
 
         WaveDirectionalModelType m_dir_model_type = NONE;
         std::unique_ptr<FrWaveDirectionalModel> m_directional_model = nullptr;
 
 
     public:
+
+        FrWaveSpectrum() = default;
 
         /// Constructor
         FrWaveSpectrum(const double hs, const double tp, const FREQ_UNIT unit=S) :
@@ -256,9 +258,11 @@ namespace frydom {
     class FrJonswapWaveSpectrum : public FrWaveSpectrum {
 
     private:
-        double m_gamma;
+        double m_gamma = 3.3;
 
     public:
+
+        FrJonswapWaveSpectrum() = default;
 
         FrJonswapWaveSpectrum(const double hs, const double tp, const FREQ_UNIT unit=S, const double gamma=3.3) :
                 FrWaveSpectrum(hs, tp, unit),
@@ -314,6 +318,8 @@ namespace frydom {
 
     public:
 
+        FrPiersonMoskowitzWaveSpectrum() = default;
+
         FrPiersonMoskowitzWaveSpectrum(const double hs, const double tp, const FREQ_UNIT unit=S) :
                 FrWaveSpectrum(hs, tp, unit) {}
 
@@ -330,6 +336,11 @@ namespace frydom {
         }
 
     };
+
+
+    std::unique_ptr<FrWaveSpectrum> MakeWaveSpectrum(WAVE_SPECTRUM_TYPE type);
+
+
 
 }  // end namespace frydom
 
