@@ -61,9 +61,35 @@ namespace frydom {
         /// Default destructor
 //        ~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
 
-        FrEnvironment* GetEnvironment() const {
+        inline FrEnvironment* GetEnvironment() const {
             return m_environment.get();
         }
+
+        inline FrFreeSurface* GetFreeSurface() const {
+            return m_environment->GetFreeSurface();
+        }
+
+        inline FrCurrent* GetCurrent() const {
+            return m_environment->GetCurrent();
+        }
+
+        inline FrTidal* GetTidal() const {
+            return m_environment->GetTidal();
+        }
+
+        inline FrSeabed* GetSeabed() const {
+            return m_environment->GetSeabed();
+        }
+
+        void SetFreeSurfaceGrid(double lmin, double lmax, double dl) {
+            m_environment->GetFreeSurface()->Initialize(lmin, lmax, dl);
+        }
+
+        void SetFreeSurfaceGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
+            m_environment->GetFreeSurface()->Initialize(xmin, xmax, dx, ymin, ymax, dy);
+        }
+
+
 
 //        /// Add a free surface model to the system
 //        void setFreeSurface(FrFreeSurface* freeSurface);

@@ -44,12 +44,12 @@ namespace frydom {
     private:
         // FIXME: ce vecteur doit representer le flux. Par contre, les informations d'angle sont courant porte vers et non vient de
         // FIXME: Corriger les information d'angle qui ne sont pas consistantes.
-            chrono::ChVector<> m_current_vector;  ///< The flux velocity vector of the current expressed in the NWU frame (NWU/GOTO)
+            chrono::ChVector<> m_currentVector;  ///< The flux velocity vector of the current expressed in the NWU frame (NWU/GOTO)
 
     public:
 
         /// Default constructor: No current
-        FrCurrent() : m_current_vector(chrono::VNULL) {}
+        FrCurrent() : m_currentVector(chrono::VNULL) {}
 
         /// Constructor from a velocity vector embedding direction and magnitude (in m/s)
         explicit FrCurrent(chrono::ChVector<>  velocity_vector,
@@ -57,11 +57,23 @@ namespace frydom {
 
         /// Constructor from an angle and a magnitude.
         FrCurrent(double  angle, double  magnitude,
-                  FrAngleUnit= DEG, FrSpeedUnit= KNOT, FrFrame= NED, FrDirectionConvention= GOTO);
+                  FrAngleUnit= DEG, FrSpeedUnit= KNOT, FrFrame= NED, FrDirectionConvention convention = GOTO);
 
         /// Constructor from a direction vector and a magnitude
         FrCurrent(chrono::ChVector<>  unit_direction, double  magnitude,
-                  FrSpeedUnit= KNOT, FrFrame= NED, FrDirectionConvention= GOTO);
+                  FrSpeedUnit= KNOT, FrFrame= NED, FrDirectionConvention convention = GOTO);
+
+        // TODO: Ajouter les setters pour la direction et l'intensite
+
+        void SetDirection(const chrono::ChVector<>& unitDirection,
+                          FrFrame frame=NED,
+                          FrDirectionConvention directionConvention=GOTO);
+
+        void SetDirection(double angle, FrAngleUnit angleUnit=DEG,
+                          FrFrame frame=NED,
+                          FrDirectionConvention directionConvention=GOTO);
+
+        void SetMagnitude(double magnitude, FrSpeedUnit speedUnit=KNOT);
 
         void Update(double Time);
 
@@ -73,7 +85,7 @@ namespace frydom {
 
         double GetAngle(FrDirectionConvention convention, FrFrame frame, FrAngleUnit= DEG);
 
-        double GetMagnitude();
+        double GetMagnitude(FrSpeedUnit speedUnit=KNOT);
 
         double GetMagnitude2();
 

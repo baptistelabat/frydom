@@ -33,12 +33,14 @@ namespace frydom {
 
         FrOffshoreSystem* m_system;
 
+        // Environment components
         std::unique_ptr<FrFreeSurface> m_freeSurface;
         std::unique_ptr<FrTidal> m_tidal;
         std::unique_ptr<FrCurrent> m_current;
         std::unique_ptr<FrWind> m_wind;
         std::unique_ptr<FrSeabed> m_seabed;
 
+        // Environments scalars
         double m_waterDensity = 1025.;
         double m_airDensity = 1.204;
 
@@ -110,6 +112,7 @@ namespace frydom {
         }
 
         double GetWaterKinematicViscosity() const {
+            // TODO: gerer la temperature
             return m_waterKinematicViscosity;
         }
 
@@ -125,7 +128,7 @@ namespace frydom {
             m_atmosphericPressure = m_atmosphericPressure;
         }
 
-        FrFreeSurface* GetFreeSurface() const {
+        inline FrFreeSurface* GetFreeSurface() const {
             return m_freeSurface.get();
         }
 
@@ -139,7 +142,7 @@ namespace frydom {
             m_tidal = std::unique_ptr<FrTidal>(tidal);
         }
 
-        FrCurrent* GetCurrent() const {
+        inline FrCurrent* GetCurrent() const {
             return m_current.get();
         }
 
@@ -147,7 +150,7 @@ namespace frydom {
             m_current = std::unique_ptr<FrCurrent>(current);
         }
 
-        FrWind* GetWind() const {
+        inline FrWind* GetWind() const {
             return m_wind.get();
         }
 
@@ -155,7 +158,7 @@ namespace frydom {
             m_wind = std::unique_ptr<FrWind>(wind);
         }
 
-        FrSeabed* GetSeabed() const {
+        inline FrSeabed* GetSeabed() const {
             return m_seabed.get();
         }
 

@@ -21,9 +21,6 @@
 #include "frydom/environment/FrConventions.h"
 
 
-// TODO: placer ces macros dans le header de FrOffshoreSystem !!! C'est d'utilite publique...
-
-
 namespace frydom {
 
 
@@ -41,7 +38,7 @@ namespace frydom {
             current_vector = -current_vector;
         }
 
-        m_current_vector = current_vector;
+        m_currentVector = current_vector;
 
     }
 
@@ -76,7 +73,7 @@ namespace frydom {
             current_vector = NED2NWU(current_vector);
         }
 
-        m_current_vector = current_vector;
+        m_currentVector = current_vector;
 
     }
 
@@ -100,7 +97,7 @@ namespace frydom {
             current_vector = -current_vector;
         }
 
-        m_current_vector = current_vector;
+        m_currentVector = current_vector;
 
     }
 
@@ -111,9 +108,9 @@ namespace frydom {
     chrono::ChVector<> FrCurrent::GetFluxVector(FrFrame frame) {
         switch (frame) {
             case NED:
-                return NWU2NED(m_current_vector);
+                return NWU2NED(m_currentVector);
             case NWU:
-                return m_current_vector;
+                return m_currentVector;
         }
     }
 
@@ -148,12 +145,66 @@ namespace frydom {
 
     }
 
-    double FrCurrent::GetMagnitude() {
-        return 0;
+    double FrCurrent::GetMagnitude(FrSpeedUnit speedUnit) {
+        return convert_velocity_unit(m_currentVector.Length(), MS, speedUnit);
     }
 
     double FrCurrent::GetMagnitude2() {
-        return 0;
+        // TODO
+    }
+
+    void FrCurrent::SetDirection(const chrono::ChVector<> &unitDirection,
+                                 FrFrame frame,
+                                 FrDirectionConvention directionConvention) {
+
+        // Ensuring the vector is a unit vector
+        auto uDirection = unitDirection;
+        uDirection /= unitDirection.Length();
+
+        if (frame == NED) {
+            uDirection = NED2NWU(uDirection);
+        }
+
+        if (directionConvention == COMEFROM) {
+            uDirection = - uDirection;
+        }
+
+        // Get the current magnitude
+        auto magnitude = GetMagnitude(MS);
+
+        // Building the current vector
+        m_currentVector = uDirection * magnitude;
+    }
+
+    void FrCurrent::SetDirection(double angle, FrAngleUnit angleUnit,
+                                 FrFrame frame,
+                                 FrDirectionConvention directionConvention) {
+        auto alpha = angle;
+        if (angleUnit == DEG) {
+            alpha = radians(alpha);
+        }
+
+        // Building the unit vector from angle
+        chrono::ChVector<double> currentVector(cos(alpha), sin(alpha), 0.);
+
+        SetDirection(currentVector, frame, directionConvention);
+
+    }
+
+    void FrCurrent::SetMagnitude(double magnitude, FrSpeedUnit speedUnit) {
+        auto vel = magnitude;
+
+        if (speedUnit != MS) {
+            vel = convert_velocity_unit(vel, speedUnit, MS);
+        }
+
+        m_currentVector /= m_currentVector.Length();
+        m_currentVector *= vel;
+
+    }
+
+    void SetCurrentVector(chrono::ChVector<double>& currentVector, FrFrame frame=NED, FrSpeedUnit speedUnit=KNOT) {
+        // TODO
     }
 
 
