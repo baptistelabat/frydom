@@ -10,6 +10,7 @@
 #include <memory>
 #include <cassert>
 #include <algorithm>
+#include <complex>
 
 namespace frydom {
 
@@ -18,15 +19,15 @@ namespace frydom {
     };
 
 
-    template <class Real=double>
+    template <class Scalar=double>
     class FrInterp1d {
 
     protected:
-        std::shared_ptr<const std::vector<Real>> xcoord;
-        std::shared_ptr<const std::vector<Real>> yval;
+        std::shared_ptr<const std::vector<Scalar>> xcoord;
+        std::shared_ptr<const std::vector<Scalar>> yval;
         unsigned long ndata = 0;
-        Real xmin;
-        Real xmax;
+        Scalar xmin;
+        Scalar xmax;
 
     public:
         FrInterp1d() {};
@@ -34,26 +35,26 @@ namespace frydom {
 
         // TODO: voir a separer l'implementation et la mettre en fin de fichier (pas directement dans le corps de la classe)
 
-        virtual void Initialize(std::shared_ptr<const std::vector<Real>> x,
-                                std::shared_ptr<const std::vector<Real>> y);
+        virtual void Initialize(std::shared_ptr<const std::vector<Scalar>> x,
+                                std::shared_ptr<const std::vector<Scalar>> y);
 
-        virtual Real Eval(const Real x) const = 0;
+        virtual Scalar Eval(const Scalar x) const = 0;
 
-        virtual std::vector<Real> Eval(const std::vector<Real>& xvector) const = 0;
+        virtual std::vector<Scalar> Eval(const std::vector<Scalar>& xvector) const = 0;
 
-        Real operator() (const Real x) const {
+        Scalar operator() (const Scalar x) const {
             return Eval(x);
         }
 
-        std::vector<Real> operator() (const std::vector<Real>& xvector) const { return Eval(xvector); }
+        std::vector<Scalar> operator() (const std::vector<Scalar>& xvector) const { return Eval(xvector); }
 
-        static FrInterp1d<Real>* MakeInterp1d(Interp1dMethod method);
+        static FrInterp1d<Scalar>* MakeInterp1d(Interp1dMethod method);
 
     };
 
-    template <class Real>
-    void FrInterp1d<Real>::Initialize(std::shared_ptr<const std::vector<Real>> x,
-                                      std::shared_ptr<const std::vector<Real>> y) {
+    template <class Scalar>
+    void FrInterp1d<Scalar>::Initialize(std::shared_ptr<const std::vector<Scalar>> x,
+                                      std::shared_ptr<const std::vector<Scalar>> y) {
 
         assert( x->size() == y->size() );
         assert (std::is_sorted(x->begin(), x->end()));
@@ -68,34 +69,34 @@ namespace frydom {
     }
 
 
-    template <class Real=double>
-    class FrInterp1dLinear : public FrInterp1d<Real> {
+    template <class Scalar=double>
+    class FrInterp1dLinear : public FrInterp1d<Scalar> {
 
     private:
-        std::vector<Real> a;
-        std::vector<Real> b;
+        std::vector<Scalar> a;
+        std::vector<Scalar> b;
 
     public:
 
-        void Initialize(const std::shared_ptr<const std::vector<Real>> x,
-                        const std::shared_ptr<const std::vector<Real>> y) override;
+        void Initialize(const std::shared_ptr<const std::vector<Scalar>> x,
+                        const std::shared_ptr<const std::vector<Scalar>> y) override;
 
-        Real Eval(const Real x) const;
+        Scalar Eval(const Scalar x) const;
 
-        std::vector<Real> Eval(const std::vector<Real>& xvector) const;
+        std::vector<Scalar> Eval(const std::vector<Scalar>& xvector) const;
 
     };
 
-    template <class Real>
-    void FrInterp1dLinear<Real>::Initialize(const std::shared_ptr<const std::vector<Real>> x,
-                                            const std::shared_ptr<const std::vector<Real>> y) {
+    template <class Scalar>
+    void FrInterp1dLinear<Scalar>::Initialize(const std::shared_ptr<const std::vector<Scalar>> x,
+                                            const std::shared_ptr<const std::vector<Scalar>> y) {
 
-        FrInterp1d<Real>::Initialize(x, y);
+        FrInterp1d<Scalar>::Initialize(x, y);
 
         a.reserve(this->ndata);
         b.reserve(this->ndata);
 
-        Real xi, xii, yi, yii, xii_m_xi;
+        Scalar xi, xii, yi, yii, xii_m_xi;
         for (unsigned int i=1; i < this->ndata; ++i) {
 
             xi = this->xcoord->at(i-1);
@@ -112,8 +113,8 @@ namespace frydom {
         }
     }
 
-    template <class Real>
-    Real FrInterp1dLinear<Real>::Eval(const Real x) const {
+    template <class Scalar>
+    Scalar FrInterp1dLinear<Scalar>::Eval(const Scalar x) const {
         assert (x >= this->xmin &&
                 x <= this->xmax);
 
@@ -123,18 +124,18 @@ namespace frydom {
 
         if (index == 0) index = 1;  // Bug fix for x == xmin
 
-        Real a_ = a.at(index-1);
-        Real b_ = b.at(index-1);
+        Scalar a_ = a.at(index-1);
+        Scalar b_ = b.at(index-1);
 
         return a_*x + b_;
     }
 
-    template <class Real>
-    std::vector<Real> FrInterp1dLinear<Real>::Eval(const std::vector<Real> &xvector) const {
+    template <class Scalar>
+    std::vector<Scalar> FrInterp1dLinear<Scalar>::Eval(const std::vector<Scalar> &xvector) const {
 
         auto n = xvector.size();
 
-        std::vector<Real> out;
+        std::vector<Scalar> out;
         out.reserve(n);
 
         for (int i=0; i<n; i++) {
@@ -144,11 +145,11 @@ namespace frydom {
     }
 
     /// Factory method to create 1D interpolation classes
-    template <class Real>
-    FrInterp1d<Real>* FrInterp1d<Real>::MakeInterp1d(Interp1dMethod method) {
+    template <class Scalar>
+    FrInterp1d<Scalar>* FrInterp1d<Scalar>::MakeInterp1d(Interp1dMethod method) {
         switch (method) {
             case LINEAR:
-                return new FrInterp1dLinear<Real>;
+                return new FrInterp1dLinear<Scalar>;
             default:
                 throw ("1D INTERPOLATION METHOD DOES NOT EXIST");
         }

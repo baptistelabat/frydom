@@ -8,6 +8,7 @@
 #include <chrono/physics/ChBodyEasy.h>
 //#include "chrono/physics/ChMaterialSurface.h"
 #include "FrBody.h"
+#include "FrHydroBody.h"
 
 namespace frydom {
 
@@ -43,7 +44,11 @@ namespace frydom {
     };
 
     // TODO: creer un FrBuoy qui gere automatiquement des modeles hydro et qui derive de FrSphere
+    class FrHydroCylinder : public FrHydroBody {
 
+
+
+    };
 
 }
 

@@ -116,6 +116,18 @@ namespace frydom {
             m_period = convert_frequency(period, unit, S);
         }
 
+        unsigned int GetNbFrequencies() const { return m_nbFreq; }
+
+        double GetMinFrequency() const { return m_minFreq; }
+
+        double GetMaxFrequency() const { return m_maxFreq; }
+
+        unsigned int GetNbWaveDirections() const { return m_nbDir; }
+
+        double GetMinWaveDirection() const { return m_minDir; }
+
+        double GetMaxWaveDirection() const { return m_maxDir; }
+
         double GetMeanWaveDirection(FrAngleUnit unit=DEG) const {
             double meanWaveDir = m_meanDir;
             if (unit == DEG) {
@@ -139,10 +151,17 @@ namespace frydom {
 
         std::vector<double> GetWaveDirections(FrAngleUnit unit=DEG) const {
             std::vector<double> waveDirections;
-            if (unit == DEG) {
-                waveDirections = linspace(m_minDir*M_RAD, m_maxDir*M_RAD, m_nbDir);
+
+            if (m_type == REGULAR) {
+                waveDirections.push_back(GetMeanWaveDirection(unit));
+
             } else {
-                waveDirections = linspace(m_minDir, m_maxDir, m_nbDir);
+                if (unit == DEG) {
+                    waveDirections = linspace(m_minDir * M_RAD, m_maxDir * M_RAD, m_nbDir);
+                } else {
+                    waveDirections = linspace(m_minDir, m_maxDir, m_nbDir);
+                }
+
             }
             return waveDirections;
         }
@@ -305,7 +324,7 @@ namespace frydom {
 
                     val = aik * exp(JJ * (ki*wi_ + phi_ik));
 
-                    if (!steady) {
+                    if (!steady) {  // TODO : utiliser les valeurs mises en cache...
                         wi = waveFreqs[ifreq];
                         val *= exp(-JJ*wi*m_time);
                     }
@@ -347,13 +366,15 @@ namespace frydom {
             // TODO
         }
 
-        std::shared_ptr<FrLinearWaveProbe> NewWaveProbe() {
-            // TODO
-        }
+        std::shared_ptr<FrLinearWaveProbe> NewWaveProbe(double x, double y);
 
         void Initialize() {
             // TODO: pour initialiser les steady elevation et les tableaux d'elevation
             // TODO: garder le tableau d'elevation (steady) en cache
+
+            // FIXME: NON, on ne garde pas les steady elevations dans waveField mais dans waveProbe dans la mesure ou
+            // ca depend d'une position dans le plan horizontal !!!
+
         }
 
         void Update(double time) override {

@@ -54,6 +54,8 @@ namespace frydom {
 
         void SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody);
 
+        std::shared_ptr<FrBEMBody> GetBEMBody() const { return m_BEMBody; }
+
         /// Set the hydrodynamic mesh from a mesh shared instance
         void SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset=true);
 

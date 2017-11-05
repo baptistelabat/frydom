@@ -26,6 +26,20 @@ namespace frydom {
 
         FrWaveField* m_waveField;
 
+    public:
+        FrWaveProbe(double x, double y) : m_x(x), m_y(y) {}
+//
+//        void SetWaveField(FrWaveField* waveField) = 0;
+//        virtual FrWaveField* GetWaveField() const { return m_waveField; }
+
+        void SetX(double x) { m_x = x; }
+
+        double GetX() const { return m_x; }
+
+        void SetY(double y) { m_y = y; }
+
+        double GetY() const { return m_y; }
+
     };
 
     class FrLinearWaveField;
@@ -36,7 +50,10 @@ namespace frydom {
         FrLinearWaveField* m_waveField;
 
     public:
+        FrLinearWaveProbe(double x, double y) : FrWaveProbe(x, y) {}
 
+        void SetWaveField(FrLinearWaveField* waveField) { m_waveField = waveField; }
+        FrLinearWaveField* GetWaveField() const { return m_waveField; }
 
     };
 

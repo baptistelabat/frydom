@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "frydom/misc/FrEigen.h"
+//#include "frydom/misc/FrLinspace.h"
 
 
 #define J std::complex<double>(0, 1)
@@ -80,6 +81,9 @@ namespace frydom {
     typedef FrBEMMode FrBEMForceMode; /// Force modes
     typedef FrBEMMode FrBEMMotionMode; /// Motion modes
 
+//    class FrBEMForceMode : public FrBEMMode {};
+//    class FrBEMMotionMode : public FrBEMMode {};
+
     class FrHydroBody;
     class FrHydroDB;
 
@@ -114,24 +118,43 @@ namespace frydom {
         FrBEMBody() = default;
         FrBEMBody(unsigned int ID, std::string& BodyName) : m_ID(ID), m_BodyName(BodyName) {}
 
+        void SetHDB(FrHydroDB* HDB) { m_HDB = HDB; }
+
+        FrHydroDB* GetHDB() const { return m_HDB; }
+
         void SetHydroBody(FrHydroBody* hydroBody) { m_hydroBody = hydroBody; }  // TODO: Ne serait-il pas mieux que ce soit la HDB qui gere les relations BEMBody/HydroBody ???
 
         void SetName(const std::string& BodyName) { m_BodyName = BodyName; }
         void SetBodyPosition(const Eigen::Vector3d& BodyPosition) { m_BodyPosition = BodyPosition; }
 
-        void SetHDB(FrHydroDB* HDB) { m_HDB = HDB; }
-
         unsigned int GetNbForceMode() const { return (uint)m_ForceModes.size(); }
+
         unsigned int GetNbMotionMode() const { return (uint)m_MotionModes.size(); }
+
+
+        FrBEMForceMode* GetForceMode(unsigned int imode) {
+            assert(imode < GetNbForceMode());
+            return &m_ForceModes[imode];
+        }
+
+        FrBEMMotionMode* GetMotionMode(unsigned int imode) {
+            assert(imode < GetNbMotionMode());
+            return &m_MotionModes[imode];
+        }
 
         unsigned int GetID() const { return m_ID; }
 
         void AddForceMode(FrBEMForceMode& mode) {
             m_ForceModes.push_back(mode);
         }
+
         void AddMotionMode(FrBEMMotionMode& mode) {
             m_MotionModes.push_back(mode);
         }
+
+        unsigned int GetNbFrequencies() const;
+
+        unsigned int GetNbWaveDirections() const;
 
         void FilterRadiation();
 
@@ -140,7 +163,16 @@ namespace frydom {
         void Finalize() {
             ComputeExcitation();
             FilterRadiation();
+
+            // TODO: Ici, on construit les interpolateurs
+            BuildInterpolators();
         }
+
+        void BuildInterpolators();
+
+        void BuildWaveExcitationInterpolators();
+
+//        void BuildRadiationInterpolators(); // FIXME: c'est plutot a l'echelle de la HDB...
 
         void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
 
@@ -233,10 +265,18 @@ namespace frydom {
             m_FrequencyDiscretization.SetNbSample(NbFreq);
         }
 
+        std::vector<double> GetFrequencies() const { // TODO: gerer les unites...
+            return m_FrequencyDiscretization.GetVector();
+        }
+
         void SetWaveDirectionDiscretization(const double MinAngle, const double MaxAngle, const unsigned int NbAngle) {
             m_WaveDirectionDiscretization.SetMin(MinAngle);
             m_WaveDirectionDiscretization.SetMax(MaxAngle);
             m_WaveDirectionDiscretization.SetNbSample(NbAngle);
+        }
+
+        std::vector<double> GetWaveDirections() const { // TODO: gerer les unites...
+            return m_WaveDirectionDiscretization.GetVector();
         }
 
         void SetTimeDiscretization(const double FinalTime, const unsigned int NbTimeSamples) {

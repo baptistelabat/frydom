@@ -8,6 +8,7 @@
 
 #include "FrHydroDB.h"
 #include "frydom/misc/FrLinspace.h"
+#include "frydom/misc/FrInterp1d.h"
 #include "frydom/IO/FrHDF5.h"
 
 
@@ -475,6 +476,56 @@ namespace frydom {
 //            // TODO : terminer
 //        }
     }
+
+    unsigned int FrBEMBody::GetNbFrequencies() const {
+        return m_HDB->GetNbFrequencies();
+    }
+
+    unsigned int FrBEMBody::GetNbWaveDirections() const {
+        return m_HDB->GetNbWaveDirections();
+    }
+
+    void FrBEMBody::BuildInterpolators() {
+        std::cout << "Generating HDB interpolators" << std::endl;
+        // Wave Exxcitation interpolators
+        BuildWaveExcitationInterpolators();
+        // Radiation interpolators
+//        BuildRadiationInterpolators(); // FIXME: c'est plutot a l'echelle de la HDB...
+    }
+
+    void FrBEMBody::BuildWaveExcitationInterpolators() {
+
+//        auto nbWaveDirections = GetNbWaveDirections();
+//        auto nbForceModes = GetNbForceMode();
+//
+//        std::vector<std::vector<FrInterp1dLinear>> waveDirectionsInterpolators; // Interpolate first wave directions then force modes against wave frequencies
+//        waveDirectionsInterpolators.reserve(nbWaveDirections);
+//
+////        auto frequencies = Get;
+//
+//        for (unsigned int iWaveDir=0; iWaveDir<nbWaveDirections; ++iWaveDir) {
+//
+//            for (unsigned int iMode=0; iMode<nbForceModes; ++iMode) {
+//
+//                auto frequencyInterpolator = FrInterp1dLinear();
+//
+//
+//
+//
+//            }
+//
+//        }
+
+
+
+
+
+    }
+
+//    void FrBEMBody::BuildRadiationInterpolators() {
+//        // TODO
+//    }
+
 
     std::vector<double> FrDiscretization1D::GetVector() const {
         return linspace<double>(m_xmin, m_xmax, m_nx);
