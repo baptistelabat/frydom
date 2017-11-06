@@ -481,8 +481,16 @@ namespace frydom {
         return m_HDB->GetNbFrequencies();
     }
 
+    std::vector<double> FrBEMBody::GetFrequencies() const {
+        return m_HDB->GetFrequencies();
+    }
+
     unsigned int FrBEMBody::GetNbWaveDirections() const {
         return m_HDB->GetNbWaveDirections();
+    }
+
+    std::vector<double> FrBEMBody::GetWaveDirections() const {
+        return m_HDB->GetWaveDirections();
     }
 
     void FrBEMBody::BuildInterpolators() {
@@ -490,36 +498,92 @@ namespace frydom {
         // Wave Exxcitation interpolators
         BuildWaveExcitationInterpolators();
         // Radiation interpolators
-//        BuildRadiationInterpolators(); // FIXME: c'est plutot a l'echelle de la HDB...
+//        BuildRadiationInterpolators(); // FIXME: c'est plutot a l'echelle de la HDB... ??? -> NON
     }
 
     void FrBEMBody::BuildWaveExcitationInterpolators() {
 
         auto nbWaveDirections = GetNbWaveDirections();
+        auto nbFreq = GetNbFrequencies();
         auto nbForceModes = GetNbForceMode();
 
-//        auto interp = FrInterp1dLinear<double, std::complex<double>>();
-//        std::vector<std::vector<FrInterp1dLinear>> waveDirectionsInterpolators; // Interpolate first wave directions then force modes against wave frequencies
-//        waveDirectionsInterpolators.reserve(nbWaveDirections);
-//
-////        auto frequencies = Get;
-//
-//        for (unsigned int iWaveDir=0; iWaveDir<nbWaveDirections; ++iWaveDir) {
-//
-//            for (unsigned int iMode=0; iMode<nbForceModes; ++iMode) {
-//
-//                auto frequencyInterpolator = FrInterp1dLinear();
-//
-//
-//
-//
-//            }
-//
-//        }
+        m_waveDirInterpolators.clear();
+        m_waveDirInterpolators.reserve(nbForceModes);
 
+        auto angles = GetWaveDirections();
+        auto angles_ptr = std::make_shared<std::vector<double>>();
+        angles_ptr->reserve(nbWaveDirections);
+        for (unsigned int iangle=0; iangle<nbWaveDirections; ++iangle) {
+            angles_ptr->push_back(angles[iangle]);
+        }
 
+        Eigen::MatrixXcd data;
+        auto interpolators = std::vector<FrInterp1dLinear<double, std::complex<double>>>();
+        interpolators.reserve(nbFreq);
 
+        for (unsigned int imode=0; imode<nbForceModes; ++imode) {
 
+            interpolators.clear();
+
+            for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq) {
+                auto coeffs = std::make_shared<std::vector<std::complex<double>>>();
+                coeffs->reserve(nbWaveDirections);
+
+                for (unsigned int iangle=0; iangle<nbWaveDirections; ++iangle) {
+                    data = GetExcitation(iangle);
+//                    data = GetDiffraction(iangle);
+                    coeffs->push_back(data(imode, ifreq));
+                }
+
+                auto interpolator = FrInterp1dLinear<double, std::complex<double>>();
+                interpolator.Initialize(angles_ptr, coeffs);
+                interpolators.push_back(interpolator);
+            }
+            m_waveDirInterpolators.push_back(interpolators);
+        }
+    }
+
+    std::vector<FrInterp1dLinear<double, std::complex<double>>>
+    FrBEMBody::GetExcitationInterpolatorByAngle(double angle, FrAngleUnit angleUnit) {
+
+        double angleDEG(angle);
+        if (angleUnit == RAD) {
+            angleDEG *= M_RAD;
+        }
+        // FIXME: verifier !!!
+
+        auto nbForceModes = GetNbForceMode();
+        auto nbFreq = GetNbFrequencies();
+
+        std::vector<FrInterp1dLinear<double, std::complex<double>>> interpolators;
+        interpolators.reserve(nbForceModes);
+
+        auto frequencies = GetFrequencies();
+        auto freq_ptr = std::make_shared<std::vector<double>>();
+        freq_ptr->reserve(nbFreq);
+        for (auto w: frequencies) {
+            freq_ptr->push_back(w);
+        }
+
+        FrInterp1dLinear<double, std::complex<double>> angleInterpolator;
+
+        auto freqCoeffs = std::make_shared<std::vector<std::complex<double>>>();
+        freqCoeffs->reserve(nbFreq);
+
+        for (unsigned int imode=0; imode<nbForceModes; ++imode) {
+            freqCoeffs->clear();
+
+            for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq) {
+                angleInterpolator = m_waveDirInterpolators[imode][ifreq];
+                freqCoeffs->push_back(angleInterpolator(angleDEG));
+            }
+            auto freq_interpolator = FrInterp1dLinear<double, std::complex<double>>();
+            freq_interpolator.Initialize(freq_ptr, freqCoeffs);
+            interpolators.push_back(freq_interpolator);
+
+        }
+
+        return interpolators;
 
     }
 

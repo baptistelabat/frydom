@@ -6,9 +6,10 @@
 #define FRYDOM_FRHYDRODB_H
 
 #include <vector>
+#include <frydom/core/FrConstants.h>
 
 #include "frydom/misc/FrEigen.h"
-//#include "frydom/misc/FrLinspace.h"
+#include "frydom/misc/FrInterp1d.h"
 
 
 #define J std::complex<double>(0, 1)
@@ -87,6 +88,9 @@ namespace frydom {
     class FrHydroBody;
     class FrHydroDB;
 
+//    template <class XReal, class YReal>
+//    class FrInterp1dLinear;
+
     class FrBEMBody {
 
     private:
@@ -113,6 +117,8 @@ namespace frydom {
         std::vector<std::vector<Eigen::MatrixXd>> m_AddedMass;
         std::vector<std::vector<Eigen::MatrixXd>> m_RadiationDamping;
         std::vector<std::vector<Eigen::MatrixXd>> m_ImpulseResponseFunction;
+
+        std::vector<std::vector<FrInterp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
     public:
         FrBEMBody() = default;
@@ -154,7 +160,11 @@ namespace frydom {
 
         unsigned int GetNbFrequencies() const;
 
+        std::vector<double> GetFrequencies() const;
+
         unsigned int GetNbWaveDirections() const;
+
+        std::vector<double> GetWaveDirections() const;
 
         void FilterRadiation();
 
@@ -170,7 +180,9 @@ namespace frydom {
 
         void BuildInterpolators();
 
-        void BuildWaveExcitationInterpolators();
+        void BuildWaveExcitationInterpolators();  // TODO: voir si on construit les interpolateurs pour la diffraction et Froude-Krylov
+
+        std::vector<FrInterp1dLinear<double, std::complex<double>>> GetExcitationInterpolatorByAngle(double angle, FrAngleUnit angleUnit=DEG);
 
 //        void BuildRadiationInterpolators(); // FIXME: c'est plutot a l'echelle de la HDB...
 
