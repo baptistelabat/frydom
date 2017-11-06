@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <complex>
 
+// TODO: differencier le x du y... ie x est real et y est real ou complex
+
 namespace frydom {
 
     enum Interp1dMethod {
@@ -19,42 +21,42 @@ namespace frydom {
     };
 
 
-    template <class Scalar=double>
+    template <class XReal=double, class YReal=double>
     class FrInterp1d {
 
     protected:
-        std::shared_ptr<const std::vector<Scalar>> xcoord;
-        std::shared_ptr<const std::vector<Scalar>> yval;
+        std::shared_ptr<const std::vector<XReal>> xcoord;
+        std::shared_ptr<const std::vector<YReal>> yval;
         unsigned long ndata = 0;
-        Scalar xmin;
-        Scalar xmax;
+        XReal xmin;
+        XReal xmax;
 
     public:
-        FrInterp1d() {};
-        ~FrInterp1d() {};
+//        FrInterp1d() {};
+//        ~FrInterp1d() {};
 
         // TODO: voir a separer l'implementation et la mettre en fin de fichier (pas directement dans le corps de la classe)
 
-        virtual void Initialize(std::shared_ptr<const std::vector<Scalar>> x,
-                                std::shared_ptr<const std::vector<Scalar>> y);
+        virtual void Initialize(std::shared_ptr<const std::vector<XReal>> x,
+                                std::shared_ptr<const std::vector<YReal>> y);
 
-        virtual Scalar Eval(const Scalar x) const = 0;
+        virtual XReal Eval(const XReal x) const = 0;
 
-        virtual std::vector<Scalar> Eval(const std::vector<Scalar>& xvector) const = 0;
+        virtual std::vector<YReal> Eval(const std::vector<XReal>& xvector) const = 0;
 
-        Scalar operator() (const Scalar x) const {
+        YReal operator() (const XReal x) const {
             return Eval(x);
         }
 
-        std::vector<Scalar> operator() (const std::vector<Scalar>& xvector) const { return Eval(xvector); }
+        std::vector<YReal> operator() (const std::vector<XReal>& xvector) const { return Eval(xvector); }
 
-        static FrInterp1d<Scalar>* MakeInterp1d(Interp1dMethod method);
+        static FrInterp1d<XReal, YReal>* MakeInterp1d(Interp1dMethod method);
 
     };
 
-    template <class Scalar>
-    void FrInterp1d<Scalar>::Initialize(std::shared_ptr<const std::vector<Scalar>> x,
-                                      std::shared_ptr<const std::vector<Scalar>> y) {
+    template <class XReal=double, class YReal=double>
+    void FrInterp1d<XReal, YReal>::Initialize(std::shared_ptr<const std::vector<XReal>> x,
+                                              std::shared_ptr<const std::vector<YReal>> y) {
 
         assert( x->size() == y->size() );
         assert (std::is_sorted(x->begin(), x->end()));
@@ -69,34 +71,35 @@ namespace frydom {
     }
 
 
-    template <class Scalar=double>
-    class FrInterp1dLinear : public FrInterp1d<Scalar> {
+    template <class XReal=double, class YReal=double>
+    class FrInterp1dLinear : public FrInterp1d<XReal, YReal> {
 
     private:
-        std::vector<Scalar> a;
-        std::vector<Scalar> b;
+        std::vector<YReal> a;
+        std::vector<YReal> b;
 
     public:
 
-        void Initialize(const std::shared_ptr<const std::vector<Scalar>> x,
-                        const std::shared_ptr<const std::vector<Scalar>> y) override;
+        void Initialize(const std::shared_ptr<const std::vector<XReal>> x,
+                        const std::shared_ptr<const std::vector<YReal>> y) override;
 
-        Scalar Eval(const Scalar x) const;
+        YReal Eval(const XReal x) const;
 
-        std::vector<Scalar> Eval(const std::vector<Scalar>& xvector) const;
+        std::vector<YReal> Eval(const std::vector<XReal>& xvector) const;
 
     };
 
-    template <class Scalar>
-    void FrInterp1dLinear<Scalar>::Initialize(const std::shared_ptr<const std::vector<Scalar>> x,
-                                            const std::shared_ptr<const std::vector<Scalar>> y) {
+    template <class XReal=double, class YReal=double>
+    void FrInterp1dLinear<XReal, YReal>::Initialize(const std::shared_ptr<const std::vector<XReal>> x,
+                                                    const std::shared_ptr<const std::vector<YReal>> y) {
 
-        FrInterp1d<Scalar>::Initialize(x, y);
+        FrInterp1d<XReal>::Initialize(x, y);
 
         a.reserve(this->ndata);
         b.reserve(this->ndata);
 
-        Scalar xi, xii, yi, yii, xii_m_xi;
+        XReal xi, xii, xii_m_xi;
+        YReal yi, yii;
         for (unsigned int i=1; i < this->ndata; ++i) {
 
             xi = this->xcoord->at(i-1);
@@ -113,8 +116,9 @@ namespace frydom {
         }
     }
 
-    template <class Scalar>
-    Scalar FrInterp1dLinear<Scalar>::Eval(const Scalar x) const {
+    template <class XReal=double, class YReal=double>
+    YReal FrInterp1dLinear<XReal, YReal>::Eval(const XReal x) const {
+        // TODO: il faut que le type de retour soit compatible avec real et complex !!!
         assert (x >= this->xmin &&
                 x <= this->xmax);
 
@@ -124,18 +128,18 @@ namespace frydom {
 
         if (index == 0) index = 1;  // Bug fix for x == xmin
 
-        Scalar a_ = a.at(index-1);
-        Scalar b_ = b.at(index-1);
+        XReal a_ = a.at(index-1);
+        XReal b_ = b.at(index-1);
 
         return a_*x + b_;
     }
 
-    template <class Scalar>
-    std::vector<Scalar> FrInterp1dLinear<Scalar>::Eval(const std::vector<Scalar> &xvector) const {
+    template <class XReal=double, class YReal=double>
+    std::vector<YReal> FrInterp1dLinear<XReal, YReal>::Eval(const std::vector<XReal> &xvector) const {
 
         auto n = xvector.size();
 
-        std::vector<Scalar> out;
+        std::vector<YReal> out;
         out.reserve(n);
 
         for (int i=0; i<n; i++) {
@@ -145,11 +149,11 @@ namespace frydom {
     }
 
     /// Factory method to create 1D interpolation classes
-    template <class Scalar>
-    FrInterp1d<Scalar>* FrInterp1d<Scalar>::MakeInterp1d(Interp1dMethod method) {
+    template <class XReal=double, class YReal=double>
+    FrInterp1d<XReal, YReal>* FrInterp1d<XReal, YReal>::MakeInterp1d(Interp1dMethod method) {
         switch (method) {
             case LINEAR:
-                return new FrInterp1dLinear<Scalar>;
+                return new FrInterp1dLinear<XReal, YReal>;
             default:
                 throw ("1D INTERPOLATION METHOD DOES NOT EXIST");
         }

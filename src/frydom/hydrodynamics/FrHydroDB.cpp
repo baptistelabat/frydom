@@ -495,9 +495,10 @@ namespace frydom {
 
     void FrBEMBody::BuildWaveExcitationInterpolators() {
 
-//        auto nbWaveDirections = GetNbWaveDirections();
-//        auto nbForceModes = GetNbForceMode();
-//
+        auto nbWaveDirections = GetNbWaveDirections();
+        auto nbForceModes = GetNbForceMode();
+
+//        auto interp = FrInterp1dLinear<double, std::complex<double>>();
 //        std::vector<std::vector<FrInterp1dLinear>> waveDirectionsInterpolators; // Interpolate first wave directions then force modes against wave frequencies
 //        waveDirectionsInterpolators.reserve(nbWaveDirections);
 //
