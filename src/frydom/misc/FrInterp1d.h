@@ -32,9 +32,6 @@ namespace frydom {
         XReal xmax;
 
     public:
-        FrInterp1d() {};
-        ~FrInterp1d() {};
-
         // TODO: voir a separer l'implementation et la mettre en fin de fichier (pas directement dans le corps de la classe)
 
         virtual void Initialize(std::shared_ptr<const std::vector<XReal>> x,

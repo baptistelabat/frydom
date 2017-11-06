@@ -60,13 +60,10 @@ int main(int argc, char* argv[]) {
     cylinder->AddForce(excForce);
     excForce->SetWaveProbe(waveProbe);
     excForce->Initialize();
+    excForce->Clear();
+    excForce->Initialize();
 
 
-    // ESSAI
-    auto BEMBody = HDB.GetBody(0);
-    auto interpolator = BEMBody->GetExcitationInterpolatorByAngle(0., DEG);
-
-    std::cout << interpolator[0](1.) << std::endl;
 
     //
 

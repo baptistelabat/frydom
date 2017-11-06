@@ -168,10 +168,13 @@ namespace frydom {
 
         void FilterRadiation();
 
+        void FilterExcitation();
+
         void Initialize();
 
         void Finalize() {
             ComputeExcitation();
+            FilterExcitation();
             FilterRadiation();
 
             // TODO: Ici, on construit les interpolateurs
@@ -182,9 +185,16 @@ namespace frydom {
 
         void BuildWaveExcitationInterpolators();  // TODO: voir si on construit les interpolateurs pour la diffraction et Froude-Krylov
 
-        std::vector<FrInterp1dLinear<double, std::complex<double>>> GetExcitationInterpolatorByAngle(double angle, FrAngleUnit angleUnit=DEG);
-
+//        std::vector<FrInterp1dLinear<double, std::complex<double>>>
+//        GetExcitationInterpolatorByAngle(double angle, FrAngleUnit angleUnit=DEG);
+//
+//        std::vector<std::vector<FrInterp1dLinear<double, std::complex<double>>>>
+//        GetExcitationInterpolatorByAngle(std::vector<double>& angles, FrAngleUnit angleUnit=DEG);
 //        void BuildRadiationInterpolators(); // FIXME: c'est plutot a l'echelle de la HDB...
+
+        std::vector<Eigen::MatrixXcd>
+        GetExcitationInterp(std::vector<double> waveFrequencies, std::vector<double> waveDirections, FrAngleUnit angleUnit=DEG);
+
 
         void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
 
@@ -199,6 +209,12 @@ namespace frydom {
         void SetRadiationDamping(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CA);
 
         void SetImpulseResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
+
+
+        // FIXME: les GetDiffraction etc ne doivent pas specialement etre accessible en dehors des interpolations...
+        // On utilisera donc plutot GetExcitation(omega, angles) ...
+
+
 
         Eigen::MatrixXcd GetDiffraction(unsigned int iangle) const;
 
@@ -260,15 +276,19 @@ namespace frydom {
         unsigned int GetNbBodies() const { return (unsigned int)m_Bodies.size(); }
 
         double GetGravityAcc() const { return m_GravityAcc; }
+
         void SetGravityAcc(const double GravityAcc) { m_GravityAcc = GravityAcc; }
 
         double GetNormalizationLength() const { return m_NormalizationLength; }
+
         void SetNormalizationLength(const double NormalizationLength) { m_NormalizationLength = NormalizationLength; }
 
         double GetWaterDensity() const { return m_WaterDensity; }
+
         void SetWaterDensity(const double WaterDensity) { m_WaterDensity = WaterDensity; }
 
         double GetWaterDepth() const { return m_WaterDepth; }
+
         void SetWaterDepth(const double WaterDepth) { m_WaterDepth = WaterDepth; }
 
         void SetFrequencyDiscretization(const double MinFreq, const double MaxFreq, const unsigned int NbFreq) {
@@ -298,7 +318,9 @@ namespace frydom {
         }
 
         unsigned int GetNbFrequencies() const { return m_FrequencyDiscretization.GetNbSample(); }
+
         unsigned int GetNbWaveDirections() const { return m_WaveDirectionDiscretization.GetNbSample(); }
+
         unsigned int GetNbTimeSamples() const { return m_TimeDiscretization.GetNbSample(); }
 
         std::shared_ptr<FrBEMBody> NewBody(std::string BodyName) {
@@ -313,7 +335,7 @@ namespace frydom {
 
     };
 
-
+    // =================================================================================================================
 
     FrHydroDB LoadHDB5(std::string h5file);
 
