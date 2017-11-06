@@ -25,7 +25,7 @@ namespace frydom {
         std::shared_ptr<std::vector<Real>> Xcoords;
         std::unordered_map<std::string, unsigned long> assoc;
         std::vector<std::shared_ptr<std::vector<Real>>> Ydata;
-        std::vector<std::unique_ptr<FrInterp1d<Real>>> interpolators;
+        std::vector<std::unique_ptr<FrInterp1d<Real, Real>>> interpolators;
 
     public:
         FrLookupTable1D() {};
@@ -123,14 +123,14 @@ namespace frydom {
             Ydata.push_back(Y_shared);
 
             // Building the interpolator based on the global interpolation method of the LUT
-            auto interp_ptr = FrInterp1d<Real>::MakeInterp1d(interp_method);
+            auto interp_ptr = FrInterp1d<Real, Real>::MakeInterp1d(interp_method);
             // FIXME: ICI, on ne recupere pas comme voulu un pointeur vers un objet FrInterp1dLinear
             // Du coup, la methode Initialize appelee apres n'est que celle de
 
             // Initializing the interpolator
             interp_ptr->Initialize(Xcoords, Y_shared);
 
-            auto interp_unique = std::unique_ptr<FrInterp1d<Real>>(interp_ptr);
+            auto interp_unique = std::unique_ptr<FrInterp1d<Real, Real>>(interp_ptr);
 
             interpolators.push_back(std::move(interp_unique));
         }

@@ -21,7 +21,7 @@ namespace frydom {
     };
 
 
-    template <class XReal=double, class YReal=double>
+    template <class XReal, class YReal>
     class FrInterp1d {
 
     protected:
@@ -40,7 +40,7 @@ namespace frydom {
         virtual void Initialize(std::shared_ptr<const std::vector<XReal>> x,
                                 std::shared_ptr<const std::vector<YReal>> y);
 
-        virtual XReal Eval(const XReal x) const = 0;
+        virtual YReal Eval(const XReal x) const = 0;
 
         virtual std::vector<YReal> Eval(const std::vector<XReal>& xvector) const = 0;
 
@@ -54,7 +54,7 @@ namespace frydom {
 
     };
 
-    template <class XReal=double, class YReal=double>
+    template <class XReal, class YReal>
     void FrInterp1d<XReal, YReal>::Initialize(std::shared_ptr<const std::vector<XReal>> x,
                                               std::shared_ptr<const std::vector<YReal>> y) {
 
@@ -71,7 +71,7 @@ namespace frydom {
     }
 
 
-    template <class XReal=double, class YReal=double>
+    template <class XReal, class YReal>
     class FrInterp1dLinear : public FrInterp1d<XReal, YReal> {
 
     private:
@@ -89,11 +89,11 @@ namespace frydom {
 
     };
 
-    template <class XReal=double, class YReal=double>
+    template <class XReal, class YReal>
     void FrInterp1dLinear<XReal, YReal>::Initialize(const std::shared_ptr<const std::vector<XReal>> x,
                                                     const std::shared_ptr<const std::vector<YReal>> y) {
 
-        FrInterp1d<XReal>::Initialize(x, y);
+        FrInterp1d<XReal, YReal>::Initialize(x, y);
 
         a.reserve(this->ndata);
         b.reserve(this->ndata);
@@ -116,7 +116,7 @@ namespace frydom {
         }
     }
 
-    template <class XReal=double, class YReal=double>
+    template <class XReal, class YReal>
     YReal FrInterp1dLinear<XReal, YReal>::Eval(const XReal x) const {
         // TODO: il faut que le type de retour soit compatible avec real et complex !!!
         assert (x >= this->xmin &&
@@ -128,13 +128,13 @@ namespace frydom {
 
         if (index == 0) index = 1;  // Bug fix for x == xmin
 
-        XReal a_ = a.at(index-1);
-        XReal b_ = b.at(index-1);
+        YReal a_ = a.at(index-1);
+        YReal b_ = b.at(index-1);
 
         return a_*x + b_;
     }
 
-    template <class XReal=double, class YReal=double>
+    template <class XReal, class YReal>
     std::vector<YReal> FrInterp1dLinear<XReal, YReal>::Eval(const std::vector<XReal> &xvector) const {
 
         auto n = xvector.size();
@@ -149,7 +149,7 @@ namespace frydom {
     }
 
     /// Factory method to create 1D interpolation classes
-    template <class XReal=double, class YReal=double>
+    template <class XReal, class YReal>
     FrInterp1d<XReal, YReal>* FrInterp1d<XReal, YReal>::MakeInterp1d(Interp1dMethod method) {
         switch (method) {
             case LINEAR:
