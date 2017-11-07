@@ -252,8 +252,8 @@ namespace frydom {
 
     // =================================================================================================================
     // FIXME: est-ce vraiment critique que d'avoir les 2 choses suivantes en macro ???
-    #define _SIGMA2_1_left (1/(pow(0.07, 2)))
-    #define _SIGMA2_1_right (1/(pow(0.09, 2)))
+    #define _SIGMA2_1_left (1./(0.07*0.07))
+    #define _SIGMA2_1_right (1./(0.09*0.09))
 
     class FrJonswapWaveSpectrum : public FrWaveSpectrum {
 
@@ -286,6 +286,34 @@ namespace frydom {
 
         double Eval(const double w) const final {
 
+
+
+//            double T1 = 0.834*M_2PI / m_peak_pulsation;
+//            double T1_2 = T1*T1;
+//            double T1_4 = T1_2 * T1_2;
+//            double w4 = pow(w, 4);
+//            double w5 = w * w4;
+//
+//            double Hs2 = m_significant_height * m_significant_height;
+//
+//            double S_w = (155. * Hs2 / (T1_4 * w5) ) * exp( -944. / (T1_4*w4) );
+//
+//            double sigma;
+//            if (w <= m_peak_pulsation) {
+//                sigma = 0.07;
+//            } else {
+//                sigma = 0.09;
+//            }
+//
+//            double tmp = (0.191 * w * T1 - 1.) / (sqrt(2.)*sigma);
+//            double a = exp(- tmp*tmp );
+//
+//            S_w *= pow(m_gamma, a);
+//
+//            return S_w;
+
+
+
             double wp2 = m_peak_pulsation * m_peak_pulsation;
             double wp4 = wp2 * wp2;
 
@@ -294,8 +322,19 @@ namespace frydom {
 
             double hs2 = m_significant_height * m_significant_height;
 
-            double S_w = 0.;
+            double S_w;
             if (w > 0.) {
+
+                std::cout << 0.3125 * hs2  << "\n";
+                std::cout << 0.3125 * hs2 * wp4  << "\n";
+                std::cout << 0.3125 * hs2 * wp4 * w5_1  << "\n";
+                std::cout << 0.3125 * hs2 * wp4 * w5_1 * std::exp(-1.25 * wp4 * w4_1)  << "\n";
+                std::cout <<  exp(-1.25 * wp4 * w4_1)  << "\n";  // FIXME: la fonction exp retourne 0...
+                std::cout << 0.3125 * hs2 * wp4 * w5_1 * exp(-1.25 * wp4 * w4_1) * (1 - 0.287 * log(m_gamma)) << "\n";
+                std::cout <<  (1 - 0.287 * log(m_gamma)) << "\n";
+
+
+
                 S_w = 0.3125 * hs2 * wp4 * w5_1 * exp(-1.25 * wp4 * w4_1) * (1 - 0.287 * log(m_gamma));
 
                 double a = exp(-pow(w - m_peak_pulsation, 2) / (2. * wp2));

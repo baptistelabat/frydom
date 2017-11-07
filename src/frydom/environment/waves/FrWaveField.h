@@ -193,7 +193,7 @@ namespace frydom {
         std::vector<double> GetWaveDirections(FrAngleUnit unit=DEG) const {
             std::vector<double> waveDirections;
 
-            if (m_type == LINEAR_REGULAR) {
+            if (m_type != LINEAR_DIRECTIONAL) {
                 waveDirections.push_back(GetMeanWaveDirection(unit));
 
             } else {
