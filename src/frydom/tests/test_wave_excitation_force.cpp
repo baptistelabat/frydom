@@ -29,13 +29,14 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     auto freeSurface = system.GetFreeSurface();
-    freeSurface->Initialize(-100, 100, 10);
+    freeSurface->Initialize(-100, 100, 100);
+    freeSurface->UpdateAssetON();
 
     // Set the wave field
     freeSurface->SetLinearWaveField(LINEAR_REGULAR);
     auto waveField = freeSurface->GetLinearWaveField();
     waveField->SetMeanWaveDirection(0., DEG);
-    waveField->SetRegularWaveHeight(1.);
+    waveField->SetRegularWaveHeight(5.);
     waveField->SetRegularWavePeriod(5., S);
 
 
@@ -69,11 +70,8 @@ int main(int argc, char* argv[]) {
     excForce->Initialize();
 
 
-
-    //
-
-        auto app = FrIrrApp(system);
-        app.Run();
+    auto app = FrIrrApp(system);
+    app.Run();
 
 
     return 0;

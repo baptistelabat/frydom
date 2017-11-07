@@ -80,19 +80,20 @@ namespace frydom {
     void FrFreeSurface::Initialize(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
         // Making sure the mesh is clean
-        m_mesh.Clear();
+//        FrTriangleMeshConnected mesh;
+//        m_mesh.Clear();
 
         // Building the grid
-        build_mesh_grid(xmin, xmax, dx, ymin, ymax, dy);
+        auto mesh = build_mesh_grid(xmin, xmax, dx, ymin, ymax, dy);
 
 //        m_mesh_name = "Free surface";
 
 //        if (m_vis_enabled) {
-        auto mesh_shape = std::make_shared<chrono::ChTriangleMeshShape>();
-        mesh_shape->SetMesh(m_mesh);
-        mesh_shape->SetName("FreeSurface");
+        m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
+        m_meshAsset->SetMesh(mesh);
+        m_meshAsset->SetName("FreeSurface");
 //            mesh_shape->SetFading(0.9);  // Ne fonctionne pas avec Irrlicht...
-        m_Body->AddAsset(mesh_shape);
+        m_Body->AddAsset(m_meshAsset);
 //        }
 
     }
@@ -101,12 +102,14 @@ namespace frydom {
         FrFreeSurface::Initialize(lmin, lmax, dl, lmin, lmax, dl);
     }
 
-    FrTriangleMeshConnected FrFreeSurface::getMesh(void) const {
-        return m_mesh;
-    }
+//    FrTriangleMeshConnected FrFreeSurface::getMesh(void) const {
+//        return m_mesh;
+//    }
 
-    void FrFreeSurface::build_mesh_grid(double xmin, double xmax, double dx,
-                                        double ymin, double ymax, double dy) {
+    FrTriangleMeshConnected FrFreeSurface::build_mesh_grid(double xmin, double xmax, double dx,
+                                                           double ymin, double ymax, double dy) {
+
+        FrTriangleMeshConnected mesh;
 
         int nvx(int((xmax - xmin) / dx) + 1);
         int nvy(int((ymax - ymin) / dy) + 1);
@@ -125,7 +128,7 @@ namespace frydom {
             xi = xmin;
         }
         // Adding the vertices list to the mesh
-        m_mesh.addVertex(vertices);
+        mesh.addVertex(vertices);
 
         // Building faces of the cartesian grid
         std::vector<chrono::ChVector<int>> triangles;
@@ -155,12 +158,19 @@ namespace frydom {
             }
         }
         // Adding the triangle list to the mesh
-        m_mesh.addTriangle(triangles);
+        mesh.addTriangle(triangles);
 
         // TODO: initialiser les normales et autres champs de ChTriangleMeshConnected
+        return mesh;
     }
 
+    void FrFreeSurface::UpdateGrid() {
 
+        auto& mesh = m_meshAsset->GetMesh();
+        for (auto& vertex: mesh.m_vertices) {
+            vertex.z() = m_waveField->GetElevation(vertex.x(), vertex.y());
+        }
+    }
 
 
 }  // end namespace frydom

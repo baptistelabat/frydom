@@ -29,7 +29,7 @@ namespace chrono {
 
     class ChBody;
 
-//    class ChColorAsset;
+    class ChTriangleMeshShape;
 }
 
 
@@ -51,16 +51,18 @@ namespace frydom{
         bool m_updateAsset = false;
 
         std::shared_ptr<chrono::ChBody> m_Body;
-        FrTriangleMeshConnected m_mesh;
+//        FrTriangleMeshConnected m_mesh;
 
         std::unique_ptr<FrTidal> m_tidal;
 
         WAVE_MODEL m_waveModel = NO_WAVES;
         std::shared_ptr<FrWaveField> m_waveField;
 
+        std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
+
 
         /// Private method in charge of the building of the free surface mesh.
-        void build_mesh_grid(double xmin, double xmax, double dx,
+        FrTriangleMeshConnected build_mesh_grid(double xmin, double xmax, double dx,
                              double ymin, double ymax, double dy);
 
     public:
@@ -120,7 +122,11 @@ namespace frydom{
                         );
 
         /// Get the free surface's mesh
-        FrTriangleMeshConnected getMesh(void) const;
+//        FrTriangleMeshConnected getMesh(void) const;
+
+        void UpdateAssetON() { m_updateAsset = true; }
+
+        void UpdateAssetOFF() { m_updateAsset = false; }
 
         /// Update the state of the free surface
         virtual void Update(double time) {
@@ -130,9 +136,12 @@ namespace frydom{
 
             if (m_updateAsset) {
                 // Updating the free surface grid for visualization
+                UpdateGrid();
             }
 
         }
+
+        void UpdateGrid();
 
         FrTidal* GetTidal() const {
             return m_tidal.get();
