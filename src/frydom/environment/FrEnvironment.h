@@ -13,7 +13,7 @@
 #include "current/FrCurrentForce.h"
 
 // Waves includes
-#include "waves/FrFlatFreeSurface.h"
+#include "waves/FrFreeSurface.h"
 #include "waves/FrWaveSpectrum.h"
 #include "waves/FrWaveField.h"
 #include "tidal/FrTidalModel.h"
@@ -35,7 +35,7 @@ namespace frydom {
 
         // Environment components
         std::unique_ptr<FrFreeSurface> m_freeSurface;
-        std::unique_ptr<FrTidal> m_tidal;
+//        std::unique_ptr<FrTidal> m_tidal;
         std::unique_ptr<FrCurrent> m_current;
         std::unique_ptr<FrWind> m_wind;
         std::unique_ptr<FrSeabed> m_seabed;
@@ -55,10 +55,10 @@ namespace frydom {
 
 
     public:
+
         FrEnvironment() {
 
-            m_freeSurface = std::make_unique<FrFlatFreeSurface>(0.);
-            m_tidal = std::make_unique<FrTidal>();
+            m_freeSurface = std::make_unique<FrFreeSurface>();
             m_current = std::make_unique<FrCurrent>();
             m_wind = std::make_unique<FrWind>();
             m_seabed = std::make_unique<FrSeabed>();
@@ -135,12 +135,12 @@ namespace frydom {
         void SetFreeSurface(FrFreeSurface* freeSurface);
 
         FrTidal* GetTidal() const {
-            return m_tidal.get();
+            return m_freeSurface->GetTidal();
         }
-
-        void SetTidal(FrTidal* tidal) {
-            m_tidal = std::unique_ptr<FrTidal>(tidal);
-        }
+//
+//        void SetTidal(FrTidal* tidal) {
+//            m_tidal = std::unique_ptr<FrTidal>(tidal);
+//        }
 
         inline FrCurrent* GetCurrent() const {
             return m_current.get();
@@ -164,6 +164,12 @@ namespace frydom {
 
         void SetSeabed(FrSeabed* seabed) {
             m_seabed = std::unique_ptr<FrSeabed>(seabed);
+        }
+
+        void Update(double time) {
+            m_freeSurface->Update(time);
+            m_current->Update(time);
+            m_wind->Update(time);
         }
 
     };

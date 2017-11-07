@@ -78,14 +78,14 @@ namespace frydom {
         };
 
         enum TidalMode {
-            NONE,
+            NO_TIDAL,
             TWELFTH_RULE
         };
 
     private:
         double m_time = 0.;
 
-        TidalMode m_mode = NONE;
+        TidalMode m_mode = NO_TIDAL;
 
         TidalLevel m_level1;
         FrUTCTime m_t1;
@@ -102,7 +102,7 @@ namespace frydom {
         void BuildTable() {
 
             switch (m_mode) {
-                case NONE:
+                case NO_TIDAL:
                     return;
                 case TWELFTH_RULE:
                     BuildTwelfthRuleTable();
@@ -167,28 +167,18 @@ namespace frydom {
             BuildTable();
         }
 
-        void UpdateState() {
-            // TODO
-        }
-
-        void UpdateTime(const double time) {
-            m_time = time;
-        };
-
         void Update(const double time) {
-            UpdateTime(time);
-            UpdateState();
-        }
-
-        double GetWaterHeight() const {
-            if (m_mode == NONE) {
-                return m_h1;
+            if (m_mode == NO_TIDAL) {
+                c_waterHeight = m_h1;
             }
 
             if (m_mode == TWELFTH_RULE) {
-                return tidalTable.Eval("tidal_height", m_time);
+                c_waterHeight = tidalTable.Eval("tidal_height", m_time);
             }
+        }
 
+        double GetWaterHeight() const {
+            return c_waterHeight;
         }
 
     };

@@ -24,35 +24,58 @@
 
 namespace frydom {
 
-    FrFreeSurface::FrFreeSurface() : m_mean_height(0) {
-        plane.pos[1] = m_mean_height;
-    }
+    FrFreeSurface::FrFreeSurface() {
+        // Creating a waveField and a tidal model
+        m_waveField = std::make_shared<FrNullWaveField>();
+        m_tidal = std::make_unique<FrTidal>();
 
-    FrFreeSurface::FrFreeSurface(double mean_height)
-            : m_mean_height(mean_height) {
-        plane.pos[2] = m_mean_height;
+        // Creating the free_surface's body
+        m_Body = std::make_shared<chrono::ChBody>();
+        m_Body->SetIdentifier(-1);
+        m_Body->SetName("FreeSurface");
+        m_Body->SetPos(chrono::ChVector<>(0, 0, 0));
+        m_Body->SetBodyFixed(true);  // Important, however we could add a ChFunction-like to emulate tidal height
 
-        // Create the free surface body used for visualization
-        m_fs_body = std::make_shared<chrono::ChBody>();
-        m_fs_body->SetIdentifier(-1);
-        m_fs_body->SetName("free_surface");
-        m_fs_body->SetPos(chrono::ChVector<>(0, 0, 0));
-        m_fs_body->SetBodyFixed(true);  // Important, however we could add a ChFunction-like to emulate tidal height
-
-        m_fs_body->SetCollide(false);  // set to false !!!
+        m_Body->SetCollide(false);  // set to false !!!
 
         // Providing color
-        m_color = std::make_shared<chrono::ChColorAsset>();
-        m_color->SetColor(chrono::ChColor(0, 41, 58, 0));
-        m_fs_body->AddAsset(m_color);
-
-        m_vis_enabled = true;
+        std::shared_ptr<chrono::ChColorAsset> color;
+        color = std::make_shared<chrono::ChColorAsset>();
+        color->SetColor(chrono::ChColor(0, 41, 58, 0));  // TODO: permettre de changer la couleur
+//        color->SetColor(chrono::ChColor(51, 153, 255, 0));  // TODO: permettre de changer la couleur
+        m_Body->AddAsset(color);
 
     }
 
-    double FrFreeSurface::getMeanHeight() const {
-       return m_mean_height;
-    }
+//    FrFreeSurface::FrFreeSurface() : m_mean_height(0) {
+//        plane.pos[1] = m_mean_height;
+//    }
+//
+//    FrFreeSurface::FrFreeSurface(double mean_height)
+//            : m_mean_height(mean_height) {
+//        plane.pos[2] = m_mean_height;
+//
+//        // Create the free surface body used for visualization
+//        m_Body = std::make_shared<chrono::ChBody>();
+//        m_Body->SetIdentifier(-1);
+//        m_Body->SetName("free_surface");
+//        m_Body->SetPos(chrono::ChVector<>(0, 0, 0));
+//        m_Body->SetBodyFixed(true);  // Important, however we could add a ChFunction-like to emulate tidal height
+//
+//        m_Body->SetCollide(false);  // set to false !!!
+//
+//        // Providing color
+//        m_color = std::make_shared<chrono::ChColorAsset>();
+//        m_color->SetColor(chrono::ChColor(0, 41, 58, 0));
+//        m_Body->AddAsset(m_color);
+//
+//        m_vis_enabled = true;
+//
+//    }
+
+//    double FrFreeSurface::getMeanHeight() const {
+//       return m_mean_height;
+//    }
 
     void FrFreeSurface::Initialize(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
@@ -62,15 +85,15 @@ namespace frydom {
         // Building the grid
         build_mesh_grid(xmin, xmax, dx, ymin, ymax, dy);
 
-        m_mesh_name = "Free surface";
+//        m_mesh_name = "Free surface";
 
-        if (m_vis_enabled) {
-            auto mesh_shape = std::make_shared<chrono::ChTriangleMeshShape>();
-            mesh_shape->SetMesh(m_mesh);
-            mesh_shape->SetName(m_mesh_name);
+//        if (m_vis_enabled) {
+        auto mesh_shape = std::make_shared<chrono::ChTriangleMeshShape>();
+        mesh_shape->SetMesh(m_mesh);
+        mesh_shape->SetName("FreeSurface");
 //            mesh_shape->SetFading(0.9);  // Ne fonctionne pas avec Irrlicht...
-            m_fs_body->AddAsset(mesh_shape);
-        }
+        m_Body->AddAsset(mesh_shape);
+//        }
 
     }
 
@@ -94,7 +117,7 @@ namespace frydom {
 
         for (int iy = 0; iy < nvy; iy++) {
             for (int ix = 0; ix < nvx; ix++) {
-                chrono::ChVector<double> vertex(xi, yi, m_mean_height);
+                chrono::ChVector<double> vertex(xi, yi, 0.);
                 vertices.push_back(vertex);
                 xi += dx;
             }
@@ -136,6 +159,7 @@ namespace frydom {
 
         // TODO: initialiser les normales et autres champs de ChTriangleMeshConnected
     }
+
 
 
 

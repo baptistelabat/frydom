@@ -16,18 +16,20 @@
 #ifndef FR_FREE_SURFACE_H
 #define FR_FREE_SURFACE_H
 
+//#include "chrono/physics/ChBody.h"
 
+#include <frydom/environment/tidal/FrTidalModel.h>
 #include "frydom/misc/FrTriangleMeshConnected.h"
 #include "FrWaveField.h"
 
 // Forward declarations
 namespace chrono {
-    template <class Real>
-    class ChCoordsys;
+//    template <class Real>
+//    class ChCoordsys;
 
     class ChBody;
 
-    class ChColorAsset;
+//    class ChColorAsset;
 }
 
 
@@ -40,27 +42,21 @@ namespace frydom{
     /// Pure Virtual Base class for a free surface system.
     class FrFreeSurface {
 
+        // FIXME: Il faut que ce soit cette classe qui comprenne un modele de maree !!
+
     protected:;  // Disallow the default constructor to be used as a public method
 
-        double ChTime;
-        bool m_vis_enabled;
-        std::shared_ptr<chrono::ChBody> m_fs_body;
-        std::shared_ptr<chrono::ChColorAsset> m_color;
+        double m_time = 0.;
+//        bool m_vis_enabled;
+        bool m_updateAsset = false;
+
+        std::shared_ptr<chrono::ChBody> m_Body;
         FrTriangleMeshConnected m_mesh;
-        std::string m_mesh_name;
-        double m_mean_height;
 
+        std::unique_ptr<FrTidal> m_tidal;
+
+        WAVE_MODEL m_waveModel = NO_WAVES;
         std::shared_ptr<FrWaveField> m_waveField;
-
-
-        chrono::ChCoordsys<> plane;  // The reference plane of the free surface
-
-
-        /// The system to which belongs the free surface.
-        std::shared_ptr<FrOffshoreSystem> m_system;
-
-        /// Flag to specify if the free surface has to be rendered in a visualization application.
-
 
 
         /// Private method in charge of the building of the free surface mesh.
@@ -68,40 +64,41 @@ namespace frydom{
                              double ymin, double ymax, double dy);
 
     public:
-        /// Enum type for free surface models
-//        enum Type {
-//            FLAT,
-//            LIN_AIRY_REGULAR,
-//            LIN_AIRY_IRREGULAR,
-//            LIN_AIRY_IRREGULAR_DIR,
-//            NL_RIENECKER_FENTON,
-//            NL_HOS
-//        };
 
-        // TODO: supprimer la classe flat free surface et n'avoir qu'une seule classe FrFreeSurface
-        // Cette classe foit contenir le maillage, le champ de vague et le mdoele de maree
-
-        // TODO: placer les constructeurs en protected vu qu'on instanncie jamais cette classe directement...
-
-        /// void constructor that should not be publicly used.
         FrFreeSurface();
 
-        /// Construct a default Free surface
-        FrFreeSurface(double mean_height);
+        void NoWaves() {
+            m_waveModel = NO_WAVES;
+//            m_waveField.reset(nullptr);
+        }
 
-        virtual ~FrFreeSurface() {std::cout << "Free surface deleted" << "\n";};
+        void SetLinearWaveField(LINEAR_WAVE_TYPE waveType) {
+            m_waveModel = LINEAR_WAVES;
+            m_waveField = std::make_shared<FrLinearWaveField>(waveType);
+        }
 
-        /// Update the state of the free surface at the specified time. --> FIXME: supprimer !!
-        virtual void Synchronize(double time) {};  // Devra d'appeler UpdateTime pour rester sur les conventions chrono
+        FrLinearWaveField* GetLinearWaveField() const {
+            return dynamic_cast<FrLinearWaveField*>(m_waveField.get());
+        }
 
-        /// Advance the state of the free surface by the specified duration. // FIXME: pas utile -->UpdateTime...
-        virtual void Advance(double step) {};
+        double GetMeanHeight(double x, double y) {
+            // TODO
+            return 0.;
+        }
 
-        /// Get the mean height of the free surface's plane. --> Donne par FrTidal !!
-        virtual double getMeanHeight() const;
+        double GetHeight(double x, double y) {
+            // TODO
+            // Maree + elevation
+            return 0.;
+        }
 
-        /// Get the free surface elevation at specified. // TODO: enlever le time (updateTime le fait) --> tidal + wave height
-        virtual double GetHeight(double x, double y, double t) const = 0;
+//        std::shared_ptr<FrLinearWaveField> GetLinearWaveField() const {
+//            if (m_waveModel != LINEAR_WAVES) {
+//                throw "Cannot get the linear wave field as it is not set to a linear model";
+//            }
+//            return dynamic_cast<std::shared_ptr<FrLinearWaveField>>(m_waveField.get());
+//        }
+
 
         /// Initializes the free surface system
         /// In any case, a mesh grid is used.
@@ -126,12 +123,25 @@ namespace frydom{
         FrTriangleMeshConnected getMesh(void) const;
 
         /// Update the state of the free surface
-        virtual void Update(double ChTime) = 0;
+        virtual void Update(double time) {
+            m_time = time;
+            m_tidal->Update(time);
+            m_waveField->Update(time);
+
+            if (m_updateAsset) {
+                // Updating the free surface grid for visualization
+            }
+
+        }
+
+        FrTidal* GetTidal() const {
+            return m_tidal.get();
+        }
 
         /// get the body that represents the free surface
-        std::shared_ptr<chrono::ChBody> GetBody() {return m_fs_body;}
+        std::shared_ptr<chrono::ChBody> GetBody() {return m_Body;}
 
-        void SetWaveField(std::shared_ptr<FrWaveField> waveField) { m_waveField = waveField; }
+//        void SetWaveField(std::shared_ptr<FrWaveField> waveField) { m_waveField = waveField; }
 
         std::shared_ptr<FrWaveField> GetWaveField() const { return m_waveField; }
 

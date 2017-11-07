@@ -21,9 +21,10 @@ namespace frydom {
 
         std::shared_ptr<FrLinearWaveProbe> m_waveProbe;
 
-        std::vector<Eigen::MatrixXcd> m_Fexc;  // Excitation coefficients interpolated from
+        std::vector<Eigen::MatrixXcd> m_Fexc;  // Excitation coefficients interpolated from the database
 
-        std::vector<std::vector<std::complex<double>>> m_steadyForce;
+        Eigen::MatrixXcd m_steadyForce;
+//        std::vector<std::vector<std::complex<double>>> m_steadyForce;
 
     public:
 
@@ -35,29 +36,94 @@ namespace frydom {
 
         void Initialize() {
 
+            auto BEMBody = dynamic_cast<FrHydroBody*>(GetBody())->GetBEMBody();
+            auto waveField = m_waveProbe->GetWaveField();
+
             if (m_Fexc.empty()) {
                 // We initialize the Fexc coefficients by interpolation on the Hydrodynamic Database
-                auto BEMBody = dynamic_cast<FrHydroBody*>(GetBody())->GetBEMBody();
-                auto waveField = m_waveProbe->GetWaveField();
+
+
                 m_Fexc = BEMBody->GetExcitationInterp(waveField->GetWavePulsations(RADS),
                                                       waveField->GetWaveDirections(DEG),
                                                       DEG);
             }
 
             // Getting the steady complex elevations
+            bool steady = true;
+            double x = m_waveProbe->GetX();
+            double y = m_waveProbe->GetY();
+            auto cmplxElevations = waveField->GetCmplxElevation(x, y, steady);
 
+            // Computing the steady force
+            auto nbFreq = waveField->GetNbFrequencies();
+            auto nbWaveDir = waveField->GetNbWaveDirections();
+            auto nbForceModes = BEMBody->GetNbForceMode();
 
+            m_steadyForce.resize(nbForceModes, nbFreq);
+            m_steadyForce.setZero();
 
-            return;
+            for (unsigned int imode=0; imode<nbForceModes; ++imode) {
+                for (unsigned int  ifreq=0; ifreq<nbFreq; ++ifreq) {
+                    for (unsigned int idir=0; idir<nbWaveDir; ++idir) {
+                        m_steadyForce(imode, ifreq) += cmplxElevations[idir][ifreq] * m_Fexc[idir](imode, ifreq);
+                    }
+                }
+            }
 
         }
 
         void UpdateState() override {
+            auto BEMBody = dynamic_cast<FrHydroBody*>(GetBody())->GetBEMBody();
 
-            // Get the wave elevation
-//            auto cmplxElevation = m_waveProbe->GetCmplxElevation();
-//
-//            return;
+            auto nbMode = BEMBody->GetNbForceMode();
+            auto nbFreq = BEMBody->GetNbFrequencies();
+
+            auto ejwt = m_waveProbe->GetWaveField()->GetTimeCoeffs();
+
+            Eigen::VectorXd forceMode(nbMode);
+            forceMode.setZero();
+
+            for (unsigned int imode=0; imode<nbMode; ++imode) {
+                for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq) {
+                    forceMode(imode) += std::imag(m_steadyForce(imode, ifreq) * ejwt[ifreq]);
+                }
+            }
+
+            force.SetNull();
+            moment.SetNull();
+
+            FrBEMMode* mode;
+            chrono::ChVector<double> direction;
+            chrono::ChVector<double> point;
+
+            FrBEMMode::TYPE modeType;
+
+            // Linear force computation
+            for (unsigned int imode=0; imode<nbMode; ++imode) {
+                mode = BEMBody->GetForceMode(imode);
+                modeType = mode->GetType();
+
+                direction = ChEig(mode->GetDirection());
+                if (modeType == FrBEMMode::LINEAR) {
+                    force += forceMode(imode) * direction;
+                }
+            }
+
+            // Moment computation
+            for (unsigned int imode=0; imode<nbMode; ++imode) {
+                mode = BEMBody->GetForceMode(imode);
+                modeType = mode->GetType();
+
+                direction = ChEig(mode->GetDirection());
+                point = ChEig(mode->GetPoint());
+                if (modeType == FrBEMMode::ANGULAR) {
+                    moment += forceMode(imode) * direction + point.Cross(force);
+                }
+            }  // FIXME: verifier qu'on ne fait pas d'erreur dans le calcul du moment...
+
+            // TODO: voir comment faire pour restreindre des ddls...
+
+            moment = GetBody()->Dir_World2Body(moment);
 
         }
 

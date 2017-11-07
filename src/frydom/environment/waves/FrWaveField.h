@@ -17,6 +17,11 @@
 
 namespace frydom {
 
+    enum WAVE_MODEL {
+        NO_WAVES,
+        LINEAR_WAVES
+    };
+
     class FrWaveField {
 
     protected:
@@ -34,21 +39,57 @@ namespace frydom {
             m_waveSpectrum = MakeWaveSpectrum(type);
         }
 
+        virtual double GetElevation(double x, double y) const = 0;
+
+        virtual std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
+                                                              const std::vector<double>& yVect) const = 0;
     };
 
     // Forward declaration
     class FrLinearWaveProbe;
 
+    class FrNullWaveField : public FrWaveField {
+
+    public:
+        double GetElevation(double x, double y) const final {
+            return 0.;
+        }
+
+        std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
+                                                      const std::vector<double>& yVect) const final {
+
+            auto nx = xVect.size();
+            auto ny = yVect.size();
+
+            std::vector<std::vector<double>> elevations;
+            elevations.reserve(nx);
+
+            std::vector<double> elev;
+            elev.reserve(ny);
+            for (unsigned int iy=0; iy<ny; ++iy) {
+                elev.push_back(0.);
+            }
+
+            for (unsigned int ix=0; ix<nx; ++ix) {
+                elevations.push_back(elev);
+            }
+
+            return elevations;
+
+        }
+
+    };
+
     enum LINEAR_WAVE_TYPE {
-        REGULAR,
-        IRREGULAR,
-        DIRECTIONAL
+        LINEAR_REGULAR,
+        LINEAR_IRREGULAR,
+        LINEAR_DIRECTIONAL
     };
 
     class FrLinearWaveField : public FrWaveField {
 
     private:
-        LINEAR_WAVE_TYPE m_type = DIRECTIONAL;
+        LINEAR_WAVE_TYPE m_type = LINEAR_DIRECTIONAL;
 
         double m_minFreq = 0.;
         double m_maxFreq = 2.;
@@ -87,14 +128,14 @@ namespace frydom {
             m_type = type;
 
             switch (type) {
-                case REGULAR:
+                case LINEAR_REGULAR:
                     m_waveSpectrum = nullptr;
                     m_nbFreq = 1;
                     m_nbDir = 1;
                     m_minDir = m_meanDir;
                     m_maxDir = m_meanDir;
                     break;
-                case IRREGULAR:
+                case LINEAR_IRREGULAR:
                     m_nbDir = 1;
                     m_minDir = m_meanDir;
                     m_maxDir = m_meanDir;
@@ -102,7 +143,7 @@ namespace frydom {
                     // Creating a default waveSpectrum
                     SetWaveSpectrum(JONSWAP);
                     break;
-                case DIRECTIONAL:
+                case LINEAR_DIRECTIONAL:
                     
                     break;
             }
@@ -143,7 +184,7 @@ namespace frydom {
                 m_meanDir = meanDirection;
             }
 
-            if (!(m_type == DIRECTIONAL)) {
+            if (!(m_type == LINEAR_DIRECTIONAL)) {
                 m_minDir = m_meanDir;
                 m_maxDir = m_meanDir;
             }
@@ -152,7 +193,7 @@ namespace frydom {
         std::vector<double> GetWaveDirections(FrAngleUnit unit=DEG) const {
             std::vector<double> waveDirections;
 
-            if (m_type == REGULAR) {
+            if (m_type == LINEAR_REGULAR) {
                 waveDirections.push_back(GetMeanWaveDirection(unit));
 
             } else {
@@ -178,9 +219,9 @@ namespace frydom {
 
             if (m_nbDir == 1) {
                 if (m_nbFreq == 1) {
-                    SetType(REGULAR);
+                    SetType(LINEAR_REGULAR);
                 } else {
-                    SetType(IRREGULAR);
+                    SetType(LINEAR_IRREGULAR);
                 }
             }
         }
@@ -188,7 +229,7 @@ namespace frydom {
         std::vector<double> GetWavePulsations(FREQ_UNIT unit=RADS) const {
 
             std::vector<double> omega;
-            if (m_type == REGULAR) {
+            if (m_type == LINEAR_REGULAR) {
                 omega.push_back(S2RADS(m_period));
             } else {
                 omega = linspace(convert_frequency(m_minFreq, RADS, unit),
@@ -204,7 +245,7 @@ namespace frydom {
             m_nbFreq = nbFreq;
 
             if (nbFreq == 1) {
-                SetType(REGULAR);
+                SetType(LINEAR_REGULAR);
             }
 
             _ComputeWaveNumber();
@@ -238,7 +279,7 @@ namespace frydom {
             std::vector<double> phases;
             phases.reserve(m_nbFreq);
 
-            if (m_type == REGULAR) {
+            if (m_type == LINEAR_REGULAR) {
                 phases.push_back(0.);
                 m_wavePhases.push_back(phases);
             } else {
@@ -269,17 +310,17 @@ namespace frydom {
             std::vector<double> ampl;
             switch (m_type) {
 
-                case REGULAR:
+                case LINEAR_REGULAR:
                     ampl.push_back(m_height * 0.5);
                     waveAmplitudes.push_back(ampl);
                     break;
 
-                case IRREGULAR:
+                case LINEAR_IRREGULAR:
                     ampl = m_waveSpectrum->GetWaveAmplitudes(m_nbFreq, m_minFreq, m_maxFreq);
                     waveAmplitudes.push_back(ampl);
                     break;
 
-                case DIRECTIONAL:
+                case LINEAR_DIRECTIONAL:
                     waveAmplitudes = m_waveSpectrum->GetWaveAmplitudes(m_nbFreq, m_minFreq, m_maxFreq,
                                                                        m_nbDir, m_minDir, m_maxDir, m_meanDir);
                     break;
@@ -298,7 +339,7 @@ namespace frydom {
 
             std::vector<double> w_;
             w_.reserve(m_nbDir);
-            if (m_type == DIRECTIONAL) {
+            if (m_type == LINEAR_DIRECTIONAL) {
                 auto wave_dirs = GetWaveDirections(RAD);
                 for (auto wave_dir: wave_dirs) {
                     w_.push_back(x * cos(wave_dir) + y * sin(wave_dir));
@@ -389,6 +430,10 @@ namespace frydom {
 
         }
 
+        std::vector<std::complex<double>> GetTimeCoeffs() const {
+            return c_emjwt;
+        }
+
         double GetElevation(double x, double y) const {
 
             auto steadyElevation =  GetSteadyElevation(x, y);
@@ -428,6 +473,18 @@ namespace frydom {
 
 
     };
+
+//    std::shared_ptr<FrWaveField> MakeWaveField(FrWaveField::LINEAR_WAVE_TYPE waveType) {
+//
+//        if (waveType == FrWaveField::LINEAR_REGULAR
+//            || waveType == FrWaveField::LINEAR_IRREGULAR
+//            || waveType == FrWaveField::LINEAR_DIRECTIONAL) {
+//
+//            return std::make_shared<FrLinearWaveField>(waveType);
+//
+//        }
+//
+//    }
 
 
 }  // end namespace frydom

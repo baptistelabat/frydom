@@ -11,7 +11,7 @@ using namespace frydom;
 
 // =====================================================================================================================
 void TestRegularWaveField(const std::vector<double>& xVect, const std::vector<double>& yVect) {
-    auto waveField = FrLinearWaveField(REGULAR);
+    auto waveField = FrLinearWaveField(LINEAR_REGULAR);
     waveField.SetRegularWaveHeight(3);
     waveField.SetRegularWavePeriod(9);
     waveField.SetMeanWaveDirection(0., DEG);
@@ -24,7 +24,7 @@ void TestRegularWaveField(const std::vector<double>& xVect, const std::vector<do
 // =====================================================================================================================
 void TestIrregularWaveField(const std::vector<double>& xVect, const std::vector<double>& yVect) {
 
-    auto waveField = FrLinearWaveField(IRREGULAR);
+    auto waveField = FrLinearWaveField(LINEAR_IRREGULAR);
     waveField.SetRegularWaveHeight(3);
     waveField.SetRegularWavePeriod(9);
     waveField.SetMeanWaveDirection(0., DEG);

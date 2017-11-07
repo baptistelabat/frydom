@@ -18,7 +18,6 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
-    bool viz = false;
 
     // TODO
     // 1 creer le systeme: il doit avoir une surface libre, un seabed, un modele de maree, un modele de courant, un modele de vent
@@ -33,11 +32,11 @@ int main(int argc, char* argv[]) {
     freeSurface->Initialize(-100, 100, 10);
 
     // Set the wave field
-    auto waveField = std::make_shared<FrLinearWaveField>(REGULAR);
+    freeSurface->SetLinearWaveField(LINEAR_REGULAR);
+    auto waveField = freeSurface->GetLinearWaveField();
     waveField->SetMeanWaveDirection(0., DEG);
     waveField->SetRegularWaveHeight(1.);
     waveField->SetRegularWavePeriod(5., S);
-    freeSurface->SetWaveField(waveField);  // TODO: permettre de regler les params du waveField de la SL directement a partir de methodes de SL
 
 
     // Get a waveProbe for excitation force on body
@@ -73,10 +72,8 @@ int main(int argc, char* argv[]) {
 
     //
 
-    if (viz) {
         auto app = FrIrrApp(system);
         app.Run();
-    }
 
 
     return 0;

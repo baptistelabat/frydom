@@ -164,8 +164,6 @@ set (SOURCE_ENVIRONMENT # TODO: par repertoire...
 
         src/frydom/environment/waves/FrFreeSurface.h
         src/frydom/environment/waves/FrFreeSurface.cpp
-        src/frydom/environment/waves/FrFlatFreeSurface.h
-        src/frydom/environment/waves/FrFlatFreeSurface.cpp
 
         src/frydom/environment/waves/FrWaveDispersionRelation.h
         src/frydom/environment/waves/FrWaveDispersionRelation.cpp

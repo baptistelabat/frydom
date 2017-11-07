@@ -9,6 +9,12 @@ namespace frydom {
 
     class FrWind {
 
+
+    public:
+        void Update(double time) {
+            // TODO
+        }
+
     };
 
 }  // end namespace frydom

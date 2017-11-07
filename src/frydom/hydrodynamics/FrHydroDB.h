@@ -43,7 +43,7 @@ namespace frydom {
     };
 
     class FrBEMMode {
-
+    public:
         enum TYPE {
             LINEAR,
             ANGULAR

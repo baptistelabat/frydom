@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRLINEARHYDROSTATICFORCE_H
 #define FRYDOM_FRLINEARHYDROSTATICFORCE_H
 
-
+// FIXME: attention, on a d'autres fichiers FrHydrostaticForce.h et .cpp
 namespace frydom {
 
     class FrLinearHydrostaticForce {
