@@ -93,7 +93,7 @@ namespace frydom {
 
         double m_minFreq = 0.;
         double m_maxFreq = 2.;
-        unsigned int m_nbFreq = 20;
+        unsigned int m_nbFreq = 40;
 
         double m_minDir = -180.*M_DEG;
         double m_maxDir = 165.*M_DEG;
@@ -118,6 +118,7 @@ namespace frydom {
             SetType(type);
             GenerateRandomWavePhases();
             Update(0.);
+            _ComputeWaveNumber();
         }
 
         LINEAR_WAVE_TYPE GetType() const {
@@ -253,6 +254,11 @@ namespace frydom {
 
         void _ComputeWaveNumber() {
             // TODO: aller chercher les infos dans FrOffshoreSystem
+            c_waveNumbers.clear();
+
+            // waterHeight = environment->GetDepth()
+            // grav = environment->GetGrav()
+
             double waterHeight = 10.;
             auto w = GetWavePulsations(RADS);
             double grav = 9.81;
@@ -302,31 +308,10 @@ namespace frydom {
         }
 
         std::vector<double> GetWaveNumbers() const {
-            // TODO
+            return c_waveNumbers;
         }
 
-        std::vector<std::vector<double>> _GetWaveAmplitudes() const {
-            std::vector<std::vector<double>> waveAmplitudes;
-            std::vector<double> ampl;
-            switch (m_type) {
-
-                case LINEAR_REGULAR:
-                    ampl.push_back(m_height * 0.5);
-                    waveAmplitudes.push_back(ampl);
-                    break;
-
-                case LINEAR_IRREGULAR:
-                    ampl = m_waveSpectrum->GetWaveAmplitudes(m_nbFreq, m_minFreq, m_maxFreq);
-                    waveAmplitudes.push_back(ampl);
-                    break;
-
-                case LINEAR_DIRECTIONAL:
-                    waveAmplitudes = m_waveSpectrum->GetWaveAmplitudes(m_nbFreq, m_minFreq, m_maxFreq,
-                                                                       m_nbDir, m_minDir, m_maxDir, m_meanDir);
-                    break;
-            }
-            return waveAmplitudes;
-        }
+        std::vector<std::vector<double>> _GetWaveAmplitudes() const;
 
         std::vector<std::vector<std::complex<double>>>
         GetCmplxElevation(const double x, const double y, bool steady=false) const {
@@ -352,18 +337,18 @@ namespace frydom {
             std::vector<double> waveFreqs = GetWavePulsations(RADS);
 
             std::complex<double> aik, val;
-            double ki, wi, wi_, phi_ik;
+            double ki, wi, wk_, phi_ik;
 
             for (unsigned int idir=0; idir<m_nbDir; ++idir) {
                 elev.clear();
+                wk_ = w_[idir];
 
                 for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
                     aik = waveAmplitudes[idir][ifreq];
-                    ki = waveFreqs[ifreq];
-                    wi_ = w_[ifreq];
+                    ki = c_waveNumbers[ifreq];  // FIXME: Ici, on doit avoir le nombre d'onde
                     phi_ik = m_wavePhases[idir][ifreq];
 
-                    val = aik * exp(JJ * (ki*wi_ + phi_ik));
+                    val = aik * exp(JJ * (ki*wk_ + phi_ik));
 
                     if (!steady) {  // TODO : utiliser les valeurs mises en cache...
                         wi = waveFreqs[ifreq];

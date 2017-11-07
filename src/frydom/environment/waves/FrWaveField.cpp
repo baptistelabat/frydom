@@ -15,5 +15,28 @@ namespace frydom {
         return waveProbe;
     }
 
+    std::vector<std::vector<double>> FrLinearWaveField::_GetWaveAmplitudes() const {
+        std::vector<std::vector<double>> waveAmplitudes;
+        std::vector<double> ampl;
+        switch (m_type) {
+
+            case LINEAR_REGULAR:
+                ampl.push_back(m_height * 0.5);
+                waveAmplitudes.push_back(ampl);
+                break;
+
+            case LINEAR_IRREGULAR:
+                ampl = m_waveSpectrum->GetWaveAmplitudes(m_nbFreq, m_minFreq, m_maxFreq);
+                waveAmplitudes.push_back(ampl);
+                break;
+
+            case LINEAR_DIRECTIONAL:
+                waveAmplitudes = m_waveSpectrum->GetWaveAmplitudes(m_nbFreq, m_minFreq, m_maxFreq,
+                                                                   m_nbDir, m_minDir, m_maxDir, m_meanDir);
+                break;
+        }
+        return waveAmplitudes;
+    }
+
 
 }  // end namespace frydom

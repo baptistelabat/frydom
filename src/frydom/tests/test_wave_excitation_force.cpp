@@ -10,9 +10,6 @@
 
 #include "frydom/utils/FrIrrApp.h"
 
-#include "matplotlibcpp.h"
-
-namespace plt = matplotlibcpp;
 
 using namespace frydom;
 
@@ -29,7 +26,7 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     auto freeSurface = system.GetFreeSurface();
-    freeSurface->Initialize(-10, 10, 0.2);
+    freeSurface->Initialize(-20, 20, 1, -4, 4, 2);
     freeSurface->UpdateAssetON();
 
     // Set the wave field
@@ -45,8 +42,11 @@ int main(int argc, char* argv[]) {
     waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
     double wmin = 0.2;
     double wmax = 2.;
-    unsigned int nbFreq = 30;
+    unsigned int nbFreq = 40;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
+
+
+//    waveField->GetWaveSpectrum()->Eval(1.);
 //    waveField->SetRegularWaveHeight(0.5);
 //    waveField->SetRegularWavePeriod(5., S);
 //    waveField->GetWaveSpectrum()->
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
     excForce->Initialize();
 
 
-    auto app = FrIrrApp(system, 10);
+    auto app = FrIrrApp(system, 40);
     app.Run();
 
 
