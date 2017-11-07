@@ -12,8 +12,6 @@
 #include <algorithm>
 #include <complex>
 
-// TODO: differencier le x du y... ie x est real et y est real ou complex
-
 namespace frydom {
 
     enum Interp1dMethod {
@@ -21,12 +19,12 @@ namespace frydom {
     };
 
 
-    template <class XReal, class YReal>
+    template <class XReal, class YScalar>
     class FrInterp1d {
 
     protected:
         std::shared_ptr<const std::vector<XReal>> xcoord;
-        std::shared_ptr<const std::vector<YReal>> yval;
+        std::shared_ptr<const std::vector<YScalar>> yval;
         unsigned long ndata = 0;
         XReal xmin;
         XReal xmax;
@@ -35,25 +33,25 @@ namespace frydom {
         // TODO: voir a separer l'implementation et la mettre en fin de fichier (pas directement dans le corps de la classe)
 
         virtual void Initialize(std::shared_ptr<const std::vector<XReal>> x,
-                                std::shared_ptr<const std::vector<YReal>> y);
+                                std::shared_ptr<const std::vector<YScalar>> y);
 
-        virtual YReal Eval(const XReal x) const = 0;
+        virtual YScalar Eval(XReal x) const = 0;
 
-        virtual std::vector<YReal> Eval(const std::vector<XReal>& xvector) const = 0;
+        virtual std::vector<YScalar> Eval(const std::vector<XReal>& xvector) const = 0;
 
-        YReal operator() (const XReal x) const {
+        YScalar operator() (const XReal x) const {
             return Eval(x);
         }
 
-        std::vector<YReal> operator() (const std::vector<XReal>& xvector) const { return Eval(xvector); }
+        std::vector<YScalar> operator() (const std::vector<XReal>& xvector) const { return Eval(xvector); }
 
-        static FrInterp1d<XReal, YReal>* MakeInterp1d(Interp1dMethod method);
+        static FrInterp1d<XReal, YScalar>* MakeInterp1d(Interp1dMethod method);
 
     };
 
-    template <class XReal, class YReal>
-    void FrInterp1d<XReal, YReal>::Initialize(std::shared_ptr<const std::vector<XReal>> x,
-                                              std::shared_ptr<const std::vector<YReal>> y) {
+    template <class XReal, class YScalar>
+    void FrInterp1d<XReal, YScalar>::Initialize(std::shared_ptr<const std::vector<XReal>> x,
+                                              std::shared_ptr<const std::vector<YScalar>> y) {
 
         assert( x->size() == y->size() );
         assert (std::is_sorted(x->begin(), x->end()));
@@ -68,35 +66,35 @@ namespace frydom {
     }
 
 
-    template <class XReal, class YReal>
-    class FrInterp1dLinear : public FrInterp1d<XReal, YReal> {
+    template <class XReal, class YScalar>
+    class FrInterp1dLinear : public FrInterp1d<XReal, YScalar> {
 
     private:
-        std::vector<YReal> a;
-        std::vector<YReal> b;
+        std::vector<YScalar> a;
+        std::vector<YScalar> b;
 
     public:
 
-        void Initialize(const std::shared_ptr<const std::vector<XReal>> x,
-                        const std::shared_ptr<const std::vector<YReal>> y) override;
+        void Initialize(std::shared_ptr<const std::vector<XReal>> x,
+                        std::shared_ptr<const std::vector<YScalar>> y) override;
 
-        YReal Eval(const XReal x) const;
+        YScalar Eval(XReal x) const;
 
-        std::vector<YReal> Eval(const std::vector<XReal>& xvector) const;
+        std::vector<YScalar> Eval(const std::vector<XReal>& xvector) const;
 
     };
 
-    template <class XReal, class YReal>
-    void FrInterp1dLinear<XReal, YReal>::Initialize(const std::shared_ptr<const std::vector<XReal>> x,
-                                                    const std::shared_ptr<const std::vector<YReal>> y) {
+    template <class XReal, class YScalar>
+    void FrInterp1dLinear<XReal, YScalar>::Initialize(const std::shared_ptr<const std::vector<XReal>> x,
+                                                    const std::shared_ptr<const std::vector<YScalar>> y) {
 
-        FrInterp1d<XReal, YReal>::Initialize(x, y);
+        FrInterp1d<XReal, YScalar>::Initialize(x, y);
 
         a.reserve(this->ndata);
         b.reserve(this->ndata);
 
         XReal xi, xii, xii_m_xi;
-        YReal yi, yii;
+        YScalar yi, yii;
         for (unsigned int i=1; i < this->ndata; ++i) {
 
             xi = this->xcoord->at(i-1);
@@ -113,8 +111,8 @@ namespace frydom {
         }
     }
 
-    template <class XReal, class YReal>
-    YReal FrInterp1dLinear<XReal, YReal>::Eval(const XReal x) const {
+    template <class XReal, class YScalar>
+    YScalar FrInterp1dLinear<XReal, YScalar>::Eval(const XReal x) const {
         // TODO: il faut que le type de retour soit compatible avec real et complex !!!
         assert (x >= this->xmin &&
                 x <= this->xmax);
@@ -125,18 +123,18 @@ namespace frydom {
 
         if (index == 0) index = 1;  // Bug fix for x == xmin
 
-        YReal a_ = a.at(index-1);
-        YReal b_ = b.at(index-1);
+        YScalar a_ = a.at(index-1);
+        YScalar b_ = b.at(index-1);
 
         return a_*x + b_;
     }
 
-    template <class XReal, class YReal>
-    std::vector<YReal> FrInterp1dLinear<XReal, YReal>::Eval(const std::vector<XReal> &xvector) const {
+    template <class XReal, class YScalar>
+    std::vector<YScalar> FrInterp1dLinear<XReal, YScalar>::Eval(const std::vector<XReal> &xvector) const {
 
         auto n = xvector.size();
 
-        std::vector<YReal> out;
+        std::vector<YScalar> out;
         out.reserve(n);
 
         for (int i=0; i<n; i++) {
@@ -146,11 +144,11 @@ namespace frydom {
     }
 
     /// Factory method to create 1D interpolation classes
-    template <class XReal, class YReal>
-    FrInterp1d<XReal, YReal>* FrInterp1d<XReal, YReal>::MakeInterp1d(Interp1dMethod method) {
+    template <class XReal, class YScalar>
+    FrInterp1d<XReal, YScalar>* FrInterp1d<XReal, YScalar>::MakeInterp1d(Interp1dMethod method) {
         switch (method) {
             case LINEAR:
-                return new FrInterp1dLinear<XReal, YReal>;
+                return new FrInterp1dLinear<XReal, YScalar>;
             default:
                 throw ("1D INTERPOLATION METHOD DOES NOT EXIST");
         }

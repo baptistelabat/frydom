@@ -22,6 +22,11 @@ int main(int argc, char* argv[]) {
 
     // TODO
     // 1 creer le systeme: il doit avoir une surface libre, un seabed, un modele de maree, un modele de courant, un modele de vent
+
+    // TODO: le systeme devrait etre un singleton de maniere a ce que chaque objet necessitant un enregistrement aupres de systeme
+    // puisse le faire de son propre chef...
+    // Du coup, systeme devrait etre cree lors de l'appel a un FRyDoM_INIT()
+    // Est ce qu'on ne peut pas definir un objet frydom qui soit un singleton et qui donne alors access au systeme embarque ??? --> mieux !!
     FrOffshoreSystem system;
 
     auto freeSurface = system.GetFreeSurface();
@@ -32,9 +37,10 @@ int main(int argc, char* argv[]) {
     waveField->SetMeanWaveDirection(0., DEG);
     waveField->SetRegularWaveHeight(1.);
     waveField->SetRegularWavePeriod(5., S);
-    freeSurface->SetWaveField(waveField);
+    freeSurface->SetWaveField(waveField);  // TODO: permettre de regler les params du waveField de la SL directement a partir de methodes de SL
 
-    // Get a waveProbe
+
+    // Get a waveProbe for excitation force on body
     auto waveProbe = waveField->NewWaveProbe(0, 0);
 
 
@@ -52,7 +58,7 @@ int main(int argc, char* argv[]) {
     // Importer une base de donnees hydro
     FrHydroDB HDB = LoadHDB5("../tools/frydom_hdb.h5");
 
-    // Lier le corps BEM et le corps hydro
+    // Linking the physical floating body to its counterpart from the HDB
     cylinder->SetBEMBody(HDB.GetBody(0));
 
     // Creer un modele de force d'excitation et l'ajouter au corps hydro
