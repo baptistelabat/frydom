@@ -351,8 +351,7 @@ namespace frydom {
                     val = aik * exp(JJ * (ki*wk_ + phi_ik));
 
                     if (!steady) {  // TODO : utiliser les valeurs mises en cache...
-                        wi = waveFreqs[ifreq];
-                        val *= exp(-JJ*wi*m_time);
+                        val *= c_emjwt[ifreq];
                     }
 
                     elev.push_back(val);

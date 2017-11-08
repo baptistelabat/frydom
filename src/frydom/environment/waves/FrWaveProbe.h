@@ -44,26 +44,19 @@ namespace frydom {
 
     class FrLinearWaveField;
 
-    class FrLinearWaveProbe : public FrWaveProbe {
+    class FrLinearWaveProbe : public FrWaveProbe {  // TODO: mettre en cache la steady elevation pour les params x, y
 
     private:
-        FrLinearWaveField* m_waveField;
+        FrLinearWaveField* m_waveField = nullptr;
 
     public:
         FrLinearWaveProbe(double x, double y) : FrWaveProbe(x, y) {}
 
         void SetWaveField(FrLinearWaveField* waveField) { m_waveField = waveField; }
+
         FrLinearWaveField* GetWaveField() const { return m_waveField; }
 
     };
-
-
-
-
-
-
-
-
 
 
 }  // end namespace frydom

@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     auto freeSurface = system.GetFreeSurface();
-    freeSurface->Initialize(-20, 20, 1, -4, 4, 2);
+    freeSurface->Initialize(-50, 50, 2.5, -50, 50, 100);
     freeSurface->UpdateAssetON();
 
     // Set the wave field
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
     waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
     double wmin = 0.2;
     double wmax = 2.;
-    unsigned int nbFreq = 40;
+    unsigned int nbFreq = 70;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
 
 
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
     excForce->Initialize();
 
 
-    auto app = FrIrrApp(system, 40);
+    auto app = FrIrrApp(system, 70);
     app.Run();
 
 

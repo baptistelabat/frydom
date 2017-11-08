@@ -172,5 +172,27 @@ namespace frydom {
         }
     }
 
+    void FrFreeSurface::UpdateAssetON() {
+        m_updateAsset = true;
+
+        // Creating the array of wave probes
+        auto nbVertices = m_meshAsset->GetMesh().getCoordsVertices().size();
+        m_waveProbeGrid.reserve(nbVertices);
+
+//        auto waveField = dynamic_cast<FrLinearWaveField*>(m_waveField.get());
+//        auto kjsqf = m_waveField.get();
+
+        for (auto& vertex : m_meshAsset->GetMesh().getCoordsVertices()) {
+            auto waveProbe = std::make_shared<FrLinearWaveProbe>(vertex.x(), vertex.y());
+//            waveProbe->SetWaveField(m_waveField.get());  // Ne fonctionne pas
+
+            m_waveProbeGrid.push_back(waveProbe);
+
+
+
+        }
+
+    }
+
 
 }  // end namespace frydom

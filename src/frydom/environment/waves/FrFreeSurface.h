@@ -21,11 +21,10 @@
 #include <frydom/environment/tidal/FrTidalModel.h>
 #include "frydom/misc/FrTriangleMeshConnected.h"
 #include "FrWaveField.h"
+#include "FrWaveProbe.h"
 
 // Forward declarations
 namespace chrono {
-//    template <class Real>
-//    class ChCoordsys;
 
     class ChBody;
 
@@ -38,7 +37,6 @@ namespace frydom{
     class FrOffshoreSystem;
 //    class FrTriangleMeshConnected;
 
-
     /// Pure Virtual Base class for a free surface system.
     class FrFreeSurface {
 
@@ -47,12 +45,9 @@ namespace frydom{
     protected:;  // Disallow the default constructor to be used as a public method
 
         double m_time = 0.;
-//        bool m_vis_enabled;
         bool m_updateAsset = false;
 
         std::shared_ptr<chrono::ChBody> m_Body;
-//        FrTriangleMeshConnected m_mesh;
-
         std::unique_ptr<FrTidal> m_tidal;
 
         WAVE_MODEL m_waveModel = NO_WAVES;
@@ -60,6 +55,10 @@ namespace frydom{
 
         std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
 
+
+         std::vector<std::shared_ptr<FrLinearWaveProbe>> m_waveProbeGrid; // TODO: passer a la classe de base...
+
+    protected:
 
         /// Private method in charge of the building of the free surface mesh.
         FrTriangleMeshConnected build_mesh_grid(double xmin, double xmax, double dx,
@@ -124,7 +123,7 @@ namespace frydom{
         /// Get the free surface's mesh
 //        FrTriangleMeshConnected getMesh(void) const;
 
-        void UpdateAssetON() { m_updateAsset = true; }
+        void UpdateAssetON();
 
         void UpdateAssetOFF() { m_updateAsset = false; }
 
