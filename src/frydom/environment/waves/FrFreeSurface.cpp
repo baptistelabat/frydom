@@ -167,9 +167,19 @@ namespace frydom {
     void FrFreeSurface::UpdateGrid() {
 
         auto& mesh = m_meshAsset->GetMesh();
-        for (auto& vertex: mesh.m_vertices) {
-            vertex.z() = m_waveField->GetElevation(vertex.x(), vertex.y());  // TODO: ne pas utiliser GetElevation mais des waveProbe
+
+        auto nbNodes = mesh.m_vertices.size();
+        FrLinearWaveProbe* waveProbe;
+        chrono::ChVector<double>* vertex;
+        for (unsigned int inode=0; inode<nbNodes; ++inode) {
+            waveProbe = m_waveProbeGrid[inode].get();
+            mesh.m_vertices[inode].z() = waveProbe->GetElevation(m_time);
         }
+
+
+//        for (auto& vertex: mesh.m_vertices) {
+//            vertex.z() = m_waveField->GetElevation(vertex.x(), vertex.y());  // TODO: ne pas utiliser GetElevation mais des waveProbe
+//        }
     }
 
     void FrFreeSurface::UpdateAssetON() {
@@ -179,19 +189,13 @@ namespace frydom {
         auto nbVertices = m_meshAsset->GetMesh().getCoordsVertices().size();
         m_waveProbeGrid.reserve(nbVertices);
 
-//        auto waveField = dynamic_cast<FrLinearWaveField*>(m_waveField.get());
-//        auto kjsqf = m_waveField.get();
+        auto waveField = std::static_pointer_cast<FrLinearWaveField>(m_waveField);
 
         for (auto& vertex : m_meshAsset->GetMesh().getCoordsVertices()) {
-            auto waveProbe = std::make_shared<FrLinearWaveProbe>(vertex.x(), vertex.y());
-//            waveProbe->SetWaveField(m_waveField.get());  // Ne fonctionne pas
-
-//            m_waveProbeGrid.push_back(waveProbe);
-
-
-
+            auto waveProbe = waveField->NewWaveProbe(vertex.x(), vertex.y());
+            waveProbe->Initialize();
+            m_waveProbeGrid.push_back(waveProbe);
         }
-
     }
 
 

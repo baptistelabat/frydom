@@ -27,7 +27,6 @@ int main(int argc, char* argv[]) {
 
     auto freeSurface = system.GetFreeSurface();
     freeSurface->Initialize(-50, 50, 2.5, -50, 50, 100);
-    freeSurface->UpdateAssetON();
 
     // Set the wave field
 //    freeSurface->SetLinearWaveField(LINEAR_REGULAR);
@@ -44,6 +43,8 @@ int main(int argc, char* argv[]) {
     double wmax = 2.;
     unsigned int nbFreq = 70;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
+
+    freeSurface->UpdateAssetON();
 
 //    freeSurface->SetLinearWaveField(LINEAR_DIRECTIONAL);
 //    auto waveField = freeSurface->GetLinearWaveField();

@@ -61,7 +61,20 @@ namespace frydom {
 
         void SetWaveField(FrLinearWaveField* waveField) { m_waveField = waveField; }
 
-        FrLinearWaveField* GetWaveField() const { return m_waveField; }
+        FrLinearWaveField* GetWaveField() const override { return m_waveField; }
+
+        void Initialize() {
+            m_steadyElevation = m_waveField->GetSteadyElevation(m_x, m_y);
+        }
+
+        double GetElevation(double time) const {
+            auto emjwt = m_waveField->GetTimeCoeffs();
+            std::complex<double> elev = 0.;
+            for (unsigned int ifreq=0; ifreq<emjwt.size(); ++ifreq) {
+                elev += m_steadyElevation[ifreq] * emjwt[ifreq];
+            }
+            return std::imag(elev);
+        }
 
     };
 
