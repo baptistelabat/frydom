@@ -168,7 +168,7 @@ namespace frydom {
 
         auto& mesh = m_meshAsset->GetMesh();
         for (auto& vertex: mesh.m_vertices) {
-            vertex.z() = m_waveField->GetElevation(vertex.x(), vertex.y());
+            vertex.z() = m_waveField->GetElevation(vertex.x(), vertex.y());  // TODO: ne pas utiliser GetElevation mais des waveProbe
         }
     }
 
@@ -186,7 +186,7 @@ namespace frydom {
             auto waveProbe = std::make_shared<FrLinearWaveProbe>(vertex.x(), vertex.y());
 //            waveProbe->SetWaveField(m_waveField.get());  // Ne fonctionne pas
 
-            m_waveProbeGrid.push_back(waveProbe);
+//            m_waveProbeGrid.push_back(waveProbe);
 
 
 

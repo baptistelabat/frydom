@@ -13,6 +13,7 @@
 
 namespace frydom {
 
+    // =================================================================================================================
     // Forward declaration
     class FrWaveField;
 
@@ -28,7 +29,7 @@ namespace frydom {
 
     public:
         FrWaveProbe(double x, double y) : m_x(x), m_y(y) {}
-//
+
 //        void SetWaveField(FrWaveField* waveField) = 0;
 //        virtual FrWaveField* GetWaveField() const { return m_waveField; }
 
@@ -40,14 +41,20 @@ namespace frydom {
 
         double GetY() const { return m_y; }
 
+        virtual FrWaveField* GetWaveField() const = 0;
+
     };
 
+    // =================================================================================================================
+    // Forward declaration
     class FrLinearWaveField;
 
     class FrLinearWaveProbe : public FrWaveProbe {  // TODO: mettre en cache la steady elevation pour les params x, y
 
     private:
         FrLinearWaveField* m_waveField = nullptr;
+
+        std::vector<std::complex<double>> m_steadyElevation;
 
     public:
         FrLinearWaveProbe(double x, double y) : FrWaveProbe(x, y) {}

@@ -11,6 +11,7 @@
 #include "frydom/misc/FrEigen.h"
 #include "frydom/misc/FrInterp1d.h"
 
+// TODO: utiliser plutot des std::vector a la place des matrices eigen ...
 
 #define J std::complex<double>(0, 1)
 

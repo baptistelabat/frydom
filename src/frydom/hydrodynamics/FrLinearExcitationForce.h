@@ -24,7 +24,6 @@ namespace frydom {
         std::vector<Eigen::MatrixXcd> m_Fexc;  // Excitation coefficients interpolated from the database
 
         Eigen::MatrixXcd m_steadyForce;
-//        std::vector<std::vector<std::complex<double>>> m_steadyForce;
 
     public:
 
@@ -41,9 +40,7 @@ namespace frydom {
 
             if (m_Fexc.empty()) {
                 // We initialize the Fexc coefficients by interpolation on the Hydrodynamic Database
-
-
-                m_Fexc = BEMBody->GetExcitationInterp(waveField->GetWavePulsations(RADS),
+                m_Fexc = BEMBody->GetExcitationInterp(waveField->GetWaveFrequencies(RADS),
                                                       waveField->GetWaveDirections(DEG),
                                                       DEG);
             }

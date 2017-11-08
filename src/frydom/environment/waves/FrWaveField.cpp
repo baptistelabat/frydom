@@ -18,7 +18,7 @@ namespace frydom {
     std::vector<std::vector<double>> FrLinearWaveField::_GetWaveAmplitudes() const {
         std::vector<std::vector<double>> waveAmplitudes;
         std::vector<double> ampl;
-        switch (m_type) {
+        switch (m_linearWaveType) {
 
             case LINEAR_REGULAR:
                 ampl.push_back(m_height * 0.5);

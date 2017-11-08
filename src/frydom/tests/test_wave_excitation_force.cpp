@@ -45,6 +45,14 @@ int main(int argc, char* argv[]) {
     unsigned int nbFreq = 70;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
 
+//    freeSurface->SetLinearWaveField(LINEAR_DIRECTIONAL);
+//    auto waveField = freeSurface->GetLinearWaveField();
+//    waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
+//    double wmin = 0.2;
+//    double wmax = 2.;
+//    unsigned int nbFreq = 70;
+//    waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
+
 
 //    waveField->GetWaveSpectrum()->Eval(1.);
 //    waveField->SetRegularWaveHeight(0.5);
