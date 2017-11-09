@@ -13,6 +13,8 @@
 //
 // =============================================================================
 
+#include <thread>
+
 #include <chrono/assets/ChTriangleMeshShape.h>
 #include <chrono/assets/ChColorAsset.h>
 #include "chrono/assets/ChTexture.h"
@@ -47,64 +49,23 @@ namespace frydom {
 
     }
 
-//    FrFreeSurface::FrFreeSurface() : m_mean_height(0) {
-//        plane.pos[1] = m_mean_height;
-//    }
-//
-//    FrFreeSurface::FrFreeSurface(double mean_height)
-//            : m_mean_height(mean_height) {
-//        plane.pos[2] = m_mean_height;
-//
-//        // Create the free surface body used for visualization
-//        m_Body = std::make_shared<chrono::ChBody>();
-//        m_Body->SetIdentifier(-1);
-//        m_Body->SetName("free_surface");
-//        m_Body->SetPos(chrono::ChVector<>(0, 0, 0));
-//        m_Body->SetBodyFixed(true);  // Important, however we could add a ChFunction-like to emulate tidal height
-//
-//        m_Body->SetCollide(false);  // set to false !!!
-//
-//        // Providing color
-//        m_color = std::make_shared<chrono::ChColorAsset>();
-//        m_color->SetColor(chrono::ChColor(0, 41, 58, 0));
-//        m_Body->AddAsset(m_color);
-//
-//        m_vis_enabled = true;
-//
-//    }
-
-//    double FrFreeSurface::getMeanHeight() const {
-//       return m_mean_height;
-//    }
-
     void FrFreeSurface::Initialize(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
-
-        // Making sure the mesh is clean
-//        FrTriangleMeshConnected mesh;
-//        m_mesh.Clear();
 
         // Building the grid
         auto mesh = build_mesh_grid(xmin, xmax, dx, ymin, ymax, dy);
 
-//        m_mesh_name = "Free surface";
-
-//        if (m_vis_enabled) {
         m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
         m_meshAsset->SetMesh(mesh);
         m_meshAsset->SetName("FreeSurface");
 //            mesh_shape->SetFading(0.9);  // Ne fonctionne pas avec Irrlicht...
         m_Body->AddAsset(m_meshAsset);
-//        }
 
     }
 
     void FrFreeSurface::Initialize(double lmin, double lmax, double dl){
+
         FrFreeSurface::Initialize(lmin, lmax, dl, lmin, lmax, dl);
     }
-
-//    FrTriangleMeshConnected FrFreeSurface::getMesh(void) const {
-//        return m_mesh;
-//    }
 
     FrTriangleMeshConnected FrFreeSurface::build_mesh_grid(double xmin, double xmax, double dx,
                                                            double ymin, double ymax, double dy) {
@@ -167,22 +128,79 @@ namespace frydom {
     void FrFreeSurface::UpdateGrid() {
 
         auto& mesh = m_meshAsset->GetMesh();
-
         auto nbNodes = mesh.m_vertices.size();
+
+        // Tentative de calcul d'une balance de charge sur des threads
+
+        // Load balancing on a vector over all available threads
+        auto nbThread = std::thread::hardware_concurrency();
+
+        auto meanSize = nbNodes / nbThread;
+        auto remainder = nbNodes - nbThread * meanSize;
+
+
+        std::vector<std::pair<unsigned int, unsigned int>> ranges;
+        ranges.reserve(nbThread);
+        std::pair<unsigned int, unsigned int> range;
+        unsigned int lastIndex = 0;
+        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
+            range.first = lastIndex;
+            range.second = (unsigned int)(lastIndex + meanSize);
+
+            if (iThread < remainder) {
+                range.second += 1;
+            }
+
+            lastIndex = range.second;
+            ranges.push_back(range);
+        }
+
+        std::vector<std::thread> threads;
+        threads.reserve(nbThread);
+        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
+            std::thread thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
+            threads.push_back(thread);
+        }
+
+//        for (auto thread : threads) {
+//            thread.join();
+//        }
+
+
+        // Fin tentative
+
+
+//        std::pair<unsigned int, unsigned int> totalRange(0, nbNodes);
+//        UpdateGridRange(totalRange);
+
+
+
+    }
+
+    void FrFreeSurface::UpdateGridRange(std::pair<unsigned int, unsigned int> range) {
+
+        auto& mesh = this->m_meshAsset->GetMesh();
+        auto nbNodes = mesh.m_vertices.size();
+
+        // getting the tidal wave height
+        double tidalHeight = this->m_tidal->GetWaterHeight();
+
+
         FrLinearWaveProbe* waveProbe;
         chrono::ChVector<double>* vertex;
         for (unsigned int inode=0; inode<nbNodes; ++inode) {
-            waveProbe = m_waveProbeGrid[inode].get();
-            mesh.m_vertices[inode].z() = waveProbe->GetElevation(m_time);
+            waveProbe = this->m_waveProbeGrid[inode].get();
+            mesh.m_vertices[inode].z() = tidalHeight + waveProbe->GetElevation(m_time);
         }
 
-
+        // TODO: garder pour faire la demo du speedup...
 //        for (auto& vertex: mesh.m_vertices) {
 //            vertex.z() = m_waveField->GetElevation(vertex.x(), vertex.y());  // TODO: ne pas utiliser GetElevation mais des waveProbe
 //        }
     }
 
-    void FrFreeSurface::UpdateAssetON() {
+
+    void FrFreeSurface::UpdateAssetON() {  // TODO: faire la creation des waveProbe ailleurs car ca oblige a definir dire UpdateAssetON apres la creation de waveField...
         m_updateAsset = true;
 
         // Creating the array of wave probes
@@ -197,6 +215,7 @@ namespace frydom {
             m_waveProbeGrid.push_back(waveProbe);
         }
     }
+
 
 
 }  // end namespace frydom
