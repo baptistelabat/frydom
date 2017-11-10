@@ -14,16 +14,22 @@ namespace frydom {
     class FrLinearDamping : public FrForce {
 
     private:
-        double m_Dx = 0.;
-        double m_Dy = 0.;
-        double m_Dwz = 0.;
-
+        chrono::ChVector<double> m_maneuveuringDampings = chrono::VNULL;
+        chrono::ChVector<double> m_seakeepingDampings = chrono::VNULL;
 
     public:
 
-        FrLinearDamping() : m_Dx(0.), m_Dy(0.), m_Dwz(0.) {};
+        FrLinearDamping() {};
 
-        FrLinearDamping(const double Dx, const double Dy, const double Dwz) : m_Dx(Dx), m_Dy(Dy), m_Dwz(Dwz){};
+//        FrLinearDamping(const double Dx, const double Dy, const double Dwz) : m_Dx(Dx), m_Dy(Dy), m_Dwz(Dwz){};
+
+        void SetManeuveuringDampings(const chrono::ChVector<double> dampings) {
+            m_maneuveuringDampings = dampings;
+        }
+
+        void SetSeakeepingDampings(const chrono::ChVector<double> dampings) {
+            m_seakeepingDampings = dampings;
+        }
 
         void UpdateState() override;
 

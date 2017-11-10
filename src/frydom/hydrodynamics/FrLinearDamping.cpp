@@ -15,13 +15,17 @@ namespace frydom {
 
         // Absolute linear velocity
         auto linear_vel = Body->GetPos_dt();
+        auto angularVelocity = Body->GetWvel_par();
 
-        force.x() = - m_Dx * linear_vel.x();
-        force.y() = - m_Dy * linear_vel.y();
-        force.z() = 0.;
+        force.x() = - m_maneuveuringDampings.x() * linear_vel.x();
+        force.y() = - m_maneuveuringDampings.y() * linear_vel.y();
+        force.z() = - m_seakeepingDampings.x() * linear_vel.z();
 
-        auto moment_abs = chrono::ChVector<double>();
-        moment.z() = - m_Dwz * Body->GetWvel_par().z();
+//        moment.x() = - m_seakeepingDampings.y() * angularVelocity.x();
+//        moment.y() = - m_seakeepingDampings.z() * angularVelocity.y();
+//        moment.z() = - m_maneuveuringDampings.z() * angularVelocity.z();
+//        moment = Body->Dir_World2Body(moment);
+
     }
 
 

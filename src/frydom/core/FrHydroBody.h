@@ -50,6 +50,9 @@ namespace frydom {
                                             // way to take forward speed into account concerning the wave excitation...
                                             // TODO: use it...
 
+        chrono::ChFrame<double> m_equilibriumFrame;
+
+
     public:
 
         void SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody);
@@ -159,6 +162,41 @@ namespace frydom {
 
         /// Set the heading of the body from a unit direction in the NED frame
         void SetNEDHeading(const chrono::ChVector<>& unit_vector);
+
+
+        void SetEquilibriumFrame(const chrono::ChFrame<double>& eqFrame) {
+            m_equilibriumFrame = eqFrame;
+        }
+
+        void SetEquilibriumFrame(const chrono::ChVector<double>& eqPos,
+                                 const chrono::ChQuaternion<double>& eqQuat) {
+            chrono::ChFrame<double> eqFrame;
+            eqFrame.SetPos(eqPos);
+            eqFrame.SetRot(eqQuat);
+
+            SetEquilibriumFrame(eqFrame);
+        }
+
+        void SetCurrentRefFrameAsEquilibrium() {
+
+            auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetFreeSurface()->GetFrame();
+
+            chrono::ChFrame<double> eqFrame0 = GetFrame_REF_to_abs() >> freeSurfaceFrame.GetInverse();
+
+            SetEquilibriumFrame(eqFrame0);
+        }
+
+        chrono::ChFrame<double> GetEquilibriumFrame() const {
+            auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetFreeSurface()->GetFrame();
+            auto eqFrame = m_equilibriumFrame >> freeSurfaceFrame.GetInverse();
+            return eqFrame;
+        }
+
+
+
+
+
+        // TODO: introduire une classe geometricProperties qui rassemble les differentes donnees...
 
         /// Get the transverse underwater area of the body
         double GetTransverseUnderWaterArea() const;

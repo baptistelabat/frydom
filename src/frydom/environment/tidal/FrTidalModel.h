@@ -83,6 +83,9 @@ namespace frydom {
         };
 
     private:
+
+        chrono::ChFrame<double> m_tidalFrame;
+
         double m_time = 0.;
 
         TidalMode m_mode = NO_TIDAL;
@@ -95,7 +98,7 @@ namespace frydom {
         FrUTCTime m_t2;
         double m_h2;
 
-        double c_waterHeight = 0.;
+//        double c_waterHeight = 0.;
 
         FrLookupTable1D<double> tidalTable;
 
@@ -168,17 +171,27 @@ namespace frydom {
         }
 
         void Update(const double time) {
+
+            double waterHeight = 0.;
+
             if (m_mode == NO_TIDAL) {
-                c_waterHeight = m_h1;
+                waterHeight = m_h1;
             }
 
             if (m_mode == TWELFTH_RULE) {
-                c_waterHeight = tidalTable.Eval("tidal_height", m_time);
+                waterHeight = tidalTable.Eval("tidal_height", m_time);
             }
+
+            m_tidalFrame.GetPos().z() = waterHeight;
+
         }
 
-        double GetWaterHeight() const {
-            return c_waterHeight;
+        const double GetWaterHeight() const {
+            return m_tidalFrame.GetPos().z();
+        }
+
+        const chrono::ChFrame<double>& GetTidalFrame() const {
+            return m_tidalFrame;
         }
 
     };

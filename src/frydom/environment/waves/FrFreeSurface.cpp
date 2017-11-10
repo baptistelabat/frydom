@@ -52,7 +52,7 @@ namespace frydom {
     void FrFreeSurface::Initialize(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
         // Building the grid
-        auto mesh = build_mesh_grid(xmin, xmax, dx, ymin, ymax, dy);
+        auto mesh = BuildRectangularMeshGrid(xmin, xmax, dx, ymin, ymax, dy);
 
         m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
         m_meshAsset->SetMesh(mesh);
@@ -67,8 +67,23 @@ namespace frydom {
         FrFreeSurface::Initialize(lmin, lmax, dl, lmin, lmax, dl);
     }
 
-    FrTriangleMeshConnected FrFreeSurface::build_mesh_grid(double xmin, double xmax, double dx,
-                                                           double ymin, double ymax, double dy) {
+    void FrFreeSurface::Initialize(double xc0,
+                    double yc0,
+                    double diameter,
+                    int nbR,
+                    int nbTheta) {
+
+        auto mesh = BuildPolarMeshGrid(xc0, yc0, diameter, nbR, nbTheta);
+        m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
+        m_meshAsset->SetMesh(mesh);
+        m_meshAsset->SetName("FreeSurface");
+//            mesh_shape->SetFading(0.9);  // Ne fonctionne pas avec Irrlicht...
+        m_Body->AddAsset(m_meshAsset);
+
+    }
+
+    FrTriangleMeshConnected FrFreeSurface::BuildRectangularMeshGrid(double xmin, double xmax, double dx,
+                                                                    double ymin, double ymax, double dy) {
 
         FrTriangleMeshConnected mesh;
 
@@ -125,6 +140,70 @@ namespace frydom {
         return mesh;
     }
 
+    FrTriangleMeshConnected FrFreeSurface::BuildPolarMeshGrid(double xc0, double yc0,
+                                                              double diameter,
+                                                              unsigned int nbR, unsigned int nbTheta) {
+
+        FrTriangleMeshConnected mesh;
+
+        auto angles = linspace(0., M_2PI, nbTheta);
+
+        std::vector<chrono::ChVector<double>> vertices;
+        vertices.reserve((nbR-1) * (nbTheta-1) + 1);
+
+        double radius = diameter * 0.5;
+        auto distances = linspace<double>(0, radius, nbR);
+
+        for (const auto& distance : distances) {
+            vertices.emplace_back(chrono::ChVector<double>(xc0 + distance, 0., 0.));
+        }
+
+        std::vector<chrono::ChVector<int>> faces;  // TODO: reserver l'espace
+
+        int i0, i1, i2, i3;
+        double angle, distance;
+        for (unsigned int iangle=1; iangle<angles.size(); ++iangle) {
+            angle = angles[iangle];
+
+            // Adding new vertices
+            for (unsigned int idist=1; idist<nbR; ++idist) {
+                distance = distances[idist];
+                vertices.emplace_back(
+                        chrono::ChVector<double>(
+                                xc0 + distance * cos(angle),
+                                yc0 + distance * sin(angle),
+                                0.
+                        )
+                );
+            }
+
+            // Building center triangle
+            i0 = 0;
+            i1 = (iangle-1) * (nbR-1) + 1;
+            i2 = iangle * (nbR-1) + 1;
+            faces.emplace_back(chrono::ChVector<int>(i0, i1, i2));
+
+            // Building next triangles
+            for (unsigned int idist=2; idist<nbR; ++idist) {
+
+                i0 = iangle * (nbR-1) + idist -1;
+                i1 = (iangle-1) * (nbR-1) + idist -1;
+                i2 = (iangle-1) * (nbR-1) + idist;
+                i3 = iangle * (nbR-1) + idist;
+
+                faces.emplace_back(chrono::ChVector<int>(i0, i1, i3));
+                faces.emplace_back(chrono::ChVector<int>(i3, i1, i2));
+
+            }
+        }
+
+        mesh.addVertex(vertices);
+        mesh.addTriangle(faces);
+
+        return mesh;
+    }
+
+
     void FrFreeSurface::UpdateGrid() {
 
         auto& mesh = m_meshAsset->GetMesh();
@@ -134,6 +213,8 @@ namespace frydom {
 
         // Load balancing on a vector over all available threads
         auto nbThread = std::thread::hardware_concurrency();
+
+//        nbThread = 4;
 
         auto meanSize = nbNodes / nbThread;
         auto remainder = nbNodes - nbThread * meanSize;
@@ -155,16 +236,17 @@ namespace frydom {
             ranges.push_back(range);
         }
 
-        std::vector<std::thread> threads;
-        threads.reserve(nbThread);
+        std::vector<std::thread> threads(nbThread);
+//        threads.reserve(nbThread);
         for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
-            std::thread thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
-            threads.push_back(thread);
+            threads.at(iThread) = std::thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
+//            std::thread thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
+//            threads.push_back(thread);
         }
 
-//        for (auto thread : threads) {
-//            thread.join();
-//        }
+        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
+            threads.at(iThread).join();
+        }
 
 
         // Fin tentative
@@ -185,6 +267,7 @@ namespace frydom {
         // getting the tidal wave height
         double tidalHeight = this->m_tidal->GetWaterHeight();
 
+//        std::cout << std::this_thread::get_id() << "\n";
 
         FrLinearWaveProbe* waveProbe;
         chrono::ChVector<double>* vertex;
@@ -195,7 +278,7 @@ namespace frydom {
 
         // TODO: garder pour faire la demo du speedup...
 //        for (auto& vertex: mesh.m_vertices) {
-//            vertex.z() = m_waveField->GetElevation(vertex.x(), vertex.y());  // TODO: ne pas utiliser GetElevation mais des waveProbe
+//            vertex.z() = tidalHeight + m_waveField->GetElevation(vertex.x(), vertex.y());  // TODO: ne pas utiliser GetElevation mais des waveProbe
 //        }
     }
 

@@ -16,7 +16,7 @@
 #ifndef FR_FREE_SURFACE_H
 #define FR_FREE_SURFACE_H
 
-//#include "chrono/physics/ChBody.h"
+#include "chrono/core/ChFrame.h"
 
 #include <frydom/environment/tidal/FrTidalModel.h>
 #include "frydom/misc/FrTriangleMeshConnected.h"
@@ -62,10 +62,14 @@ namespace frydom{
 
     protected:
 
-        /// Private method in charge of the building of the free surface mesh.
-        FrTriangleMeshConnected build_mesh_grid(double xmin, double xmax, double dx,
-                             double ymin, double ymax, double dy);
+        /// Private method in charge of the building of the free surface mesh as a rectangular grid.
+        FrTriangleMeshConnected BuildRectangularMeshGrid(double xmin, double xmax, double dx,
+                                                         double ymin, double ymax, double dy);
 
+        /// Private method in charge of the building of the free surface mesh as a polar grid.
+        FrTriangleMeshConnected BuildPolarMeshGrid(double xc0, double yc0, // center
+                                                   double diameter,
+                                                   unsigned int nbR, unsigned int nbTheta);
     public:
 
         FrFreeSurface();
@@ -85,23 +89,12 @@ namespace frydom{
         }
 
         double GetMeanHeight(double x, double y) {
-            // TODO
-            return 0.;
+            return m_tidal->GetWaterHeight();
         }
 
         double GetHeight(double x, double y) {
-            // TODO
-            // Maree + elevation
-            return 0.;
+            return m_tidal->GetWaterHeight() + m_waveField->GetElevation(x, y);
         }
-
-//        std::shared_ptr<FrLinearWaveField> GetLinearWaveField() const {
-//            if (m_waveModel != LINEAR_WAVES) {
-//                throw "Cannot get the linear wave field as it is not set to a linear model";
-//            }
-//            return dynamic_cast<std::shared_ptr<FrLinearWaveField>>(m_waveField.get());
-//        }
-
 
         /// Initializes the free surface system
         /// In any case, a mesh grid is used.
@@ -121,6 +114,14 @@ namespace frydom{
                         double lmax,
                         double dl
                         );
+
+        void Initialize(double xc0,
+                        double yc0,
+                        double diameter,
+                        int nbR,
+                        int nbTheta
+                        );
+
 
         /// Get the free surface's mesh
 //        FrTriangleMeshConnected getMesh(void) const;
@@ -158,6 +159,9 @@ namespace frydom{
 
         std::shared_ptr<FrWaveField> GetWaveField() const { return m_waveField; }
 
+        const chrono::ChFrame<double>& GetFrame() const {
+            return m_tidal->GetTidalFrame();
+        }
 
     };
 

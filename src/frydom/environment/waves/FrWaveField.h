@@ -430,7 +430,8 @@ namespace frydom {
 
         }
 
-        std::vector<std::complex<double>> GetTimeCoeffs() const {
+        // TODO: renvoyer un pointeur partagé ??
+        const std::vector<std::complex<double>>& GetTimeCoeffs() const {
             return c_emjwt;
         }
 

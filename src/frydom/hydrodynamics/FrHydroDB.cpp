@@ -537,8 +537,8 @@ namespace frydom {
                 coeffs->reserve(nbWaveDirections);
 
                 for (unsigned int iangle=0; iangle<nbWaveDirections; ++iangle) {
-//                    data = GetExcitation(iangle);
-                    data = GetDiffraction(iangle);
+                    data = GetExcitation(iangle);
+//                    data = GetDiffraction(iangle);
                     coeffs->push_back(data(imode, ifreq));
                 }
 
@@ -610,7 +610,7 @@ namespace frydom {
     std::vector<Eigen::MatrixXcd>
     FrBEMBody::GetExcitationInterp(std::vector<double> waveFrequencies,
                                    std::vector<double> waveDirections,
-                                   FrAngleUnit angleUnit) {
+                                   FrAngleUnit angleUnit) {  // TODO: utiliser angleUnit
 
         // Getting sizes
         auto nbFreqInterp = waveFrequencies.size();

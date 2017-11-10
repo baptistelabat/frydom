@@ -66,6 +66,24 @@ namespace frydom {
         std::shared_ptr<FrNode> CreateNode();
         std::shared_ptr<FrNode> CreateNode(const chrono::ChVector<double> relpos);
 
+        /// Set the position of the COG with respect to the body's reference frame (in local coordinates)
+        void SetCOG(const chrono::ChVector<double>& COGRelPos) {
+            auto COGFrame = chrono::ChFrame<double>();
+
+            COGFrame.SetPos(COGRelPos);
+            SetFrame_COG_to_REF(COGFrame);
+        }
+
+        const chrono::ChVector<double> GetAbsCOG() const {
+            auto COGFrame = GetFrame_COG_to_abs();
+            return COGFrame.GetPos();
+        }
+
+        const chrono::ChVector<double> GetRelCOG() const {
+            auto COGFrame = GetFrame_COG_to_REF();
+            return COGFrame.GetPos();
+        }
+
     };
 
 }  // end namespace frydom

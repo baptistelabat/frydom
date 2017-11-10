@@ -11,7 +11,6 @@
 #include "frydom/core/FrHydroBody.h"
 #include "FrHydroDB.h"
 
-//#include "Eigen/Dense"
 
 namespace frydom {
 
@@ -73,9 +72,10 @@ namespace frydom {
             auto BEMBody = dynamic_cast<FrHydroBody*>(GetBody())->GetBEMBody();
 
             auto nbMode = BEMBody->GetNbForceMode();
-            auto nbFreq = BEMBody->GetNbFrequencies();
+//            auto nbFreq = BEMBody->GetNbFrequencies();
 
             auto ejwt = m_waveProbe->GetWaveField()->GetTimeCoeffs();
+            auto nbFreq = ejwt.size();
 
             Eigen::VectorXd forceMode(nbMode);
             forceMode.setZero();
@@ -85,6 +85,19 @@ namespace frydom {
                     forceMode(imode) += std::imag(m_steadyForce(imode, ifreq) * ejwt[ifreq]);
                 }
             }
+
+            // On teste pour le moment du 6ddl (nbModes == 6)
+
+
+
+
+
+
+
+
+
+
+
 
             force.SetNull();
             moment.SetNull();

@@ -2,6 +2,8 @@
 // Created by frongere on 30/10/17.
 //
 
+#include <frydom/hydrodynamics/FrLinearHydrostaticForce.h>
+#include <frydom/hydrodynamics/FrLinearDamping.h>
 #include "frydom/core/FrCore.h"
 #include "frydom/hydrodynamics/FrHydroDB.h" // TODO: charger seulement un FrHydrodynamics
 #include "frydom/hydrodynamics/FrLinearExcitationForce.h"
@@ -26,7 +28,8 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     auto freeSurface = system.GetFreeSurface();
-    freeSurface->Initialize(-50, 50, 2.5, -50, 50, 100);
+    freeSurface->Initialize(-20, 20, 4);
+//    freeSurface->Initialize(0, 0, 100, 5, 90);
 
     // Set the wave field
 //    freeSurface->SetLinearWaveField(LINEAR_REGULAR);
@@ -69,13 +72,33 @@ int main(int argc, char* argv[]) {
     // 2 creer un corps hydro
     auto cylinder = std::make_shared<FrHydroBody>();
     cylinder->SetName("Cylinder");
-    cylinder->SetHydroMesh("../src/frydom/tests/data/Cylinder.stl", true);
+    cylinder->SetHydroMesh("../src/frydom/tests/data/Cylinder.obj", true);
     cylinder->SetLateralUnderWaterArea(0.);
     cylinder->SetTransverseUnderWaterArea(0.);
     cylinder->SetLpp(0.);
-    cylinder->SetInertiaXX(chrono::ChVector<double>(0, 0, 0));
-    cylinder->SetMass(0.);
+    cylinder->SetInertiaXX(chrono::ChVector<double>(1e6, 1e6, 1e6));
+    cylinder->SetMass(795e3);
+    cylinder->SetCOG(chrono::ChVector<double>(0., 0., -7.5));
+//    cylinder->SetBodyFixed(true);  // TODO: retirer
+    system.AddBody(cylinder);
 
+    // ===========================================
+    // Hydrodynamics
+    // ===========================================
+
+    // Hydrostatics
+    auto hstForce = std::make_shared<FrLinearHydrostaticForce>();
+    auto hstStiffness = hstForce->GetStiffnessMatrix();
+    double K33 = 7.7922E+05;
+    double K44 = 3.4146E+07;
+    hstStiffness->SetDiagonal(K33, K44, K44);
+    cylinder->AddForce(hstForce);
+
+    // Linear Damping
+    auto hydroDampingForce = std::make_shared<FrLinearDamping>();
+    hydroDampingForce->SetManeuveuringDampings(chrono::ChVector<double>(1e8, 1e8, 1e9));
+    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e8, 1e10, 1e10));
+    cylinder->AddForce(hydroDampingForce);
 
     // Importer une base de donnees hydro
     FrHydroDB HDB = LoadHDB5("../tools/frydom_hdb.h5");
@@ -88,11 +111,14 @@ int main(int argc, char* argv[]) {
     cylinder->AddForce(excForce);
     excForce->SetWaveProbe(waveProbe);
     excForce->Initialize();
-    excForce->Clear();
-    excForce->Initialize();
 
 
-    auto app = FrIrrApp(system, 70);
+//    double dt = 0.01;
+//    for (int i=0; i<10; ++i) {
+//        system.DoStepDynamics(dt);
+//    }
+
+    auto app = FrIrrApp(system, 40);
     app.Run();
 
 

@@ -195,6 +195,12 @@ set(SOURCE_HYDRODYNAMICS
         src/frydom/hydrodynamics/FrLinearDamping.h
         src/frydom/hydrodynamics/FrLinearDamping.cpp
 
+        src/frydom/hydrodynamics/FrLinearHydrostaticStiffnessMatrix.h
+        src/frydom/hydrodynamics/FrLinearHydrostaticStiffnessMatrix.cpp
+
+        src/frydom/hydrodynamics/FrLinearHydrostaticForce.h
+        src/frydom/hydrodynamics/FrLinearHydrostaticForce.cpp
+
         src/frydom/hydrodynamics/FrRadiationForce.h
         src/frydom/hydrodynamics/FrRadiationForce.cpp
 
