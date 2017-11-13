@@ -534,7 +534,7 @@ class FroudeKrylovDB(WaveExcitation):
         
             for iforce in xrange(body.nb_force_modes):
                 nds = body.get_nds(iforce)
-                froude_krylov[i_global_force, :, :] = - np.einsum('ijk, i -> jk', pressure, nds)
+                froude_krylov[i_global_force, :, :] =  np.einsum('ijk, i -> jk', pressure, nds)
                 i_global_force += 1
     
         # FIXME: il semblerait qu'il y ait un probleme de signe au niveau de la phase de Froude Krylov !!!
