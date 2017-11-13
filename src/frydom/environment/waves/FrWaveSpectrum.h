@@ -165,11 +165,19 @@ namespace frydom {
 
         double GetHs() const { return m_significant_height; }
 
+        void SetHs(double Hs) { m_significant_height = Hs; }
+
         double GetTp() const { return convert_frequency(m_peak_pulsation, RADS, S); }
+
+        void SetTp(double Tp) { m_peak_pulsation = convert_frequency(Tp, S, RADS); }
 
         double GetWp() const { return m_peak_pulsation; }
 
+        void SetWp(double Wp) { m_peak_pulsation = Wp; }
+
         double GetFp() const { return convert_frequency(m_peak_pulsation, RADS, HZ); }
+
+        void SetFp(double Fp) { m_peak_pulsation = convert_frequency(Fp, HZ, RADS); }
 
         double GetPeakFreq(FREQ_UNIT unit) const {
             return convert_frequency(m_peak_pulsation, RADS, unit);

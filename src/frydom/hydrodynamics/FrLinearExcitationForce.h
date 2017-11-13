@@ -89,7 +89,13 @@ namespace frydom {
             // On teste pour le moment du 6ddl (nbModes == 6)
 
 
-
+            // Applying the wave Ramp
+            auto waveRamp = m_waveProbe->GetWaveField()->GetWaveRamp();
+            if (waveRamp && waveRamp->IsActive()) {
+                for (unsigned int imode=0; imode<nbMode; ++imode) {
+                    waveRamp->Apply(ChTime, forceMode[imode]); // TODO: WaveRamp doit pouvoir s'appliquer a des vecteurs...
+                }
+            }
 
 
 
@@ -127,13 +133,16 @@ namespace frydom {
                 direction = ChEig(mode->GetDirection());
                 point = ChEig(mode->GetPoint());
                 if (modeType == FrBEMMode::ANGULAR) {
-                    moment += forceMode(imode) * direction + point.Cross(force);
+//                    moment += forceMode(imode) * direction + point.Cross(force);
+                    moment += forceMode(imode) * direction;
                 }
             }  // FIXME: verifier qu'on ne fait pas d'erreur dans le calcul du moment...
 
             // TODO: voir comment faire pour restreindre des ddls...
 
             moment = GetBody()->Dir_World2Body(moment);
+
+//            moment.SetNull(); // Retirer !!!
 
         }
 

@@ -22,6 +22,95 @@ namespace frydom {
     class FrLinearWaveProbe;
 
 
+    class FrRamp {  // TODO: placer cette classe dans son propre fichier
+
+    private:
+        bool m_active = true;
+
+        bool m_increasing = true;
+        double m_t0 = 0.;
+        double m_t1 = 20.;
+
+        double m_min = 0.;
+        double m_max = 1.;
+
+        double c_a = 0.;
+        double c_b = 1.;
+
+
+    public:
+
+        void SetDuration(double duration) {
+            m_t1 = m_t0 + duration;
+        }
+
+        void SetIncrease() {
+            m_increasing = true;
+            Initialize();
+        }
+
+        void SetDecrease() {
+            m_increasing = false;
+            Initialize();
+        }
+
+        void SetMinVal(double minVal) { m_min = minVal; }
+
+        void SetMaxVal(double maxVal) { m_max = maxVal; }
+
+        bool IsActive() {
+            return m_active;
+        }
+
+        void Initialize() {
+            double y0, y1;
+
+            if (m_increasing) {
+                y0 = m_min;
+                y1 = m_max;
+            } else {
+                y0 = m_max;
+                y1 = m_min;
+            }
+            c_a = (y1 - y0) / (m_t1 - m_t0);
+            c_b = y0 - c_a * m_t0;
+        }
+
+        void Apply(const double t, double& value) {
+
+            if (!m_active) {
+                return;
+            }
+
+            double y0, y1;
+            if (m_increasing) {
+                y0 = m_min;
+                y1 = m_max;
+            } else {
+                y0 = m_max;
+                y1 = m_min;
+            }
+
+
+            if (t < m_t0) {
+                value *= y0;
+                return;
+            }
+
+            if (t <= m_t1) {
+                value *= c_a * t + c_b;
+                return;
+            }
+
+            value *= y1;
+
+        }
+
+    };
+
+
+
+
 
     enum WAVE_MODEL {
         NO_WAVES,
@@ -33,9 +122,11 @@ namespace frydom {
     protected:
         static const WAVE_MODEL m_waveModel;
 
-        double m_time;
+        double m_time = 0.;
 
         std::unique_ptr<FrWaveSpectrum> m_waveSpectrum = nullptr;
+
+        std::shared_ptr<FrRamp> m_waveRamp;
 
     public:
 
@@ -43,11 +134,17 @@ namespace frydom {
             m_time = time;
         }
 
+        double GetTime() const { return m_time; }
+
         void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type) {
             m_waveSpectrum = MakeWaveSpectrum(type);
         }
 
         WAVE_MODEL GetWaveModel() const { return m_waveModel; }
+
+        std::shared_ptr<FrRamp> GetWaveRamp() const {
+            return m_waveRamp;
+        }
 
         virtual double GetElevation(double x, double y) const = 0;
 
@@ -146,6 +243,9 @@ namespace frydom {
             Initialize();
             Update(0.);
 
+            m_waveRamp = std::make_shared<FrRamp>();
+            m_waveRamp->Initialize();
+
         }
 
         LINEAR_WAVE_TYPE GetType() const {
@@ -183,6 +283,7 @@ namespace frydom {
 
         void SetRegularWavePeriod(double period, FREQ_UNIT unit=S) {
             m_period = convert_frequency(period, unit, S);
+            Initialize();
         }
 
         unsigned int GetNbFrequencies() const { return m_nbFreq; }
@@ -436,7 +537,7 @@ namespace frydom {
         }
 
         double GetElevation(double x, double y) const {
-
+            // FIXME: appliquer la rampe ici aussi !!!
             auto steadyElevation =  GetSteadyElevation(x, y);
 
             double elevation = 0.;

@@ -249,10 +249,17 @@ namespace frydom {
         // METHODS ABOUT ADDED MASS
         // ==========================================================================
         void IntLoadResidual_Mv(const unsigned int off,      // offset in R residual
-                                        chrono::ChVectorDynamic<>& R,        // result: the R residual, R += c*M*v
-                                        const chrono::ChVectorDynamic<>& w,  // the w vector
-                                        const double c               // a scaling factor
-        ) {
+                                chrono::ChVectorDynamic<>& R,        // result: the R residual, R += c*M*v
+                                const chrono::ChVectorDynamic<>& w,  // the w vector
+                                const double c               // a scaling factor
+        ) override {
+
+
+            auto vabs = GetPos_dt() - w.ClipVector(off, 0);  // Premiere partie de w
+            auto wloc = GetWvel_loc() - w.ClipVector(off+3, 0); // Seconde partie de w
+
+//            w(0:3) est donne par Get
+
             R(off + 0) += c * GetMass() * w(off + 0);
             R(off + 1) += c * GetMass() * w(off + 1);
             R(off + 2) += c * GetMass() * w(off + 2);

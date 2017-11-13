@@ -155,7 +155,7 @@ namespace frydom {
         auto distances = linspace<double>(0, radius, nbR);
 
         for (const auto& distance : distances) {
-            vertices.emplace_back(chrono::ChVector<double>(xc0 + distance, 0., 0.));
+            vertices.emplace_back(chrono::ChVector<double>(xc0 + distance, yc0, 0.));
         }
 
         std::vector<chrono::ChVector<int>> faces;  // TODO: reserver l'espace

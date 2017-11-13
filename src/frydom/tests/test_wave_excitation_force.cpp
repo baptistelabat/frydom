@@ -2,6 +2,8 @@
 // Created by frongere on 30/10/17.
 //
 
+#include "chrono/timestepper/ChTimestepper.h"
+
 #include <frydom/hydrodynamics/FrLinearHydrostaticForce.h>
 #include <frydom/hydrodynamics/FrLinearDamping.h>
 #include "frydom/core/FrCore.h"
@@ -28,26 +30,32 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     auto freeSurface = system.GetFreeSurface();
-    freeSurface->Initialize(-20, 20, 4);
-//    freeSurface->Initialize(0, 0, 100, 5, 90);
+//    freeSurface->Initialize(-20, 20, 4);
+    freeSurface->Initialize(-20, 20, 2, -20, 20, 40);
+//    freeSurface->Initialize(0, 0, 40, 20, 60);
 
     // Set the wave field
 //    freeSurface->SetLinearWaveField(LINEAR_REGULAR);
 //    auto waveField = freeSurface->GetLinearWaveField();
 //    waveField->SetMeanWaveDirection(0., DEG);
-//    waveField->SetRegularWaveHeight(0.5);
-//    waveField->SetRegularWavePeriod(5., S);
+//    waveField->SetRegularWaveHeight(2);
+//    waveField->SetRegularWavePeriod(6, S);
 
 
+    // TODO: permettre de regler le hs et le tp...
     freeSurface->SetLinearWaveField(LINEAR_IRREGULAR);
     auto waveField = freeSurface->GetLinearWaveField();
     waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
-    double wmin = 0.2;
-    double wmax = 2.;
-    unsigned int nbFreq = 70;
+    double wmin = 0.1;
+    double wmax = 3.;
+    unsigned int nbFreq = 120;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
+    waveField->GetWaveSpectrum()->SetHs(1.);
+    waveField->GetWaveSpectrum()->SetTp(6.);
 
-    freeSurface->UpdateAssetON();
+    waveField->GetWaveRamp()->SetDuration(40.);
+    waveField->GetWaveRamp()->SetIncrease();
+
 
 //    freeSurface->SetLinearWaveField(LINEAR_DIRECTIONAL);
 //    auto waveField = freeSurface->GetLinearWaveField();
@@ -57,6 +65,7 @@ int main(int argc, char* argv[]) {
 //    unsigned int nbFreq = 70;
 //    waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
 
+    freeSurface->UpdateAssetON();
 
 //    waveField->GetWaveSpectrum()->Eval(1.);
 //    waveField->SetRegularWaveHeight(0.5);
@@ -73,11 +82,11 @@ int main(int argc, char* argv[]) {
     auto cylinder = std::make_shared<FrHydroBody>();
     cylinder->SetName("Cylinder");
     cylinder->SetHydroMesh("../src/frydom/tests/data/Cylinder.obj", true);
-    cylinder->SetLateralUnderWaterArea(0.);
-    cylinder->SetTransverseUnderWaterArea(0.);
-    cylinder->SetLpp(0.);
-    cylinder->SetInertiaXX(chrono::ChVector<double>(1e6, 1e6, 1e6));
-    cylinder->SetMass(795e3);
+    cylinder->SetLateralUnderWaterArea(100.);
+    cylinder->SetTransverseUnderWaterArea(100.);
+    cylinder->SetLpp(10.);
+    cylinder->SetInertiaXX(chrono::ChVector<double>(5e7, 5e7, 1e6));
+    cylinder->SetMass(795e3 * 2.);
     cylinder->SetCOG(chrono::ChVector<double>(0., 0., -7.5));
 //    cylinder->SetBodyFixed(true);  // TODO: retirer
     system.AddBody(cylinder);
@@ -85,6 +94,12 @@ int main(int argc, char* argv[]) {
     // ===========================================
     // Hydrodynamics
     // ===========================================
+
+    // Set added mass
+
+
+
+
 
     // Hydrostatics
     auto hstForce = std::make_shared<FrLinearHydrostaticForce>();
@@ -97,7 +112,7 @@ int main(int argc, char* argv[]) {
     // Linear Damping
     auto hydroDampingForce = std::make_shared<FrLinearDamping>();
     hydroDampingForce->SetManeuveuringDampings(chrono::ChVector<double>(1e8, 1e8, 1e9));
-    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e8, 1e10, 1e10));
+    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e6, 1e8, 1e8));
     cylinder->AddForce(hydroDampingForce);
 
     // Importer une base de donnees hydro
@@ -118,7 +133,10 @@ int main(int argc, char* argv[]) {
 //        system.DoStepDynamics(dt);
 //    }
 
-    auto app = FrIrrApp(system, 40);
+    // TODO: tester le solveur EULER_IMPLICIT_PROJECTED
+    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_PROJECTED);
+    auto app = FrIrrApp(system, 30);
+
     app.Run();
 
 

@@ -27,6 +27,8 @@ namespace frydom {
 
         FrWaveField* m_waveField;
 
+        std::shared_ptr<FrRamp> m_waveRamp;
+
     public:
         FrWaveProbe(double x, double y) : m_x(x), m_y(y) {}
 
@@ -68,12 +70,23 @@ namespace frydom {
         }
 
         double GetElevation(double time) const {
-            auto emjwt = m_waveField->GetTimeCoeffs();
+
+            auto emjwt = m_waveField->GetTimeCoeffs(); // FIXME: tres couteux a l'appel...
             std::complex<double> elev = 0.;
             for (unsigned int ifreq=0; ifreq<emjwt.size(); ++ifreq) {
                 elev += m_steadyElevation[ifreq] * emjwt[ifreq];
             }
-            return std::imag(elev);
+            double realElev = imag(elev);
+
+            // Applying the wave ramp
+            auto waveRamp = m_waveField->GetWaveRamp();
+            if (waveRamp && waveRamp->IsActive()) {
+                m_waveField->GetWaveRamp()->Apply(
+                        m_waveField->GetTime(),
+                        realElev
+                );
+            }
+            return realElev;
         }
 
     };
