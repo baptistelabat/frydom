@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
     waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
     double wmin = 0.1;
     double wmax = 3.;
-    unsigned int nbFreq = 120;
+    unsigned int nbFreq = 80;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
     waveField->GetWaveSpectrum()->SetHs(1.);
     waveField->GetWaveSpectrum()->SetTp(6.);
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
 
 
     // Get a waveProbe for excitation force on body
-    auto waveProbe = waveField->NewWaveProbe(0, 0);
+    auto waveProbe = waveField->NewWaveProbe(0, 0); // TODO: il faut importer la position depuis la HDB... (position de mesure de houle)
 
 
     // 2 creer un corps hydro
@@ -85,8 +85,8 @@ int main(int argc, char* argv[]) {
     cylinder->SetLateralUnderWaterArea(100.);
     cylinder->SetTransverseUnderWaterArea(100.);
     cylinder->SetLpp(10.);
-    cylinder->SetInertiaXX(chrono::ChVector<double>(5e7, 5e7, 1e6));
-    cylinder->SetMass(795e3 * 2.);
+    cylinder->SetInertiaXX(chrono::ChVector<double>(5e7, 5e7, 1e8));
+    cylinder->SetMass(795e3 * 2.);  // TODO : retirer le 2., c'est pour emuler une masse ajoutee...
     cylinder->SetCOG(chrono::ChVector<double>(0., 0., -7.5));
 //    cylinder->SetBodyFixed(true);  // TODO: retirer
     system.AddBody(cylinder);
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
     // Linear Damping
     auto hydroDampingForce = std::make_shared<FrLinearDamping>();
     hydroDampingForce->SetManeuveuringDampings(chrono::ChVector<double>(1e8, 1e8, 1e9));
-    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e6, 1e8, 1e8));
+    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e6, 1e9, 1e9));
     cylinder->AddForce(hydroDampingForce);
 
     // Importer une base de donnees hydro
@@ -134,7 +134,17 @@ int main(int argc, char* argv[]) {
 //    }
 
     // TODO: tester le solveur EULER_IMPLICIT_PROJECTED
-    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_PROJECTED);
+    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_PROJECTED);
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::TRAPEZOIDAL);
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::TRAPEZOIDAL_LINEARIZED);
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::HHT);
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::HEUN);
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::RUNGEKUTTA45);
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_EXPLICIT);
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::LEAPFROG);
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::NEWMARK);
     auto app = FrIrrApp(system, 30);
 
     app.Run();
