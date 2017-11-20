@@ -11,3 +11,6 @@
 [submodule "thirdparty/MathUtils"]
 	path = thirdparty/MathUtils
 	url = git@d-ice.githost.io:frongere/MathUtils.git
+[submodule "thirdparty/matplotlib-cpp"]
+	path = thirdparty/matplotlib-cpp
+	url = https://github.com/lava/matplotlib-cpp.git
