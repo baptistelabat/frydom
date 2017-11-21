@@ -1,6 +1,6 @@
 
-[submodule "frydom/core/chrono/chrono"]
-	path = frydom/core/chrono/chrono
+[submodule "thirdparty/chrono"]
+	path = thirdparty/chrono
 	url = https://github.com/fronron/chrono.git
 [submodule "thirdparty/yaml-cpp"]
 	path = thirdparty/yaml-cpp
@@ -14,3 +14,6 @@
 [submodule "thirdparty/matplotlib-cpp"]
 	path = thirdparty/matplotlib-cpp
 	url = https://github.com/lava/matplotlib-cpp.git
+[submodule "thirdparty/which"]
+	path = thirdparty/which
+	url = https://github.com/trentm/which.git

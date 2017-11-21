@@ -15,6 +15,7 @@ __pycache__/
 .Python
 env/
 build/
+chrono_build
 develop-eggs/
 dist/
 downloads/
