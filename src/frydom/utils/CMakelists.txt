@@ -1,0 +1,7 @@
+
+
+set(UTILS_FILES
+        FrIrrApp.h
+        FrIrrApp.cpp
+)
+

@@ -30,6 +30,7 @@ set(FRYDOM_TESTS
         test_wave_spectrum
         )
 
+
 message(STATUS "Test programs for FRyDoM framework...")
 
 foreach(test ${FRYDOM_TESTS})

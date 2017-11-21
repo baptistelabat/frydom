@@ -64,7 +64,7 @@ You will have to check the same checkboxes and recursively click on the Configur
 be set using the preceding irrlicht build.
 
 Don't forget to set the ``CMAKE_BUILD_TYPE`` to ``Debug`` if you want to be able to step into the shared libraries when using a
-debugger while developping FRyDoM.
+debugger while developping into FRyDoM.
 
 When there are no error anymore in the *Configure* step, you can click on Generate. Please note that FRyDoM is configured
 so that it should find the chrono build into ``frydom/core/chrono/build`` directory. That is, during the configuration, you must
