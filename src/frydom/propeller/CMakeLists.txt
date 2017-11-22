@@ -1,6 +1,6 @@
+message(STATUS "    ...propeller")
 
-
-set(PROPELLER_FILES
+set(PROPELLER_FILES_LOCAL
         FrDieselEngine.h
         FrDieselEngine.cpp
         FrElectricEngine.h
@@ -17,3 +17,9 @@ set(PROPELLER_FILES
         FrPropulsionSystem.cpp
 )
 
+set(PROPELLER_FILES "")
+foreach(file ${PROPELLER_FILES_LOCAL})
+    list(APPEND PROPELLER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+endforeach()
+
+set(PROPELLER_FILES ${PROPELLER_FILES} PARENT_SCOPE)

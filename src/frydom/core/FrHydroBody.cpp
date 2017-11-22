@@ -4,8 +4,8 @@
 
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "chrono/assets/ChTriangleMeshShape.h"
+//#include "chrono/core/ChFrame.h"
 
-//#include "frydom/environment/current/FrCurrent.h"
 #include "frydom/hydrodynamics/FrHydroDB.h"
 #include "FrHydroBody.h"
 
@@ -117,6 +117,21 @@ namespace frydom {
 
         // TODO: Il faut renseigner les masses ajoutees a l'infini !!!!
 
+    }
+
+    void FrHydroBody::SetCurrentRefFrameAsEquilibrium() {
+
+        auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetFreeSurface()->GetFrame();
+
+        chrono::ChFrame<double> eqFrame0 = GetFrame_REF_to_abs() >> freeSurfaceFrame->GetInverse();
+
+        SetEquilibriumFrame(eqFrame0);
+    }
+
+    chrono::ChFrame<double> FrHydroBody::GetEquilibriumFrame() const {
+        auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetFreeSurface()->GetFrame();
+        auto eqFrame = m_equilibriumFrame >> freeSurfaceFrame->GetInverse();
+        return eqFrame;
     }
 
 }  // end namespace frydom

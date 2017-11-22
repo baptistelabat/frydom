@@ -2,12 +2,9 @@
 // Created by frongere on 06/10/17.
 //
 
-//#include <iostream>
-#include "frydom/environment/waves/FrWaveField.h"
+#include "frydom/frydom.h"
 
 using namespace frydom;
-
-
 
 // =====================================================================================================================
 void TestRegularWaveField(const std::vector<double>& xVect, const std::vector<double>& yVect) {

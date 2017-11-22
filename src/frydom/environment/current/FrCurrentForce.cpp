@@ -4,12 +4,9 @@
 
 #include "chrono/physics/ChBody.h"
 
-#include <frydom/core/FrConstants.h>
-#include <frydom/core/FrHydroBody.h>
-#include "FrCurrentForce.h"
-
+#include "frydom/core/FrConstants.h"
+#include "frydom/core/FrHydroBody.h"
 #include "frydom/IO/FrLoader.h"
-
 
 
 namespace frydom {

@@ -2,15 +2,17 @@
 // Created by frongere on 07/09/2017.
 //
 
-#include <frydom/hydrodynamics/FrLinearDamping.h>
-#include "frydom/core/FrCore.h"
-#include "frydom/environment/FrEnvironment.h"
-#include "frydom/cable/FrCatenaryLine.h"
+//#include <frydom/hydrodynamics/FrLinearDamping.h>
+//#include "frydom/core/FrCore.h"
+//#include "frydom/environment/FrEnvironment.h"
+//#include "frydom/cable/FrCatenaryLine.h"
+//
+//#include "frydom/hydrodynamics/FrTryalForce.h"
+//
+//#include "irrlicht.h"
+//#include "frydom/utils/FrIrrApp.h"
+#include "frydom/frydom.h"
 
-#include "frydom/hydrodynamics/FrTryalForce.h"
-
-#include "irrlicht.h"
-#include "frydom/utils/FrIrrApp.h"
 
 using namespace frydom;
 

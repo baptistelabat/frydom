@@ -16,9 +16,9 @@
 #ifndef FR_FREE_SURFACE_H
 #define FR_FREE_SURFACE_H
 
-#include "chrono/core/ChFrame.h"
+//#include "chrono/core/ChFrame.h"
 
-#include <frydom/environment/tidal/FrTidalModel.h>
+#include "frydom/environment/tidal/FrTidalModel.h"
 #include "frydom/misc/FrTriangleMeshConnected.h"
 #include "FrWaveField.h"
 #include "FrWaveProbe.h"
@@ -159,9 +159,7 @@ namespace frydom{
 
         std::shared_ptr<FrWaveField> GetWaveField() const { return m_waveField; }
 
-        const chrono::ChFrame<double>& GetFrame() const {
-            return m_tidal->GetTidalFrame();
-        }
+        const chrono::ChFrame<double>* GetFrame() const;
 
     };
 

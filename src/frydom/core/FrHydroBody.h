@@ -177,20 +177,9 @@ namespace frydom {
             SetEquilibriumFrame(eqFrame);
         }
 
-        void SetCurrentRefFrameAsEquilibrium() {
+        void SetCurrentRefFrameAsEquilibrium();
 
-            auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetFreeSurface()->GetFrame();
-
-            chrono::ChFrame<double> eqFrame0 = GetFrame_REF_to_abs() >> freeSurfaceFrame.GetInverse();
-
-            SetEquilibriumFrame(eqFrame0);
-        }
-
-        chrono::ChFrame<double> GetEquilibriumFrame() const {
-            auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetFreeSurface()->GetFrame();
-            auto eqFrame = m_equilibriumFrame >> freeSurfaceFrame.GetInverse();
-            return eqFrame;
-        }
+        chrono::ChFrame<double> GetEquilibriumFrame() const;
 
 
 

@@ -1,3 +1,4 @@
+message(STATUS "    ...tests")
 
 set(FRYDOM_TESTS
         demo_cable_ANCF
@@ -34,9 +35,9 @@ set(FRYDOM_TESTS
 message(STATUS "Test programs for FRyDoM framework...")
 
 foreach(test ${FRYDOM_TESTS})
-    message(STATUS "...add ${test}")
+    message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
-    target_link_libraries(${test} ${LIBS})
+    target_link_libraries(${test} FRyDoM_Engine)
 
 endforeach()

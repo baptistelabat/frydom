@@ -1,6 +1,6 @@
+message(STATUS "    ...Cable")
 
-
-set(CABLE_FILES
+set(CABLE_FILES_LOCAL
         FrCable.h
         FrCable.cpp
         FrCatenaryForce.h
@@ -12,3 +12,10 @@ set(CABLE_FILES
         FrDynamicCable.h
         FrDynamicCable.cpp
 )
+
+set(CABLE_FILES "")
+foreach(file ${CABLE_FILES_LOCAL})
+    list(APPEND CABLE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+endforeach()
+
+set(CABLE_FILES ${CABLE_FILES} PARENT_SCOPE)

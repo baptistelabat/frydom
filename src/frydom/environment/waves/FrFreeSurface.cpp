@@ -15,13 +15,12 @@
 
 #include <thread>
 
-#include <chrono/assets/ChTriangleMeshShape.h>
-#include <chrono/assets/ChColorAsset.h>
-#include "chrono/assets/ChTexture.h"
-
-
 #include "FrFreeSurface.h"
 #include "frydom/core/FrOffshoreSystem.h"
+
+#include "chrono/assets/ChTriangleMeshShape.h"
+#include "chrono/assets/ChColorAsset.h"
+#include "chrono/assets/ChTexture.h"
 
 
 namespace frydom {
@@ -299,6 +298,9 @@ namespace frydom {
         }
     }
 
+    const chrono::ChFrame<double>* FrFreeSurface::GetFrame() const {
+        return m_tidal->GetTidalFrame();
+    }
 
 
 }  // end namespace frydom

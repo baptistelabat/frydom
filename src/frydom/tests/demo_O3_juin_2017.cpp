@@ -27,7 +27,6 @@
 
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/FrShip.h"
-#include "frydom/environment/waves/FrFlatFreeSurface.h"
 
 #include "frydom/environment/current/FrCurrentForce.h"
 

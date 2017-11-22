@@ -1,6 +1,6 @@
+message(STATUS "    ...hydrodynamics")
 
-
-set(HYDRODYNAMICS_FILES
+set(HYDRODYNAMICS_FILES_LOCAL
         FrFroudeKrylov.h
         FrFroudeKrylov.cpp
         FrHydroDB.h
@@ -27,3 +27,9 @@ set(HYDRODYNAMICS_FILES
         FrTryalForce.cpp
 )
 
+set(HYDRODYNAMICS_FILES "")
+foreach(file ${HYDRODYNAMICS_FILES_LOCAL})
+    list(APPEND HYDRODYNAMICS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+endforeach()
+
+set(HYDRODYNAMICS_FILES ${HYDRODYNAMICS_FILES} PARENT_SCOPE)

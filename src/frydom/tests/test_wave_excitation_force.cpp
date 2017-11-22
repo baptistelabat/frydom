@@ -2,17 +2,7 @@
 // Created by frongere on 30/10/17.
 //
 
-#include "chrono/timestepper/ChTimestepper.h"
-
-#include <frydom/hydrodynamics/FrLinearHydrostaticForce.h>
-#include <frydom/hydrodynamics/FrLinearDamping.h>
-#include "frydom/core/FrCore.h"
-#include "frydom/hydrodynamics/FrHydroDB.h" // TODO: charger seulement un FrHydrodynamics
-#include "frydom/hydrodynamics/FrLinearExcitationForce.h"
-
-#include "frydom/environment/waves/FrWaveField.h"
-
-#include "frydom/utils/FrIrrApp.h"
+#include "frydom/frydom.h"
 
 
 using namespace frydom;
@@ -32,6 +22,9 @@ int main(int argc, char* argv[]) {
     auto freeSurface = system.GetFreeSurface();
 //    freeSurface->Initialize(-20, 20, 4);
     freeSurface->Initialize(-20, 20, 2, -20, 20, 40);
+
+//    auto tidal = freeSurface->GetTidal();
+
 //    freeSurface->Initialize(0, 0, 40, 20, 60);
 
     // Set the wave field
@@ -116,7 +109,7 @@ int main(int argc, char* argv[]) {
     cylinder->AddForce(hydroDampingForce);
 
     // Importer une base de donnees hydro
-    FrHydroDB HDB = LoadHDB5("../tools/frydom_hdb.h5");
+    FrHydroDB HDB = LoadHDB5("../../../../tools/frydom_hdb.h5");
 
     // Linking the physical floating body to its counterpart from the HDB
     cylinder->SetBEMBody(HDB.GetBody(0));
@@ -147,7 +140,12 @@ int main(int argc, char* argv[]) {
 //    system.SetTimestepperType(chrono::ChTimestepper::Type::NEWMARK);
     auto app = FrIrrApp(system, 30);
 
-    app.Run();
+    app.Run();  // TODO: remettre
+
+//    char* path;
+//    path = getenv("FRYDOM_BASE_DIR");
+//    std::cout << path;
+
 
 
     return 0;

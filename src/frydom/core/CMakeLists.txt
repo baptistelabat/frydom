@@ -1,6 +1,7 @@
 
+message(STATUS "    ...Core")
 
-set(CORE_FILES
+set(CORE_FILES_LOCAL
         FrBody.h
         FrBody.cpp
         FrBodyEasy.h
@@ -24,3 +25,9 @@ set(CORE_FILES
         FrShip.cpp
 )
 
+set(CORE_FILES "")
+foreach(file ${CORE_FILES_LOCAL})
+    list(APPEND CORE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+endforeach()
+
+set(CORE_FILES ${CORE_FILES} PARENT_SCOPE)

@@ -35,7 +35,6 @@ namespace frydom {
 
         // Environment components
         std::unique_ptr<FrFreeSurface> m_freeSurface;
-//        std::unique_ptr<FrTidal> m_tidal;
         std::unique_ptr<FrCurrent> m_current;
         std::unique_ptr<FrWind> m_wind;
         std::unique_ptr<FrSeabed> m_seabed;

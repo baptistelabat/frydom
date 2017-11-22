@@ -1,0 +1,181 @@
+# Cmake script that set the different variables to make thirarty library accessible to the FRyDoM project
+# It set the following variables in the parent scope (main CMakeLists.txt file of the project):
+#   * FRYDOM_THIRPARTY_LIBS
+#   * FRYDOM_THIRDPARTY_INCLUDE_DIRS
+
+set(FRYDOM_THIRPARTY_LIBS "")
+set(FRYDOM_THIRDPARTY_INCLUDE_DIRS "")
+
+#=============================================================================
+#
+# Python 2.7 library
+#
+#=============================================================================
+message(STATUS "===================================================================")
+message(STATUS "Finding package Python...")
+message(STATUS "===================================================================")
+find_package(PythonLibs 2.7) # TODO: voir a terme le passage en Python 3...
+list(APPEND FRYDOM_THIRDPARTY_LIBS ${PYTHON_LIBRARIES})
+list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${PYTHON_INCLUDE_DIRS})
+
+message(STATUS "INCLUDE DIRS : " ${PYTHON_INCLUDE_DIRS})
+message(STATUS "LIBRARIES : " ${PYTHON_LIBRARIES})
+
+#=============================================================================
+#
+# Matplotlib-cpp
+#
+#=============================================================================
+message(STATUS "===================================================================")
+message(STATUS "Finding package Matplotlib-cpp...")
+message(STATUS "===================================================================")
+set(MATPLOTLIB_CPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/matplotlib-cpp)
+list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${MATPLOTLIB_CPP_INCLUDE_DIR})
+
+message(STATUS "INCLUDE DIRS : " ${MATPLOTLIB_CPP_INCLUDE_DIR})
+message(STATUS "LIBRARIES : NO LIB REQUIRED")
+#=============================================================================
+#
+# YAML-CPP library
+#
+#=============================================================================
+message(STATUS "===================================================================")
+message(STATUS "Finding package YAML-CPP...")
+message(STATUS "===================================================================")
+# Mandatory for each new library
+set(YAML_CPP_LIB ${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp/build/libyaml-cpp.so) # FIXME: non portable
+set(YAML_CPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp/include)
+
+list(APPEND FRYDOM_THIRDPARTY_LIBS ${YAML_CPP_LIB})
+list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${YAML_CPP_INCLUDE_DIR})
+
+message(STATUS "INCLUDE DIRS : " ${YAML_CPP_INCLUDE_DIR})
+message(STATUS "LIBRARIES : " ${YAML_CPP_LIB})
+#=============================================================================
+#
+# Eigen library
+#
+#=============================================================================
+message(STATUS "===================================================================")
+message(STATUS "Finding package Eigen3...")
+message(STATUS "===================================================================")
+find_package(Eigen3 REQUIRED NO_MODULE)
+
+list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
+#list(APPEND FRYDOM_THIRDPARTY_LIBS Eigen3::Eigen)
+
+
+
+
+# Mandatory for each new library
+#set(EIGEN_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/eigen/Eigen)
+#list(APPEND EIGEN_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/eigen/unsupported)
+#
+#list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${EIGEN_INCLUDE_DIRS})
+#list(APPEND FRYDOM_THIRDPARTY_LIBS Eigen3::Eigen)
+
+
+
+
+
+
+message(STATUS "INCLUDE DIRS : " ${EIGEN_INCLUDE_DIRS})
+message(STATUS "LIBRARIES : NO LIB REQUIRED")
+#=============================================================================
+#
+# HDF5 library
+#
+#=============================================================================
+message(STATUS "===================================================================")
+message(STATUS "Finding package HDF5...")
+message(STATUS "===================================================================")
+find_package(HDF5 REQUIRED COMPONENTS CXX)
+
+# Mandatory for each new library
+list(APPEND FRYDOM_THIRDPARTY_LIBS ${HDF5_CXX_LIBRARIES})
+list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS})
+
+message(STATUS "INCLUDE DIRS : " ${HDF5_INCLUDE_DIRS})
+message(STATUS "LIBRARIES : " ${HDF5_CXX_LIBRARIES})
+#=============================================================================
+#
+# Boost library
+#
+#=============================================================================
+message(STATUS "===================================================================")
+message(STATUS "Finding package Boost...")
+message(STATUS "===================================================================")
+# To add some boost components, we just have to append their name at the end of the following find_package
+find_package(Boost REQUIRED
+        filesystem
+        system
+        )
+
+# Mandatory for each new library
+list(APPEND FRYDOM_THIRDPARTY_LIBS ${Boost_LIBRARIES})
+list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
+
+message(STATUS "INCLUDE DIRS : " ${Boost_INCLUDE_DIRS})
+message(STATUS "LIBRARIES : " ${Boost_LIBRARIES})
+
+#=============================================================================
+#
+# Adding Chrono to the project
+#
+#=============================================================================
+message(STATUS "===================================================================")
+message(STATUS "Finding package Chrono...")
+message(STATUS "===================================================================")
+#-----------------------------------------------------------------------------
+# PATH TO THE CHRONO BUILD DIR INTO THE FRyDoM PROJECT (MAY CHANGE)
+#-----------------------------------------------------------------------------
+
+# Used by find_package command and has to point to the chrono directory that contains the ChronoConfig.cmake file
+set(Chrono_DIR "${CMAKE_CURRENT_SOURCE_DIR}/chrono_build/cmake")
+
+# Find CHRONO package
+find_package(Chrono
+        COMPONENTS Irrlicht fea postprocess
+        CONFIG)
+
+#--------------------------------------------------------------
+# Return now if Chrono or a required component was not found.
+#--------------------------------------------------------------
+
+if (NOT Chrono_FOUND)
+    message("Could not find Chrono or one of its required modules")
+    return()
+endif()
+
+#--------------------------------------------------------------
+# Add path to Chrono headers and to headers of all dependencies
+# of the requested modules.
+#--------------------------------------------------------------
+include_directories(${CHRONO_INCLUDE_DIRS})
+
+
+#--------------------------------------------------------------
+# Tweaks to disable some warnings with MSVC
+#--------------------------------------------------------------
+if(MSVC)
+    add_definitions("-D_CRT_SECURE_NO_DEPRECATE")  # avoids deprecation warnings
+    add_definitions("-D_SCL_SECURE_NO_DEPRECATE")  # avoids deprecation warnings
+    set(EXTRA_COMPILE_FLAGS "/wd4275")             # disable warnings triggered by Irrlicht
+else()
+    set(EXTRA_COMPILE_FLAGS "")
+endif()
+
+# Mandatory for each new library
+list(APPEND FRYDOM_THIRDPARTY_LIBS ${CHRONO_LIBRARIES})
+list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${CHRONO_INCLUDE_DIRS})
+
+
+
+#=============================================================================
+#
+# Making principal variables available at parent scope (do not change !)
+#
+#=============================================================================
+
+set(FRYDOM_THIRDPARTY_LIBS ${FRYDOM_THIRDPARTY_LIBS} PARENT_SCOPE)
+set(FRYDOM_THIRDPARTY_INCLUDE_DIRS ${FRYDOM_THIRDPARTY_INCLUDE_DIRS} PARENT_SCOPE)

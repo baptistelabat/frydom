@@ -4,11 +4,13 @@
 
 
 // TODO: faire un header qui permet d'importer tout core (FrCore.h)
-#include "frydom/core/FrShip.h"
-#include "frydom/core/FrOffshoreSystem.h"
-#include "frydom/environment/waves/FrFlatFreeSurface.h"
-#include "frydom/core/FrEulerAngles.h"
-#include "frydom/utils/FrIrrApp.h"
+//#include "frydom/core/FrShip.h"
+//#include "frydom/core/FrOffshoreSystem.h"
+//#include "frydom/environment/waves/FrFlatFreeSurface.h"
+//#include "frydom/core/FrEulerAngles.h"
+//#include "frydom/utils/FrIrrApp.h"
+
+#include "frydom/frydom.h"
 
 
 using namespace chrono;

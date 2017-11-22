@@ -45,6 +45,24 @@ except which.WhichError:
 # cmake = which.which('cmake')
 # swig = which.which('swig')
 
+def build_eigen(build_type):
+    print("\n\n==============================================================================")
+    print("Building Eigen library (header only)")
+    print("==============================================================================")
+    try:
+        os.mkdir('eigen_build')
+    except OSError:
+        pass
+
+    os.chdir('eigen_build')
+    call([cmake,
+          '../eigen'
+          ])
+    # call([make])
+
+
+    os.chdir('..')
+
 
 def build_yaml_cpp(build_type):
     print("\n\n==============================================================================")
@@ -129,6 +147,7 @@ if __name__ == "__main__":
     call([git, "submodule", "init"])
     call([git, "submodule", "update"])
 
+    build_eigen(build_type)
     build_yaml_cpp(build_type)
     build_irrlicht(build_type)
     build_chrono(build_type)

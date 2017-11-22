@@ -73,9 +73,9 @@ namespace frydom {
             return m_environment->GetCurrent();
         }
 
-        inline FrTidal* GetTidal() const {
-            return m_environment->GetTidal();
-        }
+//        inline FrTidal* GetTidal() const {  // TODO:remettre
+//            return m_environment->GetTidal();
+//        }
 
         inline FrSeabed* GetSeabed() const {
             return m_environment->GetSeabed();
