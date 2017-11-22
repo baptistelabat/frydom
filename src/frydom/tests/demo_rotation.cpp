@@ -2,10 +2,12 @@
 // Created by frongere on 27/06/17.
 //
 
-#include "chrono/core/ChQuaternion.h"
-#include "chrono/core/ChMatrix33.h"
-#include "frydom/core/FrConstants.h"
-#include "frydom/core/FrEulerAngles.h"
+//#include "chrono/core/ChQuaternion.h"
+//#include "chrono/core/ChMatrix33.h"
+//#include "frydom/core/FrConstants.h"
+//#include "frydom/core/FrEulerAngles.h"
+
+#include "frydom/frydom.h"
 
 using namespace chrono;
 using namespace frydom;

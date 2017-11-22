@@ -13,29 +13,8 @@
 //
 // =============================================================================
 
-#include <math.h>
 
-#include "frydom/core/FrConstants.h"
-
-#include "chrono/physics/ChSystem.h"
-#include "chrono/physics/ChSystemNSC.h"
-
-#include "chrono_irrlicht/ChIrrApp.h"
-
-#include "frydom/core/FrOffshoreSystem.h"
-#include "frydom/core/FrShip.h"
-
-#include "frydom/environment/current/FrCurrentForce.h"
-
-#include "frydom/utils/FrIrrApp.h"
-#include "frydom/core/FrForceAsset.h"
-
-#include "frydom/hydrodynamics/FrITTC57.h"
-#include "frydom/hydrodynamics/FrTryalForce.h"
-
-
-#include <irrlicht.h>
-#include <chrono/physics/ChLinkMate.h>
+#include "frydom/frydom.h"
 
 bool viz = true;
 float friction = 0.6f;
@@ -49,38 +28,18 @@ int main(int argc, char* argv[]) {
     // =================================================================================================================
     // OFFSHORE SYSTEM
     // =================================================================================================================
-    auto system = frydom::FrOffshoreSystem();
+    FrOffshoreSystem system;
 
     // =================================================================================================================
     // FREE SURFACE
     // =================================================================================================================
-    // Creating the free surface and assigning it to a unique pointer as we should have only one free surface that has to be owned by the OffshoreSystem
-    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
-//    free_surface->Initialize(-400, 400, 100);
-//
-//    // Giving the free surface's ownership to the system (it becomes responsible of the destruction)
-//    system.setFreeSurface(free_surface.release()); // le release effectue un transfert de propriete de free_surface a system qui devient responsable de la destruction
-
-    system.GetEnvironment()->GetFreeSurface()->Initialize(-400, 400, 100);
+    system.GetFreeSurface()->Initialize(-400, 400, 100);
 
     // =================================================================================================================
     // CURRENT
     // =================================================================================================================
-    // Creating a current field
-    auto current_field = std::make_unique<FrCurrent>(frydom::EAST, 5, frydom::KNOT);
-
-
-//    system.SetCurrent(current_field.release());
-    system.GetEnvironment()->SetCurrent(current_field.release());
-
-
-//    auto current = system.GetCurrent();
-//    auto dir_ned = current->getDirection(frydom::NED);
-//    auto dir_nwu = current->getDirection(frydom::NWU);
-
-
-    // Contact method
-//    chrono::ChMaterialSurface::ContactMethod contactMethod = chrono::ChMaterialSurface::SMC;
+    system.GetCurrent()->SetDirection(EAST, NED, GOTO);
+    system.GetCurrent()->SetMagnitude(5, KNOT);
 
     // =================================================================================================================
     // SHIP
@@ -157,38 +116,8 @@ int main(int argc, char* argv[]) {
     ///===========================================================================================================
 
     // Visualization with irrlicht
-    if (viz) {
-
-        // Using own class for irrlicht viz
-        frydom::FrIrrApp app(&system, L"Frydom vizualization based on Irrlicht");
-        app.AddTypicalLights();
-        app.AddTypicalCamera(irr::core::vector3df(0, 0, 300), irr::core::vector3df(1, 0, -1));
-
-
-        app.AssetBindAll();
-        app.AssetUpdateAll();
-
-
-//        app.SetStepManage(true);
-        app.SetTimestep(step_size);
-        app.SetTryRealtime(true);
-
-        app.SetVideoframeSave(capture_video);
-
-
-        while (app.GetDevice()->run()) {
-            app.BeginScene();
-            app.DrawAll();
-            app.DoStep();
-            app.EndScene();
-
-            std::cout << ship->GetPos_dt().x() << std::endl;
-
-//            std::cout << "End step " << system.GetTimestepper()->GetTime() << std::endl;
-        }
-
-    }
-
+    auto app = FrIrrApp(system, 400);
+    app.Run();
 
     std::cout << "LEAVING MAIN PROGRAM" << "\n";
     return 0;

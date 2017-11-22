@@ -1,7 +1,6 @@
 message(STATUS "    ...tests")
 
 set(FRYDOM_TESTS
-        demo_cable_ANCF
         demo_FreeSurface
         demo_O3_juin_2017
         demo_rotation
