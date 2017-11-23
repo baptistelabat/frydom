@@ -62,22 +62,6 @@ message(STATUS "================================================================
 find_package(Eigen3 REQUIRED NO_MODULE)
 
 list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
-#list(APPEND FRYDOM_THIRDPARTY_LIBS Eigen3::Eigen)
-
-
-
-
-# Mandatory for each new library
-#set(EIGEN_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/eigen/Eigen)
-#list(APPEND EIGEN_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/eigen/unsupported)
-#
-#list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${EIGEN_INCLUDE_DIRS})
-#list(APPEND FRYDOM_THIRDPARTY_LIBS Eigen3::Eigen)
-
-
-
-
-
 
 message(STATUS "INCLUDE DIRS : " ${EIGEN_INCLUDE_DIRS})
 message(STATUS "LIBRARIES : NO LIB REQUIRED")
