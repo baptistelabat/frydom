@@ -172,7 +172,7 @@ namespace frydom {
                 auto diffraction_imagCoeffs = reader.ReadDoubleArray(diffraction_wave_dir_path + "/ImagCoeffs");
 
                 Eigen::MatrixXcd diffractionCoeffs;
-                diffractionCoeffs = diffraction_realCoeffs + J * diffraction_imagCoeffs;
+                diffractionCoeffs = diffraction_realCoeffs + JJ * diffraction_imagCoeffs;
                 body->SetDiffraction(iwave_dir, diffractionCoeffs);
 
                 // Reading Froude-Krylov coefficients
@@ -182,7 +182,7 @@ namespace frydom {
                 auto fk_imagCoeffs = reader.ReadDoubleArray(fk_wave_dir_path + "/ImagCoeffs");
 
                 Eigen::MatrixXcd froudeKrylovCoeffs;
-                froudeKrylovCoeffs = fk_realCoeffs + J * fk_imagCoeffs;
+                froudeKrylovCoeffs = fk_realCoeffs + JJ * fk_imagCoeffs;
                 body->SetFroudeKrylov(iwave_dir, froudeKrylovCoeffs);
 
             }

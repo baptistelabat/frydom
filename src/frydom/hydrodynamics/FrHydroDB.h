@@ -13,7 +13,7 @@
 
 // TODO: utiliser plutot des std::vector a la place des matrices eigen ...
 
-#define J std::complex<double>(0, 1)
+#define JJ std::complex<double>(0, 1)
 
 namespace frydom {
 

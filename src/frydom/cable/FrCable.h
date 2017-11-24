@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRCABLE_H
 #define FRYDOM_FRCABLE_H
 
-#include <frydom/core/FrNode.h>
+#include "frydom/core/FrNode.h"
 
 namespace frydom {
 

@@ -40,3 +40,9 @@ foreach(test ${FRYDOM_TESTS})
     target_link_libraries(${test} FRyDoM_Engine)
 
 endforeach()
+
+# Adding resource filesq
+configure_file(data/frydom_logo.png . COPYONLY)
+configure_file(../../../data/skybox/sky_dn.jpg . COPYONLY)
+configure_file(../../../data/skybox/sky_lf.jpg . COPYONLY)
+configure_file(../../../data/skybox/sky_up.jpg . COPYONLY)

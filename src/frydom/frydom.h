@@ -7,8 +7,14 @@
 
 #include <cstdlib>
 
+// Chrono related headers
+#include "chrono/solver/ChSolverMINRES.h"
+
+
+// FRyDoM related headers
 #include "core/FrCore.h"
 #include "hydrodynamics/FrHydrodynamics.h"
+#include "cable/FrCableInc.h"
 #include "utils/FrIrrApp.h"
 
 

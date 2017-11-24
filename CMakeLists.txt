@@ -43,11 +43,11 @@ set(CMAKE_CXX_STANDARD 14)
 #-----------------------------------------------------------------------------
 # Ensuring third party software is build
 #-----------------------------------------------------------------------------
-message(STATUS "Ensuring that the thirdparty software are up-to-date and properly built")
-execute_process(COMMAND python
-        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/build_thirdparty.py ${CMAKE_BUILD_TYPE}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty
-        )
+#message(STATUS "Ensuring that the thirdparty software are up-to-date and properly built")
+#execute_process(COMMAND python
+#        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/build_thirdparty.py ${CMAKE_BUILD_TYPE}
+#        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty
+#        )
 
 #=============================================================================
 #

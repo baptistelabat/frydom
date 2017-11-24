@@ -3,3 +3,8 @@
 //
 
 #include "FrDynamicCable.h"
+
+namespace frydom {
+
+
+}  // end namespace frydom

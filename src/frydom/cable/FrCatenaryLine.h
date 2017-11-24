@@ -12,9 +12,8 @@
 #include "frydom/core/FrNode.h"
 #include "FrCable.h"
 
-//#include <limits>
 
-//#define SQRT_EPS sqrt(std::numeric_limits<double>::epsilon())
+
 
 // TODO: prevoir une discretisation automatique pour laquelle on precise la taille cible d'un element
 // Servira dans la visu et pour l'application de forces comme Morrison.
