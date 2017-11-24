@@ -14,7 +14,6 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     // Creating a fixed body
-//    auto body1 = system.GetWorldBody();
     auto body1 = std::make_shared<FrBody>();
     body1->SetBodyFixed(true);
     system.AddBody(body1);
@@ -53,7 +52,7 @@ int main(int argc, char* argv[]) {
     frydom::FrIrrApp app(&system, L"Frydom vizualization based on Irrlicht");
     app.AddTypicalLights();
     app.AddTypicalCamera(irr::core::vector3df(0, 0, 150), irr::core::vector3df(1, 0, -1));
-    app.AddTypicalLogo("../src/frydom/tests/data/frydom_logo.png");
+    app.AddTypicalLogo("frydom_logo.png");
 
     app.AssetBindAll();
     app.AssetUpdateAll();

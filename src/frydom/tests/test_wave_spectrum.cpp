@@ -29,7 +29,5 @@ int main(int argc, char* argv[]) {
 
     auto S_w_theta = spectrum->GetWaveAmplitudes(nb_waves, wmin, wmax, nb_dir, tmin, tmax, tmean);
 
-
-
     return 0;
 }

@@ -90,9 +90,6 @@ int main(int argc, char* argv[]) {
     // Set added mass
 
 
-
-
-
     // Hydrostatics
     auto hstForce = std::make_shared<FrLinearHydrostaticForce>();
     auto hstStiffness = hstForce->GetStiffnessMatrix();

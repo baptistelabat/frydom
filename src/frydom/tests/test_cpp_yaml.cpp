@@ -2,10 +2,6 @@
 // Created by frongere on 05/07/17.
 //
 
-//#include <iostream>
-//#include <vector>
-//#include <algorithm>
-//#include "yaml-cpp/yaml.h"
 #include "frydom/frydom.h"
 
 struct PolarCurrentCoeffs {
@@ -29,7 +25,7 @@ int main(int argc, char* argv[]) {
 
     YAML::Node data;
     try {
-        data = YAML::LoadFile("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
+        data = YAML::LoadFile("PolarCurrentCoeffs.yml");
     } catch (YAML::BadFile err) {
         std::cout << "File not found" << std::endl;
     }

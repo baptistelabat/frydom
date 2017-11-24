@@ -70,12 +70,12 @@ int main(int argc, char* argv[]) {
     // TODO: ajouter une methode SetVelocity avec la possibilite de preciser des noeuds...
 
     // Set the mesh as a hydrodynamic mesh and an asset
-    ship->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    ship->SetHydroMesh("MagneViking.obj", true);
 
     // TODO: voir plus tard a ajouter les asset etc...
 
     // Building current force
-    std::string filename("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
+    std::string filename("PolarCurrentCoeffs.yml");
     auto current_force = std::make_shared<FrCurrentForce>(filename);
     ship->AddForce(current_force);
 

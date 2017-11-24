@@ -13,9 +13,6 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     // Set the free surface
-//    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
-//    free_surface->Initialize(-200, 200, 50, -200, 300, 50);
-//    system.setFreeSurface(free_surface.release());
     system.GetEnvironment()->GetFreeSurface()->Initialize(-200, 200, 50, -200, 300, 50);
 
     // The current
@@ -28,7 +25,7 @@ int main(int argc, char* argv[]) {
     auto tug = std::make_shared<FrShip>();
     system.AddBody(tug);
     tug->SetName("MyTug");
-    tug->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    tug->SetHydroMesh("MagneViking.obj", true);
     tug->SetMass(5e7);  // TODO: plutot dans les 5e9...
     tug->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
 
@@ -47,7 +44,7 @@ int main(int argc, char* argv[]) {
     system.AddBody(ship);
     ship->Set3DOF_ON();
     ship->SetName("ship");
-    ship->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    ship->SetHydroMesh("MagneViking.obj", true);
     ship->SetMass(5e7);  // TODO: plutot dans les 5e9...
     ship->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
 
@@ -59,7 +56,7 @@ int main(int argc, char* argv[]) {
 
 
     // Adding a curent resistance
-    std::string filename("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
+    std::string filename("PolarCurrentCoeffs.yml");
     auto current_force_tug = std::make_shared<FrCurrentForce>(filename);
     tug->AddForce(current_force_tug);
 
@@ -140,7 +137,7 @@ int main(int argc, char* argv[]) {
 
         // Adding the FRyDoM logo
         auto device = app.GetDevice();
-        app.AddTypicalLogo("../src/frydom/tests/data/frydom_logo.png");
+        app.AddTypicalLogo("frydom_logo.png");
 
         app.AssetBindAll();
         app.AssetUpdateAll();

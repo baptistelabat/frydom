@@ -37,21 +37,5 @@ int main(int argc, char* argv[]) {
     std::cout << t0[2] << std::endl;
 
 
-
-//    auto xx = linspace(150, 230, 1000);
-//
-//    double x = 150;
-//    double dx = 1.;
-//    while (x < 300) {
-//        std::cout << std::endl <<  "Solution pour x = " << x << std::endl;
-//
-//        node2->SetPos(x, 0., 0.);
-//        line.solve();
-//
-//        std::cout << line.GetCableLength() << std::endl;
-//
-//        x += dx;
-//    }
-
     return 0;
 }

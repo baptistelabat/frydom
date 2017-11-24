@@ -8,7 +8,7 @@ using namespace frydom::IO;
 
 int main(int argc, char* argv[]) {
 
-    std::string filename = "../src/frydom/tests/data/sphere.h5";
+    std::string filename = "sphere.h5";
 
 //    FrHDF5Reader reader(filename);
 

@@ -9,7 +9,7 @@ using namespace frydom;
 int main(int argc, char* argv[]) {
 
     // Reading some data around
-    YAML::Node data = YAML::LoadFile("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
+    YAML::Node data = YAML::LoadFile("PolarCurrentCoeffs.yml");
 
     std::vector<double> angles;
     std::vector<double> cx, cy, cz;

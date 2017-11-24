@@ -13,23 +13,19 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     // Set the free surface
-//    auto free_surface = std::make_unique<FrFlatFreeSurface>(0.);
-//    free_surface->Initialize(-200, 200, 50, -200, 200, 50);
-//    system.setFreeSurface(free_surface.release());
     system.GetEnvironment()->GetFreeSurface()->Initialize(-200, 200, 50, -200, 200, 50);
 
 
     // The current
     auto current_field = std::make_unique<FrCurrent>(WEST, 20, KNOT, NED, GOTO);
     // TODO: changer pour faire des move plutot que des release...
-//    system.SetCurrent(current_field.release());
     system.GetEnvironment()->SetCurrent(current_field.release());
 
     // Building a TUG
     auto tug = std::make_shared<FrShip>();
     system.AddBody(tug);
     tug->SetName("MyTug");
-    tug->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    tug->SetHydroMesh("MagneViking.obj", true);
     tug->SetMass(5e7);  // TODO: plutot dans les 5e9...
     tug->SetInertiaXX(chrono::ChVector<>(1e8, 1e9, 1e9));
 
@@ -43,7 +39,7 @@ int main(int argc, char* argv[]) {
     tug->SetPos_dt(chrono::ChVector<>(5.*M_KNOT, 0, 0));
 
     // Adding a curent resistance
-    std::string filename("../src/frydom/tests/data/PolarCurrentCoeffs.yml");
+    std::string filename("PolarCurrentCoeffs.yml");
     auto current_force = std::make_shared<FrCurrentForce>(filename);
     tug->AddForce(current_force);
 
@@ -146,7 +142,7 @@ int main(int argc, char* argv[]) {
 
         // Adding the FRyDoM logo
         auto device = app.GetDevice();
-        app.AddTypicalLogo("../src/frydom/tests/data/frydom_logo.png");
+        app.AddTypicalLogo("frydom_logo.png");
 
         app.AssetBindAll();
         app.AssetUpdateAll();
@@ -157,16 +153,12 @@ int main(int argc, char* argv[]) {
 
         app.SetVideoframeSave(capture_video);
 
-//        auto tug_force = tug->Get_Xforce();
-
         while (app.GetDevice()->run()) {
             app.BeginScene();
             app.DrawAll();
             app.DoStep();
             app.EndScene();
 
-//            tug_force = tug->Get_Xforce();
-//            std::cout << tug_force[0] << "\t" << tug_force[1] << "\t" << tug_force[2] << std::endl;
         }
     }
 

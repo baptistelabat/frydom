@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     auto ship1 = std::make_shared<FrShip>();
     system.AddBody(ship1);
     ship1->SetBodyFixed(true);
-    ship1->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    ship1->SetHydroMesh("MagneViking.obj", true);
 
     auto position = ChVector<>(x, y, z);
     auto quat1 = euler_to_quat(phi, theta, psi, CARDAN, DEG);
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     auto ship2 = std::make_shared<FrShip>();
     system.AddBody(ship2);
     ship2->SetBodyFixed(true);
-    ship2->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    ship2->SetHydroMesh("MagneViking.obj", true);
 
 
     ChQuaternion<> quat2;

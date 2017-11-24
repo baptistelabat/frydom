@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     // =================================================================================================================
     // FREE SURFACE
     // =================================================================================================================
-    system.GetFreeSurface()->Initialize(-400, 400, 100);
+    system.GetFreeSurface()->Initialize(-400, 400, 100, -50, 50, 100);
 
     // =================================================================================================================
     // CURRENT
@@ -47,17 +47,13 @@ int main(int argc, char* argv[]) {
     // Creating a body that has to be a floating body
     auto ship = std::make_shared<frydom::FrShip>();
 
-//    auto ship = std::make_shared<chrono::ChBody>();
     ship->SetName("my_ship");
-//    auto ship = std::make_shared<chrono::ChBody>(chrono::ChMaterialSurface::NSC);
     ship->SetIdentifier(1);
     double mass = 5e6;
     ship->SetMass(mass);
     ship->SetPos(chrono::ChVector<>(-200, 0, 0));
 
     auto rot = chrono::Q_from_AngAxis(0.*M_PI/180., chrono::ChVector<>(0, 0, 1));
-//    auto rot = chrono::ChQuaternion<>(, );
-
 
     ship->SetRot(rot);
 
@@ -73,7 +69,7 @@ int main(int argc, char* argv[]) {
     ship->SetInertiaXX(chrono::ChVector<>(1e5, 5e6, 5e6));
 
     // Defining the hydro mesh and as an asset
-    ship->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    ship->SetHydroMesh("MagneViking.obj", true);
 
 
     ship->SetCollide(false); // TODO: essayer avec..
@@ -116,7 +112,7 @@ int main(int argc, char* argv[]) {
     ///===========================================================================================================
 
     // Visualization with irrlicht
-    auto app = FrIrrApp(system, 400);
+    auto app = FrIrrApp(system, 200);
     app.Run();
 
     std::cout << "LEAVING MAIN PROGRAM" << "\n";

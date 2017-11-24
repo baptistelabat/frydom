@@ -54,11 +54,6 @@ int main(int argc, char* argv[]) {
 
     cable->Initialize();
 
-    
-    
-    
-    
-    
     // TODO : les lignes suivantes jusqu'a app devraient etre gerees par defaut suivant qu'on a un cable ou pas ...
     // TODO: voir si on peut specifier ces reglages pour un modele dans cable
     // Si NON, Peut-on avoir un reglage auto du solveur MINRES
@@ -76,23 +71,10 @@ int main(int argc, char* argv[]) {
     system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
     system.SetupInitial();
 
-    
-    
-    
-    
-    
-    
-    
     auto app = FrIrrApp(system, 50);
-
-
 
     app.SetTimestep(0.01); // TODO: doit etre le pas de temps par defaut...
     app.Run();
 
-
-
-
-    
     return 0;
 }

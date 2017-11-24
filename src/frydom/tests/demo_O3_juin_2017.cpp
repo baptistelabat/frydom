@@ -55,9 +55,7 @@ int main(int argc, char* argv[]) {
     // Creating a body that has to be a floating body
     auto ship1 = std::make_shared<FrShip>();
 
-//    auto ship1 = std::make_shared<chrono::ChBody>();
     ship1->SetName("Ship1");
-//    auto ship1 = std::make_shared<chrono::ChBody>(chrono::ChMaterialSurface::NSC);
     ship1->SetIdentifier(1);
     double mass = 5e6;
     ship1->SetMass(mass);
@@ -80,7 +78,7 @@ int main(int argc, char* argv[]) {
     ship1->SetInertiaXX(chrono::ChVector<>(1e5, 5e6, 5e6));
 
     // Defining the hydro mesh and as an asset
-    ship1->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    ship1->SetHydroMesh("MagneViking.obj", true);
 
     ship1->SetCollide(false); // TODO: essayer avec..
     // Adding the ship1 to the system
@@ -110,7 +108,7 @@ int main(int argc, char* argv[]) {
     ship2->SetInertiaXX(chrono::ChVector<>(1e5, 5e6, 5e6));
 
     // Defining the hydro mesh and as an asset
-    ship2->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    ship2->SetHydroMesh("MagneViking.obj", true);
 
     ship2->SetCollide(false); // TODO: essayer avec..
     // Adding the ship1 to the system
@@ -141,7 +139,7 @@ int main(int argc, char* argv[]) {
     ship3->SetInertiaXX(chrono::ChVector<>(1e5, 5e6, 5e6));
 
     // Defining the hydro mesh and as an asset
-    ship3->SetHydroMesh("../data/ship/MagneViking.obj", true);
+    ship3->SetHydroMesh("MagneViking.obj", true);
 
     ship3->SetCollide(false); // TODO: essayer avec..
     // Adding the ship1 to the system
@@ -214,16 +212,11 @@ int main(int argc, char* argv[]) {
             app.DrawAll();
             app.DoStep();
             app.EndScene();
-
-//            std::cout << ship1->GetPos_dt().x() << std::endl;
-
-//            std::cout << "End step " << system.GetTimestepper()->GetTime() << std::endl;
         }
 
     }
 
 
-    std::cout << "LEAVING MAIN PROGRAM" << "\n";
     return 0;
 
 }
