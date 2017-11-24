@@ -2,9 +2,7 @@
 // Created by frongere on 20/10/17.
 //
 
-#include "frydom/misc/FrEigen.h"
-#include <frydom/misc/FrLinspace.h>
-#include "frydom/misc/FrRecorder.h"
+#include "frydom/frydom.h"
 
 using namespace frydom;
 

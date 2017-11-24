@@ -124,3 +124,4 @@ cmake-build-debug
 /visual/Debug
 /visual/visualFrydom.VC.db
 /visual/.vs
+/thirdparty/eigen_build/

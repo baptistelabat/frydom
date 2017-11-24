@@ -2,16 +2,7 @@
 // Created by frongere on 07/09/2017.
 //
 
-#include <frydom/hydrodynamics/FrLinearDamping.h>
-#include <frydom/cable/FrDynamicCable.h>
-#include <chrono/solver/ChSolverMINRES.h>
-#include <chrono_fea/ChLinkPointFrame.h>
-#include "frydom/core/FrCore.h"
-#include "frydom/environment/FrEnvironment.h"
-#include "frydom/cable/FrCatenaryLine.h"
-
-#include "irrlicht.h"
-#include "frydom/utils/FrIrrApp.h"
+#include "frydom/frydom.h"
 
 using namespace frydom;
 
@@ -57,7 +48,8 @@ int main(int argc, char* argv[]) {
     tug->AddForce(current_force);
 
     // Adding a linear damping
-    auto lin_damping_force = std::make_shared<FrLinearDamping>(1e7, 1e7, 1e8);
+    auto lin_damping_force = std::make_shared<FrLinearDamping>();
+    lin_damping_force->SetManeuveuringDampings(1e7, 1e7, 1e8);
     tug->AddForce(lin_damping_force);
 
 

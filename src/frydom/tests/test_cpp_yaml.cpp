@@ -2,11 +2,11 @@
 // Created by frongere on 05/07/17.
 //
 
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include "yaml-cpp/yaml.h"
-
+//#include <iostream>
+//#include <vector>
+//#include <algorithm>
+//#include "yaml-cpp/yaml.h"
+#include "frydom/frydom.h"
 
 struct PolarCurrentCoeffs {
     std::vector<double> angles;

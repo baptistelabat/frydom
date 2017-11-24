@@ -2,11 +2,7 @@
 // Created by frongere on 11/10/17.
 //
 
-#include <frydom/core/FrOffshoreSystem.h>
-#include <frydom/utils/FrIrrApp.h>
-#include <chrono/solver/ChSolverMINRES.h>
-#include <chrono_fea/ChLinkPointFrame.h>
-#include "frydom/cable/FrDynamicCable.h"
+#include "frydom/frydom.h"
 
 using namespace frydom;
 

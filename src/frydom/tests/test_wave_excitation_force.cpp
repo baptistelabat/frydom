@@ -4,7 +4,6 @@
 
 #include "frydom/frydom.h"
 
-
 using namespace frydom;
 
 int main(int argc, char* argv[]) {

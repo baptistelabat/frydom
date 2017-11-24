@@ -2,9 +2,10 @@
 // Created by frongere on 10/07/17.
 //
 
-//#include "frydom/environment/FrEnvironment.h"
-#include "frydom/IO/FrLoader.h"
-#include "frydom/environment/current/FrCurrentPolarCoeffs.h"
+////#include "frydom/environment/FrEnvironment.h"
+//#include "frydom/IO/FrLoader.h"
+//#include "frydom/environment/current/FrCurrentPolarCoeffs.h"
+#include "frydom/frydom.h"
 
 using namespace frydom;
 

@@ -2,9 +2,7 @@
 // Created by frongere on 04/10/17.
 //
 
-//#include "frydom/misc/FrLinspace.h"
-#include "frydom/environment/waves/FrWaveSpectrum.h"
-
+#include "frydom/frydom.h"
 
 using namespace frydom;
 

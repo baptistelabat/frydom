@@ -2,23 +2,24 @@
 // Created by frongere on 18/09/17.
 //
 
+#include "Eigen/Dense"
+#include "frydom/frydom.h"
 
-#include <iostream>
-#include "frydom/misc/FrEigen.h"
-#include "frydom/misc/FrUtils.h"
 
 //#include "Eigen/Dense"
 
 using namespace std;
 using namespace frydom;
 
+using namespace chrono;
+
 using namespace Eigen;  // TODO : a retirer
 
 void test_conversions() {
 
     // chrono::ChVector <--> Eigen
-    auto vect = chrono::ChVector<double>(1, 2, 3);
-    cout << vect;
+    auto vect = ChVector<double>(1, 2, 3);
+//    cout << vect;
 
     auto vect_eigen = ChEig(vect);
     cout << vect_eigen << endl;
@@ -30,16 +31,16 @@ void test_conversions() {
 
 
     // chrono::ChMatrix33 <--> Eigen
-    auto mat33 = chrono::ChMatrix33<double>();
+    auto mat33 = ChMatrix33<double>();
     for (int i=0; i<9; ++i) mat33.SetElementN(i, i);
-    cout << mat33;
+//    cout << mat33;
 
     auto mat_eigen = ChEig(mat33);
     cout << "\n" << mat_eigen << endl;
-    cout << ChEig(mat_eigen);
+//    cout << ChEig(mat_eigen);
 
     // chrono::ChMatrixNM <--> Eigen
-    auto matNM = chrono::ChMatrixNM<double, 5, 10>();
+    auto matNM = ChMatrixNM<double, 5, 10>();
     int k(0);
     for (int i=0; i<5; ++i) {
         for (int j=0; j<10; ++j) {
@@ -48,16 +49,16 @@ void test_conversions() {
         }
     }
 //    print(matNM);
-    cout << matNM;
+//    cout << matNM;
 
     auto matNM_eigen = ChEig(matNM);
 
     cout << "\n" << matNM_eigen << endl;
 
-    cout << ChEig(matNM_eigen);
+//    cout << ChEig(matNM_eigen);
 
     // chrono::ChMatrixDynamic <--> Eigen
-    chrono::ChMatrixDynamic<double> mat_dyn;
+    ChMatrixDynamic<double> mat_dyn;
     mat_dyn.Resize(4, 8);
     k = 0;
     for (int i=0; i<4; ++i) {
@@ -66,7 +67,7 @@ void test_conversions() {
             mat_dyn.SetElement(i, j, double(k));
         }
     }
-    cout << mat_dyn;
+//    cout << mat_dyn;
 
     auto mat_dyn_eigen = ChEig(mat_dyn);
 

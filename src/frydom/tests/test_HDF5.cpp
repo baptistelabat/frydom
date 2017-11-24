@@ -2,12 +2,7 @@
 // Created by frongere on 20/10/17.
 //
 
-#include <iostream>
-//#include "H5Cpp.h"
-
-#include "frydom/IO/FrHDF5.h"
-
-//using namespace H5;
+#include "frydom/frydom.h"
 
 using namespace frydom::IO;
 

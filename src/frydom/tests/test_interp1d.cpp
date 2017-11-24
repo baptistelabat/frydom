@@ -2,11 +2,7 @@
 // Created by frongere on 04/07/17.
 //
 
-#include <math.h>
-
-#include "frydom/misc/FrMathUtils.h"
-#include "frydom/misc/FrInterp1d.h"
-#include "frydom/misc/FrLinspace.h"
+#include "frydom/frydom.h"
 
 #define N 100
 

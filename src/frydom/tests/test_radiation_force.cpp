@@ -2,9 +2,7 @@
 // Created by frongere on 20/10/17.
 //
 
-#include <memory>
-#include "frydom/misc/FrEigen.h"
-#include "frydom/hydrodynamics/FrRadiationForce.h"
+#include "frydom/frydom.h"
 
 using namespace frydom;
 

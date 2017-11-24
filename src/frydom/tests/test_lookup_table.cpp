@@ -2,9 +2,7 @@
 // Created by frongere on 11/07/17.
 //
 
-#include "frydom/misc/FrLinspace.h"
-#include "frydom/misc/FrLookupTable1D.h"
-#include "yaml-cpp/yaml.h"
+#include "frydom/frydom.h"
 
 using namespace frydom;
 

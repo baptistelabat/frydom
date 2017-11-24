@@ -2,7 +2,7 @@
 // Created by frongere on 04/07/17.
 //
 
-#include "frydom/misc/FrLinspace.h"
+#include "frydom/frydom.h"
 
 int main(int argc, char* argv[]) {
 

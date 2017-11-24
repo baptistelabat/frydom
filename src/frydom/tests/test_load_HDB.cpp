@@ -2,8 +2,7 @@
 // Created by frongere on 23/10/17.
 //
 
-#include "frydom/hydrodynamics/FrHydroDB.h"
-
+#include "frydom/frydom.h"
 
 using namespace frydom;
 

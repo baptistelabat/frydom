@@ -13,34 +13,7 @@
 //
 // =============================================================================
 
-#include <math.h>
-
-
-#include "frydom/environment/FrEnvironment.h"
-
-#include "frydom/core/FrConstants.h"
-
-#include "chrono/physics/ChSystem.h"
-#include "chrono/physics/ChSystemNSC.h"
-
-#include "chrono_irrlicht/ChIrrApp.h"
-
-#include "frydom/core/FrOffshoreSystem.h"
-#include "frydom/core/FrShip.h"
-
-#include "frydom/environment/current/FrCurrentForce.h"
-
-#include "frydom/utils/FrIrrApp.h"
-#include "frydom/core/FrForceAsset.h"
-
-#include "frydom/hydrodynamics/FrITTC57.h"
-#include "frydom/hydrodynamics/FrTryalForce.h"
-
-
-#include "irrlicht.h"
-#include "chrono/physics/ChLinkMate.h"
-
-
+#include "frydom/frydom.h"
 
 bool viz = true;
 float friction = 0.6f;

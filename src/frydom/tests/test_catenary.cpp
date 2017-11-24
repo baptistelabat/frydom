@@ -2,8 +2,7 @@
 // Created by frongere on 03/08/17.
 //
 
-#include <frydom/cable/FrCatenaryLine.h>
-#include "frydom/core/FrCore.h"
+#include "frydom/frydom.h"
 
 using namespace frydom;
 //using namespace environment;

@@ -2,17 +2,7 @@
 // Created by frongere on 07/09/2017.
 //
 
-//#include <frydom/hydrodynamics/FrLinearDamping.h>
-//#include "frydom/core/FrCore.h"
-//#include "frydom/environment/FrEnvironment.h"
-//#include "frydom/cable/FrCatenaryLine.h"
-//
-//#include "frydom/hydrodynamics/FrTryalForce.h"
-//
-//#include "irrlicht.h"
-//#include "frydom/utils/FrIrrApp.h"
 #include "frydom/frydom.h"
-
 
 using namespace frydom;
 
@@ -74,7 +64,8 @@ int main(int argc, char* argv[]) {
     tug->AddForce(current_force_tug);
 
     // Adding a linear damping
-    auto lin_damping_force_tug = std::make_shared<FrLinearDamping>(1e7, 1e7, 1e8);
+    auto lin_damping_force_tug = std::make_shared<FrLinearDamping>();
+    lin_damping_force_tug->SetManeuveuringDampings(1e7, 1e7, 1e8);
     tug->AddForce(lin_damping_force_tug);
 
 
@@ -82,7 +73,8 @@ int main(int argc, char* argv[]) {
     ship->AddForce(current_force_ship);
 
     // Adding a linear damping
-    auto lin_damping_force_ship = std::make_shared<FrLinearDamping>(1e7, 1e7, 1e8);
+    auto lin_damping_force_ship = std::make_shared<FrLinearDamping>();
+    lin_damping_force_ship->SetManeuveuringDampings(1e7, 1e7, 1e8);
     ship->AddForce(lin_damping_force_ship);
 
     // Adding a propulsion force to the ship

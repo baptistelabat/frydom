@@ -2,8 +2,7 @@
 // Created by frongere on 29/09/17.
 //
 
-#include <iostream>
-#include "frydom/environment/waves/FrWaveDispersionRelation.h"
+#include "frydom/frydom.h"
 
 using namespace frydom;
 

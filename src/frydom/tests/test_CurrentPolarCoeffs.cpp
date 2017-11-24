@@ -2,9 +2,7 @@
 // Created by frongere on 13/07/17.
 //
 
-#include <frydom/utils/FrIrrApp.h>
-#include "frydom/core/FrCore.h"
-#include "frydom/environment/FrEnvironment.h"
+#include "frydom/frydom.h"
 
 using namespace chrono;
 using namespace frydom;

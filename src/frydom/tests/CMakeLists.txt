@@ -8,20 +8,18 @@ set(FRYDOM_TESTS
         test_anchored_boat_current
         test_anchored_boat_current_fea_cable
         test_catenary
-        test_ch_system
         test_cpp_yaml
         test_current_force
         test_CurrentPolarCoeffs
         test_dispersion_relation
         test_dynamic_cable
-        test_eigen
+#        test_eigen
         test_fea_cable_with_body
         test_HDF5
         test_interp1d
         test_linspace
         test_load_HDB
         test_lookup_table
-        test_quadprogcpp
         test_radiation_force
         test_recorder
         test_tug
