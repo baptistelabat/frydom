@@ -124,6 +124,14 @@ def build_chrono(build_type):
     os.chdir("..")
 
 
+def install_which():
+    pip = which.which('pip')
+
+    os.chdir('which')
+    call([pip, "install", "-e", "."])
+    os.chdir('..')
+
+
 if __name__ == "__main__":
 
     print("==============================================================================")
@@ -147,6 +155,8 @@ if __name__ == "__main__":
     call([git, "submodule", "init"])
     call([git, "submodule", "update"])
 
+
+    install_which()
     build_eigen(build_type)
     build_yaml_cpp(build_type)
     build_irrlicht(build_type)

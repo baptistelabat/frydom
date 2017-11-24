@@ -46,3 +46,6 @@ configure_file(data/frydom_logo.png . COPYONLY)
 configure_file(../../../data/skybox/sky_dn.jpg . COPYONLY)
 configure_file(../../../data/skybox/sky_lf.jpg . COPYONLY)
 configure_file(../../../data/skybox/sky_up.jpg . COPYONLY)
+
+configure_file(data/frydom_hdb.h5 . COPYONLY)
+configure_file(data/Cylinder.obj . COPYONLY)

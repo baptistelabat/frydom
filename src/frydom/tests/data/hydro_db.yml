@@ -1,6 +1,0 @@
-
-
-Cylinder_hdb:
-    nbForce: 6
-    nbDOF: 6
-    hdbFile: Cylinder.h5  # TODO: utiliser une fonction portable pour pouvoir etre en relatif !!!
