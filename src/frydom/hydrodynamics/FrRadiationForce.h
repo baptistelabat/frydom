@@ -7,7 +7,7 @@
 
 #include "chrono/physics/ChBody.h"
 #include <frydom/core/FrForce.h>
-#include <frydom/misc/FrRecorder.h>
+#include <frydom/utils/FrRecorder.h>
 #include "FrHydroDB.h"
 
 namespace frydom {

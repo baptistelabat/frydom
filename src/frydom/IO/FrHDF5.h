@@ -10,7 +10,7 @@
 #include <iostream>
 #include "H5Cpp.h"
 
-#include "frydom/misc/FrEigen.h"
+#include "frydom/utils/FrEigen.h"
 
 
 #define R H5F_ACC_RDONLY

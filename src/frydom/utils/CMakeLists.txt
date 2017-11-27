@@ -3,6 +3,12 @@ message(STATUS "    ...utils")
 set(UTILS_FILES_LOCAL
         FrIrrApp.h
         FrIrrApp.cpp
+        FrEigen.h
+        FrEigen.cpp
+        FrUtils.h
+        FrUtils.cpp
+        FrRecorder.h
+        FrRecorder.cpp
 )
 
 set(UTILS_FILES "")

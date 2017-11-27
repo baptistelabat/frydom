@@ -13,7 +13,6 @@ set(subdirs
         mooring
         IO
         mesh
-        misc
         propeller
         utils
         )

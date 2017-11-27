@@ -6,17 +6,13 @@
 #define FRYDOM_FRHYDRODB_H
 
 #include <vector>
-//#include <frydom/core/FrConstants.h>
-
-#include "frydom/misc/FrEigen.h"
-//#include "frydom/misc/FrInterp1d.h"
-
 #include "MathUtils.h"
+#include "frydom/utils/FrEigen.h"
+
 
 // TODO: utiliser plutot des std::vector a la place des matrices eigen ...
 
 using namespace mathutils;
-//#define JJ std::complex<double>(0, 1)
 
 namespace frydom {
 
