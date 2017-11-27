@@ -19,10 +19,13 @@
 #include "chrono/core/ChVector.h"
 #include "frydom/core/FrConstants.h"
 #include "frydom/environment/FrConventions.h"
+#include "MathUtils.h"
 
 // TODO: definir une classe de base pour le champ de courant et de vent (et de houle) afin de ne pas
 // repliquer le code concernant la gestion des unites de vitesse, des conventions de direction ("vient de")
 // et des reperes d'expression.
+
+using namespace mathutils;
 
 namespace frydom {
 
@@ -57,11 +60,11 @@ namespace frydom {
 
         /// Constructor from an angle and a magnitude.
         FrCurrent(double  angle, double  magnitude,
-                  FrAngleUnit= DEG, FrSpeedUnit= KNOT, FrFrame= NED, FrDirectionConvention convention = GOTO);
+                  ANGLE_UNIT = DEG, SPEED_UNIT = KNOT, FrFrame= NED, FrDirectionConvention convention = GOTO);
 
         /// Constructor from a direction vector and a magnitude
         FrCurrent(chrono::ChVector<>  unit_direction, double  magnitude,
-                  FrSpeedUnit= KNOT, FrFrame= NED, FrDirectionConvention convention = GOTO);
+                  SPEED_UNIT = KNOT, FrFrame= NED, FrDirectionConvention convention = GOTO);
 
         // TODO: Ajouter les setters pour la direction et l'intensite
 
@@ -69,11 +72,11 @@ namespace frydom {
                           FrFrame frame=NED,
                           FrDirectionConvention directionConvention=GOTO);
 
-        void SetDirection(double angle, FrAngleUnit angleUnit=DEG,
+        void SetDirection(double angle, ANGLE_UNIT angleUnit=DEG,
                           FrFrame frame=NED,
                           FrDirectionConvention directionConvention=GOTO);
 
-        void SetMagnitude(double magnitude, FrSpeedUnit speedUnit=KNOT);
+        void SetMagnitude(double magnitude, SPEED_UNIT speedUnit=KNOT);
 
         void Update(double Time);
 
@@ -83,13 +86,11 @@ namespace frydom {
 
         chrono::ChVector<> GetGoToVector(FrFrame= NWU);
 
-        double GetAngle(FrDirectionConvention convention, FrFrame frame, FrAngleUnit= DEG);
+        double GetAngle(FrDirectionConvention convention, FrFrame frame, ANGLE_UNIT = DEG);
 
-        double GetMagnitude(FrSpeedUnit speedUnit=KNOT);
+        double GetMagnitude(SPEED_UNIT speedUnit=KNOT);
 
         double GetMagnitude2();
-
-
 
     };
 

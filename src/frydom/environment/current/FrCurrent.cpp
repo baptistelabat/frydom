@@ -44,8 +44,8 @@ namespace frydom {
 
     FrCurrent::FrCurrent(double const angle,
                          double const velocity,
-                         FrAngleUnit angleUnit,
-                         FrSpeedUnit speedUnit,
+                         ANGLE_UNIT angleUnit,
+                         SPEED_UNIT speedUnit,
                          FrFrame frame,
                          FrDirectionConvention convention) {
 
@@ -79,7 +79,7 @@ namespace frydom {
 
     FrCurrent::FrCurrent(chrono::ChVector<> const udir,
                          double const velocity,
-                         FrSpeedUnit speedUnit,
+                         SPEED_UNIT speedUnit,
                          FrFrame frame,
                          FrDirectionConvention convention) {
 
@@ -122,7 +122,7 @@ namespace frydom {
         return FrCurrent::GetFluxVector(frame);
     }
 
-    double FrCurrent::GetAngle(FrDirectionConvention convention, FrFrame frame, FrAngleUnit angleUnit) {
+    double FrCurrent::GetAngle(FrDirectionConvention convention, FrFrame frame, ANGLE_UNIT angleUnit) {
 
         chrono::ChVector<> current_vector;
         switch (convention) {
@@ -145,7 +145,7 @@ namespace frydom {
 
     }
 
-    double FrCurrent::GetMagnitude(FrSpeedUnit speedUnit) {
+    double FrCurrent::GetMagnitude(SPEED_UNIT speedUnit) {
         return convert_velocity_unit(m_currentVector.Length(), MS, speedUnit);
     }
 
@@ -176,7 +176,7 @@ namespace frydom {
         m_currentVector = uDirection * magnitude;
     }
 
-    void FrCurrent::SetDirection(double angle, FrAngleUnit angleUnit,
+    void FrCurrent::SetDirection(double angle, ANGLE_UNIT angleUnit,
                                  FrFrame frame,
                                  FrDirectionConvention directionConvention) {
         auto alpha = angle;
@@ -191,7 +191,7 @@ namespace frydom {
 
     }
 
-    void FrCurrent::SetMagnitude(double magnitude, FrSpeedUnit speedUnit) {
+    void FrCurrent::SetMagnitude(double magnitude, SPEED_UNIT speedUnit) {
         auto vel = magnitude;
 
         if (speedUnit != MS) {
@@ -203,7 +203,7 @@ namespace frydom {
 
     }
 
-    void SetCurrentVector(chrono::ChVector<double>& currentVector, FrFrame frame=NED, FrSpeedUnit speedUnit=KNOT) {
+    void SetCurrentVector(chrono::ChVector<double>& currentVector, FrFrame frame=NED, SPEED_UNIT speedUnit=KNOT) {
         // TODO
     }
 

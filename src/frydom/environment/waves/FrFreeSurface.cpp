@@ -15,6 +15,8 @@
 
 #include <thread>
 
+#include "MathUtils.h"
+
 #include "FrFreeSurface.h"
 #include "frydom/core/FrOffshoreSystem.h"
 
@@ -145,7 +147,7 @@ namespace frydom {
 
         FrTriangleMeshConnected mesh;
 
-        auto angles = linspace(0., M_2PI, nbTheta);
+        auto angles = linspace(0., MU_2PI, nbTheta);
 
         std::vector<chrono::ChVector<double>> vertices;
         vertices.reserve((nbR-1) * (nbTheta-1) + 1);

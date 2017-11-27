@@ -7,8 +7,6 @@
 #include "yaml-cpp/yaml.h"
 
 #include "FrHydroDB.h"
-#include "frydom/misc/FrLinspace.h"
-#include "frydom/misc/FrInterp1d.h"
 #include "frydom/IO/FrHDF5.h"
 
 
@@ -172,7 +170,7 @@ namespace frydom {
                 auto diffraction_imagCoeffs = reader.ReadDoubleArray(diffraction_wave_dir_path + "/ImagCoeffs");
 
                 Eigen::MatrixXcd diffractionCoeffs;
-                diffractionCoeffs = diffraction_realCoeffs + JJ * diffraction_imagCoeffs;
+                diffractionCoeffs = diffraction_realCoeffs + MU_JJ * diffraction_imagCoeffs;
                 body->SetDiffraction(iwave_dir, diffractionCoeffs);
 
                 // Reading Froude-Krylov coefficients
@@ -182,7 +180,7 @@ namespace frydom {
                 auto fk_imagCoeffs = reader.ReadDoubleArray(fk_wave_dir_path + "/ImagCoeffs");
 
                 Eigen::MatrixXcd froudeKrylovCoeffs;
-                froudeKrylovCoeffs = fk_realCoeffs + JJ * fk_imagCoeffs;
+                froudeKrylovCoeffs = fk_realCoeffs + MU_JJ * fk_imagCoeffs;
                 body->SetFroudeKrylov(iwave_dir, froudeKrylovCoeffs);
 
             }
@@ -525,7 +523,7 @@ namespace frydom {
         }
 
         Eigen::MatrixXcd data;
-        auto interpolators = std::vector<FrInterp1dLinear<double, std::complex<double>>>();
+        auto interpolators = std::vector<Interp1dLinear<double, std::complex<double>>>();
         interpolators.reserve(nbFreq);
 
         for (unsigned int imode=0; imode<nbForceModes; ++imode) {
@@ -542,7 +540,7 @@ namespace frydom {
                     coeffs->push_back(data(imode, ifreq));
                 }
 
-                auto interpolator = FrInterp1dLinear<double, std::complex<double>>();
+                auto interpolator = Interp1dLinear<double, std::complex<double>>();
                 interpolator.Initialize(angles_ptr, coeffs);
                 interpolators.push_back(interpolator);
             }
@@ -610,7 +608,7 @@ namespace frydom {
     std::vector<Eigen::MatrixXcd>
     FrBEMBody::GetExcitationInterp(std::vector<double> waveFrequencies,
                                    std::vector<double> waveDirections,
-                                   FrAngleUnit angleUnit) {  // TODO: utiliser angleUnit
+                                   ANGLE_UNIT angleUnit) {  // TODO: utiliser angleUnit
 
         // Getting sizes
         auto nbFreqInterp = waveFrequencies.size();
@@ -643,7 +641,7 @@ namespace frydom {
                 for (unsigned int ifreq=0; ifreq<nbFreqBDD; ++ifreq) {
                     freqCoeffs->push_back(m_waveDirInterpolators[imode][ifreq](direction));
                 }
-                auto freqInterpolator = FrInterp1dLinear<double, std::complex<double>>();
+                auto freqInterpolator = Interp1dLinear<double, std::complex<double>>();
                 freqInterpolator.Initialize(freqsBDD, freqCoeffs); // TODO: ajouter une methode clear() afin de ne pas instancier l'interpolateur a chaque iteration (sortir l'instanciation des boucles...)
 
                 auto freqCoeffsInterp = freqInterpolator(waveFrequencies); // TODO: sortir l'instanciation des boucles...

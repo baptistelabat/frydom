@@ -6,9 +6,11 @@
 #define FRYDOM_FRWAVESPECTRUM_H
 
 #include <vector>
+#include "MathUtils.h"
 
-#include "frydom/core/FrConstants.h"
-#include "frydom/misc/FrLinspace.h"
+using namespace mathutils;
+//#include "frydom/core/FrConstants.h"
+//#include "frydom/misc/FrLinspace.h"
 
 namespace frydom {
 
@@ -127,7 +129,7 @@ namespace frydom {
         FrWaveSpectrum() = default;
 
         /// Constructor
-        FrWaveSpectrum(const double hs, const double tp, const FREQ_UNIT unit=S) :
+        FrWaveSpectrum(const double hs, const double tp, const FREQUENCY_UNIT unit=S) :
                 m_significant_height(hs),
                 m_peak_pulsation(convert_frequency(tp, unit, RADS)) {}
 
@@ -179,7 +181,7 @@ namespace frydom {
 
         void SetFp(double Fp) { m_peak_pulsation = convert_frequency(Fp, HZ, RADS); }
 
-        double GetPeakFreq(FREQ_UNIT unit) const {
+        double GetPeakFreq(FREQUENCY_UNIT unit) const {
             return convert_frequency(m_peak_pulsation, RADS, unit);
         }
 
@@ -272,7 +274,7 @@ namespace frydom {
 
         FrJonswapWaveSpectrum() = default;
 
-        FrJonswapWaveSpectrum(const double hs, const double tp, const FREQ_UNIT unit=S, const double gamma=3.3) :
+        FrJonswapWaveSpectrum(const double hs, const double tp, const FREQUENCY_UNIT unit=S, const double gamma=3.3) :
                 FrWaveSpectrum(hs, tp, unit),
                 m_gamma(gamma) {
             CheckGamma();
@@ -329,14 +331,14 @@ namespace frydom {
 
         FrPiersonMoskowitzWaveSpectrum() = default;
 
-        FrPiersonMoskowitzWaveSpectrum(const double hs, const double tp, const FREQ_UNIT unit=S) :
+        FrPiersonMoskowitzWaveSpectrum(const double hs, const double tp, const FREQUENCY_UNIT unit=S) :
                 FrWaveSpectrum(hs, tp, unit) {}
 
         double Eval(const double w) const final {
 
             double Tz = RADS2S(m_peak_pulsation) / 1.408;  // Up-crossing period
 
-            double A = pow(M_2PI/Tz, 4) / (M_PI * pow(w, 4));
+            double A = pow(MU_2PI/Tz, 4) / (M_PI * pow(w, 4));
 
             double Hs2 = m_significant_height * m_significant_height;
 

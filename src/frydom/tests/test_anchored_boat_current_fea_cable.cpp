@@ -6,7 +6,6 @@
 
 using namespace frydom;
 
-
 int main(int argc, char* argv[]) {
 
     // The system
@@ -36,7 +35,7 @@ int main(int argc, char* argv[]) {
     tug->SetPos(chrono::ChVector<>(-140, 0, 0));
     tug->Set3DOF_ON();
 
-    tug->SetPos_dt(chrono::ChVector<>(5.*M_KNOT, 0, 0));
+    tug->SetPos_dt(chrono::ChVector<>(5.*MU_KNOT, 0, 0));
 
     // Adding a curent resistance
     std::string filename("PolarCurrentCoeffs.yml");

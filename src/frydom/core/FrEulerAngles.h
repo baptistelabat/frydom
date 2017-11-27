@@ -8,10 +8,11 @@
 #include <cmath>
 
 #include "chrono/core/ChMatrix33.h"
-#include "frydom/misc/FrMathUtils.h"
-#include "FrConstants.h"
+//#include "frydom/misc/FrMathUtils.h"
+//#include "FrConstants.h"
+#include "MathUtils.h"
 
-
+using namespace mathutils;
 // TODO: mettre les references utilisees (cf euler_angles.py)
 
 namespace frydom {
@@ -40,39 +41,39 @@ namespace frydom {
     template <class Real=double>
     void quat_to_axis_angle(const chrono::ChQuaternion<Real> quat,
                             chrono::ChVector<Real>& axis, Real& angle,
-                            FrAngleUnit unit = RAD);
+                            ANGLE_UNIT unit = RAD);
 
     template <class Real=double>
     chrono::ChQuaternion<Real> axis_angle_to_quat(const chrono::ChVector<Real> axis, const Real angle,
-                                                  FrAngleUnit unit = RAD);
+                                                  ANGLE_UNIT unit = RAD);
 
     template <class Real=double>
     chrono::ChMatrix33<Real> axis_angle_to_mat(const chrono::ChVector<Real> axis, const Real angle,
-                                               FrAngleUnit unit = RAD);
+                                               ANGLE_UNIT unit = RAD);
 
     template <class Real=double>
     void mat_to_axis_angle(const chrono::ChMatrix33<Real> mat,
                            chrono::ChVector<Real>& axis, Real& angle,
-                           FrAngleUnit unit = DEG);
+                           ANGLE_UNIT unit = DEG);
 
     template <class Real=double>
     chrono::ChVector<Real> axis_angle_to_euler(const chrono::ChVector<Real> axis, const Real angle,
-                                               EulerSeq seq = CARDAN, FrAngleUnit unit = RAD);
+                                               EulerSeq seq = CARDAN, ANGLE_UNIT unit = RAD);
 
     template <class Real=double>
     void axis_angle_to_euler(const chrono::ChVector<Real> axis, const Real angle,
                              Real& phi, Real& theta, Real& psi,
-                             EulerSeq seq = CARDAN, FrAngleUnit unit = RAD);
+                             EulerSeq seq = CARDAN, ANGLE_UNIT unit = RAD);
 
     template <class Real=double>
     void euler_to_axis_angle(const chrono::ChVector<Real> euler_angles,
                              chrono::ChVector<Real>& axis, Real& angle,
-                             EulerSeq seq = CARDAN, FrAngleUnit unit = RAD);
+                             EulerSeq seq = CARDAN, ANGLE_UNIT unit = RAD);
 
     template <class Real=double>
     void euler_to_axis_angle(const Real phi, const Real theta, const Real psi,
                              chrono::ChVector<Real>& axis, Real& angle,
-                             EulerSeq seq = CARDAN, FrAngleUnit unit = RAD);
+                             EulerSeq seq = CARDAN, ANGLE_UNIT unit = RAD);
 
     template <class Real=double>
     chrono::ChMatrix33<Real> quat_to_mat(const chrono::ChQuaternion<Real> quat);
@@ -83,19 +84,19 @@ namespace frydom {
     template <class Real=double>
     chrono::ChVector<Real> quat_to_euler(const chrono::ChQuaternion<Real> quat,
                                          EulerSeq seq = CARDAN,
-                                         FrAngleUnit unit = RAD);
+                                         ANGLE_UNIT unit = RAD);
 
     template <class Real = double>
     chrono::ChMatrix33<Real> euler_to_mat(const Real phi,
                                           const Real theta,
                                           const Real psi,
                                           EulerSeq seq = CARDAN,
-                                          FrAngleUnit unit = RAD);
+                                          ANGLE_UNIT unit = RAD);
 
     template <class Real=double>
     chrono::ChMatrix33<Real> euler_to_mat(const chrono::ChVector<Real> angles,
                                           EulerSeq seq = CARDAN,
-                                          FrAngleUnit unit = RAD);
+                                          ANGLE_UNIT unit = RAD);
 
     template <class Real=double>
     void eul2mat_xyz(chrono::ChMatrix33<Real> &rotmat,
@@ -109,12 +110,12 @@ namespace frydom {
                                              const Real theta,
                                              const Real psi,
                                              EulerSeq seq = CARDAN,
-                                             FrAngleUnit unit = RAD);
+                                             ANGLE_UNIT unit = RAD);
 
     template <class Real=double>
     chrono::ChQuaternion<Real> euler_to_quat(const chrono::ChVector<Real> angles,
                                              EulerSeq seq = CARDAN,
-                                             FrAngleUnit unit = RAD);
+                                             ANGLE_UNIT unit = RAD);
 
     template <class Real=double>
     inline void eul2quat_xyz(chrono::ChQuaternion<Real>& quat,
@@ -125,13 +126,13 @@ namespace frydom {
     template <class Real=double>
     chrono::ChVector<Real> mat_to_euler(const chrono::ChMatrix33<Real> rotmat,
                                         EulerSeq seq = CARDAN,
-                                        FrAngleUnit = RAD);
+                                        ANGLE_UNIT = RAD);
 
     template <class Real=double>
     void mat_to_euler(const chrono::ChMatrix33<Real> rotmat,
                       Real& phi, Real& theta, Real& psi,
                       EulerSeq seq = CARDAN,
-                      FrAngleUnit = RAD);
+                      ANGLE_UNIT = RAD);
 
     template <class Real=double>
     inline void mat2eul_xyz(const chrono::ChMatrix33<Real>& rotmat, chrono::ChVector<Real>& angles);
@@ -165,11 +166,11 @@ namespace frydom {
     template <class Real=double>
     void quat_to_axis_angle(const chrono::ChQuaternion<Real> quat,
                             chrono::ChVector<Real>& axis, Real& angle,
-                            FrAngleUnit unit) {
+                            ANGLE_UNIT unit) {
         Real q0 = quat.e0();
         Real d = 1. - q0*q0;
 
-        if (is_close(d, 0.)) {
+        if (IsClose(d, 0.)) {
             angle = 0.;
             axis = chrono::VECT_Z; // by default, we say that a null rotation is around the z axis... May change
         } else {
@@ -184,7 +185,7 @@ namespace frydom {
 
     template <class Real=double>
     chrono::ChQuaternion<Real> axis_angle_to_quat(const chrono::ChVector<Real> axis, const Real angle,
-                                                  FrAngleUnit unit) {
+                                                  ANGLE_UNIT unit) {
 
         Real half_angle = 0.5 * angle;
         if (unit == DEG) {
@@ -204,27 +205,27 @@ namespace frydom {
 
     template <class Real=double>
     chrono::ChMatrix33<Real> axis_angle_to_mat(const chrono::ChVector<Real> axis, const Real angle,
-                                               FrAngleUnit unit) {
+                                               ANGLE_UNIT unit) {
         return quat_to_mat(axis_angle_to_quat(axis, angle, unit));
     }
 
     template <class Real=double>
     void mat_to_axis_angle(const chrono::ChMatrix33<Real> mat,
                            chrono::ChVector<Real>& axis, Real& angle,
-                           FrAngleUnit unit) {
+                           ANGLE_UNIT unit) {
         quat_to_axis_angle(mat_to_quat(mat), axis, angle, unit);
     }
 
     template <class Real=double>
     chrono::ChVector<Real> axis_angle_to_euler(const chrono::ChVector<Real> axis, const Real angle,
-                                               EulerSeq seq, FrAngleUnit unit) {
+                                               EulerSeq seq, ANGLE_UNIT unit) {
         return quat_to_euler(axis_angle_to_quat(axis, angle, unit), seq, unit);
     }
 
     template <class Real=double>
     void axis_angle_to_euler(const chrono::ChVector<Real> axis, const Real angle,
                              Real& phi, Real& theta, Real& psi,
-                             EulerSeq seq, FrAngleUnit unit) {
+                             EulerSeq seq, ANGLE_UNIT unit) {
         auto euler_angles = axis_angle_to_euler(axis, angle, seq, unit);
         phi = euler_angles.x();
         theta = euler_angles.y();
@@ -234,14 +235,14 @@ namespace frydom {
     template <class Real=double>
     void euler_to_axis_angle(const chrono::ChVector<Real> euler_angles,
                              chrono::ChVector<Real>& axis, Real& angle,
-                             EulerSeq seq, FrAngleUnit unit) {
+                             EulerSeq seq, ANGLE_UNIT unit) {
         quat_to_axis_angle(euler_to_quat(euler_angles, seq, unit), axis, angle, unit);
     }
 
     template <class Real=double>
     void euler_to_axis_angle(const Real phi, const Real theta, const Real psi,
                              chrono::ChVector<Real>& axis, Real& angle,
-                             EulerSeq seq, FrAngleUnit unit) {
+                             EulerSeq seq, ANGLE_UNIT unit) {
         auto quat = euler_to_quat(phi, theta, psi, seq, unit);
         quat_to_axis_angle(quat, axis, angle, unit);
     }
@@ -261,7 +262,7 @@ namespace frydom {
     template <class Real=double>
     chrono::ChVector<Real> quat_to_euler(const chrono::ChQuaternion<Real> quat,
                                          EulerSeq seq,
-                                         FrAngleUnit unit) {
+                                         ANGLE_UNIT unit) {
         auto mat = quat_to_mat(quat);
         return mat_to_euler(mat, seq, unit);
     }
@@ -270,7 +271,7 @@ namespace frydom {
     chrono::ChMatrix33<Real> euler_to_mat(const Real phi,
                                           const Real theta,
                                           const Real psi,
-                                          EulerSeq seq, FrAngleUnit unit) {
+                                          EulerSeq seq, ANGLE_UNIT unit) {
 
         double phi_rad, theta_rad, psi_rad;
         if (unit == DEG) {
@@ -336,7 +337,7 @@ namespace frydom {
 
     template <class Real=double>
     chrono::ChMatrix33<Real> euler_to_mat(const chrono::ChVector<Real> angles,
-                                          EulerSeq seq, FrAngleUnit unit) {
+                                          EulerSeq seq, ANGLE_UNIT unit) {
         return euler_to_mat(angles[0], angles[1], angles[2], seq, unit);
     }
 
@@ -363,7 +364,7 @@ namespace frydom {
                                              const Real theta,
                                              const Real psi,
                                              EulerSeq seq,
-                                             FrAngleUnit unit) {
+                                             ANGLE_UNIT unit) {
 
         Real phi_2_rad, theta_2_rad, psi_2_rad;
 
@@ -428,7 +429,7 @@ namespace frydom {
     template <class Real=double>
     chrono::ChQuaternion<Real> euler_to_quat(const chrono::ChVector<Real> angles,
                                              EulerSeq seq,
-                                             FrAngleUnit unit) {
+                                             ANGLE_UNIT unit) {
         return euler_to_quat(angles[0], angles[1], angles[2], seq, unit);
     }
 
@@ -449,7 +450,7 @@ namespace frydom {
     void mat_to_euler(const chrono::ChMatrix33<Real> rotmat,
                       Real& phi, Real& theta, Real& psi,
                       EulerSeq seq,
-                      FrAngleUnit unit){
+                      ANGLE_UNIT unit){
 
         chrono::ChVector<Real> angles;
 
@@ -501,7 +502,7 @@ namespace frydom {
     template <class Real=double>
     chrono::ChVector<Real> mat_to_euler(const chrono::ChMatrix33<Real> rotmat,
                                         EulerSeq seq,
-                                        FrAngleUnit unit){
+                                        ANGLE_UNIT unit){
 
         Real phi, theta, psi;
         mat_to_euler(rotmat, phi, theta, psi, seq, unit);

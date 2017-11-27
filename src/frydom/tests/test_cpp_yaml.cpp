@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     YAML::Node data;
     try {
         data = YAML::LoadFile("PolarCurrentCoeffs.yml");
-    } catch (YAML::BadFile err) {
+    } catch (YAML::BadFile& err) {
         std::cout << "File not found" << std::endl;
     }
 
@@ -37,26 +37,26 @@ int main(int argc, char* argv[]) {
 
 
         try {
-            coeffs.angles = node["angle"].as<std::vector<double>>();
-        } catch (YAML::BadConversion err) {
-            std::cout << "angle not found" << std::endl;
+            coeffs.angles = node["angles"].as<std::vector<double>>();
+        } catch (YAML::BadConversion& err) {
+            std::cout << "angles not found" << std::endl;
         }
 
         try {
             coeffs.cx = node["cx"].as<std::vector<double>>();
-        } catch (YAML::BadConversion err) {
+        } catch (YAML::BadConversion& err) {
             std::cout << "cx not found" << std::endl;
         }
 
         try {
             coeffs.cy = node["cy"].as<std::vector<double>>();
-        } catch (YAML::BadConversion err) {
+        } catch (YAML::BadConversion& err) {
             std::cout << "cy not found" << std::endl;
         }
 
         try {
             coeffs.cz = node["cz"].as<std::vector<double>>();
-        } catch (YAML::BadConversion err) {
+        } catch (YAML::BadConversion& err) {
             std::cout << "cz not found" << std::endl;
         }
 

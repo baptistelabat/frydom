@@ -63,6 +63,27 @@ def build_eigen(build_type):
 
     os.chdir('..')
 
+def build_MathUtils(build_type):
+    print("\n\n==============================================================================")
+    print("Building MathUtils library (header only)")
+    print("==============================================================================")
+    os.chdir('MathUtils')
+
+    try:
+        os.mkdir('build')
+    except OSError:
+        pass
+    os.chdir('build')
+
+    call([cmake, '..'])
+    call([make])
+
+
+
+
+
+    os.chdir('../..')
+
 
 def build_yaml_cpp(build_type):
     print("\n\n==============================================================================")
@@ -158,6 +179,7 @@ if __name__ == "__main__":
 
     install_which()
     build_eigen(build_type)
+    build_MathUtils(build_type)
     build_yaml_cpp(build_type)
     build_irrlicht(build_type)
     build_chrono(build_type)

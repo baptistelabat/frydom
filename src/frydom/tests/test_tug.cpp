@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     tug->SetPos(chrono::ChVector<>(0, -50, 0));
     tug->Set3DOF_ON();
 
-    tug->SetPos_dt(chrono::ChVector<>(0*M_KNOT, 0, 0));
+    tug->SetPos_dt(chrono::ChVector<>(0*MU_KNOT, 0, 0));
 
     // Creating a ship to tug
     auto ship = std::make_shared<FrShip>();

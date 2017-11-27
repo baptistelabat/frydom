@@ -68,7 +68,7 @@ namespace frydom {
         }
     }
 
-    void FrHydroBody::SetNEDHeading(const double heading_angle, FrAngleUnit angleUnit) {
+    void FrHydroBody::SetNEDHeading(const double heading_angle, ANGLE_UNIT angleUnit) {
         auto quaternion = euler_to_quat(0., 0., -heading_angle, CARDAN, angleUnit);
         SetRot(quaternion);
     }

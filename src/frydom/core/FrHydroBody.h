@@ -108,7 +108,7 @@ namespace frydom {
 
         /// Get the heading angle defined as the angle between the x axis of the
         /// absolute frame and the x axis of the body
-        double GetHeadingAngle(FrFrame frame, FrAngleUnit angleUnit= RAD) {
+        double GetHeadingAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) {
 
             double heading = m_heading;
             if (angleUnit == DEG) {
@@ -134,7 +134,7 @@ namespace frydom {
 
         /// Get the course angle defined as the angle between the x axis of the
         /// absolute frame and the velocity vector
-        double GetCourseAngle(FrFrame frame, FrAngleUnit angleUnit= RAD) {
+        double GetCourseAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) {
             double course = m_course;
             if (angleUnit == DEG) {
                 course = degrees(course);
@@ -150,7 +150,7 @@ namespace frydom {
 
         /// Get the Sidesplip angle (or the drift angle) defined as the angle between
         /// the x axis of the body and the velocity vector
-        double GetSideslipAngle(FrFrame frame, FrAngleUnit angleUnit= RAD) {
+        double GetSideslipAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) {
 
             auto heading = GetHeadingAngle(frame, angleUnit);
             auto course = GetCourseAngle(frame, angleUnit);
@@ -158,7 +158,7 @@ namespace frydom {
         }
 
         /// Set the heading of the body from angle in the NED frame
-        void SetNEDHeading(double heading_angle, FrAngleUnit angleUnit= DEG);
+        void SetNEDHeading(double heading_angle, ANGLE_UNIT angleUnit= DEG);
 
         /// Set the heading of the body from a unit direction in the NED frame
         void SetNEDHeading(const chrono::ChVector<>& unit_vector);
@@ -219,7 +219,7 @@ namespace frydom {
         chrono::ChVector<> GetCurrentRelativeVelocity(FrFrame frame= NWU);
 
         /// Get the current relative angle
-        double GetCurrentRelativeAngle(FrFrame frame= NWU, FrAngleUnit angleUnit= RAD) {
+        double GetCurrentRelativeAngle(FrFrame frame= NWU, ANGLE_UNIT angleUnit= RAD) {
             double angle = m_current_relative_angle;
             if (angleUnit == DEG) {
                 angle = degrees(angle);

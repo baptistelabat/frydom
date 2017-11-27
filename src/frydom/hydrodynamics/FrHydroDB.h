@@ -6,14 +6,17 @@
 #define FRYDOM_FRHYDRODB_H
 
 #include <vector>
-#include <frydom/core/FrConstants.h>
+//#include <frydom/core/FrConstants.h>
 
 #include "frydom/misc/FrEigen.h"
-#include "frydom/misc/FrInterp1d.h"
+//#include "frydom/misc/FrInterp1d.h"
+
+#include "MathUtils.h"
 
 // TODO: utiliser plutot des std::vector a la place des matrices eigen ...
 
-#define JJ std::complex<double>(0, 1)
+using namespace mathutils;
+//#define JJ std::complex<double>(0, 1)
 
 namespace frydom {
 
@@ -119,7 +122,7 @@ namespace frydom {
         std::vector<std::vector<Eigen::MatrixXd>> m_RadiationDamping;
         std::vector<std::vector<Eigen::MatrixXd>> m_ImpulseResponseFunction;
 
-        std::vector<std::vector<FrInterp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
+        std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
     public:
         FrBEMBody() = default;
@@ -194,7 +197,7 @@ namespace frydom {
 //        void BuildRadiationInterpolators(); // FIXME: c'est plutot a l'echelle de la HDB...
 
         std::vector<Eigen::MatrixXcd>
-        GetExcitationInterp(std::vector<double> waveFrequencies, std::vector<double> waveDirections, FrAngleUnit angleUnit=DEG);
+        GetExcitationInterp(std::vector<double> waveFrequencies, std::vector<double> waveDirections, ANGLE_UNIT angleUnit=DEG);
 
 
         void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);

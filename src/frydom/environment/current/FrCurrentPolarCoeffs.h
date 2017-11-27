@@ -7,12 +7,15 @@
 
 
 #include <frydom/core/FrConstants.h>
-#include "frydom/misc/FrLookupTable1D.h"
+//#include "frydom/misc/FrLookupTable1D.h"
+#include "MathUtils.h"
+
+using namespace mathutils;
 
 // TODO: supprimer cette classe et utiliser directement la LUT dans la classe courant
 namespace frydom {
 
-    class FrCurrentPolarCoeffs : public FrLookupTable1D<double> {
+    class FrCurrentPolarCoeffs : public LookupTable1D<double> {
 
     private:
 

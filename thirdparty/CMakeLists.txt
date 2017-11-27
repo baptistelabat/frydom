@@ -34,6 +34,24 @@ list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${MATPLOTLIB_CPP_INCLUDE_DIR})
 
 message(STATUS "INCLUDE DIRS : " ${MATPLOTLIB_CPP_INCLUDE_DIR})
 message(STATUS "LIBRARIES : NO LIB REQUIRED")
+
+#=============================================================================
+#
+# MathUtils library
+#
+#=============================================================================
+message(STATUS "===================================================================")
+message(STATUS "Finding package MathUtils...")
+message(STATUS "===================================================================")
+set(MATHUTILS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MathUtils)
+set(MATHUTILS_LIB ${CMAKE_CURRENT_SOURCE_DIR}/MathUtils/build/src/libMathUtils.so)  # FIXME: non portable
+
+list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${MATHUTILS_INCLUDE_DIR})
+list(APPEND FRYDOM_THIRDPARTY_LIBS ${MATHUTILS_LIB})
+
+message(STATUS "INCLUDE DIRS : " ${MATHUTILS_INCLUDE_DIR})
+message(STATUS "LIBRARIES : ${MATHUTILS_LIB}" )
+
 #=============================================================================
 #
 # YAML-CPP library

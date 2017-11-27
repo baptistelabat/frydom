@@ -8,7 +8,7 @@
 #include <cstdlib>
 
 // Chrono related headers
-#include "chrono/solver/ChSolverMINRES.h"
+#include "chrono/solver/ChSolverMINRES.h" // FIXME: trouver moyen d'avoir un import plus global des headers chrono...
 
 
 // FRyDoM related headers

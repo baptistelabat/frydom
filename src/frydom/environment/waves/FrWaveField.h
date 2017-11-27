@@ -217,11 +217,11 @@ namespace frydom {
         double m_maxFreq = 2.;
         unsigned int m_nbFreq = 40;
 
-        double m_minDir = -180.*M_DEG;
-        double m_maxDir = 165.*M_DEG;
+        double m_minDir = -180. * MU_PI_180;
+        double m_maxDir = 165. * MU_PI_180;
         unsigned int m_nbDir = 20;
 
-        double m_meanDir = 0.*M_DEG;
+        double m_meanDir = 0.;
 
         // For regular wave field
         double m_height = 0.;
@@ -281,7 +281,7 @@ namespace frydom {
             m_height = height;
         }
 
-        void SetRegularWavePeriod(double period, FREQ_UNIT unit=S) {
+        void SetRegularWavePeriod(double period, FREQUENCY_UNIT unit=S) {
             m_period = convert_frequency(period, unit, S);
             Initialize();
         }
@@ -298,17 +298,17 @@ namespace frydom {
 
         double GetMaxWaveDirection() const { return m_maxDir; }
 
-        double GetMeanWaveDirection(FrAngleUnit unit=DEG) const {
+        double GetMeanWaveDirection(ANGLE_UNIT unit=DEG) const {
             double meanWaveDir = m_meanDir;
             if (unit == DEG) {
-                meanWaveDir *= M_RAD;
+                meanWaveDir *= MU_PI_180;
             }
             return meanWaveDir;
         }
 
-        void SetMeanWaveDirection(const double meanDirection, FrAngleUnit unit=DEG) {
+        void SetMeanWaveDirection(const double meanDirection, ANGLE_UNIT unit=DEG) {
             if (unit == DEG) {
-                m_meanDir = meanDirection * M_DEG;
+                m_meanDir = meanDirection * MU_PI_180;
             } else {
                 m_meanDir = meanDirection;
             }
@@ -319,7 +319,7 @@ namespace frydom {
             }
         }
 
-        std::vector<double> GetWaveDirections(FrAngleUnit unit=DEG) const {
+        std::vector<double> GetWaveDirections(ANGLE_UNIT unit=DEG) const {
             std::vector<double> waveDirections;
 
             if (m_linearWaveType != LINEAR_DIRECTIONAL) {
@@ -327,7 +327,7 @@ namespace frydom {
 
             } else {
                 if (unit == DEG) {
-                    waveDirections = linspace(m_minDir * M_RAD, m_maxDir * M_RAD, m_nbDir);
+                    waveDirections = linspace(m_minDir * MU_PI_180, m_maxDir * MU_PI_180, m_nbDir);
                 } else {
                     waveDirections = linspace(m_minDir, m_maxDir, m_nbDir);
                 }
@@ -336,10 +336,10 @@ namespace frydom {
             return waveDirections;
         }
 
-        void SetWaveDirections(const double minDir, const double maxDir, const unsigned int nbDir, FrAngleUnit unit=DEG) {
+        void SetWaveDirections(const double minDir, const double maxDir, const unsigned int nbDir, ANGLE_UNIT unit=DEG) {
             if (unit == DEG) {
-                m_minDir = minDir * M_DEG;
-                m_maxDir = maxDir * M_DEG;
+                m_minDir = minDir * MU_PI_180;
+                m_maxDir = maxDir * MU_PI_180;
             } else {
                 m_minDir = minDir;
                 m_maxDir = maxDir;
@@ -355,9 +355,11 @@ namespace frydom {
             }
         }
 
-        std::vector<double> GetWaveFrequencies(FREQ_UNIT unit = RADS) const { return c_waveFrequencies; }
+        std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit = RADS) const { return c_waveFrequencies; }
 
-        void SetWavePulsations(const double minFreq, const double maxFreq, const unsigned int nbFreq, FREQ_UNIT unit=RADS) {
+        void SetWavePulsations(const double minFreq, const double maxFreq, const unsigned int nbFreq,
+                               FREQUENCY_UNIT unit=RADS) {
+
             m_minFreq = convert_frequency(minFreq, unit, RADS);
             m_maxFreq = convert_frequency(maxFreq, unit, RADS);
             m_nbFreq = nbFreq;
@@ -418,7 +420,7 @@ namespace frydom {
             } else {
                 std::random_device rd;
                 std::mt19937 gen(rd());
-                std::uniform_real_distribution<double> dis(0., M_2PI);
+                std::uniform_real_distribution<double> dis(0., MU_2PI);
 
                 for (uint idir=0; idir<m_nbDir; ++idir) {
                     phases.clear();

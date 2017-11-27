@@ -3,11 +3,6 @@ message(STATUS "    ...misc")
 set(MISC_FILES_LOCAL
         FrEigen.h
         FrEigen.cpp
-        FrInterp1d.h
-        FrInterp1d.cpp
-        FrLinspace.h
-        FrLookupTable1D.h
-        FrMathUtils.h
         FrRecorder.h
         FrRecorder.cpp
         FrTriangleMeshConnected.h
