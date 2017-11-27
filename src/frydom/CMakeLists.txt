@@ -12,6 +12,7 @@ set(subdirs
         cable
         mooring
         IO
+        mesh
         misc
         propeller
         utils

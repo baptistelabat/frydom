@@ -16,6 +16,7 @@
 #include "hydrodynamics/FrHydrodynamics.h"
 #include "cable/FrCableInc.h"
 #include "IO/FrIO.h"
+#include "mesh/FrMeshInc.h"
 #include "utils/FrIrrApp.h"
 
 #include "Eigen/Dense"

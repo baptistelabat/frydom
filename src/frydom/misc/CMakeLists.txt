@@ -5,8 +5,6 @@ set(MISC_FILES_LOCAL
         FrEigen.cpp
         FrRecorder.h
         FrRecorder.cpp
-        FrTriangleMeshConnected.h
-        FrTriangleMeshConnected.cpp
         FrUtils.h
         FrUtils.cpp
 )

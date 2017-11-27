@@ -6,7 +6,7 @@
 #define FRYDOM_FRHYDROBODY_H
 
 #include "chrono/physics/ChBodyAuxRef.h"
-#include "frydom/misc/FrTriangleMeshConnected.h"
+#include "frydom/mesh/FrTriangleMeshConnected.h"
 #include "FrBody.h"
 #include "FrConstants.h"
 #include "FrEulerAngles.h"
