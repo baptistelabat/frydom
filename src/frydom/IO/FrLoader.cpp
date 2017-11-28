@@ -9,7 +9,7 @@
 
 
 namespace frydom {
-namespace IO {
+namespace IO {  // TODO: retirer ce namespace !
 
     FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string yaml_file) {
 
@@ -78,5 +78,5 @@ namespace IO {
         }
     }
 
-}  // end namespace frydom
+}  // end namespace IO
 }  // end namespace frydom

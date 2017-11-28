@@ -15,7 +15,7 @@
 #include "core/FrCore.h"
 #include "hydrodynamics/FrHydrodynamics.h"
 #include "cable/FrCableInc.h"
-#include "IO/FrIO.h"
+#include "IO/FrIO.h"  // TODO: pour respecter le nommage, paser le repertoire IO en io
 #include "mesh/FrMeshInc.h"
 #include "utils/FrIrrApp.h"
 
