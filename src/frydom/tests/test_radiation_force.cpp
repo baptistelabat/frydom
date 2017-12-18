@@ -4,9 +4,45 @@
 
 #include "frydom/frydom.h"
 
+
+#include "matplotlibcpp.h"
+
 using namespace frydom;
 
 int main(int argc, char* argv[]) {
+
+    // Creating a cylinder
+    auto cylinder = std::make_shared<FrHydroBody>();
+    cylinder->SetName("Cylinder");
+    cylinder->SetHydroMesh("Cylinder.obj", true);
+
+    // Loading the hydrodynamic database
+    FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");
+
+    // Computing the frequency responses
+    HDB.GenerateImpulseResponseFunctions(40., 0.01);
+
+    auto irf22 = HDB.GetBody(0)->GetImpulseResponseFunction(0, 2, 2);
+
+    std::vector<double> tmp;
+    for (unsigned int i; i<irf22.rows(); i++) {
+        tmp.push_back(irf22[i]);
+    }
+
+    matplotlibcpp::plot(tmp);
+    matplotlibcpp::show();
+
+
+
+
+
+
+
+
+
+
+
+
 
 //    // Building impulse response function database
 //    auto IRFDB = FrRadiationIRFDB(6, 6);

@@ -136,8 +136,8 @@ int main(int argc, char* argv[]) {
 //    system.SetTimestepperType(chrono::ChTimestepper::Type::NEWMARK);
     auto app = FrIrrApp(system, 30);
 
-    app.SetVideoframeSaveInterval(1);
-    app.SetVideoframeSave(true);
+//    app.SetVideoframeSaveInterval(1);
+//    app.SetVideoframeSave(true);
 
     app.Run();  // TODO: remettre
 

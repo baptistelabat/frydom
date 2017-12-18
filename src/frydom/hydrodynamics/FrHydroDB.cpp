@@ -10,6 +10,9 @@
 #include "frydom/IO/FrHDF5.h"
 
 
+// TODO: utiliser boost/multi_array.hpp a la place des vector<vector<Eigen::Matrix>>> ?????
+
+
 namespace frydom {
 
     FrHydroDB LoadHDB5(std::string hdb5_file) {
@@ -657,12 +660,92 @@ namespace frydom {
 
     }
 
+    void FrBEMBody::GenerateImpulseResponseFunctions(double p_tf, double p_dt) {
+
+        // Frequencies
+        auto wmin = m_HDB->GetMinFrequency();
+        auto wmax = m_HDB->GetMaxFrequency();
+        auto nbFreq = m_HDB->GetNbFrequencies();
+        auto omega = m_HDB->GetFrequencies();
+
+        // Time information for Impulse response function
+        auto dt = p_dt;
+        if (dt == 0.) {
+            // Ensuring a time sample satisfying largely the shannon theorem (5x by security...)
+            dt = MU_2PI / (5. * wmax);
+        }
+
+        auto time = arange<double>(0, p_tf, dt);
+        auto nbTime = time.size();
+
+        m_ImpulseResponseFunction.clear();
+        m_ImpulseResponseFunction.swap(m_ImpulseResponseFunction);
+        m_ImpulseResponseFunction.reserve(m_HDB->GetNbBodies());
+
+        unsigned int nbMotion, nbForce;
+        std::vector<double> integrand;
+        integrand.reserve(nbFreq);
+        double val;
+
+        // Initializing the 1d integrator
+        auto myIntegrator = Integrate1d<double>();
+        myIntegrator.SetIntegrationMethod(TRAPEZOIDAL);
+        myIntegrator.SetXmin(wmin);
+        myIntegrator.SetXmax(wmax);
+        myIntegrator.SetNbPoints(nbFreq);
+
+        for (unsigned int iBody=0; iBody<m_HDB->GetNbBodies(); iBody++) {
+
+            nbMotion = m_HDB->GetBody(iBody)->GetNbMotionMode();
+            nbForce = m_HDB->GetBody(iBody)->GetNbForceMode();
+
+            std::vector<Eigen::MatrixXd> body_i_impulseResponseFunctions;
+            body_i_impulseResponseFunctions.reserve(nbMotion);
+
+            for (unsigned int iMotion=0; iMotion<nbMotion; iMotion++) {
+
+                Eigen::MatrixXd localIRF(nbForce, nbTime);
+
+                for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                    auto localPotentialDamping = m_RadiationDamping[iBody][iMotion].row(iForce);
+
+                    // Performing integrations
+                    for (unsigned int iTime=0; iTime<nbTime; iTime++) {
+                        integrand.clear();
+                        for (unsigned int iFreq=0; iFreq<nbFreq; iFreq++) {
+                            val = localPotentialDamping[iFreq] * cos(omega[iFreq] * time[iTime]);
+                            integrand.push_back(val);
+                        }
+
+                        // Integration
+                        myIntegrator.SetY(integrand);
+                        localIRF(iForce, iTime) = myIntegrator.Get();
+                    }
+                }
+
+                localIRF *= MU_2_PI;
+                body_i_impulseResponseFunctions.push_back(localIRF);
+
+            }
+
+            m_ImpulseResponseFunction.push_back(body_i_impulseResponseFunctions);
+
+        }  // Loop on bodies
+
+    }
+
 //    void FrBEMBody::BuildRadiationInterpolators() {
 //        // TODO
 //    }
 
-
     std::vector<double> FrDiscretization1D::GetVector() const {
         return linspace<double>(m_xmin, m_xmax, m_nx);
+    }
+
+    void FrHydroDB::GenerateImpulseResponseFunctions(double tf, double dt) {
+        auto nbBody = GetNbBodies();
+        for (unsigned int iBody=0; iBody<nbBody; ++iBody) {
+            GetBody(iBody)->GenerateImpulseResponseFunctions(tf, dt);
+        }
     }
 }  // end namespace frydom

@@ -91,7 +91,11 @@ namespace frydom {
 //    template <class XReal, class YReal>
 //    class FrInterp1dLinear;
 
+    // =================================================================================================================
+
     class FrBEMBody {
+
+    // =================================================================================================================
 
     private:
         FrHydroBody* m_hydroBody;  // TODO: est-ce qu'on utilise un pointeur vers un hydrobody ou bien une bimap dans la HDB ??
@@ -210,11 +214,8 @@ namespace frydom {
 
         void SetImpulseResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
 
-
         // FIXME: les GetDiffraction etc ne doivent pas specialement etre accessible en dehors des interpolations...
         // On utilisera donc plutot GetExcitation(omega, angles) ...
-
-
 
         Eigen::MatrixXcd GetDiffraction(unsigned int iangle) const;
 
@@ -256,10 +257,16 @@ namespace frydom {
 
         Eigen::VectorXd GetSelfImpulseResponseFunction(unsigned int idof, unsigned int iforce) const;
 
+        void GenerateImpulseResponseFunctions(double tf = 30., double dt = 0.);
+
     };
 
+    // =================================================================================================================
 
     class FrHydroDB {
+
+    // =================================================================================================================
+
     private:
         double m_GravityAcc;
         double m_NormalizationLength;
@@ -319,6 +326,10 @@ namespace frydom {
 
         unsigned int GetNbFrequencies() const { return m_FrequencyDiscretization.GetNbSample(); }
 
+        double GetMaxFrequency() const { return m_FrequencyDiscretization.GetMax(); }
+
+        double GetMinFrequency() const { return m_FrequencyDiscretization.GetMin(); }
+
         unsigned int GetNbWaveDirections() const { return m_WaveDirectionDiscretization.GetNbSample(); }
 
         unsigned int GetNbTimeSamples() const { return m_TimeDiscretization.GetNbSample(); }
@@ -332,6 +343,7 @@ namespace frydom {
 
         std::shared_ptr<FrBEMBody> GetBody(unsigned int ibody) { return m_Bodies[ibody]; }
 
+        void GenerateImpulseResponseFunctions(double tf = 30., double dt = 0.);
 
     };
 
