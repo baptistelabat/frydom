@@ -8,7 +8,7 @@
 
 namespace frydom {
 
-    FrWaveDriftForce::FrWaveDriftForce(const std::string yaml_file) {
+    FrWaveDriftForce::FrWaveDriftForce(const std::string hdf5_file) {
 
     }
 

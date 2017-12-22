@@ -58,9 +58,9 @@ set(CMAKE_CXX_STANDARD 14)
 add_subdirectory(thirdparty)
 
 #=============================================================================
-#
+# 
 # Adding the FRyDoM project sources
-#
+# 
 #=============================================================================
 add_subdirectory(src/frydom)
 

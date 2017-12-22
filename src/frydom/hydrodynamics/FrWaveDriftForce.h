@@ -16,7 +16,7 @@ namespace frydom {
     public:
 
         /// Construct a new force model from drift table coefficients
-        FrWaveDriftForce(const std::string yaml_file);
+        FrWaveDriftForce(const std::string hdf5_file);
 
         /// Wave probe attached to the force at the application point location
         void SetWaveProbe(std::shared_ptr<FrLinearWaveProbe>& waveProbe) { m_waveProbe = waveProbe; }
