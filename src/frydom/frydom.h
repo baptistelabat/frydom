@@ -21,5 +21,8 @@
 
 #include "Eigen/Dense"
 
+#include <irrlicht.h>
+#include <H5Cpp.h>
+
 
 #endif //FRYDOM_FRYDOM_H

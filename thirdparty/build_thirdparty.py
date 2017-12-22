@@ -29,7 +29,7 @@ try:
     cmake = which.which('cmake')
 except which.WhichError:
     print "cannot find cmake"
-    cmake = '/home/frongere/mysofts/cmake-3.8.2-Linux-x86_64/bin/cmake'
+    #cmake = '/home/frongere/mysofts/cmake-3.8.2-Linux-x86_64/bin/cmake'
 
 try:
     git = which.which('git')
@@ -137,11 +137,13 @@ def build_chrono(build_type):
     # Chrono Settings
     os.chdir('chrono_build')
     call([cmake, "-Wno-dev", "-C", "../cmakeCacheScripts/chronoSettings.cmake",
-          "-DCH_IRRLICHTDIR=%s" % irrlicht_dir,
-          "-DCH_IRRLICHTLIB=%s" % irrlicht_lib,
+          #"-DCH_IRRLICHTDIR=%s" % irrlicht_dir,
+          #"-DCH_IRRLICHTLIB=%s" % irrlicht_lib,
           "-DCMAKE_BUILD_TYPE=%s" % build_type,
           "../chrono"])
+    #call([cmake, "../chrono"])
     call([make, "-j", str(nb_core)])
+    #call([make])
     os.chdir("..")
 
 
@@ -181,5 +183,5 @@ if __name__ == "__main__":
     build_eigen(build_type)
     build_MathUtils(build_type)
     build_yaml_cpp(build_type)
-    build_irrlicht(build_type)
+    #build_irrlicht(build_type)
     build_chrono(build_type)
