@@ -660,7 +660,9 @@ namespace frydom {
 
     }
 
-    void FrBEMBody::GenerateImpulseResponseFunctions(double p_tf, double p_dt) {
+    void FrBEMBody::GenerateImpulseResponseFunctions() {
+
+
 
         // Frequencies
         auto wmin = m_HDB->GetMinFrequency();
@@ -669,13 +671,25 @@ namespace frydom {
         auto omega = m_HDB->GetFrequencies();
 
         // Time information for Impulse response function
-        auto dt = p_dt;
+        auto tf = m_HDB->GetFinalTime();
+        auto dt = m_HDB->GetTimeStep();
+
         if (dt == 0.) {
-            // Ensuring a time sample satisfying largely the shannon theorem (5x by security...)
-            dt = MU_2PI / (5. * wmax);
+            throw std::runtime_error("Time discretization for impulse response functions has not been "
+                                             "initialized in the hydrodynamic database");
         }
 
-        auto time = arange<double>(0, p_tf, dt);
+
+//        auto dt = p_dt;
+//        if (dt == 0.) {
+//            // Ensuring a time sample satisfying largely the shannon theorem (5x by security...)
+//            dt = MU_2PI / (5. * wmax);
+//        }
+
+        auto time = arange<double>(0, tf, dt);
+
+
+
         auto nbTime = time.size();
 
         m_ImpulseResponseFunction.clear();
@@ -743,9 +757,24 @@ namespace frydom {
     }
 
     void FrHydroDB::GenerateImpulseResponseFunctions(double tf, double dt) {
+
+        // Generate time informations
+        if (dt == 0.) {
+            // Ensuring a time sample satisfying largely the shannon theorem (5x by security...)
+            dt = MU_2PI / (5. * GetMaxFrequency());
+        }
+
+        // Registering the time discretization into the database
+        m_TimeDiscretization.SetMin(0.);
+        m_TimeDiscretization.SetMax(tf);
+        m_TimeDiscretization.SetStep(dt);
+
+        // Computing the Impulse response functions for every bodies
         auto nbBody = GetNbBodies();
         for (unsigned int iBody=0; iBody<nbBody; ++iBody) {
-            GetBody(iBody)->GenerateImpulseResponseFunctions(tf, dt);
+            GetBody(iBody)->GenerateImpulseResponseFunctions();
         }
+
     }
+
 }  // end namespace frydom

@@ -20,7 +20,10 @@ int main(int argc, char* argv[]) {
     FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");
 
     // Computing the frequency responses
-    HDB.GenerateImpulseResponseFunctions(40., 0.01);
+    HDB.GenerateImpulseResponseFunctions(300.);
+
+
+
 
     auto irf22 = HDB.GetBody(0)->GetImpulseResponseFunction(0, 2, 2);
 

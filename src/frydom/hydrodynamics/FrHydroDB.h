@@ -24,6 +24,7 @@ namespace frydom {
         unsigned int m_nx = 0;
 
     public:
+
         FrDiscretization1D() = default;
 
         FrDiscretization1D(double xmin, double xmax, unsigned int nx)
@@ -40,7 +41,16 @@ namespace frydom {
 
         std::vector<double> GetVector() const;
 
+        void SetStep(double delta) {
+            m_nx = 1 + (unsigned int)((m_xmax - m_xmin) / delta);
+        }
+
+        double GetStep() const {
+            return (m_xmax-m_xmin) / double(m_nx-1);
+        }
+
     };
+
 
     class FrBEMMode {
     public:
@@ -98,7 +108,7 @@ namespace frydom {
     // =================================================================================================================
 
     private:
-        FrHydroBody* m_hydroBody;  // TODO: est-ce qu'on utilise un pointeur vers un hydrobody ou bien une bimap dans la HDB ??
+        FrHydroBody* m_hydroBody = nullptr;  // TODO: est-ce qu'on utilise un pointeur vers un hydrobody ou bien une bimap dans la HDB ??
 
         FrHydroDB* m_HDB = nullptr;
 
@@ -257,7 +267,7 @@ namespace frydom {
 
         Eigen::VectorXd GetSelfImpulseResponseFunction(unsigned int idof, unsigned int iforce) const;
 
-        void GenerateImpulseResponseFunctions(double tf = 30., double dt = 0.);
+        void GenerateImpulseResponseFunctions();
 
     };
 
@@ -268,17 +278,19 @@ namespace frydom {
     // =================================================================================================================
 
     private:
-        double m_GravityAcc;
-        double m_NormalizationLength;
-        double m_WaterDensity;
-        double m_WaterDepth;
+
+        double m_GravityAcc            = 9.81;
+        double m_NormalizationLength   = 1.;
+        double m_WaterDensity          = 1000.;
+        double m_WaterDepth            = 0.;
+
         std::vector<std::shared_ptr<FrBEMBody>> m_Bodies;
         FrDiscretization1D m_FrequencyDiscretization;
         FrDiscretization1D m_WaveDirectionDiscretization;
         FrDiscretization1D m_TimeDiscretization;
 
     public:
-        FrHydroDB() {};
+        FrHydroDB() = default;
 
         unsigned int GetNbBodies() const { return (unsigned int)m_Bodies.size(); }
 
@@ -334,6 +346,10 @@ namespace frydom {
 
         unsigned int GetNbTimeSamples() const { return m_TimeDiscretization.GetNbSample(); }
 
+        double GetFinalTime() const { return m_TimeDiscretization.GetMax(); }
+
+        double GetTimeStep() const { return m_TimeDiscretization.GetStep(); }
+
         std::shared_ptr<FrBEMBody> NewBody(std::string BodyName) {
             auto body = std::make_shared<FrBEMBody>(GetNbBodies(), BodyName);
             body->SetHDB(this);
@@ -345,7 +361,7 @@ namespace frydom {
 
         void GenerateImpulseResponseFunctions(double tf = 30., double dt = 0.);
 
-    };
+    };  // end class FrHydroDB
 
     // =================================================================================================================
 
