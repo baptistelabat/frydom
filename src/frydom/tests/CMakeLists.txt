@@ -21,6 +21,7 @@ set(FRYDOM_TESTS
         test_wave_excitation_force
         test_wave_field
         test_wave_spectrum
+        test_IRF_computation
         )
 
 

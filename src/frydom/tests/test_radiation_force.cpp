@@ -22,6 +22,8 @@ int main(int argc, char* argv[]) {
     // Computing the frequency responses
     HDB.GenerateImpulseResponseFunctions(300.);
 
+    auto tf = HDB.GetFinalTime();
+//    auto
 
 
 

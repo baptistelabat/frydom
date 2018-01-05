@@ -9,6 +9,10 @@
 #include "FrHydroDB.h"
 #include "frydom/IO/FrHDF5.h"
 
+#include "MathUtils.h"
+
+using namespace mathutils;
+
 
 // TODO: utiliser boost/multi_array.hpp a la place des vector<vector<Eigen::Matrix>>> ?????
 
@@ -669,6 +673,7 @@ namespace frydom {
         auto wmax = m_HDB->GetMaxFrequency();
         auto nbFreq = m_HDB->GetNbFrequencies();
         auto omega = m_HDB->GetFrequencies();
+        auto dw = m_HDB->GetStepFrequency();
 
         // Time information for Impulse response function
         auto tf = m_HDB->GetFinalTime();
@@ -702,11 +707,12 @@ namespace frydom {
         double val;
 
         // Initializing the 1d integrator
-        auto myIntegrator = Integrate1d<double>();
-        myIntegrator.SetIntegrationMethod(TRAPEZOIDAL);
-        myIntegrator.SetXmin(wmin);
-        myIntegrator.SetXmax(wmax);
-        myIntegrator.SetNbPoints(nbFreq);
+//        auto myIntegrator = Integrate1d<double>();
+//        myIntegrator.SetIntegrationMethod(TRAPEZOIDAL);
+//        myIntegrator.SetXmin(wmin);
+//        myIntegrator.SetXmax(wmax);
+//        myIntegrator.SetNbPoints(nbFreq);
+
 
         for (unsigned int iBody=0; iBody<m_HDB->GetNbBodies(); iBody++) {
 
@@ -732,12 +738,12 @@ namespace frydom {
                         }
 
                         // Integration
-                        myIntegrator.SetY(integrand);
-                        localIRF(iForce, iTime) = myIntegrator.Get();
+//                        myIntegrator.SetY(integrand);
+                        localIRF(iForce, iTime) = Trapz(integrand, dw);
                     }
                 }
 
-                localIRF *= MU_2_PI;
+                localIRF /= MU_PI_2;
                 body_i_impulseResponseFunctions.push_back(localIRF);
 
             }
@@ -760,8 +766,8 @@ namespace frydom {
 
         // Generate time informations
         if (dt == 0.) {
-            // Ensuring a time sample satisfying largely the shannon theorem (5x by security...)
-            dt = MU_2PI / (5. * GetMaxFrequency());
+            // Ensuring a time step satisfying largely the shannon theorem (5x by security instead of the theoretical 2 ...)
+            dt = MU_2PI / (5. * GetMaxFrequency());  // TODO: non, on veut avoir un nombre d'echantillon en puissance de 2 !!!
         }
 
         // Registering the time discretization into the database

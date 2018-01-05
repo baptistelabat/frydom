@@ -7,7 +7,7 @@
 
 #include <vector>
 #include "MathUtils.h"
-#include "frydom/utils/FrEigen.h"
+#include "frydom/utils/FrEigen.h" // TODO: Eigen est maintenant deja importe de MathUtils... ne plus reposer sur le sous module frydom
 
 
 // TODO: utiliser plutot des std::vector a la place des matrices eigen ...
@@ -341,6 +341,8 @@ namespace frydom {
         double GetMaxFrequency() const { return m_FrequencyDiscretization.GetMax(); }
 
         double GetMinFrequency() const { return m_FrequencyDiscretization.GetMin(); }
+
+        double GetStepFrequency() const {return m_FrequencyDiscretization.GetStep(); }
 
         unsigned int GetNbWaveDirections() const { return m_WaveDirectionDiscretization.GetNbSample(); }
 
