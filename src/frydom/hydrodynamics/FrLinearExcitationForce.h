@@ -32,7 +32,7 @@ namespace frydom {
             m_Fexc.clear();
         }
 
-        void Initialize() {
+        void Initialize() {  // TODO: devrait s'initialiser automatiquement au lancement de la simulation...
 
             auto BEMBody = dynamic_cast<FrHydroBody*>(GetBody())->GetBEMBody();
             auto waveField = m_waveProbe->GetWaveField();
@@ -113,6 +113,8 @@ namespace frydom {
             chrono::ChVector<double> point;
 
             FrBEMMode::TYPE modeType;
+
+            // FIXME: les deux boucles suivantes ne sont vraiment pas optimales !!!!
 
             // Linear force computation
             for (unsigned int imode=0; imode<nbMode; ++imode) {

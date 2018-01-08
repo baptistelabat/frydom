@@ -57,6 +57,11 @@ namespace frydom {
 
         // update parent class
         chrono::ChBodyAuxRef::Update(update_assets);
+
+        if (m_BEMBody) {
+            RecordVelocityState(); // NON !!!
+        }
+
     }
 
     chrono::ChVector<double> FrHydroBody::GetCurrentRelativeVelocity(FrFrame frame) {

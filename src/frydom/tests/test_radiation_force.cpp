@@ -20,9 +20,10 @@ int main(int argc, char* argv[]) {
     FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");
 
     // Computing the frequency responses
-    HDB.GenerateImpulseResponseFunctions(300.);
+    HDB.GenerateImpulseResponseFunctions(300.); // Ne pas faire ici, c'est fait a l'initialisation de la force de radiation !!! (automatique)
 
-    auto tf = HDB.GetFinalTime();
+
+//    auto tf = HDB.GetFinalTime();
 //    auto
 
 

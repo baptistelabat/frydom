@@ -53,6 +53,9 @@ namespace frydom {
         chrono::ChFrame<double> m_equilibriumFrame;
 
 
+        boost::circular_buffer<chrono::ChVectorDynamic<double>> m_velocityStateRecorder;
+
+
     public:
 
         void SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody);
@@ -69,10 +72,10 @@ namespace frydom {
         void Update(bool update_assets = true) override;
 
         /// Get the pointer to the parent ChSystem()
-        FrOffshoreSystem* GetSystem() const { return dynamic_cast<FrOffshoreSystem*>(system); }
+        FrOffshoreSystem* GetSystem() const { return dynamic_cast<FrOffshoreSystem*>(system); }  // FIXME: cache GetSystem() de ChPhysicsItem...
 
         /// Get the body position
-        chrono::ChVector<> GetPosition(FrFrame frame= NWU) {
+        chrono::ChVector<> GetPosition(FrFrame frame= NWU) {  // FIXME: cache le GetPosition de FrBody
             switch (frame) {
                 case NWU:
                     return GetPos();
@@ -82,12 +85,25 @@ namespace frydom {
         }
 
         /// Get the body orientation
-        chrono::ChVector<> GetOrientation(FrFrame frame= NWU) {
+        chrono::ChVector<> GetOrientation(FrFrame frame= NWU) {  // FIXME: cache le GetOrientation de FrBody
             // TODO
         }
 
+        chrono::ChVectorDynamic<double> GetSpatialVelocity(FrFrame frame=NWU) {
+            chrono::ChVectorDynamic<double> velocity(6);
+
+            auto linear = GetVelocity(frame);
+            auto angular = GetAngularVelocity(frame);
+
+            for (uint i=0; i<3; i++) {
+                velocity.ElementN(i) = linear[i];
+                velocity.ElementN(i+3) = angular[i];
+            }
+            return velocity;
+        }
+
         /// Get the body velocity
-        chrono::ChVector<> GetVelocity(FrFrame frame= NWU) {
+        chrono::ChVector<> GetVelocity(FrFrame frame= NWU) {  // FIXME: cache le GetVelocity de FrBody
             switch (frame) {
                 case NWU:
                     return GetPos_dt();
@@ -97,7 +113,7 @@ namespace frydom {
         }
 
         /// Get the body angular velocity
-        chrono::ChVector<> GetAngularVelocity(FrFrame frame= NWU) {
+        chrono::ChVector<> GetAngularVelocity(FrFrame frame= NWU) {  // FIXME: cache le GetAngularVelocity de FrBody
             switch (frame) {
                 case NWU:
                     return GetWvel_par();
@@ -182,9 +198,6 @@ namespace frydom {
         chrono::ChFrame<double> GetEquilibriumFrame() const;
 
 
-
-
-
         // TODO: introduire une classe geometricProperties qui rassemble les differentes donnees...
 
         /// Get the transverse underwater area of the body
@@ -257,6 +270,30 @@ namespace frydom {
             R.PasteSumVector(Iw, off + 3, 0);
 
         }
+
+        void InitializeVelocityState(unsigned int N) {  // TODO: voir comment faire pour recuperer le N...
+            // Number of velocities (6)
+            // TODO: c'est ici qu'on appelle la fonction permettant de determiner la longueur du buffer circulaire
+
+            // TODO: initialisation du buffer circulaire en terme de capacite et d'elements nuls (N vecteur 6)
+
+            chrono::ChVectorDynamic<double> nullVector(6);  // Elements are initialized with zero by default
+            m_velocityStateRecorder = boost::circular_buffer<chrono::ChVectorDynamic<double>>(N, N, nullVector);
+
+        }
+
+        void RecordVelocityState() {
+            m_velocityStateRecorder.push_front(GetSpatialVelocity(NWU));
+        }
+
+        boost::circular_buffer<chrono::ChVectorDynamic<double>> GetVelocityStateBuffer() const {
+            return m_velocityStateRecorder;
+        }
+
+
+
+
+
 
     };
 
