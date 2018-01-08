@@ -29,11 +29,9 @@ int main(int argc, char* argv[]) {
     auto dt = 1./fs;
 
 
-    HDB.GenerateImpulseResponseFunctions(T, dt); // Travailler dessus !!!!
+    HDB.GenerateImpulseResponseFunctions(T, dt); // Travailler dessus !!!! (T est en fait lie a dw ...
 
-
-
-    auto time = arange<double>(0., T, dt);
+    auto time = arange<double>(0., T, dt); // c'est ce qui est fait dans GeerateImpulseResonse(), meilleur moyen ???
 
     auto k22 = HDB.GetBody(0)->GetImpulseResponseFunction(0, 2, 2);
 
@@ -58,10 +56,10 @@ int main(int argc, char* argv[]) {
     Eigen::VectorXd omega_eig = Eigen::Map<Eigen::VectorXd>(omega_vec.data(), nw);
 
     // Using a B-spline to reinterpolate
-    mathutils::Spline<double, 1, 3> A22_w_spl(omega_eig, A22_w);
+    mathutils::Spline<double, 1, 3> A22_w_spl(omega_eig, A22_w);  // Renommer en MUSpline -> ambiguite avec eigen spline
     mathutils::Spline<double, 1, 3> B22_w_spl(omega_eig, B22_w);
 
-    auto nfft = (uint)pow(2, 8);
+    auto nfft = (uint)pow(2,5);
 
     auto omega_interp = linspace<double>(0, wmax, (uint)nfft);
     auto dw_interp = omega_interp[1] - omega_interp[0];
@@ -81,7 +79,7 @@ int main(int argc, char* argv[]) {
 
 
     std::vector<std::complex<double>> K22_w(nfft+1);
-    K22_w[0] = 0.;
+    K22_w[0] = 0.; // We add the fundamental which must be 0 for the resulting signal
     for (uint i=1; i<nfft; i++) {
         K22_w[i] = B22_interp[i] + MU_JJ*omega_interp[i] * (A22_interp[i] - A22inf);
     }

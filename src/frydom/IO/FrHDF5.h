@@ -17,7 +17,7 @@
 #define RW H5F_ACC_RDWR
 
 using namespace H5;
-using namespace Eigen;
+//using namespace Eigen;
 
 namespace frydom {
 namespace IO {
@@ -53,7 +53,7 @@ namespace IO {
 
         void Close() { m_file->close(); }
 
-        Matrix<double, Dynamic, Dynamic> ReadDoubleArray(std::string h5Path) const {
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ReadDoubleArray(std::string h5Path) const {
 
             DataSet dset = m_file->openDataSet(h5Path); // TODO: try
             DataSpace dspace = dset.getSpace();
@@ -89,7 +89,7 @@ namespace IO {
 
             }
 
-            Matrix<double, Dynamic, Dynamic> out(nb_rows, nb_cols);
+            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> out(nb_rows, nb_cols);
 
             auto* buffer = new double[nb_elt];
 
@@ -106,7 +106,7 @@ namespace IO {
             return out;
         }
 
-        Matrix<int, Dynamic, Dynamic> ReadIntArray(std::string h5Path) const {
+        Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> ReadIntArray(std::string h5Path) const {
 
             DataSet dset = m_file->openDataSet(h5Path);
             DataSpace dspace = dset.getSpace();
@@ -142,7 +142,7 @@ namespace IO {
 
             }
 
-            Matrix<int, Dynamic, Dynamic> out(nb_rows, nb_cols);
+            Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> out(nb_rows, nb_cols);
 
             auto* buffer = new int[nb_elt];
 
