@@ -9,7 +9,6 @@
 #include "frydom/hydrodynamics/FrHydroDB.h"
 #include "FrHydroBody.h"
 
-#include "frydom/environment/FrEnvironment.h"
 
 namespace frydom {
 
@@ -58,8 +57,9 @@ namespace frydom {
         // update parent class
         chrono::ChBodyAuxRef::Update(update_assets);
 
-        if (m_BEMBody) {
-            RecordVelocityState(); // NON !!!
+        if (m_BEMBody) {  // FIXME: est-ce que ca fonctionne comme prevu si pas de BEMBody ?
+            // Recording the velocity in case we are using a first order BEM Body (with hydrodynamics database)
+            RecordVelocityState(NWU); // NON !!!
         }
 
     }

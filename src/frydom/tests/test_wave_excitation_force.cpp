@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
     waveField->GetWaveSpectrum()->SetHs(1.);
     waveField->GetWaveSpectrum()->SetTp(7.);
 
-    waveField->GetWaveRamp()->SetDuration(20.);
+    waveField->GetWaveRamp()->SetDuration(5.);
     waveField->GetWaveRamp()->SetIncrease();
 
 
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
     cylinder->SetLateralUnderWaterArea(100.);
     cylinder->SetTransverseUnderWaterArea(100.);
     cylinder->SetLpp(10.);
-    cylinder->SetInertiaXX(chrono::ChVector<double>(5e7, 5e7, 1e9));
+    cylinder->SetInertiaXX(chrono::ChVector<double>(1e7, 1e7, 1e6));
     cylinder->SetMass(795e3 * 2.);  // TODO : retirer le 2., c'est pour emuler une masse ajoutee...
     cylinder->SetCOG(chrono::ChVector<double>(0., 0., -7.5));
 //    cylinder->SetBodyFixed(true);  // TODO: retirer
@@ -88,6 +88,10 @@ int main(int argc, char* argv[]) {
     // ===========================================
 
     // Set added mass
+
+
+
+
 
 
     // Hydrostatics
@@ -115,6 +119,12 @@ int main(int argc, char* argv[]) {
     cylinder->AddForce(excForce);
     excForce->SetWaveProbe(waveProbe);
     excForce->Initialize();
+
+
+    // Radiation
+    auto radForce = std::make_shared<FrRadiationConvolutionForce>();
+    cylinder->AddForce(radForce);
+    radForce->Initialize();
 
 
 //    double dt = 0.01;

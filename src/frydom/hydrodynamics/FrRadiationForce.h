@@ -14,9 +14,9 @@
 namespace frydom {
 
 
-    class FrRadiationModel {
-
-    };
+//    class FrRadiationModel {
+//
+//    };
 
 
 
@@ -42,6 +42,8 @@ namespace frydom {
 
     public:
         void Initialize() {
+            // TODO: comment initialiser une fois que toute la modelisation a ete faite ???
+
             // Getting the body as a FrHydroBody
             auto body = dynamic_cast<FrHydroBody*>(GetBody());
 
@@ -78,7 +80,9 @@ namespace frydom {
 
         }
 
-
+        void UpdateState() override {
+            // TODO
+        }
 
 
 

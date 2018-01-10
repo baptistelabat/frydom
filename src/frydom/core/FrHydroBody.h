@@ -53,7 +53,7 @@ namespace frydom {
         chrono::ChFrame<double> m_equilibriumFrame;
 
 
-        boost::circular_buffer<chrono::ChVectorDynamic<double>> m_velocityStateRecorder;
+        boost::circular_buffer<chrono::ChVectorDynamic<double>> m_velocityStateRecorder;  // circular buffer to store velocity state data for a fixed time persistence
 
 
     public:
@@ -90,12 +90,13 @@ namespace frydom {
         }
 
         chrono::ChVectorDynamic<double> GetSpatialVelocity(FrFrame frame=NWU) {
+            // TODO: faire une classe speciale pour le vecteur spatial permettant de recuperer directement la partie lineaire et angulare (inline)
             chrono::ChVectorDynamic<double> velocity(6);
 
             auto linear = GetVelocity(frame);
             auto angular = GetAngularVelocity(frame);
 
-            for (uint i=0; i<3; i++) {
+            for (unsigned int i=0; i<3; i++) {
                 velocity.ElementN(i) = linear[i];
                 velocity.ElementN(i+3) = angular[i];
             }
@@ -280,10 +281,19 @@ namespace frydom {
             chrono::ChVectorDynamic<double> nullVector(6);  // Elements are initialized with zero by default
             m_velocityStateRecorder = boost::circular_buffer<chrono::ChVectorDynamic<double>>(N, N, nullVector);
 
+            for (uint ielt=0; ielt<m_velocityStateRecorder.size(); ielt++) {
+                auto elt = m_velocityStateRecorder[ielt];
+                for (uint j=0; j<elt.GetRows(); j++) {
+                    std::cout << elt[j];
+                }
+                std::cout << std::endl;
+            }
+            std::cout << "init";
+
         }
 
-        void RecordVelocityState() {
-            m_velocityStateRecorder.push_front(GetSpatialVelocity(NWU));
+        void RecordVelocityState(FrFrame frame=NWU) {
+            m_velocityStateRecorder.push_front(GetSpatialVelocity(frame));
         }
 
         boost::circular_buffer<chrono::ChVectorDynamic<double>> GetVelocityStateBuffer() const {
