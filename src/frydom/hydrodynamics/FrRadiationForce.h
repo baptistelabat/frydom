@@ -35,7 +35,7 @@ namespace frydom {
     class FrRadiationConvolutionForce : public FrRadiationForce {
 
     private:
-
+        bool m_initialized = false;
 
 
 
@@ -66,22 +66,30 @@ namespace frydom {
 
 //            // Next power of 2 for the recorder
 //            auto N = NextPow2(N);
-            BEMBody->GetHDB()->SetTimeDiscretization(Te, N);  // Du coup, on le refait sur la HDB a chaque fois...
+            // FIXME: Attention, Te est ici uniquement base sur la discretisation de la HDB mais pas sur un temps physique
+            // d'extinction... --> on prend certainement trop d'echantillons
+            BEMBody->GetHDB()->SetTimeDiscretization(Te, N);  // FIXME : Du coup, on le refait sur la HDB a chaque fois...
+
+            // Initializing circular buffers for the corresponding hydrodynamic body
+            body->InitializeVelocityState(N);
 
             // TODO: FIN TODO
 
             // Initilializing the impulse response functions for current body
             BEMBody->GenerateImpulseResponseFunctions();
 
-            // Initializing circular buffers
-            BEMBody->Initialize();
-
+            m_initialized = true;
 
 
         }
 
         void UpdateState() override {
-            // TODO
+            if (!m_initialized) {
+                // TODO: prevoir dans OffshoreSystem un mecanisme d'initialisation general...
+                Initialize();
+            }
+
+
         }
 
 

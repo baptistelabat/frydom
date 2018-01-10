@@ -44,7 +44,7 @@ namespace frydom {
                 EndScene();
 
                 if (m_verbose) {
-                    std::cout << "Time: " << GetSystem()->GetChTime() << std::endl;
+//                    std::cout << "Time: " << GetSystem()->GetChTime() << std::endl;
                 }
             }
 

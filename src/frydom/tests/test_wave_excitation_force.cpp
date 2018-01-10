@@ -112,19 +112,19 @@ int main(int argc, char* argv[]) {
     FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");
 
     // Linking the physical floating body to its counterpart from the HDB
-    cylinder->SetBEMBody(HDB.GetBody(0));
+    cylinder->SetBEMBody(HDB.GetBody(0)); // Important !! On linke les corps physiques avec les corps hydro de la HDB...
 
     // Creer un modele de force d'excitation et l'ajouter au corps hydro
     auto excForce = std::make_shared<FrLinearExcitationForce>();
     cylinder->AddForce(excForce);
     excForce->SetWaveProbe(waveProbe);
-    excForce->Initialize();
+    excForce->Initialize();  // TODO: voir
 
 
     // Radiation
     auto radForce = std::make_shared<FrRadiationConvolutionForce>();
     cylinder->AddForce(radForce);
-    radForce->Initialize();
+//    radForce->Initialize();
 
 
 //    double dt = 0.01;
@@ -145,6 +145,10 @@ int main(int argc, char* argv[]) {
 //    system.SetTimestepperType(chrono::ChTimestepper::Type::LEAPFROG);
 //    system.SetTimestepperType(chrono::ChTimestepper::Type::NEWMARK);
     auto app = FrIrrApp(system, 30);
+
+    app.SetTimestep(0.01);
+//    radForce->Initialize();
+
 
 //    app.SetVideoframeSaveInterval(1);
 //    app.SetVideoframeSave(true);

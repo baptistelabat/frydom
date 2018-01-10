@@ -53,7 +53,12 @@ namespace frydom {
         chrono::ChFrame<double> m_equilibriumFrame;
 
 
-        boost::circular_buffer<chrono::ChVectorDynamic<double>> m_velocityStateRecorder;  // circular buffer to store velocity state data for a fixed time persistence
+        boost::circular_buffer<double> m_vx_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
+        boost::circular_buffer<double> m_vy_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
+        boost::circular_buffer<double> m_vz_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
+        boost::circular_buffer<double> m_wx_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
+        boost::circular_buffer<double> m_wy_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
+        boost::circular_buffer<double> m_wz_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
 
 
     public:
@@ -272,33 +277,38 @@ namespace frydom {
 
         }
 
-        void InitializeVelocityState(unsigned int N) {  // TODO: voir comment faire pour recuperer le N...
-            // Number of velocities (6)
-            // TODO: c'est ici qu'on appelle la fonction permettant de determiner la longueur du buffer circulaire
+        void InitializeVelocityState(unsigned int N) {  // TODO : Voir comment recuperer le N qui pourrait etre mis en cache quelque part ??
 
-            // TODO: initialisation du buffer circulaire en terme de capacite et d'elements nuls (N vecteur 6)
-
-            chrono::ChVectorDynamic<double> nullVector(6);  // Elements are initialized with zero by default
-            m_velocityStateRecorder = boost::circular_buffer<chrono::ChVectorDynamic<double>>(N, N, nullVector);
-
-            for (uint ielt=0; ielt<m_velocityStateRecorder.size(); ielt++) {
-                auto elt = m_velocityStateRecorder[ielt];
-                for (uint j=0; j<elt.GetRows(); j++) {
-                    std::cout << elt[j];
-                }
-                std::cout << std::endl;
-            }
-            std::cout << "init";
+            m_vx_Recorder = boost::circular_buffer<double>(N, N, 0.);
+            m_vy_Recorder = boost::circular_buffer<double>(N, N, 0.);
+            m_vz_Recorder = boost::circular_buffer<double>(N, N, 0.);
+            m_wx_Recorder = boost::circular_buffer<double>(N, N, 0.);
+            m_wy_Recorder = boost::circular_buffer<double>(N, N, 0.);
+            m_wz_Recorder = boost::circular_buffer<double>(N, N, 0.);
 
         }
 
         void RecordVelocityState(FrFrame frame=NWU) {
-            m_velocityStateRecorder.push_front(GetSpatialVelocity(frame));
+
+            std::cout << "Time : " << GetSystem()->GetChTime() << "\n";
+
+            auto linear_velocity = GetVelocity(frame);
+            auto angular_velocity = GetAngularVelocity(frame);
+
+            // FIXME: le update de frhydrobody est appelé plusieurs fois pour le meme pas de temps !!!
+
+            m_vx_Recorder.push_front(linear_velocity[0]);
+            m_vy_Recorder.push_front(linear_velocity[1]);
+            m_vz_Recorder.push_front(linear_velocity[2]);
+            m_wx_Recorder.push_front(angular_velocity[0]);
+            m_wy_Recorder.push_front(angular_velocity[1]);
+            m_wz_Recorder.push_front(angular_velocity[2]);
+
         }
 
-        boost::circular_buffer<chrono::ChVectorDynamic<double>> GetVelocityStateBuffer() const {
-            return m_velocityStateRecorder;
-        }
+//        boost::circular_buffer<chrono::ChVectorDynamic<double>> GetVelocityStateBuffer() const {
+//            return m_velocityStateRecorder;
+//        }
 
 
 
