@@ -6,7 +6,9 @@
 #define FRYDOM_FRHYDRODYNAMICS_H
 
 #include "FrFroudeKrylov.h"
+#include "FrBEMBody.h"
 #include "FrHydroDB.h"
+#include "FrHydroDBLoader.h"
 #include "FrHydrostaticForce.h"
 #include "FrITTC57.h"
 #include "FrLinearDamping.h"

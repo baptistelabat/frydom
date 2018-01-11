@@ -3,6 +3,8 @@ message(STATUS "    ...hydrodynamics")
 set(HYDRODYNAMICS_FILES_LOCAL
         FrFroudeKrylov.h
         FrFroudeKrylov.cpp
+        FrBEMBody.h
+        FrBEMBody.cpp
         FrHydroDB.h
         FrHydroDB.cpp
         FrHydrostaticForce.h
@@ -31,6 +33,8 @@ set(HYDRODYNAMICS_FILES_LOCAL
         FrRadiationModel.cpp
         FrHydroMapper.h
         FrHydroMapper.cpp
+        FrHydroDBLoader.h
+        FrHydroDBLoader.cpp
 )
 
 set(HYDRODYNAMICS_FILES "")

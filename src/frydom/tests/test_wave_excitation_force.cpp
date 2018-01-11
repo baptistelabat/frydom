@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     double wmax = 3.;
     unsigned int nbFreq = 80;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
-    waveField->GetWaveSpectrum()->SetHs(5.);  // 1
+    waveField->GetWaveSpectrum()->SetHs(1.);  // 1
     waveField->GetWaveSpectrum()->SetTp(5.5);  // 7
 
     waveField->GetWaveRamp()->SetDuration(5.);
