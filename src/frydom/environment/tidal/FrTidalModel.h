@@ -9,6 +9,8 @@
 
 #include "MathUtils.h"
 
+#include "frydom/core/FrObject.h"
+
 using namespace mathutils;
 // TODO: La hauteur de marée (+ sonde a recuperer de seabed) doivent etre retranscrite sur le corps embarque dans la
 // surface libre.
@@ -76,7 +78,7 @@ namespace frydom {
     };
 
 
-    class FrTidal {
+    class FrTidal : public FrObject {
 
         enum TidalLevel {
             LOW,

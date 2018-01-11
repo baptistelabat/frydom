@@ -2,6 +2,8 @@
 message(STATUS "    ...Core")
 
 set(CORE_FILES_LOCAL
+        FrObject.h
+        FrObject.cpp
         FrBody.h
         FrBody.cpp
         FrBodyEasy.h

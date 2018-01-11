@@ -7,6 +7,8 @@
 
 
 #include "chrono/physics/ChBodyAuxRef.h"
+
+#include "FrObject.h"
 #include "frydom/core/FrConstants.h"
 #include "frydom/core/FrForce.h"
 
@@ -16,7 +18,8 @@ namespace frydom {
     class FrNode;
 
     class FrBody : public chrono::ChBodyAuxRef,
-                   public std::enable_shared_from_this<FrBody>
+                   public std::enable_shared_from_this<FrBody>,
+                   public FrObject
     {  // TODO: voir a supprimer cet heritage...
 
     protected:

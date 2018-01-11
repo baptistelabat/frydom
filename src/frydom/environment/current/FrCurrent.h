@@ -17,6 +17,8 @@
 #define FRYDOM_FRCURRENT_H
 
 #include "chrono/core/ChVector.h"
+
+#include "frydom/core/FrObject.h"
 #include "frydom/core/FrConstants.h"
 #include "frydom/environment/FrConventions.h"
 #include "MathUtils.h"
@@ -29,7 +31,7 @@ using namespace mathutils;
 
 namespace frydom {
 
-    class FrCurrent {  // TODO: renommer en FrCurrentField
+    class FrCurrent : public FrObject {  // TODO: renommer en FrCurrentField
 
         // TODO: Avoir un current asset sur le meme modele que FrForceAsset qui place un vecteur
         // courant devant le bateau avec la fleche sur un cercle entourant le bateau et pointant

@@ -16,8 +16,11 @@
 #ifndef FR_FREE_SURFACE_H
 #define FR_FREE_SURFACE_H
 
+#include "frydom/core/FrObject.h"
+
 #include "frydom/environment/tidal/FrTidalModel.h"
 #include "frydom/mesh/FrTriangleMeshConnected.h"
+
 #include "FrWaveField.h"
 #include "FrWaveProbe.h"
 
@@ -36,7 +39,7 @@ namespace frydom{
 //    class FrTriangleMeshConnected;
 
     /// Pure Virtual Base class for a free surface system.
-    class FrFreeSurface {
+    class FrFreeSurface : public FrObject {
 
         // FIXME: Il faut que ce soit cette classe qui comprenne un modele de maree !!
 

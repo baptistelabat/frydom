@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FRENVIRONMENT_H
 #define FRYDOM_FRENVIRONMENT_H
 
+#include "frydom/core/FrObject.h"
 
 // Current includes
 
@@ -27,7 +28,7 @@
 
 namespace frydom {
     /// Class to store the different elements composing the offshore environment
-    class FrEnvironment {
+    class FrEnvironment : public FrObject {
 
     private:
 

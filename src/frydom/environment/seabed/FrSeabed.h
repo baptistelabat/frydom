@@ -5,10 +5,11 @@
 #ifndef FRYDOM_FRSEABED_H
 #define FRYDOM_FRSEABED_H
 
+#include "frydom/core/FrObject.h"
 
 namespace frydom {
 
-    class FrSeabed {
+    class FrSeabed  : public FrObject {
 
     };
 

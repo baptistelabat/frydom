@@ -134,5 +134,15 @@ namespace frydom {
     }
 
 
+    void FrOffshoreSystem::Initialize() {
+        // TODO: Ici, on initialise tous les composants de systeme. Ceci implique d'iterer sur ces derniers et qu'ils
+        // possedent tous une methode Initialize()
+        // On pourra faire deriver tous les objets d'une class FrObject qui apporte a la fois un UUID et a la
+        // methode initialize comme methode virtuelle
+
+        std::cout << "Initializing the system to make every component consistent" << std::endl;
+    }
+
+
 
 }  // end namespace frydom

@@ -6,14 +6,15 @@
 #define FRYDOM_FRNODE_H
 
 #include "chrono/physics/ChMarker.h"
-#include "FrBody.h"
 
+#include "FrBody.h"
+#include "FrObject.h"
 
 namespace frydom {
 
 //    class FrBody;
 
-    class FrNode : public chrono::ChMarker{
+    class FrNode : public chrono::ChMarker, public FrObject {
 //    private:
 //        FrBody* Body;
 

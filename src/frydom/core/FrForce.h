@@ -8,6 +8,8 @@
 
 #include "chrono/physics/ChForce.h"
 
+#include "FrObject.h"
+
 // Forward declaration
 //namespace chrono {
 //    class ChForce;
@@ -18,7 +20,10 @@
 
 namespace frydom {
 
-    class FrForce : public chrono::ChForce {
+    class FrForce :
+            public chrono::ChForce,
+            public FrObject
+    {
 
     protected:
 

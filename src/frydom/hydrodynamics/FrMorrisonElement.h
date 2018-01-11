@@ -5,9 +5,11 @@
 #ifndef FRYDOM_FRMORRISONELEMENT_H
 #define FRYDOM_FRMORRISONELEMENT_H
 
+#include "frydom/core/FrObject.h"
+
 namespace frydom {
 
-    class FrMorrisonElement {
+    class FrMorrisonElement : FrObject {
 
     };
 

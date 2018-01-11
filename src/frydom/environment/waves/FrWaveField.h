@@ -10,6 +10,8 @@
 #include <complex>
 #include <random>
 
+#include "frydom/core/FrObject.h"
+
 #include "FrWaveSpectrum.h"
 #include "FrWaveDispersionRelation.h"
 
@@ -22,7 +24,7 @@ namespace frydom {
     class FrLinearWaveProbe;
 
 
-    class FrRamp {  // TODO: placer cette classe dans son propre fichier
+    class FrRamp : public FrObject {  // TODO: placer cette classe dans son propre fichier
 
     private:
         bool m_active = true;
@@ -117,7 +119,7 @@ namespace frydom {
         LINEAR_WAVES
     };
 
-    class FrWaveField {
+    class FrWaveField : public FrObject {
 
     protected:
         static const WAVE_MODEL m_waveModel;

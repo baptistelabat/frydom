@@ -9,6 +9,8 @@
 #include <complex>
 
 #include "chrono/core/ChVector.h"
+
+#include "frydom/core/FrObject.h"
 #include "FrWaveField.h"
 
 namespace frydom {
@@ -19,7 +21,7 @@ namespace frydom {
 
     /// Class to make a measurement of the wave elevation with respect to the mean water height (tidal)
     /// It is mainly used at a fixed absolute position in the local horizontal plane
-    class FrWaveProbe {
+    class FrWaveProbe : public FrObject {
     protected:
 
         double m_x = 0;

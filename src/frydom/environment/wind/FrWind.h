@@ -5,9 +5,11 @@
 #ifndef FRYDOM_FRWIND_H
 #define FRYDOM_FRWIND_H
 
+#include "frydom/core/FrObject.h"
+
 namespace frydom {
 
-    class FrWind {
+    class FrWind : public FrObject {
 
 
     public:

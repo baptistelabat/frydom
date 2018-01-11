@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     unsigned int nbFreq = 80;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
     waveField->GetWaveSpectrum()->SetHs(0.7);  // 1
-    waveField->GetWaveSpectrum()->SetTp(12.);  // 7
+    waveField->GetWaveSpectrum()->SetTp(5.);  // 7
 
     waveField->GetWaveRamp()->SetDuration(5.);
     waveField->GetWaveRamp()->SetIncrease();
@@ -68,6 +68,8 @@ int main(int argc, char* argv[]) {
 
     // Get a waveProbe for excitation force on body
     auto waveProbe = waveField->NewWaveProbe(0, 0); // TODO: il faut importer la position depuis la HDB... (position de mesure de houle)
+
+    std::cout << waveProbe->GetUUID()<< std::endl;
 
 
     // 2 creer un corps hydro

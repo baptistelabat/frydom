@@ -8,6 +8,8 @@
 #include <vector>
 #include "MathUtils.h"
 
+#include "frydom/core/FrObject.h"
+
 using namespace mathutils;
 //#include "frydom/core/FrConstants.h"
 //#include "frydom/misc/FrLinspace.h"
@@ -114,7 +116,7 @@ namespace frydom {
         PIERSON_MOSKOWITZ
     };
 
-    class FrWaveSpectrum {
+    class FrWaveSpectrum : public FrObject {
 
     protected:
         double m_significant_height = 3.;

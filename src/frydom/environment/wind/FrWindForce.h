@@ -5,10 +5,12 @@
 #ifndef FRYDOM_FRWINDFORCE_H
 #define FRYDOM_FRWINDFORCE_H
 
+#include "frydom/core/FrForce.h"
+
 namespace frydom {
 
 
-    class FrWindForce {
+    class FrWindForce : public FrForce {
 
     };
 

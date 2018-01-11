@@ -8,10 +8,11 @@
 //#include "chrono/physics/ChSystemNSC.h"
 //#include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChSystemSMC.h"
-
 #include "chrono/timestepper/ChState.h"
 #include "chrono/core/ChMatrixNM.h"
 #include "chrono/core/ChMatrix33.h"
+
+#include "FrObject.h"
 #include "frydom/environment/waves/FrFreeSurface.h"
 #include "frydom/environment/current/FrCurrent.h"
 #include "frydom/core/FrBody.h"
@@ -36,7 +37,9 @@ namespace frydom {
     // TODO: voir aussi a deriver de ChSystemSMC pour comparer les 2 ? Avoir une classe de base virtuelle derivant de ChSystem ???
     class FrOffshoreSystem :
             public chrono::ChSystemSMC,
-            public std::enable_shared_from_this<FrOffshoreSystem> {  // TODO: supprimer cette dependance !
+            public std::enable_shared_from_this<FrOffshoreSystem>,
+            public FrObject
+    {  // TODO: supprimer cette dependance !
 
     private:
 //        double m_gravity_acc_magnitude = 9.81;  ///< The local acceleration of gravity
@@ -116,14 +119,7 @@ namespace frydom {
 
         virtual void CustomEndOfStep() override;
 
-        void Initialize() {
-            // TODO: Ici, on initialise tous les composants de systeme. Ceci implique d'iterer sur ces derniers et qu'ils
-            // possedent tous une methode Initialize()
-            // On pourra faire deriver tous les objets d'une class FrObject qui apporte a la fois un UUID et a la
-            // methode initialize comme methode virtuelle
-
-            std::cout << "Initializing the system to make every component consistent" << std::endl;
-        }
+        virtual void Initialize();
 
 
     };  // class FrOffshoreSystem
