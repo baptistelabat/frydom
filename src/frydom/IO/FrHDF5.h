@@ -179,6 +179,15 @@ namespace IO {  // TODO : Retirer ce namespace !!
             return i[0];
         }
 
+        bool ReadBool(std::string h5Path) {
+            DataSet dset = m_file->openDataSet(h5Path);
+
+            bool b[1];
+            dset.read(b, PredType::NATIVE_HBOOL);
+
+            return b[0];
+        }
+
         std::string ReadString(std::string h5Path) {
 
             StrType dtype(0, H5T_VARIABLE);

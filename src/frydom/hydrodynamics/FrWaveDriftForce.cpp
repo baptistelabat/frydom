@@ -4,13 +4,101 @@
 
 #include "frydom/environment/waves/FrWaveField.h"
 #include "FrWaveDriftForce.h"
-
+#include "frydom/IO/FrHDF5.h"
 
 namespace frydom {
 
     FrWaveDriftForce::FrWaveDriftForce(const std::string hdf5_file) {
 
+        IO::FrHDF5Reader reader;
+        reader.SetFilename(hdf5_file);
+
+        std::string mode_path("/mode_");
+        std::string head_path("/heading_");
+
+        int n_mode, n_dir;
+        std::string imode_path, idir_path;
+
+        auto sym_x = reader.ReadBool("sym_x");
+        auto sym_y = reader.ReadBool("sym_y");
+
+        m_NbModes = reader.ReadInt("n_mode");
+        double NbAngles;
+
+        char buffer [20];
+        double val;
+
+        auto headings = std::make_shared<std::vector<double>>();
+        auto freqs = std::make_shared<std::vector<double>>();
+
+        for (unsigned int imode=1; imode<=m_NbModes; ++imode) {
+
+            sprintf(buffer, "%d", imode);
+            imode_path = mode_path + buffer;
+
+            NbAngles = reader.ReadInt(imode_path + "/n_dir");
+
+            for (unsigned int idir=1; idir<=NbAngles; idir++) {
+
+                sprintf(buffer, "%d", idir);
+                idir_path = imode_path + head_path + buffer;
+
+                val = reader.ReadDouble(idir_path + "/heading");
+                headings->push_back(val);
+
+                data[0] = reader.ReadDoubleArray(idir_path + "/data");
+
+            }
+
+            freqs = reader.ReadDoubleArray(idir_path + "/freq");
+
+            m_table[imode].SetX(headings);
+            m_table[imode].SetY(freqs);
+            m_table[imode].AddData("Data", data);
+
+        }
+
+
     }
+
+    /**
+    void FrWaveDriftForce::BuildDriftCoefficientInterpolators() {
+
+        m_headInterpolators.clear();
+        m_headInterpolators.reserve(m_NbModes);
+
+        Eigen::MatrixXcd data;
+        auto angles = GetHeadings();
+
+        auto interpolators = std::vector<Interp1dLinear<double, double>>();
+        interpolators.reserve(NbFreq);
+
+        for (unsigned int imode=0; imode<m_NbModes; imode++) {
+
+            interpolators.clear();
+
+            for (unsigned int ifreq=0; ifreq<NbFreq; ifreq++) {
+
+                auto coeffs = std::make_shared<std::vector<double>>();
+                coeffs->reserve(m_NbAngles[imode]);
+
+                for (unsigned int iangle=0; iangle<m_NbAngles[imode]; ++iangle) {
+                    data = GetCoefficient(iangle);
+                    coeffs->push_back(data(imode, ifreq));
+                }
+
+                auto interpolator = Interp1dLinear<double, double>();
+                interpolator.Initialize(angles, coeffs);
+                interpolators.push_back(interpolator);
+
+            }
+            m_headInterpolators.push_back(interpolators);
+
+        }
+
+
+    }
+**/
 
     void FrWaveDriftForce::SetCmplxElevation() {
 
@@ -50,9 +138,9 @@ namespace frydom {
 
                 //cforce += m_CmplxElevation[idir][ifreq] .* drift_coeff * emjwt[ifreq];
 
-                cforce.at(0) += m_CmplxElevation[idir][ifreq] * m_table.Eval("Surge", wi, relative_angle) * emjwt[ifreq];
-                cforce.at(1) += m_CmplxElevation[idir][ifreq] * m_table.Eval("Sway", wi, relative_angle) * emjwt[ifreq];
-                cforce.at(2) += m_CmplxElevation[idir][ifreq] * m_table.Eval("Yaw", wi, relative_angle) * emjwt[ifreq];
+                cforce.at(0) += m_CmplxElevation[idir][ifreq] * m_table[0].Eval("Data", wi, relative_angle) * emjwt[ifreq];
+                cforce.at(1) += m_CmplxElevation[idir][ifreq] * m_table[1].Eval("Data", wi, relative_angle) * emjwt[ifreq];
+                cforce.at(2) += m_CmplxElevation[idir][ifreq] * m_table[2].Eval("Data", wi, relative_angle) * emjwt[ifreq];
 
             }
         }

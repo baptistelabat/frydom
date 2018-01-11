@@ -27,6 +27,8 @@ set(HYDRODYNAMICS_FILES_LOCAL
         FrRadiationForce.cpp
         FrTryalForce.h
         FrTryalForce.cpp
+        FrWaveDriftForce.h
+        FrWaveDriftForce.cpp
         FrVelocityRecorder.h
         FrVelocityRecorder.cpp
         FrRadiationModel.h
