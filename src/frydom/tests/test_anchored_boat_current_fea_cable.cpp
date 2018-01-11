@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     // Set the free surface
-    system.GetEnvironment()->GetFreeSurface()->Initialize(-200, 200, 50, -200, 200, 50);
+    system.GetEnvironment()->GetFreeSurface()->SetGrid(-200, 200, 50, -200, 200, 50);
 
 
     // The current

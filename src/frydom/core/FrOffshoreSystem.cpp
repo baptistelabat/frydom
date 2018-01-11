@@ -136,7 +136,6 @@ namespace frydom {
         std::cout << "End of time step leading to time " << ChTime << std::endl;
     }
 
-
     void FrOffshoreSystem::Initialize() {
         // TODO: Ici, on initialise tous les composants de systeme. Ceci implique d'iterer sur ces derniers et qu'ils
         // possedent tous une methode Initialize()

@@ -153,6 +153,12 @@ namespace frydom {
         // TODO
     }
 
+    void FrCurrent::Set(const chrono::ChVector<>& unitDirection, double magnitude,
+             FrFrame frame, FrDirectionConvention directionConvention, SPEED_UNIT speedUnit) {
+        SetDirection(unitDirection, frame, directionConvention);
+        SetMagnitude(magnitude, speedUnit);
+    }
+
     void FrCurrent::SetDirection(const chrono::ChVector<> &unitDirection,
                                  FrFrame frame,
                                  FrDirectionConvention directionConvention) {

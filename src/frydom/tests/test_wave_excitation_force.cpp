@@ -20,19 +20,19 @@ int main(int argc, char* argv[]) {
 
 
     // Free surface appearance
-    auto freeSurface = mySystem.GetFreeSurface();
+    auto freeSurface = mySystem.GetEnvironment()->GetFreeSurface();
     freeSurface->SetGridType(FrFreeSurface::POLAR);
     freeSurface->SetGrid(0, 0, 40, 20, 36);
 
     // TODO: permettre de regler le hs et le tp...
     freeSurface->SetLinearWaveField(LINEAR_IRREGULAR);
     auto waveField = freeSurface->GetLinearWaveField();
-    waveField->SetMeanWaveDirection(45., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
+    waveField->SetMeanWaveDirection(21., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
     double wmin = 0.1;
     double wmax = 3.;
     unsigned int nbFreq = 80;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
-    waveField->GetWaveSpectrum()->SetHs(1.);  // 1
+    waveField->GetWaveSpectrum()->SetHs(5.);  // 1
     waveField->GetWaveSpectrum()->SetTp(5.5);  // 7
 
     waveField->GetWaveRamp()->SetDuration(5.);
@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
 
     // Playing
     hydroDampingForce->SetManeuveuringDampings(chrono::ChVector<double>(1e8, 1e8, 1e9));
-    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e6, 5e10, 5e10));
+    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e5, 5e10, 5e10));
 
 
     cylinder->AddForce(hydroDampingForce);

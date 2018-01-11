@@ -22,7 +22,6 @@ set(FRYDOM_TESTS
         test_wave_field
         test_wave_spectrum
         test_IRF_computation
-        test_UUID
         )
 
 

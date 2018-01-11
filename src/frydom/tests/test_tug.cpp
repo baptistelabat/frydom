@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     // Set the free surface
-    system.GetEnvironment()->GetFreeSurface()->Initialize(-200, 200, 50, -200, 300, 50);
+    system.GetEnvironment()->GetFreeSurface()->SetGrid(-200, 200, 50, -200, 300, 50);
 
     // The current
     auto current_field = std::make_unique<FrCurrent>(WEST, 0, KNOT, NED, GOTO);

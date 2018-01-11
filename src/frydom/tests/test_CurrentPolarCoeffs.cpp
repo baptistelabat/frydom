@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 //    free_surface->Initialize(-400, 400, 200, -100, 100, 100);
 //    system.setFreeSurface(free_surface.release());
 //    system.GetEnvironment()->SetFreeSurface(free_surface.release());
-    system.GetEnvironment()->GetFreeSurface()->Initialize(-400, 400, 200, -100, 100, 100);
+    system.GetEnvironment()->GetFreeSurface()->SetGrid(-400, 400, 200, -100, 100, 100);
     // TODO: une surface libre flat (200mx200m) par defaut devrait etre presente a l'instanciation de system
 
     // ====================================================================================

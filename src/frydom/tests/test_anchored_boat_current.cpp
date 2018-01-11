@@ -13,13 +13,12 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     // Set the free surface
-    system.GetFreeSurface()->Initialize(-200, 200, 50);
+    system.GetEnvironment()->GetFreeSurface()->SetGrid(-200, 200, 50);
 
 
     // The current
-    auto current_field = std::make_unique<FrCurrent>(WEST, 20, KNOT, NED, GOTO);
-    // TODO: changer pour faire des move plutot que des release...
-    system.GetEnvironment()->SetCurrent(current_field.release());
+    system.GetEnvironment()->GetCurrent()->SetDirection(WEST, NED, GOTO);
+    system.GetEnvironment()->GetCurrent()->SetMagnitude(20, KNOT);
 
     // Building a TUG
     auto tug = std::make_shared<FrShip>();

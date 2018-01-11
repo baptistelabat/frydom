@@ -69,6 +69,8 @@ namespace frydom {
                   SPEED_UNIT = KNOT, FrFrame= NED, FrDirectionConvention convention = GOTO);
 
         // TODO: Ajouter les setters pour la direction et l'intensite
+        void Set(const chrono::ChVector<>& unitDirection, double magnitude,
+                 FrFrame frame=NED, FrDirectionConvention directionConvention=GOTO, SPEED_UNIT speedUnit=KNOT);
 
         void SetDirection(const chrono::ChVector<>& unitDirection,
                           FrFrame frame=NED,
