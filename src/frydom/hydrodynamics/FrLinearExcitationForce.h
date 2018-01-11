@@ -9,6 +9,9 @@
 #include <frydom/environment/waves/FrWaveProbe.h>
 #include "frydom/environment/waves/FrWaveField.h"
 #include "frydom/core/FrHydroBody.h"
+
+#include "FrHydroMapper.h"
+
 #include "FrHydroDB.h"
 
 
@@ -24,6 +27,13 @@ namespace frydom {
 
         Eigen::MatrixXcd m_steadyForce;
 
+
+        FrBEMBody* GetBEMBody() {
+            auto thisBody = dynamic_cast<FrHydroBody*>(GetBody());
+            auto BEMBody = dynamic_cast<FrOffshoreSystem*>(GetBody()->GetSystem())->GetHydroMapper()->GetBEMBody(thisBody);
+            return BEMBody;
+        }
+
     public:
 
         void SetWaveProbe(std::shared_ptr<FrLinearWaveProbe>& waveProbe) { m_waveProbe = waveProbe; }
@@ -34,7 +44,8 @@ namespace frydom {
 
         void Initialize() {  // TODO: devrait s'initialiser automatiquement au lancement de la simulation...
 
-            auto BEMBody = dynamic_cast<FrHydroBody*>(GetBody())->GetBEMBody();
+            auto BEMBody = GetBEMBody();
+
             auto waveField = m_waveProbe->GetWaveField();
 
             if (m_Fexc.empty()) {
@@ -69,7 +80,7 @@ namespace frydom {
         }
 
         void UpdateState() override {
-            auto BEMBody = dynamic_cast<FrHydroBody*>(GetBody())->GetBEMBody();
+            auto BEMBody = GetBEMBody();
 
             auto nbMode = BEMBody->GetNbForceMode();
 //            auto nbFreq = BEMBody->GetNbFrequencies();

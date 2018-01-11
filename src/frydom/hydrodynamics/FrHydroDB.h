@@ -364,7 +364,7 @@ namespace frydom {
 
         void GenerateImpulseResponseFunctions(double tf = 30., double dt = 0.);
 
-        FrHydroMapper GetMapper();
+        std::shared_ptr<FrHydroMapper> GetMapper();
 
     };  // end class FrHydroDB
 

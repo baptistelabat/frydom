@@ -785,8 +785,8 @@ namespace frydom {
     }
 
 
-    FrHydroMapper FrHydroDB::GetMapper() {
-        return FrHydroMapper(this);
+    std::shared_ptr<FrHydroMapper> FrHydroDB::GetMapper() {
+        return std::make_shared<FrHydroMapper>(this);
     }
 
 

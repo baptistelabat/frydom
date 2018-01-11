@@ -123,15 +123,20 @@ int main(int argc, char* argv[]) {
 
 
     // Hydro database loading
-    FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");
+    FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");  // TODO: mettre la HDB dans system ??? (ca genere du coup le mapper en auto)
 
     // Mapping between hydrodynamic bodies and bodies from the hydrodynamic database
+
+    // Getting a hydrodynamic mapper from the HDB
     auto hydroMapper = HDB.GetMapper();
-    hydroMapper.Map(cylinder, 0);
+    mySystem.SetHydroMapper(hydroMapper);
 
-    auto hydroBody = hydroMapper.GetHydroBody(HDB.GetBody(0));
+    // Mapping body
+    hydroMapper->Map(cylinder, 0);
 
-    cylinder->SetBEMBody(HDB.GetBody(0)); // TODO : A retirer, on va utiliser le hydroMapper
+    auto hydroBody = hydroMapper->GetHydroBody(HDB.GetBody(0)); // Retirer
+
+//    cylinder->SetBEMBody(HDB.GetBody(0)); // TODO : A retirer, on va utiliser le hydroMapper
 
 
 

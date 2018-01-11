@@ -13,7 +13,7 @@
 
 namespace frydom {
 
-    typedef boost::bimaps::bimap<std::shared_ptr<FrHydroBody>, std::shared_ptr<FrBEMBody>> myBimap;
+    typedef boost::bimaps::bimap<FrHydroBody*, FrBEMBody*> myBimap;
     typedef myBimap::value_type mapping;
 
 
@@ -33,7 +33,7 @@ namespace frydom {
         void Map(std::shared_ptr<FrHydroBody> hydroBody, unsigned int iBEMBody) {
 
             assert(iBEMBody < m_HDB->GetNbBodies());
-            m_mapper.insert( mapping(hydroBody, m_HDB->GetBody(iBEMBody)) );
+            m_mapper.insert( mapping(hydroBody.get(), m_HDB->GetBody(iBEMBody).get()) );
 
         }
 
@@ -41,15 +41,22 @@ namespace frydom {
             return m_mapper.size();
         }
 
-        std::shared_ptr<FrHydroBody> GetHydroBody(std::shared_ptr<FrBEMBody> BEMBody) const {
+        FrHydroBody* GetHydroBody(std::shared_ptr<FrBEMBody> BEMBody) const {
+            return m_mapper.right.at(BEMBody.get());
+        }
+
+        FrHydroBody* GetHydroBody(FrBEMBody* BEMBody) const {
             return m_mapper.right.at(BEMBody);
         }
 
-        std::shared_ptr<FrHydroBody> GetHydroBody(unsigned int iBEMBody) const {
-            return m_mapper.right.at(m_HDB->GetBody(iBEMBody));
+        FrHydroBody* GetHydroBody(unsigned int iBEMBody) const {
+            return m_mapper.right.at(m_HDB->GetBody(iBEMBody).get());
         }
 
-        std::shared_ptr<FrBEMBody> GetBEMBody(std::shared_ptr<FrHydroBody> hydroBody) {
+        FrBEMBody* GetBEMBody(std::shared_ptr<FrHydroBody> hydroBody) {
+            return m_mapper.left.at(hydroBody.get());
+        }
+        FrBEMBody* GetBEMBody(FrHydroBody* hydroBody) {
             return m_mapper.left.at(hydroBody);
         }
 

@@ -111,13 +111,13 @@ namespace frydom {
         FrHydroBody::m_wetted_surface = wetted_surface;
     }
 
-    void FrHydroBody::SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody) {
-        m_BEMBody = BEMBody;
-        BEMBody->SetHydroBody(this);
-
-        // TODO: Il faut renseigner les masses ajoutees a l'infini !!!!
-
-    }
+//    void FrHydroBody::SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody) {
+//        m_BEMBody = BEMBody;
+//        BEMBody->SetHydroBody(this);
+//
+//        // TODO: Il faut renseigner les masses ajoutees a l'infini !!!!
+//
+//    }
 
     void FrHydroBody::SetCurrentRefFrameAsEquilibrium() {
 

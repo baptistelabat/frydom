@@ -21,7 +21,7 @@ namespace chrono {
 namespace frydom {
 
     // Forward declaration
-    class FrBEMBody;
+//    class FrBEMBody;
 
     class FrHydroBody : public FrBody {
 
@@ -42,7 +42,7 @@ namespace frydom {
 
         double m_wetted_surface = 0.;
 
-        std::shared_ptr<FrBEMBody> m_BEMBody;
+//        std::shared_ptr<FrBEMBody> m_BEMBody;
         bool m_UpdateHydroPosition = false;  // If true, the body position will be updated while moving in the horizontal plane
                                             // It will slow down the simulation as linear steady elevation components
                                             // of the wavefield will be updated and it may be really false in the case of
@@ -53,20 +53,11 @@ namespace frydom {
         chrono::ChFrame<double> m_equilibriumFrame;
 
 
-
-//        boost::circular_buffer<double> m_vx_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
-//        boost::circular_buffer<double> m_vy_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
-//        boost::circular_buffer<double> m_vz_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
-//        boost::circular_buffer<double> m_wx_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
-//        boost::circular_buffer<double> m_wy_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
-//        boost::circular_buffer<double> m_wz_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
-
-
     public:
 
-        void SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody);
+//        void SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody);
 
-        std::shared_ptr<FrBEMBody> GetBEMBody() const { return m_BEMBody; }
+//        std::shared_ptr<FrBEMBody> GetBEMBody() const { return m_BEMBody; }
 
         /// Set the hydrodynamic mesh from a mesh shared instance
         void SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset=true);

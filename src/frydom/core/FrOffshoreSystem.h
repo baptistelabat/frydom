@@ -7,6 +7,7 @@
 
 //#include "chrono/physics/ChSystemNSC.h"
 //#include "chrono/physics/ChSystem.h"
+//#include <frydom/hydrodynamics/FrHydroMapper.h>
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/timestepper/ChState.h"
 #include "chrono/core/ChMatrixNM.h"
@@ -33,6 +34,7 @@ namespace frydom {
 //    class FrFreeSurface;  // forward declaration
 
 //    class FrEnvironment;
+    class FrHydroMapper;
 
     // TODO: voir aussi a deriver de ChSystemSMC pour comparer les 2 ? Avoir une classe de base virtuelle derivant de ChSystem ???
     class FrOffshoreSystem :
@@ -53,6 +55,9 @@ namespace frydom {
         chrono::ChFrame<double> NEDframe;                            ///< Frame that has Z pointing down to have a well defined heading
 
         std::unique_ptr<FrEnvironment> m_environment;
+
+        std::shared_ptr<FrHydroMapper> m_hydroMapper;
+
 
     public:
         /// Default constructor
@@ -106,6 +111,14 @@ namespace frydom {
             return world_body;
         }
 
+
+        void SetHydroMapper(std::shared_ptr<FrHydroMapper> hydroMapper) {
+            m_hydroMapper = hydroMapper;
+        }
+
+        std::shared_ptr<FrHydroMapper> GetHydroMapper() const {
+            return m_hydroMapper;
+        }
 
 
         /// Updates all the auxiliary data and children of
