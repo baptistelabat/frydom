@@ -107,11 +107,7 @@ int main(int argc, char* argv[]) {
 
     cylinder->AddForce(hydroDampingForce);
 
-    // Importer une base de donnees hydro
-    FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");
 
-    // Linking the physical floating body to its counterpart from the HDB
-    cylinder->SetBEMBody(HDB.GetBody(0)); // Important !! On linke les corps physiques avec les corps hydro de la HDB...
 
     // Creer un modele de force d'excitation et l'ajouter au corps hydro
     auto excForce = std::make_shared<FrLinearExcitationForce>();
@@ -123,6 +119,22 @@ int main(int argc, char* argv[]) {
     auto radForce = std::make_shared<FrRadiationConvolutionForce>();
     cylinder->AddForce(radForce);
 //    radForce->Initialize();
+
+
+
+    // Hydro database loading
+    FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");
+
+    // Mapping between hydrodynamic bodies and bodies from the hydrodynamic database
+    auto hydroMapper = HDB.GetMapper();
+    hydroMapper.Map(cylinder, 0);
+
+    auto hydroBody = hydroMapper.GetHydroBody(HDB.GetBody(0));
+
+    cylinder->SetBEMBody(HDB.GetBody(0)); // TODO : A retirer, on va utiliser le hydroMapper
+
+
+
 
 
 //    double dt = 0.01;

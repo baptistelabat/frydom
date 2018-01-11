@@ -29,6 +29,8 @@ set(HYDRODYNAMICS_FILES_LOCAL
         FrVelocityRecorder.cpp
         FrRadiationModel.h
         FrRadiationModel.cpp
+        FrHydroMapper.h
+        FrHydroMapper.cpp
 )
 
 set(HYDRODYNAMICS_FILES "")

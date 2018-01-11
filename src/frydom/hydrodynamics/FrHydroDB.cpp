@@ -7,6 +7,7 @@
 #include "yaml-cpp/yaml.h"
 
 #include "FrHydroDB.h"
+#include "FrHydroMapper.h"
 #include "frydom/IO/FrHDF5.h"
 
 #include "MathUtils.h"
@@ -782,5 +783,12 @@ namespace frydom {
         }
 
     }
+
+
+    FrHydroMapper FrHydroDB::GetMapper() {
+        return FrHydroMapper(this);
+    }
+
+
 
 }  // end namespace frydom

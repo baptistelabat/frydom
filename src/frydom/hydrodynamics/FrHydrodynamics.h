@@ -19,5 +19,6 @@
 #include "FrTryalForce.h"
 #include "FrVelocityRecorder.h"
 #include "FrRadiationModel.h"
+#include "FrHydroMapper.h"
 
 #endif //FRYDOM_FRHYDRODYNAMICS_H

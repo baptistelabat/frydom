@@ -272,6 +272,7 @@ namespace frydom {
     };
 
     // =================================================================================================================
+    class FrHydroMapper;
 
     class FrHydroDB {
 
@@ -362,6 +363,8 @@ namespace frydom {
         std::shared_ptr<FrBEMBody> GetBody(unsigned int ibody) { return m_Bodies[ibody]; }
 
         void GenerateImpulseResponseFunctions(double tf = 30., double dt = 0.);
+
+        FrHydroMapper GetMapper();
 
     };  // end class FrHydroDB
 
