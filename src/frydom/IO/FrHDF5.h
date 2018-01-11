@@ -17,7 +17,7 @@
 #define RW H5F_ACC_RDWR
 
 using namespace H5;
-//using namespace Eigen;
+using namespace Eigen;
 
 namespace frydom {
 namespace IO {  // TODO : Retirer ce namespace !!
@@ -53,7 +53,7 @@ namespace IO {  // TODO : Retirer ce namespace !!
 
         void Close() { m_file->close(); }
 
-        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ReadDoubleArray(std::string h5Path) const {
+        Matrix<double, Dynamic, Dynamic> ReadDoubleArray(std::string h5Path) const {
 
             DataSet dset = m_file->openDataSet(h5Path); // TODO: try
             DataSpace dspace = dset.getSpace();
@@ -89,7 +89,7 @@ namespace IO {  // TODO : Retirer ce namespace !!
 
             }
 
-            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> out(nb_rows, nb_cols);
+            Matrix<double, Dynamic, Dynamic> out(nb_rows, nb_cols);
 
             auto* buffer = new double[nb_elt];
 
@@ -106,7 +106,15 @@ namespace IO {  // TODO : Retirer ce namespace !!
             return out;
         }
 
-        Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> ReadIntArray(std::string h5Path) const {
+        std::vector<std::vector<double>> ReadDoubleArraySTD(std::string h5path) const {
+
+            auto mat = ReadDoubleArray(h5path);
+            std::vector<std::vector<double>> vec(mat.data(), mat.data() + mat.rows() * mat.cols());
+            return vec;
+
+        }
+
+        Matrix<int, Dynamic, Dynamic> ReadIntArray(std::string h5Path) const {
 
             DataSet dset = m_file->openDataSet(h5Path);
             DataSpace dspace = dset.getSpace();
@@ -142,7 +150,7 @@ namespace IO {  // TODO : Retirer ce namespace !!
 
             }
 
-            Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> out(nb_rows, nb_cols);
+            Matrix<int, Dynamic, Dynamic> out(nb_rows, nb_cols);
 
             auto* buffer = new int[nb_elt];
 
@@ -159,6 +167,14 @@ namespace IO {  // TODO : Retirer ce namespace !!
             delete [] buffer;
 
             return out;
+        }
+
+        std::vector<std::vector<int>> ReadIntArraySTD(std::string h5path) const {
+
+            auto mat = ReadDoubleArray(h5path);
+            std::vector<std::vector<int>> vec(mat.data(), mat.data() + mat.rows() * mat.cols());
+            return vec;
+
         }
 
         double ReadDouble(std::string h5Path) {

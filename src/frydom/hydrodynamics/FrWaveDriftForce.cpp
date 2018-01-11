@@ -31,6 +31,9 @@ namespace frydom {
         auto headings = std::make_shared<std::vector<double>>();
         auto freqs = std::make_shared<std::vector<double>>();
 
+        std::vector<std::vector<double>> data;
+        std::shared_ptr<std::vector<double>> coeffs;
+
         for (unsigned int imode=1; imode<=m_NbModes; ++imode) {
 
             sprintf(buffer, "%d", imode);
@@ -46,15 +49,17 @@ namespace frydom {
                 val = reader.ReadDouble(idir_path + "/heading");
                 headings->push_back(val);
 
-                data[0] = reader.ReadDoubleArray(idir_path + "/data");
-
+                data = reader.ReadDoubleArraySTD(idir_path + "/data");
+                //coeffs->push_back(data[0]);
+                coeffs->insert(std::end(*coeffs), std::begin(data[0]), std::end(data[0]));
             }
 
-            freqs = reader.ReadDoubleArray(idir_path + "/freq");
+            data = reader.ReadDoubleArraySTD(idir_path + "/freq");
+            freqs = std::make_shared<std::vector<double>>(data[0]);
 
-            m_table[imode].SetX(headings);
-            m_table[imode].SetY(freqs);
-            m_table[imode].AddData("Data", data);
+            m_table[imode].SetX(*headings);
+            m_table[imode].SetY(*freqs);
+            m_table[imode].AddData("Data", *coeffs);
 
         }
 
