@@ -33,6 +33,8 @@ namespace frydom {
 
         FrOffshoreSystem* m_system;
 
+        double m_time;
+
         // Environment components
         std::unique_ptr<FrFreeSurface> m_freeSurface;
         std::unique_ptr<FrCurrent> m_current;
@@ -69,6 +71,10 @@ namespace frydom {
         }
 
         FrOffshoreSystem* GetSystem() { return m_system; }
+
+        void SetTime(double time) { m_time = time; }
+
+        double GetTime() const { return m_time; }
 
         double GetWaterDensity() const {
             return m_waterDensity;
@@ -169,6 +175,7 @@ namespace frydom {
             m_freeSurface->Update(time);
             m_current->Update(time);
             m_wind->Update(time);
+            m_time = time;
         }
 
     };

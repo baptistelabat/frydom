@@ -301,7 +301,7 @@ namespace frydom {
         double GetMeanWaveDirection(ANGLE_UNIT unit=DEG) const {
             double meanWaveDir = m_meanDir;
             if (unit == DEG) {
-                meanWaveDir *= MU_PI_180;
+                meanWaveDir *= MU_180_PI;
             }
             return meanWaveDir;
         }

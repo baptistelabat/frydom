@@ -8,6 +8,8 @@
 //#include "chrono/physics/ChSystemNSC.h"
 //#include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChSystemSMC.h"
+
+#include "chrono/timestepper/ChState.h"
 #include "chrono/core/ChMatrixNM.h"
 #include "chrono/core/ChMatrix33.h"
 #include "frydom/environment/waves/FrFreeSurface.h"
@@ -89,37 +91,6 @@ namespace frydom {
             m_environment->GetFreeSurface()->Initialize(xmin, xmax, dx, ymin, ymax, dy);
         }
 
-
-
-//        /// Add a free surface model to the system
-//        void setFreeSurface(FrFreeSurface* freeSurface);
-//
-//        /// Add a current field to the system
-//        void SetCurrent(FrCurrent *current_field);
-//
-//        /// Get the free surface model from the offshore system.
-//        FrFreeSurface* getFreeSurface() const;
-//
-//        /// get the current field model from the offshore system
-//        FrCurrent* GetCurrent() const;
-
-//        /// Get/Set the value of the acceleration of gravity
-//        /// It must be given positive, in m/s**2
-//        void SetGravityAcceleration(double grav);
-//        double GetGravityAcceleration() const { return m_gravity_acc_magnitude; }
-//
-//        /// Get the water density
-//        double GetWaterDensity() const { return m_water_density; }
-//
-//        /// Set the water density
-//        void SetWaterDensity(const double rho_water) { m_water_density = rho_water; }
-//
-//        ///Get the air density
-//        double GetAirDensity() const { return m_air_density; }
-//
-//        /// Set the air density
-//        void SetAirDensity(const double rho_air) { m_air_density = rho_air; }
-
         /// Get NED frame
         chrono::ChFrame<double> GetNEDFrame() const { return NEDframe; }
 
@@ -138,6 +109,22 @@ namespace frydom {
         /// bodies, forces, links, given their current state
         /// as well as environment prior to everything.
         virtual void Update(bool update_assets = true) override;
+
+        virtual void StateScatter(const chrono::ChState& x, const chrono::ChStateDelta& v, const double T) override;
+
+        virtual bool Integrate_Y() override;
+
+        virtual void CustomEndOfStep() override;
+
+        void Initialize() {
+            // TODO: Ici, on initialise tous les composants de systeme. Ceci implique d'iterer sur ces derniers et qu'ils
+            // possedent tous une methode Initialize()
+            // On pourra faire deriver tous les objets d'une class FrObject qui apporte a la fois un UUID et a la
+            // methode initialize comme methode virtuelle
+
+            std::cout << "Initializing the system to make every component consistent" << std::endl;
+        }
+
 
     };  // class FrOffshoreSystem
 

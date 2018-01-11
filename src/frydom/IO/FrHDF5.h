@@ -20,7 +20,7 @@ using namespace H5;
 //using namespace Eigen;
 
 namespace frydom {
-namespace IO {
+namespace IO {  // TODO : Retirer ce namespace !!
 
     class FrHDF5Reader {
 

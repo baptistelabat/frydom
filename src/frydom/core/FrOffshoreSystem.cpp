@@ -54,6 +54,85 @@ namespace frydom {
         timer_update.stop();
     }
 
+    // From state Y={x,v} to system.
+    void FrOffshoreSystem::StateScatter(const chrono::ChState& x, const chrono::ChStateDelta& v, const double T) {
+
+        m_environment->Update(T);  // Updating environment
+
+        IntStateScatter(0, x, 0, v, T);  // TODO: voir pour faire un update de l'environnement juste avant cette ligne ...
+
+//        Update();  //***TODO*** optimize because maybe IntStateScatter above might have already called Update?
+    }
+
+    bool FrOffshoreSystem::Integrate_Y() {
+        ResetTimers();
+
+        timer_step.start();
+
+        // Executes "forStep" in all controls of controlslist
+        ExecuteControlsForStep();  // C'est ici qu'on pourra trigger les calculs de controllers... Voir avec sof si
+                                   // c'est le bon endroit / si l'objet control de chrono convient
+
+        stepcount++;
+        solvecount = 0;
+        setupcount = 0;
+
+        // Compute contacts and create contact constraints
+        ComputeCollisions();
+
+        // Counts dofs, statistics, etc. (not needed because already in Advance()...? ) // TODO: voir ce qu'il en est
+        Setup();
+
+        // Update everything - and put to sleep bodies that need it (not needed because already in Advance()...? )
+        // No need to update visualization assets here.
+//        Update(true);  // FIXME : Desactive car redondant avec ce qui est deja fait lors du system::StateScatter()...
+
+        // Re-wake the bodies that cannot sleep because they are in contact with
+        // some body that is not in sleep state.
+//        ManageSleepingBodies(); // Proposer au chrono group que cette methode soit protected afi de pouvoir
+                                  // completement deriver de Integrate_Y()...
+
+        // Prepare lists of variables and constraints.
+        DescriptorPrepareInject(*descriptor);
+        descriptor->UpdateCountsAndOffsets();
+
+        // Set some settings in timestepper object
+        timestepper->SetQcDoClamp(true);
+        timestepper->SetQcClamping(max_penetration_recovery_speed);
+        // TODO: reactiver les 3 lignes suivantes pour autoriser l'utilisation des solveurs HHT et Newmark
+//        if (std::dynamic_pointer_cast<ChTimestepperHHT>(timestepper) ||
+//            std::dynamic_pointer_cast<ChTimestepperNewmark>(timestepper))
+//            timestepper->SetQcDoClamp(false);
+
+        // PERFORM TIME STEP HERE!
+        timestepper->Advance(step);  // Ici, on passe du temps courant au temps suivant en utilisant le shema du timestepper choisi
+
+        // Executes custom processing at the end of step
+        CustomEndOfStep();
+
+        // If there are some probe objects in the probe list,
+        // tell them to record their variables (ususally x-y couples)
+        RecordAllProbes(); // Voir a utiliser les ChProbe pour les capteurs controle. On pourra utiliser pour la radiation et l'enregistremet en buffer circulaire...
+
+        // Call method to gather contact forces/torques in rigid bodies
+        contact_container->ComputeContactForces();
+
+        // TODO: ici, appeler une methode sur tout l'assembly permettant de faire une finalisation du pas de temps courant
+        // ou alors le faire en tout debut de cette methode pour avoir aussi le t=0 ?
+        // Cet appel permettra de trigger le log aux pas de temps fixes.
+        // Voir aussi la methode CurtomEndOfStep() ci-dessus qui pourrait faire tout a fait l'affaire...
+
+        // Time elapsed for step..
+        timer_step.stop();
+
+        return true;
+    }
+
+    void FrOffshoreSystem::CustomEndOfStep() {
+        // TODO : Ici on a bon candidat pour trigger l'emission des donnees des objets...
+        std::cout << "End of time step leading to time " << ChTime << std::endl;
+    }
+
 
 
 }  // end namespace frydom

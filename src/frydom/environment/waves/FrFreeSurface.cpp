@@ -251,7 +251,7 @@ namespace frydom {
 
 
         // Fin tentative
-
+        m_Body->Update(true); // Necessary to update the asset
 
 //        std::pair<unsigned int, unsigned int> totalRange(0, nbNodes);
 //        UpdateGridRange(totalRange);
@@ -285,12 +285,16 @@ namespace frydom {
 
 
     void FrFreeSurface::UpdateAssetON() {  // TODO: faire la creation des waveProbe ailleurs car ca oblige a definir dire UpdateAssetON apres la creation de waveField...
+
         m_updateAsset = true;
 
         // Creating the array of wave probes
         auto nbVertices = m_meshAsset->GetMesh().getCoordsVertices().size();
         m_waveProbeGrid.reserve(nbVertices);
 
+        // FIXME: le fait que le wavefield soit requis pour initialiser le maillage de surface libre fait qu'on est
+        // oblige de definir le wavefield avant d'activer l'asset --> pas flex du tout. Utiliser plutot un flag pour
+        // etablir que l'asset est initialise ou pas et initialiser la gille  lors de l'appel a UpdateGrid si le flag est false
         auto waveField = std::static_pointer_cast<FrLinearWaveField>(m_waveField);
 
         for (auto& vertex : m_meshAsset->GetMesh().getCoordsVertices()) {

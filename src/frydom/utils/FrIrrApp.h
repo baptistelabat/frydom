@@ -38,14 +38,20 @@ namespace frydom {
             AssetUpdateAll();
 
             while (GetDevice()->run()) {
+
                 BeginScene();
                 DrawAll();
+
+                if (m_verbose) {
+                    std::cout << "\n\n"
+                              << "Integration from " << GetSystem()->GetChTime()
+                              << " To " << GetSystem()->GetChTime()+GetTimestep()
+                              << "\n";
+                }
+
                 DoStep();
                 EndScene();
 
-                if (m_verbose) {
-//                    std::cout << "Time: " << GetSystem()->GetChTime() << std::endl;
-                }
             }
 
         }

@@ -16,9 +16,9 @@ int main(int argc, char* argv[]) {
     // puisse le faire de son propre chef...
     // Du coup, systeme devrait etre cree lors de l'appel a un FRyDoM_INIT()
     // Est ce qu'on ne peut pas definir un objet frydom qui soit un singleton et qui donne alors access au systeme embarque ??? --> mieux !!
-    FrOffshoreSystem system;
+    FrOffshoreSystem mySystem;
 
-    auto freeSurface = system.GetFreeSurface();
+    auto freeSurface = mySystem.GetFreeSurface();
 //    freeSurface->Initialize(-20, 20, 4);
     freeSurface->Initialize(-20, 20, 2, -20, 20, 2);
 
@@ -42,8 +42,8 @@ int main(int argc, char* argv[]) {
     double wmax = 3.;
     unsigned int nbFreq = 80;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
-    waveField->GetWaveSpectrum()->SetHs(1.);
-    waveField->GetWaveSpectrum()->SetTp(7.);
+    waveField->GetWaveSpectrum()->SetHs(0.7);  // 1
+    waveField->GetWaveSpectrum()->SetTp(12.);  // 7
 
     waveField->GetWaveRamp()->SetDuration(5.);
     waveField->GetWaveRamp()->SetIncrease();
@@ -77,11 +77,11 @@ int main(int argc, char* argv[]) {
     cylinder->SetLateralUnderWaterArea(100.);
     cylinder->SetTransverseUnderWaterArea(100.);
     cylinder->SetLpp(10.);
-    cylinder->SetInertiaXX(chrono::ChVector<double>(1e7, 1e7, 1e6));
+    cylinder->SetInertiaXX(chrono::ChVector<double>(8e7, 8e7, 1e6));
     cylinder->SetMass(795e3 * 2.);  // TODO : retirer le 2., c'est pour emuler une masse ajoutee...
     cylinder->SetCOG(chrono::ChVector<double>(0., 0., -7.5));
 //    cylinder->SetBodyFixed(true);  // TODO: retirer
-    system.AddBody(cylinder);
+    mySystem.AddBody(cylinder);
 
     // ===========================================
     // Hydrodynamics
@@ -104,8 +104,15 @@ int main(int argc, char* argv[]) {
 
     // Linear Damping
     auto hydroDampingForce = std::make_shared<FrLinearDamping>();
+//    hydroDampingForce->SetManeuveuringDampings(chrono::ChVector<double>(1e8, 1e8, 1e9));
+//    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e6, 1e9, 1e9));
+
+
+    // Playing
     hydroDampingForce->SetManeuveuringDampings(chrono::ChVector<double>(1e8, 1e8, 1e9));
-    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e7, 1e10, 1e10));
+    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e6, 5e10, 5e10));
+
+
     cylinder->AddForce(hydroDampingForce);
 
     // Importer une base de donnees hydro
@@ -118,8 +125,7 @@ int main(int argc, char* argv[]) {
     auto excForce = std::make_shared<FrLinearExcitationForce>();
     cylinder->AddForce(excForce);
     excForce->SetWaveProbe(waveProbe);
-    excForce->Initialize();  // TODO: voir
-
+    excForce->Initialize();  // TODO: voir avoir une initialisation auto lors du lancement de la simu (avec un flag...)
 
     // Radiation
     auto radForce = std::make_shared<FrRadiationConvolutionForce>();
@@ -129,22 +135,23 @@ int main(int argc, char* argv[]) {
 
 //    double dt = 0.01;
 //    for (int i=0; i<10; ++i) {
-//        system.DoStepDynamics(dt);
+//        mySystem.DoStepDynamics(dt); "End of time step leading to time " <<
+//    }
 //    }
 
     // TODO: tester le solveur EULER_IMPLICIT_PROJECTED
-    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
-//    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_PROJECTED);
-//    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
-//    system.SetTimestepperType(chrono::ChTimestepper::Type::TRAPEZOIDAL);
-//    system.SetTimestepperType(chrono::ChTimestepper::Type::TRAPEZOIDAL_LINEARIZED);
-//    system.SetTimestepperType(chrono::ChTimestepper::Type::HHT);
-//    system.SetTimestepperType(chrono::ChTimestepper::Type::HEUN);
-//    system.SetTimestepperType(chrono::ChTimestepper::Type::RUNGEKUTTA45);
-//    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_EXPLICIT);
-//    system.SetTimestepperType(chrono::ChTimestepper::Type::LEAPFROG);
-//    system.SetTimestepperType(chrono::ChTimestepper::Type::NEWMARK);
-    auto app = FrIrrApp(system, 30);
+    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
+//    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_PROJECTED);
+//    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
+//    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::TRAPEZOIDAL);
+//    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::TRAPEZOIDAL_LINEARIZED);
+//    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::HHT);
+//    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::HEUN);
+//    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::RUNGEKUTTA45);
+//    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::EULER_EXPLICIT);
+//    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::LEAPFROG);
+//    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::NEWMARK);
+    auto app = FrIrrApp(mySystem, 30);
 
     app.SetTimestep(0.01);
 //    radForce->Initialize();
@@ -152,7 +159,7 @@ int main(int argc, char* argv[]) {
 
 //    app.SetVideoframeSaveInterval(1);
 //    app.SetVideoframeSave(true);
-
+    mySystem.Initialize();
     app.Run();  // TODO: remettre
 
 //    char* path;
