@@ -57,11 +57,6 @@ namespace frydom {
         // update parent class
         chrono::ChBodyAuxRef::Update(update_assets);
 
-        if (m_BEMBody) {  // FIXME: est-ce que ca fonctionne comme prevu si pas de BEMBody ?
-            // Recording the velocity in case we are using a first order BEM Body (with hydrodynamics database)
-            RecordVelocityState(NWU); // NON !!!
-        }
-
     }
 
     chrono::ChVector<double> FrHydroBody::GetCurrentRelativeVelocity(FrFrame frame) {

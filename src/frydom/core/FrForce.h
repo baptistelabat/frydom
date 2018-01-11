@@ -58,6 +58,8 @@ namespace frydom {
 
         virtual void Initialize() override {}
 
+        virtual void StepFinalize() override {}
+
     };
 
 

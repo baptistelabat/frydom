@@ -47,6 +47,10 @@ namespace frydom {
 
         virtual FrWaveField* GetWaveField() const = 0;
 
+        virtual void Initialize() override {};
+
+        virtual void StepFinalize() override {}
+
     };
 
     // =================================================================================================================

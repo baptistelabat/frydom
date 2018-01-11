@@ -108,6 +108,8 @@ namespace frydom {
 
         }
 
+        virtual void StepFinalize() override {}
+
     };
 
 
@@ -155,6 +157,8 @@ namespace frydom {
 
 //        virtual std::shared_ptr<FrWaveProbe> NewWaveProbe(double x, double y) = 0;
         virtual void Initialize() override {}
+
+        virtual void StepFinalize() override {}
 
     };
 

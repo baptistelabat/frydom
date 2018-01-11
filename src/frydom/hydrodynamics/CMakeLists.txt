@@ -25,6 +25,10 @@ set(HYDRODYNAMICS_FILES_LOCAL
         FrRadiationForce.cpp
         FrTryalForce.h
         FrTryalForce.cpp
+        FrVelocityRecorder.h
+        FrVelocityRecorder.cpp
+        FrRadiationModel.h
+        FrRadiationModel.cpp
 )
 
 set(HYDRODYNAMICS_FILES "")

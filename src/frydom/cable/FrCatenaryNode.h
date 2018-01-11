@@ -110,7 +110,9 @@ namespace frydom {
         }
 
 
+        virtual void Initialize() = 0;
 
+        virtual void StepFinalize() override {}
 
 
     };

@@ -97,11 +97,13 @@ namespace frydom {
             return m_endingNode;
         }
 
-        virtual void Initialize() = 0;
-
         virtual chrono::ChVector<double> GetTension(const double s) const = 0;
 
         virtual chrono::ChVector<double> GetAbsPosition(const double s) const = 0;
+
+        virtual void Initialize() override {};
+
+        virtual void StepFinalize() override {}
 
 //        void Update(const double time) {
 //            UpdateTime(time);

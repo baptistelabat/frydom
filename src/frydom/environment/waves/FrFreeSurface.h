@@ -186,6 +186,8 @@ namespace frydom{
 
         const chrono::ChFrame<double>* GetFrame() const;
 
+        virtual void StepFinalize() override {}
+
     };
 
 }  // end namespace frydom

@@ -53,12 +53,13 @@ namespace frydom {
         chrono::ChFrame<double> m_equilibriumFrame;
 
 
-        boost::circular_buffer<double> m_vx_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
-        boost::circular_buffer<double> m_vy_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
-        boost::circular_buffer<double> m_vz_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
-        boost::circular_buffer<double> m_wx_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
-        boost::circular_buffer<double> m_wy_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
-        boost::circular_buffer<double> m_wz_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
+
+//        boost::circular_buffer<double> m_vx_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
+//        boost::circular_buffer<double> m_vy_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
+//        boost::circular_buffer<double> m_vz_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
+//        boost::circular_buffer<double> m_wx_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
+//        boost::circular_buffer<double> m_wy_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
+//        boost::circular_buffer<double> m_wz_Recorder;  // circular buffer to store velocity state data for a fixed time persistence
 
 
     public:
@@ -277,34 +278,34 @@ namespace frydom {
 
         }
 
-        void InitializeVelocityState(unsigned int N) {  // TODO : Voir comment recuperer le N qui pourrait etre mis en cache quelque part ??
-
-            m_vx_Recorder = boost::circular_buffer<double>(N, N, 0.);
-            m_vy_Recorder = boost::circular_buffer<double>(N, N, 0.);
-            m_vz_Recorder = boost::circular_buffer<double>(N, N, 0.);
-            m_wx_Recorder = boost::circular_buffer<double>(N, N, 0.);
-            m_wy_Recorder = boost::circular_buffer<double>(N, N, 0.);
-            m_wz_Recorder = boost::circular_buffer<double>(N, N, 0.);
-
-        }
-
-        void RecordVelocityState(FrFrame frame=NWU) {
-
-            std::cout << "Time : " << GetSystem()->GetChTime() << "\n";
-
-            auto linear_velocity = GetVelocity(frame);
-            auto angular_velocity = GetAngularVelocity(frame);
-
-            // FIXME: le update de frhydrobody est appelé plusieurs fois pour le meme pas de temps !!!
-
-            m_vx_Recorder.push_front(linear_velocity[0]);
-            m_vy_Recorder.push_front(linear_velocity[1]);
-            m_vz_Recorder.push_front(linear_velocity[2]);
-            m_wx_Recorder.push_front(angular_velocity[0]);
-            m_wy_Recorder.push_front(angular_velocity[1]);
-            m_wz_Recorder.push_front(angular_velocity[2]);
-
-        }
+//        void InitializeVelocityState(unsigned int N) {  // TODO : Voir comment recuperer le N qui pourrait etre mis en cache quelque part ??
+//
+//            m_vx_Recorder = boost::circular_buffer<double>(N, N, 0.);
+//            m_vy_Recorder = boost::circular_buffer<double>(N, N, 0.);
+//            m_vz_Recorder = boost::circular_buffer<double>(N, N, 0.);
+//            m_wx_Recorder = boost::circular_buffer<double>(N, N, 0.);
+//            m_wy_Recorder = boost::circular_buffer<double>(N, N, 0.);
+//            m_wz_Recorder = boost::circular_buffer<double>(N, N, 0.);
+//
+//        }
+//
+//        void RecordVelocityState(FrFrame frame=NWU) {
+//
+//            std::cout << "Time : " << GetSystem()->GetChTime() << "\n";
+//
+//            auto linear_velocity = GetVelocity(frame);
+//            auto angular_velocity = GetAngularVelocity(frame);
+//
+//            // FIXME: le update de frhydrobody est appelé plusieurs fois pour le meme pas de temps !!!
+//
+//            m_vx_Recorder.push_front(linear_velocity[0]);
+//            m_vy_Recorder.push_front(linear_velocity[1]);
+//            m_vz_Recorder.push_front(linear_velocity[2]);
+//            m_wx_Recorder.push_front(angular_velocity[0]);
+//            m_wy_Recorder.push_front(angular_velocity[1]);
+//            m_wz_Recorder.push_front(angular_velocity[2]);
+//
+//        }
 
 //        boost::circular_buffer<chrono::ChVectorDynamic<double>> GetVelocityStateBuffer() const {
 //            return m_velocityStateRecorder;

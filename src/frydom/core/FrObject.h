@@ -33,6 +33,8 @@ namespace frydom {
         /// FrOffshoreSystem::Initialize() is done.
         virtual void Initialize() = 0;
 
+        virtual void StepFinalize() = 0;
+
     };
 
 }  // end namespace frydom

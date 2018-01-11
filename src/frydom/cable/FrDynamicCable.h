@@ -211,6 +211,7 @@ namespace frydom {
 
         }
 
+        virtual void StepFinalize() override {}
 
 
 //        void UpdateTime(double time) {

@@ -189,6 +189,8 @@ namespace frydom {
 
         }
 
+        virtual void StepFinalize() override {}
+
     };
 
 }  // end namespace frydom
