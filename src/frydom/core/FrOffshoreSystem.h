@@ -87,11 +87,11 @@ namespace frydom {
         }
 
         void SetFreeSurfaceGrid(double lmin, double lmax, double dl) {
-            m_environment->GetFreeSurface()->Initialize(lmin, lmax, dl);
+            m_environment->GetFreeSurface()->SetGrid(lmin, lmax, dl);
         }
 
         void SetFreeSurfaceGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
-            m_environment->GetFreeSurface()->Initialize(xmin, xmax, dx, ymin, ymax, dy);
+            m_environment->GetFreeSurface()->SetGrid(xmin, xmax, dx, ymin, ymax, dy);
         }
 
         /// Get NED frame
@@ -119,7 +119,7 @@ namespace frydom {
 
         virtual void CustomEndOfStep() override;
 
-        virtual void Initialize();
+        virtual void Initialize() override;
 
 
     };  // class FrOffshoreSystem

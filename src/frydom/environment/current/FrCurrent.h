@@ -94,6 +94,8 @@ namespace frydom {
 
         double GetMagnitude2();
 
+        virtual void Initialize() override {}
+
     };
 
 

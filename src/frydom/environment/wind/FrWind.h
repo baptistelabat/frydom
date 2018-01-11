@@ -17,6 +17,8 @@ namespace frydom {
             // TODO
         }
 
+        virtual void Initialize() override {}
+
     };
 
 }  // end namespace frydom

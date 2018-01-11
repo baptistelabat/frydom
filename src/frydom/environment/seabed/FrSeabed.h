@@ -11,6 +11,12 @@ namespace frydom {
 
     class FrSeabed  : public FrObject {
 
+    public:
+
+        void Update(double time) {}
+
+        virtual void Initialize() override {}
+
     };
 
 }  // end namespace frydom

@@ -56,6 +56,8 @@ namespace frydom {
             body_torque = moment;
         }
 
+        virtual void Initialize() override {}
+
     };
 
 

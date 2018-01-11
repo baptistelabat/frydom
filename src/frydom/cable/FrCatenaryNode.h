@@ -5,7 +5,8 @@
 #ifndef FRYDOM_FRCATENARYNODE_H
 #define FRYDOM_FRCATENARYNODE_H
 
-#include <frydom/core/FrForce.h>
+#include "frydom/core/FrObject.h"
+#include "frydom/core/FrForce.h"
 #include <chrono/physics/ChMarker.h>
 #include "chrono/core/ChVector.h"
 
@@ -31,7 +32,7 @@ namespace frydom {
 
 
     /// Abstract base class for FryDom Node involved in catenary cable modeling
-    class FrCatenaryNode : public chrono::ChMarker {  // FIXME: faire deriver de ChMarker de maniere a ce que la position soit update automatiquement ???
+    class FrCatenaryNode : public chrono::ChMarker, FrObject {  // FIXME: faire deriver de ChMarker de maniere a ce que la position soit update automatiquement ???
 
     private:
         NodeType m_node_type = ANCHOR;

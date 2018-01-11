@@ -125,6 +125,9 @@ namespace frydom {
         // Time elapsed for step..
         timer_step.stop();
 
+
+        std::cout << "Framerate = " << 1. / timer_step.GetTimeSeconds() << " FPS" << std::endl;
+
         return true;
     }
 
@@ -141,6 +144,18 @@ namespace frydom {
         // methode initialize comme methode virtuelle
 
         std::cout << "Initializing the system to make every component consistent" << std::endl;
+        m_environment->Initialize();
+
+        // Initializing physical items
+        for (int ibody=0; ibody<bodylist.size(); ibody++) {
+            auto body = dynamic_cast<FrBody*>(bodylist[ibody].get());
+            if (body) {
+                body->Initialize();
+            }
+        }
+
+        // We can now do an initial Update as everything has been initialized against everything
+        Update(true);
     }
 
 

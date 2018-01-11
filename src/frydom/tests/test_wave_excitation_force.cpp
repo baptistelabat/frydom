@@ -18,21 +18,11 @@ int main(int argc, char* argv[]) {
     // Est ce qu'on ne peut pas definir un objet frydom qui soit un singleton et qui donne alors access au systeme embarque ??? --> mieux !!
     FrOffshoreSystem mySystem;
 
+
+    // Free surface appearance
     auto freeSurface = mySystem.GetFreeSurface();
-//    freeSurface->Initialize(-20, 20, 4);
-    freeSurface->Initialize(-20, 20, 2, -20, 20, 2);
-
-//    auto tidal = freeSurface->GetTidal();
-
-//    freeSurface->Initialize(0, 0, 40, 20, 60);
-
-    // Set the wave field
-//    freeSurface->SetLinearWaveField(LINEAR_REGULAR);
-//    auto waveField = freeSurface->GetLinearWaveField();
-//    waveField->SetMeanWaveDirection(0., DEG);
-//    waveField->SetRegularWaveHeight(2);
-//    waveField->SetRegularWavePeriod(6, S);
-
+    freeSurface->SetGridType(FrFreeSurface::POLAR);
+    freeSurface->SetGrid(0, 0, 40, 20, 36);
 
     // TODO: permettre de regler le hs et le tp...
     freeSurface->SetLinearWaveField(LINEAR_IRREGULAR);
@@ -42,8 +32,8 @@ int main(int argc, char* argv[]) {
     double wmax = 3.;
     unsigned int nbFreq = 80;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
-    waveField->GetWaveSpectrum()->SetHs(0.7);  // 1
-    waveField->GetWaveSpectrum()->SetTp(5.);  // 7
+    waveField->GetWaveSpectrum()->SetHs(1.);  // 1
+    waveField->GetWaveSpectrum()->SetTp(5.5);  // 7
 
     waveField->GetWaveRamp()->SetDuration(5.);
     waveField->GetWaveRamp()->SetIncrease();
@@ -127,7 +117,7 @@ int main(int argc, char* argv[]) {
     auto excForce = std::make_shared<FrLinearExcitationForce>();
     cylinder->AddForce(excForce);
     excForce->SetWaveProbe(waveProbe);
-    excForce->Initialize();  // TODO: voir avoir une initialisation auto lors du lancement de la simu (avec un flag...)
+//    excForce->Initialize();  // TODO: voir avoir une initialisation auto lors du lancement de la simu (avec un flag...)
 
     // Radiation
     auto radForce = std::make_shared<FrRadiationConvolutionForce>();
@@ -161,7 +151,7 @@ int main(int argc, char* argv[]) {
 
 //    app.SetVideoframeSaveInterval(1);
 //    app.SetVideoframeSave(true);
-    mySystem.Initialize();
+    mySystem.Initialize(); // Very important !!
     app.Run();  // TODO: remettre
 
 //    char* path;

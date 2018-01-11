@@ -154,6 +154,7 @@ namespace frydom {
                                                               const std::vector<double>& yVect) const = 0;
 
 //        virtual std::shared_ptr<FrWaveProbe> NewWaveProbe(double x, double y) = 0;
+        virtual void Initialize() override {}
 
     };
 

@@ -176,7 +176,17 @@ namespace frydom {
             m_freeSurface->Update(time);
             m_current->Update(time);
             m_wind->Update(time);
+            m_seabed->Update(time);
             m_time = time;
+        }
+
+        virtual void Initialize() override {
+            // TODO: appeler les methodes Initialize() sur les attributs
+            m_freeSurface->Initialize();
+            m_current->Initialize();
+            m_wind->Initialize();
+            m_seabed->Initialize();
+
         }
 
     };

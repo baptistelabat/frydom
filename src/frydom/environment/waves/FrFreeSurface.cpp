@@ -50,36 +50,74 @@ namespace frydom {
 
     }
 
-    void FrFreeSurface::Initialize(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
+    void FrFreeSurface::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
-        // Building the grid
-        auto mesh = BuildRectangularMeshGrid(xmin, xmax, dx, ymin, ymax, dy);
+        m_xmin = xmin;
+        m_xmax = xmax;
+        m_dx = dx;
+        m_ymin = ymin;
+        m_ymax = ymax;
+        m_dy = dy;
 
-        m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
-        m_meshAsset->SetMesh(mesh);
-        m_meshAsset->SetName("FreeSurface");
-//            mesh_shape->SetFading(0.9);  // Ne fonctionne pas avec Irrlicht...
-        m_Body->AddAsset(m_meshAsset);
-
+        m_gridType = CARTESIAN;
     }
 
-    void FrFreeSurface::Initialize(double lmin, double lmax, double dl){
-
-        FrFreeSurface::Initialize(lmin, lmax, dl, lmin, lmax, dl);
+    void FrFreeSurface::SetGrid(double lmin, double lmax, double dl){
+        FrFreeSurface::SetGrid(lmin, lmax, dl, lmin, lmax, dl);
     }
 
-    void FrFreeSurface::Initialize(double xc0,
+    void FrFreeSurface::SetGrid(double xc0,
                     double yc0,
                     double diameter,
                     int nbR,
                     int nbTheta) {
 
-        auto mesh = BuildPolarMeshGrid(xc0, yc0, diameter, nbR, nbTheta);
+        m_xc0 = xc0;
+        m_yc0 = yc0;
+        m_diameter = diameter;
+        m_nbR = nbR;
+        m_nbTheta = nbTheta;
+
+        m_gridType = POLAR;
+
+    }
+
+    void FrFreeSurface::Initialize() {
+
+        // Building the asset
+        FrTriangleMeshConnected mesh;
+        switch (m_gridType) {
+            case CARTESIAN:
+                mesh = BuildRectangularMeshGrid(m_xmin, m_xmax, m_dx, m_ymin, m_ymax, m_dy);
+                break;
+            case POLAR:
+                mesh = BuildPolarMeshGrid(m_xc0, m_yc0, m_diameter, m_nbR, m_nbTheta);
+                break;
+        }
+
         m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
         m_meshAsset->SetMesh(mesh);
         m_meshAsset->SetName("FreeSurface");
 //            mesh_shape->SetFading(0.9);  // Ne fonctionne pas avec Irrlicht...
         m_Body->AddAsset(m_meshAsset);
+
+        // If the mesh is being to be animated
+        if (m_updateAsset) {
+            // Creating the array of wave probes
+            auto nbVertices = m_meshAsset->GetMesh().getCoordsVertices().size();
+            m_waveProbeGrid.reserve(nbVertices);
+
+            // FIXME: le fait que le wavefield soit requis pour initialiser le maillage de surface libre fait qu'on est
+            // oblige de definir le wavefield avant d'activer l'asset --> pas flex du tout. Utiliser plutot un flag pour
+            // etablir que l'asset est initialise ou pas et initialiser la gille  lors de l'appel a UpdateGrid si le flag est false
+            auto waveField = std::static_pointer_cast<FrLinearWaveField>(m_waveField);
+
+            for (auto& vertex : m_meshAsset->GetMesh().getCoordsVertices()) {
+                auto waveProbe = waveField->NewWaveProbe(vertex.x(), vertex.y());
+                waveProbe->Initialize();
+                m_waveProbeGrid.push_back(waveProbe);
+            }
+        }
 
     }
 
@@ -281,27 +319,6 @@ namespace frydom {
 //        for (auto& vertex: mesh.m_vertices) {
 //            vertex.z() = tidalHeight + m_waveField->GetElevation(vertex.x(), vertex.y());  // TODO: ne pas utiliser GetElevation mais des waveProbe
 //        }
-    }
-
-
-    void FrFreeSurface::UpdateAssetON() {  // TODO: faire la creation des waveProbe ailleurs car ca oblige a definir dire UpdateAssetON apres la creation de waveField...
-
-        m_updateAsset = true;
-
-        // Creating the array of wave probes
-        auto nbVertices = m_meshAsset->GetMesh().getCoordsVertices().size();
-        m_waveProbeGrid.reserve(nbVertices);
-
-        // FIXME: le fait que le wavefield soit requis pour initialiser le maillage de surface libre fait qu'on est
-        // oblige de definir le wavefield avant d'activer l'asset --> pas flex du tout. Utiliser plutot un flag pour
-        // etablir que l'asset est initialise ou pas et initialiser la gille  lors de l'appel a UpdateGrid si le flag est false
-        auto waveField = std::static_pointer_cast<FrLinearWaveField>(m_waveField);
-
-        for (auto& vertex : m_meshAsset->GetMesh().getCoordsVertices()) {
-            auto waveProbe = waveField->NewWaveProbe(vertex.x(), vertex.y());
-            waveProbe->Initialize();
-            m_waveProbeGrid.push_back(waveProbe);
-        }
     }
 
     const chrono::ChFrame<double>* FrFreeSurface::GetFrame() const {

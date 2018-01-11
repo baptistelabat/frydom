@@ -87,6 +87,17 @@ namespace frydom {
             return COGFrame.GetPos();
         }
 
+        virtual void Initialize() override {
+            // Initializing forces
+            for (int iforce=0; iforce<forcelist.size(); iforce++) {
+                auto force = dynamic_cast<FrForce*>(forcelist[iforce].get());
+                if (force) {
+                    force->Initialize();
+                }
+            }
+
+        }
+
     };
 
 }  // end namespace frydom

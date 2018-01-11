@@ -5,12 +5,13 @@
 #ifndef FRYDOM_FRCABLE_H
 #define FRYDOM_FRCABLE_H
 
+#include "frydom/core/FrObject.h"
 #include "frydom/core/FrNode.h"
 
 namespace frydom {
 
     /// Abstract base class for cables
-    class FrCable {
+    class FrCable : public FrObject {
 
     protected:
 

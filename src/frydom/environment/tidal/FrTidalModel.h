@@ -128,6 +128,8 @@ namespace frydom {
 
         const chrono::ChFrame<double>* GetTidalFrame() const;
 
+        virtual void Initialize() override {}
+
     };
 
 }  // end namespace frydom

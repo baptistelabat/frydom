@@ -19,10 +19,7 @@ namespace frydom {
 //    };
 
 
-
-
-
-    class FrRadiationForce : public FrForce {
+    class FrRadiationForce : public FrForce { // TODO : mettre dans un fichier dedie
 
     public:
         FrRadiationForce() = default;
@@ -31,12 +28,9 @@ namespace frydom {
 
 
 
-
     class FrRadiationConvolutionForce : public FrRadiationForce {
 
     private:
-        bool m_initialized = false;
-
 
 
 
@@ -78,16 +72,9 @@ namespace frydom {
             // Initilializing the impulse response functions for current body
             BEMBody->GenerateImpulseResponseFunctions();
 
-            m_initialized = true;
-
-
         }
 
         void UpdateState() override {
-            if (!m_initialized) {
-                // TODO: prevoir dans OffshoreSystem un mecanisme d'initialisation general...
-                Initialize();
-            }
 
 
         }

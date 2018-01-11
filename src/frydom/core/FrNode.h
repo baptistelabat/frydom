@@ -44,6 +44,8 @@ namespace frydom {
             return GetRest_Coord();
         }
 
+        virtual void Initialize() override {}
+
 
     };  // end class FrNode
 

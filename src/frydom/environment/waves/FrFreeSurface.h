@@ -40,7 +40,12 @@ namespace frydom{
 
     /// Pure Virtual Base class for a free surface system.
     class FrFreeSurface : public FrObject {
+    public:
 
+        enum GRID_TYPE {
+            CARTESIAN,
+            POLAR
+        };
         // FIXME: Il faut que ce soit cette classe qui comprenne un modele de maree !!
 
     protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
@@ -60,6 +65,19 @@ namespace frydom{
 
         std::vector<double> m_gridHeights; // TODO: preallouer a l'initialisation
 
+        GRID_TYPE m_gridType = CARTESIAN;
+        double m_xmin = -50.;
+        double m_xmax = 50.;
+        double m_dx = 1.;
+        double m_ymin = -50.;
+        double m_ymax = 50.;
+        double m_dy = 1.;
+
+        double m_xc0 = 0.;
+        double m_yc0 = 0.;
+        double m_diameter = 50.;
+        int m_nbR = 50;
+        int m_nbTheta = 36;
 
     protected:
 
@@ -97,10 +115,16 @@ namespace frydom{
             return m_tidal->GetWaterHeight() + m_waveField->GetElevation(x, y);
         }
 
+        virtual void Initialize() override;
+
+        void SetGridType(GRID_TYPE gridType) {
+            m_gridType = gridType;
+        }
+
         /// Initializes the free surface system
         /// In any case, a mesh grid is used.
         /// this version concerns a rectangular grid
-        void Initialize(double xmin,
+        void SetGrid(double xmin,
                         double xmax,
                         double dx,
                         double ymin,
@@ -111,12 +135,12 @@ namespace frydom{
         /// Initializes the free surface system
         /// In any case, a mesh grid is used.
         /// this version concerns a square grid
-        void Initialize(double lmin,
+        void SetGrid(double lmin,
                         double lmax,
                         double dl
                         );
 
-        void Initialize(double xc0,
+        void SetGrid(double xc0,
                         double yc0,
                         double diameter,
                         int nbR,
@@ -127,7 +151,7 @@ namespace frydom{
         /// Get the free surface's mesh
 //        FrTriangleMeshConnected getMesh(void) const;
 
-        void UpdateAssetON();
+        void UpdateAssetON() { m_updateAsset = true; }
 
         void UpdateAssetOFF() { m_updateAsset = false; }
 
