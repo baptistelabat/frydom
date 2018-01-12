@@ -109,8 +109,18 @@ namespace IO {  // TODO : Retirer ce namespace !!
         std::vector<std::vector<double>> ReadDoubleArraySTD(std::string h5path) const {
 
             auto mat = ReadDoubleArray(h5path);
-            std::vector<std::vector<double>> vec(mat.data(), mat.data() + mat.rows() * mat.cols());
-            return vec;
+
+            std::vector<double> vec;
+            std::vector<std::vector<double>> res;
+
+            for (auto i=0; i<mat.cols(); i++) {
+                for (auto j=0; j<mat.rows(); j++) {
+                    vec.push_back(mat(j,i));
+                }
+                res.push_back(vec);
+            }
+
+            return res;
 
         }
 
@@ -195,10 +205,10 @@ namespace IO {  // TODO : Retirer ce namespace !!
             return i[0];
         }
 
-        bool ReadBool(std::string h5Path) {
+        hbool_t ReadBool(std::string h5Path) {
             DataSet dset = m_file->openDataSet(h5Path);
 
-            bool b[1];
+            hbool_t b[1];
             dset.read(b, PredType::NATIVE_HBOOL);
 
             return b[0];

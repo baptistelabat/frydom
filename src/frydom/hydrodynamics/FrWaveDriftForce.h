@@ -12,43 +12,6 @@
 
 namespace frydom {
 
-    class FrDriftMode {
-
-    public:
-        enum TYPE {
-            LINEAR,
-            ANGULAR,
-        };
-
-    private:
-        TYPE m_type;                    ///< Type linear or angular of the mode
-        Eigen::Vector3d m_direction;    ///< Direction of the mode
-        Eigen::Vector3d m_point;        ///< Application point of the mode
-
-        bool m_active = true;           ///< Status of the mode
-
-    public:
-
-        FrDriftMode() = default;
-
-        void SetTypeLINEAR() { m_type = LINEAR; }
-        void SetTypeAngular() { m_type = ANGULAR; }
-
-        TYPE GetType() const { return m_type; }
-
-        void SetDirection(Eigen::Vector3d& direction) { m_direction = direction; }
-        Eigen::Vector3d GetDirection() const { return m_direction; }
-
-        void SetPoint(Eigen::Vector3d& point) { m_point = point; }
-        Eigen::Vector3d GetPoint() const { return m_point; }
-
-        void Activate() { m_active = true; }
-        void Deactivate() { m_active = false; }
-        bool IsActive() const { return m_active; }
-
-    };
-
-
     class FrWaveDriftForce : public FrForce {
 
     public:
@@ -63,10 +26,10 @@ namespace frydom {
         void SetCmplxElevation();
 
         /// Definition of the body where the force is applied
-        void SetBody(FrHydroBody* body) { m_body = body;}
+        void SetBody(std::shared_ptr<FrHydroBody> body) { m_body = body;}
 
-        /// Building the wave drift coefficient interpolator
-        void BuildDriftCoefficientInterpolators();
+        /// Compute the relative angle
+        double SetRelativeAngle(const double waveDir, const double heading);
 
         /// Update procedure containing the Wave Drift Force definition
         void UpdateState() override;
@@ -74,11 +37,12 @@ namespace frydom {
     private:
 
         int m_NbModes;                                     ///< Number of modes representd in the database
-        std::vector<FrDriftMode> m_modes;                  ///< Definition of the mode
         std::shared_ptr<FrLinearWaveProbe> m_waveProbe;    ///< Wave probe for local wave field characteristics
         std::vector<std::vector<std::complex<double>>> m_CmplxElevation;  ///< Wave complex elevation
-        std::vector<mathutils::LookupTable2d<>> m_table;                 ///< Lookup table 2D depending on freq and heading (for each mode)
-        FrHydroBody*    m_body;                            ///< Hydro body to which the force is applied
+        std::vector<std::unique_ptr<mathutils::LookupTable2d<>>> m_table;                 ///< Lookup table 2D depending on freq and heading (for each mode)
+        std::shared_ptr<FrHydroBody> m_body;                            ///< Hydro body to which the force is applied
+        bool m_sym_x;
+        bool m_sym_y;
 
     };
 
