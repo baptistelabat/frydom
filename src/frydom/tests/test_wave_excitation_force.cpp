@@ -38,22 +38,8 @@ int main(int argc, char* argv[]) {
     waveField->GetWaveRamp()->SetDuration(5.);
     waveField->GetWaveRamp()->SetIncrease();
 
-
-//    freeSurface->SetLinearWaveField(LINEAR_DIRECTIONAL);
-//    auto waveField = freeSurface->GetLinearWaveField();
-//    waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
-//    double wmin = 0.2;
-//    double wmax = 2.;
-//    unsigned int nbFreq = 70;
-//    waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
-
+    // To see the free surface mesh updated
     freeSurface->UpdateAssetON();
-
-//    waveField->GetWaveSpectrum()->Eval(1.);
-//    waveField->SetRegularWaveHeight(0.5);
-//    waveField->SetRegularWavePeriod(5., S);
-//    waveField->GetWaveSpectrum()->
-
 
 
     // Get a waveProbe for excitation force on body
@@ -81,10 +67,6 @@ int main(int argc, char* argv[]) {
     // ===========================================
 
     // Set added mass
-
-
-
-
 
 
     // Hydrostatics
