@@ -227,6 +227,11 @@ namespace frydom {
         return GetAddedMass(m_ID, idof, iforce);
     }
 
+    std::vector<Eigen::MatrixXd> FrBEMBody::GetImpulseResponseFunction(unsigned int ibody) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        return m_ImpulseResponseFunction[ibody];
+    }
+
     Eigen::MatrixXd FrBEMBody::GetImpulseResponseFunction(const unsigned int ibody, const unsigned int idof) const {
         assert(ibody < m_HDB->GetNbBodies());
         assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());

@@ -69,6 +69,7 @@ int main(int argc, char* argv[]) {
     cylinder->SetLateralUnderWaterArea(100.);
     cylinder->SetTransverseUnderWaterArea(100.);
     cylinder->SetLpp(10.);
+    // TODO: Accepter 3 parametres plutot qu'un vecteur chrono
     cylinder->SetInertiaXX(chrono::ChVector<double>(8e7, 8e7, 1e6));
     cylinder->SetMass(795e3 * 2.);  // TODO : retirer le 2., c'est pour emuler une masse ajoutee...
     cylinder->SetCOG(chrono::ChVector<double>(0., 0., -7.5));
@@ -101,6 +102,7 @@ int main(int argc, char* argv[]) {
 
 
     // Playing
+    // TODO: accepter 3 arguments plutot que des vecteurs chrono
     hydroDampingForce->SetManeuveuringDampings(chrono::ChVector<double>(1e8, 1e8, 1e9));
     hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e5, 5e10, 5e10));
 
@@ -113,9 +115,14 @@ int main(int argc, char* argv[]) {
     auto excForce = std::make_shared<FrLinearExcitationForce>();
     cylinder->AddForce(excForce);
     excForce->SetWaveProbe(waveProbe);
-//    excForce->Initialize();  // TODO: voir avoir une initialisation auto lors du lancement de la simu (avec un flag...)
+//    excForce->Initialize();  // TODO: voir avoir une initialisation auto lors du lancement de la simu (avec un flag...)  --> OK fait
 
     // Radiation
+
+    // TODO: creer le modele de radiation !!!
+
+
+
     auto radForce = std::make_shared<FrRadiationConvolutionForce>();
     cylinder->AddForce(radForce);
 //    radForce->Initialize();
@@ -123,18 +130,25 @@ int main(int argc, char* argv[]) {
 
 
     // Hydro database loading
+    // TODO: renommer frydom_hdb.h5 en cylinder.hdb5
     FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");  // TODO: mettre la HDB dans system ??? (ca genere du coup le mapper en auto)
+
+
+    FrRadiationConvolutionModel radModel(&HDB, &mySystem);
+
+
+
 
     // Mapping between hydrodynamic bodies and bodies from the hydrodynamic database
 
-    // Getting a hydrodynamic mapper from the HDB
+//    // Getting a hydrodynamic mapper from the HDB
     auto hydroMapper = HDB.GetMapper();
-    mySystem.SetHydroMapper(hydroMapper);
-
-    // Mapping body
+//    mySystem.SetHydroMapper(hydroMapper);
+//
+//    // Mapping body
     hydroMapper->Map(cylinder, 0);
 
-    auto hydroBody = hydroMapper->GetHydroBody(HDB.GetBody(0)); // Retirer
+//    auto hydroBody = hydroMapper->GetHydroBody(HDB.GetBody(0)); // Retirer
 
 //    cylinder->SetBEMBody(HDB.GetBody(0)); // TODO : A retirer, on va utiliser le hydroMapper
 

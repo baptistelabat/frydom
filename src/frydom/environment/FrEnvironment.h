@@ -180,16 +180,20 @@ namespace frydom {
             m_time = time;
         }
 
-        virtual void Initialize() override {
+        void Initialize() override {
             // TODO: appeler les methodes Initialize() sur les attributs
             m_freeSurface->Initialize();
             m_current->Initialize();
             m_wind->Initialize();
             m_seabed->Initialize();
-
         }
 
-        virtual void StepFinalize() override {}
+        void StepFinalize() override {
+            m_freeSurface->StepFinalize();
+            m_current->StepFinalize();
+            m_wind->StepFinalize();
+            m_seabed->StepFinalize();
+        }
 
     };
 

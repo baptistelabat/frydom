@@ -157,6 +157,20 @@ namespace frydom {
         Update(true);
     }
 
+    void FrOffshoreSystem::StepFinalize() {
+
+        std::cout << "Finalizing the step at time " << GetChTime() << std::endl;
+        m_environment->StepFinalize();
+
+        for (int ibody=0; ibody<bodylist.size(); ibody++) {
+            auto body = dynamic_cast<FrBody*>(bodylist[ibody].get());
+            if (body) {
+                body->StepFinalize();
+            }
+        }
+
+    }
+
 
 
 }  // end namespace frydom

@@ -5,8 +5,8 @@
 #ifndef FRYDOM_FRLINEAREXCITATIONFORCE_H
 #define FRYDOM_FRLINEAREXCITATIONFORCE_H
 
-#include <frydom/core/FrForce.h>
-#include <frydom/environment/waves/FrWaveProbe.h>
+#include "frydom/core/FrForce.h"
+#include "frydom/environment/waves/FrWaveProbe.h"
 #include "frydom/environment/waves/FrWaveField.h"
 #include "frydom/core/FrHydroBody.h"
 
@@ -28,9 +28,10 @@ namespace frydom {
         Eigen::MatrixXcd m_steadyForce;
 
 
-        FrBEMBody* GetBEMBody() {
-            auto thisBody = dynamic_cast<FrHydroBody*>(GetBody());
-            auto BEMBody = dynamic_cast<FrOffshoreSystem*>(GetBody()->GetSystem())->GetHydroMapper()->GetBEMBody(thisBody);
+        std::shared_ptr<FrBEMBody> GetBEMBody() {
+            auto thisHydroBody = dynamic_cast<FrHydroBody*>(GetBody());
+            auto BEMBody = dynamic_cast<FrOffshoreSystem*>(GetBody()->GetSystem())->
+                    GetHydroMapper()->GetBEMBody(thisHydroBody);
             return BEMBody;
         }
 

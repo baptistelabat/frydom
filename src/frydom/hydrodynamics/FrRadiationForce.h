@@ -10,13 +10,36 @@
 #include <frydom/core/FrForce.h>
 #include <frydom/utils/FrRecorder.h>
 #include "frydom/core/FrHydroBody.h"
+
+#include "FrRadiationModel.h"
 #include "FrHydroDB.h"
 
 namespace frydom {
 
+    // TODO: les forces de radiation doivent pouvoir etre extraites depuis le modele de radiation...
 
+    class FrRadiationForce : public FrForce {
 
-    class FrRadiationForce : public FrForce {};
+        // FIXME : enum a placer dans RadiationModel
+//        enum class Type {
+//            CONVOLUTION,
+//            STATE_SPACE // Not used...
+//        };  // TODO : utiliser !!!
+
+    protected:
+        std::shared_ptr<FrRadiationModel> m_radiationModel;  // TODO : il faut que le modele de radiation soit en mesure de generer les forces de radiation
+        // Une possibilite serait qu'a l'initialisation du modele de radiation, les forces de radiation soient ajoutees automatiquemet aux corps...
+
+    public:
+        FrRadiationForce() = default;
+
+        explicit FrRadiationForce(std::shared_ptr<FrRadiationModel> radiationModel) : m_radiationModel(radiationModel) {}
+
+        void SetRadiationModel(const std::shared_ptr<FrRadiationModel> radiationModel) { m_radiationModel = radiationModel; }
+
+        std::shared_ptr<FrRadiationModel> GetRadiationModel() const { return m_radiationModel; }
+
+    };
 
 
     class FrRadiationConvolutionForce : public FrRadiationForce {
@@ -26,6 +49,10 @@ namespace frydom {
 
 
     public:
+
+        explicit FrRadiationConvolutionForce(std::shared_ptr<FrRadiationConvolutionModel> radiationConvolutionModel)
+                : FrRadiationForce(radiationConvolutionModel) {}
+
         void Initialize() override {
             // TODO: comment initialiser une fois que toute la modelisation a ete faite ???
 
@@ -66,49 +93,16 @@ namespace frydom {
         }
 
         void UpdateState() override {
+            // TODO: appeler le Update du RadiationModel
 
-
+            // Force dans le repere absolu, mmoment dans le repere relatif
+//            m_radiationModel->Get
+//            force =
         }
 
 
 
     };
-//    private:
-//        FrRecorder<chrono::ChVector<double>> m_linearVelocityRecorder;
-//        FrRecorder<chrono::ChVector<double>> m_angularVelocityRecorder;
-////        FrRadiationIRFDB m_IRFDB;
-//
-//    public:
-//
-////        FrRadiationConvolutionForce() = default;
-//
-////        FrRadiationConvolutionForce(FrRadiationIRFDB DB) : m_IRFDB(DB) {}
-////
-////        void SetRadiationIRFDB(FrRadiationIRFDB DB) {
-////            m_IRFDB = DB;
-////        }
-//
-//
-//        void UpdateState() override {
-//
-//            // 1- Recording the current state
-//            m_linearVelocityRecorder.record(ChTime, Body->GetPos_dt());
-//            m_angularVelocityRecorder.record(ChTime, Body->GetWvel_par());
-//
-//            // 2- Getting the time history for velocities and interpolating it based on impulse response functions
-//            // discretization
-//
-//
-//
-//        }
-
-
-
-//    };
-
-
-
-
 
 }  // end namespace frydom
 

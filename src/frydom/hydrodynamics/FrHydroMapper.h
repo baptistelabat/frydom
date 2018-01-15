@@ -13,7 +13,7 @@
 
 namespace frydom {
 
-    typedef boost::bimaps::bimap<FrHydroBody*, FrBEMBody*> myBimap;
+    typedef boost::bimaps::bimap<FrHydroBody*, unsigned int> myBimap;
     typedef myBimap::value_type mapping;
 
 
@@ -22,7 +22,6 @@ namespace frydom {
     private:
 
         FrHydroDB* m_HDB;
-
         myBimap m_mapper;
 
 
@@ -30,10 +29,10 @@ namespace frydom {
 
         explicit FrHydroMapper(FrHydroDB* HDB) : m_HDB(HDB) {}
 
-        void Map(std::shared_ptr<FrHydroBody> hydroBody, unsigned int iBEMBody) {
-
+        void Map(const std::shared_ptr<FrHydroBody> hydroBody, unsigned int iBEMBody) {
+            // TODO: mettre un safe guard pour ne pas attacher plusieurs corps a un meme BEMBody (meme indice)
             assert(iBEMBody < m_HDB->GetNbBodies());
-            m_mapper.insert( mapping(hydroBody.get(), m_HDB->GetBody(iBEMBody).get()) );
+            m_mapper.insert( mapping(hydroBody.get(), iBEMBody) );
 
         }
 
@@ -41,23 +40,24 @@ namespace frydom {
             return m_mapper.size();
         }
 
-        FrHydroBody* GetHydroBody(std::shared_ptr<FrBEMBody> BEMBody) const {
-            return m_mapper.right.at(BEMBody.get());
-        }
-
-        FrHydroBody* GetHydroBody(FrBEMBody* BEMBody) const {
-            return m_mapper.right.at(BEMBody);
-        }
-
         FrHydroBody* GetHydroBody(unsigned int iBEMBody) const {
-            return m_mapper.right.at(m_HDB->GetBody(iBEMBody).get());
+            return m_mapper.right.at(iBEMBody);
         }
 
-        FrBEMBody* GetBEMBody(std::shared_ptr<FrHydroBody> hydroBody) {
-            return m_mapper.left.at(hydroBody.get());
+        unsigned int GetBEMBodyIndex(std::shared_ptr<FrHydroBody> hydroBody) {
+            return GetBEMBodyIndex(hydroBody.get());
         }
-        FrBEMBody* GetBEMBody(FrHydroBody* hydroBody) {
+
+        unsigned int GetBEMBodyIndex(FrHydroBody* hydroBody) {
             return m_mapper.left.at(hydroBody);
+        }
+
+        std::shared_ptr<FrBEMBody> GetBEMBody(std::shared_ptr<FrHydroBody> hydroBody) {
+            return m_HDB->GetBody(GetBEMBodyIndex(hydroBody.get()));
+        }
+
+        std::shared_ptr<FrBEMBody> GetBEMBody(FrHydroBody* hydroBody) {
+            return m_HDB->GetBody(GetBEMBodyIndex(hydroBody));
         }
 
     };

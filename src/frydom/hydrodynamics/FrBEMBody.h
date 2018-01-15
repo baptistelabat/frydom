@@ -239,6 +239,8 @@ namespace frydom {
 
         Eigen::VectorXd GetselfRadiationDamping(unsigned int idof, unsigned int iforce) const;
 
+        std::vector<Eigen::MatrixXd> GetImpulseResponseFunction(unsigned int ibody) const;
+
         Eigen::MatrixXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof) const;
 
         Eigen::VectorXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
