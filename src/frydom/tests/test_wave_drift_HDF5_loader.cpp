@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 
     // Wave Field Condition
     auto freeSurface = system.GetFreeSurface();
-    freeSurface->Initialize(-200, 200, 2, -200, 200, 2);
+    freeSurface->Initialize(-200, 200, 20, -200, 200, 20);
 
     freeSurface->SetLinearWaveField(LINEAR_IRREGULAR);
     auto waveField = freeSurface->GetLinearWaveField();
@@ -24,8 +24,8 @@ int main(int argc, char* argv[]) {
     double wmax = 3.;
     unsigned int nbFreq = 80;
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
-    waveField->GetWaveSpectrum()->SetHs(5.);
-    waveField->GetWaveSpectrum()->SetTp(15.);
+    waveField->GetWaveSpectrum()->SetHs(2.);
+    waveField->GetWaveSpectrum()->SetTp(10.);
 
     //waveField->GetWaveRamp()->SetDuration(20.);
     //waveField->GetWaveRamp()->SetIncrease();
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
     platforme->AddForce(hstForce);
 
     // Create a wave drift force model and add to the ship model
-    std::string hdf5_file = "WaveDriftCoeff_100.h5";
+    std::string hdf5_file = "WaveDriftCoeff_100_2.h5";
 
     auto DriftForce = std::make_shared<FrWaveDriftForce>(hdf5_file);
     std::cout << "A new wave drift force model has been defined"<< std::endl;
