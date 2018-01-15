@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
 //    mySystem.SetTimestepperType(chrono::ChTimestepper::Type::NEWMARK);
     auto app = FrIrrApp(mySystem, 30);
 
-    app.SetTimestep(0.01);
+    app.SetTimestep(0.02);
 //    radForce->Initialize();
 
 

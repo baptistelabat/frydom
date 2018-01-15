@@ -37,11 +37,7 @@ int main(int argc, char* argv[]) {
     // =================================================================================================================
     // CURRENT
     // =================================================================================================================
-    // Creating a current field
-    auto current_field = std::make_unique<FrCurrent>(frydom::EAST, 5, KNOT);
-
-
-    system.GetEnvironment()->SetCurrent(current_field.release());
+    system.GetEnvironment()->GetCurrent()->Set(EAST, 5, NED, GOTO, KNOT);
 
 
     // =================================================================================================================
