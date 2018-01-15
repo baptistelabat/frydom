@@ -22,8 +22,10 @@ set(FRYDOM_TESTS
         test_wave_field
         test_wave_spectrum
         test_IRF_computation
+
         )
 
+set(CMAKE_CXX_FLAGS " -lIrrlicht ")
 
 message(STATUS "Test programs for FRyDoM framework...")
 
@@ -35,7 +37,7 @@ foreach(test ${FRYDOM_TESTS})
 
 endforeach()
 
-# Adding resource filesq
+# Adding resource files
 configure_file(data/frydom_logo.png . COPYONLY)
 configure_file(../../../data/skybox/sky_dn.jpg . COPYONLY)
 configure_file(../../../data/skybox/sky_lf.jpg . COPYONLY)

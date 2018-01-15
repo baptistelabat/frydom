@@ -7,7 +7,6 @@
 
 //#include "chrono/physics/ChSystemNSC.h"
 //#include "chrono/physics/ChSystem.h"
-//#include <frydom/hydrodynamics/FrHydroMapper.h>
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/timestepper/ChState.h"
 #include "chrono/core/ChMatrixNM.h"
@@ -68,7 +67,7 @@ namespace frydom {
             return world_body.get();
         }
 
-        std::shared_ptr<chrono::ChBody> GetWorldBody() const {
+        std::shared_ptr<FrBody> GetWorldBody() const {
             return world_body;
         }
 

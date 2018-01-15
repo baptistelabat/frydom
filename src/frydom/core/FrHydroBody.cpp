@@ -8,7 +8,6 @@
 #include "frydom/hydrodynamics/FrHydroDB.h"
 #include "FrHydroBody.h"
 
-
 namespace frydom {
 
     void FrHydroBody::SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset) {
@@ -55,7 +54,6 @@ namespace frydom {
 
         // update parent class
         chrono::ChBodyAuxRef::Update(update_assets);
-
     }
 
     chrono::ChVector<double> FrHydroBody::GetCurrentRelativeVelocity(FrFrame frame) {
@@ -64,6 +62,19 @@ namespace frydom {
                 return m_current_relative_velocity;
             case NED:
                 return NWU2NED(m_current_relative_velocity);
+        }
+    }
+
+    chrono::ChVector<> FrHydroBody::GetCurrentRelativeVelocity(const chrono::ChVector<>& localpos,
+                                                               FrFrame frame) {
+        auto current_velocity = GetSystem()->GetEnvironment()->GetCurrent()->GetFluxVector(NWU);
+        auto velocity = PointSpeedLocalToParent(localpos);
+        auto current_relative_velocity = current_velocity - velocity;
+        switch (frame) {
+            case NWU:
+                return current_relative_velocity;
+            case NED:
+                return NWU2NED(current_relative_velocity);
         }
     }
 
