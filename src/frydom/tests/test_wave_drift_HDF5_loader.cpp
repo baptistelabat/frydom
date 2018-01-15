@@ -14,8 +14,9 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
 
     // Wave Field Condition
-    auto freeSurface = system.GetFreeSurface();
-    freeSurface->Initialize(-200, 200, 20, -200, 200, 20);
+    auto freeSurface = system.GetEnvironment()->GetFreeSurface();
+//    freeSurface->Initialize(-200, 200, 20, -200, 200, 20);
+    freeSurface->SetGrid(-200, 200, 20);
 
     freeSurface->SetLinearWaveField(LINEAR_IRREGULAR);
     auto waveField = freeSurface->GetLinearWaveField();

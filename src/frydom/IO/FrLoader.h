@@ -8,7 +8,12 @@
 
 #include <string>
 #include <vector>
+#include "MathUtils.h"
 
+#include "frydom/core/FrConstants.h"
+#include "frydom/environment/current/FrCurrentPolarCoeffs.h"
+
+using namespace mathutils;  // TODO: mettre LookupTable en forward declaration
 
 namespace frydom {
 
@@ -21,7 +26,7 @@ namespace IO {  // TODO: retirer ce namespace !!
     //=======================================================================================================
 
     /// Build a Polar Coefficient table from a yaml file
-    FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string yaml_file);
+    FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string& yaml_file);
 
 
     /// Build a Polar Coefficient table from in-memory coefficient vectors
@@ -31,7 +36,7 @@ namespace IO {  // TODO: retirer ce namespace !!
                                                     const std::vector<double>& cz);
 
     /// Extract Polar Coefficient vectors from a yaml file
-    void LoadPolarCoeffsFromYaml(const std::string yaml_file,
+    void LoadPolarCoeffsFromYaml(const std::string& yaml_file,
                                  std::vector<double>& angles,
                                  std::vector<double>& cx,
                                  std::vector<double>& cy,

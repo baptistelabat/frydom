@@ -4,14 +4,23 @@
 
 #include "FrLoader.h"
 #include "frydom/environment/current/FrCurrentPolarCoeffs.h"
+#include <iostream>
+#include <fstream>
+
+#include "MathUtils.h"
 
 #include "yaml-cpp/yaml.h"
 
 
 namespace frydom {
+//    using FrCurrentPolarCoeffs;
 namespace IO {  // TODO: retirer ce namespace !
 
-    FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string yaml_file) {
+    //=========================================================================================================
+    // IO for the current force modeling
+    //=========================================================================================================
+
+FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string& yaml_file) {
 
         // Loading data from yaml file
         std::vector<double> angles, cx, cy, cz;
@@ -32,7 +41,7 @@ namespace IO {  // TODO: retirer ce namespace !
 
     }
 
-    void LoadPolarCoeffsFromYaml(const std::string yaml_file,
+    void LoadPolarCoeffsFromYaml(const std::string& yaml_file,
                                  std::vector<double> &angles,
                                  std::vector<double> &cx,
                                  std::vector<double> &cy,
@@ -47,28 +56,28 @@ namespace IO {  // TODO: retirer ce namespace !
             // Getting angles Node
             try {
                 angles = node["angles"].as<std::vector<double>>();
-            } catch (YAML::BadConversion err) {
+            } catch (YAML::BadConversion& err) {
                 // TODO: throw exception
             }
 
             // Getting cx Node
             try {
                 cx = node["cx"].as<std::vector<double>>();
-            } catch (YAML::BadConversion err) {
+            } catch (YAML::BadConversion& err) {
                 // TODO: throw exception
             }
 
             // Getting cy Node
             try {
                 cy = node["cy"].as<std::vector<double>>();
-            } catch (YAML::BadConversion err) {
+            } catch (YAML::BadConversion& err) {
                 // TODO: throw exception
             }
 
             // Getting cz Node
             try {
                 cz = node["cz"].as<std::vector<double>>();
-            } catch (YAML::BadConversion err) {
+            } catch (YAML::BadConversion& err) {
                 // TODO: throw exception
             }
 

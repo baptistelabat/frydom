@@ -14,7 +14,12 @@ set(FRYDOM_THIRDPARTY_INCLUDE_DIRS "")
 message(STATUS "===================================================================")
 message(STATUS "Finding package Python...")
 message(STATUS "===================================================================")
-find_package(PythonLibs 2.7) # TODO: voir a terme le passage en Python 3...
+#find_package(PythonLibs 2.7) # TODO: voir a terme le passage en Python 3...
+#set(Python_ADDITIONAL_VERSIONS 3.4)
+#find_package(PythonInterp REQUIRED)
+set(PYTHON_LIBRARIES "/usr/lib/x86_64-linux-gnu/libpython2.7.so")
+set(PYTHON_INCLUDE_DIRS "/usr/include/python2.7")
+#find_package(PythonLibs ${PYTHON_VERSION_STRING} EXACT)
 list(APPEND FRYDOM_THIRDPARTY_LIBS ${PYTHON_LIBRARIES})
 list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${PYTHON_INCLUDE_DIRS})
 
@@ -81,7 +86,7 @@ find_package(Eigen3 REQUIRED NO_MODULE)
 
 list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
 
-message(STATUS "INCLUDE DIRS : " ${EIGEN_INCLUDE_DIRS})
+message(STATUS "INCLUDE DIRS : " ${EIGEN3_INCLUDE_DIRS})
 message(STATUS "LIBRARIES : NO LIB REQUIRED")
 #=============================================================================
 #
@@ -91,8 +96,10 @@ message(STATUS "LIBRARIES : NO LIB REQUIRED")
 message(STATUS "===================================================================")
 message(STATUS "Finding package HDF5...")
 message(STATUS "===================================================================")
+#set(HDF5_ROOT "/usr/lib/x86_64-linux-gnu")
 find_package(HDF5 REQUIRED COMPONENTS CXX)
-
+#set(HDF5_CXX_LIBRARIES "${HDF5_ROOT}/libhdf5_cpp.so;${HDF5_ROOT}/hdf5/serial/libhdf5.so;${HDF5_ROOT}/libpthread.so;${HDF5_ROOT}/libsz.so;${HDF5_ROOT}/libz.so;${HDF5_ROOT}/libdl.so;${HDF5_ROOT}/libm.so")
+#set(HDF5_INCLUDE_DIRS "/usr/include/hdf5/serial")
 # Mandatory for each new library
 list(APPEND FRYDOM_THIRDPARTY_LIBS ${HDF5_CXX_LIBRARIES})
 list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS})
@@ -139,6 +146,9 @@ set(Chrono_DIR "${CMAKE_CURRENT_SOURCE_DIR}/chrono_build/cmake")
 find_package(Chrono
         COMPONENTS Irrlicht fea postprocess
         CONFIG)
+#find_package(Chrono
+#	COMPONENTS fea fsi postprocess
+#	CONFIG)
 
 #--------------------------------------------------------------
 # Return now if Chrono or a required component was not found.
@@ -172,6 +182,7 @@ list(APPEND FRYDOM_THIRDPARTY_LIBS ${CHRONO_LIBRARIES})
 list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${CHRONO_INCLUDE_DIRS})
 
 
+#include_directories(${FRYDOM_THIRDPARTY_INCLUDE_DIRS})
 
 #=============================================================================
 #

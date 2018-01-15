@@ -19,8 +19,8 @@ namespace frydom {
         int n_mode, n_dir;
         std::string imode_path, idir_path;
 
-        m_sym_x = reader.ReadBool("sym_x");
-        m_sym_y = reader.ReadBool("sym_y");
+        m_sym_x = (bool)reader.ReadBool("sym_x");
+        m_sym_y = (bool)reader.ReadBool("sym_y");
 
         m_NbModes = reader.ReadInt("n_mode");
         double NbAngles;
