@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
     // Playing
     // TODO: accepter 3 arguments plutot que des vecteurs chrono
     hydroDampingForce->SetManeuveuringDampings(chrono::ChVector<double>(1e8, 1e8, 1e9));
-    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e5, 5e10, 5e10));
+//    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e5, 5e10, 5e10));
 
 
     cylinder->AddForce(hydroDampingForce);
