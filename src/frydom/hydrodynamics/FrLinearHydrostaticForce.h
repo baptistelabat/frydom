@@ -57,7 +57,7 @@ namespace frydom {
             force -= Body->GetSystem()->Get_G_acc() * Body->GetMass();
 
             moment = Body->Dir_World2Body(chrono::ChVector<double> (values.y(), values.z(), 0.));
-
+            // TODO: verifier que c'est la bonne fonction de transport
         }
 
 

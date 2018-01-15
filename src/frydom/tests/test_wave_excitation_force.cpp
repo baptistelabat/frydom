@@ -110,11 +110,27 @@ int main(int argc, char* argv[]) {
     cylinder->AddForce(hydroDampingForce);
 
 
+    // Linear Seakeeping forces
+    // ========================
+
+    // Hydro database loading
+    // TODO: renommer frydom_hdb.h5 en cylinder.hdb5
+    FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");  // TODO: mettre la HDB dans system ??? (ca genere du coup le mapper en auto)
+
+    // Mapping physical hydrodynamic bodies and BEM bodies
+    auto hydroMapper = HDB.GetMapper();  // C'est instancie dans HDB, ne devrait pas, devrait l'etre dans le modele de force lineaire...
+    mySystem.SetHydroMapper(hydroMapper);
+    hydroMapper->Map(cylinder, 0);
+
+    auto radModel = std::make_shared<FrRadiationConvolutionModel>(&HDB, &mySystem);  // TODO : Ajouter un addExcitationForceToHydroBody (et changer le nom de radiationModel...)
+
+
+
 
     // Creer un modele de force d'excitation et l'ajouter au corps hydro
     auto excForce = std::make_shared<FrLinearExcitationForce>();
     cylinder->AddForce(excForce);
-    excForce->SetWaveProbe(waveProbe);
+    excForce->SetWaveProbe(waveProbe);  // La wave probe devrait etre generee automatiquement par la classe FrLinearHydroModel car c'est une info de la HDB !!
 //    excForce->Initialize();  // TODO: voir avoir une initialisation auto lors du lancement de la simu (avec un flag...)  --> OK fait
 
     // Radiation
@@ -123,44 +139,15 @@ int main(int argc, char* argv[]) {
 
 
 
-    auto radForce = std::make_shared<FrRadiationConvolutionForce>();
-    cylinder->AddForce(radForce);
+    radModel->AddRadiationForceToHydroBody(cylinder);
+//    auto radForce = std::make_shared<FrRadiationConvolutionForce>();
+//    cylinder->AddForce(radForce);
 //    radForce->Initialize();
 
 
-
-    // Hydro database loading
-    // TODO: renommer frydom_hdb.h5 en cylinder.hdb5
-    FrHydroDB HDB = LoadHDB5("frydom_hdb.h5");  // TODO: mettre la HDB dans system ??? (ca genere du coup le mapper en auto)
+//    radModel->Initialize();  // Voir eventuellement a trigger l'initialisation lors de l'init de la premiere force qui y est rattache...
 
 
-    FrRadiationConvolutionModel radModel(&HDB, &mySystem);
-
-
-
-
-    // Mapping between hydrodynamic bodies and bodies from the hydrodynamic database
-
-//    // Getting a hydrodynamic mapper from the HDB
-    auto hydroMapper = HDB.GetMapper();
-//    mySystem.SetHydroMapper(hydroMapper);
-//
-//    // Mapping body
-    hydroMapper->Map(cylinder, 0);
-
-//    auto hydroBody = hydroMapper->GetHydroBody(HDB.GetBody(0)); // Retirer
-
-//    cylinder->SetBEMBody(HDB.GetBody(0)); // TODO : A retirer, on va utiliser le hydroMapper
-
-
-
-
-
-//    double dt = 0.01;
-//    for (int i=0; i<10; ++i) {
-//        mySystem.DoStepDynamics(dt); "End of time step leading to time " <<
-//    }
-//    }
 
     // TODO: tester le solveur EULER_IMPLICIT_PROJECTED
     mySystem.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);

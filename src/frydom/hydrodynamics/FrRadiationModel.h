@@ -8,6 +8,7 @@
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/FrObject.h"
 #include "FrHydroDB.h"
+//#include "FrRadiationForce.h
 #include "FrHydroMapper.h"
 #include "FrVelocityRecorder.h"
 
@@ -20,7 +21,7 @@ namespace frydom {
         FrHydroDB* m_HDB = nullptr;
         FrOffshoreSystem* m_system = nullptr;
 
-        double m_time = 0.;
+        double m_time = -1.;  // Quick hack to force update at first time step...
 
         std::vector<chrono::ChVectorDynamic<double>> m_radiationForces;
 
@@ -54,6 +55,12 @@ namespace frydom {
 
         }
 
+        std::shared_ptr<FrHydroMapper> GetMapper() const {
+            // TODO: le mapper doit etre cree lors de l'instanciation de radModel et pas stocke dans system !!
+            // On parlera plutot de FrLinearHydroModel !! auquel on attache une HDB (et on a un loadHDB dans cette classe)
+            return m_system->GetHydroMapper();
+        }
+
         void ResetRadiationForceVector() {
             // Setting everything to zero to prepare for a new summation
             for (auto& force : m_radiationForces) {
@@ -65,14 +72,40 @@ namespace frydom {
 
         virtual void Update(double time) = 0;
 
+        void GetRadiationForce(FrHydroBody* hydroBody,
+                               chrono::ChVector<double>& force, chrono::ChVector<double>& moment) {
+
+            auto mapper = m_system->GetHydroMapper();
+
+            auto iBEMBody = mapper->GetBEMBodyIndex(hydroBody);  // FIXME: le mapper renvoie pour le moment un pointeur vers le BEMBody, pas son index !!
+
+            auto generalizedForce = m_radiationForces[iBEMBody];
+
+            force.x() = generalizedForce.ElementN(0);
+            force.y() = generalizedForce.ElementN(1);
+            force.z() = generalizedForce.ElementN(2);
+
+            moment.x() = generalizedForce.ElementN(3);
+            moment.y() = generalizedForce.ElementN(4);
+            moment.z() = generalizedForce.ElementN(5);
+
+            // Warning, the moment that is returned is expressed int the absolute NWU frame such as done in Seakeeping
+
+        }
+
 
     };
 
+    class FrRadiationConvolutionForce;
 
-    class FrRadiationConvolutionModel : public FrRadiationModel {
+
+    class FrRadiationConvolutionModel :
+            public FrRadiationModel,
+            public std::enable_shared_from_this<FrRadiationConvolutionModel>
+    {
 
     private:
-        // Recorders for the velocity of bodies taht are in interaction
+        // Recorders for the velocity of bodies that are in interaction
         std::vector<FrVelocityRecorder> m_recorders;
 
     public:
@@ -135,12 +168,21 @@ namespace frydom {
 
             m_time = time;
 
-            // Here we compute the radiation forces by computig the convolutions
+            // Recording the current velocities
+            for (auto& recorder : m_recorders) {
+                recorder.RecordVelocity();
+            }
+
+
+            // Here we compute the radiation forces by computin the convolutions
             ResetRadiationForceVector();
 
             auto nbBodies = GetNbInteractingBodies();
-            auto N = m_recorders[0].GetSize();
-            double stepSize = m_system->GetStep();
+//            auto N = m_recorders[0].GetSize();
+
+            auto N = m_HDB ->GetNbTimeSamples() - 1; // FIXME: le -1 est un quick hack pour le moment, la longueur des IRFs n'est pas la bonne...
+
+            double stepSize = m_system->GetStep();  // FIXME: le pas de temps n'est pas le bon ici !! (mais on s'en fout un peu en fait)
 
             double val;
 
@@ -165,6 +207,8 @@ namespace frydom {
                             // Getting the convolution kernel that goes well...
                             auto kernel = bemBody_i->GetImpulseResponseFunction(imotionBody, idof, iforce);
 
+//                            std::cout << kernel.rows() << std::endl;
+
                             // Performing the multiplication
                             auto product = std::vector<double>(N);
                             for (unsigned int itime=0; itime<N; itime++) {
@@ -184,27 +228,7 @@ namespace frydom {
 
         }
 
-        void GetRadiationForce(const std::shared_ptr<FrHydroBody> hydroBody,
-                               chrono::ChVector<double>& force, chrono::ChVector<double>& moment) {
-
-            auto mapper = m_system->GetHydroMapper();
-
-            auto iBEMBody = mapper->GetBEMBodyIndex(hydroBody);  // FIXME: le mapper renvoie pour le moment un pointeur vers le BEMBody, pas son index !!
-
-            auto generalizedForce = m_radiationForces[iBEMBody];
-
-            force.x() = generalizedForce.ElementN(0);
-            force.y() = generalizedForce.ElementN(1);
-            force.z() = generalizedForce.ElementN(2);
-
-            moment.x() = generalizedForce.ElementN(3);
-            moment.y() = generalizedForce.ElementN(4);
-            moment.z() = generalizedForce.ElementN(5);
-
-            // Warning, the moment that is returned is expressed int the absolute NWU frame such as done in Seakeeping
-
-        }
-
+        std::shared_ptr<FrRadiationConvolutionForce> AddRadiationForceToHydroBody(std::shared_ptr<FrHydroBody>);
 
 
         void StepFinalize() override {
