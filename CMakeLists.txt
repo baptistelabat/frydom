@@ -125,12 +125,8 @@ add_executable(demo_free_surface ${SOURCE_FILES} src/tests/demo_FreeSurface.cpp)
 
 add_executable(demo_O3 ${SOURCE_FILES} src/tests/demo_O3_juin_2017.cpp)
 
-<<<<<<< HEAD
-=======
 add_executable(demo_rotation ${SOURCE_FILES} src/tests/demo_rotation.cpp)
 
-add_executable(demo_ship_orientation ${SOURCE_FILES} src/tests/demo_ship_orientation.cpp)
->>>>>>> a2a803c... Validating good part of the new orientation features
 #set_target_properties(test_ch_system PROPERTIES
 #	    COMPILE_FLAGS "${CHRONO_CXX_FLAGS} ${EXTRA_COMPILE_FLAGS}"
 #	    COMPILE_DEFINITIONS "CHRONO_DATA_DIR=\"${CHRONO_DATA_DIR}\""
@@ -138,11 +134,7 @@ add_executable(demo_ship_orientation ${SOURCE_FILES} src/tests/demo_ship_orienta
 #
 target_link_libraries(demo_free_surface ${CHRONO_LIBRARIES})
 target_link_libraries(demo_O3 ${CHRONO_LIBRARIES})
-<<<<<<< HEAD
-=======
 target_link_libraries(demo_rotation ${CHRONO_LIBRARIES})
-target_link_libraries(demo_ship_orientation ${CHRONO_LIBRARIES})
->>>>>>> a2a803c... Validating good part of the new orientation features
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===
