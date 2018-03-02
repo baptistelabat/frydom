@@ -82,18 +82,18 @@ set(SOURCE_FILES
         src/environment/waves/FrFlatFreeSurface.h
         src/environment/waves/FrFlatFreeSurface.cpp
 
-
+        src/environment/FrPolarCoeffTable.h
+        src/environment/FrPolarCoeffTable.cpp
 
         src/environment/current/FrCurrent.h
         src/environment/current/FrCurrent.cpp
         src/environment/current/FrCurrentForce.h
         src/environment/current/FrCurrentForce.cpp
 
+        src/misc/FrLinspace.h
 
         src/misc/FrTriangleMeshConnected.h
         src/misc/FrTriangleMeshConnected.cpp
-
-
 
         src/core/FrHydroBody.h
         src/core/FrHydroBody.cpp
@@ -131,6 +131,11 @@ add_executable(demo_O3 ${SOURCE_FILES} src/tests/demo_O3_juin_2017.cpp)
 
 add_executable(demo_rotation ${SOURCE_FILES} src/tests/demo_rotation.cpp)
 
+add_executable(demo_ship_orientation ${SOURCE_FILES} src/tests/demo_ship_orientation.cpp)
+
+add_executable(test_interp1d ${SOURCE_FILES} src/tests/test_interp1d.cpp)
+
+add_executable(test_linspace ${SOURCE_FILES} src/tests/test_linspace.cpp)
 #set_target_properties(test_ch_system PROPERTIES
 #	    COMPILE_FLAGS "${CHRONO_CXX_FLAGS} ${EXTRA_COMPILE_FLAGS}"
 #	    COMPILE_DEFINITIONS "CHRONO_DATA_DIR=\"${CHRONO_DATA_DIR}\""
@@ -139,6 +144,9 @@ add_executable(demo_rotation ${SOURCE_FILES} src/tests/demo_rotation.cpp)
 target_link_libraries(demo_free_surface ${CHRONO_LIBRARIES})
 target_link_libraries(demo_O3 ${CHRONO_LIBRARIES})
 target_link_libraries(demo_rotation ${CHRONO_LIBRARIES})
+target_link_libraries(demo_ship_orientation ${CHRONO_LIBRARIES})
+target_link_libraries(test_interp1d ${CHRONO_LIBRARIES})
+target_link_libraries(test_linspace ${CHRONO_LIBRARIES})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===

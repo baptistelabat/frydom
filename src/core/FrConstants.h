@@ -5,6 +5,8 @@
 #ifndef FRYDOM_CONSTANTS_H
 #define FRYDOM_CONSTANTS_H
 
+#include <cmath>
+
 // Forward declaration
 namespace chrono {
     template <class Real>

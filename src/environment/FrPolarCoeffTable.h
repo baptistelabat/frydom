@@ -5,40 +5,53 @@
 #ifndef FRYDOM_FRPOLARCOEFFTABLE_H
 #define FRYDOM_FRPOLARCOEFFTABLE_H
 
+
+//#include <vector>
+#include <memory>
 #include "../core/FrConstants.h"
 
 namespace frydom {
 namespace environment {
 
     // Forward declaration
-    class FrInterpolator;
+    class FrInterp1d;
 
+    template <class Real=double>
     class FrPolarCoeffTable {
 
+        // Lors de l'initialisation, il faut qu'un interpolateur soit disponible. On stocke les objets d'interpolation
+        // et pas les donnees directement. -->
+
     private:
-        double *cx[];
-        double *cy[];
-        double *cpsi[];
+        std::shared_ptr<Real> xcoord;
+        FrInterp1d* Cx_i;
+        FrInterp1d* Cy_i;
+        FrInterp1d* Cpsi_i;
 
     public:
         FrPolarCoeffTable() {};
 
         ~FrPolarCoeffTable() {};
 
+        void SetInterpolator() {};
+
         /// To Initialize the table (may be overloaded following the way we load coefficients)
         void Initialize() {};
+        void InitializeCx() {};
+        void InitializeCy() {};
+        void InitializeCpsi() {};
 
         /// Get the Cx coefficient given the field incidence
-        double Cx(double angle, FrAngleUnit unit=RAD) { return 0.; };
+        Real Cx(const Real angle, FrAngleUnit unit=RAD) { return 0.; };
 
         /// Get the Cy coefficient given the field incidence
-        double Cy(double angle, FrAngleUnit unit=RAD) { return 0.; };
+        Real Cy(const Real angle, FrAngleUnit unit=RAD) { return 0.; };
 
         /// Get the Cpsi coefficient given the field incidence
-        double Cpsi(double angle, FrAngleUnit unit=RAD) { return 0.; };
+        Real Cpsi(const Real angle, FrAngleUnit unit=RAD) { return 0.; };
 
         /// Get Cx, Cy, Cpsi coefficients given de field incidence
-        void GetCoeffs(double angle, double &Cx, double &Cy, double &Cpsi, FrAngleUnit unit=RAD) {};
+        void GetCoeffs(const Real angle, Real &Cx, Real &Cy, Real &Cpsi, FrAngleUnit unit=RAD) {};
 
 
     };

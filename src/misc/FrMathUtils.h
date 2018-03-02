@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FRUTILS_H
 #define FRYDOM_FRUTILS_H
 
+#include "chrono/core/ChVector.h"
 #include <cmath>
 
 // TODO: rename to FrMathUtils.h
