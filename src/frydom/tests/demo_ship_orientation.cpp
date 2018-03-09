@@ -20,13 +20,9 @@ int main(int argc, char* argv[]) {
     double theta = -90.;
     double psi = 0.;
 
-
-
     // SYSTEM AND FREE SURFACE
-    auto system = frydom::FrOffshoreSystem();
-//    auto fs = std::make_unique<FrFlatFreeSurface>(0.);
-//    fs->Initialize(-50, 50, 50);
-//    system.setFreeSurface(fs.release());
+    FrOffshoreSystem system;
+
     system.GetEnvironment()->GetFreeSurface()->SetGrid(-50, 50, 50);
 
     // SHIP WITH CHRONO TOOLS FOR ORIENTATION
@@ -82,27 +78,12 @@ int main(int argc, char* argv[]) {
 
     auto quat__ = euler_to_quat(quat_to_euler(quat22, CARDAN, DEG), CARDAN, DEG);
 
-    // Essais axis_angle
-
-
 
     // VISU
-    FrIrrApp app(&system, L"Viz");
-    app.AddTypicalLights();
-    app.AddTypicalCamera(irr::core::vector3df(0, 0, 300), irr::core::vector3df(1, 0, -1));
 
+    system.Initialize();
+    auto app = FrIrrApp(system, 100);
+    app.Run();
 
-    app.AssetBindAll();
-    app.AssetUpdateAll();
-
-    while (app.GetDevice()->run()) {
-        app.BeginScene();
-        app.DrawAll();
-
-        system.Update(true);
-
-        app.EndScene();
-
-    }
 
 }

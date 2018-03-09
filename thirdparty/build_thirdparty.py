@@ -4,9 +4,11 @@
 import os
 import sys
 import shutil
-sys.path.append("./which")
-import which
+import requests
+import urllib
+import zipfile
 from subprocess import call
+from distutils.spawn import find_executable
 
 abs_path_root = os.getcwd()
 
@@ -19,56 +21,36 @@ except ImportError:
     nb_core = 1
 
 
-try:
-    make = which.which('make')
-except which.WhichError:
-    print "cannot find make"
-    # make = '/usr/bin/make'
-
-try:
-    cmake = which.which('cmake')
-except which.WhichError:
-    print "cannot find cmake"
-    #cmake = '/home/frongere/mysofts/cmake-3.8.2-Linux-x86_64/bin/cmake'
-
-try:
-    git = which.which('git')
-except which.WhichError:
-    print "cannot find git"
-    # cmake = '/usr/bin/git'
-# try:
-#     swig = which.which('swig')
-# except which.WhichError:
-#     print "cannot find swig"
-#     swig = '/home/frongere/mysofts/miniconda2/bin/swig'
-
-# cmake = which.which('cmake')
-# swig = which.which('swig')
-
-def build_eigen(build_type):
-    print("\n\n==============================================================================")
-    print("Building Eigen library (header only)")
-    print("==============================================================================")
-    try:
-        os.mkdir('eigen_build')
-    except OSError:
-        pass
-
-    os.chdir('eigen_build')
-    call([cmake,
-          '../eigen'
-          ])
-    # call([make])
+make = find_executable('make')
+cmake = find_executable('cmake')
+git = find_executable('git')
+pip = find_executable('pip')
 
 
-    os.chdir('..')
-
-def build_MathUtils(build_type):
+def build_mathutils(build_type):
     print("\n\n==============================================================================")
     print("Building MathUtils library (header only)")
     print("==============================================================================")
+
     os.chdir('MathUtils')
 
+    # First building thirdparty from MathUtils
+    os.chdir('thirdparty')
+    from MathUtils.thirdparty.build_thirdparty import build as build_mathutils_3rd
+    build_mathutils_3rd()
+
+    os.chdir('..')
+
+    print("""
+     __  __       _   _     _   _ _   _ _       _     _ _                          
+    |  \/  | __ _| |_| |__ | | | | |_(_) |___  | |   (_) |__  _ __ __ _ _ __ _   _ 
+    | |\/| |/ _` | __| '_ \| | | | __| | / __| | |   | | '_ \| '__/ _` | '__| | | |
+    | |  | | (_| | |_| | | | |_| | |_| | \__ \ | |___| | |_) | | | (_| | |  | |_| |
+    |_|  |_|\__,_|\__|_| |_|\___/ \__|_|_|___/ |_____|_|_.__/|_|  \__,_|_|   \__, |
+                                                                             |___/ 
+    """)
+
+    # Building MathUtils itself
     try:
         os.mkdir('build')
     except OSError:
@@ -78,10 +60,6 @@ def build_MathUtils(build_type):
     call([cmake, '..'])
     call([make])
 
-
-
-
-
     os.chdir('../..')
 
 
@@ -89,6 +67,16 @@ def build_yaml_cpp(build_type):
     print("\n\n==============================================================================")
     print("Building YAML-CPP library (shared)")
     print("==============================================================================")
+
+    print("""
+    __   __ _    __  __ _                           
+    \ \ / // \  |  \/  | |          ___ _ __  _ __  
+     \ V // _ \ | |\/| | |   _____ / __| '_ \| '_ \ 
+      | |/ ___ \| |  | | |__|_____| (__| |_) | |_) |
+      |_/_/   \_\_|  |_|_____|     \___| .__/| .__/ 
+                                       |_|   |_|
+    """)
+
     os.chdir('yaml-cpp')
 
     try:
@@ -101,20 +89,10 @@ def build_yaml_cpp(build_type):
           "-DBUILD_SHARED_LIBS=ON",
           "-DCMAKE_BUILD_TYPE=%s" % build_type,
           ".."])
-    # call([make, 'clean']) # TODO: retirer
+
     call([make, "-j", str(nb_core)])
 
     os.chdir('../..')
-
-
-def build_irrlicht(build_type):
-
-    print("\n\n==============================================================================")
-    print("Building Irrlicht 1.8.2 library (static)")
-    print("==============================================================================")
-    os.chdir('irrlicht-1.8.2/source/Irrlicht')
-    call([make, "-j", str(nb_core)])
-    os.chdir('../../..')
 
 
 
@@ -122,6 +100,15 @@ def build_chrono(build_type):
     print("\n\n==============================================================================")
     print("Building chrono library with some modules (shared)")
     print("==============================================================================")
+
+    print("""
+      ____ _                             _     _ _                          
+     / ___| |__  _ __ ___  _ __   ___   | |   (_) |__  _ __ __ _ _ __ _   _ 
+    | |   | '_ \| '__/ _ \| '_ \ / _ \  | |   | | '_ \| '__/ _` | '__| | | |
+    | |___| | | | | | (_) | | | | (_) | | |___| | |_) | | | (_| | |  | |_| |
+     \____|_| |_|_|  \___/|_| |_|\___/  |_____|_|_.__/|_|  \__,_|_|   \__, |
+                                                                      |___/ 
+    """)
 
     # New chrono_build directory
     try:
@@ -131,8 +118,8 @@ def build_chrono(build_type):
 
     # TODO: il faut regler les pb de chemin absolu dans chronoSettings.cmake...
 
-    irrlicht_dir = os.path.join(abs_path_root, "irrlicht-1.8.2")
-    irrlicht_lib = os.path.join(irrlicht_dir, "lib", "Linux", "libIrrlicht.a")  # FIXME: chemin non portable !!
+    # irrlicht_dir = os.path.join(abs_path_root, "irrlicht-1.8.2")
+    # irrlicht_lib = os.path.join(irrlicht_dir, "lib", "Linux", "libIrrlicht.a")  # FIXME: chemin non portable !!
 
     # Chrono Settings
     os.chdir('chrono_build')
@@ -141,31 +128,45 @@ def build_chrono(build_type):
           #"-DCH_IRRLICHTLIB=%s" % irrlicht_lib,
           "-DCMAKE_BUILD_TYPE=%s" % build_type,
           "../chrono"])
-    #call([cmake, "../chrono"])
+
     call([make, "-j", str(nb_core)])
-    #call([make])
     os.chdir("..")
 
 
-def install_which():
-    pip = which.which('pip')
+def clean():
+    # Chrono
+    print("Removing chrono build")
+    shutil.rmtree("chrono_build")
 
-    os.chdir('which')
-    call([pip, "install", "-e", "."])
-    os.chdir('..')
+    print("Removing MathUtils build")
+    shutil.rmtree("MathUtils/build")
+
+    print("Removing yaml-cpp build")
+    shutil.rmtree("yaml-cpp/build")
+
+    print("Removing libzmq build")
+    shutil.rmtree("libzmq/build")
+
+    print("Removing cppzmq build")
+    shutil.rmtree("cppzmq/build")
 
 
-if __name__ == "__main__":
+def build(args):
 
     print("==============================================================================")
     print("Building thirdparty libraries for FRyDoM project")
     print("==============================================================================\n\n")
 
-    if len(sys.argv) == 1:
+    if len(args) == 1:
         # By default, we build in Release mode
-        build_type = "Release"
+        build_type = "Debug"
     else:
-        build_type = sys.argv[1]
+        build_type = args[1]
+
+        if (build_type == "clean"):
+            clean()
+            sys.exit(0)
+
         if build_type not in ("Debug", "Release", "RelWithDebInfo", "MinSizeRel"):
             raise NameError("Build type %s is not known. It has to be chosen among Debug, Release, RelWithDebInfo, MinSizeRel" % build_type)
 
@@ -178,10 +179,14 @@ if __name__ == "__main__":
     call([git, "submodule", "init"])
     call([git, "submodule", "update"])
 
+    print("-- DONE.")
 
-    install_which()
-    build_eigen(build_type)
-    build_MathUtils(build_type)
+    # install_which()
+    build_mathutils(build_type)
     build_yaml_cpp(build_type)
-    #build_irrlicht(build_type)
     build_chrono(build_type)
+
+
+if __name__ == "__main__":
+
+    build(sys.argv)

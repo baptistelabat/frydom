@@ -45,8 +45,6 @@ int main(int argc, char* argv[]) {
     // Get a waveProbe for excitation force on body
     auto waveProbe = waveField->NewWaveProbe(0, 0); // TODO: il faut importer la position depuis la HDB... (position de mesure de houle)
 
-    std::cout << waveProbe->GetUUID()<< std::endl;
-
 
     // 2 creer un corps hydro
     auto cylinder = std::make_shared<FrHydroBody>();

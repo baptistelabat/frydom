@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     myBody.UpdateForces(false); // A quoi ca sert ??? (en plus ca semble pas etre un bool en param...)
 
 
-    auto t0 = line.get_tension(0.);
+    auto t0 = line.GetTension(0.);
     std::cout << t0[0] << std::endl;
     std::cout << t0[1] << std::endl;
     std::cout << t0[2] << std::endl;

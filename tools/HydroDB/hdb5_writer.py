@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 #  -*- coding: utf-8 -*-
-import frydom.hydrodynamics.bem.hydro_db
+# import frydom.hydrodynamics.bem.hydro_db
+from . import hydro_db
 import h5py
 import numpy as np
 import datetime
 
-from bemio.data_structures.bem import HydrodynamicData
-from warnings import warn
 
-def write_hdb5(hydro_db, out_file=None):
+def write_hdb5(hdb, out_file=None):
     
     if out_file is None:
         out_file = 'frydom_hdb.h5'
@@ -20,12 +19,12 @@ def write_hdb5(hydro_db, out_file=None):
         dset.attrs['Description'] = "Date of creation of this database"
         
         # Gravity acceleration
-        dset = f.create_dataset('GravityAcc', data=hydro_db.grav)
+        dset = f.create_dataset('GravityAcc', data=hdb.grav)
         dset.attrs['Unit'] = 'm/s**2'
         dset.attrs['Description'] = "Gravity acceleration"
         
         # Water density
-        dset = f.create_dataset('WaterDensity', data=hydro_db.rho_water)
+        dset = f.create_dataset('WaterDensity', data=hdb.rho_water)
         dset.attrs['Unit'] = 'kg/m**3'
         dset.attrs['Description'] = 'Water Density'
         
@@ -35,7 +34,7 @@ def write_hdb5(hydro_db, out_file=None):
         dset.attrs['Description'] = 'Normalization length'
         
         # Water height
-        water_depth = hydro_db.depth
+        water_depth = hdb.depth
         if water_depth == 'infinite':
             water_depth = 0.
         dset = f.create_dataset('WaterDepth', data=water_depth)
@@ -43,7 +42,7 @@ def write_hdb5(hydro_db, out_file=None):
         dset.attrs['Description'] = 'Water depth. It is 0. for infinite values and positive for finite values'
         
         # Number of interacting bodies
-        nbBodies = hydro_db.body_mapper.nb_bodies
+        nbBodies = hdb.body_mapper.nb_bodies
         dset = f.create_dataset('NbBody', data=nbBodies)
         dset.attrs['Description'] = 'Number of interacting bodies'
         
@@ -52,37 +51,37 @@ def write_hdb5(hydro_db, out_file=None):
         f.create_group(discretization_path)
         frequential_path = discretization_path + "/Frequency"
 
-        nw = hydro_db.nb_frequencies
+        nw = hdb.nb_frequencies
         dset = f.create_dataset(frequential_path + "/NbFrequencies", data=nw)
         dset.attrs['Description'] = "Number of frequencies in the discretization"
 
-        dset = f.create_dataset(frequential_path + "/MinFrequency", data=hydro_db.min_frequency)
+        dset = f.create_dataset(frequential_path + "/MinFrequency", data=hdb.min_frequency)
         dset.attrs['Unit'] = "rad/s"
         dset.attrs['Description'] = "Minimum frequency specified for the computations"
 
-        dset = f.create_dataset(frequential_path + "/MaxFrequency", data=hydro_db.max_frequency)
+        dset = f.create_dataset(frequential_path + "/MaxFrequency", data=hdb.max_frequency)
         dset.attrs['Unit'] = "rad/s"
         dset.attrs['Description'] = "Maximum frequency specified for the computations"
         
         # Wave direction discretization
         wave_direction_path = discretization_path + "/WaveDirections"
 
-        nb_wave_dir = hydro_db.nb_wave_dir
+        nb_wave_dir = hdb.nb_wave_dir
         dset = f.create_dataset(wave_direction_path + "/NbWaveDirections", data=nb_wave_dir)
         dset.attrs['Description'] = "Number of wave directions in the discretization"
 
-        min_wave_dir = hydro_db.min_wave_dir
+        min_wave_dir = hdb.min_wave_dir
         dset = f.create_dataset(wave_direction_path + "/MinAngle", data=min_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Minimum angle specified for the computations"
 
-        max_wave_dir = hydro_db.max_wave_dir
+        max_wave_dir = hdb.max_wave_dir
         dset = f.create_dataset(wave_direction_path + "/MaxAngle", data=max_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Maximum angle specified for the computations"
 
         # TODO: regler dans le writer
-        irf_db = hydro_db.radiation_db.eval_impulse_response_function(tf=100, dt=0.1)
+        irf_db = hdb.radiation_db.eval_impulse_response_function(tf=100, dt=0.1)
         
         # Time discretization
         irf_time_path = discretization_path + "/Time"
@@ -96,7 +95,7 @@ def write_hdb5(hydro_db, out_file=None):
         dset.attrs['Description'] = "Final time for the impulse response function"
         
         
-        for body in hydro_db.body_mapper.bodies:
+        for body in hdb.body_mapper.bodies:
             # assert isinstance(body, HydrodynamicData)
             
             body_path = '/Bodies/Body_%u' % body.ibody
@@ -128,10 +127,10 @@ def write_hdb5(hydro_db, out_file=None):
                 f.create_group(mode_path)
                 f.create_dataset(mode_path + "/Direction", data=force_mode.direction)
                 
-                if isinstance(force_mode, frydom.hydrodynamics.bem.hydro_db.ForceMode):
+                if isinstance(force_mode, hydro_db.ForceMode):
                     f.create_dataset(mode_path + "/Type", data='LINEAR')
                 
-                elif isinstance(force_mode, frydom.hydrodynamics.bem.hydro_db.MomentMode):
+                elif isinstance(force_mode, hydro_db.MomentMode):
                     f.create_dataset(mode_path + "/Type", data='ANGULAR')
                     f.create_dataset(mode_path + "/Point", data=force_mode.point)
 
@@ -143,10 +142,10 @@ def write_hdb5(hydro_db, out_file=None):
                 f.create_group(mode_path)
                 f.create_dataset(mode_path + "/Direction", data=motion_mode.direction)
                 
-                if isinstance(motion_mode, frydom.hydrodynamics.bem.hydro_db.TranslationMode):
+                if isinstance(motion_mode, hydro_db.TranslationMode):
                     f.create_dataset(mode_path + "/Type", data='LINEAR')
                 
-                elif isinstance(motion_mode, frydom.hydrodynamics.bem.hydro_db.RotationMode):
+                elif isinstance(motion_mode, hydro_db.RotationMode):
                     f.create_dataset(mode_path + "/Type", data='ANGULAR')
                     f.create_dataset(mode_path + "/Point", data=motion_mode.point)
             
@@ -160,8 +159,7 @@ def write_hdb5(hydro_db, out_file=None):
             # Froude-Krylov
             excitation_path = body_path + "/Excitation"
 
-            warn('FIXME: Problem in the Froude-Krylov computations')
-            fk_db = hydro_db.froude_krylov_db
+            fk_db = hdb.froude_krylov_db
             fk_group = excitation_path + "/FroudeKrylov"
             f.create_group(fk_group)
             wave_dirs = np.linspace(min_wave_dir, max_wave_dir, nb_wave_dir)
@@ -182,7 +180,7 @@ def write_hdb5(hydro_db, out_file=None):
                                             "forces on body %u as a function of frequency" % (body.nb_force_modes, body.ibody)
             
             # Diffraction excitation
-            diff_db = hydro_db.diffraction_db
+            diff_db = hdb.diffraction_db
             diffraction_path = excitation_path + "/Diffraction"
             f.create_group(diffraction_path)
             for idir, wave_dir in enumerate(wave_dirs):
@@ -203,7 +201,7 @@ def write_hdb5(hydro_db, out_file=None):
             
             # Radiation
             
-            rad_db = hydro_db.radiation_db
+            rad_db = hdb.radiation_db
             radiation_path = body_path + "/Radiation"
             f.create_group(radiation_path)
 
@@ -218,7 +216,7 @@ def write_hdb5(hydro_db, out_file=None):
             # irf_db.plot_array()
 
             
-            for body_j in hydro_db.body_mapper.bodies:
+            for body_j in hdb.body_mapper.bodies:
                 jbody = body_j.ibody
 
 
@@ -275,40 +273,3 @@ def write_hdb5(hydro_db, out_file=None):
                     dset = f.create_dataset(irf_path + "/DOF_%u" % (imode),
                                             data=impulse_response_function[:, imode, :])
                     dset.attrs['Description'] = "Impulse response functions"
-                
-
-# TODO: faire un outil en ligne de commande !!
-if __name__ == '__main__':
-
-    import argparse
-
-    
-
-    
-    from frydom.hydrodynamics.bem.bem_reader import NemohReader
-    
-
-    sim_dir = '/home/frongere/Documents/Cylinder'
-
-    reader = NemohReader(cal_file=sim_dir + "/Nemoh.cal")
-
-    write_hdb5(reader.hydro_db)
-
-    # cminf = reader.hydro_db.radiation_db.eval_infinite_added_mass()
-    # added_mass = reader.hydro_db.radiation_db.added_mass
-    #
-    # damping = reader.hydro_db.radiation_db.radiation_damping
-    #
-    #
-    # print "kjsdf"
-
-
-
-
-
-
-
-
-
-
-

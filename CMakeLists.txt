@@ -8,7 +8,7 @@
 #-----------------------------------------------------------------------------
 # Check backward compatibility
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 
 #-----------------------------------------------------------------------------
 # Prevent in-source builds
@@ -41,7 +41,7 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 14)
 
 #-----------------------------------------------------------------------------
-# Ensuring third party software is build
+# Ensuring third party software is built
 #-----------------------------------------------------------------------------
 #message(STATUS "Ensuring that the thirdparty software are up-to-date and properly built")
 #execute_process(COMMAND python
@@ -49,18 +49,16 @@ set(CMAKE_CXX_STANDARD 14)
 #        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty
 #        )
 
+
+
 #=============================================================================
-#
 # Adding Thirparty libraries to the project
-#
 #=============================================================================
 # It set FRYDOM_THIRDPARTY_LIBS and FRYDOM_THIRDPARTY_INCLUDE_DIRS
 add_subdirectory(thirdparty)
 
+
 #=============================================================================
-# 
 # Adding the FRyDoM project sources
-# 
 #=============================================================================
 add_subdirectory(src/frydom)
-

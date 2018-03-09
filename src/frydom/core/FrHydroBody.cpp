@@ -10,6 +10,50 @@
 
 namespace frydom {
 
+    void FrHydroBody::Set3DOF(const bool flag) {
+        if (flag) {
+            Set3DOF_ON();
+        } else {
+            Set3DOF_OFF();
+        }
+    }
+
+    void FrHydroBody::Set3DOF_ON() {
+        if (is3DOF){ return; }
+        // TODO: voir si on peut pas faire quelque chose avec l'attribut flipped de ChLinkMate...
+
+        try {
+            if (!GetSystem()) {
+                throw std::string("The body must be added to a system before the plane constraint is set");
+            }
+//            if (!GetSystem()->getFreeSurface()) {
+//                throw std::string("A free surface has to be created before setting a plane constraint for a body");
+//            }
+        } catch(std::string const& msg) {
+            std::cerr << msg << std::endl;
+        }
+
+        auto plane_constraint = std::make_shared<chrono::ChLinkMatePlane>();
+        auto free_surface_body = GetSystem()->GetEnvironment()->GetFreeSurface()->GetBody();
+        plane_constraint->Initialize(shared_from_this(), free_surface_body,
+                                     true,
+                                     chrono::ChVector<>(),
+                                     chrono::ChVector<>(),
+                                     chrono::ChVector<>(0, 0, 1),
+                                     chrono::ChVector<>(0, 0, -1));
+        system->AddLink(plane_constraint);
+        constraint3DOF = plane_constraint;
+        is3DOF = true;
+    }
+
+    void FrHydroBody::Set3DOF_OFF() {
+        if (!is3DOF) { return; }
+
+        system->RemoveLink(constraint3DOF);
+        constraint3DOF->SetSystem(0);
+        is3DOF = false;
+    }
+
     void FrHydroBody::SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset) {
 
         m_hydro_mesh = mesh;
@@ -54,9 +98,10 @@ namespace frydom {
 
         // update parent class
         chrono::ChBodyAuxRef::Update(update_assets);
+
     }
 
-    chrono::ChVector<double> FrHydroBody::GetCurrentRelativeVelocity(FrFrame frame) {
+    chrono::ChVector<double> FrHydroBody::GetCurrentRelativeVelocity(FrFrame frame) const{
         switch (frame) {  // TODO: avoir une fonction pour eviter la recopie systematique...
             case NWU:
                 return m_current_relative_velocity;
@@ -66,7 +111,7 @@ namespace frydom {
     }
 
     chrono::ChVector<> FrHydroBody::GetCurrentRelativeVelocity(const chrono::ChVector<>& localpos,
-                                                               FrFrame frame) {
+                                                               FrFrame frame) const {
         auto current_velocity = GetSystem()->GetEnvironment()->GetCurrent()->GetFluxVector(NWU);
         auto velocity = PointSpeedLocalToParent(localpos);
         auto current_relative_velocity = current_velocity - velocity;

@@ -3,7 +3,6 @@
 //
 
 #include <frydom/frydom.h>
-#include <frydom/hydrodynamics/FrWaveDriftForce.h>
 
 using namespace chrono;
 using namespace frydom;
@@ -31,7 +30,7 @@ int main(int argc, char* argv[]) {
     //waveField->GetWaveRamp()->SetDuration(20.);
     //waveField->GetWaveRamp()->SetIncrease();
 
-    freeSurface->UpdateAssetON();
+//    freeSurface->UpdateAssetON();
 
     // Get a waveProbe for wave drift force on body
     auto waveProbe = waveField->NewWaveProbe(0, 0);
@@ -39,7 +38,7 @@ int main(int argc, char* argv[]) {
     // New ship model
     auto platforme = std::make_shared<FrHydroBody>();
     platforme->SetName("Deepsea_Stanvenger");
-    platforme->SetHydroMesh("GVA7500_geom_full2.obj", true);
+    platforme->SetHydroMesh("GVA7500.obj", true);
     platforme->SetLpp(116.6);
     platforme->SetMass(3.22114e7);
     platforme->SetCOG(chrono::ChVector<double>(0., 0., 8.65));

@@ -312,9 +312,21 @@
     <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsGenerators.cpp" />
     <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsInputOutput.cpp" />
     <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsValidation.cpp" />
-    <ClCompile Include="..\src\core\FrOffshoreSystem.cpp" />
     <ClCompile Include="..\src\environment\waves\FrFlatFreeSurface.cpp" />
     <ClCompile Include="..\src\environment\waves\FrFreeSurface.cpp" />
+    <ClCompile Include="..\src\frydom\control\common\DVector.cpp" />
+    <ClCompile Include="..\src\frydom\control\controllers\HeadingControl.cpp" />
+    <ClCompile Include="..\src\frydom\control\controllers\HeadingControlForce.cpp" />
+    <ClCompile Include="..\src\frydom\control\controllers\PositionControlForce.cpp" />
+    <ClCompile Include="..\src\frydom\core\FrBody.cpp" />
+    <ClCompile Include="..\src\frydom\core\FrConstants.cpp" />
+    <ClCompile Include="..\src\frydom\core\FrEulerAngles.cpp" />
+    <ClCompile Include="..\src\frydom\core\FrForce.cpp" />
+    <ClCompile Include="..\src\frydom\core\FrForceAsset.cpp" />
+    <ClCompile Include="..\src\frydom\core\FrHydroBody.cpp" />
+    <ClCompile Include="..\src\frydom\core\FrNode.cpp" />
+    <ClCompile Include="..\src\frydom\core\FrOffshoreSystem.cpp" />
+    <ClCompile Include="..\src\frydom\core\FrShip.cpp" />
     <ClCompile Include="..\src\misc\FrTriangleMeshConnected.cpp" />
     <ClCompile Include="..\src\tests\demo_FreeSurface.cpp" />
     <ClCompile Include="..\src\tests\test_ch_system.cpp" />
@@ -701,10 +713,32 @@
     <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsInputOutput.h" />
     <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsSamplers.h" />
     <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\utils\ChUtilsValidation.h" />
-    <ClInclude Include="..\src\core\FrOffshoreSystem.h" />
     <ClInclude Include="..\src\environment\waves\FrFlatFreeSurface.h" />
     <ClInclude Include="..\src\environment\waves\FrFreeSurface.h" />
+    <ClInclude Include="..\src\frydom\control\common\DVector.h" />
+    <ClInclude Include="..\src\frydom\control\ControlBase.h" />
+    <ClInclude Include="..\src\frydom\control\controllers\HeadingControl.h" />
+    <ClInclude Include="..\src\frydom\control\controllers\HeadingControlForce.h" />
+    <ClInclude Include="..\src\frydom\control\controllers\PositionControl.h" />
+    <ClInclude Include="..\src\frydom\control\filters\CKF.h" />
+    <ClInclude Include="..\src\frydom\control\filters\KalmanFilter.h" />
+    <ClInclude Include="..\src\frydom\control\filters\SRCKF.h" />
+    <ClInclude Include="..\src\frydom\control\filters\SRUKF.h" />
+    <ClInclude Include="..\src\frydom\control\modes\modeStationKeeping.h" />
+    <ClInclude Include="..\src\frydom\core\FrBody.h" />
+    <ClInclude Include="..\src\frydom\core\FrConstants.h" />
+    <ClInclude Include="..\src\frydom\core\FrCore.h" />
+    <ClInclude Include="..\src\frydom\core\FrEulerAngles.h" />
+    <ClInclude Include="..\src\frydom\core\FrForce.h" />
+    <ClInclude Include="..\src\frydom\core\FrForceAsset.h" />
+    <ClInclude Include="..\src\frydom\core\FrHydroBody.h" />
+    <ClInclude Include="..\src\frydom\core\FrNode.h" />
+    <ClInclude Include="..\src\frydom\core\FrOffshoreSystem.h" />
+    <ClInclude Include="..\src\frydom\core\FrShip.h" />
     <ClInclude Include="..\src\misc\FrTriangleMeshConnected.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{47AF29AA-7ADA-49EA-84E7-2B59CE130762}</ProjectGuid>
@@ -787,6 +821,12 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\frydom\src;..\..\thirdparty;..\..\frydom\frydom\core\chrono\chrono\src\;..\..\frydom\thirdparty\yaml-cpp\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NOMINMAX;VISUAL_WINDOWS;</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

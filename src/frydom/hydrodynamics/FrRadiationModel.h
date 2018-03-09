@@ -81,13 +81,13 @@ namespace frydom {
 
             auto generalizedForce = m_radiationForces[iBEMBody];
 
-            force.x() = generalizedForce.ElementN(0);
-            force.y() = generalizedForce.ElementN(1);
-            force.z() = generalizedForce.ElementN(2);
+            force.x() = - generalizedForce.ElementN(0);
+            force.y() = - generalizedForce.ElementN(1);
+            force.z() = - generalizedForce.ElementN(2);
 
-            moment.x() = generalizedForce.ElementN(3);
-            moment.y() = generalizedForce.ElementN(4);
-            moment.z() = generalizedForce.ElementN(5);
+            moment.x() = - generalizedForce.ElementN(3);
+            moment.y() = - generalizedForce.ElementN(4);
+            moment.z() = - generalizedForce.ElementN(5);
 
             // Warning, the moment that is returned is expressed int the absolute NWU frame such as done in Seakeeping
 
@@ -164,7 +164,10 @@ namespace frydom {
 
         // It has to be called by force models and updated only once, the first time it is called
         void Update(double time) override {
-            if (m_time == time) return; // No update if the model is already at the current simulation time
+
+            double stepSize = m_system->GetStep();  // FIXME: le pas de temps n'est pas le bon ici !! (mais on s'en fout un peu en fait)
+
+            if (std::abs(m_time - time) < 0.1*stepSize) return; // No update if the model is already at the current simulation time
 
             m_time = time;
 
@@ -181,9 +184,6 @@ namespace frydom {
 //            auto N = m_recorders[0].GetSize();
 
             auto N = m_HDB ->GetNbTimeSamples() - 1; // FIXME: le -1 est un quick hack pour le moment, la longueur des IRFs n'est pas la bonne...
-
-            double stepSize = m_system->GetStep();  // FIXME: le pas de temps n'est pas le bon ici !! (mais on s'en fout un peu en fait)
-
             double val;
 
             // Loop on bodies that get force
@@ -219,7 +219,8 @@ namespace frydom {
                             val = Trapz(product, stepSize);
 
                             // Update of the force
-                            generalizedForce.ElementN(iforce) += val;  // TODO: bien verifier qu'on fait bien du inplace dans m_radiationForces !
+                            // FIXME: verification du signe  !!!
+                            generalizedForce.ElementN(iforce) -= val;  // TODO: bien verifier qu'on fait bien du inplace dans m_radiationForces !
 
                         }  // End loop iforce
                     }  // End loop imotion of body imotionBody

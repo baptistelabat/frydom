@@ -3,42 +3,10 @@
 #   * FRYDOM_THIRPARTY_LIBS
 #   * FRYDOM_THIRDPARTY_INCLUDE_DIRS
 
+cmake_minimum_required(VERSION 3.8)  # FIXME: a retirer !!
+
 set(FRYDOM_THIRPARTY_LIBS "")
 set(FRYDOM_THIRDPARTY_INCLUDE_DIRS "")
-
-#=============================================================================
-#
-# Python 2.7 library
-#
-#=============================================================================
-message(STATUS "===================================================================")
-message(STATUS "Finding package Python...")
-message(STATUS "===================================================================")
-#find_package(PythonLibs 2.7) # TODO: voir a terme le passage en Python 3...
-#set(Python_ADDITIONAL_VERSIONS 3.4)
-#find_package(PythonInterp REQUIRED)
-set(PYTHON_LIBRARIES "/usr/lib/x86_64-linux-gnu/libpython2.7.so")
-set(PYTHON_INCLUDE_DIRS "/usr/include/python2.7")
-#find_package(PythonLibs ${PYTHON_VERSION_STRING} EXACT)
-list(APPEND FRYDOM_THIRDPARTY_LIBS ${PYTHON_LIBRARIES})
-list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${PYTHON_INCLUDE_DIRS})
-
-message(STATUS "INCLUDE DIRS : " ${PYTHON_INCLUDE_DIRS})
-message(STATUS "LIBRARIES : " ${PYTHON_LIBRARIES})
-
-#=============================================================================
-#
-# Matplotlib-cpp
-#
-#=============================================================================
-message(STATUS "===================================================================")
-message(STATUS "Finding package Matplotlib-cpp...")
-message(STATUS "===================================================================")
-set(MATPLOTLIB_CPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/matplotlib-cpp)
-list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${MATPLOTLIB_CPP_INCLUDE_DIR})
-
-message(STATUS "INCLUDE DIRS : " ${MATPLOTLIB_CPP_INCLUDE_DIR})
-message(STATUS "LIBRARIES : NO LIB REQUIRED")
 
 #=============================================================================
 #
@@ -48,14 +16,16 @@ message(STATUS "LIBRARIES : NO LIB REQUIRED")
 message(STATUS "===================================================================")
 message(STATUS "Finding package MathUtils...")
 message(STATUS "===================================================================")
-set(MATHUTILS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MathUtils)
-set(MATHUTILS_LIB ${CMAKE_CURRENT_SOURCE_DIR}/MathUtils/build/src/libMathUtils.so)  # FIXME: non portable
+# TODO: Utiliser un FindMathUtils
 
-list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${MATHUTILS_INCLUDE_DIR})
-list(APPEND FRYDOM_THIRDPARTY_LIBS ${MATHUTILS_LIB})
+set(MathUtils_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MathUtils/build)
+find_package(MathUtils REQUIRED)
 
-message(STATUS "INCLUDE DIRS : " ${MATHUTILS_INCLUDE_DIR})
-message(STATUS "LIBRARIES : ${MATHUTILS_LIB}" )
+list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${MATHUTILS_INCLUDE_DIRS})
+list(APPEND FRYDOM_THIRDPARTY_LIBS ${MATHUTILS_THIRDPARTY_LIBS})
+
+message(STATUS "INCLUDE DIRS : " ${MATHUTILS_INCLUDE_DIRS})
+message(STATUS "LIBRARIES : ${MATHUTILS_THIRDPARTY_LIBS}" )
 
 #=============================================================================
 #
@@ -74,20 +44,8 @@ list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${YAML_CPP_INCLUDE_DIR})
 
 message(STATUS "INCLUDE DIRS : " ${YAML_CPP_INCLUDE_DIR})
 message(STATUS "LIBRARIES : " ${YAML_CPP_LIB})
-#=============================================================================
-#
-# Eigen library
-#
-#=============================================================================
-message(STATUS "===================================================================")
-message(STATUS "Finding package Eigen3...")
-message(STATUS "===================================================================")
-find_package(Eigen3 REQUIRED NO_MODULE)
 
-list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
 
-message(STATUS "INCLUDE DIRS : " ${EIGEN3_INCLUDE_DIRS})
-message(STATUS "LIBRARIES : NO LIB REQUIRED")
 #=============================================================================
 #
 # HDF5 library
@@ -96,16 +54,14 @@ message(STATUS "LIBRARIES : NO LIB REQUIRED")
 message(STATUS "===================================================================")
 message(STATUS "Finding package HDF5...")
 message(STATUS "===================================================================")
-#set(HDF5_ROOT "/usr/lib/x86_64-linux-gnu")
 find_package(HDF5 REQUIRED COMPONENTS CXX)
-#set(HDF5_CXX_LIBRARIES "${HDF5_ROOT}/libhdf5_cpp.so;${HDF5_ROOT}/hdf5/serial/libhdf5.so;${HDF5_ROOT}/libpthread.so;${HDF5_ROOT}/libsz.so;${HDF5_ROOT}/libz.so;${HDF5_ROOT}/libdl.so;${HDF5_ROOT}/libm.so")
-#set(HDF5_INCLUDE_DIRS "/usr/include/hdf5/serial")
-# Mandatory for each new library
+
 list(APPEND FRYDOM_THIRDPARTY_LIBS ${HDF5_CXX_LIBRARIES})
 list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS})
 
 message(STATUS "INCLUDE DIRS : " ${HDF5_INCLUDE_DIRS})
 message(STATUS "LIBRARIES : " ${HDF5_CXX_LIBRARIES})
+
 #=============================================================================
 #
 # Boost library
@@ -183,6 +139,8 @@ list(APPEND FRYDOM_THIRDPARTY_INCLUDE_DIRS ${CHRONO_INCLUDE_DIRS})
 
 
 #include_directories(${FRYDOM_THIRDPARTY_INCLUDE_DIRS})
+
+#message(STATUS ${FRYDOM_THIRDPARTY_LIBS})
 
 #=============================================================================
 #

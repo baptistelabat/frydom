@@ -11,7 +11,7 @@ namespace frydom {
 
     FrHydroDB LoadHDB5(std::string hdb5_file) {
 
-        IO::FrHDF5Reader reader;
+        FrHDF5Reader reader;
         reader.SetFilename(hdb5_file);
 
         // Hydrodynamics Database creation

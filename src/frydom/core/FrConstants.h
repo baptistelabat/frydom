@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <iostream>
+#include "chrono/core/ChVector.h"
 
 // Forward declaration
 namespace chrono {
@@ -32,6 +33,11 @@ namespace frydom {
     enum FrFrame {
         NWU,
         NED,
+    };
+
+    enum FrRefSyst {
+        ABS,   ///< Absolute system of reference
+        REL    ///< Relative system of reference
     };
 
 

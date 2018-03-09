@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 
 
     // Building a coefficients table
-    auto table = IO::MakeCurrentPolarCoeffTable("PolarCurrentCoeffs.yml");
+    auto table = MakeCurrentPolarCoeffTable("PolarCurrentCoeffs.yml");
 
 
 

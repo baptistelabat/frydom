@@ -67,6 +67,21 @@
     <Filter Include="frydom\chrono\collision\bullet\narrowPhase">
       <UniqueIdentifier>{b74645cb-98bb-492b-b353-a0a62c417de9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="frydom\control">
+      <UniqueIdentifier>{92828197-5f0c-47ec-89c7-95c55e5f4034}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\control\common">
+      <UniqueIdentifier>{a847c54b-edf6-44f0-a6dc-2901bca590a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\control\controllers">
+      <UniqueIdentifier>{f3e51545-c10a-4bd1-8346-19fc5b322aa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\control\modes">
+      <UniqueIdentifier>{9c3c4f8c-0b5b-429d-832d-f80c3ba30c62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frydom\control\filters">
+      <UniqueIdentifier>{64d0b760-0cce-4f50-bd8a-109573afff19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\misc\FrTriangleMeshConnected.cpp">
@@ -80,9 +95,6 @@
     </ClCompile>
     <ClCompile Include="..\src\environment\waves\FrFreeSurface.cpp">
       <Filter>frydom\environment</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\core\FrOffshoreSystem.cpp">
-      <Filter>frydom\core</Filter>
     </ClCompile>
     <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\core\ChQuadrature.cpp">
       <Filter>frydom\chrono\core</Filter>
@@ -966,6 +978,43 @@
     <ClCompile Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.cpp">
       <Filter>frydom\chrono\collision\bullet\narrowPhase</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\frydom\core\FrBody.cpp">
+      <Filter>frydom\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\frydom\core\FrConstants.cpp">
+      <Filter>frydom\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\frydom\core\FrEulerAngles.cpp">
+      <Filter>frydom\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\frydom\core\FrForce.cpp">
+      <Filter>frydom\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\frydom\core\FrForceAsset.cpp">
+      <Filter>frydom\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\frydom\core\FrHydroBody.cpp">
+      <Filter>frydom\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\frydom\core\FrNode.cpp">
+      <Filter>frydom\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\frydom\core\FrOffshoreSystem.cpp">
+      <Filter>frydom\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\frydom\core\FrShip.cpp">
+      <Filter>frydom\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\frydom\control\common\DVector.cpp" />
+    <ClCompile Include="..\src\frydom\control\controllers\HeadingControl.cpp">
+      <Filter>frydom\control\controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\frydom\control\controllers\HeadingControlForce.cpp">
+      <Filter>frydom\control\controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\frydom\control\controllers\PositionControlForce.cpp">
+      <Filter>frydom\control\controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\misc\FrTriangleMeshConnected.h">
@@ -976,9 +1025,6 @@
     </ClInclude>
     <ClInclude Include="..\src\environment\waves\FrFreeSurface.h">
       <Filter>frydom\environment</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\core\FrOffshoreSystem.h">
-      <Filter>frydom\core</Filter>
     </ClInclude>
     <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\core\ChPlatform.h">
       <Filter>frydom\chrono\core</Filter>
@@ -2123,5 +2169,68 @@
     <ClInclude Include="..\frydom\core\chrono\chrono\src\chrono\collision\bullet\btBulletCollisionCommon.h">
       <Filter>frydom\chrono\collision\bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\frydom\core\FrBody.h">
+      <Filter>frydom\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\core\FrConstants.h">
+      <Filter>frydom\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\core\FrCore.h">
+      <Filter>frydom\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\core\FrEulerAngles.h">
+      <Filter>frydom\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\core\FrForce.h">
+      <Filter>frydom\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\core\FrForceAsset.h">
+      <Filter>frydom\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\core\FrHydroBody.h">
+      <Filter>frydom\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\core\FrNode.h">
+      <Filter>frydom\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\core\FrOffshoreSystem.h">
+      <Filter>frydom\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\core\FrShip.h">
+      <Filter>frydom\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\control\common\DVector.h">
+      <Filter>frydom\control\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\control\ControlBase.h">
+      <Filter>frydom\control\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\control\controllers\HeadingControl.h">
+      <Filter>frydom\control\controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\control\controllers\HeadingControlForce.h">
+      <Filter>frydom\control\controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\control\controllers\PositionControl.h">
+      <Filter>frydom\control\controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\control\modes\modeStationKeeping.h">
+      <Filter>frydom\control\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\control\filters\CKF.h">
+      <Filter>frydom\control\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\control\filters\KalmanFilter.h">
+      <Filter>frydom\control\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\control\filters\SRUKF.h">
+      <Filter>frydom\control\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\frydom\control\filters\SRCKF.h">
+      <Filter>frydom\control\filters</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

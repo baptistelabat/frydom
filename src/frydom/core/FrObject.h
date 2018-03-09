@@ -22,7 +22,7 @@ namespace frydom {
                 m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()()))
         {}
 
-        std::string GetUUID() {
+        std::string GetUUID() const{
             return m_UUID;
         }
 

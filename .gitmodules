@@ -5,15 +5,6 @@
 [submodule "thirdparty/yaml-cpp"]
 	path = thirdparty/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp.git
-[submodule "thirdparty/eigen"]
-	path = thirdparty/eigen
-	url = https://github.com/RLovelett/eigen.git
 [submodule "thirdparty/MathUtils"]
 	path = thirdparty/MathUtils
 	url = https://d-ice.githost.io/frongere/MathUtils.git
-[submodule "thirdparty/matplotlib-cpp"]
-	path = thirdparty/matplotlib-cpp
-	url = https://github.com/lava/matplotlib-cpp.git
-[submodule "thirdparty/which"]
-	path = thirdparty/which
-	url = https://github.com/trentm/which.git

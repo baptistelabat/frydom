@@ -13,12 +13,11 @@
 //
 // =============================================================================
 
-#include <cmath>
+//#include <cmath>
 
-#include "chrono/core/ChVector.h"
+//#include <frydom/core/FrConstants.h>
 
 #include "FrCurrent.h"
-#include "frydom/environment/FrConventions.h"
 
 
 namespace frydom {
@@ -155,15 +154,7 @@ namespace frydom {
 
     void FrCurrent::Set(const chrono::ChVector<>& unitDirection, double magnitude,
              FrFrame frame, FrDirectionConvention directionConvention, SPEED_UNIT speedUnit) {
-        SetDirection(unitDirection, frame, directionConvention);
-        SetMagnitude(magnitude, speedUnit);
-    }
 
-    void FrCurrent::SetDirection(const chrono::ChVector<> &unitDirection,
-                                 FrFrame frame,
-                                 FrDirectionConvention directionConvention) {
-
-        // Ensuring the vector is a unit vector
         auto uDirection = unitDirection;
         uDirection /= unitDirection.Length();
 
@@ -175,39 +166,17 @@ namespace frydom {
             uDirection = - uDirection;
         }
 
-        // Get the current magnitude
-        auto magnitude = GetMagnitude(MS);
-
-        // Building the current vector
-        m_currentVector = uDirection * magnitude;
-    }
-
-    void FrCurrent::SetDirection(double angle, ANGLE_UNIT angleUnit,
-                                 FrFrame frame,
-                                 FrDirectionConvention directionConvention) {
-        auto alpha = angle;
-        if (angleUnit == DEG) {
-            alpha = radians(alpha);
-        }
-
-        // Building the unit vector from angle
-        chrono::ChVector<double> currentVector(cos(alpha), sin(alpha), 0.);
-
-        SetDirection(currentVector, frame, directionConvention);
-
-    }
-
-    void FrCurrent::SetMagnitude(double magnitude, SPEED_UNIT speedUnit) {
         auto vel = magnitude;
 
         if (speedUnit != MS) {
             vel = convert_velocity_unit(vel, speedUnit, MS);
         }
 
-        m_currentVector /= m_currentVector.Length();
-        m_currentVector *= vel;
+        // Building the current vector
+        m_currentVector = uDirection * vel;
 
     }
+
 
     void SetCurrentVector(chrono::ChVector<double>& currentVector, FrFrame frame=NED, SPEED_UNIT speedUnit=KNOT) {
         // TODO

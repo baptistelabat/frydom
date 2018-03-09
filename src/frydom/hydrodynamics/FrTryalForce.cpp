@@ -18,7 +18,7 @@ namespace frydom {
 
         vrelpoint.x() = -40;  // position du point d'application
         vrelpoint.z() = 0;
-        relforce.x() = 1e8;  // force propulsive
+        relforce.x() = 1e7;  // force propulsive
         relforce.y() = 0;  // tel qu'on ait un couple cree...
 
 //        myfile.open("output.csv");

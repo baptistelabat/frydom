@@ -8,12 +8,12 @@
 #include <cmath>
 
 #include "chrono/core/ChMatrix33.h"
-//#include "frydom/misc/FrMathUtils.h"
-//#include "FrConstants.h"
 #include "MathUtils.h"
 
 using namespace mathutils;
 // TODO: mettre les references utilisees (cf euler_angles.py)
+
+// TODO: EulerAngles devra etre transfere dans MathUtils !!!
 
 namespace frydom {
 

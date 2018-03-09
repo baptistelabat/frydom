@@ -17,10 +17,8 @@
 #define RW H5F_ACC_RDWR
 
 using namespace H5;
-using namespace Eigen;
 
 namespace frydom {
-namespace IO {  // TODO : Retirer ce namespace !!
 
     class FrHDF5Reader {
 
@@ -48,12 +46,17 @@ namespace IO {  // TODO : Retirer ce namespace !!
         void SetFilename(const std::string& filename, MODE mode=R) {
             m_filename = filename;
             m_file.release();
+            try {
             m_file = std::make_unique<H5File>(filename, mode);
+            } catch (const H5::FileIException& e) {
+                std::cout << "   --- ERROR : HDF5 file '" << filename << "' not found.";
+                throw (e);
+            }
         }
 
         void Close() { m_file->close(); }
 
-        Matrix<double, Dynamic, Dynamic> ReadDoubleArray(std::string h5Path) const {
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ReadDoubleArray(std::string h5Path) const {
 
             DataSet dset = m_file->openDataSet(h5Path); // TODO: try
             DataSpace dspace = dset.getSpace();
@@ -89,7 +92,7 @@ namespace IO {  // TODO : Retirer ce namespace !!
 
             }
 
-            Matrix<double, Dynamic, Dynamic> out(nb_rows, nb_cols);
+            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> out(nb_rows, nb_cols);
 
             auto* buffer = new double[nb_elt];
 
@@ -124,7 +127,7 @@ namespace IO {  // TODO : Retirer ce namespace !!
 
         }
 
-        Matrix<int, Dynamic, Dynamic> ReadIntArray(std::string h5Path) const {
+        Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> ReadIntArray(std::string h5Path) const {
 
             DataSet dset = m_file->openDataSet(h5Path);
             DataSpace dspace = dset.getSpace();
@@ -160,7 +163,7 @@ namespace IO {  // TODO : Retirer ce namespace !!
 
             }
 
-            Matrix<int, Dynamic, Dynamic> out(nb_rows, nb_cols);
+            Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> out(nb_rows, nb_cols);
 
             auto* buffer = new int[nb_elt];
 
@@ -236,7 +239,6 @@ namespace IO {  // TODO : Retirer ce namespace !!
 
     };
 
-}  // end namesapce IO
 }  // end namespace frydom
 
 #endif //FRYDOM_FRHDF5_H

@@ -7,7 +7,6 @@
 
 
 #include <frydom/core/FrConstants.h>
-//#include "frydom/misc/FrLookupTable1D.h"
 #include "MathUtils.h"
 
 using namespace mathutils;

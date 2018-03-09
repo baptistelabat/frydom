@@ -6,6 +6,9 @@
 #define FRYDOM_FRYDOM_H
 
 #include <cstdlib>
+#include <irrlicht.h>
+#include <H5Cpp.h>
+
 
 // Chrono related headers
 #include "chrono/solver/ChSolverMINRES.h" // FIXME: trouver moyen d'avoir un import plus global des headers chrono...
@@ -21,8 +24,7 @@
 
 #include "Eigen/Dense"
 
-#include <irrlicht.h>
-#include <H5Cpp.h>
+
 
 
 #endif //FRYDOM_FRYDOM_H

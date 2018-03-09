@@ -27,7 +27,7 @@ namespace frydom {
 
     void FrCurrentPolarCoeffs::Initialize(std::string yaml_file) {
         std::vector<double> angles, cx, cy, cz;
-        IO::LoadPolarCoeffsFromYaml(yaml_file, angles, cx, cy, cz);
+        LoadPolarCoeffsFromYaml(yaml_file, angles, cx, cy, cz);
         FrCurrentPolarCoeffs::Initialize(angles, cx, cy, cz);
     }
 

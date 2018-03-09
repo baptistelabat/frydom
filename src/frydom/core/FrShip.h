@@ -7,46 +7,29 @@
 
 #include "FrHydroBody.h"
 
-// Forward declaration chrono
-namespace chrono {
-    class ChLinkMatePlane;
-}
-
 namespace frydom {
 
     // Forward declaration
-    class FrPropeller;
+
 
     class FrShip : public FrHydroBody {
 
-    private:
-        // Special attributes for ships
-        std::vector<std::shared_ptr<FrPropeller>> propellerlist;  // FIXME pourquoi avoir des propeller shared ???
 
-        bool is3DOF = false;
-        std::shared_ptr<chrono::ChLinkMatePlane> constraint3DOF;
+    private:
+
 
     public:
-        FrShip() : is3DOF(false),
-                   FrHydroBody() {}
+		FrShip() : FrHydroBody() {}
 
         ~FrShip() {}
 
-        void AddPropeller(std::shared_ptr<FrPropeller> propeller); // FIXME: shared ?
+        /// Update subpart of the ship and then update hydrodynamics data
+        void Update(bool update_assets = true) override;
 
-        void RemovePropeller(std::shared_ptr<FrPropeller> propeller); // FIXME: shared ?
+        void StepFinalize() override;
 
-        int GetNbPropellers() { return int(propellerlist.size()); }
+	};
 
-
-        // TODO: deplacer la plupart de ces methodes dans hydrobody !!
-        bool Get3DOF() const { return is3DOF; };
-        void Set3DOF(const bool flag);
-        void Set3DOF_ON();
-        void Set3DOF_OFF();
-
-
-    };
 
 }  // end namespace frydom
 

@@ -121,6 +121,7 @@ RESUME_FEATHERSTONE
 /Debug/
 
 cmake-build-debug
+cmake-build-release
 /visual/Debug
 /visual/visualFrydom.VC.db
 /visual/.vs

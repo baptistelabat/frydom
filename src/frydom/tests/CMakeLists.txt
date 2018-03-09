@@ -7,6 +7,7 @@ set(FRYDOM_TESTS
         demo_ship_orientation
         test_anchored_boat_current
         test_anchored_boat_current_fea_cable
+        test_anchored_platform_waves
         test_catenary
         test_cpp_yaml
         test_current_force
@@ -14,18 +15,18 @@ set(FRYDOM_TESTS
         test_dispersion_relation
         test_dynamic_cable
         test_fea_cable_with_body
+        test_IRF_computation
         test_load_HDB
         test_radiation_force
         test_recorder
         test_tug
+        test_wave_drift_HDF5_loader
         test_wave_excitation_force
         test_wave_field
         test_wave_spectrum
-        test_IRF_computation
-        test_wave_drift_HDF5_loader
         )
 
-set(CMAKE_CXX_FLAGS " -lIrrlicht ")
+set(CMAKE_CXX_FLAGS " -lIrrlicht")
 
 message(STATUS "Test programs for FRyDoM framework...")
 
@@ -47,7 +48,11 @@ configure_file(data/frydom_hdb.h5 . COPYONLY)
 configure_file(data/Cylinder.obj . COPYONLY)
 configure_file(../../../data/ship/MagneViking.obj . COPYONLY)
 configure_file(data/PolarCurrentCoeffs.yml . COPYONLY)
-configure_file(data/WaveDriftCoeff_100_2.h5 . COPYONLY)
-configure_file(../../../data/ship/GVA7500_geom_full2.obj . COPYONLY)
+
+file(COPY data/Full.yml  DESTINATION .)
+
 configure_file(data/DeepSea_Stavanger/WaveDriftCoeff_100_2.h5 . COPYONLY)
 configure_file(data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
+configure_file(data/DeepSea_Stavanger/DeepSeaStavanger.hdb5 . COPYONLY)
+configure_file(data/DeepSea_Stavanger/PolarCurrentCoeffs_NC.yml . COPYONLY)
+configure_file(data/DeepSea_Stavanger/PolarWindCoeffs_NC.yml . COPYONLY)

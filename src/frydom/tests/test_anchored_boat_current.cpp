@@ -4,6 +4,7 @@
 
 #include "frydom/frydom.h"
 
+
 using namespace frydom;
 
 
@@ -12,13 +13,16 @@ int main(int argc, char* argv[]) {
     // The system
     FrOffshoreSystem system;
 
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_EXPLICIT);
+
     // Set the free surface
     system.GetEnvironment()->GetFreeSurface()->SetGrid(-200, 200, 50);
 
 
     // The current
-    system.GetEnvironment()->GetCurrent()->SetDirection(WEST, NED, GOTO);
-    system.GetEnvironment()->GetCurrent()->SetMagnitude(20, KNOT);
+//    system.GetEnvironment()->GetCurrent()->SetMagnitude(20, KNOT);
+//    system.GetEnvironment()->GetCurrent()->SetDirection(WEST, NED, GOTO);
+    system.GetEnvironment()->GetCurrent()->Set(WEST, 20, NED, GOTO, KNOT);
 
     // Building a TUG
     auto tug = std::make_shared<FrShip>();
@@ -81,6 +85,7 @@ int main(int argc, char* argv[]) {
     auto line = FrCatenaryLine(fairlead, anchor, elastic, E, A, Lu, q, u);
 
 
+    system.Initialize();
 
 
     bool viz = true;

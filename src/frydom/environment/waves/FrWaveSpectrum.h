@@ -11,8 +11,6 @@
 #include "frydom/core/FrObject.h"
 
 using namespace mathutils;
-//#include "frydom/core/FrConstants.h"
-//#include "frydom/misc/FrLinspace.h"
 
 namespace frydom {
 

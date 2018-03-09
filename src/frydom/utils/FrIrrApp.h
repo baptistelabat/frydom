@@ -14,6 +14,7 @@
 namespace frydom {
 
     class FrIrrApp : public chrono::irrlicht::ChIrrApp {
+
     private:
         bool m_verbose = true;
 

@@ -19,16 +19,14 @@ namespace frydom {
     class FrCatenaryForce : public FrForce {
 
     private:
-        FrCatenaryLine* m_line;
-        line_side m_line_side;
+        FrCatenaryLine* m_line; ///< The parent line
+        line_side m_line_side;  ///< The side of the line where the tension is applied
 
     public:
 
         FrCatenaryForce(FrCatenaryLine* p_line, line_side p_side) : m_line(p_line), m_line_side(p_side) {};
 
-
         void UpdateState() override;
-
 
     };
 

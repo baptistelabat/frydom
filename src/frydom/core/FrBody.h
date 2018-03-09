@@ -25,7 +25,6 @@ namespace frydom {
     protected:
         std::vector<std::shared_ptr<FrForce>> external_force_list;
 
-
     public:
 
         std::shared_ptr<FrBody> GetSharedPtr() {
@@ -33,7 +32,7 @@ namespace frydom {
         }
 
         /// Get the body absolute position (this of its reference point)
-        chrono::ChVector<> GetPosition(FrFrame frame = NWU) {
+        chrono::ChVector<> GetPosition(FrFrame frame = NWU) const{
             switch (frame) {
                 case NWU:
                     return GetPos();
@@ -43,12 +42,12 @@ namespace frydom {
         }
 
         /// Get the body orientation
-        chrono::ChVector<> GetOrientation(FrFrame frame= NWU) {
+        chrono::ChVector<> GetOrientation(FrFrame frame= NWU) const{
             // TODO
         }
 
         /// Get the body velocity
-        chrono::ChVector<> GetVelocity(FrFrame frame= NWU) {
+        chrono::ChVector<> GetVelocity(FrFrame frame= NWU) const{
             switch (frame) {
                 case NWU:
                     return GetPos_dt();

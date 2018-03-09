@@ -19,8 +19,6 @@ namespace frydom {
 
     class FrCurrentPolarCoeffs;
 
-namespace IO {  // TODO: retirer ce namespace !!
-
     //=======================================================================================================
     // IO for the current force modeling
     //=======================================================================================================
@@ -42,7 +40,6 @@ namespace IO {  // TODO: retirer ce namespace !!
                                  std::vector<double>& cy,
                                  std::vector<double>& cz);
 
-}  // end namespace IO
 }  // end namespace frydom
 
 

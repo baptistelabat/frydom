@@ -3,7 +3,6 @@ message(STATUS "================================================================
 message(STATUS "Getting source files for FRyDoM...")
 message(STATUS "===================================================================")
 
-
 # Adding a new subdirectory to the FRyDoM root source directory must be done by adding its name here
 set(subdirs
         core
@@ -13,7 +12,6 @@ set(subdirs
         mooring
         IO
         mesh
-        propeller
         utils
         )
 
@@ -33,8 +31,11 @@ include_directories(${FRYDOM_THIRDPARTY_INCLUDE_DIRS})
 
 find_package(Eigen3 REQUIRED NO_MODULE)  # FIXME: hack to import Eigen3::Eigen... Should not exist here as already done in thirdparty CMakeLists...
 
+#message(STATUS ${FRYDOM_THIRDPARTY_LIBS})
+
 add_library(FRyDoM_Engine SHARED ${FRYDOM_SRC_FILES})
-target_link_libraries(FRyDoM_Engine ${FRYDOM_THIRDPARTY_LIBS} Eigen3::Eigen)
+#target_link_libraries(FRyDoM_Engine ${FRYDOM_THIRDPARTY_LIBS} Eigen3::Eigen)
+target_link_libraries(FRyDoM_Engine ${FRYDOM_THIRDPARTY_LIBS})
 
 # Adding tests as target
 add_subdirectory(tests)

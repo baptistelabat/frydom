@@ -3,7 +3,6 @@
 //
 
 #include "FrOffshoreSystem.h"
-#include "frydom/environment/FrEnvironment.h"
 
 namespace frydom {
 
@@ -22,18 +21,15 @@ namespace frydom {
         world_body->SetBodyFixed(true);
         world_body->SetName("WorldBody");
 
-
-        // TODO: mettre dans une methode SetEnvironment
         m_environment = std::make_unique<FrEnvironment>();
         m_environment->SetSystem(this);
         AddBody(m_environment->GetFreeSurface()->GetBody());
+
 
         // Convention for z orientation is upward
         Set_G_acc(chrono::ChVector<>(0., 0., -m_environment->GetGravityAcceleration()));
 
     }
-
-
 
     void FrOffshoreSystem::Update(bool update_assets) {
         timer_update.start();  // Timer for profiling
@@ -55,11 +51,12 @@ namespace frydom {
     }
 
     // From state Y={x,v} to system.
-    void FrOffshoreSystem::StateScatter(const chrono::ChState& x, const chrono::ChStateDelta& v, const double T) {
+	void FrOffshoreSystem::StateScatter(const chrono::ChState &x, const chrono::ChStateDelta &v, const double T) {
 
         m_environment->Update(T);  // Updating environment
 
-        IntStateScatter(0, x, 0, v, T);  // TODO: voir pour faire un update de l'environnement juste avant cette ligne ...
+		IntStateScatter(0, x, 0, v,
+		                T);  // TODO: voir pour faire un update de l'environnement juste avant cette ligne ...
 
 //        Update();  //***TODO*** optimize because maybe IntStateScatter above might have already called Update?
     }
@@ -105,7 +102,8 @@ namespace frydom {
 //            timestepper->SetQcDoClamp(false);
 
         // PERFORM TIME STEP HERE!
-        timestepper->Advance(step);  // Ici, on passe du temps courant au temps suivant en utilisant le shema du timestepper choisi
+		timestepper->Advance(
+			step);  // Ici, on passe du temps courant au temps suivant en utilisant le shema du timestepper choisi
 
         // Executes custom processing at the end of step
         CustomEndOfStep();
@@ -134,6 +132,15 @@ namespace frydom {
     void FrOffshoreSystem::CustomEndOfStep() {
         // TODO : Ici on a bon candidat pour trigger l'emission des donnees des objets...
         std::cout << "End of time step leading to time " << ChTime << std::endl;
+
+		for (auto &ibody : bodylist) {
+			auto body = dynamic_cast<FrBody *>(ibody.get());
+			if (body) {
+
+				body->StepFinalize();
+			}
+		}
+
     }
 
     void FrOffshoreSystem::Initialize() {
@@ -146,8 +153,8 @@ namespace frydom {
         m_environment->Initialize();
 
         // Initializing physical items
-        for (int ibody=0; ibody<bodylist.size(); ibody++) {
-            auto body = dynamic_cast<FrBody*>(bodylist[ibody].get());
+		for (auto &ibody : bodylist) {
+			auto body = dynamic_cast<FrBody *>(ibody.get());
             if (body) {
                 body->Initialize();
             }
@@ -162,15 +169,12 @@ namespace frydom {
         std::cout << "Finalizing the step at time " << GetChTime() << std::endl;
         m_environment->StepFinalize();
 
-        for (int ibody=0; ibody<bodylist.size(); ibody++) {
-            auto body = dynamic_cast<FrBody*>(bodylist[ibody].get());
+		for (auto &ibody : bodylist) {
+			auto body = dynamic_cast<FrBody *>(ibody.get());
             if (body) {
-                body->StepFinalize();
+				body->StepFinalize();//TODO this line does not work, check why
             }
         }
-
     }
-
-
 
 }  // end namespace frydom

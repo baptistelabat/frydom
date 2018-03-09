@@ -3,8 +3,6 @@
 //
 
 #include "frydom/frydom.h"
-
-
 #include "matplotlibcpp.h"
 
 using namespace frydom;

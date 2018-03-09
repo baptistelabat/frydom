@@ -10,7 +10,7 @@ namespace frydom {
 
     FrWaveDriftForce::FrWaveDriftForce(const std::string hdf5_file) {
 
-        IO::FrHDF5Reader reader;
+        FrHDF5Reader reader;
         reader.SetFilename(hdf5_file);
 
         std::string mode_path("/mode_");

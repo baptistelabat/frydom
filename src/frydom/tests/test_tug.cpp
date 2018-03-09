@@ -65,7 +65,6 @@ int main(int argc, char* argv[]) {
     lin_damping_force_tug->SetManeuveuringDampings(1e7, 1e7, 1e8);
     tug->AddForce(lin_damping_force_tug);
 
-
     auto current_force_ship= std::make_shared<FrCurrentForce>(filename);
     ship->AddForce(current_force_ship);
 
@@ -116,50 +115,54 @@ int main(int argc, char* argv[]) {
 
 
 
+    system.Initialize();
+    auto app = FrIrrApp(system, 300);
+    app.Run();
 
-    bool viz = true;
-//float friction = 0.6f;
-    double step_size = 1e-1;
-    bool capture_video = false;
 
-    // TODO: mettre la boucle suivante dans une fonction plutot que de recopier a chaque fois...
-    // Il faut:
-    // system
-    // step_size
-    // TryRealTime
-    // Des trucs a sortir a chaque pas de temps
-    if (viz) {
-
-        // Using own class for irrlicht viz
-        frydom::FrIrrApp app(&system, L"Frydom vizualization based on Irrlicht");
-        app.AddTypicalLights();
-        app.AddTypicalCamera(irr::core::vector3df(0, 0, 300), irr::core::vector3df(1, 0, -1));
-
-        // Adding the FRyDoM logo
-        auto device = app.GetDevice();
-        app.AddTypicalLogo("frydom_logo.png");
-
-        app.AssetBindAll();
-        app.AssetUpdateAll();
-
-//        app.SetStepManage(true);
-        app.SetTimestep(step_size);
-        app.SetTryRealtime(true);
-
-        app.SetVideoframeSave(capture_video);
-
-        auto tug_force = tug->Get_Xforce();
-
-        while (app.GetDevice()->run()) {
-            app.BeginScene();
-            app.DrawAll();
-            app.DoStep();
-            app.EndScene();
-
-            tug_force = tug->Get_Xforce();
-            std::cout << tug_force[0] << "\t" << tug_force[1] << "\t" << tug_force[2] << std::endl;
-        }
-    }
+//    bool viz = true;
+////float friction = 0.6f;
+//    double step_size = 1e-1;
+//    bool capture_video = false;
+//
+//    // TODO: mettre la boucle suivante dans une fonction plutot que de recopier a chaque fois...
+//    // Il faut:
+//    // system
+//    // step_size
+//    // TryRealTime
+//    // Des trucs a sortir a chaque pas de temps
+//    if (viz) {
+//
+//        // Using own class for irrlicht viz
+//        frydom::FrIrrApp app(&system, L"Frydom vizualization based on Irrlicht");
+//        app.AddTypicalLights();
+//        app.AddTypicalCamera(irr::core::vector3df(0, 0, 300), irr::core::vector3df(1, 0, -1));
+//
+//        // Adding the FRyDoM logo
+//        auto device = app.GetDevice();
+//        app.AddTypicalLogo("frydom_logo.png");
+//
+//        app.AssetBindAll();
+//        app.AssetUpdateAll();
+//
+////        app.SetStepManage(true);
+//        app.SetTimestep(step_size);
+//        app.SetTryRealtime(true);
+//
+//        app.SetVideoframeSave(capture_video);
+//
+//        auto tug_force = tug->Get_Xforce();
+//
+//        while (app.GetDevice()->run()) {
+//            app.BeginScene();
+//            app.DrawAll();
+//            app.DoStep();
+//            app.EndScene();
+//
+//            tug_force = tug->Get_Xforce();
+//            std::cout << tug_force[0] << "\t" << tug_force[1] << "\t" << tug_force[2] << std::endl;
+//        }
+//    }
 
     return 0;
 

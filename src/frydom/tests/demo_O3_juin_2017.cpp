@@ -15,19 +15,20 @@
 
 #include "frydom/frydom.h"
 
+using namespace frydom;
+
 bool viz = true;
 float friction = 0.6f;
 double step_size = 1e-2;
 bool capture_video = false;
 
-using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
     // =================================================================================================================
     // OFFSHORE SYSTEM
     // =================================================================================================================
-    auto system = FrOffshoreSystem();
+	FrOffshoreSystem system;
 
     // =================================================================================================================
     // FREE SURFACE
@@ -144,8 +145,6 @@ int main(int argc, char* argv[]) {
     ship3->Set3DOF_ON();
 
 
-
-
     // =================================================================================================================
     // FORCES
     // =================================================================================================================
@@ -181,37 +180,10 @@ int main(int argc, char* argv[]) {
     /// VISUALIZATION WITH IRRLICHT
     ///===========================================================================================================
 
-    // Visualization with irrlicht
+    system.Initialize();
 
-    // TODO: utiliser l'objet frydom pourla visu irrlicht
-    if (viz) {
-
-        // Using own class for irrlicht viz
-        FrIrrApp app(&system, L"Frydom vizualization based on Irrlicht");
-        app.AddTypicalLights();
-        app.AddTypicalCamera(irr::core::vector3df(0, 0, 300), irr::core::vector3df(1, 0, -1));
-
-
-        app.AssetBindAll();
-        app.AssetUpdateAll();
-
-
-//        app.SetStepManage(true);
-        app.SetTimestep(step_size);
-        app.SetTryRealtime(true);
-
-        app.SetVideoframeSave(capture_video);
-
-
-        while (app.GetDevice()->run()) {
-            app.BeginScene();
-            app.DrawAll();
-            app.DoStep();
-            app.EndScene();
-        }
-
-    }
-
+    auto app = FrIrrApp(system, 300);
+    app.Run();
 
     return 0;
 

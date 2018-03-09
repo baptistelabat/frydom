@@ -13,8 +13,6 @@
 
 
 namespace frydom {
-//    using FrCurrentPolarCoeffs;
-namespace IO {  // TODO: retirer ce namespace !
 
     //=========================================================================================================
     // IO for the current force modeling
@@ -57,28 +55,28 @@ FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string& yaml_file) {
             try {
                 angles = node["angles"].as<std::vector<double>>();
             } catch (YAML::BadConversion& err) {
-                // TODO: throw exception
+                throw("Cannot read angles");
             }
 
             // Getting cx Node
             try {
                 cx = node["cx"].as<std::vector<double>>();
             } catch (YAML::BadConversion& err) {
-                // TODO: throw exception
+                throw("Cannot read cx coefficients");
             }
 
             // Getting cy Node
             try {
                 cy = node["cy"].as<std::vector<double>>();
             } catch (YAML::BadConversion& err) {
-                // TODO: throw exception
+                throw("Cannot read cy coefficients");
             }
 
             // Getting cz Node
             try {
                 cz = node["cz"].as<std::vector<double>>();
             } catch (YAML::BadConversion& err) {
-                // TODO: throw exception
+                throw("Cannot read cz coefficients");
             }
 
         } else {
@@ -87,5 +85,5 @@ FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string& yaml_file) {
         }
     }
 
-}  // end namespace IO
+
 }  // end namespace frydom

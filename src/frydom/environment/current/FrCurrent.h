@@ -49,12 +49,16 @@ namespace frydom {
     private:
         // FIXME: ce vecteur doit representer le flux. Par contre, les informations d'angle sont courant porte vers et non vient de
         // FIXME: Corriger les information d'angle qui ne sont pas consistantes.
-            chrono::ChVector<> m_currentVector;  ///< The flux velocity vector of the current expressed in the NWU frame (NWU/GOTO)
+
+        // TODO: separer l'intensite et la direction et avoir le m_currentVector en cache...
+
+
+            chrono::ChVector<> m_currentVector = NORTH;  ///< The flux velocity vector of the current expressed in the NWU frame (NWU/GOTO)
 
     public:
 
         /// Default constructor: No current
-        FrCurrent() : m_currentVector(chrono::VNULL) {}
+        FrCurrent() : m_currentVector(NORTH) {}
 
         /// Constructor from a velocity vector embedding direction and magnitude (in m/s)
         explicit FrCurrent(chrono::ChVector<>  velocity_vector,
@@ -71,16 +75,6 @@ namespace frydom {
         // TODO: Ajouter les setters pour la direction et l'intensite
         void Set(const chrono::ChVector<>& unitDirection, double magnitude,
                  FrFrame frame=NED, FrDirectionConvention directionConvention=GOTO, SPEED_UNIT speedUnit=KNOT);
-
-        void SetDirection(const chrono::ChVector<>& unitDirection,
-                          FrFrame frame=NED,
-                          FrDirectionConvention directionConvention=GOTO);
-
-        void SetDirection(double angle, ANGLE_UNIT angleUnit=DEG,
-                          FrFrame frame=NED,
-                          FrDirectionConvention directionConvention=GOTO);
-
-        void SetMagnitude(double magnitude, SPEED_UNIT speedUnit=KNOT);
 
         void Update(double Time);
 

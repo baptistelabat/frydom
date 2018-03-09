@@ -8,9 +8,7 @@ from warnings import warn
 import matplotlib.pyplot as plt
 import cPickle
 
-
-# from ...environment.waves.wavefield import solve_wave_dispersion_relation
-from frydom.environment.waves.wavefield import solve_wave_dispersion_relation
+from wave_dispersion_relation import solve_wave_dispersion_relation
 from hydro_db import (inf, HydroDB, HydroBody, TranslationMode, RotationMode,
                       ForceMode, MomentMode, UnknownForceMode, UnknownMotionMode)
 
@@ -45,8 +43,6 @@ class _BEMReader(object):  # TODO: le parametre n pour le nb de facette par lamb
         float
             Maximum edge length (meters)
         """
-        # from frydom.environment.waves.linearwaves import LinearWaveField  # TODO: mettre get_wave_number a un endroit
-        #  plus generaliste
         wave_number = solve_wave_dispersion_relation(omega, self.hydro_db.depth, self.hydro_db.grav)
         wave_length = 2. * pi / wave_number
         return wave_length / self.nb_face_by_wave_length
@@ -81,9 +77,8 @@ class _BEMReader(object):  # TODO: le parametre n pour le nb de facette par lamb
         n : int, optional
             Minimal number of faces by wave length. Default is 10.
         """
-        from frydom.environment.waves.linearwaves import LinearWaveField
-        
-        wave_number = LinearWaveField.get_wave_number(self.hydro_db.omega, self.hydro_db.depth, self.hydro_db.grav)
+
+        wave_number = solve_wave_dispersion_relation(self.hydro_db.omega, self.hydro_db.depth, self.hydro_db.grav)
         wave_length = 2. * pi / wave_number
         edge_length = wave_length / self.nb_face_by_wave_length
         
@@ -364,7 +359,8 @@ class NemohReader(_BEMReader):
         bem_results_file = os.path.join(self.dirname, 'results', 'Forces.dat')
         
         if not os.path.exists(bem_results_file):
-            raise NemohReaderError("Nemoh result file 'Forces.dat' does not exists in directory %s" %
+            raise NemohReaderError("Nemoh result file 'Forces.dat' does not exists in directory %s.\n\n"
+                                   ">>> PLEASE VERIFY THAT NEMOH COMPUTATIONS HAVE BEEN RUN.\n" %
                                    os.path.join(self.dirname, 'results'))
         
         with open(bem_results_file, 'r') as f:
@@ -423,33 +419,3 @@ class NemohReader(_BEMReader):
             filename = "hydro_db.pyhdb"
         with open(filename, 'w') as f:
             cPickle.dump(self.hydro_db, f)
-        
-
-# if __name__ == '__main__':
-#     reader = NemohReader()
-#     reader.set_calculation_file('../../../tests/hydrodynamics/data_nemoh/Nemoh.cal', test=False)
-#
-#     hdb = reader.hydro_db
-#
-#     rdb = hdb.radiation_db
-#
-#     rdb.wcut = 2.
-#
-#     rdb.plot_added_mass_array()
-#
-#     rdb.clean()
-#
-#     rdb.wcut = None
-#
-#     rdb.eval_infinite_added_mass()
-#
-#     rdb.plot(0, 1, 0, 1)
-#
-#     print rdb.get_frequency_response(0, 0, 0, 0)
-#
-#     rdb.plot_radiation_damping_array()
-#     rdb.plot_added_mass_array()
-#
-#     irf = rdb.eval_impulse_response_function()
-#     #
-#     irf.plot_array()

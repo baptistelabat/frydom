@@ -6,8 +6,5 @@
 
 
 namespace frydom {
-namespace IO {
 
-
-}  // end namespace IO
 }  // end namespace frydom

@@ -5,8 +5,6 @@
 #ifndef FRYDOM_FROFFSHORESYSTEM_H
 #define FRYDOM_FROFFSHORESYSTEM_H
 
-//#include "chrono/physics/ChSystemNSC.h"
-//#include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/timestepper/ChState.h"
 #include "chrono/core/ChMatrixNM.h"
@@ -18,6 +16,7 @@
 #include "frydom/core/FrBody.h"
 
 #include "frydom/environment/FrEnvironment.h"
+
 
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
 // vent, vagues, courant, fond...
@@ -51,9 +50,14 @@ namespace frydom {
                                   unsigned int max_objects = 16000,
                                   double scene_size = 500);
 
+        /// Default destructor
+        ~FrOffshoreSystem() override {}
+
+        /// Copy constructor
+        //FrOffshoreSystem(const FrOffshoreSystem& system) {};
 
         /// Default destructor
-//        ~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
+        //~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
 
         inline FrEnvironment* GetEnvironment() const {
             return m_environment.get();
@@ -94,7 +98,6 @@ namespace frydom {
         void Initialize() override;
 
         void StepFinalize() override;
-
 
     };  // class FrOffshoreSystem
 

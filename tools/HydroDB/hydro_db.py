@@ -477,11 +477,11 @@ class FroudeKrylovDB(WaveExcitation):
         """Computes the Froude-Krylov complex coefficients from indident wave field"""
         # Remarque: l'evaluation est faite sur le full range de frequence (wcut est bypassed)
         # TODO: sortir le potentiel, les pressions et les vitesses normales...
-        
-        from ...environment.waves.wavefield import solve_wave_dispersion_relation  # FIXME: cet import n'est pas top !!
-        
+
+        from . import wave_dispersion_relation as wdr
+
         omega = self.get_full_omega()
-        k_wave = solve_wave_dispersion_relation(omega, depth, grav)
+        k_wave = wdr.solve_wave_dispersion_relation(omega, depth, grav)
         # g_w = self.grav / omega
         
         body_mapper = self.body_mapper
@@ -508,12 +508,21 @@ class FroudeKrylovDB(WaveExcitation):
             kw_bar = np.einsum('i, jk -> ijk', x - x_wave_measure, kctheta)
             kw_bar += np.einsum('i, jk -> ijk', y - y_wave_measure, kstheta)  # is nf x nw x ntheta
             exp_jkw_bar = np.exp(1j * kw_bar)  # is nf x nw x ntheta
-        
-            kxzph = np.einsum('i, j -> ij', z + depth, k_wave)  # is nf x nw
-            chkh_1 = 1. / np.cosh(k_wave * depth)  # is nw
-        
-            cih = np.einsum('ij, j -> ij', np.cosh(kxzph), chkh_1)  # is nf x nw
-            sih = np.einsum('ij, j -> ij', np.sinh(kxzph), chkh_1)  # is nf x nw
+            
+            if np.isinf(depth):
+                # Infinite depth
+                kxzph = np.einsum('i, j -> ij', z, k_wave)  # is nf x nw
+                cih = np.exp(kxzph)  # is nf x nw
+
+            else:
+                # Finite depth
+                kxzph = np.einsum('i, j -> ij', z + depth, k_wave)  # is nf x nw
+                chkh_1 = 1. / np.cosh(k_wave * depth)  # is nw
+
+                cih = np.einsum('ij, j -> ij', np.cosh(kxzph), chkh_1)  # is nf x nw
+                sih = np.einsum('ij, j -> ij', np.sinh(kxzph), chkh_1)  # is nf x nw
+
+
         
             cih_exp_jkw_bar = np.einsum('ij, ijk -> ijk', cih, exp_jkw_bar)  # is nf x nw x ntheta
             # sih_exp_jkw_bar = np.einsum('ij, ijk -> ijk', sih, exp_jkw_bar)  # is nf x nw x ntheta
@@ -534,11 +543,9 @@ class FroudeKrylovDB(WaveExcitation):
         
             for iforce in xrange(body.nb_force_modes):
                 nds = body.get_nds(iforce)
-                froude_krylov[i_global_force, :, :] =  np.einsum('ijk, i -> jk', pressure, nds)
+                # froude_krylov[i_global_force, :, :] =  np.einsum('ijk, i -> jk', pressure, nds)
+                froude_krylov[i_global_force, :, :] =  np.einsum('ijk, i -> jk', pressure, -nds) #Il s'agit de la normale entrante
                 i_global_force += 1
-    
-        # FIXME: il semblerait qu'il y ait un probleme de signe au niveau de la phase de Froude Krylov !!!
-        # FIXME: cela se voit quand on compare au fichier tecplot de Nemoh...
     
         self.data = froude_krylov
     
