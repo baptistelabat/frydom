@@ -1,10 +1,1 @@
 
-[submodule "thirdparty/chrono"]
-	path = thirdparty/chrono
-	url = https://github.com/fronron/chrono.git
-[submodule "thirdparty/yaml-cpp"]
-	path = thirdparty/yaml-cpp
-	url = https://github.com/jbeder/yaml-cpp.git
-[submodule "thirdparty/MathUtils"]
-	path = thirdparty/MathUtils
-	url = https://d-ice.githost.io/frongere/MathUtils.git
