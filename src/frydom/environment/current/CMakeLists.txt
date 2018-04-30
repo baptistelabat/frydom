@@ -1,11 +1,8 @@
 message(STATUS "        ...Environment/current")
 
 set(CURRENT_FILES_LOCAL
-#        FrCurrent.h
         FrCurrent.cpp
-#        FrCurrentForce.h
         FrCurrentForce.cpp
-#        FrCurrentPolarCoeffs.h
         FrCurrentPolarCoeffs.cpp
 )
 

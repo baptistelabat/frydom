@@ -28,19 +28,17 @@ foreach(subdir ${subdirs})
 
 endforeach()
 
-
-# FRyDoM dependencies
+# =============================================================================
+# FRyDoM DEPENDENCIES
+# =============================================================================
 include(Add_chrono)
 include(Add_MathUtils)
 include(Add_yaml-cpp)
 include(Add_HDF5)
 
-
-#find_package(Irrlicht)
-#list(APPEND CMAKE_CXX_FLAGS " -lIrrlicht") # TODO: voir comment faire ...
-#find_package(Irrlicht)
-
-
+# =============================================================================
+# FRyDoM DEPENDENCIES
+# =============================================================================
 
 # FRyDoM main shared library
 add_library(FRyDoM_Engine SHARED ${FRYDOM_SRC_FILES})
@@ -64,3 +62,7 @@ target_include_directories(FRyDoM_Engine PUBLIC
 
 # Adding tests as target
 add_subdirectory(tests)
+
+
+
+

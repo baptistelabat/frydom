@@ -1,7 +1,6 @@
 message(STATUS "    ...mooring")
 
 set(SRC_FILES
-#        FrMooring.h
         FrMooring.cpp
 )
 

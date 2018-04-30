@@ -1,9 +1,7 @@
 message(STATUS "        ...Environment/wind")
 
 set(WIND_FILES_LOCAL
-#        FrWind.h
         FrWind.cpp
-#        FrWindForce.h
         FrWindForce.cpp
         )
 

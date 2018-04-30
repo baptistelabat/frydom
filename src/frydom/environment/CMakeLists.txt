@@ -8,8 +8,6 @@ add_subdirectory(wind)
 
 
 set(SRC_FILES
-#        FrConventions.h
-#        FrEnvironment.h
         FrEnvironment.cpp
         )
 

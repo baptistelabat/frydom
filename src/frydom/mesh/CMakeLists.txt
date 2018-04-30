@@ -1,7 +1,6 @@
 message(STATUS "    ...mesh")
 
 set(SRC_FILES
-#        FrTriangleMeshConnected.h
         FrTriangleMeshConnected.cpp
         )
 

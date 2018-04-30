@@ -1,13 +1,9 @@
 message(STATUS "    ...utils")
 
 set(SRC_FILES
-        FrIrrApp.h
         FrIrrApp.cpp
-        FrEigen.h
         FrEigen.cpp
-        FrUtils.h
         FrUtils.cpp
-        FrRecorder.h
         FrRecorder.cpp
 )
 

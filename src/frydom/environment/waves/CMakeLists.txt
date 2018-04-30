@@ -1,15 +1,10 @@
 message(STATUS "        ...Environment/waves")
 
 set(WAVES_FILES_LOCAL
-#        FrFreeSurface.h
         FrFreeSurface.cpp
-#        FrWaveDispersionRelation.h
         FrWaveDispersionRelation.cpp
-#        FrWaveField.h
         FrWaveField.cpp
-#        FrWaveProbe.h
         FrWaveProbe.cpp
-#        FrWaveSpectrum.h
         FrWaveSpectrum.cpp
 )
 
