@@ -1,0 +1,196 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 079a30b..df06ef9 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -14,9 +14,9 @@ cmake_minimum_required(VERSION 2.8)
+ # Prevent in-source builds.
+ #-----------------------------------------------------------------------------
+ 
+-if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
++if(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
+     message( FATAL_ERROR  "In-source build is not possible and not recommended. Choose an empty directory for build output.")
+-endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
++endif(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
+ 
+ enable_testing()
+ set(VALGRIND_COMMAND "/usr/bin/valgrind")
+@@ -73,7 +73,7 @@ set(CH_VERSION 0x00030000)
+ # Location of additional CMake scripts
+ #-----------------------------------------------------------------------------
+ 
+-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
++list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+ include(GetGitRevisionDescription)
+ get_git_head_revision(GIT_REFSPEC VCS_REVISION)
+ 
+@@ -207,12 +207,12 @@ endif()
+ #------------------------------------------------------------
+ 
+ if(MSVC OR XCODE_VERSION)
+-    file(COPY ${CMAKE_SOURCE_DIR}/data/ DESTINATION ${CMAKE_BINARY_DIR}/bin/data/)
++    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin/data/)
+ else()
+-    file(COPY ${CMAKE_SOURCE_DIR}/data/ DESTINATION ${CMAKE_BINARY_DIR}/data/)
++    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+ endif()
+ 
+-install(DIRECTORY ${CMAKE_SOURCE_DIR}/data/ DESTINATION ${CH_INSTALL_DATA})
++install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data/ DESTINATION ${CH_INSTALL_DATA})
+ 
+ #------------------------------------------------------------
+ # Defer configuration of all Chrono libraries and programs
+@@ -224,4 +224,4 @@ add_subdirectory(src)
+ # Use CPack
+ #------------------------------------------------------------
+ 
+-include(CPack)
++# include(CPack)
+diff --git a/src/chrono/physics/ChForce.h b/src/chrono/physics/ChForce.h
+index 3ae1ff0..49a9226 100644
+--- a/src/chrono/physics/ChForce.h
++++ b/src/chrono/physics/ChForce.h
+@@ -64,7 +64,7 @@ class ChApi ChForce : public ChObj {
+     CH_ENUM_VAL(WORLD_DIR);
+     CH_ENUM_MAPPER_END(AlignmentFrame);
+ 
+-  private:
++  protected:
+     ChBody* Body;  ///< object of application
+ 
+     ForceType mode;        ///< force or torque
+@@ -103,95 +103,95 @@ class ChApi ChForce : public ChObj {
+     virtual ChForce* Clone() const override { return new ChForce(*this); }
+ 
+     /// Return the parent body (the force belongs to this rigid body)
+-    ChBody* GetBody() { return Body; }
++    virtual ChBody* GetBody() { return Body; }
+     /// Sets the parent body (the force belongs to this rigid body)
+-    void SetBody(ChBody* newRB) { Body = newRB; }
++    virtual void SetBody(ChBody* newRB) { Body = newRB; }
+ 
+     /// Sets the mode (force or torque)
+-    void SetMode(ForceType m_mode) { mode = m_mode; }
+-    ForceType GetMode() const { return mode; }
++    virtual void SetMode(ForceType m_mode) { mode = m_mode; }
++    virtual ForceType GetMode() const { return mode; }
+ 
+     /// Sets the alignment method.
+     /// The force will rotate together with this reference.
+-    void SetAlign(AlignmentFrame m_align) { align = m_align; }
+-    AlignmentFrame GetAlign() const { return align; }
++    virtual void SetAlign(AlignmentFrame m_align) { align = m_align; }
++    virtual AlignmentFrame GetAlign() const { return align; }
+ 
+     /// Sets the alignment method.
+     /// The force application point will follow this reference.
+-    void SetFrame(ReferenceFrame m_frame) {
++    virtual void SetFrame(ReferenceFrame m_frame) {
+         frame = m_frame;
+         SetVpoint(vpoint);
+     }
+-    ReferenceFrame GetFrame() const { return frame; }
++    virtual ReferenceFrame GetFrame() const { return frame; }
+ 
+     /// Gets the application point, in absolute coordinates.
+-    ChVector<> GetVpoint() const { return vpoint; }
++    virtual ChVector<> GetVpoint() const { return vpoint; }
+     /// Gets the application point, in rigid body coordinates.
+-    ChVector<> GetVrelpoint() const { return vrelpoint; }
++    virtual ChVector<> GetVrelpoint() const { return vrelpoint; }
+ 
+     /// Gets the application point, in absolute coordinates.
+-    void SetVpoint(ChVector<> mypoint);
++    virtual void SetVpoint(ChVector<> mypoint);
+     /// Gets the application point, in rigid body coordinates.
+-    void SetVrelpoint(ChVector<> myrelpoint);
++    virtual void SetVrelpoint(ChVector<> myrelpoint);
+ 
+     /// Gets the force (or torque) direction, in absolute coordinates.
+-    ChVector<> GetDir() const { return vdir; }
++    virtual ChVector<> GetDir() const { return vdir; }
+     /// Gets the force (or torque) direction, in rigid body coordinates.
+-    ChVector<> GetRelDir() const { return vreldir; }
++    virtual ChVector<> GetRelDir() const { return vreldir; }
+     /// Sets the force (or torque) direction, in absolute coordinates.
+-    void SetDir(ChVector<> newf);
++    virtual void SetDir(ChVector<> newf);
+     /// Sets the force (or torque) direction, in rigid body coordinates.
+-    void SetRelDir(ChVector<> newf);
++    virtual void SetRelDir(ChVector<> newf);
+ 
+     /// Sets force (or torque) modulus.
+-    void SetMforce(double newf);
++    virtual void SetMforce(double newf);
+     /// Gets force (or torque) modulus.
+-    double GetMforce() const { return mforce; }
++    virtual double GetMforce() const { return mforce; }
+ 
+     /// Sets a f(t) function for time-modulation of the force.
+-    void SetModulation(std::shared_ptr<ChFunction> m_funct) { modula = m_funct; }
+-    std::shared_ptr<ChFunction> GetModulation() const { return modula; }
++    virtual void SetModulation(std::shared_ptr<ChFunction> m_funct) { modula = m_funct; }
++    virtual std::shared_ptr<ChFunction> GetModulation() const { return modula; }
+ 
+     /// Sets a f(t) function for time dependency of position (on x axis)
+-    void SetMove_x(std::shared_ptr<ChFunction> m_funct) { move_x = m_funct; }
+-    std::shared_ptr<ChFunction> GetMove_x() const { return move_x; }
++    virtual void SetMove_x(std::shared_ptr<ChFunction> m_funct) { move_x = m_funct; }
++    virtual std::shared_ptr<ChFunction> GetMove_x() const { return move_x; }
+     /// Sets a f(t) function for time dependency of position (on y axis)
+-    void SetMove_y(std::shared_ptr<ChFunction> m_funct) { move_y = m_funct; }
+-    std::shared_ptr<ChFunction> GetMove_y() const { return move_y; }
++    virtual void SetMove_y(std::shared_ptr<ChFunction> m_funct) { move_y = m_funct; }
++    virtual std::shared_ptr<ChFunction> GetMove_y() const { return move_y; }
+     /// Sets a f(t) function for time dependency of position (on z axis)
+-    void SetMove_z(std::shared_ptr<ChFunction> m_funct) { move_z = m_funct; }
+-    std::shared_ptr<ChFunction> GetMove_z() const { return move_z; }
++    virtual void SetMove_z(std::shared_ptr<ChFunction> m_funct) { move_z = m_funct; }
++    virtual std::shared_ptr<ChFunction> GetMove_z() const { return move_z; }
+ 
+     /// Sets a f(t) function for time dependency of force X component.
+-    void SetF_x(std::shared_ptr<ChFunction> m_funct) { f_x = m_funct; }
+-    std::shared_ptr<ChFunction> GetF_x() const { return f_x; }
++    virtual void SetF_x(std::shared_ptr<ChFunction> m_funct) { f_x = m_funct; }
++    virtual std::shared_ptr<ChFunction> GetF_x() const { return f_x; }
+     /// Sets a f(t) function for time dependency of force Y component.
+-    void SetF_y(std::shared_ptr<ChFunction> m_funct) { f_y = m_funct; }
+-    std::shared_ptr<ChFunction> GetF_y() const { return f_y; }
++    virtual void SetF_y(std::shared_ptr<ChFunction> m_funct) { f_y = m_funct; }
++    virtual std::shared_ptr<ChFunction> GetF_y() const { return f_y; }
+     /// Sets a f(t) function for time dependency of force Z component.
+-    void SetF_z(std::shared_ptr<ChFunction> m_funct) { f_z = m_funct; }
+-    std::shared_ptr<ChFunction> GetF_z() const { return f_z; }
++    virtual void SetF_z(std::shared_ptr<ChFunction> m_funct) { f_z = m_funct; }
++    virtual std::shared_ptr<ChFunction> GetF_z() const { return f_z; }
+ 
+     /// Gets the instant force vector -or torque vector- in absolute coordinates.
+-    ChVector<> GetForce() const { return force; }
++    virtual ChVector<> GetForce() const { return force; }
+     /// Gets the instant force vector -or torque vector- in rigid body coordinates.
+-    ChVector<> GetRelForce() const { return relforce; }
++    virtual ChVector<> GetRelForce() const { return relforce; }
+     /// Gets the instant force vector -or torque vector- modulus.
+-    double GetForceMod() const { return force.Length(); }
++    virtual double GetForceMod() const { return force.Length(); }
+ 
+     /// Gets force-torque applied to rigid body, as lagrangian generalized force (7x1 matrix).
+-    ChMatrix<>* GetQf() { return Qf; }
++    virtual ChMatrix<>* GetQf() { return Qf; }
+     /// Gets force-torque applied to rigid body, as force vector (in absol.coords)
+     /// and torque vector (in body coords).
+-    void GetBodyForceTorque(ChVector<>& body_force, ChVector<>& body_torque) const;
++    virtual void GetBodyForceTorque(ChVector<>& body_force, ChVector<>& body_torque) const;
+ 
+     //
+     // UPDATING
+     //
+ 
+-    void UpdateTime(double mytime);
+-    void UpdateState();
+-    void Update(double mytime);
++    virtual void UpdateTime(double mytime);
++    virtual void UpdateState();
++    virtual void Update(double mytime);
+ 
+     //
+     // SERIALIZATION

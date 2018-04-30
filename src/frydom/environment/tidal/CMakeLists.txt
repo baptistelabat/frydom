@@ -1,7 +1,7 @@
 message(STATUS "        ...Environment/tidal")
 
 set(TIDAL_FILES_LOCAL
-        FrTidalModel.h
+#        FrTidalModel.h
         FrTidalModel.cpp
 )
 

@@ -7,7 +7,7 @@
 
 #include <cassert>
 
-#include "MathUtils.h"
+#include "MathUtils/MathUtils.h"
 
 #include "frydom/core/FrObject.h"
 

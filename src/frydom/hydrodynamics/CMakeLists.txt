@@ -1,47 +1,47 @@
 message(STATUS "    ...hydrodynamics")
 
-set(HYDRODYNAMICS_FILES_LOCAL
-        FrFroudeKrylov.h
+set(SRC_FILES
+#        FrFroudeKrylov.h
         FrFroudeKrylov.cpp
-        FrBEMBody.h
+#        FrBEMBody.h
         FrBEMBody.cpp
-        FrHydroDB.h
+#        FrHydroDB.h
         FrHydroDB.cpp
-        FrHydrostaticForce.h
+#        FrHydrostaticForce.h
         FrHydrostaticForce.cpp
-        FrITTC57.h
+#        FrITTC57.h
         FrITTC57.cpp
-        FrLinearDamping.h
+#        FrLinearDamping.h
         FrLinearDamping.cpp
-        FrLinearExcitationForce.h
+#        FrLinearExcitationForce.h
         FrLinearExcitationForce.cpp
-        FrLinearHydrostaticForce.h
+#        FrLinearHydrostaticForce.h
         FrLinearHydrostaticForce.cpp
-        FrLinearHydrostaticStiffnessMatrix.h
+#        FrLinearHydrostaticStiffnessMatrix.h
         FrLinearHydrostaticStiffnessMatrix.cpp
-        FrMorrisonElement.h
+#        FrMorrisonElement.h
         FrMorrisonElement.cpp
-        FrMorrisonForce.h
+#        FrMorrisonForce.h
         FrMorrisonForce.cpp
-        FrRadiationForce.h
+#        FrRadiationForce.h
         FrRadiationForce.cpp
-        FrTryalForce.h
+#        FrTryalForce.h
         FrTryalForce.cpp
-        FrWaveDriftForce.h
+#        FrWaveDriftForce.h
         FrWaveDriftForce.cpp
-        FrVelocityRecorder.h
+#        FrVelocityRecorder.h
         FrVelocityRecorder.cpp
-        FrRadiationModel.h
+#        FrRadiationModel.h
         FrRadiationModel.cpp
-        FrHydroMapper.h
+#        FrHydroMapper.h
         FrHydroMapper.cpp
-        FrHydroDBLoader.h
+#        FrHydroDBLoader.h
         FrHydroDBLoader.cpp
 )
 
-set(HYDRODYNAMICS_FILES "")
-foreach(file ${HYDRODYNAMICS_FILES_LOCAL})
-    list(APPEND HYDRODYNAMICS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+set(FRYDOM_HYDRODYNAMICS_SOURCES "")
+foreach(file ${SRC_FILES})
+    list(APPEND FRYDOM_HYDRODYNAMICS_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 
-set(HYDRODYNAMICS_FILES ${HYDRODYNAMICS_FILES} PARENT_SCOPE)
+set(FRYDOM_HYDRODYNAMICS_SOURCES ${FRYDOM_HYDRODYNAMICS_SOURCES} PARENT_SCOPE)

@@ -11,7 +11,7 @@
 #include "frydom/core/FrConstants.h"
 #include "frydom/environment/FrConventions.h"
 
-#include "MathUtils.h"
+#include "MathUtils/MathUtils.h"
 
 
 using namespace mathutils;

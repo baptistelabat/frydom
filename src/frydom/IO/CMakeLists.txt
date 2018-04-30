@@ -1,15 +1,15 @@
 message(STATUS "    ...IO")
 
-set(IO_FILES_LOCAL
-        FrHDF5.h
+set(SRC_FILES
+#        FrHDF5.h
         FrHDF5.cpp
-        FrLoader.h
+#        FrLoader.h
         FrLoader.cpp
 )
 
-set(IO_FILES "")
-foreach(file ${IO_FILES_LOCAL})
-    list(APPEND IO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+set(FRYDOM_IO_SOURCES "")
+foreach(file ${SRC_FILES})
+    list(APPEND FRYDOM_IO_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 
-set(IO_FILES ${IO_FILES} PARENT_SCOPE)
+set(FRYDOM_IO_SOURCES ${FRYDOM_IO_SOURCES} PARENT_SCOPE)

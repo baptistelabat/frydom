@@ -1,7 +1,7 @@
 message(STATUS "        ...Environment/seabed")
 
 set(SEABED_FILES_LOCAL
-        FrSeabed.h
+#        FrSeabed.h
         FrSeabed.cpp
 )
 

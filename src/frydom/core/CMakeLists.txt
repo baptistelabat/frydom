@@ -1,35 +1,37 @@
 
 message(STATUS "    ...Core")
 
-set(CORE_FILES_LOCAL
-        FrObject.h
+set(SRC_FILES
+#        FrObject.h
         FrObject.cpp
-        FrBody.h
+#        FrBody.h
         FrBody.cpp
-        FrBodyEasy.h
+#        FrBodyEasy.h
         FrBodyEasy.cpp
-        FrConstants.h
+#        FrConstants.h
         FrConstants.cpp
-        FrCore.h
-        FrEulerAngles.h
+#        FrCore.h
+#        FrEulerAngles.h
         FrEulerAngles.cpp
-        FrForce.h
+#        FrForce.h
         FrForce.cpp
-        FrForceAsset.h
+#        FrForceAsset.h
         FrForceAsset.cpp
-        FrHydroBody.h
+#        FrHydroBody.h
         FrHydroBody.cpp
-        FrNode.h
+#        FrNode.h
         FrNode.cpp
-        FrOffshoreSystem.h
+#        FrOffshoreSystem.h
         FrOffshoreSystem.cpp
-        FrShip.h
+#        FrShip.h
         FrShip.cpp
 )
 
-set(CORE_FILES "")
-foreach(file ${CORE_FILES_LOCAL})
-    list(APPEND CORE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+set(FRYDOM_CORE_SOURCES "")
+foreach(file ${SRC_FILES})
+    list(APPEND FRYDOM_CORE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 
-set(CORE_FILES ${CORE_FILES} PARENT_SCOPE)
+#message(${FRYDOM_CORE_SOURCES})
+
+set(FRYDOM_CORE_SOURCES ${FRYDOM_CORE_SOURCES} PARENT_SCOPE)

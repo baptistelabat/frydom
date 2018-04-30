@@ -21,7 +21,7 @@
 #include "frydom/core/FrObject.h"
 #include "frydom/core/FrConstants.h"
 #include "frydom/environment/FrConventions.h"
-#include "MathUtils.h"
+#include "MathUtils/MathUtils.h"
 
 // TODO: definir une classe de base pour le champ de courant et de vent (et de houle) afin de ne pas
 // repliquer le code concernant la gestion des unites de vitesse, des conventions de direction ("vient de")

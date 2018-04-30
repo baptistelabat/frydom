@@ -8,7 +8,7 @@
 #-----------------------------------------------------------------------------
 # Check backward compatibility
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.11)
 
 #-----------------------------------------------------------------------------
 # Prevent in-source builds
@@ -20,10 +20,10 @@ endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 #-----------------------------------------------------------------------------
 # Define project name and specify version information
 #-----------------------------------------------------------------------------
-project(frydom)
+project(FRyDoM)
 
 set(FRYDOM_VERSION_MAJOR 0)
-set(FRYDOM_VERSION_MINOR 0)
+set(FRYDOM_VERSION_MINOR 1)
 set(FRYDOM_VERSION_PATCH 0)
 
 set(FRYDOM_VERSION
@@ -33,21 +33,16 @@ set(FRYDOM_VERSION
 #-----------------------------------------------------------------------------
 # Setting the configuration of the build (Debug, Release...)
 #-----------------------------------------------------------------------------
-set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Debug)
 
 #-----------------------------------------------------------------------------
 # C++ dialect
 #-----------------------------------------------------------------------------
 set(CMAKE_CXX_STANDARD 14)
 
-#-----------------------------------------------------------------------------
-# Ensuring third party software is built
-#-----------------------------------------------------------------------------
-#message(STATUS "Ensuring that the thirdparty software are up-to-date and properly built")
-#execute_process(COMMAND python
-#        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/build_thirdparty.py ${CMAKE_BUILD_TYPE}
-#        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty
-#        )
+
+# Access to local cmake scripts
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 
 
@@ -55,7 +50,7 @@ set(CMAKE_CXX_STANDARD 14)
 # Adding Thirparty libraries to the project
 #=============================================================================
 # It set FRYDOM_THIRDPARTY_LIBS and FRYDOM_THIRDPARTY_INCLUDE_DIRS
-add_subdirectory(thirdparty)
+#add_subdirectory(thirdparty)
 
 
 #=============================================================================

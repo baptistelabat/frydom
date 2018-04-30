@@ -8,7 +8,7 @@
 #include <cmath>
 
 #include "chrono/core/ChMatrix33.h"
-#include "MathUtils.h"
+#include "MathUtils/MathUtils.h"
 
 using namespace mathutils;
 // TODO: mettre les references utilisees (cf euler_angles.py)

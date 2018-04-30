@@ -6,7 +6,7 @@
 #define FRYDOM_FRBEMBODY_H
 
 
-#include "MathUtils.h"
+#include "MathUtils/MathUtils.h"
 
 using namespace mathutils;
 

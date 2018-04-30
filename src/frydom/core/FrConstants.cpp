@@ -5,7 +5,7 @@
 #include <chrono/core/ChVector.h>
 #include "FrConstants.h"
 
-#include "MathUtils.h"
+#include "MathUtils/MathUtils.h"
 
 namespace frydom {
 

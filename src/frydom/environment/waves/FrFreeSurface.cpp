@@ -15,7 +15,7 @@
 
 #include <thread>
 
-#include "MathUtils.h"
+#include "MathUtils/MathUtils.h"
 
 #include "FrFreeSurface.h"
 #include "frydom/core/FrOffshoreSystem.h"

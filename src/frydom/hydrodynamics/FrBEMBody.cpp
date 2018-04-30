@@ -2,7 +2,7 @@
 // Created by frongere on 11/01/18.
 //
 
-#include "MathUtils.h"
+#include "MathUtils/MathUtils.h"
 
 #include "FrHydroDB.h"
 #include "FrBEMBody.h"

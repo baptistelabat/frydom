@@ -1,13 +1,13 @@
 message(STATUS "    ...mooring")
 
-set(MOORING_FILES_LOCAL
-        FrMooring.h
+set(SRC_FILES
+#        FrMooring.h
         FrMooring.cpp
 )
 
-set(MOORING_FILES "")
-foreach(file ${MOORING_FILES_LOCAL})
-    list(APPEND MOORING_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+set(FRYDOM_MOORING_SOURCES "")
+foreach(file ${SRC_FILES})
+    list(APPEND FRYDOM_MOORING_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 
-set(MOORING_FILES ${MOORING_FILES} PARENT_SCOPE)
+set(FRYDOM_MOORING_SOURCES ${FRYDOM_MOORING_SOURCES} PARENT_SCOPE)

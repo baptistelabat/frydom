@@ -8,7 +8,7 @@
 
 #include <string>
 #include <vector>
-#include "MathUtils.h"
+#include "MathUtils/MathUtils.h"
 
 #include "frydom/core/FrConstants.h"
 #include "frydom/environment/current/FrCurrentPolarCoeffs.h"

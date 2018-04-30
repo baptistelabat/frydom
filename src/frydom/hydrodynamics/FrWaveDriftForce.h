@@ -8,7 +8,7 @@
 #include <frydom/core/FrForce.h>
 #include <frydom/environment/waves/FrWaveProbe.h>
 #include <frydom/core/FrHydroBody.h>
-#include <MathUtils.h>
+#include <MathUtils/MathUtils.h>
 
 namespace frydom {
 

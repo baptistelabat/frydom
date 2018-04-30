@@ -1,21 +1,18 @@
 message(STATUS "    ...Cable")
 
-set(CABLE_FILES_LOCAL
-        FrCable.h
+set(SRC_FILES
         FrCable.cpp
-        FrCatenaryForce.h
         FrCatenaryForce.cpp
-        FrCatenaryLine.h
         FrCatenaryLine.cpp
-        FrCatenaryNode.h
         FrCatenaryNode.cpp
-        FrDynamicCable.h
         FrDynamicCable.cpp
 )
 
-set(CABLE_FILES "")
-foreach(file ${CABLE_FILES_LOCAL})
-    list(APPEND CABLE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+set(FRYDOM_CABLE_SOURCES "")
+foreach(file ${SRC_FILES})
+    list(APPEND FRYDOM_CABLE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 
-set(CABLE_FILES ${CABLE_FILES} PARENT_SCOPE)
+#message(${FRYDOM_CABLE_SOURCES})
+
+set(FRYDOM_CABLE_SOURCES ${FRYDOM_CABLE_SOURCES} PARENT_SCOPE)

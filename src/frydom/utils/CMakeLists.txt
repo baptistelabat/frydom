@@ -1,6 +1,6 @@
 message(STATUS "    ...utils")
 
-set(UTILS_FILES_LOCAL
+set(SRC_FILES
         FrIrrApp.h
         FrIrrApp.cpp
         FrEigen.h
@@ -11,9 +11,9 @@ set(UTILS_FILES_LOCAL
         FrRecorder.cpp
 )
 
-set(UTILS_FILES "")
-foreach(file ${UTILS_FILES_LOCAL})
-    list(APPEND UTILS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+set(FRYDOM_UTILS_SOURCES "")
+foreach(file ${SRC_FILES})
+    list(APPEND FRYDOM_UTILS_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 
-set(UTILS_FILES ${UTILS_FILES} PARENT_SCOPE)
+set(FRYDOM_UTILS_SOURCES ${FRYDOM_UTILS_SOURCES} PARENT_SCOPE)

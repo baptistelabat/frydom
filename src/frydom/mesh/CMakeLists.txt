@@ -1,13 +1,13 @@
 message(STATUS "    ...mesh")
 
-set(MESH_FILES_LOCAL
-        FrTriangleMeshConnected.h
+set(SRC_FILES
+#        FrTriangleMeshConnected.h
         FrTriangleMeshConnected.cpp
         )
 
-set(MESH_FILES "")
-foreach(file ${MESH_FILES_LOCAL})
-    list(APPEND MESH_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+set(FRYDOM_MESH_SOURCES "")
+foreach(file ${SRC_FILES})
+    list(APPEND FRYDOM_MESH_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 
-set(MESH_FILES ${MESH_FILES} PARENT_SCOPE)
+set(FRYDOM_MESH_SOURCES ${FRYDOM_MESH_SOURCES} PARENT_SCOPE)

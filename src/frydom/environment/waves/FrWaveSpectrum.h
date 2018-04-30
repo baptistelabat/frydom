@@ -6,7 +6,7 @@
 #define FRYDOM_FRWAVESPECTRUM_H
 
 #include <vector>
-#include "MathUtils.h"
+#include "MathUtils/MathUtils.h"
 
 #include "frydom/core/FrObject.h"
 
