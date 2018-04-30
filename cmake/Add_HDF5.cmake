@@ -1,1 +1,8 @@
-find_package(HDF5 COMPONENTS CXX)
+find_package(HDF5 REQUIRED COMPONENTS CXX)
+
+message(STATUS ${HDF5_INCLUDE_DIRS})
+message(STATUS ${HDF5_LIBRARIES})
+
+add_library(HDF5 INTERFACE)
+target_include_directories(HDF5 INTERFACE ${HDF5_INCLUDE_DIRS})
+target_link_libraries(HDF5 INTERFACE ${HDF5_LIBRARIES})

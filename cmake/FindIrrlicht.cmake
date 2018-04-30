@@ -69,3 +69,10 @@ endif(WIN32)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Irrlicht DEFAULT_MSG IRRLICHT_LIBRARY IRRLICHT_INCLUDE_DIR)
+
+if (Irrlicht_FOUND)
+    message(STATUS "Irrlicht found")
+    add_library(Irrlicht INTERFACE)
+    target_include_directories(Irrlicht INTERFACE ${IRRLICHT_INCLUDE_DIR})
+    target_link_libraries(Irrlicht INTERFACE ${IRRLICHT_LIBRARY})
+endif()

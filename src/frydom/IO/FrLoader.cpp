@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "MathUtils.h"
+#include "MathUtils/MathUtils.h"
 
 #include "yaml-cpp/yaml.h"
 

@@ -16,9 +16,6 @@ if (NOT chrono_FOUND)
             )
 
 
-
-
-
     FetchContent_GetProperties(chrono)
     message(STATUS ${chrono_POPULATED})
     message(STATUS ${chrono_SOURCE_DIR})
@@ -97,3 +94,4 @@ if (TARGET ChronoEngine_postprocess)
     target_include_directories(ChronoEngine_postprocess PUBLIC ${INC})
 endif()
 
+# TODO: ajouter une custom_target rassemblat toutes les libs delectionnees pour Chrono avec des add_dependencies()

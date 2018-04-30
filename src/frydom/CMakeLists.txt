@@ -38,20 +38,21 @@ include(Add_HDF5)
 
 #find_package(Irrlicht)
 #list(APPEND CMAKE_CXX_FLAGS " -lIrrlicht") # TODO: voir comment faire ...
-find_package(Irrlicht)
+#find_package(Irrlicht)
 
 
 
 # FRyDoM main shared library
 add_library(FRyDoM_Engine SHARED ${FRYDOM_SRC_FILES})
-target_link_libraries(FRyDoM_Engine SHARED
+target_link_libraries(FRyDoM_Engine
         ChronoEngine
         ChronoEngine_fea
-#        ChronoEngine_irrlicht
+        ChronoEngine_irrlicht
 #        ChronoEngine_potprocess
         MathUtils::MathUtils
         yaml-cpp
-        Irrlicht
+#        Irrlicht
+        HDF5
         )
 
 
