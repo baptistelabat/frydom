@@ -63,4 +63,4 @@ target_include_directories(FRyDoM_Engine PUBLIC
 
 
 # Adding tests as target
-#add_subdirectory(tests)
+add_subdirectory(tests)
