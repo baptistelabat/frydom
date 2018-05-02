@@ -25,12 +25,16 @@ namespace frydom {
 
         std::vector<chrono::ChVectorDynamic<double>> m_radiationForces;
 
+        int m_HydroMapIndex = 0; // TODO : patch hydro map multibody
+
 
     public:
         FrRadiationModel() = default;
 
         explicit FrRadiationModel(FrHydroDB* HDB, FrOffshoreSystem* system) : m_HDB(HDB), m_system(system) {}
 
+        void SetHydroMapIndex(const int id) { m_HydroMapIndex = id; }  // TODO : patch hydro map multibody
+        int GetHydroMapIndex() const { return m_HydroMapIndex; }  // TODO : patch hydro map multibody
 
         void SetHydroDB(FrHydroDB* HDB) { m_HDB = HDB; }
 
@@ -58,7 +62,7 @@ namespace frydom {
         std::shared_ptr<FrHydroMapper> GetMapper() const {
             // TODO: le mapper doit etre cree lors de l'instanciation de radModel et pas stocke dans system !!
             // On parlera plutot de FrLinearHydroModel !! auquel on attache une HDB (et on a un loadHDB dans cette classe)
-            return m_system->GetHydroMapper();
+            return m_system->GetHydroMapper(m_HydroMapIndex);
         }
 
         void ResetRadiationForceVector() {
@@ -75,7 +79,7 @@ namespace frydom {
         void GetRadiationForce(FrHydroBody* hydroBody,
                                chrono::ChVector<double>& force, chrono::ChVector<double>& moment) {
 
-            auto mapper = m_system->GetHydroMapper();
+            auto mapper = m_system->GetHydroMapper(m_HydroMapIndex);
 
             auto iBEMBody = mapper->GetBEMBodyIndex(hydroBody);  // FIXME: le mapper renvoie pour le moment un pointeur vers le BEMBody, pas son index !!
 
@@ -133,7 +137,7 @@ namespace frydom {
             auto NbBodies = m_HDB->GetNbBodies();
 
             // Getting the hydrodynamic mapper
-            auto mapper = m_system->GetHydroMapper();
+            auto mapper = m_system->GetHydroMapper(m_HydroMapIndex);
 
             // We have one velocity recorder by hydrodynamic body
             m_recorders.reserve(NbBodies);
@@ -220,7 +224,7 @@ namespace frydom {
 
                             // Update of the force
                             // FIXME: verification du signe  !!!
-                            generalizedForce.ElementN(iforce) -= val;  // TODO: bien verifier qu'on fait bien du inplace dans m_radiationForces !
+                            generalizedForce.ElementN(iforce) += val;  // TODO: bien verifier qu'on fait bien du inplace dans m_radiationForces !
 
                         }  // End loop iforce
                     }  // End loop imotion of body imotionBody

@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FROFFSHORESYSTEM_H
 #define FRYDOM_FROFFSHORESYSTEM_H
 
+#include <frydom/hydrodynamics/FrHydroDB.h>
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/timestepper/ChState.h"
 #include "chrono/core/ChMatrixNM.h"
@@ -41,7 +42,9 @@ namespace frydom {
 
         std::unique_ptr<FrEnvironment> m_environment;
 
-        std::shared_ptr<FrHydroMapper> m_hydroMapper;
+        int m_nHDB = 0;
+        std::vector<std::shared_ptr<FrHydroDB>> m_HDB;
+        std::vector<std::shared_ptr<FrHydroMapper>> m_hydroMapper;  // TODO : patch vector hydro map multibody
 
 
     public:
@@ -76,13 +79,24 @@ namespace frydom {
         }
 
         void SetHydroMapper(std::shared_ptr<FrHydroMapper> hydroMapper) {
-            m_hydroMapper = hydroMapper;
+            m_hydroMapper.push_back(hydroMapper);
         }
 
-        std::shared_ptr<FrHydroMapper> GetHydroMapper() const {
-            return m_hydroMapper;
+        std::shared_ptr<FrHydroMapper> GetHydroMapper(const int id) const {
+            return m_hydroMapper[id];
         }
 
+        void SetHydroDB(const std::string filename) {
+            m_HDB.push_back( std::make_shared<FrHydroDB>(filename) );
+            m_nHDB += 1;
+            m_hydroMapper.push_back( m_HDB[m_nHDB-1]->GetMapper() );
+        }
+
+        FrHydroDB* GetHydroDB(const int id) const {
+            return m_HDB[id].get();
+        }
+
+        int GetHydroMapNb() const { return (int) m_hydroMapper.size(); }
 
         /// Updates all the auxiliary data and children of
         /// bodies, forces, links, given their current state
@@ -98,6 +112,13 @@ namespace frydom {
         void Initialize() override;
 
         void StepFinalize() override;
+
+        virtual void IntLoadResidual_Mv(const unsigned int off,
+                                        chrono::ChVectorDynamic<>& R,
+                                        const chrono::ChVectorDynamic<>& w,
+                                        const double c) override;
+
+        virtual void VariablesFbIncrementMq() override;
 
     };  // class FrOffshoreSystem
 

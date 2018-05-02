@@ -27,15 +27,20 @@ namespace frydom {
 
         Eigen::MatrixXcd m_steadyForce;
 
+        int m_HydroMapIndex; //  // TODO : patch hydro map multibody
+
 
         std::shared_ptr<FrBEMBody> GetBEMBody() {
             auto thisHydroBody = dynamic_cast<FrHydroBody*>(GetBody());
             auto BEMBody = dynamic_cast<FrOffshoreSystem*>(GetBody()->GetSystem())->
-                    GetHydroMapper()->GetBEMBody(thisHydroBody);
+                    GetHydroMapper(m_HydroMapIndex)->GetBEMBody(thisHydroBody);
             return BEMBody;
         }
 
     public:
+
+        void SetHydroMapIndex(const int id) { m_HydroMapIndex = id; } // TODO : patch hydro map multibody
+        int GetHydroMapIndex() const { return m_HydroMapIndex; } // TODO : patch hydro map multibody
 
         void SetWaveProbe(std::shared_ptr<FrLinearWaveProbe>& waveProbe) { m_waveProbe = waveProbe; }
 

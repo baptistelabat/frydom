@@ -38,8 +38,8 @@ namespace frydom {
 
         // Environment components
         std::unique_ptr<FrFreeSurface> m_freeSurface;
-        std::unique_ptr<FrCurrent> m_current;
-        std::unique_ptr<FrWind> m_wind;
+        std::shared_ptr<FrCurrent> m_current;
+        std::shared_ptr<FrWind> m_wind;
         std::unique_ptr<FrSeabed> m_seabed;
 
         // Environments scalars
@@ -61,8 +61,8 @@ namespace frydom {
         FrEnvironment() {
 
             m_freeSurface = std::make_unique<FrFreeSurface>();
-            m_current = std::make_unique<FrCurrent>();
-            m_wind = std::make_unique<FrWind>();
+            m_current = std::make_shared<FrUniformCurrent>();
+            m_wind = std::make_shared<FrUniformWind>();
             m_seabed = std::make_unique<FrSeabed>();
 
         }
@@ -148,20 +148,36 @@ namespace frydom {
 //            m_tidal = std::unique_ptr<FrTidal>(tidal);
 //        }
 
-        inline FrCurrent* GetCurrent() const {
-            return m_current.get();
-        }
+        template <class T=FrUniformCurrent>
+        T* GetCurrent() const { return dynamic_cast<T*>(m_current.get()); }
+
+        template <class T=FrUniformWind>
+        T* GetWind() const { return dynamic_cast<T*>(m_wind.get()); }
 
         void SetCurrent(FrCurrent* current) {
-            m_current = std::unique_ptr<FrCurrent>(current);
+            m_current = std::shared_ptr<FrCurrent>(current);
         }
 
-        inline FrWind* GetWind() const {
-            return m_wind.get();
+        void SetCurrent (const FrCurrent::MODEL type=FrCurrent::UNIFORM) {
+
+            switch (type) {
+                case FrCurrent::UNIFORM:
+                        m_current = std::make_shared<FrUniformCurrent>();
+                        break;
+                default:
+                        break;
+                }
         }
 
-        void SetWind(FrWind* wind) {
-            m_wind = std::unique_ptr<FrWind>(wind);
+        void SetWind(const FrWind::MODEL type=FrWind::UNIFORM) {
+
+            switch (type) {
+                case FrWind::UNIFORM:
+                    m_wind = std::make_shared<FrUniformWind>();
+                    break;
+                default:
+                    break;
+            }
         }
 
         inline FrSeabed* GetSeabed() const {

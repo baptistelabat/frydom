@@ -3,6 +3,7 @@
 //
 
 #include "FrOffshoreSystem.h"
+#include "frydom/hydrodynamics/FrHydroMapper.h"
 
 namespace frydom {
 
@@ -175,6 +176,38 @@ namespace frydom {
 				body->StepFinalize();//TODO this line does not work, check why
             }
         }
+	}
+
+	void FrOffshoreSystem::IntLoadResidual_Mv(const unsigned int off,
+										      chrono::ChVectorDynamic<>& Res,
+										      const chrono::ChVectorDynamic<>& w,
+											  const double c) {
+		unsigned int displ_v = off - offset_w;
+
+		// Inherit: operate parent method on sub object (bodies, links, etc.)
+		chrono::ChAssembly::IntLoadResidual_Mv(off, Res, w, c);
+		// Use also on contact container:
+		contact_container->IntLoadResidual_Mv(displ_v + contact_container->GetOffset_w(), Res, w, c);
+		// Use also on hydro mapper:
+		auto off_ChAw = chrono::ChAssembly::GetOffset_w();
+		for (auto& mapper: m_hydroMapper){
+			mapper->IntLoadResidual_Mv(off-off_ChAw, Res, w, c);
+		}
+
+	}
+
+	void FrOffshoreSystem::VariablesFbIncrementMq() {
+		// Inherit: operate parent method on sub object (bodies, links, etc.)
+		chrono::ChAssembly::VariablesFbIncrementMq();
+		// Use also on contact container:
+		contact_container->VariablesFbIncrementMq();
+		// Use also on hydro mapper
+        /**
+        for (auto& mapper: m_hydroMapper) {
+			mapper->VariablesFbIncrementMq();
+		}
+        **/
+
     }
 
 }  // end namespace frydom

@@ -9,6 +9,7 @@ add_subdirectory(wind)
 
 set(SRC_FILES
         FrEnvironment.cpp
+        FrUniformCurrentField.cpp
         )
 
 set(FRYDOM_ENVIRONMENT_SOURCES "")

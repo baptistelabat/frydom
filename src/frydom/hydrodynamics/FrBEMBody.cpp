@@ -4,9 +4,11 @@
 
 #include "MathUtils/MathUtils.h"
 
+#include "chrono/core/ChVectorDynamic.h"
+#include "frydom/utils/FrEigen.h"
 #include "FrHydroDB.h"
 #include "FrBEMBody.h"
-//#include "frydom/core/FrHydroBody.h"
+#include "frydom/core/FrHydroBody.h"
 
 
 using namespace mathutils;
@@ -484,6 +486,26 @@ namespace frydom {
 
         }  // Loop on bodies
 
+    }
+
+    void FrBEMBody::IntLoadResidual_Mv(const unsigned int off,
+                                       chrono::ChVectorDynamic<>& R,
+                                       const chrono::ChVectorDynamic<>& w,
+                                       const double c) {
+
+        Eigen::VectorXd q(6);
+        for (int i=0; i<6; i++) { q(i) = w(off+i);}
+
+        Eigen::VectorXd Mv = c * m_InfiniteAddedMass[0] * q;
+        auto Mw = chrono::ChVector<>(Mv(0), Mv(1), Mv(2));
+        auto Iw = chrono::ChVector<>(Mv(3), Mv(4), Mv(5));
+        R.PasteSumVector(Mw, off, 0);
+        R.PasteSumVector(Iw, off+3, 0);
+    }
+
+    void FrBEMBody::SetBEMVariables() {
+        m_hydroBody->SetVariables(variablesHydro);
+        m_hydroBody->GetVariables<FrVariablesBEMBodyMass>()->SetInfiniteAddedMass(m_InfiniteAddedMass[0]);
     }
 
 }  // end namespace frydom

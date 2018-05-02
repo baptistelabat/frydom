@@ -7,6 +7,7 @@
 
 
 #include "MathUtils/MathUtils.h"
+#include "chrono/core/ChVectorDynamic.h"
 
 using namespace mathutils;
 
@@ -122,6 +123,8 @@ namespace frydom {
 
         std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
+        bool m_radiation_active;
+
     public:
         FrBEMBody() = default;
         FrBEMBody(unsigned int ID, std::string& BodyName) : m_ID(ID), m_BodyName(BodyName) {}
@@ -131,6 +134,7 @@ namespace frydom {
         FrHydroDB* GetHDB() const { return m_HDB; }
 
         void SetHydroBody(FrHydroBody* hydroBody) { m_hydroBody = hydroBody; }  // TODO: Ne serait-il pas mieux que ce soit la HDB qui gere les relations BEMBody/HydroBody ???
+        FrHydroBody* GetHydroBody() { return m_hydroBody; }
 
         void SetName(const std::string& BodyName) { m_BodyName = BodyName; }
         void SetBodyPosition(const Eigen::Vector3d& BodyPosition) { m_BodyPosition = BodyPosition; }
@@ -251,6 +255,20 @@ namespace frydom {
 
         void GenerateImpulseResponseFunctions();
 
+        virtual void IntLoadResidual_Mv(const unsigned int off,
+                                        chrono::ChVectorDynamic<>& R,
+                                        const chrono::ChVectorDynamic<>& w,
+                                        const double c);
+
+        void SetRadiationActive(const bool is_active) { m_radiation_active = is_active; }
+
+        bool GetRadiationActive() const { return m_radiation_active; }
+
+        //void VariablesFbIncrementMq();
+
+        //void Compute_inc_Mb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const;
+
+        void SetBEMVariables();
     };
 
 }  // end namespace frydom

@@ -41,6 +41,8 @@ namespace frydom {
 
         FrHydroDB() = default;
 
+        FrHydroDB(std::string h5file);
+
         unsigned int GetNbBodies() const { return (unsigned int)m_Bodies.size(); }
 
         double GetGravityAcc() const { return m_GravityAcc; }
@@ -109,6 +111,11 @@ namespace frydom {
         void GenerateImpulseResponseFunctions(double tf = 30., double dt = 0.);
 
         std::shared_ptr<FrHydroMapper> GetMapper();
+
+        void IntLoadResidual_Mv(const unsigned int off, chrono::ChVectorDynamic<>& Res,
+                                const chrono::ChVectorDynamic<>& w, const double c) ;
+
+        //void VariablesFbIncrementMq();
 
     };  // end class FrHydroDB
 

@@ -33,25 +33,31 @@ namespace frydom {
         /// Note that the default ChIrrApp::AddTypicalSky() uses Y up.
         void SetSkyBox();
 
-        void Run() {
+        void Run(bool infiniteLoop = true, bool verbose=true, int stepMax = 200) {
+            int stepCounter = 0;
 
             AssetBindAll();
             AssetUpdateAll();
 
-            while (GetDevice()->run()) {
-
+            while (GetDevice()->run() && stepCounter < stepMax) {
                 BeginScene();
                 DrawAll();
 
-                if (m_verbose) {
+                if (verbose) {
+
                     std::cout << "\n\n"
                               << "Integration from " << GetSystem()->GetChTime()
                               << " To " << GetSystem()->GetChTime()+GetTimestep()
                               << "\n";
                 }
 
+
                 DoStep();
                 EndScene();
+
+                if(!infiniteLoop){
+                    stepCounter++;
+                }
 
             }
 

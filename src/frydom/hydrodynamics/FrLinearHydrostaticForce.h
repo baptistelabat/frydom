@@ -53,7 +53,7 @@ namespace frydom {
             auto values = - (m_stiffnessMatrix * state);
 
             force.z() = values.x();
-            // Cancelling gravity on body
+            // Cancelling gravity on body FIXME : pb de generalisation de la methode
             force -= Body->GetSystem()->Get_G_acc() * Body->GetMass();
 
             moment = Body->Dir_World2Body(chrono::ChVector<double> (values.y(), values.z(), 0.));

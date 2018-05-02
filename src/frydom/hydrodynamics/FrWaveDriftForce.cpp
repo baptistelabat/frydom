@@ -107,6 +107,8 @@ namespace frydom {
             relative_angle = 180. - relative_angle;
         }
 
+        relative_angle = Normalize_0_2PI(relative_angle);
+
         return relative_angle;
 
     }

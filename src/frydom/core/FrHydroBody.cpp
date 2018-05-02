@@ -5,10 +5,18 @@
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "chrono/assets/ChTriangleMeshShape.h"
 
-#include "frydom/hydrodynamics/FrHydroDB.h"
 #include "FrHydroBody.h"
 
 namespace frydom {
+
+    FrHydroBody::FrHydroBody() : is3DOF(false),
+                                FrBody()
+    {
+        //variablesHydro.Initialize(variables);
+        //variables.SetDisabled(true);
+        //variablesHydro.SetDisabled(false);
+        variables_ptr = &variables;
+    }
 
     void FrHydroBody::Set3DOF(const bool flag) {
         if (flag) {
@@ -52,6 +60,29 @@ namespace frydom {
         system->RemoveLink(constraint3DOF);
         constraint3DOF->SetSystem(0);
         is3DOF = false;
+    }
+
+    void FrHydroBody::Set3DOF_ON(chrono::ChVector<> dir) {
+        if (is3DOF) { return; }
+
+        try {
+            if (!GetSystem()) {
+                throw std::string("The body must be added to a system before the plane constraint is set");
+            }
+        } catch(std::string const& msg) {
+            std::cerr << msg << std::endl;
+        }
+
+        auto plane_constraint = std::make_shared<chrono::ChLinkMatePlane>();
+        auto free_surface_body = GetSystem()->GetEnvironment()->GetFreeSurface()->GetBody();
+        plane_constraint->Initialize(shared_from_this(), free_surface_body,
+                                     true,
+                                     chrono::ChVector<>(),
+                                     chrono::ChVector<>(),
+                                     dir, -dir );
+        system->AddLink(plane_constraint);
+        constraint3DOF = plane_constraint;
+        is3DOF = true;
     }
 
     void FrHydroBody::SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset) {
@@ -174,6 +205,18 @@ namespace frydom {
 //
 //    }
 
+    void FrHydroBody::SetVariables(const FrVariablesBody vtype) {
+
+        switch (vtype) {
+            case variablesStandard:
+                break;
+            case variablesHydro:
+                variables_ptr = new FrVariablesBEMBodyMass();
+                GetVariables<FrVariablesBEMBodyMass>()->Initialize(variables);
+                break;
+        }
+    }
+
     void FrHydroBody::SetCurrentRefFrameAsEquilibrium() {
         auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetEnvironment()->GetFreeSurface()->GetFrame();
         chrono::ChFrame<double> eqFrame0 = GetFrame_REF_to_abs() >> freeSurfaceFrame->GetInverse();
@@ -186,4 +229,109 @@ namespace frydom {
         return eqFrame;
     }
 
+    void FrHydroBody::Initialize() {
+        FrBody::Initialize();
+    }
+
+    void FrHydroBody::VariablesFbIncrementMq() {
+        variables_ptr->Compute_inc_invMb_v(variables_ptr->Get_fb(), variables_ptr->Get_qb());
+    }
+
+    void FrHydroBody::InjectVariables(chrono::ChSystemDescriptor& mdescriptor) {
+        this->variables_ptr->SetDisabled(!this->IsActive());
+        mdescriptor.InsertVariables(variables_ptr);
+    }
+
+    void FrHydroBody::SetInfiniteAddedMass(const Eigen::MatrixXd& CMInf) {
+
+        auto variablesBEM = dynamic_cast<FrVariablesBEMBodyMass*>(variables_ptr);
+        variablesBEM->Initialize(variables);
+        variablesBEM->SetInfiniteAddedMass(CMInf);
+
+        variables.SetDisabled(true);
+        variables_ptr->SetDisabled(false);
+    }
+
+    void FrHydroBody::IntToDescriptor(const unsigned int off_v,  // offset in v, R
+                                 const chrono::ChStateDelta& v,
+                                 const chrono::ChVectorDynamic<>& R,
+                                 const unsigned int off_L,  // offset in L, Qc
+                                 const chrono::ChVectorDynamic<>& L,
+                                 const chrono::ChVectorDynamic<>& Qc) {
+        this->variables_ptr->Get_qb().PasteClippedMatrix(v, off_v, 0, 6, 1, 0, 0);  // for solver warm starting only
+        this->variables_ptr->Get_fb().PasteClippedMatrix(R, off_v, 0, 6, 1, 0, 0);  // solver known term
+    }
+
+    void FrHydroBody::IntFromDescriptor(const unsigned int off_v,  // offset in v
+                                   chrono::ChStateDelta& v,
+                                   const unsigned int off_L,  // offset in L
+                                   chrono::ChVectorDynamic<>& L) {
+        v.PasteMatrix(this->variables_ptr->Get_qb(), off_v, 0);
+    }
+
+    void FrHydroBody::VariablesFbReset() {
+        this->variables_ptr->Get_fb().FillElem(0.0);
+    }
+
+    void FrHydroBody::VariablesFbLoadForces(double factor) {
+        // add applied forces to 'fb' vector
+        this->variables_ptr->Get_fb().PasteSumVector(Xforce * factor, 0, 0);
+
+        // add applied torques to 'fb' vector, including gyroscopic torque
+        if (this->GetNoGyroTorque())
+            this->variables_ptr->Get_fb().PasteSumVector((Xtorque)*factor, 3, 0);
+        else
+            this->variables_ptr->Get_fb().PasteSumVector((Xtorque - gyro) * factor, 3, 0);
+    }
+
+    void FrHydroBody::VariablesQbLoadSpeed() {
+        // set current speed in 'qb', it can be used by the solver when working in incremental mode
+        this->variables_ptr->Get_qb().PasteVector(GetCoord_dt().pos, 0, 0);
+        this->variables_ptr->Get_qb().PasteVector(GetWvel_loc(), 3, 0);
+    }
+
+    void FrHydroBody::VariablesQbSetSpeed(double step) {
+        chrono::ChCoordsys<> old_coord_dt = this->GetCoord_dt();
+
+        // from 'qb' vector, sets body speed, and updates auxiliary data
+        this->SetPos_dt(this->variables_ptr->Get_qb().ClipVector(0, 0));
+        this->SetWvel_loc(this->variables_ptr->Get_qb().ClipVector(3, 0));
+
+        // apply limits (if in speed clamping mode) to speeds.
+        ClampSpeed();
+
+        // compute auxiliary gyroscopic forces
+        ComputeGyro();
+
+        // Compute accel. by BDF (approximate by differentiation);
+        if (step) {
+            this->SetPos_dtdt((this->GetCoord_dt().pos - old_coord_dt.pos) / step);
+            this->SetRot_dtdt((this->GetCoord_dt().rot - old_coord_dt.rot) / step);
+        }
+    }
+
+    void FrHydroBody::VariablesQbIncrementPosition(double dt_step) {
+        if (!this->IsActive())
+            return;
+
+        // Updates position with incremental action of speed contained in the
+        // 'qb' vector:  pos' = pos + dt * speed   , like in an Eulero step.
+
+        chrono::ChVector<> newspeed = variables_ptr->Get_qb().ClipVector(0, 0);
+        chrono::ChVector<> newwel = variables_ptr->Get_qb().ClipVector(3, 0);
+
+        // ADVANCE POSITION: pos' = pos + dt * vel
+        this->SetPos(this->GetPos() + newspeed * dt_step);
+
+        // ADVANCE ROTATION: rot' = [dt*wwel]%rot  (use quaternion for delta rotation)
+        chrono::ChQuaternion<> mdeltarot;
+        chrono::ChQuaternion<> moldrot = this->GetRot();
+        chrono::ChVector<> newwel_abs = Amatrix * newwel;
+        double mangle = newwel_abs.Length() * dt_step;
+        newwel_abs.Normalize();
+        mdeltarot.Q_from_AngAxis(mangle, newwel_abs);
+        chrono::ChQuaternion<> mnewrot = mdeltarot % moldrot;
+        this->SetRot(mnewrot);
+    }
+	
 }  // end namespace frydom

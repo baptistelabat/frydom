@@ -24,12 +24,7 @@ int main(int argc, char* argv[]) {
     // ====================================================================================
     // Defining the current
     // ====================================================================================
-    // TODO: avoir une factory de courant. Un courant nul par defaut devrait etre cree dans offshoreSystem
-    auto current_field = std::make_unique<FrCurrent>(NORTH, 8, KNOT, NED, GOTO);
-
-    // TODO: changer pour faire des move !!
-//    system.SetCurrent(current_field.release());
-    system.GetEnvironment()->SetCurrent(current_field.release());
+    system.GetEnvironment()->GetCurrent()->Set(NORTH, 8, KNOT, NED, GOTO);
 
     // ====================================================================================
     // Defining the free surface

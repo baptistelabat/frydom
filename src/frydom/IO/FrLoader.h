@@ -39,6 +39,19 @@ namespace frydom {
                                  std::vector<double>& cx,
                                  std::vector<double>& cy,
                                  std::vector<double>& cz);
+    
+    // =========================================================================================================
+    // IO for wind force model
+    // =========================================================================================================
+
+    /// Extract coefficients for the wind force model from yaml file
+    void LoadWindTableFromYaml(const std::string& yaml_file,
+                               std::vector<double>& angle,
+                               std::vector<double>& Cx,
+                               std::vector<double>& Cy,
+                               std::vector<double>& Cz,
+                               ANGLE_UNIT& unit);
+
 
 }  // end namespace frydom
 

@@ -14,11 +14,8 @@ int main(int argc, char* argv[]) {
     // Set the free surface
     system.GetEnvironment()->GetFreeSurface()->SetGrid(-200, 200, 50, -200, 200, 50);
 
-
     // The current
-    auto current_field = std::make_unique<FrCurrent>(WEST, 20, KNOT, NED, GOTO);
-    // TODO: changer pour faire des move plutot que des release...
-    system.GetEnvironment()->SetCurrent(current_field.release());
+    system.GetEnvironment()->GetCurrent()->Set(WEST, 20, KNOT, NED, GOTO);
 
     // Building a TUG
     auto tug = std::make_shared<FrShip>();

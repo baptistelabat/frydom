@@ -47,15 +47,27 @@ FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string& yaml_file) {
 
         YAML::Node data = YAML::LoadFile(yaml_file);  // TODO: throw exception if not found !
 
+        ANGLE_UNIT unit = RAD;
+
         if (data["PolarCurrentCoeffs"]) {
             auto node = data["PolarCurrentCoeffs"];
             // All 4 angles, cx, cy, and cz must be present in the yaml file into the PolarCurrentCoeffs node.
+
+            try {
+                unit = STRING2ANGLE(node["unit"].as<std::string>());
+            } catch (YAML::BadConversion& err) {
+                std::cout << " warning : unit must be DEG or RAD" << std::endl;
+            }
 
             // Getting angles Node
             try {
                 angles = node["angles"].as<std::vector<double>>();
             } catch (YAML::BadConversion& err) {
                 throw("Cannot read angles");
+            }
+
+            if (unit == RAD) {
+                for (auto& val : angles) { val = degrees(val); }
             }
 
             // Getting cx Node
@@ -83,6 +95,57 @@ FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string& yaml_file) {
             // TODO: trhow an exception if the node is not present
 
         }
+    }
+
+    //=========================================================================================================
+    // IO for the wind force model
+    //=========================================================================================================
+
+    void LoadWindTableFromYaml(const std::string& yaml_file,
+                               std::vector<double>& angle,
+                               std::vector<double>& Cx,
+                               std::vector<double>& Cy,
+                               std::vector<double>& Cz,
+                               ANGLE_UNIT& unit) {
+
+        YAML::Node data = YAML::LoadFile(yaml_file);
+
+        if (data["PolarWindCoeffs"]) {
+
+            auto node = data["PolarWindCoeffs"];
+
+            try {
+                unit = STRING2ANGLE(node["unit"].as<std::string>());
+            } catch (YAML::BadConversion& err) {
+                std::cout << " warning : unit must be DEG or RAD" << std::endl;
+            }
+
+            try {
+                angle = node["angles"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+            try {
+                Cx = node["cx"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+            try {
+                Cy = node["cy"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+            try {
+                Cz = node["cz"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+        }
+
     }
 
 

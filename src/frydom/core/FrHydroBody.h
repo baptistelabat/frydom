@@ -12,19 +12,19 @@
 #include "FrConstants.h"
 #include "FrEulerAngles.h"
 #include "FrOffshoreSystem.h"
+#include "frydom/hydrodynamics/FrVariablesBEMBodyMass.h"
 
 
 // Forward declaration
 namespace chrono {
     class ChBodyAuxRef;
+    class ChSystemDescriptor;
 }
 
 namespace frydom {
 
-    // Forward declaration
-//    class FrBEMBody;
-
     class FrHydroBody : public FrBody {
+
 
     protected:
         std::shared_ptr<FrTriangleMeshConnected> m_hydro_mesh;
@@ -58,11 +58,17 @@ namespace frydom {
 
         chrono::ChFrame<double> m_equilibriumFrame;
 
+        chrono::ChVariables* variables_ptr;
 
     public:
-        FrHydroBody() : is3DOF(false),
-                        FrBody() {}
 
+        FrHydroBody();
+
+        ~FrHydroBody() {
+            if (variables_ptr != &variables) {
+                delete variables_ptr;
+            }
+        }
 
 //        void SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody);
 
@@ -73,6 +79,7 @@ namespace frydom {
         void Set3DOF(const bool flag);
         void Set3DOF_ON();
         void Set3DOF_OFF();
+        void Set3DOF_ON(chrono::ChVector<> dir);
 
 
         /// Set the hydrodynamic mesh from a mesh shared instance
@@ -266,24 +273,47 @@ namespace frydom {
         // ==========================================================================
         // METHODS ABOUT ADDED MASS
         // ==========================================================================
-        void IntLoadResidual_Mv(const unsigned int off,      // offset in R residual
-                                chrono::ChVectorDynamic<>& R,        // result: the R residual, R += c*M*v
-                                const chrono::ChVectorDynamic<>& w,  // the w vector
-                                const double c               // a scaling factor
-        ) {
 
-            auto vabs = GetPos_dt() - w.ClipVector(off, 0);  // Premiere partie de w
-            auto wloc = GetWvel_loc() - w.ClipVector(off+3, 0); // Seconde partie de w
+        void SetVariables(const FrVariablesBody vtype);
 
-//            w(0:3) est donne par Get
-            R(off + 0) += c * GetMass() * w(off + 0);
-            R(off + 1) += c * GetMass() * w(off + 1);
-            R(off + 2) += c * GetMass() * w(off + 2);
-            chrono::ChVector<> Iw = this->GetInertia() * w.ClipVector(off + 3, 0);
-            Iw *= c;
-            R.PasteSumVector(Iw, off + 3, 0);
+        /// Return the variablesHydro component
+        chrono::ChVariablesBodyOwnMass& VariablesBody() override { return dynamic_cast<chrono::ChVariablesBodyOwnMass&>(*variables_ptr); }
+        chrono::ChVariables& Variables() override { return *variables_ptr; }
 
-        }
+        /// Add a variable of type variablesHydro in system descriptor
+        virtual void InjectVariables(chrono::ChSystemDescriptor& mdescriptor) override;
+
+        /// Definition of the infinite added mass (from BEMBody) FIXME : pass to variablesHydro
+        void SetInfiniteAddedMass(const Eigen::MatrixXd& CMInf);
+
+        void IntToDescriptor(const unsigned int off_v,  // offset in v, R
+                             const chrono::ChStateDelta& v,
+                             const chrono::ChVectorDynamic<>& R,
+                             const unsigned int off_L,  // offset in L, Qc
+                             const chrono::ChVectorDynamic<>& L,
+                             const chrono::ChVectorDynamic<>& Qc) override;
+
+        void IntFromDescriptor(const unsigned int off_v,  // offset in v
+                          chrono::ChStateDelta& v,
+                          const unsigned int off_L,  // offset in L
+                          chrono::ChVectorDynamic<>& L) override;
+
+        void VariablesFbReset() override;
+
+        void VariablesFbIncrementMq() override;
+
+        void VariablesFbLoadForces(double factor) override;
+
+        void VariablesQbLoadSpeed() override;
+
+        void VariablesQbSetSpeed(double step) override;
+
+        void VariablesQbIncrementPosition(double dt_step) override;
+
+        chrono::ChVariables* GetVariables1() override { return variables_ptr; }
+
+        template <class T=chrono::ChVariables>
+        T* GetVariables() { return dynamic_cast<T*>(variables_ptr); }
 
 //        void InitializeVelocityState(unsigned int N) {  // TODO : Voir comment recuperer le N qui pourrait etre mis en cache quelque part ??
 //
@@ -318,12 +348,9 @@ namespace frydom {
 //            return m_velocityStateRecorder;
 //        }
 
+		void Initialize() override;
 
-
-
-
-
-    };
+	};
 
 }  // end namespace frydom
 

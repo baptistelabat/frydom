@@ -10,6 +10,7 @@
 #include "frydom/core/FrObject.h"
 #include "frydom/core/FrConstants.h"
 #include "frydom/environment/FrConventions.h"
+#include "frydom/environment/FrUniformCurrentField.h"
 
 #include "MathUtils/MathUtils.h"
 
@@ -19,44 +20,51 @@ using namespace mathutils;
 
 namespace frydom {
 
+    // ================================================================
+    // FrWind : Base wind field
+    // ================================================================
+
     class FrWind : public FrObject {
 
-    private:
-        chrono::ChVector<double> m_windvector = chrono::VNULL;
-
     public:
-        void Update(double time) {
-            // TODO
-        }
 
-        void Set(const chrono::ChVector<>& unitDirection, double magnitude,
-                 FrFrame frame=NED, FrDirectionConvention directionConvention=GOTO, SPEED_UNIT speedUnit=KNOT) {
-            auto uDirection = unitDirection;
-            uDirection /= unitDirection.Length();
+        enum MODEL { UNIFORM };
 
-            if (frame == NED) {
-                uDirection = NED2NWU(uDirection);
-            }
+        virtual chrono::ChVector<> GetFluxVector(FrFrame frame) { }
 
-            if (directionConvention == COMEFROM) {
-                uDirection = - uDirection;
-            }
+        virtual void Update(double time) { }
 
-            auto vel = magnitude;
+        virtual void Initialize() {}
 
-            if (speedUnit != MS) {
-                vel = convert_velocity_unit(vel, speedUnit, MS);
-            }
-
-            // Building the current vector
-            m_windvector = uDirection * vel;
-        }
+        virtual void StepFinalize() {}
+    };
 
 
-        virtual void Initialize() override {}
+    // ================================================================
+    // FrUniformWind : uniform wind profile class
+    // ================================================================
 
-        virtual void StepFinalize() override {}
+    class FrUniformWind : virtual public FrWind,
+                          virtual public FrUniformCurrentField {
+    public:
+        /// Inheritance of the base constructor
+        using FrUniformCurrentField::FrUniformCurrentField;
+    private:
+        // Current velocity from FrUniformCurrentField
+    public:
 
+        /// Update method from uniform current field class
+        void Update(double time) override { FrUniformCurrentField::Update(time); }
+
+        /// Get the vector field
+        chrono::ChVector<> GetFluxVector(FrFrame frame = NWU) override {
+            return FrUniformCurrentField::GetFluxVector(frame); }
+
+        /// Method of initialization from uniform current field class
+        void Initialize() override { FrUniformCurrentField::Initialize(); }
+
+        /// Method of finalize step from uniform current field class
+        void StepFinalize() override { FrUniformCurrentField::StepFinalize(); }
     };
 
 }  // end namespace frydom

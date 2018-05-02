@@ -9,6 +9,7 @@
 
 #include "frydom/core/FrHydroBody.h"
 #include "FrHydroDB.h"
+#include "frydom/hydrodynamics/FrBEMBody.h"
 
 
 namespace frydom {
@@ -33,7 +34,7 @@ namespace frydom {
             // TODO: mettre un safe guard pour ne pas attacher plusieurs corps a un meme BEMBody (meme indice)
             assert(iBEMBody < m_HDB->GetNbBodies());
             m_mapper.insert( mapping(hydroBody.get(), iBEMBody) );
-
+            GetBEMBody(hydroBody)->SetHydroBody(hydroBody.get());
         }
 
         unsigned int GetNbMappings() const {
@@ -59,6 +60,16 @@ namespace frydom {
         std::shared_ptr<FrBEMBody> GetBEMBody(FrHydroBody* hydroBody) {
             return m_HDB->GetBody(GetBEMBodyIndex(hydroBody));
         }
+
+        virtual void IntLoadResidual_Mv(const unsigned int off,
+                                        chrono::ChVectorDynamic<>& R,
+                                        const chrono::ChVectorDynamic<>& w,
+                                        const double c) {
+            m_HDB->IntLoadResidual_Mv(off, R, w, c);
+        }
+
+        //virtual void VariablesFbIncrementMq() { m_HDB->VariablesFbIncrementMq(); }
+
 
     };
 

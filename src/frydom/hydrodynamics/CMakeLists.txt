@@ -19,6 +19,7 @@ set(SRC_FILES
         FrRadiationModel.cpp
         FrHydroMapper.cpp
         FrHydroDBLoader.cpp
+        FrVariablesBEMBodyMass.cpp
 )
 
 set(FRYDOM_HYDRODYNAMICS_SOURCES "")

@@ -16,13 +16,14 @@
 
 // FRyDoM related headers
 #include "core/FrCore.h"
+#include "environment/FrEnvironment.h"
 #include "hydrodynamics/FrHydrodynamics.h"
 #include "cable/FrCableInc.h"
 #include "IO/FrIO.h"  // TODO: pour respecter le nommage, paser le repertoire IO en io
 #include "mesh/FrMeshInc.h"
 #include "utils/FrIrrApp.h"
 
-#include "Eigen/Dense"
+//#include "Eigen/Dense"
 
 
 
