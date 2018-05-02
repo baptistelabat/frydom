@@ -36,6 +36,14 @@ include(Add_MathUtils)
 include(Add_yaml-cpp)
 include(Add_HDF5)
 
+
+if (TARGET yaml-cpp)
+    message(YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY)
+    get_target_property(INC yaml-cpp INCLUDE_DIRECTORIES)
+    message(${INC})
+    target_include_directories(yaml-cpp INTERFACE ${INC})
+endif()
+
 # =============================================================================
 # FRyDoM DEPENDENCIES
 # =============================================================================
@@ -54,14 +62,14 @@ target_link_libraries(FRyDoM_Engine
         )
 
 
-message(${CMAKE_CURRENT_SOURCE_DIR}/..)
+#message(${CMAKE_CURRENT_SOURCE_DIR}/..)
 target_include_directories(FRyDoM_Engine PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/..
         )
 
 
-# Adding tests as target
-add_subdirectory(tests)
+## Adding tests as target
+#add_subdirectory(tests)
 
 
 

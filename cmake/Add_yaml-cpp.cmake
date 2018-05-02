@@ -26,6 +26,7 @@ if (NOT yaml-cpp_FOUND)
         set(YAML_CPP_BUILD_CONTRIB OFF)
 
 
+        # TODO: ici, on peut reconstuire la target yaml-cpp a base de find_path et find_library
 
         add_subdirectory(${yaml-cpp_SOURCE_DIR} ${yaml-cpp_BINARY_DIR})
 
@@ -35,11 +36,11 @@ endif()
 
 
 if (TARGET yaml-cpp)
-
+#    message(STATUS "FOUND yaml-cpp TARGET")
     get_target_property(INC yaml-cpp INCLUDE_DIRECTORIES)
     message(STATUS "Found yaml-cpp : ${INC}")
-#    target_include_directories(yaml-cpp PUBLIC ${INC})
-
-    include_directories(${INC})  # FIXME: pourquoi n'a-t-on pas l'include dans la target ???
+#    target_include_directories(yaml-cpp INTERFACE ${INC})
+#
+#    include_directories(${INC})  # FIXME: pourquoi n'a-t-on pas l'include dans la target ???
 
 endif()

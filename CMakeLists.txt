@@ -57,3 +57,8 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 # Adding the FRyDoM project sources
 #=============================================================================
 add_subdirectory(src/frydom)
+
+#=============================================================================
+# Adding tests
+#=============================================================================
+add_subdirectory(tests)
