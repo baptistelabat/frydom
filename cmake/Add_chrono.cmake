@@ -12,7 +12,7 @@ if (NOT chrono_FOUND)
             GIT_REPOSITORY ${chrono_URL}
             GIT_TAG "3.0.0"
             GIT_PROGRESS 1
-            PATCH_COMMAND git apply "${CMAKE_SOURCE_DIR}/cmake/patches/chrono_3.0.0.patch"
+            PATCH_COMMAND git apply "${PROJECT_SOURCE_DIR}/cmake/patches/chrono_3.0.0.patch"
             )
 
 
