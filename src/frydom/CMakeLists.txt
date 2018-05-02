@@ -39,6 +39,8 @@ include(Add_MathUtils)
 include(Add_HDF5)
 
 include(Add_yaml-cpp)
+include(Add_GeographicLib)
+include(Add_fmt)
 
 
 #if (TARGET yaml-cpp)
@@ -62,6 +64,8 @@ target_link_libraries(FRyDoM_Engine
         yaml-cpp
 #        Irrlicht
         HDF5
+        GeographicLib
+        fmt
         )
 
 #target_link_libraries(FRyDoM_Engine yaml-cpp)
