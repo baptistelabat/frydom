@@ -8,12 +8,12 @@
 
 #include <string>
 #include <vector>
-#include "MathUtils/MathUtils.h"
+//#include "MathUtils/MathUtils.h"
 
 #include "frydom/core/FrConstants.h"
 #include "frydom/environment/current/FrCurrentPolarCoeffs.h"
 
-using namespace mathutils;  // TODO: mettre LookupTable en forward declaration
+//using namespace mathutils;  // TODO: mettre LookupTable en forward declaration
 
 namespace frydom {
 

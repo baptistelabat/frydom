@@ -19,6 +19,9 @@ set(subdirs
         utils
         )
 
+# TODO: reposer plutot sur target_sources()
+# voir crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/
+
 set(FRYDOM_SRC_FILES "")
 foreach(subdir ${subdirs})
 
@@ -33,16 +36,16 @@ endforeach()
 # =============================================================================
 include(Add_chrono)
 include(Add_MathUtils)
-include(Add_yaml-cpp)
 include(Add_HDF5)
 
+include(Add_yaml-cpp)
 
-if (TARGET yaml-cpp)
-    message(YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY)
-    get_target_property(INC yaml-cpp INCLUDE_DIRECTORIES)
-    message(${INC})
-    target_include_directories(yaml-cpp INTERFACE ${INC})
-endif()
+
+#if (TARGET yaml-cpp)
+#    get_target_property(INC yaml-cpp IMPORTED_SONAME_DEBUG)
+#    message(STATUS "YAML-CPP INCLUDE_DIRS : ${INC}")
+##    target_include_directories(yaml-cpp INTERFACE ${INC})
+#endif()
 
 # =============================================================================
 # FRyDoM DEPENDENCIES
@@ -61,16 +64,22 @@ target_link_libraries(FRyDoM_Engine
         HDF5
         )
 
+#target_link_libraries(FRyDoM_Engine yaml-cpp)
+
 
 #message(${CMAKE_CURRENT_SOURCE_DIR}/..)
 target_include_directories(FRyDoM_Engine PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/..
         )
 
+get_target_property(INC FRyDoM_Engine INTERFACE_LINK_LIBRARIES)
+message(STATUS "FRyDoM_INCLUDE_DIRECTORIES : ${INC}")
+
+
 
 ## Adding tests as target
 #add_subdirectory(tests)
 
-
+# TODO: voir si on passe ce CMakeLists.txt dans le repertoire parent pour ne pas avoir a faire .. dans l'include
 
 

@@ -4,10 +4,16 @@
 if (NOT yaml-cpp_FOUND)
     include(FetchContent)
 
+
+#    message(STATUS "YAML-CPP PATCH ${PROJECT_SOURCE_DIR}")
+
+
+
     set(yaml-cpp_URL "https://github.com/jbeder/yaml-cpp.git")
     FetchContent_Declare(yaml-cpp
             GIT_REPOSITORY ${yaml-cpp_URL}
             GIT_TAG "yaml-cpp-0.6.2"
+            PATCH_COMMAND git apply "${PROJECT_SOURCE_DIR}/cmake/patches/yaml-cpp.patch"
             )
 
     FetchContent_GetProperties(yaml-cpp)
@@ -38,9 +44,6 @@ endif()
 if (TARGET yaml-cpp)
 #    message(STATUS "FOUND yaml-cpp TARGET")
     get_target_property(INC yaml-cpp INCLUDE_DIRECTORIES)
-    message(STATUS "Found yaml-cpp : ${INC}")
-#    target_include_directories(yaml-cpp INTERFACE ${INC})
-#
-#    include_directories(${INC})  # FIXME: pourquoi n'a-t-on pas l'include dans la target ???
+    message(STATUS "YAML CPP TARGET : ${INC}")
 
 endif()

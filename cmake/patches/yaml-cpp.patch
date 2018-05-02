@@ -1,0 +1,16 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d2d8810..084cba3 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -346,6 +346,11 @@ if(UNIX)
+ 	install(FILES ${PC_FILE} DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+ endif()
+ 
++target_include_directories(yaml-cpp
++		PUBLIC
++			$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
++#			$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/yaml-cpp>
++		)
+ 
+ ###
+ ### Extras
