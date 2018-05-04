@@ -11,7 +11,7 @@
 #include "FrObject.h"
 #include "frydom/core/FrConstants.h"
 #include "frydom/core/FrForce.h"
-
+#include "hermes/hermes.h"
 
 namespace frydom {
 
@@ -24,8 +24,11 @@ namespace frydom {
 
     protected:
         std::vector<std::shared_ptr<FrForce>> external_force_list;
+        hermes::Message m_bodyMsg;
 
     public:
+
+//        FrBody() : m_bodyMsg("Body_msg", "Message for a body") {}
 
         std::shared_ptr<FrBody> GetSharedPtr() {
             return shared_from_this();
@@ -87,6 +90,30 @@ namespace frydom {
         }
 
         virtual void Initialize() override {
+            // TODO: mettre l'initialisation de message dans une methode privee qu'on appelle ici...
+
+            // Initializing message
+            m_bodyMsg.SetNameAndDescription(
+                    fmt::format("Body_{}", GetUUID()),
+                    "Message of a body"
+            );
+
+            m_bodyMsg.AddCSVSerializer();
+            m_bodyMsg.AddPrintSerializer();
+
+            // Adding fields
+            m_bodyMsg.AddField<double>("x", "m", "x position of the body reference frame origin", &coord.pos.x());
+            m_bodyMsg.AddField<double>("y", "m", "y position of the body reference frame origin", &coord.pos.y());
+            m_bodyMsg.AddField<double>("z", "m", "z position of the body reference frame origin", &coord.pos.z());
+
+
+            m_bodyMsg.Initialize();
+            m_bodyMsg.Send();
+
+
+
+
+
             // Initializing forces
             for (int iforce=0; iforce<forcelist.size(); iforce++) {
                 auto force = dynamic_cast<FrForce*>(forcelist[iforce].get());
@@ -95,9 +122,13 @@ namespace frydom {
                 }
             }
 
+
         }
 
-        virtual void StepFinalize() override {}
+        virtual void StepFinalize() override {
+            m_bodyMsg.Serialize();
+            m_bodyMsg.Send();
+        }
 
     };
 

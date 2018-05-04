@@ -231,6 +231,9 @@ namespace frydom {
 
     void FrHydroBody::Initialize() {
         FrBody::Initialize();
+
+        // Initializing message
+        // TODO
     }
 
     void FrHydroBody::VariablesFbIncrementMq() {

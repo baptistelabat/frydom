@@ -41,13 +41,14 @@ include(Add_HDF5)
 include(Add_yaml-cpp)
 include(Add_GeographicLib)
 include(Add_fmt)
+include(Add_hermes)
 
 
-#if (TARGET yaml-cpp)
-#    get_target_property(INC yaml-cpp IMPORTED_SONAME_DEBUG)
-#    message(STATUS "YAML-CPP INCLUDE_DIRS : ${INC}")
-##    target_include_directories(yaml-cpp INTERFACE ${INC})
-#endif()
+if (TARGET hermes)
+    get_target_property(INC hermes INCLUDE_DIRECTORIES)
+    message(STATUS "hermes INCLUDE_DIRS : ${INC}")
+#    target_include_directories(yaml-cpp INTERFACE ${INC})
+endif()
 
 # =============================================================================
 # FRyDoM DEPENDENCIES
@@ -66,6 +67,7 @@ target_link_libraries(FRyDoM_Engine
         HDF5
         GeographicLib
         fmt
+        hermes
         )
 
 #target_link_libraries(FRyDoM_Engine yaml-cpp)
