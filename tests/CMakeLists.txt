@@ -1,6 +1,8 @@
 message(STATUS "    ...tests")
 
 set(FRYDOM_TESTS
+        bench_SphereDecay
+        bench_SphereRegular
         demo_FreeSurface
         demo_O3_juin_2017
         demo_rotation
