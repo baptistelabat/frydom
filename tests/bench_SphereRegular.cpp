@@ -12,7 +12,7 @@ using namespace mathutils;
 void ValidationResults(const std::vector<double> vtime, const std::vector<double> heave,
                        const int iperiod, const int isteepness) {
 
-    IO::FrHDF5Reader db("bench_sphere_regular.h5");
+    FrHDF5Reader db("bench_sphere_regular.h5");
 
     auto path = "T" + std::to_string(iperiod) + "/H" + std::to_string(isteepness);
 
@@ -56,7 +56,7 @@ std::vector<double> ReadParam(const std::string dbfile, const int iperiod, const
 
     std::vector<double> param(2);
 
-    IO::FrHDF5Reader db(dbfile);
+    FrHDF5Reader db(dbfile);
 
     param[0] = db.ReadDouble(path+"/period");
     param[1] = db.ReadDouble(path+"/wave_height");
@@ -86,9 +86,14 @@ int main(int argc, char* argv[]) {
     system.GetEnvironment()->SetWaterDensity(1000.);
     system.GetEnvironment()->GetFreeSurface()->SetGrid(-20., 20., 5.);
 
+    auto iperiod = 1;
+    auto isteepness = 1;
+    if (argv[1]) { iperiod = atoi(argv[1]); }
+    if (argv[2]) { isteepness = atoi(argv[2]); }
+
     // Set Free surface & wave field
 
-    auto param = ReadParam("bench_sphere_regular.h5", atoi(argv[1]), atoi(argv[2]));
+    auto param = ReadParam("bench_sphere_regular.h5", iperiod, isteepness);
 
     auto freeSurface = system.GetEnvironment()->GetFreeSurface();
     freeSurface->SetLinearWaveField(LINEAR_REGULAR);
@@ -106,7 +111,7 @@ int main(int argc, char* argv[]) {
     sphere->SetHydroMesh("sphere.obj", true);
 
     sphere->SetInertiaXX(chrono::ChVector<double>(1.690e6, 1.690e6, 2.606e6));
-    sphere->SetMass(2.618e5 + 1.32374e5);       // Mass + Added Mass FIXME : hydrostatic must take into account this definition of the mass
+    sphere->SetMass(2.618e5);
     sphere->SetCOG(chrono::ChVector<double>(0., 0., -2.));
 
     system.AddBody(sphere);
@@ -143,7 +148,7 @@ int main(int argc, char* argv[]) {
     system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
 
     double time;
-    double dt = 0.002;
+    double dt = 0.02;
 
     std::vector<double> heave;
     std::vector<double> vtime;
@@ -152,8 +157,7 @@ int main(int argc, char* argv[]) {
     system.SetStep(dt);
     system.Initialize();
 
-    auto icase = atoi(argv[1]);
-
+    auto icase = iperiod;
 
     heave.clear();
     vtime.clear();
@@ -173,5 +177,5 @@ int main(int argc, char* argv[]) {
 
     }
 
-    ValidationResults(vtime, heave, atoi(argv[1]), atoi(argv[2]));
+    ValidationResults(vtime, heave, iperiod, isteepness);
 }

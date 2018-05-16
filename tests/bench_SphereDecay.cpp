@@ -11,7 +11,7 @@ using namespace mathutils;
 
 void ValidationResults(const std::vector<double> vtime, const std::vector<double> heave, const std::string path) {
 
-    IO::FrHDF5Reader db("bench_sphere_decay_interp.h5");
+    FrHDF5Reader db("bench_sphere_decay_interp.h5");
 
 
     auto time_bench = db.ReadDoubleArraySTD(path + "/time");
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
     sphere->SetHydroMesh("sphere.obj", true);
 
     sphere->SetInertiaXX(chrono::ChVector<double>(1.690e6, 1.690e6, 2.606e6));
-    sphere->SetMass(2.618e5 + 1.32374e5);       // Mass + Added Mass FIXME : hydrostatic must take into account this definition of the mass
+    sphere->SetMass(2.618e5);
     sphere->SetCOG(chrono::ChVector<double>(0., 0., -2.));
 
     system.AddBody(sphere);
@@ -119,7 +119,8 @@ int main(int argc, char* argv[]) {
     system.SetStep(dt);
     system.Initialize();
 
-    auto icase = atoi(argv[1]);
+    auto icase = 1;
+    if (argv[1]) { icase = atoi(argv[1]); }
 
     auto zi = list_zi[icase];
 

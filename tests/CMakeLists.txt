@@ -27,6 +27,7 @@ set(FRYDOM_TESTS
         test_wave_field
         test_wave_spectrum
         test_geographicLib
+        test_sphere_irregular
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")
@@ -62,3 +63,8 @@ configure_file(data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
 configure_file(data/DeepSea_Stavanger/DeepSeaStavanger.hdb5 . COPYONLY)
 configure_file(data/DeepSea_Stavanger/PolarCurrentCoeffs_NC.yml . COPYONLY)
 configure_file(data/DeepSea_Stavanger/PolarWindCoeffs_NC.yml . COPYONLY)
+
+configure_file(data/bench_sphere_decay_interp.h5 . COPYONLY)
+configure_file(data/bench_sphere_regular.h5 . COPYONLY)
+configure_file(data/sphere.obj . COPYONLY)
+configure_file(data/sphere_hdb.h5 . COPYONLY)
