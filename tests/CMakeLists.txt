@@ -28,6 +28,8 @@ set(FRYDOM_TESTS
         test_wave_spectrum
         test_geographicLib
         test_sphere_irregular
+        test_MorisonModel
+        test_CompositeMorisonModel
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")

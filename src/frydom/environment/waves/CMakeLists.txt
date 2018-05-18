@@ -6,6 +6,8 @@ set(WAVES_FILES_LOCAL
         FrWaveField.cpp
         FrWaveProbe.cpp
         FrWaveSpectrum.cpp
+        FrFlowSensor.cpp
+        FrKinematicStretching.cpp
 )
 
 set(WAVES_FILES "")

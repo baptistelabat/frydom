@@ -6,6 +6,7 @@
 #define FRYDOM_FRUTILS_H
 
 #include <iostream>
+#include <complex>
 #include "chrono/core/ChVector.h"
 #include "chrono/core/ChMatrix.h"
 
@@ -32,6 +33,24 @@ namespace frydom {
     std::ostream& operator<<(std::ostream& os, const chrono::ChVector<Real>& vect) {
         os << std::endl << vect.x() << std::endl << vect.y() << std::endl << vect.z() << std::endl << std::endl;
         return os;
+    }
+
+    template <class Real=double>
+    chrono::ChVector<Real> ChReal(const chrono::ChVector<std::complex<Real>>& vect) {
+        chrono::ChVector<Real> reVect;
+        reVect.x() = std::real(vect.x());
+        reVect.y() = std::real(vect.y());
+        reVect.z() = std::real(vect.z());
+        return reVect;
+    }
+
+    template <class Real=double>
+    chrono::ChVector<Real> ChAbs(const chrono::ChVector<Real> vect) {
+        chrono::ChVector<Real> absVect;
+        absVect.x() = std::abs(vect.x());
+        absVect.y() = std::abs(vect.y());
+        absVect.z() = std::abs(vect.z());
+        return absVect;
     }
 
 }  // end namespace frydom
