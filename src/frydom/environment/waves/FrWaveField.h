@@ -70,6 +70,10 @@ namespace frydom {
             return m_active;
         }
 
+        void Deactivate() {
+            m_active = false;
+        }
+
         void Initialize() {
             double y0, y1;
 
@@ -625,8 +629,8 @@ namespace frydom {
             for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
 
                 if (m_verticalFactor->IsSteady()) {
-                    vdiff.x() = m_verticalFactor->Eval(x, y, z, c_waveNumbers[ifreq], m_depth);
-                    vdiff.y() = vdiff.x();
+                    vdiff.x() = cos(m_meanDir) * JJ * c_waveNumbers[ifreq] * m_verticalFactor->Eval(x, y, z, c_waveNumbers[ifreq], m_depth);
+                    vdiff.y() = sin(m_meanDir) * JJ * c_waveNumbers[ifreq] * m_verticalFactor->Eval(x, y, z, c_waveNumbers[ifreq], m_depth);
                     vdiff.z() = m_verticalFactor->EvalDZ(x, y, z, c_waveNumbers[ifreq], m_depth);
                 } else {
                     vdiff = chrono::ChVector<double>(1.);
@@ -636,8 +640,8 @@ namespace frydom {
 
                 for (unsigned int idir=0; idir<angles.size(); ++idir) {
 
-                    steadyVelocity[ifreq].x() += vdiff.x() * cxi[idir] * cmplxElevations[idir][ifreq];
-                    steadyVelocity[ifreq].y() += vdiff.y() * cyi[idir] * cmplxElevations[idir][ifreq];
+                    steadyVelocity[ifreq].x() += vdiff.x() * cmplxElevations[idir][ifreq];
+                    steadyVelocity[ifreq].y() += vdiff.y() * cmplxElevations[idir][ifreq];
                     steadyVelocity[ifreq].z() += vdiff.z() * cmplxElevations[idir][ifreq];
 
                 }

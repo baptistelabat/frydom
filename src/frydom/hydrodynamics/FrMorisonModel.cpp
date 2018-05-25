@@ -32,7 +32,7 @@ namespace frydom {
     {
         SetNodes(nodeA, nodeB);
         m_force = std::make_shared<FrMorisonForce>(this);
-        m_volume = MU_PI_4 * diameter * diameter;
+        m_volume = MU_PI_4 * diameter * diameter * m_length;
     }
 
     FrSingleElement::FrSingleElement(chrono::ChVector<>& posA,
@@ -58,19 +58,21 @@ namespace frydom {
         UpdateFrame();
 
         m_force= std::make_shared<FrMorisonForce>(this);
-        m_volume = MU_PI_4 * diameter * diameter;
+        m_volume = MU_PI_4 * diameter * diameter * m_length;
     }
 
     void FrSingleElement::SetNodes(FrNode& nodeA, FrNode& nodeB) {
         m_nodeA = std::shared_ptr<FrNode>(&nodeA);
         m_nodeB = std::shared_ptr<FrNode>(&nodeB);
         UpdateFrame();
+        m_volume = MU_PI_4 * m_diameter * m_diameter * m_length;
     }
 
     void FrSingleElement::SetNodes(std::shared_ptr<FrNode>& nodeA, std::shared_ptr<FrNode>& nodeB) {
         m_nodeA = nodeA;
         m_nodeB = nodeB;
         UpdateFrame();
+        m_volume = MU_PI_4 * m_diameter * m_diameter * m_length;
     }
 
     void FrSingleElement::SetFlowSensor(FrHydroBody* mybody) {
@@ -95,11 +97,45 @@ namespace frydom {
         direction.Normalize();
 
         auto quat = chrono::ChQuaternion<>();
-        quat.Q_from_Rotv( chrono::VECT_Z.Cross(direction) );
+        auto rotation = chrono::VECT_Z.Cross(direction);
+        if (rotation.Length() > 0.) {
+            auto angle = asin(rotation.Length());
+            rotation.Normalize();
+            quat.Q_from_AngAxis(angle, rotation);
+        }
 
         m_frame = chrono::ChFrame<>(position, quat);
         m_length = (posB-posA).Length();
         m_dir = direction;
+        m_volume = MU_PI_4 * m_diameter * m_diameter * m_length;
+
+        // CC## Debug
+        std::cout << " ----------- Quaternion - ChFrame -------------------- " << std::endl;
+
+        auto CH_VZ = chrono::VECT_Z;
+        std::cout << " Vz : " << CH_VZ.x() << ";" << CH_VZ.y() << ";" << CH_VZ.z() << std::endl;
+
+        std::cout << " Quat 1 : " << quat.e0() << ";" << quat.e1() << ";" << quat.e2() << ";" << quat.e3() << std::endl;
+        //std::cout << " Quat 2 : " << quat2.e0() << ";" << quat2.e1() << ";" << quat2.e2() << ";" << quat2.e3() << std::endl;
+
+        std::cout << " Node 1 : " << posA.x() << ";" << posA.y() << ";" << posA.z() << std::endl;
+        std::cout << " Node 2 : " << posB.x() << ";" << posB.y() << ";" << posB.z() << std::endl;
+        std::cout << " Position : " << position.x() << ";" << position.y() << ";" << position.z() << std::endl;
+        std::cout << " Direction : " << direction.x() << ";" << direction.y() << ";" << direction.z() << std::endl;
+        std::cout << " Rotation : " << rotation.x() << ";" << rotation.y() << ";" << rotation.z() << std::endl;
+        //std::cout << " angle = " << angle << std::endl;
+        std::cout << " CH_C_PI_2 : " << chrono::CH_C_PI_2 << std::endl;
+
+        auto VX = m_frame.GetA().Get_A_Xaxis();
+        auto VY = m_frame.GetA().Get_A_Yaxis();
+        auto VZ = m_frame.GetA().Get_A_Zaxis();
+
+        std::cout << " frame x-axis : " << VX.x() << ";" << VX.y() << ";" << VX.z() << std::endl;
+        std::cout << " frame y-axis : " << VY.x() << ";" << VY.y() << ";" << VY.z() << std::endl;
+        std::cout << " frame z-axis : " << VZ.x() << ";" << VZ.y() << ";" << VZ.z() << std::endl;
+
+        // ##CC
+
 
     }
 
@@ -152,6 +188,7 @@ namespace frydom {
             m_flow->SetPos(m_frame.GetPos());
         }
 
+
         auto relpos = mybody->TransformPointParentToLocal(m_frame.GetPos());
         auto body_acceleration = mybody->PointAccelerationLocalToParent(relpos);
 
@@ -161,13 +198,59 @@ namespace frydom {
         auto current_relative_velocity = mybody->GetCurrentRelativeVelocity(relpos);
         auto velocity = flow_velocity + current_relative_velocity;
 
+        // ##CC
+        std::cout << " ------------- Morison velocity -------------------- " << std::endl;
+
+        std::cout << " velocity : " << velocity.x() << ";" << velocity.y() << ";" << velocity.z() << std::endl;
+        std::cout << " body acceleration : " << body_acceleration.x() << ";"
+                  << body_acceleration.y() << ";" << body_acceleration.z() << std::endl;
+        std::cout << " flow acceleration : " << flow_acceleration.x() << ";"
+                  << flow_acceleration.y() << ";" << flow_acceleration.z() << std::endl;
+
+        // ##CC
+
+        velocity = m_frame.TransformDirectionParentToLocal(velocity);
+        flow_acceleration = m_frame.TransformDirectionParentToLocal(flow_acceleration);
+        body_acceleration = m_frame.TransformDirectionParentToLocal(body_acceleration);
+
+        // ##CC
+
+        std::cout << " => Change reference frame : Parent to local" << std::endl;
+
+        std::cout << " velocity : " << velocity.x() << ";" << velocity.y() << ";" << velocity.z() << std::endl;
+        std::cout << " body acceleration : " << body_acceleration.x() << ";"
+                  << body_acceleration.y() << ";" << body_acceleration.z() << std::endl;
+        std::cout << " flow acceleration : " << flow_acceleration.x() << ";"
+                  << flow_acceleration.y() << ";" << flow_acceleration.z() << std::endl;
+
+        // ##CC
+
         force = rho * (m_ca + 1.) * m_volume * (flow_acceleration - body_acceleration);
-        force += 0.5 * m_cd * rho * m_length * velocity * ChAbs(velocity);
-        force -= force.Dot(m_dir) * m_dir;          // Delete the axial component
+        force.z() = 0.;
+        force.x() += 0.5 * m_cd * rho * m_length * velocity.x() * std::abs(velocity.x());
+        force.y() += 0.5 * m_cd * rho * m_length * velocity.y() * std::abs(velocity.y());
+
+
+        // ##CC
+        std::cout << " ---------------- Morison force ---------------------- " << std::endl;
+        std::cout << " rho = " << rho << std::endl;
+        std::cout << " ca = " << m_ca << "; cd = " << m_cd << "; length = " << m_length
+                  << " volume = " << m_volume << std::endl;
+        std::cout << " force : " << force.x() << ";" << force.y() << ";" << force.z() << std::endl;
+        // ##CC
+
+        //force -= force.Dot(m_dir) * m_dir;          // Delete the axial component
+        force = m_frame.TransformDirectionLocalToParent(force);
+
+        // ##CC
+        std::cout << " => change reference frame : Local to parent" << std::endl;
+        std::cout << " force : " << force.x() << ";" << force.y() << ";" << force.z() << std::endl;
+        // ##CC
+
         m_force->SetBodyForce(force);               // Pass force to the FrForce model
 
         if( relpos.Length() > 0.001 ) {
-            moment = relpos.Cross(mybody->TransformPointParentToLocal(force));
+            moment = relpos.Cross(mybody->TransformDirectionParentToLocal(force));
         } else {
             moment = chrono::ChVector<double>(0.);
         }

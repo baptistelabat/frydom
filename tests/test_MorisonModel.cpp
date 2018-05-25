@@ -41,18 +41,27 @@ int main(int argc, char* argv[]) {
     // Environment
     // ---------------------------------------------------------
 
-    system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_IRREGULAR);
+    //system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_IRREGULAR);
+    //auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
+    //waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
+    //waveField->SetWavePulsations(0.5, 2., 80, RADS);
+    //waveField->GetWaveSpectrum()->SetHs(1.);
+    //waveField->GetWaveSpectrum()->SetTp(10.);
+
+    system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_REGULAR);
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
-    waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
-    waveField->SetWavePulsations(0.5, 2., 80, RADS);
-    waveField->GetWaveSpectrum()->SetHs(1.);
-    waveField->GetWaveSpectrum()->SetTp(10.);
+    waveField->SetRegularWaveHeight(1.);
+    waveField->SetRegularWavePeriod(10.);
+    waveField->SetMeanWaveDirection(0., DEG);
+
     waveField->GetSteadyElevation(0, 0);
 
-    waveField->SetStretching(VERTICAL);
+    waveField->GetWaveRamp()->Deactivate();
+
+    //waveField->SetStretching(VERTICAL);
 
     system.GetEnvironment()->SetCurrent(FrCurrent::UNIFORM);
-    system.GetEnvironment()->GetCurrent()->Set(NORTH, 0.1, KNOT, NED, GOTO);
+    system.GetEnvironment()->GetCurrent()->Set(NORTH, 0., KNOT, NED, GOTO);
 
     // ----------------------------------------------------------
     // Morison structure
@@ -73,10 +82,10 @@ int main(int argc, char* argv[]) {
 
     system.AddBody(structure);
 
-    //structure->SetBodyFixed(true);
-    structure->Set3DOF_ON(chrono::ChVector<>(0, 0, 1),
-                          chrono::ChVector<>(0, 0, 2),
-                          chrono::ChVector<>(0, 0, 0));
+    structure->SetBodyFixed(true);
+    //structure->Set3DOF_ON(chrono::ChVector<>(0, 0, 1),
+    //                      chrono::ChVector<>(0, 0, 2),
+    //                      chrono::ChVector<>(0, 0, 0));
 
     // ----------------------------------------------------------
     // Simulation
@@ -86,12 +95,13 @@ int main(int argc, char* argv[]) {
     double dt = 0.01;
 
     std::vector<double> vx, vy, vz, vtime;
+    std::vector<double> ax, ay, az;
     std::vector<double> fx, fy, fz;
     std::vector<double> mx, my, mz;
     std::vector<double> x, y, z;
     std::vector<double> rx, ry, rz;
 
-    ChVector<double> velocity;
+    ChVector<double> velocity, acceleration;
     ChVector<double> force, moment;
     ChVector<double> position, rotation;
     std::vector<std::shared_ptr<ChForce>> force_list;
@@ -103,13 +113,13 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Number of force : " << structure->GetForceList().size() << std::endl;
 
-    while (time < 100.) {
+    while (time < 50.) {
 
         time += dt;
 
         system.DoStepDynamics(dt);
 
-        //structure->UpdateForces(time);
+        structure->UpdateForces(time);
 
         velocity = morison->GetFlowSensor()->GetVelocity();
 
@@ -117,6 +127,11 @@ int main(int argc, char* argv[]) {
         vx.push_back(velocity.x());
         vy.push_back(velocity.y());
         vz.push_back(velocity.z());
+
+        acceleration = morison->GetFlowSensor()->GetAcceleration();
+        ax.push_back(acceleration.x());
+        ay.push_back(acceleration.y());
+        az.push_back(acceleration.z());
 
         force_list = structure->GetForceList();
         force_list[0]->GetBodyForceTorque(force, moment);
@@ -139,6 +154,9 @@ int main(int argc, char* argv[]) {
 
     matplotlibcpp::subplot(3,2,1);
     PlotResults(vtime, vx, vy, vz, "velocity", false);
+
+    matplotlibcpp::subplot(3,2,2);
+    PlotResults(vtime, ax, ay, az, "acceleration", false);
 
     matplotlibcpp::subplot(3,2,3);
     PlotResults(vtime, fx, fy, fz, "force", false);
