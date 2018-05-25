@@ -39,13 +39,22 @@ int main(int argc, char* argv[]) {
     // Environment
     // ---------------------------------------------------------
 
-    system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_IRREGULAR);
+    //system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_IRREGULAR);
+    //auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
+    //waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
+    //waveField->SetWavePulsations(0.5, 2., 80, RADS);
+    //waveField->GetWaveSpectrum()->SetHs(3.);
+    //waveField->GetWaveSpectrum()->SetTp(10.);
+
+    system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_REGULAR);
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
-    waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
-    waveField->SetWavePulsations(0.5, 2., 80, RADS);
-    waveField->GetWaveSpectrum()->SetHs(3.);
-    waveField->GetWaveSpectrum()->SetTp(10.);
+    waveField->SetRegularWaveHeight(1.);
+    waveField->SetRegularWavePeriod(10.);
+    waveField->SetMeanWaveDirection(0., DEG);
+
     waveField->GetSteadyElevation(0, 0);
+
+    waveField->GetWaveRamp()->Deactivate();
 
     system.GetEnvironment()->SetCurrent(FrCurrent::UNIFORM);
     system.GetEnvironment()->GetCurrent()->Set(NORTH, 0., KNOT, NED, COMEFROM);
@@ -79,9 +88,10 @@ int main(int argc, char* argv[]) {
 
     system.AddBody(structure);
 
-    structure->Set3DOF_ON(chrono::ChVector<>(1, 0, 0));
-    structure->Set3DOF_ON(chrono::ChVector<>(0, 0, 1));
+    structure->SetBodyFixed(true);
 
+    //structure->Set3DOF_ON(chrono::ChVector<>(1, 0, 0));
+    //structure->Set3DOF_ON(chrono::ChVector<>(0, 0, 1));
 
     // ----------------------------------------------------------
     // Simulation
@@ -112,6 +122,8 @@ int main(int argc, char* argv[]) {
 
         system.DoStepDynamics(dt);
         //waveField->Update(time);
+
+        structure->UpdateForces(time);
 
         velocity = waveField->GetVelocity(0, 0, -10);
 
