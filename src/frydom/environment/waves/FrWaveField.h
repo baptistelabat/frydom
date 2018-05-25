@@ -175,6 +175,19 @@ namespace frydom {
         /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
         virtual chrono::ChVector<double> GetVelocity(double x, double y, double z) const = 0;
 
+        /// Return the eulerian flow velocity. Return null vector if the point is upper the free surface elevation
+        virtual chrono::ChVector<double> GetVelocity(double x, double y, double z, bool cutoff) const {
+
+            if (cutoff) {
+                auto wave_elevation = GetElevation(x, y);
+                if (wave_elevation < z) {
+                    return chrono::VNULL;
+                }
+            }
+            return GetVelocity(x, y, z);
+        }
+
+
         /// Return the eulerian fluid particule velocity in global reference frame (from vector position)
         virtual chrono::ChVector<double> GetVelocity(chrono::ChVector<double> vect) const {
             return GetVelocity(vect.x(), vect.y(), vect.z());
@@ -182,6 +195,17 @@ namespace frydom {
 
         /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
         virtual chrono::ChVector<double> GetAcceleration(double x, double y, double z) const = 0;
+
+        virtual chrono::ChVector<double> GetAcceleration(double x, double y, double z, bool cutoff) const  {
+
+            if (cutoff) {
+                auto wave_elevation = GetElevation(x, y);
+                if (wave_elevation < z) {
+                    return chrono::VNULL;
+                }
+            }
+            return GetAcceleration(x, y, z);
+        }
 
         /// Return the eulerian fluid particule acceleration in global reference frame (from vector position)
         virtual chrono::ChVector<double> GetAcceleration(chrono::ChVector<double> vect) const {

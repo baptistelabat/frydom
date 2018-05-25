@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 
     system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_REGULAR);
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
-    waveField->SetRegularWaveHeight(1.);
+    waveField->SetRegularWaveHeight(3.);
     waveField->SetRegularWavePeriod(10.);
     waveField->SetMeanWaveDirection(0., DEG);
 
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     // ----------------------------------------------------------
 
     auto structure = std::make_shared<FrHydroBody>();
-    structure->SetPos(chrono::ChVector<double>(0,0,-2));
+    structure->SetPos(chrono::ChVector<double>(0,0,-1));
 
     structure->SetMass(0.);
 
