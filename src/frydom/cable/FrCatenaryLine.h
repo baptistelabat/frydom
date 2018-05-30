@@ -142,9 +142,10 @@ namespace frydom {
         //    m_time = time;
         //}
 
-        //void UpdateState() {
-        //    // TODO: solve ?
-        //}
+        void UpdateState() override {
+            FrCable::UpdateState();
+            solve();
+        }
     };
 
 

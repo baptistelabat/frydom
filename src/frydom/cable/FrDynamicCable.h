@@ -97,7 +97,7 @@ namespace frydom {
                 elements_assets->SetSmoothFaces(true);
                 elements_assets->SetWireframe(false);
                 m_section->SetDrawCircularRadius(m_drawCableElementRadius);
-                AddAsset(elements_assets);
+                ChMesh::AddAsset(elements_assets);
             }
 
             // Assets for the nodes
@@ -108,7 +108,7 @@ namespace frydom {
                 node_assets->SetSymbolsThickness(m_drawCableNodeSize);
                 node_assets->SetSymbolsScale(0.01);
                 node_assets->SetZbufferHide(false);
-                AddAsset(node_assets);
+                ChMesh::AddAsset(node_assets);
             }
 
         }

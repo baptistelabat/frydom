@@ -7,11 +7,13 @@
 
 #include "frydom/core/FrObject.h"
 #include "frydom/core/FrNode.h"
+#include "chrono/physics/ChLink.h"
 
 namespace frydom {
 
     /// Abstract base class for cables
-    class FrCable : public FrObject {
+    class FrCable : public FrObject,
+                    public chrono::ChLink {
 
     protected:
 
@@ -115,19 +117,19 @@ namespace frydom {
         virtual void StepFinalize() override {}
 
         /// Update time and state of the cable
-        void Update(const double time) {
+        virtual void Update(const double time, bool update_asserts = true) override {
             UpdateTime(time);
             UpdateState();
         }
 //
         /// Update internal time and time step for dynamic behaviour of the cable
-        void UpdateTime(const double time) {
+        virtual void UpdateTime(const double time) override {
             m_time_step = time - m_time;
             m_time = time;
         };
 //
         /// Update the length of the cable if unrolling speed is defined.
-        void UpdateState() {
+        virtual void UpdateState() {
             if (std::abs(m_unrollingSpeed) > DBL_EPSILON and std::abs(m_time_step) > DBL_EPSILON) {
                 m_cableLength += m_unrollingSpeed * m_time_step;
             }

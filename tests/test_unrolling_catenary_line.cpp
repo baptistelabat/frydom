@@ -56,6 +56,7 @@ int main(int argc, char* argv[]) {
     double E = EA/A;
 
     auto line = std::make_shared<FrCatenaryLine>(node1, node2, true, E, A, Lu, q, u);
+    system.AddLink(line);
 
     //system.Add(line);
 
