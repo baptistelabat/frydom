@@ -30,6 +30,8 @@ set(FRYDOM_TESTS
         test_sphere_irregular
         test_MorisonModel
         test_CompositeMorisonModel
+        test_unrolling_cable
+        test_unrolling_catenary_line
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")

@@ -138,13 +138,13 @@ namespace frydom {
         /// Returns the current cable length by line discretization
         double GetCableLength(const double n = 1000) const;
 
-        void UpdateTime(const double time) {
-            m_time = time;
-        }
+        //void UpdateTime(const double time) {
+        //    m_time = time;
+        //}
 
-        void UpdateState() {
-            // TODO: solve ?
-        }
+        //void UpdateState() {
+        //    // TODO: solve ?
+        //}
     };
 
 

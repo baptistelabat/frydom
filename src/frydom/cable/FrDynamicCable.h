@@ -214,13 +214,10 @@ namespace frydom {
         virtual void StepFinalize() override {}
 
 
-//        void UpdateTime(double time) {
-//            m_time = time;
-//        }
-//
-//        void UpdateState() {
-//
-//        }
+        void Update(double time, bool update_assets = true) override {
+            ChMesh::Update(time, update_assets);
+            FrCable::Update(time);
+        }
 
     };
 
