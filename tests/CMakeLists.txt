@@ -30,6 +30,7 @@ set(FRYDOM_TESTS
         test_sphere_irregular
         test_MorisonModel
         test_CompositeMorisonModel
+        test_dynamic_wave_probe
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")
@@ -60,7 +61,7 @@ configure_file(data/PolarCurrentCoeffs.yml . COPYONLY)
 
 file(COPY data/Full.yml  DESTINATION .)
 
-configure_file(data/DeepSea_Stavanger/WaveDriftCoeff_100_2.h5 . COPYONLY)
+configure_file(data/DeepSea_Stavanger/DeepSea_WaveDriftCoeff.h5 . COPYONLY)
 configure_file(data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
 configure_file(data/DeepSea_Stavanger/DeepSeaStavanger.hdb5 . COPYONLY)
 configure_file(data/DeepSea_Stavanger/PolarCurrentCoeffs_NC.yml . COPYONLY)
@@ -70,3 +71,9 @@ configure_file(data/bench_sphere_decay_interp.h5 . COPYONLY)
 configure_file(data/bench_sphere_regular.h5 . COPYONLY)
 configure_file(data/sphere.obj . COPYONLY)
 configure_file(data/sphere_hdb.h5 . COPYONLY)
+
+configure_file(data/Ship/Ship.h5 . COPYONLY)
+configure_file(data/Ship/Ship.obj . COPYONLY)
+configure_file(data/Ship/Ship_PolarCurrentCoeffs.yml . COPYONLY)
+configure_file(data/Ship/Ship_PolarWindCoeffs.yml . COPYONLY)
+configure_file(data/Ship/Ship_WaveDriftCoeff.h5 . COPYONLY)

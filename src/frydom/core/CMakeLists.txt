@@ -13,6 +13,8 @@ set(SRC_FILES
         FrNode.cpp
         FrOffshoreSystem.cpp
         FrShip.cpp
+        FrSpringDampingForce.cpp
+        FrNodeDynamic.cpp
 )
 
 set(FRYDOM_CORE_SOURCES "")

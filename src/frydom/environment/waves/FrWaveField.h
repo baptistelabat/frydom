@@ -725,6 +725,12 @@ namespace frydom {
             return c_emjwt;
         }
 
+        const std::vector<std::complex<double>>& GetTimeCoeffs(chrono::ChVector<double> vel) const {
+
+
+
+        }
+
         /// Return the time derivative of the temporal factor
         std::vector<std::complex<double>> GetTimeCoeffsDt() const {
 

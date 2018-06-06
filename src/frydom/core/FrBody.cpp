@@ -4,6 +4,7 @@
 
 #include "FrBody.h"
 #include "FrNode.h"
+#include "frydom/core/FrHydroBody.h"
 
 namespace frydom {
 
@@ -37,5 +38,7 @@ namespace frydom {
 
         return node;
     }
+
+
 
 }  // end namespace frydom

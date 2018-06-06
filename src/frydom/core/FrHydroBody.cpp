@@ -241,15 +241,24 @@ namespace frydom {
 
     void FrHydroBody::SetCurrentRefFrameAsEquilibrium() {
         auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetEnvironment()->GetFreeSurface()->GetFrame();
-        chrono::ChFrame<double> eqFrame0 = GetFrame_REF_to_abs() >> freeSurfaceFrame->GetInverse();
+        chrono::ChFrameMoving<double> eqFrame0 = GetFrame_REF_to_abs() >> freeSurfaceFrame->GetInverse();
         SetEquilibriumFrame(eqFrame0);
     }
 
-    chrono::ChFrame<double> FrHydroBody::GetEquilibriumFrame() const {
+    chrono::ChFrameMoving<double> FrHydroBody::GetEquilibriumFrame() const {
         auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetEnvironment()->GetFreeSurface()->GetFrame();
         auto eqFrame = m_equilibriumFrame >> freeSurfaceFrame->GetInverse();
         return eqFrame;
     }
+
+    void FrHydroBody::SetSteadyVelocity(chrono::ChVector<> velocity) {
+        m_equilibriumFrame.SetPos_dt(velocity);
+    }
+
+    chrono::ChVector<double> FrHydroBody::GetSteadyVelocity() const {
+        return m_equilibriumFrame.GetPos_dt();
+    }
+
 
     void FrHydroBody::Initialize() {
         FrBody::Initialize();
@@ -358,5 +367,6 @@ namespace frydom {
         chrono::ChQuaternion<> mnewrot = mdeltarot % moldrot;
         this->SetRot(mnewrot);
     }
+
 	
 }  // end namespace frydom

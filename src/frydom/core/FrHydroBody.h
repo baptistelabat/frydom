@@ -6,6 +6,7 @@
 #define FRYDOM_FRHYDROBODY_H
 
 #include <chrono/physics/ChLinkMate.h>
+//#include <frydom/environment/waves/FrDynamicWaveProbe.h>
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 #include "FrBody.h"
@@ -56,9 +57,11 @@ namespace frydom {
                                             // way to take forward speed into account concerning the wave excitation...
                                             // TODO: use it...
 
-        chrono::ChFrame<double> m_equilibriumFrame;
+        chrono::ChFrameMoving<double> m_equilibriumFrame;           ///< Hydrodynamic equilibrium frame where dynamic motion equation is solved
+//        FrDynamicWaveProbe m_dynamicFrame;
 
-        chrono::ChVariables* variables_ptr;
+        chrono::ChVariables* variables_ptr;                         ///< perturbation variables in the equilibrium frame
+
 
     public:
 
@@ -216,7 +219,13 @@ namespace frydom {
 
         void SetCurrentRefFrameAsEquilibrium();
 
-        chrono::ChFrame<double> GetEquilibriumFrame() const;
+        chrono::ChFrameMoving<double> GetEquilibriumFrame() const;
+
+        /// Define the constant velocity of the equilibrium frame (in local coord)
+        void SetSteadyVelocity(chrono::ChVector<> velocity);
+
+        /// Get the steady velocity corresponding to the velocity of the equilibrium frame (in local coord)
+        chrono::ChVector<double> GetSteadyVelocity() const;
 
 
         // TODO: introduire une classe geometricProperties qui rassemble les differentes donnees...
@@ -244,6 +253,7 @@ namespace frydom {
 
         /// Set the wetted surface of the body
         void SetWettedSurface(double wetted_surface);
+        
 
         // ==========================================================================
         // METHODS ABOUT CURRENT
