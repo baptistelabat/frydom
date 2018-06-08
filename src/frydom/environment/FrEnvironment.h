@@ -26,6 +26,9 @@
 // Seabed includes
 #include "seabed/FrSeabed.h"
 
+// GeographicLib includes
+#include <GeographicLib/LocalCartesian.hpp>
+
 namespace frydom {
     /// Class to store the different elements composing the offshore environment
     class FrEnvironment : public FrObject {
@@ -41,6 +44,9 @@ namespace frydom {
         std::shared_ptr<FrCurrent> m_current;
         std::shared_ptr<FrWind> m_wind;
         std::unique_ptr<FrSeabed> m_seabed;
+
+        /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
+        std::unique_ptr<GeographicLib::LocalCartesian> m_geoLib;
 
         // Environments scalars
         double m_waterDensity = 1025.;
@@ -64,7 +70,7 @@ namespace frydom {
             m_current = std::make_shared<FrUniformCurrent>();
             m_wind = std::make_shared<FrUniformWind>();
             m_seabed = std::make_unique<FrSeabed>();
-
+            m_geoLib = std::make_unique<GeographicLib::LocalCartesian>();
         }
 
         void SetSystem(FrOffshoreSystem* system) {
@@ -186,6 +192,14 @@ namespace frydom {
 
         void SetSeabed(FrSeabed* seabed) {
             m_seabed = std::unique_ptr<FrSeabed>(seabed);
+        }
+
+        GeographicLib::LocalCartesian* GetGeoLib() const {
+            return m_geoLib.get();
+        }
+
+        void SetGeoLib(GeographicLib::LocalCartesian* geolib){
+            m_geoLib = std::unique_ptr<GeographicLib::LocalCartesian>(geolib);
         }
 
         void Update(double time) {
