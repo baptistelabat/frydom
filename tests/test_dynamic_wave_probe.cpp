@@ -225,12 +225,24 @@ int main(int argc, char* argv[]) {
     system.GetEnvironment()->SetCurrent(FrCurrent::UNIFORM);
     system.GetEnvironment()->GetCurrent()->Set(EAST, 0., KNOT, NED, COMEFROM);
 
+/*
     system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_IRREGULAR);
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
     waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
     waveField->SetWavePulsations(0.5, 2., 80, RADS);
     waveField->GetWaveSpectrum()->SetHs(5.);
     waveField->GetWaveSpectrum()->SetTp(10.);
+    waveField->GetSteadyElevation(0, 0);
+*/
+
+    system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_REGULAR);
+    auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
+    waveField->SetRegularWaveHeight(1.);
+    waveField->SetRegularWavePeriod(10.);
+    waveField->SetMeanWaveDirection(0., DEG);
+
+    waveField->GetWaveRamp()->Deactivate();
+
     waveField->GetSteadyElevation(0, 0);
 
     // ----------------------------------------------------------
@@ -241,9 +253,10 @@ int main(int argc, char* argv[]) {
     ship->SetPos_dt(chrono::ChVector<double>(5., 0., 0.));
 
     // ----------------------------------------------------------
-    // Dynamic node
+    // Node
     // ----------------------------------------------------------
 
+    // Dynamic
     auto body_sensor = std::make_shared<FrHydroBody>();
     system.Add(body_sensor);
     body_sensor->SetMass(1.);
@@ -253,12 +266,27 @@ int main(int argc, char* argv[]) {
     body_sensor->AddForce(force);
 
 
+    // Fixed
+    auto fixed_sensor = ship->CreateNode();
+
     // ----------------------------------------------------------
     // Wave probe
     // ----------------------------------------------------------
 
     auto waveProbe = std::make_shared<FrLinearWaveProbe>();
     waveProbe->AttachedNode(body_sensor);
+    waveField->AddWaveProbe(waveProbe);
+
+    //auto waveProbe_fixed = waveField->NewWaveProbe();
+    auto waveProbe_fixed = std::make_shared<FrLinearWaveProbeSteady>();
+    waveProbe_fixed->AttachedNode(fixed_sensor);
+    waveField->AddWaveProbe(waveProbe_fixed);
+    waveProbe_fixed->Initialize();
+
+    // Wave Probe
+    auto waveProbe0 = waveField->NewWaveProbe(ship->GetPos().x(), ship->GetPos().y());
+    waveProbe0->Initialize();
+
 
     // ----------------------------------------------------------
     // Simulation
@@ -266,7 +294,10 @@ int main(int argc, char* argv[]) {
 
     std::vector<chrono::ChVector<double>> position_sensor, position_body;
     std::vector<chrono::ChVector<double>> velocity_sensor, velocity_body;
-    std::vector<double> vtime;
+    std::vector<double> wp_fix_x, wp_fix_y;
+    std::vector<double> wp_dyn_x, wp_dyn_y;
+    std::vector<double> wp0_x, wp0_y;
+    std::vector<double> vtime, eta_fix, eta_dyn, eta0;
 
     double time = 0.;
     double dt = 0.01;
@@ -275,26 +306,53 @@ int main(int argc, char* argv[]) {
     system.SetStep(dt);
     system.Initialize();
 
-    while (time < 80.) {
+    while (time < 200.) {
 
         system.DoStepDynamics(dt);
         time += dt;
 
         vtime.push_back(time);
+
         position_sensor.push_back(body_sensor->GetPosition());
         position_body.push_back(ship->GetPosition());
         velocity_sensor.push_back(body_sensor->GetVelocity());
         velocity_body.push_back(ship->GetVelocity());
+
+        eta_fix.push_back(waveProbe->GetElevation(time));
+        eta_dyn.push_back(waveProbe->GetElevation(time));
+
+        wp_fix_x.push_back(waveProbe_fixed->GetX());
+        wp_fix_y.push_back(waveProbe_fixed->GetY());
+
+        wp_dyn_x.push_back(waveProbe->GetX());
+        wp_dyn_y.push_back(waveProbe->GetY());
+
+        wp0_x.push_back(waveProbe0->GetX());
+        wp0_y.push_back(waveProbe0->GetY());
+
     }
 
     matplotlibcpp::subplot(2,1,1);
     PlotResults(vtime, position_sensor, "sensor", "--");
     PlotResults(vtime, position_body, "body");
-
     matplotlibcpp::subplot(2,1,2);
     PlotResults(vtime, velocity_sensor, "sensor", "--");
     PlotResults(vtime, velocity_body, "body");
+    matplotlibcpp::show();
 
+    matplotlibcpp::named_plot("wp_fix_x", vtime, wp_fix_x);
+    matplotlibcpp::named_plot("wp_fix_y", vtime, wp_fix_y);
+    matplotlibcpp::named_plot("wp_dyn_x", vtime, wp_dyn_x, "--");
+    matplotlibcpp::named_plot("wp_dyn_y", vtime, wp_dyn_y, "--");
+    matplotlibcpp::show();
+
+    matplotlibcpp::named_plot("eta_fix", vtime, eta_fix);
+    matplotlibcpp::named_plot("eta_dyn", vtime, eta_dyn);
+    matplotlibcpp::named_plot("eta0", vtime, eta0);
+    matplotlibcpp::show();
+
+    matplotlibcpp::named_plot("eta0_x", vtime, wp0_x);
+    matplotlibcpp::named_plot("eta0_y", vtime, wp0_y);
     matplotlibcpp::show();
 
 }

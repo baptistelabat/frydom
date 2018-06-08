@@ -29,16 +29,16 @@ namespace frydom {
         auto time = waveField->GetTime();
 
         // Relative angle and speed of the frame
-        auto euler_angles = quat_to_euler(m_node->GetRot(), CARDAN, RAD);
-        auto heading = Normalize_0_2PI(euler_angles.z());
-        auto speed = m_node->GetPos_dt().Length();
+        auto frame_velocity = m_node->GetPos_dt();
+        auto angle = Normalize_0_2PI(atan2(frame_velocity.y(), frame_velocity.x()));
+        auto norm_speed = frame_velocity.Length();
 
         std::vector<double> velocity;
         velocity.reserve(nbDir);
 
         // Component of the frame velocity in the wave direction
         for (unsigned int idir=0; idir<nbDir; ++idir) {
-            velocity.push_back( speed * cos(waveDir[idir]-heading));
+            velocity.push_back( norm_speed * cos(waveDir[idir]-angle));
         }
 
         // Complex elevation in time domain

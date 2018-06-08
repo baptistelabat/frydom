@@ -72,7 +72,10 @@ namespace frydom {
         virtual void StepFinalize() override {}
 
         /// Attached a node to the wave probe
-        void AttachedNode(std::shared_ptr<chrono::ChFrameMoving<double>> node) { m_node = node; }
+        void AttachedNode(std::shared_ptr<chrono::ChFrameMoving<double>> node) {
+            m_node = node;
+            m_x = GetX();
+            m_y = GetY();}
 
 
         /// Return the free surface elevation at the sensor position
@@ -120,6 +123,8 @@ namespace frydom {
         std::vector<std::complex<double>> m_steadyElevation;            ///< steady part of the wave elevation
 
     public:
+        FrLinearWaveProbeSteady(): FrLinearWaveProbe() {}
+
         /// Constructor of the wave sensor with position in the horizontal plane
         FrLinearWaveProbeSteady(double x, double y) : FrLinearWaveProbe(x, y) {}
 
