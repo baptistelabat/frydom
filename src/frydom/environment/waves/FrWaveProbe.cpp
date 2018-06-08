@@ -17,7 +17,7 @@ namespace frydom {
     // -------------------------------------------------------
     std::vector<std::vector<std::complex<double>>> FrLinearWaveProbe::GetCmplxElevation() const {
 
-        bool steady = true;
+        bool steady = false;
 
         auto waveField = dynamic_cast<FrLinearWaveField*>(m_waveField);
 
@@ -43,10 +43,9 @@ namespace frydom {
 
         // Complex elevation in time domain
         auto cmplxElevation = waveField->GetCmplxElevation(GetX(), GetY(), steady);
-        auto ejwt = waveField->GetTimeCoeffs();
         for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq) {
             for (unsigned int idir=0; idir<nbDir; ++idir) {
-                cmplxElevation[idir][ifreq] *= exp( -JJ * waveNumber[ifreq] * velocity[idir] * time);
+                cmplxElevation[idir][ifreq] *= exp( +JJ * waveNumber[ifreq] * velocity[idir] * time);
             }
         }
 
@@ -87,7 +86,7 @@ namespace frydom {
     // -------------------------------------------------------
 
     void FrLinearWaveProbeSteady::Initialize() {
-        m_steadyElevation = dynamic_cast<FrLinearWaveField *>(m_waveField)->GetSteadyElevation(m_x, m_y);
+        m_steadyElevation = dynamic_cast<FrLinearWaveField *>(m_waveField)->GetSteadyElevation(GetX(), GetY());
     }
 
     double FrLinearWaveProbeSteady::GetElevation(double time) const {

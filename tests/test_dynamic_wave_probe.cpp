@@ -300,7 +300,7 @@ int main(int argc, char* argv[]) {
     std::vector<double> vtime, eta_fix, eta_dyn, eta0;
 
     double time = 0.;
-    double dt = 0.01;
+    double dt = 0.1;
 
     system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
     system.SetStep(dt);
@@ -318,7 +318,7 @@ int main(int argc, char* argv[]) {
         velocity_sensor.push_back(body_sensor->GetVelocity());
         velocity_body.push_back(ship->GetVelocity());
 
-        eta_fix.push_back(waveProbe->GetElevation(time));
+        eta_fix.push_back(waveProbe_fixed->GetElevation(time));
         eta_dyn.push_back(waveProbe->GetElevation(time));
 
         wp_fix_x.push_back(waveProbe_fixed->GetX());
