@@ -237,7 +237,7 @@ int main(int argc, char* argv[]) {
 
     system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_REGULAR);
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
-    waveField->SetRegularWaveHeight(1.);
+    waveField->SetRegularWaveHeight(3.);
     waveField->SetRegularWavePeriod(10.);
     waveField->SetMeanWaveDirection(0., DEG);
 
@@ -250,21 +250,17 @@ int main(int argc, char* argv[]) {
     // ----------------------------------------------------------
     auto ship = Platform(&system);
 
-    ship->SetPos_dt(chrono::ChVector<double>(5., 0., 0.));
+    ship->SetPos_dt(chrono::ChVector<double>(0.5, 0., 0.));
 
     // ----------------------------------------------------------
     // Node
     // ----------------------------------------------------------
 
     // Dynamic
-    auto body_sensor = std::make_shared<FrHydroBody>();
-    system.Add(body_sensor);
-    body_sensor->SetMass(1.);
-    body_sensor->Set3DOF_ON();
-    auto force = std::make_shared<FrSpringDampingForce>(ship.get(), 60, 0.5);
-    body_sensor->SetPos_dt(ship->GetPos_dt());
-    body_sensor->AddForce(force);
 
+    auto body_sensor = std::make_shared<FrNodeDynamic>();
+    system.Add(body_sensor);
+    body_sensor->SetSpringDamping(ship.get());
 
     // Fixed
     auto fixed_sensor = ship->CreateNode();
@@ -287,7 +283,6 @@ int main(int argc, char* argv[]) {
     auto waveProbe0 = waveField->NewWaveProbe(ship->GetPos().x(), ship->GetPos().y());
     waveProbe0->Initialize();
 
-
     // ----------------------------------------------------------
     // Simulation
     // ----------------------------------------------------------
@@ -306,7 +301,7 @@ int main(int argc, char* argv[]) {
     system.SetStep(dt);
     system.Initialize();
 
-    while (time < 200.) {
+    while (time < 1000.) {
 
         system.DoStepDynamics(dt);
         time += dt;
