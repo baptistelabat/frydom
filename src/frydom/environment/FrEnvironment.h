@@ -46,7 +46,7 @@ namespace frydom {
         std::unique_ptr<FrSeabed> m_seabed;
 
         /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
-        std::unique_ptr<GeographicLib::LocalCartesian> m_geoLib;
+        std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
 
         // Environments scalars
         double m_waterDensity = 1025.;
@@ -70,7 +70,7 @@ namespace frydom {
             m_current = std::make_shared<FrUniformCurrent>();
             m_wind = std::make_shared<FrUniformWind>();
             m_seabed = std::make_unique<FrSeabed>();
-            m_geoLib = std::make_unique<GeographicLib::LocalCartesian>();
+            m_LocalCartesian = std::make_unique<GeographicLib::LocalCartesian>();
         }
 
         void SetSystem(FrOffshoreSystem* system) {
@@ -195,11 +195,19 @@ namespace frydom {
         }
 
         GeographicLib::LocalCartesian* GetGeoLib() const {
-            return m_geoLib.get();
+            return m_LocalCartesian.get();
         }
 
-        void SetGeoLib(GeographicLib::LocalCartesian* geolib){
-            m_geoLib = std::unique_ptr<GeographicLib::LocalCartesian>(geolib);
+        void SetGeographicOrigin(double lat0, double lon0, double h0){
+            m_LocalCartesian->Reset(lat0, lon0, h0);
+        }
+
+        void Convert_GeoToCart(double lat, double lon, double h, double& x, double& y, double& z){
+            m_LocalCartesian->Forward(lat, lon, h, x, y, z);
+        }
+
+        void Convert_CartToGeo(double x, double y, double z, double& lat, double& lon, double& h){
+            m_LocalCartesian->Reverse(x, y, z, lat, lon, h);
         }
 
         void Update(double time) {
