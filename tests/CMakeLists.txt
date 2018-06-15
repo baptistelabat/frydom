@@ -25,6 +25,7 @@ set(FRYDOM_TESTS
         test_wave_field
         test_wave_spectrum
         test_geographicLib
+        test_timezonelib
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")

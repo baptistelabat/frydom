@@ -41,6 +41,7 @@ include(Add_HDF5)
 include(Add_yaml-cpp)
 include(Add_GeographicLib)
 include(Add_fmt)
+include(Add_TimeZone)
 include(Add_hermes)
 
 
@@ -67,6 +68,7 @@ target_link_libraries(FRyDoM_Engine
         HDF5
         GeographicLib
         fmt
+        tz
         hermes
         )
 

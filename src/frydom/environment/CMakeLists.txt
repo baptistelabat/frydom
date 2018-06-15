@@ -10,6 +10,7 @@ add_subdirectory(wind)
 set(SRC_FILES
         FrEnvironment.cpp
         FrUniformCurrentField.cpp
+        FrTimeZone.cpp
         )
 
 set(FRYDOM_ENVIRONMENT_SOURCES "")
