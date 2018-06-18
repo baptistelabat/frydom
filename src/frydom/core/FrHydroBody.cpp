@@ -6,6 +6,7 @@
 #include "chrono/assets/ChTriangleMeshShape.h"
 
 #include "FrHydroBody.h"
+#include "frydom/core/FrNodeDynamic.h"
 
 namespace frydom {
 
@@ -239,25 +240,49 @@ namespace frydom {
         }
     }
 
-    void FrHydroBody::SetCurrentRefFrameAsEquilibrium() {
-        auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetEnvironment()->GetFreeSurface()->GetFrame();
-        chrono::ChFrameMoving<double> eqFrame0 = GetFrame_REF_to_abs() >> freeSurfaceFrame->GetInverse();
-        SetEquilibriumFrame(eqFrame0);
-    }
+    //void FrHydroBody::SetCurrentRefFrameAsEquilibrium() {
+    //    auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetEnvironment()->GetFreeSurface()->GetFrame();
+    //    chrono::ChFrameMoving<double> eqFrame0 = GetFrame_REF_to_abs() >> freeSurfaceFrame->GetInverse();
+    //    SetEquilibriumFrame( dynamic_caststd::shared_ptr<chrono::ChFrameMoving<double>>>(eqFrame0));
+    //}
 
-    chrono::ChFrameMoving<double> FrHydroBody::GetEquilibriumFrame() const {
-        auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetEnvironment()->GetFreeSurface()->GetFrame();
-        auto eqFrame = m_equilibriumFrame >> freeSurfaceFrame->GetInverse();
-        return eqFrame;
-    }
+    //chrono::ChFrameMoving<double> FrHydroBody::GetEquilibriumFrame() const {
+    //    auto freeSurfaceFrame = dynamic_cast<FrOffshoreSystem*>(system)->GetEnvironment()->GetFreeSurface()->GetFrame();
+    //    auto eqFrame = m_equilibriumFrame >> freeSurfaceFrame->GetInverse();
+    //    return eqFrame;
+    //}
 
     void FrHydroBody::SetSteadyVelocity(chrono::ChVector<> velocity) {
-        m_equilibriumFrame.SetPos_dt(velocity);
+        m_equilibriumFrame->SetPos_dt(velocity);
     }
 
     chrono::ChVector<double> FrHydroBody::GetSteadyVelocity() const {
-        return m_equilibriumFrame.GetPos_dt();
+        return m_equilibriumFrame->GetPos_dt();
     }
+
+    void FrHydroBody::SetEquilibriumFrame(const FrEquilibriumFrameType frame,
+                                          const double T0, const double psi) {
+        assert(frame == DampingSpring);
+        auto body_frame = std::make_shared<FrNodeDynamic>(this, T0, psi);
+        system->Add(body_frame);
+        m_equilibriumFrame = body_frame;
+    }
+
+    void FrHydroBody::SetEquilibriumFrame(const FrEquilibriumFrameType frame,
+                                          const double val) {
+        assert(frame == MeanMotion);
+        auto body_frame = std::make_shared<FrNodeMeanMotion>(this, val);
+        system->Add(body_frame);
+        m_equilibriumFrame = body_frame;
+    }
+
+    void FrHydroBody::SetEquilibriumFrame(const FrEquilibriumFrameType frame,
+                                          const chrono::ChVector<> vect) {
+        auto node = CreateNode();
+        node->SetPos(vect);
+        m_equilibriumFrame = node;
+    }
+
 
 
     void FrHydroBody::Initialize() {

@@ -16,6 +16,7 @@
 #include "FrForce.h"
 #include "FrForceAsset.h"
 #include "FrBodyEasy.h"
+#include "FrNodeDynamic.h"
 
 
 #endif //FRYDOM_FRCORE_H_H

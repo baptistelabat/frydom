@@ -53,8 +53,8 @@ namespace frydom {
         if (update_position) {                                      // FIXME : a voir si laisser comme ça ou passer dans une autre classe
             auto mybody = dynamic_cast<FrHydroBody*>(GetBody());
             auto eqFrame = mybody->GetEquilibriumFrame();
-            m_waveProbe->SetX(eqFrame.GetPos().x());
-            m_waveProbe->SetY(eqFrame.GetPos().y());
+            m_waveProbe->SetX(eqFrame->GetPos().x());
+            m_waveProbe->SetY(eqFrame->GetPos().y());
             Initialize();
         }
 

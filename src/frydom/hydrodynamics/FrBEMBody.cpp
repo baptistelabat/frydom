@@ -497,14 +497,10 @@ namespace frydom {
                         localIRF(iForce, iTime) = Trapz(integrand, dw);
                     }
                 }
-
                 localIRF /= MU_PI_2;
                 body_i_impulseResponseFunctions.push_back(localIRF);
-
             }
-
             m_ImpulseResponseFunction.push_back(body_i_impulseResponseFunctions);
-
         }  // Loop on bodies
 
     }

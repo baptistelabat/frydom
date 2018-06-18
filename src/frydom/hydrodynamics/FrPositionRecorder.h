@@ -38,13 +38,29 @@ namespace frydom {
         FrBody* GetBody() const { return m_body; }
 
         /// Initialization step
-        void Initialize() override;
+        void Initialize() override {
+            m_positions.reserve(3);
+            for (unsigned int i=0; i<3; i++) {
+                m_positions.emplace_back(boost::circular_buffer<double>(m_size, m_size, 0.));
+            }
+        }
 
         /// Return last time saved in the recorder
         double GetTime() const { return m_lastTime; }
 
         /// Save current velocity into recorder
-        void RecordPosition();
+        void RecordPosition() {
+
+            auto currentTime = m_body->GetChTime();
+            if (m_lastTime == currentTime) return;
+            m_lastTime = currentTime;
+
+            auto linear_position = m_body->GetPos();
+
+            m_positions[0].push_front(linear_position[0]);
+            m_positions[1].push_front(linear_position[1]);
+            m_positions[2].push_front(linear_position[2]);
+        }
 
         /// Return the velocity recorded for specific dof
         boost::circular_buffer<double> GetRecordOnDOF(unsigned int iDOF) const {
@@ -54,27 +70,6 @@ namespace frydom {
         /// Method executed at the end of each time step
         void StepFinalize() override {}
     };
-
-    void FrPositionRecorder::Initialize() {
-        m_positions.reserve(3);
-        for (unsigned int i=0; i<3; i++) {
-            m_positions.emplace_back(boost::circular_buffer<double>(m_size, m_size, 0.));
-        }
-    }
-
-    void FrPositionRecorder::RecordPosition() {
-
-        auto currentTime = m_body->GetChTime();
-        if (m_lastTime == currentTime) return;
-        m_lastTime = currentTime;
-
-        auto linear_position = m_body->GetPos();
-
-        m_positions[0].push_front(linear_position[0]);
-        m_positions[1].push_front(linear_position[1]);
-        m_positions[2].push_front(linear_position[2]);
-
-    }
 
 }   // end namespace frydom
 

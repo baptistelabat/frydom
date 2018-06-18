@@ -31,6 +31,8 @@ set(FRYDOM_TESTS
         test_MorisonModel
         test_CompositeMorisonModel
         test_dynamic_wave_probe
+        test_waveProbe
+        test_IRF_ForwardSpeed
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")
