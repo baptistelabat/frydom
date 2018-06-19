@@ -4,8 +4,10 @@
 //#include "date/tz.h"
 #include <chrono>
 #include <iostream>
-#include <include/date/tz.h>
-//#include "fmt/format.h"
+#include <date/tz.h>
+#include "fmt/format.h"
+
+#include "frydom/environment/FrTimeZone.h"
 
 /// List of tz database time zones : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
@@ -20,17 +22,59 @@ int main() {
     auto t_New_York = make_zoned(zone, system_clock::now());
     std::cout << t_New_York << '\n';
 
-    double t_simu; // Simulation time in seconds
-    t_simu = 10;
+    typedef std::chrono::duration<int,std::ratio<3600*24>> days;
+    auto daypoint = floor<days>(t_New_York);
+    auto ymd = year_month_day(daypoint);   // calendar date
+    auto tod = make_time(t_New_York - daypoint); // Yields time_of_day type
 
-    auto t_test = seconds(t_simu);
+// Obtain individual components as integers
+    auto y   = int(ymd.year());
+    auto m   = unsigned(ymd.month());
+    auto d   = unsigned(ymd.day());
+    auto h   = tod.hours().count();
+    auto min = tod.minutes().count();
+    auto s   = tod.seconds().count();
+
+    fmt::print("{}y,{}m,{}d : {}h,{}min,{}s",y,m,d,h,min,s);
+
+
+    double t_simu = 10.8; // Simulation time in seconds
+    int seco = 10, mseco=800;
+
+    auto dur = seconds(seco);
+    auto dur2 = milliseconds(mseco);
+
+    milliseconds test;
+    test = dur + dur2;
+    std::cout << test << '\n';
+
+
+    /*frydom::FrTimeZone myTime;
+    time_zone* myTimeZone;
+    myTimeZone = const_cast<time_zone *>(myTime.current_zone());
+    fmt::print("Current time zone is : {}", myTime.GetTimeZone()->name());
+
+    zoned_time<duration<long>> myZonedTime;
+    myZonedTime = myTime.LocalTime(myTime.current_zone(), myTime.now());
+    std::cout << myZonedTime << '\n';*/
+
+
+    /*
+
+    seconds sec(1);
+    std::cout << sec.count() << std::endl;
+    typedef duration<double> truc;
+    std::cout << std::chrono::duration_cast<truc>(sec).count()
+                                                    << " truc\n";
+
+    auto t_test = 10s;
     auto t_updated = make_zoned(zone,t_here.get_sys_time() + t_test);
     std::cout << t_updated << '\n';
 
-    auto test = zone;
-
-
-
+    time_point <system_clock, duration<long>> today_is;
+    today_is = date::sys_days{jun / 15 / 2018} + 15h + 59min + 59s; //date::local_days{Monday[1]/May/2016} + 9h
+    auto meet_nyc = make_zoned("America/New_York", today_is);
+    std::cout << "The New York meeting is " << meet_nyc << '\n';*/
 
     return 0;
 }

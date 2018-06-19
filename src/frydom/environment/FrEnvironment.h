@@ -215,7 +215,7 @@ namespace frydom {
         }
 
         FrTimeZone* GetTimeZone() const {return m_timeZone.get();}
-        void SetTimeZone(FrTimeZone* TimeZone) {m_timeZone = TimeZone;}
+        //void SetTimeZone(FrTimeZone* TimeZone) {m_timeZone = TimeZone;}
 
         void Update(double time) {
             m_freeSurface->Update(time);
