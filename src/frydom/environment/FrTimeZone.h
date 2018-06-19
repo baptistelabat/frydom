@@ -22,7 +22,7 @@ namespace frydom {
     public:
         auto now() { return std::chrono::system_clock::now(); }
 
-        auto current_zone() { return date::current_zone(); }
+        //auto current_zone() { return date::current_zone(); }
 
         auto LocateZone(const std::string &tz_name) { return date::locate_zone(tz_name); }
 

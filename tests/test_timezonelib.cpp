@@ -15,6 +15,7 @@ int main() {
     using namespace date;
     using namespace std::chrono;
     using namespace std::chrono_literals;
+
     auto t_here = make_zoned(current_zone(), system_clock::now());
     std::cout << t_here << '\n';
 
@@ -22,7 +23,28 @@ int main() {
     auto t_New_York = make_zoned(zone, system_clock::now());
     std::cout << t_New_York << '\n';
 
-    typedef std::chrono::duration<int,std::ratio<3600*24>> days;
+    auto tod = make_time(2h + 16min + 45s + 23ms);
+    std::cout << tod << '\n';
+    auto d = milliseconds(tod);
+    std::cout << d << '\n';
+    auto todoo = make_time(d);
+    std::cout << todoo << '\n';;
+
+    auto truc = t_New_York.get_local_time();
+    std::cout << truc << '\n';
+    truc += d;
+    std::cout << truc << '\n';
+
+    auto ymd = jul/29/2018;
+    auto dp = sys_days{ymd};
+    auto tp = dp + d;
+    std::cout << tp << '\n';
+
+    auto tpp = make_zoned(zone,tp);
+    std::cout << tpp << '\n';
+
+
+    /*typedef std::chrono::duration<int,std::ratio<3600*24>> days;
     auto daypoint = floor<days>(t_New_York);
     auto ymd = year_month_day(daypoint);   // calendar date
     auto tod = make_time(t_New_York - daypoint); // Yields time_of_day type
@@ -35,7 +57,7 @@ int main() {
     auto min = tod.minutes().count();
     auto s   = tod.seconds().count();
 
-    fmt::print("{}y,{}m,{}d : {}h,{}min,{}s",y,m,d,h,min,s);
+    fmt::print("{}y,{}m,{}d : {}h,{}min,{}s",y,m,d,h,min,s);*/
 
 
     double t_simu = 10.8; // Simulation time in seconds
@@ -48,15 +70,6 @@ int main() {
     test = dur + dur2;
     std::cout << test << '\n';
 
-
-    /*frydom::FrTimeZone myTime;
-    time_zone* myTimeZone;
-    myTimeZone = const_cast<time_zone *>(myTime.current_zone());
-    fmt::print("Current time zone is : {}", myTime.GetTimeZone()->name());
-
-    zoned_time<duration<long>> myZonedTime;
-    myZonedTime = myTime.LocalTime(myTime.current_zone(), myTime.now());
-    std::cout << myZonedTime << '\n';*/
 
 
     /*
