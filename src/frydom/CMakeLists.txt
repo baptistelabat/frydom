@@ -8,7 +8,7 @@ set(FRYDOM_SRC_FILES "")
 #=============================================================================
 # FRyDoM options
 #=============================================================================
-option(FRyDoM_WITH_GEOGRAPHICLIB "Getting GeographicLib into FRyDoM." OFF)
+option(FRyDoM_WITH_GEOGRAPHICLIB "Getting GeographicLib into FRyDoM." ON)
 
 # Adding a new subdirectory to the FRyDoM root source directory must be done by adding its name here
 set(subdirs
