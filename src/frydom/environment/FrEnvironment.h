@@ -215,7 +215,9 @@ namespace frydom {
         }
 
         FrTimeZone* GetTimeZone() const {return m_timeZone.get();}
-        //void SetTimeZone(FrTimeZone* TimeZone) {m_timeZone = TimeZone;}
+        //void SetTimeZone(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
+
+
 
         void Update(double time) {
             m_freeSurface->Update(time);
@@ -223,6 +225,7 @@ namespace frydom {
             m_wind->Update(time);
             m_seabed->Update(time);
             m_time = time;
+            m_timeZone->Update(time);
         }
 
         void Initialize() override {
@@ -231,6 +234,7 @@ namespace frydom {
             m_current->Initialize();
             m_wind->Initialize();
             m_seabed->Initialize();
+            m_timeZone->Initialize();
         }
 
         void StepFinalize() override {

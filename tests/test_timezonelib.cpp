@@ -16,7 +16,7 @@ int main() {
     using namespace std::chrono;
     using namespace std::chrono_literals;
 
-    auto t_here = make_zoned(current_zone(), system_clock::now());
+    /*auto t_here = make_zoned(current_zone(), system_clock::now());
     std::cout << t_here << '\n';
 
     auto zone = locate_zone("America/New_York");
@@ -35,13 +35,34 @@ int main() {
     truc += d;
     std::cout << truc << '\n';
 
-    auto ymd = jul/29/2018;
-    auto dp = sys_days{ymd};
+    date::year myYear{2020};
+    date::month myMonth{1};
+    date::day myDay{02};
+
+    auto YMD = myYear/myMonth/myDay;
+    std::cout << YMD << '\n';
+
+    //auto ymd = jul/29/2018;
+    auto dp = sys_days{YMD};
     auto tp = dp + d;
     std::cout << tp << '\n';
 
-    auto tpp = make_zoned(zone,tp);
-    std::cout << tpp << '\n';
+    zoned_time<duration<long>> tpp;
+    tpp = make_zoned(zone, dp);
+    std::cout << tpp << '\n';*/
+
+    frydom::FrTimeZone myTimeZone;
+    myTimeZone.SetZoneDayTime("Australia/Adelaide", 2019, 10, 15, 8, 56, 36, frydom::FrTimeZone::local);
+    myTimeZone.Initialize();
+    std::cout << "Sys_time      :" << myTimeZone.GetSysTime()   <<'\n';
+    std::cout << "Local_time    :" << myTimeZone.GetLocalTime() <<'\n';
+    std::chrono::seconds Offset = myTimeZone.GetTimeDeviation();
+    date::time_of_day<seconds> tod{Offset};
+    std::cout << "Time zone offset :" << tod.hours().count() << "h" << tod.minutes().count() <<"min\n";
+
+    double time = 12.365;
+    myTimeZone.Update(time);
+    std::cout << "Updated local time  :" << myTimeZone.GetLocalTime() <<'\n';
 
 
     /*typedef std::chrono::duration<int,std::ratio<3600*24>> days;
@@ -60,7 +81,7 @@ int main() {
     fmt::print("{}y,{}m,{}d : {}h,{}min,{}s",y,m,d,h,min,s);*/
 
 
-    double t_simu = 10.8; // Simulation time in seconds
+    /*double t_simu = 10.8; // Simulation time in seconds
     int seco = 10, mseco=800;
 
     auto dur = seconds(seco);
@@ -68,7 +89,7 @@ int main() {
 
     milliseconds test;
     test = dur + dur2;
-    std::cout << test << '\n';
+    std::cout << test << '\n';*/
 
 
 

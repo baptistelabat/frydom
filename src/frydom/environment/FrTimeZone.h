@@ -16,31 +16,46 @@ using namespace date;
 namespace frydom {
 
     class FrTimeZone {
-    private:
-        time_zone *m_timeZone;
-        zoned_time<duration<long>> m_zonedTime;
     public:
-        auto now() { return std::chrono::system_clock::now(); }
+        enum SysOrLocal {sys, local};
+    private:
+        zoned_time<milliseconds> m_zonedTime;
+        SysOrLocal m_sysOrLocal = local;
+        date::sys_days m_sysDays;
+        date::local_days m_localDays;
+        std::chrono::milliseconds m_initTime;
+        std::string m_timeZoneName;
+    public:
 
-        //auto current_zone() { return date::current_zone(); }
+        void SetSysOrLocal(SysOrLocal SL) {m_sysOrLocal = SL;}
+
+        SysOrLocal GetSysOrLocal() {return m_sysOrLocal;}
+
+        auto now() { return std::chrono::system_clock::now(); }
 
         auto LocateZone(const std::string &tz_name) { return date::locate_zone(tz_name); }
 
-        auto LocalTime(const time_zone* zone, const sys_time<duration<long>>& st) {return date::make_zoned(zone, st);}
+        void SetTimeZone(const std::string &tz_name) {m_timeZoneName = tz_name;}
 
-        void SetTimeZone(time_zone* timezone) {m_timeZone = timezone;}
+        auto LocalTime(const time_zone* zone, const sys_time<duration<long>>& st) {return date::make_zoned(zone, st);}
 
         void SetZonedTime(zoned_time<duration<long>> zonedtime) {m_zonedTime = zonedtime;}
 
-        std::string GetName() { return m_timeZone->name(); }
+        void SetDay(int Year, int Month, int Day);
 
-        auto GetTimeZone() { return m_timeZone; }
+        void SetTime(int Hours, int Minutes, int Seconds);
+
+        void SetZoneDayTime(std::string zoneName, int Year, int Month, int Day, int Hours, int Minutes, int Seconds, SysOrLocal SL);
 
         auto GetZonedTime() { return m_zonedTime; }
+
+        auto GetTimeZone() { return m_zonedTime.get_time_zone(); }
 
         auto GetLocalTime() { return m_zonedTime.get_local_time(); }
 
         auto GetSysTime() { return m_zonedTime.get_sys_time(); }
+
+        std::chrono::seconds GetTimeDeviation();
 
         std::tm to_tm(date::zoned_seconds tp);
 
@@ -48,6 +63,9 @@ namespace frydom {
 
         date::local_seconds to_local_time(std::tm const &t);
 
+        void Initialize();
+
+        void Update(double time);
 
     };
 
