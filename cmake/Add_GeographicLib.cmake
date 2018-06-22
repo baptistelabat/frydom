@@ -35,6 +35,30 @@ if (NOT GeographicLib_FOUND)
 
 
     endif()
+
+    set(MagneticModel_URL https://sourceforge.net/projects/geographiclib/files/magnetic-distrib/emm2017.tar.bz2)
+    FetchContent_Declare(MagneticModel
+            URL ${MagneticModel_URL}
+            #PATCH_COMMAND patch < "${PROJECT_SOURCE_DIR}/cmake/patches/MagneticModel.patch"
+            )
+    FetchContent_GetProperties(MagneticModel)
+    message(STATUS MagneticModel)
+    message(STATUS ${magneticmodel_POPULATED})
+    message(STATUS ${magneticmodel_SOURCE_DIR})
+    message(STATUS ${magneticmodel_BINARY_DIR})
+
+    if(NOT magneticmodel_POPULATED)
+        message(STATUS "Downloading, Configuring and Generating magnetic models for 'GeographicLib' dependency")
+        FetchContent_Populate(MagneticModel)
+
+        # GeographicLib BUILD OPTIONS
+        #set(GEOGRAPHICLIB_LIB_TYPE SHARED)
+        #set(GEOGRAPHICLIB_DOCUMENTATION OFF)
+
+        #add_subdirectory(${magneticmodel_SOURCE_DIR} ${magneticmodel_BINARY_DIR})
+
+    endif()
+
 endif()
 
 
