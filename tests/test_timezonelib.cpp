@@ -56,13 +56,17 @@ int main() {
     myTimeZone.Initialize();
     std::cout << "Sys_time      :" << myTimeZone.GetSysTime()   <<'\n';
     std::cout << "Local_time    :" << myTimeZone.GetLocalTime() <<'\n';
-    std::chrono::seconds Offset = myTimeZone.GetTimeDeviation();
+    std::chrono::seconds Offset = myTimeZone.GetTimeZoneOffset();
     date::time_of_day<seconds> tod{Offset};
     std::cout << "Time zone offset :" << tod.hours().count() << "h" << tod.minutes().count() <<"min\n";
 
     double time = 12.365;
     myTimeZone.Update(time);
     std::cout << "Updated local time  :" << myTimeZone.GetLocalTime() <<'\n';
+
+    tm m_tm = myTimeZone.to_tm();//myTimeZone.GetZonedTime()
+    fmt::print("Convert to tm : {}-{}-{}, {}:{}:{}\n",1900+m_tm.tm_year,1+m_tm.tm_mon,m_tm.tm_mday,m_tm.tm_hour,m_tm.tm_min,m_tm.tm_sec);
+
 
 
     /*typedef std::chrono::duration<int,std::ratio<3600*24>> days;

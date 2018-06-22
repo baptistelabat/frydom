@@ -29,15 +29,10 @@ namespace frydom {
 
         void SetSysOrLocal(SysOrLocal SL) {m_sysOrLocal = SL;}
 
-        SysOrLocal GetSysOrLocal() {return m_sysOrLocal;}
 
         auto now() { return std::chrono::system_clock::now(); }
 
-        auto LocateZone(const std::string &tz_name) { return date::locate_zone(tz_name); }
-
-        void SetTimeZone(const std::string &tz_name) {m_timeZoneName = tz_name;}
-
-        auto LocalTime(const time_zone* zone, const sys_time<duration<long>>& st) {return date::make_zoned(zone, st);}
+        void SetTimeZoneName(const std::string &tz_name) {m_timeZoneName = tz_name;}
 
         void SetZonedTime(zoned_time<duration<long>> zonedtime) {m_zonedTime = zonedtime;}
 
@@ -55,9 +50,11 @@ namespace frydom {
 
         auto GetSysTime() { return m_zonedTime.get_sys_time(); }
 
-        std::chrono::seconds GetTimeDeviation();
+        auto GetSysOrLocal() {return m_sysOrLocal;}
 
-        std::tm to_tm(date::zoned_seconds tp);
+        std::chrono::seconds GetTimeZoneOffset();
+
+        tm to_tm();//date::zoned_time<milliseconds> tp
 
         date::sys_seconds to_sys_time(std::tm const &t);
 

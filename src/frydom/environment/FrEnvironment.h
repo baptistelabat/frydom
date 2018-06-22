@@ -215,7 +215,7 @@ namespace frydom {
         }
 
         FrTimeZone* GetTimeZone() const {return m_timeZone.get();}
-        //void SetTimeZone(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
+        //void SetTimeZoneName(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
 
 
 
