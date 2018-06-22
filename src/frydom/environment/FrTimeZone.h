@@ -54,7 +54,7 @@ namespace frydom {
 
         std::chrono::seconds GetTimeZoneOffset();
 
-        tm to_tm();//date::zoned_time<milliseconds> tp
+        tm* const to_tm();//date::zoned_time<milliseconds> tp
 
         date::sys_seconds to_sys_time(std::tm const &t);
 
