@@ -38,7 +38,7 @@ namespace frydom {
 
         auto GetSysOrLocal() {return m_UtcOrLocal;}
 
-        std::chrono::seconds GetTimeZoneOffset();
+        double GetTimeZoneOffset(); // returns time zone offset in minutes
 
         tm* const UTC_to_tm();
 

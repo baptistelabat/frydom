@@ -78,8 +78,9 @@ namespace frydom {
         m_initTime = std::chrono::hours(Hours) + std::chrono::minutes(Minutes) + std::chrono::seconds(Seconds);
     }
 
-    std::chrono::seconds FrTimeZone::GetTimeZoneOffset() {
-        return GetTimeZone()->get_info(GetUTCTime()).offset;
+    double FrTimeZone::GetTimeZoneOffset() {
+        ///returns time zone offset in minutes
+        return GetTimeZone()->get_info(GetUTCTime()).offset.count()/60;
     }
 
     void FrTimeZone::Initialize() {
