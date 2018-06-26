@@ -54,7 +54,7 @@ int main() {
     frydom::FrTimeZone myTimeZone;
     myTimeZone.SetZoneDayTime("Australia/Adelaide", 2019, 10, 15, 8, 56, 36, frydom::FrTimeZone::local);
     myTimeZone.Initialize();
-    std::cout << "Sys_time      :" << myTimeZone.GetSysTime()   <<'\n';
+    std::cout << "UTC_time      :" << myTimeZone.GetUTCTime()   <<'\n';
     std::cout << "Local_time    :" << myTimeZone.GetLocalTime() <<'\n';
     std::chrono::seconds Offset = myTimeZone.GetTimeZoneOffset();
     date::time_of_day<seconds> tod{Offset};
@@ -62,9 +62,9 @@ int main() {
 
     double time = 12.365;
     myTimeZone.Update(time);
-    std::cout << "Updated local time  :" << myTimeZone.GetLocalTime() <<'\n';
+    std::cout << "Updated UTC time  :" << myTimeZone.GetUTCTime() <<'\n';
 
-    auto m_tm = myTimeZone.to_tm();//myTimeZone.GetZonedTime()
+    auto m_tm = myTimeZone.UTC_to_tm();//myTimeZone.GetZonedTime()
     fmt::print("Convert to tm : {}-{}-{}, {}:{}:{}\n",1900+m_tm->tm_year,1+m_tm->tm_mon,m_tm->tm_mday,m_tm->tm_hour,m_tm->tm_min,m_tm->tm_sec);
 
 
