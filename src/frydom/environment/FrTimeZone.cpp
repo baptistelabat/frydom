@@ -10,19 +10,19 @@ namespace frydom {
     tm* const FrTimeZone::to_tm() {//date::zoned_time<milliseconds> tp
         /// FROM https://github.com/HowardHinnant/date/wiki/Examples-and-Recipes#converting-to-a-tm
         auto lt = m_zonedTime.get_local_time();
-        auto ld = floor<days>(lt);
-        time_of_day<milliseconds> tod{lt - ld};  // <seconds> can be omitted in C++17
-        year_month_day ymd{ld};
+        auto ld = date::floor<date::days>(lt);
+        date::time_of_day<std::chrono::milliseconds> tod{lt - ld};  // <seconds> can be omitted in C++17
+        date::year_month_day ymd{ld};
         auto t = new tm();
         t->tm_sec = tod.seconds().count();
         t->tm_min = tod.minutes().count();
         t->tm_hour = tod.hours().count();
-        t->tm_mday = (ymd.day() - 0_d).count();
-        t->tm_mon = (ymd.month() - January).count();
-        t->tm_year = (ymd.year() - 1900_y).count();
-        t->tm_wday = (weekday{ld} - Sunday).count();
-        t->tm_yday = (ld - local_days{ymd.year() / jan / 1}).count();
-        t->tm_isdst = m_zonedTime.get_info().save != minutes{0};
+        t->tm_mday = (ymd.day() - date::day(0)).count();
+        t->tm_mon = (ymd.month() - date::January).count();
+        t->tm_year = (ymd.year() - date::year(1900)).count();
+        t->tm_wday = (date::weekday{ld} - date::Sunday).count();
+        t->tm_yday = (ld - date::local_days{ymd.year() / date::jan / 1}).count();
+        t->tm_isdst = m_zonedTime.get_info().save != std::chrono::minutes{0};
         return t;
     }
 
@@ -78,8 +78,8 @@ namespace frydom {
 
     void FrTimeZone::Update(double time) {
         auto Zone = date::locate_zone(m_timeZoneName);
-        int m_secondes = floor(time);
-        int m_milliseconds = floor(1000*(time-floor(time)));
+        int m_secondes = static_cast<int>(floor(time));
+        int m_milliseconds = static_cast<int>(floor(1000 * (time - floor(time))));
         std::chrono::milliseconds m_actualTime = m_initTime + std::chrono::seconds(m_secondes) + std::chrono::milliseconds(m_milliseconds);
         switch (m_sysOrLocal){
             case sys:

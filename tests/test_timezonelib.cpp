@@ -64,8 +64,8 @@ int main() {
     myTimeZone.Update(time);
     std::cout << "Updated local time  :" << myTimeZone.GetLocalTime() <<'\n';
 
-    tm m_tm = myTimeZone.to_tm();//myTimeZone.GetZonedTime()
-    fmt::print("Convert to tm : {}-{}-{}, {}:{}:{}\n",1900+m_tm.tm_year,1+m_tm.tm_mon,m_tm.tm_mday,m_tm.tm_hour,m_tm.tm_min,m_tm.tm_sec);
+    auto m_tm = myTimeZone.to_tm();//myTimeZone.GetZonedTime()
+    fmt::print("Convert to tm : {}-{}-{}, {}:{}:{}\n",1900+m_tm->tm_year,1+m_tm->tm_mon,m_tm->tm_mday,m_tm->tm_hour,m_tm->tm_min,m_tm->tm_sec);
 
 
 

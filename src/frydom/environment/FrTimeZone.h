@@ -10,16 +10,13 @@
 
 /// List of tz database time zones : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
-using namespace std::chrono;
-using namespace date;
-
 namespace frydom {
 
     class FrTimeZone {
     public:
         enum SysOrLocal {sys, local};
     private:
-        zoned_time<milliseconds> m_zonedTime;
+        date::zoned_time<std::chrono::milliseconds> m_zonedTime;
         SysOrLocal m_sysOrLocal = local;
         date::sys_days m_sysDays;
         date::local_days m_localDays;
@@ -34,7 +31,7 @@ namespace frydom {
 
         void SetTimeZoneName(const std::string &tz_name) {m_timeZoneName = tz_name;}
 
-        void SetZonedTime(zoned_time<duration<long>> zonedtime) {m_zonedTime = zonedtime;}
+        void SetZonedTime(date::zoned_time<std::chrono::duration<long>> zonedTime) {m_zonedTime = zonedTime;}
 
         void SetDay(int Year, int Month, int Day);
 
@@ -54,7 +51,7 @@ namespace frydom {
 
         std::chrono::seconds GetTimeZoneOffset();
 
-        tm* const to_tm();//date::zoned_time<milliseconds> tp
+        tm* const to_tm();
 
         date::sys_seconds to_sys_time(std::tm const &t);
 
