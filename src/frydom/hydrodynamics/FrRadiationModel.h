@@ -27,7 +27,7 @@ namespace frydom {
 
         int m_HydroMapIndex = 0; // TODO : patch hydro map multibody
 
-        bool m_speed_dependent;
+        bool m_speed_dependent =  false;
 
 
     public:
@@ -260,7 +260,8 @@ namespace frydom {
             auto nbBodies = GetNbInteractingBodies();
             double val;
 
-            auto mean_speed = hydroBody->GetSteadyVelocity();
+            auto steady_speed = hydroBody->GetSteadyVelocity();
+            auto mean_speed = steady_speed.Length();
 
             for (unsigned int imotionBody=0; imotionBody<nbBodies; imotionBody++) {
 
@@ -278,14 +279,14 @@ namespace frydom {
                         }
 
                         val = Trapz(product, stepSize);
-                        generalizedForce.ElementN(iforce) += mean_speed[iforce] * val;
+                        generalizedForce.ElementN(iforce) += mean_speed * val;
                     }
                 }
 
                 auto velocity = hydroBody->GetLinearVelocityPert();
                 for (unsigned int iforce=0; iforce<3; iforce++) {
                     val = Ainf(iforce, 2) * velocity[2] - Ainf(iforce, 1) * velocity[1];
-                    generalizedForce.ElementN(iforce) += mean_speed[iforce] * val;
+                    generalizedForce.ElementN(iforce) += mean_speed * val;
                 }
 
             }

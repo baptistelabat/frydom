@@ -5,6 +5,9 @@
 #include <matplotlibcpp.h>
 #include "frydom/frydom.h"
 
+#include <iostream>
+#include <fstream>
+
 using namespace frydom;
 
 void PlotResults(const std::vector<double>& vtime, const std::vector<double>& vx,
@@ -37,6 +40,7 @@ void PlotResults(const std::vector<double>& vtime, const std::vector<chrono::ChV
 
 }
 
+
 std::shared_ptr<FrShip> Platform(FrOffshoreSystem* system) {
 
     auto platform = std::make_shared<FrShip>();
@@ -68,6 +72,7 @@ std::shared_ptr<FrShip> Platform(FrOffshoreSystem* system) {
     auto radModel = std::make_shared<FrRadiationConvolutionModel>(system->GetHydroDB(HydroMapIndex), system);
     radModel->SetHydroMapIndex(HydroMapIndex); // TODO : patch hydro map multibody
     radModel->AddRadiationForceToHydroBody(platform);
+    radModel->SetSpeedDependent(false);
 
     // Wind load
     auto wind_force = std::make_shared<FrWindForce>("PolarWindCoeffs_NC.yml");
@@ -208,7 +213,7 @@ int main(int argc, char* argv[]) {
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
     waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
     waveField->SetWavePulsations(0.5, 2., 80, RADS);
-    waveField->GetWaveSpectrum()->SetHs(0.);
+    waveField->GetWaveSpectrum()->SetHs(2.);
     waveField->GetWaveSpectrum()->SetTp(10.);
     waveField->GetWaveRamp()->Deactivate();
     waveField->GetSteadyElevation(0, 0);
@@ -265,4 +270,33 @@ int main(int argc, char* argv[]) {
 
     PlotResults(vtime, pert_velocity, "perturbation", "velocity");
     matplotlibcpp::show();
+
+    // --------------------------------------------------------
+    // Write CSV
+    // --------------------------------------------------------
+
+    unsigned int nt = vtime.size();
+    std::string sep = ";";
+
+    std::ofstream csvfile;
+    csvfile.open("radiation_no_forward_speed.csv");
+
+    csvfile << "time" << sep;
+    csvfile << "X" << sep << "Y" << sep << "Z" << sep;
+    csvfile << "VX" << sep << "VY" << sep << "VZ" << sep;
+    csvfile << "Xs" << sep << "Ys" << sep << "Zs" << sep;
+    csvfile << "Xp" << sep << "Yp" << sep << "Zp";
+    csvfile << "\n";
+
+    for (unsigned int i=0; i<nt; i++) {
+        csvfile << vtime[i] << sep;
+        csvfile << position_body[i].x() << sep << position_body[i].y() << sep << position_body[i].z() << sep;
+        csvfile << velocity_body[i].x() << sep << velocity_body[i].y() << sep << velocity_body[i].z() << sep;
+        csvfile << steady_velocity[i].x() << sep << steady_velocity[i].y() << sep << steady_velocity[i].z() << sep;
+        csvfile << pert_velocity[i].x() << sep << pert_velocity[i].y() << sep << pert_velocity[i].z();
+        csvfile << "\n";
+    }
+
+    csvfile.close();
+
 }
