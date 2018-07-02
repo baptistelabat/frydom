@@ -13,7 +13,10 @@ namespace frydom {
 
     void FrCatenaryForce::UpdateState() {
 
-        m_line->solve();  // FIXME: ne pas le faire pour chacune des forces !! C'est juste un essai
+        //m_line->Update(ChTime); // FIXME : ici la mise à jour du cable est faite deux fois.
+                                // TODO : separer la mise à jour de la force de celui du cable
+
+        //m_line->solve();  // FIXME: ne pas le faire pour chacune des forces !! C'est juste un essai
 
         chrono::ChVector<double> relpos;
         switch (m_line_side) {

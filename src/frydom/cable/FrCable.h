@@ -7,6 +7,7 @@
 
 #include "frydom/core/FrObject.h"
 #include "frydom/core/FrNode.h"
+#include "chrono/physics/ChLink.h"
 
 namespace frydom {
 
@@ -16,6 +17,7 @@ namespace frydom {
     protected:
 
         double m_time = 0.;
+        double m_time_step = 0.;
 
         std::shared_ptr<FrNode> m_startingNode;
         std::shared_ptr<FrNode> m_endingNode;
@@ -23,6 +25,7 @@ namespace frydom {
         double m_youngModulus; // FIXME: mettre des valeurs par defaut non verolees !!!
         double m_sectionArea;
         double m_cableLength;
+        double m_unrollingSpeed;                ///< linear unrolling speed of the cable in m/s
 
         double m_linearDensity; // in kg/m
 
@@ -40,6 +43,7 @@ namespace frydom {
                 : m_startingNode(startingNode),
                   m_endingNode(endingNode),
                   m_cableLength(cableLength),
+                  m_unrollingSpeed(0.),
                   m_youngModulus(youngModulus),
                   m_sectionArea(sectionArea) {}
 
@@ -54,6 +58,12 @@ namespace frydom {
         void SetCableLength(const double L) { m_cableLength = L; }
 
         double GetCableLength() const { return m_cableLength; }
+
+        /// Definition of the linear unrolling speed of the cable in m/s
+        void SetUnrollingSpeed(const double unrollingSpeed) { m_unrollingSpeed = unrollingSpeed; }
+
+        /// Return the linear unrolling speed of the cable in m/s
+        double GetUnrollingSpeed() const { return m_unrollingSpeed; }
 
         void SetDiameter(const double d) {
             m_sectionArea = M_PI * pow(d*0.5, 2);
@@ -105,14 +115,7 @@ namespace frydom {
 
         virtual void StepFinalize() override {}
 
-//        void Update(const double time) {
-//            UpdateTime(time);
-//            UpdateState();
-//        }
-//
-//        virtual void UpdateTime(const double time) = 0;
-//
-//        virtual void UpdateState() = 0;
+
 
     };
 
