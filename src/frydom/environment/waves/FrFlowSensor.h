@@ -71,7 +71,7 @@ namespace frydom {
 
         /// Return the flow velocity at the location of the sensor
         virtual chrono::ChVector<double> GetVelocity() const {
-            return m_waveField->GetVelocity(m_x, m_y, m_z);
+            return m_waveField->GetVelocity(m_x, m_y, m_z, true);
         }
 
         /// Return the flow velocity at the location of the sensor at time t
@@ -82,7 +82,7 @@ namespace frydom {
 
         /// Return the flow acceleration at the location of the sensor
         virtual chrono::ChVector<double> GetAcceleration() const {
-            return m_waveField->GetAcceleration(m_x, m_y, m_z);
+            return m_waveField->GetAcceleration(m_x, m_y, m_z, true);
         }
 
         /// Return the flow acceleration at the location of the sensor at time t
