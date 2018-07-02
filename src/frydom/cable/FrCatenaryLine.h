@@ -22,7 +22,8 @@
 namespace frydom {
 
 
-    class FrCatenaryLine : public FrCable {
+    class FrCatenaryLine : public FrCable,
+                           public chrono::ChLink {
 
     private:
 
@@ -142,10 +143,26 @@ namespace frydom {
         //    m_time = time;
         //}
 
-        void UpdateState() override {
-            FrCable::UpdateState();
+        /// Update time and state of the cable
+        virtual void Update(const double time, bool update_asserts = true) override {
+            UpdateTime(time);
+            UpdateState();
+        }
+//
+        /// Update internal time and time step for dynamic behaviour of the cable
+        virtual void UpdateTime(const double time) override {
+            m_time_step = time - m_time;
+            m_time = time;
+        };
+//
+        /// Update the length of the cable if unrolling speed is defined.
+        virtual void UpdateState() {
+            if (std::abs(m_unrollingSpeed) > DBL_EPSILON and std::abs(m_time_step) > DBL_EPSILON) {
+                m_cableLength += m_unrollingSpeed * m_time_step;
+            }
             solve();
         }
+
     };
 
 

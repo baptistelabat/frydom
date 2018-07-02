@@ -14,6 +14,7 @@
 #include "chrono_fea/ChBeamSection.h"
 #include "chrono_fea/ChElementCableANCF.h"
 #include "chrono_fea/ChLinkPointFrame.h"
+#include "chrono_fea/ChMesh.h"
 #include "FrCable.h"
 
 // TODO: changer FrDynamicCable en FrANCFCable... --> pouvoir proposer d'autres modeles dynamiques de cable
@@ -214,9 +215,15 @@ namespace frydom {
         virtual void StepFinalize() override {}
 
 
+        /// Update internal time and time step for dynamic behaviour of the cable
+        virtual void UpdateTime(const double time) {
+            m_time_step = time - m_time;
+            m_time = time;
+        };
+
         void Update(double time, bool update_assets = true) override {
             ChMesh::Update(time, update_assets);
-            FrCable::Update(time);
+            UpdateTime(time);
         }
 
     };
