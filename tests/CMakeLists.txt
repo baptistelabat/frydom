@@ -67,6 +67,7 @@ configure_file(data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
 configure_file(data/DeepSea_Stavanger/DeepSeaStavanger.hdb5 . COPYONLY)
 configure_file(data/DeepSea_Stavanger/PolarCurrentCoeffs_NC.yml . COPYONLY)
 configure_file(data/DeepSea_Stavanger/PolarWindCoeffs_NC.yml . COPYONLY)
+configure_file(data/DeepSea_Stavanger/DeepSea_WaveDriftCoeff.h5 . COPYONLY)
 
 configure_file(data/bench_sphere_decay_interp.h5 . COPYONLY)
 configure_file(data/bench_sphere_regular.h5 . COPYONLY)
