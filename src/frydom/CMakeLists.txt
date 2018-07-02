@@ -5,7 +5,10 @@ message(STATUS "================================================================
 
 
 set(FRYDOM_SRC_FILES "")
-
+#=============================================================================
+# FRyDoM options
+#=============================================================================
+option(FRyDoM_WITH_GEOGRAPHICLIB "Getting GeographicLib into FRyDoM." ON)
 
 # Adding a new subdirectory to the FRyDoM root source directory must be done by adding its name here
 set(subdirs
@@ -39,7 +42,9 @@ include(Add_MathUtils)
 include(Add_HDF5)
 
 include(Add_yaml-cpp)
-include(Add_GeographicLib)
+if (FRyDoM_WITH_GEOGRAPHICLIB)
+    include(Add_GeographicLib)
+endif ()
 include(Add_fmt)
 include(Add_hermes)
 
@@ -65,11 +70,13 @@ target_link_libraries(FRyDoM_Engine
         yaml-cpp
 #        Irrlicht
         HDF5
-        GeographicLib
+#        GeographicLib
         fmt
         hermes
         )
-
+if (FRyDoM_WITH_GEOGRAPHICLIB)
+    target_link_libraries(FRyDoM_Engine GeographicLib)
+endif()
 #target_link_libraries(FRyDoM_Engine yaml-cpp)
 
 

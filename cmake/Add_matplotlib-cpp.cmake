@@ -21,7 +21,7 @@ if (NOT matplotlib-cpp_FOUND)
 #    message(STATUS ${matplotlib-cpp_SOURCE_DIR})
 #    message(STATUS ${matplotlib-cpp_BINARY_DIR})
     if(NOT matplotlib-cpp_POPULATED)
-        message(STATUS "DOWNLOADING, CONFIGURING AND GENERATING 'matplotlib-cpp' DEPENDENCY")
+        message(STATUS "Downloading, Configuring and Generating 'matplotlib-cpp' dependency")
         FetchContent_Populate(matplotlib-cpp)
 
         # matplotlib-cpp BUILD OPTIONS
