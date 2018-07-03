@@ -56,9 +56,9 @@ int main() {
     myTimeZone.Initialize();
     std::cout << "UTC_time      :" << myTimeZone.GetUTCTime()   <<'\n';
     std::cout << "Local_time    :" << myTimeZone.GetLocalTime() <<'\n';
-    std::chrono::seconds Offset = myTimeZone.GetTimeZoneOffset();
-    date::time_of_day<seconds> tod{Offset};
-    std::cout << "Time zone offset :" << tod.hours().count() << "h" << tod.minutes().count() <<"min\n";
+    auto Offset = myTimeZone.GetTimeZoneOffset();
+    std::cout << "Time zone offset :" << static_cast<int>(Offset/60) << "h"
+                                      << static_cast<int>(Offset - static_cast<int>(Offset / 60)*60) <<"min\n";
 
     double time = 12.365;
     myTimeZone.Update(time);
