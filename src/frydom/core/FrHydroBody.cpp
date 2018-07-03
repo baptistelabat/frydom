@@ -85,6 +85,28 @@ namespace frydom {
         is3DOF = true;
     }
 
+    void FrHydroBody::Set3DOF_ON(chrono::ChVector<> dir,
+                                 chrono::ChVector<> pos1,
+                                 chrono::ChVector<> pos2) {
+        if (is3DOF) { return; }
+
+        try {
+            if (!GetSystem()) {
+                throw std::string("The body must be added to a system before the plane constraint is set");
+            }
+        } catch(std::string const& msg) {
+            std::cerr << msg << std::endl;
+        }
+
+        auto plane_constraint = std::make_shared<chrono::ChLinkMatePlane>();
+        auto free_surface_body = GetSystem()->GetEnvironment()->GetFreeSurface()->GetBody();
+        plane_constraint->Initialize(shared_from_this(), free_surface_body,
+                                     true, pos1, pos2, dir, -dir );
+        system->AddLink(plane_constraint);
+        constraint3DOF = plane_constraint;
+        is3DOF = true;
+    }
+
     void FrHydroBody::SetHydroMesh(std::shared_ptr<FrTriangleMeshConnected> mesh, bool as_asset) {
 
         m_hydro_mesh = mesh;

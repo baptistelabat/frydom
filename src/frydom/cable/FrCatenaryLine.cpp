@@ -165,6 +165,7 @@ namespace frydom {
 
     void FrCatenaryLine::solve() {
 
+
         auto res = get_residual();
         auto jac = analytical_jacobian();
 

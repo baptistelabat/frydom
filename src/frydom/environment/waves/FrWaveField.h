@@ -12,8 +12,12 @@
 
 #include "frydom/core/FrObject.h"
 
+#include "frydom/core/FrConstants.h"
 #include "FrWaveSpectrum.h"
 #include "FrWaveDispersionRelation.h"
+#include "frydom/utils/FrUtils.h"
+
+#include "frydom/environment/waves/FrKinematicStretching.h"
 
 #define JJ std::complex<double>(0, 1)
 
@@ -22,6 +26,8 @@ namespace frydom {
     // Forward declarations
     class FrWaveProbe;
     class FrLinearWaveProbe;
+    class FrFlowSensor;
+    class FrLinearFlowSensor;
 
 
     class FrRamp : public FrObject {  // TODO: placer cette classe dans son propre fichier
@@ -62,6 +68,10 @@ namespace frydom {
 
         bool IsActive() {
             return m_active;
+        }
+
+        void Deactivate() {
+            m_active = false;
         }
 
         void Initialize() {
@@ -108,6 +118,12 @@ namespace frydom {
 
         }
 
+        void Apply(const double t, chrono::ChVector<double>& vect) {
+            Apply(t, vect.x());
+            Apply(t, vect.y());
+            Apply(t, vect.z());
+        }
+
         virtual void StepFinalize() override {}
 
     };
@@ -124,13 +140,17 @@ namespace frydom {
     class FrWaveField : public FrObject {
 
     protected:
-        static const WAVE_MODEL m_waveModel;
+        // FIXME static const WAVE_MODEL m_waveModel;
+        WAVE_MODEL m_waveModel;
 
         double m_time = 0.;
 
         std::unique_ptr<FrWaveSpectrum> m_waveSpectrum = nullptr;
 
         std::shared_ptr<FrRamp> m_waveRamp;
+
+        double m_depth = 0.;                     ///< Water depth (m)
+        bool m_infinite_depth = true;              ///< if true water depth is considered as infinite
 
     public:
 
@@ -152,8 +172,56 @@ namespace frydom {
 
         virtual double GetElevation(double x, double y) const = 0;
 
+        /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
+        virtual chrono::ChVector<double> GetVelocity(double x, double y, double z) const = 0;
+
+        /// Return the eulerian flow velocity. Return null vector if the point is upper the free surface elevation
+        virtual chrono::ChVector<double> GetVelocity(double x, double y, double z, bool cutoff) const {
+
+            if (cutoff) {
+                auto wave_elevation = GetElevation(x, y);
+                if (wave_elevation < z) {
+                    return chrono::VNULL;
+                }
+            }
+            return GetVelocity(x, y, z);
+        }
+
+
+        /// Return the eulerian fluid particule velocity in global reference frame (from vector position)
+        virtual chrono::ChVector<double> GetVelocity(chrono::ChVector<double> vect) const {
+            return GetVelocity(vect.x(), vect.y(), vect.z());
+        }
+
+        /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
+        virtual chrono::ChVector<double> GetAcceleration(double x, double y, double z) const = 0;
+
+        virtual chrono::ChVector<double> GetAcceleration(double x, double y, double z, bool cutoff) const  {
+
+            if (cutoff) {
+                auto wave_elevation = GetElevation(x, y);
+                if (wave_elevation < z) {
+                    return chrono::VNULL;
+                }
+            }
+            return GetAcceleration(x, y, z);
+        }
+
+        /// Return the eulerian fluid particule acceleration in global reference frame (from vector position)
+        virtual chrono::ChVector<double> GetAcceleration(chrono::ChVector<double> vect) const {
+            return GetAcceleration(vect.x(), vect.y(), vect.z());
+        }
+
         virtual std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
                                                               const std::vector<double>& yVect) const = 0;
+
+
+        virtual std::vector<std::vector<std::vector<chrono::ChVector<double>>>> GetVelocityGrid(const std::vector<double>& xvect,
+                                                                  const std::vector<double>& yvect,
+                                                                  const std::vector<double>& zvect) const = 0;
+
+        virtual FrFlowSensor* SetFlowSensor(double x, double y, double z) const;
+        virtual FrFlowSensor* SetFlowSensor(chrono::ChVector<> pos) const;
 
 //        virtual std::shared_ptr<FrWaveProbe> NewWaveProbe(double x, double y) = 0;
         virtual void Initialize() override {}
@@ -166,14 +234,22 @@ namespace frydom {
     class FrNullWaveField : public FrWaveField {
 
     private:
-        static const WAVE_MODEL m_waveModel = NO_WAVES;
-
+        //FIXME : static const WAVE_MODEL m_waveModel = NO_WAVES;
+        WAVE_MODEL m_waveModel = NO_WAVES;
 
     public:
         FrNullWaveField() {}
 
         double GetElevation(double x, double y) const final {
             return 0.;
+        }
+
+        chrono::ChVector<double> GetVelocity(double x, double y, double z) const final {
+            return chrono::ChVector<double>(0.);
+        }
+
+        chrono::ChVector<double> GetAcceleration(double x, double y, double z) const final {
+            return chrono::ChVector<double>(0.);
         }
 
         std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
@@ -199,6 +275,39 @@ namespace frydom {
 
         }
 
+        std::vector<std::vector<std::vector<chrono::ChVector<double>>>>
+        GetVelocityGrid(const std::vector<double>& xvect,
+                    const std::vector<double>& yvect,
+                    const std::vector<double>& zvect) const final {
+
+            auto nx = xvect.size();
+            auto ny = yvect.size();
+            auto nz = zvect.size();
+
+            std::vector<std::vector<std::vector<chrono::ChVector<double>>>> velocity;
+            std::vector<std::vector<chrono::ChVector<double>>> velocity_x;
+            std::vector<chrono::ChVector<double>> velocity_y;
+            chrono::ChVector<double> velocity_z;
+
+            velocity_y.reserve(nz);
+            for (unsigned int i=0; i<nz; ++i) {
+                velocity_y.push_back(0.);
+            }
+
+            velocity_x.reserve(ny);
+            for (unsigned int i=0; i<ny; ++i) {
+                velocity_x.push_back(velocity_y);
+            }
+
+            velocity.reserve(nx);
+            for (unsigned int i=0; i<nx; ++i) {
+                velocity.push_back(velocity_x);
+            }
+
+            return velocity;
+        }
+
+
         std::shared_ptr<FrWaveProbe> NewWaveProbe(double x, double y) {
             // TODO
         }
@@ -216,7 +325,8 @@ namespace frydom {
     class FrLinearWaveField : public FrWaveField {
 
     private:
-        static const WAVE_MODEL m_waveModel = LINEAR_WAVES;
+        //FIXME : static const WAVE_MODEL m_waveModel = LINEAR_WAVES;
+        WAVE_MODEL m_waveModel = LINEAR_WAVES;
 
         LINEAR_WAVE_TYPE m_linearWaveType = LINEAR_DIRECTIONAL;
 
@@ -241,6 +351,10 @@ namespace frydom {
         std::vector<std::vector<double>> m_wavePhases; // Not used in regular wave field
 
         std::vector<std::shared_ptr<FrLinearWaveProbe>> m_waveProbes;
+        std::vector<std::shared_ptr<FrLinearFlowSensor>> m_flowSensor;
+
+        std::shared_ptr<FrKinematicStretching> m_verticalFactor;        ///< Vertical scale velocity factor with stretching
+
 
     public:
 
@@ -252,6 +366,9 @@ namespace frydom {
 
             m_waveRamp = std::make_shared<FrRamp>();
             m_waveRamp->Initialize();
+
+            m_verticalFactor = std::make_shared<FrKinematicStretching>();
+            m_verticalFactor->SetInfDepth(m_infinite_depth);
 
         }
 
@@ -292,6 +409,8 @@ namespace frydom {
             m_period = convert_frequency(period, unit, S);
             Initialize();
         }
+
+        void SetStretching(FrStretchingType type);
 
         unsigned int GetNbFrequencies() const { return m_nbFreq; }
 
@@ -344,6 +463,7 @@ namespace frydom {
         }
 
         void SetWaveDirections(const double minDir, const double maxDir, const unsigned int nbDir, ANGLE_UNIT unit=DEG) {
+
             if (unit == DEG) {
                 m_minDir = minDir * MU_PI_180;
                 m_maxDir = maxDir * MU_PI_180;
@@ -497,6 +617,64 @@ namespace frydom {
 
         }
 
+
+        std::vector<chrono::ChVector<std::complex<double>>>
+        GetSteadyVelocity(const double x, const double y, const double z) const {
+
+            chrono::ChVector<std::complex<double>> vdiff;
+
+            // Initialization
+            std::vector<chrono::ChVector<std::complex<double>>> steadyVelocity;
+            steadyVelocity.reserve(m_nbFreq);
+            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
+                steadyVelocity.emplace_back(0.);
+            }
+
+            // Get the complex wave elevation
+            auto cmplxElevations = GetCmplxElevation(x, y, true);
+
+            // Wave direction
+            std::vector<double> angles;
+            angles.reserve(m_nbDir);
+            if (m_linearWaveType == LINEAR_DIRECTIONAL) {
+                angles = GetWaveDirections(RAD);
+            } else {
+                angles.push_back(m_meanDir);
+            }
+
+            // Pre-compute direction coefficient
+            std::vector<std::complex<double>> cxi, cyi;
+            for (auto& angle: angles) {
+                cxi.push_back(JJ*cos(angle));
+                cyi.push_back(JJ*sin(angle));
+            }
+
+            // Compute steady velocity
+            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
+
+                if (m_verticalFactor->IsSteady()) {
+                    vdiff.x() = cos(m_meanDir) * JJ * c_waveNumbers[ifreq] * m_verticalFactor->Eval(x, y, z, c_waveNumbers[ifreq], m_depth);
+                    vdiff.y() = sin(m_meanDir) * JJ * c_waveNumbers[ifreq] * m_verticalFactor->Eval(x, y, z, c_waveNumbers[ifreq], m_depth);
+                    vdiff.z() = m_verticalFactor->EvalDZ(x, y, z, c_waveNumbers[ifreq], m_depth);
+                } else {
+                    vdiff = chrono::ChVector<double>(1.);
+                }
+
+                vdiff *= c_waveFrequencies[ifreq] / c_waveNumbers[ifreq];
+
+                for (unsigned int idir=0; idir<angles.size(); ++idir) {
+
+                    steadyVelocity[ifreq].x() += vdiff.x() * cmplxElevations[idir][ifreq];
+                    steadyVelocity[ifreq].y() += vdiff.y() * cmplxElevations[idir][ifreq];
+                    steadyVelocity[ifreq].z() += vdiff.z() * cmplxElevations[idir][ifreq];
+
+                }
+            }
+
+            return steadyVelocity;
+
+        }
+
         std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const {
             auto cmplxElevation = GetCmplxElevation(x, y, true);
 
@@ -528,6 +706,8 @@ namespace frydom {
 
         std::shared_ptr<FrLinearWaveProbe> NewWaveProbe(double x, double y);
 
+        std::shared_ptr<FrLinearFlowSensor> NewFlowSensor(double x, double y, double z);
+
         void Update(double time) override {
             m_time = time;
 
@@ -545,6 +725,19 @@ namespace frydom {
             return c_emjwt;
         }
 
+        /// Return the time derivative of the temporal factor
+        std::vector<std::complex<double>> GetTimeCoeffsDt() const {
+
+            std::vector<std::complex<double>> emjwtdt;
+            std::vector<double> w = GetWaveFrequencies(RADS);
+
+            emjwtdt.reserve(m_nbFreq);
+            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
+                emjwtdt.push_back( -JJ * w[ifreq] * c_emjwt[ifreq] );
+            }
+            return emjwtdt;
+        }
+
         double GetElevation(double x, double y) const {
             // FIXME: appliquer la rampe ici aussi !!!
             auto steadyElevation =  GetSteadyElevation(x, y);
@@ -555,6 +748,47 @@ namespace frydom {
             }
             return elevation;
         }
+
+        /// Return the eulerian fluid particule velocity (in global frame)
+        chrono::ChVector<double> GetVelocity(double x, double y, double z) const override {
+
+            auto steadyVelocity = GetSteadyVelocity(x, y, z);
+
+            std::vector<double> Kz(m_nbFreq, 1.), dKz(m_nbFreq, 1.);
+            if (!m_verticalFactor->IsSteady()) {
+                Kz = m_verticalFactor->Eval(x, y, z, c_waveNumbers, m_depth);
+                dKz = m_verticalFactor->EvalDZ(x, y, z, c_waveNumbers, m_depth);
+            }
+
+            chrono::ChVector<double> velocity = 0.;
+            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
+                velocity.x() += std::real( Kz[ifreq] * steadyVelocity[ifreq].x() * c_emjwt[ifreq]);
+                velocity.y() += std::real( Kz[ifreq] * steadyVelocity[ifreq].y() * c_emjwt[ifreq]);
+                velocity.z() += std::real( dKz[ifreq] * steadyVelocity[ifreq].z() * c_emjwt[ifreq]);
+            }
+            return velocity;
+        }
+
+        /// Return the eulerian fluid particule acceleration (in global frame)
+        chrono::ChVector<double> GetAcceleration(double x, double y, double z) const override {
+
+            auto steadyVelocity = GetSteadyVelocity(x, y, z);
+            auto emjwt_dt = this->GetTimeCoeffsDt();
+
+            chrono::ChVector<std::complex<double>> acceleration(0.);
+            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
+                acceleration += steadyVelocity[ifreq] * emjwt_dt[ifreq];
+            }
+
+            chrono::ChVector<double> realAcceleration = ChReal(acceleration);
+
+            if (m_waveRamp && m_waveRamp->IsActive()) {
+                m_waveRamp->Apply(m_time, realAcceleration);
+            }
+
+            return realAcceleration;
+        }
+
 
         std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
                                                       const std::vector<double>& yVect) const {
@@ -583,7 +817,69 @@ namespace frydom {
         }
 
 
+        /// Return the flow velocity vector field in a grid [xvect x yvect x zvect]
+        std::vector<std::vector<std::vector<chrono::ChVector<double>>>> GetVelocityGrid(const std::vector<double>& xvect,
+                                                          const std::vector<double>& yvect,
+                                                          const std::vector<double>& zvect) const override {
+
+            auto nx = xvect.size();
+            auto ny = yvect.size();
+            auto nz = zvect.size();
+
+            std::vector<std::vector<std::vector<chrono::ChVector<double>>>> velocity;
+            std::vector<std::vector<chrono::ChVector<double>>> velocity_x;
+            std::vector<chrono::ChVector<double>> velocity_y;
+            chrono::ChVector<double> velocity_z;
+
+            double x, y, z;
+
+            for (unsigned int ix=0; ix<nx; ++ix ) {
+                velocity_x.clear();
+                x = xvect[ix];
+                for (unsigned int iy=0; iy<ny; ++iy) {
+                    velocity_y.clear();
+                    y = yvect[iy];
+                    for (unsigned int iz=0; iz<nz; ++iz) {
+                        z = zvect[iz];
+                        velocity_z = GetVelocity(x, y, z);
+                        velocity_y.push_back(velocity_z);
+                    }
+                    velocity_x.push_back(velocity_y);
+                }
+                velocity.push_back(velocity_x);
+            }
+            return velocity;
+        }
+
+    private:
+
+        double Fz(const double& z, const double& k) const {
+
+            double result;
+
+            if (m_infinite_depth) {
+                result = exp(k * z);
+            } else {
+                result = cosh(k*(z+m_depth)) / sinh(k*m_depth);
+            }
+
+            return result;
+        }
+
+        inline double dFz(const double& z, const double& k) const {
+
+            double result;
+
+            if (m_infinite_depth) {
+                result = k * exp(k * z);
+            } else {
+                result = k * sinh(k*(z+m_depth)) / sinh(k*m_depth);
+            }
+
+        }
+
     };
+
 
 //    std::shared_ptr<FrWaveField> MakeWaveField(FrWaveField::LINEAR_WAVE_TYPE waveType) {
 //

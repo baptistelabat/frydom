@@ -80,6 +80,7 @@ namespace frydom {
         void Set3DOF_ON();
         void Set3DOF_OFF();
         void Set3DOF_ON(chrono::ChVector<> dir);
+        void Set3DOF_ON(chrono::ChVector<> dir, chrono::ChVector<> pos1, chrono::ChVector<> pos2);
 
 
         /// Set the hydrodynamic mesh from a mesh shared instance

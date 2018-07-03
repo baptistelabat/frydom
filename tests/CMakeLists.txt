@@ -1,6 +1,8 @@
 message(STATUS "    ...tests")
 
 set(FRYDOM_TESTS
+        bench_SphereDecay
+        bench_SphereRegular
         demo_FreeSurface
         demo_O3_juin_2017
         demo_rotation
@@ -26,6 +28,11 @@ set(FRYDOM_TESTS
         test_wave_spectrum
         test_geographicLib
         test_timezonelib
+        test_sphere_irregular
+        test_MorisonModel
+        test_CompositeMorisonModel
+        test_unrolling_cable
+        test_unrolling_catenary_line
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")
@@ -61,3 +68,9 @@ configure_file(data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
 configure_file(data/DeepSea_Stavanger/DeepSeaStavanger.hdb5 . COPYONLY)
 configure_file(data/DeepSea_Stavanger/PolarCurrentCoeffs_NC.yml . COPYONLY)
 configure_file(data/DeepSea_Stavanger/PolarWindCoeffs_NC.yml . COPYONLY)
+configure_file(data/DeepSea_Stavanger/DeepSea_WaveDriftCoeff.h5 . COPYONLY)
+
+configure_file(data/bench_sphere_decay_interp.h5 . COPYONLY)
+configure_file(data/bench_sphere_regular.h5 . COPYONLY)
+configure_file(data/sphere.obj . COPYONLY)
+configure_file(data/sphere_hdb.h5 . COPYONLY)

@@ -4,6 +4,7 @@
 
 #include "FrWaveField.h"
 #include "FrWaveProbe.h"
+#include "FrFlowSensor.h"
 
 namespace frydom {
 
@@ -13,6 +14,12 @@ namespace frydom {
         waveProbe->SetWaveField(this);
         m_waveProbes.push_back(waveProbe);
         return waveProbe;
+    }
+
+    std::shared_ptr<FrLinearFlowSensor> FrLinearWaveField::NewFlowSensor(double x, double y, double z) {
+        auto flowSensor = std::make_shared<FrLinearFlowSensor>(this, x, y, z);
+        m_flowSensor.push_back(flowSensor);
+        return flowSensor;
     }
 
     std::vector<std::vector<double>> FrLinearWaveField::_GetWaveAmplitudes() const {
@@ -36,6 +43,42 @@ namespace frydom {
                 break;
         }
         return waveAmplitudes;
+    }
+
+
+    void FrLinearWaveField::SetStretching(FrStretchingType type) {
+
+        switch (type) {
+            case NO_STRETCHING:
+                m_verticalFactor = std::make_shared<FrKinematicStretching>();
+                break;
+            case VERTICAL:
+                m_verticalFactor = std::make_shared<FrKinStretchingVertical>();
+                break;
+            case EXTRAPOLATE:
+                m_verticalFactor = std::make_shared<FrKinStretchingExtrapol>();
+                break;
+            case WHEELER:
+                m_verticalFactor = std::make_shared<FrKinStretchingWheeler>(this);
+                break;
+            case CHAKRABARTI:
+                m_verticalFactor = std::make_shared<FrKinStretchingChakrabarti>(this);
+            case DELTA:
+                m_verticalFactor = std::make_shared<FrKinStretchingDelta>(this);
+            default:
+                m_verticalFactor = std::make_shared<FrKinematicStretching>();
+                break;
+        }
+        m_verticalFactor->SetInfDepth(m_infinite_depth);
+    }
+
+
+    FrFlowSensor* FrWaveField::SetFlowSensor(double x, double y, double z) const {
+        return new FrFlowSensor(x, y, z);
+    }
+
+    FrFlowSensor* FrWaveField::SetFlowSensor(chrono::ChVector<> pos) const {
+        return new FrFlowSensor(pos);
     }
 
 
