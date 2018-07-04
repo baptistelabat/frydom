@@ -110,6 +110,12 @@ namespace frydom {
         }
     }
 
+    FrTimeZone::FrTimeZone() {
+        auto tp = date::make_zoned(date::current_zone(), std::chrono::system_clock::now());
+        auto lt = tp.get_local_time();
+        m_localDays = date::floor<date::days>(lt);
+        m_initTime = date::floor<std::chrono::milliseconds>(lt - m_localDays);
+    }
 
 
 }

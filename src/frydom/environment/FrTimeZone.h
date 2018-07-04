@@ -21,8 +21,10 @@ namespace frydom {
         date::sys_days m_sysDays;
         date::local_days m_localDays;
         std::chrono::milliseconds m_initTime;
-        const date::time_zone *m_timeZone;
+        const date::time_zone *m_timeZone = date::current_zone();
     public:
+
+        FrTimeZone();
 
         void SetSysOrLocal(UtcOrLocal SL) {m_UtcOrLocal = SL;}
 

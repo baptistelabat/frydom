@@ -52,7 +52,7 @@ int main() {
     std::cout << tpp << '\n';*/
 
     frydom::FrTimeZone myTimeZone;
-    myTimeZone.SetZoneDayTime("Australia/Adelaide", 2019, 10, 15, 8, 56, 36, frydom::FrTimeZone::local);
+    //myTimeZone.SetZoneDayTime("Australia/Adelaide", 2019, 10, 15, 8, 56, 36, frydom::FrTimeZone::local);
     myTimeZone.Initialize();
     std::cout << "UTC_time      :" << myTimeZone.GetUTCTime()   <<'\n';
     std::cout << "Local_time    :" << myTimeZone.GetLocalTime() <<'\n';
