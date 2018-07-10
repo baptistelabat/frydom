@@ -10,7 +10,7 @@ if (NOT chrono_FOUND)
     set(chrono_URL "https://github.com/projectchrono/chrono.git")
     FetchContent_Declare(chrono
             GIT_REPOSITORY ${chrono_URL}
-            GIT_TAG "3.0.0"
+            GIT_TAG develop
             GIT_PROGRESS 1
             PATCH_COMMAND git apply "${PROJECT_SOURCE_DIR}/cmake/patches/chrono_3.0.0.patch"
             )
