@@ -37,6 +37,7 @@ set(FRYDOM_TESTS
         test_unrolling_cable
         test_unrolling_catenary_line
         test_current-wind_relative_velocity
+        bench_DTMB5512_captive
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")
@@ -84,3 +85,6 @@ configure_file(data/Ship/Ship.obj . COPYONLY)
 configure_file(data/Ship/Ship_PolarCurrentCoeffs.yml . COPYONLY)
 configure_file(data/Ship/Ship_PolarWindCoeffs.yml . COPYONLY)
 configure_file(data/Ship/Ship_WaveDriftCoeff.h5 . COPYONLY)
+
+configure_file(data/DTMB5512/DTMB5512.obj . COPYONLY)
+configure_file(data/DTMB5512/DTMB5512_hdb.h5 . COPYONLY)

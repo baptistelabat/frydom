@@ -3,7 +3,6 @@
 //
 
 #include "frydom/frydom.h"
-#include "frydom/frydom_dice.h"
 
 using namespace frydom;
 using namespace chrono;
@@ -12,11 +11,11 @@ using namespace chrono;
 // Ship model : DTMB5512 (IIHR - Yoon 2009)
 // ----------------------------------------------------------
 
-std::shared_ptr<DShip> DTMB5512(FrOffshoreSystem* system) {
+std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
 
     auto ship_pos = ChVector<>(0., 0., 0.);
 
-    auto ship = std::make_shared<DShip>();
+    auto ship = std::make_shared<FrShip>();
     system->AddBody(ship);
 
     // Geometry properties
