@@ -31,7 +31,8 @@ int main() {
     ship->Initialize();
     ship->Update();
 
-    auto currentRelativeVelocity = ship->GetCurrentRelativeVelocity(chrono::ChVector<>(10,0,0),NED,PARENT);
+    //auto currentRelativeVelocity = ship->GetCurrentRelativeVelocity(chrono::ChVector<>(10,0,0),NED,PARENT);
+    auto currentRelativeVelocity = ship->GetCurrentRelativeVelocity(Node.get(),NED,PARENT);
     auto windRelativeVelocity = ship->GetWindRelativeVelocity(Node.get(),NED,PARENT);
 
     fmt::print("Current relative velocity : ({},{},{})\n",

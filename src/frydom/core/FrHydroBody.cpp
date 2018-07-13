@@ -190,6 +190,23 @@ namespace frydom {
         }
     }
 
+    chrono::ChVector<>
+    FrHydroBody::GetCurrentRelativeVelocity(const FrNode* mNode, FrFrame frame, FrRefSyst Refsys) const {
+        auto nodeVelocity = PointSpeedLocalToParent(mNode->GetPos());
+        auto current_relative_velocity = GetSystem()->GetEnvironment()->GetCurrent()->GetFluxVector(NWU) - nodeVelocity;
+        if (Refsys == LOCAL) {
+            /// Transformation of the DIRECTION
+            current_relative_velocity = TransformDirectionParentToLocal(current_relative_velocity);
+            current_relative_velocity = mNode->TransformDirectionParentToLocal(current_relative_velocity);
+        }
+        switch (frame) {
+            case NWU:
+                return current_relative_velocity;
+            case NED:
+                return NWU2NED(current_relative_velocity);
+        }
+    }
+
     double FrHydroBody::GetCurrentRelativeAngle(FrFrame frame, ANGLE_UNIT angleUnit) const {
         double angle = m_current_relative_angle;
         if (angleUnit == DEG) {
@@ -231,8 +248,8 @@ namespace frydom {
         auto wind_relative_velocity = GetSystem()->GetEnvironment()->GetWind()->GetFluxVector(NWU) - nodeVelocity;
         if (Refsys == LOCAL){
                 /// Transformation of the DIRECTION, via frame composition
-                auto localNodeVelocity = TransformDirectionParentToLocal(wind_relative_velocity);
-                wind_relative_velocity = mNode->TransformDirectionParentToLocal(localNodeVelocity);
+                wind_relative_velocity = TransformDirectionParentToLocal(wind_relative_velocity);
+                wind_relative_velocity = mNode->TransformDirectionParentToLocal(wind_relative_velocity);
         }
         switch (frame) {
             case NWU:

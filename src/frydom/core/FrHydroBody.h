@@ -256,6 +256,10 @@ namespace frydom {
         chrono::ChVector<>
         GetCurrentRelativeVelocity(const chrono::ChVector<>& localpos, FrFrame frame = NWU, FrRefSyst Refsys = PARENT)const;
 
+        /// Get the relative velocity of the current field respect to a Node
+        chrono::ChVector<>
+        GetCurrentRelativeVelocity(const FrNode* mNode, FrFrame frame = NWU, FrRefSyst Refsys = PARENT)const;
+
         /// Get the current relative angle
         double GetCurrentRelativeAngle(FrFrame frame= NWU, ANGLE_UNIT angleUnit= RAD) const;
         // ==========================================================================
@@ -265,8 +269,8 @@ namespace frydom {
         /// Get the relative velocity of the wind field, taking into account the body's own velocity
         chrono::ChVector<> GetWindRelativeVelocity(FrFrame frame= NWU, FrRefSyst Refsys = PARENT) const;
 
-        /// Get the relative velocity of the wind field respect to a point M
-        chrono::ChVector<> GetWindRelativeVelocity(const FrNode* Node, FrFrame frame = NWU, FrRefSyst Refsys = PARENT)const;
+        /// Get the relative velocity of the wind field respect to a Node
+        chrono::ChVector<> GetWindRelativeVelocity(const FrNode* mNode, FrFrame frame = NWU, FrRefSyst Refsys = PARENT)const;
 
         // ==========================================================================
         // METHODS ABOUT ADDED MASS
