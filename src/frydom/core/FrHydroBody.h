@@ -295,26 +295,27 @@ namespace frydom {
         // ==========================================================================
 
         /// Get the relative velocity of the current field, taking into account the body's own velocity
-        chrono::ChVector<> GetCurrentRelativeVelocity(FrFrame frame= NWU) const;
+        chrono::ChVector<> GetCurrentRelativeVelocity(FrFrame frame= NWU, FrRefSyst Refsys = PARENT) const;
 
         /// Get the relative velocity of the current field respect to a point M
-        chrono::ChVector<> GetCurrentRelativeVelocity(const chrono::ChVector<>& localpos, FrFrame frame = NWU)const;
+        chrono::ChVector<>
+        GetCurrentRelativeVelocity(const chrono::ChVector<>& localpos, FrFrame frame = NWU, FrRefSyst Refsys = PARENT)const;
+
+        /// Get the relative velocity of the current field respect to a Node
+        chrono::ChVector<>
+        GetCurrentRelativeVelocity(const FrNode* mNode, FrFrame frame = NWU, FrRefSyst Refsys = PARENT)const;
 
         /// Get the current relative angle
-        double GetCurrentRelativeAngle(FrFrame frame= NWU, ANGLE_UNIT angleUnit= RAD) const{
-            double angle = m_current_relative_angle;
-            if (angleUnit == DEG) {
-                angle = degrees(angle);
-            }
+        double GetCurrentRelativeAngle(FrFrame frame= NWU, ANGLE_UNIT angleUnit= RAD) const;
+        // ==========================================================================
+        // METHODS ABOUT WIND
+        // ==========================================================================
 
-            switch (frame) {
-                case NWU:
-                    return angle;
-                case NED:
-                    return -angle;  // TODO: A verifier...
-            }
+        /// Get the relative velocity of the wind field, taking into account the body's own velocity
+        chrono::ChVector<> GetWindRelativeVelocity(FrFrame frame= NWU, FrRefSyst Refsys = PARENT) const;
 
-        }
+        /// Get the relative velocity of the wind field respect to a Node
+        chrono::ChVector<> GetWindRelativeVelocity(const FrNode* mNode, FrFrame frame = NWU, FrRefSyst Refsys = PARENT)const;
 
         // ==========================================================================
         // METHODS ABOUT ADDED MASS

@@ -36,6 +36,8 @@ namespace frydom {
     };
 
     enum FrRefSyst {
+        LOCAL,
+        PARENT,
         ABS,   ///< Absolute system of reference
         REL    ///< Relative system of reference
     };
