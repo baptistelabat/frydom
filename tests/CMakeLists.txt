@@ -27,12 +27,15 @@ set(FRYDOM_TESTS
         test_wave_field
         test_wave_spectrum
         test_geographicLib
+        test_timezonelib
         test_sphere_irregular
         test_MorisonModel
         test_CompositeMorisonModel
         test_dynamic_wave_probe
         test_waveProbe
         test_IRF_ForwardSpeed
+        test_unrolling_cable
+        test_unrolling_catenary_line
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")
@@ -68,6 +71,7 @@ configure_file(data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
 configure_file(data/DeepSea_Stavanger/DeepSeaStavanger.hdb5 . COPYONLY)
 configure_file(data/DeepSea_Stavanger/PolarCurrentCoeffs_NC.yml . COPYONLY)
 configure_file(data/DeepSea_Stavanger/PolarWindCoeffs_NC.yml . COPYONLY)
+configure_file(data/DeepSea_Stavanger/DeepSea_WaveDriftCoeff.h5 . COPYONLY)
 
 configure_file(data/bench_sphere_decay_interp.h5 . COPYONLY)
 configure_file(data/bench_sphere_regular.h5 . COPYONLY)

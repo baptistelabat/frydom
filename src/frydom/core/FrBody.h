@@ -12,6 +12,7 @@
 #include "frydom/core/FrConstants.h"
 #include "frydom/core/FrForce.h"
 #include "hermes/hermes.h"
+#include "frydom/mesh/FrTriangleMeshConnected.h"
 
 namespace frydom {
 
@@ -24,6 +25,7 @@ namespace frydom {
 
     protected:
         std::vector<std::shared_ptr<FrForce>> external_force_list;
+        std::shared_ptr<FrTriangleMeshConnected> m_visu_mesh;
         hermes::Message m_bodyMsg;
 
     public:
@@ -92,6 +94,12 @@ namespace frydom {
             return COGFrame.GetPos();
         }
 
+        /// Set the mesh used for visualization from a mesh shared instance
+        void SetVisuMesh(std::shared_ptr<FrTriangleMeshConnected> mesh);
+
+        /// Set the mesh used for visualization from a wavefront obj file
+        void SetVisuMesh(std::string obj_filename);
+
         virtual void Initialize() override {
             // TODO: mettre l'initialisation de message dans une methode privee qu'on appelle ici...
 
@@ -112,9 +120,6 @@ namespace frydom {
 
             m_bodyMsg.Initialize();
             m_bodyMsg.Send();
-
-
-
 
 
             // Initializing forces

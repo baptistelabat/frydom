@@ -7,8 +7,10 @@
 
 #include "frydom/core/FrObject.h"
 
-// Current includes
+// Time includes
+#include "FrTimeZone.h"
 
+// Current includes
 #include "current/FrCurrent.h"
 #include "current/FrCurrentPolarCoeffs.h"
 #include "current/FrCurrentForce.h"
@@ -38,6 +40,7 @@ namespace frydom {
         FrOffshoreSystem* m_system;
 
         double m_time;
+        std::unique_ptr<FrTimeZone> m_timeZone;
 
         // Environment components
         std::unique_ptr<FrFreeSurface> m_freeSurface;
@@ -71,6 +74,7 @@ namespace frydom {
             m_wind = std::make_shared<FrUniformWind>();
             m_seabed = std::make_unique<FrSeabed>();
             m_LocalCartesian = std::make_unique<GeographicLib::LocalCartesian>();
+            m_timeZone = std::make_unique<FrTimeZone>();
         }
 
         void SetSystem(FrOffshoreSystem* system) {
@@ -210,12 +214,18 @@ namespace frydom {
             m_LocalCartesian->Reverse(x, y, z, lat, lon, h);
         }
 
+        FrTimeZone* GetTimeZone() const {return m_timeZone.get();}
+        //void SetTimeZoneName(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
+
+
+
         void Update(double time) {
             m_freeSurface->Update(time);
             m_current->Update(time);
             m_wind->Update(time);
             m_seabed->Update(time);
             m_time = time;
+            m_timeZone->Update(time);
         }
 
         void Initialize() override {
@@ -224,6 +234,7 @@ namespace frydom {
             m_current->Initialize();
             m_wind->Initialize();
             m_seabed->Initialize();
+            m_timeZone->Initialize();
         }
 
         void StepFinalize() override {

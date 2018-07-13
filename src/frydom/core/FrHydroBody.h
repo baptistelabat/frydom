@@ -8,7 +8,6 @@
 #include <chrono/physics/ChLinkMate.h>
 //#include <frydom/environment/waves/FrDynamicWaveProbe.h>
 #include "chrono/physics/ChBodyAuxRef.h"
-#include "frydom/mesh/FrTriangleMeshConnected.h"
 #include "FrBody.h"
 #include "FrConstants.h"
 #include "FrEulerAngles.h"
@@ -38,7 +37,6 @@ namespace frydom {
 
     protected:
         std::shared_ptr<FrTriangleMeshConnected> m_hydro_mesh;
-        std::shared_ptr<FrTriangleMeshConnected> m_visu_mesh;
 
         // Attributes to let the body into the horizontal plane
         bool is3DOF = false;

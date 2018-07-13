@@ -4,7 +4,7 @@
 
 #include "FrBody.h"
 #include "FrNode.h"
-#include "frydom/core/FrHydroBody.h"
+#include "chrono/assets/ChTriangleMeshShape.h"
 
 namespace frydom {
 
@@ -39,6 +39,22 @@ namespace frydom {
         return node;
     }
 
+
+    void FrBody::SetVisuMesh(std::shared_ptr<FrTriangleMeshConnected> mesh) {
+
+        m_visu_mesh = mesh;
+
+        auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
+        shape->SetMesh(*mesh);
+        AddAsset(shape);
+
+    }
+
+    void FrBody::SetVisuMesh(std::string obj_filename) {
+        auto mesh=std::make_shared<FrTriangleMeshConnected>();
+        mesh->LoadWavefrontMesh(obj_filename);
+        SetVisuMesh(mesh);
+    }
 
 
 }  // end namespace frydom
