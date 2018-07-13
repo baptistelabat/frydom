@@ -137,6 +137,14 @@ namespace frydom {
         m_ImpulseResponseFunction[ibody][idof] = IRF;
     }
 
+    void FrBEMBody::SetSpeedDependentIRF(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd &IRF) {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(IRF.rows() == GetNbForceMode());
+        assert(IRF.cols() == m_HDB->GetNbTimeSamples());
+        m_SpeedDependentIRF[ibody][idof] = IRF;
+    }
+
     Eigen::MatrixXcd FrBEMBody::GetDiffraction(const unsigned int iangle) const {
         assert(iangle < m_HDB->GetNbWaveDirections());
         return m_Diffraction[iangle];
@@ -257,6 +265,24 @@ namespace frydom {
         assert(idof < GetNbMotionMode());
         assert(iforce < GetNbForceMode());
         return GetAddedMass(m_ID, idof, iforce);
+    }
+
+    std::vector<Eigen::MatrixXd> FrBEMBody::GetSpeedDependentIRF(unsigned int ibody) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        return m_SpeedDependentIRF[ibody];
+    }
+
+    Eigen::MatrixXd FrBEMBody::GetSpeedDependentIRF(unsigned int ibody, unsigned int idof) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        return m_SpeedDependentIRF[ibody][idof];
+    }
+
+    Eigen::VectorXd FrBEMBody::GetSpeedDependentIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(iforce < GetNbForceMode());
+        return m_SpeedDependentIRF[ibody][idof].row(iforce);
     }
 
     void FrBEMBody::FilterRadiation() {
@@ -400,8 +426,6 @@ namespace frydom {
 
     void FrBEMBody::GenerateImpulseResponseFunctions() {
 
-
-
         // Frequencies
         auto wmin = m_HDB->GetMinFrequency();
         auto wmax = m_HDB->GetMaxFrequency();
@@ -418,7 +442,6 @@ namespace frydom {
                                              "initialized in the hydrodynamic database");
         }
 
-
 //        auto dt = p_dt;
 //        if (dt == 0.) {
 //            // Ensuring a time sample satisfying largely the shannon theorem (5x by security...)
@@ -426,8 +449,6 @@ namespace frydom {
 //        }
 
         auto time = arange<double>(0, tf, dt);
-
-
 
         auto nbTime = time.size();
 
@@ -476,16 +497,90 @@ namespace frydom {
                         localIRF(iForce, iTime) = Trapz(integrand, dw);
                     }
                 }
-
                 localIRF /= MU_PI_2;
                 body_i_impulseResponseFunctions.push_back(localIRF);
-
             }
-
             m_ImpulseResponseFunction.push_back(body_i_impulseResponseFunctions);
-
         }  // Loop on bodies
 
+    }
+
+    void FrBEMBody::GenerateSpeedDependentIRF() {
+
+        auto wmin = m_HDB->GetMinFrequency();
+        auto wmax = m_HDB->GetMaxFrequency();
+        auto nbFreq = m_HDB->GetNbFrequencies();
+        auto omega = m_HDB->GetFrequencies();
+        auto dw = m_HDB->GetStepFrequency();
+
+        auto tf = m_HDB->GetFinalTime();
+        auto dt = m_HDB->GetTimeStep();
+
+        if (std::abs(dt) < DBL_EPSILON) {
+            throw std::runtime_error("Time discretization for impulse response functions has not been "
+                                             "initialized in the hydrodynamic database");
+        }
+
+        auto time = arange<double>(0, tf, dt);
+
+        auto nbTime = time.size();
+
+        m_SpeedDependentIRF.clear();
+        m_SpeedDependentIRF.swap(m_SpeedDependentIRF);
+        m_SpeedDependentIRF.reserve(m_HDB->GetNbBodies());
+
+        unsigned int nbMotion, nbForce;
+        std::vector<double> integrand;
+        integrand.reserve(nbFreq);
+        double val;
+
+        for (unsigned int iBody=0; iBody < m_HDB->GetNbBodies(); iBody++) {
+
+            nbMotion = m_HDB->GetBody(iBody)->GetNbMotionMode();
+            nbForce = m_HDB->GetBody(iBody)->GetNbForceMode();
+
+            std::vector<Eigen::MatrixXd> body_i_IRF;
+            body_i_IRF.reserve(nbMotion);
+
+            // iMotion : 0 -> 4
+            Eigen::MatrixXd localIRF(nbForce, nbTime);
+            for (unsigned int iMotion=0; iMotion<5; iMotion++) {
+                body_i_IRF.push_back(localIRF);
+            }
+
+            // iMotion : 5
+            for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                double Ainf = m_InfiniteAddedMass[iBody](3,iForce);
+                auto kernel = m_AddedMass[iBody][3].row(iForce);
+                for (unsigned int iTime=0; iTime<nbTime; iTime++) {
+                    integrand.clear();
+                    for (unsigned int iFreq=0; iFreq<nbFreq; iFreq++) {
+                        val = (kernel[iFreq] - Ainf) * cos(omega[iFreq] * time[iTime]);
+                        integrand.push_back(val);
+                    }
+                    localIRF(iForce, iTime) = Trapz(integrand, dw);
+                }
+                localIRF /= MU_PI_2;
+                body_i_IRF.push_back(localIRF);
+            }
+
+            //iMotion : 6
+            for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                double Ainf = m_InfiniteAddedMass[iBody](2,iForce);
+                auto kernel = m_AddedMass[iBody][2].row(iForce);
+                for (unsigned int iTime=0; iTime<nbTime; iTime++) {
+                    integrand.clear();
+                    for (unsigned int iFreq=0; iFreq<nbFreq; iFreq++) {
+                        val = (Ainf - kernel[iFreq]) * cos(omega[iFreq] * time[iTime]);
+                        integrand.push_back(val);
+                    }
+                    localIRF(iForce, iTime) = Trapz(integrand, dw);
+                }
+                localIRF /= MU_PI_2;
+                body_i_IRF.push_back(localIRF);
+            }
+            m_SpeedDependentIRF.push_back(body_i_IRF);
+        }
     }
 
     void FrBEMBody::IntLoadResidual_Mv(const unsigned int off,

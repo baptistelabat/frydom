@@ -17,7 +17,6 @@ namespace frydom {
 
     private:
 
-
     public:
 		FrShip() : FrHydroBody() {}
 

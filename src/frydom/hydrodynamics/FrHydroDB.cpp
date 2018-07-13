@@ -40,6 +40,18 @@ namespace frydom {
 
     }
 
+    void FrHydroDB::GenerateSpeedDependentIRF() {
+
+        assert(m_TimeDiscretization.GetMax() > m_TimeDiscretization.GetMin());
+        assert(m_TimeDiscretization.GetStep() > DBL_EPSILON);
+
+        // Computing the speed dependent term of the impulse response function for every bodies
+        auto nbBody = GetNbBodies();
+        for (unsigned int iBody=0; iBody<nbBody; iBody++) {
+            GetBody(iBody)->GenerateSpeedDependentIRF();
+        }
+    }
+
 
     std::shared_ptr<FrHydroMapper> FrHydroDB::GetMapper() {
         return std::make_shared<FrHydroMapper>(this);

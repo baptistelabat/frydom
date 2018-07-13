@@ -6,6 +6,7 @@
 #define FRYDOM_FRHYDROBODY_H
 
 #include <chrono/physics/ChLinkMate.h>
+//#include <frydom/environment/waves/FrDynamicWaveProbe.h>
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "FrBody.h"
 #include "FrConstants.h"
@@ -21,6 +22,15 @@ namespace chrono {
 }
 
 namespace frydom {
+
+    enum FrEquilibriumFrameType {
+        DampingSpring,
+        MeanMotion,
+        SteadyVelocity,
+        PrescribedMotion,
+        WorldFixed,
+        BodyFixed
+    };
 
     class FrHydroBody : public FrBody {
 
@@ -54,9 +64,11 @@ namespace frydom {
                                             // way to take forward speed into account concerning the wave excitation...
                                             // TODO: use it...
 
-        chrono::ChFrame<double> m_equilibriumFrame;
+        std::shared_ptr<chrono::ChFrameMoving<double>> m_equilibriumFrame;           ///< Hydrodynamic equilibrium frame where dynamic motion equation is solved
+//        FrDynamicWaveProbe m_dynamicFrame;
 
-        chrono::ChVariables* variables_ptr;
+        chrono::ChVariables* variables_ptr;                         ///< perturbation variables in the equilibrium frame
+
 
     public:
 
@@ -143,6 +155,16 @@ namespace frydom {
             }
         }
 
+        /// Get the pertubation linear velocity of the body in equilibrium frame
+        chrono::ChVector<> GetLinearVelocityPert() const {
+            return GetVelocity() - GetSteadyVelocity();
+        }
+
+        /// Get the perturbation angular velocity of the body in equilibrium frame
+        chrono::ChVector<> GetAngularVelocityPert() const {
+            return GetAngularVelocity();
+        }
+
         /// Get the heading angle defined as the angle between the x axis of the
         /// absolute frame and the x axis of the body
         double GetHeadingAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) const {
@@ -199,22 +221,46 @@ namespace frydom {
         void SetNEDHeading(const chrono::ChVector<>& unit_vector);
 
 
-        void SetEquilibriumFrame(const chrono::ChFrame<double>& eqFrame) {
+        // Equilibrium Frame
+
+        /// Dynamic equilibrium frame corresponding to a mass-spring system with damping
+        void SetEquilibriumFrame(const FrEquilibriumFrameType frame, const double T0, const double psi);
+
+        /// Equilibrium frame with position equal to the mean motion of the body
+        void SetEquilibriumFrame(const FrEquilibriumFrameType frame, const double val);
+
+        /// Equilibrium frame with fixed position
+        void SetEquilibriumFrame(const FrEquilibriumFrameType frame, const chrono::ChVector<> vect);
+
+        void SetEquilibriumFrame(const std::shared_ptr<chrono::ChFrameMoving<double>>& eqFrame) {
             m_equilibriumFrame = eqFrame;
         }
 
         void SetEquilibriumFrame(const chrono::ChVector<double>& eqPos,
                                  const chrono::ChQuaternion<double>& eqQuat) {
-            chrono::ChFrame<double> eqFrame;
-            eqFrame.SetPos(eqPos);
-            eqFrame.SetRot(eqQuat);
+            std::shared_ptr<chrono::ChFrameMoving<double>> eqFrame;
+            eqFrame->SetPos(eqPos);
+            eqFrame->SetRot(eqQuat);
 
             SetEquilibriumFrame(eqFrame);
         }
 
-        void SetCurrentRefFrameAsEquilibrium();
+        template <class T>
+        std::shared_ptr<T> GetEquilibriumFrame() const {
+            return dynamic_cast<std::shared_ptr<T>>(m_equilibriumFrame);
+        }
 
-        chrono::ChFrame<double> GetEquilibriumFrame() const;
+        std::shared_ptr<chrono::ChFrameMoving<double>> GetEquilibriumFrame() const {
+            return m_equilibriumFrame;
+        }
+
+        //void SetCurrentRefFrameAsEquilibrium();
+
+        /// Define the constant velocity of the equilibrium frame (in local coord)
+        void SetSteadyVelocity(chrono::ChVector<> velocity);
+
+        /// Get the steady velocity corresponding to the velocity of the equilibrium frame (in local coord)
+        chrono::ChVector<double> GetSteadyVelocity() const;
 
 
         // TODO: introduire une classe geometricProperties qui rassemble les differentes donnees...
@@ -242,6 +288,7 @@ namespace frydom {
 
         /// Set the wetted surface of the body
         void SetWettedSurface(double wetted_surface);
+        
 
         // ==========================================================================
         // METHODS ABOUT CURRENT

@@ -61,6 +61,7 @@ namespace frydom {
             m_radiationModel->Initialize();
         }
 
+
         void UpdateState() override {
             // TODO: appeler le Update du RadiationModel
             m_radiationModel->Update(ChTime);  // TODO: verifier que le ChTime est le bon temps courant !!
@@ -77,6 +78,7 @@ namespace frydom {
             // moment in local
 //            force = m_radiationModel->GetRadiationForce(hydroBody);
 //            moment = m_radiationModel->GetRadiationMoment(hydroBody);
+
         }
 
 

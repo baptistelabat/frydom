@@ -27,6 +27,8 @@ namespace frydom {
 
         int m_HydroMapIndex = 0; // TODO : patch hydro map multibody
 
+        bool m_speed_dependent =  false;
+
 
     public:
         FrRadiationModel() = default;
@@ -98,6 +100,10 @@ namespace frydom {
         }
 
 
+        void SetSpeedDependent(bool time_dependent = true) { m_speed_dependent = time_dependent; }
+
+
+
     };
 
     class FrRadiationConvolutionForce;
@@ -110,7 +116,7 @@ namespace frydom {
 
     private:
         // Recorders for the velocity of bodies that are in interaction
-        std::vector<FrVelocityRecorder> m_recorders;
+        std::vector<FrPerturbationVelocityRecorder> m_recorders;
 
     public:
 
@@ -145,10 +151,7 @@ namespace frydom {
             FrHydroBody* hydroBody;
             for (unsigned int ibody=0; ibody<NbBodies; ibody++) {
 
-                // Gettig the corresponding HydroBody
-
-
-                auto recorder = FrVelocityRecorder();
+                auto recorder = FrPerturbationVelocityRecorder();
 
                 hydroBody = mapper->GetHydroBody(ibody);
 
@@ -163,6 +166,10 @@ namespace frydom {
 
             // Initializing Impulse response functions with correct parameters (same as recorder)
             m_HDB->GenerateImpulseResponseFunctions(Te, dt);
+
+            if (m_speed_dependent) {
+                m_HDB->GenerateSpeedDependentIRF();
+            }
 
         }
 
@@ -181,7 +188,7 @@ namespace frydom {
             }
 
 
-            // Here we compute the radiation forces by computin the convolutions
+            // Here we compute the radiation forces by computing the convolutions
             ResetRadiationForceVector();
 
             auto nbBodies = GetNbInteractingBodies();
@@ -229,8 +236,60 @@ namespace frydom {
                         }  // End loop iforce
                     }  // End loop imotion of body imotionBody
                 }  // End loop imotionBody
+
+                if (m_speed_dependent) {
+                    UpdateSpeedDependentTerm(bemBody_i, iforceBody, generalizedForce);
+                }
+
             } // End loop iforceBody
 
+        }
+
+
+        /// Update the convolution term relative to the advance speed of the vessel
+        void UpdateSpeedDependentTerm(std::shared_ptr<FrBEMBody>& bemBody_i,
+                                      unsigned int iforceBody,
+                                      chrono::ChVectorDynamic<double>& generalizedForce) {
+
+            double stepSize = m_system->GetStep();
+            auto N = m_HDB->GetNbTimeSamples() - 1;
+            auto hydroBody = m_system->GetHydroMapper(m_HydroMapIndex)->GetHydroBody(iforceBody);
+
+            auto Ainf = bemBody_i->GetSelfInfiniteAddedMass();
+
+            auto nbBodies = GetNbInteractingBodies();
+            double val;
+
+            auto steady_speed = hydroBody->GetSteadyVelocity();
+            auto mean_speed = steady_speed.Length();
+
+            for (unsigned int imotionBody=0; imotionBody<nbBodies; imotionBody++) {
+
+                for (unsigned int idof=0; idof<6; idof++) {
+
+                    auto velocity = m_recorders[imotionBody].GetRecordOnDOF(idof);
+
+                    for (unsigned int iforce=0; iforce<3; iforce++) {
+
+                        auto kernel = bemBody_i->GetSpeedDependentIRF(imotionBody, idof, iforce);
+                        auto product = std::vector<double>(N);
+
+                        for (unsigned int itime=0; itime<N; itime++) {
+                            product[itime] = kernel[itime] * velocity[itime];
+                        }
+
+                        val = Trapz(product, stepSize);
+                        generalizedForce.ElementN(iforce) += mean_speed * val;
+                    }
+                }
+
+                auto velocity = hydroBody->GetLinearVelocityPert();
+                for (unsigned int iforce=0; iforce<3; iforce++) {
+                    val = Ainf(iforce, 2) * velocity[2] - Ainf(iforce, 1) * velocity[1];
+                    generalizedForce.ElementN(iforce) += mean_speed * val;
+                }
+
+            }
         }
 
         std::shared_ptr<FrRadiationConvolutionForce> AddRadiationForceToHydroBody(std::shared_ptr<FrHydroBody>);

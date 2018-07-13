@@ -706,6 +706,13 @@ namespace frydom {
 
         std::shared_ptr<FrLinearWaveProbe> NewWaveProbe(double x, double y);
 
+        /// Add and return a new wave probe to the wave field with default position (global origine)
+        std::shared_ptr<FrLinearWaveProbe> NewWaveProbe();
+
+        /// Add an already existing wave probe to the wev field
+        void AddWaveProbe(std::shared_ptr<FrLinearWaveProbe> waveProbe);
+
+        /// Create a new flow sensor linked to the wave field
         std::shared_ptr<FrLinearFlowSensor> NewFlowSensor(double x, double y, double z);
 
         void Update(double time) override {
@@ -723,6 +730,12 @@ namespace frydom {
         // TODO: renvoyer un pointeur partagé ??
         const std::vector<std::complex<double>>& GetTimeCoeffs() const {
             return c_emjwt;
+        }
+
+        const std::vector<std::complex<double>>& GetTimeCoeffs(chrono::ChVector<double> vel) const {
+
+
+
         }
 
         /// Return the time derivative of the temporal factor

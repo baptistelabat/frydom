@@ -23,6 +23,7 @@ if (NOT mathutils_FOUND)
 
         # MathUtils BUILD OPTIONS
         set(MATHUTILS_BUILD_TESTS OFF)
+        set(ADD_MATPLOTLIB_CPP ON CACHE BOOL "" FORCE)
 
         add_subdirectory(${mathutils_SOURCE_DIR} ${mathutils_BINARY_DIR})
     else()

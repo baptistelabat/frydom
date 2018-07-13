@@ -20,6 +20,7 @@
 #include "FrRadiationForce.h"
 #include "FrTryalForce.h"
 #include "FrVelocityRecorder.h"
+#include "FrPositionRecorder.h"
 #include "FrRadiationModel.h"
 #include "FrHydroMapper.h"
 #include "FrWaveDriftForce.h"
