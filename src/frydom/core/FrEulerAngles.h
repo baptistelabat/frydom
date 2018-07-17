@@ -178,7 +178,7 @@ namespace frydom {
             axis = quat.GetVector() / sqrt(d);
 
             if (unit == DEG) {
-                angle = degrees(angle);
+                angle = angle * RAD2DEG;
             }
         }
     }
@@ -189,7 +189,7 @@ namespace frydom {
 
         Real half_angle = 0.5 * angle;
         if (unit == DEG) {
-            half_angle = radians(half_angle);
+            half_angle = half_angle * DEG2RAD;
         }
 
         auto vector = sin(half_angle) * axis / axis.Length();
@@ -275,9 +275,9 @@ namespace frydom {
 
         double phi_rad, theta_rad, psi_rad;
         if (unit == DEG) {
-            phi_rad = radians(phi);
-            theta_rad = radians(theta);
-            psi_rad = radians(psi);
+            phi_rad   = DEG2RAD * phi;
+            theta_rad = DEG2RAD * theta;
+            psi_rad   = DEG2RAD * psi;
         } else {
             phi_rad = phi;
             theta_rad = theta;
@@ -369,9 +369,9 @@ namespace frydom {
         Real phi_2_rad, theta_2_rad, psi_2_rad;
 
         if (unit == DEG) {
-            phi_2_rad = radians(phi) * 0.5;
-            theta_2_rad = radians(theta) * 0.5;
-            psi_2_rad = radians(psi) * 0.5;
+            phi_2_rad   = DEG2RAD * phi   * 0.5;
+            theta_2_rad = DEG2RAD * theta * 0.5;
+            psi_2_rad   = DEG2RAD * psi   * 0.5;
         } else {
             phi_2_rad = phi * 0.5;
             theta_2_rad = theta * 0.5;
@@ -490,7 +490,7 @@ namespace frydom {
         }  // end switch (seq)
 
         if (unit == DEG) {
-            angles = degrees(angles);
+            angles = angles * RAD2DEG;
         }
 
         phi = angles.x();

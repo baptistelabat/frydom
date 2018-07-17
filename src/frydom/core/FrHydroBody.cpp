@@ -210,7 +210,7 @@ namespace frydom {
     double FrHydroBody::GetCurrentRelativeAngle(FrFrame frame, ANGLE_UNIT angleUnit) const {
         double angle = m_current_relative_angle;
         if (angleUnit == DEG) {
-            angle = degrees(angle);
+            angle = angle * RAD2DEG;
         }
 
         switch (frame) {
@@ -271,27 +271,43 @@ namespace frydom {
     }
 
     double FrHydroBody::GetTransverseUnderWaterArea() const {
-        return m_transverse_area;
+        return m_transverseUnderWaterArea;
     }
 
-    void FrHydroBody::SetTransverseUnderWaterArea(double transverse_area) {
-        FrHydroBody::m_transverse_area = transverse_area;
+    void FrHydroBody::SetTransverseUnderWaterArea(double area) {
+        FrHydroBody::m_transverseUnderWaterArea = area;
     }
 
     double FrHydroBody::GetLateralUnderWaterArea() const {
-        return m_lateral_area;
+        return m_lateralUnderWaterArea;
     }
 
-    void FrHydroBody::SetLateralUnderWaterArea(double lateral_area) {
-        FrHydroBody::m_lateral_area = lateral_area;
+    void FrHydroBody::SetLateralUnderWaterArea(double area) {
+        FrHydroBody::m_lateralUnderWaterArea = area;
+    }
+
+    double FrHydroBody::GetTransverseAboveWaterArea() const {
+        return m_transverseAboveWaterArea;
+    }
+
+    void FrHydroBody::SetTransverseAboveWaterArea(double area) {
+        FrHydroBody::m_transverseAboveWaterArea = area;
+    }
+
+    double FrHydroBody::GetLateralAboveWaterArea() const {
+        return m_lateralAboveWaterArea;
+    }
+
+    void FrHydroBody::SetLateralAboveWaterArea(double area) {
+        FrHydroBody::m_lateralAboveWaterArea = area;
     }
 
     double FrHydroBody::GetLpp() const {
-        return m_length_between_perpendicular;
+        return m_lengthBetweenPerpendicular;
     }
 
     void FrHydroBody::SetLpp(double lpp) {
-        FrHydroBody::m_length_between_perpendicular = lpp;
+        FrHydroBody::m_lengthBetweenPerpendicular = lpp;
     }
 
     double FrHydroBody::GetWettedSurface() const {

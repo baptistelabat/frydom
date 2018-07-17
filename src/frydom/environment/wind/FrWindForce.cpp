@@ -29,7 +29,7 @@ namespace frydom {
         assert(Cm.size() == n);
 
         if (unit == DEG) {
-            for (auto& val : angle) { val = radians(val); }
+            deg2rad(angle);
         }
 
         m_table.SetX(angle);

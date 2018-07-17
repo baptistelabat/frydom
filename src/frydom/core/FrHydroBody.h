@@ -40,9 +40,13 @@ namespace frydom {
 
         // Geometric properties of the hydro body
         // TODO: creer classe de donnees geometriques
-        double m_transverse_area = 0.;
-        double m_lateral_area = 0.;
-        double m_length_between_perpendicular = 0.;
+        double m_transverseUnderWaterArea = 0.;
+        double m_lateralUnderWaterArea = 0.;
+
+        double m_transverseAboveWaterArea = 0.;
+        double m_lateralAboveWaterArea = 0.;
+
+        double m_lengthBetweenPerpendicular = 0.;
 
         double m_wetted_surface = 0.;
 
@@ -148,7 +152,7 @@ namespace frydom {
         double GetHeadingAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) const {
             double heading = m_heading;
             if (angleUnit == DEG) {
-                heading = degrees(heading);
+                heading = heading * RAD2DEG;
             }
 
             switch (frame) {
@@ -173,7 +177,7 @@ namespace frydom {
         double GetCourseAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) const{
             double course = m_course;
             if (angleUnit == DEG) {
-                course = degrees(course);
+                course = course * RAD2DEG;
             }
             switch (frame) {
                 case NWU:
@@ -223,13 +227,25 @@ namespace frydom {
         double GetTransverseUnderWaterArea() const;
 
         /// Set the transverse underwater area of the body
-        void SetTransverseUnderWaterArea(double transverse_area);
+        void SetTransverseUnderWaterArea(double area);
 
         /// Get the lateral underwater area of the body
         double GetLateralUnderWaterArea() const;
 
         /// Set the lateral underwater area of the body
-        void SetLateralUnderWaterArea(double lateral_area);
+        void SetLateralUnderWaterArea(double area);
+
+        /// Get the transverse underwater area of the body
+        double GetTransverseAboveWaterArea() const;
+
+        /// Set the transverse underwater area of the body
+        void SetTransverseAboveWaterArea(double area);
+
+        /// Get the lateral underwater area of the body
+        double GetLateralAboveWaterArea() const;
+
+        /// Set the lateral underwater area of the body
+        void SetLateralAboveWaterArea(double area);
 
         /// Get the length between perpendicular of the body
         double GetLpp() const;
