@@ -214,6 +214,8 @@ namespace frydom {
             m_LocalCartesian->Reverse(x, y, z, lat, lon, h);
         }
 
+        double ComputeMagneticDeclination(const chrono::ChVector<> localPos);
+
         FrTimeZone* GetTimeZone() const {return m_timeZone.get();}
         //void SetTimeZoneName(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
 
