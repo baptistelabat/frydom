@@ -25,6 +25,7 @@
 // Wind includes
 #include "wind/FrWind.h"
 #include "wind/FrWindForce.h"
+#include "wind/FrWindStandardForce.h"
 
 // Seabed includes
 #include "seabed/FrSeabed.h"

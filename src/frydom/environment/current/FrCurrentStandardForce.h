@@ -17,7 +17,7 @@ namespace frydom {
     class FrCurrentStandardForce : public FrForce {
 
     private:
-        double m_rho;                       ///< water density [kg.m^-3]
+        double m_rho = 1026.;               ///< water density [kg.m^-3]
         double m_breadth;                   ///< maximum breadth at the waterline [m]
         double m_draft;                     ///< summer load line draft [m]
         double m_lateral_area;              ///< longitudinal projected submerged area [m^2]
@@ -29,7 +29,7 @@ namespace frydom {
         /// Default constructor
         FrCurrentStandardForce() = default;
 
-        /// Constructor of the force from body parameters
+        /// Constructor from body parameters
         FrCurrentStandardForce(const std::shared_ptr<FrHydroBody> mybody);
 
         /// Define the water density parameter used in drag force computation (kg/m^3)
