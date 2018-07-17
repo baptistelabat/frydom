@@ -9,6 +9,8 @@
 
 namespace frydom {
 
+    class FrHydroBody;
+
     /// Standard current drag force from DNV standard
     /// DNV-GL Station Keeping 01111
 
@@ -37,13 +39,13 @@ namespace frydom {
         double GetWaterDensity() const { return m_rho; }
 
         /// Define the maximum breadth at the waterline (m)
-        void SetMaxBreadth(const double breadth) { m_breadth = breadth; }
+        void SetMaxBreadth(const double breadth);
 
         /// Return the maximum breadth at the waterline (m)
         double GetMaxBreadth() const { return m_breadth; }
 
         /// Define the summer load draft line (m)
-        void SetDraft(const double draft) { m_draft = draft; }
+        void SetDraft(const double draft);
 
         /// Return the summer load draft line (m)
         double GetDraft() const { return m_draft; }

@@ -14,6 +14,7 @@
 #include "current/FrCurrent.h"
 #include "current/FrCurrentPolarCoeffs.h"
 #include "current/FrCurrentForce.h"
+#include "current/FrCurrentStandardForce.h"
 
 // Waves includes
 #include "waves/FrFreeSurface.h"
