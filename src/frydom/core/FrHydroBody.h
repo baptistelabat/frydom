@@ -41,6 +41,7 @@ namespace frydom {
         // Attributes to let the body into the horizontal plane
         bool is3DOF = false;
         std::shared_ptr<chrono::ChLinkMatePlane> constraint3DOF;
+        std::shared_ptr<chrono::ChLinkMateGeneric> m_constraint;
 
 
         chrono::ChVector<> m_current_relative_velocity = chrono::VNULL;
@@ -91,6 +92,7 @@ namespace frydom {
         void Set3DOF_OFF();
         void Set3DOF_ON(chrono::ChVector<> dir);
         void Set3DOF_ON(chrono::ChVector<> dir, chrono::ChVector<> pos1, chrono::ChVector<> pos2);
+        void SetDOF(bool mc_x, bool mc_y, bool mc_z, bool mc_rx, bool mc_ry, bool mc_rz);
 
 
         /// Set the hydrodynamic mesh from a mesh shared instance
