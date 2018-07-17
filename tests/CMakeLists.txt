@@ -34,6 +34,7 @@ set(FRYDOM_TESTS
         test_unrolling_cable
         test_unrolling_catenary_line
         test_current-wind_relative_velocity
+        test_current_standard_force
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")

@@ -4,6 +4,7 @@ set(CURRENT_FILES_LOCAL
         FrCurrent.cpp
         FrCurrentForce.cpp
         FrCurrentPolarCoeffs.cpp
+        FrCurrentStandardForce.cpp
 )
 
 set(CURRENT_FILES "")
