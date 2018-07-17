@@ -43,7 +43,7 @@ namespace frydom {
         double GetLateralArea() const { return m_lateral_area; }
 
         /// Define the transverse frontal area (m^2)
-        void SetTransverseArea(const double transverse_area) { m_transverse_area = transverese_area; }
+        void SetTransverseArea(const double transverse_area) { m_transverse_area = transverse_area; }
 
         /// Return the transverse frontal area (m^2)
         double GetTransverseArea() const { return m_transverse_area; }
@@ -55,10 +55,10 @@ namespace frydom {
         double GetXc() const { return m_xc; }
 
         /// Define the length between perpendicular (m)
-        void SetLpp(const double Lpp) { m_Lpp = Lpp; }
+        void SetLpp(const double Lpp) { m_lpp = Lpp; }
 
         /// Return the length between perpendicular (m)
-        double GetLpp() const { return m_Lpp; }
+        double GetLpp() const { return m_lpp; }
 
         /// Update value of the drag force
         void UpdateState() override;
