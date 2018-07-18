@@ -9,8 +9,8 @@ namespace frydom {
 
 
     FrWindStandardForce::FrWindStandardForce(const std::shared_ptr<FrHydroBody> mybody) {
-        this->SetLateralArea(mybody->GetLateralUnderWaterArea());
-        this->SetTransverseArea(mybody->GetTransverseUnderWaterArea());
+        this->SetLateralArea(mybody->GetLateralAboveWaterArea());
+        this->SetTransverseArea(mybody->GetTransverseAboveWaterArea());
         this->SetLpp(mybody->GetLpp());
         this->SetAirDensity(mybody->GetSystem()->GetEnvironment()->GetAirDensity());
     }
