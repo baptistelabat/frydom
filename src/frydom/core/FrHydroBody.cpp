@@ -271,51 +271,51 @@ namespace frydom {
     }
 
     double FrHydroBody::GetTransverseUnderWaterArea() const {
-        return m_transverseUnderWaterArea;
+        return m_properties->GetTransverseUnderWaterArea();
     }
 
     void FrHydroBody::SetTransverseUnderWaterArea(double area) {
-        FrHydroBody::m_transverseUnderWaterArea = area;
+        m_properties->SetTransverseUnderWaterArea(area);
     }
 
     double FrHydroBody::GetLateralUnderWaterArea() const {
-        return m_lateralUnderWaterArea;
+        return m_properties->GetLateralUnderWaterArea();
     }
 
     void FrHydroBody::SetLateralUnderWaterArea(double area) {
-        FrHydroBody::m_lateralUnderWaterArea = area;
+        m_properties->SetLateralUnderWaterArea(area);
     }
 
     double FrHydroBody::GetTransverseAboveWaterArea() const {
-        return m_transverseAboveWaterArea;
+        return m_properties->GetTransverseAboveWaterArea();
     }
 
     void FrHydroBody::SetTransverseAboveWaterArea(double area) {
-        FrHydroBody::m_transverseAboveWaterArea = area;
+        m_properties->SetTransverseAboveWaterArea(area);
     }
 
     double FrHydroBody::GetLateralAboveWaterArea() const {
-        return m_lateralAboveWaterArea;
+        return m_properties->GetLateralAboveWaterArea();
     }
 
     void FrHydroBody::SetLateralAboveWaterArea(double area) {
-        FrHydroBody::m_lateralAboveWaterArea = area;
+        m_properties->SetLateralAboveWaterArea(area);
     }
 
     double FrHydroBody::GetLpp() const {
-        return m_lengthBetweenPerpendicular;
+        return m_properties->GetLpp();
     }
 
     void FrHydroBody::SetLpp(double lpp) {
-        FrHydroBody::m_lengthBetweenPerpendicular = lpp;
+        m_properties->SetLpp(lpp);
     }
 
     double FrHydroBody::GetWettedSurface() const {
-        return m_wetted_surface;
+        return m_properties->GetWettedSurface();
     }
 
     void FrHydroBody::SetWettedSurface(double wetted_surface) {
-        FrHydroBody::m_wetted_surface = wetted_surface;
+        m_properties->SetWetterSurface(wetted_surface);
     }
 
 //    void FrHydroBody::SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody) {

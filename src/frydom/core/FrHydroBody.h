@@ -22,33 +22,74 @@ namespace chrono {
 
 namespace frydom {
 
+    class FrHydroBodyProperties {
+
+    private:
+        double m_transverseUnderWaterArea = 0.;             ///< transverse under water area of the body
+        double m_lateralUnderWaterArea = 0.;                ///< lateral under water area of the body
+        double m_transverseAboveWaterArea = 0.;             ///< transverse above water area of the body
+        double m_lateralAboveWaterArea = 0.;                ///< lateral above water area of the body
+        double m_lengthBetwwenPerpendicular = 0.;           ///< length between perpendicular
+        double m_wetted_surface = 0.;                       ///< wetted surface area of the body
+
+    public:
+        /// Get the transverse under water area of the body
+        double GetTransverseUnderWaterArea() const { return m_transverseAboveWaterArea; }
+
+        /// Set the transverse udner water area of the body
+        void SetTransverseUnderWaterArea(const double area) { m_transverseUnderWaterArea = area; }
+
+        /// Get the lateral under water area of the body
+        double GetLateralUnderWaterArea() const { return m_lateralUnderWaterArea; }
+
+        /// Set the lateral under water area of the body
+        void SetLateralUnderWaterArea(const double area) { m_lateralUnderWaterArea = area; }
+
+        /// Get the transverse above water area of the body
+        double GetTransverseAboveWaterArea() const { return m_transverseAboveWaterArea; }
+
+        /// Set the transverse above water area of the body
+        void SetTransverseAboveWaterArea(const double area) { m_transverseAboveWaterArea = area; }
+
+        /// Get the lateral above water area of the body
+        double GetLateralAboveWaterArea() const { return m_lateralUnderWaterArea; }
+
+        /// Set the lateral above water area of the body
+        void SetLateralAboveWaterArea(const double area) { m_lateralAboveWaterArea = area; }
+
+        /// Get the length between perpendicular of the body
+        double GetLpp() const { return m_lengthBetwwenPerpendicular; }
+
+        /// Set the length between perpendiculare of the body
+        void SetLpp(const double lpp) { m_lengthBetwwenPerpendicular = lpp; }
+
+        /// Get the wetted surface of the body
+        double GetWettedSurface() const { return m_wetted_surface; }
+
+        /// Set the wetted surface of the body
+        void SetWetterSurface(const double area) { m_wetted_surface = area; }
+
+    };
+
     class FrHydroBody : public FrBody {
 
-
     protected:
+
         std::shared_ptr<FrTriangleMeshConnected> m_hydro_mesh;
+        chrono::ChFrame<double> m_equilibriumFrame;
+
+        std::unique_ptr<FrHydroBodyProperties> m_properties;
+
+        chrono::ChVariables* variables_ptr;
 
         // Attributes to let the body into the horizontal plane
         bool is3DOF = false;
         std::shared_ptr<chrono::ChLinkMatePlane> constraint3DOF;
 
-
         chrono::ChVector<> m_current_relative_velocity = chrono::VNULL;
         double m_current_relative_angle = 0.;
         double m_heading = 0.;
         double m_course = 0.;
-
-        // Geometric properties of the hydro body
-        // TODO: creer classe de donnees geometriques
-        double m_transverseUnderWaterArea = 0.;
-        double m_lateralUnderWaterArea = 0.;
-
-        double m_transverseAboveWaterArea = 0.;
-        double m_lateralAboveWaterArea = 0.;
-
-        double m_lengthBetweenPerpendicular = 0.;
-
-        double m_wetted_surface = 0.;
 
 //        std::shared_ptr<FrBEMBody> m_BEMBody;
         bool m_UpdateHydroPosition = false;  // If true, the body position will be updated while moving in the horizontal plane
@@ -57,10 +98,6 @@ namespace frydom {
                                             // several interacting bodies. For no interactions, it could be an easy
                                             // way to take forward speed into account concerning the wave excitation...
                                             // TODO: use it...
-
-        chrono::ChFrame<double> m_equilibriumFrame;
-
-        chrono::ChVariables* variables_ptr;
 
     public:
 
