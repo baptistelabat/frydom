@@ -52,6 +52,9 @@ namespace frydom {
                                std::vector<double>& Cz,
                                ANGLE_UNIT& unit);
 
+    /// Build a Polar Coefficient table from a yaml file
+    LookupTable1D<double> MakeWindPolarCoeffTable(const std::string& yaml_file, ANGLE_UNIT unit);
+
 
 }  // end namespace frydom
 

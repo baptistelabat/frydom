@@ -32,30 +32,74 @@ namespace frydom {
         BodyFixed
     };
 
+    class FrHydroBodyProperties {
+
+    private:
+        double m_transverseUnderWaterArea = 0.;             ///< transverse under water area of the body
+        double m_lateralUnderWaterArea = 0.;                ///< lateral under water area of the body
+        double m_transverseAboveWaterArea = 0.;             ///< transverse above water area of the body
+        double m_lateralAboveWaterArea = 0.;                ///< lateral above water area of the body
+        double m_lengthBetwwenPerpendicular = 0.;           ///< length between perpendicular
+        double m_wetted_surface = 0.;                       ///< wetted surface area of the body
+
+    public:
+        /// Get the transverse under water area of the body
+        double GetTransverseUnderWaterArea() const { return m_transverseAboveWaterArea; }
+
+        /// Set the transverse udner water area of the body
+        void SetTransverseUnderWaterArea(const double area) { m_transverseUnderWaterArea = area; }
+
+        /// Get the lateral under water area of the body
+        double GetLateralUnderWaterArea() const { return m_lateralUnderWaterArea; }
+
+        /// Set the lateral under water area of the body
+        void SetLateralUnderWaterArea(const double area) { m_lateralUnderWaterArea = area; }
+
+        /// Get the transverse above water area of the body
+        double GetTransverseAboveWaterArea() const { return m_transverseAboveWaterArea; }
+
+        /// Set the transverse above water area of the body
+        void SetTransverseAboveWaterArea(const double area) { m_transverseAboveWaterArea = area; }
+
+        /// Get the lateral above water area of the body
+        double GetLateralAboveWaterArea() const { return m_lateralUnderWaterArea; }
+
+        /// Set the lateral above water area of the body
+        void SetLateralAboveWaterArea(const double area) { m_lateralAboveWaterArea = area; }
+
+        /// Get the length between perpendicular of the body
+        double GetLpp() const { return m_lengthBetwwenPerpendicular; }
+
+        /// Set the length between perpendiculare of the body
+        void SetLpp(const double lpp) { m_lengthBetwwenPerpendicular = lpp; }
+
+        /// Get the wetted surface of the body
+        double GetWettedSurface() const { return m_wetted_surface; }
+
+        /// Set the wetted surface of the body
+        void SetWetterSurface(const double area) { m_wetted_surface = area; }
+
+    };
+
     class FrHydroBody : public FrBody {
 
-
     protected:
+
         std::shared_ptr<FrTriangleMeshConnected> m_hydro_mesh;
+
+        std::unique_ptr<FrHydroBodyProperties> m_properties;
+
+        chrono::ChVariables* variables_ptr;
 
         // Attributes to let the body into the horizontal plane
         bool is3DOF = false;
         std::shared_ptr<chrono::ChLinkMatePlane> constraint3DOF;
         std::shared_ptr<chrono::ChLinkMateGeneric> m_constraint;
 
-
         chrono::ChVector<> m_current_relative_velocity = chrono::VNULL;
         double m_current_relative_angle = 0.;
         double m_heading = 0.;
         double m_course = 0.;
-
-        // Geometric properties of the hydro body
-        // TODO: creer classe de donnees geometriques
-        double m_transverse_area = 0.;
-        double m_lateral_area = 0.;
-        double m_length_between_perpendicular = 0.;
-
-        double m_wetted_surface = 0.;
 
 //        std::shared_ptr<FrBEMBody> m_BEMBody;
         bool m_UpdateHydroPosition = false;  // If true, the body position will be updated while moving in the horizontal plane
@@ -67,9 +111,6 @@ namespace frydom {
 
         std::shared_ptr<chrono::ChFrameMoving<double>> m_equilibriumFrame;           ///< Hydrodynamic equilibrium frame where dynamic motion equation is solved
 //        FrDynamicWaveProbe m_dynamicFrame;
-
-        chrono::ChVariables* variables_ptr;                         ///< perturbation variables in the equilibrium frame
-
 
     public:
 
@@ -172,7 +213,7 @@ namespace frydom {
         double GetHeadingAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) const {
             double heading = m_heading;
             if (angleUnit == DEG) {
-                heading = degrees(heading);
+                heading = heading * RAD2DEG;
             }
 
             switch (frame) {
@@ -197,7 +238,7 @@ namespace frydom {
         double GetCourseAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) const{
             double course = m_course;
             if (angleUnit == DEG) {
-                course = degrees(course);
+                course = course * RAD2DEG;
             }
             switch (frame) {
                 case NWU:
@@ -271,13 +312,25 @@ namespace frydom {
         double GetTransverseUnderWaterArea() const;
 
         /// Set the transverse underwater area of the body
-        void SetTransverseUnderWaterArea(double transverse_area);
+        void SetTransverseUnderWaterArea(double area);
 
         /// Get the lateral underwater area of the body
         double GetLateralUnderWaterArea() const;
 
         /// Set the lateral underwater area of the body
-        void SetLateralUnderWaterArea(double lateral_area);
+        void SetLateralUnderWaterArea(double area);
+
+        /// Get the transverse underwater area of the body
+        double GetTransverseAboveWaterArea() const;
+
+        /// Set the transverse underwater area of the body
+        void SetTransverseAboveWaterArea(double area);
+
+        /// Get the lateral underwater area of the body
+        double GetLateralAboveWaterArea() const;
+
+        /// Set the lateral underwater area of the body
+        void SetLateralAboveWaterArea(double area);
 
         /// Get the length between perpendicular of the body
         double GetLpp() const;

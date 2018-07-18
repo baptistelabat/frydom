@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 079a30b..df06ef9 100644
+index 7eda55949..dbe6ac62d 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -14,9 +14,9 @@ cmake_minimum_required(VERSION 2.8)
@@ -12,9 +12,9 @@ index 079a30b..df06ef9 100644
 -endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 +endif(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
  
- enable_testing()
- set(VALGRIND_COMMAND "/usr/bin/valgrind")
-@@ -73,7 +73,7 @@ set(CH_VERSION 0x00030000)
+ #-----------------------------------------------------------------------------
+ 
+@@ -76,7 +76,7 @@ set(CH_VERSION 0x00030000)
  # Location of additional CMake scripts
  #-----------------------------------------------------------------------------
  
@@ -23,7 +23,7 @@ index 079a30b..df06ef9 100644
  include(GetGitRevisionDescription)
  get_git_head_revision(GIT_REFSPEC VCS_REVISION)
  
-@@ -207,12 +207,12 @@ endif()
+@@ -213,13 +213,13 @@ endif()
  #------------------------------------------------------------
  
  if(MSVC OR XCODE_VERSION)
@@ -35,18 +35,14 @@ index 079a30b..df06ef9 100644
  endif()
  
 -install(DIRECTORY ${CMAKE_SOURCE_DIR}/data/ DESTINATION ${CH_INSTALL_DATA})
+-install(DIRECTORY ${CMAKE_SOURCE_DIR}/template_project/ DESTINATION ${CH_INSTALL_SAMPLE_PROJ})
 +install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data/ DESTINATION ${CH_INSTALL_DATA})
++install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/template_project/ DESTINATION ${CH_INSTALL_SAMPLE_PROJ})
  
  #------------------------------------------------------------
  # Defer configuration of all Chrono libraries and programs
-@@ -224,4 +224,4 @@ add_subdirectory(src)
- # Use CPack
- #------------------------------------------------------------
- 
--include(CPack)
-+# include(CPack)
 diff --git a/src/chrono/physics/ChForce.h b/src/chrono/physics/ChForce.h
-index 3ae1ff0..49a9226 100644
+index 3ae1ff0e2..49a9226f6 100644
 --- a/src/chrono/physics/ChForce.h
 +++ b/src/chrono/physics/ChForce.h
 @@ -64,7 +64,7 @@ class ChApi ChForce : public ChObj {

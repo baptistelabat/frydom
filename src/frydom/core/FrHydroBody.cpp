@@ -233,7 +233,7 @@ namespace frydom {
     double FrHydroBody::GetCurrentRelativeAngle(FrFrame frame, ANGLE_UNIT angleUnit) const {
         double angle = m_current_relative_angle;
         if (angleUnit == DEG) {
-            angle = degrees(angle);
+            angle = angle * RAD2DEG;
         }
 
         switch (frame) {
@@ -294,35 +294,51 @@ namespace frydom {
     }
 
     double FrHydroBody::GetTransverseUnderWaterArea() const {
-        return m_transverse_area;
+        return m_properties->GetTransverseUnderWaterArea();
     }
 
-    void FrHydroBody::SetTransverseUnderWaterArea(double transverse_area) {
-        FrHydroBody::m_transverse_area = transverse_area;
+    void FrHydroBody::SetTransverseUnderWaterArea(double area) {
+        m_properties->SetTransverseUnderWaterArea(area);
     }
 
     double FrHydroBody::GetLateralUnderWaterArea() const {
-        return m_lateral_area;
+        return m_properties->GetLateralUnderWaterArea();
     }
 
-    void FrHydroBody::SetLateralUnderWaterArea(double lateral_area) {
-        FrHydroBody::m_lateral_area = lateral_area;
+    void FrHydroBody::SetLateralUnderWaterArea(double area) {
+        m_properties->SetLateralUnderWaterArea(area);
+    }
+
+    double FrHydroBody::GetTransverseAboveWaterArea() const {
+        return m_properties->GetTransverseAboveWaterArea();
+    }
+
+    void FrHydroBody::SetTransverseAboveWaterArea(double area) {
+        m_properties->SetTransverseAboveWaterArea(area);
+    }
+
+    double FrHydroBody::GetLateralAboveWaterArea() const {
+        return m_properties->GetLateralAboveWaterArea();
+    }
+
+    void FrHydroBody::SetLateralAboveWaterArea(double area) {
+        m_properties->SetLateralAboveWaterArea(area);
     }
 
     double FrHydroBody::GetLpp() const {
-        return m_length_between_perpendicular;
+        return m_properties->GetLpp();
     }
 
     void FrHydroBody::SetLpp(double lpp) {
-        FrHydroBody::m_length_between_perpendicular = lpp;
+        m_properties->SetLpp(lpp);
     }
 
     double FrHydroBody::GetWettedSurface() const {
-        return m_wetted_surface;
+        return m_properties->GetWettedSurface();
     }
 
     void FrHydroBody::SetWettedSurface(double wetted_surface) {
-        FrHydroBody::m_wetted_surface = wetted_surface;
+        m_properties->SetWetterSurface(wetted_surface);
     }
 
 //    void FrHydroBody::SetBEMBody(std::shared_ptr<FrBEMBody> BEMBody) {
