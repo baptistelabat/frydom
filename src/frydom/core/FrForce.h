@@ -57,6 +57,9 @@ namespace frydom {
             body_torque = moment;
         }
 
+        /// Return the moment of the force
+        virtual chrono::ChVector<> GetTorque() const { return moment; }
+
         virtual void Initialize() override {}
 
         virtual void StepFinalize() override {}

@@ -33,7 +33,7 @@ namespace frydom {
 
         // Relative wind angle
         auto alpha = atan2(vy, vx);
-        alpha = Normalize_0_2PI(alpha);
+        alpha = Normalize__PI_PI(alpha);
 
         // amplitude coefficient
         auto ak = 0.5*m_rho_air*vel2;
@@ -41,7 +41,7 @@ namespace frydom {
         force.x() = -0.7 * ak * m_transverse_area * cos(alpha);
         force.y() = 0.9 * ak * m_lateral_area * sin(alpha);
 
-        auto m1 = 0.3 * (1. - 2.*alpha / chrono::CH_C_PI);
+        auto m1 = 0.3 * (1. - 2.*std::abs(alpha) / chrono::CH_C_PI);
         moment.z() = force.y() * (m_xc + m1 * m_lpp);
 
         // force in global reference frame
