@@ -34,6 +34,7 @@ set(FRYDOM_TESTS
         test_unrolling_cable
         test_unrolling_catenary_line
         test_current-wind_relative_velocity
+        test_hub_installation
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")
@@ -75,3 +76,8 @@ configure_file(data/bench_sphere_decay_interp.h5 . COPYONLY)
 configure_file(data/bench_sphere_regular.h5 . COPYONLY)
 configure_file(data/sphere.obj . COPYONLY)
 configure_file(data/sphere_hdb.h5 . COPYONLY)
+
+configure_file(data/Test_hub/Barge2.obj . COPYONLY)
+configure_file(data/Test_hub/BaseCrane.obj . COPYONLY)
+configure_file(data/Test_hub/HubBox.obj . COPYONLY)
+configure_file(data/Test_hub/TigeCrane.obj . COPYONLY)
