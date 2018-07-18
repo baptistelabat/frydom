@@ -39,7 +39,7 @@ namespace frydom {
         double m_lateralUnderWaterArea = 0.;                ///< lateral under water area of the body
         double m_transverseAboveWaterArea = 0.;             ///< transverse above water area of the body
         double m_lateralAboveWaterArea = 0.;                ///< lateral above water area of the body
-        double m_lengthBetwwenPerpendicular = 0.;           ///< length between perpendicular
+        double m_lengthBetweenPerpendicular = 0.;           ///< length between perpendicular
         double m_wetted_surface = 0.;                       ///< wetted surface area of the body
 
     public:
@@ -68,10 +68,10 @@ namespace frydom {
         void SetLateralAboveWaterArea(const double area) { m_lateralAboveWaterArea = area; }
 
         /// Get the length between perpendicular of the body
-        double GetLpp() const { return m_lengthBetwwenPerpendicular; }
+        double GetLpp() const { return m_lengthBetweenPerpendicular; }
 
         /// Set the length between perpendiculare of the body
-        void SetLpp(const double lpp) { m_lengthBetwwenPerpendicular = lpp; }
+        void SetLpp(const double lpp) { m_lengthBetweenPerpendicular = lpp; }
 
         /// Get the wetted surface of the body
         double GetWettedSurface() const { return m_wetted_surface; }
@@ -343,6 +343,9 @@ namespace frydom {
 
         /// Set the wetted surface of the body
         void SetWettedSurface(double wetted_surface);
+
+        /// Get the hydro body properties object
+        FrHydroBodyProperties* GetProperties() const { return m_properties.get(); }
         
 
         // ==========================================================================
