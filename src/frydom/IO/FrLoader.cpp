@@ -18,7 +18,7 @@ namespace frydom {
     // IO for the current force modeling
     //=========================================================================================================
 
-FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string& yaml_file) {
+    FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string& yaml_file) {
 
         // Loading data from yaml file
         std::vector<double> angles, cx, cy, cz;
@@ -67,7 +67,7 @@ FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string& yaml_file) {
             }
 
             if (unit == RAD) {
-                for (auto& val : angles) { val = degrees(val); }
+                rad2deg(angles);
             }
 
             // Getting cx Node
@@ -146,6 +146,20 @@ FrCurrentPolarCoeffs MakeCurrentPolarCoeffTable(const std::string& yaml_file) {
 
         }
 
+    }
+
+    LookupTable1D<double> MakeWindPolarCoeffTable(const std::string& yaml_file, ANGLE_UNIT unit) {
+
+        std::vector<double> angles, cx, cy, cz;
+        LoadWindTableFromYaml(yaml_file, angles, cx, cy, cz, unit);
+
+        LookupTable1D<double> lut;
+        lut.SetX(angles);
+        lut.AddY("cx", cx);
+        lut.AddY("cy", cy);
+        lut.AddY("cz", cz);
+
+        return lut;
     }
 
 

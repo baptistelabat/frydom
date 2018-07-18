@@ -34,7 +34,7 @@ namespace frydom {
 
         auto alpha = angle;
         if (angleUnit == DEG) {
-            alpha = radians(alpha);
+            alpha = alpha * DEG2RAD;
         }
 
         // Ensuring a velocity unit as M/S
@@ -123,7 +123,7 @@ namespace frydom {
             case RAD:
                 return angle;
             case DEG:
-                return degrees(angle);
+                return angle * RAD2DEG;
         }
 
     }
