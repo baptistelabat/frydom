@@ -16,6 +16,7 @@ namespace frydom {
         //variables.SetDisabled(true);
         //variablesHydro.SetDisabled(false);
         variables_ptr = &variables;
+        m_properties = std::make_unique<FrHydroBodyProperties>();
     }
 
     void FrHydroBody::Set3DOF(const bool flag) {

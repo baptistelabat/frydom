@@ -296,6 +296,9 @@ namespace frydom {
         /// Set the wetted surface of the body
         void SetWettedSurface(double wetted_surface);
 
+        /// Get the hydro body properties object
+        FrHydroBodyProperties* GetProperties() const { return m_properties.get(); }
+
         // ==========================================================================
         // METHODS ABOUT CURRENT
         // ==========================================================================
