@@ -13,6 +13,7 @@ set(SRC_FILES
         FrNode.cpp
         FrOffshoreSystem.cpp
         FrShip.cpp
+        FrKinematicJoint.cpp
 )
 
 set(FRYDOM_CORE_SOURCES "")
