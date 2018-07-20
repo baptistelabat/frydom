@@ -2,6 +2,8 @@
 // Created by camille on 12/07/18.
 //
 
+#include <iostream>
+#include <fstream>
 #include <vector>
 
 #include "frydom/frydom.h"
@@ -42,9 +44,11 @@ void PlotResult(std::vector<double>& vtime, std::vector<ChVector<double>>& vposi
         case 0:
             ylabel1 = "position (m)";
             ylabel2 = "rotation (rad)";
+            break;
         case 1:
             ylabel1 = "force (N)";
             ylabel2 = "torque (N.m)";
+            break;
     }
     matplotlibcpp::subplot(2,3,1);
     PlotData(vtime, x, ylabel1);
@@ -86,13 +90,14 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     system->AddBody(ship);
 
     // Geometry properties
+    ship->SetAbsPos(ChVector<>(0., 0., 0.));
     ship->SetName("DTMB5512");
     ship->SetHydroMesh("DTMB5512.obj", true);
     ship->SetLpp(3.048);
     ship->SetMass(86.0);
+    ship->SetWettedSurface(1.4);
     ship->SetCOG(ChVector<>(0., 0., -0.036));
     ship->SetInertiaXX(ChVector<>(1.98, 53.88, 49.99));
-    ship->SetPos(ChVector<>(0., 0., 0.));
     ship->SetEquilibriumFrame(MeanMotion, 60.);
 
     // Hydrostatics
@@ -107,9 +112,11 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     system->GetHydroMapper(hydroMapIndex)->Map(ship, 0);
 
     // Radiation model
+    /*
     auto radModel = std::make_shared<FrRadiationConvolutionModel>(system->GetHydroDB(hydroMapIndex), system);
     radModel->SetHydroMapIndex(hydroMapIndex); // TODO : patch hydro map multibody
     radModel->AddRadiationForceToHydroBody(ship);
+    */
 
     // Wave Probe
     auto waveField = system->GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
@@ -127,13 +134,98 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
 
     // Standard current viscous drag force model
     auto drag_force = std::make_shared<FrCurrentStandardForce>(ship);
+    drag_force->SetDraft(0.132);
+    drag_force->SetMaxBreadth(0.42);
     ship->AddForce(drag_force);
 
     return ship;
 }
 
+struct ShipSpeedStruct {
+    double Fr019 = 1.40;
+    double Fr028 = 1.532;
+    double Fr034 = 1.860;
+    double Fr041 = 2.243;
+};
+
+struct WavePeriodStruct {
+    double T1 = 0.988;
+    double T2 = 1.397;
+    double T3 = 1.711;
+};
+
+struct WaveAmplitudeStruct {
+    double A0 = 0.00;
+    double A1 = 0.025;
+    double A2 = 0.05;
+    double A3 = 0.075;
+    double A4 = 0.1;
+};
+
+void WriteCSV(std::string filename, const std::vector<double> vtime,
+              const std::vector<double> wave0, std::vector<double> wave1,
+              const std::vector<ChVector<>> vposition, const std::vector<ChVector<>> vrotation,
+              const std::vector<ChVector<>> vforce, const std::vector<ChVector<>> vtorque) {
+
+    std::ofstream fid;
+    fid.open(filename);
+
+    fid << "t;eta0;eta1;X;Y;Z;RX;RY;RZ;FX;FY;FZ;MX;MY;MZ" << std::endl;
+
+    for (unsigned int i=0; i<vtime.size(); i++) {
+        fid << vtime[i] << ";";
+        fid << wave0[i] << ";" << wave1[i] << ";";
+        fid << vposition[i].x() << ";" << vposition[i].y() << ";" << vposition[i].z() << ";";
+        fid << vrotation[i].x() << ";" << vrotation[i].y() << ";" << vrotation[i].z() << ";";
+        fid << vforce[i].x() << ";" << vforce[i].y() << ";" << vforce[i].z() << ";";
+        fid << vtorque[i].x() << ";" << vtorque[i].y() << ";" << vtorque[i].z() << std::endl;
+    }
+
+    fid.close();
+
+}
+
+void PlotFFT(std::vector<double> vtime, std::vector<double> vfunc,
+             double tmin, double tmax) {
+
+
+    std::vector<double> vx, vy;
+
+    for (unsigned int i=0; i<vtime.size(); i++) {
+        if (vtime[i] > tmin && vtime[i] < tmax) {
+            vx.push_back(vtime[i]);
+            vy.push_back(vfunc[i]);
+        }
+    }
+
+    double fs = 1. / (vtime[1] - vtime[0]);
+
+    FFT<double> fft;
+    fft.ScalingOFF();
+    fft.HalfSpectrumON();
+
+    std::vector<std::complex<double>> freqVect;
+    std::vector<double> frequencies;
+    fft.fft(freqVect, frequencies, vy, fs, HZ);
+
+    matplotlibcpp::subplot(2, 1, 1);
+    matplotlibcpp::plot(frequencies, Amplitude(freqVect));
+    matplotlibcpp::grid(true);
+    matplotlibcpp::subplot(2, 1, 2);
+    matplotlibcpp::plot(frequencies, Phase(freqVect, DEG));
+    matplotlibcpp::grid(true);
+    matplotlibcpp::show();
+}
 
 int main(int argc, char* argv[]) {
+
+    ShipSpeedStruct ShipSpeed;
+    WavePeriodStruct WavePeriod;
+    WaveAmplitudeStruct WaveAmplitude;
+
+    double speed = atof(argv[1]);
+    double ak = atof(argv[2]);
+    double Tk = atof(argv[1]);
 
     // ------------------------------------------------------
     // System
@@ -147,10 +239,13 @@ int main(int argc, char* argv[]) {
 
     system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_REGULAR);
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
-    waveField->SetRegularWaveHeight(0.05);
-    waveField->SetRegularWavePeriod(1.397);
+    waveField->SetRegularWaveHeight(ak);
+    waveField->SetRegularWavePeriod(Tk);
     waveField->SetMeanWaveDirection(180.);
     waveField->GetSteadyElevation(0, 0);
+
+    system.GetEnvironment()->SetCurrent(FrCurrent::UNIFORM);
+    system.GetEnvironment()->GetCurrent()->Set(0., 0., DEG, KNOT, NED, GOTO);
 
     // ------------------------------------------------------
     // Body
@@ -158,7 +253,7 @@ int main(int argc, char* argv[]) {
 
     auto ship = DTMB5512(&system);
 
-    auto vspeed = ChVector<>(1.532, 0., 0.);
+    auto vspeed = ChVector<>(speed, 0., 0.);
     ship->SetPos_dt(vspeed);
     ship->SetSteadyVelocity(vspeed);
     //ship->SetRot(euler_to_quat(chrono::ChVector<double>(0., 0., CH_C_PI)));
@@ -210,13 +305,14 @@ int main(int argc, char* argv[]) {
 
         auto time = 0.;
 
-        while (time < 50.) {
+        while (time < 40.) {
 
             // Do step
 
             system.DoStepDynamics(dt);
             time += dt;
             ship->Update();
+            ship->SetPos_dt(vspeed);
             vtime.push_back(time);
 
             // Save ship state
@@ -225,11 +321,15 @@ int main(int argc, char* argv[]) {
             vrotation.push_back(quat_to_euler(ship->GetRot()));
 
             global_force = ChVector<double>();
+            global_torque = ChVector<double>();
             for (auto& force: ship->GetForceList()) {
                 force->GetBodyForceTorque(local_force, local_torque);
                 global_force += local_force;
                 global_torque += local_torque;
             }
+            // Add gravity
+            global_force += ship->GetSystem()->Get_G_acc() * ship->GetMass();
+
             vforce.push_back(global_force);
             vtorque.push_back(global_torque);
 
@@ -242,22 +342,53 @@ int main(int argc, char* argv[]) {
 
         // Adimentionalize
 
-        auto adim_x = 1./(0.5*1025*1.532*1.532*1.4);
+        auto adim_x = 1./(0.5*1025.*speed*speed*ship->GetWettedSurface());
 
         for (auto& force: vforce) {
             force.x() = adim_x * force.x();
             force.z() = adim_x * force.z();
         }
 
-        PlotResult(vtime, vposition, vrotation, 0);
-        PlotResult(vtime, vforce, vtorque, 1);
+        std::vector<double> vtime_T;
+        for (auto& time: vtime) {
+            vtime_T.push_back(time / Tk);
+        }
 
-        matplotlibcpp::named_plot("fixed", vtime, waveElevation0);
-        matplotlibcpp::named_plot("dynamic", vtime, waveElevation1);
-        matplotlibcpp::xlabel("time (s)");
+        PlotResult(vtime_T, vposition, vrotation, 0);
+        PlotResult(vtime_T, vforce, vtorque, 1);
+
+
+        /*
+        matplotlibcpp::named_plot("fixed", vtime_T, waveElevation0);
+        matplotlibcpp::named_plot("dynamic", vtime_T, waveElevation1);
+        matplotlibcpp::xlabel("t/T");
         matplotlibcpp::ylabel("wave elevation (m)");
         matplotlibcpp::legend();
         matplotlibcpp::show();
+        */
+
+        //WriteCSV( argv[4], vtime, waveElevation0, waveElevation1, vposition, vrotation, vforce, vtorque);
+
+
+        // Fourier
+
+        std::vector<double> Fx, Fy, Fz;
+        std::vector<double> Mx, My, Mz;
+
+        for(auto force: vforce) {
+            Fx.push_back(force.x());
+            Fy.push_back(force.y());
+            Fz.push_back(force.z());
+        }
+
+        for (auto torque: vtorque) {
+            Mx.push_back(torque.x());
+            My.push_back(torque.y());
+            Mz.push_back(torque.z());
+        }
+
+        //PlotFFT(vtime, waveElevation0, 20*Tk, 30*Tk);
+        //PlotFFT(vtime, Fx, 20*Tk, 30*Tk);
 
     }
 

@@ -125,7 +125,8 @@ namespace frydom {
         auto constraint = std::make_shared<chrono::ChLinkMateGeneric>(mc_x, mc_y, mc_z, mc_rx, mc_ry, mc_rz);
         constraint->Initialize(shared_from_this(), free_surface_body,
                                true,
-                               chrono::ChFrame<>(chrono::ChVector<>()),
+                               //chrono::ChFrame<>(chrono::ChVector<>()),
+                               GetFrame_REF_to_COG(),
                                chrono::ChFrame<>(chrono::ChVector<>()));
         system->AddLink(constraint);
         }
@@ -386,6 +387,7 @@ namespace frydom {
                                           const double T0, const double psi) {
         assert(frame == DampingSpring);
         auto body_frame = std::make_shared<FrNodeDynamic>(this, T0, psi);
+        body_frame->SetPos(GetFrame_REF_to_abs().GetPos());
         system->Add(body_frame);
         m_equilibriumFrame = body_frame;
     }
@@ -394,6 +396,8 @@ namespace frydom {
                                           const double val) {
         assert(frame == MeanMotion);
         auto body_frame = std::make_shared<FrNodeMeanMotion>(this, val);
+        body_frame->SetPos(GetFrame_REF_to_abs().GetPos());
+        auto z = body_frame->GetPos().z(); // ##CC
         system->Add(body_frame);
         m_equilibriumFrame = body_frame;
     }

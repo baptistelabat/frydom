@@ -36,6 +36,12 @@ namespace frydom {
             return shared_from_this();
         }
 
+        void SetAbsPos(const chrono::ChVector<double>& REFabsPos) {
+            auto frame = chrono::ChFrame<double>();
+            frame.SetPos(REFabsPos);
+            SetFrame_REF_to_abs(frame);
+        }
+
         /// Get the body absolute position (this of its reference point)
         chrono::ChVector<> GetPosition(FrFrame frame = NWU) const{
             switch (frame) {
@@ -102,6 +108,7 @@ namespace frydom {
 
         virtual void Initialize() override {
             // TODO: mettre l'initialisation de message dans une methode privee qu'on appelle ici...
+
 
             // Initializing message
             m_bodyMsg.SetNameAndDescription(
