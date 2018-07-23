@@ -354,8 +354,8 @@ int main(int argc, char* argv[]) {
             vtime_T.push_back(time / Tk);
         }
 
-        PlotResult(vtime_T, vposition, vrotation, 0);
-        PlotResult(vtime_T, vforce, vtorque, 1);
+        //PlotResult(vtime_T, vposition, vrotation, 0);
+        //PlotResult(vtime_T, vforce, vtorque, 1);
 
 
         /*
@@ -389,6 +389,22 @@ int main(int argc, char* argv[]) {
 
         //PlotFFT(vtime, waveElevation0, 20*Tk, 30*Tk);
         //PlotFFT(vtime, Fx, 20*Tk, 30*Tk);
+
+        matplotlibcpp::subplot(2,1,1);
+        matplotlibcpp::named_plot("fixed", vtime, waveElevation0);
+        matplotlibcpp::named_plot("dynamic", vtime, waveElevation1);
+        matplotlibcpp::xlabel("t (s)");
+        matplotlibcpp::ylabel("eta (m)");
+        matplotlibcpp::legend();
+
+        matplotlibcpp::subplot(2,1,2);
+        matplotlibcpp::plot(vtime, Fx);
+        matplotlibcpp::xlabel("t (s)");
+        matplotlibcpp::ylabel("Fx (N)");
+
+        matplotlibcpp::show();
+
+
 
     }
 
