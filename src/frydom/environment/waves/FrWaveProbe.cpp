@@ -43,11 +43,13 @@ namespace frydom {
 
         // Complex elevation in time domain
         auto cmplxElevation = waveField->GetCmplxElevation(GetX(), GetY(), steady);
+        /*
         for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq) {
             for (unsigned int idir=0; idir<nbDir; ++idir) {
                 cmplxElevation[idir][ifreq] *= exp( +JJ * waveNumber[ifreq] * velocity[idir] * time);
             }
         }
+        */
 
         return cmplxElevation;
     }

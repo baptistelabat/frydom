@@ -62,6 +62,8 @@ namespace frydom {
         /// Return the abs position in Y of the sensor
         double& GetY() const { return m_node->GetPos().y(); }
 
+        std::shared_ptr<chrono::ChFrameMoving<>> GetNode() const { return m_node; }
+
         /// Return the wave field
         virtual FrWaveField* GetWaveField() const = 0;
 

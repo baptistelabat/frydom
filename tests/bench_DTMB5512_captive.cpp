@@ -244,6 +244,7 @@ int main(int argc, char* argv[]) {
     waveField->SetRegularWavePeriod(Tk);
     waveField->SetMeanWaveDirection(180.);
     waveField->GetSteadyElevation(0, 0);
+    waveField->GetWaveRamp()->Deactivate();
 
     system.GetEnvironment()->SetCurrent(FrCurrent::UNIFORM);
     system.GetEnvironment()->GetCurrent()->Set(0., 0., DEG, KNOT, NED, GOTO);
@@ -282,6 +283,7 @@ int main(int argc, char* argv[]) {
     std::vector<ChVector<double>> vforce;
     std::vector<ChVector<double>> vtorque;
     std::vector<double> waveElevation0, waveElevation1;
+    std::vector<double> posProbe1, vxProbe1;
     std::vector<double> vtime;
 
     double dt = 0.01;
@@ -306,7 +308,7 @@ int main(int argc, char* argv[]) {
 
         auto time = 0.;
 
-        while (time < 40.) {
+        while (time < 10.) {
 
             // Do step
 
@@ -338,7 +340,8 @@ int main(int argc, char* argv[]) {
 
             waveElevation0.push_back(fixed_waveProbe->GetElevation(time));
             waveElevation1.push_back(dynamic_waveProbe->GetElevation(time));
-
+            posProbe1.push_back(dynamic_waveProbe->GetNode()->GetPos().x());
+            vxProbe1.push_back(dynamic_waveProbe->GetNode()->GetPos_dt().x());
         }
 
         // Adimentionalize
@@ -391,14 +394,27 @@ int main(int argc, char* argv[]) {
         //PlotFFT(vtime, waveElevation0, 20*Tk, 30*Tk);
         //PlotFFT(vtime, Fx, 20*Tk, 30*Tk);
 
-        matplotlibcpp::subplot(2,1,1);
+        for (auto& time: vtime) {
+            //time = time / 1.397;
+            time = time / 0.946;
+        }
+
+        matplotlibcpp::subplot(3,1,1);
         matplotlibcpp::named_plot("fixed", vtime, waveElevation0);
         matplotlibcpp::named_plot("dynamic", vtime, waveElevation1);
         matplotlibcpp::xlabel("t (s)");
         matplotlibcpp::ylabel("eta (m)");
+        matplotlibcpp::grid(true);
         matplotlibcpp::legend();
 
-        matplotlibcpp::subplot(2,1,2);
+        matplotlibcpp::subplot(3,1,2);
+        matplotlibcpp::plot(vtime, posProbe1);
+        matplotlibcpp::plot(vtime, vxProbe1);
+        matplotlibcpp::xlabel("time (s)");
+        matplotlibcpp::ylabel("position.x (m)");
+        matplotlibcpp::grid(true);
+
+        matplotlibcpp::subplot(3,1,3);
         matplotlibcpp::plot(vtime, Fx);
         matplotlibcpp::xlabel("t (s)");
         matplotlibcpp::ylabel("Fx (N)");
