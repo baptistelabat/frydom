@@ -25,6 +25,7 @@ namespace frydom {
     protected:
 
             unsigned int m_size = 0;
+            unsigned int m_nstep = 0;
 
             // Buffers
             std::vector<boost::circular_buffer<double>> m_velocities;
@@ -38,6 +39,8 @@ namespace frydom {
         void SetSize(unsigned int size) { m_size = size; }
 
         unsigned int GetSize() const { return m_size; }
+
+        unsigned int GetNStep() const { return std::min(m_nstep, m_size); }
 
         void SetBody(FrBody* body) { m_body=body; }
 
@@ -85,6 +88,8 @@ namespace frydom {
             m_velocities[3].push_front(angular_velocity[0]);
             m_velocities[4].push_front(angular_velocity[1]);
             m_velocities[5].push_front(angular_velocity[2]);
+
+            m_nstep += 1;
 
         }
 

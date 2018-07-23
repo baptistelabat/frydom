@@ -51,7 +51,8 @@ namespace frydom {
         FrBody* m_body = nullptr;                               ///< Body to which the node is attached
         std::unique_ptr<FrVelocityRecorder> m_velocitiesREC;    ///< Velocity recorder
         std::unique_ptr<FrPositionRecorder> m_positionsREC;     ///< Position recorder
-        unsigned int m_size = 0;                                ///< size of the recorders
+        unsigned int m_size = 0;                                ///< full size of the recorders
+        unsigned int m_nstep = 0;                               ///< number of element stored
         double m_tmax = -1;                                     ///< Time length of the recorder (s)
 
     public:

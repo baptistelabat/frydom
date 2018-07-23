@@ -55,6 +55,12 @@ namespace frydom {
             auto eqFrame = mybody->GetEquilibriumFrame();
             m_waveProbe->SetX(eqFrame->GetPos().x());
             m_waveProbe->SetY(eqFrame->GetPos().y());
+            auto waveField = m_waveProbe->GetWaveField();
+            m_Fexc = BEMBody->GetExcitationInterp(waveField->GetWaveFrequencies(RADS),
+                                                  waveField->GetWaveDirections(DEG),
+                                                  waveField->GetWaveNumbers(),
+                                                  eqFrame->GetPos_dt(),
+                                                  DEG);
             Initialize();
         }
 

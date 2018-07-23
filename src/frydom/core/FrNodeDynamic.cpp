@@ -76,6 +76,8 @@ namespace frydom {
         m_velocitiesREC->RecordVelocity();
         m_positionsREC->RecordPosition();
 
+        m_nstep = m_velocitiesREC->GetNStep();
+
         auto vx = m_velocitiesREC->GetRecordOnDOF(0);
         auto vy = m_velocitiesREC->GetRecordOnDOF(1);
         auto x = m_positionsREC->GetRecordOnDOF(0);
@@ -90,16 +92,16 @@ namespace frydom {
         double mean_vy = 0.;
         double mean_x = 0.;
         double mean_y = 0.;
-        for (unsigned int i=0; i<m_size; ++i) {
+        for (unsigned int i=0; i<m_nstep; ++i) {
             mean_vx += vx[i];
             mean_vy += vy[i];
             mean_x += x[i];
             mean_y += y[i];
         }
-        mean_vx = mean_vx/m_size;
-        mean_vy = mean_vy/m_size;
-        mean_x = mean_x/m_size;
-        mean_y = mean_y/m_size;
+        mean_vx = mean_vx/m_nstep;
+        mean_vy = mean_vy/m_nstep;
+        mean_x = mean_x/m_nstep;
+        mean_y = mean_y/m_nstep;
 
         SetPos( chrono::ChVector<double>(mean_x, mean_y, 0.));
         SetPos_dt( chrono::ChVector<double>( mean_vx, mean_vy, 0.));

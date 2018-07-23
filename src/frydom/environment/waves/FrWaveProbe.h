@@ -81,6 +81,9 @@ namespace frydom {
         /// Return the free surface elevation at the sensor position
         virtual double GetElevation(double time) const = 0;
 
+        /// Return the wave frequencies ate the probe location
+        virtual std::vector<double> GetFrequencies() const = 0;
+
     };
 
     // =================================================================================================================
@@ -111,6 +114,9 @@ namespace frydom {
         /// Return the wave elevation at the wave probe position
         virtual double GetElevation(double time) const override;
 
+        /// Return the encounter wave frequencies at the wave probe position
+        virtual std::vector<double> GetFrequencies() const override;
+
     };
 
     /// Specialization of the wave probe to optimize cpu time for linear wave field
@@ -133,6 +139,9 @@ namespace frydom {
 
         /// Return the wave elevation at the sensor position
         virtual double GetElevation(double time) const override;
+
+        /// Return the wave frequencies
+        virtual std::vector<double> GetFrequencies() const override;
 
     };
 

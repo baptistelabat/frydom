@@ -397,7 +397,6 @@ namespace frydom {
         assert(frame == MeanMotion);
         auto body_frame = std::make_shared<FrNodeMeanMotion>(this, val);
         body_frame->SetPos(GetFrame_REF_to_abs().GetPos());
-        auto z = body_frame->GetPos().z(); // ##CC
         system->Add(body_frame);
         m_equilibriumFrame = body_frame;
     }

@@ -131,6 +131,7 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     ship->AddForce(excForce);
     excForce->SetWaveProbe(waveProbe);
     excForce->SetHydroMapIndex(hydroMapIndex);
+    excForce->SetSteady(true);
 
     // Standard current viscous drag force model
     auto drag_force = std::make_shared<FrCurrentStandardForce>(ship);
@@ -225,7 +226,7 @@ int main(int argc, char* argv[]) {
 
     double speed = atof(argv[1]);
     double ak = atof(argv[2]);
-    double Tk = atof(argv[1]);
+    double Tk = atof(argv[3]);
 
     // ------------------------------------------------------
     // System

@@ -81,6 +81,33 @@ namespace frydom {
 
     }
 
+    std::vector<double> FrLinearWaveProbe::GetFrequencies() const {
+
+        auto waveField = dynamic_cast<FrLinearWaveField*>(m_waveField);
+
+        auto nbDir = waveField->GetNbWaveDirections();
+        auto nbFreq = waveField->GetNbFrequencies();
+
+        auto waveNumber = waveField->GetWaveNumbers();
+        auto waveDir = waveField->GetWaveDirections(RAD);
+
+        // Relative angle and speed of the frame
+        auto frame_velocity = m_node->GetPos_dt();
+        auto angle = Normalize_0_2PI(atan2(frame_velocity.y(), frame_velocity.x()));
+        auto norm_speed = frame_velocity.Length();
+
+        std::vector<double> velocity;
+        velocity.reserve(nbDir);
+
+        // Component of the frame velocity in the wave direction
+        for (unsigned int idir=0; idir<nbDir; ++idir) {
+            velocity.push_back( norm_speed * cos(waveDir[idir]-angle));
+        }
+
+
+
+    }
+
     // -------------------------------------------------------
     // Linear wave probe with steady state
     // -------------------------------------------------------
@@ -107,6 +134,11 @@ namespace frydom {
             );
         }
         return realElev;
+    }
+
+    std::vector<double> FrLinearWaveProbeSteady::GetFrequencies() const {
+        auto waveField = dynamic_cast<FrLinearWaveField *>(m_waveField);
+        return waveField->GetWaveFrequencies();
     }
 
 

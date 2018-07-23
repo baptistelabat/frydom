@@ -169,6 +169,13 @@ namespace frydom {
 
         std::vector<double> GetFrequencies() const;
 
+        std::vector<std::vector<double>>
+        GetEncounterFrequencies(std::vector<double> waveFrequencies,
+                                std::vector<double> waveDirections,
+                                std::vector<double> waveNumbers,
+                                chrono::ChVector<double> frame_velocity,
+                                ANGLE_UNIT angleUnit);
+
         unsigned int GetNbWaveDirections() const;
 
         std::vector<double> GetWaveDirections() const;
@@ -194,6 +201,11 @@ namespace frydom {
 
         std::vector<Eigen::MatrixXcd>
         GetExcitationInterp(std::vector<double> waveFrequencies, std::vector<double> waveDirections, ANGLE_UNIT angleUnit=DEG);
+
+        std::vector<Eigen::MatrixXcd>
+        GetExcitationInterp(std::vector<double> waveFrequencies, std::vector<double> waveDirection,
+                            std::vector<double> waveNumbers, chrono::ChVector<double> frame_velocity,
+                            ANGLE_UNIT angleUnit=DEG);
 
         void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
 
