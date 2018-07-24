@@ -18,24 +18,20 @@ namespace frydom {
     class FrTaylorManDamping : public FrForce {
 
         struct TypeCoeff {
-            double x = 0.;
-            double y = 0.;
-            double n = 0.;
+            double val = 0.;
+            unsigned int m = 0;
+            unsigned int n = 0;
+            unsigned int p = 0;
         };
 
     private:
-        unsigned int m_order;                           ///< Order of the taylor expansion
-        std::vector <std::vector<TypeCoeff>> m_coeff;   ///< Taylor coefficients
+        std::vector<TypeCoeff> m_cx;                    ///< Taylor coefficients for surge motion
+        std::vector<TypeCoeff> m_cy;                    ///< Taylor coefficients for sway motion
+        std::vector<TypeCoeff> m_cn;                    ///< Taylor coefficients for yaw motion
 
     public:
         /// Default constructor
         FrTaylorManDamping() = default;
-
-        /// Set order of the taylor model expansion
-        void SetOrder(const unsigned int n);
-
-        /// Return the order of the taylor expansion used
-        unsigned int GetOrder() const { return m_order; }
 
         /// Set taylor coefficients defined by tag
         void Set(const std::string tag, const double val);
@@ -48,6 +44,7 @@ namespace frydom {
 
         /// Set taylor coefficients for yaw motion
         void SetN(const std::string tag, const double val);
+
 
         void UpdateState() override;
 

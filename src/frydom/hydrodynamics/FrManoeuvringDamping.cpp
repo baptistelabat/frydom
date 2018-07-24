@@ -6,15 +6,6 @@
 
 namespace frydom {
 
-    void FrTaylorManDamping::SetOrder(const unsigned int n) {
-
-        m_order = n;
-
-        m_coeff.reserve(m_order+1);
-        for (unsigned int i=0; i<m_order+1; i++) {
-            m_coeff[i].reserve(m_order+1 - i);
-        }
-    }
 
     void FrTaylorManDamping::Set(const std::string tag, const double val) {
 
@@ -30,33 +21,58 @@ namespace frydom {
     }
 
     void FrTaylorManDamping::SetX(const std::string tag, const double val) {
-        size_t nu = std::count(tag.being(), tag.end(), 'u');
-        size_t nv = std::count(tag.begin(), tag.end(), 'v');
-        m_coeff[nu][nv].x = val;
+        TypeCoeff new_coeff;
+        new_coeff.m = std::count(tag.being(), tag.end(), 'u');
+        new_coeff.n = std::count(tag.begin(), tag.end(), 'v');
+        new_coeff.p = std::coutn(tag.begin(), tag.end(), 'r');
+        new_coeff.val = val;
+        m_cx.push_back(new_coeff);
     }
 
     void FrTaylorManDamping::SetY(const std::string tag, const double val) {
-        size_t nu = std::count(tag.being(), tag.end(), 'u');
-        size_t nv = std::count(tag.begin(), tag.end(), 'v');
-        m_coeff[nu][nv].y = val;
+        TypeCoeff new_coeff;
+        new_coeff.m = std::count(tag.being(), tag.end(), 'u');
+        new_coeff.n = std::count(tag.begin(), tag.end(), 'v');
+        new_coeff.p = std::coutn(tag.begin(), tag.end(), 'r');
+        new_coeff.val = val;
+        m_cy.push_back(new_coeff);
     }
 
     void FrTaylorManDamping::SetN(const std::string tag, const double val) {
-        size_t nu = std::count(tag.being(), tag.end(), 'u');
-        size_t nv = std::count(tag.begin(), tag.end(), 'v');
-        m_coeff[nu][nv].n = val;
+        TypeCoeff new_coeff;
+        new_coeff.m = std::count(tag.being(), tag.end(), 'u');
+        new_coeff.n = std::count(tag.begin(), tag.end(), 'v');
+        new_coeff.p = std::coutn(tag.begin(), tag.end(), 'r');
+        new_coeff.val = val;
+        m_cn.push_back(new_coeff);
     }
 
     void FrTaylorManDamping::UpdateState() {
 
-        force = ChForce<>();
+        force_damp = chrono::ChVector<double>();
+        body_lin_velocity = chrono::ChVector<double>();
+        body_angular_velocity = chrono::ChVector<double>();
 
-        for (unsigned int i=0; i<m_order; i++) {
-            for (unsigned int j=0; i<m_order - i; j++) {
-                force += m_coeff[i][j] * std::pow(vx,i) * std::pow(vy, j);
-            }
+        auto vx = body_lin_velocity.x();
+        auto vy = body_lin_velocity.y();
+        auto vrz = body_angular_velocity.z();
+
+        for (auto& cx: m_cx) {
+            force_temp.x() += cx.val * std::pow(vx, cx.n) * std::pow(vy, cx.m) * std::pow(vrz, cx.p);
         }
 
+        for (auto& cy: m_cy) {
+            force_temp.y() += cy.val * std::pow(vx, cy.n) * std::pow(vy, cy.m) * std::pow(vrz, cy.p);
+        }
+
+        for (auto& cn: m_cn) {
+            moment_temp.z() += cn.val * std::pow(vx, cn.n) * std::pow(vy, cn.m) * std::pow(vrz, cn.p);
+        }
+
+        force = force_temp;
+        moment = moment_temp;
+
+        // Transform
     }
 
 }
