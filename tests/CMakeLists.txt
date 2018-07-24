@@ -36,6 +36,7 @@ set(FRYDOM_TESTS
         test_current-wind_relative_velocity
         test_hub_installation
         test_pendulum
+        test_motors
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")

@@ -217,7 +217,7 @@ int main(int argc, char* argv[]) {
 
     auto rotmotor = std::make_shared<ChLinkMotorRotationSpeed>();
 
-    rotmotor->Initialize(base_crane, barge, ChFrame<>(ChVector<>(0., +7.5, 3.)));
+    rotmotor->Initialize(base_crane, barge, ChFrame<>(ChVector<>(0., +7.5, 3.), CH_C_PI_2, VECT_X));
 
     //system.Add(rotmotor);
 
