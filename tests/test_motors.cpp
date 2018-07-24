@@ -93,19 +93,20 @@ int main() {
                  << "  x_Pendulum: " << pendulum1->GetPos().x() << "\n";
     }*/
 
-    /*
-    // -----------------------------------------------
+
+/*    // -----------------------------------------------
     // Irrlicht with FrOffshoreSystem
     // -----------------------------------------------
 
-    double dt = 0.01;
+    double dt = 0.05;
 
-    my_system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
+    my_system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
     my_system.SetStep(dt);
-    my_system.Initialize();
+    //my_system.Initialize();
 
     auto app = FrIrrApp(my_system);
     app.AddTypicalCamera(irr::core::vector3df(1, 1, 15), irr::core::vector3df(0, 0, 10));
+
     app.Run();*/
 
     // -----------------------------------------------
@@ -141,10 +142,11 @@ int main() {
     // THE SOFT-REAL-TIME CYCLE
     //
     // Modify some setting of the physical system for the simulation, if you want
-    my_system.SetSolverType(ChSolver::Type::SOR);
-    my_system.SetMaxItersSolverSpeed(50);
+    //my_system.SetSolverType(ChSolver::Type::SOR);
+    //my_system.SetMaxItersSolverSpeed(50);
+    my_system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
 
-    application.SetTimestep(0.005);
+    application.SetTimestep(0.05);
     application.SetTryRealtime(true);
 
 

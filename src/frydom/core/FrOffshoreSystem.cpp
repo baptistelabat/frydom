@@ -59,7 +59,9 @@ namespace frydom {
 		IntStateScatter(0, x, 0, v,
 		                T);  // TODO: voir pour faire un update de l'environnement juste avant cette ligne ...
 
-//        Update();  //***TODO*** optimize because maybe IntStateScatter above might have already called Update?
+        Update();  //***TODO*** optimize because maybe IntStateScatter above might have already called Update?
+                    // Update() needed for applications with motors and TimeStepper is EULER_IMPLICIT
+                    //          not needed however with TimeStepper is EULER_IMPLICIT_LINEARIZED.
     }
 
     bool FrOffshoreSystem::Integrate_Y() {
@@ -84,6 +86,7 @@ namespace frydom {
         // Update everything - and put to sleep bodies that need it (not needed because already in Advance()...? )
         // No need to update visualization assets here.
         Update(true);  // FIXME : Desactive car redondant avec ce qui est deja fait lors du system::StateScatter()...
+                        // Update() needed for applications with ChLink and ChMotors.
 
         // Re-wake the bodies that cannot sleep because they are in contact with
         // some body that is not in sleep state.
