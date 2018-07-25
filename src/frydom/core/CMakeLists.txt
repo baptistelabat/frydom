@@ -14,6 +14,7 @@ set(SRC_FILES
         FrOffshoreSystem.cpp
         FrShip.cpp
         FrKinematicJoint.cpp
+        FrMotor.cpp
 )
 
 set(FRYDOM_CORE_SOURCES "")
