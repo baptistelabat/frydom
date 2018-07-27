@@ -58,6 +58,7 @@ int main(int argc, char* argv[]) {
     hub_box->SetVisuMesh("HubBox.obj");
     //hub_box->SetCOG(chrono::ChVector<double>(0., 0., 0.));
     hub_box->SetPos(chrono::ChVector<double>(0,-10,4.1));
+    hub_box->SetMass(1000);
     system.AddBody(hub_box);
     //hub_box->SetBodyFixed(true);
 
@@ -75,9 +76,9 @@ int main(int argc, char* argv[]) {
 
 
     // Line properties
-    double Lu = 14.25;
+    double Lu = 14.5;
     auto u = chrono::ChVector<double>(0, 0, 1);
-    double q = 1;//616.538;
+    double q = 616.538;
     double EA = 1.5708e9;
     double A = 0.003;
     double E = EA/A;
