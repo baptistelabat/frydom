@@ -32,7 +32,7 @@ int main() {
     pendulum1 = std::make_shared<FrSphere>(1, 33500, true);
     pendulum1->SetName("pendulum");
     pendulum1->SetPos(ChVector<>(10., 0, 20));
-    pendulum1->SetBodyFixed(true);
+    //pendulum1->SetBodyFixed(true);
     my_system.Add(pendulum1);
 
     // --------------------------------------------------
@@ -51,15 +51,15 @@ int main() {
     // Catenary Line
     // --------------------------------------------------
     // Line properties
-    double Lu = 12;
+    double Lu = 10;
     auto u = chrono::ChVector<double>(0, 0, -1);
     double q = 616.538;
     double EA = 1.5708e9;
-    double A = 0.003;
+    double A = 0.05;
     double E = EA/A;
 
     auto Catenary = std::make_shared<FrCatenaryLine>(baseNode, pendulumNode, false, E, A, Lu, q, u);
-
+    my_system.AddLink(Catenary);
 
 /*
     // -----------------------------------------------

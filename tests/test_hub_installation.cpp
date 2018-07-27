@@ -88,6 +88,7 @@ int main(int argc, char* argv[]) {
     // ---------------------------------------------
 
     auto Catenary = std::make_shared<FrCatenaryLine>(A3_tige, A4_hub, false, E, A, Lu, q, u);
+    system.AddLink(Catenary);
 
     /*
     auto A1_barge = barge->CreateNode(ChVector<double>(0., 0., -5.));
