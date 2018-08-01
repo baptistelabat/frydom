@@ -24,5 +24,6 @@
 #include "FrRadiationModel.h"
 #include "FrHydroMapper.h"
 #include "FrWaveDriftForce.h"
+#include "FrManoeuvringDamping.h"
 
 #endif //FRYDOM_FRHYDRODYNAMICS_H

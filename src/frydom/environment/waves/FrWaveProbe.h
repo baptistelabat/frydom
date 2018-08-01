@@ -116,8 +116,11 @@ namespace frydom {
         /// Return the wave elevation at the wave probe position
         virtual double GetElevation(double time) const override;
 
-        /// Return the encounter wave frequencies at the wave probe position
+        /// Return the wave frequencies at the wave probe position
         virtual std::vector<double> GetFrequencies() const override;
+
+        /// Return the encounter wave frequencies at the wave probe position
+        std::vector<std::vector<double>> GetEncounterWaveFrequencies() const;
 
     };
 

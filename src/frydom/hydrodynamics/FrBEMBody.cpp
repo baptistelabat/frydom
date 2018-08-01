@@ -519,7 +519,14 @@ namespace frydom {
 
             }
             Fexc.push_back(FexcDir);
+
         }
+
+        // ##CC : debug print excitation force
+        //std::cout << " ################ EXCITATION FORCE" << std::endl;
+        //std::cout << " omegaE (rad/s): " << waveEncounterFrequencies[0][0];
+        //std::cout << ", Fe (N/m): " << Fexc[0](0,0) << std::endl;
+        // ##CC
 
         return Fexc;
 

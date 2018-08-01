@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRMANOEUVRINGDAMPING_H
 #define FRYDOM_FRMANOEUVRINGDAMPING_H
 
-#include "FrForce"
+#include "frydom/core/FrForce.h"
 
 namespace frydom {
 
@@ -19,9 +19,9 @@ namespace frydom {
 
         struct TypeCoeff {
             double val = 0.;
-            unsigned int m = 0;
-            unsigned int n = 0;
-            unsigned int p = 0;
+            double m = 0;
+            double n = 0;
+            double p = 0;
         };
 
     private:
@@ -44,6 +44,12 @@ namespace frydom {
 
         /// Set taylor coefficients for yaw motion
         void SetN(const std::string tag, const double val);
+
+        void SetX(const double val, const double m, const double n, const double p);
+
+        void SetY(const double val, const double m, const double n, const double p);
+
+        void SetN(const double val, const double m, const double n, const double p);
 
 
         void UpdateState() override;

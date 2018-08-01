@@ -41,6 +41,15 @@ namespace frydom {
                 }
             }
         }
+
+        // ##CC : debug excitation force
+        //std::cout << " ################# STEADY FORCE " << std::endl;
+        //std::cout << " elevation : " << cmplxElevations[0][0];
+        //std::cout << ", Fe : " << m_Fexc[0](0, 0);
+        //std::cout << ", steadyForce : " << m_steadyForce(0, 0);
+        //std::cout << ", ejwt : " << waveField->GetTimeCoeffs()[0];
+        //std::cout << std::endl;
+        // ##CC
     }
 
 
@@ -56,13 +65,14 @@ namespace frydom {
             m_waveProbe->SetX(eqFrame->GetPos().x());
             m_waveProbe->SetY(eqFrame->GetPos().y());
             auto waveField = m_waveProbe->GetWaveField();
-            m_Fexc = BEMBody->GetExcitationInterp(waveField->GetWaveFrequencies(RADS),
-                                                  waveField->GetWaveDirections(DEG),
-                                                  waveField->GetWaveNumbers(),
-                                                  eqFrame->GetPos_dt(),
-                                                  DEG);
+            //m_Fexc = BEMBody->GetExcitationInterp(waveField->GetWaveFrequencies(RADS),
+            //                                      waveField->GetWaveDirections(DEG),
+            //                                      waveField->GetWaveNumbers(),
+            //                                      eqFrame->GetPos_dt(),
+            //                                      DEG);
             Initialize();
         }
+
 
         auto nbMode = BEMBody->GetNbForceMode();
 //            auto nbFreq = BEMBody->GetNbFrequencies();
