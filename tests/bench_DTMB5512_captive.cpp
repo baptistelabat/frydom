@@ -159,6 +159,10 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     forceMan->SetX("Xuuuu", 2.34285);
     forceMan->SetX("Xuu", 2.720665);
 
+    // Steady force
+    auto forcePitch = std::make_shared<FrSteadyPitchTorque>();
+    ship->AddForce(forcePitch);
+
     return ship;
 }
 
