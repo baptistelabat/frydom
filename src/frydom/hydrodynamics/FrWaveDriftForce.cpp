@@ -80,15 +80,6 @@ namespace frydom {
         }
     }
 
-    void FrWaveDriftForce::SetCmplxElevation() {
-
-        auto x = m_waveProbe->GetX();
-        auto y = m_waveProbe->GetY();
-
-        m_CmplxElevation = m_waveProbe->GetWaveField()->GetCmplxElevation(x, y, true);
-
-    }
-
     double FrWaveDriftForce::SetRelativeAngle(const double waveDir, const double heading) {
 
         double relative_angle;
@@ -107,9 +98,16 @@ namespace frydom {
             relative_angle = 180. - relative_angle;
         }
 
-        relative_angle = Normalize_0_2PI(relative_angle);
+        relative_angle = Normalize_0_360(relative_angle);
 
         return relative_angle;
+
+    }
+
+    void FrWaveDriftForce::Initialize() {
+
+        m_waveAmplitude = m_waveProbe->GetWaveField()->_GetWaveAmplitudes();
+        FrForce::Initialize();
 
     }
 
@@ -122,33 +120,33 @@ namespace frydom {
 
         auto heading = m_body->GetHeadingAngle(NED, DEG);
 
-        auto emjwt = m_waveProbe->GetWaveField()->GetTimeCoeffs();
+        //auto emjwt = m_waveProbe->GetWaveField()->GetTimeCoeffs();
 
-        std::vector<std::complex<double>> cforce = {0.,0.,0.};
+        std::vector<double> cforce = {0.,0.,0.};
 
         auto waveDir = m_waveProbe->GetWaveField()->GetWaveDirections(DEG);
-        auto w = m_waveProbe->GetWaveField()->GetWaveFrequencies(RADS);
+        //auto w = m_waveProbe->GetWaveField()->GetWaveFrequencies(RADS);
+        auto w = m_waveProbe->GetEncounterWaveFrequencies();
         double wi, relative_angle;
 
         for (unsigned int idir=0; idir<nbWaveDir; ++idir) {
             for (unsigned int ifreq=0; ifreq < nbFreq; ++ifreq) {
 
-                wi  = w[ifreq];
-                relative_angle = SetRelativeAngle(waveDir[idir],heading);
+                wi  = w[idir][ifreq];
+                relative_angle = SetRelativeAngle(waveDir[idir]-180.,heading);
 
-                cforce.at(0) += m_CmplxElevation[idir][ifreq] * m_table[0]->Eval("Data", relative_angle, wi) * emjwt[ifreq];
-                cforce.at(1) += m_CmplxElevation[idir][ifreq] * m_table[1]->Eval("Data", relative_angle, wi) * emjwt[ifreq];
-                cforce.at(2) += m_CmplxElevation[idir][ifreq] * m_table[2]->Eval("Data", relative_angle, wi) * emjwt[ifreq];
-
+                cforce.at(0) -= std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[0]->Eval("Data", relative_angle, wi) ;
+                //cforce.at(1) += std::pow(m_CmplxElevation[idir][ifreq],2) * m_table[1]->Eval("Data", relative_angle, wi) ;
+                //cforce.at(2) += std::pow(m_CmplxElevation[idir][ifreq],2) * m_table[2]->Eval("Data", relative_angle, wi) ;
             }
         }
 
-        force.x() = std::real(cforce.at(0));   //  Surge
-        force.y() = std::real(cforce.at(1));   //  Sway
+        force.x() = cforce.at(0);   //  Surge
+        force.y() = cforce.at(1);   //  Sway
 
         force = GetBody()->Dir_Body2World(force);
 
-        moment.z() = std::real(cforce.at(2));  //  Yaw
+        moment.z() = cforce.at(2);  //  Yaw
 
      }
 

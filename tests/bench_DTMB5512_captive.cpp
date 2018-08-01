@@ -95,7 +95,7 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     ship->SetHydroMesh("DTMB5512.obj", true);
     ship->SetLpp(3.048);
     ship->SetMass(86.0);
-    ship->SetWettedSurface(1.4);
+    ship->SetWettedSurface(1.371);
     ship->SetCOG(ChVector<>(0., 0., -0.036));
     ship->SetInertiaXX(ChVector<>(1.98, 53.88, 49.99));
     ship->SetEquilibriumFrame(MeanMotion, 60.);
@@ -134,10 +134,30 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     excForce->SetSteady(true);
 
     // Standard current viscous drag force model
-    auto drag_force = std::make_shared<FrCurrentStandardForce>(ship);
-    drag_force->SetDraft(0.132);
-    drag_force->SetMaxBreadth(0.42);
-    ship->AddForce(drag_force);
+    //auto drag_force = std::make_shared<FrCurrentStandardForce>(ship);
+    //drag_force->SetDraft(0.132);
+    //drag_force->SetMaxBreadth(0.42);
+    //ship->AddForce(drag_force);
+
+    // Wave drift force
+    auto waveDrift = std::make_shared<FrWaveDriftForce>("DTMB5512_WaveDriftCoeff.h5");
+    ship->AddForce(waveDrift);
+    waveDrift->SetBody(ship);
+    waveDrift->SetWaveProbe(waveProbe);
+
+    // Friction force from ITTC57
+    auto forceITTC57 = std::make_shared<FrITTC57>();
+    forceITTC57->SetCharacteristicLength(ship->GetLpp());
+    forceITTC57->SetHullWettedSurface(ship->GetWettedSurface());
+    forceITTC57->SetHullFrontalProjectedArea(ship->GetTransverseUnderWaterArea());
+    ship->AddForce(forceITTC57);
+
+    // Man damping
+    auto forceMan = std::make_shared<FrTaylorManDamping>();
+    ship->AddForce(forceMan);
+    forceMan->SetX("Xuuu",-5.59134);
+    forceMan->SetX("Xuuuu", 2.34285);
+    forceMan->SetX("Xuu", 2.720665);
 
     return ship;
 }
@@ -259,6 +279,7 @@ int main(int argc, char* argv[]) {
     ship->SetPos_dt(vspeed);
     ship->SetSteadyVelocity(vspeed);
     //ship->SetRot(euler_to_quat(chrono::ChVector<double>(0., 0., CH_C_PI)));
+    //ship->SetDOF(false, true, false, true, false, true);
     ship->SetDOF(false, true, true, true, true, true);
 
     // ------------------------------------------------------
@@ -308,14 +329,14 @@ int main(int argc, char* argv[]) {
 
         auto time = 0.;
 
-        while (time < 10.) {
+        while (time < 15.) {
 
             // Do step
 
             system.DoStepDynamics(dt);
             time += dt;
             ship->Update();
-            ship->SetPos_dt(vspeed);
+            ship->GetPos_dt().x() = vspeed.x();
             vtime.push_back(time);
 
             // Save ship state
@@ -325,6 +346,11 @@ int main(int argc, char* argv[]) {
 
             global_force = ChVector<double>();
             global_torque = ChVector<double>();
+
+            // ##CC
+            std::cout << "Number of external force : " << ship->GetForceList().size() << std::endl;
+            // ##CC
+
             for (auto& force: ship->GetForceList()) {
                 force->GetBodyForceTorque(local_force, local_torque);
                 global_force += local_force;
@@ -347,10 +373,15 @@ int main(int argc, char* argv[]) {
         // Adimentionalize
 
         auto adim_x = 1./(0.5*1025.*speed*speed*ship->GetWettedSurface());
+        auto adim_cm = 1./(0.5*1025*speed*speed*ship->GetWettedSurface()*ship->GetLpp());
 
         for (auto& force: vforce) {
             force.x() = adim_x * force.x();
             force.z() = adim_x * force.z();
+        }
+
+        for (auto& torque: vtorque) {
+            torque.y() = adim_cm * torque.y();
         }
 
         std::vector<double> vtime_T;
@@ -371,7 +402,7 @@ int main(int argc, char* argv[]) {
         matplotlibcpp::show();
         */
 
-        //WriteCSV( argv[4], vtime, waveElevation0, waveElevation1, vposition, vrotation, vforce, vtorque);
+        WriteCSV( argv[4], vtime, waveElevation0, waveElevation1, vposition, vrotation, vforce, vtorque);
 
 
         // Fourier
@@ -391,14 +422,15 @@ int main(int argc, char* argv[]) {
             Mz.push_back(torque.z());
         }
 
-        //PlotFFT(vtime, waveElevation0, 20*Tk, 30*Tk);
-        //PlotFFT(vtime, Fx, 20*Tk, 30*Tk);
+        //PlotFFT(vtime, waveElevation0, 1.*Tk, 10.*Tk);
+        //PlotFFT(vtime, Fx, 1.*Tk, 5.*Tk);
 
         for (auto& time: vtime) {
             //time = time / 1.397;
-            time = time / 0.946;
+            //time = time / 0.946;
         }
 
+        /*
         matplotlibcpp::subplot(3,1,1);
         matplotlibcpp::named_plot("fixed", vtime, waveElevation0);
         matplotlibcpp::named_plot("dynamic", vtime, waveElevation1);
@@ -420,7 +452,7 @@ int main(int argc, char* argv[]) {
         matplotlibcpp::ylabel("Fx (N)");
 
         matplotlibcpp::show();
-
+        */
 
 
     }

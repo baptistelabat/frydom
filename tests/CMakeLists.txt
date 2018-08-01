@@ -90,3 +90,4 @@ configure_file(data/Ship/Ship_WaveDriftCoeff.h5 . COPYONLY)
 
 configure_file(data/DTMB5512/DTMB5512.obj . COPYONLY)
 configure_file(data/DTMB5512/DTMB5512_hdb.h5 . COPYONLY)
+configure_file(data/DTMB5512/DTMB5512_WaveDriftCoeff.h5 . COPYONLY)
