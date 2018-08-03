@@ -49,6 +49,8 @@ namespace frydom {
         bool m_drawCableElements = true;
         int m_nbDrawnElements = 21;
         std::vector<std::shared_ptr<chrono::ChLineShape>> m_cableElements;
+        double m_minTension = 0;
+        double m_maxTension = 0;
 
     public:
 
@@ -92,6 +94,7 @@ namespace frydom {
         /// Returns the cartensian tension at the end of the line.
         /// This tension is applied by the end node's parent body ON the line
         chrono::ChVector<double> GetEndingNodeTension() const;
+
 
         // TODO: supprimer a terme cette methode et coder en dur a chaque fois qu'on en a besoin
         double _rho(const double s) const {
@@ -139,6 +142,7 @@ namespace frydom {
             solve();
             // Generate assets for the cable
             GenerateAssets();
+            InitRangeTensionColor();
         }
 
         /// Returns the current cable length by line discretization
@@ -169,6 +173,13 @@ namespace frydom {
             }
             solve();
         }
+
+        ////////////////////////////////////////////////
+        // Visu
+        ////////////////////////////////////////////////
+        void SetAssetNbElements(int NbElements) {m_nbDrawnElements = NbElements;}
+        int GetAssetNbElements(){return m_nbDrawnElements;}
+        void InitRangeTensionColor();
 
         /// Update the assets (position of the discretized cable for the visualization)
         virtual void UpdateAsset();
