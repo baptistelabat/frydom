@@ -263,6 +263,8 @@ int main(int argc, char* argv[]) {
     ship->SetSteadyVelocity(vspeed);
     ship->SetDOF(false, true, true, true, false, true);
 
+    ship->Log().SetNameAndDescription("ShipLog","Message log of the ship");
+
     // ------------------------------------------------------
     // Monitoring waveProbe
     // ------------------------------------------------------
@@ -319,6 +321,8 @@ int main(int argc, char* argv[]) {
             ship->Update();
             ship->GetPos_dt().x() = vspeed.x();
             vtime.push_back(time);
+
+            //system.StepFinalize();
 
             // Save ship state
 

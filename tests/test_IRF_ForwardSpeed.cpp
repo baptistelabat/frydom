@@ -102,7 +102,6 @@ std::shared_ptr<FrShip> Platform(FrOffshoreSystem* system) {
     platform->AddForce(DriftForce);
     DriftForce->SetBody(platform);
     DriftForce->SetWaveProbe(waveProbe);
-    DriftForce->SetCmplxElevation();
 
     // Wave Excitation force
     auto excForce = std::make_shared<FrLinearExcitationForce>();

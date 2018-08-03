@@ -42,16 +42,38 @@ namespace frydom {
             }
         }
 
-        // ##CC : debug excitation force
-        //std::cout << " ################# STEADY FORCE " << std::endl;
-        //std::cout << " elevation : " << cmplxElevations[0][0];
-        //std::cout << ", Fe : " << m_Fexc[0](0, 0);
-        //std::cout << ", steadyForce : " << m_steadyForce(0, 0);
-        //std::cout << ", ejwt : " << waveField->GetTimeCoeffs()[0];
-        //std::cout << std::endl;
-        // ##CC
+        InitializeLogs();
     }
 
+
+    void FrLinearExcitationForce::SetSteadyForce() {
+
+        auto BEMBody = GetBEMBody();
+
+        auto waveField = m_waveProbe->GetWaveField();
+
+        // Getting the steady complex elevations
+        bool steady = true;
+        double x = m_waveProbe->GetX();
+        double y = m_waveProbe->GetY();
+        auto cmplxElevations = waveField->GetCmplxElevation(x, y, steady);
+
+        // Computing the steady force
+        auto nbFreq = waveField->GetNbFrequencies();
+        auto nbWaveDir = waveField->GetNbWaveDirections();
+        auto nbForceModes = BEMBody->GetNbForceMode();
+
+        m_steadyForce.resize(nbForceModes, nbFreq);
+        m_steadyForce.setZero();
+
+        for (unsigned int imode=0; imode<nbForceModes; ++imode) {
+            for (unsigned int  ifreq=0; ifreq<nbFreq; ++ifreq) {
+                for (unsigned int idir=0; idir<nbWaveDir; ++idir) {
+                    m_steadyForce(imode, ifreq) += cmplxElevations[idir][ifreq] * m_Fexc[idir](imode, ifreq);
+                }
+            }
+        }
+    }
 
     void FrLinearExcitationForce::UpdateState() {
 
@@ -65,12 +87,7 @@ namespace frydom {
             m_waveProbe->SetX(eqFrame->GetPos().x());
             m_waveProbe->SetY(eqFrame->GetPos().y());
             auto waveField = m_waveProbe->GetWaveField();
-            //m_Fexc = BEMBody->GetExcitationInterp(waveField->GetWaveFrequencies(RADS),
-            //                                      waveField->GetWaveDirections(DEG),
-            //                                      waveField->GetWaveNumbers(),
-            //                                      eqFrame->GetPos_dt(),
-            //                                      DEG);
-            Initialize();
+            SetSteadyForce();
         }
 
 

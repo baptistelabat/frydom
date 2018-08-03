@@ -40,6 +40,14 @@ namespace frydom {
 
         std::shared_ptr<FrRadiationModel> GetRadiationModel() const { return m_radiationModel; }
 
+        void SetLogPrefix(std::string prefix_name) override {
+            if (prefix_name=="") {
+                m_logPrefix = "Frad_" + FrForce::m_logPrefix;
+            } else {
+                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+            }
+        }
+
     };
 
 

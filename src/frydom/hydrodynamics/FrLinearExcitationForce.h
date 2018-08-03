@@ -55,11 +55,21 @@ namespace frydom {
         /// Return the complex amplitude of the force
         void GetCmplxForce();
 
+        void SetSteadyForce();
+
         /// Initialize the steady part of the excitation force
         void Initialize();  // TODO: devrait s'initialiser automatiquement au lancement de la simulation...
 
         /// Update force and moment
         void UpdateState() override;
+
+        void SetLogPrefix(std::string prefix_name) override {
+            if (prefix_name=="") {
+                m_logPrefix = "Fe_" + FrForce::m_logPrefix;
+            } else {
+                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+            }
+        }
     };
 
 }  // end namespace frydom

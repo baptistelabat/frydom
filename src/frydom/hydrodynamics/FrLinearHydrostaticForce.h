@@ -27,6 +27,8 @@ namespace frydom {
         FrLinearHydrostaticForce() {
             force.SetNull();
             moment.SetNull();
+            m_log = hermes::Message("Fh","Hydrostatic force log");
+
         };
 
         FrLinearHydrostaticStiffnessMatrix* GetStiffnessMatrix() { return &m_stiffnessMatrix; }
@@ -60,6 +62,13 @@ namespace frydom {
             // TODO: verifier que c'est la bonne fonction de transport
         }
 
+        void SetLogPrefix(std::string prefix_name) override {
+            if (prefix_name=="") {
+                m_logPrefix = "Fh_" + FrForce::m_logPrefix;
+            } else {
+                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+            }
+        }
 
     };
 

@@ -15,7 +15,7 @@ namespace frydom {
     }
 
     void FrShip::StepFinalize(){
-
+        FrHydroBody::StepFinalize();
     }
 
 

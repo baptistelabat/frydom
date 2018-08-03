@@ -34,6 +34,15 @@ namespace frydom {
         /// Update procedure containing the Wave Drift Force definition
         void UpdateState() override;
 
+        /// Definition of the prefix used in log file
+        void SetLogPrefix(std::string prefix_name) override {
+                if (prefix_name=="") {
+                        m_logPrefix = "Fwd_" + FrForce::m_logPrefix;
+                } else {
+                        m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+                }
+        }
+
     private:
 
         int m_NbModes;                                     ///< Number of modes representd in the database

@@ -75,7 +75,6 @@ namespace frydom {
         void AddNode(std::shared_ptr<FrNode> node);
         // TODO: implementer aussi les removeMarker etc...
 
-
         std::shared_ptr<FrNode> CreateNode();
         std::shared_ptr<FrNode> CreateNode(const chrono::ChVector<double> relpos);
 
@@ -109,26 +108,6 @@ namespace frydom {
         virtual void Initialize() override {
             // TODO: mettre l'initialisation de message dans une methode privee qu'on appelle ici...
 
-
-            // Initializing message
-            m_bodyMsg.SetNameAndDescription(
-                    fmt::format("Body_{}", GetUUID()),
-                    "Message of a body"
-            );
-
-            m_bodyMsg.AddCSVSerializer();
-            m_bodyMsg.AddPrintSerializer();
-
-            // Adding fields
-            m_bodyMsg.AddField<double>("x", "m", "x position of the body reference frame origin", &coord.pos.x());
-            m_bodyMsg.AddField<double>("y", "m", "y position of the body reference frame origin", &coord.pos.y());
-            m_bodyMsg.AddField<double>("z", "m", "z position of the body reference frame origin", &coord.pos.z());
-
-
-            m_bodyMsg.Initialize();
-            m_bodyMsg.Send();
-
-
             // Initializing forces
             for (int iforce=0; iforce<forcelist.size(); iforce++) {
                 auto force = dynamic_cast<FrForce*>(forcelist[iforce].get());
@@ -136,11 +115,56 @@ namespace frydom {
                     force->Initialize();
                 }
             }
+            InitializeLog();
+        }
+
+        virtual void InitializeLog() {
+
+            // Initializing message
+            if (m_bodyMsg.GetName() == "") {
+                m_bodyMsg.SetNameAndDescription(
+                    fmt::format("Body_{}", GetUUID()),
+                    "Message of a body");
+            }
+
+
+            m_bodyMsg.AddCSVSerializer();
+            //m_bodyMsg.AddPrintSerializer();
+
+            // Adding fields
+            m_bodyMsg.AddField<double>("time", "s", "Current time of the simulation", &ChTime);
+            m_bodyMsg.AddField<double>("x", "m", "x position of the body reference frame origin", &coord.pos.x());
+            m_bodyMsg.AddField<double>("y", "m", "y position of the body reference frame origin", &coord.pos.y());
+            m_bodyMsg.AddField<double>("z", "m", "z position of the body reference frame origin", &coord.pos.z());
+
+            for (auto force: forcelist) {
+                auto dforce = dynamic_cast<FrForce*>(force.get());
+                m_bodyMsg.AddField<hermes::Message>("force","-","external force on a body",dforce->GetLog());
+            }
+
+            m_bodyMsg.Initialize();
+            m_bodyMsg.Send();
 
 
         }
 
+        /// Return the object message of the body
+        hermes::Message& Log() { return m_bodyMsg; }
+
+        virtual void UpdateLog() {
+            m_bodyMsg.Serialize();
+            m_bodyMsg.Send();
+        }
+
         virtual void StepFinalize() override {
+
+            for (auto& iforce: forcelist) {
+                auto force = dynamic_cast<FrForce*>(iforce.get());
+                if (force) {
+                    force->StepFinalize();
+                }
+            }
+
             m_bodyMsg.Serialize();
             m_bodyMsg.Send();
         }
