@@ -35,11 +35,6 @@ namespace frydom {
                 - 22.7357 * std::pow(vx,2);
 
         moment.y() = -momentY;
-
-        // ##CC monitoring pitch force
-        std::cout << " ## PITCH STEADY TORQUE : " << momentY << std::endl;
-        // ##CC
-
     }
 
 

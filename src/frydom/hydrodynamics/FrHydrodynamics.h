@@ -26,5 +26,6 @@
 #include "FrWaveDriftForce.h"
 #include "FrManoeuvringDamping.h"
 #include "FrSteadyPitchTorque.h"
+#include "FrSteadyHeaveForce.h"
 
 #endif //FRYDOM_FRHYDRODYNAMICS_H

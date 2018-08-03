@@ -112,11 +112,10 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     system->GetHydroMapper(hydroMapIndex)->Map(ship, 0);
 
     // Radiation model
-    /*
     auto radModel = std::make_shared<FrRadiationConvolutionModel>(system->GetHydroDB(hydroMapIndex), system);
     radModel->SetHydroMapIndex(hydroMapIndex); // TODO : patch hydro map multibody
     radModel->AddRadiationForceToHydroBody(ship);
-    */
+
 
     // Wave Probe
     auto waveField = system->GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
@@ -163,29 +162,11 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     auto forcePitch = std::make_shared<FrSteadyPitchTorque>();
     ship->AddForce(forcePitch);
 
+    //auto forceHeave = std::make_shared<FrSteadyHeaveForce>();
+    //ship->AddForce(forceHeave);
+
     return ship;
 }
-
-struct ShipSpeedStruct {
-    double Fr019 = 1.40;
-    double Fr028 = 1.532;
-    double Fr034 = 1.860;
-    double Fr041 = 2.243;
-};
-
-struct WavePeriodStruct {
-    double T1 = 0.988;
-    double T2 = 1.397;
-    double T3 = 1.711;
-};
-
-struct WaveAmplitudeStruct {
-    double A0 = 0.00;
-    double A1 = 0.025;
-    double A2 = 0.05;
-    double A3 = 0.075;
-    double A4 = 0.1;
-};
 
 void WriteCSV(std::string filename, const std::vector<double> vtime,
               const std::vector<double> wave0, std::vector<double> wave1,
@@ -244,10 +225,6 @@ void PlotFFT(std::vector<double> vtime, std::vector<double> vfunc,
 
 int main(int argc, char* argv[]) {
 
-    ShipSpeedStruct ShipSpeed;
-    WavePeriodStruct WavePeriod;
-    WaveAmplitudeStruct WaveAmplitude;
-
     double speed = atof(argv[1]);
     double ak = atof(argv[2]);
     double Tk = atof(argv[3]);
@@ -268,7 +245,9 @@ int main(int argc, char* argv[]) {
     waveField->SetRegularWavePeriod(Tk);
     waveField->SetMeanWaveDirection(180.);
     waveField->GetSteadyElevation(0, 0);
-    waveField->GetWaveRamp()->Deactivate();
+    //waveField->GetWaveRamp()->Deactivate();
+    waveField->GetWaveRamp()->SetDuration(10.);
+    waveField->GetWaveRamp()->Initialize();
 
     system.GetEnvironment()->SetCurrent(FrCurrent::UNIFORM);
     system.GetEnvironment()->GetCurrent()->Set(0., 0., DEG, KNOT, NED, GOTO);
@@ -282,9 +261,7 @@ int main(int argc, char* argv[]) {
     auto vspeed = ChVector<>(speed, 0., 0.);
     ship->SetPos_dt(vspeed);
     ship->SetSteadyVelocity(vspeed);
-    //ship->SetRot(euler_to_quat(chrono::ChVector<double>(0., 0., CH_C_PI)));
-    //ship->SetDOF(false, true, false, true, false, true);
-    ship->SetDOF(false, true, true, true, true, true);
+    ship->SetDOF(false, true, true, true, false, true);
 
     // ------------------------------------------------------
     // Monitoring waveProbe
@@ -308,7 +285,7 @@ int main(int argc, char* argv[]) {
     std::vector<ChVector<double>> vforce;
     std::vector<ChVector<double>> vtorque;
     std::vector<double> waveElevation0, waveElevation1;
-    std::vector<double> posProbe1, vxProbe1;
+    std::vector<ChVector<double>> posProbe1, speedProbe1;
     std::vector<double> vtime;
 
     double dt = 0.01;
@@ -333,7 +310,7 @@ int main(int argc, char* argv[]) {
 
         auto time = 0.;
 
-        while (time < 15.) {
+        while (time < 30.) {
 
             // Do step
 
@@ -351,10 +328,6 @@ int main(int argc, char* argv[]) {
             global_force = ChVector<double>();
             global_torque = ChVector<double>();
 
-            // ##CC
-            std::cout << "Number of external force : " << ship->GetForceList().size() << std::endl;
-            // ##CC
-
             for (auto& force: ship->GetForceList()) {
                 force->GetBodyForceTorque(local_force, local_torque);
                 global_force += local_force;
@@ -370,11 +343,11 @@ int main(int argc, char* argv[]) {
 
             waveElevation0.push_back(fixed_waveProbe->GetElevation(time));
             waveElevation1.push_back(dynamic_waveProbe->GetElevation(time));
-            posProbe1.push_back(dynamic_waveProbe->GetNode()->GetPos().x());
-            vxProbe1.push_back(dynamic_waveProbe->GetNode()->GetPos_dt().x());
+            posProbe1.push_back(dynamic_waveProbe->GetNode()->GetPos());
+            speedProbe1.push_back(dynamic_waveProbe->GetNode()->GetPos_dt());
         }
 
-        // Adimentionalize
+        //  ------------------ Adimentionalize --------------
 
         auto adim_x = 1./(0.5*1025.*speed*speed*ship->GetWettedSurface());
         auto adim_cm = 1./(0.5*1025*speed*speed*ship->GetWettedSurface()*ship->GetLpp());
@@ -393,70 +366,83 @@ int main(int argc, char* argv[]) {
             vtime_T.push_back(time / Tk);
         }
 
-        //PlotResult(vtime_T, vposition, vrotation, 0);
-        //PlotResult(vtime_T, vforce, vtorque, 1);
+        // --------------- Plot position of the ship -----------------
 
+//        PlotResult(vtime, vposition, vrotation, 0);
 
-        /*
+        // ----------------- Plot external force on the ship ---------
+
+//        PlotResult(vtime, vforce, vtorque, 1);
+
+        // ----------------- Wave Elevation Plot ----------------------
+/*
         matplotlibcpp::named_plot("fixed", vtime_T, waveElevation0);
         matplotlibcpp::named_plot("dynamic", vtime_T, waveElevation1);
         matplotlibcpp::xlabel("t/T");
         matplotlibcpp::ylabel("wave elevation (m)");
         matplotlibcpp::legend();
         matplotlibcpp::show();
-        */
+*/
+        // -------------- Equilibrium Frame Position -------------------
+/*
+        std::vector<double> xp, yp, zp;
+        for (auto& pos: posProbe1) {
+            xp.push_back(pos.x());
+            yp.push_back(pos.y());
+            zp.push_back(pos.z());
+        }
 
-        WriteCSV( argv[4], vtime, waveElevation0, waveElevation1, vposition, vrotation, vforce, vtorque);
+        matplotlibcpp::title("Position of the equilibrium frame");
+        matplotlibcpp::subplot(3,1,1);
+        matplotlibcpp::plot(vtime, xp);
+        matplotlibcpp::xlabel("time (s)");
+        matplotlibcpp::ylabel("X (m)");
+        matplotlibcpp::subplot(3,1,2);
+        matplotlibcpp::plot(vtime, yp);
+        matplotlibcpp::xlabel("time (s)");
+        matplotlibcpp::ylabel("Y (m)");
+        matplotlibcpp::subplot(3, 1, 3);
+        matplotlibcpp::plot(vtime, zp);
+        matplotlibcpp::xlabel("time (s)");
+        matplotlibcpp::ylabel("Z (m)");
+        matplotlibcpp::show();
+*/
+        // ------------- Write CVS output -----------------------
 
+      WriteCSV( argv[4], vtime, waveElevation0, waveElevation1, vposition, vrotation, vforce, vtorque);
 
-        // Fourier
-
-        std::vector<double> Fx, Fy, Fz;
-        std::vector<double> Mx, My, Mz;
-
-        for(auto force: vforce) {
-            Fx.push_back(force.x());
-            Fy.push_back(force.y());
+        // ---------------- User test ---------------------------
+/*
+        std::vector<double> Fz;
+        for (auto& force:vforce) {
             Fz.push_back(force.z());
         }
 
-        for (auto torque: vtorque) {
-            Mx.push_back(torque.x());
-            My.push_back(torque.y());
-            Mz.push_back(torque.z());
+        std::vector<double> posZ;
+        for (auto& position:vposition) {
+            posZ.push_back(position.z());
         }
 
-        //PlotFFT(vtime, waveElevation0, 1.*Tk, 10.*Tk);
-        //PlotFFT(vtime, Fx, 1.*Tk, 5.*Tk);
-
-        for (auto& time: vtime) {
-            //time = time / 1.397;
-            //time = time / 0.946;
-        }
-
-        /*
         matplotlibcpp::subplot(3,1,1);
-        matplotlibcpp::named_plot("fixed", vtime, waveElevation0);
         matplotlibcpp::named_plot("dynamic", vtime, waveElevation1);
         matplotlibcpp::xlabel("t (s)");
         matplotlibcpp::ylabel("eta (m)");
         matplotlibcpp::grid(true);
-        matplotlibcpp::legend();
 
         matplotlibcpp::subplot(3,1,2);
-        matplotlibcpp::plot(vtime, posProbe1);
-        matplotlibcpp::plot(vtime, vxProbe1);
+        matplotlibcpp::plot(vtime, posZ);
         matplotlibcpp::xlabel("time (s)");
-        matplotlibcpp::ylabel("position.x (m)");
+        matplotlibcpp::ylabel("Z (m)");
         matplotlibcpp::grid(true);
 
         matplotlibcpp::subplot(3,1,3);
-        matplotlibcpp::plot(vtime, Fx);
+        matplotlibcpp::plot(vtime, Fz);
         matplotlibcpp::xlabel("t (s)");
-        matplotlibcpp::ylabel("Fx (N)");
+        matplotlibcpp::ylabel("Fz (N)");
+        matplotlibcpp::grid(true);
 
         matplotlibcpp::show();
-        */
+*/
 
 
     }
