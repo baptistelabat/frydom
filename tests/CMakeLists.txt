@@ -36,7 +36,7 @@ set(FRYDOM_TESTS
         test_current-wind_relative_velocity
         test_current_standard_force
         test_wind_standard_force
-        test_pendulum_catenary
+        test_visu_catenary
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")
