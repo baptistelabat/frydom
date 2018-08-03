@@ -267,7 +267,7 @@ namespace frydom {
                 auto Pos1 = Body2->TransformPointParentToLocal(GetAbsPosition(ds*i));
                 auto newLine = std::make_shared<chrono::geometry::ChLineSegment>(Pos0,Pos1);
                 auto newElement = std::make_shared<chrono::ChLineShape>();
-                auto myColor = chrono::ChColor::ComputeFalseColor(GetTension(ds*i).Length(),m_minTension,m_maxTension,true);
+                auto myColor = chrono::ChColor::ComputeFalseColor(GetTension(ds*i).Length(),0,m_maxTension,true);
                 newElement->SetColor(myColor);
                 newElement->SetLineGeometry(newLine);
                 m_cableElements.push_back(newElement);
@@ -285,7 +285,7 @@ namespace frydom {
                 auto Pos1 = Body2->TransformPointParentToLocal(GetAbsPosition(i*ds));
                 auto newLine = std::make_shared<chrono::geometry::ChLineSegment>(Pos0,Pos1);
                 m_cableElements[i-1]->SetLineGeometry(newLine);
-                auto myColor = chrono::ChColor::ComputeFalseColor(GetTension(ds*i).Length(),m_minTension,m_maxTension,true);
+                auto myColor = chrono::ChColor::ComputeFalseColor(GetTension(ds*i).Length(),0,m_maxTension,true);
                 m_cableElements[i-1]->SetColor(myColor);
                 Pos0 = Pos1;
             }
@@ -294,15 +294,12 @@ namespace frydom {
 
     void FrCatenaryLine::InitRangeTensionColor() {
         double ds = m_cableLength/m_nbDrawnElements;
-        double min = GetTension(0).Length();
-        double max = min;
+        double max = GetTension(0).Length();
         for (int i=1; i<m_nbDrawnElements; i++){
             auto LocalTension = GetTension(i*ds).Length();
-            if (LocalTension < min) min = LocalTension;
             if (LocalTension > max) max = LocalTension;
         }
-        m_minTension = min;
-        m_maxTension = max;
+        m_maxTension = 1.25*max;
     }
 
 

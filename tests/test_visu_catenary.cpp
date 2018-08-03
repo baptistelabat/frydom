@@ -53,6 +53,9 @@ int main() {
     auto Catenary1 = std::make_shared<FrCatenaryLine>(Node1, movingNode, true, E, A, Lu, q, u);
     Catenary1->Initialize();
     my_system.AddLink(Catenary1);
+    //Catenary1->AddAsset(std::make_shared<FrAssetBuoy>(2));
+    Catenary1->AddAsset(std::make_shared<FrAssetClumpWeight>());
+
 
     // --------------------------------------------------
     // Linear Motor
@@ -98,6 +101,7 @@ int main() {
     app.AssetBindAll();
     app.AssetUpdateAll();
     app.AddTypicalCamera(irr::core::vector3df(1, 20, 10), irr::core::vector3df(0, 0, 10));
+    app.SetVideoframeSave(true);
     app.Run();
 
 
