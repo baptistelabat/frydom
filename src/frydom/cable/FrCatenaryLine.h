@@ -8,11 +8,10 @@
 #include "chrono/physics/ChMarker.h"
 #include "chrono/core/ChLinearAlgebra.h"
 #include "chrono/core/ChMatrix33.h"
+#include "chrono/assets/ChPointPointDrawing.h"
 #include "FrCatenaryForce.h"
 #include "frydom/core/FrNode.h"
 #include "FrCable.h"
-
-
 
 
 // TODO: prevoir une discretisation automatique pour laquelle on precise la taille cible d'un element
@@ -46,6 +45,10 @@ namespace frydom {
         double m_tolerance     = 1e-6;
         unsigned int m_itermax = 100;
         double m_relax           = 0.1;
+
+        bool m_drawCableElements = true;
+        int m_nbDrawnElements = 21;
+        std::vector<std::shared_ptr<chrono::ChLineShape>> m_cableElements;
 
     public:
 
@@ -134,6 +137,8 @@ namespace frydom {
 
         void Initialize() override {
             solve();
+            // Generate assets for the cable
+            GenerateAssets();
         }
 
         /// Returns the current cable length by line discretization
@@ -144,9 +149,11 @@ namespace frydom {
         //}
 
         /// Update time and state of the cable
-        virtual void Update(const double time, bool update_asserts = true) override {
+        virtual void Update(const double time, bool update_assets = true) override {
             UpdateTime(time);
             UpdateState();
+            UpdateAsset();
+            ChPhysicsItem::Update(time, update_assets);
         }
 //
         /// Update internal time and time step for dynamic behaviour of the cable
@@ -163,6 +170,11 @@ namespace frydom {
             solve();
         }
 
+        /// Update the assets (position of the discretized cable for the visualization)
+        virtual void UpdateAsset();
+
+        /// Generate the assets (discretized cable for the visualization)
+        void GenerateAssets();
     };
 
 

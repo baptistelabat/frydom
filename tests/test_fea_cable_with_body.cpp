@@ -74,6 +74,7 @@ int main(int argc, char* argv[]) {
     auto app = FrIrrApp(system, 50);
 
     app.SetTimestep(0.01); // TODO: doit etre le pas de temps par defaut...
+    app.AddTypicalCamera(irr::core::vector3df(0, 150, -50), irr::core::vector3df(0, 0, -50));
     app.Run();
 
     return 0;

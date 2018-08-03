@@ -27,7 +27,7 @@ namespace frydom {
         guess_tension();
         solve();
 
-        // B uilding the catenary forces and adding them to bodies
+        // Building the catenary forces and adding them to bodies
         m_startingForce = std::make_shared<FrCatenaryForce>(this, LINE_START);
         auto starting_body = m_startingNode->GetBody();
         starting_body->AddForce(m_startingForce);
@@ -36,6 +36,10 @@ namespace frydom {
         m_endingForce = std::make_shared<FrCatenaryForce>(this, LINE_END);
         auto ending_body = m_endingNode->GetBody();
         ending_body->AddForce(m_endingForce);
+
+        // Completing the ChLink required parameters
+        Body1 = m_startingNode->GetBody();
+        Body2 = m_endingNode  ->GetBody();
 
     }
 
@@ -248,6 +252,76 @@ namespace frydom {
             pos_prev = pos;
         }
         return cl;
+    }
+
+    ////////////////////////////////////////////////
+    // Visu
+    ////////////////////////////////////////////////
+
+    void FrCatenaryLine::GenerateAssets() {
+        // Assets for the cable visualisation
+        if (m_drawCableElements) {
+            double ds = m_cableLength/m_nbDrawnElements;
+            auto Pos0 = Body2->TransformPointParentToLocal(GetAbsPosition(0));
+            //std::cout << "Node relative position : x = " << Pos0.x() << ", z = " << Pos0.z() << std::endl;
+            for (int i=1; i<m_nbDrawnElements; i++){
+                auto Pos1 = Body2->TransformPointParentToLocal(GetAbsPosition(ds*i));
+                auto newLine = std::make_shared<chrono::geometry::ChLineSegment>(Pos0,Pos1);
+                auto newElement = std::make_shared<chrono::ChLineShape>();
+                newElement->SetLineGeometry(newLine);
+                m_cableElements.push_back(newElement);
+                AddAsset(newElement);
+                Pos0 = Pos1;
+                //std::cout << "Node relative position : x = " << Pos1.x() << ", z = " << Pos0.z() << std::endl;
+            }
+
+            //AddAsset(std::make_shared<chrono::ChPointPointSegment>());
+
+        }
+
+    }
+
+    void FrCatenaryLine::UpdateAsset() {
+        if (m_drawCableElements) {
+            double ds = m_cableLength/m_nbDrawnElements;
+            auto Pos0 = Body2->TransformPointParentToLocal(GetAbsPosition(0));
+            //auto Pos0 = GetAbsPosition(0);
+            for (int i=1; i<m_nbDrawnElements; i++){
+                auto Pos1 = Body2->TransformPointParentToLocal(GetAbsPosition(i*ds));
+                //auto Pos1 = GetAbsPosition(i*ds);
+                auto newLine = std::make_shared<chrono::geometry::ChLineSegment>(Pos0,Pos1);
+                m_cableElements[i-1]->SetLineGeometry(newLine);
+                Pos0 = Pos1;
+            }
+            std::cout << "Abs(0) : " << GetAbsPosition(0).x() <<
+                       ", Abs(L) : " << GetAbsPosition(m_cableLength).x() <<
+                       ", Pos(Body) : " << GetBody2()->GetPos().x() << std::endl;
+
+
+            /*std::cout << m_cableElements.size() << ", " << m_nbDrawnElements << std::endl;
+            std::cout << "First node abs position : x = " << m_cableElements[0]->GetLineGeometry()->GetEndA().x()
+                      << ", z = " << m_cableElements[0]->GetLineGeometry()->GetEndA().z() << std::endl;
+            std::cout << "Last node abs position : x = " << m_cableElements[m_nbDrawnElements-2]->GetLineGeometry()->GetEndB().x()
+                      << ", z = " << m_cableElements[m_nbDrawnElements-2]->GetLineGeometry()->GetEndB().z() << std::endl;
+            std::cout << "Distance between first and last nodes = "
+                      << m_cableElements[m_nbDrawnElements-2]->GetLineGeometry()->GetEndB().x() -
+                              m_cableElements[m_nbDrawnElements-2]->GetLineGeometry()->GetEndA().x() << std::endl;*/
+
+
+            /*double ds = m_cableLength/m_nbDrawnElements;
+            auto Pos = Body2->TransformPointParentToLocal(GetAbsPosition(0));
+            //::cout << "First node abs position : x = " << Pos.x() << ", z = " << Pos.z() << std::endl;
+            for (int i=1; i<m_nbDrawnElements; i++){
+                m_cableElements.at(i-1)->GetLineGeometry()->GetEndA().Set(Pos);
+                Pos = Body2->TransformPointParentToLocal(GetAbsPosition(i*ds));
+                m_cableElements.at(i-1)->GetLineGeometry()->GetEndB().Set(Pos);
+            }
+            //std::cout << "Last node abs position : x = " << Pos.x() << ", z = " << Pos.z() << std::endl;
+            std::cout << "First node abs position : x = " << m_cableElements[0]->GetLineGeometry()->GetEndA().x()
+                      << ", z = " << m_cableElements[0]->GetLineGeometry()->GetEndA().z() << std::endl;
+            std::cout << "Last node abs position : x = " << m_cableElements[m_nbDrawnElements-2]->GetLineGeometry()->GetEndB().x()
+                      << ", z = " << m_cableElements[m_nbDrawnElements-2]->GetLineGeometry()->GetEndB().z() << std::endl;*/
+        }
     }
 
 
