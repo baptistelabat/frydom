@@ -49,7 +49,7 @@ namespace frydom {
 
         bool m_drawCableElements = true;
         int m_nbDrawnElements = 21;
-        std::vector<std::shared_ptr<chrono::ChCylinderShape>> m_cableElements;
+        std::vector<std::shared_ptr<chrono::ChLineShape>> m_cableElements;
         double m_maxTension = 0;
 
     public:
