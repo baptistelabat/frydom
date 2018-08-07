@@ -115,7 +115,7 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     auto radModel = std::make_shared<FrRadiationConvolutionModel>(system->GetHydroDB(hydroMapIndex), system);
     radModel->SetHydroMapIndex(hydroMapIndex); // TODO : patch hydro map multibody
     radModel->AddRadiationForceToHydroBody(ship);
-
+    radModel->SetSpeedDependent();
 
     // Wave Probe
     auto waveField = system->GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
@@ -228,6 +228,7 @@ int main(int argc, char* argv[]) {
     double speed = atof(argv[1]);
     double ak = atof(argv[2]);
     double Tk = atof(argv[3]);
+    std::string name = argv[4];
 
     // ------------------------------------------------------
     // System
@@ -241,12 +242,12 @@ int main(int argc, char* argv[]) {
 
     system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_REGULAR);
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
-    waveField->SetRegularWaveHeight(ak);
+    waveField->SetRegularWaveHeight(0.0);
     waveField->SetRegularWavePeriod(Tk);
     waveField->SetMeanWaveDirection(180.);
     waveField->GetSteadyElevation(0, 0);
     //waveField->GetWaveRamp()->Deactivate();
-    waveField->GetWaveRamp()->SetDuration(10.);
+    waveField->GetWaveRamp()->SetDuration(20.);
     waveField->GetWaveRamp()->Initialize();
 
     system.GetEnvironment()->SetCurrent(FrCurrent::UNIFORM);
@@ -261,9 +262,11 @@ int main(int argc, char* argv[]) {
     auto vspeed = ChVector<>(speed, 0., 0.);
     ship->SetPos_dt(vspeed);
     ship->SetSteadyVelocity(vspeed);
-    ship->SetDOF(false, true, true, true, false, true);
+    ship->SetDOF(false, true, false, true, false, false);
 
-    ship->Log().SetNameAndDescription("ShipLog","Message log of the ship");
+    ship->Log().SetNameAndDescription(name+"_ShipLog","Message log of the ship");
+    auto BodyEqFrame = dynamic_cast<FrBody*>(ship->GetEquilibriumFrame().get());
+    BodyEqFrame->Log().SetNameAndDescription(name+"_EquilibriumFrame","Hydrodynamic equilibrium frame");
 
     // ------------------------------------------------------
     // Monitoring waveProbe
@@ -292,9 +295,15 @@ int main(int argc, char* argv[]) {
 
     double dt = 0.01;
 
+    auto shipPos = ship->GetFrame_REF_to_abs();
+    auto eqFramePos = ship->GetEquilibriumFrame()->GetPos();
+
     system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
     system.SetStep(dt);
     system.Initialize();
+
+    shipPos = ship->GetFrame_REF_to_abs();
+    eqFramePos = ship->GetEquilibriumFrame()->GetPos();
 
     auto is_irrlicht = false;
 
@@ -312,9 +321,14 @@ int main(int argc, char* argv[]) {
 
         auto time = 0.;
 
-        while (time < 30.) {
+        while (time < 120.) {
 
             // Do step
+
+            if (std::abs(time-20.) < 0.5*dt) {
+                waveField->SetRegularWaveHeight(ak);
+                waveField->Initialize();
+            }
 
             system.DoStepDynamics(dt);
             time += dt;
@@ -413,7 +427,7 @@ int main(int argc, char* argv[]) {
 */
         // ------------- Write CVS output -----------------------
 
-      WriteCSV( argv[4], vtime, waveElevation0, waveElevation1, vposition, vrotation, vforce, vtorque);
+        //WriteCSV( argv[4], vtime, waveElevation0, waveElevation1, vposition, vrotation, vforce, vtorque);
 
         // ---------------- User test ---------------------------
 /*

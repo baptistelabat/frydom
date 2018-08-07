@@ -175,7 +175,8 @@ namespace frydom {
         m_current_relative_angle = Normalize__PI_PI(relative_velocity_angle - m_heading);
 
         // update parent class
-        chrono::ChBodyAuxRef::Update(update_assets);
+        FrBody::Update(update_assets);
+        //chrono::ChBodyAuxRef::Update(update_assets);
 
     }
 
@@ -407,8 +408,6 @@ namespace frydom {
         node->SetPos(vect);
         m_equilibriumFrame = node;
     }
-
-
 
     void FrHydroBody::Initialize() {
         FrBody::Initialize();

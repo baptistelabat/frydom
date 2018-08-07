@@ -23,6 +23,12 @@ namespace frydom {
     private:
         FrLinearHydrostaticStiffnessMatrix m_stiffnessMatrix;
 
+        // ##CC fix log
+        double m_delta_z;
+        double m_body_z;
+        double m_eqframe_z;
+        // ##CC
+
     public:
         FrLinearHydrostaticForce() {
             force.SetNull();
@@ -39,9 +45,16 @@ namespace frydom {
 
             auto eqFrame = dynamic_cast<FrHydroBody*>(Body)->GetEquilibriumFrame();
             auto bodyFrame = Body->GetFrame_REF_to_abs();
-            auto deltaFrame = eqFrame->GetInverse() >> bodyFrame;
+            //auto deltaFrame = bodyFrame >> eqFrame->GetInverse();
+            auto deltaFrame = eqFrame->GetInverse() * bodyFrame;
 
             double heave = deltaFrame.GetPos().z();
+
+            // ##CC fixe pour monitorer les variations de heave
+            m_eqframe_z = eqFrame->GetPos().z();
+            m_body_z = bodyFrame.GetPos().z();
+            m_delta_z = heave;
+            // ##CC
 
             chrono::ChVector<double> axis;
             double angle;
@@ -61,6 +74,17 @@ namespace frydom {
             moment = Body->Dir_World2Body(chrono::ChVector<double> (values.y(), values.z(), 0.));
             // TODO: verifier que c'est la bonne fonction de transport
         }
+
+        // ##CC Fix pour le log
+        void InitializeLogs() override {
+
+            m_log.AddField("eqFrame_z","m","Position of the equilibrium frame in z-direction",&m_eqframe_z);
+            m_log.AddField("delta_z","m","Pertubation of the position in the z-direction", &m_delta_z);
+            m_log.AddField("body_z","m","Position of the body in ref frame",&m_body_z);
+
+            FrForce::InitializeLogs();
+        }
+        // ##CC
 
         void SetLogPrefix(std::string prefix_name) override {
             if (prefix_name=="") {

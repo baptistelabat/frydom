@@ -148,7 +148,7 @@ int main(int argc, char* argv[]) {
     system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
 
     double time;
-    double dt = 0.02;
+    double dt = 0.005;
 
     std::vector<double> heave;
     std::vector<double> vtime;

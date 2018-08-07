@@ -64,8 +64,8 @@ namespace frydom {
         m_positionsREC->SetSize(m_size);
         m_positionsREC->Initialize();
 
-        SetPos(m_body->GetPos());
-        SetPos_dt(m_body->GetPos_dt());
+        //SetPos(m_body->GetFrame_REF_to_abs().GetPos());
+        //SetPos_dt(m_body->GetFrame_REF_to_abs().GetPos_dt());
 
         FrHydroBody::Initialize();
 

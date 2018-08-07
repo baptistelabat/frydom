@@ -84,7 +84,7 @@ namespace frydom {
         /// Update position and velocity of the node
         void Update(bool update_asset = true) override;
 
-        void StepFinalize() override {}
+        //void StepFinalize() override {}
 
     };
 

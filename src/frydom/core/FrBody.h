@@ -13,6 +13,7 @@
 #include "frydom/core/FrForce.h"
 #include "hermes/hermes.h"
 #include "frydom/mesh/FrTriangleMeshConnected.h"
+#include "frydom/core/FrEulerAngles.h"
 
 namespace frydom {
 
@@ -27,6 +28,11 @@ namespace frydom {
         std::vector<std::shared_ptr<FrForce>> external_force_list;
         std::shared_ptr<FrTriangleMeshConnected> m_visu_mesh;
         hermes::Message m_bodyMsg;
+
+        // ##CC : fix pour logger les angles de rotation via hermes
+        // TODO : ameliorer hermes pour permettre le log de variable non définis en attributs
+        chrono::ChVector<double> m_angles_rotation;
+        // ##CC
 
     public:
 
@@ -137,6 +143,10 @@ namespace frydom {
             m_bodyMsg.AddField<double>("y", "m", "y position of the body reference frame origin", &coord.pos.y());
             m_bodyMsg.AddField<double>("z", "m", "z position of the body reference frame origin", &coord.pos.z());
 
+            m_bodyMsg.AddField<double>("rx","rad","euler angle along the x-direction (body ref frame)", &m_angles_rotation.x());
+            m_bodyMsg.AddField<double>("ry","rad","euler angle along the y-direction (body ref frame)", &m_angles_rotation.y());
+            m_bodyMsg.AddField<double>("rz","rad","euler angle along the z-direction (body ref frame)", &m_angles_rotation.z());
+
             for (auto force: forcelist) {
                 auto dforce = dynamic_cast<FrForce*>(force.get());
                 m_bodyMsg.AddField<hermes::Message>("force","-","external force on a body",dforce->GetLog());
@@ -157,6 +167,8 @@ namespace frydom {
         }
 
         virtual void StepFinalize() override {
+
+            m_angles_rotation = quat_to_euler(GetRot());    // FIXME : ceci est un fixe pour permettre de logger l'angle de rotation
 
             for (auto& iforce: forcelist) {
                 auto force = dynamic_cast<FrForce*>(iforce.get());
