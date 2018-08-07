@@ -3,11 +3,8 @@
 //
 
 #include <chrono/physics/ChLinkMotorLinearPosition.h>
-// #include <chrono/physics/ChSystemNSC.h>
 #include "frydom/frydom.h"
-#include <fmt/format.h>
 
-//#include <chrono/physics/ChLinkLock.h>
 
 using namespace chrono;
 using namespace frydom;
@@ -53,8 +50,18 @@ int main() {
     auto Catenary1 = std::make_shared<FrCatenaryLine>(Node1, movingNode, true, E, A, Lu, q, u);
     Catenary1->Initialize();
     my_system.AddLink(Catenary1);
-    //Catenary1->AddAsset(std::make_shared<FrAssetBuoy>(2));
-    Catenary1->AddAsset(std::make_shared<FrAssetClumpWeight>());
+
+    auto my_Buoy = std::make_shared<FrAssetBuoy>(2.);
+    //Catenary1->AddAssetComponent(my_Buoy);
+    Catenary1->AddAsset(my_Buoy);
+    //auto color = chrono::ChColor(1.f,0.f,0.f);
+    //my_Buoy->SetColor(color);
+    //auto mcolor = std::make_shared<chrono::ChColorAsset>(1.f, 0.f, 0.0f);
+    //Catenary1->AddAsset(mcolor);
+
+
+    //Catenary1->AddAsset(std::make_shared<FrAssetClumpWeight>());
+
 
 
     // --------------------------------------------------

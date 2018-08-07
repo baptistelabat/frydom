@@ -12,6 +12,7 @@
 #include "FrCatenaryForce.h"
 #include "frydom/core/FrNode.h"
 #include "FrCable.h"
+#include "FrAssetComponent.h"
 
 
 // TODO: prevoir une discretisation automatique pour laquelle on precise la taille cible d'un element
@@ -48,7 +49,7 @@ namespace frydom {
 
         bool m_drawCableElements = true;
         int m_nbDrawnElements = 21;
-        std::vector<std::shared_ptr<chrono::ChLineShape>> m_cableElements;
+        std::vector<std::shared_ptr<chrono::ChCylinderShape>> m_cableElements;
         double m_maxTension = 0;
 
     public:
@@ -185,6 +186,11 @@ namespace frydom {
 
         /// Generate the assets (discretized cable for the visualization)
         void GenerateAssets();
+
+        void AddAssetComponent(std::shared_ptr<FrAssetComponent> asset){
+            AddAsset(asset->GetShapeAsset());
+            AddAsset(asset->GetColorAsset());
+        }
     };
 
 
