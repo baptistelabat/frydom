@@ -13,6 +13,7 @@
 #include "frydom/core/FrNode.h"
 #include "FrCable.h"
 #include "FrAssetComponent.h"
+#include "FrAssetBuoy.h"
 
 
 // TODO: prevoir une discretisation automatique pour laquelle on precise la taille cible d'un element

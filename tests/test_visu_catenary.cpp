@@ -51,16 +51,11 @@ int main() {
     Catenary1->Initialize();
     my_system.AddLink(Catenary1);
 
-    auto my_Buoy = std::make_shared<FrAssetBuoy>(2.);
-    //Catenary1->AddAssetComponent(my_Buoy);
-    Catenary1->AddAsset(my_Buoy);
-    //auto color = chrono::ChColor(1.f,0.f,0.f);
-    //my_Buoy->SetColor(color);
-    //auto mcolor = std::make_shared<chrono::ChColorAsset>(1.f, 0.f, 0.0f);
-    //Catenary1->AddAsset(mcolor);
 
+    auto my_Buoy = std::make_shared<FrAssetBuoy>(ChVector<>(10,0,0), 0.1, ChColor(1.f,0.f,0.f));
+    Catenary1->AddAssetComponent(my_Buoy);
 
-    //Catenary1->AddAsset(std::make_shared<FrAssetClumpWeight>());
+    Catenary1->AddAssetComponent(std::make_shared<FrAssetClumpWeight>());
 
 
 

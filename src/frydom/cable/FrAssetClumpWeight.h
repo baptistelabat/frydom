@@ -17,17 +17,14 @@ namespace frydom {
             m_color = std::make_shared<chrono::ChColorAsset>(mcolor);
         }
 
-        FrAssetClumpWeight(double mradius,chrono::ChVector<> P1, chrono::ChVector<> P2){
-            FrAssetClumpWeight(mradius,chrono::ChColor(0.6f,0.6f,0.f), P1, P2);
-        }
+        FrAssetClumpWeight(double mradius,chrono::ChVector<> P1, chrono::ChVector<> P2)
+            :FrAssetClumpWeight(mradius,chrono::ChColor(0.6f,0.6f,0.f), P1, P2){}
 
-        FrAssetClumpWeight(double mradius){
-            FrAssetClumpWeight(mradius,chrono::ChColor(0.6f,0.6f,0.f), chrono::ChVector<>(0,0,-1), chrono::ChVector<>(0,0,1));
-        }
+        FrAssetClumpWeight(double mradius)
+            :FrAssetClumpWeight(mradius,chrono::ChColor(0.6f,0.6f,0.f), chrono::ChVector<>(0,0,-1), chrono::ChVector<>(0,0,1)){}
 
-        FrAssetClumpWeight(){
-            FrAssetClumpWeight(1,chrono::ChColor(0.6f,0.6f,0.f), chrono::ChVector<>(0,0,-1), chrono::ChVector<>(0,0,1));
-        }
+        FrAssetClumpWeight()
+            :FrAssetClumpWeight(1,chrono::ChColor(0.6f,0.6f,0.f), chrono::ChVector<>(0,0,-1), chrono::ChVector<>(0,0,1)){}
 
         //void SetCylinderGeometry(chrono::geometry::ChCylinder mcylinder) {gcylinder = mcylinder;}
         //void SetRadius(double mradius) {dynamic_cast<chrono::ChCylinderShape*>(m_shape)-> GetCylinderGeometry().rad = mradius;}
