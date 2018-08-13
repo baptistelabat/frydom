@@ -34,6 +34,9 @@ set(FRYDOM_TESTS
         test_unrolling_cable
         test_unrolling_catenary_line
         test_current-wind_relative_velocity
+        test_current_standard_force
+        test_wind_standard_force
+        test_visu_catenary
         test_hub_installation
         test_pendulum
         test_pendulum_catenary

@@ -8,11 +8,12 @@
 #include "chrono/physics/ChMarker.h"
 #include "chrono/core/ChLinearAlgebra.h"
 #include "chrono/core/ChMatrix33.h"
+#include "chrono/assets/ChPointPointDrawing.h"
 #include "FrCatenaryForce.h"
 #include "frydom/core/FrNode.h"
 #include "FrCable.h"
-
-
+#include "FrAssetComponent.h"
+#include "FrAssetBuoy.h"
 
 
 // TODO: prevoir une discretisation automatique pour laquelle on precise la taille cible d'un element
@@ -46,6 +47,11 @@ namespace frydom {
         double m_tolerance     = 1e-6;
         unsigned int m_itermax = 100;
         double m_relax           = 0.1;
+
+        bool m_drawCableElements = true;
+        int m_nbDrawnElements = 21;
+        std::vector<std::shared_ptr<chrono::ChLineShape>> m_cableElements;
+        double m_maxTension = 0;
 
     public:
 
@@ -89,6 +95,7 @@ namespace frydom {
         /// Returns the cartensian tension at the end of the line.
         /// This tension is applied by the end node's parent body ON the line
         chrono::ChVector<double> GetEndingNodeTension() const;
+
 
         // TODO: supprimer a terme cette methode et coder en dur a chaque fois qu'on en a besoin
         double _rho(const double s) const {
@@ -134,6 +141,9 @@ namespace frydom {
 
         void Initialize() override {
             solve();
+            // Generate assets for the cable
+            GenerateAssets();
+            InitRangeTensionColor();
         }
 
         /// Returns the current cable length by line discretization
@@ -144,9 +154,11 @@ namespace frydom {
         //}
 
         /// Update time and state of the cable
-        virtual void Update(const double time, bool update_asserts = true) override {
+        virtual void Update(const double time, bool update_assets = true) override {
             UpdateTime(time);
             UpdateState();
+            UpdateAsset();
+            ChPhysicsItem::Update(time, update_assets);
         }
 //
         /// Update internal time and time step for dynamic behaviour of the cable
@@ -163,6 +175,23 @@ namespace frydom {
             solve();
         }
 
+        ////////////////////////////////////////////////
+        // Visu
+        ////////////////////////////////////////////////
+        void SetAssetNbElements(int NbElements) {m_nbDrawnElements = NbElements;}
+        int GetAssetNbElements(){return m_nbDrawnElements;}
+        void InitRangeTensionColor();
+
+        /// Update the assets (position of the discretized cable for the visualization)
+        virtual void UpdateAsset();
+
+        /// Generate the assets (discretized cable for the visualization)
+        void GenerateAssets();
+
+        void AddAssetComponent(std::shared_ptr<FrAssetComponent> asset){
+            AddAsset(asset->GetShapeAsset());
+            AddAsset(asset->GetColorAsset());
+        }
     };
 
 

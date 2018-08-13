@@ -3,6 +3,7 @@ message(STATUS "        ...Environment/wind")
 set(WIND_FILES_LOCAL
         FrWind.cpp
         FrWindForce.cpp
+        FrWindStandardForce.cpp
         )
 
 set(WIND_FILES "")
