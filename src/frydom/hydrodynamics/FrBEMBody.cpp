@@ -611,6 +611,32 @@ namespace frydom {
             m_ImpulseResponseFunction.push_back(body_i_impulseResponseFunctions);
         }  // Loop on bodies
 
+
+        // ##CC : write impulse response function into output file
+        std::string filename = "ImpulseResponseFunction.dat";
+        std::fstream myfile;
+        myfile.open(filename, std::ios::ate | std::ios::app);
+
+        myfile << "#time";
+        for (unsigned int iMotion=0; iMotion<nbMotion; iMotion++) {
+            for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                myfile << ";K" << std::to_string(iMotion) << std::to_string(iForce);
+            }
+        }
+        myfile << std::endl;
+
+        for (unsigned int itime=0; itime<nbTime; itime++) {
+            myfile << time[itime];
+            for (unsigned int iMotion=0; iMotion<nbMotion; iMotion++) {
+                for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                    myfile << ";" << m_ImpulseResponseFunction[0][iMotion](iForce,itime);
+                }
+            }
+            myfile << std::endl;
+        }
+        myfile.close();
+        // ##CC
+
     }
 
     void FrBEMBody::GenerateSpeedDependentIRF() {
@@ -650,16 +676,17 @@ namespace frydom {
             std::vector<Eigen::MatrixXd> body_i_IRF;
             body_i_IRF.reserve(nbMotion);
 
-            // iMotion : 0 -> 4
+            // iMotion : 0 -> 3
             Eigen::MatrixXd localIRF(nbForce, nbTime);
-            for (unsigned int iMotion=0; iMotion<5; iMotion++) {
+            localIRF.setZero();
+            for (unsigned int iMotion=0; iMotion<4; iMotion++) {
                 body_i_IRF.push_back(localIRF);
             }
 
-            // iMotion : 5
+            // iMotion : 4
             for (unsigned int iForce=0; iForce<nbForce; iForce++) {
-                double Ainf = m_InfiniteAddedMass[iBody](3,iForce);
-                auto kernel = m_AddedMass[iBody][3].row(iForce);
+                double Ainf = m_InfiniteAddedMass[iBody](2,iForce);
+                auto kernel = m_AddedMass[iBody][2].row(iForce);
                 for (unsigned int iTime=0; iTime<nbTime; iTime++) {
                     integrand.clear();
                     for (unsigned int iFreq=0; iFreq<nbFreq; iFreq++) {
@@ -668,14 +695,16 @@ namespace frydom {
                     }
                     localIRF(iForce, iTime) = Trapz(integrand, dw);
                 }
-                localIRF /= MU_PI_2;
-                body_i_IRF.push_back(localIRF);
             }
+            localIRF /= MU_PI_2;
+            body_i_IRF.push_back(localIRF);
 
-            //iMotion : 6
+            localIRF.setZero();
+
+            //iMotion : 5
             for (unsigned int iForce=0; iForce<nbForce; iForce++) {
-                double Ainf = m_InfiniteAddedMass[iBody](2,iForce);
-                auto kernel = m_AddedMass[iBody][2].row(iForce);
+                double Ainf = m_InfiniteAddedMass[iBody](1,iForce);
+                auto kernel = m_AddedMass[iBody][1].row(iForce);
                 for (unsigned int iTime=0; iTime<nbTime; iTime++) {
                     integrand.clear();
                     for (unsigned int iFreq=0; iFreq<nbFreq; iFreq++) {
@@ -684,11 +713,37 @@ namespace frydom {
                     }
                     localIRF(iForce, iTime) = Trapz(integrand, dw);
                 }
-                localIRF /= MU_PI_2;
-                body_i_IRF.push_back(localIRF);
             }
+            localIRF /= MU_PI_2;
+            body_i_IRF.push_back(localIRF);
+
             m_SpeedDependentIRF.push_back(body_i_IRF);
         }
+
+        // ##CC : write impulse response function into output file
+        std::string filename = "SpeedDependentIRF.dat";
+        std::fstream myfile;
+        myfile.open(filename, std::ios::ate | std::ios::app);
+
+        myfile << "#time";
+        for (unsigned int iMotion=0; iMotion<nbMotion; iMotion++) {
+            for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                myfile << ";Ku" << std::to_string(iMotion) << std::to_string(iForce);
+            }
+        }
+        myfile << std::endl;
+
+        for (unsigned int itime=0; itime<nbTime; itime++) {
+            myfile << time[itime];
+            for (unsigned int iMotion=0; iMotion<nbMotion; iMotion++) {
+                for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                    myfile << ";" << m_SpeedDependentIRF[0][iMotion](iForce,itime);
+                }
+            }
+            myfile << std::endl;
+        }
+        myfile.close();
+        // ##CC
     }
 
     void FrBEMBody::IntLoadResidual_Mv(const unsigned int off,

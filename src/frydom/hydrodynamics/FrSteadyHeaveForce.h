@@ -29,7 +29,7 @@ namespace frydom {
         force.z() = forceZ;
 
         // ##CC monitoring force heave
-        std::cout << " ##### STEADY HEAVE FORCE : " << forceZ << std::endl;
+        //std::cout << " ##### STEADY HEAVE FORCE : " << forceZ << std::endl;
         // ##CC
     }
 

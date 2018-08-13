@@ -139,28 +139,28 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     //ship->AddForce(drag_force);
 
     // Wave drift force
-    auto waveDrift = std::make_shared<FrWaveDriftForce>("DTMB5512_WaveDriftCoeff.h5");
-    ship->AddForce(waveDrift);
-    waveDrift->SetBody(ship);
-    waveDrift->SetWaveProbe(waveProbe);
+    //auto waveDrift = std::make_shared<FrWaveDriftForce>("DTMB5512_WaveDriftCoeff.h5");
+    //ship->AddForce(waveDrift);
+    //waveDrift->SetBody(ship);
+    //waveDrift->SetWaveProbe(waveProbe);
 
     // Friction force from ITTC57
-    auto forceITTC57 = std::make_shared<FrITTC57>();
-    forceITTC57->SetCharacteristicLength(ship->GetLpp());
-    forceITTC57->SetHullWettedSurface(ship->GetWettedSurface());
-    forceITTC57->SetHullFrontalProjectedArea(ship->GetTransverseUnderWaterArea());
-    ship->AddForce(forceITTC57);
+    //auto forceITTC57 = std::make_shared<FrITTC57>();
+    //forceITTC57->SetCharacteristicLength(ship->GetLpp());
+    //forceITTC57->SetHullWettedSurface(ship->GetWettedSurface());
+    //forceITTC57->SetHullFrontalProjectedArea(ship->GetTransverseUnderWaterArea());
+    //ship->AddForce(forceITTC57);
 
     // Man damping
-    auto forceMan = std::make_shared<FrTaylorManDamping>();
-    ship->AddForce(forceMan);
-    forceMan->SetX("Xuuu",-5.59134);
-    forceMan->SetX("Xuuuu", 2.34285);
-    forceMan->SetX("Xuu", 2.720665);
+    //auto forceMan = std::make_shared<FrTaylorManDamping>();
+    //ship->AddForce(forceMan);
+    //forceMan->SetX("Xuuu",-5.59134);
+    //forceMan->SetX("Xuuuu", 2.34285);
+    //forceMan->SetX("Xuu", 2.720665);
 
     // Steady force
-    auto forcePitch = std::make_shared<FrSteadyPitchTorque>();
-    ship->AddForce(forcePitch);
+    //auto forcePitch = std::make_shared<FrSteadyPitchTorque>();
+    //ship->AddForce(forcePitch);
 
     //auto forceHeave = std::make_shared<FrSteadyHeaveForce>();
     //ship->AddForce(forceHeave);
@@ -262,7 +262,7 @@ int main(int argc, char* argv[]) {
     auto vspeed = ChVector<>(speed, 0., 0.);
     ship->SetPos_dt(vspeed);
     ship->SetSteadyVelocity(vspeed);
-    ship->SetDOF(false, true, false, true, false, false);
+    ship->SetDOF(false, true, false, true, false, true);
 
     ship->Log().SetNameAndDescription(name+"_ShipLog","Message log of the ship");
     auto BodyEqFrame = dynamic_cast<FrBody*>(ship->GetEquilibriumFrame().get());
@@ -293,7 +293,7 @@ int main(int argc, char* argv[]) {
     std::vector<ChVector<double>> posProbe1, speedProbe1;
     std::vector<double> vtime;
 
-    double dt = 0.01;
+    double dt = 0.008;
 
     auto shipPos = ship->GetFrame_REF_to_abs();
     auto eqFramePos = ship->GetEquilibriumFrame()->GetPos();
@@ -321,11 +321,11 @@ int main(int argc, char* argv[]) {
 
         auto time = 0.;
 
-        while (time < 120.) {
+        while (time < 40.) {
 
             // Do step
 
-            if (std::abs(time-20.) < 0.5*dt) {
+            if (std::abs(time-5.) < 0.5*dt) {
                 waveField->SetRegularWaveHeight(ak);
                 waveField->Initialize();
             }

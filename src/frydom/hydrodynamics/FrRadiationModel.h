@@ -12,6 +12,10 @@
 #include "FrHydroMapper.h"
 #include "FrVelocityRecorder.h"
 
+#include <iostream>
+#include <fstream>
+
+
 namespace frydom {
 
     /// Base class
@@ -226,6 +230,18 @@ namespace frydom {
                                 product[itime] = kernel[itime] * velocity[itime];
                             }
 
+                            // ##CC : check value of the kernel
+                            //if (iforceBody==0 && iforce==2 && idof==2) {
+                            //    std::ofstream fileout;
+                            //    fileout.open("kernel.dat", std::ios::ate | std::ios::app);
+                            //    fileout << "time;Kt" << std::endl;
+                            //    for (unsigned int itime = 0; itime < N; itime++) {
+                            //             fileout << itime * m_system->GetStep() << ";" << kernel[itime] << std::endl;
+                            //    }
+                            //    fileout.close();
+                            //}
+                            // ##CC
+
                             // Numerical integration
                             val = Trapz(product, stepSize);
 
@@ -269,7 +285,7 @@ namespace frydom {
 
                     auto velocity = m_recorders[imotionBody].GetRecordOnDOF(idof);
 
-                    for (unsigned int iforce=0; iforce<3; iforce++) {
+                    for (unsigned int iforce=0; iforce<6; iforce++) {               // FIXME : verifier si le max est pas 3
 
                         auto kernel = bemBody_i->GetSpeedDependentIRF(imotionBody, idof, iforce);
                         auto product = std::vector<double>(N);
@@ -283,9 +299,21 @@ namespace frydom {
                     }
                 }
 
-                auto velocity = hydroBody->GetLinearVelocityPert();
-                for (unsigned int iforce=0; iforce<3; iforce++) {
-                    val = Ainf(iforce, 2) * velocity[2] - Ainf(iforce, 1) * velocity[1];
+                auto velocity = hydroBody->GetAngularVelocityPert();
+
+                // ##CC monitoring
+                std::cout << " ## Angular velocity : [ " << velocity[0] << " , " << velocity[1] << " , " << velocity[2] << "]" << std::endl;
+                std::cout << "## Infinite added mass" << std::endl;
+                for (unsigned int ii=0; ii<6; ii++) {
+                    for (unsigned int jj=0; jj<6; jj++) {
+                        std::cout << Ainf(ii,jj) << " ";
+                    }
+                    std::cout << std::endl;
+                }
+                // ##CC
+
+                for (unsigned int iforce=0; iforce<6; iforce++) {
+                    val = Ainf(iforce, 2) * velocity.y() - Ainf(iforce, 1) * velocity.z();
                     generalizedForce.ElementN(iforce) += mean_speed * val;
                 }
 
