@@ -7,7 +7,6 @@
 
 #include <cstdlib>
 #include <irrlicht.h>
-#include <H5Cpp.h>
 
 
 // Chrono related headers
@@ -26,6 +25,7 @@
 //#include "Eigen/Dense"
 
 
+#include <H5Cpp.h>
 
 
 #endif //FRYDOM_FRYDOM_H
