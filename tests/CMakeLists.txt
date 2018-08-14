@@ -40,6 +40,7 @@ set(FRYDOM_TESTS
         bench_DTMB5512_captive
         test_current_standard_force
         test_wind_standard_force
+        test_visu_catenary
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")

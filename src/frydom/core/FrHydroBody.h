@@ -346,7 +346,6 @@ namespace frydom {
 
         /// Get the hydro body properties object
         FrHydroBodyProperties* GetProperties() const { return m_properties.get(); }
-        
 
         // ==========================================================================
         // METHODS ABOUT CURRENT

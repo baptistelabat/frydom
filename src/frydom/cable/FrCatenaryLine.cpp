@@ -27,7 +27,7 @@ namespace frydom {
         guess_tension();
         solve();
 
-        // B uilding the catenary forces and adding them to bodies
+        // Building the catenary forces and adding them to bodies
         m_startingForce = std::make_shared<FrCatenaryForce>(this, LINE_START);
         auto starting_body = m_startingNode->GetBody();
         starting_body->AddForce(m_startingForce);
@@ -36,6 +36,10 @@ namespace frydom {
         m_endingForce = std::make_shared<FrCatenaryForce>(this, LINE_END);
         auto ending_body = m_endingNode->GetBody();
         ending_body->AddForce(m_endingForce);
+
+        // Completing the ChLink required parameters
+        Body1 = m_startingNode->GetBody();
+        Body2 = m_endingNode  ->GetBody();
 
     }
 
@@ -248,6 +252,54 @@ namespace frydom {
             pos_prev = pos;
         }
         return cl;
+    }
+
+    ////////////////////////////////////////////////
+    // Visu
+    ////////////////////////////////////////////////
+
+    void FrCatenaryLine::GenerateAssets() {
+        // Assets for the cable visualisation
+        if (m_drawCableElements) {
+            double ds = m_cableLength/m_nbDrawnElements;
+            auto Pos0 = Body2->TransformPointParentToLocal(GetAbsPosition(0));
+            for (int i=1; i<m_nbDrawnElements; i++){
+                auto Pos1 = Body2->TransformPointParentToLocal(GetAbsPosition(ds*i));
+                auto newLine = std::make_shared<chrono::geometry::ChLineSegment>(Pos0,Pos1);
+                auto newElement = std::make_shared<chrono::ChLineShape>();
+                auto myColor = chrono::ChColor::ComputeFalseColor(GetTension(ds*i).Length(),0,m_maxTension,true);
+                newElement->SetColor(myColor);
+                newElement->SetLineGeometry(newLine);
+                m_cableElements.push_back(newElement);
+                AddAsset(newElement);
+                Pos0 = Pos1;
+            }
+        }
+    }
+
+    void FrCatenaryLine::UpdateAsset() {
+        if (m_drawCableElements) {
+            double ds = m_cableLength/m_nbDrawnElements;
+            auto Pos0 = Body2->TransformPointParentToLocal(GetAbsPosition(0));
+            for (int i=1; i<m_nbDrawnElements; i++){
+                auto Pos1 = Body2->TransformPointParentToLocal(GetAbsPosition(i*ds));
+                auto newLine = std::make_shared<chrono::geometry::ChLineSegment>(Pos0,Pos1);
+                m_cableElements[i-1]->SetLineGeometry(newLine);
+                auto myColor = chrono::ChColor::ComputeFalseColor(GetTension(ds*i).Length(),0,m_maxTension,true);
+                m_cableElements[i-1]->SetColor(myColor);
+                Pos0 = Pos1;
+            }
+        }
+    }
+
+    void FrCatenaryLine::InitRangeTensionColor() {
+        double ds = m_cableLength/m_nbDrawnElements;
+        double max = GetTension(0).Length();
+        for (int i=1; i<m_nbDrawnElements; i++){
+            auto LocalTension = GetTension(i*ds).Length();
+            if (LocalTension > max) max = LocalTension;
+        }
+        m_maxTension = 1.25*max;
     }
 
 
