@@ -62,36 +62,25 @@ int main(int argc, char* argv[]) {
     hub_box->SetMass(100);
     system.AddBody(hub_box);
     //hub_box->SetBodyFixed(true);
-
     fmt:: print("Poids du hub : {}\n", hub_box->GetMass()*system.GetEnvironment()->GetGravityAcceleration());
 
-
-
     // ---------------------------------------------
-    // Markers
+    // Hub Line
     // ---------------------------------------------
 
-    //auto A1_barge = barge->CreateNode(ChVector<double>(0., 7.5, 3.));
-    //auto A1_crane = base_crane->CreateNode(ChVector<double>(0., 0., 0.));
-    //auto A2_crane = base_crane->CreateNode(ChVector<double>(2., 0., 1.5));
-    //auto A2_tige = tige_crane->CreateNode(ChVector<double>(0., 0., 0.));
     auto A3_tige = tige_crane->CreateNode(ChVector<double>(0., -19., 0.));
     auto A4_hub = hub_box->CreateNode(ChVector<double>(0., 0., 1.));
 
-    auto Test = A3_tige->GetAbsPos();
-    fmt:: print("En haut de la grue : {}, {}, {}\n", Test.x(), Test.y(), Test.z());
+    //auto Test = A3_tige->GetAbsPos();
+    //fmt:: print("En haut de la grue : {}, {}, {}\n", Test.x(), Test.y(), Test.z());
 
     // Line properties
-    double Lu = 13.835;
+    double Lu = 12.835;
     auto u = chrono::ChVector<double>(0, 0, -1);
     double q = 616.538;
     double EA = 1.5708e9;
     double A = 0.05;
     double E = EA/A;
-
-    // ---------------------------------------------
-    // Catenary Line
-    // ---------------------------------------------
 
     /*auto Catenary = std::make_shared<FrCatenaryLine>(A3_tige, A4_hub, true, E, A, Lu, q, u);
     Catenary->Initialize();
@@ -109,6 +98,33 @@ int main(int argc, char* argv[]) {
     DynamicLine->Initialize();
     system.Add(DynamicLine);
 
+
+    // ---------------------------------------------
+    // Mooring Lines
+    // ---------------------------------------------
+
+    /// Mooring lines length
+    Lu = 120;
+
+    auto B1 = barge->CreateNode(ChVector<double>(0., -12.5, 0.));
+    auto B2 = barge->CreateNode(ChVector<double>(-2.5, 12.5, 0.));
+    auto B3 = barge->CreateNode(ChVector<double>(2.5, 12.5, 0.));
+
+    auto WB1 = system.GetWorldBody()->CreateNode(ChVector<double>(0., -125, -30.));
+    auto WB2 = system.GetWorldBody()->CreateNode(ChVector<double>(-25, 125, -30.));
+    auto WB3 = system.GetWorldBody()->CreateNode(ChVector<double>(25, 125, -30.));
+
+    auto MooringLine1 = std::make_shared<FrCatenaryLine>(B1, WB1, true, E, A, Lu, q, u);
+    auto MooringLine2 = std::make_shared<FrCatenaryLine>(B2, WB2, true, E, A, Lu, q, u);
+    auto MooringLine3 = std::make_shared<FrCatenaryLine>(B3, WB3, true, E, A, Lu, q, u);
+
+    MooringLine1->Initialize();
+    MooringLine2->Initialize();
+    MooringLine3->Initialize();
+
+    system.AddLink(MooringLine1);
+    system.AddLink(MooringLine2);
+    system.AddLink(MooringLine3);
 
     /*
     auto A1_barge = barge->CreateNode(ChVector<double>(0., 0., -5.));
@@ -181,7 +197,8 @@ int main(int argc, char* argv[]) {
     system.Initialize();
 
     auto app = FrIrrApp(system);
-    app.AddTypicalCamera(irr::core::vector3df(20, 0, 20), irr::core::vector3df(0, 0, 3));
+    app.AddTypicalCamera(irr::core::vector3df(200, 0, 200), irr::core::vector3df(0, 0, 3));
+    //app.SetVideoframeSave(true);
     app.Run();
 
     /*// -----------------------------------------------
