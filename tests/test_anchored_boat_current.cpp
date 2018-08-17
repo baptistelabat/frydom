@@ -17,6 +17,8 @@ int main(int argc, char* argv[]) {
 
     // Set the free surface
     system.GetEnvironment()->GetFreeSurface()->SetGrid(-200, 200, 50);
+    // Set the sea bed
+    system.GetEnvironment()->GetSeabed()->SetGrid(-400, 400, 50);
 
 
     // The current
@@ -82,7 +84,9 @@ int main(int argc, char* argv[]) {
     double A = 0.05;
     double E = EA/A;
 
-    auto line = FrCatenaryLine(fairlead, anchor, elastic, E, A, Lu, q, u);
+    auto line = std::make_shared<FrCatenaryLine>(fairlead, anchor, elastic, E, A, Lu, q, u);
+    line->Initialize();
+    system.AddLink(line);
 
 
     system.Initialize();

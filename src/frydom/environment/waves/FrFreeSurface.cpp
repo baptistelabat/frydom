@@ -44,8 +44,9 @@ namespace frydom {
         // Providing color
         std::shared_ptr<chrono::ChColorAsset> color;
         color = std::make_shared<chrono::ChColorAsset>();
-        color->SetColor(chrono::ChColor(0, 41, 58, 0));  // TODO: permettre de changer la couleur
-//        color->SetColor(chrono::ChColor(51, 153, 255, 0));  // TODO: permettre de changer la couleur
+        color->SetColor(chrono::ChColor(255, 145, 94, 0));  // TODO: permettre de changer la couleur
+        //color->SetColor(chrono::ChColor(0, 41, 58, 0));  // TODO: permettre de changer la couleur
+        //color->SetColor(chrono::ChColor(51, 153, 255, 0));  // TODO: permettre de changer la couleur
         m_Body->AddAsset(color);
 
     }

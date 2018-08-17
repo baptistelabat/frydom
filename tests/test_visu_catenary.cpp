@@ -15,6 +15,7 @@ int main() {
     // --------------------------------------------------
 
     FrOffshoreSystem my_system;
+    my_system.GetEnvironment()->GetSeabed()->SetDepth(-100);
 
     // --------------------------------------------------
     // Bodies
@@ -102,7 +103,7 @@ int main() {
     auto app = FrIrrApp(my_system);
     app.AssetBindAll();
     app.AssetUpdateAll();
-    app.AddTypicalCamera(irr::core::vector3df(1, 20, 10), irr::core::vector3df(0, 0, 10));
+    app.AddTypicalCamera(irr::core::vector3df(1, 20, 200), irr::core::vector3df(0, 0, 10));
     app.SetVideoframeSave(true);
     app.Run();
 

@@ -39,11 +39,14 @@ int main(int argc, char* argv[]) {
 //    freeSurface->SetGrid(-100, 100, 10);
     freeSurface->SetGridType(FrFreeSurface::CARTESIAN);
 //    freeSurface->SetGrid(0, 0, 300, 25, 30);
-    freeSurface->SetGrid(-200, 200, 5, -50, 50, 5);
+    freeSurface->SetGrid(-200, 200, 5, -150, 150, 5);
 
     // Setting the wave field
     freeSurface->SetLinearWaveField(LINEAR_IRREGULAR);
 //    freeSurface->UpdateAssetON(); // Comment if you don't want the free surface asset to be updated during the visualisation
+
+    system.GetEnvironment()->GetSeabed()->SetGrid(-500,500,50,-500,500,50);
+    system.GetEnvironment()->GetSeabed()->SetDepth(-225);
 
 
     auto linearWaveField = freeSurface->GetLinearWaveField();
@@ -202,7 +205,9 @@ int main(int argc, char* argv[]) {
     anchor_1_pos.pos = A1;
     anchor_1->Impose_Abs_Coord(anchor_1_pos);
 
-    auto line_1 = FrCatenaryLine(fairlead_1, anchor_1, elastic, E, A, L, q, u);
+    auto line_1 = std::make_shared<FrCatenaryLine>(fairlead_1, anchor_1, elastic, E, A, L, q, u);
+    line_1->Initialize();
+    system.AddLink(line_1);
 
     // Line 2
     auto fairlead_2 = platform->CreateNode(F2);
@@ -212,7 +217,9 @@ int main(int argc, char* argv[]) {
     anchor_2_pos.pos = A2;
     anchor_2->Impose_Abs_Coord(anchor_2_pos);
 
-    auto line_2 = FrCatenaryLine(fairlead_2, anchor_2, elastic, E, A, L, q, u);
+    auto line_2 = std::make_shared<FrCatenaryLine>(fairlead_2, anchor_2, elastic, E, A, L, q, u);
+    line_2->Initialize();
+    system.AddLink(line_2);
 
     // Line 3
     auto fairlead_3 = platform->CreateNode(F3);
@@ -222,7 +229,9 @@ int main(int argc, char* argv[]) {
     anchor_3_pos.pos = A3;
     anchor_3->Impose_Abs_Coord(anchor_3_pos);
 
-    auto line_3 = FrCatenaryLine(fairlead_3, anchor_3, elastic, E, A, L, q, u);
+    auto line_3 = std::make_shared<FrCatenaryLine>(fairlead_3, anchor_3, elastic, E, A, L, q, u);
+    line_3->Initialize();
+    system.AddLink(line_3);
 
     // Line 4
     auto fairlead_4 = platform->CreateNode(F4);
@@ -232,7 +241,10 @@ int main(int argc, char* argv[]) {
     anchor_4_pos.pos = A4;
     anchor_4->Impose_Abs_Coord(anchor_4_pos);
 
-    auto line_4 = FrCatenaryLine(fairlead_4, anchor_4, elastic, E, A, L, q, u);
+    auto line_4 = std::make_shared<FrCatenaryLine>(fairlead_4, anchor_4, elastic, E, A, L, q, u);
+    line_4->Initialize();
+    system.AddLink(line_4);
+
 
     // ====================================================================================
     // System (and everything attached) initialization (Mandatory)
