@@ -34,6 +34,25 @@ int main(int argc, char* argv[]) {
     //barge->SetRot(Q_from_AngAxis(CH_C_PI_2,VECT_X));
     system.AddBody(barge);
     barge->SetBodyFixed(true);
+    /*
+    // TODO: faire en sorte de ne pas avoir a construire un ChVector !
+    barge->SetInertiaXX(chrono::ChVector<double>(1.02e11 * 2, 1.34e11 * 2, 1.28e11 * 2)); // Attention, le *2 partout ici est pour emuler la masse ajoutee...
+    barge->SetInertiaXY(chrono::ChVector<double>(-9.79e3 * 2, 4.73e3 * 2, 1.71e2 * 2));
+    barge->SetMass(69.892e6 * 2); // TODO: Caler avec Camille
+    // TODO: faire en sorte de ne pas avoir a construire un ChVector !
+    barge->SetCOG(chrono::ChVector<double>(0, 0, 1.015)); // TODO: Caler avec Camille
+    // ====================================================================================
+    // Adding forces to the platform
+    // ====================================================================================
+
+    // Linear Hydrostatics
+    // -------------------
+    auto hstForce = std::make_shared<FrLinearHydrostaticForce>();
+    hstForce->GetStiffnessMatrix()->SetDiagonal(1.29e7, 4.2e7, 4.35e9);
+    hstForce->GetStiffnessMatrix()->SetNonDiagonal(-1.97e3, -3.04e3, -3.69e4);
+    barge->AddForce(hstForce);  // Comment to remove
+    */
+
 
     auto base_crane = std::make_shared<FrBody>();
     base_crane->SetName("Base_crane");
@@ -42,16 +61,18 @@ int main(int argc, char* argv[]) {
     base_crane->SetPos(chrono::ChVector<double>(0., +7.5, 3.15));
     //base_crane->SetPos(chrono::ChVector<double>(1., -3., 7.5));
     //base_crane->SetPos(chrono::ChVector<double>(-7.5, 0., 3.));
+    base_crane->SetMass(5e3);
+    //base_crane->SetInertiaXX(chrono::ChVector<double>(0, 0, 1.e8));
     system.AddBody(base_crane);
     base_crane->SetBodyFixed(true);
 
-    auto tige_crane = std::make_shared<FrBody>();
-    tige_crane->SetName("Tige_crane");
-    tige_crane->SetVisuMesh("TigeCrane.obj");
+    auto arm_crane = std::make_shared<FrBody>();
+    arm_crane->SetName("Tige_crane");
+    arm_crane->SetVisuMesh("TigeCrane.obj");
     //tige_crane->SetCOG(chrono::ChVector<double>(0., 0., 0.));
-    tige_crane->SetPos(chrono::ChVector<double>(0., +5.5, 4.5));
-    tige_crane->SetRot(Q_from_AngAxis(-CH_C_PI_4,VECT_X));
-    system.AddBody(tige_crane);
+    arm_crane->SetPos(chrono::ChVector<double>(0., +5.5, 4.5));
+    arm_crane->SetRot(Q_from_AngAxis(-CH_C_PI_4,VECT_X));
+    system.AddBody(arm_crane);
     //tige_crane->SetBodyFixed(true);
 
     auto hub_box = std::make_shared<FrBody>();
@@ -68,7 +89,7 @@ int main(int argc, char* argv[]) {
     // Hub Line
     // ---------------------------------------------
 
-    auto A3_tige = tige_crane->CreateNode(ChVector<double>(0., -19., 0.));
+    auto A3_tige = arm_crane->CreateNode(ChVector<double>(0., -19., 0.));
     auto A4_hub = hub_box->CreateNode(ChVector<double>(0., 0., 1.));
 
     //auto Test = A3_tige->GetAbsPos();
@@ -81,6 +102,7 @@ int main(int argc, char* argv[]) {
     double EA = 1.5708e9;
     double A = 0.05;
     double E = EA/A;
+    double breakTensionAsset = 0;//5000000;
 
     /*auto Catenary = std::make_shared<FrCatenaryLine>(A3_tige, A4_hub, true, E, A, Lu, q, u);
     Catenary->Initialize();
@@ -106,25 +128,35 @@ int main(int argc, char* argv[]) {
     /// Mooring lines length
     Lu = 120;
 
-    auto B1 = barge->CreateNode(ChVector<double>(0., -12.5, 0.));
-    auto B2 = barge->CreateNode(ChVector<double>(-2.5, 12.5, 0.));
-    auto B3 = barge->CreateNode(ChVector<double>(2.5, 12.5, 0.));
+    auto B1 = barge->CreateNode(ChVector<double>(-2.5, -12.5, 0.));
+    auto B2 = barge->CreateNode(ChVector<double>(2.5, -12.5, 0.));
+    auto B3 = barge->CreateNode(ChVector<double>(-2.5, 12.5, 0.));
+    auto B4 = barge->CreateNode(ChVector<double>(2.5, 12.5, 0.));
 
-    auto WB1 = system.GetWorldBody()->CreateNode(ChVector<double>(0., -125, -30.));
-    auto WB2 = system.GetWorldBody()->CreateNode(ChVector<double>(-25, 125, -30.));
-    auto WB3 = system.GetWorldBody()->CreateNode(ChVector<double>(25, 125, -30.));
+    auto WB1 = system.GetWorldBody()->CreateNode(ChVector<double>(-25, -125, -30.));
+    auto WB2 = system.GetWorldBody()->CreateNode(ChVector<double>(25, -125, -30.));
+    auto WB3 = system.GetWorldBody()->CreateNode(ChVector<double>(-25, 125, -30.));
+    auto WB4 = system.GetWorldBody()->CreateNode(ChVector<double>(25, 125, -30.));
 
     auto MooringLine1 = std::make_shared<FrCatenaryLine>(B1, WB1, true, E, A, Lu, q, u);
     auto MooringLine2 = std::make_shared<FrCatenaryLine>(B2, WB2, true, E, A, Lu, q, u);
     auto MooringLine3 = std::make_shared<FrCatenaryLine>(B3, WB3, true, E, A, Lu, q, u);
+    auto MooringLine4 = std::make_shared<FrCatenaryLine>(B4, WB4, true, E, A, Lu, q, u);
+
+    MooringLine1->SetBreakingTension(breakTensionAsset);
+    MooringLine2->SetBreakingTension(breakTensionAsset);
+    MooringLine3->SetBreakingTension(breakTensionAsset);
+    MooringLine4->SetBreakingTension(breakTensionAsset);
 
     MooringLine1->Initialize();
     MooringLine2->Initialize();
     MooringLine3->Initialize();
+    MooringLine4->Initialize();
 
     system.AddLink(MooringLine1);
     system.AddLink(MooringLine2);
     system.AddLink(MooringLine3);
+    system.AddLink(MooringLine4);
 
     /*
     auto A1_barge = barge->CreateNode(ChVector<double>(0., 0., -5.));
@@ -135,36 +167,56 @@ int main(int argc, char* argv[]) {
     auto A4_hub = hub_box->CreateNode(ChVector<double>(0., 0., 0.));
     */
 
+
+    // ----------------------------------------------
+    // Links
+    // ----------------------------------------------
+    /*// Barge - Crane base:
+    auto link_crane = std::make_shared<ChLinkRevolute>();
+    link_crane->Initialize(base_crane, barge, ChFrame<>(ChVector<>(0., 7.5, 3.)));
+    system.AddLink(link_crane);
+
+    // Crane base - Crane arm
+    auto link_arm = std::make_shared<ChLinkRevolute>();
+    link_arm->Initialize(arm_crane, base_crane, ChFrame<>(ChVector<>(0., 5.5 , 4.5), CH_C_PI_2, VECT_Y));
+    system.AddLink(link_arm);*/
+
     // ----------------------------------------------
     // Motors
     // ----------------------------------------------
-
-    auto rotmotor_crane = std::make_shared<ChLinkMotorRotationAngle>();
+    // Barge - Crane base:
+    auto rotmotor_crane = std::make_shared<ChLinkMotorRotationSpeed>();
+    //auto rotmotor_crane = std::make_shared<ChLinkMotorRotationTorque>();
+    //auto rotmotor_crane = std::make_shared<ChLinkMotorRotationAngle>();
     rotmotor_crane->Initialize(base_crane, barge, ChFrame<>(ChVector<>(0., 7.5, 3.))); //, CH_C_PI_2, VECT_Z
-    //rotmotor->Initialize(base_crane, barge, true, ChVector<>(0, 0, 0), ChVector<>(0, 7.5, 3),ChVector<>(1, 0, 0), ChVector<>(1, 0, 0));
     //system.Add(rotmotor_crane);
 
-    //auto rotmotor_tige = std::make_shared<ChLinkMotorRotationAngle>();
-    auto rotmotor_tige = std::make_shared<ChLinkMotorRotationTorque>();
-    rotmotor_tige->Initialize(tige_crane, base_crane, ChFrame<>(ChVector<>(0., 5.5 , 4.5), CH_C_PI_2, VECT_Y));
-    //rotmotor_tige->Initialize(tige_crane, base_crane, true, ChVector<>(0, 0, 0), ChVector<>(0, 7.5, 1.5),ChVector<>(1, 0, 0), ChVector<>(1, 0, 0));
-    system.Add(rotmotor_tige);
+    auto rw_crane = std::make_shared<ChFunction_Const>(0.1);
+    rotmotor_crane->SetSpeedFunction(rw_crane);
 
-    auto rwspeed = std::make_shared<ChFunction_Sine>(
+   /* auto rwspeed = std::make_shared<ChFunction_Sine>(
             0,      // phase [rad]
             0.05,   // frequency [Hz]
             CH_C_PI_4 // amplitude [rad]
     );
-    //rotmotor_crane->SetAngleFunction(rwspeed);
+    rotmotor_crane->SetAngleFunction(rwspeed);
+*/
+    // Crane base - Crane arm
+    //auto rotmotor_arm = std::make_shared<ChLinkMotorRotationTorque>();
+    auto rotmotor_arm = std::make_shared<ChLinkMotorRotationSpeed>();
+    rotmotor_arm->Initialize(arm_crane, base_crane, ChFrame<>(ChVector<>(0., 5.5 , 4.5), CH_C_PI_2, VECT_Y));
+    //rotmotor_tige->Initialize(tige_crane, base_crane, true, ChVector<>(0, 0, 0), ChVector<>(0, 7.5, 1.5),ChVector<>(1, 0, 0), ChVector<>(1, 0, 0));
+    system.Add(rotmotor_arm);
 
-    //auto rwangle_tige = std::make_shared<ChFunction_Const>(0);//-CH_C_PI_4
-    //rotmotor_tige->SetAngleFunction(rwangle_tige);
-    double torque_value = hub_box->GetMass()*system.GetEnvironment()->GetGravityAcceleration()*(A3_tige->GetAbsPos().y()-5.5);
+    /*double torque_value = hub_box->GetMass()*system.GetEnvironment()->GetGravityAcceleration()*(A3_tige->GetAbsPos().y()-5.5);
     fmt::print("Torque value = {}\n", torque_value);
-    torque_value += tige_crane->GetMass()*system.GetEnvironment()->GetGravityAcceleration()*(tige_crane->GetPos().y()-5.5);
+    torque_value += arm_crane->GetMass()*system.GetEnvironment()->GetGravityAcceleration()*(arm_crane->GetPos().y()-5.5);
     fmt::print("Torque value = {}\n", torque_value);
-    auto rw_torque_tige = std::make_shared<ChFunction_Const>(torque_value*10);
-    rotmotor_tige->SetTorqueFunction(rw_torque_tige);
+    auto rw_torque_arm = std::make_shared<ChFunction_Const>(torque_value*10);
+    rotmotor_arm->SetTorqueFunction(rw_torque_arm);*/
+
+    auto rw_arm = std::make_shared<ChFunction_Const>(-1.);
+    rotmotor_arm->SetSpeedFunction(rw_arm);
 
     // --------------------------------------------------
     // Simulation Parameter
@@ -197,7 +249,7 @@ int main(int argc, char* argv[]) {
     system.Initialize();
 
     auto app = FrIrrApp(system);
-    app.AddTypicalCamera(irr::core::vector3df(200, 0, 200), irr::core::vector3df(0, 0, 3));
+    app.AddTypicalCamera(irr::core::vector3df(100, 0, 100), irr::core::vector3df(0, 0, 3));
     //app.SetVideoframeSave(true);
     app.Run();
 
