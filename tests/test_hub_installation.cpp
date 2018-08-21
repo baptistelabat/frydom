@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
     double EA = 1.5708e9;
     double A = 0.05;
     double E = EA / A;
-    double breakTensionAsset = 0;//5000000;
+    double breakTensionAsset = 100000;
 
     /*auto Catenary = std::make_shared<FrCatenaryLine>(A3_tige, A4_hub, true, E, A, Lu, q, u);
     Catenary->Initialize();
@@ -127,38 +127,103 @@ int main(int argc, char* argv[]) {
     // Mooring Lines
     // ---------------------------------------------
 
-    /// Mooring lines length
-    Lu = 120;
+    auto ColorAsset = std::make_shared<ChColorAsset>(ChColor(1.f, 0.f, 0.0f));
 
-    auto B1 = barge->CreateNode(ChVector<double>(-2.5, -12.5, 0.));
-    auto B2 = barge->CreateNode(ChVector<double>(2.5, -12.5, 0.));
-    auto B3 = barge->CreateNode(ChVector<double>(-2.5, 12.5, 0.));
-    auto B4 = barge->CreateNode(ChVector<double>(2.5, 12.5, 0.));
+    auto hstBuoyForce = std::make_shared<FrLinearHydrostaticForce>();
+    hstBuoyForce->GetStiffnessMatrix()->SetDiagonal(500, 500, 1e3);
+    hstForce->GetStiffnessMatrix()->SetNonDiagonal(0, 0, 0);
+
+    auto buoy1 = std::make_shared<FrSphere>(1,1e3,true);
+    buoy1->SetName("Buoy1");
+    //buoy1->AddForce(hstBuoyForce);
+    buoy1->SetBodyFixed(true);
+    buoy1->SetPos(ChVector<>(-5,-27.5,0));
+    buoy1->SetCOG(ChVector<>(0, 0, 0));
+    buoy1->AddAsset(ColorAsset);
+    system.AddBody(buoy1);
+
+    auto buoy2 = std::make_shared<FrSphere>(1,1e3,true);
+    buoy2->SetName("Buoy2");
+    buoy2->SetPos(ChVector<>(5,-27.5,0));
+    buoy2->SetCOG(ChVector<>(0, 0, 0));
+    //buoy2->AddForce(hstBuoyForce);
+    buoy2->SetBodyFixed(true);
+    buoy2->AddAsset(ColorAsset);
+    system.AddBody(buoy2);
+
+    auto buoy3 = std::make_shared<FrSphere>(1,1e3,true);
+    buoy3->SetName("Buoy3");
+    buoy3->SetPos(ChVector<>(-5,27.5,0));
+    buoy3->SetCOG(ChVector<>(0, 0, 0));
+    //buoy3->AddForce(hstBuoyForce);
+    buoy3->SetBodyFixed(true);
+    buoy3->AddAsset(ColorAsset);
+    system.AddBody(buoy3);
+
+    auto buoy4 = std::make_shared<FrSphere>(1,1e3,true);
+    buoy4->SetName("Buoy4");
+    buoy4->SetPos(ChVector<>(5,27.5,0));
+    buoy4->SetCOG(ChVector<>(0, 0, 0));
+    //buoy4->AddForce(hstBuoyForce);
+    buoy4->SetBodyFixed(true);
+    buoy4->AddAsset(ColorAsset);
+    system.AddBody(buoy4);
+
+    /// Mooring lines length
+    Lu = 110;
+    double Lv = 15.5;
+
+    auto B1 = barge->CreateNode(ChVector<double>(-5, -12.5, 0.));
+    auto B2 = barge->CreateNode(ChVector<double>(5, -12.5, 0.));
+    auto B3 = barge->CreateNode(ChVector<double>(-5, 12.5, 0.));
+    auto B4 = barge->CreateNode(ChVector<double>(5, 12.5, 0.));
+
+    auto BB1 = buoy1->CreateNode(ChVector<double>(0,0,0));
+    auto BB2 = buoy2->CreateNode(ChVector<double>(0,0,0));
+    auto BB3 = buoy3->CreateNode(ChVector<double>(0,0,0));
+    auto BB4 = buoy4->CreateNode(ChVector<double>(0,0,0));
 
     auto WB1 = system.GetWorldBody()->CreateNode(ChVector<double>(-25, -125, -30.));
     auto WB2 = system.GetWorldBody()->CreateNode(ChVector<double>(25, -125, -30.));
     auto WB3 = system.GetWorldBody()->CreateNode(ChVector<double>(-25, 125, -30.));
     auto WB4 = system.GetWorldBody()->CreateNode(ChVector<double>(25, 125, -30.));
 
-    auto MooringLine1 = std::make_shared<FrCatenaryLine>(B1, WB1, true, E, A, Lu, q, u);
-    auto MooringLine2 = std::make_shared<FrCatenaryLine>(B2, WB2, true, E, A, Lu, q, u);
-    auto MooringLine3 = std::make_shared<FrCatenaryLine>(B3, WB3, true, E, A, Lu, q, u);
-    auto MooringLine4 = std::make_shared<FrCatenaryLine>(B4, WB4, true, E, A, Lu, q, u);
+    auto MooringLine1 = std::make_shared<FrCatenaryLine>(B1, BB1, true, E, A, Lv, q, u);
+    auto MooringLine2 = std::make_shared<FrCatenaryLine>(B2, BB2, true, E, A, Lv, q, u);
+    auto MooringLine3 = std::make_shared<FrCatenaryLine>(B3, BB3, true, E, A, Lv, q, u);
+    auto MooringLine4 = std::make_shared<FrCatenaryLine>(B4, BB4, true, E, A, Lv, q, u);
+
+    auto MooringLine1b = std::make_shared<FrCatenaryLine>(BB1, WB1, true, E, A, Lu, q, u);
+    auto MooringLine2b = std::make_shared<FrCatenaryLine>(BB2, WB2, true, E, A, Lu, q, u);
+    auto MooringLine3b = std::make_shared<FrCatenaryLine>(BB3, WB3, true, E, A, Lu, q, u);
+    auto MooringLine4b = std::make_shared<FrCatenaryLine>(BB4, WB4, true, E, A, Lu, q, u);
 
     MooringLine1->SetBreakingTension(breakTensionAsset);
     MooringLine2->SetBreakingTension(breakTensionAsset);
     MooringLine3->SetBreakingTension(breakTensionAsset);
     MooringLine4->SetBreakingTension(breakTensionAsset);
+    MooringLine1b->SetBreakingTension(breakTensionAsset);
+    MooringLine2b->SetBreakingTension(breakTensionAsset);
+    MooringLine3b->SetBreakingTension(breakTensionAsset);
+    MooringLine4b->SetBreakingTension(breakTensionAsset);
 
     MooringLine1->Initialize();
     MooringLine2->Initialize();
     MooringLine3->Initialize();
     MooringLine4->Initialize();
+    MooringLine1b->Initialize();
+    MooringLine2b->Initialize();
+    MooringLine3b->Initialize();
+    MooringLine4b->Initialize();
 
     system.AddLink(MooringLine1);
     system.AddLink(MooringLine2);
     system.AddLink(MooringLine3);
     system.AddLink(MooringLine4);
+    system.AddLink(MooringLine1b);
+    system.AddLink(MooringLine2b);
+    system.AddLink(MooringLine3b);
+    system.AddLink(MooringLine4b);
 
     // ----------------------------------------------
     // Motors
@@ -167,7 +232,7 @@ int main(int argc, char* argv[]) {
     auto rotmotor_crane = std::make_shared<ChLinkMotorRotationSpeed>();
     rotmotor_crane->Initialize(base_crane, barge, ChFrame<>(ChVector<>(0., 7.5, 2.)));
     system.Add(rotmotor_crane);
-    auto rw_crane = std::make_shared<ChFunction_Const>(0.01);
+    auto rw_crane = std::make_shared<ChFunction_Const>(0.2);
     rotmotor_crane->SetSpeedFunction(rw_crane);
 
     // Crane base - Crane arm
@@ -208,7 +273,7 @@ int main(int argc, char* argv[]) {
     system.Initialize();
 
     auto app = FrIrrApp(system);
-    app.AddTypicalCamera(irr::core::vector3df(20, 0, 20), irr::core::vector3df(0, 0, 3));
+    app.AddTypicalCamera(irr::core::vector3df(50, 0, 50), irr::core::vector3df(0, 0, 3));
     //app.SetVideoframeSave(true);
     app.Run();
 
