@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
 
     // Setting the wave field
     freeSurface->SetLinearWaveField(LINEAR_IRREGULAR);
-//    freeSurface->UpdateAssetON(); // Comment if you don't want the free surface asset to be updated during the visualisation
+    freeSurface->UpdateAssetON(); // Comment if you don't want the free surface asset to be updated during the visualisation
 
     system.GetEnvironment()->GetSeabed()->SetGrid(-500,500,50,-500,500,50);
     system.GetEnvironment()->GetSeabed()->SetDepth(-225);
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
     linearWaveField->GetWaveRamp()->SetIncrease();
 
     // Set the current properties
-    system.GetEnvironment()->GetCurrent()->Set(NORTH, 45., NED, GOTO, KNOT);
+    system.GetEnvironment()->GetCurrent()->Set(NORTH, 5., NED, GOTO, KNOT);
 
     // Set the wind properties
     system.GetEnvironment()->GetWind()->Set(NORTH_WEST, 10., NED, GOTO, KNOT); // FIXME: pas encore actif...
@@ -254,7 +254,7 @@ int main(int argc, char* argv[]) {
     // ====================================================================================
     // Irrlicht visualization
     // ====================================================================================
-    auto app = FrIrrApp(system, 150);
+    auto app = FrIrrApp(system, 300);
 
     double timeStep = 0.02;
 
