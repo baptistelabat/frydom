@@ -75,6 +75,7 @@ namespace frydom {
             m_current = std::make_shared<FrUniformCurrent>();
             m_wind = std::make_shared<FrUniformWind>();
             m_seabed = std::make_unique<FrSeabed>();
+            m_seabed->SetEnvironment(this);
             m_LocalCartesian = std::make_unique<GeographicLib::LocalCartesian>();
             m_timeZone = std::make_unique<FrTimeZone>();
         }

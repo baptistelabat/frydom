@@ -245,7 +245,7 @@ namespace frydom {
             }
 
             // O declenche maintenant le recalcul des forces hydro
-//            Update(m_system->GetChTime()); // TODO: voir si c'est le bo endroit pour declencher ??
+//            Update(m_environment->GetChTime()); // TODO: voir si c'est le bo endroit pour declencher ??
             // Pas certain, pour des solveurs avec plus de pas intermediaires, les forces de radiation ne seront pas a jour !!!
 
         }
