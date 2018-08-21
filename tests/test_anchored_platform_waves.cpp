@@ -193,6 +193,7 @@ int main(int argc, char* argv[]) {
     double EA = 1e10;
     double A = 0.05;
     double E = EA/A;
+    double AssetBreakingTension = 1000000;
 
     // TODO: pour les ancres, avoir un corps fixe pour le seabed qui doit etre le corps fixe de systeme en std::shared_ptr...
     // Du coup, avoir la possibilite de faire un seabed->AddAnchor...
@@ -206,6 +207,7 @@ int main(int argc, char* argv[]) {
     anchor_1->Impose_Abs_Coord(anchor_1_pos);
 
     auto line_1 = std::make_shared<FrCatenaryLine>(fairlead_1, anchor_1, elastic, E, A, L, q, u);
+    line_1->SetBreakingTension(AssetBreakingTension);
     line_1->Initialize();
     system.AddLink(line_1);
 
@@ -218,6 +220,7 @@ int main(int argc, char* argv[]) {
     anchor_2->Impose_Abs_Coord(anchor_2_pos);
 
     auto line_2 = std::make_shared<FrCatenaryLine>(fairlead_2, anchor_2, elastic, E, A, L, q, u);
+    line_2->SetBreakingTension(AssetBreakingTension);
     line_2->Initialize();
     system.AddLink(line_2);
 
@@ -230,6 +233,7 @@ int main(int argc, char* argv[]) {
     anchor_3->Impose_Abs_Coord(anchor_3_pos);
 
     auto line_3 = std::make_shared<FrCatenaryLine>(fairlead_3, anchor_3, elastic, E, A, L, q, u);
+    line_3->SetBreakingTension(AssetBreakingTension);
     line_3->Initialize();
     system.AddLink(line_3);
 
@@ -242,6 +246,7 @@ int main(int argc, char* argv[]) {
     anchor_4->Impose_Abs_Coord(anchor_4_pos);
 
     auto line_4 = std::make_shared<FrCatenaryLine>(fairlead_4, anchor_4, elastic, E, A, L, q, u);
+    line_4->SetBreakingTension(AssetBreakingTension);
     line_4->Initialize();
     system.AddLink(line_4);
 
