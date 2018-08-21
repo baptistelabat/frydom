@@ -3,10 +3,9 @@
 
 import sys
 from subprocess import call
-sys.path.append("../thirdparty/which")
-import which
+from distutils.spawn import find_executable
 
-ffmpeg = which.which('ffmpeg')
+ffmpeg = find_executable('ffmpeg')
 
 if __name__ == '__main__':
 
