@@ -129,43 +129,35 @@ int main(int argc, char* argv[]) {
 
     auto ColorAsset = std::make_shared<ChColorAsset>(ChColor(1.f, 0.f, 0.0f));
 
-    auto hstBuoyForce = std::make_shared<FrLinearHydrostaticForce>();
-    hstBuoyForce->GetStiffnessMatrix()->SetDiagonal(500, 500, 1e3);
-    hstForce->GetStiffnessMatrix()->SetNonDiagonal(0, 0, 0);
-
-    auto buoy1 = std::make_shared<FrSphere>(1,1e3,true);
+    auto buoy1 = std::make_shared<FrMooringBuoy>(1,1e3,true);
     buoy1->SetName("Buoy1");
-    //buoy1->AddForce(hstBuoyForce);
-    buoy1->SetBodyFixed(true);
     buoy1->SetPos(ChVector<>(-5,-27.5,0));
     buoy1->SetCOG(ChVector<>(0, 0, 0));
+    //buoy1->SetBodyFixed(true);
     buoy1->AddAsset(ColorAsset);
     system.AddBody(buoy1);
 
-    auto buoy2 = std::make_shared<FrSphere>(1,1e3,true);
+    auto buoy2 = std::make_shared<FrMooringBuoy>(1,1e3,true);
     buoy2->SetName("Buoy2");
     buoy2->SetPos(ChVector<>(5,-27.5,0));
     buoy2->SetCOG(ChVector<>(0, 0, 0));
-    //buoy2->AddForce(hstBuoyForce);
-    buoy2->SetBodyFixed(true);
+    //buoy2->SetBodyFixed(true);
     buoy2->AddAsset(ColorAsset);
     system.AddBody(buoy2);
 
-    auto buoy3 = std::make_shared<FrSphere>(1,1e3,true);
+    auto buoy3 = std::make_shared<FrMooringBuoy>(1,1e3,true);
     buoy3->SetName("Buoy3");
     buoy3->SetPos(ChVector<>(-5,27.5,0));
     buoy3->SetCOG(ChVector<>(0, 0, 0));
-    //buoy3->AddForce(hstBuoyForce);
-    buoy3->SetBodyFixed(true);
+    //buoy3->SetBodyFixed(true);
     buoy3->AddAsset(ColorAsset);
     system.AddBody(buoy3);
 
-    auto buoy4 = std::make_shared<FrSphere>(1,1e3,true);
+    auto buoy4 = std::make_shared<FrMooringBuoy>(1,1e3,true);
     buoy4->SetName("Buoy4");
     buoy4->SetPos(ChVector<>(5,27.5,0));
     buoy4->SetCOG(ChVector<>(0, 0, 0));
-    //buoy4->AddForce(hstBuoyForce);
-    buoy4->SetBodyFixed(true);
+    //buoy4->SetBodyFixed(true);
     buoy4->AddAsset(ColorAsset);
     system.AddBody(buoy4);
 

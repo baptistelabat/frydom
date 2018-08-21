@@ -11,5 +11,6 @@
 #include "FrAssetComponent.h"
 #include "FrAssetBuoy.h"
 #include "FrAssetClumpWeight.h"
+#include "FrMooringBuoy.h"
 
 #endif //FRYDOM_FRCABLEINC_H
