@@ -61,10 +61,10 @@ int main(int argc, char* argv[]) {
     base_crane->SetPos(chrono::ChVector<double>(0., +7.5, 3.15));
     //base_crane->SetPos(chrono::ChVector<double>(1., -3., 7.5));
     //base_crane->SetPos(chrono::ChVector<double>(-7.5, 0., 3.));
-    base_crane->SetMass(5e3);
+    base_crane->SetMass(5e4);
     //base_crane->SetInertiaXX(chrono::ChVector<double>(0, 0, 1.e8));
     system.AddBody(base_crane);
-    base_crane->SetBodyFixed(true);
+    //base_crane->SetBodyFixed(true);
 
     auto arm_crane = std::make_shared<FrBody>();
     arm_crane->SetName("Tige_crane");
@@ -72,8 +72,9 @@ int main(int argc, char* argv[]) {
     //tige_crane->SetCOG(chrono::ChVector<double>(0., 0., 0.));
     arm_crane->SetPos(chrono::ChVector<double>(0., +5.5, 4.5));
     arm_crane->SetRot(Q_from_AngAxis(-CH_C_PI_4,VECT_X));
+    arm_crane->SetMass(100);
     system.AddBody(arm_crane);
-    //tige_crane->SetBodyFixed(true);
+    //arm_crane->SetBodyFixed(true);
 
     auto hub_box = std::make_shared<FrBody>();
     hub_box->SetName("HubBox");
@@ -85,6 +86,7 @@ int main(int argc, char* argv[]) {
     //hub_box->SetBodyFixed(true);
     fmt:: print("Poids du hub : {}\n", hub_box->GetMass()*system.GetEnvironment()->GetGravityAcceleration());
 
+
     // ---------------------------------------------
     // Hub Line
     // ---------------------------------------------
@@ -92,8 +94,8 @@ int main(int argc, char* argv[]) {
     auto A3_tige = arm_crane->CreateNode(ChVector<double>(0., -19., 0.));
     auto A4_hub = hub_box->CreateNode(ChVector<double>(0., 0., 1.));
 
-    //auto Test = A3_tige->GetAbsPos();
-    //fmt:: print("En haut de la grue : {}, {}, {}\n", Test.x(), Test.y(), Test.z());
+    auto Test = A3_tige->GetAbsPos();
+    fmt:: print("En haut de la grue : {}, {}, {}\n", Test.x(), Test.y(), Test.z());
 
     // Line properties
     double Lu = 12.835;
@@ -112,7 +114,7 @@ int main(int argc, char* argv[]) {
     DynamicLine->SetStartingNode(A3_tige);
     DynamicLine->SetEndingNode(A4_hub);
     DynamicLine->SetCableLength(Lu);
-    DynamicLine->SetNumberOfElements(50);
+    DynamicLine->SetNumberOfElements(10);
     DynamicLine->SetLinearDensity(30);
     DynamicLine->SetDiameter(A);
     DynamicLine->SetYoungModulus(EA);
@@ -181,6 +183,13 @@ int main(int argc, char* argv[]) {
     link_arm->Initialize(arm_crane, base_crane, ChFrame<>(ChVector<>(0., 5.5 , 4.5), CH_C_PI_2, VECT_Y));
     system.AddLink(link_arm);*/
 
+    // Crane - hub_box:
+    auto link_test = std::make_shared<ChLinkDistance>();
+    //link_test->Initialize(arm_crane, test_body, ChFrame<>(ChVector<>(0,-7.93503,17.935)));
+    link_test->Initialize(hub_box, arm_crane, true, ChVector<>(0,0,0), ChVector<>(0,-19,0), true);
+    //system.AddLink(link_test);
+
+
     // ----------------------------------------------
     // Motors
     // ----------------------------------------------
@@ -189,9 +198,9 @@ int main(int argc, char* argv[]) {
     //auto rotmotor_crane = std::make_shared<ChLinkMotorRotationTorque>();
     //auto rotmotor_crane = std::make_shared<ChLinkMotorRotationAngle>();
     rotmotor_crane->Initialize(base_crane, barge, ChFrame<>(ChVector<>(0., 7.5, 3.))); //, CH_C_PI_2, VECT_Z
-    //system.Add(rotmotor_crane);
+    system.Add(rotmotor_crane);
 
-    auto rw_crane = std::make_shared<ChFunction_Const>(0.1);
+    auto rw_crane = std::make_shared<ChFunction_Const>(0.3);
     rotmotor_crane->SetSpeedFunction(rw_crane);
 
    /* auto rwspeed = std::make_shared<ChFunction_Sine>(
@@ -203,9 +212,10 @@ int main(int argc, char* argv[]) {
 */
     // Crane base - Crane arm
     //auto rotmotor_arm = std::make_shared<ChLinkMotorRotationTorque>();
-    auto rotmotor_arm = std::make_shared<ChLinkMotorRotationSpeed>();
+    //auto rotmotor_arm = std::make_shared<ChLinkMotorRotationSpeed>();
+    auto rotmotor_arm = std::make_shared<ChLinkMotorRotationAngle>();
     rotmotor_arm->Initialize(arm_crane, base_crane, ChFrame<>(ChVector<>(0., 5.5 , 4.5), CH_C_PI_2, VECT_Y));
-    //rotmotor_tige->Initialize(tige_crane, base_crane, true, ChVector<>(0, 0, 0), ChVector<>(0, 7.5, 1.5),ChVector<>(1, 0, 0), ChVector<>(1, 0, 0));
+    //rotmotor_arm->Initialize(arm_crane, base_crane, true, ChVector<>(0, 0, 0), ChVector<>(0, 7.5, 1.5),ChVector<>(1, 0, 0), ChVector<>(1, 0, 0));
     system.Add(rotmotor_arm);
 
     /*double torque_value = hub_box->GetMass()*system.GetEnvironment()->GetGravityAcceleration()*(A3_tige->GetAbsPos().y()-5.5);
@@ -215,8 +225,8 @@ int main(int argc, char* argv[]) {
     auto rw_torque_arm = std::make_shared<ChFunction_Const>(torque_value*10);
     rotmotor_arm->SetTorqueFunction(rw_torque_arm);*/
 
-    auto rw_arm = std::make_shared<ChFunction_Const>(-1.);
-    rotmotor_arm->SetSpeedFunction(rw_arm);
+    auto rw_arm = std::make_shared<ChFunction_Const>(0.);
+    rotmotor_arm->SetAngleFunction(rw_arm);
 
     // --------------------------------------------------
     // Simulation Parameter
@@ -225,14 +235,13 @@ int main(int argc, char* argv[]) {
     // TODO: voir si on peut specifier ces reglages pour un modele dans cable
     // Si NON, Peut-on avoir un reglage auto du solveur MINRES
     system.SetSolverType(chrono::ChSolver::Type::MINRES);  // TODO: voir si on peut regler ce solveur pour des simulations sans cable
-    system.SetSolverWarmStarting(false);
+    system.SetSolverWarmStarting(true);
     system.SetMaxItersSolverSpeed(1000);  // TODO: mettre en place une adaptation lorsqu'on a un residu du solveur trop important
     system.SetMaxItersSolverStab(200);
     system.SetTolForce(1e-13);
     auto msolver = std::static_pointer_cast<chrono::ChSolverMINRES>(system.GetSolver());
-//    msolver->SetVerbose(true);
     msolver->SetVerbose(false);
-    msolver->SetDiagonalPreconditioning(false);
+    msolver->SetDiagonalPreconditioning(true);
 
 //    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
     system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
@@ -249,7 +258,7 @@ int main(int argc, char* argv[]) {
     system.Initialize();
 
     auto app = FrIrrApp(system);
-    app.AddTypicalCamera(irr::core::vector3df(100, 0, 100), irr::core::vector3df(0, 0, 3));
+    app.AddTypicalCamera(irr::core::vector3df(20, 0, 20), irr::core::vector3df(0, 0, 3));
     //app.SetVideoframeSave(true);
     app.Run();
 
