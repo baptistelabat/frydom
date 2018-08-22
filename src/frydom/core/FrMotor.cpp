@@ -2,7 +2,8 @@
 // Created by Lucas Letournel on 24/07/18.
 //
 
-#include <chrono/physics/ChLinkMotorRotationSpeed.h>
+#include "chrono/physics/ChSystem.h"
+#include "chrono/physics/ChLinkMotorRotationSpeed.h"
 #include "FrMotor.h"
 
 #include "MathUtils/MathUtils.h"

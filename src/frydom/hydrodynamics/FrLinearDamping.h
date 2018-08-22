@@ -5,8 +5,6 @@
 #ifndef FRYDOM_FRLINEARDAMPING_H
 #define FRYDOM_FRLINEARDAMPING_H
 
-#endif //FRYDOM_FRLINEARDAMPING_H
-
 #include "frydom/core/FrForce.h"
 
 namespace frydom {
@@ -65,3 +63,5 @@ namespace frydom {
 
 
 };  // end namespace frydom
+
+#endif //FRYDOM_FRLINEARDAMPING_H

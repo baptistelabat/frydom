@@ -147,9 +147,6 @@ namespace frydom {
         void Initialize() override {
             solve();
 
-            fmt::print("Tension dans la ligne : {} \n", GetEndingNodeTension().Length());
-            fmt::print("Longueur de la ligne : {} \n", GetCableLength());
-
             // Generate assets for the cable
             GenerateAssets();
             InitRangeTensionColor();
@@ -168,11 +165,6 @@ namespace frydom {
             UpdateState();
             UpdateAsset();
             ChPhysicsItem::Update(time, update_assets);
-            fmt::print("-----------------------------------------------------------\n");
-            fmt::print("Longueur de la ligne : {} \n", GetCableLength());
-            fmt::print("Bottom of the line located at z = {}\n",GetAbsPosition(GetCableLength()).z());
-            fmt::print("Hub altitude = {}\n",GetPosEndingNode().z());
-            fmt::print("Tension dans la ligne : {} \n", GetEndingNodeTension().Length());
         }
 //
         /// Update internal time and time step for dynamic behaviour of the cable

@@ -6,6 +6,7 @@
 #define FRYDOM_FRBUOY_H
 
 #include "frydom/core/FrBodyEasy.h"
+#include "frydom/hydrodynamics/FrLinearDamping.h"
 
 
 namespace frydom {
@@ -15,33 +16,44 @@ namespace frydom {
 
         class FrSphereNonLinearHydrostaticForce : public FrForce{
         private:
-            FrMooringBuoy* m_buoy;
         public:
-            //void UpdateTime(double mytime) override{};
+            FrSphereNonLinearHydrostaticForce() {
+                force.SetNull();
+                moment.SetNull();
+            }
+
             void UpdateState() override {
+                auto m_buoy = dynamic_cast<FrMooringBuoy*>(GetBody());
                 auto Gvector = m_buoy->GetSystem()->Get_G_acc();
                 auto rho_water = dynamic_cast<FrOffshoreSystem*>(m_buoy->GetSystem())->GetEnvironment()->GetWaterDensity() ;
-                force = m_buoy->GetMass()*Gvector + m_buoy->GetVolume()*rho_water;
+                force = -m_buoy->GetVolume()*rho_water*Gvector;
+                //auto gravityForce = m_buoy->GetMass()*Gvector;
+                //auto buoyancyForce = -m_buoy->GetVolume()*rho_water*Gvector;
+                //fmt::print("total force = {}, gravity force = {}, buoyancy force = {}\n",force.z(), gravityForce.z(), buoyancyForce.z());
             };
         };
 
         double m_radius;
         double m_volume;
-        std::shared_ptr<FrSphereNonLinearHydrostaticForce> m_force;
+        std::shared_ptr<FrSphereNonLinearHydrostaticForce> m_hydrostaticForce;
+        std::shared_ptr<FrLinearDamping> m_dampingForce;
 
     public:
-        FrMooringBuoy(double radius, double mass, bool visual_asset = true)
+        FrMooringBuoy(double radius, double mass, bool visual_asset = true, double damping=0)
                 :FrSphere(radius, mass, visual_asset){
             m_radius = radius;
-            m_force = std::make_shared<FrSphereNonLinearHydrostaticForce>();
-            m_force->SetBody(this);
-            AddForce(m_force);
+            m_hydrostaticForce = std::make_shared<FrSphereNonLinearHydrostaticForce>();
+            m_hydrostaticForce->SetBody(this);
+            AddForce(m_hydrostaticForce);
+            m_dampingForce = std::make_shared<FrLinearDamping>();
+            m_dampingForce->SetSeakeepingDampings(damping,0,0);
+            AddForce(m_dampingForce);
         };
 
         double computeDraft(){
-            if (GetPos().z()<m_radius) { return m_radius;}
-            if (GetPos().z()>m_radius) {return 0;}
-            else {return m_radius - GetPos().z();}
+            if (GetPos().z()<-m_radius) { return m_radius;}
+            if (GetPos().z()>m_radius) {return -m_radius;}
+            else {return -GetPos().z();}
         }
 
         double inline computeVolume(double Zt){
@@ -53,11 +65,12 @@ namespace frydom {
 
         void Update(bool update_assets = true) override{
 
+            auto Zt =computeDraft();
             m_volume = computeVolume(computeDraft());
+            fmt::print("buoy draft = {}, Zt = {}, volume = {}\n",GetPos().z(), Zt, m_volume);
 
             // update parent class
             chrono::ChBodyAuxRef::Update(update_assets);
-
         }
 
 

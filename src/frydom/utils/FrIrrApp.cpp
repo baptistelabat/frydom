@@ -18,7 +18,13 @@ namespace frydom {
                                          irr::video::EDT_OPENGL){
 
         SetSkyBox();
-        AddTypicalLights();
+        //AddTypicalLights();
+        AddTypicalLights(irr::core::vector3df(-30.f, -100.f, 30.f),
+                irr::core::vector3df(-30.f, -80.f, -30.f),
+                 290,
+                 190,
+                irr::video::SColorf(0.7f, 0.7f, 0.7f, 1.0f),
+                irr::video::SColorf(0.7f, 0.8f, 0.8f, 1.0f));
         AddTypicalCamera(irr::core::vector3df(0, (irr::f32)dist, (irr::f32)dist),
                          irr::core::vector3df(0, (irr::f32)SQ2_2, (irr::f32)SQ2_2));
         //AddTypicalLogo("frydom_logo.png");

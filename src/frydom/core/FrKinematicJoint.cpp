@@ -2,6 +2,8 @@
 // Created by Lucas Letournel on 20/07/18.
 //
 
+#include "chrono/physics/ChSystem.h"
+#include "chrono/physics/ChLinkLock.h"
 #include "FrKinematicJoint.h"
 
 namespace frydom {

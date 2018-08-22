@@ -127,35 +127,37 @@ int main(int argc, char* argv[]) {
     // Mooring Lines
     // ---------------------------------------------
 
+
+
     auto ColorAsset = std::make_shared<ChColorAsset>(ChColor(1.f, 0.f, 0.0f));
 
-    auto buoy1 = std::make_shared<FrMooringBuoy>(1,1e3,true);
+    auto buoy1 = std::make_shared<FrMooringBuoy>(1.5,4e3,true,1e2);
     buoy1->SetName("Buoy1");
-    buoy1->SetPos(ChVector<>(-5,-27.5,0));
+    buoy1->SetPos(ChVector<>(-5.,-27.5,0));
     buoy1->SetCOG(ChVector<>(0, 0, 0));
     //buoy1->SetBodyFixed(true);
     buoy1->AddAsset(ColorAsset);
     system.AddBody(buoy1);
 
-    auto buoy2 = std::make_shared<FrMooringBuoy>(1,1e3,true);
+    auto buoy2 = std::make_shared<FrMooringBuoy>(1.5,4e3,true,1e2);
     buoy2->SetName("Buoy2");
-    buoy2->SetPos(ChVector<>(5,-27.5,0));
+    buoy2->SetPos(ChVector<>(5.,-27.5,0));
     buoy2->SetCOG(ChVector<>(0, 0, 0));
     //buoy2->SetBodyFixed(true);
     buoy2->AddAsset(ColorAsset);
     system.AddBody(buoy2);
 
-    auto buoy3 = std::make_shared<FrMooringBuoy>(1,1e3,true);
+    auto buoy3 = std::make_shared<FrMooringBuoy>(1.5,4e3,true,1e2);
     buoy3->SetName("Buoy3");
-    buoy3->SetPos(ChVector<>(-5,27.5,0));
+    buoy3->SetPos(ChVector<>(-5.,27.5,0));
     buoy3->SetCOG(ChVector<>(0, 0, 0));
     //buoy3->SetBodyFixed(true);
     buoy3->AddAsset(ColorAsset);
     system.AddBody(buoy3);
 
-    auto buoy4 = std::make_shared<FrMooringBuoy>(1,1e3,true);
+    auto buoy4 = std::make_shared<FrMooringBuoy>(1.5,4e3,true,1e2);
     buoy4->SetName("Buoy4");
-    buoy4->SetPos(ChVector<>(5,27.5,0));
+    buoy4->SetPos(ChVector<>(5.,27.5,0));
     buoy4->SetCOG(ChVector<>(0, 0, 0));
     //buoy4->SetBodyFixed(true);
     buoy4->AddAsset(ColorAsset);
@@ -258,15 +260,16 @@ int main(int argc, char* argv[]) {
     // Simulation
     // -----------------------------------------------
 
-    double dt = 0.0025;
+    double dt = 0.00125;
 
     //system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
     system.SetStep(dt);
     system.Initialize();
 
     auto app = FrIrrApp(system);
-    app.AddTypicalCamera(irr::core::vector3df(50, 0, 50), irr::core::vector3df(0, 0, 3));
-    //app.SetVideoframeSave(true);
+    app.AddTypicalCamera(irr::core::vector3df(0, -70, .005), irr::core::vector3df(0, 0, 0));
+    //app.SetShowInfos(true);
+    app.SetVideoframeSave(true);
     app.Run();
 
 }

@@ -5,7 +5,8 @@
 #ifndef FRYDOM_FRKINEMATICJOINT_H
 #define FRYDOM_FRKINEMATICJOINT_H
 
-#include "frydom/frydom.h"
+//#include "frydom/frydom.h"
+#include "FrNode.h"
 
 namespace frydom {
     void make_rotoid(const std::shared_ptr<FrNode> &Node1, const std::shared_ptr<FrNode> Node2);
