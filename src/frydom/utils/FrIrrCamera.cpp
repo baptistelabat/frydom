@@ -168,7 +168,6 @@ namespace frydom {
                 tgtv.normalize();
 
                 core::vector3df up = UpVector;
-                std::cout<<"-----------------UpVector--------------------------"<<UpVector.X<<UpVector.Y<<UpVector.Z<<std::endl;
                 up.normalize();
 
                 f32 dp = tgtv.dotProduct(up);
