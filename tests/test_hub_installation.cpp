@@ -36,8 +36,8 @@ int main(int argc, char* argv[]) {
     //barge->SetBodyFixed(true);
 
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
-    barge->SetInertiaXX(chrono::ChVector<double>(1.02e11 * 2, 1.34e11 * 2, 1.28e11 * 2)); // Attention, le *2 partout ici est pour emuler la masse ajoutee...
-    barge->SetInertiaXY(chrono::ChVector<double>(-9.79e3 * 2, 4.73e3 * 2, 1.71e2 * 2));
+    barge->SetInertiaXX(chrono::ChVector<double>(2.071e7,3.979e6,2.44e07)); // Attention, le *2 partout ici est pour emuler la masse ajoutee...
+    barge->SetInertiaXY(chrono::ChVector<double>(0, 0, 0));
     barge->SetMass(440e3); // 460e3 pour l'ensemble
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
     barge->SetCOG(chrono::ChVector<double>(0, 0, 0)); // TODO: Caler avec Camille
@@ -88,7 +88,6 @@ int main(int argc, char* argv[]) {
     hub_box->SetMass(1e3);
     system.AddBody(hub_box);
     //hub_box->SetBodyFixed(true);
-    fmt::print("Poids du hub : {}\n", hub_box->GetMass() * system.GetEnvironment()->GetGravityAcceleration());
 
 
     // ---------------------------------------------
@@ -97,9 +96,6 @@ int main(int argc, char* argv[]) {
 
     auto A3_tige = arm_crane->CreateNode(ChVector<double>(0., -19., 0.));
     auto A4_hub = hub_box->CreateNode(ChVector<double>(0., 0., 1.));
-
-    auto Test = A3_tige->GetAbsPos();
-    fmt::print("En haut de la grue : {}, {}, {}\n", Test.x(), Test.y(), Test.z());
 
     // Line properties
     double Lu = 12.8;
@@ -126,12 +122,9 @@ int main(int argc, char* argv[]) {
     DynamicLine->Initialize();
     system.Add(DynamicLine);
 
-
     // ---------------------------------------------
     // Mooring Lines
     // ---------------------------------------------
-
-
 
     auto ColorAsset = std::make_shared<ChColorAsset>(ChColor(1.f, 0.f, 0.0f));
 

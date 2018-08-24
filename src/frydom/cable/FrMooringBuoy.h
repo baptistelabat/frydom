@@ -27,9 +27,6 @@ namespace frydom {
                 auto Gvector = m_buoy->GetSystem()->Get_G_acc();
                 auto rho_water = dynamic_cast<FrOffshoreSystem*>(m_buoy->GetSystem())->GetEnvironment()->GetWaterDensity() ;
                 force = -m_buoy->GetVolume()*rho_water*Gvector;
-                //auto gravityForce = m_buoy->GetMass()*Gvector;
-                //auto buoyancyForce = -m_buoy->GetVolume()*rho_water*Gvector;
-                //fmt::print("total force = {}, gravity force = {}, buoyancy force = {}\n",force.z(), gravityForce.z(), buoyancyForce.z());
             };
         };
 
@@ -67,7 +64,6 @@ namespace frydom {
 
             auto Zt =computeDraft();
             m_volume = computeVolume(computeDraft());
-            fmt::print("buoy draft = {}, Zt = {}, volume = {}\n",GetPos().z(), Zt, m_volume);
 
             // update parent class
             chrono::ChBodyAuxRef::Update(update_assets);
