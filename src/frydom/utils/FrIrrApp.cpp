@@ -19,8 +19,8 @@ namespace frydom {
                                          irr::video::EDT_OPENGL){
 
         SetSkyBox();
-        AddTypicalLights();
-        AddTypicalCamera(irr::core::vector3df(0, (irr::f32)dist, (irr::f32)dist),
+        AddCustomLights();
+        AddCustomCamera(irr::core::vector3df(-(irr::f32)dist, (irr::f32)dist*0, (irr::f32)dist),
                          irr::core::vector3df(0, (irr::f32)SQ2_2, (irr::f32)SQ2_2));
         AddTypicalLogo("frydom_logo.png");
     }
@@ -88,15 +88,16 @@ namespace frydom {
         //return ChIrrWizard::add_typical_Camera(GetDevice(), mpos, mtarg);
     }
 
+    void FrIrrApp::AddCustomLights(irr::core::vector3df pos1, irr::core::vector3df pos2,
+                                   double rad1, double rad2,
+                                   irr::video::SColorf col1, irr::video::SColorf col2)  {
+        // create lights
+        irr::scene::ILightSceneNode* mlight1 = GetDevice()->getSceneManager()->addLightSceneNode(0, pos1, col1, (irr::f32)rad1);
 
+        irr::scene::ILightSceneNode* mlight2 = GetDevice()->getSceneManager()->addLightSceneNode(0, pos2, col2, (irr::f32)rad2);
 
-
-
-
-
-
-
-
+        mlight2->enableCastShadow(false);
+    }
 
 
 }  // end namespace frydom
