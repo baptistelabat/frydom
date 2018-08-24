@@ -11,6 +11,8 @@
 
 #include "../core/FrOffshoreSystem.h"
 
+#include "FrIrrCamera.h"
+
 namespace frydom {
 
     class FrIrrApp : public chrono::irrlicht::ChIrrApp {
@@ -32,6 +34,9 @@ namespace frydom {
         /// Create a skybox that has Z pointing up.
         /// Note that the default ChIrrApp::AddTypicalSky() uses Y up.
         void SetSkyBox();
+
+        FrIrrCamera* AddCustomCamera(irr::core::vector3df mpos = irr::core::vector3df(0, 0, -8),
+                                                                irr::core::vector3df mtarg = irr::core::vector3df(0, 0, 0));
 
         void Run(bool infiniteLoop = true, bool verbose=true, int stepMax = 200) {
             int stepCounter = 0;

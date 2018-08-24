@@ -2,6 +2,7 @@ message(STATUS "    ...utils")
 
 set(SRC_FILES
         FrIrrApp.cpp
+        FrIrrCamera.cpp
         FrEigen.cpp
         FrUtils.cpp
         FrRecorder.cpp
