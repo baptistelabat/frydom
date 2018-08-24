@@ -83,7 +83,7 @@ configure_file(data/bench_sphere_regular.h5 . COPYONLY)
 configure_file(data/sphere.obj . COPYONLY)
 configure_file(data/sphere_hdb.h5 . COPYONLY)
 
-configure_file(data/Test_hub/Barge2.obj . COPYONLY)
+configure_file(data/Test_hub/Barge2_460Tdisp.obj . COPYONLY)
 configure_file(data/Test_hub/BaseCrane.obj . COPYONLY)
 configure_file(data/Test_hub/HubBox.obj . COPYONLY)
 configure_file(data/Test_hub/TigeCrane.obj . COPYONLY)

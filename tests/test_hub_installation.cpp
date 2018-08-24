@@ -29,8 +29,8 @@ int main(int argc, char* argv[]) {
 
     auto barge = std::make_shared<FrHydroBody>();
     barge->SetName("Barge");
-    barge->SetHydroMesh("Barge2.obj", true);
-    barge->SetPos(chrono::ChVector<double>(0., 0., -1.));
+    barge->SetHydroMesh("Barge2_460Tdisp.obj", true);
+    barge->SetPos(chrono::ChVector<double>(0., 0., 0.));
     //barge->SetRot(Q_from_AngAxis(CH_C_PI_2,VECT_X));
     system.AddBody(barge);
     //barge->SetBodyFixed(true);
@@ -38,9 +38,9 @@ int main(int argc, char* argv[]) {
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
     barge->SetInertiaXX(chrono::ChVector<double>(1.02e11 * 2, 1.34e11 * 2, 1.28e11 * 2)); // Attention, le *2 partout ici est pour emuler la masse ajoutee...
     barge->SetInertiaXY(chrono::ChVector<double>(-9.79e3 * 2, 4.73e3 * 2, 1.71e2 * 2));
-    barge->SetMass(69.892e6 * 2); // TODO: Caler avec Camille
+    barge->SetMass(440e3); // 460e3 pour l'ensemble
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
-    barge->SetCOG(chrono::ChVector<double>(0, 0, 1.015)); // TODO: Caler avec Camille
+    barge->SetCOG(chrono::ChVector<double>(0, 0, 0)); // TODO: Caler avec Camille
     // ====================================================================================
     // Adding forces to the platform
     // ====================================================================================
@@ -48,20 +48,24 @@ int main(int argc, char* argv[]) {
     // Linear Hydrostatics
     // -------------------
     auto hstForce = std::make_shared<FrLinearHydrostaticForce>();
-    hstForce->GetStiffnessMatrix()->SetDiagonal(1.29e7, 4.2e7, 4.35e9);
-    hstForce->GetStiffnessMatrix()->SetNonDiagonal(-1.97e3, -3.04e3, -3.69e4);
+    hstForce->GetStiffnessMatrix()->SetDiagonal(2.5e6, 1.3e8, 1.7e7);
+    hstForce->GetStiffnessMatrix()->SetNonDiagonal(0e3, 0e3, 0e4);
     barge->AddForce(hstForce);  // Comment to remove
 
+    // Linear Damping
 
+    auto HsDamping = std::make_shared<FrLinearDamping>();
+    HsDamping->SetSeakeepingDampings(1e6,1e6,1e6);
+    barge->AddForce(HsDamping);
 
     auto base_crane = std::make_shared<FrBody>();
     base_crane->SetName("Base_crane");
     base_crane->SetVisuMesh("BaseCrane.obj");
     //base_crane->SetRot(Q_from_AngAxis(CH_C_PI_2,VECT_X));
-    base_crane->SetPos(chrono::ChVector<double>(0., +7.5, 2.15));
+    base_crane->SetPos(chrono::ChVector<double>(0., +7.5, 1.15));
     //base_crane->SetPos(chrono::ChVector<double>(1., -3., 7.5));
     //base_crane->SetPos(chrono::ChVector<double>(-7.5, 0., 3.));
-    base_crane->SetMass(5e5);
+    base_crane->SetMass(10e3);
     //base_crane->SetInertiaXX(chrono::ChVector<double>(0, 0, 1.e8));
     system.AddBody(base_crane);
     //base_crane->SetBodyFixed(true);
@@ -70,9 +74,9 @@ int main(int argc, char* argv[]) {
     arm_crane->SetName("Tige_crane");
     arm_crane->SetVisuMesh("TigeCrane.obj");
     //tige_crane->SetCOG(chrono::ChVector<double>(0., 0., 0.));
-    arm_crane->SetPos(chrono::ChVector<double>(0., +5.5, 3.5));
+    arm_crane->SetPos(chrono::ChVector<double>(0., +5.5, 2.5));
     arm_crane->SetRot(Q_from_AngAxis(-CH_C_PI_4, VECT_X));
-    arm_crane->SetMass(1e5);
+    arm_crane->SetMass(10e3);
     system.AddBody(arm_crane);
     //arm_crane->SetBodyFixed(true);
 
@@ -80,7 +84,7 @@ int main(int argc, char* argv[]) {
     hub_box->SetName("HubBox");
     hub_box->SetVisuMesh("HubBox.obj");
     //hub_box->SetCOG(chrono::ChVector<double>(0., 0., 0.));
-    hub_box->SetPos(chrono::ChVector<double>(0, -7.93503, 3.1));
+    hub_box->SetPos(chrono::ChVector<double>(0, -7.93503, 2.1));
     hub_box->SetMass(1e3);
     system.AddBody(hub_box);
     //hub_box->SetBodyFixed(true);
@@ -98,7 +102,7 @@ int main(int argc, char* argv[]) {
     fmt::print("En haut de la grue : {}, {}, {}\n", Test.x(), Test.y(), Test.z());
 
     // Line properties
-    double Lu = 12.835;
+    double Lu = 12.8;
     auto u = chrono::ChVector<double>(0, 0, -1);
     double q = 616.538;
     double EA = 5e8;
