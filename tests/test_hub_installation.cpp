@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
     double Lu = 12.835;
     auto u = chrono::ChVector<double>(0, 0, -1);
     double q = 616.538;
-    double EA = 1.5708e9;
+    double EA = 5e8;
     double A = 0.05;
     double E = EA / A;
     double breakTensionAsset = 100000;
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
 
     auto ColorAsset = std::make_shared<ChColorAsset>(ChColor(1.f, 0.f, 0.0f));
 
-    auto buoy1 = std::make_shared<FrMooringBuoy>(1.5,4e3,true,1e2);
+    auto buoy1 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy1->SetName("Buoy1");
     buoy1->SetPos(ChVector<>(-5.,-27.5,0));
     buoy1->SetCOG(ChVector<>(0, 0, 0));
@@ -139,7 +139,7 @@ int main(int argc, char* argv[]) {
     buoy1->AddAsset(ColorAsset);
     system.AddBody(buoy1);
 
-    auto buoy2 = std::make_shared<FrMooringBuoy>(1.5,4e3,true,1e2);
+    auto buoy2 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy2->SetName("Buoy2");
     buoy2->SetPos(ChVector<>(5.,-27.5,0));
     buoy2->SetCOG(ChVector<>(0, 0, 0));
@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
     buoy2->AddAsset(ColorAsset);
     system.AddBody(buoy2);
 
-    auto buoy3 = std::make_shared<FrMooringBuoy>(1.5,4e3,true,1e2);
+    auto buoy3 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy3->SetName("Buoy3");
     buoy3->SetPos(ChVector<>(-5.,27.5,0));
     buoy3->SetCOG(ChVector<>(0, 0, 0));
@@ -155,7 +155,7 @@ int main(int argc, char* argv[]) {
     buoy3->AddAsset(ColorAsset);
     system.AddBody(buoy3);
 
-    auto buoy4 = std::make_shared<FrMooringBuoy>(1.5,4e3,true,1e2);
+    auto buoy4 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy4->SetName("Buoy4");
     buoy4->SetPos(ChVector<>(5.,27.5,0));
     buoy4->SetCOG(ChVector<>(0, 0, 0));
@@ -165,7 +165,12 @@ int main(int argc, char* argv[]) {
 
     /// Mooring lines length
     Lu = 110;
+    q = 20.;
+    EA = 1.5708e6;
+    A = 0.025;
+    E = EA / A;
     double Lv = 15.5;
+    breakTensionAsset = 5000;
 
     auto B1 = barge->CreateNode(ChVector<double>(-5, -12.5, 0.));
     auto B2 = barge->CreateNode(ChVector<double>(5, -12.5, 0.));
@@ -260,14 +265,14 @@ int main(int argc, char* argv[]) {
     // Simulation
     // -----------------------------------------------
 
-    double dt = 0.00125;
+    double dt = 0.0015;
 
     //system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
     system.SetStep(dt);
     system.Initialize();
 
-    auto app = FrIrrApp(system);
-    app.AddTypicalCamera(irr::core::vector3df(0, -70, .005), irr::core::vector3df(0, 0, 0));
+    auto app = FrIrrApp(system,75);
+    //app.AddTypicalCamera(irr::core::vector3df(0, -70, .005), irr::core::vector3df(0, 0, 0));
     //app.SetShowInfos(true);
     app.SetVideoframeSave(false);
     app.Run();
