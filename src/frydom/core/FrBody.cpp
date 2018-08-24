@@ -26,6 +26,20 @@ namespace frydom {
         return node;
     }
 
+    std::shared_ptr<FrNode> FrBody::CreateNode(double x, double y, double z, chrono::Quaternion q) {
+        auto newNode = CreateNode();
+
+        chrono::ChCoordsys<> coord;
+        coord.pos = chrono::ChVector<>(x, y, z);
+        coord.rot = q;
+
+        newNode->Impose_Rel_Coord(coord);
+        newNode-> UpdateState();
+
+        return newNode;
+
+    }
+
     std::shared_ptr<FrNode> FrBody::CreateNode(const chrono::ChVector<double> relpos) {
 
         auto node = CreateNode();
@@ -38,6 +52,8 @@ namespace frydom {
 
         return node;
     }
+
+    // TODO : ajouter aussi la possibilite de specifier une orientation !!!!
 
 
     void FrBody::SetVisuMesh(std::shared_ptr<FrTriangleMeshConnected> mesh) {

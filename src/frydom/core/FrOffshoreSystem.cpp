@@ -84,7 +84,8 @@ namespace frydom {
 
         // Update everything - and put to sleep bodies that need it (not needed because already in Advance()...? )
         // No need to update visualization assets here.
-//        Update(true);  // FIXME : Desactive car redondant avec ce qui est deja fait lors du system::StateScatter()...
+        Update(true);  // FIXME : Desactive car redondant avec ce qui est deja fait lors du system::StateScatter()...
+        // TODO: voir pour pouvoir updater seulement les choses dont on a besoin a ce point ?
 
         // Re-wake the bodies that cannot sleep because they are in contact with
         // some body that is not in sleep state.

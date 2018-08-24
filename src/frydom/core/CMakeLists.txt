@@ -4,6 +4,7 @@ message(STATUS "    ...Core")
 set(SRC_FILES
         FrObject.cpp
         FrBody.cpp
+        FrLink.cpp
         FrBodyEasy.cpp
         FrConstants.cpp
         FrEulerAngles.cpp

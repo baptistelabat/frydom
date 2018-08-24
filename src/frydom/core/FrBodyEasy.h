@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FREASYBODIES_H
 #define FRYDOM_FREASYBODIES_H
 
+
 #include <chrono/physics/ChBodyEasy.h>
 //#include "chrono/physics/ChMaterialSurface.h"
 #include "FrBody.h"
@@ -43,12 +44,73 @@ namespace frydom {
         }
     };
 
+
+    class FrBox : public FrBody {
+
+    public:
+        FrBox(double Xsize, double Ysize, double Zsize, double mass, bool collide=false, bool visual_asset=true) : FrBody() {
+
+            matsurface = std::make_shared<chrono::ChMaterialSurfaceSMC>();
+
+            this->SetMass(mass);
+            this->SetInertiaXX(chrono::ChVector<>((1.0 / 12.0) * mass * (pow(Ysize, 2) + pow(Zsize, 2)),
+                                                  (1.0 / 12.0) * mass * (pow(Xsize, 2) + pow(Zsize, 2)),
+                                                  (1.0 / 12.0) * mass * (pow(Xsize, 2) + pow(Ysize, 2))));
+
+            if (collide) {
+                GetCollisionModel()->ClearModel();
+                GetCollisionModel()->AddBox(Xsize * 0.5, Ysize * 0.5, Zsize * 0.5);  // radius x, radius z, height on y
+                GetCollisionModel()->BuildModel();
+                SetCollide(true);
+            }
+
+            if (visual_asset) {
+                auto vshape = std::make_shared<chrono::ChBoxShape>();
+                vshape->GetBoxGeometry().SetLengths(chrono::ChVector<>(Xsize, Ysize, Zsize));
+                this->AddAsset(vshape);
+            }
+
+        }
+    };
+
+
     // TODO: creer un FrBuoy qui gere automatiquement des modeles hydro et qui derive de FrSphere
-    class FrHydroCylinder : public FrHydroBody {
+    class FrCylinder : public FrBody {
+
+    public:
+        FrCylinder(double radius, double height, double mass, bool collide, bool visual_asset) : FrBody() {
+
+            matsurface = std::make_shared<chrono::ChMaterialSurfaceSMC>();
+
+            this->SetMass(mass);
+            this->SetInertiaXX(chrono::ChVector<>((1.0 / 12.0) * mass * (3 * pow(radius, 2) + pow(height, 2)),
+                                                  0.5 * mass * pow(radius, 2),
+                                                  (1.0 / 12.0) * mass * (3 * pow(radius, 2) + pow(height, 2))));
+
+            if (collide) {
+                GetCollisionModel()->ClearModel();
+                GetCollisionModel()->AddCylinder(radius, radius, height * 0.5);  // radius x, radius z, height on y
+                GetCollisionModel()->BuildModel();
+                SetCollide(true);
+            }
+            if (visual_asset) {
+                auto vshape = std::make_shared<chrono::ChCylinderShape>();
+                vshape->GetCylinderGeometry().p1 = chrono::ChVector<>(0, -height * 0.5, 0);
+                vshape->GetCylinderGeometry().p2 = chrono::ChVector<>(0, height * 0.5, 0);
+                vshape->GetCylinderGeometry().rad = radius;
+                this->AddAsset(vshape);
+            }
+
+        }
+
 
 
 
     };
+
+
+
+
 
 }
 

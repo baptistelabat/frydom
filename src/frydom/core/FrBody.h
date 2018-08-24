@@ -67,10 +67,12 @@ namespace frydom {
         }
 
         void AddNode(std::shared_ptr<FrNode> node);
-        // TODO: implementer aussi les removeMarker etc...
-
+        // TODO: implementer aussi les removeNode etc...
 
         std::shared_ptr<FrNode> CreateNode();
+
+        std::shared_ptr<FrNode> CreateNode(double x, double y, double z, chrono::Quaternion q = chrono::QUNIT);
+
         std::shared_ptr<FrNode> CreateNode(const chrono::ChVector<double> relpos);
 
         /// Set the position of the COG with respect to the body's reference frame (in local coordinates)

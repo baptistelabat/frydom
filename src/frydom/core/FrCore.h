@@ -8,6 +8,7 @@
 #include "FrObject.h"
 #include "FrNode.h"
 #include "FrBody.h"
+#include "FrLink.h"
 #include "FrHydroBody.h"
 #include "FrConstants.h"
 #include "FrEulerAngles.h"
