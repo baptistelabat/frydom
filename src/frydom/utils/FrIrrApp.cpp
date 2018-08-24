@@ -19,14 +19,8 @@ namespace frydom {
                                          irr::video::EDT_OPENGL){
 
         SetSkyBox();
-        //AddTypicalLights();
-        AddTypicalLights(irr::core::vector3df(-30.f, -100.f, 30.f),
-                irr::core::vector3df(-30.f, -80.f, -30.f),
-                 290,
-                 190,
-                irr::video::SColorf(0.7f, 0.7f, 0.7f, 1.0f),
-                irr::video::SColorf(0.7f, 0.8f, 0.8f, 1.0f));
-        AddTypicalCamera(irr::core::vector3df(0, (irr::f32)dist, (irr::f32)dist),
+        AddCustomLights();
+        AddCustomCamera(irr::core::vector3df(-(irr::f32)dist, (irr::f32)dist*0, (irr::f32)dist),
                          irr::core::vector3df(0, (irr::f32)SQ2_2, (irr::f32)SQ2_2));
         //AddTypicalLogo("frydom_logo.png");
     }
@@ -71,38 +65,25 @@ namespace frydom {
         auto camera = new FrIrrCamera(GetDevice(), GetSceneManager()->getRootSceneNode(), GetSceneManager(),
                                                                               -1, -160.0f, 20.0f, 20.0f);
 
-        // camera->bindTargetAndRotation(true);
         camera->setPosition(mpos);
         camera->setTarget(mtarg);
 
         camera->setNearValue(0.1f);
         camera->setMinZoom(0.6f);
-        //camera->setZoomSpeed(20);
-
-        /*auto upVector = camera->getUpVector();
-        fmt::print("UpVector : ({},{},{})\n",upVector.X,upVector.Y,upVector.Z);
-
-        //camera->setUpVector(irr::core::vector3df(0.0f,1.0f,0.0f));
-
-        upVector = camera->getUpVector();
-        fmt::print("UpVector : ({},{},{})\n",upVector.X,upVector.Y,upVector.Z);*/
-
 
         return camera;
-
-
-        //return ChIrrWizard::add_typical_Camera(GetDevice(), mpos, mtarg);
     }
 
+    void FrIrrApp::AddCustomLights(irr::core::vector3df pos1, irr::core::vector3df pos2,
+                                   double rad1, double rad2,
+                                   irr::video::SColorf col1, irr::video::SColorf col2)  {
+        // create lights
+        irr::scene::ILightSceneNode* mlight1 = GetDevice()->getSceneManager()->addLightSceneNode(0, pos1, col1, (irr::f32)rad1);
 
+        irr::scene::ILightSceneNode* mlight2 = GetDevice()->getSceneManager()->addLightSceneNode(0, pos2, col2, (irr::f32)rad2);
 
-
-
-
-
-
-
-
+        mlight2->enableCastShadow(false);
+    }
 
 
 }  // end namespace frydom
