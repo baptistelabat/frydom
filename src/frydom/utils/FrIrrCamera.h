@@ -6,7 +6,8 @@
 #define FRYDOM_FRIRRCAMERA_H
 
 
-#include <chrono_irrlicht/ChIrrCamera.h>
+#include <irrlicht.h>
+//#include <chrono_irrlicht/ChIrrCamera.h>
 //#include "chrono_irrlicht/ChApiIrr.h"
 namespace frydom {
 
@@ -23,8 +24,8 @@ namespace frydom {
                     irr::scene::ISceneManager *smgr,
                     irr::s32 id,
                     irr::f32 rotateSpeed = -160.0f,
-                    irr::f32 zoomSpeed = 10.0f,
-                    irr::f32 translationSpeed = 10.0f);
+                    irr::f32 zoomSpeed = 1.0f,
+                    irr::f32 translationSpeed = 1.0f);
 
 
         virtual ~FrIrrCamera() {}
