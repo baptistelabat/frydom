@@ -7,6 +7,8 @@
 #include <chrono/physics/ChLinkMotorRotationTorque.h>
 #include "chrono/physics/ChLinkMotorRotationSpeed.h"
 
+#include "chrono_irrlicht/ChIrrCamera.h"
+
 #include "frydom/frydom.h"
 
 
@@ -267,9 +269,9 @@ int main(int argc, char* argv[]) {
     system.Initialize();
 
     auto app = FrIrrApp(system);
-    app.AddTypicalCamera(irr::core::vector3df(0, -70, .005), irr::core::vector3df(0, 0, 0));
+    auto myCam = app.AddCustomCamera(irr::core::vector3df(80, 0, 0), irr::core::vector3df(0, 0, 0));
     //app.SetShowInfos(true);
-    app.SetVideoframeSave(true);
+    app.SetVideoframeSave(false);
     app.Run();
 
 }
