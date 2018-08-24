@@ -65,27 +65,13 @@ namespace frydom {
         auto camera = new FrIrrCamera(GetDevice(), GetSceneManager()->getRootSceneNode(), GetSceneManager(),
                                                                               -1, -160.0f, 20.0f, 20.0f);
 
-        // camera->bindTargetAndRotation(true);
         camera->setPosition(mpos);
         camera->setTarget(mtarg);
 
         camera->setNearValue(0.1f);
         camera->setMinZoom(0.6f);
-        //camera->setZoomSpeed(20);
-
-        /*auto upVector = camera->getUpVector();
-        fmt::print("UpVector : ({},{},{})\n",upVector.X,upVector.Y,upVector.Z);
-
-        //camera->setUpVector(irr::core::vector3df(0.0f,1.0f,0.0f));
-
-        upVector = camera->getUpVector();
-        fmt::print("UpVector : ({},{},{})\n",upVector.X,upVector.Y,upVector.Z);*/
-
 
         return camera;
-
-
-        //return ChIrrWizard::add_typical_Camera(GetDevice(), mpos, mtarg);
     }
 
     void FrIrrApp::AddCustomLights(irr::core::vector3df pos1, irr::core::vector3df pos2,
