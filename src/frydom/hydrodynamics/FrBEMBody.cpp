@@ -541,6 +541,15 @@ namespace frydom {
         auto omega = m_HDB->GetFrequencies();
         auto dw = m_HDB->GetStepFrequency();
 
+        // ##CC FIXE : calcul local de la frequence de rencontre
+        double speed = 2.242;
+        std::vector<double> omegaE;
+        for (auto w: omega) {
+            omegaE.push_back(w*(1.+w*speed/9.81));
+        }
+        double dwE = omegaE[1]-omegaE[0];
+        // ##CC
+
         // Time information for Impulse response function
         auto tf = m_HDB->GetFinalTime();
         auto dt = m_HDB->GetTimeStep();
@@ -596,13 +605,13 @@ namespace frydom {
                     for (unsigned int iTime=0; iTime<nbTime; iTime++) {
                         integrand.clear();
                         for (unsigned int iFreq=0; iFreq<nbFreq; iFreq++) {
-                            val = localPotentialDamping[iFreq] * cos(omega[iFreq] * time[iTime]);
+                            val = localPotentialDamping[iFreq] * cos(omegaE[iFreq] * time[iTime]);
                             integrand.push_back(val);
                         }
 
                         // Integration
 //                        myIntegrator.SetY(integrand);
-                        localIRF(iForce, iTime) = Trapz(integrand, dw);
+                        localIRF(iForce, iTime) = Trapz(integrand, dwE);
                     }
                 }
                 localIRF /= MU_PI_2;
@@ -647,6 +656,15 @@ namespace frydom {
         auto omega = m_HDB->GetFrequencies();
         auto dw = m_HDB->GetStepFrequency();
 
+        // ##CC FIXE : calcul local de la frequence de rencontre
+        double speed = 2.242;
+        std::vector<double> omegaE;
+        for (auto w: omega) {
+            omegaE.push_back(w*(1.+w*speed/9.81));
+        }
+        double dwE = omegaE[1]-omegaE[0];
+        // ##CC
+
         auto tf = m_HDB->GetFinalTime();
         auto dt = m_HDB->GetTimeStep();
 
@@ -690,10 +708,10 @@ namespace frydom {
                 for (unsigned int iTime=0; iTime<nbTime; iTime++) {
                     integrand.clear();
                     for (unsigned int iFreq=0; iFreq<nbFreq; iFreq++) {
-                        val = (kernel[iFreq] - Ainf) * cos(omega[iFreq] * time[iTime]);
+                        val = (kernel[iFreq] - Ainf) * cos(omegaE[iFreq] * time[iTime]);
                         integrand.push_back(val);
                     }
-                    localIRF(iForce, iTime) = Trapz(integrand, dw);
+                    localIRF(iForce, iTime) = Trapz(integrand, dwE);
                 }
             }
             localIRF /= MU_PI_2;
@@ -708,10 +726,10 @@ namespace frydom {
                 for (unsigned int iTime=0; iTime<nbTime; iTime++) {
                     integrand.clear();
                     for (unsigned int iFreq=0; iFreq<nbFreq; iFreq++) {
-                        val = (Ainf - kernel[iFreq]) * cos(omega[iFreq] * time[iTime]);
+                        val = (Ainf - kernel[iFreq]) * cos(omegaE[iFreq] * time[iTime]);
                         integrand.push_back(val);
                     }
-                    localIRF(iForce, iTime) = Trapz(integrand, dw);
+                    localIRF(iForce, iTime) = Trapz(integrand, dwE);
                 }
             }
             localIRF /= MU_PI_2;
