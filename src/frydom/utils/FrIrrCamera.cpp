@@ -167,7 +167,6 @@ namespace frydom {
                 tgtv.normalize();
 
                 core::vector3df up = UpVector;
-                std::cout<<"-----------------UpVector--------------------------"<<UpVector.X<<UpVector.Y<<UpVector.Z<<std::endl;
                 up.normalize();
 
                 f32 dp = tgtv.dotProduct(up);
@@ -316,19 +315,11 @@ namespace frydom {
 
             // Translation Vals
             core::vector3df translate(oldTarget);
-            /*core::vector3df tvectX = Pos - Target;
-            tvectX = tvectX.crossProduct(UpVector);
-            tvectX.normalize();*/
-
             core::vector3df direction = Pos - Target;
             core::vector3df tvectX = direction.crossProduct(UpVector);
             tvectX.normalize();
             core::vector3df tvectY = direction.crossProduct(tvectX);
             tvectY.normalize();
-
-            std::cout<<"UpVector : "<< UpVector.X<<", " << UpVector.Y<<", " << UpVector.Z<<std::endl;
-            std::cout<<"tvectX : "<< tvectX.X<<", " << tvectX.Y<<", " << tvectX.Z<<std::endl;
-            std::cout<<"tvectY : "<< tvectY.X<<", " << tvectY.Y<<", " << tvectY.Z<<std::endl;
 
             // Zoom
             if (isMouseKeyDown(MOUSE_BUTTON_RIGHT) && isMouseKeyDown(MOUSE_BUTTON_LEFT)) {
@@ -395,7 +386,7 @@ namespace frydom {
                 }
                 else
                 {
-                    translate = -(tvectX * (MousePos.X - translateStartX) - tvectY * ( MousePos.Y - translateStartY)) * translateSpeed;
+                    translate = -10*(tvectX * (MousePos.X - translateStartX) + tvectY * ( MousePos.Y - translateStartY)) * translateSpeed;
                     Target = oldTarget + translate;
                 }
             }
@@ -455,100 +446,7 @@ namespace frydom {
                 translating = false;
             }
 
-
-            /*// Translate
-            if (isMouseKeyDown(MOUSE_BUTTON_RIGHT) && !zooming) {
-                if (!translating) {
-                    translateStartX = MousePos.X;
-                    translateStartY = MousePos.Y;
-                    translating = true;
-                } else {
-                    translate += tvectX * (translateStartX - MousePos.X) * translateSpeed;
-                    translate.X += tvectX.Z * (translateStartY - MousePos.Y) * translateSpeed;
-                    translate.Z -= tvectX.X * (translateStartY - MousePos.Y) * translateSpeed;
-
-                    oldTarget = translate;
-                }
-            }
-
-            else if (isKeyDown(KEY_UP) && !zooming) {
-                if (!translating)
-                    translating = true;
-                else {
-                    core::vector3df movevector = getPosition() - getTarget();
-                    movevector.Y = 0;
-                    movevector.normalize();
-
-                    setPosition(getPosition() - movevector * translateSpeed);
-                    setTarget(getTarget() - movevector * translateSpeed);
-                    updateAbsolutePosition();
-                }
-            } else if (isKeyDown(KEY_DOWN) && !zooming) {
-                if (!translating)
-                    translating = true;
-                else {
-                    core::vector3df movevector = getPosition() - getTarget();
-                    movevector.Y = 0;
-                    movevector.normalize();
-
-                    setPosition(getPosition() + movevector * translateSpeed);
-                    setTarget(getTarget() + movevector * translateSpeed);
-                    updateAbsolutePosition();
-                }
-            } else if (isKeyDown(KEY_LEFT) && !zooming) {
-                if (!translating)
-                    translating = true;
-                else {
-                    core::vector3df totargetvector = getPosition() - getTarget();
-                    totargetvector.normalize();
-                    core::vector3df crossvector = totargetvector.crossProduct(getUpVector());
-                    core::vector3df strafevector = crossvector.normalize();
-
-                    setPosition(getPosition() - strafevector * translateSpeed);
-                    setTarget(getTarget() - strafevector * translateSpeed);
-                    updateAbsolutePosition();
-                }
-            } else if (isKeyDown(KEY_RIGHT) && !zooming) {
-                if (!translating)
-                    translating = true;
-                else {
-                    core::vector3df totargetvector = getPosition() - getTarget();
-                    totargetvector.normalize();
-                    core::vector3df crossvector = totargetvector.crossProduct(getUpVector());
-                    core::vector3df strafevector = crossvector.normalize();
-
-                    setPosition(getPosition() + strafevector * translateSpeed);
-                    setTarget(getTarget() + strafevector * translateSpeed);
-                    updateAbsolutePosition();
-                }
-            } else if (isKeyDown(KEY_PRIOR) && !zooming)  // ALE
-            {
-                if (!translating)
-                    translating = true;
-                else {
-                    core::vector3df movevector;
-                    movevector.Y = 1;
-
-                    setPosition(getPosition() + movevector * translateSpeed);
-                    setTarget(getTarget() + movevector * translateSpeed);
-                    updateAbsolutePosition();
-                }
-            } else if (isKeyDown(KEY_NEXT) && !zooming)  // ALE
-            {
-                if (!translating)
-                    translating = true;
-                else {
-                    core::vector3df movevector;
-                    movevector.Y = -1;
-
-                    setPosition(getPosition() + movevector * translateSpeed);
-                    setTarget(getTarget() + movevector * translateSpeed);
-                    updateAbsolutePosition();
-                }
-            }*/
-
             // Set Position
-            //Target = translate;
 
             Pos.X = nZoom + Target.X;
             Pos.Y = Target.Y;
@@ -562,7 +460,6 @@ namespace frydom {
             UpVector.rotateXZBy(-nRotY, core::vector3df(0, 0, 0));
             UpVector.rotateXYBy( nRotX + 180.f, core::vector3df(0, 0, 0));
 
-            std::cout<<"------------UpVector : "<< UpVector.X<<", " << UpVector.Y<<", " << UpVector.Z<<std::endl;
         }
 
         void FrIrrCamera::updateAnimationState() {
