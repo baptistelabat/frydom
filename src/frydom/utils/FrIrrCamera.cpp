@@ -124,7 +124,7 @@ namespace frydom {
                         MousePos.Y = event.MouseInput.Y / (f32)ssize.Height;
                         break;
                     case EMIE_MOUSE_WHEEL:
-                        currentZoom -= event.MouseInput.Wheel * zoomSpeed;  //***ALEX
+                        currentZoom -= event.MouseInput.Wheel * zoomSpeed;
 
                         if (currentZoom <= targetMinDistance)
                             atMinDistance = true;
@@ -316,19 +316,11 @@ namespace frydom {
 
             // Translation Vals
             core::vector3df translate(oldTarget);
-            /*core::vector3df tvectX = Pos - Target;
-            tvectX = tvectX.crossProduct(UpVector);
-            tvectX.normalize();*/
-
             core::vector3df direction = Pos - Target;
             core::vector3df tvectX = direction.crossProduct(UpVector);
             tvectX.normalize();
             core::vector3df tvectY = direction.crossProduct(tvectX);
             tvectY.normalize();
-
-            std::cout<<"UpVector : "<< UpVector.X<<", " << UpVector.Y<<", " << UpVector.Z<<std::endl;
-            std::cout<<"tvectX : "<< tvectX.X<<", " << tvectX.Y<<", " << tvectX.Z<<std::endl;
-            std::cout<<"tvectY : "<< tvectY.X<<", " << tvectY.Y<<", " << tvectY.Z<<std::endl;
 
             // Zoom
             if (isMouseKeyDown(MOUSE_BUTTON_RIGHT) && isMouseKeyDown(MOUSE_BUTTON_LEFT)) {
@@ -395,7 +387,7 @@ namespace frydom {
                 }
                 else
                 {
-                    translate = -(tvectX * (MousePos.X - translateStartX) - tvectY * ( MousePos.Y - translateStartY)) * translateSpeed;
+                    translate = -10*(tvectX * (MousePos.X - translateStartX) + tvectY * ( MousePos.Y - translateStartY)) * translateSpeed;
                     Target = oldTarget + translate;
                 }
             }
