@@ -40,7 +40,7 @@ namespace frydom {
             device = devicepointer;
             BBox.reset(0, 0, 0);
 
-            UpVector.set(0.0f, 0.0f, -1.0f);
+            UpVector.set(0.0f, 0.0f, 1.0f);
 
             Fovy = core::PI / 2.5f;
             Aspect = 4.0f / 3.0f;
@@ -316,9 +316,19 @@ namespace frydom {
 
             // Translation Vals
             core::vector3df translate(oldTarget);
-            core::vector3df tvectX = Pos - Target;
+            /*core::vector3df tvectX = Pos - Target;
             tvectX = tvectX.crossProduct(UpVector);
+            tvectX.normalize();*/
+
+            core::vector3df direction = Pos - Target;
+            core::vector3df tvectX = direction.crossProduct(UpVector);
             tvectX.normalize();
+            core::vector3df tvectY = direction.crossProduct(tvectX);
+            tvectY.normalize();
+
+            std::cout<<"UpVector : "<< UpVector.X<<", " << UpVector.Y<<", " << UpVector.Z<<std::endl;
+            std::cout<<"tvectX : "<< tvectX.X<<", " << tvectX.Y<<", " << tvectX.Z<<std::endl;
+            std::cout<<"tvectY : "<< tvectY.X<<", " << tvectY.Y<<", " << tvectY.Z<<std::endl;
 
             // Zoom
             if (isMouseKeyDown(MOUSE_BUTTON_RIGHT) && isMouseKeyDown(MOUSE_BUTTON_LEFT)) {
@@ -373,8 +383,80 @@ namespace frydom {
 
                 rotating = false;
             }
+            //Translate
+            if (isMouseKeyDown(MOUSE_BUTTON_MIDDLE) && !zooming)
+            {
+                if (!translating)
+                {
+                    translateStartX = MousePos.X;
+                    translateStartY = MousePos.Y;
+                    translating = true;
+                    oldTarget = Target;
+                }
+                else
+                {
+                    translate = -(tvectX * (MousePos.X - translateStartX) - tvectY * ( MousePos.Y - translateStartY)) * translateSpeed;
+                    Target = oldTarget + translate;
+                }
+            }
+            else if (isKeyDown(KEY_UP) && !zooming) {
+                if (!translating){
+                    translating = true;
+                    oldTarget = Target;}
+                else {
+                    translate = tvectY * translateSpeed;
+                    Target = oldTarget + translate;
+                }
+            } else if (isKeyDown(KEY_DOWN) && !zooming) {
+                if (!translating){
+                    translating = true;
+                    oldTarget = Target;}
+                else {
+                    translate = -tvectY * translateSpeed;
+                    Target = oldTarget + translate;
+                }
+            } else if (isKeyDown(KEY_LEFT) && !zooming) {
+                if (!translating){
+                    translating = true;
+                    oldTarget = Target;}
+                else {
+                    translate = tvectX * translateSpeed;
+                    Target = oldTarget + translate;
+                }
+            } else if (isKeyDown(KEY_RIGHT) && !zooming) {
+                if (!translating){
+                    translating = true;
+                    oldTarget = Target;}
+                else {
+                    translate = -tvectX * translateSpeed;
+                    Target = oldTarget + translate;
+                }
+            } else if (isKeyDown(KEY_PRIOR) && !zooming)  // ALE
+            {
+                if (!translating){
+                    translating = true;
+                    oldTarget = Target;}
+                else {
+                    translate = -UpVector * translateSpeed;
+                    Target = oldTarget + translate;
+                }
+            } else if (isKeyDown(KEY_NEXT) && !zooming)  // ALE
+            {
+                if (!translating){
+                    translating = true;
+                    oldTarget = Target;}
+                else {
+                    translate = UpVector * translateSpeed;
+                    Target = oldTarget + translate;
+                }
+            }
+            else if (translating)
+            {
+                translating = false;
+            }
 
-            // Translate
+
+            /*// Translate
             if (isMouseKeyDown(MOUSE_BUTTON_RIGHT) && !zooming) {
                 if (!translating) {
                     translateStartX = MousePos.X;
@@ -463,34 +545,36 @@ namespace frydom {
                     setTarget(getTarget() + movevector * translateSpeed);
                     updateAbsolutePosition();
                 }
-            }
+            }*/
 
             // Set Position
-            Target = translate;
+            //Target = translate;
 
             Pos.X = nZoom + Target.X;
             Pos.Y = Target.Y;
             Pos.Z = Target.Z;
 
+            Pos.rotateXZBy(nRotY, Target);
             Pos.rotateXYBy(nRotX, Target);
-            Pos.rotateXZBy(-nRotY, Target);
 
             // Correct Rotation Error
-            UpVector.set(0, 0, -1);
-            UpVector.rotateXYBy(-nRotX, core::vector3df(0, 0, 0));
-            UpVector.rotateXZBy(-nRotY + 180.f, core::vector3df(0, 0, 0));
+            UpVector.set(0, 0, 1);
+            UpVector.rotateXZBy(-nRotY, core::vector3df(0, 0, 0));
+            UpVector.rotateXYBy( nRotX + 180.f, core::vector3df(0, 0, 0));
+
+            std::cout<<"------------UpVector : "<< UpVector.X<<", " << UpVector.Y<<", " << UpVector.Z<<std::endl;
         }
 
         void FrIrrCamera::updateAnimationState() {
             core::vector3df pos(Pos - Target);
 
             // X rotation
-            core::vector2df vec2d(pos.X, pos.Z);
+            core::vector2df vec2d(pos.X, pos.Y);
             rotX = (f32)vec2d.getAngle();
 
             // Y rotation
-            pos.rotateXZBy(rotX, core::vector3df());
-            vec2d.set(pos.X, pos.Y);
+            pos.rotateXYBy(rotX, core::vector3df());
+            vec2d.set(pos.X, pos.Z);
             rotY = -(f32)vec2d.getAngle();
 
             // Zoom

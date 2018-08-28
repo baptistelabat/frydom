@@ -63,7 +63,7 @@ namespace frydom {
 
         // create and init camera
         auto camera = new FrIrrCamera(GetDevice(), GetSceneManager()->getRootSceneNode(), GetSceneManager(),
-                                                                              -1, -160.0f, 1.0f, 1.0f);
+                                                                              -1, -160.0f, 1.0f, 10.0f);
 
         camera->setPosition(mpos);
         camera->setTarget(mtarg);
