@@ -1,0 +1,60 @@
+
+=============================================
+meshmagick - version 1.0.6
+Copyright 2014-2018, Ecole Centrale de Nantes
+=============================================
+Barge.stl successfully loaded
+
+Generating hydrostatic data for a zcog of 0.000 meters.
+
+
+	GRAVITY ACCELERATION (M/S**2)----------->   9.81
+	DENSITY OF WATER (KG/M**3)-------------->   1023.0
+
+	WATERPLANE AREA (M**2)------------------>   250.0
+	WATERPLANE CENTER (M)------------------->   0.000    -0.000    
+	WET AREA (M**2)------------------------->   390.0
+	DISPLACEMENT VOLUME (M**3)-------------->   500.000
+	DISPLACEMENT MASS (TONS)---------------->   511.500
+	BUOYANCY CENTER (M)--------------------->   0.000     0.000    -1.000    
+	CENTER OF GRAVITY (M)------------------->   0.000     0.000     0.000    
+
+	DRAUGHT (M)----------------------------->   2.000
+	LENGTH OVERALL SUBMERGED (M)------------>   25.00
+	BREADTH OVERALL SUBMERGED (M)----------->   10.00
+	LENGTH AT WATERLINE LWL (M)------------->   25.00
+	FORWARD PERPENDICULAR (M)--------------->   12.50
+
+	TRANSVERSAL METACENTRIC RADIUS (M)------>   4.167
+	TRANSVERSAL METACENTRIC HEIGHT GMT (M)-->   3.167
+	LONGITUDINAL METACENTRIC RADIUS (M)----->   26.042
+	LONGITUDINAL METACENTRIC HEIGHT GML (M)->   25.042
+
+	HYDROSTATIC STIFFNESS COEFFICIENTS:
+	K33 (N/M)------------------------------->   2.5089E+06
+	K34 (N)--------------------------------->   0.0000E+00
+	K35 (N)--------------------------------->   0.0000E+00
+	K44 (N.M)------------------------------->   1.5890E+07
+	K45 (N.M)------------------------------->   0.0000E+00
+	K55 (N.M)------------------------------->   1.2565E+08
+
+	INERTIAS:
+	IXX------------------------------------->   4.433E+06
+	IXY------------------------------------->   2.908E-10
+	IXZ------------------------------------->   1.454E-11
+	IYY------------------------------------->   2.681E+07
+	IYZ------------------------------------->  -2.726E-12
+	IZZ------------------------------------->   3.090E+07
+
+	RESIDUALS:
+	ABSOLUTE-------------------------------->   9.313E-10 0.000E+00 0.000E+00
+	RELATIVE-------------------------------->   1.856E-16 0.000E+00 0.000E+00
+	RELATIVE TOLERANCE---------------------->   1.0E-02
+
+
+=============================================================
+meshmagick - version 1.0.6
+Copyright 2014-2018, Ecole Centrale de Nantes
+Maintainer : Francois Rongere <Francois.Rongere@ec-nantes.fr>
+Good Bye!
+=============================================================

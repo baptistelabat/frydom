@@ -23,24 +23,41 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
     //ChSystemSMC system;
 
+/*    // ====================================================================================
+    // Environment settings
+    // ====================================================================================
+
+    // Setting the freesurface representation
+    auto freeSurface = system.GetEnvironment()->GetFreeSurface();
+
+    // Setting the wave field
+    freeSurface->SetLinearWaveField(LINEAR_REGULAR);
+    //freeSurface->UpdateAssetON(); // Comment if you don't want the free surface asset to be updated during the visualisation
+
+    auto linearWaveField = freeSurface->GetLinearWaveField();
+    linearWaveField->SetRegularWaveHeight(0.1);
+    linearWaveField->SetRegularWavePeriod(6.28);
+    linearWaveField->SetMeanWaveDirection(0);*/
+
     // --------------------------------------------------
-    // Solid model
+    // Barge model
     // --------------------------------------------------
 
     auto barge = std::make_shared<FrHydroBody>();
     barge->SetName("Barge");
     barge->SetHydroMesh("Barge2_460Tdisp.obj", true);
     barge->SetPos(chrono::ChVector<double>(0., 0., 0.));
-    //barge->SetRot(Q_from_AngAxis(CH_C_PI_2,VECT_X));
+    //barge->SetRot(Q_from_AngAxis(CH_C_PI_2,VECT_Z));
     system.AddBody(barge);
     //barge->SetBodyFixed(true);
 
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
     barge->SetInertiaXX(chrono::ChVector<double>(2.071e7,3.979e6,2.44e07)); // Attention, le *2 partout ici est pour emuler la masse ajoutee...
     barge->SetInertiaXY(chrono::ChVector<double>(0, 0, 0));
-    barge->SetMass(440e3); // 460e3 pour l'ensemble
+    barge->SetMass(530e3); // 550.5e3 pour l'ensemble
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
     barge->SetCOG(chrono::ChVector<double>(0, 0, 0)); // TODO: Caler avec Camille
+
     // ====================================================================================
     // Adding forces to the platform
     // ====================================================================================
@@ -48,9 +65,9 @@ int main(int argc, char* argv[]) {
     // Linear Hydrostatics
     // -------------------
     auto hstForce = std::make_shared<FrLinearHydrostaticForce>();
-    hstForce->GetStiffnessMatrix()->SetDiagonal(2.5e6, 1.3e8, 1.7e7);
+    hstForce->GetStiffnessMatrix()->SetDiagonal(2.5e6, 1.7e7, 1.3e8);
     hstForce->GetStiffnessMatrix()->SetNonDiagonal(0e3, 0e3, 0e4);
-    barge->AddForce(hstForce);  // Comment to remove
+    barge->AddForce(hstForce);
 
     // Linear Damping
 
@@ -58,13 +75,43 @@ int main(int argc, char* argv[]) {
     HsDamping->SetSeakeepingDampings(1e6,1e6,1e6);
     barge->AddForce(HsDamping);
 
+/*    // Creating linear hydrodynamics database and mapping
+    // --------------------------------------------------
+    auto HDB = LoadHDB5("Barge_frydom.hdb5");  // Hydro database
+
+    // Mapping
+    // TODO: reprendre globalement le fonctionnement du mapper pour simplifier
+    auto hydroMapper = HDB.GetMapper();
+    system.SetHydroMapper(hydroMapper);
+    hydroMapper->Map(barge, 0);
+
+    auto radiationModel = std::make_shared<FrRadiationConvolutionModel>(&HDB, &system); // TODO: changer en linearHydroModel...
+    // Linear Excitation force
+    // -----------------------
+    // FIXME : pour l'excitation, ce qui compte pour la direction de la houle, c'est la direction relative de chaque composante
+    // par rapport au X local de la plateforme. Il faut donc a priori remettre a jour le steadyForce de la force d'excitation
+    // avec la direction relative instantanée !!!
+    auto excForce = std::make_shared<FrLinearExcitationForce>();
+    barge->AddForce(excForce);  // Comment to remove
+    // Creating a wave probe from waveField
+    auto waveProbe = linearWaveField->NewWaveProbe(0, 0); // TODO: doit etre genere par linearHydroModel
+    excForce->SetWaveProbe(waveProbe); // WaveProbe devrait etre genere en interne de linearHydroModel
+    // TODO: ajouter un flag pour que la position du waveProbe soit mise a jour avec le position du corps.... (valable seulement en config sans interaction hydro de radiation...)
+
+    // Linear Radiation force
+    // ----------------------
+    radiationModel->AddRadiationForceToHydroBody(barge);  // Comment to remove
+    // FIXME: Attention, pas encore de masse ajoutee dans les calculs. Pour le moment, on ne peut que en ajouter artificiellemet.
+    // L'integration dans le modele multicorps de chrono reste un point dur... (pas les termes diagonaux mais les couplages...)*/
+
+    // --------------------------------------------------
+    // Crane model
+    // --------------------------------------------------
+
     auto base_crane = std::make_shared<FrBody>();
     base_crane->SetName("Base_crane");
     base_crane->SetVisuMesh("BaseCrane.obj");
-    //base_crane->SetRot(Q_from_AngAxis(CH_C_PI_2,VECT_X));
-    base_crane->SetPos(chrono::ChVector<double>(0., +7.5, 1.15));
-    //base_crane->SetPos(chrono::ChVector<double>(1., -3., 7.5));
-    //base_crane->SetPos(chrono::ChVector<double>(-7.5, 0., 3.));
+    base_crane->SetPos(chrono::ChVector<double>(-7.5, 0, 1.15));
     base_crane->SetMass(10e3);
     //base_crane->SetInertiaXX(chrono::ChVector<double>(0, 0, 1.e8));
     system.AddBody(base_crane);
@@ -74,8 +121,9 @@ int main(int argc, char* argv[]) {
     arm_crane->SetName("Tige_crane");
     arm_crane->SetVisuMesh("TigeCrane.obj");
     //tige_crane->SetCOG(chrono::ChVector<double>(0., 0., 0.));
-    arm_crane->SetPos(chrono::ChVector<double>(0., +5.5, 2.5));
-    arm_crane->SetRot(Q_from_AngAxis(-CH_C_PI_4, VECT_X));
+    arm_crane->SetPos(chrono::ChVector<double>(-5.5, 0, 2.5));
+    arm_crane->SetRot(Q_from_AngAxis(-CH_C_PI_4, VECT_Y));
+    //arm_crane->SetRot(Q_from_AngAxis(CH_C_PI_2,VECT_Z));
     arm_crane->SetMass(10e3);
     system.AddBody(arm_crane);
     //arm_crane->SetBodyFixed(true);
@@ -84,7 +132,7 @@ int main(int argc, char* argv[]) {
     hub_box->SetName("HubBox");
     hub_box->SetVisuMesh("HubBox.obj");
     //hub_box->SetCOG(chrono::ChVector<double>(0., 0., 0.));
-    hub_box->SetPos(chrono::ChVector<double>(0, -7.93503, 2.1));
+    hub_box->SetPos(chrono::ChVector<double>(7.93503, 0, 2.1));
     hub_box->SetMass(1e3);
     system.AddBody(hub_box);
     //hub_box->SetBodyFixed(true);
@@ -94,11 +142,11 @@ int main(int argc, char* argv[]) {
     // Hub Line
     // ---------------------------------------------
 
-    auto A3_tige = arm_crane->CreateNode(ChVector<double>(0., -19., 0.));
+    auto A3_tige = arm_crane->CreateNode(ChVector<double>(19., 0., 0.));
     auto A4_hub = hub_box->CreateNode(ChVector<double>(0., 0., 1.));
 
     // Line properties
-    double Lu = 12.8;
+    double Lu = 12.7;
     auto u = chrono::ChVector<double>(0, 0, -1);
     double q = 616.538;
     double EA = 5e8;
@@ -106,9 +154,9 @@ int main(int argc, char* argv[]) {
     double E = EA / A;
     double breakTensionAsset = 100000;
 
-    /*auto Catenary = std::make_shared<FrCatenaryLine>(A3_tige, A4_hub, true, E, A, Lu, q, u);
-    Catenary->Initialize();
-    system.AddLink(Catenary);*/
+//    auto Catenary = std::make_shared<FrCatenaryLine>(A3_tige, A4_hub, true, E, A, Lu, q, u);
+//    Catenary->Initialize();
+//    system.AddLink(Catenary);
 
     auto DynamicLine = std::make_shared<FrDynamicCable>();
     DynamicLine->SetStartingNode(A3_tige);
@@ -130,7 +178,7 @@ int main(int argc, char* argv[]) {
 
     auto buoy1 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy1->SetName("Buoy1");
-    buoy1->SetPos(ChVector<>(-5.,-27.5,0));
+    buoy1->SetPos(ChVector<>(-27.5,-5.,0));
     buoy1->SetCOG(ChVector<>(0, 0, 0));
     //buoy1->SetBodyFixed(true);
     buoy1->AddAsset(ColorAsset);
@@ -138,7 +186,7 @@ int main(int argc, char* argv[]) {
 
     auto buoy2 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy2->SetName("Buoy2");
-    buoy2->SetPos(ChVector<>(5.,-27.5,0));
+    buoy2->SetPos(ChVector<>(-27.5,5.,0));
     buoy2->SetCOG(ChVector<>(0, 0, 0));
     //buoy2->SetBodyFixed(true);
     buoy2->AddAsset(ColorAsset);
@@ -146,7 +194,7 @@ int main(int argc, char* argv[]) {
 
     auto buoy3 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy3->SetName("Buoy3");
-    buoy3->SetPos(ChVector<>(-5.,27.5,0));
+    buoy3->SetPos(ChVector<>(27.5,-5.,0));
     buoy3->SetCOG(ChVector<>(0, 0, 0));
     //buoy3->SetBodyFixed(true);
     buoy3->AddAsset(ColorAsset);
@@ -154,7 +202,7 @@ int main(int argc, char* argv[]) {
 
     auto buoy4 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy4->SetName("Buoy4");
-    buoy4->SetPos(ChVector<>(5.,27.5,0));
+    buoy4->SetPos(ChVector<>(27.5,5.,0));
     buoy4->SetCOG(ChVector<>(0, 0, 0));
     //buoy4->SetBodyFixed(true);
     buoy4->AddAsset(ColorAsset);
@@ -169,20 +217,20 @@ int main(int argc, char* argv[]) {
     double Lv = 15.5;
     breakTensionAsset = 5000;
 
-    auto B1 = barge->CreateNode(ChVector<double>(-5, -12.5, 0.));
-    auto B2 = barge->CreateNode(ChVector<double>(5, -12.5, 0.));
-    auto B3 = barge->CreateNode(ChVector<double>(-5, 12.5, 0.));
-    auto B4 = barge->CreateNode(ChVector<double>(5, 12.5, 0.));
+    auto B1 = barge->CreateNode(ChVector<double>(-12.5, -5, 0.));
+    auto B2 = barge->CreateNode(ChVector<double>(-12.5, 5, 0.));
+    auto B3 = barge->CreateNode(ChVector<double>(12.5, -5, 0.));
+    auto B4 = barge->CreateNode(ChVector<double>(12.5, 5, 0.));
 
     auto BB1 = buoy1->CreateNode(ChVector<double>(0,0,0));
     auto BB2 = buoy2->CreateNode(ChVector<double>(0,0,0));
     auto BB3 = buoy3->CreateNode(ChVector<double>(0,0,0));
     auto BB4 = buoy4->CreateNode(ChVector<double>(0,0,0));
 
-    auto WB1 = system.GetWorldBody()->CreateNode(ChVector<double>(-25, -125, -30.));
-    auto WB2 = system.GetWorldBody()->CreateNode(ChVector<double>(25, -125, -30.));
-    auto WB3 = system.GetWorldBody()->CreateNode(ChVector<double>(-25, 125, -30.));
-    auto WB4 = system.GetWorldBody()->CreateNode(ChVector<double>(25, 125, -30.));
+    auto WB1 = system.GetWorldBody()->CreateNode(ChVector<double>(-125, -25, -30.));
+    auto WB2 = system.GetWorldBody()->CreateNode(ChVector<double>(-125, 25, -30.));
+    auto WB3 = system.GetWorldBody()->CreateNode(ChVector<double>(125, -25, -30.));
+    auto WB4 = system.GetWorldBody()->CreateNode(ChVector<double>(125, 25, -30.));
 
     auto MooringLine1 = std::make_shared<FrCatenaryLine>(B1, BB1, true, E, A, Lv, q, u);
     auto MooringLine2 = std::make_shared<FrCatenaryLine>(B2, BB2, true, E, A, Lv, q, u);
@@ -221,19 +269,20 @@ int main(int argc, char* argv[]) {
     system.AddLink(MooringLine3b);
     system.AddLink(MooringLine4b);
 
+
     // ----------------------------------------------
     // Motors
     // ----------------------------------------------
     // Barge - Crane base:
     auto rotmotor_crane = std::make_shared<ChLinkMotorRotationSpeed>();
-    rotmotor_crane->Initialize(base_crane, barge, ChFrame<>(ChVector<>(0., 7.5, 2.)));
+    rotmotor_crane->Initialize(base_crane, barge, ChFrame<>(ChVector<>(-7.5, 0., 2.)));
     system.Add(rotmotor_crane);
     auto rw_crane = std::make_shared<ChFunction_Const>(0.2);
     rotmotor_crane->SetSpeedFunction(rw_crane);
 
     // Crane base - Crane arm
     auto rotmotor_arm = std::make_shared<ChLinkMotorRotationAngle>();
-    rotmotor_arm->Initialize(arm_crane, base_crane, ChFrame<>(ChVector<>(0., 5.5, 3.5), CH_C_PI_2, VECT_Y));
+    rotmotor_arm->Initialize(arm_crane, base_crane, ChFrame<>(ChVector<>(-5.5, 0., 3.5), CH_C_PI_2, VECT_X));
     system.Add(rotmotor_arm);
     auto rw_arm = std::make_shared<ChFunction_Const>(0.);
     rotmotor_arm->SetAngleFunction(rw_arm);

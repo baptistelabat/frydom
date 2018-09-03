@@ -20,7 +20,7 @@ namespace frydom {
 
         SetSkyBox();
         AddCustomLights();
-        AddCustomCamera(irr::core::vector3df(-(irr::f32)dist, (irr::f32)dist*0, (irr::f32)dist),
+        AddCustomCamera(irr::core::vector3df((irr::f32)dist, (irr::f32)dist*0, (irr::f32)dist),
                          irr::core::vector3df(0, (irr::f32)SQ2_2, (irr::f32)SQ2_2));
         //AddTypicalLogo("frydom_logo.png");
     }
