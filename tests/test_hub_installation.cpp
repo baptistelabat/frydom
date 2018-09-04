@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
     //ChSystemSMC system;
 
-/*    // ====================================================================================
+    // ====================================================================================
     // Environment settings
     // ====================================================================================
 
@@ -32,12 +32,12 @@ int main(int argc, char* argv[]) {
 
     // Setting the wave field
     freeSurface->SetLinearWaveField(LINEAR_REGULAR);
-    //freeSurface->UpdateAssetON(); // Comment if you don't want the free surface asset to be updated during the visualisation
+    freeSurface->UpdateAssetON(); // Comment if you don't want the free surface asset to be updated during the visualisation
 
     auto linearWaveField = freeSurface->GetLinearWaveField();
-    linearWaveField->SetRegularWaveHeight(0.1);
-    linearWaveField->SetRegularWavePeriod(6.28);
-    linearWaveField->SetMeanWaveDirection(0);*/
+    linearWaveField->SetRegularWaveHeight(1.);
+    linearWaveField->SetRegularWavePeriod(3.14);
+    linearWaveField->SetMeanWaveDirection(180);
 
     // --------------------------------------------------
     // Barge model
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
     //barge->SetBodyFixed(true);
 
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
-    barge->SetInertiaXX(chrono::ChVector<double>(2.071e7,3.979e6,2.44e07)); // Attention, le *2 partout ici est pour emuler la masse ajoutee...
+    barge->SetInertiaXX(chrono::ChVector<double>(2.071e7,3.979e6,2.44e07));
     barge->SetInertiaXY(chrono::ChVector<double>(0, 0, 0));
     barge->SetMass(530e3); // 550.5e3 pour l'ensemble
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
@@ -75,34 +75,53 @@ int main(int argc, char* argv[]) {
     HsDamping->SetSeakeepingDampings(1e6,1e6,1e6);
     barge->AddForce(HsDamping);
 
-/*    // Creating linear hydrodynamics database and mapping
+    // Hydrodynamics
+    system.SetHydroDB("Barge_frydom.hdb5");
+    auto hydroMapIndex = system.GetHydroMapNb()-1;
+    system.GetHydroMapper(hydroMapIndex)->Map(barge, 0);
+
+    // Radiation model
+    auto radModel = std::make_shared<FrRadiationConvolutionModel>(system.GetHydroDB(hydroMapIndex), &system);
+    radModel->SetHydroMapIndex(hydroMapIndex);
+    radModel->AddRadiationForceToHydroBody(barge);
+
+    // Wave Probe
+    auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
+    auto waveProbe = waveField->NewWaveProbe(0,0);
+    //auto waveProbe = std::make_shared<FrLinearWaveProbe>(0,0);
+    waveProbe->Initialize();
+
+    // Wave Excitation force
+    auto excForce = std::make_shared<FrLinearExcitationForce>();
+    barge->AddForce(excForce);
+    excForce->SetWaveProbe(waveProbe);
+    excForce->SetHydroMapIndex(hydroMapIndex);
+
+
+    /*// Creating linear hydrodynamics database and mapping
     // --------------------------------------------------
     auto HDB = LoadHDB5("Barge_frydom.hdb5");  // Hydro database
 
     // Mapping
-    // TODO: reprendre globalement le fonctionnement du mapper pour simplifier
     auto hydroMapper = HDB.GetMapper();
     system.SetHydroMapper(hydroMapper);
     hydroMapper->Map(barge, 0);
 
-    auto radiationModel = std::make_shared<FrRadiationConvolutionModel>(&HDB, &system); // TODO: changer en linearHydroModel...
     // Linear Excitation force
     // -----------------------
     // FIXME : pour l'excitation, ce qui compte pour la direction de la houle, c'est la direction relative de chaque composante
     // par rapport au X local de la plateforme. Il faut donc a priori remettre a jour le steadyForce de la force d'excitation
     // avec la direction relative instantanée !!!
     auto excForce = std::make_shared<FrLinearExcitationForce>();
-    barge->AddForce(excForce);  // Comment to remove
+    barge->AddForce(excForce);
     // Creating a wave probe from waveField
-    auto waveProbe = linearWaveField->NewWaveProbe(0, 0); // TODO: doit etre genere par linearHydroModel
-    excForce->SetWaveProbe(waveProbe); // WaveProbe devrait etre genere en interne de linearHydroModel
-    // TODO: ajouter un flag pour que la position du waveProbe soit mise a jour avec le position du corps.... (valable seulement en config sans interaction hydro de radiation...)
+    auto waveProbe = linearWaveField->NewWaveProbe(0, 0);
+    excForce->SetWaveProbe(waveProbe);
 
     // Linear Radiation force
     // ----------------------
-    radiationModel->AddRadiationForceToHydroBody(barge);  // Comment to remove
-    // FIXME: Attention, pas encore de masse ajoutee dans les calculs. Pour le moment, on ne peut que en ajouter artificiellemet.
-    // L'integration dans le modele multicorps de chrono reste un point dur... (pas les termes diagonaux mais les couplages...)*/
+    auto radiationModel = std::make_shared<FrRadiationConvolutionModel>(&HDB, &system); // TODO: changer en linearHydroModel...
+    //radiationModel->AddRadiationForceToHydroBody(barge);*/
 
     // --------------------------------------------------
     // Crane model
@@ -146,29 +165,29 @@ int main(int argc, char* argv[]) {
     auto A4_hub = hub_box->CreateNode(ChVector<double>(0., 0., 1.));
 
     // Line properties
-    double Lu = 12.7;
+    double Lu = 12.8;
     auto u = chrono::ChVector<double>(0, 0, -1);
     double q = 616.538;
-    double EA = 5e8;
+    double EA = 5e6;
     double A = 0.05;
     double E = EA / A;
     double breakTensionAsset = 100000;
 
-//    auto Catenary = std::make_shared<FrCatenaryLine>(A3_tige, A4_hub, true, E, A, Lu, q, u);
-//    Catenary->Initialize();
-//    system.AddLink(Catenary);
+    auto Catenary = std::make_shared<FrCatenaryLine>(A3_tige, A4_hub, true, E, A, Lu, q, u);
+    Catenary->Initialize();
+    system.AddLink(Catenary);
 
-    auto DynamicLine = std::make_shared<FrDynamicCable>();
-    DynamicLine->SetStartingNode(A3_tige);
-    DynamicLine->SetEndingNode(A4_hub);
-    DynamicLine->SetCableLength(Lu);
-    DynamicLine->SetNumberOfElements(10);
-    DynamicLine->SetLinearDensity(30);
-    DynamicLine->SetDiameter(A);
-    DynamicLine->SetYoungModulus(EA);
-    DynamicLine->SetRayleighDamping(0.01);
-    DynamicLine->Initialize();
-    system.Add(DynamicLine);
+//    auto DynamicLine = std::make_shared<FrDynamicCable>();
+//    DynamicLine->SetStartingNode(A3_tige);
+//    DynamicLine->SetEndingNode(A4_hub);
+//    DynamicLine->SetCableLength(Lu);
+//    DynamicLine->SetNumberOfElements(10);
+//    DynamicLine->SetLinearDensity(30);
+//    DynamicLine->SetDiameter(A);
+//    DynamicLine->SetYoungModulus(EA);
+//    DynamicLine->SetRayleighDamping(0.01);
+//    DynamicLine->Initialize();
+//    system.Add(DynamicLine);
 
     // ---------------------------------------------
     // Mooring Lines
@@ -305,20 +324,19 @@ int main(int argc, char* argv[]) {
     msolver->SetDiagonalPreconditioning(true);
 
     system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
-    system.SetupInitial();
 
     // -----------------------------------------------
     // Simulation
     // -----------------------------------------------
 
-    double dt = 0.0015;
+    double dt = 0.025;
 
-    //system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
     system.SetStep(dt);
     system.Initialize();
+    //system.SetupInitial();
+
 
     auto app = FrIrrApp(system,75);
-    //app.AddTypicalCamera(irr::core::vector3df(0, -70, .005), irr::core::vector3df(0, 0, 0));
     //app.SetShowInfos(true);
     app.SetVideoframeSave(false);
     app.Run();
