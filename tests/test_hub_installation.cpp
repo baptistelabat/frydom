@@ -163,6 +163,7 @@ int main(int argc, char* argv[]) {
 
     auto A3_tige = arm_crane->CreateNode(ChVector<double>(19., 0., 0.));
     auto A4_hub = hub_box->CreateNode(ChVector<double>(0., 0., 1.));
+    auto A5_hub = hub_box->CreateNode(ChVector<double>(0., 0., 0.));
 
     // Line properties
     double Lu = 12.8;
@@ -197,7 +198,7 @@ int main(int argc, char* argv[]) {
 
     auto buoy1 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy1->SetName("Buoy1");
-    buoy1->SetPos(ChVector<>(-27.5,-5.,0));
+    buoy1->SetPos(ChVector<>(-50,-25.,0));
     buoy1->SetCOG(ChVector<>(0, 0, 0));
     //buoy1->SetBodyFixed(true);
     buoy1->AddAsset(ColorAsset);
@@ -205,7 +206,7 @@ int main(int argc, char* argv[]) {
 
     auto buoy2 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy2->SetName("Buoy2");
-    buoy2->SetPos(ChVector<>(-27.5,5.,0));
+    buoy2->SetPos(ChVector<>(-50,25.,0));
     buoy2->SetCOG(ChVector<>(0, 0, 0));
     //buoy2->SetBodyFixed(true);
     buoy2->AddAsset(ColorAsset);
@@ -213,7 +214,7 @@ int main(int argc, char* argv[]) {
 
     auto buoy3 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy3->SetName("Buoy3");
-    buoy3->SetPos(ChVector<>(27.5,-5.,0));
+    buoy3->SetPos(ChVector<>(50,-25.,0));
     buoy3->SetCOG(ChVector<>(0, 0, 0));
     //buoy3->SetBodyFixed(true);
     buoy3->AddAsset(ColorAsset);
@@ -221,7 +222,7 @@ int main(int argc, char* argv[]) {
 
     auto buoy4 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
     buoy4->SetName("Buoy4");
-    buoy4->SetPos(ChVector<>(27.5,5.,0));
+    buoy4->SetPos(ChVector<>(50,25.,0));
     buoy4->SetCOG(ChVector<>(0, 0, 0));
     //buoy4->SetBodyFixed(true);
     buoy4->AddAsset(ColorAsset);
@@ -230,10 +231,10 @@ int main(int argc, char* argv[]) {
     /// Mooring lines length
     Lu = 110;
     q = 20.;
-    EA = 1.5708e6;
+    EA = 1.5e6;
     A = 0.025;
     E = EA / A;
-    double Lv = 15.5;
+    double Lv = 50;
     breakTensionAsset = 5000;
 
     auto B1 = barge->CreateNode(ChVector<double>(-12.5, -5, 0.));
@@ -246,10 +247,10 @@ int main(int argc, char* argv[]) {
     auto BB3 = buoy3->CreateNode(ChVector<double>(0,0,0));
     auto BB4 = buoy4->CreateNode(ChVector<double>(0,0,0));
 
-    auto WB1 = system.GetWorldBody()->CreateNode(ChVector<double>(-125, -25, -30.));
-    auto WB2 = system.GetWorldBody()->CreateNode(ChVector<double>(-125, 25, -30.));
-    auto WB3 = system.GetWorldBody()->CreateNode(ChVector<double>(125, -25, -30.));
-    auto WB4 = system.GetWorldBody()->CreateNode(ChVector<double>(125, 25, -30.));
+    auto WB1 = system.GetWorldBody()->CreateNode(ChVector<double>(-125, -75, -30.));
+    auto WB2 = system.GetWorldBody()->CreateNode(ChVector<double>(-125, 75, -30.));
+    auto WB3 = system.GetWorldBody()->CreateNode(ChVector<double>(125, -75, -30.));
+    auto WB4 = system.GetWorldBody()->CreateNode(ChVector<double>(125, 75, -30.));
 
     auto MooringLine1 = std::make_shared<FrCatenaryLine>(B1, BB1, true, E, A, Lv, q, u);
     auto MooringLine2 = std::make_shared<FrCatenaryLine>(B2, BB2, true, E, A, Lv, q, u);
@@ -288,6 +289,36 @@ int main(int argc, char* argv[]) {
     system.AddLink(MooringLine3b);
     system.AddLink(MooringLine4b);
 
+    // ---------------------------------------------
+    // Export Cable
+    // ---------------------------------------------
+
+    // Line properties
+    Lu = 175;
+    u = chrono::ChVector<double>(0, 0, -1);
+    q = 600;
+    EA = 1e7;
+    A = 0.05;
+    E = EA / A;
+    breakTensionAsset = 100000;
+
+
+    auto Export = system.GetWorldBody()->CreateNode(ChVector<double>(0, 150, -30.));
+//    auto DynamicLine = std::make_shared<FrDynamicCable>();
+//    DynamicLine->SetStartingNode(Export);
+//    DynamicLine->SetEndingNode(A5_hub);
+//    DynamicLine->SetCableLength(Lu);
+//    DynamicLine->SetNumberOfElements(10);
+//    DynamicLine->SetLinearDensity(30);
+//    DynamicLine->SetDiameter(A);
+//    DynamicLine->SetYoungModulus(1e4);
+//    DynamicLine->SetRayleighDamping(0.01);
+//    DynamicLine->Initialize();
+//    system.Add(DynamicLine);
+
+//    auto ExportLine = std::make_shared<FrCatenaryLine>(Export, A5_hub, true, E, A, Lu, q, u);
+//    ExportLine->Initialize();
+//    system.AddLink(ExportLine);
 
     // ----------------------------------------------
     // Motors
@@ -329,7 +360,7 @@ int main(int argc, char* argv[]) {
     // Simulation
     // -----------------------------------------------
 
-    double dt = 0.025;
+    double dt = 0.005;
 
     system.SetStep(dt);
     system.Initialize();
