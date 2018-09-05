@@ -13,7 +13,6 @@
 using namespace chrono;
 using namespace frydom;
 
-
 int main(int argc, char* argv[]) {
 
     // --------------------------------------------------
@@ -45,16 +44,17 @@ int main(int argc, char* argv[]) {
 
     auto barge = std::make_shared<FrHydroBody>();
     barge->SetName("Barge");
-    barge->SetHydroMesh("Barge2_460Tdisp.obj", true);
+    barge->SetHydroMesh("Barge.obj", true);
     barge->SetPos(chrono::ChVector<double>(0., 0., 0.));
     //barge->SetRot(Q_from_AngAxis(CH_C_PI_2,VECT_Z));
     system.AddBody(barge);
     //barge->SetBodyFixed(true);
 
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
-    barge->SetInertiaXX(chrono::ChVector<double>(2.071e7,3.979e6,2.44e07));
+    barge->SetInertiaXX(chrono::ChVector<double>(2.465e7,1.149e7,1.388e07));
     barge->SetInertiaXY(chrono::ChVector<double>(0, 0, 0));
-    barge->SetMass(530e3); // 550.5e3 pour l'ensemble
+    barge->SetMass(1137.6-180.6); // 1137.576e3 pour l'ensemble
+    barge->SetMass(1137.6); // 1137.576e3 pour l'ensemble
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
     barge->SetCOG(chrono::ChVector<double>(0, 0, 0)); // TODO: Caler avec Camille
 
@@ -65,19 +65,20 @@ int main(int argc, char* argv[]) {
     // Linear Hydrostatics
     // -------------------
     auto hstForce = std::make_shared<FrLinearHydrostaticForce>();
-    hstForce->GetStiffnessMatrix()->SetDiagonal(2.5e6, 1.7e7, 1.3e8);
+    hstForce->GetStiffnessMatrix()->SetDiagonal(5.62e6, 1.09e8, 5.63e8);
     hstForce->GetStiffnessMatrix()->SetNonDiagonal(0e3, 0e3, 0e4);
     barge->AddForce(hstForce);
 
     // Linear Damping
 
     auto HsDamping = std::make_shared<FrLinearDamping>();
-    HsDamping->SetSeakeepingDampings(1e6,1e6,1e6);
+    HsDamping->SetSeakeepingDampings(1e6, 1e6, 1e6);
+    HsDamping->SetManeuveuringDampings(1e6, 1e6, 1e6);
     barge->AddForce(HsDamping);
 
     // Hydrodynamics
     system.SetHydroDB("Barge_frydom.hdb5");
-    auto hydroMapIndex = system.GetHydroMapNb()-1;
+    auto hydroMapIndex = system.GetHydroMapNb() - 1;
     system.GetHydroMapper(hydroMapIndex)->Map(barge, 0);
 
     // Radiation model
@@ -87,7 +88,7 @@ int main(int argc, char* argv[]) {
 
     // Wave Probe
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
-    auto waveProbe = waveField->NewWaveProbe(0,0);
+    auto waveProbe = waveField->NewWaveProbe(0, 0);
     //auto waveProbe = std::make_shared<FrLinearWaveProbe>(0,0);
     waveProbe->Initialize();
 
@@ -98,31 +99,6 @@ int main(int argc, char* argv[]) {
     excForce->SetHydroMapIndex(hydroMapIndex);
 
 
-    /*// Creating linear hydrodynamics database and mapping
-    // --------------------------------------------------
-    auto HDB = LoadHDB5("Barge_frydom.hdb5");  // Hydro database
-
-    // Mapping
-    auto hydroMapper = HDB.GetMapper();
-    system.SetHydroMapper(hydroMapper);
-    hydroMapper->Map(barge, 0);
-
-    // Linear Excitation force
-    // -----------------------
-    // FIXME : pour l'excitation, ce qui compte pour la direction de la houle, c'est la direction relative de chaque composante
-    // par rapport au X local de la plateforme. Il faut donc a priori remettre a jour le steadyForce de la force d'excitation
-    // avec la direction relative instantanée !!!
-    auto excForce = std::make_shared<FrLinearExcitationForce>();
-    barge->AddForce(excForce);
-    // Creating a wave probe from waveField
-    auto waveProbe = linearWaveField->NewWaveProbe(0, 0);
-    excForce->SetWaveProbe(waveProbe);
-
-    // Linear Radiation force
-    // ----------------------
-    auto radiationModel = std::make_shared<FrRadiationConvolutionModel>(&HDB, &system); // TODO: changer en linearHydroModel...
-    //radiationModel->AddRadiationForceToHydroBody(barge);*/
-
     // --------------------------------------------------
     // Crane model
     // --------------------------------------------------
@@ -131,28 +107,24 @@ int main(int argc, char* argv[]) {
     base_crane->SetName("Base_crane");
     base_crane->SetVisuMesh("BaseCrane.obj");
     base_crane->SetPos(chrono::ChVector<double>(-7.5, 0, 1.15));
-    base_crane->SetMass(10e3);
-    //base_crane->SetInertiaXX(chrono::ChVector<double>(0, 0, 1.e8));
+    base_crane->SetMass(140e3);
     system.AddBody(base_crane);
     //base_crane->SetBodyFixed(true);
 
     auto arm_crane = std::make_shared<FrBody>();
-    arm_crane->SetName("Tige_crane");
-    arm_crane->SetVisuMesh("TigeCrane.obj");
-    //tige_crane->SetCOG(chrono::ChVector<double>(0., 0., 0.));
+    arm_crane->SetName("Arm_crane");
+    arm_crane->SetVisuMesh("arm_crane.obj");
     arm_crane->SetPos(chrono::ChVector<double>(-5.5, 0, 2.5));
-    arm_crane->SetRot(Q_from_AngAxis(-CH_C_PI_4, VECT_Y));
-    //arm_crane->SetRot(Q_from_AngAxis(CH_C_PI_2,VECT_Z));
-    arm_crane->SetMass(10e3);
+    arm_crane->SetRot(Q_from_AngAxis(-3*CH_C_PI_4/2, VECT_Y));
+    arm_crane->SetMass(20e3);
     system.AddBody(arm_crane);
     //arm_crane->SetBodyFixed(true);
 
     auto hub_box = std::make_shared<FrBody>();
     hub_box->SetName("HubBox");
     hub_box->SetVisuMesh("HubBox.obj");
-    //hub_box->SetCOG(chrono::ChVector<double>(0., 0., 0.));
-    hub_box->SetPos(chrono::ChVector<double>(7.93503, 0, 2.1));
-    hub_box->SetMass(1e3);
+    hub_box->SetPos(chrono::ChVector<double>(8.27, 0, 2.1));
+    hub_box->SetMass(20.7e3);
     system.AddBody(hub_box);
     //hub_box->SetBodyFixed(true);
 
@@ -161,15 +133,15 @@ int main(int argc, char* argv[]) {
     // Hub Line
     // ---------------------------------------------
 
-    auto A3_tige = arm_crane->CreateNode(ChVector<double>(19., 0., 0.));
-    auto A4_hub = hub_box->CreateNode(ChVector<double>(0., 0., 1.));
+    auto A3_tige = arm_crane->CreateNode(ChVector<double>(36., 0., 0.));
+    auto A4_hub = hub_box->CreateNode(ChVector<double>(0., 0., 0.));
     auto A5_hub = hub_box->CreateNode(ChVector<double>(0., 0., 0.));
 
     // Line properties
-    double Lu = 12.8;
+    double Lu = 33.7;
     auto u = chrono::ChVector<double>(0, 0, -1);
-    double q = 616.538;
-    double EA = 5e6;
+    double q = 600;
+    double EA = 5e7;
     double A = 0.05;
     double E = EA / A;
     double breakTensionAsset = 100000;
@@ -196,45 +168,45 @@ int main(int argc, char* argv[]) {
 
     auto ColorAsset = std::make_shared<ChColorAsset>(ChColor(1.f, 0.f, 0.0f));
 
-    auto buoy1 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
+    auto buoy1 = std::make_shared<FrMooringBuoy>(0.75, 1e2, true, 1e3);
     buoy1->SetName("Buoy1");
-    buoy1->SetPos(ChVector<>(-50,-25.,0));
+    buoy1->SetPos(ChVector<>(-50, -25., 0));
     buoy1->SetCOG(ChVector<>(0, 0, 0));
     //buoy1->SetBodyFixed(true);
     buoy1->AddAsset(ColorAsset);
     system.AddBody(buoy1);
 
-    auto buoy2 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
+    auto buoy2 = std::make_shared<FrMooringBuoy>(0.75, 1e2, true, 1e3);
     buoy2->SetName("Buoy2");
-    buoy2->SetPos(ChVector<>(-50,25.,0));
+    buoy2->SetPos(ChVector<>(-50, 25., 0));
     buoy2->SetCOG(ChVector<>(0, 0, 0));
     //buoy2->SetBodyFixed(true);
     buoy2->AddAsset(ColorAsset);
     system.AddBody(buoy2);
 
-    auto buoy3 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
+    auto buoy3 = std::make_shared<FrMooringBuoy>(0.75, 1e2, true, 1e3);
     buoy3->SetName("Buoy3");
-    buoy3->SetPos(ChVector<>(50,-25.,0));
+    buoy3->SetPos(ChVector<>(50, -25., 0));
     buoy3->SetCOG(ChVector<>(0, 0, 0));
     //buoy3->SetBodyFixed(true);
     buoy3->AddAsset(ColorAsset);
     system.AddBody(buoy3);
 
-    auto buoy4 = std::make_shared<FrMooringBuoy>(0.5,1e2,true,1e3);
+    auto buoy4 = std::make_shared<FrMooringBuoy>(0.75, 1e2, true, 1e3);
     buoy4->SetName("Buoy4");
-    buoy4->SetPos(ChVector<>(50,25.,0));
+    buoy4->SetPos(ChVector<>(50, 25., 0));
     buoy4->SetCOG(ChVector<>(0, 0, 0));
     //buoy4->SetBodyFixed(true);
     buoy4->AddAsset(ColorAsset);
     system.AddBody(buoy4);
 
     /// Mooring lines length
-    Lu = 110;
+    Lu = 95;
     q = 20.;
-    EA = 1.5e6;
+    EA = 5e6;
     A = 0.025;
     E = EA / A;
-    double Lv = 50;
+    double Lv = 42.5;
     breakTensionAsset = 5000;
 
     auto B1 = barge->CreateNode(ChVector<double>(-12.5, -5, 0.));
@@ -242,10 +214,10 @@ int main(int argc, char* argv[]) {
     auto B3 = barge->CreateNode(ChVector<double>(12.5, -5, 0.));
     auto B4 = barge->CreateNode(ChVector<double>(12.5, 5, 0.));
 
-    auto BB1 = buoy1->CreateNode(ChVector<double>(0,0,0));
-    auto BB2 = buoy2->CreateNode(ChVector<double>(0,0,0));
-    auto BB3 = buoy3->CreateNode(ChVector<double>(0,0,0));
-    auto BB4 = buoy4->CreateNode(ChVector<double>(0,0,0));
+    auto BB1 = buoy1->CreateNode(ChVector<double>(0, 0, 0));
+    auto BB2 = buoy2->CreateNode(ChVector<double>(0, 0, 0));
+    auto BB3 = buoy3->CreateNode(ChVector<double>(0, 0, 0));
+    auto BB4 = buoy4->CreateNode(ChVector<double>(0, 0, 0));
 
     auto WB1 = system.GetWorldBody()->CreateNode(ChVector<double>(-125, -75, -30.));
     auto WB2 = system.GetWorldBody()->CreateNode(ChVector<double>(-125, 75, -30.));
@@ -294,9 +266,9 @@ int main(int argc, char* argv[]) {
     // ---------------------------------------------
 
     // Line properties
-    Lu = 175;
+    Lu = 155;
     u = chrono::ChVector<double>(0, 0, -1);
-    q = 600;
+    q = 20;
     EA = 1e7;
     A = 0.05;
     E = EA / A;
@@ -316,9 +288,9 @@ int main(int argc, char* argv[]) {
 //    DynamicLine->Initialize();
 //    system.Add(DynamicLine);
 
-//    auto ExportLine = std::make_shared<FrCatenaryLine>(Export, A5_hub, true, E, A, Lu, q, u);
-//    ExportLine->Initialize();
-//    system.AddLink(ExportLine);
+    auto ExportLine = std::make_shared<FrCatenaryLine>(Export, A5_hub, true, E, A, Lu, q, u);
+    ExportLine->Initialize();
+    system.AddLink(ExportLine);
 
     // ----------------------------------------------
     // Motors
@@ -360,16 +332,15 @@ int main(int argc, char* argv[]) {
     // Simulation
     // -----------------------------------------------
 
-    double dt = 0.005;
+    double dt = 0.015;
 
     system.SetStep(dt);
     system.Initialize();
     //system.SetupInitial();
 
 
-    auto app = FrIrrApp(system,75);
+    auto app = FrIrrApp(system, 75);
     //app.SetShowInfos(true);
     app.SetVideoframeSave(false);
     app.Run();
-
 }
