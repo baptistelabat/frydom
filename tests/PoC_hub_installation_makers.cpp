@@ -21,8 +21,8 @@ void make_environment(FrOffshoreSystem& system) {
     freeSurface->UpdateAssetON(); // Comment if you don't want the free surface asset to be updated during the visualisation
 
     auto linearWaveField = freeSurface->GetLinearWaveField();
-    linearWaveField->SetRegularWaveHeight(2.5);
-    linearWaveField->SetRegularWavePeriod(3.14);
+    linearWaveField->SetRegularWaveHeight(0.5);
+    linearWaveField->SetRegularWavePeriod(5);
     linearWaveField->SetMeanWaveDirection(180);
     //linearWaveField->GetWaveRamp()->Deactivate();
 }
@@ -46,7 +46,6 @@ void run_simulation(FrOffshoreSystem& system) {
     msolver->SetDiagonalPreconditioning(true);
 
     system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
-
     // -----------------------------------------------
     // Simulation
     // -----------------------------------------------
@@ -103,7 +102,7 @@ std::shared_ptr<FrHydroBody> make_barge(FrOffshoreSystem& system){
     HsDamping->SetSeakeepingDampings(1e6,1e10,1e10);
     HsDamping->SetManeuveuringDampings(1e6,1e6,1e10);
     HsDamping->SetName("linear damping");
-//    barge->AddForce(HsDamping);
+    barge->AddForce(HsDamping);
 
     // Hydrodynamics
     system.SetHydroDB("Barge_frydom.hdb5");
