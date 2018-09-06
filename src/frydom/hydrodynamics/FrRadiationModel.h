@@ -191,7 +191,6 @@ namespace frydom {
                 recorder.RecordVelocity();
             }
 
-
             // Here we compute the radiation forces by computing the convolutions
             ResetRadiationForceVector();
 
@@ -213,17 +212,11 @@ namespace frydom {
                     // Loop on DOF of body imotioBody
                     for (unsigned int idof=0; idof<6; idof++) {
 
-                        // ##CC FIXME : reduction de matrice en fonction des contraintes extérieures
-                        if (idof == 0 or idof == 2 or idof == 4) {
-                            // ##CC
-
                             // Getting the historic of motion of body imotionBody along DOF imotion
                             auto velocity = m_recorders[imotionBody].GetRecordOnDOF(idof);
 
                             // Loop over the force elements
                             for (unsigned int iforce = 0; iforce < 6; iforce++) {
-
-                                if (iforce == 0 or iforce == 2 or iforce == 4) {    // ##CC FIXME : fix 2
 
                                     // Getting the convolution kernel that goes well...
                                     auto kernel = bemBody_i->GetImpulseResponseFunction(imotionBody, idof, iforce);
@@ -242,11 +235,7 @@ namespace frydom {
                                     generalizedForce.ElementN(
                                             iforce) += val;  // TODO: bien verifier qu'on fait bien du inplace dans m_radiationForces !
 
-                                } // ##CC FIXME : fin du fix 2
-
                             }  // End loop iforce
-
-                        }   // ##CC FIXME : Fin du fix 1
 
                     }  // End loop imotion of body imotionBody
                 }  // End loop imotionBody
@@ -281,13 +270,9 @@ namespace frydom {
 
                 for (unsigned int idof=0; idof<6; idof++) {
 
-                    if (idof == 0 or idof == 2 or idof == 4) { // ##CC FIXME : fix 1
-
                         auto velocity = m_recorders[imotionBody].GetRecordOnDOF(idof);
 
                         for (unsigned int iforce = 0; iforce < 6; iforce++) {               // FIXME : verifier si le max est pas 3
-
-                            if (iforce == 0 or iforce == 2 or iforce == 4) {    // ##CC FIXME : fix 2
 
                                 auto kernel = bemBody_i->GetSpeedDependentIRF(imotionBody, idof, iforce);
                                 auto product = std::vector<double>(N);
@@ -298,22 +283,16 @@ namespace frydom {
 
                                 val = Trapz(product, stepSize);
                                 generalizedForce.ElementN(iforce) += mean_speed * val;
-
-                            } // ##XX FIXME : fin du fix 2
                         }
-                    } // ##CC FIXME : fin du fix 1
                 }
 
                 auto velocity = hydroBody->GetAngularVelocityPert();
 
                 for (unsigned int iforce=0; iforce<6; iforce++) {
 
-                    if (iforce == 0 or iforce == 2 or iforce == 4) {        // ##CC FIXME : fix1
-
                         val = Ainf(iforce, 2) * velocity.y() - Ainf(iforce, 1) * velocity.z();
                         generalizedForce.ElementN(iforce) += mean_speed * val;
 
-                    } //## FIXME : fin du fix 1
                 }
 
             }
