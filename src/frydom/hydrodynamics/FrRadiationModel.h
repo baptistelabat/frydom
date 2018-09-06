@@ -213,43 +213,41 @@ namespace frydom {
                     // Loop on DOF of body imotioBody
                     for (unsigned int idof=0; idof<6; idof++) {
 
-                        // Getting the historic of motion of body imotionBody along DOF imotion
-                        auto velocity = m_recorders[imotionBody].GetRecordOnDOF(idof);
-
-                        // Loop over the force elements
-                        for (unsigned int iforce=0; iforce<6; iforce++) {
-
-                            // Getting the convolution kernel that goes well...
-                            auto kernel = bemBody_i->GetImpulseResponseFunction(imotionBody, idof, iforce);
-
-//                            std::cout << kernel.rows() << std::endl;
-
-                            // Performing the multiplication
-                            auto product = std::vector<double>(N);
-                            for (unsigned int itime=0; itime<N; itime++) {
-                                product[itime] = kernel[itime] * velocity[itime];
-                            }
-
-                            // ##CC : check value of the kernel
-                            //if (iforceBody==0 && iforce==2 && idof==2) {
-                            //    std::ofstream fileout;
-                            //    fileout.open("kernel.dat", std::ios::ate | std::ios::app);
-                            //    fileout << "time;Kt" << std::endl;
-                            //    for (unsigned int itime = 0; itime < N; itime++) {
-                            //             fileout << itime * m_system->GetStep() << ";" << kernel[itime] << std::endl;
-                            //    }
-                            //    fileout.close();
-                            //}
+                        // ##CC FIXME : reduction de matrice en fonction des contraintes extérieures
+                        if (idof == 0 or idof == 2 or idof == 4) {
                             // ##CC
 
-                            // Numerical integration
-                            val = Trapz(product, stepSize);
+                            // Getting the historic of motion of body imotionBody along DOF imotion
+                            auto velocity = m_recorders[imotionBody].GetRecordOnDOF(idof);
 
-                            // Update of the force
-                            // FIXME: verification du signe  !!!
-                            generalizedForce.ElementN(iforce) += val;  // TODO: bien verifier qu'on fait bien du inplace dans m_radiationForces !
+                            // Loop over the force elements
+                            for (unsigned int iforce = 0; iforce < 6; iforce++) {
 
-                        }  // End loop iforce
+                                if (iforce == 0 or iforce == 2 or iforce == 4) {    // ##CC FIXME : fix 2
+
+                                    // Getting the convolution kernel that goes well...
+                                    auto kernel = bemBody_i->GetImpulseResponseFunction(imotionBody, idof, iforce);
+
+                                    // Performing the multiplication
+                                    auto product = std::vector<double>(N);
+                                    for (unsigned int itime = 0; itime < N; itime++) {
+                                        product[itime] = kernel[itime] * velocity[itime];
+                                    }
+
+                                    // Numerical integration
+                                    val = Trapz(product, stepSize);
+
+                                    // Update of the force
+                                    // FIXME: verification du signe  !!!
+                                    generalizedForce.ElementN(
+                                            iforce) += val;  // TODO: bien verifier qu'on fait bien du inplace dans m_radiationForces !
+
+                                } // ##CC FIXME : fin du fix 2
+
+                            }  // End loop iforce
+
+                        }   // ##CC FIXME : Fin du fix 1
+
                     }  // End loop imotion of body imotionBody
                 }  // End loop imotionBody
 
@@ -283,38 +281,39 @@ namespace frydom {
 
                 for (unsigned int idof=0; idof<6; idof++) {
 
-                    auto velocity = m_recorders[imotionBody].GetRecordOnDOF(idof);
+                    if (idof == 0 or idof == 2 or idof == 4) { // ##CC FIXME : fix 1
 
-                    for (unsigned int iforce=0; iforce<6; iforce++) {               // FIXME : verifier si le max est pas 3
+                        auto velocity = m_recorders[imotionBody].GetRecordOnDOF(idof);
 
-                        auto kernel = bemBody_i->GetSpeedDependentIRF(imotionBody, idof, iforce);
-                        auto product = std::vector<double>(N);
+                        for (unsigned int iforce = 0; iforce < 6; iforce++) {               // FIXME : verifier si le max est pas 3
 
-                        for (unsigned int itime=0; itime<N; itime++) {
-                            product[itime] = kernel[itime] * velocity[itime];
+                            if (iforce == 0 or iforce == 2 or iforce == 4) {    // ##CC FIXME : fix 2
+
+                                auto kernel = bemBody_i->GetSpeedDependentIRF(imotionBody, idof, iforce);
+                                auto product = std::vector<double>(N);
+
+                                for (unsigned int itime = 0; itime < N; itime++) {
+                                    product[itime] = kernel[itime] * velocity[itime];
+                                }
+
+                                val = Trapz(product, stepSize);
+                                generalizedForce.ElementN(iforce) += mean_speed * val;
+
+                            } // ##XX FIXME : fin du fix 2
                         }
-
-                        val = Trapz(product, stepSize);
-                        generalizedForce.ElementN(iforce) += mean_speed * val;
-                    }
+                    } // ##CC FIXME : fin du fix 1
                 }
 
                 auto velocity = hydroBody->GetAngularVelocityPert();
 
-                // ##CC monitoring
-                std::cout << " ## Angular velocity : [ " << velocity[0] << " , " << velocity[1] << " , " << velocity[2] << "]" << std::endl;
-                std::cout << "## Infinite added mass" << std::endl;
-                for (unsigned int ii=0; ii<6; ii++) {
-                    for (unsigned int jj=0; jj<6; jj++) {
-                        std::cout << Ainf(ii,jj) << " ";
-                    }
-                    std::cout << std::endl;
-                }
-                // ##CC
-
                 for (unsigned int iforce=0; iforce<6; iforce++) {
-                    val = Ainf(iforce, 2) * velocity.y() - Ainf(iforce, 1) * velocity.z();
-                    generalizedForce.ElementN(iforce) += mean_speed * val;
+
+                    if (iforce == 0 or iforce == 2 or iforce == 4) {        // ##CC FIXME : fix1
+
+                        val = Ainf(iforce, 2) * velocity.y() - Ainf(iforce, 1) * velocity.z();
+                        generalizedForce.ElementN(iforce) += mean_speed * val;
+
+                    } //## FIXME : fin du fix 1
                 }
 
             }

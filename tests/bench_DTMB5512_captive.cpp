@@ -96,18 +96,26 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     ship->SetLpp(3.048);
     ship->SetMass(86.0);
     ship->SetWettedSurface(1.371);
-    ship->SetCOG(ChVector<>(0., 0., -0.036));
+    ship->SetCOG(ChVector<>(0., 0., +0.03));
+    //ship->SetInertiaXX(ChVector<>(1.98, 53.88, 49.99));
     ship->SetInertiaXX(ChVector<>(1.98, 53.88, 49.99));
     ship->SetEquilibriumFrame(MeanMotion, 60.);
 
     // Hydrostatics
     auto hstForce = std::make_shared<FrLinearHydrostaticForce>();
     auto hstStiffness = hstForce->GetStiffnessMatrix();
-    hstStiffness->SetDiagonal(9.68e3, 8.97e1, 5.48e3);
+
+    hstStiffness->SetDiagonal(9.68e3, 3.46e1, 5.42e3);
+    //hstStiffness->SetDiagonal(9.976e3, 2.7973e1, 5.42e3);
+    hstStiffness->SetNonDiagonal(0., +1.25e3, 0.);
+    // data from Boris :
+    //hstStiffness->SetDiagonal(9.279095e3, 2.881106e1, 5.006731e3);
+    //hstStiffness->SetNonDiagonal(0., 1.013974e3, 0.);
+
     ship->AddForce(hstForce);
 
     // Hydrodynamics
-    system->SetHydroDB("DTMB5512_hdb.h5");
+    system->SetHydroDB("DTMB5512_VCG003_Xforward_opposite_dir.hdb5");
     auto hydroMapIndex = system->GetHydroMapNb()-1;
     system->GetHydroMapper(hydroMapIndex)->Map(ship, 0);
 
@@ -139,17 +147,17 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     //ship->AddForce(drag_force);
 
     // Wave drift force
-    //auto waveDrift = std::make_shared<FrWaveDriftForce>("DTMB5512_WaveDriftCoeff.h5");
-    //ship->AddForce(waveDrift);
-    //waveDrift->SetBody(ship);
-    //waveDrift->SetWaveProbe(waveProbe);
+    auto waveDrift = std::make_shared<FrWaveDriftForce>("DTMB5512_WaveDriftCoeff.h5");
+    ship->AddForce(waveDrift);
+    waveDrift->SetBody(ship);
+    waveDrift->SetWaveProbe(waveProbe);
 
     // Friction force from ITTC57
-    //auto forceITTC57 = std::make_shared<FrITTC57>();
-    //forceITTC57->SetCharacteristicLength(ship->GetLpp());
-    //forceITTC57->SetHullWettedSurface(ship->GetWettedSurface());
-    //forceITTC57->SetHullFrontalProjectedArea(ship->GetTransverseUnderWaterArea());
-    //ship->AddForce(forceITTC57);
+    auto forceITTC57 = std::make_shared<FrITTC57>();
+    forceITTC57->SetCharacteristicLength(ship->GetLpp());
+    forceITTC57->SetHullWettedSurface(ship->GetWettedSurface());
+    forceITTC57->SetHullFrontalProjectedArea(ship->GetTransverseUnderWaterArea());
+    ship->AddForce(forceITTC57);
 
     // Man damping
     //auto forceMan = std::make_shared<FrTaylorManDamping>();
@@ -159,11 +167,11 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     //forceMan->SetX("Xuu", 2.720665);
 
     // Steady force
-    //auto forcePitch = std::make_shared<FrSteadyPitchTorque>();
-    //ship->AddForce(forcePitch);
+    auto forcePitch = std::make_shared<FrSteadyPitchTorque>();
+    ship->AddForce(forcePitch);
 
-    //auto forceHeave = std::make_shared<FrSteadyHeaveForce>();
-    //ship->AddForce(forceHeave);
+    auto forceHeave = std::make_shared<FrSteadyHeaveForce>();
+    ship->AddForce(forceHeave);
 
     return ship;
 }

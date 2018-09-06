@@ -87,6 +87,7 @@ namespace frydom {
             m_waveProbe->SetX(eqFrame->GetPos().x());
             m_waveProbe->SetY(eqFrame->GetPos().y());
             auto waveField = m_waveProbe->GetWaveField();
+
             SetSteadyForce();
         }
 
