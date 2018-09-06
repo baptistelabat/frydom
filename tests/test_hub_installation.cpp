@@ -8,7 +8,7 @@
 #include "chrono/physics/ChLinkMotorRotationSpeed.h"
 
 #include "frydom/frydom.h"
-
+#include "PoC_hub_installation_makers.cpp"
 
 using namespace chrono;
 using namespace frydom;
@@ -276,21 +276,21 @@ int main(int argc, char* argv[]) {
 
 
     auto Export = system.GetWorldBody()->CreateNode(ChVector<double>(0, 150, -30.));
-//    auto DynamicLine = std::make_shared<FrDynamicCable>();
-//    DynamicLine->SetStartingNode(Export);
-//    DynamicLine->SetEndingNode(A5_hub);
-//    DynamicLine->SetCableLength(Lu);
-//    DynamicLine->SetNumberOfElements(10);
-//    DynamicLine->SetLinearDensity(30);
-//    DynamicLine->SetDiameter(A);
-//    DynamicLine->SetYoungModulus(1e4);
-//    DynamicLine->SetRayleighDamping(0.01);
-//    DynamicLine->Initialize();
-//    system.Add(DynamicLine);
+    auto DynamicLine = std::make_shared<FrDynamicCable>();
+    DynamicLine->SetStartingNode(Export);
+    DynamicLine->SetEndingNode(A5_hub);
+    DynamicLine->SetCableLength(Lu);
+    DynamicLine->SetNumberOfElements(20);
+    DynamicLine->SetLinearDensity(20);
+    DynamicLine->SetSectionArea(A);
+    DynamicLine->SetYoungModulus(E);
+    DynamicLine->SetRayleighDamping(0.01);
+    DynamicLine->Initialize();
+    system.Add(DynamicLine);
 
-    auto ExportLine = std::make_shared<FrCatenaryLine>(Export, A5_hub, true, E, A, Lu, q, u);
-    ExportLine->Initialize();
-    system.AddLink(ExportLine);
+//    auto ExportLine = std::make_shared<FrCatenaryLine>(Export, A5_hub, true, E, A, Lu, q, u);
+//    ExportLine->Initialize();
+//    system.AddLink(ExportLine);
 
     // ----------------------------------------------
     // Motors
@@ -336,7 +336,7 @@ int main(int argc, char* argv[]) {
 
     system.SetStep(dt);
     system.Initialize();
-    //system.SetupInitial();
+    system.SetupInitial();
 
 
     auto app = FrIrrApp(system, 75);

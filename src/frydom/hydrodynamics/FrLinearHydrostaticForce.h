@@ -37,7 +37,7 @@ namespace frydom {
 
             auto eqFrame = dynamic_cast<FrHydroBody*>(Body)->GetEquilibriumFrame();
             auto bodyFrame = Body->GetFrame_REF_to_abs();
-            auto deltaFrame = eqFrame.GetInverse() >> bodyFrame;
+            auto deltaFrame = eqFrame.GetInverse() * bodyFrame;
 
             double heave = deltaFrame.GetPos().z();
 

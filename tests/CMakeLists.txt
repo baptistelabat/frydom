@@ -37,10 +37,11 @@ set(FRYDOM_TESTS
         test_current_standard_force
         test_wind_standard_force
         test_visu_catenary
-        test_hub_installation
         test_pendulum
         test_pendulum_catenary
         test_motors
+        test_hub_installation
+        PoC_hub_installation
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")
@@ -83,8 +84,8 @@ configure_file(data/bench_sphere_regular.h5 . COPYONLY)
 configure_file(data/sphere.obj . COPYONLY)
 configure_file(data/sphere_hdb.h5 . COPYONLY)
 
-configure_file(data/Test_hub/Barge2_460Tdisp.obj . COPYONLY)
+configure_file(data/Test_hub/Barge.obj . COPYONLY)
 configure_file(data/Test_hub/BaseCrane.obj . COPYONLY)
+configure_file(data/Test_hub/arm_crane.obj . COPYONLY)
 configure_file(data/Test_hub/HubBox.obj . COPYONLY)
-configure_file(data/Test_hub/TigeCrane.obj . COPYONLY)
 configure_file(data/Test_hub/Barge_frydom.hdb5 . COPYONLY)
