@@ -293,13 +293,18 @@ namespace frydom {
     }
 
     void FrCatenaryLine::InitRangeTensionColor() {
-        double ds = m_cableLength/m_nbDrawnElements;
-        double max = GetTension(0).Length();
-        for (int i=1; i<m_nbDrawnElements; i++){
-            auto LocalTension = GetTension(i*ds).Length();
-            if (LocalTension > max) max = LocalTension;
+        if (m_breakingTension>0){
+            m_maxTension = m_breakingTension;
         }
-        m_maxTension = 1.25*max;
+        else{
+            double ds = m_cableLength/m_nbDrawnElements;
+            double max = GetTension(0).Length();
+            for (int i=1; i<m_nbDrawnElements; i++){
+                auto LocalTension = GetTension(i*ds).Length();
+                if (LocalTension > max) max = LocalTension;
+            }
+            m_maxTension = 1.25*max;
+        }
     }
 
 

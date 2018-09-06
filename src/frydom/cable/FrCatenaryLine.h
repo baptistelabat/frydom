@@ -48,10 +48,15 @@ namespace frydom {
         unsigned int m_itermax = 100;
         double m_relax           = 0.1;
 
+        //-------------------------------------
+        // Asset parameters
         bool m_drawCableElements = true;
         int m_nbDrawnElements = 21;
         std::vector<std::shared_ptr<chrono::ChLineShape>> m_cableElements;
         double m_maxTension = 0;
+        double m_breakingTension = 0;
+        //-------------------------------------
+
 
     public:
 
@@ -176,10 +181,14 @@ namespace frydom {
         }
 
         ////////////////////////////////////////////////
-        // Visu
+        // Asset management methods
         ////////////////////////////////////////////////
         void SetAssetNbElements(int NbElements) {m_nbDrawnElements = NbElements;}
         int GetAssetNbElements(){return m_nbDrawnElements;}
+
+        void SetBreakingTension(double tension) {m_breakingTension = tension;}
+        double GetBreakingTension() { return m_breakingTension;}
+
         void InitRangeTensionColor();
 
         /// Update the assets (position of the discretized cable for the visualization)
