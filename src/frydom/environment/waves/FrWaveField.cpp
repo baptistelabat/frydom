@@ -16,6 +16,18 @@ namespace frydom {
         return waveProbe;
     }
 
+    void FrLinearWaveField::AddWaveProbe(std::shared_ptr<FrLinearWaveProbe> waveProbe) {
+        waveProbe->SetWaveField(this);
+        m_waveProbes.push_back(waveProbe);
+    }
+
+    std::shared_ptr<FrLinearWaveProbe> FrLinearWaveField::NewWaveProbe() {
+        auto waveProbe = std::make_shared<FrLinearWaveProbe>();
+        waveProbe->SetWaveField(this);
+        m_waveProbes.push_back(waveProbe);
+        return waveProbe;
+    }
+
     std::shared_ptr<FrLinearFlowSensor> FrLinearWaveField::NewFlowSensor(double x, double y, double z) {
         auto flowSensor = std::make_shared<FrLinearFlowSensor>(this, x, y, z);
         m_flowSensor.push_back(flowSensor);

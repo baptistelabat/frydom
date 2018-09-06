@@ -20,8 +20,12 @@
 #include "FrRadiationForce.h"
 #include "FrTryalForce.h"
 #include "FrVelocityRecorder.h"
+#include "FrPositionRecorder.h"
 #include "FrRadiationModel.h"
 #include "FrHydroMapper.h"
 #include "FrWaveDriftForce.h"
+#include "FrManoeuvringDamping.h"
+#include "FrSteadyPitchTorque.h"
+#include "FrSteadyHeaveForce.h"
 
 #endif //FRYDOM_FRHYDRODYNAMICS_H

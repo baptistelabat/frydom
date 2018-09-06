@@ -40,6 +40,14 @@ namespace frydom {
 
         std::shared_ptr<FrRadiationModel> GetRadiationModel() const { return m_radiationModel; }
 
+        void SetLogPrefix(std::string prefix_name) override {
+            if (prefix_name=="") {
+                m_logPrefix = "Frad_" + FrForce::m_logPrefix;
+            } else {
+                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+            }
+        }
+
     };
 
 
@@ -61,6 +69,7 @@ namespace frydom {
             m_radiationModel->Initialize();
         }
 
+
         void UpdateState() override {
             // TODO: appeler le Update du RadiationModel
             m_radiationModel->Update(ChTime);  // TODO: verifier que le ChTime est le bon temps courant !!
@@ -77,6 +86,7 @@ namespace frydom {
             // moment in local
 //            force = m_radiationModel->GetRadiationForce(hydroBody);
 //            moment = m_radiationModel->GetRadiationMoment(hydroBody);
+
         }
 
 

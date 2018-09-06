@@ -13,6 +13,7 @@
 #include "frydom/core/FrForce.h"
 #include "hermes/hermes.h"
 #include "frydom/mesh/FrTriangleMeshConnected.h"
+#include "frydom/core/FrEulerAngles.h"
 
 namespace frydom {
 
@@ -28,12 +29,23 @@ namespace frydom {
         std::shared_ptr<FrTriangleMeshConnected> m_visu_mesh;
         hermes::Message m_bodyMsg;
 
+        // ##CC : fix pour logger les angles de rotation via hermes
+        // TODO : ameliorer hermes pour permettre le log de variable non définis en attributs
+        chrono::ChVector<double> m_angles_rotation;
+        // ##CC
+
     public:
 
 //        FrBody() : m_bodyMsg("Body_msg", "Message for a body") {}
 
         std::shared_ptr<FrBody> GetSharedPtr() {
             return shared_from_this();
+        }
+
+        void SetAbsPos(const chrono::ChVector<double>& REFabsPos) {
+            auto frame = chrono::ChFrame<double>();
+            frame.SetPos(REFabsPos);
+            SetFrame_REF_to_abs(frame);
         }
 
         /// Get the body absolute position (this of its reference point)
@@ -69,9 +81,11 @@ namespace frydom {
         void AddNode(std::shared_ptr<FrNode> node);
         // TODO: implementer aussi les removeMarker etc...
 
-
         std::shared_ptr<FrNode> CreateNode();
         std::shared_ptr<FrNode> CreateNode(const chrono::ChVector<double> relpos);
+
+        std::shared_ptr<FrBody> CreateNodeDynamic();
+        std::shared_ptr<FrBody> CreateNodeDynamic(const chrono::ChVector<double> relpos);
 
         /// Set the position of the COG with respect to the body's reference frame (in local coordinates)
         void SetCOG(const chrono::ChVector<double>& COGRelPos) {
@@ -100,25 +114,6 @@ namespace frydom {
         virtual void Initialize() override {
             // TODO: mettre l'initialisation de message dans une methode privee qu'on appelle ici...
 
-            // Initializing message
-            m_bodyMsg.SetNameAndDescription(
-                    fmt::format("Body_{}", GetUUID()),
-                    "Message of a body"
-            );
-
-            m_bodyMsg.AddCSVSerializer();
-            m_bodyMsg.AddPrintSerializer();
-
-            // Adding fields
-            m_bodyMsg.AddField<double>("x", "m", "x position of the body reference frame origin", &coord.pos.x());
-            m_bodyMsg.AddField<double>("y", "m", "y position of the body reference frame origin", &coord.pos.y());
-            m_bodyMsg.AddField<double>("z", "m", "z position of the body reference frame origin", &coord.pos.z());
-
-
-            m_bodyMsg.Initialize();
-            m_bodyMsg.Send();
-
-
             // Initializing forces
             for (int iforce=0; iforce<forcelist.size(); iforce++) {
                 auto force = dynamic_cast<FrForce*>(forcelist[iforce].get());
@@ -126,11 +121,62 @@ namespace frydom {
                     force->Initialize();
                 }
             }
+            InitializeLog();
+        }
+
+        virtual void InitializeLog() {
+
+            // Initializing message
+            if (m_bodyMsg.GetName() == "") {
+                m_bodyMsg.SetNameAndDescription(
+                    fmt::format("Body_{}", GetUUID()),
+                    "Message of a body");
+            }
+
+
+            m_bodyMsg.AddCSVSerializer();
+            //m_bodyMsg.AddPrintSerializer();
+
+            // Adding fields
+            m_bodyMsg.AddField<double>("time", "s", "Current time of the simulation", &ChTime);
+            m_bodyMsg.AddField<double>("x", "m", "x position of the body reference frame origin", &coord.pos.x());
+            m_bodyMsg.AddField<double>("y", "m", "y position of the body reference frame origin", &coord.pos.y());
+            m_bodyMsg.AddField<double>("z", "m", "z position of the body reference frame origin", &coord.pos.z());
+
+            m_bodyMsg.AddField<double>("rx","rad","euler angle along the x-direction (body ref frame)", &m_angles_rotation.x());
+            m_bodyMsg.AddField<double>("ry","rad","euler angle along the y-direction (body ref frame)", &m_angles_rotation.y());
+            m_bodyMsg.AddField<double>("rz","rad","euler angle along the z-direction (body ref frame)", &m_angles_rotation.z());
+
+            for (auto force: forcelist) {
+                auto dforce = dynamic_cast<FrForce*>(force.get());
+                m_bodyMsg.AddField<hermes::Message>("force","-","external force on a body",dforce->GetLog());
+            }
+
+            m_bodyMsg.Initialize();
+            m_bodyMsg.Send();
 
 
         }
 
+        /// Return the object message of the body
+        hermes::Message& Log() { return m_bodyMsg; }
+
+        virtual void UpdateLog() {
+            m_bodyMsg.Serialize();
+            m_bodyMsg.Send();
+        }
+
         virtual void StepFinalize() override {
+
+            m_angles_rotation = quat_to_euler(GetRot());    // FIXME : ceci est un fixe pour permettre de logger l'angle de rotation
+
+            for (auto& iforce: forcelist) {
+                auto force = dynamic_cast<FrForce*>(iforce.get());
+                if (force) {
+                    force->StepFinalize();
+                }
+            }
+
             m_bodyMsg.Serialize();
             m_bodyMsg.Send();
 

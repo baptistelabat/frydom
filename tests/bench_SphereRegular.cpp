@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
     auto sphere = std::make_shared<FrShip>();
     sphere->SetName("sphere");
     sphere->SetHydroMesh("sphere.obj", true);
-
+    sphere->SetEquilibriumFrame(BodyFixed, chrono::ChVector<>());
     sphere->SetInertiaXX(chrono::ChVector<double>(1.690e6, 1.690e6, 2.606e6));
     sphere->SetMass(2.618e5);
     sphere->SetCOG(chrono::ChVector<double>(0., 0., -2.));
@@ -148,7 +148,7 @@ int main(int argc, char* argv[]) {
     system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
 
     double time;
-    double dt = 0.02;
+    double dt = 0.005;
 
     std::vector<double> heave;
     std::vector<double> vtime;

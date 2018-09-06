@@ -31,9 +31,13 @@ set(FRYDOM_TESTS
         test_sphere_irregular
         test_MorisonModel
         test_CompositeMorisonModel
+        test_dynamic_wave_probe
+        test_waveProbe
+        test_IRF_ForwardSpeed
         test_unrolling_cable
         test_unrolling_catenary_line
         test_current-wind_relative_velocity
+        bench_DTMB5512_captive
         test_current_standard_force
         test_wind_standard_force
         test_visu_catenary
@@ -72,7 +76,7 @@ configure_file(data/PolarCurrentCoeffs.yml . COPYONLY)
 
 file(COPY data/Full.yml  DESTINATION .)
 
-configure_file(data/DeepSea_Stavanger/WaveDriftCoeff_100_2.h5 . COPYONLY)
+configure_file(data/DeepSea_Stavanger/DeepSea_WaveDriftCoeff.h5 . COPYONLY)
 configure_file(data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
 configure_file(data/DeepSea_Stavanger/DeepSeaStavanger.hdb5 . COPYONLY)
 configure_file(data/DeepSea_Stavanger/PolarCurrentCoeffs_NC.yml . COPYONLY)
@@ -83,6 +87,16 @@ configure_file(data/bench_sphere_decay_interp.h5 . COPYONLY)
 configure_file(data/bench_sphere_regular.h5 . COPYONLY)
 configure_file(data/sphere.obj . COPYONLY)
 configure_file(data/sphere_hdb.h5 . COPYONLY)
+
+configure_file(data/Ship/Ship.h5 . COPYONLY)
+configure_file(data/Ship/Ship.obj . COPYONLY)
+configure_file(data/Ship/Ship_PolarCurrentCoeffs.yml . COPYONLY)
+configure_file(data/Ship/Ship_PolarWindCoeffs.yml . COPYONLY)
+configure_file(data/Ship/Ship_WaveDriftCoeff.h5 . COPYONLY)
+
+configure_file(data/DTMB5512/DTMB5512.obj . COPYONLY)
+configure_file(data/DTMB5512/DTMB5512_hdb.h5 . COPYONLY)
+configure_file(data/DTMB5512/DTMB5512_WaveDriftCoeff.h5 . COPYONLY)
 
 configure_file(data/Test_hub/Barge.obj . COPYONLY)
 configure_file(data/Test_hub/BaseCrane.obj . COPYONLY)

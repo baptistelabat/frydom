@@ -15,6 +15,8 @@ set(SRC_FILES
         FrShip.cpp
         FrKinematicJoint.cpp
         FrMotor.cpp
+        FrSpringDampingForce.cpp
+        FrNodeDynamic.cpp
 )
 
 set(FRYDOM_CORE_SOURCES "")

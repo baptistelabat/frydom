@@ -120,6 +120,7 @@ namespace frydom {
         std::vector<std::vector<Eigen::MatrixXd>> m_AddedMass;
         std::vector<std::vector<Eigen::MatrixXd>> m_RadiationDamping;
         std::vector<std::vector<Eigen::MatrixXd>> m_ImpulseResponseFunction;
+        std::vector<std::vector<Eigen::MatrixXd>> m_SpeedDependentIRF;
 
         std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
@@ -168,6 +169,13 @@ namespace frydom {
 
         std::vector<double> GetFrequencies() const;
 
+        std::vector<std::vector<double>>
+        GetEncounterFrequencies(std::vector<double> waveFrequencies,
+                                std::vector<double> waveDirections,
+                                std::vector<double> waveNumbers,
+                                chrono::ChVector<double> frame_velocity,
+                                ANGLE_UNIT angleUnit);
+
         unsigned int GetNbWaveDirections() const;
 
         std::vector<double> GetWaveDirections() const;
@@ -194,6 +202,11 @@ namespace frydom {
         std::vector<Eigen::MatrixXcd>
         GetExcitationInterp(std::vector<double> waveFrequencies, std::vector<double> waveDirections, ANGLE_UNIT angleUnit=DEG);
 
+        std::vector<Eigen::MatrixXcd>
+        GetExcitationInterp(std::vector<double> waveFrequencies, std::vector<double> waveDirection,
+                            std::vector<double> waveNumbers, chrono::ChVector<double> frame_velocity,
+                            ANGLE_UNIT angleUnit=DEG);
+
         void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
 
         void SetFroudeKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix);
@@ -207,6 +220,8 @@ namespace frydom {
         void SetRadiationDamping(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CA);
 
         void SetImpulseResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
+
+        void SetSpeedDependentIRF(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd& IRF);
 
         // FIXME: les GetDiffraction etc ne doivent pas specialement etre accessible en dehors des interpolations...
         // On utilisera donc plutot GetExcitation(omega, angles) ...
@@ -253,7 +268,15 @@ namespace frydom {
 
         Eigen::VectorXd GetSelfImpulseResponseFunction(unsigned int idof, unsigned int iforce) const;
 
+        std::vector<Eigen::MatrixXd> GetSpeedDependentIRF(unsigned int ibody) const;
+
+        Eigen::MatrixXd GetSpeedDependentIRF(unsigned int ibody, unsigned int idof) const;
+
+        Eigen::VectorXd GetSpeedDependentIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+
         void GenerateImpulseResponseFunctions();
+
+        void GenerateSpeedDependentIRF();
 
         virtual void IntLoadResidual_Mv(const unsigned int off,
                                         chrono::ChVectorDynamic<>& R,

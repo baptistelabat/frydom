@@ -16,11 +16,13 @@ set(SRC_FILES
         FrTryalForce.cpp
         FrWaveDriftForce.cpp
         FrVelocityRecorder.cpp
+        FrPositionRecorder.cpp
         FrRadiationModel.cpp
         FrHydroMapper.cpp
         FrHydroDBLoader.cpp
         FrVariablesBEMBodyMass.cpp
         FrMorisonModel.cpp
+        FrManoeuvringDamping.cpp
 )
 
 set(FRYDOM_HYDRODYNAMICS_SOURCES "")

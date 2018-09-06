@@ -110,6 +110,8 @@ namespace frydom {
 
         void GenerateImpulseResponseFunctions(double tf = 30., double dt = 0.);
 
+        void GenerateSpeedDependentIRF();
+
         std::shared_ptr<FrHydroMapper> GetMapper();
 
         void IntLoadResidual_Mv(const unsigned int off, chrono::ChVectorDynamic<>& Res,

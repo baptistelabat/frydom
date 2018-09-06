@@ -7,6 +7,7 @@
 
 #include "frydom/core/FrConstants.h"
 #include "chrono/physics/ChForce.h"
+#include "hermes/hermes.h"
 
 #include "FrObject.h"
 
@@ -29,7 +30,9 @@ namespace frydom {
 //        chrono::ChBody* Body;
 //        chrono::ChVector<> force = chrono::VNULL;
         chrono::ChVector<> moment = chrono::VNULL;
+        hermes::Message m_log;
 
+        std::string m_logPrefix = "";           //TODO : à definir dans hermes
 
     public:
 
@@ -60,9 +63,24 @@ namespace frydom {
         /// Return the moment of the force
         virtual chrono::ChVector<> GetTorque() const { return moment; }
 
-        virtual void Initialize() override {}
+        virtual void Initialize() override {
+            InitializeLogs();
+        }
 
-        virtual void StepFinalize() override {}
+        virtual void StepFinalize() override {
+            UpdateLogs();
+        }
+
+        /// Initialization of the log message
+        virtual void InitializeLogs();
+
+        /// Update of the log message
+        virtual void UpdateLogs();
+
+        hermes::Message* GetLog() { return &m_log; }
+
+        /// Definition of the log messsage name
+        virtual void SetLogPrefix(std::string prefix_name = "") { m_logPrefix = prefix_name; };
 
     };
 

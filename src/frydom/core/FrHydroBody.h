@@ -6,6 +6,7 @@
 #define FRYDOM_FRHYDROBODY_H
 
 #include <chrono/physics/ChLinkMate.h>
+//#include <frydom/environment/waves/FrDynamicWaveProbe.h>
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "FrBody.h"
 #include "FrConstants.h"
@@ -22,6 +23,15 @@ namespace chrono {
 
 namespace frydom {
 
+    enum FrEquilibriumFrameType {
+        DampingSpring,
+        MeanMotion,
+        SteadyVelocity,
+        PrescribedMotion,
+        WorldFixed,
+        BodyFixed
+    };
+
     class FrHydroBodyProperties {
 
     private:
@@ -29,7 +39,7 @@ namespace frydom {
         double m_lateralUnderWaterArea = 0.;                ///< lateral under water area of the body
         double m_transverseAboveWaterArea = 0.;             ///< transverse above water area of the body
         double m_lateralAboveWaterArea = 0.;                ///< lateral above water area of the body
-        double m_lengthBetwwenPerpendicular = 0.;           ///< length between perpendicular
+        double m_lengthBetweenPerpendicular = 0.;           ///< length between perpendicular
         double m_wetted_surface = 0.;                       ///< wetted surface area of the body
 
     public:
@@ -58,10 +68,10 @@ namespace frydom {
         void SetLateralAboveWaterArea(const double area) { m_lateralAboveWaterArea = area; }
 
         /// Get the length between perpendicular of the body
-        double GetLpp() const { return m_lengthBetwwenPerpendicular; }
+        double GetLpp() const { return m_lengthBetweenPerpendicular; }
 
         /// Set the length between perpendiculare of the body
-        void SetLpp(const double lpp) { m_lengthBetwwenPerpendicular = lpp; }
+        void SetLpp(const double lpp) { m_lengthBetweenPerpendicular = lpp; }
 
         /// Get the wetted surface of the body
         double GetWettedSurface() const { return m_wetted_surface; }
@@ -76,7 +86,6 @@ namespace frydom {
     protected:
 
         std::shared_ptr<FrTriangleMeshConnected> m_hydro_mesh;
-        chrono::ChFrame<double> m_equilibriumFrame;
 
         std::unique_ptr<FrHydroBodyProperties> m_properties;
 
@@ -85,6 +94,7 @@ namespace frydom {
         // Attributes to let the body into the horizontal plane
         bool is3DOF = false;
         std::shared_ptr<chrono::ChLinkMatePlane> constraint3DOF;
+        std::shared_ptr<chrono::ChLinkMateGeneric> m_constraint;
 
         chrono::ChVector<> m_current_relative_velocity = chrono::VNULL;
         double m_current_relative_angle = 0.;
@@ -98,6 +108,9 @@ namespace frydom {
                                             // several interacting bodies. For no interactions, it could be an easy
                                             // way to take forward speed into account concerning the wave excitation...
                                             // TODO: use it...
+
+        std::shared_ptr<chrono::ChFrameMoving<double>> m_equilibriumFrame;           ///< Hydrodynamic equilibrium frame where dynamic motion equation is solved
+//        FrDynamicWaveProbe m_dynamicFrame;
 
     public:
 
@@ -120,6 +133,7 @@ namespace frydom {
         void Set3DOF_OFF();
         void Set3DOF_ON(chrono::ChVector<> dir);
         void Set3DOF_ON(chrono::ChVector<> dir, chrono::ChVector<> pos1, chrono::ChVector<> pos2);
+        void SetDOF(bool mc_x, bool mc_y, bool mc_z, bool mc_rx, bool mc_ry, bool mc_rz);
 
 
         /// Set the hydrodynamic mesh from a mesh shared instance
@@ -184,6 +198,16 @@ namespace frydom {
             }
         }
 
+        /// Get the pertubation linear velocity of the body in equilibrium frame
+        chrono::ChVector<> GetLinearVelocityPert() const {
+            return GetVelocity() - GetSteadyVelocity();
+        }
+
+        /// Get the perturbation angular velocity of the body in equilibrium frame
+        chrono::ChVector<> GetAngularVelocityPert() const {
+            return GetAngularVelocity();
+        }
+
         /// Get the heading angle defined as the angle between the x axis of the
         /// absolute frame and the x axis of the body
         double GetHeadingAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) const {
@@ -240,22 +264,46 @@ namespace frydom {
         void SetNEDHeading(const chrono::ChVector<>& unit_vector);
 
 
-        void SetEquilibriumFrame(const chrono::ChFrame<double>& eqFrame) {
+        // Equilibrium Frame
+
+        /// Dynamic equilibrium frame corresponding to a mass-spring system with damping
+        void SetEquilibriumFrame(const FrEquilibriumFrameType frame, const double T0, const double psi);
+
+        /// Equilibrium frame with position equal to the mean motion of the body
+        void SetEquilibriumFrame(const FrEquilibriumFrameType frame, const double val);
+
+        /// Equilibrium frame with fixed position
+        void SetEquilibriumFrame(const FrEquilibriumFrameType frame, const chrono::ChVector<> vect);
+
+        void SetEquilibriumFrame(const std::shared_ptr<chrono::ChFrameMoving<double>>& eqFrame) {
             m_equilibriumFrame = eqFrame;
         }
 
         void SetEquilibriumFrame(const chrono::ChVector<double>& eqPos,
                                  const chrono::ChQuaternion<double>& eqQuat) {
-            chrono::ChFrame<double> eqFrame;
-            eqFrame.SetPos(eqPos);
-            eqFrame.SetRot(eqQuat);
+            std::shared_ptr<chrono::ChFrameMoving<double>> eqFrame;
+            eqFrame->SetPos(eqPos);
+            eqFrame->SetRot(eqQuat);
 
             SetEquilibriumFrame(eqFrame);
         }
 
-        void SetCurrentRefFrameAsEquilibrium();
+        template <class T>
+        std::shared_ptr<T> GetEquilibriumFrame() const {
+            return dynamic_cast<std::shared_ptr<T>>(m_equilibriumFrame);
+        }
 
-        chrono::ChFrame<double> GetEquilibriumFrame() const;
+        std::shared_ptr<chrono::ChFrameMoving<double>> GetEquilibriumFrame() const {
+            return m_equilibriumFrame;
+        }
+
+        //void SetCurrentRefFrameAsEquilibrium();
+
+        /// Define the constant velocity of the equilibrium frame (in local coord)
+        void SetSteadyVelocity(chrono::ChVector<> velocity);
+
+        /// Get the steady velocity corresponding to the velocity of the equilibrium frame (in local coord)
+        chrono::ChVector<double> GetSteadyVelocity() const;
 
 
         // TODO: introduire une classe geometricProperties qui rassemble les differentes donnees...

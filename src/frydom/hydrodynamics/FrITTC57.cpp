@@ -51,8 +51,6 @@ namespace frydom{
 
         auto force_verif = Body->TransformDirectionParentToLocal(force);
 
-
-        std::cout << "Time: " << ChTime << "\tvel: " << ux << std::endl;
     }
 
 }  // end namespace frydom

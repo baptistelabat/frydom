@@ -8,7 +8,7 @@ set(WAVES_FILES_LOCAL
         FrWaveSpectrum.cpp
         FrFlowSensor.cpp
         FrKinematicStretching.cpp
-)
+        )
 
 set(WAVES_FILES "")
 foreach(file ${WAVES_FILES_LOCAL})

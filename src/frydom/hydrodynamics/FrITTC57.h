@@ -43,9 +43,15 @@ namespace frydom {
         void SetHullFrontalProjectedArea(double myAx) { Ax = myAx; }
         double GetHullFrontalProjectedArea() { return Ax; }
 
-
         void UpdateState() override;
 
+        void SetLogPrefix(std::string prefix_name) override {
+            if (prefix_name=="") {
+                m_logPrefix = "Fittc57_" + FrForce::m_logPrefix;
+            } else {
+                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+            }
+        }
 
     };
 

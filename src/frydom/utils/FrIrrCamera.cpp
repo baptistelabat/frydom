@@ -123,7 +123,7 @@ namespace frydom {
                         MousePos.Y = event.MouseInput.Y / (f32)ssize.Height;
                         break;
                     case EMIE_MOUSE_WHEEL:
-                        currentZoom -= event.MouseInput.Wheel * zoomSpeed;  //***ALEX
+                        currentZoom -= event.MouseInput.Wheel * zoomSpeed;
 
                         if (currentZoom <= targetMinDistance)
                             atMinDistance = true;

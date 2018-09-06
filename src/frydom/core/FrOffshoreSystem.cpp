@@ -180,6 +180,7 @@ namespace frydom {
 				body->StepFinalize();//TODO this line does not work, check why
             }
         }
+
 	}
 
 	void FrOffshoreSystem::IntLoadResidual_Mv(const unsigned int off,

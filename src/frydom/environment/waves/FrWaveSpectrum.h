@@ -327,6 +327,8 @@ namespace frydom {
 
     };
 
+
+
     // =================================================================================================================
 
     class FrPiersonMoskowitzWaveSpectrum : public FrWaveSpectrum {
@@ -354,7 +356,6 @@ namespace frydom {
 
 
     std::unique_ptr<FrWaveSpectrum> MakeWaveSpectrum(WAVE_SPECTRUM_TYPE type);
-
 
 
 }  // end namespace frydom

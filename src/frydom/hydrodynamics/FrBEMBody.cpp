@@ -137,6 +137,14 @@ namespace frydom {
         m_ImpulseResponseFunction[ibody][idof] = IRF;
     }
 
+    void FrBEMBody::SetSpeedDependentIRF(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd &IRF) {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(IRF.rows() == GetNbForceMode());
+        assert(IRF.cols() == m_HDB->GetNbTimeSamples());
+        m_SpeedDependentIRF[ibody][idof] = IRF;
+    }
+
     Eigen::MatrixXcd FrBEMBody::GetDiffraction(const unsigned int iangle) const {
         assert(iangle < m_HDB->GetNbWaveDirections());
         return m_Diffraction[iangle];
@@ -257,6 +265,24 @@ namespace frydom {
         assert(idof < GetNbMotionMode());
         assert(iforce < GetNbForceMode());
         return GetAddedMass(m_ID, idof, iforce);
+    }
+
+    std::vector<Eigen::MatrixXd> FrBEMBody::GetSpeedDependentIRF(unsigned int ibody) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        return m_SpeedDependentIRF[ibody];
+    }
+
+    Eigen::MatrixXd FrBEMBody::GetSpeedDependentIRF(unsigned int ibody, unsigned int idof) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        return m_SpeedDependentIRF[ibody][idof];
+    }
+
+    Eigen::VectorXd FrBEMBody::GetSpeedDependentIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(iforce < GetNbForceMode());
+        return m_SpeedDependentIRF[ibody][idof].row(iforce);
     }
 
     void FrBEMBody::FilterRadiation() {
@@ -398,9 +424,109 @@ namespace frydom {
 
     }
 
+    std::vector<std::vector<double>>
+    FrBEMBody::GetEncounterFrequencies(std::vector<double> waveFrequencies,
+                                       std::vector<double> waveDirections,
+                                       std::vector<double> waveNumbers,
+                                       chrono::ChVector<double> frame_velocity,
+                                       ANGLE_UNIT angleUnit) {
+
+        std::vector<std::vector<double>> waveEncounterFrequencies;
+        std::vector<double> waveEncounterFrequencies_freq;
+
+
+        auto nbFreq = waveFrequencies.size();
+        auto nbDir = waveDirections.size();
+
+        // Velocity component in wave direction
+        auto angle = Normalize_0_2PI(atan2(frame_velocity.y(), frame_velocity.x()));
+        auto norm_speed = frame_velocity.Length();
+
+        std::vector<double> velocity;
+        velocity.reserve(nbDir);
+        for (unsigned int idir=0; idir<nbDir; ++idir) {
+            velocity.push_back(norm_speed * cos(waveDirections[idir]*DEG2RAD - angle));
+        }
+
+        // Encounter frequencies
+
+        waveEncounterFrequencies.reserve(nbDir);
+        for (unsigned int idir=0; idir<nbDir; idir++) {
+            waveEncounterFrequencies_freq.clear();
+            waveEncounterFrequencies_freq.reserve(nbFreq);
+            for (unsigned int ifreq=0; ifreq<nbFreq; ifreq++) {
+                waveEncounterFrequencies_freq.push_back(waveFrequencies[ifreq] - waveNumbers[ifreq] * velocity[idir]);
+            }
+            waveEncounterFrequencies.push_back(waveEncounterFrequencies_freq);
+        }
+
+        return waveEncounterFrequencies;
+    }
+
+    std::vector<Eigen::MatrixXcd>
+    FrBEMBody::GetExcitationInterp(std::vector<double> waveFrequencies,
+                                   std::vector<double> waveDirections,
+                                   std::vector<double> waveNumbers,
+                                   chrono::ChVector<double> frame_velocity,
+                                   ANGLE_UNIT angleUnit) {
+
+        auto nbFreqInterp = waveFrequencies.size();
+        auto nbFreqBDD = GetNbFrequencies();
+        auto nbDirInterp = waveDirections.size();
+        auto nbForceMode = GetNbForceMode();
+
+        std::vector<Eigen::MatrixXcd> Fexc;
+        Fexc.reserve(nbDirInterp);
+
+        // Building the database wave frequency vector as a shared vector
+        auto freqsBDD = std::make_shared<std::vector<double>>();
+        freqsBDD->reserve(nbFreqBDD);
+        auto omega = GetFrequencies();
+        for (unsigned int ifreq=0; ifreq<nbFreqBDD; ++ifreq) {
+            freqsBDD->push_back(omega[ifreq]);
+        }
+
+        // shared vector to hold database frequency coefficients
+        auto freqCoeffs = std::make_shared<std::vector<std::complex<double>>>();
+        freqCoeffs->reserve(nbFreqBDD);
+
+        auto waveEncounterFrequencies = GetEncounterFrequencies(waveFrequencies,
+                                        waveDirections, waveNumbers, frame_velocity,
+                                        angleUnit);
+
+
+        double direction;
+        for (unsigned int idir=0; idir<nbDirInterp; idir++) {
+
+            direction = waveDirections[idir];
+
+            auto FexcDir = Eigen::MatrixXcd(nbForceMode, nbFreqInterp);
+            for (unsigned int imode=0; imode<nbForceMode; ++imode) {
+
+                // Building a frequency interpolator for mode imode and requested wave direction
+                freqCoeffs->clear();
+                for (unsigned int ifreq=0; ifreq<nbFreqBDD; ++ifreq) {
+                    freqCoeffs->push_back(m_waveDirInterpolators[imode][ifreq](direction));
+                }
+                auto freqInterpolator = Interp1dLinear<double, std::complex<double>>();
+                freqInterpolator.Initialize(freqsBDD, freqCoeffs); // TODO: ajouter une methode clear() afin de ne pas instancier l'interpolateur a chaque iteration (sortir l'instanciation des boucles...)
+
+                auto freqCoeffsInterp = freqInterpolator(waveEncounterFrequencies[idir]); // TODO: sortir l'instanciation des boucles...
+
+                for (unsigned int ifreq=0; ifreq<nbFreqInterp; ++ifreq) {
+                    FexcDir(imode, ifreq) = freqCoeffsInterp[ifreq];
+                }
+
+            }
+            Fexc.push_back(FexcDir);
+
+        }
+
+        return Fexc;
+
+    }
+
     void FrBEMBody::GenerateImpulseResponseFunctions() {
-
-
 
         // Frequencies
         auto wmin = m_HDB->GetMinFrequency();
@@ -418,7 +544,6 @@ namespace frydom {
                                              "initialized in the hydrodynamic database");
         }
 
-
 //        auto dt = p_dt;
 //        if (dt == 0.) {
 //            // Ensuring a time sample satisfying largely the shannon theorem (5x by security...)
@@ -426,8 +551,6 @@ namespace frydom {
 //        }
 
         auto time = arange<double>(0, tf, dt);
-
-
 
         auto nbTime = time.size();
 
@@ -476,16 +599,149 @@ namespace frydom {
                         localIRF(iForce, iTime) = Trapz(integrand, dw);
                     }
                 }
-
                 localIRF /= MU_PI_2;
                 body_i_impulseResponseFunctions.push_back(localIRF);
-
             }
-
             m_ImpulseResponseFunction.push_back(body_i_impulseResponseFunctions);
-
         }  // Loop on bodies
 
+
+        // ##CC : write impulse response function into output file
+        /**
+        std::string filename = "ImpulseResponseFunction.dat";
+        std::fstream myfile;
+        myfile.open(filename, std::ios::ate | std::ios::app);
+
+        myfile << "#time";
+        for (unsigned int iMotion=0; iMotion<nbMotion; iMotion++) {
+            for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                myfile << ";K" << std::to_string(iMotion) << std::to_string(iForce);
+            }
+        }
+        myfile << std::endl;
+
+        for (unsigned int itime=0; itime<nbTime; itime++) {
+            myfile << time[itime];
+            for (unsigned int iMotion=0; iMotion<nbMotion; iMotion++) {
+                for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                    myfile << ";" << m_ImpulseResponseFunction[0][iMotion](iForce,itime);
+                }
+            }
+            myfile << std::endl;
+        }
+        myfile.close();
+        **/
+        // ##CC
+
+    }
+
+    void FrBEMBody::GenerateSpeedDependentIRF() {
+
+        auto wmin = m_HDB->GetMinFrequency();
+        auto wmax = m_HDB->GetMaxFrequency();
+        auto nbFreq = m_HDB->GetNbFrequencies();
+        auto omega = m_HDB->GetFrequencies();
+        auto dw = m_HDB->GetStepFrequency();
+
+        auto tf = m_HDB->GetFinalTime();
+        auto dt = m_HDB->GetTimeStep();
+
+        if (std::abs(dt) < DBL_EPSILON) {
+            throw std::runtime_error("Time discretization for impulse response functions has not been "
+                                             "initialized in the hydrodynamic database");
+        }
+
+        auto time = arange<double>(0, tf, dt);
+
+        auto nbTime = time.size();
+
+        m_SpeedDependentIRF.clear();
+        m_SpeedDependentIRF.swap(m_SpeedDependentIRF);
+        m_SpeedDependentIRF.reserve(m_HDB->GetNbBodies());
+
+        unsigned int nbMotion, nbForce;
+        std::vector<double> integrand;
+        integrand.reserve(nbFreq);
+        double val;
+
+        for (unsigned int iBody=0; iBody < m_HDB->GetNbBodies(); iBody++) {
+
+            nbMotion = m_HDB->GetBody(iBody)->GetNbMotionMode();
+            nbForce = m_HDB->GetBody(iBody)->GetNbForceMode();
+
+            std::vector<Eigen::MatrixXd> body_i_IRF;
+            body_i_IRF.reserve(nbMotion);
+
+            // iMotion : 0 -> 3
+            Eigen::MatrixXd localIRF(nbForce, nbTime);
+            localIRF.setZero();
+            for (unsigned int iMotion=0; iMotion<4; iMotion++) {
+                body_i_IRF.push_back(localIRF);
+            }
+
+            // iMotion : 4
+            for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                double Ainf = m_InfiniteAddedMass[iBody](2,iForce);
+                auto kernel = m_AddedMass[iBody][2].row(iForce);
+                for (unsigned int iTime=0; iTime<nbTime; iTime++) {
+                    integrand.clear();
+                    for (unsigned int iFreq=0; iFreq<nbFreq; iFreq++) {
+                        val = (kernel[iFreq] - Ainf) * cos(omega[iFreq] * time[iTime]);
+                        integrand.push_back(val);
+                    }
+                    localIRF(iForce, iTime) = Trapz(integrand, dw);
+                }
+            }
+            localIRF /= MU_PI_2;
+            body_i_IRF.push_back(localIRF);
+
+            localIRF.setZero();
+
+            //iMotion : 5
+            for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                double Ainf = m_InfiniteAddedMass[iBody](1,iForce);
+                auto kernel = m_AddedMass[iBody][1].row(iForce);
+                for (unsigned int iTime=0; iTime<nbTime; iTime++) {
+                    integrand.clear();
+                    for (unsigned int iFreq=0; iFreq<nbFreq; iFreq++) {
+                        val = (Ainf - kernel[iFreq]) * cos(omega[iFreq] * time[iTime]);
+                        integrand.push_back(val);
+                    }
+                    localIRF(iForce, iTime) = Trapz(integrand, dw);
+                }
+            }
+            localIRF /= MU_PI_2;
+            body_i_IRF.push_back(localIRF);
+
+            m_SpeedDependentIRF.push_back(body_i_IRF);
+        }
+
+        // ##CC : write impulse response function into output file
+        /**
+        std::string filename = "SpeedDependentIRF.dat";
+        std::fstream myfile;
+        myfile.open(filename, std::ios::ate | std::ios::app);
+
+        myfile << "#time";
+        for (unsigned int iMotion=0; iMotion<nbMotion; iMotion++) {
+            for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                myfile << ";Ku" << std::to_string(iMotion) << std::to_string(iForce);
+            }
+        }
+        myfile << std::endl;
+
+        for (unsigned int itime=0; itime<nbTime; itime++) {
+            myfile << time[itime];
+            for (unsigned int iMotion=0; iMotion<nbMotion; iMotion++) {
+                for (unsigned int iForce=0; iForce<nbForce; iForce++) {
+                    myfile << ";" << m_SpeedDependentIRF[0][iMotion](iForce,itime);
+                }
+            }
+            myfile << std::endl;
+        }
+        myfile.close();
+        **/
+        // ##CC
     }
 
     void FrBEMBody::IntLoadResidual_Mv(const unsigned int off,
