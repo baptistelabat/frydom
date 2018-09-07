@@ -311,7 +311,7 @@ int main(int argc, char* argv[]) {
     rotmotor_crane->Initialize(base_crane, barge, ChFrame<>(ChVector<>(-7.5, 0., 2.)));
     system.Add(rotmotor_crane);
 
-    auto rw_crane = std::make_shared<ChFunction_Const>(RPM2RADS(0.25));
+    auto rw_crane = std::make_shared<ChFunction_Const>(RPM2RADS(0.5));
     rotmotor_crane->SetSpeedFunction(rw_crane);
 
     // Crane base - Crane arm

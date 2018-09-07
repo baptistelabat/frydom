@@ -44,8 +44,6 @@ set(FRYDOM_TESTS
         test_pendulum
         test_pendulum_catenary
         test_motors
-        test_hub_installation
-        PoC_hub_installation
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")
@@ -62,6 +60,9 @@ foreach(test ${FRYDOM_TESTS})
     target_link_libraries(${test} FRyDoM_Engine matplotlib-cpp)
 
 endforeach()
+
+
+add_subdirectory(hub_installation)
 
 # Adding resource files
 configure_file(data/frydom_logo.png . COPYONLY)
@@ -97,9 +98,3 @@ configure_file(data/Ship/Ship_WaveDriftCoeff.h5 . COPYONLY)
 configure_file(data/DTMB5512/DTMB5512.obj . COPYONLY)
 configure_file(data/DTMB5512/DTMB5512_hdb.h5 . COPYONLY)
 configure_file(data/DTMB5512/DTMB5512_WaveDriftCoeff.h5 . COPYONLY)
-
-configure_file(data/Test_hub/Barge.obj . COPYONLY)
-configure_file(data/Test_hub/BaseCrane.obj . COPYONLY)
-configure_file(data/Test_hub/arm_crane.obj . COPYONLY)
-configure_file(data/Test_hub/HubBox.obj . COPYONLY)
-configure_file(data/Test_hub/Barge_frydom.hdb5 . COPYONLY)
