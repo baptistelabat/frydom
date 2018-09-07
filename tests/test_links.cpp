@@ -49,7 +49,7 @@ int main() {
     auto turet = std::make_shared<FrBox>(10, 10, 5, turet_mass, false, true);
     system.AddBody(turet);
 
-    turet->SetPos(chrono::ChVector<double>(-40, 0, 15));
+    turet->SetPos(chrono::ChVector<double>(-40, 0, 10));
 
 
     // On recupere des noeuds frydom
@@ -57,11 +57,36 @@ int main() {
     auto turetNode = turet->CreateNode(0, 0, -2.5);
 
 
-    auto motor = make_motorRotationSpeed(platformNode, turetNode);
+    // Link in rotational angle
+    auto motor = make_motorRotationAngle(platformNode, turetNode);
     system.AddLink(motor);
 
-    double w = convert_frequency(3., RPM, RADS);
-    motor->SetConstantSpeed(w);
+    motor->SetAngleOrder(270*DEG2RAD, MU_RPM2RADS * 1);
+
+
+
+
+    // Link in rotational speed
+//    auto motor = make_motorRotationSpeed(platformNode, turetNode);
+//    system.AddLink(motor);
+//    double w = convert_frequency(3., RPM, RADS);
+//    motor->SetConstantSpeed(w);
+
+
+//    // Essai d'un PID
+//    auto motor = make_motorControlledRotation(platformNode, turetNode);
+//    system.AddLink(motor);
+//
+//    // Set the controller
+//    motor->SetKp(0.01);
+//    motor->SetKi(1.7);
+//    motor->SetKd(2);
+//
+//
+//    motor->SetAngleOrder(90);
+
+
+
 
 
     // colis box
@@ -81,7 +106,7 @@ int main() {
 
 
     //
-    system.SetSolverType(chrono::ChSolver::Type::BARZILAIBORWEIN);
+//    system.SetSolverType(chrono::ChSolver::Type::BARZILAIBORWEIN);
 
     system.SetMinBounceSpeed(10.);
     system.SetMaxPenetrationRecoverySpeed(0.1);
