@@ -81,6 +81,7 @@ std::shared_ptr<FrHydroBody> make_barge(FrOffshoreSystem& system){
     barge->SetMass(1137.6-180.6); // 1137.576e3 pour l'ensemble
     barge->SetMass(1137.6); // 1137.576e3 pour l'ensemble
     barge->SetCOG(chrono::ChVector<double>(0, 0, 0));
+    barge->SetEquilibriumFrame(WorldFixed,chrono::ChVector<>(0,0,0));
 //    barge->Set3DOF_ON();
 
     // ====================================================================================
@@ -112,7 +113,7 @@ std::shared_ptr<FrHydroBody> make_barge(FrOffshoreSystem& system){
     // Radiation model
     auto radModel = std::make_shared<FrRadiationConvolutionModel>(system.GetHydroDB(hydroMapIndex), &system);
     radModel->SetHydroMapIndex(hydroMapIndex);
-//    radModel->AddRadiationForceToHydroBody(barge);
+    radModel->AddRadiationForceToHydroBody(barge);
 
     // Wave Probe
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();

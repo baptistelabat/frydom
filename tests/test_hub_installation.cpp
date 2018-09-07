@@ -34,9 +34,12 @@ int main(int argc, char* argv[]) {
     freeSurface->UpdateAssetON(); // Comment if you don't want the free surface asset to be updated during the visualisation
 
     auto linearWaveField = freeSurface->GetLinearWaveField();
-    linearWaveField->SetRegularWaveHeight(1.);
-    linearWaveField->SetRegularWavePeriod(3.14);
+    linearWaveField->SetRegularWaveHeight(0.75);
+    linearWaveField->SetRegularWavePeriod(6);
     linearWaveField->SetMeanWaveDirection(180);
+
+    system.GetEnvironment()->GetCurrent()->Set(WEST, 1.5, NED, COMEFROM, KNOT);
+    system.GetEnvironment()->GetWind()->Set(WEST, 10., NED, COMEFROM, KNOT);
 
     // --------------------------------------------------
     // Barge model
@@ -54,9 +57,13 @@ int main(int argc, char* argv[]) {
     barge->SetInertiaXX(chrono::ChVector<double>(2.465e7,1.149e7,1.388e07));
     barge->SetInertiaXY(chrono::ChVector<double>(0, 0, 0));
     barge->SetMass(1137.6-180.6); // 1137.576e3 pour l'ensemble
-    barge->SetMass(1137.6); // 1137.576e3 pour l'ensemble
+    //barge->SetMass(1137.6); // 1137.576e3 pour l'ensemble
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
     barge->SetCOG(chrono::ChVector<double>(0, 0, 0)); // TODO: Caler avec Camille
+    barge->SetEquilibriumFrame(WorldFixed,chrono::ChVector<>(0,0,0));
+
+    auto ColorAsset_Yellow = std::make_shared<ChColorAsset>(ChColor(0.6f, 0.6f, 0.0f));
+    barge->AddAsset(ColorAsset_Yellow);
 
     // ====================================================================================
     // Adding forces to the platform
@@ -103,11 +110,14 @@ int main(int argc, char* argv[]) {
     // Crane model
     // --------------------------------------------------
 
+    auto ColorAsset_Red = std::make_shared<ChColorAsset>(ChColor(1.f, 0.f, 0.0f));
+
     auto base_crane = std::make_shared<FrBody>();
     base_crane->SetName("Base_crane");
     base_crane->SetVisuMesh("BaseCrane.obj");
     base_crane->SetPos(chrono::ChVector<double>(-7.5, 0, 1.15));
     base_crane->SetMass(140e3);
+    base_crane->AddAsset(ColorAsset_Red);
     system.AddBody(base_crane);
     //base_crane->SetBodyFixed(true);
 
@@ -117,6 +127,7 @@ int main(int argc, char* argv[]) {
     arm_crane->SetPos(chrono::ChVector<double>(-5.5, 0, 2.5));
     arm_crane->SetRot(Q_from_AngAxis(-3*CH_C_PI_4/2, VECT_Y));
     arm_crane->SetMass(20e3);
+    arm_crane->AddAsset(ColorAsset_Red);
     system.AddBody(arm_crane);
     //arm_crane->SetBodyFixed(true);
 
@@ -138,15 +149,16 @@ int main(int argc, char* argv[]) {
     auto A5_hub = hub_box->CreateNode(ChVector<double>(0., 0., 0.));
 
     // Line properties
-    double Lu = 33.7;
+    double Lu = 33.6596;
     auto u = chrono::ChVector<double>(0, 0, -1);
     double q = 600;
-    double EA = 5e7;
+    double EA = 5e8;
     double A = 0.05;
     double E = EA / A;
-    double breakTensionAsset = 100000;
+    double breakTensionAsset = 500000;
 
     auto Catenary = std::make_shared<FrCatenaryLine>(A3_tige, A4_hub, true, E, A, Lu, q, u);
+    Catenary->SetBreakingTension(breakTensionAsset);
     Catenary->Initialize();
     system.AddLink(Catenary);
 
@@ -166,14 +178,13 @@ int main(int argc, char* argv[]) {
     // Mooring Lines
     // ---------------------------------------------
 
-    auto ColorAsset = std::make_shared<ChColorAsset>(ChColor(1.f, 0.f, 0.0f));
 
     auto buoy1 = std::make_shared<FrMooringBuoy>(0.75, 1e2, true, 1e3);
     buoy1->SetName("Buoy1");
     buoy1->SetPos(ChVector<>(-50, -25., 0));
     buoy1->SetCOG(ChVector<>(0, 0, 0));
     //buoy1->SetBodyFixed(true);
-    buoy1->AddAsset(ColorAsset);
+    buoy1->AddAsset(ColorAsset_Red);
     system.AddBody(buoy1);
 
     auto buoy2 = std::make_shared<FrMooringBuoy>(0.75, 1e2, true, 1e3);
@@ -181,7 +192,7 @@ int main(int argc, char* argv[]) {
     buoy2->SetPos(ChVector<>(-50, 25., 0));
     buoy2->SetCOG(ChVector<>(0, 0, 0));
     //buoy2->SetBodyFixed(true);
-    buoy2->AddAsset(ColorAsset);
+    buoy2->AddAsset(ColorAsset_Red);
     system.AddBody(buoy2);
 
     auto buoy3 = std::make_shared<FrMooringBuoy>(0.75, 1e2, true, 1e3);
@@ -189,7 +200,7 @@ int main(int argc, char* argv[]) {
     buoy3->SetPos(ChVector<>(50, -25., 0));
     buoy3->SetCOG(ChVector<>(0, 0, 0));
     //buoy3->SetBodyFixed(true);
-    buoy3->AddAsset(ColorAsset);
+    buoy3->AddAsset(ColorAsset_Red);
     system.AddBody(buoy3);
 
     auto buoy4 = std::make_shared<FrMooringBuoy>(0.75, 1e2, true, 1e3);
@@ -197,7 +208,7 @@ int main(int argc, char* argv[]) {
     buoy4->SetPos(ChVector<>(50, 25., 0));
     buoy4->SetCOG(ChVector<>(0, 0, 0));
     //buoy4->SetBodyFixed(true);
-    buoy4->AddAsset(ColorAsset);
+    buoy4->AddAsset(ColorAsset_Red);
     system.AddBody(buoy4);
 
     /// Mooring lines length
@@ -207,7 +218,7 @@ int main(int argc, char* argv[]) {
     A = 0.025;
     E = EA / A;
     double Lv = 42.5;
-    breakTensionAsset = 5000;
+    breakTensionAsset = 50000;
 
     auto B1 = barge->CreateNode(ChVector<double>(-12.5, -5, 0.));
     auto B2 = barge->CreateNode(ChVector<double>(-12.5, 5, 0.));
@@ -234,14 +245,14 @@ int main(int argc, char* argv[]) {
     auto MooringLine3b = std::make_shared<FrCatenaryLine>(BB3, WB3, true, E, A, Lu, q, u);
     auto MooringLine4b = std::make_shared<FrCatenaryLine>(BB4, WB4, true, E, A, Lu, q, u);
 
-    MooringLine1->SetBreakingTension(breakTensionAsset);
-    MooringLine2->SetBreakingTension(breakTensionAsset);
-    MooringLine3->SetBreakingTension(breakTensionAsset);
-    MooringLine4->SetBreakingTension(breakTensionAsset);
-    MooringLine1b->SetBreakingTension(breakTensionAsset);
-    MooringLine2b->SetBreakingTension(breakTensionAsset);
-    MooringLine3b->SetBreakingTension(breakTensionAsset);
-    MooringLine4b->SetBreakingTension(breakTensionAsset);
+//    MooringLine1->SetBreakingTension(breakTensionAsset);
+//    MooringLine2->SetBreakingTension(breakTensionAsset);
+//    MooringLine3->SetBreakingTension(breakTensionAsset);
+//    MooringLine4->SetBreakingTension(breakTensionAsset);
+//    MooringLine1b->SetBreakingTension(breakTensionAsset);
+//    MooringLine2b->SetBreakingTension(breakTensionAsset);
+//    MooringLine3b->SetBreakingTension(breakTensionAsset);
+//    MooringLine4b->SetBreakingTension(breakTensionAsset);
 
     MooringLine1->Initialize();
     MooringLine2->Initialize();
@@ -276,21 +287,21 @@ int main(int argc, char* argv[]) {
 
 
     auto Export = system.GetWorldBody()->CreateNode(ChVector<double>(0, 150, -30.));
-    auto DynamicLine = std::make_shared<FrDynamicCable>();
-    DynamicLine->SetStartingNode(Export);
-    DynamicLine->SetEndingNode(A5_hub);
-    DynamicLine->SetCableLength(Lu);
-    DynamicLine->SetNumberOfElements(20);
-    DynamicLine->SetLinearDensity(20);
-    DynamicLine->SetSectionArea(A);
-    DynamicLine->SetYoungModulus(E);
-    DynamicLine->SetRayleighDamping(0.01);
-    DynamicLine->Initialize();
-    system.Add(DynamicLine);
+//    auto DynamicLine = std::make_shared<FrDynamicCable>();
+//    DynamicLine->SetStartingNode(Export);
+//    DynamicLine->SetEndingNode(A5_hub);
+//    DynamicLine->SetCableLength(Lu);
+//    DynamicLine->SetNumberOfElements(20);
+//    DynamicLine->SetLinearDensity(20);
+//    DynamicLine->SetSectionArea(A);
+//    DynamicLine->SetYoungModulus(E);
+//    DynamicLine->SetRayleighDamping(0.01);
+//    DynamicLine->Initialize();
+//    system.Add(DynamicLine);
 
-//    auto ExportLine = std::make_shared<FrCatenaryLine>(Export, A5_hub, true, E, A, Lu, q, u);
-//    ExportLine->Initialize();
-//    system.AddLink(ExportLine);
+    auto ExportLine = std::make_shared<FrCatenaryLine>(Export, A5_hub, true, E, A, Lu, q, u);
+    ExportLine->Initialize();
+    system.AddLink(ExportLine);
 
     // ----------------------------------------------
     // Motors
@@ -299,7 +310,8 @@ int main(int argc, char* argv[]) {
     auto rotmotor_crane = std::make_shared<ChLinkMotorRotationSpeed>();
     rotmotor_crane->Initialize(base_crane, barge, ChFrame<>(ChVector<>(-7.5, 0., 2.)));
     system.Add(rotmotor_crane);
-    auto rw_crane = std::make_shared<ChFunction_Const>(0.2);
+
+    auto rw_crane = std::make_shared<ChFunction_Const>(RPM2RADS(0.25));
     rotmotor_crane->SetSpeedFunction(rw_crane);
 
     // Crane base - Crane arm
@@ -332,15 +344,14 @@ int main(int argc, char* argv[]) {
     // Simulation
     // -----------------------------------------------
 
-    double dt = 0.015;
+    double dt = 0.01;
 
     system.SetStep(dt);
     system.Initialize();
     system.SetupInitial();
 
-
     auto app = FrIrrApp(system, 75);
     //app.SetShowInfos(true);
-    app.SetVideoframeSave(false);
-    app.Run();
+    app.SetVideoframeSave(true);
+    app.Run(false,false,6000);
 }

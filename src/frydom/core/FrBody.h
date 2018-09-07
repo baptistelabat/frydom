@@ -181,7 +181,7 @@ namespace frydom {
             m_bodyMsg.Send();
 
             //auto myfile = std::fopen("a_Velocity","a+");
-            fmt::print("Velx = {}, Vely = {}, Velz = {}\n",GetPos_dt().x(),GetPos_dt().y(),GetPos_dt().z());
+            //fmt::print("Velx = {}, Vely = {}, Velz = {}\n",GetPos_dt().x(),GetPos_dt().y(),GetPos_dt().z());
             //std::fclose(myfile);
         }
 
