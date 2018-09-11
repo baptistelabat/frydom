@@ -147,6 +147,9 @@ namespace frydom {
             m_bodyMsg.AddField<double>("ry","rad","euler angle along the y-direction (body ref frame)", &m_angles_rotation.y());
             m_bodyMsg.AddField<double>("rz","rad","euler angle along the z-direction (body ref frame)", &m_angles_rotation.z());
 
+            m_bodyMsg.AddField<double>("Vz", "m", "z velocity of the body reference frame origin", &GetPos_dt().z());
+
+
             for (auto force: forcelist) {
                 auto dforce = dynamic_cast<FrForce*>(force.get());
                 m_bodyMsg.AddField<hermes::Message>("force","-","external force on a body",dforce->GetLog());
