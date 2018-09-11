@@ -54,11 +54,11 @@ namespace frydom {
         int m_nbR = 50;
         int m_nbTheta = 36;
 
-        /// Private method in charge of the building of the free surface mesh as a rectangular grid.
+        /// Private method in charge of the building of the seabed mesh as a rectangular grid.
         FrTriangleMeshConnected BuildRectangularMeshGrid(double xmin, double xmax, double dx,
                                                          double ymin, double ymax, double dy);
 
-        /// Private method in charge of the building of the free surface mesh as a polar grid.
+        /// Private method in charge of the building of the seabed mesh as a polar grid.
         FrTriangleMeshConnected BuildPolarMeshGrid(double xc0, double yc0, // center
                                                    double diameter,
                                                    unsigned int nbR, unsigned int nbTheta);
@@ -72,7 +72,7 @@ namespace frydom {
         void SetDepth(double depth) {m_depth = depth;}
         double GetDepth() {return m_depth;}
 
-        /// get the body that represents the free surface
+        /// get the body that represents the seabed
         std::shared_ptr<FrBody> GetBody();
 
         void UpdateAssetON() { m_updateAsset = true; }
@@ -83,7 +83,7 @@ namespace frydom {
             m_gridType = gridType;
         }
 
-        /// Initializes the free surface system
+        /// Initializes the seabed system
         /// In any case, a mesh grid is used.
         /// this version concerns a rectangular grid
         void SetGrid(double xmin,
@@ -94,7 +94,7 @@ namespace frydom {
                      double dy
         );
 
-        /// Initializes the free surface system
+        /// Initializes the seabed system
         /// In any case, a mesh grid is used.
         /// this version concerns a square grid
         void SetGrid(double lmin,
@@ -110,7 +110,7 @@ namespace frydom {
         );
 
 
-        /// Update the state of the free surface
+        /// Update the state of the seabed
         void Update(double time) {}
 
         void Initialize() override;
