@@ -11,61 +11,38 @@ namespace frydom {
     class FrQuadraticDamping : public FrForce {
 
     private:
-        chrono::ChVector<double> m_translationalDampings = chrono::VNULL;
-        chrono::ChVector<double> m_rotationalDampings = chrono::VNULL;
+        double m_Cu = 0;
+        double m_Cv = 0;
+        double m_Cw = 0;
 
-        chrono::ChVector<double> m_projectedSection = chrono::VNULL;
+        double m_Su = 0;
+        double m_Sv = 0;
+        double m_Sw = 0;
+
+        bool m_relativeVelocity = true;
 
     public:
 
         FrQuadraticDamping() {};
 
-        void SetManeuveuringDampings(const chrono::ChVector<double>& dampings) {
-            m_translationalDampings.x() = dampings.x();
-            m_translationalDampings.y() = dampings.y();
-            m_rotationalDampings.z() = dampings.z();
+        void SetDampingCoefficients(double Cu, double Cv, double Cw) {
+            m_Cu = Cu;
+            m_Cv = Cv;
+            m_Cw = Cw;
         }
 
-        void SetManeuveuringDampings(double Bx, double By, double Byaw) {
-            SetManeuveuringDampings(chrono::ChVector<double>(Bx, By, Byaw));
+        void SetProjectedSections(double Su, double Sv,double Sw) {
+            m_Su = Su;
+            m_Sv = Sv;
+            m_Sw = Sw;
         }
 
-        void SetSeakeepingDampings(const chrono::ChVector<double>& dampings) {
-            m_translationalDampings.z() = dampings.x();
-            m_rotationalDampings.x() = dampings.y();
-            m_rotationalDampings.y() = dampings.z();
+        chrono::ChVector<double> GetProjectedSections(){
+            return chrono::ChVector<double>(m_Su,m_Sv,m_Sw);
         }
 
-        void SetSeakeepingDampings(double Bz, double Broll, double Bpitch) {
-            SetSeakeepingDampings(chrono::ChVector<double>(Bz, Broll, Bpitch));
-        }
-
-        void SetTranslationalDampings(const chrono::ChVector<double>& dampings) {
-            m_translationalDampings = dampings;
-        }
-
-        void SetTranslationalDampings(double Bx, double By, double Bz) {
-            SetTranslationalDampings(chrono::ChVector<double>(Bx, By, Bz));
-        }
-
-        void SetRotationalDampings(const chrono::ChVector<double>& dampings) {
-            m_rotationalDampings = dampings;
-        }
-
-        void SetRotationalDampings(double Broll, double Bpitch, double Byaw) {
-            SetRotationalDampings(chrono::ChVector<double>(Broll, Bpitch, Byaw));
-        }
-
-        void SetProjectedSection(const chrono::ChVector<double>& section) {
-            m_projectedSection = section;
-        }
-
-        void SetProjectedSection(double Sx, double Sy, double Sz) {
-            SetProjectedSection(chrono::ChVector<double>(Sx,Sy,Sz));
-        }
-
-        chrono::ChVector<double> GetProjectedSection() {
-            return m_projectedSection;
+        chrono::ChVector<double> GetDampingCoefficients(){
+            return chrono::ChVector<double>(m_Cu,m_Cv,m_Cw);
         }
 
         void Initialize() override;
