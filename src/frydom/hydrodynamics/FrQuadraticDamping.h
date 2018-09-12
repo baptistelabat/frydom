@@ -26,7 +26,7 @@ namespace frydom {
         double m_Su = 0;
         double m_Sv = 0;
         double m_Sw = 0;
-        /// Specify if the body velocity is taken relatively to the current on or not.
+        /// Specify if the body velocity is taken relatively to the current or not.
         bool m_relativeVelocity = true;
 
     public:

@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
     // -------------------------
     auto hydroDampings = std::make_shared<FrLinearDamping>();
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
-    hydroDampings->SetManeuveuringDampings(chrono::ChVector<double>(1e7, 1e7, 1e8)); // A caler manuellement pour stabiliser...
+    hydroDampings->SetDiagonalDamping(1e7, 1e7, 0, 0, 0, 1e8); // A caler manuellement pour stabiliser...
     platform->AddForce(hydroDampings);
 
     // Second order wave drift

@@ -13,6 +13,9 @@ namespace frydom {
         // pour appliquer l'amortissement !! Sinon, on est over-damped !!!!
         // FIXME : a changer absolument et voir le modele de force de courant pour le calcul de la vitesse relative
 
+        auto generalizedVelocity = 
+
+
         // Absolute linear velocity
         auto linear_vel = Body->GetPos_dt();
         auto angularVelocity = Body->GetWvel_par();

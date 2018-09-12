@@ -6,6 +6,7 @@
 #define FRYDOM_FRLINEARDAMPING_H
 
 
+#include "frydom/utils/FrEigen.h"
 #include "frydom/core/FrForce.h"
 
 namespace frydom {
@@ -13,60 +14,57 @@ namespace frydom {
     class FrLinearDamping : public FrForce {
 
     private:
-//        chrono::ChVector<double> m_maneuveuringDampings = chrono::VNULL;
-//        chrono::ChVector<double> m_seakeepingDampings = chrono::VNULL;
-        chrono::ChVector<double> m_translationalDampings = chrono::VNULL;
-        chrono::ChVector<double> m_rotationalDampings = chrono::VNULL;
+        Eigen::MatrixXd m_dampings;
     public:
 
         FrLinearDamping() {};
 
-//        FrLinearDamping(const double Dx, const double Dy, const double Dwz) : m_Dx(Dx), m_Dy(Dy), m_Dwz(Dwz){};
-
-        void SetManeuveuringDampings(const chrono::ChVector<double>& dampings) {
-            //m_maneuveuringDampings = dampings;
-            m_translationalDampings.x() = dampings.x();
-            m_translationalDampings.y() = dampings.y();
-            m_rotationalDampings.z() = dampings.z();
+        void SetDampingMatrix(Eigen::MatrixXd dampingMatrix) {
+            m_dampings = dampingMatrix;
         }
 
-        void SetManeuveuringDampings(double Bx, double By, double Byaw) {
-            SetManeuveuringDampings(chrono::ChVector<double>(Bx, By, Byaw));
+        void SetDiagonalDamping(double Du, double Dv, double Dw, double Dp, double Dq, double Dr){
+            SetDiagonalTranslationDamping(Du, Dv, Dw);
+            SetDiagonalRotationDamping(Dp, Dq, Dr);
         }
 
-        void SetSeakeepingDampings(const chrono::ChVector<double>& dampings) {
-//            m_seakeepingDampings = dampings;
-            m_translationalDampings.z() = dampings.x();
-            m_rotationalDampings.x() = dampings.y();
-            m_rotationalDampings.y() = dampings.z();
+        void SetDiagonalTranslationDamping(double Du, double Dv, double Dw) {
+            m_dampings(0,0) = Du;
+            m_dampings(1,1) = Dv;
+            m_dampings(2,2) = Dw;
+        }
+        void SetDiagonalRotationDamping(double Dp, double Dq, double Dr) {
+            m_dampings(3,3) = Dp;
+            m_dampings(4,4) = Dq;
+            m_dampings(5,5) = Dr;
         }
 
-        void SetSeakeepingDampings(double Bz, double Broll, double Bpitch) {
-            SetSeakeepingDampings(chrono::ChVector<double>(Bz, Broll, Bpitch));
+        void SetNonDiagonalDamping(int row, int column, double Dnd) {
+            assert(row!=column);
+            assert(row<6);
+            assert(column<6);
+            m_dampings(row,column) = Dnd;
         }
 
-        void SetTranslationalDampings(const chrono::ChVector<double>& dampings) {
-            m_translationalDampings = dampings;
-//            m_maneuveuringDampings.x() = dampings.x();
-//            m_maneuveuringDampings.y() = dampings.y();
-//            m_seakeepingDampings.x() = dampings.z();
+        void SetNonDiagonalRowDamping(int row,const double Dnd[5]){
+            assert(row<6);
+            int j=0;
+            for (int i=1;i<6;i++) {
+                if (i==row) continue;
+                m_dampings(row,j) = Dnd[i];
+                j++;
+            }
         }
 
-        void SetTranslationalDampings(double Bx, double By, double Bz) {
-            SetTranslationalDampings(chrono::ChVector<double>(Bx, By, Bz));
+        void SetNonDiagonalColumnDamping(int column,const double Dnd[5]){
+            assert(column<6);
+            int j=0;
+            for (int i=1;i<6;i++) {
+                if (i==column) continue;
+                m_dampings(j,column) = Dnd[i];
+                j++;
+            }
         }
-
-        void SetRotationalDampings(const chrono::ChVector<double>& dampings) {
-            m_rotationalDampings = dampings;
-//            m_maneuveuringDampings.z() = dampings.z();
-//            m_seakeepingDampings.y() = dampings.x();
-//            m_seakeepingDampings.z() = dampings.y();
-        }
-
-        void SetRotationalDampings(double Broll, double Bpitch, double Byaw) {
-            SetRotationalDampings(chrono::ChVector<double>(Broll, Bpitch, Byaw));
-        }
-
 
         void SetLogPrefix(std::string prefix_name) override {
             if (prefix_name=="") {

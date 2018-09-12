@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 
     // Adding a linear damping
     auto lin_damping_force_tug = std::make_shared<FrLinearDamping>();
-    lin_damping_force_tug->SetManeuveuringDampings(1e7, 1e7, 1e8);
+    lin_damping_force_tug->SetDiagonalDamping(1e7, 1e7, 0, 0, 0, 1e8);
     tug->AddForce(lin_damping_force_tug);
 
     auto current_force_ship= std::make_shared<FrCurrentForce>(filename);
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 
     // Adding a linear damping
     auto lin_damping_force_ship = std::make_shared<FrLinearDamping>();
-    lin_damping_force_ship->SetManeuveuringDampings(1e7, 1e7, 1e8);
+    lin_damping_force_ship->SetDiagonalDamping(1e7, 1e7, 0, 0, 0, 1e8);
     ship->AddForce(lin_damping_force_ship);
 
     // Adding a propulsion force to the ship
