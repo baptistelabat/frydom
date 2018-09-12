@@ -39,14 +39,14 @@ int main(int argc, char* argv[]) {
     auto breakTensionAsset = 100000;
 
 
-    auto WB1 = system.GetWorldBody()->CreateNode(ChVector<double>(0, -10, -20.));
-    auto WB2 = system.GetWorldBody()->CreateNode(ChVector<double>(0, 10, -20.));
+    auto WB1 = system.GetWorldBody()->CreateNode(ChVector<double>(30, -10, 10.));
+    auto WB2 = system.GetWorldBody()->CreateNode(ChVector<double>(30, 10, 10.));
     auto DynamicLine = std::make_shared<FrDynamicCable>();
     DynamicLine->SetStartingNode(WB1);
     DynamicLine->SetEndingNode(WB2);
     DynamicLine->SetCableLength(Lu);
     DynamicLine->SetNumberOfElements(20);
-    DynamicLine->SetLinearDensity(20);
+    DynamicLine->SetLinearDensity(q);
     DynamicLine->SetSectionArea(A);
     DynamicLine->SetYoungModulus(E);
     DynamicLine->SetRayleighDamping(0.01);

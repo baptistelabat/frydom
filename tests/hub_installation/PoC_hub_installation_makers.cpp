@@ -55,11 +55,11 @@ void run_simulation(FrOffshoreSystem& system) {
     // Simulation
     // -----------------------------------------------
 
-    double dt = 0.01;
+    double dt = 0.001;
 
     system.SetStep(dt);
     system.Initialize();
-//    system.SetupInitial();
+    system.SetupInitial();
 
     auto app = FrIrrApp(system, 75);
     //app.SetShowInfos(true);
@@ -109,7 +109,7 @@ std::shared_ptr<FrHydroBody> make_barge(FrOffshoreSystem& system){
     HsDamping->SetSeakeepingDampings(1e6,1e10,1e10);
     HsDamping->SetManeuveuringDampings(1e6,1e6,1e10);
     HsDamping->SetName("linear damping");
-    barge->AddForce(HsDamping);
+//    barge->AddForce(HsDamping);
 
     // Hydrodynamics
     system.SetHydroDB("Barge_frydom.hdb5");
@@ -119,7 +119,7 @@ std::shared_ptr<FrHydroBody> make_barge(FrOffshoreSystem& system){
     // Radiation model
     auto radModel = std::make_shared<FrRadiationConvolutionModel>(system.GetHydroDB(hydroMapIndex), &system);
     radModel->SetHydroMapIndex(hydroMapIndex);
-//    radModel->AddRadiationForceToHydroBody(barge);
+    radModel->AddRadiationForceToHydroBody(barge);
 
     // Wave Probe
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
