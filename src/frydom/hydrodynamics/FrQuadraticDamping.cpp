@@ -13,21 +13,21 @@ namespace frydom {
 
 
     void FrQuadraticDamping::UpdateState() {
-
-        // Absolute linear velocity
+        /// Body linear velocity expressed in local (body) frame, relatively or not to the current velocity.
         chrono::ChVector<double> linear_vel;
         if (m_relativeVelocity)
             linear_vel = dynamic_cast<FrHydroBody*>(Body)->GetCurrentRelativeVelocity(NWU,LOCAL);
         else
             linear_vel = Body->TransformDirectionParentToLocal(Body->GetPos_dt());
-
+        /// for each component :
         force.x() = m_Su * m_Cu * linear_vel.x() * abs(linear_vel.x());
         force.y() = m_Sv * m_Cv * linear_vel.y() * abs(linear_vel.y());
         force.z() = m_Sw * m_Cw * linear_vel.z() * abs(linear_vel.z());
-
+        /// All components are multiplied by constant : 1/2*rho
         auto rho = dynamic_cast<FrHydroBody*>(Body)->GetSystem()->GetEnvironment()->GetWaterDensity();
         force = -0.5*rho*force;
-
+        /// Resulting force is transformed back to global frame
+        force = Body->TransformDirectionLocalToParent(force);
     }
 
     void FrQuadraticDamping::Initialize() {
