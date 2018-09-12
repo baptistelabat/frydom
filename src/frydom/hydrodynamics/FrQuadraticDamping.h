@@ -1,30 +1,26 @@
 //
-// Created by frongere on 11/09/17.
+// Created by Lucas Letournel on 12/09/18.
 //
 
-#ifndef FRYDOM_FRLINEARDAMPING_H
-#define FRYDOM_FRLINEARDAMPING_H
-
-
+#ifndef FRYDOM_FRQUADRATICDAMPING_H
+#define FRYDOM_FRQUADRATICDAMPING_H
 #include "frydom/core/FrForce.h"
 
 namespace frydom {
 
-    class FrLinearDamping : public FrForce {
+    class FrQuadraticDamping : public FrForce {
 
     private:
-//        chrono::ChVector<double> m_maneuveuringDampings = chrono::VNULL;
-//        chrono::ChVector<double> m_seakeepingDampings = chrono::VNULL;
         chrono::ChVector<double> m_translationalDampings = chrono::VNULL;
         chrono::ChVector<double> m_rotationalDampings = chrono::VNULL;
+
+        chrono::ChVector<double> m_projectedSection = chrono::VNULL;
+
     public:
 
-        FrLinearDamping() {};
-
-//        FrLinearDamping(const double Dx, const double Dy, const double Dwz) : m_Dx(Dx), m_Dy(Dy), m_Dwz(Dwz){};
+        FrQuadraticDamping() {};
 
         void SetManeuveuringDampings(const chrono::ChVector<double>& dampings) {
-            //m_maneuveuringDampings = dampings;
             m_translationalDampings.x() = dampings.x();
             m_translationalDampings.y() = dampings.y();
             m_rotationalDampings.z() = dampings.z();
@@ -35,7 +31,6 @@ namespace frydom {
         }
 
         void SetSeakeepingDampings(const chrono::ChVector<double>& dampings) {
-//            m_seakeepingDampings = dampings;
             m_translationalDampings.z() = dampings.x();
             m_rotationalDampings.x() = dampings.y();
             m_rotationalDampings.y() = dampings.z();
@@ -47,9 +42,6 @@ namespace frydom {
 
         void SetTranslationalDampings(const chrono::ChVector<double>& dampings) {
             m_translationalDampings = dampings;
-//            m_maneuveuringDampings.x() = dampings.x();
-//            m_maneuveuringDampings.y() = dampings.y();
-//            m_seakeepingDampings.x() = dampings.z();
         }
 
         void SetTranslationalDampings(double Bx, double By, double Bz) {
@@ -58,19 +50,29 @@ namespace frydom {
 
         void SetRotationalDampings(const chrono::ChVector<double>& dampings) {
             m_rotationalDampings = dampings;
-//            m_maneuveuringDampings.z() = dampings.z();
-//            m_seakeepingDampings.y() = dampings.x();
-//            m_seakeepingDampings.z() = dampings.y();
         }
 
         void SetRotationalDampings(double Broll, double Bpitch, double Byaw) {
             SetRotationalDampings(chrono::ChVector<double>(Broll, Bpitch, Byaw));
         }
 
+        void SetProjectedSection(const chrono::ChVector<double>& section) {
+            m_projectedSection = section;
+        }
+
+        void SetProjectedSection(double Sx, double Sy, double Sz) {
+            SetProjectedSection(chrono::ChVector<double>(Sx,Sy,Sz));
+        }
+
+        chrono::ChVector<double> GetProjectedSection() {
+            return m_projectedSection;
+        }
+
+        void Initialize() override;
 
         void SetLogPrefix(std::string prefix_name) override {
             if (prefix_name=="") {
-                m_logPrefix = "FlinDamp_" + FrForce::m_logPrefix;
+                m_logPrefix = "FquadDamp_" + FrForce::m_logPrefix;
             } else {
                 m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
             }
@@ -82,4 +84,6 @@ namespace frydom {
 
 
 };  // end namespace frydom
-#endif //FRYDOM_FRLINEARDAMPING_H
+
+
+#endif //FRYDOM_FRQUADRATICDAMPING_H
