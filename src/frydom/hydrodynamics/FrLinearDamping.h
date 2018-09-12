@@ -14,9 +14,10 @@ namespace frydom {
     class FrLinearDamping : public FrForce {
 
     private:
-        chrono::ChVector<double> m_maneuveuringDampings = chrono::VNULL;
-        chrono::ChVector<double> m_seakeepingDampings = chrono::VNULL;
-
+//        chrono::ChVector<double> m_maneuveuringDampings = chrono::VNULL;
+//        chrono::ChVector<double> m_seakeepingDampings = chrono::VNULL;
+        chrono::ChVector<double> m_translationalDampings = chrono::VNULL;
+        chrono::ChVector<double> m_rotationalDampings = chrono::VNULL;
     public:
 
         FrLinearDamping() {};
@@ -24,7 +25,10 @@ namespace frydom {
 //        FrLinearDamping(const double Dx, const double Dy, const double Dwz) : m_Dx(Dx), m_Dy(Dy), m_Dwz(Dwz){};
 
         void SetManeuveuringDampings(const chrono::ChVector<double>& dampings) {
-            m_maneuveuringDampings = dampings;
+            //m_maneuveuringDampings = dampings;
+            m_translationalDampings.x() = dampings.x();
+            m_translationalDampings.y() = dampings.y();
+            m_rotationalDampings.z() = dampings.z();
         }
 
         void SetManeuveuringDampings(double Bx, double By, double Byaw) {
@@ -32,7 +36,10 @@ namespace frydom {
         }
 
         void SetSeakeepingDampings(const chrono::ChVector<double>& dampings) {
-            m_seakeepingDampings = dampings;
+//            m_seakeepingDampings = dampings;
+            m_translationalDampings.z() = dampings.x();
+            m_rotationalDampings.x() = dampings.y();
+            m_rotationalDampings.y() = dampings.z();
         }
 
         void SetSeakeepingDampings(double Bz, double Broll, double Bpitch) {
@@ -40,9 +47,10 @@ namespace frydom {
         }
 
         void SetTranslationalDampings(const chrono::ChVector<double>& dampings) {
-            m_maneuveuringDampings.x() = dampings.x();
-            m_maneuveuringDampings.y() = dampings.y();
-            m_seakeepingDampings.x() = dampings.z();
+            m_translationalDampings = dampings;
+//            m_maneuveuringDampings.x() = dampings.x();
+//            m_maneuveuringDampings.y() = dampings.y();
+//            m_seakeepingDampings.x() = dampings.z();
         }
 
         void SetTranslationalDampings(double Bx, double By, double Bz) {
@@ -50,9 +58,10 @@ namespace frydom {
         }
 
         void SetRotationalDampings(const chrono::ChVector<double>& dampings) {
-            m_maneuveuringDampings.z() = dampings.z();
-            m_seakeepingDampings.y() = dampings.x();
-            m_seakeepingDampings.z() = dampings.y();
+            m_rotationalDampings = dampings;
+//            m_maneuveuringDampings.z() = dampings.z();
+//            m_seakeepingDampings.y() = dampings.x();
+//            m_seakeepingDampings.z() = dampings.y();
         }
 
         void SetRotationalDampings(double Broll, double Bpitch, double Byaw) {

@@ -17,9 +17,9 @@ namespace frydom {
         auto linear_vel = Body->GetPos_dt();
         auto angularVelocity = Body->GetWvel_par();
 
-        force.x() = - m_maneuveuringDampings.x() * linear_vel.x();
-        force.y() = - m_maneuveuringDampings.y() * linear_vel.y();
-        force.z() = - m_seakeepingDampings.x() * linear_vel.z();
+        force.x() = - m_translationalDampings.x() * linear_vel.x();
+        force.y() = - m_translationalDampings.y() * linear_vel.y();
+        force.z() = - m_translationalDampings.z() * linear_vel.z();
 
 //        moment.x() = - m_seakeepingDampings.y() * angularVelocity.x();
 //        moment.y() = - m_seakeepingDampings.z() * angularVelocity.y();
