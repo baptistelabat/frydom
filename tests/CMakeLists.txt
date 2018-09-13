@@ -61,8 +61,8 @@ foreach(test ${FRYDOM_TESTS})
 
 endforeach()
 
-
 add_subdirectory(hub_installation)
+add_subdirectory(unit_tests)
 
 # Adding resource files
 configure_file(data/frydom_logo.png . COPYONLY)

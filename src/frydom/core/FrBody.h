@@ -28,6 +28,7 @@ namespace frydom {
         std::vector<std::shared_ptr<FrForce>> external_force_list;
         std::shared_ptr<FrTriangleMeshConnected> m_visu_mesh;
         hermes::Message m_bodyMsg;
+        bool is_log = true;
 
         // ##CC : fix pour logger les angles de rotation via hermes
         // TODO : ameliorer hermes pour permettre le log de variable non définis en attributs
@@ -36,7 +37,9 @@ namespace frydom {
 
     public:
 
-//        FrBody() : m_bodyMsg("Body_msg", "Message for a body") {}
+        FrBody() {
+            SetLogNameAndDescription("Body_msg", "Message for a body");
+        }
 
         std::shared_ptr<FrBody> GetSharedPtr() {
             return shared_from_this();
@@ -121,18 +124,31 @@ namespace frydom {
                     force->Initialize();
                 }
             }
-            InitializeLog();
+
+            if (is_log) {
+                InitializeLog();
+            }
         }
 
-        virtual void InitializeLog() {
+        /// Define the name and the description of the log message of the body
+        virtual void SetLogNameAndDescription(std::string name="ShipLog",
+                                              std::string description="Log of the body position and force at COG") {
+            m_bodyMsg.SetNameAndDescription(name, description);
+            is_log = true;
+        }
+
+        /// Deactivate the generation of log from the body
+        virtual void DeactivateLog() { is_log = false; }
+
+        /// Definition of the field to log
+        virtual void SetLogDefault() {
 
             // Initializing message
             if (m_bodyMsg.GetName() == "") {
                 m_bodyMsg.SetNameAndDescription(
-                    fmt::format("Body_{}", GetUUID()),
-                    "Message of a body");
+                        fmt::format("Body_{}", GetUUID()),
+                        "Message of a body");
             }
-
 
             m_bodyMsg.AddCSVSerializer();
             //m_bodyMsg.AddPrintSerializer();
@@ -143,22 +159,44 @@ namespace frydom {
             m_bodyMsg.AddField<double>("y", "m", "y position of the body reference frame origin", &coord.pos.y());
             m_bodyMsg.AddField<double>("z", "m", "z position of the body reference frame origin", &coord.pos.z());
 
-            m_bodyMsg.AddField<double>("rx","rad","euler angle along the x-direction (body ref frame)", &m_angles_rotation.x());
-            m_bodyMsg.AddField<double>("ry","rad","euler angle along the y-direction (body ref frame)", &m_angles_rotation.y());
-            m_bodyMsg.AddField<double>("rz","rad","euler angle along the z-direction (body ref frame)", &m_angles_rotation.z());
+            m_bodyMsg.AddField<double>("rx", "rad", "euler angle along the x-direction (body ref frame)",
+                                       &m_angles_rotation.x());
+            m_bodyMsg.AddField<double>("ry", "rad", "euler angle along the y-direction (body ref frame)",
+                                       &m_angles_rotation.y());
+            m_bodyMsg.AddField<double>("rz", "rad", "euler angle along the z-direction (body ref frame)",
+                                       &m_angles_rotation.z());
 
             m_bodyMsg.AddField<double>("Vz", "m", "z velocity of the body reference frame origin", &GetPos_dt().z());
 
+            m_bodyMsg.AddField<double>("Xbody_FX", "N", "force acting on the body at COG (in absolute reference frame)", &Xforce.x());
+            m_bodyMsg.AddField<double>("Xbody_FY", "N", "force acting on the body at COG (in absolute reference frame)", &Xforce.y());
+            m_bodyMsg.AddField<double>("Xbody_FZ", "N", "force acting on the body at COG (in absolute reference frame)", &Xforce.z());
 
-            for (auto force: forcelist) {
-                auto dforce = dynamic_cast<FrForce*>(force.get());
-                m_bodyMsg.AddField<hermes::Message>("force","-","external force on a body",dforce->GetLog());
-            }
+            m_bodyMsg.AddField<double>("Xbody_MX", "N.m", "moment acting on the body at COG (in body reference frame)", &Xtorque.x());
+            m_bodyMsg.AddField<double>("Xbody_MY", "N.m", "moment acting on the body at COG (in body reference frame)", &Xtorque.y());
+            m_bodyMsg.AddField<double>("Xbody_MZ", "N.m", "moment acting on the body at COG (in body reference frame)", &Xtorque.z());
 
+
+            //for (auto force: forcelist) {
+            //    auto dforce = dynamic_cast<FrForce *>(force.get());
+            //    m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
+            //}
+        }
+
+        virtual void AddMessageLog(std::shared_ptr<FrForce> dforce) {
+            m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
+            //dforce->DeactivateLog();
+        }
+
+        virtual void AddMessageLog(FrForce* dforce) {
+            m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
+            //dforce->DeactivateLog();
+        }
+
+        /// Initialize log file and serialize body field
+        virtual void InitializeLog() {
             m_bodyMsg.Initialize();
             m_bodyMsg.Send();
-
-
         }
 
         /// Return the object message of the body

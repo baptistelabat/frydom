@@ -175,7 +175,7 @@ std::shared_ptr<FrShip> Ship(FrOffshoreSystem* system) {
     // Additional damping
 
     auto lin_damping_force = std::make_shared<FrLinearDamping>();
-    lin_damping_force->SetManeuveuringDampings(1e7, 1e7, 1e8);
+    lin_damping_force->SetDiagonalDamping(1e7, 1e7, 0, 0, 0, 1e8);
     ship->AddForce(lin_damping_force);
 
     //auto lin_damping_force = std::make_shared<FrLinearDamping>();
