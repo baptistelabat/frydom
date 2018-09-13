@@ -108,9 +108,9 @@ int main(int argc, char* argv[]) {
     double A = 0.05;
     double E = EA/A;
 //    auto line = FrCatenaryLine(fairlead_tug, anchor, elastic, EA, Lu, q, u);
-    auto line = FrCatenaryLine(fairlead_tug, fairlead_ship, elastic, E, A, Lu, q, u);
-
-
+    auto line = std::make_shared<FrCatenaryLine>(fairlead_tug, fairlead_ship, elastic, E, A, Lu, q, u);
+    line->Initialize();
+    system.AddLink(line);
 
     system.Initialize();
     auto app = FrIrrApp(system, 300);
