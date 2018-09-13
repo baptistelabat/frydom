@@ -52,6 +52,10 @@ namespace frydom {
         chrono::ChVector<double> GetProjectedSections(){
             return chrono::ChVector<double>(m_Su,m_Sv,m_Sw);
         }
+        /// Setter for the boolean : m_relativeVelocity
+        void SetRelativeVelocity(bool relativeVelocity) {m_relativeVelocity = relativeVelocity;}
+        /// Getter for the boolean : m_relativeVelocity
+        bool GetRelativeVelocity() {return m_relativeVelocity;}
         /// Initialize method checking if projected sections are correctly given, and initializing the logs.
         void Initialize() override;
         /// Setter for the log prefix
@@ -62,7 +66,7 @@ namespace frydom {
                 m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
             }
         }
-
+        /// Update the state of the quadratic damping force (compute the force)
         void UpdateState() override;
 
     };
