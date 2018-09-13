@@ -58,6 +58,8 @@ foreach(test ${FRYDOM_TESTS})
 
 endforeach()
 
+add_subdirectory(unit_tests)
+
 # Adding resource files
 configure_file(data/frydom_logo.png . COPYONLY)
 configure_file(../data/skybox/sky_dn.jpg . COPYONLY)

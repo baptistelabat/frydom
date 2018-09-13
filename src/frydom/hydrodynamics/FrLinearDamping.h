@@ -15,7 +15,7 @@ namespace frydom {
 
     private:
         Eigen::MatrixXd m_dampings = Eigen::MatrixXd::Zero(6,6);
-        bool m_relativeVelocity;
+        bool m_relative2Current = false;
     public:
 
         FrLinearDamping() {};
@@ -68,9 +68,9 @@ namespace frydom {
             }
         }
         /// Setter for the boolean : m_relativeVelocity
-        void SetRelativeVelocity(bool relativeVelocity) {m_relativeVelocity = relativeVelocity;}
+        void SetRelative2Current(bool relativeVelocity);
         /// Getter for the boolean : m_relativeVelocity
-        bool GetRelativeVelocity() {return m_relativeVelocity;}
+        bool GetRelative2Current() {return m_relative2Current;}
         /// Setter for the log prefix
         void SetLogPrefix(std::string prefix_name) override {
             if (prefix_name=="") {
@@ -79,6 +79,8 @@ namespace frydom {
                 m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
             }
         }
+        // Initialize
+        void Initialize() override;
         /// Update the state of the linear damping force (compute the force)
         void UpdateState() override;
 

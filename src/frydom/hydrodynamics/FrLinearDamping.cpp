@@ -12,7 +12,7 @@ namespace frydom {
     void FrLinearDamping::UpdateState() {
         /// Body linear velocity expressed in local (body) frame, relatively or not to the current velocity.
         chrono::ChVector<double> linear_vel;
-        if (m_relativeVelocity)
+        if (m_relative2Current)
             linear_vel = dynamic_cast<FrHydroBody*>(Body)->GetCurrentRelativeVelocity(NWU,LOCAL);
         else
             linear_vel = Body->TransformDirectionParentToLocal(Body->GetPos_dt());
@@ -28,7 +28,7 @@ namespace frydom {
         Velocity(5) = angularVelocity.z();
         /// Compute the resulting damping force
         Eigen::VectorXd ResultingForce = Eigen::VectorXd::Zero(6);
-        ResultingForce = m_dampings*Velocity;
+        ResultingForce = - m_dampings*Velocity;
         /// Convert back to ChVector
         force.x() = ResultingForce(0);
         force.y() = ResultingForce(1);
@@ -38,6 +38,15 @@ namespace frydom {
         moment.z() = ResultingForce(5);
         /// Transforms the linear force back to global frame, but keep angular force (moment) in local frame (imposed by ChForce)
         force = Body->TransformDirectionLocalToParent(force);
+    }
+
+    void FrLinearDamping::SetRelative2Current(bool relativeVelocity) {
+        m_relative2Current = relativeVelocity;}
+
+    void FrLinearDamping::Initialize() {
+        FrForce::Initialize();
+        /// YOU CAN'T set m_relative2Current to true, if your body is not at least a FrHydroBody !
+        assert(m_relative2Current&&(dynamic_cast<FrHydroBody*>(Body)!= nullptr));
     }
 
 

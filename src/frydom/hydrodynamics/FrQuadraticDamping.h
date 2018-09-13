@@ -27,7 +27,7 @@ namespace frydom {
         double m_Sv = 0;
         double m_Sw = 0;
         /// Specify if the body velocity is taken relatively to the current or not.
-        bool m_relativeVelocity = true;
+        bool m_relative2Current = false;
 
     public:
 
@@ -53,9 +53,9 @@ namespace frydom {
             return chrono::ChVector<double>(m_Su,m_Sv,m_Sw);
         }
         /// Setter for the boolean : m_relativeVelocity
-        void SetRelativeVelocity(bool relativeVelocity) {m_relativeVelocity = relativeVelocity;}
+        void SetRelative2Current(bool relativeVelocity);
         /// Getter for the boolean : m_relativeVelocity
-        bool GetRelativeVelocity() {return m_relativeVelocity;}
+        bool GetRelative2Current() {return m_relative2Current;}
         /// Initialize method checking if projected sections are correctly given, and initializing the logs.
         void Initialize() override;
         /// Setter for the log prefix
