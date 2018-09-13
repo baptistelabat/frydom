@@ -14,38 +14,40 @@ namespace frydom {
     class FrLinearDamping : public FrForce {
 
     private:
-        Eigen::MatrixXd m_dampings;
+        Eigen::MatrixXd m_dampings = Eigen::MatrixXd::Zero(6,6);
+        bool m_relativeVelocity;
     public:
 
         FrLinearDamping() {};
-
+        /// Setter for the whole damping matrix
         void SetDampingMatrix(Eigen::MatrixXd dampingMatrix) {
             m_dampings = dampingMatrix;
         }
-
+        /// Setter for the diagonal components of the damping matrix
         void SetDiagonalDamping(double Du, double Dv, double Dw, double Dp, double Dq, double Dr){
             SetDiagonalTranslationDamping(Du, Dv, Dw);
             SetDiagonalRotationDamping(Dp, Dq, Dr);
         }
-
+        /// Setter for the diagonal components in translation of the damping matrix
         void SetDiagonalTranslationDamping(double Du, double Dv, double Dw) {
             m_dampings(0,0) = Du;
             m_dampings(1,1) = Dv;
             m_dampings(2,2) = Dw;
         }
+        /// Setter for the diagonal components in rotation of the damping matrix
         void SetDiagonalRotationDamping(double Dp, double Dq, double Dr) {
             m_dampings(3,3) = Dp;
             m_dampings(4,4) = Dq;
             m_dampings(5,5) = Dr;
         }
-
+        /// Setter for a non-diagonal components of the damping matrix at indices (row,column)
         void SetNonDiagonalDamping(int row, int column, double Dnd) {
             assert(row!=column);
             assert(row<6);
             assert(column<6);
             m_dampings(row,column) = Dnd;
         }
-
+        /// Setter for a row of non-diagonal components of the damping matrix
         void SetNonDiagonalRowDamping(int row,const double Dnd[5]){
             assert(row<6);
             int j=0;
@@ -55,7 +57,7 @@ namespace frydom {
                 j++;
             }
         }
-
+        /// Setter for a column of non-diagonal components of the damping matrix
         void SetNonDiagonalColumnDamping(int column,const double Dnd[5]){
             assert(column<6);
             int j=0;
@@ -65,7 +67,11 @@ namespace frydom {
                 j++;
             }
         }
-
+        /// Setter for the boolean : m_relativeVelocity
+        void SetRelativeVelocity(bool relativeVelocity) {m_relativeVelocity = relativeVelocity;}
+        /// Getter for the boolean : m_relativeVelocity
+        bool GetRelativeVelocity() {return m_relativeVelocity;}
+        /// Setter for the log prefix
         void SetLogPrefix(std::string prefix_name) override {
             if (prefix_name=="") {
                 m_logPrefix = "FlinDamp_" + FrForce::m_logPrefix;
@@ -73,7 +79,7 @@ namespace frydom {
                 m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
             }
         }
-
+        /// Update the state of the linear damping force (compute the force)
         void UpdateState() override;
 
     };

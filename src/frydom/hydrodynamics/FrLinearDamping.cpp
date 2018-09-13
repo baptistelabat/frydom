@@ -2,6 +2,7 @@
 // Created by frongere on 11/09/17.
 //
 
+#include <frydom/core/FrHydroBody.h>
 #include "FrLinearDamping.h"
 #include "chrono/physics/ChBody.h"
 
@@ -9,26 +10,34 @@ namespace frydom {
 
 
     void FrLinearDamping::UpdateState() {
-        // FIXME: Il faut prendre en compte les vitesses relatives du fluide sur la carene et pas la vitesse absolue du corps
-        // pour appliquer l'amortissement !! Sinon, on est over-damped !!!!
-        // FIXME : a changer absolument et voir le modele de force de courant pour le calcul de la vitesse relative
-
-        auto generalizedVelocity = 
-
-
-        // Absolute linear velocity
-        auto linear_vel = Body->GetPos_dt();
-        auto angularVelocity = Body->GetWvel_par();
-
-        force.x() = - m_translationalDampings.x() * linear_vel.x();
-        force.y() = - m_translationalDampings.y() * linear_vel.y();
-        force.z() = - m_translationalDampings.z() * linear_vel.z();
-
-//        moment.x() = - m_seakeepingDampings.y() * angularVelocity.x();
-//        moment.y() = - m_seakeepingDampings.z() * angularVelocity.y();
-//        moment.z() = - m_maneuveuringDampings.z() * angularVelocity.z();
-//        moment = Body->Dir_World2Body(moment);
-
+        /// Body linear velocity expressed in local (body) frame, relatively or not to the current velocity.
+        chrono::ChVector<double> linear_vel;
+        if (m_relativeVelocity)
+            linear_vel = dynamic_cast<FrHydroBody*>(Body)->GetCurrentRelativeVelocity(NWU,LOCAL);
+        else
+            linear_vel = Body->TransformDirectionParentToLocal(Body->GetPos_dt());
+        /// Body angular velocity expressed in local frame.
+        auto angularVelocity = Body->GetWvel_loc();
+        /// Convert to eigen vector
+        Eigen::VectorXd Velocity = Eigen::VectorXd::Zero(6);
+        Velocity(0) = linear_vel.x();
+        Velocity(1) = linear_vel.y();
+        Velocity(2) = linear_vel.z();
+        Velocity(3) = angularVelocity.x();
+        Velocity(4) = angularVelocity.y();
+        Velocity(5) = angularVelocity.z();
+        /// Compute the resulting damping force
+        Eigen::VectorXd ResultingForce = Eigen::VectorXd::Zero(6);
+        ResultingForce = m_dampings*Velocity;
+        /// Convert back to ChVector
+        force.x() = ResultingForce(0);
+        force.y() = ResultingForce(1);
+        force.z() = ResultingForce(2);
+        moment.x() = ResultingForce(3);
+        moment.y() = ResultingForce(4);
+        moment.z() = ResultingForce(5);
+        /// Transforms the linear force back to global frame, but keep angular force (moment) in local frame (imposed by ChForce)
+        force = Body->TransformDirectionLocalToParent(force);
     }
 
 
