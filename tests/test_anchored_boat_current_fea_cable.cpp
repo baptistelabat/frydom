@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 
     // Adding a linear damping
     auto lin_damping_force = std::make_shared<FrLinearDamping>();
-    lin_damping_force->SetManeuveuringDampings(1e7, 1e7, 1e8);
+    lin_damping_force->SetDiagonalDamping(1e7, 1e7, 0, 0, 0, 1e8);
     tug->AddForce(lin_damping_force);
 
 
