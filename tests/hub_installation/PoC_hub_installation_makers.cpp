@@ -106,8 +106,7 @@ std::shared_ptr<FrHydroBody> make_barge(FrOffshoreSystem& system){
     // Linear Damping
 
     auto HsDamping = std::make_shared<FrLinearDamping>();
-    HsDamping->SetSeakeepingDampings(1e6,1e10,1e10);
-    HsDamping->SetManeuveuringDampings(1e6,1e6,1e10);
+    HsDamping->SetDiagonalDamping(1e6,1e6,1e6,1e10,1e10,1e10);
     HsDamping->SetName("linear damping");
 //    barge->AddForce(HsDamping);
 

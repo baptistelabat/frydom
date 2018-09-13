@@ -5,11 +5,7 @@
 #ifndef FRYDOM_FRLINEARDAMPING_H
 #define FRYDOM_FRLINEARDAMPING_H
 
-<<<<<<< HEAD
-=======
-
 #include "frydom/utils/FrEigen.h"
->>>>>>> develop
 #include "frydom/core/FrForce.h"
 
 namespace frydom {
@@ -86,16 +82,6 @@ namespace frydom {
         void Initialize() override;
         /// Update the state of the linear damping force (compute the force)
         void UpdateState() override;
-
-        // ##LL
-
-        void SetLogPrefix(std::string prefix_name) override {
-            if (prefix_name=="") {
-                m_logPrefix = "FLDamp" + FrForce::m_logPrefix;
-            } else {
-                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
-            }
-        }
     };
 
 
