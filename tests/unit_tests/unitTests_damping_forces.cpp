@@ -12,7 +12,6 @@ std::shared_ptr<FrBody> make_body(const double NEDheading_angle, const chrono::C
     /// Set the heading (for the frame rotation)
     auto quaternion = euler_to_quat(0., 0., -NEDheading_angle, CARDAN, RAD);
     body->SetRot(quaternion);
-
     /// Set body velocity
     auto bodylinearVelocity = body->TransformDirectionLocalToParent(linearVelocity);
     body->SetPos_dt(bodylinearVelocity);
@@ -24,7 +23,6 @@ std::shared_ptr<FrHydroBody> make_HydroBody(const chrono::ChVector<>& unit_vecto
     auto body = std::make_shared<FrHydroBody>();
     /// Set the heading (for the frame rotation)
     body->SetNEDHeading(unit_vector);
-
     /// Set body velocity
     auto bodylinearVelocity = body->TransformDirectionLocalToParent(linearVelocity);
     body->SetPos_dt(bodylinearVelocity);
@@ -64,7 +62,7 @@ std::shared_ptr<FrLinearDamping> test_LinearDamping_HB() {
     /// Set the current properties
     system.GetEnvironment()->GetCurrent()->Set(NORTH, 2, MS, NED, GOTO);
 
-    auto body = make_HydroBody(NORTH, chrono::ChVector<>(0,1,0),chrono::ChVector<>(0,0,1));
+    auto body = make_HydroBody(NORTH, chrono::ChVector<>(0,0,0),chrono::ChVector<>(0,0,0));
     system.Add(body);
 
     auto linearForce = std::make_shared<FrLinearDamping>();
@@ -108,9 +106,35 @@ std::shared_ptr<FrQuadraticDamping> test_QuadraticDamping() {
 
 }
 
-int main() {
+std::shared_ptr<FrQuadraticDamping> test_QuadraticDamping_HB() {
+    FrOffshoreSystem system;
+    /// Set the current properties
+    system.GetEnvironment()->GetCurrent()->Set(NORTH, 2, MS, NED, GOTO);
 
-//    test_LinearDamping();
-//    test_LinearDamping_HB();
+    auto body = make_HydroBody(WEST, chrono::ChVector<>(0,0,0),chrono::ChVector<>(0,0,0));
+    system.Add(body);
+    auto quadForce = std::make_shared<FrQuadraticDamping>();
+    quadForce->SetDampingCoefficients(1,1,1);
+    quadForce->SetProjectedSections(2,2,2);
+
+    body->AddForce(quadForce);
+    quadForce->SetRelative2Current(true);
+
+    body->Initialize();
+    body->Update();
+
+    chrono::ChVector<> mforce, mtorque;
+    quadForce->GetBodyForceTorque(mforce,mtorque);
+    print_force("Quadratic damping force", mforce, mtorque);
+
+
+    return quadForce;
+
+}
+
+int main() {
+    test_LinearDamping();
+    test_LinearDamping_HB();
     test_QuadraticDamping();
+    test_QuadraticDamping_HB();
 }

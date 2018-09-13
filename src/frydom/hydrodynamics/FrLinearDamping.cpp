@@ -46,7 +46,7 @@ namespace frydom {
     void FrLinearDamping::Initialize() {
         FrForce::Initialize();
         /// YOU CAN'T set m_relative2Current to true, if your body is not at least a FrHydroBody !
-        assert(m_relative2Current&&(dynamic_cast<FrHydroBody*>(Body)!= nullptr));
+        assert(!(m_relative2Current && (dynamic_cast<FrHydroBody*>(Body)== nullptr)));
     }
 
 
