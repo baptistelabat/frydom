@@ -43,19 +43,29 @@ void run_simulation(FrOffshoreSystem& system) {
             chrono::ChSolver::Type::MINRES);  // TODO: voir si on peut regler ce solveur pour des simulations sans cable
     system.SetSolverWarmStarting(true);
     system.SetMaxItersSolverSpeed(
-            1000);  // TODO: mettre en place une adaptation lorsqu'on a un residu du solveur trop important
+            200);  // TODO: mettre en place une adaptation lorsqu'on a un residu du solveur trop important
     system.SetMaxItersSolverStab(200);
     system.SetTolForce(1e-13);
     auto msolver = std::static_pointer_cast<chrono::ChSolverMINRES>(system.GetSolver());
     msolver->SetVerbose(false);
     msolver->SetDiagonalPreconditioning(true);
 
-    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
+
+    system.SetTimestepperType(chrono::ChTimestepper::Type::HHT);
+    auto integrator = std::static_pointer_cast<chrono::ChTimestepperHHT>(system.GetTimestepper());
+    integrator->SetAlpha(-0.2);
+    integrator->SetMaxiters(8);
+    integrator->SetAbsTolerances(5e-05,1.8e00);
+    integrator->SetMode(chrono::ChTimestepperHHT::POSITION);
+    integrator->SetModifiedNewton(false);
+    integrator->SetScaling(true);
+    integrator->SetVerbose(true);
     // -----------------------------------------------
     // Simulation
     // -----------------------------------------------
 
-    double dt = 0.001;
+    double dt = 0.01;
 
     system.SetStep(dt);
     system.Initialize();

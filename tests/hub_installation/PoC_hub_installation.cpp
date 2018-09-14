@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     // Line properties
     auto Lu = 20;
     auto u = chrono::ChVector<double>(0, 0, -1);
-    auto q = 20;
+    auto q = 2000;
     auto EA = 1e7;
     auto A = 0.05;
     auto E = EA / A;
