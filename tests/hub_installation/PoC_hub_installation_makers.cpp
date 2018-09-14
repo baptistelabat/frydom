@@ -26,10 +26,10 @@ void make_environment(FrOffshoreSystem& system) {
     linearWaveField->SetRegularWaveHeight(0.75);
     linearWaveField->SetRegularWavePeriod(6);
     linearWaveField->SetMeanWaveDirection(180);
-    //linearWaveField->GetWaveRamp()->Deactivate();
+//    linearWaveField->GetWaveRamp()->Deactivate();
 
-    system.GetEnvironment()->GetCurrent()->Set(WEST, 1.5, NED, COMEFROM, KNOT);
-    system.GetEnvironment()->GetWind()->Set(WEST, 10., NED, COMEFROM, KNOT);
+//    system.GetEnvironment()->GetCurrent()->Set(WEST, 1.5, NED, COMEFROM, KNOT);
+//    system.GetEnvironment()->GetWind()->Set(WEST, 10., NED, COMEFROM, KNOT);
 }
 
 void run_simulation(FrOffshoreSystem& system) {
@@ -52,6 +52,9 @@ void run_simulation(FrOffshoreSystem& system) {
 
 //    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
 
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
+//    auto integrator = std::static_pointer_cast<chrono::ChTimestepperEulerImplicit>(system.GetTimestepper());
+
     system.SetTimestepperType(chrono::ChTimestepper::Type::HHT);
     auto integrator = std::static_pointer_cast<chrono::ChTimestepperHHT>(system.GetTimestepper());
     integrator->SetAlpha(-0.2);
@@ -60,7 +63,20 @@ void run_simulation(FrOffshoreSystem& system) {
     integrator->SetMode(chrono::ChTimestepperHHT::POSITION);
     integrator->SetModifiedNewton(false);
     integrator->SetScaling(true);
+
+//    system.SetTimestepperType(chrono::ChTimestepper::Type::NEWMARK);
+//    auto integrator = std::static_pointer_cast<chrono::ChTimestepperNewmark>(system.GetTimestepper());
+//    integrator->SetVerbose(true);
+//    integrator->SetMaxiters(8);
+//    integrator->SetAbsTolerances(5e-05,1.8e00);
+//    integrator->SetGammaBeta(0.75, 0.5);
+
     integrator->SetVerbose(true);
+
+
+
+
+
     // -----------------------------------------------
     // Simulation
     // -----------------------------------------------
@@ -92,8 +108,9 @@ std::shared_ptr<FrHydroBody> make_barge(FrOffshoreSystem& system){
     system.AddBody(barge);
     //barge->SetBodyFixed(true);
 
-    barge->SetInertiaXX(chrono::ChVector<double>(2.465e7,1.149e7,1.388e07));
-    barge->SetInertiaXY(chrono::ChVector<double>(0, 0, 0));
+//    barge->SetInertiaXX(chrono::ChVector<double>(2.465e7,1.149e8,1.388e08));
+    barge->SetInertiaXX(chrono::ChVector<double>(20*3.11432e+07,20*2.1652e+08,20*1.4624e+07));
+    barge->SetInertiaXY(chrono::ChVector<double>(0, 0.94e5, 0));
     barge->SetMass((1137.6-180.6)*1e3); // 1137.576e3 pour l'ensemble
     barge->SetMass(1137.6e3); // 1137.576e3 pour l'ensemble
     barge->SetCOG(chrono::ChVector<double>(0, 0, 0));
@@ -142,6 +159,15 @@ std::shared_ptr<FrHydroBody> make_barge(FrOffshoreSystem& system){
     barge->AddForce(excForce);
     excForce->SetWaveProbe(waveProbe);
     excForce->SetHydroMapIndex(hydroMapIndex);
+
+
+    barge->Log().SetNameAndDescription("BargeLog","Message log of the ship");
+    barge->SetLogDefault();
+
+    for (auto force: barge->GetForceList()) {
+        auto dforce = dynamic_cast<FrForce*>(force.get());
+        barge->Log().AddField<hermes::Message>("force","-","external force", dforce->GetLog());
+    }
 
     return barge;
 }
