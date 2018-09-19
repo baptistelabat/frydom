@@ -7,6 +7,8 @@
 
 #include "frydom/core/FrForce.h"
 
+#include "MathUtils/MathUtils.h"
+
 namespace frydom {
 
 

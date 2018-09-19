@@ -57,4 +57,42 @@ namespace frydom {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+    /// REFACTORING ------------->>>>>>>>>>>>>>>
+
+
+
+    _FrBodyBase::_FrBodyBase() : chrono::ChBodyAuxRef() {}
+
+
+    FrBody_::FrBody_() {
+        m_chronoBody = std::make_shared<_FrBodyBase>();
+    }
+
+    void FrBody_::SetName(const char *name) {
+        m_chronoBody->SetName(name);
+    }
+
+    void FrBody_::SetBodyFixed(bool state) {
+        m_chronoBody->SetBodyFixed(state);
+    }
+
+    void FrBody_::Initialize() {
+
+    }
+
+    void FrBody_::StepFinalize() {
+
+    }
+
+
 }  // end namespace frydom

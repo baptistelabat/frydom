@@ -6,6 +6,9 @@
 #define FRYDOM_FRBODY_H
 
 
+#include "FrOffshoreSystem.h"
+//
+//
 #include "chrono/physics/ChBodyAuxRef.h"
 
 #include "FrObject.h"
@@ -221,6 +224,77 @@ namespace frydom {
         }
 
     };
+
+
+
+
+
+
+
+
+
+    // REFACTORING ------>>>>>>>>>>>>>>
+
+
+    /// Cette classe n'est la que pour heriter des objets chrono.
+    /// Ce n'est pas celle qu'on manipule directement dans frydom en tant qu'utilisateur !!!
+    class _FrBodyBase : public chrono::ChBodyAuxRef {
+
+    public:
+
+        _FrBodyBase();
+
+    };
+
+
+
+    class FrBody_ : public FrObject {
+
+    protected:
+        std::shared_ptr<_FrBodyBase> m_chronoBody;
+
+
+    public:
+
+        /// Default constructor
+        FrBody_();
+
+        void SetName(const char name[]);
+
+        void SetBodyFixed(bool state);
+
+
+        // TODO: ici, toutes les methodes qu'on veut publiques pour un corps !!!
+
+
+    protected:
+        std::shared_ptr<chrono::ChBody> GetChronoBody() {
+            return m_chronoBody;
+        }
+
+
+    public:
+
+        void Initialize() override;
+
+        void StepFinalize() override;
+
+
+
+
+//    public:
+        friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_> rigidBody); // Voir a replacer
+
+
+//        friend void internal::AddBodyToSystem(FrOffshoreSystem* , std::shared_ptr<FrBody>);
+
+
+
+    };
+
+
+
+
 
 }  // end namespace frydom
 

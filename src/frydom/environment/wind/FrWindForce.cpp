@@ -2,11 +2,15 @@
 // Created by frongere on 03/07/17.
 //
 
+#include "FrWindForce.h"
 
 #include "frydom/core/FrConstants.h"
 #include "frydom/core/FrHydroBody.h"
 #include "frydom/IO/FrLoader.h"
-#include "FrWindForce.h"
+
+
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/wind/FrWind.h"
 
 namespace frydom {
 

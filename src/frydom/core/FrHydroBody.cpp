@@ -2,11 +2,19 @@
 // Created by frongere on 21/06/17.
 //
 
+#include "FrHydroBody.h"
+
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include "FrNode.h"
-#include "FrHydroBody.h"
+
 #include "frydom/core/FrNodeDynamic.h"
+
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/waves/FrFreeSurface.h"
+
+#include "frydom/environment/current/FrCurrent.h"
+#include "frydom/environment/wind/FrWind.h"
 
 namespace frydom {
 

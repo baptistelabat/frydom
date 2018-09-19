@@ -4,6 +4,9 @@
 
 #include "FrWindStandardForce.h"
 #include "frydom/core/FrHydroBody.h"
+#include "frydom/environment/FrEnvironment.h"
+
+#include "frydom/environment/wind/FrWind.h"
 
 namespace frydom {
 

@@ -5,6 +5,8 @@
 #include "FrCurrentStandardForce.h"
 #include "frydom/core/FrHydroBody.h"
 
+#include "frydom/environment/FrEnvironment.h"
+
 namespace frydom {
 
 

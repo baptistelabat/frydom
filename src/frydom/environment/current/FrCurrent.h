@@ -16,19 +16,16 @@
 #ifndef FRYDOM_FRCURRENT_H
 #define FRYDOM_FRCURRENT_H
 
-#include "chrono/core/ChVector.h"
-
 #include "frydom/core/FrObject.h"
 #include "frydom/core/FrConstants.h"
-#include "frydom/environment/FrConventions.h"
 #include "frydom/environment/FrUniformCurrentField.h"
-#include "MathUtils/MathUtils.h"
+
+
 
 // TODO: definir une classe de base pour le champ de courant et de vent (et de houle) afin de ne pas
 // repliquer le code concernant la gestion des unites de vitesse, des conventions de direction ("vient de")
 // et des reperes d'expression.
 
-using namespace mathutils;
 
 namespace frydom {
 
@@ -85,6 +82,89 @@ namespace frydom {
         void StepFinalize() override { FrUniformCurrentField::StepFinalize(); }
 
     };
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// REFACTORING ------------->>>>>>>>>>>>>>>>
+
+    // Forward declarations
+    class FrEnvironment_;
+
+    // ===============================================================
+    // FrCurrent : Base current field
+    // ===============================================================
+
+    class FrCurrent_ : public FrObject {
+
+    public:
+
+        enum MODEL { UNIFORM };
+
+        virtual chrono::ChVector<> GetFluxVector(FrFrame= NWU) = 0;
+
+        virtual void Update(double time) = 0;
+
+//        virtual void Initialize()  {}
+//
+//        virtual void StepFinalize()  {}
+
+//        virtual void Set(chrono::ChVector<>  unit_direction, double  magnitude,
+//                         SPEED_UNIT = KNOT, FrFrame= NED,
+//                         FrDirectionConvention convention = GOTO) = 0;
+
+
+
+
+    };
+
+    // ================================================================
+    // FrUniformCurrent : uniform current profile class
+    // ================================================================
+
+    class FrUniformCurrent_ : virtual public FrCurrent_,
+                             virtual public FrUniformCurrentField {
+        /// Inheritance of the base constructor
+        using FrUniformCurrentField::FrUniformCurrentField;
+
+    private:
+        // Current velocity from FrUniformCurrentField
+
+        FrEnvironment_* m_environment;
+
+    public:
+
+        explicit FrUniformCurrent_(FrEnvironment_* environment);
+
+        /// Update method from uniform current field class
+        void Update(double time) override;
+
+        /// Get the vector field
+        chrono::ChVector<> GetFluxVector(FrFrame frame = NWU) override;
+
+        /// Method of initialization from uniform current field class
+        void Initialize() override;
+
+        /// Method of finalize step from uniform current field class
+        void StepFinalize() override;
+
+    };
+
+
+
+
+
+
+
 
 
 }  // end namespace frydom

@@ -7,6 +7,7 @@
 #include "frydom/core/FrHydroBody.h"
 #include "frydom/hydrodynamics/FrMorisonForce.h"
 #include "frydom/environment/waves/FrFlowSensor.h"
+#include "frydom/environment/FrEnvironment.h"
 
 namespace frydom {
 

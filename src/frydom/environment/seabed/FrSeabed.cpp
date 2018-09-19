@@ -207,4 +207,66 @@ namespace frydom {
         m_environment = environment;
     }
 
+
+
+
+
+
+    /// REFACTORING ----------->>>>>>>>
+
+
+
+
+
+
+
+
+
+
+
+    FrTriangleMeshConnected
+    FrSeabed_::BuildRectangularMeshGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
+        return FrTriangleMeshConnected();
+    }
+
+    FrTriangleMeshConnected
+    FrSeabed_::BuildPolarMeshGrid(double xc0, double yc0, double diameter, unsigned int nbR, unsigned int nbTheta) {
+        return FrTriangleMeshConnected();
+    }
+
+    FrSeabed_::FrSeabed_(FrEnvironment_ *environment) {
+
+    }
+
+    void FrSeabed_::SetDepth(double depth) {m_depth = depth;}
+
+    double FrSeabed_::GetDepth() {return m_depth;}
+
+    void FrSeabed_::UpdateAsset(bool update) {
+
+    }
+
+    void FrSeabed_::SetGridType(FrSeabed_::GRID_TYPE gridType) {
+        m_gridType = gridType;
+    }
+
+    void FrSeabed_::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
+
+    }
+
+    void FrSeabed_::SetGrid(double lmin, double lmax, double dl) {
+
+    }
+
+    void FrSeabed_::SetGrid(double xc0, double yc0, double diameter, int nbR, int nbTheta) {
+
+    }
+
+    void FrSeabed_::Update(double time) {}
+
+    void FrSeabed_::Initialize() {
+
+    }
+
+    void FrSeabed_::StepFinalize() {}
 }  // end namespace frydom

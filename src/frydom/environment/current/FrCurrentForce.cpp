@@ -2,11 +2,15 @@
 // Created by frongere on 21/06/17.
 //
 
+#include "FrCurrentForce.h"
+
 #include "chrono/physics/ChBody.h"
 
 #include "frydom/core/FrConstants.h"
 #include "frydom/core/FrHydroBody.h"
 #include "frydom/IO/FrLoader.h"
+
+#include "frydom/environment/FrEnvironment.h"
 
 
 namespace frydom {

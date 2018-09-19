@@ -5,18 +5,25 @@
 #ifndef FRYDOM_FROFFSHORESYSTEM_H
 #define FRYDOM_FROFFSHORESYSTEM_H
 
-#include <frydom/hydrodynamics/FrHydroDB.h>
+//#include <frydom/hydrodynamics/FrHydroDB.h>
+//
+////#include "frydom/core/FrException.h"
+//
+//
 #include "chrono/physics/ChSystemSMC.h"
-#include "chrono/timestepper/ChState.h"
-#include "chrono/core/ChMatrixNM.h"
-#include "chrono/core/ChMatrix33.h"
-
+#include "chrono/physics/ChSystemNSC.h"
+//
+//
+//#include "chrono/timestepper/ChState.h"
+//#include "chrono/core/ChMatrixNM.h"
+//#include "chrono/core/ChMatrix33.h"
+//
 #include "FrObject.h"
-#include "frydom/environment/waves/FrFreeSurface.h"
-#include "frydom/environment/current/FrCurrent.h"
-#include "frydom/core/FrBody.h"
-
-#include "frydom/environment/FrEnvironment.h"
+//#include "frydom/environment/waves/FrFreeSurface.h"
+//#include "frydom/environment/current/FrCurrent.h"
+//#include "frydom/core/FrBody.h"
+//
+//#include "frydom/environment/FrEnvironment.h"
 
 
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
@@ -25,7 +32,11 @@
 
 namespace frydom {
 
+    class FrBody;
+    class FrEnvironment;
     class FrHydroMapper;
+    class FrHydroDB;
+
 
     // TODO: voir aussi a deriver de ChSystemSMC pour comparer les 2 ? Avoir une classe de base virtuelle derivant de ChSystem ???
     class FrOffshoreSystem :
@@ -54,7 +65,7 @@ namespace frydom {
                                   double scene_size = 500);
 
         /// Default destructor
-        ~FrOffshoreSystem() override {}
+//        ~FrOffshoreSystem() override {}
 
         /// Copy constructor
         //FrOffshoreSystem(const FrOffshoreSystem& system) {};
@@ -62,41 +73,25 @@ namespace frydom {
         /// Default destructor
         //~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
 
-        inline FrEnvironment* GetEnvironment() const {
-            return m_environment.get();
-        }
+        FrEnvironment* GetEnvironment() const;
 
         /// Get NED frame
-        chrono::ChFrame<double> GetNEDFrame() const { return NEDframe; }
+        chrono::ChFrame<double> GetNEDFrame() const;
 
         /// Get the world body
-        chrono::ChBody* GetWorldBodyPtr() const {
-            return world_body.get();
-        }
+        chrono::ChBody* GetWorldBodyPtr() const;
 
-        std::shared_ptr<FrBody> GetWorldBody() const {
-            return world_body;
-        }
+        std::shared_ptr<FrBody> GetWorldBody() const;
 
-        void SetHydroMapper(std::shared_ptr<FrHydroMapper> hydroMapper) {
-            m_hydroMapper.push_back(hydroMapper);
-        }
+        void SetHydroMapper(std::shared_ptr<FrHydroMapper> hydroMapper);
 
-        std::shared_ptr<FrHydroMapper> GetHydroMapper(const int id) const {
-            return m_hydroMapper[id];
-        }
+        std::shared_ptr<FrHydroMapper> GetHydroMapper(const int id) const;
 
-        void SetHydroDB(const std::string filename) {
-            m_HDB.push_back( std::make_shared<FrHydroDB>(filename) );
-            m_nHDB += 1;
-            m_hydroMapper.push_back( m_HDB[m_nHDB-1]->GetMapper() );
-        }
+        void SetHydroDB(const std::string filename);
 
-        FrHydroDB* GetHydroDB(const int id) const {
-            return m_HDB[id].get();
-        }
+        FrHydroDB* GetHydroDB(const int id) const;
 
-        int GetHydroMapNb() const { return (int) m_hydroMapper.size(); }
+        int GetHydroMapNb() const;
 
         /// Updates all the auxiliary data and children of
         /// bodies, forces, links, given their current state
@@ -121,6 +116,245 @@ namespace frydom {
         virtual void VariablesFbIncrementMq() override;
 
     };  // class FrOffshoreSystem
+
+
+
+
+
+
+
+
+    // REFACTORING ---->>>>>>>>>>>>
+
+    // Forward declarations
+    class FrBody_;
+    class FrEnvironment_;
+
+    class FrOffshoreSystem_ : public FrObject {
+
+    public:
+
+        enum SYSTEM_TYPE {
+            SMOOTH_CONTACT,
+            NONSMOOTH_CONTACT
+        };
+
+        enum TIME_STEPPER {
+            EULER_IMPLICIT_LINEARIZED,
+            EULER_IMPLICIT_PROJECTED,
+            EULER_IMPLICIT,
+            TRAPEZOIDAL,
+            TRAPEZOIDAL_LINEARIZED,
+            HHT,
+//            HEUN,
+            RUNGEKUTTA45,
+            EULER_EXPLICIT,
+//            LEAPFROG,
+            NEWMARK,
+        };
+
+        enum SOLVER {
+            SOR,
+            SYMMSOR,
+            JACOBI,
+//            SOR_MULTITHREAD,
+//            PMINRES,
+            BARZILAIBORWEIN,
+            PCG,
+            APGD,
+            MINRES,
+            SOLVER_SMC,
+        };
+
+        enum STATICS_METHOD {
+            LINEAR,
+            NONLINEAR,
+            RELAXATION
+        };
+
+        enum CONTACT_MODEL {
+            HOOKE,
+            HERTZ,
+            COULOMB
+        };
+
+        enum ADHESION_MODEL {
+            CONSTANT,
+            DMT
+        };
+
+        enum TANGENTIAL_DISP_MODEL {
+            NONE,
+            ONE_STEP,
+            MULTI_STEP
+        };
+
+
+
+    private:
+
+        std::unique_ptr<chrono::ChSystem> m_chronoSystem; ///< The  real Chrono system (may be SMC or NSC)
+
+        std::shared_ptr<FrBody_> m_worldBody;            ///< A fixed body that span the world and where things may be attached
+
+        std::unique_ptr<FrEnvironment_> m_environment;     ///< The offshore environment
+
+        SYSTEM_TYPE     m_systemType;
+        TIME_STEPPER    m_timeStepper;
+        SOLVER          m_solverType;
+
+        int m_nbStepStatics = 10;
+        STATICS_METHOD  m_staticsMethod;
+
+
+    public:
+
+        /// Default constructor
+        FrOffshoreSystem_(SYSTEM_TYPE systemType   = SMOOTH_CONTACT,
+                          TIME_STEPPER timeStepper = EULER_IMPLICIT_LINEARIZED,
+                          SOLVER solver            = MINRES);
+
+        void AddBody(std::shared_ptr<FrBody_> rigidBody);
+
+        FrEnvironment_* GetEnvironment() const;
+
+        std::shared_ptr<FrBody_> GetWorldBody() const;
+
+        // TODO: voir si les 3 methodes ci-dessous doivent etre privees (pas Initialize)
+
+        void Update();
+
+        void Initialize() override;
+
+        void StepFinalize() override;
+
+
+        // Constraint solver
+
+        void SetSolver(SOLVER solver, bool checkCompat=true);
+
+        void SetSolverWarmStarting(bool useWarm);
+
+        void SetSolverOverrelaxationParam(double omega);
+
+        void SetSolverSharpnessParam(double momega);
+
+        void SetParallelThreadNumber(int nbThreads);
+
+        void SetSolverMaxIterSpeed(int maxIter);
+
+        void SetSolverMaxIterStab(int maxIter);
+
+        void SetSolverMaxIterAssembly(int maxIter); // FIXME c'est quoi la diff avec les 2 precedent ?
+
+        void SetSolverGeometricTolerance(double tol);
+
+        void SetSolverForceTolerance(double tol);
+
+        void SetUseSleepingBodies(bool useSleeping);
+
+
+        // Contact
+
+        void SetSystemType(SYSTEM_TYPE type, bool checkCompat=true);
+
+        void UseMaterialProperties(bool use);
+
+        void SetContactForceModel(CONTACT_MODEL model);
+
+        void SetAdhesionForceModel(ADHESION_MODEL model);
+
+        void SetTangentialDisplacementModel(TANGENTIAL_DISP_MODEL model);
+
+        void SetStiffContact(bool isStiff);
+
+        void SetSlipVelocityThreshold(double velocity);
+
+        void SetCharacteristicImpactVelocity(double velocity);
+
+        void SetMinBounceSpeed(double speed);
+
+        void SetMaxPenetrationRecoverySpeed(double speed);
+
+
+        // Informations on system problem size
+
+        int GetNbPositionCoords() const;
+
+        int GetNbVelocityCoords() const;
+
+        int GetNbConstraintsCoords() const;
+
+        int GetNbDOF() const;
+
+        int GetNbBodies() const;
+
+        int GetNbSleepingBodies() const;
+
+        double GetGravityAcceleration() const;
+
+        void SetGravityAcceleration(double gravityAcceleration);
+
+
+        // Statics
+
+        void SetNbStepsStatics(int nSteps);
+
+        bool SolveStaticEquilibrium(STATICS_METHOD method=NONLINEAR);
+
+
+        // Time Stepping settings
+
+        void SetTimeStepper(TIME_STEPPER type, bool checkCompat=true);
+
+        void SetTimeStep(double timeStep);
+
+        double GetTimeStep() const;
+
+        void SetMinTimeStep(double minTimeStep);
+
+        void SetMaxTimeStep(double maxTimeStep);
+
+        double GetTime() const;
+
+
+        // Dynamics
+
+        bool AdvanceOneStep(double stepSize);
+
+        bool AdvanceTo(double nextTime);
+
+        bool RunDynamics(double frameStep);
+
+
+        // Adding body
+
+        std::shared_ptr<FrBody_> NewBody();
+
+
+        // Visualization
+//        void SetVisualization(bool val);
+
+    private:
+
+        void CreateWorldBody();
+
+        void CheckCompatibility() const;
+
+
+    };
+
+
+//    namespace internal {
+//        void AddBodyToSystem(FrOffshoreSystem* system, std::shared_ptr<FrBody> body) {
+//            system->AddBody()
+//        }
+//    }
+
+
+
+
+
 
 } // end namespace frydom
 
