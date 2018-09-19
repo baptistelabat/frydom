@@ -6,9 +6,12 @@
 #define FRYDOM_FRIRRCAMERA_H
 
 
-#include <irrlicht.h>
+//#include <irrlicht.h>
 //#include <chrono_irrlicht/ChIrrCamera.h>
 //#include "chrono_irrlicht/ChApiIrr.h"
+
+#include "chrono_irrlicht/ChIrrTools.h"
+
 namespace frydom {
 
 /// Copied from ChIrrCamera and modified to get UpVector on Z.

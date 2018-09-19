@@ -54,6 +54,8 @@ endif()
 # FRyDoM DEPENDENCIES
 # =============================================================================
 
+include_directories(/usr/include/irrlicht/)
+
 # FRyDoM main shared library
 add_library(FRyDoM_Engine SHARED ${FRYDOM_SRC_FILES})
 target_link_libraries(FRyDoM_Engine
