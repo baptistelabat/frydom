@@ -6,27 +6,38 @@
 #define FRYDOM_FRTIMEZONE_H
 
 #include <chrono>
-#include "include/date/tz.h"
+#include "date/tz.h"
+
 
 /// List of tz database time zones : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 namespace frydom {
 
     class FrTimeZone {
+
     public:
-        enum UtcOrLocal {utc, local};
+        
+        enum UTC_LOCAL {
+            UTC,
+            LOCAL
+        };
+
     private:
+
         date::zoned_time<std::chrono::milliseconds> m_zonedTime;
-        UtcOrLocal m_UtcOrLocal = local;
+        UTC_LOCAL m_UtcOrLocal = LOCAL;
         date::sys_days m_sysDays;
         date::local_days m_localDays;
         std::chrono::milliseconds m_initTime;
         const date::time_zone *m_timeZone = date::current_zone();
+
     public:
 
         FrTimeZone();
 
-        void SetSysOrLocal(UtcOrLocal SL) {m_UtcOrLocal = SL;}
+        ~FrTimeZone() = default;
+
+        void SetSysOrLocal(UTC_LOCAL SL) {m_UtcOrLocal = SL;}
 
         //auto now() { return std::chrono::system_clock::now(); }
 
@@ -36,7 +47,7 @@ namespace frydom {
 
         void SetTime(int Hours, int Minutes, int Seconds);
 
-        void SetZoneDayTime(std::string zoneName, int Year, int Month, int Day, int Hours, int Minutes, int Seconds, UtcOrLocal SL);
+        void SetZoneDayTime(std::string zoneName, int Year, int Month, int Day, int Hours, int Minutes, int Seconds, UTC_LOCAL SL);
 
         auto GetSysOrLocal() {return m_UtcOrLocal;}
 

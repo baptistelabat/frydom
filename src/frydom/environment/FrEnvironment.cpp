@@ -17,50 +17,25 @@
 
 
 #include "current/FrCurrent.h"
-#include "tidal/FrTidalModel.h"
+//#include "tidal/FrTidalModel.h"
 #include "wind/FrWind.h"
-#include "seabed/FrSeabed.h"
+//#include "seabed/FrSeabed.h"
 
 namespace frydom {
 
 
-    void FrEnvironment::SetFreeSurface(FrFreeSurface *freeSurface) {
-        m_freeSurface = std::unique_ptr<FrFreeSurface>(freeSurface);
-        m_system->AddBody(m_freeSurface->GetBody());
-    }
-
-    double FrEnvironment::ComputeMagneticDeclination(double x, double y, double z) {
-
-        /// Magnetic model loaded from _deps directory
-        GeographicLib::MagneticModel magneticModel("emm2017","../_deps/magneticmodel-src");
-        double lat, lon, h;
-
-        /// Convert the node local coordinates to geographical coordinates
-        Convert_CartToGeo(x, y, z, lat, lon, h);
-
-        /// Get the UTC time to obtain the year
-        auto lt = GetTimeZone()->GetUTCTime();
-        date::year_month_day ymd{date::floor<date::days>(lt)};
-        double myYear = int(ymd.year());
-
-        /// Compute the magnetic declination
-        double Bx, By, Bz, H, F, D, I;
-        magneticModel(myYear,lat,lon,h,Bx,By,Bz);
-        magneticModel.FieldComponents(Bx,By,Bz,H,F,D,I);
-        return D;
-
-    }
-
     FrEnvironment::FrEnvironment() {
 
         m_freeSurface = std::make_unique<FrFreeSurface>();
-        m_current = std::make_shared<FrUniformCurrent>();
-        m_wind = std::make_shared<FrUniformWind>();
+        m_current = std::make_unique<FrUniformCurrent>();
+        m_wind = std::make_unique<FrUniformWind>();
         m_seabed = std::make_unique<FrSeabed>();
         if (not(m_infinite_depth)) m_seabed->SetEnvironment(this);
         m_LocalCartesian = std::make_unique<GeographicLib::LocalCartesian>();
         m_timeZone = std::make_unique<FrTimeZone>();
     }
+
+    FrEnvironment::~FrEnvironment() = default;
 
     void FrEnvironment::SetSystem(FrOffshoreSystem *system) {
         m_system = system;
@@ -141,11 +116,11 @@ namespace frydom {
         return m_freeSurface->GetTidal();
     }
 
-    template<class T>
-    T *FrEnvironment::GetCurrent() const { return dynamic_cast<T*>(m_current.get()); }
-
-    template<class T>
-    T *FrEnvironment::GetWind() const { return dynamic_cast<T*>(m_wind.get()); }
+//    template<class T>
+//    T *FrEnvironment::GetCurrent() const { return dynamic_cast<T*>(m_current.get()); }
+//
+//    template<class T>
+//    T *FrEnvironment::GetWind() const { return dynamic_cast<T*>(m_wind.get()); }
 
 //    void FrEnvironment::SetCurrent(const FrCurrent::MODEL type) {
 //
@@ -220,8 +195,35 @@ namespace frydom {
         if (not(m_infinite_depth)) m_seabed->StepFinalize();
     }
 
-    void FrEnvironment::SetCurrent(FrCurrent *current) {
-        m_current = std::shared_ptr<FrCurrent>(current);
+//    void FrEnvironment::SetCurrent(FrCurrent *current) {
+//        m_current = std::shared_ptr<FrCurrent>(current);
+//    }
+
+//    void FrEnvironment::SetFreeSurface(FrFreeSurface *freeSurface) {
+//        m_freeSurface = std::unique_ptr<FrFreeSurface>(freeSurface);
+//        m_system->AddBody(m_freeSurface->GetBody());
+//    }
+
+    double FrEnvironment::ComputeMagneticDeclination(double x, double y, double z) {
+
+        /// Magnetic model loaded from _deps directory
+        GeographicLib::MagneticModel magneticModel("emm2017","../_deps/magneticmodel-src"); // FIXME : ne fonctionne pas !!!
+        double lat, lon, h;
+
+        /// Convert the node local coordinates to geographical coordinates
+        Convert_CartToGeo(x, y, z, lat, lon, h);
+
+        /// Get the UTC time to obtain the year
+        auto lt = GetTimeZone()->GetUTCTime();
+        date::year_month_day ymd{date::floor<date::days>(lt)};
+        double myYear = int(ymd.year());
+
+        /// Compute the magnetic declination
+        double Bx, By, Bz, H, F, D, I;
+        magneticModel(myYear,lat,lon,h,Bx,By,Bz);
+        magneticModel.FieldComponents(Bx,By,Bz,H,F,D,I);
+        return D;
+
     }
 
 
@@ -251,8 +253,8 @@ namespace frydom {
         m_system = system;
 
         m_freeSurface   = std::make_unique<FrFreeSurface_>(this);
-        m_current       = std::make_shared<FrUniformCurrent_>(this);
-        m_wind          = std::make_shared<FrUniformWind_>(this);
+        m_current       = std::make_unique<FrUniformCurrent_>(this);
+        m_wind          = std::make_unique<FrUniformWind_>(this);
         m_seabed        = std::make_unique<FrSeabed_>(this);
 
 //        if (not(m_infinite_depth)) m_seabed->SetEnvironment(this); // TODO : voir a porter ca dans seabed...
@@ -263,6 +265,8 @@ namespace frydom {
         m_timeZone       = std::make_unique<FrTimeZone>();
 
     }
+
+    FrEnvironment_::~FrEnvironment_() = default;
 
     FrOffshoreSystem_* FrEnvironment_::GetSystem() { return m_system; }
 
@@ -342,11 +346,21 @@ namespace frydom {
         return m_freeSurface->GetTidal();
     }
 
-    template<class T>
-    T *FrEnvironment_::GetCurrent() const { return dynamic_cast<T*>(m_current.get()); }
+    FrUniformCurrent_* FrEnvironment_::GetCurrent() const {
+        return m_current.get();
+    }
 
-    template<class T>
-    T *FrEnvironment_::GetWind() const { return dynamic_cast<T*>(m_wind.get()); }
+    FrUniformWind_* FrEnvironment_::GetWind() const {
+        return m_wind.get();
+    }
+
+
+
+//    template<class T>
+//    T *FrEnvironment_::GetCurrent() const { return dynamic_cast<T*>(m_current.get()); }
+//
+//    template<class T>
+//    T *FrEnvironment_::GetWind() const { return dynamic_cast<T*>(m_wind.get()); }
 
 //    void FrEnvironment::SetCurrent(FrCurrent *current) {
 //        m_current = std::shared_ptr<FrCurrent>(current);

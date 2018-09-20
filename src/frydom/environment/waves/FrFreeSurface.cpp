@@ -13,7 +13,7 @@
 //
 // =============================================================================
 
-#include <thread>
+//#include <thread>
 
 #include "MathUtils/MathUtils.h"
 
@@ -35,8 +35,9 @@ namespace frydom {
 
 
     FrFreeSurface::FrFreeSurface() {
+
         // Creating a waveField and a tidal model
-        m_waveField = std::make_shared<FrNullWaveField>();
+        m_waveField = std::make_unique<FrNullWaveField>(this);
         m_tidal = std::make_unique<FrTidal>();
 
         // Creating the free_surface's body
@@ -57,6 +58,8 @@ namespace frydom {
         m_Body->AddAsset(color);
 
     }
+
+    FrFreeSurface::~FrFreeSurface() = default;
 
     void FrFreeSurface::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
@@ -110,22 +113,24 @@ namespace frydom {
         m_Body->AddAsset(m_meshAsset);
 
         // If the mesh is being to be animated
-        if (m_updateAsset) {
-            // Creating the array of wave probes
-            auto nbVertices = m_meshAsset->GetMesh().getCoordsVertices().size();
-            m_waveProbeGrid.reserve(nbVertices);
+        // TODO : remettre en place l'utilisation de l'asset !!!
 
-            // FIXME: le fait que le wavefield soit requis pour initialiser le maillage de surface libre fait qu'on est
-            // oblige de definir le wavefield avant d'activer l'asset --> pas flex du tout. Utiliser plutot un flag pour
-            // etablir que l'asset est initialise ou pas et initialiser la gille  lors de l'appel a UpdateGrid si le flag est false
-            auto waveField = std::static_pointer_cast<FrLinearWaveField>(m_waveField);
-
-            for (auto& vertex : m_meshAsset->GetMesh().getCoordsVertices()) {
-                auto waveProbe = waveField->NewWaveProbe(vertex.x(), vertex.y());
-                waveProbe->Initialize();
-                m_waveProbeGrid.push_back(waveProbe);
-            }
-        }
+//        if (m_updateAsset) {
+//            // Creating the array of wave probes
+//            auto nbVertices = m_meshAsset->GetMesh().getCoordsVertices().size();
+//            m_waveProbeGrid.reserve(nbVertices);
+//
+//            // FIXME: le fait que le wavefield soit requis pour initialiser le maillage de surface libre fait qu'on est
+//            // oblige de definir le wavefield avant d'activer l'asset --> pas flex du tout. Utiliser plutot un flag pour
+//            // etablir que l'asset est initialise ou pas et initialiser la gille  lors de l'appel a UpdateGrid si le flag est false
+//            auto waveField = std::static_pointer_cast<FrLinearWaveField>(m_waveField);
+//
+//            for (auto& vertex : m_meshAsset->GetMesh().getCoordsVertices()) {
+//                auto waveProbe = waveField->NewWaveProbe(vertex.x(), vertex.y());
+//                waveProbe->Initialize();
+//                m_waveProbeGrid.push_back(waveProbe);
+//            }
+//        }
 
     }
 
@@ -253,55 +258,54 @@ namespace frydom {
 
     void FrFreeSurface::UpdateGrid() {
 
-        auto& mesh = m_meshAsset->GetMesh();
-        auto nbNodes = mesh.m_vertices.size();
-
-        // Tentative de calcul d'une balance de charge sur des threads
-
-        // Load balancing on a vector over all available threads
-        auto nbThread = std::thread::hardware_concurrency();
-
-//        nbThread = 4;
-
-        auto meanSize = nbNodes / nbThread;
-        auto remainder = nbNodes - nbThread * meanSize;
-
-
-        std::vector<std::pair<unsigned int, unsigned int>> ranges;
-        ranges.reserve(nbThread);
-        std::pair<unsigned int, unsigned int> range;
-        unsigned int lastIndex = 0;
-        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
-            range.first = lastIndex;
-            range.second = (unsigned int)(lastIndex + meanSize);
-
-            if (iThread < remainder) {
-                range.second += 1;
-            }
-
-            lastIndex = range.second;
-            ranges.push_back(range);
-        }
-
-        std::vector<std::thread> threads(nbThread);
-//        threads.reserve(nbThread);
-        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
-            threads.at(iThread) = std::thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
-//            std::thread thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
-//            threads.push_back(thread);
-        }
-
-        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
-            threads.at(iThread).join();
-        }
-
-
-        // Fin tentative
-        m_Body->Update(true); // Necessary to update the asset
-
-//        std::pair<unsigned int, unsigned int> totalRange(0, nbNodes);
-//        UpdateGridRange(totalRange);
-
+//        auto& mesh = m_meshAsset->GetMesh();
+//        auto nbNodes = mesh.m_vertices.size();
+//
+//        // Tentative de calcul d'une balance de charge sur des threads
+//
+//        // Load balancing on a vector over all available threads
+//        auto nbThread = std::thread::hardware_concurrency();
+//
+////        nbThread = 4;
+//
+//        auto meanSize = nbNodes / nbThread;
+//        auto remainder = nbNodes - nbThread * meanSize;
+//
+//
+//        std::vector<std::pair<unsigned int, unsigned int>> ranges;
+//        ranges.reserve(nbThread);
+//        std::pair<unsigned int, unsigned int> range;
+//        unsigned int lastIndex = 0;
+//        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
+//            range.first = lastIndex;
+//            range.second = (unsigned int)(lastIndex + meanSize);
+//
+//            if (iThread < remainder) {
+//                range.second += 1;
+//            }
+//
+//            lastIndex = range.second;
+//            ranges.push_back(range);
+//        }
+//
+//        std::vector<std::thread> threads(nbThread);
+////        threads.reserve(nbThread);
+//        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
+//            threads.at(iThread) = std::thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
+////            std::thread thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
+////            threads.push_back(thread);
+//        }
+//
+//        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
+//            threads.at(iThread).join();
+//        }
+//
+//
+//        // Fin tentative
+//        m_Body->Update(true); // Necessary to update the asset
+//
+////        std::pair<unsigned int, unsigned int> totalRange(0, nbNodes);
+////        UpdateGridRange(totalRange);
 
 
     }
@@ -340,7 +344,7 @@ namespace frydom {
 
     void FrFreeSurface::SetLinearWaveField(LINEAR_WAVE_TYPE waveType) {
         m_waveModel = LINEAR_WAVES;
-        m_waveField = std::make_shared<FrLinearWaveField>(waveType);
+        m_waveField = std::make_unique<FrLinearWaveField>(this, waveType);
     }
 
     FrLinearWaveField *FrFreeSurface::GetLinearWaveField() const {
@@ -377,7 +381,7 @@ namespace frydom {
 
     std::shared_ptr<chrono::ChBody> FrFreeSurface::GetBody() {return m_Body;}
 
-    std::shared_ptr<FrWaveField> FrFreeSurface::GetWaveField() const { return m_waveField; }
+    FrWaveField* FrFreeSurface::GetWaveField() const { return m_waveField.get(); }
 
 
 
@@ -410,10 +414,10 @@ namespace frydom {
 
 
 
-    FrFreeSurface_::FrFreeSurface_(FrEnvironment_* environment) : m_environment(environment){
+    FrFreeSurface_::FrFreeSurface_(FrEnvironment_* environment) : m_environment(environment) {
 
         // Creating a waveField and a tidal model
-        m_waveField = std::make_shared<FrNullWaveField>(this);
+        m_waveField = std::make_shared<FrNullWaveField_>(this);
         m_tidal     = std::make_unique<FrTidal_>(this);
 
 //        // Creating the free_surface's body
@@ -439,6 +443,8 @@ namespace frydom {
 //        m_Body->AddAsset(color); // TODO : associer l'asset a ChSystem, pas a un corps
 
     }
+
+    FrFreeSurface_::~FrFreeSurface_() = default;
 
     void FrFreeSurface_::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
@@ -502,7 +508,7 @@ namespace frydom {
             // FIXME: le fait que le wavefield soit requis pour initialiser le maillage de surface libre fait qu'on est
             // oblige de definir le wavefield avant d'activer l'asset --> pas flex du tout. Utiliser plutot un flag pour
             // etablir que l'asset est initialise ou pas et initialiser la gille  lors de l'appel a UpdateGrid si le flag est false
-            auto waveField = std::static_pointer_cast<FrLinearWaveField>(m_waveField);
+            auto waveField = std::static_pointer_cast<FrLinearWaveField_>(m_waveField);
 
             for (auto& vertex : m_meshAsset->GetMesh().getCoordsVertices()) {
                 auto waveProbe = waveField->NewWaveProbe(vertex.x(), vertex.y());
@@ -637,47 +643,47 @@ namespace frydom {
 
     void FrFreeSurface_::UpdateGrid() {
 
-        auto& mesh = m_meshAsset->GetMesh();
-        auto nbNodes = mesh.m_vertices.size();
-
-        // Tentative de calcul d'une balance de charge sur des threads
-
-        // Load balancing on a vector over all available threads
-        auto nbThread = std::thread::hardware_concurrency();
-
-//        nbThread = 4;
-
-        auto meanSize = nbNodes / nbThread;
-        auto remainder = nbNodes - nbThread * meanSize;
-
-
-        std::vector<std::pair<unsigned int, unsigned int>> ranges;
-        ranges.reserve(nbThread);
-        std::pair<unsigned int, unsigned int> range;
-        unsigned int lastIndex = 0;
-        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
-            range.first = lastIndex;
-            range.second = (unsigned int)(lastIndex + meanSize);
-
-            if (iThread < remainder) {
-                range.second += 1;
-            }
-
-            lastIndex = range.second;
-            ranges.push_back(range);
-        }
-
-        std::vector<std::thread> threads(nbThread);
-//        threads.reserve(nbThread);
-        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
-            threads.at(iThread) = std::thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
-//            std::thread thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
-//            threads.push_back(thread);
-        }
-
-        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
-            threads.at(iThread).join();
-        }
+//        auto& mesh = m_meshAsset->GetMesh();
+//        auto nbNodes = mesh.m_vertices.size();
+//
+//        // Tentative de calcul d'une balance de charge sur des threads
+//
+//        // Load balancing on a vector over all available threads
+//        auto nbThread = std::thread::hardware_concurrency();
+//
+////        nbThread = 4;
+//
+//        auto meanSize = nbNodes / nbThread;
+//        auto remainder = nbNodes - nbThread * meanSize;
+//
+//
+//        std::vector<std::pair<unsigned int, unsigned int>> ranges;
+//        ranges.reserve(nbThread);
+//        std::pair<unsigned int, unsigned int> range;
+//        unsigned int lastIndex = 0;
+//        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
+//            range.first = lastIndex;
+//            range.second = (unsigned int)(lastIndex + meanSize);
+//
+//            if (iThread < remainder) {
+//                range.second += 1;
+//            }
+//
+//            lastIndex = range.second;
+//            ranges.push_back(range);
+//        }
+//
+//        std::vector<std::thread> threads(nbThread);
+////        threads.reserve(nbThread);
+//        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
+//            threads.at(iThread) = std::thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
+////            std::thread thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
+////            threads.push_back(thread);
+//        }
+//
+//        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
+//            threads.at(iThread).join();
+//        }
 
 
         // Fin tentative
@@ -687,6 +693,7 @@ namespace frydom {
 
 //        std::pair<unsigned int, unsigned int> totalRange(0, nbNodes);
 //        UpdateGridRange(totalRange);
+
 
 
 
@@ -702,7 +709,7 @@ namespace frydom {
 
 //        std::cout << std::this_thread::get_id() << "\n";
 
-        FrLinearWaveProbe* waveProbe;
+        FrLinearWaveProbe_* waveProbe;
         chrono::ChVector<double>* vertex;
         for (unsigned int inode=0; inode<nbNodes; ++inode) {
             waveProbe = this->m_waveProbeGrid[inode].get();
@@ -726,7 +733,7 @@ namespace frydom {
 
     void FrFreeSurface_::SetLinearWaveField(LINEAR_WAVE_TYPE waveType) {
         m_waveModel = LINEAR_WAVES;
-        m_waveField = std::make_shared<FrLinearWaveField>(waveType);
+        m_waveField = std::make_shared<FrLinearWaveField_>(this, waveType);
     }
 
     FrLinearWaveField *FrFreeSurface_::GetLinearWaveField() const {
@@ -765,7 +772,7 @@ namespace frydom {
         return m_tidal.get();
     }
 
-    std::shared_ptr<FrWaveField> FrFreeSurface_::GetWaveField() const { return m_waveField; }
+    std::shared_ptr<FrWaveField_> FrFreeSurface_::GetWaveField() const { return m_waveField; }
 
 
 }  // end namespace frydom

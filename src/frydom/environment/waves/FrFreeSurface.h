@@ -19,12 +19,6 @@
 #include "frydom/core/FrObject.h"
 #include "FrWaveField.h"
 
-//#include "frydom/environment/tidal/FrTidalModel.h"
-//#include "frydom/mesh/FrTriangleMeshConnected.h"
-//
-//#include "FrWaveField.h"
-//#include "FrWaveProbe.h"
-
 
 
 // Forward declarations
@@ -41,8 +35,8 @@ namespace frydom{
     // Forward declaration
 //    class FrOffshoreSystem;
     class FrTidal;
-    class FrWaveField;
-    class FrLinearWaveField;
+//    class FrWaveField;
+//    class FrLinearWaveField;
     class FrLinearWaveProbe;
 
     class FrTriangleMeshConnected;
@@ -52,6 +46,7 @@ namespace frydom{
 
     /// Pure Virtual Base class for a free surface system.
     class FrFreeSurface : public FrObject {
+
     public:
 
         enum GRID_TYPE {
@@ -69,7 +64,7 @@ namespace frydom{
         std::unique_ptr<FrTidal> m_tidal;
 
         WAVE_MODEL m_waveModel = NO_WAVES;
-        std::shared_ptr<FrWaveField> m_waveField;
+        std::unique_ptr<FrWaveField> m_waveField;
 
         std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
 
@@ -104,6 +99,8 @@ namespace frydom{
     public:
 
         FrFreeSurface();
+
+        ~FrFreeSurface();
 
         void NoWaves();
 
@@ -168,7 +165,7 @@ namespace frydom{
 
 //        void SetWaveField(std::shared_ptr<FrWaveField> waveField) { m_waveField = waveField; }
 
-        std::shared_ptr<FrWaveField> GetWaveField() const;
+        FrWaveField* GetWaveField() const;
 
 //        const chrono::ChFrame<double>* GetFrame() const;
 
@@ -228,11 +225,11 @@ namespace frydom{
 
         WAVE_MODEL m_waveModel = NO_WAVES;
 
-        std::shared_ptr<FrWaveField> m_waveField;
+        std::shared_ptr<FrWaveField_> m_waveField;
 
         std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
 
-        std::vector<std::shared_ptr<FrLinearWaveProbe>> m_waveProbeGrid; // TODO: passer a la classe de base...
+        std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbeGrid; // TODO: passer a la classe de base...
 
         std::vector<double> m_gridHeights; // TODO: preallouer a l'initialisation
 
@@ -262,7 +259,9 @@ namespace frydom{
                                                    unsigned int nbR, unsigned int nbTheta);
     public:
 
-        FrFreeSurface_(FrEnvironment_* environment);
+        explicit FrFreeSurface_(FrEnvironment_* environment);
+
+        ~FrFreeSurface_();
 
         void NoWaves();
 
@@ -329,7 +328,7 @@ namespace frydom{
 
 //        void SetWaveField(std::shared_ptr<FrWaveField> waveField) { m_waveField = waveField; }
 
-        std::shared_ptr<FrWaveField> GetWaveField() const;
+        std::shared_ptr<FrWaveField_> GetWaveField() const;
 
 //        const chrono::ChFrame<double>* GetFrame() const;
 

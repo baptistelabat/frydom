@@ -105,6 +105,8 @@ namespace frydom {
         m_tidalFrame = std::make_unique<chrono::ChFrame<double>>();
     }
 
+    FrTidal::~FrTidal() = default;
+
     void FrTidal::Initialize() {}
 
     void FrTidal::StepFinalize() {}
@@ -238,6 +240,8 @@ namespace frydom {
         BuildTable();
 
     }
+
+    FrTidal_::~FrTidal_() = default;
 
     void FrTidal_::Update(const double time) {
         double waterHeight = 0.;

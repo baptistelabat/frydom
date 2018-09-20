@@ -95,7 +95,9 @@ namespace frydom {
 
     public:
 
-        FrTidal();;
+        FrTidal();
+
+        ~FrTidal();
 
         FrTidal(const FrUTCTime t1, const double h1, TidalLevel level1, const FrUTCTime t2, const double h2, TidalLevel level2);
 
@@ -165,6 +167,8 @@ namespace frydom {
         FrTidal_(FrFreeSurface_* freeSurface);
 
         FrTidal_(FrFreeSurface_* freeSurface, const FrUTCTime t1, const double h1, TidalLevel level1, const FrUTCTime t2, const double h2, TidalLevel level2);
+
+        ~FrTidal_();
 
         void Update(const double time);
 

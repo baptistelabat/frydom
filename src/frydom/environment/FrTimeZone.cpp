@@ -3,8 +3,8 @@
 //
 
 #include "FrTimeZone.h"
-#include <date/tz.h>
-#include "fmt/format.h"
+#include <cmath>
+
 
 namespace frydom {
 
@@ -57,7 +57,7 @@ namespace frydom {
     }
 
     void FrTimeZone::SetZoneDayTime(std::string zoneName, int Year, int Month, int Day, int Hours, int Minutes,
-                                    int Seconds, UtcOrLocal SL) {
+                                    int Seconds, UTC_LOCAL SL) {
         SetSysOrLocal(SL);
         SetTimeZone(zoneName);
         SetDay(Year, Month, Day);
@@ -66,10 +66,10 @@ namespace frydom {
 
     void FrTimeZone::SetDay(int Year, int Month, int Day) {
         switch (m_UtcOrLocal) {
-            case utc :
+            case UTC :
                 m_sysDays = date::sys_days{date::year(Year)/date::month(Month)/date::day(Day)};
                 break;
-            case local :
+            case LOCAL :
                 m_localDays = date::local_days{date::year(Year)/date::month(Month)/date::day(Day)};
                 break;
         }
@@ -81,30 +81,33 @@ namespace frydom {
 
     double FrTimeZone::GetTimeZoneOffset() {
         ///returns time zone offset in minutes
-        return GetTimeZone()->get_info(GetUTCTime()).offset.count()/60;
+        return GetTimeZone()->get_info(GetUTCTime()).offset.count()/60.;
     }
 
     void FrTimeZone::Initialize() {
+
         switch (m_UtcOrLocal){
-            case utc:
+            case UTC:
                 m_zonedTime = date::make_zoned(m_timeZone, m_sysDays + m_initTime);
                 break;
-            case local:
+            case LOCAL:
                 m_zonedTime = date::make_zoned(m_timeZone, m_localDays + m_initTime);
                 break;
 
         }
+
     }
 
     void FrTimeZone::Update(double time) {
+
         int m_secondes = static_cast<int>(floor(time));
         int m_milliseconds = static_cast<int>(floor(1000 * (time - floor(time))));
         std::chrono::milliseconds m_actualTime = m_initTime + std::chrono::seconds(m_secondes) + std::chrono::milliseconds(m_milliseconds);
         switch (m_UtcOrLocal){
-            case utc:
+            case UTC:
                 m_zonedTime = date::make_zoned(m_timeZone, m_sysDays + m_actualTime);
                 break;
-            case local:
+            case LOCAL:
                 m_zonedTime = date::make_zoned(m_timeZone, m_localDays + m_actualTime);
                 break;
 
@@ -112,10 +115,12 @@ namespace frydom {
     }
 
     FrTimeZone::FrTimeZone() {
+
         auto tp = date::make_zoned(date::current_zone(), std::chrono::system_clock::now());
         auto lt = tp.get_local_time();
         m_localDays = date::floor<date::days>(lt);
         m_initTime = date::floor<std::chrono::milliseconds>(lt - m_localDays);
+
     }
 
 

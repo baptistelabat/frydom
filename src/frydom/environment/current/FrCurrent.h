@@ -37,6 +37,8 @@ namespace frydom {
 
     public:
 
+        ~FrCurrent() = default;
+
         enum MODEL { UNIFORM };
 
         virtual chrono::ChVector<> GetFluxVector(FrFrame= NWU) { }
@@ -47,9 +49,9 @@ namespace frydom {
 
         virtual void StepFinalize()  {}
 
-//        virtual void Set(chrono::ChVector<>  unit_direction, double  magnitude,
-//                         SPEED_UNIT = KNOT, FrFrame= NED,
-//                         FrDirectionConvention convention = GOTO) = 0;
+        virtual void Set(chrono::ChVector<>  unit_direction, double  magnitude,
+                         SPEED_UNIT = KNOT, FrFrame= NED,
+                         FrDirectionConvention convention = GOTO) = 0;
 
 
 
@@ -68,6 +70,9 @@ namespace frydom {
     private:
         // Current velocity from FrUniformCurrentField
     public:
+
+        ~FrUniformCurrent() = default;
+
         /// Update method from uniform current field class
         void Update(double time) override { FrUniformCurrentField::Update(time);}
 
@@ -80,6 +85,10 @@ namespace frydom {
 
         /// Method of finalize step from uniform current field class
         void StepFinalize() override { FrUniformCurrentField::StepFinalize(); }
+
+        void Set(chrono::ChVector<>  unit_direction, double  magnitude,
+                 SPEED_UNIT = KNOT, FrFrame= NED,
+                 FrDirectionConvention convention = GOTO) override;
 
     };
 
@@ -107,6 +116,8 @@ namespace frydom {
     class FrCurrent_ : public FrObject {
 
     public:
+
+        ~FrCurrent_() = default;
 
         enum MODEL { UNIFORM };
 
@@ -144,6 +155,8 @@ namespace frydom {
     public:
 
         explicit FrUniformCurrent_(FrEnvironment_* environment);
+
+        ~FrUniformCurrent_() = default;
 
         /// Update method from uniform current field class
         void Update(double time) override;

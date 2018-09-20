@@ -36,7 +36,7 @@ namespace frydom {
     }
 
     template <class Real=double>
-    chrono::ChVector<Real> ChReal(const chrono::ChVector<std::complex<Real>>& vect) {
+    chrono::ChVector<Real> ChReal(const chrono::ChVector<std::complex<Real>>& vect) { // TODO: changer les noms en Ch --> piegeux avec les classes Chrono !!
         chrono::ChVector<Real> reVect;
         reVect.x() = std::real(vect.x());
         reVect.y() = std::real(vect.y());

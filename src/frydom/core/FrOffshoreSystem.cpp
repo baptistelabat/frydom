@@ -12,15 +12,18 @@
 #include "frydom/hydrodynamics/FrHydroDB.h"
 
 
-#include "GeographicLib/LocalCartesian.hpp"
-#include "frydom/environment/FrTimeZone.h"
-#include "frydom/environment/seabed/FrSeabed.h"
-#include "frydom/environment/tidal/FrTidalModel.h"
+//#include "GeographicLib/LocalCartesian.hpp"
+//#include "frydom/environment/FrTimeZone.h"
+//#include "frydom/environment/seabed/FrSeabed.h"
+//#include "frydom/environment/tidal/FrTidalModel.h"
 
 
 
 
 namespace frydom {
+
+//    FrTimeZone::~FrTimeZone() = default;
+
 
     FrOffshoreSystem::FrOffshoreSystem(bool use_material_properties,
                                        unsigned int max_objects,
@@ -301,8 +304,9 @@ namespace frydom {
         // Creating the environment
         m_environment = std::make_unique<FrEnvironment_>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
 
-
     }
+
+    FrOffshoreSystem_::~FrOffshoreSystem_() = default;
 
     void FrOffshoreSystem_::AddBody(std::shared_ptr<FrBody_> rigidBody) {
         m_chronoSystem->AddBody(rigidBody->GetChronoBody());
@@ -316,8 +320,9 @@ namespace frydom {
         return m_worldBody;
     }
 
-    void FrOffshoreSystem_::Update() {
-        // TODO
+    void FrOffshoreSystem_::Update(bool updateAsset) {
+        m_environment->Update(m_chronoSystem->GetChTime());
+        m_chronoSystem->Update(updateAsset);
     }
 
     void FrOffshoreSystem_::Initialize() {
@@ -335,7 +340,7 @@ namespace frydom {
 
     void FrOffshoreSystem_::SetSystemType(SYSTEM_TYPE type, bool checkCompat) {
 
-        m_chronoSystem->Clear(); // Clear the system from every bodies etc...
+        if (m_chronoSystem) m_chronoSystem->Clear(); // Clear the system from every bodies etc...
 
         // Creating the chrono System backend. It drives the way contact are modelled
         switch (type) {
@@ -355,6 +360,12 @@ namespace frydom {
 
     void FrOffshoreSystem_::CheckCompatibility() const {
         // TODO : verifier la compatibilite entre type systeme, volveur et integrateur temporel
+
+
+
+
+
+
     }
 
     void FrOffshoreSystem_::SetSolver(SOLVER solver, bool checkCompat) {
@@ -546,6 +557,10 @@ namespace frydom {
         return m_chronoSystem->GetNbodies();
     }
 
+    int FrOffshoreSystem_::GetNbFixedBodies() const {
+        return m_chronoSystem->GetNbodiesFixed();
+    }
+
     int FrOffshoreSystem_::GetNbSleepingBodies() const {
         return m_chronoSystem->GetNbodiesSleeping();
     }
@@ -578,8 +593,6 @@ namespace frydom {
     }
 
     void FrOffshoreSystem_::SetTimeStepper(TIME_STEPPER type, bool checkCompat) {
-
-        CheckCompatibility();
 
         using timeStepperType = chrono::ChTimestepper::Type;
 

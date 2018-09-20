@@ -5,8 +5,11 @@
 #ifndef FRYDOM_FRENVIRONMENT_H
 #define FRYDOM_FRENVIRONMENT_H
 
-//#include <frydom/environment/wind/FrWind.h>
+
 #include "frydom/core/FrObject.h"
+
+//#include <frydom/environment/wind/FrWind.h>
+
 
 // Time includes
 //#include "FrTimeZone.h"
@@ -50,9 +53,9 @@ namespace frydom {
     class FrFreeSurface;
     class FrTidal;
     class FrCurrent;
-    class FrUniformCurrent;
+//    class FrUniformCurrent;
     class FrWind;
-    class FrUniformWind;
+//    class FrUniformWind;
 
     class FrSeabed;
 
@@ -71,8 +74,8 @@ namespace frydom {
 
         // Environment components
         std::unique_ptr<FrFreeSurface> m_freeSurface;
-        std::shared_ptr<FrCurrent> m_current;
-        std::shared_ptr<FrWind> m_wind;
+        std::unique_ptr<FrCurrent> m_current;
+        std::unique_ptr<FrWind> m_wind;
         std::unique_ptr<FrSeabed> m_seabed;
 
         /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
@@ -97,6 +100,8 @@ namespace frydom {
     public:
 
         FrEnvironment();
+
+        ~FrEnvironment();
 
         void SetSystem(FrOffshoreSystem* system);
 
@@ -139,7 +144,7 @@ namespace frydom {
 
         FrFreeSurface* GetFreeSurface() const;
 
-        void SetFreeSurface(FrFreeSurface* freeSurface);
+//        void SetFreeSurface(FrFreeSurface* freeSurface);
 
         FrTidal* GetTidal() const;
 //
@@ -147,13 +152,13 @@ namespace frydom {
 //            m_tidal = std::unique_ptr<FrTidal>(tidal);
 //        }
 
-        template <class T=FrUniformCurrent>
+        template <class T=FrCurrent>
         T* GetCurrent() const;
 
-        template <class T=FrUniformWind>
+        template <class T=FrWind>
         T* GetWind() const;
 
-        void SetCurrent(FrCurrent* current);
+//        void SetCurrent(FrCurrent* current);
 
 //        void SetCurrent (const FrCurrent::MODEL type=FrCurrent::UNIFORM);
 //
@@ -186,6 +191,17 @@ namespace frydom {
 
     };
 
+    template<class T>
+    T* FrEnvironment::GetCurrent() const { return dynamic_cast<T*>(m_current.get()); }
+
+    template<class T>
+    T* FrEnvironment::GetWind() const { return dynamic_cast<T*>(m_wind.get()); }
+
+
+
+
+
+
 
 
 
@@ -196,12 +212,20 @@ namespace frydom {
 
     /// REFACTORING ---->>>>
 
+
+
+
+
+
+
     class FrOffshoreSystem_;
     class FrFreeSurface_;
     class FrTidal_;
     class FrSeabed_;
-    class FrCurrent_;
-    class FrWind_;
+//    class FrCurrent_;
+//    class FrWind_;
+    class FrUniformWind_;
+    class FrUniformCurrent_;
 
 
     /// Class to store the different elements composing the offshore environment
@@ -216,8 +240,8 @@ namespace frydom {
 
         // Environment components
         std::unique_ptr<FrFreeSurface_>  m_freeSurface;
-        std::shared_ptr<FrCurrent_>       m_current;
-        std::shared_ptr<FrWind_>          m_wind;
+        std::unique_ptr<FrUniformCurrent_>      m_current;  // TODO: remettre en place de la genericite
+        std::unique_ptr<FrUniformWind_>  m_wind;
         std::unique_ptr<FrSeabed_>       m_seabed;
 
         /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
@@ -242,6 +266,8 @@ namespace frydom {
     public:
 
         explicit FrEnvironment_(FrOffshoreSystem_* system);
+
+        ~FrEnvironment_();
 
 //        void SetSystem(FrOffshoreSystem* system) {
 //            m_system = system;
@@ -292,11 +318,11 @@ namespace frydom {
 
         FrTidal_* GetTidal() const;
 
-        template <class T=FrUniformCurrent>
-        T* GetCurrent() const;
+//        template <class T=FrCurrent_>
+        FrUniformCurrent_* GetCurrent() const;
 
-        template <class T=FrUniformWind>
-        T* GetWind() const;
+//        template <class T=FrCurrent_>
+        FrUniformWind_* GetWind() const;
 
 //        void SetCurrent(FrCurrent* current);
 //

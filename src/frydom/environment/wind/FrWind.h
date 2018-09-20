@@ -28,6 +28,8 @@ namespace frydom {
 
     public:
 
+        ~FrWind() = default;
+
         enum MODEL { UNIFORM };
 
         virtual chrono::ChVector<> GetFluxVector(FrFrame frame) { }
@@ -52,6 +54,8 @@ namespace frydom {
     private:
         // Current velocity from FrUniformCurrentField
     public:
+
+        ~FrUniformWind() = default;
 
         /// Update method from uniform current field class
         void Update(double time) override { FrUniformCurrentField::Update(time); }
@@ -92,6 +96,8 @@ namespace frydom {
 
     public:
 
+        ~FrWind_();
+
         enum MODEL { UNIFORM };
 
         virtual chrono::ChVector<> GetFluxVector(FrFrame frame=NWU) = 0;
@@ -122,6 +128,8 @@ namespace frydom {
     public:
 
         explicit FrUniformWind_(FrEnvironment_* environment);
+
+        ~FrUniformWind_();
 
         /// Update method from uniform current field class
         void Update(double time) override;

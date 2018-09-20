@@ -65,7 +65,7 @@ namespace frydom {
                                   double scene_size = 500);
 
         /// Default destructor
-//        ~FrOffshoreSystem() override {}
+        ~FrOffshoreSystem() = default;
 
         /// Copy constructor
         //FrOffshoreSystem(const FrOffshoreSystem& system) {};
@@ -214,6 +214,8 @@ namespace frydom {
                           TIME_STEPPER timeStepper = EULER_IMPLICIT_LINEARIZED,
                           SOLVER solver            = MINRES);
 
+        ~FrOffshoreSystem_();
+
         void AddBody(std::shared_ptr<FrBody_> rigidBody);
 
         FrEnvironment_* GetEnvironment() const;
@@ -222,7 +224,7 @@ namespace frydom {
 
         // TODO: voir si les 3 methodes ci-dessous doivent etre privees (pas Initialize)
 
-        void Update();
+        void Update(bool updateAsset); // TODO : mettre prive
 
         void Initialize() override;
 
@@ -288,6 +290,8 @@ namespace frydom {
         int GetNbDOF() const;
 
         int GetNbBodies() const;
+
+        int GetNbFixedBodies() const;
 
         int GetNbSleepingBodies() const;
 

@@ -15,8 +15,10 @@ int main(int argc, char* argv[]) {
     // Set the free surface
     system.GetEnvironment()->GetFreeSurface()->SetGrid(-200, 200, 50, -200, 300, 50);
 
+
+
     // The current
-    system.GetEnvironment()->GetCurrent()->Set(WEST, 0, KNOT, NED, GOTO);
+    system.GetEnvironment()->GetCurrent<FrUniformCurrent>()->Set(WEST, 20, KNOT, NED, GOTO);
 
     // Building a TUG
     auto tug = std::make_shared<FrShip>();

@@ -10,15 +10,11 @@
 
 
 
-// Forward declarations
+// Forward declarations of Chrono classes
 namespace chrono {
-
     class ChBody;
-
     class ChTriangleMeshShape;
 }
-
-
 
 
 namespace frydom {
@@ -43,7 +39,7 @@ namespace frydom {
 
         std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
 
-        double m_depth = -30;
+        double m_depth = -30;  // FIXME : Pourquoi cette valeur par defaut ? --> plutot utiliser une valeur positive
 
         GRID_TYPE m_gridType = CARTESIAN;
         double m_xmin = -150.;
@@ -71,6 +67,8 @@ namespace frydom {
     public:
 
         FrSeabed();
+
+        ~FrSeabed() = default;
 
         void SetEnvironment(FrEnvironment* environment);
 
@@ -187,6 +185,8 @@ namespace frydom {
     public:
 
         explicit FrSeabed_(FrEnvironment_* environment);
+
+        ~FrSeabed_() = default;
 
 //        void SetEnvironment();
 

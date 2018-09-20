@@ -8,6 +8,8 @@
 #include "frydom/hydrodynamics/FrMorisonForce.h"
 #include "frydom/environment/waves/FrFlowSensor.h"
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/waves/FrFreeSurface.h"
+#include "frydom/environment/waves/FrWaveField.h"
 
 namespace frydom {
 
@@ -77,14 +79,21 @@ namespace frydom {
     }
 
     void FrSingleElement::SetFlowSensor(FrHydroBody* mybody) {
+        double x, y, z;
+        auto pos = m_frame.GetPos();
+        x = pos[0];
+        y = pos[1];
+        z = pos[2];
+
         auto offshore_system = mybody->GetSystem();
         auto waveField = offshore_system->GetEnvironment()->GetFreeSurface()->GetWaveField();
-        if (waveField->GetWaveModel()==WAVE_MODEL::LINEAR_WAVES && is_rigid) {
-            auto flow_ptr = new FrLinearFlowSensor(waveField.get(), m_frame.GetPos());
-            m_flow = std::make_unique<FrLinearFlowSensor>(waveField.get(), m_frame.GetPos());
+        if (waveField->GetWaveModel() == WAVE_MODEL::LINEAR_WAVES && is_rigid) {
+//            auto flow_ptr = new FrLinearFlowSensor(waveField, x, y, z);
+            m_flow = std::make_unique<FrLinearFlowSensor>(waveField, x, y, z);
         } else {
-            auto flow_ptr = new FrFlowSensor(waveField.get(), m_frame.GetPos());
-            m_flow = std::make_unique<FrFlowSensor>(waveField.get(), m_frame.GetPos());
+//            auto flow_ptr = new FrFlowSensor(waveField, m_frame.GetPos());
+//            m_flow = std::make_unique<FrFlowSensor>(waveField, x, y, z);
+            // FIXME : on a deconnecte ici car FrFlowSensor est abstrait (pas d'implementaiton possible !)
         }
     }
 
@@ -158,7 +167,12 @@ namespace frydom {
 
         if (!is_rigid) {
             UpdateFrame();
-            m_flow->SetPos(m_frame.GetPos());
+            auto pos = m_frame.GetPos();
+            double x, y, z;
+            x = pos[0];
+            y = pos[1];
+            z = pos[2];
+            m_flow->SetPos(x, y, z);
         }
 
 

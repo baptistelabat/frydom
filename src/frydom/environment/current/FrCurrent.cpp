@@ -40,5 +40,10 @@ namespace frydom {
         FrUniformCurrentField::StepFinalize();
     }
 
+    void FrUniformCurrent::Set(chrono::ChVector<>  unit_direction, double  magnitude,
+                               SPEED_UNIT unit, FrFrame frame,
+                               FrDirectionConvention convention) {
+        FrUniformCurrentField::Set(unit_direction, magnitude, unit, frame, convention);
+    }
 
 }  // end namespace frydom
