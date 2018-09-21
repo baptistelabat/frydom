@@ -88,11 +88,40 @@ namespace frydom {
 
     void FrBody_::Initialize() {
 
+        // Initializing forces
+        auto forceIter = force_begin();
+        for (; forceIter != force_end(); forceIter++) {
+            (*forceIter)->Initialize();
+        }
+
+        // TODO : initialiser les logs
+
     }
 
     void FrBody_::StepFinalize() {
 
     }
+
+    FrBody_::ForceIter FrBody_::force_begin() {
+        return m_externalForces.begin();
+    }
+
+    FrBody_::ConstForceIter FrBody_::force_begin() const {
+        return m_externalForces.cbegin();
+    }
+
+    FrBody_::ForceIter FrBody_::force_end() {
+        return m_externalForces.end();
+    }
+
+    FrBody_::ConstForceIter FrBody_::force_end() const {
+        return m_externalForces.cend();
+    }
+
+
+
+
+
 
 
 }  // end namespace frydom

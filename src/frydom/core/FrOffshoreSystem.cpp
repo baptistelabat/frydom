@@ -5,11 +5,14 @@
 #include "FrOffshoreSystem.h"
 
 #include "frydom/core/FrBody.h"
+#include "frydom/core/FrLink.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/waves/FrFreeSurface.h"
 
 #include "frydom/hydrodynamics/FrHydroMapper.h"
 #include "frydom/hydrodynamics/FrHydroDB.h"
+#include "FrBody.h"
+
 
 
 //#include "GeographicLib/LocalCartesian.hpp"
@@ -308,9 +311,23 @@ namespace frydom {
 
     FrOffshoreSystem_::~FrOffshoreSystem_() = default;
 
-    void FrOffshoreSystem_::AddBody(std::shared_ptr<FrBody_> rigidBody) {
-        m_chronoSystem->AddBody(rigidBody->GetChronoBody());
+    void FrOffshoreSystem_::AddBody(std::shared_ptr<FrBody_> body) {
+
+        CheckBodyContactMethod(body);
+
+        m_chronoSystem->AddBody(body->GetChronoBody());
+        m_bodyList.push_back(body);
     }
+
+//    void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLink_> link) {
+//        m_chronoSystem->AddLink(link->GetChronoLink());
+//        m_linkList.push_back(link);
+//    }
+//
+//    void FrOffshoreSystem_::AddOtherPhysics(std::shared_ptr<FrOtherPhysics_> otherPhysics) {
+//        m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoOtherPhysics());
+//        m_otherPhysicsList.push_back(otherPhysics);
+//    }
 
     FrEnvironment_ *FrOffshoreSystem_::GetEnvironment() const {
         return m_environment.get();
@@ -327,8 +344,30 @@ namespace frydom {
 
     void FrOffshoreSystem_::Initialize() {
 
+        // Initializing environment before bodies
+        m_environment->Initialize();
+
+        // Initializing embedded chrono system
         m_chronoSystem->SetupInitial(); // Actually do nothing but called for consistency
-        // TODO
+
+        // Initializing bodies
+        auto bodyIter = body_begin();
+        for (; bodyIter != body_end(); bodyIter++) {
+            (*bodyIter)->Initialize();
+        }
+
+        // Initializing links
+        auto linkIter = link_begin();
+        for (; linkIter != link_end(); linkIter++) {
+            (*linkIter)->Initialize();
+        }
+
+//        // Initializing otherPhysics
+//        auto otherPhysicsIter = otherphysics_begin();
+//        for (; otherPhysicsIter != otherphysics_end(); otherPhysicsIter++) {
+//            (*otherPhysicsIter)->Initialize();
+//        }
+
 
     }
 
@@ -340,7 +379,7 @@ namespace frydom {
 
     void FrOffshoreSystem_::SetSystemType(SYSTEM_TYPE type, bool checkCompat) {
 
-        if (m_chronoSystem) m_chronoSystem->Clear(); // Clear the system from every bodies etc...
+        if (m_chronoSystem) Clear(); // Clear the system from every bodies etc...
 
         // Creating the chrono System backend. It drives the way contact are modelled
         switch (type) {
@@ -363,6 +402,12 @@ namespace frydom {
 
 
 
+    }
+
+    void FrOffshoreSystem_::CheckBodyContactMethod(std::shared_ptr<FrBody_> body) {
+
+        // TODO : verifier que body est bien parametre pour le type courant de systeme...
+        //        if (m_systemType == NONSMOOTH_CONTACT && !body->Get)
 
 
 
@@ -590,6 +635,7 @@ namespace frydom {
             case RELAXATION:
                 return m_chronoSystem->DoStaticRelaxing(m_nbStepStatics);
         }
+        // FIXME : il semble que les solveurs retournent toujours true...
     }
 
     void FrOffshoreSystem_::SetTimeStepper(TIME_STEPPER type, bool checkCompat) {
@@ -682,14 +728,50 @@ namespace frydom {
     }
 
     std::shared_ptr<FrBody_> FrOffshoreSystem_::NewBody() {
-        return std::shared_ptr<FrBody_>();
+        auto body = std::make_shared<FrBody_>();  // TODO : suivant le type de systeme SMC ou NSC, regler le type de surface...
+        AddBody(body);
+        return body;
     }
 
+    void FrOffshoreSystem_::Clear() {
+        m_chronoSystem->Clear();
 
+        m_bodyList.clear();
+//        m_linkList.clear();
+//        m_otherPhysicsList.clear();
+    }
 
+    FrOffshoreSystem_::BodyIter FrOffshoreSystem_::body_begin() {
+        return m_bodyList.begin();
+    }
 
+    FrOffshoreSystem_::ConstBodyIter FrOffshoreSystem_::body_begin() const {
+        return m_bodyList.cbegin();
+    }
 
+    FrOffshoreSystem_::BodyIter FrOffshoreSystem_::body_end() {
+        return m_bodyList.end();
+    }
 
+    FrOffshoreSystem_::ConstBodyIter FrOffshoreSystem_::body_end() const {
+        return m_bodyList.cend();
+    }
+
+    FrOffshoreSystem_::LinkIter FrOffshoreSystem_::link_begin() {
+        return m_linkList.begin();
+    }
+
+    FrOffshoreSystem_::ConstLinkIter FrOffshoreSystem_::link_begin() const {
+        return m_linkList.cbegin();
+    }
+
+    FrOffshoreSystem_::LinkIter FrOffshoreSystem_::link_end() {
+        return m_linkList.end();
+    }
+
+    FrOffshoreSystem_::ConstLinkIter FrOffshoreSystem_::link_end() const {
+        return m_linkList.cend();
+    }
 
 
 }  // end namespace frydom

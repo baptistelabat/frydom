@@ -16,13 +16,20 @@ int main(int argc, char* argv[]) {
     // The system
     FrOffshoreSystem_ system;
 
-    system.Update(true);
+    system.Initialize();
 
-    std::cout << system.GetNbFixedBodies() << std::endl;
-    std::cout << system.GetNbDOF() << std::endl;
+
+
 //    std::cout << system.GetN() << std::endl;
 
 
+    if (!system.SolveStaticEquilibrium()) std::cout << "No equilibirum found..." << std::endl;
+
+
+    std::cout << "Number of fixed bodies : " << system.GetNbFixedBodies() << std::endl;
+    std::cout << "Number of DOF          : " << system.GetNbDOF() << std::endl;
+
+//    system.RunDynamics(0.01);
 
 
 //    // Set the free surface

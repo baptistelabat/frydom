@@ -90,8 +90,8 @@ namespace frydom {
         std::shared_ptr<FrNode> CreateNode();
         std::shared_ptr<FrNode> CreateNode(const chrono::ChVector<double> relpos);
 
-        std::shared_ptr<FrBody> CreateNodeDynamic();
-        std::shared_ptr<FrBody> CreateNodeDynamic(const chrono::ChVector<double> relpos);
+//        std::shared_ptr<FrBody> CreateNodeDynamic();
+//        std::shared_ptr<FrBody> CreateNodeDynamic(const chrono::ChVector<double> relpos);
 
         /// Set the position of the COG with respect to the body's reference frame (in local coordinates)
         void SetCOG(const chrono::ChVector<double>& COGRelPos) {
@@ -235,6 +235,7 @@ namespace frydom {
 
     // REFACTORING ------>>>>>>>>>>>>>>
 
+    class _FrBody;
 
     /// Cette classe n'est la que pour heriter des objets chrono.
     /// Ce n'est pas celle qu'on manipule directement dans frydom en tant qu'utilisateur !!!
@@ -247,11 +248,22 @@ namespace frydom {
     };
 
 
+    // Forward declarations
+    class FrForce_;
+    class FrFrame_;
+    class FrTransform_;
+    class FrRotation_;
+
 
     class FrBody_ : public FrObject {
 
     protected:
+
         std::shared_ptr<_FrBodyBase> m_chronoBody;
+
+        using ForceContainer = std::vector<std::shared_ptr<FrForce_>>;
+
+        ForceContainer m_externalForces;
 
 
     public:
@@ -266,8 +278,86 @@ namespace frydom {
 
         // TODO: ici, toutes les methodes qu'on veut publiques pour un corps !!!
 
+        // Principal inertial parameters
+
+        void SetMass(double mass);
+
+        void SetMassInKg(double mass);
+
+        void SetMasInTons(double mass);
+
+        void SetDiagonalInertiasWRT_COG(double Ixx, double Iyy, double Izz);
+
+        void SetOffDiagonalInertiasWRT_COG(double Ixy, double Ixz, double Iyz);
+
+        void SetDiagonalInertiasWRTToAnotherFrame(FrFrame_ frame, double Ixx, double Iyy, double Izz);
+
+        void SetOffDiagonalInertiasWRTToAnotherFrame(FrFrame_ frame, double Ixy, double Ixz, double Iyz);
+
+
+
+
+        // COG position with respect to local frame
+
+        void SetCOGPositionWRTLocalFrame(double x, double y, double z);
+
+        void SetCOGFrameOrientationWRTLocalFrame(FrRotation_ rotation);
+
+        void SetCOGFrameWRTLocalFrame(FrTransform_ transform);
+
+
+        // TODO : donner la possibilite de localiser un frame par rapport a un autre en utilisant les parametres mDH
+
+        // Body local frame with respect to global frame
+
+        void SetLocalFrameAbsPosition(double x, double y, double z);
+
+        void SetLocalFrameWRTAbsFrame(FrTransform_ transform);
+
+
+        // About body COG frame with recpect to global frame
+
+        void SetCOGFrameAbsPosition(double x, double y, double z);
+
+        void SetCOGFrameWRTAbsFrame(FrTransform_ transform);
+
+
+//        // Set absolute orientation of body
+//
+//        void SetAbsOrientation(FrRotation_ rotation);
+//
+//
+//        // About Velocity of local frame
+//        void SetLocalFrameAbsVelocity(double vx, double vy, double vz);
+//
+//        void SetLocalFrameLocalVelocity(double vx, double vy, double vz);
+//
+//        void SetCOGFrameAbsVelocity(double vx, double vy, double vz);
+//
+//        void SetCOGFrameLocalVelocity(double vx, double vy, double vz);
+//
+//
+//        void SetLocalFrameAbsAngularVelocity(double vx, double vy, double vz);
+//
+//        void SetLocalFrameLocalAngularVelocity(double vx, double vy, double vz);
+//
+//        void SetCOGFrameAbsAngularVelocity(double vx, double vy, double vz);
+//
+//        void SetCOGFrameLocalAngularVelocity(double vx, double vy, double vz);
+
+
+
+
+
+
+
+
+
+
+
 
     protected:
+
         std::shared_ptr<chrono::ChBody> GetChronoBody() {
             return m_chronoBody;
         }
@@ -280,10 +370,23 @@ namespace frydom {
         void StepFinalize() override;
 
 
+        // Linear iterators on external forces
+        using ForceIter = ForceContainer::iterator;
+        using ConstForceIter = ForceContainer::const_iterator;
+
+        ForceIter       force_begin();
+        ConstForceIter  force_begin() const;
+
+        ForceIter       force_end();
+        ConstForceIter  force_end() const;
+
+
+
+
 
 
 //    public:
-        friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_> rigidBody); // Voir a replacer
+        friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_> body); // Voir a replacer
 
 
 //        friend void internal::AddBodyToSystem(FrOffshoreSystem* , std::shared_ptr<FrBody>);

@@ -3,7 +3,10 @@ message(STATUS "    ...Core")
 
 set(SRC_FILES
         FrObject.cpp
+        FrRotation.cpp
+        FrFrame.cpp
         FrBody.cpp
+        FrLink.cpp
         FrBodyEasy.cpp
         FrConstants.cpp
         FrEulerAngles.cpp

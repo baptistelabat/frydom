@@ -128,6 +128,7 @@ namespace frydom {
 
     // Forward declarations
     class FrBody_;
+    class FrLink_;
     class FrEnvironment_;
 
     class FrOffshoreSystem_ : public FrObject {
@@ -206,17 +207,39 @@ namespace frydom {
         int m_nbStepStatics = 10;
         STATICS_METHOD  m_staticsMethod;
 
+        using BodyContainer = std::vector<std::shared_ptr<FrBody_>>;
+        using LinkContainer = std::vector<std::shared_ptr<FrLink_>>;
+//        using OtherPhysicsContainer = std::vector<std::shared_ptr<FrOtherPhysics_>>;
+
+        using BodyIter          = BodyContainer::iterator;
+        using ConstBodyIter     = BodyContainer::const_iterator;
+
+        using LinkIter = LinkContainer::iterator;
+        using ConstLinkIter = LinkContainer::const_iterator;
+
+//        using OtherPhysicsIter = OtherPhysicsContainer::iterator;
+//        using ConstOtherPhysicsIter = OtherPhysicsContainer::const_iterator;
+
+
+        BodyContainer m_bodyList;
+        LinkContainer m_linkList;
+//        OtherPhysicsList m_otherPhysicsList;
 
     public:
 
         /// Default constructor
+        explicit
         FrOffshoreSystem_(SYSTEM_TYPE systemType   = SMOOTH_CONTACT,
                           TIME_STEPPER timeStepper = EULER_IMPLICIT_LINEARIZED,
                           SOLVER solver            = MINRES);
 
         ~FrOffshoreSystem_();
 
-        void AddBody(std::shared_ptr<FrBody_> rigidBody);
+        void AddBody(std::shared_ptr<FrBody_> body);
+
+        void AddLink(std::shared_ptr<FrLink_> link);
+
+//        void AddOtherPhysics(std::shared_ptr<FrOtherPhysics_> otherPhysics);
 
         FrEnvironment_* GetEnvironment() const;
 
@@ -335,6 +358,8 @@ namespace frydom {
 
         std::shared_ptr<FrBody_> NewBody();
 
+        void Clear();
+
 
         // Visualization
 //        void SetVisualization(bool val);
@@ -345,6 +370,26 @@ namespace frydom {
 
         void CheckCompatibility() const;
 
+        void CheckBodyContactMethod(std::shared_ptr<FrBody_> body);
+
+
+    public:
+        // Defining iterators
+
+        BodyIter        body_begin();
+        ConstBodyIter   body_begin() const;
+        BodyIter        body_end();
+        ConstBodyIter   body_end() const;
+
+        LinkIter link_begin();
+        ConstLinkIter link_begin() const;
+        LinkIter link_end();
+        ConstLinkIter link_end() const;
+
+//        OtherPhysicsIter otherphysics_begin();
+//        ConstOtherPhysicsIter otherphysics_begin() const;
+//        OtherPhysicsIter otherphysics_end();
+//        ConstOtherPhysicsIter otherphysics_end() const;
 
     };
 

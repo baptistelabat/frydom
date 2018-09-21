@@ -9,6 +9,8 @@
 #include "chrono/physics/ChForce.h"
 #include "hermes/hermes.h"
 
+#include "MathUtils/Vector3d.h"
+
 #include "FrObject.h"
 
 // Forward declaration
@@ -101,6 +103,81 @@ namespace frydom {
         virtual void SetLogPrefix(std::string prefix_name = "") { m_logPrefix = prefix_name; };
 
     };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// REFACTORING ------------->>>>>>>>>>>>><
+
+    using ForceVector  = mathutils::Vector3d<double>;
+    using MomentVector = mathutils::Vector3d<double>;
+
+
+    class _FrForceBase : public chrono::ChForce {
+
+    public:
+
+        _FrForceBase();
+
+    };
+
+
+    // Forward declaration;
+    class FrBody_;
+
+
+    class FrForce_ : public FrObject {
+
+    protected:
+
+        FrBody_* m_owner;
+
+        std::shared_ptr<_FrForceBase> m_chronoForce;
+
+
+
+    public:
+
+        explicit FrForce_(FrBody_* body);
+
+
+        ForceVector GetForceVectorAbsFrame();
+
+        ForceVector GetForceVectorLocalFrame();
+
+//        ForceVector GetForceVectorOtherFrame(std::shared_ptr<FrFrame_> frame);
+
+        MomentVector GetMomentVectorAbsFrame();
+
+        MomentVector GetMomentVectorLocalFrame();
+
+//        MomentVector GetMomentVectorOtherFrame(std::shared_ptr<FrFrame_> frame);
+
+
+
+        virtual void Update(double time) = 0;
+
+//        void Initialize() override;
+//
+//        void StepFinalize() override;
+
+
+
+
+    };
+
+
+
 
 
 
