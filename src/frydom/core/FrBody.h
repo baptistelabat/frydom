@@ -265,6 +265,10 @@ namespace frydom {
 
         ForceContainer m_externalForces;
 
+        using CONTACT_TYPE = FrOffshoreSystem_::SYSTEM_TYPE;
+
+        CONTACT_TYPE m_contactType = CONTACT_TYPE::SMOOTH_CONTACT;
+
 
     public:
 
@@ -295,6 +299,15 @@ namespace frydom {
         void SetOffDiagonalInertiasWRTToAnotherFrame(FrFrame_ frame, double Ixy, double Ixz, double Iyz);
 
 
+        // Contact
+
+        void SetSmoothContact();
+
+        void SetNonSmoothContact();
+
+        void SetContactMethod(CONTACT_TYPE contactType);
+
+        CONTACT_TYPE GetContactType() const;
 
 
         // COG position with respect to local frame
@@ -350,7 +363,7 @@ namespace frydom {
 
 
 
-
+        void AddMeshAsset(std::string obj_filename);
 
 
 
@@ -361,6 +374,10 @@ namespace frydom {
         std::shared_ptr<chrono::ChBody> GetChronoBody() {
             return m_chronoBody;
         }
+
+        friend std::shared_ptr<FrBody_> make_BoxBody(double, double, double, double);
+        friend std::shared_ptr<FrBody_> make_CylinderBody(double, double, double);
+        friend std::shared_ptr<FrBody_> make_SphereBody(double, double);
 
 
     public:

@@ -10,6 +10,7 @@
 ////#include "frydom/core/FrException.h"
 //
 //
+#include <frydom/utils/FrIrrApp.h>
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/physics/ChSystemNSC.h"
 //
@@ -24,6 +25,8 @@
 //#include "frydom/core/FrBody.h"
 //
 //#include "frydom/environment/FrEnvironment.h"
+
+#include "frydom/utils/FrIrrApp.h"
 
 
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
@@ -225,6 +228,7 @@ namespace frydom {
         LinkContainer m_linkList;
 //        OtherPhysicsList m_otherPhysicsList;
 
+
     public:
 
         /// Default constructor
@@ -362,7 +366,11 @@ namespace frydom {
 
 
         // Visualization
-//        void SetVisualization(bool val);
+
+        void RunInViewer(double endTime, double dist=100, bool recordVideo=false);
+
+
+
 
     private:
 
@@ -370,7 +378,11 @@ namespace frydom {
 
         void CheckCompatibility() const;
 
-        void CheckBodyContactMethod(std::shared_ptr<FrBody_> body);
+        bool CheckBodyContactMethod(std::shared_ptr<FrBody_> body);
+
+        chrono::ChSystem* GetChronoSystem();
+
+//        friend class FrIrrApp_;
 
 
     public:

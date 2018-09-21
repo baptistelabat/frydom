@@ -99,8 +99,38 @@ namespace frydom {
     }
 
     void FrBody_::StepFinalize() {
-
+        // TODO
     }
+
+    void FrBody_::SetSmoothContact() {
+        auto materialSurface = std::make_shared<chrono::ChMaterialSurfaceSMC>();
+        m_chronoBody->SetMaterialSurface(materialSurface);
+        m_contactType = CONTACT_TYPE::SMOOTH_CONTACT;
+    }
+
+    void FrBody_::SetNonSmoothContact() {
+        auto materialSurface = std::make_shared<chrono::ChMaterialSurfaceNSC>();
+        m_chronoBody->SetMaterialSurface(materialSurface);
+        m_contactType = CONTACT_TYPE::NONSMOOTH_CONTACT;
+    }
+
+    void FrBody_::SetContactMethod(CONTACT_TYPE contactType) {
+        switch (contactType) {
+            case CONTACT_TYPE::SMOOTH_CONTACT:
+                SetSmoothContact();
+                break;
+            case CONTACT_TYPE::NONSMOOTH_CONTACT:
+                SetNonSmoothContact();
+                break;
+        }
+    }
+
+    FrBody_::CONTACT_TYPE FrBody_::GetContactType() const {
+        return m_contactType;
+    }
+
+
+    // Linear iterators
 
     FrBody_::ForceIter FrBody_::force_begin() {
         return m_externalForces.begin();
@@ -119,7 +149,15 @@ namespace frydom {
     }
 
 
+    void FrBody_::AddMeshAsset(std::string obj_filename) {
 
+        auto mesh = std::make_shared<FrTriangleMeshConnected>();
+        mesh->LoadWavefrontMesh(obj_filename);
+        auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
+        shape->SetMesh(*mesh);
+        m_chronoBody->AddAsset(shape);
+
+    }
 
 
 

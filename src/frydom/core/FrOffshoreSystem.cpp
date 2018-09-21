@@ -313,11 +313,16 @@ namespace frydom {
 
     void FrOffshoreSystem_::AddBody(std::shared_ptr<FrBody_> body) {
 
-        CheckBodyContactMethod(body);
+        if (!CheckBodyContactMethod(body)) {
+            body->SetContactMethod(m_systemType);
+        }
 
         m_chronoSystem->AddBody(body->GetChronoBody());
         m_bodyList.push_back(body);
+
     }
+
+
 
 //    void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLink_> link) {
 //        m_chronoSystem->AddLink(link->GetChronoLink());
@@ -362,11 +367,13 @@ namespace frydom {
             (*linkIter)->Initialize();
         }
 
+        // TODO (pour la radiation notamment)
 //        // Initializing otherPhysics
 //        auto otherPhysicsIter = otherphysics_begin();
 //        for (; otherPhysicsIter != otherphysics_end(); otherPhysicsIter++) {
 //            (*otherPhysicsIter)->Initialize();
 //        }
+
 
 
     }
@@ -398,19 +405,14 @@ namespace frydom {
     }
 
     void FrOffshoreSystem_::CheckCompatibility() const {
-        // TODO : verifier la compatibilite entre type systeme, volveur et integrateur temporel
+        // TODO : verifier la compatibilite entre type systeme, solveur et integrateur temporel
 
 
 
     }
 
-    void FrOffshoreSystem_::CheckBodyContactMethod(std::shared_ptr<FrBody_> body) {
-
-        // TODO : verifier que body est bien parametre pour le type courant de systeme...
-        //        if (m_systemType == NONSMOOTH_CONTACT && !body->Get)
-
-
-
+    bool FrOffshoreSystem_::CheckBodyContactMethod(std::shared_ptr<FrBody_> body) {
+        return m_systemType == body->GetContactType();
     }
 
     void FrOffshoreSystem_::SetSolver(SOLVER solver, bool checkCompat) {
@@ -729,6 +731,16 @@ namespace frydom {
 
     std::shared_ptr<FrBody_> FrOffshoreSystem_::NewBody() {
         auto body = std::make_shared<FrBody_>();  // TODO : suivant le type de systeme SMC ou NSC, regler le type de surface...
+
+        switch (m_systemType) {
+            case SMOOTH_CONTACT:
+                body->SetSmoothContact();
+                break;
+            case NONSMOOTH_CONTACT:
+                body->SetNonSmoothContact();
+                break;
+        }
+
         AddBody(body);
         return body;
     }
@@ -740,6 +752,25 @@ namespace frydom {
 //        m_linkList.clear();
 //        m_otherPhysicsList.clear();
     }
+
+    chrono::ChSystem* FrOffshoreSystem_::GetChronoSystem() {
+        return m_chronoSystem.get();
+    }
+
+
+    // Irrlicht visualization
+
+    void FrOffshoreSystem_::RunInViewer(double endTime, double dist, bool recordVideo) {
+
+        FrIrrApp_ app(m_chronoSystem.get(), dist);
+        app.SetVideoframeSave(recordVideo);
+        app.Run(endTime);
+
+    }
+
+
+
+    // Iterators
 
     FrOffshoreSystem_::BodyIter FrOffshoreSystem_::body_begin() {
         return m_bodyList.begin();
