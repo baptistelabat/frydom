@@ -11,58 +11,108 @@
 
 namespace frydom {
 
+    void makeItBox(std::shared_ptr<FrBody_> body, double xSize, double ySize, double zSize, double mass) {
+
+        // Properties of the box
+        double xSize2 = xSize * xSize;
+        double ySize2 = ySize * ySize;
+        double zSize2 = zSize * zSize;
+
+        // inertia
+        double Ixx = (1./12.) * mass * (ySize2 + zSize2);
+        double Iyy = (1./12.) * mass * (xSize2 + zSize2);
+        double Izz = (1./12.) * mass * (xSize2 + ySize2);
+
+        // Building the chrono body
+        body->SetMass(mass);
+        body->SetDiagonalInertiasWRT_COG(Ixx, Iyy, Izz);
+
+
+        // Collision
+        auto collisionModel = body->m_chronoBody->GetCollisionModel();
+        collisionModel->ClearModel();
+        collisionModel->AddBox(xSize*0.5, ySize*0.5, zSize*0.5, chrono::ChVector<double>()); // TODO: permettre de specifier une position relative (et orientation ?)
+        collisionModel->BuildModel();
+        body->SetCollide(true);  // A retirer ??
+        body->SetSmoothContact();
+
+        // Asset
+        body->AddBoxShape(xSize, ySize, zSize);
+
+    }
+
+    void makeItCylinder(std::shared_ptr<FrBody_> body, double radius, double height, double mass) {
+
+        // Properties of the cylinder
+        double r2 = radius * radius;
+        double h2 = height * height;
+        double Ixx = (1./12.) * mass * (3.*r2 + h2);  // FIXME : attention, on a pas les bons ordres !!
+        double Iyy = 0.5 * mass * r2;
+        double Izz = Ixx;
+
+        body->SetMass(mass);
+        body->SetDiagonalInertiasWRT_COG(Ixx, Iyy, Izz);
+
+        // Collision
+        auto collisionModel = body->m_chronoBody->GetCollisionModel();
+        collisionModel->ClearModel();
+        collisionModel->AddCylinder(radius, radius, height * 0.5, chrono::ChVector<double>());  // TODO: permettre de specifier les coords relatives dans le modele !!
+        collisionModel->BuildModel();
+        body->SetCollide(true);  // A retirer ?
+        body->SetSmoothContact();  // Smooth contact by default
+
+        // Asset
+        body->AddCylinderShape(radius, height);
+
+    }
+
+    void makeItSphere(std::shared_ptr<FrBody_> body, double radius, double mass) {
+
+        // Properties of the sphere
+        double inertia = (2.0 / 5.0) * mass * radius * radius;
+
+        body->SetMass(mass);
+        body->SetDiagonalInertiasWRT_COG(inertia, inertia, inertia);
+
+        // Collision
+        auto collisionModel = body->m_chronoBody->GetCollisionModel();
+        collisionModel->ClearModel();
+        collisionModel->AddSphere(radius, chrono::ChVector<double>());  // TODO: permettre de specifier les coords relatives dans le modele !!
+        collisionModel->BuildModel();
+        body->SetCollide(true);  // A retirer ?
+        body->SetSmoothContact();  // Smooth contact by default
+
+        // Asset
+        body->AddSphereShape(radius);
+
+    }
+
+
 
 
     std::shared_ptr<FrBody_> make_BoxBody(double xSize, double ySize, double zSize, double mass) {
 
-        double volume = xSize * ySize * zSize;
-        double density = mass / volume;
-
         auto box = std::make_shared<FrBody_>();
-
-        auto chronoBody = std::dynamic_pointer_cast<_FrBodyBase>(
-                std::make_shared<chrono::ChBodyEasyBox>(xSize, ySize, zSize, density, true, true, chrono::ChMaterialSurface::SMC)
-                );
-
-        box->m_chronoBody = chronoBody;
-        box->SetSmoothContact();
-
+        makeItBox(box, xSize, ySize, zSize, mass);
         return box;
+
     }
 
     std::shared_ptr<FrBody_> make_CylinderBody(double radius, double height, double mass) {
-        double volume = MU_PI * radius * radius * height;
-        double density = mass / volume;
 
         auto cylinder = std::make_shared<FrBody_>();
-
-        auto chronoBody = std::dynamic_pointer_cast<_FrBodyBase>(
-                std::make_shared<chrono::ChBodyEasyCylinder>(radius, height, density, true, true, chrono::ChMaterialSurface::SMC)
-        );
-
-        cylinder->m_chronoBody = chronoBody;
-        cylinder->SetSmoothContact();
-
+        makeItCylinder(cylinder, radius, height, mass);
         return cylinder;
+
     }
 
     std::shared_ptr<FrBody_> make_SphereBody(double radius, double mass) {
-        double volume = (4. / 3.) * MU_PI * radius * radius * radius;
-        double density = mass / volume;
 
         auto sphere = std::make_shared<FrBody_>();
-
-        auto chronoBody = std::dynamic_pointer_cast<_FrBodyBase>(
-                std::make_shared<chrono::ChBodyEasyCylinder>(radius, density, true, true, chrono::ChMaterialSurface::SMC)
-        );
-
-        sphere->m_chronoBody = chronoBody;
-        sphere->SetSmoothContact();
-
+        makeItSphere(sphere, radius, mass);
         return sphere;
+
     }
-
-
 
 
 

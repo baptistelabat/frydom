@@ -64,6 +64,13 @@ namespace frydom {
     // Forward declaration
     class FrBody_;
 
+    void makeItBox(std::shared_ptr<FrBody_> body, double xSize, double ySize, double zSize, double mass);
+
+    void makeItCylinder(std::shared_ptr<FrBody_> body, double radius, double height, double mass);
+
+    void makeItSphere(std::shared_ptr<FrBody_> body, double radius, double mass);
+
+
     std::shared_ptr<FrBody_> make_BoxBody(double xSize, double ySize, double zSize, double mass);
 
     std::shared_ptr<FrBody_> make_CylinderBody(double radius, double height, double mass);

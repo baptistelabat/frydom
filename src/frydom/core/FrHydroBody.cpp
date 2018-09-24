@@ -165,7 +165,7 @@ namespace frydom {
 //        std::cout << "Updating body"  << std::endl;
 
         // Update heading
-        auto euler_angles = quat_to_euler(GetRot(), CARDAN, RAD);
+        auto euler_angles = internal::quat_to_euler(GetRot(), CARDAN, RAD);
         m_heading = Normalize_0_2PI(euler_angles.z());
 
         // Update course
@@ -294,7 +294,7 @@ namespace frydom {
     }
 
     void FrHydroBody::SetNEDHeading(const double heading_angle, ANGLE_UNIT angleUnit) {
-        auto quaternion = euler_to_quat(0., 0., -heading_angle, CARDAN, angleUnit);
+        auto quaternion = internal::euler_to_quat(0., 0., -heading_angle, CARDAN, angleUnit);
         SetRot(quaternion);
     }
 

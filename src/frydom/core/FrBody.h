@@ -210,7 +210,7 @@ namespace frydom {
 
         virtual void StepFinalize() override {
 
-            m_angles_rotation = quat_to_euler(GetRot());    // FIXME : ceci est un fixe pour permettre de logger l'angle de rotation
+            m_angles_rotation = internal::quat_to_euler(GetRot());    // FIXME : ceci est un fixe pour permettre de logger l'angle de rotation
 
             for (auto& iforce: forcelist) {
                 auto force = dynamic_cast<FrForce*>(iforce.get());
@@ -233,7 +233,7 @@ namespace frydom {
 
 
 
-    // REFACTORING ------>>>>>>>>>>>>>>
+    /// REFACTORING ------>>>>>>>>>>>>>>
 
     class _FrBody;
 
@@ -286,17 +286,15 @@ namespace frydom {
 
         void SetMass(double mass);
 
-        void SetMassInKg(double mass);
-
         void SetMasInTons(double mass);
 
         void SetDiagonalInertiasWRT_COG(double Ixx, double Iyy, double Izz);
 
         void SetOffDiagonalInertiasWRT_COG(double Ixy, double Ixz, double Iyz);
 
-        void SetDiagonalInertiasWRTToAnotherFrame(FrFrame_ frame, double Ixx, double Iyy, double Izz);
-
-        void SetOffDiagonalInertiasWRTToAnotherFrame(FrFrame_ frame, double Ixy, double Ixz, double Iyz);
+//        void SetDiagonalInertiasWRTToAnotherFrame(FrFrame_ frame, double Ixx, double Iyy, double Izz);
+//
+//        void SetOffDiagonalInertiasWRTToAnotherFrame(FrFrame_ frame, double Ixy, double Ixz, double Iyz);
 
 
         // Contact
@@ -308,6 +306,15 @@ namespace frydom {
         void SetContactMethod(CONTACT_TYPE contactType);
 
         CONTACT_TYPE GetContactType() const;
+
+        void SetCollide(bool isColliding);
+
+        // Assets
+        void AddBoxShape(double xSize, double ySize, double zSize);
+
+        void AddCylinderShape(double radius, double height);
+
+        void AddSphereShape(double radius);
 
 
         // COG position with respect to local frame
@@ -375,9 +382,13 @@ namespace frydom {
             return m_chronoBody;
         }
 
-        friend std::shared_ptr<FrBody_> make_BoxBody(double, double, double, double);
-        friend std::shared_ptr<FrBody_> make_CylinderBody(double, double, double);
-        friend std::shared_ptr<FrBody_> make_SphereBody(double, double);
+//        friend std::shared_ptr<FrBody_> make_BoxBody(double, double, double, double);
+//        friend std::shared_ptr<FrBody_> make_CylinderBody(double, double, double);
+//        friend std::shared_ptr<FrBody_> make_SphereBody(double, double);
+
+        friend void makeItBox(std::shared_ptr<FrBody_>, double, double, double, double);
+        friend void makeItCylinder(std::shared_ptr<FrBody_>, double, double, double);
+        friend void makeItSphere(std::shared_ptr<FrBody_>, double, double);
 
 
     public:

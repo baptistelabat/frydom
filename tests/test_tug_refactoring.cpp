@@ -16,22 +16,14 @@ int main(int argc, char* argv[]) {
     // The system
     FrOffshoreSystem_ system;
 
-//    std::cout << system.GetN() << std::endl;
 
+    auto cylinder = system.NewBody();
+    makeItCylinder(cylinder, 5., 30., 100e3);
+//    cylinder->SetBodyFixed(true);
+//    cylinder->SetCollide(false);
 
-//    if (!system.SolveStaticEquilibrium()) std::cout << "No equilibirum found..." << std::endl;
-
-
-//    std::cout << "Number of fixed bodies : " << system.GetNbFixedBodies() << std::endl;
-//    std::cout << "Number of DOF          : " << system.GetNbDOF() << std::endl;
-
-//    system.RunDynamics(0.01);
-
-//    auto body = system.NewBody();
-
-    system.AddBody(make_SphereBody(50, 100));
-
-
+    auto box = system.NewBody();
+    makeItBox(box, 10, 20, 30, 1e4);
 
 
 

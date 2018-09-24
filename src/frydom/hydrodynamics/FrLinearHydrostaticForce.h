@@ -58,7 +58,7 @@ namespace frydom {
 
             chrono::ChVector<double> axis;
             double angle;
-            quat_to_axis_angle(deltaFrame.GetRot(), axis, angle, RAD);
+            internal::quat_to_axis_angle(deltaFrame.GetRot(), axis, angle, RAD);
 
             double roll = angle * axis.x();
             double pitch = angle * axis.y();
