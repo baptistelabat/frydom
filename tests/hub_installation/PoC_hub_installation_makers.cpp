@@ -5,6 +5,7 @@
 #include "frydom/frydom.h"
 #include "chrono/physics/ChLinkMotorRotationSpeed.h"
 #include "chrono/physics/ChLinkMotorRotationAngle.h"
+#include "chrono_mumps/ChSolverMumps.h"
 
 
 using namespace chrono;
@@ -50,6 +51,13 @@ void run_simulation(FrOffshoreSystem& system) {
     msolver->SetVerbose(false);
     msolver->SetDiagonalPreconditioning(true);
 
+
+//    auto mumps_solver = std::make_shared<chrono::ChSolverMumps>();
+//    mumps_solver->SetSparsityPatternLock(true);
+//    system.SetSolver(mumps_solver);
+
+
+
 //    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED);
 
 //    system.SetTimestepperType(chrono::ChTimestepper::Type::EULER_IMPLICIT);
@@ -64,6 +72,16 @@ void run_simulation(FrOffshoreSystem& system) {
     integrator->SetModifiedNewton(false);
     integrator->SetScaling(true);
 
+
+//    integrator->SetAlpha(-0.2);
+//    integrator->SetMaxiters(50);
+//    integrator->SetAbsTolerances(1e-1, 1e3);
+//    integrator->SetMode(ChTimestepperHHT::ACCELERATION);
+//    integrator->SetStepControl(false);
+//    integrator->SetModifiedNewton(true);
+//    integrator->SetScaling(true);
+//    integrator->SetVerbose(verbose_integrator);
+
 //    system.SetTimestepperType(chrono::ChTimestepper::Type::NEWMARK);
 //    auto integrator = std::static_pointer_cast<chrono::ChTimestepperNewmark>(system.GetTimestepper());
 //    integrator->SetVerbose(true);
@@ -71,7 +89,7 @@ void run_simulation(FrOffshoreSystem& system) {
 //    integrator->SetAbsTolerances(5e-05,1.8e00);
 //    integrator->SetGammaBeta(0.75, 0.5);
 
-    integrator->SetVerbose(true);
+//    integrator->SetVerbose(true);
 
 
 
@@ -108,11 +126,13 @@ std::shared_ptr<FrHydroBody> make_barge(FrOffshoreSystem& system){
     system.AddBody(barge);
     //barge->SetBodyFixed(true);
 
-//    barge->SetInertiaXX(chrono::ChVector<double>(2.465e7,1.149e8,1.388e08));
-    barge->SetInertiaXX(chrono::ChVector<double>(20*3.11432e+07,20*2.1652e+08,20*1.4624e+07));
+    barge->SetInertiaXX(chrono::ChVector<double>(2.465e7,1.149e8,1.388e08));
+//    barge->SetInertiaXX(chrono::ChVector<double>(2.465e7 + 3.11432e+07,1.149e8 + 2.1652e+08,1.388e08 + 1.4624e+07));
+//    barge->SetInertiaXX(chrono::ChVector<double>(20*3.11432e+07,20*2.1652e+08,20*1.4624e+07));
     barge->SetInertiaXY(chrono::ChVector<double>(0, 0.94e5, 0));
     barge->SetMass((1137.6-180.6)*1e3); // 1137.576e3 pour l'ensemble
     barge->SetMass(1137.6e3); // 1137.576e3 pour l'ensemble
+//    barge->SetMass(1137.6e3 + 3.34317e+06); // 1137.576e3 pour l'ensemble
     barge->SetCOG(chrono::ChVector<double>(0, 0, 0));
     barge->SetEquilibriumFrame(WorldFixed,chrono::ChVector<>(0,0,0));
 //    barge->Set3DOF_ON();
@@ -228,22 +248,22 @@ double A = 0.05;
 double E = EA / A;
 double breakTensionAsset = 500000;
 
-auto Catenary = std::make_shared<FrCatenaryLine>(A3_tige, A4_hub, true, E, A, Lu, q, u);
-Catenary->SetBreakingTension(breakTensionAsset);
-Catenary->Initialize();
-system.AddLink(Catenary);
+//auto Catenary = std::make_shared<FrCatenaryLine>(A3_tige, A4_hub, true, E, A, Lu, q, u);
+//Catenary->SetBreakingTension(breakTensionAsset);
+//Catenary->Initialize();
+//system.AddLink(Catenary);
 
-//    auto DynamicLine = std::make_shared<FrDynamicCable>();
-//    DynamicLine->SetStartingNode(A3_tige);
-//    DynamicLine->SetEndingNode(A4_hub);
-//    DynamicLine->SetCableLength(Lu);
-//    DynamicLine->SetNumberOfElements(10);
-//    DynamicLine->SetLinearDensity(30);
-//    DynamicLine->SetDiameter(A);
-//    DynamicLine->SetYoungModulus(EA);
-//    DynamicLine->SetRayleighDamping(0.01);
-//    DynamicLine->Initialize();
-//    system.Add(DynamicLine);
+    auto DynamicLine = std::make_shared<FrDynamicCable>();
+    DynamicLine->SetStartingNode(A3_tige);
+    DynamicLine->SetEndingNode(A4_hub);
+    DynamicLine->SetCableLength(Lu);
+    DynamicLine->SetNumberOfElements(10);
+    DynamicLine->SetLinearDensity(30);
+    DynamicLine->SetDiameter(A);
+    DynamicLine->SetYoungModulus(EA);
+    DynamicLine->SetRayleighDamping(0.01);
+    DynamicLine->Initialize();
+    system.Add(DynamicLine);
 
 
 }
@@ -364,14 +384,14 @@ void make_export_cable(FrOffshoreSystem& system, std::shared_ptr<FrBody>& hub_bo
     auto E = EA / A;
     auto breakTensionAsset = 100000;
 
-
     auto Export = system.GetWorldBody()->CreateNode(ChVector<double>(0, 150, -30.));
+
 //    auto DynamicLine = std::make_shared<FrDynamicCable>();
 //    DynamicLine->SetStartingNode(Export);
 //    DynamicLine->SetEndingNode(A5_hub);
 //    DynamicLine->SetCableLength(Lu);
 //    DynamicLine->SetNumberOfElements(20);
-//    DynamicLine->SetLinearDensity(20);
+//    DynamicLine->SetLinearDensity(q);
 //    DynamicLine->SetSectionArea(A);
 //    DynamicLine->SetYoungModulus(E);
 //    DynamicLine->SetRayleighDamping(0.01);
