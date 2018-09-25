@@ -6,11 +6,13 @@
 #define FRYDOM_FRROTATION_H
 
 
-#include <chrono/core/ChQuaternion.h>
-#include <MathUtils/Vector3d.h>
-#include <chrono/core/ChMatrix33.h>
+#include "chrono/core/ChQuaternion.h"
+#include "MathUtils/Vector3d.h"
+#include "chrono/core/ChMatrix33.h"
 
 #include "FrEulerAngles.h"
+
+
 
 namespace mathutils {
     template <typename Real>
@@ -31,13 +33,17 @@ namespace frydom {
 
     namespace internal {
 
-        inline Vector3d ChVector2Vector3d(chrono::ChVector<double> vector);
+        /// Convert a chrono 3D vector into a mathutils Vector3d
+        Vector3d ChVectorToVector3d(const chrono::ChVector<double> vector);
 
-        inline chrono::ChVector<double> Vector3d2ChVector(Vector3d vector3d);
+        /// Convert a mathutils Vector3d into a Chrono 3D vector
+        chrono::ChVector<double> Vector3dToChVector(const Vector3d vector3d);
 
-        inline chrono::ChQuaternion<double> FrQuaternion2ChQuaternion(const FrQuaternion_& frQuaternion);
+        /// Convert a FRyDoM quaternion into a Chrono quaternion
+        chrono::ChQuaternion<double> Fr2ChQuaternion(const FrQuaternion_ &frQuaternion);
 
-        inline FrQuaternion_ ChQuaternion2FrQuaternion(const chrono::ChQuaternion<double>& chQuaternion);
+        /// Convert a Chrono quaternion into a FRyDoM quaternion
+        FrQuaternion_ Ch2FrQuaternion(const chrono::ChQuaternion<double> &chQuaternion);
 
     }
 
@@ -46,12 +52,16 @@ namespace frydom {
     class FrQuaternion_ {
 
     private:
+
         chrono::ChQuaternion<double> m_chronoQuaternion;
+
         chrono::ChQuaternion<double> GetChronoQuaternion() const;
 
         friend class FrRotation_;
 
+
     public:
+
         FrQuaternion_();
 
         FrQuaternion_(double q0, double q1, double q2, double q3);
@@ -93,10 +103,14 @@ namespace frydom {
 
         Vector3d Rotate(const Vector3d& vector);
 
+        FrQuaternion_& Inverse();
+
+        FrQuaternion_ Inverse() const;
+
     };
 
 
-
+    // FIXME : on ne devrait pas avoir besoin d'avoir une telle classe, la classe FrRotation_ suffit...
     class FrRotationMatrix_ {
 
     private:
@@ -123,14 +137,15 @@ namespace frydom {
     class FrRotation_ {
 
     private:
-        FrQuaternion_ m_quaternion;
 
+        FrQuaternion_ m_quaternion;
 
     public:
 
-
-
+        /// Default rotation constructor. This is the null rotation
         FrRotation_();
+
+        void SetNull();
 
 
         // Quaternion representation
@@ -162,11 +177,11 @@ namespace frydom {
 
         // Euler angles representation
 
-        void SetEulerAngles(double phi, double theta, double psi, EulerSeq seq);
+        void SetEulerAngles(double phi, double theta, double psi, EULER_SEQUENCE seq);
 
         void SetCardanAngles(double phi, double theta, double psi);
 
-        void GetEulerAngles(double& phi, double& theta, double& psi, EulerSeq seq) const;
+        void GetEulerAngles(double& phi, double& theta, double& psi, EULER_SEQUENCE seq) const;
 
         void GetCardanAngles(double& phi, double& theta, double& psi) const;
 
@@ -182,6 +197,7 @@ namespace frydom {
         Vector3d Rotate(const Vector3d& vector);
 
 
+        // TODO : ajouter les GetXAxis etc... cf ChQuaternion pour les methodes...
 
 
     };

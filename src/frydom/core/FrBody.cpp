@@ -208,27 +208,73 @@ namespace frydom {
 
     void FrBody_::SetCOGPositionWRTLocalFrame(double x, double y, double z) {
 
-        // TODO : Analyse de ce qui est fait pour ChBodyAuxRef :::
-
-        m_chronoBody->SetFrame_COG_to_REF()
-        m_chronoBody->SetFrame_REF_to_COG()
-        m_chronoBody->SetFrame_REF_to_abs()
-
-
-        m_chronoBody->SetPos()
-        m_chronoBody->SetPos_dt()
-        m_chronoBody->SetPos_dtdt()
-
-
-        m_chronoBody->SetRot()
-        m_chronoBody->SetRot_dt()
-        m_chronoBody->SetRot_dtdt()
-
-
-        m_chronoBody->GetFrame_COG_to_abs()
-        m_chronoBody->GetFrame_COG_to_REF()
-        m_chronoBody->GetFrame_REF_to_abs()
-        m_chronoBody->GetFrame_REF_to_COG()
+//        // TODO : Analyse de ce qui est fait pour ChBodyAuxRef :::
+//
+//        /// Set the COG frame with respect to the auxiliary reference frame.
+//        /// Note that this also moves the body absolute COG (the REF is fixed).
+//        /// The position of contained ChMarker objects, if any, is not changed with respect
+//        /// to the reference.
+//        m_chronoBody->SetFrame_COG_to_REF()
+//
+//        /// Set the auxiliary reference frame with respect to the COG frame.
+//        /// Note that this does not move the body absolute COG (the COG is fixed).
+//        m_chronoBody->SetFrame_REF_to_COG()
+//
+//        /// Set the auxiliary reference frame with respect to the absolute frame.
+//        /// This moves the entire body; the body COG is rigidly moved as well.
+//        m_chronoBody->SetFrame_REF_to_abs()
+//
+//        // Impose the translation (the COG position)
+//        m_chronoBody->SetPos()
+//
+//        // Set the linear speed
+//        m_chronoBody->SetPos_dt()
+//
+//        // Set the linear acceleration
+//        m_chronoBody->SetPos_dtdt()
+//
+//        // Impose the rotation
+//        m_chronoBody->SetRot()
+//
+//        // Set the rotation speed (quaternion)
+//        m_chronoBody->SetRot_dt()
+//
+//        // Set the rotation speed (angular speed in local coordinate system)
+//        m_chronoBody->SetWvel_loc()
+//
+//        // Set the rotation speed (angular speed in parent coordinate system)
+//        m_chronoBody->SetWvel_par()
+//
+//        m_chronoBody->SetRot_dtdt() // quaternion
+//        m_chronoBody->SetWacc_loc()
+//        m_chronoBody->SetWacc_par(
+//
+//        // TODO : les fonctions precedentes ont leur contre partie GetXXX()
+//
+//
+//
+//        // Fonctions pour limiter les vitesses
+//        m_chronoBody->SetMaxSpeed()
+//        m_chronoBody->SetMaxWvel()
+//        m_chronoBody->SetLimitSpeed()
+//
+//
+//        /// Get the rigid body coordinate system that represents
+//        /// the GOG (Center of Gravity). The mass and inertia tensor
+//        /// are defined respect to this coordinate system, that is also
+//        /// assumed the default main coordinates of the body.
+//        /// By default, doing mybody.GetPos() etc. is like mybody.GetFrame_COG_abs().GetPos() etc.
+//        m_chronoBody->GetFrame_COG_to_abs()
+//
+//        /// Get the COG frame with respect to the auxiliary reference frame.
+//        m_chronoBody->GetFrame_COG_to_REF()
+//
+//        /// Get the auxiliary reference frame with respect to the absolute frame.
+//        /// Note that, in general, this is different from GetFrame_COG_to_abs().
+//        m_chronoBody->GetFrame_REF_to_abs()
+//
+//        /// Get the auxiliary reference frame with respect to the COG frame.
+//        m_chronoBody->GetFrame_REF_to_COG()
 
 
     }

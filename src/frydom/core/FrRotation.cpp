@@ -13,36 +13,37 @@ namespace frydom {
 
     namespace internal {
 
-
         // Conversion functions
-        Vector3d ChVector2Vector3d(const chrono::ChVector<double> vector) {
+        Vector3d ChVectorToVector3d(const chrono::ChVector<double> vector) {
             Vector3d vector3d;
             vector3d << vector.x(), vector.y(), vector.z();
             return vector3d;
         }
 
-        chrono::ChVector<double> Vector3d2ChVector(const Vector3d vector3d) {
+        chrono::ChVector<double> Vector3dToChVector(const Vector3d vector3d) {
             chrono::ChVector<double> vector(vector3d[0], vector3d[1], vector3d[2]);
             return vector;
         }
 
-        chrono::ChQuaternion<double> FrQuaternion2ChQuaternion(const FrQuaternion_ &frQuaternion) {
-            return chrono::ChQuaternion<double>(frQuaternion.GetScalar(), Vector3d2ChVector(frQuaternion.GetVector()));
+        chrono::ChQuaternion<double> Fr2ChQuaternion(const FrQuaternion_ &frQuaternion) {
+            // TODO : voir si pas conversion plus directe...
+            return chrono::ChQuaternion<double>(frQuaternion.GetScalar(), Vector3dToChVector(frQuaternion.GetVector()));
         }
 
-        FrQuaternion_ ChQuaternion2FrQuaternion(const chrono::ChQuaternion<double> &chQuaternion) {
+        FrQuaternion_ Ch2FrQuaternion(const chrono::ChQuaternion<double> &chQuaternion) {
             return FrQuaternion_();
         }
 
-
     }
 
+
+    // FrQuaternion_
 
     FrQuaternion_::FrQuaternion_() : m_chronoQuaternion() {}
 
     FrQuaternion_::FrQuaternion_(double q0, double q1, double q2, double q3) : m_chronoQuaternion(q0, q1, q2, q3) {}
 
-    FrQuaternion_::FrQuaternion_(double s, const Vector3d imag) : m_chronoQuaternion(s, internal::Vector3d2ChVector(imag)) {}
+    FrQuaternion_::FrQuaternion_(double s, const Vector3d imag) : m_chronoQuaternion(s, internal::Vector3dToChVector(imag)) {}
 
     FrQuaternion_::FrQuaternion_(const FrQuaternion_ &other) : m_chronoQuaternion(other.m_chronoQuaternion) {}
 
@@ -71,7 +72,7 @@ namespace frydom {
     }
 
     void FrQuaternion_::SetVector(const Vector3d &v) {
-        m_chronoQuaternion.SetVector(internal::Vector3d2ChVector(v));
+        m_chronoQuaternion.SetVector(internal::Vector3dToChVector(v));
     }
 
     double FrQuaternion_::GetScalar() const {
@@ -79,7 +80,7 @@ namespace frydom {
     }
 
     Vector3d FrQuaternion_::GetVector() const {
-        return internal::ChVector2Vector3d(m_chronoQuaternion.GetVector());
+        return internal::ChVectorToVector3d(m_chronoQuaternion.GetVector());
     }
 
     void FrQuaternion_::Get(double &q0, double &q1, double &q2, double &q3) const {
@@ -98,11 +99,11 @@ namespace frydom {
     }
 
     FrQuaternion_ FrQuaternion_::operator-() const {
-        return internal::ChQuaternion2FrQuaternion(-m_chronoQuaternion);
+        return internal::Ch2FrQuaternion(-m_chronoQuaternion);
     }
 
     FrQuaternion_ FrQuaternion_::operator*(const FrQuaternion_ &other) const {
-        return internal::ChQuaternion2FrQuaternion(m_chronoQuaternion * other.m_chronoQuaternion);
+        return internal::Ch2FrQuaternion(m_chronoQuaternion * other.m_chronoQuaternion);
     }
 
     FrQuaternion_ &FrQuaternion_::operator*=(const FrQuaternion_ &other) {
@@ -110,11 +111,19 @@ namespace frydom {
     }
 
     Vector3d FrQuaternion_::Rotate(const Vector3d &vector) {
-        return internal::ChVector2Vector3d(m_chronoQuaternion.Rotate(internal::Vector3d2ChVector(vector)));
+        return internal::ChVectorToVector3d(m_chronoQuaternion.Rotate(internal::Vector3dToChVector(vector)));
     }
 
     chrono::ChQuaternion<double> FrQuaternion_::GetChronoQuaternion() const {
         return m_chronoQuaternion;
+    }
+
+    FrQuaternion_ &FrQuaternion_::Inverse() {
+        m_chronoQuaternion.Conjugate(); // TODO : verifier
+    }
+
+    FrQuaternion_ FrQuaternion_::Inverse() const {
+        return FrQuaternion_(*this).Inverse();  // TODO verifier
     }
 
 
@@ -134,9 +143,11 @@ namespace frydom {
 
     // FrRotation_
 
-
-
     FrRotation_::FrRotation_() : m_quaternion() {}
+
+    void FrRotation_::SetNull() {
+        m_quaternion.SetNull();
+    }
 
     void FrRotation_::SetQuaternion(const FrQuaternion_ &quat) {
         m_quaternion = quat;
@@ -151,20 +162,20 @@ namespace frydom {
     }
 
     void FrRotation_::SetAxisAngle(const Vector3d &axis, double angle) {
-        m_quaternion = internal::ChQuaternion2FrQuaternion(internal::axis_angle_to_quat(internal::Vector3d2ChVector(axis), angle));
+        m_quaternion = internal::Ch2FrQuaternion(internal::axis_angle_to_quat(internal::Vector3dToChVector(axis), angle));
     }
 
     void FrRotation_::GetAxisAngle(Vector3d &axis, double angle) {
         chrono::ChVector<double> vec;
         internal::quat_to_axis_angle(m_quaternion.GetChronoQuaternion(), vec, angle);
-        axis = internal::ChVector2Vector3d(vec);
+        axis = internal::ChVectorToVector3d(vec);
     }
 
     void FrRotation_::GetAxis(Vector3d &axis) {
         chrono::ChVector<double> vec;
         double angle;
         internal::quat_to_axis_angle(m_quaternion.GetChronoQuaternion(), vec, angle);
-        axis = internal::ChVector2Vector3d(vec);
+        axis = internal::ChVectorToVector3d(vec);
     }
 
     void FrRotation_::GetAngle(double &angle) {
@@ -173,7 +184,7 @@ namespace frydom {
     }
 
     void FrRotation_::SetRotationMatrix(const FrRotationMatrix_ &mat) {
-        m_quaternion = internal::ChQuaternion2FrQuaternion(internal::mat_to_quat(mat.GetChMatrix()));
+        m_quaternion = internal::Ch2FrQuaternion(internal::mat_to_quat(mat.GetChMatrix()));
     }
 
     FrRotationMatrix_ FrRotation_::GetRotationMatrix() const {
@@ -182,23 +193,23 @@ namespace frydom {
         return matrix;
     }
 
-    void FrRotation_::SetEulerAngles(double phi, double theta, double psi, EulerSeq seq) {
-        m_quaternion = internal::ChQuaternion2FrQuaternion(internal::euler_to_quat(phi, theta, psi, seq));
+    void FrRotation_::SetEulerAngles(double phi, double theta, double psi, EULER_SEQUENCE seq) {
+        m_quaternion = internal::Ch2FrQuaternion(internal::euler_to_quat(phi, theta, psi, seq));
     }
 
     void FrRotation_::SetCardanAngles(double phi, double theta, double psi) {
-        SetEulerAngles(phi, theta, psi, EulerSeq::CARDAN);
+        SetEulerAngles(phi, theta, psi, EULER_SEQUENCE::CARDAN);
     }
 
-    void FrRotation_::GetEulerAngles(double &phi, double &theta, double &psi, EulerSeq seq) const {
+    void FrRotation_::GetEulerAngles(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const {
         auto vec = internal::quat_to_euler(m_quaternion.GetChronoQuaternion(), seq);
-        phi = vec[0];
+        phi   = vec[0];
         theta = vec[1];
-        psi = vec[2];
+        psi   = vec[2];
     }
 
     void FrRotation_::GetCardanAngles(double &phi, double &theta, double &psi) const {
-        GetEulerAngles(phi, theta, psi, EulerSeq::CARDAN);
+        GetEulerAngles(phi, theta, psi, EULER_SEQUENCE::CARDAN);
     }
 
     FrRotation_ &FrRotation_::operator=(const FrRotation_ &other) {

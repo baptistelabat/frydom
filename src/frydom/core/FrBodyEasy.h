@@ -78,6 +78,12 @@ namespace frydom {
     std::shared_ptr<FrBody_> make_SphereBody(double radius, double mass);
 
 
+    // TODO : faire le make_ConeBody ---> mat d'eolienne...
+
+    // TODO : porter le python FRyDoM pour les calculs d'inertie...
+
+    // TODO : renommer ce fichier en FrStandardBodies
+
 
 }  // end namespace frydom
 
