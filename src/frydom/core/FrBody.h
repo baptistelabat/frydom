@@ -175,10 +175,10 @@ namespace frydom {
             m_bodyMsg.AddField<double>("Xbody_MZ", "N.m", "moment acting on the body at COG (in body reference frame)", &Xtorque.z());
 
 
-            //for (auto force: forcelist) {
-            //    auto dforce = dynamic_cast<FrForce *>(force.get());
-            //    m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
-            //}
+            for (auto force: forcelist) {
+                auto dforce = dynamic_cast<FrForce *>(force.get());
+                m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
+            }
         }
 
         virtual void AddMessageLog(std::shared_ptr<FrForce> dforce) {
