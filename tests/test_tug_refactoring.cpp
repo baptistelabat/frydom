@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     FrFrame_ frame1;
     frame1.SetPosition(10, 5, 0);
     FrRotation_ rot1;
-    rot1.SetCardanAnglesDEGREES(180, 0, 0);
+    rot1.SetCardanAngles_DEGREES(180, 0, 0);
     frame1.SetRotation(rot1);
 
     std::cout << frame1.GetRotation() << DBLSPACE;
@@ -60,17 +60,20 @@ int main(int argc, char* argv[]) {
     FrFrame_ frame2;
     frame2.SetPosition(15, 0, 0);
     FrRotation_ rot2;
-    rot2.SetCardanAnglesDEGREES(0, 0, -90);
+    rot2.SetCardanAngles_DEGREES(0, 0, -90);
     frame2.SetRotation(rot2);
 
     std::cout << frame2.GetRotation() << DBLSPACE;
 
-    std::cout << frame1.GetOtherFrameRelativeTransform(frame2);
+//    std::cout << frame1.GetOtherFrameRelativeTransform_WRT_ThisFrame(frame2);
 
+    std::cout << frame1.GetOtherFrameRelativeTransform_WRT_ThisFrame(frame2) << std::endl;
+
+    std::cout << frame1.GetThisFrameRelativeTransform_WRT_OtherFrame(frame2) << std::endl;
 
 
 //    FrRotation_ rot;
-//    rot.SetCardanAnglesDEGREES(0, 0, 90);
+//    rot.SetCardanAngles_DEGREES(0, 0, 90);
 //
 //    frame.SetPosition(10, 20, 10);
 //    frame.SetRotation(rot);

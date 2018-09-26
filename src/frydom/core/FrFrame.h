@@ -59,9 +59,7 @@ namespace frydom {
 
         chrono::ChFrame<double> m_chronoFrame;   ///< The embedded chrono frame // TODO: avoir un _FrFrameBase pour cacher le chrono...
 
-//        FrFrame_* m_parentFrame;
-
-        friend class FrBody_;
+        friend class FrBody_; // So that we don't have to expose chrono API to class user
 
     public:
 
@@ -115,11 +113,37 @@ namespace frydom {
 
         void SetNoTranslation();
 
+        void SetIdentity();
+
         FrRotation_ GetRotation() const;
 
 //        FrRotation_& GetRotation();
 
         FrQuaternion_ GetQuaternion() const;
+
+        void RotX_RADIANS(double angle);
+
+        void RotX_DEGREES(double angle);
+
+        void RotY_RADIANS(double angle);
+
+        void RotY_DEGREES(double angle);
+
+        void RotZ_RADIANS(double angle);
+
+        void RotZ_DEGREES(double angle);
+
+        void SetRotX_RADIANS(double angle);
+
+        void SetRotX_DEGREES(double angle);
+
+        void SetRotY_RADIANS(double angle);
+
+        void SetRotY_DEGREES(double angle);
+
+        void SetRotZ_RADIANS(double angle);
+
+        void SetRotZ_DEGREES(double angle);
 
 
         // Operations
@@ -129,17 +153,13 @@ namespace frydom {
         void operator*=(const FrFrame_& otherFrame);
 
 
-        FrFrame_ GetOtherFrameRelativeTransform(const FrFrame_ &otherFrame);
+        FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisFrame(const FrFrame_ &otherFrame) const;
 
+        FrFrame_ GetThisFrameRelativeTransform_WRT_OtherFrame(const FrFrame_ &otherFrame) const;
 
-        FrFrame_& Inverse() {
-            m_chronoFrame.Invert();
-            return *this;
-        }
+        FrFrame_& Inverse();
 
-        FrFrame_ GetInverse() {
-            return internal::Ch2FrFrame(m_chronoFrame.GetInverse());
-        }
+        FrFrame_ GetInverse() const;
 
 
         friend std::ostream&operator<<(std::ostream& os, const FrFrame_& frame);

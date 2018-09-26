@@ -197,42 +197,50 @@ namespace frydom {
         return matrix;
     }
 
-    void FrRotation_::SetEulerAnglesRADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq) {
+    void FrRotation_::SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq) {
         m_quaternion = internal::Ch2FrQuaternion(internal::euler_to_quat(phi, theta, psi, seq));
     }
 
-    void FrRotation_::SetEulerAnglesDEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq) {
-        SetEulerAnglesRADIANS(phi*DEG2RAD, theta*DEG2RAD, psi*DEG2RAD, seq);
+    void FrRotation_::SetEulerAngles_DEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq) {
+        SetEulerAngles_RADIANS(phi * DEG2RAD, theta * DEG2RAD, psi * DEG2RAD, seq);
     }
 
-    void FrRotation_::SetCardanAnglesRADIANS(double phi, double theta, double psi) {
-        SetEulerAnglesRADIANS(phi, theta, psi, EULER_SEQUENCE::CARDAN);
+    void FrRotation_::SetCardanAngles_RADIANS(double phi, double theta, double psi) {
+        SetEulerAngles_RADIANS(phi, theta, psi, EULER_SEQUENCE::CARDAN);
     }
 
-    void FrRotation_::SetCardanAnglesDEGREES(double phi, double theta, double psi) {
-        SetCardanAnglesRADIANS(phi*DEG2RAD, theta*DEG2RAD, psi*DEG2RAD);
+    void FrRotation_::SetCardanAngles_DEGREES(double phi, double theta, double psi) {
+        SetCardanAngles_RADIANS(phi * DEG2RAD, theta * DEG2RAD, psi * DEG2RAD);
     }
 
-    void FrRotation_::GetEulerAnglesRADIANS(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const {
+    void FrRotation_::GetEulerAngles_RADIANS(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const {
         auto vec = internal::quat_to_euler(m_quaternion.GetChronoQuaternion(), seq);
         phi   = vec[0];
         theta = vec[1];
         psi   = vec[2];
     }
 
-    void FrRotation_::GetEulerAnglesDEGREES(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const {
-        GetEulerAnglesRADIANS(phi, theta, psi, seq);
+    void FrRotation_::GetEulerAngles_DEGREES(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const {
+        GetEulerAngles_RADIANS(phi, theta, psi, seq);
         phi   *= RAD2DEG;
         theta *= RAD2DEG;
         psi   *= RAD2DEG;
     }
 
-    void FrRotation_::GetCardanAnglesRADIANS(double &phi, double &theta, double &psi) const {
-        GetEulerAnglesRADIANS(phi, theta, psi, EULER_SEQUENCE::CARDAN);
+    void FrRotation_::GetCardanAngles_RADIANS(double &phi, double &theta, double &psi) const {
+        GetEulerAngles_RADIANS(phi, theta, psi, EULER_SEQUENCE::CARDAN);
     }
 
-    void FrRotation_::GetCardanAnglesDEGREES(double &phi, double &theta, double &psi) const {
-        GetEulerAnglesDEGREES(phi, theta, psi, EULER_SEQUENCE::CARDAN);
+    void FrRotation_::GetCardanAngles_DEGREES(double &phi, double &theta, double &psi) const {
+        GetEulerAngles_DEGREES(phi, theta, psi, EULER_SEQUENCE::CARDAN);
+    }
+
+    void FrRotation_::GetFixedAxisAngles_RADIANS(double &rx, double &ry, double &rz) const {
+        // TODO
+    }
+
+    void FrRotation_::GetFixedAxisAngles_DEGREES(double &rx, double &ry, double &rz) const {
+        // TODO
     }
 
     FrRotation_ &FrRotation_::operator=(const FrRotation_ &other) {
@@ -253,12 +261,59 @@ namespace frydom {
         return m_quaternion.Rotate(vector);
     }
 
+    void FrRotation_::RotAxisAngle_RADIANS(const Vector3d &axis, double angle) {
+        FrRotation_ rotation;
+        rotation.SetAxisAngle(axis, angle);
+        *this *= rotation;
+    }
+
+    void FrRotation_::RotAxisAngle_DEGREES(const Vector3d &axis, double angle) {
+        RotAxisAngle_RADIANS(axis, angle*DEG2RAD);
+    }
+
+    void FrRotation_::RotX_RADIANS(double angle) {
+        RotAxisAngle_RADIANS(Vector3d(1., 0., 0.), angle);
+    }
+
+    void FrRotation_::RotX_DEGREES(double angle) {
+        RotX_RADIANS(angle*DEG2RAD);
+    }
+
+    void FrRotation_::RotY_RADIANS(double angle) {
+        RotAxisAngle_RADIANS(Vector3d(0., 1., 0.), angle);
+    }
+
+    void FrRotation_::RotY_DEGREES(double angle) {
+        RotY_RADIANS(angle*DEG2RAD);
+    }
+
+    void FrRotation_::RotZ_RADIANS(double angle) {
+        RotAxisAngle_RADIANS(Vector3d(0., 0., 1.), angle);
+    }
+
+    void FrRotation_::RotZ_DEGREES(double angle) {
+        RotZ_RADIANS(angle*DEG2RAD);
+    }
+
+    Vector3d FrRotation_::GetXAxis() const {
+        return internal::ChVectorToVector3d(m_quaternion.GetChronoQuaternion().GetXaxis());
+    }
+
+    Vector3d FrRotation_::GetYAxis() const {
+        return internal::ChVectorToVector3d(m_quaternion.GetChronoQuaternion().GetYaxis());
+    }
+
+    Vector3d FrRotation_::GetZAxis() const {
+        return internal::ChVectorToVector3d(m_quaternion.GetChronoQuaternion().GetZaxis());
+    }
+
+
 
 
     std::ostream& FrRotation_::cout(std::ostream &os) const {
 
         double phi, theta, psi;
-        GetCardanAnglesDEGREES(phi, theta, psi);
+        GetCardanAngles_DEGREES(phi, theta, psi);
 
         os << std::endl;
         os << "Rotation (cardan angles in deg) :\n";
@@ -268,14 +323,10 @@ namespace frydom {
         os << "; psi   = " << psi;
         os << std::endl;
 
-
     }
 
     std::ostream& operator<<(std::ostream& os, const FrRotation_& rotation) {
         return rotation.cout(os);
     }
-
-
-
 
 }  // end namespace frydom

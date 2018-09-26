@@ -85,6 +85,10 @@ namespace frydom {
         m_chronoFrame.GetPos().SetNull();
     }
 
+    void FrFrame_::SetIdentity() {
+        m_chronoFrame.SetIdentity();
+    }
+
     FrRotation_ FrFrame_::GetRotation() const {
         return FrRotation_(GetQuaternion());
     }
@@ -113,7 +117,7 @@ namespace frydom {
 
     FrFrame_ FrFrame_::operator*(const FrFrame_ &otherFrame) const {
         FrFrame_ newFrame;
-        newFrame.m_chronoFrame = m_chronoFrame >> otherFrame.m_chronoFrame;
+        newFrame.m_chronoFrame = otherFrame.m_chronoFrame >> m_chronoFrame;
         return newFrame;
     }
 
@@ -161,13 +165,12 @@ namespace frydom {
 //        return m_chronoFrame
 //    }
 
-    FrFrame_ FrFrame_::GetOtherFrameRelativeTransform(const frydom::FrFrame_ &otherFrame) {
-        auto tFA = this->GetInverse();
-        auto tAO = otherFrame;
-
-        auto tFO = tFA * tAO;
-
+    FrFrame_ FrFrame_::GetOtherFrameRelativeTransform_WRT_ThisFrame(const frydom::FrFrame_ &otherFrame) const {
         return this->GetInverse() * otherFrame;
+    }
+
+    FrFrame_ FrFrame_::GetThisFrameRelativeTransform_WRT_OtherFrame(const frydom::FrFrame_ &otherFrame) const {
+        return GetOtherFrameRelativeTransform_WRT_ThisFrame(otherFrame).GetInverse();
     }
 
 
@@ -187,28 +190,76 @@ namespace frydom {
         os << GetRotation();
         os << std::endl;
 
+        return os;
+
     }
 
     std::ostream& operator<<(std::ostream& os, const FrFrame_& frame) {
         return frame.cout(os);
     }
 
+    void FrFrame_::RotX_RADIANS(double) {
+        // TODO
+    }
 
+    void FrFrame_::RotX_DEGREES(double angle) {
+        // TODO
+    }
 
+    void FrFrame_::RotY_RADIANS(double) {
+        // TODO
+    }
 
+    void FrFrame_::RotY_DEGREES(double angle) {
+        // TODO
+    }
 
+    void FrFrame_::RotZ_RADIANS(double) {
+        // TODO
+    }
 
+    void FrFrame_::RotZ_DEGREES(double angle) {
+        // TODO
+    }
 
+    FrFrame_ &FrFrame_::Inverse() {
+        m_chronoFrame.Invert();
+        return *this;
+    }
 
+    FrFrame_ FrFrame_::GetInverse() const {
+        return internal::Ch2FrFrame(m_chronoFrame.GetInverse());
+    }
 
+    void FrFrame_::SetRotX_RADIANS(double angle) {
+        SetIdentity();
+        RotX_RADIANS(angle);
+    }
 
+    void FrFrame_::SetRotX_DEGREES(double angle) {
+        SetIdentity();
+        RotX_DEGREES(angle);
+    }
 
+    void FrFrame_::SetRotY_RADIANS(double angle) {
+        SetIdentity();
+        RotY_RADIANS(angle);
+    }
 
+    void FrFrame_::SetRotY_DEGREES(double angle) {
+        SetIdentity();
+        RotY_DEGREES(angle);
+    }
 
+    void FrFrame_::SetRotZ_RADIANS(double angle) {
+        SetIdentity();
+        RotZ_RADIANS(angle);
+    }
 
-
-
-
+    void FrFrame_::SetRotZ_DEGREES(double angle) {
+        SetIdentity();
+        RotZ_DEGREES(angle);
+    }
 
 
 

@@ -182,21 +182,44 @@ namespace frydom {
 
         // Euler angles representation
 
-        void SetEulerAnglesRADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq);
+        void SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq);
         
-        void SetEulerAnglesDEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq);
+        void SetEulerAngles_DEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq);
 
-        void SetCardanAnglesRADIANS(double phi, double theta, double psi);
+        void SetCardanAngles_RADIANS(double phi, double theta, double psi);
 
-        void SetCardanAnglesDEGREES(double phi, double theta, double psi);
+        void SetCardanAngles_DEGREES(double phi, double theta, double psi);
 
-        void GetEulerAnglesRADIANS(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const;
+        void GetEulerAngles_RADIANS(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const;
 
-        void GetEulerAnglesDEGREES(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const;
+        void GetEulerAngles_DEGREES(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const;
 
-        void GetCardanAnglesRADIANS(double &phi, double &theta, double &psi) const;
+        void GetCardanAngles_RADIANS(double &phi, double &theta, double &psi) const;
 
-        void GetCardanAnglesDEGREES(double &phi, double &theta, double &psi) const;
+        void GetCardanAngles_DEGREES(double &phi, double &theta, double &psi) const;
+
+        void GetFixedAxisAngles_RADIANS(double& rx, double& ry, double& rz) const;
+
+        void GetFixedAxisAngles_DEGREES(double& rx, double& ry, double& rz) const;
+
+
+        // Helpers to build rotations
+
+        void RotAxisAngle_RADIANS(const Vector3d& axis, double angle);
+
+        void RotAxisAngle_DEGREES(const Vector3d& axis, double angle);
+
+        void RotX_RADIANS(double angle);
+
+        void RotX_DEGREES(double angle);
+
+        void RotY_RADIANS(double angle);
+
+        void RotY_DEGREES(double angle);
+
+        void RotZ_RADIANS(double angle);
+
+        void RotZ_DEGREES(double angle);
 
 
         // Operators
@@ -208,6 +231,12 @@ namespace frydom {
         FrRotation_&operator*=(const FrRotation_& other);
 
         Vector3d Rotate(const Vector3d& vector);
+
+        Vector3d GetXAxis() const;
+
+        Vector3d GetYAxis() const;
+
+        Vector3d GetZAxis() const;
 
 
 
