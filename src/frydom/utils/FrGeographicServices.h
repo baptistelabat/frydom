@@ -37,13 +37,13 @@ namespace frydom {
         }
 
         /// Convert from geographic to local coordinates
-        void Convert_GeoToCart(double lat, double lon, double h, double &x, double &y, double &z);
+        void Convert_GeoToCart(double lat, double lon, double h, double &x_north, double &y_east, double &z_down);
 
         /// Convert from local to geographic coordinates
-        void Convert_CartToGeo(double x, double y, double z, double &lat, double &lon, double &h);
+        void Convert_CartToGeo(double x_north, double y_east, double z_down, double &lat, double &lon, double &h);
 
         /// Compute the magnetic declination for a cartesian position
-        double ComputeMagneticDeclination(double x, double y, double z, double year);
+        double ComputeMagneticDeclination(double x_north, double y_east, double z_down, double year);
 
     };
 
