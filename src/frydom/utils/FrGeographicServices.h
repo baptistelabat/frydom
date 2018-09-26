@@ -10,9 +10,9 @@
 
 #include "frydom/core/FrConstants.h"
 
-/** The local cartesian coordinates defined in FRyDoM are based on either NWU (x=North, y=West, z=Up),
- * or NED (x=North, y=East, z=Down) configurations. In GeographicLib, the local cartesian coordinates is defined as
- * (x=East, y= North, z=Up).
+/**
+ * GeographicServices local cartesian is based on NED frame (x=North, y=East, z=Down).
+ * In GeographicLib, the local cartesian coordinates is defined as ENU (x=East, y= North, z=Up).
  */
 
 namespace frydom {
@@ -25,7 +25,7 @@ namespace frydom {
         ///
         FrGeographicServices(){
         m_LocalCartesian = std::make_unique<GeographicLib::LocalCartesian>();}
-        
+
         /// Getter of the LocalCartesian variable
         GeographicLib::LocalCartesian *GetGeoLib() const {
             return m_LocalCartesian.get();
@@ -37,13 +37,13 @@ namespace frydom {
         }
 
         /// Convert from geographic to local coordinates
-        void Convert_GeoToCart(double lat, double lon, double h, double &x, double &y, double &z, FrFrame frame = NWU);
+        void Convert_GeoToCart(double lat, double lon, double h, double &x, double &y, double &z);
 
         /// Convert from local to geographic coordinates
-        void Convert_CartToGeo(double x, double y, double z, double &lat, double &lon, double &h, FrFrame frame = NWU);
+        void Convert_CartToGeo(double x, double y, double z, double &lat, double &lon, double &h);
 
         /// Compute the magnetic declination for a cartesian position
-        double ComputeMagneticDeclination(double x, double y, double z, double year, FrFrame frame = NWU);
+        double ComputeMagneticDeclination(double x, double y, double z, double year);
 
     };
 
