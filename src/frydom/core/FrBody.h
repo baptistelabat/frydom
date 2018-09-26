@@ -310,6 +310,8 @@ namespace frydom {
         void SetCollide(bool isColliding);
 
         // Assets
+//        void AssetActive() // TODO
+
         void AddBoxShape(double xSize, double ySize, double zSize);
 
         void AddCylinderShape(double radius, double height);
@@ -317,53 +319,68 @@ namespace frydom {
         void AddSphereShape(double radius);
 
 
-        // COG position with respect to local frame
+        // Speed limitation to stabilize simulations
 
-        void SetCOGPositionWRTLocalFrame(double x, double y, double z);
+        void ActivateSpeedLimits(bool activate);
 
-        void SetCOGFrameOrientationWRTLocalFrame(FrRotation_ rotation);
+        void SetMaxSpeed(double maxSpeed);
 
-        void SetCOGFrameWRTLocalFrame(FrTransform_ transform);
-
-
-        // TODO : donner la possibilite de localiser un frame par rapport a un autre en utilisant les parametres mDH
-
-        // Body local frame with respect to global frame
-
-        void SetLocalFrameAbsPosition(double x, double y, double z);
-
-        void SetLocalFrameWRTAbsFrame(FrTransform_ transform);
+        void SetMaxRotationSpeed(double wMax);
 
 
-        // About body COG frame with recpect to global frame
-
-        void SetCOGFrameAbsPosition(double x, double y, double z);
-
-        void SetCOGFrameWRTAbsFrame(FrTransform_ transform);
 
 
-//        // Set absolute orientation of body
-//
-//        void SetAbsOrientation(FrRotation_ rotation);
-//
-//
-//        // About Velocity of local frame
-//        void SetLocalFrameAbsVelocity(double vx, double vy, double vz);
-//
-//        void SetLocalFrameLocalVelocity(double vx, double vy, double vz);
-//
-//        void SetCOGFrameAbsVelocity(double vx, double vy, double vz);
-//
-//        void SetCOGFrameLocalVelocity(double vx, double vy, double vz);
-//
-//
-//        void SetLocalFrameAbsAngularVelocity(double vx, double vy, double vz);
-//
-//        void SetLocalFrameLocalAngularVelocity(double vx, double vy, double vz);
-//
-//        void SetCOGFrameAbsAngularVelocity(double vx, double vy, double vz);
-//
-//        void SetCOGFrameLocalAngularVelocity(double vx, double vy, double vz);
+        /// Methodes validees =======================>>>>>>>>>>>>>>>>>>
+
+
+        // About COG position
+
+        void SetCOGLocalPosition(double x, double y, double z);
+
+        void SetCOGLocalPosition(mathutils::Vector3d<double> position);
+
+        void SetCOGAbsPosition(double x, double y, double z);
+
+        void SetCOGAbsPosition(mathutils::Vector3d<double> position);
+
+        void GetCOGAbsPosition(double& x, double& y, double& z) const;
+
+        mathutils::Vector3d<double> GetCOGAbsPosition() const;
+
+        mathutils::Vector3d<double> GetCOGRelPosition() const;
+
+
+
+        // About body position (the one of its reference frame)
+
+        void SetPosition(double x, double y, double z);
+
+        void SetPosition(mathutils::Vector3d<double> position);
+
+        mathutils::Vector3d<double> GetPosition() const;
+
+        void GetPosition(double& x, double& y, double& z) const;
+
+        void GetPosition(mathutils::Vector3d<double>& position) const;
+
+        FrFrame_ GetFrame() const;
+
+        mathutils::Vector3d<double> GetAbsPositionOfLocalPoint(double x, double y, double z) const;
+
+        void GetOtherFrameRelativePosition(const FrFrame_ &otherFrame) const;
+
+
+
+
+
+
+        // About body orientation
+
+
+
+
+        /// =================>>>>>>>>>>>>>>>>>>< Fin methodes validees
+
 
 
 

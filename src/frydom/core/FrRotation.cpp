@@ -14,24 +14,26 @@ namespace frydom {
     namespace internal {
 
         // Conversion functions
-        Vector3d ChVectorToVector3d(const chrono::ChVector<double> vector) {
+        Vector3d ChVectorToVector3d(const chrono::ChVector<double>& vector) {
             Vector3d vector3d;
             vector3d << vector.x(), vector.y(), vector.z();
             return vector3d;
         }
 
-        chrono::ChVector<double> Vector3dToChVector(const Vector3d vector3d) {
+        chrono::ChVector<double> Vector3dToChVector(const Vector3d& vector3d) {
             chrono::ChVector<double> vector(vector3d[0], vector3d[1], vector3d[2]);
             return vector;
         }
 
-        chrono::ChQuaternion<double> Fr2ChQuaternion(const FrQuaternion_ &frQuaternion) {
+        chrono::ChQuaternion<double> Fr2ChQuaternion(const FrQuaternion_& frQuaternion) {
             // TODO : voir si pas conversion plus directe...
             return chrono::ChQuaternion<double>(frQuaternion.GetScalar(), Vector3dToChVector(frQuaternion.GetVector()));
         }
 
-        FrQuaternion_ Ch2FrQuaternion(const chrono::ChQuaternion<double> &chQuaternion) {
-            return FrQuaternion_();
+        FrQuaternion_ Ch2FrQuaternion(const chrono::ChQuaternion<double>& chQuaternion) {
+            FrQuaternion_ quaternion;
+            quaternion.m_chronoQuaternion = chQuaternion;
+            return quaternion;
         }
 
     }
@@ -45,7 +47,7 @@ namespace frydom {
 
     FrQuaternion_::FrQuaternion_(double s, const Vector3d imag) : m_chronoQuaternion(s, internal::Vector3dToChVector(imag)) {}
 
-    FrQuaternion_::FrQuaternion_(const FrQuaternion_ &other) : m_chronoQuaternion(other.m_chronoQuaternion) {}
+    FrQuaternion_::FrQuaternion_(const FrQuaternion_ &other) = default;
 
     void FrQuaternion_::Set(double q0, double q1, double q2, double q3) {
         m_chronoQuaternion.Set(q0, q1, q2, q3);
@@ -145,6 +147,8 @@ namespace frydom {
 
     FrRotation_::FrRotation_() : m_quaternion() {}
 
+    FrRotation_::FrRotation_(FrQuaternion_ quaternion) : m_quaternion(quaternion) {}
+
     void FrRotation_::SetNull() {
         m_quaternion.SetNull();
     }
@@ -193,23 +197,42 @@ namespace frydom {
         return matrix;
     }
 
-    void FrRotation_::SetEulerAngles(double phi, double theta, double psi, EULER_SEQUENCE seq) {
+    void FrRotation_::SetEulerAnglesRADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq) {
         m_quaternion = internal::Ch2FrQuaternion(internal::euler_to_quat(phi, theta, psi, seq));
     }
 
-    void FrRotation_::SetCardanAngles(double phi, double theta, double psi) {
-        SetEulerAngles(phi, theta, psi, EULER_SEQUENCE::CARDAN);
+    void FrRotation_::SetEulerAnglesDEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq) {
+        SetEulerAnglesRADIANS(phi*DEG2RAD, theta*DEG2RAD, psi*DEG2RAD, seq);
     }
 
-    void FrRotation_::GetEulerAngles(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const {
+    void FrRotation_::SetCardanAnglesRADIANS(double phi, double theta, double psi) {
+        SetEulerAnglesRADIANS(phi, theta, psi, EULER_SEQUENCE::CARDAN);
+    }
+
+    void FrRotation_::SetCardanAnglesDEGREES(double phi, double theta, double psi) {
+        SetCardanAnglesRADIANS(phi*DEG2RAD, theta*DEG2RAD, psi*DEG2RAD);
+    }
+
+    void FrRotation_::GetEulerAnglesRADIANS(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const {
         auto vec = internal::quat_to_euler(m_quaternion.GetChronoQuaternion(), seq);
         phi   = vec[0];
         theta = vec[1];
         psi   = vec[2];
     }
 
-    void FrRotation_::GetCardanAngles(double &phi, double &theta, double &psi) const {
-        GetEulerAngles(phi, theta, psi, EULER_SEQUENCE::CARDAN);
+    void FrRotation_::GetEulerAnglesDEGREES(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const {
+        GetEulerAnglesRADIANS(phi, theta, psi, seq);
+        phi   *= RAD2DEG;
+        theta *= RAD2DEG;
+        psi   *= RAD2DEG;
+    }
+
+    void FrRotation_::GetCardanAnglesRADIANS(double &phi, double &theta, double &psi) const {
+        GetEulerAnglesRADIANS(phi, theta, psi, EULER_SEQUENCE::CARDAN);
+    }
+
+    void FrRotation_::GetCardanAnglesDEGREES(double &phi, double &theta, double &psi) const {
+        GetEulerAnglesDEGREES(phi, theta, psi, EULER_SEQUENCE::CARDAN);
     }
 
     FrRotation_ &FrRotation_::operator=(const FrRotation_ &other) {
@@ -229,6 +252,29 @@ namespace frydom {
     Vector3d FrRotation_::Rotate(const Vector3d &vector) {
         return m_quaternion.Rotate(vector);
     }
+
+
+
+    std::ostream& FrRotation_::cout(std::ostream &os) const {
+
+        double phi, theta, psi;
+        GetCardanAnglesDEGREES(phi, theta, psi);
+
+        os << std::endl;
+        os << "Rotation (cardan angles in deg) :\n";
+        os << "Cardan angle (deg) : ";
+        os << "phi   = " << phi;
+        os << "; theta = " << theta;
+        os << "; psi   = " << psi;
+        os << std::endl;
+
+
+    }
+
+    std::ostream& operator<<(std::ostream& os, const FrRotation_& rotation) {
+        return rotation.cout(os);
+    }
+
 
 
 

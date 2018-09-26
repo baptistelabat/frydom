@@ -7,6 +7,7 @@
 
 
 #include "chrono/core/ChQuaternion.h"
+#include "FrRotation.h"
 #include "MathUtils/Vector3d.h"
 #include "chrono/core/ChMatrix33.h"
 
@@ -34,16 +35,16 @@ namespace frydom {
     namespace internal {
 
         /// Convert a chrono 3D vector into a mathutils Vector3d
-        Vector3d ChVectorToVector3d(const chrono::ChVector<double> vector);
+        Vector3d ChVectorToVector3d(const chrono::ChVector<double>& vector);
 
         /// Convert a mathutils Vector3d into a Chrono 3D vector
-        chrono::ChVector<double> Vector3dToChVector(const Vector3d vector3d);
+        chrono::ChVector<double> Vector3dToChVector(const Vector3d& vector3d);
 
         /// Convert a FRyDoM quaternion into a Chrono quaternion
-        chrono::ChQuaternion<double> Fr2ChQuaternion(const FrQuaternion_ &frQuaternion);
+        chrono::ChQuaternion<double> Fr2ChQuaternion(const FrQuaternion_& frQuaternion);
 
         /// Convert a Chrono quaternion into a FRyDoM quaternion
-        FrQuaternion_ Ch2FrQuaternion(const chrono::ChQuaternion<double> &chQuaternion);
+        FrQuaternion_ Ch2FrQuaternion(const chrono::ChQuaternion<double>& chQuaternion);
 
     }
 
@@ -58,6 +59,8 @@ namespace frydom {
         chrono::ChQuaternion<double> GetChronoQuaternion() const;
 
         friend class FrRotation_;
+
+        friend FrQuaternion_ internal::Ch2FrQuaternion(const chrono::ChQuaternion<double>&);
 
 
     public:
@@ -145,6 +148,8 @@ namespace frydom {
         /// Default rotation constructor. This is the null rotation
         FrRotation_();
 
+        explicit FrRotation_(FrQuaternion_ quaternion);
+
         void SetNull();
 
 
@@ -177,13 +182,21 @@ namespace frydom {
 
         // Euler angles representation
 
-        void SetEulerAngles(double phi, double theta, double psi, EULER_SEQUENCE seq);
+        void SetEulerAnglesRADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq);
+        
+        void SetEulerAnglesDEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq);
 
-        void SetCardanAngles(double phi, double theta, double psi);
+        void SetCardanAnglesRADIANS(double phi, double theta, double psi);
 
-        void GetEulerAngles(double& phi, double& theta, double& psi, EULER_SEQUENCE seq) const;
+        void SetCardanAnglesDEGREES(double phi, double theta, double psi);
 
-        void GetCardanAngles(double& phi, double& theta, double& psi) const;
+        void GetEulerAnglesRADIANS(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const;
+
+        void GetEulerAnglesDEGREES(double &phi, double &theta, double &psi, EULER_SEQUENCE seq) const;
+
+        void GetCardanAnglesRADIANS(double &phi, double &theta, double &psi) const;
+
+        void GetCardanAnglesDEGREES(double &phi, double &theta, double &psi) const;
 
 
         // Operators
@@ -197,8 +210,18 @@ namespace frydom {
         Vector3d Rotate(const Vector3d& vector);
 
 
+
+
+
+        friend std::ostream& operator<<(std::ostream& os, const FrRotation_& rotation);
+
         // TODO : ajouter les GetXAxis etc... cf ChQuaternion pour les methodes...
 
+
+
+    private:
+
+        std::ostream& cout(std::ostream& os) const;
 
     };
 

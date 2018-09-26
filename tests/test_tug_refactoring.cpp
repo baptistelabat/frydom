@@ -8,6 +8,9 @@
 
 #include "frydom/frydom.h"
 
+#define DBLSPACE std::endl << std::endl
+
+
 using namespace frydom;
 
 
@@ -17,20 +20,77 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem_ system;
 
 
-    auto cylinder = system.NewBody();
-    makeItCylinder(cylinder, 5., 30., 100e3);
+//    auto cylinder = system.NewBody();
+//    makeItCylinder(cylinder, 5., 30., 100e3);
 //    cylinder->SetBodyFixed(true);
 //    cylinder->SetCollide(false);
 
+
+
     auto box = system.NewBody();
-    makeItBox(box, 10, 20, 30, 1e4);
+    makeItBox(box, 10, 10, 10, 1e4);
+    box->SetBodyFixed(true);
+
+    box->SetPosition(10, 0, 0);
+    box->SetCOGLocalPosition(10, 0, 0);
+
+    box->SetPosition(-10, 0, 0);
+
+    box->SetCOGAbsPosition(0, 10, 0);
+//
+//
+//    std::cout << box->GetPosition() << std::endl << std::endl;
+//    std::cout << box->GetCOGAbsPosition() << std::endl << std::endl;
+//    std::cout << box->GetCOGRelPosition() << DBLSPACE;
+//
+//    std::cout << box->GetAbsPositionOfLocalPoint(0, -30, 0) << std::endl;
+
+
+
+    // Playing with frames
+    FrFrame_ frame1;
+    frame1.SetPosition(10, 5, 0);
+    FrRotation_ rot1;
+    rot1.SetCardanAnglesDEGREES(180, 0, 0);
+    frame1.SetRotation(rot1);
+
+    std::cout << frame1.GetRotation() << DBLSPACE;
+
+
+    FrFrame_ frame2;
+    frame2.SetPosition(15, 0, 0);
+    FrRotation_ rot2;
+    rot2.SetCardanAnglesDEGREES(0, 0, -90);
+    frame2.SetRotation(rot2);
+
+    std::cout << frame2.GetRotation() << DBLSPACE;
+
+    std::cout << frame1.GetOtherFrameRelativeTransform(frame2);
+
+
+
+//    FrRotation_ rot;
+//    rot.SetCardanAnglesDEGREES(0, 0, 90);
+//
+//    frame.SetPosition(10, 20, 10);
+//    frame.SetRotation(rot);
+//
+//    frame.SetNoRotation();
+//    frame.SetNoTranslation();
+//
+//    std::cout << frame << std::endl;
+//
+//    std::cout << frame.GetInverse() << std::endl;
+
+
+
 
 
 
 
     system.Initialize();
 
-    system.RunInViewer(100, 100, false);
+//    system.RunInViewer(100, 100, false);
 
 
 //    // Set the free surface

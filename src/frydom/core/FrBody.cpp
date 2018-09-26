@@ -7,6 +7,7 @@
 #include "FrRotation.h"
 
 #include "chrono/assets/ChTriangleMeshShape.h"
+#include "FrFrame.h"
 
 namespace frydom {
 
@@ -206,9 +207,22 @@ namespace frydom {
         m_chronoBody->AddAsset(shape);
     }
 
-    void FrBody_::SetCOGPositionWRTLocalFrame(double x, double y, double z) {
+    void FrBody_::ActivateSpeedLimits(bool activate) {
+        m_chronoBody->SetLimitSpeed(activate);
+    }
 
-//        // TODO : Analyse de ce qui est fait pour ChBodyAuxRef :::
+    void FrBody_::SetMaxSpeed(double maxSpeed_ms) {
+        m_chronoBody->SetMaxSpeed(maxSpeed_ms);
+    }
+
+    void FrBody_::SetMaxRotationSpeed(double wMax_rads) {
+        m_chronoBody->SetMaxWvel(wMax_rads);
+    }
+
+
+
+
+    //        // TODO : Analyse de ce qui est fait pour ChBodyAuxRef :::
 //
 //        /// Set the COG frame with respect to the auxiliary reference frame.
 //        /// Note that this also moves the body absolute COG (the REF is fixed).
@@ -277,31 +291,96 @@ namespace frydom {
 //        m_chronoBody->GetFrame_REF_to_COG()
 
 
+
+    void FrBody_::SetCOGLocalPosition(double x, double y, double z) {
+
+        chrono::ChFrame<double> cogFrame;
+        cogFrame.SetPos(chrono::ChVector<double>(x, y, z));
+        m_chronoBody->SetFrame_COG_to_REF(cogFrame);
     }
 
-    void FrBody_::SetCOGFrameOrientationWRTLocalFrame(FrRotation_ rotation) {
+    void FrBody_::SetCOGLocalPosition(mathutils::Vector3d<double> position) {
+        SetCOGLocalPosition(position[0], position[1], position[2]);
+    }
+
+
+
+    void FrBody_::SetCOGAbsPosition(double x, double y, double z) {
+        m_chronoBody->SetPos(chrono::ChVector<double>(x, y, z));
+        m_chronoBody->Update();
+    }
+
+    void FrBody_::SetCOGAbsPosition(mathutils::Vector3d<double> position) {
+        SetCOGAbsPosition(position[0], position[1], position[2]);
+    }
+
+
+    void FrBody_::GetCOGAbsPosition(double& x, double& y, double& z) const {
+        auto pos = m_chronoBody->GetPos();
+        x = pos.x();
+        y = pos.y();
+        z = pos.z();
+    }
+
+    mathutils::Vector3d<double> FrBody_::GetCOGAbsPosition() const {
+        return internal::ChVectorToVector3d(m_chronoBody->GetPos());
+    }
+
+    mathutils::Vector3d<double> FrBody_::GetCOGRelPosition() const {
+        auto cogFrame = m_chronoBody->GetFrame_COG_to_REF();
+        return internal::ChVectorToVector3d(cogFrame.GetPos());
+    }
+
+    void FrBody_::SetPosition(double x, double y, double z) {
+        chrono::ChFrame<double> auxFrame;
+        auxFrame.SetPos(chrono::ChVector<double>(x, y, z));
+        m_chronoBody->SetFrame_REF_to_abs(auxFrame);
+    }
+
+    void FrBody_::SetPosition(mathutils::Vector3d<double> position) {
+        SetPosition(position[0], position[1], position[2]);
+    }
+
+    mathutils::Vector3d<double> FrBody_::GetPosition() const {
+        auto position = m_chronoBody->GetFrame_REF_to_abs().GetPos();
+        return internal::ChVectorToVector3d(position);
+    }
+
+    void FrBody_::GetPosition(double &x, double &y, double &z) const {
+        auto position = m_chronoBody->GetFrame_REF_to_abs().GetPos();
+        x = position[0];
+        y = position[1];
+        z = position[2];
+    }
+
+    void FrBody_::GetPosition(mathutils::Vector3d<double>& position) const {
+        position = GetPosition();
+    }
+
+    FrFrame_ FrBody_::GetFrame() const {
+        auto chronoFrame = m_chronoBody->GetFrame_REF_to_abs();
+        return FrFrame_(internal::Ch2FrFrame(chronoFrame));
+    }
+
+    mathutils::Vector3d<double> FrBody_::GetAbsPositionOfLocalPoint(double x, double y, double z) const {
+        chrono::ChFrame<double> pframe;
+        pframe.SetPos(chrono::ChVector<double>(x, y, z));
+        auto aframe = m_chronoBody->GetFrame_REF_to_abs() >> pframe;
+        return internal::ChVectorToVector3d(aframe.GetPos());
+    }
+
+    void FrBody_::GetOtherFrameRelativePosition(const FrFrame_ &otherFrame) const {
 
     }
 
-//    void FrBody_::SetCOGFrameWRTLocalFrame(FrTransform_ transform) {
-//
-//    }
 
-    void FrBody_::SetLocalFrameAbsPosition(double x, double y, double z) {
 
-    }
 
-//    void FrBody_::SetLocalFrameWRTAbsFrame(FrTransform_ transform) {
-//
-//    }
 
-    void FrBody_::SetCOGFrameAbsPosition(double x, double y, double z) {
 
-    }
 
-//    void FrBody_::SetCOGFrameWRTAbsFrame(FrTransform_ transform) {
-//
-//    }
+
+//    void FrBody_::GetCOGA
 
 
 }  // end namespace frydom
