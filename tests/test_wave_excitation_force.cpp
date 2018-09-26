@@ -77,14 +77,14 @@ int main(int argc, char* argv[]) {
 
     // Linear Damping
     auto hydroDampingForce = std::make_shared<FrLinearDamping>();
-//    hydroDampingForce->SetManeuveuringDampings(chrono::ChVector<double>(1e8, 1e8, 1e9));
-//    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e6, 1e9, 1e9));
+//    hydroDampingForce->SetManeuveuringDampings(1e8, 1e8, 1e9);
+//    hydroDampingForce->SetSeakeepingDampings(1e6, 1e9, 1e9);
 
 
     // Playing
     // TODO: accepter 3 arguments plutot que des vecteurs chrono
-    hydroDampingForce->SetManeuveuringDampings(chrono::ChVector<double>(1e8, 1e8, 1e9));
-//    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(1e5, 5e10, 5e10));
+    hydroDampingForce->SetDiagonalDamping(1e8, 1e8, 0, 0, 0, 1e9);
+//    hydroDampingForce->SetSeakeepingDampings(1e5, 5e10, 5e10);
 
 
     cylinder->AddForce(hydroDampingForce);

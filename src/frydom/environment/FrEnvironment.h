@@ -31,7 +31,7 @@
 #include "seabed/FrSeabed.h"
 
 // GeographicLib includes
-#include <GeographicLib/LocalCartesian.hpp>
+#include "frydom/utils/FrGeographicServices.h"
 
 namespace frydom {
     /// Class to store the different elements composing the offshore environment
@@ -50,8 +50,8 @@ namespace frydom {
         std::shared_ptr<FrWind> m_wind;
         std::unique_ptr<FrSeabed> m_seabed;
 
-        /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
-        std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
+        /// Wrap for GeographicLib, contains the origin of geographic coordinates
+        std::unique_ptr<FrGeographicServices> m_geoServices;
 
         // Environments scalars
         double m_waterDensity = 1025.;
@@ -78,7 +78,7 @@ namespace frydom {
             m_wind = std::make_shared<FrUniformWind>();
             m_seabed = std::make_unique<FrSeabed>();
             if (not(m_infinite_depth)) m_seabed->SetEnvironment(this);
-            m_LocalCartesian = std::make_unique<GeographicLib::LocalCartesian>();
+            m_geoServices = std::make_unique<FrGeographicServices>();
             m_timeZone = std::make_unique<FrTimeZone>();
         }
 
@@ -206,28 +206,30 @@ namespace frydom {
             m_seabed = std::unique_ptr<FrSeabed>(seabed);
         }
 
-        GeographicLib::LocalCartesian* GetGeoLib() const {
-            return m_LocalCartesian.get();
+        FrGeographicServices* GetGeoServices() const {
+            return m_geoServices.get();
         }
 
         void SetGeographicOrigin(double lat0, double lon0, double h0){
-            m_LocalCartesian->Reset(lat0, lon0, h0);
+            m_geoServices->SetGeographicOrigin(lat0,lon0,h0);
         }
 
         void Convert_GeoToCart(double lat, double lon, double h, double& x, double& y, double& z){
-            m_LocalCartesian->Forward(lat, lon, h, x, y, z);
+            m_geoServices->Convert_GeoToCart(lat,lon,h,x,y,z);
         }
 
         void Convert_CartToGeo(double x, double y, double z, double& lat, double& lon, double& h){
-            m_LocalCartesian->Reverse(x, y, z, lat, lon, h);
+            m_geoServices->Convert_CartToGeo(x,y,z,lat,lon,h);
         }
 
-        double ComputeMagneticDeclination(const chrono::ChVector<> localPos);
+        double ComputeMagneticDeclination(double x, double y, double z){
+            m_geoServices->ComputeMagneticDeclination(x,y,z,GetYear());
+        }
 
         FrTimeZone* GetTimeZone() const {return m_timeZone.get();}
         //void SetTimeZoneName(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
 
-
+        int GetYear();
 
         void Update(double time) {
             m_freeSurface->Update(time);

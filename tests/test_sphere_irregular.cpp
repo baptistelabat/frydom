@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
 
     // PTO / Linear Damping
     auto hydroDampingForce = std::make_shared<FrLinearDamping>();
-    hydroDampingForce->SetSeakeepingDampings(chrono::ChVector<double>(9.0080857e4, 0., 0.));
+    hydroDampingForce->SetDiagonalTranslationDamping(0, 0, 9.0080857e4);
     sphere->AddForce(hydroDampingForce);
 
     // Numerical scheme

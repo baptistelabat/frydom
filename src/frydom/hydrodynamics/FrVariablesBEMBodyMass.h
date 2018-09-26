@@ -48,6 +48,28 @@ namespace frydom {
         /// vector, and set in result: result = [Mb]*vect
         void Compute_inc_Mb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
 
+//        /// Computes the product of the corresponding block in the
+//        /// system matrix (ie. the mass matrix) by 'vect', scale by c_a, and add to 'result'.
+//        /// NOTE: the 'vect' and 'result' vectors must already have
+//        /// the size of the total variables&constraints in the system; the procedure
+//        /// will use the ChVariable offsets (that must be already updated) to know the
+//        /// indexes in result and vect.
+//        void MultiplyAndAdd(chrono::ChMatrix<double>& result,
+//                                    const chrono::ChMatrix<double>& vect,
+//                                    const double c_a) const override;
+//
+//        /// Add the diagonal of the mass matrix scaled by c_a, to 'result'.
+//        /// NOTE: the 'result' vector must already have the size of system unknowns, ie
+//        /// the size of the total variables&constraints in the system; the procedure
+//        /// will use the ChVariable offset (that must be already updated) as index.
+//        void DiagonalAdd(chrono::ChMatrix<double>& result, const double c_a) const override;
+//
+//        /// Build the mass matrix (for these variables) scaled by c_a, storing
+//        /// it in 'storage' sparse matrix, at given column/row offset.
+//        /// Note, most iterative solvers don't need to know mass matrix explicitly.
+//        /// Optimized: doesn't fill unneeded elements except mass and 3x3 inertia.
+//        void Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) override;
+
         void SetGeneralizedMass(const Eigen::MatrixXd& GeneralizedMass) { m_GeneralizedMass = GeneralizedMass; }
         Eigen::MatrixXd GetGeneralizedMass() const { return m_GeneralizedMass; }
 
