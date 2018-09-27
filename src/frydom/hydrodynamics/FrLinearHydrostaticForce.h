@@ -33,8 +33,6 @@ namespace frydom {
         FrLinearHydrostaticForce() {
             force.SetNull();
             moment.SetNull();
-            m_log = hermes::Message("Fh","Hydrostatic force log");
-
         };
 
         FrLinearHydrostaticStiffnessMatrix* GetStiffnessMatrix() { return &m_stiffnessMatrix; }

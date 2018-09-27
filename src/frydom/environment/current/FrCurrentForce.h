@@ -42,6 +42,14 @@ namespace frydom {
         void SetCoeffs(FrCurrentPolarCoeffs table) {
             coeffs_table = std::move(table);
         }
+
+        //
+        // LOG
+        //
+
+        /// Define the prefix of the message of the current force
+        void SetLogPrefix(std::string prefix_name) override;
+
     };
 
 
