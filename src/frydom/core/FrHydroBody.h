@@ -9,7 +9,7 @@
 //#include <frydom/environment/waves/FrDynamicWaveProbe.h>
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "FrBody.h"
-#include "FrConstants.h"
+#include "FrGeographic.h"
 #include "FrEulerAngles.h"
 #include "FrOffshoreSystem.h"
 #include "frydom/hydrodynamics/FrVariablesBEMBodyMass.h"
@@ -149,21 +149,21 @@ namespace frydom {
         FrOffshoreSystem* GetSystem() const { return dynamic_cast<FrOffshoreSystem*>(system); }  // FIXME: cache GetSystem() de ChPhysicsItem...
 
         /// Get the body position
-        chrono::ChVector<> GetPosition(FrFrame frame= NWU) const {  // FIXME: cache le GetPosition de FrBody
+        chrono::ChVector<> GetPosition(FRAME_CONVENTION frame= NWU) const {  // FIXME: cache le GetAbsPosition de FrBody
             switch (frame) {
                 case NWU:
                     return GetPos();
                 case NED:
-                    return NWU2NED(GetPos());
+                    return internal::swap_NED_NWU(GetPos());
             }
         }
 
         /// Get the body orientation
-        chrono::ChVector<> GetOrientation(FrFrame frame= NWU) {  // FIXME: cache le GetOrientation de FrBody
+        chrono::ChVector<> GetOrientation(FRAME_CONVENTION frame= NWU) {  // FIXME: cache le GetOrientation de FrBody
             // TODO
         }
 
-        chrono::ChVectorDynamic<double> GetSpatialVelocity(FrFrame frame=NWU) {
+        chrono::ChVectorDynamic<double> GetSpatialVelocity(FRAME_CONVENTION frame=NWU) {
             // TODO: faire une classe speciale pour le vecteur spatial permettant de recuperer directement la partie lineaire et angulare (inline)
             chrono::ChVectorDynamic<double> velocity(6);
 
@@ -178,7 +178,7 @@ namespace frydom {
         }
 
         /// Get the body velocity
-        /*chrono::ChVector<> GetVelocity(FrFrame frame= NWU) {  // FIXME: cache le GetVelocity de FrBody
+        /*chrono::ChVector<> GetVelocity(FRAME_CONVENTION frame= NWU) {  // FIXME: cache le GetVelocity de FrBody
             switch (frame) {
                 case NWU:
                     return GetPos_dt();
@@ -189,12 +189,12 @@ namespace frydom {
         }*/
 
         /// Get the body angular velocity
-        chrono::ChVector<> GetAngularVelocity(FrFrame frame= NWU) const { // FIXME: cache le GetAngularVelocity de FrBody
+        chrono::ChVector<> GetAngularVelocity(FRAME_CONVENTION frame= NWU) const { // FIXME: cache le GetAngularVelocity de FrBody
             switch (frame) {
                 case NWU:
                     return GetWvel_par();
                 case NED:
-                    return NWU2NED(GetWvel_par());
+                    return internal::swap_NED_NWU(GetWvel_par());
             }
         }
 
@@ -210,7 +210,7 @@ namespace frydom {
 
         /// Get the heading angle defined as the angle between the x axis of the
         /// absolute frame and the x axis of the body
-        double GetHeadingAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) const {
+        double GetHeadingAngle(FRAME_CONVENTION frame, ANGLE_UNIT angleUnit= RAD) const {
             double heading = m_heading;
             if (angleUnit == DEG) {
                 heading = heading * RAD2DEG;
@@ -235,7 +235,7 @@ namespace frydom {
 
         /// Get the course angle defined as the angle between the x axis of the
         /// absolute frame and the velocity vector
-        double GetCourseAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) const{
+        double GetCourseAngle(FRAME_CONVENTION frame, ANGLE_UNIT angleUnit= RAD) const{
             double course = m_course;
             if (angleUnit == DEG) {
                 course = course * RAD2DEG;
@@ -250,7 +250,7 @@ namespace frydom {
 
         /// Get the Sidesplip angle (or the drift angle) defined as the angle between
         /// the x axis of the body and the velocity vector
-        double GetSideslipAngle(FrFrame frame, ANGLE_UNIT angleUnit= RAD) {
+        double GetSideslipAngle(FRAME_CONVENTION frame, ANGLE_UNIT angleUnit= RAD) {
 
             auto heading = GetHeadingAngle(frame, angleUnit);
             auto course = GetCourseAngle(frame, angleUnit);
@@ -352,27 +352,27 @@ namespace frydom {
         // ==========================================================================
 
         /// Get the relative velocity of the current field, taking into account the body's own velocity
-        chrono::ChVector<> GetCurrentRelativeVelocity(FrFrame frame= NWU, FrRefSyst Refsys = PARENT) const;
+        chrono::ChVector<> GetCurrentRelativeVelocity(FRAME_CONVENTION frame= NWU, FrRefSyst Refsys = PARENT) const;
 
         /// Get the relative velocity of the current field respect to a point M
         chrono::ChVector<>
-        GetCurrentRelativeVelocity(const chrono::ChVector<>& localpos, FrFrame frame = NWU, FrRefSyst Refsys = PARENT)const;
+        GetCurrentRelativeVelocity(const chrono::ChVector<>& localpos, FRAME_CONVENTION frame = NWU, FrRefSyst Refsys = PARENT)const;
 
         /// Get the relative velocity of the current field respect to a Node
         chrono::ChVector<>
-        GetCurrentRelativeVelocity(const FrNode* mNode, FrFrame frame = NWU, FrRefSyst Refsys = PARENT)const;
+        GetCurrentRelativeVelocity(const FrNode* mNode, FRAME_CONVENTION frame = NWU, FrRefSyst Refsys = PARENT)const;
 
         /// Get the current relative angle
-        double GetCurrentRelativeAngle(FrFrame frame= NWU, ANGLE_UNIT angleUnit= RAD) const;
+        double GetCurrentRelativeAngle(FRAME_CONVENTION frame= NWU, ANGLE_UNIT angleUnit= RAD) const;
         // ==========================================================================
         // METHODS ABOUT WIND
         // ==========================================================================
 
         /// Get the relative velocity of the wind field, taking into account the body's own velocity
-        chrono::ChVector<> GetWindRelativeVelocity(FrFrame frame= NWU, FrRefSyst Refsys = PARENT) const;
+        chrono::ChVector<> GetWindRelativeVelocity(FRAME_CONVENTION frame= NWU, FrRefSyst Refsys = PARENT) const;
 
         /// Get the relative velocity of the wind field respect to a Node
-        chrono::ChVector<> GetWindRelativeVelocity(const FrNode* mNode, FrFrame frame = NWU, FrRefSyst Refsys = PARENT)const;
+        chrono::ChVector<> GetWindRelativeVelocity(const FrNode* mNode, FRAME_CONVENTION frame = NWU, FrRefSyst Refsys = PARENT)const;
 
         // ==========================================================================
         // METHODS ABOUT ADDED MASS
@@ -430,7 +430,7 @@ namespace frydom {
 //
 //        }
 //
-//        void RecordVelocityState(FrFrame frame=NWU) {
+//        void RecordVelocityState(FRAME_CONVENTION frame=NWU) {
 //
 //            std::cout << "Time : " << GetSystem()->GetChTime() << "\n";
 //

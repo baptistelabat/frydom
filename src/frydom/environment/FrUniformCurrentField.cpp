@@ -8,13 +8,13 @@
 namespace frydom {
 
     void FrUniformCurrentField::Set(chrono::ChVector<> const velocity_vector,
-                         FrFrame frame, FrDirectionConvention convention) {
+                         FRAME_CONVENTION frame, FrDirectionConvention convention) {
 
         auto current_vector = velocity_vector;
 
         // Place the vector in NWU frame
         if (frame == NED) {
-            current_vector = NED2NWU(current_vector);
+            current_vector = internal::swap_NED_NWU(current_vector);
         }
 
         if (convention == COMEFROM) {
@@ -29,7 +29,7 @@ namespace frydom {
                          double const velocity,
                          ANGLE_UNIT angleUnit,
                          SPEED_UNIT speedUnit,
-                         FrFrame frame,
+                         FRAME_CONVENTION frame,
                          FrDirectionConvention convention) {
 
         auto alpha = angle;
@@ -53,7 +53,7 @@ namespace frydom {
 
         // Managing conversion into NWU
         if (frame == NED) {
-            current_vector = NED2NWU(current_vector);
+            current_vector = internal::swap_NED_NWU(current_vector);
         }
 
         m_currentVector = current_vector;
@@ -63,7 +63,7 @@ namespace frydom {
     void FrUniformCurrentField::Set(chrono::ChVector<> const udir,
                          double const velocity,
                          SPEED_UNIT speedUnit,
-                         FrFrame frame,
+                         FRAME_CONVENTION frame,
                          FrDirectionConvention convention) {
 
         // TODO: Ensure that the vector is a unit vector
@@ -73,7 +73,7 @@ namespace frydom {
 
         // Place the vector in NWU frame
         if (frame == NED) {
-            current_vector = NED2NWU(current_vector);
+            current_vector = internal::swap_NED_NWU(current_vector);
         }
 
         if (convention == COMEFROM) {
@@ -88,24 +88,24 @@ namespace frydom {
 //        std::cout << "Updating current model" << std::endl;
     }
 
-    chrono::ChVector<> FrUniformCurrentField::GetFluxVector(FrFrame frame) {
+    chrono::ChVector<> FrUniformCurrentField::GetFluxVector(FRAME_CONVENTION frame) {
         switch (frame) {
             case NED:
-                return NWU2NED(m_currentVector);
+                return internal::swap_NED_NWU(m_currentVector);
             case NWU:
                 return m_currentVector;
         }
     }
 
-    chrono::ChVector<> FrUniformCurrentField::GetComeFromVector(FrFrame frame) {
+    chrono::ChVector<> FrUniformCurrentField::GetComeFromVector(FRAME_CONVENTION frame) {
         return -FrUniformCurrentField::GetFluxVector(frame);
     }
 
-    chrono::ChVector<> FrUniformCurrentField::GetGoToVector(FrFrame frame) {
+    chrono::ChVector<> FrUniformCurrentField::GetGoToVector(FRAME_CONVENTION frame) {
         return FrUniformCurrentField::GetFluxVector(frame);
     }
 
-    double FrUniformCurrentField::GetAngle(FrDirectionConvention convention, FrFrame frame, ANGLE_UNIT angleUnit) {
+    double FrUniformCurrentField::GetAngle(FrDirectionConvention convention, FRAME_CONVENTION frame, ANGLE_UNIT angleUnit) {
 
         chrono::ChVector<> current_vector;
         switch (convention) {
@@ -137,13 +137,13 @@ namespace frydom {
     }
 
     void FrUniformCurrentField::Set(const chrono::ChVector<>& unitDirection, double magnitude,
-                        FrFrame frame, FrDirectionConvention directionConvention, SPEED_UNIT speedUnit) {
+                        FRAME_CONVENTION frame, FrDirectionConvention directionConvention, SPEED_UNIT speedUnit) {
 
         auto uDirection = unitDirection;
         uDirection /= unitDirection.Length();
 
         if (frame == NED) {
-            uDirection = NED2NWU(uDirection);
+            uDirection = internal::swap_NED_NWU(uDirection);
         }
 
         if (directionConvention == COMEFROM) {

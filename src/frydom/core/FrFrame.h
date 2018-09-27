@@ -5,10 +5,9 @@
 #ifndef FRYDOM_FRFRAME_H
 #define FRYDOM_FRFRAME_H
 
-
-//#include <chrono/core/ChFrameMoving.h>
-//#include "chrono/physics/ChMarker.h"
 #include "chrono/core/ChFrame.h"
+
+#include "FrVector.h"
 #include "FrRotation.h"
 
 
@@ -57,6 +56,8 @@ namespace frydom {
 
     private:
 
+        FRAME_CONVENTION m_frameConvention = NWU;
+
         chrono::ChFrame<double> m_chronoFrame;   ///< The embedded chrono frame // TODO: avoir un _FrFrameBase pour cacher le chrono...
 
         friend class FrBody_; // So that we don't have to expose chrono API to class user
@@ -65,24 +66,24 @@ namespace frydom {
 
         FrFrame_();
 
-        FrFrame_(const Vector3d &pos, const FrRotation_ &rotation);
+        FrFrame_(const Position &pos, const FrRotation_ &rotation);
 
-        FrFrame_(const Vector3d &pos, const FrQuaternion_& quaternion);
+        FrFrame_(const Position &pos, const FrQuaternion_& quaternion);
 
         FrFrame_& FrFrame(const FrFrame_& otherFrame);
 
 
-        // Position
+        // Cartesian Position
 
         void SetPosition(double x, double y, double z);
 
-        void SetPosition(Vector3d position);
+        void SetPosition(Position position);
 
         void GetPosition(double& x, double& y, double& z) const;
 
-        void GetPosition(Vector3d& position) const;
+        void GetPosition(Position& position) const;
 
-        Vector3d GetPosition() const;
+        Position GetPosition() const;
 
         void SetX(double x);
 
@@ -102,6 +103,15 @@ namespace frydom {
 
         double& GetZ();
 
+        // Geographic position
+
+        void GetGeographicPosition(double& latitude, double& longitude, double& height) const;
+
+        double GetLatitude() const;
+
+        double GetLongitude() const;
+
+        double GetGeographicHeight() const;
 
         // Rotation
 
@@ -116,8 +126,6 @@ namespace frydom {
         void SetIdentity();
 
         FrRotation_ GetRotation() const;
-
-//        FrRotation_& GetRotation();
 
         FrQuaternion_ GetQuaternion() const;
 
@@ -144,6 +152,19 @@ namespace frydom {
         void SetRotZ_RADIANS(double angle);
 
         void SetRotZ_DEGREES(double angle);
+
+
+        // Frame conventions
+
+        FRAME_CONVENTION GetFrameConvention() const;
+
+        FRAME_CONVENTION SwapAbsFrameConvention();
+
+        void SetFrameConvention(FRAME_CONVENTION frameConvention, bool change);
+
+        void SetNWU();
+
+        void SetNED();
 
 
         // Operations

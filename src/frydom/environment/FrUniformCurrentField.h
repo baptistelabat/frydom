@@ -8,7 +8,7 @@
 #include "chrono/core/ChVector.h"
 
 #include "frydom/core/FrObject.h"
-#include "frydom/core/FrConstants.h"
+#include "frydom/core/FrGeographic.h"
 #include "frydom/environment/FrConventions.h"
 #include "MathUtils/MathUtils.h"
 
@@ -50,30 +50,30 @@ namespace frydom {
 
             /// Constructor from a velocity vector embedding direction and magnitude (in m/s)
             void Set(chrono::ChVector<>  velocity_vector,
-                                           FrFrame= NED, FrDirectionConvention= GOTO);
+                                           FRAME_CONVENTION= NED, FrDirectionConvention= GOTO);
 
             /// Constructor from an angle and a magnitude.
             void Set(double  angle, double  magnitude,
-                                  ANGLE_UNIT = DEG, SPEED_UNIT = KNOT, FrFrame= NED, FrDirectionConvention convention = GOTO);
+                                  ANGLE_UNIT = DEG, SPEED_UNIT = KNOT, FRAME_CONVENTION= NED, FrDirectionConvention convention = GOTO);
 
             /// Constructor from a direction vector and a magnitude
             void Set(chrono::ChVector<>  unit_direction, double  magnitude,
-                                  SPEED_UNIT = KNOT, FrFrame= NED, FrDirectionConvention convention = GOTO);
+                                  SPEED_UNIT = KNOT, FRAME_CONVENTION= NED, FrDirectionConvention convention = GOTO);
 
 
             // TODO: Ajouter les setters pour la direction et l'intensite
             void Set(const chrono::ChVector<>& unitDirection, double magnitude,
-                     FrFrame frame=NED, FrDirectionConvention directionConvention=GOTO, SPEED_UNIT speedUnit=KNOT);
+                     FRAME_CONVENTION frame=NED, FrDirectionConvention directionConvention=GOTO, SPEED_UNIT speedUnit=KNOT);
 
             void Update(double Time);
 
-            chrono::ChVector<> GetFluxVector(FrFrame= NWU);
+            chrono::ChVector<> GetFluxVector(FRAME_CONVENTION= NWU);
 
-            chrono::ChVector<> GetComeFromVector(FrFrame= NWU);
+            chrono::ChVector<> GetComeFromVector(FRAME_CONVENTION= NWU);
 
-            chrono::ChVector<> GetGoToVector(FrFrame= NWU);
+            chrono::ChVector<> GetGoToVector(FRAME_CONVENTION= NWU);
 
-            double GetAngle(FrDirectionConvention convention, FrFrame frame, ANGLE_UNIT = DEG);
+            double GetAngle(FrDirectionConvention convention, FRAME_CONVENTION frame, ANGLE_UNIT = DEG);
 
             double GetMagnitude(SPEED_UNIT speedUnit=KNOT);
 

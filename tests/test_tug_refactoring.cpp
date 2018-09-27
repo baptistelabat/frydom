@@ -31,15 +31,15 @@ int main(int argc, char* argv[]) {
     makeItBox(box, 10, 10, 10, 1e4);
     box->SetBodyFixed(true);
 
-    box->SetPosition(10, 0, 0);
-    box->SetCOGLocalPosition(10, 0, 0);
+    box->SetAbsPosition(10, 0, 0, NWU);
+    box->SetCOGLocalPosition(10, 0, 0, NWU);
 
-    box->SetPosition(-10, 0, 0);
+    box->SetAbsPosition(-10, 0, 0, NWU);
 
-    box->SetCOGAbsPosition(0, 10, 0);
+    box->SetCOGAbsPosition(0, 10, 0, NWU);
 //
 //
-//    std::cout << box->GetPosition() << std::endl << std::endl;
+//    std::cout << box->GetAbsPosition() << std::endl << std::endl;
 //    std::cout << box->GetCOGAbsPosition() << std::endl << std::endl;
 //    std::cout << box->GetCOGRelPosition() << DBLSPACE;
 //
@@ -72,10 +72,13 @@ int main(int argc, char* argv[]) {
     std::cout << frame1.GetThisFrameRelativeTransform_WRT_OtherFrame(frame2) << std::endl;
 
 
+
+
+
 //    FrRotation_ rot;
 //    rot.SetCardanAngles_DEGREES(0, 0, 90);
 //
-//    frame.SetPosition(10, 20, 10);
+//    frame.SetAbsPosition(10, 20, 10);
 //    frame.SetRotation(rot);
 //
 //    frame.SetNoRotation();

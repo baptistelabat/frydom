@@ -13,10 +13,12 @@ namespace frydom {
 
     namespace internal {
 
-        FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame) {
-            auto pos = ChVectorToVector3d(chFrame.GetPos());
+        FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame, FRAME_CONVENTION fc) {
+            auto pos = ChVectorToVector3d<Position>(chFrame.GetPos(), fc);
             auto quat = Ch2FrQuaternion(chFrame.GetRot());
-            return FrFrame_(pos, quat);
+            auto frame = FrFrame_(pos, quat);
+            frame.SetFrameConvention(fc, false);
+            return frame;
         }
 
         chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame) {
@@ -25,30 +27,35 @@ namespace frydom {
             chrono::ChFrame<double>(pos, quat);
         }
 
+        inline void swap_NED_NWU(FrFrame_& frFrame) {
+            internal::swap_NED_NWU(frFrame.GetQuaternion());
+        }
+
     }
 
 
     FrFrame_::FrFrame_() = default;
 
-    FrFrame_::FrFrame_(const Vector3d &pos, const FrRotation_ &rotation) {
+    FrFrame_::FrFrame_(const Position &pos, const FrRotation_ &rotation) {
         SetPosition(pos);
         SetRotation(rotation);
     }
 
-    FrFrame_::FrFrame_(const Vector3d &pos, const frydom::FrQuaternion_ &quaternion) {
+    FrFrame_::FrFrame_(const Position &pos, const frydom::FrQuaternion_ &quaternion) {
         SetPosition(pos);
         SetRotation(quaternion);
     }
 
     FrFrame_& FrFrame_::FrFrame(const FrFrame_ &otherFrame) {
         m_chronoFrame = otherFrame.m_chronoFrame;
+        m_frameConvention = otherFrame.m_frameConvention;
     }
 
     void FrFrame_::SetPosition(double x, double y, double z) {
         m_chronoFrame.SetPos(chrono::ChVector<double>(x, y, z));
     }
 
-    void FrFrame_::SetPosition(Vector3d position) {
+    void FrFrame_::SetPosition(Position position) {
         m_chronoFrame.SetPos(internal::Vector3dToChVector(position));
     }
 
@@ -59,12 +66,12 @@ namespace frydom {
         z = pos.z();
     }
 
-    void FrFrame_::GetPosition(Vector3d &position) const {
+    void FrFrame_::GetPosition(Position &position) const {
         position = GetPosition();
     }
 
-    Vector3d FrFrame_::GetPosition() const {
-        return internal::ChVectorToVector3d(m_chronoFrame.GetPos());
+    Position FrFrame_::GetPosition() const {
+        return internal::ChVectorToVector3d<Position>(m_chronoFrame.GetPos(), GetFrameConvention());
     }
 
     void FrFrame_::SetRotation(const FrRotation_ &rotation) {
@@ -200,6 +207,7 @@ namespace frydom {
 
     void FrFrame_::RotX_RADIANS(double) {
         // TODO
+//        m_chronoFrame.SetRot()
     }
 
     void FrFrame_::RotX_DEGREES(double angle) {
@@ -261,6 +269,59 @@ namespace frydom {
         RotZ_DEGREES(angle);
     }
 
+    FRAME_CONVENTION FrFrame_::GetFrameConvention() const {
+        return m_frameConvention;
+    }
+
+    FRAME_CONVENTION FrFrame_::SwapAbsFrameConvention() {
+        auto quat = m_chronoFrame.GetRot();
+
+        quat.e2() *= -1;
+        quat.e3() *= -1;
+
+        m_chronoFrame.SetRot(quat);
+
+        if (m_frameConvention == NWU) {
+            m_frameConvention = NED;
+        } else {
+            m_frameConvention = NWU;
+        }
+
+        return m_frameConvention;
+    }
+
+    void FrFrame_::SetFrameConvention(FRAME_CONVENTION frameConvention, bool change) {
+        if (m_frameConvention != frameConvention) {
+            if (change) {
+                SwapAbsFrameConvention();
+            }
+            m_frameConvention = frameConvention;
+        }
+    }
+
+    void FrFrame_::SetNWU() {
+        SetFrameConvention(NWU, true);
+    }
+
+    void FrFrame_::SetNED() {
+        SetFrameConvention(NED, true);
+    }
+
+    void FrFrame_::GetGeographicPosition(double &latitude, double &longitude, double &height) const {
+        // TODO
+    }
+
+    double FrFrame_::GetLatitude() const {
+        // TODO
+    }
+
+    double FrFrame_::GetLongitude() const {
+        // TODO
+    }
+
+    double FrFrame_::GetGeographicHeight() const {
+        // TODO
+    }
 
 
 

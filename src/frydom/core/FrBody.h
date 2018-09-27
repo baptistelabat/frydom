@@ -12,7 +12,8 @@
 #include "chrono/physics/ChBodyAuxRef.h"
 
 #include "FrObject.h"
-#include "frydom/core/FrConstants.h"
+#include "FrVector.h"
+#include "frydom/core/FrGeographic.h"
 #include "frydom/core/FrForce.h"
 #include "hermes/hermes.h"
 #include "frydom/mesh/FrTriangleMeshConnected.h"
@@ -55,32 +56,32 @@ namespace frydom {
         }
 
         /// Get the body absolute position (this of its reference point)
-        chrono::ChVector<> GetPosition(FrFrame frame = NWU) const{
+        chrono::ChVector<> GetPosition(FRAME_CONVENTION frame = NWU) const{
             switch (frame) {
                 case NWU:
                     return GetPos();
                 case NED:
-                    return NWU2NED(GetPos());
+                    return internal::swap_NED_NWU(GetPos());
             }
         }
 
         /// Get the body orientation
-        chrono::ChVector<> GetOrientation(FrFrame frame= NWU) const{
+        chrono::ChVector<> GetOrientation(FRAME_CONVENTION frame= NWU) const{
             // TODO
         }
 
         /// Get the body velocity
-        chrono::ChVector<> GetVelocity(FrFrame frame= NWU) const{
+        chrono::ChVector<> GetVelocity(FRAME_CONVENTION frame= NWU) const{
             switch (frame) {
                 case NWU:
                     return GetPos_dt();
                 case NED:
-                    return NWU2NED(GetPos_dt());
+                    return internal::swap_NED_NWU(GetPos_dt());
             }
         }
 
         /// Get the body angular velocity
-        chrono::ChVector<> GetAngularVelocity(FrFrame frame= NWU) {
+        chrono::ChVector<> GetAngularVelocity(FRAME_CONVENTION frame= NWU) {
             //TODO
         }
 
@@ -236,6 +237,7 @@ namespace frydom {
     /// REFACTORING ------>>>>>>>>>>>>>>
 
     class _FrBody;
+    class FrQuaternion_;
 
     /// Cette classe n'est la que pour heriter des objets chrono.
     /// Ce n'est pas celle qu'on manipule directement dans frydom en tant qu'utilisateur !!!
@@ -288,7 +290,7 @@ namespace frydom {
 
         void SetMasInTons(double mass);
 
-        void SetDiagonalInertiasWRT_COG(double Ixx, double Iyy, double Izz);
+        void SetDiagonalInertiasWRT_COG(double Ixx, double Iyy, double Izz); // TODO: donner la possibilite de specifier une orientation differente du repere de reference
 
         void SetOffDiagonalInertiasWRT_COG(double Ixy, double Ixz, double Iyz);
 
@@ -335,39 +337,67 @@ namespace frydom {
 
         // About COG position
 
-        void SetCOGLocalPosition(double x, double y, double z);
+        void SetCOGLocalPosition(double x, double y, double z, FRAME_CONVENTION fc);
 
-        void SetCOGLocalPosition(mathutils::Vector3d<double> position);
+        void SetCOGLocalPosition(Position position, FRAME_CONVENTION fc);
 
-        void SetCOGAbsPosition(double x, double y, double z);
+        void SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
 
-        void SetCOGAbsPosition(mathutils::Vector3d<double> position);
+        void SetCOGAbsPosition(Position position, FRAME_CONVENTION fc);
 
-        void GetCOGAbsPosition(double& x, double& y, double& z) const;
+        void GetCOGAbsPosition(double& x, double& y, double& z, FRAME_CONVENTION fc) const;
 
-        mathutils::Vector3d<double> GetCOGAbsPosition() const;
+        Position GetCOGAbsPosition(FRAME_CONVENTION fc) const;
 
-        mathutils::Vector3d<double> GetCOGRelPosition() const;
+        Position GetCOGRelPosition(FRAME_CONVENTION fc) const;
 
 
 
         // About body position (the one of its reference frame)
 
-        void SetPosition(double x, double y, double z);
+        void SetAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
 
-        void SetPosition(mathutils::Vector3d<double> position);
+        void SetAbsPosition(Position position, FRAME_CONVENTION fc);
 
-        mathutils::Vector3d<double> GetPosition() const;
+        Position GetAbsPosition(FRAME_CONVENTION fc) const;
 
-        void GetPosition(double& x, double& y, double& z) const;
+        void GetAbsPosition(double &x, double &y, double &z, FRAME_CONVENTION fc) const;
 
-        void GetPosition(mathutils::Vector3d<double>& position) const;
+        void GetAbsPosition(Position &position, FRAME_CONVENTION fc) const;
 
-        FrFrame_ GetFrame() const;
+        FrFrame_ GetAbsFrame(FRAME_CONVENTION fc) const;
 
-        mathutils::Vector3d<double> GetAbsPositionOfLocalPoint(double x, double y, double z) const;
+        Position GetAbsPositionOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
 
-        void GetOtherFrameRelativePosition(const FrFrame_ &otherFrame) const;
+        FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisBody(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
+
+
+        // About rotation
+
+        FrRotation_ GetAbsRotation(FRAME_CONVENTION fc) const;
+
+        FrQuaternion_ GetAbsQuaternion(FRAME_CONVENTION fc) const;
+
+        void GetEulerAngles_RADIANS(double& phi, double& theta, double& psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const;
+
+        void GetEulerAngles_DEGREES(double& phi, double& theta, double& psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const;
+
+        void GetCardanAngles_RADIANS(double& phi, double& theta, double& psi, FRAME_CONVENTION fc) const;
+
+        void GetCardanAngles_DEGREES(double& phi, double& theta, double& psi, FRAME_CONVENTION fc) const;
+
+        void GetRotationAxisAngle(Direction& axis, double angle, FRAME_CONVENTION fc) const;
+
+
+//
+//        void GetRoll_NED() const;
+//
+//        void GetYaw_NED() const;
+
+
+
+
+
 
 
 

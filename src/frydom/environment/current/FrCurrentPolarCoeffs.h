@@ -6,7 +6,7 @@
 #define FRYDOM_FRCURRENTPOLARCOEFFS_H
 
 
-#include <frydom/core/FrConstants.h>
+#include <frydom/core/FrGeographic.h>
 #include "MathUtils/MathUtils.h"
 
 using namespace mathutils;
@@ -18,7 +18,7 @@ namespace frydom {
 
     private:
 
-        FrFrame  m_frame     = NED;
+        FRAME_CONVENTION  m_frame     = NED;
         bool     m_symmetric = true;
         bool     m_negate    = false;
 
@@ -31,8 +31,8 @@ namespace frydom {
 
         void Initialize(std::string yaml_file);
 
-        void SetFrame(FrFrame frame) { m_frame = frame; }
-        FrFrame GetFrame() const { return m_frame; }
+        void SetFrame(FRAME_CONVENTION frame) { m_frame = frame; }
+        FRAME_CONVENTION GetFrame() const { return m_frame; }
 
         void SetSymmetric(const bool symmetry) { m_symmetric = symmetry; }
         bool IsSymmetric() const { return m_symmetric; }
@@ -44,7 +44,7 @@ namespace frydom {
         // Coefficients evaluations
         // ================================================
 
-        double CX(const double angle, FrFrame frame = NWU) const {
+        double CX(const double angle, FRAME_CONVENTION frame = NWU) const {
             // CX coefficient is pair so CX(alpha) = CX(-alpha) + no difference between NED and NWU frames
             double alpha = angle;
             auto cx = Eval("cx", fabs(alpha));
@@ -52,16 +52,16 @@ namespace frydom {
             return cx;
         }
 
-        double CY(const double angle, FrFrame frame = NWU) const {
+        double CY(const double angle, FRAME_CONVENTION frame = NWU) const {
             return CYCZ(angle, "cy", frame);
         }
 
-        double CZ(const double angle, FrFrame frame = NWU) const {
+        double CZ(const double angle, FRAME_CONVENTION frame = NWU) const {
             return CYCZ(angle, "cz", frame);
         }
 
     private:
-        inline double CYCZ(const double angle, const std::string& coeff, const FrFrame frame) const {
+        inline double CYCZ(const double angle, const std::string& coeff, const FRAME_CONVENTION frame) const {
 
             double alpha = angle;
 

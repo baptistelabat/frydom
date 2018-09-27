@@ -28,7 +28,7 @@ namespace frydom {
         FrUniformCurrentField::Update(time);
     }
 
-    chrono::ChVector<> FrUniformCurrent_::GetFluxVector(FrFrame frame) {
+    chrono::ChVector<> FrUniformCurrent_::GetFluxVector(FRAME_CONVENTION frame) {
         return FrUniformCurrentField::GetFluxVector(frame);
     }
 
@@ -41,7 +41,7 @@ namespace frydom {
     }
 
     void FrUniformCurrent::Set(chrono::ChVector<>  unit_direction, double  magnitude,
-                               SPEED_UNIT unit, FrFrame frame,
+                               SPEED_UNIT unit, FRAME_CONVENTION frame,
                                FrDirectionConvention convention) {
         FrUniformCurrentField::Set(unit_direction, magnitude, unit, frame, convention);
     }

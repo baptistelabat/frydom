@@ -17,7 +17,7 @@ namespace frydom {
         FrUniformCurrentField::Update(time);
     }
 
-    chrono::ChVector<> FrUniformWind_::GetFluxVector(FrFrame frame) {
+    chrono::ChVector<> FrUniformWind_::GetFluxVector(FRAME_CONVENTION frame) {
         return FrUniformCurrentField::GetFluxVector(frame);
     }
 

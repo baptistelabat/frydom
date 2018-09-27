@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "frydom/core/FrConstants.h"
+#include "frydom/core/FrGeographic.h"
 #include "frydom/core/FrNode.h"
 #include "frydom/environment/waves/FrWaveField.h"
 #include "frydom/environment/waves/FrFlowSensor.h"

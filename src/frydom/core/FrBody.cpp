@@ -292,85 +292,171 @@ namespace frydom {
 
 
 
-    void FrBody_::SetCOGLocalPosition(double x, double y, double z) {
+    void FrBody_::SetCOGLocalPosition(double x, double y, double z, FRAME_CONVENTION fc) {
 
         chrono::ChFrame<double> cogFrame;
         cogFrame.SetPos(chrono::ChVector<double>(x, y, z));
+
+        if (IsNED(fc)) internal::swap_NED_NWU(cogFrame.GetPos());
+
         m_chronoBody->SetFrame_COG_to_REF(cogFrame);
     }
 
-    void FrBody_::SetCOGLocalPosition(mathutils::Vector3d<double> position) {
-        SetCOGLocalPosition(position[0], position[1], position[2]);
+    void FrBody_::SetCOGLocalPosition(Position position, FRAME_CONVENTION fc) {
+        SetCOGLocalPosition(position[0], position[1], position[2], fc);
     }
 
-
-
-    void FrBody_::SetCOGAbsPosition(double x, double y, double z) {
+    void FrBody_::SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc) {
         m_chronoBody->SetPos(chrono::ChVector<double>(x, y, z));
+
+        if (IsNED(fc)) internal::swap_NED_NWU(m_chronoBody->GetPos());
+
         m_chronoBody->Update();
     }
 
-    void FrBody_::SetCOGAbsPosition(mathutils::Vector3d<double> position) {
-        SetCOGAbsPosition(position[0], position[1], position[2]);
+    void FrBody_::SetCOGAbsPosition(Position position, FRAME_CONVENTION fc) {
+        SetCOGAbsPosition(position[0], position[1], position[2], fc);
     }
 
 
-    void FrBody_::GetCOGAbsPosition(double& x, double& y, double& z) const {
+    void FrBody_::GetCOGAbsPosition(double& x, double& y, double& z, FRAME_CONVENTION fc) const {
         auto pos = m_chronoBody->GetPos();
+
+        if (IsNED(fc)) internal::swap_NED_NWU(pos);
+
         x = pos.x();
         y = pos.y();
         z = pos.z();
+
     }
 
-    mathutils::Vector3d<double> FrBody_::GetCOGAbsPosition() const {
-        return internal::ChVectorToVector3d(m_chronoBody->GetPos());
+    Position FrBody_::GetCOGAbsPosition(FRAME_CONVENTION fc) const {
+        auto cogPos = m_chronoBody->GetPos();
+
+        if (IsNED(fc)) internal::swap_NED_NWU(cogPos);
+
+        auto absPos = internal::ChVectorToVector3d<Position>(cogPos, fc);
+        absPos.SetFrameConvention(fc, false);
+
+        return absPos;
     }
 
-    mathutils::Vector3d<double> FrBody_::GetCOGRelPosition() const {
-        auto cogFrame = m_chronoBody->GetFrame_COG_to_REF();
-        return internal::ChVectorToVector3d(cogFrame.GetPos());
+    Position FrBody_::GetCOGRelPosition(FRAME_CONVENTION fc) const {
+        auto cogPos = m_chronoBody->GetFrame_COG_to_REF().GetPos();
+
+        if (IsNED(fc)) internal::swap_NED_NWU(cogPos);
+
+        auto relPos = internal::ChVectorToVector3d<Position>(cogPos, fc);
+        relPos.SetFrameConvention(fc, false);
+
+        return relPos;
     }
 
-    void FrBody_::SetPosition(double x, double y, double z) {
+    void FrBody_::SetAbsPosition(double x, double y, double z, FRAME_CONVENTION fc) {
+
+        auto pos = chrono::ChVector<double>(x, y, z);
+
+        if (IsNED(fc)) internal::swap_NED_NWU(pos);
+
         chrono::ChFrame<double> auxFrame;
         auxFrame.SetPos(chrono::ChVector<double>(x, y, z));
         m_chronoBody->SetFrame_REF_to_abs(auxFrame);
     }
 
-    void FrBody_::SetPosition(mathutils::Vector3d<double> position) {
-        SetPosition(position[0], position[1], position[2]);
+    void FrBody_::SetAbsPosition(Position position, FRAME_CONVENTION fc) {
+        if (fc != position.GetFrameConvention()) position.SetFrameConvention(fc, true);
+        SetAbsPosition(position[0], position[1], position[2], fc);
     }
 
-    mathutils::Vector3d<double> FrBody_::GetPosition() const {
-        auto position = m_chronoBody->GetFrame_REF_to_abs().GetPos();
-        return internal::ChVectorToVector3d(position);
+    Position FrBody_::GetAbsPosition(FRAME_CONVENTION fc) const {
+        auto pos = m_chronoBody->GetFrame_REF_to_abs().GetPos();
+
+        if (IsNED(fc)) internal::swap_NED_NWU(pos);
+
+        return internal::ChVectorToVector3d<Position>(pos, fc);
     }
 
-    void FrBody_::GetPosition(double &x, double &y, double &z) const {
-        auto position = m_chronoBody->GetFrame_REF_to_abs().GetPos();
-        x = position[0];
-        y = position[1];
-        z = position[2];
+    void FrBody_::GetAbsPosition(double &x, double &y, double &z, FRAME_CONVENTION fc) const {
+        auto pos = m_chronoBody->GetFrame_REF_to_abs().GetPos();
+
+        if (IsNED(fc)) internal::swap_NED_NWU(pos);
+
+        x = pos[0];
+        y = pos[1];
+        z = pos[2];
     }
 
-    void FrBody_::GetPosition(mathutils::Vector3d<double>& position) const {
-        position = GetPosition();
+    void FrBody_::GetAbsPosition(Position &position, FRAME_CONVENTION fc) const {
+        position = GetAbsPosition(fc);
     }
 
-    FrFrame_ FrBody_::GetFrame() const {
-        auto chronoFrame = m_chronoBody->GetFrame_REF_to_abs();
-        return FrFrame_(internal::Ch2FrFrame(chronoFrame));
+    FrFrame_ FrBody_::GetAbsFrame(FRAME_CONVENTION fc) const {
+
+        auto absFrame = m_chronoBody->GetFrame_REF_to_abs();
+
+        if (IsNED(fc)) {
+            internal::swap_NED_NWU(absFrame.GetPos());
+            auto rot = internal::swap_NED_NWU(absFrame.GetRot());
+            absFrame.SetRot(rot);
+        }
+
+        return FrFrame_(internal::Ch2FrFrame(absFrame));
     }
 
-    mathutils::Vector3d<double> FrBody_::GetAbsPositionOfLocalPoint(double x, double y, double z) const {
+    Position FrBody_::GetAbsPositionOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const {
+        auto pointPos = chrono::ChVector<double>(x, y, z);
+
         chrono::ChFrame<double> pframe;
-        pframe.SetPos(chrono::ChVector<double>(x, y, z));
+        pframe.SetPos(pointPos);
+
+        // Compose both frames
         auto aframe = m_chronoBody->GetFrame_REF_to_abs() >> pframe;
-        return internal::ChVectorToVector3d(aframe.GetPos());
+
+        auto absPos = internal::ChVectorToVector3d<Position>(aframe.GetPos(), fc);
+
+        if (IsNED(fc)) internal::swap_NED_NWU(absPos);
+
+        return absPos;
     }
 
-    void FrBody_::GetOtherFrameRelativePosition(const FrFrame_ &otherFrame) const {
+    FrFrame_ FrBody_::GetOtherFrameRelativeTransform_WRT_ThisBody(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const {
 
+        auto tmpFrame = otherFrame;
+        tmpFrame.SetFrameConvention(fc, true);
+
+        return GetAbsFrame(fc).GetOtherFrameRelativeTransform_WRT_ThisFrame(tmpFrame);
+    }
+
+    FrRotation_ FrBody_::GetAbsRotation(FRAME_CONVENTION fc) const {
+        return FrRotation_(GetAbsQuaternion(fc));
+    }
+
+    FrQuaternion_ FrBody_::GetAbsQuaternion(FRAME_CONVENTION fc) const {
+        auto absQuat = internal::Ch2FrQuaternion(m_chronoBody->GetFrame_REF_to_abs().GetRot());
+
+        if (IsNED(fc)) absQuat.SwapAbsFrameConvention();
+
+        return absQuat;
+    }
+
+    void FrBody_::GetEulerAngles_RADIANS(double &phi, double &theta, double &psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const {
+        GetAbsRotation(fc).GetEulerAngles_RADIANS(phi, theta, psi, seq);
+    }
+
+    void FrBody_::GetEulerAngles_DEGREES(double &phi, double &theta, double &psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const {
+        GetAbsRotation(fc).GetEulerAngles_DEGREES(phi, theta, psi, seq);
+    }
+
+    void FrBody_::GetCardanAngles_RADIANS(double &phi, double &theta, double &psi, FRAME_CONVENTION fc) const {
+        GetAbsRotation(fc).GetCardanAngles_RADIANS(phi, theta, psi);
+    }
+
+    void FrBody_::GetCardanAngles_DEGREES(double &phi, double &theta, double &psi, FRAME_CONVENTION fc) const {
+        GetAbsRotation(fc).GetCardanAngles_DEGREES(phi, theta, psi);
+    }
+
+    void FrBody_::GetRotationAxisAngle(Direction &axis, double angle, FRAME_CONVENTION fc) const {
+        GetAbsRotation(fc).GetAxisAngle(axis, angle);
     }
 
 

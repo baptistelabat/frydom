@@ -27,7 +27,7 @@ namespace frydom {
 
         void StepFinalize() override;
 
-        const double GetHeadingVelocity(FrFrame frame) const {
+        const double GetHeadingVelocity(FRAME_CONVENTION frame) const {
             return GetAngularVelocity(frame)[2];
         }
 

@@ -6,12 +6,13 @@
 #define FRYDOM_FRCORE_H_H
 
 #include "FrObject.h"
+#include "FrVector.h"
 #include "FrFrame.h"
 #include "FrRotation.h"
 #include "FrNode.h"
 #include "FrBody.h"
 #include "FrHydroBody.h"
-#include "FrConstants.h"
+#include "FrGeographic.h"
 #include "FrEulerAngles.h"
 #include "FrOffshoreSystem.h"
 #include "FrShip.h"

@@ -193,7 +193,7 @@ namespace frydom {
     // ==========================================================================
 
     chrono::ChVector<>
-    FrHydroBody::GetCurrentRelativeVelocity(FrFrame frame, FrRefSyst Refsys) const {
+    FrHydroBody::GetCurrentRelativeVelocity(FRAME_CONVENTION frame, FrRefSyst Refsys) const {
         auto current_relative_velocity = m_current_relative_velocity;
         if (Refsys == LOCAL) {
             /// Transformation of the DIRECTION
@@ -203,12 +203,12 @@ namespace frydom {
             case NWU:
                 return current_relative_velocity;
             case NED:
-                return NWU2NED(current_relative_velocity);
+                return internal::swap_NED_NWU(current_relative_velocity);
         }
     }
 
     chrono::ChVector<>
-    FrHydroBody::GetCurrentRelativeVelocity(const chrono::ChVector<> &localpos, FrFrame frame, FrRefSyst Refsys) const {
+    FrHydroBody::GetCurrentRelativeVelocity(const chrono::ChVector<> &localpos, FRAME_CONVENTION frame, FrRefSyst Refsys) const {
         auto current_velocity = GetSystem()->GetEnvironment()->GetCurrent()->GetFluxVector(NWU);
         auto velocity = PointSpeedLocalToParent(localpos);
         auto current_relative_velocity = current_velocity - velocity;
@@ -220,12 +220,12 @@ namespace frydom {
             case NWU:
                 return current_relative_velocity;
             case NED:
-                return NWU2NED(current_relative_velocity);
+                return internal::swap_NED_NWU(current_relative_velocity);
         }
     }
 
     chrono::ChVector<>
-    FrHydroBody::GetCurrentRelativeVelocity(const FrNode* mNode, FrFrame frame, FrRefSyst Refsys) const {
+    FrHydroBody::GetCurrentRelativeVelocity(const FrNode* mNode, FRAME_CONVENTION frame, FrRefSyst Refsys) const {
         auto nodeVelocity = PointSpeedLocalToParent(mNode->GetPos());
         auto current_relative_velocity = GetSystem()->GetEnvironment()->GetCurrent()->GetFluxVector(NWU) - nodeVelocity;
         if (Refsys == LOCAL) {
@@ -237,11 +237,11 @@ namespace frydom {
             case NWU:
                 return current_relative_velocity;
             case NED:
-                return NWU2NED(current_relative_velocity);
+                return internal::swap_NED_NWU(current_relative_velocity);
         }
     }
 
-    double FrHydroBody::GetCurrentRelativeAngle(FrFrame frame, ANGLE_UNIT angleUnit) const {
+    double FrHydroBody::GetCurrentRelativeAngle(FRAME_CONVENTION frame, ANGLE_UNIT angleUnit) const {
         double angle = m_current_relative_angle;
         if (angleUnit == DEG) {
             angle = angle * RAD2DEG;
@@ -260,7 +260,7 @@ namespace frydom {
     // METHODS ABOUT WIND
     // ==========================================================================
 
-    chrono::ChVector<> FrHydroBody::GetWindRelativeVelocity(FrFrame frame, FrRefSyst Refsys) const {
+    chrono::ChVector<> FrHydroBody::GetWindRelativeVelocity(FRAME_CONVENTION frame, FrRefSyst Refsys) const {
         auto body_velocity = GetVelocity(NWU);
         auto wind_relative_velocity = GetSystem()->GetEnvironment()->GetWind()->GetFluxVector(NWU) - body_velocity;
         if (Refsys == LOCAL) {
@@ -271,11 +271,11 @@ namespace frydom {
             case NWU:
                 return wind_relative_velocity;
             case NED:
-                return NWU2NED(wind_relative_velocity);
+                return internal::swap_NED_NWU(wind_relative_velocity);
         }
     }
 
-    chrono::ChVector<> FrHydroBody::GetWindRelativeVelocity(const FrNode* mNode, FrFrame frame, FrRefSyst Refsys) const {
+    chrono::ChVector<> FrHydroBody::GetWindRelativeVelocity(const FrNode* mNode, FRAME_CONVENTION frame, FrRefSyst Refsys) const {
         /// Node velocity computation in the global frame
         auto nodeVelocity = PointSpeedLocalToParent(mNode->GetPos());
         /// Wind relative velocity computed in the global frame
@@ -289,7 +289,7 @@ namespace frydom {
             case NWU:
                 return wind_relative_velocity;
             case NED:
-                return NWU2NED(wind_relative_velocity);
+                return internal::swap_NED_NWU(wind_relative_velocity);
         }
     }
 

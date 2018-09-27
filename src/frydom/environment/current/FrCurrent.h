@@ -17,7 +17,7 @@
 #define FRYDOM_FRCURRENT_H
 
 #include "frydom/core/FrObject.h"
-#include "frydom/core/FrConstants.h"
+#include "frydom/core/FrGeographic.h"
 #include "frydom/environment/FrUniformCurrentField.h"
 
 
@@ -41,7 +41,7 @@ namespace frydom {
 
         enum MODEL { UNIFORM };
 
-        virtual chrono::ChVector<> GetFluxVector(FrFrame= NWU) { }
+        virtual chrono::ChVector<> GetFluxVector(FRAME_CONVENTION= NWU) { }
 
         virtual void Update(double time) { }
 
@@ -50,7 +50,7 @@ namespace frydom {
         virtual void StepFinalize()  {}
 
         virtual void Set(chrono::ChVector<>  unit_direction, double  magnitude,
-                         SPEED_UNIT = KNOT, FrFrame= NED,
+                         SPEED_UNIT = KNOT, FRAME_CONVENTION= NED,
                          FrDirectionConvention convention = GOTO) = 0;
 
 
@@ -77,7 +77,7 @@ namespace frydom {
         void Update(double time) override { FrUniformCurrentField::Update(time);}
 
         /// Get the vector field
-        chrono::ChVector<> GetFluxVector(FrFrame frame = NWU) override {
+        chrono::ChVector<> GetFluxVector(FRAME_CONVENTION frame = NWU) override {
             return FrUniformCurrentField::GetFluxVector(frame); }
 
         /// Method of initialization from uniform current field class
@@ -87,7 +87,7 @@ namespace frydom {
         void StepFinalize() override { FrUniformCurrentField::StepFinalize(); }
 
         void Set(chrono::ChVector<>  unit_direction, double  magnitude,
-                 SPEED_UNIT = KNOT, FrFrame= NED,
+                 SPEED_UNIT = KNOT, FRAME_CONVENTION= NED,
                  FrDirectionConvention convention = GOTO) override;
 
     };
@@ -121,7 +121,7 @@ namespace frydom {
 
         enum MODEL { UNIFORM };
 
-        virtual chrono::ChVector<> GetFluxVector(FrFrame= NWU) = 0;
+        virtual chrono::ChVector<> GetFluxVector(FRAME_CONVENTION= NWU) = 0;
 
         virtual void Update(double time) = 0;
 
@@ -130,7 +130,7 @@ namespace frydom {
 //        virtual void StepFinalize()  {}
 
 //        virtual void Set(chrono::ChVector<>  unit_direction, double  magnitude,
-//                         SPEED_UNIT = KNOT, FrFrame= NED,
+//                         SPEED_UNIT = KNOT, FRAME_CONVENTION= NED,
 //                         FrDirectionConvention convention = GOTO) = 0;
 
 
@@ -162,7 +162,7 @@ namespace frydom {
         void Update(double time) override;
 
         /// Get the vector field
-        chrono::ChVector<> GetFluxVector(FrFrame frame = NWU) override;
+        chrono::ChVector<> GetFluxVector(FRAME_CONVENTION frame = NWU) override;
 
         /// Method of initialization from uniform current field class
         void Initialize() override;

@@ -8,7 +8,7 @@
 #include "chrono/core/ChVector.h"
 
 #include "frydom/core/FrObject.h"
-#include "frydom/core/FrConstants.h"
+#include "frydom/core/FrGeographic.h"
 #include "frydom/environment/FrConventions.h"
 #include "frydom/environment/FrUniformCurrentField.h"
 
@@ -32,7 +32,7 @@ namespace frydom {
 
         enum MODEL { UNIFORM };
 
-        virtual chrono::ChVector<> GetFluxVector(FrFrame frame) { }
+        virtual chrono::ChVector<> GetFluxVector(FRAME_CONVENTION frame) { }
 
         virtual void Update(double time) { }
 
@@ -61,7 +61,7 @@ namespace frydom {
         void Update(double time) override { FrUniformCurrentField::Update(time); }
 
         /// Get the vector field
-        chrono::ChVector<> GetFluxVector(FrFrame frame = NWU) override {
+        chrono::ChVector<> GetFluxVector(FRAME_CONVENTION frame = NWU) override {
             return FrUniformCurrentField::GetFluxVector(frame); }
 
         /// Method of initialization from uniform current field class
@@ -100,7 +100,7 @@ namespace frydom {
 
         enum MODEL { UNIFORM };
 
-        virtual chrono::ChVector<> GetFluxVector(FrFrame frame=NWU) = 0;
+        virtual chrono::ChVector<> GetFluxVector(FRAME_CONVENTION frame=NWU) = 0;
 
         virtual void Update(double time) = 0;
 
@@ -135,7 +135,7 @@ namespace frydom {
         void Update(double time) override;
 
         /// Get the vector field
-        chrono::ChVector<> GetFluxVector(FrFrame frame = NWU) override;
+        chrono::ChVector<> GetFluxVector(FRAME_CONVENTION frame = NWU) override;
 
         /// Method of initialization from uniform current field class
         void Initialize() override;

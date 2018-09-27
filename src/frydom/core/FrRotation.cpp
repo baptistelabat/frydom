@@ -6,7 +6,7 @@
 
 #include "FrEulerAngles.h"
 
-#include "MathUtils/Vector3d.h"
+#include "FrGeographic.h"
 
 
 namespace frydom {
@@ -14,27 +14,8 @@ namespace frydom {
     namespace internal {
 
         // Conversion functions
-        Vector3d ChVectorToVector3d(const chrono::ChVector<double>& vector) {
-            Vector3d vector3d;
-            vector3d << vector.x(), vector.y(), vector.z();
-            return vector3d;
-        }
 
-        chrono::ChVector<double> Vector3dToChVector(const Vector3d& vector3d) {
-            chrono::ChVector<double> vector(vector3d[0], vector3d[1], vector3d[2]);
-            return vector;
-        }
 
-        chrono::ChQuaternion<double> Fr2ChQuaternion(const FrQuaternion_& frQuaternion) {
-            // TODO : voir si pas conversion plus directe...
-            return chrono::ChQuaternion<double>(frQuaternion.GetScalar(), Vector3dToChVector(frQuaternion.GetVector()));
-        }
-
-        FrQuaternion_ Ch2FrQuaternion(const chrono::ChQuaternion<double>& chQuaternion) {
-            FrQuaternion_ quaternion;
-            quaternion.m_chronoQuaternion = chQuaternion;
-            return quaternion;
-        }
 
     }
 
@@ -45,7 +26,7 @@ namespace frydom {
 
     FrQuaternion_::FrQuaternion_(double q0, double q1, double q2, double q3) : m_chronoQuaternion(q0, q1, q2, q3) {}
 
-    FrQuaternion_::FrQuaternion_(double s, const Vector3d imag) : m_chronoQuaternion(s, internal::Vector3dToChVector(imag)) {}
+    FrQuaternion_::FrQuaternion_(double s, const Direction imag) : m_chronoQuaternion(s, internal::Vector3dToChVector(imag)) {}
 
     FrQuaternion_::FrQuaternion_(const FrQuaternion_ &other) = default;
 
@@ -73,7 +54,7 @@ namespace frydom {
         m_chronoQuaternion.SetScalar(s);
     }
 
-    void FrQuaternion_::SetVector(const Vector3d &v) {
+    void FrQuaternion_::SetDirection(const Direction &v) {
         m_chronoQuaternion.SetVector(internal::Vector3dToChVector(v));
     }
 
@@ -81,8 +62,8 @@ namespace frydom {
         return m_chronoQuaternion.e0();
     }
 
-    Vector3d FrQuaternion_::GetVector() const {
-        return internal::ChVectorToVector3d(m_chronoQuaternion.GetVector());
+    Direction FrQuaternion_::GetDirection() const {
+        return internal::ChVectorToVector3d<Direction>(m_chronoQuaternion.GetVector(), m_frameConvention);
     }
 
     void FrQuaternion_::Get(double &q0, double &q1, double &q2, double &q3) const {
@@ -91,6 +72,46 @@ namespace frydom {
         q2 = m_chronoQuaternion[2];
         q3 = m_chronoQuaternion[3];
     }
+
+    FRAME_CONVENTION FrQuaternion_::GetFrameConvention() const { return m_frameConvention; }
+
+    FRAME_CONVENTION FrQuaternion_::SwapAbsFrameConvention() {
+
+        internal::swap_NED_NWU(m_chronoQuaternion);
+
+        if (IsNWU(m_frameConvention)) {
+            m_frameConvention = NED;
+        } else {
+            m_frameConvention = NWU;
+        }
+
+        return m_frameConvention;
+    }
+
+    void FrQuaternion_::SetFrameConvention(FRAME_CONVENTION frameConvention, bool change) {
+        if (m_frameConvention != frameConvention) {
+            if (change) {
+                SwapAbsFrameConvention();
+            }
+            m_frameConvention = frameConvention;
+        }
+    }
+
+    void FrQuaternion_::SetNWU() {
+        SetFrameConvention(NWU, true);
+    }
+
+    void FrQuaternion_::SetNED() {
+        SetFrameConvention(NED, true);
+    }
+
+//    bool FrQuaternion_::IsAbsolute() const {
+//        return IsAbsoluteConvention(m_frameConvention);
+//    }
+//
+//    bool FrQuaternion_::IsRelative() const {
+//        return IsRelativeConvention(m_frameConvention);
+//    }
 
     FrQuaternion_ &FrQuaternion_::operator=(const FrQuaternion_ &other) {
         m_chronoQuaternion = other.m_chronoQuaternion;
@@ -112,8 +133,9 @@ namespace frydom {
         m_chronoQuaternion *= other.m_chronoQuaternion;
     }
 
-    Vector3d FrQuaternion_::Rotate(const Vector3d &vector) {
-        return internal::ChVectorToVector3d(m_chronoQuaternion.Rotate(internal::Vector3dToChVector(vector)));
+    Position FrQuaternion_::Rotate(const Position &vector) {
+        return internal::ChVectorToVector3d<Position>(m_chronoQuaternion.Rotate(internal::Vector3dToChVector(vector)),
+                                                      m_frameConvention);
     }
 
     chrono::ChQuaternion<double> FrQuaternion_::GetChronoQuaternion() const {
@@ -165,21 +187,21 @@ namespace frydom {
         return m_quaternion;
     }
 
-    void FrRotation_::SetAxisAngle(const Vector3d &axis, double angle) {
+    void FrRotation_::SetAxisAngle(const Direction &axis, double angle) {
         m_quaternion = internal::Ch2FrQuaternion(internal::axis_angle_to_quat(internal::Vector3dToChVector(axis), angle));
     }
 
-    void FrRotation_::GetAxisAngle(Vector3d &axis, double angle) {
+    void FrRotation_::GetAxisAngle(Direction &axis, double angle) {
         chrono::ChVector<double> vec;
         internal::quat_to_axis_angle(m_quaternion.GetChronoQuaternion(), vec, angle);
-        axis = internal::ChVectorToVector3d(vec);
+        axis = internal::ChVectorToVector3d<Direction>(vec, GetFrameConvention());
     }
 
-    void FrRotation_::GetAxis(Vector3d &axis) {
+    void FrRotation_::GetAxis(Direction &axis) {
         chrono::ChVector<double> vec;
         double angle;
         internal::quat_to_axis_angle(m_quaternion.GetChronoQuaternion(), vec, angle);
-        axis = internal::ChVectorToVector3d(vec);
+        axis = internal::ChVectorToVector3d<Direction>(vec, GetFrameConvention());
     }
 
     void FrRotation_::GetAngle(double &angle) {
@@ -257,22 +279,22 @@ namespace frydom {
         m_quaternion *= other.m_quaternion;
     }
 
-    Vector3d FrRotation_::Rotate(const Vector3d &vector) {
+    Position FrRotation_::Rotate(const Position &vector) {
         return m_quaternion.Rotate(vector);
     }
 
-    void FrRotation_::RotAxisAngle_RADIANS(const Vector3d &axis, double angle) {
+    void FrRotation_::RotAxisAngle_RADIANS(const Direction &axis, double angle) {
         FrRotation_ rotation;
         rotation.SetAxisAngle(axis, angle);
         *this *= rotation;
     }
 
-    void FrRotation_::RotAxisAngle_DEGREES(const Vector3d &axis, double angle) {
+    void FrRotation_::RotAxisAngle_DEGREES(const Direction &axis, double angle) {
         RotAxisAngle_RADIANS(axis, angle*DEG2RAD);
     }
 
     void FrRotation_::RotX_RADIANS(double angle) {
-        RotAxisAngle_RADIANS(Vector3d(1., 0., 0.), angle);
+        RotAxisAngle_RADIANS(Direction(1., 0., 0., GetFrameConvention()), angle);
     }
 
     void FrRotation_::RotX_DEGREES(double angle) {
@@ -280,7 +302,7 @@ namespace frydom {
     }
 
     void FrRotation_::RotY_RADIANS(double angle) {
-        RotAxisAngle_RADIANS(Vector3d(0., 1., 0.), angle);
+        RotAxisAngle_RADIANS(Direction(0., 1., 0., GetFrameConvention()), angle);
     }
 
     void FrRotation_::RotY_DEGREES(double angle) {
@@ -288,23 +310,23 @@ namespace frydom {
     }
 
     void FrRotation_::RotZ_RADIANS(double angle) {
-        RotAxisAngle_RADIANS(Vector3d(0., 0., 1.), angle);
+        RotAxisAngle_RADIANS(Direction(0., 0., 1., GetFrameConvention()), angle);
     }
 
     void FrRotation_::RotZ_DEGREES(double angle) {
         RotZ_RADIANS(angle*DEG2RAD);
     }
 
-    Vector3d FrRotation_::GetXAxis() const {
-        return internal::ChVectorToVector3d(m_quaternion.GetChronoQuaternion().GetXaxis());
+    Direction FrRotation_::GetXAxis() const {
+        return internal::ChVectorToVector3d<Direction>(m_quaternion.GetChronoQuaternion().GetXaxis(), GetFrameConvention());
     }
 
-    Vector3d FrRotation_::GetYAxis() const {
-        return internal::ChVectorToVector3d(m_quaternion.GetChronoQuaternion().GetYaxis());
+    Direction FrRotation_::GetYAxis() const {
+        return internal::ChVectorToVector3d<Direction>(m_quaternion.GetChronoQuaternion().GetYaxis(), GetFrameConvention());
     }
 
-    Vector3d FrRotation_::GetZAxis() const {
-        return internal::ChVectorToVector3d(m_quaternion.GetChronoQuaternion().GetZaxis());
+    Direction FrRotation_::GetZAxis() const {
+        return internal::ChVectorToVector3d<Direction>(m_quaternion.GetChronoQuaternion().GetZaxis(), GetFrameConvention());
     }
 
 
@@ -328,5 +350,30 @@ namespace frydom {
     std::ostream& operator<<(std::ostream& os, const FrRotation_& rotation) {
         return rotation.cout(os);
     }
+
+    FRAME_CONVENTION FrRotation_::GetFrameConvention() const {
+        return m_quaternion.GetFrameConvention();
+    }
+
+    FRAME_CONVENTION FrRotation_::SwapAbsFrameConvention() {
+        return m_quaternion.SwapAbsFrameConvention();
+    }
+
+    void FrRotation_::SetFrameConvention(FRAME_CONVENTION frameConvention, bool change) {
+        m_quaternion.SetFrameConvention(frameConvention, change);
+    }
+
+    void FrRotation_::SetNWU() {
+        m_quaternion.SetNWU();
+    }
+
+    void FrRotation_::SetNED() {
+        m_quaternion.SetNED();
+    }
+
+
+
+
+
 
 }  // end namespace frydom

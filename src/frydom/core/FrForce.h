@@ -5,11 +5,11 @@
 #ifndef FRYDOM_FRFORCE_H
 #define FRYDOM_FRFORCE_H
 
-#include "frydom/core/FrConstants.h"
+#include "frydom/core/FrGeographic.h"
 #include "chrono/physics/ChForce.h"
 #include "hermes/hermes.h"
 
-#include "MathUtils/Vector3d.h"
+#include "FrVector.h"
 
 #include "FrObject.h"
 
@@ -119,8 +119,8 @@ namespace frydom {
 
     /// REFACTORING ------------->>>>>>>>>>>>><
 
-    using ForceVector  = mathutils::Vector3d<double>;
-    using MomentVector = mathutils::Vector3d<double>;
+    using ForceVector  = Vector3d_;
+    using MomentVector = Vector3d_;
 
 
     class _FrForceBase : public chrono::ChForce {

@@ -3,12 +3,13 @@ message(STATUS "    ...Core")
 
 set(SRC_FILES
         FrObject.cpp
+        FrVector.cpp
         FrRotation.cpp
         FrFrame.cpp
         FrBody.cpp
         FrLink.cpp
         FrBodyEasy.cpp
-        FrConstants.cpp
+        FrGeographic.cpp
         FrEulerAngles.cpp
         FrForce.cpp
         FrForceAsset.cpp
