@@ -62,9 +62,36 @@ def write_hdb5(hdb, out_file=None):
         dset = f.create_dataset(frequential_path + "/MaxFrequency", data=hdb.max_frequency)
         dset.attrs['Unit'] = "rad/s"
         dset.attrs['Description'] = "Maximum frequency specified for the computations"
-        
+
+        fk_db = hdb.froude_krylov_db
+        diff_db = hdb.diffraction_db
+
         # Wave direction discretization
         wave_direction_path = discretization_path + "/WaveDirections"
+
+        wave_dirs = np.linspace(hdb.min_wave_dir, hdb.max_wave_dir, hdb.nb_wave_dir)
+
+        # --- Adjust convention of wage direction to GOTO
+        if hdb.min_wave_dir >= -np.float32() and hdb.max_wave_dir <= 180. + np.float32():
+            wave_dirs = 180. - wave_dirs
+        else:
+            wave_dirs = np.fmod(wave_dirs + 180., 360.)
+
+        n180 = 0
+        i360 = -9
+        for idir in range(wave_dirs.size):
+            wave_dir = wave_dirs[idir]
+
+            if abs(wave_dir) < 0.01:
+                i360 = idir
+            elif abs(wave_dir - 180) < 0.01:
+                n180 += 1
+                if n180 == 2:
+                    wave_dirs[idir] = 360.
+                    fk_db.data[:, :, idir] = fk_db.data[:, :, i360]
+                    diff_db.data[:, :, idir] = diff_db.data[:, :, i360]
+
+        sort_dirs = np.argsort(wave_dirs)
 
         nb_wave_dir = hdb.nb_wave_dir
         dset = f.create_dataset(wave_direction_path + "/NbWaveDirections", data=nb_wave_dir)
@@ -159,12 +186,13 @@ def write_hdb5(hdb, out_file=None):
             # Froude-Krylov
             excitation_path = body_path + "/Excitation"
 
-            fk_db = hdb.froude_krylov_db
+
             fk_group = excitation_path + "/FroudeKrylov"
             f.create_group(fk_group)
-            wave_dirs = np.linspace(min_wave_dir, max_wave_dir, nb_wave_dir)
+      
+
             for idir, wave_dir in enumerate(wave_dirs):
-                wave_dir_path = fk_group + "/Angle_%u" % idir
+                wave_dir_path = fk_group + "/Angle_%u" % sort_dirs[idir]
                 f.create_group(wave_dir_path)
                 dset = f.create_dataset(wave_dir_path + "/Angle", data=wave_dir)
                 dset.attrs['Unit'] = 'deg'
@@ -180,11 +208,11 @@ def write_hdb5(hdb, out_file=None):
                                             "forces on body %u as a function of frequency" % (body.nb_force_modes, body.ibody)
             
             # Diffraction excitation
-            diff_db = hdb.diffraction_db
+
             diffraction_path = excitation_path + "/Diffraction"
             f.create_group(diffraction_path)
             for idir, wave_dir in enumerate(wave_dirs):
-                wave_dir_path = diffraction_path + "/Angle_%u" % idir
+                wave_dir_path = diffraction_path + "/Angle_%u" % sort_dirs[idir]
                 f.create_group(wave_dir_path)
                 f.create_dataset(wave_dir_path + "/Angle", data=wave_dir)
                 dset.attrs['Unit'] = 'deg'
