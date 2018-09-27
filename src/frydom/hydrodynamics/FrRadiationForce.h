@@ -67,6 +67,7 @@ namespace frydom {
 
         void Initialize() override {
             m_radiationModel->Initialize();
+            FrRadiationForce::Initialize();
         }
 
 

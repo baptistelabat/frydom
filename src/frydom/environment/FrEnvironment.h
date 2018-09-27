@@ -51,7 +51,7 @@ namespace frydom {
         std::unique_ptr<FrSeabed> m_seabed;
 
         /// Wrap for GeographicLib, contains the origin of geographic coordinates
-        std::unique_ptr<FrGeographicServices> m_geoServices;
+        std::unique_ptr<GeographicLib::LocalCartesian> m_localCartesian;
 
         // Environments scalars
         double m_waterDensity = 1025.;
@@ -78,7 +78,7 @@ namespace frydom {
             m_wind = std::make_shared<FrUniformWind>();
             m_seabed = std::make_unique<FrSeabed>();
             if (not(m_infinite_depth)) m_seabed->SetEnvironment(this);
-            m_geoServices = std::make_unique<FrGeographicServices>();
+            m_localCartesian = std::make_unique<GeographicLib::LocalCartesian>();
             m_timeZone = std::make_unique<FrTimeZone>();
         }
 
@@ -206,6 +206,27 @@ namespace frydom {
             m_seabed = std::unique_ptr<FrSeabed>(seabed);
         }
 
+        /// Getter of the LocalCartesian variable
+        GeographicLib::LocalCartesian *GetGeoLib() const {
+            return m_localCartesian.get();
+        }
+
+        void SetGeographicOrigin(double lat0, double lon0, double h0){
+            m_localCartesian->Reset(lat0, lon0, h0);
+        }
+
+        void Convert_GeoToCart(double lat, double lon, double h, double& x, double& y, double& z){
+            m_localCartesian->Forward(lat, lon, h, y, x, z);
+            z = -z;
+        }
+
+        void Convert_CartToGeo(double x, double y, double z, double& lat, double& lon, double& h){
+            m_localCartesian->Reverse(y, x, -z, lat, lon, h);
+        }
+
+        double ComputeMagneticDeclination(double x, double y, double z);
+
+        /* TODO : DEBUG memory leak due to ptr to m_geoServices
         FrGeographicServices* GetGeoServices() const {
             return m_geoServices.get();
         }
@@ -224,7 +245,7 @@ namespace frydom {
 
         double ComputeMagneticDeclination(double x, double y, double z){
             m_geoServices->ComputeMagneticDeclination(x,y,z,GetYear());
-        }
+        }*/
 
         FrTimeZone* GetTimeZone() const {return m_timeZone.get();}
         //void SetTimeZoneName(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}

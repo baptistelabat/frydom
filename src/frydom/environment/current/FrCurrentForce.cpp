@@ -63,6 +63,12 @@ namespace frydom {
 
     }
 
-
+    void FrCurrentForce::SetLogPrefix(std::string prefix_name) {
+        if (prefix_name == "") {
+            m_logPrefix = "Fcurrent_" + FrForce::m_logPrefix;
+        } else {
+            m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+        }
+    }
 
 }  // end namespace frydom

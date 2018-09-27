@@ -13,17 +13,17 @@
 namespace frydom {
 
     void
-    FrGeographicServices::Convert_GeoToCart(const double lat, const double lon, const double h, double &x_north, double &y_east,
-                                            double &z_down) {
+    FrGeographicServices::Convert_GeoToCart(const double lat, const double lon, const double h,
+                                            double &x_north, double &y_east, double &z_down) {
         double z_up;
         m_LocalCartesian->Forward(lat, lon, h, y_east, x_north, z_up);
         z_down = -z_up;
     }
 
     void
-    FrGeographicServices::Convert_CartToGeo(const double x_north, const double y_east, const double z_down, double &lat, double &lon,
-                                            double &h) {
-                m_LocalCartesian->Reverse(y_east, x_north, -z_down, lat, lon, h);
+    FrGeographicServices::Convert_CartToGeo(const double x_north, const double y_east, const double z_down,
+                                            double &lat, double &lon, double &h) {
+        m_LocalCartesian->Reverse(y_east, x_north, -z_down, lat, lon, h);
     }
 
     double FrGeographicServices::ComputeMagneticDeclination(double x_north, double y_east, double z_down, double year) {
