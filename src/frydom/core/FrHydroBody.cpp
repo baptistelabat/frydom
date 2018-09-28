@@ -203,7 +203,9 @@ namespace frydom {
             case NWU:
                 return current_relative_velocity;
             case NED:
-                return internal::swap_NED_NWU(current_relative_velocity);
+                current_relative_velocity[1] = -current_relative_velocity[1];
+                current_relative_velocity[2] = -current_relative_velocity[2];
+                return current_relative_velocity;
         }
     }
 
@@ -220,7 +222,9 @@ namespace frydom {
             case NWU:
                 return current_relative_velocity;
             case NED:
-                return internal::swap_NED_NWU(current_relative_velocity);
+                current_relative_velocity[1] = -current_relative_velocity[1];
+                current_relative_velocity[2] = -current_relative_velocity[2];
+                return current_relative_velocity;
         }
     }
 
@@ -237,7 +241,9 @@ namespace frydom {
             case NWU:
                 return current_relative_velocity;
             case NED:
-                return internal::swap_NED_NWU(current_relative_velocity);
+                current_relative_velocity[1] = -current_relative_velocity[1];
+                current_relative_velocity[2] = -current_relative_velocity[2];
+                return current_relative_velocity;
         }
     }
 
@@ -271,7 +277,9 @@ namespace frydom {
             case NWU:
                 return wind_relative_velocity;
             case NED:
-                return internal::swap_NED_NWU(wind_relative_velocity);
+                wind_relative_velocity[1] = -wind_relative_velocity[1];
+                wind_relative_velocity[2] = -wind_relative_velocity[2];
+                return wind_relative_velocity;
         }
     }
 
@@ -289,7 +297,9 @@ namespace frydom {
             case NWU:
                 return wind_relative_velocity;
             case NED:
-                return internal::swap_NED_NWU(wind_relative_velocity);
+                wind_relative_velocity[1] = -wind_relative_velocity[1];
+                wind_relative_velocity[2] = -wind_relative_velocity[2];
+                return wind_relative_velocity;
         }
     }
 

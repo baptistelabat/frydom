@@ -49,27 +49,27 @@ int main(int argc, char* argv[]) {
 
     // Playing with frames
     FrFrame_ frame1;
-    frame1.SetPosition(10, 5, 0);
+    frame1.SetPosition(10, 5, 0, NWU);
     FrRotation_ rot1;
-    rot1.SetCardanAngles_DEGREES(180, 0, 0);
+    rot1.SetCardanAngles_DEGREES(180, 0, 0, NWU);
     frame1.SetRotation(rot1);
 
-    std::cout << frame1.GetRotation() << DBLSPACE;
+    std::cout << frame1.GetRotation(NWU) << DBLSPACE;
 
 
     FrFrame_ frame2;
-    frame2.SetPosition(15, 0, 0);
+    frame2.SetPosition(15, 0, 0, NWU);
     FrRotation_ rot2;
-    rot2.SetCardanAngles_DEGREES(0, 0, -90);
+    rot2.SetCardanAngles_DEGREES(0, 0, -90, NWU);
     frame2.SetRotation(rot2);
 
-    std::cout << frame2.GetRotation() << DBLSPACE;
+    std::cout << frame2.GetRotation(NWU) << DBLSPACE;
 
 //    std::cout << frame1.GetOtherFrameRelativeTransform_WRT_ThisFrame(frame2);
 
-    std::cout << frame1.GetOtherFrameRelativeTransform_WRT_ThisFrame(frame2) << std::endl;
+    std::cout << frame1.GetOtherFrameRelativeTransform_WRT_ThisFrame(frame2, NWU) << std::endl;
 
-    std::cout << frame1.GetThisFrameRelativeTransform_WRT_OtherFrame(frame2) << std::endl;
+    std::cout << frame1.GetThisFrameRelativeTransform_WRT_OtherFrame(frame2, NWU) << std::endl;
 
 
 

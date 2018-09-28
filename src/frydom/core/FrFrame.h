@@ -48,15 +48,13 @@ namespace frydom {
 
     private:
 
-        FRAME_CONVENTION m_frameConvention;
-
         chrono::ChFrame<double> m_chronoFrame;   // It is always in NWU
 
         friend class FrBody_;
 
     public:
 
-        explicit FrFrame_(FRAME_CONVENTION fc);
+        explicit FrFrame_();
 
         FrFrame_(const Position &pos, const FrRotation_ &rotation, FRAME_CONVENTION fc);
 
@@ -69,11 +67,11 @@ namespace frydom {
 
         void SetPosition(double x, double y, double z, FRAME_CONVENTION fc);
 
-        void SetPosition(const Position& position);
+        void SetPosition(const Position& position, FRAME_CONVENTION fc);
 
         void GetPosition(double& x, double& y, double& z, FRAME_CONVENTION fc) const;
 
-        void GetPosition(Position& position) const;
+        void GetPosition(Position& position, FRAME_CONVENTION fc) const;
 
         Position GetPosition(FRAME_CONVENTION fc) const;
 
@@ -85,15 +83,9 @@ namespace frydom {
 
         double GetX(FRAME_CONVENTION fc) const;
 
-        double& GetX();
-
         double GetY(FRAME_CONVENTION fc) const;
 
-        double& GetY();
-
         double GetZ(FRAME_CONVENTION fc) const;
-
-        double& GetZ();
 
 
         // Operations
@@ -153,23 +145,6 @@ namespace frydom {
 
         void SetRotZ_DEGREES(double angle, FRAME_CONVENTION fc);
 
-
-        // Frame conventions
-
-        FRAME_CONVENTION GetFrameConvention() const;
-
-        FRAME_CONVENTION SwapAbsFrameConvention();
-
-        void SetFrameConvention(FRAME_CONVENTION fc);
-
-        void SetNWU();
-
-        void SetNED();
-
-
-
-
-
         FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisFrame(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
 
         FrFrame_ GetThisFrameRelativeTransform_WRT_OtherFrame(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
@@ -189,12 +164,6 @@ namespace frydom {
         // Node
 
 //        FrNode GetNodeFromMe() const;
-
-
-
-
-
-
 
 
 //        std::shared_ptr<FrFrame_> NewRelFrame(Vector3d pos, FrRotation_ rot) const;
@@ -222,24 +191,13 @@ namespace frydom {
 
 
     };
-//
-//
-//    class FrTransform_ : public FrFrame_ {
-//
-//
-//
-//    };
+
 
     namespace internal {
 
-//        FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame);
-//
-//        chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame);
-
-        inline FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame) {
+        inline FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame) {  // OK
             auto pos  = ChVectorToVector3d<Position>(chFrame.GetPos());  // In NWU
             auto quat = Ch2FrQuaternion(chFrame.GetRot());  // In NWU
-
             return FrFrame_(pos, quat, NWU);
         }
 
@@ -248,11 +206,6 @@ namespace frydom {
             auto quat = Fr2ChQuaternion(frFrame.GetQuaternion(NWU));
             chrono::ChFrame<double>(pos, quat);
         }
-
-        inline void swap_NED_NWU(FrFrame_& frFrame) {
-            internal::swap_NED_NWU(frFrame.GetQuaternion());
-        }
-
 
     }  // end namespace internal
 

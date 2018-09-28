@@ -119,10 +119,10 @@ namespace frydom {
 
     /// REFACTORING ------------->>>>>>>>>>>>><
 
-    using ForceVector  = Vector3d_;
-    using MomentVector = Vector3d_;
-
-
+//    using ForceVector  = Vector3d_;
+//    using MomentVector = Vector3d_;
+//
+//
     class _FrForceBase : public chrono::ChForce {
 
     public:
@@ -148,32 +148,32 @@ namespace frydom {
 
     public:
 
-        explicit FrForce_(FrBody_* body);
-
-
-        ForceVector GetForceVectorAbsFrame();
-
-        ForceVector GetForceVectorLocalFrame();
-
-//        ForceVector GetForceVectorOtherFrame(std::shared_ptr<FrFrame_> frame);
-
-        MomentVector GetMomentVectorAbsFrame();
-
-        MomentVector GetMomentVectorLocalFrame();
-
-//        MomentVector GetMomentVectorOtherFrame(std::shared_ptr<FrFrame_> frame);
-
-
-
-        virtual void Update(double time) = 0;
-
-//        void Initialize() override;
+//        explicit FrForce_(FrBody_* body);
 //
-//        void StepFinalize() override;
-
-
-
-
+//
+//        ForceVector GetForceVectorAbsFrame();
+//
+//        ForceVector GetForceVectorLocalFrame();
+//
+////        ForceVector GetForceVectorOtherFrame(std::shared_ptr<FrFrame_> frame);
+//
+//        MomentVector GetMomentVectorAbsFrame();
+//
+//        MomentVector GetMomentVectorLocalFrame();
+//
+////        MomentVector GetMomentVectorOtherFrame(std::shared_ptr<FrFrame_> frame);
+//
+//
+//
+//        virtual void Update(double time) = 0;
+//
+////        void Initialize() override;
+////
+////        void StepFinalize() override;
+//
+//
+//
+//
     };
 
 

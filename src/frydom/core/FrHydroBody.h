@@ -154,7 +154,12 @@ namespace frydom {
                 case NWU:
                     return GetPos();
                 case NED:
-                    return internal::swap_NED_NWU(GetPos());
+                    auto pos = GetPos();
+                    if (IsNED(frame)) {
+                        pos[1] = -pos[1];
+                        pos[2] = -pos[2];
+                    }
+                    return pos;
             }
         }
 
@@ -194,7 +199,12 @@ namespace frydom {
                 case NWU:
                     return GetWvel_par();
                 case NED:
-                    return internal::swap_NED_NWU(GetWvel_par());
+                    auto w = GetWvel_par();
+                    if (IsNED(frame)) {
+                        w[1] = -w[1];
+                        w[2] = -w[2];
+                    }
+                    return w;
             }
         }
 

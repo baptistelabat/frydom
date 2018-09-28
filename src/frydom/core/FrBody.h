@@ -245,7 +245,6 @@ namespace frydom {
 
     /// REFACTORING ------>>>>>>>>>>>>>>
 
-    class _FrBody;
     class FrQuaternion_;
 
     /// Cette classe n'est la que pour heriter des objets chrono.
@@ -262,7 +261,6 @@ namespace frydom {
     // Forward declarations
     class FrForce_;
     class FrFrame_;
-    class FrTransform_;
     class FrRotation_;
 
 
@@ -272,12 +270,12 @@ namespace frydom {
 
         std::shared_ptr<_FrBodyBase> m_chronoBody;
 
-        using ForceContainer = std::vector<std::shared_ptr<FrForce_>>;
 
+        using ForceContainer = std::vector<std::shared_ptr<FrForce_>>;
         ForceContainer m_externalForces;
 
-        using CONTACT_TYPE = FrOffshoreSystem_::SYSTEM_TYPE;
 
+        using CONTACT_TYPE = FrOffshoreSystem_::SYSTEM_TYPE;
         CONTACT_TYPE m_contactType = CONTACT_TYPE::SMOOTH_CONTACT;
 
 
@@ -366,7 +364,7 @@ namespace frydom {
 
         void SetAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
 
-        void SetAbsPosition(Position position, FRAME_CONVENTION fc);
+        void SetAbsPosition(const Position& position, FRAME_CONVENTION fc);
 
         Position GetAbsPosition(FRAME_CONVENTION fc) const;
 
@@ -374,7 +372,7 @@ namespace frydom {
 
         void GetAbsPosition(Position &position, FRAME_CONVENTION fc) const;
 
-        FrFrame_ GetAbsFrame(FRAME_CONVENTION fc) const;
+        FrFrame_ GetAbsFrame() const;
 
         Position GetAbsPositionOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
 

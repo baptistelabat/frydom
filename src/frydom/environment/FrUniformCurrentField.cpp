@@ -14,7 +14,8 @@ namespace frydom {
 
         // Place the vector in NWU frame
         if (frame == NED) {
-            current_vector = internal::swap_NED_NWU(current_vector);
+            current_vector[1] = -current_vector[1];
+            current_vector[2] = -current_vector[2];
         }
 
         if (convention == COMEFROM) {
@@ -53,7 +54,8 @@ namespace frydom {
 
         // Managing conversion into NWU
         if (frame == NED) {
-            current_vector = internal::swap_NED_NWU(current_vector);
+            current_vector[1] = -current_vector[1];
+            current_vector[2] = -current_vector[2];
         }
 
         m_currentVector = current_vector;
@@ -73,7 +75,8 @@ namespace frydom {
 
         // Place the vector in NWU frame
         if (frame == NED) {
-            current_vector = internal::swap_NED_NWU(current_vector);
+            current_vector[1] = -current_vector[1];
+            current_vector[2] = -current_vector[2];
         }
 
         if (convention == COMEFROM) {
@@ -91,7 +94,8 @@ namespace frydom {
     chrono::ChVector<> FrUniformCurrentField::GetFluxVector(FRAME_CONVENTION frame) {
         switch (frame) {
             case NED:
-                return internal::swap_NED_NWU(m_currentVector);
+                m_currentVector[1] = -m_currentVector[1];
+                m_currentVector[2] = -m_currentVector[2];
             case NWU:
                 return m_currentVector;
         }
@@ -143,7 +147,8 @@ namespace frydom {
         uDirection /= unitDirection.Length();
 
         if (frame == NED) {
-            uDirection = internal::swap_NED_NWU(uDirection);
+            uDirection[1] = -uDirection[1];
+            uDirection[2] = -uDirection[2];
         }
 
         if (directionConvention == COMEFROM) {

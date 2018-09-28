@@ -111,42 +111,42 @@ namespace frydom{
     /// REFACTORING -------------6>>>>>>>>>>>>>>>>>
 
 
-    _FrForceBase::_FrForceBase() = default;
-
-
-    FrForce_::FrForce_(FrBody_ *body) : m_owner(body) {
-
-    }
-
-    ForceVector FrForce_::GetForceVectorAbsFrame() {
-    }
-
-    ForceVector FrForce_::GetForceVectorLocalFrame() {
-    }
-
-//    ForceVector FrForce_::GetForceVectorOtherFrame(std::shared_ptr<FrFrame_> frame) {
-//    }
-
-    MomentVector FrForce_::GetMomentVectorAbsFrame() {
-    }
-
-    MomentVector FrForce_::GetMomentVectorLocalFrame() {
-    }
-
-//    MomentVector FrForce_::GetMomentVectorOtherFrame(std::shared_ptr<FrFrame_> frame) {
-//    }
-
-//    void FrForce_::Update(double time) {
+//    _FrForceBase::_FrForceBase() = default;
 //
-//    }
-
-//    void FrForce_::Initialize() {
+//
+//    FrForce_::FrForce_(FrBody_ *body) : m_owner(body) {
 //
 //    }
 //
-//    void FrForce_::StepFinalize() {
-//
+//    ForceVector FrForce_::GetForceVectorAbsFrame() {
 //    }
+//
+//    ForceVector FrForce_::GetForceVectorLocalFrame() {
+//    }
+//
+////    ForceVector FrForce_::GetForceVectorOtherFrame(std::shared_ptr<FrFrame_> frame) {
+////    }
+//
+//    MomentVector FrForce_::GetMomentVectorAbsFrame() {
+//    }
+//
+//    MomentVector FrForce_::GetMomentVectorLocalFrame() {
+//    }
+//
+////    MomentVector FrForce_::GetMomentVectorOtherFrame(std::shared_ptr<FrFrame_> frame) {
+////    }
+//
+////    void FrForce_::Update(double time) {
+////
+////    }
+//
+////    void FrForce_::Initialize() {
+////
+////    }
+////
+////    void FrForce_::StepFinalize() {
+////
+////    }
 
 
 }  // end namespace frydom
