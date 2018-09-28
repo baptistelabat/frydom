@@ -400,7 +400,7 @@ namespace frydom {
             absFrame.SetRot(rot);
         }
 
-        return FrFrame_(internal::Ch2FrFrame(absFrame));
+        return FrFrame_(internal::Ch2FrFrame(absFrame, fc));
     }
 
     Position FrBody_::GetAbsPositionOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const {
@@ -414,7 +414,7 @@ namespace frydom {
 
         auto absPos = internal::ChVectorToVector3d<Position>(aframe.GetPos(), fc);
 
-        if (IsNED(fc)) internal::swap_NED_NWU(absPos);
+        if (IsNED(fc)) absPos.SwapFrameConvention();
 
         return absPos;
     }

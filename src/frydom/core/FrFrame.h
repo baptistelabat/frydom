@@ -41,15 +41,7 @@ namespace frydom {
 //    };
 
 
-    class FrFrame_;
 
-    namespace internal {
-
-        FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame);
-
-        chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame);
-
-    }
 
 
     class FrFrame_ {
@@ -66,7 +58,7 @@ namespace frydom {
 
         FrFrame_();
 
-        FrFrame_(const Position &pos, const FrRotation_ &rotation);
+        FrFrame_(const Position &pos, const FrRotation_ &rotation);  // TODO : tester que les frames sont consistants...
 
         FrFrame_(const Position &pos, const FrQuaternion_& quaternion);
 
@@ -233,6 +225,33 @@ namespace frydom {
 //
 //
 //    };
+
+    namespace internal {
+
+//        FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame);
+//
+//        chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame);
+
+        inline FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame, FRAME_CONVENTION fc) {
+            auto pos = ChVectorToVector3d<Position>(chFrame.GetPos(), fc);
+            auto quat = Ch2FrQuaternion(chFrame.GetRot());
+            auto frame = FrFrame_(pos, quat);
+            frame.SetFrameConvention(fc, false);
+            return frame;
+        }
+
+        inline chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame) {
+            auto pos = Vector3dToChVector(frFrame.GetPosition());
+            auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
+            chrono::ChFrame<double>(pos, quat);
+        }
+
+        inline void swap_NED_NWU(FrFrame_& frFrame) {
+            internal::swap_NED_NWU(frFrame.GetQuaternion());
+        }
+
+
+    }  // end namespace internal
 
 
 }  // end namespace frydom

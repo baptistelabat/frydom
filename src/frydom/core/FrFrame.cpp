@@ -11,29 +11,6 @@
 
 namespace frydom {
 
-    namespace internal {
-
-        FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame, FRAME_CONVENTION fc) {
-            auto pos = ChVectorToVector3d<Position>(chFrame.GetPos(), fc);
-            auto quat = Ch2FrQuaternion(chFrame.GetRot());
-            auto frame = FrFrame_(pos, quat);
-            frame.SetFrameConvention(fc, false);
-            return frame;
-        }
-
-        chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame) {
-            auto pos = Vector3dToChVector(frFrame.GetPosition());
-            auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
-            chrono::ChFrame<double>(pos, quat);
-        }
-
-        inline void swap_NED_NWU(FrFrame_& frFrame) {
-            internal::swap_NED_NWU(frFrame.GetQuaternion());
-        }
-
-    }
-
-
     FrFrame_::FrFrame_() = default;
 
     FrFrame_::FrFrame_(const Position &pos, const FrRotation_ &rotation) {
@@ -236,7 +213,7 @@ namespace frydom {
     }
 
     FrFrame_ FrFrame_::GetInverse() const {
-        return internal::Ch2FrFrame(m_chronoFrame.GetInverse());
+        return internal::Ch2FrFrame(m_chronoFrame.GetInverse(), m_frameConvention);
     }
 
     void FrFrame_::SetRotX_RADIANS(double angle) {

@@ -9,7 +9,7 @@
 #include "MathUtils/Vector3d.h"
 
 #include "MathUtils/Matrix.h"
-#include "MathUtils/Matrix33.h"
+//#include "MathUtils/Matrix33.h"
 
 #include "FrGeographic.h"
 
@@ -17,7 +17,7 @@ namespace frydom {
 
 //    using Vector3d = mathutils::Vector3d<double>;
 
-    using Matrix33 = mathutils::Matrix33<double>;
+//    using Matrix33 = mathutils::Matrix33<double>;
 
 
     class Vector3d_: public mathutils::Vector3d<double> {
