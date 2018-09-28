@@ -77,6 +77,10 @@ namespace frydom {
             SetFrameConvention(NWU, true);
         }
 
+        bool HasSameConvention(FRAME_CONVENTION fc) const {
+            return (m_frameConvention == fc);
+        }
+
     };
 
 
@@ -268,14 +272,16 @@ namespace frydom {
 
         /// Convert a chrono 3D vector into a mathutils Vector3d
         template <class Vector>
-        inline Vector ChVectorToVector3d(const chrono::ChVector<double>& vector, FRAME_CONVENTION fc) {
-            return Vector(vector.x(), vector.y(), vector.z(), fc);
+        inline Vector ChVectorToVector3d(const chrono::ChVector<double>& vector) {
+            return Vector(vector.x(), vector.y(), vector.z(), NWU); // Always gives a vector expressed in NWU
         }
 
         /// Convert a mathutils Vector3d into a Chrono 3D vector
         inline chrono::ChVector<double> Vector3dToChVector(const Vector3d_& vector3d) {
-            chrono::ChVector<double> vector(vector3d[0], vector3d[1], vector3d[2]);
-            return vector;
+            auto vectorTmp = vector3d;
+            vectorTmp.SetNWU(); // Chrono  objects must always be expressed in NWU
+
+            return chrono::ChVector<double>(vectorTmp[0], vectorTmp[1], vectorTmp[2]);
         }
 
 //        template <class Vector>

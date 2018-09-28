@@ -61,7 +61,12 @@ namespace frydom {
                 case NWU:
                     return GetPos();
                 case NED:
-                    return internal::swap_NED_NWU(GetPos());
+//                    return internal::swap_NED_NWU(GetPos());
+                    auto pos = GetPos();
+                    pos[1] = -pos[1];
+                    pos[2] = -pos[2];
+                    return pos;
+//                    return internal::swap_NED_NWU(GetPos());
             }
         }
 
@@ -76,7 +81,11 @@ namespace frydom {
                 case NWU:
                     return GetPos_dt();
                 case NED:
-                    return internal::swap_NED_NWU(GetPos_dt());
+                    auto vel = GetPos_dt();
+                    vel[1] = -vel[1];
+                    vel[2] = -vel[2];
+                    return vel;
+//                    return internal::swap_NED_NWU(GetPos_dt());
             }
         }
 

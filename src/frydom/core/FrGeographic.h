@@ -52,19 +52,19 @@ namespace frydom {
 
         // TODO : placer les fonctions de conversion NED/NWU dans FrEulerAngles.h
         /// Transform either a NED vector into a NWU vector or a NWU vector into a NED vector (inline)
-        template<class Real=double>
-        inline chrono::ChVector<Real> swap_NED_NWU(const chrono::ChVector<Real>& vect) {
-            auto new_vect = vect;
-            swap_NED_NWU(new_vect);
-            return new_vect;
-        }
+//        template<class Real=double>
+//        inline chrono::ChVector<Real> swap_NED_NWU(const chrono::ChVector<Real>& vect) {
+//            auto new_vect = vect;
+//            swap_NED_NWU(new_vect);
+//            return new_vect;
+//        }
 
-        template <class Real=double>
-        inline chrono::ChVector<Real>& swap_NED_NWU(chrono::ChVector<Real>& vect) {
-            vect.y() = -vect.y();
-            vect.z() = -vect.z();
-            return vect;
-        }
+//        template <class Real=double>
+//        inline chrono::ChVector<Real>& swap_NED_NWU(chrono::ChVector<Real>& vect) {
+//            vect.y() = -vect.y();
+//            vect.z() = -vect.z();
+//            return vect;
+//        }
 
 //        /// Transform a NED vector into NWU
 //        template<class Real=double>

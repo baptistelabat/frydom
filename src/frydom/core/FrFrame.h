@@ -48,52 +48,60 @@ namespace frydom {
 
     private:
 
-        FRAME_CONVENTION m_frameConvention = NWU;
+        FRAME_CONVENTION m_frameConvention;
 
-        chrono::ChFrame<double> m_chronoFrame;   ///< The embedded chrono frame // TODO: avoir un _FrFrameBase pour cacher le chrono...
+        chrono::ChFrame<double> m_chronoFrame;   // It is always in NWU
 
-        friend class FrBody_; // So that we don't have to expose chrono API to class user
+        friend class FrBody_;
 
     public:
 
-        FrFrame_();
+        explicit FrFrame_(FRAME_CONVENTION fc);
 
-        FrFrame_(const Position &pos, const FrRotation_ &rotation);  // TODO : tester que les frames sont consistants...
+        FrFrame_(const Position &pos, const FrRotation_ &rotation, FRAME_CONVENTION fc);
 
-        FrFrame_(const Position &pos, const FrQuaternion_& quaternion);
+        FrFrame_(const Position &pos, const FrQuaternion_& quaternion, FRAME_CONVENTION fc);
 
         FrFrame_& FrFrame(const FrFrame_& otherFrame);
 
 
         // Cartesian Position
 
-        void SetPosition(double x, double y, double z);
+        void SetPosition(double x, double y, double z, FRAME_CONVENTION fc);
 
-        void SetPosition(Position position);
+        void SetPosition(const Position& position);
 
-        void GetPosition(double& x, double& y, double& z) const;
+        void GetPosition(double& x, double& y, double& z, FRAME_CONVENTION fc) const;
 
         void GetPosition(Position& position) const;
 
-        Position GetPosition() const;
+        Position GetPosition(FRAME_CONVENTION fc) const;
 
-        void SetX(double x);
+        void SetX(double x, FRAME_CONVENTION fc);
 
-        void SetY(double y);
+        void SetY(double y, FRAME_CONVENTION fc);
 
-        void SetZ(double z);
+        void SetZ(double z, FRAME_CONVENTION fc);
 
-        double GetX() const;
+        double GetX(FRAME_CONVENTION fc) const;
 
         double& GetX();
 
-        double GetY() const;
+        double GetY(FRAME_CONVENTION fc) const;
 
         double& GetY();
 
-        double GetZ() const;
+        double GetZ(FRAME_CONVENTION fc) const;
 
         double& GetZ();
+
+
+        // Operations
+
+        FrFrame_ operator*(const FrFrame_& otherFrame) const;
+
+        void operator*=(const FrFrame_& otherFrame);
+
 
         // Geographic position
 
@@ -117,33 +125,33 @@ namespace frydom {
 
         void SetIdentity();
 
-        FrRotation_ GetRotation() const;
+        FrRotation_ GetRotation(FRAME_CONVENTION fc) const;
 
-        FrQuaternion_ GetQuaternion() const;
+        FrQuaternion_ GetQuaternion(FRAME_CONVENTION fc) const;
 
-        void RotX_RADIANS(double angle);
+        void RotX_RADIANS(double angle, FRAME_CONVENTION fc);
 
-        void RotX_DEGREES(double angle);
+        void RotX_DEGREES(double angle, FRAME_CONVENTION fc);
 
-        void RotY_RADIANS(double angle);
+        void RotY_RADIANS(double angle, FRAME_CONVENTION fc);
 
-        void RotY_DEGREES(double angle);
+        void RotY_DEGREES(double angle, FRAME_CONVENTION fc);
 
-        void RotZ_RADIANS(double angle);
+        void RotZ_RADIANS(double angle, FRAME_CONVENTION fc);
 
-        void RotZ_DEGREES(double angle);
+        void RotZ_DEGREES(double angle, FRAME_CONVENTION fc);
 
-        void SetRotX_RADIANS(double angle);
+        void SetRotX_RADIANS(double angle, FRAME_CONVENTION fc);
 
-        void SetRotX_DEGREES(double angle);
+        void SetRotX_DEGREES(double angle, FRAME_CONVENTION fc);
 
-        void SetRotY_RADIANS(double angle);
+        void SetRotY_RADIANS(double angle, FRAME_CONVENTION fc);
 
-        void SetRotY_DEGREES(double angle);
+        void SetRotY_DEGREES(double angle, FRAME_CONVENTION fc);
 
-        void SetRotZ_RADIANS(double angle);
+        void SetRotZ_RADIANS(double angle, FRAME_CONVENTION fc);
 
-        void SetRotZ_DEGREES(double angle);
+        void SetRotZ_DEGREES(double angle, FRAME_CONVENTION fc);
 
 
         // Frame conventions
@@ -152,23 +160,19 @@ namespace frydom {
 
         FRAME_CONVENTION SwapAbsFrameConvention();
 
-        void SetFrameConvention(FRAME_CONVENTION frameConvention, bool change);
+        void SetFrameConvention(FRAME_CONVENTION fc);
 
         void SetNWU();
 
         void SetNED();
 
 
-        // Operations
-
-        FrFrame_ operator*(const FrFrame_& otherFrame) const;
-
-        void operator*=(const FrFrame_& otherFrame);
 
 
-        FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisFrame(const FrFrame_ &otherFrame) const;
 
-        FrFrame_ GetThisFrameRelativeTransform_WRT_OtherFrame(const FrFrame_ &otherFrame) const;
+        FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisFrame(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
+
+        FrFrame_ GetThisFrameRelativeTransform_WRT_OtherFrame(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
 
         FrFrame_& Inverse();
 
@@ -232,17 +236,16 @@ namespace frydom {
 //
 //        chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame);
 
-        inline FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame, FRAME_CONVENTION fc) {
-            auto pos = ChVectorToVector3d<Position>(chFrame.GetPos(), fc);
-            auto quat = Ch2FrQuaternion(chFrame.GetRot());
-            auto frame = FrFrame_(pos, quat);
-            frame.SetFrameConvention(fc, false);
-            return frame;
+        inline FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame) {
+            auto pos  = ChVectorToVector3d<Position>(chFrame.GetPos());  // In NWU
+            auto quat = Ch2FrQuaternion(chFrame.GetRot());  // In NWU
+
+            return FrFrame_(pos, quat, NWU);
         }
 
         inline chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame) {
-            auto pos = Vector3dToChVector(frFrame.GetPosition());
-            auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
+            auto pos = Vector3dToChVector(frFrame.GetPosition(NWU));
+            auto quat = Fr2ChQuaternion(frFrame.GetQuaternion(NWU));
             chrono::ChFrame<double>(pos, quat);
         }
 

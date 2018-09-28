@@ -11,14 +11,14 @@
 
 namespace frydom {
 
-    FrFrame_::FrFrame_() = default;
+    FrFrame_::FrFrame_(FRAME_CONVENTION fc) : m_frameConvention(fc), m_chronoFrame() {};
 
-    FrFrame_::FrFrame_(const Position &pos, const FrRotation_ &rotation) {
+    FrFrame_::FrFrame_(const Position &pos, const FrRotation_ &rotation, FRAME_CONVENTION fc) : m_frameConvention(fc) {
         SetPosition(pos);
         SetRotation(rotation);
     }
 
-    FrFrame_::FrFrame_(const Position &pos, const frydom::FrQuaternion_ &quaternion) {
+    FrFrame_::FrFrame_(const Position &pos, const frydom::FrQuaternion_ &quaternion, FRAME_CONVENTION fc) : m_frameConvention(fc) {
         SetPosition(pos);
         SetRotation(quaternion);
     }
@@ -28,31 +28,82 @@ namespace frydom {
         m_frameConvention = otherFrame.m_frameConvention;
     }
 
-    void FrFrame_::SetPosition(double x, double y, double z) {
+    void FrFrame_::SetPosition(double x, double y, double z, FRAME_CONVENTION fc) {
+
+        if (IsNED(fc)) {  // Set In NWU
+            y = -y;
+            z = -z;
+        }
+
         m_chronoFrame.SetPos(chrono::ChVector<double>(x, y, z));
     }
 
-    void FrFrame_::SetPosition(Position position) {
+    void FrFrame_::SetPosition(const Position& position) {
         m_chronoFrame.SetPos(internal::Vector3dToChVector(position));
     }
 
-    void FrFrame_::GetPosition(double &x, double &y, double &z) const {
-        auto pos = m_chronoFrame.GetPos();
+    void FrFrame_::GetPosition(double &x, double &y, double &z, FRAME_CONVENTION fc) const {
+        auto pos = m_chronoFrame.GetPos();  // In NWU
         x = pos.x();
         y = pos.y();
         z = pos.z();
+
+        if (IsNED(fc)) {
+            y = -y;
+            z = -z;
+        }
     }
 
     void FrFrame_::GetPosition(Position &position) const {
-        position = GetPosition();
+        position = GetPosition(m_frameConvention);
     }
 
-    Position FrFrame_::GetPosition() const {
-        return internal::ChVectorToVector3d<Position>(m_chronoFrame.GetPos(), GetFrameConvention());
+    Position FrFrame_::GetPosition(FRAME_CONVENTION fc) const {
+        auto pos = internal::ChVectorToVector3d<Position>(m_chronoFrame.GetPos()); // In NWU
+        pos.SetFrameConvention(fc, true);
+        return pos;
+    }
+
+    void FrFrame_::SetX(double x, FRAME_CONVENTION fc) {
+        m_chronoFrame.GetPos()[0] = x;
+    }
+
+    void FrFrame_::SetY(double y, FRAME_CONVENTION fc) {
+        if (IsNED(fc)) y = -y;
+        m_chronoFrame.GetPos()[1] = y;
+    }
+
+    void FrFrame_::SetZ(double z, FRAME_CONVENTION fc) {
+        if (IsNED(fc)) z = -z;
+        m_chronoFrame.GetPos()[2] = z;
+    }
+
+    double FrFrame_::GetX(FRAME_CONVENTION fc) const {
+        return m_chronoFrame.GetPos()[0];
+    }
+
+    double &FrFrame_::GetX() {
+        return m_chronoFrame.GetPos()[0];
+    }
+
+    double FrFrame_::GetY(FRAME_CONVENTION fc) const {
+        return -m_chronoFrame.GetPos()[1];
+    }
+
+    double &FrFrame_::GetY() {
+        return m_chronoFrame.GetPos()[1];
+    }
+
+    double FrFrame_::GetZ(FRAME_CONVENTION fc) const {
+        return -m_chronoFrame.GetPos()[2];
+    }
+
+    double &FrFrame_::GetZ() {
+        return m_chronoFrame.GetPos()[2];
     }
 
     void FrFrame_::SetRotation(const FrRotation_ &rotation) {
-        SetRotation(rotation.GetQuaternion());
+        SetRotation(rotation.GetQuaternion(NWU));
     }
 
     void FrFrame_::SetRotation(const FrQuaternion_ &quaternion) {
@@ -73,12 +124,13 @@ namespace frydom {
         m_chronoFrame.SetIdentity();
     }
 
-    FrRotation_ FrFrame_::GetRotation() const {
-        return FrRotation_(GetQuaternion());
+    FrRotation_ FrFrame_::GetRotation(FRAME_CONVENTION fc) const {
+        return FrRotation_(GetQuaternion(fc));
     }
 
-    FrQuaternion_ FrFrame_::GetQuaternion() const {
-        return internal::Ch2FrQuaternion(m_chronoFrame.GetRot());
+    FrQuaternion_ FrFrame_::GetQuaternion(FRAME_CONVENTION fc) const {
+        auto quat = internal::Ch2FrQuaternion(m_chronoFrame.GetRot());
+        quat.SetFrameConvention(fc);
     }
 
 //    FrFrame_ FrFrame_::ApplyToLeft(const FrFrame_ &otherFrame) const {
@@ -100,7 +152,7 @@ namespace frydom {
 //    }
 
     FrFrame_ FrFrame_::operator*(const FrFrame_ &otherFrame) const {
-        FrFrame_ newFrame;
+        auto newFrame = FrFrame_(m_frameConvention);
         newFrame.m_chronoFrame = otherFrame.m_chronoFrame >> m_chronoFrame;
         return newFrame;
     }
@@ -109,59 +161,20 @@ namespace frydom {
         m_chronoFrame >>= otherFrame.m_chronoFrame;
     }
 
-    void FrFrame_::SetX(double x) {
-        m_chronoFrame.GetPos()[0] = x;
+    FrFrame_ FrFrame_::GetOtherFrameRelativeTransform_WRT_ThisFrame(const frydom::FrFrame_ &otherFrame, FRAME_CONVENTION fc) const {
+        auto relFrame = this->GetInverse() * otherFrame;
+        relFrame.SetFrameConvention(fc);
     }
 
-    void FrFrame_::SetY(double y) {
-        m_chronoFrame.GetPos()[1] = y;
-    }
-
-    void FrFrame_::SetZ(double z) {
-        m_chronoFrame.GetPos()[2] = z;
-    }
-
-    double FrFrame_::GetX() const {
-        return m_chronoFrame.GetPos()[0];
-    }
-
-    double &FrFrame_::GetX() {
-        return m_chronoFrame.GetPos()[0];
-    }
-
-    double FrFrame_::GetY() const {
-        return m_chronoFrame.GetPos()[1];
-    }
-
-    double &FrFrame_::GetY() {
-        return m_chronoFrame.GetPos()[1];
-    }
-
-    double FrFrame_::GetZ() const {
-        return m_chronoFrame.GetPos()[2];
-    }
-
-    double &FrFrame_::GetZ() {
-        return m_chronoFrame.GetPos()[2];
-    }
-
-//    FrRotation_ &FrFrame_::GetRotation() {
-//        return m_chronoFrame
-//    }
-
-    FrFrame_ FrFrame_::GetOtherFrameRelativeTransform_WRT_ThisFrame(const frydom::FrFrame_ &otherFrame) const {
-        return this->GetInverse() * otherFrame;
-    }
-
-    FrFrame_ FrFrame_::GetThisFrameRelativeTransform_WRT_OtherFrame(const frydom::FrFrame_ &otherFrame) const {
-        return GetOtherFrameRelativeTransform_WRT_ThisFrame(otherFrame).GetInverse();
+    FrFrame_ FrFrame_::GetThisFrameRelativeTransform_WRT_OtherFrame(const frydom::FrFrame_ &otherFrame, FRAME_CONVENTION fc) const {
+        return GetOtherFrameRelativeTransform_WRT_ThisFrame(otherFrame, fc).GetInverse();
     }
 
 
     std::ostream& FrFrame_::cout(std::ostream &os) const {
 
         double x, y, z;
-        GetPosition(x, y, z);
+        GetPosition(x, y, z, NWU);
 
         os << std::endl;
         os << "Frame :\n";
@@ -182,69 +195,64 @@ namespace frydom {
         return frame.cout(os);
     }
 
-    void FrFrame_::RotX_RADIANS(double) {
+    void FrFrame_::RotX_RADIANS(double angle, FRAME_CONVENTION fc) {
         // TODO
 //        m_chronoFrame.SetRot()
     }
 
-    void FrFrame_::RotX_DEGREES(double angle) {
+    void FrFrame_::RotX_DEGREES(double angle, FRAME_CONVENTION fc) {
         // TODO
     }
 
-    void FrFrame_::RotY_RADIANS(double) {
+    void FrFrame_::RotY_RADIANS(double angle, FRAME_CONVENTION fc) {
         // TODO
     }
 
-    void FrFrame_::RotY_DEGREES(double angle) {
+    void FrFrame_::RotY_DEGREES(double angl, FRAME_CONVENTION fce) {
         // TODO
     }
 
-    void FrFrame_::RotZ_RADIANS(double) {
+    void FrFrame_::RotZ_RADIANS(double angle, FRAME_CONVENTION fc) {
         // TODO
     }
 
-    void FrFrame_::RotZ_DEGREES(double angle) {
+    void FrFrame_::RotZ_DEGREES(double angle, FRAME_CONVENTION fc) {
         // TODO
     }
 
-    FrFrame_ &FrFrame_::Inverse() {
-        m_chronoFrame.Invert();
-        return *this;
-    }
 
-    FrFrame_ FrFrame_::GetInverse() const {
-        return internal::Ch2FrFrame(m_chronoFrame.GetInverse(), m_frameConvention);
-    }
 
-    void FrFrame_::SetRotX_RADIANS(double angle) {
+    void FrFrame_::SetRotX_RADIANS(double angle, FRAME_CONVENTION fc) {
         SetIdentity();
-        RotX_RADIANS(angle);
+        RotX_RADIANS(angle, fc);
     }
 
-    void FrFrame_::SetRotX_DEGREES(double angle) {
+    void FrFrame_::SetRotX_DEGREES(double angle, FRAME_CONVENTION fc) {
         SetIdentity();
-        RotX_DEGREES(angle);
+        RotX_DEGREES(angle, fc);
     }
 
-    void FrFrame_::SetRotY_RADIANS(double angle) {
+    void FrFrame_::SetRotY_RADIANS(double angle, FRAME_CONVENTION fc) {
         SetIdentity();
-        RotY_RADIANS(angle);
+        RotY_RADIANS(angle, fc);
     }
 
-    void FrFrame_::SetRotY_DEGREES(double angle) {
+    void FrFrame_::SetRotY_DEGREES(double angle, FRAME_CONVENTION fc) {
         SetIdentity();
-        RotY_DEGREES(angle);
+        RotY_DEGREES(angle, fc);
     }
 
-    void FrFrame_::SetRotZ_RADIANS(double angle) {
+    void FrFrame_::SetRotZ_RADIANS(double angle, FRAME_CONVENTION fc) {
         SetIdentity();
-        RotZ_RADIANS(angle);
+        RotZ_RADIANS(angle, fc);
     }
 
-    void FrFrame_::SetRotZ_DEGREES(double angle) {
+    void FrFrame_::SetRotZ_DEGREES(double angle, FRAME_CONVENTION fc) {
         SetIdentity();
-        RotZ_DEGREES(angle);
+        RotZ_DEGREES(angle, fc);
     }
+
+
 
     FRAME_CONVENTION FrFrame_::GetFrameConvention() const {
         return m_frameConvention;
@@ -267,13 +275,8 @@ namespace frydom {
         return m_frameConvention;
     }
 
-    void FrFrame_::SetFrameConvention(FRAME_CONVENTION frameConvention, bool change) {
-        if (m_frameConvention != frameConvention) {
-            if (change) {
-                SwapAbsFrameConvention();
-            }
-            m_frameConvention = frameConvention;
-        }
+    void FrFrame_::SetFrameConvention(FRAME_CONVENTION fc) {
+        m_frameConvention = fc;
     }
 
     void FrFrame_::SetNWU() {
@@ -301,7 +304,14 @@ namespace frydom {
     }
 
 
+    FrFrame_ &FrFrame_::Inverse() {
+        m_chronoFrame.Invert();
+        return *this;
+    }
 
+    FrFrame_ FrFrame_::GetInverse() const {
+        return internal::Ch2FrFrame(m_chronoFrame.GetInverse(), m_frameConvention);
+    }
 
 
 
