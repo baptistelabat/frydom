@@ -8,7 +8,7 @@
 
 #include "frydom/frydom.h"
 
-#define DBLSPACE std::endl << std::endl
+#define DBLENDL std::endl << std::endl
 
 
 using namespace frydom;
@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 //
 //    std::cout << box->GetAbsPosition() << std::endl << std::endl;
 //    std::cout << box->GetCOGAbsPosition() << std::endl << std::endl;
-//    std::cout << box->GetCOGRelPosition() << DBLSPACE;
+//    std::cout << box->GetCOGRelPosition() << DBLENDL;
 //
 //    std::cout << box->GetAbsPositionOfLocalPoint(0, -30, 0) << std::endl;
 
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     rot1.SetCardanAngles_DEGREES(180, 0, 0, NWU);
     frame1.SetRotation(rot1);
 
-    std::cout << frame1.GetRotation(NWU) << DBLSPACE;
+    std::cout << frame1.GetRotation(NWU) << DBLENDL;
 
 
     FrFrame_ frame2;
@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
     rot2.SetCardanAngles_DEGREES(0, 0, -90, NWU);
     frame2.SetRotation(rot2);
 
-    std::cout << frame2.GetRotation(NWU) << DBLSPACE;
+    std::cout << frame2.GetRotation(NWU) << DBLENDL;
 
 //    std::cout << frame1.GetOtherFrameRelativeTransform_WRT_ThisFrame(frame2);
 

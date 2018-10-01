@@ -64,7 +64,8 @@ namespace frydom {
         return (mathutils::IsClose<double>(Norm(), 1.));
     }
 
-    void FrQuaternion_::Get(double &q0, double &q1, double &q2, double &q3, FRAME_CONVENTION fc) const {  // OK
+    void FrQuaternion_::
+    Get(double &q0, double &q1, double &q2, double &q3, FRAME_CONVENTION fc) const {  // OK
         q0 = m_chronoQuaternion[0];
         q1 = m_chronoQuaternion[1];
         q2 = m_chronoQuaternion[2];
