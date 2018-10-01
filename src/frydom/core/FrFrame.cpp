@@ -30,17 +30,13 @@ namespace frydom {
 
     void FrFrame_::SetPosition(double x, double y, double z, FRAME_CONVENTION fc) {  // OK
 
-        if (IsNED(fc)) {  // Express In NWU
-            y = -y;
-            z = -z;
-        }
-
+        if (IsNED(fc)) internal::SwapCoordinateConvention(x, y, z); // Express In NWU
         m_chronoFrame.SetPos(chrono::ChVector<double>(x, y, z));
     }
 
     void FrFrame_::SetPosition(const Position& position, FRAME_CONVENTION fc) {  // OK
         auto posTmp = position;
-        if (IsNED(fc)) internal::SwapFrameConvention(posTmp);
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(posTmp);
         m_chronoFrame.SetPos(internal::Vector3dToChVector(posTmp));
     }
 
@@ -50,10 +46,7 @@ namespace frydom {
         y = pos.y();
         z = pos.z();
 
-        if (IsNED(fc)) {
-            y = -y;
-            z = -z;
-        }
+        if (IsNED(fc)) internal::SwapCoordinateConvention(x, y, z);
     }
 
     void FrFrame_::GetPosition(Position &position, FRAME_CONVENTION fc) const {  // OK
@@ -62,7 +55,7 @@ namespace frydom {
 
     Position FrFrame_::GetPosition(FRAME_CONVENTION fc) const {  // OK
         auto pos = internal::ChVectorToVector3d<Position>(m_chronoFrame.GetPos()); // In NWU
-        if (IsNED(fc)) internal::SwapFrameConvention(pos);
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(pos);
         return pos;
     }
 
@@ -152,7 +145,7 @@ namespace frydom {
         os << std::endl;
         os << "Frame :\n";
         os << "-------\n";
-        os << "Translation (m): ";
+        os << "Translation (m, In NWU): ";
         os << "X = " << x;
         os << "; Y = " << y;
         os << "; Z = " << z;

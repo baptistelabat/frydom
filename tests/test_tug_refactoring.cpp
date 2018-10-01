@@ -28,65 +28,85 @@ int main(int argc, char* argv[]) {
 
 
     auto box = system.NewBody();
-    makeItBox(box, 10, 10, 10, 1e4);
-    box->SetBodyFixed(true);
+    makeItBox(box, 10, 10, 10, 1);
+//    box->SetBodyFixed(true);
 
-    box->SetAbsPosition(10, 0, 0, NWU);
-    box->SetCOGLocalPosition(10, 0, 0, NWU);
+    box->RemoveGravity(true);
 
-    box->SetAbsPosition(-10, 0, 0, NWU);
 
-    box->SetCOGAbsPosition(0, 10, 0, NWU);
+    // Playing with different methods to setup body position, velocity etc...
+    box->SetAbsPosition(5, 5, 0, NWU);
+
+    box->SetCardanAngles_DEGREES(0, 90, 90, NWU); // Tester le NED en -90, doit donner pareil...
+
+
+    box->SetCOGLocalPosition(5, 5, 0, NWU); // FIXME : attention on fait quoi avec l'inertie lorsqu'on specifie une position differente du COG
+
+
+
+    box->SetAbsRotationalVelocity(0., 0., 10*DEG2RAD, NWU);
+    box->SetAbsVelocity(1, 1, 0, NWU);
+
+
+
+
+
+
+
+
+    // Activating limits
+    box->ActivateSpeedLimits(true);
+    box->SetMaxRotationSpeed(180*DEG2RAD);  // Par defaut, la limite de vitesse en rotation est tres basse ...
+    box->SetMaxSpeed(10);  // FIXME : la valeur par defaut (0.5) doit etre changee !!
+
+
+
+//    box->SetCOGLocalPosition(1, 1, 0, NWU);
+
+
+
+
+//    box->SetAbsPosition(-10, 0, 0, NWU);
+
+//    box->SetCOGAbsPosition(0, 10, 0, NWU);
 //
 //
 //    std::cout << box->GetAbsPosition() << std::endl << std::endl;
 //    std::cout << box->GetCOGAbsPosition() << std::endl << std::endl;
-//    std::cout << box->GetCOGRelPosition() << DBLENDL;
+//    std::cout << box->GetCOGLocalPosition() << DBLENDL;
 //
 //    std::cout << box->GetAbsPositionOfLocalPoint(0, -30, 0) << std::endl;
 
 
 
-    // Playing with frames
-    FrFrame_ frame1;
-    frame1.SetPosition(10, 5, 0, NWU);
-    FrRotation_ rot1;
-    rot1.SetCardanAngles_DEGREES(180, 0, 0, NWU);
-    frame1.SetRotation(rot1);
-
-    std::cout << frame1.GetRotation(NWU) << DBLENDL;
-
-
-    FrFrame_ frame2;
-    frame2.SetPosition(15, 0, 0, NWU);
-    FrRotation_ rot2;
-    rot2.SetCardanAngles_DEGREES(0, 0, -90, NWU);
-    frame2.SetRotation(rot2);
-
-    std::cout << frame2.GetRotation(NWU) << DBLENDL;
-
-//    std::cout << frame1.GetOtherFrameRelativeTransform_WRT_ThisFrame(frame2);
-
-    std::cout << frame1.GetOtherFrameRelativeTransform_WRT_ThisFrame(frame2, NWU) << std::endl;
-
-    std::cout << frame1.GetThisFrameRelativeTransform_WRT_OtherFrame(frame2, NWU) << std::endl;
-
-
-
-
-
-//    FrRotation_ rot;
-//    rot.SetCardanAngles_DEGREES(0, 0, 90);
+//    // Playing with frames
+//    FrFrame_ frame1;
+//    frame1.SetPosition(10, 5, 0, NWU);
+//    FrRotation_ rot1;
+//    rot1.SetCardanAngles_DEGREES(180, 0, 0, NWU);
+//    frame1.SetRotation(rot1);
 //
-//    frame.SetAbsPosition(10, 20, 10);
-//    frame.SetRotation(rot);
+//    std::cout << frame1.GetRotation(NWU) << DBLENDL;
 //
-//    frame.SetNoRotation();
-//    frame.SetNoTranslation();
 //
-//    std::cout << frame << std::endl;
+//    FrFrame_ frame2;
+//    frame2.SetPosition(15, 0, 0, NWU);
+//    FrRotation_ rot2;
+//    rot2.SetCardanAngles_DEGREES(0, 0, -90, NWU);
+//    frame2.SetRotation(rot2);
 //
-//    std::cout << frame.GetInverse() << std::endl;
+//    std::cout << frame2.GetRotation(NWU) << DBLENDL;
+//
+////    std::cout << frame1.GetOtherFrameRelativeTransform_WRT_ThisFrame(frame2);
+//
+//    std::cout << frame1.GetOtherFrameRelativeTransform_WRT_ThisFrame(frame2, NWU) << std::endl;
+//
+//    std::cout << frame1.GetThisFrameRelativeTransform_WRT_OtherFrame(frame2, NWU) << std::endl;
+
+
+
+
+
 
 
 
@@ -96,7 +116,7 @@ int main(int argc, char* argv[]) {
 
     system.Initialize();
 
-//    system.RunInViewer(100, 100, false);
+    system.RunInViewer(100, 50, false);
 
 
 //    // Set the free surface

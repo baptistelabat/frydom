@@ -48,9 +48,9 @@ namespace frydom {
 
     private:
 
-        chrono::ChFrame<double> m_chronoFrame;   // It is always in NWU
+        chrono::ChFrame<double> m_chronoFrame;   // Chrono objects are always stored in NWU frame convention
 
-        friend class FrBody_;
+//        friend class FrBody_;
 
     public:
 

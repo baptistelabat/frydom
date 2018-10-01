@@ -70,13 +70,11 @@ namespace frydom {
 
 
 
-
-
-
-
-
     /// REFACTORING ------------->>>>>>>>>>>>>>>
 
+
+    #define DEFAULT_MAX_SPEED (float)10.
+    #define DEFAULT_MAX_ROTATION_SPEED (float)180.*DEG2RAD
 
 
     _FrBodyBase::_FrBodyBase() : chrono::ChBodyAuxRef() {}
@@ -84,6 +82,8 @@ namespace frydom {
 
     FrBody_::FrBody_() {
         m_chronoBody = std::make_shared<_FrBodyBase>();
+        m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
+        m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
     }
 
     void FrBody_::SetName(const char *name) {
@@ -171,6 +171,10 @@ namespace frydom {
         m_chronoBody->SetMass(mass);
     }
 
+    double FrBody_::GetMass() const {
+        return m_chronoBody->GetMass();
+    }
+
     void FrBody_::SetMasInTons(double mass) {
         m_chronoBody->SetMass(mass*1e3);
     }
@@ -217,6 +221,14 @@ namespace frydom {
 
     void FrBody_::SetMaxRotationSpeed(double wMax_rads) {
         m_chronoBody->SetMaxWvel(wMax_rads);
+    }
+
+    void FrBody_::RemoveGravity(bool val) {  // FIXME : cet ajout doit l'etre lors de l'initialisation !!! --> booleen en attribut
+        if (val) {
+            m_chronoBody->Accumulate_force(GetMass() * chrono::ChVector<double>(0., 0., 9.81),
+                    chrono::ChVector<double>(), true);
+            // TODO : aller chercher la gravite dans systeme !!!
+        }
     }
 
 
@@ -294,15 +306,19 @@ namespace frydom {
 
     void FrBody_::SetCOGLocalPosition(double x, double y, double z, FRAME_CONVENTION fc) {  // OK
 
-        if (IsNED(fc)) { // Transform to NWU
-            y = -y;
-            z = -z;
-        }
-
         auto cogFrame = chrono::ChFrame<double>();
-        cogFrame.SetPos(chrono::ChVector<double>(x, y, z));
-
+        cogFrame.SetPos(internal::MakeNWUChVector(x, y, z, fc));
         m_chronoBody->SetFrame_COG_to_REF(cogFrame);
+
+        // FIXME : transporter la matrice d'inertie en meme temps !!!!
+
+        auto inertiaMat = m_chronoBody->GetInertia();
+
+
+
+
+
+
         m_chronoBody->Update();  // To make auxref_to_abs up to date
     }
 
@@ -312,12 +328,7 @@ namespace frydom {
 
     void FrBody_::SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc) {  // OK
 
-        if (IsNED(fc)) {
-            y = -y;
-            z = -z;
-        }
-
-        m_chronoBody->SetPos(chrono::ChVector<double>(x, y, z));
+        m_chronoBody->SetPos(internal::MakeNWUChVector(x, y, z, fc));
         m_chronoBody->Update();
     }
 
@@ -326,14 +337,12 @@ namespace frydom {
     }
 
     void FrBody_::GetCOGAbsPosition(double& x, double& y, double& z, FRAME_CONVENTION fc) const {  // OK
-        auto pos = m_chronoBody->GetPos();
+        auto pos = m_chronoBody->GetPos(); // In NWU
         x = pos.x();
         y = pos.y();
         z = pos.z();
-        if (IsNED(fc)) {
-            y = -y;
-            z = -z;
-        }
+
+        if (IsNED(fc)) internal::SwapCoordinateConvention(x, y, z);  // Convert into NED frame convention
     }
 
     Position FrBody_::GetCOGAbsPosition(FRAME_CONVENTION fc) const {  // OK
@@ -345,21 +354,18 @@ namespace frydom {
         return frPos;
     }
 
-    Position FrBody_::GetCOGRelPosition(FRAME_CONVENTION fc) const {  // OK
+    Position FrBody_::GetCOGLocalPosition(FRAME_CONVENTION fc) const {  // OK
         auto cogPos = m_chronoBody->GetFrame_COG_to_REF().GetPos(); // In NWU
 
         auto frPos = internal::ChVectorToVector3d<Position>(cogPos);
 
-        if (IsNED(fc)) internal::SwapFrameConvention(frPos);
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(frPos);
         return frPos;
     }
 
     void FrBody_::SetAbsPosition(double x, double y, double z, FRAME_CONVENTION fc) {  // OK
 
-        if (IsNED(fc)) {
-            y = -y;
-            z = -z;
-        }
+        if (IsNED(fc)) internal::SwapCoordinateConvention(x, y, z);  // Convert into NWU
 
         chrono::ChFrame<double> auxFrame;
         auxFrame.SetPos(chrono::ChVector<double>(x, y, z));
@@ -374,7 +380,7 @@ namespace frydom {
     Position FrBody_::GetAbsPosition(FRAME_CONVENTION fc) const {  // OK
         auto pos = m_chronoBody->GetFrame_REF_to_abs().GetPos();  // In NWU
         auto frPos = internal::ChVectorToVector3d<Position>(pos);
-        if (IsNED(fc)) internal::SwapFrameConvention(frPos);
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(frPos);  // Convert into NED
         return frPos;
     }
 
@@ -383,10 +389,7 @@ namespace frydom {
         x = pos[0];
         y = pos[1];
         z = pos[2];
-        if (IsNED(fc)) {
-            y = -y;
-            z = -z;
-        }
+        if (IsNED(fc)) internal::SwapCoordinateConvention(x, y, z);  // Convert into NED
     }
 
     void FrBody_::GetAbsPosition(Position &position, FRAME_CONVENTION fc) const {  // OK
@@ -403,10 +406,8 @@ namespace frydom {
 
         Position pointPosition = Position(x, y, z);
 
-        Position absPos;
-        absPos = refFramePosition + pointPosition; // On peut pas additionner des positions ???!!! --> voir ce qui est fait dans spicy ...
-
-        // TODO : retirer l'attribut m_frameConvention des vecteurs...
+        Position absPos; // It is mandatory to declare the vector appart from the calculation...--> Eigen
+        absPos = refFramePosition + pointPosition;
 
         return absPos;
     }
@@ -442,6 +443,322 @@ namespace frydom {
     void FrBody_::GetRotationAxisAngle(Direction &axis, double angle, FRAME_CONVENTION fc) const {
         GetAbsRotation(fc).GetAxisAngle(axis, angle, fc);
     }
+
+    double FrBody_::GetRoll_DEGREES(FRAME_CONVENTION fc) const {
+        double phi, theta, psi;
+        GetCardanAngles_DEGREES(phi, theta, psi, fc);
+        return phi;
+    }
+
+    double FrBody_::GetPitch_DEGREES(FRAME_CONVENTION fc) const {
+        double phi, theta, psi;
+        GetCardanAngles_DEGREES(phi, theta, psi, fc);
+        return theta;
+    }
+
+    double FrBody_::GetYaw_DEGREES(FRAME_CONVENTION fc) const {
+        double phi, theta, psi;
+        GetCardanAngles_DEGREES(phi, theta, psi, fc);
+        return psi;
+    }
+
+    double FrBody_::GetRoll_RADIANS(FRAME_CONVENTION fc) const {
+        double phi, theta, psi;
+        GetCardanAngles_RADIANS(phi, theta, psi, fc);
+        return phi;
+    }
+
+    double FrBody_::GetPitch_RADIANS(FRAME_CONVENTION fc) const {
+        double phi, theta, psi;
+        GetCardanAngles_RADIANS(phi, theta, psi, fc);
+        return theta;
+    }
+
+    double FrBody_::GetYaw_RADIANS(FRAME_CONVENTION fc) const {
+        double phi, theta, psi;
+        GetCardanAngles_RADIANS(phi, theta, psi, fc);
+        return psi;
+    }
+
+    void FrBody_::SetAbsRotation(const FrRotation_ &rotation, FRAME_CONVENTION fc) {
+        m_chronoBody->SetRot(internal::Fr2ChQuaternion(rotation.GetQuaternion()));
+    }
+
+    void FrBody_::SetAbsRotation(const FrQuaternion_ &quaternion, FRAME_CONVENTION fc) {
+        m_chronoBody->SetRot(internal::Fr2ChQuaternion(quaternion));
+    }
+
+    void
+    FrBody_::SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) {
+        if (IsNED(fc)) { // Convert into NWU
+            theta = -theta;
+            psi = -psi;
+        }
+        m_chronoBody->SetRot(internal::euler_to_quat(phi, theta, psi, seq, RAD));
+    }
+
+    void
+    FrBody_::SetEulerAngles_DEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) {
+        SetEulerAngles_RADIANS(phi*DEG2RAD, theta*DEG2RAD, psi*DEG2RAD, seq, fc);
+    }
+
+    void FrBody_::SetCardanAngles_RADIANS(double phi, double theta, double psi, FRAME_CONVENTION fc) {
+        SetEulerAngles_RADIANS(phi, theta, psi, CARDAN, fc);
+    }
+
+    void FrBody_::SetCardanAngles_DEGREES(double phi, double theta, double psi, FRAME_CONVENTION fc) {
+        SetEulerAngles_DEGREES(phi, theta, psi, CARDAN, fc);
+    }
+
+    void FrBody_::SetRotationAxisAngle(const Direction &axis, double angleRAD, FRAME_CONVENTION fc) {
+        SetAbsRotation(FrQuaternion_(axis, angleRAD, fc), fc);
+    }
+
+    void FrBody_::SetRoll_DEGREES(double roll, FRAME_CONVENTION fc) {
+        SetCardanAngles_DEGREES(roll, 0., 0., fc);
+    }
+
+    double FrBody_::SetPitch_DEGREES(double pitch, FRAME_CONVENTION fc) {
+        SetCardanAngles_DEGREES(0., pitch, 0., fc);
+    }
+
+    double FrBody_::SetYaw_DEGREES(double yaw, FRAME_CONVENTION fc) {
+        SetCardanAngles_DEGREES(0., 0., yaw, fc);
+    }
+
+    double FrBody_::SetRoll_RADIANS(double roll, FRAME_CONVENTION fc) {
+        SetCardanAngles_RADIANS(roll, 0., 0., fc);
+    }
+
+    double FrBody_::SetPitch_RADIANS(double pitch, FRAME_CONVENTION fc) {
+        SetCardanAngles_RADIANS(0., pitch, 0., fc);
+    }
+
+    double FrBody_::SetYaw_RADIANS(double yaw, FRAME_CONVENTION fc) {
+        SetCardanAngles_RADIANS(0., 0., yaw, fc);
+    }
+
+    void FrBody_::SetAbsVelocity(double vx, double vy, double vz, FRAME_CONVENTION fc) {
+        // TODO
+
+        if (IsNED(fc)) internal::SwapCoordinateConvention(vx, vy, vz);  // Convert into NWU
+        auto localReferenceVelocity = chrono::ChVector<double>(vx, vy, vz);
+
+
+
+        // Computing the resulting COG absolute velocity
+
+        // Getting the absolute rotational velocity vector expressed in
+        auto omega = m_chronoBody->GetWvel_par();
+
+
+        auto GL = m_chronoBody->GetFrame_REF_to_abs().GetPos() - m_chronoBody->GetFrame_COG_to_abs().GetPos();
+
+        auto cogVelocity = localReferenceVelocity + GL.Cross(omega);
+
+
+        m_chronoBody->SetPos_dt(cogVelocity);
+
+//        m_chronoBody->Get_gyro()
+
+
+
+
+
+
+//        m_chronoBody->GetFrame_REF_to_abs().SetPos_dt(ChVector)
+
+
+    }
+
+    void FrBody_::SetAbsVelocity(const Velocity &velocity, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    Velocity FrBody_::GetAbsVelocity(FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    void FrBody_::GetAbsVelocity(Velocity &velocity, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    void FrBody_::GetAbsVelocity(double &vx, double &vy, double &vz, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    void FrBody_::SetLocalVelocity(double u, double v, double w, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    void FrBody_::SetLocalVelocity(const Velocity &velocity, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    Velocity FrBody_::GetLocalVelocity(FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    void FrBody_::GetLocalVelocity(Velocity &velocity, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    void FrBody_::GetLocalVelocity(double &u, double &v, double &w, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    Velocity FrBody_::GetAbsVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    Velocity FrBody_::GetLocalVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+
+
+
+
+    void FrBody_::SetCOGAbsVelocity(double vx, double vy, double vz, FRAME_CONVENTION fc) {
+        if (IsNED(fc)) internal::SwapCoordinateConvention(vx, vy, vz); // Convert to NWU
+        m_chronoBody->SetPos_dt(chrono::ChVector<double>(vx, vy, vz));
+    }
+
+    void FrBody_::SetCOGAbsVelocity(const Velocity &velocity, FRAME_CONVENTION fc) {
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(velocity);  // Convert to NWU
+        m_chronoBody->SetPos_dt(internal::Vector3dToChVector(velocity));
+    }
+
+    Velocity FrBody_::GetCOGAbsVelocity(FRAME_CONVENTION fc) const {
+        Velocity velocity;
+        GetCOGAbsVelocity(velocity, fc);
+        return velocity;
+    }
+
+    void FrBody_::GetCOGAbsVelocity(Velocity &velocity, FRAME_CONVENTION fc) const {
+        velocity = internal::ChVectorToVector3d<Velocity>(m_chronoBody->GetPos_dt());
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(velocity);
+    }
+
+    void FrBody_::GetCOGAbsVelocity(double &vx, double &vy, double &vz, FRAME_CONVENTION fc) const {
+        auto v = GetCOGAbsVelocity(fc);
+        vx = v[0];
+        vy = v[1];
+        vz = v[2];
+    }
+
+    void FrBody_::SetCOGLocalVelocity(double u, double v, double w, FRAME_CONVENTION fc) {
+        auto cogAbsVel = GetCOGAbsVelocity(fc);
+
+        // Projecting this velocity into relative coordinates
+        auto absQuat = GetAbsQuaternion(fc);
+
+        auto cogRelVel = absQuat.Rotate(cogAbsVel, fc);
+
+
+
+
+        // FIXME : finir avec quelque chose de performant !!!!
+
+
+
+//        m_chronoBody->GetWvel_par()
+
+
+
+
+
+
+
+
+    }
+
+    void FrBody_::SetCOGLocalVelocity(const Velocity &velocity, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    Velocity FrBody_::GetCOGLocalVelocity(FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    void FrBody_::GetCOGLocalVelocity(Velocity &velocity, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    void FrBody_::GetCOGLocalVelocity(double &u, double &v, double &w, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    void FrBody_::SetAbsRotationalVelocity(double wx, double wy, double wz, FRAME_CONVENTION fc) {  // OK si le COG est sur le frame
+        if (IsNED(fc)) internal::SwapCoordinateConvention(wx, wy, wz); // Convert into NWU
+        m_chronoBody->SetWvel_par(chrono::ChVector<double>(wx, wy, wz));
+    }
+
+    void FrBody_::SetAbsRotationalVelocity(const RotationalVelocity &omega, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    RotationalVelocity FrBody_::GetAbsRotationalVelocity(FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    void FrBody_::GetAbsRotationalVelocity(RotationalVelocity &omega, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    void FrBody_::GetAbsRotationalVelocity(double &wx, double &wy, double &wz, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    void FrBody_::SetAbsAcceleration(double ax, double ay, double az, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    void FrBody_::SetAbsAcceleration(const Acceleration &acceleration, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    Acceleration FrBody_::GetAbsAcceleration(FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    void FrBody_::GetAbsAcceleration(Acceleration &acceleration, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    void FrBody_::GetAbsAcceleration(double &ax, double &ay, double &az, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    void FrBody_::SetLocalAcceleration(double up, double vp, double wp, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    void FrBody_::SetLocalAcceleration(const Acceleration &acceleration, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    Acceleration FrBody_::GetLocalAcceleration(FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    void FrBody_::GetLocalAcceleration(Acceleration &acceleration, FRAME_CONVENTION fc) {
+        // TODO
+    }
+
+    void FrBody_::GetLocalAcceleration(double &up, double &vp, double &wp, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    Acceleration FrBody_::GetAbsAccelerationOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    Acceleration FrBody_::GetLocalAccelerationOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+
 
 
 }  // end namespace frydom

@@ -17,10 +17,8 @@ namespace frydom {
     FrQuaternion_::FrQuaternion_() : m_chronoQuaternion() {} // OK
 
     FrQuaternion_::FrQuaternion_(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc) { // OK
-        if (IsNED(fc)) {
-            q2 = -q2;
-            q3 = -q3;
-        }
+
+        if (IsNED(fc)) internal::SwapQuaternionElementsFrameConvention(q0, q1, q2, q3); // Internal chrono quaternion must always be in NWU convention
         m_chronoQuaternion.Set(q0, q1, q2, q3);
     }
 
@@ -31,10 +29,8 @@ namespace frydom {
     FrQuaternion_::FrQuaternion_(const FrQuaternion_ &other) = default;
 
     void FrQuaternion_::Set(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc) {  // OK
-        if (IsNED(fc)) {
-            q2 = -q2;
-            q3 = -q3;
-        }
+
+        if (IsNED(fc)) internal::SwapQuaternionElementsFrameConvention(q0, q1, q2, q3); // Internal chrono quaternion must always be in NWU convention
         m_chronoQuaternion.Set(q0, q1, q2, q3);
     }
 
@@ -70,17 +66,14 @@ namespace frydom {
         q1 = m_chronoQuaternion[1];
         q2 = m_chronoQuaternion[2];
         q3 = m_chronoQuaternion[3];  // In NWU
-        if (IsNED(fc)) {
-            q2 = - q2;
-            q3 = - q3;
-        }
+        if (IsNED(fc)) internal::SwapQuaternionElementsFrameConvention(q0, q1, q2, q3); // Internal chrono quaternion is always in NWU convention
     }
 
     void FrQuaternion_::Get(Direction& axis, double& angleRAD, FRAME_CONVENTION fc) const {  // OK
         chrono::ChVector<double> chronoAxis;
         chrono::Q_to_AngAxis(m_chronoQuaternion, angleRAD, chronoAxis); // In NWU
         axis = internal::ChVectorToVector3d<Direction>(chronoAxis); // In NWU
-        if (IsNED(fc)) internal::SwapFrameConvention(axis);
+        if (IsNED(fc)) internal::SwapFrameConvention<Direction>(axis);
     }
 
     Direction FrQuaternion_::GetXAxis(FRAME_CONVENTION fc) const {  // OK
@@ -176,7 +169,7 @@ namespace frydom {
     void FrRotation_::SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) {  // OK
 
         if (IsNED(fc)) {  // FIXME : la convention n'est valable que pour une sequence se terminant par yz...
-            // Put in NWU convention
+            // Conver it to NWU convention
             theta = -theta;
             psi   = -psi;
         }
@@ -206,6 +199,7 @@ namespace frydom {
         psi   = vec[2];
 
         if (IsNED(fc)) {  // FIXME : la convention n'est valable que pour une sequence se terminant par yz...
+            // Convert it to NED convention
             theta = -theta;
             psi   = -psi;
         }
@@ -303,7 +297,7 @@ namespace frydom {
         GetCardanAngles_DEGREES(phi, theta, psi, NWU);
 
         os << std::endl;
-        os << "Rotation (cardan angles in deg) :\n";
+        os << "Rotation (cardan angles in deg, NWU convention) :\n";
         os << "Cardan angle (deg) : ";
         os << "phi   = " << phi;
         os << "; theta = " << theta;

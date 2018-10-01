@@ -11,7 +11,7 @@
 #include "MathUtils/Matrix.h"
 //#include "MathUtils/Matrix33.h"
 
-//#include "FrGeographic.h"
+#include "FrGeographic.h"
 
 
 
@@ -177,94 +177,184 @@ namespace frydom {
     };
 
 
-//    class Velocity : public Vector3d {
-//
-//    public:
-//
-//        Velocity() : Vector3d() {}
-//
-//        Velocity(Scalar x, Scalar y, Scalar z) : Vector3d(x, y, z) {}
-//
-//        // This constructor allows to construct Vector2d from Eigen expressions
-//        template <class OtherDerived>
-//        explicit Velocity(const Eigen::MatrixBase<OtherDerived>& other) : Eigen::Matrix<Scalar, 3, 1>(other) {}
-//
-//        // This method allows to assign Eigen expressions to Vector3d
-//        template <class OtherDerived>
-//        Velocity& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
-//            this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
-//            return *this;
-//        }
-//
-//        double GetVx() const {
-//            return this->at(0);
-//        }
-//
-//        double& GetVx() {
-//            return this->at(0);
-//        }
-//
-//        double GetVy() const {
-//            return this->at(1);
-//        }
-//
-//        double& GetVy() {
-//            return this->at(1);
-//        }
-//
-//        double GetVz() const {
-//            return this->at(2);
-//        }
-//
-//        double& GetVz() {
-//            return this->at(2);
-//        }
-//    };
-//
-//
-//    class Acceleration : public Vector3d {
-//
-//    public:
-//
-//        Acceleration() : Vector3d() {}
-//
-//        Acceleration(Scalar x, Scalar y, Scalar z) : Vector3d(x, y, z) {}
-//
-//        // This constructor allows to construct Vector2d from Eigen expressions
-//        template <class OtherDerived>
-//        explicit Acceleration(const Eigen::MatrixBase<OtherDerived>& other) : Eigen::Matrix<Scalar, 3, 1>(other) {}
-//
-//        // This method allows to assign Eigen expressions to Vector3d
-//        template <class OtherDerived>
-//        Acceleration& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
-//            this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
-//            return *this;
-//        }
-//
-//        double GetAx() const {
-//            return this->at(0);
-//        }
-//
-//        double& GetAx() {
-//            return this->at(0);
-//        }
-//
-//        double GetAy() const {
-//            return this->at(1);
-//        }
-//
-//        double& GetAy() {
-//            return this->at(1);
-//        }
-//
-//        double GetAz() const {
-//            return this->at(2);
-//        }
-//
-//        double& GetAz() {
-//            return this->at(2);
-//        }
-//    };
+    class Velocity : public mathutils::Vector3d<double> {
+
+    public:
+
+        Velocity() : mathutils::Vector3d<double>() {}
+
+        Velocity(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
+
+        // This constructor allows to construct Vector2d from Eigen expressions
+        template <class OtherDerived>
+        explicit Velocity(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        Velocity& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
+            return *this;
+        }
+
+        double GetVx() const {
+            return this->at(0);
+        }
+
+        double& GetVx() {
+            return this->at(0);
+        }
+
+        double GetVy() const {
+            return this->at(1);
+        }
+
+        double& GetVy() {
+            return this->at(1);
+        }
+
+        double GetVz() const {
+            return this->at(2);
+        }
+
+        double& GetVz() {
+            return this->at(2);
+        }
+    };
+
+
+    class RotationalVelocity : public mathutils::Vector3d<double> {
+
+    public:
+
+        RotationalVelocity() : mathutils::Vector3d<double>() {}
+
+        RotationalVelocity(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
+
+        // This constructor allows to construct Vector2d from Eigen expressions
+        template <class OtherDerived>
+        explicit RotationalVelocity(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        RotationalVelocity& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
+            return *this;
+        }
+
+        double GetWx() const {
+            return this->at(0);
+        }
+
+        double& GetWx() {
+            return this->at(0);
+        }
+
+        double GetWy() const {
+            return this->at(1);
+        }
+
+        double& GetWy() {
+            return this->at(1);
+        }
+
+        double GetWz() const {
+            return this->at(2);
+        }
+
+        double& GetWz() {
+            return this->at(2);
+        }
+    };
+
+
+    class Acceleration : public mathutils::Vector3d<double> {
+
+    public:
+
+        Acceleration() : mathutils::Vector3d<double>() {}
+
+        Acceleration(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
+
+        // This constructor allows to construct Vector2d from Eigen expressions
+        template <class OtherDerived>
+        explicit Acceleration(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        Acceleration& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
+            return *this;
+        }
+
+        double GetAccX() const {
+            return this->at(0);
+        }
+
+        double& GetAccX() {
+            return this->at(0);
+        }
+
+        double GetAccY() const {
+            return this->at(1);
+        }
+
+        double& GetAccY() {
+            return this->at(1);
+        }
+
+        double GetAccZ() const {
+            return this->at(2);
+        }
+
+        double& GetAccZ() {
+            return this->at(2);
+        }
+    };
+
+
+    class RotationalAcceleration : public mathutils::Vector3d<double> {
+
+    public:
+
+        RotationalAcceleration() : mathutils::Vector3d<double>() {}
+
+        RotationalAcceleration(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
+
+        // This constructor allows to construct Vector2d from Eigen expressions
+        template <class OtherDerived>
+        explicit RotationalAcceleration(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        RotationalAcceleration& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
+            return *this;
+        }
+
+        double GetWxp() const {
+            return this->at(0);
+        }
+
+        double& GetWxp() {
+            return this->at(0);
+        }
+
+        double GetWyp() const {
+            return this->at(1);
+        }
+
+        double& GetWyp() {
+            return this->at(1);
+        }
+
+        double GetWzp() const {
+            return this->at(2);
+        }
+
+        double& GetWzp() {
+            return this->at(2);
+        }
+    };
 
 
 
@@ -281,19 +371,33 @@ namespace frydom {
         template <class Vector>
         inline Vector SwapFrameConvention(const Vector& vector) {
             Vector out = vector;
-            return SwapFrameConvention(vector);
+            return SwapFrameConvention<Vector>(vector);
         }
 
-        /// Convert a chrono 3D vector into a mathutils Vector3d
+        /// Convert a chrono 3D vector into a FRyDoM Vector
         template <class Vector>
         inline Vector ChVectorToVector3d(const chrono::ChVector<double>& vector) {
-            return Vector(vector.x(), vector.y(), vector.z()); // Always gives a vector expressed in NWU
+            return Vector(vector.x(), vector.y(), vector.z()); // Always gives a FRyDoM vector expressed in NWU
         }
 
         /// Convert a mathutils Vector3d into a Chrono 3D vector
         inline chrono::ChVector<double> Vector3dToChVector(const mathutils::Vector3d<double>& vector3d) {
             return chrono::ChVector<double>(vector3d[0], vector3d[1], vector3d[2]);
         }
+
+        inline chrono::ChVector<double> MakeNWUChVector(double& x, double& y, double& z, FRAME_CONVENTION fc) {
+            if (IsNED(fc)) {
+                return chrono::ChVector<double>(x, -y, -z);
+            } else {
+                return chrono::ChVector<double>(x, y, z);
+            }
+        }
+
+        inline void SwapCoordinateConvention(double& x, double& y, double& z) {
+            y = -y;
+            z = -z;
+        }
+
 
     }  // end namespace internal
 

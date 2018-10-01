@@ -243,6 +243,15 @@ namespace frydom {
 
 
 
+
+
+
+
+
+
+
+
+
     /// REFACTORING ------>>>>>>>>>>>>>>
 
     class FrQuaternion_;
@@ -258,6 +267,7 @@ namespace frydom {
     };
 
 
+
     // Forward declarations
     class FrForce_;
     class FrFrame_;
@@ -268,7 +278,7 @@ namespace frydom {
 
     protected:
 
-        std::shared_ptr<_FrBodyBase> m_chronoBody;
+        std::shared_ptr<_FrBodyBase> m_chronoBody;  // Chrono objects are always expressed in NWU frame convention
 
 
         using ForceContainer = std::vector<std::shared_ptr<FrForce_>>;
@@ -294,6 +304,8 @@ namespace frydom {
         // Principal inertial parameters
 
         void SetMass(double mass);
+
+        double GetMass() const;
 
         void SetMasInTons(double mass);
 
@@ -336,6 +348,8 @@ namespace frydom {
 
         void SetMaxRotationSpeed(double wMax);
 
+        void RemoveGravity(bool val);
+
 
 
 
@@ -356,7 +370,7 @@ namespace frydom {
 
         Position GetCOGAbsPosition(FRAME_CONVENTION fc) const;
 
-        Position GetCOGRelPosition(FRAME_CONVENTION fc) const;
+        Position GetCOGLocalPosition(FRAME_CONVENTION fc) const;
 
 
 
@@ -368,38 +382,206 @@ namespace frydom {
 
         Position GetAbsPosition(FRAME_CONVENTION fc) const;
 
-        void GetAbsPosition(double &x, double &y, double &z, FRAME_CONVENTION fc) const;
-
         void GetAbsPosition(Position &position, FRAME_CONVENTION fc) const;
 
-        FrFrame_ GetAbsFrame() const;
+        void GetAbsPosition(double &x, double &y, double &z, FRAME_CONVENTION fc) const;
 
         Position GetAbsPositionOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
 
-        FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisBody(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
 
 
         // About rotation
 
         FrRotation_ GetAbsRotation(FRAME_CONVENTION fc) const;
 
+        void SetAbsRotation(const FrRotation_& rotation, FRAME_CONVENTION fc);
+
         FrQuaternion_ GetAbsQuaternion(FRAME_CONVENTION fc) const;
+
+        void SetAbsRotation(const FrQuaternion_& quaternion, FRAME_CONVENTION fc);
 
         void GetEulerAngles_RADIANS(double& phi, double& theta, double& psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const;
 
+        void SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc);
+
         void GetEulerAngles_DEGREES(double& phi, double& theta, double& psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const;
+
+        void SetEulerAngles_DEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc);
 
         void GetCardanAngles_RADIANS(double& phi, double& theta, double& psi, FRAME_CONVENTION fc) const;
 
+        void SetCardanAngles_RADIANS(double phi, double theta, double psi, FRAME_CONVENTION fc);
+
         void GetCardanAngles_DEGREES(double& phi, double& theta, double& psi, FRAME_CONVENTION fc) const;
+
+        void SetCardanAngles_DEGREES(double phi, double theta, double psi, FRAME_CONVENTION fc);
 
         void GetRotationAxisAngle(Direction& axis, double angle, FRAME_CONVENTION fc) const;
 
+        void SetRotationAxisAngle(const Direction& axis, double angleRAD, FRAME_CONVENTION fc);
 
-//
-//        void GetRoll_NED() const;
-//
-//        void GetYaw_NED() const;
+        double GetRoll_DEGREES(FRAME_CONVENTION fc) const;
+        void SetRoll_DEGREES(double roll, FRAME_CONVENTION fc);
+
+        double GetPitch_DEGREES(FRAME_CONVENTION fc) const;
+        double SetPitch_DEGREES(double pitch, FRAME_CONVENTION fc);
+
+        double GetYaw_DEGREES(FRAME_CONVENTION fc) const;
+        double SetYaw_DEGREES(double yaw, FRAME_CONVENTION fc);
+
+        double GetRoll_RADIANS(FRAME_CONVENTION fc) const;
+        double SetRoll_RADIANS(double roll, FRAME_CONVENTION fc);
+
+        double GetPitch_RADIANS(FRAME_CONVENTION fc) const;
+        double SetPitch_RADIANS(double pitch, FRAME_CONVENTION fc);
+
+        double GetYaw_RADIANS(FRAME_CONVENTION fc) const;
+        double SetYaw_RADIANS(double yaw, FRAME_CONVENTION fc);
+
+
+
+        // Frame
+
+        FrFrame_ GetAbsFrame() const;
+
+        FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisBody(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
+
+
+        // Velocities
+
+        void SetAbsVelocity(double vx, double vy, double vz, FRAME_CONVENTION fc);
+
+        void SetAbsVelocity(const Velocity& velocity, FRAME_CONVENTION fc);
+
+        Velocity GetAbsVelocity(FRAME_CONVENTION fc) const;
+
+        void GetAbsVelocity(Velocity& velocity, FRAME_CONVENTION fc);
+
+        void GetAbsVelocity(double& vx, double& vy, double& vz, FRAME_CONVENTION fc) const;
+
+
+
+        void SetLocalVelocity(double u, double v, double w, FRAME_CONVENTION fc);
+
+        void SetLocalVelocity(const Velocity& velocity, FRAME_CONVENTION fc);
+
+        Velocity GetLocalVelocity(FRAME_CONVENTION fc) const;
+
+        void GetLocalVelocity(Velocity& velocity, FRAME_CONVENTION fc);
+
+        void GetLocalVelocity(double& u, double& v, double& w, FRAME_CONVENTION fc) const;
+
+        Velocity GetAbsVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
+
+        Velocity GetLocalVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
+
+
+        // Velocities for COG
+
+        void SetCOGAbsVelocity(double vx, double vy, double vz, FRAME_CONVENTION fc);
+
+        void SetCOGAbsVelocity(const Velocity& velocity, FRAME_CONVENTION fc);
+
+        Velocity GetCOGAbsVelocity(FRAME_CONVENTION fc) const;
+
+        void GetCOGAbsVelocity(Velocity& velocity, FRAME_CONVENTION fc) const;
+
+        void GetCOGAbsVelocity(double& vx, double& vy, double& vz, FRAME_CONVENTION fc) const;
+
+
+        void SetCOGLocalVelocity(double u, double v, double w, FRAME_CONVENTION fc);
+
+        void SetCOGLocalVelocity(const Velocity& velocity, FRAME_CONVENTION fc);
+
+        Velocity GetCOGLocalVelocity(FRAME_CONVENTION fc) const;
+
+        void GetCOGLocalVelocity(Velocity& velocity, FRAME_CONVENTION fc);
+
+        void GetCOGLocalVelocity(double& u, double& v, double& w, FRAME_CONVENTION fc) const;
+
+
+        // Rotational velocities
+
+        void SetAbsRotationalVelocity(double wx, double wy, double wz, FRAME_CONVENTION fc);
+
+        void SetAbsRotationalVelocity(const RotationalVelocity &omega, FRAME_CONVENTION fc);
+
+        RotationalVelocity GetAbsRotationalVelocity(FRAME_CONVENTION fc) const;
+
+        void GetAbsRotationalVelocity(RotationalVelocity &omega, FRAME_CONVENTION fc);
+
+        void GetAbsRotationalVelocity(double &wx, double &wy, double &wz, FRAME_CONVENTION fc) const;
+
+
+
+
+
+
+
+        // Accelerations
+
+        void SetAbsAcceleration(double ax, double ay, double az, FRAME_CONVENTION fc);
+
+        void SetAbsAcceleration(const Acceleration &acceleration, FRAME_CONVENTION fc);
+
+        Acceleration GetAbsAcceleration(FRAME_CONVENTION fc) const;
+
+        void GetAbsAcceleration(Acceleration &acceleration, FRAME_CONVENTION fc);
+
+        void GetAbsAcceleration(double &ax, double &ay, double &az, FRAME_CONVENTION fc) const;
+
+
+
+        void SetLocalAcceleration(double up, double vp, double wp, FRAME_CONVENTION fc);
+
+        void SetLocalAcceleration(const Acceleration &acceleration, FRAME_CONVENTION fc);
+
+        Acceleration GetLocalAcceleration(FRAME_CONVENTION fc) const;
+
+        void GetLocalAcceleration(Acceleration &acceleration, FRAME_CONVENTION fc);
+
+        void GetLocalAcceleration(double &up, double &vp, double &wp, FRAME_CONVENTION fc) const;
+
+        Acceleration GetAbsAccelerationOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
+
+        Acceleration GetLocalAccelerationOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
+
+
+        // Accelerations for COG
+
+        void SetCOGAbsAcceleration(double ax, double ay, double az, FRAME_CONVENTION fc);
+
+        void SetCOGAbsAcceleration(const Acceleration& acceleration, FRAME_CONVENTION fc);
+
+        Acceleration GetCOGAbsAcceleration(FRAME_CONVENTION fc) const;
+
+        void GetCOGAbsAcceleration(Acceleration& acceleration, FRAME_CONVENTION fc);
+
+        void GetCOGAbsAcceleration(double& ax, double& ay, double& az, FRAME_CONVENTION fc) const;
+
+
+        void SetCOGLocalAcceleration(double up, double vp, double wp, FRAME_CONVENTION fc);
+
+        void SetCOGLocalAcceleration(const Acceleration& acceleration, FRAME_CONVENTION fc);
+
+        Acceleration GetCOGLocalAcceleration(FRAME_CONVENTION fc) const;
+
+        void GetCOGLocalAcceleration(Acceleration& acceleration, FRAME_CONVENTION fc);
+
+        void GetCOGLocalAcceleration(double& up, double& vp, double& wp, FRAME_CONVENTION fc) const;
+
+
+        // Rotational accelerations
+
+        void SetAbsRotationalAcceleration(double wxp, double wyp, double wzp, FRAME_CONVENTION fc);
+
+        void SetAbsRotationalAcceleration(const RotationalAcceleration& omegap, FRAME_CONVENTION fc);
+
+        RotationalAcceleration GetAbsRotationalAcceleration(FRAME_CONVENTION fc) const;
+
+        void GetAbsRotationalAcceleration(RotationalAcceleration& omegap, FRAME_CONVENTION fc);
+
+        void GetAbsRotationalAcceleration(double& wxp, double& wyp, double& wzp, FRAME_CONVENTION fc) const;
 
 
 

@@ -25,7 +25,7 @@ namespace frydom {
 
     private:
 
-        chrono::ChQuaternion<double> m_chronoQuaternion;  //
+        chrono::ChQuaternion<double> m_chronoQuaternion;  // Chrono objects are always stored in NWU frame convention
 
         const chrono::ChQuaternion<double>& GetChronoQuaternion() const;
 
@@ -80,13 +80,13 @@ namespace frydom {
         Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) {
             auto vectorTmp = vector;
 
-            if (IsNED(fc)) internal::SwapFrameConvention(vectorTmp);
+            if (IsNED(fc)) internal::SwapFrameConvention<Vector>(vectorTmp);
 
             auto chronoVector = internal::Vector3dToChVector(vectorTmp);
 
             vectorTmp = internal::ChVectorToVector3d<Vector>(m_chronoQuaternion.Rotate(chronoVector));
 
-            if (IsNED(fc)) internal::SwapFrameConvention(vectorTmp);
+            if (IsNED(fc)) internal::SwapFrameConvention<Vector>(vectorTmp);
 
             return vectorTmp;
         }
@@ -208,6 +208,8 @@ namespace frydom {
 
     namespace internal {
 
+        // Conversion functions between Chrono quaternions and FRyDoM quaternions
+
         /// Convert a FRyDoM quaternion into a Chrono quaternion
         inline chrono::ChQuaternion<double> Fr2ChQuaternion(const FrQuaternion_& frQuaternion) {  // OK
             double q0, q1, q2, q3;
@@ -218,6 +220,11 @@ namespace frydom {
         /// Convert a Chrono quaternion into a FRyDoM quaternion
         inline FrQuaternion_ Ch2FrQuaternion(const chrono::ChQuaternion<double>& chQuaternion) {  // OK
             return FrQuaternion_(chQuaternion.e0(), chQuaternion.e1(), chQuaternion.e2(), chQuaternion.e3(), NWU);
+        }
+
+        inline void SwapQuaternionElementsFrameConvention(double& q0, double& q1, double& q2, double& q3) {
+            q2 = -q2;
+            q3 = -q3;
         }
 
     }
