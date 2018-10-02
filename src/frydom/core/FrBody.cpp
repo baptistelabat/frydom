@@ -216,19 +216,26 @@ namespace frydom {
     }
 
     void FrBody_::SetMaxSpeed(double maxSpeed_ms) {
-        m_chronoBody->SetMaxSpeed(maxSpeed_ms);
+        m_chronoBody->SetMaxSpeed((float)maxSpeed_ms);
     }
 
     void FrBody_::SetMaxRotationSpeed(double wMax_rads) {
-        m_chronoBody->SetMaxWvel(wMax_rads);
+        m_chronoBody->SetMaxWvel((float)wMax_rads);
     }
 
-    void FrBody_::RemoveGravity(bool val) {  // FIXME : cet ajout doit l'etre lors de l'initialisation !!! --> booleen en attribut
+    void FrBody_::RemoveGravity(bool val) { // TODO : ajouter la force d'accumulation a l'initialisation --> cas ou le systeme n'a pas encore ete precise pour la gravite...
+
         if (val) {
-            m_chronoBody->Accumulate_force(GetMass() * chrono::ChVector<double>(0., 0., 9.81),
-                    chrono::ChVector<double>(), true);
+            m_chronoBody->Accumulate_force(
+                    GetMass() * m_chronoBody->TransformDirectionParentToLocal(chrono::ChVector<double>(0., 0., 9.81)),
+                    chrono::VNULL,
+                    true
+                    );
             // TODO : aller chercher la gravite dans systeme !!!
+        } else {
+            m_chronoBody->Empty_forces_accumulators();
         }
+
     }
 
 
@@ -304,26 +311,29 @@ namespace frydom {
 
 
 
-    void FrBody_::SetCOGLocalPosition(double x, double y, double z, FRAME_CONVENTION fc) {  // OK
+    void FrBody_::SetCOGLocalPosition(double x, double y, double z, bool transportInertia, FRAME_CONVENTION fc) {
 
         auto cogFrame = chrono::ChFrame<double>();
-        cogFrame.SetPos(internal::MakeNWUChVector(x, y, z, fc));
+        cogFrame.SetPos(internal::MakeNWUChVector(x, y, z, fc));  // TODO : regarder partout ou on utlise le SwapVectorFrameConvention... et voir si on ne peut pas remplacer par MakeNWUChvector...
         m_chronoBody->SetFrame_COG_to_REF(cogFrame);
 
-        // FIXME : transporter la matrice d'inertie en meme temps !!!!
+        if (transportInertia) {
+            auto inertiaMat = m_chronoBody->GetInertia(); // It is expressed at COG in NWU local frame
 
-        auto inertiaMat = m_chronoBody->GetInertia();
-
-
-
+            // TODO : finir le transport !!
 
 
 
-        m_chronoBody->Update();  // To make auxref_to_abs up to date
+        }
+
+
+        // TODO : affiner les SetInertia...
+
+        m_chronoBody->Update();  // To make auxref_to_abs up to date FIXME : ca ne devrait pas changer la position de local !!
     }
 
-    void FrBody_::SetCOGLocalPosition(Position position, FRAME_CONVENTION fc) {  // OK
-        SetCOGLocalPosition(position[0], position[1], position[2], fc);
+    void FrBody_::SetCOGLocalPosition(const Position& position, bool transportInertia, FRAME_CONVENTION fc) {
+        SetCOGLocalPosition(position[0], position[1], position[2], transportInertia, fc);
     }
 
     void FrBody_::SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc) {  // OK
@@ -522,6 +532,12 @@ namespace frydom {
         SetCardanAngles_DEGREES(0., pitch, 0., fc);
     }
 
+
+
+
+
+
+    
     double FrBody_::SetYaw_DEGREES(double yaw, FRAME_CONVENTION fc) {
         SetCardanAngles_DEGREES(0., 0., yaw, fc);
     }

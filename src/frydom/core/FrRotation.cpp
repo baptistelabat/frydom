@@ -60,8 +60,7 @@ namespace frydom {
         return (mathutils::IsClose<double>(Norm(), 1.));
     }
 
-    void FrQuaternion_::
-    Get(double &q0, double &q1, double &q2, double &q3, FRAME_CONVENTION fc) const {  // OK
+    void FrQuaternion_::Get(double &q0, double &q1, double &q2, double &q3, FRAME_CONVENTION fc) const {  // OK
         q0 = m_chronoQuaternion[0];
         q1 = m_chronoQuaternion[1];
         q2 = m_chronoQuaternion[2];
@@ -78,19 +77,19 @@ namespace frydom {
 
     Direction FrQuaternion_::GetXAxis(FRAME_CONVENTION fc) const {  // OK
         auto axis = internal::ChVectorToVector3d<Direction>(m_chronoQuaternion.GetXaxis());  // NWU
-        if(IsNED(fc)) internal::SwapFrameConvention<Direction>(axis);
+        if (IsNED(fc)) internal::SwapFrameConvention<Direction>(axis);
         return axis;
     }
 
     Direction FrQuaternion_::GetYAxis(FRAME_CONVENTION fc) const {  // OK
         auto axis = internal::ChVectorToVector3d<Direction>(m_chronoQuaternion.GetYaxis());  // NWU
-        if(IsNED(fc)) internal::SwapFrameConvention<Direction>(axis);
+        if (IsNED(fc)) internal::SwapFrameConvention<Direction>(axis);
         return axis;
     }
 
     Direction FrQuaternion_::GetZAxis(FRAME_CONVENTION fc) const {  // OK
         auto axis = internal::ChVectorToVector3d<Direction>(m_chronoQuaternion.GetZaxis());  // NWU
-        if(IsNED(fc)) internal::SwapFrameConvention<Direction>(axis);
+        if (IsNED(fc)) internal::SwapFrameConvention<Direction>(axis);
         return axis;
     }
 

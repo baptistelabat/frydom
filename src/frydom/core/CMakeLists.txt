@@ -6,6 +6,7 @@ set(SRC_FILES
         FrVector.cpp
         FrRotation.cpp
         FrFrame.cpp
+        FrInertia.cpp
         FrBody.cpp
         FrLink.cpp
         FrBodyEasy.cpp

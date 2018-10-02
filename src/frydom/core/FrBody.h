@@ -18,6 +18,7 @@
 #include "hermes/hermes.h"
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 #include "frydom/core/FrEulerAngles.h"
+#include "FrInertia.h"
 
 namespace frydom {
 
@@ -251,7 +252,6 @@ namespace frydom {
 
 
 
-
     /// REFACTORING ------>>>>>>>>>>>>>>
 
     class FrQuaternion_;
@@ -313,6 +313,10 @@ namespace frydom {
 
         void SetOffDiagonalInertiasWRT_COG(double Ixy, double Ixz, double Iyz);
 
+        void SetInertia(const FrInertiaTensor_& inertia, const Position& position);
+
+        void SetInertia(const FrInertiaTensor_& inertia, const FrFrame_& frame);
+
 //        void SetDiagonalInertiasWRTToAnotherFrame(FrFrame_ frame, double Ixx, double Iyy, double Izz);
 //
 //        void SetOffDiagonalInertiasWRTToAnotherFrame(FrFrame_ frame, double Ixy, double Ixz, double Iyz);
@@ -358,9 +362,9 @@ namespace frydom {
 
         // About COG position
 
-        void SetCOGLocalPosition(double x, double y, double z, FRAME_CONVENTION fc);
+        void SetCOGLocalPosition(double x, double y, double z, bool transportInertia, FRAME_CONVENTION fc);
 
-        void SetCOGLocalPosition(Position position, FRAME_CONVENTION fc);
+        void SetCOGLocalPosition(const Position& position, bool transportInertia, FRAME_CONVENTION fc);
 
         void SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
 

@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     makeItBox(box, 10, 10, 10, 1);
 //    box->SetBodyFixed(true);
 
-    box->RemoveGravity(true);
+
 
 
     // Playing with different methods to setup body position, velocity etc...
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
     box->SetCardanAngles_DEGREES(0, 90, 90, NWU); // Tester le NED en -90, doit donner pareil...
 
 
-    box->SetCOGLocalPosition(5, 5, 0, NWU); // FIXME : attention on fait quoi avec l'inertie lorsqu'on specifie une position differente du COG
+    box->SetCOGLocalPosition(5, 5, 0, true, NWU); // FIXME : attention on fait quoi avec l'inertie lorsqu'on specifie une position differente du COG
 
 
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 
 
 
-
+    box->RemoveGravity(true);
 
 
 

@@ -111,11 +111,11 @@ namespace frydom {
         m_chronoFrame.SetIdentity();
     }
 
-    FrRotation_ FrFrame_::GetRotation(FRAME_CONVENTION fc) const {  // OK
-        return FrRotation_(GetQuaternion(fc));
+    FrRotation_ FrFrame_::GetRotation() const {  // OK
+        return FrRotation_(GetQuaternion());
     }
 
-    FrQuaternion_ FrFrame_::GetQuaternion(FRAME_CONVENTION fc) const {  // OK
+    FrQuaternion_ FrFrame_::GetQuaternion() const {  // OK
         return internal::Ch2FrQuaternion(m_chronoFrame.GetRot());  // In NWU
     }
 
@@ -126,7 +126,7 @@ namespace frydom {
     }
 
     void FrFrame_::operator*=(const FrFrame_ &otherFrame) {
-        m_chronoFrame >>= otherFrame.m_chronoFrame;  // TODO : verifier
+        m_chronoFrame >>= otherFrame.m_chronoFrame;  // TODO : verifier !!
     }
 
     FrFrame_ FrFrame_::GetOtherFrameRelativeTransform_WRT_ThisFrame(const frydom::FrFrame_ &otherFrame, FRAME_CONVENTION fc) const {  // OK
@@ -150,7 +150,7 @@ namespace frydom {
         os << "; Y = " << y;
         os << "; Z = " << z;
         os << std::endl;
-        os << GetRotation(NWU);
+        os << GetRotation();
         os << std::endl;
 
         return os;

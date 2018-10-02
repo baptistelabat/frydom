@@ -51,6 +51,7 @@ namespace frydom {
         chrono::ChFrame<double> m_chronoFrame;   // Chrono objects are always stored in NWU frame convention
 
 //        friend class FrBody_;
+        friend class FrInertiaTensor_;
 
     public:
 
@@ -61,6 +62,8 @@ namespace frydom {
         FrFrame_(const Position &pos, const FrQuaternion_& quaternion, FRAME_CONVENTION fc);
 
         FrFrame_& FrFrame(const FrFrame_& otherFrame);
+
+        // TODO : permettre de definir des parametres de Denavit-Hartenberg modifies...
 
 
         // Cartesian Position
@@ -117,9 +120,9 @@ namespace frydom {
 
         void SetIdentity();
 
-        FrRotation_ GetRotation(FRAME_CONVENTION fc) const;
+        FrRotation_ GetRotation() const;
 
-        FrQuaternion_ GetQuaternion(FRAME_CONVENTION fc) const;
+        FrQuaternion_ GetQuaternion() const;
 
         void RotX_RADIANS(double angle, FRAME_CONVENTION fc);
 
@@ -203,7 +206,7 @@ namespace frydom {
 
         inline chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame) {
             auto pos = Vector3dToChVector(frFrame.GetPosition(NWU));
-            auto quat = Fr2ChQuaternion(frFrame.GetQuaternion(NWU));
+            auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
             chrono::ChFrame<double>(pos, quat);
         }
 
