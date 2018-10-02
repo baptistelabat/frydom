@@ -14,7 +14,9 @@ namespace frydom {
 
     // FrQuaternion_
 
-    FrQuaternion_::FrQuaternion_() : m_chronoQuaternion() {} // OK
+    FrQuaternion_::FrQuaternion_() : m_chronoQuaternion() {
+        m_chronoQuaternion.Normalize();
+    } // OK
 
     FrQuaternion_::FrQuaternion_(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc) { // OK
 
@@ -239,11 +241,11 @@ namespace frydom {
         m_frQuaternion *= other.m_frQuaternion;
     }
 
-    Position FrRotation_::Rotate(const Position &vector, FRAME_CONVENTION fc) {  // OK
-        auto out = m_frQuaternion.Rotate(vector, fc);
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(out);
-        return out;
-    }
+//    Position FrRotation_::Rotate(const Position &vector, FRAME_CONVENTION fc) {  // OK
+//        auto out = m_frQuaternion.Rotate(vector, fc);
+//        if (IsNED(fc)) internal::SwapFrameConvention<Position>(out);
+//        return out;
+//    }
 
     FrRotation_& FrRotation_::RotAxisAngle_RADIANS(const Direction &axis, double angle, FRAME_CONVENTION fc) {  // OK
         *this *= FrRotation_(axis, angle, fc);

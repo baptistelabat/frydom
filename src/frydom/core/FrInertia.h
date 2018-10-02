@@ -39,20 +39,23 @@ namespace frydom {
                          double Ixy, double Ixz, double Iyz,
                          const FrFrame_& coeffsFrame, const Position& cogPosition, FRAME_CONVENTION fc);
 
-//        FrInertiaTensor_(double mass,
-//                         double Ixx, double Iyy, double Izz,
-//                         double Ixy, double Ixz, double Iyz,
-//                         const FrFrame_& cogFrame, FRAME_CONVENTION fc);
+        FrInertiaTensor_(double mass,
+                         double Ixx, double Iyy, double Izz,
+                         double Ixy, double Ixz, double Iyz,
+                         const FrFrame_& cogFrame, FRAME_CONVENTION fc);
 
+        double GetMass() const;
 
+        const Position GetCOGPosition(FRAME_CONVENTION fc) const;
 
+        void GetInertiaCoeffs(double& Ixx, double& Iyy, double& Izz,
+                              double& Ixy, double& Ixz, double& Iyz,
+                              FRAME_CONVENTION fc) const;
 
-//        void SetCOGPosition(const Position& cogPosition, bool transportInertia);
-//
-//        void SetInertiaCoeffs(double Ixx, double Iyy, double Izz,
-//                              double Ixy, double Ixz, double Iyz,
-//                              const Position& coeffsPosition);
+    private:
 
+        friend std::ostream&operator<<(std::ostream& os, const FrInertiaTensor_& inertia);
+        std::ostream& cout(std::ostream& os) const;
 
     };
 
@@ -93,6 +96,18 @@ namespace frydom {
             return chrono::ChMatrix33<double>(b2+c2, -ab,   -ac,
                                               -ab  , a2+c2, -bc,
                                               -ac  , -bc,   a2+b2) * mass;
+        }
+
+        inline void ChInertia2Coeffs(const chrono::ChMatrix33<double>& inertiaMat,
+                                     double& Ixx, double& Iyy, double& Izz,
+                                     double& Ixy, double& Ixz, double& Iyz) {
+
+            Ixx = inertiaMat.Get33Element(0, 0);
+            Iyy = inertiaMat.Get33Element(1, 1);
+            Izz = inertiaMat.Get33Element(2, 2);
+            Ixy = inertiaMat.Get33Element(0, 1);
+            Ixz = inertiaMat.Get33Element(0, 2);
+            Iyz = inertiaMat.Get33Element(1, 2);
         }
 
 

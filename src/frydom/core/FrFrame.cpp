@@ -7,6 +7,7 @@
 #include "chrono/core/ChMatrixDynamic.h"
 
 #include "FrRotation.h"
+#include "FrOffshoreSystem.h"
 
 
 namespace frydom {
@@ -161,76 +162,98 @@ namespace frydom {
         return frame.cout(os);
     }
 
-    void FrFrame_::RotX_RADIANS(double angle, FRAME_CONVENTION fc) {
-        // TODO
-//        m_chronoFrame.SetRot()
+    void FrFrame_::RotX_RADIANS(double angle, FRAME_CONVENTION fc, bool localAxis) {
+        chrono::ChVector<double> axis;
+        if (localAxis) {
+            axis = m_chronoFrame.GetRot().GetXaxis();  // In NWU
+        } else {
+            axis = chrono::ChVector<double>(1., 0., 0.);
+        }
+
+        m_chronoFrame.SetRot(chrono::Q_from_AngAxis(angle, axis) * m_chronoFrame.GetRot());
     }
 
-    void FrFrame_::RotX_DEGREES(double angle, FRAME_CONVENTION fc) {
-        // TODO
+    void FrFrame_::RotX_DEGREES(double angle, FRAME_CONVENTION fc, bool localAxis) {
+        RotX_RADIANS(angle*DEG2RAD, fc, localAxis);
     }
 
-    void FrFrame_::RotY_RADIANS(double angle, FRAME_CONVENTION fc) {
-        // TODO
+    void FrFrame_::RotY_RADIANS(double angle, FRAME_CONVENTION fc, bool localAxis) {
+        chrono::ChVector<double> axis;
+        if (localAxis) {
+            axis = m_chronoFrame.GetRot().GetYaxis();  // In NWU
+        } else {
+            axis = chrono::ChVector<double>(0., 1., 0.);
+        }
+
+        if (IsNED(fc)) angle = -angle;
+
+        m_chronoFrame.SetRot(chrono::Q_from_AngAxis(angle, axis) * m_chronoFrame.GetRot());
     }
 
-    void FrFrame_::RotY_DEGREES(double angl, FRAME_CONVENTION fce) {
-        // TODO
+    void FrFrame_::RotY_DEGREES(double angle, FRAME_CONVENTION fc, bool localAxis) {
+        RotY_RADIANS(angle*DEG2RAD, fc, localAxis);
     }
 
-    void FrFrame_::RotZ_RADIANS(double angle, FRAME_CONVENTION fc) {
-        // TODO
+    void FrFrame_::RotZ_RADIANS(double angle, FRAME_CONVENTION fc, bool localAxis) {
+        chrono::ChVector<double> axis;
+        if (localAxis) {
+            axis = m_chronoFrame.GetRot().GetZaxis();  // In NWU
+        } else {
+            axis = chrono::ChVector<double>(0., 0., 1.);
+        }
+
+        if (IsNED(fc)) angle = -angle;
+
+        m_chronoFrame.SetRot(chrono::Q_from_AngAxis(angle, axis) * m_chronoFrame.GetRot());
     }
 
-    void FrFrame_::RotZ_DEGREES(double angle, FRAME_CONVENTION fc) {
-        // TODO
+    void FrFrame_::RotZ_DEGREES(double angle, FRAME_CONVENTION fc, bool localAxis) {
+        RotZ_RADIANS(angle*DEG2RAD, fc, localAxis);
     }
-
-
 
     void FrFrame_::SetRotX_RADIANS(double angle, FRAME_CONVENTION fc) {  // OK
         SetIdentity();
-        RotX_RADIANS(angle, fc);
+        RotX_RADIANS(angle, fc, false);
     }
 
     void FrFrame_::SetRotX_DEGREES(double angle, FRAME_CONVENTION fc) {  // OK
         SetIdentity();
-        RotX_DEGREES(angle, fc);
+        RotX_DEGREES(angle, fc, false);
     }
 
     void FrFrame_::SetRotY_RADIANS(double angle, FRAME_CONVENTION fc) {  // OK
         SetIdentity();
-        RotY_RADIANS(angle, fc);
+        RotY_RADIANS(angle, fc, false);
     }
 
     void FrFrame_::SetRotY_DEGREES(double angle, FRAME_CONVENTION fc) {  // OK
         SetIdentity();
-        RotY_DEGREES(angle, fc);
+        RotY_DEGREES(angle, fc, false);
     }
 
     void FrFrame_::SetRotZ_RADIANS(double angle, FRAME_CONVENTION fc) {  // OK
         SetIdentity();
-        RotZ_RADIANS(angle, fc);
+        RotZ_RADIANS(angle, fc, false);
     }
 
     void FrFrame_::SetRotZ_DEGREES(double angle, FRAME_CONVENTION fc) {  // OK
         SetIdentity();
-        RotZ_DEGREES(angle, fc);
+        RotZ_DEGREES(angle, fc, false);
     }
 
-    void FrFrame_::GetGeographicPosition(double &latitude, double &longitude, double &height) const {
+    void FrFrame_::GetGeographicPosition(const FrOffshoreSystem_* system, double &latitude, double &longitude, double &height) const {
         // TODO
     }
 
-    double FrFrame_::GetLatitude() const {
+    double FrFrame_::GetLatitude(const FrOffshoreSystem_* system) const {
         // TODO
     }
 
-    double FrFrame_::GetLongitude() const {
+    double FrFrame_::GetLongitude(const FrOffshoreSystem_* system) const {
         // TODO
     }
 
-    double FrFrame_::GetGeographicHeight() const {
+    double FrFrame_::GetGeographicHeight(const FrOffshoreSystem_* system) const {
         // TODO
     }
 

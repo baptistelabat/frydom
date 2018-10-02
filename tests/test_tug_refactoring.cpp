@@ -31,6 +31,11 @@ int main(int argc, char* argv[]) {
     makeItBox(box, 10, 10, 10, 1);
 //    box->SetBodyFixed(true);
 
+    std::cout << box->GetInertiaParams() << std::endl;
+
+
+
+
 
 
 
@@ -43,8 +48,10 @@ int main(int argc, char* argv[]) {
     box->SetCOGLocalPosition(5, 5, 0, true, NWU); // FIXME : attention on fait quoi avec l'inertie lorsqu'on specifie une position differente du COG
 
 
+    std::cout << box->GetInertiaParams() << std::endl;
 
-    box->SetAbsRotationalVelocity(0., 0., 10*DEG2RAD, NWU);
+
+    box->SetAbsRotationalVelocity(0., 0., 100*DEG2RAD, NWU);
     box->SetAbsVelocity(1, 1, 0, NWU);
 
 

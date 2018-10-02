@@ -167,24 +167,77 @@ namespace frydom {
 
     }
 
-    void FrBody_::SetMass(double mass) {
-        m_chronoBody->SetMass(mass);
-    }
-
     double FrBody_::GetMass() const {
         return m_chronoBody->GetMass();
     }
 
-    void FrBody_::SetMasInTons(double mass) {
-        m_chronoBody->SetMass(mass*1e3);
+    Position FrBody_::GetCOGLocalPosition(FRAME_CONVENTION fc) const {  // OK
+        auto cogPos = m_chronoBody->GetFrame_COG_to_REF().GetPos(); // In NWU
+
+        auto frPos = internal::ChVectorToVector3d<Position>(cogPos);
+
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(frPos);
+        return frPos;
     }
 
-    void FrBody_::SetDiagonalInertiasWRT_COG(double Ixx, double Iyy, double Izz) {
+    void FrBody_::SetCOGLocalPosition(double x, double y, double z, bool transportInertia, FRAME_CONVENTION fc) {
+
+        auto cogFrame = chrono::ChFrame<double>();
+        cogFrame.SetPos(internal::MakeNWUChVector(x, y, z, fc));  // TODO : regarder partout ou on utlise le SwapVectorFrameConvention... et voir si on ne peut pas remplacer par MakeNWUChvector...
+        m_chronoBody->SetFrame_COG_to_REF(cogFrame);
+
+        m_chronoBody->Update();  // To make auxref_to_abs up to date
+
+        if (transportInertia) {  // FIXME : pas certain que ca fonctionne !!
+            m_chronoBody->SetInertia(
+                    m_chronoBody->GetInertia() +
+                    internal::GetPointMassInertia(GetMass(), Position(-x, -y, -z))
+                    );
+        }
+    }
+
+    void FrBody_::SetCOGLocalPosition(const Position& position, bool transportInertia, FRAME_CONVENTION fc) {
+        SetCOGLocalPosition(position[0], position[1], position[2], transportInertia, fc);
+    }
+
+    FrInertiaTensor_ FrBody_::GetInertiaParams() const {
+        double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+        internal::ChInertia2Coeffs(m_chronoBody->GetInertia(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+
+        auto cogPos = GetCOGLocalPosition(NWU);
+
+        return FrInertiaTensor_(GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame_(cogPos, FrRotation_(), NWU), NWU);
+    }
+
+    void FrBody_::SetInertiaParams(const FrInertiaTensor_& inertia) {
+
+        m_chronoBody->SetMass(inertia.GetMass());
+
+        SetCOGLocalPosition(inertia.GetCOGPosition(NWU), false, NWU);
+
+        double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+        inertia.GetInertiaCoeffs(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
+
         m_chronoBody->SetInertiaXX(chrono::ChVector<double>(Ixx, Iyy, Izz));
+        m_chronoBody->SetInertiaXY(chrono::ChVector<double>(Ixy, Ixz, Iyz));
+
     }
 
-    void FrBody_::SetOffDiagonalInertiasWRT_COG(double Ixy, double Ixz, double Iyz) {
-        m_chronoBody->SetInertiaXY(chrono::ChVector<double>(Ixy, Ixz, Iyz));
+    void FrBody_::SetInertiaParams(double mass,
+                          double Ixx, double Iyy, double Izz,
+                          double Ixy, double Ixz, double Iyz,
+                          const FrFrame_& coeffsFrame,
+                          const Position& cogPosition,
+                          FRAME_CONVENTION fc) {
+        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, coeffsFrame, cogPosition, fc));
+    }
+
+    void FrBody_::SetInertiaParams(double mass,
+                          double Ixx, double Iyy, double Izz,
+                          double Ixy, double Ixz, double Iyz,
+                          const FrFrame_& cogFrame,
+                          FRAME_CONVENTION fc) {
+        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, cogFrame, fc));
     }
 
     void FrBody_::SetCollide(bool isColliding) {
@@ -238,104 +291,6 @@ namespace frydom {
 
     }
 
-
-
-
-    //        // TODO : Analyse de ce qui est fait pour ChBodyAuxRef :::
-//
-//        /// Set the COG frame with respect to the auxiliary reference frame.
-//        /// Note that this also moves the body absolute COG (the REF is fixed).
-//        /// The position of contained ChMarker objects, if any, is not changed with respect
-//        /// to the reference.
-//        m_chronoBody->SetFrame_COG_to_REF()
-//
-//        /// Set the auxiliary reference frame with respect to the COG frame.
-//        /// Note that this does not move the body absolute COG (the COG is fixed).
-//        m_chronoBody->SetFrame_REF_to_COG()
-//
-//        /// Set the auxiliary reference frame with respect to the absolute frame.
-//        /// This moves the entire body; the body COG is rigidly moved as well.
-//        m_chronoBody->SetFrame_REF_to_abs()
-//
-//        // Impose the translation (the COG position)
-//        m_chronoBody->SetPos()
-//
-//        // Set the linear speed
-//        m_chronoBody->SetPos_dt()
-//
-//        // Set the linear acceleration
-//        m_chronoBody->SetPos_dtdt()
-//
-//        // Impose the rotation
-//        m_chronoBody->SetRot()
-//
-//        // Set the rotation speed (quaternion)
-//        m_chronoBody->SetRot_dt()
-//
-//        // Set the rotation speed (angular speed in local coordinate system)
-//        m_chronoBody->SetWvel_loc()
-//
-//        // Set the rotation speed (angular speed in parent coordinate system)
-//        m_chronoBody->SetWvel_par()
-//
-//        m_chronoBody->SetRot_dtdt() // quaternion
-//        m_chronoBody->SetWacc_loc()
-//        m_chronoBody->SetWacc_par(
-//
-//        // TODO : les fonctions precedentes ont leur contre partie GetXXX()
-//
-//
-//
-//        // Fonctions pour limiter les vitesses
-//        m_chronoBody->SetMaxSpeed()
-//        m_chronoBody->SetMaxWvel()
-//        m_chronoBody->SetLimitSpeed()
-//
-//
-//        /// Get the rigid body coordinate system that represents
-//        /// the GOG (Center of Gravity). The mass and inertia tensor
-//        /// are defined respect to this coordinate system, that is also
-//        /// assumed the default main coordinates of the body.
-//        /// By default, doing mybody.GetPos() etc. is like mybody.GetFrame_COG_abs().GetPos() etc.
-//        m_chronoBody->GetFrame_COG_to_abs()
-//
-//        /// Get the COG frame with respect to the auxiliary reference frame.
-//        m_chronoBody->GetFrame_COG_to_REF()
-//
-//        /// Get the auxiliary reference frame with respect to the absolute frame.
-//        /// Note that, in general, this is different from GetFrame_COG_to_abs().
-//        m_chronoBody->GetFrame_REF_to_abs()
-//
-//        /// Get the auxiliary reference frame with respect to the COG frame.
-//        m_chronoBody->GetFrame_REF_to_COG()
-
-
-
-    void FrBody_::SetCOGLocalPosition(double x, double y, double z, bool transportInertia, FRAME_CONVENTION fc) {
-
-        auto cogFrame = chrono::ChFrame<double>();
-        cogFrame.SetPos(internal::MakeNWUChVector(x, y, z, fc));  // TODO : regarder partout ou on utlise le SwapVectorFrameConvention... et voir si on ne peut pas remplacer par MakeNWUChvector...
-        m_chronoBody->SetFrame_COG_to_REF(cogFrame);
-
-        if (transportInertia) {
-            auto inertiaMat = m_chronoBody->GetInertia(); // It is expressed at COG in NWU local frame
-
-            // TODO : finir le transport !!
-
-
-
-        }
-
-
-        // TODO : affiner les SetInertia...
-
-        m_chronoBody->Update();  // To make auxref_to_abs up to date FIXME : ca ne devrait pas changer la position de local !!
-    }
-
-    void FrBody_::SetCOGLocalPosition(const Position& position, bool transportInertia, FRAME_CONVENTION fc) {
-        SetCOGLocalPosition(position[0], position[1], position[2], transportInertia, fc);
-    }
-
     void FrBody_::SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc) {  // OK
 
         m_chronoBody->SetPos(internal::MakeNWUChVector(x, y, z, fc));
@@ -359,15 +314,6 @@ namespace frydom {
         auto cogPos = m_chronoBody->GetPos(); // In NWU
 
         auto frPos = internal::ChVectorToVector3d<Position>(cogPos);  // In NWU
-
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(frPos);
-        return frPos;
-    }
-
-    Position FrBody_::GetCOGLocalPosition(FRAME_CONVENTION fc) const {  // OK
-        auto cogPos = m_chronoBody->GetFrame_COG_to_REF().GetPos(); // In NWU
-
-        auto frPos = internal::ChVectorToVector3d<Position>(cogPos);
 
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(frPos);
         return frPos;
@@ -426,32 +372,32 @@ namespace frydom {
         return GetAbsFrame().GetOtherFrameRelativeTransform_WRT_ThisFrame(otherFrame, fc);
     }
 
-    FrRotation_ FrBody_::GetAbsRotation(FRAME_CONVENTION fc) const {
-        return FrRotation_(GetAbsQuaternion(fc));
+    FrRotation_ FrBody_::GetAbsRotation() const {
+        return FrRotation_(GetAbsQuaternion());
     }
 
-    FrQuaternion_ FrBody_::GetAbsQuaternion(FRAME_CONVENTION fc) const {
+    FrQuaternion_ FrBody_::GetAbsQuaternion() const {
         return internal::Ch2FrQuaternion(m_chronoBody->GetFrame_REF_to_abs().GetRot());
     }
 
     void FrBody_::GetEulerAngles_RADIANS(double &phi, double &theta, double &psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const {
-        GetAbsRotation(fc).GetEulerAngles_RADIANS(phi, theta, psi, seq, fc);
+        GetAbsRotation().GetEulerAngles_RADIANS(phi, theta, psi, seq, fc);
     }
 
     void FrBody_::GetEulerAngles_DEGREES(double &phi, double &theta, double &psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const {
-        GetAbsRotation(fc).GetEulerAngles_DEGREES(phi, theta, psi, seq, fc);
+        GetAbsRotation().GetEulerAngles_DEGREES(phi, theta, psi, seq, fc);
     }
 
     void FrBody_::GetCardanAngles_RADIANS(double &phi, double &theta, double &psi, FRAME_CONVENTION fc) const {
-        GetAbsRotation(fc).GetCardanAngles_RADIANS(phi, theta, psi, fc);
+        GetAbsRotation().GetCardanAngles_RADIANS(phi, theta, psi, fc);
     }
 
     void FrBody_::GetCardanAngles_DEGREES(double &phi, double &theta, double &psi, FRAME_CONVENTION fc) const {
-        GetAbsRotation(fc).GetCardanAngles_DEGREES(phi, theta, psi, fc);
+        GetAbsRotation().GetCardanAngles_DEGREES(phi, theta, psi, fc);
     }
 
     void FrBody_::GetRotationAxisAngle(Direction &axis, double angle, FRAME_CONVENTION fc) const {
-        GetAbsRotation(fc).GetAxisAngle(axis, angle, fc);
+        GetAbsRotation().GetAxisAngle(axis, angle, fc);
     }
 
     double FrBody_::GetRoll_DEGREES(FRAME_CONVENTION fc) const {
@@ -532,12 +478,6 @@ namespace frydom {
         SetCardanAngles_DEGREES(0., pitch, 0., fc);
     }
 
-
-
-
-
-
-    
     double FrBody_::SetYaw_DEGREES(double yaw, FRAME_CONVENTION fc) {
         SetCardanAngles_DEGREES(0., 0., yaw, fc);
     }
@@ -560,80 +500,85 @@ namespace frydom {
         if (IsNED(fc)) internal::SwapCoordinateConvention(vx, vy, vz);  // Convert into NWU
         auto localReferenceVelocity = chrono::ChVector<double>(vx, vy, vz);
 
-
-
         // Computing the resulting COG absolute velocity
 
         // Getting the absolute rotational velocity vector expressed in
         auto omega = m_chronoBody->GetWvel_par();
 
-
         auto GL = m_chronoBody->GetFrame_REF_to_abs().GetPos() - m_chronoBody->GetFrame_COG_to_abs().GetPos();
 
-        auto cogVelocity = localReferenceVelocity + GL.Cross(omega);
-
-
-        m_chronoBody->SetPos_dt(cogVelocity);
-
-//        m_chronoBody->Get_gyro()
-
-
-
-
-
-
-//        m_chronoBody->GetFrame_REF_to_abs().SetPos_dt(ChVector)
-
+        m_chronoBody->SetPos_dt(localReferenceVelocity + GL.Cross(omega));
 
     }
 
     void FrBody_::SetAbsVelocity(const Velocity &velocity, FRAME_CONVENTION fc) {
-        // TODO
+        SetAbsVelocity(velocity.GetVx(), velocity.GetVy(), velocity.GetVz(), fc);
     }
 
     Velocity FrBody_::GetAbsVelocity(FRAME_CONVENTION fc) const {
-        // TODO
+        Velocity velocity;
+        GetAbsVelocity(velocity, fc);
+        return velocity;
     }
 
-    void FrBody_::GetAbsVelocity(Velocity &velocity, FRAME_CONVENTION fc) {
-        // TODO
+    void FrBody_::GetAbsVelocity(Velocity &velocity, FRAME_CONVENTION fc) const {
+        velocity = internal::ChVectorToVector3d<Velocity>(m_chronoBody->GetFrame_REF_to_abs().GetPos_dt());
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(velocity);
     }
 
     void FrBody_::GetAbsVelocity(double &vx, double &vy, double &vz, FRAME_CONVENTION fc) const {
-        // TODO
+        auto velocity = GetAbsVelocity(fc);
+        vx = velocity.GetVx();
+        vy = velocity.GetVy();
+        vz = velocity.GetVz();
     }
 
     void FrBody_::SetLocalVelocity(double u, double v, double w, FRAME_CONVENTION fc) {
-        // TODO
+        if (IsNED(fc)) internal::SwapCoordinateConvention(u, v, w);
+        auto absVel = internal::ChVectorToVector3d<Velocity>(m_chronoBody->TransformDirectionLocalToParent(chrono::ChVector<double>(u, v, w)));
+        SetAbsVelocity(absVel, NWU);
     }
 
     void FrBody_::SetLocalVelocity(const Velocity &velocity, FRAME_CONVENTION fc) {
-        // TODO
+        SetLocalVelocity(velocity.GetVx(), velocity.GetVy(), velocity.GetVz(), fc);
     }
 
     Velocity FrBody_::GetLocalVelocity(FRAME_CONVENTION fc) const {
-        // TODO
+        Velocity relVel;
+        GetLocalVelocity(relVel, fc);
+        return relVel;
     }
 
-    void FrBody_::GetLocalVelocity(Velocity &velocity, FRAME_CONVENTION fc) {
-        // TODO
+    void FrBody_::GetLocalVelocity(Velocity &velocity, FRAME_CONVENTION fc) const {
+        auto absVel = internal::Vector3dToChVector(GetAbsVelocity(NWU));
+        velocity = internal::ChVectorToVector3d<Velocity>(m_chronoBody->TransformDirectionParentToLocal(absVel));
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(velocity);
     }
 
     void FrBody_::GetLocalVelocity(double &u, double &v, double &w, FRAME_CONVENTION fc) const {
-        // TODO
+        auto relVel = GetLocalVelocity(fc);
+        u = relVel.GetVx();
+        v = relVel.GetVy();
+        w = relVel.GetVz();
     }
 
     Velocity FrBody_::GetAbsVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const {
-        // TODO
+        if (IsNED(fc)) internal::SwapCoordinateConvention(x, y, z);  // Convert into NWU
+        auto omega = m_chronoBody->GetWvel_par();
+        auto PG = m_chronoBody->GetPos() - m_chronoBody->TransformDirectionLocalToParent(chrono::ChVector<double>(x, y, z));
+
+        auto absvelTmp = m_chronoBody->GetPos_dt();
+        absvelTmp += PG.Cross(omega);
+
+        auto absVel = internal::ChVectorToVector3d<Velocity>(absvelTmp);
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(absVel);
+        return absVel;
     }
 
     Velocity FrBody_::GetLocalVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const {
-        // TODO
+        Velocity absVel = GetAbsVelocityOfLocalPoint(x, y, z, fc);
+        return GetAbsQuaternion().Inverse().Rotate<Velocity>(absVel, fc);  // TODO : verifier
     }
-
-
-
-
 
     void FrBody_::SetCOGAbsVelocity(double vx, double vy, double vz, FRAME_CONVENTION fc) {
         if (IsNED(fc)) internal::SwapCoordinateConvention(vx, vy, vz); // Convert to NWU
@@ -664,45 +609,31 @@ namespace frydom {
     }
 
     void FrBody_::SetCOGLocalVelocity(double u, double v, double w, FRAME_CONVENTION fc) {
-        auto cogAbsVel = GetCOGAbsVelocity(fc);
+        if (IsNED(fc)) internal::SwapCoordinateConvention(u, v, w);
 
-        // Projecting this velocity into relative coordinates
-        auto absQuat = GetAbsQuaternion(fc);
-
-        auto cogRelVel = absQuat.Rotate(cogAbsVel, fc);
-
-
-
-
-        // FIXME : finir avec quelque chose de performant !!!!
-
-
-
-//        m_chronoBody->GetWvel_par()
-
-
-
-
-
-
-
-
+        m_chronoBody->SetPos_dt(m_chronoBody->TransformDirectionLocalToParent(chrono::ChVector<double>(u, v, w)));
     }
 
     void FrBody_::SetCOGLocalVelocity(const Velocity &velocity, FRAME_CONVENTION fc) {
-        // TODO
+        SetCOGLocalVelocity(velocity.GetVx(), velocity.GetVy(), velocity.GetVz(), fc);
     }
 
     Velocity FrBody_::GetCOGLocalVelocity(FRAME_CONVENTION fc) const {
-        // TODO
+        Velocity relVel;
+        GetCOGLocalVelocity(relVel, fc);
+        return relVel;
     }
 
-    void FrBody_::GetCOGLocalVelocity(Velocity &velocity, FRAME_CONVENTION fc) {
-        // TODO
+    void FrBody_::GetCOGLocalVelocity(Velocity &velocity, FRAME_CONVENTION fc) const {
+        velocity = internal::ChVectorToVector3d<Velocity>(m_chronoBody->TransformDirectionParentToLocal(m_chronoBody->GetPos_dt()));
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(velocity);
     }
 
     void FrBody_::GetCOGLocalVelocity(double &u, double &v, double &w, FRAME_CONVENTION fc) const {
-        // TODO
+        auto relVel = GetCOGLocalVelocity(fc);
+        u = relVel.GetVx();
+        v = relVel.GetVy();
+        w = relVel.GetVz();
     }
 
     void FrBody_::SetAbsRotationalVelocity(double wx, double wy, double wz, FRAME_CONVENTION fc) {  // OK si le COG est sur le frame
@@ -711,23 +642,40 @@ namespace frydom {
     }
 
     void FrBody_::SetAbsRotationalVelocity(const RotationalVelocity &omega, FRAME_CONVENTION fc) {
-        // TODO
+        SetAbsRotationalVelocity(omega.GetWx(), omega.GetWy(), omega.GetWz(), fc);
     }
 
     RotationalVelocity FrBody_::GetAbsRotationalVelocity(FRAME_CONVENTION fc) const {
-        // TODO
+        RotationalVelocity omega;
+        GetAbsRotationalVelocity(omega, fc);
+        return omega;
     }
 
-    void FrBody_::GetAbsRotationalVelocity(RotationalVelocity &omega, FRAME_CONVENTION fc) {
-        // TODO
+    void FrBody_::GetAbsRotationalVelocity(RotationalVelocity &omega, FRAME_CONVENTION fc) const {
+        omega = internal::ChVectorToVector3d<RotationalVelocity>(m_chronoBody->GetWvel_par());
+        if (IsNED(fc)) internal::SwapFrameConvention<RotationalVelocity>(omega);
     }
 
     void FrBody_::GetAbsRotationalVelocity(double &wx, double &wy, double &wz, FRAME_CONVENTION fc) const {
-        // TODO
+        auto omega = GetAbsRotationalVelocity(fc);
+        wx = omega.GetWx();
+        wy = omega.GetWy();
+        wz = omega.GetWz();
     }
 
+
+    // TODO : Utiliser les methodes PointSpeedLocalToParent etc... !!!!
+
     void FrBody_::SetAbsAcceleration(double ax, double ay, double az, FRAME_CONVENTION fc) {
-        // TODO
+        if (IsNED(fc)) internal::SwapCoordinateConvention(ax, ay, az);
+
+        auto GO = -internal::Vector3dToChVector(GetCOGLocalPosition(NWU));
+
+        auto cogAbsAcc = chrono::ChVector<double>(ax, ay, az) // local frame absolute acceleration
+                - ((m_chronoBody->coord_dtdt.rot % chrono::ChQuaternion<double>(0, GO) % m_chronoBody->coord.rot.GetConjugate()).GetVector() * 2)
+                - ((m_chronoBody->coord_dt.rot % chrono::ChQuaternion<double>(0, GO) % m_chronoBody->coord_dt.rot.GetConjugate()).GetVector() * 2);
+
+        m_chronoBody->SetPos_dtdt(cogAbsAcc);
     }
 
     void FrBody_::SetAbsAcceleration(const Acceleration &acceleration, FRAME_CONVENTION fc) {

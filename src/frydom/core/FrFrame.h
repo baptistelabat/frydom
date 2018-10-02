@@ -17,7 +17,7 @@ namespace frydom {
     class FrBody_;
 //    class FrTransform_;
     class FrRotation_;
-
+    class FrOffshoreSystem_;
 
 //    class FrFrameBase_ : public chrono::ChFrameMoving<double> {
 //
@@ -55,7 +55,7 @@ namespace frydom {
 
     public:
 
-        explicit FrFrame_();
+        FrFrame_();
 
         FrFrame_(const Position &pos, const FrRotation_ &rotation, FRAME_CONVENTION fc);
 
@@ -98,16 +98,6 @@ namespace frydom {
         void operator*=(const FrFrame_& otherFrame);
 
 
-        // Geographic position
-
-        void GetGeographicPosition(double& latitude, double& longitude, double& height) const;
-
-        double GetLatitude() const;
-
-        double GetLongitude() const;
-
-        double GetGeographicHeight() const;
-
         // Rotation
 
         void SetRotation(const FrRotation_& rotation);
@@ -124,17 +114,17 @@ namespace frydom {
 
         FrQuaternion_ GetQuaternion() const;
 
-        void RotX_RADIANS(double angle, FRAME_CONVENTION fc);
+        void RotX_RADIANS(double angle, FRAME_CONVENTION fc, bool localAxis);
 
-        void RotX_DEGREES(double angle, FRAME_CONVENTION fc);
+        void RotX_DEGREES(double angle, FRAME_CONVENTION fc, bool localAxis);
 
-        void RotY_RADIANS(double angle, FRAME_CONVENTION fc);
+        void RotY_RADIANS(double angle, FRAME_CONVENTION fc, bool localAxis);
 
-        void RotY_DEGREES(double angle, FRAME_CONVENTION fc);
+        void RotY_DEGREES(double angle, FRAME_CONVENTION fc, bool localAxis);
 
-        void RotZ_RADIANS(double angle, FRAME_CONVENTION fc);
+        void RotZ_RADIANS(double angle, FRAME_CONVENTION fc, bool localAxis);
 
-        void RotZ_DEGREES(double angle, FRAME_CONVENTION fc);
+        void RotZ_DEGREES(double angle, FRAME_CONVENTION fc, bool localAxis);
 
         void SetRotX_RADIANS(double angle, FRAME_CONVENTION fc);
 
@@ -151,6 +141,18 @@ namespace frydom {
         FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisFrame(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
 
         FrFrame_ GetThisFrameRelativeTransform_WRT_OtherFrame(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
+
+
+        // Geographic position
+
+        void GetGeographicPosition(const FrOffshoreSystem_* system, double& latitude, double& longitude, double& height) const;
+
+        double GetLatitude(const FrOffshoreSystem_* system) const;
+
+        double GetLongitude(const FrOffshoreSystem_* system) const;
+
+        double GetGeographicHeight(const FrOffshoreSystem_* system) const;
+
 
         FrFrame_& Inverse();
 

@@ -187,7 +187,12 @@ namespace frydom {
 
         FrRotation_&operator*=(const FrRotation_& other);
 
-        Position Rotate(const Position& vector, FRAME_CONVENTION fc);
+        template <class Vector>
+        Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) {
+            auto out = m_frQuaternion.Rotate<Vector>(vector, fc);
+            if (IsNED(fc)) internal::SwapFrameConvention<Vector>(out);
+            return out;
+        }
 
         Direction GetXAxis(FRAME_CONVENTION fc) const;
 

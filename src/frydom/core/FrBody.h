@@ -301,25 +301,37 @@ namespace frydom {
 
         // TODO: ici, toutes les methodes qu'on veut publiques pour un corps !!!
 
-        // Principal inertial parameters
 
-        void SetMass(double mass);
+
+
+        // =============================================================================================================
+        // Principal inertial parameters
+        // =============================================================================================================
 
         double GetMass() const;
 
-        void SetMasInTons(double mass);
+        Position GetCOGLocalPosition(FRAME_CONVENTION fc) const;
 
-        void SetDiagonalInertiasWRT_COG(double Ixx, double Iyy, double Izz); // TODO: donner la possibilite de specifier une orientation differente du repere de reference
+        void SetCOGLocalPosition(double x, double y, double z, bool transportInertia, FRAME_CONVENTION fc);
 
-        void SetOffDiagonalInertiasWRT_COG(double Ixy, double Ixz, double Iyz);
+        void SetCOGLocalPosition(const Position& position, bool transportInertia, FRAME_CONVENTION fc);
 
-        void SetInertia(const FrInertiaTensor_& inertia, const Position& position);
+        FrInertiaTensor_ GetInertiaParams() const;
 
-        void SetInertia(const FrInertiaTensor_& inertia, const FrFrame_& frame);
+        void SetInertiaParams(const FrInertiaTensor_& inertia);
 
-//        void SetDiagonalInertiasWRTToAnotherFrame(FrFrame_ frame, double Ixx, double Iyy, double Izz);
-//
-//        void SetOffDiagonalInertiasWRTToAnotherFrame(FrFrame_ frame, double Ixy, double Ixz, double Iyz);
+        void SetInertiaParams(double mass,
+                              double Ixx, double Iyy, double Izz,
+                              double Ixy, double Ixz, double Iyz,
+                              const FrFrame_& coeffsFrame,
+                              const Position& cogPosition,
+                              FRAME_CONVENTION fc);
+
+        void SetInertiaParams(double mass,
+                              double Ixx, double Iyy, double Izz,
+                              double Ixy, double Ixz, double Iyz,
+                              const FrFrame_& cogFrame,
+                              FRAME_CONVENTION fc);
 
 
         // Contact
@@ -362,10 +374,6 @@ namespace frydom {
 
         // About COG position
 
-        void SetCOGLocalPosition(double x, double y, double z, bool transportInertia, FRAME_CONVENTION fc);
-
-        void SetCOGLocalPosition(const Position& position, bool transportInertia, FRAME_CONVENTION fc);
-
         void SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
 
         void SetCOGAbsPosition(Position position, FRAME_CONVENTION fc);
@@ -373,9 +381,6 @@ namespace frydom {
         void GetCOGAbsPosition(double& x, double& y, double& z, FRAME_CONVENTION fc) const;
 
         Position GetCOGAbsPosition(FRAME_CONVENTION fc) const;
-
-        Position GetCOGLocalPosition(FRAME_CONVENTION fc) const;
-
 
 
         // About body position (the one of its reference frame)
@@ -396,11 +401,11 @@ namespace frydom {
 
         // About rotation
 
-        FrRotation_ GetAbsRotation(FRAME_CONVENTION fc) const;
+        FrRotation_ GetAbsRotation() const;
 
         void SetAbsRotation(const FrRotation_& rotation, FRAME_CONVENTION fc);
 
-        FrQuaternion_ GetAbsQuaternion(FRAME_CONVENTION fc) const;
+        FrQuaternion_ GetAbsQuaternion() const;
 
         void SetAbsRotation(const FrQuaternion_& quaternion, FRAME_CONVENTION fc);
 
@@ -459,7 +464,7 @@ namespace frydom {
 
         Velocity GetAbsVelocity(FRAME_CONVENTION fc) const;
 
-        void GetAbsVelocity(Velocity& velocity, FRAME_CONVENTION fc);
+        void GetAbsVelocity(Velocity& velocity, FRAME_CONVENTION fc) const;
 
         void GetAbsVelocity(double& vx, double& vy, double& vz, FRAME_CONVENTION fc) const;
 
@@ -471,7 +476,7 @@ namespace frydom {
 
         Velocity GetLocalVelocity(FRAME_CONVENTION fc) const;
 
-        void GetLocalVelocity(Velocity& velocity, FRAME_CONVENTION fc);
+        void GetLocalVelocity(Velocity& velocity, FRAME_CONVENTION fc) const;
 
         void GetLocalVelocity(double& u, double& v, double& w, FRAME_CONVENTION fc) const;
 
@@ -499,7 +504,7 @@ namespace frydom {
 
         Velocity GetCOGLocalVelocity(FRAME_CONVENTION fc) const;
 
-        void GetCOGLocalVelocity(Velocity& velocity, FRAME_CONVENTION fc);
+        void GetCOGLocalVelocity(Velocity& velocity, FRAME_CONVENTION fc) const;
 
         void GetCOGLocalVelocity(double& u, double& v, double& w, FRAME_CONVENTION fc) const;
 
@@ -512,7 +517,7 @@ namespace frydom {
 
         RotationalVelocity GetAbsRotationalVelocity(FRAME_CONVENTION fc) const;
 
-        void GetAbsRotationalVelocity(RotationalVelocity &omega, FRAME_CONVENTION fc);
+        void GetAbsRotationalVelocity(RotationalVelocity &omega, FRAME_CONVENTION fc) const;
 
         void GetAbsRotationalVelocity(double &wx, double &wy, double &wz, FRAME_CONVENTION fc) const;
 
@@ -621,10 +626,6 @@ namespace frydom {
         std::shared_ptr<chrono::ChBody> GetChronoBody() {
             return m_chronoBody;
         }
-
-//        friend std::shared_ptr<FrBody_> make_BoxBody(double, double, double, double);
-//        friend std::shared_ptr<FrBody_> make_CylinderBody(double, double, double);
-//        friend std::shared_ptr<FrBody_> make_SphereBody(double, double);
 
         friend void makeItBox(std::shared_ptr<FrBody_>, double, double, double, double);
         friend void makeItCylinder(std::shared_ptr<FrBody_>, double, double, double);

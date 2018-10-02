@@ -15,37 +15,6 @@ namespace frydom {
 
 
     FrInertiaTensor_::FrInertiaTensor_() : m_mass(0.), m_cogPosition(0., 0., 0.) {}
-//
-//    FrInertiaTensor_::FrInertiaTensor_(double mass, double Ixx, double Iyy, double Izz, double Ixy, double Ixz,
-//                                       double Iyz, const FrFrame_& coeffsFrame, const Position &cogPosition,
-//                                       FRAME_CONVENTION fc) {
-//
-//        // On souhaite calculer et stocker l'inertier rIIg au centre de gravite exprime dans le repere local
-//        // coeffsFrame donne le repere dans lequel sont exprimes les coeffs (position et orientation par rapport au
-//        // repere local.
-//        // On fournit la mass (invariante par rapport au repere) et la position du centre de gravite dans le repere local
-//
-//        // On a la formule :
-//
-//        // rIIg = rRp . pIIp . rRp^T  - rII(m, rOG - rOP)
-//
-//        // Avec :
-//        // rIIg l'inertie en G exprimee dans le repere local
-//        // rRp la matrice de rotation qui projette le repere p d'expression des coeffs dans le repere local
-//        // rOG la position de G dans le repere local
-//        // rOP la position de P, point d'expression des coeffs dans le repere local
-//        // rII(m, rOG-rOP) l'inertie d'une masse m situee a une distance rPG = rOG - rOP exprimee dans le repere local
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    }
-
 
     FrInertiaTensor_::FrInertiaTensor_(double mass,
                                        double Ixx, double Iyy, double Izz,
@@ -77,34 +46,56 @@ namespace frydom {
 
     }
 
+    FrInertiaTensor_::FrInertiaTensor_(double mass, double Ixx, double Iyy, double Izz, double Ixy, double Ixz,
+                                       double Iyz, const FrFrame_ &cogFrame, FRAME_CONVENTION fc) {
 
+        auto cogPosition = cogFrame.GetPosition(fc);
 
+        FrFrame_ coeffsFrame;
+        coeffsFrame.SetPosition(cogPosition, fc);
+        coeffsFrame.SetRotation(cogFrame.GetRotation());
 
+        *this = FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, coeffsFrame, cogPosition, fc);
 
+    }
 
+    double FrInertiaTensor_::GetMass() const {
+        return m_mass;
+    }
 
+    const Position FrInertiaTensor_::GetCOGPosition(FRAME_CONVENTION fc) const {
+        auto cogPos = m_cogPosition;
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
+        return cogPos;
+    }
 
+    void
+    FrInertiaTensor_::GetInertiaCoeffs(double &Ixx, double &Iyy, double &Izz, double &Ixy, double &Ixz, double &Iyz,
+                                       FRAME_CONVENTION fc) const {
+        internal::ChInertia2Coeffs(m_inertiaAtCOG, Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+        if (IsNED(fc)) internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+    }
 
+    std::ostream& FrInertiaTensor_::cout(std::ostream &os) const {  // OK
 
+        double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+        internal::ChInertia2Coeffs(m_inertiaAtCOG, Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
 
+        os << std::endl;
+        os << "Inertia : \n";
+        os << "Mass (kg) : " << GetMass() << std::endl;
+        os << "COG (m)   : " << m_cogPosition.GetX() << "\t" << m_cogPosition.GetY() << "\t" << m_cogPosition.GetZ() << std::endl;
+        os << "Ixy : " << Ixy << ";\tIxz : " << Ixz << ";\tIyz : " << Iyz << std::endl;
+        os << "Ixx : " << Ixx << ";\tIyy : " << Iyy << ";\tIzz : " << Izz << std::endl;
+        os << std::endl;
 
-//    FrInertiaTensor_ MakePointInertiaTensor(double mass, const Position& position) {
-//
-//        double a, b, c, a2, b2, c2;
-//        a = position[0];
-//        b = position[1];
-//        c = position[2];
-//        a2 = a*a;
-//        b2 = b*b;
-//        c2 = c*c;
-//
-////        FrInertiaTensor_(mass,
-////                b2+c2, a2+c2, a2+b2,
-////                -a*b, -a*c, -b*c,
-////                )
-//
-//
-//    }
+        return os;
+
+    }
+
+    std::ostream& operator<<(std::ostream& os, const FrInertiaTensor_& inertia) {
+        return inertia.cout(os);
+    }
 
 
 }  // end namespace frydom

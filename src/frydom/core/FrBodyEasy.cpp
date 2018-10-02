@@ -24,8 +24,7 @@ namespace frydom {
         double Izz = (1./12.) * mass * (xSize2 + ySize2);
 
         // Building the chrono body
-        body->SetMass(mass);
-        body->SetDiagonalInertiasWRT_COG(Ixx, Iyy, Izz);
+        body->SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, 0., 0., 0., FrFrame_(), NWU));
 
 
         // Collision
@@ -50,8 +49,8 @@ namespace frydom {
         double Iyy = 0.5 * mass * r2;
         double Izz = Ixx;
 
-        body->SetMass(mass);
-        body->SetDiagonalInertiasWRT_COG(Ixx, Iyy, Izz);
+        // Building the chrono body
+        body->SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, 0., 0., 0., FrFrame_(), NWU));
 
         // Collision
         auto collisionModel = body->m_chronoBody->GetCollisionModel();
@@ -71,8 +70,8 @@ namespace frydom {
         // Properties of the sphere
         double inertia = (2.0 / 5.0) * mass * radius * radius;
 
-        body->SetMass(mass);
-        body->SetDiagonalInertiasWRT_COG(inertia, inertia, inertia);
+        // Building the Chrono body
+        body->SetInertiaParams(FrInertiaTensor_(mass, inertia, inertia, inertia, 0., 0., 0., FrFrame_(), NWU));
 
         // Collision
         auto collisionModel = body->m_chronoBody->GetCollisionModel();
@@ -86,9 +85,6 @@ namespace frydom {
         body->AddSphereShape(radius);
 
     }
-
-
-
 
     std::shared_ptr<FrBody_> make_BoxBody(double xSize, double ySize, double zSize, double mass) {
 
@@ -114,7 +110,4 @@ namespace frydom {
 
     }
 
-
-
-
-}
+}  // end namespace frydom
