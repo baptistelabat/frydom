@@ -135,14 +135,17 @@ namespace frydom {
         // TODO : Ici on a bon candidat pour trigger l'emission des donnees des objets...
         std::cout << "End of time step leading to time " << ChTime << std::endl;
 
-		for (auto &ibody : bodylist) {
-			auto body = dynamic_cast<FrBody *>(ibody.get());
-			if (body) {
+        m_NitterOutput += 1;
 
-				body->StepFinalize();
-			}
-		}
-
+        if (m_NsampleOutput == m_NitterOutput) {
+            m_NitterOutput = 0;
+            for (auto &ibody : bodylist) {
+                auto body = dynamic_cast<FrBody *>(ibody.get());
+                if (body) {
+                    body->StepFinalize();
+                }
+            }
+        }
     }
 
     void FrOffshoreSystem::Initialize() {
