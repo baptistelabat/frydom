@@ -122,7 +122,7 @@ namespace frydom {
 
     FrFrame_ FrFrame_::operator*(const FrFrame_ &otherFrame) const {
         auto newFrame = FrFrame_();
-        newFrame.m_chronoFrame = otherFrame.m_chronoFrame >> m_chronoFrame;  // TODO : verifier !!
+        newFrame.m_chronoFrame = m_chronoFrame * otherFrame.m_chronoFrame;
         return newFrame;
     }
 

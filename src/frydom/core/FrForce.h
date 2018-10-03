@@ -140,13 +140,17 @@ namespace frydom {
 
     protected:
 
-        FrBody_* m_owner;
+        FrBody_* m_body;
 
         std::shared_ptr<_FrForceBase> m_chronoForce;
 
+        std::shared_ptr<chrono::ChForce> GetChronoForce();
 
+        friend class FrBody_;
 
     public:
+
+        void SetBody(FrBody_* body);
 
 //        explicit FrForce_(FrBody_* body);
 //

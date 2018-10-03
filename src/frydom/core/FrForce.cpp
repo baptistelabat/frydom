@@ -111,10 +111,18 @@ namespace frydom{
     /// REFACTORING -------------6>>>>>>>>>>>>>>>>>
 
 
+    std::shared_ptr<chrono::ChForce> FrForce_::GetChronoForce() {
+        return m_chronoForce;
+    }
+
+    void FrForce_::SetBody(frydom::FrBody_ *body) {
+        m_body = body;
+    }
+
 //    _FrForceBase::_FrForceBase() = default;
 //
 //
-//    FrForce_::FrForce_(FrBody_ *body) : m_owner(body) {
+//    FrForce_::FrForce_(FrBody_ *body) : m_body(body) {
 //
 //    }
 //

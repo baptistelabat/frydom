@@ -367,6 +367,11 @@ namespace frydom {
         void RemoveGravity(bool val);
 
 
+        // Force functions
+        void AddExternalForce(std::shared_ptr<FrForce_> force);
+
+        void RemoveExternalForce(std::shared_ptr<FrForce_> force);
+
 
 
         /// Methodes validees =======================>>>>>>>>>>>>>>>>>>
@@ -403,11 +408,11 @@ namespace frydom {
 
         FrRotation_ GetAbsRotation() const;
 
-        void SetAbsRotation(const FrRotation_& rotation, FRAME_CONVENTION fc);
+        void SetAbsRotation(const FrRotation_& rotation);
 
         FrQuaternion_ GetAbsQuaternion() const;
 
-        void SetAbsRotation(const FrQuaternion_& quaternion, FRAME_CONVENTION fc);
+        void SetAbsRotation(const FrQuaternion_& quaternion);
 
         void GetEulerAngles_RADIANS(double& phi, double& theta, double& psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const;
 
@@ -521,10 +526,15 @@ namespace frydom {
 
         void GetAbsRotationalVelocity(double &wx, double &wy, double &wz, FRAME_CONVENTION fc) const;
 
+        void SetLocalRotationalVelocity(double p, double q, double r, FRAME_CONVENTION fc);
 
+        void SetLocalRotationalVelocity(const RotationalVelocity &omega, FRAME_CONVENTION fc);
 
+        RotationalVelocity GetLocalRotationalVelocity(FRAME_CONVENTION fc) const;
 
+        void GetLocalRotationalVelocity(RotationalVelocity &omega, FRAME_CONVENTION fc) const;
 
+        void GetLocalRotationalVelocity(double &p, double &q, double &r, FRAME_CONVENTION fc) const;
 
 
         // Accelerations
@@ -535,7 +545,7 @@ namespace frydom {
 
         Acceleration GetAbsAcceleration(FRAME_CONVENTION fc) const;
 
-        void GetAbsAcceleration(Acceleration &acceleration, FRAME_CONVENTION fc);
+        void GetAbsAcceleration(Acceleration &acceleration, FRAME_CONVENTION fc) const;
 
         void GetAbsAcceleration(double &ax, double &ay, double &az, FRAME_CONVENTION fc) const;
 
@@ -547,7 +557,7 @@ namespace frydom {
 
         Acceleration GetLocalAcceleration(FRAME_CONVENTION fc) const;
 
-        void GetLocalAcceleration(Acceleration &acceleration, FRAME_CONVENTION fc);
+        void GetLocalAcceleration(Acceleration &acceleration, FRAME_CONVENTION fc) const;
 
         void GetLocalAcceleration(double &up, double &vp, double &wp, FRAME_CONVENTION fc) const;
 
@@ -564,7 +574,7 @@ namespace frydom {
 
         Acceleration GetCOGAbsAcceleration(FRAME_CONVENTION fc) const;
 
-        void GetCOGAbsAcceleration(Acceleration& acceleration, FRAME_CONVENTION fc);
+        void GetCOGAbsAcceleration(Acceleration& acceleration, FRAME_CONVENTION fc) const;
 
         void GetCOGAbsAcceleration(double& ax, double& ay, double& az, FRAME_CONVENTION fc) const;
 
@@ -575,7 +585,7 @@ namespace frydom {
 
         Acceleration GetCOGLocalAcceleration(FRAME_CONVENTION fc) const;
 
-        void GetCOGLocalAcceleration(Acceleration& acceleration, FRAME_CONVENTION fc);
+        void GetCOGLocalAcceleration(Acceleration& acceleration, FRAME_CONVENTION fc) const;
 
         void GetCOGLocalAcceleration(double& up, double& vp, double& wp, FRAME_CONVENTION fc) const;
 
@@ -588,14 +598,9 @@ namespace frydom {
 
         RotationalAcceleration GetAbsRotationalAcceleration(FRAME_CONVENTION fc) const;
 
-        void GetAbsRotationalAcceleration(RotationalAcceleration& omegap, FRAME_CONVENTION fc);
+        void GetAbsRotationalAcceleration(RotationalAcceleration& omegap, FRAME_CONVENTION fc) const;
 
         void GetAbsRotationalAcceleration(double& wxp, double& wyp, double& wzp, FRAME_CONVENTION fc) const;
-
-
-
-
-
 
 
 
