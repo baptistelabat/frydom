@@ -35,12 +35,12 @@ namespace frydom {
         if (n > 0) {
             new_coeff.cn = 1;
             new_coeff.n1 = int(n / 2);
-            new_coeff.n2 = n - new_coeff.n2;
+            new_coeff.n2 = n - new_coeff.n1;
         }
         if (p > 0) {
             new_coeff.cp = 1;
             new_coeff.p1 = int(p / 2);
-            new_coeff.p2 = p - new_coeff.p2;
+            new_coeff.p2 = p - new_coeff.p1;
         }
         new_coeff.val = val;
         return new_coeff;
