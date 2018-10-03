@@ -19,15 +19,25 @@ namespace frydom {
 
         struct TypeCoeff {
             double val = 0.;
-            double m = 0;
-            double n = 0;
-            double p = 0;
+            int cm = 0;
+            int m1 = 0;
+            int m2 = 0;
+            int cn = 0;
+            int n1 = 0;
+            int n2 = 0;
+            int cp = 0;
+            int p1 = 0;
+            int p2 = 0;
         };
 
     private:
         std::vector<TypeCoeff> m_cx;                    ///< Taylor coefficients for surge motion
         std::vector<TypeCoeff> m_cy;                    ///< Taylor coefficients for sway motion
         std::vector<TypeCoeff> m_cn;                    ///< Taylor coefficients for yaw motion
+
+        TypeCoeff SetCoeff(const double val, const int m, const int n, const int p);
+        TypeCoeff SetCoeff(const std::string tag, const double val);
+        double ForceComponent(const TypeCoeff coeff, const double vx, const double vy, const double vrz) const;
 
     public:
         /// Default constructor
@@ -45,12 +55,11 @@ namespace frydom {
         /// Set taylor coefficients for yaw motion
         void SetN(const std::string tag, const double val);
 
-        void SetX(const double val, const double m, const double n, const double p);
+        void SetX(const double val, const int m, const int n, const int p);
 
-        void SetY(const double val, const double m, const double n, const double p);
+        void SetY(const double val, const int m, const int n, const int p);
 
-        void SetN(const double val, const double m, const double n, const double p);
-
+        void SetN(const double val, const int m, const int n, const int p);
 
         void UpdateState() override;
 

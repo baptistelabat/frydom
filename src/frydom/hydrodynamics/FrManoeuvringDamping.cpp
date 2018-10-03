@@ -17,6 +17,49 @@ namespace frydom {
         return sgn;
     }
 
+    FrTaylorManDamping::TypeCoeff FrTaylorManDamping::SetCoeff(const std::string tag, const double val) {
+        auto m = int(std::count(tag.begin(), tag.end(), 'u'));
+        auto n = int(std::count(tag.begin(), tag.end(), 'v'));
+        auto p = int(std::count(tag.begin(), tag.end(), 'r'));
+        return SetCoeff(val, m, n, p);
+    }
+
+
+    FrTaylorManDamping::TypeCoeff FrTaylorManDamping::SetCoeff(const double val, const int m, const int n, const int p) {
+        TypeCoeff new_coeff;
+        if (m > 0) {
+            new_coeff.cm = 1;
+            new_coeff.m1 = int(m / 2);
+            new_coeff.m2 = m - new_coeff.m1;
+        }
+        if (n > 0) {
+            new_coeff.cn = 1;
+            new_coeff.n1 = int(n / 2);
+            new_coeff.n2 = n - new_coeff.n2;
+        }
+        if (p > 0) {
+            new_coeff.cp = 1;
+            new_coeff.p1 = int(p / 2);
+            new_coeff.p2 = p - new_coeff.p2;
+        }
+        new_coeff.val = val;
+        return new_coeff;
+    }
+
+    double FrTaylorManDamping::ForceComponent(const TypeCoeff coeff, const double vx, const double vy, const double vrz) const {
+        double res;
+        res = coeff.val;
+        if (coeff.cm == 1) {
+            res *= std::pow(std::abs(vx), coeff.m1) * std::pow(vx, coeff.m2);
+        }
+        if (coeff.cn == 1) {
+            res *= std::pow(std::abs(vy), coeff.n1) * std::pow(vy, coeff.n2);
+        }
+        if (coeff.cp == 1) {
+            res *= std::pow(std::abs(vrz),coeff.p1) * std::pow(vrz, coeff.p2);
+        }
+        return res;
+        }
 
     void FrTaylorManDamping::Set(const std::string tag, const double val) {
 
@@ -32,86 +75,57 @@ namespace frydom {
     }
 
     void FrTaylorManDamping::SetX(const std::string tag, const double val) {
-        TypeCoeff new_coeff;
-        new_coeff.m = std::count(tag.begin(), tag.end(), 'u');
-        new_coeff.n = std::count(tag.begin(), tag.end(), 'v');
-        new_coeff.p = std::count(tag.begin(), tag.end(), 'r');
-        new_coeff.val = val;
-        m_cx.push_back(new_coeff);
+        m_cx.push_back(SetCoeff(tag, val));
     }
 
     void FrTaylorManDamping::SetY(const std::string tag, const double val) {
-        TypeCoeff new_coeff;
-        new_coeff.m = std::count(tag.begin(), tag.end(), 'u');
-        new_coeff.n = std::count(tag.begin(), tag.end(), 'v');
-        new_coeff.p = std::count(tag.begin(), tag.end(), 'r');
-        new_coeff.val = val;
-        m_cy.push_back(new_coeff);
+        m_cy.push_back(SetCoeff(tag, val));
     }
 
     void FrTaylorManDamping::SetN(const std::string tag, const double val) {
-        TypeCoeff new_coeff;
-        new_coeff.m = std::count(tag.begin(), tag.end(), 'u');
-        new_coeff.n = std::count(tag.begin(), tag.end(), 'v');
-        new_coeff.p = std::count(tag.begin(), tag.end(), 'r');
-        new_coeff.val = val;
-        m_cn.push_back(new_coeff);
+        m_cn.push_back(SetCoeff(tag, val));
     }
 
-    void FrTaylorManDamping::SetX(const double val, const double m, const double n, const double p) {
-        TypeCoeff new_coeff;
-        new_coeff.m = m;
-        new_coeff.n = n;
-        new_coeff.p = p;
-        new_coeff.val = val;
-        m_cx.push_back(new_coeff);
+    void FrTaylorManDamping::SetX(const double val, const int m, const int n, const int p) {
+        m_cx.push_back(SetCoeff(val, m, n, p));
     }
 
-    void FrTaylorManDamping::SetY(const double val, const double m, const double n, const double p) {
-        TypeCoeff new_coeff;
-        new_coeff.m = m;
-        new_coeff.n = n;
-        new_coeff.p = p;
-        new_coeff.val = val;
-        m_cy.push_back(new_coeff);
+    void FrTaylorManDamping::SetY(const double val, const int m, const int n, const int p) {
+        m_cy.push_back(SetCoeff(val, m, n, p));
     }
 
-    void FrTaylorManDamping::SetN(const double val, const double m, const double n, const double p) {
-        TypeCoeff new_coeff;
-        new_coeff.m = m;
-        new_coeff.n = n;
-        new_coeff.p = p;
-        new_coeff.val = val;
-        m_cn.push_back(new_coeff);
+    void FrTaylorManDamping::SetN(const double val, const int m, const int n, const int p) {
+        m_cn.push_back(SetCoeff(val, m, n, p));
     }
 
     void FrTaylorManDamping::UpdateState() {
 
         auto force_temp = chrono::ChVector<double>();
         auto moment_temp = chrono::ChVector<double>();
+
         auto body_lin_velocity = Body->GetPos_dt();
         auto body_angular_velocity = Body->GetWvel_par();
+        body_lin_velocity = Body->TransformDirectionParentToLocal(body_lin_velocity);
 
-        auto vxa = std::abs(body_lin_velocity.x());
-        auto vya = std::abs(body_lin_velocity.y());
-        auto vrza = std::abs(body_angular_velocity.z());
+        auto vx = body_lin_velocity.x();
+        auto vy = body_lin_velocity.y();
+        auto vrz = body_angular_velocity.z();
 
         for (auto& cx: m_cx) {
-            force_temp.x() -= cx.val * std::pow(vxa, cx.m) * std::pow(vya, cx.n) * std::pow(vrza, cx.p);
+            force_temp.x() -= ForceComponent(cx, vx, vy ,vrz);
         }
 
         for (auto& cy: m_cy) {
-            force_temp.y() -= cy.val * std::pow(vxa, cy.m) * std::pow(vya, cy.n) * std::pow(vrza, cy.p);
+            force_temp.y() -= ForceComponent(cy, vx, vy, vrz);
         }
 
         for (auto& cn: m_cn) {
-            moment_temp.z() -= cn.val * std::pow(vxa, cn.m) * std::pow(vya, cn.n) * std::pow(vrza, cn.p);
+            moment_temp.z() -= ForceComponent(cn, vx, vy, vrz);
         }
 
-        force = force_temp;
-        moment = moment_temp;
+        force = Body->TransformDirectionLocalToParent(force_temp);
+        moment = Body->TransformDirectionParentToLocal(moment_temp);
 
-        // Transform
     }
 
 }
