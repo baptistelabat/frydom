@@ -98,16 +98,40 @@ namespace frydom {
 
         auto quat = chrono::ChQuaternion<>();
         auto rotation = chrono::VECT_Z.Cross(direction);
+        rotation.Normalize();
+
+        /**
         if (rotation.Length() > 0.) {
             auto angle = asin(rotation.Length());
             rotation.Normalize();
             quat.Q_from_AngAxis(angle, rotation);
         }
-
         m_frame = chrono::ChFrame<>(position, quat);
+        **/
+
+        auto e2 = direction.Cross(rotation);
+
+        auto A_matrix = chrono::ChMatrix33<double>();
+        A_matrix.Set_A_axis(rotation, e2, direction);
+        m_frame = chrono::ChFrame<>(position, A_matrix);
+
         m_length = (posB-posA).Length();
         m_dir = direction;
         m_volume = MU_PI_4 * m_diameter * m_diameter * m_length;
+
+        //##CC
+        auto xaxis = m_frame.GetA().Get_A_Xaxis();
+        auto yaxis = m_frame.GetA().Get_A_Yaxis();
+        auto zaxis = m_frame.GetA().Get_A_Zaxis();
+        std::cout << "Morison Element : "<< std::endl;
+        std::cout << "A : [ " << posA.x() << " ; " << posA.y() << " ; " << posA.z() << " ]" << std::endl;
+        std::cout << "B : [ " << posB.x() << " ; " << posB.y() << " ; " << posB.z() << " ]" << std::endl;
+        std::cout << "center frame : [ " << position.x() << " ; " << position.y() << " ; " << position.z() << " ]" << std::endl;
+        std::cout << "x-axis : [ " << xaxis.x() << " ; " << xaxis.y() << " ; " << xaxis.z() << " ]" << std::endl;
+        std::cout << "y-axis : [ " << yaxis.x() << " ; " << yaxis.y() << " ; " << yaxis.z() << " ]" << std::endl;
+        std::cout << "z-axis : [ " << zaxis.x() << " ; " << zaxis.y() << " ; " << zaxis.z() << " ]" << std::endl;
+        //##CC
+
 
     }
 
