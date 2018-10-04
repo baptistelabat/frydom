@@ -176,8 +176,8 @@ namespace frydom {
 
         force = rho * (m_ca + 1.) * m_volume * (flow_acceleration - body_acceleration);
         force.z() = 0.;
-        force.x() += 0.5 * m_cd * rho * m_length * velocity.x() * std::abs(velocity.x());
-        force.y() += 0.5 * m_cd * rho * m_length * velocity.y() * std::abs(velocity.y());
+        force.x() += 0.5 * m_cd * rho * m_diameter * m_length * velocity.x() * std::abs(velocity.x());
+        force.y() += 0.5 * m_cd * rho * m_diameter * m_length * velocity.y() * std::abs(velocity.y());
 
         force = m_frame.TransformDirectionLocalToParent(force);
         m_force->SetBodyForce(force);               // Pass force to the FrForce model
