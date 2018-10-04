@@ -43,8 +43,7 @@ namespace frydom {
             m_hydrostaticForce->SetBody(this);
             AddForce(m_hydrostaticForce);
             m_dampingForce = std::make_shared<FrLinearDamping>();
-            m_dampingForce->SetSeakeepingDampings(damping,damping,damping);
-            m_dampingForce->SetManeuveuringDampings(damping,damping,damping);
+            m_dampingForce->SetDiagonalDamping(damping,damping,damping,damping,damping,damping);
             AddForce(m_dampingForce);
         };
 

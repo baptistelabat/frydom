@@ -6,6 +6,7 @@ set(SRC_FILES
         FrHydroDB.cpp
         FrHydrostaticForce.cpp
         FrITTC57.cpp
+        FrQuadDamping.cpp
         FrLinearDamping.cpp
         FrLinearExcitationForce.cpp
         FrLinearHydrostaticForce.cpp
@@ -23,6 +24,7 @@ set(SRC_FILES
         FrVariablesBEMBodyMass.cpp
         FrMorisonModel.cpp
         FrManoeuvringDamping.cpp
+        FrQuadraticDamping.cpp
 )
 
 set(FRYDOM_HYDRODYNAMICS_SOURCES "")

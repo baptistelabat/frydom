@@ -56,8 +56,8 @@ int main(int argc, char* argv[]) {
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
     barge->SetInertiaXX(chrono::ChVector<double>(2.465e7,1.149e7,1.388e07));
     barge->SetInertiaXY(chrono::ChVector<double>(0, 0, 0));
-    barge->SetMass(1137.6-180.6); // 1137.576e3 pour l'ensemble
-    //barge->SetMass(1137.6); // 1137.576e3 pour l'ensemble
+    barge->SetMass((1137.6-180.6)*1e3); // 1137.576e3 pour l'ensemble
+    //barge->SetMass(1137.6e3); // 1137.576e3 pour l'ensemble
     // TODO: faire en sorte de ne pas avoir a construire un ChVector !
     barge->SetCOG(chrono::ChVector<double>(0, 0, 0)); // TODO: Caler avec Camille
     barge->SetEquilibriumFrame(WorldFixed,chrono::ChVector<>(0,0,0));
@@ -79,8 +79,7 @@ int main(int argc, char* argv[]) {
     // Linear Damping
 
     auto HsDamping = std::make_shared<FrLinearDamping>();
-    HsDamping->SetSeakeepingDampings(1e6, 1e6, 1e6);
-    HsDamping->SetManeuveuringDampings(1e6, 1e6, 1e6);
+    HsDamping->SetDiagonalDamping(1e6, 1e6, 1e6,1e6, 1e6, 1e6);
     barge->AddForce(HsDamping);
 
     // Hydrodynamics

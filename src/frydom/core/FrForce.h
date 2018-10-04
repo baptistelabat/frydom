@@ -31,6 +31,7 @@ namespace frydom {
 //        chrono::ChVector<> force = chrono::VNULL;
         chrono::ChVector<> moment = chrono::VNULL;
         hermes::Message m_log;
+        bool is_log = true;
 
         std::string m_logPrefix = "";           //TODO : à definir dans hermes
 
@@ -64,12 +65,29 @@ namespace frydom {
         virtual chrono::ChVector<> GetTorque() const { return moment; }
 
         virtual void Initialize() override {
-            InitializeLogs();
+            if (is_log) {
+                SetLog();
+                InitializeLogs();
+            }
         }
 
         virtual void StepFinalize() override {
-            UpdateLogs();
+            if (is_log) {
+                UpdateLogs();
+            }
         }
+
+        /// Set the definition of the log message
+        virtual void SetLog();
+
+        virtual void SetLogNameAndDescription(std::string name = "Force_message",
+                                         std::string description = "Message of the force") {
+            m_log.SetNameAndDescription(name, description);
+            is_log = true;
+        }
+
+        /// Deactivate the generation of log from the body
+        virtual void DeactivateLog() { is_log = false; };
 
         /// Initialization of the log message
         virtual void InitializeLogs();

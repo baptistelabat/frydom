@@ -173,6 +173,16 @@ std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
     auto forceHeave = std::make_shared<FrSteadyHeaveForce>();
     ship->AddForce(forceHeave);
 
+    // Logging
+
+    ship->Log().SetNameAndDescription("ShipLog","Message log of the ship");
+    ship->SetLogDefault();
+
+    for (auto force: ship->GetForceList()) {
+        auto dforce = dynamic_cast<FrForce*>(force.get());
+        ship->Log().AddField<hermes::Message>("force","-","external force", dforce->GetLog());
+    }
+
     return ship;
 }
 
@@ -272,7 +282,6 @@ int main(int argc, char* argv[]) {
     ship->SetSteadyVelocity(vspeed);
     ship->SetDOF(false, true, false, true, false, true);
 
-    ship->Log().SetNameAndDescription(name+"_ShipLog","Message log of the ship");
     auto BodyEqFrame = dynamic_cast<FrBody*>(ship->GetEquilibriumFrame().get());
     BodyEqFrame->Log().SetNameAndDescription(name+"_EquilibriumFrame","Hydrodynamic equilibrium frame");
 

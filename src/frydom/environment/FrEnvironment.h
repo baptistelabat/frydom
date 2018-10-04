@@ -66,6 +66,8 @@ namespace frydom {
 
         double m_atmosphericPressure;
 
+        bool m_infinite_depth = false;
+
 
     public:
 
@@ -75,7 +77,7 @@ namespace frydom {
             m_current = std::make_shared<FrUniformCurrent>();
             m_wind = std::make_shared<FrUniformWind>();
             m_seabed = std::make_unique<FrSeabed>();
-            m_seabed->SetEnvironment(this);
+            if (not(m_infinite_depth)) m_seabed->SetEnvironment(this);
             m_LocalCartesian = std::make_unique<GeographicLib::LocalCartesian>();
             m_timeZone = std::make_unique<FrTimeZone>();
         }
@@ -85,6 +87,9 @@ namespace frydom {
         }
 
         FrOffshoreSystem* GetSystem() { return m_system; }
+
+        void SetInfiniteDepth(bool is_infinite) {m_infinite_depth = is_infinite;}
+        bool GetInfiniteDepth() { return m_infinite_depth;}
 
         void SetTime(double time) { m_time = time; }
 
@@ -228,7 +233,7 @@ namespace frydom {
             m_freeSurface->Update(time);
             m_current->Update(time);
             m_wind->Update(time);
-            m_seabed->Update(time);
+            if (not(m_infinite_depth)) m_seabed->Update(time);
             m_time = time;
             m_timeZone->Update(time);
         }
@@ -238,7 +243,7 @@ namespace frydom {
             m_freeSurface->Initialize();
             m_current->Initialize();
             m_wind->Initialize();
-            m_seabed->Initialize();
+            if (not(m_infinite_depth)) m_seabed->Initialize();
             m_timeZone->Initialize();
         }
 
@@ -246,7 +251,7 @@ namespace frydom {
             m_freeSurface->StepFinalize();
             m_current->StepFinalize();
             m_wind->StepFinalize();
-            m_seabed->StepFinalize();
+            if (not(m_infinite_depth)) m_seabed->StepFinalize();
         }
 
     };

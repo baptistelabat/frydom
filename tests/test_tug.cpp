@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 
     // Adding a linear damping
     auto lin_damping_force_tug = std::make_shared<FrLinearDamping>();
-    lin_damping_force_tug->SetManeuveuringDampings(1e7, 1e7, 1e8);
+    lin_damping_force_tug->SetDiagonalDamping(1e7, 1e7, 0, 0, 0, 1e8);
     tug->AddForce(lin_damping_force_tug);
 
     auto current_force_ship= std::make_shared<FrCurrentForce>(filename);
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 
     // Adding a linear damping
     auto lin_damping_force_ship = std::make_shared<FrLinearDamping>();
-    lin_damping_force_ship->SetManeuveuringDampings(1e7, 1e7, 1e8);
+    lin_damping_force_ship->SetDiagonalDamping(1e7, 1e7, 0, 0, 0, 1e8);
     ship->AddForce(lin_damping_force_ship);
 
     // Adding a propulsion force to the ship
@@ -108,9 +108,9 @@ int main(int argc, char* argv[]) {
     double A = 0.05;
     double E = EA/A;
 //    auto line = FrCatenaryLine(fairlead_tug, anchor, elastic, EA, Lu, q, u);
-    auto line = FrCatenaryLine(fairlead_tug, fairlead_ship, elastic, E, A, Lu, q, u);
-
-
+    auto line = std::make_shared<FrCatenaryLine>(fairlead_tug, fairlead_ship, elastic, E, A, Lu, q, u);
+    line->Initialize();
+    system.AddLink(line);
 
     system.Initialize();
     auto app = FrIrrApp(system, 300);

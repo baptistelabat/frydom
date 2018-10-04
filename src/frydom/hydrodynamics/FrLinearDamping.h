@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FRLINEARDAMPING_H
 #define FRYDOM_FRLINEARDAMPING_H
 
+#include "frydom/utils/FrEigen.h"
 #include "frydom/core/FrForce.h"
 
 namespace frydom {
@@ -12,53 +13,75 @@ namespace frydom {
     class FrLinearDamping : public FrForce {
 
     private:
-        chrono::ChVector<double> m_maneuveuringDampings = chrono::VNULL;
-        chrono::ChVector<double> m_seakeepingDampings = chrono::VNULL;
-
+        Eigen::MatrixXd m_dampings = Eigen::MatrixXd::Zero(6,6);
+        bool m_relative2Current = false;
     public:
 
         FrLinearDamping() {};
-
-//        FrLinearDamping(const double Dx, const double Dy, const double Dwz) : m_Dx(Dx), m_Dy(Dy), m_Dwz(Dwz){};
-
-        void SetManeuveuringDampings(const chrono::ChVector<double>& dampings) {
-            m_maneuveuringDampings = dampings;
+        /// Setter for the whole damping matrix
+        void SetDampingMatrix(Eigen::MatrixXd dampingMatrix) {
+            m_dampings = dampingMatrix;
         }
-
-        void SetManeuveuringDampings(double Bx, double By, double Byaw) {
-            SetManeuveuringDampings(chrono::ChVector<double>(Bx, By, Byaw));
+        /// Setter for the diagonal components of the damping matrix
+        void SetDiagonalDamping(double Du, double Dv, double Dw, double Dp, double Dq, double Dr){
+            SetDiagonalTranslationDamping(Du, Dv, Dw);
+            SetDiagonalRotationDamping(Dp, Dq, Dr);
         }
-
-        void SetSeakeepingDampings(const chrono::ChVector<double>& dampings) {
-            m_seakeepingDampings = dampings;
+        /// Setter for the diagonal components in translation of the damping matrix
+        void SetDiagonalTranslationDamping(double Du, double Dv, double Dw) {
+            m_dampings(0,0) = Du;
+            m_dampings(1,1) = Dv;
+            m_dampings(2,2) = Dw;
         }
-
-        void SetSeakeepingDampings(double Bz, double Broll, double Bpitch) {
-            SetSeakeepingDampings(chrono::ChVector<double>(Bz, Broll, Bpitch));
+        /// Setter for the diagonal components in rotation of the damping matrix
+        void SetDiagonalRotationDamping(double Dp, double Dq, double Dr) {
+            m_dampings(3,3) = Dp;
+            m_dampings(4,4) = Dq;
+            m_dampings(5,5) = Dr;
         }
-
-        void SetTranslationalDampings(const chrono::ChVector<double>& dampings) {
-            m_maneuveuringDampings.x() = dampings.x();
-            m_maneuveuringDampings.y() = dampings.y();
-            m_seakeepingDampings.x() = dampings.z();
+        /// Setter for a non-diagonal components of the damping matrix at indices (row,column)
+        void SetNonDiagonalDamping(int row, int column, double Dnd) {
+            assert(row!=column);
+            assert(row<6);
+            assert(column<6);
+            m_dampings(row,column) = Dnd;
         }
-
-        void SetTranslationalDampings(double Bx, double By, double Bz) {
-            SetTranslationalDampings(chrono::ChVector<double>(Bx, By, Bz));
+        /// Setter for a row of non-diagonal components of the damping matrix
+        void SetNonDiagonalRowDamping(int row,const double Dnd[5]){
+            assert(row<6);
+            int j=0;
+            for (int i=1;i<6;i++) {
+                if (i==row) continue;
+                m_dampings(row,j) = Dnd[i];
+                j++;
+            }
         }
-
-        void SetRotationalDampings(const chrono::ChVector<double>& dampings) {
-            m_maneuveuringDampings.z() = dampings.z();
-            m_seakeepingDampings.y() = dampings.x();
-            m_seakeepingDampings.z() = dampings.y();
+        /// Setter for a column of non-diagonal components of the damping matrix
+        void SetNonDiagonalColumnDamping(int column,const double Dnd[5]){
+            assert(column<6);
+            int j=0;
+            for (int i=1;i<6;i++) {
+                if (i==column) continue;
+                m_dampings(j,column) = Dnd[i];
+                j++;
+            }
         }
-
-        void SetRotationalDampings(double Broll, double Bpitch, double Byaw) {
-            SetRotationalDampings(chrono::ChVector<double>(Broll, Bpitch, Byaw));
+        /// Setter for the boolean : m_relativeVelocity
+        void SetRelative2Current(bool relativeVelocity);
+        /// Getter for the boolean : m_relativeVelocity
+        bool GetRelative2Current() {return m_relative2Current;}
+        /// Setter for the log prefix
+        void SetLogPrefix(std::string prefix_name) override {
+            if (prefix_name=="") {
+                m_logPrefix = "FlinDamp_" + FrForce::m_logPrefix;
+            } else {
+                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+            }
         }
-
+        // Initialize
+        void Initialize() override;
+        /// Update the state of the linear damping force (compute the force)
         void UpdateState() override;
-
     };
 
 

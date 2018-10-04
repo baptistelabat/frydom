@@ -12,6 +12,7 @@
 #include "FrHydrostaticForce.h"
 #include "FrITTC57.h"
 #include "FrLinearDamping.h"
+#include "FrQuadraticDamping.h"
 #include "FrLinearExcitationForce.h"
 #include "FrLinearHydrostaticForce.h"
 #include "FrLinearHydrostaticStiffnessMatrix.h"

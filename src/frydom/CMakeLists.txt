@@ -33,6 +33,8 @@ endforeach()
 # =============================================================================
 # FRyDoM DEPENDENCIES
 # =============================================================================
+
+#SET(MUMPS_ROOT "/usr/lib/" CACHE PATH "Mumps root directory" FORCE)
 include(Add_chrono)
 include(Add_MathUtils)
 include(Add_HDF5)
@@ -62,6 +64,7 @@ target_link_libraries(FRyDoM_Engine
         ChronoEngine
         ChronoEngine_fea
         ChronoEngine_irrlicht
+#        ChronoEngine_mumps
 #        ChronoEngine_potprocess
         MathUtils::MathUtils
         yaml-cpp
