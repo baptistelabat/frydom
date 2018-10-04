@@ -19,6 +19,8 @@
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 #include "frydom/core/FrEulerAngles.h"
 #include "FrInertia.h"
+#include "FrForce.h"
+
 
 namespace frydom {
 
@@ -272,6 +274,7 @@ namespace frydom {
     class FrForce_;
     class FrFrame_;
     class FrRotation_;
+    class FrOffshoreSystem_;
 
 
     class FrBody_ : public FrObject {
@@ -280,6 +283,7 @@ namespace frydom {
 
         std::shared_ptr<_FrBodyBase> m_chronoBody;  // Chrono objects are always expressed in NWU frame convention
 
+        FrOffshoreSystem_* m_system;
 
         using ForceContainer = std::vector<std::shared_ptr<FrForce_>>;
         ForceContainer m_externalForces;
@@ -293,6 +297,8 @@ namespace frydom {
 
         /// Default constructor
         FrBody_();
+
+        FrOffshoreSystem_* GetSystem();
 
         void SetName(const char name[]);
 
@@ -668,9 +674,6 @@ namespace frydom {
 
 
     };
-
-
-
 
 
 }  // end namespace frydom

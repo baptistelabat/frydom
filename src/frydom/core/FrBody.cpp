@@ -86,6 +86,10 @@ namespace frydom {
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
     }
 
+    FrOffshoreSystem_* FrBody_::GetSystem(){
+        return m_system;
+    }
+
     void FrBody_::SetName(const char *name) {
         m_chronoBody->SetName(name);
     }

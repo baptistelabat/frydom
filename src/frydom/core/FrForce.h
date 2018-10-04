@@ -133,7 +133,9 @@ namespace frydom {
 
 
     // Forward declaration;
+    class FrOffshoreSystem_;
     class FrBody_;
+    class FrNode_;
 
 
     class FrForce_ : public FrObject {
@@ -144,13 +146,77 @@ namespace frydom {
 
         std::shared_ptr<_FrForceBase> m_chronoForce;
 
-        std::shared_ptr<chrono::ChForce> GetChronoForce();
+        std::shared_ptr<FrNode_> m_node;
 
-        friend class FrBody_;
+        // Limits on forces to stabilize simulation
+        bool m_limitForce = false;
+        double m_forceLimit;
+        double m_torqueLimit;
+
 
     public:
 
         void SetBody(FrBody_* body);
+
+        virtual void Update(double time) = 0;
+
+        FrOffshoreSystem_* GetSystem();
+
+        // Force Limits
+
+        void SetMaxForceLimit(double fmax);
+
+        void SetMaxTorqueLimit(double tmax);
+
+        void SetLimit(bool val);
+
+
+        // Force Getters
+
+        void GetAbsForce(Force& force, FRAME_CONVENTION fc) const;
+
+        Force GetAbsForce(FRAME_CONVENTION fc) const;
+
+        void GetAbsForce(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
+
+        void GetLocalForce(Force& force, FRAME_CONVENTION fc) const;
+
+        Force GetLocalForce(FRAME_CONVENTION fc) const;
+
+        void GetLocalForce(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
+
+        void GetAbsMoment(Force& force, FRAME_CONVENTION fc) const;
+
+        Force GetAbsMoment(FRAME_CONVENTION fc) const;
+
+        void GetAbsMoment(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
+
+        void GetLocalMoment(Force& force, FRAME_CONVENTION fc) const;
+
+        Force GetLocalMoment(FRAME_CONVENTION fc) const;
+
+        void GetLocalMoment(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
+
+        double GetForceNorm() const;
+
+        double GetTorqueNorm() const;
+
+
+
+    protected:
+
+        std::shared_ptr<chrono::ChForce> GetChronoForce();
+
+        friend class FrBody_;
+
+        void SetLocalMomentAtNode(const chrono::ChVector<double> &momentAtNode);
+
+        void SetAbsMomentAtNode(const chrono::ChVector<double> &momentAtNode);
+
+        void SetLocalForce(const chrono::ChVector<double>& force);
+
+        void SetAbsForce(const chrono::ChVector<double>& force);
+
 
 //        explicit FrForce_(FrBody_* body);
 //

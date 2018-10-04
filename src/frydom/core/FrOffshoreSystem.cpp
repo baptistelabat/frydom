@@ -313,12 +313,14 @@ namespace frydom {
 
     void FrOffshoreSystem_::AddBody(std::shared_ptr<FrBody_> body) {
 
-        if (!CheckBodyContactMethod(body)) {
+        if (!CheckBodyContactMethod(body)) { // TODO : voir si on set pas d'autorite le mode de contact a celui du systeme plutot que de faire un if...
             body->SetContactMethod(m_systemType);
         }
 
-        m_chronoSystem->AddBody(body->GetChronoBody());
+        m_chronoSystem->AddBody(body->GetChronoBody());  // Authorized because this method is a friend of FrBody_
         m_bodyList.push_back(body);
+
+        body->m_system = this;
 
     }
 

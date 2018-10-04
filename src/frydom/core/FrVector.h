@@ -357,6 +357,95 @@ namespace frydom {
     };
 
 
+    class Force : public mathutils::Vector3d<double> {
+
+    public:
+
+        Force() : mathutils::Vector3d<double>() {}
+
+        Force(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
+
+        // This constructor allows to construct Vector2d from Eigen expressions
+        template <class OtherDerived>
+        explicit Force(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        Force& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
+            return *this;
+        }
+
+        double GetFx() const {
+            return this->at(0);
+        }
+
+        double& GetFx() {
+            return this->at(0);
+        }
+
+        double GetFy() const {
+            return this->at(1);
+        }
+
+        double& GetFy() {
+            return this->at(1);
+        }
+
+        double GetFz() const {
+            return this->at(2);
+        }
+
+        double& GetFz() {
+            return this->at(2);
+        }
+    };
+
+    class Moment : public mathutils::Vector3d<double> {
+
+    public:
+
+        Moment() : mathutils::Vector3d<double>() {}
+
+        Moment(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
+
+        // This constructor allows to construct Vector2d from Eigen expressions
+        template <class OtherDerived>
+        explicit Moment(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        Moment& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
+            return *this;
+        }
+
+        double GetMx() const {
+            return this->at(0);
+        }
+
+        double& GetMx() {
+            return this->at(0);
+        }
+
+        double GetMy() const {
+            return this->at(1);
+        }
+
+        double& GetMy() {
+            return this->at(1);
+        }
+
+        double GetMz() const {
+            return this->at(2);
+        }
+
+        double& GetMz() {
+            return this->at(2);
+        }
+    };
+
+
 
 
     namespace internal {

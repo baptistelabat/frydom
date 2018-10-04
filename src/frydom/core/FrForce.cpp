@@ -2,10 +2,10 @@
 // Created by frongere on 08/06/17.
 //
 
-#include "chrono/physics/ChBody.h"
 
 #include "FrForce.h"
 
+#include "FrBody.h"
 
 namespace frydom{
 
@@ -119,42 +119,108 @@ namespace frydom{
         m_body = body;
     }
 
-//    _FrForceBase::_FrForceBase() = default;
-//
-//
-//    FrForce_::FrForce_(FrBody_ *body) : m_body(body) {
-//
-//    }
-//
-//    ForceVector FrForce_::GetForceVectorAbsFrame() {
-//    }
-//
-//    ForceVector FrForce_::GetForceVectorLocalFrame() {
-//    }
-//
-////    ForceVector FrForce_::GetForceVectorOtherFrame(std::shared_ptr<FrFrame_> frame) {
-////    }
-//
-//    MomentVector FrForce_::GetMomentVectorAbsFrame() {
-//    }
-//
-//    MomentVector FrForce_::GetMomentVectorLocalFrame() {
-//    }
-//
-////    MomentVector FrForce_::GetMomentVectorOtherFrame(std::shared_ptr<FrFrame_> frame) {
-////    }
-//
-////    void FrForce_::Update(double time) {
-////
-////    }
-//
-////    void FrForce_::Initialize() {
-////
-////    }
-////
-////    void FrForce_::StepFinalize() {
-////
-////    }
+    FrOffshoreSystem_* FrForce_::GetSystem() {
+        return m_body->GetSystem();
+    }
+
+    void FrForce_::SetLocalMomentAtNode(const chrono::ChVector<double> &momentAtNode) {
+        // Moment is the moment at marker point expressed in NWU
+        // Should be called at the end of the update procedure with argument moment expressed at node in NWU
+        // Warning, force must be already updated into the object...
+        // FIXME : avoir une approche plus integree, supprimant la precedence...
+
+        if (!m_body) {
+            // TODO : Throw exception
+
+        }
+
+
+
+        // M_COG = M_marker + COG_marker <cross> force
+
+
+
+    }
+
+    void FrForce_::SetAbsMomentAtNode(const chrono::ChVector<double> &momentAtNode) {
+
+    }
+
+    void FrForce_::SetLocalForce(const chrono::ChVector<double> &force) {
+
+    }
+
+    void FrForce_::SetAbsForce(const chrono::ChVector<double> &force) {
+
+    }
+
+    void FrForce_::SetMaxForceLimit(double fmax) {
+
+    }
+
+    void FrForce_::SetMaxTorqueLimit(double tmax) {
+
+    }
+
+    void FrForce_::SetLimit(bool val) {
+
+    }
+
+    void FrForce_::GetAbsForce(Force &force, FRAME_CONVENTION fc) const {
+
+    }
+
+    Force FrForce_::GetAbsForce(FRAME_CONVENTION fc) const {
+        return Force();
+    }
+
+    void FrForce_::GetAbsForce(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
+
+    }
+
+    void FrForce_::GetLocalForce(Force &force, FRAME_CONVENTION fc) const {
+
+    }
+
+    Force FrForce_::GetLocalForce(FRAME_CONVENTION fc) const {
+        return Force();
+    }
+
+    void FrForce_::GetLocalForce(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
+
+    }
+
+    void FrForce_::GetAbsMoment(Force &force, FRAME_CONVENTION fc) const {
+
+    }
+
+    Force FrForce_::GetAbsMoment(FRAME_CONVENTION fc) const {
+        return Force();
+    }
+
+    void FrForce_::GetAbsMoment(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
+
+    }
+
+    void FrForce_::GetLocalMoment(Force &force, FRAME_CONVENTION fc) const {
+
+    }
+
+    Force FrForce_::GetLocalMoment(FRAME_CONVENTION fc) const {
+        return Force();
+    }
+
+    void FrForce_::GetLocalMoment(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
+
+    }
+
+    double FrForce_::GetForceNorm() const {
+        return 0;
+    }
+
+    double FrForce_::GetTorqueNorm() const {
+        return 0;
+    }
 
 
 }  // end namespace frydom
