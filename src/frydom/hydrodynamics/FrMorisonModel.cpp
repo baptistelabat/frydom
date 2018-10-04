@@ -159,6 +159,7 @@ namespace frydom {
         m_volume = MU_PI_4 * m_diameter * m_diameter * m_length;
 
         //##CC
+        /**
         auto xaxis = m_frame.GetA().Get_A_Xaxis();
         auto yaxis = m_frame.GetA().Get_A_Yaxis();
         auto zaxis = m_frame.GetA().Get_A_Zaxis();
@@ -169,6 +170,7 @@ namespace frydom {
         std::cout << "x-axis : [ " << xaxis.x() << " ; " << xaxis.y() << " ; " << xaxis.z() << " ]" << std::endl;
         std::cout << "y-axis : [ " << yaxis.x() << " ; " << yaxis.y() << " ; " << yaxis.z() << " ]" << std::endl;
         std::cout << "z-axis : [ " << zaxis.x() << " ; " << zaxis.y() << " ; " << zaxis.z() << " ]" << std::endl;
+        **/
         //##CC
 
 
