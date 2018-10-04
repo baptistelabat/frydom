@@ -45,14 +45,14 @@ int main(int argc, char* argv[]) {
     box->SetCardanAngles_DEGREES(0, 90, 90, NWU); // Tester le NED en -90, doit donner pareil...
 
 
-    box->SetCOGLocalPosition(5, 5, 0, true, NWU); // FIXME : attention on fait quoi avec l'inertie lorsqu'on specifie une position differente du COG
+//    box->SetCOGLocalPosition(5, 5, 0, true, NWU); // FIXME : attention on fait quoi avec l'inertie lorsqu'on specifie une position differente du COG
 
 
     std::cout << box->GetInertiaParams() << std::endl;
 
 
     box->SetAbsRotationalVelocity(0., 0., 100*DEG2RAD, NWU);
-    box->SetAbsVelocity(1, 1, 0, NWU);
+//    box->SetAbsVelocity(1, 1, 0, NWU);
 
 
 
@@ -66,6 +66,7 @@ int main(int argc, char* argv[]) {
     box->SetMaxRotationSpeed(180*DEG2RAD);  // Par defaut, la limite de vitesse en rotation est tres basse ...
     box->SetMaxSpeed(10);  // FIXME : la valeur par defaut (0.5) doit etre changee !!
 
+    box->SetColor(PaleGoldenRod);
 
 
 //    box->SetCOGLocalPosition(1, 1, 0, NWU);

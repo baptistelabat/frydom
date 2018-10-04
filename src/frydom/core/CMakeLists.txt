@@ -10,6 +10,7 @@ set(SRC_FILES
         FrBody.cpp
         FrLink.cpp
         FrBodyEasy.cpp
+        FrColors.cpp
         FrGeographic.cpp
         FrEulerAngles.cpp
         FrForce.cpp

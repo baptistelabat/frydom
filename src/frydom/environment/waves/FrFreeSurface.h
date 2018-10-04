@@ -227,6 +227,7 @@ namespace frydom{
 
         std::shared_ptr<FrWaveField_> m_waveField;
 
+        std::shared_ptr<chrono::ChBody> m_body;
         std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
 
         std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbeGrid; // TODO: passer a la classe de base...
@@ -257,6 +258,9 @@ namespace frydom{
         FrTriangleMeshConnected BuildPolarMeshGrid(double xc0, double yc0, // center
                                                    double diameter,
                                                    unsigned int nbR, unsigned int nbTheta);
+
+        void CreateFreeSurfaceBody();
+
     public:
 
         explicit FrFreeSurface_(FrEnvironment_* environment);

@@ -20,6 +20,7 @@
 #include "frydom/core/FrEulerAngles.h"
 #include "FrInertia.h"
 #include "FrForce.h"
+#include "FrColors.h"
 
 
 namespace frydom {
@@ -628,7 +629,12 @@ namespace frydom {
 
         void AddMeshAsset(std::string obj_filename);
 
-
+        void SetColor(NAMED_COLOR colorName) {
+            auto color = FrColor(colorName);
+            auto colorAsset = std::make_shared<chrono::ChColorAsset>(
+                    chrono::ChColor(color.R, color.G, color.B));
+            m_chronoBody->AddAsset(colorAsset);
+        }
 
 
 

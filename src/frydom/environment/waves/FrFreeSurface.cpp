@@ -432,15 +432,13 @@ namespace frydom {
 
 
         // Creating a free surface asset
+        CreateFreeSurfaceBody();
 
 
 
         // TODO : faire ca dans Initialize !
         // Providing color TODO: permettre un reglage externe... // TODO : associer l'asset a ChSystem
-        std::shared_ptr<chrono::ChColorAsset> color;
-        color = std::make_shared<chrono::ChColorAsset>();
-        color->SetColor(chrono::ChColor(255, 145, 94, 0));  // TODO: permettre de changer la couleur
-//        m_Body->AddAsset(color); // TODO : associer l'asset a ChSystem, pas a un corps
+         // TODO : associer l'asset a ChSystem, pas a un corps
 
     }
 
@@ -478,6 +476,20 @@ namespace frydom {
 
     }
 
+    void FrFreeSurface_::CreateFreeSurfaceBody() {
+        m_body = std::make_shared<chrono::ChBody>();
+        m_body->SetIdentifier(-1);
+        m_body->SetName("FreeSurface");
+        m_body->SetPos(chrono::ChVector<>(0, 0, 0));
+        m_body->SetBodyFixed(true);  // Important, however we could add a ChFunction-like to emulate tidal height
+        m_body->SetCollide(false);
+
+        std::shared_ptr<chrono::ChColorAsset> color;
+        color = std::make_shared<chrono::ChColorAsset>();
+        color->SetColor(chrono::ChColor(255, 145, 94, 0));  // TODO: permettre de changer la couleur
+        m_body->AddAsset(color);
+    }
+
     void FrFreeSurface_::Initialize() {
 
         // Building the asset
@@ -495,7 +507,7 @@ namespace frydom {
         m_meshAsset->SetMesh(mesh);
         m_meshAsset->SetName("FreeSurface");
 //            mesh_shape->SetFading(0.9);  // Ne fonctionne pas avec Irrlicht...
-//        m_Body->AddAsset(m_meshAsset);
+        m_body->AddAsset(m_meshAsset);
 
 
 
