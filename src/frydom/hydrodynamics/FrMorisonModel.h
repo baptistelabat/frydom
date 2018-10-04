@@ -64,9 +64,11 @@ namespace frydom {
         std::shared_ptr<FrNode> m_nodeA;        ///< First node of the element
         std::shared_ptr<FrNode> m_nodeB;        ///< Second node of the element
         chrono::ChFrame<> m_frame;              ///< Frame linked to the morison element (in global coordinate system)
-        double m_cd;                            ///< Drag coefficient
-        double m_ca;                            ///< mass coefficient
-        double m_cf;                            ///< friction coefficient
+        double m_cd_x;                          ///< Drag coefficient (x_axis local frame)
+        double m_cd_y;                          ///< Drag coefficient (y-axis local frame)
+        double m_ca_x;                          ///< mass coefficient (x_axis local frame)
+        double m_ca_y;                          ///< mass coefficient (y-axis local frame)
+        double m_cf;                            ///< friction coefficient (z-axis local frame)
         double m_diameter;                      ///< diameter  of the morison element (m)
         double m_length;                        ///< Length of the morison element (m)
         double m_volume;                        ///< volume of the morison element
@@ -79,13 +81,18 @@ namespace frydom {
         /// Constructor from node position and morison parameters
         FrSingleElement(std::shared_ptr<FrNode>& nodeA,
                         std::shared_ptr<FrNode>& nodeB,
-                        double diameter,
-                        double ca,
-                        double cd,
-                        double cf);
+                        double diameter, double ca, double cd, double cf);
+
+        FrSingleElement(std::shared_ptr<FrNode>& nodeA,
+                        std::shared_ptr<FrNode>& nodeB,
+                        double diameter, double ca_x, double ca_y,
+                        double cd_x, double cd_y, double cf);
 
         FrSingleElement(chrono::ChVector<>& posA, chrono::ChVector<>& posB,
                         double diameter, double ca, double cd, double cf);
+
+        FrSingleElement(chrono::ChVector<>& posA, chrono::ChVector<>& posB,
+                        double diameter, double ca_x, double ca_y, double cd_x, double cd_y, double cf);
 
         /// Definition of nodes from reference
         void SetNodes(FrNode& nodeA, FrNode& nodeB);
@@ -93,23 +100,27 @@ namespace frydom {
         /// Pass shared pointer for nodes
         void SetNodes(std::shared_ptr<FrNode>& nodeA, std::shared_ptr<FrNode>& nodeB);
 
-        /// Definition of the added mass coefficient (-)
-        void SetAddedMass(const double ca) { m_ca = ca;}
+        /// Definition of the added mass coefficient (isotrope)
+        void SetAddedMass(const double ca) { SetAddedMass(ca, ca); }
 
-        /// Return the added mass coefficient (-)
-        double GetAddedMass() const { return m_ca; }
+        /// Definition of the added mass coefficient (anisotrope)
+        void SetAddedMass(const double ca_x, double ca_y) {
+            m_ca_x = ca_x;
+            m_ca_y = ca_y;
+        }
 
-        /// Definition of the adimentional drag coefficient (-)
-        void SetDrag(const double cd) { m_cd = cd;}
+        /// Definition of the adimentional drag coefficient (isotrope)
+        void SetDrag(const double cd) { SetDrag(cd, cd); }
 
-        /// Return the adimentional drag coefficient (-)
-        double GetDrag() const { return m_cd; }
+        /// Definition of the adimentional drag coefficient (anisotrope)
+        void SetDrag(const double cd_x, const double cd_y) {
+            m_cd_x = cd_x;
+            m_cd_y = cd_y;
+        }
+
 
         /// Definition of the friction coefficient (-) (for tangential force component)
         void SetFriction(const double cf) { m_cf = cf; }
-
-        /// Return the friction coefficient (-)
-        double GetFriction() const { return m_cf; }
 
         /// Definition of the equivalent cylinder diameter (m)
         void SetDiameter(const double diameter) { m_diameter = diameter; }
@@ -187,7 +198,7 @@ namespace frydom {
             m_morison.push_back(std::unique_ptr<FrMorisonModel>(element));
         }
 
-        /// Add a new element from position
+        /// Add a new element from position (isotrope)
         void AddElement(chrono::ChVector<> posA,
                         chrono::ChVector<> posB,
                         double diameter,
@@ -195,16 +206,32 @@ namespace frydom {
                         double cd,
                         double cf);
 
+        /// Add a new element from position (anisotrope)
+        void AddElement(chrono::ChVector<> posA,
+                        chrono::ChVector<> posB,
+                        double diameter,
+                        double ca_x, double ca_y,
+                        double cd_x, double cd_y,
+                        double cf);
+
         /// Add a new element from position using default morison property
         void AddElement(chrono::ChVector<> posA,
                         chrono::ChVector<> posB);
 
-        /// Add a new element with node reference
+        /// Add a new element with node reference (isotrope)
         void AddElement(std::shared_ptr<FrNode>& nodeA,
                         std::shared_ptr<FrNode>& nodeB,
                         double diameter,
                         double ca,
                         double cd,
+                        double cf);
+
+        /// Add a new element with node reference (anisotrope)
+        void AddElement(std::shared_ptr<FrNode>& nodeA,
+                        std::shared_ptr<FrNode>& nodeB,
+                        double diameter,
+                        double ca_x, double ca_y,
+                        double cd_x, double cd_y,
                         double cf);
 
         /// Add a new element with node reference using default morison property
@@ -214,11 +241,17 @@ namespace frydom {
         void AddElement(chrono::ChVector<> posA, chrono::ChVector<> posB, const double dL,
                         double diameter, double ca, double cd, double cf);
 
+        void AddElement(chrono::ChVector<> posA, chrono::ChVector<> posB, const double dL,
+                        double diameter, double ca_x, double ca_y, double cd_x, double cd_y, double cf);
+
         /// Add new element with discretization (element size)
         void AddElement(chrono::ChVector<> posA, chrono::ChVector<> posB, const double dL);
 
         void AddElement(chrono::ChVector<> posA, chrono::ChVector<> posB, const int n,
                         double diameter, double ca, double cd, double cf);
+
+        void AddElement(chrono::ChVector<> posA, chrono::ChVector<> posB, const int n,
+                        double diameter, double ca_x, double ca_y, double cd_x, double cd_y, double cf);
 
         /// Add new element with discretization (number of element)
         void AddElement(chrono::ChVector<> posA, chrono::ChVector<> posB, const int n);

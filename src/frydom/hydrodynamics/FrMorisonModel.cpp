@@ -28,7 +28,20 @@ namespace frydom {
                                      double ca,
                                      double cd,
                                      double cf)
-            : m_ca(ca), m_cd(cd), m_cf(cf), m_diameter(diameter)
+            : m_ca_x(ca), m_ca_y(ca), m_cd_x(cd), m_cd_y(cd), m_cf(cf), m_diameter(diameter)
+    {
+        SetNodes(nodeA, nodeB);
+        m_force = std::make_shared<FrMorisonForce>(this);
+        m_volume = MU_PI_4 * diameter * diameter * m_length;
+    }
+
+    FrSingleElement::FrSingleElement(std::shared_ptr<FrNode>& nodeA,
+                                     std::shared_ptr<FrNode>& nodeB,
+                                     double diameter,
+                                     double ca_x, double ca_y,
+                                     double cd_x, double cd_y,
+                                     double cf)
+            : m_ca_x(ca_x), m_ca_y(ca_y), m_cd_x(cd_x), m_cd_y(cd_y), m_cf(cf), m_diameter(diameter)
     {
         SetNodes(nodeA, nodeB);
         m_force = std::make_shared<FrMorisonForce>(this);
@@ -41,7 +54,33 @@ namespace frydom {
                                      double ca,
                                      double cd,
                                      double cf)
-            : m_ca(ca), m_cd(cd), m_cf(cf), m_diameter(diameter)
+            : m_ca_x(ca), m_ca_y(ca), m_cd_x(cd), m_cd_y(cd), m_cf(cf), m_diameter(diameter)
+    {
+        m_nodeA = std::make_shared<FrNode>();
+        m_nodeB = std::make_shared<FrNode>();
+
+        chrono::ChCoordsys<double> coordA, coordB;
+        coordA.pos = posA;
+        coordB.pos = posB;
+        m_nodeA->Impose_Rel_Coord(coordA);
+        m_nodeB->Impose_Rel_Coord(coordB);
+
+        m_nodeA->UpdateState();
+        m_nodeB->UpdateState();
+
+        UpdateFrame();
+
+        m_force= std::make_shared<FrMorisonForce>(this);
+        m_volume = MU_PI_4 * diameter * diameter * m_length;
+    }
+
+    FrSingleElement::FrSingleElement(chrono::ChVector<>& posA,
+                                     chrono::ChVector<>& posB,
+                                     double diameter,
+                                     double ca_x, double ca_y,
+                                     double cd_x, double cd_y,
+                                     double cf)
+            : m_ca_x(ca_x), m_ca_y(ca_y), m_cd_x(cd_x), m_cd_y(cd_y), m_cf(cf), m_diameter(diameter)
     {
         m_nodeA = std::make_shared<FrNode>();
         m_nodeB = std::make_shared<FrNode>();
@@ -198,10 +237,11 @@ namespace frydom {
         flow_acceleration = m_frame.TransformDirectionParentToLocal(flow_acceleration);
         body_acceleration = m_frame.TransformDirectionParentToLocal(body_acceleration);
 
-        force = rho * (m_ca + 1.) * m_volume * (flow_acceleration - body_acceleration);
+        force.x() = rho * (m_ca_x + 1.) * m_volume * (flow_acceleration.x() - body_acceleration.x());
+        force.y() = rho * (m_ca_y + 1.) * m_volume * (flow_acceleration.y() - body_acceleration.y());
         force.z() = 0.;
-        force.x() += 0.5 * m_cd * rho * m_diameter * m_length * velocity.x() * std::abs(velocity.x());
-        force.y() += 0.5 * m_cd * rho * m_diameter * m_length * velocity.y() * std::abs(velocity.y());
+        force.x() += 0.5 * m_cd_x * rho * m_diameter * m_length * velocity.x() * std::abs(velocity.x());
+        force.y() += 0.5 * m_cd_y * rho * m_diameter * m_length * velocity.y() * std::abs(velocity.y());
 
         force = m_frame.TransformDirectionLocalToParent(force);
         m_force->SetBodyForce(force);               // Pass force to the FrForce model
@@ -236,6 +276,13 @@ namespace frydom {
     }
 
     void FrCompositeElement::AddElement(chrono::ChVector<> posA,
+                                        chrono::ChVector<> posB,
+                                        double diameter,
+                                        double ca_x, double ca_y, double cd_x, double cd_y, double cf) {
+        m_morison.push_back(std::make_unique<FrSingleElement>(posA, posB, diameter, ca_x, ca_y, cd_x, cd_y, cf));
+    }
+
+    void FrCompositeElement::AddElement(chrono::ChVector<> posA,
                                         chrono::ChVector<> posB) {
         m_morison.push_back(std::make_unique<FrSingleElement>(posA, posB, m_diameter, m_ca, m_cd, m_cf));
     }
@@ -247,12 +294,24 @@ namespace frydom {
     }
 
     void FrCompositeElement::AddElement(std::shared_ptr<FrNode>& nodeA,
+                                        std::shared_ptr<FrNode>& nodeB,
+                                        double diameter, double ca_x, double ca_y, double cd_x, double cd_y, double cf) {
+        m_morison.push_back(std::make_unique<FrSingleElement>(nodeA, nodeB, diameter, ca_x, ca_y, cd_x, cd_y, cf));
+    }
+
+    void FrCompositeElement::AddElement(std::shared_ptr<FrNode>& nodeA,
                                         std::shared_ptr<FrNode>& nodeB) {
         m_morison.push_back(std::make_unique<FrSingleElement>(nodeA, nodeB, m_diameter, m_ca, m_cd, m_cf));
     }
 
     void FrCompositeElement::AddElement(chrono::ChVector<> posA, chrono::ChVector<> posB, const double dL,
                                         double diameter, double ca, double cd, double cf) {
+        AddElement(posA, posB, dL, diameter, ca, ca, cd, cd, cf);
+    }
+
+
+    void FrCompositeElement::AddElement(chrono::ChVector<> posA, chrono::ChVector<> posB, const double dL,
+                                        double diameter, double ca_x, double ca_y, double cd_x, double cd_y, double cf) {
 
         auto vect = posB - posA;
         auto length = vect.Length();
@@ -266,9 +325,8 @@ namespace frydom {
         for (unsigned int i=0; i<n; ++i) {
             pos1 = pos2;
             pos2 = pos1 + dl*dir;
-            AddElement(pos1, pos2, diameter, ca, cd ,cf);
+            AddElement(pos1, pos2, diameter, ca_x, ca_y, cd_x, cd_y, cf);
         }
-
     }
 
     void FrCompositeElement::AddElement(chrono::ChVector<> posA, chrono::ChVector<> posB, const double dL) {
@@ -277,6 +335,12 @@ namespace frydom {
 
     void FrCompositeElement::AddElement(chrono::ChVector<> posA, chrono::ChVector<> posB, const int n,
                                         double diameter, double ca, double cd, double cf) {
+        AddElement(posA, posB, diameter, n, ca, ca, cd, cd, cf);
+    }
+
+
+    void FrCompositeElement::AddElement(chrono::ChVector<> posA, chrono::ChVector<> posB, const int n,
+                                        double diameter, double ca_x, double ca_y, double cd_x, double cd_y, double cf) {
 
         auto vect = posB - posA;
         auto length = vect.Length();
@@ -289,7 +353,7 @@ namespace frydom {
         for (unsigned int i=0; i<n; ++i) {
             pos1 = pos2;
             pos2 = pos1 + dl*dir;
-            AddElement(pos1, pos2, diameter, ca, cd, cf);
+            AddElement(pos1, pos2, diameter, ca_x, ca_y, cd_x, cd_y, cf);
         }
 
     }
