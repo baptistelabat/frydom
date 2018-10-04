@@ -192,12 +192,12 @@ namespace frydom {
 
         m_chronoBody->Update();  // To make auxref_to_abs up to date
 
-        if (transportInertia) {  // FIXME : pas certain que ca fonctionne !!
-            m_chronoBody->SetInertia(
-                    m_chronoBody->GetInertia() +
-                    internal::GetPointMassInertia(GetMass(), Position(-x, -y, -z))
-                    );
-        }
+//        if (transportInertia) {  // FIXME : pas certain que ca fonctionne !!
+//            m_chronoBody->SetInertia(
+//                    m_chronoBody->GetInertia() +
+//                    internal::GetPointMassInertia(GetMass(), Position(-x, -y, -z))
+//                    );
+//        }
     }
 
     void FrBody_::SetCOGLocalPosition(const Position& position, bool transportInertia, FRAME_CONVENTION fc) {
@@ -308,11 +308,28 @@ namespace frydom {
         m_externalForces.erase(
                 std::find<std::vector<std::shared_ptr<FrForce_>>::iterator>(m_externalForces.begin(), m_externalForces.end(), force));
 
-        // TODO : terminer
-
-
+        force->SetBody(nullptr);
     }
 
+    void FrBody_::RemoveAllForces() {
+        m_chronoBody->RemoveAllForces();
+        for (auto forceIter=force_begin(); forceIter!=force_end(); forceIter++) {
+            (*forceIter)->SetBody(nullptr);
+        }
+        m_externalForces.clear();
+    }
+
+
+
+    // Nodes
+
+    std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::FrFrame_ &localFrame) {
+        // TODO
+    }
+
+    std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::Position &localPosition) {
+        // TODO
+    }
 
 
 

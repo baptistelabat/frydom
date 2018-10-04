@@ -369,6 +369,7 @@ namespace frydom {
 
         void RunInViewer(double endTime, double dist=100, bool recordVideo=false);
 
+        void AddAsset(std::shared_ptr<chrono::ChAsset> asset);  // TODO : mettre en prive
 
 
 
@@ -383,6 +384,8 @@ namespace frydom {
         chrono::ChSystem* GetChronoSystem();
 
 //        friend class FrIrrApp_;
+
+
 
 
     public:

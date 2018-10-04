@@ -31,6 +31,9 @@
 #include "FrWaveProbe.h"
 
 
+#include "frydom/environment/FrEnvironment.h"
+
+
 namespace frydom {
 
 
@@ -437,9 +440,9 @@ namespace frydom {
 
         // TODO : faire ca dans Initialize !
         // Providing color TODO: permettre un reglage externe... // TODO : associer l'asset a ChSystem
-        std::shared_ptr<chrono::ChColorAsset> color;
-        color = std::make_shared<chrono::ChColorAsset>();
-        color->SetColor(chrono::ChColor(255, 145, 94, 0));  // TODO: permettre de changer la couleur
+//        std::shared_ptr<chrono::ChColorAsset> color;
+//        color = std::make_shared<chrono::ChColorAsset>();
+//        color->SetColor(chrono::ChColor(255, 145, 94, 0));  // TODO: permettre de changer la couleur
 //        m_Body->AddAsset(color); // TODO : associer l'asset a ChSystem, pas a un corps
 
     }
@@ -491,11 +494,22 @@ namespace frydom {
                 break;
         }
 
+
+
+
         m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
         m_meshAsset->SetMesh(mesh);
         m_meshAsset->SetName("FreeSurface");
+        m_meshAsset->SetColor(chrono::ChColor(255, 145, 94, 0));
+
+        m_environment->GetSystem()->AddAsset(m_meshAsset);
 //            mesh_shape->SetFading(0.9);  // Ne fonctionne pas avec Irrlicht...
 //        m_Body->AddAsset(m_meshAsset);
+
+
+        
+
+
 
 
 

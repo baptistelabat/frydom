@@ -19,6 +19,25 @@ int main(int argc, char* argv[]) {
     // The system
     FrOffshoreSystem_ system;
 
+    // TODO : afficher la surface libre...
+
+    system.GetEnvironment()->GetFreeSurface()->SetGrid(0., 470, 470, -4.5, 4.5, 9);
+
+
+
+    auto ship = system.NewBody();
+    ship->RemoveGravity(true);
+    ship->AddMeshAsset("MagneViking_scaled.obj");
+
+    ship->SetAbsVelocity(1, 0, 0, NED);
+
+
+
+    system.Initialize();
+
+    system.RunInViewer(100, 50, false);
+
+
 
 //    auto cylinder = system.NewBody();
 //    makeItCylinder(cylinder, 5., 30., 100e3);
@@ -27,44 +46,44 @@ int main(int argc, char* argv[]) {
 
 
 
-    auto box = system.NewBody();
-    makeItBox(box, 10, 10, 10, 1);
-//    box->SetBodyFixed(true);
-
-    std::cout << box->GetInertiaParams() << std::endl;
-
-
-
-
-
-
-
-    // Playing with different methods to setup body position, velocity etc...
-    box->SetAbsPosition(5, 5, 0, NWU);
-
-    box->SetCardanAngles_DEGREES(0, 90, 90, NWU); // Tester le NED en -90, doit donner pareil...
-
-
-    box->SetCOGLocalPosition(5, 5, 0, true, NWU); // FIXME : attention on fait quoi avec l'inertie lorsqu'on specifie une position differente du COG
-
-
-    std::cout << box->GetInertiaParams() << std::endl;
-
-
-    box->SetAbsRotationalVelocity(0., 0., 100*DEG2RAD, NWU);
-    box->SetAbsVelocity(1, 1, 0, NWU);
-
-
-
-    box->RemoveGravity(true);
+//    auto box = system.NewBody();
+//    makeItBox(box, 10, 10, 10, 1);
+////    box->SetBodyFixed(true);
+//
+//    std::cout << box->GetInertiaParams() << std::endl;
+//
+//
+//
+//
+//
+//
+//
+//    // Playing with different methods to setup body position, velocity etc...
+//    box->SetAbsPosition(5, 5, 0, NWU);
+//
+//    box->SetCardanAngles_DEGREES(0, 90, 90, NWU); // Tester le NED en -90, doit donner pareil...
+//
+//
+//    box->SetCOGLocalPosition(5, 5, 0, true, NWU); // FIXME : attention on fait quoi avec l'inertie lorsqu'on specifie une position differente du COG
+//
+//
+//    std::cout << box->GetInertiaParams() << std::endl;
+//
+//
+//    box->SetAbsRotationalVelocity(0., 0., 100*DEG2RAD, NWU);
+//    box->SetAbsVelocity(1, 1, 0, NWU);
 
 
-
-
-    // Activating limits
-    box->ActivateSpeedLimits(true);
-    box->SetMaxRotationSpeed(180*DEG2RAD);  // Par defaut, la limite de vitesse en rotation est tres basse ...
-    box->SetMaxSpeed(10);  // FIXME : la valeur par defaut (0.5) doit etre changee !!
+//
+//    box->RemoveGravity(true);
+//
+//
+//
+//
+//    // Activating limits
+//    box->ActivateSpeedLimits(true);
+//    box->SetMaxRotationSpeed(180*DEG2RAD);  // Par defaut, la limite de vitesse en rotation est tres basse ...
+//    box->SetMaxSpeed(10);  // FIXME : la valeur par defaut (0.5) doit etre changee !!
 
 
 
@@ -121,9 +140,6 @@ int main(int argc, char* argv[]) {
 
 
 
-    system.Initialize();
-
-    system.RunInViewer(100, 50, false);
 
 
 //    // Set the free surface

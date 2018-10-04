@@ -770,6 +770,9 @@ namespace frydom {
 
     }
 
+    void FrOffshoreSystem_::AddAsset(std::shared_ptr<chrono::ChAsset> asset) {
+        m_chronoSystem->AddAsset(asset);
+    }
 
 
     // Iterators

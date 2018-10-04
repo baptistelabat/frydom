@@ -72,6 +72,7 @@ configure_file(../data/skybox/sky_up.jpg . COPYONLY)
 configure_file(data/frydom_hdb.h5 . COPYONLY)
 configure_file(data/Cylinder.obj . COPYONLY)
 configure_file(../data/ship/MagneViking.obj . COPYONLY)
+configure_file(data/Ship/MagneViking_scaled.obj . COPYONLY)
 configure_file(data/PolarCurrentCoeffs.yml . COPYONLY)
 
 file(COPY data/Full.yml  DESTINATION .)

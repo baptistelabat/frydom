@@ -274,6 +274,7 @@ namespace frydom {
     class FrForce_;
     class FrFrame_;
     class FrRotation_;
+    class FrNode_;
     class FrOffshoreSystem_;
 
 
@@ -303,11 +304,6 @@ namespace frydom {
         void SetName(const char name[]);
 
         void SetBodyFixed(bool state);
-
-
-        // TODO: ici, toutes les methodes qu'on veut publiques pour un corps !!!
-
-
 
 
         // =============================================================================================================
@@ -377,6 +373,21 @@ namespace frydom {
         void AddExternalForce(std::shared_ptr<FrForce_> force);
 
         void RemoveExternalForce(std::shared_ptr<FrForce_> force);
+
+        void RemoveAllForces();
+
+
+        // Nodes
+
+        std::shared_ptr<FrNode_> NewNode(const FrFrame_& localFrame);
+
+        std::shared_ptr<FrNode_> NewNode(const Position& localPosition);
+
+
+
+
+
+
 
 
 
@@ -613,20 +624,10 @@ namespace frydom {
 
 
 
-        // About body orientation
-
-
-
-
-        /// =================>>>>>>>>>>>>>>>>>>< Fin methodes validees
-
-
-
-
-
-
-
+        // Asset
         void AddMeshAsset(std::string obj_filename);
+
+        void SetColor();
 
 
 
@@ -662,14 +663,8 @@ namespace frydom {
 
 
 
-
-
-
-//    public:
-        friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_> body); // Voir a replacer
-
-
-//        friend void internal::AddBodyToSystem(FrOffshoreSystem* , std::shared_ptr<FrBody>);
+        // friend declarations
+        friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_> body);
 
 
 
