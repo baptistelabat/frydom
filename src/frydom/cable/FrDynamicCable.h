@@ -74,9 +74,22 @@ namespace frydom {
 
         chrono::ChVector<double> GetAbsPosition(const double s) const {}  // TODO
 
+        chrono::ChVector<double> GetAbsPosition(const int iNode) {
+            auto Node = dynamic_cast<ChNodeFEAxyz*>(GetNode(iNode).get());
+            return Node->GetPos();
+        }
+
         chrono::ChVector<double> GetStartingNodeTension() const {}  // TODO
 
         chrono::ChVector<double> GetEndingNodeTension() const {}  // TODO
+
+        double GetCableLength() {
+            double Length = 0;
+            for (int i=0; i<GetNnodes()-1;i++) {
+                Length += (GetAbsPosition(i+1)-GetAbsPosition(i)).Length();
+            }
+        }
+
 
         std::shared_ptr<ChNodeFEAxyzD> GetStartingNodeFEA() const { return m_starting_node_fea; }
         std::shared_ptr<ChNodeFEAxyzD> GetEndingNodeFEA() const { return m_ending_node_fea; }
@@ -117,6 +130,7 @@ namespace frydom {
         void InitializeSection() {  // TODO: mettre en private
             m_section = std::make_shared<ChBeamSectionCable>();  // Voir si on utilise pas directement la classe mere pour avoir de la torsion...
             m_section->SetArea(m_sectionArea);
+            m_section->SetDiameter(GetDiameter());
             m_section->SetBeamRaleyghDamping(m_rayleighDamping);
             m_section->SetDensity(GetDensity());
             m_section->SetYoungModulus(m_youngModulus);
@@ -153,12 +167,12 @@ namespace frydom {
 
             // First, creating a catenary line to initialize finite element mesh node positions
             // TODO: comment on definit q ???
-            double q = 600;
+            double q = GetLinearDensity();
 
             // TODO: avoir un constructeur pour juste specifier les parametres du cable, pas les frontieres  -->  degager le constructeur par defaut
             auto catenary_line = FrCatenaryLine(m_startingNode,
                                                 m_endingNode,
-                                                true, // Elasticity is set to false to build the finite element model // FIXME: la simu ne fonctionne pas si on met false (objectif) --> absolument regler ca !!!!
+                                                false, // Elasticity is set to false to build the finite element model // FIXME: la simu ne fonctionne pas si on met false (objectif) --> absolument regler ca !!!!
                                                        // at the specified length
                                                 m_youngModulus,
                                                 m_sectionArea,
