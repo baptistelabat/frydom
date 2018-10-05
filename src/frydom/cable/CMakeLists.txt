@@ -9,6 +9,7 @@ set(SRC_FILES
         FrCatenaryLine.cpp
         FrCatenaryNode.cpp
         FrDynamicCable.cpp
+        FrCatway.cpp
 )
 
 set(FRYDOM_CABLE_SOURCES "")

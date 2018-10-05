@@ -11,5 +11,6 @@
 #include "FrAssetComponent.h"
 #include "FrAssetBuoy.h"
 #include "FrAssetClumpWeight.h"
+#include "FrCatway.h"
 
 #endif //FRYDOM_FRCABLEINC_H

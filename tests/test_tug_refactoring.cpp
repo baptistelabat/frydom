@@ -12,7 +12,7 @@
 
 
 using namespace frydom;
-
+using namespace catenary;
 
 int main(int argc, char* argv[]) {
 
@@ -42,6 +42,28 @@ int main(int argc, char* argv[]) {
 
 
 
+    // Defining the fish
+    auto fish = system.NewBody();
+    makeItSphere(fish, 0.4, 5/9.81);
+    fish->SetColor(GreenYellow);
+
+
+
+    // Defining the cable
+    double E = 130e9;
+    double diam = 0.005;
+    double linearDensity = 2;
+
+    auto properties = make_properties(E, MU_PI * pow(0.5*diam, 2), linearDensity, true);
+
+    auto node1 = make_node();
+    node1->SetPosition(0., 0., 0.);
+
+
+    auto node2 = make_node();
+
+
+    catenary::CatenaryLine(properties, )
 
 
 
