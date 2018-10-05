@@ -20,6 +20,7 @@
 #include "FrForceAsset.h"
 #include "FrBodyEasy.h"
 #include "FrNodeDynamic.h"
+#include "FrColors.h"
 
 
 #endif //FRYDOM_FRCORE_H_H
