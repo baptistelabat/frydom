@@ -29,6 +29,18 @@ namespace frydom {
 
         /// Add a list of faces to the mesh
         void addTriangle(std::vector<chrono::ChVector<int>> faces);
+
+        unsigned long GetNbVertices();
+
+        using VertexIterator = std::vector<chrono::ChVector<double>>::iterator;
+        using VertexConstIterator = std::vector<chrono::ChVector<double>>::const_iterator;
+
+        VertexIterator vertex_begin();
+        VertexIterator vertex_end();
+
+        VertexConstIterator vertex_begin() const;
+        VertexConstIterator vertex_end() const;
+
     };
 
 } // end namespace frydom

@@ -29,4 +29,24 @@ namespace frydom{
         }
     }
 
+    unsigned long FrTriangleMeshConnected::GetNbVertices() {
+        return m_vertices.size();
+    }
+
+    FrTriangleMeshConnected::VertexIterator FrTriangleMeshConnected::vertex_begin() {
+        return m_vertices.begin();
+    }
+
+    FrTriangleMeshConnected::VertexIterator FrTriangleMeshConnected::vertex_end() {
+        return m_vertices.end();
+    }
+
+    FrTriangleMeshConnected::VertexConstIterator FrTriangleMeshConnected::vertex_begin() const {
+        return m_vertices.cbegin();
+    }
+
+    FrTriangleMeshConnected::VertexConstIterator FrTriangleMeshConnected::vertex_end() const {
+        return m_vertices.cend();
+    }
+
 }  // end namespace frydom

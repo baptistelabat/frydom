@@ -625,13 +625,11 @@ namespace frydom {
 
         void AddMeshAsset(std::string obj_filename);
 
-        void SetColor(NAMED_COLOR colorName) {
-            auto color = FrColor(colorName);
-            auto colorAsset = std::make_shared<chrono::ChColorAsset>(
-                    chrono::ChColor(color.R, color.G, color.B));
-            m_chronoBody->AddAsset(colorAsset);
-        }
+        void AddMeshAsset(std::shared_ptr<FrTriangleMeshConnected> mesh);
 
+        void SetColor(NAMED_COLOR colorName);
+
+        void SetColor(const FrColor& color);
 
 
     protected:

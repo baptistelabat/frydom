@@ -32,6 +32,7 @@
 
 
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/core/FrBody.h"
 
 
 namespace frydom {
@@ -423,29 +424,13 @@ namespace frydom {
         m_waveField = std::make_shared<FrNullWaveField_>(this);
         m_tidal     = std::make_unique<FrTidal_>(this);
 
-//        // Creating the free_surface's body
-//        m_Body = std::make_shared<chrono::ChBody>();
-//        m_Body->SetIdentifier(-1);
-//        m_Body->SetName("FreeSurface");
-//        m_Body->SetPos(chrono::ChVector<>(0, 0, 0));
-//        m_Body->SetBodyFixed(true);  // Important, however we could add a ChFunction-like to emulate tidal height
-//
-//        m_Body->SetCollide(false);  // set to false !!!
-
-
-
-        // Creating a free surface asset
-        CreateFreeSurfaceBody();
-
-
-
-        // TODO : faire ca dans Initialize !
-        // Providing color TODO: permettre un reglage externe... // TODO : associer l'asset a ChSystem
-         // TODO : associer l'asset a ChSystem, pas a un corps
-
     }
 
     FrFreeSurface_::~FrFreeSurface_() = default;
+
+    FrOffshoreSystem_* FrFreeSurface_::GetSystem() {
+        return m_environment->GetSystem();
+    }
 
     void FrFreeSurface_::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
@@ -480,23 +465,21 @@ namespace frydom {
     }
 
     void FrFreeSurface_::CreateFreeSurfaceBody() {
-        m_body = std::make_shared<chrono::ChBody>();
-        m_body->SetIdentifier(-1);
+        m_body = std::make_shared<FrBody_>();
         m_body->SetName("FreeSurface");
-        m_body->SetPos(chrono::ChVector<>(0, 0, 0));
-        m_body->SetBodyFixed(true);  // Important, however we could add a ChFunction-like to emulate tidal height
+        m_body->SetAbsPosition(Position(0., 0., 0.), NWU);
+        m_body->SetBodyFixed(true);
         m_body->SetCollide(false);
 
-        std::shared_ptr<chrono::ChColorAsset> color;
-        color = std::make_shared<chrono::ChColorAsset>();
-        color->SetColor(chrono::ChColor(255, 145, 94, 0));  // TODO: permettre de changer la couleur
-        m_body->AddAsset(color);
+//        m_body->SetColor(FrColor(255, 145, 94));
+        m_body->SetColor(DodgerBlue);
+
     }
 
     void FrFreeSurface_::Initialize() {
 
         // Building the asset
-        FrTriangleMeshConnected mesh;
+        std::shared_ptr<FrTriangleMeshConnected> mesh;
         switch (m_gridType) {
             case CARTESIAN:
                 mesh = BuildRectangularMeshGrid(m_xmin, m_xmax, m_dx, m_ymin, m_ymax, m_dy);
@@ -504,20 +487,19 @@ namespace frydom {
             case POLAR:
                 mesh = BuildPolarMeshGrid(m_xc0, m_yc0, m_diameter, m_nbR, m_nbTheta);
                 break;
+            case NONE:
+                break;
         }
 
-        m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
-        m_meshAsset->SetMesh(mesh);
-        m_meshAsset->SetName("FreeSurface");
-//            mesh_shape->SetFading(0.9);  // Ne fonctionne pas avec Irrlicht...
-        m_body->AddAsset(m_meshAsset);
-
+        CreateFreeSurfaceBody();
+        m_body->AddMeshAsset(mesh);
+        GetSystem()->AddBody(m_body);
 
 
         // If the mesh is being to be animated
         if (m_updateAsset) {
             // Creating the array of wave probes
-            auto nbVertices = m_meshAsset->GetMesh().getCoordsVertices().size();
+            auto nbVertices = m_meshAsset->getCoordsVertices().size();
             m_waveProbeGrid.reserve(nbVertices);
 
             // FIXME: le fait que le wavefield soit requis pour initialiser le maillage de surface libre fait qu'on est
@@ -525,7 +507,7 @@ namespace frydom {
             // etablir que l'asset est initialise ou pas et initialiser la gille  lors de l'appel a UpdateGrid si le flag est false
             auto waveField = std::static_pointer_cast<FrLinearWaveField_>(m_waveField);
 
-            for (auto& vertex : m_meshAsset->GetMesh().getCoordsVertices()) {
+            for (auto& vertex : m_meshAsset->getCoordsVertices()) {
                 auto waveProbe = waveField->NewWaveProbe(vertex.x(), vertex.y());
                 waveProbe->Initialize();
                 m_waveProbeGrid.push_back(waveProbe);
@@ -534,10 +516,11 @@ namespace frydom {
 
     }
 
-    FrTriangleMeshConnected FrFreeSurface_::BuildRectangularMeshGrid(double xmin, double xmax, double dx,
-                                                                    double ymin, double ymax, double dy) {
+    std::shared_ptr<FrTriangleMeshConnected>
+    FrFreeSurface_::BuildRectangularMeshGrid(double xmin, double xmax, double dx,
+                                             double ymin, double ymax, double dy) {
 
-        FrTriangleMeshConnected mesh;
+        auto mesh = std::make_shared<FrTriangleMeshConnected>();
 
         int nvx(int((xmax - xmin) / dx) + 1);
         int nvy(int((ymax - ymin) / dy) + 1);
@@ -556,7 +539,7 @@ namespace frydom {
             xi = xmin;
         }
         // Adding the vertices list to the mesh
-        mesh.addVertex(vertices);
+        mesh->addVertex(vertices);
 
         // Building faces of the cartesian grid
         std::vector<chrono::ChVector<int>> triangles;
@@ -586,17 +569,18 @@ namespace frydom {
             }
         }
         // Adding the triangle list to the mesh
-        mesh.addTriangle(triangles);
+        mesh->addTriangle(triangles);
 
         // TODO: initialiser les normales et autres champs de ChTriangleMeshConnected
         return mesh;
     }
 
-    FrTriangleMeshConnected FrFreeSurface_::BuildPolarMeshGrid(double xc0, double yc0,
-                                                              double diameter,
-                                                              unsigned int nbR, unsigned int nbTheta) {
+    std::shared_ptr<FrTriangleMeshConnected>
+    FrFreeSurface_::BuildPolarMeshGrid(double xc0, double yc0,
+                                       double diameter,
+                                       unsigned int nbR, unsigned int nbTheta) {
 
-        FrTriangleMeshConnected mesh;
+        auto mesh = std::make_shared<FrTriangleMeshConnected>();
 
         auto angles = linspace(0., MU_2PI, nbTheta);
 
@@ -649,8 +633,8 @@ namespace frydom {
             }
         }
 
-        mesh.addVertex(vertices);
-        mesh.addTriangle(faces);
+        mesh->addVertex(vertices);
+        mesh->addTriangle(faces);
 
         return mesh;
     }
@@ -658,92 +642,24 @@ namespace frydom {
 
     void FrFreeSurface_::UpdateGrid() {
 
-//        auto& mesh = m_meshAsset->GetMesh();
-//        auto nbNodes = mesh.m_vertices.size();
-//
-//        // Tentative de calcul d'une balance de charge sur des threads
-//
-//        // Load balancing on a vector over all available threads
-//        auto nbThread = std::thread::hardware_concurrency();
-//
-////        nbThread = 4;
-//
-//        auto meanSize = nbNodes / nbThread;
-//        auto remainder = nbNodes - nbThread * meanSize;
-//
-//
-//        std::vector<std::pair<unsigned int, unsigned int>> ranges;
-//        ranges.reserve(nbThread);
-//        std::pair<unsigned int, unsigned int> range;
-//        unsigned int lastIndex = 0;
-//        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
-//            range.first = lastIndex;
-//            range.second = (unsigned int)(lastIndex + meanSize);
-//
-//            if (iThread < remainder) {
-//                range.second += 1;
-//            }
-//
-//            lastIndex = range.second;
-//            ranges.push_back(range);
-//        }
-//
-//        std::vector<std::thread> threads(nbThread);
-////        threads.reserve(nbThread);
-//        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
-//            threads.at(iThread) = std::thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
-////            std::thread thread(&FrFreeSurface::UpdateGridRange, this, ranges[iThread]);
-////            threads.push_back(thread);
-//        }
-//
-//        for (unsigned int iThread=0; iThread<nbThread; ++iThread) {
-//            threads.at(iThread).join();
-//        }
-
-
-        // Fin tentative
-//        m_Body->Update(true); // Necessary to update the asset
-
-
-
-//        std::pair<unsigned int, unsigned int> totalRange(0, nbNodes);
-//        UpdateGridRange(totalRange);
-
-
-
-
-    }
-
-    void FrFreeSurface_::UpdateGridRange(std::pair<unsigned int, unsigned int> range) {
-
-        auto& mesh = this->m_meshAsset->GetMesh();
-        auto nbNodes = mesh.m_vertices.size();
+        auto nbNodes = m_meshAsset->GetNbVertices();
 
         // getting the tidal wave height
-        double tidalHeight = this->m_tidal->GetWaterHeight();
-
-//        std::cout << std::this_thread::get_id() << "\n";
+        double tidalHeight = m_tidal->GetWaterHeight();
 
         FrLinearWaveProbe_* waveProbe;
         chrono::ChVector<double>* vertex;
         for (unsigned int inode=0; inode<nbNodes; ++inode) {
             waveProbe = this->m_waveProbeGrid[inode].get();
-            mesh.m_vertices[inode].z() = tidalHeight + waveProbe->GetElevation(m_time);
+            m_meshAsset->m_vertices[inode].z() = tidalHeight + waveProbe->GetElevation(m_time);
         }
 
-        // TODO: garder pour faire la demo du speedup...
-//        for (auto& vertex: mesh.m_vertices) {
-//            vertex.z() = tidalHeight + m_waveField->GetElevation(vertex.x(), vertex.y());  // TODO: ne pas utiliser GetElevation mais des waveProbe
-//        }
     }
 
-//    const chrono::ChFrame<double>* FrFreeSurface_::GetFrame() const {
-//        return m_tidal->GetTidalFrame();
-//    }
-
     void FrFreeSurface_::NoWaves() {
-        m_waveModel = NO_WAVES;
-//            m_waveField.reset(nullptr);
+        // TODO
+//        m_waveModel = NO_WAVES;
+////            m_waveField.reset(nullptr);
     }
 
     void FrFreeSurface_::SetLinearWaveField(LINEAR_WAVE_TYPE waveType) {
@@ -787,7 +703,7 @@ namespace frydom {
         return m_tidal.get();
     }
 
-    std::shared_ptr<FrWaveField_> FrFreeSurface_::GetWaveField() const { return m_waveField; }
+    FrWaveField_ * FrFreeSurface_::GetWaveField() const { return m_waveField.get(); }
 
 
 }  // end namespace frydom

@@ -23,6 +23,14 @@ int main(int argc, char* argv[]) {
 
     system.GetEnvironment()->GetFreeSurface()->SetGrid(0., 470, 470, -4.5, 4.5, 9);
 
+    // Creating a wall for the basin
+    auto wall = system.NewBody();
+    makeItBox(wall, 470, 0.3, 7.7, 0.);
+    wall->SetAbsPosition(470/2., -4.65, -(6-7.5/2), NWU);
+    wall->SetBodyFixed(true);
+    wall->SetColor(LightGrey);
+
+
 
 
     auto ship = system.NewBody();
@@ -30,12 +38,18 @@ int main(int argc, char* argv[]) {
     ship->AddMeshAsset("MagneViking_scaled.obj");
 
     ship->SetAbsVelocity(1, 0, 0, NED);
+    ship->SetColor(Yellow);
+
+
+
+
+
+
 
 
 
     system.Initialize();
-
-    system.RunInViewer(100, 50, false);
+    system.RunInViewer(100, 20, false);
 
 
 

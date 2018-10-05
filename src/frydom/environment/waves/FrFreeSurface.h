@@ -191,9 +191,10 @@ namespace frydom{
 
 
     // Forward declarations
-
+    class FrOffshoreSystem_;
     class FrEnvironment_;
     class FrTidal_;
+    class FrBody_;
 
 
 
@@ -227,12 +228,12 @@ namespace frydom{
 
         std::shared_ptr<FrWaveField_> m_waveField;
 
-        std::shared_ptr<chrono::ChBody> m_body;
-        std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
+        std::shared_ptr<FrBody_> m_body;
+        std::shared_ptr<FrTriangleMeshConnected> m_meshAsset;
 
         std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbeGrid; // TODO: passer a la classe de base...
 
-        std::vector<double> m_gridHeights; // TODO: preallouer a l'initialisation
+//        std::vector<double> m_gridHeights; // TODO: preallouer a l'initialisation
 
         GRID_TYPE m_gridType = CARTESIAN;
         double m_xmin = -50.;
@@ -251,13 +252,15 @@ namespace frydom{
     protected:
 
         /// Private method in charge of the building of the free surface mesh as a rectangular grid.
-        FrTriangleMeshConnected BuildRectangularMeshGrid(double xmin, double xmax, double dx,
-                                                         double ymin, double ymax, double dy);
+        std::shared_ptr<FrTriangleMeshConnected>
+        BuildRectangularMeshGrid(double xmin, double xmax, double dx,
+                                 double ymin, double ymax, double dy);
 
         /// Private method in charge of the building of the free surface mesh as a polar grid.
-        FrTriangleMeshConnected BuildPolarMeshGrid(double xc0, double yc0, // center
-                                                   double diameter,
-                                                   unsigned int nbR, unsigned int nbTheta);
+        std::shared_ptr<FrTriangleMeshConnected>
+        BuildPolarMeshGrid(double xc0, double yc0, // center
+                           double diameter,
+                           unsigned int nbR, unsigned int nbTheta);
 
         void CreateFreeSurfaceBody();
 
@@ -266,6 +269,8 @@ namespace frydom{
         explicit FrFreeSurface_(FrEnvironment_* environment);
 
         ~FrFreeSurface_();
+
+        FrOffshoreSystem_* GetSystem();
 
         void NoWaves();
 
@@ -307,9 +312,11 @@ namespace frydom{
                         int nbTheta
                         );
 
+        FrTidal_* GetTidal() const;
+
+        FrWaveField_ * GetWaveField() const;
 
         /// Get the free surface's mesh
-//        FrTriangleMeshConnected getMesh(void) const;
 
         void UpdateAsset(bool update);
 
@@ -320,29 +327,13 @@ namespace frydom{
         /// Update the state of the free surface
         virtual void Update(double time);
 
+        void StepFinalize() override {}
+
+    private:
+
         void UpdateGrid();
 
-        void UpdateGridRange(std::pair<unsigned int, unsigned int> range);
-
-
-        FrTidal_* GetTidal() const;
-
-//        /// get the body that represents the free surface
-//        std::shared_ptr<chrono::ChBody> GetBody() {return m_Body;}
-
-//        void SetWaveField(std::shared_ptr<FrWaveField> waveField) { m_waveField = waveField; }
-
-        std::shared_ptr<FrWaveField_> GetWaveField() const;
-
-//        const chrono::ChFrame<double>* GetFrame() const;
-
-        virtual void StepFinalize() override {}
-
     };
-
-
-
-
 
 
 }  // end namespace frydom

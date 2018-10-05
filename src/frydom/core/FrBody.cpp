@@ -165,10 +165,23 @@ namespace frydom {
 
         auto mesh = std::make_shared<FrTriangleMeshConnected>();
         mesh->LoadWavefrontMesh(obj_filename);
+        AddMeshAsset(mesh);
+    }
+
+    void FrBody_::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh) {
         auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
         shape->SetMesh(*mesh);
         m_chronoBody->AddAsset(shape);
+    }
 
+    void FrBody_::SetColor(NAMED_COLOR colorName) {
+        SetColor(FrColor(colorName));
+    }
+
+    void FrBody_::SetColor(const FrColor& color) {
+        auto colorAsset = std::make_shared<chrono::ChColorAsset>(
+                chrono::ChColor(color.R, color.G, color.B));
+        m_chronoBody->AddAsset(colorAsset);
     }
 
     double FrBody_::GetMass() const {
@@ -900,8 +913,6 @@ namespace frydom {
         wyp = wAcc.GetWyp();
         wzp = wAcc.GetWzp();
     }
-
-
 
 
 
