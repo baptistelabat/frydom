@@ -66,8 +66,8 @@ namespace frydom {
 
         double m_atmosphericPressure;
 
-        bool m_infinite_depth = false;
-
+        bool m_showSeabed = true;
+        bool m_showFreeSurface = true;
 
     public:
 
@@ -77,7 +77,7 @@ namespace frydom {
             m_current = std::make_shared<FrUniformCurrent>();
             m_wind = std::make_shared<FrUniformWind>();
             m_seabed = std::make_unique<FrSeabed>();
-            if (not(m_infinite_depth)) m_seabed->SetEnvironment(this);
+            if (m_showSeabed) m_seabed->SetEnvironment(this);
             m_localCartesian = std::make_unique<GeographicLib::LocalCartesian>();
             m_timeZone = std::make_unique<FrTimeZone>();
         }
@@ -88,8 +88,12 @@ namespace frydom {
 
         FrOffshoreSystem* GetSystem() { return m_system; }
 
-        void SetInfiniteDepth(bool is_infinite) {m_infinite_depth = is_infinite;}
-        bool GetInfiniteDepth() { return m_infinite_depth;}
+        void SetShowSeabed(bool is_shown) {m_showSeabed = is_shown;}
+        bool GetShowSeabed() { return m_showSeabed;}
+
+        void SetShowFreeSurface(bool is_shown) {m_showFreeSurface = is_shown;}
+        bool GetShowFreeSurface() { return m_showFreeSurface;}
+
 
         void SetTime(double time) { m_time = time; }
 
@@ -253,28 +257,28 @@ namespace frydom {
         int GetYear();
 
         void Update(double time) {
-            m_freeSurface->Update(time);
+            if (m_showFreeSurface) m_freeSurface->Update(time);
             m_current->Update(time);
             m_wind->Update(time);
-            if (not(m_infinite_depth)) m_seabed->Update(time);
+            if (m_showSeabed) m_seabed->Update(time);
             m_time = time;
             m_timeZone->Update(time);
         }
 
         void Initialize() override {
             // TODO: appeler les methodes Initialize() sur les attributs
-            m_freeSurface->Initialize();
+            if (m_showFreeSurface) m_freeSurface->Initialize();
             m_current->Initialize();
             m_wind->Initialize();
-            if (not(m_infinite_depth)) m_seabed->Initialize();
+            if (m_showSeabed) m_seabed->Initialize();
             m_timeZone->Initialize();
         }
 
         void StepFinalize() override {
-            m_freeSurface->StepFinalize();
+            if (m_showFreeSurface) m_freeSurface->StepFinalize();
             m_current->StepFinalize();
             m_wind->StepFinalize();
-            if (not(m_infinite_depth)) m_seabed->StepFinalize();
+            if (m_showSeabed) m_seabed->StepFinalize();
         }
 
     };
