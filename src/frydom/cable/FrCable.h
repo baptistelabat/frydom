@@ -141,8 +141,8 @@ namespace frydom {
         double m_time = 0.;
         double m_time_step = 0.;
 
-        std::shared_ptr<FrNode_> m_startingNode;
-        std::shared_ptr<FrNode_> m_endingNode;
+        std::shared_ptr<FrNode_> m_startNode;
+        std::shared_ptr<FrNode_> m_endNode;
 
         double m_youngModulus; // FIXME: mettre des valeurs par defaut non verolees !!!
         double m_sectionArea;
@@ -209,20 +209,20 @@ namespace frydom {
 
         void SetStartingNode(std::shared_ptr<FrNode_> startingNode) {
             // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
-            m_startingNode = startingNode;
+            m_startNode = startingNode;
         }
 
         std::shared_ptr<FrNode_> GetStartingNode() const {
-            return m_startingNode;
+            return m_startNode;
         }
 
         void SetEndingNode(std::shared_ptr<FrNode_> endingNode) {
             // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
-            m_endingNode = endingNode;
+            m_endNode = endingNode;
         }
 
         std::shared_ptr<FrNode_> GetEndingNode() const {
-            return m_endingNode;
+            return m_endNode;
         }
 
         virtual Force GetTension(const double s) const = 0;

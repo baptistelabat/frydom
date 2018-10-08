@@ -2,6 +2,7 @@
 // Created by frongere on 29/05/17.
 //
 
+#include <frydom/cable/FrDynamicCable.h>
 #include "FrOffshoreSystem.h"
 
 #include "frydom/core/FrBody.h"
@@ -281,7 +282,16 @@ namespace frydom {
 
     // REFACTORING ------------->>>>>>>>>>>>>>>
 
+    _FrSystemBaseSMC::_FrSystemBaseSMC(frydom::FrOffshoreSystem_ *offshoreSystem) :
+            chrono::ChSystemSMC(), m_offshoreSystem_(offshoreSystem) {}
 
+    void _FrSystemBaseSMC::Update(bool update_assets) {
+
+        m_offshoreSystem_->PreUpdate();
+        chrono::ChSystemSMC::Update(update_assets);
+        m_offshoreSystem_->PostUpdate();
+
+    }
 
 
     FrOffshoreSystem_::FrOffshoreSystem_(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
@@ -336,6 +346,20 @@ namespace frydom {
 //        m_otherPhysicsList.push_back(otherPhysics);
 //    }
 
+    void FrOffshoreSystem_::AddCable(std::shared_ptr<frydom::FrCable_> cable) {
+
+        if (auto item = std::dynamic_pointer_cast<FrCatway>(cable)) {
+            m_catenaryCables.push_back(item);
+            return;
+        }
+
+        if (auto item = std::dynamic_pointer_cast<FrDynamicCable>(cable)) {
+            // TODO
+            return;
+        }
+    }
+
+
     FrEnvironment_ *FrOffshoreSystem_::GetEnvironment() const {
         return m_environment.get();
     }
@@ -344,15 +368,35 @@ namespace frydom {
         return m_worldBody;
     }
 
-    void FrOffshoreSystem_::Update(bool updateAsset) {
+//    void FrOffshoreSystem_::Update(bool updateAsset) {
+//        m_environment->Update(m_chronoSystem->GetChTime());
+//        m_chronoSystem->Update(updateAsset);
+//    }
+
+    void FrOffshoreSystem_::PreUpdate() {
         m_environment->Update(m_chronoSystem->GetChTime());
-        m_chronoSystem->Update(updateAsset);
+
+        // Updating cables
+        for(auto& cable : m_catenaryCables) {
+            cable->Update();
+        }
+
     }
+
+    void FrOffshoreSystem_::PostUpdate() {
+
+    }
+
 
     void FrOffshoreSystem_::Initialize() {
 
         // Initializing environment before bodies
         m_environment->Initialize();
+
+        // Initializing cables
+        for (auto& cable : m_catenaryCables) {
+            cable->Initialize();
+        }
 
         // Initializing embedded chrono system
         m_chronoSystem->SetupInitial(); // Actually do nothing but called for consistency
@@ -393,11 +437,11 @@ namespace frydom {
         // Creating the chrono System backend. It drives the way contact are modelled
         switch (type) {
             case SMOOTH_CONTACT:
-                m_chronoSystem = std::make_unique<chrono::ChSystemSMC>();
+                m_chronoSystem = std::make_unique<_FrSystemBaseSMC>(this);
                 break;
             case NONSMOOTH_CONTACT:
                 std::cout << "NSC systems is not tested for now !!!!" << std::endl;
-                m_chronoSystem = std::make_unique<chrono::ChSystemNSC>();
+                m_chronoSystem = std::make_unique<_FrSystemBaseNSC>();
                 break;
         }
 

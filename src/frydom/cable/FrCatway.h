@@ -5,36 +5,30 @@
 #ifndef FRYDOM_FRCATWAY_H
 #define FRYDOM_FRCATWAY_H
 
-#include "catenary/CatenaryNode.h"
+//#include "catenary/CatenaryNode.h"
 
 #include "FrCable.h"
+
+#include "frydom/core/FrForce.h"
+
+
 
 
 //using namespace catenary;
 
 namespace catenary {
     class CatenaryLine;
+    class CatenaryNode;
 }
 
 
 namespace frydom {
 
 
-    class FrNode_;
 
 
 
-    namespace internal {
-
-        struct CatNode : public catenary::CatenaryNode {
-
-            std::shared_ptr<FrNode_> m_node;
-
-            explicit CatNode(std::shared_ptr<FrNode_> node);
-
-        };
-
-    }
+    class FrCatForce;
 
 
     class FrCatway : public FrCable_ {
@@ -43,20 +37,27 @@ namespace frydom {
 
         std::unique_ptr<catenary::CatenaryLine> m_catLine;
 
+        std::shared_ptr<catenary::CatenaryNode> m_startCatNode;
+        std::shared_ptr<catenary::CatenaryNode> m_endCatNode;
 
-        std::shared_ptr<FrNode_> m_startingNode;
-        std::shared_ptr<FrNode_> m_endNode;
+        std::shared_ptr<FrCatForce> m_startForce;
+        std::shared_ptr<FrCatForce> m_endForce;
+
 
     public:
 
         FrCatway(double youngModulus, double diameter, double linearDensity, double length,
-                         unsigned int nbElt, std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2);
+                         unsigned int nbElt, std::shared_ptr<FrNode_> startNode, std::shared_ptr<FrNode_> endNode);
 
         ~FrCatway();
 
-        Force GetTension(const double s) const override;
+        Force GetTension(double s) const override;
 
-        Position GetAbsPosition(const double s) const override;
+        Force GetStartNodeTension() const;
+
+        Force GetEndNodeTension() const;
+
+        Position GetAbsPosition(double s) const override;
 
         void Update();
 
@@ -65,11 +66,40 @@ namespace frydom {
         void StepFinalize() override;
 
 
+    };
 
 
+    class FrCatForce : public FrForce_ { // Doit etre mis en std::shared_ptr<FrForce_> dans FrBody_...
 
+        enum SIDE {
+            START,
+            END
+        };
+
+        FrCatway* m_catenaryLine;
+
+        SIDE m_side;
+
+        friend class FrCatway;
+
+    public:
+
+        FrCatForce(FrCatway* catenaryLine, std::shared_ptr<FrNode_> node);
+
+        void Update(double time) override;
+
+        void Initialize() override;
+
+        void StepFinalize() override;
+
+    private:
+
+        void SetAbsTension(const Force& tension);
 
     };
+
+
+
 
 
 }  // end namespace frydom

@@ -11,6 +11,8 @@
 //
 //
 #include <frydom/utils/FrIrrApp.h>
+#include <frydom/cable/FrCable.h>
+#include <frydom/cable/FrCatway.h>
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/physics/ChSystemNSC.h"
 //
@@ -129,6 +131,28 @@ namespace frydom {
 
     // REFACTORING ---->>>>>>>>>>>>
 
+    class FrOffshoreSystem_;
+
+    class _FrSystemBaseSMC : public chrono::ChSystemSMC {
+
+    private:
+        FrOffshoreSystem_* m_offshoreSystem_;
+
+    public:
+        _FrSystemBaseSMC(FrOffshoreSystem_* offshoreSystem);
+
+        void Update(bool update_assets = true) override;
+
+    };
+
+    class _FrSystemBaseNSC : public chrono::ChSystemNSC {
+
+
+    };
+
+
+
+
     // Forward declarations
     class FrBody_;
     class FrLink_;
@@ -228,6 +252,9 @@ namespace frydom {
         LinkContainer m_linkList;
 //        OtherPhysicsList m_otherPhysicsList;
 
+        using CatenaryCableContainer = std::vector<std::shared_ptr<FrCatway>>;
+        CatenaryCableContainer m_catenaryCables;
+
 
     public:
 
@@ -243,6 +270,8 @@ namespace frydom {
 
         void AddLink(std::shared_ptr<FrLink_> link);
 
+        void AddCable(std::shared_ptr<FrCable_> cable);
+
 //        void AddOtherPhysics(std::shared_ptr<FrOtherPhysics_> otherPhysics);
 
         FrEnvironment_* GetEnvironment() const;
@@ -251,7 +280,16 @@ namespace frydom {
 
         // TODO: voir si les 3 methodes ci-dessous doivent etre privees (pas Initialize)
 
-        void Update(bool updateAsset); // TODO : mettre prive
+        // Updates...
+
+//        void Update(bool updateAsset); // TODO : mettre prive
+
+
+        void PreUpdate();
+
+        void PostUpdate();
+
+
 
         void Initialize() override;
 
@@ -373,6 +411,9 @@ namespace frydom {
 
 
 
+
+
+
     private:
 
         void CreateWorldBody();
@@ -382,6 +423,8 @@ namespace frydom {
         bool CheckBodyContactMethod(std::shared_ptr<FrBody_> body);
 
         chrono::ChSystem* GetChronoSystem();
+
+
 
 //        friend class FrIrrApp_;
 

@@ -5,6 +5,8 @@
 #include "frydom/core/FrNode.h"
 #include "frydom/core/FrSpringDampingForce.h"
 
+#include "frydom/core/FrBody.h"
+
 namespace frydom {
 
     FrSpringDampingForce::FrSpringDampingForce(chrono::ChFrameMoving<>* ref_node, const double T0, const double psi) {

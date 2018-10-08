@@ -6,9 +6,13 @@
 #define FRYDOM_FRNODE_H
 
 #include "chrono/physics/ChMarker.h"
-
-#include "FrBody.h"
 #include "FrObject.h"
+#include "FrVector.h"
+#include "FrRotation.h"
+
+
+
+
 
 namespace frydom {
 
@@ -67,6 +71,7 @@ namespace frydom {
 
     // Forward declarations
     class FrBody_;
+    class FrFrame_;
 
 
     class FrNode_ : public FrObject {
@@ -77,20 +82,44 @@ namespace frydom {
         std::shared_ptr<chrono::ChMarker> m_chronoMarker;
 
 
-
     public:
 
         explicit FrNode_(FrBody_* body);
 
         FrNode_(FrBody_* body, const Position& position);
 
+        FrNode_(FrBody_* body, const Position& position, const FrRotation_& rotation);
+
+        FrNode_(FrBody_* body, const Position& position, const FrQuaternion_& quaternion);
+
+        FrNode_(FrBody_* body, const FrFrame_& frame);
+
         ~FrNode_();
+
+        FrBody_* GetBody();
 
         void SetLocalPosition(const Position& position);
 
         void SetLocalPosition(double x, double y, double z);
 
+        void SetLocalQuaternion(const FrQuaternion_& quaternion);
+
+        void SetLocalRotation(const FrRotation_& rotation);
+
         void SetLocalFrame(const FrFrame_& frame);
+
+
+
+        Position GetAbsPosition();
+
+        void GetAbsPosition(Position& position);
+
+
+
+
+        void Initialize();
+
+        void StepFinalize();
 
 
 

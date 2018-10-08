@@ -9,6 +9,8 @@
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include "FrFrame.h"
 
+#include "FrForce.h"
+
 namespace frydom {
 
     void FrBody::AddNode(std::shared_ptr<FrNode> node) {
@@ -70,11 +72,29 @@ namespace frydom {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /// REFACTORING ------------->>>>>>>>>>>>>>>
 
 
     #define DEFAULT_MAX_SPEED (float)10.
-    #define DEFAULT_MAX_ROTATION_SPEED (float)180.*DEG2RAD
+    #define DEFAULT_MAX_ROTATION_SPEED (float)(180.*DEG2RAD)
 
 
     _FrBodyBase::_FrBodyBase() : chrono::ChBodyAuxRef() {}
@@ -311,7 +331,7 @@ namespace frydom {
     void FrBody_::AddExternalForce(std::shared_ptr<frydom::FrForce_> force) {
         m_chronoBody->AddForce(force->GetChronoForce());  // FrBody_ is a friend class of FrForce_
 
-        force->SetBody(this);
+        force->m_body = this;
         m_externalForces.push_back(force);
     }
 
@@ -321,13 +341,13 @@ namespace frydom {
         m_externalForces.erase(
                 std::find<std::vector<std::shared_ptr<FrForce_>>::iterator>(m_externalForces.begin(), m_externalForces.end(), force));
 
-        force->SetBody(nullptr);
+        force->m_body = nullptr;
     }
 
     void FrBody_::RemoveAllForces() {
         m_chronoBody->RemoveAllForces();
         for (auto forceIter=force_begin(); forceIter!=force_end(); forceIter++) {
-            (*forceIter)->SetBody(nullptr);
+            (*forceIter)->m_body = nullptr;
         }
         m_externalForces.clear();
     }
@@ -337,27 +357,16 @@ namespace frydom {
     // Nodes
 
     std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::FrFrame_ &localFrame) {
-        // TODO
-//        FrNode_()
-
-
+        return std::make_shared<FrNode_>(this, localFrame);
     }
 
     std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::Position &localPosition) {
-        // TODO
+        return std::make_shared<FrNode_>(this, localPosition);
     }
 
     std::shared_ptr<FrNode_> FrBody_::NewNode(double x, double y, double z) {
-        // TODO
+        return std::make_shared<FrNode_>(this, Position(x, y, z));
     }
-
-
-
-
-
-
-
-
 
 
 

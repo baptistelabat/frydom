@@ -117,17 +117,36 @@ namespace frydom {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /// REFACTORING ------------->>>>>>>>>>>>><
 
 //    using ForceVector  = Vector3d_;
 //    using MomentVector = Vector3d_;
-//
-//
-    class _FrForceBase : public chrono::ChForce {
 
-    public:
+    class FrForce_;
+    struct _FrForceBase : public chrono::ChForce {
+
+        FrForce_* m_frydomForce;
 
         _FrForceBase();
+
+//        void Update(double time) override;
+
+        friend class FrForce_;
 
     };
 
@@ -156,7 +175,9 @@ namespace frydom {
 
     public:
 
-        void SetBody(FrBody_* body);
+        explicit FrForce_(std::shared_ptr<FrNode_> node);
+
+//        explicit FrForce_(FrBody_* body);
 
         virtual void Update(double time) = 0;
 

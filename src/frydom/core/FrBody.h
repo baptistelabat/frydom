@@ -5,13 +5,11 @@
 #ifndef FRYDOM_FRBODY_H
 #define FRYDOM_FRBODY_H
 
-
-#include "FrOffshoreSystem.h"
-//
-//
+#include "FrObject.h"
 #include "chrono/physics/ChBodyAuxRef.h"
 
-#include "FrObject.h"
+
+#include "FrOffshoreSystem.h"
 #include "FrVector.h"
 #include "frydom/core/FrGeographic.h"
 #include "frydom/core/FrForce.h"
@@ -21,6 +19,12 @@
 #include "FrInertia.h"
 #include "FrForce.h"
 #include "FrColors.h"
+
+
+#include "FrNode.h"
+
+
+
 
 namespace frydom {
 
@@ -271,10 +275,10 @@ namespace frydom {
 
 
     // Forward declarations
-    class FrForce_;
+//    class FrForce_;
     class FrFrame_;
     class FrRotation_;
-    class FrNode_;
+//    class FrNode_;
     class FrOffshoreSystem_;
 
 
@@ -640,11 +644,13 @@ namespace frydom {
             return m_chronoBody;
         }
 
+
+        // Friends of FrBody_ : they can have access to chrono internals
         friend void makeItBox(std::shared_ptr<FrBody_>, double, double, double, double);
         friend void makeItCylinder(std::shared_ptr<FrBody_>, double, double, double);
         friend void makeItSphere(std::shared_ptr<FrBody_>, double, double);
 
-//        friend FrNode_::FrNode_(FrBody_*);
+        friend FrNode_::FrNode_(FrBody_*);
 
     public:
 

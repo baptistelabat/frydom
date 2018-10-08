@@ -29,7 +29,7 @@ namespace frydom {
         /// Base method for Initialization of FryDoM objects
         ///
         /// This must be overrided in children classes in case of a need for special initialization at the beginning
-        /// of a computation. Every Initialize() methods must be called indirecty when the call to
+        /// of a computation. Every Initialize() methods must be called indirectly when the call to
         /// FrOffshoreSystem::Initialize() is done.
         virtual void Initialize() = 0;
 

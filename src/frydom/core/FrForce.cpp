@@ -7,6 +7,9 @@
 
 #include "FrBody.h"
 
+#include "FrNode.h"
+
+
 namespace frydom{
 
 //    void FrForce::GetBodyForceTorque(chrono::ChVector<>& body_force, chrono::ChVector<>& body_torque) const {
@@ -108,15 +111,35 @@ namespace frydom{
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     /// REFACTORING -------------6>>>>>>>>>>>>>>>>>
 
+    _FrForceBase::_FrForceBase() = default;
+
+//    void _FrForceBase::Update(double time) {
+//        m_frydomForce->Update(time);
+//    }
+
+    FrForce_::FrForce_(std::shared_ptr<FrNode_> node) {
+        m_chronoForce = std::make_shared<_FrForceBase>();
+        m_body = node->GetBody();
+        m_node = std::move(node);
+    }
 
     std::shared_ptr<chrono::ChForce> FrForce_::GetChronoForce() {
         return m_chronoForce;
-    }
-
-    void FrForce_::SetBody(frydom::FrBody_ *body) {
-        m_body = body;
     }
 
     FrOffshoreSystem_* FrForce_::GetSystem() {
@@ -134,7 +157,7 @@ namespace frydom{
 
         }
 
-
+        //        m_node->m_chronoMarker->
 
         // M_COG = M_marker + COG_marker <cross> force
 
@@ -143,83 +166,83 @@ namespace frydom{
     }
 
     void FrForce_::SetAbsMomentAtNode(const chrono::ChVector<double> &momentAtNode) {
-
+        // TODO
     }
 
     void FrForce_::SetLocalForce(const chrono::ChVector<double> &force) {
-
+        // TODO
     }
 
     void FrForce_::SetAbsForce(const chrono::ChVector<double> &force) {
-
+        // TODO
     }
 
     void FrForce_::SetMaxForceLimit(double fmax) {
-
+        // TODO
     }
 
     void FrForce_::SetMaxTorqueLimit(double tmax) {
-
+        // TODO
     }
 
     void FrForce_::SetLimit(bool val) {
-
+        // TODO
     }
 
     void FrForce_::GetAbsForce(Force &force, FRAME_CONVENTION fc) const {
-
+        // TODO
     }
 
     Force FrForce_::GetAbsForce(FRAME_CONVENTION fc) const {
-        return Force();
+        // TODO
     }
 
     void FrForce_::GetAbsForce(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
-
+        // TODO
     }
 
     void FrForce_::GetLocalForce(Force &force, FRAME_CONVENTION fc) const {
-
+        // TODO
     }
 
     Force FrForce_::GetLocalForce(FRAME_CONVENTION fc) const {
-        return Force();
+        // TODO
     }
 
     void FrForce_::GetLocalForce(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
-
+        // TODO
     }
 
     void FrForce_::GetAbsMoment(Force &force, FRAME_CONVENTION fc) const {
-
+        // TODO
     }
 
     Force FrForce_::GetAbsMoment(FRAME_CONVENTION fc) const {
-        return Force();
+        // TODO
     }
 
     void FrForce_::GetAbsMoment(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
-
+        // TODO
     }
 
     void FrForce_::GetLocalMoment(Force &force, FRAME_CONVENTION fc) const {
-
+        // TODO
     }
 
     Force FrForce_::GetLocalMoment(FRAME_CONVENTION fc) const {
-        return Force();
+        // TODO
     }
 
     void FrForce_::GetLocalMoment(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
-
+        // TODO
     }
 
     double FrForce_::GetForceNorm() const {
-        return 0;
+        // TODO
     }
 
     double FrForce_::GetTorqueNorm() const {
-        return 0;
+        // TODO
     }
 
 
