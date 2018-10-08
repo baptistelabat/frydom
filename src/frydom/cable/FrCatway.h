@@ -14,7 +14,6 @@
 
 namespace catenary {
     class CatenaryLine;
-//    class CatenaryNode;
 }
 
 
@@ -27,34 +26,43 @@ namespace frydom {
 
     namespace internal {
 
-        class CatNode : public catenary::CatenaryNode {
+        struct CatNode : public catenary::CatenaryNode {
 
-            std::shared_ptr<FrNode_> m_node1;
-            std::shared_ptr<FrNode_> m_node2;
+            std::shared_ptr<FrNode_> m_node;
+
+            explicit CatNode(std::shared_ptr<FrNode_> node);
 
         };
 
     }
 
 
-    class FrCatway : public FrCable {
+    class FrCatway : public FrCable_ {
 
     private:
 
         std::unique_ptr<catenary::CatenaryLine> m_catLine;
 
 
-        std::shared_ptr<FrNode> m_startingNode;
-        std::shared_ptr<FrNode> m_endNode;
+        std::shared_ptr<FrNode_> m_startingNode;
+        std::shared_ptr<FrNode_> m_endNode;
 
     public:
 
         FrCatway(double youngModulus, double diameter, double linearDensity, double length,
                          unsigned int nbElt, std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2);
 
+        ~FrCatway();
 
+        Force GetTension(const double s) const override;
 
+        Position GetAbsPosition(const double s) const override;
 
+        void Update();
+
+        void Initialize() override;
+
+        void StepFinalize() override;
 
 
 

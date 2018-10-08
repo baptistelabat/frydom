@@ -22,7 +22,6 @@
 #include "FrForce.h"
 #include "FrColors.h"
 
-
 namespace frydom {
 
     class FrNode;
@@ -384,6 +383,9 @@ namespace frydom {
 
         std::shared_ptr<FrNode_> NewNode(const Position& localPosition);
 
+        std::shared_ptr<FrNode_> NewNode(double x, double y, double z);
+
+
 
 
 
@@ -642,6 +644,7 @@ namespace frydom {
         friend void makeItCylinder(std::shared_ptr<FrBody_>, double, double, double);
         friend void makeItSphere(std::shared_ptr<FrBody_>, double, double);
 
+//        friend FrNode_::FrNode_(FrBody_*);
 
     public:
 

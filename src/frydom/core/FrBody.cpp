@@ -338,9 +338,16 @@ namespace frydom {
 
     std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::FrFrame_ &localFrame) {
         // TODO
+//        FrNode_()
+
+
     }
 
     std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::Position &localPosition) {
+        // TODO
+    }
+
+    std::shared_ptr<FrNode_> FrBody_::NewNode(double x, double y, double z) {
         // TODO
     }
 

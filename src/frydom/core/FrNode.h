@@ -50,6 +50,60 @@ namespace frydom {
 
     };  // end class FrNode
 
+
+
+
+
+
+
+
+
+
+
+
+
+    /// REFACTORING ----------->>>>>>>>>>>>>>>>>
+
+
+    // Forward declarations
+    class FrBody_;
+
+
+    class FrNode_ : public FrObject {
+
+    private:
+
+        FrBody_* m_body;
+        std::shared_ptr<chrono::ChMarker> m_chronoMarker;
+
+
+
+    public:
+
+        explicit FrNode_(FrBody_* body);
+
+        FrNode_(FrBody_* body, const Position& position);
+
+        ~FrNode_();
+
+        void SetLocalPosition(const Position& position);
+
+        void SetLocalPosition(double x, double y, double z);
+
+        void SetLocalFrame(const FrFrame_& frame);
+
+
+
+
+    };
+
+
+
+
+
+
+
+
 }  // end namespace frydom
 
 

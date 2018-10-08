@@ -12,7 +12,6 @@
 
 
 using namespace frydom;
-using namespace catenary;
 
 int main(int argc, char* argv[]) {
 
@@ -52,18 +51,21 @@ int main(int argc, char* argv[]) {
     // Defining the cable
     double E = 130e9;
     double diam = 0.005;
-    double linearDensity = 2;
+    double linearDensity = 0.01;  // FIXME : evaluer...
+    double length = 4;
 
-    auto properties = make_properties(E, MU_PI * pow(0.5*diam, 2), linearDensity, true);
-
-    auto node1 = make_node();
-    node1->SetPosition(0., 0., 0.);
+    unsigned int nbElt = 10;
 
 
-    auto node2 = make_node();
+    auto shipNode = ship->NewNode(0., 0., 0.);
+    auto fishNode = fish->NewNode(0., 0., 0.);
+
+    auto cable = std::make_shared<FrCatway>(E, diam, linearDensity, length, nbElt, shipNode, fishNode);  // TODO : avoir un make_catway
 
 
-    catenary::CatenaryLine(properties, )
+
+
+
 
 
 
