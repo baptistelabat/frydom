@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     ship->AddMeshAsset("MagneViking_scaled.obj");
 
     ship->SetAbsVelocity(1, 0, 0, NWU);
-    ship->SetColor(Yellow);
+    ship->SetColor(DarkRed);
 
 
 
@@ -50,12 +50,12 @@ int main(int argc, char* argv[]) {
 
 
     // Defining the cable
-    double E = 130e9;
+    double E = 130e9;  // dyneema young modulus
     double diam = 0.005;
     double linearDensity = 0.01;  // FIXME : evaluer...
     double length = 4;
 
-    unsigned int nbElt = 10;
+    unsigned int nbElt = 1;
 
 
     auto shipNode = ship->NewNode(0., 0., 0.);

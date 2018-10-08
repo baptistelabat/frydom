@@ -97,11 +97,11 @@ namespace frydom {
     #define DEFAULT_MAX_ROTATION_SPEED (float)(180.*DEG2RAD)
 
 
-    _FrBodyBase::_FrBodyBase() : chrono::ChBodyAuxRef() {}
+    _FrBodyBase::_FrBodyBase(FrBody_* body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
 
 
     FrBody_::FrBody_() {
-        m_chronoBody = std::make_shared<_FrBodyBase>();
+        m_chronoBody = std::make_shared<_FrBodyBase>(this);
         m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
     }

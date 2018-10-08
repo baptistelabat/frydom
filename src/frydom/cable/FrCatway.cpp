@@ -29,7 +29,7 @@ namespace frydom {
         m_catLine = std::make_unique<catenary::CatenaryLine>(props, m_startCatNode, m_endCatNode, length);
 
         // Discretizing the line
-        m_catLine->Discretize(nbElt);
+//        m_catLine->Discretize(nbElt);
 
     }
 
@@ -58,7 +58,12 @@ namespace frydom {
 
         // Initializing catenary nodes positions
         m_startCatNode->SetPosition(m_startNode->GetAbsPosition());
+        m_startCatNode->SetFixed(true);
         m_endCatNode->SetPosition(m_endNode->GetAbsPosition());
+        m_endCatNode->SetFixed(true);
+
+//        std::cout << m_endCatNode << std::endl;
+
         m_catLine->Initialize();
 
 

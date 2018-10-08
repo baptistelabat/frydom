@@ -368,23 +368,18 @@ namespace frydom {
         return m_worldBody;
     }
 
-//    void FrOffshoreSystem_::Update(bool updateAsset) {
-//        m_environment->Update(m_chronoSystem->GetChTime());
-//        m_chronoSystem->Update(updateAsset);
-//    }
-
     void FrOffshoreSystem_::PreUpdate() {
         m_environment->Update(m_chronoSystem->GetChTime());
 
-        // Updating cables
-        for(auto& cable : m_catenaryCables) {
+        // Updating catenary cables
+        for(auto& cable : m_catenaryCables) { // TODO : faire update des assets de cable...
             cable->Update();
         }
 
     }
 
     void FrOffshoreSystem_::PostUpdate() {
-
+        // TODO
     }
 
 

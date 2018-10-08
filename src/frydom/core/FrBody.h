@@ -261,14 +261,15 @@ namespace frydom {
     /// REFACTORING ------>>>>>>>>>>>>>>
 
     class FrQuaternion_;
+    class FrBody_;
 
     /// Cette classe n'est la que pour heriter des objets chrono.
     /// Ce n'est pas celle qu'on manipule directement dans frydom en tant qu'utilisateur !!!
-    class _FrBodyBase : public chrono::ChBodyAuxRef {
+    struct _FrBodyBase : public chrono::ChBodyAuxRef {
 
-    public:
+        FrBody_* m_frydomBody;
 
-        _FrBodyBase();
+        explicit _FrBodyBase(FrBody_* body);
 
     };
 

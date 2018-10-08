@@ -282,9 +282,6 @@ namespace frydom {
 
         // Updates...
 
-//        void Update(bool updateAsset); // TODO : mettre prive
-
-
         void PreUpdate();
 
         void PostUpdate();

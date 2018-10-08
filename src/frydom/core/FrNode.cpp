@@ -10,12 +10,8 @@ namespace frydom {
 
 
     FrNode_::FrNode_(frydom::FrBody_ *body) : m_body(body) {
-        auto chronoBody = body->GetChronoBody().get();
-
         m_chronoMarker = std::make_shared<chrono::ChMarker>();
-        m_chronoMarker->SetBody(chronoBody);  //Chrono body can be used because this constructor is a friend of FrBody_
-
-        chronoBody->AddMarker(m_chronoMarker);
+        body->GetChronoBody()->AddMarker(m_chronoMarker);  //Chrono body can be retrieved because this constructor is a friend of FrBody_
     }
 
     FrNode_::FrNode_(FrBody_ *body, const Position &position) : FrNode_(body) {
@@ -66,8 +62,9 @@ namespace frydom {
         m_chronoMarker->Impose_Rel_Coord(chCoord);
     }
 
+    // FIXME : le coord interne de ChMarker est local par rapport au corps auquel il est rattache
     Position FrNode_::GetAbsPosition() {
-        return internal::ChVectorToVector3d<Position>(m_chronoMarker->GetPos());
+        return internal::ChVectorToVector3d<Position>(m_chronoMarker->GetAbsCoord().pos);
     }
 
     void FrNode_::GetAbsPosition(Position &position) {
