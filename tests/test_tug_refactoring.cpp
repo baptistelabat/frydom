@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
     // Defining the cable
     double E = 130e9;  // dyneema young modulus
     double diam = 0.005;
-    double linearDensity = 0.01;  // FIXME : evaluer...
+    double linearDensity = 0.015;  // FIXME : evaluer...
     double length = 4;
 
     unsigned int nbElt = 1;

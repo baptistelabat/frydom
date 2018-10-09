@@ -15,12 +15,14 @@
 #include "FrBody.h"
 
 
+#include "frydom/cable/FrCable.h"
+
+
 
 //#include "GeographicLib/LocalCartesian.hpp"
 //#include "frydom/environment/FrTimeZone.h"
 //#include "frydom/environment/seabed/FrSeabed.h"
 //#include "frydom/environment/tidal/FrTidalModel.h"
-
 
 
 
@@ -286,13 +288,15 @@ namespace frydom {
             chrono::ChSystemSMC(), m_offshoreSystem_(offshoreSystem) {}
 
     void _FrSystemBaseSMC::Update(bool update_assets) {
-
         m_offshoreSystem_->PreUpdate();
-        chrono::ChSystemSMC::Update(update_assets);
+        chrono::ChSystem::Update(update_assets);
         m_offshoreSystem_->PostUpdate();
-
     }
 
+//    void _FrSystemBaseSMC::SetupInitial() {
+//        chrono::ChSystem::SetupInitial();
+//        m_offshoreSystem_->Initialize();
+//    }
 
     FrOffshoreSystem_::FrOffshoreSystem_(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
 
@@ -347,16 +351,7 @@ namespace frydom {
 //    }
 
     void FrOffshoreSystem_::AddCable(std::shared_ptr<frydom::FrCable_> cable) {
-
-        if (auto item = std::dynamic_pointer_cast<FrCatway>(cable)) {
-            m_catenaryCables.push_back(item);
-            return;
-        }
-
-        if (auto item = std::dynamic_pointer_cast<FrDynamicCable>(cable)) {
-            // TODO
-            return;
-        }
+        m_chronoSystem->AddOtherPhysicsItem(cable->GetChronoPhysicsItem());
     }
 
 
@@ -371,10 +366,10 @@ namespace frydom {
     void FrOffshoreSystem_::PreUpdate() {
         m_environment->Update(m_chronoSystem->GetChTime());
 
-        // Updating catenary cables
-        for(auto& cable : m_catenaryCables) { // TODO : faire update des assets de cable...
-            cable->Update();
-        }
+//        // Updating catenary cables
+//        for(auto& cable : m_catenaryCables) { // TODO : faire update des assets de cable...
+//            cable->Update();
+//        }
 
     }
 
@@ -388,25 +383,20 @@ namespace frydom {
         // Initializing environment before bodies
         m_environment->Initialize();
 
-        // Initializing cables
-        for (auto& cable : m_catenaryCables) {
-            cable->Initialize();
-        }
-
         // Initializing embedded chrono system
         m_chronoSystem->SetupInitial(); // Actually do nothing but called for consistency
 
-        // Initializing bodies
-        auto bodyIter = body_begin();
-        for (; bodyIter != body_end(); bodyIter++) {
-            (*bodyIter)->Initialize();
-        }
-
-        // Initializing links
-        auto linkIter = link_begin();
-        for (; linkIter != link_end(); linkIter++) {
-            (*linkIter)->Initialize();
-        }
+//        // Initializing bodies
+//        auto bodyIter = body_begin();
+//        for (; bodyIter != body_end(); bodyIter++) {
+//            (*bodyIter)->Initialize();
+//        }
+//
+//        // Initializing links
+//        auto linkIter = link_begin();
+//        for (; linkIter != link_end(); linkIter++) {
+//            (*linkIter)->Initialize();
+//        }
 
         // TODO (pour la radiation notamment)
 //        // Initializing otherPhysics

@@ -5,22 +5,22 @@
 #ifndef FRYDOM_FRCATWAY_H
 #define FRYDOM_FRCATWAY_H
 
-//#include "catenary/CatenaryNode.h"
 
 #include "FrCable.h"
 
 #include "frydom/core/FrForce.h"
 
+#include "catenary/CatenaryLine.h"
 
-
-
-//using namespace catenary;
 
 namespace catenary {
-    class CatenaryLine;
+//    class CatenaryLine;
     class CatenaryNode;
 }
 
+namespace chrono {
+    class ChLineShape;
+}
 
 namespace frydom {
 
@@ -29,13 +29,39 @@ namespace frydom {
 
 
     class FrCatForce;
+    class CatenaryCableAsset;
+    class FrCatway;
+
+    namespace internal {
+
+        struct _CatenaryBase : public catenary::CatenaryLine, public chrono::ChPhysicsItem {
+
+            FrCatway* m_frydomCatLine;
+
+            double m_breakingTension = 1e5;  // TODO : passer dans catway !!
+
+            _CatenaryBase(FrCatway* frydomCatLine,
+                          std::shared_ptr<catenary::CatenaryProperties> properties,
+                          std::shared_ptr<catenary::CatenaryNode> startNode,
+                          std::shared_ptr<catenary::CatenaryNode> endNode,
+                          const double unstretchedLength);
+
+            void Update(double time, bool update_assets) override;
+
+            void SetupInitial() override;
+
+            double GetBreakingTension();
+
+        };
+
+    }  // end namespace internal
 
 
     class FrCatway : public FrCable_ {
 
     private:
 
-        std::unique_ptr<catenary::CatenaryLine> m_catLine;
+        std::shared_ptr<internal::_CatenaryBase> m_catLine;
 
         std::shared_ptr<catenary::CatenaryNode> m_startCatNode;
         std::shared_ptr<catenary::CatenaryNode> m_endCatNode;
@@ -43,6 +69,7 @@ namespace frydom {
         std::shared_ptr<FrCatForce> m_startForce;
         std::shared_ptr<FrCatForce> m_endForce;
 
+        std::shared_ptr<CatenaryCableAsset> m_asset;
 
     public:
 
@@ -64,6 +91,15 @@ namespace frydom {
         void Initialize() override;
 
         void StepFinalize() override;
+
+        double GetBreakingTension();
+
+
+        // For asset
+        std::shared_ptr<CatenaryCableAsset> GetAsset();
+
+    private:
+        std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() override;
 
 
     };
@@ -95,6 +131,35 @@ namespace frydom {
     private:
 
         void SetAbsTension(const Force& tension);
+
+    };
+
+
+
+
+    class CatenaryCableAsset {
+
+    private:
+
+        internal::_CatenaryBase* m_cable;
+
+        std::vector<std::shared_ptr<chrono::ChLineShape>> m_elements;
+
+        unsigned int m_nbDrawnElements = 40;
+
+
+    public:
+
+        explicit CatenaryCableAsset(internal::_CatenaryBase* cable);
+
+        void SetNbElements(unsigned int n);
+
+        void Update();
+
+        void Initialize();
+
+
+
 
     };
 

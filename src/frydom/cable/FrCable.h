@@ -7,7 +7,9 @@
 
 #include "frydom/core/FrObject.h"
 #include "frydom/core/FrNode.h"
-#include "chrono/physics/ChLink.h"
+//#include "chrono/physics/ChLink.h"
+
+#include "frydom/core/FrOffshoreSystem.h"
 
 namespace frydom {
 
@@ -132,7 +134,6 @@ namespace frydom {
 
 
 
-
     /// Abstract base class for cables
     class FrCable_ : public FrObject {
 
@@ -151,7 +152,6 @@ namespace frydom {
 
         double m_linearDensity; // in kg/m
 
-        bool m_initialized = false;
 
     public:
 
@@ -161,9 +161,11 @@ namespace frydom {
                  const std::shared_ptr<FrNode_> endingNode,
                  const double cableLength,
                  const double youngModulus,
-                 const double sectionArea);
+                 const double sectionArea,
+                 const double linearDensity);
 
         ~FrCable_();
+
 
         void SetYoungModulus(const double E) { m_youngModulus = E; }
 
@@ -228,6 +230,12 @@ namespace frydom {
         virtual Force GetTension(const double s) const = 0;
 
         virtual Position GetAbsPosition(const double s) const = 0;
+
+
+    private:
+        virtual std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() = 0;
+
+        friend void FrOffshoreSystem_::AddCable(std::shared_ptr<FrCable_>);
 
 
 

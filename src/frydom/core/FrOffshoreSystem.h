@@ -11,8 +11,8 @@
 //
 //
 #include <frydom/utils/FrIrrApp.h>
-#include <frydom/cable/FrCable.h>
-#include <frydom/cable/FrCatway.h>
+//#include <frydom/cable/FrCable.h>
+//#include <frydom/cable/FrCatway.h>
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/physics/ChSystemNSC.h"
 //
@@ -143,6 +143,8 @@ namespace frydom {
 
         void Update(bool update_assets = true) override;
 
+//        void SetupInitial() override;
+
     };
 
     class _FrSystemBaseNSC : public chrono::ChSystemNSC {
@@ -157,6 +159,8 @@ namespace frydom {
     class FrBody_;
     class FrLink_;
     class FrEnvironment_;
+    class FrCable_;
+
 
     class FrOffshoreSystem_ : public FrObject {
 
@@ -253,8 +257,8 @@ namespace frydom {
         LinkContainer m_linkList;
 //        OtherPhysicsList m_otherPhysicsList;
 
-        using CatenaryCableContainer = std::vector<std::shared_ptr<FrCatway>>;
-        CatenaryCableContainer m_catenaryCables;
+//        using CatenaryCableContainer = std::vector<std::shared_ptr<FrCatway>>;
+//        CatenaryCableContainer m_catenaryCables;
 
 
     public:

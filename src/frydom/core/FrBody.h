@@ -271,6 +271,10 @@ namespace frydom {
 
         explicit _FrBodyBase(FrBody_* body);
 
+        void SetupInitial() override;
+
+        void Update(bool update_assets) override;
+
     };
 
 
@@ -658,6 +662,8 @@ namespace frydom {
         void Initialize() override;
 
         void StepFinalize() override;
+
+        void Update();
 
 
         // Linear iterators on external forces

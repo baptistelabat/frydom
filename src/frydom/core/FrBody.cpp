@@ -99,6 +99,14 @@ namespace frydom {
 
     _FrBodyBase::_FrBodyBase(FrBody_* body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
 
+    void _FrBodyBase::SetupInitial() {
+        m_frydomBody->Initialize();
+    }
+
+    void _FrBodyBase::Update(bool update_assets) {
+        chrono::ChBodyAuxRef::Update(update_assets);
+        m_frydomBody->Update();
+    }
 
     FrBody_::FrBody_() {
         m_chronoBody = std::make_shared<_FrBodyBase>(this);
@@ -131,6 +139,10 @@ namespace frydom {
     }
 
     void FrBody_::StepFinalize() {
+        // TODO
+    }
+
+    void FrBody_::Update() {
         // TODO
     }
 
@@ -223,7 +235,7 @@ namespace frydom {
         cogFrame.SetPos(internal::MakeNWUChVector(x, y, z, fc));  // TODO : regarder partout ou on utlise le SwapVectorFrameConvention... et voir si on ne peut pas remplacer par MakeNWUChvector...
         m_chronoBody->SetFrame_COG_to_REF(cogFrame);
 
-        m_chronoBody->Update();  // To make auxref_to_abs up to date
+        m_chronoBody->Update(false);  // To make auxref_to_abs up to date
 
 //        if (transportInertia) {  // FIXME : pas certain que ca fonctionne !!
 //            m_chronoBody->SetInertia(
@@ -374,7 +386,7 @@ namespace frydom {
     void FrBody_::SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc) {  // OK
 
         m_chronoBody->SetPos(internal::MakeNWUChVector(x, y, z, fc));
-        m_chronoBody->Update(); // To make the auxref up to date
+        m_chronoBody->Update(false); // To make the auxref up to date
     }
 
     void FrBody_::SetCOGAbsPosition(Position position, FRAME_CONVENTION fc) {  // OK

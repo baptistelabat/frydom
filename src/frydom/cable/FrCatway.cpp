@@ -14,24 +14,50 @@
 namespace frydom {
 
 
+    namespace internal {
+
+        _CatenaryBase::_CatenaryBase(FrCatway* frydomCatLine,
+                                     std::shared_ptr<catenary::CatenaryProperties> properties,
+                                     std::shared_ptr<catenary::CatenaryNode> startNode,
+                                     std::shared_ptr<catenary::CatenaryNode> endNode,
+                                     const double unstretchedLength)
+                                         : chrono::ChPhysicsItem(),
+                                           catenary::CatenaryLine(properties, startNode, endNode, unstretchedLength),
+                                           m_frydomCatLine(frydomCatLine)
+                                           {}
+
+        void _CatenaryBase::Update(double time, bool update_assets) {
+            chrono::ChPhysicsItem::Update(time, update_assets);
+            m_frydomCatLine->Update();
+        }
+
+        void _CatenaryBase::SetupInitial() {
+            m_frydomCatLine->Initialize();
+        }
+
+        double _CatenaryBase::GetBreakingTension() {
+            return m_breakingTension;
+        }
+
+    }  // end namespace internal
+
+
+
+
     FrCatway::FrCatway(double youngModulus, double diameter, double linearDensity, double length,
-                       unsigned int nbElt, std::shared_ptr<FrNode_> startNode, std::shared_ptr<FrNode_> endNode) {
+                       unsigned int nbElt, std::shared_ptr<FrNode_> startNode, std::shared_ptr<FrNode_> endNode) :
+                       FrCable_(startNode, endNode, length, youngModulus, MU_PI * pow(0.5*diameter, 2), linearDensity) {
 
-        auto props = catenary::make_properties(youngModulus, MU_PI * pow(0.5*diameter, 2), linearDensity, true);
-
-        // Creating catenary nodes associated to FrNodes
-        m_startNode = std::move(startNode);
-        m_endNode   = std::move(endNode);
+        // Creating the line properties
+        auto props = catenary::make_properties(m_youngModulus, m_sectionArea, m_linearDensity, true);
 
         // Creating the line
         m_startCatNode = catenary::make_node();
         m_endCatNode   = catenary::make_node();
-        m_catLine      = std::make_unique<catenary::CatenaryLine>(props, m_startCatNode, m_endCatNode, length);
-
-        // Discretizing the line
-        m_catLine->Discretize(nbElt);
+        m_catLine      = std::make_shared<internal::_CatenaryBase>(this, props, m_startCatNode, m_endCatNode, m_cableLength);
 
     }
+
 
     FrCatway::~FrCatway() {}
 
@@ -52,9 +78,14 @@ namespace frydom {
 
 
 
+        // Asset
+        m_asset->Update();
     }
 
     void FrCatway::Initialize() {
+
+        // Discretizing the line  // FIXME : permettre de discretiser apres coup !
+//        m_catLine->Discretize(nbElt);
 
         // Initializing catenary nodes positions
         m_startCatNode->SetPosition(m_startNode->GetAbsPosition());
@@ -73,10 +104,20 @@ namespace frydom {
         m_startNode->GetBody()->AddExternalForce(m_startForce);
         m_endNode->GetBody()->AddExternalForce(m_endForce);
 
+
+        // Initialize asset
+        m_asset = std::make_shared<CatenaryCableAsset>(m_catLine.get());
+        m_asset->Initialize();
+
+
     }
 
     void FrCatway::StepFinalize() {
         // TODO
+    }
+
+    double FrCatway::GetBreakingTension() {
+        return m_catLine->GetBreakingTension();
     }
 
     Force FrCatway::GetTension(const double s) const {
@@ -95,6 +136,13 @@ namespace frydom {
         return (Position)m_catLine->GetAbsPosition(s);
     }
 
+    std::shared_ptr<CatenaryCableAsset> FrCatway::GetAsset() {
+        return m_asset;
+    }
+
+    std::shared_ptr<chrono::ChPhysicsItem> FrCatway::GetChronoPhysicsItem() {
+        return m_catLine;
+    }
 
 
 
@@ -164,6 +212,43 @@ namespace frydom {
 
     }
 
+
+
+
+    CatenaryCableAsset::CatenaryCableAsset(internal::_CatenaryBase *cable) : m_cable(cable) {}
+
+    void CatenaryCableAsset::SetNbElements(unsigned int n) {
+        m_nbDrawnElements = n;
+    }
+
+    void CatenaryCableAsset::Initialize() {
+
+        // Generating line segments
+        double ds = m_cable->GetStretchedLength() / m_nbDrawnElements;
+
+        chrono::ChVector<double> p0, p1;
+        chrono::ChColor color;
+        p0 = internal::Vector3dToChVector(m_cable->GetStartNode()->GetPosition());
+        double s = 0.;
+        for (int i = 1; i < m_nbDrawnElements; i++) {
+            s += ds;
+            p1 = internal::Vector3dToChVector(m_cable->GetAbsPosition(s));
+            auto newElement = std::make_shared<chrono::ChLineShape>();
+            color = chrono::ChColor::ComputeFalseColor(m_cable->GetTension(s).norm(), 0, m_cable->GetBreakingTension(), true);
+            newElement->SetColor(color);
+            newElement->SetLineGeometry(std::make_shared<chrono::geometry::ChLineSegment>(p0, p1));
+            m_elements.push_back(newElement);
+            m_cable->AddAsset(newElement);
+            p0 = p1;
+        }
+
+    }
+
+    void CatenaryCableAsset::Update() {
+        for (auto& element : m_elements) {
+            element->GetLineGeometry()
+        }
+    }
 
 
 

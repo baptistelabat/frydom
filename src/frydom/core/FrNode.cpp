@@ -63,7 +63,7 @@ namespace frydom {
     }
 
     // FIXME : le coord interne de ChMarker est local par rapport au corps auquel il est rattache
-    Position FrNode_::GetAbsPosition() {
+    Position FrNode_::GetAbsPosition() { // TODO : utiliser FRAME_CONVENTIOn
         return internal::ChVectorToVector3d<Position>(m_chronoMarker->GetAbsCoord().pos);
     }
 
