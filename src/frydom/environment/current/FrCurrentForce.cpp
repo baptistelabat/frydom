@@ -30,26 +30,15 @@ namespace frydom {
         // Getting the angle between boat axis and velocity vector
         auto alpha = mybody->GetCurrentRelativeAngle(NWU, DEG);
 
-        // Retrieving hull underwater properties
-        auto rho_water = mybody->GetSystem()->GetEnvironment()->GetWaterDensity();
-        auto transverse_area = mybody->GetTransverseUnderWaterArea();
-        auto lateral_area = mybody->GetLateralUnderWaterArea();
-        auto lpp = mybody->GetLpp();
-
         // Getting current force coefficients
         auto cx = coeffs_table.CX(alpha, NWU);
         auto cy = coeffs_table.CY(alpha, NWU);
         auto cz = coeffs_table.CZ(alpha, NWU);
 
-        // Computing force components from formula.
-        // These expressions concern forces in the body reference frame...
-        // TODO: verifier qu'on a pas un probleme de frame !!!!
-        auto fx = -cx * vel2; // FIXME: on doit caler le sige suivant la convention prise dans les coeffs...
-        auto fy = -cy * vel2;
-        auto mz = -cz * vel2;
-//        auto fx = 0.5 * rho_water * cx * transverse_area * vel2;
-//        auto fy = 0.5 * rho_water * cy * transverse_area * vel2;
-//        auto mz = 0.5 * rho_water * cz * lateral_area * vel2 * lpp;
+        // Compute force and moment
+        auto fx = cx * vel2;
+        auto fy = cy * vel2;
+        auto mz = cz * vel2;
 
         force.x() = fx;
         force.y() = fy;
