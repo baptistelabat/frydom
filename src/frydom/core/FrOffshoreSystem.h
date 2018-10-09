@@ -7,7 +7,7 @@
 
 //#include <frydom/hydrodynamics/FrHydroDB.h>
 //
-////#include "frydom/core/FrException.h"
+///#include "frydom/core/FrException.h"
 //
 //
 #include <frydom/utils/FrIrrApp.h>
@@ -221,11 +221,12 @@ namespace frydom {
 
     private:
 
-        std::unique_ptr<chrono::ChSystem> m_chronoSystem; ///< The  real Chrono system (may be SMC or NSC)
+        std::unique_ptr<chrono::ChSystem> m_chronoSystem;   ///< The  real Chrono system (may be SMC or NSC)
 
-        std::shared_ptr<FrBody_> m_worldBody;            ///< A fixed body that span the world and where things may be attached
+        std::shared_ptr<FrBody_> m_worldBody;
+        ///< A fixed body that span the world and where things may be attached
 
-        std::unique_ptr<FrEnvironment_> m_environment;     ///< The offshore environment
+        std::unique_ptr<FrEnvironment_> m_environment;      ///< The offshore environment
 
         SYSTEM_TYPE     m_systemType;
         TIME_STEPPER    m_timeStepper;
@@ -238,10 +239,10 @@ namespace frydom {
         using LinkContainer = std::vector<std::shared_ptr<FrLink_>>;
 //        using OtherPhysicsContainer = std::vector<std::shared_ptr<FrOtherPhysics_>>;
 
-        using BodyIter          = BodyContainer::iterator;
+        using BodyIter          = BodyContainer::iterator; // TODO : bouger les iterateurs proche des methodes d'iteration...
         using ConstBodyIter     = BodyContainer::const_iterator;
 
-        using LinkIter = LinkContainer::iterator;
+        using LinkIter      = LinkContainer::iterator;
         using ConstLinkIter = LinkContainer::const_iterator;
 
 //        using OtherPhysicsIter = OtherPhysicsContainer::iterator;
@@ -265,6 +266,8 @@ namespace frydom {
                           SOLVER solver            = MINRES);
 
         ~FrOffshoreSystem_();
+
+        void Add(std::shared_ptr<FrObject> item); // TODO : faire des dynamic_pointer_cast sur les classes pouvant etre ajoutees...
 
         void AddBody(std::shared_ptr<FrBody_> body);
 

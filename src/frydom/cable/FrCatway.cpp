@@ -26,10 +26,10 @@ namespace frydom {
         // Creating the line
         m_startCatNode = catenary::make_node();
         m_endCatNode   = catenary::make_node();
-        m_catLine = std::make_unique<catenary::CatenaryLine>(props, m_startCatNode, m_endCatNode, length);
+        m_catLine      = std::make_unique<catenary::CatenaryLine>(props, m_startCatNode, m_endCatNode, length);
 
         // Discretizing the line
-//        m_catLine->Discretize(nbElt);
+        m_catLine->Discretize(nbElt);
 
     }
 
@@ -59,13 +59,11 @@ namespace frydom {
         // Initializing catenary nodes positions
         m_startCatNode->SetPosition(m_startNode->GetAbsPosition());
         m_startCatNode->SetFixed(true);
+
         m_endCatNode->SetPosition(m_endNode->GetAbsPosition());
         m_endCatNode->SetFixed(true);
 
-//        std::cout << m_endCatNode << std::endl;
-
         m_catLine->Initialize();
-
 
         // Creating forces on attached bodies
         m_startForce = std::make_shared<FrCatForce>(this, m_startNode);
@@ -111,25 +109,32 @@ namespace frydom {
     }
 
     void FrCatForce::Update(double time) {
-        // TODO
-        // Forces are updated directly by catenary lines
+        // Update of FrCatForce is not done by the force itself but by the catenary line that is updated
+        // before the bodies external forces.
+        // Nothing to do here.
 
-        // Getting tensions
-        Force tension;
 
-        switch (m_side) {
-            case START:
-                tension = m_catenaryLine->GetStartNodeTension();
-                break;
-            case END:
-                tension = m_catenaryLine->GetEndNodeTension();
-                break;
-            default:
-                throw FrException("Unknown cable SIDE");
-        }
+        // FIXME : une force de cable catenaire doit etre rattache a un noeud fixe.
 
-        // On update les 2 forces ...
-        // TODO : terminer
+//        // TODO : retirer l'enum SIDE, pas besoin !!
+//        // Forces are updated directly by catenary lines
+//
+//        // Getting tensions
+//        Force tension;
+//
+//        switch (m_side) {
+//            case START:
+//                tension = m_catenaryLine->GetStartNodeTension();
+//                break;
+//            case END:
+//                tension = m_catenaryLine->GetEndNodeTension();
+//                break;
+//            default:
+//                throw FrException("Unknown cable SIDE");
+//        }
+//
+//        // On update les 2 forces ...
+//        // TODO : terminer
 
 
 

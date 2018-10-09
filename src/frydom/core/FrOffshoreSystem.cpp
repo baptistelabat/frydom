@@ -804,13 +804,15 @@ namespace frydom {
     void FrOffshoreSystem_::RunInViewer(double endTime, double dist, bool recordVideo) {
 
         FrIrrApp_ app(m_chronoSystem.get(), dist);
+
+//        app.SetTimestep() // TODO: permettre de regler un timestep dans offshoreSystem et le recuperer ici...
         app.SetVideoframeSave(recordVideo);
         app.Run(endTime);
 
     }
 
     void FrOffshoreSystem_::AddAsset(std::shared_ptr<chrono::ChAsset> asset) {
-        m_chronoSystem->AddAsset(asset);
+        m_chronoSystem->AddAsset(std::move(asset));
     }
 
 

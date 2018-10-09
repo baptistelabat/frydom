@@ -3,9 +3,6 @@
 //
 
 
-
-
-
 #include "frydom/frydom.h"
 
 #define DBLENDL std::endl << std::endl
@@ -15,11 +12,12 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
+
+    // TODO : fournir un frydom initialize...
     // The system
     FrOffshoreSystem_ system;
 
-    // TODO : afficher la surface libre...
-
+    // Defining the visualization of the free surface such as it has the same dimensions as the INSEAN towing tank
     system.GetEnvironment()->GetFreeSurface()->SetGrid(0., 470, 470, -4.5, 4.5, 9);
 
     // Creating a wall for the basin
@@ -31,7 +29,7 @@ int main(int argc, char* argv[]) {
 
 
 
-
+    // Defining the ship
     auto ship = system.NewBody();
     ship->RemoveGravity(true);  // TODO : mettre en place les contraintes a la place de virer la gravite...
     ship->AddMeshAsset("MagneViking_scaled.obj");
@@ -45,7 +43,7 @@ int main(int argc, char* argv[]) {
     auto fish = system.NewBody();
     makeItSphere(fish, 0.4, 5/9.81);
     fish->SetColor(GreenYellow);
-    fish->SetAbsPosition(0, 0, -3.5,  NWU);
+    fish->SetAbsPosition(-1., 0, -2.5,  NWU);
 
 
 
@@ -63,14 +61,6 @@ int main(int argc, char* argv[]) {
 
     auto cable = std::make_shared<FrCatway>(E, diam, linearDensity, length, nbElt, shipNode, fishNode);  // TODO : avoir un make_catway
     system.AddCable(cable);
-
-
-
-
-
-
-
-
 
 
     system.Initialize();
