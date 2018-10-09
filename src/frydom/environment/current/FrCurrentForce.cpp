@@ -36,9 +36,9 @@ namespace frydom {
         auto cz = coeffs_table.CZ(alpha, NWU);
 
         // Compute force and moment
-        auto fx = cx * vel2;
-        auto fy = cy * vel2;
-        auto mz = cz * vel2;
+        auto fx = -cx * vel2;
+        auto fy = -cy * vel2;
+        auto mz = -cz * vel2;
 
         force.x() = fx;
         force.y() = fy;
