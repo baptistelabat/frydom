@@ -120,12 +120,9 @@ namespace frydom {
 
         auto heading = m_body->GetHeadingAngle(NED, DEG);
 
-        //auto emjwt = m_waveProbe->GetWaveField()->GetTimeCoeffs();
-
         std::vector<double> cforce = {0.,0.,0.};
 
         auto waveDir = m_waveProbe->GetWaveField()->GetWaveDirections(DEG);
-        //auto w = m_waveProbe->GetWaveField()->GetWaveFrequencies(RADS);
         auto w = m_waveProbe->GetEncounterWaveFrequencies();
         double wi, relative_angle;
 
