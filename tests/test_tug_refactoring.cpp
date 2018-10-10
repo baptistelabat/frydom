@@ -34,16 +34,19 @@ int main(int argc, char* argv[]) {
     ship->RemoveGravity(true);  // TODO : mettre en place les contraintes a la place de virer la gravite...
     ship->AddMeshAsset("MagneViking_scaled.obj");
 
-    ship->SetAbsVelocity(1, 0, 0, NWU);
+    ship->SetBodyFixed(true);
+
+    ship->SetAbsPosition(2, 0, 0, NWU);
+//    ship->SetAbsVelocity(1, 0, 0, NWU);
     ship->SetColor(DarkRed);
 
 
 
     // Defining the fish
     auto fish = system.NewBody();
-    makeItSphere(fish, 0.4, 5/9.81);
+    makeItSphere(fish, 0.2, 5/9.81);
     fish->SetColor(GreenYellow);
-    fish->SetAbsPosition(-1., 0, -2.5,  NWU);
+    fish->SetAbsPosition(-2., 0, 0,  NWU);
 
 
 
@@ -56,12 +59,14 @@ int main(int argc, char* argv[]) {
     unsigned int nbElt = 1;
 
 
-    auto shipNode = ship->NewNode(0., 0., 0.);
+    auto shipNode = ship->NewNode(-1.961, 0., 0.);
     auto fishNode = fish->NewNode(0., 0., 0.);
 
     auto cable = std::make_shared<FrCatway>(E, diam, linearDensity, length, nbElt, shipNode, fishNode);  // TODO : avoir un make_catway
     system.AddCable(cable);
 
+
+    system.SetTimeStep(0.01);
 
     system.Initialize();
     system.RunInViewer(100, 20, false);

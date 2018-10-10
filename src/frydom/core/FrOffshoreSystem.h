@@ -139,7 +139,7 @@ namespace frydom {
         FrOffshoreSystem_* m_offshoreSystem_;
 
     public:
-        _FrSystemBaseSMC(FrOffshoreSystem_* offshoreSystem);
+        explicit _FrSystemBaseSMC(FrOffshoreSystem_* offshoreSystem);
 
         void Update(bool update_assets = true) override;
 
@@ -292,6 +292,7 @@ namespace frydom {
         void PreUpdate();
 
         void PostUpdate();
+
 
 
 

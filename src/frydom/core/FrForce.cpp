@@ -126,16 +126,13 @@ namespace frydom{
 
     /// REFACTORING -------------6>>>>>>>>>>>>>>>>>
 
-    _FrForceBase::_FrForceBase() = default;
+    _FrForceBase::_FrForceBase(FrForce_* force) : m_frydomForce(force) {}
 
-//    void _FrForceBase::Update(double time) {
-//        m_frydomForce->Update(time);
-//    }
+    void _FrForceBase::UpdateState() {}
 
-    FrForce_::FrForce_(std::shared_ptr<FrNode_> node) {
-        m_chronoForce = std::make_shared<_FrForceBase>();
-        m_body = node->GetBody();
-        m_node = std::move(node);
+
+    FrForce_::FrForce_(std::shared_ptr<FrNode_> node) : m_body(node->GetBody()), m_node(node) {
+        m_chronoForce = std::make_shared<_FrForceBase>(this);
     }
 
     std::shared_ptr<chrono::ChForce> FrForce_::GetChronoForce() {
@@ -146,7 +143,7 @@ namespace frydom{
         return m_body->GetSystem();
     }
 
-    void FrForce_::SetLocalMomentAtNode(const chrono::ChVector<double> &momentAtNode) {
+    void FrForce_::SetLocalMomentAtNode(const Moment &momentAtNode) {
         // Moment is the moment at marker point expressed in NWU
         // Should be called at the end of the update procedure with argument moment expressed at node in NWU
         // Warning, force must be already updated into the object...
@@ -165,16 +162,16 @@ namespace frydom{
 
     }
 
-    void FrForce_::SetAbsMomentAtNode(const chrono::ChVector<double> &momentAtNode) {
+    void FrForce_::SetAbsMomentAtNode(const Moment &momentAtNode) {
         // TODO
     }
 
-    void FrForce_::SetLocalForce(const chrono::ChVector<double> &force) {
+    void FrForce_::SetLocalForce(const Force &force) {
         // TODO
     }
 
-    void FrForce_::SetAbsForce(const chrono::ChVector<double> &force) {
-        // TODO
+    void FrForce_::SetAbsForce(const Force &force) {
+        m_chronoForce->force = internal::Vector3dToChVector(force);
     }
 
     void FrForce_::SetMaxForceLimit(double fmax) {

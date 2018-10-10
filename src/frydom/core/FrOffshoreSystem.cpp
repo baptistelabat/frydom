@@ -3,6 +3,7 @@
 //
 
 #include <frydom/cable/FrDynamicCable.h>
+#include <chrono/utils/ChProfiler.h>
 #include "FrOffshoreSystem.h"
 
 #include "frydom/core/FrBody.h"
@@ -288,9 +289,33 @@ namespace frydom {
             chrono::ChSystemSMC(), m_offshoreSystem_(offshoreSystem) {}
 
     void _FrSystemBaseSMC::Update(bool update_assets) {
+
+        CH_PROFILE( "Update");
+
+        timer_update.start();  // Timer for profiling
+
         m_offshoreSystem_->PreUpdate();
-        chrono::ChSystem::Update(update_assets);
+
+        // Executes the "forUpdate" in all controls of controlslist
+        ExecuteControlsForUpdate();
+
+        for (auto& physicsItem : otherphysicslist) {
+            physicsItem->Update(ChTime, update_assets);
+        }
+        for (auto& body : bodylist) {
+            body->Update(ChTime, update_assets);
+        }
+        for (auto& link : linklist) {
+            link->Update(ChTime, update_assets);
+        }
+
         m_offshoreSystem_->PostUpdate();
+
+        // Update all contacts, if any
+        contact_container->Update(ChTime, update_assets);
+
+        timer_update.stop();
+
     }
 
 //    void _FrSystemBaseSMC::SetupInitial() {
@@ -795,7 +820,7 @@ namespace frydom {
 
         FrIrrApp_ app(m_chronoSystem.get(), dist);
 
-//        app.SetTimestep() // TODO: permettre de regler un timestep dans offshoreSystem et le recuperer ici...
+        app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
         app.Run(endTime);
 

@@ -11,11 +11,12 @@
 #include "frydom/core/FrForce.h"
 
 #include "catenary/CatenaryLine.h"
+#include "catenary/CatenaryNode.h"
 
 
 namespace catenary {
 //    class CatenaryLine;
-    class CatenaryNode;
+//    class CatenaryNode;
 }
 
 namespace chrono {
@@ -31,6 +32,8 @@ namespace frydom {
     class FrCatForce;
     class CatenaryCableAsset;
     class FrCatway;
+    class FrCatForce;
+
 
     namespace internal {
 
@@ -38,13 +41,13 @@ namespace frydom {
 
             FrCatway* m_frydomCatLine;
 
-            double m_breakingTension = 1e5;  // TODO : passer dans catway !!
+            double m_breakingTension = 12000;  // TODO : passer dans catway !!
 
             _CatenaryBase(FrCatway* frydomCatLine,
                           std::shared_ptr<catenary::CatenaryProperties> properties,
                           std::shared_ptr<catenary::CatenaryNode> startNode,
                           std::shared_ptr<catenary::CatenaryNode> endNode,
-                          const double unstretchedLength);
+                          double unstretchedLength);
 
             void Update(double time, bool update_assets) override;
 
@@ -53,6 +56,17 @@ namespace frydom {
             double GetBreakingTension();
 
         };
+
+        struct _CatenaryNode : public catenary::CatenaryNode {
+
+            FrCatForce* m_force;
+
+            explicit _CatenaryNode(FrCatForce* force);
+
+            void Update(bool reverse);
+
+        };
+
 
     }  // end namespace internal
 
@@ -63,8 +77,8 @@ namespace frydom {
 
         std::shared_ptr<internal::_CatenaryBase> m_catLine;
 
-        std::shared_ptr<catenary::CatenaryNode> m_startCatNode;
-        std::shared_ptr<catenary::CatenaryNode> m_endCatNode;
+        std::shared_ptr<internal::_CatenaryNode> m_startCatNode;
+        std::shared_ptr<internal::_CatenaryNode> m_endCatNode;
 
         std::shared_ptr<FrCatForce> m_startForce;
         std::shared_ptr<FrCatForce> m_endForce;
@@ -112,15 +126,11 @@ namespace frydom {
             END
         };
 
-        FrCatway* m_catenaryLine;
-
-        SIDE m_side;
-
         friend class FrCatway;
 
     public:
 
-        FrCatForce(FrCatway* catenaryLine, std::shared_ptr<FrNode_> node);
+        explicit FrCatForce(std::shared_ptr<FrNode_> node);
 
         void Update(double time) override;
 
@@ -131,6 +141,8 @@ namespace frydom {
     private:
 
         void SetAbsTension(const Force& tension);
+
+        friend void internal::_CatenaryNode::Update(bool);
 
     };
 
@@ -145,7 +157,7 @@ namespace frydom {
         public:
             explicit CatLineGeom(FrCatway *catLine);
 
-            void Evaluate(chrono::ChVector<double> &pos, const double u) const;
+            void Evaluate(chrono::ChVector<double> &pos, const double u) const override;
 
         };
 
@@ -169,9 +181,16 @@ namespace frydom {
 
         internal::_CatenaryBase* m_cable;
 
-        std::vector<std::shared_ptr<chrono::ChLineShape>> m_elements;
+        using Triplet = std::tuple<double, double, std::shared_ptr<chrono::ChLineShape>>;
+        std::vector<Triplet> m_elements;
+
 
         unsigned int m_nbDrawnElements = 40;
+
+
+        static Triplet make_triplet(double s0, double s1, std::shared_ptr<chrono::ChLineShape> lineShape) {
+            return std::make_tuple(s0, s1, lineShape);
+        }
 
 
     public:

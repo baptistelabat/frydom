@@ -27,8 +27,8 @@ namespace frydom {
                                            {}
 
         void _CatenaryBase::Update(double time, bool update_assets) {
-            chrono::ChPhysicsItem::Update(time, update_assets);
             m_frydomCatLine->Update();
+            chrono::ChPhysicsItem::Update(time, update_assets);
         }
 
         void _CatenaryBase::SetupInitial() {
@@ -38,6 +38,24 @@ namespace frydom {
         double _CatenaryBase::GetBreakingTension() {
             return m_breakingTension;
         }
+
+
+        _CatenaryNode::_CatenaryNode(frydom::FrCatForce *force) : catenary::CatenaryNode(), m_force(force) {}
+
+        void _CatenaryNode::Update(bool reverse) {
+
+            // Updating forces
+            auto tension = (Force)GetForceBalance();
+
+//            if (reverse) tension = -tension;
+
+            m_force->SetAbsTension(tension);
+
+
+
+
+        }
+
 
     }  // end namespace internal
 
@@ -51,9 +69,21 @@ namespace frydom {
         // Creating the line properties
         auto props = catenary::make_properties(m_youngModulus, m_sectionArea, m_linearDensity, true);
 
+        // Creating forces on attached bodies
+        m_startForce = std::make_shared<FrCatForce>(m_startNode);
+        m_endForce   = std::make_shared<FrCatForce>(m_endNode);
+
+        // Adding forces to body
+        startNode->GetBody()->AddExternalForce(m_startForce);
+        endNode->GetBody()->AddExternalForce(m_endForce);
+
         // Creating the line
-        m_startCatNode = catenary::make_node();
-        m_endCatNode   = catenary::make_node();
+        m_startCatNode = std::make_shared<internal::_CatenaryNode>(m_startForce.get());
+        m_startCatNode->SetFixed(true);
+
+        m_endCatNode   = std::make_shared<internal::_CatenaryNode>(m_endForce.get());
+        m_endCatNode->SetFixed(true);
+
         m_catLine      = std::make_shared<internal::_CatenaryBase>(this, props, m_startCatNode, m_endCatNode, m_cableLength);
 
     }
@@ -70,13 +100,9 @@ namespace frydom {
         // Solving catenary line
         m_catLine->Solve();
 
-        // Updating forces
-        auto startTension = (Force)m_catLine->GetStartNodeTension();
-        auto endTension   = (Force)m_catLine->GetEndNodeTension();
-
-        // TODO : terminer
-
-
+        // Updating catenaryNodes
+        m_startCatNode->Update(false);
+        m_endCatNode->Update(true);
 
         // Asset
         m_asset->Update();
@@ -89,20 +115,12 @@ namespace frydom {
 
         // Initializing catenary nodes positions
         m_startCatNode->SetPosition(m_startNode->GetAbsPosition());
-        m_startCatNode->SetFixed(true);
 
         m_endCatNode->SetPosition(m_endNode->GetAbsPosition());
-        m_endCatNode->SetFixed(true);
 
         m_catLine->Initialize();
 
-        // Creating forces on attached bodies
-        m_startForce = std::make_shared<FrCatForce>(this, m_startNode);
-        m_endForce   = std::make_shared<FrCatForce>(this, m_endNode);
-
-        // Adding forces to body
-        m_startNode->GetBody()->AddExternalForce(m_startForce);
-        m_endNode->GetBody()->AddExternalForce(m_endForce);
+        // TODO : voir s'il faut faire un update des forces sur les corps (CatForce)
 
 
         // Initialize asset
@@ -149,12 +167,7 @@ namespace frydom {
 
 
 
-
-
-
-    FrCatForce::FrCatForce(frydom::FrCatway *catenaryLine, std::shared_ptr<FrNode_> node) :
-            FrForce_(std::move(node)), m_catenaryLine(catenaryLine) {
-    }
+    FrCatForce::FrCatForce(std::shared_ptr<FrNode_> node) : FrForce_(node) {}
 
     void FrCatForce::Update(double time) {
         // Update of FrCatForce is not done by the force itself but by the catenary line that is updated
@@ -200,15 +213,9 @@ namespace frydom {
     }
 
     void FrCatForce::SetAbsTension(const Force& tension) {
-        // TODO
-        // Ici, on veut projeter sur le repere du corps et transporter le moment resultant en G...
+        SetAbsForce(tension);
 
-
-
-
-
-
-
+        // TODO : transporter le moment...
 
     }
 
@@ -246,24 +253,57 @@ namespace frydom {
         chrono::ChVector<double> p0, p1;
         chrono::ChColor color;
         p0 = internal::Vector3dToChVector(m_cable->GetStartNode()->GetPosition());
-        double s = 0.;
-        for (int i = 1; i < m_nbDrawnElements; i++) {
-            s += ds;
-            p1 = internal::Vector3dToChVector(m_cable->GetAbsPosition(s));
+        double s0 = 0.;
+        double s1 = ds;
+//        for (int i = 1; i < m_nbDrawnElements; i++) {
+
+        while (s1 <= m_cable->GetStretchedLength()) {
+
+            p1 = internal::Vector3dToChVector(m_cable->GetAbsPosition(s1));
             auto newElement = std::make_shared<chrono::ChLineShape>();
-            color = chrono::ChColor::ComputeFalseColor(m_cable->GetTension(s).norm(), 0, m_cable->GetBreakingTension(), true);
+            color = chrono::ChColor::ComputeFalseColor(m_cable->GetTension(s0).norm(), 0, m_cable->GetBreakingTension(), true);
+
             newElement->SetColor(color);
             newElement->SetLineGeometry(std::make_shared<chrono::geometry::ChLineSegment>(p0, p1));
-            m_elements.push_back(newElement);
+
+            m_elements.push_back(make_triplet(s0, s1, newElement));
             m_cable->AddAsset(newElement);
+
             p0 = p1;
+            s0 = s1;
+            s1 += ds;
         }
 
     }
 
     void CatenaryCableAsset::Update() {
+
+        std::shared_ptr<chrono::geometry::ChLineSegment> lineGeom;
+        chrono::ChVector<double> p0, p1;
+        double s0, s1;
+
+        std::shared_ptr<chrono::ChLineShape> lineShape;
+        std::shared_ptr<chrono::geometry::ChLineSegment> lineSegment;
+
+        p0 = internal::Vector3dToChVector(m_cable->GetStartNode()->GetPosition());
+
         for (auto& element : m_elements) {
-//            element->GetLineGeometry()->GetEndA();
+
+            s0 = std::get<0>(element);
+            s1 = std::get<1>(element);
+            lineShape = std::get<2>(element);
+            lineSegment = std::dynamic_pointer_cast<chrono::geometry::ChLineSegment>(lineShape->GetLineGeometry());
+
+            p1 = internal::Vector3dToChVector(m_cable->GetAbsPosition(s1));
+
+            lineSegment->pA = p0;
+            lineSegment->pB = p1;
+
+            lineShape->SetColor(
+                    chrono::ChColor::ComputeFalseColor(m_cable->GetTension(s0).norm(), 0, m_cable->GetBreakingTension(), false));
+
+            p0 = p1;
+
         }
     }
 

@@ -142,9 +142,9 @@ namespace frydom {
 
         FrForce_* m_frydomForce;
 
-        _FrForceBase();
+        explicit _FrForceBase(FrForce_* force);
 
-//        void Update(double time) override;
+        virtual void UpdateState() override;
 
         friend class FrForce_;
 
@@ -230,13 +230,13 @@ namespace frydom {
 
         friend class FrBody_;
 
-        void SetLocalMomentAtNode(const chrono::ChVector<double> &momentAtNode);
+        void SetLocalMomentAtNode(const Moment &momentAtNode);
 
-        void SetAbsMomentAtNode(const chrono::ChVector<double> &momentAtNode);
+        void SetAbsMomentAtNode(const Moment &momentAtNode);
 
-        void SetLocalForce(const chrono::ChVector<double>& force);
+        void SetLocalForce(const Force &force);
 
-        void SetAbsForce(const chrono::ChVector<double>& force);
+        void SetAbsForce(const Force &force);
 
 
 //        explicit FrForce_(FrBody_* body);
