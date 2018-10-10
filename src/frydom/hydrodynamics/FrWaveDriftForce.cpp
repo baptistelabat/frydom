@@ -120,12 +120,9 @@ namespace frydom {
 
         auto heading = m_body->GetHeadingAngle(NED, DEG);
 
-        //auto emjwt = m_waveProbe->GetWaveField()->GetTimeCoeffs();
-
         std::vector<double> cforce = {0.,0.,0.};
 
         auto waveDir = m_waveProbe->GetWaveField()->GetWaveDirections(DEG);
-        //auto w = m_waveProbe->GetWaveField()->GetWaveFrequencies(RADS);
         auto w = m_waveProbe->GetEncounterWaveFrequencies();
         double wi, relative_angle;
 
@@ -136,8 +133,8 @@ namespace frydom {
                 relative_angle = SetRelativeAngle(waveDir[idir]-180.,heading);
 
                 cforce.at(0) -= std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[0]->Eval("Data", relative_angle, wi) ;
-                //cforce.at(1) += std::pow(m_CmplxElevation[idir][ifreq],2) * m_table[1]->Eval("Data", relative_angle, wi) ;
-                //cforce.at(2) += std::pow(m_CmplxElevation[idir][ifreq],2) * m_table[2]->Eval("Data", relative_angle, wi) ;
+                cforce.at(1) += std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[1]->Eval("Data", relative_angle, wi) ;
+                cforce.at(2) += std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[2]->Eval("Data", relative_angle, wi) ;
             }
         }
 
