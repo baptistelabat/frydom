@@ -71,6 +71,46 @@ namespace frydom {
 
             moment = Body->Dir_World2Body(chrono::ChVector<double> (values.y(), values.z(), 0.));
             // TODO: verifier que c'est la bonne fonction de transport
+
+
+            // ##CC debug hydrostatic
+            std::cout << "eqFrame : " << std::endl;
+            auto eq_x = eqFrame->GetA().Get_A_Xaxis();
+            auto eq_y = eqFrame->GetA().Get_A_Yaxis();
+            auto eq_z = eqFrame->GetA().Get_A_Zaxis();
+            auto eq_pos = eqFrame->GetPos();
+            std::cout << " pos    : " << eq_pos.x() << " ; " << eq_pos.y() << " ; " << eq_pos.z() << std::endl;
+            std::cout << " x-axis : " << eq_x.x() << " ; " << eq_x.y() << " ; " << eq_x.z() << std::endl;
+            std::cout << " y-axis : " << eq_y.x() << " ; " << eq_y.y() << " ; " << eq_y.z() << std::endl;
+            std::cout << " z-axis : " << eq_z.x() << " ; " << eq_z.y() << " ; " << eq_z.z() << std::endl;
+
+            std::cout << "bodyFrame : " << std::endl;
+            auto eqB_x = bodyFrame.GetA().Get_A_Xaxis();
+            auto eqB_y = bodyFrame.GetA().Get_A_Yaxis();
+            auto eqB_z = bodyFrame.GetA().Get_A_Zaxis();
+            auto eqB_pos = bodyFrame.GetPos();
+            std::cout << " pos    : " << eqB_pos.x() << " ; " << eqB_pos.y() << " ; " << eqB_pos.z() << std::endl;
+            std::cout << " x-axis : " << eqB_x.x() << " ; " << eqB_x.y() << " ; " << eqB_x.z() << std::endl;
+            std::cout << " y-axis : " << eqB_y.x() << " ; " << eqB_y.y() << " ; " << eqB_y.z() << std::endl;
+            std::cout << " z-axis : " << eqB_z.x() << " ; " << eqB_z.y() << " ; " << eqB_z.z() << std::endl;
+
+
+            std::cout << "deltaFrame : " << std::endl;
+            auto eqD_x = deltaFrame.GetA().Get_A_Xaxis();
+            auto eqD_y = deltaFrame.GetA().Get_A_Yaxis();
+            auto eqD_z = deltaFrame.GetA().Get_A_Zaxis();
+            auto eqD_pos = deltaFrame.GetPos();
+            std::cout << " pos    : " << eqD_pos.x() << " ; " << eqD_pos.y() << " ; " << eqD_pos.z() << std::endl;
+            std::cout << " x-axis : " << eqD_x.x() << " ; " << eqD_x.y() << " ; " << eqD_x.z() << std::endl;
+            std::cout << " y-axis : " << eqD_y.x() << " ; " << eqD_y.y() << " ; " << eqD_y.z() << std::endl;
+            std::cout << " z-axis : " << eqD_z.x() << " ; " << eqD_z.y() << " ; " << eqD_z.z() << std::endl;
+
+
+            std::cout << "Rotation : " << std::endl;
+            std::cout << "angle (deg) : " << angle * RAD2DEG << std::endl;
+            std::cout << "roll (deg) : " << roll * RAD2DEG << std::endl;
+            std::cout << "pitch (deg) : " << pitch * RAD2DEG << std::endl;
+            // ##CC
         }
 
         // ##CC Fix pour le log

@@ -409,6 +409,15 @@ namespace frydom {
         m_equilibriumFrame = node;
     }
 
+    void FrHydroBody::SetEquilibriumFrame(const FrEquilibriumFrameType frame,
+                                          const chrono::ChVector<> pos,
+                                          const chrono::ChQuaternion<> rot) {
+        auto node = CreateNode();
+        node->SetPos(pos);
+        node->SetRot(rot);
+        m_equilibriumFrame = node;
+    }
+
     void FrHydroBody::Initialize() {
         FrBody::Initialize();
 
