@@ -135,14 +135,15 @@ namespace frydom {
                 wi  = w[idir][ifreq];
                 relative_angle = SetRelativeAngle(waveDir[idir]-180.,heading);
 
-                cforce.at(0) -= std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[0]->Eval("Data", relative_angle, wi) ;
-                //cforce.at(1) += std::pow(m_CmplxElevation[idir][ifreq],2) * m_table[1]->Eval("Data", relative_angle, wi) ;
-                //cforce.at(2) += std::pow(m_CmplxElevation[idir][ifreq],2) * m_table[2]->Eval("Data", relative_angle, wi) ;
+                cforce.at(0) += std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[0]->Eval("Data", relative_angle, wi) ;
+                cforce.at(1) += std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[1]->Eval("Data", relative_angle, wi) ;
+                cforce.at(2) += std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[2]->Eval("Data", relative_angle, wi) ;
             }
         }
 
         force.x() = cforce.at(0);   //  Surge
         force.y() = cforce.at(1);   //  Sway
+        force.z() = 0.;
 
         force = GetBody()->Dir_Body2World(force);
 
