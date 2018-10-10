@@ -213,6 +213,23 @@ namespace frydom {
     }
 
 
+    namespace internal {
+
+        CatLineGeom::CatLineGeom(frydom::FrCatway *catLine) : chrono::geometry::ChLine(), m_catLine(catLine) {}
+
+        void CatLineGeom::Evaluate(chrono::ChVector<double> &pos, const double u) const {
+            assert(0. <= u <= 1.);
+            pos = internal::Vector3dToChVector(m_catLine->GetAbsPosition(u * m_catLine->GetCableLength()));
+        }
+
+
+    }
+
+
+
+
+
+
 
 
     CatenaryCableAsset::CatenaryCableAsset(internal::_CatenaryBase *cable) : m_cable(cable) {}
@@ -221,7 +238,7 @@ namespace frydom {
         m_nbDrawnElements = n;
     }
 
-    void CatenaryCableAsset::Initialize() {
+    void CatenaryCableAsset::Initialize() { // TODO : il semble que ChLine soit capable de rendre des lignes courbes
 
         // Generating line segments
         double ds = m_cable->GetStretchedLength() / m_nbDrawnElements;
@@ -246,7 +263,7 @@ namespace frydom {
 
     void CatenaryCableAsset::Update() {
         for (auto& element : m_elements) {
-            element->GetLineGeometry()
+//            element->GetLineGeometry()->GetEndA();
         }
     }
 
