@@ -167,7 +167,7 @@ namespace frydom{
     }
 
     void FrForce_::SetLocalForce(const Force &force) {
-        m_chronoForce->force = internal::Vector3dToChVector(m_body->ProjectOnAbs<Force>(force));
+        m_chronoForce->force = internal::Vector3dToChVector(m_body->ProjectLocalOnAbs<Force>(force));
     }
 
     void FrForce_::SetAbsForce(const Force &force) {

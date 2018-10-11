@@ -381,6 +381,17 @@ namespace frydom {
     }
 
 
+//    template <class Vector>
+//    Vector FrBody_::ProjectLocalOnAbs(const Vector &vector) {
+//        return internal::ChVectorToVector3d<Vector>(
+//                m_chronoBody->TransformDirectionLocalToParent(
+//                internal::Vector3dToChVector(vector)));
+//    }
+
+
+
+
+
 
 
     void FrBody_::SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc) {  // OK

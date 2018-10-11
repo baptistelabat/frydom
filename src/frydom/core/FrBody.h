@@ -396,8 +396,24 @@ namespace frydom {
 
 
 
+        // Methodes pour transformer TODO : voir si on les met pas plutot dans FrFrame_...
+//        template <class Vector>
+//        Vector ProjectLocalOnAbs(const Vector& vector); // FIXME : ajouter la FRAME_CONVENTION
 
 
+//        Force ProjectOnAbs(const Force& force) {
+//        return internal::ChVectorToVector3d<Force>(
+//                m_chronoBody->TransformDirectionLocalToParent(
+//                internal::Vector3dToChVector(force)));
+//        }
+
+
+        template <class Vector>
+        Vector ProjectLocalOnAbs(const Vector& vector) {
+        return internal::ChVectorToVector3d<Vector>(
+                m_chronoBody->TransformDirectionLocalToParent(
+                internal::Vector3dToChVector(vector)));
+        }
 
 
 

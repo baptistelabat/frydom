@@ -2,6 +2,8 @@
 // Created by Lucas Letournel on 12/09/18.
 //
 
+#include "frydom/core/FrBody.h"
+
 #include <frydom/core/FrHydroBody.h>
 #include "FrQuadraticDamping.h"
 
@@ -104,7 +106,6 @@ namespace frydom {
         double u, v, w;
         body->GetCOGLocalVelocity(u, v, w, NWU);
 
-
         // TODO : integrer la vitesse du courant !!
 
         double rho = 1000;
@@ -114,6 +115,10 @@ namespace frydom {
                 - 0.5 * rho * m_Sv * m_Cv * v*v,
                 - 0.5 * rho * m_Sw * m_Cw * w*w
                 ));
+
+    }
+
+    void FrQuadraticDamping_::StepFinalize() {
 
     }
 

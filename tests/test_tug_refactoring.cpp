@@ -43,18 +43,29 @@ int main(int argc, char* argv[]) {
 
     // Defining the fish
     auto fish = system.NewBody();
-    makeItSphere(fish, 0.2, 5/9.81);
+    double radius = 0.2;
+    makeItSphere(fish, radius, 5/9.81);
     fish->SetColor(GreenYellow);
     fish->SetAbsPosition(0., 0, -3.8,  NWU);
 //    fish->SetMaxSpeed(0.1);
 //    fish->ActivateSpeedLimits(true);
+    auto fishNode = fish->NewNode(0., 0., 0.);
+
+    auto quadForce = std::make_shared<FrQuadraticDamping_>(fishNode);
+    double area = MU_PI * radius * radius;
+    quadForce->SetProjectedSections(area, area, area);
+
+    double c = 1.2; // TODO caler ce coeff pour fitter a l'expe...
+    quadForce->SetDampingCoefficients(c, c, c);
+    fish->AddExternalForce(quadForce);
 
 
 
 
 
     // Defining the cable
-    double E = 130e9;  // dyneema young modulus
+//    double E = 130e9;  // dyneema young modulus
+    double E = 130e6;  // dyneema young modulus
     double diam = 0.005;
     double linearDensity = 0.015;  // FIXME : evaluer...
     double length = 4;
@@ -63,13 +74,13 @@ int main(int argc, char* argv[]) {
 
 
     auto shipNode = ship->NewNode(-1.961, 0., 0.);
-    auto fishNode = fish->NewNode(0., 0., 0.);
+
 
     auto cable = std::make_shared<FrCatway>(E, diam, linearDensity, length, nbElt, shipNode, fishNode);  // TODO : avoir un make_catway
     system.AddCable(cable);
 
 
-    system.SetTimeStep(0.0001);
+    system.SetTimeStep(0.001);
 
     system.Initialize();
     system.RunInViewer(100, 20, false);

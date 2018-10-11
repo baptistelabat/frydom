@@ -146,6 +146,8 @@ namespace frydom {
 //        /// Update the state of the quadratic damping force (compute the force)
 //        void UpdateState() override;
 
+        void StepFinalize() override;
+
         void Update(double time) override;
 
 
