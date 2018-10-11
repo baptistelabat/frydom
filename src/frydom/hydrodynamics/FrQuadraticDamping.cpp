@@ -52,4 +52,71 @@ namespace frydom {
     }
 
 
+
+
+
+
+
+
+
+    /// REFACTORING ---------------6>>>>>>>>>>>>>>>>>>>
+
+
+
+
+    FrQuadraticDamping_::FrQuadraticDamping_(std::shared_ptr<FrNode_> node) : FrForce_(node) {}
+
+    void FrQuadraticDamping_::SetDampingCoefficients(double Cu, double Cv, double Cw) {
+        m_Cu = Cu;
+        m_Cv = Cv;
+        m_Cw = Cw;
+    }
+
+    void FrQuadraticDamping_::GetDampingCoefficients(double &Cu, double &Cv, double &Cw) {
+        Cu = m_Cu;
+        Cv = m_Cv;
+        Cw = m_Cw;
+    }
+
+    void FrQuadraticDamping_::SetProjectedSections(double Su, double Sv, double Sw) {
+        m_Su = Su;
+        m_Sv = Sv;
+        m_Sw = Sw;
+    }
+
+    void FrQuadraticDamping_::GetProjectedSections(double &Su, double &Sv, double &Sw) {
+        Su = m_Su;
+        Sv = m_Sv;
+        Sw = m_Sw;
+    }
+
+    void FrQuadraticDamping_::SetRelative2Current(bool relativeVelocity) { m_relative2Current = relativeVelocity; }
+
+    bool FrQuadraticDamping_::GetRelative2Current() {return m_relative2Current;}
+
+    void FrQuadraticDamping_::Initialize() {}
+
+    void FrQuadraticDamping_::Update(double time) {
+
+        // Get the relative body velocity with respect to fluid
+        auto body = m_node->GetBody();
+
+        double u, v, w;
+        body->GetCOGLocalVelocity(u, v, w, NWU);
+
+
+        // TODO : integrer la vitesse du courant !!
+
+        double rho = 1000;
+
+        SetLocalForce(Force(
+                - 0.5 * rho * m_Su * m_Cu * u*u,
+                - 0.5 * rho * m_Sv * m_Cv * v*v,
+                - 0.5 * rho * m_Sw * m_Cw * w*w
+                ));
+
+    }
+
+
+
 }  // end namespace frydom
