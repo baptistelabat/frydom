@@ -54,23 +54,19 @@ namespace frydom {
             m_delta_z = heave;
             // ##CC
 
-            chrono::ChVector<double> axis;
-            double angle;
-            quat_to_axis_angle(deltaFrame.GetRot(), axis, angle, RAD);
+            // Hydrostatic stiffness torque forces directly computed from cardan angles.
+            auto cardan_angles = quat_to_euler(deltaFrame.GetRot(),CARDAN,RAD);
 
-            double roll = angle * axis.x();
-            double pitch = angle * axis.y();
+            // Multiplicating the stiffness matrix with the state vector (heave, roll, pitch)
+            auto values = - (m_stiffnessMatrix * chrono::ChVector<double>(heave,cardan_angles.x(),cardan_angles.y()));
 
-            chrono::ChVector<double> state(heave, roll, pitch);
-
-            auto values = - (m_stiffnessMatrix * state);
-
+            // Distribution of the resulting force in the different hydrostatic components, according to the state vector
             force.z() = values.x();
             // Cancelling gravity on body FIXME : pb de generalisation de la methode
             force -= Body->GetSystem()->Get_G_acc() * Body->GetMass();
 
-            moment = Body->Dir_World2Body(chrono::ChVector<double> (values.y(), values.z(), 0.));
-            // TODO: verifier que c'est la bonne fonction de transport
+            moment.x() = values.y();
+            moment.y() = values.z();
         }
 
         // ##CC Fix pour le log
