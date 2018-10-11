@@ -64,8 +64,8 @@ int main(int argc, char* argv[]) {
 
 
     // Defining the cable
-//    double E = 130e9;  // dyneema young modulus
-    double E = 130e6;  // dyneema young modulus
+    double E = 130e9;  // dyneema young modulus
+//    double E = 130e6;  // dyneema young modulus
     double diam = 0.005;
     double linearDensity = 0.015;  // FIXME : evaluer...
     double length = 4;
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
     system.AddCable(cable);
 
 
-    system.SetTimeStep(0.001);
+    system.SetTimeStep(0.0001);
 
     system.Initialize();
     system.RunInViewer(100, 20, false);
