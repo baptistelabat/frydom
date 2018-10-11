@@ -147,32 +147,32 @@ namespace frydom {
     };
 
 
-    namespace internal {
-
-        class CatLineGeom : chrono::geometry::ChLine {
-
-        private:
-            FrCatway *m_catLine;
-
-        public:
-            explicit CatLineGeom(FrCatway *catLine);
-
-            void Evaluate(chrono::ChVector<double> &pos, const double u) const override;
-
-        };
-
-        class CatLineAsset : public chrono::ChLineShape {
-
-        public:
-
-            explicit CatLineAsset(std::shared_ptr<CatLineGeom> catLineGeom);
-
-
-
-        };
-
-
-    }  // end namespace internal
+//    namespace internal {
+//
+//        class CatLineGeom : chrono::geometry::ChLine {
+//
+//        private:
+//            FrCatway *m_catLine;
+//
+//        public:
+//            explicit CatLineGeom(FrCatway *catLine);
+//
+//            void Evaluate(chrono::ChVector<double> &pos, const double u) const override;
+//
+//        };
+//
+//        class CatLineAsset : public chrono::ChLineShape {
+//
+//        public:
+//
+//            explicit CatLineAsset(std::shared_ptr<CatLineGeom> catLineGeom);
+//
+//
+//
+//        };
+//
+//
+//    }  // end namespace internal
 
 
     class CatenaryCableAsset {

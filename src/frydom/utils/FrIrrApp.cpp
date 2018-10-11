@@ -187,6 +187,8 @@ namespace frydom {
 
             if (endTime > 0. && m_system->GetChTime() > endTime) break; // If the endTime given is negative or null, the loop is infinite :)
 
+            std::cout << "Time : " << m_system->GetChTime() << std::endl;
+
         }
 
     }

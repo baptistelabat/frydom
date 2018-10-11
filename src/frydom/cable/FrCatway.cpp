@@ -45,7 +45,7 @@ namespace frydom {
         void _CatenaryNode::Update(bool reverse) {
 
             // Updating forces
-            auto tension = (Force)GetForceBalance();
+            auto tension = (Force)GetForceBalance();  // Returns the total force on the node as applied by the different connected catenary elements
 
 //            if (reverse) tension = -tension;
 
@@ -220,17 +220,17 @@ namespace frydom {
     }
 
 
-    namespace internal {
-
-        CatLineGeom::CatLineGeom(frydom::FrCatway *catLine) : chrono::geometry::ChLine(), m_catLine(catLine) {}
-
-        void CatLineGeom::Evaluate(chrono::ChVector<double> &pos, const double u) const {
-            assert(0. <= u <= 1.);
-            pos = internal::Vector3dToChVector(m_catLine->GetAbsPosition(u * m_catLine->GetCableLength()));
-        }
-
-
-    }
+//    namespace internal {
+//
+//        CatLineGeom::CatLineGeom(frydom::FrCatway *catLine) : chrono::geometry::ChLine(), m_catLine(catLine) {}
+//
+//        void CatLineGeom::Evaluate(chrono::ChVector<double> &pos, const double u) const {
+//            assert(0. <= u <= 1.);
+//            pos = internal::Vector3dToChVector(m_catLine->GetAbsPosition(u * m_catLine->GetCableLength()));
+//        }
+//
+//
+//    }
 
 
 

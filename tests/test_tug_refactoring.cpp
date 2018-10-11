@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 
     // Defining the ship
     auto ship = system.NewBody();
-    ship->RemoveGravity(true);  // TODO : mettre en place les contraintes a la place de virer la gravite...
+//    ship->RemoveGravity(true);  // TODO : mettre en place les contraintes a la place de virer la gravite...
     ship->AddMeshAsset("MagneViking_scaled.obj");
 
     ship->SetBodyFixed(true);
@@ -41,12 +41,15 @@ int main(int argc, char* argv[]) {
     ship->SetColor(DarkRed);
 
 
-
     // Defining the fish
     auto fish = system.NewBody();
     makeItSphere(fish, 0.2, 5/9.81);
     fish->SetColor(GreenYellow);
-    fish->SetAbsPosition(-2., 0, 0,  NWU);
+    fish->SetAbsPosition(0., 0, -3.8,  NWU);
+//    fish->SetMaxSpeed(0.1);
+//    fish->ActivateSpeedLimits(true);
+
+
 
 
 
@@ -66,7 +69,7 @@ int main(int argc, char* argv[]) {
     system.AddCable(cable);
 
 
-    system.SetTimeStep(0.01);
+    system.SetTimeStep(0.0001);
 
     system.Initialize();
     system.RunInViewer(100, 20, false);
