@@ -659,6 +659,18 @@ namespace frydom {
         void SetColor(const FrColor& color);
 
 
+
+
+
+        // Motion constraints  : FIXME : experimental !!!!
+        void ConstainDOF(bool cx, bool cy, bool cz, bool crx, bool cry, bool crz);
+
+        void ConstrainInVx(double Vx);
+
+
+
+
+
     protected:
 
         std::shared_ptr<chrono::ChBody> GetChronoBody() {

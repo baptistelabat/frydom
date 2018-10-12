@@ -55,12 +55,15 @@ namespace frydom{
         };
         // FIXME: Il faut que ce soit cette classe qui comprenne un modele de maree !!
 
+
+        std::shared_ptr<chrono::ChBody> m_Body;  // TODO : mettre en protected !!
+
     protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
 
         double m_time = 0.;
         bool m_updateAsset = false;
 
-        std::shared_ptr<chrono::ChBody> m_Body;
+
         std::unique_ptr<FrTidal> m_tidal;
 
         WAVE_MODEL m_waveModel = NO_WAVES;
@@ -214,6 +217,7 @@ namespace frydom{
             POLAR
         };
 
+        std::shared_ptr<FrBody_> m_body; // TODO : replacer en protected
 
     protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
 
@@ -228,7 +232,7 @@ namespace frydom{
 
         std::shared_ptr<FrWaveField_> m_waveField;
 
-        std::shared_ptr<FrBody_> m_body;
+
         std::shared_ptr<FrTriangleMeshConnected> m_meshAsset;
 
         std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbeGrid; // TODO: passer a la classe de base...

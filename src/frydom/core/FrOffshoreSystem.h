@@ -275,7 +275,8 @@ namespace frydom {
 
         void AddBody(std::shared_ptr<FrBody_> body);
 
-        void AddLink(std::shared_ptr<FrLink_> link);
+//        void AddLink(std::shared_ptr<FrLink_> link);
+        void AddLink(std::shared_ptr<chrono::ChLink> link);  // TODO : remplacer par du frydom full
 
         void AddCable(std::shared_ptr<FrCable_> cable);
 

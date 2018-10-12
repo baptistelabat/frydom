@@ -2,6 +2,7 @@
 // Created by frongere on 21/06/17.
 //
 
+
 #include "FrBody.h"
 #include "FrNode.h"
 #include "FrRotation.h"
@@ -10,6 +11,14 @@
 #include "FrFrame.h"
 
 #include "FrForce.h"
+
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/waves/FrFreeSurface.h"
+
+#include <chrono/physics/ChLinkMotorLinearSpeed.h>  // FIXME : a retirer
+
+#include "FrFunction.h"
+
 
 namespace frydom {
 
@@ -215,6 +224,40 @@ namespace frydom {
                 chrono::ChColor(color.R, color.G, color.B));
         m_chronoBody->AddAsset(colorAsset);
     }
+
+
+
+
+    void FrBody_::ConstainDOF(bool cx, bool cy, bool cz, bool crx, bool cry, bool crz) {
+
+//        auto link = std::make_shared<>()
+
+    }
+
+    void FrBody_::ConstrainInVx(double Vx) {
+
+        auto motor = std::make_shared<chrono::ChLinkMotorLinearSpeed>();
+
+        auto frame = chrono::ChFrame<double>();
+
+
+        motor->Initialize(m_chronoBody, GetSystem()->GetEnvironment()->GetFreeSurface()->m_body->m_chronoBody, frame);
+
+        m_system->AddLink(motor);
+
+
+        auto rampConst = std::make_shared<FrFunction>(Vx);
+
+        motor->SetSpeedFunction(rampConst);
+
+
+
+    }
+
+
+
+
+
 
     double FrBody_::GetMass() const {
         return m_chronoBody->GetMass();

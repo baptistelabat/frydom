@@ -128,7 +128,9 @@ namespace frydom{
 
     _FrForceBase::_FrForceBase(FrForce_* force) : m_frydomForce(force) {}
 
-    void _FrForceBase::UpdateState() {}
+    void _FrForceBase::UpdateState() {
+        m_frydomForce->Update(ChTime);
+    }
 
 
     FrForce_::FrForce_(std::shared_ptr<FrNode_> node) : m_body(node->GetBody()), m_node(node) {

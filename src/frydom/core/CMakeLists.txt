@@ -21,6 +21,7 @@ set(SRC_FILES
         FrShip.cpp
         FrSpringDampingForce.cpp
         FrNodeDynamic.cpp
+        FrFunction.cpp
 )
 
 set(FRYDOM_CORE_SOURCES "")

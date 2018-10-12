@@ -424,6 +424,7 @@ namespace frydom {
         m_waveField = std::make_shared<FrNullWaveField_>(this);
         m_tidal     = std::make_unique<FrTidal_>(this);
 
+        CreateFreeSurfaceBody();
     }
 
     FrFreeSurface_::~FrFreeSurface_() = default;
@@ -491,7 +492,7 @@ namespace frydom {
                 break;
         }
 
-        CreateFreeSurfaceBody();
+//        CreateFreeSurfaceBody();
         m_body->AddMeshAsset(mesh);
         GetSystem()->AddBody(m_body);
 

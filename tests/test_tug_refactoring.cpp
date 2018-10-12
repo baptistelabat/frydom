@@ -16,6 +16,7 @@ int main(int argc, char* argv[]) {
     // TODO : fournir un frydom initialize...
     // The system
     FrOffshoreSystem_ system;
+    system.SetSolver(FrOffshoreSystem_::MINRES);
 
     // Defining the visualization of the free surface such as it has the same dimensions as the INSEAN towing tank
     system.GetEnvironment()->GetFreeSurface()->SetGrid(0., 470, 470, -4.5, 4.5, 9);
@@ -26,6 +27,7 @@ int main(int argc, char* argv[]) {
     wall->SetAbsPosition(470/2., -4.65, -(6-7.5/2), NWU);
     wall->SetBodyFixed(true);
     wall->SetColor(LightGrey);
+    wall->SetName("wall");
 
 
 
@@ -33,10 +35,21 @@ int main(int argc, char* argv[]) {
     auto ship = system.NewBody();
 //    ship->RemoveGravity(true);  // TODO : mettre en place les contraintes a la place de virer la gravite...
     ship->AddMeshAsset("MagneViking_scaled.obj");
+    ship->SetName("ship");
 
-    ship->SetBodyFixed(true);
 
-    ship->SetAbsPosition(2, 0, 0, NWU);
+
+
+//    ship->SetBodyFixed(true);
+//    ship->ConstrainInVx(0.5);
+    ship->ConstrainInVx(1);
+
+
+
+
+
+
+//    ship->SetAbsPosition(2, 0, 0, NWU);
 //    ship->SetAbsVelocity(1, 0, 0, NWU);
     ship->SetColor(DarkRed);
 
@@ -46,7 +59,9 @@ int main(int argc, char* argv[]) {
     double radius = 0.2;
     makeItSphere(fish, radius, 5/9.81);
     fish->SetColor(GreenYellow);
+    fish->SetName("fish");
     fish->SetAbsPosition(0., 0, -3.8,  NWU);
+//    fish->SetAbsPosition(0., 0, 0,  NWU);
 //    fish->SetMaxSpeed(0.1);
 //    fish->ActivateSpeedLimits(true);
     auto fishNode = fish->NewNode(0., 0., 0.);
@@ -64,8 +79,8 @@ int main(int argc, char* argv[]) {
 
 
     // Defining the cable
-    double E = 130e9;  // dyneema young modulus
-//    double E = 130e6;  // dyneema young modulus
+//    double E = 130e9;  // dyneema young modulus
+    double E = 130e7;  // dyneema young modulus
     double diam = 0.005;
     double linearDensity = 0.015;  // FIXME : evaluer...
     double length = 4;
@@ -73,17 +88,25 @@ int main(int argc, char* argv[]) {
     unsigned int nbElt = 1;
 
 
-    auto shipNode = ship->NewNode(-1.961, 0., 0.);
+//    auto shipNode = ship->NewNode(-1.961, 0., 0.);
+//    auto shipNode = ship->NewNode(-2, 0., 0.);
+    auto shipNode = ship->NewNode(0., 0., 0.);
 
 
     auto cable = std::make_shared<FrCatway>(E, diam, linearDensity, length, nbElt, shipNode, fishNode);  // TODO : avoir un make_catway
     system.AddCable(cable);
 
 
-    system.SetTimeStep(0.0001);
+
+
+
+
+
+
+    system.SetTimeStep(0.01);
 
     system.Initialize();
-    system.RunInViewer(100, 20, false);
+    system.RunInViewer(-10, 20, false);
 
 
 
