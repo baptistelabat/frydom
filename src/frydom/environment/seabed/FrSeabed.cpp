@@ -240,7 +240,7 @@ namespace frydom {
 
     void FrSeabed_::SetDepth(double depth) {m_depth = depth;}
 
-    double FrSeabed_::GetDepth() {return m_depth;}
+    double FrSeabed_::GetDepth() {return m_depth;}  // TODO : prevoir le fond a bathymetrie variable... (GetDepth(x, y))
 
     void FrSeabed_::UpdateAsset(bool update) {
 

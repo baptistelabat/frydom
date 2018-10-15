@@ -22,5 +22,8 @@ namespace frydom {
 
     FrCable_::~FrCable_() = default;
 
+    FrOffshoreSystem_* FrCable_::GetSystem() {
+        return m_system;
+    }
 
 }

@@ -59,6 +59,8 @@ int main(int argc, char* argv[]) {
     auto fish = system.NewBody();
     double radius = 0.1;
     double fishMass = 5./9.81;
+//    fishMass = 0.1;
+//    fishMass = 0.0;
     makeItSphere(fish, radius, fishMass);
     fish->SetColor(GreenYellow);
     fish->SetName("fish");
@@ -72,7 +74,8 @@ int main(int argc, char* argv[]) {
     double area = MU_PI * radius * radius;
     quadForce->SetProjectedSections(area, area, area);
 
-    double c = 1.; // TODO caler ce coeff pour fitter a l'expe...
+//    double c = 1.; // TODO caler ce coeff pour fitter a l'expe...
+    double c = 0.8; // TODO caler ce coeff pour fitter a l'expe...
     quadForce->SetDampingCoefficients(c, c, c);
     fish->AddExternalForce(quadForce);
 
@@ -87,7 +90,7 @@ int main(int argc, char* argv[]) {
     double linearDensity = 0.015;  // FIXME : evaluer...
     double length = 4;
 
-    unsigned int nbElt = 1;
+    unsigned int nbElt = 25;
 
 
 //    auto shipNode = ship->NewNode(-1.961, 0., 0.);
@@ -97,6 +100,11 @@ int main(int argc, char* argv[]) {
 
     auto cable = std::make_shared<FrCatway>(E, diam, linearDensity, length, nbElt, shipNode, fishNode);  // TODO : avoir un make_catway
     system.AddCable(cable);
+
+    // Adding morrison force on the cable
+    cable->AddMorrisonForce(0.014, 0.9);
+
+
 
 
     system.SetTimeStep(0.01);

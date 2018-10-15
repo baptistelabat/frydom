@@ -139,6 +139,8 @@ namespace frydom {
 
     protected:
 
+        FrOffshoreSystem_* m_system;
+
         double m_time = 0.;
         double m_time_step = 0.;
 
@@ -166,6 +168,7 @@ namespace frydom {
 
         ~FrCable_();
 
+        FrOffshoreSystem_* GetSystem();
 
         void SetYoungModulus(const double E) { m_youngModulus = E; }
 

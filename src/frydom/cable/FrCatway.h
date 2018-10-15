@@ -13,6 +13,9 @@
 #include "catenary/CatenaryLine.h"
 #include "catenary/CatenaryNode.h"
 
+#include "catenary/EnvironmentInterface.h"
+#include "catenary/UniformDistributedLoad.h"  // TODO : placer un Catenary au debut ?
+
 
 namespace catenary {
 //    class CatenaryLine;
@@ -85,6 +88,9 @@ namespace frydom {
 
         std::shared_ptr<CatenaryCableAsset> m_asset;
 
+        unsigned int c_nbElt = 1;  // TODO : changer la maniere dont est traite la discretisation
+
+
     public:
 
         FrCatway(double youngModulus, double diameter, double linearDensity, double length,
@@ -107,6 +113,8 @@ namespace frydom {
         void StepFinalize() override;
 
         double GetBreakingTension();
+
+        void AddMorrisonForce(double Ct, double Cn);
 
 
         // For asset
@@ -145,6 +153,8 @@ namespace frydom {
         friend void internal::_CatenaryNode::Update(bool);
 
     };
+
+
 
 
 //    namespace internal {
@@ -204,9 +214,70 @@ namespace frydom {
         void Initialize();
 
 
+    };
+
+
+
+
+    class FrCatwayEnvironmentInterface : public catenary::CatenaryEnvironmentInterface {
+
+        // TODO : terminer !! Nécessite de changer de paradigme pour l'interface environnement dans Catway (abandonner le pattern singleton)
+
+//    public:
+
+
+    private:
+        FrEnvironment_* m_frydomEnvironment;
+
+    public:
+
+        explicit FrCatwayEnvironmentInterface(FrEnvironment_* frydomEnvironment);
+
+//        void Initialize();
+
+        const double GetGravity() const override;
+        const double GetWaterDensity() const override;
+        const double GetAirDensity() const override;
+
+        const double GetFreeSurfaceHeight(const Vector& position) const override;
+        const double GetSeabedHeight(const Vector& position) const override;
+
+        const Velocity GetEnvironmentFlux(const Position& position) const;
 
 
     };
+
+
+
+    class FrCatenaryMorrison : public catenary::CatenaryUniformLoad { // TODO : voir a ajouter morrison directement dans Catway !!
+
+    private:
+
+        double m_Ct;
+        double m_Cn;
+
+    public:
+        FrCatenaryMorrison(double Ct, double Cn);
+
+        const catenary::CatenaryElement::Vector GetLoad(catenary::CatenaryElement* element) const override;
+
+
+
+
+    };
+
+
+
+
+
+
+
+
+
+
+
+//    class FrCatMorrison : public
+
 
 
 

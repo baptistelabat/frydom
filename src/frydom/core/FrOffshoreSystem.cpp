@@ -381,6 +381,7 @@ namespace frydom {
 
     void FrOffshoreSystem_::AddCable(std::shared_ptr<frydom::FrCable_> cable) {
         m_chronoSystem->AddOtherPhysicsItem(cable->GetChronoPhysicsItem());
+        cable->m_system = this;
     }
 
 

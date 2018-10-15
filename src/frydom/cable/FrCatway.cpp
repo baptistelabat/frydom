@@ -6,10 +6,13 @@
 #include "FrCatway.h"
 #include "catenary/Catenary.h"
 
+#include "frydom/core/FrVector.h"
+
 #include "frydom/core/FrNode.h"
 #include "frydom/core/FrForce.h"
 #include "frydom/core/FrBody.h"
 
+#include "frydom/environment/FrEnvironmentInc.h"
 
 namespace frydom {
 
@@ -56,7 +59,6 @@ namespace frydom {
 
         }
 
-
     }  // end namespace internal
 
 
@@ -86,6 +88,8 @@ namespace frydom {
 
         m_catLine      = std::make_shared<internal::_CatenaryBase>(this, props, m_startCatNode, m_endCatNode, m_cableLength);
 
+        c_nbElt = nbElt;
+
     }
 
 
@@ -98,7 +102,7 @@ namespace frydom {
         m_endCatNode->SetPosition(m_endNode->GetAbsPosition());
 
         // Solving catenary line
-        m_catLine->Solve();
+        m_catLine->Solve(true);
 
         // Updating catenaryNodes
         m_startCatNode->Update(false);
@@ -119,6 +123,16 @@ namespace frydom {
         m_endCatNode->SetPosition(m_endNode->GetAbsPosition());
 
         m_catLine->Initialize();
+
+
+
+
+
+        m_catLine->Discretize(c_nbElt);  // TODO : voir si on ne fait pas la discretisation lors de l'initialisation ??
+
+
+
+
 
         // TODO : voir s'il faut faire un update des forces sur les corps (CatForce)
 
@@ -160,6 +174,13 @@ namespace frydom {
 
     std::shared_ptr<chrono::ChPhysicsItem> FrCatway::GetChronoPhysicsItem() {
         return m_catLine;
+    }
+
+    void FrCatway::AddMorrisonForce(double Ct, double Cn) {
+        // TODO : utiliser directement la classe morrison de catway
+        auto morrisonLoad = std::make_shared<FrCatenaryMorrison>(Ct, Cn);
+        m_catLine->AddUniformLoad(morrisonLoad);
+
     }
 
 
@@ -257,11 +278,13 @@ namespace frydom {
         double s1 = ds;
 //        for (int i = 1; i < m_nbDrawnElements; i++) {
 
-        while (s1 <= m_cable->GetStretchedLength()) {
+        double breakingTension = m_cable->GetBreakingTension();
+
+        while (s1 <= m_cable->GetUnstretchedLength()) {
 
             p1 = internal::Vector3dToChVector(m_cable->GetAbsPosition(s1));
             auto newElement = std::make_shared<chrono::ChLineShape>();
-            color = chrono::ChColor::ComputeFalseColor(m_cable->GetTension(s0).norm(), 0, m_cable->GetBreakingTension(), true);
+            color = chrono::ChColor::ComputeFalseColor(m_cable->GetTension(s0).norm(), 0, breakingTension, true);
 
             newElement->SetColor(color);
             newElement->SetLineGeometry(std::make_shared<chrono::geometry::ChLineSegment>(p0, p1));
@@ -308,6 +331,74 @@ namespace frydom {
     }
 
 
+    FrCatwayEnvironmentInterface::FrCatwayEnvironmentInterface(FrEnvironment_ *frydomEnvironment) :
+            m_frydomEnvironment(frydomEnvironment) {}
 
+//    void FrCatwayEnvironmentInterface::Initialize() {
+////        m_gravity = m_frydomEnvironment->GetGravityAcceleration();
+//    }
+
+    const double FrCatwayEnvironmentInterface::GetGravity() const {
+        return m_frydomEnvironment->GetGravityAcceleration();
+    }
+
+    const double FrCatwayEnvironmentInterface::GetWaterDensity() const {
+        return m_frydomEnvironment->GetWaterDensity();
+    }
+
+    const double FrCatwayEnvironmentInterface::GetAirDensity() const {
+        return m_frydomEnvironment->GetAirDensity();
+    }
+
+    const double FrCatwayEnvironmentInterface::GetFreeSurfaceHeight(const Vector& position) const {
+        return m_frydomEnvironment->GetFreeSurface()->GetHeight(position[0], position[1]);
+    }
+
+    const double FrCatwayEnvironmentInterface::GetSeabedHeight(const Vector& position) const {
+        return m_frydomEnvironment->GetSeabed()->GetDepth();  // TODO : seabed doit avoir une methode donnant le depth fonction de x et y...
+    }
+
+    const Velocity FrCatwayEnvironmentInterface::GetEnvironmentFlux(const Position& position) const {
+        // TODO !!
+    }
+
+
+    FrCatenaryMorrison::FrCatenaryMorrison(double Ct, double Cn) : m_Ct(Ct), m_Cn(Cn) {}
+
+    const catenary::CatenaryElement::Vector FrCatenaryMorrison::GetLoad(catenary::CatenaryElement *element) const {
+
+//        double dt = 0.01; // FIXME : code en dur. Trouver le moyen d'acceder a l'info !!
+//
+//        // Getting the velocity of the middle point by finite difference
+//        Vector velocity = (element->GetAbsPositionMiddlePoint() - element->GetOldPositionMiddlePoint()) / dt;
+
+
+        auto velocity = Vector(1., 0., 0.);
+
+
+        // Establishing the local frame along with tangent, normal to the element at the moddle point
+        double middleS = 0.5 * element->GetUnstretchedLength();
+        Vector tangent = element->GetTangent(middleS);
+        Vector alpha = tangent.cross(velocity).normalized();
+        Vector normal = alpha.cross(tangent);  // TODO : verifier qu'on a bien des vecteurs de norme unitaire !!
+
+        // Projecting velocity on tangent and normal axis
+        double ut = velocity.dot(tangent);
+        double un = velocity.dot(normal);
+
+
+        double rho = 1000;
+        double diam = 0.005;
+
+//        auto force = Vector()
+        auto force = (-0.5 * rho * m_Ct * diam * ut * fabs(ut)) * tangent
+             + (-0.5 * rho * m_Ct * diam * ut * fabs(ut)) * normal;
+
+        std::cout << "FORCE : " << force << std::endl;
+
+
+        return force;
+
+    }
 
 }  // end namespace frydom
