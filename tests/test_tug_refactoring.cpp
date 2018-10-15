@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
     // The system
     FrOffshoreSystem_ system;
     system.SetSolver(FrOffshoreSystem_::MINRES);
+//    system.SetTimeStepper(FrOffshoreSystem_::RUNGEKUTTA45);
 
     // Defining the visualization of the free surface such as it has the same dimensions as the INSEAN towing tank
     system.GetEnvironment()->GetFreeSurface()->SetGrid(0., 470, 470, -4.5, 4.5, 9);
@@ -56,8 +57,9 @@ int main(int argc, char* argv[]) {
 
     // Defining the fish
     auto fish = system.NewBody();
-    double radius = 0.2;
-    makeItSphere(fish, radius, 5/9.81);
+    double radius = 0.1;
+    double fishMass = 5./9.81;
+    makeItSphere(fish, radius, fishMass);
     fish->SetColor(GreenYellow);
     fish->SetName("fish");
     fish->SetAbsPosition(0., 0, -3.8,  NWU);
@@ -70,7 +72,7 @@ int main(int argc, char* argv[]) {
     double area = MU_PI * radius * radius;
     quadForce->SetProjectedSections(area, area, area);
 
-    double c = 1.2; // TODO caler ce coeff pour fitter a l'expe...
+    double c = 1.; // TODO caler ce coeff pour fitter a l'expe...
     quadForce->SetDampingCoefficients(c, c, c);
     fish->AddExternalForce(quadForce);
 
@@ -80,7 +82,7 @@ int main(int argc, char* argv[]) {
 
     // Defining the cable
 //    double E = 130e9;  // dyneema young modulus
-    double E = 130e7;  // dyneema young modulus
+    double E = 130e6;  // dyneema young modulus
     double diam = 0.005;
     double linearDensity = 0.015;  // FIXME : evaluer...
     double length = 4;
@@ -95,12 +97,6 @@ int main(int argc, char* argv[]) {
 
     auto cable = std::make_shared<FrCatway>(E, diam, linearDensity, length, nbElt, shipNode, fishNode);  // TODO : avoir un make_catway
     system.AddCable(cable);
-
-
-
-
-
-
 
 
     system.SetTimeStep(0.01);
