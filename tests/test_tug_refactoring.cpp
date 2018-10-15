@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     makeItSphere(fish, radius, fishMass);
     fish->SetColor(GreenYellow);
     fish->SetName("fish");
-    fish->SetAbsPosition(0., 0, -3.8,  NWU);
+    fish->SetAbsPosition(-1.9, 0, -3.8,  NWU);
 //    fish->SetAbsPosition(0., 0, 0,  NWU);
 //    fish->SetMaxSpeed(0.1);
 //    fish->ActivateSpeedLimits(true);
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
     quadForce->SetProjectedSections(area, area, area);
 
 //    double c = 1.; // TODO caler ce coeff pour fitter a l'expe...
-    double c = 0.8; // TODO caler ce coeff pour fitter a l'expe...
+    double c = 0.3; // TODO caler ce coeff pour fitter a l'expe...
     quadForce->SetDampingCoefficients(c, c, c);
     fish->AddExternalForce(quadForce);
 
@@ -90,12 +90,12 @@ int main(int argc, char* argv[]) {
     double linearDensity = 0.015;  // FIXME : evaluer...
     double length = 4;
 
-    unsigned int nbElt = 25;
+    unsigned int nbElt = 15;
 
 
 //    auto shipNode = ship->NewNode(-1.961, 0., 0.);
 //    auto shipNode = ship->NewNode(-2, 0., 0.);
-    auto shipNode = ship->NewNode(0., 0., 0.);
+    auto shipNode = ship->NewNode(-1.9, 0., 0.);
 
 
     auto cable = std::make_shared<FrCatway>(E, diam, linearDensity, length, nbElt, shipNode, fishNode);  // TODO : avoir un make_catway

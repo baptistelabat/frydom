@@ -392,7 +392,7 @@ namespace frydom {
 
 //        auto force = Vector()
         auto force = (-0.5 * rho * m_Ct * diam * ut * fabs(ut)) * tangent
-             + (-0.5 * rho * m_Ct * diam * ut * fabs(ut)) * normal;
+             + (-0.5 * rho * m_Ct * diam * un * fabs(un)) * normal;
 
         std::cout << "FORCE : " << force << std::endl;
 
