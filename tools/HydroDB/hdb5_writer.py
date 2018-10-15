@@ -7,6 +7,34 @@ import numpy as np
 import datetime
 
 
+def symetrize(wave_dirs, fk_db, diff_db):
+
+    [nmode, nbody, ndir] = fk_db.data.shape
+
+    for i in range(ndir):
+
+        if wave_dirs[i] > np.float32(0.):
+
+            # New wave direction
+            new_dir = -wave_dirs[i] % 360
+            if new_dir < 0:
+                new_dir += 360.
+
+            # Add corresponding data
+            wave_dirs = np.append(wave_dirs, new_dir)
+
+            fk_db_temp = np.copy(fk_db.data[:, :, i])
+            fk_db_temp[(1, 4, 5), :] = -fk_db_temp[(1, 4, 5), :]
+
+            fk_db.data = np.concatenate((fk_db.data, fk_db_temp.reshape(nmode, nbody, 1)), axis=2)
+
+            diff_db_temp = np.copy(diff_db.data[:, :, i])
+            diff_db_temp[(1, 4, 5), :] = -diff_db_temp[(1, 4, 5), :]
+            diff_db.data = np.concatenate((diff_db.data, diff_db_temp.reshape(nmode, nbody, 1)), axis=2)
+
+    return wave_dirs, fk_db, diff_db
+
+
 def write_hdb5(hdb, out_file=None):
     
     if out_file is None:
@@ -74,6 +102,8 @@ def write_hdb5(hdb, out_file=None):
         # --- Adjust convention of wage direction to GOTO
         if hdb.min_wave_dir >= -np.float32() and hdb.max_wave_dir <= 180. + np.float32():
             wave_dirs = 180. - wave_dirs
+            wave_dirs, fk_db, diff_db = symetrize(wave_dirs, fk_db, diff_db)
+
         else:
             wave_dirs = np.fmod(wave_dirs + 180., 360.)
 
@@ -91,18 +121,23 @@ def write_hdb5(hdb, out_file=None):
                     fk_db.data[:, :, idir] = fk_db.data[:, :, i360]
                     diff_db.data[:, :, idir] = diff_db.data[:, :, i360]
 
+        # -- sort direction
         sort_dirs = np.argsort(wave_dirs)
+        wave_dirs = wave_dirs[sort_dirs]
+        fk_db.data = fk_db.data[:, :, sort_dirs]
+        diff_db.data = diff_db.data[:, :, sort_dirs]
 
-        nb_wave_dir = hdb.nb_wave_dir
+        # write data
+        nb_wave_dir = wave_dirs.shape[0]
         dset = f.create_dataset(wave_direction_path + "/NbWaveDirections", data=nb_wave_dir)
         dset.attrs['Description'] = "Number of wave directions in the discretization"
 
-        min_wave_dir = hdb.min_wave_dir
+        min_wave_dir = np.min(wave_dirs)
         dset = f.create_dataset(wave_direction_path + "/MinAngle", data=min_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Minimum angle specified for the computations"
 
-        max_wave_dir = hdb.max_wave_dir
+        max_wave_dir = np.max(wave_dirs)
         dset = f.create_dataset(wave_direction_path + "/MaxAngle", data=max_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Maximum angle specified for the computations"
@@ -192,8 +227,9 @@ def write_hdb5(hdb, out_file=None):
       
 
             for idir, wave_dir in enumerate(wave_dirs):
-                wave_dir_path = fk_group + "/Angle_%u" % sort_dirs[idir]
+                wave_dir_path = fk_group + "/Angle_%u" % idir
                 f.create_group(wave_dir_path)
+                wave_dir_path = fk_group + "/Angle_%u" % idir
                 dset = f.create_dataset(wave_dir_path + "/Angle", data=wave_dir)
                 dset.attrs['Unit'] = 'deg'
                 dset.attrs['Description'] = "Wave direction angle of the data"
@@ -212,7 +248,7 @@ def write_hdb5(hdb, out_file=None):
             diffraction_path = excitation_path + "/Diffraction"
             f.create_group(diffraction_path)
             for idir, wave_dir in enumerate(wave_dirs):
-                wave_dir_path = diffraction_path + "/Angle_%u" % sort_dirs[idir]
+                wave_dir_path = diffraction_path + "/Angle_%u" % idir
                 f.create_group(wave_dir_path)
                 f.create_dataset(wave_dir_path + "/Angle", data=wave_dir)
                 dset.attrs['Unit'] = 'deg'
