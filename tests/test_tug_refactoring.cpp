@@ -86,11 +86,11 @@ int main(int argc, char* argv[]) {
     // Defining the cable
 //    double E = 130e9;  // dyneema young modulus
     double E = 130e6;  // dyneema young modulus
-    double diam = 0.005;
+    double diam = 0.005*0.5;
     double linearDensity = 0.015;  // FIXME : evaluer...
     double length = 4;
 
-    unsigned int nbElt = 15;
+    unsigned int nbElt = 1;
 
 
 //    auto shipNode = ship->NewNode(-1.961, 0., 0.);
