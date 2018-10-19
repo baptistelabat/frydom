@@ -348,7 +348,7 @@ namespace frydom {
         std::vector<double> c_waveNumbers;
         std::vector<std::complex<double>> c_emjwt;
 
-        std::vector<std::vector<double>> m_wavePhases; // Not used in regular wave field
+        std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases; // Not used in regular wave field
 
         std::vector<std::shared_ptr<FrLinearWaveProbe>> m_waveProbes;
         std::vector<std::shared_ptr<FrLinearFlowSensor>> m_flowSensor;
@@ -360,9 +360,6 @@ namespace frydom {
 
         explicit FrLinearWaveField(LINEAR_WAVE_TYPE type) {
             SetType(type);
-            GenerateRandomWavePhases();
-            Initialize();
-            Update(0.);
 
             m_waveRamp = std::make_shared<FrRamp>();
             m_waveRamp->Initialize();
@@ -519,10 +516,17 @@ namespace frydom {
             double waterHeight = 10.;
             double grav = 9.81;
             c_waveNumbers = SolveWaveDispersionRelation(waterHeight, c_waveFrequencies, grav);
+
+            if (m_wavePhases==nullptr) {
+                        this->GenerateRandomWavePhases();
+            }
+
+            FrWaveField::Initialize();
+            Update(0.);
         }
 
-        std::vector<std::vector<double>> GetWavePhases() const {
-            return m_wavePhases;
+        std::vector<std::vector<double>>* GetWavePhases() const {
+            return m_wavePhases.get();
         }
 
         void SetWavePhases(std::vector<std::vector<double>>& wavePhases) {
@@ -530,20 +534,22 @@ namespace frydom {
             for (auto& w: wavePhases) {
                 assert(w.size() == m_nbFreq);
             }
-            m_wavePhases = wavePhases;
+            m_wavePhases = std::make_unique<std::vector<std::vector<double>>>(wavePhases);
         }
 
         void GenerateRandomWavePhases() {
 
-            m_wavePhases.clear();
-            m_wavePhases.reserve(m_nbDir);
+            m_wavePhases = std::make_unique<std::vector<std::vector<double>>>();
+
+            m_wavePhases->clear();
+            m_wavePhases->reserve(m_nbDir);
 
             std::vector<double> phases;
             phases.reserve(m_nbFreq);
 
             if (m_linearWaveType == LINEAR_REGULAR) {
                 phases.push_back(0.);
-                m_wavePhases.push_back(phases);
+                m_wavePhases->push_back(phases);
             } else {
                 std::random_device rd;
                 std::mt19937 gen(rd());
@@ -554,7 +560,7 @@ namespace frydom {
                     for (uint iw=0; iw<m_nbFreq; ++iw) {
                         phases.push_back(dis(gen));
                     }
-                    m_wavePhases.push_back(phases);
+                    m_wavePhases->push_back(phases);
                 }
             }
         }
@@ -601,7 +607,7 @@ namespace frydom {
                 for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
                     aik = waveAmplitudes[idir][ifreq];
                     ki = c_waveNumbers[ifreq];  // FIXME: Ici, on doit avoir le nombre d'onde
-                    phi_ik = m_wavePhases[idir][ifreq];
+                    phi_ik = m_wavePhases->at(idir)[ifreq];
 
                     val = aik * exp(JJ * (ki*wk_ + phi_ik));
 

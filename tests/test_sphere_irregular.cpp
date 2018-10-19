@@ -36,7 +36,6 @@ int main(int argc, char* argv[]) {
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
     waveField->SetMeanWaveDirection(0., DEG);
 
-
     //freeSurface->SetWaveField(waveField);
 
     // Body
@@ -47,10 +46,14 @@ int main(int argc, char* argv[]) {
     sphere->SetInertiaXX(chrono::ChVector<double>(1.690e6, 1.690e6, 2.606e6));
     sphere->SetMass(2.618e5);     
     sphere->SetCOG(chrono::ChVector<double>(0., 0., -2.));
+    sphere->SetEquilibriumFrame(WorldFixed, chrono::ChVector<double>(0., 0., -2.));
 
     system.AddBody(sphere);
 
     sphere->Set3DOF_ON(chrono::ChVector<>(1, 0, 0)); // FIXME : need to be adapted to select only one dof
+
+    sphere->Log().SetNameAndDescription("SphereLog", "Message of the sphere");
+    sphere->SetLogDefault();
 
     // Hydrostatic
     auto hstForce = std::make_shared<FrLinearHydrostaticForce>();
@@ -98,11 +101,12 @@ int main(int argc, char* argv[]) {
 
     time = -dt;
 
-    while (time < 800.) {
+    while (time < 200.) {
 
         time += dt;
 
         system.DoStepDynamics(dt);
+
 
     }
 
