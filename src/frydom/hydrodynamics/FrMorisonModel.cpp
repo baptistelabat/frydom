@@ -232,7 +232,13 @@ namespace frydom {
         auto rho = WaterDensity();
         auto flow_velocity = m_flow->GetVelocity();
         auto flow_acceleration = m_flow->GetAcceleration();
-        auto current_relative_velocity = mybody->GetCurrentRelativeVelocity(relpos);
+
+        chrono::ChVector<double> current_relative_velocity;
+        if (m_include_current) {
+            current_relative_velocity = mybody->GetCurrentRelativeVelocity(relpos);
+        } else {
+            current_relative_velocity = -mybody->PointSpeedLocalToParent(relpos);
+        }
         auto velocity = flow_velocity + current_relative_velocity;
 
         velocity = m_frame.TransformDirectionParentToLocal(velocity);

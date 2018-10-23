@@ -27,6 +27,8 @@ namespace frydom {
     protected:
         std::shared_ptr<FrMorisonForce> m_force;    ///< morison force pointer
         bool is_rigid;                              ///< Flag to identify if the structure is moving
+        bool is_log = false;                        ///< True if the morison model is logable
+        bool m_include_current = false;             ///< if true the current is accounted for the frag force computation
 
     public:
         /// Update the morison force
@@ -51,6 +53,12 @@ namespace frydom {
         void SetRigid(const bool rigid=true) { is_rigid=rigid; }
 
         virtual void Initialize() = 0;
+
+        /// Return true if the log message is active
+        bool LogIsActive() const { return is_log; }
+
+        /// Specified if the current flow must be included into the morison force
+        virtual void IncludeCurrent(const bool flag) { m_include_current = flag; }
 
     };
 
@@ -307,6 +315,21 @@ namespace frydom {
                     moment += element->GetBodyTorque();
             }
             return moment;
+        }
+
+        void ActivateLog() {
+            if (is_global_force) {
+                is_log = true;
+            } else {
+                std::cout << "warning : cannot active log, global force is not active" << std::endl;
+                is_log = false;
+            }
+        }
+
+        void IncludeCurrent(const bool flag) override {
+            for (auto& element: m_morison) {
+                element->IncludeCurrent(flag);
+            }
         }
 
         /// Update state of the morison element
