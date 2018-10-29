@@ -12,7 +12,7 @@ set(SRC_FILES
         FrBodyEasy.cpp
         FrColors.cpp
         FrGeographic.cpp
-        FrEulerAngles.cpp
+#        FrEulerAngles.inl
         FrForce.cpp
         FrForceAsset.cpp
         FrHydroBody.cpp

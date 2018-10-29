@@ -43,7 +43,7 @@ namespace frydom {
         }
 
 
-        _CatenaryNode::_CatenaryNode(frydom::FrCatForce *force) : catenary::CatenaryNode(), m_force(force) {}
+        _CatenaryNode::_CatenaryNode(FrCatForce *force) : catenary::CatenaryNode(), m_force(force) {}
 
         void _CatenaryNode::Update(bool reverse) {
 

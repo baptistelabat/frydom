@@ -29,9 +29,6 @@ namespace chrono {
 namespace frydom {
 
 
-
-
-
     class FrCatForce;
     class CatenaryCableAsset;
     class FrCatway;
