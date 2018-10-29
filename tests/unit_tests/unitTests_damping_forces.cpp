@@ -129,12 +129,35 @@ std::shared_ptr<FrQuadraticDamping> test_QuadraticDamping_HB() {
 
 
     return quadForce;
+}
+
+std::shared_ptr<FrTaylorManDamping> test_TaylorManDamping() {
+
+    auto linear_velocity = chrono::ChVector<double>(0., 0., 0.);
+    auto angular_velocity = chrono::ChVector<double>(0., 0., -2.);
+    auto heading = 0.;
+
+    auto body = make_body(heading, linear_velocity, angular_velocity);
+
+    auto dampingForce = std::make_shared<FrTaylorManDamping>();
+    dampingForce->Set("Nrr", 2.);
+
+    body->AddForce(dampingForce);
+    body->Initialize();
+    body->Update();
+
+    chrono::ChVector<> mforce, mtorque;
+    dampingForce->GetBodyForceTorque(mforce,mtorque);
+    print_force("Linear damping force", mforce, mtorque);
+
+    return dampingForce;
 
 }
 
 int main() {
-    test_LinearDamping();
-    test_LinearDamping_HB();
-    test_QuadraticDamping();
-    test_QuadraticDamping_HB();
+    //test_LinearDamping();
+    //test_LinearDamping_HB();
+    //test_QuadraticDamping();
+    //test_QuadraticDamping_HB();
+    test_TaylorManDamping();
 }

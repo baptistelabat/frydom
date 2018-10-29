@@ -51,9 +51,6 @@ namespace frydom {
         auto fx = -cx * vel2; // FIXME: on doit caler le sige suivant la convention prise dans les coeffs...
         auto fy = -cy * vel2;
         auto mz = -cz * vel2;
-//        auto fx = 0.5 * rho_water * cx * transverse_area * vel2;
-//        auto fy = 0.5 * rho_water * cy * transverse_area * vel2;
-//        auto mz = 0.5 * rho_water * cz * lateral_area * vel2 * lpp;
 
         force.x() = fx;
         force.y() = fy;
@@ -67,6 +64,12 @@ namespace frydom {
 
     }
 
-
+    void FrCurrentForce::SetLogPrefix(std::string prefix_name) {
+        if (prefix_name == "") {
+            m_logPrefix = "Fcurrent_" + FrForce::m_logPrefix;
+        } else {
+            m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+        }
+    }
 
 }  // end namespace frydom

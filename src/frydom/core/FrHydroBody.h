@@ -285,6 +285,9 @@ namespace frydom {
         /// Equilibrium frame with fixed position
         void SetEquilibriumFrame(const FrEquilibriumFrameType frame, const chrono::ChVector<> vect);
 
+        void SetEquilibriumFrame(const FrEquilibriumFrameType frame, const chrono::ChVector<> pos,
+                                 const chrono::ChQuaternion<> rot);
+
         void SetEquilibriumFrame(const std::shared_ptr<chrono::ChFrameMoving<double>>& eqFrame) {
             m_equilibriumFrame = eqFrame;
         }

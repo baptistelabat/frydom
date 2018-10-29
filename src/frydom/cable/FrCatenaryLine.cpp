@@ -261,7 +261,7 @@ namespace frydom {
     void FrCatenaryLine::GenerateAssets() {
         // Assets for the cable visualisation
         if (m_drawCableElements) {
-            double ds = m_cableLength/m_nbDrawnElements;
+            double ds = m_cableLength/(m_nbDrawnElements-1);
             auto Pos0 = Body2->TransformPointParentToLocal(GetAbsPosition(0));
             for (int i=1; i<m_nbDrawnElements; i++){
                 auto Pos1 = Body2->TransformPointParentToLocal(GetAbsPosition(ds*i));
@@ -279,7 +279,7 @@ namespace frydom {
 
     void FrCatenaryLine::UpdateAsset() {
         if (m_drawCableElements) {
-            double ds = m_cableLength/m_nbDrawnElements;
+            double ds = m_cableLength/(m_nbDrawnElements-1);
             auto Pos0 = Body2->TransformPointParentToLocal(GetAbsPosition(0));
             for (int i=1; i<m_nbDrawnElements; i++){
                 auto Pos1 = Body2->TransformPointParentToLocal(GetAbsPosition(i*ds));

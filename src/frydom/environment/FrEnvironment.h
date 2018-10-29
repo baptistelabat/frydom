@@ -35,11 +35,7 @@
 //#include "seabed/FrSeabed.h"
 
 // GeographicLib includes
-//#include <GeographicLib/LocalCartesian.hpp>
-
-
-//#include "frydom/core/FrOffshoreSystem.h"
-// TODO: passer le max en forward declaration !!
+#include "frydom/utils/FrGeographicServices.h"
 
 namespace GeographicLib {
     class LocalCartesian;
@@ -78,8 +74,8 @@ namespace frydom {
         std::unique_ptr<FrWind> m_wind;
         std::unique_ptr<FrSeabed> m_seabed;
 
-        /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
-        std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
+        /// Wrap for GeographicLib, contains the origin of geographic coordinates
+        std::unique_ptr<GeographicLib::LocalCartesian> m_localCartesian;
 
         // Environments scalars
         double m_waterDensity = 1025.;
@@ -96,6 +92,8 @@ namespace frydom {
 
         bool m_infinite_depth = false;
 
+        bool m_showSeabed = true;
+        bool m_showFreeSurface = true;
 
     public:
 
@@ -109,6 +107,12 @@ namespace frydom {
 
         void SetInfiniteDepth(bool is_infinite);
         bool GetInfiniteDepth();
+
+        void SetShowSeabed(bool is_shown) {m_showSeabed = is_shown;}
+        bool GetShowSeabed() { return m_showSeabed;}
+
+        void SetShowFreeSurface(bool is_shown) {m_showFreeSurface = is_shown;}
+        bool GetShowFreeSurface() { return m_showFreeSurface;}
 
         void SetTime(double time);
 
@@ -178,10 +182,31 @@ namespace frydom {
 
         double ComputeMagneticDeclination(double x, double y, double z);
 
+        /* TODO : DEBUG memory leak due to ptr to m_geoServices
+        FrGeographicServices* GetGeoServices() const {
+            return m_geoServices.get();
+        }
+
+        void SetGeographicOrigin(double lat0, double lon0, double h0){
+            m_geoServices->SetGeographicOrigin(lat0,lon0,h0);
+        }
+
+        void Convert_GeoToCart(double lat, double lon, double h, double& x, double& y, double& z){
+            m_geoServices->Convert_GeoToCart(lat,lon,h,x,y,z);
+        }
+
+        void Convert_CartToGeo(double x, double y, double z, double& lat, double& lon, double& h){
+            m_geoServices->Convert_CartToGeo(x,y,z,lat,lon,h);
+        }
+
+        double ComputeMagneticDeclination(double x, double y, double z){
+            m_geoServices->ComputeMagneticDeclination(x,y,z,GetYear());
+        }*/
+
         FrTimeZone* GetTimeZone() const;
         //void SetTimeZoneName(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
 
-
+        int GetYear() const;  // FIXME : ne devrait pas etre direct dans environment mais dans un servixce de temps...
 
         void Update(double time);
 
@@ -236,13 +261,13 @@ namespace frydom {
         FrOffshoreSystem_* m_system;
 
 //        double m_time;
-        std::unique_ptr<FrTimeZone> m_timeZone;
+        std::unique_ptr<FrTimeZone> m_timeZone;  // TODO : faire un service de temps
 
         // Environment components
-        std::unique_ptr<FrFreeSurface_>  m_freeSurface;
-        std::unique_ptr<FrUniformCurrent_>      m_current;  // TODO: remettre en place de la genericite
-        std::unique_ptr<FrUniformWind_>  m_wind;
-        std::unique_ptr<FrSeabed_>       m_seabed;
+        std::unique_ptr<FrFreeSurface_>     m_freeSurface;
+        std::unique_ptr<FrUniformCurrent_>  m_current;  // TODO: remettre en place de la genericite
+        std::unique_ptr<FrUniformWind_>     m_wind;
+        std::unique_ptr<FrSeabed_>          m_seabed;
 
         /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
         std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
@@ -262,6 +287,8 @@ namespace frydom {
 
 //        bool m_infinite_depth = false; // TODO : a placer plutot dans seabed !
 
+        bool m_showSeabed = true;
+        bool m_showFreeSurface = true;
 
     public:
 
@@ -345,6 +372,7 @@ namespace frydom {
 
         void Convert_CartToGeo(double x, double y, double z, double& lat, double& lon, double& h);
 
+        int GetYear() const;        
 
         // Earth magnetic model
 

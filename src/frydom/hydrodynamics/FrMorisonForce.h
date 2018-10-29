@@ -46,7 +46,24 @@ namespace frydom {
 
         /// Initialize the morison elements
         void Initialize() override {
+
+            if(is_log && m_element->LogIsActive()) {
+                is_log = true;
+            } else {
+                is_log = false;
+            }
+
             m_element->Initialize();
+            FrForce::Initialize();
+        }
+
+        /// Definition of the prefix used in log file
+        void SetLogPrefix(std::string prefix_name) override {
+            if (prefix_name=="") {
+                m_logPrefix = "Fmorison_" + FrForce::m_logPrefix;
+            } else {
+                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+            }
         }
 
         /// Apply an external force to the body

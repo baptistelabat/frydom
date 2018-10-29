@@ -78,6 +78,7 @@ namespace frydom {
     void FrDynamicCable::InitializeSection() {  // TODO: mettre en private
         m_section = std::make_shared<ChBeamSectionCable>();  // Voir si on utilise pas directement la classe mere pour avoir de la torsion...
         m_section->SetArea(m_sectionArea);
+        m_section->SetDiameter(GetDiameter());
         m_section->SetBeamRaleyghDamping(m_rayleighDamping);
         m_section->SetDensity(GetDensity());
         m_section->SetYoungModulus(m_youngModulus);
@@ -113,12 +114,12 @@ namespace frydom {
 
         // First, creating a catenary line to initialize finite element mesh node positions
         // TODO: comment on definit q ???
-        double q = 600;
+        double q = GetLinearDensity();
 
         // TODO: avoir un constructeur pour juste specifier les parametres du cable, pas les frontieres  -->  degager le constructeur par defaut
         auto catenary_line = FrCatenaryLine(m_startingNode,
                                             m_endingNode,
-                                            true, // Elasticity is set to false to build the finite element model // FIXME: la simu ne fonctionne pas si on met false (objectif) --> absolument regler ca !!!!
+                                            false, // Elasticity is set to false to build the finite element model // FIXME: la simu ne fonctionne pas si on met false (objectif) --> absolument regler ca !!!!
                 // at the specified length
                                             m_youngModulus,
                                             m_sectionArea,

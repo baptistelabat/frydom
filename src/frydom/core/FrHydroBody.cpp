@@ -7,7 +7,6 @@
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include "FrNode.h"
-
 #include "frydom/core/FrNodeDynamic.h"
 
 #include "frydom/environment/FrEnvironment.h"
@@ -424,6 +423,15 @@ namespace frydom {
                                           const chrono::ChVector<> vect) {
         auto node = CreateNode();
         node->SetPos(vect);
+        m_equilibriumFrame = node;
+    }
+
+    void FrHydroBody::SetEquilibriumFrame(const FrEquilibriumFrameType frame,
+                                          const chrono::ChVector<> pos,
+                                          const chrono::ChQuaternion<> rot) {
+        auto node = CreateNode();
+        node->SetPos(pos);
+        node->SetRot(rot);
         m_equilibriumFrame = node;
     }
 

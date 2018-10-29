@@ -58,7 +58,7 @@ namespace frydom {
         void SetSteadyForce();
 
         /// Initialize the steady part of the excitation force
-        void Initialize();  // TODO: devrait s'initialiser automatiquement au lancement de la simulation...
+        void Initialize() override;  // TODO: devrait s'initialiser automatiquement au lancement de la simulation...
 
         /// Update force and moment
         void UpdateState() override;

@@ -42,7 +42,7 @@ namespace frydom {
             }
         }
 
-        InitializeLogs();
+        FrForce::Initialize();
     }
 
 

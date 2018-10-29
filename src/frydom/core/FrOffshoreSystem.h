@@ -62,6 +62,9 @@ namespace frydom {
         std::vector<std::shared_ptr<FrHydroDB>> m_HDB;
         std::vector<std::shared_ptr<FrHydroMapper>> m_hydroMapper;  // TODO : patch vector hydro map multibody
 
+        int m_NsampleOutput = 1;    ///< number of time sample between two outputs
+        int m_NitterOutput = 0;     ///< current iteration between two outputs
+
 
     public:
         /// Default constructor
@@ -112,6 +115,8 @@ namespace frydom {
         void Initialize() override;
 
         void StepFinalize() override;
+
+        void SetNsampleOutput(const int n) { m_NsampleOutput = n; }
 
         virtual void IntLoadResidual_Mv(const unsigned int off,
                                         chrono::ChVectorDynamic<>& R,

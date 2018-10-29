@@ -80,4 +80,48 @@ namespace frydom {
 
     }
 
+// Computes the product of the corresponding block in the
+// system matrix (ie. the mass matrix) by 'vect', scale by c_a, and add to 'result'.
+// NOTE: the 'vect' and 'result' vectors must already have
+// the size of the total variables&constraints in the system; the procedure
+// will use the ChVariable offsets (that must be already updated) to know the
+// indexes in result and vect.
+    void FrVariablesBEMBodyMass::MultiplyAndAdd(chrono::ChMatrix<double>& result,
+                                                const chrono::ChMatrix<double>& vect,
+                                                const double c_a) const {
+        assert(result.GetColumns() == 1 && vect.GetColumns() == 1);
+        //
+        for (int i=0; i<6; i++) {
+            for (int j=0; j<6; j++) {
+                result(this->offset + i) += c_a * m_GeneralizedMass(i, j) * vect(this->offset + j);
+            }
+        }
+    }
+
+// Add the diagonal of the mass matrix scaled by c_a to 'result'.
+// NOTE: the 'result' vector must already have the size of system unknowns, ie
+// the size of the total variables&constraints in the system; the procedure
+// will use the ChVariable offset (that must be already updated) as index.
+    void FrVariablesBEMBodyMass::DiagonalAdd(chrono::ChMatrix<double>& result, const double c_a) const {
+        assert(result.GetColumns() == 1);
+        result(this->offset + 0) += c_a * m_GeneralizedMass(0, 0);
+        result(this->offset + 1) += c_a * m_GeneralizedMass(1, 1);
+        result(this->offset + 2) += c_a * m_GeneralizedMass(2, 2);
+        result(this->offset + 3) += c_a * m_GeneralizedMass(3, 3);
+        result(this->offset + 4) += c_a * m_GeneralizedMass(4, 4);
+        result(this->offset + 5) += c_a * m_GeneralizedMass(5, 5);
+    }
+
+// Build the mass matrix (for these variables) scaled by c_a, storing
+// it in 'storage' sparse matrix, at given column/row offset.
+// Note, most iterative solvers don't need to know mass matrix explicitly.
+// Optimized: doesn't fill unneeded elements except mass and 3x3 inertia.
+    void FrVariablesBEMBodyMass::Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) {
+        for (int i=0; i<6; i++) {
+            for (int j=0; j<6; j++) {
+                storage.SetElement(insrow + i, inscol + j, c_a * m_GeneralizedMass(i, j));
+            }
+        }
+    }
+
 }

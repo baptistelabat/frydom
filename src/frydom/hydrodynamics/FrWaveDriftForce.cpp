@@ -118,31 +118,31 @@ namespace frydom {
         auto nbFreq = m_waveProbe->GetWaveField()->GetNbFrequencies();
         auto nbWaveDir = m_waveProbe->GetWaveField()->GetNbWaveDirections();
 
-        auto heading = m_body->GetHeadingAngle(NED, DEG);
-
-        //auto emjwt = m_waveProbe->GetWaveField()->GetTimeCoeffs();
+        auto heading = m_body->GetHeadingAngle(NWU, DEG);
 
         std::vector<double> cforce = {0.,0.,0.};
 
         auto waveDir = m_waveProbe->GetWaveField()->GetWaveDirections(DEG);
-        //auto w = m_waveProbe->GetWaveField()->GetWaveFrequencies(RADS);
         auto w = m_waveProbe->GetEncounterWaveFrequencies();
         double wi, relative_angle;
+        double dw;
 
         for (unsigned int idir=0; idir<nbWaveDir; ++idir) {
+            dw = w[idir][1] - w[idir][0];
             for (unsigned int ifreq=0; ifreq < nbFreq; ++ifreq) {
 
                 wi  = w[idir][ifreq];
-                relative_angle = SetRelativeAngle(waveDir[idir]-180.,heading);
+                relative_angle = SetRelativeAngle(waveDir[idir],heading);
 
-                cforce.at(0) -= std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[0]->Eval("Data", relative_angle, wi) ;
-                //cforce.at(1) += std::pow(m_CmplxElevation[idir][ifreq],2) * m_table[1]->Eval("Data", relative_angle, wi) ;
-                //cforce.at(2) += std::pow(m_CmplxElevation[idir][ifreq],2) * m_table[2]->Eval("Data", relative_angle, wi) ;
+                cforce.at(0) += std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[0]->Eval("Data", relative_angle, wi) * dw;
+                cforce.at(1) += std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[1]->Eval("Data", relative_angle, wi) * dw;
+                cforce.at(2) += std::pow(m_waveAmplitude[idir][ifreq],2) * m_table[2]->Eval("Data", relative_angle, wi) * dw;
             }
         }
 
         force.x() = cforce.at(0);   //  Surge
         force.y() = cforce.at(1);   //  Sway
+        force.z() = 0.;
 
         force = GetBody()->Dir_Body2World(force);
 

@@ -78,9 +78,21 @@ namespace frydom {
 
         chrono::ChVector<double> GetAbsPosition(const double s) const;  // TODO
 
+        chrono::ChVector<double> GetAbsPosition(const int iNode) {
+            auto Node = dynamic_cast<ChNodeFEAxyz*>(GetNode(iNode).get());
+            return Node->GetPos();
+        }
+
         chrono::ChVector<double> GetStartingNodeTension() const;  // TODO
 
         chrono::ChVector<double> GetEndingNodeTension() const;  // TODO
+
+        double GetCableLength() {
+            double Length = 0;
+            for (int i=0; i<GetNnodes()-1;i++) {
+                Length += (GetAbsPosition(i+1)-GetAbsPosition(i)).Length();
+            }
+        }
 
         std::shared_ptr<ChNodeFEAxyzD> GetStartingNodeFEA() const;
         std::shared_ptr<ChNodeFEAxyzD> GetEndingNodeFEA() const;

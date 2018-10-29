@@ -29,6 +29,12 @@ namespace frydom {
         /// Update procedure containing implementation of the wind drag force model
         void UpdateState() override;
 
+        //
+        // LOG
+        //
+
+        void SetLogPrefix(std::string prefix_name) override;
+
     private:
 
         chrono::ChVector<> m_wind_relative_velocity;    ///< Relative velocity of the wind inflow

@@ -31,7 +31,8 @@ namespace frydom {
         m_wind = std::make_unique<FrUniformWind>();
         m_seabed = std::make_unique<FrSeabed>();
         if (not(m_infinite_depth)) m_seabed->SetEnvironment(this);
-        m_LocalCartesian = std::make_unique<GeographicLib::LocalCartesian>();
+        if (m_showSeabed) m_seabed->SetEnvironment(this);
+        m_localCartesian = std::make_unique<GeographicLib::LocalCartesian>();
         m_timeZone = std::make_unique<FrTimeZone>();
     }
 
@@ -153,27 +154,28 @@ namespace frydom {
     }
 
     GeographicLib::LocalCartesian *FrEnvironment::GetGeoLib() const {
-        return m_LocalCartesian.get();
+        return m_localCartesian.get();
     }
 
     void FrEnvironment::SetGeographicOrigin(double lat0, double lon0, double h0) {
-        m_LocalCartesian->Reset(lat0, lon0, h0);
+        m_localCartesian->Reset(lat0, lon0, h0);
     }
 
     void FrEnvironment::Convert_GeoToCart(double lat, double lon, double h, double &x, double &y, double &z) {
-        m_LocalCartesian->Forward(lat, lon, h, x, y, z);
+        m_localCartesian->Forward(lat, lon, h, x, y, z);
     }
 
     void FrEnvironment::Convert_CartToGeo(double x, double y, double z, double &lat, double &lon, double &h) {
-        m_LocalCartesian->Reverse(x, y, z, lat, lon, h);
+        m_localCartesian->Reverse(x, y, z, lat, lon, h);
     }
 
     FrTimeZone *FrEnvironment::GetTimeZone() const {return m_timeZone.get();}
 
     void FrEnvironment::Update(double time) {
-        m_freeSurface->Update(time);
+        if (m_showFreeSurface)  m_freeSurface->Update(time);
         m_current->Update(time);
         m_wind->Update(time);
+        if (m_showSeabed) m_seabed->Update(time);
         if (not(m_infinite_depth)) m_seabed->Update(time);
         m_time = time;
         m_timeZone->Update(time);
@@ -181,17 +183,19 @@ namespace frydom {
 
     void FrEnvironment::Initialize() {
         // TODO: appeler les methodes Initialize() sur les attributs
-        m_freeSurface->Initialize();
+        if (m_showFreeSurface) m_freeSurface->Initialize();
         m_current->Initialize();
         m_wind->Initialize();
+        if (m_showSeabed) m_seabed->Initialize();
         if (not(m_infinite_depth)) m_seabed->Initialize();
         m_timeZone->Initialize();
     }
 
     void FrEnvironment::StepFinalize() {
-        m_freeSurface->StepFinalize();
+        if (m_showFreeSurface) m_freeSurface->StepFinalize();
         m_current->StepFinalize();
         m_wind->StepFinalize();
+        if (m_showSeabed) m_seabed->StepFinalize();
         if (not(m_infinite_depth)) m_seabed->StepFinalize();
     }
 
@@ -204,26 +208,28 @@ namespace frydom {
 //        m_system->AddBody(m_freeSurface->GetBody());
 //    }
 
+    int FrEnvironment::GetYear() const {
+        /// Get the UTC time to obtain the year
+        auto lt = GetTimeZone()->GetUTCTime();
+        date::year_month_day ymd{date::floor<date::days>(lt)};
+        return int(ymd.year());
+    }
+
     double FrEnvironment::ComputeMagneticDeclination(double x, double y, double z) {
 
         /// Magnetic model loaded from _deps directory
-        GeographicLib::MagneticModel magneticModel("emm2017","../_deps/magneticmodel-src"); // FIXME : ne fonctionne pas !!!
+        GeographicLib::MagneticModel magneticModel("emm2017", "../_deps/magneticmodel-src");
         double lat, lon, h;
 
         /// Convert the node local coordinates to geographical coordinates
         Convert_CartToGeo(x, y, z, lat, lon, h);
 
-        /// Get the UTC time to obtain the year
-        auto lt = GetTimeZone()->GetUTCTime();
-        date::year_month_day ymd{date::floor<date::days>(lt)};
-        double myYear = int(ymd.year());
-
         /// Compute the magnetic declination
         double Bx, By, Bz, H, F, D, I;
-        magneticModel(myYear,lat,lon,h,Bx,By,Bz);
-        magneticModel.FieldComponents(Bx,By,Bz,H,F,D,I);
-        return D;
+        magneticModel(GetYear(), lat, lon, h, Bx, By, Bz);
+        GeographicLib::MagneticModel::FieldComponents(Bx, By, Bz, H, F, D, I);
 
+        return D;
     }
 
 
@@ -412,24 +418,26 @@ namespace frydom {
         m_LocalCartesian->Reverse(x, y, z, lat, lon, h);
     }
 
+    int FrEnvironment_::GetYear() const {
+        /// Get the UTC time to obtain the year
+        auto lt = GetTimeZone()->GetUTCTime();
+        date::year_month_day ymd{date::floor<date::days>(lt)};
+        return int(ymd.year());
+    }
+
     double FrEnvironment_::ComputeMagneticDeclination(double x, double y, double z) {
 
         /// Magnetic model loaded from _deps directory
-        GeographicLib::MagneticModel magneticModel("emm2017","../_deps/magneticmodel-src");
+        GeographicLib::MagneticModel magneticModel("emm2017", "../_deps/magneticmodel-src");
         double lat, lon, h;
 
         /// Convert the node local coordinates to geographical coordinates
         Convert_CartToGeo(x, y, z, lat, lon, h);
 
-        /// Get the UTC time to obtain the year
-        auto lt = GetTimeZone()->GetUTCTime();
-        date::year_month_day ymd{date::floor<date::days>(lt)};
-        double myYear = int(ymd.year());
-
         /// Compute the magnetic declination
         double Bx, By, Bz, H, F, D, I;
-        magneticModel(myYear,lat,lon,h,Bx,By,Bz);
-        magneticModel.FieldComponents(Bx,By,Bz,H,F,D,I);
+        magneticModel(GetYear(), lat, lon, h, Bx, By, Bz);
+        GeographicLib::MagneticModel::FieldComponents(Bx, By, Bz, H, F, D, I);
 
         return D;
     }
@@ -437,28 +445,28 @@ namespace frydom {
     FrTimeZone *FrEnvironment_::GetTimeZone() const {return m_timeZone.get();}
 
     void FrEnvironment_::Update(double time) {
-        m_freeSurface->Update(time);
+        if (m_showFreeSurface) m_freeSurface->Update(time);
         m_current->Update(time);
         m_wind->Update(time);
-//        if (not(m_infinite_depth)) m_seabed->Update(time);
+        if (m_showSeabed) m_seabed->Update(time);
 //        m_time = time;
         m_timeZone->Update(time);
     }
 
     void FrEnvironment_::Initialize() {
         // TODO: appeler les methodes Initialize() sur les attributs
-        m_freeSurface->Initialize();
+        if (m_showFreeSurface) m_freeSurface->Initialize();
         m_current->Initialize();
         m_wind->Initialize();
-//        if (not(m_infinite_depth)) m_seabed->Initialize();
+        if (m_showSeabed) m_seabed->Initialize();
         m_timeZone->Initialize();
     }
 
     void FrEnvironment_::StepFinalize() {
-        m_freeSurface->StepFinalize();
+        if (m_showFreeSurface) m_freeSurface->StepFinalize();
         m_current->StepFinalize();
         m_wind->StepFinalize();
-//        if (not(m_infinite_depth)) m_seabed->StepFinalize();
+        if (m_showSeabed) m_seabed->StepFinalize();
     }
 
 

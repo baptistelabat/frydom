@@ -29,9 +29,6 @@
 
 namespace frydom {
 
-//    FrTimeZone::~FrTimeZone() = default;
-
-
     FrOffshoreSystem::FrOffshoreSystem(bool use_material_properties,
                                        unsigned int max_objects,
                                        double scene_size) :
@@ -95,7 +92,7 @@ namespace frydom {
 
         // Executes "forStep" in all controls of controlslist
         ExecuteControlsForStep();  // C'est ici qu'on pourra trigger les calculs de controllers... Voir avec sof si
-        // c'est le bon endroit / si l'objet control de chrono convient
+                                   // c'est le bon endroit / si l'objet control de chrono convient
 
         stepcount++;
         solvecount = 0;
@@ -114,7 +111,7 @@ namespace frydom {
         // Re-wake the bodies that cannot sleep because they are in contact with
         // some body that is not in sleep state.
 //        ManageSleepingBodies(); // Proposer au chrono group que cette methode soit protected afi de pouvoir
-        // completement deriver de Integrate_Y()...
+                                  // completement deriver de Integrate_Y()...
 
         // Prepare lists of variables and constraints.
         DescriptorPrepareInject(*descriptor);
@@ -160,14 +157,17 @@ namespace frydom {
         // TODO : Ici on a bon candidat pour trigger l'emission des donnees des objets...
         std::cout << "End of time step leading to time " << ChTime << std::endl;
 
-        for (auto &ibody : bodylist) {
-            auto body = dynamic_cast<FrBody *>(ibody.get());
-            if (body) {
+        m_NitterOutput += 1;
 
-                body->StepFinalize();
+        if (m_NsampleOutput == m_NitterOutput) {
+            m_NitterOutput = 0;
+            for (auto &ibody : bodylist) {
+                auto body = dynamic_cast<FrBody *>(ibody.get());
+                if (body) {
+                    body->StepFinalize();
+                }
             }
         }
-
     }
 
     void FrOffshoreSystem::Initialize() {

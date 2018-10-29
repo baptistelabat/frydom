@@ -80,7 +80,7 @@ namespace frydom{
 
     void FrForce::SetLog() {
 
-        SetLogPrefix();
+        if (m_logPrefix == "") { SetLogPrefix(); }  // Set default log prefix if not defined
 
         //m_log.AddField("time","s","Current time of the simulation",&ChTime);
         m_log.AddField(m_logPrefix + "FX", "N", "Force in x-direction", &force.x());

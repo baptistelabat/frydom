@@ -44,6 +44,7 @@ namespace frydom {
         // ##CC : fix pour logger les angles de rotation via hermes
         // TODO : ameliorer hermes pour permettre le log de variable non définis en attributs
         chrono::ChVector<double> m_angles_rotation;
+        chrono::ChVector<double> m_angles_speed; ///< local coordinate system
         // ##CC
 
     public:
@@ -175,16 +176,22 @@ namespace frydom {
 
             // Adding fields
             m_bodyMsg.AddField<double>("time", "s", "Current time of the simulation", &ChTime);
+
             m_bodyMsg.AddField<double>("x", "m", "x position of the body reference frame origin", &coord.pos.x());
             m_bodyMsg.AddField<double>("y", "m", "y position of the body reference frame origin", &coord.pos.y());
             m_bodyMsg.AddField<double>("z", "m", "z position of the body reference frame origin", &coord.pos.z());
 
-            m_bodyMsg.AddField<double>("rx", "rad", "euler angle along the x-direction (body ref frame)",
-                                       &m_angles_rotation.x());
-            m_bodyMsg.AddField<double>("ry", "rad", "euler angle along the y-direction (body ref frame)",
-                                       &m_angles_rotation.y());
-            m_bodyMsg.AddField<double>("rz", "rad", "euler angle along the z-direction (body ref frame)",
-                                       &m_angles_rotation.z());
+            m_bodyMsg.AddField<double>("vx", "m/s", "velocity of the body along x-axis", &coord_dt.pos.x());
+            m_bodyMsg.AddField<double>("vy", "m/s", "velocity of the body along x-axis", &coord_dt.pos.y());
+            m_bodyMsg.AddField<double>("vz", "m/s", "velocity of the body along x-axis", &coord_dt.pos.z());
+
+            m_bodyMsg.AddField<double>("rx", "rad", "euler angle along the x-direction (body ref frame)", &m_angles_rotation.x());
+            m_bodyMsg.AddField<double>("ry", "rad", "euler angle along the y-direction (body ref frame)", &m_angles_rotation.y());
+            m_bodyMsg.AddField<double>("rz", "rad", "euler angle along the z-direction (body ref frame)", &m_angles_rotation.z());
+
+            m_bodyMsg.AddField<double>("vrx", "rad/s", "angular speed around x-axis (expressed in local coords)", &m_angles_speed.x());
+            m_bodyMsg.AddField<double>("vry", "rad/s", "angular speed around y-axis (expressed in local coords)", &m_angles_speed.y());
+            m_bodyMsg.AddField<double>("vrz", "rad/s", "angular speed around z-axis (expressed in local coords)", &m_angles_speed.z());
 
             m_bodyMsg.AddField<double>("Xbody_FX", "N", "force acting on the body at COG (in absolute reference frame)", &Xforce.x());
             m_bodyMsg.AddField<double>("Xbody_FY", "N", "force acting on the body at COG (in absolute reference frame)", &Xforce.y());
@@ -195,10 +202,10 @@ namespace frydom {
             m_bodyMsg.AddField<double>("Xbody_MZ", "N.m", "moment acting on the body at COG (in body reference frame)", &Xtorque.z());
 
 
-            //for (auto force: forcelist) {
-            //    auto dforce = dynamic_cast<FrForce *>(force.get());
-            //    m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
-            //}
+            for (auto force: forcelist) {
+                auto dforce = dynamic_cast<FrForce *>(force.get());
+                m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
+            }
         }
 
         virtual void AddMessageLog(std::shared_ptr<FrForce> dforce) {
@@ -228,6 +235,7 @@ namespace frydom {
         virtual void StepFinalize() override {
 
             m_angles_rotation = internal::quat_to_euler(GetRot());    // FIXME : ceci est un fixe pour permettre de logger l'angle de rotation
+            m_angles_speed = GetWvel_loc();
 
             for (auto& iforce: forcelist) {
                 auto force = dynamic_cast<FrForce*>(iforce.get());

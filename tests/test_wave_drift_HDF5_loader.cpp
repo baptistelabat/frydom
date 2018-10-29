@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
     DriftForce->SetWaveProbe(waveProbe);
     std::cout << "Define a new wave probe" << std::endl;
 
-    DriftForce->SetCmplxElevation();
+    //DriftForce->SetCmplxElevation();
     std::cout << "Define the complex amplitude" << std::endl;
 
     // Running simulation

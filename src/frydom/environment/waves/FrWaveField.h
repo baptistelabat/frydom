@@ -232,7 +232,7 @@ namespace frydom {
         std::vector<double> c_waveNumbers;
         std::vector<std::complex<double>> c_emjwt;
 
-        std::vector<std::vector<double>> m_wavePhases; // Not used in regular wave field
+        std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases; // Not used in regular wave field
 
         std::vector<std::shared_ptr<FrLinearWaveProbe>> m_waveProbes;
         std::vector<std::shared_ptr<FrLinearFlowSensor>> m_flowSensor;
@@ -281,7 +281,7 @@ namespace frydom {
 
         void Initialize() override;
 
-        std::vector<std::vector<double>> GetWavePhases() const;
+        std::vector<std::vector<double>>* GetWavePhases() const;
 
         void SetWavePhases(std::vector<std::vector<double>>& wavePhases);
 
@@ -542,7 +542,7 @@ namespace frydom {
         std::vector<double> c_waveNumbers;
         std::vector<std::complex<double>> c_emjwt;
 
-        std::vector<std::vector<double>> m_wavePhases; // Not used in regular wave field
+        std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases; // Not used in regular wave field
 
         std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbes;
         std::vector<std::shared_ptr<FrLinearFlowSensor_>> m_flowSensor;
@@ -591,7 +591,7 @@ namespace frydom {
 
         void Initialize() override;
 
-        std::vector<std::vector<double>> GetWavePhases() const;
+        std::vector<std::vector<double>>* GetWavePhases() const;
 
         void SetWavePhases(std::vector<std::vector<double>>& wavePhases);
 
