@@ -3,3 +3,10 @@
 //
 
 #include "FrAssetComponent.h"
+
+
+namespace frydom {
+
+
+
+}  // end namespace frydom

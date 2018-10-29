@@ -19,6 +19,7 @@ namespace frydom {
     class FrCatenaryForce : public FrForce {
 
     private:
+
         FrCatenaryLine* m_line; ///< The parent line
         line_side m_line_side;  ///< The side of the line where the tension is applied
 

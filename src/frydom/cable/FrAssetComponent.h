@@ -12,10 +12,14 @@
 namespace frydom {
 
     class FrAssetComponent : public FrObject {
+
     protected:
+
         std::shared_ptr<chrono::ChColorAsset> m_color;
         std::shared_ptr<chrono::ChVisualization> m_shape;
+
     public:
+
         std::shared_ptr<chrono::ChColorAsset> GetColorAsset() {return m_color;}
 
         std::shared_ptr<chrono::ChVisualization> GetShapeAsset() {return m_shape;}
@@ -23,6 +27,7 @@ namespace frydom {
         chrono::ChColor GetColor(){return m_color->GetColor();}
 
         void Initialize()override {};
+
         void StepFinalize()override {};
 
     };

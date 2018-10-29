@@ -17,7 +17,7 @@ namespace frydom {
     class FrCurrentStandardForce : public FrForce {
 
     private:
-        double m_rho = 1026.;               ///< water density [kg.m^-3]
+        double m_rho = 1026.;               ///< water density [kg.m^-3] TODO : aller chercher la densite dans environment !!
         double m_breadth;                   ///< maximum breadth at the waterline [m]
         double m_draft;                     ///< summer load line draft [m]
         double m_lateral_area;              ///< longitudinal projected submerged area [m^2]
