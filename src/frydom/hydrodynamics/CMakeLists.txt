@@ -24,6 +24,7 @@ set(SRC_FILES
         FrMorisonModel.cpp
         FrManoeuvringDamping.cpp
         FrQuadraticDamping.cpp
+        FrMorisonForce.cpp
 )
 
 set(FRYDOM_HYDRODYNAMICS_SOURCES "")

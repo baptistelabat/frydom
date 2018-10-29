@@ -18,65 +18,38 @@ namespace frydom {
     public:
 
         /// Default constructor of the morison force
-        FrMorisonForce() : m_element(NULL) {};
+        FrMorisonForce();;
 
         /// Constructor with definition of the morison model
-        FrMorisonForce(FrMorisonModel* element) {
-            m_element = element;
-        }
+        FrMorisonForce(FrMorisonModel* element);
 
         /// Definition of the model
-        void SetElement(FrMorisonModel* element) {
-            m_element = element;
-        }
+        void SetElement(FrMorisonModel* element);
 
         /// Update of the morison model
-        void UpdateState() override {
-            m_element->UpdateState();
-        }
+        void UpdateState() override;
 
-        void UpdateTime(const double time) override {
-            ChTime = time;
-        }
+        void UpdateTime(const double time) override;
 
-        void Update(const double time) override {
-            UpdateTime(time);
-            UpdateState();
-        }
+        void Update(const double time) override;
 
         /// Initialize the morison elements
-        void Initialize() override {
-
-            if(is_log && m_element->LogIsActive()) {
-                is_log = true;
-            } else {
-                is_log = false;
-            }
-
-            m_element->Initialize();
-            FrForce::Initialize();
-        }
+        void Initialize() override;
 
         /// Definition of the prefix used in log file
-        void SetLogPrefix(std::string prefix_name) override {
-            if (prefix_name=="") {
-                m_logPrefix = "Fmorison_" + FrForce::m_logPrefix;
-            } else {
-                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
-            }
-        }
+        void SetLogPrefix(std::string prefix_name) override;
 
         /// Apply an external force to the body
-        void SetBodyForce(chrono::ChVector<> mforce) { force = mforce; }
+        void SetBodyForce(chrono::ChVector<> mforce);
 
         /// Return the force applied to the body
-        chrono::ChVector<double> GetBodyForce() const { return force; }
+        chrono::ChVector<double> GetBodyForce() const;
 
         /// Apply an external moment to the body
-        void SetBodyTorque(chrono::ChVector<> torque) { moment = torque; }
+        void SetBodyTorque(chrono::ChVector<> torque);
 
         /// Return the moment applied to the body
-        chrono::ChVector<double> GetBodyTorque() const { return moment; }
+        chrono::ChVector<double> GetBodyTorque() const;
 
     };
 
