@@ -95,7 +95,7 @@ namespace frydom {
 
         // This constructor allows to construct Vector2d from Eigen expressions
         template <class OtherDerived>
-        explicit Position(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+        Position(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
 
         // This method allows to assign Eigen expressions to Vector3d
         template <class OtherDerived>
@@ -141,7 +141,7 @@ namespace frydom {
 
         // This constructor allows to construct Vector2d from Eigen expressions
         template <class OtherDerived>
-        explicit Direction(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+        Direction(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
 
         // This method allows to assign Eigen expressions to Vector3d
         template <class OtherDerived>
@@ -187,7 +187,7 @@ namespace frydom {
 
         // This constructor allows to construct Vector2d from Eigen expressions
         template <class OtherDerived>
-        explicit Velocity(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+        Velocity(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
 
         // This method allows to assign Eigen expressions to Vector3d
         template <class OtherDerived>
@@ -232,7 +232,7 @@ namespace frydom {
 
         // This constructor allows to construct Vector2d from Eigen expressions
         template <class OtherDerived>
-        explicit RotationalVelocity(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+        RotationalVelocity(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
 
         // This method allows to assign Eigen expressions to Vector3d
         template <class OtherDerived>
@@ -277,7 +277,7 @@ namespace frydom {
 
         // This constructor allows to construct Vector2d from Eigen expressions
         template <class OtherDerived>
-        explicit Acceleration(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+        Acceleration(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
 
         // This method allows to assign Eigen expressions to Vector3d
         template <class OtherDerived>
@@ -322,7 +322,7 @@ namespace frydom {
 
         // This constructor allows to construct Vector2d from Eigen expressions
         template <class OtherDerived>
-        explicit RotationalAcceleration(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+        RotationalAcceleration(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
 
         // This method allows to assign Eigen expressions to Vector3d
         template <class OtherDerived>
@@ -367,7 +367,7 @@ namespace frydom {
 
         // This constructor allows to construct Vector2d from Eigen expressions
         template <class OtherDerived>
-        explicit Force(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+        Force(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
 
         // This method allows to assign Eigen expressions to Vector3d
         template <class OtherDerived>
@@ -411,7 +411,7 @@ namespace frydom {
 
         // This constructor allows to construct Vector2d from Eigen expressions
         template <class OtherDerived>
-        explicit Moment(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+        Moment(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
 
         // This method allows to assign Eigen expressions to Vector3d
         template <class OtherDerived>
@@ -461,6 +461,12 @@ namespace frydom {
         inline Vector SwapFrameConvention(const Vector& vector) {
             Vector out = vector;
             return SwapFrameConvention<Vector>(vector);
+        }
+
+        inline chrono::ChVector<double>& SwapFrameConvention(chrono::ChVector<double>& vector) {
+            vector[1] = -vector[1];
+            vector[2] = -vector[2];
+            return vector;
         }
 
         /// Convert a chrono 3D vector into a FRyDoM Vector

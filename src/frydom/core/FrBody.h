@@ -505,6 +505,25 @@ namespace frydom {
         double GetYaw_RADIANS(FRAME_CONVENTION fc) const;
         double SetYaw_RADIANS(double yaw, FRAME_CONVENTION fc);
 
+        template <class Vector>
+        void ProjectAbsVectorInBodyCoords(Vector& vector, FRAME_CONVENTION fc) const {
+            vector = GetAbsQuaternion().Rotate<Vector>(vector, fc);
+        }
+
+        template <class Vector>
+        Vector ProjectAbsVectorInBodyCoords(const Vector& vector, FRAME_CONVENTION fc) const {
+            return GetAbsQuaternion().Rotate<Vector>(vector, fc);
+        }
+
+        template <class Vector>
+        void ProjectBodyVectorInAbsCoords(Vector& vector, FRAME_CONVENTION fc) const {
+            vector = GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
+        }
+
+        template <class Vector>
+        Vector ProjectBodyVectorInAbsCoords(const Vector& vector, FRAME_CONVENTION fc) const {
+            return GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
+        }
 
 
         // Frame

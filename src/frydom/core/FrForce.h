@@ -141,10 +141,23 @@ namespace frydom {
     struct _FrForceBase : public chrono::ChForce {
 
         FrForce_* m_frydomForce;
+        chrono::ChVector<double> m_torque; // Expressed in body coordinates at COG
+
 
         explicit _FrForceBase(FrForce_* force);
 
-        virtual void UpdateState() override;
+        void UpdateState() override;
+
+        void GetBodyForceTorque(chrono::ChVector<double>& body_force, chrono::ChVector<double>& body_torque) const override;
+
+        void GetAbsForceNWU(Force &body_force) const;
+
+        void GetLocalTorqueNWU(Moment &body_torque) const;
+
+        void SetAbsForceNWU(const Force &body_force);
+
+        void SetLocalTorqueNWU(const Moment &body_torque);
+
 
         friend class FrForce_;
 
@@ -183,13 +196,21 @@ namespace frydom {
 
         FrOffshoreSystem_* GetSystem();
 
+
+
         // Force Limits
 
         void SetMaxForceLimit(double fmax);
 
+        double GetMaxForceLimit() const;
+
         void SetMaxTorqueLimit(double tmax);
 
+        double GetMaxTorqueLimit() const;
+
         void SetLimit(bool val);
+
+        bool GetLimit() const;
 
 
         // Force Getters
@@ -206,21 +227,22 @@ namespace frydom {
 
         void GetLocalForce(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
 
-        void GetAbsMoment(Force& force, FRAME_CONVENTION fc) const;
+        void GetAbsTorqueAtCOG(Moment &torque, FRAME_CONVENTION fc) const;
 
-        Force GetAbsMoment(FRAME_CONVENTION fc) const;
+        Moment GetAbsTorqueAtCOG(FRAME_CONVENTION fc) const;
 
-        void GetAbsMoment(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
+        void GetAbsTorqueAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const;
 
-        void GetLocalMoment(Force& force, FRAME_CONVENTION fc) const;
+        void GetLocalTorqueAtCOG(Moment &torque, FRAME_CONVENTION fc) const;
 
-        Force GetLocalMoment(FRAME_CONVENTION fc) const;
+        Moment GetLocalTorqueAtCOG(FRAME_CONVENTION fc) const;
 
-        void GetLocalMoment(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
+        void GetLocalTorqueAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const;
 
         double GetForceNorm() const;
 
-        double GetTorqueNorm() const;
+        double GetTorqueNormAtCOG() const;
+
 
 
 
@@ -230,13 +252,85 @@ namespace frydom {
 
         friend class FrBody_;
 
-        void SetLocalMomentAtNode(const Moment &momentAtNode);
+        // The following methods are to be used in the implementation of Update method to set the force and torque
+        // of the force model used
 
-        void SetAbsMomentAtNode(const Moment &momentAtNode);
+        /// Set the force expressed in absolute coordinates. It does not generate a torque
+        void SetAbsForce(const Force& force, FRAME_CONVENTION fc);
 
-        void SetLocalForce(const Force &force);
+        /// Set the force expressed in absolute coordinates applying to a point expressed in body coordinates.
+        /// It generates a torque.
+        void SetAbsForceOnLocalPoint(const Force& force, const Position& relPos, FRAME_CONVENTION fc);
 
-        void SetAbsForce(const Force &force);
+        /// Set the force expressed in absolute coordinates applying to a point expressed in absolute coordinates.
+        /// It generates a torque.
+        void SetAbsForceOnAbsPoint(const Force& force, const Position& absPos, FRAME_CONVENTION fc);
+
+        /// Set the force expressed in body coordinates. It does not generate a torque.
+        void SetLocalForce(const Force& force, FRAME_CONVENTION fc);
+
+        /// Set the force expressed in body coordinates applying to a point expressed in body coordinates.
+        /// It generates a torque.
+        void SetLocalForceOnLocalPoint(const Force& force, const Position& relPos, FRAME_CONVENTION fc);
+
+        /// Set the force expressed in body coordinates applying to a point expressed in absolute coordinates.
+        /// It generates a torque.
+        void SetLocalForceOnAbsPoint(const Force& force, const Position& absPos, FRAME_CONVENTION fc);
+
+        /// Set the torque expressed in absolute coordinates and at COG.
+        void SetAbsTorqueAtCOG(const Moment& torque, FRAME_CONVENTION fc);
+
+        /// Set the torque expressed in relative coordinates and at COG.
+        void SetLocalTorqueAtCOG(const Moment& torque, FRAME_CONVENTION fc);
+
+        /// Set force and torque expressed in absolute coordinates and at COG.
+        void SetAbsForceTorqueAtCOG(const Force& force, const Moment& torque, FRAME_CONVENTION fc);
+
+        /// Set force and torque expressed in body coordinates and at COG
+        void SetLocalForceTorqueAtCOG(const Force& force, const Moment& torque, FRAME_CONVENTION fc);
+
+        /// Set force and torque expressed in absolute coordinates and reduced to a point expressed in body coordinates
+        void SetAbsForceTorqueAtLocalPoint(const Force& force, const Moment& torque, const Position& relPos, FRAME_CONVENTION fc);
+
+        /// Set force and torque expressed in absolute coordinates and reduced to a point expressed in absolute coordinates
+        void SetAbsForceTorqueAtAbsPoint(const Force& force, const Moment& torque, const Position& absPos, FRAME_CONVENTION fc);
+
+        /// Set force and torque expressed in body coordinates and reduced to a point expressed in body coordinates
+        void SetLocalForceTorqueAtLocalPoint(const Force& force, const Moment& torque, const Position& relPos, FRAME_CONVENTION fc);
+
+        /// Set force and torque expressed in body coordinates and reduced to a point expressed in absolute coordinates
+        void SetLocalForceTorqueAtAbsPoint(const Force& force, const Moment& torque, const Position& absPos, FRAME_CONVENTION fc);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        void SetLocalMomentAtNode(const Moment &momentAtNode);
+//
+//        void SetAbsMomentAtNode(const Moment &momentAtNode);
+//
+//        void SetLocalForce(const Force &force);
+//
+//        void SetAbsForceNWU(const Force &force);
 
 
 //        explicit FrForce_(FrBody_* body);
