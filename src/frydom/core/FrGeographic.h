@@ -7,7 +7,9 @@
 
 #include <cmath>
 #include <iostream>
-#include "chrono/core/ChVector.h"
+//#include "chrono/core/ChVector.h"
+
+#include "FrVector.h"
 
 // Forward declaration
 namespace chrono {
@@ -20,14 +22,14 @@ namespace frydom {
     // =================================================================================================================
     // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME (please do not forget the NED aspect !)
     // =================================================================================================================
-    extern const chrono::ChVector<double> NORTH;        ///< North direction
-    extern const chrono::ChVector<double> NORTH_EAST;   ///< North-East direction
-    extern const chrono::ChVector<double> EAST;         ///< East direction
-    extern const chrono::ChVector<double> SOUTH_EAST;   ///< South-East direction
-    extern const chrono::ChVector<double> SOUTH;        ///< South direction
-    extern const chrono::ChVector<double> SOUTH_WEST;   ///< South-West direction
-    extern const chrono::ChVector<double> WEST;         ///< West direction
-    extern const chrono::ChVector<double> NORTH_WEST;   ///< North-West direction
+    extern const Direction NORTH;        ///< North direction
+    extern const Direction NORTH_EAST;   ///< North-East direction
+    extern const Direction EAST;         ///< East direction
+    extern const Direction SOUTH_EAST;   ///< South-East direction
+    extern const Direction SOUTH;        ///< South direction
+    extern const Direction SOUTH_WEST;   ///< South-West direction
+    extern const Direction WEST;         ///< West direction
+    extern const Direction NORTH_WEST;   ///< North-West direction
 
     /// Absolute Reference frame conventions
     enum FRAME_CONVENTION {
@@ -47,6 +49,24 @@ namespace frydom {
         LOCAL,
         PARENT,
     };
+
+
+    enum DIRECTION_CONVENTION {
+        GOTO,
+        COMEFROM
+    };
+
+    inline bool IsGOTO(DIRECTION_CONVENTION dc) {
+        return (dc == GOTO);
+    }
+
+    inline bool IsCOMEFROM(DIRECTION_CONVENTION dc) {
+        return (dc == COMEFROM);
+    }
+
+
+
+
 
     namespace internal {
 

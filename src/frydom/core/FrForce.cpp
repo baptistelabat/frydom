@@ -175,8 +175,6 @@ namespace frydom{
 
 
 
-
-
     // FrForce_ methods implementations
 
     FrForce_::FrForce_(std::shared_ptr<FrNode_> node) : m_body(node->GetBody()), m_node(node) {
@@ -209,10 +207,6 @@ namespace frydom{
     }
 
     void FrForce_::SetLimit(bool val) {
-        if (val) {
-            m_forceLimit = 1e8;
-            m_torqueLimit = 1e8;
-        }
         m_limitForce = val;
     }
 
@@ -255,20 +249,26 @@ namespace frydom{
     void FrForce_::GetLocalForce(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
         auto force = GetLocalForce(fc);
         fx = force[0];
-        fx = force[1];
-        fx = force[2];
+        fy = force[1];
+        fz = force[2];
     }
 
     void FrForce_::GetAbsTorqueAtCOG(Moment &torque, FRAME_CONVENTION fc) const {
-        // TODO
+        GetLocalTorqueAtCOG(torque, fc);
+        m_body->ProjectBodyVectorInAbsCoords<Moment>(torque, fc);
     }
 
     Moment FrForce_::GetAbsTorqueAtCOG(FRAME_CONVENTION fc) const {
-        // TODO
+        Moment torque;
+        GetAbsTorqueAtCOG(torque, fc);
+        return torque;
     }
 
     void FrForce_::GetAbsTorqueAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const {
-        // TODO
+        Moment torque = GetAbsTorqueAtCOG(fc);
+        mx = torque[0];
+        my = torque[1];
+        mz = torque[2];
     }
 
     void FrForce_::GetLocalTorqueAtCOG(Moment &torque, FRAME_CONVENTION fc) const {
@@ -285,15 +285,18 @@ namespace frydom{
     }
 
     void FrForce_::GetLocalTorqueAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const {
-        // TODO
+        Moment torque = GetLocalTorqueAtCOG(fc);
+        mx = torque[0];
+        my = torque[1];
+        mz = torque[2];
     }
 
     double FrForce_::GetForceNorm() const {
-        // TODO
+        return GetAbsForce(NWU).norm();
     }
 
     double FrForce_::GetTorqueNormAtCOG() const {
-        // TODO
+        return GetLocalTorqueAtCOG(NWU).norm();
     }
 
     // =================================================================================================================
@@ -381,5 +384,6 @@ namespace frydom{
         SetLocalForceOnAbsPoint(force, absPos, fc);
         SetLocalTorqueAtCOG(GetLocalTorqueAtCOG(fc) + torque, fc);
     }
+
 
 }  // end namespace frydom

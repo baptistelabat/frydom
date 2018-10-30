@@ -19,6 +19,9 @@
 
 namespace frydom {
 
+    Velocity FrCurrent_::GetAbsRelativeVelocity(const Position& absPointPos, const Velocity& absPointVelocity, FRAME_CONVENTION fc) {
+        return GetFluxVector(absPointPos, fc) - absPointVelocity;
+    }
 
     FrUniformCurrent_::FrUniformCurrent_(FrEnvironment_ *environment) : m_environment(environment){
 
@@ -28,7 +31,7 @@ namespace frydom {
         FrUniformCurrentField::Update(time);
     }
 
-    chrono::ChVector<> FrUniformCurrent_::GetFluxVector(FRAME_CONVENTION frame) {
+    Velocity FrUniformCurrent_::GetFluxVector(const Position& pos, FRAME_CONVENTION frame) {
         return FrUniformCurrentField::GetFluxVector(frame);
     }
 

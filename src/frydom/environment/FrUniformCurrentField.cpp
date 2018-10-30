@@ -91,7 +91,7 @@ namespace frydom {
 //        std::cout << "Updating current model" << std::endl;
     }
 
-    chrono::ChVector<> FrUniformCurrentField::GetFluxVector(FRAME_CONVENTION frame) {
+    Velocity FrUniformCurrentField::GetFluxVector(FRAME_CONVENTION frame) {
         switch (frame) {
             case NED:
                 m_currentVector[1] = -m_currentVector[1];

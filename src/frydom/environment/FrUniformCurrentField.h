@@ -85,6 +85,81 @@ namespace frydom {
 
         };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ///////// REFACTORING ------------>>>>>>>>>>>>>>>>>>><
+
+
+        class FrUniformCurrentField_ : public FrObject {
+//                                       public std::enable_shared_from_this<FrUniformCurrentField_> {
+
+            // TODO: Avoir un current asset sur le meme modele que FrForceAsset qui place un vecteur
+            // courant devant le bateau avec la fleche sur un cercle entourant le bateau et pointant
+            // vers le centre
+
+            // TODO: avoir les methodes:
+            //  - GetFluxVector == GetGoToVector
+            //  - GetComeFromVector
+            //  - GetComeFromAngle
+            //  - GetGoToAngle
+            //  - GetMagnitude
+            //  - GetMagnitude2
+
+
+            private:
+
+            mathutils::Vector3d<double> m_currentVector = NORTH;  ///< The flux velocity vector of the current expressed in the NWU frame (NWU/GOTO)
+
+            public:
+
+            /// Default constructor: No current
+            FrUniformCurrentField_() = default;
+
+            void Set() { m_currentVector = NORTH; }
+
+            /// Constructor from a velocity vector embedding direction and magnitude (in m/s)
+            void Set(const Velocity& velocity, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+
+            /// Constructor from an angle and a magnitude.
+            void Set(double  angle, double  magnitude,
+                     ANGLE_UNIT angleUnit, SPEED_UNIT speedUnit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+
+            /// Constructor from a direction vector and a magnitude
+            void Set(const Direction& unitDirection, double  magnitude,
+                     SPEED_UNIT speedUnit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+
+            void Update(double Time);
+
+            Velocity GetAbsFluxVector(const Position& absPos, FRAME_CONVENTION fc);
+
+            Velocity GetComeFromVector(const Position& absPos, FRAME_CONVENTION fc);
+            Velocity GetGoToVector(const Position& absPos, FRAME_CONVENTION fc);
+
+
+            double GetAngle(DIRECTION_CONVENTION dc, FRAME_CONVENTION fc, ANGLE_UNIT angleUnit);
+
+            double GetMagnitude(SPEED_UNIT speedUnit);
+
+
+            void Initialize() {}
+
+            void StepFinalize() {}
+
+        };
+
 }; // end namespace frydom
 
 #endif //FRYDOM_FRUNIFORMCURRENTFIELD_H

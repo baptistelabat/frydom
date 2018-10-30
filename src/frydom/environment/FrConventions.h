@@ -7,10 +7,12 @@
 
 namespace frydom {
 
-    enum FrDirectionConvention {
-        GOTO,           ///> The field "propagates towards", "goes to", "brings to". This is a flux vector.
-        COMEFROM        ///> The field "comes from". This is the opposite of the flux vector
-    };
+    // TODO : supprimer ce header, plus utilise !!
+
+//    enum FrDirectionConvention {
+//        GOTO,           ///> The field "propagates towards", "goes to", "brings to". This is a flux vector.
+//        COMEFROM        ///> The field "comes from". This is the opposite of the flux vector
+//    };
 
 
 }  // end namespace frydom

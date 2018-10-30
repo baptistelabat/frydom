@@ -19,6 +19,7 @@
 #include "frydom/core/FrObject.h"
 #include "frydom/core/FrGeographic.h"
 #include "frydom/environment/FrUniformCurrentField.h"
+#include "frydom/core/FrVector.h"
 
 
 
@@ -41,7 +42,7 @@ namespace frydom {
 
         enum MODEL { UNIFORM };
 
-        virtual chrono::ChVector<> GetFluxVector(FRAME_CONVENTION= NWU) { }
+        virtual chrono::ChVector<> GetFluxVector(FRAME_CONVENTION= NWU) = 0;
 
         virtual void Update(double time) { }
 
@@ -52,9 +53,6 @@ namespace frydom {
         virtual void Set(chrono::ChVector<>  unit_direction, double  magnitude,
                          SPEED_UNIT = KNOT, FRAME_CONVENTION= NED,
                          FrDirectionConvention convention = GOTO) = 0;
-
-
-
 
     };
 
@@ -121,20 +119,11 @@ namespace frydom {
 
         enum MODEL { UNIFORM };
 
-        virtual chrono::ChVector<> GetFluxVector(FRAME_CONVENTION= NWU) = 0;
+        virtual Velocity GetFluxVector(const Position& absPos, FRAME_CONVENTION fc) = 0;
 
         virtual void Update(double time) = 0;
 
-//        virtual void Initialize()  {}
-//
-//        virtual void StepFinalize()  {}
-
-//        virtual void Set(chrono::ChVector<>  unit_direction, double  magnitude,
-//                         SPEED_UNIT = KNOT, FRAME_CONVENTION= NED,
-//                         FrDirectionConvention convention = GOTO) = 0;
-
-
-
+        Velocity GetAbsRelativeVelocity(const Position& absPointPos, const Velocity& absPointVelocity, FRAME_CONVENTION fc);
 
     };
 
@@ -143,9 +132,9 @@ namespace frydom {
     // ================================================================
 
     class FrUniformCurrent_ : virtual public FrCurrent_,
-                             virtual public FrUniformCurrentField {
+                              virtual public FrUniformCurrentField_ {
         /// Inheritance of the base constructor
-        using FrUniformCurrentField::FrUniformCurrentField;
+        using FrUniformCurrentField_::FrUniformCurrentField_;
 
     private:
         // Current velocity from FrUniformCurrentField
@@ -162,7 +151,7 @@ namespace frydom {
         void Update(double time) override;
 
         /// Get the vector field
-        chrono::ChVector<> GetFluxVector(FRAME_CONVENTION frame = NWU) override;
+        Velocity GetFluxVector(const Position& pos, FRAME_CONVENTION frame = NWU) override;
 
         /// Method of initialization from uniform current field class
         void Initialize() override;

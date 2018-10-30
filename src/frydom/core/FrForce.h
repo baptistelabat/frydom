@@ -134,8 +134,6 @@ namespace frydom {
 
     /// REFACTORING ------------->>>>>>>>>>>>><
 
-//    using ForceVector  = Vector3d_;
-//    using MomentVector = Vector3d_;
 
     class FrForce_;
     struct _FrForceBase : public chrono::ChForce {
@@ -182,8 +180,8 @@ namespace frydom {
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;
-        double m_forceLimit;
-        double m_torqueLimit;
+        double m_forceLimit  = 1e20;  // Taking very high values by default in case we just set limit to true without
+        double m_torqueLimit = 1e20;  // setting the values individually.
 
 
     public:
@@ -301,64 +299,6 @@ namespace frydom {
         /// Set force and torque expressed in body coordinates and reduced to a point expressed in absolute coordinates
         void SetLocalForceTorqueAtAbsPoint(const Force& force, const Moment& torque, const Position& absPos, FRAME_CONVENTION fc);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//        void SetLocalMomentAtNode(const Moment &momentAtNode);
-//
-//        void SetAbsMomentAtNode(const Moment &momentAtNode);
-//
-//        void SetLocalForce(const Force &force);
-//
-//        void SetAbsForceNWU(const Force &force);
-
-
-//        explicit FrForce_(FrBody_* body);
-//
-//
-//        ForceVector GetForceVectorAbsFrame();
-//
-//        ForceVector GetForceVectorLocalFrame();
-//
-////        ForceVector GetForceVectorOtherFrame(std::shared_ptr<FrFrame_> frame);
-//
-//        MomentVector GetMomentVectorAbsFrame();
-//
-//        MomentVector GetMomentVectorLocalFrame();
-//
-////        MomentVector GetMomentVectorOtherFrame(std::shared_ptr<FrFrame_> frame);
-//
-//
-//
-//        virtual void Update(double time) = 0;
-//
-////        void Initialize() override;
-////
-////        void StepFinalize() override;
-//
-//
-//
-//
     };
 
 
