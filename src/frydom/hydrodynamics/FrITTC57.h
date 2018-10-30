@@ -12,8 +12,8 @@ namespace frydom {
     class FrITTC57 : public FrForce {
 
       private:
-        double rho;  ///< Water density (kg/m**3)
-        double nu;   ///< Kinematic viscosity of water (m**2/s)
+        double rho;  ///< Water density (kg/m**3)  // TODO : aller chercher dans environment
+        double nu;   ///< Kinematic viscosity of water (m**2/s) // TODO : aller chercher dans environment
 
         double Lpp;  ///< Characteristic length (length between perpendicular for ships) (meters)
         double k;    ///< Hull form factor
@@ -25,33 +25,33 @@ namespace frydom {
 
         FrITTC57();
 
-        void SetWaterDensity(double myrho) { rho = myrho; }
-        double GetWaterDensity() { return rho; }
+        void SetWaterDensity(double myrho);
 
-        void SetWaterKinematicViscosity(double mynu) { nu = mynu; }
-        double GetWaterKinematicViscosity() { return nu; }
+        double GetWaterDensity();
 
-        void SetCharacteristicLength(double myLpp) { Lpp = myLpp; }
-        double GetCharacteristicLength() { return Lpp; }
+        void SetWaterKinematicViscosity(double mynu);
 
-        void SetHullFormFactor(double myk) { k = myk; }
-        double GetHullFormFactor() { return k; }
+        double GetWaterKinematicViscosity();
 
-        void SetHullWettedSurface(double myS) { S = myS; }
-        double GetHullWettedSurface() { return S; }
+        void SetCharacteristicLength(double myLpp);
 
-        void SetHullFrontalProjectedArea(double myAx) { Ax = myAx; }
-        double GetHullFrontalProjectedArea() { return Ax; }
+        double GetCharacteristicLength();
+
+        void SetHullFormFactor(double myk);
+
+        double GetHullFormFactor();
+
+        void SetHullWettedSurface(double myS);
+
+        double GetHullWettedSurface();
+
+        void SetHullFrontalProjectedArea(double myAx);
+
+        double GetHullFrontalProjectedArea();
 
         void UpdateState() override;
 
-        void SetLogPrefix(std::string prefix_name) override {
-            if (prefix_name=="") {
-                m_logPrefix = "Fittc57_" + FrForce::m_logPrefix;
-            } else {
-                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
-            }
-        }
+        void SetLogPrefix(std::string prefix_name) override;
 
     };
 

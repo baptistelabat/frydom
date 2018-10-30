@@ -5,6 +5,10 @@
 #ifndef FRYDOM_FREXCITATIONFORCE_H
 #define FRYDOM_FREXCITATIONFORCE_H
 
+
+// FIXME : NOT USED ANYMORE, TO DELETE
+
+
 namespace frydom {
 
     class FrLinearExcitationForceEncounter : public FrForce {

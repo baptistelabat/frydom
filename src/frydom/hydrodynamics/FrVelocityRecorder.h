@@ -34,70 +34,35 @@ namespace frydom {
 
     public:
 
-        FrVelocityRecorder() = default;
+        FrVelocityRecorder() = default;  // TODO : Retirer, on doit toujours instancier avec un corps
 
-        void SetSize(unsigned int size) { m_size = size; }
+        explicit FrVelocityRecorder(FrBody* body);
 
-        unsigned int GetSize() const { return m_size; }
+        void SetSize(unsigned int size);
 
-        unsigned int GetNStep() const { return std::min(m_nstep, m_size); }
+        unsigned int GetSize() const;
 
-        void SetBody(FrBody* body) { m_body=body; }
+        unsigned int GetNStep() const;
 
-        FrBody* GetBody() const { return m_body; }
+        void SetBody(FrBody* body) { m_body=body; }  // TODO : retirer, seulement le constructeur
 
-        virtual void Initialize() override {
+        FrBody* GetBody() const;
 
-            // Initializing every 6 recorders (6 DOF record) with size m_size (full buffer) and values 0.
-            m_velocities.reserve(6);
-            for (unsigned int i=0; i<6; i++) {
-                m_velocities.emplace_back(
-                        boost::circular_buffer<double>(m_size, m_size, 0.)
-                );
-            }
-        }
+        virtual void Initialize() override;
 
-        double GetTime() const { return m_lastTime; }
+        double GetTime() const;
 
         /// Return the linear velocity of the body in global frame (m/s)
-        virtual chrono::ChVector<double> GetLinearVelocity() const {
-            return m_body->GetPos_dt();
-        }
+        virtual chrono::ChVector<double> GetLinearVelocity() const;
 
         /// Return the angular velocity of the body
-        virtual chrono::ChVector<double> GetAngularVelocity() const {
-            auto angular_velocity = m_body->GetWvel_loc();
-            return m_body->TransformDirectionLocalToParent(angular_velocity);
-        }
+        virtual chrono::ChVector<double> GetAngularVelocity() const;
 
-        virtual void RecordVelocity() {
+        virtual void RecordVelocity();
 
-            auto currentTime = m_body->GetChTime();
-            if (m_lastTime == currentTime) return;
-            m_lastTime = currentTime;
+        boost::circular_buffer<double> GetRecordOnDOF(unsigned int iDOF) const;
 
-            auto linear_velocity = GetLinearVelocity();
-            auto angular_velocity = GetAngularVelocity();
-
-            // Note taht we use here push_front in order to get a conveniently organized  buffer
-            // for the calculation of hydrodynamic radiation convolutions
-            m_velocities[0].push_front(linear_velocity[0]);
-            m_velocities[1].push_front(linear_velocity[1]);
-            m_velocities[2].push_front(linear_velocity[2]);
-
-            m_velocities[3].push_front(angular_velocity[0]);
-            m_velocities[4].push_front(angular_velocity[1]);
-            m_velocities[5].push_front(angular_velocity[2]);
-
-            m_nstep += 1;
-
-        }
-
-        boost::circular_buffer<double> GetRecordOnDOF(unsigned int iDOF) const {
-            return m_velocities[iDOF];
-        }
-
-        virtual void StepFinalize() override {}
+        virtual void StepFinalize() override;
 
     };
 

@@ -3,3 +3,46 @@
 //
 
 #include "FrHydroMapper.h"
+
+
+namespace frydom {
+
+
+    FrHydroMapper::FrHydroMapper(FrHydroDB *HDB) : m_HDB(HDB) {}
+
+    void FrHydroMapper::Map(const std::shared_ptr<FrHydroBody> hydroBody, unsigned int iBEMBody) {
+        // TODO: mettre un safe guard pour ne pas attacher plusieurs corps a un meme BEMBody (meme indice)
+        assert(iBEMBody < m_HDB->GetNbBodies());
+        m_mapper.insert( mapping(hydroBody.get(), iBEMBody) );
+        GetBEMBody(hydroBody)->SetHydroBody(hydroBody.get());
+    }
+
+    unsigned int FrHydroMapper::GetNbMappings() const {
+        return m_mapper.size();
+    }
+
+    FrHydroBody *FrHydroMapper::GetHydroBody(unsigned int iBEMBody) const {
+        return m_mapper.right.at(iBEMBody);
+    }
+
+    unsigned int FrHydroMapper::GetBEMBodyIndex(std::shared_ptr<FrHydroBody> hydroBody) {
+        return GetBEMBodyIndex(hydroBody.get());
+    }
+
+    unsigned int FrHydroMapper::GetBEMBodyIndex(FrHydroBody *hydroBody) {
+        return m_mapper.left.at(hydroBody);
+    }
+
+    std::shared_ptr<FrBEMBody> FrHydroMapper::GetBEMBody(std::shared_ptr<FrHydroBody> hydroBody) {
+        return m_HDB->GetBody(GetBEMBodyIndex(hydroBody.get()));
+    }
+
+    std::shared_ptr<FrBEMBody> FrHydroMapper::GetBEMBody(FrHydroBody *hydroBody) {
+        return m_HDB->GetBody(GetBEMBodyIndex(hydroBody));
+    }
+
+    void FrHydroMapper::IntLoadResidual_Mv(const unsigned int off, chrono::ChVectorDynamic<> &R,
+                                           const chrono::ChVectorDynamic<> &w, const double c) {
+        m_HDB->IntLoadResidual_Mv(off, R, w, c);
+    }
+}  // end namespace frydom

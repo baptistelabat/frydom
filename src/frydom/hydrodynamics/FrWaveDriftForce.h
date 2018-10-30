@@ -14,6 +14,17 @@ namespace frydom {
 
     class FrWaveDriftForce : public FrForce {
 
+    private:
+
+        int m_NbModes;                                     ///< Number of modes representd in the database
+        std::shared_ptr<FrLinearWaveProbe> m_waveProbe;    ///< Wave probe for local wave field characteristics
+        std::vector<std::vector<std::complex<double>>> m_CmplxElevation;  ///< Wave complex elevation
+        std::vector<std::vector<double>> m_waveAmplitude;
+        std::vector<std::unique_ptr<mathutils::LookupTable2d<>>> m_table;                 ///< Lookup table 2D depending on freq and heading (for each mode)
+        std::shared_ptr<FrHydroBody> m_body;                            ///< Hydro body to which the force is applied
+        bool m_sym_x;
+        bool m_sym_y;
+
     public:
 
         /// Construct a new force model from drift table coefficients
@@ -42,17 +53,6 @@ namespace frydom {
                         m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
                 }
         }
-
-    private:
-
-        int m_NbModes;                                     ///< Number of modes representd in the database
-        std::shared_ptr<FrLinearWaveProbe> m_waveProbe;    ///< Wave probe for local wave field characteristics
-        std::vector<std::vector<std::complex<double>>> m_CmplxElevation;  ///< Wave complex elevation
-        std::vector<std::vector<double>> m_waveAmplitude;
-        std::vector<std::unique_ptr<mathutils::LookupTable2d<>>> m_table;                 ///< Lookup table 2D depending on freq and heading (for each mode)
-        std::shared_ptr<FrHydroBody> m_body;                            ///< Hydro body to which the force is applied
-        bool m_sym_x;
-        bool m_sym_y;
 
     };
 

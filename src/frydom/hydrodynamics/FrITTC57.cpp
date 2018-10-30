@@ -16,9 +16,7 @@ namespace frydom{
               Lpp(0.),
               k(0.25),
               S(0.),
-              Ax(0.) {
-
-    }
+              Ax(0.) {}
 
     void FrITTC57::UpdateState() {
 
@@ -51,6 +49,38 @@ namespace frydom{
 
         auto force_verif = Body->TransformDirectionParentToLocal(force);
 
+    }
+
+    void FrITTC57::SetWaterDensity(double myrho) { rho = myrho; }
+
+    double FrITTC57::GetWaterDensity() { return rho; }
+
+    void FrITTC57::SetWaterKinematicViscosity(double mynu) { nu = mynu; }
+
+    double FrITTC57::GetWaterKinematicViscosity() { return nu; }
+
+    void FrITTC57::SetCharacteristicLength(double myLpp) { Lpp = myLpp; }
+
+    double FrITTC57::GetCharacteristicLength() { return Lpp; }
+
+    void FrITTC57::SetHullFormFactor(double myk) { k = myk; }
+
+    double FrITTC57::GetHullFormFactor() { return k; }
+
+    void FrITTC57::SetHullWettedSurface(double myS) { S = myS; }
+
+    double FrITTC57::GetHullWettedSurface() { return S; }
+
+    void FrITTC57::SetHullFrontalProjectedArea(double myAx) { Ax = myAx; }
+
+    double FrITTC57::GetHullFrontalProjectedArea() { return Ax; }
+
+    void FrITTC57::SetLogPrefix(std::string prefix_name) {
+        if (prefix_name=="") {
+            m_logPrefix = "Fittc57_" + FrForce::m_logPrefix;
+        } else {
+            m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+        }
     }
 
 }  // end namespace frydom

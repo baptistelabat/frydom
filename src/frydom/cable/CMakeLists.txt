@@ -3,8 +3,7 @@ message(STATUS "    ...Cable")
 set(SRC_FILES
         FrAssetComponent.cpp
         FrAssetBuoy.cpp
-#        FrAssetClumpWeight.h
-        FrAss
+        FrAssetComponent.cpp
         FrCable.cpp
         FrCatenaryForce.cpp
         FrCatenaryLine.cpp

@@ -63,7 +63,6 @@ target_link_libraries(FRyDoM_Engine
 #        ChronoEngine_potprocess
         MathUtils::MathUtils
         yaml-cpp
-#        Irrlicht
         HDF5
         GeographicLib
         fmt

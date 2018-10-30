@@ -28,45 +28,26 @@ namespace frydom {
 
     public:
 
-        explicit FrHydroMapper(FrHydroDB* HDB) : m_HDB(HDB) {}
+        explicit FrHydroMapper(FrHydroDB* HDB);
 
-        void Map(const std::shared_ptr<FrHydroBody> hydroBody, unsigned int iBEMBody) {
-            // TODO: mettre un safe guard pour ne pas attacher plusieurs corps a un meme BEMBody (meme indice)
-            assert(iBEMBody < m_HDB->GetNbBodies());
-            m_mapper.insert( mapping(hydroBody.get(), iBEMBody) );
-            GetBEMBody(hydroBody)->SetHydroBody(hydroBody.get());
-        }
+        void Map(const std::shared_ptr<FrHydroBody> hydroBody, unsigned int iBEMBody);
 
-        unsigned int GetNbMappings() const {
-            return m_mapper.size();
-        }
+        unsigned int GetNbMappings() const;
 
-        FrHydroBody* GetHydroBody(unsigned int iBEMBody) const {
-            return m_mapper.right.at(iBEMBody);
-        }
+        FrHydroBody* GetHydroBody(unsigned int iBEMBody) const;
 
-        unsigned int GetBEMBodyIndex(std::shared_ptr<FrHydroBody> hydroBody) {
-            return GetBEMBodyIndex(hydroBody.get());
-        }
+        unsigned int GetBEMBodyIndex(std::shared_ptr<FrHydroBody> hydroBody);
 
-        unsigned int GetBEMBodyIndex(FrHydroBody* hydroBody) {
-            return m_mapper.left.at(hydroBody);
-        }
+        unsigned int GetBEMBodyIndex(FrHydroBody* hydroBody);
 
-        std::shared_ptr<FrBEMBody> GetBEMBody(std::shared_ptr<FrHydroBody> hydroBody) {
-            return m_HDB->GetBody(GetBEMBodyIndex(hydroBody.get()));
-        }
+        std::shared_ptr<FrBEMBody> GetBEMBody(std::shared_ptr<FrHydroBody> hydroBody);
 
-        std::shared_ptr<FrBEMBody> GetBEMBody(FrHydroBody* hydroBody) {
-            return m_HDB->GetBody(GetBEMBodyIndex(hydroBody));
-        }
+        std::shared_ptr<FrBEMBody> GetBEMBody(FrHydroBody* hydroBody);
 
         virtual void IntLoadResidual_Mv(const unsigned int off,
                                         chrono::ChVectorDynamic<>& R,
                                         const chrono::ChVectorDynamic<>& w,
-                                        const double c) {
-            m_HDB->IntLoadResidual_Mv(off, R, w, c);
-        }
+                                        const double c);
 
         //virtual void VariablesFbIncrementMq() { m_HDB->VariablesFbIncrementMq(); }
 
