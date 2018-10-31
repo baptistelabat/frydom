@@ -106,7 +106,6 @@ namespace frydom {
 
 
         class FrUniformCurrentField_ : public FrObject {
-//                                       public std::enable_shared_from_this<FrUniformCurrentField_> {
 
             // TODO: Avoir un current asset sur le meme modele que FrForceAsset qui place un vecteur
             // courant devant le bateau avec la fleche sur un cercle entourant le bateau et pointant
@@ -114,7 +113,7 @@ namespace frydom {
 
             private:
 
-                Velocity m_fluxVectorNWU;  ///< The flux velocity vector of the current expressed in the NWU frame (NWU/GOTO)
+                Velocity m_fluxVectorNWU = Velocity(0., 0., 0.);  ///< The flux velocity vector of the current expressed in the NWU frame (NWU/GOTO)
 
             public:
 
@@ -144,7 +143,7 @@ namespace frydom {
 
             void SetNorthWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
-            void Update(double Time);
+            void Update(double time);
 
             Velocity GetAbsFluxVelocity(FRAME_CONVENTION fc);
 
@@ -152,9 +151,9 @@ namespace frydom {
 
             double GetMagnitude(SPEED_UNIT speedUnit);
 
-            void Initialize();
+            void Initialize() override;
 
-            void StepFinalize();
+            void StepFinalize() override;
 
         };
 

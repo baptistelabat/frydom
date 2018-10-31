@@ -261,7 +261,9 @@ namespace frydom {
         if (IsCOMEFROM(dc)) m_fluxVectorNWU = -m_fluxVectorNWU;
     }
 
-    void FrUniformCurrentField_::Update(double Time) {}
+    void FrUniformCurrentField_::Update(double time) {
+        // TODO : permettre une variation temporelle...
+    }
 
     Velocity FrUniformCurrentField_::GetAbsFluxVelocity(FRAME_CONVENTION fc) {
         auto velocity = m_fluxVectorNWU;
@@ -287,6 +289,5 @@ namespace frydom {
     void FrUniformCurrentField_::Initialize() {}
 
     void FrUniformCurrentField_::StepFinalize() {}
-
 
 }  // end namespace frydom

@@ -4,30 +4,36 @@
 
 #include "FrWind.h"
 
+#include "frydom/environment/FrUniformCurrentField.h"
+
 namespace frydom {
 
-
-    FrWind_::~FrWind_() = default;
-
-    FrUniformWind_::FrUniformWind_(FrEnvironment_ *environment) : m_environment(environment) {}
-
-    FrUniformWind_::~FrUniformWind_() = default;
-
-    void FrUniformWind_::Update(double time) {
-        FrUniformCurrentField::Update(time);
+    Velocity FrWind_::GetAbsRelativeVelocity(const Position& absPointPos, const Velocity& absPointVelocity, FRAME_CONVENTION fc) {
+        return GetAbsFluxVelocity(absPointPos, fc) - absPointVelocity;
     }
 
-    chrono::ChVector<> FrUniformWind_::GetFluxVector(FRAME_CONVENTION frame) {
-        return FrUniformCurrentField::GetFluxVector(frame);
+    FrUniformWind_::FrUniformWind_(FrEnvironment_ *environment) : m_environment(environment) {
+        m_uniformField = std::make_unique<FrUniformCurrentField_>();
+    }
+
+    FrUniformCurrentField_* FrUniformWind_::GetField() {
+        return m_uniformField.get();
+    }
+
+    void FrUniformWind_::Update(double time) {
+        m_uniformField->Update(time);
+    }
+
+    Velocity FrUniformWind_::GetAbsFluxVelocity(const Position &absPos, FRAME_CONVENTION fc) {
+        return m_uniformField->GetAbsFluxVelocity(fc);
     }
 
     void FrUniformWind_::Initialize() {
-        FrUniformCurrentField::Initialize();
+        m_uniformField->Initialize();
     }
 
     void FrUniformWind_::StepFinalize() {
-        FrUniformCurrentField::StepFinalize();
+        m_uniformField->StepFinalize();
     }
-
 
 }  // end namespace frydom

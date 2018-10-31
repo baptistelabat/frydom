@@ -18,13 +18,9 @@ namespace frydom {
         std::string m_UUID;
 
     public:
-        FrObject() :
-                m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()()))
-        {}
+        FrObject() : m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()())) {}
 
-        std::string GetUUID() const{
-            return m_UUID;
-        }
+        std::string GetUUID() const{ return m_UUID; }
 
         /// Base method for Initialization of FryDoM objects
         ///

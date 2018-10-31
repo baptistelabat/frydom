@@ -16,35 +16,37 @@
 
 #include "FrCurrent.h"
 
+#include "frydom/environment/FrUniformCurrentField.h"
+
 
 namespace frydom {
 
     Velocity FrCurrent_::GetAbsRelativeVelocity(const Position& absPointPos, const Velocity& absPointVelocity, FRAME_CONVENTION fc) {
-        return GetFluxVector(absPointPos, fc) - absPointVelocity;
+        return GetAbsFluxVelocity(absPointPos, fc) - absPointVelocity;
     }
 
-    FrUniformCurrent_::FrUniformCurrent_(FrEnvironment_ *environment) : m_environment(environment) {}
+    FrUniformCurrent_::FrUniformCurrent_(FrEnvironment_ *environment) : m_environment(environment) {
+        m_uniformField = std::make_unique<FrUniformCurrentField_>();
+    }
+
+    FrUniformCurrentField_* FrUniformCurrent_::GetField() {
+        return m_uniformField.get();
+    }
 
     void FrUniformCurrent_::Update(double time) {
-        FrUniformCurrentField_::Update(time);
+        m_uniformField->Update(time);
     }
 
-    Velocity FrUniformCurrent_::GetFluxVector(const Position& pos, FRAME_CONVENTION frame) {
-        return FrUniformCurrentField_::GetFluxVector(frame);
+    Velocity FrUniformCurrent_::GetAbsFluxVelocity(const Position &absPos, FRAME_CONVENTION fc) {
+        return m_uniformField->GetAbsFluxVelocity(fc);
     }
 
     void FrUniformCurrent_::Initialize() {
-        FrUniformCurrentField::Initialize();
+        m_uniformField->Initialize();
     }
 
     void FrUniformCurrent_::StepFinalize() {
-        FrUniformCurrentField::StepFinalize();
-    }
-
-    void FrUniformCurrent::Set(chrono::ChVector<>  unit_direction, double  magnitude,
-                               SPEED_UNIT unit, FRAME_CONVENTION frame,
-                               FrDirectionConvention convention) {
-        FrUniformCurrentField::Set(unit_direction, magnitude, unit, frame, convention);
+        m_uniformField->StepFinalize();
     }
 
 }  // end namespace frydom

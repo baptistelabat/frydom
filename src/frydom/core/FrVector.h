@@ -6,80 +6,14 @@
 #define FRYDOM_FRVECTOR_H
 
 #include "chrono/core/ChVector.h"
-#include "MathUtils/Vector3d.h"
 
+#include "MathUtils/Vector3d.h"
 #include "MathUtils/Matrix.h"
+
 #include "FrGeographic.h"
 
 
 namespace frydom {
-
-//    using Vector3d = mathutils::Vector3d<double>;
-
-//    using Matrix33 = mathutils::Matrix33<double>;
-
-
-//    class Vector3d: public mathutils::Vector3d<double> {
-//
-//    private:
-//        FRAME_CONVENTION m_frameConvention = NWU;
-//
-//    public:
-//
-////        Vector3d() : m_frameConvention(NWU), mathutils::Vector3d<double>() {}
-//
-//        Vector3d(FRAME_CONVENTION fc) : m_frameConvention(fc), mathutils::Vector3d<double>() {}
-//
-//        Vector3d(Scalar x, Scalar y, Scalar z, FRAME_CONVENTION fc) : mathutils::Vector3d<double>(x, y, z) {}
-//
-//        // This constructor allows to construct Vector2d from Eigen expressions
-//        template <class OtherDerived>
-//        explicit Vector3d(const Eigen::MatrixBase<OtherDerived>& other) : Eigen::Matrix<Scalar, 3, 1>(other) {}
-//
-//        // This method allows to assign Eigen expressions to Vector3d
-//        template <class OtherDerived>
-//        Vector3d& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
-//            this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
-//            return *this;
-//        }
-//
-//        FRAME_CONVENTION GetFrameConvention() const {
-//            return m_frameConvention;
-//        }
-//
-//        void SetFrameConvention(FRAME_CONVENTION fc) {
-//            if (!HasSameConvention(fc)) {
-//                SwapFrameConvention();
-//                m_frameConvention = fc;
-//            }
-//        }
-//
-//        FRAME_CONVENTION SwapFrameConvention() {
-//            this->at(1) = -this->at(1);
-//            this->at(2) = -this->at(2);
-//
-//            if (m_frameConvention == NWU) {
-//                m_frameConvention = NED;
-//            } else {
-//                m_frameConvention = NWU;
-//            }
-//
-//            return m_frameConvention;
-//        };
-//
-//        void SetNED() {
-//            SetFrameConvention(NED);
-//        }
-//
-//        void SetNWU() {
-//            SetFrameConvention(NWU);
-//        }
-//
-//        bool HasSameConvention(FRAME_CONVENTION fc) const {
-//            return (m_frameConvention == fc);
-//        }
-//
-//    };
 
 
     class Position : public mathutils::Vector3d<double> {
