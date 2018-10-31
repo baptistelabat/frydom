@@ -52,7 +52,7 @@ namespace frydom {
 
         virtual void Set(chrono::ChVector<>  unit_direction, double  magnitude,
                          SPEED_UNIT = KNOT, FRAME_CONVENTION= NED,
-                         FrDirectionConvention convention = GOTO) = 0;
+                         DIRECTION_CONVENTION convention = GOTO) = 0;
 
     };
 
@@ -86,7 +86,7 @@ namespace frydom {
 
         void Set(chrono::ChVector<>  unit_direction, double  magnitude,
                  SPEED_UNIT = KNOT, FRAME_CONVENTION= NED,
-                 FrDirectionConvention convention = GOTO) override;
+                 DIRECTION_CONVENTION convention = GOTO) override;
 
     };
 
@@ -134,7 +134,7 @@ namespace frydom {
     class FrUniformCurrent_ : virtual public FrCurrent_,
                               virtual public FrUniformCurrentField_ {
         /// Inheritance of the base constructor
-        using FrUniformCurrentField_::FrUniformCurrentField_;
+//        using FrUniformCurrentField_::FrUniformCurrentField_;
 
     private:
         // Current velocity from FrUniformCurrentField

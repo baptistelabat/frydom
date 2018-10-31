@@ -23,16 +23,14 @@ namespace frydom {
         return GetFluxVector(absPointPos, fc) - absPointVelocity;
     }
 
-    FrUniformCurrent_::FrUniformCurrent_(FrEnvironment_ *environment) : m_environment(environment){
-
-    }
+    FrUniformCurrent_::FrUniformCurrent_(FrEnvironment_ *environment) : m_environment(environment) {}
 
     void FrUniformCurrent_::Update(double time) {
-        FrUniformCurrentField::Update(time);
+        FrUniformCurrentField_::Update(time);
     }
 
     Velocity FrUniformCurrent_::GetFluxVector(const Position& pos, FRAME_CONVENTION frame) {
-        return FrUniformCurrentField::GetFluxVector(frame);
+        return FrUniformCurrentField_::GetFluxVector(frame);
     }
 
     void FrUniformCurrent_::Initialize() {

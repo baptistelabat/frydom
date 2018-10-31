@@ -3,6 +3,7 @@ message(STATUS "    ...Core")
 
 set(SRC_FILES
         FrObject.cpp
+        FrUnits.cpp
         FrVector.cpp
         FrRotation.cpp
         FrFrame.cpp

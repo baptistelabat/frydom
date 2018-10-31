@@ -8,7 +8,7 @@
 namespace frydom {
 
     void FrUniformCurrentField::Set(chrono::ChVector<> const velocity_vector,
-                         FRAME_CONVENTION frame, FrDirectionConvention convention) {
+                         FRAME_CONVENTION frame, DIRECTION_CONVENTION convention) {
 
         auto current_vector = velocity_vector;
 
@@ -31,7 +31,7 @@ namespace frydom {
                          ANGLE_UNIT angleUnit,
                          SPEED_UNIT speedUnit,
                          FRAME_CONVENTION frame,
-                         FrDirectionConvention convention) {
+                         DIRECTION_CONVENTION convention) {
 
         auto alpha = angle;
         if (angleUnit == DEG) {
@@ -66,7 +66,7 @@ namespace frydom {
                          double const velocity,
                          SPEED_UNIT speedUnit,
                          FRAME_CONVENTION frame,
-                         FrDirectionConvention convention) {
+                         DIRECTION_CONVENTION convention) {
 
         // TODO: Ensure that the vector is a unit vector
 
@@ -91,7 +91,7 @@ namespace frydom {
 //        std::cout << "Updating current model" << std::endl;
     }
 
-    Velocity FrUniformCurrentField::GetFluxVector(FRAME_CONVENTION frame) {
+    chrono::ChVector<double> FrUniformCurrentField::GetFluxVector(FRAME_CONVENTION frame) {
         switch (frame) {
             case NED:
                 m_currentVector[1] = -m_currentVector[1];
@@ -109,7 +109,7 @@ namespace frydom {
         return FrUniformCurrentField::GetFluxVector(frame);
     }
 
-    double FrUniformCurrentField::GetAngle(FrDirectionConvention convention, FRAME_CONVENTION frame, ANGLE_UNIT angleUnit) {
+    double FrUniformCurrentField::GetAngle(DIRECTION_CONVENTION convention, FRAME_CONVENTION frame, ANGLE_UNIT angleUnit) {
 
         chrono::ChVector<> current_vector;
         switch (convention) {
@@ -141,7 +141,7 @@ namespace frydom {
     }
 
     void FrUniformCurrentField::Set(const chrono::ChVector<>& unitDirection, double magnitude,
-                        FRAME_CONVENTION frame, FrDirectionConvention directionConvention, SPEED_UNIT speedUnit) {
+                        FRAME_CONVENTION frame, DIRECTION_CONVENTION directionConvention, SPEED_UNIT speedUnit) {
 
         auto uDirection = unitDirection;
         uDirection /= unitDirection.Length();
@@ -168,4 +168,125 @@ namespace frydom {
 
 
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+    ///////// REFACTORING ---------->>>>>>>>>>>>>
+
+
+    void FrUniformCurrentField_::Set(const Velocity& velocity, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc){
+
+        auto velTmp = velocity;
+
+        if (IsNED(fc)) {
+            internal::SwapFrameConvention<Velocity>(velTmp);
+        }
+
+        if (IsCOMEFROM(dc)) {
+            velTmp = -velTmp;
+        }
+
+        m_fluxVectorNWU = velTmp;
+    }
+
+    void FrUniformCurrentField_::Set(double angle, double  magnitude,
+                                     ANGLE_UNIT angleUnit, SPEED_UNIT speedUnit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
+
+        magnitude = mathutils::convert_velocity_unit(magnitude, speedUnit, MS); // Convert in M/S
+
+        if (angleUnit == DEG) angle *= DEG2RAD; // Convert in RAD
+
+        if (IsNED(fc)) angle = -angle; // Express in NWU
+
+        if (IsCOMEFROM(dc)) angle += MU_PI; // Express in GOTO
+
+        m_fluxVectorNWU << magnitude * cos(angle), magnitude * sin(angle), 0.;
+
+    }
+
+    void FrUniformCurrentField_::SetNorth(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc) {
+        magnitude = mathutils::convert_velocity_unit(magnitude, speed_unit, MS);
+        m_fluxVectorNWU = magnitude * internal::NORTH;
+        if (IsCOMEFROM(dc)) m_fluxVectorNWU = -m_fluxVectorNWU;
+    }
+
+    void FrUniformCurrentField_::SetNorthEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc) {
+        magnitude = mathutils::convert_velocity_unit(magnitude, speed_unit, MS);
+        m_fluxVectorNWU = magnitude * internal::NORTH_EAST;
+        if (IsCOMEFROM(dc)) m_fluxVectorNWU = -m_fluxVectorNWU;
+    }
+
+    void FrUniformCurrentField_::SetEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc) {
+        magnitude = mathutils::convert_velocity_unit(magnitude, speed_unit, MS);
+        m_fluxVectorNWU = magnitude * internal::EAST;
+        if (IsCOMEFROM(dc)) m_fluxVectorNWU = -m_fluxVectorNWU;
+    }
+
+    void FrUniformCurrentField_::SetSouthEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc) {
+        magnitude = mathutils::convert_velocity_unit(magnitude, speed_unit, MS);
+        m_fluxVectorNWU = magnitude * internal::SOUTH_EAST;
+        if (IsCOMEFROM(dc)) m_fluxVectorNWU = -m_fluxVectorNWU;
+    }
+
+    void FrUniformCurrentField_::SetSouth(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc) {
+        magnitude = mathutils::convert_velocity_unit(magnitude, speed_unit, MS);
+        m_fluxVectorNWU = magnitude * internal::SOUTH;
+        if (IsCOMEFROM(dc)) m_fluxVectorNWU = -m_fluxVectorNWU;
+    }
+
+    void FrUniformCurrentField_::SetSouthWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc) {
+        magnitude = mathutils::convert_velocity_unit(magnitude, speed_unit, MS);
+        m_fluxVectorNWU = magnitude * internal::SOUTH_WEST;
+        if (IsCOMEFROM(dc)) m_fluxVectorNWU = -m_fluxVectorNWU;
+    }
+
+    void FrUniformCurrentField_::SetWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc) {
+        magnitude = mathutils::convert_velocity_unit(magnitude, speed_unit, MS);
+        m_fluxVectorNWU = magnitude * internal::WEST;
+        if (IsCOMEFROM(dc)) m_fluxVectorNWU = -m_fluxVectorNWU;
+    }
+
+    void FrUniformCurrentField_::SetNorthWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc) {
+        magnitude = mathutils::convert_velocity_unit(magnitude, speed_unit, MS);
+        m_fluxVectorNWU = magnitude * internal::NORTH_WEST;
+        if (IsCOMEFROM(dc)) m_fluxVectorNWU = -m_fluxVectorNWU;
+    }
+
+    void FrUniformCurrentField_::Update(double Time) {}
+
+    Velocity FrUniformCurrentField_::GetAbsFluxVelocity(FRAME_CONVENTION fc) {
+        auto velocity = m_fluxVectorNWU;
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(velocity);
+        return velocity;
+    }
+
+    double FrUniformCurrentField_::GetAngle(DIRECTION_CONVENTION dc, FRAME_CONVENTION fc, ANGLE_UNIT angleUnit) {
+
+        auto velocity = m_fluxVectorNWU;
+        if (IsCOMEFROM(dc)) velocity = -velocity;
+        double angle = atan2(velocity.GetVy(), velocity.GetVx());
+        if (angleUnit == DEG) angle *= RAD2DEG;
+        if (IsNED(fc)) angle = -angle;
+        return angle;
+
+    }
+
+    double FrUniformCurrentField_::GetMagnitude(SPEED_UNIT speedUnit) {
+        return mathutils::convert_velocity_unit(m_fluxVectorNWU.norm(), MS, speedUnit);
+    }
+
+    void FrUniformCurrentField_::Initialize() {}
+
+    void FrUniformCurrentField_::StepFinalize() {}
+
+
+}  // end namespace frydom

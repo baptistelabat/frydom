@@ -9,10 +9,7 @@
 #include "MathUtils/Vector3d.h"
 
 #include "MathUtils/Matrix.h"
-//#include "MathUtils/Matrix33.h"
-
 #include "FrGeographic.h"
-
 
 
 namespace frydom {
@@ -176,6 +173,19 @@ namespace frydom {
 
     };
 
+    namespace internal {
+        // =================================================================================================================
+        // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME (please do not forget the NED aspect !)
+        // =================================================================================================================
+        extern const Direction NORTH;        ///< North direction
+        extern const Direction NORTH_EAST;   ///< North-East direction
+        extern const Direction EAST;         ///< East direction
+        extern const Direction SOUTH_EAST;   ///< South-East direction
+        extern const Direction SOUTH;        ///< South direction
+        extern const Direction SOUTH_WEST;   ///< South-West direction
+        extern const Direction WEST;         ///< West direction
+        extern const Direction NORTH_WEST;   ///< North-West direction
+    } // end namespace internal
 
     class Velocity : public mathutils::Vector3d<double> {
 

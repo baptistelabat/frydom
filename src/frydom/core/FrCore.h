@@ -6,6 +6,7 @@
 #define FRYDOM_FRCORE_H_H
 
 #include "FrObject.h"
+#include "FrUnits.h"
 #include "FrVector.h"
 #include "FrFrame.h"
 #include "FrRotation.h"
