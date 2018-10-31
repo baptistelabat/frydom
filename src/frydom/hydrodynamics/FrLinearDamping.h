@@ -87,5 +87,78 @@ namespace frydom {
     };
 
 
+
+
+
+
+
+
+
+
+
+
+
+    ////// REFACTORING ---------->>>>>>>>>>>>>>>>
+
+
+    class FrLinearDamping_ : public FrForce_ {
+
+    public:
+        using DampingMatrix = Eigen::Matrix<double, 6, 6>; // TODO : disposer d'une Matrix66 dans mathutils
+
+    private:
+
+        Eigen::MatrixXd m_dampingMatrix = Eigen::MatrixXd::Zero(6,6);
+        bool m_relative2Current = false;  // FIXME : on doit pouvoir aussi appliquer dans l'air !!!!!
+
+    public:
+
+        FrLinearDamping_();
+
+        void SetNull();
+
+        /// Setter for the whole damping matrix. Translations are upper left and rotations are lower right.
+        void SetDampingMatrix(const DampingMatrix& dampingMatrix);
+
+        /// Setter for the diagonal components of the damping matrix
+        void SetDiagonalDamping(double Du, double Dv, double Dw, double Dp, double Dq, double Dr);
+
+        /// Setter for the diagonal components in translation of the damping matrix
+        void SetDiagonalTranslationDamping(double Du, double Dv, double Dw);
+
+        /// Setter for the diagonal components in rotation of the damping matrix
+        void SetDiagonalRotationDamping(double Dp, double Dq, double Dr);
+
+        /// Set a damping coefficient given its position.
+        void SetDampingCoeff(unsigned int iRow, unsigned int iCol, double coeff);
+
+        /// Setter for the boolean : m_relativeVelocity
+        void SetRelative2Current(bool relativeVelocity);
+
+        /// Getter for the boolean : m_relativeVelocity
+        bool GetRelative2Current();
+
+        /// Setter for the log prefix
+//        void SetLogPrefix(std::string prefix_name) override {
+////            if (prefix_name=="") {
+////                m_logPrefix = "FlinDamp_" + FrForce::m_logPrefix;
+////            } else {
+////                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
+////            }
+//        }
+
+        void Update(double time) override;
+
+        void Initialize() override;
+
+        void StepFinalize() override;
+
+    private:
+
+        void Check() const;
+
+    };
+
+
 };  // end namespace frydom
 #endif //FRYDOM_FRLINEARDAMPING_H

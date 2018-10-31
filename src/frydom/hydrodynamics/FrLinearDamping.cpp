@@ -2,9 +2,13 @@
 // Created by frongere on 11/09/17.
 //
 
-#include <frydom/core/FrHydroBody.h>
+#include <frydom/core/FrHydroBody.h> // TODO : Doit dirsparaitre
 #include "FrLinearDamping.h"
-#include "chrono/physics/ChBody.h"
+#include "chrono/physics/ChBody.h" // TODO : Doit disparaitre
+#include "frydom/core/FrException.h"
+
+#include "frydom/environment/FrEnvironmentInc.h"
+
 
 namespace frydom {
 
@@ -49,5 +53,96 @@ namespace frydom {
         assert(!(m_relative2Current && (dynamic_cast<FrHydroBody*>(Body)== nullptr)));
     }
 
+
+
+
+
+
+
+
+
+
+
+
+    //// REFACTORING ---------->>>>>>>>>>
+
+    FrLinearDamping_::FrLinearDamping_() {
+        SetNull();
+    }
+
+    void FrLinearDamping_::SetNull() {
+        m_dampingMatrix.setZero();
+    }
+
+    void FrLinearDamping_::SetDampingMatrix(const FrLinearDamping_::DampingMatrix &dampingMatrix) {
+        m_dampingMatrix = dampingMatrix;
+    }
+
+    void FrLinearDamping_::SetDiagonalDamping(double Du, double Dv, double Dw, double Dp, double Dq, double Dr) {
+        SetDiagonalTranslationDamping(Du, Dv, Dw);
+        SetDiagonalRotationDamping(Dp, Dq, Dr);
+    }
+
+    void FrLinearDamping_::SetDiagonalTranslationDamping(double Du, double Dv, double Dw) {
+        m_dampingMatrix(0,0) = Du;
+        m_dampingMatrix(1,1) = Dv;
+        m_dampingMatrix(2,2) = Dw;
+    }
+
+    void FrLinearDamping_::SetDiagonalRotationDamping(double Dp, double Dq, double Dr) {
+        m_dampingMatrix(3,3) = Dp;
+        m_dampingMatrix(4,4) = Dq;
+        m_dampingMatrix(5,5) = Dr;
+    }
+
+    void FrLinearDamping_::SetDampingCoeff(unsigned int iRow, unsigned int iCol, double coeff) {
+        m_dampingMatrix(iRow, iCol) = coeff;
+    }
+
+    void FrLinearDamping_::SetRelative2Current(bool relativeVelocity) {
+        m_relative2Current = relativeVelocity;
+    }
+
+    bool FrLinearDamping_::GetRelative2Current() {return m_relative2Current;}
+
+    void FrLinearDamping_::Update(double time) {
+
+        // Body Velocity at COG in body coordinates
+        Velocity cogRelVel;
+        if (m_relative2Current) {
+            Position cogAbsPos = m_body->GetCOGAbsPosition(NWU);
+            Velocity absVel = m_body->GetCOGAbsVelocity(NWU);
+            cogRelVel = GetSystem()->GetEnvironment()->GetCurrent()->GetAbsRelativeVelocity(cogAbsPos, absVel, NWU);
+            m_body->ProjectAbsVectorInBodyCoords(cogRelVel, NWU);
+
+        } else {
+            cogRelVel = m_body->GetCOGLocalVelocity(NWU);
+        }
+        Velocity localVel = m_body->GetCOGLocalVelocity(NWU);
+
+
+
+
+
+    }
+
+    void FrLinearDamping_::Initialize() {
+        Check();
+    }
+
+    void FrLinearDamping_::StepFinalize() {
+
+    }
+
+    void FrLinearDamping_::Check() const {
+        // Here we check if every damping coefficient is positive
+        for (unsigned int iRow=0; iRow<6; iRow++) {
+            for (unsigned int iCol=0; iCol<6; iCol++) {
+                if (m_dampingMatrix(iRow, iCol) < 0.) {
+                    throw FrException("Damping coefficients cannot be negative !");
+                }
+            }
+        }
+    }
 
 }  // end namespace frydom
