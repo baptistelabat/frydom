@@ -5,25 +5,23 @@
 #ifndef FRYDOM_FRBODY_H
 #define FRYDOM_FRBODY_H
 
-#include "FrObject.h"
 #include "chrono/physics/ChBodyAuxRef.h"
 
+#include "hermes/hermes.h"
 
+#include "FrObject.h"
 #include "FrOffshoreSystem.h"
 #include "FrVector.h"
-#include "frydom/core/FrGeographic.h"
-#include "frydom/core/FrForce.h"
-#include "hermes/hermes.h"
+#include "FrGeographic.h"
+#include "FrForce.h"
+#include "FrEulerAngles.h" // TODO : devrait disparaitre
+
 #include "frydom/mesh/FrTriangleMeshConnected.h"
-#include "frydom/core/FrEulerAngles.h"
+
 #include "FrInertia.h"
 #include "FrForce.h"
 #include "FrColors.h"
-
-
 #include "FrNode.h"
-
-
 
 
 namespace frydom {

@@ -172,6 +172,8 @@ namespace frydom {
 
         void SetSeabed(FrSeabed* seabed);
 
+        // TODO : encapsuler ces methodes dans un GeographicService
+
         GeographicLib::LocalCartesian* GetGeoLib() const;
 
         void SetGeographicOrigin(double lat0, double lon0, double h0);
@@ -337,6 +339,10 @@ namespace frydom {
         double GetAtmosphericPressure() const;
 
         void SetAtmosphericPressure(double atmosphericPressure);
+
+        double GetReynoldsNumberInWater(double characteristicLength, double velocity) const;
+
+        double GetFroudeNumberInWater(double characteristicLength, double velocity) const;
 
 
         // Environment elements Getters

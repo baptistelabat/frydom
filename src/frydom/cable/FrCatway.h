@@ -133,6 +133,9 @@ namespace frydom {
 
         friend class FrCatway;
 
+    private:
+        std::shared_ptr<FrNode_> m_node;
+
     public:
 
         explicit FrCatForce(std::shared_ptr<FrNode_> node);

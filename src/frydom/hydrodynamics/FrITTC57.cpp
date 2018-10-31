@@ -4,9 +4,14 @@
 
 #include <cmath>
 
-#include "chrono/physics/ChBody.h"
+#include "chrono/physics/ChBody.h"  // TODO : a retirer
 
 #include "FrITTC57.h"
+//#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/environment/FrEnvironmentInc.h"
+//#include "frydom/environment/current/FrCurrent.h"
+#include "frydom/core/FrBody.h"
+
 
 namespace frydom{
 
@@ -81,6 +86,62 @@ namespace frydom{
         } else {
             m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
         }
+    }
+
+
+
+
+
+    //////// REFACTOR --------------->>>>>>>>>>>>>>>>
+
+
+
+
+    FrITTC57_::FrITTC57_(double characteristicLength, double hullFormFactor, double hullWetSurface,
+                         double hullFrontalArea) :
+                         FrForce_(),
+                         m_Lpp(characteristicLength),
+                         m_k(hullFormFactor),
+                         m_S(hullWetSurface),
+                         m_Ax(hullWetSurface) {}
+
+    void FrITTC57_::Update(double time) {
+
+//        auto environment = GetSystem()->GetEnvironment(); // TODO : voir a mettre environnement en pointeur a l'initialisation de la force
+
+        // Getting the relative velocity with respect to water along body X axis
+        Position cogAbsPos = m_body->GetCOGAbsPosition(NWU);
+        Velocity cogAbsVel = m_body->GetCOGAbsVelocity(NWU);
+        Velocity relVel = m_environment->GetCurrent()->GetAbsRelativeVelocity(cogAbsPos, cogAbsVel, NWU);
+
+        m_body->ProjectAbsVectorInBodyCoords(relVel, NWU);
+        double  ux = relVel.GetVx();
+
+        // Computing Reynolds number
+        double Re = GetSystem()->GetEnvironment()->GetReynoldsNumberInWater(m_Lpp, ux);
+
+        // Computing ITTC57 flat plate friction coefficient
+        auto CF = 0.075 / pow( log10(Re)-2., 2. );
+
+        // Residual friction
+        auto CR = 0.12 * CF; // TODO: changer !! juste pour avoir qqch (mettre en attribut)
+
+        // Total coefficient
+        auto Ct = CF + CR;
+
+        // Resistance along the body X Axis
+        double Rt = - 0.5 * m_environment->GetWaterDensity() * m_S * (1+m_k) * Ct * ux * std::abs(ux);
+
+        SetLocalForce(Force(Rt, 0., 0.), NWU);
+
+    }
+
+    void FrITTC57_::Initialize() {
+        m_environment = GetSystem()->GetEnvironment();
+    }
+
+    void FrITTC57_::StepFinalize() {
+
     }
 
 }  // end namespace frydom

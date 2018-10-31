@@ -176,8 +176,6 @@ namespace frydom {
 
         std::shared_ptr<_FrForceBase> m_chronoForce;
 
-        std::shared_ptr<FrNode_> m_node;
-
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;
         double m_forceLimit  = 1e20;  // Taking very high values by default in case we just set limit to true without
@@ -186,7 +184,7 @@ namespace frydom {
 
     public:
 
-        explicit FrForce_(std::shared_ptr<FrNode_> node);
+        FrForce_();
 
 //        explicit FrForce_(FrBody_* body);
 

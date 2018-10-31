@@ -9,8 +9,6 @@
 
 #include "frydom/core/FrObject.h"
 
-//#include "frydom/environment/FrConventions.h"
-
 #include "frydom/core/FrVector.h"
 #include "frydom/core/FrGeographic.h"
 #include "frydom/core/FrUnits.h"

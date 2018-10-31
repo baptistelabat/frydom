@@ -678,7 +678,7 @@ namespace frydom {
     }
 
     double FrOffshoreSystem_::GetGravityAcceleration() const {
-        return - m_chronoSystem->Get_G_acc()[2];
+        return fabs(m_chronoSystem->Get_G_acc()[2]);
     }
 
     void FrOffshoreSystem_::SetGravityAcceleration(double gravityAcceleration) {

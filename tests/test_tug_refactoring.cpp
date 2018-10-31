@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
 //    fish->ActivateSpeedLimits(true);
     auto fishNode = fish->NewNode(0., 0., 0.);
 
-    auto quadForce = std::make_shared<FrQuadraticDamping_>(fishNode);
+    auto quadForce = std::make_shared<FrQuadraticDamping_>();
     double area = MU_PI * radius * radius;
     quadForce->SetProjectedSections(area, area, area);
 
@@ -79,6 +79,9 @@ int main(int argc, char* argv[]) {
     quadForce->SetDampingCoefficients(c, c, c);
     fish->AddExternalForce(quadForce);
 
+
+    // Test ittc
+    auto ittcForce = std::make_shared<FrITTC57_>(10, 0.1, 30, 5);
 
 
 

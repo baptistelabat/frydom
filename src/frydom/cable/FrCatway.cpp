@@ -188,7 +188,7 @@ namespace frydom {
 
 
 
-    FrCatForce::FrCatForce(std::shared_ptr<FrNode_> node) : FrForce_(node) {}
+    FrCatForce::FrCatForce(std::shared_ptr<FrNode_> node) : m_node(node) {}
 
     void FrCatForce::Update(double time) {
         // Update of FrCatForce is not done by the force itself but by the catenary line that is updated

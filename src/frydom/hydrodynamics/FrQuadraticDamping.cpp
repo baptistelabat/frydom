@@ -68,7 +68,7 @@ namespace frydom {
 
 
 
-    FrQuadraticDamping_::FrQuadraticDamping_(std::shared_ptr<FrNode_> node) : FrForce_(node) {}
+    FrQuadraticDamping_::FrQuadraticDamping_() {}
 
     void FrQuadraticDamping_::SetDampingCoefficients(double Cu, double Cv, double Cw) {
         m_Cu = Cu;
@@ -103,12 +103,10 @@ namespace frydom {
     void FrQuadraticDamping_::Update(double time) {
 
         // Get the relative body velocity with respect to fluid
-        auto body = m_node->GetBody();
+//        auto body = m_node->GetBody();
 
         double u, v, w;
-        body->GetCOGLocalVelocity(u, v, w, NWU);
-
-        // TODO : integrer la vitesse du courant !!
+        m_body->GetCOGLocalVelocity(u, v, w, NWU); // TODO : FIXME integrer la vitesse du courant !!
 
         double rho = 1000;
 

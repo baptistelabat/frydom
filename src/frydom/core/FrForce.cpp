@@ -177,7 +177,7 @@ namespace frydom{
 
     // FrForce_ methods implementations
 
-    FrForce_::FrForce_(std::shared_ptr<FrNode_> node) : m_body(node->GetBody()), m_node(node) {
+    FrForce_::FrForce_() {
         m_chronoForce = std::make_shared<_FrForceBase>(this);
     }
 

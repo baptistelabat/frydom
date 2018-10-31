@@ -111,7 +111,7 @@ namespace frydom {
 
     public:
 
-        explicit FrQuadraticDamping_(std::shared_ptr<FrNode_> node);
+        FrQuadraticDamping_();
 
         /// Setter for the damping coefficients.
         void SetDampingCoefficients(double Cu, double Cv, double Cw);

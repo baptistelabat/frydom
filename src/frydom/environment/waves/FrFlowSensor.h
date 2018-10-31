@@ -191,7 +191,7 @@ namespace frydom {
     public:
 
         /// Constructor with wave field
-        explicit FrFlowSensor_(FrWaveField_* waveField);;
+        explicit FrFlowSensor_(FrWaveField_* waveField);
 
         /// Constructor operator with 3D-coordinates
         FrFlowSensor_(FrWaveField_* waveField, double x, double y, double z);

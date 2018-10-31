@@ -339,6 +339,14 @@ namespace frydom {
         m_atmosphericPressure = atmosphericPressure;
     }
 
+    double FrEnvironment_::GetReynoldsNumberInWater(double characteristicLength, double velocity) const {
+        return fabs(velocity) * characteristicLength / m_waterKinematicViscosity;
+    }
+
+    double FrEnvironment_::GetFroudeNumberInWater(double characteristicLength, double velocity) const {
+        return fabs(velocity) / sqrt(GetGravityAcceleration() * characteristicLength);
+    }
+
     FrFreeSurface_* FrEnvironment_::GetFreeSurface() const {
         return m_freeSurface.get();
     }
