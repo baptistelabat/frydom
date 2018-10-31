@@ -16,7 +16,7 @@
 
 #include "FrCurrent.h"
 
-#include "frydom/environment/FrUniformCurrentField.h"
+#include "frydom/environment/field/FrUniformCurrentField.h"
 
 
 namespace frydom {

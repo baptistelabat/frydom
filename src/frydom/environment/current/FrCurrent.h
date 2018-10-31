@@ -19,7 +19,7 @@
 #include "frydom/core/FrObject.h"
 #include "frydom/core/FrGeographic.h"
 
-#include "frydom/environment/FrUniformCurrentField.h"  // TODO : include a retirer
+#include "frydom/environment/field/FrUniformCurrentField.h"  // TODO : include a retirer
 
 #include "frydom/core/FrVector.h"
 #include "frydom/core/FrUnits.h"
