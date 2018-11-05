@@ -9,7 +9,7 @@
 using namespace frydom;
 
 
-class test_FrBody_ :public FrBody_ {
+class TestFrBody_ :public FrBody_ {
 public:
 
     int Test_Smthg(){return 0;};
@@ -17,22 +17,18 @@ public:
 };
 
 TEST(FrBody_Test,test_SMTHG){
-//    FrOffshoreSystem_ system;
-    // Defining the ship
-    auto body = std::make_shared<test_FrBody_>();
-//    body->SetSmoothContact();
-//    system.AddBody(body);
-    // Testeing something
+
+    auto body = std::make_shared<TestFrBody_>();
+
     EXPECT_EQ(body->Test_Smthg(),0);
+
 };
 
 
 TEST(FrBody_Test,test_SMTHGELSE){
-//    FrOffshoreSystem_ system;
-    // Defining the ship
-    auto body = std::make_shared<test_FrBody_>();
-//    body->SetSmoothContact();
-//    system.AddBody(body);
-    // Testeing something
+
+    auto body = std::make_shared<TestFrBody_>();
+
     EXPECT_EQ(body->Test_SmthgElse(),100);
+
 };
