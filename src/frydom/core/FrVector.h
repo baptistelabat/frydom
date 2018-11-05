@@ -8,6 +8,7 @@
 #include "chrono/core/ChVector.h" // TODO : a priori, devrait disparaitre !!
 
 #include "MathUtils/Vector3d.h"
+#include "MathUtils/Vector6d.h"
 #include "MathUtils/Matrix.h"
 
 #include "FrGeographic.h"
@@ -62,6 +63,91 @@ namespace frydom {
     };
 
 
+    class CardanAngles : public mathutils::Vector3d<double> {
+
+    public:
+
+        CardanAngles() : mathutils::Vector3d<double>() {}
+
+        CardanAngles(double roll, double pitch, double yaw) : mathutils::Vector3d<double>(roll, pitch, yaw) {}
+
+        // This constructor allows to construct Vector2d from Eigen expressions
+        template <class OtherDerived>
+        CardanAngles(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        CardanAngles& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->mathutils::Vector3d<double>::operator=(other);
+            return *this;
+        }
+
+        double GetRoll() const {
+            return this->at(0);
+        }
+
+        double& GetRoll() {
+            return this->at(0);
+        }
+
+        double GetPitch() const {
+            return this->at(1);
+        }
+
+        double& GetPitch() {
+            return this->at(1);
+        }
+
+        double GetYaw() const {
+            return this->at(2);
+        }
+
+        double& GetYaw() {
+            return this->at(2);
+        }
+
+    };
+
+
+    class GeneralizedPosition : public mathutils::Vector6d<double> {
+
+    public:
+
+        GeneralizedPosition() : mathutils::Vector6d<double>() {}
+
+        GeneralizedPosition(const Position& pos, const CardanAngles& cardanAngles) :
+            mathutils::Vector6d<double>(pos[0], pos[1], pos[2], cardanAngles[0], cardanAngles[1], cardanAngles[2]) {}
+
+        // This constructor allows to construct Vector6d from Eigen expressions
+        template <class OtherDerived>
+        GeneralizedPosition(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector6d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        GeneralizedPosition& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->mathutils::Vector6d<double>::operator=(other);
+            return *this;
+        }
+
+        Position GetPosition() const {
+            return this->block<3, 1>(0, 0);
+        }
+
+        void SetPosition(const Position& pos) {
+            this->block<3, 1>(0, 0) = pos;
+        }
+
+        CardanAngles GetCardanAngles() const {
+            return this->block<3, 1>(3, 0);
+        }
+
+        void SetCardanAngles(const CardanAngles& cardanAngles) {
+            this->block<3, 1>(3, 0) = cardanAngles;
+        }
+
+    };
+
+
     class Direction : public mathutils::Vector3d<double> {
 
     public:
@@ -106,6 +192,8 @@ namespace frydom {
         }
 
     };
+
+    // TODO : avoir un generalizedDirection ?? (direction lineaire + direction en rotation) --> definir produit vectoriel -> utile pour maillage
 
     namespace internal {
         // =================================================================================================================
@@ -211,6 +299,45 @@ namespace frydom {
     };
 
 
+    class GeneralizedVelocity : public mathutils::Vector6d<double> {
+
+    public:
+
+        GeneralizedVelocity() : mathutils::Vector6d<double>() {}
+
+        GeneralizedVelocity(const Velocity& vel, const RotationalVelocity& rotVel) :
+                mathutils::Vector6d<double>(vel[0], vel[1], vel[2], rotVel[0], rotVel[1], rotVel[2]) {}
+
+        // This constructor allows to construct Vector6d from Eigen expressions
+        template <class OtherDerived>
+        GeneralizedVelocity(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector6d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        GeneralizedVelocity& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->mathutils::Vector6d<double>::operator=(other);
+            return *this;
+        }
+
+        Velocity GetVelocity() const {
+            return this->block<3, 1>(0, 0);
+        }
+
+        void SetVelocity(const Velocity& vel) {
+            this->block<3, 1>(0, 0) = vel;
+        }
+
+        RotationalVelocity GetRotationalVelocity() const {
+            return this->block<3, 1>(3, 0);
+        }
+
+        void SetRotationalVelocity(const RotationalVelocity& rotVel) {
+            this->block<3, 1>(3, 0) = rotVel;
+        }
+
+    };
+
+
     class Acceleration : public mathutils::Vector3d<double> {
 
     public:
@@ -301,6 +428,45 @@ namespace frydom {
     };
 
 
+    class GeneralizedAcceleration : public mathutils::Vector6d<double> {
+
+    public:
+
+        GeneralizedAcceleration() : mathutils::Vector6d<double>() {}
+
+        GeneralizedAcceleration(const Acceleration& acc, const RotationalAcceleration& rotAcc) :
+                mathutils::Vector6d<double>(acc[0], acc[1], acc[2], rotAcc[0], rotAcc[1], rotAcc[2]) {}
+
+        // This constructor allows to construct Vector6d from Eigen expressions
+        template <class OtherDerived>
+        GeneralizedAcceleration(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector6d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        GeneralizedAcceleration& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->mathutils::Vector6d<double>::operator=(other);
+            return *this;
+        }
+
+        Acceleration GetAcceleration() const {
+            return this->block<3, 1>(0, 0);
+        }
+
+        void SetAcceleration(const Acceleration& acc) {
+            this->block<3, 1>(0, 0) = acc;
+        }
+
+        RotationalAcceleration GetRotationalAcceleration() const {
+            return this->block<3, 1>(3, 0);
+        }
+
+        void SetRotationalAcceleration(const RotationalAcceleration& rotAcc) {
+            this->block<3, 1>(3, 0) = rotAcc;
+        }
+
+    };
+
+
     class Force : public mathutils::Vector3d<double> {
 
     public:
@@ -387,6 +553,45 @@ namespace frydom {
         double& GetMz() {
             return this->at(2);
         }
+    };
+
+
+    class GeneralizedForce : public mathutils::Vector6d<double> {
+
+    public:
+
+        GeneralizedForce() : mathutils::Vector6d<double>() {}
+
+        GeneralizedForce(const Force& force, const Moment& torque) :
+                mathutils::Vector6d<double>(force[0], force[1], force[2], torque[0], torque[1], torque[2]) {}
+
+        // This constructor allows to construct Vector6d from Eigen expressions
+        template <class OtherDerived>
+        GeneralizedForce(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector6d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        GeneralizedForce& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->mathutils::Vector6d<double>::operator=(other);
+            return *this;
+        }
+
+        Force GetForce() const {
+            return this->block<3, 1>(0, 0);
+        }
+
+        void SetForce(const Force& force) {
+            this->block<3, 1>(0, 0) = force;
+        }
+
+        Moment GetTorque() const {
+            return this->block<3, 1>(3, 0);
+        }
+
+        void SetTorque(const Moment& moment) {
+            this->block<3, 1>(3, 0) = moment;
+        }
+
     };
 
 

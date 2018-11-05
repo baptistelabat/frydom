@@ -324,7 +324,7 @@ namespace frydom {
 
 
         // =============================================================================================================
-        // Principal inertial parameters
+        // PRINCIPAL INERTIAL PARAMETERS
         // =============================================================================================================
 
         double GetMass() const;
@@ -353,7 +353,9 @@ namespace frydom {
                               FRAME_CONVENTION fc);
 
 
-        // Contact
+        // =============================================================================================================
+        // CONTACT
+        // =============================================================================================================
 
         void SetSmoothContact();
 
@@ -365,7 +367,9 @@ namespace frydom {
 
         void SetCollide(bool isColliding);
 
-        // Assets
+        // =============================================================================================================
+        // VISUAL ASSETS
+        // =============================================================================================================
 //        void AssetActive() // TODO
 
         void AddBoxShape(double xSize, double ySize, double zSize);
@@ -374,8 +378,9 @@ namespace frydom {
 
         void AddSphereShape(double radius);
 
-
-        // Speed limitation to stabilize simulations
+        // =============================================================================================================
+        // SPEED LIMITATIONS TO STABILIZE SIMULATIONS
+        // =============================================================================================================
 
         void ActivateSpeedLimits(bool activate);
 
@@ -386,15 +391,19 @@ namespace frydom {
         void RemoveGravity(bool val);
 
 
-        // Force functions
+        // =============================================================================================================
+        // FORCES
+        // =============================================================================================================
+
         void AddExternalForce(std::shared_ptr<FrForce_> force);
 
         void RemoveExternalForce(std::shared_ptr<FrForce_> force);
 
         void RemoveAllForces();
 
-
-        // Nodes
+        // =============================================================================================================
+        // NODES
+        // =============================================================================================================
 
         std::shared_ptr<FrNode_> NewNode(const FrFrame_& localFrame);
 
@@ -423,8 +432,9 @@ namespace frydom {
                 internal::Vector3dToChVector(vector)));
         }
 
-
-        // About COG position
+        // =============================================================================================================
+        // COG POSITION
+        // =============================================================================================================
 
         void SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
 
@@ -434,8 +444,9 @@ namespace frydom {
 
         Position GetCOGAbsPosition(FRAME_CONVENTION fc) const;
 
-
-        // About body position (the one of its reference frame)
+        // =============================================================================================================
+        // BODY POSITION (reference frame)
+        // =============================================================================================================
 
         void SetAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
 
@@ -447,12 +458,21 @@ namespace frydom {
 
         void GetAbsPosition(double &x, double &y, double &z, FRAME_CONVENTION fc) const;
 
+        // =============================================================================================================
+        // POSITION OF ANY POINT
+        // =============================================================================================================
+
         Position GetAbsPositionOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
 
         Position GetAbsPositionOfLocalPoint(const Position& localPos, FRAME_CONVENTION fc) const;
 
+        Position GetLocalPositionOfAbsPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
 
-        // About rotation
+        Position GetLocalPositionOfAbsPoint(const Position& absPos, FRAME_CONVENTION fc) const;
+
+        // =============================================================================================================
+        // About rotations
+        // =============================================================================================================
 
         FrRotation_ GetAbsRotation() const;
 
@@ -500,6 +520,10 @@ namespace frydom {
         double GetYaw_RADIANS(FRAME_CONVENTION fc) const;
         double SetYaw_RADIANS(double yaw, FRAME_CONVENTION fc);
 
+        // =============================================================================================================
+        // Projections in frames absolute and body frame of vector quantities
+        // =============================================================================================================
+
         template <class Vector>
         void ProjectAbsVectorInBodyCoords(Vector& vector, FRAME_CONVENTION fc) const {
             vector = GetAbsQuaternion().Rotate<Vector>(vector, fc);
@@ -521,15 +545,17 @@ namespace frydom {
             return GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
         }
 
-
+        // =============================================================================================================
         // Frame
+        // =============================================================================================================
 
         FrFrame_ GetAbsFrame() const;
 
         FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisBody(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
 
-
+        // =============================================================================================================
         // Velocities
+        // =============================================================================================================
 
         void SetAbsVelocity(double vx, double vy, double vz, FRAME_CONVENTION fc);
 
@@ -559,8 +585,9 @@ namespace frydom {
 
         Velocity GetLocalVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
 
-
+        // =============================================================================================================
         // Relative velocities in current and wind
+        // =============================================================================================================
 
         // TODO : utiliser l'enum FLUID_TYPE defini dans FrEnvironment
         // On veut la vitesse du vecteur flux relativement au corps en absolu ou en relatif en un point du corps (exprime en reltif ou absolu)
@@ -580,8 +607,9 @@ namespace frydom {
 
         Velocity GetLocalRelVelocityInStreamAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
 
-
+        // =============================================================================================================
         // Velocities for COG
+        // =============================================================================================================
 
         void SetCOGAbsVelocity(double vx, double vy, double vz, FRAME_CONVENTION fc);
 
@@ -604,8 +632,9 @@ namespace frydom {
 
         void GetCOGLocalVelocity(double& u, double& v, double& w, FRAME_CONVENTION fc) const;
 
-
+        // =============================================================================================================
         // Rotational velocities
+        // =============================================================================================================
 
         void SetAbsRotationalVelocity(double wx, double wy, double wz, FRAME_CONVENTION fc);
 
@@ -628,7 +657,9 @@ namespace frydom {
         void GetLocalRotationalVelocity(double &p, double &q, double &r, FRAME_CONVENTION fc) const;
 
 
-        // Accelerations
+        // =============================================================================================================
+        // ACCELERATIONS
+        // =============================================================================================================
 
         void SetAbsAcceleration(double ax, double ay, double az, FRAME_CONVENTION fc);
 
@@ -656,8 +687,9 @@ namespace frydom {
 
         Acceleration GetLocalAccelerationOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
 
-
+        // =============================================================================================================
         // Accelerations for COG
+        // =============================================================================================================
 
         void SetCOGAbsAcceleration(double ax, double ay, double az, FRAME_CONVENTION fc);
 

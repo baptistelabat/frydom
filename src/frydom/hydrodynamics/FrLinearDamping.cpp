@@ -2,6 +2,8 @@
 // Created by frongere on 11/09/17.
 //
 
+#include "MathUtils/Vector6d.h"
+
 #include <frydom/core/FrHydroBody.h> // TODO : Doit dirsparaitre
 #include "FrLinearDamping.h"
 #include "chrono/physics/ChBody.h" // TODO : Doit disparaitre
@@ -66,12 +68,12 @@ namespace frydom {
 
     //// REFACTORING ---------->>>>>>>>>>
 
-    FrLinearDamping_::FrLinearDamping_() {
+    FrLinearDamping_::FrLinearDamping_(FLUID_TYPE ft, bool relativeToFluid) : m_fluidType(ft), m_relativeToFluid(relativeToFluid) {
         SetNull();
     }
 
     void FrLinearDamping_::SetNull() {
-        m_dampingMatrix.setZero();
+        m_dampingMatrix.SetNull();
     }
 
     void FrLinearDamping_::SetDampingMatrix(const FrLinearDamping_::DampingMatrix &dampingMatrix) {
@@ -99,40 +101,29 @@ namespace frydom {
         m_dampingMatrix(iRow, iCol) = coeff;
     }
 
-    void FrLinearDamping_::SetRelative2Current(bool relativeVelocity) {
-        m_relative2Current = relativeVelocity;
+    void FrLinearDamping_::SetRelativeToFluid(bool isRelative) {
+        m_relativeToFluid = isRelative;
     }
 
-    bool FrLinearDamping_::GetRelative2Current() {return m_relative2Current;}
+    bool FrLinearDamping_::GetRelativeToFluid() {return m_relativeToFluid;}
 
     void FrLinearDamping_::Update(double time) {
 
         // Body Velocity at COG in body coordinates
         Velocity cogRelVel;
-        if (m_relative2Current) {
-            Position cogAbsPos = m_body->GetCOGAbsPosition(NWU);
-            Velocity absVel = m_body->GetCOGAbsVelocity(NWU);
-            cogRelVel = GetSystem()->GetEnvironment()->GetCurrent()->GetAbsRelativeVelocity(cogAbsPos, absVel, NWU);
-            m_body->ProjectAbsVectorInBodyCoords(cogRelVel, NWU);
-
+        if (m_relativeToFluid) {
+            cogRelVel = m_body->GetLocalRelVelocityInStreamAtCOG(m_fluidType, NWU);
         } else {
             cogRelVel = m_body->GetCOGLocalVelocity(NWU);
         }
 
         RotationalVelocity rotVel = m_body->GetLocalRotationalVelocity(NWU);
 
-        // TODO : mettre en cache !
-        mathutils::VectorN<double> generalizedVel(6);
-        generalizedVel.block(0, 0, 3, 1) = cogRelVel;
-        generalizedVel.block(3, 0, 3, 1) = rotVel;
+        GeneralizedVelocity genRelVel(cogRelVel, rotVel);
 
-        mathutils::VectorN<double> generalizedForce(6);
-        generalizedForce = - m_dampingMatrix * generalizedVel;
+        GeneralizedForce genForce = - m_dampingMatrix * genRelVel;
 
-        Force relForce = generalizedForce.block(0, 0, 3, 1);
-        Moment relTorque = generalizedForce.block(3, 0, 3, 1);
-
-        SetLocalForceTorqueAtCOG(relForce, relTorque, NWU);
+        SetLocalForceTorqueAtCOG(genForce.GetForce(), genForce.GetTorque(), NWU);
 
     }
 

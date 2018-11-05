@@ -108,8 +108,6 @@ int main(int argc, char* argv[]) {
     cable->AddMorrisonForce(0.014, 0.9);
 
 
-
-
     system.SetTimeStep(0.01);
 
     system.Initialize();
