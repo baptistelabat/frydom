@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRVECTOR_H
 #define FRYDOM_FRVECTOR_H
 
-#include "chrono/core/ChVector.h"
+#include "chrono/core/ChVector.h" // TODO : a priori, devrait disparaitre !!
 
 #include "MathUtils/Vector3d.h"
 #include "MathUtils/Matrix.h"

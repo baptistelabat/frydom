@@ -23,6 +23,8 @@
 #include "FrColors.h"
 #include "FrNode.h"
 
+#include "frydom/environment/FrFluidType.h"
+
 
 namespace frydom {
 
@@ -415,17 +417,11 @@ namespace frydom {
 
 
         template <class Vector>
-        Vector ProjectLocalOnAbs(const Vector& vector) {
+        Vector ProjectLocalOnAbs(const Vector& vector) { // FIXME : redondant...
         return internal::ChVectorToVector3d<Vector>(
                 m_chronoBody->TransformDirectionLocalToParent(
                 internal::Vector3dToChVector(vector)));
         }
-
-
-
-
-
-        /// Methodes validees =======================>>>>>>>>>>>>>>>>>>
 
 
         // About COG position
@@ -513,6 +509,7 @@ namespace frydom {
             return GetAbsQuaternion().Rotate<Vector>(vector, fc);
         }
 
+        // TODO : voir pourquoi on ne peut pas acceder a cette methode...
         template <class Vector>
         void ProjectBodyVectorInAbsCoords(Vector& vector, FRAME_CONVENTION fc) const {
             vector = GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
@@ -558,6 +555,27 @@ namespace frydom {
         Velocity GetAbsVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
 
         Velocity GetLocalVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
+
+
+        // Relative velocities in current and wind
+
+        // TODO : utiliser l'enum FLUID_TYPE defini dans FrEnvironment
+        // On veut la vitesse du vecteur flux relativement au corps en absolu ou en relatif en un point du corps (exprime en reltif ou absolu)
+        // Quand on prend un point exprime en coord absolues, c'est une approche eulerienne...
+        // Quand on prend un point exprime en coord locale (body), c'est une approche lagrangienne...
+        // TODO : Ne doit-on pas plutot nommer Get
+
+        Velocity GetAbsRelVelocityInStreamAtCOG(FLUID_TYPE ft, FRAME_CONVENTION fc) const; // Voir si on met un enum CURRENT ou WIND
+
+        Velocity GetLocalRelVelocityInStreamAtCOG(FLUID_TYPE ft, FRAME_CONVENTION fc) const;
+
+        Velocity GetAbsRelVelocityInStreamAtLocalPoint(const Position& localPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
+
+        Velocity GetAbsRelVelocityInStreamAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
+
+        Velocity GetLocalRelVelocityInStreamAtLocalPoint(const Position& localPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
+
+        Velocity GetLocalRelVelocityInStreamAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
 
 
         // Velocities for COG
@@ -648,7 +666,6 @@ namespace frydom {
 
         void GetCOGAbsAcceleration(double& ax, double& ay, double& az, FRAME_CONVENTION fc) const;
 
-
         void SetCOGLocalAcceleration(double up, double vp, double wp, FRAME_CONVENTION fc);
 
         void SetCOGLocalAcceleration(const Acceleration& acceleration, FRAME_CONVENTION fc);
@@ -658,6 +675,8 @@ namespace frydom {
         void GetCOGLocalAcceleration(Acceleration& acceleration, FRAME_CONVENTION fc) const;
 
         void GetCOGLocalAcceleration(double& up, double& vp, double& wp, FRAME_CONVENTION fc) const;
+
+        // TODO : voir si on peut avoir des methodes de calcul d'acceleration a des points differents du COG...
 
 
         // Rotational accelerations
@@ -694,14 +713,12 @@ namespace frydom {
 
 
 
-
-
     protected:
 
+        // TODO : voir si on a besoin que ce bloc soit protected...
         std::shared_ptr<chrono::ChBody> GetChronoBody() {
             return m_chronoBody;
         }
-
 
         // Friends of FrBody_ : they can have access to chrono internals
         friend void makeItBox(std::shared_ptr<FrBody_>, double, double, double, double);

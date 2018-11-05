@@ -118,11 +118,21 @@ namespace frydom {
         } else {
             cogRelVel = m_body->GetCOGLocalVelocity(NWU);
         }
-        Velocity localVel = m_body->GetCOGLocalVelocity(NWU);
 
+        RotationalVelocity rotVel = m_body->GetLocalRotationalVelocity(NWU);
 
+        // TODO : mettre en cache !
+        mathutils::VectorN<double> generalizedVel(6);
+        generalizedVel.block(0, 0, 3, 1) = cogRelVel;
+        generalizedVel.block(3, 0, 3, 1) = rotVel;
 
+        mathutils::VectorN<double> generalizedForce(6);
+        generalizedForce = - m_dampingMatrix * generalizedVel;
 
+        Force relForce = generalizedForce.block(0, 0, 3, 1);
+        Moment relTorque = generalizedForce.block(3, 0, 3, 1);
+
+        SetLocalForceTorqueAtCOG(relForce, relTorque, NWU);
 
     }
 

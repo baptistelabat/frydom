@@ -107,7 +107,12 @@ namespace frydom{
 
     void FrITTC57_::Update(double time) {
 
-//        auto environment = GetSystem()->GetEnvironment(); // TODO : voir a mettre environnement en pointeur a l'initialisation de la force
+        // TODO : simplifier la procedure pour avoir les vitesses relatives fonction du courant ou du vent. Repercuter
+        // aussi sur FrLinearDamping avant d'aller plus loin !!
+
+        // On va ecrire une methode de FrBody_ permettant d'avoir cela dans l'eau et l'air et qui appelle la methode qui
+        // va bien depuis current et wind
+
 
         // Getting the relative velocity with respect to water along body X axis
         Position cogAbsPos = m_body->GetCOGAbsPosition(NWU);

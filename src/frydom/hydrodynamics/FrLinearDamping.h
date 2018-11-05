@@ -108,7 +108,7 @@ namespace frydom {
 
     private:
 
-        Eigen::MatrixXd m_dampingMatrix = Eigen::MatrixXd::Zero(6,6);
+        Eigen::MatrixXd m_dampingMatrix;
         bool m_relative2Current = false;  // FIXME : on doit pouvoir aussi appliquer dans l'air !!!!!
 
     public:

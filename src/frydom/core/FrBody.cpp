@@ -12,12 +12,13 @@
 
 #include "FrForce.h"
 
-#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/FrEnvironmentInc.h"
 #include "frydom/environment/waves/FrFreeSurface.h"
 
 #include <chrono/physics/ChLinkMotorLinearSpeed.h>  // FIXME : a retirer
 
 #include "FrFunction.h"
+#include "FrException.h"
 
 
 namespace frydom {
@@ -710,7 +711,6 @@ namespace frydom {
 
         if (IsNED(fc)) internal::SwapCoordinateConvention(x, y, z);  // Convert into NWU
 
-
         auto absVel = internal::ChVectorToVector3d<Velocity>(
                 m_chronoBody->PointSpeedLocalToParent(chrono::ChVector<double>(x, y, z) - m_chronoBody->GetFrame_COG_to_REF().GetPos()));
 
@@ -722,6 +722,54 @@ namespace frydom {
     Velocity FrBody_::GetLocalVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const {
         Velocity absVel = GetAbsVelocityOfLocalPoint(x, y, z, fc);
         return GetAbsQuaternion().Inverse().Rotate<Velocity>(absVel, fc);  // TODO : verifier
+    }
+
+    Velocity FrBody_::GetAbsRelVelocityInStreamAtCOG(FLUID_TYPE ft, FRAME_CONVENTION fc) const {
+
+        Position cogAbsPos = GetCOGAbsPosition(NWU);
+        Velocity cogAbsVel = GetCOGAbsVelocity(NWU);
+
+        Velocity cogAbsRelVel;
+        switch (ft) {
+
+            case WATER:
+                cogAbsRelVel = m_system->GetEnvironment()->GetCurrent()->GetAbsRelativeVelocity(cogAbsPos, cogAbsVel, NWU);
+                break;
+
+            case AIR:
+                cogAbsRelVel = m_system->GetEnvironment()->GetWind()->GetAbsRelativeVelocity(cogAbsPos, cogAbsVel, NWU);
+                break;
+
+            default:
+                throw FrException("Fluid is not known...");
+        }
+
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(cogAbsRelVel);
+
+        return cogAbsRelVel;
+
+    }
+
+    Velocity FrBody_::GetLocalRelVelocityInStreamAtCOG(FLUID_TYPE ft, FRAME_CONVENTION fc) const {
+        return ProjectAbsVectorInBodyCoords<Velocity>(GetAbsRelVelocityInStreamAtCOG(ft, fc), fc);
+    }
+
+    Velocity FrBody_::GetAbsRelVelocityInStreamAtLocalPoint(const Position& localPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const {
+        // TODO
+
+        GetAbsVelocityOfLocalPoint()
+    }
+
+    Velocity FrBody_::GetAbsRelVelocityInStreamAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    Velocity FrBody_::GetLocalRelVelocityInStreamAtLocalPoint(const Position& localPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const {
+        // TODO
+    }
+
+    Velocity FrBody_::GetLocalRelVelocityInStreamAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const {
+        // TODO
     }
 
     void FrBody_::SetCOGAbsVelocity(double vx, double vy, double vz, FRAME_CONVENTION fc) {  // OK

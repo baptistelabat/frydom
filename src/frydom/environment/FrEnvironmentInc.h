@@ -7,6 +7,7 @@
 
 
 #include "FrEnvironment.h"
+#include "FrFluidType.h"
 
 #include "time/FrTimeInc.h"
 #include "field/FrFieldInc.h"

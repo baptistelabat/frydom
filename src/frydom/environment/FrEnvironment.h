@@ -56,8 +56,6 @@ namespace frydom {
     class FrSeabed;
 
 
-
-
     /// Class to store the different elements composing the offshore environment
     class FrEnvironment : public FrObject {
 
