@@ -111,7 +111,7 @@ namespace frydom {
 
         // Body Velocity at COG in body coordinates
         Velocity cogRelVel;
-        if (m_relativeToFluid) {
+        if (m_relativeToFluid) {  // FIXME : FAUX ici, il faut prendre l'oppose sur l'un ou l'autre
             cogRelVel = m_body->GetLocalRelVelocityInStreamAtCOG(m_fluidType, NWU);
         } else {
             cogRelVel = m_body->GetCOGLocalVelocity(NWU);

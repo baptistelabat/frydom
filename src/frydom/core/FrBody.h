@@ -271,9 +271,10 @@ namespace frydom {
     class FrQuaternion_;
     class FrBody_;
 
-    /// Cette classe n'est la que pour heriter des objets chrono.
-    /// Ce n'est pas celle qu'on manipule directement dans frydom en tant qu'utilisateur !!!
-    struct _FrBodyBase : public chrono::ChBodyAuxRef {
+
+    /// Base class inheriting from chrono ChBodyAuxRef
+    /// This class must be used by external FRyDoM users. It is used in composition rule along with the FrBody_ FRyDoM class
+    struct _FrBodyBase : public chrono::ChBodyAuxRef {  // TODO : encapsuler dans le namespace internal
 
         FrBody_* m_frydomBody;
 
@@ -294,7 +295,7 @@ namespace frydom {
 //    class FrNode_;
     class FrOffshoreSystem_;
 
-
+    /// Main class for a FRyDoM rigid body
     class FrBody_ : public FrObject {
 
     protected:
@@ -316,10 +317,14 @@ namespace frydom {
         /// Default constructor
         FrBody_();
 
+        /// Get the system to which the body is registered for simulation
         FrOffshoreSystem_* GetSystem();
 
+        /// Set the name of the body
         void SetName(const char name[]);
 
+        /// Fix the body in the world.
+        /// If true, the dynamics of the body is not resolved at all. This is different from adding a fixed constraint.
         void SetBodyFixed(bool state);
 
 
@@ -327,18 +332,26 @@ namespace frydom {
         // PRINCIPAL INERTIAL PARAMETERS
         // =============================================================================================================
 
+        /// Get the body mass in kg
         double GetMass() const;
 
+        /// Get the COG position in body reference coordinate system
         Position GetCOGLocalPosition(FRAME_CONVENTION fc) const;
 
+        /// Set the COG position in body reference coordinate system
         void SetCOGLocalPosition(double x, double y, double z, bool transportInertia, FRAME_CONVENTION fc);
 
+        /// Set the COG position in body reference coordinate system
         void SetCOGLocalPosition(const Position& position, bool transportInertia, FRAME_CONVENTION fc);
 
-        FrInertiaTensor_ GetInertiaParams() const;
+        /// Get the inertia parameters as a FrInertiaTensor_ object
+        FrInertiaTensor_ GetInertiaParams() const; // TODO : voir pour une methode renvoyant une reference non const
 
+        /// Set the inertia parameters as a FrInertiaTensor_ object
         void SetInertiaParams(const FrInertiaTensor_& inertia);
 
+        /// Set the principal inertia parameters given as coefficients expressed in coeffsFrame that can be different
+        /// from the local COG position cogPosition (expressed in body reference coordinate system)
         void SetInertiaParams(double mass,
                               double Ixx, double Iyy, double Izz,
                               double Ixy, double Ixz, double Iyz,
@@ -346,6 +359,7 @@ namespace frydom {
                               const Position& cogPosition,
                               FRAME_CONVENTION fc);
 
+        /// Set the inertia parameters given in cogFrame relative to
         void SetInertiaParams(double mass,
                               double Ixx, double Iyy, double Izz,
                               double Ixy, double Ixz, double Iyz,
@@ -357,37 +371,65 @@ namespace frydom {
         // CONTACT
         // =============================================================================================================
 
+        /// Set the contact method to SMOOTH
+        /// The system where the body is registered must be consistent
         void SetSmoothContact();
 
+        /// Set the contact method to NONSMOOTH
+        /// The system where the body is registered must be consistent
         void SetNonSmoothContact();
 
+        /// Set the contact method (SMOOTH or NONSMOOTH)
+        /// The system where the body is registered must be consistent
         void SetContactMethod(CONTACT_TYPE contactType);
 
+        /// Get the contact method of this body
         CONTACT_TYPE GetContactType() const;
 
+        /// Set the collide mode. If true, a collision shape must be set and the body will participate in physical
+        /// collision with other physical collision enabled items
         void SetCollide(bool isColliding);
+
+        // TODO : ajouter de quoi definir des shapes de collision !!!
 
         // =============================================================================================================
         // VISUAL ASSETS
         // =============================================================================================================
 //        void AssetActive() // TODO
 
-        void AddBoxShape(double xSize, double ySize, double zSize);
+        /// Add a box shape to the body with its dimensions defined in absolute coordinates. Dimensions in meters
+        void AddBoxShape(double xSize, double ySize, double zSize);  // TODO : definir plutot les dimensions dans le repere local du corps...
 
-        void AddCylinderShape(double radius, double height);
+        /// Add a cylinder shape to the body with its dimensions defined in ???? Dimensions in meters
+        void AddCylinderShape(double radius, double height);  // FIXME : travailler la possibilite de definir un axe... dans le repere local du corps
 
-        void AddSphereShape(double radius);
+        /// Add a sphere shape to the body. Dimensions in meters.
+        void AddSphereShape(double radius);  // TODO : permettre de definir un centre en coords locales du corps
 
         // =============================================================================================================
         // SPEED LIMITATIONS TO STABILIZE SIMULATIONS
         // =============================================================================================================
 
+        /// Enable the maximum speed limits in both linear and angular speed (beyond this limit it will be clamped).
+        /// This is useful in virtual reality and real-time simulations, because
+        /// it reduces the risk of bad collision detection.
+        /// The realism is limited, but the simulation is more stable.
         void ActivateSpeedLimits(bool activate);
 
+        /// Set the maximum linear speed (beyond this limit it will be clamped). In m/s
+        /// This is useful in virtual reality and real-time simulations, because
+        /// it reduces the risk of bad collision detection.
+        /// This speed limit is active only if you set  SetLimitSpeed(true);
         void SetMaxSpeed(double maxSpeed);
 
+        /// Set the maximum angular speed (beyond this limit it will be clamped). In rad/s
+        /// This is useful in virtual reality and real-time simulations, because
+        /// it reduces the risk of bad collision detection.
+        /// This speed limit is active only if you set  SetLimitSpeed(true);
         void SetMaxRotationSpeed(double wMax);
 
+        /// [DEBUGGING MODE] Remove the gravity by adding a anti-gravity. This is a debugging method and should not be
+        /// used in projects
         void RemoveGravity(bool val);
 
 
@@ -395,16 +437,20 @@ namespace frydom {
         // FORCES
         // =============================================================================================================
 
+        /// Add an external force to the body
         void AddExternalForce(std::shared_ptr<FrForce_> force);
 
+        /// Remove an external force to the body
         void RemoveExternalForce(std::shared_ptr<FrForce_> force);
 
+        /// Remove all forces from the body
         void RemoveAllForces();
 
         // =============================================================================================================
         // NODES
         // =============================================================================================================
 
+        /// Get a new node attached to
         std::shared_ptr<FrNode_> NewNode(const FrFrame_& localFrame);
 
         std::shared_ptr<FrNode_> NewNode(const Position& localPosition);

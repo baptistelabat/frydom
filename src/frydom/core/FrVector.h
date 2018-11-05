@@ -17,6 +17,7 @@
 namespace frydom {
 
 
+    /// Class for representing a position vector in cartesian coordinates
     class Position : public mathutils::Vector3d<double> {
 
     public:
@@ -63,6 +64,7 @@ namespace frydom {
     };
 
 
+    /// Class for stacking cardan angles into a vector (unit is to be managed by user)
     class CardanAngles : public mathutils::Vector3d<double> {
 
     public:
@@ -109,6 +111,7 @@ namespace frydom {
     };
 
 
+    /// Class to stack linear and
     class GeneralizedPosition : public mathutils::Vector6d<double> {
 
     public:
@@ -593,8 +596,6 @@ namespace frydom {
         }
 
     };
-
-
 
 
     namespace internal {

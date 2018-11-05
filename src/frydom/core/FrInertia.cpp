@@ -23,26 +23,44 @@ namespace frydom {
                                        const Position& cogPosition,
                                        FRAME_CONVENTION fc) {
 
-        if (IsNED(fc)) internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz); // Convert to NWU
+        Position cogPosTmp = cogPosition;
+        if (IsNED(fc)) {
+            internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz); // Convert to NWU
+            cogPosTmp = internal::SwapFrameConvention<Position>(cogPosTmp);
+        }
 
-        chrono::ChMatrix33<double> chInertia_pp = internal::BuildChInertiaMatrix(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+        FrRotation_ rot_rp = coeffsFrame.GetRotation();
 
+        m_inertiaAtCOG << Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Ixy, Izz;
 
-        auto chRotation_rp = coeffsFrame.m_chronoFrame.Amatrix; // Allowed because FrInertiaTensor_ is a friend of FrFrame_
-        // FIXME : faire gaffe a la convention adoptee pour decrire la rotation. Est-ce que la rotation donne bien
-        // le repere de frame dans le repere local (R * vecteur exprime dans p donne vecteur exprime localement)...
+        m_inertiaAtCOG = rot_rp * m_inertiaAtCOG * rot_rp.Inverse();
 
+        Position PG = cogPosTmp - coeffsFrame.GetPosition(NWU);
 
-        // Applying the generalized Huygens theorem to transport inertia at G, expressed in local frame coordinate system
-        m_inertiaAtCOG.Reset();
-        m_inertiaAtCOG.MatrMultiplyT(chRotation_rp * chInertia_pp, chRotation_rp);
-
-        Position PG;
-        PG = cogPosition - coeffsFrame.GetPosition(NWU);
-
-        m_inertiaAtCOG -= internal::GetPointMassInertia(mass, PG);
-        m_cogPosition = cogPosition;
+        m_inertiaAtCOG -= PG;
+        m_cogPosition = cogPosTmp;
         m_mass = mass;
+
+
+
+//
+////        chrono::ChMatrix33<double> chInertia_pp = internal::BuildChInertiaMatrix(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+//
+//        // TODO : utiliser l'API pour les rotations !!!!!!!!!!!
+//
+//        auto chRotation_rp = coeffsFrame.m_chronoFrame.Amatrix; // Allowed because FrInertiaTensor_ is a friend of FrFrame_ // FIXME : retirer cette amitie
+//        // Cette rotation multiplie un vecteur exprime dans p en un vecteur exprime dans r
+//
+//        // Applying the generalized Huygens theorem to transport inertia at G, expressed in local frame coordinate system
+//        m_inertiaAtCOG.Reset();
+//        m_inertiaAtCOG.MatrMultiplyT(chRotation_rp * chInertia_pp, chRotation_rp);
+//
+//        Position PG;
+//        PG = cogPosTmp - coeffsFrame.GetPosition(NWU);
+//
+//        m_inertiaAtCOG -= internal::GetPointMassInertia(mass, PG); // Transport inertia matrix at COG
+//        m_cogPosition = cogPosTmp;
+//        m_mass = mass;
 
     }
 
