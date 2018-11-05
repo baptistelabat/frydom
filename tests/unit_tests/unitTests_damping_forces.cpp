@@ -47,7 +47,7 @@ std::shared_ptr<FrLinearDamping> test_LinearDamping() {
 //    linearForce->SetNonDiagonalDamping(5,0,5);
 
     body->AddForce(linearForce);
-    //linearForce->SetRelative2Current(true);
+    //linearForce->SetRelativeToFluid(true);
     body->Initialize();
     body->Update();
 
@@ -71,7 +71,7 @@ std::shared_ptr<FrLinearDamping> test_LinearDamping_HB() {
     linearForce->SetDiagonalDamping(10,10,10,10,10,10);
 //    linearForce->SetNonDiagonalDamping(0,5,5);
 //    linearForce->SetNonDiagonalDamping(5,0,5);
-    //linearForce->SetRelative2Current(true);
+    //linearForce->SetRelativeToFluid(true);
 
     body->Initialize();
     body->Update();

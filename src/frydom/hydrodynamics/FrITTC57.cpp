@@ -92,6 +92,14 @@ namespace frydom{
 
 
 
+
+
+
+
+
+
+
+
     //////// REFACTOR --------------->>>>>>>>>>>>>>>>
 
 
@@ -142,7 +150,7 @@ namespace frydom{
     }
 
     void FrITTC57_::Initialize() {
-        m_environment = GetSystem()->GetEnvironment();
+        m_environment = GetSystem()->GetEnvironment(); // To reduce the number of indirections during update
     }
 
     void FrITTC57_::StepFinalize() {

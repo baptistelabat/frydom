@@ -5,9 +5,11 @@
 #ifndef FRYDOM_FRLINEARDAMPING_H
 #define FRYDOM_FRLINEARDAMPING_H
 
+#include "MathUtils/Matrix66.h"
 
 #include "frydom/utils/FrEigen.h"
 #include "frydom/core/FrForce.h"
+#include "frydom/environment/FrFluidType.h"
 
 namespace frydom {
 
@@ -104,16 +106,17 @@ namespace frydom {
     class FrLinearDamping_ : public FrForce_ {
 
     public:
-        using DampingMatrix = Eigen::Matrix<double, 6, 6>; // TODO : disposer d'une Matrix66 dans mathutils
+        using DampingMatrix = mathutils::Matrix66<double>; // TODO : disposer d'une Matrix66 dans mathutils
 
     private:
 
-        Eigen::MatrixXd m_dampingMatrix;
-        bool m_relative2Current = false;  // FIXME : on doit pouvoir aussi appliquer dans l'air !!!!!
+        DampingMatrix m_dampingMatrix;
+        FLUID_TYPE m_fluidType;
+        bool m_relativeToFluid = false;  // FIXME : on doit pouvoir aussi appliquer dans l'air !!!!!
 
     public:
 
-        FrLinearDamping_();
+        FrLinearDamping_(FLUID_TYPE ft, bool relativeToFluid);
 
         void SetNull();
 
@@ -133,10 +136,10 @@ namespace frydom {
         void SetDampingCoeff(unsigned int iRow, unsigned int iCol, double coeff);
 
         /// Setter for the boolean : m_relativeVelocity
-        void SetRelative2Current(bool relativeVelocity);
+        void SetRelativeToFluid(bool isRelative);
 
         /// Getter for the boolean : m_relativeVelocity
-        bool GetRelative2Current();
+        bool GetRelativeToFluid();
 
         /// Setter for the log prefix
 //        void SetLogPrefix(std::string prefix_name) override {
