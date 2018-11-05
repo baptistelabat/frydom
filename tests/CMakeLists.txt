@@ -57,11 +57,12 @@ foreach(test ${FRYDOM_TESTS})
     message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
-    target_link_libraries(${test} FRyDoM_Engine matplotlib-cpp)
+    target_link_libraries(${test} FRyDoM_Engine matplotlib-cpp gtest)
 
 endforeach()
 
 add_subdirectory(unit_tests)
+add_subdirectory(GoogleTest)
 
 # Adding resource files
 configure_file(data/frydom_logo.png . COPYONLY)
