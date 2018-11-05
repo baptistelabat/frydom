@@ -449,6 +449,7 @@ namespace frydom {
 
         Position GetAbsPositionOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
 
+        Position GetAbsPositionOfLocalPoint(const Position& localPos, FRAME_CONVENTION fc) const;
 
 
         // About rotation
@@ -554,6 +555,8 @@ namespace frydom {
 
         Velocity GetAbsVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
 
+        Velocity GetAbsVelocityOfLocalPoint(const Position& locaPos, FRAME_CONVENTION fc) const;
+
         Velocity GetLocalVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
 
 
@@ -565,13 +568,13 @@ namespace frydom {
         // Quand on prend un point exprime en coord locale (body), c'est une approche lagrangienne...
         // TODO : Ne doit-on pas plutot nommer Get
 
+        Velocity GetAbsRelVelocityInStreanAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
+
         Velocity GetAbsRelVelocityInStreamAtCOG(FLUID_TYPE ft, FRAME_CONVENTION fc) const; // Voir si on met un enum CURRENT ou WIND
 
         Velocity GetLocalRelVelocityInStreamAtCOG(FLUID_TYPE ft, FRAME_CONVENTION fc) const;
 
         Velocity GetAbsRelVelocityInStreamAtLocalPoint(const Position& localPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
-
-        Velocity GetAbsRelVelocityInStreamAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
 
         Velocity GetLocalRelVelocityInStreamAtLocalPoint(const Position& localPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
 
