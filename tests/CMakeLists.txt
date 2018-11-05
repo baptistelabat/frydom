@@ -44,6 +44,7 @@ set(FRYDOM_TESTS
 
 
         test_tug_refactoring
+        test_FrBody_
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")

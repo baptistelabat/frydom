@@ -43,6 +43,7 @@ include(Add_fmt)
 include(Add_TimeZone)
 include(Add_hermes)
 include(Add_catway)
+include(Add_googletest)
 
 if (TARGET hermes)
     get_target_property(INC hermes INCLUDE_DIRECTORIES)
