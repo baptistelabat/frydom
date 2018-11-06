@@ -72,4 +72,31 @@ namespace frydom {
         }
     }
 
+
+
+    /// >>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    FrCurrentForce_::FrCurrentForce_(std::string yamlFile) {
+        m_coeffsTable = std::move(MakeCurrentPolarCoeffTable(yamlFile));
+    }
+
+    void FrCurrentForce_::Update(double time) {
+
+        auto cogRelVel = m_body->GetLocalRelVelocityInStreamAtCOG(WATER, NWU);
+        auto velSquare = cogRelVel.squaredNorm();
+        auto alpha = m_body->GetApparentAngle(WATER, NWU, DEG);
+
+        auto cx = m_coeffsTable.CX(alpha, NWU);
+        auto cy = m_coeffsTable.CY(alpha, NWU);
+        auto cz = m_coeffsTable.CZ(alpha, NWU);
+
+        auto fx = -cx * velSquare;
+        auto fy = -cy * velSquare;
+        auto mz = -cz * velSquare;
+
+        SetLocalForceTorqueAtCOG(Force(fx, fy, 0.), Moment(0., 0., mz), NWU);
+
+    }
+
+
 }  // end namespace frydom

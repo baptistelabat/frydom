@@ -511,6 +511,8 @@ namespace frydom {
         double GetYaw_DEGREES(FRAME_CONVENTION fc) const;
         double SetYaw_DEGREES(double yaw, FRAME_CONVENTION fc);
 
+        double GetHeading_DEGREES(FRAME_CONVENTION fc) const;
+
         double GetRoll_RADIANS(FRAME_CONVENTION fc) const;
         double SetRoll_RADIANS(double roll, FRAME_CONVENTION fc);
 
@@ -519,6 +521,8 @@ namespace frydom {
 
         double GetYaw_RADIANS(FRAME_CONVENTION fc) const;
         double SetYaw_RADIANS(double yaw, FRAME_CONVENTION fc);
+
+        double GetHeading_RADIANS(FRAME_CONVENTION fc) const;
 
         // =============================================================================================================
         // Projections in frames absolute and body frame of vector quantities
@@ -606,6 +610,12 @@ namespace frydom {
         Velocity GetLocalRelVelocityInStreamAtLocalPoint(const Position& localPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
 
         Velocity GetLocalRelVelocityInStreamAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
+
+        double GetApparentAngleAtLocalPoint(const Position& relPos, FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const;
+
+        double GetApparentAngleAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const;
+
+        double GetApparentAngle(FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const;
 
         // =============================================================================================================
         // Velocities for COG

@@ -569,6 +569,15 @@ namespace frydom {
         return psi;
     }
 
+    double FrBody_::GetHeading_DEGREES(FRAME_CONVENTION fc) const {
+        double phi, theta, psi;
+        GetCardanAngles_DEGREES(phi, theta, psi, fc);
+        if (std::abs(theta - 90.) < DBL_EPSILON or std::abs(theta - 270.) < DBL_EPSILON) {
+            std::cout << "warning heading angle : x-axis is vertical" << std::endl;
+        }
+        return psi;
+    }
+
     double FrBody_::GetRoll_RADIANS(FRAME_CONVENTION fc) const {  // OK
         double phi, theta, psi;
         GetCardanAngles_RADIANS(phi, theta, psi, fc);
@@ -584,6 +593,15 @@ namespace frydom {
     double FrBody_::GetYaw_RADIANS(FRAME_CONVENTION fc) const {
         double phi, theta, psi;
         GetCardanAngles_RADIANS(phi, theta, psi, fc);
+        return psi;
+    }
+
+    double FrBody_::GetHeading_RADIANS(FRAME_CONVENTION fc) const {
+        double phi, theta, psi;
+        GetCardanAngles_RADIANS(phi, theta, psi, fc);
+        if (std::abs(theta - M_PI_2) < DBL_EPSILON or std::abs(theta - 3. * M_PI_2) < DBL_EPSILON) {
+            std::cout << "warning heading angle : x-axis is vertical" << std::endl;
+        }
         return psi;
     }
 
@@ -763,7 +781,7 @@ namespace frydom {
     }
 
     Velocity FrBody_::GetLocalRelVelocityInStreamAtCOG(FLUID_TYPE ft, FRAME_CONVENTION fc) const {
-        return ProjectAbsVectorInBodyCoords<Velocity>(GetAbsRelVelocityInStreamAtCOG(ft, fc), fc);
+        return -ProjectAbsVectorInBodyCoords<Velocity>(GetAbsRelVelocityInStreamAtCOG(ft, fc), fc);
     }
 
     Velocity FrBody_::GetAbsRelVelocityInStreamAtLocalPoint(const Position& localPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const {
@@ -777,6 +795,33 @@ namespace frydom {
     Velocity FrBody_::GetLocalRelVelocityInStreamAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const {
         return ProjectAbsVectorInBodyCoords<Velocity>(GetAbsRelVelocityInStreanAtAbsPoint(absPos, ft, fc), fc);
     }
+
+    double FrBody_::GetApparentAngleAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const {
+        auto absVel = this->GetAbsRelVelocityInStreanAtAbsPoint(absPos, ft, fc);
+        auto heading = this->GetHeading_RADIANS(fc);
+        auto angle = atan2(absVel.y(), absVel.x());
+
+        auto angle_apparent = Normalize_0_2PI(angle - heading);
+        if (unit == DEG) { angle_apparent *= RAD2DEG; }
+
+        return angle_apparent;
+    }
+
+    double FrBody_::GetApparentAngleAtLocalPoint(const Position& relPos, FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const {
+        auto absVel = this->GetAbsRelVelocityInStreamAtLocalPoint(relPos, ft, fc);
+        auto heading = this->GetHeading_RADIANS(fc);
+        auto angle = atan2(absVel.y(), absVel.x());
+
+        auto angle_apparent = Normalize_0_2PI(angle - heading);
+        if (unit == DEG) { angle_apparent *= RAD2DEG; }
+
+        return angle_apparent;
+    }
+
+    double FrBody_::GetApparentAngle(FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const {
+        return GetApparentAngleAtLocalPoint(Position(0.,0.,0.), ft, fc, unit);
+    }
+
 
     void FrBody_::SetCOGAbsVelocity(double vx, double vy, double vz, FRAME_CONVENTION fc) {  // OK
         if (IsNED(fc)) internal::SwapCoordinateConvention(vx, vy, vz); // Convert to NWU
