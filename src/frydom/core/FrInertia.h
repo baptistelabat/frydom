@@ -44,7 +44,13 @@ namespace frydom {
     };
 
 
-
+    /// Class to define the inertia tensor of a rigid body
+    /// It stores the principal inertia parameters :
+    ///     - mass
+    ///     - local COG position expressed in the body reference frame
+    ///     - inertia matrix expressed at COG in the body reference frame
+    /// Internally, the frame convention used is NWU but it is still possible to get or set parameters in any frame
+    /// convention
     class FrInertiaTensor_ {
 
         using InertiaMatrix = mathutils::Matrix33<double>;
@@ -64,7 +70,7 @@ namespace frydom {
         // Dans inertia tensor, on stocke les coefficients de la matrice d'inertie exprimee au centre de gravite
         // dans le repere de reference dans lequel les coords du centre de gravite sont donnes
 
-        /// Default constructor
+        /// Default constructor with every inertia parameters set to null (COG position, mass, inertia matrix)
         FrInertiaTensor_();
 
         /// Constructor from standard inertia parameters. Inertia coefficients are expressed in coeffsFrame that can be
@@ -94,7 +100,11 @@ namespace frydom {
                               double& Ixy, double& Ixz, double& Iyz,
                               FRAME_CONVENTION fc) const;
 
+        /// Get the inertia matrix of a point mass
+        static InertiaMatrix GetPointMassInertiaMatrix(double mass, const Position& PG);
+
     private:
+
 
         friend std::ostream&operator<<(std::ostream& os, const FrInertiaTensor_& inertia);
         std::ostream& cout(std::ostream& os) const;
@@ -127,34 +137,34 @@ namespace frydom {
             Ixz = -Ixz;
         }
 
-        /// Get the inertia matrix of a point mass
-        inline chrono::ChMatrix33<double> GetPointMassInertia(double mass, const Position& cogPos) {
-            double a = cogPos[0];
-            double b = cogPos[1];
-            double c = cogPos[2];
-            double a2 = a*a;
-            double b2 = b*b;
-            double c2 = c*c;
-            double ab = a*b;
-            double ac = a*c;
-            double bc = b*c;
-            return chrono::ChMatrix33<double>(b2+c2, -ab,   -ac,
-                                              -ab  , a2+c2, -bc,
-                                              -ac  , -bc,   a2+b2) * mass;
-        }
+//        /// Get the inertia matrix of a point mass
+//        inline chrono::ChMatrix33<double> GetPointMassInertia(double mass, const Position& cogPos) {  // TODO : faire cette fonction plutot en Matrix33 !!
+//            double a = cogPos[0];
+//            double b = cogPos[1];
+//            double c = cogPos[2];
+//            double a2 = a*a;
+//            double b2 = b*b;
+//            double c2 = c*c;
+//            double ab = a*b;
+//            double ac = a*c;
+//            double bc = b*c;
+//            return chrono::ChMatrix33<double>(b2+c2, -ab,   -ac,
+//                                              -ab  , a2+c2, -bc,
+//                                              -ac  , -bc,   a2+b2) * mass;
+//        }
 
-        /// Split the inertial matrix into individual inertia coefficients
-        inline void ChInertia2Coeffs(const chrono::ChMatrix33<double>& inertiaMat,
-                                     double& Ixx, double& Iyy, double& Izz,
-                                     double& Ixy, double& Ixz, double& Iyz) {
-
-            Ixx = inertiaMat.Get33Element(0, 0);
-            Iyy = inertiaMat.Get33Element(1, 1);
-            Izz = inertiaMat.Get33Element(2, 2);
-            Ixy = inertiaMat.Get33Element(0, 1);
-            Ixz = inertiaMat.Get33Element(0, 2);
-            Iyz = inertiaMat.Get33Element(1, 2);
-        }
+//        /// Split the inertial matrix into individual inertia coefficients
+//        inline void ChInertia2Coeffs(const chrono::ChMatrix33<double>& inertiaMat,
+//                                     double& Ixx, double& Iyy, double& Izz,
+//                                     double& Ixy, double& Ixz, double& Iyz) {
+//
+//            Ixx = inertiaMat.Get33Element(0, 0);
+//            Iyy = inertiaMat.Get33Element(1, 1);
+//            Izz = inertiaMat.Get33Element(2, 2);
+//            Ixy = inertiaMat.Get33Element(0, 1);
+//            Ixz = inertiaMat.Get33Element(0, 2);
+//            Iyz = inertiaMat.Get33Element(1, 2);
+//        }
 
 
     }  // end namespace internal

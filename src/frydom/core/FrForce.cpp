@@ -126,59 +126,61 @@ namespace frydom{
 
     /// REFACTORING -------------6>>>>>>>>>>>>>>>>>
 
-    _FrForceBase::_FrForceBase(FrForce_* force) : m_frydomForce(force) {}
+    namespace internal {
 
-    void _FrForceBase::UpdateState() {
+        _FrForceBase::_FrForceBase(FrForce_ *force) : m_frydomForce(force) {}
 
-        // Calling the FRyDoM interface for Update
-        m_frydomForce->Update(ChTime);
+        void _FrForceBase::UpdateState() {
 
-        // Limitation of the force and torque
-        if (m_frydomForce->GetLimit()) {
+            // Calling the FRyDoM interface for Update
+            m_frydomForce->Update(ChTime);
 
-            double limit = m_frydomForce->GetMaxForceLimit();
-            double magn = force.Length();
-            if (magn > limit) {
-                force *= limit / magn;
-            }
+            // Limitation of the force and torque
+            if (m_frydomForce->GetLimit()) {
 
-            limit = m_frydomForce->GetMaxTorqueLimit();
-            magn = m_torque.Length();
-            if (magn > limit) {
-                m_torque *= limit / magn;
+                double limit = m_frydomForce->GetMaxForceLimit();
+                double magn = force.Length();
+                if (magn > limit) {
+                    force *= limit / magn;
+                }
+
+                limit = m_frydomForce->GetMaxTorqueLimit();
+                magn = m_torque.Length();
+                if (magn > limit) {
+                    m_torque *= limit / magn;
+                }
             }
         }
-    }
 
-    void _FrForceBase::GetBodyForceTorque(chrono::ChVector<double>& body_force,
-                                          chrono::ChVector<double>& body_torque) const {
-        body_force  = force;    // In absolute coordinates
-        body_torque = m_torque; // In body coordinates expressed at COG
-    }
+        void _FrForceBase::GetBodyForceTorque(chrono::ChVector<double> &body_force,
+                                              chrono::ChVector<double> &body_torque) const {
+            body_force = force;    // In absolute coordinates
+            body_torque = m_torque; // In body coordinates expressed at COG
+        }
 
-    void _FrForceBase::GetAbsForceNWU(Force &body_force) const {
-        body_force = internal::ChVectorToVector3d<Force>(force);
-    }
+        void _FrForceBase::GetAbsForceNWU(Force &body_force) const {
+            body_force = internal::ChVectorToVector3d<Force>(force);
+        }
 
-    void _FrForceBase::GetLocalTorqueNWU(Moment &body_torque) const {
-        body_torque = internal::ChVectorToVector3d<Moment>(m_torque);
-    }
+        void _FrForceBase::GetLocalTorqueNWU(Moment &body_torque) const {
+            body_torque = internal::ChVectorToVector3d<Moment>(m_torque);
+        }
 
-    void _FrForceBase::SetAbsForceNWU(const Force &body_force) {
-        force = internal::Vector3dToChVector(body_force);
-    }
+        void _FrForceBase::SetAbsForceNWU(const Force &body_force) {
+            force = internal::Vector3dToChVector(body_force);
+        }
 
-    void _FrForceBase::SetLocalTorqueNWU(const Moment &body_torque) {
-        m_torque = internal::Vector3dToChVector(body_torque);
-    }
+        void _FrForceBase::SetLocalTorqueNWU(const Moment &body_torque) {
+            m_torque = internal::Vector3dToChVector(body_torque);
+        }
 
-
+    }  // end namespace internal
 
 
     // FrForce_ methods implementations
 
     FrForce_::FrForce_() {
-        m_chronoForce = std::make_shared<_FrForceBase>(this);
+        m_chronoForce = std::make_shared<internal::_FrForceBase>(this);
     }
 
     std::shared_ptr<chrono::ChForce> FrForce_::GetChronoForce() {

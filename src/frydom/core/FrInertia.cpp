@@ -6,6 +6,8 @@
 
 #include "FrVector.h"
 
+#include "FrMatrix.h"
+
 #include "chrono/core/ChMatrix.h"
 
 #include "chrono/core/ChMatrixDynamic.h"
@@ -29,15 +31,21 @@ namespace frydom {
             cogPosTmp = internal::SwapFrameConvention<Position>(cogPosTmp);
         }
 
-        FrRotation_ rot_rp = coeffsFrame.GetRotation();
+        auto rot_rp = coeffsFrame.GetRotation().GetRotationMatrix();
 
-        m_inertiaAtCOG << Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Ixy, Izz;
+        m_inertiaAtCOG << Ixx, Ixy, Ixz,
+                          Ixy, Iyy, Iyz,
+                          Ixz, Iyz, Izz;
 
-        m_inertiaAtCOG = rot_rp * m_inertiaAtCOG * rot_rp.Inverse();
+        m_inertiaAtCOG = rot_rp * m_inertiaAtCOG * rot_rp.transpose();
 
         Position PG = cogPosTmp - coeffsFrame.GetPosition(NWU);
 
-        m_inertiaAtCOG -= PG;
+
+        m_inertiaAtCOG -= GetPointMassInertiaMatrix(mass, PG); // Avoir un GetPointMassInertia
+
+
+
         m_cogPosition = cogPosTmp;
         m_mass = mass;
 
@@ -90,17 +98,37 @@ namespace frydom {
     void
     FrInertiaTensor_::GetInertiaCoeffs(double &Ixx, double &Iyy, double &Izz, double &Ixy, double &Ixz, double &Iyz,
                                        FRAME_CONVENTION fc) const {
-        internal::ChInertia2Coeffs(m_inertiaAtCOG, Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+        SplitMatrix33IntoCoeffs(m_inertiaAtCOG, Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
+
         if (IsNED(fc)) internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+    }
+
+    FrInertiaTensor_::InertiaMatrix FrInertiaTensor_::GetPointMassInertiaMatrix(double mass,
+                                                                                const frydom::Position &cogPos) {
+        double a = cogPos[0];
+        double b = cogPos[1];
+        double c = cogPos[2];
+        double a2 = a*a;
+        double b2 = b*b;
+        double c2 = c*c;
+        double ab = a*b;
+        double ac = a*c;
+        double bc = b*c;
+        InertiaMatrix inertiaMatrix;
+        inertiaMatrix << b2+c2, -ab,   -ac,
+                         -ab  , a2+c2, -bc,
+                         -ac  , -bc,   a2+b2;
+        inertiaMatrix *= mass;
+        return inertiaMatrix;
     }
 
     std::ostream& FrInertiaTensor_::cout(std::ostream &os) const {  // OK
 
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-        internal::ChInertia2Coeffs(m_inertiaAtCOG, Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+        SplitMatrix33IntoCoeffs(m_inertiaAtCOG, Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
 
         os << std::endl;
-        os << "Inertia : \n";
+        os << "Inertia (NWU): \n";
         os << "Mass (kg) : " << GetMass() << std::endl;
         os << "COG (m)   : " << m_cogPosition.GetX() << "\t" << m_cogPosition.GetY() << "\t" << m_cogPosition.GetZ() << std::endl;
         os << "Ixy : " << Ixy << ";\tIxz : " << Ixz << ";\tIyz : " << Iyz << std::endl;

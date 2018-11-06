@@ -272,20 +272,23 @@ namespace frydom {
     class FrBody_;
 
 
-    /// Base class inheriting from chrono ChBodyAuxRef
-    /// This class must be used by external FRyDoM users. It is used in composition rule along with the FrBody_ FRyDoM class
-    struct _FrBodyBase : public chrono::ChBodyAuxRef {  // TODO : encapsuler dans le namespace internal
+    namespace internal {
 
-        FrBody_* m_frydomBody;
+        /// Base class inheriting from chrono ChBodyAuxRef
+        /// This class must be used by external FRyDoM users. It is used in composition rule along with the FrBody_ FRyDoM class
+        struct _FrBodyBase : public chrono::ChBodyAuxRef {  // TODO : encapsuler dans le namespace internal
 
-        explicit _FrBodyBase(FrBody_* body);
+            FrBody_ *m_frydomBody;
 
-        void SetupInitial() override;
+            explicit _FrBodyBase(FrBody_ *body);
 
-        void Update(bool update_assets) override;
+            void SetupInitial() override;
 
-    };
+            void Update(bool update_assets) override;
 
+        };
+
+    }  // end namespace internal
 
 
     // Forward declarations
@@ -300,7 +303,7 @@ namespace frydom {
 
     protected:
 
-        std::shared_ptr<_FrBodyBase> m_chronoBody;  ///< Embedded Chrono body Object
+        std::shared_ptr<internal::_FrBodyBase> m_chronoBody;  ///< Embedded Chrono body Object
 
         FrOffshoreSystem_* m_system;                ///< Pointer to the FrOffshoreSystem where the body has been registered
 
@@ -344,6 +347,7 @@ namespace frydom {
         void SetCOGLocalPosition(const Position& position, bool transportInertia, FRAME_CONVENTION fc);
 
         /// Get the inertia parameters as a FrInertiaTensor_ object
+        // TODO : gerer la frame convention !
         FrInertiaTensor_ GetInertiaParams() const; // TODO : voir pour une methode renvoyant une reference non const
 
         /// Set the inertia parameters as a FrInertiaTensor_ object
@@ -445,49 +449,39 @@ namespace frydom {
         /// Remove all forces from the body
         void RemoveAllForces();
 
+
         // =============================================================================================================
         // NODES
         // =============================================================================================================
 
-        /// Get a new node attached to
+        /// Get a new node attached to the body given a frame defined with respect to the body reference frame
         std::shared_ptr<FrNode_> NewNode(const FrFrame_& localFrame);
 
+        /// Get a new node attached to the body given a position of the node expressed into the body reference frame
         std::shared_ptr<FrNode_> NewNode(const Position& localPosition);
 
+        /// Get a new node attached to the body given a position of the node expressed into the body reference frame
         std::shared_ptr<FrNode_> NewNode(double x, double y, double z);
 
 
-
-        // Methodes pour transformer TODO : voir si on les met pas plutot dans FrFrame_...
-//        template <class Vector>
-//        Vector ProjectLocalOnAbs(const Vector& vector); // FIXME : ajouter la FRAME_CONVENTION
-
-
-//        Force ProjectOnAbs(const Force& force) {
-//        return internal::ChVectorToVector3d<Force>(
-//                m_chronoBody->TransformDirectionLocalToParent(
-//                internal::Vector3dToChVector(force)));
-//        }
-
-
-//        template <class Vector>
-//        Vector ProjectLocalOnAbs(const Vector& vector) { // FIXME : redondant...
-//        return internal::ChVectorToVector3d<Vector>(
-//                m_chronoBody->TransformDirectionLocalToParent(
-//                internal::Vector3dToChVector(vector)));
-//        }
+        // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame_ !
 
         // =============================================================================================================
         // COG POSITION
         // =============================================================================================================
 
+        /// Set the absolute position of the body COG
         void SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
 
+        /// Set the absolute position of the body COG
         void SetCOGAbsPosition(Position position, FRAME_CONVENTION fc);
 
+        /// Get the absolute position of the body COG
         void GetCOGAbsPosition(double& x, double& y, double& z, FRAME_CONVENTION fc) const;
 
+        /// Get the absolute position of the body COG
         Position GetCOGAbsPosition(FRAME_CONVENTION fc) const;
+
 
         // =============================================================================================================
         // BODY POSITION (reference frame)
@@ -508,6 +502,7 @@ namespace frydom {
         /// get the absolute position of the body reference frame origin
         void GetAbsPosition(double &x, double &y, double &z, FRAME_CONVENTION fc) const;
 
+
         // =============================================================================================================
         // POSITION OF ANY POINT
         // =============================================================================================================
@@ -523,6 +518,7 @@ namespace frydom {
 
         /// Get the position of an absolute point with respect to the body reference frame
         Position GetLocalPositionOfAbsPoint(const Position& absPos, FRAME_CONVENTION fc) const;
+
 
         // =============================================================================================================
         // About rotations

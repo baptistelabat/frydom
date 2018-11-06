@@ -4,6 +4,8 @@
 
 #include "FrRotation.h"
 
+#include "FrMatrix.h"
+
 #include "FrEulerAngles.h"
 
 #include "FrGeographic.h"
@@ -123,6 +125,34 @@ namespace frydom {
         return FrQuaternion_(*this).Inverse();  // TODO verifier
     }
 
+    mathutils::Matrix33<double> FrQuaternion_::GetRotationMatrix() const {
+        chrono::ChMatrix33<double> chronoMatrix;
+        chronoMatrix.Set_A_quaternion(m_chronoQuaternion);
+        return internal::ChMatrix33ToMatrix33(chronoMatrix);
+    }
+
+    mathutils::Matrix33<double> FrQuaternion_::GetInverseRotationMatrix() const {
+        chrono::ChMatrix33<double> chronoMatrix;
+        chronoMatrix.Set_A_quaternion(m_chronoQuaternion.GetInverse());
+        return internal::ChMatrix33ToMatrix33(chronoMatrix);
+    }
+
+    mathutils::Matrix33<double> FrQuaternion_::LeftMultiply(const mathutils::Matrix33<double>& matrix) const {
+        return GetRotationMatrix() * matrix;
+    }
+
+    mathutils::Matrix33<double> FrQuaternion_::RightMultiply(const mathutils::Matrix33<double>& matrix) const {
+        return matrix * GetRotationMatrix();
+    }
+
+    mathutils::Matrix33<double> FrQuaternion_::LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
+        return GetInverseRotationMatrix() * matrix;
+    }
+
+    mathutils::Matrix33<double> FrQuaternion_::RightMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
+        return matrix * GetInverseRotationMatrix();
+    }
+
 
     // FrRotation_
 
@@ -165,6 +195,14 @@ namespace frydom {
     void FrRotation_::GetAngle(double &angle) {  // OK
         Direction axis;
         GetAxisAngle(axis, angle, NWU);
+    }
+
+    mathutils::Matrix33<double> FrRotation_::GetRotationMatrix() const {
+        return m_frQuaternion.GetRotationMatrix();
+    }
+
+    mathutils::Matrix33<double> FrRotation_::GetInverseRotationMatrix() const{
+        return m_frQuaternion.GetInverseRotationMatrix();
     }
 
     void FrRotation_::SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) {  // OK
@@ -222,7 +260,7 @@ namespace frydom {
     }
 
     void FrRotation_::GetFixedAxisAngles_RADIANS(double &rx, double &ry, double &rz, FRAME_CONVENTION fc) const {
-        // TODO
+        // TODO : utiliser
     }
 
     void FrRotation_::GetFixedAxisAngles_DEGREES(double &rx, double &ry, double &rz, FRAME_CONVENTION fc) const {
@@ -237,9 +275,26 @@ namespace frydom {
         return FrRotation_(m_frQuaternion * other.m_frQuaternion);
     }
 
-    FrRotation_ &FrRotation_::operator*=(const FrRotation_ &other) {  // OK
+    FrRotation_ & FrRotation_::operator*=(const FrRotation_ &other) {  // OK
         m_frQuaternion *= other.m_frQuaternion;
     }
+
+    mathutils::Matrix33<double> FrRotation_::LeftMultiply(const mathutils::Matrix33<double>& matrix) const {
+        return GetRotationMatrix() * matrix;
+    }
+
+    mathutils::Matrix33<double> FrRotation_::LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
+        return GetInverseRotationMatrix() * matrix;
+    }
+
+    mathutils::Matrix33<double> FrRotation_::RighttMultiply(const mathutils::Matrix33<double>& matrix) const {
+        return matrix * GetRotationMatrix();
+    }
+
+    mathutils::Matrix33<double> FrRotation_::RighttMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
+        return matrix * GetInverseRotationMatrix();
+    }
+
 
 //    Position FrRotation_::Rotate(const Position &vector, FRAME_CONVENTION fc) {  // OK
 //        auto out = m_frQuaternion.Rotate(vector, fc);

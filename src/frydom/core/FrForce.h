@@ -136,31 +136,35 @@ namespace frydom {
 
 
     class FrForce_;
-    struct _FrForceBase : public chrono::ChForce {
 
-        FrForce_* m_frydomForce;
-        chrono::ChVector<double> m_torque; // Expressed in body coordinates at COG
+    namespace internal {
 
+        struct _FrForceBase : public chrono::ChForce {
 
-        explicit _FrForceBase(FrForce_* force);
-
-        void UpdateState() override;
-
-        void GetBodyForceTorque(chrono::ChVector<double>& body_force, chrono::ChVector<double>& body_torque) const override;
-
-        void GetAbsForceNWU(Force &body_force) const;
-
-        void GetLocalTorqueNWU(Moment &body_torque) const;
-
-        void SetAbsForceNWU(const Force &body_force);
-
-        void SetLocalTorqueNWU(const Moment &body_torque);
+            FrForce_ *m_frydomForce;
+            chrono::ChVector<double> m_torque; // Expressed in body coordinates at COG
 
 
-        friend class FrForce_;
+            explicit _FrForceBase(FrForce_ *force);
 
-    };
+            void UpdateState() override;
 
+            void GetBodyForceTorque(chrono::ChVector<double> &body_force,
+                                    chrono::ChVector<double> &body_torque) const override;
+
+            void GetAbsForceNWU(Force &body_force) const;
+
+            void GetLocalTorqueNWU(Moment &body_torque) const;
+
+            void SetAbsForceNWU(const Force &body_force);
+
+            void SetLocalTorqueNWU(const Moment &body_torque);
+
+            friend class FrForce_;
+
+        };
+
+    }  // end namespace internal
 
     // Forward declaration;
     class FrOffshoreSystem_;
@@ -174,7 +178,7 @@ namespace frydom {
 
         FrBody_* m_body;
 
-        std::shared_ptr<_FrForceBase> m_chronoForce;
+        std::shared_ptr<internal::_FrForceBase> m_chronoForce;
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;
@@ -240,8 +244,6 @@ namespace frydom {
         double GetTorqueNormAtCOG() const;
 
 
-
-
     protected:
 
         std::shared_ptr<chrono::ChForce> GetChronoForce();
@@ -298,16 +300,6 @@ namespace frydom {
         void SetLocalForceTorqueAtAbsPoint(const Force& force, const Moment& torque, const Position& absPos, FRAME_CONVENTION fc);
 
     };
-
-
-
-
-
-
-
-
-
-
 
 }  // end namespace frydom
 

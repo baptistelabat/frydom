@@ -6,6 +6,7 @@
 #include "FrBody.h"
 #include "FrNode.h"
 #include "FrRotation.h"
+#include "FrMatrix.h"
 
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include "FrFrame.h"
@@ -106,20 +107,23 @@ namespace frydom {
     #define DEFAULT_MAX_SPEED (float)10.
     #define DEFAULT_MAX_ROTATION_SPEED (float)(180.*DEG2RAD)
 
+    namespace internal {
 
-    _FrBodyBase::_FrBodyBase(FrBody_* body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
+        _FrBodyBase::_FrBodyBase(FrBody_ *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
 
-    void _FrBodyBase::SetupInitial() {
-        m_frydomBody->Initialize();
-    }
+        void _FrBodyBase::SetupInitial() {
+            m_frydomBody->Initialize();
+        }
 
-    void _FrBodyBase::Update(bool update_assets) {
-        chrono::ChBodyAuxRef::Update(update_assets);
-        m_frydomBody->Update();
-    }
+        void _FrBodyBase::Update(bool update_assets) {
+            chrono::ChBodyAuxRef::Update(update_assets);
+            m_frydomBody->Update();
+        }
+
+    }  // end namespace internal
 
     FrBody_::FrBody_() {
-        m_chronoBody = std::make_shared<_FrBodyBase>(this);
+        m_chronoBody = std::make_shared<internal::_FrBodyBase>(this);
         m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
     }
@@ -295,11 +299,12 @@ namespace frydom {
 
     FrInertiaTensor_ FrBody_::GetInertiaParams() const {
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-        internal::ChInertia2Coeffs(m_chronoBody->GetInertia(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+        SplitMatrix33IntoCoeffs(internal::ChMatrix33ToMatrix33(m_chronoBody->GetInertia()),
+                Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
 
         auto cogPos = GetCOGLocalPosition(NWU);
 
-        return FrInertiaTensor_(GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame_(cogPos, FrRotation_(), NWU), NWU);
+        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame_(cogPos, FrRotation_(), NWU), NWU};
     }
 
     void FrBody_::SetInertiaParams(const FrInertiaTensor_& inertia) {

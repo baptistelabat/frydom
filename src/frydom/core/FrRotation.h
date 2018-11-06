@@ -95,6 +95,18 @@ namespace frydom {
 
         FrQuaternion_ GetInverse() const;
 
+        mathutils::Matrix33<double> GetRotationMatrix() const;
+
+        mathutils::Matrix33<double> GetInverseRotationMatrix() const;
+
+        mathutils::Matrix33<double> LeftMultiply(const mathutils::Matrix33<double>& matrix) const;
+
+        mathutils::Matrix33<double> RightMultiply(const mathutils::Matrix33<double>& matrix) const;
+
+        mathutils::Matrix33<double> LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const;
+
+        mathutils::Matrix33<double> RightMultiplyInverse(const mathutils::Matrix33<double>& matrix) const;
+
     };
 
 
@@ -145,6 +157,12 @@ namespace frydom {
 
         /// Get the angle in rotation in space (in radians)
         void GetAngle(double& angle);
+
+        /// Get the rotation matrix representation
+        mathutils::Matrix33<double> GetRotationMatrix() const;
+
+        /// Get the inverse rotation matrix representation
+        mathutils::Matrix33<double> GetInverseRotationMatrix() const;
 
 
         // Euler angles representation
@@ -206,8 +224,9 @@ namespace frydom {
         /// Apply a rotation around the Z axis to the current rotation (angle in degrees)
         FrRotation_& RotZ_DEGREES(double angle, FRAME_CONVENTION fc);
 
-
+        // =============================================================================================================
         // Operators
+        // =============================================================================================================
 
         /// Assign the other rotation to the current rotation
         FrRotation_& operator=(const FrRotation_& other);
@@ -217,6 +236,21 @@ namespace frydom {
 
         /// Compopse the current rotation with the other inplace. In a matrix form it would be this = this*other.
         FrRotation_&operator*=(const FrRotation_& other);
+
+        /// Multiply a matrix by this rotation on the left
+        mathutils::Matrix33<double> LeftMultiply(const mathutils::Matrix33<double>& matrix) const;
+
+        /// Multiply a matrix by the inverse of this rotation on the left
+        mathutils::Matrix33<double> LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const;
+
+        /// Multiply a matrix by this rotation on the right
+        mathutils::Matrix33<double> RighttMultiply(const mathutils::Matrix33<double>& matrix) const;
+
+        /// Multiply a matrix by the inverse of this rotation on the right
+        mathutils::Matrix33<double> RighttMultiplyInverse(const mathutils::Matrix33<double>& matrix) const;
+
+
+
 
         /// Rotate a vector by the current rotation. Templatized method by the type of vector (Position, Velocity... cf FrVector.h)
         template <class Vector>
