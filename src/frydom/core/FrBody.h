@@ -330,6 +330,9 @@ namespace frydom {
         void SetBodyFixed(bool state);
 
 
+        ////// NOUVEAU
+
+
         // =============================================================================================================
         // PRINCIPAL INERTIAL PARAMETERS
         // =============================================================================================================
@@ -337,7 +340,62 @@ namespace frydom {
         /// Get the body mass in kg
         double GetMass() const;
 
-        /// Get the COG position in body reference coordinate system
+        /// Set the body mass in kg
+        void SetMass(double mass);
+
+        /// Set the COG position in the body reference frame
+        void SetCOG();
+
+        Position GetCOG();
+
+
+        // =============================================================================================================
+        // POSITIONS
+        // =============================================================================================================
+
+        // Position of the body reference frame in world -->
+
+        /// Get the position in world frame of the origin of the body reference frame
+        Position GetPosition() const;
+
+        /// Set the position in world frame of the origin of the body reference frame
+        void SetPosition(const Position& worldPos);
+
+
+
+
+        /// Get the position in world frame of a point whose position is given wrt body reference frame
+        Position GetPointPositionInWorld(const Position& bodyPos) const;
+
+        /// Get the position in body reference frame of a point whose position is given wrt world frame
+        Position GetPointPositionInBody(const Position& worldPos) const;
+
+
+
+
+
+        /// Set the position in world of a point whose position is defined wrt body reference frame
+        void SetPointPosition(const Position& bodyPoint, const Position& worldPos);
+
+        /// Set the COG position in the world frame
+        void SetCOGPosition(const Position& worldPos);
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ///// FIN NOUVEAU
+
+
+
         Position GetCOGLocalPosition(FRAME_CONVENTION fc) const;
 
         /// Set the COG position in body reference coordinate system
@@ -470,17 +528,17 @@ namespace frydom {
         // COG POSITION
         // =============================================================================================================
 
-        /// Set the absolute position of the body COG
-        void SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
-
-        /// Set the absolute position of the body COG
-        void SetCOGAbsPosition(Position position, FRAME_CONVENTION fc);
-
-        /// Get the absolute position of the body COG
-        void GetCOGAbsPosition(double& x, double& y, double& z, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute position of the body COG
-        Position GetCOGAbsPosition(FRAME_CONVENTION fc) const;
+//        /// Set the absolute position of the body COG
+//        void SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
+//
+//        /// Set the absolute position of the body COG
+//        void SetCOGAbsPosition(Position position, FRAME_CONVENTION fc);
+//
+//        /// Get the absolute position of the body COG
+//        void GetCOGAbsPosition(double& x, double& y, double& z, FRAME_CONVENTION fc) const;
+//
+//        /// Get the absolute position of the body COG
+//        Position GetCOGAbsPosition(FRAME_CONVENTION fc) const;
 
 
         // =============================================================================================================
