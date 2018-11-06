@@ -110,6 +110,10 @@ namespace frydom {
         return *this;
     }
 
+    bool FrQuaternion_::operator==(const frydom::FrQuaternion_ &other) const {
+        return m_chronoQuaternion == other.m_chronoQuaternion;
+    }
+
     const chrono::ChQuaternion<double>& FrQuaternion_::GetChronoQuaternion() const {  // TODO : supprimer le besoin de cette methode
         return m_chronoQuaternion;
     }
@@ -239,6 +243,10 @@ namespace frydom {
 
     FrRotation_ &FrRotation_::operator*=(const FrRotation_ &other) {  // OK
         m_frQuaternion *= other.m_frQuaternion;
+    }
+
+    bool FrRotation_::operator==(const FrRotation_& other) const {
+        return m_frQuaternion == other.m_frQuaternion;
     }
 
 //    Position FrRotation_::Rotate(const Position &vector, FRAME_CONVENTION fc) {  // OK

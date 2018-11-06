@@ -75,6 +75,8 @@ namespace frydom {
 
         FrQuaternion_& operator*=(const FrQuaternion_& other);
 
+        bool operator==(const FrQuaternion_& other) const;
+
         // TODO : voir pour rendre generique par rapport aux differents vecteurs...
         template <class Vector>
         Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) {
@@ -186,6 +188,8 @@ namespace frydom {
         FrRotation_ operator*(const FrRotation_& other) const;
 
         FrRotation_&operator*=(const FrRotation_& other);
+
+        bool operator==(const FrRotation_& other) const;
 
         template <class Vector>
         Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) {
