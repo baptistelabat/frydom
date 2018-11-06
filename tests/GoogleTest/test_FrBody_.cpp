@@ -16,11 +16,10 @@ public:
         SetAbsPosition(OrigAbsPos,NWU);
 
         // Test of the getter for the absolute position (expressed in the world reference frame)
-//        auto absPosNWU = GetAbsPosition(NWU);
-//        EXPECT_EQ( (OrigAbsPos-absPosNWU).norm(), 0. );
         Position testPosition = OrigAbsPos-GetAbsPosition(NWU);
         EXPECT_TRUE(testPosition.isZero());
-//        EXPECT_EQ( ().norm(), 0. );
+
+        //-----------------COG-----------------//
 
         // Set the COG position, expressed in local body reference frame
         Position OrigLocalCOGPos(2.,3.,4.);
@@ -29,48 +28,42 @@ public:
         // Test the Getters for the COG position, expressed in world reference frame
         testPosition = GetCOGAbsPosition(NWU)-(OrigLocalCOGPos + OrigAbsPos);
         EXPECT_TRUE(testPosition.isZero());
-//        EXPECT_EQ( (GetCOGAbsPosition(NWU)-(OrigLocalCOGPos + OrigAbsPos)).norm(), 0. );
+
         // Test the Getters for the COG position, expressed in local body reference frame
         testPosition = GetCOGLocalPosition(NWU)-OrigLocalCOGPos;
         EXPECT_TRUE(testPosition.isZero());
-//        EXPECT_EQ( (GetCOGLocalPosition(NWU)-OrigLocalCOGPos).norm(), 0. );
 
-
-//        // Set the COG position, expressed in world reference frame
-//        Position OrigAbsCOGPos(2.,3.,4.);
-//        SetCOGAbsPosition(OrigAbsCOGPos, NWU);
-//
-//        // Test the Getters for the COG position, expressed in world reference frame
-//        EXPECT_EQ( (GetCOGAbsPosition(NWU)-OrigAbsCOGPos).norm(), 0. );
-//        // Test the Getters for the COG position, expressed in local body reference frame
-//        Position truc = OrigAbsCOGPos - OrigAbsPos;
-//        EXPECT_EQ( (GetCOGLocalPosition(NWU)-truc).norm(), 0. );
-//        EXPECT_EQ(GetCOGLocalPosition(NWU).GetX(),truc.GetX());
-//        EXPECT_EQ(GetCOGLocalPosition(NWU).GetY(),truc.GetY());
-//        EXPECT_EQ(GetCOGLocalPosition(NWU).GetZ(),truc.GetZ());
-
-
+        //-----------------Fixed Point-----------------//
         // Test for the getter for the local position of a point expressed in the world reference frame
         Position OrigAbsPosLocalPoint(4.,5,.6);
-//        auto relPosNWU = GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU);
-//        EXPECT_EQ( (relPosNWU-(OrigAbsPosLocalPoint - OrigAbsPos)).norm(), 0. );
         testPosition = GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)-(OrigAbsPosLocalPoint - OrigAbsPos);
         EXPECT_TRUE(testPosition.isZero());
 
 
+        //-----------------Orientation-----------------//
         // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
         FrRotation_ OrigAbsRot; OrigAbsRot.SetCardanAngles_DEGREES(1.,2.,3.,NWU);
         SetAbsRotation(OrigAbsRot);
+        SetCardanAngles_DEGREES(1.,2.,3.,NWU);
 
         // Test of the getter for the absolute orientation (expressed in the world reference frame)
-        auto absRotNWU = GetAbsRotation();
-//        EXPECT_EQ( (absRotNWU-OrigAbsRot).norm(), 0. );
+        EXPECT_TRUE(OrigAbsRot==GetAbsRotation());
+
+        // Test of the setter using cardan angles
+        SetCardanAngles_DEGREES(1.,2.,3.,NWU);
+        EXPECT_TRUE(OrigAbsRot==GetAbsRotation());
+
+        // Rotation to an easy transformation
+        SetCardanAngles_DEGREES(90.,0.,0.,NWU);
 
         // Test that the orientation of the body changed the previous getter result
-//        relPosNWU = GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU);
-//        EXPECT_NE( (relPosNWU-(OrigAbsPosLocalPoint - OrigAbsPos)).norm(), 0. );
-        testPosition = GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)-(OrigAbsPosLocalPoint - OrigAbsPos);
-        EXPECT_FALSE(testPosition.isZero());
+        Position OrigPosTest = (OrigAbsPosLocalPoint - OrigAbsPos);
+        auto OrigPosTestX = OrigPosTest.GetX();
+        auto OrigPosTestY = OrigPosTest.GetY();
+        auto OrigPosTestZ = OrigPosTest.GetZ();
+        Position NewOrigPos (OrigPosTestX, -OrigPosTestZ, OrigPosTestY);
+        testPosition = GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)-NewOrigPos;
+        EXPECT_TRUE(testPosition.isZero());
 
         
     };
