@@ -105,6 +105,8 @@ namespace frydom {
 
     FrInertiaTensor_::InertiaMatrix FrInertiaTensor_::GetPointMassInertiaMatrix(double mass,
                                                                                 const frydom::Position &cogPos) {
+
+        // TODO : voir a implementer la version alternative avec le outer product ?? -> annexe technique Innosea
         double a = cogPos[0];
         double b = cogPos[1];
         double c = cogPos[2];

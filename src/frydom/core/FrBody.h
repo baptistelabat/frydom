@@ -504,7 +504,7 @@ namespace frydom {
 
 
         // =============================================================================================================
-        // POSITION OF ANY POINT
+        // POSITION OF ANY BODY FIXED POINT
         // =============================================================================================================
 
         /// Get the absolute position of a point defined with respect to the body local reference frame
@@ -886,8 +886,9 @@ namespace frydom {
 
         // TODO : voir si on peut avoir des methodes de calcul d'acceleration a des points differents du COG...
 
-
+        // =============================================================================================================
         // Rotational accelerations
+        // =============================================================================================================
 
         /// Set the absolute angular acceleration of the body (expressed in absolute frame)
         void SetAbsRotationalAcceleration(double wxp, double wyp, double wzp, FRAME_CONVENTION fc);
@@ -904,8 +905,9 @@ namespace frydom {
         /// Get the absolute angular acceleration of the body (expressed in absolute frame)
         void GetAbsRotationalAcceleration(double& wxp, double& wyp, double& wzp, FRAME_CONVENTION fc) const;
 
-
+        // =============================================================================================================
         // Asset
+        // =============================================================================================================
 
         /// Add a mesh as an asset for visualization given a WaveFront .obj file name
         void AddMeshAsset(std::string obj_filename);
