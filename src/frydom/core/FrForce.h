@@ -154,11 +154,11 @@ namespace frydom {
 
             void GetAbsForceNWU(Force &body_force) const;
 
-            void GetLocalTorqueNWU(Moment &body_torque) const;
+            void GetLocalTorqueNWU(Torque &body_torque) const;
 
             void SetAbsForceNWU(const Force &body_force);
 
-            void SetLocalTorqueNWU(const Moment &body_torque);
+            void SetLocalTorqueNWU(const Torque &body_torque);
 
             friend class FrForce_;
 
@@ -227,15 +227,15 @@ namespace frydom {
 
         void GetLocalForce(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
 
-        void GetAbsTorqueAtCOG(Moment &torque, FRAME_CONVENTION fc) const;
+        void GetAbsTorqueAtCOG(Torque &torque, FRAME_CONVENTION fc) const;
 
-        Moment GetAbsTorqueAtCOG(FRAME_CONVENTION fc) const;
+        Torque GetAbsTorqueAtCOG(FRAME_CONVENTION fc) const;
 
         void GetAbsTorqueAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const;
 
-        void GetLocalTorqueAtCOG(Moment &torque, FRAME_CONVENTION fc) const;
+        void GetLocalTorqueAtCOG(Torque &torque, FRAME_CONVENTION fc) const;
 
-        Moment GetLocalTorqueAtCOG(FRAME_CONVENTION fc) const;
+        Torque GetLocalTorqueAtCOG(FRAME_CONVENTION fc) const;
 
         void GetLocalTorqueAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const;
 
@@ -276,28 +276,28 @@ namespace frydom {
         void SetLocalForceOnAbsPoint(const Force& force, const Position& absPos, FRAME_CONVENTION fc);
 
         /// Set the torque expressed in absolute coordinates and at COG.
-        void SetAbsTorqueAtCOG(const Moment& torque, FRAME_CONVENTION fc);
+        void SetAbsTorqueAtCOG(const Torque& torque, FRAME_CONVENTION fc);
 
         /// Set the torque expressed in relative coordinates and at COG.
-        void SetLocalTorqueAtCOG(const Moment& torque, FRAME_CONVENTION fc);
+        void SetLocalTorqueAtCOG(const Torque& torque, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in absolute coordinates and at COG.
-        void SetAbsForceTorqueAtCOG(const Force& force, const Moment& torque, FRAME_CONVENTION fc);
+        void SetAbsForceTorqueAtCOG(const Force& force, const Torque& torque, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in body coordinates and at COG
-        void SetLocalForceTorqueAtCOG(const Force& force, const Moment& torque, FRAME_CONVENTION fc);
+        void SetLocalForceTorqueAtCOG(const Force& force, const Torque& torque, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in absolute coordinates and reduced to a point expressed in body coordinates
-        void SetAbsForceTorqueAtLocalPoint(const Force& force, const Moment& torque, const Position& relPos, FRAME_CONVENTION fc);
+        void SetAbsForceTorqueAtLocalPoint(const Force& force, const Torque& torque, const Position& relPos, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in absolute coordinates and reduced to a point expressed in absolute coordinates
-        void SetAbsForceTorqueAtAbsPoint(const Force& force, const Moment& torque, const Position& absPos, FRAME_CONVENTION fc);
+        void SetAbsForceTorqueAtAbsPoint(const Force& force, const Torque& torque, const Position& absPos, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in body coordinates and reduced to a point expressed in body coordinates
-        void SetLocalForceTorqueAtLocalPoint(const Force& force, const Moment& torque, const Position& relPos, FRAME_CONVENTION fc);
+        void SetLocalForceTorqueAtLocalPoint(const Force& force, const Torque& torque, const Position& relPos, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in body coordinates and reduced to a point expressed in absolute coordinates
-        void SetLocalForceTorqueAtAbsPoint(const Force& force, const Moment& torque, const Position& absPos, FRAME_CONVENTION fc);
+        void SetLocalForceTorqueAtAbsPoint(const Force& force, const Torque& torque, const Position& absPos, FRAME_CONVENTION fc);
 
     };
 

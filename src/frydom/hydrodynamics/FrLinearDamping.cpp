@@ -117,7 +117,7 @@ namespace frydom {
             cogRelVel = m_body->GetCOGLocalVelocity(NWU);
         }
 
-        RotationalVelocity rotVel = m_body->GetLocalRotationalVelocity(NWU);
+        AngularVelocity rotVel = m_body->GetLocalRotationalVelocity(NWU);
 
         GeneralizedVelocity genRelVel(cogRelVel, rotVel);
 
