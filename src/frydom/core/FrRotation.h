@@ -97,6 +97,13 @@ namespace frydom {
 
         FrQuaternion_ GetInverse() const;
 
+        friend std::ostream& operator<<(std::ostream& os, const FrQuaternion_& quaternion);
+
+
+    private:
+
+        std::ostream& cout(std::ostream& os) const;
+
     };
 
 
