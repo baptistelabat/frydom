@@ -24,12 +24,12 @@ std::map<std::string, DIRECTION_CONVENTION>
 void CompareForceValue(Force force, Moment torque,
                        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> forceRef) {
 
-    EXPECT_DOUBLE_EQ(force.GetFx(), forceRef(0));
-    EXPECT_DOUBLE_EQ(force.GetFy(), forceRef(1));
-    EXPECT_DOUBLE_EQ(force.GetFz(), forceRef(2));
-    EXPECT_DOUBLE_EQ(torque.GetMx(), forceRef(3));
-    EXPECT_DOUBLE_EQ(torque.GetMy(), forceRef(4));
-    EXPECT_DOUBLE_EQ(torque.GetMz(), forceRef(5));
+    EXPECT_FLOAT_EQ(force.GetFx(), forceRef(0));
+    EXPECT_FLOAT_EQ(force.GetFy(), forceRef(1));
+    EXPECT_FLOAT_EQ(force.GetFz(), forceRef(2));
+    EXPECT_FLOAT_EQ(torque.GetMx(), forceRef(3));
+    EXPECT_FLOAT_EQ(torque.GetMy(), forceRef(4));
+    EXPECT_FLOAT_EQ(torque.GetMz(), forceRef(5));
 }
 
 TEST(FrCurrentForce_test, ALL) {
