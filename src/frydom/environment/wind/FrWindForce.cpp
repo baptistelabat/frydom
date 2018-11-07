@@ -90,4 +90,59 @@ namespace frydom {
 
 
 
+
+
+    /// >>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    FrWindForce_::FrWindForce_(const std::string& yamlFile) {
+        this->ReadTable(yamlFile);
+    }
+
+    void FrWindForce_::ReadTable(const std::string& yamlFile) {
+
+        std::vector<double> angle, Cx, Cy, Cm;
+        ANGLE_UNIT unit;
+
+        LoadWindTableFromYaml(yamlFile, angle, Cx, Cy, Cm, unit);
+
+        auto n = angle.size();
+
+        assert(Cx.size() == n);
+        assert(Cy.size() == n);
+        assert(Cm.size() == n);
+
+        if (unit == DEG) {
+            deg2rad(angle);
+        }
+
+        m_table.SetX(angle);
+        m_table.AddY("Cx", Cx);
+        m_table.AddY("Cy", Cy);
+        m_table.AddY("Cm", Cm);
+    }
+
+    void FrWindForce_::Update(double time) {
+
+        auto cogRelVel = m_body->GetLocalRelVelocityInStreamAtCOG(AIR, NWU);
+        auto velSquare = cogRelVel.squaredNorm();
+        auto alpha = m_body->GetApparentAngle(AIR, NWU, RAD);
+        alpha = Normalize_0_2PI(alpha);
+
+        auto cx = m_table.Eval("CX", alpha);
+        auto cy = m_table.Eval("CY", alpha);
+        auto cz = m_table.Eval("CZ", alpha);
+
+        auto fx = cx * velSquare;
+        auto fy = cy * velSquare;
+        auto mz = cz * velSquare;
+
+        SetLocalForceTorqueAtCOG(Force(fx, fy, 0.), Moment(0., 0., mz), NWU);
+
+    }
+
+
+
+
+
+
 }  // end namespace frydom

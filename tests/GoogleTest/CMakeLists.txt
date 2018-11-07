@@ -3,6 +3,7 @@
 set(GOOGLE_TESTS
         # include test source files here (without .cpp)
         test_FrCurrentForce_
+        test_FrWindForce_
         )
 
 #enable_testing()
