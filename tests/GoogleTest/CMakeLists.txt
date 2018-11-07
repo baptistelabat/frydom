@@ -2,6 +2,7 @@
 
 set(GOOGLE_TESTS
         # include test source files here (without .cpp)
+        test_internal
         test_FrBody_
         )
 

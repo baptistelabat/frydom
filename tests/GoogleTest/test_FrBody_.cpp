@@ -57,30 +57,15 @@ public:
         FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
         FrRotation_ Rotation3; Rotation3.SetCardanAngles_DEGREES(0.,0.,90.,NWU);
         FrRotation_ TotalRotation = Rotation3*Rotation2*Rotation1;
-//        std::cout<<TotalRotation.GetQuaternion();
-//        std::cout<<TotalRotation;
         SetAbsRotation(TotalRotation);
 
-//        SetCardanAngles_DEGREES(90.,0.,0.,NWU);
-
         // Test that the orientation of the body changed the previous getter result
-        Position OrigPosTest = (OrigAbsPosLocalPoint - OrigAbsPos);
-        // 90 sur x
-//        auto OrigPosTestX = OrigPosTest.GetX();
-//        auto OrigPosTestY = -OrigPosTest.GetZ();
-//        auto OrigPosTestZ = OrigPosTest.GetY();
-        // 90 sur x, puis 90 sur y
-//        auto OrigPosTestX = OrigPosTest.GetY();
-//        auto OrigPosTestY = -OrigPosTest.GetZ();
-//        auto OrigPosTestZ = -OrigPosTest.GetX();
-        // 90 sur x, puis 90 sur y, puis 90 sur z
-        auto OrigPosTestX = OrigPosTest.GetZ();
-        auto OrigPosTestY = OrigPosTest.GetY();
-        auto OrigPosTestZ = -OrigPosTest.GetX();
-        Position NewOrigPos (OrigPosTestX, OrigPosTestY, OrigPosTestZ);
+        Position Test_LocalPosLocalPoint = (OrigAbsPosLocalPoint - OrigAbsPos);
+        auto TempX = Test_LocalPosLocalPoint.GetZ();
+        auto TempY = Test_LocalPosLocalPoint.GetY();
+        auto OrigPosTestZ = -Test_LocalPosLocalPoint.GetX();
+        Position NewOrigPos (TempX, TempY, OrigPosTestZ);
         testPosition = GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)-NewOrigPos;
-        std::cout << "GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU) = " << GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)<<std::endl;
-        std::cout << "NewOrigPos = " << NewOrigPos<<std::endl;
         EXPECT_TRUE(testPosition.isZero());
         
     };
