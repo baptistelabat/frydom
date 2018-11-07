@@ -63,6 +63,7 @@ endforeach()
 
 add_subdirectory(unit_tests)
 add_subdirectory(TestNonRegression)
+add_subdirectory(GoogleTest)
 
 # Adding resource files
 configure_file(data/frydom_logo.png . COPYONLY)

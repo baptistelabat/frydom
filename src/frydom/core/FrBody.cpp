@@ -797,7 +797,7 @@ namespace frydom {
     }
 
     double FrBody_::GetApparentAngleAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const {
-        auto absVel = this->GetAbsRelVelocityInStreanAtAbsPoint(absPos, ft, fc);
+        auto absVel = -this->GetAbsRelVelocityInStreanAtAbsPoint(absPos, ft, fc);
         auto heading = this->GetHeading_RADIANS(fc);
         auto angle = atan2(absVel.y(), absVel.x());
 
@@ -808,11 +808,11 @@ namespace frydom {
     }
 
     double FrBody_::GetApparentAngleAtLocalPoint(const Position& relPos, FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const {
-        auto absVel = this->GetAbsRelVelocityInStreamAtLocalPoint(relPos, ft, fc);
+        auto absVel = -this->GetAbsRelVelocityInStreamAtLocalPoint(relPos, ft, fc);
         auto heading = this->GetHeading_RADIANS(fc);
         auto angle = atan2(absVel.y(), absVel.x());
 
-        auto angle_apparent = Normalize_0_2PI(angle - heading);
+        auto angle_apparent = Normalize__PI_PI(angle - heading);
         if (unit == DEG) { angle_apparent *= RAD2DEG; }
 
         return angle_apparent;
