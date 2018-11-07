@@ -54,24 +54,29 @@ public:
 
         // Rotation to an easy transformation
         FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
-        FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,0*90.,0.,NWU);
-        FrRotation_ Rotation3; Rotation3.SetCardanAngles_DEGREES(0.,0.,0*90.,NWU);
-        FrRotation_ TotalRotation = Rotation2*Rotation1; // *Rotation2*Rotation3;
-        double q0, q1, q2, q3; TotalRotation.GetQuaternion().Get(q0,q1,q2,q3,NWU);
-        std::cout<<"Quaternion : q0 = "<<q0<<", q1 = "<<q1<<", q2 = "<<q2<<", q3 = "<<q3<<std::endl;
-        std::cout<<TotalRotation<<std::endl;
+        FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
+        FrRotation_ Rotation3; Rotation3.SetCardanAngles_DEGREES(0.,0.,90.,NWU);
+        FrRotation_ TotalRotation = Rotation3*Rotation2*Rotation1;
+//        std::cout<<TotalRotation.GetQuaternion();
+//        std::cout<<TotalRotation;
         SetAbsRotation(TotalRotation);
 
 //        SetCardanAngles_DEGREES(90.,0.,0.,NWU);
 
         // Test that the orientation of the body changed the previous getter result
         Position OrigPosTest = (OrigAbsPosLocalPoint - OrigAbsPos);
-        auto OrigPosTestX = OrigPosTest.GetX();
-        auto OrigPosTestY = -OrigPosTest.GetZ();
-        auto OrigPosTestZ = OrigPosTest.GetY();
+        // 90 sur x
+//        auto OrigPosTestX = OrigPosTest.GetX();
+//        auto OrigPosTestY = -OrigPosTest.GetZ();
+//        auto OrigPosTestZ = OrigPosTest.GetY();
+        // 90 sur x, puis 90 sur y
 //        auto OrigPosTestX = OrigPosTest.GetY();
 //        auto OrigPosTestY = -OrigPosTest.GetZ();
 //        auto OrigPosTestZ = -OrigPosTest.GetX();
+        // 90 sur x, puis 90 sur y, puis 90 sur z
+        auto OrigPosTestX = OrigPosTest.GetZ();
+        auto OrigPosTestY = OrigPosTest.GetY();
+        auto OrigPosTestZ = -OrigPosTest.GetX();
         Position NewOrigPos (OrigPosTestX, OrigPosTestY, OrigPosTestZ);
         testPosition = GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)-NewOrigPos;
         std::cout << "GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU) = " << GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)<<std::endl;
