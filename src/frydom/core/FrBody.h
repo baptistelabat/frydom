@@ -383,6 +383,70 @@ namespace frydom {
 
 
 
+        FrFrame_ GetFrame() const;
+
+        void SetFrame(const FrFrame_& worldFrame);
+
+        void TranslateInWorld(const Position& worldTranslation);
+
+        void TranslateInBody(const Position& bodyTranslation);
+
+
+        Velocity GetVelocityInWorldAtPointInWorld(const Position& worldPoint) const;
+        Velocity GetVelocityInWorldAtPointInBody(const Position& bodyPoint) const;
+        Velocity GetVelocityInBodyAtPointInWorld(const Position& worldPoint) const;
+        Velocity GetVelocityInBodyAtPointInBody(const Position& bodyPoint) const;
+        Acceleration GetAccelerationInWorldAtPointInWorld(const Position& worldPoint) const;
+        Acceleration GetAccelerationInWorldAtPointInBody(const Position& bodyPoint) const;
+        Acceleration GetAccelerationInBodyAtPointInWorld(const Position& worldPoint) const;
+        Acceleration GetAccelerationInBodyAtPointInBody(const Position& bodyPoint) const;
+
+        void SetVelocityInWorldAtPointInWorld(const Position& worldPoint, const Velocity& worldVel);
+        void SetVelocityInWorldAtPointInBody(const Position& bodyPoint, const Velocity& worldVel);
+        void SetVelocityInBodyAtPointInWorld(const Position& worldPoint, const Velocity& bodyVel);
+        void SetVelocityInBodyAtPointInBody(const Position& bodyPoint, const Velocity& bodyVel);
+        void SetAccelerationInWorldAtPointInWorld(const Position& worldPoint, const Acceleration& worldAcc);
+        void SetAccelerationInWorldAtPointInBody(const Position& bodyPoint, const Acceleration& worldAcc);
+        void SetAccelerationInBodyAtPointInWorld(const Position& worldPoint, const Acceleration& bodyAcc);
+        void SetAccelerationInBodyAtPointInBody(const Position& bodyPoint, const Acceleration& bodyAcc);
+
+
+        Velocity GetApparentVelocityInWorldAtPointInBody(const Position& bodyPoint);
+        Velocity GetApparentVelocityInBodyAtPointInWorld(const Position& worldPoint);
+
+
+        double GetApparentAngle(FLUID_TYPE ft, FRAME_CONVENTION fc);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        template <class Vector>
+        Vector ProjectVectorInWorld(const Vector& bodyVector) const {
+
+        }
+
+        template <class Vector>
+        Vector ProjectVectorInBody(const Vector& worldVector) const {
+
+        }
+
+
+
 
 
 
