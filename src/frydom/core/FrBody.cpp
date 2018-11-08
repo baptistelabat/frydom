@@ -279,11 +279,11 @@ namespace frydom {
 
     void FrBody_::SetCOGLocalPosition(double x, double y, double z, bool transportInertia, FRAME_CONVENTION fc) {
 
-        auto cogFrame = chrono::ChFrame<double>();
-        cogFrame.SetPos(internal::MakeNWUChVector(x, y, z, fc));  // TODO : regarder partout ou on utlise le SwapVectorFrameConvention... et voir si on ne peut pas remplacer par MakeNWUChvector...
-        m_chronoBody->SetFrame_COG_to_REF(cogFrame);
-
-        m_chronoBody->Update(false);  // To make auxref_to_abs up to date
+//        auto cogFrame = chrono::ChFrame<double>();
+//        cogFrame.SetPos(internal::MakeNWUChVector(x, y, z, fc));  // TODO : regarder partout ou on utlise le SwapVectorFrameConvention... et voir si on ne peut pas remplacer par MakeNWUChvector...
+//        m_chronoBody->SetFrame_COG_to_REF(cogFrame);
+//
+//        m_chronoBody->Update(false);  // To make auxref_to_abs up to date
 
 //        if (transportInertia) {  // FIXME : pas certain que ca fonctionne !!
 //            m_chronoBody->SetInertia(
@@ -445,8 +445,8 @@ namespace frydom {
 
     void FrBody_::SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc) {  
 
-        m_chronoBody->SetPos(internal::MakeNWUChVector(x, y, z, fc));
-        m_chronoBody->Update(false); // To make the auxref up to date
+//        m_chronoBody->SetPos(internal::MakeNWUChVector(x, y, z, fc));
+//        m_chronoBody->Update(false); // To make the auxref up to date
     }
 
     void FrBody_::SetCOGAbsPosition(Position position, FRAME_CONVENTION fc) {  
@@ -1151,13 +1151,13 @@ namespace frydom {
 
     }
 
-    void FrBody_::Rotate(const FrRotation_ &relRotation) {
-
-    }
-
-    void FrBody_::Rotate(const FrQuaternion_ &relQuaternion) {
-
-    }
+//    void FrBody_::Rotate(const FrRotation_ &relRotation) {
+//
+//    }
+//
+//    void FrBody_::Rotate(const FrQuaternion_ &relQuaternion) {
+//
+//    }
 
     void FrBody_::SetVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
 
