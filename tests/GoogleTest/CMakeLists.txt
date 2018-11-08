@@ -5,6 +5,8 @@ set(GOOGLE_TESTS
         test_FrCurrentForce_
         test_FrWindForce_
         test_FrForce_
+        test_internal
+        test_FrBody_
         )
 
 #enable_testing()
@@ -31,3 +33,4 @@ foreach (subdir ${subdirs})
 endforeach ()
 
 configure_file(../data/TNR_database.h5 . COPYONLY)
+

@@ -19,45 +19,33 @@ namespace frydom {
     class FrRotation_;
     class FrOffshoreSystem_;
 
-//    class FrFrameBase_ : public chrono::ChFrameMoving<double> {
-//
-////        void essai() {
-////            GetPos()
-////            GetA_dt()
-////            GetA()
-////            GetA_dtdt()
-////
-////            GetInverse()
-////            GetPos_dt()
-////            GetPos_dtdt()
-////
-////            GetRot()
-////            GetRot_dt()
-////            GetWvel_loc()
-////            GetWvel_par()
-////
-////            chrono::ChMarker<double>()
-////        }
-//    };
 
 
 
 
-
+    /// Class defining a frame from a position and a rotation.
+    ///
+    /// The parent frame is never defined and must be tracked from the context. Indeed, frames may also be thought as
+    /// transforms between frames as they are able to locate a "TO" frame with respect to a "FROM" frame.
+    /// To get position part of a frame, a frame convention must always be given as argument (NWU/NED) but a frame does
+    /// not hold this notion internally as by default, every quantities are always stored in the NWU convention.
+    /// Conversions between conventions are done transparently while calling setters and getters. Note that frame
+    /// convention does not need to be given when manipulating FrRotation objects as these objects does neither hold the
+    /// frame convention notion intenally, conversions are also automatic.
     class FrFrame_ {
 
     private:
 
-        chrono::ChFrame<double> m_chronoFrame;   // Chrono objects are always stored in NWU frame convention
-
-//        friend class FrBody_;
-        friend class FrInertiaTensor_;
+        chrono::ChFrame<double> m_chronoFrame;   ///< Chrono objects are always stored in NWU frame convention
 
     public:
 
+        /// Default constructor that builds a new frame with zero position and rotation
         FrFrame_();
 
+        /// Constructor taking a position and a rotation. Position is given in frame convention
         FrFrame_(const Position &pos, const FrRotation_ &rotation, FRAME_CONVENTION fc);
+
 
         FrFrame_(const Position &pos, const FrQuaternion_& quaternion, FRAME_CONVENTION fc);
 
@@ -138,6 +126,8 @@ namespace frydom {
 
         void SetRotZ_DEGREES(double angle, FRAME_CONVENTION fc);
 
+        // TODO : et les angles d'Euler ?
+
         FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisFrame(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
 
         FrFrame_ GetThisFrameRelativeTransform_WRT_OtherFrame(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
@@ -164,6 +154,8 @@ namespace frydom {
     private:
 
         std::ostream& cout(std::ostream& os) const;
+
+        friend class FrInertiaTensor_;  // TODO : voir pourquoi on definnit cette amitie... (et voir si on peut retirer !)
 
 
         // Node
@@ -197,6 +189,9 @@ namespace frydom {
 
     };
 
+    /// Transoform between frames which is also a frame.
+    using FrTransform = FrFrame_;
+
 
     namespace internal {
 
@@ -209,7 +204,7 @@ namespace frydom {
         inline chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame) {
             auto pos = Vector3dToChVector(frFrame.GetPosition(NWU));
             auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
-            chrono::ChFrame<double>(pos, quat);
+            return chrono::ChFrame<double>(pos, quat);
         }
 
     }  // end namespace internal
