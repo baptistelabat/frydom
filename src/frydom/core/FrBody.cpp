@@ -1299,15 +1299,17 @@ namespace frydom {
     }
 
     Velocity FrBody_::GetVelocityInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-
+        Position bodyPoint = worldPoint - GetPosition(fc);
+        return GetVelocityInWorldAtPointInBody(bodyPoint, fc);
     }
 
     Velocity FrBody_::GetVelocityInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
-        return Velocity();
+        return ProjectVectorInWorld<Velocity>(GetVelocityInBodyAtPointInBody(bodyPoint, fc), fc);
     }
 
     Velocity FrBody_::GetVelocityInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-        return Velocity();
+        Position bodyPoint = worldPoint - GetPosition(fc);
+        return GetVelocityInBodyAtPointInBody(bodyPoint, fc);
     }
 
     Velocity FrBody_::GetVelocityInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
@@ -1317,40 +1319,54 @@ namespace frydom {
     }
 
     Acceleration FrBody_::GetAccelerationInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-        return Acceleration();
+        // TODO
     }
 
     Acceleration FrBody_::GetAccelerationInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
-        return Acceleration();
+        // TODO
     }
 
     Acceleration FrBody_::GetAccelerationInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-        return Acceleration();
+        // TODO
     }
 
     Acceleration FrBody_::GetAccelerationInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
-        return Acceleration();
+        // TODO
     }
 
+    
     void FrBody_::SetGeneralizedVelocityInWorldAtPointInWorld(const Position &worldPoint, const Velocity &worldVel,
                                                               const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
-
+        Position bodyPoint = ProjectVectorInBody<Position>(worldPoint - GetPosition(fc), fc);
+        SetGeneralizedVelocityInWorldAtPointInBody(bodyPoint, worldVel, worldAngVel, fc);
     }
 
     void FrBody_::SetGeneralizedVelocityInWorldAtPointInBody(const Position &bodyPoint, const Velocity &worldVel,
                                                              const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
-
+        Velocity bodyVel = ProjectVectorInBody<Velocity>(worldVel, fc);
+        AngularVelocity bodyAngVel = ProjectVectorInBody<AngularVelocity>(worldAngVel, fc);
+        SetGeneralizedVelocityInBodyAtPointInBody(bodyPoint, bodyVel, bodyAngVel, fc);
     }
 
     void FrBody_::SetGeneralizedVelocityInBodyAtPointInWorld(const Position &worldPoint, const Velocity &bodyVel,
                                                              const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
-
+        Position bodyPoint = ProjectVectorInBody<Position>(worldPoint - GetPosition(fc), fc);
+        SetGeneralizedVelocityInBodyAtPointInBody(bodyPoint, bodyVel, bodyAngVel, fc);
     }
 
     void FrBody_::SetGeneralizedVelocityInBodyAtPointInBody(const Position &bodyPoint, const Velocity &bodyVel,
                                                             const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
-
+        SetAngularVelocityInBody(bodyAngVel, fc);
+        Position PG = GetCOG(fc) - bodyPoint;
+        Velocity cogVel = bodyVel + bodyAngVel.cross(PG);
+        SetCOGVelocityInBody(cogVel, fc);
     }
+
+
+
+
+
+
 
     void
     FrBody_::SetGeneralizedAccelerationInWorldAtPointInWorld(const Position &worldPoint, const Acceleration &worldAcc,
