@@ -672,12 +672,12 @@ namespace frydom {
 
         template <class Vector>
         Vector ProjectVectorInWorld(const Vector& bodyVector, FRAME_CONVENTION fc) const {
-
+            return GetQuaternion().Rotate<Vector>(bodyVector, fc);
         }
 
         template <class Vector>
         Vector ProjectVectorInBody(const Vector& worldVector, FRAME_CONVENTION fc) const {
-
+            return GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
         }
 
 
