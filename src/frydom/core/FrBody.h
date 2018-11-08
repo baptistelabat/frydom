@@ -535,13 +535,13 @@ namespace frydom {
 
         template <class Vector>
         Vector ProjectAbsVectorInBodyCoords(const Vector& vector, FRAME_CONVENTION fc) const {
-            return GetAbsQuaternion().Rotate<Vector>(vector, fc);
+            return GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
         }
 
         // TODO : voir pourquoi on ne peut pas acceder a cette methode...
         template <class Vector>
         void ProjectBodyVectorInAbsCoords(Vector& vector, FRAME_CONVENTION fc) const {
-            vector = GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
+            vector = GetAbsQuaternion().Rotate<Vector>(vector, fc);
         }
 
         template <class Vector>

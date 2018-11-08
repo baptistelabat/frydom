@@ -282,6 +282,7 @@ namespace frydom{
     Moment FrForce_::GetLocalTorqueAtCOG(FRAME_CONVENTION fc) const {
         Moment torque;
         GetLocalTorqueAtCOG(torque, fc);
+        return torque;
     }
 
     void FrForce_::GetLocalTorqueAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const {
@@ -317,6 +318,8 @@ namespace frydom{
 
         // Calculating the moment created by the force applied at point relPos
         Position GP = relPos - m_body->GetCOGLocalPosition(fc); // In body coordinates following the fc convention
+
+        auto force_temp = m_body->ProjectAbsVectorInBodyCoords<Force>(force, fc);
 
         Moment body_torque = GP.cross(m_body->ProjectAbsVectorInBodyCoords<Force>(force, fc));
 
