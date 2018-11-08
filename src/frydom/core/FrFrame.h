@@ -204,7 +204,7 @@ namespace frydom {
         inline chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame) {
             auto pos = Vector3dToChVector(frFrame.GetPosition(NWU));
             auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
-            chrono::ChFrame<double>(pos, quat);
+            return chrono::ChFrame<double>(pos, quat);
         }
 
     }  // end namespace internal
