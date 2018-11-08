@@ -8,6 +8,17 @@
 
 using namespace frydom;
 
+
+inline Position & EasyRotate(Position & vector) {
+    Position res(vector.GetZ(),vector.GetX(),vector.GetY());
+    return vector = res;
+}
+
+inline Velocity & EasyRotate(Velocity & vector) {
+    Velocity res(vector.GetVz(),vector.GetVx(),vector.GetVy());
+    return vector = res;
+}
+
 TEST(FrBodyTest,Test_Position_Orientation){
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
@@ -54,21 +65,24 @@ TEST(FrBodyTest,Test_Position_Orientation){
     // Rotation to an easy transformation
     FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
     FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
-    FrRotation_ Rotation3; Rotation3.SetCardanAngles_DEGREES(0.,0.,90.,NWU);
-    FrRotation_ TotalRotation = Rotation3*Rotation2*Rotation1;
+    FrRotation_ TotalRotation = Rotation1*Rotation2 ;
     body->SetAbsRotation(TotalRotation);
 
     // Test that the orientation of the body changed the previous getter result
     Position Test_LocalPosLocalPoint = (OrigAbsPosLocalPoint - OrigAbsPos);
+    testPosition = body->GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)-Test_LocalPosLocalPoint;
+    EXPECT_TRUE(testPosition.isZero());
+
+    auto EasyRotateTest = EasyRotate(Test_LocalPosLocalPoint);
     auto TempX = Test_LocalPosLocalPoint.GetZ();
-    auto TempY = Test_LocalPosLocalPoint.GetY();
-    auto TempZ = -Test_LocalPosLocalPoint.GetX();
+    auto TempY = Test_LocalPosLocalPoint.GetX();
+    auto TempZ = Test_LocalPosLocalPoint.GetY();
     Position NewOrigPos (TempX, TempY, TempZ);
     testPosition = body->GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)-NewOrigPos;
     EXPECT_TRUE(testPosition.isZero());
 }
 
-TEST(FrBodyTest,Test_Velocity){
+TEST(FrBodyTest,Test_translation_velocity){
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -76,11 +90,13 @@ TEST(FrBodyTest,Test_Velocity){
     body->SetAbsPosition(OrigWorldPos,NWU);
 
     //-----------------Frame Velocity-----------------//
-    Velocity VelocityInWorld(1.,0.,0.);
+    Velocity VelocityInWorld(1.,1.,1.);
     body->SetAbsVelocity(VelocityInWorld,NWU);
     Velocity testVelocity = body->GetAbsVelocity(NWU) - VelocityInWorld;
+    std::cout<<testVelocity;
     EXPECT_TRUE(testVelocity.isZero());
     testVelocity = body->GetLocalVelocity(NWU) - VelocityInWorld;
+    std::cout<<testVelocity;
     EXPECT_TRUE(testVelocity.isZero());
 
     //-----------------COG-----------------//
@@ -96,12 +112,12 @@ TEST(FrBodyTest,Test_Velocity){
     testVelocity = body->GetCOGLocalVelocity(NWU) - VelocityInWorld;
     EXPECT_TRUE(testVelocity.isZero());
 
-    // Test Setter for the COG Velocity expresed in the World reference frame
+    // Test Setter for the COG Velocity expressed in the World reference frame
     Velocity COGVelocityInWorld(0.,1.,0.);
     body->SetCOGAbsVelocity(COGVelocityInWorld,NWU);
     testVelocity = body->GetCOGAbsVelocity(NWU) - COGVelocityInWorld;
     EXPECT_TRUE(testVelocity.isZero());
-    // Test Setter for the COG Velocity expresed in the Body reference frame
+    // Test Setter for the COG Velocity expressed in the Body reference frame
     Velocity COGVelocityInBody(0.,1.,0.);
     body->SetCOGLocalVelocity(COGVelocityInBody,NWU);
     testVelocity = body->GetCOGAbsVelocity(NWU) - COGVelocityInBody;
@@ -113,24 +129,76 @@ TEST(FrBodyTest,Test_Velocity){
     testVelocity = body->GetAbsVelocityOfLocalPoint(Point,NWU)- COGVelocityInBody;
     EXPECT_TRUE(testVelocity.isZero());
 
-    // Test Setter for the COG Velocity expresed in the World reference frame
+    // Test Setter for the COG Velocity expressed in the World reference frame
     Velocity PointVelocityInWorld(0.,1.,0.);
 //    body->SetVelocityInWorldAtPointInBody(Point,PointVelocityInWorld,NWU);
     testVelocity = body->GetAbsVelocityOfLocalPoint(Point,NWU) - PointVelocityInWorld;
     EXPECT_TRUE(testVelocity.isZero());
-    // Test Setter for the COG Velocity expresed in the Body reference frame
+    // Test Setter for the COG Velocity expressed in the Body reference frame
     Velocity PointVelocityInBody(0.,1.,0.);
 //    body->SetVelocityInBodyAtPointInBody(Point,PointVelocityInBody,NWU);
 //    testVelocity = body->GetLocalVelocityOfLocalPoint(Point,NWU) - PointVelocityInBody;
 //    EXPECT_TRUE(testVelocity.isZero());
 
+}
+
+
+TEST(FrBodyTest,Test_translation_velocity_with_orientation){
+    // Body Instantiation
+    auto body = std::make_shared<FrBody_>();
+
+    Position OrigWorldPos(1.,2.,3.);
+    body->SetAbsPosition(OrigWorldPos,NWU);
+
+    //-----------------COG-----------------//
+    // Set the COG position, expressed in local body reference frame
+    Position OrigLocalCOGPos(2.,3.,4.);
+    body->SetCOGLocalPosition(OrigLocalCOGPos, false, NWU);
+
     //-----------------Orientation-----------------//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
-    // Rotation to an easy transformation
+    // Rotation to an easy transformation (X = z, Y = x, Z = y)
     FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
     FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
-    FrRotation_ Rotation3; Rotation3.SetCardanAngles_DEGREES(0.,0.,90.,NWU);
-    FrRotation_ TotalRotation = Rotation3*Rotation2*Rotation1;
+    FrRotation_ TotalRotation = Rotation1*Rotation2;
     body->SetAbsRotation(TotalRotation);
+
+    //-----------------Frame Velocity-----------------//
+    Velocity VelocityInWorld(1.,1.,1.);
+    body->SetAbsVelocity(VelocityInWorld,NWU);
+
+    // Velocity in the Body reference frame
+    Velocity VelocityInBodyFromRotate = EasyRotate(VelocityInWorld);
+
+    // Test of the Velocity getter in the World reference frame
+    Velocity testVelocity = body->GetAbsVelocity(NWU) - VelocityInWorld;
+    std::cout<<testVelocity;
+    EXPECT_TRUE(testVelocity.isZero());
+
+    // Test of the Velocity getter in the Body reference frame
+    testVelocity = body->GetLocalVelocity(NWU) - VelocityInBodyFromRotate;
+    std::cout<<testVelocity;
+    EXPECT_TRUE(testVelocity.isZero());
+
+    //-----------------COG Velocity-----------------//
+
+    // Test Getter for the COG velocity expressed in the Body reference frame
+    testVelocity = body->GetCOGAbsVelocity(NWU) - VelocityInWorld;
+    EXPECT_TRUE(testVelocity.isZero());
+
+    // Test Getter for the COG velocity expressed in the Body reference frame
+    testVelocity = body->GetCOGLocalVelocity(NWU) - VelocityInBodyFromRotate;
+    EXPECT_TRUE(testVelocity.isZero());
+
+    //-----------------Point Velocity-----------------//
+    Position Point(5.,6.,7.);
+
+    // Test Getter for the Point Velocity expressed in the Body reference frame
+    testVelocity = body->GetAbsVelocityOfLocalPoint(Point,NWU) - VelocityInWorld;
+    EXPECT_TRUE(testVelocity.isZero());
+
+    // Test Getter for the Point Velocity expressed in the Body reference frame
+//    testVelocity = body->GetLocalVelocityOfLocalPoint(Point,NWU) - VelocityInBodyFromRotate;
+//    EXPECT_TRUE(testVelocity.isZero());
 
 }
