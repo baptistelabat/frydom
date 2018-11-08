@@ -60,8 +60,11 @@ namespace frydom {
 
     public:
 
+        /// Default constructor
+        FrWindForce_() = default;
+
         /// Constructor from the yaml file
-        explicit FrWindForce_(const std::string& yamlFile);
+        explicit FrWindForce_(std::string yamlFile);
 
         //
         //  UPDATE
@@ -77,7 +80,7 @@ namespace frydom {
     private:
 
         /// Read the drag and lift coefficient from yaml file
-        void ReadTable(const std::string& yamlFile);
+        void ReadTable(std::string yamlFile);
 
     };
 

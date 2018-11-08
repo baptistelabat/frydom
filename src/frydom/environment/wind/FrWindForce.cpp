@@ -94,11 +94,11 @@ namespace frydom {
 
     /// >>>>>>>>>>>>>>>>>>>>> REFACTORING
 
-    FrWindForce_::FrWindForce_(const std::string& yamlFile) {
+    FrWindForce_::FrWindForce_(std::string yamlFile) {
         this->ReadTable(yamlFile);
     }
 
-    void FrWindForce_::ReadTable(const std::string& yamlFile) {
+    void FrWindForce_::ReadTable(std::string yamlFile) {
 
         std::vector<double> angle, Cx, Cy, Cm;
         ANGLE_UNIT unit;
@@ -128,9 +128,9 @@ namespace frydom {
         auto alpha = m_body->GetApparentAngle(AIR, NWU, RAD);
         alpha = Normalize_0_2PI(alpha);
 
-        auto cx = m_table.Eval("CX", alpha);
-        auto cy = m_table.Eval("CY", alpha);
-        auto cz = m_table.Eval("CZ", alpha);
+        auto cx = m_table.Eval("Cx", alpha);
+        auto cy = m_table.Eval("Cy", alpha);
+        auto cz = m_table.Eval("Cm", alpha);
 
         auto fx = cx * velSquare;
         auto fy = cy * velSquare;

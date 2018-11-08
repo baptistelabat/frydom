@@ -76,7 +76,6 @@ TEST(FrWindForce_test, ALL) {
     for (unsigned int i=0; i<speed.size(); i++) {
 
         system.GetEnvironment()->GetWind()->GetField()->Set(dir(i), speed(i), angle_unit, speed_unit, frame, convention);
-        //system.Initialize();
         wind_force->Update(false);
         wind_force->GetAbsForce(force, NWU);
         wind_force->GetLocalTorqueAtCOG(torque, NWU);
