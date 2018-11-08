@@ -8,108 +8,129 @@
 
 using namespace frydom;
 
+TEST(FrBodyTest,Test_Position_Orientation){
+    // Body Instantiation
+    auto body = std::make_shared<FrBody_>();
 
-class TestFrBody_ :public FrBody_ {
-public:
-    void TestSettersGettersPosition(){
-        Position OrigAbsPos(1.,2.,3.);
-        SetAbsPosition(OrigAbsPos,NWU);
+    Position OrigAbsPos(1.,2.,3.);
+    body->SetAbsPosition(OrigAbsPos,NWU);
 
-        // Test of the getter for the absolute position (expressed in the world reference frame)
-        Position testPosition = OrigAbsPos-GetAbsPosition(NWU);
-        EXPECT_TRUE(testPosition.isZero());
+    // Test of the getter for the absolute position (expressed in the world reference frame)
+    Position testPosition = OrigAbsPos-body->GetAbsPosition(NWU);
+    EXPECT_TRUE(testPosition.isZero());
 
-        //-----------------COG-----------------//
+    //-----------------COG-----------------//
+    // Set the COG position, expressed in local body reference frame
+    Position OrigLocalCOGPos(2.,3.,4.);
+    body->SetCOGLocalPosition(OrigLocalCOGPos, false, NWU);
 
-        // Set the COG position, expressed in local body reference frame
-        Position OrigLocalCOGPos(2.,3.,4.);
-        SetCOGLocalPosition(OrigLocalCOGPos, false, NWU);
+    // Test the Getters for the COG position, expressed in world reference frame
+    testPosition = body->GetCOGAbsPosition(NWU)-(OrigLocalCOGPos + OrigAbsPos);
+    EXPECT_TRUE(testPosition.isZero());
 
-        // Test the Getters for the COG position, expressed in world reference frame
-        testPosition = GetCOGAbsPosition(NWU)-(OrigLocalCOGPos + OrigAbsPos);
-        EXPECT_TRUE(testPosition.isZero());
+    // Test the Getters for the COG position, expressed in local body reference frame
+    testPosition = body->GetCOGLocalPosition(NWU)-OrigLocalCOGPos;
+    EXPECT_TRUE(testPosition.isZero());
 
-        // Test the Getters for the COG position, expressed in local body reference frame
-        testPosition = GetCOGLocalPosition(NWU)-OrigLocalCOGPos;
-        EXPECT_TRUE(testPosition.isZero());
-
-        //-----------------Fixed Point-----------------//
-        // Test for the getter for the local position of a point expressed in the world reference frame
-        Position OrigAbsPosLocalPoint(4.,5.,6.);
-        testPosition = GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)-(OrigAbsPosLocalPoint - OrigAbsPos);
-        EXPECT_TRUE(testPosition.isZero());
-
-
-        //-----------------Orientation-----------------//
-        // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
-        FrRotation_ OrigAbsRot; OrigAbsRot.SetCardanAngles_DEGREES(1.,2.,3.,NWU);
-        SetAbsRotation(OrigAbsRot);
-
-        // Test of the getter for the absolute orientation (expressed in the world reference frame)
-        EXPECT_TRUE(OrigAbsRot==GetAbsRotation());
-
-        // Test of the setter using cardan angles
-        SetCardanAngles_DEGREES(1.,2.,3.,NWU);
-        EXPECT_TRUE(OrigAbsRot==GetAbsRotation());
-
-        // Rotation to an easy transformation
-        FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
-        FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
-        FrRotation_ Rotation3; Rotation3.SetCardanAngles_DEGREES(0.,0.,90.,NWU);
-        FrRotation_ TotalRotation = Rotation3*Rotation2*Rotation1;
-        SetAbsRotation(TotalRotation);
-
-        // Test that the orientation of the body changed the previous getter result
-        Position Test_LocalPosLocalPoint = (OrigAbsPosLocalPoint - OrigAbsPos);
-        auto TempX = Test_LocalPosLocalPoint.GetZ();
-        auto TempY = Test_LocalPosLocalPoint.GetY();
-        auto OrigPosTestZ = -Test_LocalPosLocalPoint.GetX();
-        Position NewOrigPos (TempX, TempY, OrigPosTestZ);
-        testPosition = GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)-NewOrigPos;
-        EXPECT_TRUE(testPosition.isZero());
-        
-    };
-
-    void TestSettersGettersCOGPosition(){
-        Position OrigCOGAbsPos(7.,8,.9);
-        SetCOGAbsPosition(OrigCOGAbsPos,NWU);
-
-        auto COGabsPosNWU = GetCOGAbsPosition(NWU);
-        EXPECT_EQ(COGabsPosNWU.GetX(),OrigCOGAbsPos.GetX());
-        EXPECT_EQ(COGabsPosNWU.GetY(),OrigCOGAbsPos.GetY());
-        EXPECT_EQ(COGabsPosNWU.GetZ(),OrigCOGAbsPos.GetZ());
-    };
+    //-----------------Fixed Point-----------------//
+    // Test for the getter for the local position of a point expressed in the world reference frame
+    Position OrigAbsPosLocalPoint(4.,5.,6.);
+    testPosition = body->GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)-(OrigAbsPosLocalPoint - OrigAbsPos);
+    EXPECT_TRUE(testPosition.isZero());
 
 
+    //-----------------Orientation-----------------//
+    // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
+    FrRotation_ OrigAbsRot; OrigAbsRot.SetCardanAngles_DEGREES(1.,2.,3.,NWU);
+    body->SetAbsRotation(OrigAbsRot);
 
+    // Test of the getter for the absolute orientation (expressed in the world reference frame)
+    EXPECT_TRUE(OrigAbsRot==body->GetAbsRotation());
 
-    int Test_Smthg(){return 0;};
-    int Test_SmthgElse(){return 100;};
-};
+    // Test of the setter using cardan angles
+    body->SetCardanAngles_DEGREES(1.,2.,3.,NWU);
+    EXPECT_TRUE(OrigAbsRot==body->GetAbsRotation());
 
-TEST(FrBodyTest,TestSettersGettersPosition){
-    auto body = std::make_shared<TestFrBody_>();
-    body->TestSettersGettersPosition();
+    // Rotation to an easy transformation
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
+    FrRotation_ Rotation3; Rotation3.SetCardanAngles_DEGREES(0.,0.,90.,NWU);
+    FrRotation_ TotalRotation = Rotation3*Rotation2*Rotation1;
+    body->SetAbsRotation(TotalRotation);
+
+    // Test that the orientation of the body changed the previous getter result
+    Position Test_LocalPosLocalPoint = (OrigAbsPosLocalPoint - OrigAbsPos);
+    auto TempX = Test_LocalPosLocalPoint.GetZ();
+    auto TempY = Test_LocalPosLocalPoint.GetY();
+    auto TempZ = -Test_LocalPosLocalPoint.GetX();
+    Position NewOrigPos (TempX, TempY, TempZ);
+    testPosition = body->GetLocalPositionOfAbsPoint(OrigAbsPosLocalPoint,NWU)-NewOrigPos;
+    EXPECT_TRUE(testPosition.isZero());
 }
 
+TEST(FrBodyTest,Test_Velocity){
+    // Body Instantiation
+    auto body = std::make_shared<FrBody_>();
 
-//TEST(FrBody_Test,test_SMTHG){
-////    FrOffshoreSystem_ system;
-//    // Defining the ship
-//    auto body = std::make_shared<TestFrBody_>();
-////    body->SetSmoothContact();
-////    system.AddBody(body);
-//    // Testeing something
-//    EXPECT_EQ(body->Test_Smthg(),0);
-//};
-//
-//
-//TEST(FrBody_Test,test_SMTHGELSE){
-////    FrOffshoreSystem_ system;
-//    // Defining the ship
-//    auto body = std::make_shared<TestFrBody_>();
-////    body->SetSmoothContact();
-////    system.AddBody(body);
-//    // Testeing something
-//    EXPECT_EQ(body->Test_SmthgElse(),100);
-//};
+    Position OrigWorldPos(1.,2.,3.);
+    body->SetAbsPosition(OrigWorldPos,NWU);
+
+    //-----------------Frame Velocity-----------------//
+    Velocity VelocityInWorld(1.,0.,0.);
+    body->SetAbsVelocity(VelocityInWorld,NWU);
+    Velocity testVelocity = body->GetAbsVelocity(NWU) - VelocityInWorld;
+    EXPECT_TRUE(testVelocity.isZero());
+    testVelocity = body->GetLocalVelocity(NWU) - VelocityInWorld;
+    EXPECT_TRUE(testVelocity.isZero());
+
+    //-----------------COG-----------------//
+    // Set the COG position, expressed in local body reference frame
+    Position OrigLocalCOGPos(2.,3.,4.);
+    body->SetCOGLocalPosition(OrigLocalCOGPos, false, NWU);
+
+    //-----------------COG Velocity-----------------//
+    // Test Getter for the COG velocity expressed in the World reference frame
+    testVelocity = body->GetCOGAbsVelocity(NWU) - VelocityInWorld;
+    EXPECT_TRUE(testVelocity.isZero());
+    // Test Getter for the COG velocity expressed in the Body reference frame
+    testVelocity = body->GetCOGLocalVelocity(NWU) - VelocityInWorld;
+    EXPECT_TRUE(testVelocity.isZero());
+
+    // Test Setter for the COG Velocity expresed in the World reference frame
+    Velocity COGVelocityInWorld(0.,1.,0.);
+    body->SetCOGAbsVelocity(COGVelocityInWorld,NWU);
+    testVelocity = body->GetCOGAbsVelocity(NWU) - COGVelocityInWorld;
+    EXPECT_TRUE(testVelocity.isZero());
+    // Test Setter for the COG Velocity expresed in the Body reference frame
+    Velocity COGVelocityInBody(0.,1.,0.);
+    body->SetCOGLocalVelocity(COGVelocityInBody,NWU);
+    testVelocity = body->GetCOGAbsVelocity(NWU) - COGVelocityInBody;
+    EXPECT_TRUE(testVelocity.isZero());
+
+    //-----------------Point-----------------//
+    Position Point(5.,6.,7.);
+    // Test Getter for the velocity expressed in the World reference frame, at a Point expressed in Body reference frame
+    testVelocity = body->GetAbsVelocityOfLocalPoint(Point,NWU)- COGVelocityInBody;
+    EXPECT_TRUE(testVelocity.isZero());
+
+    // Test Setter for the COG Velocity expresed in the World reference frame
+    Velocity PointVelocityInWorld(0.,1.,0.);
+//    body->SetVelocityInWorldAtPointInBody(Point,PointVelocityInWorld,NWU);
+    testVelocity = body->GetAbsVelocityOfLocalPoint(Point,NWU) - PointVelocityInWorld;
+    EXPECT_TRUE(testVelocity.isZero());
+    // Test Setter for the COG Velocity expresed in the Body reference frame
+    Velocity PointVelocityInBody(0.,1.,0.);
+//    body->SetVelocityInBodyAtPointInBody(Point,PointVelocityInBody,NWU);
+//    testVelocity = body->GetLocalVelocityOfLocalPoint(Point,NWU) - PointVelocityInBody;
+//    EXPECT_TRUE(testVelocity.isZero());
+
+    //-----------------Orientation-----------------//
+    // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
+    // Rotation to an easy transformation
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
+    FrRotation_ Rotation3; Rotation3.SetCardanAngles_DEGREES(0.,0.,90.,NWU);
+    FrRotation_ TotalRotation = Rotation3*Rotation2*Rotation1;
+    body->SetAbsRotation(TotalRotation);
+
+}
