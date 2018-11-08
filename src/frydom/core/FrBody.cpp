@@ -1135,20 +1135,31 @@ namespace frydom {
     }
 
     void FrBody_::SetPointPosition(const Position &bodyPoint, const Position &worldPos, FRAME_CONVENTION fc) {
-
-
+        _SetPointPosition(bodyPoint, BODY, worldPos, WORLD, fc);
     }
 
     void FrBody_::SetCOGPosition(const Position &worldPos, FRAME_CONVENTION fc) {
-
+        _SetPointPosition(GetCOG(fc), BODY, worldPos, WORLD, fc);
     }
 
     void FrBody_::TranslateInWorld(const Position &worldTranslation, FRAME_CONVENTION fc) {
-
+        _Translate(worldTranslation, WORLD, fc);
     }
 
     void FrBody_::TranslateInBody(const Position &bodyTranslation, FRAME_CONVENTION fc) {
+        _Translate(bodyTranslation, BODY, fc);
+    }
 
+    void FrBody_::_Translate(const Position &translation, FRAME translationFrame, FRAME_CONVENTION fc) {
+        auto refFrame = GetFrame();
+
+        if (translationFrame == BODY) {
+            refFrame.SetPosition(refFrame.GetPosition(fc) + ProjectVectorInWorld<Position>(translation, fc), fc);
+        } else {
+            refFrame.SetPosition(refFrame.GetPosition(fc) + translation, fc);
+        }
+
+        m_chronoBody->SetFrame_REF_to_abs(internal::Fr2ChFrame(refFrame));
     }
 
 //    void FrBody_::Rotate(const FrRotation_ &relRotation) {
@@ -1158,105 +1169,137 @@ namespace frydom {
 //    void FrBody_::Rotate(const FrQuaternion_ &relQuaternion) {
 //
 //    }
-
-    void FrBody_::SetVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
-
+//
+//    void FrBody_::_SetVelocityAtPoint(const Position& point, FRAME pointFrame, FRAME pointFrameExpr,
+//                                      const Velocity& vel, FRAME velFrame,
+//                                      const AngularVelocity& angVel, FRAME angVelFrame, FRAME_CONVENTION fc) {
+//
+//        if (velFrame == BODY) {
+//
+//        }
+//    }
+//
+//    void FrBody_::SetVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+//
+//    }
+//
+//    void FrBody_::SetVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+//
+//    }
+//
+    Velocity FrBody_::GetVelocityInWorld(FRAME_CONVENTION fc) const {
+        Velocity bodyVel = internal::ChVectorToVector3d<Velocity>(m_chronoBody->GetFrame_REF_to_abs().GetPos_dt());
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(bodyVel);
+        return bodyVel;
     }
 
-    void FrBody_::SetVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
-
-    }
-
-    void FrBody_::GetVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
-
-    }
-
-    void FrBody_::GetVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
-
+    Velocity FrBody_::GetVelocityInBody(FRAME_CONVENTION fc) const {
+        return ProjectVectorInBody<Velocity>(GetVelocityInWorld(fc), fc);
     }
 
     void FrBody_::SetCOGVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
-
+        auto worldVelTmp = worldVel;
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(worldVelTmp);
+        chrono::ChCoordsys<double> coord;
+        coord.pos = internal::Vector3dToChVector(worldVelTmp);
+        m_chronoBody->SetCoord_dt(coord);
     }
 
     void FrBody_::SetCOGVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
-
+        SetCOGVelocityInWorld(ProjectVectorInWorld(bodyVel, fc), fc);
     }
 
-    void FrBody_::GetCOGVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
-
+    Velocity FrBody_::GetCOGVelocityInWorld(FRAME_CONVENTION fc) const {
+        Velocity cogVel = internal::ChVectorToVector3d<Velocity>(m_chronoBody->GetCoord_dt().pos); // In NWU
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(cogVel);
+        return cogVel;
     }
 
-    void FrBody_::GetCOGVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
-
+    Velocity FrBody_::GetCOGVelocityInBody(FRAME_CONVENTION fc) const {
+        return ProjectVectorInBody<Velocity>(GetCOGVelocityInWorld(fc), fc);
     }
 
-    void FrBody_::SetAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+//    void FrBody_::SetAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+//
+//    }
+//
+//    void FrBody_::SetAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+//
+//    }
+//
+//    void FrBody_::GetAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+//
+//    }
+//
+//    void FrBody_::GetAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+//
+//    }
 
+    void FrBody_::SetCOGAccelerationInWorld(const Acceleration &worldAcc, FRAME_CONVENTION fc) {
+        auto worldAccTmp = worldAcc;
+        if (IsNED(fc)) internal::SwapFrameConvention<Acceleration>(worldAccTmp);
+        chrono::ChCoordsys<double> coord;
+        coord.pos = internal::Vector3dToChVector(worldAccTmp);
+        m_chronoBody->SetCoord_dtdt(coord);
     }
 
-    void FrBody_::SetAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
-
+    void FrBody_::SetCOGAccelerationInBody(const Acceleration &bodyAcc, FRAME_CONVENTION fc) {
+        SetCOGAccelerationInWorld(ProjectVectorInWorld<Acceleration>(bodyAcc, fc), fc);
     }
 
-    void FrBody_::GetAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
-
+    Acceleration FrBody_::GetCOGAccelerationInWorld(FRAME_CONVENTION fc) {
+        Acceleration cogAcc = internal::ChVectorToVector3d<Acceleration>(m_chronoBody->GetCoord_dtdt().pos); // In NWU
+        if (IsNED(fc)) internal::SwapFrameConvention<Acceleration>(cogAcc);
+        return cogAcc;
     }
 
-    void FrBody_::GetAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
-
-    }
-
-    void FrBody_::SetCOGAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
-
-    }
-
-    void FrBody_::SetCOGAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
-
-    }
-
-    void FrBody_::GetCOGAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
-
-    }
-
-    void FrBody_::GetCOGAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
-
+    Acceleration FrBody_::GetCOGAccelerationInBody(FRAME_CONVENTION fc) {
+        return ProjectVectorInBody<Acceleration>(GetCOGAccelerationInWorld(fc), fc);
     }
 
     void FrBody_::SetAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
-
+        auto worldAngVelTmp = worldAngVel;
+        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngVelTmp);
+        m_chronoBody->SetWvel_par(internal::Vector3dToChVector(worldAngVelTmp));
     }
 
     void FrBody_::SetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
-
+        SetAngularVelocityInWorld(ProjectVectorInWorld(bodyAngVel, fc), fc);
     }
 
-    void FrBody_::GetAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
-
+    AngularVelocity FrBody_::GetAngularVelocityInWorld(FRAME_CONVENTION fc) const {
+        AngularVelocity angVel = internal::ChVectorToVector3d<AngularVelocity>(m_chronoBody->GetWvel_par());
+        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(angVel);
+        return angVel;
     }
 
-    void FrBody_::GetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
-
+    AngularVelocity FrBody_::GetAngularVelocityInBody(FRAME_CONVENTION fc) const {
+        return ProjectVectorInBody<AngularVelocity>(GetAngularVelocityInWorld(fc), fc);
     }
 
     void FrBody_::SetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
-
+        auto worldAngAccTmp = worldAngAcc;
+        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngAccTmp);
+        auto chronoAngAcc = internal::Vector3dToChVector(worldAngAccTmp);
+        m_chronoBody->SetWacc_par(chronoAngAcc); // FIXME : dans chrono, l'argument d'entree n'est pas const... -> fix Chrono
     }
 
     void FrBody_::SetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
-
+        SetAngularAccelerationInWorld(ProjectVectorInWorld(bodyAngAcc, fc), fc);
     }
 
-    void FrBody_::GetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
-
+    AngularAcceleration FrBody_::GetAngularAccelerationInWorld(FRAME_CONVENTION fc) const {
+        AngularAcceleration angAcc = internal::ChVectorToVector3d<AngularAcceleration>(m_chronoBody->GetWacc_par());
+        if (IsNED(fc)) internal::SwapFrameConvention<AngularAcceleration>(angAcc);
+        return angAcc;
     }
 
-    void FrBody_::GetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
-
+    AngularAcceleration FrBody_::GetAngularAccelerationInBody(FRAME_CONVENTION fc) const {
+        return ProjectVectorInBody(GetAngularAccelerationInWorld(fc), fc);
     }
 
     Velocity FrBody_::GetVelocityInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-        return Velocity();
+
     }
 
     Velocity FrBody_::GetVelocityInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
@@ -1268,7 +1311,9 @@ namespace frydom {
     }
 
     Velocity FrBody_::GetVelocityInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
-        return Velocity();
+        Velocity bodyVel = GetVelocityInBody(fc);
+        AngularVelocity bodyAngVel = GetAngularVelocityInBody(fc);
+        Velocity pointVel = bodyVel + bodyAngVel.cross(bodyPoint);
     }
 
     Acceleration FrBody_::GetAccelerationInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
@@ -1348,6 +1393,32 @@ namespace frydom {
 
     double FrBody_::GetApparentAngle(FLUID_TYPE ft, FRAME_CONVENTION fc) {
         return 0;
+    }
+
+
+
+    void FrBody_::_SetPointPosition(const Position& point, FRAME pointFrame, const Position& pos, FRAME posFrame, FRAME_CONVENTION fc) {
+
+        Position WB = GetPosition(fc);
+
+        Position WP;
+        if (pointFrame == BODY) {
+            // we have BP
+            WP = WB + ProjectVectorInWorld<Position>(point, fc);
+        } else {
+            WP = point;
+        }
+
+        Position WT;
+        if (posFrame == BODY) {
+            // we have BT
+            WT = GetPosition(fc) + ProjectVectorInWorld<Position>(pos, fc);
+        }
+
+        Position PT = WT - WP;
+
+        TranslateInWorld(PT, fc);
+
     }
 
 

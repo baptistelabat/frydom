@@ -482,17 +482,17 @@ namespace frydom {
         // TODO : ajouter aussi les RotateX, RotateAxisAngle, RotateEuler...
 
 
-        /// Set the velocity of the body reference frame with a vector expressed in WORLD frame
-        void SetVelocityInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
-
-        /// Set the velocity of the body reference frame with a vector expressed in BODY frame
-        void SetVelocityInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
-
+//        /// Set the velocity of the body reference frame with a vector expressed in WORLD frame
+//        void SetVelocityInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
+//
+//        /// Set the velocity of the body reference frame with a vector expressed in BODY frame
+//        void SetVelocityInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
+//
         /// Get the velocity of the body reference frame with a vector expressed in WORLD frame
-        void GetVelocityInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
+        Velocity GetVelocityInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the velocity of the body reference frame with a vector expressed in BODY frame
-        void GetVelocityInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
+        Velocity GetVelocityInBody(FRAME_CONVENTION fc) const;
 
 
 
@@ -503,40 +503,40 @@ namespace frydom {
         void SetCOGVelocityInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
 
         /// Get the velocity of the body COG with a vector expressed in WORLD frame
-        void GetCOGVelocityInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
+        Velocity GetCOGVelocityInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the velocity of the body COG with a vector expressed in BODY frame
-        void GetCOGVelocityInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
+        Velocity GetCOGVelocityInBody(FRAME_CONVENTION fc) const;
 
 
 
 
-        /// Set the acceleration of the body reference frame with a vector expressed in WORLD frame
-        void SetAccelerationInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
-
-        /// Set the acceleration of the body reference frame with a vector expressed in BODY frame
-        void SetAccelerationInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
-
-        /// Get the acceleration of the body reference frame with a vector expressed in WORLD frame
-        void GetAccelerationInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
-
-        /// Get the acceleration of the body reference frame with a vector expressed in BODY frame
-        void GetAccelerationInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
+//        /// Set the acceleration of the body reference frame with a vector expressed in WORLD frame
+//        void SetAccelerationInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
+//
+//        /// Set the acceleration of the body reference frame with a vector expressed in BODY frame
+//        void SetAccelerationInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
+//
+//        /// Get the acceleration of the body reference frame with a vector expressed in WORLD frame
+//        void GetAccelerationInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
+//
+//        /// Get the acceleration of the body reference frame with a vector expressed in BODY frame
+//        void GetAccelerationInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
 
 
 
 
         /// Set the acceleration of the body COG with a vector expressed in WORLD frame
-        void SetCOGAccelerationInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
+        void SetCOGAccelerationInWorld(const Acceleration& worldAcc, FRAME_CONVENTION fc);
 
         /// Set the acceleration of the body COG with a vector expressed in BODY frame
-        void SetCOGAccelerationInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
+        void SetCOGAccelerationInBody(const Acceleration& bodyAcc, FRAME_CONVENTION fc);
 
         /// Get the acceleration of the body COG with a vector expressed in WORLD frame
-        void GetCOGAccelerationInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
+        Acceleration GetCOGAccelerationInWorld(FRAME_CONVENTION fc);
 
         /// Get the acceleration of the body COG with a vector expressed in BODY frame
-        void GetCOGAccelerationInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
+        Acceleration GetCOGAccelerationInBody(FRAME_CONVENTION fc);
 
 
 
@@ -548,10 +548,10 @@ namespace frydom {
 
 
         /// Get the body angular velocity from a vector expressed in WORLD frame
-        void GetAngularVelocityInWorld(const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
+        AngularVelocity GetAngularVelocityInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the body angular velocity from a vector expressed in BODY frame
-        void GetAngularVelocityInBody(const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
+        AngularVelocity GetAngularVelocityInBody(FRAME_CONVENTION fc) const;
 
 
 
@@ -564,10 +564,10 @@ namespace frydom {
 
 
         /// Get the body angular acceleration from a vector expressed in WORLD frame
-        void GetAngularAccelerationInWorld(const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
+        AngularAcceleration GetAngularAccelerationInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the body angular acceleration from a vector expressed in BODY frame
-        void GetAngularAccelerationInBody(const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
+        AngularAcceleration GetAngularAccelerationInBody(FRAME_CONVENTION fc) const;
 
 
 
@@ -681,11 +681,23 @@ namespace frydom {
         }
 
 
+    private:
 
+        enum FRAME {
+            WORLD,
+            BODY
+        };
 
+        void _SetPointPosition(const Position& point, FRAME pointFrame, const Position& pos, FRAME posFrame, FRAME_CONVENTION fc);
 
+        void _Translate(const Position& translation, FRAME translationFrame, FRAME_CONVENTION fc);
 
+        void _SetVelocityAtPoint(const Position& point, FRAME pointFrame,
+                                 const Velocity& vel, FRAME velFrame,
+                                 const AngularVelocity& angVel, FRAME angVelFrame,
+                                 FRAME_CONVENTION fc);
 
+    public:
 
 
 
