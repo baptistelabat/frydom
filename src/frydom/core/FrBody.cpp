@@ -6,6 +6,7 @@
 #include "FrBody.h"
 #include "FrNode.h"
 #include "FrRotation.h"
+#include "FrMatrix.h"
 
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include "FrFrame.h"
@@ -106,20 +107,23 @@ namespace frydom {
     #define DEFAULT_MAX_SPEED (float)10.
     #define DEFAULT_MAX_ROTATION_SPEED (float)(180.*DEG2RAD)
 
+    namespace internal {
 
-    _FrBodyBase::_FrBodyBase(FrBody_* body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
+        _FrBodyBase::_FrBodyBase(FrBody_ *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
 
-    void _FrBodyBase::SetupInitial() {
-        m_frydomBody->Initialize();
-    }
+        void _FrBodyBase::SetupInitial() {
+            m_frydomBody->Initialize();
+        }
 
-    void _FrBodyBase::Update(bool update_assets) {
-        chrono::ChBodyAuxRef::Update(update_assets);
-        m_frydomBody->Update();
-    }
+        void _FrBodyBase::Update(bool update_assets) {
+            chrono::ChBodyAuxRef::Update(update_assets);
+            m_frydomBody->Update();
+        }
+
+    }  // end namespace internal
 
     FrBody_::FrBody_() {
-        m_chronoBody = std::make_shared<_FrBodyBase>(this);
+        m_chronoBody = std::make_shared<internal::_FrBodyBase>(this);
         m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
     }
@@ -275,11 +279,11 @@ namespace frydom {
 
     void FrBody_::SetCOGLocalPosition(double x, double y, double z, bool transportInertia, FRAME_CONVENTION fc) {
 
-        auto cogFrame = chrono::ChFrame<double>();
-        cogFrame.SetPos(internal::MakeNWUChVector(x, y, z, fc));  // TODO : regarder partout ou on utlise le SwapVectorFrameConvention... et voir si on ne peut pas remplacer par MakeNWUChvector...
-        m_chronoBody->SetFrame_COG_to_REF(cogFrame);
-
-        m_chronoBody->Update(false);  // To make auxref_to_abs up to date
+//        auto cogFrame = chrono::ChFrame<double>();
+//        cogFrame.SetPos(internal::MakeNWUChVector(x, y, z, fc));  // TODO : regarder partout ou on utlise le SwapVectorFrameConvention... et voir si on ne peut pas remplacer par MakeNWUChvector...
+//        m_chronoBody->SetFrame_COG_to_REF(cogFrame);
+//
+//        m_chronoBody->Update(false);  // To make auxref_to_abs up to date
 
 //        if (transportInertia) {  // FIXME : pas certain que ca fonctionne !!
 //            m_chronoBody->SetInertia(
@@ -295,11 +299,12 @@ namespace frydom {
 
     FrInertiaTensor_ FrBody_::GetInertiaParams() const {
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-        internal::ChInertia2Coeffs(m_chronoBody->GetInertia(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+        SplitMatrix33IntoCoeffs(internal::ChMatrix33ToMatrix33(m_chronoBody->GetInertia()),
+                Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
 
         auto cogPos = GetCOGLocalPosition(NWU);
 
-        return FrInertiaTensor_(GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame_(cogPos, FrRotation_(), NWU), NWU);
+        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame_(cogPos, FrRotation_(), NWU), NWU};
     }
 
     void FrBody_::SetInertiaParams(const FrInertiaTensor_& inertia) {
@@ -440,8 +445,8 @@ namespace frydom {
 
     void FrBody_::SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc) {  
 
-        m_chronoBody->SetPos(internal::MakeNWUChVector(x, y, z, fc));
-        m_chronoBody->Update(false); // To make the auxref up to date
+//        m_chronoBody->SetPos(internal::MakeNWUChVector(x, y, z, fc));
+//        m_chronoBody->Update(false); // To make the auxref up to date
     }
 
     void FrBody_::SetCOGAbsPosition(Position position, FRAME_CONVENTION fc) {  
@@ -838,19 +843,19 @@ namespace frydom {
         m_chronoBody->SetWvel_par(chrono::ChVector<double>(wx, wy, wz));
     }
 
-    void FrBody_::SetAbsRotationalVelocity(const RotationalVelocity &omega, FRAME_CONVENTION fc) {  
+    void FrBody_::SetAbsRotationalVelocity(const AngularVelocity &omega, FRAME_CONVENTION fc) {
         SetAbsRotationalVelocity(omega.GetWx(), omega.GetWy(), omega.GetWz(), fc);
     }
 
-    RotationalVelocity FrBody_::GetAbsRotationalVelocity(FRAME_CONVENTION fc) const {  
-        RotationalVelocity omega;
+    AngularVelocity FrBody_::GetAbsRotationalVelocity(FRAME_CONVENTION fc) const {
+        AngularVelocity omega;
         GetAbsRotationalVelocity(omega, fc);
         return omega;
     }
 
-    void FrBody_::GetAbsRotationalVelocity(RotationalVelocity &omega, FRAME_CONVENTION fc) const {
-        omega = internal::ChVectorToVector3d<RotationalVelocity>(m_chronoBody->GetWvel_par());
-        if (IsNED(fc)) internal::SwapFrameConvention<RotationalVelocity>(omega);
+    void FrBody_::GetAbsRotationalVelocity(AngularVelocity &omega, FRAME_CONVENTION fc) const {
+        omega = internal::ChVectorToVector3d<AngularVelocity>(m_chronoBody->GetWvel_par());
+        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(omega);
     }
 
     void FrBody_::GetAbsRotationalVelocity(double &wx, double &wy, double &wz, FRAME_CONVENTION fc) const {  
@@ -866,19 +871,19 @@ namespace frydom {
         SetAbsRotationalVelocity(absRotVel[0], absRotVel[1], absRotVel[2], NWU);
     }
 
-    void FrBody_::SetLocalRotationalVelocity(const RotationalVelocity &omega, FRAME_CONVENTION fc) {  
+    void FrBody_::SetLocalRotationalVelocity(const AngularVelocity &omega, FRAME_CONVENTION fc) {
         SetLocalRotationalVelocity(omega.GetWx(), omega.GetWy(), omega.GetWz(), fc);
     }
 
-    RotationalVelocity FrBody_::GetLocalRotationalVelocity(FRAME_CONVENTION fc) const {  
-        RotationalVelocity rotVel;
+    AngularVelocity FrBody_::GetLocalRotationalVelocity(FRAME_CONVENTION fc) const {
+        AngularVelocity rotVel;
         GetLocalRotationalVelocity(rotVel, fc);
         return rotVel;
     }
 
-    void FrBody_::GetLocalRotationalVelocity(RotationalVelocity &omega, FRAME_CONVENTION fc) const {  
-        omega = internal::ChVectorToVector3d<RotationalVelocity>(m_chronoBody->GetWvel_loc());  // In NWU
-        if (IsNED(fc)) internal::SwapFrameConvention<RotationalVelocity>(omega);
+    void FrBody_::GetLocalRotationalVelocity(AngularVelocity &omega, FRAME_CONVENTION fc) const {
+        omega = internal::ChVectorToVector3d<AngularVelocity>(m_chronoBody->GetWvel_loc());  // In NWU
+        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(omega);
     }
 
     void FrBody_::GetLocalRotationalVelocity(double &p, double &q, double &r, FRAME_CONVENTION fc) const {  
@@ -1028,19 +1033,19 @@ namespace frydom {
         m_chronoBody->SetWacc_par(tmp);  // FIXME Chrono:: mettre en const tmp dans Chrono...
     }
 
-    void FrBody_::SetAbsRotationalAcceleration(const RotationalAcceleration &omegap, FRAME_CONVENTION fc) {
+    void FrBody_::SetAbsRotationalAcceleration(const AngularAcceleration &omegap, FRAME_CONVENTION fc) {
         SetAbsRotationalAcceleration(omegap.GetWxp(), omegap.GetWyp(), omegap.GetWzp(), fc);
     }
 
-    RotationalAcceleration FrBody_::GetAbsRotationalAcceleration(FRAME_CONVENTION fc) const {
-        RotationalAcceleration wAcc;
+    AngularAcceleration FrBody_::GetAbsRotationalAcceleration(FRAME_CONVENTION fc) const {
+        AngularAcceleration wAcc;
         GetAbsRotationalAcceleration(wAcc, fc);
         return wAcc;
     }
 
-    void FrBody_::GetAbsRotationalAcceleration(RotationalAcceleration &omegap, FRAME_CONVENTION fc) const {
-        omegap = internal::ChVectorToVector3d<RotationalAcceleration>(m_chronoBody->GetWacc_par());
-        if (IsNED(fc)) internal::SwapFrameConvention<RotationalAcceleration>(omegap);
+    void FrBody_::GetAbsRotationalAcceleration(AngularAcceleration &omegap, FRAME_CONVENTION fc) const {
+        omegap = internal::ChVectorToVector3d<AngularAcceleration>(m_chronoBody->GetWacc_par());
+        if (IsNED(fc)) internal::SwapFrameConvention<AngularAcceleration>(omegap);
     }
 
     void FrBody_::GetAbsRotationalAcceleration(double &wxp, double &wyp, double &wzp, FRAME_CONVENTION fc) const {
@@ -1051,6 +1056,299 @@ namespace frydom {
     }
 
 
+
+
+
+
+
+
+    ///// NOUVELLES METHODES non implementees...
+
+
+    void FrBody_::SetMass(double mass) {
+        m_chronoBody->SetMass(mass);
+    }
+
+    void FrBody_::SetCOG(const Position& bodyPos, FRAME_CONVENTION fc) {
+        FrFrame_ cogFrame;
+        cogFrame.SetPosition(bodyPos, fc);
+        m_chronoBody->SetFrame_COG_to_REF(internal::Fr2ChFrame(cogFrame));
+    }
+
+    Position FrBody_::GetCOG(FRAME_CONVENTION fc) {
+        Position cogPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_COG_to_REF().GetPos()); // In NWU
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
+        return cogPos;
+    }
+
+    Position FrBody_::GetPosition(FRAME_CONVENTION fc) const {
+        return internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_REF_to_abs().GetPos());
+    }
+
+    void FrBody_::SetPosition(const Position &worldPos, FRAME_CONVENTION fc) {
+        auto bodyFrame = GetFrame();
+        bodyFrame.SetPosition(worldPos, fc);
+        m_chronoBody->SetFrame_REF_to_abs(internal::Fr2ChFrame(bodyFrame));
+        // Traiter update
+    }
+
+    FrRotation_ FrBody_::GetRotation() const {
+        return FrRotation_(GetQuaternion());
+    }
+
+    void FrBody_::SetRotation(const FrRotation_ &rotation) {
+        SetRotation(rotation.GetQuaternion());
+    }
+
+    FrQuaternion_ FrBody_::GetQuaternion() const {
+        return internal::Ch2FrQuaternion(m_chronoBody->GetRot());
+    }
+
+    void FrBody_::SetRotation(const FrQuaternion_ &quaternion) {
+        m_chronoBody->SetRot(internal::Fr2ChQuaternion(quaternion));
+    }
+
+    FrFrame_ FrBody_::GetFrame() const {
+        FrFrame_ bodyRefFrame;
+        bodyRefFrame.SetPosition(GetPosition(NWU), NWU);
+        bodyRefFrame.SetRotation(GetQuaternion());
+        return bodyRefFrame;
+    }
+
+    void FrBody_::SetFrame(const FrFrame_ &worldFrame) {
+        SetPosition(worldFrame.GetPosition(NWU), NWU);
+        SetRotation(worldFrame.GetQuaternion());
+    }
+
+    Position FrBody_::GetPointPositionInWorld(const Position &bodyPos, FRAME_CONVENTION fc) const {
+        return GetPosition(fc) + ProjectVectorInWorld<Position>(bodyPos, fc);
+    }
+
+    Position FrBody_::GetPointPositionInBody(const Position &worldPos, FRAME_CONVENTION fc) const {
+        return ProjectVectorInBody<Position>(worldPos - GetPosition(fc), fc);
+    }
+
+    Position FrBody_::GetCOGPositionInWorld(FRAME_CONVENTION fc) const {
+        Position cogPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetPos());
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
+        return cogPos;
+    }
+
+    void FrBody_::SetPointPosition(const Position &bodyPoint, const Position &worldPos, FRAME_CONVENTION fc) {
+
+
+    }
+
+    void FrBody_::SetCOGPosition(const Position &worldPos, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::TranslateInWorld(const Position &worldTranslation, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::TranslateInBody(const Position &bodyTranslation, FRAME_CONVENTION fc) {
+
+    }
+
+//    void FrBody_::Rotate(const FrRotation_ &relRotation) {
+//
+//    }
+//
+//    void FrBody_::Rotate(const FrQuaternion_ &relQuaternion) {
+//
+//    }
+
+    void FrBody_::SetVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetCOGVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetCOGVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetCOGVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetCOGVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetCOGAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetCOGAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetCOGAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetCOGAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::GetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
+
+    }
+
+    Velocity FrBody_::GetVelocityInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
+        return Velocity();
+    }
+
+    Velocity FrBody_::GetVelocityInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
+        return Velocity();
+    }
+
+    Velocity FrBody_::GetVelocityInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
+        return Velocity();
+    }
+
+    Velocity FrBody_::GetVelocityInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
+        return Velocity();
+    }
+
+    Acceleration FrBody_::GetAccelerationInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
+        return Acceleration();
+    }
+
+    Acceleration FrBody_::GetAccelerationInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
+        return Acceleration();
+    }
+
+    Acceleration FrBody_::GetAccelerationInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
+        return Acceleration();
+    }
+
+    Acceleration FrBody_::GetAccelerationInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
+        return Acceleration();
+    }
+
+    void FrBody_::SetGeneralizedVelocityInWorldAtPointInWorld(const Position &worldPoint, const Velocity &worldVel,
+                                                              const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetGeneralizedVelocityInWorldAtPointInBody(const Position &bodyPoint, const Velocity &worldVel,
+                                                             const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetGeneralizedVelocityInBodyAtPointInWorld(const Position &worldPoint, const Velocity &bodyVel,
+                                                             const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetGeneralizedVelocityInBodyAtPointInBody(const Position &bodyPoint, const Velocity &bodyVel,
+                                                            const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void
+    FrBody_::SetGeneralizedAccelerationInWorldAtPointInWorld(const Position &worldPoint, const Acceleration &worldAcc,
+                                                             const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void
+    FrBody_::SetGeneralizedAccelerationInWorldAtPointInBody(const Position &bodyPoint, const Acceleration &worldAcc,
+                                                            const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void
+    FrBody_::SetGeneralizedAccelerationInBodyAtPointInWorld(const Position &worldPoint, const Acceleration &bodyAcc,
+                                                            const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    void FrBody_::SetGeneralizedAccelerationInBodyAtPointInBody(const Position &bodyPoint, const Acceleration &bodyAcc,
+                                                                const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
+
+    }
+
+    Velocity FrBody_::GetApparentVelocityInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) {
+        return Velocity();
+    }
+
+    Velocity FrBody_::GetApparentVelocityInWorldAtPointInWorld(const Position &bodyPoint, FRAME_CONVENTION fc) {
+        return Velocity();
+    }
+
+    Velocity FrBody_::GetApparentVelocityInBodyAtPointInBody(const Position &worldPoint, FRAME_CONVENTION fc) {
+        return Velocity();
+    }
+
+    Velocity FrBody_::GetApparentVelocityInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) {
+        return Velocity();
+    }
+
+    double FrBody_::GetApparentAngle(FLUID_TYPE ft, FRAME_CONVENTION fc) {
+        return 0;
+    }
 
 
 }  // end namespace frydom

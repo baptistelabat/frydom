@@ -5,6 +5,7 @@ set(SRC_FILES
         FrObject.cpp
         FrUnits.cpp
         FrVector.cpp
+        FrMatrix.cpp
         FrRotation.cpp
         FrFrame.cpp
         FrInertia.cpp
@@ -13,7 +14,6 @@ set(SRC_FILES
         FrBodyEasy.cpp
         FrColors.cpp
         FrGeographic.cpp
-#        FrEulerAngles.inl
         FrForce.cpp
         FrForceAsset.cpp
         FrHydroBody.cpp

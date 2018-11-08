@@ -16,8 +16,7 @@
 
 namespace frydom {
 
-
-
+    /// Class for representing a translation vector in cartesian coordinates
     class Translation : public mathutils::Vector3d<double> {
 
     public:
@@ -63,6 +62,7 @@ namespace frydom {
 
     };
 
+    /// Class for representing a position vector in cartesian coordinates
     class Position : public mathutils::Vector3d<double> {
 
     public:
@@ -109,6 +109,7 @@ namespace frydom {
     };
 
 
+    /// Class for stacking cardan angles into a vector (unit is to be managed by user)
     class CardanAngles : public mathutils::Vector3d<double> {
 
     public:
@@ -155,6 +156,7 @@ namespace frydom {
     };
 
 
+    /// Class to stack linear and
     class GeneralizedPosition : public mathutils::Vector6d<double> {
 
     public:
@@ -300,21 +302,21 @@ namespace frydom {
     };
 
 
-    class RotationalVelocity : public mathutils::Vector3d<double> {
+    class AngularVelocity : public mathutils::Vector3d<double> {
 
     public:
 
-        RotationalVelocity() : mathutils::Vector3d<double>() {}
+        AngularVelocity() : mathutils::Vector3d<double>() {}
 
-        RotationalVelocity(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
+        AngularVelocity(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
 
         // This constructor allows to construct Vector2d from Eigen expressions
         template <class OtherDerived>
-        RotationalVelocity(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+        AngularVelocity(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
 
         // This method allows to assign Eigen expressions to Vector3d
         template <class OtherDerived>
-        RotationalVelocity& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+        AngularVelocity& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
             this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
             return *this;
         }
@@ -351,7 +353,7 @@ namespace frydom {
 
         GeneralizedVelocity() : mathutils::Vector6d<double>() {}
 
-        GeneralizedVelocity(const Velocity& vel, const RotationalVelocity& rotVel) :
+        GeneralizedVelocity(const Velocity& vel, const AngularVelocity& rotVel) :
                 mathutils::Vector6d<double>(vel[0], vel[1], vel[2], rotVel[0], rotVel[1], rotVel[2]) {}
 
         // This constructor allows to construct Vector6d from Eigen expressions
@@ -373,11 +375,11 @@ namespace frydom {
             this->block<3, 1>(0, 0) = vel;
         }
 
-        RotationalVelocity GetRotationalVelocity() const {
+        AngularVelocity GetAngularVelocity() const {
             return this->block<3, 1>(3, 0);
         }
 
-        void SetRotationalVelocity(const RotationalVelocity& rotVel) {
+        void SetAngularVelocity(const AngularVelocity &rotVel) {
             this->block<3, 1>(3, 0) = rotVel;
         }
 
@@ -429,21 +431,21 @@ namespace frydom {
     };
 
 
-    class RotationalAcceleration : public mathutils::Vector3d<double> {
+    class AngularAcceleration : public mathutils::Vector3d<double> {
 
     public:
 
-        RotationalAcceleration() : mathutils::Vector3d<double>() {}
+        AngularAcceleration() : mathutils::Vector3d<double>() {}
 
-        RotationalAcceleration(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
+        AngularAcceleration(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
 
         // This constructor allows to construct Vector2d from Eigen expressions
         template <class OtherDerived>
-        RotationalAcceleration(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+        AngularAcceleration(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
 
         // This method allows to assign Eigen expressions to Vector3d
         template <class OtherDerived>
-        RotationalAcceleration& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+        AngularAcceleration& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
             this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
             return *this;
         }
@@ -480,7 +482,7 @@ namespace frydom {
 
         GeneralizedAcceleration() : mathutils::Vector6d<double>() {}
 
-        GeneralizedAcceleration(const Acceleration& acc, const RotationalAcceleration& rotAcc) :
+        GeneralizedAcceleration(const Acceleration& acc, const AngularAcceleration& rotAcc) :
                 mathutils::Vector6d<double>(acc[0], acc[1], acc[2], rotAcc[0], rotAcc[1], rotAcc[2]) {}
 
         // This constructor allows to construct Vector6d from Eigen expressions
@@ -502,12 +504,12 @@ namespace frydom {
             this->block<3, 1>(0, 0) = acc;
         }
 
-        RotationalAcceleration GetRotationalAcceleration() const {
+        AngularAcceleration GetAngularAcceleration() const {
             return this->block<3, 1>(3, 0);
         }
 
-        void SetRotationalAcceleration(const RotationalAcceleration& rotAcc) {
-            this->block<3, 1>(3, 0) = rotAcc;
+        void SetAngularAcceleration(const AngularAcceleration &angAcc) {
+            this->block<3, 1>(3, 0) = angAcc;
         }
 
     };
@@ -557,21 +559,21 @@ namespace frydom {
         }
     };
 
-    class Moment : public mathutils::Vector3d<double> {
+    class Torque : public mathutils::Vector3d<double> {
 
     public:
 
-        Moment() : mathutils::Vector3d<double>() {}
+        Torque() : mathutils::Vector3d<double>() {}
 
-        Moment(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
+        Torque(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
 
         // This constructor allows to construct Vector2d from Eigen expressions
         template <class OtherDerived>
-        Moment(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+        Torque(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
 
         // This method allows to assign Eigen expressions to Vector3d
         template <class OtherDerived>
-        Moment& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+        Torque& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
             this->Eigen::Matrix<Scalar, 3, 1>::operator=(other);
             return *this;
         }
@@ -608,7 +610,7 @@ namespace frydom {
 
         GeneralizedForce() : mathutils::Vector6d<double>() {}
 
-        GeneralizedForce(const Force& force, const Moment& torque) :
+        GeneralizedForce(const Force& force, const Torque& torque) :
                 mathutils::Vector6d<double>(force[0], force[1], force[2], torque[0], torque[1], torque[2]) {}
 
         // This constructor allows to construct Vector6d from Eigen expressions
@@ -630,17 +632,15 @@ namespace frydom {
             this->block<3, 1>(0, 0) = force;
         }
 
-        Moment GetTorque() const {
+        Torque GetTorque() const {
             return this->block<3, 1>(3, 0);
         }
 
-        void SetTorque(const Moment& moment) {
+        void SetTorque(const Torque& moment) {
             this->block<3, 1>(3, 0) = moment;
         }
 
     };
-
-
 
 
     namespace internal {
@@ -675,13 +675,13 @@ namespace frydom {
             return chrono::ChVector<double>(vector3d[0], vector3d[1], vector3d[2]);
         }
 
-        inline chrono::ChVector<double> MakeNWUChVector(double& x, double& y, double& z, FRAME_CONVENTION fc) {
-            if (IsNED(fc)) {
-                return chrono::ChVector<double>(x, -y, -z);
-            } else {
-                return chrono::ChVector<double>(x, y, z);
-            }
-        }
+//        inline chrono::ChVector<double> MakeNWUChVector(double& x, double& y, double& z, FRAME_CONVENTION fc) {
+//            if (IsNED(fc)) {
+//                return chrono::ChVector<double>(x, -y, -z);
+//            } else {
+//                return chrono::ChVector<double>(x, y, z);
+//            }
+//        }
 
         inline void SwapCoordinateConvention(double& x, double& y, double& z) {
             y = -y;
