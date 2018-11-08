@@ -108,8 +108,14 @@ namespace frydom {
     }
 
     FrQuaternion_ &FrQuaternion_::operator*=(const FrQuaternion_ &other) {  // OK
-        m_chronoQuaternion *= other.m_chronoQuaternion;
+//        m_chronoQuaternion *= other.m_chronoQuaternion; // FIXME : this Chrono operator is currently buggy (07/11/2018)
+        m_chronoQuaternion = m_chronoQuaternion * other.m_chronoQuaternion;
+        // TODO : wait for a new release of Chrono for a fix to *= to use it... A message has been sent to the Chrono list by Lucas (07/11/2018)
         return *this;
+    }
+
+    bool FrQuaternion_::operator==(const frydom::FrQuaternion_ &other) const {
+        return m_chronoQuaternion == other.m_chronoQuaternion;
     }
 
     const chrono::ChQuaternion<double>& FrQuaternion_::GetChronoQuaternion() const {  // TODO : supprimer le besoin de cette methode
@@ -123,6 +129,22 @@ namespace frydom {
 
     FrQuaternion_ FrQuaternion_::GetInverse() const {  // OK
         return FrQuaternion_(*this).Inverse();  // TODO verifier
+    }
+
+    std::ostream& FrQuaternion_::cout(std::ostream &os) const {  // OK
+
+        os << std::endl;
+        os << "Quaternion : q0 = "<< m_chronoQuaternion.e0()
+           <<", q1 = "<< m_chronoQuaternion.e1()
+           <<", q2 = "<< m_chronoQuaternion.e2()
+           <<", q3 = "<< m_chronoQuaternion.e3()
+           << std::endl;
+
+        return os;
+    }
+
+    std::ostream& operator<<(std::ostream& os, const FrQuaternion_& quaternion) {  // OK
+        return quaternion.cout(os);
     }
 
     mathutils::Matrix33<double> FrQuaternion_::GetRotationMatrix() const {
@@ -152,7 +174,6 @@ namespace frydom {
     mathutils::Matrix33<double> FrQuaternion_::RightMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
         return matrix * GetInverseRotationMatrix();
     }
-
 
     // FrRotation_
 
@@ -279,8 +300,8 @@ namespace frydom {
         m_frQuaternion *= other.m_frQuaternion;
     }
 
-    mathutils::Matrix33<double> FrRotation_::LeftMultiply(const mathutils::Matrix33<double>& matrix) const {
-        return GetRotationMatrix() * matrix;
+    bool FrRotation_::operator==(const FrRotation_& other) const {
+        return m_frQuaternion == other.m_frQuaternion;
     }
 
     mathutils::Matrix33<double> FrRotation_::LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {

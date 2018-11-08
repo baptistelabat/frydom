@@ -456,9 +456,27 @@ namespace frydom {
 
         // FIXME : reflechir de nouveau a ce que sont les eux methodes precedentes... on tourne autour de quoi ?
         // Possible que ca n'ait pas de sens...
-        void RotateAroundPointInWorld(const FrRotation_& worldPos);
+        void RotateAroundPointInWorld(const FrRotation_& rot, const Position& worldPos);
 
-        void RotateAroundPointInBody(const FrRotation_& bodyPos);
+        void RotateAroundPointInBody(const FrRotation_& rot, const Position& bodyPos);
+
+        void RotateAroundCOGInWorld(const FrRotation_& rot, const Position& worldPos);
+
+        void RotateAroundCOGInBody(const FrRotation_& rot, const Position& bodydPos);
+
+
+        void RotateAroundPointInWorld(const FrQuaternion_& rot, const Position& worldPos);
+
+        void RotateAroundPointInBody(const FrQuaternion_& rot, const Position& bodyPos);
+
+        void RotateAroundCOGInWorld(const FrQuaternion_& rot, const Position& worldPos);
+
+        void RotateAroundCOGInBody(const FrQuaternion_& rot, const Position& bodydPos);
+
+
+
+
+
 
 
         // TODO : ajouter aussi les RotateX, RotateAxisAngle, RotateEuler...

@@ -75,6 +75,8 @@ namespace frydom {
 
         FrQuaternion_& operator*=(const FrQuaternion_& other);
 
+        bool operator==(const FrQuaternion_& other) const;
+
         // TODO : voir pour rendre generique par rapport aux differents vecteurs...
         template <class Vector>
         Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) {
@@ -106,6 +108,13 @@ namespace frydom {
         mathutils::Matrix33<double> LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const;
 
         mathutils::Matrix33<double> RightMultiplyInverse(const mathutils::Matrix33<double>& matrix) const;
+
+        friend std::ostream& operator<<(std::ostream& os, const FrQuaternion_& quaternion);
+
+
+    private:
+
+        std::ostream& cout(std::ostream& os) const;
 
     };
 
@@ -236,6 +245,8 @@ namespace frydom {
 
         /// Compopse the current rotation with the other inplace. In a matrix form it would be this = this*other.
         FrRotation_&operator*=(const FrRotation_& other);
+
+        bool operator==(const FrRotation_& other) const;
 
         /// Multiply a matrix by this rotation on the left
         mathutils::Matrix33<double> LeftMultiply(const mathutils::Matrix33<double>& matrix) const;
