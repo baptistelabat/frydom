@@ -1069,71 +1069,85 @@ namespace frydom {
         m_chronoBody->SetMass(mass);
     }
 
-    void FrBody_::SetCOG() {
-
+    void FrBody_::SetCOG(const Position& bodyPos, FRAME_CONVENTION fc) {
+        FrFrame_ cogFrame;
+        cogFrame.SetPosition(bodyPos, fc);
+        m_chronoBody->SetFrame_COG_to_REF(internal::Fr2ChFrame(cogFrame));
     }
 
-    Position FrBody_::GetCOG() {
-
+    Position FrBody_::GetCOG(FRAME_CONVENTION fc) {
+        Position cogPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_COG_to_REF().GetPos()); // In NWU
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
+        return cogPos;
     }
 
-    Position FrBody_::GetPosition() const {
-        return Position();
+    Position FrBody_::GetPosition(FRAME_CONVENTION fc) const {
+        return internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_REF_to_abs().GetPos());
     }
 
-    void FrBody_::SetPosition(const Position &worldPos) {
-
+    void FrBody_::SetPosition(const Position &worldPos, FRAME_CONVENTION fc) {
+        auto bodyFrame = GetFrame();
+        bodyFrame.SetPosition(worldPos, fc);
+        m_chronoBody->SetFrame_REF_to_abs(internal::Fr2ChFrame(bodyFrame));
+        // Traiter update
     }
 
     FrRotation_ FrBody_::GetRotation() const {
-        return FrRotation_();
+        return FrRotation_(GetQuaternion());
     }
 
     void FrBody_::SetRotation(const FrRotation_ &rotation) {
-
+        SetRotation(rotation.GetQuaternion());
     }
 
     FrQuaternion_ FrBody_::GetQuaternion() const {
-        return FrQuaternion_();
+        return internal::Ch2FrQuaternion(m_chronoBody->GetRot());
     }
 
     void FrBody_::SetRotation(const FrQuaternion_ &quaternion) {
-
+        m_chronoBody->SetRot(internal::Fr2ChQuaternion(quaternion));
     }
 
     FrFrame_ FrBody_::GetFrame() const {
-        return FrFrame_();
+        FrFrame_ bodyRefFrame;
+        bodyRefFrame.SetPosition(GetPosition(NWU), NWU);
+        bodyRefFrame.SetRotation(GetQuaternion());
+        return bodyRefFrame;
     }
 
     void FrBody_::SetFrame(const FrFrame_ &worldFrame) {
+        SetPosition(worldFrame.GetPosition(NWU), NWU);
+        SetRotation(worldFrame.GetQuaternion());
+    }
+
+    Position FrBody_::GetPointPositionInWorld(const Position &bodyPos, FRAME_CONVENTION fc) const {
+        return GetPosition(fc) + ProjectVectorInWorld<Position>(bodyPos, fc);
+    }
+
+    Position FrBody_::GetPointPositionInBody(const Position &worldPos, FRAME_CONVENTION fc) const {
+        return ProjectVectorInBody<Position>(worldPos - GetPosition(fc), fc);
+    }
+
+    Position FrBody_::GetCOGPositionInWorld(FRAME_CONVENTION fc) const {
+        Position cogPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetPos());
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
+        return cogPos;
+    }
+
+    void FrBody_::SetPointPosition(const Position &bodyPoint, const Position &worldPos, FRAME_CONVENTION fc) {
+
 
     }
 
-    Position FrBody_::GetPointPositionInWorld(const Position &bodyPos) const {
-        return Position();
-    }
-
-    Position FrBody_::GetPointPositionInBody(const Position &worldPos) const {
-        return Position();
-    }
-
-    Position FrBody_::GetCOGPositionInWorld() const {
-        return Position();
-    }
-
-    void FrBody_::SetPointPosition(const Position &bodyPoint, const Position &worldPos) {
+    void FrBody_::SetCOGPosition(const Position &worldPos, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetCOGPosition(const Position &worldPos) {
+    void FrBody_::TranslateInWorld(const Position &worldTranslation, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::TranslateInWorld(const Position &worldTranslation) {
-
-    }
-
-    void FrBody_::TranslateInBody(const Position &bodyTranslation) {
+    void FrBody_::TranslateInBody(const Position &bodyTranslation, FRAME_CONVENTION fc) {
 
     }
 
@@ -1141,194 +1155,194 @@ namespace frydom {
 
     }
 
-    void FrBody_::Rotate(const FrQuaternion_ &relQuaterion) {
+    void FrBody_::Rotate(const FrQuaternion_ &relQuaternion) {
 
     }
 
-    void FrBody_::SetVelocityInWorld(const Velocity &worldVel) {
+    void FrBody_::SetVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetVelocityInBody(const Velocity &bodyVel) {
+    void FrBody_::SetVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetVelocityInWorld(const Velocity &worldVel) {
+    void FrBody_::GetVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetVelocityInBody(const Velocity &bodyVel) {
+    void FrBody_::GetVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetCOGVelocityInWorld(const Velocity &worldVel) {
+    void FrBody_::SetCOGVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetCOGVelocityInBody(const Velocity &bodyVel) {
+    void FrBody_::SetCOGVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetCOGVelocityInWorld(const Velocity &worldVel) {
+    void FrBody_::GetCOGVelocityInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetCOGVelocityInBody(const Velocity &bodyVel) {
+    void FrBody_::GetCOGVelocityInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetAccelerationInWorld(const Velocity &worldVel) {
+    void FrBody_::SetAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetAccelerationInBody(const Velocity &bodyVel) {
+    void FrBody_::SetAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetAccelerationInWorld(const Velocity &worldVel) {
+    void FrBody_::GetAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetAccelerationInBody(const Velocity &bodyVel) {
+    void FrBody_::GetAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetCOGAccelerationInWorld(const Velocity &worldVel) {
+    void FrBody_::SetCOGAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetCOGAccelerationInBody(const Velocity &bodyVel) {
+    void FrBody_::SetCOGAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetCOGAccelerationInWorld(const Velocity &worldVel) {
+    void FrBody_::GetCOGAccelerationInWorld(const Velocity &worldVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetCOGAccelerationInBody(const Velocity &bodyVel) {
+    void FrBody_::GetCOGAccelerationInBody(const Velocity &bodyVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetAngularVelocityInWorld(const AngularVelocity &worldAngVel) {
+    void FrBody_::SetAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetAngularVelocityInBody(const AngularVelocity &bodyAngVel) {
+    void FrBody_::SetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetAngularVelocityInWorld(const AngularVelocity &worldAngVel) {
+    void FrBody_::GetAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetAngularVelocityInBody(const AngularVelocity &bodyAngVel) {
+    void FrBody_::GetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc) {
+    void FrBody_::SetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::SetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc) {
+    void FrBody_::SetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc) {
+    void FrBody_::GetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
 
     }
 
-    void FrBody_::GetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc) {
+    void FrBody_::GetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
 
     }
 
-    Velocity FrBody_::GetVelocityInWorldAtPointInWorld(const Position &worldPoint) const {
+    Velocity FrBody_::GetVelocityInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
         return Velocity();
     }
 
-    Velocity FrBody_::GetVelocityInWorldAtPointInBody(const Position &bodyPoint) const {
+    Velocity FrBody_::GetVelocityInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
         return Velocity();
     }
 
-    Velocity FrBody_::GetVelocityInBodyAtPointInWorld(const Position &worldPoint) const {
+    Velocity FrBody_::GetVelocityInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
         return Velocity();
     }
 
-    Velocity FrBody_::GetVelocityInBodyAtPointInBody(const Position &bodyPoint) const {
+    Velocity FrBody_::GetVelocityInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
         return Velocity();
     }
 
-    Acceleration FrBody_::GetAccelerationInWorldAtPointInWorld(const Position &worldPoint) const {
+    Acceleration FrBody_::GetAccelerationInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
         return Acceleration();
     }
 
-    Acceleration FrBody_::GetAccelerationInWorldAtPointInBody(const Position &bodyPoint) const {
+    Acceleration FrBody_::GetAccelerationInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
         return Acceleration();
     }
 
-    Acceleration FrBody_::GetAccelerationInBodyAtPointInWorld(const Position &worldPoint) const {
+    Acceleration FrBody_::GetAccelerationInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
         return Acceleration();
     }
 
-    Acceleration FrBody_::GetAccelerationInBodyAtPointInBody(const Position &bodyPoint) const {
+    Acceleration FrBody_::GetAccelerationInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
         return Acceleration();
     }
 
     void FrBody_::SetGeneralizedVelocityInWorldAtPointInWorld(const Position &worldPoint, const Velocity &worldVel,
-                                                              const AngularVelocity &worldAngVel) {
+                                                              const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
 
     }
 
     void FrBody_::SetGeneralizedVelocityInWorldAtPointInBody(const Position &bodyPoint, const Velocity &worldVel,
-                                                             const AngularVelocity &worldAngVel) {
+                                                             const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
 
     }
 
     void FrBody_::SetGeneralizedVelocityInBodyAtPointInWorld(const Position &worldPoint, const Velocity &bodyVel,
-                                                             const AngularVelocity &bodyAngVel) {
+                                                             const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
 
     }
 
     void FrBody_::SetGeneralizedVelocityInBodyAtPointInBody(const Position &bodyPoint, const Velocity &bodyVel,
-                                                            const AngularVelocity &bodyAngVel) {
+                                                            const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
 
     }
 
     void
     FrBody_::SetGeneralizedAccelerationInWorldAtPointInWorld(const Position &worldPoint, const Acceleration &worldAcc,
-                                                             const AngularVelocity &worldAngVel) {
+                                                             const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
 
     }
 
     void
     FrBody_::SetGeneralizedAccelerationInWorldAtPointInBody(const Position &bodyPoint, const Acceleration &worldAcc,
-                                                            const AngularVelocity &worldAngVel) {
+                                                            const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
 
     }
 
     void
     FrBody_::SetGeneralizedAccelerationInBodyAtPointInWorld(const Position &worldPoint, const Acceleration &bodyAcc,
-                                                            const AngularVelocity &bodyAngVel) {
+                                                            const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
 
     }
 
     void FrBody_::SetGeneralizedAccelerationInBodyAtPointInBody(const Position &bodyPoint, const Acceleration &bodyAcc,
-                                                                const AngularVelocity &bodyAngVel) {
+                                                                const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
 
     }
 
-    Velocity FrBody_::GetApparentVelocityInWorldAtPointInBody(const Position &bodyPoint) {
+    Velocity FrBody_::GetApparentVelocityInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) {
         return Velocity();
     }
 
-    Velocity FrBody_::GetApparentVelocityInWorldAtPointInWorld(const Position &bodyPoint) {
+    Velocity FrBody_::GetApparentVelocityInWorldAtPointInWorld(const Position &bodyPoint, FRAME_CONVENTION fc) {
         return Velocity();
     }
 
-    Velocity FrBody_::GetApparentVelocityInBodyAtPointInBody(const Position &worldPoint) {
+    Velocity FrBody_::GetApparentVelocityInBodyAtPointInBody(const Position &worldPoint, FRAME_CONVENTION fc) {
         return Velocity();
     }
 
-    Velocity FrBody_::GetApparentVelocityInBodyAtPointInWorld(const Position &worldPoint) {
+    Velocity FrBody_::GetApparentVelocityInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) {
         return Velocity();
     }
 
