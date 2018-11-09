@@ -118,7 +118,7 @@ namespace frydom {
         double v = cogRelVel.GetVy();
         double w = cogRelVel.GetVz();
 
-        SetLocalForce(Force(
+        SetForceInBody(Force(
                 - 0.5 * rho * m_Su * m_Cu * u*fabs(u),
                 - 0.5 * rho * m_Sv * m_Cv * v*fabs(v),
                 - 0.5 * rho * m_Sw * m_Cw * w*fabs(w)

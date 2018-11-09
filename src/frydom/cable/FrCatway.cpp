@@ -234,7 +234,7 @@ namespace frydom {
     }
 
     void FrCatForce::SetAbsTension(const Force& tension) {
-        SetAbsForce(tension, NWU);
+        SetForceInWorldAtCOG(tension, NWU);
 
         // TODO : transporter le moment...
 

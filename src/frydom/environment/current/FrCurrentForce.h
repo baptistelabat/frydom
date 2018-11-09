@@ -16,6 +16,10 @@ namespace frydom {
     class FrCurrent;
     class FrHydroBody;
 
+
+
+
+
     class FrCurrentForce : public FrForce {
 
     private:
@@ -54,6 +58,36 @@ namespace frydom {
 
 
 
+
+
+
+
+
+    /// REFACTORING ------>>>>>>>>>>>>>>
+
+    class FrCurrentForce_ : public FrForce_ {
+
+    private:
+        FrCurrentPolarCoeffs m_coeffsTable;
+
+    public:
+
+        /// Default constructor
+        FrCurrentForce_() = default;
+
+        /// Constructor from YAML file
+        explicit FrCurrentForce_(std::string yamlFile);
+
+        /// Update the state of the force
+        void Update(double time) override;
+
+        void Initialize() override {};
+
+        void StepFinalize() override {};
+
+        //void SetCoeffs(FrCurrentPolarCoeffs coeffsTable);
+
+    };
 
 
 }  // end namespace frydom

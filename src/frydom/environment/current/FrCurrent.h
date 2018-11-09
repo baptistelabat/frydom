@@ -53,6 +53,7 @@ namespace frydom {
 
         virtual void StepFinalize()  {}
 
+
 //        virtual void Set(chrono::ChVector<>  unit_direction, double  magnitude,
 //                         SPEED_UNIT = KNOT, FRAME_CONVENTION= NED,
 //                         DIRECTION_CONVENTION convention = GOTO) = 0;
@@ -109,6 +110,7 @@ namespace frydom {
 
     // Forward declarations
     class FrEnvironment_;
+    //class FrFrame_;
 
     // ===============================================================
     // FrCurrent : Base current field
@@ -125,6 +127,8 @@ namespace frydom {
         virtual void Update(double time) = 0;
 
         Velocity GetAbsRelativeVelocity(const Position& absPointPos, const Velocity& absPointVelocity, FRAME_CONVENTION fc);
+
+        //Velocity GetRelativeVelocityInLocalFrame(const FrFrame_ frame, const Velocity& absVel, FRAME_CONVENTION fc);
 
     };
 

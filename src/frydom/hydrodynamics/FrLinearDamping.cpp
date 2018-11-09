@@ -126,7 +126,7 @@ namespace frydom {
 
         GeneralizedForce genForce = - m_dampingMatrix * genRelVel;
 
-        SetLocalForceTorqueAtCOG(genForce.GetForce(), genForce.GetTorque(), NWU);
+        SetForceTorqueInBodyAtCOG(genForce.GetForce(), genForce.GetTorque(), NWU);
 
     }
 

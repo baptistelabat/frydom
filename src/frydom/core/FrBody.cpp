@@ -802,25 +802,6 @@ namespace frydom {
 
     }
 
-//    Velocity FrBody_::GetApparentVelocityInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) {
-//        return Velocity();
-//    }
-//
-//    Velocity FrBody_::GetApparentVelocityInWorldAtPointInWorld(const Position &bodyPoint, FRAME_CONVENTION fc) {
-//        return Velocity();
-//    }
-//
-//    Velocity FrBody_::GetApparentVelocityInBodyAtPointInBody(const Position &worldPoint, FRAME_CONVENTION fc) {
-//        return Velocity();
-//    }
-//
-//    Velocity FrBody_::GetApparentVelocityInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) {
-//        return Velocity();
-//    }
-//
-//    double FrBody_::GetApparentAngle(FLUID_TYPE ft, FRAME_CONVENTION fc) {
-//        return 0;
-//    }
 
 
 
