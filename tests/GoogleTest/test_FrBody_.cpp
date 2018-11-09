@@ -230,7 +230,7 @@ void Test_AllGetVelocity(const std::shared_ptr<FrBody_> body,
     testVelocity = body->GetCOGVelocityInBody(NWU) - RotVelocity;
     EXPECT_TRUE(testVelocity.isZero());
 
-    
+
     //-----------------Point-----------------//
     Position Point(5.,6.,7.);
     // Test Getter for the velocity expressed in the world reference frame, at a Point expressed in body reference frame
@@ -335,7 +335,6 @@ TEST(FrBodyTest,TestTranslationalVelocityWithOrientation){
     FrRotation_ TotalRotation = Rotation1*Rotation2;
     body->SetRotation(TotalRotation);
 
-<<<<<<< HEAD
 //    //-----------------Velocity Setters-----------------//
 //    //+++++Frame Velocity Setters+++++//
 //    // Set the body velocity, expressed in the world reference frame
@@ -357,29 +356,6 @@ TEST(FrBodyTest,TestTranslationalVelocityWithOrientation){
 //    Velocity COGVelocityInBody(0.,1.,0.);
 //    body->SetCOGLocalVelocity(COGVelocityInBody,NWU);
 //    Test_AllGetVelocity(body, COGVelocityInBody, true);
-=======
-    //-----------------Velocity Setters-----------------//
-    //+++++Frame Velocity Setters+++++//
-    // Set the body velocity, expressed in the world reference frame
-    //Velocity VelocityInWorld(1.,1.,1.);    Velocity testVelocity;
-    //body->SetVelocityInWorld(VelocityInWorld,NWU);
-    //Test_AllGetVelocity(body, VelocityInWorld, true);
-
-    // Set the body velocity, expressed in the body reference frame
-    //body->SetVelocityInBody(VelocityInWorld,NWU);
-    //Test_AllGetVelocity(body, VelocityInWorld, true);
-
-    //+++++COG Velocity Setters+++++//
-    // Test Setter for the COG Velocity expressed in the world reference frame
-    Velocity COGVelocityInWorld(0.,1.,0.);
-    body->SetCOGAbsVelocity(COGVelocityInWorld,NWU);
-    Test_AllGetVelocity(body, COGVelocityInWorld, true);
-
-    // Test Setter for the COG Velocity expressed in the body reference frame
-    Velocity COGVelocityInBody(0.,1.,0.);
-    body->SetCOGLocalVelocity(COGVelocityInBody,NWU);
-    Test_AllGetVelocity(body, COGVelocityInBody, true);
->>>>>>> feature/FR_refactoring_open_source
 
 
 }
