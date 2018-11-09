@@ -1308,7 +1308,7 @@ namespace frydom {
     }
 
     Velocity FrBody_::GetVelocityInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-        Position bodyPoint = GetPointPositionInBody(worldPoint);
+        Position bodyPoint = GetPointPositionInBody(worldPoint, fc);
         return GetVelocityInBodyAtPointInBody(bodyPoint, fc);
     }
 
