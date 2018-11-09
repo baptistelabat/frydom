@@ -158,19 +158,19 @@ namespace frydom{
             body_torque = m_torque; // In body coordinates expressed at COG
         }
 
-        void _FrForceBase::GetAbsForceNWU(Force &body_force) const {
+        void _FrForceBase::GetForceInWorldNWU(Force &body_force) const {
             body_force = internal::ChVectorToVector3d<Force>(force);
         }
 
-        void _FrForceBase::GetLocalTorqueNWU(Torque &body_torque) const {
+        void _FrForceBase::GetTorqueInBodyNWU(Torque &body_torque) const {
             body_torque = internal::ChVectorToVector3d<Torque>(m_torque);
         }
 
-        void _FrForceBase::SetAbsForceNWU(const Force &body_force) {
+        void _FrForceBase::SetForceInWorldNWU(const Force &body_force) {
             force = internal::Vector3dToChVector(body_force);
         }
 
-        void _FrForceBase::SetLocalTorqueNWU(const Torque &body_torque) {
+        void _FrForceBase::SetTorqueInBodyNWU(const Torque &body_torque) {
             m_torque = internal::Vector3dToChVector(body_torque);
         }
 
@@ -216,176 +216,176 @@ namespace frydom{
         return m_limitForce;
     }
 
-    void FrForce_::GetAbsForce(Force &force, FRAME_CONVENTION fc) const {
-        m_chronoForce->GetAbsForceNWU(force);  // NWU
+    void FrForce_::GetForceInWorld(Force &force, FRAME_CONVENTION fc) const {
+        m_chronoForce->GetForceInWorldNWU(force);  // NWU
 
         if (IsNED(fc)) {
             internal::SwapFrameConvention<Force>(force);
         }
     }
 
-    Force FrForce_::GetAbsForce(FRAME_CONVENTION fc) const {
+    Force FrForce_::GetForceInWorld(FRAME_CONVENTION fc) const {
         Force force;
-        GetAbsForce(force, fc);
+        GetForceInWorld(force, fc);
         return force;
     }
 
-    void FrForce_::GetAbsForce(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
-        auto force = GetAbsForce(fc);
+    void FrForce_::GetForceInWorld(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
+        auto force = GetForceInWorld(fc);
         fx = force[0];
         fy = force[1];
         fz = force[2];
     }
 
-    void FrForce_::GetLocalForce(Force &force, FRAME_CONVENTION fc) const {
-        GetAbsForce(force, fc);
+    void FrForce_::GetForceInBody(Force &force, FRAME_CONVENTION fc) const {
+        GetForceInWorld(force, fc);
         m_body->ProjectAbsVectorInBodyCoords<Force>(force, fc);
     }
 
-    Force FrForce_::GetLocalForce(FRAME_CONVENTION fc) const {
+    Force FrForce_::GetForceInBody(FRAME_CONVENTION fc) const {
         Force force;
-        GetLocalForce(force, fc);
+        GetForceInBody(force, fc);
         return force;
     }
 
-    void FrForce_::GetLocalForce(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
-        auto force = GetLocalForce(fc);
+    void FrForce_::GetForceInBody(double &fx, double &fy, double &fz, FRAME_CONVENTION fc) const {
+        auto force = GetForceInBody(fc);
         fx = force[0];
         fy = force[1];
         fz = force[2];
     }
 
-    void FrForce_::GetAbsTorqueAtCOG(Torque &torque, FRAME_CONVENTION fc) const {
-        GetLocalTorqueAtCOG(torque, fc);
+    void FrForce_::GetTorqueInWorldAtCOG(Torque &torque, FRAME_CONVENTION fc) const {
+        GetTorqueInBodyAtCOG(torque, fc);
         m_body->ProjectBodyVectorInAbsCoords<Torque>(torque, fc);
     }
 
-    Torque FrForce_::GetAbsTorqueAtCOG(FRAME_CONVENTION fc) const {
+    Torque FrForce_::GetTorqueInWorldAtCOG(FRAME_CONVENTION fc) const {
         Torque torque;
-        GetAbsTorqueAtCOG(torque, fc);
+        GetTorqueInWorldAtCOG(torque, fc);
         return torque;
     }
 
-    void FrForce_::GetAbsTorqueAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const {
-        Torque torque = GetAbsTorqueAtCOG(fc);
+    void FrForce_::GetTorqueInWorldAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const {
+        Torque torque = GetTorqueInWorldAtCOG(fc);
         mx = torque[0];
         my = torque[1];
         mz = torque[2];
     }
 
-    void FrForce_::GetLocalTorqueAtCOG(Torque &torque, FRAME_CONVENTION fc) const {
-        m_chronoForce->GetLocalTorqueNWU(torque);
+    void FrForce_::GetTorqueInBodyAtCOG(Torque &torque, FRAME_CONVENTION fc) const {
+        m_chronoForce->GetTorqueInBodyNWU(torque);
 
         if (IsNED(fc)) {
             internal::SwapFrameConvention<Torque>(torque);
         }
     }
 
-    Torque FrForce_::GetLocalTorqueAtCOG(FRAME_CONVENTION fc) const {
+    Torque FrForce_::GetTorqueInBodyAtCOG(FRAME_CONVENTION fc) const {
         Torque torque;
-        GetLocalTorqueAtCOG(torque, fc);
+        GetTorqueInBodyAtCOG(torque, fc);
         return torque;
     }
 
-    void FrForce_::GetLocalTorqueAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const {
-        Torque torque = GetLocalTorqueAtCOG(fc);
+    void FrForce_::GetTorqueInBodyAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const {
+        Torque torque = GetTorqueInBodyAtCOG(fc);
         mx = torque[0];
         my = torque[1];
         mz = torque[2];
     }
 
     double FrForce_::GetForceNorm() const {
-        return GetAbsForce(NWU).norm();
+        return GetForceInWorld(NWU).norm();
     }
 
     double FrForce_::GetTorqueNormAtCOG() const {
-        return GetLocalTorqueAtCOG(NWU).norm();
+        return GetTorqueInBodyAtCOG(NWU).norm();
     }
 
     // =================================================================================================================
     // Protected methods implementations
     // =================================================================================================================
 
-    void FrForce_::SetAbsForce(const Force &force, FRAME_CONVENTION fc) {
+    void FrForce_::SetForceInWorldAtCOG(const Force &force, FRAME_CONVENTION fc) {
         auto forceTmp = force;
         if (IsNED(fc)) {
             internal::SwapFrameConvention<Force>(forceTmp);  // In NWU
         }
 
-        m_chronoForce->SetAbsForceNWU(forceTmp);
+        m_chronoForce->SetForceInWorldNWU(forceTmp);
     }
 
-    void FrForce_::SetAbsForceOnLocalPoint(const Force &force, const Position &relPos, FRAME_CONVENTION fc) {
-        SetAbsForce(force, fc);
+    void FrForce_::SetForceInWorldAtPointInBody(const Force &force, const Position &relPos, FRAME_CONVENTION fc) {
+        SetForceInWorldAtCOG(force, fc);
 
         // Calculating the moment created by the force applied at point relPos
         Position GP = relPos - m_body->GetCOGLocalPosition(fc); // In body coordinates following the fc convention
 
         Torque body_torque = GP.cross(m_body->ProjectAbsVectorInBodyCoords<Force>(force, fc));
 
-        SetLocalTorqueAtCOG(body_torque, fc);
+        SetTorqueInBodyAtCOG(body_torque, fc);
     }
 
-    void FrForce_::SetAbsForceOnAbsPoint(const Force &force, const Position &absPos, FRAME_CONVENTION fc) {
+    void FrForce_::SetForceInWorldAtPointInWorld(const Force &force, const Position &absPos, FRAME_CONVENTION fc) {
         // Getting the local position of the point
         Position relPos = m_body->ProjectAbsVectorInBodyCoords<Position>(absPos - m_body->GetAbsPosition(fc), fc);
-        SetAbsForceOnLocalPoint(force, relPos, fc);
+        SetForceInWorldAtPointInBody(force, relPos, fc);
     }
 
-    void FrForce_::SetLocalForce(const Force &force, FRAME_CONVENTION fc) {
-        SetAbsForce(m_body->ProjectBodyVectorInAbsCoords<Force>(force, fc), fc);
+    void FrForce_::SetForceInBody(const Force &force, FRAME_CONVENTION fc) {
+        SetForceInWorldAtCOG(m_body->ProjectBodyVectorInAbsCoords<Force>(force, fc), fc);
     }
 
-    void FrForce_::SetLocalForceOnLocalPoint(const Force& force, const Position& relPos, FRAME_CONVENTION fc) {
-        SetAbsForceOnLocalPoint(m_body->ProjectBodyVectorInAbsCoords<Force>(force, fc), relPos, fc);
+    void FrForce_::SetForceInBodyAtPointInBody(const Force& force, const Position& relPos, FRAME_CONVENTION fc) {
+        SetForceInWorldAtPointInBody(m_body->ProjectBodyVectorInAbsCoords<Force>(force, fc), relPos, fc);
     }
 
-    void FrForce_::SetLocalForceOnAbsPoint(const Force& force, const Position& absPos, FRAME_CONVENTION fc) {
-        SetAbsForceOnAbsPoint(m_body->ProjectBodyVectorInAbsCoords<Force>(force, fc), absPos, fc);
+    void FrForce_::SetForceInBodyAtPointInWorld(const Force& force, const Position& absPos, FRAME_CONVENTION fc) {
+        SetForceInWorldAtPointInWorld(m_body->ProjectBodyVectorInAbsCoords<Force>(force, fc), absPos, fc);
     }
 
-    void FrForce_::SetAbsTorqueAtCOG(const Torque& torque, FRAME_CONVENTION fc) {
-        SetLocalTorqueAtCOG(m_body->ProjectAbsVectorInBodyCoords<Torque>(torque, fc), fc);
+    void FrForce_::SetTorqueInWorldAtCOG(const Torque& torque, FRAME_CONVENTION fc) {
+        SetTorqueInBodyAtCOG(m_body->ProjectAbsVectorInBodyCoords<Torque>(torque, fc), fc);
     }
 
-    void FrForce_::SetLocalTorqueAtCOG(const Torque& torque, FRAME_CONVENTION fc) {
+    void FrForce_::SetTorqueInBodyAtCOG(const Torque& torque, FRAME_CONVENTION fc) {
         auto torqueTmp = torque;
         if (IsNED(fc)) {
             internal::SwapFrameConvention<Torque>(torqueTmp);  // In NWU
         }
 
-        m_chronoForce->SetLocalTorqueNWU(torqueTmp);
+        m_chronoForce->SetTorqueInBodyNWU(torqueTmp);
     }
 
 
-    void FrForce_::SetAbsForceTorqueAtCOG(const Force& force, const Torque& torque, FRAME_CONVENTION fc) {
-        SetAbsForce(force, fc);
-        SetAbsTorqueAtCOG(torque, fc);
+    void FrForce_::SetForceTorqueInWorldAtCOG(const Force& force, const Torque& torque, FRAME_CONVENTION fc) {
+        SetForceInWorldAtCOG(force, fc);
+        SetTorqueInWorldAtCOG(torque, fc);
     }
 
-    void FrForce_::SetLocalForceTorqueAtCOG(const Force& force, const Torque& torque, FRAME_CONVENTION fc) {
-        SetLocalForce(force, fc);
-        SetLocalTorqueAtCOG(torque, fc);
+    void FrForce_::SetForceTorqueInBodyAtCOG(const Force& force, const Torque& torque, FRAME_CONVENTION fc) {
+        SetForceInBody(force, fc);
+        SetTorqueInBodyAtCOG(torque, fc);
     }
 
-    void FrForce_::SetAbsForceTorqueAtLocalPoint(const Force& force, const Torque& torque, const Position& relPos, FRAME_CONVENTION fc) {
-        SetAbsForceOnLocalPoint(force, relPos, fc);
-        SetLocalTorqueAtCOG(GetLocalTorqueAtCOG(fc) + m_body->ProjectAbsVectorInBodyCoords<Torque>(torque, fc), fc);
+    void FrForce_::SetForceTorqueInWorldAtPointInBody(const Force& force, const Torque& torque, const Position& relPos, FRAME_CONVENTION fc) {
+        SetForceInWorldAtPointInBody(force, relPos, fc);
+        SetTorqueInBodyAtCOG(GetTorqueInBodyAtCOG(fc) + m_body->ProjectAbsVectorInBodyCoords<Torque>(torque, fc), fc);
     }
 
-    void FrForce_::SetAbsForceTorqueAtAbsPoint(const Force& force, const Torque& torque, const Position& absPos, FRAME_CONVENTION fc) {
-        SetAbsForceOnAbsPoint(force, absPos, fc);
-        SetLocalTorqueAtCOG(GetLocalTorqueAtCOG(fc) + m_body->ProjectAbsVectorInBodyCoords<Torque>(torque, fc), fc);
+    void FrForce_::SetForceTorqueInWorldAtPointInWorld(const Force& force, const Torque& torque, const Position& absPos, FRAME_CONVENTION fc) {
+        SetForceInWorldAtPointInWorld(force, absPos, fc);
+        SetTorqueInBodyAtCOG(GetTorqueInBodyAtCOG(fc) + m_body->ProjectAbsVectorInBodyCoords<Torque>(torque, fc), fc);
     }
 
-    void FrForce_::SetLocalForceTorqueAtLocalPoint(const Force& force, const Torque& torque, const Position& relPos, FRAME_CONVENTION fc) {
-        SetLocalForceOnLocalPoint(force, relPos, fc);
-        SetLocalTorqueAtCOG(GetLocalTorqueAtCOG(fc) + torque, fc);
+    void FrForce_::SetForceTorqueInBodyAtPointInBody(const Force& force, const Torque& torque, const Position& relPos, FRAME_CONVENTION fc) {
+        SetForceInBodyAtPointInBody(force, relPos, fc);
+        SetTorqueInBodyAtCOG(GetTorqueInBodyAtCOG(fc) + torque, fc);
     }
 
-    void FrForce_::SetLocalForceTorqueAtAbsPoint(const Force& force, const Torque& torque, const Position& absPos, FRAME_CONVENTION fc) {
-        SetLocalForceOnAbsPoint(force, absPos, fc);
-        SetLocalTorqueAtCOG(GetLocalTorqueAtCOG(fc) + torque, fc);
+    void FrForce_::SetForceTorqueInBodyAtPointInWorld(const Force& force, const Torque& torque, const Position& absPos, FRAME_CONVENTION fc) {
+        SetForceInBodyAtPointInWorld(force, absPos, fc);
+        SetTorqueInBodyAtCOG(GetTorqueInBodyAtCOG(fc) + torque, fc);
     }
 
 

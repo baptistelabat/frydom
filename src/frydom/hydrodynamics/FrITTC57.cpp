@@ -145,7 +145,7 @@ namespace frydom{
         // Resistance along the body X Axis
         double Rt = - 0.5 * m_environment->GetWaterDensity() * m_S * (1+m_k) * Ct * ux * std::abs(ux);
 
-        SetLocalForce(Force(Rt, 0., 0.), NWU);
+        SetForceInBody(Force(Rt, 0., 0.), NWU);
 
     }
 

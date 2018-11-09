@@ -94,7 +94,7 @@ namespace frydom {
         auto fy = -cy * velSquare;
         auto mz = -cz * velSquare;
 
-        SetLocalForceTorqueAtCOG(Force(fx, fy, 0.), Torque(0., 0., mz), NWU);
+        SetForceTorqueInBodyAtCOG(Force(fx, fy, 0.), Torque(0., 0., mz), NWU);
 
     }
 

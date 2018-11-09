@@ -15,7 +15,7 @@
 
 
 #include "FrCurrent.h"
-#include "frydom/core/FrFrame.h"
+//#include "frydom/core/FrFrame.h"
 
 #include "frydom/environment/field/FrUniformCurrentField.h"
 
@@ -26,10 +26,10 @@ namespace frydom {
         return GetAbsFluxVelocity(absPointPos, fc) - absPointVelocity;
     }
 
-    Velocity FrCurrent_::GetRelativeVelocityInLocalFrame(const FrFrame_ frame, const Velocity& absVel, FRAME_CONVENTION fc) {
-        auto velocity = this->GetAbsRelativeVelocity(frame.GetPosition(fc), absVel, fc);
-        return frame.GetQuaternion().Inverse().Rotate(velocity, fc);
-    }
+    //Velocity FrCurrent_::GetRelativeVelocityInLocalFrame(const FrFrame_ frame, const Velocity& absVel, FRAME_CONVENTION fc) {
+    //    auto velocity = this->GetAbsRelativeVelocity(frame.GetPosition(fc), absVel, fc);
+    //    return frame.GetQuaternion().Inverse().Rotate(velocity, fc);
+    //}
 
     FrUniformCurrent_::FrUniformCurrent_(FrEnvironment_ *environment) : m_environment(environment) {
         m_uniformField = std::make_unique<FrUniformCurrentField_>();

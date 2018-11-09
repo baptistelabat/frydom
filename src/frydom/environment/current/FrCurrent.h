@@ -110,7 +110,7 @@ namespace frydom {
 
     // Forward declarations
     class FrEnvironment_;
-    class FrFrame_;
+    //class FrFrame_;
 
     // ===============================================================
     // FrCurrent : Base current field
@@ -128,7 +128,7 @@ namespace frydom {
 
         Velocity GetAbsRelativeVelocity(const Position& absPointPos, const Velocity& absPointVelocity, FRAME_CONVENTION fc);
 
-        Velocity GetRelativeVelocityInLocalFrame(const FrFrame_ frame, const Velocity& absVel, FRAME_CONVENTION fc);
+        //Velocity GetRelativeVelocityInLocalFrame(const FrFrame_ frame, const Velocity& absVel, FRAME_CONVENTION fc);
 
     };
 
