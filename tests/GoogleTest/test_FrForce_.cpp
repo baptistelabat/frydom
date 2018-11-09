@@ -55,6 +55,10 @@ public:
     void TestForceInBodyAtPointInWorld();
     void TestForceInBodyAtPointInBody();
     void TestGetForceInWorldReference();
+    void TestGetForceInWorldComponent();
+    void TestGetForceInBody();
+    void TestGetForceInBodyReference();
+    void TestGetForceInBodyComponent();
 
     /// Accessor
     Position GetPointREFInWorld() const { return m_PointREFInWorld; }
@@ -404,6 +408,70 @@ void TestFrForce_::TestGetForceInWorldReference() {
 
 }
 
+void TestFrForce_::TestGetForceInWorldComponent() {
+
+    this->SetForceInWorldAtCOG(m_forceInWorldAtCOG, NWU);
+
+    m_body->Update();
+
+    Force force;
+    GetForceInWorld(force.GetFx(), force.GetFy(), force.GetFz(), NWU);
+
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
+    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
+    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
+
+    return;
+}
+
+void TestFrForce_::TestGetForceInBody() {
+
+    this->SetForceInWorldAtCOG(m_forceInWorldAtCOG, NWU);
+
+    m_body->Update();
+
+    auto force = GetForceInBody(NWU);
+
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInBodyAtCOG.GetFx());
+    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInBodyAtCOG.GetFy());
+    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInBodyAtCOG.GetFz());
+
+    return;
+}
+
+void TestFrForce_::TestGetForceInBodyReference() {
+
+    this->SetForceInWorldAtCOG(m_forceInWorldAtCOG, NWU);
+
+    m_body->Update();
+
+    Force force;
+    GetForceInBody(force, NWU);
+
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInBodyAtCOG.GetFx());
+    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInBodyAtCOG.GetFy());
+    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInBodyAtCOG.GetFz());
+
+    return;
+}
+
+
+void TestFrForce_::TestGetForceInBodyComponent() {
+
+    this->SetForceInWorldAtCOG(m_forceInWorldAtCOG, NWU);
+
+    m_body->Update();
+
+    Force force;
+    GetForceInBody(force.GetFx(), force.GetFy(), force.GetFz(), NWU);
+
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInBodyAtCOG.GetFx());
+    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInBodyAtCOG.GetFy());
+    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInBodyAtCOG.GetFz());
+
+    return;
+}
+
 std::shared_ptr<FrBody_> NewBody(std::shared_ptr<TestFrForce_> test) {
 
     auto body = std::make_shared<FrBody_>();
@@ -568,4 +636,40 @@ TEST(FrForce_test, GetForceInWorldReference) {
     auto body = NewBody(test);
     system.AddBody(body);
     test->TestGetForceInWorldReference();
+}
+
+TEST(FrForce_test, GetForceInWorldComponent) {
+    FrOffshoreSystem_ system;
+    auto test = std::make_shared<TestFrForce_>();
+    test->CreateDataset();
+    auto body = NewBody(test);
+    system.AddBody(body);
+    test->TestGetForceInWorldComponent();
+}
+
+TEST(FrForce_test, GetForceInBody) {
+    FrOffshoreSystem_ system;
+    auto test = std::make_shared<TestFrForce_>();
+    test->CreateDataset();
+    auto body = NewBody(test);
+    system.AddBody(body);
+    test->TestGetForceInBody();
+}
+
+TEST(FrForce_test, GetForceInBodyReference) {
+    FrOffshoreSystem_ system;
+    auto test = std::make_shared<TestFrForce_>();
+    test->CreateDataset();
+    auto body = NewBody(test);
+    system.AddBody(body);
+    test->TestGetForceInBodyReference();
+}
+
+TEST(FrForce_test, GetForceInBodyComponent) {
+    FrOffshoreSystem_ system;
+    auto test = std::make_shared<TestFrForce_>();
+    test->CreateDataset();
+    auto body = NewBody(test);
+    system.AddBody(body);
+    test->TestGetForceInBodyComponent();
 }
