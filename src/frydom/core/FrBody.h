@@ -286,6 +286,8 @@ namespace frydom {
 
             void Update(bool update_assets) override;
 
+            void UpdateAfterMove();
+
         };
 
     }  // end namespace internal
@@ -334,18 +336,6 @@ namespace frydom {
 
 
 
-
-
-
-
-
-
-
-
-
-        ////// NOUVEAU
-
-
         // =============================================================================================================
         // PRINCIPAL INERTIAL PARAMETERS
         // =============================================================================================================
@@ -361,358 +351,6 @@ namespace frydom {
 
         /// Get the COG position in the body reference frame
         Position GetCOG(FRAME_CONVENTION fc) const;
-
-
-
-        // =============================================================================================================
-        // POSITIONS
-        // =============================================================================================================
-
-        // Position of the body reference frame in world -->
-
-        /// Get the position in world frame of the origin of the body reference frame
-        Position GetPosition(FRAME_CONVENTION fc) const;
-
-        /// Set the position in world frame of the origin of the body reference frame
-        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
-        /// which are updated
-        void SetPosition(const Position& worldPos, FRAME_CONVENTION fc);
-
-
-        /// Get the rotation object that represents the orientation of the body reference frame in the world
-        FrRotation_ GetRotation() const;
-
-        /// Set the orientation of the body reference frame in world using a rotation object
-        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
-        /// which are updated
-        void SetRotation(const FrRotation_& rotation);
-
-        /// Get the quaternion object that represents the orientation of the body reference frame in the world
-        FrQuaternion_ GetQuaternion() const;
-
-        /// Set the orientation of the body reference frame in world using a quaterion object
-        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
-        /// which are updated
-        void SetRotation(const FrQuaternion_& quaternion);
-
-        //TODO : ajouter ici toutes les methodes portant sur d'autres representations de la rotation
-
-
-
-        /// Get the body reference frame expressed in the world
-        FrFrame_ GetFrame() const;
-
-        /// Set the body reference frame expressed in the world frame
-        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
-        /// which are updated
-        void SetFrame(const FrFrame_& worldFrame);
-
-
-        /// Get the position in world frame of a body fixed point whose position is given in body reference frame
-        Position GetPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const;
-
-        /// Get the position in body reference frame of a body fixed point whose position is given in world frame
-        Position GetPointPositionInBody(const Position& worldPos, FRAME_CONVENTION fc) const;
-
-        /// Get the body COG position in world frame (coordinates are expressed in world frame)
-        Position GetCOGPositionInWorld(FRAME_CONVENTION fc) const;
-
-
-
-        // FIXME : est ce que ces methodes de setPointPosition ne devraient pas etre plutot du movePointPosition
-        // Le pb est qu'on implicite la rotation...
-        /// Set the position in world of a body fixed point whose position is defined wrt body reference frame
-        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
-        /// which are updated
-        void SetPointPosition(const Position& bodyPoint, const Position& worldPos, FRAME_CONVENTION fc);
-
-        /// Set the COG position in the world frame.
-        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
-        /// which are updated
-        void SetCOGPosition(const Position& worldPos, FRAME_CONVENTION fc);
-
-
-        /// Translate the body along a translation vector whose coordinates are given in the world frame
-        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
-        /// which are updated
-        void TranslateInWorld(const Position& worldTranslation, FRAME_CONVENTION fc);
-
-        /// Translate the body along a translation vector whose coordinates are given in the body frame
-        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
-        /// which are updated
-        void TranslateInBody(const Position& bodyTranslation, FRAME_CONVENTION fc);
-
-
-//        /// Rotate the body with respect to its current orientation in world using a rotation object
-//        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
-//        /// which are updated
-//        void Rotate(const FrRotation_& relRotation);
-//
-//        /// Rotate the body with respect to its current orientation in world using a quaternion object
-//        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
-//        /// which are updated
-//        void Rotate(const FrQuaternion_& relQuaternion);
-
-
-        // FIXME : reflechir de nouveau a ce que sont les eux methodes precedentes... on tourne autour de quoi ?
-        // Possible que ca n'ait pas de sens...
-        void RotateAroundPointInWorld(const FrRotation_& rot, const Position& worldPos);
-
-        void RotateAroundPointInBody(const FrRotation_& rot, const Position& bodyPos);
-
-        void RotateAroundCOGInWorld(const FrRotation_& rot, const Position& worldPos);
-
-        void RotateAroundCOGInBody(const FrRotation_& rot, const Position& bodydPos);
-
-
-        void RotateAroundPointInWorld(const FrQuaternion_& rot, const Position& worldPos);
-
-        void RotateAroundPointInBody(const FrQuaternion_& rot, const Position& bodyPos);
-
-        void RotateAroundCOGInWorld(const FrQuaternion_& rot, const Position& worldPos);
-
-        void RotateAroundCOGInBody(const FrQuaternion_& rot, const Position& bodydPos);
-
-
-
-
-
-
-
-        // TODO : ajouter aussi les RotateX, RotateAxisAngle, RotateEuler...
-
-
-//        /// Set the velocity of the body reference frame with a vector expressed in WORLD frame
-//        void SetVelocityInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
-//
-//        /// Set the velocity of the body reference frame with a vector expressed in BODY frame
-//        void SetVelocityInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
-//
-        /// Get the velocity of the body reference frame with a vector expressed in WORLD frame
-        Velocity GetVelocityInWorld(FRAME_CONVENTION fc) const;
-
-        /// Get the velocity of the body reference frame with a vector expressed in BODY frame
-        Velocity GetVelocityInBody(FRAME_CONVENTION fc) const;
-
-
-
-        /// Set the velocity of the body COG with a vector expressed in WORLD frame
-        void SetCOGVelocityInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
-
-        /// Set the velocity of the body COG with a vector expressed in BODY frame
-        void SetCOGVelocityInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
-
-        /// Get the velocity of the body COG with a vector expressed in WORLD frame
-        Velocity GetCOGVelocityInWorld(FRAME_CONVENTION fc) const;
-
-        /// Get the velocity of the body COG with a vector expressed in BODY frame
-        Velocity GetCOGVelocityInBody(FRAME_CONVENTION fc) const;
-
-
-
-
-//        /// Set the acceleration of the body reference frame with a vector expressed in WORLD frame
-//        void SetAccelerationInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
-//
-//        /// Set the acceleration of the body reference frame with a vector expressed in BODY frame
-//        void SetAccelerationInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
-//
-//        /// Get the acceleration of the body reference frame with a vector expressed in WORLD frame
-//        void GetAccelerationInWorld(const Velocity& worldVel, FRAME_CONVENTION fc);
-//
-//        /// Get the acceleration of the body reference frame with a vector expressed in BODY frame
-//        void GetAccelerationInBody(const Velocity& bodyVel, FRAME_CONVENTION fc);
-
-
-
-
-        /// Set the acceleration of the body COG with a vector expressed in WORLD frame
-        void SetCOGAccelerationInWorld(const Acceleration& worldAcc, FRAME_CONVENTION fc);
-
-        /// Set the acceleration of the body COG with a vector expressed in BODY frame
-        void SetCOGAccelerationInBody(const Acceleration& bodyAcc, FRAME_CONVENTION fc);
-
-        /// Get the acceleration of the body COG with a vector expressed in WORLD frame
-        Acceleration GetCOGAccelerationInWorld(FRAME_CONVENTION fc) const;
-
-        /// Get the acceleration of the body COG with a vector expressed in BODY frame
-        Acceleration GetCOGAccelerationInBody(FRAME_CONVENTION fc) const;
-
-
-
-        /// Set the body angular velocity from a vector expressed in WORLD frame
-        void SetAngularVelocityInWorld(const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
-
-        /// Set the body angular velocity from a vector expressed in BODY frame
-        void SetAngularVelocityInBody(const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
-
-
-        /// Get the body angular velocity from a vector expressed in WORLD frame
-        AngularVelocity GetAngularVelocityInWorld(FRAME_CONVENTION fc) const;
-
-        /// Get the body angular velocity from a vector expressed in BODY frame
-        AngularVelocity GetAngularVelocityInBody(FRAME_CONVENTION fc) const;
-
-
-
-
-        /// Set the body angular acceleration from a vector expressed in WORLD frame
-        void SetAngularAccelerationInWorld(const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
-
-        /// Set the body angular acceleration from a vector expressed in BODY frame
-        void SetAngularAccelerationInBody(const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
-
-
-        /// Get the body angular acceleration from a vector expressed in WORLD frame
-        AngularAcceleration GetAngularAccelerationInWorld(FRAME_CONVENTION fc) const;
-
-        /// Get the body angular acceleration from a vector expressed in BODY frame
-        AngularAcceleration GetAngularAccelerationInBody(FRAME_CONVENTION fc) const;
-
-
-
-        /// Get the velocity expressed in world frame of a body fixed point whose coordinates are given in world frame
-        Velocity GetVelocityInWorldAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
-
-        /// Get the velocity expressed in world frame of a body fixed point whose coordinates are given in body frame
-        Velocity GetVelocityInWorldAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
-
-        /// Get the velocity expressed in body frame of a body fixed point whose coordinates are given in world frame
-        Velocity GetVelocityInBodyAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
-
-        /// Get the velocity expressed in body frame of a body fixed point whose coordinates are given in body frame
-        Velocity GetVelocityInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
-
-
-
-        /// Get the acceleration expressed in world frame of a body fixed point whose coordinates are given in world frame
-        Acceleration GetAccelerationInWorldAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
-
-        /// Get the acceleration expressed in world frame of a body fixed point whose coordinates are given in body frame
-        Acceleration GetAccelerationInWorldAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
-
-        /// Get the acceleration expressed in body frame of a body fixed point whose coordinates are given in world frame
-        Acceleration GetAccelerationInBodyAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
-
-        /// Get the acceleration expressed in body frame of a body fixed point whose coordinates are given in body frame
-        Acceleration GetAccelerationInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
-
-
-
-        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
-        /// along with the angular velocity expressed in WORLD frame so that the velocity state is totally defined
-        void SetGeneralizedVelocityInWorldAtPointInWorld(const Position& worldPoint,
-                const Velocity& worldVel, const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
-
-        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in BODY frame
-        /// along with the angular velocity expressed in WORLD frame so that the velocity state is totally defined
-        void SetGeneralizedVelocityInWorldAtPointInBody(const Position& bodyPoint,
-                const Velocity& worldVel, const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
-
-        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in WORLD frame
-        /// along with the angular velocity expressed in BODY frame so that the velocity state is totally defined
-        void SetGeneralizedVelocityInBodyAtPointInWorld(const Position& worldPoint,
-                const Velocity& bodyVel, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
-
-        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in BODY frame
-        /// along with the angular velocity expressed in BODY frame so that the velocity state is totally defined
-        void SetGeneralizedVelocityInBodyAtPointInBody(const Position& bodyPoint,
-                const Velocity& bodyVel, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
-
-        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
-        /// along with the angular velocity expressed in WORLD frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInWorldAtPointInWorld(const Position& worldPoint,
-                const Acceleration& worldAcc, const AngularAcceleration& worldAngVel, FRAME_CONVENTION fc);
-
-        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
-        /// along with the angular velocity expressed in WORLD frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInWorldAtPointInBody(const Position& bodyPoint,
-                const Acceleration& worldAcc, const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
-
-        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in WORLD frame
-        /// along with the angular velocity expressed in BODY frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInBodyAtPointInWorld(const Position& worldPoint,
-                const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
-
-        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in BODY frame
-        /// along with the angular velocity expressed in BODY frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInBodyAtPointInBody(const Position& bodyPoint,
-                const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
-
-
-
-        /// Get the apparent (relative) velocity expressed in WORLD frame with respect to a fluid stream (AIR or WATER)
-        /// of a body fixed point whose coordinates are given in BODY frame. In other terms, this is the point velocity
-        /// as seen by the fluid in motion expressed in WORLD frame
-        Velocity GetApparentVelocityInWorldAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc);
-
-        /// Get the apparent (relative) velocity expressed in WORLD frame with respect to a fluid stream (AIR or WATER)
-        /// of a body fixed point whose coordinates are given in WORLD frame. In other terms, this is the point velocity
-        /// as seen by the fluid in motion expressed in WORLD frame
-        Velocity GetApparentVelocityInWorldAtPointInWorld(const Position& bodyPoint, FRAME_CONVENTION fc);
-
-
-
-        /// Get the apparent (relative) velocity expressed in BODY frame with respect to a fluid stream (AIR or WATER)
-        /// of a body fixed point whose coordinates are given in BODY frame. In other terms, this is the point velocity
-        /// as seen by the fluid in motion expressed in BODY frame
-        Velocity GetApparentVelocityInBodyAtPointInBody(const Position& worldPoint, FRAME_CONVENTION fc);
-
-        /// Get the apparent (relative) velocity expressed in BODY frame with respect to a fluid stream (AIR or WATER)
-        /// of a body fixed point whose coordinates are given in WORLD frame. In other terms, this is the point velocity
-        /// as seen by the fluid in motion expressed in BODY frame
-        Velocity GetApparentVelocityInBodyAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc);
-
-
-
-        /// Get the apparent angle between the body velocity
-        double GetApparentAngle(FLUID_TYPE ft, FRAME_CONVENTION fc);
-
-
-
-        template <class Vector>
-        Vector ProjectVectorInWorld(const Vector& bodyVector, FRAME_CONVENTION fc) const {
-            return GetQuaternion().Rotate<Vector>(bodyVector, fc);
-        }
-
-        template <class Vector>
-        Vector ProjectVectorInBody(const Vector& worldVector, FRAME_CONVENTION fc) const {
-            return GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
-        }
-
-
-    private:
-
-        enum FRAME {
-            WORLD,
-            BODY
-        };
-
-        void _SetPointPosition(const Position& point, FRAME pointFrame, const Position& pos, FRAME posFrame, FRAME_CONVENTION fc);
-
-        void _Translate(const Position& translation, FRAME translationFrame, FRAME_CONVENTION fc);
-
-        void _SetVelocityAtPoint(const Position& point, FRAME pointFrame,
-                                 const Velocity& vel, FRAME velFrame,
-                                 const AngularVelocity& angVel, FRAME angVelFrame,
-                                 FRAME_CONVENTION fc);
-
-    public:
-
-
-
-
-        ///// FIN NOUVEAU
-
-
-
-        Position GetCOGLocalPosition(FRAME_CONVENTION fc) const;
-
-        /// Set the COG position in body reference coordinate system
-        void SetCOGLocalPosition(double x, double y, double z, bool transportInertia, FRAME_CONVENTION fc);
-
-        /// Set the COG position in body reference coordinate system
-        void SetCOGLocalPosition(const Position& position, bool transportInertia, FRAME_CONVENTION fc);
 
         /// Get the inertia parameters as a FrInertiaTensor_ object
         // TODO : gerer la frame convention !
@@ -736,7 +374,6 @@ namespace frydom {
                               double Ixy, double Ixz, double Iyz,
                               const FrFrame_& cogFrame,
                               FRAME_CONVENTION fc);
-
 
         // =============================================================================================================
         // CONTACT
@@ -834,454 +471,6 @@ namespace frydom {
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame_ !
 
-        // =============================================================================================================
-        // COG POSITION
-        // =============================================================================================================
-
-        /// Set the absolute position of the body COG
-        void SetCOGAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
-
-        /// Set the absolute position of the body COG
-        void SetCOGAbsPosition(Position position, FRAME_CONVENTION fc);
-
-        /// Get the absolute position of the body COG
-        void GetCOGAbsPosition(double& x, double& y, double& z, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute position of the body COG
-        Position GetCOGAbsPosition(FRAME_CONVENTION fc) const;
-
-
-        // =============================================================================================================
-        // BODY POSITION (reference frame)
-        // =============================================================================================================
-
-        /// Set the absolute position of the body reference frame origin
-        void SetAbsPosition(double x, double y, double z, FRAME_CONVENTION fc);
-
-        /// Set the absolute position of the body reference frame origin
-        void SetAbsPosition(const Position& position, FRAME_CONVENTION fc);
-
-        /// Get the absolute position of the body reference frame origin
-        Position GetAbsPosition(FRAME_CONVENTION fc) const;
-
-        /// get the absolute position of the body reference frame origin
-        void GetAbsPosition(Position &position, FRAME_CONVENTION fc) const;
-
-        /// get the absolute position of the body reference frame origin
-        void GetAbsPosition(double &x, double &y, double &z, FRAME_CONVENTION fc) const;
-
-
-        // =============================================================================================================
-        // POSITION OF ANY BODY FIXED POINT
-        // =============================================================================================================
-
-        /// Get the absolute position of a point defined with respect to the body local reference frame
-        Position GetAbsPositionOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute position of a point defined with respect to the body local reference frame
-        Position GetAbsPositionOfLocalPoint(const Position& localPos, FRAME_CONVENTION fc) const;
-
-        /// Get the position of an absolute point with respect to the body reference frame
-        Position GetLocalPositionOfAbsPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
-
-        /// Get the position of an absolute point with respect to the body reference frame
-        Position GetLocalPositionOfAbsPoint(const Position& absPos, FRAME_CONVENTION fc) const;
-
-
-        // =============================================================================================================
-        // About rotations
-        // =============================================================================================================
-
-        /// Get the rotation of the body with respect to the absolute frame
-        FrRotation_ GetAbsRotation() const;
-
-        /// Set the rotation of the body with respect to the absolute frame
-        void SetAbsRotation(const FrRotation_& rotation);
-
-        /// Get the quaternion of the body with respect to the absolute frame
-        FrQuaternion_ GetAbsQuaternion() const;
-
-        /// Set the rotation of the body with respect to the absolute frame given a quaternion
-        void SetAbsRotation(const FrQuaternion_& quaternion);
-
-        /// Get the euler angles given an axis sequence of the rotation of the body with respect to the absolute frame
-        /// (angles in radians)
-        void GetEulerAngles_RADIANS(double& phi, double& theta, double& psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const;
-
-        /// Set the euler angles given an axis sequence of the rotation of the body with respect to the absolute frame
-        /// (angles in radians)
-        void SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc);
-
-        /// Get the euler angles given an axis sequence of the rotation of the body with respect to the absolute frame
-        /// (angles in degrees)
-        void GetEulerAngles_DEGREES(double& phi, double& theta, double& psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const;
-
-        /// Set the euler angles given an axis sequence of the rotation of the body with respect to the absolute frame
-        /// (angles in degrees)
-        void SetEulerAngles_DEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc);
-
-        /// Get the Cardan angles of the rotation of the body with respect to the absolute frame
-        /// (angles in radians)
-        void GetCardanAngles_RADIANS(double& phi, double& theta, double& psi, FRAME_CONVENTION fc) const;
-
-        /// Set the Cardan angles of the rotation of the body with respect to the absolute frame
-        /// (angles in radians)
-        void SetCardanAngles_RADIANS(double phi, double theta, double psi, FRAME_CONVENTION fc);
-
-        /// Get the Cardan angles of the rotation of the body with respect to the absolute frame
-        /// (angles in degrees)
-        void GetCardanAngles_DEGREES(double& phi, double& theta, double& psi, FRAME_CONVENTION fc) const;
-
-        /// Set the Cardan angles of the rotation of the body with respect to the absolute frame
-        /// (angles in degrees)
-        void SetCardanAngles_DEGREES(double phi, double theta, double psi, FRAME_CONVENTION fc);
-
-        /// Get the rotation of the body with respect ot the absolute frame in axis angle representation (angle in radians)
-        void GetRotationAxisAngle(Direction& axis, double angleRAD, FRAME_CONVENTION fc) const;
-
-        /// Set the rotation of the body with respect ot the absolute frame in axis angle representation (angle in radians)
-        void SetRotationAxisAngle(const Direction& axis, double angleRAD, FRAME_CONVENTION fc);
-
-        /// Get the roll angle of the body with respect to the absolute frame (angle in degrees)
-        double GetRoll_DEGREES(FRAME_CONVENTION fc) const;
-
-        /// Set the roll angle of the body with respect to the absolute frame (angle in degrees)
-        void SetRoll_DEGREES(double roll, FRAME_CONVENTION fc);
-
-        /// Get the pitch angle of the body with respect to the absolute frame (angle in degrees)
-        double GetPitch_DEGREES(FRAME_CONVENTION fc) const;
-
-        /// Set the pitch angle of the body with respect to the absolute frame (angle in degrees)
-        double SetPitch_DEGREES(double pitch, FRAME_CONVENTION fc);
-
-        /// Get the yaw angle of the body with respect to the absolute frame (angle in degrees)
-        double GetYaw_DEGREES(FRAME_CONVENTION fc) const;
-
-        /// Set the yaw angle of the body with respect to the absolute frame (angle in degrees)
-        double SetYaw_DEGREES(double yaw, FRAME_CONVENTION fc);
-
-        double GetHeading_DEGREES(FRAME_CONVENTION fc) const;
-
-        /// Get the roll angle of the body with respect to the absolute frame (angle in radians)
-        double GetRoll_RADIANS(FRAME_CONVENTION fc) const;
-
-        /// Set the roll angle of the body with respect to the absolute frame (angle in radians)
-        double SetRoll_RADIANS(double roll, FRAME_CONVENTION fc);
-
-        /// Get the pitch angle of the body with respect to the absolute frame (angle in radians)
-        double GetPitch_RADIANS(FRAME_CONVENTION fc) const;
-
-        /// Set the pitch angle of the body with respect to the absolute frame (angle in radians)
-        double SetPitch_RADIANS(double pitch, FRAME_CONVENTION fc);
-
-        /// Get the yaw angle of the body with respect to the absolute frame (angle in radians)
-        double GetYaw_RADIANS(FRAME_CONVENTION fc) const;
-
-        /// Set the yaw angle of the body with respect to the absolute frame (angle in radians)
-        double SetYaw_RADIANS(double yaw, FRAME_CONVENTION fc);
-
-        double GetHeading_RADIANS(FRAME_CONVENTION fc) const;
-
-        // =============================================================================================================
-        // Projections in frames absolute and body frame of vector quantities
-        // =============================================================================================================
-
-        /// Project a vector expressed in absolute coordinate system into the body reference coordinate system
-        template <class Vector>
-        void ProjectAbsVectorInBodyCoords(Vector& vector, FRAME_CONVENTION fc) const {
-            vector = GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
-        }
-
-        /// Project a vector expressed in absolute coordinate system into the body reference coordinate system
-        template <class Vector>
-        Vector ProjectAbsVectorInBodyCoords(const Vector& vector, FRAME_CONVENTION fc) const {
-            return GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
-        }
-
-        /// Project a vector expressed in body reference coordinate system into the absolute reference coordinate system
-        // TODO : voir pourquoi on ne peut pas acceder a cette methode...
-        template <class Vector>
-        void ProjectBodyVectorInAbsCoords(Vector& vector, FRAME_CONVENTION fc) const {
-            vector = GetAbsQuaternion().Rotate<Vector>(vector, fc);
-        }
-
-        /// Project a vector expressed in body reference coordinate system into the absolute reference coordinate system
-        template <class Vector>
-        Vector ProjectBodyVectorInAbsCoords(const Vector& vector, FRAME_CONVENTION fc) const {
-            return GetAbsQuaternion().Rotate<Vector>(vector, fc);
-        }
-
-        // =============================================================================================================
-        // Frame
-        // =============================================================================================================
-
-        /// Get the reference frame of the body with respect to the absolute frame
-        FrFrame_ GetAbsFrame() const;
-
-        /// Set the reference frame of the body with respect to the absolute frame
-        void SetAbsFrame(const FrFrame_& absFrame);
-
-        /// Get the transform between an other frame (wrt absolute frame) and the body reference frame (wrt absolute)
-        FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisBody(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
-
-        // =============================================================================================================
-        // Velocities
-        // =============================================================================================================
-
-        /// Set the absolute velocity of the origin of the body reference frame expressed into the absolute frame
-        void SetAbsVelocity(double vx, double vy, double vz, FRAME_CONVENTION fc);
-
-        /// Set the absolute velocity of the origin of the body reference frame expressed into the absolute frame
-        void SetAbsVelocity(const Velocity& absVel, FRAME_CONVENTION fc);
-
-        /// Get the absolute velocity of the origin of the body reference frame expressed into the absolute frame
-        Velocity GetAbsVelocity(FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of the origin of the body reference frame expressed into the absolute frame
-        void GetAbsVelocity(Velocity& absVel, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of the origin of the body reference frame expressed into the absolute frame
-        void GetAbsVelocity(double& vx, double& vy, double& vz, FRAME_CONVENTION fc) const;
-
-        /// Set the absolute velocity of the origin of the body reference frame expressed into the body reference frame
-        void SetLocalVelocity(double u, double v, double w, FRAME_CONVENTION fc);
-
-        /// Set the absolute velocity of the origin of the body reference frame expressed into the body reference frame
-        void SetLocalVelocity(const Velocity& velocity, FRAME_CONVENTION fc);
-
-        /// Get the absolute velocity of the origin of the body reference frame expressed into the body reference frame
-        Velocity GetLocalVelocity(FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of the origin of the body reference frame expressed into the body reference frame
-        void GetLocalVelocity(Velocity& velocity, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of the origin of the body reference frame expressed into the body reference frame
-        void GetLocalVelocity(double& u, double& v, double& w, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of a body fixed point expressed in absolute frame and whose position is expressed
-        /// into the body reference frame
-        Velocity GetAbsVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of a body fixed point expressed in absolute frame and whose position is expressed
-        /// into the body reference frame
-        Velocity GetAbsVelocityOfLocalPoint(const Position& locaPos, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of a body fixed point expressed in body reference frame and whose position is
-        /// expressed into the body reference frame
-        Velocity GetLocalVelocityOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of a body fixed point expressed in body reference frame and whose position is
-        /// expressed into the body reference frame
-        Velocity GetLocalVelocityOfLocalPoint(const Position& localPos, FRAME_CONVENTION fc) const;
-
-
-
-        // =============================================================================================================
-        // Relative velocities in current and wind
-        // =============================================================================================================
-
-        // TODO : utiliser l'enum FLUID_TYPE defini dans FrEnvironment
-        // On veut la vitesse du vecteur flux relativement au corps en absolu ou en relatif en un point du corps (exprime en reltif ou absolu)
-        // Quand on prend un point exprime en coord absolues, c'est une approche eulerienne...
-        // Quand on prend un point exprime en coord locale (body), c'est une approche lagrangienne...
-        // TODO : Ne doit-on pas plutot nommer Get
-
-        /// Get the absolute relative velocity (expressed in absolute frame) with respect to a fluid stream
-        /// (air or water) of a body fixed point whose coordinates are given in absolute coordinates
-        Velocity GetAbsRelVelocityInStreamAtAbsPoint(const Position &absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute relative velocity (expressed in absolute frame) with respect to a fluid stream
-        /// (air or water) of the body COG
-        Velocity GetAbsRelVelocityInStreamAtCOG(FLUID_TYPE ft, FRAME_CONVENTION fc) const; // Voir si on met un enum CURRENT ou WIND
-
-        /// Get the absolute relative velocity (expressed in body coordinate frame) with respect to a fluid stream
-        /// (air or water) of the body COG
-        Velocity GetLocalRelVelocityInStreamAtCOG(FLUID_TYPE ft, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity (exressed in absolute frame) with respect to a fluid stream
-        /// (air or water) of a body fixed point whose coordinates are given in body local reference frame
-        Velocity GetAbsRelVelocityInStreamAtLocalPoint(const Position& localPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute relative velocity (expressed body reference frame) with respect to a fluid stream
-        /// (air or water) of a body fixed point whose coordinates are given in body reference frame
-        Velocity GetLocalRelVelocityInStreamAtLocalPoint(const Position& localPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute relative velocity (expressed body reference frame) with respect to a fluid stream
-        /// (air or water) of a body fixed point whose coordinates are given in absolute frame
-        Velocity GetLocalRelVelocityInStreamAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
-
-        double GetApparentAngleAtLocalPoint(const Position& relPos, FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const;
-
-        double GetApparentAngleAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const;
-
-        double GetApparentAngle(FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const;
-
-        // =============================================================================================================
-        // Velocities for COG
-        // =============================================================================================================
-
-        /// Set the absolute velocity of the body COG (expressed in absolute frame)
-        void SetCOGAbsVelocity(double vx, double vy, double vz, FRAME_CONVENTION fc);
-
-        /// Set the absolute velocity of the body COG (expressed in absolute frame)
-        void SetCOGAbsVelocity(const Velocity& velocity, FRAME_CONVENTION fc);
-
-        /// Get the absolute velocity of the body COG (expressed in absolute frame)
-        Velocity GetCOGAbsVelocity(FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of the body COG (expressed in absolute frame)
-        void GetCOGAbsVelocity(Velocity& velocity, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of the body COG (expressed in absolute frame)
-        void GetCOGAbsVelocity(double& vx, double& vy, double& vz, FRAME_CONVENTION fc) const;
-
-        /// Set the absolute velocity of the body COG (expressed in body reference frame)
-        void SetCOGLocalVelocity(double u, double v, double w, FRAME_CONVENTION fc);
-
-        /// Set the absolute velocity of the body COG (expressed in body reference frame)
-        void SetCOGLocalVelocity(const Velocity& velocity, FRAME_CONVENTION fc);
-
-        /// Get the absolute velocity of the body COG (expressed in body reference frame)
-        Velocity GetCOGLocalVelocity(FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of the body COG (expressed in body reference frame)
-        void GetCOGLocalVelocity(Velocity& velocity, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute velocity of the body COG (expressed in body reference frame)
-        void GetCOGLocalVelocity(double& u, double& v, double& w, FRAME_CONVENTION fc) const;
-
-        // =============================================================================================================
-        // Rotational velocities
-        // =============================================================================================================
-
-        /// Set the body absolute angular velocity (expressed in absolute frame)
-        void SetAbsRotationalVelocity(double wx, double wy, double wz, FRAME_CONVENTION fc);
-
-        /// Set the body absolute angular velocity (expressed in absolute frame)
-        void SetAbsRotationalVelocity(const AngularVelocity &omega, FRAME_CONVENTION fc);
-
-        /// Get the body absolute angular velocity (expressed in absolute frame)
-        AngularVelocity GetAbsRotationalVelocity(FRAME_CONVENTION fc) const;
-
-        /// Get the body absolute angular velocity (expressed in absolute frame)
-        void GetAbsRotationalVelocity(AngularVelocity &omega, FRAME_CONVENTION fc) const;
-
-        /// Get the body absolute angular velocity (expressed in absolute frame)
-        void GetAbsRotationalVelocity(double &wx, double &wy, double &wz, FRAME_CONVENTION fc) const;
-
-        /// Set the body absolute angular velocity (expressed in body reference frame)
-        void SetLocalRotationalVelocity(double p, double q, double r, FRAME_CONVENTION fc);
-
-        /// Set the body absolute angular velocity (expressed in body reference frame)
-        void SetLocalRotationalVelocity(const AngularVelocity &omega, FRAME_CONVENTION fc);
-
-        /// Get the body absolute angular velocity (expressed in body reference frame)
-        AngularVelocity GetLocalRotationalVelocity(FRAME_CONVENTION fc) const;
-
-        /// Get the body absolute angular velocity (expressed in body reference frame)
-        void GetLocalRotationalVelocity(AngularVelocity &omega, FRAME_CONVENTION fc) const;
-
-        /// Get the body absolute angular velocity (expressed in body reference frame)
-        void GetLocalRotationalVelocity(double &p, double &q, double &r, FRAME_CONVENTION fc) const;
-
-
-        // =============================================================================================================
-        // ACCELERATIONS
-        // =============================================================================================================
-
-        /// Set the absolute acceleration of body reference frame (expressed in absolute frame)
-        void SetAbsAcceleration(double ax, double ay, double az, FRAME_CONVENTION fc);
-
-        /// Set the absolute acceleration of body reference frame (expressed in absolute frame)
-        void SetAbsAcceleration(const Acceleration &acceleration, FRAME_CONVENTION fc);
-
-        /// Get the absolute acceleration of body reference frame (expressed in absolute frame)
-        Acceleration GetAbsAcceleration(FRAME_CONVENTION fc) const;
-
-        /// Get the absolute acceleration of body reference frame (expressed in absolute frame)
-        void GetAbsAcceleration(Acceleration &acceleration, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute acceleration of body reference frame (expressed in absolute frame)
-        void GetAbsAcceleration(double &ax, double &ay, double &az, FRAME_CONVENTION fc) const;
-
-
-        /// Get the absolute acceleration of body reference frame (expressed in body reference frame)
-        void SetLocalAcceleration(double up, double vp, double wp, FRAME_CONVENTION fc);
-
-        /// Set the absolute acceleration of body reference frame (expressed in body reference frame)
-        void SetLocalAcceleration(const Acceleration &acceleration, FRAME_CONVENTION fc);
-
-        /// Get the absolute acceleration of body reference frame (expressed in body reference frame)
-        Acceleration GetLocalAcceleration(FRAME_CONVENTION fc) const;
-
-        /// Get the absolute acceleration of body reference frame (expressed in body reference frame)
-        void GetLocalAcceleration(Acceleration &acceleration, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute acceleration of body reference frame (expressed in body reference frame)
-        void GetLocalAcceleration(double &up, double &vp, double &wp, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute acceleration (expressed in absolute frame) of a body fixed point whose coordinates are
-        /// given in body reference frame
-        Acceleration GetAbsAccelerationOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute acceleration (expressed in body reference frame) of a body fixed point whose coordinates are
-        /// given in body reference frame
-        Acceleration GetLocalAccelerationOfLocalPoint(double x, double y, double z, FRAME_CONVENTION fc) const;
-
-        // =============================================================================================================
-        // Accelerations for COG
-        // =============================================================================================================
-
-        /// Set the absolute acceleration of body COG (expressed in absolute frame)
-        void SetCOGAbsAcceleration(double ax, double ay, double az, FRAME_CONVENTION fc);
-
-        /// Set the absolute acceleration of body COG (expressed in absolute frame)
-        void SetCOGAbsAcceleration(const Acceleration& acceleration, FRAME_CONVENTION fc);
-
-        /// Get the absolute acceleration of body COG (expressed in absolute frame)
-        Acceleration GetCOGAbsAcceleration(FRAME_CONVENTION fc) const;
-
-        /// Get the absolute acceleration of body COG (expressed in absolute frame)
-        void GetCOGAbsAcceleration(Acceleration& acceleration, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute acceleration of body COG (expressed in absolute frame)
-        void GetCOGAbsAcceleration(double& ax, double& ay, double& az, FRAME_CONVENTION fc) const;
-
-        /// Set the absolute acceleration of body COG (expressed in body reference frame)
-        void SetCOGLocalAcceleration(double up, double vp, double wp, FRAME_CONVENTION fc);
-
-        /// Set the absolute acceleration of body COG (expressed in body reference frame)
-        void SetCOGLocalAcceleration(const Acceleration& acceleration, FRAME_CONVENTION fc);
-
-        /// Get the absolute acceleration of body COG (expressed in body reference frame)
-        Acceleration GetCOGLocalAcceleration(FRAME_CONVENTION fc) const;
-
-        /// Get the absolute acceleration of body COG (expressed in body reference frame)
-        void GetCOGLocalAcceleration(Acceleration& acceleration, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute acceleration of body COG (expressed in body reference frame)
-        void GetCOGLocalAcceleration(double& up, double& vp, double& wp, FRAME_CONVENTION fc) const;
-
-        // TODO : voir si on peut avoir des methodes de calcul d'acceleration a des points differents du COG...
-
-        // =============================================================================================================
-        // Rotational accelerations
-        // =============================================================================================================
-
-        /// Set the absolute angular acceleration of the body (expressed in absolute frame)
-        void SetAbsRotationalAcceleration(double wxp, double wyp, double wzp, FRAME_CONVENTION fc);
-
-        /// Set the absolute angular acceleration of the body (expressed in absolute frame)
-        void SetAbsRotationalAcceleration(const AngularAcceleration& omegap, FRAME_CONVENTION fc);
-
-        /// Get the absolute angular acceleration of the body (expressed in absolute frame)
-        AngularAcceleration GetAbsRotationalAcceleration(FRAME_CONVENTION fc) const;
-
-        /// Get the absolute angular acceleration of the body (expressed in absolute frame)
-        void GetAbsRotationalAcceleration(AngularAcceleration& omegap, FRAME_CONVENTION fc) const;
-
-        /// Get the absolute angular acceleration of the body (expressed in absolute frame)
-        void GetAbsRotationalAcceleration(double& wxp, double& wyp, double& wzp, FRAME_CONVENTION fc) const;
 
         // =============================================================================================================
         // Asset
@@ -1299,7 +488,286 @@ namespace frydom {
         /// Set the mesh color in visualization given a FrColor object
         void SetColor(const FrColor& color);
 
+        // =============================================================================================================
+        // POSITIONS
+        // =============================================================================================================
 
+        // Position of the body reference frame in world -->
+
+        /// Get the position in world frame of the origin of the body reference frame
+        Position GetPosition(FRAME_CONVENTION fc) const;
+
+        /// Set the position in world frame of the origin of the body reference frame
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        void SetPosition(const Position& worldPos, FRAME_CONVENTION fc);
+
+
+        /// Get the rotation object that represents the orientation of the body reference frame in the world
+        FrRotation_ GetRotation() const;
+
+        /// Set the orientation of the body reference frame in world using a rotation object
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        void SetRotation(const FrRotation_& rotation);
+
+        /// Get the quaternion object that represents the orientation of the body reference frame in the world
+        FrQuaternion_ GetQuaternion() const;
+
+        /// Set the orientation of the body reference frame in world using a quaterion object
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        void SetRotation(const FrQuaternion_& quaternion);
+
+        //TODO : ajouter ici toutes les methodes portant sur d'autres representations de la rotation
+
+
+
+        /// Get the body reference frame expressed in the world
+        FrFrame_ GetFrame() const;
+
+        /// Set the body reference frame expressed in the world frame
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        void SetFrame(const FrFrame_& worldFrame);
+
+        /// Get a frame object whose origin is located at a body point expressed in BODY frame and orientation is that
+        /// of the body reference frame
+        FrFrame_ GetFrameAtPoint(const Position& bodyPoint, FRAME_CONVENTION fc);
+
+        /// Get a frame object whose origin is locate at COG and orientation is that of the body reference frame
+        FrFrame_ GetFrameAtCOG(FRAME_CONVENTION fc);
+
+
+        /// Get the position in world frame of a body fixed point whose position is given in body reference frame
+        Position GetPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const;
+
+        /// Get the position in body reference frame of a body fixed point whose position is given in world frame
+        Position GetPointPositionInBody(const Position& worldPos, FRAME_CONVENTION fc) const;
+
+        /// Get the body COG position in world frame (coordinates are expressed in world frame)
+        Position GetCOGPositionInWorld(FRAME_CONVENTION fc) const;
+
+
+
+        // FIXME : est ce que ces methodes de setPointPosition ne devraient pas etre plutot du movePointPosition
+        // Le pb est qu'on implicite la rotation...
+        /// Set the position in world of a body fixed point whose position is defined wrt body reference frame
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        void SetPositionOfBodyPoint(const Position &bodyPoint, const Position &worldPos, FRAME_CONVENTION fc);
+
+        /// Translate the body along a translation vector whose coordinates are given in the world frame
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        void TranslateInWorld(const Position& worldTranslation, FRAME_CONVENTION fc);
+
+        /// Translate the body along a translation vector whose coordinates are given in the body frame
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        void TranslateInBody(const Position& bodyTranslation, FRAME_CONVENTION fc);
+
+
+        /// Rotate the body with respect to its current orientation in world using a rotation object
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        void Rotate(const FrRotation_& relRotation);
+
+        /// Rotate the body with respect to its current orientation in world using a quaternion object
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        void Rotate(const FrQuaternion_& relQuaternion);
+
+
+        // FIXME : reflechir de nouveau a ce que sont les eux methodes precedentes... on tourne autour de quoi ?
+        // Possible que ca n'ait pas de sens...
+        void RotateAroundPointInWorld(const FrRotation_& rot, const Position& worldPos, FRAME_CONVENTION fc);
+
+        void RotateAroundPointInBody(const FrRotation_& rot, const Position& bodyPos, FRAME_CONVENTION fc);
+
+        void RotateAroundCOG(const FrRotation_& rot, FRAME_CONVENTION fc);
+
+
+        void RotateAroundPointInWorld(const FrQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc);
+
+        void RotateAroundPointInBody(const FrQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc);
+
+        void RotateAroundCOG(const FrQuaternion_& rot, FRAME_CONVENTION fc);
+
+
+
+
+        // TODO : ajouter aussi les RotateX, RotateAxisAngle, RotateEuler...
+
+
+        /// Set the velocity of the body reference frame with a vector expressed in WORLD frame
+        void SetVelocityInWorldNoRotation(const Velocity& worldVel, FRAME_CONVENTION fc);
+
+        /// Set the velocity of the body reference frame with a vector expressed in BODY frame
+        void SetVelocityInBodyNoRotation(const Velocity& bodyVel, FRAME_CONVENTION fc);
+
+        /// Set the generalized velocity of the body reference frame with vectors expressed in WORLD frame
+        void SetGeneralizedVelocityInWorld(const Velocity& worldVel, const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
+
+        /// Set the generalized velocity of the body reference frame with vectors expressed in BODY frame
+        void SetGeneralizedVelocityInBody(const Velocity& bodyVel, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
+
+
+        /// Get the velocity of the body reference frame with a vector expressed in WORLD frame
+        Velocity GetVelocityInWorld(FRAME_CONVENTION fc) const;
+
+        /// Get the velocity of the body reference frame with a vector expressed in BODY frame
+        Velocity GetVelocityInBody(FRAME_CONVENTION fc) const;
+
+
+        /// Get the velocity of the body COG with a vector expressed in WORLD frame
+        Velocity GetCOGVelocityInWorld(FRAME_CONVENTION fc) const;
+
+        /// Get the velocity of the body COG with a vector expressed in BODY frame
+        Velocity GetCOGVelocityInBody(FRAME_CONVENTION fc) const;
+
+        /// Set the acceleration of the body COG with a vector expressed in WORLD frame
+        void SetAccelerationInWorldNoRotation(const Acceleration &worldAcc, FRAME_CONVENTION fc);
+
+        /// Set the acceleration of the body COG with a vector expressed in BODY frame
+        void SetAccelerationInBodyNoRotation(const Acceleration &bodyAcc, FRAME_CONVENTION fc);
+
+        /// Get the acceleration of the body COG with a vector expressed in WORLD frame
+        Acceleration GetCOGAccelerationInWorld(FRAME_CONVENTION fc) const;
+
+        /// Get the acceleration of the body COG with a vector expressed in BODY frame
+        Acceleration GetCOGAccelerationInBody(FRAME_CONVENTION fc) const;
+
+
+
+        /// Set the body angular velocity from a vector expressed in WORLD frame
+        void SetAngularVelocityInWorld(const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
+
+        /// Set the body angular velocity from a vector expressed in BODY frame
+        void SetAngularVelocityInBody(const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
+
+
+        /// Get the body angular velocity from a vector expressed in WORLD frame
+        AngularVelocity GetAngularVelocityInWorld(FRAME_CONVENTION fc) const;
+
+        /// Get the body angular velocity from a vector expressed in BODY frame
+        AngularVelocity GetAngularVelocityInBody(FRAME_CONVENTION fc) const;
+
+
+
+        /// Set the body angular acceleration from a vector expressed in WORLD frame
+        void SetAngularAccelerationInWorld(const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
+
+        /// Set the body angular acceleration from a vector expressed in BODY frame
+        void SetAngularAccelerationInBody(const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
+
+
+        /// Get the body angular acceleration from a vector expressed in WORLD frame
+        AngularAcceleration GetAngularAccelerationInWorld(FRAME_CONVENTION fc) const;
+
+        /// Get the body angular acceleration from a vector expressed in BODY frame
+        AngularAcceleration GetAngularAccelerationInBody(FRAME_CONVENTION fc) const;
+
+
+
+        /// Get the velocity expressed in world frame of a body fixed point whose coordinates are given in world frame
+        Velocity GetVelocityInWorldAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
+
+        /// Get the velocity expressed in world frame of a body fixed point whose coordinates are given in body frame
+        Velocity GetVelocityInWorldAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
+
+        /// Get the velocity expressed in body frame of a body fixed point whose coordinates are given in world frame
+        Velocity GetVelocityInBodyAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
+
+        /// Get the velocity expressed in body frame of a body fixed point whose coordinates are given in body frame
+        Velocity GetVelocityInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
+
+
+
+        /// Get the acceleration expressed in world frame of a body fixed point whose coordinates are given in world frame
+        Acceleration GetAccelerationInWorldAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
+
+        /// Get the acceleration expressed in world frame of a body fixed point whose coordinates are given in body frame
+        Acceleration GetAccelerationInWorldAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
+
+        /// Get the acceleration expressed in body frame of a body fixed point whose coordinates are given in world frame
+        Acceleration GetAccelerationInBodyAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
+
+        /// Get the acceleration expressed in body frame of a body fixed point whose coordinates are given in body frame
+        Acceleration GetAccelerationInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
+
+
+
+        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
+        /// along with the angular velocity expressed in WORLD frame so that the velocity state is totally defined
+        void SetGeneralizedVelocityInWorldAtPointInWorld(const Position& worldPoint,
+                const Velocity& worldVel, const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
+
+        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in BODY frame
+        /// along with the angular velocity expressed in WORLD frame so that the velocity state is totally defined
+        void SetGeneralizedVelocityInWorldAtPointInBody(const Position& bodyPoint,
+                const Velocity& worldVel, const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
+
+        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in WORLD frame
+        /// along with the angular velocity expressed in BODY frame so that the velocity state is totally defined
+        void SetGeneralizedVelocityInBodyAtPointInWorld(const Position& worldPoint,
+                const Velocity& bodyVel, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
+
+        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in BODY frame
+        /// along with the angular velocity expressed in BODY frame so that the velocity state is totally defined
+        void SetGeneralizedVelocityInBodyAtPointInBody(const Position& bodyPoint,
+                const Velocity& bodyVel, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
+
+        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
+        /// along with the angular velocity expressed in WORLD frame so that the acceleration state is totally defined
+        void SetGeneralizedAccelerationInWorldAtPointInWorld(const Position& worldPoint,
+                const Acceleration& worldAcc, const AngularAcceleration& worldAngVel, FRAME_CONVENTION fc);
+
+        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
+        /// along with the angular velocity expressed in WORLD frame so that the acceleration state is totally defined
+        void SetGeneralizedAccelerationInWorldAtPointInBody(const Position& bodyPoint,
+                const Acceleration& worldAcc, const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
+
+        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in WORLD frame
+        /// along with the angular velocity expressed in BODY frame so that the acceleration state is totally defined
+        void SetGeneralizedAccelerationInBodyAtPointInWorld(const Position& worldPoint,
+                const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
+
+        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in BODY frame
+        /// along with the angular velocity expressed in BODY frame so that the acceleration state is totally defined
+        void SetGeneralizedAccelerationInBodyAtPointInBody(const Position& bodyPoint,
+                const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
+
+
+        // =============================================================================================================
+        // PROJECTIONS
+        // =============================================================================================================
+
+        template <class Vector>
+        Vector ProjectVectorInWorld(const Vector& bodyVector, FRAME_CONVENTION fc) const {
+            return GetQuaternion().Rotate<Vector>(bodyVector, fc);
+        }
+
+        template <class Vector>
+        Vector& ProjectVectorInWorld(Vector& bodyVector, FRAME_CONVENTION fc) const {
+            bodyVector = GetQuaternion().Rotate<Vector>(bodyVector, fc);
+            return bodyVector;
+        }
+
+        template <class Vector>
+        Vector ProjectVectorInBody(const Vector& worldVector, FRAME_CONVENTION fc) const {
+            return GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+        }
+
+        template <class Vector>
+        Vector& ProjectVectorInBody(Vector& worldVector, FRAME_CONVENTION fc) const {
+            worldVector = GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+            return worldVector;
+        }
+
+        // =============================================================================================================
+        // CONSTRAINTS ON DOF
+        // =============================================================================================================
 
         // Motion constraints  : FIXME : experimental !!!!
         void ConstainDOF(bool cx, bool cy, bool cz, bool crx, bool cry, bool crz);
@@ -1307,8 +775,15 @@ namespace frydom {
         void ConstrainInVx(double Vx);
 
 
-
     protected:
+
+        enum FRAME {
+            WORLD,
+            BODY
+        };
+
+//        void _SetPointPosition(const Position& point, FRAME pointFrame, const Position& pos, FRAME posFrame, FRAME_CONVENTION fc);
+
 
         // TODO : voir si on a besoin que ce bloc soit protected...
         std::shared_ptr<chrono::ChBody> GetChronoBody() {
@@ -1350,7 +825,6 @@ namespace frydom {
         // This one is made for the FrOffshoreSystem to be able to add the embedded chrono object into the embedded
         // chrono system (ChSystem)
         friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_>);
-
 
 
     };

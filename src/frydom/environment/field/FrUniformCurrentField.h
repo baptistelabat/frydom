@@ -143,7 +143,7 @@ namespace frydom {
 
             void Update(double time);
 
-            Velocity GetAbsFluxVelocity(FRAME_CONVENTION fc);
+            Velocity GetWorldFluxVelocity(FRAME_CONVENTION fc);
 
             double GetAngle(DIRECTION_CONVENTION dc, FRAME_CONVENTION fc, ANGLE_UNIT angleUnit);
 

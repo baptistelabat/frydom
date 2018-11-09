@@ -114,12 +114,12 @@ TEST(FrBodyTest,TestTranslation) {
 
 
     //+++++Translate body reference frame from COG+++++//
-    body->SetCOGPosition(body->GetCOGAbsPosition(NWU)+BodyTranslationInWorld,NWU);
+    body->SetPositionOfCOG(body->GetCOGAbsPosition(NWU) + BodyTranslationInWorld, NWU);
     Test_AllGetPosition(body,OrigAbsPos,OrigAbsCOGPos);
 
     //+++++Translate body reference frame from fixed point+++++//
     Position Point(4.,5.,6.); // Position of a point expressed in body reference frame
-    body->SetPointPosition(Point, body->GetAbsPositionOfLocalPoint(Point,NWU), NWU);
+    body->SetPositionOfBodyPoint(Point, body->GetAbsPositionOfLocalPoint(Point, NWU), NWU);
     Test_AllGetPosition(body,OrigAbsPos,OrigAbsCOGPos);
 }
 

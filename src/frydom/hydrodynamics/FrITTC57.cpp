@@ -115,19 +115,12 @@ namespace frydom{
 
     void FrITTC57_::Update(double time) {
 
-        // TODO : simplifier la procedure pour avoir les vitesses relatives fonction du courant ou du vent. Repercuter
-        // aussi sur FrLinearDamping avant d'aller plus loin !!
+        Velocity cogWorldVel = m_body->GetCOGVelocityInWorld(NWU);
+        FrFrame_ cogWorldFrame = m_body->GetFrameAtCOG(NWU);
 
-        // On va ecrire une methode de FrBody_ permettant d'avoir cela dans l'eau et l'air et qui appelle la methode qui
-        // va bien depuis current et wind
+        Velocity relVel = m_environment->GetCurrent()->GetRelativeVelocityInFrame(cogWorldFrame, cogWorldVel, NWU);
 
-
-        // Getting the relative velocity with respect to water along body X axis
-        Position cogAbsPos = m_body->GetCOGAbsPosition(NWU);
-        Velocity cogAbsVel = m_body->GetCOGAbsVelocity(NWU);
-        Velocity relVel = m_environment->GetCurrent()->GetAbsRelativeVelocity(cogAbsPos, cogAbsVel, NWU);
-
-        m_body->ProjectAbsVectorInBodyCoords(relVel, NWU);
+        m_body->ProjectVectorInBody<Velocity>(relVel, NWU);
         double  ux = relVel.GetVx();
 
         // Computing Reynolds number

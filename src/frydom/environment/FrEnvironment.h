@@ -36,6 +36,8 @@
 
 // GeographicLib includes
 #include "frydom/utils/FrGeographicServices.h"
+#include "frydom/core/FrGeographic.h"
+#include "frydom/environment/FrFluidType.h"
 
 namespace GeographicLib {
     class LocalCartesian;
@@ -251,6 +253,8 @@ namespace frydom {
 //    class FrWind_;
     class FrUniformWind_;
     class FrUniformCurrent_;
+    class Velocity;
+    class FrFrame_;
 
 
     /// Class to store the different elements composing the offshore environment
@@ -318,6 +322,8 @@ namespace frydom {
 
         void SetAirDensity(double airDensity);
 
+        double GetFluidDensity(FLUID_TYPE ft) const;
+
         double GetGravityAcceleration() const;
 
         void SetGravityAcceleration(double gravityAcceleration);
@@ -326,9 +332,9 @@ namespace frydom {
 
         void SetSeaTemperature(double seaTemperature);
 
-        double GetAirtemperature() const;
+        double GetAirTemperature() const;
 
-        void SetAirtemperature(double airtemperature);
+        void SetAirTemperature(double airtemperature);
 
         double GetWaterKinematicViscosity() const;
 
@@ -362,6 +368,9 @@ namespace frydom {
 //        void SetWind(const FrWind::MODEL type=FrWind::UNIFORM);
 
         FrSeabed_* GetSeabed() const;
+
+        Velocity GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
+                FLUID_TYPE ft, FRAME_CONVENTION fc);
 
 //        void SetSeabed(FrSeabed* seabed);
 

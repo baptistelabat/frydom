@@ -258,7 +258,7 @@ namespace frydom {
 
         /// Set the force expressed in absolute coordinates applying to a point expressed in body coordinates.
         /// It generates a torque.
-        void SetForceInWorldAtPointInBody(const Force& force, const Position& relPos, FRAME_CONVENTION fc);
+        void SetForceInWorldAtPointInBody(const Force& force, const Position& bodyPos, FRAME_CONVENTION fc);
 
         /// Set the force expressed in absolute coordinates applying to a point expressed in absolute coordinates.
         /// It generates a torque.
