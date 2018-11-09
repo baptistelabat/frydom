@@ -25,7 +25,9 @@ int main(int argc, char* argv[]) {
     // Creating a wall for the basin
     auto wall = system.NewBody();
     makeItBox(wall, 470, 0.3, 7.7, 0.);
-    wall->SetAbsPosition(470/2., -4.65, -(6-7.5/2), NWU);
+
+    wall->SetPosition(Position(470/2., -4.65, -(6-7.5/2)), NWU);
+
     wall->SetBodyFixed(true);
     wall->SetColor(LightGrey);
     wall->SetName("wall");
@@ -64,13 +66,13 @@ int main(int argc, char* argv[]) {
     makeItSphere(fish, radius, fishMass);
     fish->SetColor(GreenYellow);
     fish->SetName("fish");
-    fish->SetAbsPosition(-1.9, 0, -3.8,  NWU);
+    fish->SetPosition(Position(-1.9, 0, -3.8),  NWU);
 //    fish->SetAbsPosition(0., 0, 0,  NWU);
 //    fish->SetMaxSpeed(0.1);
 //    fish->ActivateSpeedLimits(true);
     auto fishNode = fish->NewNode(0., 0., 0.);
 
-    auto quadForce = std::make_shared<FrQuadraticDamping_>();
+    auto quadForce = std::make_shared<FrQuadraticDamping_>(WATER, true);
     double area = MU_PI * radius * radius;
     quadForce->SetProjectedSections(area, area, area);
 

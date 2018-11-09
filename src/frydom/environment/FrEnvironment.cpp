@@ -6,6 +6,7 @@
 
 #include <GeographicLib/LocalCartesian.hpp>
 #include <GeographicLib/MagneticModel.hpp>
+#include <frydom/core/FrException.h>
 
 
 #include "frydom/core/FrOffshoreSystem.h"
@@ -406,9 +407,19 @@ namespace frydom {
         return m_seabed.get();
     }
 
-//    void FrEnvironment::SetSeabed(FrSeabed *seabed) {
-//        m_seabed = std::unique_ptr<FrSeabed>(seabed);
-//    }
+    Velocity FrEnvironment_::GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
+                                        FLUID_TYPE ft, FRAME_CONVENTION fc) {
+        switch (ft) {
+            case WATER:
+                m_current->GetRelativeVelocityInFrame(frame, worldVel, fc);
+                break;
+            case AIR:
+                m_wind->GetRelativeVelocityInFrame(frame, worldVel, fc);
+                break;
+            default:
+                throw FrException("Fluid is not known...");
+        }
+    }
 
     GeographicLib::LocalCartesian *FrEnvironment_::GetGeoLib() const {
         return m_LocalCartesian.get();

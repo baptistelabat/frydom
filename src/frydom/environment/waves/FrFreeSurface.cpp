@@ -468,7 +468,7 @@ namespace frydom {
     void FrFreeSurface_::CreateFreeSurfaceBody() {
         m_body = std::make_shared<FrBody_>();
         m_body->SetName("FreeSurface");
-        m_body->SetAbsPosition(Position(0., 0., 0.), NWU);
+        m_body->SetPosition(Position(0., 0., 0.), NWU);
         m_body->SetBodyFixed(true);
         m_body->SetCollide(false);
 

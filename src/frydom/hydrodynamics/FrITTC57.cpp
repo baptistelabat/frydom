@@ -123,11 +123,12 @@ namespace frydom{
 
 
         // Getting the relative velocity with respect to water along body X axis
-        Position cogAbsPos = m_body->GetCOGAbsPosition(NWU);
-        Velocity cogAbsVel = m_body->GetCOGAbsVelocity(NWU);
-        Velocity relVel = m_environment->GetCurrent()->GetAbsRelativeVelocity(cogAbsPos, cogAbsVel, NWU);
+        Position cogWorldPos = m_body->GetCOGPositionInWorld(NWU);
+        Velocity cogWorldVel = m_body->GetCOGVelocityInWorld(NWU);
 
-        m_body->ProjectAbsVectorInBodyCoords(relVel, NWU);
+        Velocity relVel = m_environment->GetCurrent()->GetAbsRelativeVelocity(cogWorldPos, cogWorldVel, NWU);
+
+        m_body->ProjectVectorInBody<Velocity>(relVel, NWU);
         double  ux = relVel.GetVx();
 
         // Computing Reynolds number
