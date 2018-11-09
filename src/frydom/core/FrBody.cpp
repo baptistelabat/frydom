@@ -395,8 +395,8 @@ namespace frydom {
 
     // Nodes
 
-    std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::FrFrame_ &localFrame) {
-        return std::make_shared<FrNode_>(this, localFrame);
+    std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::FrFrame_ &bodyFrame) {
+        return std::make_shared<FrNode_>(this, bodyFrame);
     }
 
     std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::Position &localPosition) {
@@ -450,7 +450,9 @@ namespace frydom {
     }
 
     void FrBody_::SetRotation(const FrQuaternion_ &quaternion) {
+        Position bodyWorldPos = GetPosition(NWU);
         m_chronoBody->SetRot(internal::Fr2ChQuaternion(quaternion));
+        SetPosition(bodyWorldPos, NWU);
         m_chronoBody->UpdateAfterMove();
     }
 

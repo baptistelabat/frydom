@@ -460,7 +460,7 @@ namespace frydom {
         // =============================================================================================================
 
         /// Get a new node attached to the body given a frame defined with respect to the body reference frame
-        std::shared_ptr<FrNode_> NewNode(const FrFrame_& localFrame);
+        std::shared_ptr<FrNode_> NewNode(const FrFrame_& bodyFrame);
 
         /// Get a new node attached to the body given a position of the node expressed into the body reference frame
         std::shared_ptr<FrNode_> NewNode(const Position& localPosition);
