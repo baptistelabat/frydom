@@ -30,10 +30,10 @@ private:
     Force m_forceInWorldAtPoint;                ///< Force at a point of the body in world frame
     Force m_forceInBodyAtPoint;                 ///< Force at a point of the body in body frame
 
-    Moment m_torqueInWorldAtCOG;                ///< Torque at COG in world frame
-    Moment m_torqueInBodyAtCOG;                 ///< Torque at COG in body frame
-    Moment m_torqueInWorldAtPoint;              ///< Torque at a point of the body in world frame
-    Moment m_torqueInBodyAtPoint;               ///< Torque at a point of the body in body frame
+    Torque m_torqueInWorldAtCOG;                ///< Torque at COG in world frame
+    Torque m_torqueInBodyAtCOG;                 ///< Torque at COG in body frame
+    Torque m_torqueInWorldAtPoint;              ///< Torque at a point of the body in world frame
+    Torque m_torqueInBodyAtPoint;               ///< Torque at a point of the body in body frame
 
 public:
     void TestMaxForceLimit(double fmax);
@@ -60,7 +60,7 @@ void TestFrForce_::CreateDataset() {
     /// Frame of the body
     Direction vect = Direction(0.5, 0.4, 0.8);
     vect.normalize();
-    double angle = M_PI/8;
+    double angle = M_PI/8.;
     m_quatREF =  FrQuaternion_(vect, angle, NWU);
     m_frameREF = FrFrame_(m_PointREFInWorld, m_quatREF, NWU);  // TODO : a voir si c'est utile de définir la convention ici
 
@@ -69,10 +69,10 @@ void TestFrForce_::CreateDataset() {
     m_forceInBodyAtPoint   = Force(3000000.00000000,5000000.00000000,2000000.00000000);
     m_forceInWorldAtCOG    = Force(1761428.06341033,5290133.96192031,2629040.47940839);
     m_forceInBodyAtCOG     = Force(3000000.00000000,5000000.00000000,2000000.00000000);
-    m_torqueInWorldAtPoint = Moment(16157552865.99235725,-14374562644.35187531,87363810780.93070984);
-    m_torqueInBodyAtPoint  = Moment(200000000.00000000,300000000.00000000,90000000000.00000000);
-    m_torqueInWorldAtCOG   = Moment(16177106450.72056389,-14381757296.81767845,87365187116.70848083);
-    m_torqueInBodyAtCOG    = Moment(216000000.00000000,288000000.00000000,90006000000.00000000);
+    m_torqueInWorldAtPoint = Torque(16157552865.99235725,-14374562644.35187531,87363810780.93070984);
+    m_torqueInBodyAtPoint  = Torque(200000000.00000000,300000000.00000000,90000000000.00000000);
+    m_torqueInWorldAtCOG   = Torque(16177106450.72056389,-14381757296.81767845,87365187116.70848083);
+    m_torqueInBodyAtCOG    = Torque(216000000.00000000,288000000.00000000,90006000000.00000000);
 
     return;
 }

@@ -299,6 +299,26 @@ namespace frydom {
         double& GetVz() {
             return this->at(2);
         }
+
+
+        double GetXaxisAngle(mathutils::ANGLE_UNIT unit) const {
+            auto angle = atan2(this->GetVz(), this->GetVy());
+            if (unit == mathutils::DEG) { angle *= RAD2DEG; }
+            return angle;
+        }
+
+        double GetYaxisAngle(mathutils::ANGLE_UNIT unit) const {
+            auto angle = atan2(this->GetVx(), this->GetVz());
+            if (unit == mathutils::DEG) { angle *= RAD2DEG; }
+            return angle;
+        }
+
+        double GetZaxisAngle(mathutils::ANGLE_UNIT unit) const {
+            auto angle = atan2(this->GetVy(), this->GetVx());
+            if (unit == mathutils::DEG) { angle *= RAD2DEG; }
+            return angle;
+        }
+
     };
 
 
