@@ -11,16 +11,19 @@ using namespace frydom;
 
 inline Position & EasyRotate(Position & vector) {
     Position res(vector.GetZ(),vector.GetX(),vector.GetY());
+//    Position res(vector.GetX(),-vector.GetZ(),vector.GetY());
     return vector = res;
 }
 
 inline Translation & EasyRotate(Translation & vector) {
     Translation res(vector.GetDz(),vector.GetDx(),vector.GetDy());
+//    Translation res(vector.GetDx(),-vector.GetDz(),vector.GetDy());
     return vector = res;
 }
 
 inline Velocity & EasyRotate(Velocity & vector) {
     Velocity res(vector.GetVz(),vector.GetVx(),vector.GetVy());
+//    Velocity res(vector.GetVx(),-vector.GetVz(),vector.GetVy());
     return vector = res;
 }
 
@@ -28,12 +31,12 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
         const Position &AbsRefBodyPosition, const Position &AbsCOGBodyPosition,
         bool is_Orientation = false){
 
-    Position ModAbsRefBodyPosition = AbsRefBodyPosition;
-    Position ModAbsCOGBodyPosition = AbsCOGBodyPosition;
-    if (is_Orientation) {
-        ModAbsRefBodyPosition = EasyRotate(ModAbsRefBodyPosition);
-        ModAbsCOGBodyPosition = EasyRotate(ModAbsCOGBodyPosition);
-    }
+//    Position ModAbsRefBodyPosition = AbsRefBodyPosition;
+//    Position ModAbsCOGBodyPosition = AbsCOGBodyPosition;
+//    if (is_Orientation) {
+//        ModAbsRefBodyPosition = EasyRotate(ModAbsRefBodyPosition);
+//        ModAbsCOGBodyPosition = EasyRotate(ModAbsCOGBodyPosition);
+//    }
 
     // Test body reference frame position in world reference frame
     Position testPosition = body->GetPosition(NWU) - AbsRefBodyPosition;
@@ -45,25 +48,23 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
     EXPECT_TRUE(testPosition.isZero());
     // Test COG position in body reference frame
     Position TempPos = AbsCOGBodyPosition - AbsRefBodyPosition;
-    if (is_Orientation) TempPos = EasyRotate(TempPos);
+//    if (is_Orientation) TempPos = EasyRotate(TempPos);
     testPosition = body->GetCOG(NWU) - TempPos;
-//    std::cout<<body->GetCOGLocalPosition(NWU)<<std::endl;
-//    std::cout<<TempPos<<std::endl;
     EXPECT_TRUE(testPosition.isZero());
 
     //-----------------Fixed Point-----------------//
     // Test for the getter for the local position of a point expressed in the world reference frame
-    Position AbsPoint(4., 5., 6.); // Position of a point, expressed in world reference frame
-    TempPos = AbsPoint - AbsRefBodyPosition;
+    Position AbsPoint(1., 5., 9.); // Position of a point, expressed in world reference frame
+    TempPos = body->GetPointPositionInBody(AbsPoint, NWU);
     if (is_Orientation) TempPos = EasyRotate(TempPos);
-    testPosition = body->GetPointPositionInBody(AbsPoint, NWU) - TempPos;
+    testPosition = TempPos - (AbsPoint - AbsRefBodyPosition);
     EXPECT_TRUE(testPosition.isZero());
 
     Position BodyPoint(1.,5.,9.); // Position of a point, expressed in body reference frame
     // Test for the getter for the abs position of a point expressed in the body reference frame
-    TempPos = body->GetPointPositionInWorld(BodyPoint, NWU) - AbsRefBodyPosition;
+    TempPos = BodyPoint;
     if (is_Orientation) TempPos = EasyRotate(TempPos);
-    testPosition = TempPos - BodyPoint;
+    testPosition = body->GetPointPositionInWorld(BodyPoint, NWU) - AbsRefBodyPosition - TempPos;
     EXPECT_TRUE(testPosition.isZero());
 
 }
@@ -163,19 +164,10 @@ TEST(FrBodyTest,TestPositionWithOrientation){
     FrRotation_ TotalRotation = Rotation1*Rotation2 ;
     body->SetRotation(TotalRotation);
 
-//    std::cout<<body->GetAbsRotation();
-//    std::cout<<body->GetAbsFrame();
-
+    std::cout<<body->GetAbsRotation();
+    std::cout<<body->GetAbsFrame();
 
     Test_AllGetPosition(body, OrigAbsPos, OrigAbsCOGPos, true);
-
-    // Test that the orientation of the body changed the previous getter result
-    Position OrigAbsPosPoint(4., 8., 5.); // Position of a point, expressed in world reference frame
-    Position Test_LocalPosLocalPoint = (OrigAbsPosPoint - OrigAbsPos);
-    auto EasyRotateTest = EasyRotate(Test_LocalPosLocalPoint);
-    Position testPosition = body->GetPointPositionInBody(OrigAbsPosPoint,NWU)-EasyRotateTest;
-    EXPECT_TRUE(testPosition.isZero());
-
 
 }
 
@@ -189,25 +181,21 @@ void Test_AllGetVelocity(const std::shared_ptr<FrBody_> body,
 
     // Test getter for the body velocity, expressed in the world reference frame
     Velocity testVelocity;
-    body->GetVelocityInWorld(testVelocity, NWU);
-    testVelocity -= VelocityToCompare;
+    testVelocity = body->GetVelocityInWorld(NWU) - VelocityToCompare;
     EXPECT_TRUE(testVelocity.isZero());
 
     // Test getter for the body velocity, expressed in the body reference frame
-    body->GetVelocityInBody(testVelocity, NWU);
-    testVelocity -= RotVelocity;
+    testVelocity = body->GetVelocityInBody(NWU) - RotVelocity;
     EXPECT_TRUE(testVelocity.isZero());
 
 
     //-----------------COG Velocity-----------------//
     // Test Getter for the COG velocity expressed in the world reference frame
-    body->GetCOGVelocityInWorld(testVelocity, NWU);
-    testVelocity -= VelocityToCompare;
+    testVelocity = body->GetCOGVelocityInWorld(NWU) - VelocityToCompare;
     EXPECT_TRUE(testVelocity.isZero());
 
     // Test Getter for the COG velocity expressed in the body reference frame
-    body->GetCOGVelocityInBody(testVelocity, NWU);
-    testVelocity -= RotVelocity;
+    testVelocity = body->GetCOGVelocityInBody(NWU) - RotVelocity;
     EXPECT_TRUE(testVelocity.isZero());
 
     //-----------------Point-----------------//
@@ -245,28 +233,28 @@ TEST(FrBodyTest,TestTranslationalVelocity){
     Position OrigLocalCOGPos(2.,3.,4.);
     body->SetCOG(OrigLocalCOGPos, NWU);
 
-    //-----------------Velocity Setters-----------------//
-    //+++++Frame Velocity Setters+++++//
-    // Set the body velocity, expressed in the world reference frame
-    Velocity VelocityInWorld(1.,1.,1.);    Velocity testVelocity;
-    body->SetVelocityInWorld(VelocityInWorld,NWU);
-    Test_AllGetVelocity(body,VelocityInWorld, false);
-
-    // Set the body velocity, expressed in the body reference frame
-    body->SetVelocityInBody(VelocityInWorld,NWU);
-    Test_AllGetVelocity(body,VelocityInWorld, false);
-
-    //+++++COG Velocity Setters+++++//
-    // Test Setter for the COG Velocity expressed in the world reference frame
-    Velocity COGVelocityInWorld(0.,1.,0.);
-    body->SetCOGAbsVelocity(COGVelocityInWorld,NWU);
-    Test_AllGetVelocity(body,COGVelocityInWorld, false);
-
-    // Test Setter for the COG Velocity expressed in the body reference frame
-    Velocity COGVelocityInBody(0.,1.,0.);
-    body->SetCOGLocalVelocity(COGVelocityInBody,NWU);
-    Test_AllGetVelocity(body,COGVelocityInBody, false);
-
+//    //-----------------Velocity Setters-----------------//
+//    //+++++Frame Velocity Setters+++++//
+//    // Set the body velocity, expressed in the world reference frame
+//    Velocity VelocityInWorld(1.,1.,1.);    Velocity testVelocity;
+//    body->SetVelocityInWorld(VelocityInWorld,NWU);
+//    Test_AllGetVelocity(body,VelocityInWorld, false);
+//
+//    // Set the body velocity, expressed in the body reference frame
+//    body->SetVelocityInBody(VelocityInWorld,NWU);
+//    Test_AllGetVelocity(body,VelocityInWorld, false);
+//
+//    //+++++COG Velocity Setters+++++//
+//    // Test Setter for the COG Velocity expressed in the world reference frame
+//    Velocity COGVelocityInWorld(0.,1.,0.);
+//    body->SetCOGAbsVelocity(COGVelocityInWorld,NWU);
+//    Test_AllGetVelocity(body,COGVelocityInWorld, false);
+//
+//    // Test Setter for the COG Velocity expressed in the body reference frame
+//    Velocity COGVelocityInBody(0.,1.,0.);
+//    body->SetCOGLocalVelocity(COGVelocityInBody,NWU);
+//    Test_AllGetVelocity(body,COGVelocityInBody, false);
+//
 //    //+++++Point Velocity Setters+++++//
 //    Position PointInWorld(5.,6.,7.);
 //    Position PointInBody = body->GetPointPositionInBody(PointInWorld,NWU);
@@ -314,27 +302,27 @@ TEST(FrBodyTest,TestTranslationalVelocityWithOrientation){
     FrRotation_ TotalRotation = Rotation1*Rotation2;
     body->SetRotation(TotalRotation);
 
-    //-----------------Velocity Setters-----------------//
-    //+++++Frame Velocity Setters+++++//
-    // Set the body velocity, expressed in the world reference frame
-    Velocity VelocityInWorld(1.,1.,1.);    Velocity testVelocity;
-    body->SetVelocityInWorld(VelocityInWorld,NWU);
-    Test_AllGetVelocity(body, VelocityInWorld, true);
-
-    // Set the body velocity, expressed in the body reference frame
-    body->SetVelocityInBody(VelocityInWorld,NWU);
-    Test_AllGetVelocity(body, VelocityInWorld, true);
-
-    //+++++COG Velocity Setters+++++//
-    // Test Setter for the COG Velocity expressed in the world reference frame
-    Velocity COGVelocityInWorld(0.,1.,0.);
-    body->SetCOGAbsVelocity(COGVelocityInWorld,NWU);
-    Test_AllGetVelocity(body, COGVelocityInWorld, true);
-
-    // Test Setter for the COG Velocity expressed in the body reference frame
-    Velocity COGVelocityInBody(0.,1.,0.);
-    body->SetCOGLocalVelocity(COGVelocityInBody,NWU);
-    Test_AllGetVelocity(body, COGVelocityInBody, true);
+//    //-----------------Velocity Setters-----------------//
+//    //+++++Frame Velocity Setters+++++//
+//    // Set the body velocity, expressed in the world reference frame
+//    Velocity VelocityInWorld(1.,1.,1.);    Velocity testVelocity;
+//    body->SetVelocityInWorld(VelocityInWorld,NWU);
+//    Test_AllGetVelocity(body, VelocityInWorld, true);
+//
+//    // Set the body velocity, expressed in the body reference frame
+//    body->SetVelocityInBody(VelocityInWorld,NWU);
+//    Test_AllGetVelocity(body, VelocityInWorld, true);
+//
+//    //+++++COG Velocity Setters+++++//
+//    // Test Setter for the COG Velocity expressed in the world reference frame
+//    Velocity COGVelocityInWorld(0.,1.,0.);
+//    body->SetCOGAbsVelocity(COGVelocityInWorld,NWU);
+//    Test_AllGetVelocity(body, COGVelocityInWorld, true);
+//
+//    // Test Setter for the COG Velocity expressed in the body reference frame
+//    Velocity COGVelocityInBody(0.,1.,0.);
+//    body->SetCOGLocalVelocity(COGVelocityInBody,NWU);
+//    Test_AllGetVelocity(body, COGVelocityInBody, true);
 
 
 }
