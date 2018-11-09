@@ -4,12 +4,16 @@
 
 #include "FrWind.h"
 
+#include "chrono/core/ChMatrixDynamic.h"  // TODO : voir pourquoi on est oblige d'inclure
 #include "frydom/environment/field/FrUniformCurrentField.h"
+
+#include "frydom/core/FrFrame.h"
 
 namespace frydom {
 
-    Velocity FrWind_::GetAbsRelativeVelocity(const Position& absPointPos, const Velocity& absPointVelocity, FRAME_CONVENTION fc) {
-        return GetAbsFluxVelocity(absPointPos, fc) - absPointVelocity;
+    Velocity FrWind_::GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel, FRAME_CONVENTION fc) {
+        Velocity worldRelCurrentVel = GetWorldFluxVelocity(frame.GetPosition(fc), fc) - worldVel;
+        return frame.GetQuaternion().GetInverse().Rotate(worldRelCurrentVel, fc);
     }
 
     FrUniformWind_::FrUniformWind_(FrEnvironment_ *environment) : m_environment(environment) {
@@ -24,8 +28,8 @@ namespace frydom {
         m_uniformField->Update(time);
     }
 
-    Velocity FrUniformWind_::GetAbsFluxVelocity(const Position &absPos, FRAME_CONVENTION fc) {
-        return m_uniformField->GetAbsFluxVelocity(fc);
+    Velocity FrUniformWind_::GetWorldFluxVelocity(const Position &absPos, FRAME_CONVENTION fc) {
+        return m_uniformField->GetWorldFluxVelocity(fc);
     }
 
     void FrUniformWind_::Initialize() {

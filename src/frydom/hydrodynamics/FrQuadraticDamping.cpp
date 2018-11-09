@@ -68,7 +68,8 @@ namespace frydom {
 
 
 
-    FrQuadraticDamping_::FrQuadraticDamping_() {}
+    FrQuadraticDamping_::FrQuadraticDamping_(FLUID_TYPE ft, bool relativeToFluid) :
+            m_fluidType(ft), m_relative2Fluid(relativeToFluid) {}
 
     void FrQuadraticDamping_::SetDampingCoefficients(double Cu, double Cv, double Cw) {
         m_Cu = Cu;
@@ -94,21 +95,28 @@ namespace frydom {
         Sw = m_Sw;
     }
 
-    void FrQuadraticDamping_::SetRelative2Current(bool relativeVelocity) { m_relative2Current = relativeVelocity; }
+    void FrQuadraticDamping_::SetRelative2Fluid(bool relativeVelocity) { m_relative2Fluid = relativeVelocity; }
 
-    bool FrQuadraticDamping_::GetRelative2Current() {return m_relative2Current;}
+    bool FrQuadraticDamping_::GetRelative2Fluid() {return m_relative2Fluid;}
 
     void FrQuadraticDamping_::Initialize() {}
 
     void FrQuadraticDamping_::Update(double time) {
 
-        // Get the relative body velocity with respect to fluid
-//        auto body = m_node->GetBody();
+        Velocity cogRelVel;
+        if (m_relative2Fluid) {
+            FrFrame_ cogFrame = m_body->GetFrameAtCOG(NWU);
+            cogRelVel = m_body->GetSystem()->GetEnvironment()->GetRelativeVelocityInFrame(
+                    cogFrame, m_body->GetCOGVelocityInWorld(NWU), m_fluidType, NWU);
+        } else {
+            cogRelVel = m_body->GetCOGVelocityInBody(NWU);
+        }
 
-        double u, v, w;
-        m_body->GetCOGLocalVelocity(u, v, w, NWU); // TODO : FIXME integrer la vitesse du courant !!
+        double rho = m_body->GetSystem()->GetEnvironment()->GetFluidDensity(m_fluidType);
 
-        double rho = 1000;
+        double u = cogRelVel.GetVx();
+        double v = cogRelVel.GetVy();
+        double w = cogRelVel.GetVz();
 
         SetForceInBody(Force(
                 - 0.5 * rho * m_Su * m_Cu * u*fabs(u),

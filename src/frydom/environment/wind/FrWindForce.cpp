@@ -123,14 +123,19 @@ namespace frydom {
 
     void FrWindForce_::Update(double time) {
 
-        auto cogRelVel = m_body->GetLocalRelVelocityInStreamAtCOG(AIR, NWU);
-        auto velSquare = cogRelVel.squaredNorm();
-        auto alpha = m_body->GetApparentAngle(AIR, NWU, RAD);
+        FrFrame_ cogFrame = m_body->GetFrameAtCOG(NWU);
+        Velocity cogWorldVel = m_body->GetCOGVelocityInWorld(NWU);
+
+        Velocity cogRelVel = m_body->GetSystem()->GetEnvironment()->GetWind()->GetRelativeVelocityInFrame(cogFrame, cogWorldVel, NWU);
+
+        double alpha = cogRelVel.GetZaxisAngle(RAD);
         alpha = Normalize_0_2PI(alpha);
 
         auto cx = m_table.Eval("Cx", alpha);
         auto cy = m_table.Eval("Cy", alpha);
         auto cz = m_table.Eval("Cm", alpha);
+
+        double velSquare = cogRelVel.squaredNorm();
 
         auto fx = cx * velSquare;
         auto fy = cy * velSquare;
@@ -139,10 +144,6 @@ namespace frydom {
         SetForceTorqueInBodyAtCOG(Force(fx, fy, 0.), Torque(0., 0., mz), NWU);
 
     }
-
-
-
-
 
 
 }  // end namespace frydom

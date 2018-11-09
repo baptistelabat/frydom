@@ -6,6 +6,7 @@
 
 #include <GeographicLib/LocalCartesian.hpp>
 #include <GeographicLib/MagneticModel.hpp>
+#include <frydom/core/FrException.h>
 
 
 #include "frydom/core/FrOffshoreSystem.h"
@@ -298,6 +299,15 @@ namespace frydom {
         m_airDensity = airDensity;
     }
 
+    double FrEnvironment_::GetFluidDensity(FLUID_TYPE ft) const {
+        switch (ft) {
+            case WATER:
+                return m_waterDensity;
+            case AIR:
+                return m_airDensity;
+        }
+    }
+
     double FrEnvironment_::GetGravityAcceleration() const {
         return m_system->GetGravityAcceleration();
     }
@@ -314,11 +324,11 @@ namespace frydom {
         m_seaTemperature = seaTemperature;
     }
 
-    double FrEnvironment_::GetAirtemperature() const {
+    double FrEnvironment_::GetAirTemperature() const {
         return m_airTemperature;
     }
 
-    void FrEnvironment_::SetAirtemperature(double airtemperature) {
+    void FrEnvironment_::SetAirTemperature(double airtemperature) {
         m_airTemperature = airtemperature;
     }
 
@@ -406,9 +416,19 @@ namespace frydom {
         return m_seabed.get();
     }
 
-//    void FrEnvironment::SetSeabed(FrSeabed *seabed) {
-//        m_seabed = std::unique_ptr<FrSeabed>(seabed);
-//    }
+    Velocity FrEnvironment_::GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
+                                        FLUID_TYPE ft, FRAME_CONVENTION fc) {
+        switch (ft) {
+            case WATER:
+                m_current->GetRelativeVelocityInFrame(frame, worldVel, fc);
+                break;
+            case AIR:
+                m_wind->GetRelativeVelocityInFrame(frame, worldVel, fc);
+                break;
+            default:
+                throw FrException("Fluid is not known...");
+        }
+    }
 
     GeographicLib::LocalCartesian *FrEnvironment_::GetGeoLib() const {
         return m_LocalCartesian.get();

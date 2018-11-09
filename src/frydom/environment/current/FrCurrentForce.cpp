@@ -7,10 +7,14 @@
 #include "chrono/physics/ChBody.h"
 
 #include "frydom/core/FrGeographic.h"
+
+#include "frydom/core/FrBody.h"
+
 #include "frydom/core/FrHydroBody.h"
 #include "frydom/IO/FrLoader.h"
 
-#include "frydom/environment/FrEnvironment.h"
+
+#include "frydom/environment/FrEnvironmentInc.h"
 
 
 namespace frydom {
@@ -82,13 +86,20 @@ namespace frydom {
 
     void FrCurrentForce_::Update(double time) {
 
-        auto cogRelVel = m_body->GetLocalRelVelocityInStreamAtCOG(WATER, NWU);
-        auto velSquare = cogRelVel.squaredNorm();
-        auto alpha = m_body->GetApparentAngle(WATER, NWU, DEG);
+        FrFrame_ cogFrame = m_body->GetFrameAtCOG(NWU);
+        Velocity cogWorldVel = m_body->GetCOGVelocityInWorld(NWU);
+
+        Velocity cogRelVel = m_body->GetSystem()->GetEnvironment()->GetCurrent()->GetRelativeVelocityInFrame(cogFrame, cogWorldVel, NWU);
+
+        double alpha = cogRelVel.GetZaxisAngle(RAD);
+        alpha = Normalize_0_2PI(alpha);
 
         auto cx = m_coeffsTable.CX(alpha, NWU);
         auto cy = m_coeffsTable.CY(alpha, NWU);
         auto cz = m_coeffsTable.CZ(alpha, NWU);
+
+
+        double velSquare = cogRelVel.squaredNorm();
 
         auto fx = -cx * velSquare;
         auto fy = -cy * velSquare;

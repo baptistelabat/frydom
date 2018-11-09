@@ -4,7 +4,9 @@
 
 #ifndef FRYDOM_FRQUADRATICDAMPING_H
 #define FRYDOM_FRQUADRATICDAMPING_H
+
 #include "frydom/core/FrForce.h"
+#include "frydom/environment/FrFluidType.h"
 
 namespace frydom {
      /**
@@ -107,11 +109,12 @@ namespace frydom {
         double m_Sw = 0;
 
         /// Specify if the body velocity is taken relatively to the current or not.
-        bool m_relative2Current = false;
+        FLUID_TYPE m_fluidType;
+        bool m_relative2Fluid = false;
 
     public:
 
-        FrQuadraticDamping_();
+        FrQuadraticDamping_(FLUID_TYPE ft, bool relativeToFluid);
 
         /// Setter for the damping coefficients.
         void SetDampingCoefficients(double Cu, double Cv, double Cw);
@@ -126,10 +129,10 @@ namespace frydom {
         void GetProjectedSections(double& Su, double& Sv,double& Sw);
 
         /// Setter for the boolean : m_relativeVelocity
-        void SetRelative2Current(bool relativeVelocity);
+        void SetRelative2Fluid(bool relativeVelocity);
 
         /// Getter for the boolean : m_relativeVelocity
-        bool GetRelative2Current();
+        bool GetRelative2Fluid();
 
         /// Initialize method checking if projected sections are correctly given, and initializing the logs.
         void Initialize() override;

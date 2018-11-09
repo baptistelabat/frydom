@@ -119,7 +119,7 @@ TEST(FrBodyTest,Translation) {
     BodyPosition += BodyTranslationInWorld;
     COGPosition += BodyTranslationInWorld;
     Position Point(4.,5.,6.); // Position of a point expressed in body reference frame
-    body->SetPointPosition(Point, body->GetPointPositionInWorld(Point,NWU) + BodyTranslationInWorld, NWU);
+    body->SetPositionOfBodyPoint(Point, body->GetPointPositionInWorld(Point,NWU) + BodyTranslationInWorld, NWU);
     Test_AllGetPosition(body,BodyPosition,COGPosition);
 
     //+++++Translate body reference frame from translation expressed in world reference frame+++++//
@@ -135,11 +135,6 @@ TEST(FrBodyTest,Translation) {
     COGPosition += BodyTranslationInWorld;
     body->TranslateInBody(BodyTranslationInWorld,NWU);
     Test_AllGetPosition(body,BodyPosition,COGPosition);
-
-
-//    //+++++Translate body reference frame from COG+++++//
-//    body->SetCOGPosition(body->GetCOGPositionInWorld(NWU)+BodyTranslationInWorld,NWU);
-//    Test_AllGetPosition(body,RefPositionInWorld,COGPositionInWorld);
 
 }
 
@@ -171,9 +166,9 @@ TEST(FrBodyTest,Orientation) {
 
     Test_AllGetRotation(body, BodyRotationInWorld);
 
-    //+++++Set Rotation, using Cardan angles+++++//
-    body->SetCardanAngles_DEGREES(1., 2., 3., NWU);
-    EXPECT_TRUE(BodyRotationInWorld == body->GetRotation());
+//    //+++++Set Rotation, using Cardan angles+++++//
+//    body->SetCardanAngles_DEGREES(1., 2., 3., NWU);
+//    EXPECT_TRUE(BodyRotationInWorld == body->GetRotation());
 
     Test_AllGetRotation(body, BodyRotationInWorld);
     // Test of the frame position getter

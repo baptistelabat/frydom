@@ -112,12 +112,15 @@ namespace frydom {
         // Body Velocity at COG in body coordinates
         Velocity cogRelVel;
         if (m_relativeToFluid) {  // FIXME : FAUX ici, il faut prendre l'oppose sur l'un ou l'autre
-            cogRelVel = m_body->GetLocalRelVelocityInStreamAtCOG(m_fluidType, NWU);
+            FrFrame_ cogFrame = m_body->GetFrameAtCOG(NWU);
+            cogRelVel = m_body->GetSystem()->GetEnvironment()->GetRelativeVelocityInFrame(
+                    cogFrame, m_body->GetCOGVelocityInWorld(NWU), m_fluidType, NWU);
+
         } else {
-            cogRelVel = m_body->GetCOGLocalVelocity(NWU);
+            cogRelVel = m_body->GetCOGVelocityInBody(NWU);
         }
 
-        AngularVelocity rotVel = m_body->GetLocalRotationalVelocity(NWU);
+        AngularVelocity rotVel = m_body->GetAngularVelocityInBody(NWU);
 
         GeneralizedVelocity genRelVel(cogRelVel, rotVel);
 

@@ -7,9 +7,6 @@
 
 #include <cmath>
 #include <iostream>
-//#include "chrono/core/ChVector.h"
-
-//#include "FrVector.h"
 
 // TODO : placer ici les services de geographie et l'inclusion de GeographicLib
 
