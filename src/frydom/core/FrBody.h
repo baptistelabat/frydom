@@ -989,7 +989,7 @@ namespace frydom {
         /// Project a vector expressed in absolute coordinate system into the body reference coordinate system
         template <class Vector>
         void ProjectAbsVectorInBodyCoords(Vector& vector, FRAME_CONVENTION fc) const {
-            vector = GetAbsQuaternion().Rotate<Vector>(vector, fc);
+            vector = GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
         }
 
         /// Project a vector expressed in absolute coordinate system into the body reference coordinate system
@@ -1008,7 +1008,7 @@ namespace frydom {
         /// Project a vector expressed in body reference coordinate system into the absolute reference coordinate system
         template <class Vector>
         Vector ProjectBodyVectorInAbsCoords(const Vector& vector, FRAME_CONVENTION fc) const {
-            return GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
+            return GetAbsQuaternion().Rotate<Vector>(vector, fc);
         }
 
         // =============================================================================================================
