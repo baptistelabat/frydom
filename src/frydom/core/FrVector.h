@@ -16,6 +16,51 @@
 
 namespace frydom {
 
+    /// Class for representing a translation vector in cartesian coordinates
+    class Translation : public mathutils::Vector3d<double> {
+
+    public:
+
+        Translation() : mathutils::Vector3d<double>() {}
+
+        Translation(double x, double y, double z) : mathutils::Vector3d<double>(x, y, z) {}
+
+        // This constructor allows to construct Vector2d from Eigen expressions
+        template <class OtherDerived>
+        Translation(const Eigen::MatrixBase<OtherDerived>& other) : mathutils::Vector3d<double>(other) {}
+
+        // This method allows to assign Eigen expressions to Vector3d
+        template <class OtherDerived>
+        Translation& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->mathutils::Vector3d<double>::operator=(other);
+            return *this;
+        }
+
+        double GetDx() const {
+            return this->at(0);
+        }
+
+        double& GetDx() {
+            return this->at(0);
+        }
+
+        double GetDy() const {
+            return this->at(1);
+        }
+
+        double& GetDy() {
+            return this->at(1);
+        }
+
+        double GetDz() const {
+            return this->at(2);
+        }
+
+        double& GetDz() {
+            return this->at(2);
+        }
+
+    };
 
     /// Class for representing a position vector in cartesian coordinates
     class Position : public mathutils::Vector3d<double> {
