@@ -360,7 +360,7 @@ namespace frydom {
         void SetCOG(const Position& bodyPos, FRAME_CONVENTION fc);
 
         /// Get the COG position in the body reference frame
-        Position GetCOG(FRAME_CONVENTION fc);
+        Position GetCOG(FRAME_CONVENTION fc) const;
 
 
 
@@ -533,10 +533,10 @@ namespace frydom {
         void SetCOGAccelerationInBody(const Acceleration& bodyAcc, FRAME_CONVENTION fc);
 
         /// Get the acceleration of the body COG with a vector expressed in WORLD frame
-        Acceleration GetCOGAccelerationInWorld(FRAME_CONVENTION fc);
+        Acceleration GetCOGAccelerationInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the acceleration of the body COG with a vector expressed in BODY frame
-        Acceleration GetCOGAccelerationInBody(FRAME_CONVENTION fc);
+        Acceleration GetCOGAccelerationInBody(FRAME_CONVENTION fc) const;
 
 
 
@@ -622,22 +622,22 @@ namespace frydom {
         /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
         /// along with the angular velocity expressed in WORLD frame so that the acceleration state is totally defined
         void SetGeneralizedAccelerationInWorldAtPointInWorld(const Position& worldPoint,
-                const Acceleration& worldAcc, const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
+                const Acceleration& worldAcc, const AngularAcceleration& worldAngVel, FRAME_CONVENTION fc);
 
         /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
         /// along with the angular velocity expressed in WORLD frame so that the acceleration state is totally defined
         void SetGeneralizedAccelerationInWorldAtPointInBody(const Position& bodyPoint,
-                const Acceleration& worldAcc, const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
+                const Acceleration& worldAcc, const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
 
         /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in WORLD frame
         /// along with the angular velocity expressed in BODY frame so that the acceleration state is totally defined
         void SetGeneralizedAccelerationInBodyAtPointInWorld(const Position& worldPoint,
-                const Acceleration& bodyAcc, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
+                const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
 
         /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in BODY frame
         /// along with the angular velocity expressed in BODY frame so that the acceleration state is totally defined
         void SetGeneralizedAccelerationInBodyAtPointInBody(const Position& bodyPoint,
-                const Acceleration& bodyAcc, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
+                const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
 
 
 
