@@ -28,43 +28,36 @@ inline Velocity & EasyRotate(Velocity & vector) {
 }
 
 void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
-        const Position &AbsRefBodyPosition, const Position &AbsCOGBodyPosition,
+        const Position &RefPositionInWorld, const Position &COGPositionInWorld,
         bool is_Orientation = false){
 
-//    Position ModAbsRefBodyPosition = AbsRefBodyPosition;
-//    Position ModAbsCOGBodyPosition = AbsCOGBodyPosition;
-//    if (is_Orientation) {
-//        ModAbsRefBodyPosition = EasyRotate(ModAbsRefBodyPosition);
-//        ModAbsCOGBodyPosition = EasyRotate(ModAbsCOGBodyPosition);
-//    }
-
     // Test body reference frame position in world reference frame
-    Position testPosition = body->GetPosition(NWU) - AbsRefBodyPosition;
+    Position testPosition = body->GetPosition(NWU) - RefPositionInWorld;
     EXPECT_TRUE(testPosition.isZero());
 
     //-----------------COG-----------------//
     // Test COG position in world reference frame
-    testPosition = body->GetCOGPositionInWorld(NWU) - AbsCOGBodyPosition;
+    testPosition = body->GetCOGPositionInWorld(NWU) - COGPositionInWorld;
     EXPECT_TRUE(testPosition.isZero());
     // Test COG position in body reference frame
-    Position TempPos = AbsCOGBodyPosition - AbsRefBodyPosition;
+    Position TempPos = COGPositionInWorld - RefPositionInWorld;
 //    if (is_Orientation) TempPos = EasyRotate(TempPos);
     testPosition = body->GetCOG(NWU) - TempPos;
     EXPECT_TRUE(testPosition.isZero());
 
     //-----------------Fixed Point-----------------//
     // Test for the getter for the local position of a point expressed in the world reference frame
-    Position AbsPoint(1., 5., 9.); // Position of a point, expressed in world reference frame
-    TempPos = body->GetPointPositionInBody(AbsPoint, NWU);
+    Position PointPositionInWorld(1., 5., 9.); // Position of a point, expressed in world reference frame
+    TempPos = body->GetPointPositionInBody(PointPositionInWorld, NWU);
     if (is_Orientation) TempPos = EasyRotate(TempPos);
-    testPosition = TempPos - (AbsPoint - AbsRefBodyPosition);
+    testPosition = TempPos - (PointPositionInWorld - RefPositionInWorld);
     EXPECT_TRUE(testPosition.isZero());
 
-    Position BodyPoint(1.,5.,9.); // Position of a point, expressed in body reference frame
+    Position PointPositionInBody(1.,5.,9.); // Position of a point, expressed in body reference frame
     // Test for the getter for the abs position of a point expressed in the body reference frame
-    TempPos = BodyPoint;
+    TempPos = PointPositionInBody;
     if (is_Orientation) TempPos = EasyRotate(TempPos);
-    testPosition = body->GetPointPositionInWorld(BodyPoint, NWU) - AbsRefBodyPosition - TempPos;
+    testPosition = body->GetPointPositionInWorld(PointPositionInBody, NWU) - RefPositionInWorld - TempPos;
     EXPECT_TRUE(testPosition.isZero());
 
 }
@@ -73,75 +66,116 @@ TEST(FrBodyTest,TestPosition) {
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
-    Position OrigAbsPos(1., 2., 3.);
-    body->SetPosition(OrigAbsPos, NWU);
+    Position RefPositionInWorld(1., 2., 3.);
+    body->SetPosition(RefPositionInWorld, NWU);
 
     //-----------------COG-----------------//
     // Set the COG position, expressed in local body reference frame
-    Position OrigLocalCOGPos(2., 3., 4.);
-    body->SetCOG(OrigLocalCOGPos, NWU);
-    Position OrigAbsCOGPos = OrigAbsPos + OrigLocalCOGPos;
+    Position COGPositionInBody(2., 3., 4.);
+    body->SetCOG(COGPositionInBody, NWU);
+    Position COGPositionInWorld = RefPositionInWorld + COGPositionInBody;
 
-    Test_AllGetPosition(body,OrigAbsPos,OrigAbsCOGPos);
+    Test_AllGetPosition(body,RefPositionInWorld,COGPositionInWorld);
 }
 
 TEST(FrBodyTest,TestTranslation) {
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
-    Position OrigAbsPos(1., 2., 3.);
-    body->SetPosition(OrigAbsPos, NWU);
+    Position RefPositionInWorld(1., 2., 3.);
+    body->SetPosition(RefPositionInWorld, NWU);
 
     //-----------------COG-----------------//
     // Set the COG position, expressed in local body reference frame
-    Position OrigLocalCOGPos(2., 3., 4.);
-    body->SetCOG(OrigLocalCOGPos, NWU);
-    Position OrigAbsCOGPos = OrigAbsPos + OrigLocalCOGPos;
+    Position COGPositionInBody(2., 3., 4.);
+    body->SetCOG(COGPositionInBody, NWU);
+    Position COGPositionInWorld = RefPositionInWorld + COGPositionInBody;
 
     //-----------------Translate Body-----------------//
     Translation BodyTranslationInWorld(1.,4.,7.);
+    Position BodyPosition = RefPositionInWorld + BodyTranslationInWorld;
+    Position COGPosition = COGPositionInWorld + BodyTranslationInWorld;
 
     //+++++Translate body reference frame+++++//
-    body->SetPosition(OrigAbsPos+BodyTranslationInWorld,NWU);
-    Test_AllGetPosition(body,OrigAbsPos,OrigAbsCOGPos);
-
-    //+++++Translate body reference frame from translation expressed in world reference frame+++++//
-    body->TranslateInWorld(BodyTranslationInWorld,NWU);
-    Test_AllGetPosition(body,OrigAbsPos + BodyTranslationInWorld,OrigAbsCOGPos + BodyTranslationInWorld);
-
-    //+++++Translate body reference frame from translation expressed in body reference frame+++++//
-    body->TranslateInBody(BodyTranslationInWorld,NWU);
-    Test_AllGetPosition(body,OrigAbsPos + BodyTranslationInWorld,OrigAbsCOGPos + BodyTranslationInWorld);
-
-
-    //+++++Translate body reference frame from COG+++++//
-    body->SetCOGPosition(body->GetCOGAbsPosition(NWU)+BodyTranslationInWorld,NWU);
-    Test_AllGetPosition(body,OrigAbsPos,OrigAbsCOGPos);
+//    std::cout<<"+++++SetPosition"<<std::endl;
+    body->SetPosition(RefPositionInWorld+BodyTranslationInWorld,NWU);
+    Test_AllGetPosition(body,BodyPosition,COGPosition);
 
     //+++++Translate body reference frame from fixed point+++++//
+//    std::cout<<"+++++SetPointPosition"<<std::endl;
+    BodyPosition += BodyTranslationInWorld;
+    COGPosition += BodyTranslationInWorld;
     Position Point(4.,5.,6.); // Position of a point expressed in body reference frame
-    body->SetPointPosition(Point, body->GetAbsPositionOfLocalPoint(Point,NWU), NWU);
-    Test_AllGetPosition(body,OrigAbsPos,OrigAbsCOGPos);
+    body->SetPointPosition(Point, body->GetPointPositionInWorld(Point,NWU) + BodyTranslationInWorld, NWU);
+    Test_AllGetPosition(body,BodyPosition,COGPosition);
+
+    //+++++Translate body reference frame from translation expressed in world reference frame+++++//
+//    std::cout<<"+++++TranslateInWorld"<<std::endl;
+    BodyPosition += BodyTranslationInWorld;
+    COGPosition += BodyTranslationInWorld;
+    body->TranslateInWorld(BodyTranslationInWorld,NWU);
+    Test_AllGetPosition(body,BodyPosition,COGPosition);
+
+    //+++++Translate body reference frame from translation expressed in body reference frame+++++//
+//    std::cout<<"+++++TranslateInBody"<<std::endl;
+    BodyPosition += BodyTranslationInWorld;
+    COGPosition += BodyTranslationInWorld;
+    body->TranslateInBody(BodyTranslationInWorld,NWU);
+    Test_AllGetPosition(body,BodyPosition,COGPosition);
+
+
+//    //+++++Translate body reference frame from COG+++++//
+//    body->SetCOGPosition(body->GetCOGPositionInWorld(NWU)+BodyTranslationInWorld,NWU);
+//    Test_AllGetPosition(body,RefPositionInWorld,COGPositionInWorld);
+
 }
+
+void Test_AllGetRotation(const std::shared_ptr<FrBody_> body, const FrRotation_ &BodyRotationInWorld){
+
+    // Test of the getter for the absolute orientation (expressed in the world reference frame)
+    EXPECT_TRUE(body->GetRotation() == BodyRotationInWorld);
+
+    // Test of the getter for the quaternion
+    EXPECT_TRUE(body->GetQuaternion() == BodyRotationInWorld.GetQuaternion());
+
+    // Test of the frame getter
+    EXPECT_TRUE(body->GetFrame().GetRotation() == BodyRotationInWorld);
+}
+
 
 TEST(FrBodyTest,TestOrientation) {
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
-    Position OrigAbsPos(1., 2., 3.);
-    body->SetPosition(OrigAbsPos, NWU);
+    Position RefPositionInWorld(1., 2., 3.);
+    body->SetPosition(RefPositionInWorld, NWU);
 
     //-----------------Orientation-----------------//
+    //+++++Set Rotation+++++//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
-    FrRotation_ OrigAbsRot;    OrigAbsRot.SetCardanAngles_DEGREES(1., 2., 3., NWU);
-    body->SetRotation(OrigAbsRot);
+    FrRotation_ BodyRotationInWorld;    BodyRotationInWorld.SetCardanAngles_DEGREES(1., 2., 3., NWU);
+    body->SetRotation(BodyRotationInWorld);
 
-    // Test of the getter for the absolute orientation (expressed in the world reference frame)
-    EXPECT_TRUE(OrigAbsRot == body->GetRotation());
+    Test_AllGetRotation(body, BodyRotationInWorld);
 
-    // Test of the setter using cardan angles
+    //+++++Set Rotation, using Cardan angles+++++//
     body->SetCardanAngles_DEGREES(1., 2., 3., NWU);
-    EXPECT_TRUE(OrigAbsRot == body->GetRotation());
+    EXPECT_TRUE(BodyRotationInWorld == body->GetRotation());
+
+    Test_AllGetRotation(body, BodyRotationInWorld);
+    // Test of the frame position getter
+    Position testPosition = body->GetFrame().GetPosition(NWU) - RefPositionInWorld;
+    EXPECT_TRUE(testPosition.isZero());
+
+    //+++++Set Frame+++++//
+    FrFrame_ RefFrame(RefPositionInWorld,BodyRotationInWorld,NWU);
+    body->SetFrame(RefFrame);
+
+    Test_AllGetRotation(body, BodyRotationInWorld);
+    // Test of the frame position getter
+    testPosition = body->GetFrame().GetPosition(NWU) - RefFrame.GetPosition(NWU);
+    EXPECT_TRUE(testPosition.isZero());
+
 }
 
 TEST(FrBodyTest,TestPositionWithOrientation){
@@ -164,8 +198,6 @@ TEST(FrBodyTest,TestPositionWithOrientation){
     FrRotation_ TotalRotation = Rotation1*Rotation2 ;
     body->SetRotation(TotalRotation);
 
-    std::cout<<body->GetAbsRotation();
-    std::cout<<body->GetAbsFrame();
 
     Test_AllGetPosition(body, OrigAbsPos, OrigAbsCOGPos, true);
 
