@@ -54,6 +54,7 @@ public:
     void TestForceInWorldAtPointInWorld();
     void TestForceInBodyAtPointInWorld();
     void TestForceInBodyAtPointInBody();
+    void TestGetForceInWorldReference();
 
     /// Accessor
     Position GetPointREFInWorld() const { return m_PointREFInWorld; }
@@ -386,12 +387,29 @@ void TestFrForce_::TestForceInBodyAtPointInWorld() {
     return;
 }
 
+void TestFrForce_::TestGetForceInWorldReference() {
+
+    this->SetForceInWorldAtCOG(m_forceInWorldAtCOG, NWU);
+
+    m_body->Update();
+
+    Force force;
+    GetForceInWorld(force, NWU);
+
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
+    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
+    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
+
+    return;
+
+}
+
 std::shared_ptr<FrBody_> NewBody(std::shared_ptr<TestFrForce_> test) {
 
     auto body = std::make_shared<FrBody_>();
-    body->SetAbsPosition(test->GetPointREFInWorld(), NWU);
+    body->SetPosition(test->GetPointREFInWorld(), NWU);
     body->SetCOG(test->GetPointCOGInBody(), NWU);
-    body->SetAbsRotation(test->GetQuatREF());
+    body->SetRotation(test->GetQuatREF());
     body->AddExternalForce(test);
     body->Update();
     return body;
@@ -541,4 +559,13 @@ TEST(FrForce_test, ForceInBodyAtPointInWorld) {
     auto body = NewBody(test);
     system.AddBody(body);
     test->TestForceInBodyAtPointInWorld();
+}
+
+TEST(FrForce_test, GetForceInWorldReference) {
+    FrOffshoreSystem_ system;
+    auto test = std::make_shared<TestFrForce_>();
+    test->CreateDataset();
+    auto body = NewBody(test);
+    system.AddBody(body);
+    test->TestGetForceInWorldReference();
 }
