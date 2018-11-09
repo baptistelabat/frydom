@@ -62,6 +62,7 @@ foreach(test ${FRYDOM_TESTS})
 endforeach()
 
 add_subdirectory(unit_tests)
+add_subdirectory(TestNonRegression)
 add_subdirectory(GoogleTest)
 
 # Adding resource files

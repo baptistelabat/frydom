@@ -960,6 +960,8 @@ namespace frydom {
         /// Set the yaw angle of the body with respect to the absolute frame (angle in degrees)
         double SetYaw_DEGREES(double yaw, FRAME_CONVENTION fc);
 
+        double GetHeading_DEGREES(FRAME_CONVENTION fc) const;
+
         /// Get the roll angle of the body with respect to the absolute frame (angle in radians)
         double GetRoll_RADIANS(FRAME_CONVENTION fc) const;
 
@@ -978,6 +980,8 @@ namespace frydom {
         /// Set the yaw angle of the body with respect to the absolute frame (angle in radians)
         double SetYaw_RADIANS(double yaw, FRAME_CONVENTION fc);
 
+        double GetHeading_RADIANS(FRAME_CONVENTION fc) const;
+
         // =============================================================================================================
         // Projections in frames absolute and body frame of vector quantities
         // =============================================================================================================
@@ -991,14 +995,14 @@ namespace frydom {
         /// Project a vector expressed in absolute coordinate system into the body reference coordinate system
         template <class Vector>
         Vector ProjectAbsVectorInBodyCoords(const Vector& vector, FRAME_CONVENTION fc) const {
-            return GetAbsQuaternion().Rotate<Vector>(vector, fc);
+            return GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
         }
 
         /// Project a vector expressed in body reference coordinate system into the absolute reference coordinate system
         // TODO : voir pourquoi on ne peut pas acceder a cette methode...
         template <class Vector>
         void ProjectBodyVectorInAbsCoords(Vector& vector, FRAME_CONVENTION fc) const {
-            vector = GetAbsQuaternion().GetInverse().Rotate<Vector>(vector, fc);
+            vector = GetAbsQuaternion().Rotate<Vector>(vector, fc);
         }
 
         /// Project a vector expressed in body reference coordinate system into the absolute reference coordinate system
@@ -1105,6 +1109,12 @@ namespace frydom {
         /// Get the absolute relative velocity (expressed body reference frame) with respect to a fluid stream
         /// (air or water) of a body fixed point whose coordinates are given in absolute frame
         Velocity GetLocalRelVelocityInStreamAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc) const;
+
+        double GetApparentAngleAtLocalPoint(const Position& relPos, FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const;
+
+        double GetApparentAngleAtAbsPoint(const Position& absPos, FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const;
+
+        double GetApparentAngle(FLUID_TYPE ft, FRAME_CONVENTION fc, ANGLE_UNIT unit) const;
 
         // =============================================================================================================
         // Velocities for COG

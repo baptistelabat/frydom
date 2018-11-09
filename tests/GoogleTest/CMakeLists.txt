@@ -2,6 +2,9 @@
 
 set(GOOGLE_TESTS
         # include test source files here (without .cpp)
+        test_FrCurrentForce_
+        test_FrWindForce_
+        test_FrForce_
         test_internal
         test_FrBody_
         )
@@ -28,3 +31,6 @@ set(subdirs
 foreach (subdir ${subdirs})
     add_subdirectory(${subdir})
 endforeach ()
+
+configure_file(../data/TNR_database.h5 . COPYONLY)
+

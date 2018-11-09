@@ -44,5 +44,46 @@ namespace frydom {
     };
 
 
+
+
+
+
+
+
+    /// REFACTORING ------>>>>>>>>>>>>>>
+
+    class FrWindForce_ : public FrForce_ {
+
+
+    private:
+        mathutils::LookupTable1D<double> m_table;
+
+    public:
+
+        /// Default constructor
+        FrWindForce_() = default;
+
+        /// Constructor from the yaml file
+        explicit FrWindForce_(std::string yamlFile);
+
+        //
+        //  UPDATE
+        //
+
+        /// Update the state of the force
+        void Update(double time) override;
+
+        void Initialize() override {};
+
+        void StepFinalize() override {};
+
+    private:
+
+        /// Read the drag and lift coefficient from yaml file
+        void ReadTable(std::string yamlFile);
+
+    };
+
+
 }  // end namespace frydom
 #endif //FRYDOM_FRWINDFORCE_H
