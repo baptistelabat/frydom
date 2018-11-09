@@ -27,6 +27,12 @@ inline Velocity & EasyRotate(Velocity & vector) {
     return vector = res;
 }
 
+inline AngularVelocity & EasyRotate(AngularVelocity & vector) {
+    Velocity res(vector.GetWz(),vector.GetWx(),vector.GetWy());
+//    Velocity res(vector.GetVx(),-vector.GetVz(),vector.GetVy());
+    return vector = res;
+}
+
 void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
         const Position &RefPositionInWorld, const Position &COGPositionInWorld,
         bool is_Orientation = false){
@@ -62,7 +68,7 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
 
 }
 
-TEST(FrBodyTest,TestPosition) {
+TEST(FrBodyTest,Position) {
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -78,7 +84,7 @@ TEST(FrBodyTest,TestPosition) {
     Test_AllGetPosition(body,RefPositionInWorld,COGPositionInWorld);
 }
 
-TEST(FrBodyTest,TestTranslation) {
+TEST(FrBodyTest,Translation) {
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -143,7 +149,7 @@ void Test_AllGetRotation(const std::shared_ptr<FrBody_> body, const FrRotation_ 
 }
 
 
-TEST(FrBodyTest,TestOrientation) {
+TEST(FrBodyTest,Orientation) {
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -178,7 +184,7 @@ TEST(FrBodyTest,TestOrientation) {
 
 }
 
-TEST(FrBodyTest,TestPositionWithOrientation){
+TEST(FrBodyTest,PositionWithOrientation){
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -254,7 +260,7 @@ void Test_AllGetVelocity(const std::shared_ptr<FrBody_> body,
     EXPECT_TRUE(testVelocity.isZero());
 }
 
-TEST(FrBodyTest,TestTranslationalVelocity){
+TEST(FrBodyTest,TranslationalVelocity){
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -315,7 +321,7 @@ TEST(FrBodyTest,TestTranslationalVelocity){
 }
 
 
-TEST(FrBodyTest,TestTranslationalVelocityWithOrientation){
+TEST(FrBodyTest,TranslationalVelocityWithOrientation){
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -356,6 +362,68 @@ TEST(FrBodyTest,TestTranslationalVelocityWithOrientation){
 //    Velocity COGVelocityInBody(0.,1.,0.);
 //    body->SetCOGLocalVelocity(COGVelocityInBody,NWU);
 //    Test_AllGetVelocity(body, COGVelocityInBody, true);
+
+
+}
+
+void Test_GetAngularVelocity(const std::shared_ptr<FrBody_> body,
+        const AngularVelocity &BodyAngularVelocityInWorld, bool is_orientation){
+
+    AngularVelocity testAngularVelocity;
+
+    // Test Angular Velocity getter, expressed in world reference frame
+    testAngularVelocity = body->GetAngularVelocityInWorld(NWU) - BodyAngularVelocityInWorld;
+    EXPECT_TRUE(testAngularVelocity.isZero());
+
+    // Test Angular Velocity getter, expressed in body reference frame
+    testAngularVelocity = body->GetAngularVelocityInBody(NWU);
+    if (is_orientation) testAngularVelocity = EasyRotate(testAngularVelocity);
+    testAngularVelocity -= BodyAngularVelocityInWorld;
+    EXPECT_TRUE(testAngularVelocity.isZero());
+}
+
+TEST(FrBodyTest,AngularVelocity) {
+    // Body Instantiation
+    auto body = std::make_shared<FrBody_>();
+
+    AngularVelocity BodyAngularVelocityInBody, BodyAngularVelocityInWorld;
+
+    //+++++Test Angular Velocity Setters and Getters without any body reference frame rotation+++++//
+    // Test Angular Velocity setter, expressed in world reference frame
+    BodyAngularVelocityInWorld.Set(1.,2.,3.);
+    body->SetAngularVelocityInWorld(BodyAngularVelocityInWorld,NWU);
+    std::cout<<"SetAngularVelocityInWorld"<<std::endl;
+    Test_GetAngularVelocity(body,BodyAngularVelocityInWorld,false);
+
+
+    // Test Angular Velocity setter, expressed in body reference frame
+    BodyAngularVelocityInBody.Set(4.,5.,6.);
+    body->SetAngularVelocityInBody(BodyAngularVelocityInBody,NWU);
+    std::cout<<"SetAngularVelocityInBody"<<std::endl;
+    Test_GetAngularVelocity(body,BodyAngularVelocityInBody,false);
+
+    //-----------------Orientation-----------------//
+    // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
+    // Rotation to an easy transformation (X = z, Y = x, Z = y)
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
+    FrRotation_ TotalRotation = Rotation1*Rotation2;
+    body->SetRotation(TotalRotation);
+
+    //+++++Test Angular Velocity Setters and Getters with a body reference frame rotation+++++//
+    // Test Angular Velocity setter, expressed in world reference frame
+    BodyAngularVelocityInWorld.Set(1.,2.,3.);
+    body->SetAngularVelocityInWorld(BodyAngularVelocityInWorld,NWU);
+    std::cout<<"SetAngularVelocityInWorld, with a rotation"<<std::endl;
+    Test_GetAngularVelocity(body,BodyAngularVelocityInWorld,true);
+
+
+    // Test Angular Velocity setter, expressed in body reference frame
+    BodyAngularVelocityInBody.Set(4.,5.,6.);
+    body->SetAngularVelocityInBody(BodyAngularVelocityInBody,NWU);
+    std::cout<<"SetAngularVelocityInBody, with a rotation"<<std::endl;
+    BodyAngularVelocityInWorld = EasyRotate(BodyAngularVelocityInBody);
+    Test_GetAngularVelocity(body,BodyAngularVelocityInWorld,true);
 
 
 }
