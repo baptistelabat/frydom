@@ -299,6 +299,15 @@ namespace frydom {
         m_airDensity = airDensity;
     }
 
+    double FrEnvironment_::GetFluidDensity(FLUID_TYPE ft) const {
+        switch (ft) {
+            case WATER:
+                return m_waterDensity;
+            case AIR:
+                return m_airDensity;
+        }
+    }
+
     double FrEnvironment_::GetGravityAcceleration() const {
         return m_system->GetGravityAcceleration();
     }
@@ -315,11 +324,11 @@ namespace frydom {
         m_seaTemperature = seaTemperature;
     }
 
-    double FrEnvironment_::GetAirtemperature() const {
+    double FrEnvironment_::GetAirTemperature() const {
         return m_airTemperature;
     }
 
-    void FrEnvironment_::SetAirtemperature(double airtemperature) {
+    void FrEnvironment_::SetAirTemperature(double airtemperature) {
         m_airTemperature = airtemperature;
     }
 

@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
 
 
     // TODO : fournir un frydom initialize...
+
     // The system
     FrOffshoreSystem_ system;
     system.SetSolver(FrOffshoreSystem_::MINRES);
@@ -32,28 +33,14 @@ int main(int argc, char* argv[]) {
     wall->SetColor(LightGrey);
     wall->SetName("wall");
 
-
-
     // Defining the ship
     auto ship = system.NewBody();
 //    ship->RemoveGravity(true);  // TODO : mettre en place les contraintes a la place de virer la gravite...
     ship->AddMeshAsset("MagneViking_scaled.obj");
     ship->SetName("ship");
 
-
-
-
-//    ship->SetBodyFixed(true);
-//    ship->ConstrainInVx(0.5);
     ship->ConstrainInVx(1);
 
-
-
-
-
-
-//    ship->SetAbsPosition(2, 0, 0, NWU);
-//    ship->SetAbsVelocity(1, 0, 0, NWU);
     ship->SetColor(DarkRed);
 
 
@@ -72,7 +59,8 @@ int main(int argc, char* argv[]) {
 //    fish->ActivateSpeedLimits(true);
     auto fishNode = fish->NewNode(0., 0., 0.);
 
-    auto quadForce = std::make_shared<FrQuadraticDamping_>(WATER, true);
+
+    auto quadForce = std::make_shared<FrQuadraticDamping_>(WATER, false);
     double area = MU_PI * radius * radius;
     quadForce->SetProjectedSections(area, area, area);
 
@@ -82,8 +70,8 @@ int main(int argc, char* argv[]) {
     fish->AddExternalForce(quadForce);
 
 
-    // Test ittc
-    auto ittcForce = std::make_shared<FrITTC57_>(10, 0.1, 30, 5);
+//    // Test ittc
+//    auto ittcForce = std::make_shared<FrITTC57_>(10, 0.1, 30, 5);
 
 
 

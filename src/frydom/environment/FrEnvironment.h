@@ -322,6 +322,8 @@ namespace frydom {
 
         void SetAirDensity(double airDensity);
 
+        double GetFluidDensity(FLUID_TYPE ft) const;
+
         double GetGravityAcceleration() const;
 
         void SetGravityAcceleration(double gravityAcceleration);
@@ -330,9 +332,9 @@ namespace frydom {
 
         void SetSeaTemperature(double seaTemperature);
 
-        double GetAirtemperature() const;
+        double GetAirTemperature() const;
 
-        void SetAirtemperature(double airtemperature);
+        void SetAirTemperature(double airtemperature);
 
         double GetWaterKinematicViscosity() const;
 

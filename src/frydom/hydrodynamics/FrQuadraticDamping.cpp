@@ -112,7 +112,7 @@ namespace frydom {
             cogRelVel = m_body->GetCOGVelocityInBody(NWU);
         }
 
-        double rho = m_body->GetSystem()->GetEnvironment()->GetWaterDensity();
+        double rho = m_body->GetSystem()->GetEnvironment()->GetFluidDensity(m_fluidType);
 
         double u = cogRelVel.GetVx();
         double v = cogRelVel.GetVy();

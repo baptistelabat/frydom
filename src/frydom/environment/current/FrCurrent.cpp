@@ -15,21 +15,18 @@
 
 
 #include "FrCurrent.h"
-//#include "frydom/core/FrFrame.h"
 
+#include "chrono/core/ChMatrixDynamic.h"  // TODO : voir pourquoi on est oblige d'inclure
 #include "frydom/environment/field/FrUniformCurrentField.h"
 
+#include "frydom/core/FrFrame.h"
 
 namespace frydom {
 
-    Velocity FrCurrent_::GetAbsRelativeVelocity(const Position& absPointPos, const Velocity& absPointVelocity, FRAME_CONVENTION fc) {
-        return GetAbsFluxVelocity(absPointPos, fc) - absPointVelocity;
+    Velocity FrCurrent_::GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel, FRAME_CONVENTION fc) {
+        Velocity worldRelCurrentVel = GetWorldFluxVelocity(frame.GetPosition(fc), fc) - worldVel;
+        return frame.GetQuaternion().GetInverse().Rotate(worldRelCurrentVel, fc);
     }
-
-    //Velocity FrCurrent_::GetRelativeVelocityInLocalFrame(const FrFrame_ frame, const Velocity& absVel, FRAME_CONVENTION fc) {
-    //    auto velocity = this->GetAbsRelativeVelocity(frame.GetPosition(fc), absVel, fc);
-    //    return frame.GetQuaternion().Inverse().Rotate(velocity, fc);
-    //}
 
     FrUniformCurrent_::FrUniformCurrent_(FrEnvironment_ *environment) : m_environment(environment) {
         m_uniformField = std::make_unique<FrUniformCurrentField_>();
@@ -43,8 +40,8 @@ namespace frydom {
         m_uniformField->Update(time);
     }
 
-    Velocity FrUniformCurrent_::GetAbsFluxVelocity(const Position &absPos, FRAME_CONVENTION fc) {
-        return m_uniformField->GetAbsFluxVelocity(fc);
+    Velocity FrUniformCurrent_::GetWorldFluxVelocity(const Position &absPos, FRAME_CONVENTION fc) {
+        return m_uniformField->GetWorldFluxVelocity(fc);
     }
 
     void FrUniformCurrent_::Initialize() {

@@ -265,7 +265,7 @@ namespace frydom {
         // TODO : permettre une variation temporelle...
     }
 
-    Velocity FrUniformCurrentField_::GetAbsFluxVelocity(FRAME_CONVENTION fc) {
+    Velocity FrUniformCurrentField_::GetWorldFluxVelocity(FRAME_CONVENTION fc) {
         auto velocity = m_fluxVectorNWU;
         if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(velocity);
         return velocity;

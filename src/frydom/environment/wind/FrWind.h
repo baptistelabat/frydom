@@ -84,6 +84,7 @@ namespace frydom {
     /// REFACTORING ------------>>>>>>>>>>>>>><
 
     class FrEnvironment_;
+    class FrFrame_;
 
 
     // ================================================================
@@ -96,11 +97,11 @@ namespace frydom {
 
         ~FrWind_() = default;
 
-        virtual Velocity GetAbsFluxVelocity(const Position& absPos, FRAME_CONVENTION fc) = 0;
+        virtual Velocity GetWorldFluxVelocity(const Position &worldPos, FRAME_CONVENTION fc) = 0;
 
         virtual void Update(double time) = 0;
 
-        Velocity GetAbsRelativeVelocity(const Position& absPointPos, const Velocity& absPointVelocity, FRAME_CONVENTION fc);
+        Velocity GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel, FRAME_CONVENTION fc);
 
     };
 
@@ -130,7 +131,7 @@ namespace frydom {
         void Update(double time) override;
 
         /// Get the vector field
-        Velocity GetAbsFluxVelocity(const Position& absPos, FRAME_CONVENTION fc) override;
+        Velocity GetWorldFluxVelocity(const Position &absPos, FRAME_CONVENTION fc) override;
 
         /// Method of initialization from uniform current field class
         void Initialize() override;
