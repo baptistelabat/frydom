@@ -501,14 +501,14 @@ namespace frydom {
         TranslateInWorld(translation, fc);
     }
 
-    void FrBody_::TranslateInWorld(const Position &worldTranslation, FRAME_CONVENTION fc) {
+    void FrBody_::TranslateInWorld(const Translation &worldTranslation, FRAME_CONVENTION fc) {
         auto refFrame = GetFrame();
         refFrame.SetPosition(refFrame.GetPosition(fc) + worldTranslation, fc);
         m_chronoBody->SetFrame_REF_to_abs(internal::Fr2ChFrame(refFrame));
         m_chronoBody->UpdateAfterMove();
     }
 
-    void FrBody_::TranslateInBody(const Position &bodyTranslation, FRAME_CONVENTION fc) {
+    void FrBody_::TranslateInBody(const Translation &bodyTranslation, FRAME_CONVENTION fc) {
         auto refFrame = GetFrame();
         refFrame.SetPosition(refFrame.GetPosition(fc) + ProjectVectorInWorld<Position>(bodyTranslation, fc), fc);
         m_chronoBody->SetFrame_REF_to_abs(internal::Fr2ChFrame(refFrame));

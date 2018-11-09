@@ -560,12 +560,12 @@ namespace frydom {
         /// Translate the body along a translation vector whose coordinates are given in the world frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
-        void TranslateInWorld(const Position& worldTranslation, FRAME_CONVENTION fc);
+        void TranslateInWorld(const Translation &worldTranslation, FRAME_CONVENTION fc);
 
         /// Translate the body along a translation vector whose coordinates are given in the body frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
-        void TranslateInBody(const Position& bodyTranslation, FRAME_CONVENTION fc);
+        void TranslateInBody(const Translation &bodyTranslation, FRAME_CONVENTION fc);
 
 
         /// Rotate the body with respect to its current orientation in world using a rotation object
