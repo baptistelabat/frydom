@@ -8,34 +8,40 @@
 
 using namespace frydom;
 
+// From Body To World
 template <class Vector>
-inline Vector& EasyRotate(Vector& vector) {
+inline Vector& EasyRotate(Vector& vector, FRAME_CONVENTION fc=NWU) {
     Vector vecTem = vector;
+    if (fc==NED) {internal::SwapFrameConvention(vector);}
     vecTem[0] = vector[2];
     vecTem[1] = vector[0];
     vecTem[2] = vector[1];
+    if (fc==NED) {internal::SwapFrameConvention(vecTem);}
     return vector = vecTem;
 }
 
 template <class Vector>
-inline Vector EasyRotate(const Vector& vector) {
+inline Vector EasyRotate(const Vector& vector, FRAME_CONVENTION fc=NWU) {
     Vector out = vector;
-    return EasyRotate<Vector>(out);
+    return EasyRotate<Vector>(out,fc);
 }
 
+// From World To Body
 template <class Vector>
-inline Vector& EasyRotateInv(Vector& vector) {
+inline Vector& EasyRotateInv(Vector& vector, FRAME_CONVENTION fc=NWU) {
     Vector vecTem = vector;
+    if (fc==NED) {internal::SwapFrameConvention(vector);}
     vecTem[0] = vector[1];
     vecTem[1] = vector[2];
     vecTem[2] = vector[0];
+    if (fc==NED) {internal::SwapFrameConvention(vecTem);}
     return vector = vecTem;
 }
 
 template <class Vector>
-inline Vector EasyRotateInv(const Vector& vector) {
+inline Vector EasyRotateInv(const Vector& vector, FRAME_CONVENTION fc=NWU) {
     Vector out = vector;
-    return EasyRotate<Vector>(out);
+    return EasyRotateInv<Vector>(out,fc);
 }
 
 
@@ -71,36 +77,41 @@ inline Vector EasyRotateInv(const Vector& vector) {
 
 
 void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
-        const Position &RefPositionInWorld, const Position &COGPositionInWorld,
-        bool is_Orientation = false){
+        Position &RefPositionInWorld, Position &COGPositionInWorld, FRAME_CONVENTION in_fc,
+        bool is_Orientation, FRAME_CONVENTION out_fc){
+
+    if (out_fc != in_fc) {
+        internal::SwapFrameConvention(RefPositionInWorld);
+        internal::SwapFrameConvention(COGPositionInWorld);
+    }
 
     // Test body reference frame position in world reference frame
-    Position testPosition = body->GetPosition(NWU) - RefPositionInWorld;
+    Position testPosition = body->GetPosition(out_fc) - RefPositionInWorld;
     EXPECT_TRUE(testPosition.isZero());
     if (not(testPosition.isZero())) {
-        std::cout<<body->GetPosition(NWU)<<std::endl;
+        std::cout<<body->GetPosition(out_fc)<<std::endl;
         std::cout<<RefPositionInWorld<<std::endl;
     }
 
     //-----------------COG-----------------//
     // Test COG position in body reference frame
     Position TempPos = COGPositionInWorld - RefPositionInWorld;
-    testPosition = body->GetCOG(NWU) - TempPos;
+    testPosition = body->GetCOG(out_fc) - TempPos;
     EXPECT_TRUE(testPosition.isZero());
     // Test COG position in world reference frame
     TempPos = COGPositionInWorld - RefPositionInWorld;
     if (is_Orientation) EasyRotate(TempPos);
-    testPosition = body->GetCOGPositionInWorld(NWU) - (RefPositionInWorld +TempPos);
+    testPosition = body->GetCOGPositionInWorld(out_fc) - (RefPositionInWorld +TempPos);
     EXPECT_TRUE(testPosition.isZero());
     if (not(testPosition.isZero())) {
-        std::cout<<body->GetCOGPositionInWorld(NWU)<<std::endl;
+        std::cout<<body->GetCOGPositionInWorld(out_fc)<<std::endl;
         std::cout<<COGPositionInWorld<<std::endl;
     }
 
     //-----------------Fixed Point-----------------//
     // Test for the getter for the local position of a point expressed in the world reference frame
     Position PointPositionInWorld(1., 5., 9.); // Position of a point, expressed in world reference frame
-    TempPos = body->GetPointPositionInBody(PointPositionInWorld, NWU);
+    TempPos = body->GetPointPositionInBody(PointPositionInWorld, out_fc);
     if (is_Orientation) EasyRotate(TempPos);
     testPosition = TempPos - (PointPositionInWorld - RefPositionInWorld);
     EXPECT_TRUE(testPosition.isZero());
@@ -109,7 +120,7 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
     // Test for the getter for the abs position of a point expressed in the body reference frame
     TempPos = PointPositionInBody;
     if (is_Orientation) EasyRotate(TempPos);
-    testPosition = body->GetPointPositionInWorld(PointPositionInBody, NWU) - RefPositionInWorld - TempPos;
+    testPosition = body->GetPointPositionInWorld(PointPositionInBody, out_fc) - RefPositionInWorld - TempPos;
     EXPECT_TRUE(testPosition.isZero());
 
 }
@@ -127,7 +138,23 @@ TEST(FrBodyTest,Position) {
     body->SetCOG(COGPositionInBody, NWU);
     Position COGPositionInWorld = RefPositionInWorld + COGPositionInBody;
 
-    Test_AllGetPosition(body,RefPositionInWorld,COGPositionInWorld);
+    Test_AllGetPosition(body,RefPositionInWorld,COGPositionInWorld,NWU,false,NWU);
+}
+
+TEST(FrBodyTest,PositionNED) {
+    // Body Instantiation
+    auto body = std::make_shared<FrBody_>();
+
+    Position RefPositionInWorld(1., 2., 3.);
+    body->SetPosition(RefPositionInWorld, NWU);
+
+    //-----------------COG-----------------//
+    // Set the COG position, expressed in local body reference frame
+    Position COGPositionInBody(2., 3., 4.);
+    body->SetCOG(COGPositionInBody, NWU);
+    Position COGPositionInWorld = RefPositionInWorld + COGPositionInBody;
+
+    Test_AllGetPosition(body,RefPositionInWorld,COGPositionInWorld,NWU,false,NED);
 }
 
 TEST(FrBodyTest,Translation) {
@@ -151,7 +178,7 @@ TEST(FrBodyTest,Translation) {
     //+++++Translate body reference frame+++++//
 //    std::cout<<"+++++SetPosition"<<std::endl;
     body->SetPosition(RefPositionInWorld+BodyTranslationInWorld,NWU);
-    Test_AllGetPosition(body,BodyPosition,COGPosition);
+    Test_AllGetPosition(body,BodyPosition,COGPosition,NWU,false,NWU);
 
     //+++++Translate body reference frame from fixed point+++++//
 //    std::cout<<"+++++SetPointPosition"<<std::endl;
@@ -159,21 +186,21 @@ TEST(FrBodyTest,Translation) {
     COGPosition += BodyTranslationInWorld;
     Position Point(4.,5.,6.); // Position of a point expressed in body reference frame
     body->SetPositionOfBodyPoint(Point, body->GetPointPositionInWorld(Point,NWU) + BodyTranslationInWorld, NWU);
-    Test_AllGetPosition(body,BodyPosition,COGPosition);
+    Test_AllGetPosition(body,BodyPosition,COGPosition,NWU,false,NWU);
 
     //+++++Translate body reference frame from translation expressed in world reference frame+++++//
 //    std::cout<<"+++++TranslateInWorld"<<std::endl;
     BodyPosition += BodyTranslationInWorld;
     COGPosition += BodyTranslationInWorld;
     body->TranslateInWorld(BodyTranslationInWorld,NWU);
-    Test_AllGetPosition(body,BodyPosition,COGPosition);
+    Test_AllGetPosition(body,BodyPosition,COGPosition,NWU,false,NWU);
 
     //+++++Translate body reference frame from translation expressed in body reference frame+++++//
 //    std::cout<<"+++++TranslateInBody"<<std::endl;
     BodyPosition += BodyTranslationInWorld;
     COGPosition += BodyTranslationInWorld;
     body->TranslateInBody(BodyTranslationInWorld,NWU);
-    Test_AllGetPosition(body,BodyPosition,COGPosition);
+    Test_AllGetPosition(body,BodyPosition,COGPosition,NWU,false,NWU);
 
 }
 
@@ -246,7 +273,7 @@ TEST(FrBodyTest,PositionWithOrientation){
     body->SetRotation(TotalRotation);
 
 
-    Test_AllGetPosition(body, RefPositionInWorld, OrigAbsCOGPos, true);
+    Test_AllGetPosition(body, RefPositionInWorld, OrigAbsCOGPos, NWU, true, NWU);
 
 }
 
@@ -549,3 +576,73 @@ TEST(FrBodyTest,TranslationalVelocityWithOrientation){
     Test_AllGetVelocity(body, VelocityInWorldAtPointInBody, is_orientation);
 }
 
+TEST(FrBodyTest,ProjectVectorMethods){
+
+    // Body Instantiation
+    auto body = std::make_shared<FrBody_>();
+
+    Position NWUWorldPos(1,2,3);
+
+    Position NWUBodyPos = body->ProjectVectorInBody(NWUWorldPos,NWU);
+    Position testPosition = NWUBodyPos - NWUWorldPos;
+    EXPECT_TRUE(testPosition.isZero());
+
+    Position NEDWorldPos(1,2,3);
+    Position NEDBodyPos = body->ProjectVectorInBody(NEDWorldPos,NED);
+    testPosition = NEDWorldPos - NEDBodyPos;
+    EXPECT_TRUE(testPosition.isZero());
+    if (not(testPosition.isZero())){
+        std::cout<<NEDWorldPos<<std::endl;
+        std::cout<<NEDBodyPos<<std::endl;
+    }
+
+    testPosition = NWUBodyPos - body->ProjectVectorInWorld(NWUBodyPos,NWU);
+    EXPECT_TRUE(testPosition.isZero());
+
+    testPosition = NEDBodyPos - body->ProjectVectorInWorld(NEDBodyPos,NED);
+    EXPECT_TRUE(testPosition.isZero());
+
+}
+
+TEST(FrBodyTest,ProjectVectorMethodsWithOrientation){
+
+    // Body Instantiation
+    auto body = std::make_shared<FrBody_>();
+
+    //-----------------Orientation-----------------//
+    // Rotation to an easy transformation
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
+    FrRotation_ TotalRotation = Rotation1*Rotation2 ;
+    body->SetRotation(TotalRotation);
+
+    const Position NWUWorldPos(1,2,3);
+
+    Position NWUBodyPos = body->ProjectVectorInBody(NWUWorldPos,NWU);
+    Position testPosition = NWUBodyPos - EasyRotateInv(NWUWorldPos);
+    EXPECT_TRUE(testPosition.isZero());
+
+    const Position NEDWorldPos(1,2,3);
+    Position NEDBodyPos = body->ProjectVectorInBody(NEDWorldPos,NED);
+    testPosition = NEDBodyPos - EasyRotateInv(NEDWorldPos,NED);
+    EXPECT_TRUE(testPosition.isZero());
+    if (not(testPosition.isZero())){
+        std::cout<<NEDBodyPos<<std::endl;
+        std::cout<<EasyRotateInv(NEDWorldPos,NED)<<std::endl;
+    }
+
+    testPosition = NWUWorldPos - body->ProjectVectorInWorld(NWUBodyPos,NWU);
+    EXPECT_TRUE(testPosition.isZero());
+    if (not(testPosition.isZero())){
+        std::cout<<NWUWorldPos<<std::endl;
+        std::cout<<NWUBodyPos<<std::endl;
+    }
+
+    testPosition = NEDWorldPos - body->ProjectVectorInWorld(NEDBodyPos,NED);
+    EXPECT_TRUE(testPosition.isZero());
+    if (not(testPosition.isZero())){
+        std::cout<<NEDWorldPos<<std::endl;
+        std::cout<<NEDBodyPos<<std::endl;
+    }
+
+}
