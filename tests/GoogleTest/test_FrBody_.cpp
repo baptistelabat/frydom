@@ -47,6 +47,10 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
     // Test body reference frame position in world reference frame
     Position testPosition = body->GetPosition(NWU) - RefPositionInWorld;
     EXPECT_TRUE(testPosition.isZero());
+    if (not(testPosition.isZero())) {
+        std::cout<<body->GetPosition(NWU)<<std::endl;
+        std::cout<<RefPositionInWorld<<std::endl;
+    }
 
     //-----------------COG-----------------//
     // Test COG position in world reference frame
@@ -190,14 +194,14 @@ TEST(FrBodyTest,PositionWithOrientation){
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
-    Position OrigAbsPos(1.,2.,3.);
-    body->SetPosition(OrigAbsPos,NWU);
+    Position RefPositionInWorld(1.,2.,3.);
+    body->SetPosition(RefPositionInWorld,NWU);
 
     //-----------------COG-----------------//
     // Set the COG position, expressed in local body reference frame
-    Position OrigLocalCOGPos(2.,3.,4.);
-    body->SetCOG(OrigLocalCOGPos, NWU);
-    Position OrigAbsCOGPos = OrigAbsPos + OrigLocalCOGPos;
+    Position COGPositionInBody(2.,3.,4.);
+    body->SetCOG(COGPositionInBody, NWU);
+    Position OrigAbsCOGPos = RefPositionInWorld + COGPositionInBody;
 
     //-----------------Orientation-----------------//
     // Rotation to an easy transformation
@@ -207,7 +211,7 @@ TEST(FrBodyTest,PositionWithOrientation){
     body->SetRotation(TotalRotation);
 
 
-    Test_AllGetPosition(body, OrigAbsPos, OrigAbsCOGPos, true);
+    Test_AllGetPosition(body, RefPositionInWorld, OrigAbsCOGPos, true);
 
 }
 
