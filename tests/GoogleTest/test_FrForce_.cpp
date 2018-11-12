@@ -11,6 +11,7 @@ using namespace frydom;
 // CLASS OF THE TEST
 //
 
+
 class TestFrForce_ : public FrForce_ {
 
 private:
@@ -110,8 +111,6 @@ void TestFrForce_::CreateDataset() {
     m_torqueInBodyAtPoint  = Torque(200000000.00000000,300000000.00000000,90000000000.00000000);
     m_torqueInWorldAtCOG   = Torque(16177106450.72056389,-14381757296.81767845,87365187116.70848083);
     m_torqueInBodyAtCOG    = Torque(216000000.00000000,288000000.00000000,90006000000.00000000);
-
-    return;
 }
 
 void TestFrForce_::CheckForceInWorldAtCOG() {
@@ -139,16 +138,7 @@ void TestFrForce_::CheckForceTorqueAtCOG() {
     this->CheckTorqueInBodyAtCOG();
 }
 
-std::shared_ptr<FrBody_> NewBody(std::shared_ptr<TestFrForce_> test) {
 
-    auto body = std::make_shared<FrBody_>();
-    body->SetPosition(test->GetPointREFInWorld(), NWU);
-    body->SetCOG(test->GetPointCOGInBody(), NWU);
-    body->SetRotation(test->GetQuatREF());
-    body->AddExternalForce(test);
-    body->Update();
-    return body;
-}
 
 void TestFrForce_::TestMaxForceLimit(double fmax) {
     this->SetMaxForceLimit(fmax);
@@ -438,8 +428,49 @@ void TestFrForce_::TestTorqueNorm() {
     EXPECT_FLOAT_EQ(normTEST, normREF);
 }
 
+
 //
-// GTEST
+// TESTING CLASS FUNCTION
+//
+
+class TestBase : public ::testing::Test {
+
+protected:
+
+    /// Environment objects
+    FrOffshoreSystem_ system;
+    std::shared_ptr<FrBody_> body;
+    std::shared_ptr<TestFrForce_> force;
+
+    /// Initialize environment
+    void SetUp() override;
+
+    /// Create a new body object with position and orientation of the test
+    std::shared_ptr<FrBody_> NewBody(std::shared_ptr<TestFrForce_> test);
+
+};
+
+void TestBase::SetUp() {
+    force = std::make_shared<TestFrForce_>();
+    force->CreateDataset();
+    body = NewBody(force);
+    system.AddBody(body);
+}
+
+std::shared_ptr<FrBody_> TestBase::NewBody(std::shared_ptr<TestFrForce_> test) {
+
+    auto body = std::make_shared<FrBody_>();
+    body->SetPosition(test->GetPointREFInWorld(), NWU);
+    body->SetCOG(test->GetPointCOGInBody(), NWU);
+    body->SetRotation(test->GetQuatREF());
+    body->AddExternalForce(test);
+    body->Update();
+    return body;
+}
+
+
+//
+// LIST OF GTEST
 //
 
 TEST(FrForce_test, MaxForceLimit) {
@@ -457,229 +488,107 @@ TEST(FrForce_test, SetLimit) {
     test.TestSetLimit();
 }
 
-TEST(FrForce_test, ForceTorqueInWorldAtPointInBody) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInWorldAtPointInBody();
+TEST_F(TestBase, ForceTorqueInWorldAtPointInBody) {
+    force->TestForceTorqueInWorldAtPointInBody();
 }
 
-TEST(FrForce_test, ForceTorqueInBodyAtPointInBody) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInBodyAtPointInBody();
+TEST_F(TestBase, ForceTorqueInBodyAtPointInBody) {
+    force->TestForceTorqueInBodyAtPointInBody();
 }
 
-TEST(FrForce_test, ForceTorqueInWorldAtPointInWorld) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInWorldAtPointInWorld();
+TEST_F(TestBase, ForceTorqueInWorldAtPointInWorld) {
+    force->TestForceTorqueInWorldAtPointInWorld();
 }
 
-TEST(FrForce_test, ForceTorqueInBodyAtPointInWorld) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInBodyAtPointInWorld();
+TEST_F(TestBase, ForceTorqueInBodyAtPointInWorld) {
+    force->TestForceTorqueInBodyAtPointInWorld();
 }
 
-
-TEST(FrForce_test, ForceTorqueInWorldAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInWorldAtCOG();
+TEST_F(TestBase, ForceTorqueInWorldAtCOG) {
+    force->TestForceTorqueInWorldAtCOG();
 }
 
-TEST(FrForce_test, ForceTorqueInBodyAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInBodyAtCOG();
+TEST_F(TestBase, ForceTorqueInBodyAtCOG) {
+    force->TestForceTorqueInBodyAtCOG();
 }
 
-TEST(FrForce_test, TorqueInBodyAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestTorqueInBodyAtCOG();
+TEST_F(TestBase, TorqueInBodyAtCOG) {
+    force->TestTorqueInBodyAtCOG();
 }
 
-TEST(FrForce_test, TorqueInWorldAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestTorqueInWorldAtCOG();
+TEST_F(TestBase, TorqueInWorldAtCOG) {
+    force->TestTorqueInWorldAtCOG();
 }
 
-TEST(FrForce_test, ForceInBodyAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInBodyAtCOG();
+TEST_F(TestBase, ForceInBodyAtCOG) {
+    force->TestForceInBodyAtCOG();
 }
 
-TEST(FrForce_test, ForceInWorldAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInWorldAtCOG();
+TEST_F(TestBase, ForceInWorldAtCOG) {
+    force->TestForceInWorldAtCOG();
 }
 
-TEST(FrForce_test, ForceInWorldAtPointInBody) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInWorldAtPointInBody();
+TEST_F(TestBase, ForceInWorldAtPointInBody) {
+    force->TestForceInWorldAtPointInBody();
 }
 
-TEST(FrForce_test, ForceInWorldAtPointInWorld) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInWorldAtPointInWorld();
+TEST_F(TestBase, ForceInWorldAtPointInWorld) {
+    force->TestForceInWorldAtPointInWorld();
 }
 
-TEST(FrForce_test, ForceInBodyAtPointInBody) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInBodyAtPointInBody();
+TEST_F(TestBase, ForceInBodyAtPointInBody) {
+    force->TestForceInBodyAtPointInBody();
 }
 
-TEST(FrForce_test, ForceInBodyAtPointInWorld) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInBodyAtPointInWorld();
+TEST_F(TestBase, ForceInBodyAtPointInWorld) {
+    force->TestForceInBodyAtPointInWorld();
 }
 
-TEST(FrForce_test, GetForceInWorldReference) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetForceInWorldReference();
+TEST_F(TestBase, GetForceInWorldReference) {
+   force->TestGetForceInWorldReference();
 }
 
-TEST(FrForce_test, GetForceInWorldComponent) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetForceInWorldComponent();
+TEST_F(TestBase, GetForceInWorldComponent) {
+    force->TestGetForceInWorldComponent();
 }
 
-TEST(FrForce_test, GetForceInBody) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetForceInBody();
+TEST_F(TestBase, GetForceInBody) {
+    force->TestGetForceInBody();
 }
 
-TEST(FrForce_test, GetForceInBodyReference) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetForceInBodyReference();
+TEST_F(TestBase, GetForceInBodyReference) {
+    force->TestGetForceInBodyReference();
 }
 
-TEST(FrForce_test, GetForceInBodyComponent) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetForceInBodyComponent();
+TEST_F(TestBase, GetForceInBodyComponent) {
+    force->TestGetForceInBodyComponent();
 }
 
-TEST(FrForce_test, GetTorqueInWorld) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetTorqueInWorld();
+TEST_F(TestBase, GetTorqueInWorld) {
+    force->TestGetTorqueInWorld();
 }
 
-TEST(FrForce_test, GetTorqueInWorldReference) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetTorqueInWorldReference();
+TEST_F(TestBase, GetTorqueInWorldReference) {
+    force->TestGetTorqueInWorldReference();
 }
 
-TEST(FrForce_test, GetTorqueInBodyReference) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetTorqueInWorldReference();
+TEST_F(TestBase, GetTorqueInBodyReference) {
+    force->TestGetTorqueInWorldReference();
 }
 
-TEST(FrForce_test, GetTorqueInBodyComponent) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetTorqueInBodyComponent();
+TEST_F(TestBase,GetTorqueInBodyComponent) {
+    force->TestGetTorqueInBodyComponent();
 }
 
-TEST(FrForce_test, ForceNorm) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceNorm();
+TEST_F(TestBase, ForceNorm) {
+    force->TestForceNorm();
 }
 
-TEST(FrForce_test, TorqueNorm) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestTorqueNorm();
+TEST_F(TestBase, TorqueNorm) {
+    force->TestTorqueNorm();
 }
 
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
