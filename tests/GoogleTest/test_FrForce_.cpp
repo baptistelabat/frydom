@@ -75,6 +75,12 @@ public:
 
     /// Methods
     void CreateDataset();
+    void LoadData(std::string filename);
+    Position ReadPosition(FrHDF5Reader& reader, std::string field);
+    Force ReadForce(FrHDF5Reader& reader, std::string field);
+    Torque ReadTorque(FrHDF5Reader& reader, std::string field);
+    Direction ReadDirection(FrHDF5Reader& reader, std::string field);
+
     void CheckForceInWorldAtCOG();
     void CheckTorqueInBodyAtCOG();
     void CheckForceTorqueAtCOG();
@@ -86,36 +92,58 @@ private:
     void StepFinalize() override {};
 };
 
-void TestFrForce_::CreateDataset() {
+Position TestFrForce_::ReadPosition(FrHDF5Reader& reader, std::string field) {
+    auto value = reader.ReadDoubleArray(field);
+    return Position(value(0), value(1), value(2));
+}
 
-    /// Positions
-    m_PointREFInWorld   = Position(10., 20., -5.);
-    m_PointCOGInBody    = Position(-1., 2., 3.);
-    m_PointInBody       = Position(5., 10., 3.);
-    m_PointCOGInWorld   = Position(9.02460532, 21.06709459, -1.54892562);
-    m_PointInWorld = Position(12.40247008, 30.43053193, -0.59180977);
+Force TestFrForce_::ReadForce(FrHDF5Reader& reader, std::string field) {
+    auto value = reader.ReadDoubleArray(field);
+    return Force(value(0), value(1), value(2));
+}
 
-    /// Frame of the body
-    Direction vect = Direction(0.5, 0.4, 0.8);
-    vect.normalize();
-    double angle = M_PI/8.;
-    m_quatREF =  FrQuaternion_(vect, angle, NWU);
-    m_frameREF = FrFrame_(m_PointREFInWorld, m_quatREF, NWU);  // TODO : a voir si c'est utile de définir la convention ici
+Torque TestFrForce_::ReadTorque(FrHDF5Reader& reader, std::string field) {
+    auto value = reader.ReadDoubleArray(field);
+    return Torque(value(0), value(1), value(2));
+}
 
-    /// Force and Torque
-    m_forceInWorldAtPoint  = Force(1761428.06341033,5290133.96192031,2629040.47940839);
-    m_forceInBodyAtPoint   = Force(3000000.00000000,5000000.00000000,2000000.00000000);
-    m_forceInWorldAtCOG    = Force(1761428.06341033,5290133.96192031,2629040.47940839);
-    m_forceInBodyAtCOG     = Force(3000000.00000000,5000000.00000000,2000000.00000000);
-    m_torqueInWorldAtPoint = Torque(16157552865.99235725,-14374562644.35187531,87363810780.93070984);
-    m_torqueInBodyAtPoint  = Torque(200000000.00000000,300000000.00000000,90000000000.00000000);
-    m_torqueInWorldAtCOG   = Torque(16177106450.72056389,-14381757296.81767845,87365187116.70848083);
-    m_torqueInBodyAtCOG    = Torque(216000000.00000000,288000000.00000000,90006000000.00000000);
+Direction TestFrForce_::ReadDirection(FrHDF5Reader& reader, std::string field) {
+    auto value = reader.ReadDoubleArray(field);
+    return Torque(value(0), value(1), value(2));
+}
+
+void TestFrForce_::LoadData(std::string filename) {
+
+    FrHDF5Reader reader;
+
+    reader.SetFilename(filename);
+    std::string group = "/force_general/";
+
+    m_PointREFInWorld = ReadPosition(reader, group + "PointREFInWorld/");
+    m_PointCOGInBody  = ReadPosition(reader, group + "PointCOGInBody/");
+    m_PointInBody     = ReadPosition(reader, group + "PointInBody/");
+    m_PointCOGInWorld = ReadPosition(reader, group + "PointCOGInWorld/");
+    m_PointInWorld    = ReadPosition(reader, group + "PointInWorld/");
+
+    auto direction = ReadDirection(reader, group + "RotationDirection/");
+    direction.normalize();
+    auto angle = reader.ReadDouble(group + "RotationAngle/");
+    m_quatREF =  FrQuaternion_(direction, angle, NWU);
+    m_frameREF = FrFrame_(m_PointREFInWorld, m_quatREF, NWU);
+
+    m_forceInWorldAtPoint  = ReadForce(reader, group + "ForceInWorldAtPoint/");
+    m_forceInBodyAtPoint   = ReadForce(reader, group + "ForceInBodyAtPoint/");
+    m_forceInWorldAtCOG    = ReadForce(reader, group + "ForceInWorldAtCOG/");
+    m_forceInBodyAtCOG     = ReadForce(reader, group + "ForceInBodyAtCOG/");
+    m_torqueInWorldAtPoint = ReadTorque(reader, group + "TorqueInWorldAtPoint/");
+    m_torqueInBodyAtPoint  = ReadTorque(reader, group + "TorqueInBodyAtPoint/");
+    m_torqueInWorldAtCOG   = ReadTorque(reader, group + "TorqueInWorldAtCOG/");
+    m_torqueInBodyAtCOG    = ReadTorque(reader, group + "TorqueInBodyAtCOG/");
 }
 
 void TestFrForce_::CheckForceInWorldAtCOG() {
 
-    m_body->Update();
+    //m_body->Update();
     auto force = this->GetForceInWorld(NWU);
 
     EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
@@ -125,7 +153,7 @@ void TestFrForce_::CheckForceInWorldAtCOG() {
 
 void TestFrForce_::CheckTorqueInBodyAtCOG() {
 
-    m_body->Update();
+    //m_body->Update();
     auto torque = this->GetTorqueInBodyAtCOG(NWU);
 
     EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
@@ -137,7 +165,6 @@ void TestFrForce_::CheckForceTorqueAtCOG() {
     this->CheckForceInWorldAtCOG();
     this->CheckTorqueInBodyAtCOG();
 }
-
 
 
 void TestFrForce_::TestMaxForceLimit(double fmax) {
@@ -452,7 +479,7 @@ protected:
 
 void TestBase::SetUp() {
     force = std::make_shared<TestFrForce_>();
-    force->CreateDataset();
+    force->LoadData("TNR_database.h5");
     body = NewBody(force);
     system.AddBody(body);
 }
