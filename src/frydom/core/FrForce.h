@@ -254,50 +254,54 @@ namespace frydom {
         // of the force model used
 
         /// Set the force expressed in absolute coordinates. It does not generate a torque
-        void SetForceInWorldAtCOG(const Force& force, FRAME_CONVENTION fc);
+        void SetForceInWorldAtCOG(const Force& worldForce, FRAME_CONVENTION fc);
 
         /// Set the force expressed in absolute coordinates applying to a point expressed in body coordinates.
         /// It generates a torque.
-        void SetForceInWorldAtPointInBody(const Force& force, const Position& bodyPos, FRAME_CONVENTION fc);
+        void SetForceInWorldAtPointInBody(const Force& worldForce, const Position& bodyPos, FRAME_CONVENTION fc);
 
         /// Set the force expressed in absolute coordinates applying to a point expressed in absolute coordinates.
         /// It generates a torque.
-        void SetForceInWorldAtPointInWorld(const Force& force, const Position& absPos, FRAME_CONVENTION fc);
+        void SetForceInWorldAtPointInWorld(const Force& worldForce, const Position& worldPos, FRAME_CONVENTION fc);
 
         /// Set the force expressed in body coordinates. It does not generate a torque.
-        void SetForceInBody(const Force& force, FRAME_CONVENTION fc);
+        void SetForceInBody(const Force& bodyForce, FRAME_CONVENTION fc);
 
         /// Set the force expressed in body coordinates applying to a point expressed in body coordinates.
         /// It generates a torque.
-        void SetForceInBodyAtPointInBody(const Force& force, const Position& relPos, FRAME_CONVENTION fc);
+        void SetForceInBodyAtPointInBody(const Force& bodyForce, const Position& bodyPos, FRAME_CONVENTION fc);
 
         /// Set the force expressed in body coordinates applying to a point expressed in absolute coordinates.
         /// It generates a torque.
-        void SetForceInBodyAtPointInWorld(const Force& force, const Position& absPos, FRAME_CONVENTION fc);
+        void SetForceInBodyAtPointInWorld(const Force& bodyForce, const Position& worldPos, FRAME_CONVENTION fc);
 
         /// Set the torque expressed in absolute coordinates and at COG.
-        void SetTorqueInWorldAtCOG(const Torque& torque, FRAME_CONVENTION fc);
+        void SetTorqueInWorldAtCOG(const Torque& worldTorque, FRAME_CONVENTION fc);
 
         /// Set the torque expressed in relative coordinates and at COG.
-        void SetTorqueInBodyAtCOG(const Torque& torque, FRAME_CONVENTION fc);
+        void SetTorqueInBodyAtCOG(const Torque& bodyTorque, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in absolute coordinates and at COG.
-        void SetForceTorqueInWorldAtCOG(const Force& force, const Torque& torque, FRAME_CONVENTION fc);
+        void SetForceTorqueInWorldAtCOG(const Force& worldForce, const Torque& worldTorque, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in body coordinates and at COG
-        void SetForceTorqueInBodyAtCOG(const Force& force, const Torque& torque, FRAME_CONVENTION fc);
+        void SetForceTorqueInBodyAtCOG(const Force& bodyForce, const Torque& bodyTorque, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in absolute coordinates and reduced to a point expressed in body coordinates
-        void SetForceTorqueInWorldAtPointInBody(const Force& force, const Torque& torque, const Position& relPos, FRAME_CONVENTION fc);
+        void SetForceTorqueInWorldAtPointInBody(const Force &worldForce, const Torque &worldTorque,
+                                                const Position &bodyPos, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in absolute coordinates and reduced to a point expressed in absolute coordinates
-        void SetForceTorqueInWorldAtPointInWorld(const Force& force, const Torque& torque, const Position& absPos, FRAME_CONVENTION fc);
+        void SetForceTorqueInWorldAtPointInWorld(const Force &worldForce, const Torque &worldTorque,
+                                                 const Position &worldPoint, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in body coordinates and reduced to a point expressed in body coordinates
-        void SetForceTorqueInBodyAtPointInBody(const Force& force, const Torque& torque, const Position& relPos, FRAME_CONVENTION fc);
+        void SetForceTorqueInBodyAtPointInBody(const Force &bodyForce, const Torque &bodyTorque,
+                                               const Position &bodyPos, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in body coordinates and reduced to a point expressed in absolute coordinates
-        void SetForceTorqueInBodyAtPointInWorld(const Force& force, const Torque& torque, const Position& absPos, FRAME_CONVENTION fc);
+        void SetForceTorqueInBodyAtPointInWorld(const Force &bodyForce, const Torque &bodyTorque,
+                                                const Position &worldPos, FRAME_CONVENTION fc);
 
     };
 

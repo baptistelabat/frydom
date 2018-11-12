@@ -79,7 +79,7 @@ namespace frydom {
 
         // TODO : voir pour rendre generique par rapport aux differents vecteurs...
         template <class Vector>
-        Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) {
+        Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) {  // TODO : voir si on a pas qqch de plus optimise...
             auto vectorTmp = vector;
 
             if (IsNED(fc)) internal::SwapFrameConvention<Vector>(vectorTmp);

@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
 //    fish->SetAbsPosition(0., 0, 0,  NWU);
 //    fish->SetMaxSpeed(0.1);
 //    fish->ActivateSpeedLimits(true);
-    auto fishNode = fish->NewNode(0., 0., 0.);
+    auto fishNode = fish->NewNode(0., 0., radius);
 
 
     auto quadForce = std::make_shared<FrQuadraticDamping_>(WATER, false);
