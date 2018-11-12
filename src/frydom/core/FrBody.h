@@ -288,6 +288,8 @@ namespace frydom {
 
             void UpdateAfterMove();
 
+            void UpdateRefFrame(bool update_assets);
+
         };
 
     }  // end namespace internal
@@ -832,6 +834,9 @@ namespace frydom {
 
         /// Body update method
         void Update();
+
+        /// Call to ChBodyAuxRef
+        void UpdateRefFrame(bool update_assets);
 
 
         // Linear iteraotrs on external forces

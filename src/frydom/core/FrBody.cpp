@@ -133,6 +133,10 @@ namespace frydom {
             UpdateMarkers(GetChTime());
         }
 
+        void _FrBodyBase::UpdateRefFrame(bool update_assets) {
+            chrono::ChBodyAuxRef::Update(update_assets);
+        }
+
     }  // end namespace internal
 
     FrBody_::FrBody_() {
@@ -672,7 +676,7 @@ namespace frydom {
     Velocity FrBody_::GetVelocityInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
         Velocity bodyVel = GetVelocityInBody(fc);
         AngularVelocity bodyAngVel = GetAngularVelocityInBody(fc);
-        Velocity pointVel = bodyVel + bodyAngVel.cross(bodyPoint);
+        return bodyVel + bodyAngVel.cross(bodyPoint);
     }
 
     Acceleration FrBody_::GetAccelerationInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
@@ -785,6 +789,10 @@ namespace frydom {
     void FrBody_::SetGeneralizedAccelerationInBodyAtPointInBody(const Position &bodyPoint, const Acceleration &bodyAcc,
                                                                 const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
 
+    }
+
+    void FrBody_::UpdateRefFrame(bool update_assets) {
+        m_chronoBody->UpdateRefFrame(update_assets);
     }
 
 
