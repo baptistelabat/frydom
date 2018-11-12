@@ -53,14 +53,19 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
     }
 
     //-----------------COG-----------------//
-    // Test COG position in world reference frame
-    testPosition = body->GetCOGPositionInWorld(NWU) - COGPositionInWorld;
-    EXPECT_TRUE(testPosition.isZero());
     // Test COG position in body reference frame
     Position TempPos = COGPositionInWorld - RefPositionInWorld;
-//    if (is_Orientation) TempPos = EasyRotate(TempPos);
     testPosition = body->GetCOG(NWU) - TempPos;
     EXPECT_TRUE(testPosition.isZero());
+    // Test COG position in world reference frame
+    TempPos = COGPositionInWorld - RefPositionInWorld;
+    if (is_Orientation) TempPos = EasyRotate(TempPos);
+    testPosition = body->GetCOGPositionInWorld(NWU) - (RefPositionInWorld +TempPos);
+    EXPECT_TRUE(testPosition.isZero());
+    if (not(testPosition.isZero())) {
+        std::cout<<body->GetCOGPositionInWorld(NWU)<<std::endl;
+        std::cout<<COGPositionInWorld<<std::endl;
+    }
 
     //-----------------Fixed Point-----------------//
     // Test for the getter for the local position of a point expressed in the world reference frame
