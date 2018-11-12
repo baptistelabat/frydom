@@ -429,7 +429,9 @@ namespace frydom {
     }
 
     Position FrBody_::GetPosition(FRAME_CONVENTION fc) const {
-        return internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_REF_to_abs().GetPos());
+        Position refPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_REF_to_abs().GetPos());
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(refPos);
+        return refPos;
     }
 
     void FrBody_::SetPosition(const Position &worldPos, FRAME_CONVENTION fc) {
