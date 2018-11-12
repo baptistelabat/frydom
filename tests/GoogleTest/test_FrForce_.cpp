@@ -96,7 +96,6 @@ public:
     FrQuaternion_ GetQuatREF()    const { return m_quatREF; }
 
     /// Methods
-    void CreateDataset();
     void LoadData(std::string filename);
     Position ReadPosition(FrHDF5Reader& reader, std::string field);
     Force ReadForce(FrHDF5Reader& reader, std::string field);
@@ -740,11 +739,15 @@ TEST_F(TestBase, GetTorqueInWorldReference) {
 }
 
 TEST_F(TestBase, GetTorqueInBodyReference) {
-    force->TestGetTorqueInWorldReference();
+    force->TestGetTorqueInBodyReference();
 }
 
 TEST_F(TestBase,GetTorqueInBodyComponent) {
     force->TestGetTorqueInBodyComponent();
+}
+
+TEST_F(TestBase,GetTorqueInWorldComponent) {
+    force->TestGetTorqueInWorldComponent();
 }
 
 TEST_F(TestBase, ForceNorm) {
