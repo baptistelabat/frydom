@@ -675,7 +675,7 @@ namespace frydom {
         template <class Vector>
         inline Vector SwapFrameConvention(const Vector& vector) {
             Vector out = vector;
-            return SwapFrameConvention<Vector>(vector);
+            return SwapFrameConvention<Vector>(out);
         }
 
         inline chrono::ChVector<double>& SwapFrameConvention(chrono::ChVector<double>& vector) {

@@ -8,66 +8,66 @@
 
 using namespace frydom;
 
-//template <class Vector>
-//inline Vector& EasyRotate(Vector& vector) {
-//    Vector vecTem = vector;
-//    vecTem[1] = vecTem[3];
-//    vecTem[2] = vecTem[1];
-//    vecTem[3] = vecTem[2];
-//    return vecTem;
+template <class Vector>
+inline Vector& EasyRotate(Vector& vector) {
+    Vector vecTem = vector;
+    vecTem[0] = vector[2];
+    vecTem[1] = vector[0];
+    vecTem[2] = vector[1];
+    return vector = vecTem;
+}
+
+template <class Vector>
+inline Vector EasyRotate(const Vector& vector) {
+    Vector out = vector;
+    return EasyRotate<Vector>(out);
+}
+
+template <class Vector>
+inline Vector& EasyRotateInv(Vector& vector) {
+    Vector vecTem = vector;
+    vecTem[0] = vector[1];
+    vecTem[1] = vector[2];
+    vecTem[2] = vector[0];
+    return vector = vecTem;
+}
+
+template <class Vector>
+inline Vector EasyRotateInv(const Vector& vector) {
+    Vector out = vector;
+    return EasyRotate<Vector>(out);
+}
+
+
+//inline Position & EasyRotate(Position & vector) {
+//    Position res(vector.GetZ(),vector.GetX(),vector.GetY());
+////    Position res(vector.GetX(),-vector.GetZ(),vector.GetY());
+//    return vector = res;
 //}
 //
-//template <class Vector>
-//inline Vector EasyRotate(const Vector& vector) {
-//    Vector out = vector;
-//    return EasyRotate<Vector>(vector);
+//inline Translation & EasyRotate(Translation & vector) {
+//    Translation res(vector.GetDz(),vector.GetDx(),vector.GetDy());
+////    Translation res(vector.GetDx(),-vector.GetDz(),vector.GetDy());
+//    return vector = res;
 //}
 //
-//template <class Vector>
-//inline Vector& EasyRotateInv(Vector& vector) {
-//    Vector vecTem = vector;
-//    vecTem[1] = vecTem[2];
-//    vecTem[2] = vecTem[3];
-//    vecTem[3] = vecTem[1];
-//    return vecTem;
+//inline Velocity & EasyRotate(Velocity & vector) {
+//    Velocity res(vector.GetVz(),vector.GetVx(),vector.GetVy());
+////    Velocity res(vector.GetVx(),-vector.GetVz(),vector.GetVy());
+//    return vector = res;
 //}
 //
-//template <class Vector>
-//inline Vector EasyRotateInv(const Vector& vector) {
-//    Vector out = vector;
-//    return EasyRotate<Vector>(vector);
+//inline AngularVelocity & EasyRotate(AngularVelocity & vector) {
+//    Velocity res(vector.GetWz(),vector.GetWx(),vector.GetWy());
+////    Velocity res(vector.GetVx(),-vector.GetVz(),vector.GetVy());
+//    return vector = res;
 //}
-
-
-inline Position & EasyRotate(Position & vector) {
-    Position res(vector.GetZ(),vector.GetX(),vector.GetY());
-//    Position res(vector.GetX(),-vector.GetZ(),vector.GetY());
-    return vector = res;
-}
-
-inline Translation & EasyRotate(Translation & vector) {
-    Translation res(vector.GetDz(),vector.GetDx(),vector.GetDy());
-//    Translation res(vector.GetDx(),-vector.GetDz(),vector.GetDy());
-    return vector = res;
-}
-
-inline Velocity & EasyRotate(Velocity & vector) {
-    Velocity res(vector.GetVz(),vector.GetVx(),vector.GetVy());
-//    Velocity res(vector.GetVx(),-vector.GetVz(),vector.GetVy());
-    return vector = res;
-}
-
-inline AngularVelocity & EasyRotate(AngularVelocity & vector) {
-    Velocity res(vector.GetWz(),vector.GetWx(),vector.GetWy());
-//    Velocity res(vector.GetVx(),-vector.GetVz(),vector.GetVy());
-    return vector = res;
-}
-
-
-inline Velocity & EasyRotateInv(Velocity & vector) {
-    Velocity res(vector.GetVy(),vector.GetVz(),vector.GetVx());
-    return vector = res;
-}
+//
+//
+//inline Velocity & EasyRotateInv(Velocity & vector) {
+//    Velocity res(vector.GetVy(),vector.GetVz(),vector.GetVx());
+//    return vector = res;
+//}
 
 
 void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
@@ -89,7 +89,7 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
     EXPECT_TRUE(testPosition.isZero());
     // Test COG position in world reference frame
     TempPos = COGPositionInWorld - RefPositionInWorld;
-    if (is_Orientation) TempPos = EasyRotate(TempPos);
+    if (is_Orientation) EasyRotate(TempPos);
     testPosition = body->GetCOGPositionInWorld(NWU) - (RefPositionInWorld +TempPos);
     EXPECT_TRUE(testPosition.isZero());
     if (not(testPosition.isZero())) {
@@ -101,14 +101,14 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
     // Test for the getter for the local position of a point expressed in the world reference frame
     Position PointPositionInWorld(1., 5., 9.); // Position of a point, expressed in world reference frame
     TempPos = body->GetPointPositionInBody(PointPositionInWorld, NWU);
-    if (is_Orientation) TempPos = EasyRotate(TempPos);
+    if (is_Orientation) EasyRotate(TempPos);
     testPosition = TempPos - (PointPositionInWorld - RefPositionInWorld);
     EXPECT_TRUE(testPosition.isZero());
 
     Position PointPositionInBody(1.,5.,9.); // Position of a point, expressed in body reference frame
     // Test for the getter for the abs position of a point expressed in the body reference frame
     TempPos = PointPositionInBody;
-    if (is_Orientation) TempPos = EasyRotate(TempPos);
+    if (is_Orientation) EasyRotate(TempPos);
     testPosition = body->GetPointPositionInWorld(PointPositionInBody, NWU) - RefPositionInWorld - TempPos;
     EXPECT_TRUE(testPosition.isZero());
 
@@ -261,7 +261,7 @@ void Test_GetAngularVelocity(const std::shared_ptr<FrBody_> body,
 
     // Test Angular Velocity getter, expressed in body reference frame
     testAngularVelocity = body->GetAngularVelocityInBody(NWU);
-    if (is_orientation) testAngularVelocity = EasyRotate(testAngularVelocity);
+    if (is_orientation) EasyRotate(testAngularVelocity);
     testAngularVelocity -= BodyAngularVelocityInWorld;
     EXPECT_TRUE(testAngularVelocity.isZero());
 }
@@ -487,8 +487,8 @@ TEST(FrBodyTest,TranslationalVelocityWithOrientation){
     Test_AllGetVelocity(body,VelocityInWorld, is_orientation);
 
     // Set the body velocity, expressed in the body reference frame
-    Velocity VelocityInBody(1.,6.,4.);
-    VelocityInWorld = VelocityInBody;    EasyRotate(VelocityInWorld);
+    const Velocity VelocityInBody(1.,6.,4.);
+    VelocityInWorld = EasyRotate(VelocityInBody);
     std::cout<<"SetVelocityInBodyNoRotation"<<std::endl;
     body->SetVelocityInBodyNoRotation(VelocityInBody,NWU);
     body->UpdateRefFrame(true);
@@ -531,8 +531,8 @@ TEST(FrBodyTest,TranslationalVelocityWithOrientation){
     // Test Setter for the generalized velocity expressed in the body reference frame,
     // at a point expressed in world reference frame
     std::cout<<"SetGeneralizedVelocityInBodyAtPointInWorld"<<std::endl;
-    Velocity VelocityInBodyAtPointInWorld(8.,1.,9.);
-    VelocityInWorldAtPointInWorld = VelocityInBodyAtPointInWorld;    EasyRotate(VelocityInWorldAtPointInWorld);
+    const Velocity VelocityInBodyAtPointInWorld(8.,1.,9.);
+    VelocityInWorldAtPointInWorld = EasyRotate(VelocityInBodyAtPointInWorld);
     body->SetGeneralizedVelocityInBodyAtPointInWorld(PointInWorld,VelocityInBodyAtPointInWorld,BodyAngularVelocity,NWU);
     body->UpdateRefFrame(true);
 
@@ -540,8 +540,8 @@ TEST(FrBodyTest,TranslationalVelocityWithOrientation){
 
     // Test Setter for the generalized velocity expressed in the body reference frame,
     // at a point expressed in body reference frame
-    Velocity VelocityInBodyAtPointInBody(1.,1.,5.);
-    VelocityInWorldAtPointInBody = VelocityInBodyAtPointInBody;    EasyRotate(VelocityInWorldAtPointInBody);
+    const Velocity VelocityInBodyAtPointInBody(1.,1.,5.);
+    VelocityInWorldAtPointInBody = EasyRotate(VelocityInBodyAtPointInBody);
     std::cout<<"SetGeneralizedVelocityInBodyAtPointInBody"<<std::endl;
     body->SetGeneralizedVelocityInBodyAtPointInBody(PointInBody,VelocityInBodyAtPointInBody,BodyAngularVelocity,NWU);
     body->UpdateRefFrame(true);
