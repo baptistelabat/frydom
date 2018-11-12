@@ -328,7 +328,7 @@ namespace frydom{
 
     void FrForce_::SetForceInWorldAtPointInWorld(const Force &worldForce, const Position &worldPos, FRAME_CONVENTION fc) {
         // Getting the local position of the point
-        Position bodyPos = m_body->GetPointPositionInBody(worldPos, fc);   //bodyPos in NWU
+        Position bodyPos = m_body->GetPointPositionInBody(worldPos, fc);   
         SetForceInWorldAtPointInBody(worldForce, bodyPos, fc);
     }
 
