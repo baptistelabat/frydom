@@ -133,6 +133,10 @@ namespace frydom {
             UpdateMarkers(GetChTime());
         }
 
+        void _FrBodyBase::UpdateRefFrame(bool update_assets) {
+            chrono::ChBodyAuxRef::Update(update_assets);
+        }
+
     }  // end namespace internal
 
     FrBody_::FrBody_() {
@@ -425,7 +429,9 @@ namespace frydom {
     }
 
     Position FrBody_::GetPosition(FRAME_CONVENTION fc) const {
-        return internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_REF_to_abs().GetPos());
+        Position refPos = internal::ChVectorToVector3d<Position>(m_chronoBody->GetFrame_REF_to_abs().GetPos());
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(refPos);
+        return refPos;
     }
 
     void FrBody_::SetPosition(const Position &worldPos, FRAME_CONVENTION fc) {
@@ -672,7 +678,7 @@ namespace frydom {
     Velocity FrBody_::GetVelocityInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
         Velocity bodyVel = GetVelocityInBody(fc);
         AngularVelocity bodyAngVel = GetAngularVelocityInBody(fc);
-        Velocity pointVel = bodyVel + bodyAngVel.cross(bodyPoint);
+        return bodyVel + bodyAngVel.cross(bodyPoint);
     }
 
     Acceleration FrBody_::GetAccelerationInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
@@ -785,6 +791,10 @@ namespace frydom {
     void FrBody_::SetGeneralizedAccelerationInBodyAtPointInBody(const Position &bodyPoint, const Acceleration &bodyAcc,
                                                                 const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
 
+    }
+
+    void FrBody_::UpdateRefFrame(bool update_assets) {
+        m_chronoBody->UpdateRefFrame(update_assets);
     }
 
 
