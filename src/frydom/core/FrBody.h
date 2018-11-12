@@ -548,11 +548,7 @@ namespace frydom {
         /// Get the body COG position in world frame (coordinates are expressed in world frame)
         Position GetCOGPositionInWorld(FRAME_CONVENTION fc) const;
 
-
-
-        // FIXME : est ce que ces methodes de setPointPosition ne devraient pas etre plutot du movePointPosition
-        // Le pb est qu'on implicite la rotation...
-        /// Set the position in world of a body fixed point whose position is defined wrt body reference frame
+        /// Set the position in WORLD frame of a body fixed point whose position is defined wrt body reference frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         void SetPositionOfBodyPoint(const Position &bodyPoint, const Position &worldPos, FRAME_CONVENTION fc);
@@ -743,6 +739,8 @@ namespace frydom {
         // PROJECTIONS
         // =============================================================================================================
 
+        // Projection of 3D vectors defined in FrVector.h
+
         template <class Vector>
         Vector ProjectVectorInWorld(const Vector& bodyVector, FRAME_CONVENTION fc) const {
             return GetQuaternion().Rotate<Vector>(bodyVector, fc);
@@ -765,9 +763,36 @@ namespace frydom {
             return worldVector;
         }
 
+
+        // Projection of generalized vectors defined in FrVector.h
+
+        template <class Vector>
+        Vector ProjectGenerallizedVectorInWorld(const Vector& bodyVector, FRAME_CONVENTION fc) const {
+            return GetQuaternion().Rotate<Vector>(bodyVector, fc);
+        }
+
+        template <class Vector>
+        Vector& ProjectGenerallizedVectorInWorld(Vector& bodyVector, FRAME_CONVENTION fc) const {
+            bodyVector = GetQuaternion().Rotate<Vector>(bodyVector, fc);
+            return bodyVector;
+        }
+
+        template <class Vector>
+        Vector ProjectGenerallizedVectorInBody(const Vector& worldVector, FRAME_CONVENTION fc) const {
+            return GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+        }
+
+        template <class Vector>
+        Vector& ProjectGenerallizedVectorInBody(Vector& worldVector, FRAME_CONVENTION fc) const {
+            worldVector = GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+            return worldVector;
+        }
+
         // =============================================================================================================
         // CONSTRAINTS ON DOF
         // =============================================================================================================
+
+        // TODO : tenier a jour un masque de degres de liberte bloques...
 
         // Motion constraints  : FIXME : experimental !!!!
         void ConstainDOF(bool cx, bool cy, bool cz, bool crx, bool cry, bool crz);

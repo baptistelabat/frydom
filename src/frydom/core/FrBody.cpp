@@ -432,7 +432,6 @@ namespace frydom {
         auto bodyFrame = GetFrame();
         bodyFrame.SetPosition(worldPos, fc);
         m_chronoBody->SetFrame_REF_to_abs(internal::Fr2ChFrame(bodyFrame));
-
         m_chronoBody->UpdateAfterMove();
     }
 
@@ -442,7 +441,6 @@ namespace frydom {
 
     void FrBody_::SetRotation(const FrRotation_ &rotation) {
         SetRotation(rotation.GetQuaternion());
-        m_chronoBody->UpdateAfterMove();
     }
 
     FrQuaternion_ FrBody_::GetQuaternion() const {
@@ -453,7 +451,6 @@ namespace frydom {
         Position bodyWorldPos = GetPosition(NWU);
         m_chronoBody->SetRot(internal::Fr2ChQuaternion(quaternion));
         SetPosition(bodyWorldPos, NWU);
-        m_chronoBody->UpdateAfterMove();
     }
 
     FrFrame_ FrBody_::GetFrame() const {
