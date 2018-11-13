@@ -581,6 +581,7 @@ namespace frydom {
         coord.pos = internal::Vector3dToChVector(worldVelTmp);
         coord.rot.SetNull();
         m_chronoBody->SetCoord_dt(coord);
+        UpdateRefFrame(true);
     }
 
     void FrBody_::SetVelocityInBodyNoRotation(const Velocity &bodyVel, FRAME_CONVENTION fc) {
@@ -733,6 +734,7 @@ namespace frydom {
         Velocity cogVel = bodyVel + bodyAngVel.cross(PG);
         SetVelocityInBodyNoRotation(cogVel, fc);
         SetAngularVelocityInBody(bodyAngVel, fc);
+        UpdateRefFrame(true);
     }
 
 

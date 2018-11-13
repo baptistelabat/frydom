@@ -96,12 +96,16 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
     //-----------------COG-----------------//
     // Test COG position in body reference frame
     Position TempPos = COGPositionInWorld - RefPositionInWorld;
+    if (is_Orientation) EasyRotateInv(TempPos);
     testPosition = body->GetCOG(out_fc) - TempPos;
     EXPECT_TRUE(testPosition.isZero());
+    if (not(testPosition.isZero())) {
+        std::cout<<body->GetCOG(out_fc)<<std::endl;
+        std::cout<<TempPos<<std::endl;
+    }
+
     // Test COG position in world reference frame
-    TempPos = COGPositionInWorld - RefPositionInWorld;
-    if (is_Orientation) EasyRotate(TempPos);
-    testPosition = body->GetCOGPositionInWorld(out_fc) - (RefPositionInWorld +TempPos);
+    testPosition = body->GetCOGPositionInWorld(out_fc) - COGPositionInWorld;
     EXPECT_TRUE(testPosition.isZero());
     if (not(testPosition.isZero())) {
         std::cout<<body->GetCOGPositionInWorld(out_fc)<<std::endl;
@@ -202,6 +206,20 @@ TEST(FrBodyTest,Translation) {
     body->TranslateInBody(BodyTranslationInWorld,NWU);
     Test_AllGetPosition(body,BodyPosition,COGPosition,NWU,false,NWU);
 
+    //-----------------Orientation-----------------//
+    // Rotation to an easy transformation
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
+    FrRotation_ TotalRotation = Rotation1*Rotation2 ;
+    body->SetRotation(TotalRotation);
+
+    //+++++Translate body reference frame from fixed point, with a rotation+++++//
+    COGPosition = body->GetCOGPositionInWorld(NWU);
+    BodyPosition += BodyTranslationInWorld;
+    COGPosition += BodyTranslationInWorld;
+    body->TranslateInBody(EasyRotateInv(BodyTranslationInWorld),NWU);
+    Test_AllGetPosition(body,BodyPosition,COGPosition,NWU,true,NWU);
+
 }
 
 
@@ -236,7 +254,8 @@ TEST(FrBodyTest,Orientation) {
 //    body->SetCardanAngles_DEGREES(1., 2., 3., NWU);
 //    EXPECT_TRUE(BodyRotationInWorld == body->GetRotation());
 
-    Test_AllGetRotation(body, BodyRotationInWorld);
+//    Test_AllGetRotation(body, BodyRotationInWorld);
+
     // Test of the frame position getter
     Position testPosition = body->GetFrame().GetPosition(NWU) - RefPositionInWorld;
     EXPECT_TRUE(testPosition.isZero());
@@ -263,7 +282,6 @@ TEST(FrBodyTest,PositionWithOrientation){
     // Set the COG position, expressed in local body reference frame
     Position COGPositionInBody(2.,3.,4.);
     body->SetCOG(COGPositionInBody, NWU);
-    Position OrigAbsCOGPos = RefPositionInWorld + COGPositionInBody;
 
     //-----------------Orientation-----------------//
     // Rotation to an easy transformation
@@ -272,6 +290,7 @@ TEST(FrBodyTest,PositionWithOrientation){
     FrRotation_ TotalRotation = Rotation1*Rotation2 ;
     body->SetRotation(TotalRotation);
 
+    Position OrigAbsCOGPos = RefPositionInWorld + EasyRotate(COGPositionInBody);
 
     Test_AllGetPosition(body, RefPositionInWorld, OrigAbsCOGPos, NWU, true, NWU);
 
@@ -417,23 +436,19 @@ TEST(FrBodyTest,TranslationalVelocity){
     // Set the body velocity, expressed in the world reference frame
     Velocity VelocityInWorld(1.,1.,1.);
     body->SetVelocityInWorldNoRotation(VelocityInWorld,NWU);
-    body->UpdateRefFrame(true);
     Test_AllGetVelocity(body,VelocityInWorld, is_orientation);
 
     // Set the body velocity, expressed in the body reference frame
     Velocity VelocityInBody(1.,6.,4.);
     body->SetVelocityInBodyNoRotation(VelocityInBody,NWU);
-    body->UpdateRefFrame(true);
     Test_AllGetVelocity(body,VelocityInBody, is_orientation);
 
     // Set the body generalized velocity, expressed in the world reference frame
     body->SetGeneralizedVelocityInWorld(VelocityInWorld, BodyAngularVelocity, NWU);
-    body->UpdateRefFrame(true);
     Test_AllGetVelocity(body,VelocityInWorld, is_orientation);
 
     // Set the body generalized velocity, expressed in the body reference frame
     body->SetGeneralizedVelocityInBody(VelocityInBody, BodyAngularVelocity, NWU);
-    body->UpdateRefFrame(true);
     Test_AllGetVelocity(body,VelocityInBody, is_orientation);
 
     //+++++Point Velocity Setters+++++//
@@ -445,7 +460,6 @@ TEST(FrBodyTest,TranslationalVelocity){
 //    std::cout<<"SetGeneralizedVelocityInWorldAtPointInWorld"<<std::endl;
     Velocity VelocityInWorldAtPointInWorld(3.,1.,5.);
     body->SetGeneralizedVelocityInWorldAtPointInWorld(PointInWorld,VelocityInWorldAtPointInWorld,BodyAngularVelocity,NWU);
-    body->UpdateRefFrame(true);
 
     Test_AllGetVelocity(body, VelocityInWorldAtPointInWorld, is_orientation);
 
@@ -454,7 +468,6 @@ TEST(FrBodyTest,TranslationalVelocity){
 //    std::cout<<"SetGeneralizedVelocityInWorldAtPointInBody"<<std::endl;
     Velocity VelocityInWorldAtPointInBody(2.,1.,8.);
     body->SetGeneralizedVelocityInWorldAtPointInBody(PointInBody,VelocityInWorldAtPointInBody,BodyAngularVelocity,NWU);
-    body->UpdateRefFrame(true);
 
     Test_AllGetVelocity(body, VelocityInWorldAtPointInBody, is_orientation);
 
@@ -463,7 +476,6 @@ TEST(FrBodyTest,TranslationalVelocity){
 //    std::cout<<"SetGeneralizedVelocityInBodyAtPointInWorld"<<std::endl;
     Velocity VelocityInBodyAtPointInWorld(8.,1.,9.);
     body->SetGeneralizedVelocityInBodyAtPointInWorld(PointInWorld,VelocityInBodyAtPointInWorld,BodyAngularVelocity,NWU);
-    body->UpdateRefFrame(true);
 
     Test_AllGetVelocity(body, VelocityInBodyAtPointInWorld, is_orientation);
 
@@ -472,7 +484,6 @@ TEST(FrBodyTest,TranslationalVelocity){
 //    std::cout<<"SetGeneralizedVelocityInBodyAtPointInBody"<<std::endl;
     Velocity VelocityInBodyAtPointInBody(1.,1.,5.);
     body->SetGeneralizedVelocityInBodyAtPointInBody(PointInBody,VelocityInBodyAtPointInBody,BodyAngularVelocity,NWU);
-    body->UpdateRefFrame(true);
 
     Test_AllGetVelocity(body, VelocityInBodyAtPointInBody, is_orientation);
 
@@ -508,29 +519,25 @@ TEST(FrBodyTest,TranslationalVelocityWithOrientation){
     //+++++COG Frame Velocity Setters+++++//
     // Set the body velocity, expressed in the world reference frame
     Velocity VelocityInWorld(1.,1.,1.);
-    std::cout<<"SetVelocityInWorldNoRotation"<<std::endl;
+//    std::cout<<"SetVelocityInWorldNoRotation"<<std::endl;
     body->SetVelocityInWorldNoRotation(VelocityInWorld,NWU);
-    body->UpdateRefFrame(true);
     Test_AllGetVelocity(body,VelocityInWorld, is_orientation);
 
     // Set the body velocity, expressed in the body reference frame
     const Velocity VelocityInBody(1.,6.,4.);
     VelocityInWorld = EasyRotate(VelocityInBody);
-    std::cout<<"SetVelocityInBodyNoRotation"<<std::endl;
+//    std::cout<<"SetVelocityInBodyNoRotation"<<std::endl;
     body->SetVelocityInBodyNoRotation(VelocityInBody,NWU);
-    body->UpdateRefFrame(true);
     Test_AllGetVelocity(body,VelocityInWorld, is_orientation);
 
     // Set the body generalized velocity, expressed in the world reference frame
-    std::cout<<"SetGeneralizedVelocityInWorld"<<std::endl;
+//    std::cout<<"SetGeneralizedVelocityInWorld"<<std::endl;
     body->SetGeneralizedVelocityInWorld(VelocityInWorld, BodyAngularVelocity, NWU);
-    body->UpdateRefFrame(true);
     Test_AllGetVelocity(body,VelocityInWorld, is_orientation);
 
     // Set the body generalized velocity, expressed in the body reference frame
-    std::cout<<"SetGeneralizedVelocityInBody"<<std::endl;
+//    std::cout<<"SetGeneralizedVelocityInBody"<<std::endl;
     body->SetGeneralizedVelocityInBody(VelocityInBody, BodyAngularVelocity, NWU);
-    body->UpdateRefFrame(true);
     Test_AllGetVelocity(body,VelocityInWorld, is_orientation);
 
     //+++++Point Velocity Setters+++++//
@@ -539,39 +546,34 @@ TEST(FrBodyTest,TranslationalVelocityWithOrientation){
 
     // Test Setter for the generalized velocity expressed in the world reference frame,
     // at a point expressed in world reference frame
-    std::cout<<"SetGeneralizedVelocityInWorldAtPointInWorld"<<std::endl;
+//    std::cout<<"SetGeneralizedVelocityInWorldAtPointInWorld"<<std::endl;
     Velocity VelocityInWorldAtPointInWorld(3.,1.,5.);
     body->SetGeneralizedVelocityInWorldAtPointInWorld(PointInWorld,VelocityInWorldAtPointInWorld,BodyAngularVelocity,NWU);
-    body->UpdateRefFrame(true);
 
     Test_AllGetVelocity(body, VelocityInWorldAtPointInWorld, is_orientation);
 
     // Test Setter for the generalized velocity expressed in the world reference frame,
     // at a point expressed in body reference frame
-    std::cout<<"SetGeneralizedVelocityInWorldAtPointInBody"<<std::endl;
+//    std::cout<<"SetGeneralizedVelocityInWorldAtPointInBody"<<std::endl;
     Velocity VelocityInWorldAtPointInBody(2.,1.,8.);
     body->SetGeneralizedVelocityInWorldAtPointInBody(PointInBody,VelocityInWorldAtPointInBody,BodyAngularVelocity,NWU);
-    body->UpdateRefFrame(true);
 
     Test_AllGetVelocity(body, VelocityInWorldAtPointInBody, is_orientation);
 
     // Test Setter for the generalized velocity expressed in the body reference frame,
     // at a point expressed in world reference frame
-    std::cout<<"SetGeneralizedVelocityInBodyAtPointInWorld"<<std::endl;
+//    std::cout<<"SetGeneralizedVelocityInBodyAtPointInWorld"<<std::endl;
     const Velocity VelocityInBodyAtPointInWorld(8.,1.,9.);
     VelocityInWorldAtPointInWorld = EasyRotate(VelocityInBodyAtPointInWorld);
     body->SetGeneralizedVelocityInBodyAtPointInWorld(PointInWorld,VelocityInBodyAtPointInWorld,BodyAngularVelocity,NWU);
-    body->UpdateRefFrame(true);
-
     Test_AllGetVelocity(body, VelocityInWorldAtPointInWorld, is_orientation);
 
     // Test Setter for the generalized velocity expressed in the body reference frame,
     // at a point expressed in body reference frame
     const Velocity VelocityInBodyAtPointInBody(1.,1.,5.);
     VelocityInWorldAtPointInBody = EasyRotate(VelocityInBodyAtPointInBody);
-    std::cout<<"SetGeneralizedVelocityInBodyAtPointInBody"<<std::endl;
+//    std::cout<<"SetGeneralizedVelocityInBodyAtPointInBody"<<std::endl;
     body->SetGeneralizedVelocityInBodyAtPointInBody(PointInBody,VelocityInBodyAtPointInBody,BodyAngularVelocity,NWU);
-    body->UpdateRefFrame(true);
 
     Test_AllGetVelocity(body, VelocityInWorldAtPointInBody, is_orientation);
 }
