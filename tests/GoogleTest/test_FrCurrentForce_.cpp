@@ -119,7 +119,7 @@ void TestFrUniformCurrent_::SetUp() {
 
 void TestFrUniformCurrent_::TestGetWorldFluxVelocity() {
 
-    Velocity velocity = system.GetEnvironment()->GetCurrent()->GetWorldFluxVelocity(m_PointInWorld, m_frame);
+    Velocity velocity = system.GetEnvironment()->GetCurrent()->GetFluxVelocityInWorld(m_PointInWorld, m_frame);
     Velocity velocityREF = velocity - m_PointVelocityInWorld;
 
     EXPECT_FLOAT_EQ(velocity.GetVx(), m_VelocityInWorld.GetVx());

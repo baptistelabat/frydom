@@ -131,7 +131,7 @@ namespace frydom {
         void Update(double time) override;
 
         /// Get the vector field
-        Velocity GetWorldFluxVelocity(const Position &absPos, FRAME_CONVENTION fc) override;
+        Velocity GetWorldFluxVelocity(const Position &worldPos, FRAME_CONVENTION fc) override;
 
         /// Method of initialization from uniform current field class
         void Initialize() override;

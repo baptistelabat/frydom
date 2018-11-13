@@ -24,7 +24,7 @@
 namespace frydom {
 
     Velocity FrCurrent_::GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel, FRAME_CONVENTION fc) {
-        Velocity worldRelCurrentVel = GetWorldFluxVelocity(frame.GetPosition(fc), fc) - worldVel;
+        Velocity worldRelCurrentVel = GetFluxVelocityInWorld(frame.GetPosition(fc), fc) - worldVel;
         return frame.GetQuaternion().GetInverse().Rotate(worldRelCurrentVel, fc);
     }
 
@@ -40,7 +40,7 @@ namespace frydom {
         m_uniformField->Update(time);
     }
 
-    Velocity FrUniformCurrent_::GetWorldFluxVelocity(const Position &absPos, FRAME_CONVENTION fc) {
+    Velocity FrUniformCurrent_::GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) {
         return m_uniformField->GetWorldFluxVelocity(fc);
     }
 

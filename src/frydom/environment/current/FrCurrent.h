@@ -122,7 +122,7 @@ namespace frydom {
 
         ~FrCurrent_() = default;
 
-        virtual Velocity GetWorldFluxVelocity(const Position &worldPos, FRAME_CONVENTION fc) = 0;
+        virtual Velocity GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) = 0;
 
         virtual void Update(double time) = 0;
 
@@ -155,7 +155,7 @@ namespace frydom {
         void Update(double time) override;
 
         /// Get the flux velocity at absolute point absPos
-        Velocity GetWorldFluxVelocity(const Position &absPos, FRAME_CONVENTION fc) override;
+        Velocity GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) override;
 
         /// Method of initialization from uniform current field class
         void Initialize() override;

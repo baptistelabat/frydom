@@ -28,7 +28,7 @@ namespace frydom {
         m_uniformField->Update(time);
     }
 
-    Velocity FrUniformWind_::GetWorldFluxVelocity(const Position &absPos, FRAME_CONVENTION fc) {
+    Velocity FrUniformWind_::GetWorldFluxVelocity(const Position &worldPos, FRAME_CONVENTION fc) {
         return m_uniformField->GetWorldFluxVelocity(fc);
     }
 
