@@ -91,8 +91,8 @@ namespace frydom {
 
         Velocity cogRelVel = m_body->GetSystem()->GetEnvironment()->GetCurrent()->GetRelativeVelocityInFrame(cogFrame, cogWorldVel, NWU);
 
-        double alpha = cogRelVel.GetProjectedAngleAroundZ(RAD);
-        alpha = Normalize_0_2PI(alpha);
+        double alpha = cogRelVel.GetProjectedAngleAroundZ(DEG)+180.;
+        alpha = Normalize__180_180(alpha);
 
         auto cx = m_coeffsTable.CX(alpha, NWU);
         auto cy = m_coeffsTable.CY(alpha, NWU);
