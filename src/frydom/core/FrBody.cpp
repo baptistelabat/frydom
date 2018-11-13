@@ -698,7 +698,7 @@ namespace frydom {
     }
 
     Acceleration FrBody_::GetAccelerationInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-        GetAccelerationInBodyAtPointInBody(GetPointPositionInBody(worldPoint, fc), fc);
+        return GetAccelerationInBodyAtPointInBody(GetPointPositionInBody(worldPoint, fc), fc);
     }
 
     Acceleration FrBody_::GetAccelerationInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
