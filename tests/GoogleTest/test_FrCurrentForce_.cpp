@@ -6,13 +6,15 @@
 #include "frydom/frydom.h"
 #include "gtest/gtest.h"
 
+#include <type_traits>
+
 using namespace frydom;
 
-//
+// -------------------------------------------------------------------
 //
 // MAP TO HELP UNIT CONVERSION
 //
-//
+// -------------------------------------------------------------------
 
 
 std::map<std::string, ANGLE_UNIT>
@@ -28,47 +30,49 @@ std::map<std::string, DIRECTION_CONVENTION>
         DirConvention = boost::assign::map_list_of("GOTO", GOTO)("COMEFROM", COMEFROM);
 
 
-//
+// --------------------------------------------------------------------
 //
 // TEST OF THE UNIFORM CURRENT FIELD
 //
-//
+// --------------------------------------------------------------------
 
 class TestFrUniformCurrent_ : public ::testing::Test {
 
 protected:
 
-    /// Environment objects
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem_ system;                   ///< offshore system
 
-    /// Initialize environment
+    double m_angle;                             ///< current direction
+    double m_speed;                             ///< current speed
+    ANGLE_UNIT m_angleUnit;                     ///< current direction unit (RAD/DEG)
+    SPEED_UNIT m_speedUnit;                     ///< current speed unit (KNOT/MS)
+    FRAME_CONVENTION m_frame;                   ///< frame convention (NED/NWU)
+    DIRECTION_CONVENTION m_convention;          ///< direction convention (GOTO/COMEFROM)
+
+    Position m_PointInWorld;                    ///< Position of an arbitrary point in world frame
+    FrFrame_ m_frameREF;                        ///< Local frame at Point
+    FrQuaternion_ m_quatREF;                    ///< Rotation of the local frame / world frame
+    Velocity m_PointVelocityInWorld;            ///< Velocity vector of the local frame / world frame
+
+    Velocity m_VelocityInWorld;                 ///< Current velocity at Point in world frame
+    Velocity m_RelativeVelocityInWorld;         ///< Relative velocity at Point in world frame
+    Velocity m_RelativeVelocityInFrame;         ///< Relative velocity at Point in local frame
+
+    /// Initialization of the method
     void SetUp() override;
+
+    /// Loading data from HDF5 file
     void LoadData(std::string filename);
 
+    /// Vector reading method
     template <class Vector>
     Vector ReadVector(FrHDF5Reader& reader, std::string field) const;
 
-    /// Dataset
-    double m_angle;
-    double m_speed;
-    ANGLE_UNIT m_angleUnit;
-    SPEED_UNIT m_speedUnit;
-    FRAME_CONVENTION m_frame;
-    DIRECTION_CONVENTION m_convention;
-
-    Position m_PointInWorld;
-    FrQuaternion_ m_quatREF;
-    FrFrame_ m_frameREF;
-    Velocity m_PointVelocityInWorld;
-
-    Velocity m_VelocityInWorld;
-    Velocity m_RelativeVelocityInWorld;
-    Velocity m_RelativeVelocityInFrame;
-
-
 public:
-    /// List of tests
+    /// Test of the get flux vector method
     void TestGetWorldFluxVelocity();
+
+    /// Test of the get relative velocity in frame method
     void TestGetRelativeVelocityInFrame();
 
 };
@@ -133,8 +137,6 @@ void TestFrUniformCurrent_::TestGetRelativeVelocityInFrame() {
 }
 
 
-
-
 TEST_F(TestFrUniformCurrent_, Update) {
     system.GetEnvironment()->GetCurrent()->Update(0.);
 }
@@ -149,7 +151,6 @@ TEST_F(TestFrUniformCurrent_, StepFinalize) {
 
 TEST_F(TestFrUniformCurrent_, GetField) {
     auto field = system.GetEnvironment()->GetCurrent()->GetField();
-    //EXPECT_TRUE(typeid(field) == typeid(FrUniformCurrentField_));
 }
 
 TEST_F(TestFrUniformCurrent_, TestWorldFluxVelocity) {
@@ -160,40 +161,46 @@ TEST_F(TestFrUniformCurrent_, TestRelativeFluxVelocity) {
     TestGetRelativeVelocityInFrame();
 }
 
-//
+// ---------------------------------------------------------------------------
 //
 // TEST OF THE CURRENT FORCE OBJECT
 //
-//
+// ----------------------------------------------------------------------------
 
 class TestFrCurrentForce_ : public testing::Test {
 
 protected:
-    /// Environment
-    FrOffshoreSystem_ system;
-    std::shared_ptr<FrBody_> body;
-    std::shared_ptr<FrCurrentForce_> force;
 
-    /// Dataset
-    const Position bodyPositionInWorld = Position(0., 0., 0.);
-    const Position COGPosition = Position(0., 0., 0.03);
+    FrOffshoreSystem_ system;                               ///< offshore system
+    std::shared_ptr<FrBody_> body;                          ///< hydrodynamic body
+    std::shared_ptr<FrCurrentForce_> force;                 ///< current force
 
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> current_speed;
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> current_dir;
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> forceREF;
+    const Position bodyPositionInWorld = Position(0., 0., 0.);  ///< Position of Point in world
+    const Position COGPosition = Position(0., 0., 0.03);        ///< Position of the COG in body
 
-    ANGLE_UNIT angleUnit;
-    SPEED_UNIT speedUnit;
-    FRAME_CONVENTION frame;
-    DIRECTION_CONVENTION convention;
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> current_speed;  ///< List of current speed test
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> current_dir;    ///< List of current direction test
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> forceREF;       ///< List of force results for the test
+
+    ANGLE_UNIT angleUnit;                                   ///< current direction unit (RAD/DEG)
+    SPEED_UNIT speedUnit;                                   ///< current speed unit (KNOT/MS)
+    FRAME_CONVENTION frame;                                 ///< frame convention (NED/NWU)
+    DIRECTION_CONVENTION convention;                        ///< direction convention (GOTO/COMEFROM)
 
     /// Initialize environment
     void SetUp() override;
+
+    /// Loading data from HDF5 file
     void LoadData(std::string filename);
 
 public:
+    /// Test the current force vector
     void TestForce();
+
+    /// Compare the force value in world at the COG
     void CheckForceInWorldAtCOG(Force force, const unsigned int index);
+
+    /// Compare the torque value in body at the COG
     void CheckTorqueInBodyAtCOG(Torque torque, const unsigned int index);
 
 };
