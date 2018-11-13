@@ -55,19 +55,21 @@ protected:
     SPEED_UNIT m_speedUnit;
     FRAME_CONVENTION m_frame;
     DIRECTION_CONVENTION m_convention;
-    Velocity m_fluxVector;
 
     Position m_PointInWorld;
     FrQuaternion_ m_quatREF;
     FrFrame_ m_frameREF;
     Velocity m_PointVelocityInWorld;
 
+    Velocity m_VelocityInWorld;
+    Velocity m_RelativeVelocityInWorld;
+    Velocity m_RelativeVelocityInFrame;
+
 
 public:
     /// List of tests
     void TestGetWorldFluxVelocity();
     void TestGetRelativeVelocityInFrame();
-    void TestUpdate();
 
 };
 
@@ -91,16 +93,16 @@ void TestFrUniformCurrent_::LoadData(std::string filename) {
     m_frame = FrameConv[ reader.ReadString(group + "frame_convention/")];
     m_convention = DirConvention[ reader.ReadString(group + "direction_convention/")];
 
-    auto value = reader.ReadDoubleArray(group + "flux_vector/");
-    m_fluxVector = Velocity(value(0), value(1), value(2));
-
     m_PointInWorld = ReadVector<Position>(reader, group + "PointInWorld");
     auto direction = ReadVector<Direction>(reader, group + "RotationDirection/") ;
     double angle = reader.ReadDouble(group + "RotationAngle/");
     m_quatREF = FrQuaternion_(direction, angle, NWU);
     m_frameREF = FrFrame_(m_PointInWorld, m_quatREF, NWU);
-
     m_PointVelocityInWorld = ReadVector<Velocity>(reader, group + "PointVelocityInWorld/");
+
+    m_VelocityInWorld = ReadVector<Velocity>(reader, group + "VelocityInWorld/");
+    m_RelativeVelocityInWorld = ReadVector<Velocity>(reader, group + "RelativeVelocityInWorld");
+    m_RelativeVelocityInFrame = ReadVector<Velocity>(reader, group + "RelativeVelocityInFrame");
 
 }
 
@@ -112,17 +114,51 @@ void TestFrUniformCurrent_::SetUp() {
 }
 
 void TestFrUniformCurrent_::TestGetWorldFluxVelocity() {
-    // TODO
+
+    Velocity velocity = system.GetEnvironment()->GetCurrent()->GetWorldFluxVelocity(m_PointInWorld, m_frame);
+    Velocity velocityREF = velocity - m_PointVelocityInWorld;
+
+    EXPECT_FLOAT_EQ(velocity.GetVx(), m_VelocityInWorld.GetVx());
+    EXPECT_FLOAT_EQ(velocity.GetVy(), m_VelocityInWorld.GetVy());
+    EXPECT_FLOAT_EQ(velocity.GetVz(), m_VelocityInWorld.GetVz());
 }
 
 void TestFrUniformCurrent_::TestGetRelativeVelocityInFrame() {
-    // TODO
+
+    Velocity velocity = system.GetEnvironment()->GetCurrent()->GetRelativeVelocityInFrame(m_frameREF, m_PointVelocityInWorld, m_frame);
+
+    EXPECT_FLOAT_EQ(velocity.GetVx(), m_RelativeVelocityInFrame.GetVx());
+    EXPECT_FLOAT_EQ(velocity.GetVy(), m_RelativeVelocityInFrame.GetVy());
+    EXPECT_FLOAT_EQ(velocity.GetVz(), m_RelativeVelocityInFrame.GetVz());
 }
 
-void TestFrUniformCurrent_::TestUpdate() {
-    // TODO
+
+
+
+TEST_F(TestFrUniformCurrent_, Update) {
+    system.GetEnvironment()->GetCurrent()->Update(0.);
 }
 
+TEST_F(TestFrUniformCurrent_, Initialize) {
+    system.GetEnvironment()->GetCurrent()->Initialize();
+}
+
+TEST_F(TestFrUniformCurrent_, StepFinalize) {
+    system.GetEnvironment()->GetCurrent()->StepFinalize();
+}
+
+TEST_F(TestFrUniformCurrent_, GetField) {
+    auto field = system.GetEnvironment()->GetCurrent()->GetField();
+    //EXPECT_TRUE(typeid(field) == typeid(FrUniformCurrentField_));
+}
+
+TEST_F(TestFrUniformCurrent_, TestWorldFluxVelocity) {
+    TestGetWorldFluxVelocity();
+}
+
+TEST_F(TestFrUniformCurrent_, TestRelativeFluxVelocity) {
+    TestGetRelativeVelocityInFrame();
+}
 
 //
 //

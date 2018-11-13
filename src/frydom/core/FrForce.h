@@ -188,64 +188,129 @@ namespace frydom {
 
     public:
 
+        ///
         FrForce_();
 
 //        explicit FrForce_(FrBody_* body);
 
+        ///
+        /// \param time
         virtual void Update(double time) = 0;
 
+        ///
+        /// \return
         FrOffshoreSystem_* GetSystem();
-
-
 
         // Force Limits
 
+        ///
+        /// \param fmax
         void SetMaxForceLimit(double fmax);
 
+        ///
+        /// \return
         double GetMaxForceLimit() const;
 
+        ///
+        /// \param tmax
         void SetMaxTorqueLimit(double tmax);
 
+        ///
+        /// \return
         double GetMaxTorqueLimit() const;
 
+        ///
+        /// \param val
         void SetLimit(bool val);
 
+        ///
+        /// \return
         bool GetLimit() const;
 
 
         // Force Getters
 
+        ///
+        /// \param force
+        /// \param fc
         void GetForceInWorld(Force& force, FRAME_CONVENTION fc) const;
 
+        ///
+        /// \param fc
+        /// \return
         Force GetForceInWorld(FRAME_CONVENTION fc) const;
 
+        ///
+        /// \param fx
+        /// \param fy
+        /// \param fz
+        /// \param fc
         void GetForceInWorld(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
 
+        ///
+        /// \param force
+        /// \param fc
         void GetForceInBody(Force& force, FRAME_CONVENTION fc) const;
 
+        ///
+        /// \param fc
+        /// \return
         Force GetForceInBody(FRAME_CONVENTION fc) const;
 
+        ///
+        /// \param fx
+        /// \param fy
+        /// \param fz
+        /// \param fc
         void GetForceInBody(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
 
+        ///
+        /// \param torque
+        /// \param fc
         void GetTorqueInWorldAtCOG(Torque &torque, FRAME_CONVENTION fc) const;
 
+        ///
+        /// \param fc
+        /// \return
         Torque GetTorqueInWorldAtCOG(FRAME_CONVENTION fc) const;
 
+        ///
+        /// \param mx
+        /// \param my
+        /// \param mz
+        /// \param fc
         void GetTorqueInWorldAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const;
 
+        ///
+        /// \param torque
+        /// \param fc
         void GetTorqueInBodyAtCOG(Torque &torque, FRAME_CONVENTION fc) const;
 
+        ///
+        /// \param fc
+        /// \return
         Torque GetTorqueInBodyAtCOG(FRAME_CONVENTION fc) const;
 
+        ///
+        /// \param mx
+        /// \param my
+        /// \param mz
+        /// \param fc
         void GetTorqueInBodyAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const;
 
+        ///
+        /// \return
         double GetForceNorm() const;
 
+        ///
+        /// \return
         double GetTorqueNormAtCOG() const;
 
 
     protected:
 
+        ///
+        /// \return
         std::shared_ptr<chrono::ChForce> GetChronoForce();
 
         friend class FrBody_;
@@ -254,52 +319,94 @@ namespace frydom {
         // of the force model used
 
         /// Set the force expressed in absolute coordinates. It does not generate a torque
+        /// \param worldForce
+        /// \param fc
         void SetForceInWorldAtCOG(const Force& worldForce, FRAME_CONVENTION fc);
 
         /// Set the force expressed in absolute coordinates applying to a point expressed in body coordinates.
         /// It generates a torque.
+        /// \param worldForce
+        /// \param bodyPos
+        /// \param fc
         void SetForceInWorldAtPointInBody(const Force& worldForce, const Position& bodyPos, FRAME_CONVENTION fc);
 
         /// Set the force expressed in absolute coordinates applying to a point expressed in absolute coordinates.
         /// It generates a torque.
+        /// \param worldForce
+        /// \param worldPos
+        /// \param fc
         void SetForceInWorldAtPointInWorld(const Force& worldForce, const Position& worldPos, FRAME_CONVENTION fc);
 
         /// Set the force expressed in body coordinates. It does not generate a torque.
+        /// \param bodyForce
+        /// \param fc
         void SetForceInBody(const Force& bodyForce, FRAME_CONVENTION fc);
 
         /// Set the force expressed in body coordinates applying to a point expressed in body coordinates.
         /// It generates a torque.
+        /// \param bodyForce
+        /// \param bodyPos
+        /// \param fc
         void SetForceInBodyAtPointInBody(const Force& bodyForce, const Position& bodyPos, FRAME_CONVENTION fc);
 
         /// Set the force expressed in body coordinates applying to a point expressed in absolute coordinates.
         /// It generates a torque.
+        /// \param bodyForce
+        /// \param worldPos
+        /// \param fc
         void SetForceInBodyAtPointInWorld(const Force& bodyForce, const Position& worldPos, FRAME_CONVENTION fc);
 
         /// Set the torque expressed in absolute coordinates and at COG.
+        /// \param worldTorque
+        /// \param fc
         void SetTorqueInWorldAtCOG(const Torque& worldTorque, FRAME_CONVENTION fc);
 
         /// Set the torque expressed in relative coordinates and at COG.
+        /// \param bodyTorque
+        /// \param fc
         void SetTorqueInBodyAtCOG(const Torque& bodyTorque, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in absolute coordinates and at COG.
+        /// \param worldForce
+        /// \param worldTorque
+        /// \param fc
         void SetForceTorqueInWorldAtCOG(const Force& worldForce, const Torque& worldTorque, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in body coordinates and at COG
+        /// \param bodyForce
+        /// \param bodyTorque
+        /// \param fc
         void SetForceTorqueInBodyAtCOG(const Force& bodyForce, const Torque& bodyTorque, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in absolute coordinates and reduced to a point expressed in body coordinates
+        /// \param worldForce
+        /// \param worldTorque
+        /// \param bodyPos
+        /// \param fc
         void SetForceTorqueInWorldAtPointInBody(const Force &worldForce, const Torque &worldTorque,
                                                 const Position &bodyPos, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in absolute coordinates and reduced to a point expressed in absolute coordinates
+        /// \param worldForce
+        /// \param worldTorque
+        /// \param worldPoint
+        /// \param fc
         void SetForceTorqueInWorldAtPointInWorld(const Force &worldForce, const Torque &worldTorque,
                                                  const Position &worldPoint, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in body coordinates and reduced to a point expressed in body coordinates
+        /// \param bodyForce
+        /// \param bodyTorque
+        /// \param bodyPos
+        /// \param fc
         void SetForceTorqueInBodyAtPointInBody(const Force &bodyForce, const Torque &bodyTorque,
                                                const Position &bodyPos, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in body coordinates and reduced to a point expressed in absolute coordinates
+        /// \param bodyForce
+        /// \param bodyTorque
+        /// \param worldPos
+        /// \param fc
         void SetForceTorqueInBodyAtPointInWorld(const Force &bodyForce, const Torque &bodyTorque,
                                                 const Position &worldPos, FRAME_CONVENTION fc);
 
