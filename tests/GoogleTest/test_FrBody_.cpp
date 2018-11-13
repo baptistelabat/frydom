@@ -242,6 +242,12 @@ TEST(FrBodyTest,Orientation) {
     Position RefPositionInWorld(1., 2., 3.);
     body->SetPosition(RefPositionInWorld, NWU);
 
+    //-----------------COG-----------------//
+    // Set the COG position, expressed in local body reference frame
+    Position COGPositionInBody(2., 3., 4.);
+    body->SetCOG(COGPositionInBody, NWU);
+    Position COGPositionInWorld = RefPositionInWorld + COGPositionInBody;
+
     //-----------------Orientation-----------------//
     //+++++Set Rotation+++++//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
@@ -269,6 +275,57 @@ TEST(FrBodyTest,Orientation) {
     testPosition = body->GetFrame().GetPosition(NWU) - RefFrame.GetPosition(NWU);
     EXPECT_TRUE(testPosition.isZero());
 
+    //-----------------Rotation-----------------//
+    //+++++Rotate+++++//
+    FrRotation_ NewRotation; NewRotation.SetCardanAngles_DEGREES(4.,8.,3.,NWU);
+    body->Rotate(NewRotation);
+
+    BodyRotationInWorld *= NewRotation;
+    Test_AllGetRotation(body, BodyRotationInWorld);
+
+    //+++++RotateAroundCOG+++++//
+    FrRotation_ RotationAroundCOG; RotationAroundCOG.SetCardanAngles_DEGREES(8.,6.,2.,NWU);
+    body->RotateAroundCOG(RotationAroundCOG,NWU);
+
+    BodyRotationInWorld *= RotationAroundCOG;
+    Test_AllGetRotation(body, BodyRotationInWorld);
+
+    //+++++RotateAroundPointInWorld+++++//
+    Position PointInWorld(5.,4.,8.);
+    FrRotation_ RotationAroundPointInWorld; RotationAroundPointInWorld.SetCardanAngles_DEGREES(1.,9.,7.,NWU);
+    body->RotateAroundPointInWorld(RotationAroundPointInWorld, PointInWorld, NWU);
+
+    BodyRotationInWorld *= RotationAroundPointInWorld;
+    Test_AllGetRotation(body, BodyRotationInWorld);
+
+    //+++++RotateAroundPointInBody+++++//
+    Position PointInBody(5.,4.,8.);
+    FrRotation_ RotationAroundPointInBody; RotationAroundPointInBody.SetCardanAngles_DEGREES(1.,9.,7.,NWU);
+    body->RotateAroundPointInWorld(RotationAroundPointInBody, PointInBody, NWU);
+
+    BodyRotationInWorld *= RotationAroundPointInBody;
+    Test_AllGetRotation(body, BodyRotationInWorld);
+
+    //+++++Test Position after Rotating around a Point+++++//
+    // Init the Frame to original Position and Rotation
+    BodyRotationInWorld.SetCardanAngles_DEGREES(0., 0., 0., NWU);
+    RefFrame.SetPosition(RefPositionInWorld,NWU);
+    RefFrame.SetRotation(BodyRotationInWorld);
+    body->SetFrame(RefFrame);
+
+    Test_AllGetRotation(body, BodyRotationInWorld);
+
+    //-----------------Orientation-----------------//
+    // Rotation to an easy transformation
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
+    FrRotation_ TotalRotation = Rotation1*Rotation2 ;
+
+    // Rotate around the RefPositionInWorld, using RotateAroundPointInWorld, to check the position
+    body->RotateAroundPointInWorld(TotalRotation, RefPositionInWorld, NWU);
+
+    Position OrigAbsCOGPos = RefPositionInWorld + EasyRotate(COGPositionInBody);
+    Test_AllGetPosition(body, RefPositionInWorld, OrigAbsCOGPos, NWU, true, NWU);
 }
 
 TEST(FrBodyTest,PositionWithOrientation){
@@ -757,6 +814,10 @@ TEST(FrBodyTest,TranslationalVelocityWithAngularVelocityAndOrientation){
     Test_AllGetVelocity(body, VelocityInWorld, AngularVelocityInWorld, is_orientation);
 
 }
+
+
+
+
 
 
 TEST(FrBodyTest,ProjectVectorMethods){
