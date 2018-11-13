@@ -11,12 +11,12 @@ using namespace frydom;
 // CLASS OF THE TEST
 //
 
+
 class TestFrForce_ : public FrForce_ {
 
 private:
     Position m_PointCOGInWorld;                 ///< Position of the COG in world
     Position m_PointCOGInBody;                  ///< Position of the COG in body
-
     Position m_PointREFInWorld;                 ///< Position of the body in world
 
     FrFrame_ m_frameREF;                        ///< Body frame
@@ -35,8 +35,27 @@ private:
     Torque m_torqueInWorldAtPoint;              ///< Torque at a point of the body in world frame
     Torque m_torqueInBodyAtPoint;               ///< Torque at a point of the body in body frame
 
+    Position m_PointInBody_NED;                 ///< Position of a point of the body in body (NED)
+    Position m_PointInWorld_NED;                ///< Position of a point of the body in world (NED)
+
+    Force m_forceInWorldAtCOG_NED;              ///< Force at the COG in world frame (NED)
+    Force m_forceInBodyAtCOG_NED;               ///< Force at the COG in body frame (NED)
+    Force m_forceInWorldAtPoint_NED;            ///< Force at a point of the body in world frame (NED)
+    Force m_forceInBodyAtPoint_NED;             ///< Force at a point of the body in body frame (NED)
+
+    Torque m_torqueInWorldAtCOG_NED;            ///< Torque at COG in world frame (NED)
+    Torque m_torqueInBodyAtCOG_NED;             ///< Torque at COG in body frame (NED)
+    Torque m_torqueInWorldAtPoint_NED;          ///< Torque at a point of the body in world frame (NED)
+    Torque m_torqueInBodyAtPoint_NED;           ///< Torque at a point of the body in body frame (NED)
+
+    double m_forceLimitUser;
+    double m_torqueLimitUser;
+    Force m_forceInWorldAtCOG_limited;          ///< Force at the COG in world frame with applied limit
+    Torque m_torqueInBodyAtCOG_limited;         ///< Torque at the COG in body frame with appliced limit
+
+
 public:
-    /// Test
+    /// Tests
     void TestMaxForceLimit(double fmax);
     void TestMaxTorqueLimit(double fmax);
     void TestSetLimit();
@@ -66,14 +85,27 @@ public:
     void TestGetTorqueInBodyComponent();
     void TestForceNorm();
     void TestTorqueNorm();
-
+    void TestGetForceNED();
+    void TestGetTorqueNED();
+    void TestSpecificCase();
+    void TestUpdateLimitApplication();
 
     /// Accessor
     Position GetPointREFInWorld() const { return m_PointREFInWorld; }
     Position GetPointCOGInBody()  const { return m_PointCOGInBody; }
     FrQuaternion_ GetQuatREF()    const { return m_quatREF; }
 
-    void CreateDataset();
+    /// Methods
+    void LoadData(std::string filename);
+    Position ReadPosition(FrHDF5Reader& reader, std::string field);
+    Force ReadForce(FrHDF5Reader& reader, std::string field);
+    Torque ReadTorque(FrHDF5Reader& reader, std::string field);
+    Direction ReadDirection(FrHDF5Reader& reader, std::string field);
+
+    void CheckForceInWorldAtCOG();
+    void CheckTorqueInBodyAtCOG();
+    void CheckForceTorqueAtCOG();
+    void CheckLeverArmTorqueInBodyAtCOG();
 
 private:
     /// Override pure virtual methods
@@ -82,321 +114,232 @@ private:
     void StepFinalize() override {};
 };
 
-void TestFrForce_::CreateDataset() {
-
-    /// Positions
-    m_PointREFInWorld   = Position(10., 20., -5.);
-    m_PointCOGInBody    = Position(-1., 2., 3.);
-    m_PointInBody       = Position(5., 10., 3.);
-    m_PointCOGInWorld   = Position(9.02460532, 21.06709459, -1.54892562);
-    m_PointInWorld = Position(12.40247008, 30.43053193, -0.59180977);
-
-    /// Frame of the body
-    Direction vect = Direction(0.5, 0.4, 0.8);
-    vect.normalize();
-    double angle = M_PI/8.;
-    m_quatREF =  FrQuaternion_(vect, angle, NWU);
-    m_frameREF = FrFrame_(m_PointREFInWorld, m_quatREF, NWU);  // TODO : a voir si c'est utile de définir la convention ici
-
-    /// Force and Torque
-    m_forceInWorldAtPoint  = Force(1761428.06341033,5290133.96192031,2629040.47940839);
-    m_forceInBodyAtPoint   = Force(3000000.00000000,5000000.00000000,2000000.00000000);
-    m_forceInWorldAtCOG    = Force(1761428.06341033,5290133.96192031,2629040.47940839);
-    m_forceInBodyAtCOG     = Force(3000000.00000000,5000000.00000000,2000000.00000000);
-    m_torqueInWorldAtPoint = Torque(16157552865.99235725,-14374562644.35187531,87363810780.93070984);
-    m_torqueInBodyAtPoint  = Torque(200000000.00000000,300000000.00000000,90000000000.00000000);
-    m_torqueInWorldAtCOG   = Torque(16177106450.72056389,-14381757296.81767845,87365187116.70848083);
-    m_torqueInBodyAtCOG    = Torque(216000000.00000000,288000000.00000000,90006000000.00000000);
-
-    return;
+Position TestFrForce_::ReadPosition(FrHDF5Reader& reader, std::string field) {
+    auto value = reader.ReadDoubleArray(field);
+    return Position(value(0), value(1), value(2));
 }
+
+Force TestFrForce_::ReadForce(FrHDF5Reader& reader, std::string field) {
+    auto value = reader.ReadDoubleArray(field);
+    return Force(value(0), value(1), value(2));
+}
+
+Torque TestFrForce_::ReadTorque(FrHDF5Reader& reader, std::string field) {
+    auto value = reader.ReadDoubleArray(field);
+    return Torque(value(0), value(1), value(2));
+}
+
+Direction TestFrForce_::ReadDirection(FrHDF5Reader& reader, std::string field) {
+    auto value = reader.ReadDoubleArray(field);
+    return Torque(value(0), value(1), value(2));
+}
+
+void TestFrForce_::LoadData(std::string filename) {
+
+    FrHDF5Reader reader;
+
+    reader.SetFilename(filename);
+    std::string group = "/force_general/";
+
+    m_PointREFInWorld = ReadPosition(reader, group + "PointREFInWorld/");
+    m_PointCOGInBody  = ReadPosition(reader, group + "PointCOGInBody/");
+    m_PointInBody     = ReadPosition(reader, group + "PointInBody/");
+    m_PointCOGInWorld = ReadPosition(reader, group + "PointCOGInWorld/");
+    m_PointInWorld    = ReadPosition(reader, group + "PointInWorld/");
+
+    auto direction = ReadDirection(reader, group + "RotationDirection/");
+    direction.normalize();
+    auto angle = reader.ReadDouble(group + "RotationAngle/");
+    m_quatREF =  FrQuaternion_(direction, angle, NWU);
+    m_frameREF = FrFrame_(m_PointREFInWorld, m_quatREF, NWU);
+
+    m_forceInWorldAtPoint  = ReadForce(reader, group + "ForceInWorldAtPoint/");
+    m_forceInBodyAtPoint   = ReadForce(reader, group + "ForceInBodyAtPoint/");
+    m_forceInWorldAtCOG    = ReadForce(reader, group + "ForceInWorldAtCOG/");
+    m_forceInBodyAtCOG     = ReadForce(reader, group + "ForceInBodyAtCOG/");
+    m_torqueInWorldAtPoint = ReadTorque(reader, group + "TorqueInWorldAtPoint/");
+    m_torqueInBodyAtPoint  = ReadTorque(reader, group + "TorqueInBodyAtPoint/");
+    m_torqueInWorldAtCOG   = ReadTorque(reader, group + "TorqueInWorldAtCOG/");
+    m_torqueInBodyAtCOG    = ReadTorque(reader, group + "TorqueInBodyAtCOG/");
+
+    // Create vector in NED convention
+    m_PointInBody_NED          = m_PointInBody;
+    m_PointInWorld_NED         = m_PointInWorld;
+    m_forceInWorldAtPoint_NED  = m_forceInWorldAtPoint;
+    m_forceInBodyAtPoint_NED   = m_forceInBodyAtPoint;
+    m_forceInWorldAtCOG_NED    = m_forceInWorldAtCOG;
+    m_forceInBodyAtCOG_NED     = m_forceInBodyAtCOG;
+    m_torqueInWorldAtPoint_NED = m_torqueInWorldAtPoint;
+    m_torqueInBodyAtPoint_NED  = m_torqueInBodyAtPoint;
+    m_torqueInWorldAtCOG_NED   = m_torqueInWorldAtCOG;
+    m_torqueInBodyAtCOG_NED    = m_torqueInBodyAtCOG;
+    internal::SwapFrameConvention(m_PointInBody_NED);
+    internal::SwapFrameConvention(m_PointInWorld_NED);
+    internal::SwapFrameConvention(m_forceInWorldAtPoint_NED);
+    internal::SwapFrameConvention(m_forceInBodyAtPoint_NED);
+    internal::SwapFrameConvention(m_forceInWorldAtCOG_NED);
+    internal::SwapFrameConvention(m_forceInBodyAtCOG_NED);
+    internal::SwapFrameConvention(m_torqueInWorldAtPoint_NED);
+    internal::SwapFrameConvention(m_torqueInBodyAtPoint_NED);
+    internal::SwapFrameConvention(m_torqueInWorldAtCOG_NED);
+    internal::SwapFrameConvention(m_torqueInBodyAtCOG_NED);
+
+    m_forceLimitUser       = reader.ReadDouble(group + "ForceLimit/");
+    m_torqueLimitUser      = reader.ReadDouble(group + "TorqueLimit/");
+    m_forceInWorldAtCOG_limited = ReadForce(reader, group + "ForceInWorldAtCOG_limited/");
+    m_torqueInBodyAtCOG_limited = ReadTorque(reader, group + "TorqueInBodyAtCOG_limited/");
+}
+
+void TestFrForce_::CheckForceInWorldAtCOG() {
+    m_body->Update();
+    auto force = this->GetForceInWorld(NWU);
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
+    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
+    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
+}
+
+void TestFrForce_::CheckTorqueInBodyAtCOG() {
+    m_body->Update();
+    auto torque = this->GetTorqueInBodyAtCOG(NWU);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
+}
+
+void TestFrForce_::CheckForceTorqueAtCOG() {
+    this->CheckForceInWorldAtCOG();
+    this->CheckTorqueInBodyAtCOG();
+}
+
+void TestFrForce_::CheckLeverArmTorqueInBodyAtCOG() {
+    m_body->Update();
+    auto torque = this->GetTorqueInBodyAtCOG(NWU);
+    Torque torqueREF = m_torqueInBodyAtCOG - m_torqueInBodyAtPoint;
+
+    EXPECT_FLOAT_EQ(torque.GetMx(), torqueREF.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), torqueREF.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), torqueREF.GetMz());
+}
+
 
 void TestFrForce_::TestMaxForceLimit(double fmax) {
     this->SetMaxForceLimit(fmax);
     EXPECT_FLOAT_EQ(this->GetMaxForceLimit(), fmax);
-    return;
 }
 
 void TestFrForce_::TestMaxTorqueLimit(double fmax) {
     this->SetMaxTorqueLimit(fmax);
     EXPECT_FLOAT_EQ(this->GetMaxTorqueLimit(), fmax);
-    return;
 }
 
 void TestFrForce_::TestSetLimit() {
     this->SetLimit(true);
     EXPECT_TRUE(this->GetLimit());
-    return;
 }
 
 void TestFrForce_::TestForceTorqueInWorldAtPointInBody() {
-
     this->SetForceTorqueInWorldAtPointInBody(m_forceInWorldAtPoint, m_torqueInWorldAtPoint, m_PointInBody, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
-
-    return;
+    CheckForceTorqueAtCOG();
+    this->SetForceTorqueInWorldAtPointInBody(m_forceInWorldAtPoint_NED, m_torqueInWorldAtPoint_NED, m_PointInBody_NED, NED);
+    CheckForceTorqueAtCOG();
 }
 
-
 void TestFrForce_::TestForceTorqueInBodyAtPointInBody() {
-
     this->SetForceTorqueInBodyAtPointInBody(m_forceInBodyAtPoint, m_torqueInBodyAtPoint, m_PointInBody, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
-
-    return;
+    CheckForceTorqueAtCOG();
+    this->SetForceTorqueInBodyAtPointInBody(m_forceInBodyAtPoint_NED, m_torqueInBodyAtPoint_NED, m_PointInBody_NED, NED);
+    CheckForceTorqueAtCOG();
 }
 
 void TestFrForce_::TestForceTorqueInWorldAtPointInWorld() {
-
     this->SetForceTorqueInWorldAtPointInWorld(m_forceInWorldAtPoint, m_torqueInWorldAtPoint, m_PointInWorld, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
-
-    return;
+    CheckForceTorqueAtCOG();
+    this->SetForceTorqueInWorldAtPointInWorld(m_forceInWorldAtPoint_NED, m_torqueInWorldAtPoint_NED, m_PointInWorld_NED, NED);
+    CheckForceTorqueAtCOG();
 }
 
-
 void TestFrForce_::TestForceTorqueInBodyAtPointInWorld() {
-
     this->SetForceTorqueInBodyAtPointInWorld(m_forceInBodyAtPoint, m_torqueInBodyAtPoint, m_PointInWorld, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
-
-    return;
+    CheckForceTorqueAtCOG();
+    this->SetForceTorqueInBodyAtPointInWorld(m_forceInBodyAtPoint_NED, m_torqueInBodyAtPoint_NED, m_PointInWorld_NED, NED);
+    CheckForceTorqueAtCOG();
 }
 
 void TestFrForce_::TestForceTorqueInWorldAtCOG() {
-
     this->SetForceTorqueInWorldAtCOG(m_forceInWorldAtCOG, m_torqueInWorldAtCOG, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
-
-    return;
+    CheckForceTorqueAtCOG();
+    this->SetForceTorqueInWorldAtCOG(m_forceInWorldAtCOG_NED, m_torqueInWorldAtCOG_NED, NED);
+    CheckForceTorqueAtCOG();
 }
 
 void TestFrForce_::TestForceTorqueInBodyAtCOG() {
-
     this->SetForceTorqueInBodyAtCOG(m_forceInBodyAtCOG, m_torqueInBodyAtCOG, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
-
-    return;
+    CheckForceTorqueAtCOG();
+    this->SetForceTorqueInBodyAtCOG(m_forceInBodyAtCOG_NED, m_torqueInBodyAtCOG_NED, NED);
+    CheckForceTorqueAtCOG();
 }
-
 
 void TestFrForce_::TestTorqueInBodyAtCOG() {
-
     this->SetTorqueInBodyAtCOG(m_torqueInBodyAtCOG, NWU);
-
-    m_body->Update();
-
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
-
-    return;
+    CheckTorqueInBodyAtCOG();
+    this->SetTorqueInBodyAtCOG(m_torqueInBodyAtCOG_NED, NED);
+    CheckTorqueInBodyAtCOG();
 }
 
-
 void TestFrForce_::TestTorqueInWorldAtCOG() {
-
     this->SetTorqueInWorldAtCOG(m_torqueInWorldAtCOG, NWU);
-
-    m_body->Update();
-
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
-
-    return;
+    CheckTorqueInBodyAtCOG();
+    this->SetTorqueInWorldAtCOG(m_torqueInWorldAtCOG_NED, NED);
+    CheckTorqueInBodyAtCOG();
 }
 
 void TestFrForce_::TestForceInBodyAtCOG() {
-
     this->SetForceInBody(m_forceInBodyAtCOG, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    return;
-}
+    CheckForceInWorldAtCOG();
+    this->SetForceInBody(m_forceInBodyAtCOG_NED, NED);
+    CheckForceInWorldAtCOG();}
 
 void TestFrForce_::TestForceInWorldAtCOG() {
-
     this->SetForceInWorldAtCOG(m_forceInWorldAtCOG, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    return;
-
+    CheckForceInWorldAtCOG();
+    this->SetForceInWorldAtCOG(m_forceInWorldAtCOG_NED, NED);
+    CheckForceInWorldAtCOG();
 }
 
 void TestFrForce_::TestForceInWorldAtPointInBody() {
-
     this->SetForceInWorldAtPointInBody(m_forceInWorldAtPoint, m_PointInBody, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-    Torque torqueREF = m_torqueInBodyAtCOG - m_torqueInBodyAtPoint;
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), torqueREF.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), torqueREF.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), torqueREF.GetMz());
-
-    return;
-
+    CheckForceInWorldAtCOG();
+    CheckLeverArmTorqueInBodyAtCOG();
+    this->SetForceInWorldAtPointInBody(m_forceInWorldAtPoint_NED, m_PointInBody_NED, NED);
+    CheckForceInWorldAtCOG();
+    CheckLeverArmTorqueInBodyAtCOG();
 }
 
 void TestFrForce_::TestForceInWorldAtPointInWorld() {
-
     this->SetForceInWorldAtPointInWorld(m_forceInWorldAtPoint, m_PointInWorld, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-    Torque torqueREF = m_torqueInBodyAtCOG - m_torqueInBodyAtPoint;
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), torqueREF.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), torqueREF.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), torqueREF.GetMz());
-
-    return;
+    CheckForceInWorldAtCOG();
+    CheckLeverArmTorqueInBodyAtCOG();
+    this->SetForceInWorldAtPointInWorld(m_forceInWorldAtPoint_NED, m_PointInWorld_NED, NED);
+    CheckForceInWorldAtCOG();
+    CheckLeverArmTorqueInBodyAtCOG();
 }
 
 void TestFrForce_::TestForceInBodyAtPointInBody() {
-
     this->SetForceInBodyAtPointInBody(m_forceInBodyAtPoint, m_PointInBody, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-    Torque torqueREF = m_torqueInBodyAtCOG - m_torqueInBodyAtPoint;
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), torqueREF.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), torqueREF.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), torqueREF.GetMz());
-
-    return;
+    CheckForceInWorldAtCOG();
+    CheckLeverArmTorqueInBodyAtCOG();
+    this->SetForceInBodyAtPointInBody(m_forceInBodyAtPoint_NED, m_PointInBody_NED, NED);
+    CheckForceInWorldAtCOG();
+    CheckLeverArmTorqueInBodyAtCOG();
 }
 
 void TestFrForce_::TestForceInBodyAtPointInWorld() {
-
     this->SetForceInBodyAtPointInWorld(m_forceInBodyAtPoint, m_PointInWorld, NWU);
-
-    m_body->Update();
-
-    auto force = this->GetForceInWorld(NWU);
-    auto torque = this->GetTorqueInBodyAtCOG(NWU);
-    Torque torqueREF = m_torqueInBodyAtCOG - m_torqueInBodyAtPoint;
-
-    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
-    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
-    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
-
-    EXPECT_FLOAT_EQ(torque.GetMx(), torqueREF.GetMx());
-    EXPECT_FLOAT_EQ(torque.GetMy(), torqueREF.GetMy());
-    EXPECT_FLOAT_EQ(torque.GetMz(), torqueREF.GetMz());
-
-    return;
+    CheckForceInWorldAtCOG();
+    CheckLeverArmTorqueInBodyAtCOG();
+    this->SetForceInBodyAtPointInWorld(m_forceInBodyAtPoint_NED, m_PointInWorld_NED, NED);
+    CheckForceInWorldAtCOG();
+    CheckLeverArmTorqueInBodyAtCOG();
 }
 
 void TestFrForce_::TestGetForceInWorldReference() {
@@ -407,13 +350,14 @@ void TestFrForce_::TestGetForceInWorldReference() {
 
     Force force;
     GetForceInWorld(force, NWU);
-
     EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
     EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
     EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
 
-    return;
-
+    GetForceInWorld(force, NED);
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG_NED.GetFx());
+    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG_NED.GetFy());
+    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG_NED.GetFz());
 }
 
 void TestFrForce_::TestGetForceInWorldComponent() {
@@ -424,12 +368,14 @@ void TestFrForce_::TestGetForceInWorldComponent() {
 
     Force force;
     GetForceInWorld(force.GetFx(), force.GetFy(), force.GetFz(), NWU);
-
     EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
     EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG.GetFy());
     EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG.GetFz());
 
-    return;
+    GetForceInWorld(force.GetFx(), force.GetFy(), force.GetFz(), NED);
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG_NED.GetFx());
+    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG_NED.GetFy());
+    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG_NED.GetFz());
 }
 
 void TestFrForce_::TestGetForceInBody() {
@@ -439,12 +385,14 @@ void TestFrForce_::TestGetForceInBody() {
     m_body->Update();
 
     auto force = GetForceInBody(NWU);
-
     EXPECT_FLOAT_EQ(force.GetFx(), m_forceInBodyAtCOG.GetFx());
     EXPECT_FLOAT_EQ(force.GetFy(), m_forceInBodyAtCOG.GetFy());
     EXPECT_FLOAT_EQ(force.GetFz(), m_forceInBodyAtCOG.GetFz());
 
-    return;
+    force = GetForceInBody(NED);
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInBodyAtCOG_NED.GetFx());
+    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInBodyAtCOG_NED.GetFy());
+    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInBodyAtCOG_NED.GetFz());
 }
 
 void TestFrForce_::TestGetForceInBodyReference() {
@@ -455,12 +403,14 @@ void TestFrForce_::TestGetForceInBodyReference() {
 
     Force force;
     GetForceInBody(force, NWU);
-
     EXPECT_FLOAT_EQ(force.GetFx(), m_forceInBodyAtCOG.GetFx());
     EXPECT_FLOAT_EQ(force.GetFy(), m_forceInBodyAtCOG.GetFy());
     EXPECT_FLOAT_EQ(force.GetFz(), m_forceInBodyAtCOG.GetFz());
 
-    return;
+    GetForceInBody(force, NED);
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInBodyAtCOG_NED.GetFx());
+    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInBodyAtCOG_NED.GetFy());
+    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInBodyAtCOG_NED.GetFz());
 }
 
 
@@ -475,7 +425,10 @@ void TestFrForce_::TestGetForceInBodyComponent() {
     EXPECT_FLOAT_EQ(force.GetFy(), m_forceInBodyAtCOG.GetFy());
     EXPECT_FLOAT_EQ(force.GetFz(), m_forceInBodyAtCOG.GetFz());
 
-    return;
+    GetForceInBody(force.GetFx(), force.GetFy(), force.GetFz(), NED);
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInBodyAtCOG_NED.GetFx());
+    EXPECT_FLOAT_EQ(force.GetFy(), m_forceInBodyAtCOG_NED.GetFy());
+    EXPECT_FLOAT_EQ(force.GetFz(), m_forceInBodyAtCOG_NED.GetFz());
 }
 
 
@@ -488,7 +441,11 @@ void TestFrForce_::TestGetTorqueInWorld() {
     EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInWorldAtCOG.GetMx());
     EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInWorldAtCOG.GetMy());
     EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInWorldAtCOG.GetMz());
-    return;
+
+    torque = GetTorqueInWorldAtCOG(NED);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInWorldAtCOG_NED.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInWorldAtCOG_NED.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInWorldAtCOG_NED.GetMz());
 }
 
 void TestFrForce_::TestGetTorqueInWorldReference() {
@@ -501,7 +458,11 @@ void TestFrForce_::TestGetTorqueInWorldReference() {
     EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInWorldAtCOG.GetMx());
     EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInWorldAtCOG.GetMy());
     EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInWorldAtCOG.GetMz());
-    return;
+
+    GetTorqueInWorldAtCOG(torque, NED);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInWorldAtCOG_NED.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInWorldAtCOG_NED.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInWorldAtCOG_NED.GetMz());
 }
 
 void TestFrForce_::TestGetTorqueInWorldComponent() {
@@ -514,7 +475,11 @@ void TestFrForce_::TestGetTorqueInWorldComponent() {
     EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInWorldAtCOG.GetMx());
     EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInWorldAtCOG.GetMy());
     EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInWorldAtCOG.GetMz());
-    return;
+
+    GetTorqueInWorldAtCOG(torque.GetMx(), torque.GetMy(), torque.GetMz(), NED);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInWorldAtCOG_NED.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInWorldAtCOG_NED.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInWorldAtCOG_NED.GetMz());
 }
 
 void TestFrForce_::TestGetTorqueInBodyReference() {
@@ -527,7 +492,11 @@ void TestFrForce_::TestGetTorqueInBodyReference() {
     EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
     EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
     EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
-    return;
+
+    GetTorqueInBodyAtCOG(torque, NED);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG_NED.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG_NED.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG_NED.GetMz());
 }
 
 void TestFrForce_::TestGetTorqueInBodyComponent() {
@@ -540,9 +509,12 @@ void TestFrForce_::TestGetTorqueInBodyComponent() {
     EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
     EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
     EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
-    return;
-}
 
+    GetTorqueInBodyAtCOG(torque.GetMx(), torque.GetMy(), torque.GetMz(), NED);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG_NED.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG_NED.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG_NED.GetMz());
+}
 
 void TestFrForce_::TestForceNorm() {
 
@@ -556,7 +528,6 @@ void TestFrForce_::TestForceNorm() {
     auto normTEST = GetForceNorm();
 
     EXPECT_FLOAT_EQ(normTEST, normREF);
-    return;
 }
 
 
@@ -572,11 +543,87 @@ void TestFrForce_::TestTorqueNorm() {
     auto normTEST = GetTorqueNormAtCOG();
 
     EXPECT_FLOAT_EQ(normTEST, normREF);
-    return;
-
 }
 
-std::shared_ptr<FrBody_> NewBody(std::shared_ptr<TestFrForce_> test) {
+void TestFrForce_::TestGetForceNED() {
+
+    this->SetForceInWorldAtCOG(m_forceInWorldAtCOG, NWU);
+
+    auto force = GetForceInWorld(NED);
+    EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG.GetFx());
+    EXPECT_FLOAT_EQ(-force.GetFy(), m_forceInWorldAtCOG.GetFy());
+    EXPECT_FLOAT_EQ(-force.GetFz(), m_forceInWorldAtCOG.GetFz());
+}
+
+void TestFrForce_::TestGetTorqueNED() {
+
+    this->SetTorqueInBodyAtCOG(m_torqueInBodyAtCOG, NWU);
+
+    auto torque = GetTorqueInBodyAtCOG(NED);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG.GetMx());
+    EXPECT_FLOAT_EQ(-torque.GetMy(), m_torqueInBodyAtCOG.GetMy());
+    EXPECT_FLOAT_EQ(-torque.GetMz(), m_torqueInBodyAtCOG.GetMz());
+}
+
+void TestFrForce_::TestSpecificCase() {
+    this->SetForceTorqueInBodyAtPointInBody(m_forceInBodyAtCOG, m_torqueInBodyAtCOG, m_PointCOGInBody, NWU);
+    CheckForceInWorldAtCOG();
+    CheckTorqueInBodyAtCOG();
+    this->SetForceTorqueInWorldAtPointInWorld(m_forceInWorldAtCOG, m_torqueInWorldAtCOG, m_PointCOGInWorld, NWU);
+    CheckForceInWorldAtCOG();
+    CheckTorqueInBodyAtCOG();
+}
+
+void TestFrForce_::TestUpdateLimitApplication() {
+
+        this->SetMaxForceLimit(m_forceLimitUser);
+        this->SetMaxTorqueLimit(m_torqueLimitUser);
+        this->SetLimit(true);
+
+        this->SetForceTorqueInBodyAtCOG(m_forceInBodyAtCOG, m_torqueInBodyAtCOG, NWU);
+        m_chronoForce->UpdateState();
+
+        auto force = GetForceInWorld(NWU);
+        auto torque = GetTorqueInBodyAtCOG(NWU);
+
+        EXPECT_FLOAT_EQ(force.GetFx(), m_forceInWorldAtCOG_limited.GetFx());
+        EXPECT_FLOAT_EQ(force.GetFy(), m_forceInWorldAtCOG_limited.GetFy());
+        EXPECT_FLOAT_EQ(force.GetFz(), m_forceInWorldAtCOG_limited.GetFz());
+
+        EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtCOG_limited.GetMx());
+        EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtCOG_limited.GetMy());
+        EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG_limited.GetMz());
+};
+
+//
+// TESTING CLASS FUNCTION
+//
+
+class TestBase : public ::testing::Test {
+
+protected:
+
+    /// Environment objects
+    FrOffshoreSystem_ system;
+    std::shared_ptr<FrBody_> body;
+    std::shared_ptr<TestFrForce_> force;
+
+    /// Initialize environment
+    void SetUp() override;
+
+    /// Create a new body object with position and orientation of the test
+    std::shared_ptr<FrBody_> NewBody(std::shared_ptr<TestFrForce_> test);
+
+};
+
+void TestBase::SetUp() {
+    force = std::make_shared<TestFrForce_>();
+    force->LoadData("TNR_database.h5");
+    body = NewBody(force);
+    system.AddBody(body);
+}
+
+std::shared_ptr<FrBody_> TestBase::NewBody(std::shared_ptr<TestFrForce_> test) {
 
     auto body = std::make_shared<FrBody_>();
     body->SetPosition(test->GetPointREFInWorld(), NWU);
@@ -587,8 +634,9 @@ std::shared_ptr<FrBody_> NewBody(std::shared_ptr<TestFrForce_> test) {
     return body;
 }
 
+
 //
-// GTEST
+// LIST OF GTEST
 //
 
 TEST(FrForce_test, MaxForceLimit) {
@@ -606,229 +654,127 @@ TEST(FrForce_test, SetLimit) {
     test.TestSetLimit();
 }
 
-TEST(FrForce_test, ForceTorqueInWorldAtPointInBody) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInWorldAtPointInBody();
+TEST_F(TestBase, ForceTorqueInWorldAtPointInBody) {
+    force->TestForceTorqueInWorldAtPointInBody();
 }
 
-TEST(FrForce_test, ForceTorqueInBodyAtPointInBody) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInBodyAtPointInBody();
+TEST_F(TestBase, ForceTorqueInBodyAtPointInBody) {
+    force->TestForceTorqueInBodyAtPointInBody();
 }
 
-TEST(FrForce_test, ForceTorqueInWorldAtPointInWorld) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInWorldAtPointInWorld();
+TEST_F(TestBase, ForceTorqueInWorldAtPointInWorld) {
+    force->TestForceTorqueInWorldAtPointInWorld();
 }
 
-TEST(FrForce_test, ForceTorqueInBodyAtPointInWorld) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInBodyAtPointInWorld();
+TEST_F(TestBase, ForceTorqueInBodyAtPointInWorld) {
+    force->TestForceTorqueInBodyAtPointInWorld();
 }
 
-
-TEST(FrForce_test, ForceTorqueInWorldAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInWorldAtCOG();
+TEST_F(TestBase, ForceTorqueInWorldAtCOG) {
+    force->TestForceTorqueInWorldAtCOG();
 }
 
-TEST(FrForce_test, ForceTorqueInBodyAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceTorqueInBodyAtCOG();
+TEST_F(TestBase, ForceTorqueInBodyAtCOG) {
+    force->TestForceTorqueInBodyAtCOG();
 }
 
-TEST(FrForce_test, TorqueInBodyAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestTorqueInBodyAtCOG();
+TEST_F(TestBase, TorqueInBodyAtCOG) {
+    force->TestTorqueInBodyAtCOG();
 }
 
-TEST(FrForce_test, TorqueInWorldAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestTorqueInWorldAtCOG();
+TEST_F(TestBase, TorqueInWorldAtCOG) {
+    force->TestTorqueInWorldAtCOG();
 }
 
-TEST(FrForce_test, ForceInBodyAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInBodyAtCOG();
+TEST_F(TestBase, ForceInBodyAtCOG) {
+    force->TestForceInBodyAtCOG();
 }
 
-TEST(FrForce_test, ForceInWorldAtCOG) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInWorldAtCOG();
+TEST_F(TestBase, ForceInWorldAtCOG) {
+    force->TestForceInWorldAtCOG();
 }
 
-TEST(FrForce_test, ForceInWorldAtPointInBody) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInWorldAtPointInBody();
+TEST_F(TestBase, ForceInWorldAtPointInBody) {
+    force->TestForceInWorldAtPointInBody();
 }
 
-TEST(FrForce_test, ForceInWorldAtPointInWorld) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInWorldAtPointInWorld();
+TEST_F(TestBase, ForceInWorldAtPointInWorld) {
+    force->TestForceInWorldAtPointInWorld();
 }
 
-TEST(FrForce_test, ForceInBodyAtPointInBody) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInBodyAtPointInBody();
+TEST_F(TestBase, ForceInBodyAtPointInBody) {
+    force->TestForceInBodyAtPointInBody();
 }
 
-TEST(FrForce_test, ForceInBodyAtPointInWorld) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceInBodyAtPointInWorld();
+TEST_F(TestBase, ForceInBodyAtPointInWorld) {
+    force->TestForceInBodyAtPointInWorld();
 }
 
-TEST(FrForce_test, GetForceInWorldReference) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetForceInWorldReference();
+TEST_F(TestBase, GetForceInWorldReference) {
+   force->TestGetForceInWorldReference();
 }
 
-TEST(FrForce_test, GetForceInWorldComponent) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetForceInWorldComponent();
+TEST_F(TestBase, GetForceInWorldComponent) {
+    force->TestGetForceInWorldComponent();
 }
 
-TEST(FrForce_test, GetForceInBody) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetForceInBody();
+TEST_F(TestBase, GetForceInBody) {
+    force->TestGetForceInBody();
 }
 
-TEST(FrForce_test, GetForceInBodyReference) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetForceInBodyReference();
+TEST_F(TestBase, GetForceInBodyReference) {
+    force->TestGetForceInBodyReference();
 }
 
-TEST(FrForce_test, GetForceInBodyComponent) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetForceInBodyComponent();
+TEST_F(TestBase, GetForceInBodyComponent) {
+    force->TestGetForceInBodyComponent();
 }
 
-TEST(FrForce_test, GetTorqueInWorld) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetTorqueInWorld();
+TEST_F(TestBase, GetTorqueInWorld) {
+    force->TestGetTorqueInWorld();
 }
 
-TEST(FrForce_test, GetTorqueInWorldReference) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetTorqueInWorldReference();
+TEST_F(TestBase, GetTorqueInWorldReference) {
+    force->TestGetTorqueInWorldReference();
 }
 
-TEST(FrForce_test, GetTorqueInBodyReference) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetTorqueInWorldReference();
+TEST_F(TestBase, GetTorqueInBodyReference) {
+    force->TestGetTorqueInBodyReference();
 }
 
-TEST(FrForce_test, GetTorqueInBodyComponent) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestGetTorqueInBodyComponent();
+TEST_F(TestBase,GetTorqueInBodyComponent) {
+    force->TestGetTorqueInBodyComponent();
 }
 
-TEST(FrForce_test, ForceNorm) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestForceNorm();
+TEST_F(TestBase,GetTorqueInWorldComponent) {
+    force->TestGetTorqueInWorldComponent();
 }
 
-TEST(FrForce_test, TorqueNorm) {
-    FrOffshoreSystem_ system;
-    auto test = std::make_shared<TestFrForce_>();
-    test->CreateDataset();
-    auto body = NewBody(test);
-    system.AddBody(body);
-    test->TestTorqueNorm();
+TEST_F(TestBase, ForceNorm) {
+    force->TestForceNorm();
 }
 
+TEST_F(TestBase, TorqueNorm) {
+    force->TestTorqueNorm();
+}
+
+TEST_F(TestBase, GetForceNED) {
+    force->TestGetForceNED();
+}
+
+TEST_F(TestBase, GetTorqueNED) {
+    force->TestGetTorqueNED();
+}
+
+TEST_F(TestBase, SpecificCase) {
+    force->TestSpecificCase();
+}
+
+TEST_F(TestBase, UpdateLimitApplication) {
+    force->TestUpdateLimitApplication();
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
