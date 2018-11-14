@@ -868,58 +868,92 @@ TEST(FrBodyTest,AngularAcceleration) {
 
 
 void Test_AllGetAcceleration(const std::shared_ptr<FrBody_> body,
-                             const Acceleration &AccelerationInWorld, const AngularAcceleration &AngularAccelerationInWorld,
+                             const Acceleration &COGAccelerationInWorld,
+                             const AngularAcceleration &AngularAccelerationInWorld,
+                             const AngularVelocity &AngularVelocityInWorld,
                              bool is_Rotation, FRAME_CONVENTION fc){
 
-    Acceleration AccelerationInBody = AccelerationInWorld;
-    if (is_Rotation) EasyRotateInv(AccelerationInBody,fc);
+    Acceleration COGAccelerationInBody = COGAccelerationInWorld;
+    if (is_Rotation) EasyRotateInv(COGAccelerationInBody,fc);
+
+    Position OGInWorld = body->GetCOGPositionInWorld(fc) - body->GetPosition(fc);
 
     //-----------------COG Acceleration-----------------//
     // Test Getter for the COG Acceleration expressed in the world reference frame
-    Acceleration testAcceleration = body->GetCOGAccelerationInWorld(fc) - AccelerationInWorld;
-//    testAcceleration -= AngularAccelerationInWorld.cross(body->GetCOGPositionInWorld(fc) - body->GetPosition(fc));
+//    Acceleration AccelerationToCompare = COGAccelerationInWorld ;//+ AngularAccelerationInWorld.cross(OGInWorld)
+//            + 2.*AngularVelocityInWorld.cross(body->GetCOGVelocityInWorld(fc))
+//            + AngularVelocityInWorld.cross(AngularVelocityInWorld.cross(OGInWorld)) ;
+    Acceleration testAcceleration = body->GetCOGAccelerationInWorld(fc) - COGAccelerationInWorld;
     EXPECT_TRUE(testAcceleration.isZero());
     if (not(testAcceleration.isZero())) {
-        std::cout<<AccelerationInWorld<<std::endl;
         std::cout<<body->GetCOGAccelerationInWorld(fc)<<std::endl;
+        std::cout<<COGAccelerationInWorld<<std::endl;
     }
 
     // Test Getter for the COG Acceleration expressed in the body reference frame
 //    testAcceleration = - AngularAccelerationInWorld.cross(body->GetCOGPositionInWorld(fc) - body->GetPosition(fc));
 //    if (is_Rotation) testAcceleration = EasyRotateInv(testAcceleration);
-    testAcceleration = body->GetCOGAccelerationInBody(fc) - AccelerationInBody;
+    testAcceleration = body->GetCOGAccelerationInBody(fc) - COGAccelerationInBody;
     EXPECT_TRUE(testAcceleration.isZero());
+    if (not(testAcceleration.isZero())) {
+        std::cout<<body->GetCOGAccelerationInBody(fc)<<std::endl;
+        std::cout<<COGAccelerationInBody<<std::endl;
+    }
 
     //-----------------PointInBody-----------------//
     Position PointInBody(5.,6.,7.);    Position PointInWorld(7.,6.,5.);
+
     // Test Getter for the Acceleration expressed in the world reference frame, at a Point expressed in body reference frame
-    testAcceleration = body->GetAccelerationInWorldAtPointInBody(PointInBody, fc) - AccelerationInWorld;
-//    testAcceleration -= AngularAccelerationInWorld.cross(body->GetPointPositionInWorld(PointInBody, fc) - body->GetPosition(fc));
-    EXPECT_TRUE(testAcceleration.isZero());
-
-    // Test Getter for the Acceleration expressed in the world reference frame, at a Point expressed in world reference frame
-    testAcceleration = body->GetAccelerationInWorldAtPointInWorld(PointInWorld, fc) - AccelerationInWorld;
-//    testAcceleration -= AngularAccelerationInWorld.cross(PointInWorld - body->GetPosition(fc));
-    EXPECT_TRUE(testAcceleration.isZero());
-
-    // Test Getter for the Acceleration expressed in the body reference frame, at a Point expressed in body reference frame
-//    testAcceleration = - AngularAccelerationInWorld.cross(body->GetPointPositionInWorld(PointInBody, fc) - body->GetPosition(fc));
-//    if (is_Rotation) testAcceleration = EasyRotateInv(testAcceleration);
-    testAcceleration = body->GetAccelerationInBodyAtPointInBody(PointInBody, fc) - AccelerationInBody;
+    Position PG = body->GetPointPositionInWorld(PointInBody,fc) - body->GetCOGPositionInWorld(fc);
+    Acceleration AccelerationToCompare = COGAccelerationInWorld + AngularAccelerationInWorld.cross(PG)
+                            + AngularVelocityInWorld.cross(AngularVelocityInWorld.cross(PG)) ;
+    testAcceleration = body->GetAccelerationInWorldAtPointInBody(PointInBody, fc) - AccelerationToCompare;
     EXPECT_TRUE(testAcceleration.isZero());
     if (not(testAcceleration.isZero())) {
-        std::cout<<AccelerationInBody<<std::endl;
+        std::cout<<body->GetAccelerationInWorldAtPointInBody(PointInBody, fc)<<std::endl;
+        std::cout<<AccelerationToCompare<<std::endl;
+    }
+
+    // Test Getter for the Acceleration expressed in the world reference frame, at a Point expressed in world reference frame
+    PG = PointInWorld - body->GetCOGPositionInWorld(fc);
+    AccelerationToCompare = COGAccelerationInWorld + AngularAccelerationInWorld.cross(PG)
+                            + AngularVelocityInWorld.cross(AngularVelocityInWorld.cross(PG)) ;
+    testAcceleration = body->GetAccelerationInWorldAtPointInWorld(PointInWorld, fc) - AccelerationToCompare;
+    EXPECT_TRUE(testAcceleration.isZero());
+    if (not(testAcceleration.isZero())) {
+        std::cout<<body->GetAccelerationInWorldAtPointInWorld(PointInBody, fc)<<std::endl;
+        std::cout<<AccelerationToCompare<<std::endl;
+    }
+
+    // Test Getter for the Acceleration expressed in the body reference frame, at a Point expressed in body reference frame
+    PG = body->GetPointPositionInWorld(PointInBody,fc) - body->GetCOGPositionInWorld(fc);
+    AccelerationToCompare = COGAccelerationInWorld + AngularAccelerationInWorld.cross(PG)
+                            + AngularVelocityInWorld.cross(AngularVelocityInWorld.cross(PG)) ;
+//    testAcceleration = - AngularAccelerationInWorld.cross(body->GetPointPositionInWorld(PointInBody, fc) - body->GetPosition(fc));
+//    if (is_Rotation) testAcceleration = EasyRotateInv(testAcceleration);
+    testAcceleration = body->GetAccelerationInBodyAtPointInBody(PointInBody, fc);
+    if (is_Rotation) testAcceleration = EasyRotate(testAcceleration,fc);
+    testAcceleration -= AccelerationToCompare;
+    EXPECT_TRUE(testAcceleration.isZero());
+    if (not(testAcceleration.isZero())) {
         std::cout<<body->GetAccelerationInBodyAtPointInBody(PointInBody, fc)<<std::endl;
+        std::cout<<AccelerationToCompare<<std::endl;
     }
 
     // Test Getter for the Acceleration expressed in the body reference frame, at a Point expressed in world reference frame
+    PG = PointInWorld - body->GetCOGPositionInWorld(fc);
+    AccelerationToCompare = COGAccelerationInWorld + AngularAccelerationInWorld.cross(PG)
+                            + AngularVelocityInWorld.cross(AngularVelocityInWorld.cross(PG)) ;
+    testAcceleration = body->GetAccelerationInBodyAtPointInWorld(PointInWorld, fc);
+    if (is_Rotation) testAcceleration = EasyRotate(testAcceleration,fc);
+    testAcceleration -= AccelerationToCompare;
 //    testAcceleration = - AngularAccelerationInWorld.cross(PointInWorld - body->GetPosition(fc));
 //    if (is_Rotation) testAcceleration = EasyRotateInv(testAcceleration);
-    testAcceleration = body->GetAccelerationInBodyAtPointInWorld(PointInWorld, fc) - AccelerationInBody;
+//    testAcceleration = body->GetAccelerationInBodyAtPointInWorld(PointInWorld, fc) - COGAccelerationInBody;
     EXPECT_TRUE(testAcceleration.isZero());
     if (not(testAcceleration.isZero())) {
-        std::cout<<AccelerationInBody<<std::endl;
         std::cout<<body->GetAccelerationInBodyAtPointInWorld(PointInWorld, fc)<<std::endl;
+        std::cout<<AccelerationToCompare<<std::endl;
     }
 
 
@@ -928,6 +962,7 @@ void Test_AllGetAcceleration(const std::shared_ptr<FrBody_> body,
 
 TEST(FrBodyTest,Acceleration){
     FRAME_CONVENTION fc = NED;
+    bool is_orientation = false;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -943,19 +978,21 @@ TEST(FrBodyTest,Acceleration){
     Acceleration AccelerationInWorld(5.,6.,9.);
     body->SetAccelerationInWorldNoRotation(AccelerationInWorld, fc);
     AngularAcceleration AngularAccelerationInWorld = body->GetAngularAccelerationInWorld(fc);
+    AngularVelocity AngularVelocityInWorld = body->GetAngularVelocityInWorld(fc);
 
-    Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, false, fc);
+    Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
 
     //+++++SetAccelerationInBodyNoRotation+++++//
     Acceleration AccelerationInBody(7.,2.,4.);
     body->SetAccelerationInBodyNoRotation(AccelerationInBody, fc);
 
-    Test_AllGetAcceleration(body, AccelerationInBody, AngularAccelerationInWorld, false, fc);
+    Test_AllGetAcceleration(body, AccelerationInBody, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
 
 }
 
 TEST(FrBodyTest,AccelerationWithOrientation){
     FRAME_CONVENTION fc = NED;
+    bool is_orientation = true;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -975,25 +1012,100 @@ TEST(FrBodyTest,AccelerationWithOrientation){
     FrRotation_ TotalRotation = Rotation1*Rotation2;
     body->SetRotation(TotalRotation);
 
-    bool is_orientation = true;
-
     //+++++SetAccelerationInWorldNoRotation+++++//
     Acceleration AccelerationInWorld(5.,6.,9.);
     body->SetAccelerationInWorldNoRotation(AccelerationInWorld, fc);
-    AngularAcceleration AngularAccelerationInWorld = body->GetAngularAccelerationInWorld(fc);
+    auto AngularAccelerationInWorld = body->GetAngularAccelerationInWorld(fc);
+    auto AngularVelocityInWorld = body->GetAngularVelocityInWorld(fc);
 
-    Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, is_orientation, fc);
+    Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
 
     //+++++SetAccelerationInBodyNoRotation+++++//
     const Acceleration AccelerationInBody(7.,2.,4.);
     body->SetAccelerationInBodyNoRotation(AccelerationInBody, fc);
 
     AccelerationInWorld = EasyRotate(AccelerationInBody,fc);
-    Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, is_orientation, fc);
+    Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
 
 }
 
+TEST(FrBodyTest,AccelerationWithAngularVelocityAndAcceleration){
+    FRAME_CONVENTION fc = NED;
+    bool is_orientation = false;
+    // Body Instantiation
+    auto body = std::make_shared<FrBody_>();
 
+    Position OrigWorldPos(1.,2.,3.);
+    body->SetPosition(OrigWorldPos, fc);
+
+    //-----------------COG-----------------//
+    // Set the COG position, expressed in the body reference frame
+    Position OrigLocalCOGPos(6.,5.,4.);
+    body->SetCOG(OrigLocalCOGPos, fc);
+
+    //-----------------Generalized Velocity, imposed at COG-----------------//
+    Velocity VelocityInWorld(2.,8.,6.);
+    AngularVelocity AngularVelocityInWorld(1.,5.,9.);
+//    AngularVelocity AngularVelocityInWorld(0.,0.,0.);
+    body->SetGeneralizedVelocityInWorldAtPointInBody(OrigLocalCOGPos, VelocityInWorld, AngularVelocityInWorld, fc);
+
+    //-----------------Generalized Acceleration, imposed at COG-----------------//
+    // If we use these 2 methods (SetAccelerationInWorldNoRotation followed by SetAngularAccelerationInWorld),
+    // the linear velocity is imposed on the COG !!!
+    //+++++SetAccelerationInWorldNoRotation+++++//
+    Acceleration AccelerationInWorld(5.,6.,9.);
+    body->SetAccelerationInWorldNoRotation(AccelerationInWorld, fc);
+
+    //-----------------Angular Acceleration-----------------//
+    AngularAcceleration AngularAccelerationInWorld(5.,8.,4.);
+    body->SetAngularAccelerationInWorld(AngularAccelerationInWorld,fc);
+
+    Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
+
+}
+
+TEST(FrBodyTest,AccelerationWithOrientationAndAngularVelocityAndAcceleration){
+    FRAME_CONVENTION fc = NED;
+    bool is_orientation = true;
+    // Body Instantiation
+    auto body = std::make_shared<FrBody_>();
+
+    Position OrigWorldPos(1.,2.,3.);
+    body->SetPosition(OrigWorldPos, fc);
+
+    //-----------------COG-----------------//
+    // Set the COG position, expressed in the body reference frame
+    Position OrigLocalCOGPos(6.,5.,4.);
+    body->SetCOG(OrigLocalCOGPos, fc);
+
+    //-----------------Orientation-----------------//
+    // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
+    // Rotation to an easy transformation (X = z, Y = x, Z = y)
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
+    FrRotation_ TotalRotation = Rotation1*Rotation2;
+    body->SetRotation(TotalRotation);
+
+    //-----------------Generalized Velocity, imposed at COG-----------------//
+    Velocity VelocityInWorld(2.,8.,6.);
+    AngularVelocity AngularVelocityInWorld(1.,5.,9.);
+//    AngularVelocity AngularVelocityInWorld(0.,0.,0.);
+    body->SetGeneralizedVelocityInWorldAtPointInBody(OrigLocalCOGPos, VelocityInWorld, AngularVelocityInWorld, fc);
+
+    //-----------------Generalized Acceleration, imposed at COG-----------------//
+    // If we use these 2 methods (SetAccelerationInWorldNoRotation followed by SetAngularAccelerationInWorld),
+    // the linear velocity is imposed on the COG !!!
+    //+++++SetAccelerationInWorldNoRotation+++++//
+    Acceleration AccelerationInWorld(5.,6.,9.);
+    body->SetAccelerationInWorldNoRotation(AccelerationInWorld, fc);
+
+    //-----------------Angular Acceleration-----------------//
+    AngularAcceleration AngularAccelerationInWorld(5.,8.,4.);
+    body->SetAngularAccelerationInWorld(AngularAccelerationInWorld,fc);
+
+    Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
+
+}
 
 TEST(FrBodyTest,ProjectVectorMethods){
 

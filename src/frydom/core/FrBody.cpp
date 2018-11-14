@@ -603,6 +603,7 @@ namespace frydom {
         coord.pos = internal::Vector3dToChVector(worldAccTmp);
         coord.rot.SetNull();
         m_chronoBody->SetCoord_dtdt(coord);
+        m_chronoBody->UpdateAfterMove();
     }
 
     void FrBody_::SetAccelerationInBodyNoRotation(const Acceleration &bodyAcc, FRAME_CONVENTION fc) {
@@ -623,6 +624,7 @@ namespace frydom {
         auto worldAngVelTmp = worldAngVel;
         if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngVelTmp);
         m_chronoBody->SetWvel_par(internal::Vector3dToChVector(worldAngVelTmp));
+        m_chronoBody->UpdateAfterMove();
     }
 
     void FrBody_::SetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
@@ -644,6 +646,7 @@ namespace frydom {
         if (IsNED(fc)) internal::SwapFrameConvention<AngularAcceleration>(worldAngAccTmp);
         auto chronoAngAcc = internal::Vector3dToChVector(worldAngAccTmp);
         m_chronoBody->SetWacc_par(chronoAngAcc); // FIXME : dans chrono, l'argument d'entree n'est pas const... -> fix Chrono
+        m_chronoBody->UpdateAfterMove();
     }
 
     void FrBody_::SetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
@@ -732,7 +735,6 @@ namespace frydom {
         Velocity cogVel = bodyVel + bodyAngVel.cross(PG);
         SetVelocityInBodyNoRotation(cogVel, fc);
         SetAngularVelocityInBody(bodyAngVel, fc);
-        m_chronoBody->UpdateAfterMove();
     }
 
 
