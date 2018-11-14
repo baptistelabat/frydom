@@ -61,7 +61,7 @@ namespace frydom {
         /// Return the field model of the flow
         /// \tparam Field Field model
         /// \return Field model pointer
-        template <class T>
+        template <class T=FrUniformField>
         T* GetField() const;
 
         FrUniformField* GetFieldUniform() const;

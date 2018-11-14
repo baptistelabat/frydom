@@ -20,7 +20,7 @@ namespace frydom {
 
     Velocity FrFlowBase::GetRelativeVelocityInFrame(const FrFrame_ &frame, const Velocity &worldVel,
                                                     FRAME_CONVENTION fc) const {
-        Velocity fluxVelocityInWorld = GetFluxVelocityInWorld(frame.GetPosition(fc), fc);
+        Velocity fluxVelocityInWorld = GetFluxVelocityInWorld(frame.GetPosition(fc), fc) - worldVel;
         return frame.GetQuaternion().GetInverse().Rotate(fluxVelocityInWorld, fc);
     }
 

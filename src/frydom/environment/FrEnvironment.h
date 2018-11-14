@@ -252,8 +252,6 @@ namespace frydom {
     class FrUniformWind_;
     class FrUniformCurrent_;
     class FrFlowBase;
-    class FrWind_;
-    class FrCurrent_;
     class FrCurrent_;
     class FrWind_;
     class Velocity;

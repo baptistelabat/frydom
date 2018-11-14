@@ -112,10 +112,7 @@ void TestFrUniformWind_::LoadData(std::string filename) {
 void TestFrUniformWind_::SetUp() {
 
     LoadData("TNR_database.h5");
-    //system.GetEnvironment()->GetWind()->NewField<FrUniformField>();
-    //system.GetEnvironment()->GetWind()->GetFieldUniform()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
-    system.GetEnvironment()->GetWind()->GetField<FrUniformField>()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
-
+    system.GetEnvironment()->GetWind()->GetFieldUniform()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
 }
 
 void TestFrUniformWind_::TestGetWorldFluxVelocity() {
