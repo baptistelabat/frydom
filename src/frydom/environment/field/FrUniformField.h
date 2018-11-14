@@ -8,6 +8,7 @@
 #include "chrono/core/ChVector.h"  // TODO supprimer a terme
 
 #include "frydom/core/FrObject.h"
+#include "frydom/environment/field/FrFieldBase.h"
 
 #include "frydom/core/FrVector.h"
 #include "frydom/core/FrGeographic.h"
@@ -103,7 +104,7 @@ namespace frydom {
         ///////// REFACTORING ------------>>>>>>>>>>>>>>>>>>><
 
 
-        class FrUniformCurrentField_ : public FrObject {
+        class FrUniformField : public FrFieldBase {
 
             // TODO: Avoir un current asset sur le meme modele que FrForceAsset qui place un vecteur
             // courant devant le bateau avec la fleche sur un cercle entourant le bateau et pointant
@@ -116,41 +117,90 @@ namespace frydom {
             public:
 
             /// Default constructor: No current
-            FrUniformCurrentField_() = default;
+            FrUniformField() = default;
 
             /// Constructor from a velocity vector embedding direction and magnitude (in m/s)
+            /// \param velocity
+            /// \param fc
+            /// \param dc
             void Set(const Velocity& velocity, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
             /// Constructor from an angle and a magnitude.
+            /// \param angle
+            /// \param magnitude
+            /// \param angleUnit
+            /// \param speedUnit
+            /// \param fc
+            /// \param dc
             void Set(double  angle, double  magnitude,
                      ANGLE_UNIT angleUnit, SPEED_UNIT speedUnit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
+
+            void Set(std::function<Velocity(FRAME_CONVENTION)> direction, double magnitude,
+                     SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
+
+            ///
+            /// \param magnitude
+            /// \param speed_unit
+            /// \param dc
             void SetNorth(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            ///
+            /// \param magnitude
+            /// \param speed_unit
+            /// \param dc
             void SetNorthEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            ///
+            /// \param magnitude
+            /// \param speed_unit
+            /// \param dc
             void SetEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            ///
+            /// \param magnitude
+            /// \param speed_unit
+            /// \param dc
             void SetSouthEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            ///
+            /// \param magnitude
+            /// \param speed_unit
+            /// \param dc
             void SetSouth(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            ///
+            /// \param magnitude
+            /// \param speed_unit
+            /// \param dc
             void SetSouthWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            ///
+            /// \param magnitude
+            /// \param speed_unit
+            /// \param dc
             void SetWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            ///
+            /// \param magnitude
+            /// \param speed_unit
+            /// \param dc
             void SetNorthWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            /// Return the flow velocity at a given point in world frame
+            /// \param worldPos Position of the Point in world frame
+            /// \param fc Frame convention (NED/NWU)
+            /// \return Velocity in world frame
+            Velocity GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) const override;
+
+            /// Update the state of the field model (virtual pure)
+            /// \param time Current time of the simulation
             void Update(double time);
 
-            Velocity GetWorldFluxVelocity(FRAME_CONVENTION fc);
-
-            double GetAngle(DIRECTION_CONVENTION dc, FRAME_CONVENTION fc, ANGLE_UNIT angleUnit);
-
-            double GetMagnitude(SPEED_UNIT speedUnit);
-
+            /// Initialize the field object
             void Initialize() override;
 
+            /// Method of be applied at the end of each time step
             void StepFinalize() override;
 
         };

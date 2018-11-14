@@ -243,20 +243,6 @@ namespace frydom {
 
     // TODO : avoir un generalizedDirection ?? (direction lineaire + direction en rotation) --> definir produit vectoriel -> utile pour maillage
 
-    namespace internal {
-        // =================================================================================================================
-        // SYMBOLIC DIRECTIONS EXPRESSED IN THE NED FRAME (please do not forget the NED aspect !)
-        // =================================================================================================================
-        extern const Direction NORTH;        ///< North direction
-        extern const Direction NORTH_EAST;   ///< North-East direction
-        extern const Direction EAST;         ///< East direction
-        extern const Direction SOUTH_EAST;   ///< South-East direction
-        extern const Direction SOUTH;        ///< South direction
-        extern const Direction SOUTH_WEST;   ///< South-West direction
-        extern const Direction WEST;         ///< West direction
-        extern const Direction NORTH_WEST;   ///< North-West direction
-    } // end namespace internal
-
     class Velocity : public mathutils::Vector3d<double> {
 
     public:
@@ -300,27 +286,7 @@ namespace frydom {
             return this->at(2);
         }
 
-
-        double GetXaxisAngle(mathutils::ANGLE_UNIT unit) const {
-            auto angle = atan2(this->GetVz(), this->GetVy());
-            if (unit == mathutils::DEG) { angle *= RAD2DEG; }
-            return angle;
-        }
-
-        double GetYaxisAngle(mathutils::ANGLE_UNIT unit) const {
-            auto angle = atan2(this->GetVx(), this->GetVz());
-            if (unit == mathutils::DEG) { angle *= RAD2DEG; }
-            return angle;
-        }
-
-        double GetZaxisAngle(mathutils::ANGLE_UNIT unit) const {
-            auto angle = atan2(this->GetVy(), this->GetVx());
-            if (unit == mathutils::DEG) { angle *= RAD2DEG; }
-            return angle;
-        }
-
     };
-
 
     class AngularVelocity : public mathutils::Vector3d<double> {
 
@@ -404,6 +370,19 @@ namespace frydom {
         }
 
     };
+
+    // =================================================================================================================
+    // SYMBOLIC VELOCITY FUNCTION EXPRESSED WITH CARDINAL
+    // =================================================================================================================
+
+    const Velocity NORTH(FRAME_CONVENTION fc);
+    const Velocity NORTH_EAST(FRAME_CONVENTION fc);
+    const Velocity EAST(FRAME_CONVENTION fc);
+    const Velocity SOUTH_EAST(FRAME_CONVENTION fc);
+    const Velocity SOUTH(FRAME_CONVENTION fc);
+    const Velocity SOUTH_WEST(FRAME_CONVENTION fc);
+    const Velocity WEST(FRAME_CONVENTION fc);
+    const Velocity NORTH_WEST(FRAME_CONVENTION fc);
 
 
     class Acceleration : public mathutils::Vector3d<double> {
@@ -708,8 +687,9 @@ namespace frydom {
             z = -z;
         }
 
-
     }  // end namespace internal
+
+
 
 }  // end namespace frydom
 
