@@ -8,7 +8,7 @@
 #include "frydom/core/FrObject.h"
 #include "frydom/core/FrGeographic.h"
 
-#include "frydom/environment/field/FrUniformCurrentField.h"  // TODO : include a retirer
+#include "frydom/environment/field/FrUniformField.h"  // TODO : include a retirer
 
 #include "frydom/core/FrVector.h"
 #include "frydom/core/FrUnits.h"
@@ -45,10 +45,10 @@ namespace frydom {
     // ================================================================
 
     class FrUniformWind : virtual public FrWind,
-                          virtual public FrUniformCurrentField {
+                          virtual public FrUniformField {
     public:
         /// Inheritance of the base constructor
-        using FrUniformCurrentField::FrUniformCurrentField;
+        using FrUniformField::FrUniformField;
     private:
         // Current velocity from FrUniformCurrentField
     public:
@@ -56,17 +56,18 @@ namespace frydom {
         ~FrUniformWind() = default;
 
         /// Update method from uniform current field class
-        void Update(double time) override { FrUniformCurrentField::Update(time); }
+        void Update(double time) override { FrUniformField::Update(time); }
 
         /// Get the vector field
         chrono::ChVector<> GetFluxVector(FRAME_CONVENTION frame = NWU) override {
-            return FrUniformCurrentField::GetFluxVector(frame); }
+            //return FrUniformField::GetFluxVelocityInWorld(frame);
+        }
 
         /// Method of initialization from uniform current field class
-        void Initialize() override { FrUniformCurrentField::Initialize(); }
+        void Initialize() override { FrUniformField::Initialize(); }
 
         /// Method of finalize step from uniform current field class
-        void StepFinalize() override { FrUniformCurrentField::StepFinalize(); }
+        void StepFinalize() override { FrUniformField::StepFinalize(); }
     };
 
 
@@ -83,62 +84,7 @@ namespace frydom {
 
     /// REFACTORING ------------>>>>>>>>>>>>>><
 
-    class FrEnvironment_;
-    class FrFrame_;
-
-
-    // ================================================================
-    // FrWind : Base wind field
-    // ================================================================
-
-    class FrWind_ : public FrObject {
-
-    public:
-
-        ~FrWind_() = default;
-
-        virtual Velocity GetWorldFluxVelocity(const Position &worldPos, FRAME_CONVENTION fc) = 0;
-
-        virtual void Update(double time) = 0;
-
-        Velocity GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel, FRAME_CONVENTION fc);
-
-    };
-
-
-    // ================================================================
-    // FrUniformWind : uniform wind profile class
-    // ================================================================
-
-    // Forward declaration
-    class FrUniformCurrentField_;
-
-    class FrUniformWind_ : public FrWind_ {
-
-    private:
-        FrEnvironment_* m_environment;
-        std::unique_ptr<FrUniformCurrentField_> m_uniformField;
-
-    public:
-
-        explicit FrUniformWind_(FrEnvironment_* environment);
-
-        ~FrUniformWind_() = default;
-
-        FrUniformCurrentField_* GetField();
-
-        /// Update method from uniform current field class
-        void Update(double time) override;
-
-        /// Get the vector field
-        Velocity GetWorldFluxVelocity(const Position &worldPos, FRAME_CONVENTION fc) override;
-
-        /// Method of initialization from uniform current field class
-        void Initialize() override;
-
-        /// Method of finalize step from uniform current field class
-        void StepFinalize() override;
-    };
+    /// -> use FrFlowField
 
 }  // end namespace frydom
 #endif //FRYDOM_FRWIND_H

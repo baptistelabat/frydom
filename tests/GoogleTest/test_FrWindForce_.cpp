@@ -6,7 +6,6 @@
 #include "frydom/frydom.h"
 #include "gtest/gtest.h"
 
-#include <type_traits>
 
 using namespace frydom;
 
@@ -113,13 +112,15 @@ void TestFrUniformWind_::LoadData(std::string filename) {
 void TestFrUniformWind_::SetUp() {
 
     LoadData("TNR_database.h5");
-    system.GetEnvironment()->GetWind()->GetField()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
+    //system.GetEnvironment()->GetWind()->NewField<FrUniformField>();
+    //system.GetEnvironment()->GetWind()->GetFieldUniform()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
+    system.GetEnvironment()->GetWind()->GetField<FrUniformField>()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
 
 }
 
 void TestFrUniformWind_::TestGetWorldFluxVelocity() {
 
-    Velocity velocity = system.GetEnvironment()->GetWind()->GetWorldFluxVelocity(m_PointInWorld, m_frame);
+    Velocity velocity = system.GetEnvironment()->GetWind()->GetFluxVelocityInWorld(m_PointInWorld, m_frame);
     Velocity velocityREF = velocity - m_PointVelocityInWorld;
 
     EXPECT_FLOAT_EQ(velocity.GetVx(), m_VelocityInWorld.GetVx());
@@ -150,7 +151,7 @@ TEST_F(TestFrUniformWind_, StepFinalize) {
 }
 
 TEST_F(TestFrUniformWind_, GetField) {
-    auto field = system.GetEnvironment()->GetWind()->GetField();
+    auto field = system.GetEnvironment()->GetWind()->GetFieldUniform();
 }
 
 TEST_F(TestFrUniformWind_, TestWorldFluxVelocity) {
@@ -258,7 +259,7 @@ void TestFrWindForce_::TestForce() {
     Torque torqueTemp;
 
     for (unsigned int i=0; i<wind_speed.size(); i++) {
-        system.GetEnvironment()->GetWind()->GetField()->Set(wind_dir(i), wind_speed(i), angleUnit, speedUnit, frame, convention);
+        system.GetEnvironment()->GetWind()->GetFieldUniform()->Set(wind_dir(i), wind_speed(i), angleUnit, speedUnit, frame, convention);
         force->Update(false);
         force->GetForceInWorld(forceTemp, NWU);
         force->GetTorqueInBodyAtCOG(torqueTemp, NWU);

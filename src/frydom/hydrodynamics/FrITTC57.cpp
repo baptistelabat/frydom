@@ -10,6 +10,7 @@
 //#include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/environment/FrEnvironmentInc.h"
 //#include "frydom/environment/current/FrCurrent.h"
+#include "frydom/environment/FrFlowBase.h"
 #include "frydom/core/FrBody.h"
 
 

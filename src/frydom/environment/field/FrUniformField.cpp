@@ -2,7 +2,7 @@
 // Created by camille on 27/02/18.
 //
 
-#include "FrUniformCurrentField.h"
+#include "FrUniformField.h"
 
 
 namespace frydom {

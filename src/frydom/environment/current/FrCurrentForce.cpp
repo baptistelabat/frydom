@@ -3,6 +3,7 @@
 //
 
 #include "FrCurrentForce.h"
+#include "frydom/environment/FrFlowBase.h"
 
 #include "chrono/physics/ChBody.h"
 

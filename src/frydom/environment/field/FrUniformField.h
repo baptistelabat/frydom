@@ -2,8 +2,8 @@
 // Created by camille on 27/02/18.
 //
 
-#ifndef FRYDOM_FRUNIFORMCURRENTFIELD_H
-#define FRYDOM_FRUNIFORMCURRENTFIELD_H
+#ifndef FRYDOM_FRUNIFORMFIELD_H
+#define FRYDOM_FRUNIFORMFIELD_H
 
 #include "chrono/core/ChVector.h"  // TODO supprimer a terme
 
@@ -207,4 +207,4 @@ namespace frydom {
 
 }; // end namespace frydom
 
-#endif //FRYDOM_FRUNIFORMCURRENTFIELD_H
+#endif //FRYDOM_FRUNIFORMFIELD_H

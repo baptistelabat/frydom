@@ -16,10 +16,12 @@
 #include "waves/FrFreeSurface.h"
 #include "seabed/FrSeabed.h"
 
+#include "FrFlowBase.h"
+#include "frydom/environment/current/FrCurrent.h"
+#include "frydom/environment/wind/FrWind.h"
 
-#include "current/FrCurrent.h"
+
 //#include "tidal/FrTidalModel.h"
-#include "wind/FrWind.h"
 //#include "seabed/FrSeabed.h"
 
 namespace frydom {
@@ -28,8 +30,8 @@ namespace frydom {
     FrEnvironment::FrEnvironment() {
 
         m_freeSurface = std::make_unique<FrFreeSurface>();
-        m_current = std::make_unique<FrUniformCurrent>();
-        m_wind = std::make_unique<FrUniformWind>();
+        //m_current = std::make_unique<FrUniformCurrent>();
+        //m_wind = std::make_unique<FrUniformWind>();
         m_seabed = std::make_unique<FrSeabed>();
         if (not(m_infinite_depth)) m_seabed->SetEnvironment(this);
         if (m_showSeabed) m_seabed->SetEnvironment(this);
@@ -174,8 +176,8 @@ namespace frydom {
 
     void FrEnvironment::Update(double time) {
         if (m_showFreeSurface)  m_freeSurface->Update(time);
-        m_current->Update(time);
-        m_wind->Update(time);
+        //m_current->Update(time);
+        //m_wind->Update(time);
         if (m_showSeabed) m_seabed->Update(time);
         if (not(m_infinite_depth)) m_seabed->Update(time);
         m_time = time;
@@ -185,8 +187,8 @@ namespace frydom {
     void FrEnvironment::Initialize() {
         // TODO: appeler les methodes Initialize() sur les attributs
         if (m_showFreeSurface) m_freeSurface->Initialize();
-        m_current->Initialize();
-        m_wind->Initialize();
+        //m_current->Initialize();
+        //m_wind->Initialize();
         if (m_showSeabed) m_seabed->Initialize();
         if (not(m_infinite_depth)) m_seabed->Initialize();
         m_timeZone->Initialize();
@@ -194,8 +196,8 @@ namespace frydom {
 
     void FrEnvironment::StepFinalize() {
         if (m_showFreeSurface) m_freeSurface->StepFinalize();
-        m_current->StepFinalize();
-        m_wind->StepFinalize();
+        //m_current->StepFinalize();
+        //m_wind->StepFinalize();
         if (m_showSeabed) m_seabed->StepFinalize();
         if (not(m_infinite_depth)) m_seabed->StepFinalize();
     }
@@ -260,8 +262,8 @@ namespace frydom {
         m_system = system;
 
         m_freeSurface   = std::make_unique<FrFreeSurface_>(this);
-        m_current       = std::make_unique<FrUniformCurrent_>(this);
-        m_wind          = std::make_unique<FrUniformWind_>(this);
+        m_current       = std::make_unique<FrCurrent_>(this);
+        m_wind          = std::make_unique<FrWind_>(this);
         m_seabed        = std::make_unique<FrSeabed_>(this);
 
 //        if (not(m_infinite_depth)) m_seabed->SetEnvironment(this); // TODO : voir a porter ca dans seabed...
@@ -370,12 +372,12 @@ namespace frydom {
         return m_freeSurface->GetTidal();
     }
 
-    FrUniformCurrent_* FrEnvironment_::GetCurrent() const {
-        return m_current.get();
+    FrCurrent_* FrEnvironment_::GetCurrent() const {
+        return dynamic_cast<FrCurrent_*>(m_current.get());
     }
 
-    FrUniformWind_* FrEnvironment_::GetWind() const {
-        return m_wind.get();
+    FrWind_* FrEnvironment_::GetWind() const {
+        return dynamic_cast<FrWind_*>(m_wind.get());
     }
 
 

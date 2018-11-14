@@ -3,6 +3,7 @@
 //
 
 #include "FrWindForce.h"
+#include "frydom/environment/FrFlowBase.h"
 
 #include "frydom/core/FrGeographic.h"
 #include "frydom/core/FrHydroBody.h"

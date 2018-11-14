@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FRFIELDBASE_H
 #define FRYDOM_FRFIELDBASE_H
 
+#include "frydom/core/FrObject.h"
 #include "frydom/core/FrVector.h"
 
 namespace frydom {
@@ -32,8 +33,6 @@ namespace frydom {
         void StepFinalize() override {};
 
     };
-
-
 }
 
 #endif //FRYDOM_FRFIELDBASE_H

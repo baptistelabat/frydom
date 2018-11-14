@@ -5,14 +5,20 @@
 #ifndef FRYDOM_FRFLOWBASE_H
 #define FRYDOM_FRFLOWBASE_H
 
-#include "frydom/frydom.h"
+#include "frydom/core/FrObject.h"
+#include "frydom/core/FrVector.h"
+#include "frydom/environment/field/FrFieldBase.h"
+#include "frydom/environment/field/FrUniformField.h"
 
 namespace frydom {
 
     // Forward declarations
     class FrEnvironment_;
     class FrFrame_;
-    class FrFieldBase;
+
+    enum FIELD {
+        UNIFORM
+    };
 
     ///
     /// FrFlowBase : Base flow field
@@ -22,15 +28,15 @@ namespace frydom {
 
     private:
         FrEnvironment_* m_environment;              ///< Link to the environment variable
-        std::unique_ptr<FrFieldBase> m_field;       ///< Flow field model
+        std::unique_ptr<FrFieldBase> m_field;        ///< Flow field model
 
     public:
 
         /// Default constructor
-        explicit FrFlowBase(FrEnvironment_* environment): m_environment(environment) {}
+        explicit FrFlowBase(FrEnvironment_* environment);
 
         /// Destructor of the flow base object
-        ~FrFlowBase_() = default;
+        ~FrFlowBase() = default;
 
         /// Return the flow velocity at a given point in world frame
         /// \param worldPos Position of the Point in world frame
@@ -47,14 +53,18 @@ namespace frydom {
 
         ///
         /// \tparam Field
-        template <class Field>
+        template <class T>
         void NewField();
+
+        void MakeFieldUniform();
 
         /// Return the field model of the flow
         /// \tparam Field Field model
         /// \return Field model pointer
-        template <class Field>
-        Field* GetField() const;
+        template <class T>
+        T* GetField() const;
+
+        FrUniformField* GetFieldUniform() const;
 
         /// Method of initialization of the flow base model
         void Initialize() override;
@@ -65,6 +75,24 @@ namespace frydom {
 
         //// Method to be applied at the end of each time step
         void StepFinalize() override;
+
+    };
+
+
+    class FrCurrent_ : public FrFlowBase {
+
+    public:
+        FrCurrent_(FrEnvironment_* environment) : FrFlowBase(environment) {}
+
+    };
+
+
+
+
+    class FrWind_ : public FrFlowBase {
+
+    public:
+        FrWind_(FrEnvironment_* environment) : FrFlowBase(environment) {}
 
     };
 
