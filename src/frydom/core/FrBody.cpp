@@ -641,7 +641,7 @@ namespace frydom {
 
     void FrBody_::SetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
         auto worldAngAccTmp = worldAngAcc;
-        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngAccTmp);
+        if (IsNED(fc)) internal::SwapFrameConvention<AngularAcceleration>(worldAngAccTmp);
         auto chronoAngAcc = internal::Vector3dToChVector(worldAngAccTmp);
         m_chronoBody->SetWacc_par(chronoAngAcc); // FIXME : dans chrono, l'argument d'entree n'est pas const... -> fix Chrono
     }

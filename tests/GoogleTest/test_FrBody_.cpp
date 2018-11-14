@@ -11,12 +11,12 @@ using namespace frydom;
 // From Body To World
 template <class Vector>
 inline Vector& EasyRotate(Vector& vector, FRAME_CONVENTION fc) {
-    Vector vecTem = vector;
-    if (fc==NED) {internal::SwapFrameConvention(vector);}
+    Vector vecTem;
+    if (IsNED(fc)) {internal::SwapFrameConvention<Vector>(vector);}
     vecTem[0] = vector[2];
     vecTem[1] = vector[0];
     vecTem[2] = vector[1];
-    if (fc==NED) {internal::SwapFrameConvention(vecTem);}
+    if (IsNED(fc)) {internal::SwapFrameConvention<Vector>(vecTem);}
     return vector = vecTem;
 }
 
@@ -29,12 +29,12 @@ inline Vector EasyRotate(const Vector& vector, FRAME_CONVENTION fc) {
 // From World To Body
 template <class Vector>
 inline Vector& EasyRotateInv(Vector& vector, FRAME_CONVENTION fc) {
-    Vector vecTem = vector;
-    if (fc==NED) {internal::SwapFrameConvention(vector);}
+    Vector vecTem;
+    if (IsNED(fc)) {internal::SwapFrameConvention<Vector>(vector);}
     vecTem[0] = vector[1];
     vecTem[1] = vector[2];
     vecTem[2] = vector[0];
-    if (fc==NED) {internal::SwapFrameConvention(vecTem);}
+    if (IsNED(fc)) {internal::SwapFrameConvention<Vector>(vecTem);}
     return vector = vecTem;
 }
 
@@ -50,8 +50,8 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
         bool is_Orientation, FRAME_CONVENTION out_fc){
 
     if (out_fc != in_fc) {
-        internal::SwapFrameConvention(RefPositionInWorld);
-        internal::SwapFrameConvention(COGPositionInWorld);
+        internal::SwapFrameConvention<Position>(RefPositionInWorld);
+        internal::SwapFrameConvention<Position>(COGPositionInWorld);
     }
 
     // Test body reference frame position in world reference frame
@@ -99,7 +99,7 @@ void Test_AllGetPosition(const std::shared_ptr<FrBody_> body,
 }
 
 TEST(FrBodyTest,Position) {
-    FRAME_CONVENTION fc = NWU;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -132,7 +132,7 @@ TEST(FrBodyTest,PositionNED) {
 }
 
 TEST(FrBodyTest,Translation) {
-    FRAME_CONVENTION fc = NWU;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -147,6 +147,7 @@ TEST(FrBodyTest,Translation) {
 
     //-----------------Translate Body-----------------//
     Translation BodyTranslationInWorld(1.,4.,7.);
+    if (IsNED(fc)) {internal::SwapFrameConvention<Translation>(BodyTranslationInWorld);}
     Position BodyPosition = RefPositionInWorld + BodyTranslationInWorld;
     Position COGPosition = COGPositionInWorld + BodyTranslationInWorld;
 
@@ -179,8 +180,8 @@ TEST(FrBodyTest,Translation) {
 
     //-----------------Orientation-----------------//
     // Rotation to an easy transformation
-    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,fc);
-    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,fc);
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
     FrRotation_ TotalRotation = Rotation1*Rotation2 ;
     body->SetRotation(TotalRotation);
 
@@ -207,7 +208,7 @@ void Test_AllGetRotation(const std::shared_ptr<FrBody_> body, const FrRotation_ 
 }
 
 TEST(FrBodyTest,Orientation) {
-    FRAME_CONVENTION fc = NWU;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -223,7 +224,7 @@ TEST(FrBodyTest,Orientation) {
     //-----------------Orientation-----------------//
     //+++++Set Rotation+++++//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
-    FrRotation_ BodyRotationInWorld;    BodyRotationInWorld.SetCardanAngles_DEGREES(1., 2., 3., fc);
+    FrRotation_ BodyRotationInWorld;    BodyRotationInWorld.SetCardanAngles_DEGREES(1., 2., 3., NWU);
     body->SetRotation(BodyRotationInWorld);
 
     Test_AllGetRotation(body, BodyRotationInWorld);
@@ -249,14 +250,14 @@ TEST(FrBodyTest,Orientation) {
 
     //-----------------Rotation-----------------//
     //+++++Rotate+++++//
-    FrRotation_ NewRotation; NewRotation.SetCardanAngles_DEGREES(4.,8.,3.,fc);
+    FrRotation_ NewRotation; NewRotation.SetCardanAngles_DEGREES(4.,8.,3.,NWU);
     body->Rotate(NewRotation);
 
     BodyRotationInWorld *= NewRotation;
     Test_AllGetRotation(body, BodyRotationInWorld);
 
     //+++++RotateAroundCOG+++++//
-    FrRotation_ RotationAroundCOG; RotationAroundCOG.SetCardanAngles_DEGREES(8.,6.,2.,fc);
+    FrRotation_ RotationAroundCOG; RotationAroundCOG.SetCardanAngles_DEGREES(8.,6.,2.,NWU);
     body->RotateAroundCOG(RotationAroundCOG,fc);
 
     BodyRotationInWorld *= RotationAroundCOG;
@@ -264,7 +265,7 @@ TEST(FrBodyTest,Orientation) {
 
     //+++++RotateAroundPointInWorld+++++//
     Position PointInWorld(5.,4.,8.);
-    FrRotation_ RotationAroundPointInWorld; RotationAroundPointInWorld.SetCardanAngles_DEGREES(1.,9.,7.,fc);
+    FrRotation_ RotationAroundPointInWorld; RotationAroundPointInWorld.SetCardanAngles_DEGREES(1.,9.,7.,NWU);
     body->RotateAroundPointInWorld(RotationAroundPointInWorld, PointInWorld, fc);
 
     BodyRotationInWorld *= RotationAroundPointInWorld;
@@ -272,7 +273,7 @@ TEST(FrBodyTest,Orientation) {
 
     //+++++RotateAroundPointInBody+++++//
     Position PointInBody(5.,4.,8.);
-    FrRotation_ RotationAroundPointInBody; RotationAroundPointInBody.SetCardanAngles_DEGREES(1.,9.,7.,fc);
+    FrRotation_ RotationAroundPointInBody; RotationAroundPointInBody.SetCardanAngles_DEGREES(1.,9.,7.,NWU);
     body->RotateAroundPointInWorld(RotationAroundPointInBody, PointInBody, fc);
 
     BodyRotationInWorld *= RotationAroundPointInBody;
@@ -289,8 +290,8 @@ TEST(FrBodyTest,Orientation) {
 
     //-----------------Orientation-----------------//
     // Rotation to an easy transformation
-    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,fc);
-    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,fc);
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
     FrRotation_ TotalRotation = Rotation1*Rotation2 ;
 
     // Rotate around the RefPositionInWorld, using RotateAroundPointInWorld, to check the position
@@ -301,7 +302,7 @@ TEST(FrBodyTest,Orientation) {
 }
 
 TEST(FrBodyTest,PositionWithOrientation){
-    FRAME_CONVENTION fc = NWU;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -315,8 +316,8 @@ TEST(FrBodyTest,PositionWithOrientation){
 
     //-----------------Orientation-----------------//
     // Rotation to an easy transformation
-    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,fc);
-    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,fc);
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
     FrRotation_ TotalRotation = Rotation1*Rotation2 ;
     body->SetRotation(TotalRotation);
 
@@ -344,7 +345,7 @@ void Test_GetAngularVelocity(const std::shared_ptr<FrBody_> body,
 }
 
 TEST(FrBodyTest,AngularVelocity) {
-    FRAME_CONVENTION fc = NWU;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -367,8 +368,8 @@ TEST(FrBodyTest,AngularVelocity) {
     //-----------------Orientation-----------------//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
     // Rotation to an easy transformation (X = z, Y = x, Z = y)
-    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,fc);
-    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,fc);
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
     FrRotation_ TotalRotation = Rotation1*Rotation2;
     body->SetRotation(TotalRotation);
 
@@ -462,7 +463,7 @@ void Test_AllGetVelocity(const std::shared_ptr<FrBody_> body,
 }
 
 TEST(FrBodyTest,TranslationalVelocity){
-    FRAME_CONVENTION fc = NWU;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -538,7 +539,7 @@ TEST(FrBodyTest,TranslationalVelocity){
 
 
 TEST(FrBodyTest,TranslationalVelocityWithOrientation){
-    FRAME_CONVENTION fc = NWU;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -548,8 +549,8 @@ TEST(FrBodyTest,TranslationalVelocityWithOrientation){
     //-----------------Orientation-----------------//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
     // Rotation to an easy transformation (X = z, Y = x, Z = y)
-    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,fc);
-    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,fc);
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
     FrRotation_ TotalRotation = Rotation1*Rotation2;
     body->SetRotation(TotalRotation);
 
@@ -628,7 +629,7 @@ TEST(FrBodyTest,TranslationalVelocityWithOrientation){
 
 
 TEST(FrBodyTest,TranslationalVelocityWithAngularVelocity){
-    FRAME_CONVENTION fc = NWU;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -706,7 +707,7 @@ TEST(FrBodyTest,TranslationalVelocityWithAngularVelocity){
 
 
 TEST(FrBodyTest,TranslationalVelocityWithAngularVelocityAndOrientation){
-    FRAME_CONVENTION fc = NWU;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -721,8 +722,8 @@ TEST(FrBodyTest,TranslationalVelocityWithAngularVelocityAndOrientation){
     //-----------------Orientation-----------------//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
     // Rotation to an easy transformation (X = z, Y = x, Z = y)
-    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,fc);
-    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,fc);
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
     FrRotation_ TotalRotation = Rotation1*Rotation2;
     body->SetRotation(TotalRotation);
 
@@ -805,6 +806,10 @@ void Test_GetAngularAcceleration(const std::shared_ptr<FrBody_> body,
     // Test Angular Velocity getter, expressed in world reference frame
     testAngularAcceleration = body->GetAngularAccelerationInWorld(fc) - BodyAngularAccelerationInWorld;
     EXPECT_TRUE(testAngularAcceleration.isZero());
+    if (not(testAngularAcceleration.isZero())){
+        std::cout<<body->GetAngularAccelerationInWorld(fc)<<std::endl;
+        std::cout<<BodyAngularAccelerationInWorld<<std::endl;
+    }
 
     // Test Angular Velocity getter, expressed in body reference frame
     testAngularAcceleration = body->GetAngularAccelerationInBody(fc);
@@ -814,7 +819,7 @@ void Test_GetAngularAcceleration(const std::shared_ptr<FrBody_> body,
 }
 
 TEST(FrBodyTest,AngularAcceleration) {
-    FRAME_CONVENTION fc = NWU;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -837,8 +842,8 @@ TEST(FrBodyTest,AngularAcceleration) {
     //-----------------Orientation-----------------//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
     // Rotation to an easy transformation (X = z, Y = x, Z = y)
-    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,fc);
-    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,fc);
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
     FrRotation_ TotalRotation = Rotation1*Rotation2;
     body->SetRotation(TotalRotation);
 
@@ -922,7 +927,7 @@ void Test_AllGetAcceleration(const std::shared_ptr<FrBody_> body,
 
 
 TEST(FrBodyTest,Acceleration){
-    FRAME_CONVENTION fc = fc;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -950,7 +955,7 @@ TEST(FrBodyTest,Acceleration){
 }
 
 TEST(FrBodyTest,AccelerationWithOrientation){
-    FRAME_CONVENTION fc = fc;
+    FRAME_CONVENTION fc = NED;
     // Body Instantiation
     auto body = std::make_shared<FrBody_>();
 
@@ -965,8 +970,8 @@ TEST(FrBodyTest,AccelerationWithOrientation){
     //-----------------Orientation-----------------//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
     // Rotation to an easy transformation (X = z, Y = x, Z = y)
-    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,fc);
-    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,fc);
+    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,NWU);
     FrRotation_ TotalRotation = Rotation1*Rotation2;
     body->SetRotation(TotalRotation);
 

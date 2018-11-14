@@ -9,12 +9,12 @@
 using namespace frydom;
 using namespace frydom::internal;
 
-TEST(Test_Internal,FrFrame){
+TEST(Internal,FrFrame){
     // Init a Position
-    FrRotation_ myRotation;    myRotation.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
-    
-    // Init a Rotation
     Position myPosition(1.,2.,3.);
+
+    // Init a Rotation
+    FrRotation_ myRotation;    myRotation.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
     
     // Init a Frame from these Position and Rotation
     FrFrame_ FRyDoMFrame(myPosition, myRotation, NWU);
@@ -47,9 +47,31 @@ TEST(Test_Internal,FrFrame){
     testPosition = FRyDoMFrame.GetPosition(NWU)-myPosition;
     EXPECT_TRUE(testPosition.isZero());
     EXPECT_TRUE(FRyDoMFrame.GetRotation()==myRotation);
-    
-    
-    
 
 }
 
+TEST(Internal, SwapFrameConvention) {
+
+    // Init a Position
+    const Position NWUConstPos(1.,2.,3.);
+    Position NWUPos = NWUConstPos;
+
+    const Position NEDConstPos(1.,-2.,-3.);
+    Position testPos;
+
+    // Swap NWU to NED, using non-const method
+    SwapFrameConvention(NWUPos);
+    testPos = NWUPos - NEDConstPos;
+    EXPECT_TRUE(testPos.isZero());
+
+    // Swap back to NWU, using non-const method
+    SwapFrameConvention(NWUPos);
+    testPos = NWUPos - NWUConstPos;
+    EXPECT_TRUE(testPos.isZero());
+
+    // Swap NWU to NED, using const method
+    testPos = SwapFrameConvention(NWUConstPos);
+    testPos -= NEDConstPos;
+    EXPECT_TRUE(testPos.isZero());
+
+};

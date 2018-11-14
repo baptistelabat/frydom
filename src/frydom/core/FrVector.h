@@ -664,25 +664,27 @@ namespace frydom {
 
 
     namespace internal {
-
+        /// Swap the frame convention of a templated Vector: replace the argument vector and return a reference vector.
         template <class Vector>
-        inline Vector& SwapFrameConvention(Vector& vector) {
+        inline Vector& SwapFrameConvention(Vector &vector) {
             vector[1] = -vector[1];
             vector[2] = -vector[2];
             return vector;
         }
 
+        /// Swap the frame convention of a templated Vector: only return a reference vector, does not change the argument vector
         template <class Vector>
         inline Vector SwapFrameConvention(const Vector& vector) {
             Vector out = vector;
-            return SwapFrameConvention<Vector>(out);
+            SwapFrameConvention<Vector>(out);
+            return out;
         }
 
-        inline chrono::ChVector<double>& SwapFrameConvention(chrono::ChVector<double>& vector) {
-            vector[1] = -vector[1];
-            vector[2] = -vector[2];
-            return vector;
-        }
+//        inline chrono::ChVector<double>& SwapFrameConvention(chrono::ChVector<double>& vector) {
+//            vector[1] = -vector[1];
+//            vector[2] = -vector[2];
+//            return vector;
+//        }
 
         /// Convert a chrono 3D vector into a FRyDoM Vector
         template <class Vector>

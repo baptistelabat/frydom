@@ -28,7 +28,7 @@ namespace frydom {
         Position cogPosTmp = cogPosition;
         if (IsNED(fc)) {
             internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz); // Convert to NWU
-            cogPosTmp = internal::SwapFrameConvention<Position>(cogPosTmp);
+            internal::SwapFrameConvention<Position>(cogPosTmp);
         }
 
         auto rot_rp = coeffsFrame.GetRotation().GetRotationMatrix();
