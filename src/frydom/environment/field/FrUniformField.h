@@ -116,22 +116,22 @@ namespace frydom {
 
             public:
 
-            /// Default constructor: No current
+            /// Default constructor: No field
             FrUniformField() = default;
 
-            /// Constructor from a velocity vector embedding direction and magnitude (in m/s)
-            /// \param velocity
-            /// \param fc
-            /// \param dc
+            /// Definition of the uniform field from flux vector
+            /// \param velocity Flux vector of the field
+            /// \param fc Frame convention (NED/NWU)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void Set(const Velocity& velocity, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
-            /// Constructor from an angle and a magnitude.
-            /// \param angle
-            /// \param magnitude
-            /// \param angleUnit
-            /// \param speedUnit
-            /// \param fc
-            /// \param dc
+            /// Definition of the uniform field from angle and magnitude
+            /// \param angle Direction angle of the flow
+            /// \param magnitude Velocity speed of the flow
+            /// \param angleUnit Angle unit (RAD/DEG)
+            /// \param speedUnit Speed unit (MS/KMH/KNOT)
+            /// \param fc Frame convention (NED/NWU)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void Set(double  angle, double  magnitude,
                      ANGLE_UNIT angleUnit, SPEED_UNIT speedUnit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
@@ -139,61 +139,61 @@ namespace frydom {
             void Set(std::function<Velocity(FRAME_CONVENTION)> direction, double magnitude,
                      SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
-            ///
-            /// \param magnitude
-            /// \param speed_unit
-            /// \param dc
+            /// Definition of the uniform field aligned with north
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetNorth(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
-            ///
-            /// \param magnitude
-            /// \param speed_unit
-            /// \param dc
+            /// Definition of the uniform field aligned with north-east
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetNorthEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
-            ///
-            /// \param magnitude
-            /// \param speed_unit
-            /// \param dc
+            /// Definition of the uniform field aligned with east
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
-            ///
-            /// \param magnitude
-            /// \param speed_unit
-            /// \param dc
+            /// Definition of the uniform field aligned with south-east
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetSouthEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
-            ///
-            /// \param magnitude
-            /// \param speed_unit
-            /// \param dc
+            /// Definition of the uniform field aligned with south
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetSouth(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
-            ///
-            /// \param magnitude
-            /// \param speed_unit
-            /// \param dc
+            /// Definition of the uniform field aligned with south-west
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetSouthWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
-            ///
-            /// \param magnitude
-            /// \param speed_unit
-            /// \param dc
+            /// Definition of the uniform field aligned with west
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
-            ///
-            /// \param magnitude
-            /// \param speed_unit
-            /// \param dc
+            /// Definition of the uniform field aligned with north-west
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetNorthWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
-            /// Return the flow velocity at a given point in world frame
-            /// \param worldPos Position of the Point in world frame
+            /// Return the flux vector at a given point
+            /// \param worldPos Position of point in world frame
             /// \param fc Frame convention (NED/NWU)
-            /// \return Velocity in world frame
+            /// \return Flux Vector
             Velocity GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) const override;
 
-            /// Update the state of the field model (virtual pure)
+            /// Update the state of the field model
             /// \param time Current time of the simulation
             void Update(double time);
 
