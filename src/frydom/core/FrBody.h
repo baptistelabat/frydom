@@ -463,10 +463,10 @@ namespace frydom {
         std::shared_ptr<FrNode_> NewNode(const FrFrame_& bodyFrame);
 
         /// Get a new node attached to the body given a position of the node expressed into the body reference frame
-        std::shared_ptr<FrNode_> NewNode(const Position& localPosition);
+        std::shared_ptr<FrNode_> NewNode(const Position& localPosition, FRAME_CONVENTION fc);
 
         /// Get a new node attached to the body given a position of the node expressed into the body reference frame
-        std::shared_ptr<FrNode_> NewNode(double x, double y, double z);
+        std::shared_ptr<FrNode_> NewNode(double x, double y, double z, FRAME_CONVENTION fc);
 
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame_ !

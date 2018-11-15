@@ -401,12 +401,16 @@ namespace frydom {
         return std::make_shared<FrNode_>(this, bodyFrame);
     }
 
-    std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::Position &localPosition) {
-        return std::make_shared<FrNode_>(this, localPosition);
+    std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::Position &localPosition, FRAME_CONVENTION fc) {
+        auto NodePositionInBody = localPosition;
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(NodePositionInBody);
+        return std::make_shared<FrNode_>(this, NodePositionInBody);
     }
 
-    std::shared_ptr<FrNode_> FrBody_::NewNode(double x, double y, double z) {
-        return std::make_shared<FrNode_>(this, Position(x, y, z));
+    std::shared_ptr<FrNode_> FrBody_::NewNode(double x, double y, double z, FRAME_CONVENTION fc) {
+        auto NodePositionInBody = Position(x, y, z);
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(NodePositionInBody);
+        return std::make_shared<FrNode_>(this, NodePositionInBody);
     }
 
 
