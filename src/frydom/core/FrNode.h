@@ -9,6 +9,7 @@
 #include "FrObject.h"
 #include "FrVector.h"
 #include "FrRotation.h"
+#include "FrFrame.h"
 
 
 
@@ -97,6 +98,28 @@ namespace frydom {
 
         FrBody_* GetBody();
 
+        FrFrame_ GetFrame() const;
+
+        Position GetPositionInWorld(FRAME_CONVENTION fc) const;
+
+        void GetPositionInWorld(Position &position, FRAME_CONVENTION fc);
+
+        Position GetNodePositionInBody(FRAME_CONVENTION fc) const;
+
+        Velocity GetVelocityInWorld(FRAME_CONVENTION fc) const;
+
+        Velocity GetVelocityInNode(FRAME_CONVENTION fc) const;
+
+        Acceleration GetAccelerationInWorld(FRAME_CONVENTION fc) const;
+
+        Acceleration GetAccelerationInNode(FRAME_CONVENTION fc) const;
+
+        void Initialize() override;
+
+        void StepFinalize() override;
+
+    private:
+
         void SetLocalPosition(const Position& position);
 
         void SetLocalPosition(double x, double y, double z);
@@ -108,19 +131,33 @@ namespace frydom {
         void SetLocalFrame(const FrFrame_& frame);
 
 
+        // =============================================================================================================
+        // PROJECTIONS
+        // =============================================================================================================
 
-        Position GetAbsPosition();
+        // Projection of 3D vectors defined in FrVector.h
 
-        void GetAbsPosition(Position& position);
+        template <class Vector>
+        Vector ProjectVectorInWorld(const Vector& bodyVector, FRAME_CONVENTION fc) const {
+            return GetFrame().GetQuaternion().Rotate<Vector>(bodyVector, fc);
+        }
 
+        template <class Vector>
+        Vector& ProjectVectorInWorld(Vector& bodyVector, FRAME_CONVENTION fc) const {
+            bodyVector = GetFrame().GetQuaternion().Rotate<Vector>(bodyVector, fc);
+            return bodyVector;
+        }
 
+        template <class Vector>
+        Vector ProjectVectorInNode(const Vector &worldVector, FRAME_CONVENTION fc) const {
+            return GetFrame().GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+        }
 
-
-        void Initialize();
-
-        void StepFinalize();
-
-
+        template <class Vector>
+        Vector& ProjectVectorInNode(Vector& worldVector, FRAME_CONVENTION fc) const {
+            worldVector = GetFrame().GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+            return worldVector;
+        }
 
 
     };

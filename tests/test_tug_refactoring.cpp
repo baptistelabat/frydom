@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
 //    box->SetCOGAbsPosition(0, 10, 0, NWU);
 //
 //
-//    std::cout << box->GetAbsPosition() << std::endl << std::endl;
+//    std::cout << box->GetPositionInWorld() << std::endl << std::endl;
 //    std::cout << box->GetCOGAbsPosition() << std::endl << std::endl;
 //    std::cout << box->GetCOGLocalPosition() << DBLENDL;
 //
