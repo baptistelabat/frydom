@@ -54,7 +54,7 @@ namespace frydom {
             // All 4 angles, cx, cy, and cz must be present in the yaml file into the PolarCurrentCoeffs node.
 
             try {
-                unit = STRING2ANGLE(node["unit"].as<std::string>());
+                unit = string2angle(node["unit"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
@@ -115,7 +115,7 @@ namespace frydom {
             auto node = data["PolarWindCoeffs"];
 
             try {
-                unit = STRING2ANGLE(node["unit"].as<std::string>());
+                unit = string2angle(node["unit"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
@@ -162,5 +162,69 @@ namespace frydom {
         return lut;
     }
 
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>< REFACTORING
+
+
+    void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
+                                    std::vector<double>& angle,
+                                    std::vector<double>& cx,
+                                    std::vector<double>& cy,
+                                    std::vector<double>& cn,
+                                    ANGLE_UNIT& angle_unit,
+                                    FRAME_CONVENTION& fc,
+                                    DIRECTION_CONVENTION& dc) {
+
+        YAML::Node data = YAML::LoadFile(yamlFile);
+
+        if (data["PolarFlowCoeffs"]) {
+
+            auto node = data["PolarFlowCoeffs"];
+
+            try {
+                angle_unit = string2angle(node["angle_unit"].as<std::string>());
+            } catch (YAML::BadConversion& err) {
+                std::cout << " warning : unit must be DEG or RAD" << std::endl;
+            }
+
+            try {
+                fc = string2frame(node["frame convention"].as<std::string>());
+            } catch (YAML::BadConversion& err) {
+                std::cout << " warning : unit must be DEG or RAD" << std::endl;
+            }
+
+            try {
+                dc = string2direction(node["direction convention"].as<std::string>());
+            } catch (YAML::BadConversion& err) {
+                std::cout << " warning : unit must be DEG or RAD" << std::endl;
+            }
+
+            try {
+                angle = node["angles"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+            try {
+                cx = node["cx"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+            try {
+                cy = node["cy"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+            try {
+                cn = node["cn"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+        }
+
+    }
 
 }  // end namespace frydom

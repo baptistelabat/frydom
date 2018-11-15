@@ -56,6 +56,29 @@ namespace frydom {
     LookupTable1D<double> MakeWindPolarCoeffTable(const std::string& yaml_file, ANGLE_UNIT unit);
 
 
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    // =========================================================================================================
+    // IO for flow force model
+    // =========================================================================================================
+
+    /// Extract coefficients for the flow force mocel from YAML file
+    /// \param yamlFile Name of the YAML file containing the polar coefficient
+    /// \param angle Flow direction
+    /// \param cx Polar coefficient in surge
+    /// \param cy Polar coefficient in sway
+    /// \param cn Polar coefficient in yaw
+    /// \param unit Unit of the angle direction
+    void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
+                                    std::vector<double>& angle,
+                                    std::vector<double>& cx,
+                                    std::vector<double>& cy,
+                                    std::vector<double>& cn,
+                                    ANGLE_UNIT& unit);
+
+
+
+
 }  // end namespace frydom
 
 

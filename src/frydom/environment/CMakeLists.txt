@@ -12,6 +12,7 @@ add_subdirectory(wind)
 set(SRC_FILES
         FrEnvironment.cpp
         FrFlowBase.cpp
+        FrFlowForce.cpp
         )
 
 set(FRYDOM_ENVIRONMENT_SOURCES "")

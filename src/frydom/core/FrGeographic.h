@@ -8,6 +8,8 @@
 #include <cmath>
 #include <iostream>
 
+#include "frydom/core/FrException.h"
+
 // TODO : placer ici les services de geographie et l'inclusion de GeographicLib
 
 
@@ -33,6 +35,18 @@ namespace frydom {
         return (fc == NED);
     }
 
+    FRAME_CONVENTION string2frame(const std::string& field) {
+
+        if (field == "NED") {
+            return NED;
+        } else if (field == "NWU") {
+            return NWU;
+        } else {
+            throw FrException("unknown value for the direction convention");
+        }
+
+    }
+
     enum FrRefSyst {  // TODO : a retirer et n'utiliser que FRAME_CONVENTION
         LOCAL,
         PARENT,
@@ -50,6 +64,17 @@ namespace frydom {
 
     inline bool IsCOMEFROM(DIRECTION_CONVENTION dc) {
         return (dc == COMEFROM);
+    }
+
+    DIRECTION_CONVENTION string2direction(const std::string& field) {
+        if (field == "GOTO") {
+            return GOTO;
+        } else if (field == "COMEFROM") {
+            return COMEFROM;
+        } else {
+            throw FrException("unknown value for the direction convention");
+        }
+
     }
 
 }  // end namespace frydom

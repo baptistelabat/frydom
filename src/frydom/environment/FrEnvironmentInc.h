@@ -9,6 +9,7 @@
 #include "FrEnvironment.h"
 #include "FrFluidType.h"
 #include "FrFlowBase.h"
+#include "FrFlowForce.h"
 
 #include "time/FrTimeInc.h"
 #include "field/FrFieldInc.h"
