@@ -241,22 +241,6 @@ namespace frydom {
         RotZ_DEGREES(angle, fc, false);
     }
 
-    void FrFrame_::GetGeographicPosition(const FrOffshoreSystem_* system, double &latitude, double &longitude, double &height) const {
-        // TODO
-    }
-
-    double FrFrame_::GetLatitude(const FrOffshoreSystem_* system) const {
-        // TODO
-    }
-
-    double FrFrame_::GetLongitude(const FrOffshoreSystem_* system) const {
-        // TODO
-    }
-
-    double FrFrame_::GetGeographicHeight(const FrOffshoreSystem_* system) const {
-        // TODO
-    }
-
     FrFrame_ &FrFrame_::Inverse() {  // OK
         m_chronoFrame.Invert();
         return *this;

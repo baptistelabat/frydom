@@ -256,17 +256,6 @@ namespace frydom {
         /// \return the transformation frame
         FrFrame_ GetThisFrameRelativeTransform_WRT_OtherFrame(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
 
-
-        // Geographic position
-
-        void GetGeographicPosition(const FrOffshoreSystem_* system, double& latitude, double& longitude, double& height) const;
-
-        double GetLatitude(const FrOffshoreSystem_* system) const;
-
-        double GetLongitude(const FrOffshoreSystem_* system) const;
-
-        double GetGeographicHeight(const FrOffshoreSystem_* system) const;
-
         /// Inverse a frame transformation
         /// \return the inverse frame transformation
         FrFrame_& Inverse();
@@ -282,35 +271,6 @@ namespace frydom {
         std::ostream& cout(std::ostream& os) const;
 
         friend class FrInertiaTensor_;  // TODO : voir pourquoi on definit cette amitie... (et voir si on peut retirer !)
-
-
-        // Node
-
-//        FrNode GetNodeFromMe() const;
-
-
-//        std::shared_ptr<FrFrame_> NewRelFrame(Vector3d pos, FrRotation_ rot) const;
-//
-//        std::shared_ptr<FrFrame_> NewRelFrame(Vector3d pos) const;
-//
-//        std::shared_ptr<FrFrame_> NewRelFrame(FrRotation_ rot) const;
-
-
-
-
-
-//        std::shared_ptr<FrFrame_> GetParentFrame() const;
-//
-//        std::shared_ptr<FrBody_> GetBodyOwner() const;
-
-//        inline std::shared_ptr<FrTransform_> GetTransform() const;
-//
-//
-//        void SetAbsPosition(const Vector3d position);
-//
-//        Vector3d GetAbsPosition() const;
-
-
 
 
     };
