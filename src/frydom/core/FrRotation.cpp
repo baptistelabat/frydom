@@ -17,7 +17,7 @@ namespace frydom {
     // FrUnitQuaternion_
 
     FrUnitQuaternion_::FrUnitQuaternion_() : m_chronoQuaternion() {
-        Normalize();
+        SetNullRotation();
     } // OK
 
     FrUnitQuaternion_::FrUnitQuaternion_(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc) { // OK
