@@ -35,6 +35,6 @@ namespace frydom {
         // FIXME: Calculer le moment par rapport au point de reference du corps ?
 //        Body->Dir_World2Body(force);
         moment = relpos.Cross(Body->Dir_World2Body(force));
-//        moment.SetNull();
+//        moment.SetNullRotation();
     }
 }  // end namespace frydom

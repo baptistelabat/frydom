@@ -451,11 +451,11 @@ namespace frydom {
         SetRotation(rotation.GetQuaternion());
     }
 
-    FrQuaternion_ FrBody_::GetQuaternion() const {
+    FrUnitQuaternion_ FrBody_::GetQuaternion() const {
         return internal::Ch2FrQuaternion(m_chronoBody->GetRot());
     }
 
-    void FrBody_::SetRotation(const FrQuaternion_ &quaternion) {
+    void FrBody_::SetRotation(const FrUnitQuaternion_ &quaternion) {
         Position bodyWorldPos = GetPosition(NWU);
         m_chronoBody->SetRot(internal::Fr2ChQuaternion(quaternion));
         SetPosition(bodyWorldPos, NWU);
@@ -524,7 +524,7 @@ namespace frydom {
         SetRotation(GetRotation() * relRotation);
     }
 
-    void FrBody_::Rotate(const FrQuaternion_ &relQuaternion) {
+    void FrBody_::Rotate(const FrUnitQuaternion_ &relQuaternion) {
         SetRotation(GetQuaternion() * relQuaternion);
     }
 
@@ -536,13 +536,13 @@ namespace frydom {
         RotateAroundPointInBody(rot.GetQuaternion(), bodyPos, fc);
     }
 
-    void FrBody_::RotateAroundPointInWorld(const FrQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc) {
+    void FrBody_::RotateAroundPointInWorld(const FrUnitQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc) {
         Position bodyPos = GetPointPositionInBody(worldPos, fc);
         Rotate(rot);
         SetPositionOfBodyPoint(bodyPos, worldPos, fc);
     }
 
-    void FrBody_::RotateAroundPointInBody(const FrQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc) {
+    void FrBody_::RotateAroundPointInBody(const FrUnitQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc) {
         Position worldPos = GetPointPositionInWorld(bodyPos, fc);
         Rotate(rot);
         SetPositionOfBodyPoint(bodyPos, worldPos, fc);
@@ -552,7 +552,7 @@ namespace frydom {
         RotateAroundPointInBody(rot, GetCOG(fc), fc);
     }
 
-    void FrBody_::RotateAroundCOG(const FrQuaternion_& rot, FRAME_CONVENTION fc) {
+    void FrBody_::RotateAroundCOG(const FrUnitQuaternion_& rot, FRAME_CONVENTION fc) {
         RotateAroundPointInBody(rot, GetCOG(fc), fc);
     }
 

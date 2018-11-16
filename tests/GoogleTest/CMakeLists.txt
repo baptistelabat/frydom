@@ -9,6 +9,7 @@ set(GOOGLE_TESTS
         test_FrBody_
         test_FrFrame_
         test_FrNode_
+        test_FrRotation_
         )
 
 #enable_testing()

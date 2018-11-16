@@ -268,7 +268,7 @@ namespace frydom {
 
     /// REFACTORING ------>>>>>>>>>>>>>>
 
-    class FrQuaternion_;
+    class FrUnitQuaternion_;
     class FrBody_;
 
 
@@ -512,12 +512,12 @@ namespace frydom {
         void SetRotation(const FrRotation_& rotation);
 
         /// Get the quaternion object that represents the orientation of the body reference frame in the world
-        FrQuaternion_ GetQuaternion() const;
+        FrUnitQuaternion_ GetQuaternion() const;
 
         /// Set the orientation of the body reference frame in world using a quaterion object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
-        void SetRotation(const FrQuaternion_& quaternion);
+        void SetRotation(const FrUnitQuaternion_& quaternion);
 
         //TODO : ajouter ici toutes les methodes portant sur d'autres representations de la rotation
 
@@ -572,7 +572,7 @@ namespace frydom {
         /// Rotate the body with respect to its current orientation in world using a quaternion object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
-        void Rotate(const FrQuaternion_& relQuaternion);
+        void Rotate(const FrUnitQuaternion_& relQuaternion);
 
 
         // FIXME : reflechir de nouveau a ce que sont les eux methodes precedentes... on tourne autour de quoi ?
@@ -584,11 +584,11 @@ namespace frydom {
         void RotateAroundCOG(const FrRotation_& rot, FRAME_CONVENTION fc);
 
 
-        void RotateAroundPointInWorld(const FrQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc);
+        void RotateAroundPointInWorld(const FrUnitQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc);
 
-        void RotateAroundPointInBody(const FrQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc);
+        void RotateAroundPointInBody(const FrUnitQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc);
 
-        void RotateAroundCOG(const FrQuaternion_& rot, FRAME_CONVENTION fc);
+        void RotateAroundCOG(const FrUnitQuaternion_& rot, FRAME_CONVENTION fc);
 
 
 

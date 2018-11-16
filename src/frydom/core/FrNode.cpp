@@ -22,7 +22,7 @@ namespace frydom {
         SetLocalRotation(rotation);
     }
 
-    FrNode_::FrNode_(FrBody_ *body, const Position &position, const FrQuaternion_ &quaternion) : FrNode_(body, position) {
+    FrNode_::FrNode_(FrBody_ *body, const Position &position, const FrUnitQuaternion_ &quaternion) : FrNode_(body, position) {
         SetLocalQuaternion(quaternion);
     }
 
@@ -49,7 +49,7 @@ namespace frydom {
         SetLocalPosition(Position(x, y, z));
     }
 
-    void FrNode_::SetLocalQuaternion(const FrQuaternion_ &quaternion) {
+    void FrNode_::SetLocalQuaternion(const FrUnitQuaternion_ &quaternion) {
         auto coord = chrono::ChCoordsys<double>(chrono::VNULL, internal::Fr2ChQuaternion(quaternion));
         m_chronoMarker->Impose_Rel_Coord(coord);
     }
@@ -86,7 +86,7 @@ namespace frydom {
 
     Velocity FrNode_::GetVelocityInWorld(FRAME_CONVENTION fc) const {
         Velocity VelocityInWorld = internal::ChVectorToVector3d<Velocity>(m_chronoMarker->GetAbsCoord_dt().pos);
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(VelocityInWorld);
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(VelocityInWorld);
         return VelocityInWorld;
     }
 
@@ -96,7 +96,7 @@ namespace frydom {
 
     Acceleration FrNode_::GetAccelerationInWorld(FRAME_CONVENTION fc) const {
         Acceleration AccelerationInWorld = internal::ChVectorToVector3d<Acceleration>(m_chronoMarker->GetAbsCoord_dtdt().pos);
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(AccelerationInWorld);
+        if (IsNED(fc)) internal::SwapFrameConvention<Acceleration>(AccelerationInWorld);
         return AccelerationInWorld;
     }
 

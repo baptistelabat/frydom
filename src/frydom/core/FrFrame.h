@@ -53,7 +53,7 @@ namespace frydom {
         /// \param pos Position of the frame
         /// \param quaternion Quaternion of the frame
         /// \param fc Frame convention (NED/NWU)
-        FrFrame_(const Position &pos, const FrQuaternion_& quaternion, FRAME_CONVENTION fc);
+        FrFrame_(const Position &pos, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc);
 
         /// Copy Constructor from an other frame
         /// \param otherFrame Frame to be copied
@@ -151,7 +151,7 @@ namespace frydom {
 
         /// Set the rotation of the present frame, using FrQuaternion
         /// \param quaternion Quaternion to be set
-        void SetRotation(const FrQuaternion_& quaternion);
+        void SetRotation(const FrUnitQuaternion_& quaternion);
 
         /// Nullify any rotation of the present frame
         void SetNoRotation();
@@ -168,7 +168,7 @@ namespace frydom {
 
         /// Get the rotation of the present frame, as FrQuaternion
         /// \return the quaternion of the frame/transformation frame
-        FrQuaternion_ GetQuaternion() const;
+        FrUnitQuaternion_ GetQuaternion() const;
 
         /// Rotate the present frame, around the X axis of the present frame (if localAxis)
         /// or around the X axis of the world reference frame otherwise, from a value given in radians.

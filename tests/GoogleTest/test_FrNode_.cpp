@@ -9,7 +9,7 @@
 using namespace frydom;
 
 TEST(FrNode,Position) {
-    FRAME_CONVENTION fc = NWU;
+    FRAME_CONVENTION fc = NED;
 
     /// Create a body
     auto body = std::make_shared<FrBody_>();
@@ -68,7 +68,7 @@ TEST(FrNode,Position) {
         std::cout<<node->GetAccelerationInWorld(fc)<<std::endl;
     }
 
-    // test GetVelocityInNode
+    /// test GetVelocityInNode
     testVelocity = node->GetFrame().GetRotation().Rotate(node->GetVelocityInNode(fc),fc) - body->GetVelocityInWorldAtPointInBody(NodePositionInBody,fc);
     EXPECT_TRUE(testVelocity.isZero());
     if (not(testVelocity.isZero())){

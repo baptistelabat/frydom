@@ -84,28 +84,28 @@ namespace frydom {
 
     public:
 
-        /// Base Constructor
+        /// Default Constructor
         /// \param body body to which the node belongs
         explicit FrNode_(FrBody_* body);
 
-        /// Constructor, with a Position given in argument
+        /// Constructor from a Position
         /// \param body body to which the node belongs
         /// \param position relative position of the node in the body reference frame
         FrNode_(FrBody_* body, const Position& position);
 
-        /// Constructor, with a Position and Rotation given in arguments
+        /// Constructor from a Position and a Rotation
         /// \param body body to which the node belongs
         /// \param position relative position of the frame node in the body reference frame
         /// \param rotation relative rotation of the frame node in the body reference frame
         FrNode_(FrBody_* body, const Position& position, const FrRotation_& rotation);
 
-        /// Constructor, with a Position and Quaternion given in arguments
+        /// Constructor from a Position and a Quaternion
         /// \param body body to which the node belongs
         /// \param position relative position of the frame node in the body reference frame
         /// \param quaternion relative rotation of the frame node in the body reference frame, given as quaternion
-        FrNode_(FrBody_* body, const Position& position, const FrQuaternion_& quaternion);
+        FrNode_(FrBody_* body, const Position& position, const FrUnitQuaternion_& quaternion);
 
-        /// Constructor, with a frame given in argument
+        /// Constructor from a frame
         /// \param body body to which the node belongs
         /// \param frame relative frame node, given in the body reference frame
         FrNode_(FrBody_* body, const FrFrame_& frame);
@@ -176,7 +176,7 @@ namespace frydom {
 
         /// Set the node rotation, given in the body reference frame
         /// \param quaternion rotation, as quaternion, given in the body reference frame
-        void SetLocalQuaternion(const FrQuaternion_& quaternion);
+        void SetLocalQuaternion(const FrUnitQuaternion_& quaternion);
 
         /// Set the node rotation, given in the body reference frame
         /// \param rotation rotation, given in the body reference frame
