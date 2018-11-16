@@ -14,6 +14,13 @@ namespace frydom {
 
     private:
 
+        struct PolarElement {
+            double angle;
+            double cx;
+            double cy;
+            double cn;
+        };
+
         mathutils::LookupTable1D<double> m_table;   ///< table of coeffient
 
     public:

@@ -35,7 +35,8 @@ namespace frydom {
         return (fc == NED);
     }
 
-    FRAME_CONVENTION string2frame(const std::string& field) {
+
+    inline FRAME_CONVENTION STRING2FRAME(const std::string& field) {
 
         if (field == "NED") {
             return NED;
@@ -46,6 +47,7 @@ namespace frydom {
         }
 
     }
+
 
     enum FrRefSyst {  // TODO : a retirer et n'utiliser que FRAME_CONVENTION
         LOCAL,
@@ -66,7 +68,8 @@ namespace frydom {
         return (dc == COMEFROM);
     }
 
-    DIRECTION_CONVENTION string2direction(const std::string& field) {
+
+    inline DIRECTION_CONVENTION STRING2DIRECTION(const std::string& field) {
         if (field == "GOTO") {
             return GOTO;
         } else if (field == "COMEFROM") {
@@ -76,6 +79,7 @@ namespace frydom {
         }
 
     }
+
 
 }  // end namespace frydom
 

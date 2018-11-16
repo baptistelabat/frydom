@@ -62,7 +62,7 @@ namespace frydom {
     // IO for flow force model
     // =========================================================================================================
 
-    /// Extract coefficients for the flow force mocel from YAML file
+    /// Extract coefficients for the flow force model from YAML file
     /// \param yamlFile Name of the YAML file containing the polar coefficient
     /// \param angle Flow direction
     /// \param cx Polar coefficient in surge
@@ -74,7 +74,9 @@ namespace frydom {
                                     std::vector<double>& cx,
                                     std::vector<double>& cy,
                                     std::vector<double>& cn,
-                                    ANGLE_UNIT& unit);
+                                    ANGLE_UNIT& unit,
+                                    FRAME_CONVENTION& fc,
+                                    DIRECTION_CONVENTION& dc);
 
 
 

@@ -188,13 +188,13 @@ namespace frydom {
             }
 
             try {
-                fc = string2frame(node["frame convention"].as<std::string>());
+                fc = STRING2FRAME(node["frame convention"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
 
             try {
-                dc = string2direction(node["direction convention"].as<std::string>());
+                dc = STRING2DIRECTION(node["direction convention"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
