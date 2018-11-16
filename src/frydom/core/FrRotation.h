@@ -164,12 +164,14 @@ namespace frydom {
         FrUnitQuaternion_& operator*=(const FrUnitQuaternion_& other);
 
         /// Component-wise comparison operator.
+        /// \param other other FrUnitQuaternion to compare
+        /// \return true if FrUnitQuaternion are equals, false otherwise
         bool operator==(const FrUnitQuaternion_& other) const;
 
         /// Rotate a templated vector A, of type Vector, of a rotation,
         /// on the basis of this quaternion: res=p*[0,A]*p'
         /// \tparam Vector template of the vector argument
-        /// \param vector vector to be rotate
+        /// \param vector vector to be rotated
         /// \param fc frame convention (NED/NWU)
         /// \return rotated vector
         // TODO : voir pour rendre generique par rapport aux differents vecteurs...
@@ -264,9 +266,13 @@ namespace frydom {
         FrRotation_();
 
         /// Constructor from a quaternion
+        /// \param quaternion Unit quaternion representing the rotation
         explicit FrRotation_(FrUnitQuaternion_ quaternion);
 
         /// Constructor from axis angle rotation (angle in radians)
+        /// \param axis direction of the rotation, MUST be normalized
+        /// \param angleRAD angle in radians
+        /// \param fc frame convention (NED/NWU)
         FrRotation_(const Direction& axis, double angleRAD, FRAME_CONVENTION fc);
 
         /// Set the null rotation
@@ -276,93 +282,182 @@ namespace frydom {
         // Quaternion representation
 
         /// Set the quaternion of the rotation
+        /// \param quat Unit quaternion representing the rotation
         void Set(const FrUnitQuaternion_ &quat);
 
         /// Get the quaternion
+        /// \return Unit quaternion representing the rotation
         FrUnitQuaternion_& GetQuaternion();
 
         /// Get the quaternion (const)
+        /// \return Unit quaternion representing the rotation
         const FrUnitQuaternion_& GetQuaternion() const;
 
 
         // Axis angle representation
 
         /// Set the rotation by axis angle representation (angle in radians)
+        /// \param axis direction of the rotation, MUST be normalized
+        /// \param angleRAD angle in radians
+        /// \param fc frame convention (NED/NWU)
         void SetAxisAngle(const Direction& axis, double angleRAD, FRAME_CONVENTION fc);
 
         /// Get the rotation by axis angle representation (angle in radians)
-        void GetAxisAngle(Direction& axis, double angleRAD, FRAME_CONVENTION fc);
+        /// \param axis direction of the rotation, normalized
+        /// \param angleRAD angle in radians
+        /// \param fc frame convention (NED/NWU)
+        void GetAxisAngle(Direction& axis, double& angleRAD, FRAME_CONVENTION fc);
 
         /// Get the axis of the rotation
+        /// \param axis direction of the rotation, normalized
         void GetAxis(Direction& axis, FRAME_CONVENTION fc);
 
         /// Get the angle in rotation in space (in radians)
+        /// \param angle angle in radians
         void GetAngle(double& angle);
 
         /// Get the rotation matrix representation
+        /// \return 3x3 rotation matrix
         mathutils::Matrix33<double> GetRotationMatrix() const;
 
         /// Get the inverse rotation matrix representation
+        /// \return 3x3 inverse rotation matrix
         mathutils::Matrix33<double> GetInverseRotationMatrix() const;
 
 
         // Euler angles representation
 
         /// Set the euler angles following the prescribed axis sequence (angles in radians)
+        /// Only the Cardan seq is implemented for now
+        /// \param phi first angle of the Euler sequence
+        /// \param theta second angle of the Euler sequence
+        /// \param psi third angle of the Euler sequence
+        /// \param seq Euler sequence
+        /// \param fc frame convention (NED/NWU)
         void SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc);
 
         /// Set the euler angles following the prescribed axis sequence (angles in degrees)
+        /// Only the Cardan seq is implemented for now
+        /// \param phi first angle of the Euler sequence
+        /// \param theta second angle of the Euler sequence
+        /// \param psi third angle of the Euler sequence
+        /// \param seq Euler sequence
+        /// \param fc frame convention (NED/NWU)
         void SetEulerAngles_DEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc);
 
         /// Set the cardan angles (angles in radians)
+        /// \param phi roll angle
+        /// \param theta pitch angle
+        /// \param psi yaw angle
+        /// \param fc frame convention (NED/NWU)
         void SetCardanAngles_RADIANS(double phi, double theta, double psi, FRAME_CONVENTION fc);
 
         /// Set the cardan angles (angles in degrees)
+        /// \param phi roll angle
+        /// \param theta pitch angle
+        /// \param psi yaw angle
+        /// \param fc frame convention (NED/NWU)
         void SetCardanAngles_DEGREES(double phi, double theta, double psi, FRAME_CONVENTION fc);
 
         /// Get the euler angles following the prescribed axis sequence (angles in radians)
+        /// Only the Cardan seq is implemented for now
+        /// \param phi first angle of the Euler sequence
+        /// \param theta second angle of the Euler sequence
+        /// \param psi third angle of the Euler sequence
+        /// \param seq Euler sequence
+        /// \param fc frame convention (NED/NWU)
         void GetEulerAngles_RADIANS(double &phi, double &theta, double &psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const;
 
         /// Get the euler angles following the prescribed axis sequence (angles in degrees)
+        /// Only the Cardan seq is implemented for now
+        /// \param phi first angle of the Euler sequence
+        /// \param theta second angle of the Euler sequence
+        /// \param psi third angle of the Euler sequence
+        /// \param seq Euler sequence
+        /// \param fc frame convention (NED/NWU)
         void GetEulerAngles_DEGREES(double &phi, double &theta, double &psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const;
 
         /// Get the cardan angles (angles in radians)
+        /// \param phi roll angle
+        /// \param theta pitch angle
+        /// \param psi yaw angle
+        /// \param fc frame convention (NED/NWU)
         void GetCardanAngles_RADIANS(double &phi, double &theta, double &psi, FRAME_CONVENTION fc) const;
 
         /// Get the cardan angles (angles in degrees)
+        /// \param phi roll angle
+        /// \param theta pitch angle
+        /// \param psi yaw angle
+        /// \param fc frame convention (NED/NWU)
         void GetCardanAngles_DEGREES(double &phi, double &theta, double &psi, FRAME_CONVENTION fc) const;
 
         /// Get the angles of a fixed axis representation (angles in radians)
+        /// \param rx
+        /// \param ry
+        /// \param rz
+        /// \param fc frame convention (NED/NWU)
+        //             TODO:        NON IMPLEMENTEE
         void GetFixedAxisAngles_RADIANS(double& rx, double& ry, double& rz, FRAME_CONVENTION fc) const;
 
         /// Get the angles of a fixed axis representation (angles in degrees)
+        /// \param rx
+        /// \param ry
+        /// \param rz
+        /// \param fc frame convention (NED/NWU)
+        //             TODO:        NON IMPLEMENTEE
         void GetFixedAxisAngles_DEGREES(double& rx, double& ry, double& rz, FRAME_CONVENTION fc) const;
 
 
         // Helpers to build rotations
 
         /// Apply a rotation to the current rotation by the axis angle representation (angle in radians)
+        /// \param axis direction of the rotation, MUST be normalized
+        /// \param angle angle in radians
+        /// \param fc frame convention (NED/NWU)
+        /// \return the rotation resulting from the combination of both rotations
         FrRotation_& RotAxisAngle_RADIANS(const Direction& axis, double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation to the current rotation by the axis angle representation (angle in degrees)
+        /// \param axis direction of the rotation, MUST be normalized
+        /// \param angle angle in degrees
+        /// \param fc frame convention (NED/NWU)
+        /// \return the rotation resulting from the combination of both rotations
         FrRotation_& RotAxisAngle_DEGREES(const Direction& axis, double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the X axis to the current rotation (angle in radians)
+        /// \param angle angle in radians
+        /// \param fc frame convention (NED/NWU)
+        /// \return the rotation resulting from the combination of both rotations
         FrRotation_& RotX_RADIANS(double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the X axis to the current rotation (angle in degrees)
+        /// \param angle angle in degrees
+        /// \param fc frame convention (NED/NWU)
+        /// \return the rotation resulting from the combination of both rotations
         FrRotation_& RotX_DEGREES(double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the Y axis to the current rotation (angle in radians)
+        /// \param angle angle in radians
+        /// \param fc frame convention (NED/NWU)
+        /// \return the rotation resulting from the combination of both rotations
         FrRotation_& RotY_RADIANS(double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the Y axis to the current rotation (angle in degrees)
+        /// \param angle angle in degrees
+        /// \param fc frame convention (NED/NWU)
+        /// \return the rotation resulting from the combination of both rotations
         FrRotation_& RotY_DEGREES(double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the Z axis to the current rotation (angle in radians)
+        /// \param angle angle in radians
+        /// \param fc frame convention (NED/NWU)
+        /// \return the rotation resulting from the combination of both rotations
         FrRotation_& RotZ_RADIANS(double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the Z axis to the current rotation (angle in degrees)
+        /// \param angle angle in degrees
+        /// \param fc frame convention (NED/NWU)
+        /// \return the rotation resulting from the combination of both rotations
         FrRotation_& RotZ_DEGREES(double angle, FRAME_CONVENTION fc);
 
         // =============================================================================================================
@@ -370,32 +465,51 @@ namespace frydom {
         // =============================================================================================================
 
         /// Assign the other rotation to the current rotation
+        /// \param other other rotation, to assign
+        /// \return assigned rotation
         FrRotation_& operator=(const FrRotation_& other);
 
         /// Compose the current rotation with the other. In a matrix form it would be result = this*other.
+        /// \param other other rotation, to compose
+        /// \return total rotation
         FrRotation_ operator*(const FrRotation_& other) const;
 
-        /// Compopse the current rotation with the other inplace. In a matrix form it would be this = this*other.
+        /// Compose the current rotation with the other inplace. In a matrix form it would be this = this*other.
+        /// \param other other rotation, to compose
+        /// \return total rotation
         FrRotation_&operator*=(const FrRotation_& other);
 
+        /// Component-wise comparison operator.
+        /// \param other other FrRotation to compare
+        /// \return true if FrRotation are equals, false otherwise
         bool operator==(const FrRotation_& other) const;
 
         /// Multiply a matrix by this rotation on the left
+        /// \param matrix 3x3 matrix to be multiplied
+        /// \return 3x3 matrix solution of the multiplication
         mathutils::Matrix33<double> LeftMultiply(const mathutils::Matrix33<double>& matrix) const;
 
         /// Multiply a matrix by the inverse of this rotation on the left
+        /// \param matrix 3x3 matrix to be multiplied
+        /// \return 3x3 matrix solution of the multiplication
         mathutils::Matrix33<double> LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const;
 
         /// Multiply a matrix by this rotation on the right
-        mathutils::Matrix33<double> RighttMultiply(const mathutils::Matrix33<double>& matrix) const;
+        /// \param matrix 3x3 matrix to be multiplied
+        /// \return 3x3 matrix solution of the multiplication
+        mathutils::Matrix33<double> RightMultiply(const mathutils::Matrix33<double>& matrix) const;
 
         /// Multiply a matrix by the inverse of this rotation on the right
-        mathutils::Matrix33<double> RighttMultiplyInverse(const mathutils::Matrix33<double>& matrix) const;
-
-
+        /// \param matrix 3x3 matrix to be multiplied
+        /// \return 3x3 matrix solution of the multiplication
+        mathutils::Matrix33<double> RightMultiplyInverse(const mathutils::Matrix33<double>& matrix) const;
 
 
         /// Rotate a vector by the current rotation. Templatized method by the type of vector (Position, Velocity... cf FrVector.h)
+        /// \tparam Vector template of the vector argument
+        /// \param vector vector to be rotated
+        /// \param fc frame convention (NED/NWU)
+        /// \return rotated vector
         template <class Vector>
         Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) {
             auto out = m_frQuaternion.Rotate<Vector>(vector, fc);
@@ -404,12 +518,18 @@ namespace frydom {
         }
 
         /// Get the X axis of the coordinate system obtained by the rotation
+        /// \param fc frame convention (NED/NWU)
+        /// \return X axis
         Direction GetXAxis(FRAME_CONVENTION fc) const;
 
         /// Get the Y axis of the coordinate system obtained by the rotation
+        /// \param fc frame convention (NED/NWU)
+        /// \return Y axis
         Direction GetYAxis(FRAME_CONVENTION fc) const;
 
         /// Get the Z axis of the coordinate system obtained by the rotation
+        /// \param fc frame convention (NED/NWU)
+        /// \return Z axis
         Direction GetZAxis(FRAME_CONVENTION fc) const;
 
 

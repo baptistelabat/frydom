@@ -17,7 +17,7 @@ namespace frydom {
     // FrUnitQuaternion_
 
     FrUnitQuaternion_::FrUnitQuaternion_() : m_chronoQuaternion() {
-        Normalize();
+        SetNullRotation();
     } // OK
 
     FrUnitQuaternion_::FrUnitQuaternion_(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc) { // OK
@@ -219,7 +219,7 @@ namespace frydom {
         m_frQuaternion.Set(axis, angleRAD, fc);
     }
 
-    void FrRotation_::GetAxisAngle(Direction &axis, double angleRAD, FRAME_CONVENTION fc) {  // OK
+    void FrRotation_::GetAxisAngle(Direction &axis, double &angleRAD, FRAME_CONVENTION fc) {  // OK
         m_frQuaternion.Get(axis, angleRAD, fc);
     }
 
@@ -243,8 +243,9 @@ namespace frydom {
 
     void FrRotation_::SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) {  // OK
 
+        assert(seq == CARDAN || seq == XYZ);
         if (IsNED(fc)) {  // FIXME : la convention n'est valable que pour une sequence se terminant par yz...
-            // Conver it to NWU convention
+            // Convert it to NWU convention
             theta = -theta;
             psi   = -psi;
         }
@@ -319,15 +320,19 @@ namespace frydom {
         return m_frQuaternion == other.m_frQuaternion;
     }
 
+    mathutils::Matrix33<double> FrRotation_::LeftMultiply(const mathutils::Matrix33<double>& matrix) const {
+        return GetRotationMatrix() * matrix;
+    }
+
     mathutils::Matrix33<double> FrRotation_::LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
         return GetInverseRotationMatrix() * matrix;
     }
 
-    mathutils::Matrix33<double> FrRotation_::RighttMultiply(const mathutils::Matrix33<double>& matrix) const {
+    mathutils::Matrix33<double> FrRotation_::RightMultiply(const mathutils::Matrix33<double>& matrix) const {
         return matrix * GetRotationMatrix();
     }
 
-    mathutils::Matrix33<double> FrRotation_::RighttMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
+    mathutils::Matrix33<double> FrRotation_::RightMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
         return matrix * GetInverseRotationMatrix();
     }
 
