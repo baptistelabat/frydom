@@ -20,7 +20,7 @@ namespace frydom {
         SetRotation(rotation);
     }
 
-    FrFrame_::FrFrame_(const Position &pos, const frydom::FrQuaternion_ &quaternion, FRAME_CONVENTION fc) {  // OK
+    FrFrame_::FrFrame_(const Position &pos, const frydom::FrUnitQuaternion_ &quaternion, FRAME_CONVENTION fc) {  // OK
         SetPosition(pos, fc);
         SetRotation(quaternion);
     }
@@ -94,7 +94,7 @@ namespace frydom {
         SetRotation(rotation.GetQuaternion());
     }
 
-    void FrFrame_::SetRotation(const FrQuaternion_ &quaternion) {  // OK
+    void FrFrame_::SetRotation(const FrUnitQuaternion_ &quaternion) {  // OK
         m_chronoFrame.SetRot(internal::Fr2ChQuaternion(quaternion));
     }
 
@@ -116,7 +116,7 @@ namespace frydom {
         return FrRotation_(GetQuaternion());
     }
 
-    FrQuaternion_ FrFrame_::GetQuaternion() const {  // OK
+    FrUnitQuaternion_ FrFrame_::GetQuaternion() const {  // OK
         return internal::Ch2FrQuaternion(m_chronoFrame.GetRot());  // In NWU
     }
 
@@ -239,22 +239,6 @@ namespace frydom {
     void FrFrame_::SetRotZ_DEGREES(double angle, FRAME_CONVENTION fc) {  // OK
         SetIdentity();
         RotZ_DEGREES(angle, fc, false);
-    }
-
-    void FrFrame_::GetGeographicPosition(const FrOffshoreSystem_* system, double &latitude, double &longitude, double &height) const {
-        // TODO
-    }
-
-    double FrFrame_::GetLatitude(const FrOffshoreSystem_* system) const {
-        // TODO
-    }
-
-    double FrFrame_::GetLongitude(const FrOffshoreSystem_* system) const {
-        // TODO
-    }
-
-    double FrFrame_::GetGeographicHeight(const FrOffshoreSystem_* system) const {
-        // TODO
     }
 
     FrFrame_ &FrFrame_::Inverse() {  // OK
