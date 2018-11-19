@@ -12,16 +12,10 @@ namespace frydom {
 
     class FrFlowForce : public FrForce_ {
 
-    private:
-
-        struct PolarElement {
-            double angle;
-            double cx;
-            double cy;
-            double cn;
-        };
+    protected:
 
         mathutils::LookupTable1D<double> m_table;   ///< table of coeffient
+        Velocity m_fluxVelocityInBody;             ///< relative velocity of the flow in the body frame
 
     public:
 
@@ -43,6 +37,26 @@ namespace frydom {
         void Initialize() override {}
 
         void StepFinalize() override {}
+
+    };
+
+
+    class FrCurrentForce2_ : public FrFlowForce {
+
+
+    public:
+        explicit FrCurrentForce2_(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
+
+        void Update(double time) override;
+    };
+
+
+    class FrWindForce2_ : public FrFlowForce {
+
+    public:
+        explicit FrWindForce2_(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
+
+        void Update(double time) override;
 
     };
 

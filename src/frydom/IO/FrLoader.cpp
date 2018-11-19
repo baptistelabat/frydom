@@ -54,7 +54,7 @@ namespace frydom {
             // All 4 angles, cx, cy, and cz must be present in the yaml file into the PolarCurrentCoeffs node.
 
             try {
-                unit = string2angle(node["unit"].as<std::string>());
+                unit = STRING2ANGLE(node["unit"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
@@ -115,7 +115,7 @@ namespace frydom {
             auto node = data["PolarWindCoeffs"];
 
             try {
-                unit = string2angle(node["unit"].as<std::string>());
+                unit = STRING2ANGLE(node["unit"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
@@ -182,21 +182,21 @@ namespace frydom {
             auto node = data["PolarFlowCoeffs"];
 
             try {
-                angle_unit = string2angle(node["angle_unit"].as<std::string>());
+                angle_unit = STRING2ANGLE(node["unit"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
 
             try {
-                fc = STRING2FRAME(node["frame convention"].as<std::string>());
+                fc = STRING2FRAME(node["FRAME_CONVENTION"].as<std::string>());
             } catch (YAML::BadConversion& err) {
-                std::cout << " warning : unit must be DEG or RAD" << std::endl;
+                std::cout << " error : reading frame convention. Must be NWU or NED." << std::endl;
             }
 
             try {
-                dc = STRING2DIRECTION(node["direction convention"].as<std::string>());
+                dc = STRING2DIRECTION(node["DIRECTION_CONVENTION"].as<std::string>());
             } catch (YAML::BadConversion& err) {
-                std::cout << " warning : unit must be DEG or RAD" << std::endl;
+                std::cout << " error : reading direction convention. Must be GOTO or COMEFROM." << std::endl;
             }
 
             try {
@@ -225,6 +225,28 @@ namespace frydom {
 
         }
 
+    }
+
+    void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
+                                    std::vector<std::pair<double, Vector3d<double>>>& polar,
+                                    ANGLE_UNIT& unit,
+                                    FRAME_CONVENTION& fc,
+                                    DIRECTION_CONVENTION& dc) {
+
+        std::vector<double> angles;
+        std::vector<double> cx, cy, cn;
+
+        LoadFlowPolarCoeffFromYaml(yamlFile, angles, cx, cy, cn, unit, fc, dc);
+
+        auto n = angles.size();
+        assert(cx.size() == n);
+        assert(cy.size() == n);
+        assert(cn.size() == n);
+
+        std::pair<double, Vector3d<double>> new_element;
+        for (int i=0; i<angles.size(); i++) {
+            polar.push_back( std::pair<double, Vector3d<double>>(angles[i], Vector3d<double>(cx[i], cy[i], cn[i])));
+        }
     }
 
 }  // end namespace frydom

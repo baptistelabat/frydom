@@ -79,6 +79,11 @@ namespace frydom {
                                     DIRECTION_CONVENTION& dc);
 
 
+    void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
+                                    std::vector<std::pair<double, Vector3d<double>>>& polar,
+                                    ANGLE_UNIT& unit,
+                                    FRAME_CONVENTION& fc,
+                                    DIRECTION_CONVENTION& dc);
 
 
 }  // end namespace frydom

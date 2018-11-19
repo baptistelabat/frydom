@@ -9,6 +9,7 @@ set(GOOGLE_TESTS
         test_FrBody_
         test_FrUniformField
         test_FrFlowBase
+        test_FrFlowForce
         )
 
 #enable_testing()

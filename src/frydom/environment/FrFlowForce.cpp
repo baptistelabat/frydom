@@ -21,63 +21,45 @@ namespace frydom {
     void FrFlowForce::ReadTable(const std::string& yamlFile) {
 
         std::vector<std::pair<double, Vector3d<double>>> polar;
-
-        std::vector<double> angles, cx, cy, cn;
+        std::pair<double, Vector3d<double>> new_element;
         ANGLE_UNIT angle_unit;
         FRAME_CONVENTION fc;
         DIRECTION_CONVENTION dc;
 
-        LoadFlowPolarCoeffFromYaml(yamlFile, angles, cx, cy, cn, angle_unit, fc, dc);
-        //LoadFlowPolarCoeffFromYaml(yamlFile, polar, angle_unit, fc, dc);
+        LoadFlowPolarCoeffFromYaml(yamlFile, polar, angle_unit, fc, dc);
 
-        auto n = angles.size();
-        assert(cx.size() == n);
-        assert(cy.size() == n);
-        assert(cn.size() == n);
-
-        if (angle_unit == DEG) { deg2rad(angles); }
-
-        // Convert double into tuple
-        // TODO : utiliser directement un tuple en sortie de Load coefficient
-        std::pair<double, Vector3d<double>> new_element;
-        for (int i=0; i<angles.size(); i++) {
-            //new_element.first = angles[i];
-            //new_element.second = Vector3d<double>(cx[i], cy[i], cn[i]);
-            //polar.push_back( new_element ); // TODO : a passer en argument du loader
-            polar.push_back( std::pair<double, Vector3d<double>>(angles[i], Vector3d<double>(cx[i], cy[i], cn[i])));
+        if (angle_unit == DEG) {
+            for (auto it=polar.begin(); it != polar.end(); ++it) { it->first *= DEG2RAD; }
         }
 
         // Complete if symmetry
-        // TODO : essayer de ne plus avoir recours à cx, cy cn mais seulement à polar
-        auto max_angle = polar.end()->first;
+        auto max_angle = polar.back().first;
         if (std::abs(max_angle - M_PI) < 10e-2) {
 
-            std::pair<double, Vector3d<double>> new_element;
-
-            for (unsigned int i=polar.size()-1; i>=1; i--) {
-                new_element.first = 2.* M_PI - angles[i];
-                new_element.second = Vector3d<double>(cx[i], -cy[i], -cn[i]);
+            for (unsigned int i=polar.size()-2; i>=1; i--) {
+                new_element.first = 2.* M_PI - polar[i].first;
+                new_element.second = { polar[i].second[0], -polar[i].second[1], -polar[i].second[2] };
                 polar.push_back(new_element);
             }
         }
 
         // Delete double term
-        if ( (*angles.end() - 2.* M_PI) < 10e-2) {
+        if ( std::abs(polar.back().first - 2.* M_PI) < 10e-2) {
             polar.pop_back();
         }
 
         // Conversion to NWU if NED convention is used
         if (fc == NED) {
-            for (auto& element: polar) { element.first = -element.first; }
+            for (auto it=polar.begin(); it != polar.end(); ++it) { it->first = -it->first; }
         }
 
         // Conversion to GOTO if COMEFROM convention is used
         if (dc == COMEFROM) {
-            for (auto& element: polar) { element.first = element.first + M_PI; }
+            for (auto it=polar.begin(); it!= polar.end(); ++it) { it->first += M_PI; }
         }
 
         // Normalized angle in [0, 2pi]
-        for (auto& element: polar) { Normalize_0_2PI(element.first); }
+        for (auto it=polar.begin(); it != polar.end(); ++it) { it->first = Normalize_0_2PI(it->first); }
 
         // Sort element according to increasing angles
         std::sort(polar.begin(), polar.end(), [](auto const &a, auto const &b) {
@@ -86,7 +68,7 @@ namespace frydom {
 
         // Adding last term for angle equal to 2pi
         new_element.first = 2* M_PI;
-        new_element.second =  Vector3d<double>(cx[0], cy[0], cn[0]);
+        new_element.second =  polar.begin()->second;
         polar.push_back( new_element );
 
         // Change tuple into std::vector
@@ -95,41 +77,61 @@ namespace frydom {
         std::vector<double> anglesL;
         std::vector<double> cxL, cyL, cnL;
 
-        for (auto element: polar) {
-            anglesL.push_back(std::get<0>(element));
-            cxL.push_back(element.second[0]);
-            cyL.push_back(element.second[1]);
-            cnL.push_back(element.second[2]);
+        for (auto it=polar.begin(); it != polar.end(); ++it) {
+            anglesL.push_back(it->first);
+            cxL.push_back(it->second[0]);
+            cyL.push_back(it->second[1]);
+            cnL.push_back(it->second[2]);
         }
 
         m_table.SetX(anglesL);
         m_table.AddY("cx", cxL);
-        m_table.AddY("cz", cyL);
+        m_table.AddY("cy", cyL);
         m_table.AddY("cn", cnL);
     }
 
     void FrFlowForce::Update(double time) {
 
-        FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
-        Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
-
-        Velocity FluxVelocityInFrame = m_body->GetSystem()->GetEnvironment()->GetWind()
-                ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
-
-        double alpha = FluxVelocityInFrame.GetProjectedAngleAroundZ(RAD)+M_PI;
+        double alpha = m_fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
         alpha = Normalize_0_2PI(alpha);
 
         auto cx = m_table.Eval("cx", alpha);
         auto cy = m_table.Eval("cy", alpha);
         auto cn = m_table.Eval("cn", alpha);
 
-        double SquaredVelocity = FluxVelocityInFrame.squaredNorm();
+        double SquaredVelocity = m_fluxVelocityInBody.squaredNorm();
 
         auto fx = cx * SquaredVelocity;
         auto fy = cy * SquaredVelocity;
         auto mz = cn * SquaredVelocity;
 
         SetForceTorqueInBodyAtCOG(Force(fx, fy, 0.), Torque(0., 0., mz), NWU);
+
+    }
+
+
+    void FrCurrentForce2_::Update(double time) {
+
+        FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+        Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
+
+        m_fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetCurrent()
+                ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
+
+        FrFlowForce::Update(time);
+    }
+
+
+
+    void FrWindForce2_::Update(double time) {
+
+        FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+        Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
+
+        m_fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetWind()
+                ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
+
+        FrFlowForce::Update(time);
 
     }
 
