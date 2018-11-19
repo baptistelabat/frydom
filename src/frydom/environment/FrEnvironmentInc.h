@@ -8,8 +8,6 @@
 
 #include "FrEnvironment.h"
 #include "FrFluidType.h"
-#include "FrFlowBase.h"
-#include "FrFlowForce.h"
 
 #include "time/FrTimeInc.h"
 #include "field/FrFieldInc.h"
@@ -18,6 +16,7 @@
 #include "tidal/FrTidalInc.h"
 #include "waves/FrWavesInc.h"
 #include "wind/FrWindInc.h"
+#include "flow/FrFlowInc.h"
 
 
 #endif //FRYDOM_FRENVIRONMENTINC_H

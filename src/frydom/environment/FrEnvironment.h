@@ -36,7 +36,7 @@
 
 // GeographicLib includes
 #include "frydom/utils/FrGeographicServices.h"
-#include "frydom/core/FrGeographic.h"
+#include "frydom/core/FrConvention.h"
 #include "frydom/environment/FrFluidType.h"
 
 namespace GeographicLib {

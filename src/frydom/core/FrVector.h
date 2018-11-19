@@ -11,7 +11,7 @@
 #include "MathUtils/Vector6d.h"
 #include "MathUtils/Matrix.h"
 
-#include "FrGeographic.h"
+#include "FrConvention.h"
 
 
 namespace frydom {

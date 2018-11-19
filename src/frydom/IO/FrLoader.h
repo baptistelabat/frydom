@@ -10,7 +10,7 @@
 #include <vector>
 //#include "MathUtils/MathUtils.h"
 
-#include "frydom/core/FrGeographic.h"
+#include "frydom/core/FrConvention.h"
 #include "frydom/environment/current/FrCurrentPolarCoeffs.h"
 
 //using namespace mathutils;  // TODO: mettre LookupTable en forward declaration

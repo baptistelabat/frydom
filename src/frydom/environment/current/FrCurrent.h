@@ -17,7 +17,7 @@
 #define FRYDOM_FRCURRENT_H
 
 #include "frydom/core/FrObject.h"
-#include "frydom/core/FrGeographic.h"
+#include "frydom/core/FrConvention.h"
 
 #include "frydom/environment/field/FrUniformField.h"  // TODO : include a retirer
 

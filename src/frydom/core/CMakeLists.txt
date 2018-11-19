@@ -13,7 +13,7 @@ set(SRC_FILES
         FrLink.cpp
         FrBodyEasy.cpp
         FrColors.cpp
-        FrGeographic.cpp
+        FrConvention.cpp
         FrForce.cpp
         FrForceAsset.cpp
         FrHydroBody.cpp

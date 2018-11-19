@@ -11,7 +11,7 @@
 #include "frydom/environment/field/FrFieldBase.h"
 
 #include "frydom/core/FrVector.h"
-#include "frydom/core/FrGeographic.h"
+#include "frydom/core/FrConvention.h"
 #include "frydom/core/FrUnits.h"
 
 using namespace mathutils;

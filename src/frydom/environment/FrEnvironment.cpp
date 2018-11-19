@@ -16,7 +16,7 @@
 #include "waves/FrFreeSurface.h"
 #include "seabed/FrSeabed.h"
 
-#include "FrFlowBase.h"
+#include "frydom/environment/flow/FrFlowBase.h"
 #include "frydom/environment/current/FrCurrent.h"
 #include "frydom/environment/wind/FrWind.h"
 

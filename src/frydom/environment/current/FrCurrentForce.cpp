@@ -3,11 +3,11 @@
 //
 
 #include "FrCurrentForce.h"
-#include "frydom/environment/FrFlowBase.h"
+#include "frydom/environment/flow/FrFlowBase.h"
 
 #include "chrono/physics/ChBody.h"
 
-#include "frydom/core/FrGeographic.h"
+#include "frydom/core/FrConvention.h"
 
 #include "frydom/core/FrBody.h"
 

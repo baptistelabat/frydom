@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRFORCE_H
 #define FRYDOM_FRFORCE_H
 
-#include "frydom/core/FrGeographic.h"
+#include "frydom/core/FrConvention.h"
 #include "chrono/physics/ChForce.h"
 #include "hermes/hermes.h"
 

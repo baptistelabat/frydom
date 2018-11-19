@@ -7,12 +7,11 @@ add_subdirectory(seabed)
 add_subdirectory(tidal)
 add_subdirectory(waves)
 add_subdirectory(wind)
+add_subdirectory(flow)
 
 
 set(SRC_FILES
         FrEnvironment.cpp
-        FrFlowBase.cpp
-        FrFlowForce.cpp
         )
 
 set(FRYDOM_ENVIRONMENT_SOURCES "")
@@ -27,6 +26,7 @@ list(APPEND FRYDOM_ENVIRONMENT_SOURCES ${SEABED_FILES})
 list(APPEND FRYDOM_ENVIRONMENT_SOURCES ${TIDAL_FILES})
 list(APPEND FRYDOM_ENVIRONMENT_SOURCES ${WAVES_FILES})
 list(APPEND FRYDOM_ENVIRONMENT_SOURCES ${WIND_FILES})
+list(APPEND FRYDOM_ENVIRONMENT_SOURCES ${FLOW_FILES})
 
 
 set(FRYDOM_ENVIRONMENT_SOURCES ${FRYDOM_ENVIRONMENT_SOURCES} PARENT_SCOPE)

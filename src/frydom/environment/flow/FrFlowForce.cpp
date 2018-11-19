@@ -5,7 +5,7 @@
 #include "FrFlowForce.h"
 
 #include "frydom/core/FrBody.h"
-#include "frydom/environment/FrFlowBase.h"
+#include "FrFlowBase.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/IO/FrLoader.h"
 #include "frydom/core/FrFrame.h"
