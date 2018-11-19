@@ -35,7 +35,7 @@
 //#include "seabed/FrSeabed.h"
 
 // GeographicLib includes
-#include "frydom/utils/FrGeographicServices.h"
+#include "frydom/environment/GeographicServices/FrGeographicServices.h"
 #include "frydom/core/FrGeographic.h"
 #include "frydom/environment/FrFluidType.h"
 
@@ -194,15 +194,15 @@ namespace frydom {
         }
 
         void Convert_GeoToCart(double lat, double lon, double h, double& x, double& y, double& z){
-            m_geoServices->Convert_GeoToCart(lat,lon,h,x,y,z);
+            m_geoServices->GeoToCart(lat,lon,h,x,y,z);
         }
 
         void Convert_CartToGeo(double x, double y, double z, double& lat, double& lon, double& h){
-            m_geoServices->Convert_CartToGeo(x,y,z,lat,lon,h);
+            m_geoServices->CartToGeo(x,y,z,lat,lon,h);
         }
 
         double ComputeMagneticDeclination(double x, double y, double z){
-            m_geoServices->ComputeMagneticDeclination(x,y,z,GetYear());
+            m_geoServices->GetDeclinationFromCart(x,y,z,GetYear());
         }*/
 
         FrTimeZone* GetTimeZone() const;
@@ -255,6 +255,7 @@ namespace frydom {
     class FrUniformCurrent_;
     class Velocity;
     class FrFrame_;
+    class FrGeographicServices;
 
 
     /// Class to store the different elements composing the offshore environment
@@ -275,6 +276,7 @@ namespace frydom {
 
         /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
         std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
+        std::unique_ptr<FrGeographicServices> m_geographicServices;
 
         // Environments scalars
         double m_waterDensity = 1025.;
