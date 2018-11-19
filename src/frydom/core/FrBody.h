@@ -714,26 +714,13 @@ namespace frydom {
         void SetGeneralizedVelocityInBodyAtPointInBody(const Position& bodyPoint,
                 const Velocity& bodyVel, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
 
-        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
-        /// along with the angular velocity expressed in WORLD frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInWorldAtPointInWorld(const Position& worldPoint,
-                const Acceleration& worldAcc, const AngularAcceleration& worldAngVel, FRAME_CONVENTION fc);
+        /// Set the COG acceleration along with the angular velocity expressed in BODY frame,
+        /// so that the acceleration state is totally defined
+        void SetGeneralizedAccelerationInBodyAtCOG(const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
 
-        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
-        /// along with the angular velocity expressed in WORLD frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInWorldAtPointInBody(const Position& bodyPoint,
-                const Acceleration& worldAcc, const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
-
-        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in WORLD frame
-        /// along with the angular velocity expressed in BODY frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInBodyAtPointInWorld(const Position& worldPoint,
-                const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
-
-        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in BODY frame
-        /// along with the angular velocity expressed in BODY frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInBodyAtPointInBody(const Position& bodyPoint,
-                const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
-
+        /// Set the COG acceleration along with the angular velocity expressed in WORLD frame,
+        /// so that the acceleration state is totally defined
+        void SetGeneralizedAccelerationInWorldAtCOG(const Acceleration& worldAcc, const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
 
         // =============================================================================================================
         // PROJECTIONS

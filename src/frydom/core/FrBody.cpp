@@ -742,60 +742,15 @@ namespace frydom {
     }
 
 
-
-
-
-
-
-    void
-    FrBody_::SetGeneralizedAccelerationInWorldAtPointInWorld(const Position &worldPoint, const Acceleration &worldAcc,
-                                                             const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
-
-
-        // Voir la methode TransformLocaToParent() de ChFrameMoving pour le transport d'acceleration de point
-
-//        // pos_dtdt
-//        parent.coord_dtdt.pos =
-//                PointAccelerationLocalToParent(local.coord.pos, local.coord_dt.pos, local.coord_dtdt.pos);
-//
-//        // rot_dt
-//        parent.coord_dt.rot = coord_dt.rot % local.coord.rot + this->coord.rot % local.coord_dt.rot;
-//
-//        // rot_dtdt
-//        parent.coord_dtdt.rot = coord_dtdt.rot % local.coord.rot + (coord_dt.rot % local.coord_dt.rot) * 2 +
-//                                this->coord.rot % local.coord_dtdt.rot;
-
-
-
-//      PointAccelerationLocalToParent :
-
-        // Calule l'acceleration d'un point fixe au corps odnt les coords sont donnees en local au corps. L'acceleration
-        // est exprimee dans le repere world
-
-//        return coord_dtdt.pos +
-//               ((coord_dtdt.rot % ChQuaternion<Real>(0, localpos) % this->coord.rot.GetConjugate()).GetVector() * 2) +
-//               ((coord_dt.rot % ChQuaternion<Real>(0, localpos) % coord_dt.rot.GetConjugate()).GetVector() * 2);
-
-        // Formule :
-        // Acc_P_world = Acc_G_world + bodyQuat_pp *
-
+    void FrBody_::SetGeneralizedAccelerationInBodyAtCOG(const Acceleration &bodyAcc, const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
+        SetAccelerationInBodyNoRotation(bodyAcc, fc);
+        SetAngularAccelerationInBody(bodyAngAcc, fc);
 
     }
 
-    void
-    FrBody_::SetGeneralizedAccelerationInWorldAtPointInBody(const Position &bodyPoint, const Acceleration &worldAcc,
-                                                            const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
-
-    }
-
-    void
-    FrBody_::SetGeneralizedAccelerationInBodyAtPointInWorld(const Position &worldPoint, const Acceleration &bodyAcc,
-                                                            const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
-
-    }
-
-    void FrBody_::SetGeneralizedAccelerationInBodyAtPointInBody(const Position &bodyPoint, const Acceleration &bodyAcc,
-                                                                const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
+    void FrBody_::SetGeneralizedAccelerationInWorldAtCOG(const Acceleration &worldAcc, const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
+        SetAccelerationInWorldNoRotation(worldAcc, fc);
+        SetAngularAccelerationInWorld(worldAngAcc, fc);
 
     }
 
