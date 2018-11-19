@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
 //    fish->SetAbsPosition(0., 0, 0,  NWU);
 //    fish->SetMaxSpeed(0.1);
 //    fish->ActivateSpeedLimits(true);
-    auto fishNode = fish->NewNode(0., 0., radius);
+    auto fishNode = fish->NewNode(0., 0., radius, NWU);
 
 
     auto quadForce = std::make_shared<FrQuadraticDamping_>(WATER, false);
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
 
 //    auto shipNode = ship->NewNode(-1.961, 0., 0.);
 //    auto shipNode = ship->NewNode(-2, 0., 0.);
-    auto shipNode = ship->NewNode(-1.9, 0., 0.);
+    auto shipNode = ship->NewNode(-1.9, 0., 0., NWU);
 
 
     auto cable = std::make_shared<FrCatway>(E, diam, linearDensity, length, nbElt, shipNode, fishNode);  // TODO : avoir un make_catway
@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
 //    box->SetCOGAbsPosition(0, 10, 0, NWU);
 //
 //
-//    std::cout << box->GetAbsPosition() << std::endl << std::endl;
+//    std::cout << box->GetPositionInWorld() << std::endl << std::endl;
 //    std::cout << box->GetCOGAbsPosition() << std::endl << std::endl;
 //    std::cout << box->GetCOGLocalPosition() << DBLENDL;
 //

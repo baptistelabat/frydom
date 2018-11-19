@@ -22,7 +22,7 @@ namespace frydom {
         SetLocalRotation(rotation);
     }
 
-    FrNode_::FrNode_(FrBody_ *body, const Position &position, const FrQuaternion_ &quaternion) : FrNode_(body, position) {
+    FrNode_::FrNode_(FrBody_ *body, const Position &position, const FrUnitQuaternion_ &quaternion) : FrNode_(body, position) {
         SetLocalQuaternion(quaternion);
     }
 
@@ -36,6 +36,10 @@ namespace frydom {
         return m_body;
     }
 
+    FrFrame_ FrNode_::GetFrame() const {
+        return internal::Ch2FrFrame(m_chronoMarker->GetAbsFrame());
+    }
+
     void FrNode_::SetLocalPosition(const Position &position) {
         auto coord = chrono::ChCoordsys<double>(chrono::ChVector<double>(internal::Vector3dToChVector(position)));
         m_chronoMarker->Impose_Rel_Coord(coord);
@@ -45,7 +49,7 @@ namespace frydom {
         SetLocalPosition(Position(x, y, z));
     }
 
-    void FrNode_::SetLocalQuaternion(const FrQuaternion_ &quaternion) {
+    void FrNode_::SetLocalQuaternion(const FrUnitQuaternion_ &quaternion) {
         auto coord = chrono::ChCoordsys<double>(chrono::VNULL, internal::Fr2ChQuaternion(quaternion));
         m_chronoMarker->Impose_Rel_Coord(coord);
     }
@@ -62,16 +66,43 @@ namespace frydom {
         m_chronoMarker->Impose_Rel_Coord(chCoord);
     }
 
+    Position FrNode_::GetNodePositionInBody(FRAME_CONVENTION fc) const {
+        Position NodePositionInBody = internal::ChVectorToVector3d<Position>(m_chronoMarker->GetRest_Coord().pos);
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(NodePositionInBody);
+        return  NodePositionInBody;
+    }
+
     // FIXME : le coord interne de ChMarker est local par rapport au corps auquel il est rattache
-    Position FrNode_::GetAbsPosition() { // TODO : utiliser FRAME_CONVENTIOn
-        return internal::ChVectorToVector3d<Position>(m_chronoMarker->GetAbsCoord().pos);
+    Position FrNode_::GetPositionInWorld(FRAME_CONVENTION fc) const {
+        auto PositionInWorld = internal::ChVectorToVector3d<Position>(m_chronoMarker->GetAbsCoord().pos);
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(PositionInWorld);
+        return PositionInWorld;
     }
 
-    void FrNode_::GetAbsPosition(Position &position) {
-        position = GetAbsPosition();
+    void FrNode_::GetPositionInWorld(Position &position, FRAME_CONVENTION fc) {
+        position = GetPositionInWorld(fc);
     }
 
 
+    Velocity FrNode_::GetVelocityInWorld(FRAME_CONVENTION fc) const {
+        Velocity VelocityInWorld = internal::ChVectorToVector3d<Velocity>(m_chronoMarker->GetAbsCoord_dt().pos);
+        if (IsNED(fc)) internal::SwapFrameConvention<Velocity>(VelocityInWorld);
+        return VelocityInWorld;
+    }
+
+    Velocity FrNode_::GetVelocityInNode(FRAME_CONVENTION fc) const {
+        return ProjectVectorInNode<Velocity>(GetVelocityInWorld(fc),fc);
+    }
+
+    Acceleration FrNode_::GetAccelerationInWorld(FRAME_CONVENTION fc) const {
+        Acceleration AccelerationInWorld = internal::ChVectorToVector3d<Acceleration>(m_chronoMarker->GetAbsCoord_dtdt().pos);
+        if (IsNED(fc)) internal::SwapFrameConvention<Acceleration>(AccelerationInWorld);
+        return AccelerationInWorld;
+    }
+
+    Acceleration FrNode_::GetAccelerationInNode(FRAME_CONVENTION fc) const {
+        return ProjectVectorInNode<Acceleration>(GetAccelerationInWorld(fc),fc);
+    }
 
 
     void FrNode_::Initialize() {
@@ -81,6 +112,8 @@ namespace frydom {
     void FrNode_::StepFinalize() {
 
     }
+
+
 
 
 }  // end namespace frydom

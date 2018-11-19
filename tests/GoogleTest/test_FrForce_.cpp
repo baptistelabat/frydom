@@ -20,7 +20,7 @@ private:
     Position m_PointREFInWorld;                 ///< Position of the body in world
 
     FrFrame_ m_frameREF;                        ///< Body frame
-    FrQuaternion_ m_quatREF;                    ///< Rotation of the body in world
+    FrUnitQuaternion_ m_quatREF;                    ///< Rotation of the body in world
 
     Position m_PointInBody;                     ///< Position of a point of the body in body
     Position m_PointInWorld;                    ///< Position of a point of the boyd in world
@@ -93,10 +93,9 @@ public:
     /// Accessor
     Position GetPointREFInWorld() const { return m_PointREFInWorld; }
     Position GetPointCOGInBody()  const { return m_PointCOGInBody; }
-    FrQuaternion_ GetQuatREF()    const { return m_quatREF; }
+    FrUnitQuaternion_ GetQuatREF()    const { return m_quatREF; }
 
     /// Methods
-    void CreateDataset();
     void LoadData(std::string filename);
     Position ReadPosition(FrHDF5Reader& reader, std::string field);
     Force ReadForce(FrHDF5Reader& reader, std::string field);
@@ -151,7 +150,7 @@ void TestFrForce_::LoadData(std::string filename) {
     auto direction = ReadDirection(reader, group + "RotationDirection/");
     direction.normalize();
     auto angle = reader.ReadDouble(group + "RotationAngle/");
-    m_quatREF =  FrQuaternion_(direction, angle, NWU);
+    m_quatREF =  FrUnitQuaternion_(direction, angle, NWU);
     m_frameREF = FrFrame_(m_PointREFInWorld, m_quatREF, NWU);
 
     m_forceInWorldAtPoint  = ReadForce(reader, group + "ForceInWorldAtPoint/");
@@ -740,11 +739,15 @@ TEST_F(TestBase, GetTorqueInWorldReference) {
 }
 
 TEST_F(TestBase, GetTorqueInBodyReference) {
-    force->TestGetTorqueInWorldReference();
+    force->TestGetTorqueInBodyReference();
 }
 
 TEST_F(TestBase,GetTorqueInBodyComponent) {
     force->TestGetTorqueInBodyComponent();
+}
+
+TEST_F(TestBase,GetTorqueInWorldComponent) {
+    force->TestGetTorqueInWorldComponent();
 }
 
 TEST_F(TestBase, ForceNorm) {

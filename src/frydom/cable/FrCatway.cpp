@@ -98,8 +98,8 @@ namespace frydom {
     void FrCatway::Update() {
 
         // Updating catway's node position from frydom nodes
-        m_startCatNode->SetPosition(m_startNode->GetAbsPosition());
-        m_endCatNode->SetPosition(m_endNode->GetAbsPosition());
+        m_startCatNode->SetPosition(m_startNode->GetPositionInWorld(NWU));
+        m_endCatNode->SetPosition(m_endNode->GetPositionInWorld(NWU));
 
         // Solving catenary line
         m_catLine->Solve(true);
@@ -118,9 +118,9 @@ namespace frydom {
 //        m_catLine->Discretize(nbElt);
 
         // Initializing catenary nodes positions
-        m_startCatNode->SetPosition(m_startNode->GetAbsPosition());
+        m_startCatNode->SetPosition(m_startNode->GetPositionInWorld(NWU));
 
-        m_endCatNode->SetPosition(m_endNode->GetAbsPosition());
+        m_endCatNode->SetPosition(m_endNode->GetPositionInWorld(NWU));
 
         m_catLine->Initialize();
 
@@ -247,7 +247,7 @@ namespace frydom {
 //
 //        void CatLineGeom::Evaluate(chrono::ChVector<double> &pos, const double u) const {
 //            assert(0. <= u <= 1.);
-//            pos = internal::Vector3dToChVector(m_catLine->GetAbsPosition(u * m_catLine->GetCableLength()));
+//            pos = internal::Vector3dToChVector(m_catLine->GetPositionInWorld(u * m_catLine->GetCableLength()));
 //        }
 //
 //

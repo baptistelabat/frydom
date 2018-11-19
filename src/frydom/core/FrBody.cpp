@@ -129,12 +129,10 @@ namespace frydom {
 
             SetFrame_REF_to_abs(auxref_to_abs);
 
+            chrono::ChBodyAuxRef::Update(true);
+
             // Updating markers
             UpdateMarkers(GetChTime());
-        }
-
-        void _FrBodyBase::UpdateRefFrame(bool update_assets) {
-            chrono::ChBodyAuxRef::Update(update_assets);
         }
 
     }  // end namespace internal
@@ -403,12 +401,16 @@ namespace frydom {
         return std::make_shared<FrNode_>(this, bodyFrame);
     }
 
-    std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::Position &localPosition) {
-        return std::make_shared<FrNode_>(this, localPosition);
+    std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::Position &localPosition, FRAME_CONVENTION fc) {
+        auto NodePositionInBody = localPosition;
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(NodePositionInBody);
+        return std::make_shared<FrNode_>(this, NodePositionInBody);
     }
 
-    std::shared_ptr<FrNode_> FrBody_::NewNode(double x, double y, double z) {
-        return std::make_shared<FrNode_>(this, Position(x, y, z));
+    std::shared_ptr<FrNode_> FrBody_::NewNode(double x, double y, double z, FRAME_CONVENTION fc) {
+        auto NodePositionInBody = Position(x, y, z);
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(NodePositionInBody);
+        return std::make_shared<FrNode_>(this, NodePositionInBody);
     }
 
 
@@ -449,11 +451,11 @@ namespace frydom {
         SetRotation(rotation.GetQuaternion());
     }
 
-    FrQuaternion_ FrBody_::GetQuaternion() const {
+    FrUnitQuaternion_ FrBody_::GetQuaternion() const {
         return internal::Ch2FrQuaternion(m_chronoBody->GetRot());
     }
 
-    void FrBody_::SetRotation(const FrQuaternion_ &quaternion) {
+    void FrBody_::SetRotation(const FrUnitQuaternion_ &quaternion) {
         Position bodyWorldPos = GetPosition(NWU);
         m_chronoBody->SetRot(internal::Fr2ChQuaternion(quaternion));
         SetPosition(bodyWorldPos, NWU);
@@ -522,7 +524,7 @@ namespace frydom {
         SetRotation(GetRotation() * relRotation);
     }
 
-    void FrBody_::Rotate(const FrQuaternion_ &relQuaternion) {
+    void FrBody_::Rotate(const FrUnitQuaternion_ &relQuaternion) {
         SetRotation(GetQuaternion() * relQuaternion);
     }
 
@@ -534,13 +536,13 @@ namespace frydom {
         RotateAroundPointInBody(rot.GetQuaternion(), bodyPos, fc);
     }
 
-    void FrBody_::RotateAroundPointInWorld(const FrQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc) {
+    void FrBody_::RotateAroundPointInWorld(const FrUnitQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc) {
         Position bodyPos = GetPointPositionInBody(worldPos, fc);
         Rotate(rot);
         SetPositionOfBodyPoint(bodyPos, worldPos, fc);
     }
 
-    void FrBody_::RotateAroundPointInBody(const FrQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc) {
+    void FrBody_::RotateAroundPointInBody(const FrUnitQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc) {
         Position worldPos = GetPointPositionInWorld(bodyPos, fc);
         Rotate(rot);
         SetPositionOfBodyPoint(bodyPos, worldPos, fc);
@@ -550,7 +552,7 @@ namespace frydom {
         RotateAroundPointInBody(rot, GetCOG(fc), fc);
     }
 
-    void FrBody_::RotateAroundCOG(const FrQuaternion_& rot, FRAME_CONVENTION fc) {
+    void FrBody_::RotateAroundCOG(const FrUnitQuaternion_& rot, FRAME_CONVENTION fc) {
         RotateAroundPointInBody(rot, GetCOG(fc), fc);
     }
 
@@ -581,6 +583,7 @@ namespace frydom {
         coord.pos = internal::Vector3dToChVector(worldVelTmp);
         coord.rot.SetNull();
         m_chronoBody->SetCoord_dt(coord);
+        m_chronoBody->UpdateAfterMove();
     }
 
     void FrBody_::SetVelocityInBodyNoRotation(const Velocity &bodyVel, FRAME_CONVENTION fc) {
@@ -604,6 +607,7 @@ namespace frydom {
         coord.pos = internal::Vector3dToChVector(worldAccTmp);
         coord.rot.SetNull();
         m_chronoBody->SetCoord_dtdt(coord);
+        m_chronoBody->UpdateAfterMove();
     }
 
     void FrBody_::SetAccelerationInBodyNoRotation(const Acceleration &bodyAcc, FRAME_CONVENTION fc) {
@@ -624,6 +628,7 @@ namespace frydom {
         auto worldAngVelTmp = worldAngVel;
         if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngVelTmp);
         m_chronoBody->SetWvel_par(internal::Vector3dToChVector(worldAngVelTmp));
+        m_chronoBody->UpdateAfterMove();
     }
 
     void FrBody_::SetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
@@ -642,9 +647,10 @@ namespace frydom {
 
     void FrBody_::SetAngularAccelerationInWorld(const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
         auto worldAngAccTmp = worldAngAcc;
-        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngAccTmp);
+        if (IsNED(fc)) internal::SwapFrameConvention<AngularAcceleration>(worldAngAccTmp);
         auto chronoAngAcc = internal::Vector3dToChVector(worldAngAccTmp);
         m_chronoBody->SetWacc_par(chronoAngAcc); // FIXME : dans chrono, l'argument d'entree n'est pas const... -> fix Chrono
+        m_chronoBody->UpdateAfterMove();
     }
 
     void FrBody_::SetAngularAccelerationInBody(const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
@@ -699,7 +705,7 @@ namespace frydom {
     }
 
     Acceleration FrBody_::GetAccelerationInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
-        GetAccelerationInBodyAtPointInBody(GetPointPositionInBody(worldPoint, fc), fc);
+        return GetAccelerationInBodyAtPointInBody(GetPointPositionInBody(worldPoint, fc), fc);
     }
 
     Acceleration FrBody_::GetAccelerationInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
@@ -736,65 +742,16 @@ namespace frydom {
     }
 
 
-
-
-
-
-
-    void
-    FrBody_::SetGeneralizedAccelerationInWorldAtPointInWorld(const Position &worldPoint, const Acceleration &worldAcc,
-                                                             const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
-
-
-        // Voir la methode TransformLocaToParent() de ChFrameMoving pour le transport d'acceleration de point
-
-//        // pos_dtdt
-//        parent.coord_dtdt.pos =
-//                PointAccelerationLocalToParent(local.coord.pos, local.coord_dt.pos, local.coord_dtdt.pos);
-//
-//        // rot_dt
-//        parent.coord_dt.rot = coord_dt.rot % local.coord.rot + this->coord.rot % local.coord_dt.rot;
-//
-//        // rot_dtdt
-//        parent.coord_dtdt.rot = coord_dtdt.rot % local.coord.rot + (coord_dt.rot % local.coord_dt.rot) * 2 +
-//                                this->coord.rot % local.coord_dtdt.rot;
-
-
-
-//      PointAccelerationLocalToParent :
-
-        // Calule l'acceleration d'un point fixe au corps odnt les coords sont donnees en local au corps. L'acceleration
-        // est exprimee dans le repere world
-
-//        return coord_dtdt.pos +
-//               ((coord_dtdt.rot % ChQuaternion<Real>(0, localpos) % this->coord.rot.GetConjugate()).GetVector() * 2) +
-//               ((coord_dt.rot % ChQuaternion<Real>(0, localpos) % coord_dt.rot.GetConjugate()).GetVector() * 2);
-
-        // Formule :
-        // Acc_P_world = Acc_G_world + bodyQuat_pp *
-
+    void FrBody_::SetGeneralizedAccelerationInBodyAtCOG(const Acceleration &bodyAcc, const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
+        SetAccelerationInBodyNoRotation(bodyAcc, fc);
+        SetAngularAccelerationInBody(bodyAngAcc, fc);
 
     }
 
-    void
-    FrBody_::SetGeneralizedAccelerationInWorldAtPointInBody(const Position &bodyPoint, const Acceleration &worldAcc,
-                                                            const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
+    void FrBody_::SetGeneralizedAccelerationInWorldAtCOG(const Acceleration &worldAcc, const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
+        SetAccelerationInWorldNoRotation(worldAcc, fc);
+        SetAngularAccelerationInWorld(worldAngAcc, fc);
 
-    }
-
-    void
-    FrBody_::SetGeneralizedAccelerationInBodyAtPointInWorld(const Position &worldPoint, const Acceleration &bodyAcc,
-                                                            const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
-
-    }
-
-    void FrBody_::SetGeneralizedAccelerationInBodyAtPointInBody(const Position &bodyPoint, const Acceleration &bodyAcc,
-                                                                const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
-
-    }
-
-    void FrBody_::UpdateRefFrame(bool update_assets) {
-        m_chronoBody->UpdateRefFrame(update_assets);
     }
 
 

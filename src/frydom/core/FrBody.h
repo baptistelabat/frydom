@@ -268,7 +268,7 @@ namespace frydom {
 
     /// REFACTORING ------>>>>>>>>>>>>>>
 
-    class FrQuaternion_;
+    class FrUnitQuaternion_;
     class FrBody_;
 
 
@@ -287,8 +287,6 @@ namespace frydom {
             void Update(bool update_assets) override;
 
             void UpdateAfterMove();
-
-            void UpdateRefFrame(bool update_assets);
 
         };
 
@@ -465,10 +463,10 @@ namespace frydom {
         std::shared_ptr<FrNode_> NewNode(const FrFrame_& bodyFrame);
 
         /// Get a new node attached to the body given a position of the node expressed into the body reference frame
-        std::shared_ptr<FrNode_> NewNode(const Position& localPosition);
+        std::shared_ptr<FrNode_> NewNode(const Position& localPosition, FRAME_CONVENTION fc);
 
         /// Get a new node attached to the body given a position of the node expressed into the body reference frame
-        std::shared_ptr<FrNode_> NewNode(double x, double y, double z);
+        std::shared_ptr<FrNode_> NewNode(double x, double y, double z, FRAME_CONVENTION fc);
 
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame_ !
@@ -514,12 +512,12 @@ namespace frydom {
         void SetRotation(const FrRotation_& rotation);
 
         /// Get the quaternion object that represents the orientation of the body reference frame in the world
-        FrQuaternion_ GetQuaternion() const;
+        FrUnitQuaternion_ GetQuaternion() const;
 
         /// Set the orientation of the body reference frame in world using a quaterion object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
-        void SetRotation(const FrQuaternion_& quaternion);
+        void SetRotation(const FrUnitQuaternion_& quaternion);
 
         //TODO : ajouter ici toutes les methodes portant sur d'autres representations de la rotation
 
@@ -574,7 +572,7 @@ namespace frydom {
         /// Rotate the body with respect to its current orientation in world using a quaternion object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
-        void Rotate(const FrQuaternion_& relQuaternion);
+        void Rotate(const FrUnitQuaternion_& relQuaternion);
 
 
         // FIXME : reflechir de nouveau a ce que sont les eux methodes precedentes... on tourne autour de quoi ?
@@ -586,11 +584,11 @@ namespace frydom {
         void RotateAroundCOG(const FrRotation_& rot, FRAME_CONVENTION fc);
 
 
-        void RotateAroundPointInWorld(const FrQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc);
+        void RotateAroundPointInWorld(const FrUnitQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc);
 
-        void RotateAroundPointInBody(const FrQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc);
+        void RotateAroundPointInBody(const FrUnitQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc);
 
-        void RotateAroundCOG(const FrQuaternion_& rot, FRAME_CONVENTION fc);
+        void RotateAroundCOG(const FrUnitQuaternion_& rot, FRAME_CONVENTION fc);
 
 
 
@@ -716,26 +714,13 @@ namespace frydom {
         void SetGeneralizedVelocityInBodyAtPointInBody(const Position& bodyPoint,
                 const Velocity& bodyVel, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
 
-        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
-        /// along with the angular velocity expressed in WORLD frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInWorldAtPointInWorld(const Position& worldPoint,
-                const Acceleration& worldAcc, const AngularAcceleration& worldAngVel, FRAME_CONVENTION fc);
+        /// Set the COG acceleration along with the angular velocity expressed in BODY frame,
+        /// so that the acceleration state is totally defined
+        void SetGeneralizedAccelerationInBodyAtCOG(const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
 
-        /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
-        /// along with the angular velocity expressed in WORLD frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInWorldAtPointInBody(const Position& bodyPoint,
-                const Acceleration& worldAcc, const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
-
-        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in WORLD frame
-        /// along with the angular velocity expressed in BODY frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInBodyAtPointInWorld(const Position& worldPoint,
-                const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
-
-        /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in BODY frame
-        /// along with the angular velocity expressed in BODY frame so that the acceleration state is totally defined
-        void SetGeneralizedAccelerationInBodyAtPointInBody(const Position& bodyPoint,
-                const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
-
+        /// Set the COG acceleration along with the angular velocity expressed in WORLD frame,
+        /// so that the acceleration state is totally defined
+        void SetGeneralizedAccelerationInWorldAtCOG(const Acceleration& worldAcc, const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
 
         // =============================================================================================================
         // PROJECTIONS
@@ -834,9 +819,6 @@ namespace frydom {
 
         /// Body update method
         void Update();
-
-        /// Call to ChBodyAuxRef
-        void UpdateRefFrame(bool update_assets);
 
 
         // Linear iteraotrs on external forces

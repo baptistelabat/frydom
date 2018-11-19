@@ -10,6 +10,9 @@ set(GOOGLE_TESTS
         test_FrUniformField
         test_FrFlowBase
         test_FrFlowForce
+        test_FrFrame_
+        test_FrNode_
+        test_FrRotation_
         )
 
 #enable_testing()

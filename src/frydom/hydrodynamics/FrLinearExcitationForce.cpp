@@ -157,7 +157,7 @@ namespace frydom {
 
         moment = GetBody()->Dir_World2Body(moment);
 
-//            moment.SetNull(); // Retirer !!!
+//            moment.SetNullRotation(); // Retirer !!!
 
     }
 
