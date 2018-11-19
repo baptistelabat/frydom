@@ -28,13 +28,13 @@ namespace frydom {
     //Forward Declaration
     class Position;
 
-    /// Class defining geographic coordinates : (latitude, longitude and elevation).
+    /// Class defining geographic coordinates : (latitude, longitude and height).
     class FrGeographicCoord {
 
     private:
         double m_latitude;
         double m_longitude;
-        double m_elevation;
+        double m_height;
     public:
         FrGeographicCoord();
         FrGeographicCoord(double lat, double lon, double h);
@@ -52,11 +52,11 @@ namespace frydom {
         double& GetLongitude(){
                 return m_longitude;
         }
-        double GetElevation() const{
-                return m_elevation;
+        double GetHeight() const{
+                return m_height;
         }
-        double& GetElevation(){
-                return m_elevation;
+        double& GetHeight(){
+                return m_height;
         }
 
 
@@ -80,14 +80,22 @@ namespace frydom {
         /// Set the geographic origin
         /// \param lat0 latitude of the origin
         /// \param lon0 longitude of the origin
-        /// \param h0 elevation of the origin
+        /// \param h0 height of the origin
         void SetGeographicOrigin(double lat0, double lon0, double h0);
+
+        /// Set the geographic origin
+        /// \param geoCoord geographic coordinates
+        void SetGeographicOrigin(FrGeographicCoord geoCoord);
+        
+        FrGeographicCoord GetGeographicOrigin();
+        
+        void GetGeographicOrigin(double& lat, double& lon, double& h);
 
         //-------------------------GeoToCart-------------------------//
         /// Convert geographic coordinates to cartesian position
         /// \param lat latitude of the geographic coordinates
         /// \param lon longitude of the geographic coordinates
-        /// \param h elevation of the geographic coordinates
+        /// \param h height of the geographic coordinates
         /// \param x x cartesian position in the world reference frame
         /// \param y y cartesian position in the world reference frame
         /// \param z z cartesiant position in the world reference frame
@@ -97,7 +105,7 @@ namespace frydom {
         /// Convert geographic coordinates to cartesian position
         /// \param lat latitude of the geographic coordinates
         /// \param lon longitude of the geographic coordinates
-        /// \param h elevation of the geographic coordinates
+        /// \param h height of the geographic coordinates
         /// \param fc frame convention (NED/NWU) for the cartesian position
         /// \return cartesian position
         Position GeoToCart(double lat, double lon, double h, FRAME_CONVENTION fc);
@@ -122,7 +130,7 @@ namespace frydom {
         /// \param z z cartesiant position in the world reference frame
         /// \param lat latitude of the geographic coordinates
         /// \param lon longitude of the geographic coordinates
-        /// \param h elevation of the geographic coordinates
+        /// \param h height of the geographic coordinates
         /// \param fc frame convention (NED/NWU) for the cartesian position
         void CartToGeo(double x, double y, double z, double &lat, double &lon, double &h,
                        FRAME_CONVENTION fc);
@@ -166,7 +174,7 @@ namespace frydom {
         /// Compute the magnetic declination of a geographic coordinates
         /// \param lat latitude of the geographic coordinates
         /// \param lon longitude of the geographic coordinates
-        /// \param h elevation of the geographic coordinates
+        /// \param h height of the geographic coordinates
         /// \param year year
         /// \return magnetic declination
         double GetDeclinationFromGeo(double lat, double lon, double h, double year);

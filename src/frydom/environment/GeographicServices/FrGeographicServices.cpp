@@ -19,19 +19,19 @@ namespace frydom {
     FrGeographicCoord::FrGeographicCoord(const Position geoPos) {
         m_latitude = geoPos.GetX();
         m_longitude = geoPos.GetY();
-        m_elevation = geoPos.GetZ();
+        m_height = geoPos.GetZ();
     }
 
     FrGeographicCoord::FrGeographicCoord() {
         m_latitude = 0.;
         m_longitude = 0.;
-        m_elevation = 0.;
+        m_height = 0.;
     }
 
     FrGeographicCoord::FrGeographicCoord(double lat, double lon, double h) {
         m_latitude = lat;
         m_longitude = lon;
-        m_elevation = h;
+        m_height = h;
     }
 
     FrGeographicServices::FrGeographicServices() {
@@ -46,6 +46,22 @@ namespace frydom {
         m_LocalCartesian.Reset(lat0, lon0, h0);
     }
 
+    void FrGeographicServices::SetGeographicOrigin(const FrGeographicCoord geoCoord) {
+        SetGeographicOrigin(geoCoord.GetLatitude(), geoCoord.GetLongitude(), geoCoord.GetHeight());
+    }
+
+    FrGeographicCoord FrGeographicServices::GetGeographicOrigin() {
+        return {m_LocalCartesian.LatitudeOrigin(), m_LocalCartesian.LongitudeOrigin(), m_LocalCartesian.HeightOrigin()};
+    }
+
+    void FrGeographicServices::GetGeographicOrigin(double& lat, double& lon, double& h) {
+        lat = m_LocalCartesian.LatitudeOrigin();
+        lon = m_LocalCartesian.LongitudeOrigin();
+        h = m_LocalCartesian.HeightOrigin();
+    }
+
+
+
     void FrGeographicServices::GeoToCart(double lat, double lon, double h,
                                          double &x, double &y, double &z, FRAME_CONVENTION fc) {
         m_LocalCartesian.Forward(lat, lon, h, y, x, z);
@@ -55,7 +71,7 @@ namespace frydom {
 
     Position FrGeographicServices::GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) {
         double x,y,z;
-        GeoToCart(geoCoord.GetLatitude(), geoCoord.GetLongitude(), geoCoord.GetElevation(), y, x, z, fc);
+        GeoToCart(geoCoord.GetLatitude(), geoCoord.GetLongitude(), geoCoord.GetHeight(), x, y, z, fc);
         return {x,y,z};
     }
 
@@ -101,11 +117,11 @@ namespace frydom {
     double
     FrGeographicServices::GetDeclinationFromGeo(const FrGeographicCoord &geoCoord, double year) {
         /// Magnetic model loaded from _deps directory
-        GeographicLib::MagneticModel magneticModel("emm2017", "../_deps/magneticmodel-src");
+        GeographicLib::MagneticModel magneticModel("emm2017", "../../_deps/magneticmodel-src");
 
         /// Compute the magnetic declination
         double Bx, By, Bz, H, F, D, I;
-        magneticModel(year, geoCoord.GetLatitude(), geoCoord.GetLongitude(), geoCoord.GetElevation(), Bx, By, Bz);
+        magneticModel(year, geoCoord.GetLatitude(), geoCoord.GetLongitude(), geoCoord.GetHeight(), Bx, By, Bz);
         GeographicLib::MagneticModel::FieldComponents(Bx, By, Bz, H, F, D, I);
 
         return D;
@@ -115,11 +131,6 @@ namespace frydom {
     FrGeographicServices::GetDeclinationFromGeo(double lat, double lon, double h, double year) {
         return GetDeclinationFromGeo(FrGeographicCoord(lat,lon,h),year);
     }
-
-
-
-
-
 
 
 }

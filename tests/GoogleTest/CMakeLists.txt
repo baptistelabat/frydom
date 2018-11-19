@@ -10,6 +10,7 @@ set(GOOGLE_TESTS
         test_FrFrame_
         test_FrNode_
         test_FrRotation_
+        test_FrGeographicServices
         )
 
 #enable_testing()
