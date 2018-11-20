@@ -275,7 +275,7 @@ namespace frydom {
         std::unique_ptr<FrSeabed_>          m_seabed;
 
         /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
-        std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
+//        std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
         std::unique_ptr<FrGeographicServices> m_geographicServices;
 
         // Environments scalars
@@ -379,19 +379,8 @@ namespace frydom {
 
         // Geographic coordinates manipulations
 
-        GeographicLib::LocalCartesian* GetGeoLib() const;
+        FrGeographicServices* GetGeographicServices() const;
 
-        void SetGeographicOrigin(double lat0, double lon0, double h0);
-
-        void Convert_GeoToCart(double lat, double lon, double h, double& x, double& y, double& z);
-
-        void Convert_CartToGeo(double x, double y, double z, double& lat, double& lon, double& h);
-
-        int GetYear() const;        
-
-        // Earth magnetic model
-
-        double ComputeMagneticDeclination(double x, double y, double z); // Local position (cartesian)
 
 
         // TODO : ajouter des methodes permettant de recuperer l'heure UTC, de regler le temps origine...
@@ -399,6 +388,7 @@ namespace frydom {
         FrTimeZone* GetTimeZone() const;
         //void SetTimeZoneName(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
 
+        int GetYear() const;
 
         // Solver methods
 

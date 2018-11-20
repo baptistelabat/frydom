@@ -10,6 +10,7 @@
 
 // GeographicLib includes
 #include "GeographicLib/LocalCartesian.hpp"
+#include "GeographicLib/MagneticModel.hpp"
 
 
 /**
@@ -21,6 +22,7 @@
 
 namespace GeographicLib {
     class LocalCartesian;
+    class MagneticModel;
 }
 
 namespace frydom {
@@ -87,9 +89,9 @@ namespace frydom {
         /// \param geoCoord geographic coordinates
         void SetGeographicOrigin(FrGeographicCoord geoCoord);
         
-        FrGeographicCoord GetGeographicOrigin();
+        FrGeographicCoord GetGeographicOrigin() const;
         
-        void GetGeographicOrigin(double& lat, double& lon, double& h);
+        void GetGeographicOrigin(double& lat, double& lon, double& h) const;
 
         //-------------------------GeoToCart-------------------------//
         /// Convert geographic coordinates to cartesian position
@@ -100,7 +102,7 @@ namespace frydom {
         /// \param y y cartesian position in the world reference frame
         /// \param z z cartesiant position in the world reference frame
         /// \param fc frame convention (NED/NWU) for the cartesian position
-        void GeoToCart(double lat, double lon, double h, double &x, double &y, double &z, FRAME_CONVENTION fc);
+        void GeoToCart(double lat, double lon, double h, double &x, double &y, double &z, FRAME_CONVENTION fc) const;
 
         /// Convert geographic coordinates to cartesian position
         /// \param lat latitude of the geographic coordinates
@@ -108,19 +110,19 @@ namespace frydom {
         /// \param h height of the geographic coordinates
         /// \param fc frame convention (NED/NWU) for the cartesian position
         /// \return cartesian position
-        Position GeoToCart(double lat, double lon, double h, FRAME_CONVENTION fc);
+        Position GeoToCart(double lat, double lon, double h, FRAME_CONVENTION fc) const;
 
         /// Convert geographic coordinates to cartesian position
         /// \param geoCoord geographic coordinates
         /// \param fc frame convention (NED/NWU)
         /// \return cartesian position in the world reference frame
-        Position GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc);
+        Position GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) const;
 
         /// Convert geographic coordinates to cartesian position
         /// \param geoCoord geographic coordinates
         /// \param cartPos cartesian position in the world reference frame
         /// \param fc frame convention (NED/NWU) for the cartesian position
-        void GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc);
+        void GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc) const;
 
 
         //-------------------------CartToGeo-------------------------//
@@ -132,20 +134,19 @@ namespace frydom {
         /// \param lon longitude of the geographic coordinates
         /// \param h height of the geographic coordinates
         /// \param fc frame convention (NED/NWU) for the cartesian position
-        void CartToGeo(double x, double y, double z, double &lat, double &lon, double &h,
-                       FRAME_CONVENTION fc);
+        void CartToGeo(double x, double y, double z, double &lat, double &lon, double &h, FRAME_CONVENTION fc) const;
 
         /// Convert cartesian position to geographic coordinates
         /// \param cartPos cartesian position in the world reference frame
         /// \param geoCoord geographic coordinates
         /// \param fc frame convention (NED/NWU) for the cartesian position
-        void CartToGeo(const Position& cartPos, FrGeographicCoord& geoCoord, FRAME_CONVENTION fc);
+        void CartToGeo(const Position& cartPos, FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) const;
 
         /// Convert cartesian position to geographic coordinates
         /// \param cartPos cartesian position in the world reference frame
         /// \param fc frame convention (NED/NWU) for the cartesian position
         /// \return geographic coordinates
-        FrGeographicCoord CartToGeo(const Position& cartPos, FRAME_CONVENTION fc);
+        FrGeographicCoord CartToGeo(const Position& cartPos, FRAME_CONVENTION fc) const;
 
 
         //-------------------------Magnetic Declination-------------------------//
@@ -154,7 +155,7 @@ namespace frydom {
         /// \param year year
         /// \param fc frame convention (NED/NWU) for the cartesian position
         /// \return magnetic declination
-        double GetDeclinationFromCart(const Position &cartPos, double year, FRAME_CONVENTION fc);
+        double GetDeclinationFromCart(const Position &cartPos, double year, FRAME_CONVENTION fc) const;
 
         /// Compute the magnetic declination of a cartesian position
         /// \param x x cartesian position in the world reference frame
@@ -163,13 +164,13 @@ namespace frydom {
         /// \param year year
         /// \param fc frame convention (NED/NWU) for the cartesian position
         /// \return magnetic declination
-        double GetDeclinationFromCart(double x, double y, double z, double year, FRAME_CONVENTION fc);
+        double GetDeclinationFromCart(double x, double y, double z, double year, FRAME_CONVENTION fc) const;
 
         /// Compute the magnetic declination of a geographic coordinates
         /// \param geoCoord geographic coordinates
         /// \param year year
         /// \return magnetic declination
-        double GetDeclinationFromGeo(const FrGeographicCoord& geoCoord, double year);
+        double GetDeclinationFromGeo(const FrGeographicCoord& geoCoord, double year) const;
 
         /// Compute the magnetic declination of a geographic coordinates
         /// \param lat latitude of the geographic coordinates
@@ -177,7 +178,7 @@ namespace frydom {
         /// \param h height of the geographic coordinates
         /// \param year year
         /// \return magnetic declination
-        double GetDeclinationFromGeo(double lat, double lon, double h, double year);
+        double GetDeclinationFromGeo(double lat, double lon, double h, double year) const;
 
     };
 

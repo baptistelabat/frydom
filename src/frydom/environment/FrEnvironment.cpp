@@ -268,7 +268,7 @@ namespace frydom {
 
         SetGravityAcceleration(9.81);
 
-        m_LocalCartesian = std::make_unique<GeographicLib::LocalCartesian>();
+        m_geographicServices = std::make_unique<FrGeographicServices>();
         m_timeZone       = std::make_unique<FrTimeZone>();
 
     }
@@ -430,20 +430,8 @@ namespace frydom {
         }
     }
 
-    GeographicLib::LocalCartesian *FrEnvironment_::GetGeoLib() const {
-        return m_LocalCartesian.get();
-    }
-
-    void FrEnvironment_::SetGeographicOrigin(double lat0, double lon0, double h0) {
-        m_LocalCartesian->Reset(lat0, lon0, h0);
-    }
-
-    void FrEnvironment_::Convert_GeoToCart(double lat, double lon, double h, double &x, double &y, double &z) {
-        m_LocalCartesian->Forward(lat, lon, h, x, y, z);
-    }
-
-    void FrEnvironment_::Convert_CartToGeo(double x, double y, double z, double &lat, double &lon, double &h) {
-        m_LocalCartesian->Reverse(x, y, z, lat, lon, h);
+    FrGeographicServices *FrEnvironment_::GetGeographicServices() const {
+        return m_geographicServices.get();
     }
 
     int FrEnvironment_::GetYear() const {
@@ -451,23 +439,6 @@ namespace frydom {
         auto lt = GetTimeZone()->GetUTCTime();
         date::year_month_day ymd{date::floor<date::days>(lt)};
         return int(ymd.year());
-    }
-
-    double FrEnvironment_::ComputeMagneticDeclination(double x, double y, double z) {
-
-        /// Magnetic model loaded from _deps directory
-        GeographicLib::MagneticModel magneticModel("emm2017", "../_deps/magneticmodel-src");
-        double lat, lon, h;
-
-        /// Convert the node local coordinates to geographical coordinates
-        Convert_CartToGeo(x, y, z, lat, lon, h);
-
-        /// Compute the magnetic declination
-        double Bx, By, Bz, H, F, D, I;
-        magneticModel(GetYear(), lat, lon, h, Bx, By, Bz);
-        GeographicLib::MagneticModel::FieldComponents(Bx, By, Bz, H, F, D, I);
-
-        return D;
     }
 
     FrTimeZone *FrEnvironment_::GetTimeZone() const {return m_timeZone.get();}

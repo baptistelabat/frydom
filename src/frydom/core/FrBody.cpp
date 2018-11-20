@@ -143,7 +143,7 @@ namespace frydom {
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
     }
 
-    FrOffshoreSystem_* FrBody_::GetSystem(){
+    FrOffshoreSystem_* FrBody_::GetSystem() const {
         return m_system;
     }
 
@@ -436,6 +436,10 @@ namespace frydom {
         return refPos;
     }
 
+    FrGeographicCoord FrBody_::GetGeoPosition(FRAME_CONVENTION fc) const {
+        return CartToGeo(GetPosition(fc),fc);
+    }
+
     void FrBody_::SetPosition(const Position &worldPos, FRAME_CONVENTION fc) {
         auto bodyFrame = GetFrame();
         bodyFrame.SetPosition(worldPos, fc);
@@ -497,6 +501,20 @@ namespace frydom {
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
         return cogPos;
     }
+
+
+    FrGeographicCoord FrBody_::GetGeoPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const {
+        return CartToGeo(GetPointPositionInWorld(bodyPos, fc), fc);
+    }
+
+    FrGeographicCoord FrBody_::GetGeoPointPositionInBody(const Position &worldPos, FRAME_CONVENTION fc) const {
+        return CartToGeo(GetPointPositionInBody(worldPos, fc), fc);
+    }
+
+    FrGeographicCoord FrBody_::GetCOGGeoPositionInWorld(FRAME_CONVENTION fc) const {
+        return CartToGeo(GetCOGPositionInWorld(fc), fc);
+    }
+
 
     void FrBody_::SetPositionOfBodyPoint(const Position &bodyPoint, const Position &worldPos, FRAME_CONVENTION fc) {
         Position bodyWorldPos = GetPosition(fc);
@@ -752,6 +770,14 @@ namespace frydom {
         SetAccelerationInWorldNoRotation(worldAcc, fc);
         SetAngularAccelerationInWorld(worldAngAcc, fc);
 
+    }
+
+    void FrBody_::CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) const {
+        geoCoord = CartToGeo(cartPos, fc);
+    }
+
+    FrGeographicCoord FrBody_::CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) const {
+        return GetSystem()->GetEnvironment()->GetGeographicServices()->CartToGeo(cartPos, fc);
     }
 
 
