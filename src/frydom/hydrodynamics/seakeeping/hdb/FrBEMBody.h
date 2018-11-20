@@ -310,205 +310,207 @@ namespace frydom {
 
 
 
-    class FrBEMBody_ {
-
-        // =================================================================================================================
-
-    private:
-//        FrHydroBody* m_hydroBody = nullptr;  // TODO: est-ce qu'on utilise un pointeur vers un hydrobody ou bien une bimap dans la HDB ??
-
-
-        FrHydroDB* m_HDB = nullptr;
-
-        unsigned int m_ID;
-        std::string m_BodyName;
-
-        std::vector<FrBEMForceMode> m_ForceModes;
-        std::vector<FrBEMMotionMode> m_MotionModes;
-
-        Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> m_ExcitationMask;
-        std::vector<Eigen::MatrixXcd> m_Diffraction;
-        std::vector<Eigen::MatrixXcd> m_FroudeKrylov;
-        std::vector<Eigen::MatrixXcd> m_Excitation;
-
-        std::vector<Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>> m_RadiationMask;
-        std::vector<Eigen::MatrixXd> m_InfiniteAddedMass;
-        std::vector<std::vector<Eigen::MatrixXd>> m_AddedMass;
-        std::vector<std::vector<Eigen::MatrixXd>> m_RadiationDamping;
-        std::vector<std::vector<Eigen::MatrixXd>> m_ImpulseResponseFunction;
-        std::vector<std::vector<Eigen::MatrixXd>> m_SpeedDependentIRF;
-
-        std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
-
-        bool m_radiation_active;
-
-    public:
-
-        FrBEMBody_() = default;
-        FrBEMBody_(unsigned int ID, std::string& BodyName) : m_ID(ID), m_BodyName(BodyName) {}
-
-        void SetHDB(FrHydroDB* HDB) { m_HDB = HDB; }
-        FrHydroDB* GetHDB() const { return m_HDB; }
-
-//        void SetHydroBody(FrHydroBody* hydroBody) { m_hydroBody = hydroBody; }  // TODO: Ne serait-il pas mieux que ce soit la HDB qui gere les relations BEMBody/HydroBody ???
-//        FrHydroBody* GetHydroBody() { return m_hydroBody; }
-
-        void SetName(const std::string& BodyName) { m_BodyName = BodyName; }
-//        void SetBodyPosition(const Eigen::Vector3d& BodyPosition) { m_BodyPosition = BodyPosition; }
-
-        unsigned int GetNbForceMode() const { return (uint)m_ForceModes.size(); }
-
-        unsigned int GetNbMotionMode() const { return (uint)m_MotionModes.size(); }
-
-
-        FrBEMForceMode* GetForceMode(unsigned int imode) {
-            assert(imode < GetNbForceMode());
-            return &m_ForceModes[imode];
-        }
-
-        FrBEMMotionMode* GetMotionMode(unsigned int imode) {
-            assert(imode < GetNbMotionMode());
-            return &m_MotionModes[imode];
-        }
-
-        unsigned int GetID() const { return m_ID; }
-
-        void AddForceMode(FrBEMForceMode& mode) {
-            m_ForceModes.push_back(mode);
-        }
-
-        void AddMotionMode(FrBEMMotionMode& mode) {
-            m_MotionModes.push_back(mode);
-        }
-
-        unsigned int GetNbFrequencies() const;
-
-        std::vector<double> GetFrequencies() const;
-
-        std::vector<std::vector<double>>
-        GetEncounterFrequencies(std::vector<double> waveFrequencies,
-                                std::vector<double> waveDirections,
-                                std::vector<double> waveNumbers,
-                                chrono::ChVector<double> frame_velocity,
-                                ANGLE_UNIT angleUnit);
-
-        unsigned int GetNbWaveDirections() const;
-
-        std::vector<double> GetWaveDirections() const;
-
-        void FilterRadiation();
-
-        void FilterExcitation();
-
-        void Initialize();
-
-        void Finalize() {
-            ComputeExcitation();
-            FilterExcitation();
-            FilterRadiation();
-
-            // TODO: Ici, on construit les interpolateurs
-            BuildInterpolators();
-        }
-
-        void BuildInterpolators();
-
-        void BuildWaveExcitationInterpolators();  // TODO: voir si on construit les interpolateurs pour la diffraction et Froude-Krylov
-
-        std::vector<Eigen::MatrixXcd>
-        GetExcitationInterp(std::vector<double> waveFrequencies, std::vector<double> waveDirections, ANGLE_UNIT angleUnit=DEG);
-
-        std::vector<Eigen::MatrixXcd>
-        GetExcitationInterp(std::vector<double> waveFrequencies, std::vector<double> waveDirection,
-                            std::vector<double> waveNumbers, chrono::ChVector<double> frame_velocity,
-                            ANGLE_UNIT angleUnit=DEG);
-
-        void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
-
-        void SetFroudeKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix);
-
-        void ComputeExcitation();
-
-        void SetInfiniteAddedMass(unsigned int ibody, const Eigen::MatrixXd& CMInf);
-
-        void SetAddedMass(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CM);
-
-        void SetRadiationDamping(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CA);
-
-        void SetImpulseResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
-
-        void SetSpeedDependentIRF(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd& IRF);
-
-        // FIXME: les GetDiffraction etc ne doivent pas specialement etre accessible en dehors des interpolations...
-        // On utilisera donc plutot GetExcitation(omega, angles) ...
-
-        Eigen::MatrixXcd GetDiffraction(unsigned int iangle) const;
-
-        Eigen::VectorXcd GetDiffraction(unsigned int iangle, unsigned int iforce) const;
-
-        Eigen::MatrixXcd GetFroudeKrylov(unsigned int iangle) const;
-
-        Eigen::VectorXcd GetFroudeKrylov(unsigned int iangle, unsigned int iforce) const;
-
-        Eigen::MatrixXcd GetExcitation(unsigned int iangle) const;
-
-        Eigen::VectorXcd GetExcitation(unsigned int iangle, unsigned int iforce) const;
-
-        Eigen::MatrixXd GetInfiniteAddedMass(unsigned int ibody) const;
-
-        Eigen::MatrixXd GetSelfInfiniteAddedMass() const;
-
-        Eigen::MatrixXd GetAddedMass(unsigned int ibody, unsigned int idof) const;
-
-        Eigen::VectorXd GetAddedMass(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
-
-        Eigen::MatrixXd GetSelfAddedMass(unsigned int idof) const;
-
-        Eigen::VectorXd GetSelfAddedMass(unsigned int idof, unsigned int iforce) const;
-
-        Eigen::MatrixXd GetRadiationDamping(unsigned int ibody, unsigned int idof) const;
-
-        Eigen::VectorXd GetRadiationDamping(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
-
-        Eigen::MatrixXd GetSelfRadiationDamping(unsigned int idof) const;
-
-        Eigen::VectorXd GetselfRadiationDamping(unsigned int idof, unsigned int iforce) const;
-
-        std::vector<Eigen::MatrixXd> GetImpulseResponseFunction(unsigned int ibody) const;
-
-        Eigen::MatrixXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof) const;
-
-        Eigen::VectorXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
-
-        Eigen::MatrixXd GetSelfImpulseResponseFunction(unsigned int idof) const;
-
-        Eigen::VectorXd GetSelfImpulseResponseFunction(unsigned int idof, unsigned int iforce) const;
-
-        std::vector<Eigen::MatrixXd> GetSpeedDependentIRF(unsigned int ibody) const;
-
-        Eigen::MatrixXd GetSpeedDependentIRF(unsigned int ibody, unsigned int idof) const;
-
-        Eigen::VectorXd GetSpeedDependentIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
-
-        void GenerateImpulseResponseFunctions();
-
-        void GenerateSpeedDependentIRF();
-
-        virtual void IntLoadResidual_Mv(const unsigned int off,
-                                        chrono::ChVectorDynamic<>& R,
-                                        const chrono::ChVectorDynamic<>& w,
-                                        const double c);
-
-        void SetRadiationActive(const bool is_active) { m_radiation_active = is_active; }
-
-        bool GetRadiationActive() const { return m_radiation_active; }
-
-        //void VariablesFbIncrementMq();
-
-        //void Compute_inc_Mb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const;
-
-        void SetBEMVariables();
-    };
+//    class FrBEMBody_ {
+//
+//        // =================================================================================================================
+//
+//    private:
+////        FrHydroBody* m_hydroBody = nullptr;  // TODO: est-ce qu'on utilise un pointeur vers un hydrobody ou bien une bimap dans la HDB ??
+//
+//
+////        FrHydroDB* m_HDB = nullptr;
+//
+//        unsigned int m_ID;
+//        std::string m_BodyName;
+//
+//        std::vector<FrBEMForceMode> m_ForceModes;
+//        std::vector<FrBEMMotionMode> m_MotionModes;
+//
+//        Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> m_ExcitationMask;
+//        std::vector<Eigen::MatrixXcd> m_Diffraction;
+//        std::vector<Eigen::MatrixXcd> m_FroudeKrylov;
+//        std::vector<Eigen::MatrixXcd> m_Excitation;
+//
+//        std::vector<Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>> m_RadiationMask;
+//        std::vector<Eigen::MatrixXd> m_InfiniteAddedMass;
+//        std::vector<std::vector<Eigen::MatrixXd>> m_AddedMass;
+//        std::vector<std::vector<Eigen::MatrixXd>> m_RadiationDamping;
+//        std::vector<std::vector<Eigen::MatrixXd>> m_ImpulseResponseFunction;
+//        std::vector<std::vector<Eigen::MatrixXd>> m_SpeedDependentIRF;
+//
+//        std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
+//
+//        bool m_radiation_active;
+//
+////        friend FrHydroDB_ LoadHDB5_(std::string);
+//
+//    public:
+//
+//        FrBEMBody_() = default;
+//        FrBEMBody_(unsigned int ID, std::string& BodyName) : m_ID(ID), m_BodyName(BodyName) {}
+//
+////        void SetHDB(FrHydroDB* HDB) { m_HDB = HDB; }
+////        FrHydroDB* GetHDB() const { return m_HDB; }
+//
+////        void SetHydroBody(FrHydroBody* hydroBody) { m_hydroBody = hydroBody; }  // TODO: Ne serait-il pas mieux que ce soit la HDB qui gere les relations BEMBody/HydroBody ???
+////        FrHydroBody* GetHydroBody() { return m_hydroBody; }
+//
+//        void SetName(const std::string& BodyName) { m_BodyName = BodyName; }
+////        void SetBodyPosition(const Eigen::Vector3d& BodyPosition) { m_BodyPosition = BodyPosition; }
+//
+//        unsigned int GetNbForceMode() const { return (uint)m_ForceModes.size(); }
+//
+//        unsigned int GetNbMotionMode() const { return (uint)m_MotionModes.size(); }
+//
+//
+//        FrBEMForceMode* GetForceMode(unsigned int imode) {
+//            assert(imode < GetNbForceMode());
+//            return &m_ForceModes[imode];
+//        }
+//
+//        FrBEMMotionMode* GetMotionMode(unsigned int imode) {
+//            assert(imode < GetNbMotionMode());
+//            return &m_MotionModes[imode];
+//        }
+//
+//        unsigned int GetID() const { return m_ID; }
+//
+//        void AddForceMode(FrBEMForceMode& mode) {
+//            m_ForceModes.push_back(mode);
+//        }
+//
+//        void AddMotionMode(FrBEMMotionMode& mode) {
+//            m_MotionModes.push_back(mode);
+//        }
+//
+//        unsigned int GetNbFrequencies() const;
+//
+//        std::vector<double> GetFrequencies() const;
+//
+//        std::vector<std::vector<double>>
+//        GetEncounterFrequencies(std::vector<double> waveFrequencies,
+//                                std::vector<double> waveDirections,
+//                                std::vector<double> waveNumbers,
+//                                chrono::ChVector<double> frame_velocity,
+//                                ANGLE_UNIT angleUnit);
+//
+//        unsigned int GetNbWaveDirections() const;
+//
+//        std::vector<double> GetWaveDirections() const;
+//
+//        void FilterRadiation();
+//
+//        void FilterExcitation();
+//
+//        void Initialize();
+//
+//        void Finalize() {
+//            ComputeExcitation();
+//            FilterExcitation();
+//            FilterRadiation();
+//
+//            // TODO: Ici, on construit les interpolateurs
+//            BuildInterpolators();
+//        }
+//
+//        void BuildInterpolators();
+//
+//        void BuildWaveExcitationInterpolators();  // TODO: voir si on construit les interpolateurs pour la diffraction et Froude-Krylov
+//
+//        std::vector<Eigen::MatrixXcd>
+//        GetExcitationInterp(std::vector<double> waveFrequencies, std::vector<double> waveDirections, ANGLE_UNIT angleUnit=DEG);
+//
+//        std::vector<Eigen::MatrixXcd>
+//        GetExcitationInterp(std::vector<double> waveFrequencies, std::vector<double> waveDirection,
+//                            std::vector<double> waveNumbers, chrono::ChVector<double> frame_velocity,
+//                            ANGLE_UNIT angleUnit=DEG);
+//
+//        void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
+//
+//        void SetFroudeKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix);
+//
+//        void ComputeExcitation();
+//
+//        void SetInfiniteAddedMass(unsigned int ibody, const Eigen::MatrixXd& CMInf);
+//
+//        void SetAddedMass(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CM);
+//
+//        void SetRadiationDamping(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CA);
+//
+//        void SetImpulseResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
+//
+//        void SetSpeedDependentIRF(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd& IRF);
+//
+//        // FIXME: les GetDiffraction etc ne doivent pas specialement etre accessible en dehors des interpolations...
+//        // On utilisera donc plutot GetExcitation(omega, angles) ...
+//
+//        Eigen::MatrixXcd GetDiffraction(unsigned int iangle) const;
+//
+//        Eigen::VectorXcd GetDiffraction(unsigned int iangle, unsigned int iforce) const;
+//
+//        Eigen::MatrixXcd GetFroudeKrylov(unsigned int iangle) const;
+//
+//        Eigen::VectorXcd GetFroudeKrylov(unsigned int iangle, unsigned int iforce) const;
+//
+//        Eigen::MatrixXcd GetExcitation(unsigned int iangle) const;
+//
+//        Eigen::VectorXcd GetExcitation(unsigned int iangle, unsigned int iforce) const;
+//
+//        Eigen::MatrixXd GetInfiniteAddedMass(unsigned int ibody) const;
+//
+//        Eigen::MatrixXd GetSelfInfiniteAddedMass() const;
+//
+//        Eigen::MatrixXd GetAddedMass(unsigned int ibody, unsigned int idof) const;
+//
+//        Eigen::VectorXd GetAddedMass(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+//
+//        Eigen::MatrixXd GetSelfAddedMass(unsigned int idof) const;
+//
+//        Eigen::VectorXd GetSelfAddedMass(unsigned int idof, unsigned int iforce) const;
+//
+//        Eigen::MatrixXd GetRadiationDamping(unsigned int ibody, unsigned int idof) const;
+//
+//        Eigen::VectorXd GetRadiationDamping(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+//
+//        Eigen::MatrixXd GetSelfRadiationDamping(unsigned int idof) const;
+//
+//        Eigen::VectorXd GetselfRadiationDamping(unsigned int idof, unsigned int iforce) const;
+//
+//        std::vector<Eigen::MatrixXd> GetImpulseResponseFunction(unsigned int ibody) const;
+//
+//        Eigen::MatrixXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof) const;
+//
+//        Eigen::VectorXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+//
+//        Eigen::MatrixXd GetSelfImpulseResponseFunction(unsigned int idof) const;
+//
+//        Eigen::VectorXd GetSelfImpulseResponseFunction(unsigned int idof, unsigned int iforce) const;
+//
+//        std::vector<Eigen::MatrixXd> GetSpeedDependentIRF(unsigned int ibody) const;
+//
+//        Eigen::MatrixXd GetSpeedDependentIRF(unsigned int ibody, unsigned int idof) const;
+//
+//        Eigen::VectorXd GetSpeedDependentIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+//
+//        void GenerateImpulseResponseFunctions();
+//
+//        void GenerateSpeedDependentIRF();
+//
+//        virtual void IntLoadResidual_Mv(const unsigned int off,
+//                                        chrono::ChVectorDynamic<>& R,
+//                                        const chrono::ChVectorDynamic<>& w,
+//                                        const double c);
+//
+//        void SetRadiationActive(const bool is_active) { m_radiation_active = is_active; }
+//
+//        bool GetRadiationActive() const { return m_radiation_active; }
+//
+//        //void VariablesFbIncrementMq();
+//
+//        //void Compute_inc_Mb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const;
+//
+//        void SetBEMVariables();
+//    };
 
 
 

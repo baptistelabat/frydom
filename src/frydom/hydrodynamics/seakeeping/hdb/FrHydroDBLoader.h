@@ -14,6 +14,25 @@ namespace frydom {
 
     FrHydroDB LoadHDB5(std::string h5file);  // TODO: mettre dans fichier a part...
 
+
+
+
+
+
+
+
+    ////////////// REFACTORING ------------->>>>>>>>>>>>>>>><
+
+    // Forward declaration
+    class FrHydroDB_;
+
+//    FrHydroDB_ LoadHDB5_(std::string h5file);
+
+
+
+
+
+
 }  // end namespace frydom
 
 #endif //FRYDOM_FRHYDRODBLOADER_H
