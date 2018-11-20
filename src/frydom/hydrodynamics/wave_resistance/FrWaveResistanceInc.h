@@ -1,0 +1,12 @@
+//
+// Created by frongere on 20/11/18.
+//
+
+#ifndef FRYDOM_FRWAVERESISTANCEINC_H
+#define FRYDOM_FRWAVERESISTANCEINC_H
+
+
+#include "FrITTC57.h"
+
+
+#endif //FRYDOM_FRWAVERESISTANCEINC_H

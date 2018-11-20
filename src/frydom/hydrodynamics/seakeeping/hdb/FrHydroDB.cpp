@@ -439,6 +439,7 @@ namespace frydom {
 
         }  // end for ibody
 
+
         // READING THE HYDRODYNAMIC COEFFICIENTS
         for (unsigned int ibody=0; ibody<NbBodies; ++ibody) {
 

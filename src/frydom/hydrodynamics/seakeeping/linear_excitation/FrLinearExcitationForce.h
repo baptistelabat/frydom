@@ -10,9 +10,8 @@
 #include "frydom/environment/waves/FrWaveField.h"
 #include "frydom/core/FrHydroBody.h"
 
-#include "FrHydroMapper.h"
-
-#include "FrHydroDB.h"
+#include "frydom/hydrodynamics/seakeeping/hdb/FrHydroMapper.h" // TODO : ces deux include devraient disparaitre (c'est model qui connait...)
+#include "frydom/hydrodynamics/seakeeping/hdb/FrHydroDB.h"
 
 
 namespace frydom {

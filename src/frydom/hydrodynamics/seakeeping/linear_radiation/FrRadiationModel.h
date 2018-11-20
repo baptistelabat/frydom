@@ -7,10 +7,9 @@
 
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/FrObject.h"
-#include "FrHydroDB.h"
-//#include "FrRadiationForce.h
-#include "FrHydroMapper.h"
-#include "FrVelocityRecorder.h"
+#include "frydom/hydrodynamics/seakeeping/hdb/FrHydroDB.h"
+#include "frydom/hydrodynamics/seakeeping/hdb/FrHydroMapper.h" // TODO : doit disparaitre, c'est HydroDB qui connait...
+#include "frydom/hydrodynamics/FrVelocityRecorder.h"
 
 #include <iostream>
 #include <fstream>

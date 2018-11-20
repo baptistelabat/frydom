@@ -5,7 +5,7 @@
 #include "chrono/core/ChQuaternion.h"
 #include "FrMorisonModel.h"
 #include "frydom/core/FrHydroBody.h"
-#include "frydom/hydrodynamics/FrMorisonForce.h"
+#include "frydom/hydrodynamics/morrison/FrMorisonForce.h"
 #include "frydom/environment/waves/FrFlowSensor.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/waves/FrFreeSurface.h"

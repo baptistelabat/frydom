@@ -9,7 +9,7 @@
 
 #include "frydom/core/FrHydroBody.h"
 #include "FrHydroDB.h"
-#include "frydom/hydrodynamics/FrBEMBody.h"
+#include "FrBEMBody.h"
 
 
 namespace frydom {

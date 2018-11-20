@@ -445,7 +445,7 @@ namespace frydom {
         FrHydroDB_(std::string hdb5File);
 
         unsigned int GetNbBodies() const { return (unsigned int)m_Bodies.size(); }
-//
+
 //        double GetGravityAcc() const { return m_GravityAcc; }
 //
 //        void SetGravityAcc(const double GravityAcc) { m_GravityAcc = GravityAcc; }

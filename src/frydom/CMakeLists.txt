@@ -31,7 +31,7 @@ foreach(subdir ${subdirs})
 endforeach()
 
 # =============================================================================
-# FRyDoM DEPENDENCIES
+# FRyDoM DIRECT DEPENDENCIES
 # =============================================================================
 include(Add_chrono)
 include(Add_MathUtils)

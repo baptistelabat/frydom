@@ -1,35 +1,30 @@
 message(STATUS "    ...hydrodynamics")
 
+add_subdirectory(dampings)
+add_subdirectory(hydrostatics)
+add_subdirectory(maneuveuring)
+add_subdirectory(morrison)
+add_subdirectory(seakeeping)
+add_subdirectory(wave_resistance)
+
+
 set(SRC_FILES
-        FrFroudeKrylov.cpp
-        FrBEMBody.cpp
-        FrHydroDB.cpp
-        FrHydrostaticForce.cpp
-        FrITTC57.cpp
-        FrLinearDamping.cpp
-        FrLinearExcitationForce.cpp
-        FrLinearHydrostaticForce.cpp
-        FrLinearHydrostaticStiffnessMatrix.cpp
-        FrMorrisonElement.cpp
-        FrMorrisonForce.cpp
-        FrRadiationForce.cpp
-        FrTryalForce.cpp
-        FrWaveDriftForce.cpp
-        FrVelocityRecorder.cpp
         FrPositionRecorder.cpp
-        FrRadiationModel.cpp
-        FrHydroMapper.cpp
-        FrHydroDBLoader.cpp
-        FrVariablesBEMBodyMass.cpp
-        FrMorisonModel.cpp
-        FrManoeuvringDamping.cpp
-        FrQuadraticDamping.cpp
-        FrMorisonForce.cpp
-)
+        FrVelocityRecorder.cpp
+        )
+
 
 set(FRYDOM_HYDRODYNAMICS_SOURCES "")
 foreach(file ${SRC_FILES})
     list(APPEND FRYDOM_HYDRODYNAMICS_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+
+list(APPEND FRYDOM_HYDRODYNAMICS_SOURCES ${FRYDOM_HYDRODYNAMICS_DAMPINGS_SOURCES})
+list(APPEND FRYDOM_HYDRODYNAMICS_SOURCES ${FRYDOM_HYDRODYNAMICS_HYDROSTATICS_SOURCES})
+list(APPEND FRYDOM_HYDRODYNAMICS_SOURCES ${FRYDOM_HYDRODYNAMICS_MANEUVEURING_SOURCES})
+list(APPEND FRYDOM_HYDRODYNAMICS_SOURCES ${FRYDOM_HYDRODYNAMICS_MORISON_SOURCES})
+list(APPEND FRYDOM_HYDRODYNAMICS_SOURCES ${FRYDOM_HYDRODYNAMICS_SEAKEEPING_SOURCES})
+list(APPEND FRYDOM_HYDRODYNAMICS_SOURCES ${FRYDOM_HYDRODYNAMICS_WAVE_RESISTANCE_SOURCES})
+
 
 set(FRYDOM_HYDRODYNAMICS_SOURCES ${FRYDOM_HYDRODYNAMICS_SOURCES} PARENT_SCOPE)

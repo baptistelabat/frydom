@@ -2,17 +2,17 @@
 // Created by frongere on 29/05/17.
 //
 
-#include <frydom/cable/FrDynamicCable.h>
+#include <frydom/cable/FrDynamicCable.h>  // TODO : n'a rien a faire ici...
 #include <chrono/utils/ChProfiler.h>
 #include "FrOffshoreSystem.h"
 
-#include "frydom/core/FrBody.h"
-#include "frydom/core/FrLink.h"
+//#include "frydom/core/FrBody.h"
+//#include "frydom/core/FrLink.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/waves/FrFreeSurface.h"
 
-#include "frydom/hydrodynamics/FrHydroMapper.h"
-#include "frydom/hydrodynamics/FrHydroDB.h"
+#include "frydom/hydrodynamics/seakeeping/hdb/FrHydroMapper.h" // TODO : 2 includes a retirer...
+#include "frydom/hydrodynamics/seakeeping/hdb/FrHydroDB.h"
 #include "FrBody.h"
 
 
