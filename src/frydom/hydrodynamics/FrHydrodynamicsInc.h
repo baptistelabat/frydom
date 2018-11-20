@@ -7,7 +7,7 @@
 
 #include "dampings/FrHydroDampingsInc.h"
 #include "hydrostatics/FrHydrostaticsInc.h"
-#include "maneuveuring/FrManeuveuringInc.h"
+#include "maneuvering/FrManeuveringInc.h"
 #include "morrison/FrMorisonInc.h"
 #include "seakeeping/FrSeakeepingInc.h"
 #include "wave_resistance/FrWaveResistanceInc.h"

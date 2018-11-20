@@ -14,7 +14,6 @@ namespace frydom {
 
     FrHDF5Reader::~FrHDF5Reader() {
         m_file->close();
-//            std::cout << std::endl << "HDF5 file " << m_filename << " has been properly closed" << std::endl;
     }
 
     void FrHDF5Reader::SetFilename(const std::string &filename, FrHDF5Reader::MODE mode) {
@@ -203,7 +202,7 @@ namespace frydom {
         return str;
     }
 
-    void FrHDF5Reader::CreateGroup(std::string h5Path) {}
-
-    void FrHDF5Reader::CreateDataset(std::string h5Path) {}
+//    void FrHDF5Reader::CreateGroup(std::string h5Path) {}
+//
+//    void FrHDF5Reader::CreateDataset(std::string h5Path) {}
 }  // end namespace frydom

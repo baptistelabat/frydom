@@ -60,9 +60,9 @@ namespace frydom {
 
         std::string ReadString(std::string h5Path);
 
-        void CreateGroup(std::string h5Path);
-
-        void CreateDataset(std::string h5Path); // A rendre polymorphe pour les differents types de donnees
+//        void CreateGroup(std::string h5Path);
+//
+//        void CreateDataset(std::string h5Path); // A rendre polymorphe pour les differents types de donnees
 
 //        void SearchGroup(std::string& h5Path) {}
 

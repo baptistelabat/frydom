@@ -5,6 +5,6 @@
 #ifndef FRYDOM_FRMANEUVEURINGINC_H
 #define FRYDOM_FRMANEUVEURINGINC_H
 
-#include "FrManoeuvringDamping.h"
+#include "FrManeuveringDamping.h"
 
 #endif //FRYDOM_FRMANEUVEURINGINC_H

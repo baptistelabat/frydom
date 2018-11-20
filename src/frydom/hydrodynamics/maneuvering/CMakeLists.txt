@@ -1,7 +1,7 @@
 message(STATUS "        ...maneuveuring")
 
 set(SRC_FILES
-        FrManoeuvringDamping.cpp
+        FrManeuveringDamping.cpp
         )
 
 set(FRYDOM_HYDRODYNAMICS_MANEUVEURING_SOURCES "")

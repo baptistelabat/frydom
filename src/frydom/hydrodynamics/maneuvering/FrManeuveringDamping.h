@@ -9,7 +9,7 @@
 
 namespace frydom {
 
-    class FrManoeuvringDamping : public FrForce {
+    class FrManeuveringDamping : public FrForce {
 
 
     };
@@ -82,9 +82,9 @@ namespace frydom {
         eigen::matrix<6, 6> A0;
     public:
         /// Default constructor
-        FrManoeuvringDamping() {};
+        FrManeuveringDamping() {};
 
-        //FrManoeuvringDamping(FrHydroDB* HDB, FrOffshoreSystem *system) {
+        //FrManeuveringDamping(FrHydroDB* HDB, FrOffshoreSystem *system) {
         //
         //
         //}

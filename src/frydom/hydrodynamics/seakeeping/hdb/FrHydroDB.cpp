@@ -307,7 +307,7 @@ namespace frydom {
 
 
     FrBEMBody_::FrBEMBody_(unsigned int ID, std::string& BodyName, FrHydroDB_* hdb) :
-            m_ID(ID), m_BodyName(BodyName), m_HDB(hdb) {}
+            m_ID(ID), m_bodyName(BodyName), m_HDB(hdb) {}
 
 
 

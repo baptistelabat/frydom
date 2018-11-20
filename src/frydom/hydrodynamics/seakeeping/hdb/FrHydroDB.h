@@ -165,7 +165,7 @@ namespace frydom {
         FrHydroDB_* m_HDB = nullptr;
 
         unsigned int m_ID;
-        std::string m_BodyName;
+        std::string m_bodyName;
 
         Position m_BodyPosition;  // Ne peut etre utilise pour renvoyer un warning si le corps n'est pas proche de cette position en seakeeping sans vitesse d'avance
 
@@ -197,7 +197,7 @@ namespace frydom {
 
 //        FrHydroDB* GetHDB() const { return m_HDB; }
 
-        void SetName(const std::string& BodyName) { m_BodyName = BodyName; }
+        void SetName(const std::string& BodyName) { m_bodyName = BodyName; }
         void SetWorldPosition(const Eigen::Vector3d &BodyPosition) { m_BodyPosition = BodyPosition; }
 
         unsigned int GetNbForceMode() const { return (uint)m_ForceModes.size(); }

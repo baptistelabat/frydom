@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include "FrManoeuvringDamping.h"
+#include "FrManeuveringDamping.h"
 #include "chrono/physics/ChBody.h"
 #include "MathUtils/Maths.h"
 

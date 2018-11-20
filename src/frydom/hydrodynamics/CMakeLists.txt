@@ -2,7 +2,7 @@ message(STATUS "    ...hydrodynamics")
 
 add_subdirectory(dampings)
 add_subdirectory(hydrostatics)
-add_subdirectory(maneuveuring)
+add_subdirectory(maneuvering)
 add_subdirectory(morrison)
 add_subdirectory(seakeeping)
 add_subdirectory(wave_resistance)
