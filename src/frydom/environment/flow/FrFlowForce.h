@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FRFLOWFORCE_H
 #define FRYDOM_FRFLOWFORCE_H
 
+#include "MathUtils/Vector3d.h"
 #include "frydom/core/FrForce.h"
 #include "MathUtils/MathUtils.h"
 
@@ -14,8 +15,8 @@ namespace frydom {
 
     protected:
 
-        mathutils::LookupTable1D<double> m_table;   ///< table of coeffient
         Velocity m_fluxVelocityInBody;             ///< relative velocity of the flow in the body frame
+        mathutils::LookupTable1D<double, mathutils::Vector3d<double>> m_table;  ///< Table of polar coefficient
 
     public:
 

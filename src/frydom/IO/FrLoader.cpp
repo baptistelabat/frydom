@@ -153,7 +153,7 @@ namespace frydom {
         std::vector<double> angles, cx, cy, cz;
         LoadWindTableFromYaml(yaml_file, angles, cx, cy, cz, unit);
 
-        LookupTable1D<double> lut;
+        LookupTable1D<double, double> lut;
         lut.SetX(angles);
         lut.AddY("cx", cx);
         lut.AddY("cy", cy);

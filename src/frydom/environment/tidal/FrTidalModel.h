@@ -87,7 +87,7 @@ namespace frydom {
 
 //        double c_waterHeight = 0.;
 
-        LookupTable1D<double> tidalTable;
+        LookupTable1D<double, double> tidalTable;
 
         void BuildTable();
 
@@ -156,7 +156,7 @@ namespace frydom {
 
 //        double c_waterHeight = 0.;
 
-        LookupTable1D<double> tidalTable;
+        LookupTable1D<double, double> tidalTable;
 
         void BuildTable();
 
