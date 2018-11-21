@@ -59,10 +59,23 @@ namespace frydom {
         Force force;
         force = -(bodyPosition - position) * m_stiffness - (bodyVelocity - m_velocity) * m_damping;
 
+        double temp1, temp2;
+        double bodyPsi, psi;
+        GetRotation().GetCardanAngles_RADIANS(temp1, temp2, psi, NWU);
+        m_body->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, bodyPsi, NWU);
+        auto bodyAngularVelocity = m_body->GetAngularVelocityInWorld(NWU).GetWz();
+
+        double torque;
+        torque = -(bodyPsi - psi) * m_stiffness - (bodyAngularVelocity - m_angularVelocity) * m_damping;
+
         m_velocity += force * (time - m_prevTime);
         position += m_velocity * (time - m_prevTime);
 
+        m_angularVelocity += torque * (time - m_prevTime);
+
         this->SetPosition(position, NWU);
+        this->GetRotation().RotZ_RADIANS(m_angularVelocity * (time - m_prevTime), NWU);
+
         m_prevTime = time;
     }
 

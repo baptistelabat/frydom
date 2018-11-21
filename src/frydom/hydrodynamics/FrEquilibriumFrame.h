@@ -79,6 +79,14 @@ namespace frydom {
 
         void SetSpringDamping(const double T0 = 60., const double psi = 0.5);
 
+        double GetDamping() const { return m_damping; };
+
+        void SetDamping(const double damping) { m_damping = damping; }
+
+        double GetStiffness() const { return m_stiffness; }
+
+        void SetStiffness(const double stiffness) { m_stiffness = stiffness; }
+
         void Update(double time) override;
 
     };
