@@ -161,6 +161,9 @@ namespace frydom {
 
         explicit FrTimeRecorder_(double timePersistence) : m_timePersistence(timePersistence) { }
 
+        explicit FrTimeRecorder_(double timePersistence, double timeStep)
+            : m_timePersistence(timePersistence), m_timeStep(timeStep) { }
+
         void SetTimePersistence(const double timePersistence);
 
         double GetTimePersistence() const;
@@ -180,6 +183,8 @@ namespace frydom {
         std::vector<double> GetTime() const;
 
         double GetLastTime() const;
+
+        T GetMean() const;
 
     private:
 
@@ -218,7 +223,7 @@ namespace frydom {
     template <class T>
     void FrTimeRecorder_<T>::Initialize() {
         m_size = int(m_timePersistence / m_timeStep);
-        m_data.resize(m_size, T());
+        m_data.set_capacity(m_size);
     }
 
     template <class T>
@@ -279,6 +284,19 @@ namespace frydom {
     template <class T>
     double FrTimeRecorder_<T>::GetLastTime() const { return m_lastTime; }
 
+
+    template <class T>
+    T FrTimeRecorder_<T>::GetMean() const {
+
+        auto result = T();
+        for (auto val: m_data) {
+            result += val;
+        }
+
+        if (m_data.size() > 0) { result /= m_data.size(); }
+
+        return result;
+    }
 
 }  // end namespace frydom
 

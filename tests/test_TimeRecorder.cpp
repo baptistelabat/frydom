@@ -46,6 +46,8 @@ int main(int argc, char* argv[]) {
 
     for (auto val: rtime) { rtimeReal.push_back(last_time - val); }
 
+    std::cout << "Size of the record : " << recorder.GetData().size() << std::endl;
+    std::cout << "Mean value : " << recorder.GetMean() << std::endl;
 
     matplotlibcpp::subplot(2, 1, 1);
     matplotlibcpp::named_plot("function", ftime, fval);
