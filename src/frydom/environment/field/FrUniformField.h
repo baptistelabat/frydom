@@ -2,15 +2,16 @@
 // Created by camille on 27/02/18.
 //
 
-#ifndef FRYDOM_FRUNIFORMCURRENTFIELD_H
-#define FRYDOM_FRUNIFORMCURRENTFIELD_H
+#ifndef FRYDOM_FRUNIFORMFIELD_H
+#define FRYDOM_FRUNIFORMFIELD_H
 
 #include "chrono/core/ChVector.h"  // TODO supprimer a terme
 
 #include "frydom/core/FrObject.h"
+#include "frydom/environment/field/FrFieldBase.h"
 
 #include "frydom/core/FrVector.h"
-#include "frydom/core/FrGeographic.h"
+#include "frydom/core/FrConvention.h"
 #include "frydom/core/FrUnits.h"
 
 using namespace mathutils;
@@ -103,7 +104,7 @@ namespace frydom {
         ///////// REFACTORING ------------>>>>>>>>>>>>>>>>>>><
 
 
-        class FrUniformCurrentField_ : public FrObject {
+        class FrUniformField : public FrFieldBase {
 
             // TODO: Avoir un current asset sur le meme modele que FrForceAsset qui place un vecteur
             // courant devant le bateau avec la fleche sur un cercle entourant le bateau et pointant
@@ -115,46 +116,95 @@ namespace frydom {
 
             public:
 
-            /// Default constructor: No current
-            FrUniformCurrentField_() = default;
+            /// Default constructor: No field
+            FrUniformField() = default;
 
-            /// Constructor from a velocity vector embedding direction and magnitude (in m/s)
+            /// Definition of the uniform field from flux vector
+            /// \param velocity Flux vector of the field
+            /// \param fc Frame convention (NED/NWU)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void Set(const Velocity& velocity, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
-            /// Constructor from an angle and a magnitude.
+            /// Definition of the uniform field from angle and magnitude
+            /// \param angle Direction angle of the flow
+            /// \param magnitude Velocity speed of the flow
+            /// \param angleUnit Angle unit (RAD/DEG)
+            /// \param speedUnit Speed unit (MS/KMH/KNOT)
+            /// \param fc Frame convention (NED/NWU)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void Set(double  angle, double  magnitude,
                      ANGLE_UNIT angleUnit, SPEED_UNIT speedUnit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
+
+            void Set(std::function<Velocity(FRAME_CONVENTION)> direction, double magnitude,
+                     SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
+
+            /// Definition of the uniform field aligned with north
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetNorth(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            /// Definition of the uniform field aligned with north-east
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetNorthEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            /// Definition of the uniform field aligned with east
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            /// Definition of the uniform field aligned with south-east
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetSouthEast(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            /// Definition of the uniform field aligned with south
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetSouth(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            /// Definition of the uniform field aligned with south-west
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetSouthWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            /// Definition of the uniform field aligned with west
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            /// Definition of the uniform field aligned with north-west
+            /// \param magnitude Velocity speed of the flow
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void SetNorthWest(double magnitude, SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 
+            /// Return the flux vector at a given point
+            /// \param worldPos Position of point in world frame
+            /// \param fc Frame convention (NED/NWU)
+            /// \return Flux Vector
+            Velocity GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) const override;
+
+            /// Update the state of the field model
+            /// \param time Current time of the simulation
             void Update(double time);
 
-            Velocity GetWorldFluxVelocity(FRAME_CONVENTION fc);
-
-            double GetAngle(DIRECTION_CONVENTION dc, FRAME_CONVENTION fc, ANGLE_UNIT angleUnit);
-
-            double GetMagnitude(SPEED_UNIT speedUnit);
-
+            /// Initialize the field object
             void Initialize() override;
 
+            /// Method of be applied at the end of each time step
             void StepFinalize() override;
 
         };
 
 }; // end namespace frydom
 
-#endif //FRYDOM_FRUNIFORMCURRENTFIELD_H
+#endif //FRYDOM_FRUNIFORMFIELD_H

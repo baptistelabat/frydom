@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FRFRAME_H
 #define FRYDOM_FRFRAME_H
 
+#include "chrono/core/ChMatrixDynamic.h"
 #include "chrono/core/ChFrame.h"
 
 #include "FrVector.h"

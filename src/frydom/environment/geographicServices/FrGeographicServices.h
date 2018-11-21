@@ -6,7 +6,7 @@
 #define FRYDOM_FRGEOGRAPHICSERVICES_H
 
 #include <memory>
-#include "frydom/core/FrGeographic.h"
+#include "frydom/core/FrConvention.h"
 
 // GeographicLib includes
 #include "GeographicLib/LocalCartesian.hpp"

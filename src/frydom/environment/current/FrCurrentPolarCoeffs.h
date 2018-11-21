@@ -6,7 +6,7 @@
 #define FRYDOM_FRCURRENTPOLARCOEFFS_H
 
 
-#include <frydom/core/FrGeographic.h>
+#include <frydom/core/FrConvention.h>
 #include "MathUtils/MathUtils.h"
 
 using namespace mathutils;
@@ -14,7 +14,7 @@ using namespace mathutils;
 // TODO: supprimer cette classe et utiliser directement la LUT dans la classe courant
 namespace frydom {
 
-    class FrCurrentPolarCoeffs : public LookupTable1D<double> {
+    class FrCurrentPolarCoeffs : public LookupTable1D<double, double> {
 
     private:
 

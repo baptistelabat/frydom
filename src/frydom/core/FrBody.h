@@ -12,7 +12,7 @@
 #include "FrObject.h"
 #include "FrOffshoreSystem.h"
 #include "FrVector.h"
-#include "FrGeographic.h"
+#include "FrConvention.h"
 #include "FrForce.h"
 #include "FrEulerAngles.h" // TODO : devrait disparaitre
 

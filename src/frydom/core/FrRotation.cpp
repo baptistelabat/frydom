@@ -8,7 +8,7 @@
 
 #include "FrEulerAngles.h"
 
-#include "FrGeographic.h"
+#include "FrConvention.h"
 
 
 namespace frydom {

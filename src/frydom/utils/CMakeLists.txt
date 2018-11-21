@@ -6,7 +6,7 @@ set(SRC_FILES
         FrEigen.cpp
         FrUtils.cpp
         FrRecorder.cpp
-        ../environment/GeographicServices/FrGeographicServices.cpp
+        ../environment/geographicServices/FrGeographicServices.cpp
 )
 
 set(FRYDOM_UTILS_SOURCES "")

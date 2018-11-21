@@ -1,7 +1,7 @@
 message(STATUS "        ...Environment/field")
 
 set(FIELD_FILES_LOCAL
-        FrUniformCurrentField.cpp
+        FrUniformField.cpp
         )
 
 set(FIELD_FILES "")

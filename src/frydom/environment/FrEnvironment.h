@@ -35,8 +35,8 @@
 //#include "seabed/FrSeabed.h"
 
 // GeographicLib includes
-#include "frydom/environment/GeographicServices/FrGeographicServices.h"
-#include "frydom/core/FrGeographic.h"
+#include "frydom/environment/geographicServices/FrGeographicServices.h"
+#include "frydom/core/FrConvention.h"
 #include "frydom/environment/FrFluidType.h"
 
 namespace GeographicLib {
@@ -249,10 +249,11 @@ namespace frydom {
     class FrFreeSurface_;
     class FrTidal_;
     class FrSeabed_;
-//    class FrCurrent_;
-//    class FrWind_;
     class FrUniformWind_;
     class FrUniformCurrent_;
+    class FrFlowBase;
+    class FrCurrent_;
+    class FrWind_;
     class Velocity;
     class FrFrame_;
     class FrGeographicServices;
@@ -269,10 +270,10 @@ namespace frydom {
         std::unique_ptr<FrTimeZone> m_timeZone;  // TODO : faire un service de temps
 
         // Environment components
-        std::unique_ptr<FrFreeSurface_>     m_freeSurface;
-        std::unique_ptr<FrUniformCurrent_>  m_current;  // TODO: remettre en place de la genericite
-        std::unique_ptr<FrUniformWind_>     m_wind;
-        std::unique_ptr<FrSeabed_>          m_seabed;
+        std::unique_ptr<FrFreeSurface_> m_freeSurface;
+        std::unique_ptr<FrFlowBase>     m_current;  // TODO: remettre en place de la genericite
+        std::unique_ptr<FrFlowBase>     m_wind;
+        std::unique_ptr<FrSeabed_>      m_seabed;
 
         /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
 //        std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
@@ -357,11 +358,9 @@ namespace frydom {
 
         FrTidal_* GetTidal() const;
 
-//        template <class T=FrCurrent_>
-        FrUniformCurrent_* GetCurrent() const;
+        FrCurrent_* GetCurrent() const;
 
-//        template <class T=FrCurrent_>
-        FrUniformWind_* GetWind() const;
+        FrWind_* GetWind() const;
 
 //        void SetCurrent(FrCurrent* current);
 //

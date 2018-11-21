@@ -14,7 +14,7 @@
 #include "FrForceAsset.h"
 #include "FrFrame.h"
 #include "FrFunction.h"
-#include "FrGeographic.h"
+#include "FrConvention.h"
 #include "FrHydroBody.h"
 #include "FrInertia.h"
 #include "FrLink.h"

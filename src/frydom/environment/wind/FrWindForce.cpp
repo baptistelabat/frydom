@@ -3,8 +3,9 @@
 //
 
 #include "FrWindForce.h"
+#include "frydom/environment/flow/FrFlowBase.h"
 
-#include "frydom/core/FrGeographic.h"
+#include "frydom/core/FrConvention.h"
 #include "frydom/core/FrHydroBody.h"
 #include "frydom/IO/FrLoader.h"
 
@@ -128,7 +129,7 @@ namespace frydom {
 
         Velocity cogRelVel = m_body->GetSystem()->GetEnvironment()->GetWind()->GetRelativeVelocityInFrame(cogFrame, cogWorldVel, NWU);
 
-        double alpha = cogRelVel.GetZaxisAngle(RAD);
+        double alpha = cogRelVel.GetProjectedAngleAroundZ(RAD)+M_PI;
         alpha = Normalize_0_2PI(alpha);
 
         auto cx = m_table.Eval("Cx", alpha);
