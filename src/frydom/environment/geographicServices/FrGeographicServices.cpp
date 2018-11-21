@@ -120,10 +120,10 @@ namespace frydom {
 
         // FIXME : le chemin vers le modèle magnétique est indiqué via la variable d'environnement GEOGRAPHICLIB_MAGNETIC_PATH
         // A voir si on doit changer ça.
-        putenv("GEOGRAPHICLIB_MAGNETIC_PATH=/home/d-ice/Documents/DEV/frydom_GPL/cmake-build-debug/_deps/magneticmodel-src");
+//        putenv("GEOGRAPHICLIB_MAGNETIC_PATH=/home/d-ice/Documents/DEV/frydom_GPL/cmake-build-debug/_deps/magneticmodel-src");
 
         /// Magnetic model loaded from _deps directory
-        GeographicLib::MagneticModel magneticModel("emm2017");//, "../_deps/magneticmodel-src"
+        GeographicLib::MagneticModel magneticModel("emm2017", "../_deps/magneticmodel-src");
 
         /// Compute the magnetic declination
         double Bx, By, Bz, H, F, D, I;
