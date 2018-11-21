@@ -51,8 +51,8 @@ TEST(FrGeographicServices,GeographicServices){
 //     Pour tester cette fonctionnalité, modifier le chemin du fichier de modèle magnétique
 //     dans FrGeographicServices.GetDeclinationFromCart :
 //     GeographicLib::MagneticModel magneticModel("emm2017", "../../_deps/magneticmodel-src");
-//    auto B = geoServices.GetDeclinationFromCart(cartPos, 2018, fc);
-//    EXPECT_NEAR(-0.221/0.6, B, 1e-3);
+    auto B = geoServices.GetDeclinationFromCart(cartPos, 2018, fc);
+    EXPECT_NEAR(-0.221/0.6, B, 1e-3);
 //    std::cout << "decl = " << -0.221/0.6 << std::endl;
 //    std::cout << "B = " << B << std::endl;
 
