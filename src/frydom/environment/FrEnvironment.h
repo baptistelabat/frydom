@@ -379,6 +379,8 @@ namespace frydom {
 
         // Geographic coordinates manipulations
 
+        /// Get the geographic service (convert cartesian to geographic position, compute magnetic declination, etc.)
+        /// \return the geographic service
         FrGeographicServices* GetGeographicServices() const;
 
 

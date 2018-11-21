@@ -57,3 +57,38 @@ TEST(FrGeographicServices,GeographicServices){
     std::cout << "B = " << B << std::endl;
 
 }
+
+TEST(FrGeographicServices,FrBodyIntegration){
+    FRAME_CONVENTION fc = NWU;
+    FrOffshoreSystem_ system;
+
+    FrGeographicCoord Origin(47.22, -1.55, 0.);
+
+    auto GeoServices = system.GetEnvironment()->GetGeographicServices();
+    GeoServices->SetGeographicOrigin(Origin);
+
+
+    auto body = system.NewBody();
+
+    Position bodyPosition(50.,92.,1.5);
+    body->SetPosition(bodyPosition, fc);
+
+    auto bodyGeoPos = body->GetGeoPosition(fc);
+    auto geoPos = GeoServices->CartToGeo(bodyPosition, fc);
+    EXPECT_FLOAT_EQ(bodyGeoPos.GetLatitude(),geoPos.GetLatitude());
+    EXPECT_FLOAT_EQ(bodyGeoPos.GetLongitude(),geoPos.GetLongitude());
+    EXPECT_FLOAT_EQ(bodyGeoPos.GetHeight(),geoPos.GetHeight());
+
+    auto newGeoPos = GeoServices->CartToGeo(-bodyPosition, fc);
+    body->SetGeoPosition(newGeoPos);
+
+//    Position testPosition = body->GetPosition(fc);
+//    EXPECT_TRUE(testPosition.isZero());
+//    if (not(testPosition.isZero())){
+//        std::cout<<testPosition<<std::endl;
+//    }
+    EXPECT_FLOAT_EQ(-bodyPosition.GetX(), body->GetPosition(fc).GetX());
+    EXPECT_FLOAT_EQ(-bodyPosition.GetY(), body->GetPosition(fc).GetY());
+    EXPECT_FLOAT_EQ(-bodyPosition.GetZ(), body->GetPosition(fc).GetZ());
+
+}

@@ -88,9 +88,15 @@ namespace frydom {
         /// Set the geographic origin
         /// \param geoCoord geographic coordinates
         void SetGeographicOrigin(FrGeographicCoord geoCoord);
-        
+
+        /// Get the geographic position of the origin
+        /// \return geographic position of the origin
         FrGeographicCoord GetGeographicOrigin() const;
-        
+
+        /// Get the geographic position of the origin
+        /// \param lat latitude of the origin
+        /// \param lon longitude of the origin
+        /// \param h height of the origin
         void GetGeographicOrigin(double& lat, double& lon, double& h) const;
 
         //-------------------------GeoToCart-------------------------//

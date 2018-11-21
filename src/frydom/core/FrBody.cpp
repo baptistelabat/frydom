@@ -447,6 +447,10 @@ namespace frydom {
         m_chronoBody->UpdateAfterMove();
     }
 
+    void FrBody_::SetGeoPosition(const FrGeographicCoord& geoCoord) {
+        SetPosition(GeoToCart(geoCoord,NWU),NWU);
+    }
+
     FrRotation_ FrBody_::GetRotation() const {
         return FrRotation_(GetQuaternion());
     }
@@ -775,9 +779,30 @@ namespace frydom {
     void FrBody_::CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) const {
         geoCoord = CartToGeo(cartPos, fc);
     }
+    void FrBody_::CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) {
+        geoCoord = CartToGeo(cartPos, fc);
+    }
 
     FrGeographicCoord FrBody_::CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) const {
         return GetSystem()->GetEnvironment()->GetGeographicServices()->CartToGeo(cartPos, fc);
+    }
+    FrGeographicCoord FrBody_::CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) {
+        return GetSystem()->GetEnvironment()->GetGeographicServices()->CartToGeo(cartPos, fc);
+    }
+
+
+    void FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc) const {
+        cartPos = GeoToCart(geoCoord, fc);
+    }
+    void FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc) {
+        cartPos = GeoToCart(geoCoord, fc);
+    }
+
+    Position FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) const {
+        return GetSystem()->GetEnvironment()->GetGeographicServices()->GeoToCart(geoCoord, fc);
+    }
+    Position FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) {
+        return GetSystem()->GetEnvironment()->GetGeographicServices()->GeoToCart(geoCoord, fc);
     }
 
 
