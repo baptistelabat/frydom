@@ -3,8 +3,10 @@
 //
 
 #include "FrRecorder.h"
+#include <cfloat>
 
 namespace frydom {
+
 
 
 

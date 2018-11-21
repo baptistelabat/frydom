@@ -23,6 +23,7 @@ set(SRC_FILES
         FrSpringDampingForce.cpp
         FrNodeDynamic.cpp
         FrFunction.cpp
+        FrPhysicsItem.cpp
 )
 
 set(FRYDOM_CORE_SOURCES "")
