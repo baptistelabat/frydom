@@ -306,8 +306,7 @@ namespace frydom {
     ///////////////// REFACTORING ----------------->>>>>>>>>>>>>>>>>>>
 
 
-    FrBEMBody_::FrBEMBody_(unsigned int ID, std::string& BodyName, FrHydroDB_* hdb) :
-            m_ID(ID), m_bodyName(BodyName), m_HDB(hdb) {}
+
 
 
 
@@ -441,17 +440,18 @@ namespace frydom {
 
 
         // READING THE HYDRODYNAMIC COEFFICIENTS
+        unsigned int nbWaveDir = m_WaveDirectionDiscretization.GetNbSample();
         for (unsigned int ibody=0; ibody<NbBodies; ++ibody) {
 
             sprintf(buffer, "%d", ibody);
             body_i_path = body_path + buffer;
-            auto body = HDB.GetBody(ibody);
+            auto body = GetBody(ibody);
 
             // Reading the excitation hydrodynamic coefficients
             auto diffraction_path = body_i_path + "/Excitation/Diffraction";
             auto froude_kylov_path = body_i_path + "/Excitation/FroudeKrylov";
             std::string diffraction_wave_dir_path, fk_wave_dir_path;
-            for (unsigned int iwave_dir=0; iwave_dir<NbWaveDir; ++iwave_dir) {
+            for (unsigned int iwave_dir=0; iwave_dir<nbWaveDir; ++iwave_dir) {
                 sprintf(buffer, "/Angle_%d", iwave_dir);
 
                 // Reading diffraction coefficients
@@ -478,11 +478,11 @@ namespace frydom {
 
             // Reading the radiation coefficients
             auto radiation_path = body_i_path + "/Radiation";
-            std::shared_ptr<FrBEMBody> body_motion;
+            FrBEMBody_* body_motion;
             for (unsigned int ibody_motion=0; ibody_motion<NbBodies; ++ibody_motion) {
                 sprintf(buffer, "/BodyMotion_%d", ibody_motion);
 
-                body_motion = HDB.GetBody(ibody_motion);
+                body_motion = GetBody(ibody_motion);
 
                 auto body_i_infinite_added_mass_path = radiation_path + buffer + "/InfiniteAddedMass";
                 auto infinite_added_mass = reader.ReadDoubleArray(body_i_infinite_added_mass_path);
@@ -511,9 +511,6 @@ namespace frydom {
             body->Finalize();
 
         }  // end for ibody (force)
-
-        return HDB;
-
 
     }
 

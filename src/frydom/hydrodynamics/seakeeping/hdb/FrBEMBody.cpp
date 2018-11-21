@@ -764,4 +764,363 @@ namespace frydom {
         m_hydroBody->GetVariables<FrVariablesBEMBodyMass>()->SetInfiniteAddedMass(m_InfiniteAddedMass[0]);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ///////////// REFACTORING ------------->>>>>>>>><
+
+    FrBEMBody_::FrBEMBody_(unsigned int ID, std::string& BodyName, FrHydroDB_* hdb) :
+            m_ID(ID), m_bodyName(BodyName), m_HDB(hdb) {}
+
+    void FrBEMBody_::SetWorldPosition(const Eigen::Vector3d &BodyPosition) { m_BodyPosition = BodyPosition; }
+
+    unsigned int FrBEMBody_::GetNbForceMode() const { return (uint)m_ForceModes.size(); }
+
+    unsigned int FrBEMBody_::GetNbMotionMode() const { return (uint)m_MotionModes.size(); }
+
+    unsigned int FrBEMBody_::GetID() const { return m_ID; }
+
+    void FrBEMBody_::AddForceMode(FrBEMForceMode &mode) {
+        m_ForceModes.push_back(mode);
+    }
+
+    void FrBEMBody_::AddMotionMode(FrBEMMotionMode &mode) {
+        m_MotionModes.push_back(mode);
+    }
+
+    void FrBEMBody_::Initialize() {
+        assert(!m_ForceModes.empty() && !m_MotionModes.empty());
+
+        auto nbForce = GetNbForceMode();
+
+        // Allocating arrays for excitations
+        auto NbWaveDir = m_HDB->GetNbWaveDirections();
+        m_ExcitationMask = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>(nbForce, NbWaveDir);
+        m_ExcitationMask.setConstant(true);
+        m_Diffraction.reserve((unsigned long)NbWaveDir);
+        m_FroudeKrylov.reserve((unsigned long)NbWaveDir);
+        m_Excitation.reserve((unsigned long)NbWaveDir);
+
+        auto NbFreq = m_HDB->GetNbFrequencies();
+        for (int i=0; i<NbWaveDir; ++i) {
+            Eigen::MatrixXcd mat(nbForce, NbFreq);
+            m_Diffraction.push_back(mat);
+            m_FroudeKrylov.push_back(mat);
+            m_Excitation.push_back(mat);
+        }
+
+        // Allocating arrays for radiation
+        auto NbBodies = m_HDB->GetNbBodies();
+        m_RadiationMask.reserve(NbBodies);
+        m_InfiniteAddedMass.reserve(NbBodies);
+        m_AddedMass.reserve(NbBodies);
+        m_RadiationDamping.reserve(NbBodies);
+        m_ImpulseResponseFunction.reserve(NbBodies);
+
+        auto NbTime = m_HDB->GetNbTimeSamples();
+        for (unsigned int ibody=0; ibody<NbBodies; ++ibody) {
+
+            auto body = m_HDB->GetBody(ibody);
+            auto NbMotion = body->GetNbMotionMode();
+
+            Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> mask(nbForce, NbMotion);
+            mask.setConstant(true);
+            m_RadiationMask.push_back(mask);
+
+            Eigen::MatrixXd InfAddedMassMat(nbForce, NbMotion);
+            m_InfiniteAddedMass.push_back(InfAddedMassMat);
+
+            std::vector<Eigen::MatrixXd> added_mass_vector;
+            added_mass_vector.reserve(NbMotion);  // TODO: voir si utile...
+            std::vector<Eigen::MatrixXd> radiation_damping_vector;
+            radiation_damping_vector.reserve(NbMotion);
+            std::vector<Eigen::MatrixXd> impulse_response_fcn_vector;
+            impulse_response_fcn_vector.reserve(NbMotion);
+
+            for (unsigned int idof=0; idof<NbMotion; ++idof) {
+
+                Eigen::MatrixXd mat(nbForce, NbFreq);
+                added_mass_vector.push_back(mat);
+                radiation_damping_vector.push_back(mat);
+
+                Eigen::MatrixXd matTime(nbForce, NbTime);
+                impulse_response_fcn_vector.push_back(matTime);
+            }
+
+            m_AddedMass.push_back(added_mass_vector);
+            m_RadiationDamping.push_back(radiation_damping_vector);
+            m_ImpulseResponseFunction.push_back(impulse_response_fcn_vector);
+        }
+    }
+
+    void FrBEMBody_::Finalize() {
+        ComputeExcitation();
+        FilterExcitation();
+        FilterRadiation();
+
+        // TODO: Ici, on construit les interpolateurs
+        BuildInterpolators();
+    }
+
+    Eigen::MatrixXcd FrBEMBody_::GetDiffraction(const unsigned int iangle) const {
+        assert(iangle < m_HDB->GetNbWaveDirections());
+        return m_Diffraction[iangle];
+    }
+
+    Eigen::VectorXcd FrBEMBody_::GetDiffraction(const unsigned int iangle, const unsigned iforce) const {
+        assert(iangle < m_HDB->GetNbWaveDirections());
+        assert(iforce < GetNbForceMode());
+        return m_Diffraction[iangle].row(iforce);
+    }
+
+    Eigen::MatrixXcd FrBEMBody_::GetFroudeKrylov(const unsigned int iangle) const {
+        assert(iangle < m_HDB->GetNbWaveDirections());
+        return m_FroudeKrylov[iangle];
+    }
+
+    Eigen::VectorXcd FrBEMBody_::GetFroudeKrylov(const unsigned int iangle, const unsigned iforce) const {
+        assert(iangle < m_HDB->GetNbWaveDirections());
+        assert(iforce < GetNbForceMode());
+        return m_FroudeKrylov[iangle].row(iforce);
+    }
+
+    Eigen::MatrixXcd FrBEMBody_::GetExcitation(const unsigned int iangle) const {
+        assert(iangle < m_HDB->GetNbWaveDirections());
+        return m_Excitation[iangle];
+    }
+
+    Eigen::VectorXcd FrBEMBody_::GetExcitation(const unsigned int iangle, const unsigned iforce) const {
+        assert(iangle < m_HDB->GetNbWaveDirections());
+        assert(iforce < GetNbForceMode());
+        return m_Excitation[iangle].row(iforce);
+    }
+
+    Eigen::MatrixXd FrBEMBody_::GetInfiniteAddedMass(const unsigned int ibody) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        return m_InfiniteAddedMass[ibody];
+    }
+
+    Eigen::MatrixXd FrBEMBody_::GetSelfInfiniteAddedMass() const {
+        return m_InfiniteAddedMass[m_ID];
+    }
+
+    Eigen::MatrixXd FrBEMBody_::GetAddedMass(const unsigned int ibody, const unsigned int idof) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        return m_AddedMass[ibody][idof];
+    }
+
+    Eigen::VectorXd
+    FrBEMBody_::GetAddedMass(const unsigned int ibody, const unsigned int idof, const unsigned int iforce) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(iforce < GetNbForceMode());
+        return m_AddedMass[ibody][idof].row(iforce);
+    }
+
+    Eigen::MatrixXd FrBEMBody_::GetSelfAddedMass(const unsigned int idof) const {
+        assert(idof < GetNbMotionMode());
+        return GetAddedMass(m_ID, idof);
+    }
+
+    Eigen::VectorXd FrBEMBody_::GetSelfAddedMass(const unsigned int idof, const unsigned int iforce) const {
+        assert(idof < GetNbMotionMode());
+        assert(iforce < GetNbForceMode());
+        return GetAddedMass(m_ID, idof, iforce);
+    }
+
+    Eigen::MatrixXd FrBEMBody_::GetRadiationDamping(const unsigned int ibody, const unsigned int idof) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        return m_RadiationDamping[ibody][idof];
+    }
+
+    Eigen::VectorXd
+    FrBEMBody_::GetRadiationDamping(const unsigned int ibody, const unsigned int idof, const unsigned int iforce) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(iforce < GetNbForceMode());
+        return m_RadiationDamping[ibody][idof].row(iforce);
+    }
+
+    Eigen::MatrixXd FrBEMBody_::GetSelfRadiationDamping(const unsigned int idof) const {
+        assert(idof < GetNbMotionMode());
+        return GetAddedMass(m_ID, idof);
+    }
+
+    Eigen::VectorXd FrBEMBody_::GetselfRadiationDamping(const unsigned int idof, const unsigned int iforce) const {
+        assert(idof < GetNbMotionMode());
+        assert(iforce < GetNbForceMode());
+        return GetAddedMass(m_ID, idof, iforce);
+    }
+
+    std::vector<Eigen::MatrixXd> FrBEMBody_::GetImpulseResponseFunction(unsigned int ibody) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        return m_ImpulseResponseFunction[ibody];
+    }
+
+    Eigen::MatrixXd FrBEMBody_::GetImpulseResponseFunction(const unsigned int ibody, const unsigned int idof) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        return m_ImpulseResponseFunction[ibody][idof];
+    }
+
+    Eigen::VectorXd FrBEMBody_::GetImpulseResponseFunction(const unsigned int ibody, const unsigned int idof,
+                                                          const unsigned int iforce) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(iforce < GetNbForceMode());
+        return m_ImpulseResponseFunction[ibody][idof].row(iforce);
+    }
+
+    Eigen::MatrixXd FrBEMBody_::GetSelfImpulseResponseFunction(const unsigned int idof) const {
+        assert(idof < GetNbMotionMode());
+        return GetAddedMass(m_ID, idof);
+    }
+
+    Eigen::VectorXd FrBEMBody_::GetSelfImpulseResponseFunction(const unsigned int idof, const unsigned int iforce) const {
+        assert(idof < GetNbMotionMode());
+        assert(iforce < GetNbForceMode());
+        return GetAddedMass(m_ID, idof, iforce);
+    }
+
+    std::vector<Eigen::MatrixXd> FrBEMBody_::GetSpeedDependentIRF(unsigned int ibody) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        return m_SpeedDependentIRF[ibody];
+    }
+
+    Eigen::MatrixXd FrBEMBody_::GetSpeedDependentIRF(unsigned int ibody, unsigned int idof) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        return m_SpeedDependentIRF[ibody][idof];
+    }
+
+    Eigen::VectorXd FrBEMBody_::GetSpeedDependentIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(iforce < GetNbForceMode());
+        return m_SpeedDependentIRF[ibody][idof].row(iforce);
+    }
+
+    void FrBEMBody_::SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix) {
+        assert(iangle < m_HDB->GetNbWaveDirections());
+        assert(diffractionMatrix.rows() == GetNbForceMode());
+        assert(diffractionMatrix.cols() == m_HDB->GetNbFrequencies());
+        m_Diffraction[iangle] = diffractionMatrix;
+    }
+
+    void FrBEMBody_::SetFroudeKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix) {
+        assert(iangle < m_HDB->GetNbWaveDirections());
+        assert(froudeKrylovMatrix.rows() == GetNbForceMode());
+        assert(froudeKrylovMatrix.cols() == m_HDB->GetNbFrequencies());
+        m_FroudeKrylov[iangle] = froudeKrylovMatrix;
+    }
+
+    void FrBEMBody_::SetInfiniteAddedMass(unsigned int ibody, const Eigen::MatrixXd& CMInf) {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(CMInf.rows() == GetNbForceMode());
+        assert(CMInf.cols() == m_HDB->GetBody(ibody)->GetNbMotionMode());
+        m_InfiniteAddedMass[ibody] = CMInf;
+    }
+
+    void FrBEMBody_::SetAddedMass(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CM) {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(CM.rows() == GetNbForceMode());
+        assert(CM.cols() == m_HDB->GetNbFrequencies());
+        m_AddedMass[ibody][idof] = CM;
+    }
+
+    void FrBEMBody_::SetRadiationDamping(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CA) {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(CA.rows() == GetNbForceMode());
+        assert(CA.cols() == m_HDB->GetNbFrequencies());
+        m_RadiationDamping[ibody][idof] = CA;
+    }
+
+    void FrBEMBody_::SetImpulseResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF) {
+        assert(ibody < m_HDB->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(IRF.rows() == GetNbForceMode());
+        assert(IRF.cols() == m_HDB->GetNbTimeSamples());
+        m_ImpulseResponseFunction[ibody][idof] = IRF;
+    }
+
+//        void SetSpeedDependentIRF(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd& IRF);
+
+    void FrBEMBody_::ComputeExcitation() {
+        for (unsigned int iangle=0; iangle<m_HDB->GetNbWaveDirections(); ++iangle) {
+            m_Excitation[iangle] = m_Diffraction[iangle] + m_FroudeKrylov[iangle];
+        }
+    }
+
+    void FrBEMBody_::FilterRadiation() {
+        // TODO
+    }
+
+    void FrBEMBody_::FilterExcitation() {
+        // TODO
+    }
+
+    void FrBEMBody_::BuildInterpolators() {
+        BuildWaveExcitationInterpolators();
+    }
+
+    void FrBEMBody_::BuildWaveExcitationInterpolators() {
+
+        auto nbWaveDirections = m_HDB->GetNbWaveDirections();
+        auto nbFreq = m_HDB->GetNbFrequencies();
+        auto nbForceModes = GetNbForceMode();
+
+        m_waveDirInterpolators.clear();
+        m_waveDirInterpolators.reserve(nbForceModes);
+
+        auto angles = m_HDB->GetWaveDirections();
+        auto angles_ptr = std::make_shared<std::vector<double>>();
+        angles_ptr->reserve(nbWaveDirections);
+        for (unsigned int iangle=0; iangle<nbWaveDirections; ++iangle) {
+            angles_ptr->push_back(angles[iangle]);
+        }
+
+        Eigen::MatrixXcd data;
+        auto interpolators = std::vector<Interp1dLinear<double, std::complex<double>>>();
+        interpolators.reserve(nbFreq);
+
+        for (unsigned int imode=0; imode<nbForceModes; ++imode) {
+
+            interpolators.clear();
+
+            for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq) {
+                auto coeffs = std::make_shared<std::vector<std::complex<double>>>();
+                coeffs->reserve(nbWaveDirections);
+
+                for (unsigned int iangle=0; iangle<nbWaveDirections; ++iangle) {
+                    data = GetExcitation(iangle);
+//                    data = GetDiffraction(iangle);
+                    coeffs->push_back(data(imode, ifreq));
+                }
+
+                auto interpolator = Interp1dLinear<double, std::complex<double>>();
+                interpolator.Initialize(angles_ptr, coeffs);
+                interpolators.push_back(interpolator);
+            }
+            m_waveDirInterpolators.push_back(interpolators);
+        }
+    }
+
+
 }  // end namespace frydom
