@@ -24,7 +24,9 @@ namespace frydom {
 
             void SetupInitial() override;
 
-            void Update(bool update_assets) override;
+            void Update(bool update_assets) override;           // TODO : non nécessaire
+
+            void Update(double time, bool update_assets) override;
 
             friend class FrPhysicsItem_;
 

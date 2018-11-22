@@ -264,6 +264,16 @@ namespace frydom {
         /// \return the inverse frame transformation
         FrFrame_ GetInverse() const;
 
+        template <class Vector>
+        Vector ProjectVectorParentInFrame(const Vector& parentVector) const {
+            return GetQuaternion().GetInverse().Rotate<Vector>(parentVector, NWU);
+        };
+
+        template <class Vector>
+        Vector ProjectVectorInParent(const Vector& frameVector) const {
+            return GetQuaternion().Rotate<Vector>(frameVector, NWU);
+        }
+
 
         friend std::ostream&operator<<(std::ostream& os, const FrFrame_& frame);
 

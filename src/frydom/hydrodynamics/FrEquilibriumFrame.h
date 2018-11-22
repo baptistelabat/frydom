@@ -30,24 +30,30 @@ namespace frydom {
 
     public:
 
-        FrEquilibriumFrame_() : FrFrame_() { };
+        FrEquilibriumFrame_() : FrFrame_(), FrPhysicsItem_() { };
 
-        FrEquilibriumFrame_(FrBody_* body, bool initPos = true) : FrFrame_(), m_body(body), m_initPositionFromBody(initPos) { };
+        FrEquilibriumFrame_(FrBody_* body, bool initPos = true) : FrFrame_(), FrPhysicsItem_(), m_body(body), m_initPositionFromBody(initPos) { };
 
         FrEquilibriumFrame_(const Position& pos, const FrRotation_& rotation, FRAME_CONVENTION fc, FrBody_* body)
-                : FrFrame_(pos, rotation, fc), m_body(body), m_initPositionFromBody(false) { }
+                : FrFrame_(pos, rotation, fc), FrPhysicsItem_(), m_body(body), m_initPositionFromBody(false) { }
 
         FrEquilibriumFrame_(const Position& pos, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc, FrBody_* body)
-                : FrFrame_(pos, quaternion, fc), m_body(body), m_initPositionFromBody(false) { }
+                : FrFrame_(pos, quaternion, fc), FrPhysicsItem_(), m_body(body), m_initPositionFromBody(false) { }
 
         FrEquilibriumFrame_(const FrFrame_& otherFrame, FrBody_* body)
-                : FrFrame_(otherFrame), m_body(body), m_initPositionFromBody(false) { }
+                : FrFrame_(otherFrame), FrPhysicsItem_(), m_body(body), m_initPositionFromBody(false) { }
 
         void SetBody(FrBody_* body, bool initPos = true);
 
         void SetVelocity(const Velocity& velocity);
 
         void SetAngularVelocity(const double& angularVelocity);
+
+        Velocity GetVelocityInWorld(FRAME_CONVENTION fc) const;
+
+        Velocity GetVelocityInFrame() const;
+
+        double GetAngularVelocity() const;
 
         void Update(double time) override { }
 

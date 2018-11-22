@@ -26,6 +26,20 @@ namespace frydom {
         m_initPositionFromBody = initPos;
     }
 
+    Velocity FrEquilibriumFrame_::GetVelocityInWorld(FRAME_CONVENTION fc) const {
+        Velocity velocity = m_velocity;
+        if (IsNED(fc)) internal::SwapFrameConvention(velocity);
+        return velocity;
+    }
+
+    Velocity FrEquilibriumFrame_::GetVelocityInFrame() const {
+        return ProjectVectorParentInFrame<Velocity>(m_velocity);
+    }
+
+    double FrEquilibriumFrame_::GetAngularVelocity() const {
+        return m_angularVelocity;
+    }
+
     void FrEquilibriumFrame_::Initialize() {
 
         if (m_initPositionFromBody) {
@@ -136,7 +150,7 @@ namespace frydom {
         auto position = GetPosition(NWU);
         position += m_velocity * (time - m_prevTime);
 
-        GetRotation().RotZ_RADIANS(m_angularVelocity * (time - m_prevTime), NWU);
+        SetRotation( GetRotation().RotZ_RADIANS(m_angularVelocity * (time - m_prevTime), NWU));
         this->SetPosition(position, NWU);
 
         m_prevTime = time;
