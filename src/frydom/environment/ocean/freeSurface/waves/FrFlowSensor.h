@@ -14,7 +14,7 @@
 
 //#include "frydom/core/FrConstants.h"
 //
-#include "frydom/environment/waves/FrWaveField.h"
+#include "FrWaveField.h"
 //#include "frydom/utils/FrUtils.h"
 
 

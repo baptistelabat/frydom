@@ -13,11 +13,12 @@
 
 
 #include "time/FrTimeZone.h"
-#include "waves/FrFreeSurface.h"
-#include "seabed/FrSeabed.h"
+#include "ocean/FrOcean_.h"
+#include "ocean/freeSurface/FrFreeSurface.h"
+#include "ocean/seabed/FrSeabed.h"
 
 #include "frydom/environment/flow/FrFlowBase.h"
-#include "frydom/environment/current/FrCurrent.h"
+#include "frydom/environment/ocean/current/FrCurrent.h"
 #include "frydom/environment/wind/FrWind.h"
 
 
@@ -261,18 +262,14 @@ namespace frydom {
 
         m_system = system;
 
-        m_freeSurface   = std::make_unique<FrFreeSurface_>(this);
-        m_current       = std::make_unique<FrCurrent_>(this);
-        m_wind          = std::make_unique<FrWind_>(this);
-        m_seabed        = std::make_unique<FrSeabed_>(this);
+        m_geographicServices    = std::make_unique<FrGeographicServices>();
+        m_timeZone              = std::make_unique<FrTimeZone>();
+        m_ocean                 = std::make_unique<FrOcean_>(this);
+        m_wind                  = std::make_unique<FrWind_>(this);
 
 //        if (not(m_infinite_depth)) m_seabed->SetEnvironment(this); // TODO : voir a porter ca dans seabed...
 
         SetGravityAcceleration(9.81);
-
-        m_geographicServices = std::make_unique<FrGeographicServices>();
-        m_timeZone       = std::make_unique<FrTimeZone>();
-
     }
 
     FrEnvironment_::~FrEnvironment_() = default;
@@ -285,30 +282,6 @@ namespace frydom {
 
     double FrEnvironment_::GetTime() const { return m_system->GetTime(); } // TODO : voir a gerer l'UTC etc...
 
-    double FrEnvironment_::GetWaterDensity() const {
-        return m_waterDensity;
-    }
-
-    void FrEnvironment_::SetWaterDensity(const double waterDensity) {
-        m_waterDensity = waterDensity;
-    }
-
-    double FrEnvironment_::GetAirDensity() const {
-        return m_airDensity;
-    }
-
-    void FrEnvironment_::SetAirDensity(double airDensity) {
-        m_airDensity = airDensity;
-    }
-
-    double FrEnvironment_::GetFluidDensity(FLUID_TYPE ft) const {
-        switch (ft) {
-            case WATER:
-                return m_waterDensity;
-            case AIR:
-                return m_airDensity;
-        }
-    }
 
     double FrEnvironment_::GetGravityAcceleration() const {
         return m_system->GetGravityAcceleration();
@@ -316,64 +289,6 @@ namespace frydom {
 
     void FrEnvironment_::SetGravityAcceleration(double gravityAcceleration) {
         m_system->SetGravityAcceleration(gravityAcceleration);
-    }
-
-    double FrEnvironment_::GetSeaTemperature() const {
-        return m_seaTemperature;
-    }
-
-    void FrEnvironment_::SetSeaTemperature(double seaTemperature) {
-        m_seaTemperature = seaTemperature;
-    }
-
-    double FrEnvironment_::GetAirTemperature() const {
-        return m_airTemperature;
-    }
-
-    void FrEnvironment_::SetAirTemperature(double airtemperature) {
-        m_airTemperature = airtemperature;
-    }
-
-    double FrEnvironment_::GetWaterKinematicViscosity() const {
-        // TODO: gerer la temperature
-        return m_waterKinematicViscosity;
-    }
-
-    void FrEnvironment_::SetWaterKinematicViscosity(double waterKinematicViscosity) {
-        m_waterKinematicViscosity = waterKinematicViscosity;
-    }
-
-    double FrEnvironment_::GetAtmosphericPressure() const {
-        return m_atmosphericPressure;
-    }
-
-    void FrEnvironment_::SetAtmosphericPressure(double atmosphericPressure) {
-        m_atmosphericPressure = atmosphericPressure;
-    }
-
-    double FrEnvironment_::GetReynoldsNumberInWater(double characteristicLength, double velocity) const {
-        return fabs(velocity) * characteristicLength / m_waterKinematicViscosity;
-    }
-
-    double FrEnvironment_::GetFroudeNumberInWater(double characteristicLength, double velocity) const {
-        return fabs(velocity) / sqrt(GetGravityAcceleration() * characteristicLength);
-    }
-
-    FrFreeSurface_* FrEnvironment_::GetFreeSurface() const {
-        return m_freeSurface.get();
-    }
-
-//    void FrEnvironment::SetFreeSurface(FrFreeSurface *freeSurface) {
-//        m_freeSurface = std::unique_ptr<FrFreeSurface>(freeSurface);
-////        m_system->AddBody(m_freeSurface->GetBody());
-//    }
-
-    FrTidal_ *FrEnvironment_::GetTidal() const {
-        return m_freeSurface->GetTidal();
-    }
-
-    FrCurrent_* FrEnvironment_::GetCurrent() const {
-        return dynamic_cast<FrCurrent_*>(m_current.get());
     }
 
     FrWind_* FrEnvironment_::GetWind() const {
@@ -414,23 +329,21 @@ namespace frydom {
 //        }
 //    }
 
-    FrSeabed_* FrEnvironment_::GetSeabed() const {
-        return m_seabed.get();
-    }
+    FrOcean_ *FrEnvironment_::GetOcean() const { return m_ocean.get();}
 
-    Velocity FrEnvironment_::GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
-                                        FLUID_TYPE ft, FRAME_CONVENTION fc) {
-        switch (ft) {
-            case WATER:
-                m_current->GetRelativeVelocityInFrame(frame, worldVel, fc);
-                break;
-            case AIR:
-                m_wind->GetRelativeVelocityInFrame(frame, worldVel, fc);
-                break;
-            default:
-                throw FrException("Fluid is not known...");
-        }
-    }
+//    Velocity FrEnvironment_::GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
+//                                        FLUID_TYPE ft, FRAME_CONVENTION fc) {
+//        switch (ft) {
+//            case WATER:
+//                m_current->GetRelativeVelocityInFrame(frame, worldVel, fc);
+//                break;
+//            case AIR:
+//                m_wind->GetRelativeVelocityInFrame(frame, worldVel, fc);
+//                break;
+//            default:
+//                throw FrException("Fluid is not known...");
+//        }
+//    }
 
     FrGeographicServices *FrEnvironment_::GetGeographicServices() const {
         return m_geographicServices.get();
@@ -446,28 +359,23 @@ namespace frydom {
     FrTimeZone *FrEnvironment_::GetTimeZone() const {return m_timeZone.get();}
 
     void FrEnvironment_::Update(double time) {
-        if (m_showFreeSurface) m_freeSurface->Update(time);
-        m_current->Update(time);
+
+        m_ocean->Update(time);
+
         m_wind->Update(time);
-        if (m_showSeabed) m_seabed->Update(time);
 //        m_time = time;
         m_timeZone->Update(time);
     }
 
     void FrEnvironment_::Initialize() {
-        // TODO: appeler les methodes Initialize() sur les attributs
-        if (m_showFreeSurface) m_freeSurface->Initialize();
-        m_current->Initialize();
+        m_ocean->Initialize();
         m_wind->Initialize();
-        if (m_showSeabed) m_seabed->Initialize();
         m_timeZone->Initialize();
     }
 
     void FrEnvironment_::StepFinalize() {
-        if (m_showFreeSurface) m_freeSurface->StepFinalize();
-        m_current->StepFinalize();
+        m_ocean->StepFinalize();
         m_wind->StepFinalize();
-        if (m_showSeabed) m_seabed->StepFinalize();
     }
 
 

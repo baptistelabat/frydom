@@ -16,8 +16,6 @@ namespace frydom {
 
     // Forward declaration
     class FrBody_;
-//    class FrTransform_;
-    class FrRotation_;
     class FrOffshoreSystem_;
 
 

@@ -1,4 +1,4 @@
-message(STATUS "        ...Environment/current")
+message(STATUS "            ...current")
 
 set(CURRENT_FILES_LOCAL
         FrCurrent.cpp

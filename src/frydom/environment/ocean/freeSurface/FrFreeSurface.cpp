@@ -25,10 +25,10 @@
 #include "chrono/assets/ChTexture.h"
 
 #include "frydom/mesh/FrTriangleMeshConnected.h"
-#include "frydom/environment/tidal/FrTidalModel.h"
+#include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
-#include "FrWaveField.h"
-#include "FrWaveProbe.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h"
 
 
 #include "frydom/environment/FrEnvironment.h"
@@ -432,6 +432,10 @@ namespace frydom {
     FrOffshoreSystem_* FrFreeSurface_::GetSystem() {
         return m_environment->GetSystem();
     }
+    FrEnvironment_* FrFreeSurface_::GetEnvironment() {
+        return m_environment;
+    }
+
 
     void FrFreeSurface_::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
@@ -664,7 +668,7 @@ namespace frydom {
     }
 
     void FrFreeSurface_::SetLinearWaveField(LINEAR_WAVE_TYPE waveType) {
-        m_waveModel = LINEAR_WAVES;
+//        m_waveModel = LINEAR_WAVES;
         m_waveField = std::make_shared<FrLinearWaveField_>(this, waveType);
     }
 
@@ -672,11 +676,11 @@ namespace frydom {
         return dynamic_cast<FrLinearWaveField*>(m_waveField.get());
     }
 
-    double FrFreeSurface_::GetMeanHeight(double x, double y) {
+    double FrFreeSurface_::GetMeanHeight() const {
         return m_tidal->GetWaterHeight();
     }
 
-    double FrFreeSurface_::GetHeight(double x, double y) {
+    double FrFreeSurface_::GetHeight(double x, double y) const {
         return m_tidal->GetWaterHeight() + m_waveField->GetElevation(x, y);
     }
 
@@ -700,9 +704,7 @@ namespace frydom {
 
     }
 
-    FrTidal_ *FrFreeSurface_::GetTidal() const {
-        return m_tidal.get();
-    }
+    FrTidal_ *FrFreeSurface_::GetTidal() const { return m_tidal.get();}
 
     FrWaveField_ * FrFreeSurface_::GetWaveField() const { return m_waveField.get(); }
 

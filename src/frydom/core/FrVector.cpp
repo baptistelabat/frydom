@@ -7,50 +7,50 @@
 
 namespace frydom {
 
-    const Velocity NORTH(FRAME_CONVENTION fc) {
-        auto vect = Velocity(1, 0, 0);
+    const mathutils::Vector3d<double> NORTH(FRAME_CONVENTION fc) {
+        auto vect = mathutils::Vector3d<double>(1, 0, 0);
         if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
         return vect;
     }
 
-    const Velocity NORTH_EAST(FRAME_CONVENTION fc) {
-        auto vect = Velocity(MU_SQRT2_2, -MU_SQRT2_2, 0);
+    const mathutils::Vector3d<double> NORTH_EAST(FRAME_CONVENTION fc) {
+        auto vect = mathutils::Vector3d<double>(MU_SQRT2_2, -MU_SQRT2_2, 0);
         if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
         return vect;
     }
 
-    const Velocity EAST(FRAME_CONVENTION fc) {
-        auto vect = Velocity(0, -1, 0);
+    const mathutils::Vector3d<double> EAST(FRAME_CONVENTION fc) {
+        auto vect = mathutils::Vector3d<double>(0, -1, 0);
         if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
         return vect;
     }
 
-    const Velocity SOUTH_EAST(FRAME_CONVENTION fc) {
-        auto vect = Velocity(-MU_SQRT2_2, -MU_SQRT2_2, 0);
+    const mathutils::Vector3d<double> SOUTH_EAST(FRAME_CONVENTION fc) {
+        auto vect = mathutils::Vector3d<double>(-MU_SQRT2_2, -MU_SQRT2_2, 0);
         if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
         return vect;
     }
 
-    const Velocity SOUTH(FRAME_CONVENTION fc) {
-        auto vect = Velocity(-1, 0, 0);
+    const mathutils::Vector3d<double> SOUTH(FRAME_CONVENTION fc) {
+        auto vect = mathutils::Vector3d<double>(-1, 0, 0);
         if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
         return vect;
     }
 
-    const Velocity SOUTH_WEST(FRAME_CONVENTION fc) {
-        auto vect = Velocity(-MU_SQRT2_2, MU_SQRT2_2, 0);
+    const mathutils::Vector3d<double> SOUTH_WEST(FRAME_CONVENTION fc) {
+        auto vect = mathutils::Vector3d<double>(-MU_SQRT2_2, MU_SQRT2_2, 0);
         if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
         return vect;
     }
 
-    const Velocity WEST(FRAME_CONVENTION fc) {
-        auto vect = Velocity(0, 1, 0);
+    const mathutils::Vector3d<double> WEST(FRAME_CONVENTION fc) {
+        auto vect = mathutils::Vector3d<double>(0, 1, 0);
         if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
         return vect;
     }
 
-    const Velocity NORTH_WEST(FRAME_CONVENTION fc) {
-        auto vect = Velocity(MU_SQRT2_2, MU_SQRT2_2, 0);
+    const mathutils::Vector3d<double> NORTH_WEST(FRAME_CONVENTION fc) {
+        auto vect = mathutils::Vector3d<double>(MU_SQRT2_2, MU_SQRT2_2, 0);
         if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
         return vect;
     }

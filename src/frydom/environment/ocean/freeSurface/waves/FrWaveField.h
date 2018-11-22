@@ -11,13 +11,14 @@
 //#include <random>
 
 #include "frydom/core/FrObject.h"
+#include "frydom/core/FrVector.h"
 
 #include "chrono/core/ChVector.h"
 
 #include "FrWaveSpectrum.h"
 #include "FrKinematicStretching.h"
 
-
+#include "frydom/core/FrComplex.h"
 
 
 //#include "frydom/core/FrConstants.h"
@@ -27,11 +28,6 @@
 //
 //#include "frydom/environment/waves/FrKinematicStretching.h"
 
-
-
-
-
-#define JJ std::complex<double>(0, 1)
 
 namespace frydom {
 
@@ -412,7 +408,6 @@ namespace frydom {
         // FIXME static const WAVE_MODEL m_waveModel;
         WAVE_MODEL m_waveModel = NO_WAVES;
 
-        double m_time = 0.;
 
         std::unique_ptr<FrWaveSpectrum> m_waveSpectrum = nullptr;
 
@@ -440,28 +435,28 @@ namespace frydom {
         virtual double GetElevation(double x, double y) const = 0;
 
         /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
-        virtual chrono::ChVector<double> GetVelocity(double x, double y, double z) const = 0;
+        virtual Velocity GetVelocity(double x, double y, double z) const = 0;
 
         /// Return the eulerian flow velocity. Return null vector if the point is upper the free surface elevation
-        virtual chrono::ChVector<double> GetVelocity(double x, double y, double z, bool cutoff) const;
+        virtual Velocity GetVelocity(double x, double y, double z, bool cutoff) const;
 
 
         /// Return the eulerian fluid particule velocity in global reference frame (from vector position)
-        virtual chrono::ChVector<double> GetVelocity(chrono::ChVector<double> vect) const;
+        virtual Velocity GetVelocity(const Position& worldPos) const;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
-        virtual chrono::ChVector<double> GetAcceleration(double x, double y, double z) const = 0;
+        virtual Acceleration GetAcceleration(double x, double y, double z) const = 0;
 
-        virtual chrono::ChVector<double> GetAcceleration(double x, double y, double z, bool cutoff) const;
+        virtual Acceleration GetAcceleration(double x, double y, double z, bool cutoff) const;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (from vector position)
-        virtual chrono::ChVector<double> GetAcceleration(chrono::ChVector<double> vect) const;
+        virtual Acceleration GetAcceleration(const Position& worldPos) const;
 
         virtual std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
                                                               const std::vector<double>& yVect) const = 0;
 
 
-        virtual std::vector<std::vector<std::vector<chrono::ChVector<double>>>> GetVelocityGrid(const std::vector<double>& xvect,
+        virtual std::vector<std::vector<std::vector<Position>>> GetVelocityGrid(const std::vector<double>& xvect,
                                                                   const std::vector<double>& yvect,
                                                                   const std::vector<double>& zvect) const = 0;
 
@@ -486,20 +481,18 @@ namespace frydom {
 
         double GetElevation(double x, double y) const final;
 
-        chrono::ChVector<double> GetVelocity(double x, double y, double z) const final;
+        Velocity GetVelocity(double x, double y, double z) const final;
 
-        chrono::ChVector<double> GetAcceleration(double x, double y, double z) const final;
+        Acceleration GetAcceleration(double x, double y, double z) const final;
 
         std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
                                                       const std::vector<double>& yVect) const final;
 
-        std::vector<std::vector<std::vector<chrono::ChVector<double>>>>
+        std::vector<std::vector<std::vector<Position>>>
         GetVelocityGrid(const std::vector<double>& xvect,
                     const std::vector<double>& yvect,
                     const std::vector<double>& zvect) const final;
 
-
-        std::shared_ptr<FrWaveProbe> NewWaveProbe(double x, double y);
 
     };
 
@@ -558,9 +551,9 @@ namespace frydom {
 
         void SetType(LINEAR_WAVE_TYPE type);
 
-        void SetRegularWaveHeight(double height);
-
-        void SetRegularWavePeriod(double period, FREQUENCY_UNIT unit=S);
+//        void SetWaveHeight(double height);
+//
+//        void SetWavePeriod(double period, FREQUENCY_UNIT unit=S);
 
         void SetStretching(FrStretchingType type);
 
@@ -614,9 +607,9 @@ namespace frydom {
 
         FrWaveSpectrum* GetWaveSpectrum() const;
 
-        void SetReturnPeriod();
-
-        double GetReturnPeriod() const;
+//        void SetReturnPeriod();
+//
+//        double GetReturnPeriod() const;
 
         std::shared_ptr<FrLinearWaveProbe_> NewWaveProbe(double x, double y);
 
@@ -642,10 +635,10 @@ namespace frydom {
         double GetElevation(double x, double y) const;
 
         /// Return the eulerian fluid particule velocity (in global frame)
-        chrono::ChVector<double> GetVelocity(double x, double y, double z) const override;
+        Velocity GetVelocity(double x, double y, double z) const override;
 
         /// Return the eulerian fluid particule acceleration (in global frame)
-        chrono::ChVector<double> GetAcceleration(double x, double y, double z) const override;
+        Acceleration GetAcceleration(double x, double y, double z) const override;
 
 
         std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,

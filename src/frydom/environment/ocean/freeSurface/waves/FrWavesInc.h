@@ -6,11 +6,12 @@
 #define FRYDOM_FRWAVESINC_H
 
 #include "FrFlowSensor.h"
-#include "FrFreeSurface.h"
 #include "FrKinematicStretching.h"
 #include "FrWaveDispersionRelation.h"
 #include "FrWaveField.h"
 #include "FrWaveProbe.h"
 #include "FrWaveSpectrum.h"
+
+#include "airy/FrAiryInc.h"
 
 #endif //FRYDOM_FRWAVESINC_H

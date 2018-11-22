@@ -14,6 +14,7 @@ set(GOOGLE_TESTS
         test_FrNode_
         test_FrRotation_
         test_FrGeographicServices
+        test_FrFreeSurface_
         )
 
 #enable_testing()

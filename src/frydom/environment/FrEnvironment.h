@@ -246,17 +246,13 @@ namespace frydom {
 
 
     class FrOffshoreSystem_;
-    class FrFreeSurface_;
     class FrTidal_;
-    class FrSeabed_;
-    class FrUniformWind_;
-    class FrUniformCurrent_;
     class FrFlowBase;
-    class FrCurrent_;
     class FrWind_;
     class Velocity;
     class FrFrame_;
     class FrGeographicServices;
+    class FrOcean_;
 
 
     /// Class to store the different elements composing the offshore environment
@@ -270,32 +266,32 @@ namespace frydom {
         std::unique_ptr<FrTimeZone> m_timeZone;  // TODO : faire un service de temps
 
         // Environment components
-        std::unique_ptr<FrFreeSurface_> m_freeSurface;
-        std::unique_ptr<FrFlowBase>     m_current;  // TODO: remettre en place de la genericite
+
+        std::unique_ptr<FrOcean_> m_ocean;
+
         std::unique_ptr<FrFlowBase>     m_wind;
-        std::unique_ptr<FrSeabed_>      m_seabed;
 
         /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
 //        std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
         std::unique_ptr<FrGeographicServices> m_geographicServices;
 
         // Environments scalars
-        double m_waterDensity = 1025.;
-        double m_airDensity = 1.204;
+//        double m_waterDensity = 1025.;
+//        double m_airDensity = 1.204;
 
 //        double m_gravityAcceleration = 9.81;
 
-        double m_seaTemperature = 15.;
-        double m_airTemperature = 20.;
+//        double m_seaTemperature = 15.;
+//        double m_airTemperature = 20.;
 
-        double m_waterKinematicViscosity;
+//        double m_waterKinematicViscosity;
 
-        double m_atmosphericPressure;
+//        double m_atmosphericPressure;
 
 //        bool m_infinite_depth = false; // TODO : a placer plutot dans seabed !
 
-        bool m_showSeabed = true;
-        bool m_showFreeSurface = true;
+//        bool m_showSeabed = true;
+//        bool m_showFreeSurface = true;
 
     public:
 
@@ -317,48 +313,14 @@ namespace frydom {
 
         // Environment scalars
 
-        double GetWaterDensity() const;
-
-        void SetWaterDensity(double waterDensity);
-
-        double GetAirDensity() const;
-
-        void SetAirDensity(double airDensity);
-
-        double GetFluidDensity(FLUID_TYPE ft) const;
-
         double GetGravityAcceleration() const;
 
         void SetGravityAcceleration(double gravityAcceleration);
 
-        double GetSeaTemperature() const;
-
-        void SetSeaTemperature(double seaTemperature);
-
-        double GetAirTemperature() const;
-
-        void SetAirTemperature(double airtemperature);
-
-        double GetWaterKinematicViscosity() const;
-
-        void SetWaterKinematicViscosity(double waterKinematicViscosity);
-
-        double GetAtmosphericPressure() const;
-
-        void SetAtmosphericPressure(double atmosphericPressure);
-
-        double GetReynoldsNumberInWater(double characteristicLength, double velocity) const;
-
-        double GetFroudeNumberInWater(double characteristicLength, double velocity) const;
-
 
         // Environment elements Getters
 
-        FrFreeSurface_* GetFreeSurface() const;
-
-        FrTidal_* GetTidal() const;
-
-        FrCurrent_* GetCurrent() const;
+        FrOcean_* GetOcean() const;
 
         FrWind_* GetWind() const;
 
@@ -368,7 +330,6 @@ namespace frydom {
 
 //        void SetWind(const FrWind::MODEL type=FrWind::UNIFORM);
 
-        FrSeabed_* GetSeabed() const;
 
         Velocity GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
                 FLUID_TYPE ft, FRAME_CONVENTION fc);

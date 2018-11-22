@@ -1,4 +1,4 @@
-message(STATUS "        ...Environment/seabed")
+message(STATUS "            ...seabed")
 
 set(SEABED_FILES_LOCAL
         FrSeabed.cpp

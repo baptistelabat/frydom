@@ -1,4 +1,4 @@
-message(STATUS "        ...Environment/tidal")
+message(STATUS "                ...tidal")
 
 set(TIDAL_FILES_LOCAL
         FrTidalModel.cpp

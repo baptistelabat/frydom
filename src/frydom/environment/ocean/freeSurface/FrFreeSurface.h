@@ -17,7 +17,7 @@
 #define FR_FREE_SURFACE_H
 
 #include "frydom/core/FrObject.h"
-#include "FrWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 
 
 
@@ -225,14 +225,16 @@ namespace frydom{
         bool m_updateAsset = false;
 
         FrEnvironment_* m_environment;
-//        std::shared_ptr<chrono::ChBody> m_Body; // TODO: on n'utilise plus maintenant de body pour l'asset de surface libre !! On met comme asset uniquement dans le systeme
-        std::unique_ptr<FrTidal_> m_tidal;
 
-        WAVE_MODEL m_waveModel = NO_WAVES;
+        // Free surface elements
+
+        std::unique_ptr<FrTidal_> m_tidal;
 
         std::shared_ptr<FrWaveField_> m_waveField;
 
+//        WAVE_MODEL m_waveModel = NO_WAVES;
 
+        // Mesh for the asset
         std::shared_ptr<FrTriangleMeshConnected> m_meshAsset;
 
         std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbeGrid; // TODO: passer a la classe de base...
@@ -276,15 +278,21 @@ namespace frydom{
 
         FrOffshoreSystem_* GetSystem();
 
+        FrEnvironment_* GetEnvironment();
+
+        FrTidal_* GetTidal() const;
+
+        FrWaveField_ * GetWaveField() const;
+
         void NoWaves();
 
         void SetLinearWaveField(LINEAR_WAVE_TYPE waveType);
 
         FrLinearWaveField* GetLinearWaveField() const;
 
-        double GetMeanHeight(double x, double y);
+        double GetMeanHeight() const;
 
-        double GetHeight(double x, double y);
+        double GetHeight(double x, double y) const;
 
         virtual void Initialize() override;
 
@@ -293,32 +301,15 @@ namespace frydom{
         /// Initializes the free surface system
         /// In any case, a mesh grid is used.
         /// this version concerns a rectangular grid
-        void SetGrid(double xmin,
-                        double xmax,
-                        double dx,
-                        double ymin,
-                        double ymax,
-                        double dy
-                        );
+        void SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy);
 
         /// Initializes the free surface system
         /// In any case, a mesh grid is used.
         /// this version concerns a square grid
-        void SetGrid(double lmin,
-                        double lmax,
-                        double dl
-                        );
+        void SetGrid(double lmin, double lmax, double dl);
 
-        void SetGrid(double xc0,
-                        double yc0,
-                        double diameter,
-                        int nbR,
-                        int nbTheta
-                        );
+        void SetGrid(double xc0, double yc0, double diameter, int nbR, int nbTheta);
 
-        FrTidal_* GetTidal() const;
-
-        FrWaveField_ * GetWaveField() const;
 
         /// Get the free surface's mesh
 

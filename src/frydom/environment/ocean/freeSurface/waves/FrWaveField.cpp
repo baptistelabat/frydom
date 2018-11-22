@@ -6,6 +6,9 @@
 
 #include <random>
 
+#include "../FrFreeSurface.h"
+#include "frydom/core/FrOffshoreSystem.h"
+
 #include "FrWaveProbe.h"
 #include "FrFlowSensor.h"
 #include "FrWaveDispersionRelation.h"
@@ -866,10 +869,9 @@ namespace frydom {
     }
 
     void FrWaveField_::Update(double time) {
-        m_time = time;
     }
 
-    double FrWaveField_::GetTime() const { return m_time; }
+    double FrWaveField_::GetTime() const { return m_freeSurface->GetSystem()->GetTime(); }
 
 //    FrFlowSensor* FrWaveField_::SetFlowSensor(double x, double y, double z) const {
 //        return new FrFlowSensor(x, y, z);
@@ -889,34 +891,34 @@ namespace frydom {
         return m_waveRamp;
     }
 
-    chrono::ChVector<double> FrWaveField_::GetVelocity(double x, double y, double z, bool cutoff) const {
+    Velocity FrWaveField_::GetVelocity(double x, double y, double z, bool cutoff) const {
 
         if (cutoff) {
             auto wave_elevation = GetElevation(x, y);
             if (wave_elevation < z) {
-                return chrono::VNULL;
+                return {0.,0.,0.};
             }
         }
         return GetVelocity(x, y, z);
     }
 
-    chrono::ChVector<double> FrWaveField_::GetVelocity(chrono::ChVector<double> vect) const {
-        return GetVelocity(vect.x(), vect.y(), vect.z());
+    Velocity FrWaveField_::GetVelocity(const Position& worldPos) const {
+        return GetVelocity(worldPos.GetX(), worldPos.GetY(), worldPos.GetZ());
     }
 
-    chrono::ChVector<double> FrWaveField_::GetAcceleration(double x, double y, double z, bool cutoff) const {
+    Acceleration FrWaveField_::GetAcceleration(double x, double y, double z, bool cutoff) const {
 
         if (cutoff) {
             auto wave_elevation = GetElevation(x, y);
             if (wave_elevation < z) {
-                return chrono::VNULL;
+                return {0.,0.,0.};
             }
         }
         return GetAcceleration(x, y, z);
     }
 
-    chrono::ChVector<double> FrWaveField_::GetAcceleration(chrono::ChVector<double> vect) const {
-        return GetAcceleration(vect.x(), vect.y(), vect.z());
+    Acceleration FrWaveField_::GetAcceleration(const Position& worldPos) const {
+        return GetAcceleration(worldPos.GetX(), worldPos.GetY(), worldPos.GetZ());
     }
 
     void FrWaveField_::Initialize() {}
@@ -933,12 +935,12 @@ namespace frydom {
         return 0.;
     }
 
-    chrono::ChVector<double> FrNullWaveField_::GetVelocity(double x, double y, double z) const {
-        return chrono::ChVector<double>(0.);
+    Velocity FrNullWaveField_::GetVelocity(double x, double y, double z) const {
+        return {0.,0.,0.};
     }
 
-    chrono::ChVector<double> FrNullWaveField_::GetAcceleration(double x, double y, double z) const {
-        return chrono::ChVector<double>(0.);
+    Acceleration FrNullWaveField_::GetAcceleration(double x, double y, double z) const {
+        return {0.,0.,0.};
     }
 
     std::vector<std::vector<double>>
@@ -993,10 +995,6 @@ namespace frydom {
         }
 
         return velocity;
-    }
-
-    std::shared_ptr<FrWaveProbe> FrNullWaveField_::NewWaveProbe(double x, double y) {
-        // TODO
     }
 
 
@@ -1121,14 +1119,14 @@ namespace frydom {
         }
     }
 
-    void FrLinearWaveField_::SetRegularWaveHeight(double height) {
-        m_height = height;
-    }
-
-    void FrLinearWaveField_::SetRegularWavePeriod(double period, FREQUENCY_UNIT unit) {
-        m_period = convert_frequency(period, unit, S);
-        Initialize();
-    }
+//    void FrLinearWaveField_::SetWaveHeight(double height) {
+//        m_height = height;
+//    }
+//
+//    void FrLinearWaveField_::SetWavePeriod(double period, FREQUENCY_UNIT unit) {
+//        m_period = convert_frequency(period, unit, S);
+//        Initialize();
+//    }
 
     unsigned int FrLinearWaveField_::GetNbFrequencies() const { return m_nbFreq; }
 
@@ -1421,13 +1419,13 @@ namespace frydom {
 
     FrWaveSpectrum *FrLinearWaveField_::GetWaveSpectrum() const { return m_waveSpectrum.get(); }
 
-    void FrLinearWaveField_::SetReturnPeriod() {
-        // TODO
-    }
-
-    double FrLinearWaveField_::GetReturnPeriod() const {
-        // TODO
-    }
+//    void FrLinearWaveField_::SetReturnPeriod() {
+//        // TODO
+//    }
+//
+//    double FrLinearWaveField_::GetReturnPeriod() const {
+//        // TODO
+//    }
 
     void FrLinearWaveField_::Update(double time) {
         m_time = time;
@@ -1474,7 +1472,7 @@ namespace frydom {
         return elevation;
     }
 
-    chrono::ChVector<double> FrLinearWaveField_::GetVelocity(double x, double y, double z) const {
+    Velocity FrLinearWaveField_::GetVelocity(double x, double y, double z) const {
 
         auto steadyVelocity = GetSteadyVelocity(x, y, z);
 
@@ -1484,7 +1482,7 @@ namespace frydom {
             dKz = m_verticalFactor->EvalDZ(x, y, z, c_waveNumbers, m_depth);
         }
 
-        chrono::ChVector<double> velocity = 0.;
+        Velocity velocity(0.,0.,0.);
         for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
             velocity.x() += std::real( Kz[ifreq] * steadyVelocity[ifreq].x() * c_emjwt[ifreq]);
             velocity.y() += std::real( Kz[ifreq] * steadyVelocity[ifreq].y() * c_emjwt[ifreq]);
@@ -1493,7 +1491,7 @@ namespace frydom {
         return velocity;
     }
 
-    chrono::ChVector<double> FrLinearWaveField_::GetAcceleration(double x, double y, double z) const {
+    Acceleration FrLinearWaveField_::GetAcceleration(double x, double y, double z) const {
 
         auto steadyVelocity = GetSteadyVelocity(x, y, z);
         auto emjwt_dt = this->GetTimeCoeffsDt();
@@ -1503,7 +1501,7 @@ namespace frydom {
             acceleration += steadyVelocity[ifreq] * emjwt_dt[ifreq];
         }
 
-        chrono::ChVector<double> realAcceleration = ChReal(acceleration);
+        Acceleration realAcceleration = internal:: ChReal(acceleration);
 
         if (m_waveRamp && m_waveRamp->IsActive()) {
             m_waveRamp->Apply(m_time, realAcceleration);

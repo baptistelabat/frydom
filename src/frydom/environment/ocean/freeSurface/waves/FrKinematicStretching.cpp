@@ -3,7 +3,7 @@
 //
 
 #include "FrKinematicStretching.h"
-#include "frydom/environment/waves/FrWaveField.h"
+#include "FrWaveField.h"
 
 namespace frydom {
 

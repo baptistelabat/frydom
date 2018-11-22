@@ -137,8 +137,8 @@ void TestFrFlowForce::TestForce() {
     for (unsigned int i=0; i<speed.size(); i++) {
 
         if (m_type == WATER) {
-            system.GetEnvironment()->GetCurrent()->MakeFieldUniform();
-            system.GetEnvironment()->GetCurrent()->GetFieldUniform()->Set(dir(i), speed(i), angleUnit, speedUnit, frame,
+            system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
+            system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()->Set(dir(i), speed(i), angleUnit, speedUnit, frame,
                                                                    convention);
         } else if (m_type == FLUID_TYPE::AIR) {
             system.GetEnvironment()->GetWind()->MakeFieldUniform();

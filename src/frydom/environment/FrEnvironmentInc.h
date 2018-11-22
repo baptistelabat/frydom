@@ -11,10 +11,7 @@
 
 #include "time/FrTimeInc.h"
 #include "field/FrFieldInc.h"
-#include "current/FrCurrentInc.h"
-#include "seabed/FrSeabedInc.h"
-#include "tidal/FrTidalInc.h"
-#include "waves/FrWavesInc.h"
+#include "ocean/FrOceanInc.h"
 #include "wind/FrWindInc.h"
 #include "flow/FrFlowInc.h"
 

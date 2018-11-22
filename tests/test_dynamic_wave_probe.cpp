@@ -238,8 +238,8 @@ int main(int argc, char* argv[]) {
 /*
     system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_REGULAR);
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
-    waveField->SetRegularWaveHeight(3.);
-    waveField->SetRegularWavePeriod(10.);
+    waveField->SetWaveHeight(3.);
+    waveField->SetWavePeriod(10.);
     waveField->SetMeanWaveDirection(0., DEG);
 
     waveField->GetWaveRamp()->Deactivate();
