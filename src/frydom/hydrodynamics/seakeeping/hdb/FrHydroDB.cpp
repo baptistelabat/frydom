@@ -6,9 +6,14 @@
 
 #include "yaml-cpp/yaml.h"
 
+#include "frydom/core/FrHydroBody.h" // TODO : a retirer
+
 #include "FrHydroDB.h"
+#include "FrBEMBody.h"
 #include "FrHydroMapper.h"
 #include "frydom/IO/FrHDF5.h"
+
+
 
 
 using namespace mathutils;
@@ -305,6 +310,27 @@ namespace frydom {
 
     ///////////////// REFACTORING ----------------->>>>>>>>>>>>>>>>>>>
 
+    bool FrBEMBodyMapper_::AddEntry(FrBEMBody_* bemBody, FrBody_* frydomBody) {
+        bool success = true;
+//        success *= m_namedBEMBodyMap.insert({bemBody->GetName(), bemBody}).second;
+        success *= m_BEMToFrydomBodyMap.insert({bemBody, frydomBody}).second;
+        success *= m_FrydomToBEMBodyMap.insert({frydomBody, bemBody}).second;
+        return success;
+    }
+
+    FrBody_* FrBEMBodyMapper_::GetFrydomBody(FrBEMBody_* bemBody) const {
+        return m_BEMToFrydomBodyMap.at(bemBody);
+    }
+
+    FrBEMBody_* FrBEMBodyMapper_::GetBEMBody(FrBody_* frydomBody) const {
+        return m_FrydomToBEMBodyMap.at(frydomBody);
+    }
+
+    unsigned long FrBEMBodyMapper_::GetNbMappedBodies() const {
+        auto size = m_FrydomToBEMBodyMap.size();
+        assert(m_BEMToFrydomBodyMap.size() == size);
+        return size;
+    }
 
 
 
@@ -359,8 +385,8 @@ namespace frydom {
             Position BodyPosition = reader.ReadDoubleArray(body_i_path + "/BodyPosition");
             body->SetWorldPosition(BodyPosition);
 
-            auto ID = reader.ReadInt(body_i_path + "/ID");
-            assert(body->GetID() == ID);
+//            auto ID = reader.ReadInt(body_i_path + "/ID");
+//            assert(body->GetID() == ID);
 
             auto nbForceModes = reader.ReadInt(body_i_path + "/Modes/NbForceModes");
 
@@ -445,7 +471,8 @@ namespace frydom {
 
             sprintf(buffer, "%d", ibody);
             body_i_path = body_path + buffer;
-            auto body = GetBody(ibody);
+            auto body = m_bodies[ibody].get();
+
 
             // Reading the excitation hydrodynamic coefficients
             auto diffraction_path = body_i_path + "/Excitation/Diffraction";
@@ -482,11 +509,12 @@ namespace frydom {
             for (unsigned int ibody_motion=0; ibody_motion<NbBodies; ++ibody_motion) {
                 sprintf(buffer, "/BodyMotion_%d", ibody_motion);
 
-                body_motion = GetBody(ibody_motion);
+//                body_motion = GetBody(ibody_motion);
+                body_motion = m_bodies[ibody_motion].get();
 
                 auto body_i_infinite_added_mass_path = radiation_path + buffer + "/InfiniteAddedMass";
                 auto infinite_added_mass = reader.ReadDoubleArray(body_i_infinite_added_mass_path);
-                body->SetInfiniteAddedMass(ibody_motion, infinite_added_mass);
+                body->SetInfiniteAddedMass(body_motion, infinite_added_mass);
 
                 auto body_i_added_mass_path = radiation_path + buffer + "/AddedMass";
                 auto body_i_radiation_damping_path = radiation_path + buffer + "/RadiationDamping";
@@ -496,13 +524,13 @@ namespace frydom {
                     sprintf(buffer, "/DOF_%d", imotion);
 
                     auto added_mass = reader.ReadDoubleArray(body_i_added_mass_path + buffer);
-                    body->SetAddedMass(ibody_motion, imotion, added_mass);
+                    body->SetAddedMass(body_motion, imotion, added_mass);
 
                     auto radiation_damping = reader.ReadDoubleArray(body_i_radiation_damping_path + buffer);
-                    body->SetRadiationDamping(ibody_motion, imotion, radiation_damping);
+                    body->SetRadiationDamping(body_motion, imotion, radiation_damping);
 
                     auto impulse_response_function = reader.ReadDoubleArray(body_i_impulse_response_function_path + buffer);
-                    body->SetImpulseResponseFunction(ibody_motion, imotion, impulse_response_function);
+                    body->SetImpulseResponseFunction(body_motion, imotion, impulse_response_function);
 
                 }  // end for imotion
             }  // end ibody_motion
@@ -514,9 +542,55 @@ namespace frydom {
 
     }
 
+    void FrHydroDB_::Bind(std::string bemBodyName, FrBody_* frydomBody) {
+        m_bodyMapper->AddEntry(GetBEMBody(std::move(bemBodyName)), frydomBody);
+    }
+
+    FrBEMBody_* FrHydroDB_::GetBEMBody(FrBody_* frydomBody) {
+        return m_bodyMapper->GetBEMBody(frydomBody);
+    }
+
+    FrBEMBody_* FrHydroDB_::GetBEMBody(std::string bemBodyName) {
+        return m_namedBodyMap.at(bemBodyName).second;
+    }
+
+    FrBody_* FrHydroDB_::GetFrydomBody(FrBEMBody_* bemBody) {
+        return m_bodyMapper->GetFrydomBody(bemBody);
+    }
+
+//    const FrBody_* FrHydroDB_::GetFrydomBody(const FrBEMBody_* bemBody) const {
+//        return m_bodyMapper->GetFrydomBody(bemBody);
+//    }
+
+    bool FrHydroDB_::IsFullyConnected() const {
+        return GetNbBodies() == m_bodyMapper->GetNbMappedBodies();
+    }
+
+
+    // BEM body iterator
+
+    FrHydroDB_::BEMBodyIter FrHydroDB_::begin_body() {
+        return m_bodies.begin();
+    }
+
+    FrHydroDB_::BEMBodyIter FrHydroDB_::end_body() {
+        return m_bodies.end();
+    }
+
+//    FrHydroDB_::BEMBodyConstIter FrHydroDB_::begin_body() const {
+//        return m_bodies.cbegin();
+//    }
+//
+//    FrHydroDB_::BEMBodyConstIter FrHydroDB_::end_body() const {
+//        return m_bodies.cend();
+//    }
 
 
 
+
+    unsigned long FrHydroDB_::GetBodyIndex(const FrBEMBody_* bemBody) {
+        return m_namedBodyMap.at(bemBody->GetName()).first;
+    }
 
 
 

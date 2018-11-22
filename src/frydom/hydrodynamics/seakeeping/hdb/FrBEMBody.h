@@ -331,7 +331,7 @@ namespace frydom {
 
         FrHydroDB_* m_HDB = nullptr;
 
-        unsigned int m_ID;
+//        unsigned int m_ID;
         std::string m_bodyName;
 
         Position m_BodyPosition;  // Ne peut etre utilise pour renvoyer un warning si le corps n'est pas proche de cette position en seakeeping sans vitesse d'avance
@@ -362,11 +362,16 @@ namespace frydom {
     public:
 
 //        FrBEMBody_() = default;
-        FrBEMBody_(unsigned int ID, std::string& BodyName, FrHydroDB_* hdb);
+        FrBEMBody_(std::string& BodyName, FrHydroDB_* hdb);
 
 //        FrHydroDB* GetHDB() const { return m_HDB; }
 
 //        void SetName(const std::string& BodyName) { m_bodyName = BodyName; }
+
+
+        std::string GetName() const;
+
+
         void SetWorldPosition(const Eigen::Vector3d &BodyPosition);
 //
         unsigned int GetNbForceMode() const;
@@ -384,11 +389,13 @@ namespace frydom {
 //            return &m_MotionModes[imode];
 //        }
 //
-        unsigned int GetID() const;
+//        unsigned int GetID() const;
 
         void AddForceMode(FrBEMForceMode& mode);
 
         void AddMotionMode(FrBEMMotionMode& mode);
+
+
 //
 //        unsigned int GetNbFrequencies() const;
 //
@@ -439,42 +446,42 @@ namespace frydom {
 
         Eigen::VectorXcd GetExcitation(unsigned int iangle, unsigned int iforce) const;
 
-        Eigen::MatrixXd GetInfiniteAddedMass(unsigned int ibody) const;
+        Eigen::MatrixXd GetInfiniteAddedMass(const FrBEMBody_* bemBody) const;
 
         Eigen::MatrixXd GetSelfInfiniteAddedMass() const;
 
-        Eigen::MatrixXd GetAddedMass(unsigned int ibody, unsigned int idof) const;
+        Eigen::MatrixXd GetAddedMass(const FrBEMBody_* bemBody, unsigned int idof) const;
 
-        Eigen::VectorXd GetAddedMass(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+        Eigen::VectorXd GetAddedMass(const FrBEMBody_* bemBody, unsigned int idof, unsigned int iforce) const;
 
         Eigen::MatrixXd GetSelfAddedMass(unsigned int idof) const;
 
         Eigen::VectorXd GetSelfAddedMass(unsigned int idof, unsigned int iforce) const;
 
-        Eigen::MatrixXd GetRadiationDamping(unsigned int ibody, unsigned int idof) const;
+        Eigen::MatrixXd GetRadiationDamping(const FrBEMBody_* bemBody, unsigned int idof) const;
 
-        Eigen::VectorXd GetRadiationDamping(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+        Eigen::VectorXd GetRadiationDamping(const FrBEMBody_* bemBody, unsigned int idof, unsigned int iforce) const;
 
         Eigen::MatrixXd GetSelfRadiationDamping(unsigned int idof) const;
 
         Eigen::VectorXd GetselfRadiationDamping(unsigned int idof, unsigned int iforce) const;
 
-        std::vector<Eigen::MatrixXd> GetImpulseResponseFunction(unsigned int ibody) const;
+        std::vector<Eigen::MatrixXd> GetImpulseResponseFunction(const FrBEMBody_* bemBody) const;
 
-        Eigen::MatrixXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof) const;
+        Eigen::MatrixXd GetImpulseResponseFunction(const FrBEMBody_* bemBody, unsigned int idof) const;
 
-        Eigen::VectorXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+        Eigen::VectorXd GetImpulseResponseFunction(const FrBEMBody_* bemBody, unsigned int idof, unsigned int iforce) const;
 
         Eigen::MatrixXd GetSelfImpulseResponseFunction(unsigned int idof) const;
 
         Eigen::VectorXd GetSelfImpulseResponseFunction(unsigned int idof, unsigned int iforce) const;
 
-        std::vector<Eigen::MatrixXd> GetSpeedDependentIRF(unsigned int ibody) const;
+        std::vector<Eigen::MatrixXd> GetSpeedDependentIRF(const FrBEMBody_* bemBody) const;
 
-        Eigen::MatrixXd GetSpeedDependentIRF(unsigned int ibody, unsigned int idof) const;
+        Eigen::MatrixXd GetSpeedDependentIRF(const FrBEMBody_* bemBody, unsigned int idof) const;
 
-        Eigen::VectorXd GetSpeedDependentIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
-//
+        Eigen::VectorXd GetSpeedDependentIRF(const FrBEMBody_* bemBody, unsigned int idof, unsigned int iforce) const;
+
 //        void GenerateImpulseResponseFunctions();
 //
 //        void GenerateSpeedDependentIRF();
@@ -496,18 +503,20 @@ namespace frydom {
 
     private:
 
+        unsigned long GetIndexInHDB() const;
+
         void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
-//
+
         void SetFroudeKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix);
-//
-        void SetInfiniteAddedMass(unsigned int ibody, const Eigen::MatrixXd& CMInf);
-//
-        void SetAddedMass(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CM);
-//
-        void SetRadiationDamping(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& CA);
-//
-        void SetImpulseResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
-//
+
+        void SetInfiniteAddedMass(const FrBEMBody_* bemBody, const Eigen::MatrixXd& CMInf);
+
+        void SetAddedMass(const FrBEMBody_* bemBody, unsigned int idof, const Eigen::MatrixXd& CM);
+
+        void SetRadiationDamping(const FrBEMBody_* bemBody, unsigned int idof, const Eigen::MatrixXd& CA);
+
+        void SetImpulseResponseFunction(const FrBEMBody_* bemBody, unsigned int idof, const Eigen::MatrixXd& IRF);
+
 //        void SetSpeedDependentIRF(const unsigned int ibody, const unsigned int idof, const Eigen::MatrixXd& IRF);
 
         void ComputeExcitation();

@@ -7,7 +7,8 @@
 
 #include <vector>
 
-#include "boost/bimap.hpp"
+//#include "boost/bimap.hpp"
+#include <unordered_map>
 
 
 #include "MathUtils/MathUtils.h"
@@ -151,6 +152,9 @@ namespace frydom {
 
     ////////////// REFACTORING --------------->>>>>>>>>>>>>>>>>>>>
 
+
+
+
     // Forward declaration
     class FrBEMBody_;
 
@@ -158,37 +162,20 @@ namespace frydom {
 
     private:
 
-        using BodyMapper = boost::bimaps::bimap<FrBody_*, FrBEMBody_*>;
-
-//        FrHydroDB* m_HDB;
-        BodyMapper m_mapper;
-
+        std::unordered_map<FrBEMBody_*, FrBody_*> m_BEMToFrydomBodyMap;
+        std::unordered_map<FrBody_*, FrBEMBody_*> m_FrydomToBEMBodyMap;
 
     public:
 
-        FrBEMBodyMapper_();
+        FrBEMBodyMapper_() = default;
 
-//        void Map(const std::shared_ptr<FrHydroBody> hydroBody, unsigned int iBEMBody);
-//
-//        unsigned int GetNbMappings() const;
-//
-//        FrHydroBody* GetHydroBody(unsigned int iBEMBody) const;
-//
-//        unsigned int GetBEMBodyIndex(std::shared_ptr<FrHydroBody> hydroBody);
-//
-//        unsigned int GetBEMBodyIndex(FrHydroBody* hydroBody);
-//
-//        std::shared_ptr<FrBEMBody> GetBEMBody(std::shared_ptr<FrHydroBody> hydroBody);
-//
-//        std::shared_ptr<FrBEMBody> GetBEMBody(FrHydroBody* hydroBody);
-//
-//        virtual void IntLoadResidual_Mv(const unsigned int off,
-//                                        chrono::ChVectorDynamic<>& R,
-//                                        const chrono::ChVectorDynamic<>& w,
-//                                        const double c);
-//
-//        //virtual void VariablesFbIncrementMq() { m_HDB->VariablesFbIncrementMq(); }
+        bool AddEntry(FrBEMBody_* bemBody, FrBody_* frydomBody);
 
+        FrBody_* GetFrydomBody(FrBEMBody_* bemBody) const;
+
+        FrBEMBody_* GetBEMBody(FrBody_* frydomBody) const;
+
+        unsigned long GetNbMappedBodies() const;
 
     };
 
@@ -224,22 +211,44 @@ namespace frydom {
         double m_WaterDensity          = 1000.;
         double m_WaterDepth            = 0.;
 
-        std::vector<std::unique_ptr<FrBEMBody_>> m_bodies;
+        using BEMBodyContainer = std::vector<std::unique_ptr<FrBEMBody_>>;
+        BEMBodyContainer m_bodies;
+
+        std::unordered_map<std::string, std::pair<unsigned long, FrBEMBody_*>> m_namedBodyMap;
+//        std::unordered_map<FrBEMBody_*, unsigned long> m_bemBodyToIndex;
+
         FrDiscretization1D m_FrequencyDiscretization;
         FrDiscretization1D m_WaveDirectionDiscretization;
         FrDiscretization1D m_TimeDiscretization;
 
-//        friend FrHydroDB_ LoadHDB5_(std::string);
+        std::unique_ptr<FrBEMBodyMapper_> m_bodyMapper;
 
 
 
     public:
 
-//        FrHydroDB_() = default;
+        /// Constructor from a HDB5 file that is loaded
+        explicit FrHydroDB_(std::string hdb5File);
 
-        FrHydroDB_(std::string hdb5File);
+        /// Get the number of interacting bodies
+        unsigned long GetNbBodies() const { return m_bodies.size(); }
 
-        unsigned int GetNbBodies() const { return (unsigned int)m_bodies.size(); }
+        /// Bind a frydom body to a BEMBody defined by its name as specified into the HDB
+        void Bind(std::string bemBodyName, FrBody_* frydomBody);
+
+        /// Get a pointer to the BEM body that has been bind to the Frydom body given as argument
+        FrBEMBody_* GetBEMBody(FrBody_* frydomBody);
+
+        FrBEMBody_* GetBEMBody(std::string bemBodyName);
+
+        /// Get a pointer to the frydom body that has been bind to the bemBody given as argument
+        FrBody_* GetFrydomBody(FrBEMBody_* bemBody);
+
+        bool IsFullyConnected() const;
+
+
+
+
 
 //        double GetGravityAcc() const { return m_GravityAcc; }
 //
@@ -296,11 +305,15 @@ namespace frydom {
         double GetTimeStep() const { return m_TimeDiscretization.GetStep(); }
 
         FrBEMBody_* NewBEMBody(std::string BodyName) {
-            m_bodies.emplace_back(std::make_unique<FrBEMBody_>(GetNbBodies(), BodyName, this));
-            return m_bodies.back().get();
+            m_bodies.emplace_back(std::make_unique<FrBEMBody_>(BodyName, this));
+            FrBEMBody_* newBody = m_bodies.back().get();
+
+            m_namedBodyMap.insert({BodyName, {GetNbBodies()-1, newBody}});
+
+            return newBody;
         }
 //
-        FrBEMBody_* GetBody(unsigned int ibody) { return m_bodies[ibody].get(); }
+//        FrBEMBody_* GetBody(unsigned int ibody) { return m_bodies[ibody].get(); }
 
 //        void GenerateImpulseResponseFunctions(double tf = 30., double dt = 0.);
 //
@@ -312,6 +325,57 @@ namespace frydom {
 //                                const chrono::ChVectorDynamic<>& w, const double c) ;
 //
 //        //void VariablesFbIncrementMq();
+
+
+
+
+        /// Iterators on bodies that are interacting into the hydrodynamic database
+
+        struct BEMBodyIter : public BEMBodyContainer::iterator {
+
+            BEMBodyIter() : BEMBodyContainer::iterator() {}
+            BEMBodyIter(BEMBodyContainer::iterator it) : BEMBodyContainer::iterator(it) {}
+
+            FrBEMBody_* GetBEMBody() {
+                return BEMBodyContainer::iterator::operator*().get();
+            }
+
+            FrBody_* GetFrydomBody() {
+                FrBEMBody_* bemBody = GetBEMBody();
+                return bemBody->m_HDB->GetFrydomBody(bemBody);
+            }
+
+        };
+
+
+//        struct BEMBodyConstIter : public BEMBodyContainer::const_iterator {
+//
+//            BEMBodyConstIter() : BEMBodyContainer::const_iterator() {}
+//            BEMBodyConstIter(BEMBodyContainer::const_iterator it) : BEMBodyContainer::const_iterator(it) {}
+//
+//            const FrBEMBody_* GetBEMBody() const {
+//                return BEMBodyContainer::const_iterator::operator*().get();
+//            }
+//
+//            const FrBody_* GetFrydomBody() const {
+//                const FrBEMBody_* bemBody = GetBEMBody();
+//                return bemBody->m_HDB->GetFrydomBody(bemBody);
+//            }
+//
+//        };
+
+
+        BEMBodyIter begin_body();
+        BEMBodyIter end_body();
+
+//        BEMBodyConstIter begin_body() const;
+//        BEMBodyConstIter end_body() const;
+    private:
+
+        friend unsigned long FrBEMBody_::GetIndexInHDB() const;
+
+        unsigned long GetBodyIndex(const FrBEMBody_* bemBody);
+
 
     };  // end class FrHydroDB
 
