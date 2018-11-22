@@ -246,13 +246,13 @@ namespace frydom {
 
 
     class FrOffshoreSystem_;
-    class FrTidal_;
-    class FrFlowBase;
-    class FrWind_;
+
+    class FrOcean_;
+    class FrAtmosphere_;
+    class FrGeographicServices;
+
     class Velocity;
     class FrFrame_;
-    class FrGeographicServices;
-    class FrOcean_;
 
 
     /// Class to store the different elements composing the offshore environment
@@ -269,24 +269,13 @@ namespace frydom {
 
         std::unique_ptr<FrOcean_> m_ocean;
 
-        std::unique_ptr<FrFlowBase>     m_wind;
+        std::unique_ptr<FrAtmosphere_> m_atmosphere;
 
         /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
 //        std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
         std::unique_ptr<FrGeographicServices> m_geographicServices;
 
         // Environments scalars
-//        double m_waterDensity = 1025.;
-//        double m_airDensity = 1.204;
-
-//        double m_gravityAcceleration = 9.81;
-
-//        double m_seaTemperature = 15.;
-//        double m_airTemperature = 20.;
-
-//        double m_waterKinematicViscosity;
-
-//        double m_atmosphericPressure;
 
 //        bool m_infinite_depth = false; // TODO : a placer plutot dans seabed !
 
@@ -298,10 +287,6 @@ namespace frydom {
         explicit FrEnvironment_(FrOffshoreSystem_* system);
 
         ~FrEnvironment_();
-
-//        void SetSystem(FrOffshoreSystem* system) {
-//            m_system = system;
-//        }
 
         FrOffshoreSystem_* GetSystem();
 //
@@ -322,19 +307,11 @@ namespace frydom {
 
         FrOcean_* GetOcean() const;
 
-        FrWind_* GetWind() const;
-
-//        void SetCurrent(FrCurrent* current);
-//
-//        void SetCurrent (const FrCurrent::MODEL type=FrCurrent::UNIFORM);
-
-//        void SetWind(const FrWind::MODEL type=FrWind::UNIFORM);
+        FrAtmosphere_* GetAtmosphere() const;
 
 
         Velocity GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
                 FLUID_TYPE ft, FRAME_CONVENTION fc);
-
-//        void SetSeabed(FrSeabed* seabed);
 
 
         // Geographic coordinates manipulations

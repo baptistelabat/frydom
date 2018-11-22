@@ -10,9 +10,8 @@
 #include "FrFluidType.h"
 
 #include "time/FrTimeInc.h"
-#include "field/FrFieldInc.h"
 #include "ocean/FrOceanInc.h"
-#include "wind/FrWindInc.h"
+#include "atmosphere/FrAtmosphereInc.h"
 #include "flow/FrFlowInc.h"
 
 

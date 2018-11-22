@@ -1,9 +1,8 @@
 message(STATUS "    ...Environment")
 
 add_subdirectory(time)
-add_subdirectory(field)
 add_subdirectory(ocean)
-add_subdirectory(wind)
+add_subdirectory(atmosphere)
 add_subdirectory(flow)
 
 
@@ -17,9 +16,8 @@ foreach(file ${SRC_FILES})
 endforeach()
 
 list(APPEND FRYDOM_ENVIRONMENT_SOURCES ${TIME_FILES})
-list(APPEND FRYDOM_ENVIRONMENT_SOURCES ${FIELD_FILES})
 list(APPEND FRYDOM_ENVIRONMENT_SOURCES ${OCEAN_FILES})
-list(APPEND FRYDOM_ENVIRONMENT_SOURCES ${WIND_FILES})
+list(APPEND FRYDOM_ENVIRONMENT_SOURCES ${ATMOSPHERE_FILES})
 list(APPEND FRYDOM_ENVIRONMENT_SOURCES ${FLOW_FILES})
 
 

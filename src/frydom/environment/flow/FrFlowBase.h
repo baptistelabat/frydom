@@ -7,8 +7,8 @@
 
 #include "frydom/core/FrObject.h"
 #include "frydom/core/FrVector.h"
-#include "frydom/environment/field/FrFieldBase.h"
-#include "frydom/environment/field/FrUniformField.h"
+#include "FrFieldBase.h"
+#include "FrUniformField.h"
 
 namespace frydom {
 

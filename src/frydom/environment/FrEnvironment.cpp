@@ -13,13 +13,15 @@
 
 
 #include "time/FrTimeZone.h"
+
 #include "ocean/FrOcean_.h"
 #include "ocean/freeSurface/FrFreeSurface.h"
 #include "ocean/seabed/FrSeabed.h"
+#include "ocean/current/FrCurrent.h"
 
-#include "frydom/environment/flow/FrFlowBase.h"
-#include "frydom/environment/ocean/current/FrCurrent.h"
-#include "frydom/environment/wind/FrWind.h"
+#include "atmosphere/FrAtmosphere_.h"
+
+#include "flow/FrFlowBase.h"
 
 
 //#include "tidal/FrTidalModel.h"
@@ -256,8 +258,6 @@ namespace frydom {
 
     /// REFACTORING ---------->>>>>>>>>>
 
-//    void FrEnvironment::SetTime(double time) { m_time = time; }
-
     FrEnvironment_::FrEnvironment_(FrOffshoreSystem_* system) {
 
         m_system = system;
@@ -265,7 +265,7 @@ namespace frydom {
         m_geographicServices    = std::make_unique<FrGeographicServices>();
         m_timeZone              = std::make_unique<FrTimeZone>();
         m_ocean                 = std::make_unique<FrOcean_>(this);
-        m_wind                  = std::make_unique<FrWind_>(this);
+        m_atmosphere            = std::make_unique<FrAtmosphere_>(this);
 
 //        if (not(m_infinite_depth)) m_seabed->SetEnvironment(this); // TODO : voir a porter ca dans seabed...
 
@@ -291,59 +291,24 @@ namespace frydom {
         m_system->SetGravityAcceleration(gravityAcceleration);
     }
 
-    FrWind_* FrEnvironment_::GetWind() const {
-        return dynamic_cast<FrWind_*>(m_wind.get());
-    }
-
-
-
-//    template<class T>
-//    T *FrEnvironment_::GetCurrent() const { return dynamic_cast<T*>(m_current.get()); }
-//
-//    template<class T>
-//    T *FrEnvironment_::GetWind() const { return dynamic_cast<T*>(m_wind.get()); }
-
-//    void FrEnvironment::SetCurrent(FrCurrent *current) {
-//        m_current = std::shared_ptr<FrCurrent>(current);
-//    }
-
-//    void FrEnvironment::SetCurrent(const FrCurrent::MODEL type) {
-//
-//        switch (type) {
-//            case FrCurrent::UNIFORM:
-//                m_current = std::make_shared<FrUniformCurrent>();
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-
-//    void FrEnvironment::SetWind(const FrWind::MODEL type) {
-//
-//        switch (type) {
-//            case FrWind::UNIFORM:
-//                m_wind = std::make_shared<FrUniformWind>();
-//                break;
-//            default:
-//                break;
-//        }
-//    }
 
     FrOcean_ *FrEnvironment_::GetOcean() const { return m_ocean.get();}
 
-//    Velocity FrEnvironment_::GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
-//                                        FLUID_TYPE ft, FRAME_CONVENTION fc) {
-//        switch (ft) {
-//            case WATER:
-//                m_current->GetRelativeVelocityInFrame(frame, worldVel, fc);
-//                break;
-//            case AIR:
-//                m_wind->GetRelativeVelocityInFrame(frame, worldVel, fc);
-//                break;
-//            default:
-//                throw FrException("Fluid is not known...");
-//        }
-//    }
+    FrAtmosphere_ *FrEnvironment_::GetAtmosphere() const { return m_atmosphere.get();}
+
+    Velocity FrEnvironment_::GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
+                                        FLUID_TYPE ft, FRAME_CONVENTION fc) {
+        switch (ft) {
+            case WATER:
+                m_ocean->GetCurrent()->GetRelativeVelocityInFrame(frame, worldVel, fc);
+                break;
+            case AIR:
+                m_atmosphere->GetWind()->GetRelativeVelocityInFrame(frame, worldVel, fc);
+                break;
+            default:
+                throw FrException("Fluid is not known...");
+        }
+    }
 
     FrGeographicServices *FrEnvironment_::GetGeographicServices() const {
         return m_geographicServices.get();
@@ -359,25 +324,21 @@ namespace frydom {
     FrTimeZone *FrEnvironment_::GetTimeZone() const {return m_timeZone.get();}
 
     void FrEnvironment_::Update(double time) {
-
         m_ocean->Update(time);
-
-        m_wind->Update(time);
-//        m_time = time;
+        m_atmosphere->Update(time);
         m_timeZone->Update(time);
     }
 
     void FrEnvironment_::Initialize() {
         m_ocean->Initialize();
-        m_wind->Initialize();
+        m_atmosphere->Initialize();
         m_timeZone->Initialize();
     }
 
     void FrEnvironment_::StepFinalize() {
         m_ocean->StepFinalize();
-        m_wind->StepFinalize();
+        m_atmosphere->StepFinalize();
     }
-
 
 
 }  // end namespace frydom

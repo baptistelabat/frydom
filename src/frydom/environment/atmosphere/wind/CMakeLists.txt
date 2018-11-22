@@ -1,4 +1,4 @@
-message(STATUS "        ...Environment/wind")
+message(STATUS "            ...wind")
 
 set(WIND_FILES_LOCAL
         FrWind.cpp

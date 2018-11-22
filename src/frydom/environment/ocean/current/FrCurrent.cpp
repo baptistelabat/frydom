@@ -17,7 +17,7 @@
 #include "FrCurrent.h"
 
 #include "chrono/core/ChMatrixDynamic.h"  // TODO : voir pourquoi on est oblige d'inclure
-#include "frydom/environment/field/FrUniformField.h"
+#include "frydom/environment/flow/FrUniformField.h"
 
 #include "frydom/core/FrFrame.h"
 

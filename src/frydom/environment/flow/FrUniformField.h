@@ -8,7 +8,7 @@
 #include "chrono/core/ChVector.h"  // TODO supprimer a terme
 
 #include "frydom/core/FrObject.h"
-#include "frydom/environment/field/FrFieldBase.h"
+#include "FrFieldBase.h"
 
 #include "frydom/core/FrVector.h"
 #include "frydom/core/FrConvention.h"

@@ -8,7 +8,7 @@
 #include "frydom/core/FrObject.h"
 #include "frydom/core/FrConvention.h"
 
-#include "frydom/environment/field/FrUniformField.h"  // TODO : include a retirer
+#include "frydom/environment/flow/FrUniformField.h"  // TODO : include a retirer
 
 #include "frydom/core/FrVector.h"
 #include "frydom/core/FrUnits.h"
