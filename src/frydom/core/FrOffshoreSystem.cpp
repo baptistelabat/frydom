@@ -8,6 +8,7 @@
 
 #include "frydom/core/FrBody.h"
 #include "frydom/core/FrLink.h"
+#include "frydom/core/FrPhysicsItem.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/waves/FrFreeSurface.h"
 
@@ -384,6 +385,9 @@ namespace frydom {
         cable->m_system = this;
     }
 
+    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics) {
+        m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
+    }
 
     FrEnvironment_ *FrOffshoreSystem_::GetEnvironment() const {
         return m_environment.get();

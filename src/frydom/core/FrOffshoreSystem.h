@@ -163,6 +163,7 @@ namespace frydom {
     // Forward declarations
     class FrBody_;
     class FrLink_;
+    class FrPhysicsItem_;
     class FrEnvironment_;
     class FrCable_;
 
@@ -286,6 +287,8 @@ namespace frydom {
         void AddCable(std::shared_ptr<FrCable_> cable);
 
 //        void AddOtherPhysics(std::shared_ptr<FrOtherPhysics_> otherPhysics);
+
+        void AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics);
 
         FrEnvironment_* GetEnvironment() const;
 

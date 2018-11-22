@@ -5,8 +5,9 @@
 #ifndef FRYDOM_FRPHYSICSITEM_H
 #define FRYDOM_FRPHYSICSITEM_H
 
-#include <chrono/physics/ChPhysicsItem.h>
 #include "FrObject.h"
+#include "frydom/core/FrOffshoreSystem.h"
+#include <chrono/physics/ChPhysicsItem.h>
 
 namespace frydom {
 
@@ -53,6 +54,14 @@ namespace frydom {
         std::string GetName() const;
 
         virtual void Update(double time) = 0;
+
+    protected:
+
+        virtual std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() const ;
+
+        friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_>);
+
+
 
 
     };

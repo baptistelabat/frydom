@@ -29,7 +29,7 @@ namespace frydom {
 
         FrEquilibriumFrame_() : FrFrame_() { };
 
-        FrEquilibriumFrame_(FrBody_* body) : m_body(body) { };
+        FrEquilibriumFrame_(FrBody_* body) : FrFrame_(), m_body(body) { };
 
         FrEquilibriumFrame_(const Position& pos, const FrRotation_& rotation, FRAME_CONVENTION fc, FrBody_* body)
                 : FrFrame_(pos, rotation, fc), m_body(body) { }
@@ -46,7 +46,11 @@ namespace frydom {
 
         void SetAngularVelocity(const double& angularVelocity);
 
-        void Update(double time) override { };
+        void Update(double time) override { }
+
+        void Initialize() override { }
+
+        void StepFinalize() override { }
 
     };
 

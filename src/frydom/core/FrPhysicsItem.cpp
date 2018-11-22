@@ -37,4 +37,8 @@ namespace frydom {
         return m_chronoPhysicsItem->GetNameString();
     }
 
+    std::shared_ptr<chrono::ChPhysicsItem> FrPhysicsItem_::GetChronoPhysicsItem() const {
+        return m_chronoPhysicsItem;
+    }
+
 }
