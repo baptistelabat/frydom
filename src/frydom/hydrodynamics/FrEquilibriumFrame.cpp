@@ -46,8 +46,8 @@ namespace frydom {
     // Equilibrium frame with spring damping restoring force
     // -----------------------------------------------------------------------
 
-    FrEqFrameSpringDamping_::FrEqFrameSpringDamping_(FrBody_* body, double T0, double psi)
-        : FrEquilibriumFrame_(body) { this->SetSpringDamping(T0, psi); }
+    FrEqFrameSpringDamping_::FrEqFrameSpringDamping_(FrBody_* body, double T0, double psi, bool initPos)
+        : FrEquilibriumFrame_(body, initPos) { this->SetSpringDamping(T0, psi); }
 
     FrEqFrameSpringDamping_::FrEqFrameSpringDamping_(const Position &pos, const FrRotation_ &rotation,
                                                      FRAME_CONVENTION fc, FrBody_* body, double T0, double psi)
@@ -113,8 +113,8 @@ namespace frydom {
     FrEqFrameMeanMotion_::FrEqFrameMeanMotion_(const FrFrame_ &otherFrame, FrBody_* body, double timePersistence, double timeStep)
             : FrEquilibriumFrame_(otherFrame, body) { this->SetRecorders(timePersistence, timeStep); }
 
-    FrEqFrameMeanMotion_::FrEqFrameMeanMotion_(FrBody_ *body, double timePersistence, double timeStep)
-    : FrEquilibriumFrame_(body) { this->SetRecorders(timePersistence, timeStep); }
+    FrEqFrameMeanMotion_::FrEqFrameMeanMotion_(FrBody_ *body, double timePersistence, double timeStep, bool initPos)
+    : FrEquilibriumFrame_(body, initPos) { this->SetRecorders(timePersistence, timeStep); }
 
 
     void FrEqFrameMeanMotion_::SetRecorders(double timePersistence, double timeStep) {

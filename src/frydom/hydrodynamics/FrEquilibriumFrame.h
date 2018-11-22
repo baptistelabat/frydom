@@ -73,7 +73,7 @@ namespace frydom {
 
     public:
 
-        FrEqFrameSpringDamping_(FrBody_* body, double T0, double psi);
+        FrEqFrameSpringDamping_(FrBody_* body, double T0, double psi, bool initPos = true);
 
         FrEqFrameSpringDamping_(const Position &pos, const FrRotation_ &rotation,
                                 FRAME_CONVENTION fc, FrBody_* body, double T0, double psi);
@@ -113,7 +113,7 @@ namespace frydom {
 
     public:
 
-        FrEqFrameMeanMotion_(FrBody_* body, double timePersistence, double timeStep) ;
+        FrEqFrameMeanMotion_(FrBody_* body, double timePersistence, double timeStep, bool initPos = true) ;
 
         FrEqFrameMeanMotion_(const Position &pos, const FrRotation_ &rotation, FRAME_CONVENTION fc,
                              FrBody_* body, double timePersistence, double timeStep);
