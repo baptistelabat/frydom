@@ -45,4 +45,8 @@ namespace frydom {
         return m_chronoPhysicsItem;
     }
 
+    double FrPhysicsItem_::GetTime() const {
+        return m_system->GetTime();
+    }
+
 }

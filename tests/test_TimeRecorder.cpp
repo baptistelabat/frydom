@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     double value;
     std::vector<double> ftime, fval;
 
-    FrTimeRecorder_<double> recorder;
+    FrRecorder_<double> recorder;
 
     recorder.SetTimePersistence(10.);
     recorder.SetTimeStep(0.5);

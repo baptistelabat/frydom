@@ -135,9 +135,9 @@ namespace frydom {
 
 
     void FrEqFrameMeanMotion_::SetRecorders(double timePersistence, double timeStep) {
-        m_TrSpeedRec = std::make_unique<FrTimeRecorder_<Velocity>>(timePersistence, timeStep);
+        m_TrSpeedRec = std::make_unique<FrRecorder_<Velocity>>(timePersistence, timeStep);
         m_TrSpeedRec->Initialize();
-        m_AglSpeedRec = std::make_unique<FrTimeRecorder_<double>>(timePersistence, timeStep);
+        m_AglSpeedRec = std::make_unique<FrRecorder_<double>>(timePersistence, timeStep);
         m_AglSpeedRec->Initialize();
     }
 

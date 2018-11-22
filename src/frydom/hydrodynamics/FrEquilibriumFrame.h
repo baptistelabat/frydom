@@ -14,9 +14,6 @@
 namespace frydom {
 
 
-
-
-
     class FrEquilibriumFrame_ : public FrFrame_,
                                 public FrPhysicsItem_ {
 
@@ -113,8 +110,8 @@ namespace frydom {
 
     private:
 
-        std::unique_ptr<FrTimeRecorder_<Velocity>> m_TrSpeedRec;
-        std::unique_ptr<FrTimeRecorder_<double>> m_AglSpeedRec;
+        std::unique_ptr<FrRecorder_<Velocity>> m_TrSpeedRec;
+        std::unique_ptr<FrRecorder_<double>> m_AglSpeedRec;
         double m_prevTime;
 
     public:

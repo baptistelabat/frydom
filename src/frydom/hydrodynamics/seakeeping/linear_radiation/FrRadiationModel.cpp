@@ -314,7 +314,22 @@ namespace frydom {
 
     ////////////   REFACTORING ---------------->>>>>>>>>>>>>>
 
-    
+    FrRadiationModel_::FrRadiationModel_(std::shared_ptr<frydom::FrHydroDB_> hdb) : m_HDB(hdb) {}
+
+    const FrHydroDB_* FrRadiationModel_::GetHydroDB() const {
+        return m_HDB.get();
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

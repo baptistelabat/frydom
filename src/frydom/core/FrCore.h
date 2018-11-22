@@ -26,5 +26,6 @@
 #include "FrSpringDampingForce.h"
 #include "FrUnits.h"
 #include "FrVector.h"
+#include "FrPhysicsItem.h"
 
 #endif //FRYDOM_FRCORE_H_H

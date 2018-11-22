@@ -277,12 +277,12 @@ namespace frydom {
 
         ~FrOffshoreSystem_();
 
-        void Add(std::shared_ptr<FrObject> item); // TODO : faire des dynamic_pointer_cast sur les classes pouvant etre ajoutees...
+//        void Add(std::shared_ptr<FrObject> item); // TODO : faire des dynamic_pointer_cast sur les classes pouvant etre ajoutees...
 
         void AddBody(std::shared_ptr<FrBody_> body);
 
 //        void AddLink(std::shared_ptr<FrLink_> link);
-        void AddLink(std::shared_ptr<chrono::ChLink> link);  // TODO : remplacer par du frydom full
+//        void AddLink(std::shared_ptr<chrono::ChLink> link);  // TODO : remplacer par du frydom full
 
         void AddCable(std::shared_ptr<FrCable_> cable);
 

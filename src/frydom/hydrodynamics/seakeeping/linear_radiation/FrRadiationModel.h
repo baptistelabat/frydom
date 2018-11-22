@@ -5,11 +5,23 @@
 #ifndef FRYDOM_FRRADIATIONMODEL_H
 #define FRYDOM_FRRADIATIONMODEL_H
 
+
+#include "frydom/core/FrPhysicsItem.h"
+
+
+
+
+
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/FrObject.h"
 #include "frydom/hydrodynamics/seakeeping/hdb/FrHydroDB.h"
 #include "frydom/hydrodynamics/seakeeping/hdb/FrHydroMapper.h" // TODO : doit disparaitre, c'est HydroDB qui connait...
 #include "frydom/hydrodynamics/FrVelocityRecorder.h"
+
+
+
+
+
 
 #include <iostream>
 #include <fstream>
@@ -125,19 +137,41 @@ namespace frydom {
 
 
     // Forward declaration
-    class FrRadiationModel_;
+//    class FrRadiationModel_;
 
-    struct _FrRadiationModelBase : public chrono::ChPhysicsItem {
 
-        FrRadiationModel_* m_frydomRadiationModel;
+    // Forward declarations
+//    class FrOffshoreSystem_;
 
-        explicit _FrRadiationModelBase(FrRadiationModel_* model);
 
-        void SetupInitial() override;
+    class FrRadiationModel_ : public FrPhysicsItem_ {
 
-        void Update(bool update_assets) override;
+    protected:
+
+        std::shared_ptr<FrHydroDB_> m_HDB;
+
+
+    public:
+
+        explicit FrRadiationModel_(std::shared_ptr<FrHydroDB_> hdb);
+
+        const FrHydroDB_* GetHydroDB() const;
+
+        virtual GeneralizedForce GetGeneralizedForce(const FrBody* body) = 0;
+
+
+//        void Initialize() override;
+//
+//        void Update(double time) override;
+//
+//        void StepFinalize() override;
+
 
     };
+
+
+
+
 
 
 

@@ -501,9 +501,12 @@ namespace frydom {
 //
 //        void SetBEMVariables();
 
-    private:
+
 
         unsigned long GetIndexInHDB() const;
+
+
+    private:
 
         void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
 

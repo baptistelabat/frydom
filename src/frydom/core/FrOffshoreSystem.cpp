@@ -365,9 +365,9 @@ namespace frydom {
     }
 
 
-    void FrOffshoreSystem_::AddLink(std::shared_ptr<chrono::ChLink> link) {
-        m_chronoSystem->AddLink(link);
-    }
+//    void FrOffshoreSystem_::AddLink(std::shared_ptr<chrono::ChLink> link) {
+//        m_chronoSystem->AddLink(link);
+//    }
 
 
 //    void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLink_> link) {
@@ -387,6 +387,7 @@ namespace frydom {
 
     void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics) {
         m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
+        otherPhysics->m_system = this;
     }
 
     FrEnvironment_ *FrOffshoreSystem_::GetEnvironment() const {

@@ -36,6 +36,8 @@ namespace frydom {
 
 
 
+
+
     class FrOffshoreSystem_;
 
     class FrPhysicsItem_: public FrObject {
@@ -56,6 +58,8 @@ namespace frydom {
         std::string GetName() const;
 
         virtual void Update(double time) = 0;
+
+        double GetTime() const;
 
     protected:
 
