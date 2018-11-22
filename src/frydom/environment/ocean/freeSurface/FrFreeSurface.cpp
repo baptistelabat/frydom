@@ -27,6 +27,7 @@
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
+#include "frydom/environment/ocean/FrOcean_.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h"
 
@@ -418,7 +419,7 @@ namespace frydom {
 
 
 
-    FrFreeSurface_::FrFreeSurface_(FrEnvironment_* environment) : m_environment(environment) {
+    FrFreeSurface_::FrFreeSurface_(FrOcean_* ocean) : m_ocean(ocean) {
 
         // Creating a waveField and a tidal model
         m_waveField = std::make_shared<FrNullWaveField_>(this);
@@ -429,13 +430,11 @@ namespace frydom {
 
     FrFreeSurface_::~FrFreeSurface_() = default;
 
-    FrOffshoreSystem_* FrFreeSurface_::GetSystem() {
-        return m_environment->GetSystem();
-    }
-    FrEnvironment_* FrFreeSurface_::GetEnvironment() {
-        return m_environment;
-    }
+    double FrFreeSurface_::GetTime() const { return m_ocean->GetTime();}
 
+    FrAtmosphere_ *FrFreeSurface_::GetAtmosphere() const { return m_ocean->GetEnvironment()->GetAtmosphere();}
+
+    FrOcean_ *FrFreeSurface_::GetOcean() const { return m_ocean;}
 
     void FrFreeSurface_::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
@@ -498,7 +497,7 @@ namespace frydom {
 
 //        CreateFreeSurfaceBody();
         m_body->AddMeshAsset(mesh);
-        GetSystem()->AddBody(m_body);
+        m_ocean->GetEnvironment()->GetSystem()->AddBody(m_body);
 
 
         // If the mesh is being to be animated
@@ -707,6 +706,7 @@ namespace frydom {
     FrTidal_ *FrFreeSurface_::GetTidal() const { return m_tidal.get();}
 
     FrWaveField_ * FrFreeSurface_::GetWaveField() const { return m_waveField.get(); }
+
 
 
 }  // end namespace frydom

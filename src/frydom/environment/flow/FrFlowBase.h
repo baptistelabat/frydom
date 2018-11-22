@@ -27,13 +27,12 @@ namespace frydom {
     class FrFlowBase : public FrObject {
 
     private:
-        FrEnvironment_* m_environment;              ///< Link to the environment variable
         std::unique_ptr<FrFieldBase> m_field;        ///< Flow field model
 
     public:
 
         /// Default constructor
-        explicit FrFlowBase(FrEnvironment_* environment);
+        explicit FrFlowBase();
 
         /// Destructor of the flow base object
         ~FrFlowBase() = default;
@@ -79,21 +78,29 @@ namespace frydom {
     };
 
 
+    //Forward Declaration
+    class FrOcean_;
+    class FrAtmosphere_;
+
     class FrCurrent_ : public FrFlowBase {
-
+    private:
+        FrOcean_* m_ocean;
     public:
-        FrCurrent_(FrEnvironment_* environment) : FrFlowBase(environment) {}
+        FrCurrent_(FrOcean_* ocean) : FrFlowBase() { m_ocean = ocean;}
 
+        FrOcean_* GetOcean() const {return m_ocean;}
     };
 
 
 
 
     class FrWind_ : public FrFlowBase {
-
+    private:
+        FrAtmosphere_* m_atmosphere;
     public:
-        FrWind_(FrEnvironment_* environment) : FrFlowBase(environment) {}
+        FrWind_(FrAtmosphere_* atmosphere) : FrFlowBase() { m_atmosphere = atmosphere;}
 
+        FrAtmosphere_* GetAtmosphere() const {return m_atmosphere;}
     };
 
 } // end of namespace frydom

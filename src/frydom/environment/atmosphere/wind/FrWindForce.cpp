@@ -11,6 +11,7 @@
 
 
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/atmosphere/FrAtmosphere_.h"
 #include "FrWind.h"
 
 namespace frydom {
@@ -127,7 +128,7 @@ namespace frydom {
         FrFrame_ cogFrame = m_body->GetFrameAtCOG(NWU);
         Velocity cogWorldVel = m_body->GetCOGVelocityInWorld(NWU);
 
-        Velocity cogRelVel = m_body->GetSystem()->GetEnvironment()->GetWind()->GetRelativeVelocityInFrame(cogFrame, cogWorldVel, NWU);
+        Velocity cogRelVel = m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetRelativeVelocityInFrame(cogFrame, cogWorldVel, NWU);
 
         double alpha = cogRelVel.GetProjectedAngleAroundZ(RAD)+M_PI;
         alpha = Normalize_0_2PI(alpha);

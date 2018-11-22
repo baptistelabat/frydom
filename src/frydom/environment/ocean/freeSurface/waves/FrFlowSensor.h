@@ -217,16 +217,16 @@ namespace frydom {
         virtual FrWaveField_* GetWaveField() const;
 
         /// Return the flow velocity at the location of the sensor
-        virtual chrono::ChVector<double> GetVelocity() const;
+        virtual Velocity GetVelocity() const;
 
         /// Return the flow velocity at the location of the sensor at time t
-        virtual chrono::ChVector<double> GetVelocity(double time) const;
+        virtual Velocity GetVelocity(double time) const;
 
         /// Return the flow acceleration at the location of the sensor
-        virtual chrono::ChVector<double> GetAcceleration() const;
+        virtual Acceleration GetAcceleration() const;
 
         /// Return the flow acceleration at the location of the sensor at time t
-        virtual chrono::ChVector<double> GetAcceleration(double time) const;
+        virtual Acceleration GetAcceleration(double time) const;
 
         void Initialize() override {};
 
@@ -265,16 +265,16 @@ namespace frydom {
 
         void Initialize() override;
 
-        chrono::ChVector<double> GetVelocity(double time) const override;
+        Velocity GetVelocity(double time) const override;
 
         /// Return the flow acceleration at the location of the sensor at time t
-        chrono::ChVector<double> GetAcceleration(double time) const override;
+        Acceleration GetAcceleration(double time) const override;
 
         /// Return the flow velocity at the location of the sensor
-        chrono::ChVector<double> GetVelocity() const override;
+        Velocity GetVelocity() const override;
 
         /// return the flow acceleration at the location of the sensor
-        chrono::ChVector<double> GetAcceleration() const override;
+        Acceleration GetAcceleration() const override;
 
     };
 

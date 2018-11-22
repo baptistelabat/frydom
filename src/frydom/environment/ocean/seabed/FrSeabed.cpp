@@ -216,8 +216,10 @@ namespace frydom {
 
 
 
+    FrSeabed_::FrSeabed_(FrOcean_ *ocean) :m_ocean(ocean){}
 
 
+    FrOcean_ *FrSeabed_::GetOcean() const {return m_ocean;}
 
 
 
@@ -234,9 +236,6 @@ namespace frydom {
         return FrTriangleMeshConnected();
     }
 
-    FrSeabed_::FrSeabed_(FrEnvironment_ *environment) {
-
-    }
 
     void FrSeabed_::SetDepth(double depth) {m_depth = depth;}
 
@@ -269,4 +268,5 @@ namespace frydom {
     }
 
     void FrSeabed_::StepFinalize() {}
+
 }  // end namespace frydom

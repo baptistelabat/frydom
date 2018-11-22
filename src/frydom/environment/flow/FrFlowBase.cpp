@@ -10,7 +10,7 @@
 
 namespace frydom {
 
-    FrFlowBase::FrFlowBase(FrEnvironment_ *environment) : m_environment(environment) {
+    FrFlowBase::FrFlowBase() {
         m_field = std::make_unique<FrUniformField>();
     };
 

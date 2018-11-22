@@ -139,7 +139,7 @@ namespace frydom {
 
 
 
-    class FrEnvironment_;
+    class FrOcean_;
 
     class FrSeabed_  : public FrObject {
     public:
@@ -153,7 +153,7 @@ namespace frydom {
 
         bool m_updateAsset = false;
 
-        FrEnvironment_* m_environment;
+        FrOcean_* m_ocean;
 
         std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
 
@@ -184,11 +184,11 @@ namespace frydom {
 
     public:
 
-        explicit FrSeabed_(FrEnvironment_* environment);
+        explicit FrSeabed_(FrOcean_* ocean);
 
         ~FrSeabed_() = default;
 
-//        void SetEnvironment();
+        FrOcean_* GetOcean() const;
 
         void SetDepth(double depth);
         double GetDepth();

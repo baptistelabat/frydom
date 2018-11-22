@@ -19,6 +19,7 @@ namespace frydom{
 
     }
 
+    FrEnvironment_ *FrAtmosphere_::GetEnvironment() const { return m_environment; }
 
     void FrAtmosphere_::SetTemperature(double Temperature) {m_airProp->m_temperature = Temperature;}
 
@@ -65,5 +66,6 @@ namespace frydom{
     void FrAtmosphere_::StepFinalize() {
         m_wind->StepFinalize();
     }
+
 
 }

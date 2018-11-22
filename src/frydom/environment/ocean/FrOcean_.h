@@ -42,7 +42,11 @@ namespace frydom {
 
         explicit FrOcean_(FrEnvironment_* environment);
 
-        //----------------------------Fluid Properties----------------------------//
+        FrEnvironment_* GetEnvironment() const;
+
+        double GetTime() const;
+
+        //---------------------------- Fluid Properties ----------------------------//
 
         /// Set the fluid temperature
         /// \param Temperature temperature of the fluid
@@ -96,7 +100,7 @@ namespace frydom {
 
         double GetFroudeNumberInWater(double characteristicLength, double velocity) const;
 
-        // Ocean elements Getters
+        //---------------------------- Ocean elements Getters ----------------------------//
 
         /// Get the free surface element
         /// \return the free surface element
@@ -109,6 +113,8 @@ namespace frydom {
         /// Get the seabed element
         /// \return the seabed element
         FrSeabed_* GetSeabed() const;
+
+        //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
         void Update(double time);
 

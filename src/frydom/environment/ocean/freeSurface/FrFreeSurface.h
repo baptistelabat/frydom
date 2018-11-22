@@ -196,6 +196,8 @@ namespace frydom{
     // Forward declarations
     class FrOffshoreSystem_;
     class FrEnvironment_;
+    class FrAtmosphere_;
+    class FrOcean_;
     class FrTidal_;
     class FrBody_;
 
@@ -224,7 +226,7 @@ namespace frydom{
         double m_time = 0.;
         bool m_updateAsset = false;
 
-        FrEnvironment_* m_environment;
+        FrOcean_* m_ocean;
 
         // Free surface elements
 
@@ -272,13 +274,15 @@ namespace frydom{
 
     public:
 
-        explicit FrFreeSurface_(FrEnvironment_* environment);
+        explicit FrFreeSurface_(FrOcean_* ocean);
 
         ~FrFreeSurface_();
 
-        FrOffshoreSystem_* GetSystem();
+        double GetTime() const;
 
-        FrEnvironment_* GetEnvironment();
+        FrOcean_* GetOcean() const;
+
+        FrAtmosphere_* GetAtmosphere() const;;
 
         FrTidal_* GetTidal() const;
 

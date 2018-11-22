@@ -90,7 +90,7 @@ namespace frydom {
         FrFrame_ cogFrame = m_body->GetFrameAtCOG(NWU);
         Velocity cogWorldVel = m_body->GetCOGVelocityInWorld(NWU);
 
-        Velocity cogRelVel = m_body->GetSystem()->GetEnvironment()->GetCurrent()->GetRelativeVelocityInFrame(cogFrame, cogWorldVel, NWU);
+        Velocity cogRelVel = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(cogFrame, cogWorldVel, NWU);
 
         double alpha = cogRelVel.GetProjectedAngleAroundZ(DEG)+180.;
         alpha = Normalize__180_180(alpha);

@@ -6,6 +6,7 @@
 
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean_.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
 //#include "../FrWaveDispersionRelation.h"
 
@@ -25,7 +26,7 @@ namespace frydom {
 
         // Set the wave number, using the wave dispersion relation
         auto waterHeight = m_freeSurface->GetMeanHeight();
-        auto gravityAcceleration = m_freeSurface->GetEnvironment()->GetGravityAcceleration();
+        auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
         m_k = SolveWaveDispersionRelation(waterHeight, m_omega, gravityAcceleration);
 
     }

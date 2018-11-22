@@ -6,8 +6,10 @@
 
 #include <random>
 
-#include "../FrFreeSurface.h"
-#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
+//#include "frydom/core/FrOffshoreSystem.h"
+//#include "frydom/environment/FrEnvironment.h"
+//#include "frydom/environment/ocean/FrOcean_.h"
 
 #include "FrWaveProbe.h"
 #include "FrFlowSensor.h"
@@ -871,7 +873,7 @@ namespace frydom {
     void FrWaveField_::Update(double time) {
     }
 
-    double FrWaveField_::GetTime() const { return m_freeSurface->GetSystem()->GetTime(); }
+    double FrWaveField_::GetTime() const { return m_freeSurface->GetTime(); }
 
 //    FrFlowSensor* FrWaveField_::SetFlowSensor(double x, double y, double z) const {
 //        return new FrFlowSensor(x, y, z);
@@ -966,7 +968,7 @@ namespace frydom {
 
     }
 
-    std::vector<std::vector<std::vector<chrono::ChVector<double>>>>
+    std::vector<std::vector<std::vector<Velocity>>>
     FrNullWaveField_::GetVelocityGrid(const std::vector<double> &xvect, const std::vector<double> &yvect,
                                      const std::vector<double> &zvect) const {
 
@@ -974,14 +976,14 @@ namespace frydom {
         auto ny = yvect.size();
         auto nz = zvect.size();
 
-        std::vector<std::vector<std::vector<chrono::ChVector<double>>>> velocity;
-        std::vector<std::vector<chrono::ChVector<double>>> velocity_x;
-        std::vector<chrono::ChVector<double>> velocity_y;
-        chrono::ChVector<double> velocity_z;
+        std::vector<std::vector<std::vector<Velocity>>> velocity;
+        std::vector<std::vector<Velocity>> velocity_x;
+        std::vector<Velocity> velocity_y;
+//        Velocity velocity_z;
 
         velocity_y.reserve(nz);
         for (unsigned int i=0; i<nz; ++i) {
-            velocity_y.push_back(0.);
+            velocity_y.emplace_back(0.,0.,0.);
         }
 
         velocity_x.reserve(ny);
@@ -1428,7 +1430,7 @@ namespace frydom {
 //    }
 
     void FrLinearWaveField_::Update(double time) {
-        m_time = time;
+//        m_time = time;
 
         // Updating exp(-jwt)
         std::vector<double> w = GetWaveFrequencies(RADS);
@@ -1500,12 +1502,12 @@ namespace frydom {
         for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
             acceleration += steadyVelocity[ifreq] * emjwt_dt[ifreq];
         }
-
-        Acceleration realAcceleration = internal:: ChReal(acceleration);
-
-        if (m_waveRamp && m_waveRamp->IsActive()) {
-            m_waveRamp->Apply(m_time, realAcceleration);
-        }
+        Acceleration realAcceleration;
+//        Acceleration realAcceleration = internal:: ChReal(acceleration);
+//
+//        if (m_waveRamp && m_waveRamp->IsActive()) {
+//            m_waveRamp->Apply(m_time, realAcceleration);
+//        }
 
         return realAcceleration;
     }
@@ -1536,7 +1538,7 @@ namespace frydom {
         return elevations;
     }
 
-    std::vector<std::vector<std::vector<chrono::ChVector<double>>>>
+    std::vector<std::vector<std::vector<Velocity>>>
     FrLinearWaveField_::GetVelocityGrid(const std::vector<double> &xvect, const std::vector<double> &yvect,
                                        const std::vector<double> &zvect) const {
 
@@ -1544,10 +1546,10 @@ namespace frydom {
         auto ny = yvect.size();
         auto nz = zvect.size();
 
-        std::vector<std::vector<std::vector<chrono::ChVector<double>>>> velocity;
-        std::vector<std::vector<chrono::ChVector<double>>> velocity_x;
-        std::vector<chrono::ChVector<double>> velocity_y;
-        chrono::ChVector<double> velocity_z;
+        std::vector<std::vector<std::vector<Velocity>>> velocity;
+        std::vector<std::vector<Velocity>> velocity_x;
+        std::vector<Velocity> velocity_y;
+        Velocity velocity_z;
 
         double x, y, z;
 

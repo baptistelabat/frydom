@@ -13,9 +13,7 @@
 
 namespace frydom{
 
-    FrOcean_::FrOcean_(FrEnvironment_* environment) {
-
-        m_environment = environment;
+    FrOcean_::FrOcean_(FrEnvironment_* environment) :m_environment(environment) {
 
         m_freeSurface   = std::make_unique<FrFreeSurface_>(this);
         m_current       = std::make_unique<FrCurrent_>(this);
@@ -23,6 +21,10 @@ namespace frydom{
         m_waterProp     = std::make_unique<FrFluidProperties>(10., 1027., 0.001397, 1.3604E-06, 35., 1.2030E-03 );
 
     }
+
+    FrEnvironment_ *FrOcean_::GetEnvironment() const { return m_environment;}
+
+    double FrOcean_::GetTime() const {return m_environment->GetTime();}
 
 
     void FrOcean_::SetTemperature(double Temperature) {m_waterProp->m_temperature = Temperature;}
@@ -82,5 +84,6 @@ namespace frydom{
         m_current->StepFinalize();
         if (m_showSeabed) m_seabed->StepFinalize();
     }
+
 
 }

@@ -61,7 +61,7 @@ namespace frydom {
                                                               const std::vector<double>& yVect) const final;
 
 
-        std::vector<std::vector<std::vector<chrono::ChVector<double>>>> GetVelocityGrid(const std::vector<double>& xvect,
+        std::vector<std::vector<std::vector<Velocity>>> GetVelocityGrid(const std::vector<double>& xvect,
                                                                                         const std::vector<double>& yvect,
                                                                                         const std::vector<double>& zvect) const final;
 

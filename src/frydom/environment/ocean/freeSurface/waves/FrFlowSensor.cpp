@@ -208,20 +208,20 @@ namespace frydom {
         return m_waveField;
     }
 
-    chrono::ChVector<double> FrFlowSensor_::GetVelocity() const {
+    Velocity FrFlowSensor_::GetVelocity() const {
         return m_waveField->GetVelocity(m_x, m_y, m_z, true);
     }
 
-    chrono::ChVector<double> FrFlowSensor_::GetVelocity(double time) const {
+    Velocity FrFlowSensor_::GetVelocity(double time) const {
         m_waveField->Update(time);
         return this->GetVelocity();
     }
 
-    chrono::ChVector<double> FrFlowSensor_::GetAcceleration() const {
+    Acceleration FrFlowSensor_::GetAcceleration() const {
         return m_waveField->GetAcceleration(m_x, m_y, m_z, true);
     }
 
-    chrono::ChVector<double> FrFlowSensor_::GetAcceleration(double time) const {
+    Acceleration FrFlowSensor_::GetAcceleration(double time) const {
         m_waveField->Update(time);
         return this->GetAcceleration();
     }
@@ -246,51 +246,51 @@ namespace frydom {
         m_steadyVelocity = m_waveField->GetSteadyVelocity(m_x, m_y, m_z);
     }
 
-    chrono::ChVector<double> FrLinearFlowSensor_::GetVelocity(double time) const {
+    Velocity FrLinearFlowSensor_::GetVelocity(double time) const {
 
-        auto emjwt = m_waveField->GetTimeCoeffs();
-
-        chrono::ChVector<std::complex<double>> velocity(0.);
-        for (unsigned int ifreq=0; ifreq<emjwt.size(); ++ifreq) {
-            velocity += m_steadyVelocity[ifreq] * emjwt[ifreq];
-        }
-
-        chrono::ChVector<double> realVelocity = ChReal(velocity);
-
-        auto waveRamp = m_waveField->GetWaveRamp();
-        if (waveRamp && waveRamp->IsActive()) {
-            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(),realVelocity);
-        }
-
-        return realVelocity;
-
-    }
-
-    chrono::ChVector<double> FrLinearFlowSensor_::GetAcceleration(double time) const {
-
-        auto emjwt_dt = m_waveField->GetTimeCoeffsDt();
-
-        chrono::ChVector<std::complex<double>> acceleration(0.);
-        for (unsigned int ifreq=0; ifreq<emjwt_dt.size(); ++ifreq) {
-            acceleration += m_steadyVelocity[ifreq] * emjwt_dt[ifreq];
-        }
-
-        chrono::ChVector<double> realAcceleration = ChReal(acceleration);
-
-        auto waveRamp = m_waveField->GetWaveRamp();
-        if (waveRamp && waveRamp->IsActive()) {
-            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(), realAcceleration);
-        }
-
-        return realAcceleration;
+//        auto emjwt = m_waveField->GetTimeCoeffs();
+//
+//        chrono::ChVector<std::complex<double>> velocity(0.);
+//        for (unsigned int ifreq=0; ifreq<emjwt.size(); ++ifreq) {
+//            velocity += m_steadyVelocity[ifreq] * emjwt[ifreq];
+//        }
+//
+//        chrono::ChVector<double> realVelocity = ChReal(velocity);
+//
+//        auto waveRamp = m_waveField->GetWaveRamp();
+//        if (waveRamp && waveRamp->IsActive()) {
+//            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(),realVelocity);
+//        }
+//
+//        return realVelocity;
 
     }
 
-    chrono::ChVector<double> FrLinearFlowSensor_::GetVelocity() const {
+    Acceleration FrLinearFlowSensor_::GetAcceleration(double time) const {
+
+//        auto emjwt_dt = m_waveField->GetTimeCoeffsDt();
+//
+//        chrono::ChVector<std::complex<double>> acceleration(0.);
+//        for (unsigned int ifreq=0; ifreq<emjwt_dt.size(); ++ifreq) {
+//            acceleration += m_steadyVelocity[ifreq] * emjwt_dt[ifreq];
+//        }
+//
+//        chrono::ChVector<double> realAcceleration = ChReal(acceleration);
+//
+//        auto waveRamp = m_waveField->GetWaveRamp();
+//        if (waveRamp && waveRamp->IsActive()) {
+//            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(), realAcceleration);
+//        }
+//
+//        return realAcceleration;
+
+    }
+
+    Velocity FrLinearFlowSensor_::GetVelocity() const {
         // TODO
     }
 
-    chrono::ChVector<double> FrLinearFlowSensor_::GetAcceleration() const {
+    Acceleration FrLinearFlowSensor_::GetAcceleration() const {
         // TODO
     }
 }

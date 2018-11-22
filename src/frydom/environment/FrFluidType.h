@@ -30,6 +30,25 @@ namespace frydom {
         double m_salinity; //TODO : ITTC Recommended Procedures : Fresh Water and Seawater Properties
         /// Fluid static pressure (MPa)
         double m_pressure;
+
+        FrFluidProperties() {
+            m_temperature = 0.;
+            m_density = 0.;
+            m_dynamicViscosity = 0.;
+            m_kinematicViscosity = 0.;
+            m_salinity = 0.;
+            m_pressure = 0.;
+        }
+
+        FrFluidProperties(double Temperature, double Density, double DynamicViscosity, double KinematicViscosity,
+                          double Salinity, double Pressure) {
+            m_temperature = Temperature;
+            m_density = Density;
+            m_dynamicViscosity = DynamicViscosity;
+            m_kinematicViscosity = KinematicViscosity;
+            m_salinity = Salinity;
+            m_pressure = Pressure;
+        }
     };
 
 //    // dans environnement, on aura Atmosphere et Sea en amont de current et wind ??

@@ -33,6 +33,8 @@ namespace frydom {
 
         explicit FrAtmosphere_(FrEnvironment_* environment);
 
+        FrEnvironment_* GetEnvironment() const;
+
         //----------------------------Fluid Properties----------------------------//
 
         /// Set the fluid temperature

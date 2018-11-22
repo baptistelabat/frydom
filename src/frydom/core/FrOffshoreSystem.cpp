@@ -9,7 +9,7 @@
 #include "frydom/core/FrBody.h"
 #include "frydom/core/FrLink.h"
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/waves/FrFreeSurface.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 
 #include "frydom/hydrodynamics/FrHydroMapper.h"
 #include "frydom/hydrodynamics/FrHydroDB.h"

@@ -456,7 +456,7 @@ namespace frydom {
                                                               const std::vector<double>& yVect) const = 0;
 
 
-        virtual std::vector<std::vector<std::vector<Position>>> GetVelocityGrid(const std::vector<double>& xvect,
+        virtual std::vector<std::vector<std::vector<Velocity>>> GetVelocityGrid(const std::vector<double>& xvect,
                                                                   const std::vector<double>& yvect,
                                                                   const std::vector<double>& zvect) const = 0;
 
@@ -488,7 +488,7 @@ namespace frydom {
         std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
                                                       const std::vector<double>& yVect) const final;
 
-        std::vector<std::vector<std::vector<Position>>>
+        std::vector<std::vector<std::vector<Velocity>>>
         GetVelocityGrid(const std::vector<double>& xvect,
                     const std::vector<double>& yvect,
                     const std::vector<double>& zvect) const final;
@@ -646,7 +646,7 @@ namespace frydom {
 
 
         /// Return the flow velocity vector field in a grid [xvect x yvect x zvect]
-        std::vector<std::vector<std::vector<chrono::ChVector<double>>>> GetVelocityGrid(const std::vector<double>& xvect,
+        std::vector<std::vector<std::vector<Velocity>>> GetVelocityGrid(const std::vector<double>& xvect,
                                                           const std::vector<double>& yvect,
                                                           const std::vector<double>& zvect) const override;
 
