@@ -85,12 +85,15 @@ namespace frydom {
 
     void FrEqFrameSpringDamping_::Update(double time) {
 
-        auto bodyPosition = m_body->GetPosition(NWU);
-        auto bodyVelocity = m_body->GetVelocityInWorld(NWU);
+        if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
+
+        auto bodyPosition = m_body->GetCOGPositionInWorld(NWU);
+        auto bodyVelocity = m_body->GetCOGVelocityInWorld(NWU);
         auto position = GetPosition(NWU);
 
         Force force;
-        force = -(bodyPosition - position) * m_stiffness - (bodyVelocity - m_velocity) * m_damping;
+        force = (bodyPosition - position) * m_stiffness + (bodyVelocity - m_velocity) * m_damping;
+        force.GetFz() = 0.;
 
         double temp1, temp2;
         double bodyPsi, psi;
@@ -99,7 +102,7 @@ namespace frydom {
         auto bodyAngularVelocity = m_body->GetAngularVelocityInWorld(NWU).GetWz();
 
         double torque;
-        torque = -(bodyPsi - psi) * m_stiffness - (bodyAngularVelocity - m_angularVelocity) * m_damping;
+        torque = (bodyPsi - psi) * m_stiffness + (bodyAngularVelocity - m_angularVelocity) * m_damping;
 
         m_velocity += force * (time - m_prevTime);
         position += m_velocity * (time - m_prevTime);
@@ -107,7 +110,7 @@ namespace frydom {
         m_angularVelocity += torque * (time - m_prevTime);
 
         this->SetPosition(position, NWU);
-        this->GetRotation().RotZ_RADIANS(m_angularVelocity * (time - m_prevTime), NWU);
+        SetRotation( this->GetRotation().RotZ_RADIANS(m_angularVelocity * (time - m_prevTime), NWU) );
 
         m_prevTime = time;
     }

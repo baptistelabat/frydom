@@ -27,10 +27,13 @@ int main(int argc, char* argv[]) {
 
     auto body = system.NewBody();
 
-    auto eqFrame = std::make_shared<FrEqFrameMeanMotion_>(body.get(), 10., 0.1);
-    system.AddPhysicsItem(eqFrame);
+    body->RemoveGravity(true); // Permet de supprimer les mouvements verticaux
 
-    system.Initialize();
+    //auto eqFrame = std::make_shared<FrEqFrameMeanMotion_>(body.get(), 10., 0.1);
+    //system.AddPhysicsItem(eqFrame);
+
+    auto eqFrame = std::make_shared<FrEqFrameSpringDamping_>(body.get(), 60., 0.5);
+    system.AddPhysicsItem(eqFrame);
 
     double time = 0.;
     double dt = 0.01;
@@ -55,7 +58,10 @@ int main(int argc, char* argv[]) {
 
     body->SetGeneralizedVelocityInBody(HorSpeed, NoRotSpeed, NWU);
 
+    system.Initialize();
+
     for (int it=0; it<nt; ++it) {
+
 
         if (time > 80. and time < 120.) {
             body->SetGeneralizedVelocityInBody(HorSpeed, RotSpeed, NWU);
