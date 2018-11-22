@@ -9,7 +9,7 @@
 //#include <frydom/environment/waves/FrDynamicWaveProbe.h>
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "FrBody.h"
-#include "FrGeographic.h"
+#include "FrConvention.h"
 #include "FrEulerAngles.h"
 #include "FrOffshoreSystem.h"
 #include "frydom/hydrodynamics/seakeeping/linear_radiation/FrVariablesBEMBodyMass.h"

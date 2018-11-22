@@ -8,7 +8,7 @@
 //#include "chrono/core/ChMatrix33.h"
 
 #include "FrVector.h"
-#include "FrGeographic.h"
+#include "FrConvention.h"
 #include "FrFrame.h"
 
 

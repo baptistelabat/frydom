@@ -39,7 +39,7 @@ namespace frydom {
 
         chrono::ChVector<> m_wind_relative_velocity;    ///< Relative velocity of the wind inflow
         double m_wind_relative_angle;                   ///< Relative angle of the wind
-        mathutils::LookupTable1D<double> m_table;       ///< table of coefficient
+        mathutils::LookupTable1D<double, double> m_table;       ///< table of coefficient
 
     };
 
@@ -56,7 +56,7 @@ namespace frydom {
 
 
     private:
-        mathutils::LookupTable1D<double> m_table;
+        mathutils::LookupTable1D<double, double> m_table;
 
     public:
 

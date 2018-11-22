@@ -143,7 +143,7 @@ namespace frydom {
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
     }
 
-    FrOffshoreSystem_* FrBody_::GetSystem(){
+    FrOffshoreSystem_* FrBody_::GetSystem() const {
         return m_system;
     }
 
@@ -436,11 +436,19 @@ namespace frydom {
         return refPos;
     }
 
+    FrGeographicCoord FrBody_::GetGeoPosition(FRAME_CONVENTION fc) const {
+        return CartToGeo(GetPosition(fc),fc);
+    }
+
     void FrBody_::SetPosition(const Position &worldPos, FRAME_CONVENTION fc) {
         auto bodyFrame = GetFrame();
         bodyFrame.SetPosition(worldPos, fc);
         m_chronoBody->SetFrame_REF_to_abs(internal::Fr2ChFrame(bodyFrame));
         m_chronoBody->UpdateAfterMove();
+    }
+
+    void FrBody_::SetGeoPosition(const FrGeographicCoord& geoCoord) {
+        SetPosition(GeoToCart(geoCoord,NWU),NWU);
     }
 
     FrRotation_ FrBody_::GetRotation() const {
@@ -497,6 +505,20 @@ namespace frydom {
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
         return cogPos;
     }
+
+
+    FrGeographicCoord FrBody_::GetGeoPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const {
+        return CartToGeo(GetPointPositionInWorld(bodyPos, fc), fc);
+    }
+
+    FrGeographicCoord FrBody_::GetGeoPointPositionInBody(const Position &worldPos, FRAME_CONVENTION fc) const {
+        return CartToGeo(GetPointPositionInBody(worldPos, fc), fc);
+    }
+
+    FrGeographicCoord FrBody_::GetCOGGeoPositionInWorld(FRAME_CONVENTION fc) const {
+        return CartToGeo(GetCOGPositionInWorld(fc), fc);
+    }
+
 
     void FrBody_::SetPositionOfBodyPoint(const Position &bodyPoint, const Position &worldPos, FRAME_CONVENTION fc) {
         Position bodyWorldPos = GetPosition(fc);
@@ -742,61 +764,45 @@ namespace frydom {
     }
 
 
-
-
-
-
-
-    void
-    FrBody_::SetGeneralizedAccelerationInWorldAtPointInWorld(const Position &worldPoint, const Acceleration &worldAcc,
-                                                             const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
-
-
-        // Voir la methode TransformLocaToParent() de ChFrameMoving pour le transport d'acceleration de point
-
-//        // pos_dtdt
-//        parent.coord_dtdt.pos =
-//                PointAccelerationLocalToParent(local.coord.pos, local.coord_dt.pos, local.coord_dtdt.pos);
-//
-//        // rot_dt
-//        parent.coord_dt.rot = coord_dt.rot % local.coord.rot + this->coord.rot % local.coord_dt.rot;
-//
-//        // rot_dtdt
-//        parent.coord_dtdt.rot = coord_dtdt.rot % local.coord.rot + (coord_dt.rot % local.coord_dt.rot) * 2 +
-//                                this->coord.rot % local.coord_dtdt.rot;
-
-
-
-//      PointAccelerationLocalToParent :
-
-        // Calule l'acceleration d'un point fixe au corps odnt les coords sont donnees en local au corps. L'acceleration
-        // est exprimee dans le repere world
-
-//        return coord_dtdt.pos +
-//               ((coord_dtdt.rot % ChQuaternion<Real>(0, localpos) % this->coord.rot.GetConjugate()).GetVector() * 2) +
-//               ((coord_dt.rot % ChQuaternion<Real>(0, localpos) % coord_dt.rot.GetConjugate()).GetVector() * 2);
-
-        // Formule :
-        // Acc_P_world = Acc_G_world + bodyQuat_pp *
-
+    void FrBody_::SetGeneralizedAccelerationInBodyAtCOG(const Acceleration &bodyAcc, const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
+        SetAccelerationInBodyNoRotation(bodyAcc, fc);
+        SetAngularAccelerationInBody(bodyAngAcc, fc);
 
     }
 
-    void
-    FrBody_::SetGeneralizedAccelerationInWorldAtPointInBody(const Position &bodyPoint, const Acceleration &worldAcc,
-                                                            const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
+    void FrBody_::SetGeneralizedAccelerationInWorldAtCOG(const Acceleration &worldAcc, const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
+        SetAccelerationInWorldNoRotation(worldAcc, fc);
+        SetAngularAccelerationInWorld(worldAngAcc, fc);
 
     }
 
-    void
-    FrBody_::SetGeneralizedAccelerationInBodyAtPointInWorld(const Position &worldPoint, const Acceleration &bodyAcc,
-                                                            const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
-
+    void FrBody_::CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) const {
+        geoCoord = CartToGeo(cartPos, fc);
+    }
+    void FrBody_::CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) {
+        geoCoord = CartToGeo(cartPos, fc);
     }
 
-    void FrBody_::SetGeneralizedAccelerationInBodyAtPointInBody(const Position &bodyPoint, const Acceleration &bodyAcc,
-                                                                const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
+    FrGeographicCoord FrBody_::CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) const {
+        return GetSystem()->GetEnvironment()->GetGeographicServices()->CartToGeo(cartPos, fc);
+    }
+    FrGeographicCoord FrBody_::CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) {
+        return GetSystem()->GetEnvironment()->GetGeographicServices()->CartToGeo(cartPos, fc);
+    }
 
+
+    void FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc) const {
+        cartPos = GeoToCart(geoCoord, fc);
+    }
+    void FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc) {
+        cartPos = GeoToCart(geoCoord, fc);
+    }
+
+    Position FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) const {
+        return GetSystem()->GetEnvironment()->GetGeographicServices()->GeoToCart(geoCoord, fc);
+    }
+    Position FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) {
+        return GetSystem()->GetEnvironment()->GetGeographicServices()->GeoToCart(geoCoord, fc);
     }
 
 

@@ -11,6 +11,7 @@ add_subdirectory(wave_resistance)
 set(SRC_FILES
         FrPositionRecorder.cpp
         FrVelocityRecorder.cpp
+        FrEquilibriumFrame.cpp
         )
 
 

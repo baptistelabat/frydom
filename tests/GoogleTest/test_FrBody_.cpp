@@ -978,6 +978,11 @@ TEST(FrBodyTest,Acceleration){
 
     Test_AllGetAcceleration(body, AccelerationInBody, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
 
+    //+++++SetGeneralizedAccelerationInBodyAtCOG+++++//
+    body->SetGeneralizedAccelerationInBodyAtCOG(AccelerationInBody, AngularAccelerationInWorld, fc);
+
+    Test_AllGetAcceleration(body, AccelerationInBody, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
+
 }
 
 TEST(FrBodyTest,AccelerationWithOrientation){
@@ -1017,6 +1022,11 @@ TEST(FrBodyTest,AccelerationWithOrientation){
     AccelerationInWorld = EasyRotate(AccelerationInBody,fc);
     Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
 
+
+    //+++++SetGeneralizedAccelerationInBodyAtCOG+++++//
+    body->SetGeneralizedAccelerationInBodyAtCOG(AccelerationInBody, AngularAccelerationInWorld, fc);
+
+    Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
 }
 
 TEST(FrBodyTest,AccelerationWithAngularVelocityAndAcceleration){
@@ -1049,6 +1059,14 @@ TEST(FrBodyTest,AccelerationWithAngularVelocityAndAcceleration){
     //-----------------Angular Acceleration-----------------//
     AngularAcceleration AngularAccelerationInWorld(5.,8.,4.);
     body->SetAngularAccelerationInWorld(AngularAccelerationInWorld,fc);
+
+    Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
+
+    //+++++SetGeneralizedAccelerationInBodyAtCOG+++++//
+    body->SetGeneralizedAccelerationInWorldAtCOG(AccelerationInWorld, AngularAccelerationInWorld, fc);
+
+//    AccelerationInWorld = AccelerationInWorld + AngularAccelerationInWorld.cross(body->GetCOGPositionInWorld(fc))
+//            + AngularVelocityInWorld.cross(AngularVelocityInWorld.cross(body->GetCOGPositionInWorld(fc)));
 
     Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
 
@@ -1092,6 +1110,11 @@ TEST(FrBodyTest,AccelerationWithOrientationAndAngularVelocityAndAcceleration){
     //-----------------Angular Acceleration-----------------//
     AngularAcceleration AngularAccelerationInWorld(5.,8.,4.);
     body->SetAngularAccelerationInWorld(AngularAccelerationInWorld,fc);
+
+    Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
+
+    //+++++SetGeneralizedAccelerationInBodyAtCOG+++++//
+    body->SetGeneralizedAccelerationInWorldAtCOG(AccelerationInWorld, AngularAccelerationInWorld, fc);
 
     Test_AllGetAcceleration(body, AccelerationInWorld, AngularAccelerationInWorld, AngularVelocityInWorld, is_orientation, fc);
 

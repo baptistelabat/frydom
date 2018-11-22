@@ -41,9 +41,9 @@ set(FRYDOM_TESTS
         test_current_standard_force
         test_wind_standard_force
         test_visu_catenary
-
-
         test_tug_refactoring
+        test_TimeRecorder
+        test_FrEquilibriumFrame
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")

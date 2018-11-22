@@ -7,9 +7,13 @@ set(GOOGLE_TESTS
         test_FrForce_
         test_internal
         test_FrBody_
+        test_FrUniformField
+        test_FrFlowBase
+        test_FrFlowForce
         test_FrFrame_
         test_FrNode_
         test_FrRotation_
+        test_FrGeographicServices
         )
 
 #enable_testing()

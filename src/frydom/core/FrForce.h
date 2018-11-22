@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRFORCE_H
 #define FRYDOM_FRFORCE_H
 
-#include "frydom/core/FrGeographic.h"
+#include "frydom/core/FrConvention.h"
 #include "chrono/physics/ChForce.h"
 #include "hermes/hermes.h"
 
@@ -171,81 +171,152 @@ namespace frydom {
     class FrBody_;
     class FrNode_;
 
+    /// Class defining an effort with force and torque vector
+    ///
+    ///
 
     class FrForce_ : public FrObject {
 
     protected:
 
-        FrBody_* m_body;
+        FrBody_* m_body;                ///< Pointer to the body to which the force is applied
 
-        std::shared_ptr<internal::_FrForceBase> m_chronoForce;
+        std::shared_ptr<internal::_FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
 
         // Limits on forces to stabilize simulation
-        bool m_limitForce = false;
-        double m_forceLimit  = 1e20;  // Taking very high values by default in case we just set limit to true without
-        double m_torqueLimit = 1e20;  // setting the values individually.
+        bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise
+        double m_forceLimit  = 1e20;            ///< Taking very high values by default in case we just set limit to true without
+        double m_torqueLimit = 1e20;            ///< setting the values individually.
 
 
     public:
 
+        /// Default constructor that builds a new force with zero force and torque
         FrForce_();
 
 //        explicit FrForce_(FrBody_* body);
 
+        /// Virtual function to allow updating the child object from the solver
+        /// \param time Current time of the simulation from begining, in seconds
         virtual void Update(double time) = 0;
 
+        /// Return the system to which the force is linked
+        /// \return Offshore system object pointer
         FrOffshoreSystem_* GetSystem();
-
-
 
         // Force Limits
 
+        /// Define the maximum force amplitude. If the force amplitude is higher to this value
+        /// the force is scaled according to the maximum force amplitude
+        /// \param fmax Maximum force amplitude, in Newton
         void SetMaxForceLimit(double fmax);
 
+        /// Return the maximum force amplitude
+        /// \return Maximum force amplitude, in Newton
         double GetMaxForceLimit() const;
 
+        /// Define the maximum torque amplitude. If the torque amplitude is higher to this value
+        /// the torque is scaled according to the maximum torque amplitude
+        /// \param tmax Maximum torque amplitude, in N.m
         void SetMaxTorqueLimit(double tmax);
 
+        /// Return the maximum torque amplitude
+        /// \return Maximum torque amplitude, in N.m
         double GetMaxTorqueLimit() const;
 
+        /// Define if the maximum amplitude limit for torque and force are used. Setting is true if
+        /// the limit are used, false otherwise.
+        /// \param val Boolean true/false
         void SetLimit(bool val);
 
+        /// Return true if the maximum limits for torque and force are used, false otherwise
+        /// \return Bollean true/false
         bool GetLimit() const;
 
 
         // Force Getters
 
+        /// Return the force vector at COG in world coordinates with the given convention
+        /// \param force Force vector at COG in world coordinates
+        /// \param fc Frame convention
         void GetForceInWorld(Force& force, FRAME_CONVENTION fc) const;
 
+        /// Return the force vector at COG in world coordinates with the given convention
+        /// \param fc Frame convention
+        /// \return Force vector at COG in world coordinates
         Force GetForceInWorld(FRAME_CONVENTION fc) const;
 
+        /// Return the force vector components at COG in world coordinates with the given convention
+        /// \param fx x-component of the force vector in world coordinates
+        /// \param fy y-component of the force vector in world coordinates
+        /// \param fz z-component of the force vector in world coordinates
+        /// \param fc Frame convention
         void GetForceInWorld(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
 
+        /// Return the force vector at COG in body coordinates with the given convention
+        /// \param force Force vector at COG in body coordinates
+        /// \param fc Frame convention
         void GetForceInBody(Force& force, FRAME_CONVENTION fc) const;
 
+        /// Return the force vector at COG in body coordinates with the given convention
+        /// \param fc Force vector at COG in body coordinates
+        /// \return Frame convention
         Force GetForceInBody(FRAME_CONVENTION fc) const;
 
+        /// Return the force vector components at COG in body coordinates with the given convention
+        /// \param fx x-component of the force vector in body coordinates
+        /// \param fy y-component of the force vector in body coordinates
+        /// \param fz z-component of the force vector in body coordinates
+        /// \param fc Frame convention
         void GetForceInBody(double& fx, double& fy, double& fz, FRAME_CONVENTION fc) const;
 
+        /// Return the torque vector at COG in world coordinates with the given convention
+        /// \param torque Torque vector at COG in world coordinates
+        /// \param fc Frame convention
         void GetTorqueInWorldAtCOG(Torque &torque, FRAME_CONVENTION fc) const;
 
+        /// Return the torque vector at COG in world coordinates with the given convention
+        /// \param fc Torque vector at COG in world coordinates
+        /// \return Frame convention
         Torque GetTorqueInWorldAtCOG(FRAME_CONVENTION fc) const;
 
+        /// Return the torque vector components at COG in world coordinates with the given convention
+        /// \param mx x-component of the torque vector in world coordinates
+        /// \param my y-component of the torque vector in world coordinates
+        /// \param mz z-component of the torque vector in world coordinates
+        /// \param fc Frame convention
         void GetTorqueInWorldAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const;
 
+        /// Return the torque vector at COG in body coordinates with the given convention
+        /// \param torque Torque vector at COG in body coordinates
+        /// \param fc Frame convention
         void GetTorqueInBodyAtCOG(Torque &torque, FRAME_CONVENTION fc) const;
 
+        /// Return the torque vector at COG in body coordinates with the given convention
+        /// \param fc Frame convention
+        /// \return Torque vector at COG in body coordinates
         Torque GetTorqueInBodyAtCOG(FRAME_CONVENTION fc) const;
 
+        /// Return the torque vector components at COG in body coordinates with given convention
+        /// \param mx x-component of the torque vector in body coordinates
+        /// \param my y-component of the torque vector in body coordinates
+        /// \param mz z-component of the torque vector in body coordinates
+        /// \param fc Frame convention
         void GetTorqueInBodyAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const;
 
+        /// Return the amplitude of the force
+        /// \return Amplitude of the force, in Newton
         double GetForceNorm() const;
 
+        /// Return the amplitude of the torque
+        /// \return Amplitude of the torque, in N.m
         double GetTorqueNormAtCOG() const;
 
 
     protected:
 
+        /// Return the force as a chrono object.
+        /// \return Force vector as a chrono object
         std::shared_ptr<chrono::ChForce> GetChronoForce();
 
         friend class FrBody_;
@@ -253,53 +324,95 @@ namespace frydom {
         // The following methods are to be used in the implementation of Update method to set the force and torque
         // of the force model used
 
-        /// Set the force expressed in absolute coordinates. It does not generate a torque
+        /// Set the force expressed in world coordinates at COG. It does not generate a torque
+        /// \param worldForce Force expressed in world coordinates
+        /// \param fc Frame convention
         void SetForceInWorldAtCOG(const Force& worldForce, FRAME_CONVENTION fc);
 
-        /// Set the force expressed in absolute coordinates applying to a point expressed in body coordinates.
+        /// Set the force expressed in world coordinates applying to a point expressed in body coordinates.
         /// It generates a torque.
+        /// \param worldForce Force expressed in world coordinates
+        /// \param bodyPos Point position expressed in body coordinates
+        /// \param fc Frame convention
         void SetForceInWorldAtPointInBody(const Force& worldForce, const Position& bodyPos, FRAME_CONVENTION fc);
 
-        /// Set the force expressed in absolute coordinates applying to a point expressed in absolute coordinates.
+        /// Set the force expressed in world coordinates applying to a point expressed in world coordinates.
         /// It generates a torque.
+        /// \param worldForce Force expressend in world coordinates
+        /// \param worldPos Point position expressed in world coordinates
+        /// \param fc Frame convention
         void SetForceInWorldAtPointInWorld(const Force& worldForce, const Position& worldPos, FRAME_CONVENTION fc);
 
-        /// Set the force expressed in body coordinates. It does not generate a torque.
+        /// Set the force at COG expressed in body coordinates. It does not generate a torque.
+        /// \param bodyForce Force expressed in body coordinates
+        /// \param fc Frame convention
         void SetForceInBody(const Force& bodyForce, FRAME_CONVENTION fc);
 
         /// Set the force expressed in body coordinates applying to a point expressed in body coordinates.
         /// It generates a torque.
+        /// \param bodyForce Force expressed in body coordinates
+        /// \param bodyPos Point position expressed in body coordinates
+        /// \param fc Frame convention
         void SetForceInBodyAtPointInBody(const Force& bodyForce, const Position& bodyPos, FRAME_CONVENTION fc);
 
-        /// Set the force expressed in body coordinates applying to a point expressed in absolute coordinates.
+        /// Set the force expressed in body coordinates applying to a point expressed in world coordinates.
         /// It generates a torque.
+        /// \param bodyForce Force expressed in body coordinates
+        /// \param worldPos Point position expressed in world coordinates
+        /// \param fc Frame convention
         void SetForceInBodyAtPointInWorld(const Force& bodyForce, const Position& worldPos, FRAME_CONVENTION fc);
 
-        /// Set the torque expressed in absolute coordinates and at COG.
+        /// Set the torque expressed in world coordinates and at COG.
+        /// \param worldTorque Torque expressed in world coordinates
+        /// \param fc Frame convention
         void SetTorqueInWorldAtCOG(const Torque& worldTorque, FRAME_CONVENTION fc);
 
-        /// Set the torque expressed in relative coordinates and at COG.
+        /// Set the torque expressed in body coordinates and at COG.
+        /// \param bodyTorque Torque expressed in body coordinates
+        /// \param fc Frame convention
         void SetTorqueInBodyAtCOG(const Torque& bodyTorque, FRAME_CONVENTION fc);
 
-        /// Set force and torque expressed in absolute coordinates and at COG.
+        /// Set force and torque expressed in world coordinates and at COG.
+        /// \param worldForce Force expressed in world coordinates
+        /// \param worldTorque Torque expressed in world coordinates
+        /// \param fc Frame convention
         void SetForceTorqueInWorldAtCOG(const Force& worldForce, const Torque& worldTorque, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in body coordinates and at COG
+        /// \param bodyForce Force expressed in body coordinates
+        /// \param bodyTorque Torque expressed in body coordinates
+        /// \param fc Frame convention
         void SetForceTorqueInBodyAtCOG(const Force& bodyForce, const Torque& bodyTorque, FRAME_CONVENTION fc);
 
-        /// Set force and torque expressed in absolute coordinates and reduced to a point expressed in body coordinates
+        /// Set force and torque expressed in world coordinates and reduced to a point expressed in body coordinates
+        /// \param worldForce Force expressed in world coordinates
+        /// \param worldTorque Force expressed in body coordinates
+        /// \param bodyPos Point position expressed in body coordinates
+        /// \param fc Frame convention
         void SetForceTorqueInWorldAtPointInBody(const Force &worldForce, const Torque &worldTorque,
                                                 const Position &bodyPos, FRAME_CONVENTION fc);
 
-        /// Set force and torque expressed in absolute coordinates and reduced to a point expressed in absolute coordinates
+        /// Set force and torque expressed in world coordinates and reduced to a point expressed in world coordinates
+        /// \param worldForce  Force expressed in world coordinates
+        /// \param worldTorque Force expressed in body coordinates
+        /// \param worldPoint Point position expressed in world coordinates
+        /// \param fc Frame convention
         void SetForceTorqueInWorldAtPointInWorld(const Force &worldForce, const Torque &worldTorque,
                                                  const Position &worldPoint, FRAME_CONVENTION fc);
 
         /// Set force and torque expressed in body coordinates and reduced to a point expressed in body coordinates
+        /// \param bodyForce Force expressed in body coordinates
+        /// \param bodyTorque Torque expressed in body coordinates
+        /// \param bodyPos Point position expressed in body coordinates
+        /// \param fc Frame convention
         void SetForceTorqueInBodyAtPointInBody(const Force &bodyForce, const Torque &bodyTorque,
                                                const Position &bodyPos, FRAME_CONVENTION fc);
 
-        /// Set force and torque expressed in body coordinates and reduced to a point expressed in absolute coordinates
+        /// Set force and torque expressed in body coordinates and reduced to a point expressed in world coordinates
+        /// \param bodyForce Force expressed in body coordinates
+        /// \param bodyTorque Torque expressed in body coordinates
+        /// \param worldPos Point position expressed in world coordinates
+        /// \param fc Frame convention
         void SetForceTorqueInBodyAtPointInWorld(const Force &bodyForce, const Torque &bodyTorque,
                                                 const Position &worldPos, FRAME_CONVENTION fc);
 

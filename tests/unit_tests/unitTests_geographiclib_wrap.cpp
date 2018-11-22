@@ -3,7 +3,7 @@
 //
 
 #include <frydom/environment/FrEnvironment.h>
-#include "frydom/utils/FrGeographicServices.h"
+#include "frydom/environment/GeographicServices/FrGeographicServices.h"
 //#include "fmt/format.h"
 
 using namespace frydom;
@@ -13,21 +13,21 @@ int unitTest_FrGeographicServices(bool verbose = false){
 
     double north = 100, east = 200, down = 0;
     double lat, lon, h;
-    myGeoLib->Convert_CartToGeo(north,east,down,lat,lon,h);
+    myGeoLib->CartToGeo(north, east, down, lat, lon, h);
     if (verbose) {
         std::cout << "north = " << north << ", east = " << east << ", down = " << down << std::endl;
         std::cout<<"lat = "<< lat <<", lon = "<< lon <<", h = "<< h <<std::endl;
     }
     double xf, yf, zf;
-    myGeoLib->Convert_GeoToCart(lat,lon,h,xf,yf,zf);
+    myGeoLib->GeoToCart(lat, lon, h, xf, yf, zf);
     if (verbose) {
         std::cout << "north = " << xf << ", east = " << yf << ", down = " << zf << std::endl;
     }
 //     Pour tester cette fonctionnalité, modifier le chemin du fichier de modèle magnétique
-//     dans FrGeographicServices.ComputeMagneticDeclination :
+//     dans FrGeographicServices.GetDeclinationFromCart :
 //     GeographicLib::MagneticModel magneticModel("emm2017", "../../_deps/magneticmodel-src");
 //
-//    auto B = myGeoLib->ComputeMagneticDeclination(north,east,down,2018);
+//    auto B = myGeoLib->GetDeclinationFromCart(north,east,down,2018);
 //    if (verbose) {
 //        std::cout << "B = " << B << std::endl;
 //    }
@@ -57,15 +57,15 @@ int unitTest_GeoLib_integration_in_FrEnvironment(bool verbose = false){
     if (verbose) {
         std::cout << "north = " << xf << ", east = " << yf << ", down = " << zf << std::endl;
     }
-    
+
 //     Pour tester cette fonctionnalité, modifier le chemin du fichier de modèle magnétique
-//     dans FrGeographicServices.ComputeMagneticDeclination :
+//     dans FrGeographicServices.GetDeclinationFromCart :
 //     GeographicLib::MagneticModel magneticModel("emm2017", "../../_deps/magneticmodel-src");
 //    if (verbose) {
 //        std::cout << "Year : " << myEnvironment->GetYear() << std::endl;
 //    }
 //
-//    auto B = myEnvironment->ComputeMagneticDeclination(north,east,down);
+//    auto B = myEnvironment->GetDeclinationFromCart(north,east,down);
 //    if (verbose) {
 //        std::cout << "B = " << B << std::endl;
 //    }

@@ -44,7 +44,7 @@ namespace frydom {
         void UpdateState() override;
 
         void SetCoeffs(FrCurrentPolarCoeffs table) {
-            coeffs_table = std::move(table);
+            //coeffs_table = std::move(table);
         }
 
         //

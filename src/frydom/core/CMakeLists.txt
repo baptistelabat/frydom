@@ -13,7 +13,7 @@ set(SRC_FILES
         FrLink.cpp
         FrBodyEasy.cpp
         FrColors.cpp
-        FrGeographic.cpp
+        FrConvention.cpp
         FrForce.cpp
         FrForceAsset.cpp
         FrHydroBody.cpp
@@ -23,6 +23,7 @@ set(SRC_FILES
         FrSpringDampingForce.cpp
         FrNodeDynamic.cpp
         FrFunction.cpp
+        FrPhysicsItem.cpp
 )
 
 set(FRYDOM_CORE_SOURCES "")

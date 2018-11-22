@@ -10,7 +10,7 @@
 #include <vector>
 //#include "MathUtils/MathUtils.h"
 
-#include "frydom/core/FrGeographic.h"
+#include "frydom/core/FrConvention.h"
 #include "frydom/environment/current/FrCurrentPolarCoeffs.h"
 
 //using namespace mathutils;  // TODO: mettre LookupTable en forward declaration
@@ -53,7 +53,37 @@ namespace frydom {
                                ANGLE_UNIT& unit);
 
     /// Build a Polar Coefficient table from a yaml file
-    LookupTable1D<double> MakeWindPolarCoeffTable(const std::string& yaml_file, ANGLE_UNIT unit);
+    LookupTable1D<double, double> MakeWindPolarCoeffTable(const std::string& yaml_file, ANGLE_UNIT unit);
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    // =========================================================================================================
+    // IO for flow force model
+    // =========================================================================================================
+
+    /// Extract coefficients for the flow force model from YAML file
+    /// \param yamlFile Name of the YAML file containing the polar coefficient
+    /// \param angle Flow direction
+    /// \param cx Polar coefficient in surge
+    /// \param cy Polar coefficient in sway
+    /// \param cn Polar coefficient in yaw
+    /// \param unit Unit of the angle direction
+    void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
+                                    std::vector<double>& angle,
+                                    std::vector<double>& cx,
+                                    std::vector<double>& cy,
+                                    std::vector<double>& cn,
+                                    ANGLE_UNIT& unit,
+                                    FRAME_CONVENTION& fc,
+                                    DIRECTION_CONVENTION& dc);
+
+
+    void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
+                                    std::vector<std::pair<double, Vector3d<double>>>& polar,
+                                    ANGLE_UNIT& unit,
+                                    FRAME_CONVENTION& fc,
+                                    DIRECTION_CONVENTION& dc);
 
 
 }  // end namespace frydom

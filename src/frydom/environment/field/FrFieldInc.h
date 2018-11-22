@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FRFIELDINC_H
 #define FRYDOM_FRFIELDINC_H
 
-#include "FrUniformCurrentField.h"
+#include "FrFieldBase.h"
+#include "FrUniformField.h"
 
 #endif //FRYDOM_FRFIELDINC_H

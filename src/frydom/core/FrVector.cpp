@@ -7,18 +7,52 @@
 
 namespace frydom {
 
-    namespace internal {
+    const Velocity NORTH(FRAME_CONVENTION fc) {
+        auto vect = Velocity(1, 0, 0);
+        if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
+        return vect;
+    }
 
-        // SYMBOLIC DIRECTIONS EXPRESSED IN THE NWU FRAME
-        const Direction NORTH(1, 0, 0);
-        const Direction NORTH_EAST(MU_SQRT2_2, -MU_SQRT2_2, 0);
-        const Direction EAST(0, -1, 0);
-        const Direction SOUTH_EAST(-MU_SQRT2_2, -MU_SQRT2_2, 0);
-        const Direction SOUTH(-1, 0, 0);
-        const Direction SOUTH_WEST(-MU_SQRT2_2, MU_SQRT2_2, 0);
-        const Direction WEST(0, 1, 0);
-        const Direction NORTH_WEST(MU_SQRT2_2, MU_SQRT2_2, 0);
+    const Velocity NORTH_EAST(FRAME_CONVENTION fc) {
+        auto vect = Velocity(MU_SQRT2_2, -MU_SQRT2_2, 0);
+        if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
+        return vect;
+    }
 
-    }  // end namespace internal
+    const Velocity EAST(FRAME_CONVENTION fc) {
+        auto vect = Velocity(0, -1, 0);
+        if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
+        return vect;
+    }
+
+    const Velocity SOUTH_EAST(FRAME_CONVENTION fc) {
+        auto vect = Velocity(-MU_SQRT2_2, -MU_SQRT2_2, 0);
+        if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
+        return vect;
+    }
+
+    const Velocity SOUTH(FRAME_CONVENTION fc) {
+        auto vect = Velocity(-1, 0, 0);
+        if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
+        return vect;
+    }
+
+    const Velocity SOUTH_WEST(FRAME_CONVENTION fc) {
+        auto vect = Velocity(-MU_SQRT2_2, MU_SQRT2_2, 0);
+        if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
+        return vect;
+    }
+
+    const Velocity WEST(FRAME_CONVENTION fc) {
+        auto vect = Velocity(0, 1, 0);
+        if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
+        return vect;
+    }
+
+    const Velocity NORTH_WEST(FRAME_CONVENTION fc) {
+        auto vect = Velocity(MU_SQRT2_2, MU_SQRT2_2, 0);
+        if (IsNED(fc)) { internal::SwapFrameConvention(vect);}
+        return vect;
+    }
 
 } // end namespace frydom

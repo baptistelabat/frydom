@@ -8,7 +8,7 @@
 
 #include "chrono/core/ChQuaternion.h"
 #include "FrRotation.h"
-#include "FrGeographic.h"
+#include "FrConvention.h"
 
 #include "FrEulerAngles.h"
 

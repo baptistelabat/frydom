@@ -333,7 +333,7 @@ namespace frydom {
 
         // TODO: garder pour faire la demo du speedup...
 //        for (auto& vertex: mesh.m_vertices) {
-//            vertex.z() = tidalHeight + m_waveField->GetElevation(vertex.x(), vertex.y());  // TODO: ne pas utiliser GetElevation mais des waveProbe
+//            vertex.z() = tidalHeight + m_waveField->GetHeight(vertex.x(), vertex.y());  // TODO: ne pas utiliser GetHeight mais des waveProbe
 //        }
     }
 

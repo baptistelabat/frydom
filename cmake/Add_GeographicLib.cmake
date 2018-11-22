@@ -57,6 +57,10 @@ if (NOT GeographicLib_FOUND)
 
         #add_subdirectory(${magneticmodel_SOURCE_DIR} ${magneticmodel_BINARY_DIR})
 
+#        message(STATUS "Magnetic Field model datasets found in: " ${magneticmodel_SOURCE_DIR})
+        set(ENV{GEOGRAPHICLIB_MAGNETIC_PATH} ${magneticmodel_SOURCE_DIR})
+        message(STATUS "GEOGRAPHICLIB_MAGNETIC_PATH : " $ENV{GEOGRAPHICLIB_MAGNETIC_PATH})
+
     endif()
 
 endif()

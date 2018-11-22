@@ -6,7 +6,16 @@
 #include "frydom/frydom.h"
 #include "gtest/gtest.h"
 
+#include <type_traits>
+
 using namespace frydom;
+
+// -------------------------------------------------------------------
+//
+// MAP TO HELP UNIT CONVERSION
+//
+// -------------------------------------------------------------------
+
 
 std::map<std::string, ANGLE_UNIT>
         AngleUnit = boost::assign::map_list_of("DEG", DEG)("RAD", RAD);
@@ -21,69 +30,246 @@ std::map<std::string, DIRECTION_CONVENTION>
         DirConvention = boost::assign::map_list_of("GOTO", GOTO)("COMEFROM", COMEFROM);
 
 
-void CompareForceValue(Force force, Moment torque,
-                       Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> forceRef) {
+// --------------------------------------------------------------------
+//
+// TEST OF THE UNIFORM CURRENT FIELD
+//
+// --------------------------------------------------------------------
 
-    EXPECT_FLOAT_EQ(force.GetFx(), forceRef(0));
-    EXPECT_FLOAT_EQ(force.GetFy(), forceRef(1));
-    EXPECT_FLOAT_EQ(force.GetFz(), forceRef(2));
-    EXPECT_FLOAT_EQ(torque.GetMx(), forceRef(3));
-    EXPECT_FLOAT_EQ(torque.GetMy(), forceRef(4));
-    EXPECT_FLOAT_EQ(torque.GetMz(), forceRef(5));
+class TestFrUniformCurrent_ : public ::testing::Test {
+
+protected:
+
+    FrOffshoreSystem_ system;                   ///< offshore system
+
+    double m_angle;                             ///< current direction
+    double m_speed;                             ///< current speed
+    ANGLE_UNIT m_angleUnit;                     ///< current direction unit (RAD/DEG)
+    SPEED_UNIT m_speedUnit;                     ///< current speed unit (KNOT/MS)
+    FRAME_CONVENTION m_frame;                   ///< frame convention (NED/NWU)
+    DIRECTION_CONVENTION m_convention;          ///< direction convention (GOTO/COMEFROM)
+
+    Position m_PointInWorld;                    ///< Position of an arbitrary point in world frame
+    FrFrame_ m_frameREF;                        ///< Local frame at Point
+    FrUnitQuaternion_ m_quatREF;                    ///< Rotation of the local frame / world frame
+    Velocity m_PointVelocityInWorld;            ///< Velocity vector of the local frame / world frame
+
+    Velocity m_VelocityInWorld;                 ///< Current velocity at Point in world frame
+    Velocity m_RelativeVelocityInWorld;         ///< Relative velocity at Point in world frame
+    Velocity m_RelativeVelocityInFrame;         ///< Relative velocity at Point in local frame
+
+    /// Initialization of the method
+    void SetUp() override;
+
+    /// Loading data from HDF5 file
+    void LoadData(std::string filename);
+
+    /// Vector reading method
+    template <class Vector>
+    Vector ReadVector(FrHDF5Reader& reader, std::string field) const;
+
+public:
+    /// Test of the get flux vector method
+    void TestGetWorldFluxVelocity();
+
+    /// Test of the get relative velocity in frame method
+    void TestGetRelativeVelocityInFrame();
+
+};
+
+template <class Vector>
+Vector TestFrUniformCurrent_::ReadVector(FrHDF5Reader& reader, std::string field) const {
+    auto value = reader.ReadDoubleArray(field);
+    return Vector(value(0), value(1), value(2));
 }
 
-TEST(FrCurrentForce_test, ALL) {
-
-    // System
-
-    FrOffshoreSystem_ system;
-
-    // Ship
-
-    auto ship = std::make_shared<FrBody_>();
-    system.AddBody(ship);
-    ship->SetAbsPosition(0., 0., 0., NWU);
-    ship->SetCOGLocalPosition(0., 0. , 0.03, false, NWU);
-
-    // Force
-
-    auto current_force = std::make_shared<FrCurrentForce_>("../Ship_PolarCurrentCoeffs.yml");
-    ship->AddExternalForce(current_force);
-
-    // Initialize
-
-    system.Initialize();
-
-    // Loop
+void TestFrUniformCurrent_::LoadData(std::string filename) {
 
     FrHDF5Reader reader;
 
-    reader.SetFilename("TNR_database.h5");
+    reader.SetFilename(filename);
+    std::string group = "current/uniform/";
+
+    m_angle = reader.ReadDouble(group + "angle/");
+    m_speed = reader.ReadDouble(group + "speed/");
+    m_angleUnit = AngleUnit[ reader.ReadString(group + "angle_unit/")];
+    m_speedUnit = SpeedUnit[ reader.ReadString(group + "speed_unit/")];
+    m_frame = FrameConv[ reader.ReadString(group + "frame_convention/")];
+    m_convention = DirConvention[ reader.ReadString(group + "direction_convention/")];
+
+    m_PointInWorld = ReadVector<Position>(reader, group + "PointInWorld");
+    auto direction = ReadVector<Direction>(reader, group + "RotationDirection/") ;
+    double angle = reader.ReadDouble(group + "RotationAngle/");
+    m_quatREF = FrUnitQuaternion_(direction, angle, NWU);
+    m_frameREF = FrFrame_(m_PointInWorld, m_quatREF, NWU);
+    m_PointVelocityInWorld = ReadVector<Velocity>(reader, group + "PointVelocityInWorld/");
+
+    m_VelocityInWorld = ReadVector<Velocity>(reader, group + "VelocityInWorld/");
+    m_RelativeVelocityInWorld = ReadVector<Velocity>(reader, group + "RelativeVelocityInWorld");
+    m_RelativeVelocityInFrame = ReadVector<Velocity>(reader, group + "RelativeVelocityInFrame");
+
+}
+
+void TestFrUniformCurrent_::SetUp() {
+
+    LoadData("TNR_database.h5");
+    system.GetEnvironment()->GetCurrent()->GetField()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
+
+}
+
+void TestFrUniformCurrent_::TestGetWorldFluxVelocity() {
+
+    Velocity velocity = system.GetEnvironment()->GetCurrent()->GetFluxVelocityInWorld(m_PointInWorld, m_frame);
+    Velocity velocityREF = velocity - m_PointVelocityInWorld;
+
+    EXPECT_FLOAT_EQ(velocity.GetVx(), m_VelocityInWorld.GetVx());
+    EXPECT_FLOAT_EQ(velocity.GetVy(), m_VelocityInWorld.GetVy());
+    EXPECT_FLOAT_EQ(velocity.GetVz(), m_VelocityInWorld.GetVz());
+}
+
+void TestFrUniformCurrent_::TestGetRelativeVelocityInFrame() {
+
+    Velocity velocity = system.GetEnvironment()->GetCurrent()->GetRelativeVelocityInFrame(m_frameREF, m_PointVelocityInWorld, m_frame);
+
+    EXPECT_FLOAT_EQ(velocity.GetVx(), m_RelativeVelocityInFrame.GetVx());
+    EXPECT_FLOAT_EQ(velocity.GetVy(), m_RelativeVelocityInFrame.GetVy());
+    EXPECT_FLOAT_EQ(velocity.GetVz(), m_RelativeVelocityInFrame.GetVz());
+}
+
+
+TEST_F(TestFrUniformCurrent_, Update) {
+    system.GetEnvironment()->GetCurrent()->Update(0.);
+}
+
+TEST_F(TestFrUniformCurrent_, Initialize) {
+    system.GetEnvironment()->GetCurrent()->Initialize();
+}
+
+TEST_F(TestFrUniformCurrent_, StepFinalize) {
+    system.GetEnvironment()->GetCurrent()->StepFinalize();
+}
+
+TEST_F(TestFrUniformCurrent_, GetField) {
+    auto field = system.GetEnvironment()->GetCurrent()->GetField();
+}
+
+TEST_F(TestFrUniformCurrent_, TestWorldFluxVelocity) {
+    TestGetWorldFluxVelocity();
+}
+
+TEST_F(TestFrUniformCurrent_, TestRelativeFluxVelocity) {
+    TestGetRelativeVelocityInFrame();
+}
+
+// ---------------------------------------------------------------------------
+//
+// TEST OF THE CURRENT FORCE OBJECT
+//
+// ----------------------------------------------------------------------------
+
+class TestFrCurrentForce_ : public testing::Test {
+
+protected:
+
+    FrOffshoreSystem_ system;                               ///< offshore system
+    std::shared_ptr<FrBody_> body;                          ///< hydrodynamic body
+    std::shared_ptr<FrCurrentForce_> force;                 ///< current force
+
+    const Position bodyPositionInWorld = Position(0., 0., 0.);  ///< Position of Point in world
+    const Position COGPosition = Position(0., 0., 0.03);        ///< Position of the COG in body
+
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> current_speed;  ///< List of current speed test
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> current_dir;    ///< List of current direction test
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> forceREF;       ///< List of force results for the test
+
+    ANGLE_UNIT angleUnit;                                   ///< current direction unit (RAD/DEG)
+    SPEED_UNIT speedUnit;                                   ///< current speed unit (KNOT/MS)
+    FRAME_CONVENTION frame;                                 ///< frame convention (NED/NWU)
+    DIRECTION_CONVENTION convention;                        ///< direction convention (GOTO/COMEFROM)
+
+    /// Initialize environment
+    void SetUp() override;
+
+    /// Loading data from HDF5 file
+    void LoadData(std::string filename);
+
+public:
+    /// Test the current force vector
+    void TestForce();
+
+    /// Compare the force value in world at the COG
+    void CheckForceInWorldAtCOG(Force force, const unsigned int index);
+
+    /// Compare the torque value in body at the COG
+    void CheckTorqueInBodyAtCOG(Torque torque, const unsigned int index);
+
+};
+
+void TestFrCurrentForce_::SetUp() {
+
+    this->LoadData("TNR_database.h5");
+
+    body = std::make_shared<FrBody_>();
+    body->SetPosition(bodyPositionInWorld, NWU);
+    body->SetCOG(COGPosition, NWU);
+    system.AddBody(body);
+
+    force = std::make_shared<FrCurrentForce_>("../Ship_PolarCurrentCoeffs.yml");
+    body->AddExternalForce(force);
+
+    system.Initialize();
+}
+
+void TestFrCurrentForce_::LoadData(std::string filename) {
+
+    FrHDF5Reader reader;
+
+    reader.SetFilename(filename);
     std::string group = "/current_force/";
 
-    auto current_speed = reader.ReadDoubleArray(group + "speed/");
-    auto current_dir   = reader.ReadDoubleArray(group + "direction/");
-    auto forceREF      = reader.ReadDoubleArray(group + "force/");
+    current_speed = reader.ReadDoubleArray(group + "speed/");
+    current_dir   = reader.ReadDoubleArray(group + "direction/");
+    forceREF      = reader.ReadDoubleArray(group + "force/");
 
-    auto angle_unit = AngleUnit[ reader.ReadString(group + "angle_unit/") ];
-    auto speed_unit = SpeedUnit[ reader.ReadString(group + "speed_unit/") ];
-    auto convention = DirConvention[ reader.ReadString(group + "convention/") ];
-    auto frame = FrameConv[ reader.ReadString(group + "frame/") ];
+    angleUnit = AngleUnit[ reader.ReadString(group + "angle_unit/") ];
+    speedUnit = SpeedUnit[ reader.ReadString(group + "speed_unit/") ];
+    convention = DirConvention[ reader.ReadString(group + "convention/") ];
+    frame = FrameConv[ reader.ReadString(group + "frame/") ];
+}
 
-    Force force;
-    Moment torque;
+void TestFrCurrentForce_::CheckForceInWorldAtCOG(Force force, const unsigned int index) {
+
+    auto forceRef_i = forceREF.row(index);
+    EXPECT_FLOAT_EQ(force.GetFx(), forceRef_i(0));
+    EXPECT_FLOAT_EQ(force.GetFy(), forceRef_i(1));
+    EXPECT_FLOAT_EQ(force.GetFz(), forceRef_i(2));
+}
+
+void TestFrCurrentForce_::CheckTorqueInBodyAtCOG(Torque torque, const unsigned int index) {
+
+    auto forceRef_i = forceREF.row(index);
+    EXPECT_FLOAT_EQ(torque.GetMx(), forceRef_i(3));
+    EXPECT_FLOAT_EQ(torque.GetMy(), forceRef_i(4));
+    EXPECT_FLOAT_EQ(torque.GetMz(), forceRef_i(5));
+}
+
+void TestFrCurrentForce_::TestForce() {
+    Force forceTemp;
+    Torque torqueTemp;
 
     for (unsigned int i=0; i<current_speed.size(); i++) {
+        system.GetEnvironment()->GetCurrent()->GetField()->Set(current_dir(i), current_speed(i), angleUnit, speedUnit, frame, convention);
+        force->Update(false);
+        force->GetForceInWorld(forceTemp, NWU);
+        force->GetTorqueInBodyAtCOG(torqueTemp, NWU);
 
-        system.GetEnvironment()->GetCurrent()->GetField()->Set(current_dir(i), current_speed(i), angle_unit, speed_unit, frame, convention);
-        //system.Initialize();
-        current_force->Update(false);
-        current_force->GetAbsForce(force, NWU);
-        current_force->GetLocalTorqueAtCOG(torque, NWU);
-
-        CompareForceValue(force, torque, forceREF.row(i));
+        CheckForceInWorldAtCOG(forceTemp, i);
+        CheckTorqueInBodyAtCOG(torqueTemp, i);
     }
+}
 
+TEST_F(TestFrCurrentForce_, TestForce) {
+    TestForce();
 };
 
 
