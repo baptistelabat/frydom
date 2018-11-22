@@ -13,14 +13,33 @@ namespace frydom {
 
     void FrEquilibriumFrame_::SetVelocity(const Velocity& velocity) {
         m_velocity = velocity;
+        m_initSpeedFromBody = false;
     }
 
     void FrEquilibriumFrame_::SetAngularVelocity(const double &angularVelocity) {
         m_angularVelocity = angularVelocity;
+        m_initSpeedFromBody = false;
     }
 
-    void FrEquilibriumFrame_::SetBody(FrBody_* body) {
+    void FrEquilibriumFrame_::SetBody(FrBody_* body, bool initPos) {
         m_body = body;
+        m_initPositionFromBody = initPos;
+    }
+
+    void FrEquilibriumFrame_::Initialize() {
+
+        if (m_initPositionFromBody) {
+            this->SetPosition(m_body->GetPosition(NWU), NWU);
+            double temp1, temp2, psi;
+            m_body->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, psi, NWU);
+            this->GetRotation().RotZ_RADIANS(psi, NWU);
+        }
+
+        if (m_initSpeedFromBody) {
+            m_velocity = m_body->GetVelocityInWorld(NWU);
+            m_angularVelocity = 0.;
+        }
+
     }
 
     // -----------------------------------------------------------------------

@@ -21,26 +21,29 @@ namespace frydom {
                                 public FrPhysicsItem_ {
 
     protected:
-        FrBody_* m_body = nullptr;                    ///< Link to the body to which the equilibrium frame if applied
-        Velocity m_velocity;                ///< translational velocity of the frame
-        double m_angularVelocity = 0.;           ///< angular velocity of the frame around Z-direction
+        FrBody_* m_body = nullptr;               ///< Link to the body to which the equilibrium frame if applied
+        Velocity m_velocity;                     ///< translational velocity of the frame in world coordinates
+        double m_angularVelocity;                ///< angular velocity of the frame around Z-direction
+        bool m_initSpeedFromBody = true;         ///< Initialize the frame position, orientation and velocity according
+        bool m_initPositionFromBody;             ///< to the body during the initialization stage
+
 
     public:
 
         FrEquilibriumFrame_() : FrFrame_() { };
 
-        FrEquilibriumFrame_(FrBody_* body) : FrFrame_(), m_body(body) { };
+        FrEquilibriumFrame_(FrBody_* body, bool initPos = true) : FrFrame_(), m_body(body), m_initPositionFromBody(initPos) { };
 
         FrEquilibriumFrame_(const Position& pos, const FrRotation_& rotation, FRAME_CONVENTION fc, FrBody_* body)
-                : FrFrame_(pos, rotation, fc), m_body(body) { }
+                : FrFrame_(pos, rotation, fc), m_body(body), m_initPositionFromBody(false) { }
 
         FrEquilibriumFrame_(const Position& pos, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc, FrBody_* body)
-                : FrFrame_(pos, quaternion, fc), m_body(body) { }
+                : FrFrame_(pos, quaternion, fc), m_body(body), m_initPositionFromBody(false) { }
 
         FrEquilibriumFrame_(const FrFrame_& otherFrame, FrBody_* body)
-                : FrFrame_(otherFrame), m_body(body) { }
+                : FrFrame_(otherFrame), m_body(body), m_initPositionFromBody(false) { }
 
-        void SetBody(FrBody_* body);
+        void SetBody(FrBody_* body, bool initPos = true);
 
         void SetVelocity(const Velocity& velocity);
 
@@ -48,7 +51,7 @@ namespace frydom {
 
         void Update(double time) override { }
 
-        void Initialize() override { }
+        void Initialize() override;
 
         void StepFinalize() override { }
 

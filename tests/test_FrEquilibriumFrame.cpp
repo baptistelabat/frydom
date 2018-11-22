@@ -19,12 +19,12 @@ int main(int argc, char* argv[]) {
 
     system.Initialize();
 
-    double time;
+    double time = 0.;
     double dt = 0.01;
 
     system.SetTimeStep(dt);
 
-    while (time < 20.) {
+    while (time < 100.) {
 
         system.AdvanceTo(time);
         time += dt;
