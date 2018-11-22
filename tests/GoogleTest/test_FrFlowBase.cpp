@@ -22,7 +22,7 @@ protected:
     Velocity m_RelativeVelocityInFrame;     ///< Velocity of the flow relative to the frame express into the frame
     Position m_PointInWorld;                ///< Position of the frame in world (NWU)
     Velocity m_FrameVelocityInWorld;        ///< Velocity of the frame in world (NWU)
-    FrQuaternion_ m_quat;                   ///< Orientation of the frame (quaternion) / world
+    FrUnitQuaternion_ m_quat;                   ///< Orientation of the frame (quaternion) / world
     FrFrame_ m_frame;                       ///< Local frame
 
 protected:
@@ -71,7 +71,7 @@ void TestFrFlowBase::LoadData(std::string filename) {
     auto direction = ReadVector<Direction>(reader, group + "RotationDirection");
     direction.normalize();
     auto angle = reader.ReadDouble(group + "RotationAngle");
-    m_quat = FrQuaternion_(direction, angle, NWU);
+    m_quat = FrUnitQuaternion_(direction, angle, NWU);
     m_frame = FrFrame_(m_PointInWorld, m_quat, NWU);
 
     m_FrameVelocityInWorld = ReadVector<Velocity>(reader, group + "FrameVelocityInWorld");

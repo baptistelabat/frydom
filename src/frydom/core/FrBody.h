@@ -299,6 +299,7 @@ namespace frydom {
     class FrRotation_;
 //    class FrNode_;
     class FrOffshoreSystem_;
+    class FrGeographicCoord;
 
     /// Main class for a FRyDoM rigid body
     class FrBody_ : public FrObject {
@@ -323,7 +324,7 @@ namespace frydom {
         FrBody_();
 
         /// Get the FrOffshoreSystem where the body has been registered
-        FrOffshoreSystem_* GetSystem();
+        FrOffshoreSystem_* GetSystem() const;
 
         /// Set the body name
         void SetName(const char name[]);
@@ -497,11 +498,21 @@ namespace frydom {
         /// Get the position in world frame of the origin of the body reference frame
         Position GetPosition(FRAME_CONVENTION fc) const;
 
+        /// Get the geographic position in world frame of the origin of the body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return geographic position of the origin of the body reference frame
+        FrGeographicCoord GetGeoPosition(FRAME_CONVENTION fc) const;
+
         /// Set the position in world frame of the origin of the body reference frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         void SetPosition(const Position& worldPos, FRAME_CONVENTION fc);
 
+        /// Set the position in world frame of the origin of the body reference frame, at a geographic position
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        /// \param geoPos geographic destination for the origin of the body reference frame
+        void SetGeoPosition(const FrGeographicCoord& geoPos);
 
         /// Get the rotation object that represents the orientation of the body reference frame in the world
         FrRotation_ GetRotation() const;
@@ -547,6 +558,26 @@ namespace frydom {
 
         /// Get the body COG position in world frame (coordinates are expressed in world frame)
         Position GetCOGPositionInWorld(FRAME_CONVENTION fc) const;
+
+
+        /// Get the geographic position in world frame of a body fixed point whose position is given in body reference frame
+        /// \param bodyPos position of a point given in the body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return geographic position of the point mentioned above
+        FrGeographicCoord GetGeoPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const;
+
+        /// Get the geographic position in body reference frame of a body fixed point whose position is given in world frame
+        /// \param worldPos position of a point given in the world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return geographic position of the point mentioned above
+        FrGeographicCoord GetGeoPointPositionInBody(const Position& worldPos, FRAME_CONVENTION fc) const;
+
+        /// Get the body COG geographic position in world frame (coordinates are expressed in world frame)
+        /// \param fc frame convention (NED/NWU)
+        /// \return geographic position of the COG
+        FrGeographicCoord GetCOGGeoPositionInWorld(FRAME_CONVENTION fc) const;
+
+
 
         /// Set the position in WORLD frame of a body fixed point whose position is defined wrt body reference frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
@@ -796,6 +827,53 @@ namespace frydom {
 
 //        void _SetPointPosition(const Position& point, FRAME pointFrame, const Position& pos, FRAME posFrame, FRAME_CONVENTION fc);
 
+        /// Convert a cartesian position to a geographic position, using the geographic service of FrEnvironment
+        /// \param cartPos cartesian position to convert
+        /// \param geoCoord geographic position
+        /// \param fc frame position (NED/NWU) of the cartesian position
+        void CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) const;
+
+        /// Convert a cartesian position to a geographic position, using the geographic service of FrEnvironment
+        /// \param cartPos cartesian position to convert
+        /// \param geoCoord geographic position
+        /// \param fc frame position (NED/NWU) of the cartesian position
+        void CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc);
+
+        /// Convert a cartesian position to a geographic position, using the geographic service of FrEnvironment
+        /// \param cartPos cartesian position to convert
+        /// \param fc frame position (NED/NWU) of the cartesian position
+        /// \return geographic position
+        FrGeographicCoord CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) const;
+
+        /// Convert a cartesian position to a geographic position, using the geographic service of FrEnvironment
+        /// \param cartPos cartesian position to convert
+        /// \param fc frame position (NED/NWU) of the cartesian position
+        /// \return geographic position
+        FrGeographicCoord CartToGeo(const Position &cartPos, FRAME_CONVENTION fc);
+
+        /// Convert a geographic position to a cartesian position, using the geographic service of FrEnvironment
+        /// \param geoCoord geographic position to convert
+        /// \param cartPos cartesian position
+        /// \param fc frame position (NED/NWU) of the cartesian position
+        void GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc);
+
+        /// Convert a geographic position to a cartesian position, using the geographic service of FrEnvironment
+        /// \param geoCoord geographic position to convert
+        /// \param cartPos cartesian position
+        /// \param fc frame position (NED/NWU) of the cartesian position
+        void GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc) const;
+
+        /// Convert a geographic position to a cartesian position, using the geographic service of FrEnvironment
+        /// \param geoCoord geographic position to convert
+        /// \param fc frame position (NED/NWU) of the cartesian position
+        /// \return cartPos cartesian position
+        Position GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) const;
+
+        /// Convert a geographic position to a cartesian position, using the geographic service of FrEnvironment
+        /// \param geoCoord geographic position to convert
+        /// \param fc frame position (NED/NWU) of the cartesian position
+        /// \return cartPos cartesian position
+        Position GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc);
 
         // TODO : voir si on a besoin que ce bloc soit protected...
         std::shared_ptr<chrono::ChBody> GetChronoBody() {

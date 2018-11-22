@@ -51,7 +51,7 @@ protected:
 
     Position m_PointInWorld;                    ///< Position of an arbitrary point in world frame
     FrFrame_ m_frameREF;                        ///< Local frame at Point
-    FrQuaternion_ m_quatREF;                    ///< Rotation of the local frame / world frame
+    FrUnitQuaternion_ m_quatREF;                    ///< Rotation of the local frame / world frame
     Velocity m_PointVelocityInWorld;            ///< Velocity vector of the local frame / world frame
 
     Velocity m_VelocityInWorld;                 ///< Current velocity at Point in world frame
@@ -100,7 +100,7 @@ void TestFrUniformCurrent_::LoadData(std::string filename) {
     m_PointInWorld = ReadVector<Position>(reader, group + "PointInWorld");
     auto direction = ReadVector<Direction>(reader, group + "RotationDirection/") ;
     double angle = reader.ReadDouble(group + "RotationAngle/");
-    m_quatREF = FrQuaternion_(direction, angle, NWU);
+    m_quatREF = FrUnitQuaternion_(direction, angle, NWU);
     m_frameREF = FrFrame_(m_PointInWorld, m_quatREF, NWU);
     m_PointVelocityInWorld = ReadVector<Velocity>(reader, group + "PointVelocityInWorld/");
 
