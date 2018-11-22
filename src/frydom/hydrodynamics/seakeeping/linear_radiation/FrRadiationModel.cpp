@@ -297,4 +297,25 @@ namespace frydom {
         return radiationForce;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ////////////   REFACTORING ---------------->>>>>>>>>>>>>>
+
+    
+
+
+
 }

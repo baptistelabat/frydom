@@ -124,7 +124,20 @@ namespace frydom {
     ///////////////////   REFACTORING --------------->>>>>>>>>>>>>>>>>>>>
 
 
+    // Forward declaration
+    class FrRadiationModel_;
 
+    struct _FrRadiationModelBase : public chrono::ChPhysicsItem {
+
+        FrRadiationModel_* m_frydomRadiationModel;
+
+        explicit _FrRadiationModelBase(FrRadiationModel_* model);
+
+        void SetupInitial() override;
+
+        void Update(bool update_assets) override;
+
+    };
 
 
 
