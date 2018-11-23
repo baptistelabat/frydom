@@ -55,7 +55,7 @@ void TestFrFlowBase::SetUp() {
 
     LoadData("TNR_database.h5");
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
-    flow = std::make_shared<FrFlowBase>(system.GetEnvironment());
+    flow = std::make_shared<FrFlowBase>();
     flow->MakeFieldUniform();
     flow->GetFieldUniform()->Set(m_VelocityInWorld, NWU, GOTO);
 }

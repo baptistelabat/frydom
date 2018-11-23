@@ -6,7 +6,7 @@
 #include "frydom/frydom.h"
 
 #include "frydom/core/FrNode.h"
-#include "frydom/environment/waves/FrWaveProbe.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h"
 #include "frydom/core/FrSpringDampingForce.h"
 #include "frydom/core/FrNodeDynamic.h"
 

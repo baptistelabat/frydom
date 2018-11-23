@@ -6,8 +6,8 @@
 #define FRYDOM_FRLINEAREXCITATIONFORCE_H
 
 #include "frydom/core/FrForce.h"
-#include "frydom/environment/waves/FrWaveProbe.h"
-#include "frydom/environment/waves/FrWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/core/FrHydroBody.h"
 
 #include "FrHydroMapper.h"

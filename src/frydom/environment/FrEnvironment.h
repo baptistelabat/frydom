@@ -313,6 +313,8 @@ namespace frydom {
         Velocity GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
                 FLUID_TYPE ft, FRAME_CONVENTION fc);
 
+        double GetFluidDensity(FLUID_TYPE ft) const;;
+
 
         // Geographic coordinates manipulations
 

@@ -20,6 +20,7 @@
 #include "ocean/current/FrCurrent.h"
 
 #include "atmosphere/FrAtmosphere_.h"
+#include "atmosphere/wind/FrWind.h"
 
 #include "flow/FrFlowBase.h"
 
@@ -33,8 +34,8 @@ namespace frydom {
     FrEnvironment::FrEnvironment() {
 
         m_freeSurface = std::make_unique<FrFreeSurface>();
-        //m_current = std::make_unique<FrUniformCurrent>();
-        //m_wind = std::make_unique<FrUniformWind>();
+        m_current = std::make_unique<FrUniformCurrent>();
+        m_wind = std::make_unique<FrUniformWind>();
         m_seabed = std::make_unique<FrSeabed>();
         if (not(m_infinite_depth)) m_seabed->SetEnvironment(this);
         if (m_showSeabed) m_seabed->SetEnvironment(this);
@@ -310,6 +311,15 @@ namespace frydom {
         }
     }
 
+    double FrEnvironment_::GetFluidDensity(FLUID_TYPE ft) const {
+        switch (ft) {
+            case AIR:
+                return m_atmosphere->GetDensity();
+            case WATER:
+                return m_ocean->GetDensity();
+        }
+    }
+
     FrGeographicServices *FrEnvironment_::GetGeographicServices() const {
         return m_geographicServices.get();
     }
@@ -339,6 +349,7 @@ namespace frydom {
         m_ocean->StepFinalize();
         m_atmosphere->StepFinalize();
     }
+
 
 
 }  // end namespace frydom

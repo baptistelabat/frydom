@@ -9,8 +9,8 @@
 
 #include "frydom/core/FrConvention.h"
 #include "frydom/core/FrNode.h"
-#include "frydom/environment/waves/FrWaveField.h"
-#include "frydom/environment/waves/FrFlowSensor.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrFlowSensor.h"
 
 namespace frydom {
 

@@ -170,17 +170,17 @@ TEST_F(TestFrFlowForce, TestWindForce) {
     TestForce();
 };
 
-TEST_F(TestFrFlowForce, TestFlowForce) {
-    LoadData("TNR_database.h5", "/current_force/");
-    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM_0_PI.yml"); // OK
-    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM_0_180.yml"); // OK
-    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM_0_2PI.yml"); // OK (numerical error)
-    MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_GOTO_0_PI.yml"); // OK (numerical error)
-    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM__PI_PI.yml"); // NO
-    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NED_COMEFROM_0_PI.yml"); // OK (numerical error)
-    system.Initialize();
-    TestForce();
-};
+//TEST_F(TestFrFlowForce, TestFlowForce) {
+//    LoadData("TNR_database.h5", "/current_force/");
+//    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM_0_PI.yml"); // OK
+//    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM_0_180.yml"); // OK
+//    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM_0_2PI.yml"); // OK (numerical error)
+//    MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_GOTO_0_PI.yml"); // OK (numerical error)
+//    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM__PI_PI.yml"); // NO
+//    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NED_COMEFROM_0_PI.yml"); // OK (numerical error)
+//    system.Initialize();
+//    TestForce();
+//};
 
 
 int main(int argc, char **argv) {
