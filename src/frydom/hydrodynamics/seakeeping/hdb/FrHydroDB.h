@@ -223,12 +223,18 @@ namespace frydom {
 
         std::unique_ptr<FrBEMBodyMapper_> m_bodyMapper;
 
+        double m_cutoffTime = -1.; // Negative or null if calculated automatically at Initialization of the HDB...
+
+
+        bool c_isInitialized = false;
 
 
     public:
 
         /// Constructor from a HDB5 file that is loaded
         explicit FrHydroDB_(std::string hdb5File);
+
+        void SetCutoffTime(double cutoffTime);
 
         /// Get the number of interacting bodies
         unsigned long GetNbBodies() const { return m_bodies.size(); }
@@ -245,6 +251,8 @@ namespace frydom {
         FrBody_* GetFrydomBody(FrBEMBody_* bemBody);
 
         bool IsFullyConnected() const;
+
+        void Initialize();
 
 
 
@@ -375,6 +383,10 @@ namespace frydom {
         friend unsigned long FrBEMBody_::GetIndexInHDB() const;
 
         unsigned long GetBodyIndex(const FrBEMBody_* bemBody);
+
+
+        void EstimateCutoffTime();
+
 
 
     };  // end class FrHydroDB

@@ -806,6 +806,13 @@ namespace frydom {
         return m_HDB->GetBodyIndex(this);
     }
 
+    double FrBEMBody_::GetMaxDamping(const FrBEMBody_* bemBody) const {
+
+        auto damping = GetRadiationDamping(bemBody);
+
+
+    }
+
     void FrBEMBody_::Initialize() {
         assert(!m_ForceModes.empty() && !m_MotionModes.empty());
 

@@ -318,7 +318,47 @@ namespace frydom {
 
     /////////// REFACTORING -------------------->>>>>>>>>>>>>>>>>><
 
+    // Forward declarations
     class FrHydroDB_;
+    class FrBEMBody_;
+
+
+    /// Definition of the hydrodynamics coefficients containers
+
+    template <typename ScalarType>
+    class ForceModeFrequencyContainer {
+
+    private:
+
+        FrBEMBody_* m_bemBody;
+        Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic> m_matrix;
+
+    public:
+
+        ForceModeFrequencyContainer(unsigned int nbForceMode, unsigned int nbFreq);
+
+        void SetMatrix(const Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>& matrix);
+
+        Eigen::Matrix<ScalarType, 1, Eigen::Dynamic> GetFrequencyVector(const FrBEMForceMode& forceMode);
+
+
+
+
+    };
+
+
+
+    struct ExcitationContainer : public std::vector<Eigen::MatrixXd> {
+
+        FrHydroDB_ *m_HDB;
+
+
+    };
+
+
+
+
+
 
 
     class FrBEMBody_ {
@@ -343,6 +383,28 @@ namespace frydom {
         std::vector<Eigen::MatrixXcd> m_Diffraction;
         std::vector<Eigen::MatrixXcd> m_FroudeKrylov;
         std::vector<Eigen::MatrixXcd> m_Excitation;
+
+
+        // Definition of the different containers used to store hydrodynamics coefficients
+
+        // TODO : definir une serie de structures permettant de simplifier l'utilisation des coeffs hydro !!!
+
+
+
+
+//        using ForceFrequencyContainer = Eigen::MatrixXd;
+//
+//        using ByDOFContainer = std::vector<Eigen::MatrixXd>;
+//        using ByBodyContainer = std::vector<ByDOFContainer>;
+//
+//        using AddedMassContainer = ByBodyContainer ;
+//        using RadiationDampingContainer = ByBodyContainer;
+//        using IRFContainer = ByBodyContainer ;
+//        using ForwardSpeedIRFContainer = ByBodyContainer ;
+//
+//        using InfiniteAddedMassContainer = std::vector<Eigen::MatrixXd>;
+
+
 
         std::vector<Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>> m_RadiationMask;
         std::vector<Eigen::MatrixXd> m_InfiniteAddedMass;
@@ -501,6 +563,9 @@ namespace frydom {
 //
 //        void SetBEMVariables();
 
+        /// Get the maximum value of the wave damping acting on this body for a motion of the body given as input argument
+        /// Only diagonal terms are taken into account
+        double GetMaxDamping(const FrBEMBody_* bemBody) const;
 
 
         unsigned long GetIndexInHDB() const;

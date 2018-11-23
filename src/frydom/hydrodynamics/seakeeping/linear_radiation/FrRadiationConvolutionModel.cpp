@@ -16,6 +16,8 @@ namespace frydom   {
 
     void FrRadiationConvolutionModel_::Initialize() {
 
+        m_HDB->Initialize();
+
         // Initializing velocity recorders
 
         unsigned long nbBodies = m_HDB->GetNbBodies();

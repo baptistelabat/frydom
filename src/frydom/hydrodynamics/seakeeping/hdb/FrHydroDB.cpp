@@ -542,6 +542,10 @@ namespace frydom {
 
     }
 
+    void FrHydroDB_::SetCutoffTime(double cutoffTime) {
+        m_cutoffTime = cutoffTime;
+    }
+
     void FrHydroDB_::Bind(std::string bemBodyName, FrBody_* frydomBody) {
         m_bodyMapper->AddEntry(GetBEMBody(std::move(bemBodyName)), frydomBody);
     }
@@ -564,6 +568,26 @@ namespace frydom {
 
     bool FrHydroDB_::IsFullyConnected() const {
         return GetNbBodies() == m_bodyMapper->GetNbMappedBodies();
+    }
+
+    void FrHydroDB_::Initialize() {
+        if (c_isInitialized) return;
+
+        assert(IsFullyConnected());
+
+        // TODO : faire le calcul des reponses impulsionnelles par expl...
+        GenerateImpulseResponseFunctions();
+
+
+        // Filtering the Impulse responses functions
+        if (m_cutoffTime <= 0.) EstimateCutoffTime(); // The cutoff time is automatically estimated by FRyDoM
+        FilterImpulseResponseFunctions();
+
+
+        // AUTRE ?
+
+
+        c_isInitialized = true;
     }
 
 
@@ -590,6 +614,22 @@ namespace frydom {
 
     unsigned long FrHydroDB_::GetBodyIndex(const FrBEMBody_* bemBody) {
         return m_namedBodyMap.at(bemBody->GetName()).first;
+    }
+
+    void FrHydroDB_::EstimateCutoffTime() {
+        // give a damping level approximation Cutoff Tolerance, as a percentage error
+        // relative to the largest damping level given
+
+
+        // Getting the maximum wave damping damping
+        double maxDamping = 0.;
+
+        auto bodyIter = begin_body();
+        for (; bodyIter != end_body(); bodyIter++) {
+            maxDamping = std::max(maxDamping, (*bodyIter)->GetMaxDamping());
+        }
+
+
     }
 
 
