@@ -57,9 +57,7 @@ namespace frydom {
 
     void FrEquilibriumFrame_::SetPositionToBodyPosition() {
         this->SetPosition(m_body->GetCOGPositionInWorld(NWU), NWU);
-        double temp1, temp2, psi;
-        m_body->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, psi, NWU);
-        this->SetRotation( this->GetRotation().RotZ_RADIANS(psi, NWU) );
+        this->SetRotation(m_body->GetRotation());
         m_initPositionFromBody = false;
     }
 
