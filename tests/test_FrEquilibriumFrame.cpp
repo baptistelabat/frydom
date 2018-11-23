@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
         RBody.push_back(rb);
         RFrame.push_back(rf);
         WBody.push_back(body->GetAngularVelocityInWorld(NWU).GetWz());
-        WFrame.push_back(eqFrame->GetAngularVelocity());
+        WFrame.push_back(eqFrame->GetAngularVelocityAroundZ(NWU));
     }
 
 

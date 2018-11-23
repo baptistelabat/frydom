@@ -11,13 +11,21 @@ namespace frydom {
     // Equilibrium frame
     // ---------------------------------------------------------------------
 
-    void FrEquilibriumFrame_::SetVelocity(const Velocity& velocity) {
+    void FrEquilibriumFrame_::SetVelocityInWorld(const Velocity& velocity, FRAME_CONVENTION fc) {
+        if(IsNED(fc)) internal::SwapFrameConvention(velocity);
         m_velocity = velocity;
         m_initSpeedFromBody = false;
     }
 
-    void FrEquilibriumFrame_::SetAngularVelocity(const double &angularVelocity) {
+    void FrEquilibriumFrame_::SetVelocityInFrame(const Velocity& frameVel) {
+        auto worldVel = ProjectVectorInParent(frameVel);
+        this->SetVelocityInWorld(worldVel, NWU);
+        m_initSpeedFromBody = false;
+    }
+
+    void FrEquilibriumFrame_::SetAngularVelocityAroundZ(const double &angularVelocity, FRAME_CONVENTION fc) {
         m_angularVelocity = angularVelocity;
+        if(IsNED(fc))  { m_angularVelocity = -m_angularVelocity; }
         m_initSpeedFromBody = false;
     }
 
@@ -36,24 +44,37 @@ namespace frydom {
         return ProjectVectorParentInFrame<Velocity>(m_velocity);
     }
 
-    double FrEquilibriumFrame_::GetAngularVelocity() const {
-        return m_angularVelocity;
+    double FrEquilibriumFrame_::GetAngularVelocityAroundZ(FRAME_CONVENTION fc) const {
+        double result = m_angularVelocity;
+        if (IsNED(fc)) { result = -result; }
+        return result;
+    }
+
+    AngularVelocity FrEquilibriumFrame_::GetAngularVelocity(FRAME_CONVENTION fc) const {
+        auto wvel = GetAngularVelocityAroundZ(fc);
+        return AngularVelocity(0., 0., wvel);
+    }
+
+    void FrEquilibriumFrame_::SetPositionToBodyPosition() {
+        this->SetPosition(m_body->GetCOGPositionInWorld(NWU), NWU);
+        double temp1, temp2, psi;
+        m_body->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, psi, NWU);
+        this->SetRotation( this->GetRotation().RotZ_RADIANS(psi, NWU) );
+        m_initPositionFromBody = false;
+    }
+
+    void FrEquilibriumFrame_::SetVelocityToBodyVelocity() {
+        m_velocity = m_body->GetCOGVelocityInWorld(NWU);
+        m_angularVelocity = 0.;
+        m_initSpeedFromBody = false;
     }
 
     void FrEquilibriumFrame_::Initialize() {
 
-        if (m_initPositionFromBody) {
-            this->SetPosition(m_body->GetPosition(NWU), NWU);
-            double temp1, temp2, psi;
-            m_body->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, psi, NWU);
-            this->GetRotation().RotZ_RADIANS(psi, NWU);
-        }
+        if(!m_body) { throw FrException("error : the body is not defined in equilibrium frame"); }
 
-        if (m_initSpeedFromBody) {
-            m_velocity = m_body->GetVelocityInWorld(NWU);
-            m_angularVelocity = 0.;
-        }
-
+        if (m_initPositionFromBody) this->SetPositionToBodyPosition();
+        if (m_initSpeedFromBody) this->SetVelocityToBodyVelocity();
     }
 
     // -----------------------------------------------------------------------
@@ -144,7 +165,9 @@ namespace frydom {
 
     void FrEqFrameMeanMotion_::Update(double time) {
 
-        m_TrSpeedRec->Record(time, m_body->GetVelocityInWorld(NWU));
+        if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
+
+        m_TrSpeedRec->Record(time, m_body->GetCOGVelocityInWorld(NWU));
         m_AglSpeedRec->Record(time, m_body->GetAngularVelocityInWorld(NWU).GetWz());
 
         m_velocity = m_TrSpeedRec->GetMean();
