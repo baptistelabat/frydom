@@ -219,13 +219,19 @@ namespace frydom {
     /// during a period of time specified by the user. Past velocities are recorded
     /// in a buffer with a specific time stepper.
 
+    // TODO : il faudrait pouvoir retrancher une difference de position moyenne
+
     class FrEqFrameMeanMotion_ : public FrEquilibriumFrame_ {
 
     private:
 
         std::unique_ptr<FrTimeRecorder_<Velocity>> m_TrSpeedRec;        ///< Recorder of the translational speed of the body
         std::unique_ptr<FrTimeRecorder_<double>> m_AglSpeedRec;         ///< Recorder of the angular speed of the body around the vertical axis Z
+        std::unique_ptr<FrTimeRecorder_<Position>> m_ErrPositionRec;    ///< Recorder of the position error
+        std::unique_ptr<FrTimeRecorder_<double>> m_ErrAngleRec;
         double m_prevTime;              ///< Previous time recorded in the buffer
+        double m_errPosCoeff;           ///< Damping coefficient for position correction
+        double m_errAngleCoeff;
 
     public:
 
@@ -262,6 +268,8 @@ namespace frydom {
         /// \param timePersistence Time windows for the mean velocity computation
         /// \param timeStep Time step for the recorder
         FrEqFrameMeanMotion_(const FrFrame_ &otherFrame, FrBody_* body, double timePersistence, double timeStep);
+
+        void SetPositionCorrection(double timePersistence, double timeStep, double posCoeff, double angleCoeff);
 
         /// Update position and velocity of the equilibrium frame
         /// \param time Current time of the simulation from beginning

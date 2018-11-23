@@ -20,6 +20,17 @@ void GetVector(std::vector<double>& x, std::vector<double>& y, std::vector<doubl
     }
 }
 
+
+inline Velocity HorSpeedFunction(const double& time) {
+    Velocity result;
+    result = Velocity(0., 2., 0.);
+    result += Velocity(0.1 * sin(M_PI / 5. * time), 0.2 * sin(M_PI / 4. * time), 0);
+    result += Velocity(0.5 * cos(M_PI / 1. * (time - 2.)), 0.8 * cos(M_PI / 5. * (time - 5.) ), 0);
+    result += Velocity(1. * sin(M_PI / 10. * (time - 10.)), 1. * sin(M_PI / 10. * (time - 50.) ), 0);
+    result += Velocity(0.8 * cos(M_PI / 20. * (time - 45)), 0.5 * cos(M_PI / 6. * (time - 2.) ), 0);
+    return result;
+}
+
 int main(int argc, char* argv[]) {
 
 
@@ -29,15 +40,18 @@ int main(int argc, char* argv[]) {
 
     body->RemoveGravity(true); // Permet de supprimer les mouvements verticaux
 
-    //auto eqFrame = std::make_shared<FrEqFrameMeanMotion_>(body.get(), 10., 0.1);
+    //auto eqFrame = std::make_shared<FrEqFrameMeanMotion_>(body.get(), 60., 0.1);
+    //eqFrame->SetPositionCorrection(60., 0.1, 0.01/60., 0.01/60.);
     //system.AddPhysicsItem(eqFrame);
 
-    auto eqFrame = std::make_shared<FrEqFrameSpringDamping_>(body.get(), 60., 0.5);
+    auto eqFrame = std::make_shared<FrEqFrameSpringDamping_>(body.get(), 120., 0.5);
     system.AddPhysicsItem(eqFrame);
+
+    eqFrame->InitSpeedFromBody(true);
 
     double time = 0.;
     double dt = 0.01;
-    double tmax = 200.;
+    double tmax = 400.;
 
     auto HorSpeed = Velocity(0., 2., 0.);
     auto RotSpeed = AngularVelocity(0., 0., M_PI_2 / 40.);
@@ -64,9 +78,9 @@ int main(int argc, char* argv[]) {
 
 
         if (time > 80. and time < 120.) {
-            body->SetGeneralizedVelocityInBody(HorSpeed, RotSpeed, NWU);
+            body->SetGeneralizedVelocityInBody(HorSpeedFunction(time), RotSpeed, NWU);
         } else {
-            body->SetGeneralizedVelocityInBody(HorSpeed, NoRotSpeed, NWU);
+            body->SetGeneralizedVelocityInBody(HorSpeedFunction(time), NoRotSpeed, NWU);
         }
 
         system.AdvanceTo(time);

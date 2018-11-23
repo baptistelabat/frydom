@@ -162,6 +162,15 @@ namespace frydom {
         m_AglSpeedRec->Initialize();
     }
 
+    void FrEqFrameMeanMotion_::SetPositionCorrection(double timePersistence, double timeStep,
+                                                     double posCoeff, double angleCoeff) {
+        m_ErrPositionRec = std::make_unique<FrTimeRecorder_<Position>>(timePersistence, timeStep);
+        m_ErrPositionRec->Initialize();
+        m_ErrAngleRec = std::make_unique<FrTimeRecorder_<double>>(timePersistence, timeStep);
+        m_ErrAngleRec->Initialize();
+        m_errPosCoeff = posCoeff;
+        m_errAngleCoeff = angleCoeff;
+    }
 
     void FrEqFrameMeanMotion_::Update(double time) {
 
@@ -176,8 +185,24 @@ namespace frydom {
         auto position = GetPosition(NWU);
         position += m_velocity * (time - m_prevTime);
 
-        SetRotation( GetRotation().RotZ_RADIANS(m_angularVelocity * (time - m_prevTime), NWU));
+        auto angle = m_angularVelocity * (time - m_prevTime);
+
+        if (m_ErrPositionRec and m_ErrAngleRec) {
+
+            m_ErrPositionRec->Record(time, m_body->GetCOGPositionInWorld(NWU) - GetPosition(NWU));
+            auto errMeanPosition = m_ErrPositionRec->GetMean();
+            position += errMeanPosition * m_errPosCoeff;
+
+            double temp1, temp2, bodyAngle, frameAngle;
+            m_body->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, bodyAngle, NWU);
+            this->GetRotation().GetCardanAngles_RADIANS(temp1, temp2, frameAngle, NWU);
+            m_ErrAngleRec->Record(time, bodyAngle - frameAngle);
+            auto errMeanAngle = m_ErrAngleRec->GetMean();
+            angle += errMeanAngle * m_errAngleCoeff;
+        }
+
         this->SetPosition(position, NWU);
+        SetRotation( GetRotation().RotZ_RADIANS(angle, NWU));
 
         m_prevTime = time;
     }
