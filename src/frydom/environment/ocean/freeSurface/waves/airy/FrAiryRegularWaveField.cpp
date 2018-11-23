@@ -7,10 +7,22 @@
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/seabed/FrSeabed.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
 //#include "../FrWaveDispersionRelation.h"
 
 namespace frydom {
+
+    FrAiryRegularWaveField::FrAiryRegularWaveField(FrFreeSurface_* freeSurface) : FrWaveField_(freeSurface) {
+
+        m_waveRamp = std::make_shared<FrRamp>();
+        m_waveRamp->Initialize();
+
+        m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+        m_verticalFactor->SetInfDepth(m_infinite_depth);
+
+    }
 
     void FrAiryRegularWaveField::SetWaveHeight(double height) { m_height = height;}
 
@@ -25,7 +37,7 @@ namespace frydom {
         m_omega = S2RADS(m_period);
 
         // Set the wave number, using the wave dispersion relation
-        auto waterHeight = m_freeSurface->GetMeanHeight();
+        auto waterHeight = m_freeSurface->GetMeanHeight() - m_freeSurface->GetOcean()->GetSeabed()->GetDepth();
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
         m_k = SolveWaveDispersionRelation(waterHeight, m_omega, gravityAcceleration);
 
@@ -48,7 +60,7 @@ namespace frydom {
 
     }
 
-    void FrAiryRegularWaveField::SetDirection(Direction direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
+    void FrAiryRegularWaveField::SetDirection(const Direction& direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         assert(mathutils::IsClose(direction.Getuz(),0.));
         double dirAngle = atan2(direction.Getuy(),direction.Getux());
         SetDirection(dirAngle, RAD, fc, dc);
@@ -69,8 +81,7 @@ namespace frydom {
         return {cos(m_dirAngle), sin(m_dirAngle), 0.};
     }
 
-
-
+    double FrAiryRegularWaveField::GetWaveLength() const {return 2.*M_PI/m_k;}
 
 
 
@@ -121,6 +132,21 @@ namespace frydom {
 
         return Velocity();
     }
+
+//    void FrAiryRegularWaveField::Update(double time) {
+//        FrWaveField_::Update(time);
+//    }
+
+    Acceleration FrAiryRegularWaveField::GetAcceleration(double x, double y, double z) const {
+        return Acceleration();
+    }
+
+    std::vector<std::vector<std::vector<Velocity>>>
+    FrAiryRegularWaveField::GetVelocityGrid(const std::vector<double> &xvect, const std::vector<double> &yvect,
+                                            const std::vector<double> &zvect) const {
+        return std::vector<std::vector<std::vector<Velocity>>>();
+    }
+
 
 
 }

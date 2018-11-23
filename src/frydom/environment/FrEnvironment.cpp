@@ -34,8 +34,8 @@ namespace frydom {
     FrEnvironment::FrEnvironment() {
 
         m_freeSurface = std::make_unique<FrFreeSurface>();
-        m_current = std::make_unique<FrUniformCurrent>();
-        m_wind = std::make_unique<FrUniformWind>();
+//        m_current = std::make_unique<FrUniformCurrent>();
+//        m_wind = std::make_unique<FrUniformWind>();
         m_seabed = std::make_unique<FrSeabed>();
         if (not(m_infinite_depth)) m_seabed->SetEnvironment(this);
         if (m_showSeabed) m_seabed->SetEnvironment(this);

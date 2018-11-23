@@ -25,14 +25,15 @@
 #include "chrono/assets/ChTexture.h"
 
 #include "frydom/mesh/FrTriangleMeshConnected.h"
-#include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
-
-#include "frydom/environment/ocean/FrOcean_.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h"
-
 
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h"
+#include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryRegularWaveField.h"
+
+
 #include "frydom/core/FrBody.h"
 
 
@@ -422,7 +423,7 @@ namespace frydom {
     FrFreeSurface_::FrFreeSurface_(FrOcean_* ocean) : m_ocean(ocean) {
 
         // Creating a waveField and a tidal model
-        m_waveField = std::make_shared<FrNullWaveField_>(this);
+        m_waveField = std::make_unique<FrNullWaveField_>(this);
         m_tidal     = std::make_unique<FrTidal_>(this);
 
         CreateFreeSurfaceBody();
@@ -509,13 +510,14 @@ namespace frydom {
             // FIXME: le fait que le wavefield soit requis pour initialiser le maillage de surface libre fait qu'on est
             // oblige de definir le wavefield avant d'activer l'asset --> pas flex du tout. Utiliser plutot un flag pour
             // etablir que l'asset est initialise ou pas et initialiser la gille  lors de l'appel a UpdateGrid si le flag est false
-            auto waveField = std::static_pointer_cast<FrLinearWaveField_>(m_waveField);
-
-            for (auto& vertex : m_meshAsset->getCoordsVertices()) {
-                auto waveProbe = waveField->NewWaveProbe(vertex.x(), vertex.y());
-                waveProbe->Initialize();
-                m_waveProbeGrid.push_back(waveProbe);
-            }
+// ##LL
+//            auto waveField = std::static_pointer_cast<FrLinearWaveField_>(m_waveField);
+//
+//            for (auto& vertex : m_meshAsset->getCoordsVertices()) {
+//                auto waveProbe = waveField->NewWaveProbe(vertex.x(), vertex.y());
+//                waveProbe->Initialize();
+//                m_waveProbeGrid.push_back(waveProbe);
+//            }
         }
 
     }
@@ -668,11 +670,39 @@ namespace frydom {
 
     void FrFreeSurface_::SetLinearWaveField(LINEAR_WAVE_TYPE waveType) {
 //        m_waveModel = LINEAR_WAVES;
-        m_waveField = std::make_shared<FrLinearWaveField_>(this, waveType);
+        m_waveField = std::make_unique<FrLinearWaveField_>(this, waveType);
     }
 
     FrLinearWaveField *FrFreeSurface_::GetLinearWaveField() const {
         return dynamic_cast<FrLinearWaveField*>(m_waveField.get());
+    }
+
+
+
+    FrAiryRegularWaveField*
+    FrFreeSurface_::SetAiryRegularWaveField() {
+        m_waveField = std::make_unique<FrAiryRegularWaveField>(this);
+        return dynamic_cast<FrAiryRegularWaveField*>(m_waveField.get());
+    }
+
+    FrAiryRegularWaveField*
+    FrFreeSurface_::SetAiryRegularWaveField(double waveHeight, double wavePeriod, double waveDirAngle, ANGLE_UNIT unit,
+                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
+        auto waveField = SetAiryRegularWaveField();
+        waveField->SetWaveHeight(waveHeight);
+        waveField->SetWavePeriod(wavePeriod);
+        waveField->SetDirection(waveDirAngle, unit, fc, dc);
+        return waveField;
+    }
+
+    FrAiryRegularWaveField*
+    FrFreeSurface_::SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
+                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
+        auto waveField = SetAiryRegularWaveField();
+        waveField->SetWaveHeight(waveHeight);
+        waveField->SetWavePeriod(wavePeriod);
+        waveField->SetDirection(waveDirection, fc, dc);
+        return waveField;
     }
 
     double FrFreeSurface_::GetMeanHeight() const {

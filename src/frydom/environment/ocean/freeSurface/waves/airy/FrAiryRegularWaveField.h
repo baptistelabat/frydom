@@ -10,6 +10,9 @@
 
 namespace frydom {
 
+    //Forward Declaration
+    class FrFreeSurface_;
+
 
     class FrAiryRegularWaveField : public FrWaveField_ {
     private:
@@ -25,8 +28,12 @@ namespace frydom {
         double m_dirAngle = 0.; // used internally with the conventions : NWU, GOTO, and unit : RAD; [0,2PI]
         Direction m_direction = NORTH(NWU);
 
+        /// Vertical scale velocity factor with stretching
+        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;
+
     public:
 
+        explicit FrAiryRegularWaveField(FrFreeSurface_* freeSurface);
 
         void SetWaveHeight(double height);
 
@@ -34,7 +41,7 @@ namespace frydom {
 
         void SetDirection(double dirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
-        void SetDirection(Direction direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+        void SetDirection(const Direction& direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
         double GetWaveHeight() const;;
 
@@ -44,8 +51,9 @@ namespace frydom {
 
         Direction GetDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const;;
 
+        double GetWaveLength() const;
 
-        void Update(double time) final;
+//        void Update(double time) final;
 
         double GetElevation(double x, double y) const final;
 

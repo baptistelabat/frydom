@@ -200,6 +200,7 @@ namespace frydom{
     class FrOcean_;
     class FrTidal_;
     class FrBody_;
+    class FrAiryRegularWaveField;
 
 
 
@@ -232,9 +233,7 @@ namespace frydom{
 
         std::unique_ptr<FrTidal_> m_tidal;
 
-        std::shared_ptr<FrWaveField_> m_waveField;
-
-//        WAVE_MODEL m_waveModel = NO_WAVES;
+        std::unique_ptr<FrWaveField_> m_waveField;
 
         // Mesh for the asset
         std::shared_ptr<FrTriangleMeshConnected> m_meshAsset;
@@ -289,6 +288,15 @@ namespace frydom{
         FrWaveField_ * GetWaveField() const;
 
         void NoWaves();
+
+        FrAiryRegularWaveField* SetAiryRegularWaveField();
+        
+        FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, double waveDirAngle,
+                                                        ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+        
+        FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
+                                                        FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+
 
         void SetLinearWaveField(LINEAR_WAVE_TYPE waveType);
 
