@@ -343,19 +343,19 @@ namespace frydom {
     }
 
     const double FrCatwayEnvironmentInterface::GetWaterDensity() const {
-        return m_frydomEnvironment->GetWaterDensity();
+        return m_frydomEnvironment->GetOcean()->GetDensity();
     }
 
     const double FrCatwayEnvironmentInterface::GetAirDensity() const {
-        return m_frydomEnvironment->GetAirDensity();
+        return m_frydomEnvironment->GetAtmosphere()->GetDensity();
     }
 
     const double FrCatwayEnvironmentInterface::GetFreeSurfaceHeight(const Vector& position) const {
-        return m_frydomEnvironment->GetFreeSurface()->GetHeight(position[0], position[1]);
+        return m_frydomEnvironment->GetOcean()->GetFreeSurface()->GetHeight(position[0], position[1]);
     }
 
     const double FrCatwayEnvironmentInterface::GetSeabedHeight(const Vector& position) const {
-        return m_frydomEnvironment->GetSeabed()->GetDepth();  // TODO : seabed doit avoir une methode donnant le depth fonction de x et y...
+        return m_frydomEnvironment->GetOcean()->GetSeabed()->GetDepth();  // TODO : seabed doit avoir une methode donnant le depth fonction de x et y...
     }
 
     const Velocity FrCatwayEnvironmentInterface::GetEnvironmentFlux(const Position& position) const {

@@ -113,13 +113,13 @@ void TestFrUniformCurrent_::LoadData(std::string filename) {
 void TestFrUniformCurrent_::SetUp() {
 
     LoadData("TNR_database.h5");
-    system.GetEnvironment()->GetCurrent()->GetField()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
+    system.GetEnvironment()->GetOcean()->GetCurrent()->GetField()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
 
 }
 
 void TestFrUniformCurrent_::TestGetWorldFluxVelocity() {
 
-    Velocity velocity = system.GetEnvironment()->GetCurrent()->GetFluxVelocityInWorld(m_PointInWorld, m_frame);
+    Velocity velocity = system.GetEnvironment()->GetOcean()->GetCurrent()->GetFluxVelocityInWorld(m_PointInWorld, m_frame);
     Velocity velocityREF = velocity - m_PointVelocityInWorld;
 
     EXPECT_FLOAT_EQ(velocity.GetVx(), m_VelocityInWorld.GetVx());
@@ -129,7 +129,7 @@ void TestFrUniformCurrent_::TestGetWorldFluxVelocity() {
 
 void TestFrUniformCurrent_::TestGetRelativeVelocityInFrame() {
 
-    Velocity velocity = system.GetEnvironment()->GetCurrent()->GetRelativeVelocityInFrame(m_frameREF, m_PointVelocityInWorld, m_frame);
+    Velocity velocity = system.GetEnvironment()->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(m_frameREF, m_PointVelocityInWorld, m_frame);
 
     EXPECT_FLOAT_EQ(velocity.GetVx(), m_RelativeVelocityInFrame.GetVx());
     EXPECT_FLOAT_EQ(velocity.GetVy(), m_RelativeVelocityInFrame.GetVy());
@@ -138,19 +138,19 @@ void TestFrUniformCurrent_::TestGetRelativeVelocityInFrame() {
 
 
 TEST_F(TestFrUniformCurrent_, Update) {
-    system.GetEnvironment()->GetCurrent()->Update(0.);
+    system.GetEnvironment()->GetOcean()->GetCurrent()->Update(0.);
 }
 
 TEST_F(TestFrUniformCurrent_, Initialize) {
-    system.GetEnvironment()->GetCurrent()->Initialize();
+    system.GetEnvironment()->GetOcean()->GetCurrent()->Initialize();
 }
 
 TEST_F(TestFrUniformCurrent_, StepFinalize) {
-    system.GetEnvironment()->GetCurrent()->StepFinalize();
+    system.GetEnvironment()->GetOcean()->GetCurrent()->StepFinalize();
 }
 
 TEST_F(TestFrUniformCurrent_, GetField) {
-    auto field = system.GetEnvironment()->GetCurrent()->GetField();
+    auto field = system.GetEnvironment()->GetOcean()->GetCurrent()->GetField();
 }
 
 TEST_F(TestFrUniformCurrent_, TestWorldFluxVelocity) {
@@ -258,7 +258,7 @@ void TestFrCurrentForce_::TestForce() {
     Torque torqueTemp;
 
     for (unsigned int i=0; i<current_speed.size(); i++) {
-        system.GetEnvironment()->GetCurrent()->GetField()->Set(current_dir(i), current_speed(i), angleUnit, speedUnit, frame, convention);
+        system.GetEnvironment()->GetOcean()->GetCurrent()->GetField()->Set(current_dir(i), current_speed(i), angleUnit, speedUnit, frame, convention);
         force->Update(false);
         force->GetForceInWorld(forceTemp, NWU);
         force->GetTorqueInBodyAtCOG(torqueTemp, NWU);

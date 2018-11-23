@@ -6,11 +6,11 @@
 #include "FrFlowBase.h"
 #include "frydom/core/FrFrame.h"
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/field/FrUniformField.h"
+#include "FrUniformField.h"
 
 namespace frydom {
 
-    FrFlowBase::FrFlowBase(FrEnvironment_ *environment) : m_environment(environment) {
+    FrFlowBase::FrFlowBase() {
         m_field = std::make_unique<FrUniformField>();
     };
 

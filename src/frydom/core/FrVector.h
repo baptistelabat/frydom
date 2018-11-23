@@ -375,14 +375,14 @@ namespace frydom {
     // SYMBOLIC VELOCITY FUNCTION EXPRESSED WITH CARDINAL
     // =================================================================================================================
 
-    const Velocity NORTH(FRAME_CONVENTION fc);
-    const Velocity NORTH_EAST(FRAME_CONVENTION fc);
-    const Velocity EAST(FRAME_CONVENTION fc);
-    const Velocity SOUTH_EAST(FRAME_CONVENTION fc);
-    const Velocity SOUTH(FRAME_CONVENTION fc);
-    const Velocity SOUTH_WEST(FRAME_CONVENTION fc);
-    const Velocity WEST(FRAME_CONVENTION fc);
-    const Velocity NORTH_WEST(FRAME_CONVENTION fc);
+    const mathutils::Vector3d<double> NORTH(FRAME_CONVENTION fc);
+    const mathutils::Vector3d<double> NORTH_EAST(FRAME_CONVENTION fc);
+    const mathutils::Vector3d<double> EAST(FRAME_CONVENTION fc);
+    const mathutils::Vector3d<double> SOUTH_EAST(FRAME_CONVENTION fc);
+    const mathutils::Vector3d<double> SOUTH(FRAME_CONVENTION fc);
+    const mathutils::Vector3d<double> SOUTH_WEST(FRAME_CONVENTION fc);
+    const mathutils::Vector3d<double> WEST(FRAME_CONVENTION fc);
+    const mathutils::Vector3d<double> NORTH_WEST(FRAME_CONVENTION fc);
 
 
     class Acceleration : public mathutils::Vector3d<double> {

@@ -2,7 +2,7 @@
 // Created by camille on 14/12/17.
 //
 
-#include "frydom/environment/waves/FrWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "FrWaveDriftForce.h"
 #include "frydom/IO/FrHDF5.h"
 

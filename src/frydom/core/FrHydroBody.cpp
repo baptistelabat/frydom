@@ -10,10 +10,10 @@
 #include "frydom/core/FrNodeDynamic.h"
 
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/waves/FrFreeSurface.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 
-#include "frydom/environment/current/FrCurrent.h"
-#include "frydom/environment/wind/FrWind.h"
+#include "frydom/environment/ocean/current/FrCurrent.h"
+#include "frydom/environment/atmosphere/wind/FrWind.h"
 
 namespace frydom {
 

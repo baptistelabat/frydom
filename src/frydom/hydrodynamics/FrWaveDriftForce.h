@@ -6,7 +6,7 @@
 #define FRYDOM_FRWAVEDRIFTFORCE_H
 
 #include <frydom/core/FrForce.h>
-#include <frydom/environment/waves/FrWaveProbe.h>
+#include <frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h>
 #include <frydom/core/FrHydroBody.h>
 #include <MathUtils/MathUtils.h>
 

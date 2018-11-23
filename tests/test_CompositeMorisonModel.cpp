@@ -5,7 +5,7 @@
 
 #include "frydom/frydom.h"
 #include "matplotlibcpp.h"
-#include "frydom/environment/waves/FrWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/hydrodynamics/FrMorisonModel.h"
 
 using namespace frydom;
