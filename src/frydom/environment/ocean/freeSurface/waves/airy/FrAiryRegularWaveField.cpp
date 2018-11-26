@@ -15,6 +15,7 @@
 namespace frydom {
 
     FrAiryRegularWaveField::FrAiryRegularWaveField(FrFreeSurface_* freeSurface) : FrWaveField_(freeSurface) {
+        m_depth = m_freeSurface->GetOcean()->GetSeabed()->GetDepth();
 
         m_waveRamp = std::make_shared<FrRamp>();
         m_waveRamp->Initialize();
@@ -37,9 +38,11 @@ namespace frydom {
         m_omega = S2RADS(m_period);
 
         // Set the wave number, using the wave dispersion relation
-        auto waterHeight = m_freeSurface->GetMeanHeight() - m_freeSurface->GetOcean()->GetSeabed()->GetDepth();
+        auto waterHeight = m_freeSurface->GetMeanHeight() - m_depth;
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
         m_k = SolveWaveDispersionRelation(waterHeight, m_omega, gravityAcceleration);
+
+        m_infinite_depth = 3. * 2. * M_PI / m_k < m_depth;
 
     }
 
@@ -83,6 +86,30 @@ namespace frydom {
 
     double FrAiryRegularWaveField::GetWaveLength() const {return 2.*M_PI/m_k;}
 
+    void FrAiryRegularWaveField::SetStretching(FrStretchingType type) {
+        switch (type) {
+            case NO_STRETCHING:
+                m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+                break;
+            case VERTICAL:
+                m_verticalFactor = std::make_unique<FrKinStretchingVertical_>();
+                break;
+            case EXTRAPOLATE:
+                m_verticalFactor = std::make_unique<FrKinStretchingExtrapol_>();
+                break;
+            case WHEELER:
+                m_verticalFactor = std::make_unique<FrKinStretchingWheeler_>(this);
+                break;
+            case CHAKRABARTI:
+                m_verticalFactor = std::make_unique<FrKinStretchingChakrabarti_>(this);
+            case DELTA:
+                m_verticalFactor = std::make_unique<FrKinStretchingDelta_>(this);
+            default:
+                m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+                break;
+        }
+        m_verticalFactor->SetInfDepth(m_infinite_depth);
+    }
 
 
 
@@ -98,7 +125,7 @@ namespace frydom {
     }
 
     double FrAiryRegularWaveField::GetElevation(double x, double y) const {
-        return std::real( GetComplexElevation(x, y));
+        return std::imag( GetComplexElevation(x, y));
     }
 
     std::vector<std::vector<double>>
@@ -122,15 +149,27 @@ namespace frydom {
         return elevations;
     }
 
+    mathutils::Vector3d<Complex> FrAiryRegularWaveField::GetComplexVelocity(double x, double y, double z) const {
+        auto Vtemp = m_omega * GetComplexElevation(x, y) * m_verticalFactor->Eval(x,y,z,m_k,m_depth);
+
+        auto Vx = cos(m_dirAngle) * Vtemp;
+        auto Vy = sin(m_dirAngle) * Vtemp;
+        auto Vz = -JJ * m_omega / m_k * GetComplexElevation(x, y) * m_verticalFactor->EvalDZ(x,y,z,m_k,m_depth);
+
+        return {Vx,Vy,Vz};
+    }
+
     Velocity FrAiryRegularWaveField::GetVelocity(double x, double y, double z) const {
-        // Vx = DPhi/Dx = D( - d(eta)/dt )/Dx
-        // Vx =
+        auto cplxVel = GetComplexVelocity(x, y, z);
+        return {std::imag(cplxVel.x()),std::imag(cplxVel.y()),std::imag(cplxVel.z())};
 
-
-        auto cmplxElevations = GetComplexElevation(x, y);
-
-
-        return Velocity();
+//        auto Vtemp = m_omega *  std::imag(GetComplexElevation(x, y)) * m_verticalFactor->Eval(x,y,z,m_k,m_depth);
+//
+//        auto Vx = cos(m_dirAngle) * Vtemp;
+//        auto Vy = sin(m_dirAngle) * Vtemp;
+//        auto Vz = m_omega / m_k *  std::real(GetComplexElevation(x, y)) * m_verticalFactor->EvalDZ(x,y,z,m_k,m_depth);
+//
+//        return {Vx,Vy,Vz};
     }
 
 //    void FrAiryRegularWaveField::Update(double time) {
@@ -138,7 +177,17 @@ namespace frydom {
 //    }
 
     Acceleration FrAiryRegularWaveField::GetAcceleration(double x, double y, double z) const {
-        return Acceleration();
+        auto cplxVel = GetComplexVelocity(x, y, z);
+        auto cplxAcc = -JJ * m_omega * cplxVel;
+        return {std::imag(cplxAcc.x()),std::imag(cplxAcc.y()),std::imag(cplxAcc.z())};
+
+//        auto Atemp = -m_omega * m_omega *  std::real(GetComplexElevation(x, y)) * m_verticalFactor->Eval(x,y,z,m_k,m_depth);
+//
+//        auto Ax = cos(m_dirAngle) * Atemp;
+//        auto Ay = sin(m_dirAngle) * Atemp;
+//        auto Az = -m_omega * m_omega / m_k * std::imag(GetComplexElevation(x, y)) * m_verticalFactor->EvalDZ(x,y,z,m_k,m_depth);
+//
+//        return {Ax,Ay,Az};
     }
 
     std::vector<std::vector<std::vector<Velocity>>>
@@ -146,7 +195,6 @@ namespace frydom {
                                             const std::vector<double> &zvect) const {
         return std::vector<std::vector<std::vector<Velocity>>>();
     }
-
 
 
 }

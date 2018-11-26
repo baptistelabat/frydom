@@ -6,6 +6,7 @@
 #define FRYDOM_FRAIRYREGULARWAVEFIELD_H
 
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
+//#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
 
 
 namespace frydom {
@@ -43,6 +44,8 @@ namespace frydom {
 
         void SetDirection(const Direction& direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
+        void SetStretching(FrStretchingType type);
+
         double GetWaveHeight() const;;
 
         double GetWavePeriod(FREQUENCY_UNIT unit = S) const;;
@@ -61,6 +64,8 @@ namespace frydom {
 
         /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
         Velocity GetVelocity(double x, double y, double z) const final;
+
+        mathutils::Vector3d<Complex> GetComplexVelocity(double x, double y, double z) const;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
         Acceleration GetAcceleration(double x, double y, double z) const final;
