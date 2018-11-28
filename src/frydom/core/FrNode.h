@@ -110,6 +110,8 @@ namespace frydom {
         /// \param frame relative frame node, given in the body reference frame
         FrNode_(FrBody_* body, const FrFrame_& frame);
 
+        void Set(FrBody_* body, Position pos, Direction e1, Direction e2, Direction e3);
+
         /// Destructor
         ~FrNode_();
 

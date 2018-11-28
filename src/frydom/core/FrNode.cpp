@@ -30,6 +30,14 @@ namespace frydom {
         SetLocalFrame(frame);
     }
 
+    void FrNode_::Set(FrBody_* body, Position pos, Direction e1, Direction e2, Direction e3) {
+        SetLocalPosition(pos);
+        m_body = body;
+        m_chronoMarker->GetA().Set_A_axis(internal::Vector3dToChVector(e1),
+                                        internal::Vector3dToChVector(e2),
+                                        internal::Vector3dToChVector(e3));
+    }
+
     FrNode_::~FrNode_() = default;
 
     FrBody_* FrNode_::GetBody() {

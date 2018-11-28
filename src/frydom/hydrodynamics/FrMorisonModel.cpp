@@ -11,6 +11,8 @@
 #include "frydom/environment/waves/FrFreeSurface.h"
 #include "frydom/environment/waves/FrWaveField.h"
 
+#include "frydom/core/FrVector.h"
+
 namespace frydom {
 
 // --------------------------------------------------------------------------
@@ -405,4 +407,267 @@ namespace frydom {
             m_force->SetBodyTorque( GetBodyTorque() );
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+
+    // -----------------------------------------------------------------
+    // MORISON MODEL
+    // -----------------------------------------------------------------
+
+    void FrMorisonElement_::SetFrame(FrBody_* body, Position posA, Position posB, Direction vect) {
+
+        Direction position = 0.5*(posA + posB);
+
+        Direction e3 = posB - posA;
+        e3.normalize();
+        Direction e1 = vect.cross(e3);
+
+        if (std::abs(e1.norm()) < FLT_EPSILON) {
+            e1.normalize();
+        } else {
+            e1 = Direction(1., 0., 0.);
+        }
+
+        Direction e2 = e3.cross(e1);
+        e2.normalize();
+
+        m_frame->Set(body, position, e1, e2, e3);
+
+    }
+
+    void FrMorisonElement_::SetFrame(FrBody_* body, FrFrame_ frame) {
+        m_frame = std::make_unique<FrNode_>(body, frame);
+    }
+
+    Force FrMorisonElement_::GetForceInWorld(FRAME_CONVENTION fc) const {
+        auto force = m_force;
+        if (IsNED(fc)) internal::SwapFrameConvention(force);
+        return force;
+    }
+
+    Torque FrMorisonElement_::GetTorqueInBody() const {
+        return m_torque;
+    }
+
+
+    // ---------------------------------------------------------------------
+    // MORISON SINGLE ELEMENT
+    // ---------------------------------------------------------------------
+
+    FrMorisonSingleElement_::FrMorisonSingleElement_(FrBody_* body) {
+        m_frame = std::make_shared<FrNode_>(body);
+    }
+
+    FrMorisonSingleElement_::FrMorisonSingleElement_(FrBody_* body, Position posA, Position posB, double diameter,
+                                                     MorisonCoeff ca, MorisonCoeff cd, double cf,
+                                                     Direction perpendicular) {
+        SetAddedMass(ca);
+        SetDragCoeff(cd);
+        SetFrictionCoeff(cf);
+
+        m_frame = std::make_shared<FrNode_>(body);
+        SetFrame(body, posA, posB, perpendicular);
+
+        SetDiameter(diameter);
+        SetLength(posA, posB);
+        SetVolume();
+    }
+
+    FrMorisonSingleElement_::FrMorisonSingleElement_(std::shared_ptr<FrNode_>& nodeA,
+                                                     std::shared_ptr<FrNode_>& nodeB,
+                                                     double diameter, MorisonCoeff ca, MorisonCoeff cd, double cf,
+                                                     Direction perpendicular) {
+        SetNodes(nodeA, nodeB);
+
+        SetAddedMass(ca);
+        SetDragCoeff(cd);
+        SetFrictionCoeff(cf);
+
+        m_frame = std::make_shared<FrNode_>(nodeA->GetBody());
+        SetFrame(nodeA->GetBody(), nodeA->GetPositionInWorld(NWU), nodeB->GetPositionInWorld(NWU), perpendicular);
+
+        SetDiameter(diameter);
+        SetLength(nodeA->GetPositionInWorld(NWU), nodeB->GetPositionInWorld(NWU));
+        SetVolume();
+    }
+
+    FrMorisonSingleElement_::FrMorisonSingleElement_(FrBody_* body, FrFrame_ frame, double diameter, double length,
+                                                     MorisonCoeff ca, MorisonCoeff cd, double cf) {
+        SetAddedMass(ca);
+        SetDragCoeff(cd);
+        SetFrictionCoeff(cf);
+
+        SetFrame(body, frame);
+
+        SetDiameter(diameter);
+        SetLength(length);
+        SetVolume();
+    }
+
+
+    void FrMorisonSingleElement_::SetNodes(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB) {
+        m_nodeA = nodeA;
+        m_nodeB = nodeB;
+    }
+
+    void FrMorisonSingleElement_::SetAddedMass(MorisonCoeff ca) {
+        assert(ca.x >= -FLT_EPSILON or std::abs(ca.x) <= FLT_EPSILON);
+        assert(ca.y >= -FLT_EPSILON or std::abs(ca.y) <= FLT_EPSILON);
+        m_property.ca = ca;
+    }
+
+    void FrMorisonSingleElement_::SetDragCoeff(MorisonCoeff cd) {
+        assert(cd.x >= -FLT_EPSILON or std::abs(cd.x) <= FLT_EPSILON);
+        assert(cd.y >= -FLT_EPSILON or std::abs(cd.y) <= FLT_EPSILON);
+        m_property.cd = cd;
+    }
+
+    void FrMorisonSingleElement_::SetFrictionCoeff(double cf) {
+        assert(cf >= -FLT_EPSILON or std::abs(cf) <= FLT_EPSILON);
+        m_property.cf = cf;
+    }
+
+    void FrMorisonSingleElement_::SetDiameter(const double diameter) {
+        assert(diameter >= -FLT_EPSILON or std::abs(diameter) <= FLT_EPSILON);
+        m_property.diameter = diameter;
+    }
+
+
+
+    void FrMorisonSingleElement_::SetLength(Position posA, Position posB) {
+        m_property.length = (posB - posA).norm();
+    }
+
+    void FrMorisonSingleElement_::SetVolume() {
+        m_property.volume = MU_PI_4 * GetDiameter() * GetDiameter() * GetLength();
+    }
+
+    //
+    // UPDATE
+    //
+
+    void FrMorisonSingleElement_::Update(double time) {
+
+        Force localForce;
+
+        auto rho = GetSystem()->GetEnvironment()->GetWaterDensity();
+        auto body = m_frame->GetBody();
+
+        Velocity velocity; // TODO : à partir de l'evironnement
+        Acceleration flow_acc; //TODO : à partir de l'environement
+        Acceleration body_acc = m_frame->GetAccelerationInWorld(NWU);
+
+        localForce.x() = 0.5 * m_property.cd.x * rho * m_property.diameter * m_property.length * velocity.x() * std::abs(velocity.x());
+        localForce.y() = 0.5 * m_property.cd.y * rho * m_property.diameter * m_property.length * velocity.y() * std::abs(velocity.y());
+
+        if (m_extendedModel) {
+            localForce.x() += rho * (m_property.ca.x + 1.) * GetVolume() * (flow_acc.x() - body_acc.x());
+            localForce.y() += rho * (m_property.ca.y + 1.) * GetVolume() * (flow_acc.y() - body_acc.y());
+        }
+
+        localForce.z() = 0.; // TODO : friction
+
+        // Project force in world at COG
+        auto forceBody = m_frame->GetFrame().ProjectVectorInParent(localForce);
+        m_force = body->GetFrame().ProjectVectorInParent(forceBody);
+
+        //Project torque in body at COG
+        Position relPos = m_frame->GetNodePositionInBody(NWU) - body->GetCOG(NWU);
+        m_torque = relPos.cross(forceBody);
+    }
+
+    void FrMorisonSingleElement_::Initialize() {
+
+    }
+
+    void FrMorisonSingleElement_::StepFinalize() {
+
+    }
+
+
+    // -------------------------------------------------------------------
+    // MORISON COMPOSITE FORCE MODEL
+    // -------------------------------------------------------------------
+
+    FrMorisonCompositeElement_::FrMorisonCompositeElement_(FrBody_* body) {
+        m_frame = std::make_shared<FrNode_>(body);
+    }
+
+    FrMorisonCompositeElement_::FrMorisonCompositeElement_(FrBody_* body, FrFrame_& frame) {
+        m_frame = std::make_shared<FrNode_>(body, frame);
+    }
+
+    void FrMorisonCompositeElement_::AddElement(std::shared_ptr<FrNode_> nodeA, std::shared_ptr<FrNode_> nodeB, double diameter,
+                                                MorisonCoeff ca, MorisonCoeff cd, double cf, Direction perpendicular) {
+        m_morison.push_back(std::make_unique<FrMorisonSingleElement_>(nodeA, nodeB, diameter, ca, cd, cf, perpendicular));
+    }
+
+    void FrMorisonCompositeElement_::AddElement(Position posA, Position posB, double diameter,
+                                                MorisonCoeff ca, MorisonCoeff cd, double cf, unsigned int n,
+                                                Direction perpendicular) {
+        Direction dV = (posB - posA) / n;
+
+        Position pos;
+        for (unsigned int i=0; i<n; ++i) {
+            pos = posA + dV * n;
+            m_morison.push_back(std::make_unique<FrMorisonSingleElement_>(m_frame->GetBody(), pos, pos + dV, diameter,
+                                                                          ca, cd, cf, perpendicular));
+        }
+    }
+
+    void FrMorisonCompositeElement_::AddElement(FrFrame_ frame, double diameter, double length,
+                                                MorisonCoeff ca, MorisonCoeff cd, double cf) {
+        m_morison.push_back(std::make_unique<FrMorisonSingleElement_>(m_frame->GetBody(), frame, diameter,
+                                                                      length, ca, cd, cf));
+    }
+
+    void FrMorisonCompositeElement_::SetDragCoeff(MorisonCoeff cd) {
+        m_property.cd = cd;
+    }
+
+    void FrMorisonCompositeElement_::SetFrictionCoeff(double cf) {
+        m_property.cf = cf;
+    }
+
+    void FrMorisonCompositeElement_::SetAddedMass(MorisonCoeff ca) {
+        m_property.ca = ca;
+    }
+
+    void FrMorisonCompositeElement_::Initialize() {
+        for (auto& element: m_morison) {
+            element->Initialize();
+        }
+    }
+
+    void FrMorisonCompositeElement_::Update(double time) {
+
+        m_force.SetNull();
+        m_torque.SetNull();
+
+        for (auto& element : m_morison) {
+            element->Update(time);
+            m_force += element->GetForceInWorld(NWU);
+            m_torque += element->GetTorqueInBody();
+        }
+    }
+
 }

@@ -53,6 +53,36 @@ namespace frydom {
 
     };
 
+
+
+
+
+
+
+
+
+
+    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+    class FrMorisonForce_ : public FrForce_ {
+
+
+    private:
+        std::shared_ptr<FrMorisonElement_> m_model;
+
+    public:
+
+        FrMorisonForce_(std::shared_ptr<FrMorisonElement_> model)
+            : m_model(model) { }
+
+        void Update(double time) override;
+
+        void Initialize() override;
+
+        void StepFinalize() override;
+    };
+
+
 }
 
 #endif //FRYDOM_FRMORISONFORCE_H

@@ -59,4 +59,29 @@ namespace frydom {
     chrono::ChVector<double> FrMorisonForce::GetBodyTorque() const { return moment; }
 
 
+
+
+
+
+
+
+    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+    void FrMorisonForce_::Update(double time) {
+
+        m_model->Update(time);
+
+        SetForceInWorldAtCOG(m_model->GetForceInWorld(NWU), NWU);
+        SetTorqueInBodyAtCOG(m_model->GetTorqueInBody(), NWU);
+    }
+
+    void FrMorisonForce_::Initialize() {
+        m_model->Initialize();
+    }
+
+    void FrMorisonForce_::StepFinalize() {
+
+    }
+
+
 }  // end namespace frydom

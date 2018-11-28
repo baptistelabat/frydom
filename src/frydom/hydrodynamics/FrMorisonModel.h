@@ -5,12 +5,20 @@
 #ifndef FRYDOM_FRMORISONMODEL_H
 #define FRYDOM_FRMORISONMODEL_H
 
+/// <<<<<<<<<<<<< Head
+
 #include <vector>
+#include <frydom/core/FrPhysicsItem.h>
 
 #include "frydom/core/FrConvention.h"
 #include "frydom/core/FrNode.h"
 #include "frydom/environment/waves/FrWaveField.h"
 #include "frydom/environment/waves/FrFlowSensor.h"
+
+/// <<<<<<<<<<<<< Adding header for refactoring
+
+#include "frydom/core/FrForce.h"
+
 
 namespace frydom {
 
@@ -338,6 +346,222 @@ namespace frydom {
         /// Call initialisation of the element contained in composite element
         void Initialize() override;
     };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>><<< REFACTORING
+
+
+    // --------------------------------------------------------------------------
+    // MORISON ELEMENT
+    // --------------------------------------------------------------------------
+
+    class FrMorisonElement_ : public FrPhysicsItem_ {
+
+    protected:
+        bool m_fixStructure;
+        bool m_includeCurrent;
+        std::shared_ptr<FrNode_> m_frame;
+        Force m_force;                      ///< Force at COG in world-coordinates
+        Torque m_torque;                    ///< Torque at COG in body-coordinates
+
+    public:
+        ///
+        /// \param fixStructure
+        void SetFixStructure(bool fixStructure) { m_fixStructure = fixStructure; }
+
+        ///
+        /// \param includeCurrent
+        virtual void SetIncludeCurrent(bool includeCurrent) { m_includeCurrent = includeCurrent; }
+
+        void SetFrame(FrBody_* body, Position posA, Position posB, Direction vect = Direction(0., 0., 1.));
+
+        void SetFrame(FrBody_* body, FrFrame_ frame);
+
+        Force GetForceInWorld(FRAME_CONVENTION fc) const;
+
+        Torque GetTorqueInBody() const;
+
+    };
+
+
+    // --------------------------------------------------------------------------
+    // MORISON SINGLE ELEMENT
+    // --------------------------------------------------------------------------
+
+    struct MorisonCoeff {
+        double x;
+        double y;
+        MorisonCoeff& operator=(double val) {
+            x = val;
+            y = val;
+            return *this;
+        }
+    };
+
+    struct MorisonElementProperty {
+        MorisonCoeff cd;
+        MorisonCoeff ca;
+        double cf;
+        double diameter;
+        double length;
+        double volume;
+    };
+
+
+    class FrMorisonSingleElement_ : public FrMorisonElement_ {
+
+
+    private:
+        std::shared_ptr<FrNode_> m_nodeA;
+        std::shared_ptr<FrNode_> m_nodeB;
+
+        Direction m_perpendicular;
+        MorisonElementProperty m_property;
+        bool m_extendedModel = false;
+
+
+    public:
+        FrMorisonSingleElement_(FrBody_* body);
+
+        FrMorisonSingleElement_(std::shared_ptr<FrNode_>& nodeA,
+                                std::shared_ptr<FrNode_>& nodeB,
+                                double diameter, MorisonCoeff ca, MorisonCoeff cd, double cf,
+                                Direction perpendicular = Direction(0., 0., 1.));
+
+        FrMorisonSingleElement_(FrBody_* body, Position posA, Position posB,
+                                double diameter, MorisonCoeff ca, MorisonCoeff cd, double cf,
+                                Direction perpendicular = Direction(0., 0., 1.));
+
+        FrMorisonSingleElement_(FrBody_* body, FrFrame_ frame, double diameter, double length,
+                                MorisonCoeff ca, MorisonCoeff cd, double cf);
+
+        void SetNodes(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB);
+
+        void SetAddedMass(MorisonCoeff ca);
+
+        void SetDragCoeff(MorisonCoeff cd);
+
+        void SetFrictionCoeff(double cf);
+
+        void SetDiameter(double diameter);
+
+        double GetDiameter() const { return m_property.diameter; }
+
+        double GetVolume() const { return m_property.volume; }
+
+        double GetLength() const { return m_property.length; }
+
+        void SetExtendedModel(bool extendedModel) { m_extendedModel = extendedModel; }
+
+
+        //
+        // UPDATE
+        //
+
+        void Update(double time) override;
+
+        void Initialize() override;
+
+        void StepFinalize() override;
+
+    private:
+
+        void SetLength(Position posA, Position posB);
+
+        void SetLength(double length) { m_property.length = length; }
+
+        void SetVolume();
+
+    };
+
+    // --------------------------------------------------------------------------
+    // MORISON COMPOSITE ELEMENT
+    // --------------------------------------------------------------------------
+
+    class FrMorisonCompositeElement_ : public FrMorisonElement_ {
+
+
+    protected:
+
+        std::vector<std::unique_ptr<FrMorisonElement_>> m_morison;
+        MorisonElementProperty m_property;
+        bool m_isGlobal = false;
+
+    public:
+
+        FrMorisonCompositeElement_(FrBody_* body);
+
+        FrMorisonCompositeElement_(FrBody_* body, FrFrame_& frame);
+
+        void SetGlobal(bool isGlobal) { m_isGlobal = isGlobal; }
+
+        bool GetGlobal() const { return m_isGlobal; }
+
+        void AddElement(FrMorisonElement_* model) {
+            m_morison.push_back(std::unique_ptr<FrMorisonElement_>(model));
+        }
+
+        void AddElement(std::shared_ptr<FrNode_> nodeA, std::shared_ptr<FrNode_> nodeB, double diameter,
+                        MorisonCoeff ca, MorisonCoeff cd, double cf,
+                        Direction perpendicular = Direction(0., 0, 1.));
+
+        void AddElement(Position posA, Position posB, double diameter,
+                        MorisonCoeff ca, MorisonCoeff cd, double cf, unsigned int n =1,
+                        Direction perpendicular = Direction(0., 0., 1.));
+
+        void AddElement(FrFrame_ frame, double diameter, double length,
+                        MorisonCoeff ca, MorisonCoeff Cd, double cf);
+
+        void SetDragCoeff(MorisonCoeff cd);
+
+        MorisonCoeff GetDragCoeff() const { return m_property.cd; }
+
+        void SetFrictionCoeff(double cf);
+
+        double GetFrictionCoeff() const { return m_property.cf; }
+
+        void SetAddedMass(MorisonCoeff ca);
+
+        MorisonCoeff GetAddedMass() const { return m_property.ca; }
+
+        //
+        // UPDATE
+        //
+
+        void Update(double time) override;
+
+        void Initialize() override;
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 

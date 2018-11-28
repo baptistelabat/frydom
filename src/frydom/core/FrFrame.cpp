@@ -90,6 +90,13 @@ namespace frydom {
         return z;
     }
 
+    void FrFrame_::Set(Position pos, Direction e1, Direction e2, Direction e3, FRAME_CONVENTION fc) {
+        SetPosition(pos, fc);
+        m_chronoFrame.GetA().Set_A_axis(internal::Vector3dToChVector(e1),
+                                        internal::Vector3dToChVector(e2),
+                                        internal::Vector3dToChVector(e3));
+    }
+
     void FrFrame_::SetRotation(const FrRotation_ &rotation) {  // OK
         SetRotation(rotation.GetQuaternion());
     }

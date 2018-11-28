@@ -124,6 +124,7 @@ namespace frydom {
         /// \return  the z position of the frame
         double GetZ(FRAME_CONVENTION fc) const;
 
+        void Set(Position pos, Direction e1, Direction e2, Direction e3, FRAME_CONVENTION fc);
 
         // Operations
         /// The '*' operator transforms a coordinate system, so
