@@ -619,7 +619,7 @@ namespace frydom {
             localForce.y() += rho * (m_property.ca.y + 1.) * GetVolume() * acceleration.y();
         }
 
-        localForce.z() = 0.; // TODO : friction
+        localForce.z() = 0.; // TODO : friction model
 
         // Project force in world at COG
         auto forceBody = m_frame->GetFrame().ProjectVectorInParent(localForce);
