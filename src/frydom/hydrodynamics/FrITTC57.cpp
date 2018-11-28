@@ -119,13 +119,13 @@ namespace frydom{
         Velocity cogWorldVel = m_body->GetCOGVelocityInWorld(NWU);
         FrFrame_ cogWorldFrame = m_body->GetFrameAtCOG(NWU);
 
-        Velocity relVel = m_environment->GetCurrent()->GetRelativeVelocityInFrame(cogWorldFrame, cogWorldVel, NWU);
+        Velocity relVel = m_environment->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(cogWorldFrame, cogWorldVel, NWU);
 
         m_body->ProjectVectorInBody<Velocity>(relVel, NWU);
         double  ux = relVel.GetVx();
 
         // Computing Reynolds number
-        double Re = GetSystem()->GetEnvironment()->GetReynoldsNumberInWater(m_Lpp, ux);
+        double Re = GetSystem()->GetEnvironment()->GetOcean()->GetReynoldsNumberInWater(m_Lpp, ux);
 
         // Computing ITTC57 flat plate friction coefficient
         auto CF = 0.075 / pow( log10(Re)-2., 2. );
@@ -137,7 +137,7 @@ namespace frydom{
         auto Ct = CF + CR;
 
         // Resistance along the body X Axis
-        double Rt = - 0.5 * m_environment->GetWaterDensity() * m_S * (1+m_k) * Ct * ux * std::abs(ux);
+        double Rt = - 0.5 * m_environment->GetOcean()->GetDensity() * m_S * (1+m_k) * Ct * ux * std::abs(ux);
 
         SetForceInBody(Force(Rt, 0., 0.), NWU);
 

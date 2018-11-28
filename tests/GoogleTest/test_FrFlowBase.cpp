@@ -54,8 +54,8 @@ Vector TestFrFlowBase::ReadVector(FrHDF5Reader& reader, std::string field) const
 void TestFrFlowBase::SetUp() {
 
     LoadData("TNR_database.h5");
-    system.GetEnvironment()->GetCurrent()->MakeFieldUniform();
-    flow = std::make_shared<FrFlowBase>(system.GetEnvironment());
+    system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
+    flow = std::make_shared<FrFlowBase>();
     flow->MakeFieldUniform();
     flow->GetFieldUniform()->Set(m_VelocityInWorld, NWU, GOTO);
 }

@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 //    system.SetTimeStepper(FrOffshoreSystem_::RUNGEKUTTA45);
 
     // Defining the visualization of the free surface such as it has the same dimensions as the INSEAN towing tank
-    system.GetEnvironment()->GetFreeSurface()->SetGrid(0., 470, 470, -4.5, 4.5, 9);
+    system.GetEnvironment()->GetOcean()->GetFreeSurface()->SetGrid(0., 470, 470, -4.5, 4.5, 9);
 
     // Creating a wall for the basin
     auto wall = system.NewBody();

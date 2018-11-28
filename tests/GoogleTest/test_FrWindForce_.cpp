@@ -50,7 +50,7 @@ protected:
 
     Position m_PointInWorld;                    ///< Position of an arbitrary point in world frame
     FrFrame_ m_frameREF;                        ///< Local frame at Point
-    FrQuaternion_ m_quatREF;                    ///< Rotation of the local frame / world frame
+    FrUnitQuaternion_ m_quatREF;                    ///< Rotation of the local frame / world frame
     Velocity m_PointVelocityInWorld;            ///< Velocity vector of the local frame / world frame
 
     Velocity m_VelocityInWorld;                 ///< Wind velocity at Point in world frame
@@ -99,7 +99,7 @@ void TestFrUniformWind_::LoadData(std::string filename) {
     m_PointInWorld = ReadVector<Position>(reader, group + "PointInWorld");
     auto direction = ReadVector<Direction>(reader, group + "RotationDirection/") ;
     double angle = reader.ReadDouble(group + "RotationAngle/");
-    m_quatREF = FrQuaternion_(direction, angle, NWU);
+    m_quatREF = FrUnitQuaternion_(direction, angle, NWU);
     m_frameREF = FrFrame_(m_PointInWorld, m_quatREF, NWU);
     m_PointVelocityInWorld = ReadVector<Velocity>(reader, group + "PointVelocityInWorld/");
 
@@ -112,12 +112,12 @@ void TestFrUniformWind_::LoadData(std::string filename) {
 void TestFrUniformWind_::SetUp() {
 
     LoadData("TNR_database.h5");
-    system.GetEnvironment()->GetWind()->GetFieldUniform()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
+    system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
 }
 
 void TestFrUniformWind_::TestGetWorldFluxVelocity() {
 
-    Velocity velocity = system.GetEnvironment()->GetWind()->GetFluxVelocityInWorld(m_PointInWorld, m_frame);
+    Velocity velocity = system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFluxVelocityInWorld(m_PointInWorld, m_frame);
     Velocity velocityREF = velocity - m_PointVelocityInWorld;
 
     EXPECT_FLOAT_EQ(velocity.GetVx(), m_VelocityInWorld.GetVx());
@@ -127,7 +127,7 @@ void TestFrUniformWind_::TestGetWorldFluxVelocity() {
 
 void TestFrUniformWind_::TestGetRelativeVelocityInFrame() {
 
-    Velocity velocity = system.GetEnvironment()->GetWind()->GetRelativeVelocityInFrame(m_frameREF, m_PointVelocityInWorld, m_frame);
+    Velocity velocity = system.GetEnvironment()->GetAtmosphere()->GetWind()->GetRelativeVelocityInFrame(m_frameREF, m_PointVelocityInWorld, m_frame);
 
     EXPECT_FLOAT_EQ(velocity.GetVx(), m_RelativeVelocityInFrame.GetVx());
     EXPECT_FLOAT_EQ(velocity.GetVy(), m_RelativeVelocityInFrame.GetVy());
@@ -136,19 +136,19 @@ void TestFrUniformWind_::TestGetRelativeVelocityInFrame() {
 
 
 TEST_F(TestFrUniformWind_, Update) {
-    system.GetEnvironment()->GetWind()->Update(0.);
+    system.GetEnvironment()->GetAtmosphere()->GetWind()->Update(0.);
 }
 
 TEST_F(TestFrUniformWind_, Initialize) {
-    system.GetEnvironment()->GetWind()->Initialize();
+    system.GetEnvironment()->GetAtmosphere()->GetWind()->Initialize();
 }
 
 TEST_F(TestFrUniformWind_, StepFinalize) {
-    system.GetEnvironment()->GetWind()->StepFinalize();
+    system.GetEnvironment()->GetAtmosphere()->GetWind()->StepFinalize();
 }
 
 TEST_F(TestFrUniformWind_, GetField) {
-    auto field = system.GetEnvironment()->GetWind()->GetFieldUniform();
+    auto field = system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform();
 }
 
 TEST_F(TestFrUniformWind_, TestWorldFluxVelocity) {
@@ -256,7 +256,7 @@ void TestFrWindForce_::TestForce() {
     Torque torqueTemp;
 
     for (unsigned int i=0; i<wind_speed.size(); i++) {
-        system.GetEnvironment()->GetWind()->GetFieldUniform()->Set(wind_dir(i), wind_speed(i), angleUnit, speedUnit, frame, convention);
+        system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()->Set(wind_dir(i), wind_speed(i), angleUnit, speedUnit, frame, convention);
         force->Update(false);
         force->GetForceInWorld(forceTemp, NWU);
         force->GetTorqueInBodyAtCOG(torqueTemp, NWU);

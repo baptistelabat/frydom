@@ -3,7 +3,7 @@
 //
 
 #include "FrLoader.h"
-#include "frydom/environment/current/FrCurrentPolarCoeffs.h"
+#include "frydom/environment/ocean/current/FrCurrentPolarCoeffs.h"
 #include <iostream>
 #include <fstream>
 

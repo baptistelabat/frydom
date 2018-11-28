@@ -3,6 +3,7 @@ message(STATUS "        ...Environment/flow")
 set(FLOW_FILES_LOCAL
         FrFlowBase.cpp
         FrFlowForce.cpp
+        FrUniformField.cpp
         )
 
 set(FLOW_FILES "")

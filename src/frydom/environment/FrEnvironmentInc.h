@@ -10,12 +10,8 @@
 #include "FrFluidType.h"
 
 #include "time/FrTimeInc.h"
-#include "field/FrFieldInc.h"
-#include "current/FrCurrentInc.h"
-#include "seabed/FrSeabedInc.h"
-#include "tidal/FrTidalInc.h"
-#include "waves/FrWavesInc.h"
-#include "wind/FrWindInc.h"
+#include "ocean/FrOceanInc.h"
+#include "atmosphere/FrAtmosphereInc.h"
 #include "flow/FrFlowInc.h"
 
 

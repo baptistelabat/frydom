@@ -14,7 +14,7 @@
 #include "FrForce.h"
 
 #include "frydom/environment/FrEnvironmentInc.h"
-#include "frydom/environment/waves/FrFreeSurface.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 
 #include <chrono/physics/ChLinkMotorLinearSpeed.h>  // FIXME : a retirer
 
@@ -261,7 +261,7 @@ namespace frydom {
         auto frame = chrono::ChFrame<double>();
 
 
-        motor->Initialize(m_chronoBody, GetSystem()->GetEnvironment()->GetFreeSurface()->m_body->m_chronoBody, frame);
+        motor->Initialize(m_chronoBody, GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->m_body->m_chronoBody, frame);
 
         m_system->AddLink(motor);
 

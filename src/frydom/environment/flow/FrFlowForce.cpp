@@ -7,6 +7,8 @@
 #include "frydom/core/FrBody.h"
 #include "FrFlowBase.h"
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/atmosphere/FrAtmosphere_.h"
 #include "frydom/IO/FrLoader.h"
 #include "frydom/core/FrFrame.h"
 #include "MathUtils/Vector3d.h"
@@ -125,7 +127,7 @@ namespace frydom {
         FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
 
-        m_fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetCurrent()
+        m_fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()
                 ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
 
         FrFlowForce::Update(time);
@@ -138,7 +140,7 @@ namespace frydom {
         FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
 
-        m_fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetWind()
+        m_fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()
                 ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
 
         FrFlowForce::Update(time);

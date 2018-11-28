@@ -5,9 +5,9 @@
 
 #include "frydom/frydom.h"
 #include "matplotlibcpp.h"
-#include "frydom/environment/waves/FrWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrFlowSensor.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/hydrodynamics/FrMorisonModel.h"
-#include "frydom/environment/waves/FrFlowSensor.h"
 
 using namespace frydom;
 using namespace chrono;

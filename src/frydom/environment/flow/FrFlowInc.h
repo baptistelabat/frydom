@@ -8,4 +8,7 @@
 #include "FrFlowBase.h"
 #include "FrFlowForce.h"
 
+#include "FrFieldBase.h"
+#include "FrUniformField.h"
+
 #endif //FRYDOM_FRFLOWINC_H
