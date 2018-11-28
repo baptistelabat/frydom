@@ -12,6 +12,7 @@
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 
 #include "frydom/core/FrVector.h"
+#include "frydom/environment/ocean/FrOceanInc.h"
 
 namespace frydom {
 
@@ -569,7 +570,7 @@ namespace frydom {
 
         Force localForce;
 
-        auto rho = GetSystem()->GetEnvironment()->GetWaterDensity();
+        auto rho = GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
         auto body = m_frame->GetBody();
 
         Velocity velocity; // TODO : à partir de l'evironnement
