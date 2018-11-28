@@ -13,6 +13,7 @@
 
 #include "frydom/core/FrVector.h"
 #include "frydom/environment/ocean/FrOceanInc.h"
+#include "frydom/environment/flow/FrFlowInc.h"
 
 namespace frydom {
 
@@ -562,6 +563,41 @@ namespace frydom {
         m_property.volume = MU_PI_4 * GetDiameter() * GetDiameter() * GetLength();
     }
 
+
+    Velocity FrMorisonSingleElement_::GetFlowVelocity() {
+
+        Velocity velocity;
+        Position worldPos = m_frame->GetPositionInWorld(NWU);
+        auto body = m_frame->GetBody();
+
+        auto waveField = GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+
+        velocity = waveField->GetVelocity(worldPos);
+        velocity -= m_frame->GetVelocityInWorld(NWU);
+
+        if (m_includeCurrent) {
+            velocity += GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetFluxVelocityInWorld(worldPos, NWU);
+        }
+
+        Velocity velocityBody = body->GetFrame().ProjectVectorParentInFrame(velocity);
+        return m_frame->GetFrame().ProjectVectorParentInFrame(velocityBody);
+    }
+
+    Acceleration FrMorisonSingleElement_::GetFlowAcceleration() {
+
+        Acceleration acceleration;
+        Position worldPos = m_frame->GetPositionInWorld(NWU);
+        auto body = m_frame->GetBody();
+
+        auto waveField = GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+
+        acceleration = waveField->GetAcceleration(worldPos);
+        acceleration -= m_frame->GetAccelerationInWorld(NWU);
+
+        Acceleration accBody = body->GetFrame().ProjectVectorParentInFrame(acceleration);
+        return m_frame->GetFrame().ProjectVectorParentInFrame(accBody);
+    }
+
     //
     // UPDATE
     //
@@ -573,16 +609,14 @@ namespace frydom {
         auto rho = GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
         auto body = m_frame->GetBody();
 
-        Velocity velocity; // TODO : à partir de l'evironnement
-        Acceleration flow_acc; //TODO : à partir de l'environement
-        Acceleration body_acc = m_frame->GetAccelerationInWorld(NWU);
-
+        Velocity velocity = GetFlowVelocity();
         localForce.x() = 0.5 * m_property.cd.x * rho * m_property.diameter * m_property.length * velocity.x() * std::abs(velocity.x());
         localForce.y() = 0.5 * m_property.cd.y * rho * m_property.diameter * m_property.length * velocity.y() * std::abs(velocity.y());
 
         if (m_extendedModel) {
-            localForce.x() += rho * (m_property.ca.x + 1.) * GetVolume() * (flow_acc.x() - body_acc.x());
-            localForce.y() += rho * (m_property.ca.y + 1.) * GetVolume() * (flow_acc.y() - body_acc.y());
+            Acceleration acceleration = GetFlowAcceleration();
+            localForce.x() += rho * (m_property.ca.x + 1.) * GetVolume() * acceleration.x();
+            localForce.y() += rho * (m_property.ca.y + 1.) * GetVolume() * acceleration.y();
         }
 
         localForce.z() = 0.; // TODO : friction

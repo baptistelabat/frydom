@@ -488,6 +488,10 @@ namespace frydom {
 
         void SetVolume();
 
+        Velocity GetFlowVelocity();
+
+        Acceleration GetFlowAcceleration();
+
     };
 
     // --------------------------------------------------------------------------
