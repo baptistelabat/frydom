@@ -293,14 +293,15 @@ namespace frydom{
         
         FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, double waveDirAngle,
                                                         ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
-        
+
         FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
                                                         FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
 
+
         void SetLinearWaveField(LINEAR_WAVE_TYPE waveType);
 
-        FrLinearWaveField* GetLinearWaveField() const;
+        FrLinearWaveField_* GetLinearWaveField() const;
 
         double GetMeanHeight() const;
 

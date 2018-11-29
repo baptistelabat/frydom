@@ -36,6 +36,9 @@ namespace frydom {
 
         explicit FrAiryRegularWaveField(FrFreeSurface_* freeSurface);
 
+        FrAiryRegularWaveField(FrFreeSurface_* freeSurface, double waveHeight, double wavePeriod,
+                               double waveDirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+
         void SetWaveHeight(double height);
 
         void SetWavePeriod(double period, FREQUENCY_UNIT unit = S);

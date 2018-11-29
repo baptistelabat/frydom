@@ -673,11 +673,9 @@ namespace frydom {
         m_waveField = std::make_unique<FrLinearWaveField_>(this, waveType);
     }
 
-    FrLinearWaveField *FrFreeSurface_::GetLinearWaveField() const {
-        return dynamic_cast<FrLinearWaveField*>(m_waveField.get());
+    FrLinearWaveField_ *FrFreeSurface_::GetLinearWaveField() const {
+        return dynamic_cast<FrLinearWaveField_*>(m_waveField.get());
     }
-
-
 
     FrAiryRegularWaveField*
     FrFreeSurface_::SetAiryRegularWaveField() {
@@ -692,8 +690,9 @@ namespace frydom {
         waveField->SetWaveHeight(waveHeight);
         waveField->SetWavePeriod(wavePeriod);
         waveField->SetDirection(waveDirAngle, unit, fc, dc);
-        return waveField;
+        return dynamic_cast<FrAiryRegularWaveField*>(m_waveField.get());
     }
+
 
     FrAiryRegularWaveField*
     FrFreeSurface_::SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,

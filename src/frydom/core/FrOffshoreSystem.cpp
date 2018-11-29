@@ -387,6 +387,7 @@ namespace frydom {
 
     void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics) {
         m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
+        otherPhysics->m_system = this;
     }
 
     FrEnvironment_ *FrOffshoreSystem_::GetEnvironment() const {

@@ -18,6 +18,8 @@
 #include "FrLinearHydrostaticStiffnessMatrix.h"
 #include "FrMorrisonElement.h"
 #include "FrMorrisonForce.h"
+#include "FrMorisonModel.h"
+#include "FrMorisonForce.h"
 #include "FrRadiationForce.h"
 #include "FrTryalForce.h"
 #include "FrVelocityRecorder.h"

@@ -531,6 +531,12 @@ namespace frydom {
         m_nodeB = nodeB;
     }
 
+    void FrMorisonSingleElement_::SetNodes(FrBody_* body, Position posA, Position posB) {
+        m_nodeA = std::make_shared<FrNode_>(body, posA);
+        m_nodeB = std::make_shared<FrNode_>(body, posB);
+        SetLength(m_nodeA->GetPositionInWorld(NWU), m_nodeB->GetPositionInWorld(NWU));
+    }
+
     void FrMorisonSingleElement_::SetAddedMass(MorisonCoeff ca) {
         assert(ca.x >= -FLT_EPSILON or std::abs(ca.x) <= FLT_EPSILON);
         assert(ca.y >= -FLT_EPSILON or std::abs(ca.y) <= FLT_EPSILON);
@@ -631,7 +637,11 @@ namespace frydom {
     }
 
     void FrMorisonSingleElement_::Initialize() {
-
+        assert(m_frame);
+        assert(m_frame->GetBody());
+        assert(m_property.length > FLT_EPSILON);
+        assert(m_property.diameter > FLT_EPSILON);
+        SetVolume();
     }
 
     void FrMorisonSingleElement_::StepFinalize() {
@@ -688,6 +698,7 @@ namespace frydom {
     }
 
     void FrMorisonCompositeElement_::Initialize() {
+
         for (auto& element: m_morison) {
             element->Initialize();
         }

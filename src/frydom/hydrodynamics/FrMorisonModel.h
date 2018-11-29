@@ -407,6 +407,14 @@ namespace frydom {
     struct MorisonCoeff {
         double x;
         double y;
+
+        MorisonCoeff() { }
+
+        MorisonCoeff(double val) {
+            x = val;
+            y = val;
+        }
+
         MorisonCoeff& operator=(double val) {
             x = val;
             y = val;
@@ -431,7 +439,6 @@ namespace frydom {
         std::shared_ptr<FrNode_> m_nodeA;
         std::shared_ptr<FrNode_> m_nodeB;
 
-        Direction m_perpendicular;
         MorisonElementProperty m_property;
         bool m_extendedModel = false;
 
@@ -452,6 +459,8 @@ namespace frydom {
                                 MorisonCoeff ca, MorisonCoeff cd, double cf);
 
         void SetNodes(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB);
+
+        void SetNodes(FrBody_* body, Position posA, Position posB);
 
         void SetAddedMass(MorisonCoeff ca);
 

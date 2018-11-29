@@ -25,6 +25,22 @@ namespace frydom {
 
     }
 
+    FrAiryRegularWaveField::FrAiryRegularWaveField(FrFreeSurface_* freeSurface, double waveHeight, double wavePeriod,
+    double waveDirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) : FrWaveField_(freeSurface) {
+
+        m_depth = m_freeSurface->GetOcean()->GetSeabed()->GetDepth();
+
+        m_waveRamp = std::make_shared<FrRamp>();
+        m_waveRamp->Initialize();
+
+        m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+        m_verticalFactor->SetInfDepth(m_infinite_depth);
+
+        SetWaveHeight(waveHeight);
+        SetWavePeriod(wavePeriod);
+        SetDirection(waveDirAngle, unit, fc ,dc);
+    }
+
     void FrAiryRegularWaveField::SetWaveHeight(double height) { m_height = height;}
 
     double FrAiryRegularWaveField::GetWaveHeight() const {return m_height;}
