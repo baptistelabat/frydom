@@ -16,6 +16,7 @@ set(GOOGLE_TESTS
         test_FrGeographicServices
         test_FrEquilibriumFrame_
         test_FrFreeSurface_
+        test_FrMorisonElement_
         )
 
 #enable_testing()

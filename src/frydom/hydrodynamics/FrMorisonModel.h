@@ -393,6 +393,10 @@ namespace frydom {
 
         void SetFrame(FrBody_* body, FrFrame_ frame);
 
+        FrFrame_ GetFrame() const { return m_frame->GetFrame(); }
+
+        std::shared_ptr<FrNode_> GetNode() const { return m_frame; }
+
         Force GetForceInWorld(FRAME_CONVENTION fc) const;
 
         Torque GetTorqueInBody() const;
@@ -415,11 +419,17 @@ namespace frydom {
             y = val;
         }
 
+        MorisonCoeff(double val1, double val2) {
+            x = val1;
+            y = val2;
+        }
+
         MorisonCoeff& operator=(double val) {
             x = val;
             y = val;
             return *this;
         }
+
     };
 
     struct MorisonElementProperty {
@@ -435,7 +445,7 @@ namespace frydom {
     class FrMorisonSingleElement_ : public FrMorisonElement_ {
 
 
-    private:
+    protected:
         std::shared_ptr<FrNode_> m_nodeA;
         std::shared_ptr<FrNode_> m_nodeB;
 
@@ -489,7 +499,7 @@ namespace frydom {
 
         void StepFinalize() override;
 
-    private:
+    protected:
 
         void SetLength(Position posA, Position posB);
 

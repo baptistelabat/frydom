@@ -443,7 +443,7 @@ namespace frydom {
         e3.normalize();
         Direction e1 = vect.cross(e3);
 
-        if (std::abs(e1.norm()) < FLT_EPSILON) {
+        if (std::abs(e1.norm()) > FLT_EPSILON) {
             e1.normalize();
         } else {
             e1 = Direction(1., 0., 0.);
