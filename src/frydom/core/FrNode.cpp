@@ -5,6 +5,8 @@
 #include "FrNode.h"
 #include "FrBody.h"
 
+#include "frydom/core/FrMatrix.h"
+
 
 namespace frydom {
 
@@ -33,9 +35,13 @@ namespace frydom {
     void FrNode_::Set(FrBody_* body, Position pos, Direction e1, Direction e2, Direction e3) {
         m_body = body;
         SetLocalPosition(pos);
-        m_chronoMarker->GetA().Set_A_axis(internal::Vector3dToChVector(e1),
-                                        internal::Vector3dToChVector(e2),
-                                        internal::Vector3dToChVector(e3));
+
+        mathutils::Matrix33<double> matrix;
+        matrix <<   e1.Getux(), e2.Getux(), e3.Getux(),
+                    e1.Getuy(), e2.Getuy(), e3.Getuy(),
+                    e1.Getuz(), e2.Getuz(), e3.Getuz();
+        m_chronoMarker->SetRot(internal::Matrix33ToChMatrix33(matrix));
+        m_chronoMarker->UpdateState();
     }
 
     FrNode_::~FrNode_() = default;
@@ -49,7 +55,9 @@ namespace frydom {
     }
 
     void FrNode_::SetLocalPosition(const Position &position) {
-        auto coord = chrono::ChCoordsys<double>(chrono::ChVector<double>(internal::Vector3dToChVector(position)));
+        m_localPosition = position;
+        Position localPositionFromCOG = position - m_body->GetCOG(NWU);
+        auto coord = chrono::ChCoordsys<double>(chrono::ChVector<double>(internal::Vector3dToChVector(localPositionFromCOG)));
         m_chronoMarker->Impose_Rel_Coord(coord);
     }
 
@@ -67,15 +75,18 @@ namespace frydom {
     }
 
     void FrNode_::SetLocalFrame(const FrFrame_ &frame) {
+        m_localPosition = frame.GetPosition(NWU);
+        Position localPositionFromCOG = m_localPosition - m_body->GetCOG(NWU);
         auto chCoord = chrono::ChCoordsys<double>(
-                internal::Vector3dToChVector(frame.GetPosition(NWU)),
+                internal::Vector3dToChVector(localPositionFromCOG),
                 internal::Fr2ChQuaternion(frame.GetQuaternion())
                 );
         m_chronoMarker->Impose_Rel_Coord(chCoord);
     }
 
     Position FrNode_::GetNodePositionInBody(FRAME_CONVENTION fc) const {
-        Position NodePositionInBody = internal::ChVectorToVector3d<Position>(m_chronoMarker->GetRest_Coord().pos);
+        Position NodePositionInBodyFromCOG = internal::ChVectorToVector3d<Position>(m_chronoMarker->GetRest_Coord().pos);
+        Position NodePositionInBody = NodePositionInBodyFromCOG + m_body->GetCOG(NWU);
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(NodePositionInBody);
         return  NodePositionInBody;
     }
@@ -114,7 +125,8 @@ namespace frydom {
 
 
     void FrNode_::Initialize() {
-
+        auto localPosition = m_localPosition;
+        SetLocalPosition(localPosition);        // Update local pos according to COG
     }
 
     void FrNode_::StepFinalize() {

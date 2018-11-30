@@ -37,6 +37,21 @@ namespace frydom {
             return matrix;
         }
 
+        /// Converts a frydom::Matrix33 into a chrono::ChMatrix33
+        inline chrono::ChMatrix33<double> Matrix33ToChMatrix33(const Matrix33& matrix) {
+            chrono::ChMatrix33<double> chronoMatrix33;
+            chronoMatrix33.Set33Element(0, 0, matrix(0, 0));
+            chronoMatrix33.Set33Element(0, 1, matrix(0, 1));
+            chronoMatrix33.Set33Element(0, 2, matrix(0, 2));
+            chronoMatrix33.Set33Element(1, 0, matrix(1, 0));
+            chronoMatrix33.Set33Element(1, 1, matrix(1, 1));
+            chronoMatrix33.Set33Element(1, 2, matrix(1, 2));
+            chronoMatrix33.Set33Element(2, 0, matrix(2, 0));
+            chronoMatrix33.Set33Element(2, 1, matrix(2, 1));
+            chronoMatrix33.Set33Element(2, 2, matrix(2, 2));
+            return chronoMatrix33;
+        }
+
     } // end namespace internal
 
 }  // end namespace frydom

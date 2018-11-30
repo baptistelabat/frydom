@@ -227,13 +227,13 @@ void TestMorison::CheckForce(FrForce_* force) const {
     auto forceWorld = force->GetForceInWorld(NWU);
     auto torqueBody = force->GetTorqueInBodyAtCOG(NWU);
 
-    EXPECT_FLOAT_EQ(m_MorisonForce.GetFx(), forceWorld.GetFx());
-    EXPECT_FLOAT_EQ(m_MorisonForce.GetFy(), forceWorld.GetFy());
-    EXPECT_FLOAT_EQ(m_MorisonForce.GetFz(), forceWorld.GetFz());
+    EXPECT_NEAR(m_MorisonForce.GetFx(), forceWorld.GetFx(), 10e-8);
+    EXPECT_NEAR(m_MorisonForce.GetFy(), forceWorld.GetFy(), 10e-8);
+    EXPECT_NEAR(m_MorisonForce.GetFz(), forceWorld.GetFz(), 10e-8);
 
-    EXPECT_FLOAT_EQ(m_MorisonTorque.GetMx(), torqueBody.GetMx());
-    EXPECT_FLOAT_EQ(m_MorisonTorque.GetMy(), torqueBody.GetMy());
-    EXPECT_FLOAT_EQ(m_MorisonTorque.GetMz(), torqueBody.GetMz());
+    EXPECT_NEAR(m_MorisonTorque.GetMx(), torqueBody.GetMx(), 10e-8);
+    EXPECT_NEAR(m_MorisonTorque.GetMy(), torqueBody.GetMy(), 10e-8);
+    EXPECT_NEAR(m_MorisonTorque.GetMz(), torqueBody.GetMz(), 10e-8);
 
 }
 
@@ -318,40 +318,5 @@ TEST_F(TestMorison, UpdateForce) {
 }
 
 
-// ##CC debug
-TEST_F(TestMorison, debug) {
 
-    LoadData("TNR_database.h5");
-
-    auto morison = std::make_shared<TestMorisonSingleElement>(body.get(), m_pointA, m_pointB, m_diameter, m_addedMass, m_dragCoeff,
-                                                              m_frictionCoeff);
-
-    system.AddPhysicsItem(morison);
-    system.Initialize();
-
-    auto cog = body->GetCOG(NWU);
-    std::cout << "cog : " << cog.GetX() << " ; " << cog.GetY() << " ; " << cog.GetZ() << std::endl;
-
-    auto frameRef = body->GetFrame();
-
-    auto xframe = frameRef.GetRotation().GetXAxis(NWU);
-    auto yframe = frameRef.GetRotation().GetYAxis(NWU);
-    auto zframe = frameRef.GetRotation().GetZAxis(NWU);
-
-    auto pos = morison->GetFrame().GetPosition(NWU);
-    //auto pos = Position(0.5, 0., -2.);
-
-    std::cout << "frame position : " << pos.GetX() << ";" << pos.GetY() << ";" << pos.GetZ() << std::endl;
-
-    auto waveField = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
-
-    auto flowVelocity = waveField->GetVelocity(pos.GetX(), pos.GetY(), pos.GetZ());
-    std::cout << "flow velocity : " << flowVelocity.GetVx() << ";" << flowVelocity.GetVy() << ";"
-              << flowVelocity.GetVz() << std::endl;
-
-    auto bodyVelocity = body->GetVelocityInWorldAtPointInWorld(pos, NWU);
-    std::cout << "body velocity : " << bodyVelocity.GetVx() << ";" << bodyVelocity.GetVy() << ";"
-              << bodyVelocity.GetVz() << std::endl;
-
-}
 

@@ -80,6 +80,7 @@ namespace frydom {
     private:
 
         FrBody_* m_body;
+        Position m_localPosition;
         std::shared_ptr<chrono::ChMarker> m_chronoMarker;
 
     public:
