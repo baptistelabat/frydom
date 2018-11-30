@@ -293,7 +293,6 @@ TEST_F(TestMorison, SingleElementConstructor) {
     auto nodeA = std::make_shared<FrNode_>(body.get(), posA);
     auto nodeB = std::make_shared<FrNode_>(body.get(), posB);
     auto morison2 = std::make_shared<TestMorisonSingleElement>(nodeA, nodeB, 0.5, 0.1, 0.2, 0.01);
-
 }
 
 TEST_F(TestMorison, UpdateForce) {

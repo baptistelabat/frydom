@@ -170,22 +170,6 @@ namespace frydom {
         m_dir = direction;
         m_volume = MU_PI_4 * m_diameter * m_diameter * m_length;
 
-        //##CC
-        /**
-        auto xaxis = m_frame.GetA().Get_A_Xaxis();
-        auto yaxis = m_frame.GetA().Get_A_Yaxis();
-        auto zaxis = m_frame.GetA().Get_A_Zaxis();
-        std::cout << "Morison Element : "<< std::endl;
-        std::cout << "A : [ " << posA.x() << " ; " << posA.y() << " ; " << posA.z() << " ]" << std::endl;
-        std::cout << "B : [ " << posB.x() << " ; " << posB.y() << " ; " << posB.z() << " ]" << std::endl;
-        std::cout << "center frame : [ " << position.x() << " ; " << position.y() << " ; " << position.z() << " ]" << std::endl;
-        std::cout << "x-axis : [ " << xaxis.x() << " ; " << xaxis.y() << " ; " << xaxis.z() << " ]" << std::endl;
-        std::cout << "y-axis : [ " << yaxis.x() << " ; " << yaxis.y() << " ; " << yaxis.z() << " ]" << std::endl;
-        std::cout << "z-axis : [ " << zaxis.x() << " ; " << zaxis.y() << " ; " << zaxis.z() << " ]" << std::endl;
-        **/
-        //##CC
-
-
     }
 
     void FrSingleElement::AddForce(FrHydroBody* body) {
@@ -561,8 +545,6 @@ namespace frydom {
         assert(diameter >= -FLT_EPSILON or std::abs(diameter) <= FLT_EPSILON);
         m_property.diameter = diameter;
     }
-
-
 
     void FrMorisonSingleElement_::SetLength(Position posA, Position posB) {
         m_property.length = (posB - posA).norm();

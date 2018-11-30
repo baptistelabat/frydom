@@ -3,6 +3,7 @@
 //
 
 #include "FrFrame.h"
+#include "FrMatrix.h"
 
 #include "chrono/core/ChMatrixDynamic.h"
 
@@ -92,9 +93,13 @@ namespace frydom {
 
     void FrFrame_::Set(Position pos, Direction e1, Direction e2, Direction e3, FRAME_CONVENTION fc) {
         SetPosition(pos, fc);
-        m_chronoFrame.GetA().Set_A_axis(internal::Vector3dToChVector(e1),
-                                        internal::Vector3dToChVector(e2),
-                                        internal::Vector3dToChVector(e3));
+
+        mathutils::Matrix33<double> matrix;
+        matrix <<   e1.Getux(), e2.Getux(), e3.Getux(),
+                e1.Getuy(), e2.Getuy(), e3.Getuy(),
+                e1.Getuz(), e2.Getuz(), e3.Getuz();
+
+        m_chronoFrame.SetRot(internal::Matrix33ToChMatrix33(matrix));
     }
 
     void FrFrame_::SetRotation(const FrRotation_ &rotation) {  // OK

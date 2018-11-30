@@ -111,6 +111,12 @@ namespace frydom {
         /// \param frame relative frame node, given in the body reference frame
         FrNode_(FrBody_* body, const FrFrame_& frame);
 
+        /// Set node position and direction axis, given in the body reference frame
+        /// \param body body to which the node belongs
+        /// \param pos relative position of the frame node in the body reference frame
+        /// \param e1 direction of the x-axis in the body reference frame
+        /// \param e2 direction of the y-axis in the body reference frame
+        /// \param e3 direction of the z-axis in the body reference frame
         void Set(FrBody_* body, Position pos, Direction e1, Direction e2, Direction e3);
 
         /// Destructor

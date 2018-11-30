@@ -122,6 +122,12 @@ namespace frydom {
         /// \return  the z position of the frame
         double GetZ(FRAME_CONVENTION fc) const;
 
+        /// Set the position and axis in world reference frame
+        /// \param pos Position of the frame
+        /// \param e1 direction of the x-axis
+        /// \param e2 direction of the y-axis
+        /// \param e3 direction of the z-axis
+        /// \param fc Frame convention
         void Set(Position pos, Direction e1, Direction e2, Direction e3, FRAME_CONVENTION fc);
 
         // Operations
