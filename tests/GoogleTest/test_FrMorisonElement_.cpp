@@ -219,7 +219,6 @@ void TestMorison::LoadData(std::string filename) {
 
     m_MorisonForce = ReadVector<Force>(reader, group + "MorisonForce");
     m_MorisonTorque = ReadVector<Torque>(reader, group + "MorisonTorque");
-
 }
 
 void TestMorison::CheckForce(FrForce_* force) const {
@@ -308,13 +307,10 @@ TEST_F(TestMorison, UpdateForce) {
 
     system.AddPhysicsItem(morison);
     body->AddExternalForce(force);
-
     system.Initialize();
 
     force->Update(0.);
-
     CheckForce(force.get());
-
 }
 
 

@@ -293,14 +293,16 @@ namespace frydom {
     void FrCompositeElement::AddElement(chrono::ChVector<> posA,
                                         chrono::ChVector<> posB,
                                         double diameter,
-                                        double ca, double cd, double cf) {
+                                        double ca, double cd,
+                                        double cf) {
         m_morison.push_back(std::make_unique<FrSingleElement>(posA, posB, diameter, ca, cd, cf));
     }
 
     void FrCompositeElement::AddElement(chrono::ChVector<> posA,
                                         chrono::ChVector<> posB,
                                         double diameter,
-                                        double ca_x, double ca_y, double cd_x, double cd_y, double cf) {
+                                        double ca_x, double ca_y, double cd_x,
+                                        double cd_y, double cf) {
         m_morison.push_back(std::make_unique<FrSingleElement>(posA, posB, diameter, ca_x, ca_y, cd_x, cd_y, cf));
     }
 
@@ -311,7 +313,8 @@ namespace frydom {
 
     void FrCompositeElement::AddElement(std::shared_ptr<FrNode>& nodeA,
                                         std::shared_ptr<FrNode>& nodeB,
-                                        double diameter, double ca, double cd, double cf) {
+                                        double diameter, double ca,
+                                        double cd, double cf) {
         m_morison.push_back(std::make_unique<FrSingleElement>(nodeA, nodeB, diameter, ca, cd, cf));
     }
 
