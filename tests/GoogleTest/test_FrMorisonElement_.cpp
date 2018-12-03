@@ -295,12 +295,30 @@ TEST_F(TestMorison, SingleElementConstructor) {
     auto morison2 = std::make_shared<TestMorisonSingleElement>(nodeA, nodeB, 0.5, 0.1, 0.2, 0.01);
 }
 
-TEST_F(TestMorison, UpdateForce) {
+TEST_F(TestMorison, SingleElementForce) {
 
     LoadData("TNR_database.h5");
 
     auto morison = std::make_shared<TestMorisonSingleElement>(body.get(), m_pointA, m_pointB, m_diameter, m_addedMass, m_dragCoeff,
                                                               m_frictionCoeff);
+
+    auto force = std::make_shared<FrMorisonForce_>(morison);
+
+    system.AddPhysicsItem(morison);
+    body->AddExternalForce(force);
+    system.Initialize();
+
+    force->Update(0.);
+    CheckForce(force.get());
+}
+
+TEST_F(TestMorison, CompositeElementForce) {
+
+    LoadData("TNR_database.h5");
+
+    auto morison = std::make_shared<FrMorisonCompositeElement_>(body.get());
+
+    morison->AddElement(m_pointA, m_pointB, m_diameter, m_addedMass, m_dragCoeff, m_frictionCoeff);
 
     auto force = std::make_shared<FrMorisonForce_>(morison);
 

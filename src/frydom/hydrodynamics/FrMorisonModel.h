@@ -570,6 +570,8 @@ namespace frydom {
         void Update(double time) override;
 
         void Initialize() override;
+
+        void StepFinalize() override { }
     };
 
 

@@ -561,13 +561,13 @@ namespace frydom {
         Position worldPos = m_frame->GetPositionInWorld(NWU);
         auto body = m_frame->GetBody();
 
-        auto waveField = GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+        auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
         velocity = waveField->GetVelocity(worldPos);
         velocity -= m_frame->GetVelocityInWorld(NWU);
 
         if (m_includeCurrent) {
-            velocity += GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetFluxVelocityInWorld(worldPos, NWU);
+            velocity += body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetFluxVelocityInWorld(worldPos, NWU);
         }
 
         Velocity velocityBody = body->GetFrame().ProjectVectorParentInFrame(velocity);
@@ -580,7 +580,7 @@ namespace frydom {
         Position worldPos = m_frame->GetPositionInWorld(NWU);
         auto body = m_frame->GetBody();
 
-        auto waveField = GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+        auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
         acceleration = waveField->GetAcceleration(worldPos);
         acceleration -= m_frame->GetAccelerationInWorld(NWU);
@@ -597,8 +597,8 @@ namespace frydom {
 
         Force localForce;
 
-        auto rho = GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
         auto body = m_frame->GetBody();
+        auto rho = body->GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
 
         Velocity velocity = GetFlowVelocity();
         localForce.x() = 0.5 * m_property.cd.x * rho * m_property.diameter * m_property.length * velocity.x() * std::abs(velocity.x());
@@ -658,7 +658,7 @@ namespace frydom {
 
         Position pos;
         for (unsigned int i=0; i<n; ++i) {
-            pos = posA + dV * n;
+            pos = posA + dV * i;
             m_morison.push_back(std::make_unique<FrMorisonSingleElement_>(m_frame->GetBody(), pos, pos + dV, diameter,
                                                                           ca, cd, cf, perpendicular));
         }
