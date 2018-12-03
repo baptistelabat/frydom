@@ -131,6 +131,45 @@ void TestMorisonSingleElement::CheckFriction(double cf) {
     EXPECT_FLOAT_EQ(cf, m_property.cf);
 }
 
+// ---------------------------------------------------------------
+//
+// MORISON COMPOSITE ELEMENT
+//
+// ---------------------------------------------------------------
+
+class TestMorisonCompositeElement : public FrMorisonCompositeElement_ {
+
+
+public:
+    TestMorisonCompositeElement(FrBody_* body) : FrMorisonCompositeElement_(body) { }
+    void TestDragCoeff(double cdX, double cdY);
+    void TestAddedMass(double caX, double caY);
+    void TestFrictionCoeff(double cf);
+    void TestDiameter(double diameter);
+};
+
+void TestMorisonCompositeElement::TestDragCoeff(double cdX, double cdY) {
+    SetDragCoeff({cdX, cdY});
+    EXPECT_FLOAT_EQ(cdX, m_property.cd.x);
+    EXPECT_FLOAT_EQ(cdY, m_property.cd.y);
+}
+
+void TestMorisonCompositeElement::TestAddedMass(double caX, double caY) {
+    SetAddedMass({caX, caY});
+    EXPECT_FLOAT_EQ(caX, m_property.ca.x);
+    EXPECT_FLOAT_EQ(caY, m_property.ca.y);
+}
+
+void TestMorisonCompositeElement::TestFrictionCoeff(double cf) {
+    SetFrictionCoeff(cf);
+    EXPECT_FLOAT_EQ(cf, m_property.cf);
+}
+
+void TestMorisonCompositeElement::TestDiameter(double diameter) {
+    SetDiameter(diameter);
+    EXPECT_FLOAT_EQ(diameter, m_property.diameter);
+}
+
 // -----------------------------------------------------------------
 //
 // MORISON TEST
@@ -312,7 +351,27 @@ TEST_F(TestMorison, SingleElementForce) {
     CheckForce(force.get());
 }
 
-TEST_F(TestMorison, CompositeElementForce) {
+TEST_F(TestMorison, SingleElementForceWithNode) {
+
+    LoadData("TNR_database.h5");
+
+    auto nodeA = std::make_shared<FrNode_>(body.get(), m_pointA);
+    auto nodeB = std::make_shared<FrNode_>(body.get(), m_pointB);
+
+    auto morison = std::make_shared<TestMorisonSingleElement>(nodeA, nodeB, m_diameter, m_addedMass, m_dragCoeff,
+                                                              m_frictionCoeff);
+
+    auto force = std::make_shared<FrMorisonForce_>(morison);
+
+    system.AddPhysicsItem(morison);
+    body->AddExternalForce(force);
+    system.Initialize();
+
+    force->Update(0.);
+    CheckForce(force.get());
+}
+
+TEST_F(TestMorison, CompositeElementWithPositions) {
 
     LoadData("TNR_database.h5");
 
@@ -330,6 +389,149 @@ TEST_F(TestMorison, CompositeElementForce) {
     CheckForce(force.get());
 }
 
+TEST_F(TestMorison, CompositeElementWithNodes) {
+
+    LoadData("TNR_database.h5");
+
+    auto morison = std::make_shared<FrMorisonCompositeElement_>(body.get());
+
+    auto nodeA = std::make_shared<FrNode_>(body.get(), m_pointA);
+    auto nodeB = std::make_shared<FrNode_>(body.get(), m_pointB);
+
+    morison->AddElement(nodeA, nodeB, m_diameter, m_addedMass, m_dragCoeff, m_frictionCoeff);
+
+    auto force = std::make_shared<FrMorisonForce_>(morison);
+
+    system.AddPhysicsItem(morison);
+    body->AddExternalForce(force);
+    system.Initialize();
+
+    force->Update(0.);
+    CheckForce(force.get());
+}
+
+TEST_F(TestMorison, ElementDiscretization) {
+
+    LoadData("TNR_database.h5");
+
+    auto morison = std::make_shared<FrMorisonCompositeElement_>(body.get());
+
+    morison->AddElement(m_pointA, m_pointB, m_diameter, m_addedMass, m_dragCoeff, m_frictionCoeff, 10);
+
+    auto force = std::make_shared<FrMorisonForce_>(morison);
+
+    system.AddPhysicsItem(morison);
+    body->AddExternalForce(force);
+    system.Initialize();
+
+    force->Update(0.);
+    CheckForce(force.get());
+}
+
+TEST_F(TestMorison, TwoElements) {
+
+    LoadData("TNR_database.h5");
+
+    auto morison = std::make_shared<FrMorisonCompositeElement_>(body.get());
+
+    morison->AddElement(m_pointA, m_pointB, m_diameter, m_addedMass, m_dragCoeff, m_frictionCoeff);
+    morison->AddElement(m_pointA, m_pointB, m_diameter, m_addedMass, m_dragCoeff, m_frictionCoeff);
+
+    auto force = std::make_shared<FrMorisonForce_>(morison);
+
+    system.AddPhysicsItem(morison);
+    body->AddExternalForce(force);
+    system.Initialize();
+
+    force->Update(0.);
+
+    auto forceWorld = force->GetForceInWorld(NWU);
+    auto torqueBody = force->GetTorqueInBodyAtCOG(NWU);
+
+    EXPECT_NEAR(2. * m_MorisonForce.GetFx(), forceWorld.GetFx(), 10e-8);
+    EXPECT_NEAR(2. * m_MorisonForce.GetFy(), forceWorld.GetFy(), 10e-8);
+    EXPECT_NEAR(2. * m_MorisonForce.GetFz(), forceWorld.GetFz(), 10e-8);
+
+    EXPECT_NEAR(2. * m_MorisonTorque.GetMx(), torqueBody.GetMx(), 10e-8);
+    EXPECT_NEAR(2. * m_MorisonTorque.GetMy(), torqueBody.GetMy(), 10e-8);
+    EXPECT_NEAR(2. * m_MorisonTorque.GetMz(), torqueBody.GetMz(), 10e-8);
+}
+
+TEST_F(TestMorison, CompositeDragCoeff) {
+    auto morison = std::make_shared<TestMorisonCompositeElement>(body.get());
+    morison->TestDragCoeff(0.1, 0.15);
+    auto cd = morison->GetDragCoeff();
+    EXPECT_FLOAT_EQ(0.1, cd.x);
+    EXPECT_FLOAT_EQ(0.15, cd.y);
+}
+
+TEST_F(TestMorison, CompositeAddedMass) {
+    auto morison = std::make_shared<TestMorisonCompositeElement>(body.get());
+    morison->TestAddedMass(1.5, 2.);
+    auto ca = morison->GetAddedMass();
+    EXPECT_FLOAT_EQ(1.5, ca.x);
+    EXPECT_FLOAT_EQ(2., ca.y);
+}
+
+TEST_F(TestMorison, CompositeFrictionCoeff) {
+    auto morison = std::make_shared<TestMorisonCompositeElement>(body.get());
+    morison->TestFrictionCoeff(0.01);
+    auto cf = morison->GetFrictionCoeff();
+    EXPECT_FLOAT_EQ(0.01, cf);
+}
+
+TEST_F(TestMorison, CompositeDiameter) {
+    auto morison = std::make_shared<TestMorisonCompositeElement>(body.get());
+    morison->TestDiameter(0.5);
+    auto diameter = morison->GetDiameter();
+    EXPECT_FLOAT_EQ(0.5, diameter);
+}
+
+TEST_F(TestMorison, CompositionElementGeneralProperty) {
+
+    LoadData("TNR_database.h5");
+
+    auto morison = std::make_shared<FrMorisonCompositeElement_>(body.get());
+
+    morison->SetAddedMass(m_addedMass);
+    morison->SetDiameter(m_diameter);
+    morison->SetDragCoeff(m_dragCoeff);
+    morison->SetFrictionCoeff(m_frictionCoeff);
+
+    morison->AddElement(m_pointA, m_pointB);
+    auto force = std::make_shared<FrMorisonForce_>(morison);
+
+    system.AddPhysicsItem(morison);
+    body->AddExternalForce(force);
+    system.Initialize();
+
+    force->Update(0.);
+    CheckForce(force.get());
+}
 
 
+TEST_F(TestMorison, CompositionElementGeneralPropertyNode) {
+
+    LoadData("TNR_database.h5");
+
+    auto morison = std::make_shared<FrMorisonCompositeElement_>(body.get());
+
+    morison->SetAddedMass(m_addedMass);
+    morison->SetDiameter(m_diameter);
+    morison->SetDragCoeff(m_dragCoeff);
+    morison->SetFrictionCoeff(m_frictionCoeff);
+
+    auto nodeA = std::make_shared<FrNode_>(body.get(), m_pointA);
+    auto nodeB = std::make_shared<FrNode_>(body.get(), m_pointB);
+
+    morison->AddElement(nodeA, nodeB);
+    auto force = std::make_shared<FrMorisonForce_>(morison);
+
+    system.AddPhysicsItem(morison);
+    body->AddExternalForce(force);
+    system.Initialize();
+
+    force->Update(0.);
+    CheckForce(force.get());
+}
 

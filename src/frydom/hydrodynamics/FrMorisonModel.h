@@ -433,12 +433,12 @@ namespace frydom {
     };
 
     struct MorisonElementProperty {
-        MorisonCoeff cd;
-        MorisonCoeff ca;
-        double cf;
-        double diameter;
-        double length;
-        double volume;
+        MorisonCoeff cd = 0.;
+        MorisonCoeff ca = 0.;
+        double cf       = 0.;
+        double diameter = 0.;
+        double length   = 0.;
+        double volume   = 0.;
     };
 
 
@@ -523,7 +523,7 @@ namespace frydom {
     protected:
 
         std::vector<std::unique_ptr<FrMorisonElement_>> m_morison;
-        MorisonElementProperty m_property;
+        MorisonElementProperty m_property = MorisonElementProperty();
         bool m_isGlobal = false;
 
     public:
@@ -540,16 +540,23 @@ namespace frydom {
             m_morison.push_back(std::unique_ptr<FrMorisonElement_>(model));
         }
 
-        void AddElement(std::shared_ptr<FrNode_> nodeA, std::shared_ptr<FrNode_> nodeB, double diameter,
-                        MorisonCoeff ca, MorisonCoeff cd, double cf,
+        void AddElement(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB,
+                        double diameter, MorisonCoeff ca,  MorisonCoeff cd, double cf,
+                        Direction perpendicular = Direction(0., 0, 1.));
+
+        void AddElement(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB,
                         Direction perpendicular = Direction(0., 0, 1.));
 
         void AddElement(Position posA, Position posB, double diameter,
-                        MorisonCoeff ca, MorisonCoeff cd, double cf, unsigned int n =1,
+                        MorisonCoeff ca, MorisonCoeff cd,  double cf, unsigned int n =1,
                         Direction perpendicular = Direction(0., 0., 1.));
 
-        void AddElement(FrFrame_ frame, double diameter, double length,
-                        MorisonCoeff ca, MorisonCoeff Cd, double cf);
+        void AddElement(Position posA, Position posB, unsigned int n =1,
+                        Direction perpendicular = Direction(0., 0., 1.));
+
+        void AddElement(FrFrame_ frame, double length, double diameter,  MorisonCoeff ca, MorisonCoeff Cd, double cf);
+
+        void AddElement(FrFrame_ frame, double length);
 
         void SetDragCoeff(MorisonCoeff cd);
 
@@ -560,6 +567,10 @@ namespace frydom {
         double GetFrictionCoeff() const { return m_property.cf; }
 
         void SetAddedMass(MorisonCoeff ca);
+
+        void SetDiameter(double diameter);
+
+        double GetDiameter() const { return m_property.diameter; }
 
         MorisonCoeff GetAddedMass() const { return m_property.ca; }
 
