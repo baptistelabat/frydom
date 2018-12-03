@@ -135,6 +135,17 @@ namespace frydom {
             UpdateMarkers(GetChTime());
         }
 
+        void _FrBodyBase::UpdateMarkerPositionToCOG(const chrono::ChVector<> newCOG) {
+
+            chrono::ChVector<double> position;
+
+            for (auto& marker : GetMarkerList()) {
+                position = marker->GetPos() - newCOG;
+                marker->Impose_Rel_Coord(chrono::ChCoordsys<double>(position));
+            }
+            UpdateMarkers(GetChTime());
+        }
+
     }  // end namespace internal
 
     FrBody_::FrBody_() {
@@ -421,6 +432,7 @@ namespace frydom {
     void FrBody_::SetCOG(const Position& bodyPos, FRAME_CONVENTION fc) {
         FrFrame_ cogFrame;
         cogFrame.SetPosition(bodyPos, fc);
+        m_chronoBody->UpdateMarkerPositionToCOG(internal::Vector3dToChVector(cogFrame.GetPosition(NWU)));
         m_chronoBody->SetFrame_COG_to_REF(internal::Fr2ChFrame(cogFrame));
     }
 

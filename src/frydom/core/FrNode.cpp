@@ -36,7 +36,7 @@ namespace frydom {
         m_body = body;
         SetLocalPosition(pos);
 
-        mathutils::Matrix33<double> matrix;
+        mathutils::Matrix33<double> matrix;                 // FIXME : passer un FrRotation plutôt que matrix33
         matrix <<   e1.Getux(), e2.Getux(), e3.Getux(),
                     e1.Getuy(), e2.Getuy(), e3.Getuy(),
                     e1.Getuz(), e2.Getuz(), e3.Getuz();
@@ -55,7 +55,6 @@ namespace frydom {
     }
 
     void FrNode_::SetLocalPosition(const Position &position) {
-        m_localPosition = position;
         Position localPositionFromCOG = position - m_body->GetCOG(NWU);
         auto coord = chrono::ChCoordsys<double>(chrono::ChVector<double>(internal::Vector3dToChVector(localPositionFromCOG)));
         m_chronoMarker->Impose_Rel_Coord(coord);
@@ -75,8 +74,7 @@ namespace frydom {
     }
 
     void FrNode_::SetLocalFrame(const FrFrame_ &frame) {
-        m_localPosition = frame.GetPosition(NWU);
-        Position localPositionFromCOG = m_localPosition - m_body->GetCOG(NWU);
+        Position localPositionFromCOG = frame.GetPosition(NWU); - m_body->GetCOG(NWU);
         auto chCoord = chrono::ChCoordsys<double>(
                 internal::Vector3dToChVector(localPositionFromCOG),
                 internal::Fr2ChQuaternion(frame.GetQuaternion())
@@ -125,8 +123,7 @@ namespace frydom {
 
 
     void FrNode_::Initialize() {
-        auto localPosition = m_localPosition;
-        SetLocalPosition(localPosition);        // Update local pos according to COG
+
     }
 
     void FrNode_::StepFinalize() {

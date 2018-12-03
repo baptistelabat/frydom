@@ -288,6 +288,8 @@ namespace frydom {
 
             void UpdateAfterMove();
 
+            void UpdateMarkerPositionToCOG(const chrono::ChVector<> newCOG);
+
         };
 
     }  // end namespace internal
@@ -468,7 +470,6 @@ namespace frydom {
 
         /// Get a new node attached to the body given a position of the node expressed into the body reference frame
         std::shared_ptr<FrNode_> NewNode(double x, double y, double z, FRAME_CONVENTION fc);
-
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame_ !
 
