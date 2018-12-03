@@ -75,6 +75,10 @@ namespace frydom {
         FrMorisonForce_(std::shared_ptr<FrMorisonElement_> model)
             : m_model(model) { }
 
+        FrMorisonSingleElement_* SetSingleElementModel(FrBody_* body);
+
+        FrMorisonCompositeElement_* SetCompositeElementModel(FrBody_* body);
+
         void Update(double time) override;
 
         void Initialize() override;

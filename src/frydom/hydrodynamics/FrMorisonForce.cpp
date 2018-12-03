@@ -67,6 +67,16 @@ namespace frydom {
 
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
+    FrMorisonSingleElement_* FrMorisonForce_::SetSingleElementModel(FrBody_* body) {
+        m_model = std::make_shared<FrMorisonSingleElement_>(body);
+        return dynamic_cast<FrMorisonSingleElement_*>(m_model.get());
+    }
+
+    FrMorisonCompositeElement_* FrMorisonForce_::SetCompositeElementModel(FrBody_* body) {
+        m_model = std::make_shared<FrMorisonCompositeElement_>(body);
+        return dynamic_cast<FrMorisonCompositeElement_*>(m_model.get());
+    }
+
     void FrMorisonForce_::Update(double time) {
 
         m_model->Update(time);

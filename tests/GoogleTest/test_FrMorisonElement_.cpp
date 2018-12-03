@@ -343,7 +343,6 @@ TEST_F(TestMorison, SingleElementForce) {
 
     auto force = std::make_shared<FrMorisonForce_>(morison);
 
-    system.AddPhysicsItem(morison);
     body->AddExternalForce(force);
     system.Initialize();
 
@@ -363,7 +362,6 @@ TEST_F(TestMorison, SingleElementForceWithNode) {
 
     auto force = std::make_shared<FrMorisonForce_>(morison);
 
-    system.AddPhysicsItem(morison);
     body->AddExternalForce(force);
     system.Initialize();
 
@@ -381,7 +379,6 @@ TEST_F(TestMorison, CompositeElementWithPositions) {
 
     auto force = std::make_shared<FrMorisonForce_>(morison);
 
-    system.AddPhysicsItem(morison);
     body->AddExternalForce(force);
     system.Initialize();
 
@@ -402,7 +399,6 @@ TEST_F(TestMorison, CompositeElementWithNodes) {
 
     auto force = std::make_shared<FrMorisonForce_>(morison);
 
-    system.AddPhysicsItem(morison);
     body->AddExternalForce(force);
     system.Initialize();
 
@@ -420,7 +416,6 @@ TEST_F(TestMorison, ElementDiscretization) {
 
     auto force = std::make_shared<FrMorisonForce_>(morison);
 
-    system.AddPhysicsItem(morison);
     body->AddExternalForce(force);
     system.Initialize();
 
@@ -439,7 +434,6 @@ TEST_F(TestMorison, TwoElements) {
 
     auto force = std::make_shared<FrMorisonForce_>(morison);
 
-    system.AddPhysicsItem(morison);
     body->AddExternalForce(force);
     system.Initialize();
 
@@ -501,7 +495,6 @@ TEST_F(TestMorison, CompositionElementGeneralProperty) {
     morison->AddElement(m_pointA, m_pointB);
     auto force = std::make_shared<FrMorisonForce_>(morison);
 
-    system.AddPhysicsItem(morison);
     body->AddExternalForce(force);
     system.Initialize();
 
@@ -527,7 +520,6 @@ TEST_F(TestMorison, CompositionElementGeneralPropertyNode) {
     morison->AddElement(nodeA, nodeB);
     auto force = std::make_shared<FrMorisonForce_>(morison);
 
-    system.AddPhysicsItem(morison);
     body->AddExternalForce(force);
     system.Initialize();
 

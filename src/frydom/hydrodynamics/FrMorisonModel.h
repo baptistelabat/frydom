@@ -371,7 +371,7 @@ namespace frydom {
     // MORISON ELEMENT
     // --------------------------------------------------------------------------
 
-    class FrMorisonElement_ : public FrPhysicsItem_ {
+    class FrMorisonElement_ {
 
     protected:
         bool m_fixStructure;
@@ -400,6 +400,12 @@ namespace frydom {
         Force GetForceInWorld(FRAME_CONVENTION fc) const;
 
         Torque GetTorqueInBody() const;
+
+        virtual void Update(double time) = 0;
+
+        virtual void Initialize() = 0;
+
+        virtual void StepFinalize() = 0;
 
     };
 
@@ -454,13 +460,32 @@ namespace frydom {
 
 
     public:
+        /// Constructor of a new morison element without property definition
+        /// \param body Body to which the morison force is applied
         FrMorisonSingleElement_(FrBody_* body);
 
+        /// Constructor of a new morison element with property
+        /// \param nodeA First extremity node of the morison element
+        /// \param nodeB Second extremity node of the morison element
+        /// \param diameter Diameter, in m
+        /// \param ca Added mass coefficient
+        /// \param cd Drag coefficient
+        /// \param cf Friction coefficient
+        /// \param perpendicular Vector used to build the frame of the morison element
         FrMorisonSingleElement_(std::shared_ptr<FrNode_>& nodeA,
                                 std::shared_ptr<FrNode_>& nodeB,
                                 double diameter, MorisonCoeff ca, MorisonCoeff cd, double cf,
                                 Direction perpendicular = Direction(0., 0., 1.));
 
+        /// Constructor of a new element with property
+        /// \param body
+        /// \param posA
+        /// \param posB
+        /// \param diameter
+        /// \param ca
+        /// \param cd
+        /// \param cf
+        /// \param perpendicular
         FrMorisonSingleElement_(FrBody_* body, Position posA, Position posB,
                                 double diameter, MorisonCoeff ca, MorisonCoeff cd, double cf,
                                 Direction perpendicular = Direction(0., 0., 1.));
