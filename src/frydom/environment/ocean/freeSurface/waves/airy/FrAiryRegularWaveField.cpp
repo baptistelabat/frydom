@@ -59,7 +59,7 @@ namespace frydom {
 
         mathutils::Normalize_0_2PI(m_dirAngle);
 
-        m_direction = Direction(cos(m_dirAngle), sin(m_dirAngle), 0.);
+//        m_direction = Direction(cos(m_dirAngle), sin(m_dirAngle), 0.);
 
     }
 
