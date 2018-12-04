@@ -6,5 +6,6 @@
 #define FRYDOM_FRAIRYINC_H
 
 #include "FrAiryRegularWaveField.h"
+#include "FrAiryIrregularWaveField.h"
 
 #endif //FRYDOM_FRAIRYINC_H

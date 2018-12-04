@@ -15,11 +15,7 @@
 namespace frydom {
 
     FrAiryRegularWaveField::FrAiryRegularWaveField(FrFreeSurface_* freeSurface) : FrWaveField_(freeSurface) {
-        m_depth = m_freeSurface->GetOcean()->GetSeabed()->GetDepth();
-
-        m_waveRamp = std::make_shared<FrRamp>();
-        m_waveRamp->Initialize();
-
+        m_waveModel = LINEAR_WAVES;
         m_verticalFactor = std::make_unique<FrKinematicStretching_>();
         m_verticalFactor->SetInfDepth(m_infinite_depth);
 
@@ -117,7 +113,7 @@ namespace frydom {
 
 
     Complex FrAiryRegularWaveField::GetComplexElevation(double x, double y) const {
-        // eta = Re(A * exp(j.k.[x.cos(theta) + y.sin(theta)]) * exp(-j.omega.t)
+        // eta_cplx = A * exp(j.k.[x.cos(theta) + y.sin(theta)] - j.omega.t)
 
         double kdir = x*cos(m_dirAngle) + y*sin(m_dirAngle);
         double time = GetTime();

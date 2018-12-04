@@ -131,7 +131,12 @@ namespace frydom {
         /// Constructor
         FrWaveSpectrum(const double hs, const double tp, const FREQUENCY_UNIT unit=S) :
                 m_significant_height(hs),
-                m_peak_pulsation(convert_frequency(tp, unit, RADS)) {}
+                m_peak_pulsation(convert_frequency(tp, unit, RADS)) {};
+
+        void SetCos2sDirectionaleModel(double spreadingFactor){
+            m_dir_model_type = COS2S;
+            m_directional_model = std::make_unique<FrCos2sDirectionalModel>(spreadingFactor);
+        }
 
         /// Set the directional model to use from type
         void SetDirectionalModel(WaveDirectionalModelType model) {
@@ -146,7 +151,7 @@ namespace frydom {
             }
         }
 
-        /// Set the directional model to use from objetct
+        /// Set the directional model to use from object
         void SetDirectionalModel(FrWaveDirectionalModel* dir_model) {
             m_dir_model_type = dir_model->GetType();
             m_directional_model = std::unique_ptr<FrWaveDirectionalModel>(dir_model);
@@ -191,7 +196,7 @@ namespace frydom {
 
         /// Eval the spectrum at one frequency
         /// Must be implemented into each wave spectrum
-        virtual double Eval(const double w) const = 0;
+        virtual double Eval(double w) const = 0;
 
         /// Eval the spectrum at a vector of frequencies
         virtual std::vector<double> Eval(const std::vector<double> wVect) const {
@@ -203,6 +208,75 @@ namespace frydom {
                 S_w.push_back(Eval(w));
             }
             return S_w;
+        }
+
+        std::vector<double> vectorDiscretization(std::vector<double> vect){
+            assert(vect.empty());
+            std::vector<double> discretization;
+            unsigned long Nv = vect.size();
+            double dw;
+            if (Nv == 0) {
+                dw = 1;
+                discretization.push_back(dw);
+                return discretization;
+            }
+            dw = vect[1] - vect[0];
+            discretization.push_back(dw);
+            if (Nv > 1) {
+                for (unsigned long iv=1; iv<Nv-1; iv++) {
+                    dw = vect[iv+1] - vect[iv-1];
+                    discretization.push_back(dw);
+                }
+                dw = vect[Nv] - vect[Nv-1];
+                discretization.push_back(dw);
+            }
+            return discretization;
+        }
+
+        /// Get the wave amplitudes for a given regular frequency discretization
+        virtual std::vector<double> GetWaveAmplitudes(std::vector<double> waveFrequencies){
+            std::vector<double> wave_ampl;
+            auto nbFreq = waveFrequencies.size();
+            wave_ampl.reserve(nbFreq);
+            // Compute dw
+            auto dw = vectorDiscretization(waveFrequencies);
+            // Loop on the container to compute the wave amplitudes for the set of wave frequencies
+            for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq){
+                wave_ampl.push_back(sqrt(2. * Eval(waveFrequencies[ifreq]) * dw[ifreq]));
+            }
+            return wave_ampl;
+        }
+
+
+        /// Get the wave amplitudes for a given regular frequency discretization
+        virtual std::vector<std::vector<double>> GetWaveAmplitudes(std::vector<double> waveFrequencies, std::vector<double> waveDirections) {
+            auto nbDir = waveDirections.size();
+            auto nbFreq = waveFrequencies.size();
+
+            // Compute the directional function
+            auto theta_mean = 0.5*(waveDirections[0] + waveDirections[nbDir]);
+            m_directional_model->UpdateSpreadingFunction(waveDirections, theta_mean);
+            auto dir_func = m_directional_model->GetSpreadingFunction();  // TODO: les deux etapes sont inutiles...
+
+            // Compute dw and dtheta
+            auto dtheta = vectorDiscretization(waveDirections);
+            auto dw = vectorDiscretization(waveFrequencies);
+
+            // Init the containers
+            std::vector<double> wave_ampl_temp;
+            wave_ampl_temp.reserve(nbFreq);
+            std::vector<std::vector<double>> wave_ampl;
+            wave_ampl.reserve(nbDir);
+
+            // Loop on the two containers to compute the wave amplitudes for the sets of wave frequencies and directions
+            for (unsigned int idir=0; idir<nbDir; ++idir) {
+                wave_ampl_temp.clear();
+                for (unsigned int ifreq = 0; ifreq < nbFreq; ++ifreq) {
+                    wave_ampl_temp.push_back(sqrt(2. * Eval(waveFrequencies[ifreq]) * dir_func[idir] * dtheta[idir] * dw[ifreq]));
+                }
+                wave_ampl.push_back(wave_ampl_temp);
+            }
+            return wave_ampl;
         }
 
 
@@ -230,14 +304,12 @@ namespace frydom {
                                                                    const double theta_max,
                                                                    const double theta_mean) {
 
-            if (m_dir_model_type == NONE) {
-                // ERROR !!
-            }
+            assert(m_dir_model_type != NONE);
 
             auto wVect = linspace(wmin, wmax, nb_waves);
             double dw = wVect[1] - wVect[0];
 
-            auto thetaVect = linspace(wmin, wmax, nb_dir);
+            auto thetaVect = linspace(theta_min, theta_max, nb_dir);
             double dtheta = thetaVect[1] - thetaVect[0];
             m_directional_model->UpdateSpreadingFunction(thetaVect, theta_mean);
             auto dir_func = m_directional_model->GetSpreadingFunction();  // TODO: les deux etapes sont inutiles...
@@ -258,9 +330,9 @@ namespace frydom {
             return S_w_theta;
         }
 
-        virtual void Initialize() override {}
+        void Initialize() override {}
 
-        virtual void StepFinalize() override {}
+        void StepFinalize() override {}
 
     };
 

@@ -1,0 +1,90 @@
+//
+// Created by Lucas Letournel on 03/12/18.
+//
+
+#ifndef FRYDOM_FRAIRYIRREGULARWAVEFIELD_H
+#define FRYDOM_FRAIRYIRREGULARWAVEFIELD_H
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
+
+
+namespace frydom {
+
+    //Forward Declaration
+    class FrFreeSurface_;
+
+
+    class FrAiryIrregularWaveField : public FrWaveField_ {
+    private:
+
+        double m_minFreq = 0.05;
+        double m_maxFreq = 2.;
+        unsigned int m_nbFreq = 40;
+
+//        double m_minDir;
+//        double m_maxDir;
+        unsigned int m_nbDir = 1;
+
+        double m_meanDir = 0;
+
+        /// Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
+        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum;
+
+        std::vector<double> m_waveDirections;
+        std::vector<double> m_waveFrequencies;
+        std::vector<double> m_waveNumbers;
+        std::vector<std::complex<double>> m_emjwt;
+
+        /// Table of wave phases,of dimensions (m_nbDir,m_nbFreq)
+        /// made unique to check at initialize() if wavePhases were given by the users,
+        /// or if they need to be randomly generated.
+        std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases;
+
+        ///< Vertical scale velocity factor with stretching
+        std::shared_ptr<FrKinematicStretching> m_verticalFactor;
+    public:
+
+        /// Default constructor
+        /// \param freeSurface pointer to the free surface, to which the wave field belongs
+        explicit FrAiryIrregularWaveField(FrFreeSurface_* freeSurface);
+
+        void SetWaveFrequencies(double minFreq, double maxFreq, unsigned int nbFreq);
+
+        void SetMeanWaveDirection(double dirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+        void SetMeanWaveDirection(Direction direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+
+        std::vector<std::vector<double>>* GetWavePhases() const {return m_wavePhases.get();}
+
+        void SetWavePhases(std::vector<std::vector<double>>& wavePhases) {
+            assert(wavePhases.size() == m_nbDir);
+            for (auto& w: wavePhases) {
+                assert(w.size() == m_nbFreq);
+            }
+            m_wavePhases = std::make_unique<std::vector<std::vector<double>>>(wavePhases);
+        }
+
+        void SetDirectionalParameters(unsigned int nbDir, double spreadingFactor);
+
+        void SetStretching(FrStretchingType type);
+
+        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
+
+        FrWaveSpectrum* GetWaveSpectrum() const;
+
+        void GenerateRandomWavePhases();
+
+        double GetElevation(double x, double y) const override;
+
+        /// Return the eulerian fluid particule velocity (in global frame)
+        Velocity GetVelocity(double x, double y, double z) const override;
+
+        /// Return the eulerian fluid particule acceleration (in global frame)
+        Acceleration GetAcceleration(double x, double y, double z) const override;
+
+        void Initialize() override;
+
+    };
+
+};
+
+
+#endif //FRYDOM_FRAIRYIRREGULARWAVEFIELD_H

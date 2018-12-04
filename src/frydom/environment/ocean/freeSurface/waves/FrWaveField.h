@@ -409,8 +409,6 @@ namespace frydom {
         WAVE_MODEL m_waveModel = NO_WAVES;
 
 
-        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum = nullptr;
-
         std::shared_ptr<FrRamp> m_waveRamp;
 
         double m_depth = 0.;                     ///< Water depth (m) // TODO: aller chercher dans le seabed...
@@ -425,8 +423,6 @@ namespace frydom {
         virtual void Update(double time);
 
         double GetTime() const;
-
-        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
 
         WAVE_MODEL GetWaveModel() const;
 
@@ -453,12 +449,12 @@ namespace frydom {
         virtual Acceleration GetAcceleration(const Position& worldPos) const;
 
         virtual std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
-                                                              const std::vector<double>& yVect) const = 0;
+                                                              const std::vector<double>& yVect) const;
 
 
-        virtual std::vector<std::vector<std::vector<Velocity>>> GetVelocityGrid(const std::vector<double>& xvect,
+        virtual std::vector<std::vector<std::vector<Velocity>>> GetVelocity(const std::vector<double>& xvect,
                                                                   const std::vector<double>& yvect,
-                                                                  const std::vector<double>& zvect) const = 0;
+                                                                  const std::vector<double>& zvect) const;
 
 //        virtual FrFlowSensor* SetFlowSensor(double x, double y, double z) const;
 //        virtual FrFlowSensor* SetFlowSensor(chrono::ChVector<> pos) const;
@@ -484,15 +480,6 @@ namespace frydom {
         Velocity GetVelocity(double x, double y, double z) const final;
 
         Acceleration GetAcceleration(double x, double y, double z) const final;
-
-        std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
-                                                      const std::vector<double>& yVect) const final;
-
-        std::vector<std::vector<std::vector<Velocity>>>
-        GetVelocityGrid(const std::vector<double>& xvect,
-                    const std::vector<double>& yvect,
-                    const std::vector<double>& zvect) const final;
-
 
     };
 
@@ -530,6 +517,8 @@ namespace frydom {
         // For regular wave field
         double m_height = 0.;
         double m_period = 0.;
+
+        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum = nullptr;
 
         std::vector<double> c_waveFrequencies;
         std::vector<double> c_waveNumbers;
@@ -571,15 +560,15 @@ namespace frydom {
 
         double GetMeanWaveDirection(ANGLE_UNIT unit=DEG) const;
 
-        void SetMeanWaveDirection(const double meanDirection, ANGLE_UNIT unit=DEG);
+        void SetMeanWaveDirection(double meanDirection, ANGLE_UNIT unit=DEG);
 
         std::vector<double> GetWaveDirections(ANGLE_UNIT unit=DEG) const;
 
-        void SetWaveDirections(const double minDir, const double maxDir, const unsigned int nbDir, ANGLE_UNIT unit=DEG);
+        void SetWaveDirections(double minDir, double maxDir, unsigned int nbDir, ANGLE_UNIT unit=DEG);
 
         std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit = RADS) const;
 
-        void SetWavePulsations(const double minFreq, const double maxFreq, const unsigned int nbFreq,
+        void SetWavePulsations(double minFreq, double maxFreq, unsigned int nbFreq,
                                FREQUENCY_UNIT unit=RADS);
 
         void Initialize() override;
@@ -597,13 +586,16 @@ namespace frydom {
         std::vector<std::vector<double>> _GetWaveAmplitudes() const;
 
         std::vector<std::vector<std::complex<double>>>
-        GetCmplxElevation(const double x, const double y, bool steady=false) const;
+        GetCmplxElevation(double x, double y, bool steady=false) const;
 
 
         std::vector<chrono::ChVector<std::complex<double>>>
-        GetSteadyVelocity(const double x, const double y, const double z) const;
+        GetSteadyVelocity(double x, double y, double z) const;
 
-        std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const;
+        std::vector<std::complex<double>> GetSteadyElevation(double x, double y) const;
+
+
+        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
 
         FrWaveSpectrum* GetWaveSpectrum() const;
 
@@ -632,7 +624,7 @@ namespace frydom {
         /// Return the time derivative of the temporal factor
         std::vector<std::complex<double>> GetTimeCoeffsDt() const;
 
-        double GetElevation(double x, double y) const;
+        double GetElevation(double x, double y) const override;
 
         /// Return the eulerian fluid particule velocity (in global frame)
         Velocity GetVelocity(double x, double y, double z) const override;
@@ -640,21 +632,11 @@ namespace frydom {
         /// Return the eulerian fluid particule acceleration (in global frame)
         Acceleration GetAcceleration(double x, double y, double z) const override;
 
-
-        std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
-                                                      const std::vector<double>& yVect) const;
-
-
-        /// Return the flow velocity vector field in a grid [xvect x yvect x zvect]
-        std::vector<std::vector<std::vector<Velocity>>> GetVelocityGrid(const std::vector<double>& xvect,
-                                                          const std::vector<double>& yvect,
-                                                          const std::vector<double>& zvect) const override;
-
     private:
 
-        double Fz(const double& z, const double& k) const;
+        double Fz(double z, double k) const;
 
-        inline double dFz(const double& z, const double& k) const;
+        double dFz(double z, double k) const;
 
     };
 

@@ -7,6 +7,8 @@
 #include <random>
 
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
+#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/seabed/FrSeabed.h"
 //#include "frydom/core/FrOffshoreSystem.h"
 //#include "frydom/environment/FrEnvironment.h"
 //#include "frydom/environment/ocean/FrOcean_.h"
@@ -868,6 +870,11 @@ namespace frydom {
 
     FrWaveField_::FrWaveField_(FrFreeSurface_ *freeSurface) : m_freeSurface(freeSurface) {
 
+        m_depth = m_freeSurface->GetOcean()->GetSeabed()->GetDepth();
+
+        m_waveRamp = std::make_shared<FrRamp>();
+        m_waveRamp->Initialize();
+
     }
 
     void FrWaveField_::Update(double time) {
@@ -883,9 +890,6 @@ namespace frydom {
 //        return new FrFlowSensor(pos);
 //    }
 
-    void FrWaveField_::SetWaveSpectrum(WAVE_SPECTRUM_TYPE type) {
-        m_waveSpectrum = MakeWaveSpectrum(type);
-    }
 
     WAVE_MODEL FrWaveField_::GetWaveModel() const { return m_waveModel; }
 
@@ -927,6 +931,63 @@ namespace frydom {
 
     void FrWaveField_::StepFinalize() {}
 
+    std::vector<std::vector<double>>
+    FrWaveField_::GetElevation(const std::vector<double> &xVect, const std::vector<double> &yVect) const {
+        auto nx = xVect.size();
+        auto ny = yVect.size();
+
+        std::vector<std::vector<double>> elevations;
+        std::vector<double> elev;
+
+        elevations.reserve(nx);
+        elev.reserve(ny);
+
+        double eta, x, y;
+        for (unsigned int ix=0; ix<nx; ++ix) {
+            elev.clear();
+            x = xVect[ix];
+            for (unsigned int iy=0; iy<ny; ++iy) {
+                y = yVect[iy];
+                eta = GetElevation(x, y);
+                elev.push_back(eta);
+            }
+            elevations.push_back(elev);
+        }
+        return elevations;
+    }
+
+    std::vector<std::vector<std::vector<Velocity>>>
+    FrWaveField_::GetVelocity(const std::vector<double> &xvect, const std::vector<double> &yvect,
+                              const std::vector<double> &zvect) const {
+        auto nx = xvect.size();
+        auto ny = yvect.size();
+        auto nz = zvect.size();
+
+        std::vector<std::vector<std::vector<Velocity>>> velocity;
+        std::vector<std::vector<Velocity>> velocity_x;
+        std::vector<Velocity> velocity_y;
+        Velocity velocity_z;
+
+        double x, y, z;
+
+        for (unsigned int ix=0; ix<nx; ++ix ) {
+            velocity_x.clear();
+            x = xvect[ix];
+            for (unsigned int iy=0; iy<ny; ++iy) {
+                velocity_y.clear();
+                y = yvect[iy];
+                for (unsigned int iz=0; iz<nz; ++iz) {
+                    z = zvect[iz];
+                    velocity_z = GetVelocity(x, y, z);
+                    velocity_y.push_back(velocity_z);
+                }
+                velocity_x.push_back(velocity_y);
+            }
+            velocity.push_back(velocity_x);
+        }
+        return velocity;
+    }
+
 
 
     // FrNullWaveField definitions
@@ -943,60 +1004,6 @@ namespace frydom {
 
     Acceleration FrNullWaveField_::GetAcceleration(double x, double y, double z) const {
         return {0.,0.,0.};
-    }
-
-    std::vector<std::vector<double>>
-    FrNullWaveField_::GetElevation(const std::vector<double> &xVect, const std::vector<double> &yVect) const {
-
-        auto nx = xVect.size();
-        auto ny = yVect.size();
-
-        std::vector<std::vector<double>> elevations;
-        elevations.reserve(nx);
-
-        std::vector<double> elev;
-        elev.reserve(ny);
-        for (unsigned int iy=0; iy<ny; ++iy) {
-            elev.push_back(0.);
-        }
-
-        for (unsigned int ix=0; ix<nx; ++ix) {
-            elevations.push_back(elev);
-        }
-
-        return elevations;
-
-    }
-
-    std::vector<std::vector<std::vector<Velocity>>>
-    FrNullWaveField_::GetVelocityGrid(const std::vector<double> &xvect, const std::vector<double> &yvect,
-                                     const std::vector<double> &zvect) const {
-
-        auto nx = xvect.size();
-        auto ny = yvect.size();
-        auto nz = zvect.size();
-
-        std::vector<std::vector<std::vector<Velocity>>> velocity;
-        std::vector<std::vector<Velocity>> velocity_x;
-        std::vector<Velocity> velocity_y;
-//        Velocity velocity_z;
-
-        velocity_y.reserve(nz);
-        for (unsigned int i=0; i<nz; ++i) {
-            velocity_y.emplace_back(0.,0.,0.);
-        }
-
-        velocity_x.reserve(ny);
-        for (unsigned int i=0; i<ny; ++i) {
-            velocity_x.push_back(velocity_y);
-        }
-
-        velocity.reserve(nx);
-        for (unsigned int i=0; i<nx; ++i) {
-            velocity.push_back(velocity_x);
-        }
-
-        return velocity;
     }
 
 
@@ -1419,6 +1426,10 @@ namespace frydom {
 
     }
 
+    void FrLinearWaveField_::SetWaveSpectrum(WAVE_SPECTRUM_TYPE type) {
+        m_waveSpectrum = MakeWaveSpectrum(type);
+    }
+
     FrWaveSpectrum *FrLinearWaveField_::GetWaveSpectrum() const { return m_waveSpectrum.get(); }
 
 //    void FrLinearWaveField_::SetReturnPeriod() {
@@ -1512,66 +1523,7 @@ namespace frydom {
         return realAcceleration;
     }
 
-    std::vector<std::vector<double>>
-    FrLinearWaveField_::GetElevation(const std::vector<double> &xVect, const std::vector<double> &yVect) const {
-
-        auto nx = xVect.size();
-        auto ny = yVect.size();
-
-        std::vector<std::vector<double>> elevations;
-        std::vector<double> elev;
-
-        elevations.reserve(nx);
-        elev.reserve(ny);
-
-        double eta, x, y;
-        for (unsigned int ix=0; ix<nx; ++ix) {
-            elev.clear();
-            x = xVect[ix];
-            for (unsigned int iy=0; iy<ny; ++iy) {
-                y = yVect[iy];
-                eta = GetElevation(x, y);
-                elev.push_back(eta);
-            }
-            elevations.push_back(elev);
-        }
-        return elevations;
-    }
-
-    std::vector<std::vector<std::vector<Velocity>>>
-    FrLinearWaveField_::GetVelocityGrid(const std::vector<double> &xvect, const std::vector<double> &yvect,
-                                       const std::vector<double> &zvect) const {
-
-        auto nx = xvect.size();
-        auto ny = yvect.size();
-        auto nz = zvect.size();
-
-        std::vector<std::vector<std::vector<Velocity>>> velocity;
-        std::vector<std::vector<Velocity>> velocity_x;
-        std::vector<Velocity> velocity_y;
-        Velocity velocity_z;
-
-        double x, y, z;
-
-        for (unsigned int ix=0; ix<nx; ++ix ) {
-            velocity_x.clear();
-            x = xvect[ix];
-            for (unsigned int iy=0; iy<ny; ++iy) {
-                velocity_y.clear();
-                y = yvect[iy];
-                for (unsigned int iz=0; iz<nz; ++iz) {
-                    z = zvect[iz];
-                    velocity_z = GetVelocity(x, y, z);
-                    velocity_y.push_back(velocity_z);
-                }
-                velocity_x.push_back(velocity_y);
-            }
-            velocity.push_back(velocity_x);
-        }
-        return velocity;
-    }
-
-    double FrLinearWaveField_::Fz(const double &z, const double &k) const {
+    double FrLinearWaveField_::Fz(double z, double k) const {
 
         double result;
 
@@ -1584,7 +1536,7 @@ namespace frydom {
         return result;
     }
 
-    double FrLinearWaveField_::dFz(const double &z, const double &k) const {
+    double FrLinearWaveField_::dFz(double z, double k) const {
 
         double result;
 

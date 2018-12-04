@@ -2,6 +2,7 @@ message(STATUS "                    ...airy")
 
 set(AIRY_FILES_LOCAL
         FrAiryRegularWaveField.cpp
+        FrAiryIrregularWaveField.cpp
         )
 
 set(AIRY_FILES "")
