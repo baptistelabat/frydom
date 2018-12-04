@@ -434,6 +434,18 @@ namespace frydom {
     };
 
 
+    // =================================================================================================================
+    /// For test use only
+    class FrTestWaveSpectrum : public FrWaveSpectrum {
+    public:
+        FrTestWaveSpectrum() = default;
+        double Eval(const double w) const final {
+            return 1.;
+        }
+        
+    };
+    
+    
     std::unique_ptr<FrWaveSpectrum> MakeWaveSpectrum(WAVE_SPECTRUM_TYPE type);
 
 

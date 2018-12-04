@@ -41,6 +41,7 @@ namespace frydom {
 
         ///< Vertical scale velocity factor with stretching
         std::unique_ptr<FrKinematicStretching_> m_verticalFactor;
+        
     public:
 
         /// Default constructor
@@ -65,6 +66,8 @@ namespace frydom {
         FrJonswapWaveSpectrum* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S, double gamma=3.3);
 
         FrPiersonMoskowitzWaveSpectrum* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S);
+
+        FrTestWaveSpectrum* SetTestWaveSpectrum();
 
         FrWaveSpectrum* GetWaveSpectrum() const;
 

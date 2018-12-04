@@ -108,6 +108,7 @@ TEST(FrFreeSurface_,regularWaveField){
 
 
 TEST(FrFreeSurface_,irregularWaveField) {
+    double g = 9.81;
 
     // Frame convention
     FRAME_CONVENTION fc = NWU;
@@ -118,21 +119,79 @@ TEST(FrFreeSurface_,irregularWaveField) {
     FrOffshoreSystem_ system;
 
     // Set depth to infinite
-    system.GetEnvironment()->GetOcean()->GetSeabed()->SetDepth(100);
+    double depth = 100;
+    system.GetEnvironment()->GetOcean()->GetSeabed()->SetDepth(depth);
 
     // Set the waveField to AiryRegular
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
     auto waveField = freeSurface->SetAiryIrregularWaveField();
 
-    // Set the JONSWAP wave spectrum
-    double Hs = 3;
-    double Tp = 9;
-    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
+//    // Set the JONSWAP wave spectrum
+//    double Hs = 3;
+//    double Tp = 9;
+//    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
+
+    auto spectre = waveField->SetTestWaveSpectrum();
+    double T1 = 12, T2 = 6;
+    auto w1 = 2.*M_PI/T1;
+    auto w2 = 2.*M_PI/T2;
+    auto k1 = SolveWaveDispersionRelation(depth, w1, g);
+    auto k2 = SolveWaveDispersionRelation(depth, w2, g);
+    double Amp = sqrt(2.*(w2-w1));
+
+    waveField->SetWaveFrequencies(w1,w2,2);
 
     // Set wave direction
-    waveField->SetMeanWaveDirection(Direction(SOUTH(fc)), fc, dc);
-    waveField->SetDirectionalParameters(20,10);
+    waveField->SetMeanWaveDirection(Direction(NORTH(fc)), fc, dc);
+//    waveField->SetDirectionalParameters(2,10);
 
+    std::vector<double> phases_temp;
+    phases_temp.push_back(0.);phases_temp.push_back(0.);
+    std::vector<std::vector<double>> phases;
+    phases.push_back(phases_temp);
+
+    waveField->SetWavePhases(phases);
+
+    waveField->Initialize();
+
+    // test at T = 0s
+    //          test Elevation
+    EXPECT_NEAR(0, waveField->GetElevation(0.,0.), 1e-8);
+//    EXPECT_NEAR(0, waveField->GetElevation(waveLength,0.), 1e-8);
+//    EXPECT_NEAR(0,-waveField->GetElevation(0.5*waveLength,0.), 1e-8);
+    EXPECT_NEAR(0, waveField->GetElevation(0,1.), 1e-8);
+    //          test Velocity
+    EXPECT_NEAR(0., waveField->GetVelocity(0.,0.,0.).GetVx(), 1e-8);
+    EXPECT_NEAR(0., waveField->GetVelocity(0.,0.,0.).GetVy(), 1e-8);
+    EXPECT_NEAR(Amp*(w1+w2), -waveField->GetVelocity(0.,0.,0.).GetVz(), 1e-8);
+    //          test Acceleration
+    EXPECT_NEAR(Amp*(w1*w1+w2*w2), -waveField->GetAcceleration(0.,0.,0.).GetAccX(), 1e-8);
+    EXPECT_NEAR(0., waveField->GetAcceleration(0.,0.,0.).GetAccY(), 1e-8);
+    EXPECT_NEAR(0., waveField->GetAcceleration(0.,0.,0.).GetAccZ(), 1e-8);
+
+    // test at T = T2/2
+    system.AdvanceOneStep(0.5*T2);
+    EXPECT_DOUBLE_EQ(0.5*T2,system.GetTime());
+    //          test Elevation
+    EXPECT_NEAR(Amp, -waveField->GetElevation(0.,0.), 1e-8);
+
+    // test at T = T2
+    system.AdvanceOneStep(0.5*T2);
+    EXPECT_DOUBLE_EQ(T2,system.GetTime());
+    //          test Elevation
+    EXPECT_NEAR(0, waveField->GetElevation(0.,0.), 1e-8);
+
+    // test at T = 3/2.T2
+    system.AdvanceOneStep(0.5*T2);
+    EXPECT_DOUBLE_EQ(1.5*T2,system.GetTime());
+    //          test Elevation
+    EXPECT_NEAR(Amp, waveField->GetElevation(0.,0.), 1e-8);
+
+    // test at T = T1s = 2*T2
+    system.AdvanceOneStep(0.5*T2);
+    EXPECT_DOUBLE_EQ(T1,system.GetTime());
+    //          test Elevation
+    EXPECT_NEAR(0., waveField->GetElevation(0.,0.), 1e-8);
 
 
 //    system.SetTimeStep(0.01);
