@@ -17,6 +17,7 @@ set(GOOGLE_TESTS
         test_FrEquilibriumFrame_
         test_FrFreeSurface_
         test_FrMorisonElement_
+        test_FrLinearHydrostaticForce_
         )
 
 #enable_testing()

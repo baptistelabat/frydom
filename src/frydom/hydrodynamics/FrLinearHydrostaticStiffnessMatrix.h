@@ -133,9 +133,9 @@ namespace frydom {
         void SetK33(double K33) { this->at(0, 0) = K33; }
         void SetK44(double K44) { this->at(1, 1) = K44; }
         void SetK55(double K55) { this->at(2, 2) = K55; }
-        void SetK34(double K34) { this->at(0, 1) = K34; }
-        void SetK35(double K35) { this->at(0, 2) = K35; }
-        void SetK45(double K45) { this->at(1, 2) = K45; }
+        void SetK34(double K34) { this->at(0, 1) = K34; this->at(1, 0) = K34; }
+        void SetK35(double K35) { this->at(0, 2) = K35; this->at(2, 0) = K35; }
+        void SetK45(double K45) { this->at(1, 2) = K45; this->at(2, 1) = K45; }
 
         double GetK33() const { return this->at(0, 0); }
         double GetK44() const { return this->at(1, 1); }
