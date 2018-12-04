@@ -32,6 +32,7 @@
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h"
 #include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryRegularWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryIrregularWaveField.h"
 
 
 #include "frydom/core/FrBody.h"
@@ -495,22 +496,27 @@ namespace frydom {
             case NONE:
                 break;
         }
+        m_meshAsset = mesh;
+//            mesh_shape->SetFading(0.9);  // Ne fonctionne pas avec Irrlicht...
+        m_body->AddMeshAsset(m_meshAsset);
 
 //        CreateFreeSurfaceBody();
         m_body->AddMeshAsset(mesh);
         m_ocean->GetEnvironment()->GetSystem()->AddBody(m_body);
 
+        m_waveField->Initialize();
 
-        // If the mesh is being to be animated
-        if (m_updateAsset) {
-            // Creating the array of wave probes
-            auto nbVertices = m_meshAsset->getCoordsVertices().size();
-            m_waveProbeGrid.reserve(nbVertices);
-
-            // FIXME: le fait que le wavefield soit requis pour initialiser le maillage de surface libre fait qu'on est
-            // oblige de definir le wavefield avant d'activer l'asset --> pas flex du tout. Utiliser plutot un flag pour
-            // etablir que l'asset est initialise ou pas et initialiser la gille  lors de l'appel a UpdateGrid si le flag est false
-// ##LL
+//        ##LL
+//        // If the mesh is being to be animated
+//        if (m_updateAsset) {
+//            // Creating the array of wave probes
+//            auto nbVertices = m_meshAsset->getCoordsVertices().size();
+//            m_waveProbeGrid.reserve(nbVertices);
+//
+//            // FIXME: le fait que le wavefield soit requis pour initialiser le maillage de surface libre fait qu'on est
+//            // oblige de definir le wavefield avant d'activer l'asset --> pas flex du tout. Utiliser plutot un flag pour
+//            // etablir que l'asset est initialise ou pas et initialiser la gille  lors de l'appel a UpdateGrid si le flag est false
+//
 //            auto waveField = std::static_pointer_cast<FrLinearWaveField_>(m_waveField);
 //
 //            for (auto& vertex : m_meshAsset->getCoordsVertices()) {
@@ -518,7 +524,7 @@ namespace frydom {
 //                waveProbe->Initialize();
 //                m_waveProbeGrid.push_back(waveProbe);
 //            }
-        }
+//        }
 
     }
 
@@ -648,17 +654,24 @@ namespace frydom {
 
     void FrFreeSurface_::UpdateGrid() {
 
-        auto nbNodes = m_meshAsset->GetNbVertices();
-
         // getting the tidal wave height
         double tidalHeight = m_tidal->GetWaterHeight();
 
-        FrLinearWaveProbe_* waveProbe;
-        chrono::ChVector<double>* vertex;
+//        for (auto& vertex : m_meshAsset->getCoordsVertices()) {
+//            vertex.z() = tidalHeight + GetElevation(vertex.x(),vertex.y());
+//        }
+
+        auto nbNodes = m_meshAsset->m_vertices.size();
         for (unsigned int inode=0; inode<nbNodes; ++inode) {
-            waveProbe = this->m_waveProbeGrid[inode].get();
-            m_meshAsset->m_vertices[inode].z() = tidalHeight + waveProbe->GetElevation(m_time);
+            m_meshAsset->m_vertices[inode].z() = tidalHeight + GetElevation(m_meshAsset->m_vertices[inode].x(),m_meshAsset->m_vertices[inode].y());
         }
+
+//        FrLinearWaveProbe_* waveProbe;
+//        chrono::ChVector<double>* vertex;
+//        for (unsigned int inode=0; inode<nbNodes; ++inode) {
+//            waveProbe = this->m_waveProbeGrid[inode].get();
+//            m_meshAsset->m_vertices[inode].z() = tidalHeight + waveProbe->GetElevation(m_time);
+//        }
 
     }
 
@@ -705,6 +718,12 @@ namespace frydom {
         return waveField;
     }
 
+    FrAiryIrregularWaveField*
+    FrFreeSurface_::SetAiryIrregularWaveField() {
+        m_waveField = std::make_unique<FrAiryIrregularWaveField>(this);
+        return dynamic_cast<FrAiryIrregularWaveField*>(m_waveField.get());
+    }
+
     double FrFreeSurface_::GetMeanHeight() const {
         return m_tidal->GetWaterHeight();
     }
@@ -737,6 +756,7 @@ namespace frydom {
 
     FrWaveField_ * FrFreeSurface_::GetWaveField() const { return m_waveField.get(); }
 
+    double FrFreeSurface_::GetElevation(double x, double y) const { GetWaveField()->GetElevation(x,y);}
 
 
 }  // end namespace frydom

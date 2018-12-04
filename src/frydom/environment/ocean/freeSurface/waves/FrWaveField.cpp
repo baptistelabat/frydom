@@ -870,11 +870,6 @@ namespace frydom {
 
     FrWaveField_::FrWaveField_(FrFreeSurface_ *freeSurface) : m_freeSurface(freeSurface) {
 
-        m_depth = m_freeSurface->GetOcean()->GetSeabed()->GetDepth();
-
-        m_waveRamp = std::make_shared<FrRamp>();
-        m_waveRamp->Initialize();
-
     }
 
     void FrWaveField_::Update(double time) {
@@ -927,7 +922,13 @@ namespace frydom {
         return GetAcceleration(worldPos.GetX(), worldPos.GetY(), worldPos.GetZ());
     }
 
-    void FrWaveField_::Initialize() {}
+    void FrWaveField_::Initialize() {
+
+        m_depth = m_freeSurface->GetOcean()->GetSeabed()->GetDepth();
+
+        m_waveRamp = std::make_shared<FrRamp>();
+        m_waveRamp->Initialize();
+    }
 
     void FrWaveField_::StepFinalize() {}
 

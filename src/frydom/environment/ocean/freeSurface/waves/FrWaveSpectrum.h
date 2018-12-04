@@ -211,9 +211,9 @@ namespace frydom {
         }
 
         std::vector<double> vectorDiscretization(std::vector<double> vect){
-            assert(vect.empty());
+            assert(!vect.empty());
             std::vector<double> discretization;
-            unsigned long Nv = vect.size();
+            unsigned long Nv = vect.size()-1;
             double dw;
             if (Nv == 0) {
                 dw = 1;
@@ -222,12 +222,14 @@ namespace frydom {
             }
             dw = vect[1] - vect[0];
             discretization.push_back(dw);
-            if (Nv > 1) {
-                for (unsigned long iv=1; iv<Nv-1; iv++) {
-                    dw = vect[iv+1] - vect[iv-1];
+            if (Nv > 2) {
+                for (unsigned long iv=1; iv<Nv; iv++) {
+                    dw = 0.5*(vect[iv+1] - vect[iv-1]);
                     discretization.push_back(dw);
                 }
-                dw = vect[Nv] - vect[Nv-1];
+            }
+            if (Nv > 0) {
+                dw = vect[Nv] - vect[Nv - 1];
                 discretization.push_back(dw);
             }
             return discretization;
@@ -254,10 +256,14 @@ namespace frydom {
             auto nbFreq = waveFrequencies.size();
 
             // Compute the directional function
-            auto theta_mean = 0.5*(waveDirections[0] + waveDirections[nbDir]);
-            m_directional_model->UpdateSpreadingFunction(waveDirections, theta_mean);
-            auto dir_func = m_directional_model->GetSpreadingFunction();  // TODO: les deux etapes sont inutiles...
-
+            auto theta_mean = 0.5*(waveDirections[0] + waveDirections[nbDir-1]);
+            std::vector<double> dir_func;
+            dir_func.reserve(nbDir);
+            if (m_directional_model == nullptr) {dir_func.push_back(1.);}
+            else {
+                m_directional_model->UpdateSpreadingFunction(waveDirections, theta_mean);
+                dir_func = m_directional_model->GetSpreadingFunction();  // TODO: les deux etapes sont inutiles...
+            }
             // Compute dw and dtheta
             auto dtheta = vectorDiscretization(waveDirections);
             auto dw = vectorDiscretization(waveFrequencies);
@@ -269,10 +275,11 @@ namespace frydom {
             wave_ampl.reserve(nbDir);
 
             // Loop on the two containers to compute the wave amplitudes for the sets of wave frequencies and directions
+            double test;
             for (unsigned int idir=0; idir<nbDir; ++idir) {
                 wave_ampl_temp.clear();
                 for (unsigned int ifreq = 0; ifreq < nbFreq; ++ifreq) {
-                    wave_ampl_temp.push_back(sqrt(2. * Eval(waveFrequencies[ifreq]) * dir_func[idir] * dtheta[idir] * dw[ifreq]));
+                    wave_ampl_temp.push_back(sqrt(2.*Eval(waveFrequencies[ifreq]) * dir_func[idir] * dtheta[idir] * dw[ifreq]));
                 }
                 wave_ampl.push_back(wave_ampl_temp);
             }

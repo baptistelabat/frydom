@@ -105,33 +105,39 @@ TEST(FrFreeSurface_,regularWaveField){
 }
 
 
-//TEST(FrFreeSurfaceOld, regularWaveField){
-//
-//    FrOffshoreSystem system;
-//
-//    auto freeSurface = system.GetEnvironment()->GetFreeSurface();
-//
-//    freeSurface->SetLinearWaveField(LINEAR_REGULAR);
-//
-//    auto waveField = freeSurface->GetLinearWaveField();
-//
-//    waveField->SetRegularWaveHeight(3);
-//    waveField->SetRegularWavePeriod(9);
-//    waveField->SetMeanWaveDirection(0., DEG);
-//
-//    auto SteadyElevation = waveField->GetSteadyElevation(0, 0);
-//
-//
-//    for (auto it=SteadyElevation.begin(); it!=SteadyElevation.end(); it++) {
-//        std::cout << it << std::endl;
-//    }
-//
-//    // Grid definition
-//    auto xVect = linspace<double>(-1000., 1000., 100);
-//    auto yVect = linspace<double>(-1000., 1000., 100);
-//
-//    auto eta = waveField->GetElevation(xVect, yVect);
-//
-//
-//}
 
+
+TEST(FrFreeSurface_,irregularWaveField) {
+
+    // Frame convention
+    FRAME_CONVENTION fc = NWU;
+    // Wave direction convention
+    DIRECTION_CONVENTION dc = GOTO;
+
+    // create a system
+    FrOffshoreSystem_ system;
+
+    // Set depth to infinite
+    system.GetEnvironment()->GetOcean()->GetSeabed()->SetDepth(100);
+
+    // Set the waveField to AiryRegular
+    auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
+    auto waveField = freeSurface->SetAiryIrregularWaveField();
+
+    // Set the JONSWAP wave spectrum
+    double Hs = 3;
+    double Tp = 9;
+    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
+
+    // Set wave direction
+    waveField->SetMeanWaveDirection(Direction(SOUTH(fc)), fc, dc);
+    waveField->SetDirectionalParameters(20,10);
+
+
+
+//    system.SetTimeStep(0.01);
+//
+//    system.Initialize();
+//    system.RunInViewer(-10, 20, false);
+
+}

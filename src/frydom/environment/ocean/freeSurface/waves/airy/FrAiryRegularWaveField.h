@@ -122,23 +122,6 @@ namespace frydom {
         /// \return eulerian fluid particule acceleration, in m/s²
         Acceleration GetAcceleration(double x, double y, double z) const final;
 
-        /// Get the wave elevation for a set of point positions
-        /// \param xVect x positions
-        /// \param yVect y positions
-        /// \return wave elvation, in meters
-        std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
-                                                              const std::vector<double>& yVect) const final;
-
-        /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
-        /// for a set of point positions
-        /// \param xVect x positions
-        /// \param yVect y positions
-        /// \param zvect z positions
-        /// \return eulerian fluid particule velocity, in m/s
-        std::vector<std::vector<std::vector<Velocity>>> GetVelocityGrid(const std::vector<double>& xvect,
-                                                                                        const std::vector<double>& yvect,
-                                                                                        const std::vector<double>& zvect) const final;
-
 //        void Update(double time) final;
     };
 }

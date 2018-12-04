@@ -201,6 +201,7 @@ namespace frydom{
     class FrTidal_;
     class FrBody_;
     class FrAiryRegularWaveField;
+    class FrAiryIrregularWaveField;
 
 
 
@@ -238,7 +239,7 @@ namespace frydom{
         // Mesh for the asset
         std::shared_ptr<FrTriangleMeshConnected> m_meshAsset;
 
-        std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbeGrid; // TODO: passer a la classe de base...
+//        std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbeGrid; // TODO: passer a la classe de base...
 
 //        std::vector<double> m_gridHeights; // TODO: preallouer a l'initialisation
 
@@ -297,16 +298,19 @@ namespace frydom{
         FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
                                                         FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
+        FrAiryIrregularWaveField* SetAiryIrregularWaveField();
 
         void SetLinearWaveField(LINEAR_WAVE_TYPE waveType);
 
         FrLinearWaveField* GetLinearWaveField() const;
 
+        double GetElevation(double x, double y) const;
+
         double GetMeanHeight() const;
 
         double GetHeight(double x, double y) const;
 
-        virtual void Initialize() override;
+        void Initialize() override;
 
         void SetGridType(GRID_TYPE gridType);
 

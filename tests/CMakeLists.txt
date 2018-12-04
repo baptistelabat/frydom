@@ -41,7 +41,7 @@ set(FRYDOM_TESTS
 #        test_current_standard_force
 #        test_wind_standard_force
 #        test_visu_catenary
-        test_tug_refactoring
+#        test_tug_refactoring
 #        test_TimeRecorder
 #        test_FrEquilibriumFrame
         )
@@ -62,6 +62,7 @@ foreach(test ${FRYDOM_TESTS})
 endforeach()
 
 add_subdirectory(unit_tests)
+add_subdirectory(refactoring)
 add_subdirectory(TestNonRegression)
 add_subdirectory(GoogleTest)
 

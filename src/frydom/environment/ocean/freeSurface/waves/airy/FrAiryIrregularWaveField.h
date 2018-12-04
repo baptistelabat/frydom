@@ -32,7 +32,7 @@ namespace frydom {
         std::vector<double> m_waveDirections;
         std::vector<double> m_waveFrequencies;
         std::vector<double> m_waveNumbers;
-        std::vector<std::complex<double>> m_emjwt;
+//        std::vector<std::complex<double>> m_emjwt;
 
         /// Table of wave phases,of dimensions (m_nbDir,m_nbFreq)
         /// made unique to check at initialize() if wavePhases were given by the users,
@@ -40,7 +40,7 @@ namespace frydom {
         std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases;
 
         ///< Vertical scale velocity factor with stretching
-        std::shared_ptr<FrKinematicStretching> m_verticalFactor;
+        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;
     public:
 
         /// Default constructor
@@ -54,23 +54,25 @@ namespace frydom {
 
         std::vector<std::vector<double>>* GetWavePhases() const {return m_wavePhases.get();}
 
-        void SetWavePhases(std::vector<std::vector<double>>& wavePhases) {
-            assert(wavePhases.size() == m_nbDir);
-            for (auto& w: wavePhases) {
-                assert(w.size() == m_nbFreq);
-            }
-            m_wavePhases = std::make_unique<std::vector<std::vector<double>>>(wavePhases);
-        }
+        void SetWavePhases(std::vector<std::vector<double>>& wavePhases);
 
         void SetDirectionalParameters(unsigned int nbDir, double spreadingFactor);
 
         void SetStretching(FrStretchingType type);
 
-        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
+//        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
+
+        FrJonswapWaveSpectrum* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S, double gamma=3.3);
+
+        FrPiersonMoskowitzWaveSpectrum* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S);
 
         FrWaveSpectrum* GetWaveSpectrum() const;
 
         void GenerateRandomWavePhases();
+
+        std::vector<std::vector<Complex>> GetComplexElevation(double x, double y) const;
+
+        std::vector<mathutils::Vector3d<Complex>> GetComplexVelocity(double x, double y, double z) const;
 
         double GetElevation(double x, double y) const override;
 
