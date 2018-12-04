@@ -20,12 +20,12 @@ namespace frydom {
         SetLocalPosition(position);
     }
 
-    FrNode_::FrNode_(FrBody_ *body, const Position &position, const FrRotation_ &rotation) : FrNode_(body, position) {
-        SetLocalRotation(rotation);
+    FrNode_::FrNode_(FrBody_ *body, const Position &position, const FrRotation_ &rotation) : FrNode_(body) {
+        SetLocalFrame( FrFrame_(position, rotation, NWU) );
     }
 
-    FrNode_::FrNode_(FrBody_ *body, const Position &position, const FrUnitQuaternion_ &quaternion) : FrNode_(body, position) {
-        SetLocalQuaternion(quaternion);
+    FrNode_::FrNode_(FrBody_ *body, const Position &position, const FrUnitQuaternion_ &quaternion) : FrNode_(body) {
+        SetLocalFrame( FrFrame_(position, quaternion, NWU) );
     }
 
     FrNode_::FrNode_(FrBody_ *body, const FrFrame_ &frame) : FrNode_(body) {
@@ -74,7 +74,7 @@ namespace frydom {
     }
 
     void FrNode_::SetLocalFrame(const FrFrame_ &frame) {
-        Position localPositionFromCOG = frame.GetPosition(NWU); - m_body->GetCOG(NWU);
+        Position localPositionFromCOG = frame.GetPosition(NWU) - m_body->GetCOG(NWU);
         auto chCoord = chrono::ChCoordsys<double>(
                 internal::Vector3dToChVector(localPositionFromCOG),
                 internal::Fr2ChQuaternion(frame.GetQuaternion())

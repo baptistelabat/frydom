@@ -5,6 +5,8 @@
 
 #include "frydom/frydom.h"
 
+#include "frydom/core/FrMatrix.h"
+
 #include "gtest/gtest.h"
 
 using namespace frydom;
@@ -155,6 +157,20 @@ TEST(FrQuaternion,Quaternion) {
     auto NewRot = xRot * yRot;
     EXPECT_TRUE(NewRot.GetRotationMatrix().IsEqual(yRot.RightMultiply(xRotMatrix)));
 
+    // Test set rotation from matrix
+    Quat.SetNullRotation();
+    mathutils::Matrix33<double> matrix;
+    matrix << 0., -1., 0.,
+              1., 0., 0.,
+              0., 0., 1.;
+    Quat.Set(matrix);
+
+    testDirection = Quat.GetXAxis(NWU) - Direction(0,1,0);
+    EXPECT_TRUE(testDirection.isZero());
+    testDirection = Quat.GetYAxis(NWU) - Direction(-1,0,0);
+    EXPECT_TRUE(testDirection.isZero());
+    testDirection = Quat.GetZAxis(NWU) - Direction(0,0,1);
+    EXPECT_TRUE(testDirection.isZero());
 
 }
 
@@ -253,4 +269,15 @@ TEST(FrRotation,Rotation){
 
 //    testRotation = XRotation.RotY_DEGREES(90.,fc);
 //    EXPECT_TRUE(testRotation == TotalRotation);
+
+    // Test set rotation from direction
+    testRotation.SetNullRotation();
+    testRotation.Set(Direction(0, 1, 0), Direction(-1, 0, 0.), Direction(0., 0., 1.));
+
+    testDirection = testRotation.GetXAxis(NWU) - Direction(0,1,0);
+    EXPECT_TRUE(testDirection.isZero());
+    testDirection = testRotation.GetYAxis(NWU) - Direction(-1,0,0);
+    EXPECT_TRUE(testDirection.isZero());
+    testDirection = testRotation.GetZAxis(NWU) - Direction(0,0,1);
+    EXPECT_TRUE(testDirection.isZero());
 }

@@ -439,8 +439,7 @@ namespace frydom {
         Direction e2 = e3.cross(e1);
         e2.normalize();
 
-        m_frame->Set(body, position, e1, e2, e3);
-
+        m_frame = std::make_shared<FrNode_>(body, position, FrRotation_(e1, e2, e3));
     }
 
     void FrMorisonElement_::SetFrame(FrBody_* body, FrFrame_ frame) {
@@ -473,7 +472,7 @@ namespace frydom {
         SetDragCoeff(cd);
         SetFrictionCoeff(cf);
 
-        m_frame = std::make_shared<FrNode_>(body);
+        //m_frame = std::make_shared<FrNode_>(body);
         SetFrame(body, posA, posB, perpendicular);
 
         SetDiameter(diameter);
@@ -491,7 +490,7 @@ namespace frydom {
         SetDragCoeff(cd);
         SetFrictionCoeff(cf);
 
-        m_frame = std::make_shared<FrNode_>(nodeA->GetBody());
+        //m_frame = std::make_shared<FrNode_>(nodeA->GetBody());
         SetFrame(nodeA->GetBody(), nodeA->GetNodePositionInBody(NWU), nodeB->GetNodePositionInBody(NWU), perpendicular);
 
         SetDiameter(diameter);

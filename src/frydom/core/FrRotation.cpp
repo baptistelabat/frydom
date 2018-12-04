@@ -61,6 +61,12 @@ namespace frydom {
         assert(IsRotation());
     }
 
+    void FrUnitQuaternion_::Set(const mathutils::Matrix33<double> matrix) {
+        chrono::ChMatrix33<double> chronoMatrix = internal::Matrix33ToChMatrix33(matrix);
+        m_chronoQuaternion = chronoMatrix.Get_A_quaternion();
+    }
+
+
     void FrUnitQuaternion_::SetNullRotation() {  // OK
         m_chronoQuaternion.SetUnit();
     }
@@ -199,6 +205,10 @@ namespace frydom {
     FrRotation_::FrRotation_(const Direction& axis, double angleRAD, FRAME_CONVENTION fc) :
                         m_frQuaternion(axis, angleRAD, fc) {}  // OK
 
+    FrRotation_::FrRotation_(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis) {
+        this->Set(xaxis, yaxis, zaxis);
+    }
+
     void FrRotation_::SetNullRotation() {  // OK
         m_frQuaternion.SetNullRotation();
     }
@@ -239,6 +249,23 @@ namespace frydom {
 
     mathutils::Matrix33<double> FrRotation_::GetInverseRotationMatrix() const{
         return m_frQuaternion.GetInverseRotationMatrix();
+    }
+
+    void FrRotation_::Set(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis) {
+
+        assert(std::abs(xaxis.dot(yaxis)) < FLT_EPSILON);
+        assert(std::abs(yaxis.dot(zaxis)) < FLT_EPSILON);
+        assert(std::abs(zaxis.dot(xaxis)) < FLT_EPSILON);
+        assert(std::abs(xaxis.norm()-1.) < FLT_EPSILON);
+        assert(std::abs(yaxis.norm()-1.) < FLT_EPSILON);
+        assert(std::abs(zaxis.norm()-1.) < FLT_EPSILON);
+
+        mathutils::Matrix33<double> matrix;
+        matrix <<   xaxis.Getux(), yaxis.Getux(), zaxis.Getux(),
+                    xaxis.Getuy(), yaxis.Getuy(), zaxis.Getuy(),
+                    xaxis.Getuz(), yaxis.Getuz(), zaxis.Getuz();
+
+        m_frQuaternion.Set(matrix);
     }
 
     void FrRotation_::SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) {  // OK
