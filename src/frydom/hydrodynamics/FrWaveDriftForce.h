@@ -56,6 +56,40 @@ namespace frydom {
 
     };
 
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    class FrWaveDriftForceRAO_ : public FrForce_ {
+
+    private:
+
+        std::vector<std::unique_ptr<mathutils::LookupTable2d<>>> m_table;
+
+    public:
+
+        //FrWaveDriftForce_(const std::string hdf5file);
+
+        void Initialize() override;
+
+        void Update(double time) override;
+
+        void StepFinalize() override;
+
+
+
+
+    };
+
 // end namespace frydom
 }
 

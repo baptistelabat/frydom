@@ -11,6 +11,11 @@
 #include <frydom/core/FrHydroBody.h>
 #include "FrLinearHydrostaticStiffnessMatrix.h"
 
+/// <<<<<<<<<<<<<<<<<<< Additional include from refactoring
+
+
+/// <<<<<<<<<<<<<<<<<<
+
 
 // FIXME: bien travailler sur le bon placement de la force hydrostatique lineaire !!!!
 
@@ -31,7 +36,7 @@ namespace frydom {
 
     public:
 
-        FrLinearHydrostaticForce();;
+        FrLinearHydrostaticForce();
 
         FrLinearHydrostaticStiffnessMatrix* GetStiffnessMatrix();
 
@@ -44,6 +49,51 @@ namespace frydom {
 
         void SetLogPrefix(std::string prefix_name) override;
 
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    // forward declaration
+
+    class FrEquilibriumFrame_;
+
+
+    class FrLinearHydrostaticForce_ : public FrForce_ {
+
+    private:
+        FrLinearHydrostaticStiffnessMatrix_ m_stiffnessMatrix;
+        FrEquilibriumFrame_* m_equilibriumFrame;
+
+    public:
+        FrLinearHydrostaticForce_() : FrForce_() { }
+
+        FrLinearHydrostaticForce_(FrEquilibriumFrame_* equilibriumFrame)
+                : FrForce_(), m_equilibriumFrame(equilibriumFrame) { }
+
+        void SetStiffnessMatrix(FrLinearHydrostaticStiffnessMatrix_ stiffnessMatrix) { m_stiffnessMatrix = stiffnessMatrix; }
+
+        FrLinearHydrostaticStiffnessMatrix_* GetStiffnessMatrix() { return &m_stiffnessMatrix; }
+
+        void Update(double time) override;
     };
 
 }  // end namespace frydom

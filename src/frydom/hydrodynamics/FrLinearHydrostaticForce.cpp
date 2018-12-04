@@ -4,6 +4,11 @@
 
 #include "FrLinearHydrostaticForce.h"
 
+/// >>>>>>>>>>>>>>>>> from refactoring
+
+#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+
+/// <<<<<<<<<<<<<<<<<<<<
 
 namespace frydom {
 
@@ -63,4 +68,61 @@ namespace frydom {
             m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    void FrLinearHydrostaticForce_::Update(double time) {
+
+        auto bodyFrame = m_body->GetFrameAtCOG(NWU);
+        auto deltaFrame = m_equilibriumFrame->GetInverse() * bodyFrame;
+
+        Vector3d<double> state; double temp;
+        state[0] = deltaFrame.GetPosition(NWU).z();
+        deltaFrame.GetRotation().GetCardanAngles_RADIANS(state[1], state[2], temp, NWU);
+
+        auto forceState = - (m_stiffnessMatrix * state);
+
+        auto worldForce = Force(0., 0., forceState[0]);
+        worldForce.z() -= m_body->GetSystem()->GetGravityAcceleration() * m_body->GetMass();
+        SetForceInWorldAtCOG( worldForce, NWU);
+
+        auto localTorque = Torque(forceState[1], forceState[2], 0.);
+        Torque worldTorque = m_equilibriumFrame->ProjectVectorInParent(localTorque);
+        Torque bodyTorque = bodyFrame.ProjectVectorParentInFrame(worldTorque);
+    }
+
+
 }  // end namespace frydom

@@ -9,6 +9,8 @@
 
 #include <chrono/core/ChVector.h>
 
+#include "frydom/core/FrMatrix.h"
+
 namespace frydom {
 
     class FrLinearHydrostaticStiffnessMatrix {
@@ -94,6 +96,75 @@ namespace frydom {
 
         }
 
+
+
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    class FrLinearHydrostaticStiffnessMatrix_ : public mathutils::Matrix33<double> {
+
+    public:
+
+        void SetK33(double K33) { this->at(0, 0) = K33; }
+        void SetK44(double K44) { this->at(1, 1) = K44; }
+        void SetK55(double K55) { this->at(2, 2) = K55; }
+        void SetK34(double K34) { this->at(0, 1) = K34; }
+        void SetK35(double K35) { this->at(0, 2) = K35; }
+        void SetK45(double K45) { this->at(1, 2) = K45; }
+
+        double GetK33() const { return this->at(0, 0); }
+        double GetK44() const { return this->at(1, 1); }
+        double GetK55() const { return this->at(2, 2); }
+        double GetK34() const { return this->at(0, 1); }
+        double GetK35() const { return this->at(0, 2); }
+        double GetK45() const { return this->at(1, 2); }
+
+        void SetDiagonal(double K33, double K44, double K55) {
+            this->SetK33(K33);
+            this->SetK44(K44);
+            this->SetK55(K55);
+        }
+
+        void SetNonDiagonal(double K34, double K35, double K45) {
+            this->SetK34(K34);
+            this->SetK35(K35);
+            this->SetK45(K45);
+        }
+
+        void SplitCoeffs(double& K33, double& K44, double& K55,
+                         double& K34, double& K35, double& K45) {
+            K33 = this->GetK33();
+            K44 = this->GetK44();
+            K55 = this->GetK55();
+            K34 = this->GetK34();
+            K35 = this->GetK35();
+            K45 = this->GetK45();
+        }
 
 
     };

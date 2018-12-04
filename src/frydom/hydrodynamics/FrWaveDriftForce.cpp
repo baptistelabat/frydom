@@ -3,6 +3,7 @@
 //
 
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
+#include "frydom/environment/FrEnvironmentInc.h"
 #include "FrWaveDriftForce.h"
 #include "frydom/IO/FrHDF5.h"
 
@@ -149,5 +150,52 @@ namespace frydom {
         moment.z() = cforce.at(2);  //  Yaw
 
      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    void FrWaveDriftForceRAO_::Update(double time) {
+
+        auto waveAmplitude = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+
+    }
+
 
 }
