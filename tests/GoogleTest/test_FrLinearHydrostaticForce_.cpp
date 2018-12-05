@@ -21,15 +21,15 @@ class TestLinearHydrostaticStiffnessMatrix : public FrLinearHydrostaticStiffness
 {
 
 public:
-    void CheckK33(double val) const { EXPECT_FLOAT_EQ(val, this->at(0, 0));}
-    void CheckK44(double val) const { EXPECT_FLOAT_EQ(val, this->at(1, 1));}
-    void CheckK55(double val) const { EXPECT_FLOAT_EQ(val, this->at(2, 2));}
-    void CheckK34(double val) const { EXPECT_FLOAT_EQ(val, this->at(0, 1));}
-    void CheckK35(double val) const { EXPECT_FLOAT_EQ(val, this->at(0, 2));}
-    void CheckK45(double val) const { EXPECT_FLOAT_EQ(val, this->at(1, 2));}
-    void CheckK43(double val) const { EXPECT_FLOAT_EQ(val, this->at(1, 0));}
-    void CheckK53(double val) const { EXPECT_FLOAT_EQ(val, this->at(2, 0));}
-    void CheckK54(double val) const { EXPECT_FLOAT_EQ(val, this->at(2, 1));}
+    void CheckK33(double val) const { EXPECT_FLOAT_EQ(val, GetK33());}
+    void CheckK44(double val) const { EXPECT_FLOAT_EQ(val, GetK44());}
+    void CheckK55(double val) const { EXPECT_FLOAT_EQ(val, GetK55());}
+    void CheckK34(double val) const { EXPECT_FLOAT_EQ(val, GetK34());}
+    void CheckK35(double val) const { EXPECT_FLOAT_EQ(val, GetK35());}
+    void CheckK45(double val) const { EXPECT_FLOAT_EQ(val, GetK45());}
+    void CheckK43(double val) const { EXPECT_FLOAT_EQ(val, m_data.at(1, 0));}
+    void CheckK53(double val) const { EXPECT_FLOAT_EQ(val, m_data.at(2, 0));}
+    void CheckK54(double val) const { EXPECT_FLOAT_EQ(val, m_data.at(2, 1));}
 };
 
 TEST(TestHydrostatic, StiffnessMatrix ) {
@@ -67,7 +67,7 @@ protected:
     std::shared_ptr<FrBody_> body;
     std::shared_ptr<FrEquilibriumFrame_> eqFrame;
     std::shared_ptr<FrLinearHydrostaticForce_> hstForce;
-    FrLinearHydrostaticStiffnessMatrix_ stiffnessMatrix;
+    mathutils::Matrix33<double> stiffnessMatrix;
     Force ForceInWorld;
     Torque TorqueInBody;
 
@@ -117,7 +117,7 @@ void TestLinearHydrostaticForce_::LoadData(std::string filename) {
 
     hstForce = std::make_shared<FrLinearHydrostaticForce_>(eqFrame);
     stiffnessMatrix = reader.ReadDoubleArray("/hydrostatic/StiffnessMatrix");
-    hstForce->SetStiffnessMatrix(stiffnessMatrix);
+    hstForce->GetStiffnessMatrix()->SetData(stiffnessMatrix);
     body->AddExternalForce(hstForce);
 
     ForceInWorld = ReadVector<Force>(reader, "/hydrostatic/ForceInWorld");
