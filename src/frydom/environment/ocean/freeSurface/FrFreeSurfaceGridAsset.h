@@ -12,7 +12,7 @@ namespace frydom {
     class FrFreeSurface_;
     class FrTriangleMeshConnected;
 
-    class FrFreeSurfacePhysicItem : public FrPhysicsItem_{
+    class FrFreeSurfaceGridAsset : public FrPhysicsItem_{
     public:
         enum GRID_TYPE {
             NONE,  // TODO: utiliser si on ne veut pas montrer la SL
@@ -42,7 +42,7 @@ namespace frydom {
 
 
     public:
-        FrFreeSurfacePhysicItem(FrFreeSurface_* freeSurface){
+        FrFreeSurfaceGridAsset(FrFreeSurface_* freeSurface){
             m_freeSurface = freeSurface;
         }
 
@@ -68,7 +68,7 @@ namespace frydom {
 
         void Initialize() override;
 
-        void StepFinalize() override;
+        void StepFinalize() override {};
 
     protected:
 

@@ -2,7 +2,7 @@
 // Created by Lucas Letournel on 05/12/18.
 //
 
-#include "FrFreeSurfacePhysicItem.h"
+#include "FrFreeSurfaceGridAsset.h"
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
@@ -12,11 +12,11 @@ namespace frydom{
 
 
 
-    void FrFreeSurfacePhysicItem::SetGridType(GRID_TYPE gridType) {
+    void FrFreeSurfaceGridAsset::SetGridType(GRID_TYPE gridType) {
         m_gridType = gridType;
     }
 
-    void FrFreeSurfacePhysicItem::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
+    void FrFreeSurfaceGridAsset::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
         m_xmin = xmin;
         m_xmax = xmax;
@@ -28,11 +28,11 @@ namespace frydom{
         m_gridType = CARTESIAN;
     }
 
-    void FrFreeSurfacePhysicItem::SetGrid(double lmin, double lmax, double dl){
+    void FrFreeSurfaceGridAsset::SetGrid(double lmin, double lmax, double dl){
         SetGrid(lmin, lmax, dl, lmin, lmax, dl);
     }
 
-    void FrFreeSurfacePhysicItem::SetGrid(double xc0, double yc0, double diameter, int nbR, int nbTheta) {
+    void FrFreeSurfaceGridAsset::SetGrid(double xc0, double yc0, double diameter, int nbR, int nbTheta) {
 
         m_xc0 = xc0;
         m_yc0 = yc0;
@@ -44,12 +44,12 @@ namespace frydom{
 
     }
 
-    void FrFreeSurfacePhysicItem::UpdateAssetON() { m_updateAsset = true; }
+    void FrFreeSurfaceGridAsset::UpdateAssetON() { m_updateAsset = true; }
 
-    void FrFreeSurfacePhysicItem::UpdateAssetOFF() { m_updateAsset = false; }
+    void FrFreeSurfaceGridAsset::UpdateAssetOFF() { m_updateAsset = false; }
 
     std::shared_ptr<FrTriangleMeshConnected>
-    FrFreeSurfacePhysicItem::BuildRectangularMeshGrid(double xmin, double xmax, double dx,
+    FrFreeSurfaceGridAsset::BuildRectangularMeshGrid(double xmin, double xmax, double dx,
                                              double ymin, double ymax, double dy) {
 
         auto mesh = std::make_shared<FrTriangleMeshConnected>();
@@ -108,7 +108,7 @@ namespace frydom{
     }
 
     std::shared_ptr<FrTriangleMeshConnected>
-    FrFreeSurfacePhysicItem::BuildPolarMeshGrid(double xc0, double yc0,
+    FrFreeSurfaceGridAsset::BuildPolarMeshGrid(double xc0, double yc0,
                                        double diameter,
                                        unsigned int nbR, unsigned int nbTheta) {
 
@@ -171,7 +171,7 @@ namespace frydom{
         return mesh;
     }
 
-    void FrFreeSurfacePhysicItem::Initialize() {
+    void FrFreeSurfaceGridAsset::Initialize() {
         // Building the asset
         std::shared_ptr<FrTriangleMeshConnected> mesh;
         switch (m_gridType) {
@@ -185,11 +185,12 @@ namespace frydom{
                 break;
         }
         m_meshAsset = mesh;
+        Update(0.);
         AddMeshAsset(m_meshAsset);
         SetColor(DodgerBlue);
     }
 
-    void FrFreeSurfacePhysicItem::Update(double time) {
+    void FrFreeSurfaceGridAsset::Update(double time) {
         if (m_updateAsset) {
             // getting the tidal wave height
             double tidalHeight = m_freeSurface->GetTidal()->GetWaterHeight();
@@ -201,10 +202,6 @@ namespace frydom{
                                                                                  m_meshAsset->m_vertices[inode].y());
             }
         }
-    }
-
-    void FrFreeSurfacePhysicItem::StepFinalize() {
-
     }
 
 }

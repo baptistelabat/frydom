@@ -202,12 +202,7 @@ namespace frydom{
     class FrBody_;
     class FrAiryRegularWaveField;
     class FrAiryIrregularWaveField;
-    class FrFreeSurfacePhysicItem;
-
-
-    class FrFreeSurfaceAsset {
-
-    };
+    class FrFreeSurfaceGridAsset;
 
 
     /// Pure Virtual Base class for a free surface system.
@@ -236,40 +231,9 @@ namespace frydom{
         std::unique_ptr<FrWaveField_> m_waveField;
 
         // Mesh for the asset
-        std::shared_ptr<FrFreeSurfacePhysicItem> m_AssetContainer;
-//        bool m_updateAsset = false;
-//        std::shared_ptr<FrTriangleMeshConnected> m_meshAsset;
-
-//        std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbeGrid; // TODO: passer a la classe de base...
-
-//        std::vector<double> m_gridHeights; // TODO: preallouer a l'initialisation
-
-//        GRID_TYPE m_gridType = CARTESIAN;
-//        double m_xmin = -50.;
-//        double m_xmax = 50.;
-//        double m_dx = 1.;
-//        double m_ymin = -50.;
-//        double m_ymax = 50.;
-//        double m_dy = 1.;
-//
-//        double m_xc0 = 0.;
-//        double m_yc0 = 0.;
-//        double m_diameter = 50.;
-//        int m_nbR = 50;
-//        int m_nbTheta = 36;
+        std::shared_ptr<FrFreeSurfaceGridAsset> m_freeSurfaceGridAsset;
 
     protected:
-
-//        /// Private method in charge of the building of the free surface mesh as a rectangular grid.
-//        std::shared_ptr<FrTriangleMeshConnected>
-//        BuildRectangularMeshGrid(double xmin, double xmax, double dx,
-//                                 double ymin, double ymax, double dy);
-//
-//        /// Private method in charge of the building of the free surface mesh as a polar grid.
-//        std::shared_ptr<FrTriangleMeshConnected>
-//        BuildPolarMeshGrid(double xc0, double yc0, // center
-//                           double diameter,
-//                           unsigned int nbR, unsigned int nbTheta);
 
         void CreateFreeSurfaceBody();
 
@@ -287,7 +251,16 @@ namespace frydom{
 
         FrTidal_* GetTidal() const;
 
-        FrWaveField_ * GetWaveField() const;
+        FrWaveField_* GetWaveField() const;
+
+        FrFreeSurfaceGridAsset* GetFreeSurfaceGridAsset() const;
+
+        double GetElevation(double x, double y) const;
+
+        double GetMeanHeight() const;
+
+        double GetHeight(double x, double y) const;
+
 
         void NoWaves();
 
@@ -301,42 +274,11 @@ namespace frydom{
 
         FrAiryIrregularWaveField* SetAiryIrregularWaveField();
 
-        void SetLinearWaveField(LINEAR_WAVE_TYPE waveType);
-
-        FrLinearWaveField* GetLinearWaveField() const;
-
-        double GetElevation(double x, double y) const;
-
-        double GetMeanHeight() const;
-
-        double GetHeight(double x, double y) const;
-
-        std::shared_ptr<FrFreeSurfacePhysicItem> GetAssetContainer() const;
+//        void SetLinearWaveField(LINEAR_WAVE_TYPE waveType);
+//
+//        FrLinearWaveField* GetLinearWaveField() const;
 
         void Initialize() override;
-
-//        void SetGridType(GRID_TYPE gridType);
-//
-//        /// Initializes the free surface system
-//        /// In any case, a mesh grid is used.
-//        /// this version concerns a rectangular grid
-//        void SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy);
-//
-//        /// Initializes the free surface system
-//        /// In any case, a mesh grid is used.
-//        /// this version concerns a square grid
-//        void SetGrid(double lmin, double lmax, double dl);
-//
-//        void SetGrid(double xc0, double yc0, double diameter, int nbR, int nbTheta);
-
-
-        /// Get the free surface's mesh
-
-//        void UpdateAsset(bool update);
-
-        void UpdateAssetON();
-
-        void UpdateAssetOFF();
 
         /// Update the state of the free surface
         virtual void Update(double time);
