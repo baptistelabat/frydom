@@ -81,12 +81,12 @@ namespace frydom {
 
     private:
         FrLinearHydrostaticStiffnessMatrix_ m_stiffnessMatrix;
-        FrEquilibriumFrame_* m_equilibriumFrame;
+        std::shared_ptr<FrEquilibriumFrame_> m_equilibriumFrame;
 
     public:
         FrLinearHydrostaticForce_() : FrForce_() { }
 
-        FrLinearHydrostaticForce_(FrEquilibriumFrame_* equilibriumFrame)
+        FrLinearHydrostaticForce_(std::shared_ptr<FrEquilibriumFrame_> equilibriumFrame)
                 : FrForce_(), m_equilibriumFrame(equilibriumFrame) { }
 
         void SetStiffnessMatrix(FrLinearHydrostaticStiffnessMatrix_ stiffnessMatrix) { m_stiffnessMatrix = stiffnessMatrix; }
@@ -94,6 +94,10 @@ namespace frydom {
         FrLinearHydrostaticStiffnessMatrix_* GetStiffnessMatrix() { return &m_stiffnessMatrix; }
 
         void Update(double time) override;
+
+        void Initialize() override { }
+
+        void StepFinalize() override { }
     };
 
 }  // end namespace frydom

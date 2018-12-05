@@ -130,6 +130,18 @@ namespace frydom {
 
     public:
 
+        FrLinearHydrostaticStiffnessMatrix_() : mathutils::Matrix33<double>() {}
+
+        template <class OtherDerived>
+        FrLinearHydrostaticStiffnessMatrix_(const Eigen::MatrixBase<OtherDerived>& other)
+                : mathutils::Matrix33<double>(other) {}
+
+        template <class OtherDerived>
+        FrLinearHydrostaticStiffnessMatrix_& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+            this->mathutils::Matrix33<double>::operator=(other);
+            return *this;
+        }
+
         void SetK33(double K33) { this->at(0, 0) = K33; }
         void SetK44(double K44) { this->at(1, 1) = K44; }
         void SetK55(double K55) { this->at(2, 2) = K55; }

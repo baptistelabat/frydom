@@ -5,8 +5,11 @@
 #include "frydom/frydom.h"
 #include "gtest/gtest.h"
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+#include "frydom/core/FrMatrix.h"
+#include "frydom/hydrodynamics/FrLinearHydrostaticForce.h"
 
 using namespace frydom;
+using namespace mathutils;
 
 // ----------------------------------------------------------------
 //
@@ -57,28 +60,82 @@ TEST(TestHydrostatic, StiffnessMatrix ) {
 //
 // ----------------------------------------------------------------
 
-class TestLinearHydrostaticForce_ : public FrLinearHydrostaticForce_,
-                                    public testing::Test {
+class TestLinearHydrostaticForce_ : public testing::Test {
 
 protected:
     FrOffshoreSystem_ system;
     std::shared_ptr<FrBody_> body;
     std::shared_ptr<FrEquilibriumFrame_> eqFrame;
+    std::shared_ptr<FrLinearHydrostaticForce_> hstForce;
+    FrLinearHydrostaticStiffnessMatrix_ stiffnessMatrix;
+    Force ForceInWorld;
+    Torque TorqueInBody;
 
 protected:
     void SetUp() override;
     void LoadData(std::string filename);
 
+    /// Vector reader
+    template <class Vector>
+    Vector ReadVector(FrHDF5Reader& reader, std::string field) const;
+
 public:
 
 };
 
+template <class Vector>
+Vector TestLinearHydrostaticForce_::ReadVector(FrHDF5Reader& reader, std::string field) const {
+    auto value = reader.ReadDoubleArray(field);
+    return Vector(value(0), value(1), value(2));
+}
+
 void TestLinearHydrostaticForce_::SetUp() {
     body = std::make_shared<FrBody_>();
     system.AddBody(body);
-    eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());
+    LoadData("TNR_database.h5");
+    system.Initialize();
 }
 
 void TestLinearHydrostaticForce_::LoadData(std::string filename) {
 
+    FrHDF5Reader reader;
+
+    reader.SetFilename(filename);
+
+    auto bodyPosition = ReadVector<Position>(reader, "/body_frame/PointInWorld");
+    auto bodyDirection = ReadVector<Direction>(reader, "/body_frame/RotationDirection");
+    auto bodyAngle = reader.ReadDouble("/body_frame/RotationAngle");
+    auto bodyCOG = ReadVector<Position>(reader, "/body_frame/COG");
+    body->SetFrame(FrFrame_(bodyPosition, FrUnitQuaternion_(bodyDirection, bodyAngle, NWU), NWU));
+    body->SetCOG(bodyCOG, NWU);
+
+    auto eqPosition = ReadVector<Position>(reader, "/equilibrium_frame/PointInWorld");
+    auto eqDirection = ReadVector<Direction>(reader, "/equilibrium_frame/RotationDirection");
+    auto eqAngle = reader.ReadDouble("/equilibrium_frame/RotationAngle");
+    eqFrame = std::make_shared<FrEquilibriumFrame_>(eqPosition, FrUnitQuaternion_(eqDirection, eqAngle, NWU),
+                                                    NWU, body.get());
+
+    hstForce = std::make_shared<FrLinearHydrostaticForce_>(eqFrame);
+    stiffnessMatrix = reader.ReadDoubleArray("/hydrostatic/StiffnessMatrix");
+    hstForce->SetStiffnessMatrix(stiffnessMatrix);
+    body->AddExternalForce(hstForce);
+
+    ForceInWorld = ReadVector<Force>(reader, "/hydrostatic/ForceInWorld");
+    TorqueInBody = ReadVector<Torque>(reader, "/hydrostatic/TorqueInBody");
+}
+
+TEST_F(TestLinearHydrostaticForce_, force) {
+
+    hstForce->Update(0.);
+    auto force = hstForce->GetForceInWorld(NWU);
+    force.GetFz() += system.GetGravityAcceleration() * body->GetMass();
+    auto torque = hstForce->GetTorqueInBodyAtCOG(NWU);
+
+    EXPECT_FLOAT_EQ(ForceInWorld.GetFx(), force.GetFx());
+    EXPECT_FLOAT_EQ(ForceInWorld.GetFy(), force.GetFy());
+    EXPECT_FLOAT_EQ(ForceInWorld.GetFz(), force.GetFz());
+
+    EXPECT_FLOAT_EQ(TorqueInBody.GetMx(), torque.GetMx());
+    EXPECT_FLOAT_EQ(TorqueInBody.GetMy(), torque.GetMy());
+    EXPECT_FLOAT_EQ(TorqueInBody.GetMz(), torque.GetMz());
 }

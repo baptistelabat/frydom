@@ -120,8 +120,7 @@ namespace frydom {
         SetForceInWorldAtCOG( worldForce, NWU);
 
         auto localTorque = Torque(forceState[1], forceState[2], 0.);
-        Torque worldTorque = m_equilibriumFrame->ProjectVectorInParent(localTorque);
-        Torque bodyTorque = bodyFrame.ProjectVectorParentInFrame(worldTorque);
+        SetTorqueInBodyAtCOG(localTorque, NWU);
     }
 
 
