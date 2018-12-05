@@ -21,8 +21,9 @@ int main(int argc, char* argv[]) {
 
 // Set the waveField to AiryRegular
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
-    freeSurface->SetGrid(-20., 20, 1, -20, 20, 1);
-    freeSurface->UpdateAssetON();
+    auto FSAsset = freeSurface->GetAssetContainer();
+    FSAsset->SetGrid(-20., 20, 1, -20, 20, 1);
+    FSAsset->UpdateAssetON();
 
     auto waveField = freeSurface->SetAiryRegularWaveField();
     // Airy regular wave parameters
