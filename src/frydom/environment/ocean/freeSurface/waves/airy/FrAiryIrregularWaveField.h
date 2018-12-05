@@ -50,8 +50,22 @@ namespace frydom {
 
         void SetWaveFrequencies(double minFreq, double maxFreq, unsigned int nbFreq);
 
-        void SetMeanWaveDirection(double dirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+        void SetMeanWaveDirectionAngle(double dirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
         void SetMeanWaveDirection(Direction direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+
+        /// Get the wave direction angle, from North direction, of the irregular Airy wave field
+        /// \param unit angle unit
+        /// \param fc frame convention (NED/NWU)
+        /// \param dc direction convention (GOTO/COMEFROM)
+        /// \return wave direction angle
+        double GetMeanWaveDirectionAngle(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const;;
+
+        /// Get the wave direction of the irregular Airy wave field
+        /// \param fc frame convention (NED/NWU)
+        /// \param dc direction convention (GOTO/COMEFROM)
+        /// \return wave direction
+        Direction GetMeanWaveDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const;;
+
 
         std::vector<std::vector<double>>* GetWavePhases() const {return m_wavePhases.get();}
 

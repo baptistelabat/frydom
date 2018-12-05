@@ -104,8 +104,74 @@ TEST(FrFreeSurface_,regularWaveField){
 
 }
 
+struct BiChromaticWaveInfDepth{
+    double m_depth = 1000;
+    double m_T1 = 12;
+    double m_T2 = 6;
+    double m_w1 = 2.*M_PI/m_T1;;
+    double m_w2 = 2.*M_PI/m_T2;
+    double m_k1 = SolveWaveDispersionRelation(m_depth,m_w1,9.81);
+    double m_k2 = SolveWaveDispersionRelation(m_depth,m_w2,9.81);
+    double m_Amp = sqrt(2.*(m_w2-m_w1));
+    double m_dir = 0;
+
+    BiChromaticWaveInfDepth(double T1, double T2, double dir, double depth){
+        m_T1 = T1; m_T2 = T2, m_dir = dir; m_depth = depth;
+        Init();
+    }
+    void Init() {
+        m_w1 = 2.*M_PI/m_T1;;
+        m_w2 = 2.*M_PI/m_T2;
+        m_k1 = SolveWaveDispersionRelation(m_depth,m_w1,9.81);
+        m_k2 = SolveWaveDispersionRelation(m_depth,m_w2,9.81);
+        m_Amp = sqrt(2.*(m_w2-m_w1));
+    }
+
+    double GetElevation(double x, double y, double t){
+        double kdir = x*cos(m_dir) + y*sin(m_dir);
+        return m_Amp*( sin(m_k1 * kdir - m_w1 * t) + sin(m_k2 * kdir - m_w2 * t));
+    }
+    double GetPotential(double x, double y, double z, double t){
+        double kdir = x*cos(m_dir) + y*sin(m_dir);
+        double g = 9.81;
+        return -m_Amp*( g/m_w1 * cos(m_k1 * kdir - m_w1 * t) * exp(m_k1*z)
+                      + g/m_w2 * cos(m_k2 * kdir - m_w2 * t) * exp(m_k2*z) );
+    }
+
+    double GetVx(double x, double y, double z, double t){
+        double kdir = x*cos(m_dir) + y*sin(m_dir);
+        return m_Amp*( m_w1 * cos(m_dir) * sin(m_k1 * kdir - m_w1 * t) * exp(m_k1*z)
+                     + m_w2 * cos(m_dir) * sin(m_k2 * kdir - m_w2 * t) * exp(m_k2*z) );
+    }
+    double GetVy(double x, double y, double z, double t){
+        double kdir = x*cos(m_dir) + y*sin(m_dir);
+        return m_Amp*( m_w1 * sin(m_dir) * sin(m_k1 * kdir - m_w1 * t) * exp(m_k1*z)
+                     + m_w2 * sin(m_dir) * sin(m_k2 * kdir - m_w2 * t) * exp(m_k2*z));
+    }
+    double GetVz(double x, double y, double z, double t){
+        double kdir = x*cos(m_dir) + y*sin(m_dir);
+        return -m_Amp*( m_w1 * cos(m_k1 * kdir - m_w1 * t) * exp(m_k1*z)
+                      + m_w2 * cos(m_k2 * kdir - m_w2 * t) * exp(m_k2*z));
+    }
+
+    double GetAx(double x, double y, double z, double t){
+        double kdir = x*cos(m_dir) + y*sin(m_dir);
+        return -m_Amp*( m_w1 * m_w1 * cos(m_dir) * cos(m_k1 * kdir - m_w1 * t) * exp(m_k1*z)
+                       + m_w2 * m_w2 * cos(m_dir) * cos(m_k2 * kdir - m_w2 * t) * exp(m_k2*z) );
+    }
+    double GetAy(double x, double y, double z, double t){
+        double kdir = x*cos(m_dir) + y*sin(m_dir);
+        return -m_Amp*( m_w1 * m_w1 * sin(m_dir) * cos(m_k1 * kdir - m_w1 * t) * exp(m_k1*z)
+                       + m_w2 * m_w2 * sin(m_dir) * cos(m_k2 * kdir - m_w2 * t) * exp(m_k2*z));
+    }
+    double GetAz(double x, double y, double z, double t){
+        double kdir = x*cos(m_dir) + y*sin(m_dir);
+        return -m_Amp*( m_w1 * m_w1 * sin(m_k1 * kdir - m_w1 * t) * exp(m_k1*z)
+                        + m_w2 * m_w2 * sin(m_k2 * kdir - m_w2 * t) * exp(m_k2*z));
+    }
 
 
+};
 
 TEST(FrFreeSurface_,irregularWaveField) {
     double g = 9.81;
@@ -119,7 +185,7 @@ TEST(FrFreeSurface_,irregularWaveField) {
     FrOffshoreSystem_ system;
 
     // Set depth to infinite
-    double depth = 100;
+    double depth = 1000;
     system.GetEnvironment()->GetOcean()->GetSeabed()->SetDepth(depth);
 
     // Set the waveField to AiryRegular
@@ -135,14 +201,16 @@ TEST(FrFreeSurface_,irregularWaveField) {
     double T1 = 12, T2 = 6;
     auto w1 = 2.*M_PI/T1;
     auto w2 = 2.*M_PI/T2;
+//    std:: cout<<"w1 = "<<w1<<", w2 = "<<w2<<std::endl;
     auto k1 = SolveWaveDispersionRelation(depth, w1, g);
     auto k2 = SolveWaveDispersionRelation(depth, w2, g);
     double Amp = sqrt(2.*(w2-w1));
+//    std::cout<<"Amp = "<<Amp<<std::endl;
 
     waveField->SetWaveFrequencies(w1,w2,2);
 
     // Set wave direction
-    waveField->SetMeanWaveDirection(Direction(NORTH(fc)), fc, dc);
+    waveField->SetMeanWaveDirection(Direction(EAST(fc)), fc, dc);
 //    waveField->SetDirectionalParameters(2,10);
 
     std::vector<double> phases_temp;
@@ -154,44 +222,108 @@ TEST(FrFreeSurface_,irregularWaveField) {
 
     waveField->Initialize();
 
+
+    BiChromaticWaveInfDepth WaveRef(T1, T2, waveField->GetMeanWaveDirectionAngle(RAD,fc,dc), depth);
+
     // test at T = 0s
+    double t = system.GetTime();
     //          test Elevation
-    EXPECT_NEAR(0, waveField->GetElevation(0.,0.), 1e-8);
-//    EXPECT_NEAR(0, waveField->GetElevation(waveLength,0.), 1e-8);
-//    EXPECT_NEAR(0,-waveField->GetElevation(0.5*waveLength,0.), 1e-8);
-    EXPECT_NEAR(0, waveField->GetElevation(0,1.), 1e-8);
+//    EXPECT_NEAR(0, waveField->GetElevation(0.,0.), 1e-8);
+//    EXPECT_NEAR(0, waveField->GetElevation(0,1.), 1e-8);
+    EXPECT_NEAR(WaveRef.GetElevation(0.,0.,t), waveField->GetElevation(0.,0.), 1e-8);
+    EXPECT_NEAR(WaveRef.GetElevation(0.,1.,t), waveField->GetElevation(0.,1.), 1e-8);
+    EXPECT_NEAR(WaveRef.GetElevation(1.,0.,t), waveField->GetElevation(1.,0.), 1e-8);
+
     //          test Velocity
-    EXPECT_NEAR(0., waveField->GetVelocity(0.,0.,0.).GetVx(), 1e-8);
-    EXPECT_NEAR(0., waveField->GetVelocity(0.,0.,0.).GetVy(), 1e-8);
-    EXPECT_NEAR(Amp*(w1+w2), -waveField->GetVelocity(0.,0.,0.).GetVz(), 1e-8);
+//    EXPECT_NEAR(0., waveField->GetVelocity(0.,0.,0.).GetVx(), 1e-8);
+//    EXPECT_NEAR(0., waveField->GetVelocity(0.,0.,0.).GetVy(), 1e-8);
+//    EXPECT_NEAR(Amp*(w1+w2), -waveField->GetVelocity(0.,0.,0.).GetVz(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVx(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVx(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVy(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVy(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVz(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVz(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVx(0.,0.,-1.,t), waveField->GetVelocity(0.,0.,-1.).GetVx(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVy(0.,0.,-1.,t), waveField->GetVelocity(0.,0.,-1.).GetVy(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVz(0.,0.,-1.,t), waveField->GetVelocity(0.,0.,-1.).GetVz(), 1e-8);
+
     //          test Acceleration
-    EXPECT_NEAR(Amp*(w1*w1+w2*w2), -waveField->GetAcceleration(0.,0.,0.).GetAccX(), 1e-8);
-    EXPECT_NEAR(0., waveField->GetAcceleration(0.,0.,0.).GetAccY(), 1e-8);
-    EXPECT_NEAR(0., waveField->GetAcceleration(0.,0.,0.).GetAccZ(), 1e-8);
+//    EXPECT_NEAR(Amp*(w1*w1+w2*w2), -waveField->GetAcceleration(0.,0.,0.).GetAccX(), 1e-8);
+//    EXPECT_NEAR(0., waveField->GetAcceleration(0.,0.,0.).GetAccY(), 1e-8);
+//    EXPECT_NEAR(0., waveField->GetAcceleration(0.,0.,0.).GetAccZ(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAx(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccX(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAy(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccY(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAz(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccZ(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAx(0.,0.,-1.,t), waveField->GetAcceleration(0.,0.,-1.).GetAccX(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAy(0.,0.,-1.,t), waveField->GetAcceleration(0.,0.,-1.).GetAccY(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAz(0.,0.,-1.,t), waveField->GetAcceleration(0.,0.,-1.).GetAccZ(), 1e-8);
+
 
     // test at T = T2/2
     system.AdvanceOneStep(0.5*T2);
-    EXPECT_DOUBLE_EQ(0.5*T2,system.GetTime());
+    t = system.GetTime();
+//    EXPECT_DOUBLE_EQ(0.5*T2,t);
     //          test Elevation
-    EXPECT_NEAR(Amp, -waveField->GetElevation(0.,0.), 1e-8);
+//    EXPECT_NEAR(Amp, -waveField->GetElevation(0.,0.), 1e-8);
+    EXPECT_NEAR(WaveRef.GetElevation(0.,0.,t), waveField->GetElevation(0.,0.), 1e-8);
+    //          test Velocity
+//    EXPECT_NEAR(Amp*w1, -waveField->GetVelocity(0.,0.,0.).GetVx(), 1e-8);
+//    EXPECT_NEAR(Amp*w2, waveField->GetVelocity(0.,0.,0.).GetVz(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVx(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVx(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVy(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVy(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVz(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVz(), 1e-8);
+    //          test Acceleration
+//    EXPECT_NEAR(Amp*w2*w2, waveField->GetAcceleration(0.,0.,0.).GetAccX(), 1e-8);
+//    EXPECT_NEAR(Amp*w1*w1, waveField->GetAcceleration(0.,0.,0.).GetAccZ(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAx(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccX(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAy(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccY(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAz(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccZ(), 1e-8);
 
     // test at T = T2
     system.AdvanceOneStep(0.5*T2);
-    EXPECT_DOUBLE_EQ(T2,system.GetTime());
+    t = system.GetTime();
+//    EXPECT_DOUBLE_EQ(T2,t);
     //          test Elevation
-    EXPECT_NEAR(0, waveField->GetElevation(0.,0.), 1e-8);
+//    EXPECT_NEAR(0, waveField->GetElevation(0.,0.), 1e-8);
+    EXPECT_NEAR(WaveRef.GetElevation(0.,0.,t), waveField->GetElevation(0.,0.), 1e-8);
+    //          test Velocity
+    EXPECT_NEAR(WaveRef.GetVx(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVx(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVy(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVy(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVz(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVz(), 1e-8);
+    //          test Acceleration
+    EXPECT_NEAR(WaveRef.GetAx(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccX(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAy(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccY(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAz(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccZ(), 1e-8);
 
     // test at T = 3/2.T2
     system.AdvanceOneStep(0.5*T2);
-    EXPECT_DOUBLE_EQ(1.5*T2,system.GetTime());
+    t = system.GetTime();
+//    EXPECT_DOUBLE_EQ(1.5*T2,t);
     //          test Elevation
-    EXPECT_NEAR(Amp, waveField->GetElevation(0.,0.), 1e-8);
+//    EXPECT_NEAR(Amp, waveField->GetElevation(0.,0.), 1e-8);
+    EXPECT_NEAR(WaveRef.GetElevation(0.,0.,t), waveField->GetElevation(0.,0.), 1e-8);
+    //          test Velocity
+    EXPECT_NEAR(WaveRef.GetVx(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVx(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVy(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVy(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVz(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVz(), 1e-8);
+    //          test Acceleration
+    EXPECT_NEAR(WaveRef.GetAx(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccX(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAy(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccY(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAz(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccZ(), 1e-8);
 
     // test at T = T1s = 2*T2
     system.AdvanceOneStep(0.5*T2);
-    EXPECT_DOUBLE_EQ(T1,system.GetTime());
+    t = system.GetTime();
+//    EXPECT_DOUBLE_EQ(T1,t);
     //          test Elevation
-    EXPECT_NEAR(0., waveField->GetElevation(0.,0.), 1e-8);
+//    EXPECT_NEAR(0., waveField->GetElevation(0.,0.), 1e-8);
+    EXPECT_NEAR(WaveRef.GetElevation(0.,0.,t), waveField->GetElevation(0.,0.), 1e-8);
+    //          test Velocity
+    EXPECT_NEAR(WaveRef.GetVx(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVx(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVy(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVy(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetVz(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0.).GetVz(), 1e-8);
+    //          test Acceleration
+    EXPECT_NEAR(WaveRef.GetAx(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccX(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAy(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccY(), 1e-8);
+    EXPECT_NEAR(WaveRef.GetAz(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0.).GetAccZ(), 1e-8);
 
 
 //    system.SetTimeStep(0.01);

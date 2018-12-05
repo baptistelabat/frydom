@@ -77,7 +77,7 @@ namespace frydom {
 
     Direction FrAiryRegularWaveField::GetDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const {
         auto dirAngle = GetDirectionAngle(RAD, fc, dc);
-        return {cos(m_dirAngle), sin(m_dirAngle), 0.};
+        return {cos(dirAngle), sin(dirAngle), 0.};
     }
 
     double FrAiryRegularWaveField::GetWaveLength() const {return 2.*M_PI/m_k;}
