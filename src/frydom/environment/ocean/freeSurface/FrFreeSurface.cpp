@@ -23,12 +23,12 @@
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include "chrono/assets/ChColorAsset.h"
 #include "chrono/assets/ChTexture.h"
+#include "frydom/asset/FrFreeSurfaceGridAsset.h"
 
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean_.h"
-#include "frydom/environment/ocean/freeSurface/FrFreeSurfaceGridAsset.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h"

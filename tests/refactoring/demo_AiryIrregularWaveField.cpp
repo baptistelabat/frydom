@@ -18,12 +18,16 @@ int main(int argc, char* argv[]) {
 
 // Set depth to infinite
     system.GetEnvironment()->GetOcean()->GetSeabed()->SetDepth(100);
+//    system.GetEnvironment()->GetOcean()->GetSeabed()->GetSeabedGridAsset()->SetGridType(FrGridAsset::NOGRID);
+//    system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset()->SetGridType(FrGridAsset::NOGRID);
 
 // Set the waveField to AiryRegular
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
     auto FSAsset = freeSurface->GetFreeSurfaceGridAsset();
     FSAsset->SetGrid(-40., 40, 2, -20, 20, 1);
     FSAsset->UpdateAssetON();
+//    FSAsset->SetGridType(FrGridAsset::NOGRID);
+
 
 //    auto waveField = freeSurface->SetAiryRegularWaveField();
 //    // Airy regular wave parameters

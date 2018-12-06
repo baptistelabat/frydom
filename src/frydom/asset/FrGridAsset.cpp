@@ -1,8 +1,9 @@
 //
-// Created by Lucas Letournel on 05/12/18.
+// Created by Lucas Letournel on 06/12/18.
 //
 
-#include "FrFreeSurfaceGridAsset.h"
+#include "FrGridAsset.h"
+
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
@@ -10,13 +11,12 @@
 
 namespace frydom{
 
-
-
-    void FrFreeSurfaceGridAsset::SetGridType(GRID_TYPE gridType) {
+    void FrGridAsset::SetGridType(GRID_TYPE gridType) {
         m_gridType = gridType;
+        if (gridType == NOGRID) {UpdateAssetOFF();}
     }
 
-    void FrFreeSurfaceGridAsset::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
+    void FrGridAsset::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
 
         m_xmin = xmin;
         m_xmax = xmax;
@@ -28,11 +28,11 @@ namespace frydom{
         m_gridType = CARTESIAN;
     }
 
-    void FrFreeSurfaceGridAsset::SetGrid(double lmin, double lmax, double dl){
+    void FrGridAsset::SetGrid(double lmin, double lmax, double dl){
         SetGrid(lmin, lmax, dl, lmin, lmax, dl);
     }
 
-    void FrFreeSurfaceGridAsset::SetGrid(double xc0, double yc0, double diameter, int nbR, int nbTheta) {
+    void FrGridAsset::SetGrid(double xc0, double yc0, double diameter, int nbR, int nbTheta) {
 
         m_xc0 = xc0;
         m_yc0 = yc0;
@@ -44,13 +44,16 @@ namespace frydom{
 
     }
 
-    void FrFreeSurfaceGridAsset::UpdateAssetON() { m_updateAsset = true; }
+    void FrGridAsset::UpdateAssetON() {
+        assert(m_gridType != NOGRID);
+        m_updateAsset = true;
+    }
 
-    void FrFreeSurfaceGridAsset::UpdateAssetOFF() { m_updateAsset = false; }
+    void FrGridAsset::UpdateAssetOFF() { m_updateAsset = false; }
 
     std::shared_ptr<FrTriangleMeshConnected>
-    FrFreeSurfaceGridAsset::BuildRectangularMeshGrid(double xmin, double xmax, double dx,
-                                             double ymin, double ymax, double dy) {
+    FrGridAsset::BuildRectangularMeshGrid(double xmin, double xmax, double dx,
+                                                     double ymin, double ymax, double dy) {
 
         auto mesh = std::make_shared<FrTriangleMeshConnected>();
 
@@ -63,7 +66,7 @@ namespace frydom{
 
         for (int iy = 0; iy < nvy; iy++) {
             for (int ix = 0; ix < nvx; ix++) {
-                chrono::ChVector<double> vertex(xi, yi, 0.);
+                chrono::ChVector<double> vertex(xi, yi, m_gridHeight);
                 vertices.push_back(vertex);
                 xi += dx;
             }
@@ -108,9 +111,9 @@ namespace frydom{
     }
 
     std::shared_ptr<FrTriangleMeshConnected>
-    FrFreeSurfaceGridAsset::BuildPolarMeshGrid(double xc0, double yc0,
-                                       double diameter,
-                                       unsigned int nbR, unsigned int nbTheta) {
+    FrGridAsset::BuildPolarMeshGrid(double xc0, double yc0,
+                                               double diameter,
+                                               unsigned int nbR, unsigned int nbTheta) {
 
         auto mesh = std::make_shared<FrTriangleMeshConnected>();
 
@@ -123,7 +126,7 @@ namespace frydom{
         auto distances = linspace<double>(0, radius, nbR);
 
         for (const auto& distance : distances) {
-            vertices.emplace_back(chrono::ChVector<double>(xc0 + distance, yc0, 0.));
+            vertices.emplace_back(chrono::ChVector<double>(xc0 + distance, yc0, m_gridHeight));
         }
 
         std::vector<chrono::ChVector<int>> faces;  // TODO: reserver l'espace
@@ -171,7 +174,7 @@ namespace frydom{
         return mesh;
     }
 
-    void FrFreeSurfaceGridAsset::Initialize() {
+    void FrGridAsset::Initialize() {
         // Building the asset
         std::shared_ptr<FrTriangleMeshConnected> mesh;
         switch (m_gridType) {
@@ -181,31 +184,22 @@ namespace frydom{
             case POLAR:
                 mesh = BuildPolarMeshGrid(m_xc0, m_yc0, m_diameter, m_nbR, m_nbTheta);
                 break;
-            case NONE:
-                break;
+            case NOGRID:
+                return;
         }
         m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
         m_meshAsset->SetMesh(*mesh);
         m_chronoPhysicsItem->AddAsset(m_meshAsset);
 
-        SetColor(DodgerBlue);
+        SetColor(m_color);
     }
 
-    void FrFreeSurfaceGridAsset::Update(double time) {
+    void FrGridAsset::SetGridHeight(double height) {m_gridHeight = height;}
 
-        if (m_updateAsset) {
-            // getting the tidal wave height
-            double tidalHeight = m_freeSurface->GetTidal()->GetWaterHeight();
+    double FrGridAsset::GetGridHeight() const { return m_gridHeight;}
 
-            auto& mesh = m_meshAsset->GetMesh();
-            auto nbNodes = mesh.m_vertices.size();
-            for (unsigned int inode = 0; inode < nbNodes; ++inode) {
-                mesh.m_vertices[inode].z() = tidalHeight +
-                                                     m_freeSurface->GetElevation(mesh.m_vertices[inode].x(),
-                                                                                 mesh.m_vertices[inode].y());
-            }
-        }
+    NAMED_COLOR FrGridAsset::GetColor() const { return m_color; }
 
-    }
+    void FrGridAsset::SetGridColor(NAMED_COLOR color) {m_color = color;}
 
 }

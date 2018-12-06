@@ -2,13 +2,15 @@
 // Created by frongere on 10/10/17.
 //
 
+#include "FrSeabed.h"
+
 #include <thread>
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include <chrono/assets/ChColorAsset.h>
-#include "FrSeabed.h"
 #include <frydom/core/FrOffshoreSystem.h>
-#include "frydom/environment/FrEnvironment.h"
 #include "frydom/core/FrBody.h"
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean_.h"
 
 
 namespace frydom {
@@ -215,58 +217,30 @@ namespace frydom {
     /// REFACTORING ----------->>>>>>>>
 
 
+    FrSeabed_::FrSeabed_(FrOcean_ *ocean) :m_ocean(ocean){
+        m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset >();
+        m_SeabedGridAsset->SetGridHeight(-m_depth);
+        m_SeabedGridAsset->SetGridColor(Chocolate);
 
-    FrSeabed_::FrSeabed_(FrOcean_ *ocean) :m_ocean(ocean){}
-
+        m_ocean->GetEnvironment()->GetSystem()->AddPhysicsItem(m_SeabedGridAsset);
+    }
 
     FrOcean_ *FrSeabed_::GetOcean() const {return m_ocean;}
 
 
-
-
-
-
-    FrTriangleMeshConnected
-    FrSeabed_::BuildRectangularMeshGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
-        return FrTriangleMeshConnected();
+    void FrSeabed_::SetDepth(double depth) {
+        m_depth = fabs(depth);
+        m_SeabedGridAsset->SetGridHeight(-m_depth);
     }
-
-    FrTriangleMeshConnected
-    FrSeabed_::BuildPolarMeshGrid(double xc0, double yc0, double diameter, unsigned int nbR, unsigned int nbTheta) {
-        return FrTriangleMeshConnected();
-    }
-
-
-    void FrSeabed_::SetDepth(double depth) {m_depth = depth;}
 
     double FrSeabed_::GetDepth() {return m_depth;}  // TODO : prevoir le fond a bathymetrie variable... (GetDepth(x, y))
 
-    void FrSeabed_::UpdateAsset(bool update) {
-
-    }
-
-    void FrSeabed_::SetGridType(FrSeabed_::GRID_TYPE gridType) {
-        m_gridType = gridType;
-    }
-
-    void FrSeabed_::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
-
-    }
-
-    void FrSeabed_::SetGrid(double lmin, double lmax, double dl) {
-
-    }
-
-    void FrSeabed_::SetGrid(double xc0, double yc0, double diameter, int nbR, int nbTheta) {
-
-    }
-
     void FrSeabed_::Update(double time) {}
 
-    void FrSeabed_::Initialize() {
-
-    }
+    void FrSeabed_::Initialize() {}
 
     void FrSeabed_::StepFinalize() {}
+
+    FrSeabedGridAsset *FrSeabed_::GetSeabedGridAsset() {return m_SeabedGridAsset.get();}
 
 }  // end namespace frydom

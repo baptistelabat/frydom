@@ -6,7 +6,6 @@
 #define FRYDOM_FRFREESURFACEINC_H
 
 #include "FrFreeSurface.h"
-#include "FrFreeSurfaceGridAsset.h"
 
 #include "tidal/FrTidalInc.h"
 #include "waves/FrWavesInc.h"

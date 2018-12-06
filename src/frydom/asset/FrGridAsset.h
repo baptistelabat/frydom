@@ -1,9 +1,9 @@
 //
-// Created by Lucas Letournel on 05/12/18.
+// Created by Lucas Letournel on 06/12/18.
 //
 
-#ifndef FRYDOM_FRFREESURFACEPHYSICITEM_H
-#define FRYDOM_FRFREESURFACEPHYSICITEM_H
+#ifndef FRYDOM_FRGRIDASSET_H
+#define FRYDOM_FRGRIDASSET_H
 
 #include "frydom/core/FrPhysicsItem.h"
 
@@ -12,20 +12,24 @@ namespace frydom {
     class FrFreeSurface_;
     class FrTriangleMeshConnected;
 
-    class FrFreeSurfaceGridAsset : public FrPhysicsItem_{
+    class FrGridAsset : public FrPhysicsItem_{
     public:
         enum GRID_TYPE {
-            NONE,  // TODO: utiliser si on ne veut pas montrer la SL
+            NOGRID,  // TODO: utiliser si on ne veut pas montrer la SL
             CARTESIAN,
             POLAR
         };
-    private:
-        FrFreeSurface_* m_freeSurface;
+    protected:
         // Mesh for the asset
         std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
 
         bool m_updateAsset = false;
 
+        NAMED_COLOR m_color = Gray;
+
+        double m_gridHeight= 0;
+
+    private:
         GRID_TYPE m_gridType = CARTESIAN;
         double m_xmin = -50.;
         double m_xmax = 50.;
@@ -42,11 +46,18 @@ namespace frydom {
 
 
     public:
-        FrFreeSurfaceGridAsset(FrFreeSurface_* freeSurface){
-            m_freeSurface = freeSurface;
-        }
+
+        FrGridAsset() = default;
+
+        void SetGridHeight(double height);
+
+        double GetGridHeight() const;
 
         void SetGridType(GRID_TYPE gridType);
+
+        void  SetGridColor(NAMED_COLOR color);
+
+        NAMED_COLOR GetColor() const;
 
         /// Initializes the free surface system
         /// In any case, a mesh grid is used.
@@ -64,7 +75,7 @@ namespace frydom {
 
         void UpdateAssetOFF();
 
-        void Update(double time) override;
+        void Update(double time) override {};
 
         void Initialize() override;
 
@@ -85,4 +96,4 @@ namespace frydom {
     };
 }
 
-#endif //FRYDOM_FRFREESURFACEPHYSICITEM_H
+#endif //FRYDOM_FRGRIDASSET_H

@@ -5,7 +5,6 @@ add_subdirectory(waves)
 
 set(SRC_FILES
         FrFreeSurface.cpp
-        FrFreeSurfaceGridAsset.cpp
         )
 
 set(FREESURFACE_FILES "")
