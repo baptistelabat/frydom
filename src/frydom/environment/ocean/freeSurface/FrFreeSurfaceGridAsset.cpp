@@ -184,24 +184,28 @@ namespace frydom{
             case NONE:
                 break;
         }
-        m_meshAsset = mesh;
-        Update(0.);
-        AddMeshAsset(m_meshAsset);
+        m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
+        m_meshAsset->SetMesh(*mesh);
+        m_chronoPhysicsItem->AddAsset(m_meshAsset);
+
         SetColor(DodgerBlue);
     }
 
     void FrFreeSurfaceGridAsset::Update(double time) {
+
         if (m_updateAsset) {
             // getting the tidal wave height
             double tidalHeight = m_freeSurface->GetTidal()->GetWaterHeight();
 
-            auto nbNodes = m_meshAsset->m_vertices.size();
+            auto& mesh = m_meshAsset->GetMesh();
+            auto nbNodes = mesh.m_vertices.size();
             for (unsigned int inode = 0; inode < nbNodes; ++inode) {
-                m_meshAsset->m_vertices[inode].z() = tidalHeight +
-                                                     m_freeSurface->GetElevation(m_meshAsset->m_vertices[inode].x(),
-                                                                                 m_meshAsset->m_vertices[inode].y());
+                mesh.m_vertices[inode].z() = tidalHeight +
+                                                     m_freeSurface->GetElevation(mesh.m_vertices[inode].x(),
+                                                                                 mesh.m_vertices[inode].y());
             }
         }
+
     }
 
 }

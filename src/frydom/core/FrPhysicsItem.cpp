@@ -21,8 +21,8 @@ namespace frydom {
         }
 
         void _FrPhysicsItemBase::Update(double time, bool update_assets) {
-            ChPhysicsItem::Update(time, update_assets);
             m_frydomPhysicsItem->Update(time);
+            ChPhysicsItem::Update(time, update_assets);
         }
 
     }

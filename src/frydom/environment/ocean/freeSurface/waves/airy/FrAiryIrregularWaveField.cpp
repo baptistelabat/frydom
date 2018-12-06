@@ -51,6 +51,7 @@ namespace frydom{
         if (IsCOMEFROM(dc)) m_meanDir -= MU_PI;
 
         m_meanDir = mathutils::Normalize_0_2PI(m_meanDir);
+        if (m_waveSpectrum->GetDirectionalModel() != nullptr) { ComputeWaveDirections(); }
     }
 
     void
@@ -63,18 +64,20 @@ namespace frydom{
     void FrAiryIrregularWaveField::SetDirectionalParameters(unsigned int nbDir, double spreadingFactor) {
         m_nbDir = nbDir;
         m_waveDirections.clear();
+        m_waveSpectrum->SetCos2sDirectionaleModel(spreadingFactor);
 
+        ComputeWaveDirections();
+    }
+
+    void FrAiryIrregularWaveField::ComputeWaveDirections(){
+        double BoundParameter = 1E-3;
         assert(m_waveSpectrum!= nullptr);
         // TODO : gérer le cas où l'on souhaite un modèle d'étalement différent de cos2s
-        m_waveSpectrum->SetCos2sDirectionaleModel(spreadingFactor);
-        double test = pow(1E-5,1.0/(2.*spreadingFactor));
-        double dirBounds = 2.*acos(pow(1E-5,1.0/(2.*spreadingFactor)));
-        m_waveDirections = linspace(m_meanDir - dirBounds, m_meanDir + dirBounds, nbDir);
+        auto spreadingFactor = dynamic_cast<FrCos2sDirectionalModel*>(m_waveSpectrum->GetDirectionalModel())->GetSpreadingFactor();
+        double dirBounds = 2.*acos(pow(BoundParameter,1.0/(2.*spreadingFactor)));
+        m_waveDirections = linspace(m_meanDir - dirBounds, m_meanDir + dirBounds, m_nbDir);
         // FIXME : Normalize_0_2PI not working...
-//        for (auto& dir:m_waveDirections) {dir = mathutils::Normalize_0_2PI(dir);};
-//        for (unsigned int idir=0; idir<nbDir; ++idir) {
-//            m_waveDirections[idir] = mathutils::Normalize_0_2PI(m_waveDirections[idir]);
-//        };
+        for (auto& dir:m_waveDirections) {dir = mathutils::Normalize_0_2PI(dir);};
     }
 
     void FrAiryIrregularWaveField::SetWavePhases(std::vector<std::vector<double>> &wavePhases) {
@@ -203,6 +206,7 @@ namespace frydom{
         double time = GetTime();
         for (unsigned int idir=0; idir<m_nbDir; ++idir) {
             double kdir = x*cos(m_waveDirections[idir]) + y*sin(m_waveDirections[idir]);
+            ComplexElevation_temp.clear();
             for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
                 ki = m_waveNumbers[ifreq];
                 aik = Amplitudes[idir][ifreq];

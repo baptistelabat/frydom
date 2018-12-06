@@ -22,7 +22,7 @@ namespace frydom {
     private:
         FrFreeSurface_* m_freeSurface;
         // Mesh for the asset
-        std::shared_ptr<FrTriangleMeshConnected> m_meshAsset;
+        std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
 
         bool m_updateAsset = false;
 

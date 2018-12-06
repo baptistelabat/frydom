@@ -521,8 +521,8 @@ namespace frydom {
 
     void FrFreeSurface_::Initialize() {
 
-        m_freeSurfaceGridAsset->Initialize();
         m_waveField->Initialize();
+//        m_freeSurfaceGridAsset->Initialize();
 
     }
 
