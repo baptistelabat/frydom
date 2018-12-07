@@ -176,7 +176,7 @@ namespace frydom {
 
 		for (auto &ibody : bodylist) {
 			auto body = dynamic_cast<FrBody *>(ibody.get());
-            if (body) {
+            if (body && !body->GetBodyFixed()) {
 				body->StepFinalize();//TODO this line does not work, check why
             }
         }

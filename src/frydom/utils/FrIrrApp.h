@@ -65,6 +65,7 @@ namespace frydom {
 
 
                 DoStep();
+                dynamic_cast<FrOffshoreSystem*>(GetSystem())->StepFinalize();
                 EndScene();
 
                 if(!infiniteLoop){
