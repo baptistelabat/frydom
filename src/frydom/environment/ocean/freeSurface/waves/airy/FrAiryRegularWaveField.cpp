@@ -37,7 +37,8 @@ namespace frydom {
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
         m_k = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(), m_omega, gravityAcceleration);
 
-        m_infinite_depth = 3. * 2. * M_PI / m_k < m_freeSurface->GetOcean()->GetDepth();
+        m_infinite_depth = 3. / m_k < m_freeSurface->GetOcean()->GetDepth();
+        m_verticalFactor->SetInfDepth(m_infinite_depth);
 
     }
 
@@ -143,11 +144,6 @@ namespace frydom {
         auto cplxAcc = -JJ * m_omega * cplxVel;
         return {std::imag(cplxAcc.x()),std::imag(cplxAcc.y()),std::imag(cplxAcc.z())};
 
-    }
-
-    void FrAiryRegularWaveField::Update(double time) {
-        FrWaveField_::Update(time);
-        m_verticalFactor->SetInfDepth(m_infinite_depth);
     }
 
 
