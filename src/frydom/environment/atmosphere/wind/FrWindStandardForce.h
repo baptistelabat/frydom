@@ -65,6 +65,61 @@ namespace frydom {
 
     };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    /// Standard wind drag force from DNV standard
+    /// DNV-GL station keeping 01111
+
+    class FrWindStandardForce_ : public FrForce_ {
+
+    private:
+        double m_transverseArea = -1;
+        double m_lateralArea = -1;
+        double m_lpp = -1;
+        double m_xCenter;
+
+    public:
+
+        FrWindStandardForce_() = default;
+
+        void SetLateralArea(double lateralArea);
+
+        double GetLateralArea() const { return m_lateralArea; }
+
+        void SetTransverseArea(double transverseArea);
+
+        double GetTransverseArea() const { return m_transverseArea; }
+
+        void SetXCenter(double xCenter);
+
+        double GetXCenter() const { return m_xCenter; }
+
+        void SetLenghtBetweenPerpendicular(double lpp);
+
+        double GetLengthBetweenPerpendicular() const { return m_lpp; }
+
+        void Initialize() override;
+
+        void Update(double time) override;
+
+        void StepFinalize() override;
+    };
+
+
 }
 
 

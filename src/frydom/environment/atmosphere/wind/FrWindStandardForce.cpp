@@ -6,6 +6,9 @@
 #include "frydom/core/FrHydroBody.h"
 #include "frydom/environment/FrEnvironment.h"
 
+#include "frydom/environment/atmosphere/FrAtmosphere_.h"
+#include "frydom/environment/flow/FrFlowBase.h"
+
 #include "FrWind.h"
 
 namespace frydom {
@@ -51,5 +54,96 @@ namespace frydom {
         force = mybody->Dir_Body2World(force);
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    FrWindStandardForce_::FrWindStandardForce_() : FrForce() { }
+
+    void FrWindStandardForce_::SetLateralArea(double lateralArea) {
+        assert(lateralArea > FLT_EPSILON);
+        m_lateralArea = lateralArea;
+    }
+
+    void FrWindStandardForce_::SetTransverseArea(double transverseArea) {
+        assert(transverseArea > FLT_EPSILON);
+        m_transverseArea = transverseArea;
+    }
+
+    void FrWindStandardForce_::SetXCenter(double xCenter) {
+        m_xCenter = xCenter;
+    }
+
+    void FrWindStandardForce_::SetLenghtBetweenPerpendicular(double lpp) {
+        assert(lpp > FLT_EPSILON);
+        m_lpp = lpp;
+    }
+
+    void FrWindStandardForce_::Initialize() {
+        if (m_transverseArea < FLT_EPSILON) throw FrException(" error value transverse area");
+        if (m_lateralArea < FLT_EPSILON) throw FrException("error value lateral area");
+        if (m_lpp < FLT_EPSILON) throw FrException("error value length between perpendicular");
+    }
+
+    void FrWindStandardForce_::Update(double time) {
+
+        Force force;
+        Torque torque;
+
+        auto rho = GetSystem()->GetEnvironment()->GetAtmosphere()->GetDensity();
+
+        FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+        Velocity VelocityInWorldAtCOG = m_body->GetCOGVelocityInWorld(NWU);
+
+        Velocity fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()
+                ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NED);
+
+        double alpha = fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
+        alpha = Normalize__PI_PI(alpha);
+
+        auto ak = 0.5 * rho * fluxVelocityInBody.norm();
+
+        force.x() = -0.7 * ak * m_transverseArea * cos(alpha);
+        force.y() = 0.9 * ak * m_lateralArea * sin(alpha);
+        force.z() = 0.;
+        SetForceInBody(force, NWU);
+
+        auto m1 = 0.3 * (1. - 2. * alpha / M_PI);
+        torque.x() = 0.;
+        torque.y() = 0.;
+        torque.z() = force.y() * (m1 * m_lpp - m_xCenter);
+        SetTorqueInBodyAtCOG(torque, NWU);
+    }
+
+    void FrWindStandardForce_::StepFinalize() {
+
+    }
+
+
+
+
+
+
 
 }
