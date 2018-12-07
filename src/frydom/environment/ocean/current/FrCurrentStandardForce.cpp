@@ -127,10 +127,12 @@ namespace frydom {
         auto rho = GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
 
         FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
-        Velocity VelocityInWorldAtCOG = m_body->GetCOGVelocityInWorld(NWU);
+
+        auto bodyVelocity = m_body->GetVelocityInWorld(NWU);
+        bodyVelocity.z() = 0.;
 
         Velocity fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()
-                ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NED);
+                ->GetRelativeVelocityInFrame(FrameAtCOG, bodyVelocity, NED);
 
         double alpha = fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
         alpha = Normalize__PI_PI(alpha);
@@ -140,14 +142,25 @@ namespace frydom {
         force.x() = -0.07 * ak * m_transverseArea * cos(alpha);
         force.y() = 0.6 * ak * m_lateralArea * sin(alpha);
         force.z() = 0.;
-        SetForceInBody(force, NWU);
 
         auto m1 = std::min(0.4 * (1. - 2.* alpha / M_PI), 0.25);
         auto m2 = std::max(m1, -0.2);
         torque.x() = 0.;
         torque.y() = 0.;
         torque.z() = force.y() * (m2 * m_lpp - m_xCenter);
-        SetTorqueInBodyAtCOG(torque, NWU);
+
+        // Project on horizontal plane
+        Direction xaxis = FrameAtCOG.GetRotation().GetXAxis(NWU);
+        xaxis.z() = 0.;
+        xaxis.normalize();
+
+        Direction yaxis = FrameAtCOG.GetRotation().GetYAxis(NWU);
+        yaxis.z() = 0.;
+        yaxis.normalize();
+
+        force = xaxis * force.GetFx() + yaxis * force.GetFy();
+
+        SetForceTorqueInWorldAtPointInBody(force, torque, Position(m_xCenter, 0., 0.), NWU);
     }
 
     void FrCurrentStandardForce_::StepFinalize() {
