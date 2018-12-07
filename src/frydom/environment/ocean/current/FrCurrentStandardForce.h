@@ -80,6 +80,79 @@ namespace frydom {
 
     };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><< REFACTORING
+
+    /// Standard current drag force from DNV standard
+    /// DNV-GL Station Keeping 01111
+
+    class FrCurrentStandardForce_ : public FrForce_ {
+
+    private:
+        double m_breadth = -1;
+        double m_draft = -1;
+        double m_lateralArea = -1;
+        double m_transverseArea =-1 ;
+        double m_xCenter;
+        double m_lpp = -1;
+
+    public:
+
+        FrCurrentStandardForce_() = default;
+
+        void SetMaximumBreadth(double breadth);
+
+        double GetMaximumBreadth() const { return m_breadth; }
+
+        void SetDraft(double draft);
+
+        double GetDraft() const { return m_draft; }
+
+        void SetLateralArea(double lateralArea);
+
+        double GetLateralArea() const { return m_lateralArea; }
+
+        void SetTransverseArea(double transverseArea);
+
+        double GetTransverseArea() const { return m_transverseArea; }
+
+        void SetXCenter(double xCenter);
+
+        double GetXCenter() const { return m_xCenter; }
+
+        void SetLengthBetweenPerpendicular(double lpp);
+
+        double GetLengthBetweenPerpendicular() const { return m_lpp; }
+
+        void Initialize() override;
+
+        void Update(double time) override;
+
+        void StepFinalize() override;
+    };
+
+
+
+
 }
 
 

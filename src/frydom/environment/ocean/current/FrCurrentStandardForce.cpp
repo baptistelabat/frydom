@@ -6,6 +6,8 @@
 #include "frydom/core/FrHydroBody.h"
 
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/flow/FrFlowBase.h"
 
 namespace frydom {
 
@@ -55,6 +57,109 @@ namespace frydom {
         force = mybody->Dir_Body2World(force);
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+    void FrCurrentStandardForce_::SetMaximumBreadth(double breadth) {
+        assert(breadth > FLT_EPSILON);
+        m_breadth = breadth;
+    }
+
+    void FrCurrentStandardForce_::SetDraft(double draft) {
+        assert(draft > FLT_EPSILON);
+        m_draft = draft;
+    }
+
+    void FrCurrentStandardForce_::SetLateralArea(double lateralArea) {
+        assert(lateralArea > FLT_EPSILON);
+        m_lateralArea = lateralArea;
+    }
+
+    void FrCurrentStandardForce_::SetTransverseArea(double transverseArea) {
+        assert(transverseArea > FLT_EPSILON);
+        m_transverseArea = transverseArea;
+    }
+
+    void FrCurrentStandardForce_::SetXCenter(double xCenter) {
+        m_xCenter = xCenter;
+    }
+
+    void FrCurrentStandardForce_::SetLengthBetweenPerpendicular(double lpp) {
+        assert(lpp > FLT_EPSILON);
+        m_lpp = lpp;
+    }
+
+    void FrCurrentStandardForce_::Initialize() {
+        if (m_transverseArea < FLT_EPSILON and m_draft > FLT_EPSILON and m_breadth > FLT_EPSILON) {
+            m_transverseArea = m_draft * m_breadth;
+        }
+        if (m_lateralArea < FLT_EPSILON) throw FrException("error value lateral area");
+        if (m_transverseArea < FLT_EPSILON) throw FrException("error value transverse area");
+        if (m_lpp < FLT_EPSILON) throw  FrException("error value length between perpendicular");
+    }
+
+    void FrCurrentStandardForce_::Update(double time) {
+
+        Force force;
+        Torque torque;
+
+        auto rho = GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
+
+        FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+        Velocity VelocityInWorldAtCOG = m_body->GetCOGVelocityInWorld(NWU);
+
+        Velocity fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()
+                ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NED);
+
+        double alpha = fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
+        alpha = Normalize__PI_PI(alpha);
+
+        auto ak = 0.5 * rho * fluxVelocityInBody.squaredNorm();
+
+        force.x() = -0.07 * ak * m_transverseArea * cos(alpha);
+        force.y() = 0.6 * ak * m_lateralArea * sin(alpha);
+        force.z() = 0.;
+        SetForceInBody(force, NWU);
+
+        auto m1 = std::min(0.4 * (1. - 2.* alpha / M_PI), 0.25);
+        auto m2 = std::max(m1, -0.2);
+        torque.x() = 0.;
+        torque.y() = 0.;
+        torque.z() = force.y() * (m2 * m_lpp - m_xCenter);
+        SetTorqueInBodyAtCOG(torque, NWU);
+    }
+
+    void FrCurrentStandardForce_::StepFinalize() {
+
+    }
+
+
+
+
+
+
+
 
 
 

@@ -94,7 +94,7 @@ namespace frydom {
 
     public:
 
-        FrWindStandardForce_() = default;
+        FrWindStandardForce_();
 
         void SetLateralArea(double lateralArea);
 

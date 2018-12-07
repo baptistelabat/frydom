@@ -79,7 +79,7 @@ namespace frydom {
 
     /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
-    FrWindStandardForce_::FrWindStandardForce_() : FrForce() { }
+    FrWindStandardForce_::FrWindStandardForce_() : FrForce_() { }
 
     void FrWindStandardForce_::SetLateralArea(double lateralArea) {
         assert(lateralArea > FLT_EPSILON);
@@ -122,7 +122,7 @@ namespace frydom {
         double alpha = fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
         alpha = Normalize__PI_PI(alpha);
 
-        auto ak = 0.5 * rho * fluxVelocityInBody.norm();
+        auto ak = 0.5 * rho * fluxVelocityInBody.squaredNorm();
 
         force.x() = -0.7 * ak * m_transverseArea * cos(alpha);
         force.y() = 0.9 * ak * m_lateralArea * sin(alpha);
