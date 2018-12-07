@@ -167,128 +167,128 @@ namespace frydom {
 
     /// REFACTORING -------------->>>>>>>>>>>>
 
-
-
-
-
-
-    // =================================================================================================================
-    // Forward declaration
-    class FrWaveField_;
-    class FrRamp;
-
-    /// Class to make a measurement of the wave elevation with respect to the mean water height (tidal)
-    /// It is mainly used at a fixed absolute position in the local horizontal plane
-    class FrWaveProbe_ : public FrObject {
-
-    protected:
-        double m_x = 0;                                     ///< Abs position in x of the sensor (m)
-        double m_y = 0;                                     ///< Abs position in y of the sensor (m)
-        FrWaveField_* m_waveField;                           ///< Wave field
-        std::shared_ptr<chrono::ChFrameMoving<double>> m_node;      ///< Node to which the wave probe is attached
-        std::shared_ptr<FrRamp> m_waveRamp;                 ///< Ramp applied at the initial stage
-
-    public:
-        /// Default constructor
-        explicit FrWaveProbe_(FrWaveField_* waveField);
-
-        /// New constructor from sensor position in the horizontal plane
-        FrWaveProbe_(FrWaveField_* waveField, double x, double y);
-
-        /// Set Abs position in X
-        void SetX(double x);
-
-        /// Return the abs position in X of the sensor
-        double& GetX() const;
-
-        /// Set Abs position in Y
-        void SetY(double y);
-
-        /// Return the abs position in Y of the sensor
-        double& GetY() const;
-
-        std::shared_ptr<chrono::ChFrameMoving<>> GetNode() const;
-
-        /// Return the wave field
-//        virtual FrWaveField* GetWaveField() const = 0;
-
-        /// Initialization of the wave probe sensor
-        virtual void Initialize() override {};
-
-        /// Method run after each time step
-        virtual void StepFinalize() override {}
-
-        /// Attached a node to the wave probe
-        void AttachedNode(std::shared_ptr<chrono::ChFrameMoving<double>> node);
-
-
-        /// Return the free surface elevation at the sensor position
-        virtual double GetElevation(double time) const = 0;
-
-        /// Return the wave frequencies ate the probe location
-        virtual std::vector<double> GetFrequencies() const = 0;
-
-    };
-
-    // =================================================================================================================
-    // Forward declaration
-    class FrLinearWaveField_;
-
-    /// Specialization of the wave probe for linear wave field and moving frame.
-    /// Assumed moving frame and encounter frequency
-
-    class FrLinearWaveProbe_ : public FrWaveProbe_ {
-
-    public:
-        explicit FrLinearWaveProbe_(FrLinearWaveField_* waveField);
-
-        FrLinearWaveProbe_(FrLinearWaveField_* waveField, double x, double y);
-
-        /// Set the linear wave field linked to the wave probe
-//        void SetWaveField(FrLinearWaveField_ *waveField);
-
-        /// Return the linear wave field to which the wave probe is linked
-//        FrLinearWaveField_* GetWaveField() const override;
-
-        /// Compute complex elevation depending on the position and frequency
-        std::vector<std::vector<std::complex<double>>> GetCmplxElevation() const;
-
-        /// Return the wave elevation at the wave probe position
-        double GetElevation(double time) const override;
-
-        /// Return the wave frequencies at the wave probe position
-        std::vector<double> GetFrequencies() const override;
-
-        /// Return the encounter wave frequencies at the wave probe position
-        std::vector<std::vector<double>> GetEncounterWaveFrequencies() const;
-
-    };
-
-    /// Specialization of the wave probe to optimize cpu time for linear wave field
-    /// Assumed linear wave field and fixe position if the global reference frame.
-    /// Assumed only time frequency dependance.
-
-    class FrLinearWaveProbeSteady_ : public FrLinearWaveProbe_ {  // TODO: mettre en cache la steady elevation pour les params x, y
-
-    private:
-        std::vector<std::complex<double>> m_steadyElevation;            ///< steady part of the wave elevation
-
-    public:
-        explicit FrLinearWaveProbeSteady_(FrLinearWaveField_* waveField): FrLinearWaveProbe_(waveField) {}
-
-        /// Constructor of the wave sensor with position in the horizontal plane
-        FrLinearWaveProbeSteady_(FrLinearWaveField_* waveField, double x, double y) : FrLinearWaveProbe_(waveField, x, y) {}
-
-        /// Set the steady part of the wave elevation
-        void Initialize() override;
-
-        /// Return the wave elevation at the sensor position
-        double GetElevation(double time) const override;
-
-        /// Return the wave frequencies
-        std::vector<double> GetFrequencies() const override;
-
-    };
+//
+//
+//
+//
+//
+//    // =================================================================================================================
+//    // Forward declaration
+//    class FrWaveField_;
+//    class FrRamp;
+//
+//    /// Class to make a measurement of the wave elevation with respect to the mean water height (tidal)
+//    /// It is mainly used at a fixed absolute position in the local horizontal plane
+//    class FrWaveProbe_ : public FrObject {
+//
+//    protected:
+//        double m_x = 0;                                     ///< Abs position in x of the sensor (m)
+//        double m_y = 0;                                     ///< Abs position in y of the sensor (m)
+//        FrWaveField_* m_waveField;                           ///< Wave field
+//        std::shared_ptr<chrono::ChFrameMoving<double>> m_node;      ///< Node to which the wave probe is attached
+//        std::shared_ptr<FrRamp> m_waveRamp;                 ///< Ramp applied at the initial stage
+//
+//    public:
+//        /// Default constructor
+//        explicit FrWaveProbe_(FrWaveField_* waveField);
+//
+//        /// New constructor from sensor position in the horizontal plane
+//        FrWaveProbe_(FrWaveField_* waveField, double x, double y);
+//
+//        /// Set Abs position in X
+//        void SetX(double x);
+//
+//        /// Return the abs position in X of the sensor
+//        double& GetX() const;
+//
+//        /// Set Abs position in Y
+//        void SetY(double y);
+//
+//        /// Return the abs position in Y of the sensor
+//        double& GetY() const;
+//
+//        std::shared_ptr<chrono::ChFrameMoving<>> GetNode() const;
+//
+//        /// Return the wave field
+////        virtual FrWaveField* GetWaveField() const = 0;
+//
+//        /// Initialization of the wave probe sensor
+//        virtual void Initialize() override {};
+//
+//        /// Method run after each time step
+//        virtual void StepFinalize() override {}
+//
+//        /// Attached a node to the wave probe
+//        void AttachedNode(std::shared_ptr<chrono::ChFrameMoving<double>> node);
+//
+//
+//        /// Return the free surface elevation at the sensor position
+//        virtual double GetElevation(double time) const = 0;
+//
+//        /// Return the wave frequencies ate the probe location
+//        virtual std::vector<double> GetFrequencies() const = 0;
+//
+//    };
+//
+//    // =================================================================================================================
+//    // Forward declaration
+//    class FrLinearWaveField_;
+//
+//    /// Specialization of the wave probe for linear wave field and moving frame.
+//    /// Assumed moving frame and encounter frequency
+//
+//    class FrLinearWaveProbe_ : public FrWaveProbe_ {
+//
+//    public:
+//        explicit FrLinearWaveProbe_(FrLinearWaveField_* waveField);
+//
+//        FrLinearWaveProbe_(FrLinearWaveField_* waveField, double x, double y);
+//
+//        /// Set the linear wave field linked to the wave probe
+////        void SetWaveField(FrLinearWaveField_ *waveField);
+//
+//        /// Return the linear wave field to which the wave probe is linked
+////        FrLinearWaveField_* GetWaveField() const override;
+//
+//        /// Compute complex elevation depending on the position and frequency
+//        std::vector<std::vector<std::complex<double>>> GetCmplxElevation() const;
+//
+//        /// Return the wave elevation at the wave probe position
+//        double GetElevation(double time) const override;
+//
+//        /// Return the wave frequencies at the wave probe position
+//        std::vector<double> GetFrequencies() const override;
+//
+//        /// Return the encounter wave frequencies at the wave probe position
+//        std::vector<std::vector<double>> GetEncounterWaveFrequencies() const;
+//
+//    };
+//
+//    /// Specialization of the wave probe to optimize cpu time for linear wave field
+//    /// Assumed linear wave field and fixe position if the global reference frame.
+//    /// Assumed only time frequency dependance.
+//
+//    class FrLinearWaveProbeSteady_ : public FrLinearWaveProbe_ {  // TODO: mettre en cache la steady elevation pour les params x, y
+//
+//    private:
+//        std::vector<std::complex<double>> m_steadyElevation;            ///< steady part of the wave elevation
+//
+//    public:
+//        explicit FrLinearWaveProbeSteady_(FrLinearWaveField_* waveField): FrLinearWaveProbe_(waveField) {}
+//
+//        /// Constructor of the wave sensor with position in the horizontal plane
+//        FrLinearWaveProbeSteady_(FrLinearWaveField_* waveField, double x, double y) : FrLinearWaveProbe_(waveField, x, y) {}
+//
+//        /// Set the steady part of the wave elevation
+//        void Initialize() override;
+//
+//        /// Return the wave elevation at the sensor position
+//        double GetElevation(double time) const override;
+//
+//        /// Return the wave frequencies
+//        std::vector<double> GetFrequencies() const override;
+//
+//    };
 
 }  // end namespace frydom
 

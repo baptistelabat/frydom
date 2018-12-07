@@ -8,9 +8,15 @@
 #include "FrGridAsset.h"
 
 namespace frydom {
+    class FrSeabed_;
 
     class FrSeabedGridAsset : public FrGridAsset {
-        // TODO ajouter bathymétrie variable
+        FrSeabed_* m_seabed;
+    public:
+        explicit FrSeabedGridAsset(FrSeabed_* seabed);
+
+        double GetGridHeight() const override;
+
     };
 
 }

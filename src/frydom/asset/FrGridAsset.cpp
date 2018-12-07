@@ -66,7 +66,7 @@ namespace frydom{
 
         for (int iy = 0; iy < nvy; iy++) {
             for (int ix = 0; ix < nvx; ix++) {
-                chrono::ChVector<double> vertex(xi, yi, m_gridHeight);
+                chrono::ChVector<double> vertex(xi, yi, GetGridHeight());
                 vertices.push_back(vertex);
                 xi += dx;
             }
@@ -126,7 +126,7 @@ namespace frydom{
         auto distances = linspace<double>(0, radius, nbR);
 
         for (const auto& distance : distances) {
-            vertices.emplace_back(chrono::ChVector<double>(xc0 + distance, yc0, m_gridHeight));
+            vertices.emplace_back(chrono::ChVector<double>(xc0 + distance, yc0, GetGridHeight()));
         }
 
         std::vector<chrono::ChVector<int>> faces;  // TODO: reserver l'espace

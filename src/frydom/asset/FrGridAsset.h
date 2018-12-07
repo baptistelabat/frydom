@@ -51,7 +51,7 @@ namespace frydom {
 
         void SetGridHeight(double height);
 
-        double GetGridHeight() const;
+        virtual double GetGridHeight() const;
 
         void SetGridType(GRID_TYPE gridType);
 

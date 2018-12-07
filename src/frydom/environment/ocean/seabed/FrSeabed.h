@@ -150,7 +150,7 @@ namespace frydom {
 
         std::shared_ptr<FrSeabedGridAsset> m_SeabedGridAsset;
 
-        double m_depth = 30;
+        double m_meanBathymetry = -30;
 
 
     public:
@@ -163,9 +163,11 @@ namespace frydom {
 
         FrSeabedGridAsset * GetSeabedGridAsset();
 
-        void SetDepth(double depth);
+        void SetBathymetry(double bathymetry);
 
-        double GetDepth();
+        const double GetMeanBathymetry() const;
+
+        const double GetBathymetry(double x, double y) const;
 
         /// Update the state of the seabed
         void Update(double time);

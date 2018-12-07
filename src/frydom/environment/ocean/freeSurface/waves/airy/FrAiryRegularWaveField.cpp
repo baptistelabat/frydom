@@ -34,11 +34,10 @@ namespace frydom {
         m_omega = S2RADS(m_period);
 
         // Set the wave number, using the wave dispersion relation
-        auto waterHeight = m_freeSurface->GetMeanHeight() - m_depth;
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
-        m_k = SolveWaveDispersionRelation(waterHeight, m_omega, gravityAcceleration);
+        m_k = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(), m_omega, gravityAcceleration);
 
-        m_infinite_depth = 3. * 2. * M_PI / m_k < m_depth;
+        m_infinite_depth = 3. * 2. * M_PI / m_k < m_freeSurface->GetOcean()->GetDepth();
 
     }
 
@@ -125,11 +124,11 @@ namespace frydom {
     }
 
     mathutils::Vector3d<Complex> FrAiryRegularWaveField::GetComplexVelocity(double x, double y, double z) const {
-        auto Vtemp = m_omega * GetComplexElevation(x, y) * m_verticalFactor->Eval(x,y,z,m_k,m_depth);
+        auto Vtemp = m_omega * GetComplexElevation(x, y) * m_verticalFactor->Eval(x,y,z,m_k,c_depth);
 
         auto Vx = cos(m_dirAngle) * Vtemp;
         auto Vy = sin(m_dirAngle) * Vtemp;
-        auto Vz = -JJ * m_omega / m_k * GetComplexElevation(x, y) * m_verticalFactor->EvalDZ(x,y,z,m_k,m_depth);
+        auto Vz = -JJ * m_omega / m_k * GetComplexElevation(x, y) * m_verticalFactor->EvalDZ(x,y,z,m_k,c_depth);
 
         return {Vx,Vy,Vz};
     }

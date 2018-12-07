@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem_ system;
 
 // Set depth to infinite
-    system.GetEnvironment()->GetOcean()->GetSeabed()->SetDepth(100);
+//    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(-100);
 //    system.GetEnvironment()->GetOcean()->GetSeabed()->GetSeabedGridAsset()->SetGridType(FrGridAsset::NOGRID);
 //    system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset()->SetGridType(FrGridAsset::NOGRID);
 

@@ -30,7 +30,7 @@ TEST(FrFreeSurface_,regularWaveField){
     auto waveLength =  2.*M_PI/k;
 
     // Set depth to infinite (H>>3*waveLength)
-    system.GetEnvironment()->GetOcean()->GetSeabed()->SetDepth(4*waveLength);
+    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(4 * waveLength);
 
     // Set the waveField to AiryRegular
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
@@ -186,7 +186,7 @@ TEST(FrFreeSurface_,irregularWaveField) {
 
     // Set depth to infinite
     double depth = 1000;
-    system.GetEnvironment()->GetOcean()->GetSeabed()->SetDepth(depth);
+    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(depth);
 
     // Set the waveField to AiryRegular
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();

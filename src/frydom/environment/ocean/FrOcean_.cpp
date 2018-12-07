@@ -6,6 +6,7 @@
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/flow/FrFlowBase.h"
+#include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
 #include "freeSurface/FrFreeSurface.h"
 #include "seabed/FrSeabed.h"
@@ -15,9 +16,9 @@ namespace frydom{
 
     FrOcean_::FrOcean_(FrEnvironment_* environment) :m_environment(environment) {
 
+        m_seabed        = std::make_unique<FrSeabed_>(this);
         m_freeSurface   = std::make_unique<FrFreeSurface_>(this);
         m_current       = std::make_unique<FrCurrent_>(this);
-        m_seabed        = std::make_unique<FrSeabed_>(this);
         m_waterProp     = std::make_unique<FrFluidProperties>(10., 1027., 0.001397, 1.3604E-06, 35., 1.2030E-03 );
 
     }
@@ -83,6 +84,14 @@ namespace frydom{
         if (m_showFreeSurface) m_freeSurface->StepFinalize();
         m_current->StepFinalize();
         if (m_showSeabed) m_seabed->StepFinalize();
+    }
+
+    double FrOcean_::GetDepth() const {
+        return m_freeSurface->GetTidal()->GetHeight() - m_seabed->GetMeanBathymetry();
+    }
+
+    double FrOcean_::GetDepth(double x, double y) const {
+        return m_freeSurface->GetTidal()->GetHeight() - m_seabed->GetBathymetry(x,y);
     }
 
 

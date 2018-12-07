@@ -36,9 +36,8 @@ namespace frydom{
         m_waveNumbers.clear();
 
         // Set the wave numbers, using the wave dispersion relation
-        auto waterHeight = m_freeSurface->GetMeanHeight() - m_depth;
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
-        m_waveNumbers = SolveWaveDispersionRelation(waterHeight, m_waveFrequencies, gravityAcceleration);
+        m_waveNumbers = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(), m_waveFrequencies, gravityAcceleration);
 
     }
 
@@ -168,9 +167,8 @@ namespace frydom{
         m_waveNumbers.clear();
 
         // Set the wave numbers, using the wave dispersion relation
-        auto waterHeight = m_freeSurface->GetMeanHeight() - m_depth;
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
-        m_waveNumbers = SolveWaveDispersionRelation(waterHeight, m_waveFrequencies, gravityAcceleration);
+        m_waveNumbers = SolveWaveDispersionRelation(c_depth, m_waveFrequencies, gravityAcceleration);
 
         // Checks wave phases, and randomly generate them if needed
         bool testSize = true;
@@ -257,6 +255,7 @@ namespace frydom{
         Complex Vx = 0, Vy = 0, Vz = 0;
         double ki, wi, thetaj;
         double Stretching, StretchingDZ;
+        auto depth = m_freeSurface->GetOcean()->GetDepth();
 
         auto ComplexElevation = GetComplexElevation(x,y);
 
@@ -264,8 +263,8 @@ namespace frydom{
             ki = m_waveNumbers[ifreq];
             wi = m_waveFrequencies[ifreq];
             Vx = 0, Vy = 0, Vz = 0;
-            Stretching = m_verticalFactor->Eval(x,y,z,ki,m_depth);
-            StretchingDZ = m_verticalFactor->EvalDZ(x,y,z,ki,m_depth);
+            Stretching = m_verticalFactor->Eval(x,y,z,ki,depth);
+            StretchingDZ = m_verticalFactor->EvalDZ(x,y,z,ki,depth);
             for (unsigned int idir=0; idir<m_nbDir; ++idir) {
                 thetaj = m_waveDirections[idir];
                 Vx += cos(thetaj) * wi * ComplexElevation[idir][ifreq] * Stretching;
@@ -313,8 +312,8 @@ namespace frydom{
         for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
             ki = m_waveNumbers[ifreq];
             wi = m_waveFrequencies[ifreq];
-            Stretching = m_verticalFactor->Eval(x,y,z,ki,m_depth);
-            StretchingDZ = m_verticalFactor->EvalDZ(x,y,z,ki,m_depth);
+            Stretching = m_verticalFactor->Eval(x,y,z,ki,c_depth);
+            StretchingDZ = m_verticalFactor->EvalDZ(x,y,z,ki,c_depth);
             for (unsigned int idir=0; idir<m_nbDir; ++idir) {
                 thetaj = m_waveDirections[idir];
                 Vx += std::imag( cos(thetaj) * wi * ComplexElevation[idir][ifreq] * Stretching );
@@ -336,8 +335,8 @@ namespace frydom{
         for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
             ki = m_waveNumbers[ifreq];
             wi = m_waveFrequencies[ifreq];
-            Stretching = m_verticalFactor->Eval(x,y,z,ki,m_depth);
-            StretchingDZ = m_verticalFactor->EvalDZ(x,y,z,ki,m_depth);
+            Stretching = m_verticalFactor->Eval(x,y,z,ki,c_depth);
+            StretchingDZ = m_verticalFactor->EvalDZ(x,y,z,ki,c_depth);
             for (unsigned int idir=0; idir<m_nbDir; ++idir) {
                 thetaj = m_waveDirections[idir];
                 Ax += std::imag( - JJ * cos(thetaj) * wi * wi * ComplexElevation[idir][ifreq] * Stretching );

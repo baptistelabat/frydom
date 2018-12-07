@@ -256,10 +256,10 @@ namespace frydom{
         FrFreeSurfaceGridAsset* GetFreeSurfaceGridAsset() const;
 
         double GetElevation(double x, double y) const;
-
-        double GetMeanHeight() const;
-
-        double GetHeight(double x, double y) const;
+        
+        double GetPosition() const;
+        
+        double GetPosition(double x, double y) const;
 
 
         void NoWaves();

@@ -218,9 +218,7 @@ namespace frydom {
 
 
     FrSeabed_::FrSeabed_(FrOcean_ *ocean) :m_ocean(ocean){
-        m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset >();
-        m_SeabedGridAsset->SetGridHeight(-m_depth);
-        m_SeabedGridAsset->SetGridColor(Chocolate);
+        m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(this);
 
         m_ocean->GetEnvironment()->GetSystem()->AddPhysicsItem(m_SeabedGridAsset);
     }
@@ -228,12 +226,17 @@ namespace frydom {
     FrOcean_ *FrSeabed_::GetOcean() const {return m_ocean;}
 
 
-    void FrSeabed_::SetDepth(double depth) {
-        m_depth = fabs(depth);
-        m_SeabedGridAsset->SetGridHeight(-m_depth);
+    void FrSeabed_::SetBathymetry(double bathymetry) {
+        m_meanBathymetry = -fabs(bathymetry);
     }
 
-    double FrSeabed_::GetDepth() {return m_depth;}  // TODO : prevoir le fond a bathymetrie variable... (GetDepth(x, y))
+    const double FrSeabed_::GetMeanBathymetry() const {
+        return m_meanBathymetry;
+    }
+    
+    const double FrSeabed_::GetBathymetry(double x, double y) const {
+        return m_meanBathymetry;
+    }
 
     void FrSeabed_::Update(double time) {}
 
@@ -242,5 +245,6 @@ namespace frydom {
     void FrSeabed_::StepFinalize() {}
 
     FrSeabedGridAsset *FrSeabed_::GetSeabedGridAsset() {return m_SeabedGridAsset.get();}
+
 
 }  // end namespace frydom

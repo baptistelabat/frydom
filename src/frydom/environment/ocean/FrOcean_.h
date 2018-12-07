@@ -27,9 +27,9 @@ namespace frydom {
         FrEnvironment_* m_environment;
 
         /// FrOcean components :
+        std::unique_ptr <FrSeabed_> m_seabed;
         std::unique_ptr <FrFreeSurface_> m_freeSurface;
         std::unique_ptr <FrCurrent_> m_current;
-        std::unique_ptr <FrSeabed_> m_seabed;
 
         std::unique_ptr <FrFluidProperties> m_waterProp;
 
@@ -95,6 +95,10 @@ namespace frydom {
         /// Get the fluid pressure
         /// \return Pressure pressure of the fluid
         double GetPressure() const;
+
+        double GetDepth() const;
+
+        double GetDepth(double x, double y) const;
 
         double GetReynoldsNumberInWater(double characteristicLength, double velocity) const;
 

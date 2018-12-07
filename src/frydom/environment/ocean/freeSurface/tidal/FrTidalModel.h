@@ -172,7 +172,7 @@ namespace frydom {
 
         void Update(const double time);
 
-        const double GetWaterHeight() const;
+        const double GetHeight() const;
 
         const chrono::ChFrame<double>* GetTidalFrame() const;
 

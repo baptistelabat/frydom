@@ -457,16 +457,16 @@ namespace frydom {
 
     FrWaveField_ * FrFreeSurface_::GetWaveField() const { return m_waveField.get(); }
 
-    double FrFreeSurface_::GetElevation(double x, double y) const { GetWaveField()->GetElevation(x,y);}
+    double FrFreeSurface_::GetElevation(double x, double y) const { m_waveField->GetElevation(x,y);}
 
     FrFreeSurfaceGridAsset *FrFreeSurface_::GetFreeSurfaceGridAsset() const {return m_freeSurfaceGridAsset.get();}
 
-    double FrFreeSurface_::GetMeanHeight() const {
-        return m_tidal->GetWaterHeight();
+    double FrFreeSurface_::GetPosition() const {
+        return GetPosition(0.,0.);
     }
 
-    double FrFreeSurface_::GetHeight(double x, double y) const {
-        return m_tidal->GetWaterHeight() + m_waveField->GetElevation(x, y);
+    double FrFreeSurface_::GetPosition(double x, double y) const {
+        return m_tidal->GetHeight() + m_waveField->GetElevation(x, y);
     }
 
 

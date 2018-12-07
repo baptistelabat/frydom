@@ -170,127 +170,127 @@ namespace frydom {
 
     /// REFACTORING --------------->>>>>>>>>>>>>>>
 
-
-
-
-
-
-    FrFlowSensor_::FrFlowSensor_(FrWaveField_ *waveField) : m_waveField(waveField) {}
-
-    FrFlowSensor_::FrFlowSensor_(FrWaveField_ *waveField, double x, double y, double z) :
-        m_waveField(waveField), m_x(x), m_y(y), m_z(z) {}
-
-//    void FrFlowSensor_::SetX(const double x) { m_x = x; }
 //
-//    double FrFlowSensor_::GetX() const { return m_x; }
 //
-//    void FrFlowSensor_::SetY(const double y) { m_y = y; }
 //
-//    double FrFlowSensor_::GetY() const { return m_y; }
 //
-//    void FrFlowSensor_::SetZ(const double z) { m_z = z; }
 //
-//    double FrFlowSensor_::GetZ() const { return m_z; }
-
-    void FrFlowSensor_::SetPos(double x, double y, double z) {
-        m_x = x;
-        m_y = y;
-        m_z = z;
-    }
-
-    void FrFlowSensor_::GetPos(double& x, double& y, double& z) const {
-        x = m_x;
-        y = m_y;
-        z = m_z;
-    }
-
-    FrWaveField_* FrFlowSensor_::GetWaveField() const {
-        return m_waveField;
-    }
-
-    Velocity FrFlowSensor_::GetVelocity() const {
-        return m_waveField->GetVelocity(m_x, m_y, m_z, true);
-    }
-
-    Velocity FrFlowSensor_::GetVelocity(double time) const {
-        m_waveField->Update(time);
-        return this->GetVelocity();
-    }
-
-    Acceleration FrFlowSensor_::GetAcceleration() const {
-        return m_waveField->GetAcceleration(m_x, m_y, m_z, true);
-    }
-
-    Acceleration FrFlowSensor_::GetAcceleration(double time) const {
-        m_waveField->Update(time);
-        return this->GetAcceleration();
-    }
-
-
-
-
-    FrLinearFlowSensor_::~FrLinearFlowSensor_() { delete m_waveField; } // TODO: voir pourquoi le delete
-
-    FrLinearFlowSensor_::FrLinearFlowSensor_(FrWaveField_ *waveField) : FrFlowSensor_(waveField) {}
-
-    FrLinearFlowSensor_::FrLinearFlowSensor_(FrWaveField_ *waveField, double x, double y, double z)
-            : FrFlowSensor_(waveField, x, y, z) {}
-
-//    FrLinearFlowSensor::FrLinearFlowSensor(FrWaveField *waveField, chrono::ChVector<> pos) : FrFlowSensor(pos) {
-//        m_waveField = dynamic_cast<FrLinearWaveField*>(waveField);
+//    FrFlowSensor_::FrFlowSensor_(FrWaveField_ *waveField) : m_waveField(waveField) {}
+//
+//    FrFlowSensor_::FrFlowSensor_(FrWaveField_ *waveField, double x, double y, double z) :
+//        m_waveField(waveField), m_x(x), m_y(y), m_z(z) {}
+//
+////    void FrFlowSensor_::SetX(const double x) { m_x = x; }
+////
+////    double FrFlowSensor_::GetX() const { return m_x; }
+////
+////    void FrFlowSensor_::SetY(const double y) { m_y = y; }
+////
+////    double FrFlowSensor_::GetY() const { return m_y; }
+////
+////    void FrFlowSensor_::SetZ(const double z) { m_z = z; }
+////
+////    double FrFlowSensor_::GetZ() const { return m_z; }
+//
+//    void FrFlowSensor_::SetPos(double x, double y, double z) {
+//        m_x = x;
+//        m_y = y;
+//        m_z = z;
 //    }
-
-//    void FrLinearFlowSensor::SetWaveField(FrLinearWaveField *waveField) { m_waveField = waveField; }
-
-    void FrLinearFlowSensor_::Initialize() {
-        m_steadyVelocity = m_waveField->GetSteadyVelocity(m_x, m_y, m_z);
-    }
-
-    Velocity FrLinearFlowSensor_::GetVelocity(double time) const {
-
-//        auto emjwt = m_waveField->GetTimeCoeffs();
 //
-//        chrono::ChVector<std::complex<double>> velocity(0.);
-//        for (unsigned int ifreq=0; ifreq<emjwt.size(); ++ifreq) {
-//            velocity += m_steadyVelocity[ifreq] * emjwt[ifreq];
-//        }
+//    void FrFlowSensor_::GetPos(double& x, double& y, double& z) const {
+//        x = m_x;
+//        y = m_y;
+//        z = m_z;
+//    }
 //
-//        chrono::ChVector<double> realVelocity = ChReal(velocity);
+//    FrWaveField_* FrFlowSensor_::GetWaveField() const {
+//        return m_waveField;
+//    }
 //
-//        auto waveRamp = m_waveField->GetWaveRamp();
-//        if (waveRamp && waveRamp->IsActive()) {
-//            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(),realVelocity);
-//        }
+//    Velocity FrFlowSensor_::GetVelocity() const {
+//        return m_waveField->GetVelocity(m_x, m_y, m_z, true);
+//    }
 //
-//        return realVelocity;
-
-    }
-
-    Acceleration FrLinearFlowSensor_::GetAcceleration(double time) const {
-
-//        auto emjwt_dt = m_waveField->GetTimeCoeffsDt();
+//    Velocity FrFlowSensor_::GetVelocity(double time) const {
+//        m_waveField->Update(time);
+//        return this->GetVelocity();
+//    }
 //
-//        chrono::ChVector<std::complex<double>> acceleration(0.);
-//        for (unsigned int ifreq=0; ifreq<emjwt_dt.size(); ++ifreq) {
-//            acceleration += m_steadyVelocity[ifreq] * emjwt_dt[ifreq];
-//        }
+//    Acceleration FrFlowSensor_::GetAcceleration() const {
+//        return m_waveField->GetAcceleration(m_x, m_y, m_z, true);
+//    }
 //
-//        chrono::ChVector<double> realAcceleration = ChReal(acceleration);
+//    Acceleration FrFlowSensor_::GetAcceleration(double time) const {
+//        m_waveField->Update(time);
+//        return this->GetAcceleration();
+//    }
 //
-//        auto waveRamp = m_waveField->GetWaveRamp();
-//        if (waveRamp && waveRamp->IsActive()) {
-//            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(), realAcceleration);
-//        }
 //
-//        return realAcceleration;
-
-    }
-
-    Velocity FrLinearFlowSensor_::GetVelocity() const {
-        // TODO
-    }
-
-    Acceleration FrLinearFlowSensor_::GetAcceleration() const {
-        // TODO
-    }
+//
+//
+//    FrLinearFlowSensor_::~FrLinearFlowSensor_() { delete m_waveField; } // TODO: voir pourquoi le delete
+//
+//    FrLinearFlowSensor_::FrLinearFlowSensor_(FrWaveField_ *waveField) : FrFlowSensor_(waveField) {}
+//
+//    FrLinearFlowSensor_::FrLinearFlowSensor_(FrWaveField_ *waveField, double x, double y, double z)
+//            : FrFlowSensor_(waveField, x, y, z) {}
+//
+////    FrLinearFlowSensor::FrLinearFlowSensor(FrWaveField *waveField, chrono::ChVector<> pos) : FrFlowSensor(pos) {
+////        m_waveField = dynamic_cast<FrLinearWaveField*>(waveField);
+////    }
+//
+////    void FrLinearFlowSensor::SetWaveField(FrLinearWaveField *waveField) { m_waveField = waveField; }
+//
+//    void FrLinearFlowSensor_::Initialize() {
+//        m_steadyVelocity = m_waveField->GetSteadyVelocity(m_x, m_y, m_z);
+//    }
+//
+//    Velocity FrLinearFlowSensor_::GetVelocity(double time) const {
+//
+////        auto emjwt = m_waveField->GetTimeCoeffs();
+////
+////        chrono::ChVector<std::complex<double>> velocity(0.);
+////        for (unsigned int ifreq=0; ifreq<emjwt.size(); ++ifreq) {
+////            velocity += m_steadyVelocity[ifreq] * emjwt[ifreq];
+////        }
+////
+////        chrono::ChVector<double> realVelocity = ChReal(velocity);
+////
+////        auto waveRamp = m_waveField->GetWaveRamp();
+////        if (waveRamp && waveRamp->IsActive()) {
+////            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(),realVelocity);
+////        }
+////
+////        return realVelocity;
+//
+//    }
+//
+//    Acceleration FrLinearFlowSensor_::GetAcceleration(double time) const {
+//
+////        auto emjwt_dt = m_waveField->GetTimeCoeffsDt();
+////
+////        chrono::ChVector<std::complex<double>> acceleration(0.);
+////        for (unsigned int ifreq=0; ifreq<emjwt_dt.size(); ++ifreq) {
+////            acceleration += m_steadyVelocity[ifreq] * emjwt_dt[ifreq];
+////        }
+////
+////        chrono::ChVector<double> realAcceleration = ChReal(acceleration);
+////
+////        auto waveRamp = m_waveField->GetWaveRamp();
+////        if (waveRamp && waveRamp->IsActive()) {
+////            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(), realAcceleration);
+////        }
+////
+////        return realAcceleration;
+//
+//    }
+//
+//    Velocity FrLinearFlowSensor_::GetVelocity() const {
+//        // TODO
+//    }
+//
+//    Acceleration FrLinearFlowSensor_::GetAcceleration() const {
+//        // TODO
+//    }
 }
