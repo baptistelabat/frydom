@@ -398,17 +398,18 @@ namespace frydom {
 
         std::shared_ptr<FrRamp> m_waveRamp;
 
+        /// cache value of the time of the simulation
+        double c_time;
         /// cache value of the depth. (depth = bathymetry + tidal)
         double c_depth;
-        bool m_infinite_depth;              ///< if true water depth is considered as infinite
+        /// Infinite depth boolean (if true, water depth is considered as infinite)
+        bool m_infinite_depth = false;
 
     public:
 
         explicit  FrWaveField_(FrFreeSurface_* freeSurface);
 
         ~FrWaveField_() = default;
-
-        double GetTime() const;
 
         WAVE_MODEL GetWaveModel() const;
 

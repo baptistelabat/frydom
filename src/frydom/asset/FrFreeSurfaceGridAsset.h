@@ -16,11 +16,16 @@ namespace frydom {
     class FrFreeSurfaceGridAsset : public FrGridAsset{
 
     private:
+        /// Pointer to the free surface containing this asset
         FrFreeSurface_* m_freeSurface;
 
     public:
+        /// Default constructor
+        /// \param freeSurface free surface containing this asset
         explicit FrFreeSurfaceGridAsset(FrFreeSurface_* freeSurface);
 
+        /// FrFreeSurfaceGridAsset update method
+        /// \param time time of the simulation
         void Update(double time) override;
 
     };

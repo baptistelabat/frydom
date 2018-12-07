@@ -28,8 +28,6 @@ namespace frydom{
 
     FrEnvironment_ *FrOcean_::GetEnvironment() const { return m_environment;}
 
-    double FrOcean_::GetTime() const {return m_environment->GetTime();}
-
 
     void FrOcean_::SetTemperature(double Temperature) {m_waterProp->m_temperature = Temperature;}
 

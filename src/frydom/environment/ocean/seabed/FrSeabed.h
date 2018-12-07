@@ -146,38 +146,67 @@ namespace frydom {
     class FrSeabed_  : public FrObject {
     protected:
 
+        /// Pointer to the ocean containing this asset
         FrOcean_* m_ocean;
 
+        /// Boolean checking if the seabed is shown/exists
         bool m_showSeabed = true;
 
+        /// Seabed grid asset, containing also its asset visualization
         std::shared_ptr<FrSeabedGridAsset> m_SeabedGridAsset;
 
+        /// Mean bathymetry
         double m_Bathymetry = -30;
 
+        //TODO : consider varying bathymetry
 
     public:
 
+        /// Default constructor
+        /// \param ocean ocean containing this seabed
         explicit FrSeabed_(FrOcean_* ocean);
 
+        /// Default destructor
         ~FrSeabed_() = default;
 
+        //---------------------------- Asset ----------------------------//
+        /// Set if the seabed is to be shown/exist
+        /// \param showSeabed showseabed true means the seabed exists
         void ShowSeabed(bool showSeabed);
 
-        FrOcean_* GetOcean() const;
-
+        /// Get the seabed grid asset
+        /// \return seabed grid asset
         FrSeabedGridAsset * GetSeabedGridAsset();
 
+        //---------------------------- Seabed elements Getters ----------------------------//
+
+        /// Get the ocean containing this seabed
+        /// \return ocean containing this seabed
+        FrOcean_* GetOcean() const;
+
+        /// Set the mean bathymetry of the seabed
+        /// \param bathymetry mean bathymetry of the seabed
         void SetBathymetry(double bathymetry);
 
+        /// Get the mean bathymetry of the seabed
+        /// \return mean bathymetry of the seabed
         const double GetBathymetry() const;
 
+        /// Get the local bathymetry at the position (x,y)
+        /// \param x x position
+        /// \param y y position
+        /// \return local bathymetry
         const double GetBathymetry(double x, double y) const;
+
+        //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
         /// Update the state of the seabed
         void Update(double time);
 
+        /// Initialize the state of the seabed
         void Initialize() override;
 
+        /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
     };

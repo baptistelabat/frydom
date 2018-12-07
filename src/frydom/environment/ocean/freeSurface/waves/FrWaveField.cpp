@@ -871,8 +871,6 @@ namespace frydom {
     FrWaveField_::FrWaveField_(FrFreeSurface_ *freeSurface) : m_freeSurface(freeSurface) {
     }
 
-    double FrWaveField_::GetTime() const { return m_freeSurface->GetTime(); }
-
     WAVE_MODEL FrWaveField_::GetWaveModel() const { return m_waveModel; }
 
     std::shared_ptr<FrRamp> FrWaveField_::GetWaveRamp() const {
@@ -977,6 +975,7 @@ namespace frydom {
     }
 
     void FrWaveField_::Update(double time) {
+        c_time = time;
         c_depth = m_freeSurface->GetOcean()->GetDepth();
     }
 

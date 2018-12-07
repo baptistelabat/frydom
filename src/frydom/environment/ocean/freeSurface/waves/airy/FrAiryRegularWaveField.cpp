@@ -116,8 +116,7 @@ namespace frydom {
         // eta_cplx = A * exp(j.k.[x.cos(theta) + y.sin(theta)] - j.omega.t)
 
         double kdir = x*cos(m_dirAngle) + y*sin(m_dirAngle);
-        double time = GetTime();
-        return m_height * exp(JJ*(m_k*kdir - m_omega * time));
+        return m_height * exp(JJ*(m_k*kdir - m_omega * c_time));
     }
 
     double FrAiryRegularWaveField::GetElevation(double x, double y) const {

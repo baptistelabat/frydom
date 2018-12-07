@@ -201,7 +201,6 @@ namespace frydom{
         Complex elevation;
 
         auto Amplitudes = m_waveSpectrum->GetWaveAmplitudes(m_waveFrequencies, m_waveDirections);
-        double time = GetTime();
         for (unsigned int idir=0; idir<m_nbDir; ++idir) {
             double kdir = x*cos(m_waveDirections[idir]) + y*sin(m_waveDirections[idir]);
             ComplexElevation_temp.clear();
@@ -209,7 +208,7 @@ namespace frydom{
                 ki = m_waveNumbers[ifreq];
                 aik = Amplitudes[idir][ifreq];
                 phi_ik = m_wavePhases->at(idir)[ifreq];
-                elevation = aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * time - phi_ik) );
+                elevation = aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * c_time - phi_ik) );
                 ComplexElevation_temp.push_back(elevation);
             }
             ComplexElevation.push_back(ComplexElevation_temp);

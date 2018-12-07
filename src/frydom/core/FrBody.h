@@ -899,7 +899,7 @@ namespace frydom {
         void Update();
 
 
-        // Linear iteraotrs on external forces
+        // Linear iterators on external forces
         using ForceIter = ForceContainer::iterator;
         using ConstForceIter = ForceContainer::const_iterator;
 

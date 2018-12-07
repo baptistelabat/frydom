@@ -447,8 +447,6 @@ namespace frydom {
 
     }
 
-    double FrFreeSurface_::GetTime() const { return m_ocean->GetTime(); }
-
     FrAtmosphere_ *FrFreeSurface_::GetAtmosphere() const { return m_ocean->GetEnvironment()->GetAtmosphere(); }
 
     FrOcean_ *FrFreeSurface_::GetOcean() const { return m_ocean; }
@@ -471,9 +469,7 @@ namespace frydom {
 
 
     void FrFreeSurface_::NoWaves() {
-        // TODO
-//        m_waveModel = NO_WAVES;
-////            m_waveField.reset(nullptr);
+        m_waveField = std::make_unique<FrNullWaveField_>(this);
     }
 
 //    void FrFreeSurface_::SetLinearWaveField(LINEAR_WAVE_TYPE waveType) {
@@ -528,7 +524,6 @@ namespace frydom {
 
     void FrFreeSurface_::Update(double time) {
         if (m_showFreeSurface) {
-            m_time = time;
             m_tidal->Update(time);
             m_waveField->Update(time);
         }
