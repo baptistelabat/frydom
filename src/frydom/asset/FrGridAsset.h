@@ -49,11 +49,11 @@ namespace frydom {
 
         FrGridAsset() = default;
 
+        void SetNoGrid();
+
         void SetGridHeight(double height);
 
         virtual double GetGridHeight() const;
-
-        void SetGridType(GRID_TYPE gridType);
 
         void  SetGridColor(NAMED_COLOR color);
 
@@ -93,6 +93,9 @@ namespace frydom {
         BuildPolarMeshGrid(double xc0, double yc0, // center
                            double diameter,
                            unsigned int nbR, unsigned int nbTheta);
+
+        void SetGridType(GRID_TYPE gridType);
+
     };
 }
 

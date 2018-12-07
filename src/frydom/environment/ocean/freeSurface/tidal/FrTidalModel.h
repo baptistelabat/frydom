@@ -170,6 +170,8 @@ namespace frydom {
 
         ~FrTidal_();
 
+        void SetNoTidal();
+
         void Update(const double time);
 
         const double GetHeight() const;

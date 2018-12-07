@@ -6,8 +6,6 @@
 #define FRYDOM_FRSEABED_H
 
 #include "frydom/core/FrObject.h"
-//#include "frydom/asset/FrGridAsset.h"
-#include "frydom/asset/FrSeabedGridAsset.h"
 
 
 
@@ -23,6 +21,7 @@ namespace frydom {
     class FrOffshoreSystem;
     class FrEnvironment;
     class FrBody;
+    class FrTriangleMeshConnected;
 
     class FrSeabed  : public FrObject {
     public:
@@ -141,6 +140,7 @@ namespace frydom {
 
 
     class FrOcean_;
+    class FrSeabedGridAsset;
 //    using FrSeabedGridAsset = FrGridAsset;
 
     class FrSeabed_  : public FrObject {
@@ -148,9 +148,11 @@ namespace frydom {
 
         FrOcean_* m_ocean;
 
+        bool m_showSeabed = true;
+
         std::shared_ptr<FrSeabedGridAsset> m_SeabedGridAsset;
 
-        double m_meanBathymetry = -30;
+        double m_Bathymetry = -30;
 
 
     public:
@@ -159,13 +161,15 @@ namespace frydom {
 
         ~FrSeabed_() = default;
 
+        void ShowSeabed(bool showSeabed);
+
         FrOcean_* GetOcean() const;
 
         FrSeabedGridAsset * GetSeabedGridAsset();
 
         void SetBathymetry(double bathymetry);
 
-        const double GetMeanBathymetry() const;
+        const double GetBathymetry() const;
 
         const double GetBathymetry(double x, double y) const;
 

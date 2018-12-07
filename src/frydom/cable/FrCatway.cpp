@@ -355,7 +355,7 @@ namespace frydom {
     }
 
     const double FrCatwayEnvironmentInterface::GetSeabedHeight(const Vector& position) const {
-        return m_frydomEnvironment->GetOcean()->GetSeabed()->GetMeanBathymetry();  // TODO : seabed doit avoir une methode donnant le depth fonction de x et y...
+        return m_frydomEnvironment->GetOcean()->GetSeabed()->GetBathymetry();  // TODO : seabed doit avoir une methode donnant le depth fonction de x et y...
     }
 
     const Velocity FrCatwayEnvironmentInterface::GetEnvironmentFlux(const Position& position) const {

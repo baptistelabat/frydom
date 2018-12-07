@@ -4,6 +4,8 @@
 
 #include "FrSeabed.h"
 
+#include "frydom/asset/FrSeabedGridAsset.h"
+
 #include <thread>
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include <chrono/assets/ChColorAsset.h>
@@ -227,15 +229,15 @@ namespace frydom {
 
 
     void FrSeabed_::SetBathymetry(double bathymetry) {
-        m_meanBathymetry = -fabs(bathymetry);
+        m_Bathymetry = -fabs(bathymetry);
     }
 
-    const double FrSeabed_::GetMeanBathymetry() const {
-        return m_meanBathymetry;
+    const double FrSeabed_::GetBathymetry() const {
+        return m_Bathymetry;
     }
     
     const double FrSeabed_::GetBathymetry(double x, double y) const {
-        return m_meanBathymetry;
+        return m_Bathymetry;
     }
 
     void FrSeabed_::Update(double time) {}
@@ -245,6 +247,17 @@ namespace frydom {
     void FrSeabed_::StepFinalize() {}
 
     FrSeabedGridAsset *FrSeabed_::GetSeabedGridAsset() {return m_SeabedGridAsset.get();}
+
+    void FrSeabed_::ShowSeabed(bool showSeabed) {
+        if (showSeabed && m_showSeabed!=showSeabed) {
+            std::cout<< "Be careful to set new seabed grid and bathymetry"<<std::endl;
+        }
+        m_showSeabed = showSeabed;
+        if (!showSeabed) {
+            m_Bathymetry = 1E8;
+            m_SeabedGridAsset->SetNoGrid();
+        }
+    }
 
 
 }  // end namespace frydom

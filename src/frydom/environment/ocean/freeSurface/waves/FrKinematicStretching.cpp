@@ -256,7 +256,7 @@ namespace frydom {
     /// REFACTORING ------------>>>>>>>>>>>>>>
 
 
-    void FrKinematicStretching_::SetInfDepth(const bool infinite_depth) { m_infinite_depth = infinite_depth; }
+    void FrKinematicStretching_::SetInfDepth(const bool infinite_depth) { c_infinite_depth = infinite_depth; }
 
     void FrKinematicStretching_::SetInfDepth_ON() { this->SetInfDepth(true); }
 
@@ -311,7 +311,7 @@ namespace frydom {
     }
 
     double FrKinematicStretching_::Ez(const double &z, const double &konde, const double &depth) const {
-        if (m_infinite_depth) {
+        if (c_infinite_depth) {
             return exp(konde * z);
         } else {
             return cosh(konde*(z+depth)) / sinh(konde*depth);
@@ -319,7 +319,7 @@ namespace frydom {
     }
 
     double FrKinematicStretching_::diffEz(const double &z, const double &konde, const double &depth) const {
-        if (m_infinite_depth) {
+        if (c_infinite_depth) {
             return konde * exp(konde * z);
         } else {
             return konde* sinh(konde*(z+depth)) / sinh(konde*depth);
@@ -415,7 +415,7 @@ namespace frydom {
 
     double FrKinStretchingChakrabarti_::Eval(const double &x, const double &y, const double &z,
                                             const double &konde, const double &depth) const {
-        if (m_infinite_depth) {
+        if (c_infinite_depth) {
             return exp(konde * z);
         } else {
             auto eta = m_waveField->GetElevation(x, y);
@@ -426,7 +426,7 @@ namespace frydom {
     double FrKinStretchingChakrabarti_::EvalDZ(const double &x, const double &y, const double &z,
                                               const double &konde, const double &depth) const {
 
-        if (m_infinite_depth) {
+        if (c_infinite_depth) {
             return konde * exp(konde * z);
         } else {
             auto eta = m_waveField->GetElevation(x, y);

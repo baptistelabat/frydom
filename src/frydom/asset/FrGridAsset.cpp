@@ -202,4 +202,6 @@ namespace frydom{
 
     void FrGridAsset::SetGridColor(NAMED_COLOR color) {m_color = color;}
 
+    void FrGridAsset::SetNoGrid() {SetGridType(NOGRID);}
+
 }

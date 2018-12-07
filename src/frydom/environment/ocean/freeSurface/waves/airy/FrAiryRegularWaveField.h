@@ -122,7 +122,7 @@ namespace frydom {
         /// \return eulerian fluid particule acceleration, in m/s²
         Acceleration GetAcceleration(double x, double y, double z) const final;
 
-//        void Update(double time) final;
+        void Update(double time) final;;
     };
 }
 

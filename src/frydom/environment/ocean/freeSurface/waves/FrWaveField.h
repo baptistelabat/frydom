@@ -400,7 +400,6 @@ namespace frydom {
 
         /// cache value of the depth. (depth = bathymetry + tidal)
         double c_depth;
-//        const double* m_depth;                     ///< Water depth (m) // TODO: aller chercher dans le seabed...
         bool m_infinite_depth;              ///< if true water depth is considered as infinite
 
     public:

@@ -101,6 +101,8 @@ namespace frydom {
 
         void Initialize() override;
 
+        void Update(double time) final;;
+
     protected:
         void ComputeWaveDirections();
 

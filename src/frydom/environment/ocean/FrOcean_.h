@@ -8,6 +8,7 @@
 #include "frydom/environment/FrFluidType.h"
 #include "frydom/core/FrVector.h"
 #include "frydom/core/FrObject.h"
+#include "frydom/asset/FrGridAsset.h"
 
 namespace frydom {
 
@@ -33,11 +34,6 @@ namespace frydom {
 
         std::unique_ptr <FrFluidProperties> m_waterProp;
 
-        /// Assets
-        bool m_showSeabed = true;
-        bool m_showFreeSurface = true;
-
-
     public:
 
         explicit FrOcean_(FrEnvironment_* environment);
@@ -45,6 +41,10 @@ namespace frydom {
         FrEnvironment_* GetEnvironment() const;
 
         double GetTime() const;
+
+        //---------------------------- Assets ----------------------------//
+        void ShowSeabed(bool showSeabed);
+        void ShowFreeSurface(bool showFreeSurface);
 
         //---------------------------- Fluid Properties ----------------------------//
 

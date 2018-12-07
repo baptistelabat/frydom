@@ -273,8 +273,7 @@ namespace frydom {
 
     }
 
-
-
+    void FrTidal_::SetNoTidal() {m_mode = NO_TIDAL;}
 
 
 }  // end namespace frydom

@@ -138,15 +138,16 @@ namespace frydom {
         return {std::imag(cplxVel.x()),std::imag(cplxVel.y()),std::imag(cplxVel.z())};
     }
 
-//    void FrAiryRegularWaveField::Update(double time) {
-//        FrWaveField_::Update(time);
-//    }
-
     Acceleration FrAiryRegularWaveField::GetAcceleration(double x, double y, double z) const {
         auto cplxVel = GetComplexVelocity(x, y, z);
         auto cplxAcc = -JJ * m_omega * cplxVel;
         return {std::imag(cplxAcc.x()),std::imag(cplxAcc.y()),std::imag(cplxAcc.z())};
 
+    }
+
+    void FrAiryRegularWaveField::Update(double time) {
+        FrWaveField_::Update(time);
+        m_verticalFactor->SetInfDepth(m_infinite_depth);
     }
 
 

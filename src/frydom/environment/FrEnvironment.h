@@ -262,25 +262,15 @@ namespace frydom {
 
         FrOffshoreSystem_* m_system;
 
-//        double m_time;
-        std::unique_ptr<FrTimeZone> m_timeZone;  // TODO : faire un service de temps
-
         // Environment components
+        std::unique_ptr<FrTimeZone> m_timeZone;  // TODO : faire un service de temps
 
         std::unique_ptr<FrOcean_> m_ocean;
 
         std::unique_ptr<FrAtmosphere_> m_atmosphere;
 
         /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
-//        std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
         std::unique_ptr<FrGeographicServices> m_geographicServices;
-
-        // Environments scalars
-
-//        bool m_infinite_depth = false; // TODO : a placer plutot dans seabed !
-
-//        bool m_showSeabed = true;
-//        bool m_showFreeSurface = true;
 
     public:
 
@@ -289,31 +279,25 @@ namespace frydom {
         ~FrEnvironment_();
 
         FrOffshoreSystem_* GetSystem();
-//
-//        void SetInfiniteDepth(bool is_infinite);
-//        bool GetInfiniteDepth();
-
-        double GetTime() const;
-
 
         // Environment scalars
+
+        double GetTime() const;
 
         double GetGravityAcceleration() const;
 
         void SetGravityAcceleration(double gravityAcceleration);
 
+        Velocity GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
+                                            FLUID_TYPE ft, FRAME_CONVENTION fc);
+
+        double GetFluidDensity(FLUID_TYPE ft) const;;
 
         // Environment elements Getters
 
         FrOcean_* GetOcean() const;
 
         FrAtmosphere_* GetAtmosphere() const;
-
-
-        Velocity GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
-                FLUID_TYPE ft, FRAME_CONVENTION fc);
-
-        double GetFluidDensity(FLUID_TYPE ft) const;;
 
 
         // Geographic coordinates manipulations
@@ -327,7 +311,6 @@ namespace frydom {
         // TODO : ajouter des methodes permettant de recuperer l'heure UTC, de regler le temps origine...
 
         FrTimeZone* GetTimeZone() const;
-        //void SetTimeZoneName(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
 
         int GetYear() const;
 

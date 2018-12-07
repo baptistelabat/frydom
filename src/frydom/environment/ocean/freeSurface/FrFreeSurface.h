@@ -210,12 +210,6 @@ namespace frydom{
 
     public:
 
-        enum GRID_TYPE {
-            NONE,  // TODO: utiliser si on ne veut pas montrer la SL
-            CARTESIAN,
-            POLAR
-        };
-
         std::shared_ptr<FrBody_> m_body; // TODO : replacer en protected
 
     protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
@@ -231,6 +225,7 @@ namespace frydom{
         std::unique_ptr<FrWaveField_> m_waveField;
 
         // Mesh for the asset
+        bool m_showFreeSurface = true;
         std::shared_ptr<FrFreeSurfaceGridAsset> m_freeSurfaceGridAsset;
 
     protected:
@@ -242,6 +237,8 @@ namespace frydom{
         explicit FrFreeSurface_(FrOcean_* ocean);
 
         ~FrFreeSurface_();
+
+        void ShowFreeSurface(bool showFreeSurface);
 
         double GetTime() const;
 

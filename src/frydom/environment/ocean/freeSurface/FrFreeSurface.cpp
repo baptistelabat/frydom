@@ -520,18 +520,30 @@ namespace frydom {
     }
 
     void FrFreeSurface_::Initialize() {
-
-        m_waveField->Initialize();
-//        m_freeSurfaceGridAsset->Initialize();
-
+        if (m_showFreeSurface) {
+            m_tidal->Initialize();
+            m_waveField->Initialize();
+        }
     }
 
     void FrFreeSurface_::Update(double time) {
+        if (m_showFreeSurface) {
+            m_time = time;
+            m_tidal->Update(time);
+            m_waveField->Update(time);
+        }
+    }
 
-        m_time = time;
-        m_tidal->Update(time);
-        m_waveField->Update(time);
-
+    void FrFreeSurface_::ShowFreeSurface(bool showFreeSurface) {
+        if (showFreeSurface && m_showFreeSurface!=showFreeSurface) {
+            std::cout<< "Be careful to set new free surface grid, wave field and tidal model"<<std::endl;
+        }
+        m_showFreeSurface = showFreeSurface;
+        if (!showFreeSurface) {
+            m_waveField = std::make_unique<FrNullWaveField_>(this);
+            m_tidal->SetNoTidal();
+            m_freeSurfaceGridAsset->SetNoGrid();
+        }
     }
 
 

@@ -362,4 +362,9 @@ namespace frydom{
         return {cos(dirAngle), sin(dirAngle), 0.};
     }
 
+    void FrAiryIrregularWaveField::Update(double time) {
+        FrWaveField_::Update(time);
+        m_verticalFactor->SetInfDepth(m_infinite_depth);
+    }
+
 }
