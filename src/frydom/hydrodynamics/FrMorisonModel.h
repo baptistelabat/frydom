@@ -372,7 +372,6 @@ namespace frydom {
     // --------------------------------------------------------------------------
 
     /// This class is a base class for morison model with only one single element or composite elements.
-
     class FrMorisonElement_ {
 
     protected:
@@ -435,7 +434,6 @@ namespace frydom {
 
     /// Morison coefficient structure used to allow isotropic or anisotropic coefficients definition
     /// for the morison model
-
     struct MorisonCoeff {
         double x;
         double y;
@@ -461,7 +459,6 @@ namespace frydom {
     };
 
     /// The MorisonElementProperty structure encapsulate the basics property of a morison model
-
     struct MorisonElementProperty {
         MorisonCoeff cd = 0.;                   ///< Drag coefficient (can be isotropic or anisotropic)
         MorisonCoeff ca = 0.;                   ///< Added mass (can be isotropic ar anisotropic)
@@ -474,7 +471,6 @@ namespace frydom {
     /// This class defines a morison model.
     /// It can be instanciate when the morison model is composed by only one single element
     /// The pointer to the body must be specified before to create a new morison model with single element
-
     class FrMorisonSingleElement_ : public FrMorisonElement_ {
 
     protected:
@@ -616,7 +612,6 @@ namespace frydom {
     /// The resultant force and torque are the sum of the force and torque of each morison model component
     /// computed at the center of gravity of the body. The force is expressed in the world coordinates system
     /// and the torque in the body coordinate system.
-
     class FrMorisonCompositeElement_ : public FrMorisonElement_ {
 
     protected:
