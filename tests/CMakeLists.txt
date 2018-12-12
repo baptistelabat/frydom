@@ -39,7 +39,9 @@ set(FRYDOM_TESTS
 #        test_current-wind_relative_velocity
 #        bench_DTMB5512_captive
 #        test_current_standard_force
+        test_FrCurrentStandardForce
 #        test_wind_standard_force
+        test_FrWindStandardForce
 #        test_visu_catenary
         test_tug_refactoring
         test_TimeRecorder

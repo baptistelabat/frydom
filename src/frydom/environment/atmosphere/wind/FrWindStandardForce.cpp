@@ -119,10 +119,13 @@ namespace frydom {
         bodyVelocity.z()= 0.;
 
         Velocity fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()
-                ->GetRelativeVelocityInFrame(FrameAtCOG, bodyVelocity, NED);
+                ->GetRelativeVelocityInFrame(FrameAtCOG, bodyVelocity, NWU);
+
+        fluxVelocityInBody = internal::SwapFrameConvention(fluxVelocityInBody);
+        fluxVelocityInBody = -fluxVelocityInBody;   // Swap convention GOTO/COMEFROM;
 
         double alpha = fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
-        alpha = Normalize__PI_PI(alpha);
+        alpha = Normalize_0_2PI(alpha);
 
         auto ak = 0.5 * rho * fluxVelocityInBody.squaredNorm();
 
@@ -130,6 +133,7 @@ namespace frydom {
         force.y() = 0.9 * ak * m_lateralArea * sin(alpha);
         force.z() = 0.;
 
+        if (alpha > M_PI) alpha = 2.*M_PI - alpha;
         auto m1 = 0.3 * (1. - 2. * alpha / M_PI);
         torque.x() = 0.;
         torque.y() = 0.;
