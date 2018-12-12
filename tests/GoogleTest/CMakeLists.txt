@@ -19,6 +19,7 @@ set(GOOGLE_TESTS
         test_FrMorisonElement_
         test_FrLinearHydrostaticForce_
         test_FrRecorder_
+        test_FrStandardWindForce
         )
 
 #enable_testing()
