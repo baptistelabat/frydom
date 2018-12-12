@@ -392,12 +392,16 @@ namespace frydom {
 
     protected:
 
+        /// Pointer to the free surface containing this wave field
         FrFreeSurface_* m_freeSurface;
 
+        /// wave model (NO_WAVES, LINEAR_WAVES)
         WAVE_MODEL m_waveModel = NO_WAVES;
 
+        /// Wave ramp
         std::shared_ptr<FrRamp> m_waveRamp;
 
+        // Cache attributes
         /// cache value of the time of the simulation
         double c_time;
         /// cache value of the depth. (depth = bathymetry + tidal)
@@ -407,38 +411,72 @@ namespace frydom {
 
     public:
 
+        /// Default Constructor
+        /// \param freeSurface free surface containing this wave field
         explicit  FrWaveField_(FrFreeSurface_* freeSurface);
 
+        /// Default destructor
         ~FrWaveField_() = default;
 
+        /// Get the wave model
+        /// \return wave model (NO_WAVES, LINEAR_WAVES)
         WAVE_MODEL GetWaveModel() const;
 
+        /// Get the time ramp applied on the wave field
+        /// \return time ramp
         std::shared_ptr<FrRamp> GetWaveRamp() const;
 
+        /// Get the wave elevation on the horizontal position (x,y)
+        /// \param x x position
+        /// \param y y position
+        /// \return wave elevation, in meters
         virtual double GetElevation(double x, double y) const = 0;
 
         /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \return eulerian fluid particule velocity, in m/s
         virtual Velocity GetVelocity(double x, double y, double z) const = 0;
 
         /// Return the eulerian flow velocity. Return null vector if the point is upper the free surface elevation
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \param cutoff if true, and z position above the wave elevation, return 0
+        /// \return eulerian fluid particule velocity, in m/s
         virtual Velocity GetVelocity(double x, double y, double z, bool cutoff) const;
 
 
         /// Return the eulerian fluid particule velocity in global reference frame (from vector position)
+        /// \param worldPos position
+        /// \return eulerian fluid particule velocity, in m/s
         virtual Velocity GetVelocity(const Position& worldPos) const;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \return eulerian fluid particule acceleration, in m/s²
         virtual Acceleration GetAcceleration(double x, double y, double z) const = 0;
 
+        /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \param cutoff if true, and z position above the wave elevation, return 0
+        /// \return eulerian fluid particule acceleration, in m/s²
         virtual Acceleration GetAcceleration(double x, double y, double z, bool cutoff) const;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (from vector position)
+        /// \param worldPos position
+        /// \return eulerian fluid particule acceleration, in m/s²
         virtual Acceleration GetAcceleration(const Position& worldPos) const;
 
         /// Get the wave elevation for a set of point positions
         /// \param xVect x positions
         /// \param yVect y positions
-        /// \return wave elvation, in meters
+        /// \return wave elevation, in meters
         virtual std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
                                                               const std::vector<double>& yVect) const;
 
@@ -469,10 +507,24 @@ namespace frydom {
     public:
         explicit FrNullWaveField_(FrFreeSurface_* freeSurface);
 
+        /// Get the wave elevation on the horizontal position (x,y)
+        /// \param x x position
+        /// \param y y position
+        /// \return wave elevation, in meters
         double GetElevation(double x, double y) const final;
 
+        /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \return eulerian fluid particule velocity, in m/s
         Velocity GetVelocity(double x, double y, double z) const final;
 
+        /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \return eulerian fluid particule acceleration, in m/s²
         Acceleration GetAcceleration(double x, double y, double z) const final;
 
     };

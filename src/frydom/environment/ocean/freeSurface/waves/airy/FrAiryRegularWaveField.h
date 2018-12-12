@@ -26,7 +26,6 @@ namespace frydom {
         double m_k = 0.;
         /// Wave direction
         double m_dirAngle = 0.; // used internally with the conventions : NWU, GOTO, and unit : RAD; [0,2PI]
-//        Direction m_direction = NORTH(NWU);
 
         /// Vertical scale velocity factor with stretching
         std::unique_ptr<FrKinematicStretching_> m_verticalFactor;

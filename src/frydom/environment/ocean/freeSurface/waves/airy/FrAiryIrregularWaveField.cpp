@@ -23,12 +23,20 @@ namespace frydom{
 
     void FrAiryIrregularWaveField::SetWaveFrequencies(double minFreq, double maxFreq, unsigned int nbFreq) {
         assert(minFreq>0);
-        assert(minFreq<maxFreq);
+        assert(minFreq<=maxFreq);
         assert(nbFreq!=0);
         m_minFreq = minFreq;
         m_maxFreq = maxFreq;
         m_nbFreq = nbFreq;
-        m_waveFrequencies = linspace(m_minFreq, m_maxFreq, m_nbFreq);
+
+        m_waveFrequencies.clear();
+        if (nbFreq ==1 ) {
+            assert(minFreq==maxFreq);
+            m_waveFrequencies.push_back(m_minFreq);
+        }
+        else {
+            m_waveFrequencies = linspace(m_minFreq, m_maxFreq, m_nbFreq);
+        }
 
         // Caching wave numbers
         m_waveNumbers.clear();
@@ -62,22 +70,46 @@ namespace frydom{
         SetMeanWaveDirectionAngle(dirAngle, RAD, fc, dc);
     }
 
-    void FrAiryIrregularWaveField::SetDirectionalParameters(unsigned int nbDir, double spreadingFactor) {
+    void FrAiryIrregularWaveField::SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WaveDirectionalModelType dirType) {
         m_nbDir = nbDir;
         m_waveDirections.clear();
-        m_waveSpectrum->SetCos2sDirectionaleModel(spreadingFactor);
+        switch (dirType) {
+            case NONE:
+                m_waveSpectrum->SetDirectionalModel(dirType);
+                break;
+            case DIRTEST:
+                m_waveSpectrum->SetDirectionalModel(dirType);
+                break;
+            case COS2S:
+                m_waveSpectrum->SetCos2sDirectionalModel(spreadingFactor);
+                break;
+        }
 
         ComputeWaveDirections();
     }
 
     void FrAiryIrregularWaveField::ComputeWaveDirections(){
-        double BoundParameter = 1E-3;
+
         assert(m_waveSpectrum!= nullptr);
-        // TODO : gérer le cas où l'on souhaite un modèle d'étalement différent de cos2s
-        auto spreadingFactor = dynamic_cast<FrCos2sDirectionalModel*>(m_waveSpectrum->GetDirectionalModel())->GetSpreadingFactor();
-        double dirBounds = 2.*acos(pow(BoundParameter,1.0/(2.*spreadingFactor)));
-        m_waveDirections = linspace(m_meanDir - dirBounds, m_meanDir + dirBounds, m_nbDir);
-        // FIXME : Normalize_0_2PI not working...
+
+        double spreadingFactor, dirBounds, BoundParameter;
+
+        m_waveDirections.clear();
+        switch (m_waveSpectrum->GetDirectionalModel()->GetType()) {
+            case NONE:
+                m_waveDirections.push_back(m_meanDir);
+                break;
+            case COS2S:
+                BoundParameter = 1E-2;
+                spreadingFactor = dynamic_cast<FrCos2sDirectionalModel*>(m_waveSpectrum->GetDirectionalModel())->GetSpreadingFactor();
+                dirBounds = 2.*acos(pow(BoundParameter,1.0/(2.*spreadingFactor)));
+                m_waveDirections = linspace(m_meanDir - dirBounds, m_meanDir + dirBounds, m_nbDir);
+                break;
+            case DIRTEST:
+                m_waveDirections = linspace(m_meanDir, m_meanDir + 0.1, m_nbDir);
+                break;
+        }
+
         for (auto& dir:m_waveDirections) {dir = mathutils::Normalize_0_2PI(dir);};
 
         if (!m_waveFrequencies.empty()){
@@ -166,15 +198,10 @@ namespace frydom{
     void FrAiryIrregularWaveField::Initialize() {
         FrWaveField_::Initialize();
 
+        if (m_waveDirections.empty()){m_waveDirections.push_back(m_meanDir);}
+
         // Initialize wave frequency vector
-        m_waveFrequencies = linspace(m_minFreq, m_maxFreq, m_nbFreq);
-
-        // Caching wave numbers
-        m_waveNumbers.clear();
-
-        // Set the wave numbers, using the wave dispersion relation
-        auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
-        m_waveNumbers = SolveWaveDispersionRelation(c_depth, m_waveFrequencies, gravityAcceleration);
+        SetWaveFrequencies(m_minFreq, m_maxFreq, m_nbFreq);
 
         // Checks wave phases, and randomly generate them if needed
         bool testSize = true;
@@ -185,13 +212,9 @@ namespace frydom{
             }
         }
 
-        if (m_waveDirections.empty()){m_waveDirections.push_back(m_meanDir);}
-
         if (m_wavePhases==nullptr || !testSize) {
             GenerateRandomWavePhases();
         }
-
-        c_amplitude = m_waveSpectrum->GetWaveAmplitudes(m_waveFrequencies, m_waveDirections);
 
         Update(0.);
     }
