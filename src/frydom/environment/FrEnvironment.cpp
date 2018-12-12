@@ -7,7 +7,7 @@
 #include <GeographicLib/LocalCartesian.hpp>
 #include <GeographicLib/MagneticModel.hpp>
 #include <frydom/core/FrException.h>
-
+#include "frydom/core/FrFunction.h"
 
 #include "frydom/core/FrOffshoreSystem.h"
 
@@ -268,6 +268,8 @@ namespace frydom {
         m_ocean                 = std::make_unique<FrOcean_>(this);
         m_atmosphere            = std::make_unique<FrAtmosphere_>(this);
 
+        m_timeRamp              = std::make_unique<FrRamp_>();
+
 //        if (not(m_infinite_depth)) m_seabed->SetEnvironment(this); // TODO : voir a porter ca dans seabed...
 
         SetGravityAcceleration(9.81);
@@ -334,22 +336,26 @@ namespace frydom {
     FrTimeZone *FrEnvironment_::GetTimeZone() const {return m_timeZone.get();}
 
     void FrEnvironment_::Update(double time) {
+        m_timeRamp->Update(time);
         m_ocean->Update(time);
         m_atmosphere->Update(time);
         m_timeZone->Update(time);
     }
 
     void FrEnvironment_::Initialize() {
+        m_timeRamp->Initialize();
         m_ocean->Initialize();
         m_atmosphere->Initialize();
         m_timeZone->Initialize();
     }
 
     void FrEnvironment_::StepFinalize() {
+        m_timeRamp->StepFinalize();
         m_ocean->StepFinalize();
         m_atmosphere->StepFinalize();
     }
 
+    FrRamp_ *FrEnvironment_::GetTimeRamp() const { return m_timeRamp.get();}
 
 
 }  // end namespace frydom

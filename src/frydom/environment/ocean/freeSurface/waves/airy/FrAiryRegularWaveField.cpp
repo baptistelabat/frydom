@@ -118,7 +118,7 @@ namespace frydom {
         double NWUsign = 1;
         if (IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
         double kdir = x*cos(m_dirAngle) + y*sin(m_dirAngle);
-        return m_height * exp(JJ*(m_k*kdir - m_omega * c_time)) * NWUsign;
+        return m_height * exp(JJ*(m_k*kdir - m_omega * c_time)) * NWUsign * c_ramp;
     }
 
     mathutils::Vector3d<Complex> FrAiryRegularWaveField::GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
@@ -127,9 +127,9 @@ namespace frydom {
         auto ComplexElevation = GetComplexElevation(x, y, fc);
         auto Vtemp = m_omega * ComplexElevation * m_verticalFactor->Eval(x,y,z,m_k,c_depth);
 
-        auto Vx = cos(m_dirAngle) * Vtemp;
-        auto Vy = sin(m_dirAngle) * Vtemp * NWUsign;
-        auto Vz = -JJ * m_omega / m_k * ComplexElevation * m_verticalFactor->EvalDZ(x,y,z,m_k,c_depth) * NWUsign;
+        auto Vx = cos(m_dirAngle) * Vtemp * NWUsign;
+        auto Vy = sin(m_dirAngle) * Vtemp;
+        auto Vz = -JJ * m_omega / m_k * ComplexElevation * m_verticalFactor->EvalDZ(x,y,z,m_k,c_depth);
 
         return {Vx,Vy,Vz};
     }

@@ -32,7 +32,7 @@ namespace frydom {
             ComplexElevation_temp.clear();
             for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
                 ki = m_waveNumbers[ifreq];
-                elevation = exp(JJ * ki * kdir ) * c_expJwt[ifreq] * c_AExpJphi[idir][ifreq] * NWUsign;
+                elevation = exp(JJ * ki * kdir ) * c_expJwt[ifreq] * c_AExpJphi[idir][ifreq] * NWUsign * c_ramp;
                 ComplexElevation_temp.push_back(elevation);
             }
             ComplexElevation.push_back(ComplexElevation_temp);
@@ -62,9 +62,9 @@ namespace frydom {
             Stretching = m_verticalFactor->Eval(x,y,z,ki,c_depth);
             StretchingDZ = m_verticalFactor->EvalDZ(x,y,z,ki,c_depth);
             for (unsigned int idir=0; idir<m_nbDir; ++idir) {
-                Vx += c_cosTheta[idir] * wi * ComplexElevation[idir][ifreq] * Stretching;
-                Vy += c_sinTheta[idir] * wi * ComplexElevation[idir][ifreq] * Stretching * NWUsign;
-                Vz +=   - JJ / ki * wi * ComplexElevation[idir][ifreq] * StretchingDZ * NWUsign;
+                Vx += c_cosTheta[idir] * wi * ComplexElevation[idir][ifreq] * Stretching * NWUsign;
+                Vy += c_sinTheta[idir] * wi * ComplexElevation[idir][ifreq] * Stretching;
+                Vz +=   - JJ / ki * wi * ComplexElevation[idir][ifreq] * StretchingDZ;
             }
             ComplexVel.emplace_back(Vx,Vy,Vz);
         }

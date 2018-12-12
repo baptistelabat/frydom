@@ -254,6 +254,8 @@ namespace frydom {
     class Velocity;
     class FrFrame_;
 
+    class FrRamp_;
+
 
     /// Class to store the different elements composing the offshore environment
     class FrEnvironment_ : public FrObject {
@@ -264,6 +266,8 @@ namespace frydom {
 
         // Environment components
         std::unique_ptr<FrTimeZone> m_timeZone;  // TODO : faire un service de temps
+
+        std::unique_ptr<FrRamp_> m_timeRamp;
 
         std::unique_ptr<FrOcean_> m_ocean;
 
@@ -283,6 +287,10 @@ namespace frydom {
         // Environment scalars
 
         double GetTime() const;
+
+        /// Get the time ramp attached to the environment
+        /// \return time ramp
+        FrRamp_* GetTimeRamp() const;
 
         double GetGravityAcceleration() const;
 

@@ -6,11 +6,13 @@
 
 #include <random>
 
+#include "frydom/core/FrFunction.h"
+
+#include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/FrOcean_.h"
 #include "frydom/environment/ocean/seabed/FrSeabed.h"
 //#include "frydom/core/FrOffshoreSystem.h"
-//#include "frydom/environment/FrEnvironment.h"
 //#include "frydom/environment/ocean/FrOcean_.h"
 
 #include "FrWaveProbe.h"
@@ -873,10 +875,6 @@ namespace frydom {
 
     WAVE_MODEL FrWaveField_::GetWaveModel() const { return m_waveModel; }
 
-    std::shared_ptr<FrRamp> FrWaveField_::GetWaveRamp() const {
-        return m_waveRamp;
-    }
-
     Velocity FrWaveField_::GetVelocity(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const {
 
         if (cutoff) {
@@ -910,12 +908,11 @@ namespace frydom {
     void FrWaveField_::Initialize() {
 
         c_depth = m_freeSurface->GetOcean()->GetDepth(NWU);
-
-        m_waveRamp = std::make_shared<FrRamp>();
-        m_waveRamp->Initialize();
     }
 
-    void FrWaveField_::StepFinalize() {}
+    void FrWaveField_::StepFinalize() {
+        c_ramp = m_freeSurface->GetOcean()->GetEnvironment()->GetTimeRamp()->GetFunctionValue();
+    }
 
     std::vector<std::vector<double>>
     FrWaveField_::GetElevation(const std::vector<double> &xVect, const std::vector<double> &yVect, FRAME_CONVENTION fc) const {

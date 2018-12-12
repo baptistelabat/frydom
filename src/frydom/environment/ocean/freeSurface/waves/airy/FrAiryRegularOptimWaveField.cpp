@@ -26,7 +26,7 @@ namespace frydom {
         double NWUsign = 1;
         if(IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
         double kdir = x * c_cosTheta + y * c_sinTheta;
-        return c_expJwt * exp(JJ * m_k * kdir) * NWUsign;
+        return c_expJwt * exp(JJ * m_k * kdir) * NWUsign * c_ramp;
     }
 
     Vector3d<frydom::Complex>
@@ -37,9 +37,9 @@ namespace frydom {
 
         auto Vtemp = m_omega * ComplexElevation * m_verticalFactor->Eval(x, y, z, m_k, c_depth);
 
-        auto Vx = c_cosTheta * Vtemp;
-        auto Vy = c_sinTheta * Vtemp * NWUsign;
-        auto Vz = -JJ * m_omega / m_k * ComplexElevation * m_verticalFactor->EvalDZ(x, y, z, m_k, c_depth) * NWUsign;
+        auto Vx = c_cosTheta * Vtemp * NWUsign;
+        auto Vy = c_sinTheta * Vtemp;
+        auto Vz = -JJ * m_omega / m_k * ComplexElevation * m_verticalFactor->EvalDZ(x, y, z, m_k, c_depth);
 
         return {Vx, Vy, Vz};
     }

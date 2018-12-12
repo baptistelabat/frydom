@@ -387,6 +387,7 @@ namespace frydom {
 
     // Forward declarations
     class FrFreeSurface_;
+    class FrRamp_;
 
     class FrWaveField_ : public FrObject {
 
@@ -398,8 +399,8 @@ namespace frydom {
         /// wave model (NO_WAVES, LINEAR_WAVES)
         WAVE_MODEL m_waveModel = NO_WAVES;
 
-        /// Wave ramp
-        std::shared_ptr<FrRamp> m_waveRamp;
+        /// cache value of the time ramp applied on the wave field
+        double c_ramp;
 
         // Cache attributes
         /// cache value of the time of the simulation
@@ -421,10 +422,6 @@ namespace frydom {
         /// Get the wave model
         /// \return wave model (NO_WAVES, LINEAR_WAVES)
         WAVE_MODEL GetWaveModel() const;
-
-        /// Get the time ramp applied on the wave field
-        /// \return time ramp
-        std::shared_ptr<FrRamp> GetWaveRamp() const;
 
         /// Get the wave elevation on the horizontal position (x,y)
         /// \param x x position
