@@ -15,8 +15,8 @@ namespace frydom {
         FrSeabed_* m_seabed;
     public:
         /// Default constructor
-        /// \param seabed seabed containing this asset
-        explicit FrSeabedGridAsset(FrSeabed_* seabed);
+        /// \param body body containing this asset (usually WorldBody)
+        explicit FrSeabedGridAsset(FrBody_* body, FrSeabed_* seabed);
 
         /// Get the seabed grid height
         /// \return

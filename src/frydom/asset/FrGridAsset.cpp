@@ -2,9 +2,12 @@
 // Created by Lucas Letournel on 06/12/18.
 //
 
+#include <chrono/assets/ChColorAsset.h>
 #include "FrGridAsset.h"
 
 #include "frydom/mesh/FrTriangleMeshConnected.h"
+
+#include "frydom/core/FrBody.h"
 
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
@@ -46,10 +49,11 @@ namespace frydom{
 
     void FrGridAsset::UpdateAssetON() {
         assert(m_gridType != NOGRID);
-        m_updateAsset = true;
+        if (m_updateStep == 0) {m_updateStep = 1;}
+//        m_updateAsset = true;
     }
 
-    void FrGridAsset::UpdateAssetOFF() { m_updateAsset = false; }
+    void FrGridAsset::UpdateAssetOFF() { m_updateStep = 0; }
 
     std::shared_ptr<FrTriangleMeshConnected>
     FrGridAsset::BuildRectangularMeshGrid(double xmin, double xmax, double dx,
@@ -189,19 +193,38 @@ namespace frydom{
         }
         m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
         m_meshAsset->SetMesh(*mesh);
-        m_chronoPhysicsItem->AddAsset(m_meshAsset);
 
-        SetColor(m_color);
+        auto color = FrColor(m_color);
+        m_colorAsset = std::make_shared<chrono::ChColorAsset>(chrono::ChColor(color.R, color.G, color.B));
+
+        // Create an asset level for meshAsset and colorAsset
+        auto FreeSurfaceAssetLevel = std::make_shared<chrono::ChAssetLevel>();
+        FreeSurfaceAssetLevel->AddAsset(m_meshAsset);
+        FreeSurfaceAssetLevel->AddAsset(m_colorAsset);
+
+        // Add the asset level to the body
+        m_body->m_chronoBody->AddAsset(FreeSurfaceAssetLevel);
     }
 
     void FrGridAsset::SetGridHeight(double height) {m_gridHeight = height;}
 
     double FrGridAsset::GetGridHeight() const { return m_gridHeight;}
 
-    NAMED_COLOR FrGridAsset::GetColor() const { return m_color; }
+    NAMED_COLOR FrGridAsset::GetGridColor() const { return m_color; }
 
     void FrGridAsset::SetGridColor(NAMED_COLOR color) {m_color = color;}
 
     void FrGridAsset::SetNoGrid() {SetGridType(NOGRID);}
+
+    FrGridAsset::FrGridAsset(FrBody_ *body) {
+        m_body = body;
+
+    }
+
+    void FrGridAsset::StepFinalize() {
+        c_currentStep +=1;
+    }
+
+    void FrGridAsset::SetUpdateStep(int nStep) {m_updateStep = nStep;}
 
 }

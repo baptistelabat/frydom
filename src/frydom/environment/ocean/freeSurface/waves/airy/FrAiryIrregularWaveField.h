@@ -14,7 +14,7 @@ namespace frydom {
 
 
     class FrAiryIrregularWaveField : public FrWaveField_ {
-    private:
+    protected:
 
         double m_minFreq = 0.05;
         double m_maxFreq = 2.;
@@ -33,6 +33,8 @@ namespace frydom {
         std::vector<double> m_waveFrequencies;
         std::vector<double> m_waveNumbers;
 //        std::vector<std::complex<double>> m_emjwt;
+        /// cache value of the amplitude given by the wave spectrum
+        std::vector<std::vector<double>> c_amplitude;
 
         /// Table of wave phases,of dimensions (m_nbDir,m_nbFreq)
         /// made unique to check at initialize() if wavePhases were given by the users,
@@ -87,9 +89,9 @@ namespace frydom {
 
         void GenerateRandomWavePhases();
 
-        std::vector<std::vector<Complex>> GetComplexElevation(double x, double y) const;
+        virtual std::vector<std::vector<Complex>> GetComplexElevation(double x, double y) const;
 
-        std::vector<mathutils::Vector3d<Complex>> GetComplexVelocity(double x, double y, double z) const;
+        virtual std::vector<mathutils::Vector3d<Complex>> GetComplexVelocity(double x, double y, double z) const;
 
         double GetElevation(double x, double y) const override;
 
@@ -100,8 +102,6 @@ namespace frydom {
         Acceleration GetAcceleration(double x, double y, double z) const override;
 
         void Initialize() override;
-
-        void Update(double time) final;;
 
     protected:
         void ComputeWaveDirections();

@@ -15,7 +15,7 @@ namespace frydom {
 
 
     class FrAiryRegularWaveField : public FrWaveField_ {
-    private:
+    protected:
         /// Wave Height
         double m_height = 0.;
         /// Wave Period
@@ -99,7 +99,7 @@ namespace frydom {
         /// \param x x position
         /// \param y y position
         /// \return complex wave elevation, in meters
-        Complex GetComplexElevation(double x, double y) const;
+        virtual Complex GetComplexElevation(double x, double y) const;
 
         /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
         /// \param x x position
@@ -113,7 +113,7 @@ namespace frydom {
         /// \param y y position
         /// \param z z position
         /// \return complex eulerian fluid particule velocity, in m/s
-        mathutils::Vector3d<Complex> GetComplexVelocity(double x, double y, double z) const;
+        virtual mathutils::Vector3d<Complex> GetComplexVelocity(double x, double y, double z) const;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
         /// \param x x position

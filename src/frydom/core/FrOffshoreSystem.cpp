@@ -319,6 +319,10 @@ namespace frydom {
 
     }
 
+    void _FrSystemBaseSMC::CustomEndOfStep() {
+        m_offshoreSystem_->StepFinalize();
+    }
+
 //    void _FrSystemBaseSMC::SetupInitial() {
 //        chrono::ChSystem::SetupInitial();
 //        m_offshoreSystem_->Initialize();
@@ -444,9 +448,7 @@ namespace frydom {
     }
 
     void FrOffshoreSystem_::StepFinalize() {
-        m_chronoSystem->CustomEndOfStep(); // Actually do nothing but called for consistency
-        // TODO
-
+        m_environment->StepFinalize();
     }
 
     void FrOffshoreSystem_::SetSystemType(SYSTEM_TYPE type, bool checkCompat) {

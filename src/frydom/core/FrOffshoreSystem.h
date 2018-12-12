@@ -148,6 +148,8 @@ namespace frydom {
 
         void Update(bool update_assets = true) override;
 
+        void CustomEndOfStep() override;
+
 //        void SetupInitial() override;
 
     };

@@ -5,14 +5,19 @@
 #ifndef FRYDOM_FRGRIDASSET_H
 #define FRYDOM_FRGRIDASSET_H
 
-#include "frydom/core/FrPhysicsItem.h"
+#include <chrono/assets/ChAssetLevel.h>
+#include "chrono/assets/ChTriangleMeshShape.h"
+#include "chrono/assets/ChColorAsset.h"
+#include "frydom/core/FrObject.h"
+#include "frydom/core/FrColors.h"
 
 namespace frydom {
 
     class FrFreeSurface_;
     class FrTriangleMeshConnected;
+    class FrBody_;
 
-    class FrGridAsset : public FrPhysicsItem_{
+    class FrGridAsset : public FrObject  {
     public:
         enum GRID_TYPE {
             NOGRID,  // TODO: utiliser si on ne veut pas montrer la SL
@@ -20,10 +25,19 @@ namespace frydom {
             POLAR
         };
     protected:
-        /// Mesh for the asset visualization
+        /// body containing the grid asset
+        FrBody_* m_body;
+        /// Mesh asset for the visualization
         std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
+        /// Color asset for the visualization
+        std::shared_ptr<chrono::ChColorAsset> m_colorAsset;
+
         /// Boolean to check if the grid asset is updated (in position, color, etc.) during the simulation
-        bool m_updateAsset = false;
+//        bool m_updateAsset = false;
+        /// The free surface grid asset position is updated every m_updateStep simulation steps
+        int m_updateStep = 0;
+        int c_currentStep;
+
         /// Color of the grid asset
         NAMED_COLOR m_color = Gray;
         /// Z position of the grid asset in the world reference frame
@@ -48,7 +62,7 @@ namespace frydom {
 
     public:
         /// Default constructor of the grid asset
-        FrGridAsset() = default;
+        explicit FrGridAsset(FrBody_* body);
 
         /// grid asset is set to NOGRID and the asset is not visualized or updated
         void SetNoGrid();
@@ -67,7 +81,7 @@ namespace frydom {
 
         /// Get the grid color
         /// \return grid color
-        NAMED_COLOR GetColor() const;
+        NAMED_COLOR GetGridColor() const;
 
         /// Set the grid asset to a CARTESIAN grid, with constants x and y discretizations
         /// \param xmin xmin of the grid
@@ -98,14 +112,15 @@ namespace frydom {
         /// Asset characteristics (position color, etc.) are NOT updated during the simulation
         void UpdateAssetOFF();
 
-        /// GridAsset update method
-        void Update(double time) override {};
+        /// Set the update step parameters : the asset characteristics (position, colors, etc.) are then updated
+        /// every m_updateStep steps.
+        void SetUpdateStep(int nStep);
 
         /// GridAsset initialization method
         void Initialize() override;
 
         /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override {};
+        void StepFinalize() override;;
 
     protected:
 

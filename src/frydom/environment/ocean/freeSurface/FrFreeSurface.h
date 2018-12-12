@@ -201,7 +201,9 @@ namespace frydom{
     class FrTidal_;
     class FrBody_;
     class FrAiryRegularWaveField;
+    class FrAiryRegularOptimWaveField;
     class FrAiryIrregularWaveField;
+    class FrAiryIrregularOptimWaveField;
     class FrFreeSurfaceGridAsset;
 
 
@@ -319,9 +321,38 @@ namespace frydom{
         FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
                                                         FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
+        /// Set the wave field model to an Airy regular wave field optimized
+        /// \return Airy regular wave field
+        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField();
+
+        /// Set the wave field model to an Airy regular wave field optimized
+        /// \param waveHeight wave height
+        /// \param wavePeriod wave period
+        /// \param waveDirAngle wave direction angle
+        /// \param unit wave direction angle unit
+        /// \param fc frame convention (NED/NWU)
+        /// \param dc direction convention (GOTO/COMEFROM)
+        /// \return Airy regular wave field
+        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, double waveDirAngle,
+                                                        ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+
+        /// Set the wave field model to an Airy regular wave field optimized
+        /// \param waveHeight wave height
+        /// \param wavePeriod wave period
+        /// \param waveDirection wave direction
+        /// \param fc frame convention (NED/NWU)
+        /// \param dc direction convention (GOTO/COMEFROM)
+        /// \return Airy regular wave field
+        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
+                                                        FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+
         /// Set the wave field model to an Airy irregular wave field
         /// \return Airy irregular wave field
         FrAiryIrregularWaveField* SetAiryIrregularWaveField();
+
+        /// Set the wave field model to an Airy irregular wave field optimized
+        /// \return Airy irregular wave field
+        FrAiryIrregularOptimWaveField* SetAiryIrregularOptimWaveField();
 
 //        void SetLinearWaveField(LINEAR_WAVE_TYPE waveType);
 //
@@ -336,7 +367,7 @@ namespace frydom{
         virtual void Update(double time);
 
         /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override {}
+        void StepFinalize() override;
 
     };
 

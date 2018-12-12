@@ -220,9 +220,7 @@ namespace frydom {
 
 
     FrSeabed_::FrSeabed_(FrOcean_ *ocean) :m_ocean(ocean){
-        m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(this);
-
-        m_ocean->GetEnvironment()->GetSystem()->AddPhysicsItem(m_SeabedGridAsset);
+        m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(ocean->GetEnvironment()->GetSystem()->GetWorldBody().get(),this);
     }
 
     FrOcean_ *FrSeabed_::GetOcean() const {return m_ocean;}
@@ -242,9 +240,13 @@ namespace frydom {
 
     void FrSeabed_::Update(double time) {}
 
-    void FrSeabed_::Initialize() {}
+    void FrSeabed_::Initialize() {
+        if (m_showSeabed) m_SeabedGridAsset->Initialize();
+    }
 
-    void FrSeabed_::StepFinalize() {}
+    void FrSeabed_::StepFinalize() {
+        if (m_showSeabed) m_SeabedGridAsset->StepFinalize();
+    }
 
     FrSeabedGridAsset *FrSeabed_::GetSeabedGridAsset() {return m_SeabedGridAsset.get();}
 

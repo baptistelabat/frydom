@@ -451,11 +451,14 @@ namespace frydom {
         virtual std::vector<std::vector<std::vector<Velocity>>> GetVelocity(const std::vector<double>& xvect,
                                                                   const std::vector<double>& yvect,
                                                                   const std::vector<double>& zvect) const;
-
+        /// Initialize the state of the wave field
         void Initialize() override;
 
+        /// Update the state of the free surface
+        /// \param time time of the simulation
         virtual void Update(double time);
 
+        /// Method called at the send of a time step.
         void StepFinalize() override;
 
     };

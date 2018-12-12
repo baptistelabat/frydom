@@ -33,7 +33,9 @@
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h"
 #include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryRegularWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryRegularOptimWaveField.h"
 #include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryIrregularWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryIrregularOptimWaveField.h"
 
 
 #include "frydom/core/FrBody.h"
@@ -428,9 +430,7 @@ namespace frydom {
         // Creating a waveField and a tidal model
         m_waveField         = std::make_unique<FrNullWaveField_>(this);
         m_tidal             = std::make_unique<FrTidal_>(this);
-        m_freeSurfaceGridAsset    = std::make_shared<FrFreeSurfaceGridAsset>(this);
-
-        m_ocean->GetEnvironment()->GetSystem()->AddPhysicsItem(m_freeSurfaceGridAsset);
+        m_freeSurfaceGridAsset    = std::make_shared<FrFreeSurfaceGridAsset>(ocean->GetEnvironment()->GetSystem()->GetWorldBody().get(),this);
 
         CreateFreeSurfaceBody();
     }
@@ -509,16 +509,51 @@ namespace frydom {
         return waveField;
     }
 
+
+    FrAiryRegularOptimWaveField*
+    FrFreeSurface_::SetAiryRegularOptimWaveField() {
+        m_waveField = std::make_unique<FrAiryRegularOptimWaveField>(this);
+        return dynamic_cast<FrAiryRegularOptimWaveField*>(m_waveField.get());
+    }
+
+    FrAiryRegularOptimWaveField*
+    FrFreeSurface_::SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, double waveDirAngle, ANGLE_UNIT unit,
+                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
+        auto waveField = SetAiryRegularOptimWaveField();
+        waveField->SetWaveHeight(waveHeight);
+        waveField->SetWavePeriod(wavePeriod);
+        waveField->SetDirection(waveDirAngle, unit, fc, dc);
+        return waveField;
+    }
+
+    FrAiryRegularOptimWaveField*
+    FrFreeSurface_::SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
+                                            FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
+        auto waveField = SetAiryRegularOptimWaveField();
+        waveField->SetWaveHeight(waveHeight);
+        waveField->SetWavePeriod(wavePeriod);
+        waveField->SetDirection(waveDirection, fc, dc);
+        return waveField;
+    }
+
+
     FrAiryIrregularWaveField*
     FrFreeSurface_::SetAiryIrregularWaveField() {
         m_waveField = std::make_unique<FrAiryIrregularWaveField>(this);
         return dynamic_cast<FrAiryIrregularWaveField*>(m_waveField.get());
     }
 
+    FrAiryIrregularOptimWaveField*
+    FrFreeSurface_::SetAiryIrregularOptimWaveField() {
+        m_waveField = std::make_unique<FrAiryIrregularOptimWaveField>(this);
+        return dynamic_cast<FrAiryIrregularOptimWaveField*>(m_waveField.get());
+    }
+
     void FrFreeSurface_::Initialize() {
         if (m_showFreeSurface) {
             m_tidal->Initialize();
             m_waveField->Initialize();
+            m_freeSurfaceGridAsset->Initialize();
         }
     }
 
@@ -538,6 +573,13 @@ namespace frydom {
             m_waveField = std::make_unique<FrNullWaveField_>(this);
             m_tidal->SetNoTidal();
             m_freeSurfaceGridAsset->SetNoGrid();
+        }
+    }
+
+    void FrFreeSurface_::StepFinalize() {
+        if (m_showFreeSurface) {
+            m_waveField->StepFinalize();
+            m_freeSurfaceGridAsset->StepFinalize();
         }
     }
 

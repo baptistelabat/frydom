@@ -3,6 +3,7 @@
 //
 
 #include "frydom/frydom.h"
+#include <ctime>
 
 using namespace frydom;
 
@@ -26,12 +27,15 @@ int main(int argc, char* argv[]) {
 // Set the waveField to AiryRegular
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
     auto FSAsset = freeSurface->GetFreeSurfaceGridAsset();
-    FSAsset->SetGrid(-40., 40, 2, -20, 20, 1);
-    FSAsset->UpdateAssetON();
+    FSAsset->SetGrid(-100., 100, 2, -100, 100, 2);
+//    FSAsset->UpdateAssetON();
+    FSAsset->SetUpdateStep(5);
 //    FSAsset->SetGridType(FrGridAsset::NOGRID);
 
 
-//    auto waveField = freeSurface->SetAiryRegularWaveField();
+// ------------------ Regular ------------------ //
+////    auto waveField = freeSurface->SetAiryRegularWaveField();
+//    auto waveField = freeSurface->SetAiryRegularOptimWaveField();
 //    // Airy regular wave parameters
 //    double waveHeight = 2.;
 //    double wavePeriod = 2.*M_PI;
@@ -40,7 +44,9 @@ int main(int argc, char* argv[]) {
 //    waveField->SetWavePeriod(wavePeriod);
 //    waveField->SetDirection(waveDirection, fc, dc);
 
-    auto waveField = freeSurface->SetAiryIrregularWaveField();
+// ------------------ Irregular ------------------ //
+//    auto waveField = freeSurface->SetAiryIrregularWaveField();
+    auto waveField = freeSurface->SetAiryIrregularOptimWaveField();
 //    waveField->GetWaveRamp()->Deactivate();
 
 // Set the JONSWAP wave spectrum
@@ -48,17 +54,28 @@ int main(int argc, char* argv[]) {
     double Tp = 9;
     auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
 
-    waveField->SetWaveFrequencies(0.5,2,4);
+    waveField->SetWaveFrequencies(0.5,2,20);
 
 // Set wave direction
     waveField->SetMeanWaveDirection(Direction(SOUTH(fc)), fc, dc);
-    waveField->SetDirectionalParameters(5, 10);
+    waveField->SetDirectionalParameters(10, 10);
 
+
+
+// ------------------ Run ------------------ //
     system.SetTimeStep(0.01);
 
     system.Initialize();
-    system.RunInViewer(-10, 20, false);
 
+    time_t startTime = time(nullptr);
+
+    system.RunInViewer(10, 20, false);
+//    system.AdvanceTo(10);
+
+    time_t endTime = time(nullptr) - startTime;
+    char* dt = ctime(&endTime);
+
+    std::cout<<"time spent :"<<dt;
 
 }
 
