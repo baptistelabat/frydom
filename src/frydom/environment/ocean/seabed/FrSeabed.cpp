@@ -226,16 +226,21 @@ namespace frydom {
     FrOcean_ *FrSeabed_::GetOcean() const {return m_ocean;}
 
 
-    void FrSeabed_::SetBathymetry(double bathymetry) {
-        m_Bathymetry = -fabs(bathymetry);
+    void FrSeabed_::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
+        m_bathymetry = -fabs(bathymetry);
+        if (IsNED(fc)) {m_bathymetry = -m_bathymetry;}
     }
 
-    const double FrSeabed_::GetBathymetry() const {
-        return m_Bathymetry;
+    const double FrSeabed_::GetBathymetry(FRAME_CONVENTION fc) const {
+        double bathy = m_bathymetry;
+        if (IsNED(fc)) {bathy = -bathy;}
+        return bathy;
     }
     
-    const double FrSeabed_::GetBathymetry(double x, double y) const {
-        return m_Bathymetry;
+    const double FrSeabed_::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
+        double bathy = m_bathymetry;
+        if (IsNED(fc)) {bathy = -bathy;}
+        return bathy;
     }
 
     void FrSeabed_::Update(double time) {}
@@ -256,7 +261,7 @@ namespace frydom {
         }
         m_showSeabed = showSeabed;
         if (!showSeabed) {
-            m_Bathymetry = 1E8;
+            m_bathymetry = 1E8;
             m_SeabedGridAsset->SetNoGrid();
         }
     }

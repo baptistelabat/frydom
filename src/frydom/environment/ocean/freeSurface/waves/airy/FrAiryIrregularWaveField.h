@@ -133,38 +133,45 @@ namespace frydom {
         ///Generate random wave phases
         void GenerateRandomWavePhases();
 
+        //------------------------------------MAIN GETTERS----------------------------------//
+
         /// Get the complex wave elevation at the position (x,y,0), of the regular Airy wave field
         /// \param x x position
         /// \param y y position
+        /// \param fc frame convention (NED/NWU)
         /// \return complex wave elevation, in meters
-        virtual std::vector<std::vector<Complex>> GetComplexElevation(double x, double y) const;
+        virtual std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const;
 
         /// Return the complex eulerian fluid particule velocity in global reference frame (implemented in child)
         /// \param x x position
         /// \param y y position
         /// \param z z position
+        /// \param fc frame convention (NED/NWU)
         /// \return complex eulerian fluid particule velocity, in m/s
-        virtual std::vector<mathutils::Vector3d<Complex>> GetComplexVelocity(double x, double y, double z) const;
+        virtual std::vector<mathutils::Vector3d<Complex>> GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const;
 
         /// Get the wave elevation on the horizontal position (x,y)
         /// \param x x position
         /// \param y y position
+        /// \param fc frame convention (NED/NWU)
         /// \return wave elevation, in meters
-        double GetElevation(double x, double y) const override;
+        double GetElevation(double x, double y, FRAME_CONVENTION fc) const override;
 
         /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
         /// \param x x position
         /// \param y y position
         /// \param z z position
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule velocity, in m/s
-        Velocity GetVelocity(double x, double y, double z) const override;
+        Velocity GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const override;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
         /// \param x x position
         /// \param y y position
         /// \param z z position
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule acceleration, in m/s²
-        Acceleration GetAcceleration(double x, double y, double z) const override;
+        Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const override;
 
         /// Initialize the state of the wave field
         void Initialize() override;

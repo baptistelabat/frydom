@@ -134,14 +134,16 @@ namespace frydom {
         FrSeabed_* GetSeabed() const;
 
         /// Get mean ocean depth (tidal height + mean bathymetry)
+        /// \param fc frame convention (NED/NWU)
         /// \return mean ocean depth, in meters
-        double GetDepth() const;
+        double GetDepth(FRAME_CONVENTION fc) const;
 
         /// Get ocean depth at a position (x,y) (tidal height + bathymetry at position (x,y))
         /// \param x x position
         /// \param y y position
+        /// \param fc frame convention (NED/NWU)
         /// \return ocean depth at position (x,y)
-        double GetDepth(double x, double y) const;
+        double GetDepth(double x, double y, FRAME_CONVENTION fc) const;
 
         //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 

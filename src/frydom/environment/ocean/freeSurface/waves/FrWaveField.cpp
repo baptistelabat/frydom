@@ -877,39 +877,39 @@ namespace frydom {
         return m_waveRamp;
     }
 
-    Velocity FrWaveField_::GetVelocity(double x, double y, double z, bool cutoff) const {
+    Velocity FrWaveField_::GetVelocity(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const {
 
         if (cutoff) {
-            auto wave_elevation = GetElevation(x, y);
+            auto wave_elevation = GetElevation(x, y, fc);
             if (wave_elevation < z) {
                 return {0.,0.,0.};
             }
         }
-        return GetVelocity(x, y, z);
+        return GetVelocity(x, y, z, fc);
     }
 
-    Velocity FrWaveField_::GetVelocity(const Position& worldPos) const {
-        return GetVelocity(worldPos.GetX(), worldPos.GetY(), worldPos.GetZ());
+    Velocity FrWaveField_::GetVelocity(const Position& worldPos, FRAME_CONVENTION fc) const {
+        return GetVelocity(worldPos.GetX(), worldPos.GetY(), worldPos.GetZ(), fc);
     }
 
-    Acceleration FrWaveField_::GetAcceleration(double x, double y, double z, bool cutoff) const {
+    Acceleration FrWaveField_::GetAcceleration(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const {
 
         if (cutoff) {
-            auto wave_elevation = GetElevation(x, y);
+            auto wave_elevation = GetElevation(x, y, fc);
             if (wave_elevation < z) {
                 return {0.,0.,0.};
             }
         }
-        return GetAcceleration(x, y, z);
+        return GetAcceleration(x, y, z, fc);
     }
 
-    Acceleration FrWaveField_::GetAcceleration(const Position& worldPos) const {
-        return GetAcceleration(worldPos.GetX(), worldPos.GetY(), worldPos.GetZ());
+    Acceleration FrWaveField_::GetAcceleration(const Position& worldPos, FRAME_CONVENTION fc) const {
+        return GetAcceleration(worldPos.GetX(), worldPos.GetY(), worldPos.GetZ(), fc);
     }
 
     void FrWaveField_::Initialize() {
 
-        c_depth = m_freeSurface->GetOcean()->GetDepth();
+        c_depth = m_freeSurface->GetOcean()->GetDepth(NWU);
 
         m_waveRamp = std::make_shared<FrRamp>();
         m_waveRamp->Initialize();
@@ -918,7 +918,7 @@ namespace frydom {
     void FrWaveField_::StepFinalize() {}
 
     std::vector<std::vector<double>>
-    FrWaveField_::GetElevation(const std::vector<double> &xVect, const std::vector<double> &yVect) const {
+    FrWaveField_::GetElevation(const std::vector<double> &xVect, const std::vector<double> &yVect, FRAME_CONVENTION fc) const {
         auto nx = xVect.size();
         auto ny = yVect.size();
 
@@ -934,7 +934,7 @@ namespace frydom {
             x = xVect[ix];
             for (unsigned int iy=0; iy<ny; ++iy) {
                 y = yVect[iy];
-                eta = GetElevation(x, y);
+                eta = GetElevation(x, y, fc);
                 elev.push_back(eta);
             }
             elevations.push_back(elev);
@@ -944,7 +944,7 @@ namespace frydom {
 
     std::vector<std::vector<std::vector<Velocity>>>
     FrWaveField_::GetVelocity(const std::vector<double> &xvect, const std::vector<double> &yvect,
-                              const std::vector<double> &zvect) const {
+                              const std::vector<double> &zvect, FRAME_CONVENTION fc) const {
         auto nx = xvect.size();
         auto ny = yvect.size();
         auto nz = zvect.size();
@@ -964,7 +964,7 @@ namespace frydom {
                 y = yvect[iy];
                 for (unsigned int iz=0; iz<nz; ++iz) {
                     z = zvect[iz];
-                    velocity_z = GetVelocity(x, y, z);
+                    velocity_z = GetVelocity(x, y, z, fc);
                     velocity_y.push_back(velocity_z);
                 }
                 velocity_x.push_back(velocity_y);
@@ -976,7 +976,7 @@ namespace frydom {
 
     void FrWaveField_::Update(double time) {
         c_time = time;
-        c_depth = m_freeSurface->GetOcean()->GetDepth();
+        c_depth = m_freeSurface->GetOcean()->GetDepth(NWU);
     }
 
 
@@ -987,15 +987,15 @@ namespace frydom {
         m_waveModel = NO_WAVES;
     }
 
-    double FrNullWaveField_::GetElevation(double x, double y) const {
+    double FrNullWaveField_::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
         return 0.;
     }
 
-    Velocity FrNullWaveField_::GetVelocity(double x, double y, double z) const {
+    Velocity FrNullWaveField_::GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
         return {0.,0.,0.};
     }
 
-    Acceleration FrNullWaveField_::GetAcceleration(double x, double y, double z) const {
+    Acceleration FrNullWaveField_::GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const {
         return {0.,0.,0.};
     }
 

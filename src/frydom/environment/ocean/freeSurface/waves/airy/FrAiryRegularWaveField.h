@@ -88,38 +88,45 @@ namespace frydom {
         /// \return wave length
         double GetWaveLength() const;
 
-        /// Get the wave elevation at the position (x,y,0), of the regular Airy wave field
-        /// \param x x position
-        /// \param y y position
-        /// \return wave elevation, in meters
-        double GetElevation(double x, double y) const final;
+        //------------------------------------MAIN GETTERS----------------------------------//
 
         /// Get the complex wave elevation at the position (x,y,0), of the regular Airy wave field
         /// \param x x position
         /// \param y y position
+        /// \param fc frame convention (NED/NWU)
         /// \return complex wave elevation, in meters
-        virtual Complex GetComplexElevation(double x, double y) const;
-
-        /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
-        /// \param x x position
-        /// \param y y position
-        /// \param z z position
-        /// \return eulerian fluid particule velocity, in m/s
-        Velocity GetVelocity(double x, double y, double z) const final;
+        virtual Complex GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const;
 
         /// Return the complex eulerian fluid particule velocity in global reference frame (implemented in child)
         /// \param x x position
         /// \param y y position
         /// \param z z position
+        /// \param fc frame convention (NED/NWU)
         /// \return complex eulerian fluid particule velocity, in m/s
-        virtual mathutils::Vector3d<Complex> GetComplexVelocity(double x, double y, double z) const;
+        virtual mathutils::Vector3d<Complex> GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const;
+
+        /// Get the wave elevation at the position (x,y,0), of the regular Airy wave field
+        /// \param x x position
+        /// \param y y position
+        /// \param fc frame convention (NED/NWU)
+        /// \return wave elevation, in meters
+        double GetElevation(double x, double y, FRAME_CONVENTION fc) const final;
+
+        /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \param fc frame convention (NED/NWU)
+        /// \return eulerian fluid particule velocity, in m/s
+        Velocity GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
         /// \param x x position
         /// \param y y position
         /// \param z z position
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule acceleration, in m/s²
-        Acceleration GetAcceleration(double x, double y, double z) const final;
+        Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
     };
 }

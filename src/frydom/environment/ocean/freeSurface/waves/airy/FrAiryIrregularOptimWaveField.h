@@ -28,15 +28,17 @@ namespace frydom {
         /// Get the complex wave elevation at the position (x,y,0), of the regular Airy wave field
         /// \param x x position
         /// \param y y position
+        /// \param fc frame convention (NED/NWU)
         /// \return complex wave elevation, in meters
-        std::vector<std::vector<Complex>> GetComplexElevation(double x, double y) const final;
+        std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const final;
 
         /// Return the complex eulerian fluid particule velocity in global reference frame (implemented in child)
         /// \param x x position
         /// \param y y position
         /// \param z z position
+        /// \param fc frame convention (NED/NWU)
         /// \return complex eulerian fluid particule velocity, in m/s
-        std::vector<mathutils::Vector3d<Complex>> GetComplexVelocity(double x, double y, double z) const final;
+        std::vector<mathutils::Vector3d<Complex>> GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
         /// Initialize the state of the wave field
         void Initialize() override;

@@ -278,18 +278,32 @@ namespace frydom{
         /// Get the wave elevation at the position (x,y,0), given by the wave field model
         /// \param x x position
         /// \param y y position
+        /// \param fc frame convention (NED/NWU)
         /// \return wave elevation, in meters
-        double GetElevation(double x, double y) const;
+        double GetElevation(double x, double y, FRAME_CONVENTION fc) const;
 
-        /// Get the vertical position of the free surface (tidal height + elevtation)
-        /// \return vertical position of the free surface
-        double GetPosition() const;
+        /// Get the vertical position of the free surface at the position (0,0) (tidal height + elevation)
+        /// \param fc frame convention (NED/NWU)
+        /// \return vertical position of the free surface at the position (0,0) in frame convention
+        double GetPosition(FRAME_CONVENTION fc) const;
 
-        ///  Get the vertical position of the free surface at the position (x,y) (tidal height + elevtation)
+        /// Get the vertical position of the free surface at the position (x,y) (tidal height + elevation)
         /// \param x x position
         /// \param y y position
-        /// \return vertical position of the free surface at the position (x,y)
-        double GetPosition(double x, double y) const;
+        /// \param fc frame convention (NED/NWU)
+        /// \return vertical position of the free surface at the position (x,y) in frame convention
+        double GetPosition(double x, double y, FRAME_CONVENTION fc) const;
+
+        /// Get the vertical position of the free surface at the worldPos position (tidal height + elevation)
+        /// \param worldPos position in world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return vertical position of the free surface at the position (x,y) in frame convention
+        double GetPosition(const Position worldPos, FRAME_CONVENTION fc) const;
+
+        /// Get the vertical position of the free surface at the worldPos position (tidal height + elevation)
+        /// \param worldPos position in world reference frame, (x,y) are used as input and result is returned in z
+        /// \param fc frame convention (NED/NWU)
+        void GetPosition(Position &worldPos, FRAME_CONVENTION fc) const;
 
         //---------------------------- Wave field makers ----------------------------//
 

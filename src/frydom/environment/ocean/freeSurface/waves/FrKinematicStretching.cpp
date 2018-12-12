@@ -372,7 +372,7 @@ namespace frydom {
     double FrKinStretchingWheeler_::Eval(const double &x, const double &y, const double &z,
                                         const double &konde, const double &depth) const {
 
-        auto eta = m_waveField->GetElevation(x, y);
+        auto eta = m_waveField->GetElevation(x, y, NWU);
         auto rz = (depth + z) / (depth + eta);
         auto zp = depth * (rz - 1.);
 
@@ -384,7 +384,7 @@ namespace frydom {
     double FrKinStretchingWheeler_::EvalDZ(const double &x, const double &y, const double &z,
                                           const double &konde, const double &depth) const {
 
-        auto eta = m_waveField->GetElevation(x, y);
+        auto eta = m_waveField->GetElevation(x, y, NWU);
         auto rz = (depth + z) / (depth + eta);
         auto drz = depth / (depth + eta);
         auto zp = depth * (rz - 1.);
@@ -418,7 +418,7 @@ namespace frydom {
         if (c_infinite_depth) {
             return exp(konde * z);
         } else {
-            auto eta = m_waveField->GetElevation(x, y);
+            auto eta = m_waveField->GetElevation(x, y, NWU);
             return cosh(konde * (z + depth)) / sinh(konde * (depth + eta));
         }
     }
@@ -429,7 +429,7 @@ namespace frydom {
         if (c_infinite_depth) {
             return konde * exp(konde * z);
         } else {
-            auto eta = m_waveField->GetElevation(x, y);
+            auto eta = m_waveField->GetElevation(x, y, NWU);
             return konde * sinh(konde * (z + depth)) / sinh(konde * (depth + eta));
         }
 
@@ -462,7 +462,7 @@ namespace frydom {
 
     double FrKinStretchingDelta_::Zp(const double &x, const double &y, const double &z) const {
 
-        auto eta = m_waveField->GetElevation(x, y);
+        auto eta = m_waveField->GetElevation(x, y, NWU);
 
         double zp;
         if (z > -m_hd) {

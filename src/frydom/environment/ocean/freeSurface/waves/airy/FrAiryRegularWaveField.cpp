@@ -35,9 +35,9 @@ namespace frydom {
 
         // Set the wave number, using the wave dispersion relation
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
-        m_k = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(), m_omega, gravityAcceleration);
+        m_k = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(NWU), m_omega, gravityAcceleration);
 
-        m_infinite_depth = 3. / m_k < m_freeSurface->GetOcean()->GetDepth();
+        m_infinite_depth = 3. / m_k < m_freeSurface->GetOcean()->GetDepth(NWU);
         m_verticalFactor->SetInfDepth(m_infinite_depth);
 
     }
@@ -112,34 +112,40 @@ namespace frydom {
 
 
 
-    Complex FrAiryRegularWaveField::GetComplexElevation(double x, double y) const {
+    Complex FrAiryRegularWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
         // eta_cplx = A * exp(j.k.[x.cos(theta) + y.sin(theta)] - j.omega.t)
 
+        double NWUsign = 1;
+        if (IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
         double kdir = x*cos(m_dirAngle) + y*sin(m_dirAngle);
-        return m_height * exp(JJ*(m_k*kdir - m_omega * c_time));
+        return m_height * exp(JJ*(m_k*kdir - m_omega * c_time)) * NWUsign;
     }
 
-    double FrAiryRegularWaveField::GetElevation(double x, double y) const {
-        return std::imag( GetComplexElevation(x, y));
-    }
-
-    mathutils::Vector3d<Complex> FrAiryRegularWaveField::GetComplexVelocity(double x, double y, double z) const {
-        auto Vtemp = m_omega * GetComplexElevation(x, y) * m_verticalFactor->Eval(x,y,z,m_k,c_depth);
+    mathutils::Vector3d<Complex> FrAiryRegularWaveField::GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
+        double NWUsign = 1;
+        if (IsNED(fc)) {y=-y; z=-z; NWUsign = -NWUsign;}
+        auto ComplexElevation = GetComplexElevation(x, y, fc);
+        auto Vtemp = m_omega * ComplexElevation * m_verticalFactor->Eval(x,y,z,m_k,c_depth);
 
         auto Vx = cos(m_dirAngle) * Vtemp;
-        auto Vy = sin(m_dirAngle) * Vtemp;
-        auto Vz = -JJ * m_omega / m_k * GetComplexElevation(x, y) * m_verticalFactor->EvalDZ(x,y,z,m_k,c_depth);
+        auto Vy = sin(m_dirAngle) * Vtemp * NWUsign;
+        auto Vz = -JJ * m_omega / m_k * ComplexElevation * m_verticalFactor->EvalDZ(x,y,z,m_k,c_depth) * NWUsign;
 
         return {Vx,Vy,Vz};
     }
 
-    Velocity FrAiryRegularWaveField::GetVelocity(double x, double y, double z) const {
-        auto cplxVel = GetComplexVelocity(x, y, z);
+
+    double FrAiryRegularWaveField::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
+        return std::imag( GetComplexElevation(x, y, fc));
+    }
+
+    Velocity FrAiryRegularWaveField::GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
+        auto cplxVel = GetComplexVelocity(x, y, z, fc);
         return {std::imag(cplxVel.x()),std::imag(cplxVel.y()),std::imag(cplxVel.z())};
     }
 
-    Acceleration FrAiryRegularWaveField::GetAcceleration(double x, double y, double z) const {
-        auto cplxVel = GetComplexVelocity(x, y, z);
+    Acceleration FrAiryRegularWaveField::GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const {
+        auto cplxVel = GetComplexVelocity(x, y, z, fc);
         auto cplxAcc = -JJ * m_omega * cplxVel;
         return {std::imag(cplxAcc.x()),std::imag(cplxAcc.y()),std::imag(cplxAcc.z())};
 

@@ -43,7 +43,7 @@ namespace frydom{
 
         // Set the wave numbers, using the wave dispersion relation
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
-        m_waveNumbers = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(), m_waveFrequencies, gravityAcceleration);
+        m_waveNumbers = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(NWU), m_waveFrequencies, gravityAcceleration);
 
         if (!m_waveDirections.empty()){
             c_amplitude = m_waveSpectrum->GetWaveAmplitudes(m_waveFrequencies, m_waveDirections);
@@ -219,7 +219,11 @@ namespace frydom{
         Update(0.);
     }
 
-    std::vector<std::vector<Complex>> FrAiryIrregularWaveField::GetComplexElevation(double x, double y) const {
+    std::vector<std::vector<Complex>>
+    FrAiryIrregularWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
+        double NWUsign = 1;
+        if (IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
+
         std::vector<std::vector<Complex>> ComplexElevation;
         ComplexElevation.reserve(m_nbDir);
         ComplexElevation.clear();
@@ -241,7 +245,7 @@ namespace frydom{
                 ki = m_waveNumbers[ifreq];
                 aik = amplitudeTemp[ifreq];
                 phi_ik = m_wavePhases->at(idir)[ifreq];
-                elevation = aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * c_time - phi_ik) );
+                elevation = aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * c_time - phi_ik) ) * NWUsign;
                 ComplexElevation_temp.push_back(elevation);
             }
             ComplexElevation.push_back(ComplexElevation_temp);
@@ -250,20 +254,10 @@ namespace frydom{
         return ComplexElevation;
     }
 
-    double FrAiryIrregularWaveField::GetElevation(double x, double y) const {
-        double elevation = 0.;
-
-        auto ComplexElevation = GetComplexElevation(x,y);
-
-        for (unsigned int idir=0; idir<m_nbDir; ++idir) {
-            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
-                elevation += std::imag(ComplexElevation[idir][ifreq]);
-            }
-        }
-        return elevation;
-    }
-
-    std::vector<mathutils::Vector3d<Complex>> FrAiryIrregularWaveField::GetComplexVelocity(double x, double y, double z) const {
+    std::vector<mathutils::Vector3d<Complex>>
+    FrAiryIrregularWaveField::GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
+        double NWUsign = 1;
+        if (IsNED(fc)) {y=-y; z=-z; NWUsign = -NWUsign;}
 
         std::vector<mathutils::Vector3d<Complex>> ComplexVel;
         ComplexVel.reserve(m_nbFreq);
@@ -273,7 +267,7 @@ namespace frydom{
         double ki, wi, thetaj;
         double Stretching, StretchingDZ;
 
-        auto ComplexElevation = GetComplexElevation(x,y);
+        auto ComplexElevation = GetComplexElevation(x,y,fc);
 
         for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
             ki = m_waveNumbers[ifreq];
@@ -284,8 +278,8 @@ namespace frydom{
             for (unsigned int idir=0; idir<m_nbDir; ++idir) {
                 thetaj = m_waveDirections[idir];
                 Vx += cos(thetaj) * wi * ComplexElevation[idir][ifreq] * Stretching;
-                Vy += sin(thetaj) * wi * ComplexElevation[idir][ifreq] * Stretching;
-                Vz +=   - JJ / ki * wi * ComplexElevation[idir][ifreq] * StretchingDZ;
+                Vy += sin(thetaj) * wi * ComplexElevation[idir][ifreq] * Stretching * NWUsign;
+                Vz +=   - JJ / ki * wi * ComplexElevation[idir][ifreq] * StretchingDZ * NWUsign;
             }
             ComplexVel.emplace_back(Vx,Vy,Vz);
         }
@@ -293,9 +287,22 @@ namespace frydom{
         return ComplexVel;
     }
 
-    Velocity FrAiryIrregularWaveField::GetVelocity(double x, double y, double z) const {
+    double FrAiryIrregularWaveField::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
+        double elevation = 0.;
+
+        auto ComplexElevation = GetComplexElevation(x,y, fc);
+
+        for (unsigned int idir=0; idir<m_nbDir; ++idir) {
+            for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
+                elevation += std::imag(ComplexElevation[idir][ifreq]);
+            }
+        }
+        return elevation;
+    }
+
+    Velocity FrAiryIrregularWaveField::GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
         Velocity Vel = {0.,0.,0.};
-        auto cplxVel = GetComplexVelocity(x, y, z);
+        auto cplxVel = GetComplexVelocity(x, y, z, fc);
         for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
             Vel.GetVx() += std::imag(cplxVel[ifreq].x());
             Vel.GetVy() += std::imag(cplxVel[ifreq].y());
@@ -304,9 +311,9 @@ namespace frydom{
         return Vel;
     }
 
-    Acceleration FrAiryIrregularWaveField::GetAcceleration(double x, double y, double z) const {
+    Acceleration FrAiryIrregularWaveField::GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const {
         Acceleration Acc = {0.,0.,0.};
-        auto cplxVel = GetComplexVelocity(x, y, z);
+        auto cplxVel = GetComplexVelocity(x, y, z, fc);
         double wi;
         for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
             wi = m_waveFrequencies[ifreq];

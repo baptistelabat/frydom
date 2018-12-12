@@ -455,16 +455,26 @@ namespace frydom {
 
     FrWaveField_ * FrFreeSurface_::GetWaveField() const { return m_waveField.get(); }
 
-    double FrFreeSurface_::GetElevation(double x, double y) const { m_waveField->GetElevation(x,y);}
+    double FrFreeSurface_::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
+        m_waveField->GetElevation(x,y, fc);
+    }
 
     FrFreeSurfaceGridAsset *FrFreeSurface_::GetFreeSurfaceGridAsset() const {return m_freeSurfaceGridAsset.get();}
 
-    double FrFreeSurface_::GetPosition() const {
-        return GetPosition(0.,0.);
+    double FrFreeSurface_::GetPosition(FRAME_CONVENTION fc) const {
+        return GetPosition(0.,0.,fc);
     }
 
-    double FrFreeSurface_::GetPosition(double x, double y) const {
-        return m_tidal->GetHeight() + m_waveField->GetElevation(x, y);
+    double FrFreeSurface_::GetPosition(double x, double y, FRAME_CONVENTION fc) const {
+        return m_tidal->GetHeight(fc) + m_waveField->GetElevation(x, y, fc);
+    }
+
+    double FrFreeSurface_::GetPosition(const Position worldPos, FRAME_CONVENTION fc) const {
+        return GetPosition(worldPos[0],worldPos[1],fc);
+    }
+
+    void FrFreeSurface_::GetPosition(Position& worldPos, FRAME_CONVENTION fc) const {
+        worldPos[2] = GetPosition(worldPos[0],worldPos[1],fc);
     }
 
 

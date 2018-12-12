@@ -6,7 +6,7 @@
 #define FRYDOM_FRSEABED_H
 
 #include "frydom/core/FrObject.h"
-
+#include "frydom/core/FrConvention.h"
 
 
 // Forward declarations of Chrono classes
@@ -156,7 +156,7 @@ namespace frydom {
         std::shared_ptr<FrSeabedGridAsset> m_SeabedGridAsset;
 
         /// Mean bathymetry
-        double m_Bathymetry = -30;
+        double m_bathymetry = -30;
 
         //TODO : consider varying bathymetry
 
@@ -186,17 +186,20 @@ namespace frydom {
 
         /// Set the mean bathymetry of the seabed
         /// \param bathymetry mean bathymetry of the seabed
-        void SetBathymetry(double bathymetry);
+        /// \param fc frame convention (NED/NWU)
+        void SetBathymetry(double bathymetry, FRAME_CONVENTION fc);
 
         /// Get the mean bathymetry of the seabed
+        /// \param fc frame convention (NED/NWU)
         /// \return mean bathymetry of the seabed
-        const double GetBathymetry() const;
+        const double GetBathymetry(FRAME_CONVENTION fc) const;
 
         /// Get the local bathymetry at the position (x,y)
         /// \param x x position
         /// \param y y position
+        /// \param fc frame convention (NED/NWU)
         /// \return local bathymetry
-        const double GetBathymetry(double x, double y) const;
+        const double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const;
 
         //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 

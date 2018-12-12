@@ -10,6 +10,7 @@
 #include "MathUtils/MathUtils.h"
 
 #include "frydom/core/FrObject.h"
+#include "frydom/core/FrConvention.h"
 
 using namespace mathutils;
 // TODO: La hauteur de marée (+ sonde a recuperer de seabed) doivent etre retranscrite sur le corps embarque dans la
@@ -174,7 +175,7 @@ namespace frydom {
 
         void Update(const double time);
 
-        const double GetHeight() const;
+        const double GetHeight(FRAME_CONVENTION fc) const;
 
         const chrono::ChFrame<double>* GetTidalFrame() const;
 

@@ -430,14 +430,14 @@ namespace frydom {
         /// \param x x position
         /// \param y y position
         /// \return wave elevation, in meters
-        virtual double GetElevation(double x, double y) const = 0;
+        virtual double GetElevation(double x, double y, FRAME_CONVENTION fc) const = 0;
 
         /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
         /// \param x x position
         /// \param y y position
         /// \param z z position
         /// \return eulerian fluid particule velocity, in m/s
-        virtual Velocity GetVelocity(double x, double y, double z) const = 0;
+        virtual Velocity GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const = 0;
 
         /// Return the eulerian flow velocity. Return null vector if the point is upper the free surface elevation
         /// \param x x position
@@ -445,20 +445,20 @@ namespace frydom {
         /// \param z z position
         /// \param cutoff if true, and z position above the wave elevation, return 0
         /// \return eulerian fluid particule velocity, in m/s
-        virtual Velocity GetVelocity(double x, double y, double z, bool cutoff) const;
+        virtual Velocity GetVelocity(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const;
 
 
         /// Return the eulerian fluid particule velocity in global reference frame (from vector position)
         /// \param worldPos position
         /// \return eulerian fluid particule velocity, in m/s
-        virtual Velocity GetVelocity(const Position& worldPos) const;
+        virtual Velocity GetVelocity(const Position& worldPos, FRAME_CONVENTION fc) const;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
         /// \param x x position
         /// \param y y position
         /// \param z z position
         /// \return eulerian fluid particule acceleration, in m/s²
-        virtual Acceleration GetAcceleration(double x, double y, double z) const = 0;
+        virtual Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const = 0;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
         /// \param x x position
@@ -466,19 +466,19 @@ namespace frydom {
         /// \param z z position
         /// \param cutoff if true, and z position above the wave elevation, return 0
         /// \return eulerian fluid particule acceleration, in m/s²
-        virtual Acceleration GetAcceleration(double x, double y, double z, bool cutoff) const;
+        virtual Acceleration GetAcceleration(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (from vector position)
         /// \param worldPos position
         /// \return eulerian fluid particule acceleration, in m/s²
-        virtual Acceleration GetAcceleration(const Position& worldPos) const;
+        virtual Acceleration GetAcceleration(const Position& worldPos, FRAME_CONVENTION fc) const;
 
         /// Get the wave elevation for a set of point positions
         /// \param xVect x positions
         /// \param yVect y positions
         /// \return wave elevation, in meters
         virtual std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
-                                                              const std::vector<double>& yVect) const;
+                                                              const std::vector<double>& yVect, FRAME_CONVENTION fc) const;
 
         /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
         /// for a set of point positions
@@ -488,7 +488,7 @@ namespace frydom {
         /// \return eulerian fluid particule velocity, in m/s
         virtual std::vector<std::vector<std::vector<Velocity>>> GetVelocity(const std::vector<double>& xvect,
                                                                   const std::vector<double>& yvect,
-                                                                  const std::vector<double>& zvect) const;
+                                                                  const std::vector<double>& zvect, FRAME_CONVENTION fc) const;
         /// Initialize the state of the wave field
         void Initialize() override;
 
@@ -511,21 +511,21 @@ namespace frydom {
         /// \param x x position
         /// \param y y position
         /// \return wave elevation, in meters
-        double GetElevation(double x, double y) const final;
+        double GetElevation(double x, double y, FRAME_CONVENTION fc) const final;
 
         /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
         /// \param x x position
         /// \param y y position
         /// \param z z position
         /// \return eulerian fluid particule velocity, in m/s
-        Velocity GetVelocity(double x, double y, double z) const final;
+        Velocity GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
         /// \param x x position
         /// \param y y position
         /// \param z z position
         /// \return eulerian fluid particule acceleration, in m/s²
-        Acceleration GetAcceleration(double x, double y, double z) const final;
+        Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
     };
 

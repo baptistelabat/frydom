@@ -16,5 +16,5 @@ namespace frydom{
         SetGridColor(Chocolate);
     }
 
-    double FrSeabedGridAsset::GetGridHeight() const {return m_seabed->GetBathymetry();}
+    double FrSeabedGridAsset::GetGridHeight() const {return m_seabed->GetBathymetry(NWU);}
 }

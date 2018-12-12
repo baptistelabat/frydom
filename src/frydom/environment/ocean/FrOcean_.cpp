@@ -87,12 +87,12 @@ namespace frydom{
         m_seabed->StepFinalize();
     }
 
-    double FrOcean_::GetDepth() const {
-        return m_freeSurface->GetTidal()->GetHeight() - m_seabed->GetBathymetry();
+    double FrOcean_::GetDepth(FRAME_CONVENTION fc) const {
+        return m_freeSurface->GetTidal()->GetHeight(fc) - m_seabed->GetBathymetry(fc);
     }
 
-    double FrOcean_::GetDepth(double x, double y) const {
-        return m_freeSurface->GetTidal()->GetHeight() - m_seabed->GetBathymetry(x,y);
+    double FrOcean_::GetDepth(double x, double y, FRAME_CONVENTION fc) const {
+        return m_freeSurface->GetTidal()->GetHeight(fc) - m_seabed->GetBathymetry(x,y,fc);
     }
 
     void FrOcean_::ShowSeabed(bool showSeabed) {
