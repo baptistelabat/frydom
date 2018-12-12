@@ -69,21 +69,29 @@ namespace frydom {
 
     /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
+    //forward declaration
+
+    class FrHydroDB_;
+
     class FrWaveDriftForceRAO_ : public FrForce_ {
 
     private:
 
+        std::shared_ptr<FrHydroDB_> m_hdb;
         std::vector<std::unique_ptr<mathutils::LookupTable2d<>>> m_table;
 
     public:
 
-        //FrWaveDriftForce_(const std::string hdf5file);
+        FrWaveDriftForceRAO_(const FrHydroDB_& hdb);
 
         void Initialize() override;
 
         void Update(double time) override;
 
         void StepFinalize() override;
+
+    private:
+         void SetInterpolationTable();
 
 
 

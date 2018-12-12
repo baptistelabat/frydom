@@ -191,11 +191,32 @@ namespace frydom {
 
     /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
+    FrWaveDriftForceRAO_::FrWaveDriftForceRAO_(const FrHydroDB_& hdb)
+          { }
+
     void FrWaveDriftForceRAO_::Update(double time) {
 
         auto waveAmplitude = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
     }
+
+    void FrWaveDriftForceRAO_::Initialize() {
+        this->SetInterpolationTable();
+
+    }
+
+    void FrWaveDriftForceRAO_::StepFinalize() {
+
+    }
+
+    void FrWaveDriftForceRAO_::SetInterpolationTable() {
+
+
+
+    }
+
+
+
 
 
 }

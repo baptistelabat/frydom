@@ -21,6 +21,7 @@ set(GOOGLE_TESTS
         test_FrRecorder_
         test_FrStandardWindForce
         test_FrStandardCurrentForce
+        test_FrInertia
         )
 
 #enable_testing()
