@@ -20,6 +20,7 @@ set(GOOGLE_TESTS
         test_FrLinearHydrostaticForce_
         test_FrRecorder_
         test_FrStandardWindForce
+        test_FrStandardCurrentForce
         )
 
 #enable_testing()
