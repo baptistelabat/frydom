@@ -37,7 +37,7 @@ namespace frydom {
                           Ixy, Iyy, Iyz,
                           Ixz, Iyz, Izz;
 
-        m_inertiaAtCOG = rot_rp.transpose() * m_inertiaAtCOG * rot_rp;
+        m_inertiaAtCOG = rot_rp * m_inertiaAtCOG * rot_rp.transpose();
         Position PG = cogPosTmp - coeffsFrame.GetPosition(NWU);
         m_inertiaAtCOG -= GetPointMassInertiaMatrix(mass, PG); // Avoir un GetPointMassInertia
         m_cogPosition = cogPosTmp;
