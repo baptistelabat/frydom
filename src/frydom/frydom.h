@@ -13,6 +13,7 @@
 #include "chrono/solver/ChSolverMINRES.h" // FIXME: trouver moyen d'avoir un import plus global des headers chrono...
 
 // FRyDoM related headers
+#include "asset/FrAssetInc.h"
 #include "core/FrCore.h"
 #include "environment/FrEnvironmentInc.h"
 #include "hydrodynamics/FrHydrodynamics.h"

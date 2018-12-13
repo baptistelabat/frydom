@@ -5,6 +5,7 @@ message(STATUS "    ...REFACTORING TESTS :")
 
 set(REFACTORING_TESTS
         test_tug_refactoring
+        demo_AiryIrregularWaveField
         )
 
 
@@ -16,3 +17,17 @@ foreach(test ${REFACTORING_TESTS})
 
 endforeach()
 
+set(subdirs
+        # add here the test source subdirectories
+        )
+
+foreach (subdir ${subdirs})
+    add_subdirectory(${subdir})
+endforeach ()
+
+
+# Adding resource files
+configure_file(../data/frydom_logo.png . COPYONLY)
+configure_file(../../data/skybox/sky_dn.jpg . COPYONLY)
+configure_file(../../data/skybox/sky_lf.jpg . COPYONLY)
+configure_file(../../data/skybox/sky_up.jpg . COPYONLY)

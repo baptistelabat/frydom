@@ -201,12 +201,10 @@ namespace frydom{
     class FrTidal_;
     class FrBody_;
     class FrAiryRegularWaveField;
-
-
-
-    class FrFreeSurfaceAsset {
-
-    };
+    class FrAiryRegularOptimWaveField;
+    class FrAiryIrregularWaveField;
+    class FrAiryIrregularOptimWaveField;
+    class FrFreeSurfaceGridAsset;
 
 
     /// Pure Virtual Base class for a free surface system.
@@ -214,132 +212,176 @@ namespace frydom{
 
     public:
 
-        enum GRID_TYPE {
-            NONE,  // TODO: utiliser si on ne veut pas montrer la SL
-            CARTESIAN,
-            POLAR
-        };
-
-        std::shared_ptr<FrBody_> m_body; // TODO : replacer en protected
+        //TODO : TO BE DELETED
+        std::shared_ptr<FrBody_> m_body;
 
     protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
 
-        double m_time = 0.;
-        bool m_updateAsset = false;
-
+        /// Pointer to the ocean containing this free surface
         FrOcean_* m_ocean;
 
+        /// Boolean testing if the free surface is to be shown/exist
+        bool m_showFreeSurface = true;
+
         // Free surface elements
-
+        /// Tidal model
         std::unique_ptr<FrTidal_> m_tidal;
-
+        /// Wave field model
         std::unique_ptr<FrWaveField_> m_waveField;
 
-        // Mesh for the asset
-        std::shared_ptr<FrTriangleMeshConnected> m_meshAsset;
-
-        std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbeGrid; // TODO: passer a la classe de base...
-
-//        std::vector<double> m_gridHeights; // TODO: preallouer a l'initialisation
-
-        GRID_TYPE m_gridType = CARTESIAN;
-        double m_xmin = -50.;
-        double m_xmax = 50.;
-        double m_dx = 1.;
-        double m_ymin = -50.;
-        double m_ymax = 50.;
-        double m_dy = 1.;
-
-        double m_xc0 = 0.;
-        double m_yc0 = 0.;
-        double m_diameter = 50.;
-        int m_nbR = 50;
-        int m_nbTheta = 36;
+        // Visualization asset
+        /// free surface grid asset, containing also the visualization asset
+        std::shared_ptr<FrFreeSurfaceGridAsset> m_freeSurfaceGridAsset;
 
     protected:
 
-        /// Private method in charge of the building of the free surface mesh as a rectangular grid.
-        std::shared_ptr<FrTriangleMeshConnected>
-        BuildRectangularMeshGrid(double xmin, double xmax, double dx,
-                                 double ymin, double ymax, double dy);
-
-        /// Private method in charge of the building of the free surface mesh as a polar grid.
-        std::shared_ptr<FrTriangleMeshConnected>
-        BuildPolarMeshGrid(double xc0, double yc0, // center
-                           double diameter,
-                           unsigned int nbR, unsigned int nbTheta);
-
+        //TODO : TO BE DELETED
         void CreateFreeSurfaceBody();
 
     public:
 
+        /// Default constructor
+        /// \param ocean ocean containing this free surface
         explicit FrFreeSurface_(FrOcean_* ocean);
 
+        /// Default destructor
         ~FrFreeSurface_();
 
-        double GetTime() const;
+        //---------------------------- Asset ----------------------------//
 
+        /// Set if the free surface is to be shown/exist
+        /// \param showFreeSurface showfreesurface true means the free surface exists
+        void ShowFreeSurface(bool showFreeSurface);
+
+        /// Get the free surface grid asset
+        /// \return free surface grid asset
+        FrFreeSurfaceGridAsset* GetFreeSurfaceGridAsset() const;
+
+        //---------------------------- Free surface elements Getters ----------------------------//
+
+        /// Get the ocean containing this free surface
+        /// \return ocean containing this free surface
         FrOcean_* GetOcean() const;
 
+        /// Get the atmosphere above the ocean
+        /// \return atmosphere above the ocean
         FrAtmosphere_* GetAtmosphere() const;;
 
+        /// Get the tidal model
+        /// \return tidal model
         FrTidal_* GetTidal() const;
 
-        FrWaveField_ * GetWaveField() const;
+        /// Get the wave field model
+        /// \return wave field model
+        FrWaveField_* GetWaveField() const;
 
+        /// Get the wave elevation at the position (x,y,0), given by the wave field model
+        /// \param x x position
+        /// \param y y position
+        /// \param fc frame convention (NED/NWU)
+        /// \return wave elevation, in meters
+        double GetElevation(double x, double y, FRAME_CONVENTION fc) const;
+
+        /// Get the vertical position of the free surface at the position (0,0) (tidal height + elevation)
+        /// \param fc frame convention (NED/NWU)
+        /// \return vertical position of the free surface at the position (0,0) in frame convention
+        double GetPosition(FRAME_CONVENTION fc) const;
+
+        /// Get the vertical position of the free surface at the position (x,y) (tidal height + elevation)
+        /// \param x x position
+        /// \param y y position
+        /// \param fc frame convention (NED/NWU)
+        /// \return vertical position of the free surface at the position (x,y) in frame convention
+        double GetPosition(double x, double y, FRAME_CONVENTION fc) const;
+
+        /// Get the vertical position of the free surface at the worldPos position (tidal height + elevation)
+        /// \param worldPos position in world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return vertical position of the free surface at the position (x,y) in frame convention
+        double GetPosition(const Position worldPos, FRAME_CONVENTION fc) const;
+
+        /// Get the vertical position of the free surface at the worldPos position (tidal height + elevation)
+        /// \param worldPos position in world reference frame, (x,y) are used as input and result is returned in z
+        /// \param fc frame convention (NED/NWU)
+        void GetPosition(Position &worldPos, FRAME_CONVENTION fc) const;
+
+        //---------------------------- Wave field makers ----------------------------//
+
+        /// Set the wave field model to a null wave field
         void NoWaves();
 
+        /// Set the wave field model to an Airy regular wave field
+        /// \return Airy regular wave field
         FrAiryRegularWaveField* SetAiryRegularWaveField();
-        
+
+        /// Set the wave field model to an Airy regular wave field
+        /// \param waveHeight wave height
+        /// \param wavePeriod wave period
+        /// \param waveDirAngle wave direction angle
+        /// \param unit wave direction angle unit
+        /// \param fc frame convention (NED/NWU)
+        /// \param dc direction convention (GOTO/COMEFROM)
+        /// \return Airy regular wave field
         FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, double waveDirAngle,
                                                         ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
+        /// Set the wave field model to an Airy regular wave field
+        /// \param waveHeight wave height
+        /// \param wavePeriod wave period
+        /// \param waveDirection wave direction
+        /// \param fc frame convention (NED/NWU)
+        /// \param dc direction convention (GOTO/COMEFROM)
+        /// \return Airy regular wave field
         FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
                                                         FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
+        /// Set the wave field model to an Airy regular wave field optimized
+        /// \return Airy regular wave field
+        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField();
 
+        /// Set the wave field model to an Airy regular wave field optimized
+        /// \param waveHeight wave height
+        /// \param wavePeriod wave period
+        /// \param waveDirAngle wave direction angle
+        /// \param unit wave direction angle unit
+        /// \param fc frame convention (NED/NWU)
+        /// \param dc direction convention (GOTO/COMEFROM)
+        /// \return Airy regular wave field
+        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, double waveDirAngle,
+                                                        ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
-        void SetLinearWaveField(LINEAR_WAVE_TYPE waveType);
+        /// Set the wave field model to an Airy regular wave field optimized
+        /// \param waveHeight wave height
+        /// \param wavePeriod wave period
+        /// \param waveDirection wave direction
+        /// \param fc frame convention (NED/NWU)
+        /// \param dc direction convention (GOTO/COMEFROM)
+        /// \return Airy regular wave field
+        FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
+                                                        FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
-        FrLinearWaveField_* GetLinearWaveField() const;
+        /// Set the wave field model to an Airy irregular wave field
+        /// \return Airy irregular wave field
+        FrAiryIrregularWaveField* SetAiryIrregularWaveField();
 
-        double GetMeanHeight() const;
+        /// Set the wave field model to an Airy irregular wave field optimized
+        /// \return Airy irregular wave field
+        FrAiryIrregularOptimWaveField* SetAiryIrregularOptimWaveField();
 
-        double GetHeight(double x, double y) const;
+//        void SetLinearWaveField(LINEAR_WAVE_TYPE waveType);
+//
+//        FrLinearWaveField* GetLinearWaveField() const;
 
-        virtual void Initialize() override;
+        //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
-        void SetGridType(GRID_TYPE gridType);
-
-        /// Initializes the free surface system
-        /// In any case, a mesh grid is used.
-        /// this version concerns a rectangular grid
-        void SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy);
-
-        /// Initializes the free surface system
-        /// In any case, a mesh grid is used.
-        /// this version concerns a square grid
-        void SetGrid(double lmin, double lmax, double dl);
-
-        void SetGrid(double xc0, double yc0, double diameter, int nbR, int nbTheta);
-
-
-        /// Get the free surface's mesh
-
-        void UpdateAsset(bool update);
-
-        void UpdateAssetON();
-
-        void UpdateAssetOFF();
+        /// Initialize the state of the free surface
+        void Initialize() override;
 
         /// Update the state of the free surface
         virtual void Update(double time);
 
-        void StepFinalize() override {}
-
-    private:
-
-        void UpdateGrid();
+        /// Method called at the send of a time step. Logging may be used here
+        void StepFinalize() override;
 
     };
 

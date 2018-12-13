@@ -6,25 +6,27 @@
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/flow/FrFlowBase.h"
+#include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
 #include "freeSurface/FrFreeSurface.h"
 #include "seabed/FrSeabed.h"
+
+#include "frydom/asset/FrSeabedGridAsset.h"
+#include "frydom/asset/FrFreeSurfaceGridAsset.h"
 
 
 namespace frydom{
 
     FrOcean_::FrOcean_(FrEnvironment_* environment) :m_environment(environment) {
 
+        m_seabed        = std::make_unique<FrSeabed_>(this);
         m_freeSurface   = std::make_unique<FrFreeSurface_>(this);
         m_current       = std::make_unique<FrCurrent_>(this);
-        m_seabed        = std::make_unique<FrSeabed_>(this);
         m_waterProp     = std::make_unique<FrFluidProperties>(10., 1027., 0.001397, 1.3604E-06, 35., 1.2030E-03 );
 
     }
 
     FrEnvironment_ *FrOcean_::GetEnvironment() const { return m_environment;}
-
-    double FrOcean_::GetTime() const {return m_environment->GetTime();}
 
 
     void FrOcean_::SetTemperature(double Temperature) {m_waterProp->m_temperature = Temperature;}
@@ -67,23 +69,38 @@ namespace frydom{
 
     void FrOcean_::Update(double time) {
 
-        if (m_showFreeSurface) m_freeSurface->Update(time);
+        m_freeSurface->Update(time);
         m_current->Update(time);
-        if (m_showSeabed) m_seabed->Update(time);
+        m_seabed->Update(time);
 
     }
 
     void FrOcean_::Initialize() {
-        if (m_showFreeSurface) m_freeSurface->Initialize();
+        m_freeSurface->Initialize();
         m_current->Initialize();
-        if (m_showSeabed) m_seabed->Initialize();
+        m_seabed->Initialize();
     }
 
     void FrOcean_::StepFinalize() {
-        if (m_showFreeSurface) m_freeSurface->StepFinalize();
+        m_freeSurface->StepFinalize();
         m_current->StepFinalize();
-        if (m_showSeabed) m_seabed->StepFinalize();
+        m_seabed->StepFinalize();
     }
 
+    double FrOcean_::GetDepth(FRAME_CONVENTION fc) const {
+        return m_freeSurface->GetTidal()->GetHeight(fc) - m_seabed->GetBathymetry(fc);
+    }
+
+    double FrOcean_::GetDepth(double x, double y, FRAME_CONVENTION fc) const {
+        return m_freeSurface->GetTidal()->GetHeight(fc) - m_seabed->GetBathymetry(x,y,fc);
+    }
+
+    void FrOcean_::ShowSeabed(bool showSeabed) {
+        m_seabed->ShowSeabed(showSeabed);
+    }
+
+    void FrOcean_::ShowFreeSurface(bool showFreeSurface) {
+        m_freeSurface->ShowFreeSurface(showFreeSurface);
+    }
 
 }

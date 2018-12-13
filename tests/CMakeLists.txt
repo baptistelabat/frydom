@@ -45,6 +45,8 @@ set(FRYDOM_TESTS
 #        test_visu_catenary
         test_tug_refactoring
         test_TimeRecorder
+#        test_tug_refactoring
+#        test_TimeRecorder
 #        test_FrEquilibriumFrame
         test_MorisonElement
         )
@@ -65,6 +67,7 @@ foreach(test ${FRYDOM_TESTS})
 endforeach()
 
 add_subdirectory(unit_tests)
+add_subdirectory(refactoring)
 add_subdirectory(TestNonRegression)
 add_subdirectory(GoogleTest)
 

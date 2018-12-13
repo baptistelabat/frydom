@@ -254,97 +254,122 @@ namespace frydom {
     class Velocity;
     class FrFrame_;
 
+    class FrRamp_;
+
 
     /// Class to store the different elements composing the offshore environment
     class FrEnvironment_ : public FrObject {
 
     private:
 
+        /// Offshore sytem containing this Environment
         FrOffshoreSystem_* m_system;
 
-//        double m_time;
-        std::unique_ptr<FrTimeZone> m_timeZone;  // TODO : faire un service de temps
+        //---------------------------- Environment elements ----------------------------//
+        /// Zoned time conversion service, can give time during simulation in a specified time zone.
+        std::unique_ptr<FrTimeZone> m_timeZone;  // TODO : faire un service de temps, NEED REFACTO
 
-        // Environment components
+        /// Time ramp, can be applied on wave field, current field, wind field, etc.
+        std::unique_ptr<FrRamp_> m_timeRamp;
 
+        /// Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
         std::unique_ptr<FrOcean_> m_ocean;
 
+        /// Atmosphere element of the simulation, contains wind model, air properties.
         std::unique_ptr<FrAtmosphere_> m_atmosphere;
 
-        /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
-//        std::unique_ptr<GeographicLib::LocalCartesian> m_LocalCartesian;
+        /// Service converting local coordinates to geographic coordinates, contains the geocoord origins.
         std::unique_ptr<FrGeographicServices> m_geographicServices;
-
-        // Environments scalars
-
-//        bool m_infinite_depth = false; // TODO : a placer plutot dans seabed !
-
-//        bool m_showSeabed = true;
-//        bool m_showFreeSurface = true;
 
     public:
 
+        /// Default constructor
+        /// \param system offshore system containing this environment
         explicit FrEnvironment_(FrOffshoreSystem_* system);
 
+        /// Destructor
         ~FrEnvironment_();
 
+        /// Get the offshore system, containing this environment
+        /// \return offshore system
         FrOffshoreSystem_* GetSystem();
-//
-//        void SetInfiniteDepth(bool is_infinite);
-//        bool GetInfiniteDepth();
 
+        //---------------------------- Environment scalars methods ----------------------------//
+
+        /// Get the simulation time (given by Chrono)
+        /// \return simulation time
         double GetTime() const;
 
+        /// Get the time ramp attached to the environment
+        /// \return time ramp
+        FrRamp_* GetTimeRamp() const;
 
-        // Environment scalars
-
+        /// Get the gravity acceleration on the vertical axis
+        /// \return gravity acceleration on the vertical axis, in m/s²
         double GetGravityAcceleration() const;
 
+        /// Set the gravity acceleration on the vertical axis
+        /// \param gravityAcceleration, in m/s²
         void SetGravityAcceleration(double gravityAcceleration);
 
+        /// Return the flow velocity observed from the local frame
+        /// \param frame Local frame in which the velocity is computed
+        /// \param worldVel Translation velocity of the frame in world frame
+        /// \param ft fluid type (AIR/WATER)
+        /// \param fc Frame convention (NED/NWU)
+        /// \return Velocity in local frame
+        Velocity GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
+                                            FLUID_TYPE ft, FRAME_CONVENTION fc);
 
-        // Environment elements Getters
+        /// Get the fluid density
+        /// \param ft fluid type (AIR/WATER)
+        /// \return fluid density
+        double GetFluidDensity(FLUID_TYPE ft) const;;
 
+        //---------------------------- Environment elements Getters ----------------------------//
+
+        /// Get the Ocean element
+        /// \return Ocean element
         FrOcean_* GetOcean() const;
 
+        /// Get the Atmosphere element
+        /// \return Atmosphere element
         FrAtmosphere_* GetAtmosphere() const;
 
 
-        Velocity GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
-                FLUID_TYPE ft, FRAME_CONVENTION fc);
-
-        double GetFluidDensity(FLUID_TYPE ft) const;;
-
-
-        // Geographic coordinates manipulations
+        //---------------------------- Geographic coordinates manipulations---------------------------- //
 
         /// Get the geographic service (convert cartesian to geographic position, compute magnetic declination, etc.)
         /// \return the geographic service
         FrGeographicServices* GetGeographicServices() const;
 
 
-
+        //---------------------------- Zoned time conversion manipulations---------------------------- //
         // TODO : ajouter des methodes permettant de recuperer l'heure UTC, de regler le temps origine...
 
+        /// Get the zoned time conversion service
+        /// \return zoned time conversion service
         FrTimeZone* GetTimeZone() const;
-        //void SetTimeZoneName(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
 
+        /// Get the year given by the zoned time conversion service
+        /// \return year
         int GetYear() const;
 
-        // Solver methods
+        //---------------------------- Update-Initialize-StepFinalize ---------------------------- //
 
+        /// Update the state of the environment
         void Update(double time);
 
+        /// Initialize the state of the environment
         void Initialize() override;
 
+        /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
     };
 
 
-
-
-
+    
 
 
 }  // end namespace frydom

@@ -378,93 +378,122 @@ namespace frydom {
 
 
 
-    /// REFACTORING -------------6>>>>>>>>>>>>>>>>>>
-
-
-
-
+    /// REFACTORING ------------->>>>>>>>>>>>>>>>>>
 
 
 
 
     // FrWaveField declarations
 
-
-//    enum WAVE_MODEL_ { // TODO: passer l'enum dans la classe
-//        NO_WAVES,
-//        LINEAR_WAVES
-//    };
-
-
     // Forward declarations
     class FrFreeSurface_;
+    class FrRamp_;
 
     class FrWaveField_ : public FrObject {
 
     protected:
 
+        /// Pointer to the free surface containing this wave field
         FrFreeSurface_* m_freeSurface;
 
-        // FIXME static const WAVE_MODEL m_waveModel;
+        /// wave model (NO_WAVES, LINEAR_WAVES)
         WAVE_MODEL m_waveModel = NO_WAVES;
 
+        /// cache value of the time ramp applied on the wave field
+        double c_ramp;
 
-        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum = nullptr;
-
-        std::shared_ptr<FrRamp> m_waveRamp;
-
-        double m_depth = 0.;                     ///< Water depth (m) // TODO: aller chercher dans le seabed...
-        bool m_infinite_depth = true;              ///< if true water depth is considered as infinite
+        // Cache attributes
+        /// cache value of the time of the simulation
+        double c_time;
+        /// cache value of the depth. (depth = bathymetry + tidal)
+        double c_depth;
+        /// Infinite depth boolean (if true, water depth is considered as infinite)
+        bool m_infinite_depth = false;
 
     public:
 
+        /// Default Constructor
+        /// \param freeSurface free surface containing this wave field
         explicit  FrWaveField_(FrFreeSurface_* freeSurface);
 
+        /// Default destructor
         ~FrWaveField_() = default;
 
-        virtual void Update(double time);
-
-        double GetTime() const;
-
-        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
-
+        /// Get the wave model
+        /// \return wave model (NO_WAVES, LINEAR_WAVES)
         WAVE_MODEL GetWaveModel() const;
 
-        std::shared_ptr<FrRamp> GetWaveRamp() const;
-
-        virtual double GetElevation(double x, double y) const = 0;
+        /// Get the wave elevation on the horizontal position (x,y)
+        /// \param x x position
+        /// \param y y position
+        /// \return wave elevation, in meters
+        virtual double GetElevation(double x, double y, FRAME_CONVENTION fc) const = 0;
 
         /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
-        virtual Velocity GetVelocity(double x, double y, double z) const = 0;
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \return eulerian fluid particule velocity, in m/s
+        virtual Velocity GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const = 0;
 
         /// Return the eulerian flow velocity. Return null vector if the point is upper the free surface elevation
-        virtual Velocity GetVelocity(double x, double y, double z, bool cutoff) const;
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \param cutoff if true, and z position above the wave elevation, return 0
+        /// \return eulerian fluid particule velocity, in m/s
+        virtual Velocity GetVelocity(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const;
 
 
         /// Return the eulerian fluid particule velocity in global reference frame (from vector position)
-        virtual Velocity GetVelocity(const Position& worldPos) const;
+        /// \param worldPos position
+        /// \return eulerian fluid particule velocity, in m/s
+        virtual Velocity GetVelocity(const Position& worldPos, FRAME_CONVENTION fc) const;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
-        virtual Acceleration GetAcceleration(double x, double y, double z) const = 0;
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \return eulerian fluid particule acceleration, in m/s²
+        virtual Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const = 0;
 
-        virtual Acceleration GetAcceleration(double x, double y, double z, bool cutoff) const;
+        /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \param cutoff if true, and z position above the wave elevation, return 0
+        /// \return eulerian fluid particule acceleration, in m/s²
+        virtual Acceleration GetAcceleration(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (from vector position)
-        virtual Acceleration GetAcceleration(const Position& worldPos) const;
+        /// \param worldPos position
+        /// \return eulerian fluid particule acceleration, in m/s²
+        virtual Acceleration GetAcceleration(const Position& worldPos, FRAME_CONVENTION fc) const;
 
+        /// Get the wave elevation for a set of point positions
+        /// \param xVect x positions
+        /// \param yVect y positions
+        /// \return wave elevation, in meters
         virtual std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
-                                                              const std::vector<double>& yVect) const = 0;
+                                                              const std::vector<double>& yVect, FRAME_CONVENTION fc) const;
 
-
-        virtual std::vector<std::vector<std::vector<Velocity>>> GetVelocityGrid(const std::vector<double>& xvect,
+        /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
+        /// for a set of point positions
+        /// \param xVect x positions
+        /// \param yVect y positions
+        /// \param zvect z positions
+        /// \return eulerian fluid particule velocity, in m/s
+        virtual std::vector<std::vector<std::vector<Velocity>>> GetVelocity(const std::vector<double>& xvect,
                                                                   const std::vector<double>& yvect,
-                                                                  const std::vector<double>& zvect) const = 0;
-
-//        virtual FrFlowSensor* SetFlowSensor(double x, double y, double z) const;
-//        virtual FrFlowSensor* SetFlowSensor(chrono::ChVector<> pos) const;
-
+                                                                  const std::vector<double>& zvect, FRAME_CONVENTION fc) const;
+        /// Initialize the state of the wave field
         void Initialize() override;
 
+        /// Update the state of the free surface
+        /// \param time time of the simulation
+        virtual void Update(double time);
+
+        /// Method called at the send of a time step.
         void StepFinalize() override;
 
     };
@@ -472,204 +501,200 @@ namespace frydom {
 
     class FrNullWaveField_ : public FrWaveField_ {
 
-    private:
-        //FIXME : static const WAVE_MODEL m_waveModel = NO_WAVES;
-        WAVE_MODEL m_waveModel = NO_WAVES;
-
     public:
         explicit FrNullWaveField_(FrFreeSurface_* freeSurface);
 
-        double GetElevation(double x, double y) const final;
+        /// Get the wave elevation on the horizontal position (x,y)
+        /// \param x x position
+        /// \param y y position
+        /// \return wave elevation, in meters
+        double GetElevation(double x, double y, FRAME_CONVENTION fc) const final;
 
-        Velocity GetVelocity(double x, double y, double z) const final;
+        /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \return eulerian fluid particule velocity, in m/s
+        Velocity GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
-        Acceleration GetAcceleration(double x, double y, double z) const final;
-
-        std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
-                                                      const std::vector<double>& yVect) const final;
-
-        std::vector<std::vector<std::vector<Velocity>>>
-        GetVelocityGrid(const std::vector<double>& xvect,
-                    const std::vector<double>& yvect,
-                    const std::vector<double>& zvect) const final;
-
+        /// Return the eulerian fluid particule acceleration in global reference frame (implemented in child)
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \return eulerian fluid particule acceleration, in m/s²
+        Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
     };
 
-//    enum LINEAR_WAVE_TYPE {
-//        LINEAR_REGULAR,
-//        LINEAR_IRREGULAR,
-//        LINEAR_DIRECTIONAL
+////    enum LINEAR_WAVE_TYPE {
+////        LINEAR_REGULAR,
+////        LINEAR_IRREGULAR,
+////        LINEAR_DIRECTIONAL
+////    };
+//
+//    // =================================================================================================================
+//
+//    // Forward declarations
+//    class FrLinearWaveProbe_;
+//    class FrLinearFlowSensor_;
+//
+//
+//    class FrLinearWaveField_ : public FrWaveField_ {
+//
+//    private:
+//        //FIXME : static const WAVE_MODEL m_waveModel = LINEAR_WAVES;
+//        WAVE_MODEL m_waveModel = LINEAR_WAVES;
+//
+//        LINEAR_WAVE_TYPE m_linearWaveType = LINEAR_DIRECTIONAL;
+//
+//        double m_minFreq = 0.;
+//        double m_maxFreq = 2.;
+//        unsigned int m_nbFreq = 40;
+//
+//        double m_minDir = -180. * MU_PI_180;
+//        double m_maxDir = 165. * MU_PI_180;
+//        unsigned int m_nbDir = 20;
+//
+//        double m_meanDir = 0.;
+//
+//        // For regular wave field
+//        double m_height = 0.;
+//        double m_period = 0.;
+//
+//        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum = nullptr;
+//
+//        std::vector<double> c_waveFrequencies;
+//        std::vector<double> c_waveNumbers;
+//        std::vector<std::complex<double>> c_emjwt;
+//
+//        std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases; // Not used in regular wave field
+//
+//        std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbes;
+//        std::vector<std::shared_ptr<FrLinearFlowSensor_>> m_flowSensor;
+//
+//        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;        ///< Vertical scale velocity factor with stretching
+//
+//
+//    public:
+//
+//        explicit FrLinearWaveField_(FrFreeSurface_* freeSurface, LINEAR_WAVE_TYPE type);
+//
+//        LINEAR_WAVE_TYPE GetType() const;
+//
+//        void SetType(LINEAR_WAVE_TYPE type);
+//
+////        void SetWaveHeight(double height);
+////
+////        void SetWavePeriod(double period, FREQUENCY_UNIT unit=S);
+//
+//        void SetStretching(FrStretchingType type);
+//
+//        unsigned int GetNbFrequencies() const;
+//
+//        double GetMinFrequency() const;
+//
+//        double GetMaxFrequency() const;
+//
+//        unsigned int GetNbWaveDirections() const;
+//
+//        double GetMinWaveDirection() const;
+//
+//        double GetMaxWaveDirection() const;
+//
+//        double GetMeanWaveDirection(ANGLE_UNIT unit=DEG) const;
+//
+//        void SetMeanWaveDirection(double meanDirection, ANGLE_UNIT unit=DEG);
+//
+//        std::vector<double> GetWaveDirections(ANGLE_UNIT unit=DEG) const;
+//
+//        void SetWaveDirections(double minDir, double maxDir, unsigned int nbDir, ANGLE_UNIT unit=DEG);
+//
+//        std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit = RADS) const;
+//
+//        void SetWavePulsations(double minFreq, double maxFreq, unsigned int nbFreq,
+//                               FREQUENCY_UNIT unit=RADS);
+//
+//        void Initialize() override;
+//
+//        std::vector<std::vector<double>>* GetWavePhases() const;
+//
+//        void SetWavePhases(std::vector<std::vector<double>>& wavePhases);
+//
+//        void GenerateRandomWavePhases();
+//
+//        std::vector<double> GetWaveLengths() const;
+//
+//        std::vector<double> GetWaveNumbers() const;
+//
+//        std::vector<std::vector<double>> _GetWaveAmplitudes() const;
+//
+//        std::vector<std::vector<std::complex<double>>>
+//        GetCmplxElevation(double x, double y, bool steady=false) const;
+//
+//
+//        std::vector<chrono::ChVector<std::complex<double>>>
+//        GetSteadyVelocity(double x, double y, double z) const;
+//
+//        std::vector<std::complex<double>> GetSteadyElevation(double x, double y) const;
+//
+//
+//        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
+//
+//        FrWaveSpectrum* GetWaveSpectrum() const;
+//
+////        void SetReturnPeriod();
+////
+////        double GetReturnPeriod() const;
+//
+//        std::shared_ptr<FrLinearWaveProbe_> NewWaveProbe(double x, double y);
+//
+//        /// Add and return a new wave probe to the wave field with default position (global origine)
+//        std::shared_ptr<FrLinearWaveProbe_> NewWaveProbe();
+//
+////        /// Add an already existing wave probe to the wev field
+////        void AddWaveProbe(std::shared_ptr<FrLinearWaveProbe> waveProbe);
+//
+//        /// Create a new flow sensor linked to the wave field
+//        std::shared_ptr<FrLinearFlowSensor_> NewFlowSensor(FrLinearWaveField_* waveField, double x, double y, double z);
+//
+//        void Update(double time) override;
+//
+//        // TODO: renvoyer un pointeur partagé ??
+//        const std::vector<std::complex<double>>& GetTimeCoeffs() const;
+//
+//        const std::vector<std::complex<double>>& GetTimeCoeffs(chrono::ChVector<double> vel) const;
+//
+//        /// Return the time derivative of the temporal factor
+//        std::vector<std::complex<double>> GetTimeCoeffsDt() const;
+//
+//        double GetElevation(double x, double y) const override;
+//
+//        /// Return the eulerian fluid particule velocity (in global frame)
+//        Velocity GetVelocity(double x, double y, double z) const override;
+//
+//        /// Return the eulerian fluid particule acceleration (in global frame)
+//        Acceleration GetAcceleration(double x, double y, double z) const override;
+//
+//    private:
+//
+//        double Fz(double z, double k) const;
+//
+//        double dFz(double z, double k) const;
+//
 //    };
-
-    // =================================================================================================================
-
-    // Forward declarations
-    class FrLinearWaveProbe_;
-    class FrLinearFlowSensor_;
-
-
-    class FrLinearWaveField_ : public FrWaveField_ {
-
-    private:
-        //FIXME : static const WAVE_MODEL m_waveModel = LINEAR_WAVES;
-        WAVE_MODEL m_waveModel = LINEAR_WAVES;
-
-        LINEAR_WAVE_TYPE m_linearWaveType = LINEAR_DIRECTIONAL;
-
-        double m_minFreq = 0.;
-        double m_maxFreq = 2.;
-        unsigned int m_nbFreq = 40;
-
-        double m_minDir = -180. * MU_PI_180;
-        double m_maxDir = 165. * MU_PI_180;
-        unsigned int m_nbDir = 20;
-
-        double m_meanDir = 0.;
-
-        // For regular wave field
-        double m_height = 0.;
-        double m_period = 0.;
-
-        std::vector<double> c_waveFrequencies;
-        std::vector<double> c_waveNumbers;
-        std::vector<std::complex<double>> c_emjwt;
-
-        std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases; // Not used in regular wave field
-
-        std::vector<std::shared_ptr<FrLinearWaveProbe_>> m_waveProbes;
-        std::vector<std::shared_ptr<FrLinearFlowSensor_>> m_flowSensor;
-
-        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;        ///< Vertical scale velocity factor with stretching
-
-
-    public:
-
-        explicit FrLinearWaveField_(FrFreeSurface_* freeSurface, LINEAR_WAVE_TYPE type);
-
-        LINEAR_WAVE_TYPE GetType() const;
-
-        void SetType(LINEAR_WAVE_TYPE type);
-
-//        void SetWaveHeight(double height);
 //
-//        void SetWavePeriod(double period, FREQUENCY_UNIT unit=S);
-
-        void SetStretching(FrStretchingType type);
-
-        unsigned int GetNbFrequencies() const;
-
-        double GetMinFrequency() const;
-
-        double GetMaxFrequency() const;
-
-        unsigned int GetNbWaveDirections() const;
-
-        double GetMinWaveDirection() const;
-
-        double GetMaxWaveDirection() const;
-
-        double GetMeanWaveDirection(ANGLE_UNIT unit=DEG) const;
-
-        void SetMeanWaveDirection(const double meanDirection, ANGLE_UNIT unit=DEG);
-
-        std::vector<double> GetWaveDirections(ANGLE_UNIT unit=DEG) const;
-
-        void SetWaveDirections(const double minDir, const double maxDir, const unsigned int nbDir, ANGLE_UNIT unit=DEG);
-
-        std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit = RADS) const;
-
-        void SetWavePulsations(const double minFreq, const double maxFreq, const unsigned int nbFreq,
-                               FREQUENCY_UNIT unit=RADS);
-
-        void Initialize() override;
-
-        std::vector<std::vector<double>>* GetWavePhases() const;
-
-        void SetWavePhases(std::vector<std::vector<double>>& wavePhases);
-
-        void GenerateRandomWavePhases();
-
-        std::vector<double> GetWaveLengths() const;
-
-        std::vector<double> GetWaveNumbers() const;
-
-        std::vector<std::vector<double>> _GetWaveAmplitudes() const;
-
-        std::vector<std::vector<std::complex<double>>>
-        GetCmplxElevation(const double x, const double y, bool steady=false) const;
-
-
-        std::vector<chrono::ChVector<std::complex<double>>>
-        GetSteadyVelocity(const double x, const double y, const double z) const;
-
-        std::vector<std::complex<double>> GetSteadyElevation(const double x, const double y) const;
-
-        FrWaveSpectrum* GetWaveSpectrum() const;
-
-//        void SetReturnPeriod();
 //
-//        double GetReturnPeriod() const;
-
-        std::shared_ptr<FrLinearWaveProbe_> NewWaveProbe(double x, double y);
-
-        /// Add and return a new wave probe to the wave field with default position (global origine)
-        std::shared_ptr<FrLinearWaveProbe_> NewWaveProbe();
-
-//        /// Add an already existing wave probe to the wev field
-//        void AddWaveProbe(std::shared_ptr<FrLinearWaveProbe> waveProbe);
-
-        /// Create a new flow sensor linked to the wave field
-        std::shared_ptr<FrLinearFlowSensor_> NewFlowSensor(FrLinearWaveField_* waveField, double x, double y, double z);
-
-        void Update(double time) override;
-
-        // TODO: renvoyer un pointeur partagé ??
-        const std::vector<std::complex<double>>& GetTimeCoeffs() const;
-
-        const std::vector<std::complex<double>>& GetTimeCoeffs(chrono::ChVector<double> vel) const;
-
-        /// Return the time derivative of the temporal factor
-        std::vector<std::complex<double>> GetTimeCoeffsDt() const;
-
-        double GetElevation(double x, double y) const;
-
-        /// Return the eulerian fluid particule velocity (in global frame)
-        Velocity GetVelocity(double x, double y, double z) const override;
-
-        /// Return the eulerian fluid particule acceleration (in global frame)
-        Acceleration GetAcceleration(double x, double y, double z) const override;
-
-
-        std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
-                                                      const std::vector<double>& yVect) const;
-
-
-        /// Return the flow velocity vector field in a grid [xvect x yvect x zvect]
-        std::vector<std::vector<std::vector<Velocity>>> GetVelocityGrid(const std::vector<double>& xvect,
-                                                          const std::vector<double>& yvect,
-                                                          const std::vector<double>& zvect) const override;
-
-    private:
-
-        double Fz(const double& z, const double& k) const;
-
-        inline double dFz(const double& z, const double& k) const;
-
-    };
-
-
-//    std::shared_ptr<FrWaveField> MakeWaveField(FrWaveField::LINEAR_WAVE_TYPE waveType) {
-//
-//        if (waveType == FrWaveField::LINEAR_REGULAR
-//            || waveType == FrWaveField::LINEAR_IRREGULAR
-//            || waveType == FrWaveField::LINEAR_DIRECTIONAL) {
-//
-//            return std::make_shared<FrLinearWaveField>(waveType);
-//
-//        }
-//
-//    }
+////    std::shared_ptr<FrWaveField> MakeWaveField(FrWaveField::LINEAR_WAVE_TYPE waveType) {
+////
+////        if (waveType == FrWaveField::LINEAR_REGULAR
+////            || waveType == FrWaveField::LINEAR_IRREGULAR
+////            || waveType == FrWaveField::LINEAR_DIRECTIONAL) {
+////
+////            return std::make_shared<FrLinearWaveField>(waveType);
+////
+////        }
+////
+////    }
 
 
 }  // end namespace frydom

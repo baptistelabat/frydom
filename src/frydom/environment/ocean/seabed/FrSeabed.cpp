@@ -2,13 +2,17 @@
 // Created by frongere on 10/10/17.
 //
 
+#include "FrSeabed.h"
+
+#include "frydom/asset/FrSeabedGridAsset.h"
+
 #include <thread>
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include <chrono/assets/ChColorAsset.h>
-#include "FrSeabed.h"
 #include <frydom/core/FrOffshoreSystem.h>
-#include "frydom/environment/FrEnvironment.h"
 #include "frydom/core/FrBody.h"
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean_.h"
 
 
 namespace frydom {
@@ -215,58 +219,52 @@ namespace frydom {
     /// REFACTORING ----------->>>>>>>>
 
 
-
-    FrSeabed_::FrSeabed_(FrOcean_ *ocean) :m_ocean(ocean){}
-
+    FrSeabed_::FrSeabed_(FrOcean_ *ocean) :m_ocean(ocean){
+        m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(ocean->GetEnvironment()->GetSystem()->GetWorldBody().get(),this);
+    }
 
     FrOcean_ *FrSeabed_::GetOcean() const {return m_ocean;}
 
 
-
-
-
-
-    FrTriangleMeshConnected
-    FrSeabed_::BuildRectangularMeshGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
-        return FrTriangleMeshConnected();
+    void FrSeabed_::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
+        m_bathymetry = -fabs(bathymetry);
+        if (IsNED(fc)) {m_bathymetry = -m_bathymetry;}
     }
 
-    FrTriangleMeshConnected
-    FrSeabed_::BuildPolarMeshGrid(double xc0, double yc0, double diameter, unsigned int nbR, unsigned int nbTheta) {
-        return FrTriangleMeshConnected();
+    const double FrSeabed_::GetBathymetry(FRAME_CONVENTION fc) const {
+        double bathy = m_bathymetry;
+        if (IsNED(fc)) {bathy = -bathy;}
+        return bathy;
     }
-
-
-    void FrSeabed_::SetDepth(double depth) {m_depth = depth;}
-
-    double FrSeabed_::GetDepth() {return m_depth;}  // TODO : prevoir le fond a bathymetrie variable... (GetDepth(x, y))
-
-    void FrSeabed_::UpdateAsset(bool update) {
-
-    }
-
-    void FrSeabed_::SetGridType(FrSeabed_::GRID_TYPE gridType) {
-        m_gridType = gridType;
-    }
-
-    void FrSeabed_::SetGrid(double xmin, double xmax, double dx, double ymin, double ymax, double dy) {
-
-    }
-
-    void FrSeabed_::SetGrid(double lmin, double lmax, double dl) {
-
-    }
-
-    void FrSeabed_::SetGrid(double xc0, double yc0, double diameter, int nbR, int nbTheta) {
-
+    
+    const double FrSeabed_::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
+        double bathy = m_bathymetry;
+        if (IsNED(fc)) {bathy = -bathy;}
+        return bathy;
     }
 
     void FrSeabed_::Update(double time) {}
 
     void FrSeabed_::Initialize() {
-
+        if (m_showSeabed) m_SeabedGridAsset->Initialize();
     }
 
-    void FrSeabed_::StepFinalize() {}
+    void FrSeabed_::StepFinalize() {
+        if (m_showSeabed) m_SeabedGridAsset->StepFinalize();
+    }
+
+    FrSeabedGridAsset *FrSeabed_::GetSeabedGridAsset() {return m_SeabedGridAsset.get();}
+
+    void FrSeabed_::ShowSeabed(bool showSeabed) {
+        if (showSeabed && m_showSeabed!=showSeabed) {
+            std::cout<< "Be careful to set new seabed grid and bathymetry"<<std::endl;
+        }
+        m_showSeabed = showSeabed;
+        if (!showSeabed) {
+            m_bathymetry = 1E8;
+            m_SeabedGridAsset->SetNoGrid();
+        }
+    }
+
 
 }  // end namespace frydom

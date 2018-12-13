@@ -5,7 +5,10 @@
 
 #include "FrFlowBase.h"
 #include "frydom/core/FrFrame.h"
+#include "frydom/core/FrFunction.h"
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/atmosphere/FrAtmosphere_.h"
 #include "FrUniformField.h"
 
 namespace frydom {
@@ -15,7 +18,7 @@ namespace frydom {
     };
 
     Velocity FrFlowBase::GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) const {
-        return m_field->GetFluxVelocityInWorld(worldPos, fc);
+        return m_field->GetFluxVelocityInWorld(worldPos, fc) * c_ramp;
     }
 
     Velocity FrFlowBase::GetRelativeVelocityInFrame(const FrFrame_ &frame, const Velocity &worldVel,
@@ -54,5 +57,13 @@ namespace frydom {
 
     void FrFlowBase::StepFinalize() {
         m_field->StepFinalize();
+    }
+
+    void FrCurrent_::StepFinalize() {
+        c_ramp = m_ocean->GetEnvironment()->GetTimeRamp()->GetFunctionValue();
+    }
+
+    void FrWind_::StepFinalize() {
+        c_ramp = m_atmosphere->GetEnvironment()->GetTimeRamp()->GetFunctionValue();
     }
 }

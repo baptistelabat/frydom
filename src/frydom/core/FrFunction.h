@@ -8,6 +8,7 @@
 
 #include "chrono/motion_functions/ChFunction.h"
 
+#include "frydom/core/FrObject.h"
 
 
 namespace frydom {
@@ -63,6 +64,88 @@ namespace frydom {
             return new FrFunction(*this);
         }
 
+
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// REFACTORING ------------->>>>>>>>>>>>>>>>>>
+
+    class FrFunction_ : public FrObject {
+    protected:
+        double m_functionValue = 1.;
+        double c_time = 0.;
+    public:
+
+        double GetFunctionValue() const;
+
+        void Update(double time);
+    };
+
+    class FrRamp_ : public FrFunction_ {
+
+    private:
+        bool m_active = false;
+
+        bool m_increasing = true;
+        double m_t0 = 0.;
+        double m_t1 = 20.;
+
+        double m_min = 0.;
+        double m_max = 1.;
+
+        double c_a = 0.;
+        double c_b = 1.;
+
+
+    public:
+
+        void SetDuration(double duration);
+
+        void SetIncrease();
+
+        void SetDecrease();
+
+        void SetMinVal(double minVal);
+
+        void SetMaxVal(double maxVal);
+
+        bool IsActive();
+
+        void Activate();
+
+        void Deactivate();
+
+        void Initialize() override;
+
+        void StepFinalize() override;
 
     };
 

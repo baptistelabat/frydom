@@ -16,6 +16,8 @@
 #include "FrForce.h"
 #include "FrEulerAngles.h" // TODO : devrait disparaitre
 
+#include "frydom/asset/FrGridAsset.h"
+
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 
 #include "FrInertia.h"
@@ -900,7 +902,7 @@ namespace frydom {
         void Update();
 
 
-        // Linear iteraotrs on external forces
+        // Linear iterators on external forces
         using ForceIter = ForceContainer::iterator;
         using ConstForceIter = ForceContainer::const_iterator;
 
@@ -916,6 +918,7 @@ namespace frydom {
         // This one is made for the FrOffshoreSystem to be able to add the embedded chrono object into the embedded
         // chrono system (ChSystem)
         friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_>);
+        friend void FrGridAsset::Initialize();
 
 
     };

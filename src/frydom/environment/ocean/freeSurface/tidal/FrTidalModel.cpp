@@ -257,8 +257,10 @@ namespace frydom {
         m_tidalFrame->GetPos().z() = waterHeight;
     }
 
-    const double FrTidal_::GetWaterHeight() const {
-        return m_tidalFrame->GetPos().z();
+    const double FrTidal_::GetHeight(FRAME_CONVENTION fc) const {
+        double ZPos = m_tidalFrame->GetPos().z();
+        if (IsNED(fc)) {ZPos = -ZPos;}
+        return ZPos;
     }
 
     const chrono::ChFrame<double> *FrTidal_::GetTidalFrame() const {
@@ -273,8 +275,7 @@ namespace frydom {
 
     }
 
-
-
+    void FrTidal_::SetNoTidal() {m_mode = NO_TIDAL;}
 
 
 }  // end namespace frydom

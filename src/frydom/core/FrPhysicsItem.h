@@ -6,6 +6,7 @@
 #define FRYDOM_FRPHYSICSITEM_H
 
 #include "FrObject.h"
+#include "frydom/core/FrColors.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include <chrono/physics/ChPhysicsItem.h>
 
@@ -37,6 +38,7 @@ namespace frydom {
 
 
     class FrOffshoreSystem_;
+    class FrTriangleMeshConnected;
 
     class FrPhysicsItem_: public FrObject {
 
@@ -56,6 +58,12 @@ namespace frydom {
         std::string GetName() const;
 
         virtual void Update(double time) = 0;
+
+        void AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh);
+
+        void SetColor(NAMED_COLOR colorName);
+
+        void SetColor(const FrColor& color);
 
     protected:
 

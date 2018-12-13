@@ -24,6 +24,7 @@ namespace frydom {
         /// pointer to the container
         FrEnvironment_* m_environment;
 
+        //---------------------------- Atmosphere elements ----------------------------//
         /// FrOcean components :
         std::unique_ptr<FrWind_>     m_wind;
 
@@ -35,7 +36,7 @@ namespace frydom {
 
         FrEnvironment_* GetEnvironment() const;
 
-        //----------------------------Fluid Properties----------------------------//
+        //----------------------------Fluid properties methods----------------------------//
 
         /// Set the fluid temperature
         /// \param Temperature temperature of the fluid
@@ -89,16 +90,21 @@ namespace frydom {
 
         double GetFroudeNumberInAir(double characteristicLength, double velocity) const;
 
-        // Ocean elements Getters
+        //---------------------------- Ocean elements Getters ----------------------------//
 
         /// Get The wind element
         /// \return the wind element
         FrWind_* GetWind() const;
 
+        //---------------------------- Update-Initialize-StepFinalize ----------------------------//
+
+        /// Update the state of the atmosphere
         void Update(double time);
 
+        /// Initialize the state of the atmosphere
         void Initialize() override;
 
+        /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
     };

@@ -28,7 +28,9 @@ namespace frydom {
 
     private:
         std::unique_ptr<FrFieldBase> m_field;        ///< Flow field model
-
+    protected:
+        /// cache value of the time ramp applied on the flow field
+        double c_ramp=1.;
     public:
 
         /// Default constructor
@@ -86,9 +88,12 @@ namespace frydom {
     private:
         FrOcean_* m_ocean;
     public:
-        FrCurrent_(FrOcean_* ocean) : FrFlowBase() { m_ocean = ocean;}
+        explicit FrCurrent_(FrOcean_* ocean) : FrFlowBase() { m_ocean = ocean;}
 
         FrOcean_* GetOcean() const {return m_ocean;}
+
+        /// Method to be applied at the end of each time step
+        void StepFinalize() override;
     };
 
 
@@ -98,9 +103,12 @@ namespace frydom {
     private:
         FrAtmosphere_* m_atmosphere;
     public:
-        FrWind_(FrAtmosphere_* atmosphere) : FrFlowBase() { m_atmosphere = atmosphere;}
+        explicit FrWind_(FrAtmosphere_* atmosphere) : FrFlowBase() { m_atmosphere = atmosphere;}
 
         FrAtmosphere_* GetAtmosphere() const {return m_atmosphere;}
+
+        /// Method to be applied at the end of each time step
+        void StepFinalize() override;
     };
 
 } // end of namespace frydom

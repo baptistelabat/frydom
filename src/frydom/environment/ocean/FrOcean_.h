@@ -8,6 +8,7 @@
 #include "frydom/environment/FrFluidType.h"
 #include "frydom/core/FrVector.h"
 #include "frydom/core/FrObject.h"
+#include "frydom/asset/FrGridAsset.h"
 
 namespace frydom {
 
@@ -26,27 +27,37 @@ namespace frydom {
         /// pointer to the container
         FrEnvironment_* m_environment;
 
-        /// FrOcean components :
-        std::unique_ptr <FrFreeSurface_> m_freeSurface;
-        std::unique_ptr <FrCurrent_> m_current;
+        //---------------------------- FrOcean elements ----------------------------//
+        /// Seabed element, with bathymetry model information
         std::unique_ptr <FrSeabed_> m_seabed;
-
+        /// Free surface element, with tidal, wavefield models information
+        std::unique_ptr <FrFreeSurface_> m_freeSurface;
+        /// Current, with current model information
+        std::unique_ptr <FrCurrent_> m_current;
+        /// Water properties
         std::unique_ptr <FrFluidProperties> m_waterProp;
-
-        /// Assets
-        bool m_showSeabed = true;
-        bool m_showFreeSurface = true;
-
 
     public:
 
+        /// Default constructor
+        /// \param environment environment containing this ocean
         explicit FrOcean_(FrEnvironment_* environment);
 
+        /// Get the environment containing this ocean
+        /// \return environment containing this ocean
         FrEnvironment_* GetEnvironment() const;
 
-        double GetTime() const;
+        //---------------------------- Assets ----------------------------//
 
-        //---------------------------- Fluid Properties ----------------------------//
+        /// Set if the seabed is to be shown/exist
+        /// \param showSeabed showseabed true means the seabed exists
+        void ShowSeabed(bool showSeabed);
+
+        /// Set if the free surface is to be shown/exist
+        /// \param showFreeSurface showfreesurface true means the free surface exists
+        void ShowFreeSurface(bool showFreeSurface);
+
+        //---------------------------- Fluid properties methods ----------------------------//
 
         /// Set the fluid temperature
         /// \param Temperature temperature of the fluid
@@ -96,8 +107,16 @@ namespace frydom {
         /// \return Pressure pressure of the fluid
         double GetPressure() const;
 
+        /// Get Reynolds number (Re = U.L/nu)
+        /// \param characteristicLength characteristic length L, in meters
+        /// \param velocity fluid velocity U, in m/s
+        /// \return Reynolds number, no dimension
         double GetReynoldsNumberInWater(double characteristicLength, double velocity) const;
 
+        /// Get Froude number (Fe = U/sqrt(g.L) )
+        /// \param characteristicLength characteristic length L, in meters
+        /// \param velocity fluid velocity U, in m/s
+        /// \return Froude number, no dimension
         double GetFroudeNumberInWater(double characteristicLength, double velocity) const;
 
         //---------------------------- Ocean elements Getters ----------------------------//
@@ -114,12 +133,27 @@ namespace frydom {
         /// \return the seabed element
         FrSeabed_* GetSeabed() const;
 
+        /// Get mean ocean depth (tidal height + mean bathymetry)
+        /// \param fc frame convention (NED/NWU)
+        /// \return mean ocean depth, in meters
+        double GetDepth(FRAME_CONVENTION fc) const;
+
+        /// Get ocean depth at a position (x,y) (tidal height + bathymetry at position (x,y))
+        /// \param x x position
+        /// \param y y position
+        /// \param fc frame convention (NED/NWU)
+        /// \return ocean depth at position (x,y)
+        double GetDepth(double x, double y, FRAME_CONVENTION fc) const;
+
         //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
+        /// Update the state of the ocean
         void Update(double time);
 
+        /// Initialize the state of the ocean
         void Initialize() override;
 
+        /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
     };

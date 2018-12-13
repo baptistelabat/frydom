@@ -6,8 +6,7 @@
 #define FRYDOM_FRSEABED_H
 
 #include "frydom/core/FrObject.h"
-#include "frydom/mesh/FrTriangleMeshConnected.h"
-
+#include "frydom/core/FrConvention.h"
 
 
 // Forward declarations of Chrono classes
@@ -22,6 +21,7 @@ namespace frydom {
     class FrOffshoreSystem;
     class FrEnvironment;
     class FrBody;
+    class FrTriangleMeshConnected;
 
     class FrSeabed  : public FrObject {
     public:
@@ -140,102 +140,76 @@ namespace frydom {
 
 
     class FrOcean_;
+    class FrSeabedGridAsset;
+//    using FrSeabedGridAsset = FrGridAsset;
 
     class FrSeabed_  : public FrObject {
-    public:
-
-        enum GRID_TYPE {
-            CARTESIAN,
-            POLAR
-        };
-
     protected:
 
-        bool m_updateAsset = false;
-
+        /// Pointer to the ocean containing this asset
         FrOcean_* m_ocean;
 
-        std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
+        /// Boolean checking if the seabed is shown/exists
+        bool m_showSeabed = true;
 
-        double m_depth = -30;
+        /// Seabed grid asset, containing also its asset visualization
+        std::shared_ptr<FrSeabedGridAsset> m_SeabedGridAsset;
 
-        GRID_TYPE m_gridType = CARTESIAN;
-        double m_xmin = -150.;
-        double m_xmax = 150.;
-        double m_dx = 3.;
-        double m_ymin = -150.;
-        double m_ymax = 150.;
-        double m_dy = 3.;
+        /// Mean bathymetry
+        double m_bathymetry = -30;
 
-        double m_xc0 = 0.;
-        double m_yc0 = 0.;
-        double m_diameter = 150.;
-        int m_nbR = 50;
-        int m_nbTheta = 36;
-
-        /// Private method in charge of the building of the seabed mesh as a rectangular grid.
-        FrTriangleMeshConnected BuildRectangularMeshGrid(double xmin, double xmax, double dx,
-                                                         double ymin, double ymax, double dy);
-
-        /// Private method in charge of the building of the seabed mesh as a polar grid.
-        FrTriangleMeshConnected BuildPolarMeshGrid(double xc0, double yc0, // center
-                                                   double diameter,
-                                                   unsigned int nbR, unsigned int nbTheta);
+        //TODO : consider varying bathymetry
 
     public:
 
+        /// Default constructor
+        /// \param ocean ocean containing this seabed
         explicit FrSeabed_(FrOcean_* ocean);
 
+        /// Default destructor
         ~FrSeabed_() = default;
 
+        //---------------------------- Asset ----------------------------//
+        /// Set if the seabed is to be shown/exist
+        /// \param showSeabed showseabed true means the seabed exists
+        void ShowSeabed(bool showSeabed);
+
+        /// Get the seabed grid asset
+        /// \return seabed grid asset
+        FrSeabedGridAsset * GetSeabedGridAsset();
+
+        //---------------------------- Seabed elements Getters ----------------------------//
+
+        /// Get the ocean containing this seabed
+        /// \return ocean containing this seabed
         FrOcean_* GetOcean() const;
 
-        void SetDepth(double depth);
-        double GetDepth();
+        /// Set the mean bathymetry of the seabed
+        /// \param bathymetry mean bathymetry of the seabed
+        /// \param fc frame convention (NED/NWU)
+        void SetBathymetry(double bathymetry, FRAME_CONVENTION fc);
 
-        /// get the body that represents the seabed
-//        std::shared_ptr<FrBody> GetBody();
+        /// Get the mean bathymetry of the seabed
+        /// \param fc frame convention (NED/NWU)
+        /// \return mean bathymetry of the seabed
+        const double GetBathymetry(FRAME_CONVENTION fc) const;
 
-//        void UpdateAssetON() { m_updateAsset = true; }
-//
-//        void UpdateAssetOFF() { m_updateAsset = false; }
+        /// Get the local bathymetry at the position (x,y)
+        /// \param x x position
+        /// \param y y position
+        /// \param fc frame convention (NED/NWU)
+        /// \return local bathymetry
+        const double GetBathymetry(double x, double y, FRAME_CONVENTION fc) const;
 
-        void UpdateAsset(bool update);
-
-        void SetGridType(GRID_TYPE gridType);
-
-        /// Initializes the seabed system
-        /// In any case, a mesh grid is used.
-        /// this version concerns a rectangular grid
-        void SetGrid(double xmin,
-                     double xmax,
-                     double dx,
-                     double ymin,
-                     double ymax,
-                     double dy
-        );
-
-        /// Initializes the seabed system
-        /// In any case, a mesh grid is used.
-        /// this version concerns a square grid
-        void SetGrid(double lmin,
-                     double lmax,
-                     double dl
-        );
-
-        void SetGrid(double xc0,
-                     double yc0,
-                     double diameter,
-                     int nbR,
-                     int nbTheta
-        );
-
+        //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
         /// Update the state of the seabed
         void Update(double time);
 
+        /// Initialize the state of the seabed
         void Initialize() override;
 
+        /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
     };
