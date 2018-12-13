@@ -241,8 +241,7 @@ namespace frydom {
 
     protected:
         bool is_steady = true;                      ///< The expression is not time dependant
-        /// cache value of infinite_depth of FrWaveField
-        bool c_infinite_depth = false;              ///< Infinite depth is active
+        bool c_infinite_depth = false;              ///< cache value of infinite_depth of FrWaveField
 
     public:
         /// Set the infinite depth value

@@ -207,7 +207,7 @@ namespace frydom {
     class FrFreeSurfaceGridAsset;
 
 
-    /// Pure Virtual Base class for a free surface system.
+    /// Class for a free surface system.
     class FrFreeSurface_ : public FrObject {
 
     public:
