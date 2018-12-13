@@ -69,13 +69,12 @@ namespace frydom {
     FrInertiaTensor_::FrInertiaTensor_(double mass, double Ixx, double Iyy, double Izz, double Ixy, double Ixz,
                                        double Iyz, const FrFrame_ &cogFrame, FRAME_CONVENTION fc) {
 
-        auto cogPosition = cogFrame.GetPosition(fc);
+        m_inertiaAtCOG << Ixx, Ixy, Ixz,
+                          Ixy, Iyy, Iyz,
+                          Ixz, Iyz, Izz;
 
-        FrFrame_ coeffsFrame;
-        coeffsFrame.SetPosition(cogPosition, fc);
-        coeffsFrame.SetRotation(cogFrame.GetRotation());
-
-        *this = FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, coeffsFrame, cogPosition, fc);
+        m_cogPosition = cogFrame.GetPosition(NWU);
+        m_mass = mass;
 
     }
 

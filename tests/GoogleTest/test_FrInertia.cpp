@@ -39,7 +39,7 @@ protected:
     template <class Vector>
     Vector ReadVector(FrHDF5Reader& reader, std::string field) const;
 
-
+    void CheckInertiaAtCOG() const;
 
 };
 
@@ -83,7 +83,20 @@ void TestInertia::SetUp() {
 
 }
 
-TEST_F(TestInertia, InertiaConstructor) {
+void TestInertia::CheckInertiaAtCOG() const {
+    double Ixx, Iyy, Izz;
+    double Ixy, Ixz, Iyz;
+    inertia->GetInertiaCoeffs(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
+
+    EXPECT_NEAR(m_InertialInBodyAtCOG(0, 0), Ixx, 1e-8);
+    EXPECT_NEAR(m_InertialInBodyAtCOG(1, 1), Iyy, 1e-8);
+    EXPECT_NEAR(m_InertialInBodyAtCOG(2, 2), Izz, 1e-8);
+    EXPECT_NEAR(m_InertialInBodyAtCOG(0, 1), Ixy, 1e-8);
+    EXPECT_NEAR(m_InertialInBodyAtCOG(0, 2), Ixz, 1e-8);
+    EXPECT_NEAR(m_InertialInBodyAtCOG(1, 2), Iyz, 1e-8);
+}
+
+TEST_F(TestInertia, InertiaInFrame) {
 
     auto frame = FrFrame_(m_PointInBody, FrRotation_(m_FrameRotationDirection, m_FrameRotationAngle, NWU), NWU);
 
@@ -92,15 +105,40 @@ TEST_F(TestInertia, InertiaConstructor) {
        m_InertialInFrameAtPoint(0, 1), m_InertialInFrameAtPoint(0, 2), m_InertialInFrameAtPoint(1, 2),
        frame, body->GetCOG(NWU), NWU);
 
-    double Ixx, Iyy, Izz;
-    double Ixy, Ixz, Iyz;
-    inertia->GetInertiaCoeffs(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
-
-    EXPECT_NEAR(m_InertialInBodyAtCOG(0, 0), Ixx, 1e-5);
-    EXPECT_NEAR(m_InertialInBodyAtCOG(1, 1), Iyy, 1e-5);
-    EXPECT_NEAR(m_InertialInBodyAtCOG(2, 2), Izz, 1e-5);
-    EXPECT_NEAR(m_InertialInBodyAtCOG(0, 1), Ixy, 1e-5);
-    EXPECT_NEAR(m_InertialInBodyAtCOG(0, 2), Ixz, 1e-5);
-    EXPECT_NEAR(m_InertialInBodyAtCOG(1, 2), Iyz, 1e-5);
-
+    this->CheckInertiaAtCOG();
 }
+
+TEST_F(TestInertia, InertiaAtCOG) {
+
+    inertia = std::make_shared<FrInertiaTensor_>(m_BodyMass,
+       m_InertialInBodyAtCOG(0, 0), m_InertialInBodyAtCOG(1, 1), m_InertialInBodyAtCOG(2, 2),
+       m_InertialInBodyAtCOG(0, 1), m_InertialInBodyAtCOG(0, 2), m_InertialInBodyAtCOG(1, 2),
+       body->GetFrameAtCOG(NWU), NWU);
+
+    this->CheckInertiaAtCOG();
+}
+
+TEST_F(TestInertia, BodyInertiaAtCOG) {
+
+    body->SetInertiaParams(m_BodyMass,
+       m_InertialInBodyAtCOG(0, 0), m_InertialInBodyAtCOG(1, 1), m_InertialInBodyAtCOG(2, 2),
+       m_InertialInBodyAtCOG(0, 1), m_InertialInBodyAtCOG(0, 2), m_InertialInBodyAtCOG(1, 2),
+       body->GetFrameAtCOG(NWU), NWU);
+
+    inertia = std::make_shared<FrInertiaTensor_>(body->GetInertiaParams());
+    this->CheckInertiaAtCOG();
+}
+
+TEST_F(TestInertia, BodyInertiaInFrame) {
+
+    auto frame = FrFrame_(m_PointInBody, FrRotation_(m_FrameRotationDirection, m_FrameRotationAngle, NWU), NWU);
+
+    body->SetInertiaParams(m_BodyMass,
+       m_InertialInFrameAtPoint(0, 0), m_InertialInFrameAtPoint(1, 1), m_InertialInFrameAtPoint(2, 2),
+       m_InertialInFrameAtPoint(0, 1), m_InertialInFrameAtPoint(0, 2), m_InertialInFrameAtPoint(1, 2),
+       frame, body->GetCOG(NWU), NWU);
+
+    inertia = std::make_shared<FrInertiaTensor_>(body->GetInertiaParams());
+    this->CheckInertiaAtCOG();
+}
+
