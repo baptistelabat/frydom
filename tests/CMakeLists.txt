@@ -43,12 +43,10 @@ set(FRYDOM_TESTS
 #        test_wind_standard_force
 #        test_FrWindStandardForce
 #        test_visu_catenary
-        test_tug_refactoring
-        test_TimeRecorder
+#        test_tug_refactoring
 #        test_tug_refactoring
 #        test_TimeRecorder
 #        test_FrEquilibriumFrame
-        test_MorisonElement
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")

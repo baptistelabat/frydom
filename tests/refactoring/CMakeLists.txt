@@ -6,6 +6,8 @@ message(STATUS "    ...REFACTORING TESTS :")
 set(REFACTORING_TESTS
         test_tug_refactoring
         demo_AiryIrregularWaveField
+        test_TimeRecorder
+        test_MorisonElement
         )
 
 

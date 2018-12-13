@@ -562,7 +562,7 @@ namespace frydom {
 
         auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
-        velocity = waveField->GetVelocity(worldPos);
+        velocity = waveField->GetVelocity(worldPos, NWU);
         velocity -= m_frame->GetVelocityInWorld(NWU);
 
         if (m_includeCurrent) {
@@ -581,7 +581,7 @@ namespace frydom {
 
         auto waveField = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
-        acceleration = waveField->GetAcceleration(worldPos);
+        acceleration = waveField->GetAcceleration(worldPos, NWU);
         acceleration -= m_frame->GetAccelerationInWorld(NWU);
 
         Acceleration accBody = body->GetFrame().ProjectVectorParentInFrame(acceleration);

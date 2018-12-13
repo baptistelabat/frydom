@@ -15,7 +15,7 @@ set(GOOGLE_TESTS
         test_FrRotation_
         test_FrGeographicServices
         test_FrEquilibriumFrame_
-        test_FrFreeSurface_
+        test_FrWaveField_
         test_FrMorisonElement_
         test_FrLinearHydrostaticForce_
         test_FrRecorder_
