@@ -120,7 +120,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING --------------->>>>>>>>>>>>>>>
+    // REFACTORING --------------->>>>>>>>>>>>>>>
 
     class FrFreeSurface_;
 

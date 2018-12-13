@@ -4,11 +4,11 @@
 
 #include "FrLinearHydrostaticForce.h"
 
-/// >>>>>>>>>>>>>>>>> from refactoring
+// >>>>>>>>>>>>>>>>> from refactoring
 
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 
-/// <<<<<<<<<<<<<<<<<<<<
+// <<<<<<<<<<<<<<<<<<<<
 
 namespace frydom {
 
@@ -102,7 +102,7 @@ namespace frydom {
 
 
 
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
     void FrLinearHydrostaticForce_::Update(double time) {
 

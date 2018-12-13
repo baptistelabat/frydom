@@ -8,11 +8,11 @@
 namespace frydom {
 
 
-    void FrKinematicStretching::SetInfDepth(const bool infinite_depth) { m_infinite_depth = infinite_depth; }
+    void FrKinematicStretching::SetInfDepth(bool infinite_depth) { m_infinite_depth = infinite_depth; }
 
     void FrKinematicStretching::SetInfDepth_ON() { this->SetInfDepth(true); }
 
-    void FrKinematicStretching::SetSteady(const bool steady) { is_steady = steady; }
+    void FrKinematicStretching::SetSteady(bool steady) { is_steady = steady; }
 
     bool FrKinematicStretching::IsSteady() const { return is_steady; }
 
@@ -232,7 +232,7 @@ namespace frydom {
 
     void FrKinStretchingDelta::SetWaveField(FrWaveField *waveField) { m_waveField = waveField; }
 
-    void FrKinStretchingDelta::SetParam(const double hd, const double delta) {
+    void FrKinStretchingDelta::SetParam(double hd, double delta) {
         m_hd = hd;
         m_delta = delta;
     }
@@ -253,14 +253,14 @@ namespace frydom {
 
 
 
-    /// REFACTORING ------------>>>>>>>>>>>>>>
+    // REFACTORING ------------>>>>>>>>>>>>>>
 
 
-    void FrKinematicStretching_::SetInfDepth(const bool infinite_depth) { c_infinite_depth = infinite_depth; }
+    void FrKinematicStretching_::SetInfDepth(bool infinite_depth) { c_infinite_depth = infinite_depth; }
 
     void FrKinematicStretching_::SetInfDepth_ON() { this->SetInfDepth(true); }
 
-    void FrKinematicStretching_::SetSteady(const bool steady) { is_steady = steady; }
+    void FrKinematicStretching_::SetSteady(bool steady) { is_steady = steady; }
 
     bool FrKinematicStretching_::IsSteady() const { return is_steady; }
 
@@ -480,7 +480,7 @@ namespace frydom {
 
 //    void FrKinStretchingDelta_::SetWaveField(FrWaveField *waveField) { m_waveField = waveField; }
 
-    void FrKinStretchingDelta_::SetParam(const double hd, const double delta) {
+    void FrKinStretchingDelta_::SetParam(double hd, double delta) {
         m_hd = hd;
         m_delta = delta;
     }

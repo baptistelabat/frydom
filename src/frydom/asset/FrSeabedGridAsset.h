@@ -11,8 +11,8 @@ namespace frydom {
     class FrSeabed_;
 
     class FrSeabedGridAsset : public FrGridAsset {
-        /// Seabed containing this asset
-        FrSeabed_* m_seabed;
+
+        FrSeabed_* m_seabed;    ///> Seabed containing this asset
     public:
         /// Default constructor
         /// \param body body containing this asset (usually WorldBody)

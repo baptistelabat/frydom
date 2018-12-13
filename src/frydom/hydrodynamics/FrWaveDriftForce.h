@@ -67,7 +67,7 @@ namespace frydom {
 
 
 
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
     //forward declaration
 

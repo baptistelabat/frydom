@@ -116,7 +116,7 @@ namespace frydom {
 
 
 
-    /// >>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
 
     template <class T>

@@ -268,7 +268,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ------>>>>>>>>>>>>>>
+    // REFACTORING ------>>>>>>>>>>>>>>
 
     class FrUnitQuaternion_;
     class FrBody_;

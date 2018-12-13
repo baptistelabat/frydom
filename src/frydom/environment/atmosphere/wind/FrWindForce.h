@@ -50,7 +50,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ------>>>>>>>>>>>>>>
+    // REFACTORING ------>>>>>>>>>>>>>>
 
     class FrWindForce_ : public FrForce_ {
 

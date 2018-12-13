@@ -30,7 +30,7 @@ namespace chrono {
 }
 
 
-namespace frydom{
+namespace frydom {
 
     // Forward declaration
 //    class FrOffshoreSystem;
@@ -186,7 +186,7 @@ namespace frydom{
 
 
 
-    //// REFACTORING -------->>>>>>>>>>>
+    // REFACTORING -------->>>>>>>>>>>
 
 
 
@@ -217,21 +217,15 @@ namespace frydom{
 
     protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
 
-        /// Pointer to the ocean containing this free surface
-        FrOcean_* m_ocean;
-
-        /// Boolean testing if the free surface is to be shown/exist
-        bool m_showFreeSurface = true;
+        FrOcean_* m_ocean;                            ///< Pointer to the ocean containing this free surface
+        bool m_showFreeSurface = true;                ///< Boolean testing if the free surface is to be shown/exist
 
         // Free surface elements
-        /// Tidal model
-        std::unique_ptr<FrTidal_> m_tidal;
-        /// Wave field model
-        std::unique_ptr<FrWaveField_> m_waveField;
+        std::unique_ptr<FrTidal_> m_tidal;            ///< Tidal model
+        std::unique_ptr<FrWaveField_> m_waveField;    ///< Wave field model
 
         // Visualization asset
-        /// free surface grid asset, containing also the visualization asset
-        std::shared_ptr<FrFreeSurfaceGridAsset> m_freeSurfaceGridAsset;
+        std::shared_ptr<FrFreeSurfaceGridAsset> m_freeSurfaceGridAsset;    ///> free surface grid asset, containing also the visualization asset
 
     protected:
 

@@ -100,7 +100,7 @@ namespace frydom {
 
 
 
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><< REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><< REFACTORING
 
     /// Standard current drag force from DNV standard
     /// DNV-GL Station Keeping 01111

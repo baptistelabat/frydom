@@ -213,7 +213,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING --------------->>>>>>>>>>>>>>>>
+    // REFACTORING --------------->>>>>>>>>>>>>>>>
 
 
 
@@ -246,13 +246,13 @@ namespace frydom {
 
     public:
         /// Set the infinite depth value
-        void SetInfDepth(const bool infinite_depth);
+        void SetInfDepth(bool infinite_depth);
 
         /// Activate the infinite depth
         void SetInfDepth_ON();
 
         /// Set if the expresion is time dependant (is_steady=true) or not (is_steady=false)
-        void SetSteady(const bool steady);
+        void SetSteady(bool steady);
 
         /// Return true if the scale factor is not time dependant. False otherwise
         bool IsSteady() const;
@@ -396,7 +396,7 @@ namespace frydom {
 //        void SetWaveField(FrWaveField* waveField);
 
         /// Define the water depth and delta parameters
-        void SetParam(const double hd, const double delta);
+        void SetParam(double hd, double delta);
 
         /// Return the vertical scaling factor with the delta stretching
         double Eval(const double& x, const double& y, const double& z, const double& konde, const double& depth) const override;

@@ -189,7 +189,7 @@ namespace frydom {
 
 
 
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
     FrWaveDriftForceRAO_::FrWaveDriftForceRAO_(const FrHydroDB_& hdb)
           { }

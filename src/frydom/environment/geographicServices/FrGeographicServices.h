@@ -13,17 +13,11 @@
 #include "GeographicLib/MagneticModel.hpp"
 
 
-/**
- * GeographicServices is a service providing convert methods between geographic coordinates and cartesian positions.
- * It can also compute the magnetic declination of a position given either in geographic or cartesian coordinates.
- * In GeographicServices, the cartesian reference frame depends on the frame convention given (NED/NWU).
- * In GeographicLib, the cartesian coordinates is defined as ENU (x=East, y= North, z=Up).
- */
 
-namespace GeographicLib {
-    class LocalCartesian;
-    class MagneticModel;
-}
+//namespace GeographicLib {
+//    class LocalCartesian;
+//    class MagneticModel;
+//}
 
 namespace frydom {
 
@@ -65,11 +59,14 @@ namespace frydom {
     };
 
 
+    /// FrGeographicServices is a service providing convert methods between geographic coordinates and cartesian positions.
+    /// It can also compute the magnetic declination of a position given either in geographic or cartesian coordinates.
+    /// In GeographicServices, the cartesian reference frame depends on the frame convention given (NED/NWU).
+    /// In GeographicLib, the cartesian coordinates is defined as ENU (x=East, y= North, z=Up).
     class FrGeographicServices {
 
     private:
-        /// Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
-        GeographicLib::LocalCartesian m_LocalCartesian;
+        GeographicLib::LocalCartesian m_LocalCartesian; ///> Structure for converting local coordinates to geographic coordinates, contains the geocoord origins
 
     public:
         /// Default Constructor
@@ -188,5 +185,5 @@ namespace frydom {
 
     };
 
-}
+} // end namespace frydom
 #endif //FRYDOM_FRGEOGRAPHICSERVICES_H

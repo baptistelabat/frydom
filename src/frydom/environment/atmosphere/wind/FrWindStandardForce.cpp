@@ -77,7 +77,7 @@ namespace frydom {
 
 
 
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
     FrWindStandardForce_::FrWindStandardForce_() : FrForce_() { }
 

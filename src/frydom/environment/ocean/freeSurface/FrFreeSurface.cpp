@@ -420,7 +420,7 @@ namespace frydom {
 
 
 
-    ////// REFACTORING ---------->>>>>>>>>>
+    // REFACTORING ---------->>>>>>>>>>
 
 
     FrFreeSurface_::~FrFreeSurface_() = default;

@@ -7,7 +7,7 @@
 
 //#include <frydom/hydrodynamics/FrHydroDB.h>
 //
-///#include "frydom/core/FrException.h"
+//#include "frydom/core/FrException.h"
 //
 //
 #include <frydom/utils/FrIrrApp.h>

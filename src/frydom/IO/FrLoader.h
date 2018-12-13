@@ -56,7 +56,7 @@ namespace frydom {
     LookupTable1D<double, double> MakeWindPolarCoeffTable(const std::string& yaml_file, ANGLE_UNIT unit);
 
 
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
     // =========================================================================================================
     // IO for flow force model

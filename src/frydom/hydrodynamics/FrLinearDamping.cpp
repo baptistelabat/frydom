@@ -66,7 +66,7 @@ namespace frydom {
 
 
 
-    //// REFACTORING ---------->>>>>>>>>>
+    // REFACTORING ---------->>>>>>>>>>
 
     FrLinearDamping_::FrLinearDamping_(FLUID_TYPE ft, bool relativeToFluid) : m_fluidType(ft), m_relativeToFluid(relativeToFluid) {
         SetNull();

@@ -101,7 +101,7 @@ namespace frydom {
 
 
 
-        ///////// REFACTORING ------------>>>>>>>>>>>>>>>>>>><
+        // REFACTORING ------------>>>>>>>>>>>>>>>>>>><
 
 
         class FrUniformField : public FrFieldBase {
@@ -135,7 +135,11 @@ namespace frydom {
             void Set(double  angle, double  magnitude,
                      ANGLE_UNIT angleUnit, SPEED_UNIT speedUnit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
-
+            /// Definition of the uniform field from direction and magnitude
+            /// \param direction Direction
+            /// \param magnitude Velocity speed of the flow
+            /// \param speedUnit Speed unit (MS/KMH/KNOT)
+            /// \param dc Direction convention (GOTO/COMEFROM)
             void Set(std::function<Velocity(FRAME_CONVENTION)> direction, double magnitude,
                      SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);
 

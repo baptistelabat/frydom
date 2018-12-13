@@ -96,7 +96,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ------------->>>>>>>>>>>>>>>>>>
+    // REFACTORING ------------->>>>>>>>>>>>>>>>>>
 
     class FrFunction_ : public FrObject {
     protected:

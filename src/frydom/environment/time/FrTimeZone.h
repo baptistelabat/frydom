@@ -9,10 +9,11 @@
 #include "date/tz.h"
 
 
-/// List of tz database time zones : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 namespace frydom {
 
+/// Class providing services for the conversion of zoned time, based on "date" project : https://github.com/HowardHinnant/date
+/// List of tz database time zones : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
     class FrTimeZone {
 
     public:

@@ -237,7 +237,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ---->>>>
+    // REFACTORING ---->>>>
 
 
 
@@ -262,24 +262,23 @@ namespace frydom {
 
     private:
 
-        /// Offshore sytem containing this Environment
-        FrOffshoreSystem_* m_system;
+        FrOffshoreSystem_* m_system;    ///< Offshore sytem containing this Environment
 
         //---------------------------- Environment elements ----------------------------//
-        /// Zoned time conversion service, can give time during simulation in a specified time zone.
-        std::unique_ptr<FrTimeZone> m_timeZone;  // TODO : faire un service de temps, NEED REFACTO
+        // TODO : faire un service de temps, NEED REFACTO
+        std::unique_ptr<FrTimeZone> m_timeZone;     ///< Zoned time conversion service, can give time during simulation in a specified time zone.
 
-        /// Time ramp, can be applied on wave field, current field, wind field, etc.
-        std::unique_ptr<FrRamp_> m_timeRamp;
 
-        /// Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
-        std::unique_ptr<FrOcean_> m_ocean;
+        std::unique_ptr<FrRamp_> m_timeRamp;        ///< Time ramp, can be applied on wave field, current field, wind field, etc.
 
-        /// Atmosphere element of the simulation, contains wind model, air properties.
-        std::unique_ptr<FrAtmosphere_> m_atmosphere;
 
-        /// Service converting local coordinates to geographic coordinates, contains the geocoord origins.
-        std::unique_ptr<FrGeographicServices> m_geographicServices;
+        std::unique_ptr<FrOcean_> m_ocean;    ///> Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
+
+
+        std::unique_ptr<FrAtmosphere_> m_atmosphere;    ///> Atmosphere element of the simulation, contains wind model, air properties.
+
+
+        std::unique_ptr<FrGeographicServices> m_geographicServices;    ///> Service converting local coordinates to geographic coordinates, contains the geocoord origins.
 
     public:
 

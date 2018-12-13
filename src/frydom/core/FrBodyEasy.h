@@ -59,7 +59,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ----------->>>>>
+    // REFACTORING ----------->>>>>
 
     // Forward declaration
     class FrBody_;

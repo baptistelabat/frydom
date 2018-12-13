@@ -16,19 +16,15 @@ namespace frydom {
 
     class FrAiryRegularWaveField : public FrWaveField_ {
     protected:
-        /// Wave Height
-        double m_height = 0.;
-        /// Wave Period
-        double m_period = 0.;
-        /// Wave Frequency
-        double m_omega = 0;
-        /// Wave Number
-        double m_k = 0.;
-        /// Wave direction
-        double m_dirAngle = 0.; // used internally with the conventions : NWU, GOTO, and unit : RAD; [0,2PI]
 
-        /// Vertical scale velocity factor with stretching
-        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;
+        double m_height = 0.;   ///< Wave Height
+        double m_period = 0.;   ///< Wave Period
+        double m_omega = 0;     ///< Wave Frequency
+        double m_k = 0.;        ///< Wave Number
+        double m_dirAngle = 0.; ///< Wave direction
+                                ///< used internally with the conventions : NWU, GOTO, and unit : RAD; [0,2PI]
+
+        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;    /// Vertical scale velocity factor with stretching
 
     public:
 

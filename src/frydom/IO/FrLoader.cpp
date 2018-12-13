@@ -163,7 +163,7 @@ namespace frydom {
     }
 
 
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>< REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
 
     void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,

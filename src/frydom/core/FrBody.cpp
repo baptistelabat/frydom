@@ -101,7 +101,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ------------->>>>>>>>>>>>>>>
+    // REFACTORING ------------->>>>>>>>>>>>>>>
 
 
     #define DEFAULT_MAX_SPEED (float)10.

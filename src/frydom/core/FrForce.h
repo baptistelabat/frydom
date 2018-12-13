@@ -132,7 +132,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ------------->>>>>>>>>>>>><
+    // REFACTORING ------------->>>>>>>>>>>>><
 
 
     class FrForce_;
