@@ -27,7 +27,7 @@ namespace frydom {
         /// pointer to the container
         FrEnvironment_* m_environment;
 
-        // FrOcean elements
+        //---------------------------- FrOcean elements ----------------------------//
         /// Seabed element, with bathymetry model information
         std::unique_ptr <FrSeabed_> m_seabed;
         /// Free surface element, with tidal, wavefield models information
@@ -57,7 +57,7 @@ namespace frydom {
         /// \param showFreeSurface showfreesurface true means the free surface exists
         void ShowFreeSurface(bool showFreeSurface);
 
-        //---------------------------- Fluid Properties ----------------------------//
+        //---------------------------- Fluid properties methods ----------------------------//
 
         /// Set the fluid temperature
         /// \param Temperature temperature of the fluid
