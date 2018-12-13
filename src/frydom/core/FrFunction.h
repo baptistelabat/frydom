@@ -100,7 +100,7 @@ namespace frydom {
 
     class FrFunction_ : public FrObject {
     protected:
-        double m_functionValue = 0.;
+        double m_functionValue = 1.;
         double c_time = 0.;
     public:
 

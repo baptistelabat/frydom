@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem_ system;
 
     auto timeRamp = system.GetEnvironment()->GetTimeRamp();
-//    timeRamp->Activate();
+    timeRamp->Activate();
 
 // Set depth to infinite
 //    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(-100);
@@ -27,13 +27,11 @@ int main(int argc, char* argv[]) {
 //    system.GetEnvironment()->GetOcean()->ShowFreeSurface(false);
 
 
-// Set the waveField to AiryRegular
+// Free surface grid definition
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
     auto FSAsset = freeSurface->GetFreeSurfaceGridAsset();
     FSAsset->SetGrid(-100., 100, 2, -100, 100, 2);
-//    FSAsset->UpdateAssetON();
     FSAsset->SetUpdateStep(10);
-//    FSAsset->SetGridType(FrGridAsset::NOGRID);
 
 
 // ------------------ Regular ------------------ //

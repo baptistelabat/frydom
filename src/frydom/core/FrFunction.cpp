@@ -75,16 +75,16 @@ namespace frydom {
 
 
         if (c_time < m_t0) {
-            m_functionValue *= y0;
+            m_functionValue = y0;
             return;
         }
 
         if (c_time <= m_t1) {
-            m_functionValue *= c_a * c_time + c_b;
+            m_functionValue = c_a * c_time + c_b;
             return;
         }
 
-        m_functionValue *= y1;
+        m_functionValue = y1;
 
 
     }
