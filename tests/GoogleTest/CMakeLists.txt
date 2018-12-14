@@ -23,6 +23,7 @@ set(GOOGLE_TESTS
         test_FrStandardCurrentForce
         test_FrInertia
         test_FrKinematicStretching
+        test_FrWaveSpectrum
         )
 
 #enable_testing()
@@ -49,4 +50,5 @@ foreach (subdir ${subdirs})
 endforeach ()
 
 configure_file(../data/TNR_database.h5 . COPYONLY)
+configure_file(../data/python/wavespectrum.py . COPYONLY)
 

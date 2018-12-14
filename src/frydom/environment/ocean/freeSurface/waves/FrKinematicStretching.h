@@ -15,7 +15,8 @@ namespace frydom {
         EXTRAPOLATE,
         WHEELER,
         CHAKRABARTI,
-        DELTA
+        DELTA,
+        HDELTA
     };
 
     // --------------------------------------------------------

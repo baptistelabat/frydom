@@ -24,7 +24,7 @@ namespace frydom {
         double m_meanDir = 0;           ///< Mean wave direction
         unsigned int m_nbDir = 1;       ///< Number of directions to discretize
 
-        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum;    ///< Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
+        std::unique_ptr<FrWaveSpectrum_> m_waveSpectrum;    ///< Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
 
         std::vector<double> m_waveDirections;    ///< Wave directions vector
         std::vector<double> m_waveFrequencies;   ///< Wave frequencies vector
@@ -100,22 +100,22 @@ namespace frydom {
         /// \param unit unit of the peak period
         /// \param gamma gamma factor of the Jonswap wave spectrum
         /// \return wave spectrum
-        FrJonswapWaveSpectrum* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S, double gamma=3.3);
+        FrJonswapWaveSpectrum_* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S, double gamma=3.3);
 
         /// Set a Pierson Moskowitz wave spectrum
         /// \param Hs significant height
         /// \param Tp peak period
         /// \param unit unit of the peak period
         /// \return wave spectrum
-        FrPiersonMoskowitzWaveSpectrum* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S);
+        FrPiersonMoskowitzWaveSpectrum_* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S);
 
         /// Set a wave spectrum, based on the TEST wave spectrum type
         /// \return the TEST wave spectrum
-        FrTestWaveSpectrum* SetTestWaveSpectrum();
+        FrTestWaveSpectrum_* SetTestWaveSpectrum();
 
         /// Get the wave spectrum
         /// \return wave spectrum
-        FrWaveSpectrum* GetWaveSpectrum() const;
+        FrWaveSpectrum_* GetWaveSpectrum() const;
 
         ///Generate random wave phases
         void GenerateRandomWavePhases();
