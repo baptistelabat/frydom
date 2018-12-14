@@ -153,18 +153,11 @@ namespace frydom {
         torque.y() = 0.;
         torque.z() = force.y() * m2 * m_lpp;
 
-        // Project on horizontal plane
-        Direction xaxis = FrameAtCOG.GetRotation().GetXAxis(NWU);
-        xaxis.z() = 0.;
-        xaxis.normalize();
+        auto frame = FrameAtCOG.ProjectToHorizontalPlane();
+        auto worldForce = frame.ProjectVectorInParent(force);
+        auto worldTorque = frame.ProjectVectorInParent(torque);
 
-        Direction yaxis = FrameAtCOG.GetRotation().GetYAxis(NWU);
-        yaxis.z() = 0.;
-        yaxis.normalize();
-
-        force = xaxis * force.GetFx() + yaxis * force.GetFy();
-
-        SetForceTorqueInWorldAtPointInBody(force, torque, Position(m_xCenter, 0., 0.), NWU);
+        SetForceTorqueInWorldAtPointInBody(worldForce, worldTorque, Position(m_xCenter, 0., 0.), NWU);
     }
 
     void FrCurrentStandardForce_::StepFinalize() {

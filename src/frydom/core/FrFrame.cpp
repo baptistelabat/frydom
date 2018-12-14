@@ -262,5 +262,21 @@ namespace frydom {
         return internal::Ch2FrFrame(m_chronoFrame.GetInverse());
     }
 
+    FrFrame_ FrFrame_::ProjectToHorizontalPlane() const {
+
+        Direction xaxis = this->GetRotation().GetXAxis(NWU);
+        xaxis.z() = 0.;
+        xaxis.normalize();
+
+        Direction yaxis = this->GetRotation().GetYAxis(NWU);
+        yaxis.z() = 0.;
+        yaxis.normalize();
+
+        Direction zaxis = Direction(0., 0., 1.);
+        Position origin = this->GetPosition(NWU);
+
+        return FrFrame_(origin, FrRotation_(xaxis, yaxis, zaxis), NWU);
+    }
+
 
 }  // end namespace frydom
