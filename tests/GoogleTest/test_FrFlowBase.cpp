@@ -5,6 +5,8 @@
 #include "frydom/frydom.h"
 #include "gtest/gtest.h"
 
+#include "frydom/environment/flow/FrFlowBase.h"
+
 using namespace frydom;
 
 // --------------------------------------------------------------------
@@ -55,7 +57,7 @@ void TestFrFlowBase::SetUp() {
 
     LoadData("TNR_database.h5");
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
-    flow = std::make_shared<FrFlowBase>();
+    flow = std::make_shared<FrCurrent_>(system.GetEnvironment()->GetOcean());
     flow->MakeFieldUniform();
     flow->GetFieldUniform()->Set(m_VelocityInWorld, NWU, GOTO);
 }

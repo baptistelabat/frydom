@@ -23,6 +23,7 @@ set(GOOGLE_TESTS
         test_FrStandardCurrentForce
         test_FrInertia
         test_FrManoeuvringDamping
+        test_FrLinearDamping_
         )
 
 #enable_testing()
