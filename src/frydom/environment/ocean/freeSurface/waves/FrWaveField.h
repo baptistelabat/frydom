@@ -397,7 +397,7 @@ namespace frydom {
         WAVE_MODEL m_waveModel = NO_WAVES;    ///< wave model (NO_WAVES, LINEAR_WAVES)
 
         // Cache attributes
-        double c_ramp;                        ///< cache value of the time ramp applied on the wave field
+        double c_ramp = 1.;                        ///< cache value of the time ramp applied on the wave field
         double c_time;                        ///< cache value of the time of the simulation
         double c_depth;                       ///< cache value of the depth. (depth = bathymetry + tidal)
         bool m_infinite_depth = false;        ///< Infinite depth boolean (if true, water depth is considered as infinite)

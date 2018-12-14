@@ -22,6 +22,7 @@ set(GOOGLE_TESTS
         test_FrStandardWindForce
         test_FrStandardCurrentForce
         test_FrInertia
+        test_FrKinematicStretching
         )
 
 #enable_testing()
