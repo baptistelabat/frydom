@@ -35,30 +35,30 @@ int main(int argc, char* argv[]) {
 
 
 // ------------------ Regular ------------------ //
-//    auto waveField = freeSurface->SetAiryRegularWaveField();
-    auto waveField = freeSurface->SetAiryRegularOptimWaveField();
-    // Airy regular wave parameters
-    double waveHeight = 2.;    double wavePeriod = 2.*M_PI;
-    Direction waveDirection = Direction(SOUTH(fc));
-    waveField->SetWaveHeight(waveHeight);
-    waveField->SetWavePeriod(wavePeriod);
-    waveField->SetDirection(waveDirection, fc, dc);
+////    auto waveField = freeSurface->SetAiryRegularWaveField();
+//    auto waveField = freeSurface->SetAiryRegularOptimWaveField();
+//    // Airy regular wave parameters
+//    double waveHeight = 2.;    double wavePeriod = 2.*M_PI;
+//    Direction waveDirection = Direction(SOUTH(fc));
+//    waveField->SetWaveHeight(waveHeight);
+//    waveField->SetWavePeriod(wavePeriod);
+//    waveField->SetDirection(waveDirection, fc, dc);
 
-//// ------------------ Irregular ------------------ //
-////    auto waveField = freeSurface->SetAiryIrregularWaveField();
-//    auto waveField = freeSurface->SetAiryIrregularOptimWaveField();
-//
-//// Set the JONSWAP wave spectrum
-//    double Hs = 3;    double Tp = 9;
-//    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
-//
-//    double w1 = 0.5; double w2 = 2; unsigned int nbFreq = 20;
-//    waveField->SetWaveFrequencies(w1,w2,nbFreq);
-//
-//// Set wave direction
-//    waveField->SetMeanWaveDirection(Direction(SOUTH(fc)), fc, dc);
-//    double spreadingFactor = 10.;    unsigned int nbDir = 10;
-//    waveField->SetDirectionalParameters(nbDir, spreadingFactor);
+// ------------------ Irregular ------------------ //
+//    auto waveField = freeSurface->SetAiryIrregularWaveField();
+    auto waveField = freeSurface->SetAiryIrregularOptimWaveField();
+
+// Set the JONSWAP wave spectrum
+    double Hs = 3;    double Tp = 9;
+    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
+
+    double w1 = 0.5; double w2 = 2; unsigned int nbFreq = 20;
+    waveField->SetWaveFrequencies(w1,w2,nbFreq);
+
+// Set wave direction
+    waveField->SetMeanWaveDirection(Direction(SOUTH(fc)), fc, dc);
+    double spreadingFactor = 10.;    unsigned int nbDir = 10;
+    waveField->SetDirectionalParameters(nbDir, spreadingFactor);
 
 
 // ------------------ Run ------------------ //

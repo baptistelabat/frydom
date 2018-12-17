@@ -93,6 +93,7 @@ namespace frydom{
         assert(m_waveSpectrum!= nullptr);
 
         double spreadingFactor, dirBounds, BoundParameter;
+        double theta_min, theta_max;
 
         m_waveDirections.clear();
         switch (m_waveSpectrum->GetDirectionalModel()->GetType()) {
@@ -100,10 +101,8 @@ namespace frydom{
                 m_waveDirections.push_back(m_meanDir);
                 break;
             case COS2S:
-                BoundParameter = 1E-2;
-                spreadingFactor = dynamic_cast<FrCos2sDirectionalModel*>(m_waveSpectrum->GetDirectionalModel())->GetSpreadingFactor();
-                dirBounds = 2.*acos(pow(BoundParameter,1.0/(2.*spreadingFactor)));
-                m_waveDirections = linspace(m_meanDir - dirBounds, m_meanDir + dirBounds, m_nbDir);
+                m_waveSpectrum->GetDirectionalModel()->GetDirectionBandwidth(theta_min, theta_max, m_meanDir);
+                m_waveDirections = linspace(theta_min, theta_max, m_nbDir);
                 break;
             case DIRTEST:
                 m_waveDirections = linspace(m_meanDir, m_meanDir + 0.1, m_nbDir);
@@ -201,6 +200,10 @@ namespace frydom{
         FrWaveField_::Initialize();
 
         if (m_waveDirections.empty()){m_waveDirections.push_back(m_meanDir);}
+
+        if (m_minFreq==0. && m_maxFreq==0.) {
+            GetWaveSpectrum()->GetFrequencyBandwidth(m_minFreq,m_maxFreq);
+        }
 
         // Initialize wave frequency vector
         SetWaveFrequencies(m_minFreq, m_maxFreq, m_nbFreq);

@@ -6,6 +6,53 @@
 
 namespace frydom {
 
+    // FrWaveDirectionalModel_ descriptions
+
+    std::vector<double>
+    FrWaveDirectionalModel_::GetSpreadingFunction(const std::vector<double> &thetaVect, double theta_mean) {
+        std::vector<double> spreading_fcn;
+        spreading_fcn.clear();
+        spreading_fcn.reserve(thetaVect.size());
+        double spreadEval;
+
+        for (double theta: thetaVect) {
+            spreadEval = Eval(theta,theta_mean);
+            spreading_fcn.push_back(spreadEval);
+        }
+        return spreading_fcn;
+    }
+
+    void FrWaveDirectionalModel_::GetDirectionBandwidth(double &theta_min, double &theta_max, double theta_mean) const {
+        double threshold = 0.01;
+
+        theta_min = dichotomySearch(theta_mean,threshold);
+        double Dtheta = theta_mean - theta_min;
+        theta_max = theta_min + 2.*Dtheta;
+    }
+
+    double FrWaveDirectionalModel_::dichotomySearch(double theta_mean, double threshold) const {
+        double theta_min = theta_mean - M_PI;
+        double theta_max = theta_mean;
+
+        double theta_result, epsilon = 1.E-10;
+
+        while(fabs(theta_min-theta_max)>epsilon*epsilon)
+        {
+            theta_result=(theta_min+theta_max)/2.0f;
+            if (fabs(Eval(theta_result,theta_mean) - threshold) < epsilon)
+            {
+                return theta_result;
+            }
+            else
+            {
+                if ((Eval(theta_max,theta_mean) - threshold) * (Eval(theta_result,theta_mean) - threshold) < 0.0f)
+                    theta_min=theta_result;
+                else
+                    theta_max=theta_result;
+            }
+        }
+    }
+
     // FrCos2sDirectionalModel descriptions
 
     void FrCos2sDirectionalModel_::CheckSpreadingFactor() {
@@ -17,46 +64,37 @@ namespace frydom {
 
     FrCos2sDirectionalModel_::FrCos2sDirectionalModel_(double spreading_factor) : m_spreading_factor(spreading_factor) {
         CheckSpreadingFactor();
+        EvalCs();
     }
 
     WaveDirectionalModelType FrCos2sDirectionalModel_::GetType() const { return COS2S; }
 
     double FrCos2sDirectionalModel_::GetSpreadingFactor() const { return m_spreading_factor; }
 
-    std::vector<double> FrCos2sDirectionalModel_::GetSpreadingFunction(const std::vector<double> &thetaVect, const double theta_mean) {
-        std::vector<double> spreading_fcn;
-        spreading_fcn.clear();
-        spreading_fcn.reserve(thetaVect.size());
-
-        double s = m_spreading_factor;
-        double two_s = 2. * s;
-        double c_s = ( pow(2., two_s - 1.) / M_PI ) * pow(std::tgamma(s + 1.), 2.) / std::tgamma(two_s + 1.);
-
-        for (double theta: thetaVect) {
-            spreading_fcn.push_back(c_s * pow(cos(0.5 * (theta - theta_mean)), two_s));
-        }
-        return spreading_fcn;
+    double FrCos2sDirectionalModel_::Eval(double theta, double theta_mean) const {
+        return c_s * pow(cos(0.5 * (theta - theta_mean)), 2. * m_spreading_factor);
     }
 
     void FrCos2sDirectionalModel_::SetSpreadingFactor(const double spreading_factor) {
         m_spreading_factor = spreading_factor;
         CheckSpreadingFactor();
+        EvalCs();
+    }
+
+    void FrCos2sDirectionalModel_::EvalCs() {
+        double s = m_spreading_factor;
+        double two_s = 2. * s;
+        c_s = ( pow(2., two_s - 1.) / M_PI ) * pow(std::tgamma(s + 1.), 2.) / std::tgamma(two_s + 1.);
     }
 
     // =================================================================================================================
     // FrTestDirectionalModel_ descriptions
 
-    std::vector<double> FrTestDirectionalModel_::GetSpreadingFunction(const std::vector<double> &thetaVect, double theta_mean) {
-        std::vector<double> spreading_fcn;
-        spreading_fcn.clear();
-        spreading_fcn.reserve(thetaVect.size());
-        for (double theta: thetaVect) {
-            spreading_fcn.push_back(1.);
-        }
-        return spreading_fcn;
-    }
-
     WaveDirectionalModelType FrTestDirectionalModel_::GetType() const { return DIRTEST; }
+
+    double FrTestDirectionalModel_::Eval(double theta, double theta_mean) const {
+        return 1.;
+    }
 
 
     // =================================================================================================================

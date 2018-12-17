@@ -149,7 +149,7 @@ namespace frydom {
         FrOcean_* m_ocean;            ///> Pointer to the ocean containing this asset
         bool m_showSeabed = true;     ///> Boolean checking if the seabed is shown/exists
         std::shared_ptr<FrSeabedGridAsset> m_SeabedGridAsset;    ///> Seabed grid asset, containing also its asset visualization
-        double m_bathymetry = -30;    ///> Mean bathymetry
+        double m_bathymetry = -30;    ///> Mean bathymetry, in NWU
 
         //TODO : consider varying bathymetry
 
@@ -177,7 +177,7 @@ namespace frydom {
         /// \return ocean containing this seabed
         FrOcean_* GetOcean() const;
 
-        /// Set the mean bathymetry of the seabed
+        /// Set the mean bathymetry of the seabed (negative in NWU/positive in NED)
         /// \param bathymetry mean bathymetry of the seabed
         /// \param fc frame convention (NED/NWU)
         void SetBathymetry(double bathymetry, FRAME_CONVENTION fc);

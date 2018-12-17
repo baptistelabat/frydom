@@ -227,8 +227,8 @@ namespace frydom {
 
 
     void FrSeabed_::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
-        m_bathymetry = -fabs(bathymetry);
-        if (IsNED(fc)) {m_bathymetry = -m_bathymetry;}
+        if (IsNED(fc)) {bathymetry = -bathymetry;};
+        m_bathymetry = bathymetry;
     }
 
     const double FrSeabed_::GetBathymetry(FRAME_CONVENTION fc) const {

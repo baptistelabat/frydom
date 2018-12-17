@@ -11,14 +11,12 @@ using namespace frydom;
 TEST(FrWaveSpectrum,FrCos2sDirectionalModel){
 
     
-    double thetaMean = M_PI;
+    double thetaMean = 0*M_PI;
     std::vector<double> thetaVect; thetaVect.clear();
     thetaVect = linspace(0.,2.*M_PI,21);
-//    thetaVect.push_back(0.1);
-
 
     // test FrCos2sDirectionalModel_
-    FrCos2sDirectionalModel_ Cos2sDirModel;
+    FrCos2sDirectionalModel_ Cos2sDirModel(10);
 
     auto Cos2SDirfunc = Cos2sDirModel.GetSpreadingFunction(thetaVect, thetaMean);
 
@@ -32,11 +30,11 @@ TEST(FrWaveSpectrum,FrCos2sDirectionalModel){
         EXPECT_NEAR(spreading_fcn, Cos2SDirfunc[iv], 1.E-8);
     }
 
-}
-
-TEST(FrWaveSpectrum,BandWidth){
-
-
+    double theta_min, theta_max;
+    Cos2sDirModel.GetDirectionBandwidth(theta_min, theta_max, thetaMean);
+//    std::cout<<"theta_min = "<<theta_min*RAD2DEG<<", theta_max = "<<theta_max*RAD2DEG
+//             <<", theta_mean-theta_min = "<<(thetaMean-theta_min)*RAD2DEG<<std::endl;
+    EXPECT_NEAR(thetaMean-theta_min, theta_max-thetaMean, 1.E-8);
 
 }
 

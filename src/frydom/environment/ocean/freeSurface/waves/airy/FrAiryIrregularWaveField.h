@@ -17,8 +17,8 @@ namespace frydom {
     protected:
 
 
-        double m_minFreq = 0.05;        ///< Minimum frequency
-        double m_maxFreq = 2.;          ///< Maximum frequency
+        double m_minFreq = 0.;        ///< Minimum frequency
+        double m_maxFreq = 0.;          ///< Maximum frequency
         unsigned int m_nbFreq = 40;     ///< Number of frequency to discretize
 
         double m_meanDir = 0;           ///< Mean wave direction

@@ -406,7 +406,25 @@ namespace frydom {
         /// \param thetaVect vector of wave directions
         /// \param theta_mean mean wave direction
         /// \return spreading function
-        virtual std::vector<double> GetSpreadingFunction(const std::vector<double>& thetaVect, double theta_mean) = 0;
+        virtual std::vector<double> GetSpreadingFunction(const std::vector<double>& thetaVect, double theta_mean);
+
+        /// Evaluate the spreading function for a wave direction
+        /// \param theta wave direction
+        /// \param theta_mean mean wave direction
+        /// \return evaluation of the spreading function
+        virtual double Eval(double theta, double theta_mean) const = 0;
+
+        /// Get the extremal frequency values where the power spectral density is equal to 1% of the total variance m0 = hs**2/16
+        /// \return extremal frequency values
+        void GetDirectionBandwidth(double& theta_min, double& theta_max, double theta_mean) const;
+
+    protected:
+
+        /// Search by dichotomy method.
+        /// \param theta_mean mean wave direction
+        /// \param threshold threshold
+        /// \return
+        double dichotomySearch(double theta_mean, double threshold) const;
 
     };
 
@@ -416,15 +434,21 @@ namespace frydom {
     /// -------------------------------------------------------------------
     /// This directional model, proposed by Longuet-Higgins[1963] is an extension of the cosine-squared model.
     /// the spreading function is given by
-    /// spreading_fcn = [ 2^(2s-1)]/Pi . [Gamma²(s+1)]/[Gamma(2s+1)] cos^2s[(theta-theta0)/2]
+    /// spreading_fcn = c_s * cos^2s[(theta-theta0)/2]
+    /// where c_s = [ 2^(2s-1)]/Pi . [Gamma²(s+1)]/[Gamma(2s+1)]
     class FrCos2sDirectionalModel_ : public FrWaveDirectionalModel_ {
 
     private:
 
         double m_spreading_factor = 10.;    ///< Spreading factor, must be defined between 1. and 100.
 
+        double c_s;                    ///< cached value of [(2^(2s-1))/Pi]*[Gamma²(s+1)]/[Gamma(2s+1)]
+
         /// Check that the spreading factor is correctly defined between 1. and 100.
         void CheckSpreadingFactor();
+
+        /// Compute the directional spectrum coefficient
+        void EvalCs();
 
     public:
 
@@ -444,11 +468,11 @@ namespace frydom {
         /// \param spreading_factor spreading factor s of the cos2s directional model
         void SetSpreadingFactor(double spreading_factor);
 
-        /// Get the spreading function for a vector of wave directions thetaVect
-        /// \param thetaVect vector of wave directions
+        /// Evaluate the spreading function for a wave direction
+        /// \param theta wave direction
         /// \param theta_mean mean wave direction
-        /// \return spreading function
-        std::vector<double> GetSpreadingFunction(const std::vector<double>& thetaVect, double theta_mean) override;
+        /// \return evaluation of the spreading function
+        double Eval(double theta, double theta_mean) const override;
 
     };
 
@@ -461,11 +485,11 @@ namespace frydom {
         /// \return type of directional model, here DIRTEST
         WaveDirectionalModelType GetType() const override;
 
-        /// Get the spreading function for a vector of wave directions thetaVect
-        /// \param thetaVect vector of wave directions
+        /// Evaluate the spreading function for a wave direction
+        /// \param theta wave direction
         /// \param theta_mean mean wave direction
-        /// \return spreading function
-        std::vector<double> GetSpreadingFunction(const std::vector<double>& thetaVect, double theta_mean) override;
+        /// \return evaluation of the spreading function
+        double Eval(double theta, double theta_mean) const override;
     };
 
     // =================================================================================================================
@@ -545,7 +569,7 @@ namespace frydom {
 
         /// Get the extremal frequency values where the power spectral density is equal to 1% of the total variance m0 = hs**2/16
         /// \return extremal frequency values
-        void GetFrequencyBandwidth(double& wmin, double& wmax) const;;
+        void GetFrequencyBandwidth(double& wmin, double& wmax) const;
 
         /// Eval the spectrum at one frequency
         /// Must be implemented into each wave spectrum
