@@ -79,8 +79,8 @@ namespace frydom {
 
     private:
 
-        FrBody_* m_body;
-        std::shared_ptr<chrono::ChMarker> m_chronoMarker;
+        FrBody_* m_body;                                    ///< Pointer to the body containing this node
+        std::shared_ptr<chrono::ChMarker> m_chronoMarker;   ///< Chrono class for nodes/marker.
 
     public:
 

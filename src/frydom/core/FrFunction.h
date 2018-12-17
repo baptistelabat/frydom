@@ -100,51 +100,69 @@ namespace frydom {
 
     class FrFunction_ : public FrObject {
     protected:
-        double m_functionValue = 1.;
-        double c_time = 0.;
+        double m_functionValue = 1.;    ///< value of the function to return
+        double c_time = 0.;             ///< cached value of the time, updated using the Update method
     public:
 
+        /// Get the function value
+        /// \return function value
         double GetFunctionValue() const;
 
+        /// Update the state of the function, including the cached value of the time. This method needs to  be called
+        /// by the container of this function.
+        /// \param time time of the simulation
         void Update(double time);
     };
 
     class FrRamp_ : public FrFunction_ {
 
     private:
-        bool m_active = false;
+        bool m_active = false;      ///< bool checking if the ramp is active
+        bool m_increasing = true;   ///< bool checking if the ramp is increasing (true) of decreasing (false)
 
-        bool m_increasing = true;
-        double m_t0 = 0.;
-        double m_t1 = 20.;
+        double m_t0 = 0.;           ///< start time of the ramp
+        double m_t1 = 20.;          ///< end time of the ramp
 
-        double m_min = 0.;
-        double m_max = 1.;
+        double m_min = 0.;          ///< start value of the ramp if it's increasing, end otherwise
+        double m_max = 1.;          ///< end value of the ramp if it's increasing, start otherwise
 
-        double c_a = 0.;
-        double c_b = 1.;
-
+        double c_a = 0.;            ///< cached coefficient of the ramp (slope)
+        double c_b = 1.;            ///< cached coefficient of the ramp (y offset)
 
     public:
 
+        /// Set the duration of the ramp, meaning m_t1-m_t0
+        /// \param duration duration of the ramp
         void SetDuration(double duration);
 
+        /// Set the ramp to an increasing one
         void SetIncrease();
 
+        /// Set the ramp to a decreasing one
         void SetDecrease();
 
+        /// Set the min value of the ramp, m_min
+        /// \param minVal min value of the ramp
         void SetMinVal(double minVal);
 
+        /// Set the max value of the ramp, m_max
+        /// \param maxVal max value of the ramp
         void SetMaxVal(double maxVal);
 
+        /// Check is the ramp is active
+        /// \return true if the ramp is active, false otherwise
         bool IsActive();
 
+        /// Activate the ramp (set active)
         void Activate();
 
+        /// De-activate the ramp (set inactive)
         void Deactivate();
 
+        /// Initialize the state of the ramp
         void Initialize() override;
 
+        /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
     };
