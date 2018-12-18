@@ -5,7 +5,7 @@ set(SRC_FILES
         FrBEMBody.cpp
         FrHydroDB.cpp
         FrHydrostaticForce.cpp
-        FrITTC57.cpp
+        FrITTCResistance.cpp
         FrLinearDamping.cpp
         FrLinearExcitationForce.cpp
         FrLinearHydrostaticForce.cpp

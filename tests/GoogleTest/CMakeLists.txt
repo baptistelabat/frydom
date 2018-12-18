@@ -24,6 +24,7 @@ set(GOOGLE_TESTS
         test_FrInertia
         test_FrManoeuvringDamping
         test_FrLinearDamping_
+        test_FrITTCResistance
         )
 
 #enable_testing()

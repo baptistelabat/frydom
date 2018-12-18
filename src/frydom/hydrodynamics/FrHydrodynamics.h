@@ -10,7 +10,7 @@
 #include "FrHydroDB.h"
 #include "FrHydroDBLoader.h"
 #include "FrHydrostaticForce.h"
-#include "FrITTC57.h"
+#include "FrITTCResistance.h"
 #include "FrLinearDamping.h"
 #include "FrQuadraticDamping.h"
 #include "FrLinearExcitationForce.h"
