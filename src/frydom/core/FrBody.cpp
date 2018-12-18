@@ -265,25 +265,25 @@ namespace frydom {
 
     }
 
-    void FrBody_::ConstrainInVx(double Vx) {
-
-        auto motor = std::make_shared<chrono::ChLinkMotorLinearSpeed>();
-
-        auto frame = chrono::ChFrame<double>();
-
-
-        motor->Initialize(m_chronoBody, GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->m_body->m_chronoBody, frame);
-
-        m_system->AddLink(motor);
-
-
-        auto rampConst = std::make_shared<FrFunction>(Vx);
-
-        motor->SetSpeedFunction(rampConst);
-
-
-
-    }
+//    void FrBody_::ConstrainInVx(double Vx) {
+//
+//        auto motor = std::make_shared<chrono::ChLinkMotorLinearSpeed>();
+//
+//        auto frame = chrono::ChFrame<double>();
+//
+//
+//        motor->Initialize(m_chronoBody, GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->m_body->m_chronoBody, frame);
+//
+//        m_system->AddLink(motor);
+//
+//
+//        auto rampConst = std::make_shared<FrFunction>(Vx);
+//
+//        motor->SetSpeedFunction(rampConst);
+//
+//
+//
+//    }
 
     double FrBody_::GetMass() const {
         return m_chronoBody->GetMass();

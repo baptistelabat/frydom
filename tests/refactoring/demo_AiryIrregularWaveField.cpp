@@ -9,19 +9,25 @@ using namespace frydom;
 
 
 int main(int argc, char* argv[]) {
-    // Frame convention
+
+    // Define the frame convention (North-West-Up or North-East-Down)
     FRAME_CONVENTION fc = NWU;
-    // Wave direction convention
+    // Define the wave direction convention (GOTO or COMEFROM)
     DIRECTION_CONVENTION dc = GOTO;
 
-// create a system
+    // create an offshore system
     FrOffshoreSystem_ system;
 
+    // Activate the time ramp, embedded in the environment
     auto timeRamp = system.GetEnvironment()->GetTimeRamp();
     timeRamp->Activate();
 
-// Set depth to infinite
-//    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(-100);
+    // Set the water depth to infinite. Note that the water depth is set with a frame convention. In NWU, it is then set
+    // negatively.
+    system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
+
+    auto seabed = system.GetEnvironment()->GetOcean()->GetSeabed();
+    seabed->GetBathymetry(fc);
 
 //    system.GetEnvironment()->GetOcean()->ShowSeabed(false);
 //    system.GetEnvironment()->GetOcean()->ShowFreeSurface(false);

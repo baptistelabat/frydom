@@ -16,7 +16,6 @@ namespace frydom{
     FrAiryIrregularWaveField::FrAiryIrregularWaveField(FrFreeSurface_ *freeSurface) : FrWaveField_(freeSurface) {
         m_waveModel = LINEAR_WAVES;
         m_verticalFactor = std::make_unique<FrKinematicStretching_>();
-        m_verticalFactor->SetInfDepth(m_infinite_depth);
 
         m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum_>();
     }
@@ -198,6 +197,7 @@ namespace frydom{
 
     void FrAiryIrregularWaveField::Initialize() {
         FrWaveField_::Initialize();
+        m_verticalFactor->SetInfDepth(m_infinite_depth);
 
         if (m_waveDirections.empty()){m_waveDirections.push_back(m_meanDir);}
 

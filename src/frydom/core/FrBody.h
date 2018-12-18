@@ -1053,7 +1053,7 @@ namespace frydom {
         // Motion constraints  : FIXME : experimental !!!!
         void ConstainDOF(bool cx, bool cy, bool cz, bool crx, bool cry, bool crz);
 
-        void ConstrainInVx(double Vx);
+//        void ConstrainInVx(double Vx);
 
 
     protected:

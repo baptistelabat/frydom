@@ -37,7 +37,7 @@ namespace frydom {
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
         m_k = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(NWU), m_omega, gravityAcceleration);
 
-        m_infinite_depth = 3. / m_k < m_freeSurface->GetOcean()->GetDepth(NWU);
+        m_infinite_depth = m_infinite_depth || 3. / m_k < m_freeSurface->GetOcean()->GetDepth(NWU);
         m_verticalFactor->SetInfDepth(m_infinite_depth);
 
     }

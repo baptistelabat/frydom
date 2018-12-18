@@ -906,7 +906,7 @@ namespace frydom {
     }
 
     void FrWaveField_::Initialize() {
-
+        m_infinite_depth = m_freeSurface->GetOcean()->GetSeabed()->GetInfiniteDepth();
         c_depth = m_freeSurface->GetOcean()->GetDepth(NWU);
     }
 
