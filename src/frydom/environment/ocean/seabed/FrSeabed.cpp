@@ -230,20 +230,26 @@ namespace frydom {
     //------------------------------------------------------------------------------------------------------------------
     // FrNullSeabed descriptions
 
+    FrSeabedGridAsset *FrNullSeabed_::GetSeabedGridAsset() {
+        try {throw FrException("a null seabed cannot return a seabed asset.");}
+        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
+    }
+
     FrNullSeabed_::FrNullSeabed_(FrOcean_ *ocean) :FrSeabed_(ocean) {m_infiniteDepth = true;}
 
     void FrNullSeabed_::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
-        static_assert("","a null seabed cannot set a bathymetry.");
+        try {throw FrException("a null seabed cannot return a bathymetry.");}
+        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
     }
 
     const double FrNullSeabed_::GetBathymetry(FRAME_CONVENTION fc) const {
-        static_assert("","a null seabed cannot return a bathymetry.");
-        return 0;
+        try {throw FrException("a null seabed cannot return a bathymetry.");}
+        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
     }
 
     const double FrNullSeabed_::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
-        static_assert("","a null seabed cannot return a bathymetry.");
-        return 0;
+        try {throw FrException("a null seabed cannot return a bathymetry.");}
+        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
     }
 
     void FrNullSeabed_::Update(double time) {
@@ -266,19 +272,20 @@ namespace frydom {
     }
 
     void FrMeanSeabed_::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
+        assert(m_showSeabed);
         if (IsNED(fc)) {bathymetry = -bathymetry;};
         m_bathymetry = bathymetry;
     }
 
     const double FrMeanSeabed_::GetBathymetry(FRAME_CONVENTION fc) const {
-        assert(!m_showSeabed);
+        assert(m_showSeabed);
         double bathy = m_bathymetry;
         if (IsNED(fc)) {bathy = -bathy;}
         return bathy;
     }
 
     const double FrMeanSeabed_::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
-        assert(!m_showSeabed);
+        assert(m_showSeabed);
         double bathy = m_bathymetry;
         if (IsNED(fc)) {bathy = -bathy;}
         return bathy;

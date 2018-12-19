@@ -157,6 +157,12 @@ namespace frydom {
         /// Default destructor
         ~FrSeabed_() = default;
 
+        //---------------------------- Asset ----------------------------//
+
+        /// Get the seabed grid asset
+        /// \return seabed grid asset
+        virtual FrSeabedGridAsset * GetSeabedGridAsset() = 0;
+
         //---------------------------- Seabed elements Getters ----------------------------//
 
         /// Get the ocean containing this seabed
@@ -203,7 +209,15 @@ namespace frydom {
 
         /// Default constructor
         /// \param ocean ocean containing this seabed
-        explicit FrNullSeabed_(FrOcean_* ocean);;
+        explicit FrNullSeabed_(FrOcean_* ocean);
+
+        //---------------------------- Asset ----------------------------//
+
+        /// Get the seabed grid asset
+        /// \return seabed grid asset
+        FrSeabedGridAsset * GetSeabedGridAsset() override;
+
+        //---------------------------- Seabed elements Getters ----------------------------//
 
         /// Set the mean bathymetry of the seabed (negative in NWU/positive in NED)
         /// \param bathymetry mean bathymetry of the seabed
@@ -258,7 +272,7 @@ namespace frydom {
 
         /// Get the seabed grid asset
         /// \return seabed grid asset
-        FrSeabedGridAsset * GetSeabedGridAsset();
+        FrSeabedGridAsset * GetSeabedGridAsset() override;
 
         //---------------------------- Seabed elements Getters ----------------------------//
 

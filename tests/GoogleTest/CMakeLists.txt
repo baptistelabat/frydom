@@ -50,5 +50,4 @@ foreach (subdir ${subdirs})
 endforeach ()
 
 configure_file(../data/TNR_database.h5 . COPYONLY)
-configure_file(../data/python/wavespectrum.py . COPYONLY)
 
