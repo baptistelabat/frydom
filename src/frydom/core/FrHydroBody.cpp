@@ -15,6 +15,8 @@
 #include "frydom/environment/ocean/current/FrCurrent.h"
 #include "frydom/environment/atmosphere/wind/FrWind.h"
 
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesBEMBodyMass.h"
+
 namespace frydom {
 
     FrHydroBody::FrHydroBody() : is3DOF(false),

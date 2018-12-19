@@ -7,10 +7,10 @@
 
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/FrObject.h"
-#include "FrHydroDB.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 //#include "FrRadiationForce.h
-#include "FrHydroMapper.h"
-#include "FrVelocityRecorder.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
+#include "frydom/hydrodynamics/FrVelocityRecorder.h"
 
 #include <iostream>
 #include <fstream>

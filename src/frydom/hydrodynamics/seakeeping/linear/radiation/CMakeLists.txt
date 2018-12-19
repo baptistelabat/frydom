@@ -1,8 +1,8 @@
 message(STATUS "    ...radiation")
 
-set(SRC_FILE
-        FrRadiationForce.cpp
+set(SRC_FILES
         FrVariablesBEMBodyMass.cpp
+        FrRadiationForce.cpp
         FrRadiationModel.cpp
         )
 

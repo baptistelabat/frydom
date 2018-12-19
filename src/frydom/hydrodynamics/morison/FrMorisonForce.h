@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRMORISONFORCE_H
 #define FRYDOM_FRMORISONFORCE_H
 
-#include "frydom/hydrodynamics/FrMorisonModel.h"
+#include "frydom/hydrodynamics/morison/FrMorisonModel.h"
 #include "frydom/core/FrForce.h"
 
 namespace frydom {

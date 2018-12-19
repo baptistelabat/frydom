@@ -10,9 +10,9 @@
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/core/FrHydroBody.h"
 
-#include "FrHydroMapper.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
 
-#include "FrHydroDB.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 
 
 namespace frydom {

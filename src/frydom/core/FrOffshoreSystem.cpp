@@ -12,8 +12,8 @@
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 
-#include "frydom/hydrodynamics/FrHydroMapper.h"
-#include "frydom/hydrodynamics/FrHydroDB.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 #include "FrBody.h"
 
 
