@@ -79,6 +79,8 @@ namespace frydom {
         //// Method to be applied at the end of each time step
         void StepFinalize() override;
 
+        virtual FrEnvironment_* GetEnvironment() const = 0;
+
     };
 
 
@@ -100,8 +102,8 @@ namespace frydom {
         /// \return ocean containing this current model
         FrOcean_* GetOcean() const {return m_ocean;}
 
-        /// Method to be applied at the end of each time step
-        void StepFinalize() override;
+        FrEnvironment_* GetEnvironment() const override;
+
     };
 
 
@@ -122,8 +124,8 @@ namespace frydom {
         /// \return atmosphere containing this wind model
         FrAtmosphere_* GetAtmosphere() const {return m_atmosphere;}
 
-        /// Method to be applied at the end of each time step
-        void StepFinalize() override;
+        FrEnvironment_* GetEnvironment() const override;
+
     };
 
 } // end of namespace frydom

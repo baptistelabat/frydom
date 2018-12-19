@@ -13,6 +13,10 @@
 
 namespace frydom {
 
+    // -----------------------------------------------------------
+    // FLOW BASE
+    // -----------------------------------------------------------
+
     FrFlowBase::FrFlowBase() {
         m_field = std::make_unique<FrUniformField>();
     };
@@ -46,9 +50,9 @@ namespace frydom {
         return dynamic_cast<FrUniformField*>(m_field.get());
     }
 
-
     void FrFlowBase::Initialize() {
         m_field->Initialize();
+        c_ramp = GetEnvironment()->GetTimeRamp()->GetFunctionValue();
     }
 
     void FrFlowBase::Update(double time) {
@@ -57,13 +61,22 @@ namespace frydom {
 
     void FrFlowBase::StepFinalize() {
         m_field->StepFinalize();
+        c_ramp = GetEnvironment()->GetTimeRamp()->GetFunctionValue();
     }
 
-    void FrCurrent_::StepFinalize() {
-        c_ramp = m_ocean->GetEnvironment()->GetTimeRamp()->GetFunctionValue();
+    // ---------------------------------------------------------
+    // WIND
+    // ---------------------------------------------------------
+
+    FrEnvironment_* FrWind_::GetEnvironment() const {
+        return m_atmosphere->GetEnvironment();
     }
 
-    void FrWind_::StepFinalize() {
-        c_ramp = m_atmosphere->GetEnvironment()->GetTimeRamp()->GetFunctionValue();
+    // ---------------------------------------------------------
+    // CURRENT
+    // ---------------------------------------------------------
+
+    FrEnvironment_* FrCurrent_::GetEnvironment() const {
+        return m_ocean->GetEnvironment();
     }
 }

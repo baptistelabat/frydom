@@ -96,16 +96,6 @@ namespace frydom {
 
         m_table.SetX(anglesL);
         m_table.AddY("coeff", vectL);
-
-        // ##CC Debug
-        std::ofstream file;
-        file.open("coeff_table.csv",  std::ios::out);
-        file << "angle;cx;cy;cn" << std::endl;
-        for (auto it=polar.begin(); it != polar.end(); ++it) {
-            file << it->first << ";" << it->second[0] << ";" << it->second[1] << ";" << it->second[2] << std::endl;
-        }
-        file.close();
-        // ##CC
     }
 
     void FrFlowForce::Update(double time) {
@@ -115,12 +105,14 @@ namespace frydom {
 
         auto coeff = m_table.Eval("coeff", alpha);
         double SquaredVelocity = m_fluxVelocityInBody.squaredNorm();
-        auto force_temp = coeff * SquaredVelocity;
+        auto res = coeff * SquaredVelocity;
 
-        SetForceTorqueInBodyAtCOG(Force(force_temp[0], force_temp[1], 0.), Torque(0., 0., force_temp[2]), NWU);
+        auto frame = m_body->GetFrameAtCOG(NWU).ProjectToHorizontalPlane();
+        auto worldForce = frame.ProjectVectorInParent( Force(res[0], res[1], 0) );
+        auto worldTorque = frame.ProjectVectorInParent( Torque(0., 0., res[2]));
 
+        SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
     }
-
 
     void FrCurrentForce2_::Update(double time) {
 
@@ -133,8 +125,6 @@ namespace frydom {
         FrFlowForce::Update(time);
     }
 
-
-
     void FrWindForce2_::Update(double time) {
 
         FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
@@ -144,7 +134,6 @@ namespace frydom {
                 ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
 
         FrFlowForce::Update(time);
-
     }
 
 } // end of namespace frydom

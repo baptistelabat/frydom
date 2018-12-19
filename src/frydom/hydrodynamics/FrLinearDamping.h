@@ -141,15 +141,6 @@ namespace frydom {
         /// Getter for the boolean : m_relativeVelocity
         bool GetRelativeToFluid();
 
-        /// Setter for the log prefix
-//        void SetLogPrefix(std::string prefix_name) override {
-////            if (prefix_name=="") {
-////                m_logPrefix = "FlinDamp_" + FrForce::m_logPrefix;
-////            } else {
-////                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
-////            }
-//        }
-
         void Update(double time) override;
 
         void Initialize() override;

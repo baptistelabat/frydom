@@ -63,7 +63,7 @@ namespace frydom {
 
 
 
-    // REFACTORING --------------->>>>>>>>>>>>>>>>>>>
+    /// REFACTORING --------------->>>>>>>>>>>>>>>>>>>
 
 
 
@@ -106,7 +106,7 @@ namespace frydom {
         Velocity cogRelVel;
         if (m_relative2Fluid) {
             FrFrame_ cogFrame = m_body->GetFrameAtCOG(NWU);
-            cogRelVel = m_body->GetSystem()->GetEnvironment()->GetRelativeVelocityInFrame(
+            cogRelVel = -m_body->GetSystem()->GetEnvironment()->GetRelativeVelocityInFrame(
                     cogFrame, m_body->GetCOGVelocityInWorld(NWU), m_fluidType, NWU);
         } else {
             cogRelVel = m_body->GetCOGVelocityInBody(NWU);

@@ -142,3 +142,14 @@ TEST_F(TestInertia, BodyInertiaInFrame) {
     this->CheckInertiaAtCOG();
 }
 
+TEST_F(TestInertia, BodyInertia) {
+
+    body->SetInertiaParams(FrInertiaTensor_(m_BodyMass,
+       m_InertialInBodyAtCOG(0, 0), m_InertialInBodyAtCOG(1, 1), m_InertialInBodyAtCOG(2, 2),
+       m_InertialInBodyAtCOG(0, 1), m_InertialInBodyAtCOG(0, 2), m_InertialInBodyAtCOG(1, 2),
+       FrFrame_(body->GetCOG(NWU), FrRotation_(), NWU), NWU));
+
+    inertia = std::make_shared<FrInertiaTensor_>(body->GetInertiaParams());
+    this->CheckInertiaAtCOG();
+}
+

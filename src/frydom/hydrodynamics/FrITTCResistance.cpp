@@ -6,7 +6,7 @@
 
 #include "chrono/physics/ChBody.h"  // TODO : a retirer
 
-#include "FrITTC57.h"
+#include "FrITTCResistance.h"
 //#include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/environment/FrEnvironmentInc.h"
 //#include "frydom/environment/current/FrCurrent.h"
@@ -103,51 +103,39 @@ namespace frydom{
 
     //////// REFACTOR --------------->>>>>>>>>>>>>>>>
 
+    void FrITTCResistance_::Update(double time) {
 
-
-
-    FrITTC57_::FrITTC57_(double characteristicLength, double hullFormFactor, double hullWetSurface,
-                         double hullFrontalArea) :
-                         FrForce_(),
-                         m_Lpp(characteristicLength),
-                         m_k(hullFormFactor),
-                         m_S(hullWetSurface),
-                         m_Ax(hullWetSurface) {}
-
-    void FrITTC57_::Update(double time) {
-
-        Velocity cogWorldVel = m_body->GetCOGVelocityInWorld(NWU);
-        FrFrame_ cogWorldFrame = m_body->GetFrameAtCOG(NWU);
-
-        Velocity relVel = m_environment->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(cogWorldFrame, cogWorldVel, NWU);
-
-        m_body->ProjectVectorInBody<Velocity>(relVel, NWU);
-        double  ux = relVel.GetVx();
+        Velocity cogBodyVel = m_body->GetCOGVelocityInBody(NWU);
+        double  ux = cogBodyVel.GetVx();
 
         // Computing Reynolds number
         double Re = GetSystem()->GetEnvironment()->GetOcean()->GetReynoldsNumberInWater(m_Lpp, ux);
 
         // Computing ITTC57 flat plate friction coefficient
-        auto CF = 0.075 / pow( log10(Re)-2., 2. );
-
-        // Residual friction
-        auto CR = 0.12 * CF; // TODO: changer !! juste pour avoir qqch (mettre en attribut)
+        auto Cf = 0.075 / pow( log10(Re)-2., 2. );
 
         // Total coefficient
-        auto Ct = CF + CR;
+        auto Ct = (1. + m_k)*Cf + m_cr + m_ca + m_caa + m_capp;
 
         // Resistance along the body X Axis
-        double Rt = - 0.5 * m_environment->GetOcean()->GetDensity() * m_S * (1+m_k) * Ct * ux * std::abs(ux);
+        double Rt = - 0.5 * m_environment->GetOcean()->GetDensity() * m_hullWetSurface * Ct * ux * std::abs(ux);
 
         SetForceInBody(Force(Rt, 0., 0.), NWU);
-
     }
 
-    void FrITTC57_::Initialize() {
+    void FrITTCResistance_::SetRoughnessFromLength(double Lwl, double surfaceRoughness) {
+        m_ca = (105. * std::pow(surfaceRoughness / Lwl, 1./3.) - 0.64) * 0.001;
+    }
+
+    void FrITTCResistance_::SetAirResistanceFromArea(double area) {
+        m_caa = area / (1000. * m_hullWetSurface);
+    }
+
+    void FrITTCResistance_::Initialize() {
         m_environment = GetSystem()->GetEnvironment(); // To reduce the number of indirections during update
     }
 
-    void FrITTC57_::StepFinalize() {
+    void FrITTCResistance_::StepFinalize() {
 
     }
 

@@ -64,6 +64,7 @@ void TestFrStandardWindForce::SetUp() {
     force->SetXCenter(m_Xcenter);
 
     body = system.NewBody();
+    body->SetCOG(Position(0.1, 0., 0.), NWU);
     body->AddExternalForce(force);
 
     system.GetEnvironment()->GetAtmosphere()->GetWind()->MakeFieldUniform();
@@ -72,6 +73,8 @@ void TestFrStandardWindForce::SetUp() {
     m_xadim = 0.5*rho*m_windSpeed*m_windSpeed*m_frontalArea;
     m_yadim = 0.5*rho*m_windSpeed*m_windSpeed*m_lateralArea;
     m_nadim = 0.5*rho*m_windSpeed*m_windSpeed*m_lateralArea*m_lengthOverAll;
+
+    system.Initialize();
 }
 
 TEST_F(TestFrStandardWindForce, TestForce) {
@@ -88,4 +91,20 @@ TEST_F(TestFrStandardWindForce, TestForce) {
             EXPECT_NEAR(m_dragCoefficient(2, i), force->GetTorqueInWorldAtCOG(NWU).GetMz() / m_nadim, 1.e-5);
 
         }
+}
+
+TEST_F(TestFrStandardWindForce, TestTransport) {
+
+    int i = 2;
+    double xc = 0.5;
+
+    system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()
+            ->Set(m_direction(i), m_windSpeed, DEG, MS, NED, COMEFROM);
+
+    force->SetXCenter(xc);
+    force->Initialize();
+    force->Update(0.);
+
+    double torqueRef = m_dragCoefficient(2, i) * m_nadim + (xc-0.1) * m_dragCoefficient(1, i) * m_yadim;
+    EXPECT_NEAR(torqueRef / m_nadim, force->GetTorqueInWorldAtCOG(NWU).GetMz() / m_nadim, 1.e-5);
 }

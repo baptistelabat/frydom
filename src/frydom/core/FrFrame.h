@@ -269,6 +269,8 @@ namespace frydom {
         /// \return the inverse frame transformation
         FrFrame_ GetInverse() const;
 
+        FrFrame_ ProjectToHorizontalPlane() const;
+
         template <class Vector>
         Vector ProjectVectorParentInFrame(const Vector& parentVector) const {
             return GetQuaternion().GetInverse().Rotate<Vector>(parentVector, NWU);
