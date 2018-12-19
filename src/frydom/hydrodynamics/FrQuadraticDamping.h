@@ -83,7 +83,7 @@ namespace frydom {
 
 
 
-    // REFACTORING ---------------6>>>>>>>>>>>>>>>>>
+    /// REFACTORING --------------->>>>>>>>>>>>>>>>>
 
 
 
@@ -136,18 +136,6 @@ namespace frydom {
 
         /// Initialize method checking if projected sections are correctly given, and initializing the logs.
         void Initialize() override;
-
-        /// Setter for the log prefix
-//        void SetLogPrefix(std::string prefix_name) override {
-//            if (prefix_name=="") {
-//                m_logPrefix = "FquadDamp_" + FrForce::m_logPrefix;
-//            } else {
-//                m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
-//            }
-//        }
-
-//        /// Update the state of the quadratic damping force (compute the force)
-//        void UpdateState() override;
 
         void StepFinalize() override;
 
