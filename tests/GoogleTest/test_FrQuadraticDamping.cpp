@@ -59,7 +59,7 @@ TEST_F(TestQuadraticDamping, TestBodyVelocity) {
 
 }
 
-TEST_F(TestQuadraticDamping, TestFlowVelocity) {
+TEST_F(TestQuadraticDamping, TestCurrentVelocity) {
 
     force->SetDampingCoefficients(Cu, Cv, Cw);
     force->SetProjectedSections(Su, Sv, Sw);
@@ -78,4 +78,28 @@ TEST_F(TestQuadraticDamping, TestFlowVelocity) {
     EXPECT_NEAR(forceRef.GetFx(), bodyForce.GetFx(), 1e-5);
     EXPECT_NEAR(forceRef.GetFy(), bodyForce.GetFy(), 1e-5);
     EXPECT_NEAR(forceRef.GetFz(), bodyForce.GetFz(), 1e-5);
+}
+
+TEST_F(TestQuadraticDamping, TestWindVelocity) {
+
+    auto windDamping = std::make_shared<FrQuadraticDamping_>(AIR, true);
+    body->AddExternalForce(windDamping);
+
+    windDamping->SetDampingCoefficients(Cu, Cv, Cw);
+    windDamping->SetProjectedSections(Su, Sv, Sw);
+
+    system.GetEnvironment()->GetAtmosphere()->GetWind()->MakeFieldUniform();
+    auto frameAtCOG = body->GetFrameAtCOG(NWU);
+    Velocity flowVelocity = frameAtCOG.ProjectVectorInParent(Velocity(-0.5, 1.3, 0.));
+    system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()->Set(flowVelocity, NWU, GOTO);
+    body->SetVelocityInBodyNoRotation(Velocity(0., 0., 0.1), NWU);
+    system.Initialize();
+
+    windDamping->Update(0.);
+
+    auto bodyForce = windDamping->GetForceInBody(NWU);
+    EXPECT_NEAR(forceRef.GetFx() * 0.001172346640701071, bodyForce.GetFx(), 1e-5);
+    EXPECT_NEAR(forceRef.GetFy() * 0.001172346640701071, bodyForce.GetFy(), 1e-5);
+    EXPECT_NEAR(forceRef.GetFz() * 0.001172346640701071, bodyForce.GetFz(), 1e-5);
+
 }
