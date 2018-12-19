@@ -35,8 +35,10 @@ namespace frydom {
         /// \param time Current time of the simulation
         void Update(double time) override;
 
+        /// Initialize the state of the flow force
         void Initialize() override {}
 
+        /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override {}
 
     };

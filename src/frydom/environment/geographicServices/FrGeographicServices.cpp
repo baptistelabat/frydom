@@ -9,7 +9,7 @@
 #include <frydom/core/FrVector.h>
 
 
-/**
+/*
  * In GeographicServices, the cartesian reference frame depends on the frame convention given (NED/NWU).
  * In GeographicLib, the cartesian coordinates is defined as ENU (x=East, y= North, z=Up).
  */

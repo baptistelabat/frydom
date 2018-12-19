@@ -57,5 +57,5 @@ namespace frydom {
          */
     };
 
-}
+} // end namespace frydom
 #endif //FRYDOM_FRASSETBUOY_H

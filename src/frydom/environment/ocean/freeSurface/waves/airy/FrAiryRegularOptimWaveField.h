@@ -11,12 +11,10 @@ namespace frydom {
 
     class FrAiryRegularOptimWaveField : public FrAiryRegularWaveField {
     private:
-        /// cache attribute for the time dependant coefficient (H.exp(-j.w.t)
-        Complex c_expJwt;
-        /// cache attribute for the cos(theta) value
-        double c_cosTheta;
-        /// cache attribute for the sin(theta) value
-        double c_sinTheta;
+
+        Complex c_expJwt;    ///< cache attribute for the time dependant coefficient (H.exp(-j.w.t)
+        double c_cosTheta;   ///< cache attribute for the cos(theta) value
+        double c_sinTheta;   ///< cache attribute for the sin(theta) value
 
     public:
         explicit FrAiryRegularOptimWaveField(FrFreeSurface_* freeSurface);

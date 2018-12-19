@@ -7,7 +7,7 @@
 
 #include "complex"
 
-namespace frydom{
+namespace frydom {
 
     using Complex = std::complex<double>;
     #define JJ Complex(0, 1)

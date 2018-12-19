@@ -17,19 +17,15 @@ namespace frydom {
     };
 
     struct FrFluidProperties{
+        //TODO : ITTC Recommended Procedures : Fresh Water and Seawater Properties
         // Fluid properties:
-        /// Fluid temperature, in Celsius (SI:Kelvin?)
-        double m_temperature;
-        /// Fluid density, in kg/m³
-        double m_density;
-        /// Fluid dynamic viscosity, in (Ns/m² = Pa.s)
-        double m_dynamicViscosity;
-        /// Fluid kinematic viscosity, in ? (m²/s)
-        double m_kinematicViscosity;
-        /// Fluid salinity, dimensionless (g/kg)
-        double m_salinity; //TODO : ITTC Recommended Procedures : Fresh Water and Seawater Properties
-        /// Fluid static pressure (MPa)
-        double m_pressure;
+
+        double m_temperature;            ///> Fluid temperature, in Celsius (SI:Kelvin?)
+        double m_density;                ///> Fluid density, in kg/m³
+        double m_dynamicViscosity;       ///> Fluid dynamic viscosity, in (Ns/m² = Pa.s)
+        double m_kinematicViscosity;     ///> Fluid kinematic viscosity, in ? (m²/s)
+        double m_salinity;               ///> Fluid salinity, dimensionless (g/kg)
+        double m_pressure;               ///> Fluid static pressure (MPa)
 
         FrFluidProperties() {
             m_temperature = 0.;

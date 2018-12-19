@@ -85,7 +85,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ------------->>>>>>>>>>>>
+    // REFACTORING ------------->>>>>>>>>>>>
 
     // Forward declaration
     class FrOffshoreSystem_;

@@ -378,7 +378,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ------------->>>>>>>>>>>>>>>>>>
+    // REFACTORING ------------->>>>>>>>>>>>>>>>>>
 
 
 
@@ -393,22 +393,14 @@ namespace frydom {
 
     protected:
 
-        /// Pointer to the free surface containing this wave field
-        FrFreeSurface_* m_freeSurface;
-
-        /// wave model (NO_WAVES, LINEAR_WAVES)
-        WAVE_MODEL m_waveModel = NO_WAVES;
-
-        /// cache value of the time ramp applied on the wave field
-        double c_ramp;
+        FrFreeSurface_* m_freeSurface;        ///< Pointer to the free surface containing this wave field
+        WAVE_MODEL m_waveModel = NO_WAVES;    ///< wave model (NO_WAVES, LINEAR_WAVES)
 
         // Cache attributes
-        /// cache value of the time of the simulation
-        double c_time;
-        /// cache value of the depth. (depth = bathymetry + tidal)
-        double c_depth;
-        /// Infinite depth boolean (if true, water depth is considered as infinite)
-        bool m_infinite_depth = false;
+        double c_ramp = 1.;                        ///< cache value of the time ramp applied on the wave field
+        double c_time;                        ///< cache value of the time of the simulation
+        double c_depth;                       ///< cache value of the depth. (depth = bathymetry + tidal)
+        bool m_infinite_depth = false;        ///< Infinite depth boolean (if true, water depth is considered as infinite)
 
     public:
 

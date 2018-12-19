@@ -268,7 +268,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ------>>>>>>>>>>>>>>
+    // REFACTORING ------>>>>>>>>>>>>>>
 
     class FrUnitQuaternion_;
     class FrBody_;
@@ -277,19 +277,28 @@ namespace frydom {
     namespace internal {
 
         /// Base class inheriting from chrono ChBodyAuxRef
-        /// This class must be used by external FRyDoM users. It is used in composition rule along with the FrBody_ FRyDoM class
-        struct _FrBodyBase : public chrono::ChBodyAuxRef {  // TODO : encapsuler dans le namespace internal
+        /// This class must not be used by external FRyDoM users. It is used in composition rule along with the FrBody_ FRyDoM class
+        struct _FrBodyBase : public chrono::ChBodyAuxRef {
 
-            FrBody_ *m_frydomBody;
+            FrBody_ *m_frydomBody;                      ///< pointer to the FrBody containing this bodyBase
 
+            /// Constructor of the bodyBase
+            /// \param body body containing this bodyBase
             explicit _FrBodyBase(FrBody_ *body);
 
+            /// Initial setup of the bodyBase, called from chrono, call the Initialize of the body
             void SetupInitial() override;
 
+            /// Update the state of the bodyBase, called from chrono, call the Update of the body
+            /// \param update_assets check if the assets are updated
             void Update(bool update_assets) override;
 
+            /// Update the state of the body when this one is moved by its setters.
+            /// It is not called during simulation by chrono
             void UpdateAfterMove();
 
+            /// Update the markers position, relatively to the new Center Of Gravity given
+            /// \param newCOG new Center Of Gravity
             void UpdateMarkerPositionToCOG(const chrono::ChVector<> newCOG);
 
         };
@@ -298,10 +307,8 @@ namespace frydom {
 
 
     // Forward declarations
-//    class FrForce_;
     class FrFrame_;
     class FrRotation_;
-//    class FrNode_;
     class FrOffshoreSystem_;
     class FrGeographicCoord;
 
@@ -331,14 +338,12 @@ namespace frydom {
         FrOffshoreSystem_* GetSystem() const;
 
         /// Set the body name
+        /// \param name body name
         void SetName(const char name[]);
 
         /// Make the body fixed
+        /// \param state true if body is fixed, false otherwise
         void SetBodyFixed(bool state);
-
-
-
-
 
 
         // =============================================================================================================
@@ -349,12 +354,16 @@ namespace frydom {
         double GetMass() const;
 
         /// Set the body mass in kg
+        /// \param mass body mass in kg
         void SetMass(double mass);
 
         /// Set the COG position in the body reference frame
+        /// \param bodyPos COG position in the body reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetCOG(const Position& bodyPos, FRAME_CONVENTION fc);
 
         /// Get the COG position in the body reference frame
+        /// \param fc frame convention (NED/NWU)
         Position GetCOG(FRAME_CONVENTION fc) const;
 
         /// Get the inertia parameters as a FrInertiaTensor_ object
@@ -394,13 +403,16 @@ namespace frydom {
 
         /// Set the contact method (SMOOTH or NONSMOOTH)
         /// The system where the body is registered must be consistent
+        /// \param contactType contact method to be used (SMOOTH/NONSMOOTH)
         void SetContactMethod(CONTACT_TYPE contactType);
 
         /// Get the contact method of this body
+        /// \return contact method used (SMOOTH/NONSMOOTH)
         CONTACT_TYPE GetContactType() const;
 
         /// Set the collide mode. If true, a collision shape must be set and the body will participate in physical
         /// collision with other physical collision enabled items
+        /// \param isColliding true if a collision model is to be defined, false otherwise
         void SetCollide(bool isColliding);
 
         // TODO : ajouter de quoi definir des shapes de collision !!!
@@ -411,12 +423,18 @@ namespace frydom {
 //        void AssetActive() // TODO
 
         /// Add a box shape to the body with its dimensions defined in absolute coordinates. Dimensions in meters
+        /// \param xSize size of the box along the x absolute coordinates
+        /// \param ySize size of the box along the y absolute coordinates
+        /// \param zSize size of the box along the z absolute coordinates
         void AddBoxShape(double xSize, double ySize, double zSize);  // TODO : definir plutot les dimensions dans le repere local du corps...
 
         /// Add a cylinder shape to the body with its dimensions defined in ???? Dimensions in meters
+        /// \param radius radius of the cylinder shape.
+        /// \param height height of the cylinder shape.
         void AddCylinderShape(double radius, double height);  // FIXME : travailler la possibilite de definir un axe... dans le repere local du corps
 
         /// Add a sphere shape to the body. Dimensions in meters.
+        /// \param radius radius of the sphere shape.
         void AddSphereShape(double radius);  // TODO : permettre de definir un centre en coords locales du corps
 
         // =============================================================================================================
@@ -427,22 +445,26 @@ namespace frydom {
         /// This is useful in virtual reality and real-time simulations, because
         /// it reduces the risk of bad collision detection.
         /// The realism is limited, but the simulation is more stable.
+        /// \param activate true if the speed limit is activated, false otherwise
         void ActivateSpeedLimits(bool activate);
 
         /// Set the maximum linear speed (beyond this limit it will be clamped). In m/s
         /// This is useful in virtual reality and real-time simulations, because
         /// it reduces the risk of bad collision detection.
         /// This speed limit is active only if you set  SetLimitSpeed(true);
+        /// \param maxSpeed maximum linear speed, for the speed limit feature
         void SetMaxSpeed(double maxSpeed);
 
         /// Set the maximum angular speed (beyond this limit it will be clamped). In rad/s
         /// This is useful in virtual reality and real-time simulations, because
         /// it reduces the risk of bad collision detection.
         /// This speed limit is active only if you set  SetLimitSpeed(true);
+        /// \param maxSpeed maximum angular speed, for the speed limit feature
         void SetMaxRotationSpeed(double wMax);
 
         /// [DEBUGGING MODE] Remove the gravity by adding a anti-gravity. This is a debugging method and should not be
         /// used in projects
+        /// \param val true if the gravity is to be removed, false otherwise.
         void RemoveGravity(bool val);
 
 
@@ -451,9 +473,11 @@ namespace frydom {
         // =============================================================================================================
 
         /// Add an external force to the body
+        /// \param force force to be added to the body
         void AddExternalForce(std::shared_ptr<FrForce_> force);
 
         /// Remove an external force to the body
+        /// \param force force to be removed to the body
         void RemoveExternalForce(std::shared_ptr<FrForce_> force);
 
         /// Remove all forces from the body
@@ -465,12 +489,22 @@ namespace frydom {
         // =============================================================================================================
 
         /// Get a new node attached to the body given a frame defined with respect to the body reference frame
+        /// \param bodyFrame frame of the node, given in body reference frame
+        /// \return node created
         std::shared_ptr<FrNode_> NewNode(const FrFrame_& bodyFrame);
 
         /// Get a new node attached to the body given a position of the node expressed into the body reference frame
+        /// \param localPosition position of the node, in the body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return node created
         std::shared_ptr<FrNode_> NewNode(const Position& localPosition, FRAME_CONVENTION fc);
 
         /// Get a new node attached to the body given a position of the node expressed into the body reference frame
+        /// \param x x position of the node in the body reference frame
+        /// \param y y position of the node in the body reference frame
+        /// \param z z position of the node in the body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return node created
         std::shared_ptr<FrNode_> NewNode(double x, double y, double z, FRAME_CONVENTION fc);
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame_ !
@@ -481,15 +515,19 @@ namespace frydom {
         // =============================================================================================================
 
         /// Add a mesh as an asset for visualization given a WaveFront .obj file name
+        /// \param obj_filename filename of the asset to be added
         void AddMeshAsset(std::string obj_filename);
 
         /// Add a mesh as an asset for visualization given a FrTriangleMeshConnected mesh object
+        /// \param mesh mesh of the asset to be added
         void AddMeshAsset(std::shared_ptr<FrTriangleMeshConnected> mesh);
 
-        /// Set the mesh color in visualization given a color id
+        /// Set the asset color in visualization given a color id
+        /// \param colorName color of the asset
         void SetColor(NAMED_COLOR colorName);
 
-        /// Set the mesh color in visualization given a FrColor object
+        /// Set the asset color in visualization given a FrColor object
+        /// \param color color of the asset
         void SetColor(const FrColor& color);
 
         // =============================================================================================================
@@ -499,6 +537,8 @@ namespace frydom {
         // Position of the body reference frame in world -->
 
         /// Get the position in world frame of the origin of the body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return position in world frame of the origin of the body reference frame
         Position GetPosition(FRAME_CONVENTION fc) const;
 
         /// Get the geographic position in world frame of the origin of the body reference frame
@@ -509,6 +549,8 @@ namespace frydom {
         /// Set the position in world frame of the origin of the body reference frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
+        /// \param worldPos position in world frame of the origin of the body reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetPosition(const Position& worldPos, FRAME_CONVENTION fc);
 
         /// Set the position in world frame of the origin of the body reference frame, at a geographic position
@@ -517,49 +559,68 @@ namespace frydom {
         /// \param geoPos geographic destination for the origin of the body reference frame
         void SetGeoPosition(const FrGeographicCoord& geoPos);
 
-        /// Get the rotation object that represents the orientation of the body reference frame in the world
+        /// Get the rotation object that represents the orientation of the body reference frame in the world frame
+        /// \return rotation object that represents the orientation of the body reference frame in the world frame
         FrRotation_ GetRotation() const;
 
         /// Set the orientation of the body reference frame in world using a rotation object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
+        /// \param rotation orientation of the body reference frame in world frame
         void SetRotation(const FrRotation_& rotation);
 
-        /// Get the quaternion object that represents the orientation of the body reference frame in the world
+        /// Get the quaternion object that represents the orientation of the body reference frame in the world frame
+        /// \return quaternion object that represents the orientation of the body reference frame in the world frame
         FrUnitQuaternion_ GetQuaternion() const;
 
-        /// Set the orientation of the body reference frame in world using a quaterion object
+        /// Set the orientation of the body reference frame in world frame using a quaterion object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
+        /// \param quaternion orientation of the body reference frame in world frame
         void SetRotation(const FrUnitQuaternion_& quaternion);
 
         //TODO : ajouter ici toutes les methodes portant sur d'autres representations de la rotation
 
 
 
-        /// Get the body reference frame expressed in the world
+        /// Get the body reference frame expressed in the world frame
+        /// \return body reference frame expressed in the world frame
         FrFrame_ GetFrame() const;
 
         /// Set the body reference frame expressed in the world frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
+        /// \param worldFrame body reference frame expressed in the world frame
         void SetFrame(const FrFrame_& worldFrame);
 
         /// Get a frame object whose origin is located at a body point expressed in BODY frame and orientation is that
         /// of the body reference frame
+        /// \param bodyPoint origin of the frame to return
+        /// \param fc frame convention (NED/NWU)
+        /// \return body frame
         FrFrame_ GetFrameAtPoint(const Position& bodyPoint, FRAME_CONVENTION fc);
 
         /// Get a frame object whose origin is locate at COG and orientation is that of the body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return body frame
         FrFrame_ GetFrameAtCOG(FRAME_CONVENTION fc);
 
 
         /// Get the position in world frame of a body fixed point whose position is given in body reference frame
+        /// \param bodyPos position in the body reference frame of the point to be returned in world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return point position in world reference frame
         Position GetPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const;
 
         /// Get the position in body reference frame of a body fixed point whose position is given in world frame
+        /// \param worldPos position in the world reference frame of the point to be returned in body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return point position in body reference frame
         Position GetPointPositionInBody(const Position& worldPos, FRAME_CONVENTION fc) const;
 
         /// Get the body COG position in world frame (coordinates are expressed in world frame)
+        /// \param fc frame convention (NED/NWU)
+        /// \return COG position in body reference frame
         Position GetCOGPositionInWorld(FRAME_CONVENTION fc) const;
 
 
@@ -585,43 +646,88 @@ namespace frydom {
         /// Set the position in WORLD frame of a body fixed point whose position is defined wrt body reference frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
+        /// \param bodyPoint position of a point given in the body reference frame
+        /// \param worldPos destination position for the point, given in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetPositionOfBodyPoint(const Position &bodyPoint, const Position &worldPos, FRAME_CONVENTION fc);
 
         /// Translate the body along a translation vector whose coordinates are given in the world frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
+        /// \param worldTranslation translation to be applied to the body, expressed in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void TranslateInWorld(const Position& worldTranslation, FRAME_CONVENTION fc);
 
         /// Translate the body along a translation vector whose coordinates are given in the body frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
+        /// \param bodyTranslation translation to be applied to the body, expressed in body reference frame
+        /// \param fc frame convention (NED/NWU)
         void TranslateInBody(const Position& bodyTranslation, FRAME_CONVENTION fc);
 
 
         /// Rotate the body with respect to its current orientation in world using a rotation object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
+        /// \param relRotation relative rotation to be applied
         void Rotate(const FrRotation_& relRotation);
 
         /// Rotate the body with respect to its current orientation in world using a quaternion object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
+        /// \param relQuaternion relative rotation, defined with quaternion, to be applied
         void Rotate(const FrUnitQuaternion_& relQuaternion);
-
-
         // FIXME : reflechir de nouveau a ce que sont les eux methodes precedentes... on tourne autour de quoi ?
         // Possible que ca n'ait pas de sens...
+
+        /// Rotate the body around a point, given in world reference frame,  with respect to its current orientation
+        /// in world using a rotation object.
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        /// \param rot rotation to be applied
+        /// \param worldPos point position around which the body is to be rotated, given in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void RotateAroundPointInWorld(const FrRotation_& rot, const Position& worldPos, FRAME_CONVENTION fc);
 
+        /// Rotate the body around a point, given in body reference frame,  with respect to its current orientation
+        /// in world using a rotation object.
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        /// \param rot rotation to be applied
+        /// \param worldPos point position around which the body is to be rotated, given in body reference frame
+        /// \param fc frame convention (NED/NWU)
         void RotateAroundPointInBody(const FrRotation_& rot, const Position& bodyPos, FRAME_CONVENTION fc);
 
+        /// Rotate the body around COG with respect to its current orientation in world using a rotation object.
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        /// \param rot rotation to be applied
+        /// \param fc frame convention (NED/NWU)
         void RotateAroundCOG(const FrRotation_& rot, FRAME_CONVENTION fc);
 
-
+        /// Rotate the body around a point, given in world reference frame,  with respect to its current orientation
+        /// in world using a quaternion object.
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        /// \param rot rotation to be applied, with a quaternion object
+        /// \param worldPos point position around which the body is to be rotated, given in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void RotateAroundPointInWorld(const FrUnitQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc);
 
+        /// Rotate the body around a point, given in body reference frame,  with respect to its current orientation
+        /// in world using a quaternion object.
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        /// \param rot rotation to be applied, with a quaternion object
+        /// \param worldPos point position around which the body is to be rotated, given in body reference frame
+        /// \param fc frame convention (NED/NWU)
         void RotateAroundPointInBody(const FrUnitQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc);
 
+        /// Rotate the body around COG with respect to its current orientation in world using a quaternion object.
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        /// \param rot rotation to be applied, with a quaternion object
+        /// \param fc frame convention (NED/NWU)
         void RotateAroundCOG(const FrUnitQuaternion_& rot, FRAME_CONVENTION fc);
 
 
@@ -631,129 +737,217 @@ namespace frydom {
 
 
         /// Set the velocity of the body reference frame with a vector expressed in WORLD frame
+        /// \param worldVel body velocity in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetVelocityInWorldNoRotation(const Velocity& worldVel, FRAME_CONVENTION fc);
 
         /// Set the velocity of the body reference frame with a vector expressed in BODY frame
+        /// \param bodyVel body velocity in body reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetVelocityInBodyNoRotation(const Velocity& bodyVel, FRAME_CONVENTION fc);
 
         /// Set the generalized velocity of the body reference frame with vectors expressed in WORLD frame
+        /// \param worldVel body velocity in world reference frame
+        /// \param worldAngVel body angular velocity in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetGeneralizedVelocityInWorld(const Velocity& worldVel, const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
 
         /// Set the generalized velocity of the body reference frame with vectors expressed in BODY frame
+        /// \param bodyVel body velocity in body reference frame
+        /// \param bodyAngVel body angular velocity in body reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetGeneralizedVelocityInBody(const Velocity& bodyVel, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
 
 
         /// Get the velocity of the body reference frame with a vector expressed in WORLD frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return body velocity in world reference frame
         Velocity GetVelocityInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the velocity of the body reference frame with a vector expressed in BODY frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return body velocity in body reference frame
         Velocity GetVelocityInBody(FRAME_CONVENTION fc) const;
 
 
         /// Get the velocity of the body COG with a vector expressed in WORLD frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return COG velocity in world reference frame
         Velocity GetCOGVelocityInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the velocity of the body COG with a vector expressed in BODY frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return COG velocity in body reference frame
         Velocity GetCOGVelocityInBody(FRAME_CONVENTION fc) const;
 
         /// Set the acceleration of the body COG with a vector expressed in WORLD frame
+        /// \param worldAcc body acceleration in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetAccelerationInWorldNoRotation(const Acceleration &worldAcc, FRAME_CONVENTION fc);
 
         /// Set the acceleration of the body COG with a vector expressed in BODY frame
+        /// \param bodyAcc body acceleration in body reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetAccelerationInBodyNoRotation(const Acceleration &bodyAcc, FRAME_CONVENTION fc);
 
         /// Get the acceleration of the body COG with a vector expressed in WORLD frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return COG acceleration in world reference frame
         Acceleration GetCOGAccelerationInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the acceleration of the body COG with a vector expressed in BODY frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return COG acceleration in body reference frame
         Acceleration GetCOGAccelerationInBody(FRAME_CONVENTION fc) const;
 
 
 
         /// Set the body angular velocity from a vector expressed in WORLD frame
+        /// \param worldAngVel body angular velocity in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetAngularVelocityInWorld(const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
 
         /// Set the body angular velocity from a vector expressed in BODY frame
+        /// \param bodyAngVel body angular velocity in body reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetAngularVelocityInBody(const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
 
 
         /// Get the body angular velocity from a vector expressed in WORLD frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return body angular velocity in world reference frame
         AngularVelocity GetAngularVelocityInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the body angular velocity from a vector expressed in BODY frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return body angular velocity in body reference frame
         AngularVelocity GetAngularVelocityInBody(FRAME_CONVENTION fc) const;
 
 
 
         /// Set the body angular acceleration from a vector expressed in WORLD frame
+        /// \param worldAngAcc body angular acceleration in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetAngularAccelerationInWorld(const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
 
         /// Set the body angular acceleration from a vector expressed in BODY frame
+        /// \param bodyAngAcc body angular acceleration in body reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetAngularAccelerationInBody(const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
 
 
         /// Get the body angular acceleration from a vector expressed in WORLD frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return body angular acceleration in world reference frame
         AngularAcceleration GetAngularAccelerationInWorld(FRAME_CONVENTION fc) const;
 
         /// Get the body angular acceleration from a vector expressed in BODY frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return body angular acceleration in body reference frame
         AngularAcceleration GetAngularAccelerationInBody(FRAME_CONVENTION fc) const;
 
 
 
         /// Get the velocity expressed in world frame of a body fixed point whose coordinates are given in world frame
+        /// \param worldPoint point position in world reference frame, at which the velocity is requested
+        /// \param fc frame convention (NED/NWU)
+        /// \return body velocity expressed in world reference frame
         Velocity GetVelocityInWorldAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
 
         /// Get the velocity expressed in world frame of a body fixed point whose coordinates are given in body frame
+        /// \param bodyPoint point position in body reference frame, at which the velocity is requested
+        /// \param fc frame convention (NED/NWU)
+        /// \return body velocity expressed in world reference frame
         Velocity GetVelocityInWorldAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
 
         /// Get the velocity expressed in body frame of a body fixed point whose coordinates are given in world frame
+        /// \param worldPoint point position in world reference frame, at which the velocity is requested
+        /// \param fc frame convention (NED/NWU)
+        /// \return body velocity expressed in body reference frame
         Velocity GetVelocityInBodyAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
 
         /// Get the velocity expressed in body frame of a body fixed point whose coordinates are given in body frame
+        /// \param bodyPoint point position in body reference frame, at which the velocity is requested
+        /// \param fc frame convention (NED/NWU)
+        /// \return body velocity expressed in body reference frame
         Velocity GetVelocityInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
 
 
 
         /// Get the acceleration expressed in world frame of a body fixed point whose coordinates are given in world frame
+        /// \param worldPoint point position in world reference frame, at which the acceleration is requested
+        /// \param fc frame convention (NED/NWU)
+        /// \return body acceleration expressed in world reference frame
         Acceleration GetAccelerationInWorldAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
 
         /// Get the acceleration expressed in world frame of a body fixed point whose coordinates are given in body frame
+        /// \param bodyPoint point position in body reference frame, at which the acceleration is requested
+        /// \param fc frame convention (NED/NWU)
+        /// \return body acceleration expressed in world reference frame
         Acceleration GetAccelerationInWorldAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
 
         /// Get the acceleration expressed in body frame of a body fixed point whose coordinates are given in world frame
+        /// \param worldPoint point position in world reference frame, at which the acceleration is requested
+        /// \param fc frame convention (NED/NWU)
+        /// \return body acceleration expressed in body reference frame
         Acceleration GetAccelerationInBodyAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
 
         /// Get the acceleration expressed in body frame of a body fixed point whose coordinates are given in body frame
+        /// \param bodyPoint point position in body reference frame, at which the acceleration is requested
+        /// \param fc frame convention (NED/NWU)
+        /// \return body acceleration expressed in body reference frame
         Acceleration GetAccelerationInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
 
 
 
         /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
         /// along with the angular velocity expressed in WORLD frame so that the velocity state is totally defined
+        /// \param worldPoint point position in world reference frame, at which the generalized velocity is set
+        /// \param worldVel body linear velocity in world reference frame
+        /// \param worldAngVel body angular velocity in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetGeneralizedVelocityInWorldAtPointInWorld(const Position& worldPoint,
                 const Velocity& worldVel, const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
 
         /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in BODY frame
         /// along with the angular velocity expressed in WORLD frame so that the velocity state is totally defined
+        /// \param bodyPoint point position in body reference frame, at which the generalized velocity is set
+        /// \param worldVel body linear velocity in world reference frame
+        /// \param worldAngVel body angular velocity in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetGeneralizedVelocityInWorldAtPointInBody(const Position& bodyPoint,
                 const Velocity& worldVel, const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
 
         /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in WORLD frame
         /// along with the angular velocity expressed in BODY frame so that the velocity state is totally defined
+        /// \param worldPoint point position in world reference frame, at which the generalized velocity is set
+        /// \param bodyVel body linear velocity in body reference frame
+        /// \param bodyAngVel body angular velocity in body reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetGeneralizedVelocityInBodyAtPointInWorld(const Position& worldPoint,
                 const Velocity& bodyVel, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
 
         /// Set the velocity expressed in BODY frame of a body fixed point whose coordinates are given in BODY frame
         /// along with the angular velocity expressed in BODY frame so that the velocity state is totally defined
+        /// \param bodyPoint point position in body reference frame, at which the generalized velocity is set
+        /// \param bodyVel body linear velocity in body reference frame
+        /// \param bodyAngVel body angular velocity in body reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetGeneralizedVelocityInBodyAtPointInBody(const Position& bodyPoint,
                 const Velocity& bodyVel, const AngularVelocity& bodyAngVel, FRAME_CONVENTION fc);
 
         /// Set the COG acceleration along with the angular velocity expressed in BODY frame,
         /// so that the acceleration state is totally defined
+        /// \param bodyAcc body linear acceleration in body reference frame
+        /// \param bodyAngAcc body angular acceleration in body reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetGeneralizedAccelerationInBodyAtCOG(const Acceleration& bodyAcc, const AngularAcceleration& bodyAngAcc, FRAME_CONVENTION fc);
 
         /// Set the COG acceleration along with the angular velocity expressed in WORLD frame,
         /// so that the acceleration state is totally defined
+        /// \param worldAcc body linear acceleration in world reference frame
+        /// \param worldAngAcc body angular acceleration in world reference frame
+        /// \param fc frame convention (NED/NWU)
         void SetGeneralizedAccelerationInWorldAtCOG(const Acceleration& worldAcc, const AngularAcceleration& worldAngAcc, FRAME_CONVENTION fc);
 
         // =============================================================================================================
@@ -762,22 +956,42 @@ namespace frydom {
 
         // Projection of 3D vectors defined in FrVector.h
 
+        /// Project a vector given in body reference frame, to the world reference frame
+        /// \tparam Vector type of the vector defined in FrVector.h
+        /// \param bodyVector vector given in body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return vector in world reference frame
         template <class Vector>
         Vector ProjectVectorInWorld(const Vector& bodyVector, FRAME_CONVENTION fc) const {
             return GetQuaternion().Rotate<Vector>(bodyVector, fc);
         }
 
+        /// Project in place a vector given in body reference frame, to the world reference frame
+        /// \tparam Vector type of the vector defined in FrVector.h
+        /// \param bodyVector vector given in body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return vector in world reference frame
         template <class Vector>
         Vector& ProjectVectorInWorld(Vector& bodyVector, FRAME_CONVENTION fc) const {
             bodyVector = GetQuaternion().Rotate<Vector>(bodyVector, fc);
             return bodyVector;
         }
 
+        /// Project a vector given in world reference frame, to the body reference frame
+        /// \tparam Vector type of the vector defined in FrVector.h
+        /// \param worldVector vector given in world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return vector in body reference frame
         template <class Vector>
         Vector ProjectVectorInBody(const Vector& worldVector, FRAME_CONVENTION fc) const {
             return GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
         }
 
+        /// Project in place a vector given in world reference frame, to the body reference frame
+        /// \tparam Vector type of the vector defined in FrVector.h
+        /// \param worldVector vector given in world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return vector in body reference frame
         template <class Vector>
         Vector& ProjectVectorInBody(Vector& worldVector, FRAME_CONVENTION fc) const {
             worldVector = GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
@@ -787,22 +1001,43 @@ namespace frydom {
 
         // Projection of generalized vectors defined in FrVector.h
 
+
+        /// Project a generalized vector given in body reference frame, to the world reference frame
+        /// \tparam Vector type of the generalized vector defined in FrVector.h
+        /// \param bodyVector vector given in body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return vector in world reference frame
         template <class Vector>
         Vector ProjectGenerallizedVectorInWorld(const Vector& bodyVector, FRAME_CONVENTION fc) const {
             return GetQuaternion().Rotate<Vector>(bodyVector, fc);
         }
 
+        /// Project in place a generalized vector given in body reference frame, to the world reference frame
+        /// \tparam Vector type of the generalized vector defined in FrVector.h
+        /// \param bodyVector vector given in body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return vector in world reference frame
         template <class Vector>
         Vector& ProjectGenerallizedVectorInWorld(Vector& bodyVector, FRAME_CONVENTION fc) const {
             bodyVector = GetQuaternion().Rotate<Vector>(bodyVector, fc);
             return bodyVector;
         }
 
+        /// Project a generalized vector given in world reference frame, to the body reference frame
+        /// \tparam Vector type of the generalized vector defined in FrVector.h
+        /// \param bodyVector vector given in world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return vector in body reference frame
         template <class Vector>
         Vector ProjectGenerallizedVectorInBody(const Vector& worldVector, FRAME_CONVENTION fc) const {
             return GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
         }
 
+        /// Project in place a generalized vector given in world reference frame, to the body reference frame
+        /// \tparam Vector type of the generalized vector defined in FrVector.h
+        /// \param bodyVector vector given in world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return vector in body reference frame
         template <class Vector>
         Vector& ProjectGenerallizedVectorInBody(Vector& worldVector, FRAME_CONVENTION fc) const {
             worldVector = GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
@@ -813,7 +1048,7 @@ namespace frydom {
         // CONSTRAINTS ON DOF
         // =============================================================================================================
 
-        // TODO : tenier a jour un masque de degres de liberte bloques...
+        // TODO : tenir a jour un masque de degres de liberte bloques...
 
         // Motion constraints  : FIXME : experimental !!!!
         void ConstainDOF(bool cx, bool cy, bool cz, bool crx, bool cry, bool crz);

@@ -16,8 +16,7 @@ namespace frydom {
     class FrFreeSurfaceGridAsset : public FrGridAsset{
 
     private:
-        /// Pointer to the free surface containing this asset
-        FrFreeSurface_* m_freeSurface;
+        FrFreeSurface_* m_freeSurface;    ///> Pointer to the free surface containing this asset
 
     public:
         /// Default constructor
@@ -32,6 +31,6 @@ namespace frydom {
         void StepFinalize() override;
 
     };
-}
+} // end namespace frydom
 
 #endif //FRYDOM_FRFREESURFACEPHYSICITEM_H

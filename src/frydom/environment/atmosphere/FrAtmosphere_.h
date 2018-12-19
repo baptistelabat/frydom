@@ -21,19 +21,21 @@ namespace frydom {
 
     private:
 
-        /// pointer to the container
-        FrEnvironment_* m_environment;
+        FrEnvironment_* m_environment;    ///< pointer to the container
 
         //---------------------------- Atmosphere elements ----------------------------//
-        /// FrOcean components :
-        std::unique_ptr<FrWind_>     m_wind;
 
-        std::unique_ptr <FrFluidProperties> m_airProp;
+        std::unique_ptr<FrWind_>     m_wind;    ///< Wind, with wind model information
+        std::unique_ptr <FrFluidProperties> m_airProp;  ///< Air properties
 
     public:
 
+        /// Default constructor
+        /// \param environment environment containing this atmosphere
         explicit FrAtmosphere_(FrEnvironment_* environment);
 
+        /// Get the environment containing this atmosphere
+        /// \return environment containing this atmosphere
         FrEnvironment_* GetEnvironment() const;
 
         //----------------------------Fluid properties methods----------------------------//
@@ -86,8 +88,16 @@ namespace frydom {
         /// \return Pressure pressure of the fluid
         double GetPressure() const;
 
+        /// Get Reynolds number (Re = U.L/nu)
+        /// \param characteristicLength characteristic length L, in meters
+        /// \param velocity fluid velocity U, in m/s
+        /// \return Reynolds number, no dimension
         double GetReynoldsNumberInAir(double characteristicLength, double velocity) const;
 
+        /// Get Froude number (Fe = U/sqrt(g.L) )
+        /// \param characteristicLength characteristic length L, in meters
+        /// \param velocity fluid velocity U, in m/s
+        /// \return Froude number, no dimension
         double GetFroudeNumberInAir(double characteristicLength, double velocity) const;
 
         //---------------------------- Ocean elements Getters ----------------------------//

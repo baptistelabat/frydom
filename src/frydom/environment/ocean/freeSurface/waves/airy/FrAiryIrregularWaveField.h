@@ -16,38 +16,25 @@ namespace frydom {
     class FrAiryIrregularWaveField : public FrWaveField_ {
     protected:
 
-        /// Minimum frequency
-        double m_minFreq = 0.05;
-        /// Maximum frequency
-        double m_maxFreq = 2.;
-        /// Number of frequency to discretize
-        unsigned int m_nbFreq = 40;
 
-        /// Mean wave direction
-        double m_meanDir = 0;
-        /// Number of directions to discretize
-        unsigned int m_nbDir = 1;
+        double m_minFreq = 0.;        ///< Minimum frequency
+        double m_maxFreq = 0.;          ///< Maximum frequency
+        unsigned int m_nbFreq = 40;     ///< Number of frequency to discretize
 
-        /// Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
-        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum;
+        double m_meanDir = 0;           ///< Mean wave direction
+        unsigned int m_nbDir = 1;       ///< Number of directions to discretize
 
-        /// Wave directions vector
-        std::vector<double> m_waveDirections;
-        /// Wave frequencies vector
-        std::vector<double> m_waveFrequencies;
-        /// Wave numbers vector
-        std::vector<double> m_waveNumbers;
+        std::unique_ptr<FrWaveSpectrum_> m_waveSpectrum;    ///< Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
 
-        /// cache value of the amplitude given by the wave spectrum
-        std::vector<std::vector<double>> c_amplitude;
+        std::vector<double> m_waveDirections;    ///< Wave directions vector
+        std::vector<double> m_waveFrequencies;   ///< Wave frequencies vector
+        std::vector<double> m_waveNumbers;       ///< Wave numbers vector
 
-        /// Table of wave phases,of dimensions (m_nbDir,m_nbFreq)
-        /// made unique to check at initialize() if wavePhases were given by the users,
-        /// or if they need to be randomly generated.
-        std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases;
-
-        /// Vertical scale velocity factor with stretching
-        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;
+        std::vector<std::vector<double>> c_amplitude;    ///< cache value of the amplitude given by the wave spectrum
+        std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases;    ///< Table of wave phases,of dimensions (m_nbDir,m_nbFreq)
+                                                                           ///< made unique to check at initialize() if wavePhases were given by the users,
+                                                                           ///< or if they need to be randomly generated.
+        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;    ///< Vertical scale velocity factor with stretching
         
     public:
 
@@ -113,22 +100,22 @@ namespace frydom {
         /// \param unit unit of the peak period
         /// \param gamma gamma factor of the Jonswap wave spectrum
         /// \return wave spectrum
-        FrJonswapWaveSpectrum* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S, double gamma=3.3);
+        FrJonswapWaveSpectrum_* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S, double gamma=3.3);
 
         /// Set a Pierson Moskowitz wave spectrum
         /// \param Hs significant height
         /// \param Tp peak period
         /// \param unit unit of the peak period
         /// \return wave spectrum
-        FrPiersonMoskowitzWaveSpectrum* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S);
+        FrPiersonMoskowitzWaveSpectrum_* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S);
 
         /// Set a wave spectrum, based on the TEST wave spectrum type
         /// \return the TEST wave spectrum
-        FrTestWaveSpectrum* SetTestWaveSpectrum();
+        FrTestWaveSpectrum_* SetTestWaveSpectrum();
 
         /// Get the wave spectrum
         /// \return wave spectrum
-        FrWaveSpectrum* GetWaveSpectrum() const;
+        FrWaveSpectrum_* GetWaveSpectrum() const;
 
         ///Generate random wave phases
         void GenerateRandomWavePhases();

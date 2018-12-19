@@ -94,7 +94,7 @@ namespace frydom {
 
 
 
-    /// >>>>>>>>>>>>>>>>>>>>> REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>> REFACTORING
 
     FrWindForce_::FrWindForce_(std::string yamlFile) {
         this->ReadTable(yamlFile);

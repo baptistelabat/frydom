@@ -79,7 +79,7 @@ namespace frydom {
 
 
 
-    /// >>>>>>>>>>>>>>>>>>>>> REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>> REFACTORING
 
     FrCurrentForce_::FrCurrentForce_(std::string yamlFile) {
         m_coeffsTable = std::move(MakeCurrentPolarCoeffTable(yamlFile));

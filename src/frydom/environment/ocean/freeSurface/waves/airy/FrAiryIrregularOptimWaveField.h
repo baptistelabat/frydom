@@ -10,15 +10,12 @@
 namespace frydom {
     class FrAiryIrregularOptimWaveField : public FrAiryIrregularWaveField{
     private:
-        /// Cache value of exp(-j.w_m.t) for the different w_m frequencuies
-        std::vector<Complex> c_expJwt;
-        /// Cache value of cos(theta_n) for the different theta_n directions
-        std::vector<double> c_cosTheta;
-        /// Cache value of sin(theta_n) for the different theta_n directions
-        std::vector<double> c_sinTheta;
-        /// Cache value of A(w_m,theta_n).exp[-j.phase(w_m,theta_n)]
-        /// for the different w_m frequencies and theta_j directions
-        std::vector<std::vector<Complex>> c_AExpJphi;
+
+        std::vector<Complex> c_expJwt;    ///< Cache value of exp(-j.w_m.t) for the different w_m frequencies
+        std::vector<double> c_cosTheta;   ///< Cache value of cos(theta_n) for the different theta_n directions
+        std::vector<double> c_sinTheta;   ///< Cache value of sin(theta_n) for the different theta_n directions
+        std::vector<std::vector<Complex>> c_AExpJphi;    ///< Cache value of A(w_m,theta_n).exp[-j.phase(w_m,theta_n)]
+                                                         ///< for the different w_m frequencies and theta_j directions
     public:
 
         /// Default constructor

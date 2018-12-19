@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRMORISONMODEL_H
 #define FRYDOM_FRMORISONMODEL_H
 
-/// <<<<<<<<<<<<< Head
+// <<<<<<<<<<<<< Head
 
 #include <vector>
 #include <frydom/core/FrPhysicsItem.h>
@@ -15,7 +15,7 @@
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrFlowSensor.h"
 
-/// <<<<<<<<<<<<< Adding header for refactoring
+// <<<<<<<<<<<<< Adding header for refactoring
 
 #include "frydom/core/FrForce.h"
 
@@ -364,7 +364,7 @@ namespace frydom {
 
 
 
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>><<< REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>><<< REFACTORING
 
 
     // --------------------------------------------------------------------------

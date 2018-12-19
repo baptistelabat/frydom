@@ -1,4 +1,4 @@
-//
+//NED
 // Created by frongere on 20/09/18.
 //
 
@@ -27,8 +27,11 @@ namespace frydom {
 
     private:
 
-        chrono::ChQuaternion<double> m_chronoQuaternion;  // Chrono objects are always stored in NWU frame convention
+        chrono::ChQuaternion<double> m_chronoQuaternion;  ///< Chrono class for quaternion,
+                                                          ///< Chrono objects are always stored in NWU frame convention
 
+        /// Get the Chrono quaternion object
+        /// \return Chrono quaternion object
         const chrono::ChQuaternion<double>& GetChronoQuaternion() const;
 
         friend class FrRotation_;

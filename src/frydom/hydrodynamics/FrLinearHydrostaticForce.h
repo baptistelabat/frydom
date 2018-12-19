@@ -11,10 +11,10 @@
 #include <frydom/core/FrHydroBody.h>
 #include "FrLinearHydrostaticStiffnessMatrix.h"
 
-/// <<<<<<<<<<<<<<<<<<< Additional include from refactoring
+// <<<<<<<<<<<<<<<<<<< Additional include from refactoring
 
 
-/// <<<<<<<<<<<<<<<<<<
+// <<<<<<<<<<<<<<<<<<
 
 
 // FIXME: bien travailler sur le bon placement de la force hydrostatique lineaire !!!!
@@ -70,7 +70,7 @@ namespace frydom {
 
 
 
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
     // forward declaration
 

@@ -63,7 +63,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ------>>>>>>>>>>>>>>
+    // REFACTORING ------>>>>>>>>>>>>>>
 
     class FrCurrentForce_ : public FrForce_ {
 

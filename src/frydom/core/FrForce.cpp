@@ -124,7 +124,7 @@ namespace frydom{
 
 
 
-    /// REFACTORING -------------6>>>>>>>>>>>>>>>>>
+    // REFACTORING -------------6>>>>>>>>>>>>>>>>>
 
     namespace internal {
 

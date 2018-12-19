@@ -24,18 +24,14 @@ namespace frydom {
 
     private:
 
-        /// pointer to the container
-        FrEnvironment_* m_environment;
+        FrEnvironment_* m_environment;    ///> pointer to the container
 
         //---------------------------- FrOcean elements ----------------------------//
-        /// Seabed element, with bathymetry model information
-        std::unique_ptr <FrSeabed_> m_seabed;
-        /// Free surface element, with tidal, wavefield models information
-        std::unique_ptr <FrFreeSurface_> m_freeSurface;
-        /// Current, with current model information
-        std::unique_ptr <FrCurrent_> m_current;
-        /// Water properties
-        std::unique_ptr <FrFluidProperties> m_waterProp;
+
+        std::unique_ptr <FrSeabed_> m_seabed;               ///> Seabed element, with bathymetry model information
+        std::unique_ptr <FrFreeSurface_> m_freeSurface;     ///> Free surface element, with tidal, wavefield models information
+        std::unique_ptr <FrCurrent_> m_current;             ///> Current, with current model information
+        std::unique_ptr <FrFluidProperties> m_waterProp;    ///> Water properties
 
     public:
 

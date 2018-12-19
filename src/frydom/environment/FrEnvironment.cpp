@@ -257,7 +257,7 @@ namespace frydom {
 
 
 
-    /// REFACTORING ---------->>>>>>>>>>
+    // REFACTORING ---------->>>>>>>>>>
 
     FrEnvironment_::FrEnvironment_(FrOffshoreSystem_* system) {
 

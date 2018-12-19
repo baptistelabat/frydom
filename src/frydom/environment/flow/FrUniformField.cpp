@@ -180,7 +180,7 @@ namespace frydom {
 
 
 
-    ///////// REFACTORING ---------->>>>>>>>>>>>>
+    // REFACTORING ---------->>>>>>>>>>>>>
 
 
     void FrUniformField::Set(const Velocity& velocity, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc){

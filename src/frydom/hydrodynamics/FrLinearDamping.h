@@ -100,7 +100,7 @@ namespace frydom {
 
 
 
-    ////// REFACTORING ---------->>>>>>>>>>>>>>>>
+    // REFACTORING ---------->>>>>>>>>>>>>>>>
 
 
     class FrLinearDamping_ : public FrForce_ {

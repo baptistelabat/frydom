@@ -82,9 +82,9 @@ namespace frydom {
 
 
 
-    /// REFACTORING ------------>>>>>>>>>>>>>><
+    // REFACTORING ------------>>>>>>>>>>>>>><
 
-    /// -> use FrFlowField
+    // -> use FrFlowField
 
 }  // end namespace frydom
 #endif //FRYDOM_FRWIND_H

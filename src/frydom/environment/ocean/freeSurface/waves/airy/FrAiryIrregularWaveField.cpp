@@ -18,7 +18,7 @@ namespace frydom{
         m_verticalFactor = std::make_unique<FrKinematicStretching_>();
         m_verticalFactor->SetInfDepth(m_infinite_depth);
 
-        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum>();
+        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum_>();
     }
 
     void FrAiryIrregularWaveField::SetWaveFrequencies(double minFreq, double maxFreq, unsigned int nbFreq) {
@@ -93,6 +93,7 @@ namespace frydom{
         assert(m_waveSpectrum!= nullptr);
 
         double spreadingFactor, dirBounds, BoundParameter;
+        double theta_min, theta_max;
 
         m_waveDirections.clear();
         switch (m_waveSpectrum->GetDirectionalModel()->GetType()) {
@@ -100,10 +101,8 @@ namespace frydom{
                 m_waveDirections.push_back(m_meanDir);
                 break;
             case COS2S:
-                BoundParameter = 1E-2;
-                spreadingFactor = dynamic_cast<FrCos2sDirectionalModel*>(m_waveSpectrum->GetDirectionalModel())->GetSpreadingFactor();
-                dirBounds = 2.*acos(pow(BoundParameter,1.0/(2.*spreadingFactor)));
-                m_waveDirections = linspace(m_meanDir - dirBounds, m_meanDir + dirBounds, m_nbDir);
+                m_waveSpectrum->GetDirectionalModel()->GetDirectionBandwidth(theta_min, theta_max, m_meanDir);
+                m_waveDirections = linspace(theta_min, theta_max, m_nbDir);
                 break;
             case DIRTEST:
                 m_waveDirections = linspace(m_meanDir, m_meanDir + 0.1, m_nbDir);
@@ -125,26 +124,26 @@ namespace frydom{
         m_wavePhases = std::make_unique<std::vector<std::vector<double>>>(wavePhases);
     }
 
-    FrJonswapWaveSpectrum *FrAiryIrregularWaveField::SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit, double gamma) {
-        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum>(Hs,Tp,unit,gamma);
-        return dynamic_cast<FrJonswapWaveSpectrum*>(m_waveSpectrum.get());
+    FrJonswapWaveSpectrum_ *FrAiryIrregularWaveField::SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit, double gamma) {
+        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum_>(Hs,Tp,unit,gamma);
+        return dynamic_cast<FrJonswapWaveSpectrum_*>(m_waveSpectrum.get());
     }
 
-    FrPiersonMoskowitzWaveSpectrum *FrAiryIrregularWaveField::SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit) {
-        m_waveSpectrum = std::make_unique<FrPiersonMoskowitzWaveSpectrum>(Hs,Tp,unit);
-        return dynamic_cast<FrPiersonMoskowitzWaveSpectrum*>(m_waveSpectrum.get());
+    FrPiersonMoskowitzWaveSpectrum_ *FrAiryIrregularWaveField::SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit) {
+        m_waveSpectrum = std::make_unique<FrPiersonMoskowitzWaveSpectrum_>(Hs,Tp,unit);
+        return dynamic_cast<FrPiersonMoskowitzWaveSpectrum_*>(m_waveSpectrum.get());
     }
 
-    FrTestWaveSpectrum *FrAiryIrregularWaveField::SetTestWaveSpectrum() {
-        m_waveSpectrum = std::make_unique<FrTestWaveSpectrum>();
-        return dynamic_cast<FrTestWaveSpectrum*>(m_waveSpectrum.get());
+    FrTestWaveSpectrum_ *FrAiryIrregularWaveField::SetTestWaveSpectrum() {
+        m_waveSpectrum = std::make_unique<FrTestWaveSpectrum_>();
+        return dynamic_cast<FrTestWaveSpectrum_*>(m_waveSpectrum.get());
     }
 
 //    void FrAiryIrregularWaveField::SetWaveSpectrum(WAVE_SPECTRUM_TYPE type) {
 //        m_waveSpectrum = MakeWaveSpectrum(type);
 //    }
 
-    FrWaveSpectrum *FrAiryIrregularWaveField::GetWaveSpectrum() const { return m_waveSpectrum.get(); }
+    FrWaveSpectrum_ *FrAiryIrregularWaveField::GetWaveSpectrum() const { return m_waveSpectrum.get(); }
 
     void FrAiryIrregularWaveField::SetStretching(FrStretchingType type) {
         switch (type) {
@@ -164,6 +163,8 @@ namespace frydom{
                 m_verticalFactor = std::make_unique<FrKinStretchingChakrabarti_>(this);
             case DELTA:
                 m_verticalFactor = std::make_unique<FrKinStretchingDelta_>(this);
+            case HDELTA:
+                m_verticalFactor = std::make_unique<FrKinStretchingHDelta_>(this);
             default:
                 m_verticalFactor = std::make_unique<FrKinematicStretching_>();
                 break;
@@ -199,6 +200,10 @@ namespace frydom{
         FrWaveField_::Initialize();
 
         if (m_waveDirections.empty()){m_waveDirections.push_back(m_meanDir);}
+
+        if (m_minFreq==0. && m_maxFreq==0.) {
+            GetWaveSpectrum()->GetFrequencyBandwidth(m_minFreq,m_maxFreq);
+        }
 
         // Initialize wave frequency vector
         SetWaveFrequencies(m_minFreq, m_maxFreq, m_nbFreq);

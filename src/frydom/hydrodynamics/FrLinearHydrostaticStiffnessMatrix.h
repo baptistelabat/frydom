@@ -125,7 +125,7 @@ namespace frydom {
 
 
 
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
     /// This class defines the hydrostatic stiffness matrix for the linear hydrostatic force
     /// Only non null values are stored in the data.

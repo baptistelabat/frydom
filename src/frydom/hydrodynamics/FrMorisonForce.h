@@ -62,7 +62,7 @@ namespace frydom {
 
 
 
-    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
     class FrMorisonForce_ : public FrForce_ {
 
