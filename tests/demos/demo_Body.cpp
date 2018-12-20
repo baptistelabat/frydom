@@ -105,7 +105,66 @@ int main(int argc, char* argv[]) {
     // POSITIONS
     // =============================================================================================================
 
-    // Different methods are available to set the position and orientation in the world reference frame. You can combine
-    // some
+    // Different methods are available to set the body position, orientation or frame (position+rotation) in the world
+    // reference frame. Be careful to take care of the frame convention (NED/NWU) when setting (and getting) positions.
+    // Note that these methods moves the entire body, along with its nodes and other attached elements.
+
+    //------------------------------------------------------------------------------------------------------------------
+    // SetPosition and translation methods:
+
+    // Set the body reference frame position at bodyPosInWorld, expressed in world reference frame.
+    Position bodyPosInWorld(0.,1.,2.);
+    body->SetPosition(bodyPosInWorld,fc);
+
+    // Set the body reference frame at a geographic coordinate (Guinea Golf). Don't forget to define first the origin of
+    // geographic coordinates, see demo_Environment.
+    body->SetGeoPosition(FrGeographicCoord(0.,0.,0.));
+
+    // The bodyPoint, expressed in the body reference frame, will be moved to the worldPos, expressed in the world
+    // reference frame. All the body translate accordingly.
+    Position bodyPoint(1.,0.,5.), worldPos(9.,0.,7.);
+    body->SetPositionOfBodyPoint(bodyPoint, worldPos, fc);
+
+    // Translate the body of a vector bodyTranslation, expressed in the body reference frame.
+    Position bodyTranslation(10.,0.,0.);
+    body->TranslateInBody(bodyTranslation, fc);
+
+    // Translate the body of a vector worldTranslation, expressed in the world reference frame.
+    Position worldTranslation(0.,50.,0.);
+    body->TranslateInWorld(worldTranslation, fc);
+
+    //------------------------------------------------------------------------------------------------------------------
+    // SetRotation and Rotation methods : For constructing rotations, see demo_Frame_and_Rotation.
+
+    // Set the body reference frame orientation, using quaternions
+    FrUnitQuaternion_ IdQuaternion(1.,0.,0.,0.,fc); // Id quaternion means no rotation.
+    body->SetRotation(IdQuaternion);
+    // or rotation, based on quaternions:
+    FrRotation_ bodyRotation(IdQuaternion);
+    body->SetRotation(bodyRotation);
+
+    // Rotate the body around its reference frame, based on its current orientation, using quaternions or a rotation.
+    body->Rotate(IdQuaternion);
+//    body->Rotate(bodyRotation);
+
+    // Rotate the body around its COG, based on its current orientation, using quaternions or a rotation.
+    body->RotateAroundCOG(IdQuaternion, fc);
+//    body->RotateAroundCOG(bodyRotation, fc);
+
+    // Rotate the body around a point position, expressed in world reference frame, based on its current orientation,
+    // using quaternions or a rotation.
+    body->RotateAroundPointInWorld(IdQuaternion, worldPos, fc);
+//    body->RotateAroundPointInWorld(bodyRotation, worldPos, fc);
+
+    // Rotate the body around a point position, expressed in body reference frame, based on its current orientation,
+    // using quaternions or a rotation.
+    body->RotateAroundPointInBody(IdQuaternion, bodyPoint, fc);
+//    body->RotateAroundPointInBody(bodyRotation, bodyPoint, fc);
+
+
+
+
+
+
 
 }
