@@ -64,7 +64,7 @@ void TestFrStandardWindForce::SetUp() {
     force->SetXCenter(m_Xcenter);
 
     body = system.NewBody();
-    body->SetCOG(Position(0.1, 0., 0.), NWU);
+    body->SetCOG(Position(0., 0., 0.), NWU);
     body->AddExternalForce(force);
 
     system.GetEnvironment()->GetAtmosphere()->GetWind()->MakeFieldUniform();
@@ -100,6 +100,9 @@ TEST_F(TestFrStandardWindForce, TestTransport) {
 
     system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()
             ->Set(m_direction(i), m_windSpeed, DEG, MS, NED, COMEFROM);
+
+    body->SetCOG(Position(0.1, 0., 0.), NWU);
+    body->Initialize();
 
     force->SetXCenter(xc);
     force->Initialize();
