@@ -6,6 +6,7 @@ message(STATUS "    ...DEMOS :")
 set(DEMOS
         demo_Environment
         demo_FreeSurface
+        demo_Body
         )
 
 

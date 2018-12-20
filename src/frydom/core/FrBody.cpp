@@ -290,15 +290,18 @@ namespace frydom {
     }
 
 
-    FrInertiaTensor_ FrBody_::GetInertiaParams() const {
+    FrInertiaTensor_ FrBody_::GetInertiaTensor(FRAME_CONVENTION fc) const {
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
         SplitMatrix33IntoCoeffs(internal::ChMatrix33ToMatrix33(m_chronoBody->GetInertia()),
                 Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
+        if (IsNED(fc)) {
+            internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+        }
 
-        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame_(GetCOG(NWU), FrRotation_(), NWU), NWU};
+        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame_(GetCOG(fc), FrRotation_(), fc), fc};
     }
 
-    void FrBody_::SetInertiaParams(const FrInertiaTensor_& inertia) {
+    void FrBody_::SetInertiaTensor(const FrInertiaTensor_ &inertia) {
 
         m_chronoBody->SetMass(inertia.GetMass());
 
@@ -312,22 +315,22 @@ namespace frydom {
 
     }
 
-    void FrBody_::SetInertiaParams(double mass,
-                          double Ixx, double Iyy, double Izz,
-                          double Ixy, double Ixz, double Iyz,
-                          const FrFrame_& coeffsFrame,
-                          const Position& cogPosition,
-                          FRAME_CONVENTION fc) {
-        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, coeffsFrame, cogPosition, fc));
-    }
-
-    void FrBody_::SetInertiaParams(double mass,
-                          double Ixx, double Iyy, double Izz,
-                          double Ixy, double Ixz, double Iyz,
-                          const FrFrame_& cogFrame,
-                          FRAME_CONVENTION fc) {
-        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, cogFrame, fc));
-    }
+//    void FrBody_::SetInertiaParams(double mass,
+//                          double Ixx, double Iyy, double Izz,
+//                          double Ixy, double Ixz, double Iyz,
+//                          const FrFrame_& coeffsFrame,
+//                          const Position& cogPosition,
+//                          FRAME_CONVENTION fc) {
+//        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, coeffsFrame, cogPosition, fc));
+//    }
+//
+//    void FrBody_::SetInertiaParams(double mass,
+//                          double Ixx, double Iyy, double Izz,
+//                          double Ixy, double Ixz, double Iyz,
+//                          const FrFrame_& cogFrame,
+//                          FRAME_CONVENTION fc) {
+//        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, cogFrame, fc));
+//    }
 
     void FrBody_::SetCollide(bool isColliding) {
         m_chronoBody->SetCollide(isColliding);
@@ -425,9 +428,9 @@ namespace frydom {
     }
 
 
-    void FrBody_::SetMass(double mass) {
-        m_chronoBody->SetMass(mass);
-    }
+//    void FrBody_::SetMass(double mass) {
+//        m_chronoBody->SetMass(mass);
+//    }
 
     void FrBody_::SetCOG(const Position& bodyPos, FRAME_CONVENTION fc) {
         FrFrame_ cogFrame;

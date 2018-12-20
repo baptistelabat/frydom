@@ -239,7 +239,9 @@ void TestMorison::LoadData(std::string filename) {
     body->SetPosition(pointRef, NWU);
 
     auto posCOG = ReadVector<Position>(reader, group + "COG");
-    body->SetCOG(posCOG, NWU);
+
+    FrInertiaTensor_ InertiaTensor(1.,posCOG,NWU);
+    body->SetInertiaTensor(InertiaTensor);
 
     auto direction = ReadVector<Direction>(reader, group + "RotationDirection");
     direction.normalize();

@@ -84,7 +84,10 @@ public:
 void TestFrFlowForce::SetUp() {
     body = std::make_shared<FrBody_>();
     body->SetPosition(bodyPositionInWorld, NWU);
-    body->SetCOG(COGPosition, NWU);
+
+    FrInertiaTensor_ InertiaTensor(1.,COGPosition,NWU);
+    body->SetInertiaTensor(InertiaTensor);
+
     system.AddBody(body);
 }
 

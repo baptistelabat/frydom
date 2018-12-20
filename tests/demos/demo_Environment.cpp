@@ -2,7 +2,6 @@
 // Created by Lucas Letournel on 19/12/18.
 //
 #include "frydom/frydom.h"
-#include <ctime>
 
 using namespace frydom;
 

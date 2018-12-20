@@ -65,7 +65,10 @@ void TestFrStandardCurrentForce::SetUp() {
     force->SetXCenter(m_Xcenter);
 
     body = system.NewBody();
-    body->SetCOG(Position(0., 0., 0.), NWU);
+
+    FrInertiaTensor_ InertiaTensor(1.,Position(0., 0., 0.),NWU);
+    body->SetInertiaTensor(InertiaTensor);
+
     body->AddExternalForce(force);
 
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
@@ -101,7 +104,9 @@ TEST_F(TestFrStandardCurrentForce, TestTransport) {
     system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()
             ->Set(m_direction(i), m_currentSpeed, DEG, MS, NED, COMEFROM);
 
-    body->SetCOG(Position(0.1, 0., 0.), NWU);
+    FrInertiaTensor_ InertiaTensor(1.,Position(0.1, 0., 0.),NWU);
+    body->SetInertiaTensor(InertiaTensor);
+
     body->Initialize();
 
     force->SetXCenter(xc);

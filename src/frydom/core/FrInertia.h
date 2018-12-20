@@ -73,8 +73,15 @@ namespace frydom {
         /// Default constructor with every inertia parameters set to null (COG position, mass, inertia matrix)
         FrInertiaTensor_();
 
+        /// Constructor taking only a mass. COG Position and inertia matrix are set to null. Mass is in kg.
+        explicit FrInertiaTensor_(double mass);
+
+        /// Constructor taking only a  mass and a COG Position. The inertia matrix is set to null. Mass is in kg.
+        /// The frame convention holds on the COG Position.
+        FrInertiaTensor_(double mass, const Position& cogPosition, FRAME_CONVENTION fc);
+
         /// Constructor from standard inertia parameters. Inertia coefficients are expressed in coeffsFrame that can be
-        /// different from the corPosition. Both coeffsFrame and corPosition are relative to body reference coordinate
+        /// different from the cogPosition. Both coeffsFrame and corPosition are relative to body reference coordinate
         /// system. Mass is in kg. The frame convention holds on inertia coefficients and COG Position.
         FrInertiaTensor_(double mass,
                          double Ixx, double Iyy, double Izz,

@@ -42,7 +42,10 @@ void TestITTCResistance::SetUp() {
     auto direction = Direction(0.1, 0.3, 0.9);
     direction.normalize();
     body->SetRotation(FrUnitQuaternion_(direction, M_PI/5., NWU));
-    body->SetCOG(Position(0.2, 0.2, 0.1), NWU);
+
+    FrInertiaTensor_ InertiaTensor(1.,Position(0.2, 0.2, 0.1),NWU);
+    body->SetInertiaTensor(InertiaTensor);
+
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
     LoadData("TNR_database.h5");
 }

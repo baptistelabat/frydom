@@ -65,7 +65,9 @@ void TestLinearDamping_::SetUp() {
     rotationDirection.normalize();
 
     body->SetRotation(FrUnitQuaternion_(rotationDirection, rotationAngle, NWU));
-    body->SetCOG(COGPosition, NWU);
+
+    FrInertiaTensor_ InertiaTensor(1.,COGPosition,NWU);
+    body->SetInertiaTensor(InertiaTensor);
 
     body->SetGeneralizedVelocityInBodyAtPointInBody(body->GetCOG(NWU), Velocity(vx, vy, vz),
                                                     AngularVelocity(vp, vq, vr), NWU);
