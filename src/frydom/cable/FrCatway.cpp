@@ -355,6 +355,7 @@ namespace frydom {
     }
 
     const double FrCatwayEnvironmentInterface::GetSeabedHeight(const Vector& position) const {
+        // FIXME : attention si profondeur infinie, GetBathymetry génère une erreur.
         return m_frydomEnvironment->GetOcean()->GetSeabed()->GetBathymetry(NWU);  // TODO : seabed doit avoir une methode donnant le depth fonction de x et y...
     }
 
