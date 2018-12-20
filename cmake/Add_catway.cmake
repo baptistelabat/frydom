@@ -1,4 +1,7 @@
 
+# catway BUILD OPTIONS
+set(CATWAY_BUILD_TESTS OFF)
+
 find_package(catway QUIET)
 
 if (NOT catway_FOUND)
@@ -21,8 +24,6 @@ if (NOT catway_FOUND)
         message(STATUS "Downloading, Configuring and Generating 'catway' dependency")
         FetchContent_Populate(catway)
 
-        # catway BUILD OPTIONS
-#        set(HERMES_BUILD_TESTS OFF)
 
         add_subdirectory(${catway_SOURCE_DIR} ${catway_BINARY_DIR})
     else()

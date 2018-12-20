@@ -2,8 +2,8 @@
 
 set(GOOGLE_TESTS
         # include test source files here (without .cpp)
-        test_FrCurrentForce_
-        test_FrWindForce_
+#        test_FrCurrentForce_
+#        test_FrWindForce_
         test_FrForce_
         test_internal
         test_FrBody_
