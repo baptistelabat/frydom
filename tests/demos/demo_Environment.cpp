@@ -9,6 +9,15 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
+    /** The main components and methods of FrEnvironment are introduced in this demo:
+     *      - the atmosphere object is composed of the air physical properties and the wind field model
+     *      - the ocean object is composed of the sea water physical properties, current field model and free surface.
+     *      the free surface is not presented here, refer to demo_FreeSurface for more details
+     *      - the GeographicServices gives access to conversion between cartesian and geographic coordinates
+     *      - the time ramp function, which is by default applied on the current, wind and wave field models
+     *
+     */
+
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
     FRAME_CONVENTION fc = NWU;
     // Define the wave direction convention (GOTO or COMEFROM), can be used also for current and wind direction definition.
@@ -160,6 +169,14 @@ int main(int argc, char* argv[]) {
         GeoServices->GeoToCart(lat,lon,h,x,y,z,fc);
         newCartPos =GeoServices->GeoToCart(lat,lon,h,fc);
 
+        // It is also possible to get the magnetic declination of any cartesian of geographic position, depending on the
+        // year specified. Note however that this method loads a magnetic model, which path is hard coded. You may then
+        // need to modify it, depending of the location of your exe. This will be fixed later, using cmake.
+        double year = 2019;
+//        auto declination =GeoServices->GetDeclinationFromGeo(newGeoPos, year);
+
+        // -------------------------------------------------------------------------------------------------------------
+        // GeographicService from FrBody
         // You can also use some GeographicServices through bodies : set the body position at a geographic coordinates,
         // convert cartesian position expressed in the body reference frame in geographic coordinates.
         auto body = system.NewBody();
