@@ -623,23 +623,23 @@ namespace frydom {
         /// \return COG position in body reference frame
         Position GetCOGPositionInWorld(FRAME_CONVENTION fc) const;
 
+        // GeographicServices
 
-        /// Get the geographic position in world frame of a body fixed point whose position is given in body reference frame
-        /// \param bodyPos position of a point given in the body reference frame
-        /// \param fc frame convention (NED/NWU)
-        /// \return geographic position of the point mentioned above
-        FrGeographicCoord GetGeoPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const;
-
-        /// Get the geographic position in body reference frame of a body fixed point whose position is given in world frame
+        /// Get the geographic position in world frame of a body fixed point whose position is given in world reference frame
         /// \param worldPos position of a point given in the world reference frame
         /// \param fc frame convention (NED/NWU)
         /// \return geographic position of the point mentioned above
-        FrGeographicCoord GetGeoPointPositionInBody(const Position& worldPos, FRAME_CONVENTION fc) const;
+        FrGeographicCoord GetGeoPointPositionInWorld(const Position& worldPos, FRAME_CONVENTION fc) const;
 
-        /// Get the body COG geographic position in world frame (coordinates are expressed in world frame)
+        /// Get the geographic position in body reference frame of a body fixed point whose position is given in body frame
+        /// \param bodyPos position of a point given in the body reference frame
         /// \param fc frame convention (NED/NWU)
+        /// \return geographic position of the point mentioned above
+        FrGeographicCoord GetGeoPointPositionInBody(const Position& bodyPos, FRAME_CONVENTION fc) const;
+
+        /// Get the body COG geographic position
         /// \return geographic position of the COG
-        FrGeographicCoord GetCOGGeoPositionInWorld(FRAME_CONVENTION fc) const;
+        FrGeographicCoord GetCOGGeoPosition() const;
 
 
 

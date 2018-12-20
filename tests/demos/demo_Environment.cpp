@@ -130,8 +130,46 @@ int main(int argc, char* argv[]) {
 
     {
         //
-        // EXAMPLE 3: Geographic services - conversion of cartesian coordinates to geographic coordinates and vice versa
+        // EXAMPLE 3: GeographicServices - conversion of cartesian coordinates to geographic coordinates and vice versa
         //
+
+        // The first thing you want to set, if you need to use GeographicServices, is the geographic origin, i.e. the
+        // corresponding geographic coordinates for the cartesian origin of the world reference frame.
+        auto GeoServices = system.GetEnvironment()->GetGeographicServices();
+
+        // The FrGeographicCoord class is specially defined to cope with geographic coordinates (latitude, longitude, height)
+        FrGeographicCoord Origin(47.22, -1.55, 0.);
+        GeoServices->SetGeographicOrigin(Origin);
+
+        // You can now convert any cartesian coordinates, given from the world reference frame, into a geographic one.
+        // Be careful to specify the correct frame convention related to the cartesian position.
+        Position cartPos(10,-800,0.);
+        auto newGeoPos = GeoServices->CartToGeo(cartPos,fc);
+
+        // Two other versions of CartToGeo are available:
+        GeoServices->CartToGeo(cartPos, newGeoPos, fc);
+
+        double x=cartPos.GetX(), y=cartPos.GetY(), z=cartPos.GetZ();
+        double lat, lon, h;
+        GeoServices->CartToGeo(x,y,z,lat,lon,h,fc);
+
+        // The conversion from geographic to cartesian coordinates is as easy to use. Several versions of GeoToCart are
+        // also available.
+        auto newCartPos = GeoServices->GeoToCart(newGeoPos,fc);
+        GeoServices->GeoToCart(newGeoPos, newCartPos,fc);
+        GeoServices->GeoToCart(lat,lon,h,x,y,z,fc);
+        newCartPos =GeoServices->GeoToCart(lat,lon,h,fc);
+
+        // You can also use some GeographicServices through bodies : set the body position at a geographic coordinates,
+        // convert cartesian position expressed in the body reference frame in geographic coordinates.
+        auto body = system.NewBody();
+        body->SetGeoPosition(newGeoPos);
+
+        Position localPos(12.,6.,8.);
+        auto GeoCoordOfLocalPos = body->GetGeoPointPositionInBody(localPos,fc);
+
+        auto COGGeoCoord = body->GetCOGGeoPosition();
+
 
     }
 

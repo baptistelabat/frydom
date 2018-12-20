@@ -527,8 +527,8 @@ namespace frydom {
         return CartToGeo(GetPointPositionInBody(worldPos, fc), fc);
     }
 
-    FrGeographicCoord FrBody_::GetCOGGeoPositionInWorld(FRAME_CONVENTION fc) const {
-        return CartToGeo(GetCOGPositionInWorld(fc), fc);
+    FrGeographicCoord FrBody_::GetCOGGeoPosition() const {
+        return CartToGeo(GetCOGPositionInWorld(NWU), NWU);
     }
 
 
