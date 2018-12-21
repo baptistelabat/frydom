@@ -120,6 +120,14 @@ namespace frydom {
         ///Generate random wave phases
         void GenerateRandomWavePhases();
 
+        std::vector<double> GetWaveFrequencies() { return m_waveFrequencies; }
+
+        std::vector<double> GetWaveNumbers() { return m_waveNumbers; }
+
+        std::vector<std::vector<double>> GetWaveAmplitudes() { return c_amplitude; }
+
+        std::vector<double> GetWaveDirections() { return m_waveDirections; }
+
         //------------------------------------MAIN GETTERS----------------------------------//
 
         /// Get the complex wave elevation at the position (x,y,0), of the regular Airy wave field
