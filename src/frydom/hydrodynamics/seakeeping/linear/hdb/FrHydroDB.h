@@ -140,6 +140,7 @@ namespace frydom {
 
     class FrHydroMapper_;
     class FrBEMBody_;
+    class FrBody_;
 
     // ----------------------------------------------------------
     // FrDiscretization1D
@@ -202,7 +203,7 @@ namespace frydom {
 
         FrHydroDB_(std::string h5file);
 
-        unsigned int GetNBodies() const { return (uint)m_bodies.size(); };
+        unsigned int GetNbBodies() const { return (uint)m_bodies.size(); };
 
         void SetWaveDirectionDiscretization(const double minAngle, const double maxAngle, const unsigned int nbAngle);
 
@@ -242,18 +243,7 @@ namespace frydom {
 
         FrHydroMapper_* GetMapper();
 
-
-
-
-
     };
-
-
-
-
-
-
-
 
 }  // end namespace frydom
 

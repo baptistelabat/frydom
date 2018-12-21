@@ -222,4 +222,36 @@ namespace frydom {
 
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    // la méthode est maintenant intégrée à FrHydroDB
+
+
+
+
+
+
 }  // end namespace frydom

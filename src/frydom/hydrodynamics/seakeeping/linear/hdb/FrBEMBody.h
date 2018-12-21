@@ -9,6 +9,10 @@
 #include "MathUtils/MathUtils.h"
 #include "chrono/core/ChVectorDynamic.h"
 
+/// <<<<<<<<<<<<<<<<<<<< ADDITIONAL INCLUDE
+
+#include "frydom/core/FrVector.h"
+
 using namespace mathutils;
 
 namespace frydom {
@@ -313,7 +317,7 @@ namespace frydom {
 
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
-
+    class FrHydroDB_;
 
     class FrBEMMode_ {
 
@@ -360,7 +364,10 @@ namespace frydom {
 
     private:
 
+        FrHydroDB_* m_HDB;
         unsigned int m_id;
+        std::string m_name;
+        Position m_position;
 
         std::vector<FrBEMForceMode_> m_forceModes;
         std::vector<FrBEMMotionMode_> m_motionModes;
@@ -370,7 +377,7 @@ namespace frydom {
         std::vector<Eigen::MatrixXcd> m_froudeKrylov;
         std::vector<Eigen::MatrixXcd> m_diffraction;
 
-        Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> m_radiationMask;
+        std::vector<Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>> m_radiationMask;
         std::vector<Eigen::MatrixXcd> m_infiniteAddedMass;
         std::vector<std::vector<Eigen::MatrixXd>> m_impulseResponseFunction;
         std::vector<std::vector<Eigen::MatrixXd>> m_velocityCouplingIRF;
@@ -378,6 +385,8 @@ namespace frydom {
         std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
     public:
+        FrBEMBody_(unsigned int id, std::string name,  FrHydroDB_* HDB)
+                : m_id(id), m_name(name), m_HDB(HDB) { }
 
         unsigned int GetID() const { return m_id; }
 
@@ -417,9 +426,11 @@ namespace frydom {
         // Setters
         //
 
+        void SetPosition(Position& position) { m_position = position; }
+
         void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
 
-        void SetFroudKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix);
+        void SetFroudeKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix);
 
         void SetExcitation(unsigned int iangle, const Eigen::MatrixXcd& excitationMatrix);
 

@@ -797,28 +797,29 @@ namespace frydom {
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
     unsigned int FrBEMBody_::GetNbFrequencies() const {
-        // FIXME : voir si il y a un interet a être ici
+        return m_HDB->GetNbFrequencies();
     }
 
     std::vector<double> FrBEMBody_::GetFrequencies() const {
-        // FIXME : void si il  a un interet a être ici
+        return m_HDB->GetFrequencies();
     }
 
     unsigned int FrBEMBody_::GetNbWaveDirections() const {
-        // FIXME : void si il  a un interet a être ici
+        return m_HDB->GetNbWaveDirections();
     }
 
     std::vector<double> FrBEMBody_::GetWaveDirections() const {
-        // FIXME : void si il  a un interet a être ici
+        return m_HDB->GetWaveDirections();
     }
 
     unsigned int FrBEMBody_::GetNbBodies() const {
-        // FIXME : void si il  a un interet a être ici
+        return m_HDB->GetNbBodies();
     }
 
     unsigned int FrBEMBody_::GetNbTimeSamples() const {
-        // FIXME : void si il  a un interet a être ici
+        return m_HDB->GetNbTimeSamples();
     }
+
 
     void FrBEMBody_::Initialize() {
 
@@ -854,7 +855,7 @@ namespace frydom {
         auto nbTime = GetNbTimeSamples();
         for (unsigned int ibody=0; ibody<nbBodies; ++ibody) {
 
-            auto body = GetBody(ibody);
+            auto body = m_HDB->GetBody(ibody);
             auto nbMotion = GetNbMotionMode();
 
             Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> mask(nbForce, nbMotion);
@@ -875,6 +876,11 @@ namespace frydom {
             m_impulseResponseFunction.push_back(impulseResponseFunctionVector);
             m_velocityCouplingIRF.push_back(impulseResponseFunctionVector);
         }
+    }
+
+    void FrBEMBody_::Finalize() {
+        ComputeExcitation();
+        BuildWaveExcitationInterpolators();
     }
 
     //
@@ -933,7 +939,7 @@ namespace frydom {
     void FrBEMBody_::SetInfiniteAddedMass(unsigned int ibody, const Eigen::MatrixXd& CMInf) {
         assert(ibody < GetNbBodies());
         assert(CMInf.rows() == GetNbForceMode());
-        assert(CMInf.cols() == GetBody(ibody)->GetNbMotionMode());
+        assert(CMInf.cols() == m_HDB->GetBody(ibody)->GetNbMotionMode());
         m_infiniteAddedMass[ibody] = CMInf;
     }
 
@@ -951,7 +957,6 @@ namespace frydom {
         assert(IRF.rows() == GetNbForceMode());
         assert(IRF.cols() == GetNbTimeSamples());
         m_velocityCouplingIRF[ibody][idof] = IRF;
-
     }
 
     //

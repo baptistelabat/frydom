@@ -354,7 +354,7 @@ namespace frydom {
     }
 
     FrBEMBody_* FrHydroDB_::NewBody(std::string bodyName) {
-        m_bodies.push_back( std::make_unique<FrBEMBody_>(GetNBodies(), bodyName));
+        m_bodies.push_back( std::make_unique<FrBEMBody_>(GetNbBodies(), bodyName, this));
         return m_bodies.end()->get();
     }
 
@@ -534,6 +534,34 @@ namespace frydom {
                 Eigen::MatrixXcd froudeKrylovCoeffs;
                 froudeKrylovCoeffs = froudeKrylovRealCoeffs + MU_JJ * froudeKrylovImagCoeffs;
                 BEMBody->SetFroudeKrylov(iwaveDir, froudeKrylovCoeffs);
+
+            }
+
+            // -> Radiation
+
+            auto radiationPath = ibodyPath + "/Radiation";
+
+            for (unsigned int ibodyMotion=0; ibodyMotion < m_nbody; ++ibodyMotion) {
+
+                sprintf(buffer, "/BodyMotion_%d", ibodyMotion);
+
+                auto bodyMotion = this->GetBody(ibodyMotion);
+
+                auto infiniteAddedMassPath = radiationPath + buffer + "/InfiniteAddedMass";
+                auto infiniteAddedMass = reader.ReadDoubleArray(infiniteAddedMassPath);
+                BEMBody->SetInfiniteAddedMass(ibodyMotion, infiniteAddedMass);
+
+                auto IRFPath = radiationPath + buffer + "/ImpulseResponseFunctionK";
+                auto IRFUPath = radiationPath + buffer + "/ImpulseResponseFunctionKU";
+                for (unsigned int imotion=0; imotion<bodyMotion->GetNbMotionMode(); ++imotion) {
+                    sprintf(buffer, "/DOF_%d", imotion);
+
+                    auto impulseResponseFunction = reader.ReadDoubleArray(IRFPath + buffer);
+                    BEMBody->SetImpusleResponseFunction(ibodyMotion, imotion, impulseResponseFunction);
+
+                    auto impulseResponseFunctionKU = reader.ReadDoubleArray(IRFUPath + buffer);
+                    BEMBody->SetVelocityCouplingIRF(ibodyMotion, imotion, impulseResponseFunctionKU);
+                }
             }
 
             BEMBody->Finalize();
