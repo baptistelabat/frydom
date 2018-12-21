@@ -3,6 +3,7 @@
 //
 
 #include "FrHydroMapper.h"
+#include "FrBEMBody.h"
 
 
 namespace frydom {
@@ -45,4 +46,56 @@ namespace frydom {
                                            const chrono::ChVectorDynamic<> &w, const double c) {
         m_HDB->IntLoadResidual_Mv(off, R, w, c);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    void FrHydroMapper_::Map(FrBEMBody_* BEMBody, FrBody_* body) {
+        mapBEMToBody[BEMBody] = body;
+        mapBodyToBEM[body] = BEMBody;
+    }
+
+    void FrHydroMapper_::Map(FrBody_* body, FrBEMBody_* BEMBody) {
+        this->Map(BEMBody, body);
+    }
+
+    unsigned long FrHydroMapper_::GetNbMappings() const {
+        return mapBEMToBody.size();
+    }
+
+    FrBody_* FrHydroMapper_::GetBody(FrBEMBody_* BEMBody) const {
+        return mapBEMToBody[BEMBody];
+    }
+
+    FrBEMBody_* FrHydroMapper_::GetBEMBody(FrBody_* body) const {
+        return mapBodyToBEM[body];
+    }
+
+    unsigned int FrHydroMapper_::GetBEMBodyIndex(FrBody_* body) const {
+        auto BEMBody = mapBodyToBEM[body];
+        return BEMBody->GetID();
+    }
+
+
 }  // end namespace frydom

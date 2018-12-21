@@ -294,6 +294,186 @@ namespace frydom {
         void SetBEMVariables();
     };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+
+
+    class FrBEMMode_ {
+
+    public:
+        enum TYPE {
+            LINEAR,
+            ANGULAR
+        };
+
+    private:
+        TYPE m_type;
+        Direction m_direction;
+        Position m_position;
+        bool m_active = true;
+
+    public:
+        FrBEMMode_() = default;
+
+        void SetTypeLINEAR() { m_type = LINEAR; }
+        void SetTypeANGULAR() { m_type = ANGULAR; }
+        TYPE GetType() const { return m_type; }
+
+        void SetDirection(Direction& direction) { m_direction = direction; }
+        Direction GetDirection() const { return m_direction; }
+
+        void SetPointPosition(Position& position) { m_position = position; }
+        Position GetPointPosition() const { return m_position; }
+
+        // TODO : flag pour le couplage FrBody/FrBEMBody (a voir si conservation necessaire)
+        void Activate() { m_active = true; }
+        void Deactivate() { m_active = false; }
+        bool IsActive() const { return m_active; }
+
+
+    };
+
+    typedef FrBEMMode_ FrBEMForceMode_;
+    typedef FrBEMMode_ FrBEMMotionMode_;
+
+
+
+
+    class FrBEMBody_ {
+
+    private:
+
+        unsigned int m_id;
+
+        std::vector<FrBEMForceMode_> m_forceModes;
+        std::vector<FrBEMMotionMode_> m_motionModes;
+
+        Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> m_excitationMask;
+        std::vector<Eigen::MatrixXcd> m_excitation;
+        std::vector<Eigen::MatrixXcd> m_froudeKrylov;
+        std::vector<Eigen::MatrixXcd> m_diffraction;
+
+        Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> m_radiationMask;
+        std::vector<Eigen::MatrixXcd> m_infiniteAddedMass;
+        std::vector<std::vector<Eigen::MatrixXd>> m_impulseResponseFunction;
+        std::vector<std::vector<Eigen::MatrixXd>> m_velocityCouplingIRF;
+
+        std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
+
+    public:
+
+        unsigned int GetID() const { return m_id; }
+
+        unsigned int GetNbFrequencies() const;
+
+        std::vector<double> GetFrequencies() const;
+
+        unsigned int GetNbWaveDirections() const;
+
+        std::vector<double> GetWaveDirections() const;
+
+        unsigned int GetNbBodies() const;
+
+        unsigned int GetNbTimeSamples() const;
+
+        void Initialize();
+
+        void Finalize();
+
+        //
+        // Generalized modes
+        //
+
+        unsigned int GetNbForceMode() const { return (uint)m_forceModes.size(); }
+
+        unsigned int GetNbMotionMode() const { return (uint)m_motionModes.size(); }
+
+        FrBEMForceMode_* GetForceMode(unsigned int imode);
+
+        FrBEMMotionMode_* GetMotionMode(unsigned int imode);
+
+        void AddForceMode(FrBEMForceMode_& mode);
+
+        void AddMotionMode(FrBEMMotionMode_& mode);
+
+        //
+        // Setters
+        //
+
+        void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
+
+        void SetFroudKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix);
+
+        void SetExcitation(unsigned int iangle, const Eigen::MatrixXcd& excitationMatrix);
+
+        void ComputeExcitation();
+
+        void SetInfiniteAddedMass(unsigned int ibody, const Eigen::MatrixXd& CMInf);
+
+        void SetImpusleResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
+
+        void SetVelocityCouplingIRF(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
+
+        //
+        // Getters
+        //
+
+        Eigen::MatrixXcd GetDiffraction(unsigned int iangle) const;
+
+        Eigen::VectorXcd GetDiffraction(unsigned int iangle, unsigned int iforce) const;
+
+        Eigen::MatrixXcd GetFroudeKrylov(unsigned int iangle) const;
+
+        Eigen::VectorXcd GetFroudeKrylov(unsigned int iangle, unsigned int iforce) const;
+
+        Eigen::MatrixXcd GetExcitation(unsigned int iangle) const;
+
+        Eigen::VectorXcd GetExcitation(unsigned int iangle, unsigned int iforce) const;
+
+        Eigen::MatrixXd GetInfiniteAddedMass(unsigned int ibody) const;
+
+        Eigen::MatrixXd GetSelfInfiniteAddedMass() const;
+
+        std::vector<Eigen::MatrixXd> GetImpulseResponseFunction(unsigned int ibody) const;
+
+        Eigen::MatrixXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof) const;
+
+        Eigen::VectorXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+
+        std::vector<Eigen::MatrixXd> GetVelocityCouplingIRF(unsigned int ibody) const;
+
+        Eigen::MatrixXd GetVelocityCouplingIRF(unsigned int ibody, unsigned int idof) const;
+
+        Eigen::VectorXd GetVelocityCouplingIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+
+        //
+        // Interpolators for the excitation force
+        //
+
+        void BuildWaveExcitationInterpolators();
+
+        std::vector<Eigen::MatrixXcd> GetExcitationInterp(std::vector<double> waveFrequencies,
+                                                          std::vector<double> waveDirections,
+                                                          ANGLE_UNIT angleUnit);
+    };
+
 }  // end namespace frydom
 
 

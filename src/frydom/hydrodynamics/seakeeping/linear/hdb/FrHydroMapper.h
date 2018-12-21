@@ -54,6 +54,46 @@ namespace frydom {
 
     };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<< REFACTORING
+
+    class FrHydroMapper_ {
+
+    private:
+        std::map<FrBEMBody_*, FrBody_*> mapBEMToBody;
+        std::map<FrBody_*, FrBEMBody_*> mapBodyToBEM;
+
+    public:
+
+        FrHydroMapper_() = default;
+
+        void Map(FrBEMBody_* BEMBody, FrBody_* body);
+
+        void Map(FrBody_* body, FrBEMBody_* BEMBody);
+
+        unsigned long GetNbMappings() const;
+
+        FrBody_* GetBody(FrBEMBody_* BEMBody) const;
+
+        FrBEMBody_* GetBEMBody(FrBody_* body) const;
+
+        unsigned int GetBEMBodyIndex(FrBody_* body) const;
+
+    };
+
 }  // end namespace frydom
 
 

@@ -134,6 +134,123 @@ namespace frydom {
 
 
 
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    // Forward declarations
+
+    class FrHydroMapper_;
+    class FrBEMBody_;
+
+    // ----------------------------------------------------------
+    // FrDiscretization1D
+    // ----------------------------------------------------------
+
+    class FrDiscretization1D_ {
+    private:
+        double m_xmin = 0.;
+        double m_xmax = 0.;
+        unsigned int m_nx = 0;
+
+    public:
+
+        FrDiscretization1D_() = default;
+
+        FrDiscretization1D_(double xmin, double xmax, unsigned int nx)
+                : m_xmin(xmin), m_xmax(xmax), m_nx(nx) {}
+
+        double GetMin() const { return m_xmin; }
+        void SetMin(double xmin) { m_xmin = xmin; }
+
+        double GetMax() const { return m_xmax; }
+        void SetMax(double xmax) { m_xmax = xmax; }
+
+        unsigned int GetNbSample() const { return m_nx; }
+        void SetNbSample(unsigned int nx) { m_nx = nx; }
+
+        std::vector<double> GetVector() const;
+
+        void SetStep(double delta);
+
+        double GetStep() const;
+
+    };
+
+    // --------------------------------------------------------
+    // FrHydroDB
+    // --------------------------------------------------------
+
+    class FrHydroDB_ {
+
+    private:
+
+        double m_gravityAcc;
+        double m_waterDensity;
+        double m_waterDepth;
+        double m_normalizationLength;
+        int m_nbody;
+
+        std::vector<std::unique_ptr<FrBEMBody_>> m_bodies;
+        std::unique_ptr<FrHydroMapper_> m_mapper;
+
+        FrDiscretization1D_ m_frequencyDiscretization;
+        FrDiscretization1D_ m_waveDirectionDiscretization;
+        FrDiscretization1D_ m_timeDiscretization;
+
+    public:
+
+        FrHydroDB_() = default;
+
+        FrHydroDB_(std::string h5file);
+
+        unsigned int GetNBodies() const { return (uint)m_bodies.size(); };
+
+        void SetWaveDirectionDiscretization(const double minAngle, const double maxAngle, const unsigned int nbAngle);
+
+        void SetTimeDiscretization(const double finalTime, const unsigned int nbTimeSamples);
+
+        void SetFrequencyDiscretization(const double minFreq, const double maxFreq, const unsigned int nbFreq);
+
+        std::vector<double> GetFrequencies() const { return m_frequencyDiscretization.GetVector(); }
+
+        std::vector<double> GetWaveDirections() const { return m_waveDirectionDiscretization.GetVector(); }
+
+        unsigned int GetNbFrequencies() const { return m_frequencyDiscretization.GetNbSample(); }
+
+        double GetMaxFrequency() const { return m_frequencyDiscretization.GetMax(); }
+
+        double GetMinFrequency() const { return m_frequencyDiscretization.GetMin(); }
+
+        double GetStepFrequency() const {return m_frequencyDiscretization.GetStep(); }
+
+        unsigned int GetNbWaveDirections() const { return m_waveDirectionDiscretization.GetNbSample(); }
+
+        unsigned int GetNbTimeSamples() const { return m_timeDiscretization.GetNbSample(); }
+
+        double GetFinalTime() const { return m_timeDiscretization.GetMax(); }
+
+        double GetTimeStep() const { return m_timeDiscretization.GetStep(); }
+
+        FrBEMBody_* NewBody(std::string bodyName);
+
+        FrBEMBody_* GetBody(unsigned int ibody);
+
+        FrBEMBody_* GetBody(std::shared_ptr<FrBody_> body);
+
+        FrBEMBody_* GetBody(FrBody_* body);
+
+        FrBody_* GetBody(FrBEMBody_* body);
+
+        FrHydroMapper_* GetMapper();
+
+
+
+
+
+    };
+
+
+
+
 
 
 

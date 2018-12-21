@@ -289,4 +289,256 @@ namespace frydom {
     }
     **/
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+    // ----------------------------------------------
+    // FrDiscretization1D
+    // ----------------------------------------------
+
+    std::vector<double> FrDiscretization1D_::GetVector() const {
+        return linspace<double>(m_xmin, m_xmax, m_nx);
+    }
+
+    void FrDiscretization1D_::SetStep(double delta) {
+        m_nx = 1 + (unsigned int)((m_xmax - m_xmin) / delta);
+    }
+
+    double FrDiscretization1D_::GetStep() const {
+        return (m_xmax-m_xmin) / double(m_nx-1);
+    }
+
+    // ----------------------------------------------------
+    // FrHydroDB
+    // ----------------------------------------------------
+
+    void FrHydroDB_::SetWaveDirectionDiscretization(const double minAngle, const double maxAngle,
+                                                    const unsigned int nbAngle) {
+        m_waveDirectionDiscretization.SetMin(minAngle);
+        m_waveDirectionDiscretization.SetMax(maxAngle);
+        m_waveDirectionDiscretization.SetNbSample(nbAngle);
+    }
+
+    void FrHydroDB_::SetTimeDiscretization(const double finalTime, const unsigned int nbTimeSamples) {
+        m_timeDiscretization.SetMin(0.);
+        m_timeDiscretization.SetMax(finalTime);
+        m_timeDiscretization.SetNbSample(nbTimeSamples);
+    }
+
+    void FrHydroDB_::SetFrequencyDiscretization(const double minFreq, const double maxFreq,
+                                                const unsigned int nbFreq) {
+        m_frequencyDiscretization.SetMin(minFreq);
+        m_frequencyDiscretization.SetMax(maxFreq);
+        m_frequencyDiscretization.SetNbSample(nbFreq);
+    }
+
+    FrBEMBody_* FrHydroDB_::NewBody(std::string bodyName) {
+        m_bodies.push_back( std::make_unique<FrBEMBody_>(GetNBodies(), bodyName));
+        return m_bodies.end()->get();
+    }
+
+    FrBEMBody_* FrHydroDB_::GetBody(std::shared_ptr<FrBody_> body) {
+        return m_mapper->GetBEMBody(body.get());
+    }
+
+    FrBEMBody_* FrHydroDB_::GetBody(FrBody_* body) {
+        return m_mapper->GetBEMBody(body);
+    }
+
+    FrBEMBody_* FrHydroDB_::GetBody(unsigned int ibody) {
+        return m_bodies[ibody].get();
+    }
+
+    FrBody_* FrHydroDB_::GetBody(FrBEMBody_* body) {
+        return m_mapper->GetBody(body);
+    }
+
+    FrHydroMapper_* FrHydroDB_::GetMapper() {
+        return m_mapper.get();
+    }
+
+    FrHydroDB_::FrHydroDB_(std::string h5file) {
+
+        FrHDF5Reader reader;
+        reader.SetFilename(h5file);
+
+        m_gravityAcc = reader.ReadDouble("/GravityAcc");
+        m_waterDensity = reader.ReadDouble("/WaterDensity");
+        m_normalizationLength = reader.ReadDouble("/NormalizationLength");
+        m_waterDepth = reader.ReadDouble("/WaterDepth");
+        m_nbody = reader.ReadInt("/NbBody");
+
+        // ----> Reading discretization path
+
+        std::string discretization_path = "/Discretizations";
+
+        // -----------> Reading frequency path
+
+        std::string frequency_discretization_path = discretization_path + "/Frequency";
+        auto NbFreq = reader.ReadInt(frequency_discretization_path + "/NbFrequencies");
+        auto MinFreq = reader.ReadDouble(frequency_discretization_path + "/MinFrequency");
+        auto MaxFreq = reader.ReadDouble(frequency_discretization_path + "/MaxFrequency");
+        this->SetFrequencyDiscretization(MinFreq, MaxFreq, (uint)NbFreq);
+
+        // ------------> Reading waves directions
+
+        std::string wave_direction_discretization_path = discretization_path + "/WaveDirections";
+        auto NbWaveDir = reader.ReadInt(wave_direction_discretization_path + "/NbWaveDirections");
+        auto MinWaveDir = reader.ReadDouble(wave_direction_discretization_path + "/MinAngle");
+        auto MaxWaveDir = reader.ReadDouble(wave_direction_discretization_path + "/MaxAngle");
+        this->SetWaveDirectionDiscretization(MinWaveDir, MaxWaveDir, (uint)NbWaveDir);
+
+        // -------------> Reading time discretization
+
+        std::string time_discretization_path = discretization_path + "/Time";
+        auto NbTimeSample = reader.ReadInt(time_discretization_path + "/NbTimeSample");
+        auto FinalTime = reader.ReadDouble(time_discretization_path + "/FinalTime");
+        this->SetTimeDiscretization(FinalTime, (uint)NbTimeSample);
+
+        // -------------> Reading data from Body
+
+        char buffer[20];
+
+        std::string bodyPath = "/Bodies/Body_";
+
+        for (unsigned int ibody=0; ibody<m_nbody; ++ibody) {
+
+            sprintf(buffer, "%d", ibody);
+            auto ibodyPath = bodyPath + buffer;
+
+            auto bodyName = reader.ReadString(ibodyPath + "/BodyName");
+            auto BEMBody = this->NewBody(bodyName);
+
+            auto bodyPosition = reader.ReadDoubleArray(ibodyPath + "/BodyPosition");
+            BEMBody->SetPosition(bodyPosition);
+
+            auto ID = reader.ReadInt(ibodyPath + "/ID");
+            assert(BEMBody->GetID() == ID);
+
+            auto nbForceModes = reader.ReadInt(ibodyPath + "/Modes/NbForceModes");
+
+            // ----- Force Mode ----------------------
+
+            auto modePath = ibodyPath + "/Modes/ForceModes/Mode_";
+
+            for (unsigned int iforce=0; iforce<nbForceModes; ++iforce) {
+
+                sprintf(buffer, "%d", iforce);
+                auto imodePath = modePath + buffer;
+
+                // Building the force mode
+                FrBEMForceMode mode;
+
+                auto modeType = reader.ReadString(imodePath + "/Type");
+                Direction direction = reader.ReadDoubleArray(imodePath + "/Direction");
+                mode.SetDirection(direction);
+
+                if (modeType == "ANGULAR") {
+                    Position point = reader.ReadDoubleArray(imodePath + "/Point");
+                    mode.SetTypeANGULAR();
+                    mode.SetPoint(point);
+                } else {
+                    mode.SetTypeLINEAR();
+                }
+
+                // Adding the mode to the BEMBody
+                BEMBody->AddForceMode(mode);
+
+            }
+
+            // --------------- Motion Mode --------------------
+
+            auto nbMotionModes = reader.ReadInt(ibodyPath + "/Modes/NbMotionModes");
+
+            modePath = ibodyPath + "/Modes/MotionModes/Mode_";
+            for (unsigned int imotion=0; imotion<nbForceModes; ++imotion) {
+                sprintf(buffer, "%d", imotion);
+                auto imodePath = modePath + buffer;
+
+                FrBEMMotionMode mode;
+
+                auto modeType = reader.ReadString(imodePath + "/Type");
+                auto direction = reader.ReadDoubleArray(imodePath + "/Direction");
+
+                mode.SetDirection(direction);
+
+                if (modeType == "ANGULAR") {
+                    Position point = reader.ReadDoubleArray(imodePath + "/Point");
+                    mode.SetTypeANGULAR();
+                    mode.SetPoint(point);
+                } else {
+                    mode.SetTypeLINEAR();
+                }
+
+                // Adding the mode to the BEMBody
+                BEMBody->AddMotionMode(mode);
+            }
+
+            BEMBody->Initialize();
+
+        } // end for ibody
+
+        // -----------> Reading the hydrodynamic coefficients
+
+        for (unsigned int ibody=0; ibody<m_nbody; ++ibody) {
+
+            auto BEMBody = this->GetBody(ibody);
+
+            sprintf(buffer, "%d", ibody);
+            auto ibodyPath = bodyPath + buffer;
+
+            auto diffractionPath = ibodyPath + "/Excitation/Diffraction";
+            auto froudeKrylovPath = ibodyPath + "/Excitation/FroudeKrylov/";
+
+            for (unsigned int iwaveDir=0; iwaveDir < NbWaveDir; ++iwaveDir) {
+
+                sprintf(buffer, "/Angle_%d", iwaveDir);
+
+                // ->Diffraction
+
+                auto diffractionWaveDirPath = diffractionPath + buffer;
+                auto diffractionRealCoeffs = reader.ReadDoubleArray(diffractionWaveDirPath + "/RealCoeffs");
+                auto diffractionImagCoeffs = reader.ReadDoubleArray(diffractionWaveDirPath + "/ImagCoeffs");
+
+                Eigen::MatrixXcd diffractionCoeffs;
+                diffractionCoeffs = diffractionRealCoeffs + MU_JJ * diffractionImagCoeffs;
+                BEMBody->SetDiffraction(iwaveDir, diffractionCoeffs);
+
+                // ->Froude-Krylov
+
+                auto froudeKrylovWaveDirPath = froudeKrylovPath + buffer;
+                auto froudeKrylovRealCoeffs = reader.ReadDoubleArray(froudeKrylovWaveDirPath + "/RealCoeffs");
+                auto froudeKrylovImagCoeffs = reader.ReadDoubleArray(froudeKrylovWaveDirPath + "/ImagCoeffs");
+
+                Eigen::MatrixXcd froudeKrylovCoeffs;
+                froudeKrylovCoeffs = froudeKrylovRealCoeffs + MU_JJ * froudeKrylovImagCoeffs;
+                BEMBody->SetFroudeKrylov(iwaveDir, froudeKrylovCoeffs);
+            }
+
+            BEMBody->Finalize();
+
+        } // end for ibody
+    }
+
 }  // end namespace frydom
