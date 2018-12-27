@@ -14,6 +14,12 @@
 
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 
+// <<<<<<<<<<<<<<<<<<<<<< include refactoring
+
+#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+
+//
+
 
 namespace frydom {
 
@@ -71,6 +77,51 @@ namespace frydom {
             }
         }
     };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+
+    class FrLinearExcitationForce_ : public FrForce_ {
+
+    private:
+
+        std::shared_ptr<FrHydroDB_> m_HDB;
+        std::shared_ptr<FrEquilibriumFrame_> m_equilibriumFrame;
+
+        std::vector<Eigen::MatrixXcd> m_Fexc;
+
+        Matrix66<std::complex<double>> m_steadyForce;
+
+
+    public:
+
+        FrLinearExcitationForce_(std::shared_ptr<FrHydroDB_>& HDB, std::shared_ptr<FrEquilibriumFrame_>& eqFrame)
+                : m_HDB(HDB) {};
+
+        void Initialize() override;
+
+        void Update(double time) override;
+
+        void StepFinalize() override { }
+
+    };
+
 
 }  // end namespace frydom
 

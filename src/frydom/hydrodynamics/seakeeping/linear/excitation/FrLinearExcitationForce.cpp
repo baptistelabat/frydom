@@ -4,6 +4,11 @@
 
 #include "FrLinearExcitationForce.h"
 
+/// <<<<<<<<<<<<<< REFACTORING INCLUDE
+
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOceanInc.h"
+
 
 namespace frydom {
 
@@ -162,6 +167,81 @@ namespace frydom {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+    void FrLinearExcitationForce_::Initialize() {
+
+        auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+
+        auto BEMBody = m_HDB->GetBody(m_body);
+
+        auto freqs = waveField->GetWaveFrequencies(RADS);
+        auto directions = waveField->GetWaveDirections(DEG, NWU, GOTO);
+
+        if (m_Fexc.empty()) {
+            m_Fexc = BEMBody->GetExcitationInterp(freqs, directions, DEG);
+        }
+
+        FrForce_::Initialize();
+
+    }
+
+    void FrLinearExcitationForce_::Update(double time) {
+
+        auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+        auto complexElevations = waveField->GetComplexElevation(m_equilibriumFrame->GetX(NWU),
+                                                              m_equilibriumFrame->GetY(NWU),
+                                                              NWU);
+
+        auto nbMode = m_HDB->GetBody(m_body)->GetNbForceMode();
+        auto nbFreq = waveField->GetWaveFrequencies(RADS).size();
+        auto nbWaveDir = waveField->GetWaveDirections(DEG, NWU, GOTO).size();
+
+        Eigen::VectorXd forceMode(nbMode);
+        forceMode.setZero();
+        for (unsigned int imode=0; imode<nbMode; ++imode) {
+            for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq) {
+                for (unsigned int idir=0; idir<nbWaveDir; ++idir) {
+                    forceMode(imode) += std::imag(complexElevations[idir][ifreq] * m_Fexc[idir](imode, ifreq));
+                }
+            }
+        }
+
+        auto force = Force();
+        auto torque = Torque();
+
+        for (unsigned int imode=0; imode<nbMode; ++imode) {
+
+            auto mode = m_HDB->GetBody(m_body)->GetForceMode(imode);
+            Direction direction = mode->GetDirection();
+
+            switch (mode->GetType()) {
+                case FrBEMMode_::LINEAR:
+                    force += direction * forceMode(imode);
+                    break;
+                case FrBEMMode_::ANGULAR:
+                    torque += direction * forceMode(imode);
+                    break;
+            }
+        }
+        this->SetForceTorqueInBodyAtCOG(force, torque, NWU);
+    }
 
 
 }  // end namespace frydom

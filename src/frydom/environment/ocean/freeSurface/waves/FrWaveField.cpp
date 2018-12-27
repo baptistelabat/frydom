@@ -996,6 +996,27 @@ namespace frydom {
         return {0.,0.,0.};
     }
 
+    std::vector<double> FrNullWaveField_::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
+        return std::vector<double>(1, 0.);
+    }
+
+    std::vector<double> FrNullWaveField_::GetWaveNumbers() const {
+        return std::vector<double>(1, 0.);
+    }
+
+    std::vector<std::vector<double>> FrNullWaveField_::GetWaveAmplitudes() const {
+        return std::vector(1, std::vector<double>(1, 0.));
+    }
+
+    std::vector<double> FrNullWaveField_::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc,
+                                                            DIRECTION_CONVENTION dc) const {
+        return std::vector<double>(1, 0.);
+    }
+
+    std::vector<std::vector<Complex>> FrNullWaveField_::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
+        return std::vector(1, std::vector<Complex>(1, 0.));
+    }
+
 //
 //    // FrLinearWaveField definitions
 //
