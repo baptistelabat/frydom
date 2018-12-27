@@ -351,13 +351,23 @@ namespace frydom {
         void Deactivate() { m_active = false; }
         bool IsActive() const { return m_active; }
 
-
     };
 
     typedef FrBEMMode_ FrBEMForceMode_;
     typedef FrBEMMode_ FrBEMMotionMode_;
 
 
+    struct FrWaveDriftPolarData {
+        bool m_xSym;            // TODO : peut être plus utile
+        bool m_ySym;            //
+        std::vector<double> m_angles;
+        std::vector<double> m_freqs;
+        std::vector<double> m_data;
+        std::unique_ptr<mathutils::LookupTable2d<>> m_table;
+
+        FrWaveDriftPolarData(std::vector<double> angles, std::vector<double> freqs,
+                             std::vector<double> coeffs);
+    };
 
 
     class FrBEMBody_ {
@@ -379,10 +389,12 @@ namespace frydom {
 
         std::vector<Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>> m_radiationMask;
         std::vector<Eigen::MatrixXcd> m_infiniteAddedMass;
-        std::vector<std::vector<Eigen::MatrixXd>> m_impulseResponseFunction;
-        std::vector<std::vector<Eigen::MatrixXd>> m_velocityCouplingIRF;
+        std::vector<std::vector<Eigen::MatrixXd>> m_impulseResponseFunctionK;
+        std::vector<std::vector<Eigen::MatrixXd>> m_impulseResponseFunctionKu;
 
         std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
+
+        std::vector<std::unique_ptr<FrWaveDriftPolarData>> m_waveDrift;
 
     public:
         FrBEMBody_(unsigned int id, std::string name,  FrHydroDB_* HDB)
@@ -441,6 +453,9 @@ namespace frydom {
         void SetImpusleResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
 
         void SetVelocityCouplingIRF(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
+
+        void SetWaveDrift(const std::vector<double>& headings, const std::vector<double>& freqs,
+                          const std::vector<double>& coeffs);
 
         //
         // Getters

@@ -206,4 +206,9 @@ namespace frydom {
     void FrHDF5Reader::CreateGroup(std::string h5Path) {}
 
     void FrHDF5Reader::CreateDataset(std::string h5Path) {}
+
+    bool FrHDF5Reader::GroupExist(std::string h5Path) const {
+        return m_file->attrExists(h5Path);
+    }
+
 }  // end namespace frydom

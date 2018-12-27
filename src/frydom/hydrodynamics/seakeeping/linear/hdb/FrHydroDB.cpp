@@ -436,137 +436,202 @@ namespace frydom {
             auto ID = reader.ReadInt(ibodyPath + "/ID");
             assert(BEMBody->GetID() == ID);
 
-            auto nbForceModes = reader.ReadInt(ibodyPath + "/Modes/NbForceModes");
-
-            // ----- Force Mode ----------------------
-
-            auto modePath = ibodyPath + "/Modes/ForceModes/Mode_";
-
-            for (unsigned int iforce=0; iforce<nbForceModes; ++iforce) {
-
-                sprintf(buffer, "%d", iforce);
-                auto imodePath = modePath + buffer;
-
-                // Building the force mode
-                FrBEMForceMode mode;
-
-                auto modeType = reader.ReadString(imodePath + "/Type");
-                Direction direction = reader.ReadDoubleArray(imodePath + "/Direction");
-                mode.SetDirection(direction);
-
-                if (modeType == "ANGULAR") {
-                    Position point = reader.ReadDoubleArray(imodePath + "/Point");
-                    mode.SetTypeANGULAR();
-                    mode.SetPoint(point);
-                } else {
-                    mode.SetTypeLINEAR();
-                }
-
-                // Adding the mode to the BEMBody
-                BEMBody->AddForceMode(mode);
-
-            }
-
-            // --------------- Motion Mode --------------------
-
-            auto nbMotionModes = reader.ReadInt(ibodyPath + "/Modes/NbMotionModes");
-
-            modePath = ibodyPath + "/Modes/MotionModes/Mode_";
-            for (unsigned int imotion=0; imotion<nbForceModes; ++imotion) {
-                sprintf(buffer, "%d", imotion);
-                auto imodePath = modePath + buffer;
-
-                FrBEMMotionMode mode;
-
-                auto modeType = reader.ReadString(imodePath + "/Type");
-                auto direction = reader.ReadDoubleArray(imodePath + "/Direction");
-
-                mode.SetDirection(direction);
-
-                if (modeType == "ANGULAR") {
-                    Position point = reader.ReadDoubleArray(imodePath + "/Point");
-                    mode.SetTypeANGULAR();
-                    mode.SetPoint(point);
-                } else {
-                    mode.SetTypeLINEAR();
-                }
-
-                // Adding the mode to the BEMBody
-                BEMBody->AddMotionMode(mode);
-            }
+            this->ModeReader(reader, ibodyPath, BEMBody);
 
             BEMBody->Initialize();
 
-        } // end for ibody
+        }
 
         // -----------> Reading the hydrodynamic coefficients
 
         for (unsigned int ibody=0; ibody<m_nbody; ++ibody) {
 
-            auto BEMBody = this->GetBody(ibody);
-
             sprintf(buffer, "%d", ibody);
             auto ibodyPath = bodyPath + buffer;
 
-            auto diffractionPath = ibodyPath + "/Excitation/Diffraction";
-            auto froudeKrylovPath = ibodyPath + "/Excitation/FroudeKrylov/";
+            auto BEMBody = this->GetBody(ibody);
 
-            for (unsigned int iwaveDir=0; iwaveDir < NbWaveDir; ++iwaveDir) {
+            this->ExcitationReader(reader, ibodyPath, BEMBody);
 
-                sprintf(buffer, "/Angle_%d", iwaveDir);
+            this->RadiationReader(reader, ibodyPath, BEMBody);
 
-                // ->Diffraction
-
-                auto diffractionWaveDirPath = diffractionPath + buffer;
-                auto diffractionRealCoeffs = reader.ReadDoubleArray(diffractionWaveDirPath + "/RealCoeffs");
-                auto diffractionImagCoeffs = reader.ReadDoubleArray(diffractionWaveDirPath + "/ImagCoeffs");
-
-                Eigen::MatrixXcd diffractionCoeffs;
-                diffractionCoeffs = diffractionRealCoeffs + MU_JJ * diffractionImagCoeffs;
-                BEMBody->SetDiffraction(iwaveDir, diffractionCoeffs);
-
-                // ->Froude-Krylov
-
-                auto froudeKrylovWaveDirPath = froudeKrylovPath + buffer;
-                auto froudeKrylovRealCoeffs = reader.ReadDoubleArray(froudeKrylovWaveDirPath + "/RealCoeffs");
-                auto froudeKrylovImagCoeffs = reader.ReadDoubleArray(froudeKrylovWaveDirPath + "/ImagCoeffs");
-
-                Eigen::MatrixXcd froudeKrylovCoeffs;
-                froudeKrylovCoeffs = froudeKrylovRealCoeffs + MU_JJ * froudeKrylovImagCoeffs;
-                BEMBody->SetFroudeKrylov(iwaveDir, froudeKrylovCoeffs);
-
+            if (reader.GroupExist(ibodyPath + "/WaveDrift")) {
+                this->WaveDriftReader(reader, ibodyPath, BEMBody);
             }
 
-            // -> Radiation
+            this->GetBody(ibody)->Finalize();
+        }
+    }
 
-            auto radiationPath = ibodyPath + "/Radiation";
+    void FrHydroDB_::ModeReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
 
-            for (unsigned int ibodyMotion=0; ibodyMotion < m_nbody; ++ibodyMotion) {
+        char buffer[20];
 
-                sprintf(buffer, "/BodyMotion_%d", ibodyMotion);
+        // ----- Force Mode ----------------------
 
-                auto bodyMotion = this->GetBody(ibodyMotion);
+        auto nbForceModes = reader.ReadInt(path + "/Modes/NbForceModes");
 
-                auto infiniteAddedMassPath = radiationPath + buffer + "/InfiniteAddedMass";
-                auto infiniteAddedMass = reader.ReadDoubleArray(infiniteAddedMassPath);
-                BEMBody->SetInfiniteAddedMass(ibodyMotion, infiniteAddedMass);
+        auto modePath = path + "/Modes/ForceModes/Mode_";
 
-                auto IRFPath = radiationPath + buffer + "/ImpulseResponseFunctionK";
-                auto IRFUPath = radiationPath + buffer + "/ImpulseResponseFunctionKU";
-                for (unsigned int imotion=0; imotion<bodyMotion->GetNbMotionMode(); ++imotion) {
-                    sprintf(buffer, "/DOF_%d", imotion);
+        for (unsigned int iforce=0; iforce<nbForceModes; ++iforce) {
 
-                    auto impulseResponseFunction = reader.ReadDoubleArray(IRFPath + buffer);
-                    BEMBody->SetImpusleResponseFunction(ibodyMotion, imotion, impulseResponseFunction);
+            sprintf(buffer, "%d", iforce);
+            auto imodePath = modePath + buffer;
 
-                    auto impulseResponseFunctionKU = reader.ReadDoubleArray(IRFUPath + buffer);
-                    BEMBody->SetVelocityCouplingIRF(ibodyMotion, imotion, impulseResponseFunctionKU);
-                }
+            // Building the force mode
+            FrBEMForceMode mode;
+
+            auto modeType = reader.ReadString(imodePath + "/Type");
+            Direction direction = reader.ReadDoubleArray(imodePath + "/Direction");
+            mode.SetDirection(direction);
+
+            if (modeType == "ANGULAR") {
+                Position point = reader.ReadDoubleArray(imodePath + "/Point");
+                mode.SetTypeANGULAR();
+                mode.SetPoint(point);
+            } else {
+                mode.SetTypeLINEAR();
             }
 
-            BEMBody->Finalize();
+            // Adding the mode to the BEMBody
+            BEMBody->AddForceMode(mode);
 
-        } // end for ibody
+        }
+
+        // --------------- Motion Mode --------------------
+
+        auto nbMotionModes = reader.ReadInt(path + "/Modes/NbMotionModes");
+
+        modePath = path + "/Modes/MotionModes/Mode_";
+        for (unsigned int imotion=0; imotion<nbForceModes; ++imotion) {
+            sprintf(buffer, "%d", imotion);
+            auto imodePath = modePath + buffer;
+
+            FrBEMMotionMode mode;
+
+            auto modeType = reader.ReadString(imodePath + "/Type");
+            auto direction = reader.ReadDoubleArray(imodePath + "/Direction");
+
+            mode.SetDirection(direction);
+
+            if (modeType == "ANGULAR") {
+                Position point = reader.ReadDoubleArray(imodePath + "/Point");
+                mode.SetTypeANGULAR();
+                mode.SetPoint(point);
+            } else {
+                mode.SetTypeLINEAR();
+            }
+
+            // Adding the mode to the BEMBody
+            BEMBody->AddMotionMode(mode);
+        }
+
+    }
+
+    void FrHydroDB_::ExcitationReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
+
+        char buffer[20];
+
+        auto diffractionPath = path + "/Excitation/Diffraction";
+        auto froudeKrylovPath = path + "/Excitation/FroudeKrylov/";
+
+        for (unsigned int iwaveDir=0; iwaveDir < GetNbWaveDirections(); ++iwaveDir) {
+
+            sprintf(buffer, "/Angle_%d", iwaveDir);
+
+            // ->Diffraction
+
+            auto diffractionWaveDirPath = diffractionPath + buffer;
+            auto diffractionRealCoeffs = reader.ReadDoubleArray(diffractionWaveDirPath + "/RealCoeffs");
+            auto diffractionImagCoeffs = reader.ReadDoubleArray(diffractionWaveDirPath + "/ImagCoeffs");
+
+            Eigen::MatrixXcd diffractionCoeffs;
+            diffractionCoeffs = diffractionRealCoeffs + MU_JJ * diffractionImagCoeffs;
+            BEMBody->SetDiffraction(iwaveDir, diffractionCoeffs);
+
+            // ->Froude-Krylov
+
+            auto froudeKrylovWaveDirPath = froudeKrylovPath + buffer;
+            auto froudeKrylovRealCoeffs = reader.ReadDoubleArray(froudeKrylovWaveDirPath + "/RealCoeffs");
+            auto froudeKrylovImagCoeffs = reader.ReadDoubleArray(froudeKrylovWaveDirPath + "/ImagCoeffs");
+
+            Eigen::MatrixXcd froudeKrylovCoeffs;
+            froudeKrylovCoeffs = froudeKrylovRealCoeffs + MU_JJ * froudeKrylovImagCoeffs;
+            BEMBody->SetFroudeKrylov(iwaveDir, froudeKrylovCoeffs);
+
+        }
+    }
+
+    void FrHydroDB_::RadiationReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
+
+        char buffer[20];
+
+        auto radiationPath = path + "/Radiation";
+
+        for (unsigned int ibodyMotion=0; ibodyMotion < m_nbody; ++ibodyMotion) {
+
+            sprintf(buffer, "/BodyMotion_%d", ibodyMotion);
+
+            auto bodyMotion = this->GetBody(ibodyMotion);
+
+            auto infiniteAddedMassPath = radiationPath + buffer + "/InfiniteAddedMass";
+            auto infiniteAddedMass = reader.ReadDoubleArray(infiniteAddedMassPath);
+            BEMBody->SetInfiniteAddedMass(ibodyMotion, infiniteAddedMass);
+
+            auto IRFPath = radiationPath + buffer + "/ImpulseResponseFunctionK";
+            auto IRFUPath = radiationPath + buffer + "/ImpulseResponseFunctionKU";
+            for (unsigned int imotion=0; imotion<bodyMotion->GetNbMotionMode(); ++imotion) {
+                sprintf(buffer, "/DOF_%d", imotion);
+
+                auto impulseResponseFunction = reader.ReadDoubleArray(IRFPath + buffer);
+                BEMBody->SetImpusleResponseFunction(ibodyMotion, imotion, impulseResponseFunction);
+
+                auto impulseResponseFunctionKU = reader.ReadDoubleArray(IRFUPath + buffer);
+                BEMBody->SetVelocityCouplingIRF(ibodyMotion, imotion, impulseResponseFunctionKU);
+            }
+        }
+    }
+
+    void FrHydroDB_::WaveDriftReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
+
+        char buffer[20];
+
+        std::string modePath = path + "mode_";
+        std::string headPath = path + "heading_";
+
+        bool xSym = (bool)reader.ReadBool(path + "sym_x");
+        bool ySym = (bool)reader.ReadBool(path + "sym_y");
+        int nbModes = reader.ReadInt(path + "n_modes");
+
+        for (unsigned int imode=1; imode<=nbModes; ++imode) {
+
+            sprintf(buffer, "%d", imode);
+            auto imodePath = modePath + buffer;
+
+            auto nbAngles = reader.ReadInt(imodePath + "/n_dir");
+            auto coeffs = std::vector<double>();
+            auto headings = std::vector<double>();
+
+            for (unsigned int idir=1; idir<=nbAngles; ++idir) {
+
+                sprintf(buffer, "%d", idir);
+                auto idirPath = imodePath + headPath + buffer;
+
+                auto angle = reader.ReadDouble(idirPath + "/heading");
+                headings.push_back(angle);
+
+                auto data = reader.ReadDoubleArraySTD(idirPath + "/data");
+                coeffs.insert(std::end(coeffs), std::begin(data[0]), std::end(data[0]));
+            }
+
+            auto data = reader.ReadDoubleArraySTD(imodePath + "/freq");
+            auto freqs = std::vector<double>(data[0]);
+
+            BEMBody->SetWaveDrift(headings, freqs, coeffs);
+
+        }
+
+
     }
 
 }  // end namespace frydom

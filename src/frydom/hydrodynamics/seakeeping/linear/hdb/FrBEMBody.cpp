@@ -796,6 +796,22 @@ namespace frydom {
 
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
+
+    //
+    // FrWaveDriftPolarCoeff
+    //
+
+    FrWaveDriftPolarData::FrWaveDriftPolarData(std::vector<double> angles, std::vector<double> freqs,
+                                               std::vector<double> coeffs)
+    : m_angles(angles), m_freqs(freqs), m_data(coeffs) {
+
+        m_table = std::make_unique<mathutils::LookupTable2d<>>();
+        m_table->SetX(m_angles);
+        m_table->SetY(m_freqs);
+        m_table->AddData("Data", coeffs);
+    }
+
+
     unsigned int FrBEMBody_::GetNbFrequencies() const {
         return m_HDB->GetNbFrequencies();
     }
@@ -849,8 +865,8 @@ namespace frydom {
         auto nbBodies = GetNbBodies();
         m_radiationMask.reserve(nbBodies);
         m_infiniteAddedMass.reserve(nbBodies);
-        m_impulseResponseFunction.reserve(nbBodies);
-        m_velocityCouplingIRF.reserve(nbBodies);
+        m_impulseResponseFunctionK.reserve(nbBodies);
+        m_impulseResponseFunctionKu.reserve(nbBodies);
 
         auto nbTime = GetNbTimeSamples();
         for (unsigned int ibody=0; ibody<nbBodies; ++ibody) {
@@ -873,8 +889,8 @@ namespace frydom {
                 Eigen::MatrixXd matTime(nbForce, nbTime);
                 impulseResponseFunctionVector.push_back(matTime);
             }
-            m_impulseResponseFunction.push_back(impulseResponseFunctionVector);
-            m_velocityCouplingIRF.push_back(impulseResponseFunctionVector);
+            m_impulseResponseFunctionK.push_back(impulseResponseFunctionVector);
+            m_impulseResponseFunctionKu.push_back(impulseResponseFunctionVector);
         }
     }
 
@@ -948,7 +964,7 @@ namespace frydom {
         assert(idof < GetNbMotionMode());
         assert(IRF.rows() == GetNbForceMode());
         assert(IRF.cols() == GetNbTimeSamples());
-        m_impulseResponseFunction[ibody][idof] = IRF;
+        m_impulseResponseFunctionK[ibody][idof] = IRF;
     }
 
     void FrBEMBody_::SetVelocityCouplingIRF(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd &IRF) {
@@ -956,7 +972,12 @@ namespace frydom {
         assert(idof < GetNbMotionMode());
         assert(IRF.rows() == GetNbForceMode());
         assert(IRF.cols() == GetNbTimeSamples());
-        m_velocityCouplingIRF[ibody][idof] = IRF;
+        m_impulseResponseFunctionKu[ibody][idof] = IRF;
+    }
+
+    void FrBEMBody_::SetWaveDrift(const std::vector<double>& headings, const std::vector<double>& freqs,
+                                  const std::vector<double>& coeffs) {
+        m_waveDrift.push_back( std::make_unique<FrWaveDriftPolarData>(headings, freqs, coeffs));
     }
 
     //
@@ -1007,38 +1028,38 @@ namespace frydom {
 
     std::vector<Eigen::MatrixXd> FrBEMBody_::GetImpulseResponseFunction(unsigned int ibody) const {
         assert(ibody < GetNbBodies());
-        return m_impulseResponseFunction[ibody];
+        return m_impulseResponseFunctionK[ibody];
     }
 
     Eigen::MatrixXd FrBEMBody_::GetImpulseResponseFunction(unsigned int ibody, unsigned int idof) const {
         assert(ibody < GetNbBodies());
         assert(idof < GetNbMotionMode());
-        return m_impulseResponseFunction[ibody][idof];
+        return m_impulseResponseFunctionK[ibody][idof];
     }
 
     Eigen::VectorXd FrBEMBody_::GetImpulseResponseFunction(unsigned int ibody, unsigned int idof, unsigned int iforce) const {
         assert(ibody < GetNbBodies());
         assert(idof < GetNbMotionMode());
         assert(iforce < GetNbForceMode());
-        return m_impulseResponseFunction[ibody][idof].row(iforce);
+        return m_impulseResponseFunctionK[ibody][idof].row(iforce);
     }
 
     std::vector<Eigen::MatrixXd> FrBEMBody_::GetVelocityCouplingIRF(unsigned int ibody) const {
         assert(ibody < GetNbBodies());
-        return m_velocityCouplingIRF[ibody];
+        return m_impulseResponseFunctionKu[ibody];
     }
 
     Eigen::MatrixXd FrBEMBody_::GetVelocityCouplingIRF(unsigned int ibody, unsigned int idof) const {
         assert(ibody < GetNbBodies());
         assert(idof < GetNbMotionMode());
-        return m_velocityCouplingIRF[ibody][idof];
+        return m_impulseResponseFunctionKu[ibody][idof];
     }
 
     Eigen::VectorXd FrBEMBody_::GetVelocityCouplingIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const {
         assert(ibody < GetNbBodies());
         assert(idof < GetNbMotionMode());
         assert(iforce < GetNbForceMode());
-        return m_velocityCouplingIRF[ibody][idof].row(iforce);
+        return m_impulseResponseFunctionKu[ibody][idof].row(iforce);
     }
 
     //

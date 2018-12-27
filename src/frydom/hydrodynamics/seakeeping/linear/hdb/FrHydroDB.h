@@ -141,6 +141,7 @@ namespace frydom {
     class FrHydroMapper_;
     class FrBEMBody_;
     class FrBody_;
+    class FrHDF5Reader;
 
     // ----------------------------------------------------------
     // FrDiscretization1D
@@ -202,6 +203,14 @@ namespace frydom {
         FrHydroDB_() = default;
 
         FrHydroDB_(std::string h5file);
+
+        void ModeReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
+
+        void ExcitationReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
+
+        void RadiationReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
+
+        void WaveDriftReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
 
         unsigned int GetNbBodies() const { return (uint)m_bodies.size(); };
 
