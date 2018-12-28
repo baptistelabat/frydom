@@ -480,17 +480,23 @@ namespace frydom {
 
         Eigen::MatrixXd GetSelfInfiniteAddedMass() const;
 
-        std::vector<Eigen::MatrixXd> GetImpulseResponseFunction(unsigned int ibody) const;
+        std::vector<Eigen::MatrixXd> GetImpulseResponseFunctionK(unsigned int ibody) const;
 
-        Eigen::MatrixXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof) const;
+        Eigen::MatrixXd GetImpulseResponseFunctionK(unsigned int ibody, unsigned int idof) const;
 
-        Eigen::VectorXd GetImpulseResponseFunction(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+        Eigen::VectorXd GetImpulseResponseFunctionK(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
 
-        std::vector<Eigen::MatrixXd> GetVelocityCouplingIRF(unsigned int ibody) const;
+        std::vector<Eigen::MatrixXd> GetImpulseResponseFunctionKu(unsigned int ibody) const;
 
-        Eigen::MatrixXd GetVelocityCouplingIRF(unsigned int ibody, unsigned int idof) const;
+        Eigen::MatrixXd GetImpulseResponseFunctionKu(unsigned int ibody, unsigned int idof) const;
 
-        Eigen::VectorXd GetVelocityCouplingIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+        Eigen::VectorXd GetImpulseResponseFunctionKu(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
+
+        Interp1d<double, VectorN> GetIRFInterpolatorK(unsigned int ibody, unsigned int idof) const;
+
+        Interp1d<double, VectorN> GetIRFInterpolatorKu(unsigned int ibody, unsigned int idof) const;
+
+
 
         //
         // Interpolators

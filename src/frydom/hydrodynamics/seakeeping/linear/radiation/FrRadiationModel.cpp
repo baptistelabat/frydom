@@ -363,23 +363,37 @@ namespace frydom {
     }
 
     void FrRadiationConvolutionModel_::Update(double time) {
+
+        auto nbBodies = m_HDB->GetNbBodies();
+
+        auto radiationForce = GeneralizedForce();
+
         for (unsigned int iforceBody=0; iforceBody<nbBodies; iforceBody++) {
 
             auto BEMBody = m_HDB->GetBody(iforceBody);
 
-            for (unsigned int imotionBody=0; imotionBody<nbBodies; imotionBody++) {
+            for (unsigned int imotionBody = 0; imotionBody < nbBodies; imotionBody++) {
 
-                for (unsigned int idof=0; idof<6; idof++) {
+                auto velocity = m_recorder[imotionBody].GetData();
+                auto vtime = m_recorder[imotionBody].GetTime();
 
-                    auto velocity = m_recorder[imotionBody].GetData();
-                    auto vtime = m_recorder[imotionBody].GetTime();
+                for (unsigned int idof = 0; idof < 6; idof++) {
 
-                    for (unsigned int iforce=0; iforce<6; iforce++) {
-                        auto IRFInterpolation = BEMBody->GetIRFInterpolatorK(imotionBody, idof, iforce);
-                        val = Trapz(vtime, IRFInterpolator(vtime) * velocity);
+                    auto interpK = BEMBody->GetIRFInterpolatorK(imotionBody, idof);
+
+                    std::vector<VectorN> kernel;
+                    for (unsigned int it = 0; it < vtime.size(); ++it) {
+                        kernel.push_back(interpK.Eval(vtime[it]) * velocity[it]);
                     }
+                    radiationForce += Trapz(vtime, kernel);
                 }
             }
+
+            //if () {// TODO : steady velocity non null)
+                radiationForce += ConvolutionKu(meanSpeed);
+            //}
+
+            m_radiationForce = radiationForce;
         }
     }
 
@@ -397,7 +411,45 @@ namespace frydom {
 
     void FrRadiationConvolutionModel_::GetImpulseResponseSize(double &Te, double &dt, unsigned int &N) const {
 
+        // TODO
 
+    }
+
+    GeneralizedForce FrRadiationConvolutionModel_::ConvolutionKu(double meanSpeed) const {
+
+        auto nbBodies = m_HDB->GetNbBodies();
+
+        auto radiationForce = GeneralizedForce();
+
+        for (unsigned int iforceBody=0; iforceBody<nbBodies; iforceBody++) {
+
+            auto BEMBody = m_HDB->GetBody(iforceBody);
+            auto Ainf = BEMBody->GetSelfInfiniteAddedMass();
+
+            for (unsigned int imotionBody=0; imotionBody<nbBodies; imotionBody++) {
+
+                auto velocity = m_recorder[imotionBody].GetData();
+                auto vtime = m_recorder[imotionBody].GetTime();
+
+                for (unsigned int idof=0; idof<6; idof++) {
+
+                    auto interpKu = BEMBody->GetIRFInterpolatorKu(imotionBody, idof);
+
+                    std::vector<VectorN> kernel;
+                    for (unsigned int it = 0; it < vtime.size(); ++it) {
+                        kernel.push_back(interpKu.Eval(vtime[it]) * velocity[it]);
+                    }
+                    radiationForce += meanSpeed * Trapz(vtime, kernel);
+                }
+
+                auto damping = Ainf.col(2) * angular.y() - Ainf.col(1) * angular.x();
+                radiationForce += meanSpeed * damping;
+
+            }
+
+        }
+
+        return radiationForce;
 
     }
 

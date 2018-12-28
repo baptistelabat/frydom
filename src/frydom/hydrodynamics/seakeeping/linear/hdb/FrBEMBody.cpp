@@ -986,40 +986,40 @@ namespace frydom {
     //
 
     Eigen::MatrixXcd FrBEMBody_::GetDiffraction(const unsigned int iangle) const {
-        assert(iangle < GetNbWaveDirections());
+        assert(iangle < this->GetNbWaveDirections());
         return m_diffraction[iangle];
     }
 
     Eigen::VectorXcd FrBEMBody_::GetDiffraction(const unsigned int iangle, const unsigned iforce) const {
-        assert(iangle < GetNbWaveDirections());
-        assert(iforce < GetNbForceMode());
+        assert(iangle < this->GetNbWaveDirections());
+        assert(iforce < this->GetNbForceMode());
         return m_diffraction[iangle].row(iforce);
     }
 
     Eigen::MatrixXcd FrBEMBody_::GetFroudeKrylov(const unsigned int iangle) const {
-        assert(iangle < GetNbWaveDirections());
+        assert(iangle < this->GetNbWaveDirections());
         return m_froudeKrylov[iangle];
     }
 
     Eigen::VectorXcd FrBEMBody_::GetFroudeKrylov(const unsigned int iangle, const unsigned iforce) const {
-        assert(iangle < GetNbWaveDirections());
-        assert(iforce < GetNbForceMode());
+        assert(iangle < this->GetNbWaveDirections());
+        assert(iforce < this->GetNbForceMode());
         return m_froudeKrylov[iangle].row(iforce);
     }
 
     Eigen::MatrixXcd FrBEMBody_::GetExcitation(const unsigned int iangle) const {
-        assert(iangle < GetNbWaveDirections());
+        assert(iangle < this->GetNbWaveDirections());
         return m_excitation[iangle];
     }
 
     Eigen::VectorXcd FrBEMBody_::GetExcitation(const unsigned int iangle, const unsigned iforce) const {
-        assert(iangle < GetNbWaveDirections());
-        assert(iforce < GetNbForceMode());
+        assert(iangle < this->GetNbWaveDirections());
+        assert(iforce < this->GetNbForceMode());
         return m_excitation[iangle].row(iforce);
     }
 
     Eigen::MatrixXd FrBEMBody_::GetInfiniteAddedMass(const unsigned int ibody) const {
-        assert(ibody < GetNbBodies());
+        assert(ibody < this->GetNbBodies());
         return m_infiniteAddedMass[ibody];
     }
 
@@ -1027,41 +1027,53 @@ namespace frydom {
         return m_infiniteAddedMass[m_id];
     }
 
-    std::vector<Eigen::MatrixXd> FrBEMBody_::GetImpulseResponseFunction(unsigned int ibody) const {
-        assert(ibody < GetNbBodies());
+    std::vector<Eigen::MatrixXd> FrBEMBody_::GetImpulseResponseFunctionK(unsigned int ibody) const {
+        assert(ibody < this->GetNbBodies());
         return m_impulseResponseFunctionK[ibody];
     }
 
-    Eigen::MatrixXd FrBEMBody_::GetImpulseResponseFunction(unsigned int ibody, unsigned int idof) const {
-        assert(ibody < GetNbBodies());
-        assert(idof < GetNbMotionMode());
+    Eigen::MatrixXd FrBEMBody_::GetImpulseResponseFunctionK(unsigned int ibody, unsigned int idof) const {
+        assert(ibody < this->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
         return m_impulseResponseFunctionK[ibody][idof];
     }
 
-    Eigen::VectorXd FrBEMBody_::GetImpulseResponseFunction(unsigned int ibody, unsigned int idof, unsigned int iforce) const {
-        assert(ibody < GetNbBodies());
-        assert(idof < GetNbMotionMode());
-        assert(iforce < GetNbForceMode());
+    Eigen::VectorXd FrBEMBody_::GetImpulseResponseFunctionK(unsigned int ibody, unsigned int idof, unsigned int iforce) const {
+        assert(ibody < this->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(iforce < this->GetNbForceMode());
         return m_impulseResponseFunctionK[ibody][idof].row(iforce);
     }
 
-    std::vector<Eigen::MatrixXd> FrBEMBody_::GetVelocityCouplingIRF(unsigned int ibody) const {
-        assert(ibody < GetNbBodies());
+    std::vector<Eigen::MatrixXd> FrBEMBody_::GetImpulseResponseFunctionKu(unsigned int ibody) const {
+        assert(ibody < this->GetNbBodies());
         return m_impulseResponseFunctionKu[ibody];
     }
 
-    Eigen::MatrixXd FrBEMBody_::GetVelocityCouplingIRF(unsigned int ibody, unsigned int idof) const {
-        assert(ibody < GetNbBodies());
-        assert(idof < GetNbMotionMode());
+    Eigen::MatrixXd FrBEMBody_::GetImpulseResponseFunctionKu(unsigned int ibody, unsigned int idof) const {
+        assert(ibody < this->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
         return m_impulseResponseFunctionKu[ibody][idof];
     }
 
-    Eigen::VectorXd FrBEMBody_::GetVelocityCouplingIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const {
-        assert(ibody < GetNbBodies());
-        assert(idof < GetNbMotionMode());
-        assert(iforce < GetNbForceMode());
+    Eigen::VectorXd FrBEMBody_::GetImpulseResponseFunctionKu(unsigned int ibody, unsigned int idof, unsigned int iforce) const {
+        assert(ibody < this->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        assert(iforce < this->GetNbForceMode());
         return m_impulseResponseFunctionKu[ibody][idof].row(iforce);
     }
+
+    Interp1d<double, VectorN> FrBEMBody_::GetIRFInterpolatorK(unsigned int ibody, unsigned int idof) const {
+        assert(ibody < this->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        return m_interpK[ibody][idof];
+    };
+
+    Interp1d<double, VectorN> FrBEMBody_::GetIRFInterpolatorKu(unsigned int ibody, unsigned int idof) const {
+        assert(ibody < this->GetNbBodies());
+        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
+        return m_interpKu[ibody][idof];
+    };
 
     //
     // Interpolators for the excitation force

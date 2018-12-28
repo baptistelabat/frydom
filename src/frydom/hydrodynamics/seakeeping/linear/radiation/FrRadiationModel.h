@@ -138,6 +138,7 @@ namespace frydom {
     protected:
 
         std::shared_ptr<FrHydroDB_> m_HDB;
+        GeneralizedForce m_radiationForce;
 
     public:
 
@@ -146,6 +147,8 @@ namespace frydom {
         explicit FrRadiationModel_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {}
 
         FrHydroDB_* GetHydroDB() const { return m_HDB.get(); }
+
+        GeneralizedForce* GetRadiationForce() const { return &m_radiationForce; }
 
         void Initialize() override;
 
@@ -163,7 +166,7 @@ namespace frydom {
     template <class T>
     class FrTimeRecorder_<T>;
 
-    class FrRadiationConvolutionModel_ : public FrRadiationModel {
+    class FrRadiationConvolutionModel_ : public FrRadiationModel_ {
 
     private:
         std::vector<FrTimeRecorder_<Velocity>> m_recorder;
@@ -181,6 +184,8 @@ namespace frydom {
     private:
 
         void GetImpulseResponseSize(double& Te, double &dt, unsigned int& N) const;
+
+        GeneralizedForce ConvolutionKu(double meanSpeed) const;
 
     };
 
