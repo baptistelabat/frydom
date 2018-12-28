@@ -83,7 +83,7 @@ namespace frydom {
         /// \param fc Frame convention
         void SetVelocityInWorld(const Velocity& velocity, FRAME_CONVENTION fc);
 
-        /// Set velocity ofthe equilibrium frame in world coordinates
+        /// Set velocity of the equilibrium frame in world coordinates
         /// \param velocity Velocity vector in frame coordinates
         void SetVelocityInFrame(const Velocity& velocity);
 

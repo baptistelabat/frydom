@@ -6,6 +6,10 @@
 
 #include "FrRadiationForce.h"
 
+/// <<<<<<<<<<<<<<<<<<<<<< Refactoring
+
+#include "frydom/utils/FrRecorder.h"
+#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 
 namespace frydom {
 
@@ -297,4 +301,116 @@ namespace frydom {
         return radiationForce;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+    // ----------------------------------------------------------------
+    // Radiation model
+    // ----------------------------------------------------------------
+
+    void FrRadiationModel_::Initialize() {
+
+    }
+
+    FrHydroMapper_* FrRadiationModel_::GetMapper() const {
+        return m_HDB->GetMapper();
+    }
+
+    void FrRadiationModel_::Update(double time) {
+
+    }
+
+    // ----------------------------------------------------------------
+    // Radiation model with convolution
+    // ----------------------------------------------------------------
+
+    void FrRadiationConvolutionModel_::Initialize() {
+
+        double Te, dt;
+        unsigned int N;
+        GetImpulseResponseSize(Te, dt, N);
+
+        auto nbBodies = m_HDB->GetNbBodies();
+
+        m_recorder.reserve(nbBodies);
+
+        for (unsigned int ibody=0; ibody<nbBodies; ++ibody) {
+            m_recorder.push_back(FrTimeRecorder_(Te, dt));
+        }
+    }
+
+    void FrRadiationConvolutionModel_::Update(double time) {
+        for (unsigned int iforceBody=0; iforceBody<nbBodies; iforceBody++) {
+
+            auto BEMBody = m_HDB->GetBody(iforceBody);
+
+            for (unsigned int imotionBody=0; imotionBody<nbBodies; imotionBody++) {
+
+                for (unsigned int idof=0; idof<6; idof++) {
+
+                    auto velocity = m_recorder[imotionBody].GetData();
+                    auto vtime = m_recorder[imotionBody].GetTime();
+
+                    for (unsigned int iforce=0; iforce<6; iforce++) {
+                        auto IRFInterpolation = BEMBody->GetIRFInterpolatorK(imotionBody, idof, iforce);
+                        val = Trapz(vtime, IRFInterpolator(vtime) * velocity);
+                    }
+                }
+            }
+        }
+    }
+
+    void FrRadiationConvolutionModel_::StepFinalize() {
+
+        auto nbBodies = m_HDB->GetNbBodies();
+
+        for (unsigned int ibody=0; ibody<nbBodies; ++ibody) {
+            // TODO : trouver où stocker le repere d'équilibre et calculer les vitesse d
+            // TODO : du corps dans le repere d'équilibre puis stockage.
+            // FIXME : est-ce la vitesse doit bien être calculée ici (pb de dépendance) ?
+        }
+
+    }
+
+    void FrRadiationConvolutionModel_::GetImpulseResponseSize(double &Te, double &dt, unsigned int &N) const {
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 }
+

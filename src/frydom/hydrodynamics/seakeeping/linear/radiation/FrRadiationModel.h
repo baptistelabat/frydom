@@ -15,6 +15,10 @@
 #include <iostream>
 #include <fstream>
 
+///  <<<<<<<<<<<<< Refactoring include
+
+#include "frydom/core/FrPhysicsItem.h"
+
 
 namespace frydom {
 
@@ -87,7 +91,6 @@ namespace frydom {
 
         FrRadiationConvolutionModel(FrHydroDB* HDB, FrOffshoreSystem* system);
 
-
         void Initialize() override;
 
         // It has to be called by force models and updated only once, the first time it is called
@@ -110,6 +113,76 @@ namespace frydom {
     };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+    // ---------------------------------------------------------------------
+    // Radiation model
+    // ---------------------------------------------------------------------
+
+    class FrRadiationModel_ : public FrPhysicsItem_ {
+
+    protected:
+
+        std::shared_ptr<FrHydroDB_> m_HDB;
+
+    public:
+
+        FrRadiationModel_() = default;
+
+        explicit FrRadiationModel_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {}
+
+        FrHydroDB_* GetHydroDB() const { return m_HDB.get(); }
+
+        void Initialize() override;
+
+        FrHydroMapper_* GetMapper() const;
+
+        void Update(double time) override;
+
+    };
+
+
+    // -------------------------------------------------------------------------
+    // Radiation model with convolution
+    // -------------------------------------------------------------------------
+
+    template <class T>
+    class FrTimeRecorder_<T>;
+
+    class FrRadiationConvolutionModel_ : public FrRadiationModel {
+
+    private:
+        std::vector<FrTimeRecorder_<Velocity>> m_recorder;
+
+    public:
+
+        FrRadiationConvolutionModel_(std::shared_ptr<FrHydroDB_> HDB) : FrRadiationModel_(HDB) {}
+
+        void Initialize() override;
+
+        void Update(double time) override;
+
+        void StepFinalize() override;
+
+    private:
+
+        void GetImpulseResponseSize(double& Te, double &dt, unsigned int& N) const;
+
+    };
 
 }  // end namespace frydom
 
