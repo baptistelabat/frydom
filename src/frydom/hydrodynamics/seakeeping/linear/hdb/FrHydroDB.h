@@ -240,6 +240,8 @@ namespace frydom {
 
         double GetTimeStep() const { return m_timeDiscretization.GetStep(); }
 
+        std::vector<double> GetTimeDiscretization() const { return m_timeDiscretization.GetVector(); }
+
         FrBEMBody_* NewBody(std::string bodyName);
 
         FrBEMBody_* GetBody(unsigned int ibody);

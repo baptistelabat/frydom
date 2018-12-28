@@ -392,6 +392,9 @@ namespace frydom {
         std::vector<std::vector<Eigen::MatrixXd>> m_impulseResponseFunctionK;
         std::vector<std::vector<Eigen::MatrixXd>> m_impulseResponseFunctionKu;
 
+        std::vector<std::vector<mathutils::Interp1d<double, VectorN>>> m_interpK;
+        std::vector<std::vector<mathutils::Interp1d<double, VectorN>>> m_interpKu;
+
         std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
         std::vector<std::unique_ptr<FrWaveDriftPolarData>> m_waveDrift;
@@ -490,7 +493,7 @@ namespace frydom {
         Eigen::VectorXd GetVelocityCouplingIRF(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
 
         //
-        // Interpolators for the excitation force
+        // Interpolators
         //
 
         void BuildWaveExcitationInterpolators();
@@ -498,6 +501,8 @@ namespace frydom {
         std::vector<Eigen::MatrixXcd> GetExcitationInterp(std::vector<double> waveFrequencies,
                                                           std::vector<double> waveDirections,
                                                           ANGLE_UNIT angleUnit);
+
+        void BuildIRFInterpolators();
     };
 
 }  // end namespace frydom

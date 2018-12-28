@@ -892,11 +892,12 @@ namespace frydom {
             m_impulseResponseFunctionK.push_back(impulseResponseFunctionVector);
             m_impulseResponseFunctionKu.push_back(impulseResponseFunctionVector);
         }
+
     }
 
     void FrBEMBody_::Finalize() {
-        ComputeExcitation();
         BuildWaveExcitationInterpolators();
+        BuildIRFInterpolators();
     }
 
     //
@@ -1146,6 +1147,47 @@ namespace frydom {
             Fexc.push_back(excitationForceDir);
         }
         return Fexc;
+    }
+
+
+    void FrBEMBody_::BuildIRFInterpolators() {
+
+        m_interpK.clear();
+        m_interpKu.clear();
+
+        auto nbBodies = GetNbBodies();
+
+        auto vtime = std::make_shared<std::vector<double>>(m_HDB->GetTimeDiscretization());
+
+        for (unsigned int ibody=0; ibody<nbBodies; ++ibody) {
+
+            auto nbMotion = m_HDB->GetBody(ibody)->GetNbMotionMode();
+
+            std::vector<Interp1d<double, VectorN>> interpolatorsK;
+            interpolatorsK.reserve(nbMotion);
+            std::vector<Interp1d<double, VectorN>> interpolatorsKu;
+            interpolatorsKu.reserve(nbMotion);
+
+            for (unsigned int imotion=0; imotion<nbMotion; ++imotion) {
+
+                auto interpK = Interp1dLinear<double, VectorN>();
+                auto mat = m_impulseResponseFunctionK[ibody][imotion];
+                auto vdata = std::make_shared<std::vector<VectorN>>(mat.data(), mat.data() + mat.cols());
+                interpK.Initialize(vtime, vdata);
+
+                auto interpKu = Interp1dLinear<double, VectorN>();
+                mat = m_impulseResponseFunctionKu[ibody][imotion];
+                vdata = std::make_shared<std::vector<VectorN>>(mat.data(), mat.data() + mat.cols());
+                interpKu.Initialize(vtime, vdata);
+
+                interpolatorsK.push_back(interpK);
+                interpolatorsKu.push_back(interpKu);
+            }
+
+            m_interpK.push_back(interpolatorsK);
+            m_interpKu.push_back(interpolatorsKu);
+        }
+
     }
 
 
