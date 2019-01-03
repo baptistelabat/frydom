@@ -16,6 +16,11 @@ int main(int argc, char* argv[]) {
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem_ system;
 
+    // Specify the size of the free surface asset.
+    auto FSAsset = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset();
+    FSAsset->SetGrid(-100., 100, 2, -100, 100, 2);
+
+
     // Creating a new body is really simple, you just have to call the NewBody() method of offshore system. This way,
     // it is automatically linked to the system, with the right contact method defined in the offshore system.
     auto body = system.NewBody();
@@ -162,8 +167,19 @@ int main(int argc, char* argv[]) {
 //    body->RotateAroundPointInBody(bodyRotation, bodyPoint, fc);
 
 
+    // ------------------ Run ------------------ //
 
+    // You can change the dynamical simulation time step using.
+    system.SetTimeStep(0.04);
 
+    // Don't forget to initialize the offshore system : it will initialize every physical objects and environmental
+    // components it contains.
+    system.Initialize();
+
+    // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
+    // the time length of the simulation (here 30s) and the distance from the camera to the objectif (100m).
+    // For saving snapshots of the simulation, just turn the boolean to true.
+    system.RunInViewer(30, 100, false);
 
 
 
