@@ -8,6 +8,14 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
+    /** We present in this demo the methods which can be used to defined an body. They can be grouped in different thematics:
+     *      - the methods to set the visual assets of the body, in terms of shapes and colors
+     *      - the methods to set the inertia parameters of the body (mass, inertia tensor, center of gravity)
+     *      - the methods to add nodes to the body, which can be used for setting kinematic links, cables, etc. between bodies
+     *      - the methods to set the position and rotation of the body, or to translate and rotate the body.
+     *
+     */
+
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
     FRAME_CONVENTION fc = NWU;
     // Define the wave direction convention (GOTO or COMEFROM), can be used also for current and wind direction definition.
@@ -55,7 +63,7 @@ int main(int argc, char* argv[]) {
 
     // The inertia parameters, mass, inertia matrix and application point, are strongly linked, so we embedded them into
     // a single element: the inertia tensor (FrInertiaTensor). We chose to fix the application point to the body CoG by
-    // convention. So, for setting mass and CoG position for a body, you need to use the SetInertiaTensor() method.
+    // convention. So, for setting mass and CoG position for a body, you just need to use the SetInertiaTensor() method.
 
     // However you can use simple FrInertiaTensor constructors, if you just want to specify the mass, or the mass and
     // COG position. All inertia param not specified are implicitly set to null.

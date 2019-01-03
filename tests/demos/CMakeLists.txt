@@ -7,13 +7,14 @@ set(DEMOS
         demo_Environment
         demo_FreeSurface
         demo_Body
+        demo_Frame_and_Rotation
         )
 
 
 foreach(test ${DEMOS})
     message(STATUS "        ...add ${test}")
 
-    add_executable(${test} ${test}.cpp)
+    add_executable(${test} ${test}.cpp demo_Frame_and_Rotation.cpp)
     target_link_libraries(${test} FRyDoM_Engine matplotlib-cpp)
 
 endforeach()

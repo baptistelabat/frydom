@@ -9,6 +9,13 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
+    /** The main components and methods of FrFreeSurface are introduced in this demo:
+     *      - free surface asset definition and manipulation
+     *      - the Twelfth rule tidal model
+     *      - the Airy linear wavefield models : regular and irregular ones
+     *
+     */
+
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
     FRAME_CONVENTION fc = NWU;
     // Define the wave direction convention (GOTO or COMEFROM), can be used also for current and wind direction definition.

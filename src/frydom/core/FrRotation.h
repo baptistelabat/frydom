@@ -44,7 +44,7 @@ namespace frydom {
         FrUnitQuaternion_();
 
         /// Constructor from four doubles. The first is the real part, others are i,j,k imaginary parts
-        /// the quaternion reprented by {q0,q1,q2,q3} MUST be normalized.
+        /// the quaternion represented by {q0,q1,q2,q3} MUST be normalized.
         /// \param q0 real part
         /// \param q1 first imaginary part
         /// \param q2 second imaginary part
