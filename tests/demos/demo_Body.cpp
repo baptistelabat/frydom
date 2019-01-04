@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     // Make the body fixed : If true, it does not move respect to the absolute world, despite constraints, forces, etc.
     // By default a body is not fixed.
-    body->SetBodyFixed(true);
+//    body->SetBodyFixed(true);
 
     // =============================================================================================================
     // VISUAL ASSETS
@@ -65,30 +65,26 @@ int main(int argc, char* argv[]) {
     // a single element: the inertia tensor (FrInertiaTensor). We chose to fix the application point to the body CoG by
     // convention. So, for setting mass and CoG position for a body, you just need to use the SetInertiaTensor() method.
 
-    // However you can use simple FrInertiaTensor constructors, if you just want to specify the mass, or the mass and
-    // COG position. All inertia param not specified are implicitly set to null.
+    // Note that the simulation won't work with null  diagonal inertia parameters and non fixed body.
     double mass = 1000.; // in Kg
-    Position COGPos(10.,-5.,-3.);
-    //
-    FrInertiaTensor_ InertiaTensor(mass);
-    FrInertiaTensor_ InertiaTensor0(mass, COGPos, fc);
+    double Ixx =1., Iyy = 1., Izz = 1., Ixy = 0., Ixz = 0., Iyz = 0.;
 
-    // You can also choose to set the inertia coefficients, given at the COG frame (position and orientation, which may
+    // You can set the inertia coefficients, given at the COG frame (position and orientation, which may
     // not be the body orientation).
-    double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
 
+    Position COGPos(10.,-5.,-3.);
     FrRotation_ COGOrientation;
     COGOrientation.SetCardanAngles_DEGREES(0.,0.,90.,fc); // COGFrame has a 90 yaw rotation, compared to the body reference frame.
 
     FrFrame_ COGFrame(COGPos,COGOrientation,fc); // creating COGFrame, from the COG position and orientation.
-    FrInertiaTensor_ InertiaTensor2(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,COGFrame,fc);
+    FrInertiaTensor_ InertiaTensor(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,COGFrame,fc);
 
-    // Finally, you may got your inertia coefficients expressed in a frame, auxFrame, that can be different from the
-    // COGPosition. The inertia are then automatically transported to the CoG Position you specify by this following
+    // Or you may got your inertia coefficients expressed in a frame, auxFrame, that can be different from the
+    // COGPosition. The inertia are then automatically transported to the CoG Position specified, by this following
     // constructor.
     FrFrame_ auxFrame; // defined from the position and orientation you got.
 
-    FrInertiaTensor_ InertiaTensor3(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,auxFrame,COGPos,fc);
+    FrInertiaTensor_ InertiaTensor0(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,auxFrame,COGPos,fc);
 
     // Set now the inertia tensor you want in the body.
     body->SetInertiaTensor(InertiaTensor);

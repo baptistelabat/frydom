@@ -57,7 +57,7 @@ TEST(FrWaveSpectrum,Jonswap){
             0.07464189, 0.06691458, 0.06023814, 0.05444138, 0.04938449,
             0.04495295};
 
-    for (int i=0;i<22;++i) {
+    for (int i=0;i<21;++i) {
         EXPECT_NEAR(FromPython[i],waveAmp[i],1.E-8);
     }
 

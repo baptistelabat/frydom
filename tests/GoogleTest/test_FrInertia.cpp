@@ -77,7 +77,8 @@ void TestInertia::SetUp() {
     body->SetPosition(m_BodyPositionInWorld, NWU);
     body->SetRotation(FrUnitQuaternion_(m_BodyRotationDirection, m_BodyRotationAngle, NWU));
 
-    body->SetInertiaTensor(FrInertiaTensor_(m_BodyMass,m_COG,NWU));
+    body->SetInertiaTensor(FrInertiaTensor_(m_BodyMass,0.,0.,0.,0.,0.,0.,FrFrame_(m_COG,FrRotation_(),NWU),NWU));
+//    body->SetInertiaTensor(FrInertiaTensor_(m_BodyMass,m_COG,NWU));
 //    body->SetCOG(m_COG, NWU);
 //    body->SetMass(m_BodyMass);
 

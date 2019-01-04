@@ -16,15 +16,15 @@
 namespace frydom {
 
 
-    FrInertiaTensor_::FrInertiaTensor_() : m_mass(0.), m_cogPosition(0., 0., 0.) {}
-
-    FrInertiaTensor_::FrInertiaTensor_(double mass) : m_mass(mass), m_cogPosition(0., 0., 0.){}
-
-
-    FrInertiaTensor_::FrInertiaTensor_(double mass, const Position &cogPosition, FRAME_CONVENTION fc): m_mass(mass) {
-        m_cogPosition = cogPosition;
-        if(IsNED(fc)) {internal::SwapFrameConvention(m_cogPosition);}
-    }
+//    FrInertiaTensor_::FrInertiaTensor_() : m_mass(0.), m_cogPosition(0., 0., 0.) {}
+//
+//    FrInertiaTensor_::FrInertiaTensor_(double mass) : m_mass(mass), m_cogPosition(0., 0., 0.){}
+//
+//
+//    FrInertiaTensor_::FrInertiaTensor_(double mass, const Position &cogPosition, FRAME_CONVENTION fc): m_mass(mass) {
+//        m_cogPosition = cogPosition;
+//        if(IsNED(fc)) {internal::SwapFrameConvention(m_cogPosition);}
+//    }
 
     FrInertiaTensor_::FrInertiaTensor_(double mass,
                                        double Ixx, double Iyy, double Izz,

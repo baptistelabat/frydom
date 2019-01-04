@@ -108,7 +108,7 @@ void TestLinearHydrostaticForce_::LoadData(std::string filename) {
     auto bodyCOG = ReadVector<Position>(reader, "/body_frame/COG");
     body->SetFrame(FrFrame_(bodyPosition, FrUnitQuaternion_(bodyDirection, bodyAngle, NWU), NWU));
 
-    FrInertiaTensor_ InertiaTensor(1.,bodyCOG,NWU);
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(bodyCOG,FrRotation_(),NWU),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     auto eqPosition = ReadVector<Position>(reader, "/equilibrium_frame/PointInWorld");
