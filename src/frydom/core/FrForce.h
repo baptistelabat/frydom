@@ -183,6 +183,9 @@ namespace frydom {
 
         std::shared_ptr<internal::_FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
 
+        // Force Asset
+        bool m_isForceAsset = false;            ///< A ForceAsset (vector) is displayed if true
+
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise
         double m_forceLimit  = 1e20;            ///< Taking very high values by default in case we just set limit to true without
@@ -203,6 +206,15 @@ namespace frydom {
         /// Return the system to which the force is linked
         /// \return Offshore system object pointer
         FrOffshoreSystem_* GetSystem();
+
+        // Force Asset
+        /// Inquire if a ForceAsset is displayed
+        /// \return true if a ForceAsset is displayed
+        bool IsForceAsset();
+
+        /// Set if a ForceAsset is to be displayed
+        /// \param isAsset true if a ForceAsset is to be displayed
+        void SetIsForceAsset(bool isAsset);
 
         // Force Limits
 
@@ -236,13 +248,15 @@ namespace frydom {
 
         // Force Getters
 
-        Position GetForceApplicationPointInWorld(FRAME_CONVENTION fc) const {
-            m_chronoForce->GetVpoint();
-        }
+        /// Get the application point of the force, in the world reference frame.
+        /// \param fc Frame convention (NED/NWU)
+        /// \return position of the application point in the world reference frame.
+        Position GetForceApplicationPointInWorld(FRAME_CONVENTION fc) const;
 
-        Position GetForceApplicationPointInBody(FRAME_CONVENTION fc) const {
-            m_chronoForce->GetVrelpoint();
-        }
+        /// Get the application point of the force, in the body reference frame.
+        /// \param fc Frame convention (NED/NWU)
+        /// \return position of the application point in the body reference frame.
+        Position GetForceApplicationPointInBody(FRAME_CONVENTION fc) const;
 
         /// Return the force vector at COG in world coordinates with the given convention
         /// \param force Force vector at COG in world coordinates

@@ -17,6 +17,7 @@
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 
 #include <chrono/physics/ChLinkMotorLinearSpeed.h>  // FIXME : a retirer
+#include <frydom/asset/FrAsset.h>
 
 #include "FrFunction.h"
 #include "FrException.h"
@@ -247,6 +248,10 @@ namespace frydom {
         m_chronoBody->AddAsset(shape);
     }
 
+    void FrBody_::AddAsset(std::shared_ptr<FrAsset> asset) {
+        m_chronoBody->AddAsset(asset->GetChronoAsset());
+    }
+
     void FrBody_::SetColor(NAMED_COLOR colorName) {
         SetColor(FrColor(colorName));
     }
@@ -390,10 +395,10 @@ namespace frydom {
         force->m_body = this;
         m_externalForces.push_back(force);
 
-        // Test force asset
-        auto ForceAsset = std::make_shared<FrForceAsset_>(force);
-
-        m_chronoBody->AddAsset(ForceAsset);
+        if (force->IsForceAsset()) {
+            auto ForceAsset = std::make_shared<FrForceAsset_>(force);
+            AddAsset(ForceAsset);
+        }
     }
 
     void FrBody_::RemoveExternalForce(std::shared_ptr<FrForce_> force) {

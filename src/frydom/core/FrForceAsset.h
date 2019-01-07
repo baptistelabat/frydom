@@ -8,6 +8,7 @@
 #include "chrono/assets/ChGlyphs.h"
 #include "chrono/physics/ChBody.h"
 #include "FrForce.h"
+#include "frydom/asset/FrAsset.h"
 
 
 // Cet asset doit etre ajoute directement au corps qui contient la force
@@ -67,12 +68,28 @@ namespace frydom {
 
 
 
+    class FrForceAsset_;
+
+    namespace internal{
+
+    struct FrForceAssetBase_ : public chrono::ChGlyphs {
+
+        FrForceAsset_ * m_frydomForceAsset;
+
+        explicit FrForceAssetBase_(FrForceAsset_ * forceAsset);
+
+        void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) override;
+
+    };
+
+    }
 
 
-
-    class FrForceAsset_ : public chrono::ChGlyphs {
+    class FrForceAsset_ : public FrAsset {
 
     private:
+        std::shared_ptr<internal::FrForceAssetBase_> m_chronoAsset;
+
         std::shared_ptr<FrForce_> m_force;  //< The force that this asset represents
         double OrderOfMagnitude;
         bool adaptive_OOM;
@@ -81,31 +98,14 @@ namespace frydom {
         bool inverse_direction;
         // TODO ajouter flag pour dire si on affiche la force qui s'applique ou la force delivree pour la visu (propulseurs...)
 
+    protected:
+        std::shared_ptr<chrono::ChAsset> GetChronoAsset() override;
+
     public:
-        FrForceAsset_(std::shared_ptr<FrForce_> myforce)  // TODO: ajouter couleur
-                : m_force(myforce){
-            // TODO: migrer vers l'implementation dans le cpp
 
-            SetDrawMode(eCh_GlyphType::GLYPH_VECTOR);
+        explicit FrForceAsset_(std::shared_ptr<FrForce_> force);
 
-//            auto point = myforce->GetVrelpoint();
-//            auto forcevect = myforce->GetRelForce();
-            auto point = internal::Vector3dToChVector(myforce->GetForceApplicationPointInBody(NWU));
-            auto forcevect = internal::Vector3dToChVector(myforce->GetForceInBody(NWU));
-            SetGlyphVector(0, point, forcevect);
-            SetGlyphsSize(20);  // Ne semble pas faire de difference avec Irrlicht
-
-
-        }
-
-        void Update(chrono::ChPhysicsItem* updater,
-                    const chrono::ChCoordsys<>& coords) {
-
-            // Here, the asset point is automatically following the motion but the force has to be updated
-            SetGlyphVector(0, internal::Vector3dToChVector(m_force->GetForceApplicationPointInWorld(NWU)),
-                    internal::Vector3dToChVector(m_force->GetForceInWorld(NWU)));
-
-        }
+        void Update();
 
     };
 

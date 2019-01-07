@@ -192,6 +192,14 @@ namespace frydom{
     }
 
 
+    bool FrForce_::IsForceAsset() {
+        return m_isForceAsset;
+    }
+
+    void FrForce_::SetIsForceAsset(bool isAsset) {
+        m_isForceAsset = isAsset;
+    }
+
     void FrForce_::SetMaxForceLimit(double fmax) {
         m_forceLimit = fmax;
     }
@@ -214,6 +222,14 @@ namespace frydom{
 
     bool FrForce_::GetLimit() const {
         return m_limitForce;
+    }
+
+    Position FrForce_::GetForceApplicationPointInWorld(FRAME_CONVENTION fc) const {
+        return internal::ChVectorToVector3d<Position>(m_chronoForce->GetVpoint());
+    }
+
+    Position FrForce_::GetForceApplicationPointInBody(FRAME_CONVENTION fc) const {
+        return internal::ChVectorToVector3d<Position>(m_chronoForce->GetVrelpoint());
     }
 
     void FrForce_::GetForceInWorld(Force &force, FRAME_CONVENTION fc) const {

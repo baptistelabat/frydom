@@ -311,6 +311,7 @@ namespace frydom {
     class FrRotation_;
     class FrOffshoreSystem_;
     class FrGeographicCoord;
+    class FrAsset;
 
     /// Main class for a FRyDoM rigid body
     class FrBody_ : public FrObject {
@@ -436,6 +437,8 @@ namespace frydom {
         /// Add a mesh as an asset for visualization given a FrTriangleMeshConnected mesh object
         /// \param mesh mesh of the asset to be added
         void AddMeshAsset(std::shared_ptr<FrTriangleMeshConnected> mesh);
+
+        void AddAsset(std::shared_ptr<FrAsset> asset);
 
         /// Set the asset color in visualization given a color id
         /// \param colorName color of the asset

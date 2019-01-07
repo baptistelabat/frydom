@@ -72,6 +72,8 @@ int main(int argc, char* argv[]) {
     // Instantiate a Morison Force, using a Morison model
     auto MorisonForce = std::make_shared<FrMorisonForce_>(MorisonModel);
 
+    MorisonForce->SetIsForceAsset(true);
+
     // Don't forget to add the Morison force to the body !
     cylinder->AddExternalForce(MorisonForce);
 

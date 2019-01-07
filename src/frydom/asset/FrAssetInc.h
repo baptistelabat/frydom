@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FRASSETINC_H
 #define FRYDOM_FRASSETINC_H
 
+#include "FrAsset.h"
 #include "FrGridAsset.h"
 #include "FrFreeSurfaceGridAsset.h"
 #include "FrSeabedGridAsset.h"

@@ -1,6 +1,7 @@
 message(STATUS "    ...Asset")
 
 set(SRC_FILES
+        FrAsset.cpp
         FrGridAsset.cpp
         FrSeabedGridAsset.cpp
         FrFreeSurfaceGridAsset.cpp

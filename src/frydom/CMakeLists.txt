@@ -22,7 +22,7 @@ set(subdirs
 # TODO: reposer plutot sur target_sources()
 # voir crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/
 
-set(FRYDOM_SRC_FILES "")
+set(FRYDOM_SRC_FILES "" asset/FrAsset.cpp asset/FrAsset.h)
 foreach(subdir ${subdirs})
 
     add_subdirectory(${subdir})
