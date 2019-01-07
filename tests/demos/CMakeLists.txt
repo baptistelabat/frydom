@@ -9,6 +9,7 @@ set(DEMOS
         demo_FreeSurface
         demo_Body
         demo_Rotation_and_Frame
+        demo_Morison
         )
 
 

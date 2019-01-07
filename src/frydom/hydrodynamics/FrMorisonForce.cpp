@@ -3,6 +3,7 @@
 //
 
 #include "FrMorisonForce.h"
+#include "frydom/hydrodynamics/FrMorisonModel.h"
 
 namespace frydom {
 

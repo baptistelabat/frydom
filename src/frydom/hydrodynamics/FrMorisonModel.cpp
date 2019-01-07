@@ -418,13 +418,18 @@ namespace frydom {
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
 
+    std::shared_ptr<FrMorisonCompositeElement_> make_MorisonModel(FrBody_* body){
+        return std::make_shared<FrMorisonCompositeElement_>(body);
+    }
+
+
     // -----------------------------------------------------------------
     // MORISON MODEL
     // -----------------------------------------------------------------
 
     void FrMorisonElement_::SetFrame(FrBody_* body, Position posA, Position posB, Direction vect) {
 
-        Direction position = 0.5*(posA + posB);
+        Position position = 0.5*(posA + posB);
 
         Direction e3 = posB - posA;
         e3.normalize();

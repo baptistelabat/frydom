@@ -366,6 +366,15 @@ namespace frydom {
 
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>><<< REFACTORING
 
+    class FrMorisonCompositeElement_;
+
+    std::shared_ptr<FrMorisonCompositeElement_> make_MorisonModel(FrBody_* body);
+
+//    std::shared_ptr<FrMorisonCompositeElement_> make_MorisonModel(FrBody_* body, FrFrame_& Frame){
+//            return std::make_shared<FrMorisonCompositeElement_>(body, Frame);
+//    }
+
+
 
     // --------------------------------------------------------------------------
     // MORISON ELEMENT

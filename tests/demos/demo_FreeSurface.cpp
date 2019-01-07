@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
         // auto waveField = freeSurface->SetAiryRegularWaveField();
         auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
 
-        // The Airy regular wave parameters are basically its height, period and direction.
+        // The Airy regular wave parameters are its height, period and direction.
         double waveHeight = 2.;    double wavePeriod = 2.*M_PI;
         Direction waveDirection = Direction(SOUTH(fc));
 
@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
         waveField->SetDirection(waveDirection, fc, dc);
 
         // Note that you can also choose to set these parameters directly in the Setter of the Airy regular wave field
-        // auto waveField = freeSurface->SetAiryRegularOptimWaveField(waveHeight, wavePeriod, waveDirection, fc, dc);
+        // auto waveField = FreeSurface->SetAiryRegularOptimWaveField(waveHeight, wavePeriod, waveDirection, fc, dc);
 
     }
     else

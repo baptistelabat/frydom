@@ -236,6 +236,14 @@ namespace frydom {
 
         // Force Getters
 
+        Position GetForceApplicationPointInWorld(FRAME_CONVENTION fc) const {
+            m_chronoForce->GetVpoint();
+        }
+
+        Position GetForceApplicationPointInBody(FRAME_CONVENTION fc) const {
+            m_chronoForce->GetVrelpoint();
+        }
+
         /// Return the force vector at COG in world coordinates with the given convention
         /// \param force Force vector at COG in world coordinates
         /// \param fc Frame convention

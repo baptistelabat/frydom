@@ -20,6 +20,7 @@
 
 #include "FrFunction.h"
 #include "FrException.h"
+#include "FrCore.h"
 
 
 namespace frydom {
@@ -388,6 +389,11 @@ namespace frydom {
 
         force->m_body = this;
         m_externalForces.push_back(force);
+
+        // Test force asset
+        auto ForceAsset = std::make_shared<FrForceAsset_>(force);
+
+        m_chronoBody->AddAsset(ForceAsset);
     }
 
     void FrBody_::RemoveExternalForce(std::shared_ptr<FrForce_> force) {

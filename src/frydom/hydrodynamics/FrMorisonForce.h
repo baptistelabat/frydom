@@ -5,10 +5,12 @@
 #ifndef FRYDOM_FRMORISONFORCE_H
 #define FRYDOM_FRMORISONFORCE_H
 
-#include "frydom/hydrodynamics/FrMorisonModel.h"
 #include "frydom/core/FrForce.h"
 
 namespace frydom {
+
+
+    class FrMorisonModel;
 
     class FrMorisonForce : public FrForce {
 
@@ -63,6 +65,11 @@ namespace frydom {
 
 
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+    class FrMorisonElement_;
+    class FrMorisonSingleElement_;
+    class FrMorisonCompositeElement_;
+
 
     class FrMorisonForce_ : public FrForce_ {
 
