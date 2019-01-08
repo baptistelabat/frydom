@@ -378,6 +378,14 @@ namespace frydom {
         return m_mapper.get();
     }
 
+    void FrHydroDB_::Map(FrBEMBody_* BEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame) {
+        m_mapper->Map(BEMBody, body, eqFrame);
+    }
+
+    void FrHydroDB_::Map(unsigned int iBEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame) {
+        m_mapper->Map(m_bodies[iBEMBody].get(), body, eqFrame);
+    }
+
     FrHydroDB_::FrHydroDB_(std::string h5file) {
 
         FrHDF5Reader reader;

@@ -142,6 +142,7 @@ namespace frydom {
     class FrBEMBody_;
     class FrBody_;
     class FrHDF5Reader;
+    class FrEquilibriumFrame_;
 
     // ----------------------------------------------------------
     // FrDiscretization1D
@@ -253,6 +254,10 @@ namespace frydom {
         FrBody_* GetBody(FrBEMBody_* body);
 
         FrHydroMapper_* GetMapper();
+
+        void Map(FrBEMBody_* BEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame);
+
+        void Map(unsigned int iBEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame);
 
     };
 

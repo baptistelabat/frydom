@@ -12,6 +12,7 @@
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrBEMBody.h"
 
 
+
 namespace frydom {
 
     typedef boost::bimaps::bimap<FrHydroBody*, unsigned int> myBimap;
@@ -70,19 +71,20 @@ namespace frydom {
 
     /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<< REFACTORING
 
+    class FrEquilibriumFrame_;
+
     class FrHydroMapper_ {
 
     private:
-        std::map<FrBEMBody_*, FrBody_*> mapBEMToBody;
-        std::map<FrBody_*, FrBEMBody_*> mapBodyToBEM;
+        std::unordered_map<FrBEMBody_*, FrBody_*> m_mapBEMToBody;
+        std::unordered_map<FrBody_*, FrBEMBody_*> m_mapBodyToBEM;
+        std::unordered_map<FrBEMBody_*, std::shared_ptr<FrEquilibriumFrame_>> m_mapEqFrame;
 
     public:
 
         FrHydroMapper_() = default;
 
-        void Map(FrBEMBody_* BEMBody, FrBody_* body);
-
-        void Map(FrBody_* body, FrBEMBody_* BEMBody);
+        void Map(FrBEMBody_* BEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame);
 
         unsigned long GetNbMappings() const;
 
@@ -91,6 +93,10 @@ namespace frydom {
         FrBEMBody_* GetBEMBody(FrBody_* body) const;
 
         unsigned int GetBEMBodyIndex(FrBody_* body) const;
+
+        FrEquilibriumFrame_* GetEquilibriumFrame(FrBEMBody_* BEMBody) const;
+
+        FrEquilibriumFrame_* GetEquilibriumFrame(FrBody_* body) const;
 
     };
 

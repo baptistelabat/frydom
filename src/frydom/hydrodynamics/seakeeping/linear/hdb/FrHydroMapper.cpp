@@ -5,6 +5,8 @@
 #include "FrHydroMapper.h"
 #include "FrBEMBody.h"
 
+#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+
 
 namespace frydom {
 
@@ -71,30 +73,36 @@ namespace frydom {
 
     /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
-    void FrHydroMapper_::Map(FrBEMBody_* BEMBody, FrBody_* body) {
-        mapBEMToBody[BEMBody] = body;
-        mapBodyToBEM[body] = BEMBody;
-    }
-
-    void FrHydroMapper_::Map(FrBody_* body, FrBEMBody_* BEMBody) {
-        this->Map(BEMBody, body);
+    void FrHydroMapper_::Map(FrBEMBody_* BEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame) {
+        m_mapBEMToBody[BEMBody] = body;
+        m_mapBodyToBEM[body] = BEMBody;
+        m_mapEqFrame[BEMBody] = eqFrame;
     }
 
     unsigned long FrHydroMapper_::GetNbMappings() const {
-        return mapBEMToBody.size();
+        return m_mapBEMToBody.size();
     }
 
     FrBody_* FrHydroMapper_::GetBody(FrBEMBody_* BEMBody) const {
-        return mapBEMToBody[BEMBody];
+        return m_mapBEMToBody[BEMBody];
     }
 
     FrBEMBody_* FrHydroMapper_::GetBEMBody(FrBody_* body) const {
-        return mapBodyToBEM[body];
+        return m_mapBodyToBEM[body];
     }
 
     unsigned int FrHydroMapper_::GetBEMBodyIndex(FrBody_* body) const {
-        auto BEMBody = mapBodyToBEM[body];
+        auto BEMBody = m_mapBodyToBEM[body];
         return BEMBody->GetID();
+    }
+
+    FrEquilibriumFrame_* FrHydroMapper_::GetEquilibriumFrame(FrBEMBody_* BEMBody) const {
+        return m_mapEqFrame[BEMBody].get();
+    }
+
+    FrEquilibriumFrame_* FrHydroMapper_::GetEquilibriumFrame(FrBody_* body) const {
+        auto BEMBody = this->GetBEMBody(body);
+        return m_mapEqFrame[BEMBody].get();
     }
 
 
