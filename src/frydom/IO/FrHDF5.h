@@ -13,8 +13,8 @@
 #include "frydom/utils/FrEigen.h"
 
 
-#define R H5F_ACC_RDONLY
-#define RW H5F_ACC_RDWR
+//#define R H5F_ACC_RDONLY
+//#define RW H5F_ACC_RDWR
 
 using namespace H5;
 
@@ -26,7 +26,7 @@ namespace frydom {
 
     private:
 
-        MODE m_mode = R;
+        MODE m_mode = H5F_ACC_RDONLY;
 
         std::string m_filename;
         std::unique_ptr<H5File> m_file;
@@ -35,7 +35,7 @@ namespace frydom {
 
         FrHDF5Reader() = default;
 
-        explicit FrHDF5Reader(const std::string &filename, MODE mode=R)
+        explicit FrHDF5Reader(const std::string &filename, MODE mode=H5F_ACC_RDONLY)
                 : m_filename(filename), m_file(std::make_unique<H5File>(filename, mode)) {}
 
         ~FrHDF5Reader() {
@@ -43,7 +43,7 @@ namespace frydom {
 //            std::cout << std::endl << "HDF5 file " << m_filename << " has been properly closed" << std::endl;
         }
 
-        void SetFilename(const std::string& filename, MODE mode=R) {
+        void SetFilename(const std::string& filename, MODE mode=H5F_ACC_RDONLY) {
             m_filename = filename;
             m_file.release();
             try {

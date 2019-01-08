@@ -177,9 +177,9 @@ namespace frydom {
 
         void SetWp(double Wp) { m_peak_pulsation = Wp; }
 
-        double GetFp() const { return convert_frequency(m_peak_pulsation, RADS, HZ); }
+        double GetFp() const { return convert_frequency(m_peak_pulsation, RADS, HERTZ); }
 
-        void SetFp(double Fp) { m_peak_pulsation = convert_frequency(Fp, HZ, RADS); }
+        void SetFp(double Fp) { m_peak_pulsation = convert_frequency(Fp, HERTZ, RADS); }
 
         double GetPeakFreq(FREQUENCY_UNIT unit) const {
             return convert_frequency(m_peak_pulsation, RADS, unit);
