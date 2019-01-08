@@ -353,33 +353,25 @@ namespace frydom {
         unsigned int N;
         GetImpulseResponseSize(Te, dt, N);
 
-        auto nbBodies = m_HDB->GetNbBodies();
-
-        m_recorder.reserve(nbBodies);
-
-        for (unsigned int ibody=0; ibody<nbBodies; ++ibody) {
-            m_recorder.push_back(FrTimeRecorder_(Te, dt));
+        for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
+            m_recorder[BEMBody->get()] = FrTimeRecorder_(Te, dt);
         }
     }
 
     void FrRadiationConvolutionModel_::Update(double time) {
 
-        auto nbBodies = m_HDB->GetNbBodies();
-
         auto radiationForce = GeneralizedForce();
 
-        for (unsigned int iforceBody=0; iforceBody<nbBodies; iforceBody++) {
+        for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
 
-            auto BEMBody = m_HDB->GetBody(iforceBody);
+            for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion != m_HDB->end(); ++BEMBodyMotion) {
 
-            for (unsigned int imotionBody = 0; imotionBody < nbBodies; imotionBody++) {
-
-                auto velocity = m_recorder[imotionBody].GetData();
-                auto vtime = m_recorder[imotionBody].GetTime();
+                auto velocity = m_recorder[BEMBodyMotion->get()].GetData();
+                auto vtime = m_recorder[BEMBodyMotion->get()].GetTime();
 
                 for (unsigned int idof = 0; idof < 6; idof++) {
 
-                    auto interpK = BEMBody->GetIRFInterpolatorK(imotionBody, idof);
+                    auto interpK = BEMBody->get()->GetIRFInterpolatorK(BEMBodyMotion->get()->GetID(), idof);
 
                     std::vector<VectorN> kernel;
                     for (unsigned int it = 0; it < vtime.size(); ++it) {
@@ -389,9 +381,12 @@ namespace frydom {
                 }
             }
 
-            //if () {// TODO : steady velocity non null)
-                radiationForce += ConvolutionKu(meanSpeed);
-            //}
+            auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->get());
+            auto meanSpeed = eqFrame->GetVelocityInFrame();
+
+            if (meanSpeed.squaredNorm() > FLT_EPSILON) {
+                radiationForce += ConvolutionKu(meanSpeed.norm());
+            }
 
             m_radiationForce = radiationForce;
         }
@@ -417,23 +412,20 @@ namespace frydom {
 
     GeneralizedForce FrRadiationConvolutionModel_::ConvolutionKu(double meanSpeed) const {
 
-        auto nbBodies = m_HDB->GetNbBodies();
-
         auto radiationForce = GeneralizedForce();
 
-        for (unsigned int iforceBody=0; iforceBody<nbBodies; iforceBody++) {
+        for (auto BEMBody = m_HDB->begin(); BEMBody != m_HDB->end(); BEMBody++) {
 
-            auto BEMBody = m_HDB->GetBody(iforceBody);
-            auto Ainf = BEMBody->GetSelfInfiniteAddedMass();
+            auto Ainf = BEMBody->get()->GetSelfInfiniteAddedMass();
 
-            for (unsigned int imotionBody=0; imotionBody<nbBodies; imotionBody++) {
+            for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion != m_HDB->end(); BEMBodyMotion++) {
 
-                auto velocity = m_recorder[imotionBody].GetData();
-                auto vtime = m_recorder[imotionBody].GetTime();
+                auto velocity = m_recorder[BEMBodyMotion->get()].GetData();
+                auto vtime = m_recorder[BEMBodyMotion->get()].GetTime();
 
                 for (unsigned int idof=0; idof<6; idof++) {
 
-                    auto interpKu = BEMBody->GetIRFInterpolatorKu(imotionBody, idof);
+                    auto interpKu = BEMBody->get()->GetIRFInterpolatorKu(BEMBodyMotion->get()->GetID(), idof);
 
                     std::vector<VectorN> kernel;
                     for (unsigned int it = 0; it < vtime.size(); ++it) {
@@ -442,9 +434,11 @@ namespace frydom {
                     radiationForce += meanSpeed * Trapz(vtime, kernel);
                 }
 
+                auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBodyMotion->get());
+                auto angular = eqFrame->GetAngularPerturbationVelocityInFrame();
+
                 auto damping = Ainf.col(2) * angular.y() - Ainf.col(1) * angular.x();
                 radiationForce += meanSpeed * damping;
-
             }
 
         }

@@ -497,7 +497,6 @@ namespace frydom {
         Interp1d<double, VectorN> GetIRFInterpolatorKu(unsigned int ibody, unsigned int idof) const;
 
 
-
         //
         // Interpolators
         //
