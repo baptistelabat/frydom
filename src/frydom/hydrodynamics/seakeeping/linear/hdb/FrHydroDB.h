@@ -259,6 +259,9 @@ namespace frydom {
 
         void Map(unsigned int iBEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame);
 
+        std::vector<std::unique_ptr<FrBEMBody_>>::iterator begin() { return m_bodies.begin(); }
+
+        std::vector<std::unique_ptr<FrBEMBody_>>::iterator end() { return m_bodies.end(); }
     };
 
 }  // end namespace frydom
