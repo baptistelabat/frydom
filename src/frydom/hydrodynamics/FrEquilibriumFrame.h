@@ -100,6 +100,10 @@ namespace frydom {
         /// \return Velocity vector
         Velocity GetVelocityInFrame() const;
 
+        Velocity GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const;
+
+        Velocity GetPerturbationVelocityInFrame() const;
+
         /// Get the angular velocity of the equilibrium frame around the Z-axis
         /// \param fc Frame convention
         /// \return Angular velocity around Z (vertical)
@@ -109,6 +113,10 @@ namespace frydom {
         /// \param fc Frame convention
         /// \return Angular velocity vector
         AngularVelocity GetAngularVelocity(FRAME_CONVENTION fc) const;
+
+        AngularVelocity GetAngularPerturbationVelocity(FRAME_CONVENTION fc) const;
+
+        AngularVelocity GetAngularPerturbationVelocityInFrame() const;
 
         /// The velocity of the frame is initialized from the body velocity
         /// \param is_init Boolean True/Flase

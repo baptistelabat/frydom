@@ -44,6 +44,17 @@ namespace frydom {
         return ProjectVectorParentInFrame<Velocity>(m_velocity);
     }
 
+    Velocity FrEquilibriumFrame_::GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const {
+        auto frameVelocity = this->GetVelocityInWorld(fc);
+        auto bodyVelocity = m_body->GetVelocityInWorld(fc);
+        return bodyVelocity - frameVelocity;
+    }
+
+    Velocity FrEquilibriumFrame_::GetPerturbationVelocityInFrame() const {
+        auto velocityInWorld = this->GetPerturbationVelocityInWorld(NWU);
+        return ProjectVectorParentInFrame<Velocity>(velocityInWorld);
+    }
+
     double FrEquilibriumFrame_::GetAngularVelocityAroundZ(FRAME_CONVENTION fc) const {
         double result = m_angularVelocity;
         if (IsNED(fc)) { result = -result; }
@@ -53,6 +64,17 @@ namespace frydom {
     AngularVelocity FrEquilibriumFrame_::GetAngularVelocity(FRAME_CONVENTION fc) const {
         auto wvel = GetAngularVelocityAroundZ(fc);
         return AngularVelocity(0., 0., wvel);
+    }
+
+    AngularVelocity FrEquilibriumFrame_::GetAngularPerturbationVelocity(FRAME_CONVENTION fc) const {
+        auto frameAngularVelocity = GetAngularVelocity(fc);
+        auto bodyAngularVelocity = m_body->GetAngularVelocityInWorld(fc);
+        return bodyAngularVelocity - frameAngularVelocity;
+    }
+
+    AngularVelocity FrEquilibriumFrame_::GetAngularPerturbationVelocityInFrame() const {
+        auto worldAngularVelocity = this->GetAngularPerturbationVelocity(NWU);
+        return ProjectVectorParentInFrame<AngularVelocity>(worldAngularVelocity);
     }
 
     void FrEquilibriumFrame_::SetPositionToBodyPosition() {
