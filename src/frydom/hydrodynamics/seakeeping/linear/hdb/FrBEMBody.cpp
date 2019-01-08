@@ -984,6 +984,10 @@ namespace frydom {
         m_waveDrift.push_back( std::make_unique<FrWaveDriftPolarData>(headings, freqs, coeffs));
     }
 
+    void FrBEMBody_::SetStiffnessMatrix(Matrix33<double> hydrostaticStiffnessMatrix) {
+        m_hydrostaticStiffnessMatrix = hydrostaticStiffnessMatrix;
+    }
+
     //
     // Getters
     //

@@ -467,6 +467,10 @@ namespace frydom {
                 this->WaveDriftReader(reader, ibodyPath, BEMBody);
             }
 
+            if (reader.GroupExist(ibodyPath + "/Hydrostatic")) {
+                this->HydrostaticReader(reader, ibodyPath, BEMBody);
+            }
+
             this->GetBody(ibody)->Finalize();
         }
     }
@@ -641,8 +645,12 @@ namespace frydom {
             BEMBody->SetWaveDrift(headings, freqs, coeffs);
 
         }
+    }
 
+    void FrHydroDB_::HydrostaticReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
 
+        auto matrix = reader.ReadDoubleArray(path + "/stiffness_matrix");
+        BEMBody->SetStiffnessMatrix(matrix);
     }
 
 }  // end namespace frydom

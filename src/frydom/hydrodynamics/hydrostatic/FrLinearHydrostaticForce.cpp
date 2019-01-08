@@ -7,6 +7,7 @@
 // >>>>>>>>>>>>>>>>> from refactoring
 
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
 
 // <<<<<<<<<<<<<<<<<<<<
 
@@ -103,6 +104,12 @@ namespace frydom {
 
 
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+
+    void FrLinearHydrostaticForce_::Initialize() {
+        m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
+        m_stiffnessMatrix.SetData(m_HDB->GetBody(m_body)->GetHydrostaticStiffnessMatrix());
+    }
 
     void FrLinearHydrostaticForce_::Update(double time) {
 

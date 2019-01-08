@@ -213,6 +213,8 @@ namespace frydom {
 
         void WaveDriftReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
 
+        void HydrostaticReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
+
         unsigned int GetNbBodies() const { return (uint)m_bodies.size(); };
 
         void SetWaveDirectionDiscretization(const double minAngle, const double maxAngle, const unsigned int nbAngle);

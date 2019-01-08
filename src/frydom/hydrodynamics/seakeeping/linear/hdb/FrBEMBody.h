@@ -396,6 +396,8 @@ namespace frydom {
 
         std::vector<std::unique_ptr<FrWaveDriftPolarData>> m_waveDrift;
 
+        mathutils::Matrix33<double> m_hydrostaticStiffnessMatrix;
+
     public:
         FrBEMBody_(unsigned int id, std::string name,  FrHydroDB_* HDB)
                 : m_id(id), m_name(name), m_HDB(HDB) { }
@@ -457,6 +459,8 @@ namespace frydom {
         void SetWaveDrift(const std::vector<double>& headings, const std::vector<double>& freqs,
                           const std::vector<double>& coeffs);
 
+        void SetStiffnessMatrix(Matrix33<double> hydrostaticStiffnessMatrix);
+
         //
         // Getters
         //
@@ -480,6 +484,8 @@ namespace frydom {
         Interp1d<double, VectorN> GetIRFInterpolatorK(FrBEMBody_* BEMBodyMotion, unsigned int idof) const;
 
         Interp1d<double, VectorN> GetIRFInterpolatorKu(FrBEMBody_* BEMBodyMotion, unsigned int idof) const;
+
+        Matrix33<double> GetHydrostaticStiffnessMatrix() const { return m_hydrostaticStiffnessMatrix; }
 
         //
         // Interpolators

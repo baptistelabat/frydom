@@ -13,6 +13,7 @@
 
 // <<<<<<<<<<<<<<<<<<< Additional include from refactoring
 
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 
 // <<<<<<<<<<<<<<<<<<
 
@@ -85,18 +86,12 @@ namespace frydom {
     class FrLinearHydrostaticForce_ : public FrForce_ {
 
     private:
+        FrHydroDB_* m_HDB;
         FrLinearHydrostaticStiffnessMatrix_ m_stiffnessMatrix;      ///< Hydrostatic stiffness matrix
         std::shared_ptr<FrEquilibriumFrame_> m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
 
     public:
-        /// Constructor of a linear hydrostatic force with equilibrium frame
-        /// \param equilibriumFrame Equilibrium frame
-        FrLinearHydrostaticForce_(std::shared_ptr<FrEquilibriumFrame_> equilibriumFrame)
-                : FrForce_(), m_equilibriumFrame(equilibriumFrame) { }
-
-        /// Set the stiffness matrix of the hydrostatic force from an external matrix
-        /// \param stiffnessMatrix Hydrostatic stiffness matrix
-        void SetStiffnessMatrix(FrLinearHydrostaticStiffnessMatrix_ stiffnessMatrix) { m_stiffnessMatrix = stiffnessMatrix; }
+        FrLinearHydrostaticForce_(FrHydroDB_* HDB) : m_HDB(HDB) { }
 
         /// Get the stiffness matrix of the hydrostatic force
         /// \return Hydrostatic stiffness matrix
@@ -107,7 +102,7 @@ namespace frydom {
         void Update(double time) override;
 
         /// Intialize the hydrostatic force model
-        void Initialize() override { }
+        void Initialize() override;
 
         /// Methods to be applied at the end of each time steps
         void StepFinalize() override { }
