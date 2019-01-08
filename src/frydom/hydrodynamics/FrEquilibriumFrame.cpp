@@ -55,6 +55,18 @@ namespace frydom {
         return ProjectVectorParentInFrame<Velocity>(velocityInWorld);
     }
 
+    GeneralizedVelocity FrEquilibriumFrame_::GetPerturbationGeneralizedVelocityInWorld(FRAME_CONVENTION fc) const {
+        auto velocity = GetPerturbationVelocityInWorld(fc);
+        auto angularVelocity = GetAngularPerturbationVelocity(fc);
+        return GeneralizedVelocity(velocity, angularVelocity);
+    }
+
+    GeneralizedVelocity FrEquilibriumFrame_::GetPerturbationGeneralizedVelocityInFrame() const {
+        auto velocity = GetAngularPerturbationVelocityInFrame();
+        auto angularVelocity = GetAngularPerturbationVelocityInFrame();
+        return GeneralizedVelocity(velocity, angularVelocity);
+    }
+
     double FrEquilibriumFrame_::GetAngularVelocityAroundZ(FRAME_CONVENTION fc) const {
         double result = m_angularVelocity;
         if (IsNED(fc)) { result = -result; }

@@ -104,6 +104,10 @@ namespace frydom {
 
         Velocity GetPerturbationVelocityInFrame() const;
 
+        GeneralizedVelocity GetPerturbationGeneralizedVelocityInWorld(FRAME_CONVENTION fc) const;
+
+        GeneralizedVelocity GetPerturbationGeneralizedVelocityInFrame() const;
+
         /// Get the angular velocity of the equilibrium frame around the Z-axis
         /// \param fc Frame convention
         /// \return Angular velocity around Z (vertical)

@@ -362,6 +362,12 @@ namespace frydom {
 
         auto radiationForce = GeneralizedForce();
 
+        // Update speed recorder
+        for (auto BEMBody = m_HDB->begin(); BEMBody != m_HDB->end(); BEMBody++) {
+            auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->get());
+            m_recorder[BEMBody->get()].Record(time, eqFrame->GetPerturbationGeneralizedVelocityInFrame());
+        }
+
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
 
             for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion != m_HDB->end(); ++BEMBodyMotion) {
@@ -371,7 +377,7 @@ namespace frydom {
 
                 for (unsigned int idof = 0; idof < 6; idof++) {
 
-                    auto interpK = BEMBody->get()->GetIRFInterpolatorK(BEMBodyMotion->get()->GetID(), idof);
+                    auto interpK = BEMBody->get()->GetIRFInterpolatorK(BEMBodyMotion->get(), idof);
 
                     std::vector<VectorN> kernel;
                     for (unsigned int it = 0; it < vtime.size(); ++it) {
@@ -393,14 +399,6 @@ namespace frydom {
     }
 
     void FrRadiationConvolutionModel_::StepFinalize() {
-
-        auto nbBodies = m_HDB->GetNbBodies();
-
-        for (unsigned int ibody=0; ibody<nbBodies; ++ibody) {
-            // TODO : trouver où stocker le repere d'équilibre et calculer les vitesse d
-            // TODO : du corps dans le repere d'équilibre puis stockage.
-            // FIXME : est-ce la vitesse doit bien être calculée ici (pb de dépendance) ?
-        }
 
     }
 
@@ -425,7 +423,7 @@ namespace frydom {
 
                 for (unsigned int idof=0; idof<6; idof++) {
 
-                    auto interpKu = BEMBody->get()->GetIRFInterpolatorKu(BEMBodyMotion->get()->GetID(), idof);
+                    auto interpKu = BEMBody->get()->GetIRFInterpolatorKu(BEMBodyMotion->get(), idof);
 
                     std::vector<VectorN> kernel;
                     for (unsigned int it = 0; it < vtime.size(); ++it) {

@@ -584,19 +584,22 @@ namespace frydom {
 
             auto infiniteAddedMassPath = radiationPath + buffer + "/InfiniteAddedMass";
             auto infiniteAddedMass = reader.ReadDoubleArray(infiniteAddedMassPath);
-            BEMBody->SetInfiniteAddedMass(ibodyMotion, infiniteAddedMass);
+            BEMBody->SetInfiniteAddedMass(bodyMotion, infiniteAddedMass);
 
             auto IRFPath = radiationPath + buffer + "/ImpulseResponseFunctionK";
             auto IRFUPath = radiationPath + buffer + "/ImpulseResponseFunctionKU";
+
+            std::vector<Eigen::MatrixXd> impulseResponseFunctionsK;
+            std::vector<Eigen::MatrixXd> impulseResponseFunctionsKU;
+
             for (unsigned int imotion=0; imotion<bodyMotion->GetNbMotionMode(); ++imotion) {
                 sprintf(buffer, "/DOF_%d", imotion);
-
-                auto impulseResponseFunction = reader.ReadDoubleArray(IRFPath + buffer);
-                BEMBody->SetImpusleResponseFunction(ibodyMotion, imotion, impulseResponseFunction);
-
-                auto impulseResponseFunctionKU = reader.ReadDoubleArray(IRFUPath + buffer);
-                BEMBody->SetVelocityCouplingIRF(ibodyMotion, imotion, impulseResponseFunctionKU);
+                impulseResponseFunctionsK.push_back(reader.ReadDoubleArray(IRFPath + buffer));
+                impulseResponseFunctionsKU.push_back(reader.ReadDoubleArray(IRFUPath + buffer));
             }
+
+            BEMBody->SetImpulseResponseFunctionK(bodyMotion, impulseResponseFunctionsK);
+            BEMBody->SetImpulseResponseFunctionKu(bodyMotion, impulseResponseFunctionsKU);
         }
     }
 

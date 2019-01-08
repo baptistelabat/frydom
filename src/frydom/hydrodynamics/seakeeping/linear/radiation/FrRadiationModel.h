@@ -169,7 +169,7 @@ namespace frydom {
     class FrRadiationConvolutionModel_ : public FrRadiationModel_ {
 
     private:
-        std::unordered_map<FrBEMBody_*, FrTimeRecorder_<Velocity>> m_recorder;
+        std::unordered_map<FrBEMBody_*, FrTimeRecorder_<GeneralizedVelocity>> m_recorder;
 
     public:
 

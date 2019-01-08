@@ -388,12 +388,9 @@ namespace frydom {
         std::vector<Eigen::MatrixXcd> m_diffraction;
 
         std::vector<Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>> m_radiationMask;
-        std::vector<Eigen::MatrixXcd> m_infiniteAddedMass;
-        std::vector<std::vector<Eigen::MatrixXd>> m_impulseResponseFunctionK;
-        std::vector<std::vector<Eigen::MatrixXd>> m_impulseResponseFunctionKu;
-
-        std::vector<std::vector<mathutils::Interp1d<double, VectorN>>> m_interpK;
-        std::vector<std::vector<mathutils::Interp1d<double, VectorN>>> m_interpKu;
+        std::unordered_map<FrBEMBody_*, Matrix66> m_infiniteAddedMass;
+        std::unordered_map<FrBEMBody_*, std::vector<mathutils::Interp1d<double, Vector6d>>> m_interpK;
+        std::unordered_map<FrBEMBody_*, std::vector<mathutils::Interp1d<double, Vector6d>>> m_interpKu;
 
         std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
@@ -451,11 +448,11 @@ namespace frydom {
 
         void ComputeExcitation();
 
-        void SetInfiniteAddedMass(unsigned int ibody, const Eigen::MatrixXd& CMInf);
+        void SetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion, const Eigen::MatrixXd& CMInf);
 
-        void SetImpusleResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
+        void SetImpulseResponseFunctionK(FrBEMBody_* BEMBodyMotion, const std::vector<Eigen::MatrixXd>& listIRF);
 
-        void SetVelocityCouplingIRF(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF);
+        void SetImpulseResponseFunctionKu(FrBEMBody_* BEMBodyMotion, const std::vector<Eigen::MatrixXd>& listIRF);
 
         void SetWaveDrift(const std::vector<double>& headings, const std::vector<double>& freqs,
                           const std::vector<double>& coeffs);
@@ -476,26 +473,13 @@ namespace frydom {
 
         Eigen::VectorXcd GetExcitation(unsigned int iangle, unsigned int iforce) const;
 
-        Eigen::MatrixXd GetInfiniteAddedMass(unsigned int ibody) const;
+        Eigen::MatrixXd GetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion) const;
 
-        Eigen::MatrixXd GetSelfInfiniteAddedMass() const;
+        Eigen::MatrixXd GetSelfInfiniteAddedMass();
 
-        std::vector<Eigen::MatrixXd> GetImpulseResponseFunctionK(unsigned int ibody) const;
+        Interp1d<double, VectorN> GetIRFInterpolatorK(FrBEMBody_* BEMBodyMotion, unsigned int idof) const;
 
-        Eigen::MatrixXd GetImpulseResponseFunctionK(unsigned int ibody, unsigned int idof) const;
-
-        Eigen::VectorXd GetImpulseResponseFunctionK(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
-
-        std::vector<Eigen::MatrixXd> GetImpulseResponseFunctionKu(unsigned int ibody) const;
-
-        Eigen::MatrixXd GetImpulseResponseFunctionKu(unsigned int ibody, unsigned int idof) const;
-
-        Eigen::VectorXd GetImpulseResponseFunctionKu(unsigned int ibody, unsigned int idof, unsigned int iforce) const;
-
-        Interp1d<double, VectorN> GetIRFInterpolatorK(unsigned int ibody, unsigned int idof) const;
-
-        Interp1d<double, VectorN> GetIRFInterpolatorKu(unsigned int ibody, unsigned int idof) const;
-
+        Interp1d<double, VectorN> GetIRFInterpolatorKu(FrBEMBody_* BEMBodyMotion, unsigned int idof) const;
 
         //
         // Interpolators

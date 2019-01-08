@@ -864,9 +864,6 @@ namespace frydom {
 
         auto nbBodies = GetNbBodies();
         m_radiationMask.reserve(nbBodies);
-        m_infiniteAddedMass.reserve(nbBodies);
-        m_impulseResponseFunctionK.reserve(nbBodies);
-        m_impulseResponseFunctionKu.reserve(nbBodies);
 
         auto nbTime = GetNbTimeSamples();
         for (unsigned int ibody=0; ibody<nbBodies; ++ibody) {
@@ -878,19 +875,6 @@ namespace frydom {
             mask.setConstant(true);
             m_radiationMask.push_back(mask);
 
-            Eigen::MatrixXd infAddedMassMat(nbForce, nbMotion);
-            m_infiniteAddedMass.push_back(infAddedMassMat);
-
-            std::vector<Eigen::MatrixXd> impulseResponseFunctionVector;
-            impulseResponseFunctionVector.reserve(nbMotion);
-
-            for (unsigned int idof=0; idof<nbMotion; ++idof) {
-
-                Eigen::MatrixXd matTime(nbForce, nbTime);
-                impulseResponseFunctionVector.push_back(matTime);
-            }
-            m_impulseResponseFunctionK.push_back(impulseResponseFunctionVector);
-            m_impulseResponseFunctionKu.push_back(impulseResponseFunctionVector);
         }
 
     }
@@ -933,7 +917,7 @@ namespace frydom {
         m_diffraction[iangle] = diffractionMatrix;
     }
 
-    void FrBEMBody_::SetFroudKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix) {
+    void FrBEMBody_::SetFroudeKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix) {
         assert(iangle < GetNbWaveDirections());
         assert(froudeKrylovMatrix.rows() == GetNbForceMode());
         assert(froudeKrylovMatrix.cols() == GetNbFrequencies());
@@ -953,27 +937,46 @@ namespace frydom {
         }
     }
 
-    void FrBEMBody_::SetInfiniteAddedMass(unsigned int ibody, const Eigen::MatrixXd& CMInf) {
-        assert(ibody < GetNbBodies());
-        assert(CMInf.rows() == GetNbForceMode());
-        assert(CMInf.cols() == m_HDB->GetBody(ibody)->GetNbMotionMode());
-        m_infiniteAddedMass[ibody] = CMInf;
+    void FrBEMBody_::SetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion, const Eigen::MatrixXd& CMInf) {
+        assert(CMInf.rows() == 6);
+        assert(CMInf.cols() == 6);
+        m_infiniteAddedMass[BEMBodyMotion] = CMInf;
     }
 
-    void FrBEMBody_::SetImpusleResponseFunction(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd& IRF) {
-        assert(ibody < GetNbBodies());
-        assert(idof < GetNbMotionMode());
-        assert(IRF.rows() == GetNbForceMode());
-        assert(IRF.cols() == GetNbTimeSamples());
-        m_impulseResponseFunctionK[ibody][idof] = IRF;
+    void FrBEMBody_::SetImpulseResponseFunctionK(FrBEMBody_* BEMBodyMotion, const std::vector<Eigen::MatrixXd>& listIRF) {
+
+        unsigned int idof = 0;
+        std::vector<mathutils::Interp1dLinear<double, Vector6d>> interpolators;
+        interpolators.reserve(6);
+
+        for (auto& IRF: listIRF) {
+            assert(IRF.rows() == 6);
+            assert(IRF.cols() == GetNbTimeSamples());
+            auto vtime = std::make_shared<std::vector<double>>(m_HDB->GetTimeDiscretization());
+            auto vdata = std::make_shared<std::vector<Vector6d>>(IRF.data(), IRF.data() + IRF.cols());
+            interpolators[idof].Initialize(vtime, vdata);
+            idof += 1;
+        }
+
+        m_interpK[BEMBodyMotion] = interpolators;
     }
 
-    void FrBEMBody_::SetVelocityCouplingIRF(unsigned int ibody, unsigned int idof, const Eigen::MatrixXd &IRF) {
-        assert(ibody < GetNbBodies());
-        assert(idof < GetNbMotionMode());
-        assert(IRF.rows() == GetNbForceMode());
-        assert(IRF.cols() == GetNbTimeSamples());
-        m_impulseResponseFunctionKu[ibody][idof] = IRF;
+    void FrBEMBody_::SetImpulseResponseFunctionKu(FrBEMBody_* BEMBodyMotion, const std::vector<Eigen::MatrixXd> &listIRF) {
+
+        unsigned int idof = 0;
+        std::vector<mathutils::Interp1dLinear<double, Vector6d>> interpolators;
+        interpolators.reserve(6);
+
+        for (auto& IRF: listIRF) {
+            assert(IRF.rows() == 6);
+            assert(IRF.cols() == GetNbTimeSamples());
+            auto vtime = std::make_shared<std::vector<double>>(m_HDB->GetTimeDiscretization());
+            auto vdata = std::make_shared<std::vector<Vector6d>>(IRF.data(), IRF.data() + IRF.cols());
+            interpolators[idof].Initialize(vtime, vdata);
+            idof += 1;
+        }
+
+        m_interpKu[BEMBodyMotion] = interpolators;
     }
 
     void FrBEMBody_::SetWaveDrift(const std::vector<double>& headings, const std::vector<double>& freqs,
@@ -1018,61 +1021,22 @@ namespace frydom {
         return m_excitation[iangle].row(iforce);
     }
 
-    Eigen::MatrixXd FrBEMBody_::GetInfiniteAddedMass(const unsigned int ibody) const {
-        assert(ibody < this->GetNbBodies());
-        return m_infiniteAddedMass[ibody];
+    Eigen::MatrixXd FrBEMBody_::GetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion) const {
+        return m_infiniteAddedMass[BEMBodyMotion];
     }
 
-    Eigen::MatrixXd FrBEMBody_::GetSelfInfiniteAddedMass() const {
-        return m_infiniteAddedMass[m_id];
+    Eigen::MatrixXd FrBEMBody_::GetSelfInfiniteAddedMass() {
+        return m_infiniteAddedMass[this];
     }
 
-    std::vector<Eigen::MatrixXd> FrBEMBody_::GetImpulseResponseFunctionK(unsigned int ibody) const {
-        assert(ibody < this->GetNbBodies());
-        return m_impulseResponseFunctionK[ibody];
-    }
-
-    Eigen::MatrixXd FrBEMBody_::GetImpulseResponseFunctionK(unsigned int ibody, unsigned int idof) const {
-        assert(ibody < this->GetNbBodies());
-        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
-        return m_impulseResponseFunctionK[ibody][idof];
-    }
-
-    Eigen::VectorXd FrBEMBody_::GetImpulseResponseFunctionK(unsigned int ibody, unsigned int idof, unsigned int iforce) const {
-        assert(ibody < this->GetNbBodies());
-        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
-        assert(iforce < this->GetNbForceMode());
-        return m_impulseResponseFunctionK[ibody][idof].row(iforce);
-    }
-
-    std::vector<Eigen::MatrixXd> FrBEMBody_::GetImpulseResponseFunctionKu(unsigned int ibody) const {
-        assert(ibody < this->GetNbBodies());
-        return m_impulseResponseFunctionKu[ibody];
-    }
-
-    Eigen::MatrixXd FrBEMBody_::GetImpulseResponseFunctionKu(unsigned int ibody, unsigned int idof) const {
-        assert(ibody < this->GetNbBodies());
-        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
-        return m_impulseResponseFunctionKu[ibody][idof];
-    }
-
-    Eigen::VectorXd FrBEMBody_::GetImpulseResponseFunctionKu(unsigned int ibody, unsigned int idof, unsigned int iforce) const {
-        assert(ibody < this->GetNbBodies());
-        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
-        assert(iforce < this->GetNbForceMode());
-        return m_impulseResponseFunctionKu[ibody][idof].row(iforce);
-    }
-
-    Interp1d<double, VectorN> FrBEMBody_::GetIRFInterpolatorK(unsigned int ibody, unsigned int idof) const {
-        assert(ibody < this->GetNbBodies());
-        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
-        return m_interpK[ibody][idof];
+    Interp1d<double, VectorN> FrBEMBody_::GetIRFInterpolatorK(FrBEMBody_* BEMBodyMotion, unsigned int idof) const {
+        assert(idof < 6);
+        return m_interpK[BEMBodyMotion][idof];
     };
 
-    Interp1d<double, VectorN> FrBEMBody_::GetIRFInterpolatorKu(unsigned int ibody, unsigned int idof) const {
-        assert(ibody < this->GetNbBodies());
-        assert(idof < m_HDB->GetBody(ibody)->GetNbMotionMode());
-        return m_interpKu[ibody][idof];
+    Interp1d<double, VectorN> FrBEMBody_::GetIRFInterpolatorKu(FrBEMBody_* BEMBodyMotion, unsigned int idof) const {
+        assert(idof < 6);
+        return m_interpKu[BEMBodyMotion][idof];
     };
 
     //
