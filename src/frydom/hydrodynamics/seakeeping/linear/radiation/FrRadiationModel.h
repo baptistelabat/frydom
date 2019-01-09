@@ -138,7 +138,7 @@ namespace frydom {
     protected:
 
         std::shared_ptr<FrHydroDB_> m_HDB;
-        GeneralizedForce m_radiationForce;
+        std::unordered_map<FrBEMBody_*, GeneralizedForce> m_radiationForce;
 
     public:
 
@@ -148,7 +148,13 @@ namespace frydom {
 
         FrHydroDB_* GetHydroDB() const { return m_HDB.get(); }
 
-        GeneralizedForce* GetRadiationForce() const { return &m_radiationForce; }
+        Force GetRadiationForce(FrBEMBody_* BEMBody) const;
+
+        Force GetRadiationForce(FrBody_* body) const;
+
+        Torque GetRadiationTorque(FrBEMBody_* BEMBody) const;
+
+        Torque GetRadiationTorque(FrBody_* body) const;
 
         void Initialize() override;
 

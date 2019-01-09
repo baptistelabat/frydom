@@ -339,6 +339,25 @@ namespace frydom {
         return m_HDB->GetMapper();
     }
 
+
+    Force FrRadiationModel_::GetRadiationForce(FrBEMBody_ *BEMBody) const {
+        return m_radiationForce[BEMBody].GetForce();
+    }
+
+    Force FrRadiationModel_::GetRadiationForce(FrBody_* body) const {
+        auto BEMBody = m_HDB->GetBody(body);
+        return m_radiationForce[BEMBody].GetForce();
+    }
+
+    Torque FrRadiationModel_::GetRadiationTorque(FrBEMBody_* BEMBody) const {
+        return m_radiationForce[BEMBody].GetTorque();
+    }
+
+    Torque FrRadiationModel_::GetRadiationTorque(FrBody_* body) const {
+        auto BEMBody = m_HDB->GetBody(body);
+        return m_radiationForce[BEMBody].GetTorque();
+    }
+
     void FrRadiationModel_::Update(double time) {
 
     }
@@ -360,8 +379,6 @@ namespace frydom {
 
     void FrRadiationConvolutionModel_::Update(double time) {
 
-        auto radiationForce = GeneralizedForce();
-
         // Update speed recorder
         for (auto BEMBody = m_HDB->begin(); BEMBody != m_HDB->end(); BEMBody++) {
             auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->get());
@@ -369,6 +386,8 @@ namespace frydom {
         }
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
+
+            auto radiationForce = GeneralizedForce();
 
             for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion != m_HDB->end(); ++BEMBodyMotion) {
 
@@ -394,7 +413,7 @@ namespace frydom {
                 radiationForce += ConvolutionKu(meanSpeed.norm());
             }
 
-            m_radiationForce = radiationForce;
+            m_radiationForce[BEMBody] = radiationForce;
         }
     }
 

@@ -60,6 +60,57 @@ namespace frydom {
 
     };
 
+
+
+
+
+
+
+
+
+
+
+
+    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+    class FrRadiationModel_;
+
+    class FrRadiationForce_ : public FrForce_ {
+
+    protected:
+
+        std::shared_ptr<FrRadiationModel_> m_radiationModel;
+
+    public:
+
+        FrRadiationForce_() = default;
+
+        explicit FrRadiationForce_(const std::shared_ptr<FrRadiationModel_> radiationModel);
+
+        void SetRadiationModel(const std::shared_ptr<FrRadiationModel_> radiationModel);
+
+        std::shared_ptr<FrRadiationModel_> GetRadiationModel() const;
+
+    };
+
+
+
+
+
+    class FrRadiationConvolutionModel_;
+
+    class FrRadiationConvolutionForce_: public FrRadiationForce_ {
+
+    public:
+
+        explicit FrRadiationConvolutionForce_(std::shared_ptr<FrRadiationConvolutionModel_> radiationModel);
+
+        void Initialize() override;
+
+        void Update(double time) override;
+
+    };
+
 }  // end namespace frydom
 
 #endif //FRYDOM_FRRADIATIONFORCE_H

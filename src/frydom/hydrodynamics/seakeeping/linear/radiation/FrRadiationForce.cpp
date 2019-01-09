@@ -52,4 +52,52 @@ namespace frydom {
 
     }
 
+
+
+
+
+
+
+
+
+
+
+    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+
+
+    // --------------------------------------------------
+    // FrRadiationForce
+    // --------------------------------------------------
+
+    FrRadiationForce_::FrRadiationForce_(const std::shared_ptr<FrRadiationModel_> radiationModel)
+            : m_radiationModel(radiationModel) {}
+
+    void FrRadiationForce_::SetRadiationModel(const std::shared_ptr<FrRadiationModel_> radiationModel) {
+        m_radiationModel = radiationModel;
+    }
+
+    // --------------------------------------------------
+    // FrRadiationConvolutionForce
+    // --------------------------------------------------
+
+    FrRadiationConvolutionForce_::FrRadiationConvolutionForce_(
+            std::shared_ptr<FrRadiationConvolutionModel_> radiationModel)
+            : m_radiationModel(radiationModel) {}
+
+    void FrRadiationConvolutionForce_::Initialize() {
+        m_radiationModel->Initialize();
+        FrRadiationForce_::Initialize();
+    }
+
+    void FrRadiationConvolutionForce_::Update(double time) {
+        m_radiationModel->Update(time);
+
+        auto force = m_radiationModel->GetRadiationForce(m_body);
+        auto torque = m_radiationModel->GetRadiationTorque(m_body);
+
+        SetForceTorqueInBodyAtCOG(force, torque, NWU);
+    }
+
+
+
 }  // end namespace frydom
