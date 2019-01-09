@@ -95,7 +95,7 @@ namespace frydom {
         auto force = m_radiationModel->GetRadiationForce(m_body);
         auto torque = m_radiationModel->GetRadiationTorque(m_body);
 
-        SetForceTorqueInBodyAtCOG(force, torque, NWU);
+        SetForceTorqueInWorldAtCOG(force, torque, NWU);
     }
 
 

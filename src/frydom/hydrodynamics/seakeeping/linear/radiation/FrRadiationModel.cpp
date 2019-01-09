@@ -413,7 +413,10 @@ namespace frydom {
                 radiationForce += ConvolutionKu(meanSpeed.norm());
             }
 
-            m_radiationForce[BEMBody] = radiationForce;
+            auto forceInWorld = eqFrame->ProjectVectorInParent(radiationForce.GetForce());
+            auto TorqueInWorld = eqFrame->ProjectVectorInParent(radiationForce.GetTorque());
+
+            m_radiationForce[BEMBody->get()] = - GeneralizedForce(forceInWorld, TorqueInWorld);
         }
     }
 
