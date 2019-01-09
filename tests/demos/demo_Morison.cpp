@@ -72,6 +72,7 @@ int main(int argc, char* argv[]) {
     // Instantiate a Morison Force, using a Morison model
     auto MorisonForce = std::make_shared<FrMorisonForce_>(MorisonModel);
 
+    // Make the asset (a vector) for the Morison force visible
     MorisonForce->SetIsForceAsset(true);
 
     // Don't forget to add the Morison force to the body !
@@ -87,6 +88,8 @@ int main(int argc, char* argv[]) {
     // Don't forget to initialize the offshore system : it will initialize every physical objects and environmental
     // components it contains.
     system.Initialize();
+
+    cylinder->RemoveExternalForce(MorisonForce);
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 15) and the distance from the camera to the objectif (75m).

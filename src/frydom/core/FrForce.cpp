@@ -184,9 +184,15 @@ namespace frydom{
         m_chronoForce = std::make_shared<internal::_FrForceBase>(this);
     }
 
+//    FrForce_::~FrForce_(){
+//        m_forceAsset=nullptr;
+//    }
+
     void FrForce_::Initialize() {
         if (m_isForceAsset) {
+            assert(m_forceAsset==nullptr);
             auto ForceAsset = std::make_shared<FrForceAsset_>(this);
+            m_forceAsset = ForceAsset.get();
             m_body->AddAsset(ForceAsset);
         }
     }

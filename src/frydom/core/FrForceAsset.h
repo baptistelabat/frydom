@@ -72,15 +72,15 @@ namespace frydom {
 
     namespace internal{
 
-    struct FrForceAssetBase_ : public chrono::ChGlyphs {
+        struct FrForceAssetBase_ : public chrono::ChGlyphs {
 
-        FrForceAsset_ * m_frydomForceAsset;
+            FrForceAsset_ * m_frydomForceAsset;
 
-        explicit FrForceAssetBase_(FrForceAsset_ * forceAsset);
+            explicit FrForceAssetBase_(FrForceAsset_ * forceAsset);
 
-        void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) override;
+            void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) override;
 
-    };
+        };
 
     }
 
@@ -94,7 +94,7 @@ namespace frydom {
         double OrderOfMagnitude;
         bool adaptive_OOM;
 
-        double m_CharacteristicLength = 1.;
+        double m_CharacteristicLength;
         chrono::ChColor m_symbolscolor;
         bool inverse_direction;
 
@@ -108,6 +108,8 @@ namespace frydom {
         explicit FrForceAsset_(FrForce_* force);
 
         void Update();
+
+        friend void FrBody_::RemoveExternalForce(std::shared_ptr<frydom::FrForce_>);
 
     };
 

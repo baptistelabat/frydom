@@ -301,6 +301,9 @@ namespace frydom {
             /// \param newCOG new Center Of Gravity
             void UpdateMarkerPositionToCOG(const chrono::ChVector<> newCOG);
 
+            ///
+            void RemoveAsset(std::shared_ptr<chrono::ChAsset> asset);
+
         };
 
     }  // end namespace internal

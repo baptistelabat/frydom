@@ -170,6 +170,7 @@ namespace frydom {
     class FrOffshoreSystem_;
     class FrBody_;
     class FrNode_;
+    class FrForceAsset_;
 
     /// Class defining an effort with force and torque vector
     ///
@@ -185,6 +186,7 @@ namespace frydom {
 
         // Force Asset
         bool m_isForceAsset = false;            ///< A ForceAsset (vector) is displayed if true
+        FrForceAsset_* m_forceAsset;            ///< pointer to the ForceAsset object.
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise
@@ -198,6 +200,9 @@ namespace frydom {
         FrForce_();
 
 //        explicit FrForce_(FrBody_* body);
+
+//        /// Force Destructor, delete the related force asset and remove it from the asset container of the body
+//        ~FrForce_();
 
         void Initialize() override;
 

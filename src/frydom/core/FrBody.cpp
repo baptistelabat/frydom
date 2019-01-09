@@ -18,10 +18,12 @@
 
 #include <chrono/physics/ChLinkMotorLinearSpeed.h>  // FIXME : a retirer
 #include "frydom/asset/FrAsset.h"
+#include "frydom/core/FrForceAsset.h"
 
 #include "FrFunction.h"
 #include "FrException.h"
-#include "FrCore.h"
+//#include "FrCore.h"
+
 
 
 namespace frydom {
@@ -146,6 +148,16 @@ namespace frydom {
                 marker->Impose_Rel_Coord(chrono::ChCoordsys<double>(position));
             }
             UpdateMarkers(GetChTime());
+        }
+
+        void _FrBodyBase::RemoveAsset(std::shared_ptr<chrono::ChAsset> asset) { //taken from RemoveForce
+            // trying to remove objects not previously added?
+            assert(std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset) !=
+                           assets.end());
+
+            // warning! linear time search
+            assets.erase(
+                    std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset));
         }
 
     }  // end namespace internal
@@ -403,6 +415,28 @@ namespace frydom {
 
         m_externalForces.erase(
                 std::find<std::vector<std::shared_ptr<FrForce_>>::iterator>(m_externalForces.begin(), m_externalForces.end(), force));
+
+        if (force->m_forceAsset!=nullptr) {
+            m_chronoBody->RemoveAsset(force->m_forceAsset->GetChronoAsset());
+
+            bool asserted=false;
+            for (int ia=0;ia<m_assets.size();++ia){
+                if (m_assets[ia].get()==force->m_forceAsset){
+                    m_assets.erase(m_assets.begin()+ia);
+                    asserted=true;
+                }
+            }
+            assert(asserted);
+            force->m_forceAsset=nullptr;
+
+//            { // just to make sure this shared pointer is not used anywhere else.
+//                auto sharedAsset = std::make_shared<FrForceAsset_>(force->m_forceAsset);
+//                m_assets.erase(
+//                        std::find<std::vector<std::shared_ptr<FrAsset>>::iterator>(m_assets.begin(), m_assets.end(),
+//                                                                                   sharedAsset));
+//            }
+        }
+
 
         force->m_body = nullptr;
     }
