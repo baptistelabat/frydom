@@ -18,7 +18,7 @@
 
 #include <chrono/physics/ChLinkMotorLinearSpeed.h>  // FIXME : a retirer
 #include "frydom/asset/FrAsset.h"
-#include "frydom/core/FrForceAsset.h"
+#include "frydom/asset/FrForceAsset.h"
 
 #include "FrFunction.h"
 #include "FrException.h"

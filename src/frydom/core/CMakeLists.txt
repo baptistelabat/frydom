@@ -15,7 +15,6 @@ set(SRC_FILES
         FrColors.cpp
         FrConvention.cpp
         FrForce.cpp
-        FrForceAsset.cpp
         FrHydroBody.cpp
         FrNode.cpp
         FrOffshoreSystem.cpp

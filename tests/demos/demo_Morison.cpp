@@ -21,6 +21,7 @@ int main(int argc, char* argv[]) {
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem_ system;
 
+    
     // ------------------ Wave Field ------------------ //
 
     auto FreeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
@@ -42,6 +43,7 @@ int main(int argc, char* argv[]) {
 
     auto waveField = FreeSurface->SetAiryRegularOptimWaveField(waveHeight, wavePeriod, waveDirection, fc, dc);
 
+    
     // ------------------ Cylinder ------------------ //
 
     // Create the cylinder
@@ -54,6 +56,7 @@ int main(int argc, char* argv[]) {
 
     cylinder->SetBodyFixed(true);
 
+    
     // ------------------ Morison Model ------------------ //
 
     // Several ways exist to add a Morison model to a body. Remember that a Morison model is a composition of Morison
@@ -79,7 +82,6 @@ int main(int argc, char* argv[]) {
     cylinder->AddExternalForce(MorisonForce);
 
 
-
     // ------------------ Run ------------------ //
 
     // You can change the dynamical simulation time step using.
@@ -88,8 +90,6 @@ int main(int argc, char* argv[]) {
     // Don't forget to initialize the offshore system : it will initialize every physical objects and environmental
     // components it contains.
     system.Initialize();
-
-    cylinder->RemoveExternalForce(MorisonForce);
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 15) and the distance from the camera to the objectif (75m).

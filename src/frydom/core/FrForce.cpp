@@ -8,7 +8,7 @@
 #include "FrBody.h"
 
 #include "FrNode.h"
-#include "frydom/core/FrForceAsset.h"
+#include "frydom/asset/FrForceAsset.h"
 
 
 namespace frydom{
