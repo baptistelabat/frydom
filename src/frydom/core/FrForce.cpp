@@ -8,6 +8,7 @@
 #include "FrBody.h"
 
 #include "FrNode.h"
+#include "frydom/core/FrForceAsset.h"
 
 
 namespace frydom{
@@ -181,6 +182,13 @@ namespace frydom{
 
     FrForce_::FrForce_() {
         m_chronoForce = std::make_shared<internal::_FrForceBase>(this);
+    }
+
+    void FrForce_::Initialize() {
+        if (m_isForceAsset) {
+            auto ForceAsset = std::make_shared<FrForceAsset_>(this);
+            m_body->AddAsset(ForceAsset);
+        }
     }
 
     std::shared_ptr<chrono::ChForce> FrForce_::GetChronoForce() {

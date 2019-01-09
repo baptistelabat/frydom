@@ -90,12 +90,14 @@ namespace frydom {
     private:
         std::shared_ptr<internal::FrForceAssetBase_> m_chronoAsset;
 
-        std::shared_ptr<FrForce_> m_force;  //< The force that this asset represents
+        FrForce_* m_force;  //< The force that this asset represents
         double OrderOfMagnitude;
         bool adaptive_OOM;
 
-        double CharacteristicLength;
+        double m_CharacteristicLength = 1.;
+        chrono::ChColor m_symbolscolor;
         bool inverse_direction;
+
         // TODO ajouter flag pour dire si on affiche la force qui s'applique ou la force delivree pour la visu (propulseurs...)
 
     protected:
@@ -103,7 +105,7 @@ namespace frydom {
 
     public:
 
-        explicit FrForceAsset_(std::shared_ptr<FrForce_> force);
+        explicit FrForceAsset_(FrForce_* force);
 
         void Update();
 

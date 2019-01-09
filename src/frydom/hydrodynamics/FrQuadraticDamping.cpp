@@ -99,7 +99,9 @@ namespace frydom {
 
     bool FrQuadraticDamping_::GetRelative2Fluid() {return m_relative2Fluid;}
 
-    void FrQuadraticDamping_::Initialize() {}
+    void FrQuadraticDamping_::Initialize() {
+        FrForce_::Initialize();
+    }
 
     void FrQuadraticDamping_::Update(double time) {
 

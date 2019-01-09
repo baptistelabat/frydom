@@ -88,6 +88,7 @@ namespace frydom {
 
     void FrMorisonForce_::Initialize() {
 
+        FrForce_::Initialize();
         m_model->Initialize();
     }
 

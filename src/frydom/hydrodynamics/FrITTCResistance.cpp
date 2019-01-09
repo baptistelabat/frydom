@@ -132,6 +132,7 @@ namespace frydom{
     }
 
     void FrITTCResistance_::Initialize() {
+        FrForce_::Initialize();
         m_environment = GetSystem()->GetEnvironment(); // To reduce the number of indirections during update
     }
 

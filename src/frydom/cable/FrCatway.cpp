@@ -226,6 +226,7 @@ namespace frydom {
     }
 
     void FrCatForce::Initialize() {
+        FrForce_::Initialize();
         // TODO  : rien a faire ?
     }
 

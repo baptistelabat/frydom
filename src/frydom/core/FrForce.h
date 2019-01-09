@@ -199,6 +199,10 @@ namespace frydom {
 
 //        explicit FrForce_(FrBody_* body);
 
+        void Initialize() override;
+
+//        void StepFinalize() override;
+
         /// Virtual function to allow updating the child object from the solver
         /// \param time Current time of the simulation from begining, in seconds
         virtual void Update(double time) = 0;

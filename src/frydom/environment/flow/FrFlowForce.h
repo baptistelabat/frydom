@@ -36,7 +36,7 @@ namespace frydom {
         void Update(double time) override;
 
         /// Initialize the state of the flow force
-        void Initialize() override {}
+        void Initialize() override;
 
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override {}

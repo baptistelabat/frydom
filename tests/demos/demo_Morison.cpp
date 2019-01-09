@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
     double radius = 3, height = 30, mass = 1000;
     makeItCylinder(cylinder,radius, height, mass);
     cylinder->SetColor(LightGoldenRodYellow);
-    cylinder->SetPosition(Position(0.,0.,-0.25*height),fc);
+    cylinder->SetPosition(Position(0.,0.,-0.5*height),fc);
 
     cylinder->SetBodyFixed(true);
 
@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 15) and the distance from the camera to the objectif (75m).
     // For saving snapshots of the simulation, just turn the boolean to true.
-    system.RunInViewer(15, 55, false);
+    system.RunInViewer(150, 155, false);
 
 
 }

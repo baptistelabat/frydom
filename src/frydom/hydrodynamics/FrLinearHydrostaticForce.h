@@ -107,7 +107,7 @@ namespace frydom {
         void Update(double time) override;
 
         /// Intialize the hydrostatic force model
-        void Initialize() override { }
+        void Initialize() override;
 
         /// Methods to be applied at the end of each time steps
         void StepFinalize() override { }

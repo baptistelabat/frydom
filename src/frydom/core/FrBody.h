@@ -325,6 +325,8 @@ namespace frydom {
         using ForceContainer = std::vector<std::shared_ptr<FrForce_>>;
         ForceContainer m_externalForces;            ///< Container of the external forces acting on body
 
+        using AssetContainer = std::vector<std::shared_ptr<FrAsset>>;
+        AssetContainer m_assets;                    ///< Container of the assets added to the body
 
         using CONTACT_TYPE = FrOffshoreSystem_::SYSTEM_TYPE;
         CONTACT_TYPE m_contactType = CONTACT_TYPE::SMOOTH_CONTACT; ///< The contact method that has to be consistent with that of the FrOffshoreSystem
