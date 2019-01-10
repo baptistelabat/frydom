@@ -9,7 +9,7 @@ using namespace frydom;
 int main(int argc, char* argv[]) {
 
     /** Rotations can be expressed using several tools in FRyDoM : quaternions, cardan angles, rotation objects, etc.
-     * We present in this demo the quaternions and rotations objects, whit their constructor and associated methods.
+     * We present in this demo the quaternions and rotations objects, with their constructors and associated methods.
      *
      */
 
