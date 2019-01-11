@@ -4,28 +4,58 @@
    contain the root `toctree` directive.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
 
-   source/conventions.rst
-   source/dynamics.rst
-   source/environment.rst
-   source/forces.rst
-   source/frame.rst
-   source/rotation.rst
-   
-Welcome to FRyDoM's documentation!
-==================================
+..   source/conventions
+   source/dynamics
+   source/environment/environment
+   source/forces
+   source/frame
+   source/rotation
 
-Contents:
+**********************************
+Welcome to FRyDoM's documentation!
+**********************************
+
+.. Contents:
+
+General conventions
+*******************
+
+.. toctree::
+   :maxdepth: 3
+
+   source/general/index
+
+Environment Theory
+******************
+
+.. toctree::
+   :maxdepth: 3
+
+   source/environment/index
+
+Forces
+******
 
 .. toctree::
    :maxdepth: 2
 
+   source/forces
+
+
+Dynamics
+********
+
+.. toctree::
+   :maxdepth: 2
+
+   source/dynamics
    
 
 Indices and tables
-==================
+******************
 
 * :ref:`genindex`
 * :ref:`modindex`
