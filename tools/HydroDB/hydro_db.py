@@ -741,7 +741,7 @@ class RadiationDB(_FreqDB):
         ibody_motion : int
             Index of the body having a motion
         idof : int
-            Index of the local body's raditation mode (motion)
+            Index of the local body's radiation mode (motion)
         ibody_force : int
             Index of the body where the radiation force is applied
         iforce : int

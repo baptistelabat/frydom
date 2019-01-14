@@ -285,8 +285,6 @@ def write_hdb5(hdb, out_file=None):
                 jbody = body_j.ibody
 
 
-
-
                 radiation_body_motion_path = radiation_path + "/BodyMotion_%u" % jbody
                 
                 dg = f.create_group(radiation_body_motion_path)
