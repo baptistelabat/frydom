@@ -4,7 +4,8 @@
 
 import numpy as np
 
-class environment_db(object):
+
+class EnvironmentDB(object):
 
     def __init__(self):
         self._gravity = None

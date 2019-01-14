@@ -4,6 +4,7 @@
 
 import numpy as np
 
+
 def symetrize(wave_dirs, fk_db, diff_db):
 
     [nmode, nbody, ndir] = fk_db.data.shape
@@ -31,7 +32,8 @@ def symetrize(wave_dirs, fk_db, diff_db):
 
     return wave_dirs, fk_db, diff_db
 
-class discretization_db(object):
+
+class DiscretizationDB(object):
 
     def __init__(self):
         # Frequency discretization
@@ -84,7 +86,7 @@ class discretization_db(object):
         self._min_frequency = hdb.min_frequency
         self._nb_frequencies = hdb.nb_frequencies
 
-        time = hdb.radiation_db.get_irf().time
+        time = hdb.radiation_db.get_irf_db().time
         self._final_time = time[-1]
         self._nb_time_sample = len(time)
 
@@ -129,29 +131,35 @@ class discretization_db(object):
 
         self._wave_dirs = np.linspace(hdb.min_wave_dir, hdb.max_wave_dir, hdb.nb_wave_dir)
 
+        fk_db = hdb.froude_krylov_db
+        diff_db = hdb.diffraction_db
+
         # --- Adjust convention of wage direction to GOTO
         if hdb.min_wave_dir >= -np.float32() and hdb.max_wave_dir <= 180. + np.float32():
             self._wave_dirs = 180. - self._wave_dirs
-            self._wave_dirs,  hdb._froude_krylov_db, hdb._diffraction_db = symetrize(self._wave_dirs,
-                                                                                     hdb._froude_krylov_db,
-                                                                                     hdb._diffraction_db)
-
+            self._wave_dirs,  fk_db, diff_db = symetrize(self._wave_dirs, fk_db, diff_db)
         else:
             self._wave_dirs = np.fmod(self._wave_dirs + 180., 360.)
 
         n180 = 0
         i360 = -9
         for idir in range(self._wave_dirs.size):
-            self._wave_dirs = self._wave_dirs[idir]
+            wave_dir = self._wave_dirs[idir]
 
-            if abs(self._wave_dirs) < 0.01:
+            if abs(wave_dir) < 0.01:
                 i360 = idir
-            elif abs(self._wave_dirs - 180) < 0.01:
+            elif abs(wave_dir - 180) < 0.01:
                 n180 += 1
                 if n180 == 2:
                     self._wave_dirs[idir] = 360.
-                    hdb._froude_krylov_db.data[:, :, idir] = hdb._froude_krylov_db.data[:, :, i360]
-                    hdb._diffraction_db.data[:, :, idir] = hdb._diffraction_db.data[:, :, i360]
+                    fk_db.data[:, :, idir] = fk_db.data[:, :, i360]
+                    diff_db.data[:, :, idir] = diff_db.data[:, :, i360]
+
+        # -- sort direction
+        sort_dirs = np.argsort(self._wave_dirs)
+        self._wave_dirs = self._wave_dirs[sort_dirs]
+        hdb._froude_krylov_db.data = fk_db.data[:, :, sort_dirs]
+        hdb._diffraction_db.data = diff_db.data[:, :, sort_dirs]
 
         self._max_angle = np.max(self._wave_dirs)
         self._min_angle = np.min(self._wave_dirs)

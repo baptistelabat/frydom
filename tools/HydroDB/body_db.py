@@ -3,18 +3,21 @@
 """Module to create a body database for frydom hydrodynamic database"""
 
 import numpy as np
-from HydroDB import hydro_db
-from HydroDB.hydrostatic_db import HydrostaticDB
-from HydroDB.wave_drift_db import WaveDriftDB
 
-class body_db(object):
+import hydro_db
+from hydrostatic_db import HydrostaticDB
+from wave_drift_db import WaveDriftDB
 
-    def __init__(self):
-        self._ibody = None
+
+class BodyDB(object):
+
+    def __init__(self, hdb, i_body):
+        self._i_body = None
         self._hdb = None
         self._wave_drift = None
         self._hydrostatic = None
         self._wave_dirs = None
+        self.load_data(hdb, i_body)
 
     @property
     def name(self):
@@ -22,7 +25,7 @@ class body_db(object):
 
     @property
     def id(self):
-        return self._ibody
+        return self._i_body
 
     @property
     def position(self):
@@ -106,8 +109,8 @@ class body_db(object):
     def irf_ku(self, i_body_motion):
         return self._hdb.get_impulse_response_ku(self.id, i_body_motion)
 
-    def load_data(self, hdb, ibody):
-        self._ibody = ibody
+    def load_data(self, hdb, i_body):
+        self._i_body = i_body
         self._hdb = hdb
         self._hydrostatic = HydrostaticDB()
         self._wave_drift = WaveDriftDB()
