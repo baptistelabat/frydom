@@ -395,6 +395,8 @@ namespace frydom {
 
     // >>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
+    //TODO: Changer la discrétisation en direction, de manière à obtenir une énergie spectrale constante pour toutes les composantes
+    // voir OrcaFlex Equal Energy dans Frequency spectrum discretisation.
     class FrWaveDirectionalModel_ {
     public:
 
@@ -497,6 +499,9 @@ namespace frydom {
     /// FrWaveSpectrum_
     /// -------------------------------------------------------------------
     /// Virtual base class for the wave spectra.
+
+    //TODO: Changer la discrétisation en fréquence, de manière à obtenir une énergie spectrale constante pour toutes les composantes
+    // voir OrcaFlex Equal Energy dans Frequency spectrum discretisation.
     class FrWaveSpectrum_ : public FrObject {
 
     protected:

@@ -24,6 +24,8 @@ ITTC resistance force
 ---------------------
 
 
+
+
 Morison force
 -------------
 
@@ -31,7 +33,7 @@ Originally designed for vertical cylinder, the morison equation represents the i
 It corresponds to the sum of an inertia term, due to the acceleration of the fluid particule, and a drag term, due to the flow velocity.
 When the body is moving this equation can be extended to integrate the force due to the body acceleration.
 
-For a flow with velocity u(t) the morison equation is as follows:
+For a flow with velocity :math:`u(t)` the morison equation is as follows:
 
 .. math::
 	F_M = \rho (1 + C_a) v_a (\dot{u}(t) - \ddot{X}(t)) + \frac{1}{2} C_d \rho L (u - \dot{X})|u - \dot{X}|
