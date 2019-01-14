@@ -42,7 +42,7 @@ Forces
 .. toctree::
    :maxdepth: 2
 
-   source/forces
+   source/forces/index
 
 
 Dynamics
