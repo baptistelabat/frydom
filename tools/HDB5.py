@@ -57,6 +57,11 @@ class HDB5(object):
 
         print('-------> Nemoh data successfully loaded from "%s"' % input_directory)
 
+    def get_body_list(self):
+        for body in self._bodies:
+            print("body id: %i, name : %s" % (body.id, body.name))
+        return
+
     def get_body(self, id=None, name=None):
 
         if name:
@@ -68,10 +73,14 @@ class HDB5(object):
 
         return None
 
+    @property
+    def body(self):
+        return self._bodies
+
     def _find_body_by_name(self, name):
 
         for body in self._bodies:
-            if body.name == name:
+            if body.mesh.name == name:
                 return body
 
         print("warning : no body found with name %s" % name)
@@ -99,8 +108,11 @@ class HDB5(object):
 
         try:
 
-            with h5py.File(output_file, 'w') as writer:
+            with h5py.File(hdb5_file, 'w') as writer:
                 self._environment.write_hdb5(writer)
+                self._discretization.write_hdb5(writer)
+                for body in self._bodies:
+                    body.write_hdb5(writer)
 
         except IOError:
             raise IOError('Problem in writing HDB5 file at location %s' % hdb5_file)

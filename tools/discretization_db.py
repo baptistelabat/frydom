@@ -81,6 +81,10 @@ class DiscretizationDB(object):
     def nb_wave_directions(self):
         return self._nb_wave_directions
 
+    @property
+    def wave_dirs(self):
+        return self._wave_dirs
+
     def load_data(self, hdb):
         self._max_frequency = hdb.max_frequency
         self._min_frequency = hdb.min_frequency
@@ -114,7 +118,7 @@ class DiscretizationDB(object):
 
         # Wave direction discretization
         wave_direction_path = discretization_path + "/WaveDirections"
-        dset = writer.create_dataset(wave_direction_path + "/NbWaveDirections", data=self.nb_wave_dir)
+        dset = writer.create_dataset(wave_direction_path + "/NbWaveDirections", data=self.nb_wave_directions)
         dset.attrs['Description'] = "Number of wave directions in the discretization"
 
         dset = writer.create_dataset(wave_direction_path + "/MinAngle", data=self.min_angle)
@@ -160,6 +164,7 @@ class DiscretizationDB(object):
         self._wave_dirs = self._wave_dirs[sort_dirs]
         hdb._froude_krylov_db.data = fk_db.data[:, :, sort_dirs]
         hdb._diffraction_db.data = diff_db.data[:, :, sort_dirs]
+        hdb._wave_dirs = self._wave_dirs
 
         self._max_angle = np.max(self._wave_dirs)
         self._min_angle = np.min(self._wave_dirs)

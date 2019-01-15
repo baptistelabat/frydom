@@ -126,6 +126,7 @@ class HydroDB(_FreqDB):
         self.nb_wave_dir = 0  # TODO: mettre dans diffraction uniquement
         self.min_wave_dir = 0.
         self.max_wave_dir = 0.
+        self._wave_dirs = np.array([])
         
         self.has_kochin = False  # TODO: mettre dans Kochin uniquement
         self.nb_dir_kochin = 0
@@ -136,6 +137,7 @@ class HydroDB(_FreqDB):
         
         self._radiation_db = RadiationDB()  # IRF est genere a partir de radiation...
         self._diffraction_db = DiffractionDB()  # TODO: les frequences seront ajoutees lors d'une requete sur la ppte !
+
         
         self._has_froude_krylov = False
         self._froude_krylov_db = FroudeKrylovDB()
@@ -208,7 +210,11 @@ class HydroDB(_FreqDB):
         db._y_wave_measure = self.y_wave_measure
         
         return db
-    
+
+    @property
+    def wave_dirs(self):
+        return self._wave_dirs
+
     def set_wave_direction(self, min_wave_dir, max_wave_dir, nb_wave_dir):
         # self._diffraction_db.set_wave_dir(min_wave_dir, max_wave_dir, nb_wave_dir)
         self.min_wave_dir = min_wave_dir
@@ -1690,6 +1696,10 @@ class HydroBodySetMapping(object):
         for body in self.bodies:
             n += body.nb_force_modes
         return n
+
+    @property
+    def body(self):
+        return self.bodies
 
     def get_body(self, ibody):  # TODO: Methode de HydroBodySetMapping
         """Get the HydroBody object specified by its number

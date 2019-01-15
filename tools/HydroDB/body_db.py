@@ -16,12 +16,12 @@ class BodyDB(object):
         self._hdb = None
         self._wave_drift = None
         self._hydrostatic = None
-        self._wave_dirs = None
         self.load_data(hdb, i_body)
+        self._position = np.zeros(3, dtype=np.float)
 
     @property
     def name(self):
-        return self._hdb.body_mapper.body[self.id].name
+        return self._hdb.body_mapper.body[self.id].mesh.name
 
     @property
     def id(self):
@@ -29,7 +29,7 @@ class BodyDB(object):
 
     @property
     def position(self):
-        return self._hdb.body_mapper.body[self.id].position
+        return self._position
 
     @property
     def force_modes(self):
@@ -69,25 +69,21 @@ class BodyDB(object):
 
     @property
     def wave_dirs(self):
-        return self._wave_dirs
-
-    @wave_dirs.setter
-    def wave_dirs(self, value):
-        self._wave_dirs = value
+        return self._hdb.wave_dirs
 
     @property
     def diffraction(self):
         i_start = self._hdb.body_mapper.get_general_force_index(self.id, 0)
-        nb_force = self._hdb.boddy_mapper.body[self.id].nb_forces
+        nb_force = self._hdb.body_mapper.body[self.id].nb_force_modes
         i_end = self._hdb.body_mapper.get_general_force_index(self.id, nb_force-1)
-        return self._hdb.diffraction_db[i_start:i_end+1, :, :]
+        return self._hdb.diffraction_db.data[i_start:i_end+1, :, :]
 
     @property
     def froude_krylov(self):
         i_start = self._hdb.body_mapper.get_general_force_index(self.id, 0)
-        nb_force = self._hdb.boddy_mapper.body[self.id].nb_forces
+        nb_force = self._hdb.body_mapper.body[self.id].nb_force_modes
         i_end = self._hdb.body_mapper.get_general_force_index(self.id, nb_force-1)
-        return self._hdb.froude_krylov_db[i_start:i_end+1, :, :]
+        return self._hdb.froude_krylov_db.data[i_start:i_end+1, :, :]
 
     @property
     def hydrostatic(self):
@@ -112,53 +108,63 @@ class BodyDB(object):
     def load_data(self, hdb, i_body):
         self._i_body = i_body
         self._hdb = hdb
-        self._hydrostatic = HydrostaticDB()
-        self._wave_drift = WaveDriftDB()
         return
+
+    def activate_hydrostatic(self):
+        self._hydrostatic = HydrostaticDB()
+
+    def activate_wave_drift(self):
+        self._wave_drift = WaveDriftDB()
 
     def write_hdb5(self, writer):
 
+        body_path = '/Bodies/Body_%u' % self.id
+
+        dset = writer.create_group(body_path)
+
         # Body name
-        dset = writer.create_group("/BodyName", data=self.name)
+        dset = writer.create_dataset(body_path + "/BodyName", data=self.name)
         dset.attrs['Description'] = "Body name"
 
         # Id of the body
-        dset = writer.create_dataset("/ID", data=self.id)
+        dset = writer.create_dataset(body_path + "/ID", data=self.id)
         dset.attrs['Description'] = "Body identifier"
 
         # Position of the body
-        dset = writer.create_group("/BodyPosition", data=self.position)
+        dset = writer.create_dataset(body_path + "/BodyPosition", data=self.position)
         dset.attrs['Description'] = "Position of the body in the absolute frame"
 
         # Modes Force
-        self.write_mode_force(writer, "/Modes")
+        self.write_mode_force(writer, body_path + "/Modes")
 
         # Modes Motion
-        self.write_mode_motion(writer, "/Modes")
+        self.write_mode_motion(writer, body_path + "/Modes")
 
         # Mesh file
-        self.write_mesh(writer, "/Mesh")
+        self.write_mesh(writer, body_path + "/Mesh")
 
         # Excitation force
-        self.write_excitation(writer, "/Excitation")
+        self.write_excitation(writer, body_path + "/Excitation")
 
         # Wave drift coefficients
-        self.write_wave_drift(writer, "/WaveDrift")
+        if self._wave_drift:
+            self.write_wave_drift(writer, body_path + "/WaveDrift")
 
         # Hydrostatic stiffness matrix
-        self.write_hydrostatic(writer, "/Hydrostatic")
+        if self._hydrostatic:
+            self.write_hydrostatic(writer, body_path + "/Hydrostatic")
 
         return
 
     def write_mode_force(self, writer, body_modes_path="/Modes"):
 
-        dset = writer.create_dataset(body_modes_path, "/NbForceModes", data=self.nb_force_modes)
+        dset = writer.create_dataset(body_modes_path + "/NbForceModes", data=self.nb_force_modes)
         dset.attrs['Description'] = "Number of force modes for body number %u" % self.id
 
         for imode, force_mode in enumerate(self.force_modes):
             mode_path = body_modes_path + "/ForceModes/Mode_%u" % imode
             writer.create_group(mode_path)
-            writer.create_database(mode_path + "/Direction", data=force_mode.direction)
+            writer.create_dataset(mode_path + "/Direction", data=force_mode.direction)
 
             if isinstance(force_mode, hydro_db.ForceMode):
                 writer.create_dataset(mode_path + "/Type", data='LINEAR')
@@ -184,7 +190,7 @@ class BodyDB(object):
 
             elif isinstance(motion_mode, hydro_db.RotationMode):
                 writer.create_dataset(mode_path + "/Type", data="ANGULAR")
-                writer.create_dataser(mode_path + "/Point", data=motion_mode.point)
+                writer.create_dataset(mode_path + "/Point", data=motion_mode.point)
 
         return
 
@@ -204,7 +210,7 @@ class BodyDB(object):
         fk_path = excitation_path + "/FroudeKrylov"
         writer.create_group(fk_path)
 
-        for idir, wave_dir in enumerate(self._wave_dirs):
+        for idir, wave_dir in enumerate(self.wave_dirs):
 
             wave_dir_path = fk_path + "/Angle_%u" % idir
             writer.create_group(wave_dir_path)
@@ -213,13 +219,13 @@ class BodyDB(object):
             dset.attrs['Unit'] = 'deg'
             dset.attrs['Description'] = "Wave direction angle of the data"
 
-            dset = writer.create_dataset(wave_dir_path + "/RealCoeffs", data=self.froude_krylov.data[:, :, idir].real)
+            dset = writer.create_dataset(wave_dir_path + "/RealCoeffs", data=self.froude_krylov[:, :, idir].real)
             dset.attrs['Unit'] = ''
             dset.attrs['Description'] = "Real part of the Froude-Krylov hydrodynamic coefficients for %u forces " \
                                         "on body %u as a function of frequency" % \
                                         (self.nb_force_modes, self.id)
 
-            dset = writer.create_dataset(wave_dir_path + "/ImagCoeffs", data=self.froude_krylov.data[:, :, idir].imag)
+            dset = writer.create_dataset(wave_dir_path + "/ImagCoeffs", data=self.froude_krylov[:, :, idir].imag)
             dset.attrs['Unit'] = ''
             dset.attrs['Description'] = "Imaginary part of the Froude-Krylov hydrodynamic coefficients for %u " \
                                         "forces on body %u as a function of frequency" % (
@@ -230,7 +236,7 @@ class BodyDB(object):
         diffraction_path = excitation_path + "/Diffraction"
         writer.create_group(diffraction_path)
 
-        for idir, wave_dir in enumerate(self._wave_dirs):
+        for idir, wave_dir in enumerate(self.wave_dirs):
 
             wave_dir_path = diffraction_path + "/Angle_%u" % idir
             writer.create_group(wave_dir_path)
@@ -239,13 +245,13 @@ class BodyDB(object):
             dset.attrs['Unit'] = 'deg'
             dset.attrs['Description'] = "Wave direction angle of the data"
 
-            writer.create_dataset(wave_dir_path + "/RealCoeffs", data=self.diffraction.data[:, :, idir].real)
+            writer.create_dataset(wave_dir_path + "/RealCoeffs", data=self.diffraction[:, :, idir].real)
             dset.attrs['Unit'] = ''
             dset.attrs['Description'] = "Real part of the diffraction hydrodynamic coefficients for %u forces " \
                                         "on body %u as a function of frequency" % \
                                         (self.nb_force_modes, self.id)
 
-            writer.create_dataset(wave_dir_path + "/ImagCoeffs", data=self.diffraction.data[:, :, idir].imag)
+            writer.create_dataset(wave_dir_path + "/ImagCoeffs", data=self.diffraction[:, :, idir].imag)
             dset.attrs['Unit'] = ''
             dset.attrs['Description'] = "Imaginary part of the diffraction hydrodynamic coefficients for %u forces " \
                                         "on body %u as a function of frequency" % \

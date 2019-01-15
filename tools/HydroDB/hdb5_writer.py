@@ -156,8 +156,7 @@ def write_hdb5(hdb, out_file=None):
         dset = f.create_dataset(irf_time_path + "/FinalTime", data=time[-1])
         dset.attrs['Unit'] = "s"
         dset.attrs['Description'] = "Final time for the impulse response function"
-        
-        
+
         for body in hdb.body_mapper.bodies:
             # assert isinstance(body, HydrodynamicData)
             

@@ -3,6 +3,7 @@
 """Module to create a environment database for frydom hydrodynamic database"""
 
 import numpy as np
+from datetime import datetime
 
 
 class EnvironmentDB(object):
