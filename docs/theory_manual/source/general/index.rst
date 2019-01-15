@@ -40,4 +40,11 @@ Geographic coordinates
 
     geographic
 
+Body
+====
+.. toctree::
+    :maxdepth:1
+
+    body
+
 

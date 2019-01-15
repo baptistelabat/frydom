@@ -22,9 +22,10 @@ Model forces
 ~~~~~~~~~~~~
 ITTC resistance force
 ---------------------
+.. toctree::
+    :maxdepth: 1
 
-
-
+    ITTC78
 
 Morison force
 -------------
@@ -48,9 +49,8 @@ Flow force (wind and current)
 
 Damping forces
 --------------
-Linear damping
-______________
-Quadratic damping
-_________________
-Manoeuvring damping
-___________________
+.. toctree::
+    :maxdepth: 1
+
+    damping
+
