@@ -27,6 +27,10 @@ class WaveDriftDB(object):
         self._discrete_wave_dir = None
 
     @property
+    def modes(self):
+        return self._modes
+
+    @property
     def sym_x(self):
         return self._sym_x
 

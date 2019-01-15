@@ -86,6 +86,18 @@ class HDB5(object):
         print("warning : no body found with name %s" % name)
         return None
 
+    def initialize(self):
+
+        for body in self._bodies:
+
+            if body.wave_drift:
+                body.wave_drift.discrete_wave_dir = self._discretization.wave_dirs
+                body.wave_drift.initialize()
+
+        return
+
+
+
     def write_hdb5(self, output_file=None):
 
         print('========================')

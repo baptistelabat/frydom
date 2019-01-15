@@ -336,10 +336,10 @@ class BodyDB(object):
 
         dg = writer.create_group(wave_drift_path)
 
-        for mode in self.wave_drift.modes:
+        for key, mode in self.wave_drift.modes.items():
             grp_modes = dg.require_group(mode.name)
 
-            for i in range(mode.heading.size):
+            for i in range(len(mode.heading)):
                 grp_dir = grp_modes.require_group("heading_%i" % mode.heading_index[i])
 
                 # Set heading angle
@@ -357,9 +357,9 @@ class BodyDB(object):
         dset.attrs['Description'] = "Time discretization of the data"
 
         # Set sym
-        dset = dg.create_dataset("sym_x", data=self.wave_drift.symx)
+        dset = dg.create_dataset("sym_x", data=self.wave_drift.sym_x)
         dset.attrs['Description'] = "Symmetry along x"
-        dset = dg.create_dataset('sym_y', data=self.wave_drift.symy)
+        dset = dg.create_dataset('sym_y', data=self.wave_drift.sym_y)
         dset.attrs['Description'] = "Symmetry along y"
 
 
