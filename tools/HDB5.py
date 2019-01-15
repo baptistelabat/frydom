@@ -101,6 +101,12 @@ class HDB5(object):
     def write_hdb5(self, output_file=None):
 
         print('========================')
+        print('Intialize HDB5 database...')
+        print('========================')
+
+        self.initialize()
+
+        print('========================')
         print('Writing HDB5 database...')
         print('========================')
 

@@ -339,16 +339,16 @@ class BodyDB(object):
         for key, mode in self.wave_drift.modes.items():
             grp_modes = dg.require_group(mode.name)
 
-            for i in range(len(mode.heading)):
-                grp_dir = grp_modes.require_group("heading_%i" % mode.heading_index[i])
+            for i_angle, angle in enumerate(mode.heading):
+                grp_dir = grp_modes.require_group("heading_%i" % i_angle)
 
                 # Set heading angle
-                dset = grp_dir.create_dataset("heading", data=mode.heading[i])
+                dset = grp_dir.create_dataset("heading", data=angle)
                 dset.attrs['Unit'] = 'rad'
                 dset.attrs['Description'] = "Heading angle"
 
                 # Set data
-                dset = grp_dir.create_dataset("data", data=mode.data[i])
+                dset = grp_dir.create_dataset("data", data=mode.data[i_angle])
                 dset.attrs['Description'] = "Wave Drift force coefficient"
 
         # Set frequency
