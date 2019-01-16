@@ -348,7 +348,7 @@ class BodyDB(object):
                 dset.attrs['Description'] = "Heading angle"
 
                 # Set data
-                dset = grp_dir.create_dataset("data", data=mode.data[i_angle])
+                dset = grp_dir.create_dataset("data", data=mode.data[i_angle, :])
                 dset.attrs['Description'] = "Wave Drift force coefficient"
 
         # Set frequency

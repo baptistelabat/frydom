@@ -4,15 +4,18 @@
 
 import numpy as np
 from math import *
+from scipy.interpolate import interp1d
 
 
 class CoeffData(object):
 
-    name = None
-    heading = []
-    freq = []
-    data = []
-    heading_index = None
+    def __init__(self):
+        self.name = None
+        self.heading = []
+        self.freq = []
+        self.data = []
+        self.heading_index = None
+        return
 
 
 class WaveDriftDB(object):
@@ -148,30 +151,40 @@ class WaveDriftDB(object):
 
     def initialize(self):
 
-        for key, mode in self._modes.items():
-            headings, mode.heading_index = np.unique(mode.heading, return_index=True)
-
         self._set_discrete_frequency()
 
-        for key, mode in self._modes.items():
-            for i in range(len(mode.freq)):
-                freq = mode.freq[i]
-                data = mode.data[i]
-                mode.data[i] = np.interp(self._discrete_frequency, freq, data)
-                mode.freq[i] = self._discrete_frequency
+        for key in self._modes:
 
-                if abs(mode.freq[i][0]) < 1e-2:
-                    mode.freq[i][0] = 0.
+            headings, self._modes[key].heading_index = np.unique(self._modes[key].heading, return_index=True)
 
-                if abs(mode.freq[i][-1] - pi) < 1e-2:
-                    mode.freq[i][-1] = pi
+            for i in range(len(self._modes[key].freq)):
+                freq = self._modes[key].freq[i]
+                data = self._modes[key].data[i]
+                self._modes[key].data[i] = np.interp(self._discrete_frequency, freq, data)
+                self._modes[key].freq[i] = self._discrete_frequency
 
-            mat = np.array(mode.data)
+                if abs(self._modes[key].freq[i][0]) < 1e-2:
+                    self._modes[key].freq[i][0] = 0.
 
-            mode.data = [np.interp(self._discrete_wave_dir, mode.heading, mat[:, i])
-                         for i in range(self._discrete_wave_dir.size)]
+                if abs(self._modes[key].freq[i][-1] - pi) < 1e-2:
+                    self._modes[key].freq[i][-1] = pi
 
-            mode.heading = list(self._discrete_wave_dir)
+            x = np.array(self._modes[key].heading)
+            y = np.array(self._modes[key].data)
+
+            f_interp = interp1d(x, y, kind='linear', axis=0, fill_value='extrapolate', bounds_error=False)
+            data = f_interp(self._discrete_wave_dir)
+
+            self._modes[key].data = data
+            self._modes[key].heading = list(self._discrete_wave_dir)
 
         return
+
+    def get_structure(self):
+
+        for key, mode in self._modes.items():
+
+            for i_dir, angle in enumerate(mode.heading):
+
+                print("mode: %s ;heading_%i:%16.8f ;size_freq(%s)" % (key, i_dir, angle * 180./pi, str(mode.data[i_dir].size)))
 

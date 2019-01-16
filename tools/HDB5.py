@@ -3,6 +3,7 @@
 """Module to create a hydrodynamic database for frydom"""
 
 import os, h5py
+from math import *
 
 from HydroDB.bem_reader import NemohReader
 from HydroDB.body_db import BodyDB
@@ -91,7 +92,7 @@ class HDB5(object):
         for body in self._bodies:
 
             if body.wave_drift:
-                body.wave_drift.discrete_wave_dir = self._discretization.wave_dirs
+                body.wave_drift.discrete_wave_dir = self._discretization.wave_dirs * pi/ 180.
                 body.wave_drift.initialize()
 
         return
