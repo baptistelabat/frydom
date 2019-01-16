@@ -1,3 +1,57 @@
+
+Recommendations on how to write doc in Sphinx
+=============================================
+
+You can find here some notation conventions to write new entries to the theory manual. Click on the "View page source to
+visualize the source code and the different sphinx commands.
+
+You can have access to 6 levels of titles, with the following notations :
+
+\*****
+Title
+\*****
+Title 1
+\*******
+Title 2
+\=======
+Title 3
+\-------
+Title 4
+\~~~~~~~
+Title 5
+\_______
+
+Notation conventions
+--------------------
+
+- For vectors, use \mathbf{} and lowercase : :math:`\mathbf{u}`
+- For matrix, use \mathbf{} and uppercase : :math:`\mathbf{M}`
+- For tensor, use \mathcal and uppercase : :math:`\mathcal{M}`
+- For inertia tensor, use \mathbb and upercase : :math:`\mathbb{I}`
+
+
+Arborescence
+------------
+
+to include .rst, use
+
+\.. toctree::
+    \:maxdepth: 1
+
+    fileName
+
+Example of References
+---------------------
+
+In the text: \[LEONARD2001]_
+
+
+at the end:
+.. [LEONARD2001] Leonard, W., *Control of electrical drivers*, 3rd ed. Springer, 2001
+
+
+
+
 .. _thruster:
 
 Thruster Model
