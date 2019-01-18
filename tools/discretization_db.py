@@ -41,7 +41,7 @@ class DiscretizationDB(object):
         self._wave_frequencies = None
         self._max_frequency = None
         self._min_frequency = None
-        self._nb_frequencies = 0
+        self._nb_frequencies = None
         # Time discretization
         self._final_time = None
         self._nb_time_sample = 0
@@ -83,11 +83,26 @@ class DiscretizationDB(object):
     def nb_wave_directions(self):
         return self._nb_wave_directions
 
+    @nb_wave_directions.setter
+    def nb_wave_directions(self, value):
+        if isinstance(value, int):
+            self._nb_wave_directions = value
+            print("warning : wave dir set to %i" % value)
+        else:
+            print("warning : dimension must be an integer")
+
     @property
     def wave_dirs(self):
         return self._wave_dirs
 
+    @property
+    def wave_frequencies(self):
+        return self._wave_frequencies
+
     def initialize(self, hdb):
+
+        print("")
+        print("-- Initialize --")
 
         # Wave frequency
 
@@ -102,6 +117,10 @@ class DiscretizationDB(object):
 
         self._wave_frequencies = np.linspace(self.min_frequency, self.max_frequency, self.nb_frequencies)
 
+        print(" Max frequency : %16.8f" % self._min_frequency)
+        print(" Min frequency : %16.8f" % self._max_frequency)
+        print(" Nb Wave frequencies : %i" % self._nb_frequencies)
+
         # Wave direction
 
         if self.max_angle is None:
@@ -113,9 +132,13 @@ class DiscretizationDB(object):
         if self.nb_wave_directions is None:
             self._nb_wave_directions = hdb.nb_wave_dir
 
+        print(" Angle max : %16.8f" % self._max_angle)
+        print(" Angle min : %16.8f" % self._min_angle)
+        print(" Nb Wave direction : %i" % self._nb_wave_directions)
+
         self._wave_dirs = np.linspace(self.min_angle, self.max_angle, self.nb_wave_directions)
 
-        # Time
+        # Time
 
         time = hdb.radiation_db.get_irf_db().time
         self._final_time = time[-1]

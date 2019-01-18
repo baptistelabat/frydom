@@ -7,6 +7,9 @@ import numpy as np
 import hydro_db
 from hydrostatic_db import HydrostaticDB
 from wave_drift_db import WaveDriftDB
+from discretization_db import DiscretizationDB
+
+from scipy import interpolate
 
 
 class BodyDB(object):
@@ -14,6 +17,7 @@ class BodyDB(object):
     def __init__(self, hdb, i_body):
         self._i_body = None
         self._hdb = None
+        self._discretization = None
         self._wave_drift = None
         self._hydrostatic = None
         self.load_data(hdb, i_body)
@@ -69,7 +73,7 @@ class BodyDB(object):
 
     @property
     def wave_dirs(self):
-        return self._hdb.wave_dirs
+        return self._discretization.wave_dirs
 
     @property
     def diffraction(self):
@@ -92,6 +96,17 @@ class BodyDB(object):
     @property
     def wave_drift(self):
         return self._wave_drift
+
+    @property
+    def discretization(self):
+        return self._discretization
+
+    @discretization.setter
+    def discretization(self, value):
+        if isinstance(value, DiscretizationDB):
+            self._discretization = value
+        else:
+            print("warning : wrong type value")
 
     def added_mass(self, i_body_motion):
         return self._hdb.radiation_db.get_added_mass(self.id, i_body_motion)
