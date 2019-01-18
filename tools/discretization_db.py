@@ -2,6 +2,7 @@
 #  -*- coding: utf-8 -*-
 """Module to create the discretization database for frydom hydrodynamic database"""
 
+from math import *
 import numpy as np
 
 
@@ -37,6 +38,7 @@ class DiscretizationDB(object):
 
     def __init__(self):
         # Frequency discretization
+        self._wave_frequencies = None
         self._max_frequency = None
         self._min_frequency = None
         self._nb_frequencies = 0
@@ -85,16 +87,70 @@ class DiscretizationDB(object):
     def wave_dirs(self):
         return self._wave_dirs
 
-    def load_data(self, hdb):
-        self._max_frequency = hdb.max_frequency
-        self._min_frequency = hdb.min_frequency
-        self._nb_frequencies = hdb.nb_frequencies
+    def initialize(self, hdb):
+
+        # Wave frequency
+
+        if self.max_frequency is None:
+            self._max_frequency = hdb.max_frequency
+
+        if self.min_frequency is None:
+            self._min_frequency = hdb.min_frequency
+
+        if self.nb_frequencies is None:
+            self._nb_frequencies = hdb.nb_frequencies
+
+        self._wave_frequencies = np.linspace(self.min_frequency, self.max_frequency, self.nb_frequencies)
+
+        # Wave direction
+
+        if self.max_angle is None:
+            self._max_angle = hdb.max_wave_dir
+
+        if self.min_angle is None:
+            self._min_angle = hdb.min_wave_dir
+
+        if self.nb_wave_directions is None:
+            self._nb_wave_directions = hdb.nb_wave_dir
+
+        self._wave_dirs = np.linspace(self.min_angle, self.max_angle, self.nb_wave_directions)
+
+        # Time
 
         time = hdb.radiation_db.get_irf_db().time
         self._final_time = time[-1]
         self._nb_time_sample = len(time)
 
-        self.compute_wave_dirs(hdb)
+        return
+
+    def set_wave_frequencies(self, f_min, f_max, df, unit='rads'):
+
+        if unit == 'Hz':
+            f_min *= 2.*pi
+            f_max *= 2.*pi
+            df *= 2.*pi
+
+        self._min_frequency = f_min
+        self._max_frequency = f_max
+
+        n = int((f_max - f_min) / df)
+        df = (f_max - f_min) / float(n)
+
+        self._wave_frequencies = np.arange(f_min, f_max, df)
+
+        return
+
+    def set_wave_direction(self, min_angle, max_angle, delta_angle, unit='rad'):
+
+        if unit == 'deg':
+            min_angle *= pi/180.
+            max_angle *= pi/180.
+            delta_angle *= pi/180.
+
+        n = int((max_angle - min_angle)/delta_angle)
+        delta_angle = (max_angle - min_angle) / float(n)
+
+        self._wave_dirs = np.arange(min_angle, max_angle, delta_angle)
 
         return
 
