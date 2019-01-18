@@ -147,6 +147,8 @@ class HDB5(object):
         self._interpolate_diffraction()
         self._interpolate_froude_krylov()
 
+        #self._interpolate_radiation_damping()  # FIXME : ne marche pas ...
+
         for body in self._bodies:
 
             body.discretization = self._discretization
@@ -158,12 +160,6 @@ class HDB5(object):
         return
 
     def _initialize_wave_dir(self):
-
-        print("")
-        print("--> Initialize Wave directions ")
-        print("    min angle = %16.8f" % self._hdb.min_wave_dir)
-        print("    max angle = %16.8f" % self._hdb.max_wave_dir)
-        print("    nb directions = %i" % self._hdb.nb_wave_dir)
 
         self._hdb._wave_dirs = np.linspace(self._hdb.min_wave_dir, self._hdb.max_wave_dir, self._hdb.nb_wave_dir)
 
@@ -201,10 +197,6 @@ class HDB5(object):
         self._hdb.max_wave_dir = np.max(self._hdb._wave_dirs)
         self._hdb.nb_wave_dir = self._hdb._wave_dirs.shape[0]
 
-        print("    min angle = %16.8f" % self._hdb.min_wave_dir)
-        print("    max angle = %16.8f" % self._hdb.max_wave_dir)
-        print("    nb directions = %i" % self._hdb.nb_wave_dir)
-
         return
 
     def set_direction(self, d_angle, unit='deg'):
@@ -236,28 +228,15 @@ class HDB5(object):
 
     def _interpolate_diffraction(self):
 
-        print("")
-        print("Interpolation : Shape diffraction (before) : ", self._hdb.diffraction_db.data.shape)
-
-        print("Interpolation : Nb direction %i" % self._discretization.wave_dirs.size)
-        print("Interpolation : Nb frequencies %i" % self._discretization.wave_frequencies.size)
-
         f_interp_dir = interpolate.interp1d(self._hdb.wave_dirs, self._hdb._diffraction_db.data, axis=2)
         self._hdb._diffraction_db.data = f_interp_dir(self._discretization.wave_dirs)
 
         f_interp_freq = interpolate.interp1d(self._hdb.omega, self._hdb._diffraction_db.data, axis=1)
         self._hdb._diffraction_db.data = f_interp_freq(self._discretization.wave_frequencies)
 
-        print("Interpolation : Shape diffraction (after) : ", self._hdb._diffraction_db.data.shape)
-
         return
 
     def _interpolate_froude_krylov(self):
-
-        print("Interpolation : Shape Froude-Krylov (before) :", self._hdb.froude_krylov_db.data.shape)
-
-        print("Interpolation : Nb direction %i" % self._discretization.wave_dirs.size)
-        print("Interpolation : Nb frequencies %i" % self._discretization.wave_frequencies.size)
 
         f_interp_dir = interpolate.interp1d(self._hdb.wave_dirs, self._hdb.froude_krylov_db.data, axis=2)
         self._hdb.froude_krylov_db.data = f_interp_dir(self._discretization.wave_dirs)
@@ -265,9 +244,28 @@ class HDB5(object):
         f_interp_freq = interpolate.interp1d(self._hdb.omega, self._hdb.froude_krylov_db.data, axis=1)
         self._hdb.froude_krylov_db.data = f_interp_freq(self._discretization.wave_frequencies)
 
-        print("Interpolation : Shape Froude-Krylov (after) : ", self._hdb.froude_krylov_db.data.shape)
+        return
+
+    def _interpolate_radiation_damping(self):
+
+        #self._hdb.radiation_db._min_frequency = self.discretization.min_frequency
+        #self._hdb.radiation_db._max_frequency = self.discretization.max_frequency
+        #self._hdb.radiation_db._nb_frequencies = self.discretization.nb_frequencies
+
+        print("nb frequencies : %i" % self._discretization.wave_frequencies.size)
+
+        print(" shape ca (before) : ", self._hdb.radiation_db._ca.shape)
+
+        f_interp_freq = interpolate.interp1d(self._hdb.omega, self._hdb.radiation_db._ca, axis=1)
+        self._hdb._radiation_db._ca = f_interp_freq(self._discretization.wave_frequencies)
+
+        print(" shape ca (after) : ", self._hdb.radiation_db._ca.shape)
+
+        f_interp_freq = interpolate.interp1d(self._hdb.omega, self._hdb.radiation_db._cm, axis=1)
+        self._hdb._radiation_db._cm = f_interp_freq(self._discretization.wave_frequencies)
 
         return
+
 
     def write_hdb5(self, output_file=None):
 
