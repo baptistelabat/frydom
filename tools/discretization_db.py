@@ -63,6 +63,13 @@ class DiscretizationDB(object):
     def nb_frequencies(self):
         return self._nb_frequencies
 
+    @nb_frequencies.setter
+    def nb_frequencies(self, value):
+        if isinstance(value, int):
+            self._nb_frequencies = value
+        else:
+            print("warning : value must be an integer")
+
     @property
     def final_time(self):
         return self._final_time
