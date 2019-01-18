@@ -1,3 +1,4 @@
+.. wave_spectra:
 
 Wave spectra
 ~~~~~~~~~~~~

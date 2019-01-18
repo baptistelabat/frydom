@@ -1,8 +1,10 @@
+.. _body_model:
+
 Body
 ====
 
 A body contains a reference frame and inertial quantities (mass :math:`m`, inertia matrix :math:`\mathbf{I}_G`, expressed
-on a point :math:`G`), which can be united in an inertial tensor :math:`\mathbb{I}`.
+on a point :math:`G`), which can be united in an inertia tensor :math:`\mathbb{I}`.
 
 .. math::
     \mathbb{I} = \Biggl \lbrace { \mathbf{M} \atop \mathbf{I}_G } \Biggr \rbrace_G
@@ -26,7 +28,12 @@ where, for :math:`\mathbf{OG} = \begin{bmatrix} a \\ b \\ c \end{bmatrix}`:
 
 
 Frame associated to the gravity center
+--------------------------------------
+
+
+.. _equilibrium_frame:
 
 Equilibrium frame
+-----------------
 
-
+In construction

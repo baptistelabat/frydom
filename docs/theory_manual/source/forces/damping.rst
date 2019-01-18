@@ -1,3 +1,4 @@
+.. _damping_forces:
 
 Linear damping
 ______________

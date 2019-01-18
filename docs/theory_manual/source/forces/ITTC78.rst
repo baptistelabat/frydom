@@ -1,3 +1,4 @@
+.. _ITTC_resistance_force:
 
 ITTC78 Resistance force
 -----------------------

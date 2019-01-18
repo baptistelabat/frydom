@@ -1,3 +1,5 @@
+.. _geographic:
+
 Geographic coordinates system
 =============================
 
