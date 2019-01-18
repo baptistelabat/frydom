@@ -857,11 +857,11 @@ class RadiationDB(_FreqDB):
             Radiation Impulse Response Database object
         """
 
-        self.eval_infinite_added_mass(full)
+        self.eval_infinite_added_mass()     # FIXME : pourquoi cela ne fonctionne par en extérieur
 
-        irf_db = RadiationDB()
+        irf_db = RadiationIRFDB()
 
-        if dt in None:
+        if dt is None:
             # Using Shannon theorem
             dt = pi / (10. * self.max_frequency)
 
@@ -882,7 +882,7 @@ class RadiationDB(_FreqDB):
         else:
             cm = self.added_mass
 
-        cm_inf = self._cm_inf
+        cm_inf = self.infinite_added_mass
 
         cm_diff = np.zeros(cm.shape)
         for j in range(w.size):
@@ -894,7 +894,6 @@ class RadiationDB(_FreqDB):
         kernel = np.einsum('ijk, jl -> ijkl', cm_diff, cwt)  # is nb_forces x nb_motions x nt
 
         irf_data = (2. / pi) * np.trapz(kernel, x=w, axis=1)
-        irf_db.body_mapper = self.body_mapper
 
         irf_db.set_data(tf, dt, irf_data)
         irf_db.body_mapper = self.body_mapper
@@ -903,11 +902,10 @@ class RadiationDB(_FreqDB):
 
         return irf_db
 
-    def get_irf_Ku(self):
+    def get_irf_ku(self):
         if self._irf_ku_db is None:
             self.eval_impulse_response_function_Ku(tf=100, dt=0.1)
         return self._irf_ku_db
-
 
     def eval_infinite_added_mass(self, full=True):
         """Evaluates the infinite added mass matrix coefficients using Ogilvie formula.

@@ -94,16 +94,16 @@ class BodyDB(object):
         return self._wave_drift
 
     def added_mass(self, i_body_motion):
-        return self._hdb.get_added_mass(self.id, i_body_motion)
+        return self._hdb.radiation_db.get_added_mass(self.id, i_body_motion)
 
     def radiation_damping(self, i_body_motion):
-        return self._hdb.get_radiation_damping(self.id, i_body_motion)
+        return self._hdb.radiation_db.get_radiation_damping(self.id, i_body_motion)
 
     def irf_k(self, i_body_motion):
-        return self._hdb.get_impulse_response(self.id, i_body_motion)
+        return self._hdb.radiation_db.get_irf_db().get_impulse_response(self.id, i_body_motion)
 
     def irf_ku(self, i_body_motion):
-        return self._hdb.get_impulse_response_ku(self.id, i_body_motion)
+        return self._hdb.radiation_db.get_irf_ku().get_impulse_response(self.id, i_body_motion)
 
     def load_data(self, hdb, i_body):
         self._i_body = i_body
@@ -145,6 +145,9 @@ class BodyDB(object):
 
         # Excitation force
         self.write_excitation(writer, body_path + "/Excitation")
+
+        # Radiation force
+        self.write_radiation(writer, body_path + "/Radiation")
 
         # Wave drift coefficients
         if self._wave_drift:
@@ -296,7 +299,7 @@ class BodyDB(object):
             irf = self.irf_k(j)
             irf_ku = self.irf_ku(j)
 
-            for imode in range(irf.size[1]):
+            for imode in range(self.nb_dof):
 
                 # Added mass
                 dset = writer.create_dataset(added_mass_path + "/DOF_%u" % imode, data=added_mass[:, :, imode])

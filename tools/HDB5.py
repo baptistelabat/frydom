@@ -4,6 +4,7 @@
 
 import os, h5py
 from math import *
+import numpy as np
 
 from HydroDB.bem_reader import NemohReader
 from HydroDB.body_db import BodyDB
@@ -20,6 +21,8 @@ class HDB5(object):
         self._environment = EnvironmentDB()
         self._discretization = DiscretizationDB()
         self._bodies = []
+        self._wave_direction = np.array([])
+        self._wave_frequencies = np.array([])
 
         return
 
@@ -54,7 +57,7 @@ class HDB5(object):
 
         # Load bodies
         for i_body in range(reader.hydro_db.body_mapper.nb_bodies):
-            self._bodies.append(BodyDB(reader.hydro_db, i_body))
+            self._bodies.append(BodyDB(self._hdb, i_body))
 
         print('-------> Nemoh data successfully loaded from "%s"' % input_directory)
 
@@ -89,6 +92,18 @@ class HDB5(object):
 
     def initialize(self):
 
+        # Compute froude krylov
+        self._hdb.froude_krylov_db
+
+        # Compute diffraction
+        self._hdb.diffraction_db
+
+        self._hdb.radiation_db.eval_impulse_response_function(tf=100, dt=0.1)
+
+        self._hdb.radiation_db.eval_infinite_added_mass()
+
+        self._hdb.radiation_db.eval_impulse_response_function_Ku(tf=100, dt=0.1)
+
         for body in self._bodies:
 
             if body.wave_drift:
@@ -97,7 +112,31 @@ class HDB5(object):
 
         return
 
+    def set_direction(self, d_angle, unit='deg'):
 
+        if unit == 'deg':
+            d_angle *= pi/180.
+
+        n = int(2.*pi/d_angle)
+        d_angle = 2.*pi / float(n)
+
+        self._wave_direction = np.linspace(0, 2.*pi, d_angle)
+
+        return
+
+    def set_frequencies(self, f_min, f_max, df, unit='rads'):
+
+        if unit == 'Hz':
+            f_min *= 2.*pi
+            f_max *= 2.*pi
+            df *= 2.*pi
+
+        n = int((f_max - f_min) / df)
+        df = (f_max - f_min) / float(n)
+
+        self._wave_frequencies = np.linspace(f_min, f_max, df)
+
+        return
 
     def write_hdb5(self, output_file=None):
 
