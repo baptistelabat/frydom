@@ -35,3 +35,5 @@ configure_file(../data/frydom_logo.png . COPYONLY)
 configure_file(../../data/skybox/sky_dn.jpg . COPYONLY)
 configure_file(../../data/skybox/sky_lf.jpg . COPYONLY)
 configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
+
+configure_file(../data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)

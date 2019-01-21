@@ -709,6 +709,7 @@ namespace frydom {
 
         for (auto& element: m_morison) {
             element->Initialize();
+            element->SetExtendedModel(m_extendedModel);
         }
     }
 

@@ -43,44 +43,88 @@ int main(int argc, char* argv[]) {
 
     auto waveField = FreeSurface->SetAiryRegularOptimWaveField(waveHeight, wavePeriod, waveDirection, fc, dc);
 
-    
-    // ------------------ Cylinder ------------------ //
+    if (true)
+    {
+        // ------------------ Cylinder ------------------ //
 
-    // Create the cylinder
-    auto cylinder = system.NewBody();
-    cylinder->SetName("Cylinder");
-    double radius = 3, height = 30, mass = 1000;
-    makeItCylinder(cylinder,radius, height, mass);
-    cylinder->SetColor(LightGoldenRodYellow);
-    cylinder->SetPosition(Position(0.,0.,-0.5*height),fc);
+        // Create the cylinder
+        auto cylinder = system.NewBody();
+        cylinder->SetName("Cylinder");
+        double radius = 3, height = 30, mass = 1000;
+        makeItCylinder(cylinder, radius, height, mass);
+        cylinder->SetColor(LightGoldenRodYellow);
+        cylinder->SetPosition(Position(0., 0., -0.5 * height), fc);
 
-    cylinder->SetBodyFixed(true);
+        cylinder->SetBodyFixed(true);
 
-    
-    // ------------------ Morison Model ------------------ //
 
-    // Several ways exist to add a Morison model to a body. Remember that a Morison model is a composition of Morison
-    // elements (using a composition pattern). Morison elements can be added simply to a Morison model. Note that you
-    // can also provide a Morison Force with a Morison element, if you got only one element.
-    auto MorisonModel = make_MorisonModel(cylinder.get());
+        // ------------------ Morison Model ------------------ //
 
-    // Define the added mass and drag Morison Coefficients.
-    MorisonCoeff AddedMassCoeff(0.5,0.7);
-    MorisonCoeff DragCoeff(1.5,1.7);
-    double frictionCoeff = 0.1;
+        // Several ways exist to add a Morison model to a body. Remember that a Morison model is a composition of Morison
+        // elements (using a composition pattern). Morison elements can be added simply to a Morison model. Note that you
+        // can also provide a Morison Force with a Morison element, if you got only one element.
+        auto MorisonModel = make_MorisonModel(cylinder.get());
 
-    // Add an element, with parameters corresponding to the cylinder.
-    MorisonModel->AddElement(FrFrame_(), height, 2.*radius, AddedMassCoeff, DragCoeff, frictionCoeff);
+        // Define the added mass and drag Morison Coefficients.
+        MorisonCoeff AddedMassCoeff(0.5, 0.7);
+        MorisonCoeff DragCoeff(1.5, 1.7);
+        double frictionCoeff = 0.1;
 
-    // Instantiate a Morison Force, using a Morison model
-    auto MorisonForce = std::make_shared<FrMorisonForce_>(MorisonModel);
+        // Add an element, with parameters corresponding to the cylinder.
+        MorisonModel->AddElement(FrFrame_(), height, 2. * radius, AddedMassCoeff, DragCoeff, frictionCoeff);
 
-    // Make the asset (a vector) for the Morison force visible
-    MorisonForce->SetIsForceAsset(true);
+        // Instantiate a Morison Force, using a Morison model
+        auto MorisonForce = std::make_shared<FrMorisonForce_>(MorisonModel);
 
-    // Don't forget to add the Morison force to the body !
-    cylinder->AddExternalForce(MorisonForce);
+        // Make the asset (a vector) for the Morison force visible
+        MorisonForce->SetIsForceAsset(true);
 
+        // Don't forget to add the Morison force to the body !
+        cylinder->AddExternalForce(MorisonForce);
+    }
+    else
+    {
+        // ------------------ Platform ------------------ //
+        auto Platform = system.NewBody();
+        Platform->SetName("Platform");
+
+        Platform->AddMeshAsset("GVA7500.obj");
+
+        Platform->SetBodyFixed(true);
+
+        // Morison Model
+        auto MorisonModel = make_MorisonModel(Platform.get());
+
+        // Define the added mass and friction coefficients.
+        MorisonCoeff AddedMassCoeff(0., 0.); // The added mass is not taken into account
+        double frictionCoeff = 0.; // No friction either
+
+        MorisonModel->SetExtendedModel(false); // The added mass is not taken into account
+
+        auto cog = Platform->GetCOG(NWU);
+        double diameter = 0.01;
+        // Morison elements
+        MorisonModel->AddElement(Position(-54.4, 31.04, -17.10)-cog,Position(54.4, 31.04, -17.10)-cog, diameter, AddedMassCoeff, MorisonCoeff(1551., 3456.), frictionCoeff);
+        MorisonModel->AddElement(Position(-54.4,-31.04, -17.10)-cog,Position(54.4,-31.04, -17.10)-cog, diameter, AddedMassCoeff, MorisonCoeff(1551., 3456.), frictionCoeff);
+
+        MorisonModel->AddElement(Position(-32.3, 31.04,-12)-cog,Position(-32.3, 31.04,0.)-cog, diameter, AddedMassCoeff, MorisonCoeff(1352., 2501.), frictionCoeff);
+        MorisonModel->AddElement(Position( 32.3, 31.04,-12)-cog,Position( 32.3, 31.04,0.)-cog, diameter, AddedMassCoeff, MorisonCoeff(1352., 2501.), frictionCoeff);
+        MorisonModel->AddElement(Position(-32.3,-31.04,-12)-cog,Position(-32.3,-31.04,0.)-cog, diameter, AddedMassCoeff, MorisonCoeff(1352., 2501.), frictionCoeff);
+        MorisonModel->AddElement(Position( 32.3,-31.04,-12)-cog,Position( 32.3,-31.04,0.)-cog, diameter, AddedMassCoeff, MorisonCoeff(1352., 2501.), frictionCoeff);
+
+        MorisonModel->AddElement(Position(-32.3,23.04,-17.10)-cog,Position(-32.3,-23.04,-17.10)-cog, diameter, AddedMassCoeff, MorisonCoeff(123., 2928.), frictionCoeff);
+        MorisonModel->AddElement(Position( 32.3,23.04,-17.10)-cog,Position( 32.3,-23.04,-17.10)-cog, diameter, AddedMassCoeff, MorisonCoeff(123., 2928.), frictionCoeff);
+
+
+        // Instantiate a Morison Force, using a Morison model
+        auto MorisonForce = std::make_shared<FrMorisonForce_>(MorisonModel);
+
+        // Make the asset (a vector) for the Morison force visible
+        MorisonForce->SetIsForceAsset(true);
+
+        // Don't forget to add the Morison force to the body !
+        Platform->AddExternalForce(MorisonForce);
+    }
 
     // ------------------ Run ------------------ //
 
