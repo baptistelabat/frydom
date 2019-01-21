@@ -187,7 +187,9 @@ class DiscretizationDB(object):
     def write_hdb5(self, writer):
 
         # Frequency discretization
+
         discretization_path = "/Discretizations"
+
         writer.create_group(discretization_path)
         frequential_path = discretization_path + "/Frequency"
 
@@ -203,7 +205,9 @@ class DiscretizationDB(object):
         dset.attrs['Description'] = "Maximum frequency specified for the computations"
 
         # Wave direction discretization
+
         wave_direction_path = discretization_path + "/WaveDirections"
+
         dset = writer.create_dataset(wave_direction_path + "/NbWaveDirections", data=self.nb_wave_directions)
         dset.attrs['Description'] = "Number of wave directions in the discretization"
 
@@ -214,6 +218,17 @@ class DiscretizationDB(object):
         dset = writer.create_dataset(wave_direction_path + "/MaxAngle", data=self._max_angle)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Maximum angle specified for the computations"
+
+        # Time sample
+
+        time_path = discretization_path + "/Time"
+
+        dset = writer.create_dataset(time_path + "/NbTimeSample", data=self._nb_time_sample)
+        dset.attrs['Description'] = "Number of time samples"
+
+        dset = writer.create_dataset(time_path + "/FinalTime", data=self._final_time)
+        dset.attrs['Unit'] = "s"
+        dset.attrs['Description'] = "Final time for the impulse response function"
 
         return
 
