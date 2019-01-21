@@ -309,6 +309,11 @@ class BodyDB(object):
             dg.attrs['Description'] = "Impulse response function Ku for velocity of body %u that radiates waves " \
                                       "and generates forces on body %u" % (j, self.id)
 
+            dset = writer.create_dataset(radiation_body_motion_path + "/InfiniteAddedMass",
+                                         data=self.added_mass(j))
+            dset.attrs['Description'] = "Infinite added mass matrix that modifies the apparent mass of body %u from " \
+                                        "acceleration of body %u" % (self.id, j)
+
             added_mass = self.added_mass(j)
             radiation_damping = self.radiation_damping(j)
             irf = self.irf_k(j)
