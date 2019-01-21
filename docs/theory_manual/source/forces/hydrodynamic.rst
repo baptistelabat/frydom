@@ -92,7 +92,7 @@ computed from the damping coefficients.
 
 
 Mean wave drift force
-----------------
+---------------------
 
 The generalized mean wave drift force, given by the linear approximation, is:
 

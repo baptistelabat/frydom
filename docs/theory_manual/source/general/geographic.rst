@@ -7,7 +7,12 @@ The geographic coordinates system in FRyDoM is a coordinates system that locates
 latitude, longitude and elevation coordinates. The latitude and longitude represent the horizontal position, while the
 elevation represents the vertical position.
 
-.. todo: .. image: _static/geographic_coordsys.png
+.. _fig_geographic_coordsys::
+.. figure:: _static/geographic_coordsys.png
+    :align: center
+    :alt: Geographic Coordinate system
+
+    Longitude lines are perpendicular to the Equator and latitude lines are parallel to the Equator.
 
 Geographic coordinates in FRyDoM use the library GeographicLib, with the default Earth Geocentric (Geocentric::WGS84()).
 For more information about the coordinate system definition, refer to \

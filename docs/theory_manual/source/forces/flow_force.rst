@@ -25,6 +25,13 @@ the moment acts about the vertical direction only.
 
 .. todo:: add some figures to illustrate the flow velocity, etc.
 
+.. figure:: _static/flow_velocity.png
+    :align: center
+    :alt: Relative flow velocity
+
+    Relative flow velocity, past the body
+
+
 The computations are done within FRyDoM in NWU and GOT conventions, however you can give polar coefficient in NED or NWU
 and in GOTO or COMEFROM, convention.
 
