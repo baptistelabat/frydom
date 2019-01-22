@@ -1076,14 +1076,14 @@ namespace frydom {
 
                 for (unsigned int iangle=0; iangle<nbWaveDirections; ++iangle) {
                     auto data = GetExcitation(iangle);
-                    coeffs->at(iangle) = data(imode, ifreq);
+                    coeffs->push_back(data(imode, ifreq));
                 }
 
                 auto interpolator = Interp1dLinear<double, std::complex<double>>();
                 interpolator.Initialize(angles, coeffs);
-                interpolators[ifreq] = interpolator;
+                interpolators.push_back(interpolator);
             }
-            m_waveDirInterpolators[imode] = interpolators;
+            m_waveDirInterpolators.push_back(interpolators);
         }
     }
 

@@ -356,7 +356,7 @@ namespace frydom {
 
     FrBEMBody_* FrHydroDB_::NewBody(std::string bodyName) {
         m_bodies.push_back( std::make_unique<FrBEMBody_>(GetNbBodies(), bodyName, this));
-        return m_bodies.end()->get();
+        return m_bodies.back().get();
     }
 
     FrBEMBody_* FrHydroDB_::GetBody(std::shared_ptr<FrBody_> body) {

@@ -440,7 +440,7 @@ namespace frydom {
         // Setters
         //
 
-        void SetPosition(Position& position) { m_position = position; }
+        void SetPosition(Position position) { m_position = position; }
 
         void SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd& diffractionMatrix);
 

@@ -47,6 +47,7 @@ set(FRYDOM_TESTS
 #        test_tug_refactoring
 #        test_TimeRecorder
 #        test_FrEquilibriumFrame
+        test_loading_new_hdb
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")

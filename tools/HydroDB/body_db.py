@@ -112,6 +112,9 @@ class BodyDB(object):
     def added_mass(self, i_body_motion):
         return self._hdb.radiation_db.get_added_mass(self.id, i_body_motion)
 
+    def infinite_added_mass(self, i_body_motion):
+        return self._hdb.radiation_db.get_infinite_added_mass_matrix(self.id, i_body_motion)
+
     def radiation_damping(self, i_body_motion):
         return self._hdb.radiation_db.get_radiation_damping(self.id, i_body_motion)
 
@@ -273,11 +276,11 @@ class BodyDB(object):
 
     def write_mode_motion(self, writer, body_modes_path="/Modes"):
 
-        dset = writer.create_dataset(body_modes_path + "/NbMotionsModes", data=self.nb_dof)
+        dset = writer.create_dataset(body_modes_path + "/NbMotionModes", data=self.nb_dof)
         dset.attrs['Description'] = "Number of motion modes for body number %u" % self.id
 
         for idof, motion_mode in enumerate(self.motion_modes):
-            mode_path = "/MotionModes/Mode_%u" % idof
+            mode_path = body_modes_path + "/MotionModes/Mode_%u" % idof
             writer.create_group(mode_path)
             writer.create_dataset(mode_path + "/Direction", data=motion_mode.direction)
 
@@ -377,18 +380,18 @@ class BodyDB(object):
             dg.attrs['Description'] = "Wave damping coefficients for velocity of body %u that radiates waves " \
                                       "and generates forces on body %u" % (j, self.id)
 
-            irf_path = radiation_body_motion_path + "/ImpulseResponseFunction"
+            irf_path = radiation_body_motion_path + "/ImpulseResponseFunctionK"
             dg = writer.create_group(irf_path)
             dg.attrs['Description'] = "Impulse response function for velocity of body %u that radiates waves " \
                                       "and generates forces on body %u" % (j, self.id)
 
-            irf_ku_path = radiation_body_motion_path + "/ImpulseResponseFunctionKu"
+            irf_ku_path = radiation_body_motion_path + "/ImpulseResponseFunctionKU"
             dg = writer.create_group(irf_ku_path)
             dg.attrs['Description'] = "Impulse response function Ku for velocity of body %u that radiates waves " \
                                       "and generates forces on body %u" % (j, self.id)
 
             dset = writer.create_dataset(radiation_body_motion_path + "/InfiniteAddedMass",
-                                         data=self.added_mass(j))
+                                         data=self.infinite_added_mass(j))
             dset.attrs['Description'] = "Infinite added mass matrix that modifies the apparent mass of body %u from " \
                                         "acceleration of body %u" % (self.id, j)
 
