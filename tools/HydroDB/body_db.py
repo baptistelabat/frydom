@@ -4,11 +4,12 @@
 
 import numpy as np
 
+import sys
 import hydro_db
 from hydrostatic_db import HydrostaticDB
 from wave_drift_db import WaveDriftDB
 from discretization_db import DiscretizationDB
-
+import matplotlib.pyplot as plt
 from scipy import interpolate
 
 
@@ -119,6 +120,83 @@ class BodyDB(object):
 
     def irf_ku(self, i_body_motion):
         return self._hdb.radiation_db.get_irf_ku().get_impulse_response(self.id, i_body_motion)
+
+    def cut_off_scaling_irf_k(self, tc, i_body_motion, i_force, i_dof, auto_apply=False):
+
+        time = self.discretization.time
+
+        try:
+            coeff = np.exp(-9.*time*time / (tc*tc))
+        except:
+            coeff = np.zeros(time.size)
+
+        bool = False
+
+        if auto_apply:
+            bool = True
+        else:
+            plt.figure()
+            plt.plot(time, self.irf_k(i_body_motion)[i_force, i_dof, :], label="initial")
+            plt.plot(time, self.irf_k(i_body_motion)[i_force, i_dof, :] * coeff, label="with scaling factor")
+            plt.xlabel("time (s)")
+            plt.ylabel("IRF")
+            plt.legend()
+            plt.show()
+
+            # raw_input returns the empty string for "enter"
+            yes = {'yes', 'y', 'ye', ''}
+            no = {'no', 'n'}
+
+            choice = raw_input("Apply scaling (y/n) ?").lower()
+            if choice in yes:
+                bool = True
+            elif choice in no:
+                bool = False
+            else:
+                sys.stdout.write("Please respond with 'yes' or 'no'")
+
+        if bool:
+            self.irf_k(i_body_motion)[i_force, i_dof, :] *= coeff
+
+        return
+
+    def cut_off_scaling_irf_ku(self, tc, i_body_motion, i_force, i_dof, auto_apply=False):
+
+        time = self.discretization.time
+
+        try:
+            coeff = np.exp(-9.*time*time / (tc*tc))
+        except:
+            coeff = np.zeros(time.size)
+
+        bool = False
+        if auto_apply:
+            bool = True
+        else:
+            plt.figure()
+            plt.plot(time, self.irf_ku(i_body_motion)[i_force, i_dof, :], label="initial")
+            plt.plot(time, self.irf_ku(i_body_motion)[i_force, i_dof, :] * coeff, label="with scaling factor")
+            plt.xlabel("time (s)")
+            plt.ylabel("IRF")
+            plt.legend()
+            plt.show()
+
+            # raw_input returns the empty string for "enter"
+            yes = {'yes', 'y', 'ye', ''}
+            no = {'no', 'n'}
+
+            choice = raw_input("Apply scaling (y/n) ?").lower()
+            if choice in yes:
+                bool = True
+            elif choice in no:
+                bool = False
+            else:
+                sys.stdout.write("Please respond with 'yes' or 'no'")
+
+        if bool:
+            self.irf_ku(i_body_motion)[i_force, i_dof, :] *= coeff
+
+        return
 
     def load_data(self, hdb, i_body):
         self._i_body = i_body

@@ -317,7 +317,7 @@ def write_hdb5(hdb, out_file=None):
                                             "acceleration of body %u" % (body.ibody, jbody)
 
                 added_mass = rad_db.get_added_mass(body.ibody, jbody)
-                radiation_damping = rad_db.get_radpythiation_damping(body.ibody, jbody)
+                radiation_damping = rad_db.get_radiation_damping(body.ibody, jbody)
                 impulse_response_function = irf_db.get_impulse_response(body.ibody, jbody)
                 impulse_response_function_ku = irf_ku_db.get_impulse_response_Ku(body.ibody, jbody)
 

@@ -106,6 +106,10 @@ class DiscretizationDB(object):
     def wave_frequencies(self):
         return self._wave_frequencies
 
+    @property
+    def time(self):
+        return np.linspace(0., self._final_time, self._nb_time_sample)
+
     def initialize(self, hdb):
 
         print("")

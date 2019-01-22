@@ -53,6 +53,7 @@ class HDB5(object):
         self._bodies = []
         self._wave_direction = np.array([])
         self._wave_frequencies = np.array([])
+        self._is_initialized = False
 
         return
 
@@ -156,6 +157,8 @@ class HDB5(object):
             if body.wave_drift:
                 body.wave_drift.discrete_wave_dir = self._discretization.wave_dirs * pi/ 180.
                 body.wave_drift.initialize()
+
+        self._is_initialized = True
 
         return
 
@@ -269,11 +272,13 @@ class HDB5(object):
 
     def write_hdb5(self, output_file=None):
 
-        print('========================')
-        print('Intialize HDB5 database...')
-        print('========================')
+        if not self._is_initialized:
 
-        self._initialize()
+            print('========================')
+            print('Intialize HDB5 database...')
+            print('========================')
+
+            self._initialize()
 
         print('========================')
         print('Writing HDB5 database...')
