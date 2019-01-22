@@ -22,11 +22,12 @@ namespace frydom {
         InternalUpdate();
     }
 
-    Complex frydom::FrAiryRegularOptimWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
+    std::vector<std::vector<Complex>> frydom::FrAiryRegularOptimWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
         double NWUsign = 1;
         if(IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
         double kdir = x * c_cosTheta + y * c_sinTheta;
-        return c_expJwt * exp(JJ * m_k * kdir) * NWUsign * c_ramp;
+        Complex cmplxElevation = c_expJwt * exp(JJ * m_k * kdir) * NWUsign * c_ramp;
+        return std::vector<std::vector<Complex>>(1, std::vector<Complex>(1, cmplxElevation));
     }
 
     Vector3d<frydom::Complex>
@@ -35,11 +36,11 @@ namespace frydom {
         if(IsNED(fc)) {y=-y; z=-z; NWUsign = -NWUsign;}
         auto ComplexElevation = GetComplexElevation(x, y, fc);
 
-        auto Vtemp = m_omega * ComplexElevation * m_verticalFactor->Eval(x, y, z, m_k, c_depth);
+        auto Vtemp = m_omega * ComplexElevation[0][0] * m_verticalFactor->Eval(x, y, z, m_k, c_depth);
 
         auto Vx = c_cosTheta * Vtemp * NWUsign;
         auto Vy = c_sinTheta * Vtemp;
-        auto Vz = -JJ * m_omega / m_k * ComplexElevation * m_verticalFactor->EvalDZ(x, y, z, m_k, c_depth);
+        auto Vz = -JJ * m_omega / m_k * ComplexElevation[0][0] * m_verticalFactor->EvalDZ(x, y, z, m_k, c_depth);
 
         return {Vx, Vy, Vz};
     }

@@ -107,7 +107,7 @@ namespace frydom {
 
 
     void FrLinearHydrostaticForce_::Initialize() {
-        m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
+        m_equilibriumFrame = std::shared_ptr<FrEquilibriumFrame_>(m_HDB->GetMapper()->GetEquilibriumFrame(m_body));
         m_stiffnessMatrix.SetData(m_HDB->GetBody(m_body)->GetHydrostaticStiffnessMatrix());
     }
 
@@ -128,10 +128,6 @@ namespace frydom {
 
         auto localTorque = Torque(forceState[1], forceState[2], 0.);
         SetTorqueInBodyAtCOG(localTorque, NWU);
-    }
-
-    void FrLinearHydrostaticForce_::Initialize() {
-        FrForce_::Initialize();
     }
 
 

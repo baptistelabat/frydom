@@ -17,6 +17,8 @@
 
 ///  <<<<<<<<<<<<< Refactoring include
 
+#include "frydom/utils/FrRecorder.h"
+
 #include "frydom/core/FrPhysicsItem.h"
 
 
@@ -168,9 +170,6 @@ namespace frydom {
     // -------------------------------------------------------------------------
     // Radiation model with convolution
     // -------------------------------------------------------------------------
-
-    template <class T>
-    class FrTimeRecorder_<T>;
 
     class FrRadiationConvolutionModel_ : public FrRadiationModel_ {
 

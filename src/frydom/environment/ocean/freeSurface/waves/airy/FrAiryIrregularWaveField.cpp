@@ -208,7 +208,7 @@ namespace frydom{
 
     std::vector<double> FrAiryIrregularWaveField::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
         std::vector<double> freqs = m_waveFrequencies;
-        if (unit /= RADS) {
+        if (unit != RADS) {
             for (auto &freq: freqs) {
                 freq = convert_frequency(freq, RADS, unit);
             }

@@ -84,25 +84,25 @@ namespace frydom {
     }
 
     FrBody_* FrHydroMapper_::GetBody(FrBEMBody_* BEMBody) const {
-        return m_mapBEMToBody[BEMBody];
+        return m_mapBEMToBody.at(BEMBody);
     }
 
     FrBEMBody_* FrHydroMapper_::GetBEMBody(FrBody_* body) const {
-        return m_mapBodyToBEM[body];
+        return m_mapBodyToBEM.at(body);
     }
 
     unsigned int FrHydroMapper_::GetBEMBodyIndex(FrBody_* body) const {
-        auto BEMBody = m_mapBodyToBEM[body];
+        auto BEMBody = m_mapBodyToBEM.at(body);
         return BEMBody->GetID();
     }
 
     FrEquilibriumFrame_* FrHydroMapper_::GetEquilibriumFrame(FrBEMBody_* BEMBody) const {
-        return m_mapEqFrame[BEMBody].get();
+        return m_mapEqFrame.at(BEMBody).get();
     }
 
     FrEquilibriumFrame_* FrHydroMapper_::GetEquilibriumFrame(FrBody_* body) const {
         auto BEMBody = this->GetBEMBody(body);
-        return m_mapEqFrame[BEMBody].get();
+        return m_mapEqFrame.at(BEMBody).get();
     }
 
 

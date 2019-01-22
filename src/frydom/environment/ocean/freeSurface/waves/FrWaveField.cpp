@@ -1006,7 +1006,7 @@ namespace frydom {
     }
 
     std::vector<std::vector<double>> FrNullWaveField_::GetWaveAmplitudes() const {
-        return std::vector(1, std::vector<double>(1, 0.));
+        return std::vector<std::vector<double>>(1, std::vector<double>(1, 0.));
     }
 
     std::vector<double> FrNullWaveField_::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc,
@@ -1015,7 +1015,7 @@ namespace frydom {
     }
 
     std::vector<std::vector<Complex>> FrNullWaveField_::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
-        return std::vector(1, std::vector<Complex>(1, 0.));
+        return std::vector<std::vector<Complex>>(1, std::vector<Complex>(1, 0.));
     }
 
 //

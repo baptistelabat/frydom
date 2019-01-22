@@ -8,10 +8,10 @@
 
 /// <<<<<<<<<<<<<<<<<<<<<< Refactoring
 
-#include "frydom/utils/FrRecorder.h"
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 
 namespace frydom {
+
 
 
     FrRadiationConvolutionModel::FrRadiationConvolutionModel(FrHydroDB *HDB, FrOffshoreSystem *system) : FrRadiationModel(HDB, system) {}
@@ -327,9 +327,38 @@ namespace frydom {
 
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
+    // TODO : generaliser la méthode de mathutils pour les vecteurs Eigen
+
+    Vector6d<double> TrapzLoc(std::vector<double>& x, std::vector<Vector6d<double>>& y) {
+
+        unsigned long N = y.size();
+
+        assert(N > 1);
+        assert(x.size() == N);
+
+        double dx1 = x[1] - x[0];
+        double dxN_1 = x[N-1] - x[N-2];
+
+        Vector6d<double> sum;
+        sum.SetNull();
+        double dxi, dxii;
+
+        dxii = dx1;
+
+        for (unsigned long i=1; i<N-1; i++) {
+            dxi = dxii;
+            dxii = x[i+1] - x[i];
+            sum += y[i] * (dxi + dxii);
+        }
+
+        return 0.5 * (sum + y[0]*dx1 + y[N-1]*dxN_1);
+
+    };
+
     // ----------------------------------------------------------------
     // Radiation model
     // ----------------------------------------------------------------
+
 
     void FrRadiationModel_::Initialize() {
 
@@ -339,23 +368,22 @@ namespace frydom {
         return m_HDB->GetMapper();
     }
 
-
     Force FrRadiationModel_::GetRadiationForce(FrBEMBody_ *BEMBody) const {
-        return m_radiationForce[BEMBody].GetForce();
+        return m_radiationForce.at(BEMBody).GetForce();
     }
 
     Force FrRadiationModel_::GetRadiationForce(FrBody_* body) const {
         auto BEMBody = m_HDB->GetBody(body);
-        return m_radiationForce[BEMBody].GetForce();
+        return m_radiationForce.at(BEMBody).GetForce();
     }
 
     Torque FrRadiationModel_::GetRadiationTorque(FrBEMBody_* BEMBody) const {
-        return m_radiationForce[BEMBody].GetTorque();
+        return m_radiationForce.at(BEMBody).GetTorque();
     }
 
     Torque FrRadiationModel_::GetRadiationTorque(FrBody_* body) const {
         auto BEMBody = m_HDB->GetBody(body);
-        return m_radiationForce[BEMBody].GetTorque();
+        return m_radiationForce.at(BEMBody).GetTorque();
     }
 
     void FrRadiationModel_::Update(double time) {
@@ -373,7 +401,7 @@ namespace frydom {
         GetImpulseResponseSize(Te, dt, N);
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
-            m_recorder[BEMBody->get()] = FrTimeRecorder_(Te, dt);
+            m_recorder[BEMBody->get()] = FrTimeRecorder_<GeneralizedVelocity>(Te, dt);
         }
     }
 
@@ -398,12 +426,13 @@ namespace frydom {
 
                     auto interpK = BEMBody->get()->GetIRFInterpolatorK(BEMBodyMotion->get(), idof);
 
-                    std::vector<VectorN> kernel;
+                    std::vector<mathutils::Vector6d<double>> kernel;
                     for (unsigned int it = 0; it < vtime.size(); ++it) {
-                        kernel.push_back(interpK.Eval(vtime[it]) * velocity[it]);
+                        kernel.push_back(interpK->Eval(vtime[it]).cwiseProduct(velocity.at(it)));
                     }
-                    radiationForce += Trapz(vtime, kernel);
+                    radiationForce += TrapzLoc(vtime, kernel);
                 }
+
             }
 
             auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->get());
@@ -440,18 +469,18 @@ namespace frydom {
 
             for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion != m_HDB->end(); BEMBodyMotion++) {
 
-                auto velocity = m_recorder[BEMBodyMotion->get()].GetData();
-                auto vtime = m_recorder[BEMBodyMotion->get()].GetTime();
+                auto velocity = m_recorder.at(BEMBodyMotion->get()).GetData();
+                auto vtime = m_recorder.at(BEMBodyMotion->get()).GetTime();
 
                 for (unsigned int idof=0; idof<6; idof++) {
 
                     auto interpKu = BEMBody->get()->GetIRFInterpolatorKu(BEMBodyMotion->get(), idof);
 
-                    std::vector<VectorN> kernel;
+                    std::vector<mathutils::Vector6d<double>> kernel;
                     for (unsigned int it = 0; it < vtime.size(); ++it) {
-                        kernel.push_back(interpKu.Eval(vtime[it]) * velocity[it]);
+                        kernel.push_back(interpKu->Eval(vtime[it]).cwiseProduct(velocity[it]));
                     }
-                    radiationForce += meanSpeed * Trapz(vtime, kernel);
+                    radiationForce += TrapzLoc(vtime, kernel) * meanSpeed ;
                 }
 
                 auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBodyMotion->get());

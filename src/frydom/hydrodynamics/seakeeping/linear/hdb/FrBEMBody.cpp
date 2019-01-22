@@ -881,7 +881,7 @@ namespace frydom {
 
     void FrBEMBody_::Finalize() {
         BuildWaveExcitationInterpolators();
-        BuildIRFInterpolators();
+        //BuildIRFInterpolators();
     }
 
     //
@@ -945,38 +945,42 @@ namespace frydom {
 
     void FrBEMBody_::SetImpulseResponseFunctionK(FrBEMBody_* BEMBodyMotion, const std::vector<Eigen::MatrixXd>& listIRF) {
 
-        unsigned int idof = 0;
-        std::vector<mathutils::Interp1dLinear<double, Vector6d>> interpolators;
-        interpolators.reserve(6);
-
         for (auto& IRF: listIRF) {
             assert(IRF.rows() == 6);
             assert(IRF.cols() == GetNbTimeSamples());
-            auto vtime = std::make_shared<std::vector<double>>(m_HDB->GetTimeDiscretization());
-            auto vdata = std::make_shared<std::vector<Vector6d>>(IRF.data(), IRF.data() + IRF.cols());
-            interpolators[idof].Initialize(vtime, vdata);
-            idof += 1;
-        }
 
-        m_interpK[BEMBodyMotion] = interpolators;
+            auto vtime = std::make_shared<std::vector<double>>(m_HDB->GetTimeDiscretization());
+
+            auto vdata = std::make_shared<std::vector<Vector6d<double>>>();
+            for (unsigned int j=0; j<IRF.cols(); ++j) {
+                vdata->push_back(IRF.col(j));
+            }
+
+            auto interp = std::make_shared<Interp1dLinear<double, Vector6d<double>>>();
+            interp->Initialize(vtime, vdata);
+
+            m_interpK[BEMBodyMotion].push_back(interp);
+        }
     }
 
     void FrBEMBody_::SetImpulseResponseFunctionKu(FrBEMBody_* BEMBodyMotion, const std::vector<Eigen::MatrixXd> &listIRF) {
 
-        unsigned int idof = 0;
-        std::vector<mathutils::Interp1dLinear<double, Vector6d>> interpolators;
-        interpolators.reserve(6);
-
         for (auto& IRF: listIRF) {
             assert(IRF.rows() == 6);
             assert(IRF.cols() == GetNbTimeSamples());
-            auto vtime = std::make_shared<std::vector<double>>(m_HDB->GetTimeDiscretization());
-            auto vdata = std::make_shared<std::vector<Vector6d>>(IRF.data(), IRF.data() + IRF.cols());
-            interpolators[idof].Initialize(vtime, vdata);
-            idof += 1;
-        }
 
-        m_interpKu[BEMBodyMotion] = interpolators;
+            auto vtime = std::make_shared<std::vector<double>>(m_HDB->GetTimeDiscretization());
+
+            auto vdata = std::make_shared<std::vector<Vector6d<double>>>();
+            for (unsigned int j=0; j<IRF.cols(); ++j) {
+                vdata->push_back(IRF.col(j));
+            }
+
+            auto interp = std::make_shared<Interp1dLinear<double, Vector6d<double>>>();
+            interp->Initialize(vtime, vdata);
+
+            m_interpKu[BEMBodyMotion].push_back(interp);
+        }
     }
 
     void FrBEMBody_::SetWaveDrift(const std::vector<double>& headings, const std::vector<double>& freqs,
@@ -1025,22 +1029,22 @@ namespace frydom {
         return m_excitation[iangle].row(iforce);
     }
 
-    Eigen::MatrixXd FrBEMBody_::GetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion) const {
-        return m_infiniteAddedMass[BEMBodyMotion];
+    mathutils::Matrix66<double> FrBEMBody_::GetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion) const {
+        return m_infiniteAddedMass.at(BEMBodyMotion);
     }
 
-    Eigen::MatrixXd FrBEMBody_::GetSelfInfiniteAddedMass() {
+    mathutils::Matrix66<double> FrBEMBody_::GetSelfInfiniteAddedMass() {
         return m_infiniteAddedMass[this];
     }
 
-    Interp1d<double, VectorN> FrBEMBody_::GetIRFInterpolatorK(FrBEMBody_* BEMBodyMotion, unsigned int idof) const {
+    Interp1d<double, Vector6d<double>>* FrBEMBody_::GetIRFInterpolatorK(FrBEMBody_* BEMBodyMotion, unsigned int idof) {
         assert(idof < 6);
-        return m_interpK[BEMBodyMotion][idof];
+        return m_interpK[BEMBodyMotion][idof].get();
     };
 
-    Interp1d<double, VectorN> FrBEMBody_::GetIRFInterpolatorKu(FrBEMBody_* BEMBodyMotion, unsigned int idof) const {
+    Interp1d<double, Vector6d<double>>* FrBEMBody_::GetIRFInterpolatorKu(FrBEMBody_* BEMBodyMotion, unsigned int idof) {
         assert(idof < 6);
-        return m_interpKu[BEMBodyMotion][idof];
+        return m_interpKu[BEMBodyMotion][idof].get();
     };
 
     //
@@ -1127,47 +1131,6 @@ namespace frydom {
             Fexc.push_back(excitationForceDir);
         }
         return Fexc;
-    }
-
-
-    void FrBEMBody_::BuildIRFInterpolators() {
-
-        m_interpK.clear();
-        m_interpKu.clear();
-
-        auto nbBodies = GetNbBodies();
-
-        auto vtime = std::make_shared<std::vector<double>>(m_HDB->GetTimeDiscretization());
-
-        for (unsigned int ibody=0; ibody<nbBodies; ++ibody) {
-
-            auto nbMotion = m_HDB->GetBody(ibody)->GetNbMotionMode();
-
-            std::vector<Interp1d<double, VectorN>> interpolatorsK;
-            interpolatorsK.reserve(nbMotion);
-            std::vector<Interp1d<double, VectorN>> interpolatorsKu;
-            interpolatorsKu.reserve(nbMotion);
-
-            for (unsigned int imotion=0; imotion<nbMotion; ++imotion) {
-
-                auto interpK = Interp1dLinear<double, VectorN>();
-                auto mat = m_impulseResponseFunctionK[ibody][imotion];
-                auto vdata = std::make_shared<std::vector<VectorN>>(mat.data(), mat.data() + mat.cols());
-                interpK.Initialize(vtime, vdata);
-
-                auto interpKu = Interp1dLinear<double, VectorN>();
-                mat = m_impulseResponseFunctionKu[ibody][imotion];
-                vdata = std::make_shared<std::vector<VectorN>>(mat.data(), mat.data() + mat.cols());
-                interpKu.Initialize(vtime, vdata);
-
-                interpolatorsK.push_back(interpK);
-                interpolatorsKu.push_back(interpKu);
-            }
-
-            m_interpK.push_back(interpolatorsK);
-            m_interpKu.push_back(interpolatorsKu);
-        }
-
     }
 
 

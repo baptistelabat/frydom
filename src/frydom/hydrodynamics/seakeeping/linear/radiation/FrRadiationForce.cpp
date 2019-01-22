@@ -82,7 +82,7 @@ namespace frydom {
 
     FrRadiationConvolutionForce_::FrRadiationConvolutionForce_(
             std::shared_ptr<FrRadiationConvolutionModel_> radiationModel)
-            : m_radiationModel(radiationModel) {}
+            : FrRadiationForce_(radiationModel) {}
 
     void FrRadiationConvolutionForce_::Initialize() {
         m_radiationModel->Initialize();

@@ -388,9 +388,9 @@ namespace frydom {
         std::vector<Eigen::MatrixXcd> m_diffraction;
 
         std::vector<Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>> m_radiationMask;
-        std::unordered_map<FrBEMBody_*, Matrix66> m_infiniteAddedMass;
-        std::unordered_map<FrBEMBody_*, std::vector<mathutils::Interp1d<double, Vector6d>>> m_interpK;
-        std::unordered_map<FrBEMBody_*, std::vector<mathutils::Interp1d<double, Vector6d>>> m_interpKu;
+        std::unordered_map<FrBEMBody_*, mathutils::Matrix66<double>> m_infiniteAddedMass;
+        std::unordered_map<FrBEMBody_*, std::vector< std::shared_ptr<Interp1d<double, Vector6d<double>>> >> m_interpK;
+        std::unordered_map<FrBEMBody_*, std::vector< std::shared_ptr<Interp1d<double, Vector6d<double>>> >> m_interpKu;
 
         std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
@@ -459,7 +459,7 @@ namespace frydom {
         void SetWaveDrift(const std::vector<double>& headings, const std::vector<double>& freqs,
                           const std::vector<double>& coeffs);
 
-        void SetStiffnessMatrix(Matrix33<double> hydrostaticStiffnessMatrix);
+        void SetStiffnessMatrix(mathutils::Matrix33<double> hydrostaticStiffnessMatrix);
 
         //
         // Getters
@@ -477,15 +477,15 @@ namespace frydom {
 
         Eigen::VectorXcd GetExcitation(unsigned int iangle, unsigned int iforce) const;
 
-        Eigen::MatrixXd GetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion) const;
+        mathutils::Matrix66<double> GetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion) const;
 
-        Eigen::MatrixXd GetSelfInfiniteAddedMass();
+        mathutils::Matrix66<double> GetSelfInfiniteAddedMass();
 
-        Interp1d<double, VectorN> GetIRFInterpolatorK(FrBEMBody_* BEMBodyMotion, unsigned int idof) const;
+        Interp1d<double, Vector6d<double>>* GetIRFInterpolatorK(FrBEMBody_* BEMBodyMotion, unsigned int idof);
 
-        Interp1d<double, VectorN> GetIRFInterpolatorKu(FrBEMBody_* BEMBodyMotion, unsigned int idof) const;
+        Interp1d<double, Vector6d<double>>* GetIRFInterpolatorKu(FrBEMBody_* BEMBodyMotion, unsigned int idof);
 
-        Matrix33<double> GetHydrostaticStiffnessMatrix() const { return m_hydrostaticStiffnessMatrix; }
+        mathutils::Matrix33<double> GetHydrostaticStiffnessMatrix() const { return m_hydrostaticStiffnessMatrix; }
 
         //
         // Interpolators
@@ -496,8 +496,6 @@ namespace frydom {
         std::vector<Eigen::MatrixXcd> GetExcitationInterp(std::vector<double> waveFrequencies,
                                                           std::vector<double> waveDirections,
                                                           ANGLE_UNIT angleUnit);
-
-        void BuildIRFInterpolators();
     };
 
 }  // end namespace frydom

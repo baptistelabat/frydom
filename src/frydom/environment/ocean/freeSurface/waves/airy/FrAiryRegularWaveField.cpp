@@ -130,7 +130,7 @@ namespace frydom {
         if (IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
         double kdir = x*cos(m_dirAngle) + y*sin(m_dirAngle);
         Complex cmplxElevation = m_height * exp(JJ*(m_k*kdir - m_omega * c_time)) * NWUsign * c_ramp;
-        return std::vector(1, std::vector<Complex>(1, cmplxElevation));
+        return std::vector<std::vector<Complex>>(1, std::vector<Complex>(1, cmplxElevation));
     }
 
     mathutils::Vector3d<Complex> FrAiryRegularWaveField::GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
@@ -175,7 +175,7 @@ namespace frydom {
     }
 
     std::vector<std::vector<double>> FrAiryRegularWaveField::GetWaveAmplitudes() const {
-        return std::vector(1, std::vector<double>(1, m_height));
+        return std::vector<std::vector<double>>(1, std::vector<double>(1, m_height));
     }
 
     std::vector<double> FrAiryRegularWaveField::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const {

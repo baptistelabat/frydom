@@ -9,6 +9,7 @@
 #include "FrHydroDB.h"
 #include "FrHydroMapper.h"
 #include "frydom/IO/FrHDF5.h"
+#include "FrBEMBody.h"
 
 
 using namespace mathutils;
@@ -438,7 +439,7 @@ namespace frydom {
             auto bodyName = reader.ReadString(ibodyPath + "/BodyName");
             auto BEMBody = this->NewBody(bodyName);
 
-            auto bodyPosition = reader.ReadDoubleArray(ibodyPath + "/BodyPosition");
+            Position bodyPosition = reader.ReadDoubleArray(ibodyPath + "/BodyPosition");
             BEMBody->SetPosition(bodyPosition);
 
             auto ID = reader.ReadInt(ibodyPath + "/ID");
@@ -491,7 +492,7 @@ namespace frydom {
             auto imodePath = modePath + buffer;
 
             // Building the force mode
-            FrBEMForceMode mode;
+            FrBEMForceMode_ mode;
 
             auto modeType = reader.ReadString(imodePath + "/Type");
             Direction direction = reader.ReadDoubleArray(imodePath + "/Direction");
@@ -500,7 +501,7 @@ namespace frydom {
             if (modeType == "ANGULAR") {
                 Position point = reader.ReadDoubleArray(imodePath + "/Point");
                 mode.SetTypeANGULAR();
-                mode.SetPoint(point);
+                mode.SetPointPosition(point);
             } else {
                 mode.SetTypeLINEAR();
             }
@@ -519,17 +520,17 @@ namespace frydom {
             sprintf(buffer, "%d", imotion);
             auto imodePath = modePath + buffer;
 
-            FrBEMMotionMode mode;
+            FrBEMMotionMode_ mode;
 
             auto modeType = reader.ReadString(imodePath + "/Type");
-            auto direction = reader.ReadDoubleArray(imodePath + "/Direction");
+            Direction direction = reader.ReadDoubleArray(imodePath + "/Direction");
 
             mode.SetDirection(direction);
 
             if (modeType == "ANGULAR") {
                 Position point = reader.ReadDoubleArray(imodePath + "/Point");
                 mode.SetTypeANGULAR();
-                mode.SetPoint(point);
+                mode.SetPointPosition(point);
             } else {
                 mode.SetTypeLINEAR();
             }
