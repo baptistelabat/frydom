@@ -212,8 +212,8 @@ namespace frydom {
 
     public:
 
-        //TODO : TO BE DELETED
-        std::shared_ptr<FrBody_> m_body;
+//        //TODO : TO BE DELETED
+//        std::shared_ptr<FrBody_> m_body;
 
     protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
 
@@ -227,10 +227,10 @@ namespace frydom {
         // Visualization asset
         std::shared_ptr<FrFreeSurfaceGridAsset> m_freeSurfaceGridAsset;    ///> free surface grid asset, containing also the visualization asset
 
-    protected:
-
-        //TODO : TO BE DELETED
-        void CreateFreeSurfaceBody();
+//    protected:
+//
+//        //TODO : TO BE DELETED
+//        void CreateFreeSurfaceBody();
 
     public:
 

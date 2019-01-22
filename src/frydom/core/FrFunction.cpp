@@ -33,6 +33,10 @@ namespace frydom {
         Initialize();
     }
 
+    void FrRamp_::SetMinTime(double minTime) { m_t0 = minTime;}
+    
+    void FrRamp_::SetMaxTime(double maxTime) { m_t1 = maxTime;}
+
     void FrRamp_::SetMinVal(double minVal) { m_min = minVal; }
 
     void FrRamp_::SetMaxVal(double maxVal) { m_max = maxVal; }
@@ -46,6 +50,7 @@ namespace frydom {
     void FrRamp_::Deactivate() {m_active = false;}
 
     void FrRamp_::Initialize() {
+        assert(m_min<=m_max);
         double y0, y1;
 
         if (m_increasing) {

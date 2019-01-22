@@ -130,5 +130,9 @@ namespace frydom {
         SetTorqueInBodyAtCOG(localTorque, NWU);
     }
 
+    void FrLinearHydrostaticForce_::Initialize() {
+        FrForce_::Initialize();
+    }
+
 
 }  // end namespace frydom

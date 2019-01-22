@@ -395,6 +395,8 @@ namespace frydom {
 
     // >>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
+    //TODO: Changer la discrétisation en direction, de manière à obtenir une énergie spectrale constante pour toutes les composantes
+    // voir OrcaFlex Equal Energy dans Frequency spectrum discretisation.
     class FrWaveDirectionalModel_ {
     public:
 
@@ -497,6 +499,9 @@ namespace frydom {
     /// FrWaveSpectrum_
     /// -------------------------------------------------------------------
     /// Virtual base class for the wave spectra.
+
+    //TODO: Changer la discrétisation en fréquence, de manière à obtenir une énergie spectrale constante pour toutes les composantes
+    // voir OrcaFlex Equal Energy dans Frequency spectrum discretisation.
     class FrWaveSpectrum_ : public FrObject {
 
     protected:
@@ -643,13 +648,16 @@ namespace frydom {
     /// -------------------------------------------------------------------
     /// FrJonswapWaveSpectrum_
     /// -------------------------------------------------------------------
-    /// Class for a Jonswap wave spectrum
+    /// Class for a JONSWAP wave spectrum
     ///
     ///    References
     ///    ----------
+    ///    DNV, Modelling and analysis of marine operations. Offshore Standard, 2011.
     ///    Kim C.H., Nonlinear Waves and Offshore structures, 2008
     ///    Molin B., Hydrodynamique des Structures Offshore, 2002
     ///
+    //TODO : Implémenter les recommandations de DNV pour la valeur de gamma.
+    //TODO : S'appuyer sur le calcul du spectre de Pierson-Moskowitz pour celui de JONSWAP?
     class FrJonswapWaveSpectrum_ : public FrWaveSpectrum_ {
 
     private:
@@ -662,7 +670,7 @@ namespace frydom {
         /// Default constructor
         FrJonswapWaveSpectrum_() = default;
 
-        /// Constructor for a Jonswap wave spectrum, based on the significant height, peak frequency and its associated unit
+        /// Constructor for a JONSWAP wave spectrum, based on the significant height, peak frequency and its associated unit
         /// and a gamma factor
         /// \param hs significant height
         /// \param tp peak frequency
@@ -673,12 +681,12 @@ namespace frydom {
         /// Check that the gamma factor is correctly defined between 1. and 10.
         void CheckGamma();
 
-        /// Get the gamma factor of the Jonswap spectrum
-        /// \return gamma factor of the Jonswap spectrum
+        /// Get the gamma factor of the JONSWAP spectrum
+        /// \return gamma factor of the JONSWAP spectrum
         double GetGamma() const;
 
-        /// Get the gamma factor of the Jonswap spectrum
-        /// \param gamma gamma factor of the Jonswap spectrum
+        /// Get the gamma factor of the JONSWAP spectrum
+        /// \param gamma gamma factor of the JONSWAP spectrum
         void SetGamma(double gamma);
 
         /// Eval the spectrum at one frequency

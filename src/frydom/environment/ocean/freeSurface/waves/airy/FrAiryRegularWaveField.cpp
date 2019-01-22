@@ -18,7 +18,6 @@ namespace frydom {
         m_waveModel = LINEAR_WAVES;
         m_verticalFactor = std::make_unique<FrKinematicStretching_>();
         m_verticalFactor->SetInfDepth(m_infinite_depth);
-
     }
 
     void FrAiryRegularWaveField::SetWaveHeight(double height) { m_height = height;}
@@ -35,9 +34,23 @@ namespace frydom {
 
         // Set the wave number, using the wave dispersion relation
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
-        m_k = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(NWU), m_omega, gravityAcceleration);
 
-        m_infinite_depth = 3. / m_k < m_freeSurface->GetOcean()->GetDepth(NWU);
+//        try {
+//            m_k = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(NWU), m_omega, gravityAcceleration);
+//            m_infinite_depth = 3. / m_k < m_freeSurface->GetOcean()->GetDepth(NWU);
+//        }
+//        catch(FrException& e) {
+//            m_k = m_omega*m_omega/gravityAcceleration;
+//            m_infinite_depth = true;
+//        }
+
+        if (m_infinite_depth) {
+            m_k = m_omega*m_omega/gravityAcceleration;
+        }
+        else {
+            m_k = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(NWU), m_omega, gravityAcceleration);
+            m_infinite_depth = 3. / m_k < m_freeSurface->GetOcean()->GetDepth(NWU);
+        }
         m_verticalFactor->SetInfDepth(m_infinite_depth);
 
     }

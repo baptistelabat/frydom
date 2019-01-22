@@ -129,6 +129,10 @@ namespace frydom {
         /// \return the seabed element
         FrSeabed_* GetSeabed() const;
 
+        /// Enforce the infinite depth condition on the Seabed object.
+        /// A NullSeabed is then considered, with no grid asset and no bathymetry getters
+        void SetInfiniteDepth();;
+
         /// Get mean ocean depth (tidal height + mean bathymetry)
         /// \param fc frame convention (NED/NWU)
         /// \return mean ocean depth, in meters

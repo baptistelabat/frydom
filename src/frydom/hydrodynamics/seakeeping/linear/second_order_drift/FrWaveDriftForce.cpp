@@ -201,6 +201,7 @@ namespace frydom {
     }
 
     void FrWaveDriftForceRAO_::Initialize() {
+        FrForce_::Initialize();
         this->SetInterpolationTable();
 
     }

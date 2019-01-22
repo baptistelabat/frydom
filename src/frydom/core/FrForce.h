@@ -170,6 +170,7 @@ namespace frydom {
     class FrOffshoreSystem_;
     class FrBody_;
     class FrNode_;
+    class FrForceAsset_;
 
     /// Class defining an effort with force and torque vector
     ///
@@ -182,6 +183,10 @@ namespace frydom {
         FrBody_* m_body;                ///< Pointer to the body to which the force is applied
 
         std::shared_ptr<internal::_FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
+
+        // Force Asset
+        bool m_isForceAsset = false;            ///< A ForceAsset (vector) is displayed if true
+        FrForceAsset_* m_forceAsset;            ///< pointer to the ForceAsset object.
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise
@@ -196,6 +201,13 @@ namespace frydom {
 
 //        explicit FrForce_(FrBody_* body);
 
+//        /// Force Destructor, delete the related force asset and remove it from the asset container of the body
+//        ~FrForce_();
+
+        void Initialize() override;
+
+//        void StepFinalize() override;
+
         /// Virtual function to allow updating the child object from the solver
         /// \param time Current time of the simulation from begining, in seconds
         virtual void Update(double time) = 0;
@@ -203,6 +215,15 @@ namespace frydom {
         /// Return the system to which the force is linked
         /// \return Offshore system object pointer
         FrOffshoreSystem_* GetSystem();
+
+        // Force Asset
+        /// Inquire if a ForceAsset is displayed
+        /// \return true if a ForceAsset is displayed
+        bool IsForceAsset();
+
+        /// Set if a ForceAsset is to be displayed
+        /// \param isAsset true if a ForceAsset is to be displayed
+        void SetIsForceAsset(bool isAsset);
 
         // Force Limits
 
@@ -235,6 +256,16 @@ namespace frydom {
 
 
         // Force Getters
+
+        /// Get the application point of the force, in the world reference frame.
+        /// \param fc Frame convention (NED/NWU)
+        /// \return position of the application point in the world reference frame.
+        Position GetForceApplicationPointInWorld(FRAME_CONVENTION fc) const;
+
+        /// Get the application point of the force, in the body reference frame.
+        /// \param fc Frame convention (NED/NWU)
+        /// \return position of the application point in the body reference frame.
+        Position GetForceApplicationPointInBody(FRAME_CONVENTION fc) const;
 
         /// Return the force vector at COG in world coordinates with the given convention
         /// \param force Force vector at COG in world coordinates

@@ -64,7 +64,10 @@ void TestFrStandardWindForce::SetUp() {
     force->SetXCenter(m_Xcenter);
 
     body = system.NewBody();
-    body->SetCOG(Position(0., 0., 0.), NWU);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(),NWU);
+    body->SetInertiaTensor(InertiaTensor);
+
     body->AddExternalForce(force);
 
     system.GetEnvironment()->GetAtmosphere()->GetWind()->MakeFieldUniform();
@@ -101,7 +104,9 @@ TEST_F(TestFrStandardWindForce, TestTransport) {
     system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()
             ->Set(m_direction(i), m_windSpeed, DEG, MS, NED, COMEFROM);
 
-    body->SetCOG(Position(0.1, 0., 0.), NWU);
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(Position(0.1, 0., 0.),FrRotation_(),NWU),NWU);
+    body->SetInertiaTensor(InertiaTensor);
+
     body->Initialize();
 
     force->SetXCenter(xc);

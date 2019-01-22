@@ -17,9 +17,13 @@
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 
 #include <chrono/physics/ChLinkMotorLinearSpeed.h>  // FIXME : a retirer
+#include "frydom/asset/FrAsset.h"
+#include "frydom/asset/FrForceAsset.h"
 
 #include "FrFunction.h"
 #include "FrException.h"
+//#include "FrCore.h"
+
 
 
 namespace frydom {
@@ -146,6 +150,16 @@ namespace frydom {
             UpdateMarkers(GetChTime());
         }
 
+        void _FrBodyBase::RemoveAsset(std::shared_ptr<chrono::ChAsset> asset) { //taken from RemoveForce
+            // trying to remove objects not previously added?
+            assert(std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset) !=
+                           assets.end());
+
+            // warning! linear time search
+            assets.erase(
+                    std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset));
+        }
+
     }  // end namespace internal
 
     FrBody_::FrBody_() {
@@ -246,6 +260,11 @@ namespace frydom {
         m_chronoBody->AddAsset(shape);
     }
 
+    void FrBody_::AddAsset(std::shared_ptr<FrAsset> asset) {
+        m_assets.push_back(asset);
+        m_chronoBody->AddAsset(asset->GetChronoAsset());
+    }
+
     void FrBody_::SetColor(NAMED_COLOR colorName) {
         SetColor(FrColor(colorName));
     }
@@ -265,40 +284,43 @@ namespace frydom {
 
     }
 
-    void FrBody_::ConstrainInVx(double Vx) {
-
-        auto motor = std::make_shared<chrono::ChLinkMotorLinearSpeed>();
-
-        auto frame = chrono::ChFrame<double>();
-
-
-        motor->Initialize(m_chronoBody, GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->m_body->m_chronoBody, frame);
-
-        m_system->AddLink(motor);
-
-
-        auto rampConst = std::make_shared<FrFunction>(Vx);
-
-        motor->SetSpeedFunction(rampConst);
-
-
-
-    }
+//    void FrBody_::ConstrainInVx(double Vx) {
+//
+//        auto motor = std::make_shared<chrono::ChLinkMotorLinearSpeed>();
+//
+//        auto frame = chrono::ChFrame<double>();
+//
+//
+//        motor->Initialize(m_chronoBody, GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->m_body->m_chronoBody, frame);
+//
+//        m_system->AddLink(motor);
+//
+//
+//        auto rampConst = std::make_shared<FrFunction>(Vx);
+//
+//        motor->SetSpeedFunction(rampConst);
+//
+//
+//
+//    }
 
     double FrBody_::GetMass() const {
         return m_chronoBody->GetMass();
     }
 
 
-    FrInertiaTensor_ FrBody_::GetInertiaParams() const {
+    FrInertiaTensor_ FrBody_::GetInertiaTensor(FRAME_CONVENTION fc) const {
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
         SplitMatrix33IntoCoeffs(internal::ChMatrix33ToMatrix33(m_chronoBody->GetInertia()),
                 Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
+        if (IsNED(fc)) {
+            internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+        }
 
-        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame_(GetCOG(NWU), FrRotation_(), NWU), NWU};
+        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame_(GetCOG(fc), FrRotation_(), fc), fc};
     }
 
-    void FrBody_::SetInertiaParams(const FrInertiaTensor_& inertia) {
+    void FrBody_::SetInertiaTensor(const FrInertiaTensor_ &inertia) {
 
         m_chronoBody->SetMass(inertia.GetMass());
 
@@ -312,22 +334,22 @@ namespace frydom {
 
     }
 
-    void FrBody_::SetInertiaParams(double mass,
-                          double Ixx, double Iyy, double Izz,
-                          double Ixy, double Ixz, double Iyz,
-                          const FrFrame_& coeffsFrame,
-                          const Position& cogPosition,
-                          FRAME_CONVENTION fc) {
-        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, coeffsFrame, cogPosition, fc));
-    }
-
-    void FrBody_::SetInertiaParams(double mass,
-                          double Ixx, double Iyy, double Izz,
-                          double Ixy, double Ixz, double Iyz,
-                          const FrFrame_& cogFrame,
-                          FRAME_CONVENTION fc) {
-        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, cogFrame, fc));
-    }
+//    void FrBody_::SetInertiaParams(double mass,
+//                          double Ixx, double Iyy, double Izz,
+//                          double Ixy, double Ixz, double Iyz,
+//                          const FrFrame_& coeffsFrame,
+//                          const Position& cogPosition,
+//                          FRAME_CONVENTION fc) {
+//        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, coeffsFrame, cogPosition, fc));
+//    }
+//
+//    void FrBody_::SetInertiaParams(double mass,
+//                          double Ixx, double Iyy, double Izz,
+//                          double Ixy, double Ixz, double Iyz,
+//                          const FrFrame_& cogFrame,
+//                          FRAME_CONVENTION fc) {
+//        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, cogFrame, fc));
+//    }
 
     void FrBody_::SetCollide(bool isColliding) {
         m_chronoBody->SetCollide(isColliding);
@@ -385,6 +407,7 @@ namespace frydom {
 
         force->m_body = this;
         m_externalForces.push_back(force);
+
     }
 
     void FrBody_::RemoveExternalForce(std::shared_ptr<FrForce_> force) {
@@ -392,6 +415,28 @@ namespace frydom {
 
         m_externalForces.erase(
                 std::find<std::vector<std::shared_ptr<FrForce_>>::iterator>(m_externalForces.begin(), m_externalForces.end(), force));
+
+        if (force->m_forceAsset!=nullptr) {
+            m_chronoBody->RemoveAsset(force->m_forceAsset->GetChronoAsset());
+
+            bool asserted=false;
+            for (int ia=0;ia<m_assets.size();++ia){
+                if (m_assets[ia].get()==force->m_forceAsset){
+                    m_assets.erase(m_assets.begin()+ia);
+                    asserted=true;
+                }
+            }
+            assert(asserted);
+            force->m_forceAsset=nullptr;
+
+//            { // just to make sure this shared pointer is not used anywhere else.
+//                auto sharedAsset = std::make_shared<FrForceAsset_>(force->m_forceAsset);
+//                m_assets.erase(
+//                        std::find<std::vector<std::shared_ptr<FrAsset>>::iterator>(m_assets.begin(), m_assets.end(),
+//                                                                                   sharedAsset));
+//            }
+        }
+
 
         force->m_body = nullptr;
     }
@@ -425,9 +470,9 @@ namespace frydom {
     }
 
 
-    void FrBody_::SetMass(double mass) {
-        m_chronoBody->SetMass(mass);
-    }
+//    void FrBody_::SetMass(double mass) {
+//        m_chronoBody->SetMass(mass);
+//    }
 
     void FrBody_::SetCOG(const Position& bodyPos, FRAME_CONVENTION fc) {
         FrFrame_ cogFrame;
@@ -527,8 +572,8 @@ namespace frydom {
         return CartToGeo(GetPointPositionInBody(worldPos, fc), fc);
     }
 
-    FrGeographicCoord FrBody_::GetCOGGeoPositionInWorld(FRAME_CONVENTION fc) const {
-        return CartToGeo(GetCOGPositionInWorld(fc), fc);
+    FrGeographicCoord FrBody_::GetCOGGeoPosition() const {
+        return CartToGeo(GetCOGPositionInWorld(NWU), NWU);
     }
 
 

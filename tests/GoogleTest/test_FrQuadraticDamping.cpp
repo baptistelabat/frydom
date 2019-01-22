@@ -38,7 +38,10 @@ void TestQuadraticDamping::SetUp() {
     force = std::make_shared<FrQuadraticDamping_>(WATER, false);
     body->AddExternalForce(force);
     body->SetPosition(bodyPosition, NWU);
-    body->SetCOG(cogPosition, NWU);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(cogPosition,FrRotation_(),NWU),NWU);
+    body->SetInertiaTensor(InertiaTensor);
+
     rotationDirection.normalize();
     body->SetRotation(FrUnitQuaternion_(rotationDirection, rotationAngle, NWU));
 }

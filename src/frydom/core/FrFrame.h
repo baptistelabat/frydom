@@ -30,7 +30,7 @@ namespace frydom {
     /// not hold this notion internally as by default, every quantities are always stored in the NWU convention.
     /// Conversions between conventions are done transparently while calling setters and getters. Note that frame
     /// convention does not need to be given when manipulating FrRotation objects as these objects does neither hold the
-    /// frame convention notion intenally, conversions are also automatic.
+    /// frame convention notion internally, conversions are also automatic.
     class FrFrame_ {
 
     private:

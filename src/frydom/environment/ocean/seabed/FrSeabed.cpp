@@ -218,53 +218,90 @@ namespace frydom {
 
     // REFACTORING ----------->>>>>>>>
 
+    // FrSeabed descriptions
 
     FrSeabed_::FrSeabed_(FrOcean_ *ocean) :m_ocean(ocean){
-        m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(ocean->GetEnvironment()->GetSystem()->GetWorldBody().get(),this);
     }
 
     FrOcean_ *FrSeabed_::GetOcean() const {return m_ocean;}
 
+    bool FrSeabed_::GetInfiniteDepth() { return m_infiniteDepth;}
 
-    void FrSeabed_::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
+    //------------------------------------------------------------------------------------------------------------------
+    // FrNullSeabed descriptions
+
+    FrSeabedGridAsset *FrNullSeabed_::GetSeabedGridAsset() {
+        try {throw FrException("a null seabed cannot return a seabed asset.");}
+        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
+    }
+
+    FrNullSeabed_::FrNullSeabed_(FrOcean_ *ocean) :FrSeabed_(ocean) {m_infiniteDepth = true;}
+
+    void FrNullSeabed_::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
+        try {throw FrException("a null seabed cannot return a bathymetry.");}
+        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
+    }
+
+    const double FrNullSeabed_::GetBathymetry(FRAME_CONVENTION fc) const {
+        try {throw FrException("a null seabed cannot return a bathymetry.");}
+        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
+    }
+
+    const double FrNullSeabed_::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
+        try {throw FrException("a null seabed cannot return a bathymetry.");}
+        catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
+    }
+
+    void FrNullSeabed_::Update(double time) {
+
+    }
+
+    void FrNullSeabed_::Initialize() {
+
+    }
+
+    void FrNullSeabed_::StepFinalize() {
+
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // FrMeanSeabed descriptions
+
+    FrMeanSeabed_::FrMeanSeabed_(FrOcean_ *ocean) :FrSeabed_(ocean){
+        m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(ocean->GetEnvironment()->GetSystem()->GetWorldBody().get(),this);
+    }
+
+    void FrMeanSeabed_::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
+        assert(m_showSeabed);
         if (IsNED(fc)) {bathymetry = -bathymetry;};
         m_bathymetry = bathymetry;
     }
 
-    const double FrSeabed_::GetBathymetry(FRAME_CONVENTION fc) const {
-        double bathy = m_bathymetry;
-        if (IsNED(fc)) {bathy = -bathy;}
-        return bathy;
-    }
-    
-    const double FrSeabed_::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
+    const double FrMeanSeabed_::GetBathymetry(FRAME_CONVENTION fc) const {
+        assert(m_showSeabed);
         double bathy = m_bathymetry;
         if (IsNED(fc)) {bathy = -bathy;}
         return bathy;
     }
 
-    void FrSeabed_::Update(double time) {}
+    const double FrMeanSeabed_::GetBathymetry(double x, double y, FRAME_CONVENTION fc) const {
+        assert(m_showSeabed);
+        double bathy = m_bathymetry;
+        if (IsNED(fc)) {bathy = -bathy;}
+        return bathy;
+    }
 
-    void FrSeabed_::Initialize() {
+    void FrMeanSeabed_::Update(double time) {}
+
+    void FrMeanSeabed_::Initialize() {
         if (m_showSeabed) m_SeabedGridAsset->Initialize();
     }
 
-    void FrSeabed_::StepFinalize() {
+    void FrMeanSeabed_::StepFinalize() {
         if (m_showSeabed) m_SeabedGridAsset->StepFinalize();
     }
 
-    FrSeabedGridAsset *FrSeabed_::GetSeabedGridAsset() {return m_SeabedGridAsset.get();}
-
-    void FrSeabed_::ShowSeabed(bool showSeabed) {
-        if (showSeabed && m_showSeabed!=showSeabed) {
-            std::cout<< "Be careful to set new seabed grid and bathymetry"<<std::endl;
-        }
-        m_showSeabed = showSeabed;
-        if (!showSeabed) {
-            m_bathymetry = 1E8;
-            m_SeabedGridAsset->SetNoGrid();
-        }
-    }
+    FrSeabedGridAsset *FrMeanSeabed_::GetSeabedGridAsset() {return m_SeabedGridAsset.get();}
 
 
 }  // end namespace frydom

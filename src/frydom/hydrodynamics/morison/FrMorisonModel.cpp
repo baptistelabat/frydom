@@ -243,8 +243,8 @@ namespace frydom {
         flow_acceleration = m_frame.TransformDirectionParentToLocal(flow_acceleration);
         body_acceleration = m_frame.TransformDirectionParentToLocal(body_acceleration);
 
-        force.x() = rho * (m_ca_x + 1.) * m_volume * (flow_acceleration.x() - body_acceleration.x());
-        force.y() = rho * (m_ca_y + 1.) * m_volume * (flow_acceleration.y() - body_acceleration.y());
+        force.x() = rho * m_volume * (flow_acceleration.x() + m_ca_x * (flow_acceleration.x() - body_acceleration.x()));
+        force.y() = rho * m_volume * (flow_acceleration.y() + m_ca_y * (flow_acceleration.y() - body_acceleration.y()));
         force.z() = 0.;
         force.x() += 0.5 * m_cd_x * rho * m_diameter * m_length * velocity.x() * std::abs(velocity.x());
         force.y() += 0.5 * m_cd_y * rho * m_diameter * m_length * velocity.y() * std::abs(velocity.y());
@@ -418,13 +418,18 @@ namespace frydom {
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
 
+    std::shared_ptr<FrMorisonCompositeElement_> make_MorisonModel(FrBody_* body){
+        return std::make_shared<FrMorisonCompositeElement_>(body);
+    }
+
+
     // -----------------------------------------------------------------
     // MORISON MODEL
     // -----------------------------------------------------------------
 
     void FrMorisonElement_::SetFrame(FrBody_* body, Position posA, Position posB, Direction vect) {
 
-        Direction position = 0.5*(posA + posB);
+        Position position = 0.5*(posA + posB);
 
         Direction e3 = posB - posA;
         e3.normalize();
@@ -704,6 +709,7 @@ namespace frydom {
 
         for (auto& element: m_morison) {
             element->Initialize();
+            element->SetExtendedModel(m_extendedModel);
         }
     }
 

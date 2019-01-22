@@ -262,4 +262,8 @@ namespace frydom {
 
         SetForceTorqueInBodyAtCOG(force ,torque, NWU);
     }
+
+    void FrManDampingTaylorExpansion_::Initialize() {
+        FrForce_::Initialize();
+    }
 }

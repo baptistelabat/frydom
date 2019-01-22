@@ -8,6 +8,7 @@
 #include "FrBody.h"
 
 #include "FrNode.h"
+#include "frydom/asset/FrForceAsset.h"
 
 
 namespace frydom{
@@ -183,6 +184,19 @@ namespace frydom{
         m_chronoForce = std::make_shared<internal::_FrForceBase>(this);
     }
 
+//    FrForce_::~FrForce_(){
+//        m_forceAsset=nullptr;
+//    }
+
+    void FrForce_::Initialize() {
+        if (m_isForceAsset) {
+            assert(m_forceAsset==nullptr);
+            auto ForceAsset = std::make_shared<FrForceAsset_>(this);
+            m_forceAsset = ForceAsset.get();
+            m_body->AddAsset(ForceAsset);
+        }
+    }
+
     std::shared_ptr<chrono::ChForce> FrForce_::GetChronoForce() {
         return m_chronoForce;
     }
@@ -191,6 +205,14 @@ namespace frydom{
         return m_body->GetSystem();
     }
 
+
+    bool FrForce_::IsForceAsset() {
+        return m_isForceAsset;
+    }
+
+    void FrForce_::SetIsForceAsset(bool isAsset) {
+        m_isForceAsset = isAsset;
+    }
 
     void FrForce_::SetMaxForceLimit(double fmax) {
         m_forceLimit = fmax;
@@ -214,6 +236,14 @@ namespace frydom{
 
     bool FrForce_::GetLimit() const {
         return m_limitForce;
+    }
+
+    Position FrForce_::GetForceApplicationPointInWorld(FRAME_CONVENTION fc) const {
+        return internal::ChVectorToVector3d<Position>(m_chronoForce->GetVpoint());
+    }
+
+    Position FrForce_::GetForceApplicationPointInBody(FRAME_CONVENTION fc) const {
+        return internal::ChVectorToVector3d<Position>(m_chronoForce->GetVrelpoint());
     }
 
     void FrForce_::GetForceInWorld(Force &force, FRAME_CONVENTION fc) const {

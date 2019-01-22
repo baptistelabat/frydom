@@ -316,7 +316,7 @@ namespace frydom {
     void FrJonswapWaveSpectrum_::CheckGamma() {
         if (m_gamma < 1. || m_gamma > 10.) {
             // TODO: utiliser un vrai warning sur stderr
-            std::cout << "WARNING: Valid values of gamma parameter in Jonswap wave spectrum are between 1 and 10. " << std::endl;
+            std::cout << "WARNING: Valid values of gamma parameter in JONSWAP wave spectrum are between 1 and 10. " << std::endl;
         }
     }
 

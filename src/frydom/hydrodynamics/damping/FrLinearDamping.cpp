@@ -131,6 +131,7 @@ namespace frydom {
     }
 
     void FrLinearDamping_::Initialize() {
+        FrForce_::Initialize();
         Check();
     }
 

@@ -68,6 +68,7 @@ add_subdirectory(unit_tests)
 add_subdirectory(refactoring)
 add_subdirectory(TestNonRegression)
 add_subdirectory(GoogleTest)
+add_subdirectory(demos)
 
 # Adding resource files
 configure_file(data/frydom_logo.png . COPYONLY)

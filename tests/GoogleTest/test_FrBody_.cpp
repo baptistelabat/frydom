@@ -109,7 +109,10 @@ TEST(FrBodyTest,Position) {
     //-----------------COG-----------------//
     // Set the COG position, expressed in local body reference frame
     Position COGPositionInBody(2., 3., 4.);
-    body->SetCOG(COGPositionInBody, fc);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(COGPositionInBody,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
+
     Position COGPositionInWorld = RefPositionInWorld + COGPositionInBody;
 
     Test_AllGetPosition(body,RefPositionInWorld,COGPositionInWorld,fc,false,fc);
@@ -125,7 +128,10 @@ TEST(FrBodyTest,PositionNED) {
     //-----------------COG-----------------//
     // Set the COG position, expressed in local body reference frame
     Position COGPositionInBody(2., 3., 4.);
-    body->SetCOG(COGPositionInBody, NWU);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(COGPositionInBody,FrRotation_(),NWU),NWU);
+    body->SetInertiaTensor(InertiaTensor);
+
     Position COGPositionInWorld = RefPositionInWorld + COGPositionInBody;
 
     Test_AllGetPosition(body,RefPositionInWorld,COGPositionInWorld,NWU,false,NED);
@@ -142,7 +148,10 @@ TEST(FrBodyTest,Translation) {
     //-----------------COG-----------------//
     // Set the COG position, expressed in local body reference frame
     Position COGPositionInBody(2., 3., 4.);
-    body->SetCOG(COGPositionInBody, fc);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(COGPositionInBody,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
+
     Position COGPositionInWorld = RefPositionInWorld + COGPositionInBody;
 
     //-----------------Translate Body-----------------//
@@ -218,7 +227,9 @@ TEST(FrBodyTest,Orientation) {
     //-----------------COG-----------------//
     // Set the COG position, expressed in local body reference frame
     Position COGPositionInBody(2., 3., 4.);
-    body->SetCOG(COGPositionInBody, fc);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(COGPositionInBody,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
     Position COGPositionInWorld = RefPositionInWorld + COGPositionInBody;
 
     //-----------------Orientation-----------------//
@@ -312,7 +323,8 @@ TEST(FrBodyTest,PositionWithOrientation){
     //-----------------COG-----------------//
     // Set the COG position, expressed in local body reference frame
     Position COGPositionInBody(2.,3.,4.);
-    body->SetCOG(COGPositionInBody, fc);
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(COGPositionInBody,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
 
     //-----------------Orientation-----------------//
     // Rotation to an easy transformation
@@ -473,7 +485,8 @@ TEST(FrBodyTest,TranslationalVelocity){
     //-----------------COG-----------------//
     // Set the COG position, expressed in the body reference frame
     Position OrigLocalCOGPos(2.,3.,4.);
-    body->SetCOG(OrigLocalCOGPos, fc);
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(OrigLocalCOGPos,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
 
     //-----------------Angular Velocity-----------------//
     AngularVelocity BodyAngularVelocity(0,0,0);
@@ -559,7 +572,9 @@ TEST(FrBodyTest,TranslationalVelocityWithOrientation){
     //-----------------COG-----------------//
     // Set the COG position, expressed in local body reference frame
     Position OrigLocalCOGPos(2.,3.,4.);
-    body->SetCOG(OrigLocalCOGPos, fc);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(OrigLocalCOGPos,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
 
     //-----------------Angular Velocity-----------------//
     AngularVelocity BodyAngularVelocity(0,0,0);
@@ -639,7 +654,9 @@ TEST(FrBodyTest,TranslationalVelocityWithAngularVelocity){
     //-----------------COG-----------------//
     // Set the COG position, expressed in the body reference frame
     Position OrigLocalCOGPos(2.,3.,4.);
-    body->SetCOG(OrigLocalCOGPos, fc);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(OrigLocalCOGPos,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
 
     //-----------------Angular Velocity-----------------//
     AngularVelocity BodyAngularVelocity(1,5,9);
@@ -717,7 +734,9 @@ TEST(FrBodyTest,TranslationalVelocityWithAngularVelocityAndOrientation){
     //-----------------COG-----------------//
     // Set the COG position, expressed in local body reference frame
     Position OrigLocalCOGPos(2.,3.,4.);
-    body->SetCOG(OrigLocalCOGPos, fc);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(OrigLocalCOGPos,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
 
     //-----------------Orientation-----------------//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
@@ -962,7 +981,9 @@ TEST(FrBodyTest,Acceleration){
     //-----------------COG-----------------//
     // Set the COG position, expressed in the body reference frame
     Position OrigLocalCOGPos(2.,3.,4.);
-    body->SetCOG(OrigLocalCOGPos, fc);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(OrigLocalCOGPos,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
 
     //+++++SetAccelerationInWorldNoRotation+++++//
     Acceleration AccelerationInWorld(5.,6.,9.);
@@ -997,7 +1018,9 @@ TEST(FrBodyTest,AccelerationWithOrientation){
     //-----------------COG-----------------//
     // Set the COG position, expressed in the body reference frame
     Position OrigLocalCOGPos(2.,3.,4.);
-    body->SetCOG(OrigLocalCOGPos, fc);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(OrigLocalCOGPos,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
 
     //-----------------Orientation-----------------//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)
@@ -1041,7 +1064,9 @@ TEST(FrBodyTest,AccelerationWithAngularVelocityAndAcceleration){
     //-----------------COG-----------------//
     // Set the COG position, expressed in the body reference frame
     Position OrigLocalCOGPos(6.,5.,4.);
-    body->SetCOG(OrigLocalCOGPos, fc);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(OrigLocalCOGPos,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
 
     //-----------------Generalized Velocity, imposed at COG-----------------//
     Velocity VelocityInWorld(2.,8.,6.);
@@ -1084,7 +1109,9 @@ TEST(FrBodyTest,AccelerationWithOrientationAndAngularVelocityAndAcceleration){
     //-----------------COG-----------------//
     // Set the COG position, expressed in the body reference frame
     Position OrigLocalCOGPos(6.,5.,4.);
-    body->SetCOG(OrigLocalCOGPos, fc);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(OrigLocalCOGPos,FrRotation_(),fc),fc);
+    body->SetInertiaTensor(InertiaTensor);
 
     //-----------------Orientation-----------------//
     // Set a new orientation for the body, expressed using CARDAN angles, in the world reference frame)

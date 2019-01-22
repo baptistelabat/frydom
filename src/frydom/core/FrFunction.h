@@ -141,6 +141,14 @@ namespace frydom {
         /// Set the ramp to a decreasing one
         void SetDecrease();
 
+        /// Set the min time of the ramp, m_t0
+        /// \param minTime min time of the ramp
+        void SetMinTime(double minTime);
+
+        /// Set the max time of the ramp, m_t1
+        /// \param maxTime max time of the ramp
+        void SetMaxTime(double maxTime);
+
         /// Set the min value of the ramp, m_min
         /// \param minVal min value of the ramp
         void SetMinVal(double minVal);

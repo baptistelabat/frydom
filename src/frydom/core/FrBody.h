@@ -301,6 +301,9 @@ namespace frydom {
             /// \param newCOG new Center Of Gravity
             void UpdateMarkerPositionToCOG(const chrono::ChVector<> newCOG);
 
+            ///
+            void RemoveAsset(std::shared_ptr<chrono::ChAsset> asset);
+
         };
 
     }  // end namespace internal
@@ -311,6 +314,7 @@ namespace frydom {
     class FrRotation_;
     class FrOffshoreSystem_;
     class FrGeographicCoord;
+    class FrAsset;
 
     /// Main class for a FRyDoM rigid body
     class FrBody_ : public FrObject {
@@ -324,6 +328,8 @@ namespace frydom {
         using ForceContainer = std::vector<std::shared_ptr<FrForce_>>;
         ForceContainer m_externalForces;            ///< Container of the external forces acting on body
 
+        using AssetContainer = std::vector<std::shared_ptr<FrAsset>>;
+        AssetContainer m_assets;                    ///< Container of the assets added to the body
 
         using CONTACT_TYPE = FrOffshoreSystem_::SYSTEM_TYPE;
         CONTACT_TYPE m_contactType = CONTACT_TYPE::SMOOTH_CONTACT; ///< The contact method that has to be consistent with that of the FrOffshoreSystem
@@ -353,41 +359,33 @@ namespace frydom {
         /// Get the body mass in kg
         double GetMass() const;
 
-        /// Set the body mass in kg
-        /// \param mass body mass in kg
-        void SetMass(double mass);
-
-        /// Set the COG position in the body reference frame
-        /// \param bodyPos COG position in the body reference frame
-        /// \param fc frame convention (NED/NWU)
-        void SetCOG(const Position& bodyPos, FRAME_CONVENTION fc);
-
-        /// Get the COG position in the body reference frame
-        /// \param fc frame convention (NED/NWU)
-        Position GetCOG(FRAME_CONVENTION fc) const;
+//        /// Set the body mass in kg
+//        /// \param mass body mass in kg
+//        void SetMass(double mass);
+//
 
         /// Get the inertia parameters as a FrInertiaTensor_ object
         // TODO : gerer la frame convention !
-        FrInertiaTensor_ GetInertiaParams() const; // TODO : voir pour une methode renvoyant une reference non const
+        FrInertiaTensor_ GetInertiaTensor(FRAME_CONVENTION fc) const; // TODO : voir pour une methode renvoyant une reference non const
 
         /// Set the inertia parameters as a FrInertiaTensor_ object
-        void SetInertiaParams(const FrInertiaTensor_& inertia);
+        void SetInertiaTensor(const FrInertiaTensor_ &inertia);
 
-        /// Set the principal inertia parameters given as coefficients expressed in coeffsFrame that can be different
-        /// from the local COG position cogPosition (expressed in body reference coordinate system)
-        void SetInertiaParams(double mass,
-                              double Ixx, double Iyy, double Izz,
-                              double Ixy, double Ixz, double Iyz,
-                              const FrFrame_& coeffsFrame,
-                              const Position& cogPosition,
-                              FRAME_CONVENTION fc);
-
-        /// Set the inertia parameters given in cogFrame relative to
-        void SetInertiaParams(double mass,
-                              double Ixx, double Iyy, double Izz,
-                              double Ixy, double Ixz, double Iyz,
-                              const FrFrame_& cogFrame,
-                              FRAME_CONVENTION fc);
+//        /// Set the principal inertia parameters given as coefficients expressed in coeffsFrame that can be different
+//        /// from the local COG position cogPosition (expressed in body reference coordinate system)
+//        void SetInertiaParams(double mass,
+//                              double Ixx, double Iyy, double Izz,
+//                              double Ixy, double Ixz, double Iyz,
+//                              const FrFrame_& coeffsFrame,
+//                              const Position& cogPosition,
+//                              FRAME_CONVENTION fc);
+//
+//        /// Set the inertia parameters given in cogFrame relative to
+//        void SetInertiaParams(double mass,
+//                              double Ixx, double Iyy, double Izz,
+//                              double Ixy, double Ixz, double Iyz,
+//                              const FrFrame_& cogFrame,
+//                              FRAME_CONVENTION fc);
 
         // =============================================================================================================
         // CONTACT
@@ -436,6 +434,24 @@ namespace frydom {
         /// Add a sphere shape to the body. Dimensions in meters.
         /// \param radius radius of the sphere shape.
         void AddSphereShape(double radius);  // TODO : permettre de definir un centre en coords locales du corps
+
+        /// Add a mesh as an asset for visualization given a WaveFront .obj file name
+        /// \param obj_filename filename of the asset to be added
+        void AddMeshAsset(std::string obj_filename);
+
+        /// Add a mesh as an asset for visualization given a FrTriangleMeshConnected mesh object
+        /// \param mesh mesh of the asset to be added
+        void AddMeshAsset(std::shared_ptr<FrTriangleMeshConnected> mesh);
+
+        void AddAsset(std::shared_ptr<FrAsset> asset);
+
+        /// Set the asset color in visualization given a color id
+        /// \param colorName color of the asset
+        void SetColor(NAMED_COLOR colorName);
+
+        /// Set the asset color in visualization given a FrColor object
+        /// \param color color of the asset
+        void SetColor(const FrColor& color);
 
         // =============================================================================================================
         // SPEED LIMITATIONS TO STABILIZE SIMULATIONS
@@ -508,27 +524,6 @@ namespace frydom {
         std::shared_ptr<FrNode_> NewNode(double x, double y, double z, FRAME_CONVENTION fc);
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame_ !
-
-
-        // =============================================================================================================
-        // Asset
-        // =============================================================================================================
-
-        /// Add a mesh as an asset for visualization given a WaveFront .obj file name
-        /// \param obj_filename filename of the asset to be added
-        void AddMeshAsset(std::string obj_filename);
-
-        /// Add a mesh as an asset for visualization given a FrTriangleMeshConnected mesh object
-        /// \param mesh mesh of the asset to be added
-        void AddMeshAsset(std::shared_ptr<FrTriangleMeshConnected> mesh);
-
-        /// Set the asset color in visualization given a color id
-        /// \param colorName color of the asset
-        void SetColor(NAMED_COLOR colorName);
-
-        /// Set the asset color in visualization given a FrColor object
-        /// \param color color of the asset
-        void SetColor(const FrColor& color);
 
         // =============================================================================================================
         // POSITIONS
@@ -623,23 +618,27 @@ namespace frydom {
         /// \return COG position in body reference frame
         Position GetCOGPositionInWorld(FRAME_CONVENTION fc) const;
 
-
-        /// Get the geographic position in world frame of a body fixed point whose position is given in body reference frame
-        /// \param bodyPos position of a point given in the body reference frame
+        /// Get the COG position in the body reference frame
         /// \param fc frame convention (NED/NWU)
-        /// \return geographic position of the point mentioned above
-        FrGeographicCoord GetGeoPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const;
+        Position GetCOG(FRAME_CONVENTION fc) const;
 
-        /// Get the geographic position in body reference frame of a body fixed point whose position is given in world frame
+        // GeographicServices
+
+        /// Get the geographic position in world frame of a body fixed point whose position is given in world reference frame
         /// \param worldPos position of a point given in the world reference frame
         /// \param fc frame convention (NED/NWU)
         /// \return geographic position of the point mentioned above
-        FrGeographicCoord GetGeoPointPositionInBody(const Position& worldPos, FRAME_CONVENTION fc) const;
+        FrGeographicCoord GetGeoPointPositionInWorld(const Position& worldPos, FRAME_CONVENTION fc) const;
 
-        /// Get the body COG geographic position in world frame (coordinates are expressed in world frame)
+        /// Get the geographic position in body reference frame of a body fixed point whose position is given in body frame
+        /// \param bodyPos position of a point given in the body reference frame
         /// \param fc frame convention (NED/NWU)
+        /// \return geographic position of the point mentioned above
+        FrGeographicCoord GetGeoPointPositionInBody(const Position& bodyPos, FRAME_CONVENTION fc) const;
+
+        /// Get the body COG geographic position
         /// \return geographic position of the COG
-        FrGeographicCoord GetCOGGeoPositionInWorld(FRAME_CONVENTION fc) const;
+        FrGeographicCoord GetCOGGeoPosition() const;
 
 
 
@@ -1053,7 +1052,7 @@ namespace frydom {
         // Motion constraints  : FIXME : experimental !!!!
         void ConstainDOF(bool cx, bool cy, bool cz, bool crx, bool cry, bool crz);
 
-        void ConstrainInVx(double Vx);
+//        void ConstrainInVx(double Vx);
 
 
     protected:
@@ -1062,6 +1061,11 @@ namespace frydom {
             WORLD,
             BODY
         };
+
+        /// Set the COG position in the body reference frame
+        /// \param bodyPos COG position in the body reference frame
+        /// \param fc frame convention (NED/NWU)
+        void SetCOG(const Position& bodyPos, FRAME_CONVENTION fc);
 
 //        void _SetPointPosition(const Position& point, FRAME pointFrame, const Position& pos, FRAME posFrame, FRAME_CONVENTION fc);
 

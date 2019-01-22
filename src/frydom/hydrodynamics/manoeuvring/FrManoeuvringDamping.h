@@ -225,7 +225,7 @@ namespace frydom {
         void Update(double time) override;
 
         /// Initialization of the manoeuvring force model
-        void Initialize() override { }
+        void Initialize() override;
 
         /// Applied method at the end of each time step
         void StepFinalize() override {}

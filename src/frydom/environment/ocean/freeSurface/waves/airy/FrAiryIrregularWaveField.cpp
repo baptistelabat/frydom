@@ -16,7 +16,6 @@ namespace frydom{
     FrAiryIrregularWaveField::FrAiryIrregularWaveField(FrFreeSurface_ *freeSurface) : FrWaveField_(freeSurface) {
         m_waveModel = LINEAR_WAVES;
         m_verticalFactor = std::make_unique<FrKinematicStretching_>();
-        m_verticalFactor->SetInfDepth(m_infinite_depth);
 
         m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum_>();
     }
@@ -43,8 +42,19 @@ namespace frydom{
 
         // Set the wave numbers, using the wave dispersion relation
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
-        m_waveNumbers = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(NWU), m_waveFrequencies, gravityAcceleration);
 
+        double k;
+        if (m_infinite_depth) {
+            m_waveNumbers.reserve(m_nbFreq);
+            for (auto freq:m_waveFrequencies) {
+                k = pow(freq,2) / gravityAcceleration;
+                m_waveNumbers.push_back(k);
+            }
+        }
+        else {
+            m_waveNumbers = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(NWU), m_waveFrequencies,
+                                                        gravityAcceleration);
+        }
         if (!m_waveDirections.empty()){
             c_amplitude = m_waveSpectrum->GetWaveAmplitudes(m_waveFrequencies, m_waveDirections);
         }
@@ -221,6 +231,7 @@ namespace frydom{
 
     void FrAiryIrregularWaveField::Initialize() {
         FrWaveField_::Initialize();
+        m_verticalFactor->SetInfDepth(m_infinite_depth);
 
         if (m_waveDirections.empty()){m_waveDirections.push_back(m_meanDir);}
 

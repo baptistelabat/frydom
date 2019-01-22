@@ -1,5 +1,5 @@
 set(TESTNONREGRESSION
-        TNR_current_force
+#        TNR_current_force
         )
 
 message(STATUS "Test of non-regression for FRyDoM framework")

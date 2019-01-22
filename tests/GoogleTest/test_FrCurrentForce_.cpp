@@ -113,7 +113,8 @@ void TestFrUniformCurrent_::LoadData(std::string filename) {
 void TestFrUniformCurrent_::SetUp() {
 
     LoadData("TNR_database.h5");
-    system.GetEnvironment()->GetOcean()->GetCurrent()->GetField()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
+//    system.GetEnvironment()->GetOcean()->GetCurrent()->GetField()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
+    system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()->Set(m_angle, m_speed, m_angleUnit, m_speedUnit, m_frame, m_convention);
 
 }
 
@@ -150,7 +151,7 @@ TEST_F(TestFrUniformCurrent_, StepFinalize) {
 }
 
 TEST_F(TestFrUniformCurrent_, GetField) {
-    auto field = system.GetEnvironment()->GetOcean()->GetCurrent()->GetField();
+    auto field = system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform();
 }
 
 TEST_F(TestFrUniformCurrent_, TestWorldFluxVelocity) {
@@ -258,7 +259,7 @@ void TestFrCurrentForce_::TestForce() {
     Torque torqueTemp;
 
     for (unsigned int i=0; i<current_speed.size(); i++) {
-        system.GetEnvironment()->GetOcean()->GetCurrent()->GetField()->Set(current_dir(i), current_speed(i), angleUnit, speedUnit, frame, convention);
+        system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()->Set(current_dir(i), current_speed(i), angleUnit, speedUnit, frame, convention);
         force->Update(false);
         force->GetForceInWorld(forceTemp, NWU);
         force->GetTorqueInBodyAtCOG(torqueTemp, NWU);

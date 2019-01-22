@@ -29,8 +29,8 @@ TEST(FrWaveField,regularWaveField){
     auto k = omega * omega / system.GetGravityAcceleration();
     auto waveLength =  2.*M_PI/k;
 
-    // Set depth to infinite (H>>3*waveLength)
-    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(-4 * waveLength, fc);
+    // Set depth to infinite
+    system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
 
     // Set the waveField to AiryRegular
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
@@ -186,8 +186,9 @@ TEST(FrWaveField,BiChromaticWaveInfDepth) {
     FrOffshoreSystem_ system;
 
     // Set depth to infinite
+    system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
     double depth = -1000;
-    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(depth, fc);
+//    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(depth, fc);
 
     // Set the waveField to AiryRegular
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
@@ -421,8 +422,9 @@ TEST(FrWaveField,BiDirectionalWaveInfDepth) {
     FrOffshoreSystem_ system;
 
     // Set depth to infinite
+    system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
     double depth = -1000;
-    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(depth, fc);
+//    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(depth, fc);
 
     // Set the waveField to AiryRegular
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();

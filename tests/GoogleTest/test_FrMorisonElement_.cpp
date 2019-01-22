@@ -217,6 +217,8 @@ MorisonCoeff TestMorison::ReadMorisonCoeff(FrHDF5Reader& reader, std::string fie
 void TestMorison::SetUp() {
     body = std::make_shared<FrBody_>();
     system.AddBody(body);
+//    system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
+//    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(-41.38,NWU);
 }
 
 void TestMorison::LoadData(std::string filename) {
@@ -237,7 +239,9 @@ void TestMorison::LoadData(std::string filename) {
     body->SetPosition(pointRef, NWU);
 
     auto posCOG = ReadVector<Position>(reader, group + "COG");
-    body->SetCOG(posCOG, NWU);
+
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(posCOG,FrRotation_(),NWU),NWU);
+    body->SetInertiaTensor(InertiaTensor);
 
     auto direction = ReadVector<Direction>(reader, group + "RotationDirection");
     direction.normalize();

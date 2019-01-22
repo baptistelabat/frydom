@@ -3,6 +3,7 @@
 //
 
 #include "FrMorisonForce.h"
+#include "frydom/hydrodynamics/FrMorisonModel.h"
 
 namespace frydom {
 
@@ -87,6 +88,7 @@ namespace frydom {
 
     void FrMorisonForce_::Initialize() {
 
+        FrForce_::Initialize();
         m_model->Initialize();
     }
 

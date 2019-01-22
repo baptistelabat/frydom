@@ -432,20 +432,20 @@ namespace frydom {
         m_tidal             = std::make_unique<FrTidal_>(this);
         m_freeSurfaceGridAsset    = std::make_shared<FrFreeSurfaceGridAsset>(ocean->GetEnvironment()->GetSystem()->GetWorldBody().get(),this);
 
-        CreateFreeSurfaceBody();
+//        CreateFreeSurfaceBody();
     }
 
-    void FrFreeSurface_::CreateFreeSurfaceBody() {
-
-        m_body = std::make_shared<FrBody_>();
-        m_body->SetName("FreeSurface");
-        m_body->SetPosition(Position(0., 0., 0.), NWU);
-        m_body->SetBodyFixed(true);
-        m_body->SetCollide(false);
-
-        m_ocean->GetEnvironment()->GetSystem()->AddBody(m_body);
-
-    }
+//    void FrFreeSurface_::CreateFreeSurfaceBody() {
+//
+//        m_body = std::make_shared<FrBody_>();
+//        m_body->SetName("FreeSurface");
+//        m_body->SetPosition(Position(0., 0., 0.), NWU);
+//        m_body->SetBodyFixed(true);
+//        m_body->SetCollide(false);
+//
+//        m_ocean->GetEnvironment()->GetSystem()->AddBody(m_body);
+//
+//    }
 
     FrAtmosphere_ *FrFreeSurface_::GetAtmosphere() const { return m_ocean->GetEnvironment()->GetAtmosphere(); }
 

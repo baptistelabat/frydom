@@ -366,6 +366,15 @@ namespace frydom {
 
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>><<< REFACTORING
 
+    class FrMorisonCompositeElement_;
+
+    std::shared_ptr<FrMorisonCompositeElement_> make_MorisonModel(FrBody_* body);
+
+//    std::shared_ptr<FrMorisonCompositeElement_> make_MorisonModel(FrBody_* body, FrFrame_& Frame){
+//            return std::make_shared<FrMorisonCompositeElement_>(body, Frame);
+//    }
+
+
 
     // --------------------------------------------------------------------------
     // MORISON ELEMENT
@@ -380,6 +389,7 @@ namespace frydom {
         Torque m_torque;                    ///< Torque at COG of the body in body-coordinates
 
         bool m_includeCurrent;              ///< Include current flow in morison element model
+        bool m_extendedModel = false;                   ///< If true the inertial component of the morison force is used (false by dafault)
 
     public:
         /// Set the local frame of the morison model from node positions
@@ -414,6 +424,10 @@ namespace frydom {
         /// Include current flow in the morison model
         /// \param includeCurrent Boolean, if true the current is included in morison model
         virtual void SetIncludeCurrent(bool includeCurrent) { m_includeCurrent = includeCurrent; }
+
+        /// Defines if the inertial component with added mass is used (false by default)
+        /// \param extendedModel Boolean, if true inertial component is used
+        void SetExtendedModel(bool extendedModel) { m_extendedModel = extendedModel; }
 
         /// Update the force of the morison model
         /// \param time Current time of the simulation from begining (in seconds)
@@ -478,7 +492,6 @@ namespace frydom {
         std::shared_ptr<FrNode_> m_nodeB;               ///< Second extremity node of the morison element
 
         MorisonElementProperty m_property;              ///< Container of the morison property (diameter, drag coeff...)
-        bool m_extendedModel = false;                   ///< If true the inertial component of the morison force is used (false by dafault)
 
 
     public:
@@ -561,10 +574,6 @@ namespace frydom {
         /// Get the length of the morison element
         /// \return length in meter
         double GetLength() const { return m_property.length; }
-
-        /// Defines if the inertial component with added mass is used (false by default)
-        /// \param extendedModel Boolean, if true inertial component is used
-        void SetExtendedModel(bool extendedModel) { m_extendedModel = extendedModel; }
 
         //
         // UPDATE

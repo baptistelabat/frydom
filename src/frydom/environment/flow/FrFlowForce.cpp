@@ -114,6 +114,10 @@ namespace frydom {
         SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
     }
 
+    void FrFlowForce::Initialize() {
+        FrForce_::Initialize();
+    }
+
     void FrCurrentForce2_::Update(double time) {
 
         FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);

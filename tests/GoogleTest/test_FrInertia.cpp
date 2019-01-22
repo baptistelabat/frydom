@@ -76,8 +76,11 @@ void TestInertia::SetUp() {
     body = system.NewBody();
     body->SetPosition(m_BodyPositionInWorld, NWU);
     body->SetRotation(FrUnitQuaternion_(m_BodyRotationDirection, m_BodyRotationAngle, NWU));
-    body->SetCOG(m_COG, NWU);
-    body->SetMass(m_BodyMass);
+
+    body->SetInertiaTensor(FrInertiaTensor_(m_BodyMass,0.,0.,0.,0.,0.,0.,FrFrame_(m_COG,FrRotation_(),NWU),NWU));
+//    body->SetInertiaTensor(FrInertiaTensor_(m_BodyMass,m_COG,NWU));
+//    body->SetCOG(m_COG, NWU);
+//    body->SetMass(m_BodyMass);
 
     system.Initialize();
 
@@ -120,12 +123,13 @@ TEST_F(TestInertia, InertiaAtCOG) {
 
 TEST_F(TestInertia, BodyInertiaAtCOG) {
 
-    body->SetInertiaParams(m_BodyMass,
-       m_InertialInBodyAtCOG(0, 0), m_InertialInBodyAtCOG(1, 1), m_InertialInBodyAtCOG(2, 2),
-       m_InertialInBodyAtCOG(0, 1), m_InertialInBodyAtCOG(0, 2), m_InertialInBodyAtCOG(1, 2),
-       body->GetFrameAtCOG(NWU), NWU);
+    FrInertiaTensor_ InertiaTensor(m_BodyMass,
+                                   m_InertialInBodyAtCOG(0, 0), m_InertialInBodyAtCOG(1, 1), m_InertialInBodyAtCOG(2, 2),
+                                   m_InertialInBodyAtCOG(0, 1), m_InertialInBodyAtCOG(0, 2), m_InertialInBodyAtCOG(1, 2),
+                                   body->GetFrameAtCOG(NWU), NWU);
+    body->SetInertiaTensor(InertiaTensor);
 
-    inertia = std::make_shared<FrInertiaTensor_>(body->GetInertiaParams());
+    inertia = std::make_shared<FrInertiaTensor_>(body->GetInertiaTensor(NWU));
     this->CheckInertiaAtCOG();
 }
 
@@ -133,23 +137,28 @@ TEST_F(TestInertia, BodyInertiaInFrame) {
 
     auto frame = FrFrame_(m_PointInBody, FrRotation_(m_FrameRotationDirection, m_FrameRotationAngle, NWU), NWU);
 
-    body->SetInertiaParams(m_BodyMass,
-       m_InertialInFrameAtPoint(0, 0), m_InertialInFrameAtPoint(1, 1), m_InertialInFrameAtPoint(2, 2),
-       m_InertialInFrameAtPoint(0, 1), m_InertialInFrameAtPoint(0, 2), m_InertialInFrameAtPoint(1, 2),
-       frame, body->GetCOG(NWU), NWU);
 
-    inertia = std::make_shared<FrInertiaTensor_>(body->GetInertiaParams());
+    body->SetInertiaTensor(FrInertiaTensor_ (m_BodyMass,
+                                             m_InertialInFrameAtPoint(0, 0), m_InertialInFrameAtPoint(1, 1),
+                                             m_InertialInFrameAtPoint(2, 2),
+                                             m_InertialInFrameAtPoint(0, 1), m_InertialInFrameAtPoint(0, 2),
+                                             m_InertialInFrameAtPoint(1, 2),
+                                             frame, body->GetCOG(NWU), NWU));
+
+    inertia = std::make_shared<FrInertiaTensor_>(body->GetInertiaTensor(NWU));
     this->CheckInertiaAtCOG();
 }
 
 TEST_F(TestInertia, BodyInertia) {
 
-    body->SetInertiaParams(FrInertiaTensor_(m_BodyMass,
-       m_InertialInBodyAtCOG(0, 0), m_InertialInBodyAtCOG(1, 1), m_InertialInBodyAtCOG(2, 2),
-       m_InertialInBodyAtCOG(0, 1), m_InertialInBodyAtCOG(0, 2), m_InertialInBodyAtCOG(1, 2),
-       FrFrame_(body->GetCOG(NWU), FrRotation_(), NWU), NWU));
+    body->SetInertiaTensor(FrInertiaTensor_(m_BodyMass,
+                                            m_InertialInBodyAtCOG(0, 0), m_InertialInBodyAtCOG(1, 1),
+                                            m_InertialInBodyAtCOG(2, 2),
+                                            m_InertialInBodyAtCOG(0, 1), m_InertialInBodyAtCOG(0, 2),
+                                            m_InertialInBodyAtCOG(1, 2),
+                                            FrFrame_(body->GetCOG(NWU), FrRotation_(), NWU), NWU));
 
-    inertia = std::make_shared<FrInertiaTensor_>(body->GetInertiaParams());
+    inertia = std::make_shared<FrInertiaTensor_>(body->GetInertiaTensor(NWU));
     this->CheckInertiaAtCOG();
 }
 

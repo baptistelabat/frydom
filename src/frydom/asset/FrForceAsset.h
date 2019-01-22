@@ -7,7 +7,8 @@
 
 #include "chrono/assets/ChGlyphs.h"
 #include "chrono/physics/ChBody.h"
-#include "FrForce.h"
+#include "frydom/core/FrForce.h"
+#include "frydom/asset/FrAsset.h"
 
 
 // Cet asset doit etre ajoute directement au corps qui contient la force
@@ -50,6 +51,70 @@ namespace frydom {
         }
 
     };
+
+
+
+
+
+
+
+
+
+
+
+
+    //>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+
+
+
+    class FrForceAsset_;
+
+    namespace internal{
+
+        struct FrForceAssetBase_ : public chrono::ChGlyphs {
+
+            FrForceAsset_ * m_frydomForceAsset;
+
+            explicit FrForceAssetBase_(FrForceAsset_ * forceAsset);
+
+            void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) override;
+
+        };
+
+    }
+
+
+    class FrForceAsset_ : public FrAsset {
+
+    private:
+        std::shared_ptr<internal::FrForceAssetBase_> m_chronoAsset;
+
+        FrForce_* m_force;  //< The force that this asset represents
+        double OrderOfMagnitude;
+        bool adaptive_OOM;
+
+        double m_CharacteristicLength;
+        chrono::ChColor m_symbolscolor;
+        bool inverse_direction;
+
+        // TODO ajouter flag pour dire si on affiche la force qui s'applique ou la force delivree pour la visu (propulseurs...)
+
+    protected:
+        std::shared_ptr<chrono::ChAsset> GetChronoAsset() override;
+
+    public:
+
+        explicit FrForceAsset_(FrForce_* force);
+
+        void Update();
+
+        friend void FrBody_::RemoveExternalForce(std::shared_ptr<frydom::FrForce_>);
+
+    };
+
+
+
 
 }  // end of frydom namespace
 
