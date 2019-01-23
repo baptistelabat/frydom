@@ -9,6 +9,7 @@
 #include "frydom/core/FrNode.h"
 //#include "chrono/physics/ChLink.h"
 
+#include "frydom/core/FrPhysicsItem.h"
 #include "frydom/core/FrOffshoreSystem.h"
 
 namespace frydom {
@@ -135,11 +136,9 @@ namespace frydom {
 
 
     /// Abstract base class for cables
-    class FrCable_ : public FrObject {
+    class FrCable_ : public FrMidPhysicsItem_ {
 
     protected:
-
-        FrOffshoreSystem_* m_system;
 
         double m_time = 0.;
         double m_time_step = 0.;
@@ -161,26 +160,24 @@ namespace frydom {
 
         FrCable_(const std::shared_ptr<FrNode_> startingNode,
                  const std::shared_ptr<FrNode_> endingNode,
-                 const double cableLength,
-                 const double youngModulus,
-                 const double sectionArea,
-                 const double linearDensity);
+                 double cableLength,
+                 double youngModulus,
+                 double sectionArea,
+                 double linearDensity);
 
         ~FrCable_();
 
-        FrOffshoreSystem_* GetSystem();
+        void SetYoungModulus(double E);
 
-        void SetYoungModulus(const double E) { m_youngModulus = E; }
+        double GetYoungModulus() const;
 
-        double GetYoungModulus() const { return m_youngModulus; }
+        void SetSectionArea(double A);
 
-        void SetSectionArea(const double A) { m_sectionArea = A; }
+        double GetSectionArea() const;
 
-        double GetSectionArea() const { return m_sectionArea; }
+        void SetCableLength(double L);
 
-        void SetCableLength(const double L) { m_cableLength = L; }
-
-        double GetCableLength() const { return m_cableLength; }
+        double GetCableLength() const;
 
 //        /// Definition of the linear unrolling speed of the cable in m/s
 //        void SetUnrollingSpeed(const double unrollingSpeed) { m_unrollingSpeed = unrollingSpeed; }
@@ -188,59 +185,31 @@ namespace frydom {
 //        /// Return the linear unrolling speed of the cable in m/s
 //        double GetUnrollingSpeed() const { return m_unrollingSpeed; }
 
-        void SetDiameter(const double d) {
-            m_sectionArea = M_PI * pow(d*0.5, 2);
-        }
+        void SetDiameter(double d);
 
-        double GetDiameter() const {
-            return sqrt(4. * m_sectionArea / M_PI);
-        }
+        double GetDiameter() const;
 
-        double GetEA() const {
-            return m_youngModulus * m_sectionArea;
-        }
+        double GetEA() const;
 
-        void SetLinearDensity(const double lambda) { m_linearDensity = lambda; }
+        void SetLinearDensity(double lambda);
 
-        double GetLinearDensity() const { return m_linearDensity; }
+        double GetLinearDensity() const;
 
-        void SetDensity(const double rho) {
-            m_linearDensity = rho * m_sectionArea;
-        }
+        void SetDensity(double rho);
 
-        double GetDensity() const {
-            return m_linearDensity / m_sectionArea;
-        }
+        double GetDensity() const;
 
-        void SetStartingNode(std::shared_ptr<FrNode_> startingNode) {
-            // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
-            m_startNode = startingNode;
-        }
+        void SetStartingNode(std::shared_ptr<FrNode_> startingNode);
 
-        std::shared_ptr<FrNode_> GetStartingNode() const {
-            return m_startNode;
-        }
+        std::shared_ptr<FrNode_> GetStartingNode() const;
 
-        void SetEndingNode(std::shared_ptr<FrNode_> endingNode) {
-            // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
-            m_endNode = endingNode;
-        }
+        void SetEndingNode(std::shared_ptr<FrNode_> endingNode);
 
-        std::shared_ptr<FrNode_> GetEndingNode() const {
-            return m_endNode;
-        }
+        std::shared_ptr<FrNode_> GetEndingNode() const;
 
-        virtual Force GetTension(const double s) const = 0;
+        virtual Force GetTension(double s) const = 0;
 
-        virtual Position GetAbsPosition(const double s) const = 0;
-
-
-    private:
-        virtual std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() = 0;
-
-        friend void FrOffshoreSystem_::AddCable(std::shared_ptr<FrCable_>);
-
-
+        virtual Position GetAbsPosition(double s) const = 0;
 
     };
 
