@@ -333,7 +333,13 @@ namespace frydom {
 
         unsigned long N = y.size();
 
-        assert(N > 1);
+        //assert(N > 1);
+        if (N <= 1) {
+            auto res = Vector6d<double>();
+            res.SetNull();
+            return res;
+        }
+
         assert(x.size() == N);
 
         double dx1 = x[1] - x[0];
@@ -402,6 +408,7 @@ namespace frydom {
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
             m_recorder[BEMBody->get()] = FrTimeRecorder_<GeneralizedVelocity>(Te, dt);
+            m_recorder[BEMBody->get()].Initialize();
         }
     }
 
@@ -415,13 +422,21 @@ namespace frydom {
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
 
+            std::cout << "First loop " << std::endl;
+
             auto radiationForce = GeneralizedForce();
 
             for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion != m_HDB->end(); ++BEMBodyMotion) {
 
+                std::cout << "Second loop" << std::endl;
+
+                std::cout << "Velocity " << std::endl;
                 auto velocity = m_recorder[BEMBodyMotion->get()].GetData();
+
+                std::cout << "Vtime" << std::endl;
                 auto vtime = m_recorder[BEMBodyMotion->get()].GetTime();
 
+                std::cout << "Loop on dof" << std::endl;
                 for (unsigned int idof = 0; idof < 6; idof++) {
 
                     auto interpK = BEMBody->get()->GetIRFInterpolatorK(BEMBodyMotion->get(), idof);
@@ -455,7 +470,18 @@ namespace frydom {
 
     void FrRadiationConvolutionModel_::GetImpulseResponseSize(double &Te, double &dt, unsigned int &N) const {
 
-        // TODO
+        auto timeStep = m_system->GetTimeStep();
+
+        auto freqStep = m_HDB->GetStepFrequency();
+
+        Te = 0.5 * MU_2PI / freqStep;
+
+        N = (unsigned int)floor(Te / timeStep);
+
+        dt = Te / double(N-1);
+
+        // ##CC
+        std::cout << "Impulse response : Te = " << Te << " ; dt = " << dt << std::endl;
 
     }
 

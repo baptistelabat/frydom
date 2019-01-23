@@ -7,6 +7,7 @@
 
 
 #include "frydom/core/FrForce.h"
+#include "FrRadiationModel.h"
 
 
 namespace frydom {
@@ -73,8 +74,6 @@ namespace frydom {
 
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
-    class FrRadiationModel_;
-
     class FrRadiationForce_ : public FrForce_ {
 
     protected:
@@ -91,13 +90,11 @@ namespace frydom {
 
         std::shared_ptr<FrRadiationModel_> GetRadiationModel() const;
 
+        void StepFinalize() override { }
+
     };
 
 
-
-
-
-    class FrRadiationConvolutionModel_;
 
     class FrRadiationConvolutionForce_: public FrRadiationForce_ {
 

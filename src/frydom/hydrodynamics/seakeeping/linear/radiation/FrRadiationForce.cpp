@@ -90,7 +90,6 @@ namespace frydom {
     }
 
     void FrRadiationConvolutionForce_::Update(double time) {
-        m_radiationModel->Update(time);
 
         auto force = m_radiationModel->GetRadiationForce(m_body);
         auto torque = m_radiationModel->GetRadiationTorque(m_body);

@@ -50,6 +50,7 @@ set(FRYDOM_TESTS
         test_loading_new_hdb
         test_body_mapper
         test_hydrostatic_new_hdb
+        test_radiation_model
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")

@@ -233,6 +233,8 @@ namespace frydom {
             m_data.push_front(data);
             m_lastTime = time;
             m_prevTime = time;
+            // ##CC
+            std::cout << "data size : " << m_data.size() << std::endl;
             return;
         }
 
@@ -271,11 +273,16 @@ namespace frydom {
     std::vector<double> FrTimeRecorder_<T>::GetTime() const {
 
         std::vector<double> vtime;
-        vtime.push_back(0.);
-        vtime.push_back(m_deltaTime);
 
-        for (int i=1; i<m_data.size()-1; ++i) {
-            vtime.push_back(m_deltaTime + i* m_timeStep);
+        vtime.push_back(0.);
+
+        if (m_deltaTime > FLT_EPSILON && m_data.size() > 1) {
+            for (int i = 0; i < m_data.size() - 1; ++i) {
+                // ##CC
+                //std::cout << " i = " << i << std::endl;
+                // ##CC
+                vtime.push_back(m_deltaTime + i * m_timeStep);
+            }
         }
 
         return vtime;
