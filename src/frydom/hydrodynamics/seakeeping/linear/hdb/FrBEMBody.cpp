@@ -801,16 +801,25 @@ namespace frydom {
     // FrWaveDriftPolarCoeff
     //
 
-    FrWaveDriftPolarData::FrWaveDriftPolarData(std::vector<double> angles, std::vector<double> freqs,
-                                               std::vector<double> coeffs)
-    : m_angles(angles), m_freqs(freqs), m_data(coeffs) {
-
+    FrWaveDriftPolarData::FrWaveDriftPolarData() {
         m_table = std::make_unique<mathutils::LookupTable2d<>>();
-        m_table->SetX(m_angles);
-        m_table->SetY(m_freqs);
-        m_table->AddData("Data", coeffs);
     }
 
+    void FrWaveDriftPolarData::SetAngles(const std::vector<double>& angles) {
+        m_table->SetX(angles);
+    }
+
+    void FrWaveDriftPolarData::SetFrequencies(const std::vector<double>& freqs) {
+        m_table->SetY(freqs);
+    }
+
+    void FrWaveDriftPolarData::AddData(std::string& name, std::vector<double> coeffs) {
+        m_table->AddData(name, coeffs);
+    }
+
+    //
+    // FrBEMBody
+    //
 
     unsigned int FrBEMBody_::GetNbFrequencies() const {
         return m_HDB->GetNbFrequencies();
@@ -983,13 +992,16 @@ namespace frydom {
         }
     }
 
-    void FrBEMBody_::SetWaveDrift(const std::vector<double>& headings, const std::vector<double>& freqs,
-                                  const std::vector<double>& coeffs) {
-        m_waveDrift.push_back( std::make_unique<FrWaveDriftPolarData>(headings, freqs, coeffs));
+    void FrBEMBody_::SetStiffnessMatrix(const Matrix33<double>& hydrostaticStiffnessMatrix) {
+        m_hydrostaticStiffnessMatrix = hydrostaticStiffnessMatrix;
     }
 
-    void FrBEMBody_::SetStiffnessMatrix(Matrix33<double> hydrostaticStiffnessMatrix) {
-        m_hydrostaticStiffnessMatrix = hydrostaticStiffnessMatrix;
+    void FrBEMBody_::SetStiffnessMatrix(const Matrix66<double>& hydrostaticStiffnessMatrix) {
+        m_hydrostaticStiffnessMatrix = hydrostaticStiffnessMatrix.block<3, 3>(2, 2);
+    }
+
+    void FrBEMBody_::SetWaveDrift() {
+        m_waveDrift = std::make_unique<FrWaveDriftPolarData>();
     }
 
     //
@@ -1133,5 +1145,8 @@ namespace frydom {
         return Fexc;
     }
 
+    FrWaveDriftPolarData* FrBEMBody_::GetWaveDrift() const {
+        return m_waveDrift.get();
+    }
 
 }  // end namespace frydom

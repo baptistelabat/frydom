@@ -247,7 +247,7 @@ namespace frydom {
 
         FrBEMBody_* NewBody(std::string bodyName);
 
-        FrBEMBody_* GetBody(unsigned int ibody);
+        FrBEMBody_* GetBody(int ibody);
 
         FrBEMBody_* GetBody(std::shared_ptr<FrBody_> body);
 

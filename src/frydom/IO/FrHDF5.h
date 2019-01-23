@@ -63,7 +63,7 @@ namespace frydom {
 
         void CreateDataset(std::string h5Path); // A rendre polymorphe pour les differents types de donnees
 
-        bool GroupExist(std::string h5Path) const;
+        bool GroupExist(const std::string& h5Path) const;
 
 //        void SearchGroup(std::string& h5Path) {}
 

@@ -367,7 +367,7 @@ namespace frydom {
         return m_mapper->GetBEMBody(body);
     }
 
-    FrBEMBody_* FrHydroDB_::GetBody(unsigned int ibody) {
+    FrBEMBody_* FrHydroDB_::GetBody(int ibody) {
         return m_bodies[ibody].get();
     }
 
@@ -465,11 +465,11 @@ namespace frydom {
             this->RadiationReader(reader, ibodyPath, BEMBody);
 
             if (reader.GroupExist(ibodyPath + "/WaveDrift")) {
-                this->WaveDriftReader(reader, ibodyPath, BEMBody);
+                this->WaveDriftReader(reader, ibodyPath + "/WaveDrift", BEMBody);
             }
 
             if (reader.GroupExist(ibodyPath + "/Hydrostatic")) {
-                this->HydrostaticReader(reader, ibodyPath, BEMBody);
+                this->HydrostaticReader(reader, ibodyPath + "/Hydrostatic", BEMBody);
             }
 
             this->GetBody(ibody)->Finalize();
@@ -610,47 +610,51 @@ namespace frydom {
 
     void FrHydroDB_::WaveDriftReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
 
+        BEMBody->SetWaveDrift();
+
         char buffer[20];
+        auto listMode = {"surge", "sway", "heave", "roll", "pitch", "yaw"};
 
-        std::string modePath = path + "mode_";
-        std::string headPath = path + "heading_";
+        auto data = reader.ReadDoubleArraySTD(path + "/freq");
+        auto freqs = std::vector<double>(data[0]);
 
-        bool xSym = (bool)reader.ReadBool(path + "sym_x");
-        bool ySym = (bool)reader.ReadBool(path + "sym_y");
-        int nbModes = reader.ReadInt(path + "n_modes");
+        BEMBody->GetWaveDrift()->SetFrequencies(freqs);
+        BEMBody->GetWaveDrift()->SetAngles(GetWaveDirections());
 
-        for (unsigned int imode=1; imode<=nbModes; ++imode) {
+        bool xSym = (bool)reader.ReadBool(path + "/sym_x");
+        bool ySym = (bool)reader.ReadBool(path + "/sym_y");
 
-            sprintf(buffer, "%d", imode);
-            auto imodePath = modePath + buffer;
+        auto nbWaveDirection = GetNbWaveDirections();
 
-            auto nbAngles = reader.ReadInt(imodePath + "/n_dir");
-            auto coeffs = std::vector<double>();
-            auto headings = std::vector<double>();
+        for (std::string mode: listMode) {
 
-            for (unsigned int idir=1; idir<=nbAngles; ++idir) {
+            auto modePath = path + "/" + mode;
 
-                sprintf(buffer, "%d", idir);
-                auto idirPath = imodePath + headPath + buffer;
+            if (reader.GroupExist(modePath)) {
 
-                auto angle = reader.ReadDouble(idirPath + "/heading");
-                headings.push_back(angle);
+                auto coeffs = std::vector<double>();
+                //auto headings = std::vector<double>();
 
-                auto data = reader.ReadDoubleArraySTD(idirPath + "/data");
-                coeffs.insert(std::end(coeffs), std::begin(data[0]), std::end(data[0]));
+                for (unsigned int i_dir=0; i_dir<nbWaveDirection; ++i_dir) {
+
+                    sprintf(buffer, "%d", i_dir);
+                    auto idirPath = modePath + "/heading_" + buffer;
+
+                    //auto angle = reader.ReadDouble(idirPath + "/heading");
+                    //headings.push_back(angle);
+
+                    auto data = reader.ReadDoubleArraySTD(idirPath + "/data");
+                    coeffs.insert(std::end(coeffs), std::begin(data[0]), std::end(data[0]));
+                }
+
+                BEMBody->GetWaveDrift()->AddData(mode, coeffs);
             }
-
-            auto data = reader.ReadDoubleArraySTD(imodePath + "/freq");
-            auto freqs = std::vector<double>(data[0]);
-
-            BEMBody->SetWaveDrift(headings, freqs, coeffs);
-
         }
     }
 
     void FrHydroDB_::HydrostaticReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
 
-        auto matrix = reader.ReadDoubleArray(path + "/stiffness_matrix");
+        Matrix66<double> matrix = reader.ReadDoubleArray(path + "/StiffnessMatrix");
         BEMBody->SetStiffnessMatrix(matrix);
     }
 
