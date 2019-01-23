@@ -12,7 +12,7 @@
 #include "FrFrame.h"
 
 
-
+//#include "frydom/core/link/FrLink.h"
 
 
 namespace frydom {
@@ -243,6 +243,7 @@ namespace frydom {
             return worldVector;
         }
 
+//        friend void FrLink_::SetMarkers(FrNode_*, FrNode_*);
 
     };
 

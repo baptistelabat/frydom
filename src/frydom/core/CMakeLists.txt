@@ -36,6 +36,8 @@ list(APPEND SRC_FILES
 # LINK
 list(APPEND SRC_FILES
 
+        link/FrLink.cpp
+
         link/actuators/FrAngularActuatorAngle.cpp
         link/actuators/FrAngularActuatorVelocity.cpp
         link/actuators/FrAngularActuatorTorque.cpp
