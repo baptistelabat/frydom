@@ -383,7 +383,7 @@ namespace frydom {
         m_mapper->Map(BEMBody, body, eqFrame);
     }
 
-    void FrHydroDB_::Map(unsigned int iBEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame) {
+    void FrHydroDB_::Map(int iBEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame) {
         m_mapper->Map(m_bodies[iBEMBody].get(), body, eqFrame);
     }
 
@@ -397,6 +397,8 @@ namespace frydom {
         m_normalizationLength = reader.ReadDouble("/NormalizationLength");
         m_waterDepth = reader.ReadDouble("/WaterDepth");
         m_nbody = reader.ReadInt("/NbBody");
+
+        m_mapper = std::make_unique<FrHydroMapper_>();
 
         // ----> Reading discretization path
 

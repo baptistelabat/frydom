@@ -259,7 +259,7 @@ namespace frydom {
 
         void Map(FrBEMBody_* BEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame);
 
-        void Map(unsigned int iBEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame);
+        void Map(int iBEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame);
 
         std::vector<std::unique_ptr<FrBEMBody_>>::iterator begin() { return m_bodies.begin(); }
 

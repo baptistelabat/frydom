@@ -88,7 +88,7 @@ namespace frydom {
     private:
         FrHydroDB_* m_HDB;
         FrLinearHydrostaticStiffnessMatrix_ m_stiffnessMatrix;      ///< Hydrostatic stiffness matrix
-        std::shared_ptr<FrEquilibriumFrame_> m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
+        FrEquilibriumFrame_* m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
 
     public:
         FrLinearHydrostaticForce_(FrHydroDB_* HDB) : m_HDB(HDB) { }

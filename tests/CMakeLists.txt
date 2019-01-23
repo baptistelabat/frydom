@@ -48,6 +48,8 @@ set(FRYDOM_TESTS
 #        test_TimeRecorder
 #        test_FrEquilibriumFrame
         test_loading_new_hdb
+        test_body_mapper
+        test_hydrostatic_new_hdb
         )
 
 set(CMAKE_CXX_FLAGS " -lIrrlicht")
