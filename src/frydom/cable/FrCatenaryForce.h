@@ -31,6 +31,36 @@ namespace frydom {
 
     };
 
+
+
+
+
+
+
+
+
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTO
+
+
+    class FrCatenaryLine_;
+
+    class FrCatenaryForce_ : public FrForce_ {
+
+    private:
+
+        FrCatenaryLine_* m_line; ///< The parent line
+        line_side m_line_side;  ///< The side of the line where the tension is applied
+
+    public:
+
+        FrCatenaryForce_(FrCatenaryLine_* p_line, line_side p_side) : m_line(p_line), m_line_side(p_side) {};
+
+        void Update(double time) override;
+
+        void StepFinalize() override {};
+
+    };
+
 }  // end namespace frydom
 
 

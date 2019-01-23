@@ -146,12 +146,14 @@ namespace frydom {
         std::shared_ptr<FrNode_> m_startNode;
         std::shared_ptr<FrNode_> m_endNode;
 
-        double m_youngModulus; // FIXME: mettre des valeurs par defaut non verolees !!!
-        double m_sectionArea;
-        double m_cableLength;
-        double m_unrollingSpeed;                ///< linear unrolling speed of the cable in m/s
+        double m_youngModulus = 3.1416E10; // FIXME: mettre des valeurs par defaut non verolees !!!
+        double m_sectionArea = 0.05;
+        double m_cableLength = 100;
+        double m_unrollingSpeed = 0;                ///< linear unrolling speed of the cable in m/s
 
-        double m_linearDensity; // in kg/m
+        double m_linearDensity = 616.538; // in kg/m
+
+        double m_breakingTension = 0;               ///< breaking tension
 
 
     public:
@@ -175,9 +177,12 @@ namespace frydom {
 
         double GetSectionArea() const;
 
-        void SetCableLength(double L);
+        void SetUnstretchedLength(double L);
 
-        double GetCableLength() const;
+        double GetUnstretchedLength() const;
+
+        virtual double GetStretchedLength() const = 0;
+
 
 //        /// Definition of the linear unrolling speed of the cable in m/s
 //        void SetUnrollingSpeed(const double unrollingSpeed) { m_unrollingSpeed = unrollingSpeed; }
@@ -210,6 +215,10 @@ namespace frydom {
         virtual Force GetTension(double s) const = 0;
 
         virtual Position GetAbsPosition(double s) const = 0;
+
+        void SetBreakingTension(double tension);
+
+        double GetBreakingTension() const;
 
     };
 

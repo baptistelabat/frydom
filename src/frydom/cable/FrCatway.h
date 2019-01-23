@@ -118,7 +118,7 @@ namespace frydom {
         std::shared_ptr<CatenaryCableAsset> GetAsset();
 
     private:
-        std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() override;
+        std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() const override;
 
 
     };

@@ -172,7 +172,7 @@ namespace frydom {
         return m_asset;
     }
 
-    std::shared_ptr<chrono::ChPhysicsItem> FrCatway::GetChronoPhysicsItem() {
+    std::shared_ptr<chrono::ChPhysicsItem> FrCatway::GetChronoPhysicsItem() const {
         return m_catLine;
     }
 

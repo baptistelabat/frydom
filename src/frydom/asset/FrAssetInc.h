@@ -10,5 +10,6 @@
 #include "FrGridAsset.h"
 #include "FrFreeSurfaceGridAsset.h"
 #include "FrSeabedGridAsset.h"
+#include "FrCatenaryLineAsset_.h"
 
 #endif //FRYDOM_FRASSETINC_H

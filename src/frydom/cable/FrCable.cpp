@@ -8,6 +8,8 @@ namespace frydom {
 
     FrCable_::FrCable_() = default;
 
+    FrCable_::~FrCable_() = default;
+
     FrCable_::FrCable_(const std::shared_ptr<FrNode_> startingNode, const std::shared_ptr<FrNode_> endingNode,
                        double cableLength, double youngModulus, double sectionArea,
                        double linearDensity)
@@ -17,7 +19,8 @@ namespace frydom {
               m_unrollingSpeed(0.),
               m_youngModulus(youngModulus),
               m_sectionArea(sectionArea),
-              m_linearDensity(linearDensity) {}
+              m_linearDensity(linearDensity),
+              FrMidPhysicsItem_(){}
 
     void FrCable_::SetYoungModulus(double E) { m_youngModulus = E; }
 
@@ -27,9 +30,9 @@ namespace frydom {
 
     double FrCable_::GetSectionArea() const { return m_sectionArea; }
 
-    void FrCable_::SetCableLength(double L) { m_cableLength = L; }
+    void FrCable_::SetUnstretchedLength(double L) { m_cableLength = L; }
 
-    double FrCable_::GetCableLength() const { return m_cableLength; }
+    double FrCable_::GetUnstretchedLength() const { return m_cableLength; }
 
     void FrCable_::SetDiameter(double d) {
         m_sectionArea = M_PI * pow(d*0.5, 2);
@@ -73,7 +76,10 @@ namespace frydom {
         return m_endNode;
     }
 
+    void FrCable_::SetBreakingTension(double tension) {m_breakingTension = tension;}
 
-    FrCable_::~FrCable_() = default;
+    double FrCable_::GetBreakingTension() const { return m_breakingTension;}
+
+
 
 }
