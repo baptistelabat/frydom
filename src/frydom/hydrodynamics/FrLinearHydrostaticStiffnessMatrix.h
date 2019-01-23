@@ -9,7 +9,7 @@
 
 #include <chrono/core/ChVector.h>
 
-#include "frydom/core/FrMatrix.h"
+#include "frydom/core/math/FrMatrix.h"
 #include "MathUtils/Vector3d.h"
 
 namespace frydom {

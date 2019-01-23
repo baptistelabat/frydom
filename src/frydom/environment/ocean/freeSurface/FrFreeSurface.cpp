@@ -38,7 +38,7 @@
 #include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryIrregularOptimWaveField.h"
 
 
-#include "frydom/core/FrBody.h"
+#include "frydom/core/body/FrBody.h"
 
 
 namespace frydom {

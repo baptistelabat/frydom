@@ -2,28 +2,87 @@
 message(STATUS "    ...Core")
 
 set(SRC_FILES
-        FrObject.cpp
-        FrUnits.cpp
-        FrVector.cpp
-        FrMatrix.cpp
-        FrRotation.cpp
-        FrFrame.cpp
-        FrInertia.cpp
-        FrBody.cpp
-        FrLink.cpp
-        FrBodyEasy.cpp
-        FrColors.cpp
-        FrConvention.cpp
-        FrForce.cpp
-        FrHydroBody.cpp
-        FrNode.cpp
         FrOffshoreSystem.cpp
-        FrShip.cpp
-        FrSpringDampingForce.cpp
-        FrNodeDynamic.cpp
-        FrFunction.cpp
-        FrPhysicsItem.cpp
 )
+
+# BODY
+list(APPEND SRC_FILES
+        body/FrBody.cpp
+        body/FrBodyEasy.cpp
+        )
+
+# COMMON
+list(APPEND SRC_FILES
+        common/FrConvention.cpp
+        common/FrException.cpp
+        common/FrFrame.cpp
+        common/FrNode.cpp
+        common/FrObject.cpp
+        common/FrPhysicsItem.cpp
+        common/FrRotation.cpp
+        common/FrUnits.cpp
+        )
+
+# FORCE
+list(APPEND SRC_FILES
+        force/FrForce.cpp
+        )
+
+# FUNCTIONS
+list(APPEND SRC_FILES
+        functions/FrFunction.cpp
+        )
+
+# LINK
+list(APPEND SRC_FILES
+
+        link/actuators/FrAngularActuatorAngle.cpp
+        link/actuators/FrAngularActuatorVelocity.cpp
+        link/actuators/FrAngularActuatorTorque.cpp
+        link/actuators/FrLinearActuatorPosition.cpp
+        link/actuators/FrLinearActuatorVelocity.cpp
+        link/actuators/FrLinearActuatorForce.cpp
+
+        link/constraints/FrDistanceBetweenPointsConstraint.cpp
+        link/constraints/FrParallelConstraint.cpp
+        link/constraints/FrPerpendicularConstraint.cpp
+        link/constraints/FrPlaneOnPlaneConstraint.cpp
+        link/constraints/FrPointDistanceToAxisConstraint.cpp
+        link/constraints/FrPointOnLineConstraint.cpp
+        link/constraints/FrPointOnPlaneConstraint.cpp
+        link/constraints/FrPointOnSplineConstraint.cpp
+
+        link/links/FrCylindricalLink.cpp
+        link/links/FrFixedLink.cpp
+        link/links/FrFreeLink.cpp
+        link/links/FrPrismaticLink.cpp
+        link/links/FrRevoluteLink.cpp
+        link/links/FrScrewLink.cpp
+        link/links/FrSphericalLink.cpp
+
+        )
+
+# MATH
+list(APPEND SRC_FILES
+        math/FrMatrix.cpp
+        math/FrVector.cpp
+        )
+
+# MISC
+list(APPEND SRC_FILES
+        misc/FrColors.cpp
+        )
+
+# JUNK FIXME : a supprimer
+list(APPEND SRC_FILES
+        junk/FrHydroBody.cpp
+        junk/FrNodeDynamic.cpp
+        junk/FrShip.cpp
+        junk/FrSpringDampingForce.cpp
+        junk/FrUpdatable.cpp
+        )
+
+
 
 set(FRYDOM_CORE_SOURCES "")
 foreach(file ${SRC_FILES})

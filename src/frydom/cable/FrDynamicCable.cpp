@@ -4,7 +4,7 @@
 
 #include "FrDynamicCable.h"
 
-#include "frydom/core/FrBody.h"
+#include "frydom/core/body/FrBody.h"
 
 
 

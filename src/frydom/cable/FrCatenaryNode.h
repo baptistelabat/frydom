@@ -5,8 +5,8 @@
 #ifndef FRYDOM_FRCATENARYNODE_H
 #define FRYDOM_FRCATENARYNODE_H
 
-#include "frydom/core/FrObject.h"
-#include "frydom/core/FrForce.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/force/FrForce.h"
 #include <chrono/physics/ChMarker.h>
 #include "chrono/core/ChVector.h"
 

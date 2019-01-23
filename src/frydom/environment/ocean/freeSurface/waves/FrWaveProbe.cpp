@@ -4,8 +4,8 @@
 
 #include "FrWaveField.h"
 #include "FrWaveProbe.h"
-#include "frydom/core/FrHydroBody.h"
-#include "frydom/core/FrNode.h"
+#include "frydom/core/junk/FrHydroBody.h"
+#include "frydom/core/common/FrNode.h"
 
 
 namespace frydom {

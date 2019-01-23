@@ -7,8 +7,8 @@
 
 // FIXME: attention, on a d'autres fichiers FrHydrostaticForce.h et .cpp
 #include "chrono/physics/ChBody.h"
-#include <frydom/core/FrForce.h>
-#include <frydom/core/FrHydroBody.h>
+#include <frydom/core/force/FrForce.h>
+#include <frydom/core/junk/FrHydroBody.h>
 #include "FrLinearHydrostaticStiffnessMatrix.h"
 
 // <<<<<<<<<<<<<<<<<<< Additional include from refactoring

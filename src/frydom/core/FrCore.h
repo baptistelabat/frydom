@@ -5,25 +5,14 @@
 #ifndef FRYDOM_FRCORE_H_H
 #define FRYDOM_FRCORE_H_H
 
-#include "FrBody.h"
-#include "FrBodyEasy.h"
-#include "FrColors.h"
-#include "FrEulerAngles.h"
-#include "FrException.h"
-#include "FrForce.h"
-#include "FrFrame.h"
-#include "FrFunction.h"
-#include "FrConvention.h"
-#include "FrHydroBody.h"
-#include "FrInertia.h"
-#include "FrLink.h"
-#include "FrNode.h"
-#include "FrNodeDynamic.h"
-#include "FrObject.h"
-#include "FrOffshoreSystem.h"
-#include "FrRotation.h"
-#include "FrSpringDampingForce.h"
-#include "FrUnits.h"
-#include "FrVector.h"
+#include "body/FrBodyInc.h"
+#include "common/FrCommonInc.h"
+#include "force/FrForceInc.h"
+#include "functions/FrFunctionsInc.h"
+#include "link/FrLinkInc.h"
+#include "math/FrMathInc.h"
+#include "misc/FrMiscInc.h"
+
+#include "junk/JunkInc.h" // FIXME : a retirer !!!
 
 #endif //FRYDOM_FRCORE_H_H

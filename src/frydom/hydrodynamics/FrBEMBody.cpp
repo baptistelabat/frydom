@@ -8,7 +8,7 @@
 #include "frydom/utils/FrEigen.h"
 #include "FrHydroDB.h"
 #include "FrBEMBody.h"
-#include "frydom/core/FrHydroBody.h"
+#include "frydom/core/junk/FrHydroBody.h"
 
 
 using namespace mathutils;

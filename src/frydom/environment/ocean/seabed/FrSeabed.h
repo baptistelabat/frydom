@@ -5,8 +5,8 @@
 #ifndef FRYDOM_FRSEABED_H
 #define FRYDOM_FRSEABED_H
 
-#include "frydom/core/FrObject.h"
-#include "frydom/core/FrConvention.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/common/FrConvention.h"
 
 
 // Forward declarations of Chrono classes

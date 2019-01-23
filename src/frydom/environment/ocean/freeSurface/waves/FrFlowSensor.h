@@ -6,7 +6,7 @@
 #define FRYDOM_FRFLOWSENSOR_H
 
 
-#include "frydom/core/FrObject.h"
+#include "frydom/core/common/FrObject.h"
 
 #include "chrono/core/ChVector.h"
 

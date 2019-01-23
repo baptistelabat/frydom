@@ -5,13 +5,13 @@
 #ifndef FRYDOM_FRWIND_H
 #define FRYDOM_FRWIND_H
 
-#include "frydom/core/FrObject.h"
-#include "frydom/core/FrConvention.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/common/FrConvention.h"
 
 #include "frydom/environment/flow/FrUniformField.h"  // TODO : include a retirer
 
-#include "frydom/core/FrVector.h"
-#include "frydom/core/FrUnits.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrUnits.h"
 
 
 using namespace mathutils;

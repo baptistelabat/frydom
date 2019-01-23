@@ -7,11 +7,11 @@
 
 #include "chrono/physics/ChBody.h"
 
-#include "frydom/core/FrConvention.h"
+#include "frydom/core/common/FrConvention.h"
 
-#include "frydom/core/FrBody.h"
+#include "frydom/core/body/FrBody.h"
 
-#include "frydom/core/FrHydroBody.h"
+#include "frydom/core/junk/FrHydroBody.h"
 #include "frydom/IO/FrLoader.h"
 
 

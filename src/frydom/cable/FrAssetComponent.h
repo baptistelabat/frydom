@@ -7,7 +7,7 @@
 
 #include <chrono/assets/ChColorAsset.h>
 #include <chrono/assets/ChVisualization.h>
-#include "frydom/core/FrObject.h"
+#include "frydom/core/common/FrObject.h"
 
 namespace frydom {
 

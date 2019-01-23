@@ -7,12 +7,12 @@
 
 #include "chrono/core/ChVector.h"  // TODO supprimer a terme
 
-#include "frydom/core/FrObject.h"
+#include "frydom/core/common/FrObject.h"
 #include "FrFieldBase.h"
 
-#include "frydom/core/FrVector.h"
-#include "frydom/core/FrConvention.h"
-#include "frydom/core/FrUnits.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrConvention.h"
+#include "frydom/core/common/FrUnits.h"
 
 using namespace mathutils;
 

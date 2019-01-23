@@ -1,32 +1,36 @@
 message(STATUS "    ...hydrodynamics")
 
 set(SRC_FILES
-        FrFroudeKrylov.cpp
         FrBEMBody.cpp
         FrHydroDB.cpp
-        FrHydrostaticForce.cpp
         FrITTCResistance.cpp
         FrLinearDamping.cpp
         FrLinearExcitationForce.cpp
         FrLinearHydrostaticForce.cpp
         FrLinearHydrostaticStiffnessMatrix.cpp
-        FrMorrisonElement.cpp
-        FrMorrisonForce.cpp
         FrRadiationForce.cpp
-        FrTryalForce.cpp
         FrWaveDriftForce.cpp
         FrVelocityRecorder.cpp
         FrPositionRecorder.cpp
         FrRadiationModel.cpp
         FrHydroMapper.cpp
         FrHydroDBLoader.cpp
-        FrVariablesBEMBodyMass.cpp
         FrMorisonModel.cpp
         FrManoeuvringDamping.cpp
         FrQuadraticDamping.cpp
         FrMorisonForce.cpp
         FrEquilibriumFrame.cpp
 )
+
+# JUNK FIXME : a retirer
+list(APPEND SRC_FILES
+        junk/FrFroudeKrylov.cpp
+        junk/FrHydrostaticForce.cpp
+        junk/FrMorrisonForce.cpp
+        junk/FrMorrisonElement.cpp
+        junk/FrTryalForce.cpp
+        junk/FrVariablesBEMBodyMass.cpp
+        )
 
 set(FRYDOM_HYDRODYNAMICS_SOURCES "")
 foreach(file ${SRC_FILES})

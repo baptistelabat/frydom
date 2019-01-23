@@ -6,7 +6,7 @@
 #define FRYDOM_FRFLOWFORCE_H
 
 #include "MathUtils/Vector3d.h"
-#include "frydom/core/FrForce.h"
+#include "frydom/core/force/FrForce.h"
 #include "MathUtils/MathUtils.h"
 
 namespace frydom {

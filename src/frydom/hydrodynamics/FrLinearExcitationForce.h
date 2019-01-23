@@ -5,10 +5,10 @@
 #ifndef FRYDOM_FRLINEAREXCITATIONFORCE_H
 #define FRYDOM_FRLINEAREXCITATIONFORCE_H
 
-#include "frydom/core/FrForce.h"
+#include "frydom/core/force/FrForce.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
-#include "frydom/core/FrHydroBody.h"
+#include "frydom/core/junk/FrHydroBody.h"
 
 #include "FrHydroMapper.h"
 

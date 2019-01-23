@@ -4,14 +4,14 @@
 
 #include "chrono/core/ChQuaternion.h"
 #include "FrMorisonModel.h"
-#include "frydom/core/FrHydroBody.h"
+#include "frydom/core/junk/FrHydroBody.h"
 #include "frydom/hydrodynamics/FrMorisonForce.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrFlowSensor.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 
-#include "frydom/core/FrVector.h"
+#include "frydom/core/math/FrVector.h"
 #include "frydom/environment/ocean/FrOceanInc.h"
 #include "frydom/environment/flow/FrFlowInc.h"
 

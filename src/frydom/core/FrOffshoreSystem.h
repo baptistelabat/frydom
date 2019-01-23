@@ -21,7 +21,7 @@
 //#include "chrono/core/ChMatrixNM.h"
 //#include "chrono/core/ChMatrix33.h"
 //
-#include "FrObject.h"
+#include "frydom/core/common/FrObject.h"
 //#include "frydom/environment/waves/FrFreeSurface.h"
 //#include "frydom/environment/current/FrCurrent.h"
 //#include "frydom/core/FrBody.h"

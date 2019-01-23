@@ -8,7 +8,7 @@
 
 #include "FrCable.h"
 
-#include "frydom/core/FrForce.h"
+#include "frydom/core/force/FrForce.h"
 
 #include "catenary/CatenaryLine.h"
 #include "catenary/CatenaryNode.h"

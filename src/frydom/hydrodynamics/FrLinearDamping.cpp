@@ -4,10 +4,10 @@
 
 #include "MathUtils/Vector6d.h"
 
-#include <frydom/core/FrHydroBody.h> // TODO : Doit dirsparaitre
+#include <frydom/core/junk/FrHydroBody.h> // TODO : Doit dirsparaitre
 #include "FrLinearDamping.h"
 #include "chrono/physics/ChBody.h" // TODO : Doit disparaitre
-#include "frydom/core/FrException.h"
+#include "frydom/core/common/FrException.h"
 
 #include "frydom/environment/FrEnvironmentInc.h"
 

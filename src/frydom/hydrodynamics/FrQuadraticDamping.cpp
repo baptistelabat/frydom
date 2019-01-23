@@ -2,9 +2,9 @@
 // Created by Lucas Letournel on 12/09/18.
 //
 
-#include "frydom/core/FrBody.h"
+#include "frydom/core/body/FrBody.h"
 
-#include <frydom/core/FrHydroBody.h>
+#include <frydom/core/junk/FrHydroBody.h>
 #include "FrQuadraticDamping.h"
 
 #include "chrono/physics/ChBody.h"

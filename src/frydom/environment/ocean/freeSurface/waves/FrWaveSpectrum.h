@@ -8,7 +8,7 @@
 #include <vector>
 #include "MathUtils/MathUtils.h"
 
-#include "frydom/core/FrObject.h"
+#include "frydom/core/common/FrObject.h"
 
 using namespace mathutils;
 
@@ -730,7 +730,7 @@ namespace frydom {
     public:
         FrTestWaveSpectrum_() = default;
         double Eval(double w) const final;
-        
+
     };
 
 

@@ -6,15 +6,15 @@
 #include <chrono/utils/ChProfiler.h>
 #include "FrOffshoreSystem.h"
 
-#include "frydom/core/FrBody.h"
-#include "frydom/core/FrLink.h"
-#include "frydom/core/FrPhysicsItem.h"
+#include "frydom/core/body/FrBody.h"
+#include "frydom/core/link/FrLink.h"
+#include "frydom/core/common/FrPhysicsItem.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 
 #include "frydom/hydrodynamics/FrHydroMapper.h"
 #include "frydom/hydrodynamics/FrHydroDB.h"
-#include "FrBody.h"
+#include "frydom/core/body/FrBody.h"
 
 
 #include "frydom/cable/FrCable.h"

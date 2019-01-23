@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRCURRENTSTANDARDFORCE_H
 #define FRYDOM_FRCURRENTSTANDARDFORCE_H
 
-#include "frydom/core/FrForce.h"
+#include "frydom/core/force/FrForce.h"
 
 namespace frydom {
 

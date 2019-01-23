@@ -6,7 +6,7 @@
 
 #include "GeographicLib/LocalCartesian.hpp"
 #include <GeographicLib/MagneticModel.hpp>
-#include <frydom/core/FrVector.h>
+#include <frydom/core/math/FrVector.h>
 
 
 /*

@@ -5,8 +5,8 @@
 #ifndef FRYDOM_FRFIELDBASE_H
 #define FRYDOM_FRFIELDBASE_H
 
-#include "frydom/core/FrObject.h"
-#include "frydom/core/FrVector.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/math/FrVector.h"
 
 namespace frydom {
 

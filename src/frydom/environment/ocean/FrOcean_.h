@@ -6,8 +6,8 @@
 #define FRYDOM_FROCEAN_H
 
 #include "frydom/environment/FrFluidType.h"
-#include "frydom/core/FrVector.h"
-#include "frydom/core/FrObject.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrObject.h"
 #include "frydom/asset/FrGridAsset.h"
 
 namespace frydom {

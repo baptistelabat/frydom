@@ -6,7 +6,7 @@
 #define FRYDOM_FRRADIATIONMODEL_H
 
 #include "frydom/core/FrOffshoreSystem.h"
-#include "frydom/core/FrObject.h"
+#include "frydom/core/common/FrObject.h"
 #include "FrHydroDB.h"
 //#include "FrRadiationForce.h
 #include "FrHydroMapper.h"

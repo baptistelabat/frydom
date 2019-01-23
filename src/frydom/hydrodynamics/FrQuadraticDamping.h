@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRQUADRATICDAMPING_H
 #define FRYDOM_FRQUADRATICDAMPING_H
 
-#include "frydom/core/FrForce.h"
+#include "frydom/core/force/FrForce.h"
 #include "frydom/environment/FrFluidType.h"
 
 namespace frydom {

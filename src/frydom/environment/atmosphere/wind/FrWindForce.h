@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRWINDFORCE_H
 #define FRYDOM_FRWINDFORCE_H
 
-#include "frydom/core/FrForce.h"
+#include "frydom/core/force/FrForce.h"
 
 #include "MathUtils/MathUtils.h"
 

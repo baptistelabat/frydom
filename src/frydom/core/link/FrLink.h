@@ -5,11 +5,11 @@
 #ifndef FRYDOM_FRLINK_H
 #define FRYDOM_FRLINK_H
 
-#include <chrono/physics/ChLinkMotorLinearSpeed.h>
-#include "FrObject.h"
-
-#include "chrono/physics/ChLinkMate.h"
-#include "FrOffshoreSystem.h"
+//#include <chrono/physics/ChLinkMotorLinearSpeed.h>
+//#include "FrObject.h"
+//
+//#include "chrono/physics/ChLinkMate.h"
+//#include "FrOffshoreSystem.h"
 
 
 namespace frydom {

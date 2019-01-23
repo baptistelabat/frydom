@@ -19,7 +19,7 @@
 #include "chrono/core/ChMatrixDynamic.h"  // TODO : voir pourquoi on est oblige d'inclure
 #include "frydom/environment/flow/FrUniformField.h"
 
-#include "frydom/core/FrFrame.h"
+#include "frydom/core/common/FrFrame.h"
 
 namespace frydom {
 

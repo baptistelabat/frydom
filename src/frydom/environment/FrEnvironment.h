@@ -6,7 +6,7 @@
 #define FRYDOM_FRENVIRONMENT_H
 
 
-#include "frydom/core/FrObject.h"
+#include "frydom/core/common/FrObject.h"
 
 //#include <frydom/environment/wind/FrWind.h>
 
@@ -36,7 +36,7 @@
 
 // GeographicLib includes
 #include "frydom/environment/geographicServices/FrGeographicServices.h"
-#include "frydom/core/FrConvention.h"
+#include "frydom/core/common/FrConvention.h"
 #include "frydom/environment/FrFluidType.h"
 
 namespace GeographicLib {
@@ -368,7 +368,7 @@ namespace frydom {
     };
 
 
-    
+
 
 
 }  // end namespace frydom

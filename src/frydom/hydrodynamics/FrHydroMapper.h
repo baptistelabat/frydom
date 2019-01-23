@@ -7,7 +7,7 @@
 
 #include "boost/bimap.hpp"
 
-#include "frydom/core/FrHydroBody.h"
+#include "frydom/core/junk/FrHydroBody.h"
 #include "FrHydroDB.h"
 #include "frydom/hydrodynamics/FrBEMBody.h"
 

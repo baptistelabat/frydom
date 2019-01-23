@@ -6,8 +6,8 @@
 #define FRYDOM_FRATMOSPHERE_H
 
 #include "frydom/environment/FrFluidType.h"
-#include "frydom/core/FrVector.h"
-#include "frydom/core/FrObject.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrObject.h"
 
 namespace frydom {
 

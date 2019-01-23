@@ -10,7 +10,7 @@
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include <chrono/assets/ChColorAsset.h>
 #include <frydom/core/FrOffshoreSystem.h>
-#include "frydom/core/FrBody.h"
+#include "frydom/core/body/FrBody.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean_.h"
 

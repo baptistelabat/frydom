@@ -9,8 +9,8 @@
 
 #include "chrono/physics/ChProbe.h"
 
-#include "frydom/core/FrObject.h"
-#include "frydom/core/FrHydroBody.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/junk/FrHydroBody.h"
 #include "frydom/core/FrOffshoreSystem.h"
 
 

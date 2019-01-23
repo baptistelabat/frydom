@@ -8,7 +8,7 @@
 #include "chrono/physics/ChBody.h"
 #include "MathUtils/Maths.h"
 
-#include "frydom/core/FrBody.h"
+#include "frydom/core/body/FrBody.h"
 
 namespace frydom {
 

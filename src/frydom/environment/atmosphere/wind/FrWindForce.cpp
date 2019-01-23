@@ -5,8 +5,8 @@
 #include "FrWindForce.h"
 #include "frydom/environment/flow/FrFlowBase.h"
 
-#include "frydom/core/FrConvention.h"
-#include "frydom/core/FrHydroBody.h"
+#include "frydom/core/common/FrConvention.h"
+#include "frydom/core/junk/FrHydroBody.h"
 #include "frydom/IO/FrLoader.h"
 
 

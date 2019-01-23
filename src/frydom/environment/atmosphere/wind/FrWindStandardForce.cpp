@@ -3,7 +3,7 @@
 //
 
 #include "FrWindStandardForce.h"
-#include "frydom/core/FrHydroBody.h"
+#include "frydom/core/junk/FrHydroBody.h"
 #include "frydom/environment/FrEnvironment.h"
 
 #include "frydom/environment/atmosphere/FrAtmosphere_.h"

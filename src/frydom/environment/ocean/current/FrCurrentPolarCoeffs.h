@@ -6,7 +6,7 @@
 #define FRYDOM_FRCURRENTPOLARCOEFFS_H
 
 
-#include <frydom/core/FrConvention.h>
+#include <frydom/core/common/FrConvention.h>
 #include "MathUtils/MathUtils.h"
 
 using namespace mathutils;

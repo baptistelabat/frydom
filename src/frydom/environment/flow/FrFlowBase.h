@@ -5,8 +5,8 @@
 #ifndef FRYDOM_FRFLOWBASE_H
 #define FRYDOM_FRFLOWBASE_H
 
-#include "frydom/core/FrObject.h"
-#include "frydom/core/FrVector.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/math/FrVector.h"
 #include "FrFieldBase.h"
 #include "FrUniformField.h"
 

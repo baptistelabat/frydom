@@ -4,13 +4,13 @@
 
 #include "FrFlowForce.h"
 
-#include "frydom/core/FrBody.h"
+#include "frydom/core/body/FrBody.h"
 #include "FrFlowBase.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean_.h"
 #include "frydom/environment/atmosphere/FrAtmosphere_.h"
 #include "frydom/IO/FrLoader.h"
-#include "frydom/core/FrFrame.h"
+#include "frydom/core/common/FrFrame.h"
 #include "MathUtils/Vector3d.h"
 
 

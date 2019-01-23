@@ -8,16 +8,16 @@
 // <<<<<<<<<<<<< Head
 
 #include <vector>
-#include <frydom/core/FrPhysicsItem.h>
+#include <frydom/core/common/FrPhysicsItem.h>
 
-#include "frydom/core/FrConvention.h"
-#include "frydom/core/FrNode.h"
+#include "frydom/core/common/FrConvention.h"
+#include "frydom/core/common/FrNode.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrFlowSensor.h"
 
 // <<<<<<<<<<<<< Adding header for refactoring
 
-#include "frydom/core/FrForce.h"
+#include "frydom/core/force/FrForce.h"
 
 
 namespace frydom {

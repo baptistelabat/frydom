@@ -6,7 +6,7 @@
 #define FRYDOM_FRASSET_H
 
 #include <chrono/assets/ChAsset.h>
-#include "frydom/core/FrBody.h"
+#include "frydom/core/body/FrBody.h"
 
 namespace frydom {
 
@@ -23,4 +23,5 @@ namespace frydom {
     };
 
 }   // end namespace frydom
+
 #endif //FRYDOM_FRASSET_H

@@ -10,15 +10,15 @@
 //#include <complex>
 //#include <random>
 
-#include "frydom/core/FrObject.h"
-#include "frydom/core/FrVector.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/math/FrVector.h"
 
 #include "chrono/core/ChVector.h"
 
 #include "FrWaveSpectrum.h"
 #include "FrKinematicStretching.h"
 
-#include "frydom/core/FrComplex.h"
+#include "frydom/core/math/FrComplex.h"
 
 
 //#include "frydom/core/FrConstants.h"

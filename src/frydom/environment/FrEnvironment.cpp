@@ -6,8 +6,8 @@
 
 #include <GeographicLib/LocalCartesian.hpp>
 #include <GeographicLib/MagneticModel.hpp>
-#include <frydom/core/FrException.h>
-#include "frydom/core/FrFunction.h"
+#include <frydom/core/common/FrException.h>
+#include "frydom/core/functions/FrFunction.h"
 
 #include "frydom/core/FrOffshoreSystem.h"
 

@@ -10,7 +10,7 @@
 #include <vector>
 //#include "MathUtils/MathUtils.h"
 
-#include "frydom/core/FrConvention.h"
+#include "frydom/core/common/FrConvention.h"
 #include "frydom/environment/ocean/current/FrCurrentPolarCoeffs.h"
 
 //using namespace mathutils;  // TODO: mettre LookupTable en forward declaration
@@ -39,7 +39,7 @@ namespace frydom {
                                  std::vector<double>& cx,
                                  std::vector<double>& cy,
                                  std::vector<double>& cz);
-    
+
     // =========================================================================================================
     // IO for wind force model
     // =========================================================================================================

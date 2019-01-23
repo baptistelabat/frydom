@@ -6,7 +6,7 @@
 #define FRYDOM_FRWAVEPROBE_H
 
 
-#include "frydom/core/FrObject.h"
+#include "frydom/core/common/FrObject.h"
 
 
 

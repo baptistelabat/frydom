@@ -6,7 +6,7 @@
 #define FRYDOM_FRFLUIDTYPE_H
 
 
-#include "frydom/core/FrUnits.h"
+#include "frydom/core/common/FrUnits.h"
 
 namespace frydom {
 

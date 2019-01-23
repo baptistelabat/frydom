@@ -16,13 +16,13 @@
 #ifndef FRYDOM_FRCURRENT_H
 #define FRYDOM_FRCURRENT_H
 
-#include "frydom/core/FrObject.h"
-#include "frydom/core/FrConvention.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/common/FrConvention.h"
 
 #include "frydom/environment/flow/FrUniformField.h"  // TODO : include a retirer
 
-#include "frydom/core/FrVector.h"
-#include "frydom/core/FrUnits.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrUnits.h"
 
 
 // TODO: definir une classe de base pour le champ de courant et de vent (et de houle) afin de ne pas

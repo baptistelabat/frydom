@@ -7,7 +7,7 @@
 
 #include "chrono/assets/ChGlyphs.h"
 #include "chrono/physics/ChBody.h"
-#include "frydom/core/FrForce.h"
+#include "frydom/core/force/FrForce.h"
 #include "frydom/asset/FrAsset.h"
 
 

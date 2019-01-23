@@ -2,15 +2,15 @@
 // Created by frongere on 05/10/18.
 //
 
-#include <frydom/core/FrException.h>
+#include <frydom/core/common/FrException.h>
 #include "FrCatway.h"
 #include "catenary/Catenary.h"
 
-#include "frydom/core/FrVector.h"
+#include "frydom/core/math/FrVector.h"
 
-#include "frydom/core/FrNode.h"
-#include "frydom/core/FrForce.h"
-#include "frydom/core/FrBody.h"
+#include "frydom/core/common/FrNode.h"
+#include "frydom/core/force/FrForce.h"
+#include "frydom/core/body/FrBody.h"
 
 #include "frydom/environment/FrEnvironmentInc.h"
 

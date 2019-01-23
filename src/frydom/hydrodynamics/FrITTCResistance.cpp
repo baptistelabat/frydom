@@ -11,7 +11,7 @@
 #include "frydom/environment/FrEnvironmentInc.h"
 //#include "frydom/environment/current/FrCurrent.h"
 #include "frydom/environment/flow/FrFlowBase.h"
-#include "frydom/core/FrBody.h"
+#include "frydom/core/body/FrBody.h"
 
 
 namespace frydom{

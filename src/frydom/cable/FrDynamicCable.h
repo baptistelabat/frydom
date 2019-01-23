@@ -7,7 +7,7 @@
 
 #include <memory>
 #include "chrono/physics/ChSystem.h"
-#include <frydom/core/FrNode.h>
+#include <frydom/core/common/FrNode.h>
 #include <chrono_fea/ChVisualizationFEAmesh.h>
 #include <frydom/cable/FrCatenaryLine.h>
 

@@ -8,8 +8,8 @@
 #include <chrono/assets/ChAssetLevel.h>
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include "chrono/assets/ChColorAsset.h"
-#include "frydom/core/FrObject.h"
-#include "frydom/core/FrColors.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/misc/FrColors.h"
 
 namespace frydom {
 

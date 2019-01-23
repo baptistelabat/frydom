@@ -7,7 +7,7 @@
 
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 
-#include "frydom/core/FrBody.h"
+#include "frydom/core/body/FrBody.h"
 
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"

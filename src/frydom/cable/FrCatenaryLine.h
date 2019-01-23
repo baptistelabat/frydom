@@ -10,7 +10,7 @@
 #include "chrono/core/ChMatrix33.h"
 #include "chrono/assets/ChPointPointDrawing.h"
 #include "FrCatenaryForce.h"
-#include "frydom/core/FrNode.h"
+#include "frydom/core/common/FrNode.h"
 #include "FrCable.h"
 #include "FrAssetComponent.h"
 #include "FrAssetBuoy.h"

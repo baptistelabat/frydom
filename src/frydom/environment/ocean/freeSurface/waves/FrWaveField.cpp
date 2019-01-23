@@ -6,7 +6,7 @@
 
 #include <random>
 
-#include "frydom/core/FrFunction.h"
+#include "frydom/core/functions/FrFunction.h"
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"

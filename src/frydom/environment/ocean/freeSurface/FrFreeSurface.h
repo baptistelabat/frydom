@@ -16,7 +16,7 @@
 #ifndef FR_FREE_SURFACE_H
 #define FR_FREE_SURFACE_H
 
-#include "frydom/core/FrObject.h"
+#include "frydom/core/common/FrObject.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 
 

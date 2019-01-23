@@ -7,8 +7,8 @@
 
 #include "boost/circular_buffer.hpp"
 #include "chrono/physics/ChProbe.h"
-#include "frydom/core/FrObject.h"
-#include "frydom/core/FrBody.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/body/FrBody.h"
 #include "frydom/core/FrOffshoreSystem.h"
 
 namespace frydom {
