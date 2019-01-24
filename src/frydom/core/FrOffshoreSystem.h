@@ -153,7 +153,7 @@ namespace frydom {
 
         /// Update the state of the systemBase, called from chrono, call the Update of the offshore system
         /// \param update_assets check if the assets are updated
-        void Update(bool update_assets = true) override;
+        void Update(bool update_assets) override;
 
         /// This method overrides a ChSystemSMC method, called by chrono, call StepFinalize of the offshore system
         /// at the end of each step
@@ -177,6 +177,9 @@ namespace frydom {
     class FrBody_;
     class FrLink_;
     class FrPhysicsItem_;
+    class FrPrePhysicsItem_;
+    class FrMidPhysicsItem_;
+    class FrPostPhysicsItem_;
     class FrEnvironment_;
     class FrCable_;
 
@@ -300,21 +303,33 @@ namespace frydom {
 
         using BodyContainer = std::vector<std::shared_ptr<FrBody_>>;
         using LinkContainer = std::vector<std::shared_ptr<FrLink_>>;
-//        using OtherPhysicsContainer = std::vector<std::shared_ptr<FrOtherPhysics_>>;
 
-        using BodyIter          = BodyContainer::iterator; // TODO : bouger les iterateurs proche des methodes d'iteration...
+        using PrePhysicsContainer = std::vector<std::shared_ptr<FrPrePhysicsItem_>>;
+        using MidPhysicsContainer = std::vector<std::shared_ptr<FrMidPhysicsItem_>>;
+        using PostPhysicsContainer = std::vector<std::shared_ptr<FrPostPhysicsItem_>>;
+
+        // TODO : bouger les iterateurs proche des methodes d'iteration...
+        using BodyIter          = BodyContainer::iterator;
         using ConstBodyIter     = BodyContainer::const_iterator;
 
         using LinkIter      = LinkContainer::iterator;
         using ConstLinkIter = LinkContainer::const_iterator;
 
-//        using OtherPhysicsIter = OtherPhysicsContainer::iterator;
-//        using ConstOtherPhysicsIter = OtherPhysicsContainer::const_iterator;
+        using PrePhysicsIter = PrePhysicsContainer::iterator;
+        using ConstPrePhysicsIter = PrePhysicsContainer::const_iterator;
+
+        using MidPhysicsIter = MidPhysicsContainer::iterator;
+        using ConstMidPhysicsIter = MidPhysicsContainer::const_iterator;
+
+        using PostPhysicsIter = PostPhysicsContainer::iterator;
+        using ConstPostPhysicsIter = PostPhysicsContainer::const_iterator;
 
 
-        BodyContainer m_bodyList;   ///< list of bodies managed by this offshore system
-        LinkContainer m_linkList;   ///< list of links between bodies managed by this offhsore system
-//        OtherPhysicsList m_otherPhysicsList;
+        BodyContainer m_bodyList;               ///< list of bodies managed by this offshore system
+        LinkContainer m_linkList;               ///< list of links between bodies managed by this offhsore system
+        PrePhysicsContainer m_PrePhysicsList;   ///< list of physics items, updated before the bodies
+        MidPhysicsContainer m_MidPhysicsList;   ///< list of physics items, updated between the bodies and links
+        PostPhysicsContainer m_PostPhysicsList; ///< list of physics items, updated after the links
 
 //        using CatenaryCableContainer = std::vector<std::shared_ptr<FrCatway>>;
 //        CatenaryCableContainer m_catenaryCables;
@@ -347,14 +362,25 @@ namespace frydom {
 //        void AddLink(std::shared_ptr<FrLink_> link);
         void AddLink(std::shared_ptr<chrono::ChLink> link);  // TODO : remplacer par du frydom full
 
+        void AddLink(std::shared_ptr<FrLink_> link);
+
         /// Add a cable to the offshore system
         /// \param cable to be added
         void AddCable(std::shared_ptr<FrCable_> cable);
 
 //        void AddOtherPhysics(std::shared_ptr<FrOtherPhysics_> otherPhysics);
+
         /// Add other physics item to the offshore system
         /// \param otherPhysics other physic item to be added
-        void AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics);
+        void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem_> otherPhysics);
+
+        /// Add other physics item to the offshore system
+        /// \param otherPhysics other physic item to be added
+        void AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem_> otherPhysics);
+
+        /// Add other physics item to the offshore system
+        /// \param otherPhysics other physic item to be added
+        void AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem_> otherPhysics);
 
         /// Get the environment embedded in the offshore system
         /// \return environment embedded in the offshore system
@@ -679,6 +705,9 @@ namespace frydom {
         /// \return systemBase
         chrono::ChSystem* GetChronoSystem();
 
+        /// Add other physics item to the offshore system
+        /// \param otherPhysics other physic item to be added
+        void AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics);
 
 
 //        friend class FrIrrApp_;

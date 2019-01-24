@@ -6,9 +6,10 @@
 #define FRYDOM_FRLINK_H
 
 #include <chrono/physics/ChLinkMotorLinearSpeed.h>
-#include "FrObject.h"
-
 #include "chrono/physics/ChLinkMate.h"
+
+#include "FrObject.h"
+#include "frydom/core/FrOffshoreSystem.h"
 
 namespace frydom {
 
@@ -51,6 +52,12 @@ namespace frydom {
         std::string GetName() const;
 
         virtual void Update() = 0;
+
+    protected:
+
+        virtual std::shared_ptr<chrono::ChLink> GetChronoLink() const { return m_chronoLink;}
+
+        friend void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLink_>);
 
     };
 //

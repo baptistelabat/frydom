@@ -355,6 +355,28 @@ namespace frydom {
 
     FrOffshoreSystem_::~FrOffshoreSystem_() = default;
 
+    void FrOffshoreSystem_::Add(std::shared_ptr<FrObject> newItem) {
+        assert(std::dynamic_pointer_cast<FrBody_>(newItem) ||
+               std::dynamic_pointer_cast<FrLink_>(newItem) ||
+               std::dynamic_pointer_cast<FrPhysicsItem_>(newItem));
+
+        if (auto item = std::dynamic_pointer_cast<FrBody_>(newItem)) {
+            AddBody(item);
+            return;
+        }
+
+        if (auto item = std::dynamic_pointer_cast<FrLink_>(newItem)) {
+            AddLink(item);
+            return;
+        }
+
+        if (auto item = std::dynamic_pointer_cast<FrPhysicsItem_>(newItem)) {
+            AddPhysicsItem(item);
+            return;
+        }
+
+    }
+
     void FrOffshoreSystem_::AddBody(std::shared_ptr<FrBody_> body) {
 
         if (!CheckBodyContactMethod(body)) { // TODO : voir si on set pas d'autorite le mode de contact a celui du systeme plutot que de faire un if...
@@ -373,11 +395,11 @@ namespace frydom {
         m_chronoSystem->AddLink(link);
     }
 
+    void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLink_> link) {
+        m_chronoSystem->AddLink(link->GetChronoLink());
+        m_linkList.push_back(link);
+    }
 
-//    void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLink_> link) {
-//        m_chronoSystem->AddLink(link->GetChronoLink());
-//        m_linkList.push_back(link);
-//    }
 //
 //    void FrOffshoreSystem_::AddOtherPhysics(std::shared_ptr<FrOtherPhysics_> otherPhysics) {
 //        m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoOtherPhysics());
@@ -390,8 +412,42 @@ namespace frydom {
     }
 
     void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics) {
+        assert(std::dynamic_pointer_cast<FrPrePhysicsItem_>(otherPhysics) ||
+               std::dynamic_pointer_cast<FrMidPhysicsItem_>(otherPhysics) ||
+               std::dynamic_pointer_cast<FrPostPhysicsItem_>(otherPhysics));
+
+        if (auto item = std::dynamic_pointer_cast<FrPrePhysicsItem_>(otherPhysics)) {
+            AddPhysicsItem(item);
+            return;
+        }
+
+        if (auto item = std::dynamic_pointer_cast<FrMidPhysicsItem_>(otherPhysics)) {
+            AddPhysicsItem(item);
+            return;
+        }
+
+        if (auto item = std::dynamic_pointer_cast<FrPostPhysicsItem_>(otherPhysics)) {
+            AddPhysicsItem(item);
+            return;
+        }
+    }
+
+    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem_> otherPhysics) {
         m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
         otherPhysics->m_system = this;
+        m_PrePhysicsList.push_back(otherPhysics);
+    }
+
+    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem_> otherPhysics) {
+        m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
+        otherPhysics->m_system = this;
+        m_MidPhysicsList.push_back(otherPhysics);
+    }
+
+    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem_> otherPhysics) {
+        m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
+        otherPhysics->m_system = this;
+        m_PostPhysicsList.push_back(otherPhysics);
     }
 
     FrEnvironment_ *FrOffshoreSystem_::GetEnvironment() const {

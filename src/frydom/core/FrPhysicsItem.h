@@ -69,11 +69,24 @@ namespace frydom {
 
         virtual std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() const ;
 
-        friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_>);
+//        friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_>);
 
 
+    };
 
+    class FrPrePhysicsItem_ : public FrPhysicsItem_{
+    protected:
+        friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem_>);
+    };
 
+    class FrMidPhysicsItem_ : public FrPhysicsItem_{
+    protected:
+        friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem_>);
+    };
+
+    class FrPostPhysicsItem_ : public FrPhysicsItem_{
+    protected:
+        friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem_>);
     };
 
 }
