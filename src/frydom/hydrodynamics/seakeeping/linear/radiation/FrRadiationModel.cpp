@@ -418,6 +418,14 @@ namespace frydom {
         for (auto BEMBody = m_HDB->begin(); BEMBody != m_HDB->end(); BEMBody++) {
             auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->get());
             m_recorder[BEMBody->get()].Record(time, eqFrame->GetPerturbationGeneralizedVelocityInFrame());
+
+            //##CC
+            //auto vp = eqFrame->GetPerturbationGeneralizedVelocityInFrame().GetVelocity();
+            //auto vrp = eqFrame->GetPerturbationGeneralizedVelocityInFrame().GetAngularVelocity();
+            //std::cout << "debug: radiation force: record perturbation velocity:"
+            //          << vp.x() <<  ";" << vp.y() << ";" << vp.z()
+            //          << vrp.x() << ";"  << vrp.y() << ";"  << vrp.z() << std::endl;
+            //##CC
         }
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
@@ -435,8 +443,16 @@ namespace frydom {
                     auto interpK = BEMBody->get()->GetIRFInterpolatorK(BEMBodyMotion->get(), idof);
 
                     std::vector<mathutils::Vector6d<double>> kernel;
+                    kernel.reserve(vtime.size());
                     for (unsigned int it = 0; it < vtime.size(); ++it) {
                         kernel.push_back(interpK->Eval(vtime[it]).cwiseProduct(velocity.at(it)));
+
+                        //##CC
+                        //std::cout << "debug: radiation force: time= " << vtime[it] << ";"
+                        //          << "kernel:" << kernel[it].at(0) << ";" << kernel[it].at(1) << ";" << kernel[it].at(2)
+                        //          << ";" << kernel[it].at(3) << ";" << kernel[it].at(4) << ";" << kernel[it].at(5)
+                        //          << std::endl;
+                        //##CC
                     }
                     radiationForce += TrapzLoc(vtime, kernel);
                 }
@@ -445,12 +461,27 @@ namespace frydom {
             auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->get());
             auto meanSpeed = eqFrame->GetVelocityInFrame();
 
+            // ##CC
+            //std::cout << "debug: radiation force: meanSpeed = " << meanSpeed.x() << ";"
+            //          << meanSpeed.y() << ";" << meanSpeed.z() << std::endl;
+            //##CC
+
             if (meanSpeed.squaredNorm() > FLT_EPSILON) {
+
+                //##CC
+                //std::cout << "debug: radiation force: compute Ku" << std::endl;
+                //##CC
                 radiationForce += ConvolutionKu(meanSpeed.norm());
             }
 
             auto forceInWorld = eqFrame->ProjectVectorInParent(radiationForce.GetForce());
             auto TorqueInWorld = eqFrame->ProjectVectorInParent(radiationForce.GetTorque());
+
+            // ##CC
+            //std::cout << "debug: radiation force Fx=" << forceInWorld.GetFx() << " Fy=" << forceInWorld.GetFy()
+            //          << " Fz=" << forceInWorld.GetFz() << " Mx=" << TorqueInWorld.GetMx()
+            //          << " My=" << TorqueInWorld.GetMy() << " Mz=" << TorqueInWorld.GetMz() << std::endl;
+            // ##CC
 
             m_radiationForce[BEMBody->get()] = - GeneralizedForce(forceInWorld, TorqueInWorld);
         }
@@ -471,7 +502,6 @@ namespace frydom {
         N = (unsigned int)floor(Te / timeStep);
 
         dt = Te / double(N-1);
-
     }
 
     GeneralizedForce FrRadiationConvolutionModel_::ConvolutionKu(double meanSpeed) const {

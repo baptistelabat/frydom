@@ -37,13 +37,14 @@ namespace frydom {
         /// Constructor of a new equilibrium frame with default position and no velocity
         /// User will must define the body to linked with with the corresponding method
         /// before execution of the simulation
-        FrEquilibriumFrame_() : FrFrame_(), FrPrePhysicsItem_() { };
+        FrEquilibriumFrame_() : FrFrame_(), FrPrePhysicsItem_(), m_angularVelocity(0.) { };
 
         /// Constructor of a new equilibrium frame with body linked
         /// \param body Body to which the equilibrium frame is linked
         /// \param initPos Boolean, if true the position of the equilibrium is set to the position of
         /// the body during initialization
-        FrEquilibriumFrame_(FrBody_* body, bool initPos = true) : FrFrame_(), FrPrePhysicsItem_(), m_body(body), m_initPositionFromBody(initPos) { };
+        FrEquilibriumFrame_(FrBody_* body, bool initPos = true) : FrFrame_(), FrPrePhysicsItem_(), m_body(body),
+                                                                  m_initPositionFromBody(initPos), m_angularVelocity(0.) { };
 
         /// Constructor of a new equilibrium frame with defined position, rotation and body linked
         /// \param pos Initial position of the equilibrium frame in world coordinates

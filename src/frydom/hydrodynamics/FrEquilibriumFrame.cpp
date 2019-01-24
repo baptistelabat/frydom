@@ -62,7 +62,7 @@ namespace frydom {
     }
 
     GeneralizedVelocity FrEquilibriumFrame_::GetPerturbationGeneralizedVelocityInFrame() const {
-        auto velocity = GetAngularPerturbationVelocityInFrame();
+        auto velocity = GetPerturbationVelocityInFrame();
         auto angularVelocity = GetAngularPerturbationVelocityInFrame();
         return GeneralizedVelocity(velocity, angularVelocity);
     }
