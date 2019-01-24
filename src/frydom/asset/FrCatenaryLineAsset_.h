@@ -18,30 +18,44 @@ namespace frydom {
     // Forward declarations:
     class FrCatenaryLine_;
 
-
+    /**
+     * \class FrCatenaryLineAsset_
+     * \brief Class for a catenary line asset, using chrono::ChLineShape in aggregation
+     * Line elements of ChLineShape are updated in position and color (related to the tension) in this class
+     */
     class FrCatenaryLineAsset_ {
 
     private:
 
-        FrCatenaryLine_ *m_catenaryLine;
+        FrCatenaryLine_ *m_catenaryLine;    ///< Catenary line containing this asset
 
         using Triplet = std::tuple<double, double, std::shared_ptr<chrono::ChLineShape>>;
-        std::vector<Triplet> m_elements;
+        std::vector<Triplet> m_elements;    ///< container of elements based on ChLineShape
 
-        double m_maxTension = 0;
+        double m_maxTension = 0;            ///< max tension cached value for the color visualization
 
     public:
 
+        /// Catenary line asset constructor
+        /// \param line catenary line containing this asset
         explicit FrCatenaryLineAsset_(FrCatenaryLine_ * line);
 
+        /// Update the elements position and color
         void Update();
 
+        /// Initialize the asset by creating the elements
         void Initialize();
 
     private:
 
+        /// Initialize the max tension value for the color visualization
         void InitRangeTensionColor();
 
+        /// Make a tuple, based on the starting and ending lagrangian coordinates and the corresponding element
+        /// \param s0 starting lagrangian coordinate of the element
+        /// \param s1 ending lagrangiand coordinate of the element
+        /// \param lineShape element based on ChLineShape
+        /// \return
         static Triplet make_triplet(double s0, double s1, std::shared_ptr<chrono::ChLineShape> lineShape) {
             return std::make_tuple(s0, s1, lineShape);
         }

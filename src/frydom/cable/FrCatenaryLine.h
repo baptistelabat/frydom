@@ -385,7 +385,7 @@ namespace frydom {
         void solve();
 
         /// Guess the line tension from line boundary positions
-        /// Used to initialize the Newton-Raphson algorithm (see solve method) TODO: mettre un see a facon doxygen...
+        /// Used to initialize the Newton-Raphson algorithm.
         /// \see FrCatenaryLine_::solve()
         void guess_tension();
 

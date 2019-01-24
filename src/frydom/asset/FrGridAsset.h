@@ -95,7 +95,7 @@ namespace frydom {
         /// Set the grid asset to a square CARTESIAN grid, with constants x and y discretizations
         /// \param lmin lmin of the grid
         /// \param lmax lmax of the grid
-        /// \param lx discretization of the grid
+        /// \param dl discretization of the grid
         void SetGrid(double lmin, double lmax, double dl);
 
         /// Set the grid asset to a POLAR grid, with constants discretizations in radius and angle
