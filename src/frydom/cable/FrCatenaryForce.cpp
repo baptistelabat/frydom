@@ -65,12 +65,12 @@ namespace frydom {
         // Get the line tension from the corresponding node
         switch (m_line_side) {
             case LINE_START:
-                ForceInWorld = m_line->getStartingNodeTension();
+                ForceInWorld = m_line->getStartingNodeTension(NWU);
                 relpos = m_line->GetStartingNode()->GetNodePositionInBody(NWU);
                 break;
 
             case LINE_END:
-                ForceInWorld = -m_line->GetEndingNodeTension(); // Be careful of the - sign
+                ForceInWorld = m_line->GetEndingNodeTension(NWU);
                 relpos = m_line->GetEndingNode()->GetNodePositionInBody(NWU);
                 break;
         }

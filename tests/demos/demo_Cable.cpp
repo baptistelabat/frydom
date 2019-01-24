@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
             double YoungModulus = EA / sectionArea; // Young modulus of the line
 
             // Create the catenary line, using the nodes and line properties previously defined
-            auto CatenaryLine = std::make_shared<FrCatenaryLine_>(Node1, Node2, elastic, YoungModulus, sectionArea, unstretchedLength, linearDensity, u);
+            auto CatenaryLine = std::make_shared<FrCatenaryLine_>(Node1, Node2, elastic, YoungModulus, sectionArea, unstretchedLength, linearDensity, u, fc);
 
             // Don't forgot to add the line to the system !
             system.Add(CatenaryLine);
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 
             // Create the catenary line, using the nodes and line properties previously defined
             auto CatenaryLine = std::make_shared<FrCatenaryLine_>(sphereNode, worldNode, elastic, YoungModulus,
-                                                                  sectionArea, unstretchedLength, linearDensity, u);
+                                                                  sectionArea, unstretchedLength, linearDensity, u, fc);
 
             // Don't forgot to add the line to the system !
             system.Add(CatenaryLine);
@@ -145,10 +145,10 @@ int main(int argc, char* argv[]) {
                 // Create the catenary lines, using the nodes and line properties previously defined
                 auto CatenaryLine1 = std::make_shared<FrCatenaryLine_>(sphereNode, worldNode1, elastic, YoungModulus,
                                                                        sectionArea, unstretchedLength, linearDensity,
-                                                                       u);
+                                                                       u, fc);
                 auto CatenaryLine2 = std::make_shared<FrCatenaryLine_>(sphereNode, worldNode2, elastic, YoungModulus,
                                                                        sectionArea, unstretchedLength, linearDensity,
-                                                                       u);
+                                                                       u, fc);
                 // Set the number of drawn elements on the catenary lines (the more, the slower the simulation)
                 CatenaryLine1->SetNbElements(10);
                 CatenaryLine2->SetNbElements(10);

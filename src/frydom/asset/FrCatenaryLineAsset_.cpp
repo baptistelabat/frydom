@@ -24,9 +24,9 @@ namespace frydom{
 
         while (s1 <= m_catenaryLine->GetUnstretchedLength()) {
 
-            p1 = internal::Vector3dToChVector(m_catenaryLine->GetAbsPosition(s1));
+            p1 = internal::Vector3dToChVector(m_catenaryLine->GetAbsPosition(s1, NWU));
             auto newElement = std::make_shared<chrono::ChLineShape>();
-            color = chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetTension(s0).norm(), 0, m_maxTension, true);
+            color = chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetTension(s0, NWU).norm(), 0, m_maxTension, true);
 
             newElement->SetColor(color);
             newElement->SetLineGeometry(std::make_shared<chrono::geometry::ChLineSegment>(p0, p1));
@@ -60,13 +60,13 @@ namespace frydom{
             lineShape = std::get<2>(element);
             lineSegment = std::dynamic_pointer_cast<chrono::geometry::ChLineSegment>(lineShape->GetLineGeometry());
 
-            p1 = internal::Vector3dToChVector(m_catenaryLine->GetAbsPosition(s1));
+            p1 = internal::Vector3dToChVector(m_catenaryLine->GetAbsPosition(s1, NWU));
 
             lineSegment->pA = p0;
             lineSegment->pB = p1;
 
             lineShape->SetColor(
-                    chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetTension(s0).norm(), 0, m_maxTension, false));
+                    chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetTension(s0, NWU).norm(), 0, m_maxTension, false));
 
             p0 = p1;
 
@@ -80,9 +80,9 @@ namespace frydom{
         }
         else{
             double ds = m_catenaryLine->GetUnstretchedLength()/m_catenaryLine->GetNbElements();
-            double max = m_catenaryLine->GetTension(0).norm();
+            double max = m_catenaryLine->GetTension(0, NWU).norm();
             for (int i=1; i<m_catenaryLine->GetNbElements(); i++){
-                auto LocalTension = m_catenaryLine->GetTension(i*ds).norm();
+                auto LocalTension = m_catenaryLine->GetTension(i*ds, NWU).norm();
                 if (LocalTension > max) max = LocalTension;
             }
             m_maxTension = 1.25*max;

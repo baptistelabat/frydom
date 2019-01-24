@@ -325,26 +325,17 @@ namespace frydom {
 
     //>>>>>>>>>>>>>>> REFACTO
 
-    namespace internal {
-        void _FrCatenaryLineBase::Update(const double time, bool update_assets) {
-
-            m_frydomCatenaryLine->UpdateTime(time);
-            m_frydomCatenaryLine->UpdateState();
-
-            chrono::ChPhysicsItem::Update(time, update_assets);
-        }
-    }// end namespace internal
-
     FrCatenaryLine_::FrCatenaryLine_(const std::shared_ptr<FrNode_> &startingNode, const std::shared_ptr<FrNode_> &endingNode,
-                                     bool elastic, double youngModulus, double sectionArea,
-                                     double cableLength,
-                                     double q, mathutils::Vector3d<double> u)
+                                     bool elastic, double youngModulus, double sectionArea, double cableLength,
+                                     double q, Direction u, FRAME_CONVENTION fc)
             : m_elastic(elastic),
               m_q(q),
-              m_u(u),
-              c_qvec(q*u),
               FrCable_(startingNode, endingNode, cableLength, youngModulus, sectionArea, q)
     {
+        if(IsNED(fc)) {internal::SwapFrameConvention(u);}
+        m_u = u;
+        c_qvec = q*u;
+
         // Initializing U matrix
         c_Umat.SetIdentity();
         c_Umat -= u*(u.transpose().eval());
@@ -391,8 +382,10 @@ namespace frydom {
         m_t0 = fu * m_u + fv * v;
     }
 
-    Force FrCatenaryLine_::GetTension(double s) const {
-        return m_t0 - c_qvec * s;
+    Force FrCatenaryLine_::GetTension(double s, FRAME_CONVENTION fc) const {
+        Force tension = m_t0 - c_qvec * s;
+        if(IsNED(fc)) {internal::SwapFrameConvention(tension);}
+        return tension;
     }
 
     std::shared_ptr<FrCatenaryForce_> FrCatenaryLine_::GetStartingForce() {
@@ -403,23 +396,26 @@ namespace frydom {
         return m_endingForce;
     }
 
-    Force FrCatenaryLine_::getStartingNodeTension() const {
-        return m_t0;
+    Force FrCatenaryLine_::getStartingNodeTension(FRAME_CONVENTION fc) const {
+        Force t0 = m_t0;
+        if(IsNED(fc)) {internal::SwapFrameConvention(t0);}
+        return t0;
     }
 
-    Force FrCatenaryLine_::GetEndingNodeTension() const {
-        return m_t0 - c_qvec * m_cableLength;
+    Force FrCatenaryLine_::GetEndingNodeTension(FRAME_CONVENTION fc) const {
+        Force t0 = m_t0 - c_qvec * m_cableLength;
+        if(IsNED(fc)) {internal::SwapFrameConvention(t0);}
+        return -t0;
     }
 
     double FrCatenaryLine_::_rho(double s) const {
-        // FIXME: cette fonction calcule le tension en s mais generalement, cette derniere doit etre accessible ailleurs...
-        auto t0_qS = GetTension(s);
+        auto t0_qS = GetTension(s, NWU);
         return t0_qS.norm() - m_u.dot(t0_qS);
     }
 
-    Position FrCatenaryLine_::GetUnstrainedChord(double s) const {
+    Position FrCatenaryLine_::GetUnstrainedChord(double s, FRAME_CONVENTION fc) const {
 
-        mathutils::Vector3d<double> pc = - (m_u/m_q) * ( (GetTension(s)).norm() - m_t0.norm() );
+        Position pc = - (m_u/m_q) * ( (GetTension(s, NWU)).norm() - m_t0.norm() );
         auto rho_0 = _rho(0.);  // TODO: calculer directement
 
         if (rho_0 > 0.) {
@@ -428,26 +424,24 @@ namespace frydom {
                 pc += (c_Umat*m_t0 / m_q) * log(rho_s / rho_0);
             }
         }
+        if (IsNED(fc)) {internal::SwapFrameConvention(pc);}
         return pc;
 
     }
 
-    Position FrCatenaryLine_::GetElasticIncrement(double s) const {
-
-        if (m_elastic) {
-            return m_q * s * (m_t0 / m_q - 0.5 * m_u * s) / GetEA();
-        } else {
-            return {};
-        }
-
+    Position FrCatenaryLine_::GetElasticIncrement(double s, FRAME_CONVENTION fc) const {
+        Position Inc(0.,0.,0.);
+        if (m_elastic) {Inc = m_q * s * (m_t0 / m_q - 0.5 * m_u * s) / GetEA();}
+        if (IsNED(fc)) {internal::SwapFrameConvention(Inc);}
+        return Inc;
     }
 
-    Position FrCatenaryLine_::GetAbsPosition(double s) const {
+    Position FrCatenaryLine_::GetAbsPosition(double s, FRAME_CONVENTION fc) const {
 
         Position pos;
-        pos += GetStartingNode()->GetPositionInWorld(NWU);
-        pos += GetUnstrainedChord(s);
-        pos += GetElasticIncrement(s);
+        pos += GetStartingNode()->GetPositionInWorld(fc);
+        pos += GetUnstrainedChord(s, fc);
+        pos += GetElasticIncrement(s, fc);
         return pos;
 
     }
@@ -457,19 +451,19 @@ namespace frydom {
         int n = 1000;
 
         double ds = m_cableLength / (n-1);
-        auto pos_prev = GetAbsPosition(0.);
+        auto pos_prev = GetAbsPosition(0., NWU);
 
         for (uint i=0; i<n; ++i) {
             auto s = i*ds;
-            auto pos = GetAbsPosition(s);
+            auto pos = GetAbsPosition(s, NWU);
             cl += (pos - pos_prev).norm();
             pos_prev = pos;
         }
         return cl;
     }
 
-    Position FrCatenaryLine_::get_residual() const {
-        return GetAbsPosition(m_cableLength) - GetEndingNode()->GetPositionInWorld(NWU);
+    Position FrCatenaryLine_::get_residual(FRAME_CONVENTION fc) const {
+        return GetAbsPosition(m_cableLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
     }
 
     mathutils::Matrix33<double> FrCatenaryLine_::analytical_jacobian() const {
@@ -532,7 +526,7 @@ namespace frydom {
 
     void FrCatenaryLine_::solve() {
 
-        auto res = get_residual();
+        auto res = get_residual(NWU);
         auto jac = analytical_jacobian();
 
         jac.Inverse();
@@ -540,14 +534,14 @@ namespace frydom {
 
         m_t0 += m_relax * delta_t0;
 
-        res = get_residual();
+        res = get_residual(NWU);
         double err = res.infNorm();
 
         unsigned int iter = 1;
         while ((err > m_tolerance) && (iter < m_itermax)) {
             iter++;
 
-            res = get_residual();
+            res = get_residual(NWU);
             jac = analytical_jacobian();
 
             jac.Inverse();
@@ -565,7 +559,7 @@ namespace frydom {
 
             m_relax = std::min(1., m_relax*2.);
 
-            res = get_residual();
+            res = get_residual(NWU);
             err = res.infNorm();
         }  // end while
 

@@ -152,20 +152,28 @@ namespace frydom {
         return m_catLine->GetBreakingTension();
     }
 
-    Force FrCatway::GetTension(const double s) const {
-        return (Force)m_catLine->GetTension(s);
+    Force FrCatway::GetTension(const double s, FRAME_CONVENTION fc) const {
+        Force tension = m_catLine->GetTension(s);
+        if (IsNED(fc)) {internal::SwapFrameConvention(tension);}
+        return tension;
     }
 
-    Force FrCatway::GetStartNodeTension() const {
-        return (Force)m_catLine->GetStartNodeTension();
+    Force FrCatway::GetStartNodeTension(FRAME_CONVENTION fc) const {
+        Force tension = m_catLine->GetStartNodeTension();
+        if (IsNED(fc)) {internal::SwapFrameConvention(tension);}
+        return tension;
     }
 
-    Force FrCatway::GetEndNodeTension() const {
-        return (Force)m_catLine->GetEndNodeTension();
+    Force FrCatway::GetEndNodeTension(FRAME_CONVENTION fc) const {
+        Force tension = m_catLine->GetEndNodeTension();
+        if (IsNED(fc)) {internal::SwapFrameConvention(tension);}
+        return tension;
     }
 
-    Position FrCatway::GetAbsPosition(const double s) const {
-        return (Position)m_catLine->GetAbsPosition(s);
+    Position FrCatway::GetAbsPosition(const double s, FRAME_CONVENTION fc) const {
+        Position pos = m_catLine->GetAbsPosition(s);
+        if (IsNED(fc)) {internal::SwapFrameConvention(pos);}
+        return pos;
     }
 
     std::shared_ptr<CatenaryCableAsset> FrCatway::GetAsset() {

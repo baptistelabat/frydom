@@ -212,9 +212,9 @@ namespace frydom {
 
         std::shared_ptr<FrNode_> GetEndingNode() const;
 
-        virtual Force GetTension(double s) const = 0;
+        virtual Force GetTension(double s, FRAME_CONVENTION fc) const = 0;
 
-        virtual Position GetAbsPosition(double s) const = 0;
+        virtual Position GetAbsPosition(double s, FRAME_CONVENTION fc) const = 0;
 
         void SetBreakingTension(double tension);
 
