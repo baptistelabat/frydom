@@ -1,4 +1,4 @@
-\mainpage FRyDoM API/SDK documentation
+\mainpage FRyDoM User Guide
 
 @subpage introduction_frydom
 
