@@ -605,4 +605,8 @@ namespace frydom {
         solve();
     }
 
+    void FrCatenaryLine_::SetNbElements(unsigned int n) {m_nbDrawnElements = n;}
+
+    unsigned int FrCatenaryLine_::GetNbElements() {return m_nbDrawnElements;}
+
 }// end namespace frydom

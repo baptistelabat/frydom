@@ -264,6 +264,7 @@ namespace frydom {
         //-------------------------------------
         // Asset parameters
         bool is_lineAsset = true;
+        unsigned int m_nbDrawnElements = 40;
         std::unique_ptr<FrCatenaryLineAsset_> m_lineAsset;
         //-------------------------------------
 
@@ -317,6 +318,11 @@ namespace frydom {
         double _rho(double s) const;
 
     public:
+
+        void SetNbElements(unsigned int n);;
+
+        unsigned int GetNbElements();
+
         //FIXME: Frame convention?
         /// Get the current chord at lagrangian coordinate s
         /// This is the position of the line if there is no elasticity.

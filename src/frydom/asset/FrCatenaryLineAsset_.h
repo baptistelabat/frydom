@@ -30,13 +30,9 @@ namespace frydom {
 
         double m_maxTension = 0;
 
-        unsigned int m_nbDrawnElements = 40;
-
     public:
 
         explicit FrCatenaryLineAsset_(FrCatenaryLine_ * line);
-
-        void SetNbElements(unsigned int n);
 
         void Update();
 
