@@ -223,7 +223,7 @@ namespace frydom {
 
 
     /**
-     * \class FrCatenaryLine FrCatenaryLine.h
+     * \class FrCatenaryLine_ FrCatenaryLine.h
      * \brief Class for catenary line objects, subclass of FrCable_
      * The catenary line can be specified elastic or not. However be careful not to stretch the line if it has been
      * defined as non elastic. Only an elastic line can be stretched !
@@ -299,13 +299,26 @@ namespace frydom {
                         FRAME_CONVENTION fc
         );
 
+        //--------------------------------------------------------------------------------------------------------------
+        // Asset
         /// Get the catenary line asset, created at the initialization of the catenary line (don't try to get it before initializing the line)
         /// \return catenary line asset
         FrCatenaryLineAsset_* GetLineAsset() const;
 
+        /// Set the number of asset elements depicted
+        /// \param n number of asset elements
+        void SetNbElements(unsigned int n);;
+
+        /// Get the number of asset elements depicted
+        /// \return number of asset elements
+        unsigned int GetNbElements();
+
+        //--------------------------------------------------------------------------------------------------------------
         // TODO: avoir une methode pour detacher d'un noeud ou d'un corps. Dans ce cas, un nouveau noeud fixe est cree a
         // la position courante de la ligne.
 
+        //--------------------------------------------------------------------------------------------------------------
+        // Force accessors
         /// Get the starting force of the line
         /// \return the starting force of the line
         std::shared_ptr<FrCatenaryForce_> GetStartingForce();
@@ -314,14 +327,8 @@ namespace frydom {
         /// \return the ending force of the line
         std::shared_ptr<FrCatenaryForce_> GetEndingForce();
 
-
-        /// Guess the line tension from line boundary positions
-        /// Used to initialize the Newton-Raphson algorithm (see solve method) TODO: mettre un see a facon doxygen...
-        /// \see FrCatenaryLine_::solve()
-        void guess_tension();
-
         // TODO: accessors pour le champ de force distribue
-        /// Get the inside line tension at the lagrangian coordinate s
+        /// Get the inside line tension at the lagrangian coordinate s, from the starting node to the ending node
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)
         /// \return inside line tension
@@ -339,28 +346,14 @@ namespace frydom {
         /// \return tension applied by the line on the ending node
         Force GetEndingNodeTension(FRAME_CONVENTION fc) const;
 
-
-    private :
-        /// Cached function to compute ||t(s)|| - u.t(s)
+        //--------------------------------------------------------------------------------------------------------------
+        // Positions accessors
+        /// Get the line position at lagrangian coordinate s
         /// \param s lagrangian coordinate
-        /// \return rho function value
-        double _rho(double s) const;
+        /// \param fc frame convention (NED/NWU)
+        /// \return line position
+        Position GetAbsPosition(double s, FRAME_CONVENTION fc) const override;
 
-        /// Compute the jacobian matrix with respect to tension using its analytical expression
-        /// \return jacobian matrix
-        mathutils::Matrix33<double> analytical_jacobian() const;
-
-    public:
-
-        /// Set the number of asset elements depicted
-        /// \param n number of asset elements
-        void SetNbElements(unsigned int n);;
-
-        /// Get the number of asset elements depicted
-        /// \return number of asset elements
-        unsigned int GetNbElements();
-
-        //FIXME: Frame convention?
         /// Get the current chord at lagrangian coordinate s
         /// This is the position of the line if there is no elasticity.
         /// This is given by the catenary equation
@@ -375,12 +368,6 @@ namespace frydom {
         /// \return current elastic increment
         Position GetElasticIncrement(double s, FRAME_CONVENTION fc) const;
 
-        /// Get the line position at lagrangian coordinate s
-        /// \param s lagrangian coordinate
-        /// \param fc frame convention (NED/NWU)
-        /// \return line position
-        Position GetAbsPosition(double s, FRAME_CONVENTION fc) const override;
-
         /// Returns the current cable length by line discretization
         /// \return stretched cable length
         double GetStretchedLength() const override;
@@ -392,17 +379,16 @@ namespace frydom {
         /// \return position residual
         Position get_residual(FRAME_CONVENTION fc) const;
 
-//        /// Compute the jacobian matrix with respect to tension using finite difference method
-//        chrono::ChMatrix33<double> numerical_jacobian() const {
-//            auto jac = chrono::ChMatrix33<double>();
-//            // TODO
-//            return jac;
-//        }
-
+        //--------------------------------------------------------------------------------------------------------------
+        // solving methods
         /// Solve the nonlinear catenary equation for line tension using a Relaxed Newton-Raphson solver
         void solve();
 
-    public:
+        /// Guess the line tension from line boundary positions
+        /// Used to initialize the Newton-Raphson algorithm (see solve method) TODO: mettre un see a facon doxygen...
+        /// \see FrCatenaryLine_::solve()
+        void guess_tension();
+
         //--------------------------------------------------------------------------------------------------------------
         // Accessor relative to the embedded Newton-Raphson solver
         /// Set the Newton-Raphson solver tolerance
@@ -416,9 +402,9 @@ namespace frydom {
         /// Set the Newton-Raphson initial relaxation factor
         /// \param relax initial relaxation factor
         void SetSolverInitialRelaxFactor(double relax);
-        //--------------------------------------------------------------------------------------------------------------
 
         //--------------------------------------------------------------------------------------------------------------
+        // Initialize - Update - Finalize methods
         /// Catenary line initialization method
         void Initialize() override;
 
@@ -436,9 +422,17 @@ namespace frydom {
 
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override {}
-        //--------------------------------------------------------------------------------------------------------------
 
-    private:
+        //--------------------------------------------------------------------------------------------------------------
+    private :
+        /// Cached function to compute ||t(s)|| - u.t(s)
+        /// \param s lagrangian coordinate
+        /// \return rho function value
+        double _rho(double s) const;
+
+        /// Compute the jacobian matrix with respect to tension using its analytical expression
+        /// \return jacobian matrix
+        mathutils::Matrix33<double> analytical_jacobian() const;
 
         friend void FrCatenaryLineAsset_::Initialize();
     };

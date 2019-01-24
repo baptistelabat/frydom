@@ -22,17 +22,29 @@ namespace frydom {
               m_linearDensity(linearDensity),
               FrMidPhysicsItem_(){}
 
-    void FrCable_::SetYoungModulus(double E) { m_youngModulus = E; }
+    void FrCable_::SetYoungModulus(double E) {
+        m_youngModulus = E;
+    }
 
-    double FrCable_::GetYoungModulus() const { return m_youngModulus; }
+    double FrCable_::GetYoungModulus() const {
+        return m_youngModulus;
+    }
 
-    void FrCable_::SetSectionArea(double A) { m_sectionArea = A; }
+    void FrCable_::SetSectionArea(double A) {
+        m_sectionArea = A;
+    }
 
-    double FrCable_::GetSectionArea() const { return m_sectionArea; }
+    double FrCable_::GetSectionArea() const {
+        return m_sectionArea;
+    }
 
-    void FrCable_::SetUnstretchedLength(double L) { m_cableLength = L; }
+    void FrCable_::SetUnstretchedLength(double L) {
+        m_cableLength = L;
+    }
 
-    double FrCable_::GetUnstretchedLength() const { return m_cableLength; }
+    double FrCable_::GetUnstretchedLength() const {
+        return m_cableLength;
+    }
 
     void FrCable_::SetDiameter(double d) {
         m_sectionArea = M_PI * pow(d*0.5, 2);
@@ -46,9 +58,13 @@ namespace frydom {
         return m_youngModulus * m_sectionArea;
     }
 
-    void FrCable_::SetLinearDensity(double lambda) { m_linearDensity = lambda; }
+    void FrCable_::SetLinearDensity(double lambda) {
+        m_linearDensity = lambda;
+    }
 
-    double FrCable_::GetLinearDensity() const { return m_linearDensity; }
+    double FrCable_::GetLinearDensity() const {
+        return m_linearDensity;
+    }
 
     void FrCable_::SetDensity(double rho) {
         m_linearDensity = rho * m_sectionArea;
@@ -76,10 +92,21 @@ namespace frydom {
         return m_endNode;
     }
 
-    void FrCable_::SetBreakingTension(double tension) {m_breakingTension = tension;}
+    void FrCable_::SetBreakingTension(double tension) {
+        m_breakingTension = tension;
+    }
 
-    double FrCable_::GetBreakingTension() const { return m_breakingTension;}
+    double FrCable_::GetBreakingTension() const {
+        return m_breakingTension;
+    }
 
+    void FrCable_::SetUnrollingSpeed(double unrollingSpeed) {
+        m_unrollingSpeed = unrollingSpeed;
+    }
+
+    double FrCable_::GetUnrollingSpeed() const {
+        return m_unrollingSpeed;
+    }
 
 
 }

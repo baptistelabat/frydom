@@ -355,11 +355,13 @@ namespace frydom {
         ending_body->AddExternalForce(m_endingForce);
     }
 
-    FrCatenaryLineAsset_ *FrCatenaryLine_::GetLineAsset() const { return m_lineAsset.get();}
+    FrCatenaryLineAsset_ *FrCatenaryLine_::GetLineAsset() const {
+        return m_lineAsset.get();
+    }
 
     void FrCatenaryLine_::guess_tension() {
 
-        mathutils::Vector3d<double> p0pL = GetEndingNode()->GetPositionInWorld(NWU) - GetStartingNode()->GetPositionInWorld(NWU);
+        Position p0pL = GetEndingNode()->GetPositionInWorld(NWU) - GetStartingNode()->GetPositionInWorld(NWU);
         auto lx = p0pL[0];
         auto ly = p0pL[1];
         auto lz = p0pL[2];
@@ -518,11 +520,17 @@ namespace frydom {
         return jac;
     }
 
-    void FrCatenaryLine_::SetSolverTolerance(double tol) { m_tolerance = tol; }
+    void FrCatenaryLine_::SetSolverTolerance(double tol) {
+        m_tolerance = tol;
+    }
 
-    void FrCatenaryLine_::SetSolverMaxIter(unsigned int maxiter) { m_itermax = maxiter; }
+    void FrCatenaryLine_::SetSolverMaxIter(unsigned int maxiter) {
+        m_itermax = maxiter;
+    }
 
-    void FrCatenaryLine_::SetSolverInitialRelaxFactor(double relax) { m_relax = relax; }
+    void FrCatenaryLine_::SetSolverInitialRelaxFactor(double relax) {
+        m_relax = relax;
+    }
 
     void FrCatenaryLine_::solve() {
 
@@ -599,8 +607,12 @@ namespace frydom {
         solve();
     }
 
-    void FrCatenaryLine_::SetNbElements(unsigned int n) {m_nbDrawnElements = n;}
+    void FrCatenaryLine_::SetNbElements(unsigned int n) {
+        m_nbDrawnElements = n;
+    }
 
-    unsigned int FrCatenaryLine_::GetNbElements() {return m_nbDrawnElements;}
+    unsigned int FrCatenaryLine_::GetNbElements() {
+        return m_nbDrawnElements;
+    }
 
 }// end namespace frydom
