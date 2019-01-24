@@ -370,7 +370,17 @@ namespace frydom {
             return;
         }
 
-        if (auto item = std::dynamic_pointer_cast<FrPhysicsItem_>(newItem)) {
+        if (auto item = std::dynamic_pointer_cast<FrPrePhysicsItem_>(newItem)) {
+            AddPhysicsItem(item);
+            return;
+        }
+
+        if (auto item = std::dynamic_pointer_cast<FrMidPhysicsItem_>(newItem)) {
+            AddPhysicsItem(item);
+            return;
+        }
+
+        if (auto item = std::dynamic_pointer_cast<FrPostPhysicsItem_>(newItem)) {
             AddPhysicsItem(item);
             return;
         }
@@ -411,26 +421,26 @@ namespace frydom {
         cable->m_system = this;
     }
 
-    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics) {
-        assert(std::dynamic_pointer_cast<FrPrePhysicsItem_>(otherPhysics) ||
-               std::dynamic_pointer_cast<FrMidPhysicsItem_>(otherPhysics) ||
-               std::dynamic_pointer_cast<FrPostPhysicsItem_>(otherPhysics));
-
-        if (auto item = std::dynamic_pointer_cast<FrPrePhysicsItem_>(otherPhysics)) {
-            AddPhysicsItem(item);
-            return;
-        }
-
-        if (auto item = std::dynamic_pointer_cast<FrMidPhysicsItem_>(otherPhysics)) {
-            AddPhysicsItem(item);
-            return;
-        }
-
-        if (auto item = std::dynamic_pointer_cast<FrPostPhysicsItem_>(otherPhysics)) {
-            AddPhysicsItem(item);
-            return;
-        }
-    }
+//    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics) {
+//        assert(std::dynamic_pointer_cast<FrPrePhysicsItem_>(otherPhysics) ||
+//               std::dynamic_pointer_cast<FrMidPhysicsItem_>(otherPhysics) ||
+//               std::dynamic_pointer_cast<FrPostPhysicsItem_>(otherPhysics));
+//
+//        if (auto item = std::dynamic_pointer_cast<FrPrePhysicsItem_>(otherPhysics)) {
+//            AddPhysicsItem(item);
+//            return;
+//        }
+//
+//        if (auto item = std::dynamic_pointer_cast<FrMidPhysicsItem_>(otherPhysics)) {
+//            AddPhysicsItem(item);
+//            return;
+//        }
+//
+//        if (auto item = std::dynamic_pointer_cast<FrPostPhysicsItem_>(otherPhysics)) {
+//            AddPhysicsItem(item);
+//            return;
+//        }
+//    }
 
     void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem_> otherPhysics) {
         m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());

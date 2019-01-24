@@ -705,9 +705,9 @@ namespace frydom {
         /// \return systemBase
         chrono::ChSystem* GetChronoSystem();
 
-        /// Add other physics item to the offshore system
-        /// \param otherPhysics other physic item to be added
-        void AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics);
+//        /// Add other physics item to the offshore system
+//        /// \param otherPhysics other physic item to be added
+//        void AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics);
 
 
 //        friend class FrIrrApp_;

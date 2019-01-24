@@ -135,7 +135,7 @@ namespace frydom {
     // Radiation model
     // ---------------------------------------------------------------------
 
-    class FrRadiationModel_ : public FrPhysicsItem_ {
+    class FrRadiationModel_ : public FrPrePhysicsItem_ {
 
     protected:
 
