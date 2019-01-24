@@ -518,6 +518,7 @@ namespace frydom {
         auto nbMotionModes = reader.ReadInt(path + "/Modes/NbMotionModes");
 
         modePath = path + "/Modes/MotionModes/Mode_";
+
         for (unsigned int imotion=0; imotion<nbForceModes; ++imotion) {
             sprintf(buffer, "%d", imotion);
             auto imodePath = modePath + buffer;
@@ -554,7 +555,7 @@ namespace frydom {
 
             sprintf(buffer, "/Angle_%d", iwaveDir);
 
-            // ->Diffraction
+            // -> Diffraction
 
             auto diffractionWaveDirPath = diffractionPath + buffer;
             auto diffractionRealCoeffs = reader.ReadDoubleArray(diffractionWaveDirPath + "/RealCoeffs");
@@ -564,7 +565,7 @@ namespace frydom {
             diffractionCoeffs = diffractionRealCoeffs + MU_JJ * diffractionImagCoeffs;
             BEMBody->SetDiffraction(iwaveDir, diffractionCoeffs);
 
-            // ->Froude-Krylov
+            // -> Froude-Krylov
 
             auto froudeKrylovWaveDirPath = froudeKrylovPath + buffer;
             auto froudeKrylovRealCoeffs = reader.ReadDoubleArray(froudeKrylovWaveDirPath + "/RealCoeffs");
@@ -575,6 +576,10 @@ namespace frydom {
             BEMBody->SetFroudeKrylov(iwaveDir, froudeKrylovCoeffs);
 
         }
+
+        // -> Excitation
+
+        BEMBody->ComputeExcitation();
     }
 
     void FrHydroDB_::RadiationReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {

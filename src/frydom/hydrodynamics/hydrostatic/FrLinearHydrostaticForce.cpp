@@ -123,7 +123,7 @@ namespace frydom {
         auto forceState = - (m_stiffnessMatrix * state);
 
         auto worldForce = Force(0., 0., forceState[0]);
-        worldForce.z() -= m_body->GetSystem()->GetGravityAcceleration() * m_body->GetMass();
+        worldForce.z() += m_body->GetSystem()->GetGravityAcceleration() * m_body->GetMass();
         SetForceInWorldAtCOG( worldForce, NWU);
 
         auto localTorque = Torque(forceState[1], forceState[2], 0.);

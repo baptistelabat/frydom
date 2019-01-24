@@ -241,6 +241,7 @@ namespace frydom {
             }
         }
         this->SetForceTorqueInBodyAtCOG(force, torque, NWU);
+
     }
 
 

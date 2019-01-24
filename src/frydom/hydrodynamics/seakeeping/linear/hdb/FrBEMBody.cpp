@@ -1129,7 +1129,7 @@ namespace frydom {
 
                 freqCoeffs->clear();
                 for (unsigned int ifreq=0; ifreq<nbFreqBDD; ++ifreq) {
-                    freqCoeffs->at(ifreq) = m_waveDirInterpolators[imode][ifreq](direction);
+                    freqCoeffs->push_back(m_waveDirInterpolators[imode][ifreq](direction));
                 }
 
                 auto freqInterpolator = Interp1dLinear<double, std::complex<double>>();

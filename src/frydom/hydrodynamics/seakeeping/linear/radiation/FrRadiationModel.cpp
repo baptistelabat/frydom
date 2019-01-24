@@ -422,21 +422,14 @@ namespace frydom {
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
 
-            std::cout << "First loop " << std::endl;
-
             auto radiationForce = GeneralizedForce();
 
             for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion != m_HDB->end(); ++BEMBodyMotion) {
 
-                std::cout << "Second loop" << std::endl;
-
-                std::cout << "Velocity " << std::endl;
                 auto velocity = m_recorder[BEMBodyMotion->get()].GetData();
 
-                std::cout << "Vtime" << std::endl;
                 auto vtime = m_recorder[BEMBodyMotion->get()].GetTime();
 
-                std::cout << "Loop on dof" << std::endl;
                 for (unsigned int idof = 0; idof < 6; idof++) {
 
                     auto interpK = BEMBody->get()->GetIRFInterpolatorK(BEMBodyMotion->get(), idof);
@@ -447,7 +440,6 @@ namespace frydom {
                     }
                     radiationForce += TrapzLoc(vtime, kernel);
                 }
-
             }
 
             auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->get());
@@ -479,9 +471,6 @@ namespace frydom {
         N = (unsigned int)floor(Te / timeStep);
 
         dt = Te / double(N-1);
-
-        // ##CC
-        std::cout << "Impulse response : Te = " << Te << " ; dt = " << dt << std::endl;
 
     }
 
