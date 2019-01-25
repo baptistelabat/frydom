@@ -6,34 +6,34 @@
 #define FRYDOM_FRPRISMATICLINK_H
 
 
-//#include "chrono/physics/ChLinkLock.h"
-
 #include "frydom/core/link/FrLink.h"
 
 
 namespace frydom {
 
-
-    class FrPrismaticLink;
-    std::shared_ptr<FrPrismaticLink> make_prismatic_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
-
-
-    class FrPrismaticLink : public _FrLinkLockBase {
+    class FrPrismaticLink : public FrLink_ {
 
     public:
         FrPrismaticLink(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
 
+        void SetSpringDamper(double stiffness, double dampingCoeff);
 
-        double GetPosition() const;
 
-        double GetVelocity() const;
 
-        double GetAcceleration() const;
+        Direction GetLinkDirectionInWorld() const;
 
+
+        double GetLinkPosition() const;
+
+        double GetLinkVelocity() const;
+
+        double GetLinkAcceleration() const;
 
 
 
         void Initialize() override;
+
+        void Update(double time) override;
 
         void StepFinalize() override;
 
@@ -41,6 +41,8 @@ namespace frydom {
     };
 
 
+//    class FrPrismaticLink;
+//    std::shared_ptr<FrPrismaticLink> make_prismatic_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
 
 
 }  // end namespace frydom

@@ -142,12 +142,12 @@ namespace frydom {
         m_chronoFrame >>= otherFrame.m_chronoFrame;  // TODO : verifier !!
     }
 
-    FrFrame_ FrFrame_::GetOtherFrameRelativeTransform_WRT_ThisFrame(const frydom::FrFrame_ &otherFrame, FRAME_CONVENTION fc) const {  // OK
+    FrFrame_ FrFrame_::GetOtherFrameRelativeTransform_WRT_ThisFrame(const frydom::FrFrame_ &otherFrame) const {  // OK
         return this->GetInverse() * otherFrame;
     }
 
-    FrFrame_ FrFrame_::GetThisFrameRelativeTransform_WRT_OtherFrame(const frydom::FrFrame_ &otherFrame, FRAME_CONVENTION fc) const {  // OK
-        return GetOtherFrameRelativeTransform_WRT_ThisFrame(otherFrame, fc).GetInverse();
+    FrFrame_ FrFrame_::GetThisFrameRelativeTransform_WRT_OtherFrame(const frydom::FrFrame_ &otherFrame) const {  // OK
+        return GetOtherFrameRelativeTransform_WRT_ThisFrame(otherFrame).GetInverse();
     }
 
     std::ostream& FrFrame_::cout(std::ostream &os) const {  // OK

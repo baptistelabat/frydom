@@ -28,6 +28,7 @@ set(GOOGLE_TESTS
         test_FrKinematicStretching
         test_FrWaveSpectrum
         test_FrQuadraticDamping
+        test_FrLinks
         )
 
 #enable_testing()

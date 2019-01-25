@@ -254,13 +254,13 @@ namespace frydom {
         /// \param otherFrame other frame from which the transformation frame is searched
         /// \param fc frame convention (NED/NWU)
         /// \return the transformation frame
-        FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisFrame(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
+        FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisFrame(const FrFrame_ &otherFrame) const;
 
         /// Get the transformation frame, transforming an other frame to this frame
         /// \param otherFrame other frame from which the transformation frame is searched
         /// \param fc frame convention (NED/NWU)
         /// \return the transformation frame
-        FrFrame_ GetThisFrameRelativeTransform_WRT_OtherFrame(const FrFrame_ &otherFrame, FRAME_CONVENTION fc) const;
+        FrFrame_ GetThisFrameRelativeTransform_WRT_OtherFrame(const FrFrame_ &otherFrame) const;
 
         /// Inverse a frame transformation
         /// \return the inverse frame transformation

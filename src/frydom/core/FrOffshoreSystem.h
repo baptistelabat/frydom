@@ -175,7 +175,7 @@ namespace frydom {
 
     // Forward declarations
     class FrBody_;
-    class FrLink_;
+    class FrLinkBase_;
     class FrPhysicsItem_;
     class FrEnvironment_;
     class FrCable_;
@@ -299,7 +299,7 @@ namespace frydom {
         STATICS_METHOD  m_staticsMethod;                    ///< method to find the static equilibrium
 
         using BodyContainer = std::vector<std::shared_ptr<FrBody_>>;
-        using LinkContainer = std::vector<std::shared_ptr<FrLink_>>;
+        using LinkContainer = std::vector<std::shared_ptr<FrLinkBase_>>;
 //        using OtherPhysicsContainer = std::vector<std::shared_ptr<FrOtherPhysics_>>;
 
         using BodyIter          = BodyContainer::iterator; // TODO : bouger les iterateurs proche des methodes d'iteration...
@@ -344,8 +344,7 @@ namespace frydom {
 
         /// Add a link between bodies to the offshore system
         /// \param link link to be added
-//        void AddLink(std::shared_ptr<FrLink_> link);
-        void AddLink(std::shared_ptr<chrono::ChLink> link);  // TODO : remplacer par du frydom full
+        void AddLink(std::shared_ptr<FrLinkBase_> link);
 
         /// Add a cable to the offshore system
         /// \param cable to be added

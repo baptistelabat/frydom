@@ -9,6 +9,7 @@ set(SRC_FILES
 list(APPEND SRC_FILES
         body/FrBody.cpp
         body/FrBodyEasy.cpp
+        body/FrInertia.cpp
         )
 
 # COMMON

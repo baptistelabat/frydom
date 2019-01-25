@@ -369,12 +369,13 @@ namespace frydom {
     }
 
 
-    void FrOffshoreSystem_::AddLink(std::shared_ptr<chrono::ChLink> link) {
-        m_chronoSystem->AddLink(link);
+    void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLinkBase_> link) {
+        m_chronoSystem->AddLink(link->GetChronoLink());
+        m_linkList.push_back(link);
     }
 
 
-//    void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLink_> link) {
+//    void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLinkBase_> link) {
 //        m_chronoSystem->AddLink(link->GetChronoLink());
 //        m_linkList.push_back(link);
 //    }

@@ -2,8 +2,8 @@
 // Created by frongere on 23/01/19.
 //
 
-#ifndef FRYDOM_FRLINKINC_H
-#define FRYDOM_FRLINKINC_H
+#ifndef FRYDOM_FRLINKSINC_H
+#define FRYDOM_FRLINKSINC_H
 
 #include "FrCylindricalLink.h"
 #include "FrFixedLink.h"
@@ -13,4 +13,4 @@
 #include "FrScrewLink.h"
 #include "FrSphericalLink.h"
 
-#endif //FRYDOM_FRLINKINC_H
+#endif //FRYDOM_FRLINKSINC_H

@@ -5,10 +5,14 @@
 #ifndef FRYDOM_FRLINK_H
 #define FRYDOM_FRLINK_H
 
-#include <chrono/physics/ChLink.h>
-#include "frydom/core/common/FrObject.h"
-//
-#include "memory"
+
+#include "frydom/core/common/FrPhysicsItem.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrConvention.h"
+#include "frydom/core/common/FrFrame.h"
+
+
+#include <memory>
 
 
 // Forward declaration
@@ -16,7 +20,6 @@ namespace chrono {
     class ChLinkLock;
     class ChLinkMotor;
 }
-
 
 
 namespace frydom {
@@ -29,86 +32,126 @@ namespace frydom {
 
 
 
-    class FrLink_ : public FrObject {
+    /// Pure abstract class for every FRyDoM constraint
+    class FrLinkBase_ : public FrPhysicsItem_ {
 
     protected:
 
-//        std::shared_ptr<chrono::ChLink> m_chronoLink;
-
-        FrOffshoreSystem_* m_system;
-
-        std::shared_ptr<FrNode_> m_node1;
-        std::shared_ptr<FrNode_> m_node2;
+        std::shared_ptr<FrNode_> m_node1;   ///< the node on body 1 of the link
+        std::shared_ptr<FrNode_> m_node2;   ///< the node on body 2 of the link
 
     public:
-        FrLink_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
+        FrLinkBase_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
 
-        virtual void Broke(); // TODO : Voir a rendre virtuel pur...
+        /// Tells if all constraints of this link are currently turned on or off by the user.
+        virtual bool IsDisabled() const = 0;
 
+        /// User can use this to enable/disable all the constraint of the link as desired.
+        virtual void SetDisabled(bool disabled) = 0;
+
+        /// Tells if the link is broken, for excess of pulling/pushing.
+        virtual bool IsBroken() const = 0;
+
+        /// Set the 'broken' status vof this link.
+        virtual void SetBroken(bool broken) = 0;
+
+        /// Tells if the link is currently active, in general,
+        /// that is tells if it must be included into the system solver or not.
+        /// This method cumulates the effect of various flags (so a link may
+        /// be not active either because disabled, or broken, or not valid)
+        virtual bool IsActive() const = 0;
+
+
+        /// Returns the force in the link in 3 dof in the link frame 1 coordinate system
+        virtual const Force GetLinkReactionForceInLinkFrame1() const = 0;
+
+        /// Returns the force in the link in 3 dof in the link frame 2 coordinate system
+        virtual const Force GetLinkReactionForceInLinkFrame2() const = 0;
+
+        /// Returns the force in the link in 3 dof in the world frame coordinate system
+        virtual const Force GetLinkReactionForceInWorldFrame(FRAME_CONVENTION fc) const = 0;
+
+
+        /// Returns the torque in the link in 3 dof in the link frame coordinate system
+        virtual const Torque GetLinkReactionTorqueInLinkFrame1() const = 0;
+
+        /// Returns the torque in the link in 3 dof in the link frame coordinate system
+        virtual const Torque GetLinkReactionTorqueInLinkFrame2() const = 0;
+
+        /// Returns the torque in the link in 3 dof in the world frame coordinate system
+        virtual const Torque GetLinkReactionTorqueInWorldFrame(FRAME_CONVENTION fc) const = 0;
+
+
+        /// Returns the first node of the link
         FrNode_* GetNode1();
 
+        /// Returns the second node of the link
         FrNode_* GetNode2();
 
-        // TODO : ajotuer fonctions pour donner la distance entre les noeuds...
+        /// Returns the first body of the link
+        FrBody_* GetBody1();
 
+        /// Returns the second body of the link
+        FrBody_* GetBody2();
 
 
 
     protected:  // TODO : voir si on rend cela private
         virtual void SetMarkers(FrNode_* node1, FrNode_* node2) = 0;
 
-//    private:
-//        friend class FrNode_;
+        friend void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLinkBase_> link);
+        virtual std::shared_ptr<chrono::ChLink> GetChronoLink() = 0;
+
+        FrFrame_ GetTransformFromFrame2ToFrame1() const;
+
 
     };
 
 
 
 
-    /// Base class to be used to replicate Chrono links using the Lock approach
-
-    // Forward declaration
-//    namespace chrono {
-//        class ChLinkLock;
-//    }
-
-    class _FrLinkLockBase : public FrLink_ {
-
-    public:
-        _FrLinkLockBase(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system);
+    class FrLink_ : public FrLinkBase_ {
 
     protected:
         std::shared_ptr<chrono::ChLinkLock> m_chronoLink;
 
 
-    };
+
+    public:
+        FrLink_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system);
+
+        bool IsDisabled() const override;
+
+        void SetDisabled(bool disabled) override;
+
+        bool IsBroken() const override;
+
+        void SetBroken(bool broken) override;
+
+        bool IsActive() const override;
 
 
 
+        const Force GetLinkReactionForceInLinkFrame1() const override;
+
+        const Force GetLinkReactionForceInLinkFrame2() const override;
+
+        const Force GetLinkReactionForceInWorldFrame(FRAME_CONVENTION fc) const override;
 
 
+        const Torque GetLinkReactionTorqueInLinkFrame1() const override;
+
+        const Torque GetLinkReactionTorqueInLinkFrame2() const override;
+
+        const Torque GetLinkReactionTorqueInWorldFrame(FRAME_CONVENTION fc) const override;
 
 
-
-
-
-
-
-
-
-
-
-    /// Base class to used to replicate Chrono ChLinkMotor classes
-//    namespace chrono {
-//        class ChLinkMotor;
-//    }
-
-    class _FrActuatorBase : public FrLink_ {
 
     protected:
-        std::shared_ptr<chrono::ChLinkMotor> m_chronoLink;
+        friend class FrNode_;
+        void SetMarkers(FrNode_* node1, FrNode_* node2) override;
 
-
+        std::shared_ptr<chrono::ChLink> GetChronoLink() override;
 
     };
 
@@ -119,47 +162,6 @@ namespace frydom {
 
 
 
-    // Forward declarations
-
-    // Classes representing common links
-//    class FrPrismaticLink;
-//    class FrRevoluteLink;
-//    class FrSphericalLink;
-//    class FrCylindricalLink;
-//    class FrFreeLink;
-//    class FrFixedLink;
-//    class FrScrewLink;
-//
-//
-//    std::shared_ptr<FrRevoluteLink> make_revolute_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
-//    std::shared_ptr<FrSphericalLink> make_spherical_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
-//    std::shared_ptr<FrCylindricalLink> make_cylindrical_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
-//    std::shared_ptr<FrFreeLink> make_free_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
-//    std::shared_ptr<FrFixedLink> make_fixed_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
-//    std::shared_ptr<FrScrewLink> make_screw_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
-//
-//
-//    // Classes representing constraints between markers
-//    class FrParallelConstraint;
-//    class FrPerpendicularConstraint;
-//    class FrPointOnLineConstraint;
-//    class FrPlaneOnPlaneConstraint;
-//    class FrPointOnPlaneConstraint;
-//    class FrPointOnSplineConstraint;
-//    class FrDistanceConstraint;
-//    class FrPointDistanceToAxisConstraint;
-//
-//
-//    // Classes representing actuators
-//    class FrLinearActuatorPosition;
-//    class FrLinearActuatorVelocity;
-//    class FrLinearActuatorForce;
-//    class FrAngularActuatorAngle;
-//    class FrAngularActuatorVelocity;
-//    class FrAngularActuatorTorque;
-
-
-//    / Helper functions to place links of different type between markers belonging to two bodies
 
 
 
@@ -167,47 +169,27 @@ namespace frydom {
 
 
 
-//    // Forward declaration
-//    class FrLink_;
+
+
+//    class FrActuator_ : public FrLinkBase_ {
 //
-//    struct _FrLinkBase : public chrono::ChLink {
-//
-//        FrLink_* m_frydomLink;
-//
-//        explicit _FrLinkBase(FrLink_* link);
-//
-//        void SetupInitial() override;
-//
-//        void Update(bool update_assets) override;
-//
-//    };
-//
-//    // Forward declaration
-//    class FrOffshoreSystem_;
-//    class FrNode_;
-//
-//    class FrLink_ : public FrObject {
 //
 //    protected:
-//
-//        std::shared_ptr<_FrLinkBase> m_chronoLink;
-//
-//        FrOffshoreSystem_* m_system;
+//        std::shared_ptr<chrono::ChLinkMotor> m_chronoLink;
 //
 //
 //    public:
 //
-//        FrLink_();
 //
-//        FrOffshoreSystem_* GetSystem();
+//    protected:
+//        friend class FrNode_;
+//        void SetMarkers(FrNode_* node1, FrNode_* node2) override;
 //
-//        void SetName(const char name[]);
-//
-//        std::string GetName() const;
-//
-//        virtual void Update() = 0;
+//        std::shared_ptr<chrono::ChLink> GetChronoLink() override;
 //
 //    };
+
+
 
 
 

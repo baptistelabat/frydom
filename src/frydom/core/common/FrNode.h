@@ -5,6 +5,8 @@
 #ifndef FRYDOM_FRNODE_H
 #define FRYDOM_FRNODE_H
 
+#include <frydom/core/link/FrLink.h>
+
 #include "chrono/physics/ChMarker.h"
 #include "FrObject.h"
 #include "frydom/core/math/FrVector.h"
@@ -12,7 +14,7 @@
 #include "FrFrame.h"
 
 
-//#include "frydom/core/link/FrLink.h"
+#include "frydom/core/link/FrLink.h"
 
 
 namespace frydom {
@@ -164,36 +166,11 @@ namespace frydom {
         /// \return the node acceleration in the node reference frame
         Acceleration GetAccelerationInNode(FRAME_CONVENTION fc) const;
 
-        ///Initialize method not implmeented yet
+        /// Initialize method not implemented yet
         void Initialize() override;
 
-        ///StepFinalize method not implmeented yet
+        /// StepFinalize method not implemented yet
         void StepFinalize() override;
-
-    private:
-
-        /// Set the node position, given in the body reference frame
-        /// \param position node position, given in the body reference frame
-        void SetLocalPosition(const Position& position);
-
-        /// Set the node position, given in the body reference frame
-        /// \param x x position, given in the body reference frame
-        /// \param y y position, given in the body reference frame
-        /// \param z z position, given in the body reference frame
-        void SetLocalPosition(double x, double y, double z);
-
-        /// Set the node rotation, given in the body reference frame
-        /// \param quaternion rotation, as quaternion, given in the body reference frame
-        void SetLocalQuaternion(const FrUnitQuaternion_& quaternion);
-
-        /// Set the node rotation, given in the body reference frame
-        /// \param rotation rotation, given in the body reference frame
-        void SetLocalRotation(const FrRotation_& rotation);
-
-        /// Set the node frame, given in the body reference frame
-        /// \param frame frame, given in the body reference frame
-        void SetLocalFrame(const FrFrame_& frame);
-
 
         // =============================================================================================================
         // PROJECTIONS
@@ -243,13 +220,35 @@ namespace frydom {
             return worldVector;
         }
 
-//        friend void FrLink_::SetMarkers(FrNode_*, FrNode_*);
+    private:
+
+        /// Set the node position, given in the body reference frame
+        /// \param position node position, given in the body reference frame
+        void SetLocalPosition(const Position& position);
+
+        /// Set the node position, given in the body reference frame
+        /// \param x x position, given in the body reference frame
+        /// \param y y position, given in the body reference frame
+        /// \param z z position, given in the body reference frame
+        void SetLocalPosition(double x, double y, double z);
+
+        /// Set the node rotation, given in the body reference frame
+        /// \param quaternion rotation, as quaternion, given in the body reference frame
+        void SetLocalQuaternion(const FrUnitQuaternion_& quaternion);
+
+        /// Set the node rotation, given in the body reference frame
+        /// \param rotation rotation, given in the body reference frame
+        void SetLocalRotation(const FrRotation_& rotation);
+
+        /// Set the node frame, given in the body reference frame
+        /// \param frame frame, given in the body reference frame
+        void SetLocalFrame(const FrFrame_& frame);
+
+
+        friend void FrLink_::SetMarkers(FrNode_*, FrNode_*);
+//        friend void FrActuator_::SetMarkers(FrNode_*, FrNode_*);
 
     };
-
-
-
-
 
 
 

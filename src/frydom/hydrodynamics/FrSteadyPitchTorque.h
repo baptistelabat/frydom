@@ -6,7 +6,7 @@
 #define FRYDOM_FRSTEADYPITCHTORQUE_H
 
 
-#include "frydom/core/FrForce.h"
+#include "frydom/core/force/FrForce.h"
 
 namespace frydom {
 
