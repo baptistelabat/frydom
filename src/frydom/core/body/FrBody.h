@@ -505,15 +505,22 @@ namespace frydom {
         // =============================================================================================================
 
         /// Get a new node attached to the body given a frame defined with respect to the body reference frame
+        /// \param nodeFrame frame of the node, given in body reference frame
+        /// \return node created
+        std::shared_ptr<FrNode_> NewNode(const FrFrame_& nodeFrame);
+
+        /// Get a new node attached to the body given a position and a rotation defined with respect to the body
+        /// reference frame
         /// \param bodyFrame frame of the node, given in body reference frame
         /// \return node created
-        std::shared_ptr<FrNode_> NewNode(const FrFrame_& bodyFrame);
+        std::shared_ptr<FrNode_> NewNode(const Position& nodeLocalPosition, const FrRotation_& nodeLocalRotation,
+                                         FRAME_CONVENTION fc);
 
         /// Get a new node attached to the body given a position of the node expressed into the body reference frame
-        /// \param localPosition position of the node, in the body reference frame
+        /// \param nodeLocalPosition position of the node, in the body reference frame
         /// \param fc frame convention (NED/NWU)
         /// \return node created
-        std::shared_ptr<FrNode_> NewNode(const Position& localPosition, FRAME_CONVENTION fc);
+        std::shared_ptr<FrNode_> NewNode(const Position& nodeLocalPosition, FRAME_CONVENTION fc);
 
         /// Get a new node attached to the body given a position of the node expressed into the body reference frame
         /// \param x x position of the node in the body reference frame

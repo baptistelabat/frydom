@@ -176,6 +176,15 @@ namespace frydom {
         /// \return the quaternion of the frame/transformation frame
         FrUnitQuaternion_ GetQuaternion() const;
 
+        // FIXME : on parle de world reference dans les methodes qui suivent. Un frame n'est pas necessairement relatif
+        // a world !! plutot parler de parent ! --> modifier la doc en consequence
+        // FIXME : Du coup en vrai, je ne vois pas l'interet de localAxis ... Retirer ?
+
+        /// Rotate the present frame around an axis defined in the present frame (if localAxis)
+        /// or in the world reference otherwise
+        void Rotate(const Direction& direction, double angleRad, FRAME_CONVENTION fc, bool localAxis);
+
+
         /// Rotate the present frame, around the X axis of the present frame (if localAxis)
         /// or around the X axis of the world reference frame otherwise, from a value given in radians.
         /// \param angle rotation angle in radians
@@ -272,12 +281,12 @@ namespace frydom {
         FrFrame_ ProjectToHorizontalPlane() const;
 
         template <class Vector>
-        Vector ProjectVectorParentInFrame(const Vector& parentVector) const {
+        Vector ProjectVectorParentInFrame(const Vector& parentVector) const {  // FIXME : et si le vecteur place en entree est en NED ????
             return GetQuaternion().GetInverse().Rotate<Vector>(parentVector, NWU);
         };
 
         template <class Vector>
-        Vector ProjectVectorInParent(const Vector& frameVector) const {
+        Vector ProjectVectorInParent(const Vector& frameVector) const {  // FIXME : et si le vecteur place en entree est en NED ????
             return GetQuaternion().Rotate<Vector>(frameVector, NWU);
         }
 
@@ -300,15 +309,29 @@ namespace frydom {
     namespace internal {
 
         inline FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame) {  // OK
-            auto pos  = ChVectorToVector3d<Position>(chFrame.GetPos());  // In NWU
-            auto quat = Ch2FrQuaternion(chFrame.GetRot());  // In NWU
-            return FrFrame_(pos, quat, NWU);
+            return FrFrame_(ChVectorToVector3d<Position>(chFrame.GetPos()),  // In NWU
+                            Ch2FrQuaternion(chFrame.GetRot()), // In NWU
+                            NWU);
+        }
+
+        inline FrFrame_ Ch2FrFrame(const chrono::ChCoordsys<double>& chCoordsys) {
+            return FrFrame_(
+                    ChVectorToVector3d<Position>(chCoordsys.pos), // In NWU
+                    Ch2FrQuaternion(chCoordsys.rot),
+                    NWU
+                    );
         }
 
         inline chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame) {
             auto pos = Vector3dToChVector(frFrame.GetPosition(NWU));
             auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
             return chrono::ChFrame<double>(pos, quat);
+        }
+
+        inline chrono::ChCoordsys<double> Fr2ChCoordsys(const FrFrame_& frFrame) {
+            auto pos = Vector3dToChVector(frFrame.GetPosition(NWU));
+            auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
+            return chrono::ChCoordsys<double>(pos, quat);
         }
 
     }  // end namespace internal

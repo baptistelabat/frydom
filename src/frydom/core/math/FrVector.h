@@ -241,6 +241,11 @@ namespace frydom {
 
     };
 
+//    #define XDIR Direction(1., 0., 0.);
+//    #define YDIR Direction(0., 1., 0.);
+//    #define ZDIR Direction(0., 0., 1.);
+
+
     // TODO : avoir un generalizedDirection ?? (direction lineaire + direction en rotation) --> definir produit vectoriel -> utile pour maillage
 
     class Velocity : public mathutils::Vector3d<double> {

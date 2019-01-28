@@ -406,7 +406,7 @@ namespace frydom {
 
         /// Get the local frame of the morison model
         /// \return Local frame
-        FrFrame_ GetFrame() const { return m_frame->GetFrame(); }
+        FrFrame_ GetFrame() const { return m_frame->GetFrameInWorld(); }
 
         /// Get the local frame of the morison model as node
         /// \return Node

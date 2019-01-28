@@ -8,7 +8,7 @@
 
 #include "actuators/FrActuatorsInc.h"
 #include "constraints/FrConstraintsInc.h"
-#include "links/FrLinksInc.h"
+#include "frydom/core/link/links_lib/FrLinksLibInc.h"
 
 #include "FrLink.h"
 

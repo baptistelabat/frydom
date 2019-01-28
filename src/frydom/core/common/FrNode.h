@@ -90,38 +90,72 @@ namespace frydom {
         /// \param body body to which the node belongs
         explicit FrNode_(FrBody_* body);
 
-        /// Constructor from a Position
-        /// \param body body to which the node belongs
-        /// \param position relative position of the node in the body reference frame
-        FrNode_(FrBody_* body, const Position& position);
+//        /// Constructor from a Position
+//        /// \param body body to which the node belongs
+//        /// \param position relative position of the node with respect to body reference frame
+//        FrNode_(FrBody_* body, const Position& position, FRAME_CONVENTION fc);
+//
+//        /// Constructor from a Position and a Rotation
+//        /// \param body body to which the node belongs
+//        /// \param position relative position of the frame node with respect to body reference frame
+//        /// \param rotation relative rotation of the frame node with respect to body reference frame
+//        FrNode_(FrBody_* body, const Position& position, const FrRotation_& rotation, FRAME_CONVENTION fc);
+//
+//        /// Constructor from a Position and a Quaternion
+//        /// \param body body to which the node belongs
+//        /// \param position relative position of the frame node with respect to body reference frame
+//        /// \param quaternion relative rotation of the frame node with respect to body reference frame, given as quaternion
+//        FrNode_(FrBody_* body, const Position& position, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc);
+//
+//        /// Constructor from a frame
+//        /// \param body body to which the node belongs
+//        /// \param frame relative frame node, with respect to body reference frame
+//        FrNode_(FrBody_* body, const FrFrame_& frame);
 
-        /// Constructor from a Position and a Rotation
-        /// \param body body to which the node belongs
-        /// \param position relative position of the frame node in the body reference frame
-        /// \param rotation relative rotation of the frame node in the body reference frame
-        FrNode_(FrBody_* body, const Position& position, const FrRotation_& rotation);
+        /// Set node position and direction axis, with respect to body reference frame
+        /// \param pos relative position of the frame node with respect to body reference frame
+        /// \param e1 direction of the x-axis with respect to reference frame
+        /// \param e2 direction of the y-axis with respect to reference frame
+        /// \param e3 direction of the z-axis with respect to reference frame
+        void Set(const Position& pos, const Direction& e1, const Direction& e2, const Direction& e3, FRAME_CONVENTION fc);
 
-        /// Constructor from a Position and a Quaternion
-        /// \param body body to which the node belongs
-        /// \param position relative position of the frame node in the body reference frame
-        /// \param quaternion relative rotation of the frame node in the body reference frame, given as quaternion
-        FrNode_(FrBody_* body, const Position& position, const FrUnitQuaternion_& quaternion);
 
-        /// Constructor from a frame
-        /// \param body body to which the node belongs
-        /// \param frame relative frame node, given in the body reference frame
-        FrNode_(FrBody_* body, const FrFrame_& frame);
+        /*
+         * Setters
+         */
 
-        /// Set node position and direction axis, given in the body reference frame
-        /// \param body body to which the node belongs
-        /// \param pos relative position of the frame node in the body reference frame
-        /// \param e1 direction of the x-axis in the body reference frame
-        /// \param e2 direction of the y-axis in the body reference frame
-        /// \param e3 direction of the z-axis in the body reference frame
-        void Set(FrBody_* body, Position pos, Direction e1, Direction e2, Direction e3);
+        /// Set the node position with respect to body reference frame
+        void SetPositionInBody(const Position& bodyPosition, FRAME_CONVENTION fc);
+        void SetPositionInWorld(const Position& worldPosition, FRAME_CONVENTION fc);
+
+        void TranslateInBody(const Position& positionBody, FRAME_CONVENTION fc);
+        void TranslateInBody(const Direction& directionBody, double distance, FRAME_CONVENTION fc);
+
+        void TranslateInWorld(const Position& positionWorld, FRAME_CONVENTION fc);
+        void TranslateInWorld(const Direction& directionWorld, double distance, FRAME_CONVENTION fc);
+
+
+        void SetOrientationInBody(const FrRotation_& rotation);
+        void SetOrientationInBody(const FrUnitQuaternion_& quaternion);
+
+        void RotateInBody(const FrRotation_& rotation);
+        void RotateInBody(const FrUnitQuaternion_& quaternion);
+
+        void RotateInWorld(const FrRotation_& rotation);
+        void RotateInWorld(const FrUnitQuaternion_& quaternion);
+
+        void RotateAroundXInBody(double angleRad, FRAME_CONVENTION fc);
+        void RotateAroundYInBody(double angleRad, FRAME_CONVENTION fc);
+        void RotateAroundZInBody(double angleRad, FRAME_CONVENTION fc);
+
+        void RotateAroundXInWorld(double angleRad, FRAME_CONVENTION fc);
+        void RotateAroundYInWorld(double angleRad, FRAME_CONVENTION fc);
+        void RotateAroundZInWorld(double angleRad, FRAME_CONVENTION fc);
+
+
 
         /// Destructor
-        ~FrNode_();
+        ~FrNode_() = default;
 
         /// Get the body pointer
         /// \return the body to which the node belongs
@@ -129,7 +163,17 @@ namespace frydom {
 
         /// Get the node frame, given in the world reference frame
         /// \return the node frame in the world reference frame
-        FrFrame_ GetFrame() const;
+        FrFrame_ GetFrameInWorld() const;
+
+        /// Get the node frame, given in the body reference frame
+        /// \return the node frame in the body reference frame
+        FrFrame_ GetFrameInBody() const;
+
+
+        void SetFrameInBody(const FrFrame_& frameInBody);
+
+        void SetFrameInWorld(const FrFrame_& frameInWorld);
+
 
         /// Get the node position in world reference frame
         /// \param fc Frame convention (NED/NWU)
@@ -185,7 +229,7 @@ namespace frydom {
         /// \return the vector projected in the world reference frame
         template <class Vector>
         Vector ProjectVectorInWorld(const Vector& nodeVector, FRAME_CONVENTION fc) const {
-            return GetFrame().GetQuaternion().Rotate<Vector>(nodeVector, fc);
+            return GetFrameInWorld().GetQuaternion().Rotate<Vector>(nodeVector, fc);
         }
 
         /// Project a vector from node reference frame to world reference frame
@@ -195,7 +239,7 @@ namespace frydom {
         /// \return the vector projected in the world reference frame
         template <class Vector>
         Vector& ProjectVectorInWorld(Vector& nodeVector, FRAME_CONVENTION fc) const {
-            nodeVector = GetFrame().GetQuaternion().Rotate<Vector>(nodeVector, fc);
+            nodeVector = GetFrameInWorld().GetQuaternion().Rotate<Vector>(nodeVector, fc);
             return nodeVector;
         }
 
@@ -206,7 +250,7 @@ namespace frydom {
         /// \return the vector projected in the node reference frame
         template <class Vector>
         Vector ProjectVectorInNode(const Vector &worldVector, FRAME_CONVENTION fc) const {
-            return GetFrame().GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+            return GetFrameInWorld().GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
         }
 
         /// Project a vector from world reference frame to node reference frame
@@ -216,33 +260,46 @@ namespace frydom {
         /// \return the vector projected in the node reference frame
         template <class Vector>
         Vector& ProjectVectorInNode(Vector& worldVector, FRAME_CONVENTION fc) const {
-            worldVector = GetFrame().GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
+            worldVector = GetFrameInWorld().GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
             return worldVector;
         }
 
     private:
+        /*
+         * The following methods are for internal use only. Everything must be passed as NWU referenced values !
+         */
 
-        /// Set the node position, given in the body reference frame
-        /// \param position node position, given in the body reference frame
-        void SetLocalPosition(const Position& position);
+//        /// Set the node position, with respect to the body reference frame
+//        /// \param position node position, with respect to the body reference frame
+//        void SetLocalPosition(const Position& position);
+//
+//        /// Set the node position, given in the body reference frame
+//        /// \param x x position, with respect to the body reference frame
+//        /// \param y y position, with respect to the body reference frame
+//        /// \param z z position, with respect to the body reference frame
+//        void SetLocalPosition(double x, double y, double z);
+//
+////        void SetWorldPosition(const Position& position);  // TODO : tester !!!!
+//
+//
+//
+//
+//        /// Set the node rotation, with respect to the body reference frame
+//        /// \param quaternion rotation, as quaternion, with respect to the body reference frame
+//        void SetLocalQuaternion(const FrUnitQuaternion_& quaternion);
+//
+//        /// Set the node rotation, with respect to the body reference frame
+//        /// \param rotation rotation, with respect to the body reference frame
+//        void SetLocalRotation(const FrRotation_& rotation);
 
-        /// Set the node position, given in the body reference frame
-        /// \param x x position, given in the body reference frame
-        /// \param y y position, given in the body reference frame
-        /// \param z z position, given in the body reference frame
-        void SetLocalPosition(double x, double y, double z);
 
-        /// Set the node rotation, given in the body reference frame
-        /// \param quaternion rotation, as quaternion, given in the body reference frame
-        void SetLocalQuaternion(const FrUnitQuaternion_& quaternion);
+        // TODO : voir si on garde les 2 methodes suivantes privees...
 
-        /// Set the node rotation, given in the body reference frame
-        /// \param rotation rotation, given in the body reference frame
-        void SetLocalRotation(const FrRotation_& rotation);
-
-        /// Set the node frame, given in the body reference frame
-        /// \param frame frame, given in the body reference frame
-        void SetLocalFrame(const FrFrame_& frame);
+        /// Set the node frame, with respect to the body reference frame
+        /// \param frame frame, with respect to the body reference frame
+//        void _SetLocalFrame(const FrFrame_ &frame);
+//
+//        void _SetWorldFrame(const FrFrame_ &frame);
 
 
         friend void FrLink_::SetMarkers(FrNode_*, FrNode_*);

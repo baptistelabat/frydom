@@ -55,13 +55,13 @@ list(APPEND SRC_FILES
         link/constraints/FrPointOnPlaneConstraint.cpp
         link/constraints/FrPointOnSplineConstraint.cpp
 
-        link/links/FrCylindricalLink.cpp
-        link/links/FrFixedLink.cpp
-        link/links/FrFreeLink.cpp
-        link/links/FrPrismaticLink.cpp
-        link/links/FrRevoluteLink.cpp
-        link/links/FrScrewLink.cpp
-        link/links/FrSphericalLink.cpp
+        link/links_lib/FrCylindricalLink.cpp
+        link/links_lib/FrFixedLink.cpp
+        link/links_lib/FrFreeLink.cpp
+        link/links_lib/FrPrismaticLink.cpp
+        link/links_lib/FrRevoluteLink.cpp
+        link/links_lib/FrScrewLink.cpp
+        link/links_lib/FrSphericalLink.cpp
 
         )
 

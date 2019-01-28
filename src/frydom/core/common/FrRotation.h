@@ -99,7 +99,7 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         void Set(const Direction& axis, double angleRAD, FRAME_CONVENTION fc);
 
-        void Set(const mathutils::Matrix33<double> matrix);
+        void Set(const mathutils::Matrix33<double> matrix, FRAME_CONVENTION fc);
 
         /// Set the Quaternion to the null rotation (ie the unit quaternion: {1,0,0,0})
         void SetNullRotation();
@@ -573,6 +573,12 @@ namespace frydom {
         inline void SwapQuaternionElementsFrameConvention(double& q0, double& q1, double& q2, double& q3) {
             q2 = -q2;
             q3 = -q3;
+        }
+
+        /// Swap the frame convention (NED/NWU) of a ChQuaternion
+        inline chrono::ChQuaternion<double>& SwapChQuaternionFrameConvention(chrono::ChQuaternion<double>& quat) {
+            quat.e2() = quat.e2();
+            quat.e3() = quat.e3();
         }
 
     }

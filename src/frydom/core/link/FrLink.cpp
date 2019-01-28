@@ -40,7 +40,7 @@ namespace frydom {
     }
 
     FrFrame_ FrLinkBase_::GetTransformFromFrame2ToFrame1() const {
-        return m_node2->GetFrame().GetOtherFrameRelativeTransform_WRT_ThisFrame(m_node1->GetFrame());
+        return m_node2->GetFrameInWorld().GetOtherFrameRelativeTransform_WRT_ThisFrame(m_node1->GetFrameInWorld());
     }
 
 

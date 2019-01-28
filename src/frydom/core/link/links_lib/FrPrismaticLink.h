@@ -11,6 +11,8 @@
 
 namespace frydom {
 
+
+
     class FrPrismaticLink : public FrLink_ {
 
     public:
@@ -42,7 +44,7 @@ namespace frydom {
 
 
 //    class FrPrismaticLink;
-//    std::shared_ptr<FrPrismaticLink> make_prismatic_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
+    std::shared_ptr<FrPrismaticLink> make_prismatic_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
 
 
 }  // end namespace frydom

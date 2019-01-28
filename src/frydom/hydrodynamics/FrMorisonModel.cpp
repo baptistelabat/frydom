@@ -575,7 +575,7 @@ namespace frydom {
         }
 
         Velocity velocityBody = body->GetFrame().ProjectVectorParentInFrame(velocity);
-        return m_frame->GetFrame().ProjectVectorParentInFrame(velocityBody);
+        return m_frame->GetFrameInWorld().ProjectVectorParentInFrame(velocityBody);
     }
 
     Acceleration FrMorisonSingleElement_::GetFlowAcceleration() {
@@ -590,7 +590,7 @@ namespace frydom {
         acceleration -= m_frame->GetAccelerationInWorld(NWU);
 
         Acceleration accBody = body->GetFrame().ProjectVectorParentInFrame(acceleration);
-        return m_frame->GetFrame().ProjectVectorParentInFrame(accBody);
+        return m_frame->GetFrameInWorld().ProjectVectorParentInFrame(accBody);
     }
 
     //
@@ -617,7 +617,7 @@ namespace frydom {
         localForce.z() = 0.5 * m_property.cf * rho * M_PI * m_property.diameter * m_property.length * velocity.z() * std::abs(velocity.z());
 
         // Project force in world at COG
-        auto forceBody = m_frame->GetFrame().ProjectVectorInParent(localForce);
+        auto forceBody = m_frame->GetFrameInWorld().ProjectVectorInParent(localForce);
         m_force = body->GetFrame().ProjectVectorInParent(forceBody);
 
         //Project torque in body at COG

@@ -61,9 +61,10 @@ namespace frydom {
         assert(IsRotation());
     }
 
-    void FrUnitQuaternion_::Set(const mathutils::Matrix33<double> matrix) {
+    void FrUnitQuaternion_::Set(const mathutils::Matrix33<double> matrix, FRAME_CONVENTION fc) {
         chrono::ChMatrix33<double> chronoMatrix = internal::Matrix33ToChMatrix33(matrix);
         m_chronoQuaternion = chronoMatrix.Get_A_quaternion();
+        if (IsNED(fc)) internal::SwapChQuaternionFrameConvention(m_chronoQuaternion);
     }
 
 

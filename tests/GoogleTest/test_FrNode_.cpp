@@ -69,15 +69,15 @@ TEST(FrNode,Position) {
     }
 
     /// test GetVelocityInNode
-    testVelocity = node->GetFrame().GetRotation().Rotate(node->GetVelocityInNode(fc),fc) - body->GetVelocityInWorldAtPointInBody(NodePositionInBody,fc);
+    testVelocity = node->GetFrameInWorld().GetRotation().Rotate(node->GetVelocityInNode(fc),fc) - body->GetVelocityInWorldAtPointInBody(NodePositionInBody,fc);
     EXPECT_TRUE(testVelocity.isZero());
     if (not(testVelocity.isZero())){
         std::cout<<body->GetVelocityInWorldAtPointInBody(NodePositionInBody,fc)<<std::endl;
-        std::cout<<node->GetFrame().GetRotation().Rotate(node->GetVelocityInNode(fc),fc)<<std::endl;
+        std::cout<< node->GetFrameInWorld().GetRotation().Rotate(node->GetVelocityInNode(fc),fc)<<std::endl;
     }
 
     /// test for fun
-    auto Node2BodyRotation = body->GetFrame().GetThisFrameRelativeTransform_WRT_OtherFrame(node->GetFrame(),fc).GetRotation();
+    auto Node2BodyRotation = body->GetFrame().GetThisFrameRelativeTransform_WRT_OtherFrame(node->GetFrameInWorld(),fc).GetRotation();
     testVelocity = Node2BodyRotation.Rotate(node->GetVelocityInNode(fc),fc) - body->GetVelocityInBodyAtPointInBody(NodePositionInBody,fc);
     EXPECT_TRUE(testVelocity.isZero());
     if (not(testVelocity.isZero())){
@@ -86,11 +86,11 @@ TEST(FrNode,Position) {
     }
 
     /// test GetAccelerationInNode
-    testAcceleration = node->GetFrame().GetRotation().Rotate(node->GetAccelerationInNode(fc),fc) - body->GetAccelerationInWorldAtPointInBody(NodePositionInBody,fc);
+    testAcceleration = node->GetFrameInWorld().GetRotation().Rotate(node->GetAccelerationInNode(fc),fc) - body->GetAccelerationInWorldAtPointInBody(NodePositionInBody,fc);
     EXPECT_TRUE(testAcceleration.isZero());
     if (not(testAcceleration.isZero())){
         std::cout<<body->GetAccelerationInWorldAtPointInBody(NodePositionInBody,fc)<<std::endl;
-        std::cout<<node->GetFrame().GetRotation().Rotate(node->GetAccelerationInNode(fc),fc)<<std::endl;
+        std::cout<< node->GetFrameInWorld().GetRotation().Rotate(node->GetAccelerationInNode(fc),fc)<<std::endl;
     }
 
 
@@ -103,7 +103,7 @@ TEST(FrNode,Position) {
     auto node2 = body->NewNode(NodeFrame);
 
     /// test GetFrame
-    testPosition  = node->GetFrame().GetPosition(fc) - body->GetPointPositionInWorld(NodePositionInBody,fc);
+    testPosition  = node->GetFrameInWorld().GetPosition(fc) - body->GetPointPositionInWorld(NodePositionInBody,fc);
     EXPECT_TRUE(testPosition.isZero());
     if (not(testPosition.isZero())){
         std::cout<<body->GetPointPositionInWorld(NodePositionInBody,fc)<<std::endl;
@@ -111,11 +111,11 @@ TEST(FrNode,Position) {
     }
 
     /// test GetFrame
-    bool testRotation = BodyRotationInWorld*NodeRotation == node2->GetFrame().GetRotation();
+    bool testRotation = BodyRotationInWorld*NodeRotation == node2->GetFrameInWorld().GetRotation();
     EXPECT_TRUE(testRotation);
     if (not(testRotation)){
         std::cout<<BodyRotationInWorld*NodeRotation<<std::endl;
-        std::cout<<node2->GetFrame().GetRotation()<<std::endl;
+        std::cout<< node2->GetFrameInWorld().GetRotation()<<std::endl;
     }
 
 

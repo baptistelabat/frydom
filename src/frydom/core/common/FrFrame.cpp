@@ -174,6 +174,20 @@ namespace frydom {
         return frame.cout(os);
     }
 
+    void FrFrame_::Rotate(const Direction& direction, double angleRad, FRAME_CONVENTION fc, bool localAxis) {
+        auto tmpDirection = direction;
+        if (localAxis) {
+            tmpDirection = ProjectVectorInParent<Direction>(tmpDirection);
+        }
+
+        FrUnitQuaternion_ rotQuat(tmpDirection, angleRad, fc);
+
+
+        GetQuaternion()
+
+
+    }
+
     void FrFrame_::RotX_RADIANS(double angle, FRAME_CONVENTION fc, bool localAxis) {
         chrono::ChVector<double> axis;
         if (localAxis) {

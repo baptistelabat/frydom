@@ -14,16 +14,6 @@
 namespace frydom {
 
 
-//    FrInertiaTensor_::FrInertiaTensor_() : m_mass(0.), m_cogPosition(0., 0., 0.) {}
-//
-//    FrInertiaTensor_::FrInertiaTensor_(double mass) : m_mass(mass), m_cogPosition(0., 0., 0.){}
-//
-//
-//    FrInertiaTensor_::FrInertiaTensor_(double mass, const Position &cogPosition, FRAME_CONVENTION fc): m_mass(mass) {
-//        m_cogPosition = cogPosition;
-//        if(IsNED(fc)) {internal::SwapFrameConvention(m_cogPosition);}
-//    }
-
     FrInertiaTensor_::FrInertiaTensor_(double mass,
                                        double Ixx, double Iyy, double Izz,
                                        double Ixy, double Ixz, double Iyz,
@@ -48,27 +38,6 @@ namespace frydom {
         m_inertiaAtCOG -= GetPointMassInertiaMatrix(mass, PG); // Avoir un GetPointMassInertia
         m_cogPosition = cogPosTmp;
         m_mass = mass;
-
-
-
-//
-////        chrono::ChMatrix33<double> chInertia_pp = internal::BuildChInertiaMatrix(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
-//
-//        // TODO : utiliser l'API pour les rotations !!!!!!!!!!!
-//
-//        auto chRotation_rp = coeffsFrame.m_chronoFrame.Amatrix; // Allowed because FrInertiaTensor_ is a friend of FrFrame_ // FIXME : retirer cette amitie
-//        // Cette rotation multiplie un vecteur exprime dans p en un vecteur exprime dans r
-//
-//        // Applying the generalized Huygens theorem to transport inertia at G, expressed in local frame coordinate system
-//        m_inertiaAtCOG.Reset();
-//        m_inertiaAtCOG.MatrMultiplyT(chRotation_rp * chInertia_pp, chRotation_rp);
-//
-//        Position PG;
-//        PG = cogPosTmp - coeffsFrame.GetPosition(NWU);
-//
-//        m_inertiaAtCOG -= internal::GetPointMassInertia(mass, PG); // Transport inertia matrix at COG
-//        m_cogPosition = cogPosTmp;
-//        m_mass = mass;
 
     }
 
@@ -142,6 +111,16 @@ namespace frydom {
 
     std::ostream& operator<<(std::ostream& os, const FrInertiaTensor_& inertia) {
         return inertia.cout(os);
+    }
+
+
+    void FrInertiaTensor_::SetMass(double mass_kg) {
+        m_mass = mass_kg;
+    }
+
+    void FrInertiaTensor_::SetCOGPosition(const frydom::Position &cogPosition, frydom::FRAME_CONVENTION fc) {
+        m_cogPosition = cogPosition;
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(m_cogPosition);
     }
 
 
