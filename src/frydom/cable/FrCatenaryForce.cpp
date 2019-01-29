@@ -4,8 +4,12 @@
 
 #include "chrono/core/ChVector.h"
 
+
 #include "FrCatenaryForce.h"
 #include "FrCatenaryLine.h"
+
+
+#include "frydom/core/body/FrBody.h"
 
 
 namespace frydom {
@@ -37,4 +41,47 @@ namespace frydom {
         moment = relpos.Cross(Body->Dir_World2Body(force));
 //        moment.SetNullRotation();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>REFACTO
+    void FrCatenaryForce_::Update(double time) {
+        Position relpos;
+        Force ForceInWorld;
+
+        // Get the line tension from the corresponding node
+        switch (m_line_side) {
+            case LINE_START:
+                ForceInWorld = m_line->getStartingNodeTension(NWU);
+                relpos = m_line->GetStartingNode()->GetNodePositionInBody(NWU);
+                break;
+
+            case LINE_END:
+                ForceInWorld = m_line->GetEndingNodeTension(NWU);
+                relpos = m_line->GetEndingNode()->GetNodePositionInBody(NWU);
+                break;
+        }
+        // Set the tension in the world reference frame and NWU frame convention
+        m_chronoForce->SetForceInWorldNWU(ForceInWorld);
+
+        // Set the torque in body reference frame and NWU frame convention
+        // FIXME: Calculer le moment par rapport au point de reference du corps ?
+        m_chronoForce->SetTorqueInBodyNWU(relpos.cross(m_body->ProjectVectorInBody(ForceInWorld,NWU)));
+
+    }
+
+
 }  // end namespace frydom

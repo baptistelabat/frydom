@@ -172,10 +172,9 @@ namespace frydom {
     class FrNode_;
     class FrForceAsset_;
 
-    /// Class defining an effort with force and torque vector
-    ///
-    ///
-
+    /**
+     * \brief  Class defining an effort with force and torque vector
+     */
     class FrForce_ : public FrObject {
 
     protected:

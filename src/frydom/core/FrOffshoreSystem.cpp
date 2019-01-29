@@ -12,8 +12,8 @@
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 
-#include "frydom/hydrodynamics/FrHydroMapper.h"
-#include "frydom/hydrodynamics/FrHydroDB.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 #include "frydom/core/body/FrBody.h"
 
 
@@ -354,6 +354,37 @@ namespace frydom {
     }
 
     FrOffshoreSystem_::~FrOffshoreSystem_() = default;
+    void FrOffshoreSystem_::Add(std::shared_ptr<FrObject> newItem) {
+        assert(std::dynamic_pointer_cast<FrBody_>(newItem) ||
+               std::dynamic_pointer_cast<FrLink_>(newItem) ||
+               std::dynamic_pointer_cast<FrPhysicsItem_>(newItem));
+
+        if (auto item = std::dynamic_pointer_cast<FrBody_>(newItem)) {
+            AddBody(item);
+            return;
+        }
+
+        if (auto item = std::dynamic_pointer_cast<FrLink_>(newItem)) {
+            AddLink(item);
+            return;
+        }
+
+        if (auto item = std::dynamic_pointer_cast<FrPrePhysicsItem_>(newItem)) {
+            AddPhysicsItem(item);
+            return;
+        }
+
+        if (auto item = std::dynamic_pointer_cast<FrMidPhysicsItem_>(newItem)) {
+            AddPhysicsItem(item);
+            return;
+        }
+
+        if (auto item = std::dynamic_pointer_cast<FrPostPhysicsItem_>(newItem)) {
+            AddPhysicsItem(item);
+            return;
+        }
+
+    }
 
     void FrOffshoreSystem_::AddBody(std::shared_ptr<FrBody_> body) {
 
@@ -375,24 +406,29 @@ namespace frydom {
     }
 
 
-//    void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLinkBase_> link) {
-//        m_chronoSystem->AddLink(link->GetChronoLink());
-//        m_linkList.push_back(link);
-//    }
 //
 //    void FrOffshoreSystem_::AddOtherPhysics(std::shared_ptr<FrOtherPhysics_> otherPhysics) {
 //        m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoOtherPhysics());
 //        m_otherPhysicsList.push_back(otherPhysics);
 //    }
 
-    void FrOffshoreSystem_::AddCable(std::shared_ptr<frydom::FrCable_> cable) {
-        m_chronoSystem->AddOtherPhysicsItem(cable->GetChronoPhysicsItem());
-        cable->m_system = this;
-    }
 
-    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics) {
+    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem_> otherPhysics) {
         m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
         otherPhysics->m_system = this;
+        m_PrePhysicsList.push_back(otherPhysics);
+    }
+
+    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem_> otherPhysics) {
+        m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
+        otherPhysics->m_system = this;
+        m_MidPhysicsList.push_back(otherPhysics);
+    }
+
+    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem_> otherPhysics) {
+        m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
+        otherPhysics->m_system = this;
+        m_PostPhysicsList.push_back(otherPhysics);
     }
 
     FrEnvironment_ *FrOffshoreSystem_::GetEnvironment() const {

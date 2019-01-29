@@ -17,7 +17,7 @@ namespace frydom {
     class FrAiryRegularWaveField : public FrWaveField_ {
     protected:
 
-        double m_height = 0.;   ///< Wave Height
+        double m_height = 0.;   ///< Wave amplitude
         double m_period = 0.;   ///< Wave Period
         double m_omega = 0;     ///< Wave Frequency
         double m_k = 0.;        ///< Wave Number
@@ -91,7 +91,7 @@ namespace frydom {
         /// \param y y position
         /// \param fc frame convention (NED/NWU)
         /// \return complex wave elevation, in meters
-        virtual Complex GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const;
+        virtual std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const;
 
         /// Return the complex eulerian fluid particule velocity in global reference frame (implemented in child)
         /// \param x x position
@@ -123,6 +123,16 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule acceleration, in m/s²
         Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const final;
+
+        // -------------------------------------- Wave characteristics -----------------------------
+
+        std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit) const override;
+
+        std::vector<double> GetWaveNumbers() const override;
+
+        std::vector<std::vector<double>> GetWaveAmplitudes() const override;
+
+        std::vector<double> GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const override;
 
     };
 }

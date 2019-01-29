@@ -206,6 +206,29 @@ namespace frydom{
 
     }
 
+    std::vector<double> FrAiryIrregularWaveField::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
+        std::vector<double> freqs = m_waveFrequencies;
+        if (unit != RADS) {
+            for (auto &freq: freqs) {
+                freq = convert_frequency(freq, RADS, unit);
+            }
+        }
+        return freqs;
+    }
+
+    std::vector<double> FrAiryIrregularWaveField::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc,
+                                                                    DIRECTION_CONVENTION dc) const {
+        auto directions = m_waveDirections;
+
+        if(IsNED(fc)) for (auto& dir: directions) {dir = -dir; }
+        if(dc == COMEFROM) for (auto& dir: directions) { dir += M_PI; }
+        for (auto& dir: directions) Normalize_0_2PI(dir);
+        if(unit==DEG) for (auto& dir: directions) { dir *= MU_180_PI; }
+
+        return directions;
+
+    }
+
     void FrAiryIrregularWaveField::Initialize() {
         FrWaveField_::Initialize();
         m_verticalFactor->SetInfDepth(m_infinite_depth);

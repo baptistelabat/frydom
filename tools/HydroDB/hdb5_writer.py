@@ -144,7 +144,8 @@ def write_hdb5(hdb, out_file=None):
 
         # TODO: regler dans le writer
         irf_db = hdb.radiation_db.eval_impulse_response_function(tf=100, dt=0.1)
-        
+        irf_ku_db = hdb.radiation_db.eval_impulse_response_function_Ku(tf=100, dt=0.1)
+
         # Time discretization
         irf_time_path = discretization_path + "/Time"
         time = irf_db.time
@@ -155,8 +156,7 @@ def write_hdb5(hdb, out_file=None):
         dset = f.create_dataset(irf_time_path + "/FinalTime", data=time[-1])
         dset.attrs['Unit'] = "s"
         dset.attrs['Description'] = "Final time for the impulse response function"
-        
-        
+
         for body in hdb.body_mapper.bodies:
             # assert isinstance(body, HydrodynamicData)
             
@@ -284,8 +284,6 @@ def write_hdb5(hdb, out_file=None):
                 jbody = body_j.ibody
 
 
-
-
                 radiation_body_motion_path = radiation_path + "/BodyMotion_%u" % jbody
                 
                 dg = f.create_group(radiation_body_motion_path)
@@ -307,6 +305,11 @@ def write_hdb5(hdb, out_file=None):
                 dg.attrs['Description'] = "Impulse response function for velocity of body %u that radiates waves " \
                                           "and generates forces on body %u" % (jbody, body.ibody)
 
+                irf_ku_path = radiation_body_motion_path + "/ImpulseResponseFunctionKu"
+                dg = f.create_group(irf_ku_path)
+                dg.attrs['Description'] = "Impulse response function Ku for velocity of body %u that radiates waves " \
+                                          "and generates forces on body %u" % (jbody, body.ibody)
+
                 # Infinite added mass for body i and motion of body j
                 dset = f.create_dataset(radiation_body_motion_path + "/InfiniteAddedMass",
                                         data=rad_db.get_infinite_added_mass_matrix(body.ibody, jbody))
@@ -316,6 +319,7 @@ def write_hdb5(hdb, out_file=None):
                 added_mass = rad_db.get_added_mass(body.ibody, jbody)
                 radiation_damping = rad_db.get_radiation_damping(body.ibody, jbody)
                 impulse_response_function = irf_db.get_impulse_response(body.ibody, jbody)
+                impulse_response_function_ku = irf_ku_db.get_impulse_response_Ku(body.ibody, jbody)
 
                 for imode, motion_mode_j in enumerate(body_j.motion_modes):
 
@@ -337,3 +341,8 @@ def write_hdb5(hdb, out_file=None):
                     dset = f.create_dataset(irf_path + "/DOF_%u" % (imode),
                                             data=impulse_response_function[:, imode, :])
                     dset.attrs['Description'] = "Impulse response functions"
+
+                    # Impulse response function Ku
+                    dset = f.create_dataset(irf_ku_path + "/DOF_%u" % (imode),
+                                            data=impulse_response_function_ku[:, imode, :])
+                    dset.attrs['Description'] = "Impulse response functions Ku"

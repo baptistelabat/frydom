@@ -95,13 +95,13 @@ namespace frydom {
 
         ~FrCatway();
 
-        Force GetTension(double s) const override;
+        Force GetTension(double s, FRAME_CONVENTION fc) const override;
 
-        Force GetStartNodeTension() const;
+        Force GetStartNodeTension(FRAME_CONVENTION fc) const;
 
-        Force GetEndNodeTension() const;
+        Force GetEndNodeTension(FRAME_CONVENTION fc) const;
 
-        Position GetAbsPosition(double s) const override;
+        Position GetAbsPosition(double s, FRAME_CONVENTION fc) const override;
 
         void Update();
 
@@ -118,7 +118,7 @@ namespace frydom {
         std::shared_ptr<CatenaryCableAsset> GetAsset();
 
     private:
-        std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() override;
+        std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() const override;
 
 
     };

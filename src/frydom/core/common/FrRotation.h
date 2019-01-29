@@ -208,7 +208,6 @@ namespace frydom {
         /// It corresponds to applying a rotation to the target frame and must be expressed in the current target frame
         /// Practically, this is a right rotation composition
         void RotateInFrame(const FrUnitQuaternion_& rightQuaternion);
-
         /// Inverse the quaternion to get its inverse in place (its vectorial part changes sign).
         /// \return the quaternion conjugate in place
         FrUnitQuaternion_& Inverse();
@@ -226,8 +225,6 @@ namespace frydom {
         /// to the rotation expressed by the quaternion inverse.
         /// \return 3x3 rotation matrix
         mathutils::Matrix33<double> GetInverseRotationMatrix() const;
-
-
         // FIXME : les 4 methodes suivantes sont-elles vraiment utiles ??? De maniere generale dans FRyDoM, on ne manipule
         // que rarement directement les matrices de rotation ...
 
@@ -274,8 +271,6 @@ namespace frydom {
         std::ostream& cout(std::ostream& os) const;
 
     };
-
-
 
     /*==================================================================================================================
      *
@@ -343,6 +338,7 @@ namespace frydom {
 
         /// Get the axis of the rotation
         /// \param axis direction of the rotation, normalized
+        /// \param fc frame convention (NED/NWU)
         void GetAxis(Direction& axis, FRAME_CONVENTION fc);
 
         /// Get the angle in rotation in space (in radians)
@@ -552,7 +548,6 @@ namespace frydom {
 //            if (IsNED(fc)) internal::SwapFrameConvention<Vector>(out);
             return out;
         }
-
         /// Apply rotation before this rotation.
         /// It corresponds to applying a rotation to the parent and must be expressed in the current parent frame
         /// Practically, this is a left rotation composition

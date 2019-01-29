@@ -23,7 +23,7 @@ namespace frydom {
     /// during the initialization stage.
 
     class FrEquilibriumFrame_ : public FrFrame_,
-                                public FrPhysicsItem_ {
+                                public FrPrePhysicsItem_ {
 
     protected:
         FrBody_* m_body = nullptr;               ///< Link to the body to which the equilibrium frame if applied
@@ -37,13 +37,14 @@ namespace frydom {
         /// Constructor of a new equilibrium frame with default position and no velocity
         /// User will must define the body to linked with with the corresponding method
         /// before execution of the simulation
-        FrEquilibriumFrame_() : FrFrame_(), FrPhysicsItem_() { };
+        FrEquilibriumFrame_() : FrFrame_(), FrPrePhysicsItem_(), m_angularVelocity(0.) { };
 
         /// Constructor of a new equilibrium frame with body linked
         /// \param body Body to which the equilibrium frame is linked
         /// \param initPos Boolean, if true the position of the equilibrium is set to the position of
         /// the body during initialization
-        FrEquilibriumFrame_(FrBody_* body, bool initPos = true) : FrFrame_(), FrPhysicsItem_(), m_body(body), m_initPositionFromBody(initPos) { };
+        FrEquilibriumFrame_(FrBody_* body, bool initPos = true) : FrFrame_(), FrPrePhysicsItem_(), m_body(body),
+                                                                  m_initPositionFromBody(initPos), m_angularVelocity(0.) { };
 
         /// Constructor of a new equilibrium frame with defined position, rotation and body linked
         /// \param pos Initial position of the equilibrium frame in world coordinates
@@ -51,7 +52,7 @@ namespace frydom {
         /// \param fc Frame convention
         /// \param body Body link
         FrEquilibriumFrame_(const Position& pos, const FrRotation_& rotation, FRAME_CONVENTION fc, FrBody_* body)
-                : FrFrame_(pos, rotation, fc), FrPhysicsItem_(), m_body(body), m_initPositionFromBody(false) { }
+                : FrFrame_(pos, rotation, fc), FrPrePhysicsItem_(), m_body(body), m_initPositionFromBody(false) { }
 
         /// Constructor of a new equilibrium frame with defined position, rotation and body linked
         /// \param pos Initial position of the equilibrium frame in world coordinates
@@ -59,13 +60,13 @@ namespace frydom {
         /// \param fc Frame convention
         /// \param body Body link
         FrEquilibriumFrame_(const Position& pos, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc, FrBody_* body)
-                : FrFrame_(pos, quaternion, fc), FrPhysicsItem_(), m_body(body), m_initPositionFromBody(false) { }
+                : FrFrame_(pos, quaternion, fc), FrPrePhysicsItem_(), m_body(body), m_initPositionFromBody(false) { }
 
         /// Constructor of a new equilibrium frame from an other frame and body link
         /// \param otherFrame Initial frame definition
         /// \param body Body link
         FrEquilibriumFrame_(const FrFrame_& otherFrame, FrBody_* body)
-                : FrFrame_(otherFrame), FrPhysicsItem_(), m_body(body), m_initPositionFromBody(false) { }
+                : FrFrame_(otherFrame), FrPrePhysicsItem_(), m_body(body), m_initPositionFromBody(false) { }
 
         /// Define the body to which the equilibrium frame is linked
         /// \param body Body link
@@ -83,7 +84,7 @@ namespace frydom {
         /// \param fc Frame convention
         void SetVelocityInWorld(const Velocity& velocity, FRAME_CONVENTION fc);
 
-        /// Set velocity ofthe equilibrium frame in world coordinates
+        /// Set velocity of the equilibrium frame in world coordinates
         /// \param velocity Velocity vector in frame coordinates
         void SetVelocityInFrame(const Velocity& velocity);
 
@@ -100,6 +101,14 @@ namespace frydom {
         /// \return Velocity vector
         Velocity GetVelocityInFrame() const;
 
+        Velocity GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const;
+
+        Velocity GetPerturbationVelocityInFrame() const;
+
+        GeneralizedVelocity GetPerturbationGeneralizedVelocityInWorld(FRAME_CONVENTION fc) const;
+
+        GeneralizedVelocity GetPerturbationGeneralizedVelocityInFrame() const;
+
         /// Get the angular velocity of the equilibrium frame around the Z-axis
         /// \param fc Frame convention
         /// \return Angular velocity around Z (vertical)
@@ -109,6 +118,10 @@ namespace frydom {
         /// \param fc Frame convention
         /// \return Angular velocity vector
         AngularVelocity GetAngularVelocity(FRAME_CONVENTION fc) const;
+
+        AngularVelocity GetAngularPerturbationVelocity(FRAME_CONVENTION fc) const;
+
+        AngularVelocity GetAngularPerturbationVelocityInFrame() const;
 
         /// The velocity of the frame is initialized from the body velocity
         /// \param is_init Boolean True/Flase

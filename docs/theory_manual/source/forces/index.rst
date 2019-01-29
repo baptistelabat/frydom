@@ -20,8 +20,8 @@ ITTC resistance force
 
     ITTC78
 
-Morison force
--------------
+Morison model and force
+-----------------------
 .. toctree::
     :maxdepth: 1
 

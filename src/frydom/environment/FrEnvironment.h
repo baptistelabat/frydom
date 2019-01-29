@@ -308,7 +308,7 @@ namespace frydom {
         double GetGravityAcceleration() const;
 
         /// Set the gravity acceleration on the vertical axis
-        /// \param gravityAcceleration, in m/s²
+        /// \param gravityAcceleration gravity acceleration, in m/s²
         void SetGravityAcceleration(double gravityAcceleration);
 
         /// Return the flow velocity observed from the local frame

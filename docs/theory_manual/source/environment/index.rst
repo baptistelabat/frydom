@@ -41,6 +41,7 @@ Waves
 
 Wave theory
 ~~~~~~~~~~~
+
 .. toctree::
     :maxdepth: 1
 

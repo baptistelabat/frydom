@@ -413,6 +413,8 @@ namespace frydom {
         /// \param isColliding true if a collision model is to be defined, false otherwise
         void SetCollide(bool isColliding);
 
+        std::shared_ptr<chrono::ChMaterialSurfaceSMC> GetMaterialSurface() {return m_chronoBody->GetMaterialSurfaceSMC();}
+
         // TODO : ajouter de quoi definir des shapes de collision !!!
 
         // =============================================================================================================

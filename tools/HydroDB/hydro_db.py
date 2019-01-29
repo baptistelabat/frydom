@@ -126,6 +126,7 @@ class HydroDB(_FreqDB):
         self.nb_wave_dir = 0  # TODO: mettre dans diffraction uniquement
         self.min_wave_dir = 0.
         self.max_wave_dir = 0.
+        self._wave_dirs = np.array([])
         
         self.has_kochin = False  # TODO: mettre dans Kochin uniquement
         self.nb_dir_kochin = 0
@@ -136,6 +137,7 @@ class HydroDB(_FreqDB):
         
         self._radiation_db = RadiationDB()  # IRF est genere a partir de radiation...
         self._diffraction_db = DiffractionDB()  # TODO: les frequences seront ajoutees lors d'une requete sur la ppte !
+
         
         self._has_froude_krylov = False
         self._froude_krylov_db = FroudeKrylovDB()
@@ -208,7 +210,11 @@ class HydroDB(_FreqDB):
         db._y_wave_measure = self.y_wave_measure
         
         return db
-    
+
+    @property
+    def wave_dirs(self):
+        return self._wave_dirs
+
     def set_wave_direction(self, min_wave_dir, max_wave_dir, nb_wave_dir):
         # self._diffraction_db.set_wave_dir(min_wave_dir, max_wave_dir, nb_wave_dir)
         self.min_wave_dir = min_wave_dir
@@ -589,6 +595,7 @@ class RadiationDB(_FreqDB):
         self._cm_inf = None
 
         self._irf_db = None
+        self._irf_ku_db = None
         
         self.body_mapper = HydroBodySetMapping()
         self._flags = np.empty(0, dtype=np.bool)
@@ -740,7 +747,7 @@ class RadiationDB(_FreqDB):
         ibody_motion : int
             Index of the body having a motion
         idof : int
-            Index of the local body's raditation mode (motion)
+            Index of the local body's radiation mode (motion)
         ibody_force : int
             Index of the body where the radiation force is applied
         iforce : int
@@ -827,6 +834,78 @@ class RadiationDB(_FreqDB):
         if self._irf_db is None:
             self.eval_impulse_response_function(tf=100, dt=0.1)
         return self._irf_db
+
+    def eval_impulse_response_function_Ku(self, tf=30., dt=None, full=True):
+        """Computes the impulse response function relative to the ship advance speed
+
+        ref : F. Rongère et al. (Journées de l'Hydrodynamique 2010 - Nantes)
+
+        Parameters
+        ----------
+        tf : float, optional
+            Final time (seconds). Default is 30.
+        dt : float, optional
+            Time step (seconds). Default is None. If None, a time step is computed according to the max
+            frequency of
+            hydrodynamic coefficients (the Nyquist frequency is taken)
+        full : bool, optional
+            If True (default), it will use the full frequency range for computations.
+
+        Returns
+        -------
+        RadiationIRFDB:
+            Radiation Impulse Response Database object
+        """
+
+        self.eval_infinite_added_mass()     # FIXME : pourquoi cela ne fonctionne par en extérieur
+
+        irf_db = RadiationIRFDB()
+
+        if dt is None:
+            # Using Shannon theorem
+            dt = pi / (10. * self.max_frequency)
+
+        time = np.arange(start=0., stop=tf + dt, step=dt)
+
+        tf = time[-1]
+
+        if full:
+            w = self.get_full_omega()
+        else:
+            w = self.omega
+
+        wt = np.einsum('i, j ->ij', w, time)  # is nw x nt
+        cwt = np.cos(wt)  # is nw x nt
+
+        if full:
+            cm = np.einsum('ijk, ik -> ijk', self._cm, self._flags)
+        else:
+            cm = self.added_mass
+
+        cm_inf = self.infinite_added_mass
+
+        cm_diff = np.zeros(cm.shape)
+        for j in range(w.size):
+            cm_diff[:, j, :] = cm_inf[:, :] - cm[:, j, :]
+
+        cm_diff[:, :, 4] = -cm_diff[:, :, 2]
+        cm_diff[:, :, 5] = cm_diff[:, :, 1]
+
+        kernel = np.einsum('ijk, jl -> ijkl', cm_diff, cwt)  # is nb_forces x nb_motions x nt
+
+        irf_data = (2. / pi) * np.trapz(kernel, x=w, axis=1)
+
+        irf_db.set_data(tf, dt, irf_data)
+        irf_db.body_mapper = self.body_mapper
+
+        self._irf_ku_db = irf_db
+
+        return irf_db
+
+    def get_irf_ku(self):
+        if self._irf_ku_db is None:
+            self.eval_impulse_response_function_Ku(tf=100, dt=0.1)
+        return self._irf_ku_db
 
     def eval_infinite_added_mass(self, full=True):
         """Evaluates the infinite added mass matrix coefficients using Ogilvie formula.
@@ -1615,6 +1694,10 @@ class HydroBodySetMapping(object):
         for body in self.bodies:
             n += body.nb_force_modes
         return n
+
+    @property
+    def body(self):
+        return self.bodies
 
     def get_body(self, ibody):  # TODO: Methode de HydroBodySetMapping
         """Get the HydroBody object specified by its number

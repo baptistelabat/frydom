@@ -125,31 +125,30 @@ namespace frydom {
 
 
 
-    Complex FrAiryRegularWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
-        // eta_cplx = A * exp(j.k.[x.cos(theta) + y.sin(theta)] - j.omega.t)
-
+    std::vector<std::vector<Complex>> FrAiryRegularWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
         double NWUsign = 1;
         if (IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
         double kdir = x*cos(m_dirAngle) + y*sin(m_dirAngle);
-        return m_height * exp(JJ*(m_k*kdir - m_omega * c_time)) * NWUsign * c_ramp;
+        Complex cmplxElevation = m_height * exp(JJ*(m_k*kdir - m_omega * c_time)) * NWUsign * c_ramp;
+        return std::vector<std::vector<Complex>>(1, std::vector<Complex>(1, cmplxElevation));
     }
 
     mathutils::Vector3d<Complex> FrAiryRegularWaveField::GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
         double NWUsign = 1;
         if (IsNED(fc)) {y=-y; z=-z; NWUsign = -NWUsign;}
         auto ComplexElevation = GetComplexElevation(x, y, fc);
-        auto Vtemp = m_omega * ComplexElevation * m_verticalFactor->Eval(x,y,z,m_k,c_depth);
+        auto Vtemp = m_omega * ComplexElevation[0][0] * m_verticalFactor->Eval(x,y,z,m_k,c_depth);
 
         auto Vx = cos(m_dirAngle) * Vtemp * NWUsign;
         auto Vy = sin(m_dirAngle) * Vtemp;
-        auto Vz = -JJ * m_omega / m_k * ComplexElevation * m_verticalFactor->EvalDZ(x,y,z,m_k,c_depth);
+        auto Vz = -JJ * m_omega / m_k * ComplexElevation[0][0] * m_verticalFactor->EvalDZ(x,y,z,m_k,c_depth);
 
         return {Vx,Vy,Vz};
     }
 
 
     double FrAiryRegularWaveField::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
-        return std::imag( GetComplexElevation(x, y, fc));
+        return std::imag( GetComplexElevation(x, y, fc)[0][0]);
     }
 
     Velocity FrAiryRegularWaveField::GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
@@ -162,6 +161,32 @@ namespace frydom {
         auto cplxAcc = -JJ * m_omega * cplxVel;
         return {std::imag(cplxAcc.x()),std::imag(cplxAcc.y()),std::imag(cplxAcc.z())};
 
+    }
+
+    // ------------------------------------- Wave characteristics ----------------------------
+
+    std::vector<double> FrAiryRegularWaveField::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
+        auto omega = convert_frequency(m_omega, RADS, unit);
+        return std::vector<double>(1, omega);
+    }
+
+    std::vector<double> FrAiryRegularWaveField::GetWaveNumbers() const {
+        return std::vector<double>(1, m_k);
+    }
+
+    std::vector<std::vector<double>> FrAiryRegularWaveField::GetWaveAmplitudes() const {
+        return std::vector<std::vector<double>>(1, std::vector<double>(1, m_height));
+    }
+
+    std::vector<double> FrAiryRegularWaveField::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const {
+        auto direction = m_dirAngle;
+
+        if(IsNED(fc)) direction = -direction;
+        if(dc == COMEFROM) direction += MU_PI;
+        Normalize_0_2PI(direction);
+        if (unit == DEG) direction *= MU_180_PI;
+
+        return std::vector<double>(1, direction);
     }
 
 

@@ -1,5 +1,8 @@
 .. _wave_stretching:
 
+Kinematic stretching
+~~~~~~~~~~~~~~~~~~~~
+
 The linear wave theory is based on the linearization of the free surface condition on the mean water level :math:`z=0`.
 This means that the velocity potential evaluated above the mean water level can lead to non-realistic values, due to the
 scaling factor :math:`E(z)`, in the velocity potential expression (see :any:`wave theory<wave_theory>`).

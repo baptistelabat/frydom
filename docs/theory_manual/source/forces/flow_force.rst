@@ -37,5 +37,5 @@ and in GOTO or COMEFROM, convention.
 
 
 References
-----------
+__________
 .. [OCIMF] Oil Companies International Marine Forum, 1994. Prediction of Wind and Current Loads on VLCCs, 2nd edition, Witherby & Co., London.

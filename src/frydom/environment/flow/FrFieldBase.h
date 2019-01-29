@@ -20,7 +20,7 @@ namespace frydom {
         /// \param worldPos Position of the Point in world frame
         /// \param fc Frame convention (NED/NWU)
         /// \return Velocity in world frame
-        virtual Velocity GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION frame) const = 0;
+        virtual Velocity GetFluxVelocityInWorld(const Position &worldPos, FRAME_CONVENTION fc) const = 0;
 
         /// Update the state of the field model (virtual pure)
         /// \param time Current time of the simulation

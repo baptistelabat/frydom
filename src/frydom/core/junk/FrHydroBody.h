@@ -12,7 +12,7 @@
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/core/math/FrEulerAngles.h"
 #include "frydom/core/FrOffshoreSystem.h"
-#include "frydom/hydrodynamics/junk/FrVariablesBEMBodyMass.h"
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesBEMBodyMass.h"
 
 
 // Forward declaration

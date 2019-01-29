@@ -52,7 +52,15 @@ Dynamics
    :maxdepth: 2
 
    source/dynamics
-   
+
+
+Cables
+********
+
+.. toctree::
+   :maxdepth: 2
+
+   source/cable/index
 
 Indices and tables
 ******************

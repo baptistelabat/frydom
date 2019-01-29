@@ -138,7 +138,7 @@ namespace frydom {
             /// Definition of the uniform field from direction and magnitude
             /// \param direction Direction
             /// \param magnitude Velocity speed of the flow
-            /// \param speedUnit Speed unit (MS/KMH/KNOT)
+            /// \param speed_unit Speed unit (MS/KMH/KNOT)
             /// \param dc Direction convention (GOTO/COMEFROM)
             void Set(std::function<Velocity(FRAME_CONVENTION)> direction, double magnitude,
                      SPEED_UNIT speed_unit, DIRECTION_CONVENTION dc);

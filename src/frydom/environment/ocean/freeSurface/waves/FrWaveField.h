@@ -415,9 +415,14 @@ namespace frydom {
         /// \return wave model (NO_WAVES, LINEAR_WAVES)
         WAVE_MODEL GetWaveModel() const;
 
+        //
+        // Velocity & Acceleration
+        //
+
         /// Get the wave elevation on the horizontal position (x,y)
         /// \param x x position
         /// \param y y position
+        /// \param fc frame convention (NED/NWU)
         /// \return wave elevation, in meters
         virtual double GetElevation(double x, double y, FRAME_CONVENTION fc) const = 0;
 
@@ -425,6 +430,7 @@ namespace frydom {
         /// \param x x position
         /// \param y y position
         /// \param z z position
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule velocity, in m/s
         virtual Velocity GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const = 0;
 
@@ -433,12 +439,14 @@ namespace frydom {
         /// \param y y position
         /// \param z z position
         /// \param cutoff if true, and z position above the wave elevation, return 0
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule velocity, in m/s
         virtual Velocity GetVelocity(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const;
 
 
         /// Return the eulerian fluid particule velocity in global reference frame (from vector position)
         /// \param worldPos position
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule velocity, in m/s
         virtual Velocity GetVelocity(const Position& worldPos, FRAME_CONVENTION fc) const;
 
@@ -446,6 +454,7 @@ namespace frydom {
         /// \param x x position
         /// \param y y position
         /// \param z z position
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule acceleration, in m/s²
         virtual Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const = 0;
 
@@ -454,30 +463,52 @@ namespace frydom {
         /// \param y y position
         /// \param z z position
         /// \param cutoff if true, and z position above the wave elevation, return 0
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule acceleration, in m/s²
         virtual Acceleration GetAcceleration(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const;
 
         /// Return the eulerian fluid particule acceleration in global reference frame (from vector position)
         /// \param worldPos position
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule acceleration, in m/s²
         virtual Acceleration GetAcceleration(const Position& worldPos, FRAME_CONVENTION fc) const;
 
         /// Get the wave elevation for a set of point positions
         /// \param xVect x positions
         /// \param yVect y positions
+        /// \param fc frame convention (NED/NWU)
         /// \return wave elevation, in meters
         virtual std::vector<std::vector<double>> GetElevation(const std::vector<double>& xVect,
                                                               const std::vector<double>& yVect, FRAME_CONVENTION fc) const;
 
         /// Return the eulerian fluid particule velocity in global reference frame (implemented in child)
         /// for a set of point positions
-        /// \param xVect x positions
-        /// \param yVect y positions
+        /// \param xvect x positions
+        /// \param yvect y positions
         /// \param zvect z positions
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule velocity, in m/s
         virtual std::vector<std::vector<std::vector<Velocity>>> GetVelocity(const std::vector<double>& xvect,
                                                                   const std::vector<double>& yvect,
                                                                   const std::vector<double>& zvect, FRAME_CONVENTION fc) const;
+        //
+        // Wave frequencies and direction
+        //
+
+        virtual std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit) const = 0;
+
+        virtual std::vector<double> GetWaveNumbers() const = 0;
+
+        virtual std::vector<std::vector<double>> GetWaveAmplitudes() const = 0;
+
+        virtual std::vector<double> GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const = 0;
+
+        virtual std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const = 0;
+
+        //
+        // Update
+        //
+
         /// Initialize the state of the wave field
         void Initialize() override;
 
@@ -499,6 +530,7 @@ namespace frydom {
         /// Get the wave elevation on the horizontal position (x,y)
         /// \param x x position
         /// \param y y position
+        /// \param fc frame convention (NED/NWU)
         /// \return wave elevation, in meters
         double GetElevation(double x, double y, FRAME_CONVENTION fc) const final;
 
@@ -506,6 +538,7 @@ namespace frydom {
         /// \param x x position
         /// \param y y position
         /// \param z z position
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule velocity, in m/s
         Velocity GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
@@ -513,9 +546,19 @@ namespace frydom {
         /// \param x x position
         /// \param y y position
         /// \param z z position
+        /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule acceleration, in m/s²
         Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
+        std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit) const override;
+
+        std::vector<double> GetWaveNumbers() const override;
+
+        std::vector<std::vector<double>> GetWaveAmplitudes() const override;
+
+        std::vector<double> GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const override;
+
+        std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const override;
     };
 
 ////    enum LINEAR_WAVE_TYPE {

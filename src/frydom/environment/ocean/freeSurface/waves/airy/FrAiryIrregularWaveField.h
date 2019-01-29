@@ -120,6 +120,14 @@ namespace frydom {
         ///Generate random wave phases
         void GenerateRandomWavePhases();
 
+        std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit) const override;
+
+        std::vector<double> GetWaveNumbers() const override { return m_waveNumbers; }
+
+        std::vector<std::vector<double>> GetWaveAmplitudes() const override { return c_amplitude; }
+
+        std::vector<double> GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const override;
+
         //------------------------------------MAIN GETTERS----------------------------------//
 
         /// Get the complex wave elevation at the position (x,y,0), of the regular Airy wave field
@@ -127,7 +135,7 @@ namespace frydom {
         /// \param y y position
         /// \param fc frame convention (NED/NWU)
         /// \return complex wave elevation, in meters
-        virtual std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const;
+        virtual std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const override;
 
         /// Return the complex eulerian fluid particule velocity in global reference frame (implemented in child)
         /// \param x x position

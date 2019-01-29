@@ -110,6 +110,7 @@ TEST_F(TestFrStandardWindForce, TestTransport) {
     body->Initialize();
 
     force->SetXCenter(xc);
+
     force->Initialize();
     force->Update(0.);
 

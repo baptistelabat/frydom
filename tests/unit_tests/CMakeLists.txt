@@ -1,8 +1,8 @@
 
 
 set(UNIT_TESTS
-#        unitTests_damping_forces
-#        unitTests_geographiclib_wrap
+        unitTests_damping_forces
+        unitTests_geographiclib_wrap
         )
 
 # set(CMAKE_CXX_FLAGS " -lIrrlicht")
