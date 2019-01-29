@@ -82,6 +82,10 @@ namespace frydom {
         return m_chronoLink->IsActive();
     }
 
+    void FrLink_::SetThisConfigurationAsReference() {
+        // TODO
+    }
+
     const Force FrLink_::GetLinkReactionForceInLinkFrame1() const { // TODO : tester
         auto transform2To1 = GetTransformFromFrame2ToFrame1();
         auto forceIn2 = GetLinkReactionForceInLinkFrame2();

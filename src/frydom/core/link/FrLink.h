@@ -131,6 +131,7 @@ namespace frydom {
         bool IsActive() const override;
 
 
+        void SetThisConfigurationAsReference();
 
         const Force GetLinkReactionForceInLinkFrame1() const override;
 
@@ -144,6 +145,7 @@ namespace frydom {
         const Torque GetLinkReactionTorqueInLinkFrame2() const override;
 
         const Torque GetLinkReactionTorqueInWorldFrame(FRAME_CONVENTION fc) const override;
+
 
 
 

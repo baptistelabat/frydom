@@ -18,8 +18,7 @@ namespace frydom {
     public:
         FrPrismaticLink(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
 
-        void SetSpringDamper(double stiffness, double dampingCoeff);
-
+        void SetSpringDamper(double stiffness, double dampingCoeff, double restLength);
 
 
         Direction GetLinkDirectionInWorld() const;

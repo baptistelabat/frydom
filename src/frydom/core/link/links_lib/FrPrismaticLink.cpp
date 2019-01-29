@@ -20,7 +20,7 @@ namespace frydom {
 
     }
 
-    void FrPrismaticLink::SetSpringDamper(double stiffness, double dampingCoeff) {
+    void FrPrismaticLink::SetSpringDamper(double stiffness, double dampingCoeff, double restLength) {
 
     }
 

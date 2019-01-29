@@ -12,7 +12,7 @@ using namespace frydom;
 int main() {
 
     FrOffshoreSystem_ system;
-    system.SetGravityAcceleration(0.1);
+//    system.SetGravityAcceleration(0.01);
 
     // Body 1 definition (fixed body)
     auto body1 = system.NewBody();
@@ -21,51 +21,53 @@ int main() {
     body1->SetCollide(false);
     body1->SetColor(Yellow);
 
+    body1->SetRotation(FrRotation_(Direction(0, 1, 0), 5*DEG2RAD, NWU));
+
 
     // Body 2 definition (linked body)
     auto body2 = system.NewBody();
     makeItBox(body2, 2, 2, 40, 2000);
     body2->SetColor(Black);
-    body2->SetBodyFixed(true);
+//    body2->SetBodyFixed(true);
+
+    body2->SetRotation(FrRotation_(Direction(0, 1, 0), 90*DEG2RAD, NWU));
+
+    std::cout << body1->GetCOG(NWU) << body1->GetPosition(NWU) << std::endl;
+
+
+    auto m1 = body1->NewNode();
+    m1->TranslateInBody(10, 0, -1, NWU);
+    m1->RotateAroundYInWorld(90*DEG2RAD, NWU);
 
 
 
-//    FrRotation_ rot(Direction(0, 1, 0), 90*DEG2RAD, NWU);
+    auto m2 = body2->NewNode();
+    m2->TranslateInBody(-1, -1, -20, NWU);
 
-
-
-//    auto inertia = body2->GetInertiaTensor(NWU);
-//    inertia.SetCOGPosition(Position(0, 0, 5), NWU);
-//
-//    body2->SetInertiaTensor(inertia);
-//    body2->Rotate(FrRotation_(Direction(0, 0, 1), 20*DEG2RAD, NWU));
-
-
-
-
-//
-//    body2->Rotate(rot);
-//    body2->TranslateInBody(Position(-5, 0, 0), NWU);
-//
-//    body2->TranslateInWorld(Position(10, 0, 0), NWU);
-
-
-
-
-
-
-
-//    rot.RotX_RADIANS(10*DEG2RAD, NWU);
-////    auto node1 = body1->NewNode(FrFrame_(Position(0, 0, 4), rot, NWU));
-//    auto node1 = body1->NewNode(Position(0, 0, 0), rot, NWU);
-//    auto node1 = body1->NewNode();
-//    auto node2 = body2->NewNode(0, 0, 20, NWU);
-//
-//    auto prismatic = make_prismatic_link(node1, node2, &system);
-
+    auto prismaticLink = make_prismatic_link(m1, m2, &system);
 
     system.RunInViewer(0, 50, false);
 
+
+
+    /*
+     *
+     * implementer les methodes permettant de recuperer les valeurs des ddl de la liaison
+     *
+     * ajouter maintenant des raideurs et amortissement dans la liaison
+     *
+     * Implementer le calculde la force dans la liaison
+     *
+     * Implementer la methode de calcul de la reaction
+     *
+     * Ajouter methode disant MakeThisConfigurationAsReference
+     *
+     * SetSpringDamping(double stiffness, double damping, double restLength);
+     *
+     *
+     *
+     *
+     */
 
 
 

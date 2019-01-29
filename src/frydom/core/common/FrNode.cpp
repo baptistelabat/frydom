@@ -54,13 +54,13 @@ namespace frydom {
     }
 
     FrFrame_ FrNode_::GetFrameInBody() const {
-        auto pos = m_body->GetCOG(NWU) + internal::ChVectorToVector3d<Position>(m_chronoMarker->GetPos()); // pos wrt body reference frame, not COG..
+        Position pos = m_body->GetCOG(NWU) + internal::ChVectorToVector3d<Position>(m_chronoMarker->GetPos()); // pos wrt body reference frame, not COG..
         auto quat = internal::Ch2FrQuaternion(m_chronoMarker->GetRot());
         return FrFrame_(pos, quat, NWU);
     }
 
     void FrNode_::SetFrameInBody(const FrFrame_& frameInBody) {
-        auto localPosition_WRT_COG = frameInBody.GetPosition(NWU) - m_body->GetCOG(NWU);
+        Position localPosition_WRT_COG = frameInBody.GetPosition(NWU) - m_body->GetCOG(NWU);
         auto chCoord = chrono::ChCoordsys<double>(
                 internal::Vector3dToChVector(localPosition_WRT_COG),
                 internal::Fr2ChQuaternion(frameInBody.GetQuaternion())
@@ -97,6 +97,10 @@ namespace frydom {
         TranslateInBody(distance * tmpDirection, fc);
     }
 
+    void FrNode_::TranslateInBody(double x, double y, double z, FRAME_CONVENTION fc) {
+        TranslateInBody(Translation(x, y, z), fc);
+    }
+
     void FrNode_::TranslateInWorld(const Translation &translationInWorld, FRAME_CONVENTION fc) {
         auto currentFrameInWorld = GetFrameInWorld();
         currentFrameInWorld.TranslateInParent(translationInWorld, fc);
@@ -107,6 +111,10 @@ namespace frydom {
         auto tmpDirection = directionWorld;
         tmpDirection.Normalize();
         TranslateInWorld(distance * tmpDirection, fc);
+    }
+
+    void FrNode_::TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc) {
+        TranslateInWorld(Translation(x, y, z), fc);
     }
 
     void FrNode_::SetOrientationInBody(const FrRotation_& rotation) {
