@@ -27,6 +27,8 @@
 
 #include "frydom/environment/FrFluidType.h"
 
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
+
 
 namespace frydom {
 
@@ -1143,6 +1145,7 @@ namespace frydom {
 
         friend FrNode_::FrNode_(FrBody_*);
 
+
     public:
 
         /// Body initialization method
@@ -1172,6 +1175,9 @@ namespace frydom {
         // chrono system (ChSystem)
         friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_>);
         friend void FrGridAsset::Initialize();
+
+        friend void internal::FrAddedMassBase::IntLoadResidual_Mv(const unsigned int off, chrono::ChVectorDynamic<> &R,
+                                                        const chrono::ChVectorDynamic<> &w, const double c);
 
 
     };
