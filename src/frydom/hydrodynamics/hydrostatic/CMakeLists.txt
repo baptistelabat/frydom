@@ -1,7 +1,7 @@
 message(STATUS "    ...hydrostatic")
 
 set(SRC_FILES
-        FrHydrostaticForce.cpp
+#        FrHydrostaticForce.cpp
         FrLinearHydrostaticForce.cpp
         FrLinearHydrostaticStiffnessMatrix.cpp
         )

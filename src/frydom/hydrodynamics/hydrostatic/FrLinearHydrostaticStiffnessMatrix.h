@@ -136,50 +136,32 @@ namespace frydom {
         mathutils::Matrix33<double> m_data;
 
     public:
-        FrLinearHydrostaticStiffnessMatrix_() : m_data(mathutils::Matrix33<double>()) {}
+        FrLinearHydrostaticStiffnessMatrix_();
 
-        void SetK33(double K33) { m_data.at(0, 0) = K33; }
-        void SetK44(double K44) { m_data.at(1, 1) = K44; }
-        void SetK55(double K55) { m_data.at(2, 2) = K55; }
-        void SetK34(double K34) { m_data.at(0, 1) = K34; m_data.at(1, 0) = K34; }
-        void SetK35(double K35) { m_data.at(0, 2) = K35; m_data.at(2, 0) = K35; }
-        void SetK45(double K45) { m_data.at(1, 2) = K45; m_data.at(2, 1) = K45; }
+        void SetK33(double K33);
+        void SetK44(double K44);
+        void SetK55(double K55);
+        void SetK34(double K34);
+        void SetK35(double K35);
+        void SetK45(double K45);
 
-        double GetK33() const { return m_data.at(0, 0); }
-        double GetK44() const { return m_data.at(1, 1); }
-        double GetK55() const { return m_data.at(2, 2); }
-        double GetK34() const { return m_data.at(0, 1); }
-        double GetK35() const { return m_data.at(0, 2); }
-        double GetK45() const { return m_data.at(1, 2); }
+        double GetK33() const;
+        double GetK44() const;
+        double GetK55() const;
+        double GetK34() const;
+        double GetK35() const;
+        double GetK45() const;
 
-        void SetDiagonal(double K33, double K44, double K55) {
-            this->SetK33(K33);
-            this->SetK44(K44);
-            this->SetK55(K55);
-        }
+        void SetDiagonal(double K33, double K44, double K55);
 
-        void SetNonDiagonal(double K34, double K35, double K45) {
-            this->SetK34(K34);
-            this->SetK35(K35);
-            this->SetK45(K45);
-        }
+        void SetNonDiagonal(double K34, double K35, double K45);
 
         void SplitCoeffs(double& K33, double& K44, double& K55,
-                         double& K34, double& K35, double& K45) {
-            K33 = this->GetK33();
-            K44 = this->GetK44();
-            K55 = this->GetK55();
-            K34 = this->GetK34();
-            K35 = this->GetK35();
-            K45 = this->GetK45();
-        }
+                         double& K34, double& K35, double& K45);
 
-        void SetData(const mathutils::Matrix33<double>& data) { m_data = data; }
+        void SetData(const mathutils::Matrix33<double>& data);
 
-        mathutils::Vector3d<double> operator*(const mathutils::Vector3d<double>& state) const {
-            return m_data * state;
-        }
-
+        mathutils::Vector3d<double> operator*(const mathutils::Vector3d<double>& state) const;
 
     };
 
