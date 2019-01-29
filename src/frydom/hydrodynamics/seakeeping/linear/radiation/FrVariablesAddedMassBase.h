@@ -16,9 +16,6 @@ namespace frydom {
 
         private:
 
-            _FrBodyBase* m_body;
-            Eigen::MatrixXd m_infiniteAddedMass;
-
         public:
 
             FrVariablesAddedMassBase();
