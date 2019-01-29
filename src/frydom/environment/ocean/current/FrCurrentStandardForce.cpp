@@ -154,8 +154,8 @@ namespace frydom {
         torque.z() = force.y() * m2 * m_lpp;
 
         auto frame = FrameAtCOG.ProjectToHorizontalPlane();
-        auto worldForce = frame.ProjectVectorInParent(force);
-        auto worldTorque = frame.ProjectVectorInParent(torque);
+        auto worldForce = frame.ProjectVectorFrameInParent(force);
+        auto worldTorque = frame.ProjectVectorFrameInParent(torque);
 
         SetForceTorqueInWorldAtPointInBody(worldForce, worldTorque, Position(m_xCenter, 0., 0.), NWU);
     }

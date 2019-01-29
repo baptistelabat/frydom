@@ -78,7 +78,7 @@ namespace frydom {
         /// \param q2 second imaginary part
         /// \param q3 third imaginary part
         /// \param fc frame convention (NED/NWU)
-        void Set(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc);
+        void Set(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc); // TODO : fusionner avec le methode suivante...
 
         /// Set the quaternion real part and imaginary parts
         /// \param q0 real part
@@ -91,7 +91,7 @@ namespace frydom {
 
         /// Set the quaternion using an other quaternion
         /// \param other quaternion
-        void Set(const FrUnitQuaternion_& quaternion);
+        void Set(const FrUnitQuaternion_& quaternion); // TODO : supprimer, on a deja l'operateur =.
 
         /// Set the quaternion using a direction and an angle
         /// \param axis direction of the rotation, MUST be normalized
@@ -99,7 +99,7 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         void Set(const Direction& axis, double angleRAD, FRAME_CONVENTION fc);
 
-        void Set(const mathutils::Matrix33<double> matrix, FRAME_CONVENTION fc);
+        void Set(const mathutils::Matrix33<double>& matrix, FRAME_CONVENTION fc);
 
         /// Set the Quaternion to the null rotation (ie the unit quaternion: {1,0,0,0})
         void SetNullRotation();
@@ -110,13 +110,13 @@ namespace frydom {
         /// \param q2 second imaginary part
         /// \param q3 third imaginary part
         /// \param fc frame convention (NED/NWU)
-        void Get(double& q0, double& q1, double& q2, double& q3, FRAME_CONVENTION fc) const;
+        void Get(double& q0, double& q1, double& q2, double& q3, FRAME_CONVENTION fc) const; // TODO : renommer en GetComponents
 
         /// Get the direction and angle of the rotation, represented by the quaternion
         /// \param axis direction of the rotation
         /// \param angleRAD angle in radians
         /// \param fc frame convention (NED/NWU)
-        void Get(Direction& axis, double& angleRAD, FRAME_CONVENTION fc) const;
+        void Get(Direction& axis, double& angleRAD, FRAME_CONVENTION fc) const;  // TODO : renommer en GetAxisAngle
 
         /// Get the X axis of a coordsystem, given the quaternion which represents
         /// the alignment of the coordsystem. Note that it is assumed that the
@@ -157,6 +157,7 @@ namespace frydom {
         /// \param other quaternion to be multiplied
         /// \return product of quaternions
         FrUnitQuaternion_ operator*(const FrUnitQuaternion_& other) const;
+        // TODO : definir un operateur * template pour les vecteurs
 
         /// Operator for quaternion product and assignment:
         /// A*=B means A'=A*B, with typical quaternion product.
@@ -168,7 +169,7 @@ namespace frydom {
         /// \return product of quaternions
         FrUnitQuaternion_& operator*=(const FrUnitQuaternion_& other);
 
-        /// Component-wise comparison operator.
+        /// Quaternions comparison operator.
         /// \param other other FrUnitQuaternion to compare
         /// \return true if FrUnitQuaternion are equals, false otherwise
         bool operator==(const FrUnitQuaternion_& other) const;
@@ -179,7 +180,6 @@ namespace frydom {
         /// \param vector vector to be rotated
         /// \param fc frame convention (NED/NWU)
         /// \return rotated vector
-        // TODO : voir pour rendre generique par rapport aux differents vecteurs...
         template <class Vector>
         Vector Rotate(const Vector& vector, FRAME_CONVENTION fc) {  // TODO : voir si on a pas qqch de plus optimise...
             auto vectorTmp = vector;
@@ -194,6 +194,16 @@ namespace frydom {
 
             return vectorTmp;
         }
+
+        /// Apply rotation before this rotation.
+        /// It corresponds to applying a rotation to the parent and must be expressed in the current parent frame
+        /// Practically, this is a left rotation composition
+        void RotateInParent(const FrUnitQuaternion_& leftQuaternion);
+
+        /// Apply rotation after this rotation.
+        /// It corresponds to applying a rotation to the target frame and must be expressed in the current target frame
+        /// Practically, this is a right rotation composition
+        void RotateInFrame(const FrUnitQuaternion_& rightQuaternion);
 
         /// Inverse the quaternion to get its inverse in place (its vectorial part changes sign).
         /// \return the quaternion conjugate in place
@@ -212,6 +222,10 @@ namespace frydom {
         /// to the rotation expressed by the quaternion inverse.
         /// \return 3x3 rotation matrix
         mathutils::Matrix33<double> GetInverseRotationMatrix() const;
+
+
+        // FIXME : les 4 methodes suivantes sont-elles vraiment utiles ??? De maniere generale dans FRyDoM, on ne manipule
+        // que rarement directement les matrices de rotation ...
 
         /// Compute the left multiplication of a 3x3 matrix A, by the 3x3 rotation matrix corresponding
         ///  to the rotation expressed by the quaternion : res = A * R(quat)
@@ -257,6 +271,14 @@ namespace frydom {
 
     };
 
+
+
+    /*==================================================================================================================
+     *
+     * FrRotation_
+     *
+     *
+     */
 
 
     class FrRotation_ {
@@ -526,6 +548,26 @@ namespace frydom {
 //            if (IsNED(fc)) internal::SwapFrameConvention<Vector>(out);
             return out;
         }
+
+        /// Apply rotation before this rotation.
+        /// It corresponds to applying a rotation to the parent and must be expressed in the current parent frame
+        /// Practically, this is a left rotation composition
+        void RotateInParent(const FrUnitQuaternion_& leftQuaternion);
+
+        /// Apply rotation after this rotation.
+        /// It corresponds to applying a rotation to the target frame and must be expressed in the current target frame
+        /// Practically, this is a right rotation composition
+        void RotateInFrame(const FrUnitQuaternion_& rightQuaternion);
+
+        /// Apply rotation before this rotation.
+        /// It corresponds to applying a rotation to the parent and must be expressed in the current parent frame
+        /// Practically, this is a left rotation composition
+        void RotateInParent(const FrRotation_& leftRotation);
+
+        /// Apply rotation after this rotation.
+        /// It corresponds to applying a rotation to the target frame and must be expressed in the current target frame
+        /// Practically, this is a right rotation composition
+        void RotateInFrame(const FrRotation_& rightRotation);
 
         /// Get the X axis of the coordinate system obtained by the rotation
         /// \param fc frame convention (NED/NWU)

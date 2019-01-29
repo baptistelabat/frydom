@@ -174,20 +174,46 @@ namespace frydom {
         return frame.cout(os);
     }
 
-    void FrFrame_::Rotate(const Direction& direction, double angleRad, FRAME_CONVENTION fc, bool localAxis) {
+    void FrFrame_::IncrementRotation(const Direction &direction, double angleRad, FRAME_CONVENTION fc, bool localAxis) {
         auto tmpDirection = direction;
         if (localAxis) {
-            tmpDirection = ProjectVectorInParent<Direction>(tmpDirection);
+            tmpDirection = ProjectVectorFrameInParent<Direction>(tmpDirection, fc);
+            // FIXME : les donnees (position, orientation) de FrFrame_ sont relatives au repere parent.
+            // Pour la position, c'est la position de l'origine du repere courant par rapport au repere parent, exprime
+            // dans les axes du repere parent.
+            // Pour la rotation, c'est la matrice qui multipliee par un vecteur exprime dans le vecteur courant, donne
+            // les coordonnees de ce meme vecteur dans le repere parent.
         }
 
         FrUnitQuaternion_ rotQuat(tmpDirection, angleRad, fc);
 
 
-        GetQuaternion()
+//        GetQuaternion()
+
+
+        /*
+         * Reflexion sur le Rotate ou Translate sur un frame ou node :
+         *
+         * Pour la rotation, soit on multiplie a gauche, soit a droite.
+         *
+         * Si on pose iRj la rotation qui fait iu = iRj ju, alors:
+         *
+         * En multipliant a gauche par kRi permet d'avroi ku = kRi iRj ju = kRj ju   soit on incremente la rotation
+         *
+         *
+         * TRES BIEN : A RETENIR !!!!!!!!!!!!!!!!!!!!
+         *
+         * Lorsqu'on multiplie par une rotation exprimee dans le repere parent, on multiplie a gauche
+         * Lorsqu'on multiplie par une rotation exprimee dans le repere cible, on multiplie a droite...
+         *
+         */
+
 
 
     }
 
+    // FIXME : c'est une multiplication a gauche !
+    // FIXME : changer les implementations de tous les RotX etc... et reposer sur des methodes de FrRotation et FrQuaternion !!!!
     void FrFrame_::RotX_RADIANS(double angle, FRAME_CONVENTION fc, bool localAxis) {
         chrono::ChVector<double> axis;
         if (localAxis) {

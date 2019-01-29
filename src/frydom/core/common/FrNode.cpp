@@ -125,7 +125,7 @@ namespace frydom {
 
     void FrNode_::RotateInBody(const FrUnitQuaternion_& quaternion) {
         auto currentFrameInBody = GetFrameInBody();
-        currentFrameInBody.Rotate(quaternion);
+        currentFrameInBody.IncrementRotation(quaternion);
         SetFrameInBody(currentFrameInBody);
     }
 
@@ -135,7 +135,7 @@ namespace frydom {
 
     void FrNode_::RotateInWorld(const FrUnitQuaternion_& quaternion) {
         auto currentFrameInWorld = GetFrameInWorld();
-        currentFrameInWorld.Rotate(quaternion);
+        currentFrameInWorld.IncrementRotation(quaternion);
         SetFrameInWorld(currentFrameInWorld);
     }
 

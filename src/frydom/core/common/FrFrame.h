@@ -181,50 +181,50 @@ namespace frydom {
         // FIXME : Du coup en vrai, je ne vois pas l'interet de localAxis ... Retirer ?
 
         /// Rotate the present frame around an axis defined in the present frame (if localAxis)
-        /// or in the world reference otherwise
-        void Rotate(const Direction& direction, double angleRad, FRAME_CONVENTION fc, bool localAxis);
+        /// or in the parent reference otherwise
+        void IncrementRotation(const Direction &direction, double angleRad, FRAME_CONVENTION fc, bool localAxis);
 
 
         /// Rotate the present frame, around the X axis of the present frame (if localAxis)
-        /// or around the X axis of the world reference frame otherwise, from a value given in radians.
+        /// or around the X axis of the parent reference frame otherwise, from a value given in radians.
         /// \param angle rotation angle in radians
         /// \param fc frame convention (NED/NWU)
-        /// \param localAxis boolean to choose between present frame x axis (true) or world frame x axis (false)
+        /// \param localAxis boolean to choose between present frame x axis (true) or parent frame x axis (false)
         void RotX_RADIANS(double angle, FRAME_CONVENTION fc, bool localAxis);
 
         /// Rotate the present frame, around the X axis of the present frame (if localAxis)
-        /// or around the X axis of the world reference frame otherwise, from a value given in degrees.
+        /// or around the X axis of the parent reference frame otherwise, from a value given in degrees.
         /// \param angle rotation angle in degrees
         /// \param fc frame convention (NED/NWU)
-        /// \param localAxis boolean to choose between present frame x axis (true) or world frame x axis (false)
+        /// \param localAxis boolean to choose between present frame x axis (true) or parent frame x axis (false)
         void RotX_DEGREES(double angle, FRAME_CONVENTION fc, bool localAxis);
 
         /// Rotate the present frame, around the Y axis of the present frame (if localAxis)
-        /// or around the X axis of the world reference frame otherwise, from a value given in radians.
+        /// or around the X axis of the parent reference frame otherwise, from a value given in radians.
         /// \param angle rotation angle in radians
         /// \param fc frame convention (NED/NWU)
-        /// \param localAxis boolean to choose between present frame y axis (true) or world frame y axis (false)
+        /// \param localAxis boolean to choose between present frame y axis (true) or parent frame y axis (false)
         void RotY_RADIANS(double angle, FRAME_CONVENTION fc, bool localAxis);
 
         /// Rotate the present frame, around the Y axis of the present frame (if localAxis)
-        /// or around the X axis of the world reference frame otherwise, from a value given in degrees.
+        /// or around the X axis of the parent reference frame otherwise, from a value given in degrees.
         /// \param angle rotation angle in degrees
         /// \param fc frame convention (NED/NWU)
-        /// \param localAxis boolean to choose between present frame y axis (true) or world frame y axis (false)
+        /// \param localAxis boolean to choose between present frame y axis (true) or parent frame y axis (false)
         void RotY_DEGREES(double angle, FRAME_CONVENTION fc, bool localAxis);
 
         /// Rotate the present frame, around the Z axis of the present frame (if localAxis)
-        /// or around the X axis of the world reference frame otherwise, from a value given in degrees.
+        /// or around the X axis of the parent reference frame otherwise, from a value given in degrees.
         /// \param angle rotation angle in radians
         /// \param fc frame convention (NED/NWU)
-        /// \param localAxis boolean to choose between present frame z axis (true) or world frame z axis (false)
+        /// \param localAxis boolean to choose between present frame z axis (true) or parent frame z axis (false)
         void RotZ_RADIANS(double angle, FRAME_CONVENTION fc, bool localAxis);
 
         /// Rotate the present frame, around the Z axis of the present frame (if localAxis)
-        /// or around the X axis of the world reference frame otherwise, from a value given in degrees.
+        /// or around the X axis of the parent reference frame otherwise, from a value given in degrees.
         /// \param angle rotation angle in degrees
         /// \param fc frame convention (NED/NWU)
-        /// \param localAxis boolean to choose between present frame z axis (true) or world frame z axis (false)
+        /// \param localAxis boolean to choose between present frame z axis (true) or parent frame z axis (false)
         void RotZ_DEGREES(double angle, FRAME_CONVENTION fc, bool localAxis);
 
         /// Set the transformation frame to be a rotation around the X axis
@@ -281,13 +281,13 @@ namespace frydom {
         FrFrame_ ProjectToHorizontalPlane() const;
 
         template <class Vector>
-        Vector ProjectVectorParentInFrame(const Vector& parentVector) const {  // FIXME : et si le vecteur place en entree est en NED ????
-            return GetQuaternion().GetInverse().Rotate<Vector>(parentVector, NWU);
+        Vector ProjectVectorParentInFrame(const Vector& parentVector, FRAME_CONVENTION fc) const {  // FIXME : et si le vecteur place en entree est en NED ????
+            return GetQuaternion().GetInverse().Rotate<Vector>(parentVector, fc);
         };
 
         template <class Vector>
-        Vector ProjectVectorInParent(const Vector& frameVector) const {  // FIXME : et si le vecteur place en entree est en NED ????
-            return GetQuaternion().Rotate<Vector>(frameVector, NWU);
+        Vector ProjectVectorFrameInParent(const Vector &frameVector, FRAME_CONVENTION fc) const {  // FIXME : et si le vecteur place en entree est en NED ????
+            return GetQuaternion().Rotate<Vector>(frameVector, fc);
         }
 
 

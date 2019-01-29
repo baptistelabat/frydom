@@ -108,8 +108,8 @@ namespace frydom {
         auto res = coeff * SquaredVelocity;
 
         auto frame = m_body->GetFrameAtCOG(NWU).ProjectToHorizontalPlane();
-        auto worldForce = frame.ProjectVectorInParent( Force(res[0], res[1], 0) );
-        auto worldTorque = frame.ProjectVectorInParent( Torque(0., 0., res[2]));
+        auto worldForce = frame.ProjectVectorFrameInParent(Force(res[0], res[1], 0));
+        auto worldTorque = frame.ProjectVectorFrameInParent(Torque(0., 0., res[2]));
 
         SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
     }

@@ -617,8 +617,8 @@ namespace frydom {
         localForce.z() = 0.5 * m_property.cf * rho * M_PI * m_property.diameter * m_property.length * velocity.z() * std::abs(velocity.z());
 
         // Project force in world at COG
-        auto forceBody = m_frame->GetFrameInWorld().ProjectVectorInParent(localForce);
-        m_force = body->GetFrame().ProjectVectorInParent(forceBody);
+        auto forceBody = m_frame->GetFrameInWorld().ProjectVectorFrameInParent(localForce);
+        m_force = body->GetFrame().ProjectVectorFrameInParent(forceBody);
 
         //Project torque in body at COG
         Position relPos = m_frame->GetNodePositionInBody(NWU) - body->GetCOG(NWU);

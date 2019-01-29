@@ -18,7 +18,7 @@ namespace frydom {
     }
 
     void FrEquilibriumFrame_::SetVelocityInFrame(const Velocity& frameVel) {
-        auto worldVel = ProjectVectorInParent(frameVel);
+        auto worldVel = ProjectVectorFrameInParent(frameVel);
         this->SetVelocityInWorld(worldVel, NWU);
         m_initSpeedFromBody = false;
     }
