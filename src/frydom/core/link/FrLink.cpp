@@ -85,7 +85,7 @@ namespace frydom {
     const Force FrLink_::GetLinkReactionForceInLinkFrame1() const { // TODO : tester
         auto transform2To1 = GetTransformFromFrame2ToFrame1();
         auto forceIn2 = GetLinkReactionForceInLinkFrame2();
-        return transform2To1.ProjectVectorParentInFrame<Force>(forceIn2);
+        return transform2To1.ProjectVectorParentInFrame<Force>(forceIn2, NWU); // TODO : voir si on reporte le fc...
     }
 
     const Force FrLink_::GetLinkReactionForceInLinkFrame2() const { // TODO : tester
@@ -99,7 +99,7 @@ namespace frydom {
     const Torque FrLink_::GetLinkReactionTorqueInLinkFrame1() const { // TODO : tester
         auto transform2To1 = GetTransformFromFrame2ToFrame1();
         auto torqueIn2 = GetLinkReactionForceInLinkFrame2();
-        return transform2To1.ProjectVectorParentInFrame<Force>(torqueIn2);
+        return transform2To1.ProjectVectorParentInFrame<Force>(torqueIn2, NWU); // TODO : voir si on reporte le fc...
     }
 
     const Torque FrLink_::GetLinkReactionTorqueInLinkFrame2() const { // TODO : tester

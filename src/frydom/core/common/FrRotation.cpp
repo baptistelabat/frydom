@@ -222,8 +222,8 @@ namespace frydom {
     FrRotation_::FrRotation_(const Direction& axis, double angleRAD, FRAME_CONVENTION fc) :
                         m_frQuaternion(axis, angleRAD, fc) {}
 
-    FrRotation_::FrRotation_(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis) {
-        this->Set(xaxis, yaxis, zaxis);
+    FrRotation_::FrRotation_(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis, FRAME_CONVENTION fc) {
+        this->Set(xaxis, yaxis, zaxis, fc);
     }
 
     void FrRotation_::SetNullRotation() {
@@ -268,21 +268,23 @@ namespace frydom {
         return m_frQuaternion.GetInverseRotationMatrix();
     }
 
-    void FrRotation_::Set(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis) {
+    void FrRotation_::Set(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis, FRAME_CONVENTION fc) {
 
-        assert(std::abs(xaxis.dot(yaxis)) < FLT_EPSILON);  // FIXME : pourquoi ne pas utiliser le IsClose de mathutils ????
-        assert(std::abs(yaxis.dot(zaxis)) < FLT_EPSILON);
-        assert(std::abs(zaxis.dot(xaxis)) < FLT_EPSILON);
-        assert(std::abs(xaxis.norm()-1.) < FLT_EPSILON);
-        assert(std::abs(yaxis.norm()-1.) < FLT_EPSILON);
-        assert(std::abs(zaxis.norm()-1.) < FLT_EPSILON);
+        // Verifying the directions are orthogonal
+        assert(mathutils::IsClose<double>(xaxis.dot(yaxis), 0.));
+        assert(mathutils::IsClose<double>(xaxis.dot(zaxis), 0.));
+        assert(mathutils::IsClose<double>(xaxis.dot(xaxis), 0.));
+
+        assert(xaxis.IsUnit());
+        assert(yaxis.IsUnit());
+        assert(zaxis.IsUnit());
 
         mathutils::Matrix33<double> matrix;
         matrix <<   xaxis.Getux(), yaxis.Getux(), zaxis.Getux(),
                     xaxis.Getuy(), yaxis.Getuy(), zaxis.Getuy(),
                     xaxis.Getuz(), yaxis.Getuz(), zaxis.Getuz();
 
-        m_frQuaternion.Set(matrix);
+        m_frQuaternion.Set(matrix, fc);
     }
 
     void FrRotation_::SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) {

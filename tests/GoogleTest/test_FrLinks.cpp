@@ -59,7 +59,7 @@ int main() {
 ////    auto node1 = body1->NewNode(FrFrame_(Position(0, 0, 4), rot, NWU));
 //    auto node1 = body1->NewNode(Position(0, 0, 0), rot, NWU);
 //    auto node1 = body1->NewNode();
-    auto node2 = body2->NewNode(0, 0, 20, NWU);
+//    auto node2 = body2->NewNode(0, 0, 20, NWU);
 //
 //    auto prismatic = make_prismatic_link(node1, node2, &system);
 

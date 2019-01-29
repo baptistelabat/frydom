@@ -402,7 +402,7 @@ namespace frydom {
         /// Set the local frame of the morison model from another frame
         /// \param body Body to which the frame is attached
         /// \param frame Other frame
-        void SetFrame(FrBody_* body, FrFrame_ frame);
+        void SetFrame(FrBody_* body, const FrFrame_& frame);
 
         /// Get the local frame of the morison model
         /// \return Local frame

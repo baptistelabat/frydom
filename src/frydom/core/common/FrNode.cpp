@@ -85,9 +85,9 @@ namespace frydom {
         SetFrameInWorld(currentFrameInWorld);
     }
 
-    void FrNode_::TranslateInBody(const Position& positionBody, FRAME_CONVENTION fc) {
+    void FrNode_::TranslateInBody(const Translation &translationInBody, FRAME_CONVENTION fc) {
         auto currentFrameInBody = GetFrameInBody();
-        currentFrameInBody.Translate(positionBody, fc);
+        currentFrameInBody.TranslateInFrame(translationInBody, fc);
         SetFrameInBody(currentFrameInBody);
     }
 
@@ -97,9 +97,9 @@ namespace frydom {
         TranslateInBody(distance * tmpDirection, fc);
     }
 
-    void FrNode_::TranslateInWorld(const Position& positionWorld, FRAME_CONVENTION fc) {
+    void FrNode_::TranslateInWorld(const Translation &translationInWorld, FRAME_CONVENTION fc) {
         auto currentFrameInWorld = GetFrameInWorld();
-        currentFrameInWorld.Translate(positionWorld, fc);
+        currentFrameInWorld.TranslateInParent(translationInWorld, fc);
         SetFrameInWorld(currentFrameInWorld);
     }
 
@@ -125,7 +125,7 @@ namespace frydom {
 
     void FrNode_::RotateInBody(const FrUnitQuaternion_& quaternion) {
         auto currentFrameInBody = GetFrameInBody();
-        currentFrameInBody.IncrementRotation(quaternion);
+        currentFrameInBody.RotateInFrame(quaternion);
         SetFrameInBody(currentFrameInBody);
     }
 
@@ -135,7 +135,7 @@ namespace frydom {
 
     void FrNode_::RotateInWorld(const FrUnitQuaternion_& quaternion) {
         auto currentFrameInWorld = GetFrameInWorld();
-        currentFrameInWorld.IncrementRotation(quaternion);
+        currentFrameInWorld.RotateInFrame(quaternion);
         SetFrameInWorld(currentFrameInWorld);
     }
 

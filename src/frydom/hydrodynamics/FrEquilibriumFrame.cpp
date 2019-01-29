@@ -17,8 +17,8 @@ namespace frydom {
         m_initSpeedFromBody = false;
     }
 
-    void FrEquilibriumFrame_::SetVelocityInFrame(const Velocity& frameVel) {
-        auto worldVel = ProjectVectorFrameInParent(frameVel);
+    void FrEquilibriumFrame_::SetVelocityInFrame(const Velocity& frameVel) { // TODO : voir a ajouter un FRAME_CONVENTION !!
+        auto worldVel = ProjectVectorFrameInParent(frameVel, NWU);
         this->SetVelocityInWorld(worldVel, NWU);
         m_initSpeedFromBody = false;
     }
@@ -40,8 +40,8 @@ namespace frydom {
         return velocity;
     }
 
-    Velocity FrEquilibriumFrame_::GetVelocityInFrame() const {
-        return ProjectVectorParentInFrame<Velocity>(m_velocity);
+    Velocity FrEquilibriumFrame_::GetVelocityInFrame() const { // TODO : voir a ajouter un FRAME_CONVENTION !!
+        return ProjectVectorParentInFrame<Velocity>(m_velocity, NWU);
     }
 
     double FrEquilibriumFrame_::GetAngularVelocityAroundZ(FRAME_CONVENTION fc) const {

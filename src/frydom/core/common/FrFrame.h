@@ -176,13 +176,52 @@ namespace frydom {
         /// \return the quaternion of the frame/transformation frame
         FrUnitQuaternion_ GetQuaternion() const;
 
-        // FIXME : on parle de world reference dans les methodes qui suivent. Un frame n'est pas necessairement relatif
-        // a world !! plutot parler de parent ! --> modifier la doc en consequence
         // FIXME : Du coup en vrai, je ne vois pas l'interet de localAxis ... Retirer ?
 
-        /// Rotate the present frame around an axis defined in the present frame (if localAxis)
-        /// or in the parent reference otherwise
-        void IncrementRotation(const Direction &direction, double angleRad, FRAME_CONVENTION fc, bool localAxis);
+
+
+        /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
+        /// multiplication of the frame current rotation by the given rotation
+        void RotateInFrame(const FrUnitQuaternion_& quaternion);
+
+        /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
+        /// multiplication of the frame current rotation by the given rotation
+        void RotateInFrame(const FrRotation_& rotation);
+
+        /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
+        /// multiplication of the frame current rotation by the given rotation
+        void RotateInFrame(const Direction &direction, double angleRad, FRAME_CONVENTION fc);
+
+        /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
+        /// multiplication of the frame current rotation by the given rotation
+        void RotateInFrame(double phiRad, double thetaRad, double psiRad,  EULER_SEQUENCE seq, FRAME_CONVENTION fc);
+
+        /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
+        /// multiplication of the frame current rotation by the given rotation
+        void RotateInParent(const FrUnitQuaternion_& quaternion);
+
+        /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
+        /// multiplication of the frame current rotation by the given rotation
+        void RotateInParent(const FrRotation_& rotation);
+
+        /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
+        /// multiplication of the frame current rotation by the given rotation
+        void RotateInParent(const Direction &direction, double angleRad, FRAME_CONVENTION fc);
+
+        /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
+        /// multiplication of the frame current rotation by the given rotation
+        void RotateInParent(double phiRad, double thetaRad, double psiRad,  EULER_SEQUENCE seq, FRAME_CONVENTION fc);
+
+        /// Translate the present frame along in its own axes
+        void TranslateInFrame(const Translation& translation, FRAME_CONVENTION fc);
+        void TranslateInFrame(const Direction& direction, double distance, FRAME_CONVENTION fc);
+        void TranslateInFrame(double x, double y, double z, FRAME_CONVENTION fc);
+        void TranslateInParent(const Translation& translation, FRAME_CONVENTION fc);
+        void TranslateInParent(const Direction& direction, double distance, FRAME_CONVENTION fc);
+        void TranslateInParent(double x, double y, double z, FRAME_CONVENTION fc);
+
+
+
 
 
         /// Rotate the present frame, around the X axis of the present frame (if localAxis)
@@ -274,11 +313,15 @@ namespace frydom {
         /// Inverse a frame transformation
         /// \return the inverse frame transformation
         FrFrame_& Inverse();
+
         /// Get the inverse of a frame transformation
         /// \return the inverse frame transformation
         FrFrame_ GetInverse() const;
 
-        FrFrame_ ProjectToHorizontalPlane() const;
+        /// Get the projection of the current frame into the parent frame XY plane so that the new frame share its z axis
+        /// with the parent frame
+        /// \return projected frame
+        FrFrame_ ProjectToXYPlane(FRAME_CONVENTION fc) const;
 
         template <class Vector>
         Vector ProjectVectorParentInFrame(const Vector& parentVector, FRAME_CONVENTION fc) const {  // FIXME : et si le vecteur place en entree est en NED ????

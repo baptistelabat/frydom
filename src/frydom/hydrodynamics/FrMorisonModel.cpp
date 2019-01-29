@@ -444,11 +444,14 @@ namespace frydom {
         Direction e2 = e3.cross(e1);
         e2.normalize();
 
-        m_frame = std::make_shared<FrNode_>(body, position, FrRotation_(e1, e2, e3));
+//        m_frame = std::make_shared<FrNode_>(body, position, FrRotation_(e1, e2, e3, NWU));
+        m_frame = std::make_shared<FrNode_>(body);  // TODO : doit etre gere par la classe de base !!
+        m_frame->SetFrameInBody(FrFrame_(position, FrRotation_(e1, e2, e3, NWU), NWU));
     }
 
-    void FrMorisonElement_::SetFrame(FrBody_* body, FrFrame_ frame) {
-        m_frame = std::make_unique<FrNode_>(body, frame);
+    void FrMorisonElement_::SetFrame(FrBody_* body, const FrFrame_& frame) {
+        m_frame = std::make_shared<FrNode_>(body);
+        m_frame->SetFrameInBody(frame);
     }
 
     Force FrMorisonElement_::GetForceInWorld(FRAME_CONVENTION fc) const {
@@ -523,8 +526,10 @@ namespace frydom {
     }
 
     void FrMorisonSingleElement_::SetNodes(FrBody_* body, Position posA, Position posB) {
-        m_nodeA = std::make_shared<FrNode_>(body, posA);
-        m_nodeB = std::make_shared<FrNode_>(body, posB);
+        m_nodeA = std::make_shared<FrNode_>(body);
+        m_nodeA->SetPositionInBody(posA, NWU);
+        m_nodeB = std::make_shared<FrNode_>(body);
+        m_nodeB->SetPositionInBody(posB, NWU);
         SetLength(m_nodeA->GetPositionInWorld(NWU), m_nodeB->GetPositionInWorld(NWU));
     }
 
@@ -574,8 +579,8 @@ namespace frydom {
             velocity += body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetFluxVelocityInWorld(worldPos, NWU);
         }
 
-        Velocity velocityBody = body->GetFrame().ProjectVectorParentInFrame(velocity);
-        return m_frame->GetFrameInWorld().ProjectVectorParentInFrame(velocityBody);
+        Velocity velocityBody = body->GetFrame().ProjectVectorParentInFrame(velocity, NWU);
+        return m_frame->GetFrameInWorld().ProjectVectorParentInFrame(velocityBody, NWU);
     }
 
     Acceleration FrMorisonSingleElement_::GetFlowAcceleration() {
@@ -589,8 +594,8 @@ namespace frydom {
         acceleration = waveField->GetAcceleration(worldPos, NWU);
         acceleration -= m_frame->GetAccelerationInWorld(NWU);
 
-        Acceleration accBody = body->GetFrame().ProjectVectorParentInFrame(acceleration);
-        return m_frame->GetFrameInWorld().ProjectVectorParentInFrame(accBody);
+        Acceleration accBody = body->GetFrame().ProjectVectorParentInFrame(acceleration, NWU);
+        return m_frame->GetFrameInWorld().ProjectVectorParentInFrame(accBody, NWU);
     }
 
     //
@@ -617,8 +622,8 @@ namespace frydom {
         localForce.z() = 0.5 * m_property.cf * rho * M_PI * m_property.diameter * m_property.length * velocity.z() * std::abs(velocity.z());
 
         // Project force in world at COG
-        auto forceBody = m_frame->GetFrameInWorld().ProjectVectorFrameInParent(localForce);
-        m_force = body->GetFrame().ProjectVectorFrameInParent(forceBody);
+        auto forceBody = m_frame->GetFrameInWorld().ProjectVectorFrameInParent(localForce, NWU);
+        m_force = body->GetFrame().ProjectVectorFrameInParent(forceBody, NWU);
 
         //Project torque in body at COG
         Position relPos = m_frame->GetNodePositionInBody(NWU) - body->GetCOG(NWU);
@@ -647,7 +652,8 @@ namespace frydom {
     }
 
     FrMorisonCompositeElement_::FrMorisonCompositeElement_(FrBody_* body, FrFrame_& frame) {
-        m_frame = std::make_shared<FrNode_>(body, frame);
+        m_frame = std::make_shared<FrNode_>(body); // TODO : Devrait etre instancie dans la classe de base
+        m_frame->SetFrameInBody(frame);
     }
 
     void FrMorisonCompositeElement_::AddElement(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB, double diameter,

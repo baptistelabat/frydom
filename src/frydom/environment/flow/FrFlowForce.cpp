@@ -107,9 +107,9 @@ namespace frydom {
         double SquaredVelocity = m_fluxVelocityInBody.squaredNorm();
         auto res = coeff * SquaredVelocity;
 
-        auto frame = m_body->GetFrameAtCOG(NWU).ProjectToHorizontalPlane();
-        auto worldForce = frame.ProjectVectorFrameInParent(Force(res[0], res[1], 0));
-        auto worldTorque = frame.ProjectVectorFrameInParent(Torque(0., 0., res[2]));
+        auto frame = m_body->GetFrameAtCOG(NWU).ProjectToXYPlane(NWU);
+        auto worldForce = frame.ProjectVectorFrameInParent(Force(res[0], res[1], 0), NWU);
+        auto worldTorque = frame.ProjectVectorFrameInParent(Torque(0., 0., res[2]), NWU);
 
         SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
     }

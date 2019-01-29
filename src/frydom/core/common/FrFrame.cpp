@@ -174,43 +174,114 @@ namespace frydom {
         return frame.cout(os);
     }
 
-    void FrFrame_::IncrementRotation(const Direction &direction, double angleRad, FRAME_CONVENTION fc, bool localAxis) {
-        auto tmpDirection = direction;
-        if (localAxis) {
-            tmpDirection = ProjectVectorFrameInParent<Direction>(tmpDirection, fc);
-            // FIXME : les donnees (position, orientation) de FrFrame_ sont relatives au repere parent.
-            // Pour la position, c'est la position de l'origine du repere courant par rapport au repere parent, exprime
-            // dans les axes du repere parent.
-            // Pour la rotation, c'est la matrice qui multipliee par un vecteur exprime dans le vecteur courant, donne
-            // les coordonnees de ce meme vecteur dans le repere parent.
-        }
+//    void FrFrame_::RotateInFrame(const Direction &direction, double angleRad, FRAME_CONVENTION fc) {
+//
+//
+//
+//
+//
+////        auto tmpDirection = direction;
+////        if (localAxis) {
+////            tmpDirection = ProjectVectorFrameInParent<Direction>(tmpDirection, fc);
+////            // FIXME : les donnees (position, orientation) de FrFrame_ sont relatives au repere parent.
+////            // Pour la position, c'est la position de l'origine du repere courant par rapport au repere parent, exprime
+////            // dans les axes du repere parent.
+////            // Pour la rotation, c'est la matrice qui multipliee par un vecteur exprime dans le vecteur courant, donne
+////            // les coordonnees de ce meme vecteur dans le repere parent.
+////        }
+////
+////        FrUnitQuaternion_ rotQuat(tmpDirection, angleRad, fc);
+//
+//
+////        GetQuaternion()
+//
+//
+//        /*
+//         * Reflexion sur le Rotate ou Translate sur un frame ou node :
+//         *
+//         * Pour la rotation, soit on multiplie a gauche, soit a droite.
+//         *
+//         * Si on pose iRj la rotation qui fait iu = iRj ju, alors:
+//         *
+//         * En multipliant a gauche par kRi permet d'avroi ku = kRi iRj ju = kRj ju   soit on incremente la rotation
+//         *
+//         *
+//         * TRES BIEN : A RETENIR !!!!!!!!!!!!!!!!!!!!
+//         *
+//         * Lorsqu'on multiplie par une rotation exprimee dans le repere parent, on multiplie a gauche
+//         * Lorsqu'on multiplie par une rotation exprimee dans le repere cible, on multiplie a droite...
+//         *
+//         */
+//
+//
+//
+//    }
 
-        FrUnitQuaternion_ rotQuat(tmpDirection, angleRad, fc);
-
-
-//        GetQuaternion()
-
-
-        /*
-         * Reflexion sur le Rotate ou Translate sur un frame ou node :
-         *
-         * Pour la rotation, soit on multiplie a gauche, soit a droite.
-         *
-         * Si on pose iRj la rotation qui fait iu = iRj ju, alors:
-         *
-         * En multipliant a gauche par kRi permet d'avroi ku = kRi iRj ju = kRj ju   soit on incremente la rotation
-         *
-         *
-         * TRES BIEN : A RETENIR !!!!!!!!!!!!!!!!!!!!
-         *
-         * Lorsqu'on multiplie par une rotation exprimee dans le repere parent, on multiplie a gauche
-         * Lorsqu'on multiplie par une rotation exprimee dans le repere cible, on multiplie a droite...
-         *
-         */
-
-
-
+    void FrFrame_::RotateInFrame(const FrUnitQuaternion_& quaternion) {
+        m_chronoFrame.SetRot(m_chronoFrame.GetRot() * internal::Fr2ChQuaternion(quaternion));
     }
+
+    void FrFrame_::RotateInFrame(const FrRotation_& rotation) {
+        RotateInFrame(rotation.GetQuaternion());
+    }
+
+    void FrFrame_::RotateInFrame(const Direction &direction, double angleRad, FRAME_CONVENTION fc) {
+        RotateInFrame(FrUnitQuaternion_(direction, angleRad, fc));
+    }
+
+    void FrFrame_::RotateInFrame(double phiRad, double thetaRad, double psiRad,  EULER_SEQUENCE seq, FRAME_CONVENTION fc) {
+        FrRotation_ rotation;
+        rotation.SetEulerAngles_DEGREES(phiRad, thetaRad, psiRad, seq, fc);
+        RotateInFrame(rotation);
+    }
+
+    void FrFrame_::RotateInParent(const FrUnitQuaternion_& quaternion) {
+        m_chronoFrame.SetRot(internal::Fr2ChQuaternion(quaternion) * m_chronoFrame.GetRot());
+    }
+
+    void FrFrame_::RotateInParent(const FrRotation_& rotation) {
+        RotateInParent(rotation.GetQuaternion());
+    }
+
+    void FrFrame_::RotateInParent(const Direction &direction, double angleRad, FRAME_CONVENTION fc) {
+        RotateInParent(FrUnitQuaternion_(direction, angleRad, fc));
+    }
+
+    void FrFrame_::RotateInParent(double phiRad, double thetaRad, double psiRad,  EULER_SEQUENCE seq, FRAME_CONVENTION fc) {
+        FrRotation_ rotation;
+        rotation.SetEulerAngles_DEGREES(phiRad, thetaRad, psiRad, seq, fc);
+        RotateInParent(rotation);
+    }
+
+    void FrFrame_::TranslateInFrame(const Translation& translation, FRAME_CONVENTION fc) {
+        TranslateInParent(ProjectVectorFrameInParent<Translation>(translation, fc), fc);
+    }
+
+    void FrFrame_::TranslateInFrame(const Direction& direction, double distance, FRAME_CONVENTION fc) {
+        assert(direction.IsUnit());
+        TranslateInFrame(direction * distance, fc);
+    }
+
+    void FrFrame_::TranslateInFrame(double x, double y, double z, FRAME_CONVENTION fc) {
+        TranslateInFrame(Translation(x, y, z), fc);
+    }
+
+    void FrFrame_::TranslateInParent(const Translation& translation, FRAME_CONVENTION fc) {
+        auto tmpTranslation = translation;
+        if (IsNED(fc)) internal::SwapFrameConvention<Translation>(tmpTranslation);
+        m_chronoFrame.Move(internal::Vector3dToChVector(tmpTranslation));
+    }
+
+    void FrFrame_::TranslateInParent(const Direction& direction, double distance, FRAME_CONVENTION fc) {
+        assert(direction.IsUnit());
+        TranslateInParent(direction * distance, fc);
+    }
+
+    void FrFrame_::TranslateInParent(double x, double y, double z, FRAME_CONVENTION fc) {
+        TranslateInParent(Translation(x, y, z), fc);
+    }
+
+
 
     // FIXME : c'est une multiplication a gauche !
     // FIXME : changer les implementations de tous les RotX etc... et reposer sur des methodes de FrRotation et FrQuaternion !!!!
@@ -302,20 +373,20 @@ namespace frydom {
         return internal::Ch2FrFrame(m_chronoFrame.GetInverse());
     }
 
-    FrFrame_ FrFrame_::ProjectToHorizontalPlane() const {
+    FrFrame_ FrFrame_::ProjectToXYPlane(FRAME_CONVENTION fc) const {
 
-        Direction xaxis = this->GetRotation().GetXAxis(NWU);
+        Direction xaxis = this->GetRotation().GetXAxis(fc);
         xaxis.z() = 0.;
         xaxis.normalize();
 
-        Direction yaxis = this->GetRotation().GetYAxis(NWU);
+        Direction yaxis = this->GetRotation().GetYAxis(fc);
         yaxis.z() = 0.;
         yaxis.normalize();
 
         Direction zaxis = Direction(0., 0., 1.);
-        Position origin = this->GetPosition(NWU);
+        Position origin = this->GetPosition(fc);
 
-        return FrFrame_(origin, FrRotation_(xaxis, yaxis, zaxis), NWU);
+        return FrFrame_(origin, FrRotation_(xaxis, yaxis, zaxis, fc), fc);
     }
 
 

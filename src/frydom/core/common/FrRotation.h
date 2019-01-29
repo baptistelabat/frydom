@@ -99,6 +99,10 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         void Set(const Direction& axis, double angleRAD, FRAME_CONVENTION fc);
 
+        /// Set the quaternion using a roration matrix.
+        /// The matrix must be orthogonal
+        /// \param matrix the 3x3 rotation matrix
+        /// \param fc frame convention (NED/NWU)
         void Set(const mathutils::Matrix33<double>& matrix, FRAME_CONVENTION fc);
 
         /// Set the Quaternion to the null rotation (ie the unit quaternion: {1,0,0,0})
@@ -302,7 +306,7 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         FrRotation_(const Direction& axis, double angleRAD, FRAME_CONVENTION fc);
 
-        FrRotation_(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis);
+        FrRotation_(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis, FRAME_CONVENTION fc);
 
         /// Set the null rotation
         void SetNullRotation();
@@ -353,9 +357,9 @@ namespace frydom {
         /// \return 3x3 inverse rotation matrix
         mathutils::Matrix33<double> GetInverseRotationMatrix() const;
 
-        // Matrix represention
+        // Matrix representation
 
-        void Set(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis);
+        void Set(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis, FRAME_CONVENTION fc);
 
         // Euler angles representation
 

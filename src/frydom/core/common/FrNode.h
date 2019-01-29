@@ -128,10 +128,10 @@ namespace frydom {
         void SetPositionInBody(const Position& bodyPosition, FRAME_CONVENTION fc);
         void SetPositionInWorld(const Position& worldPosition, FRAME_CONVENTION fc);
 
-        void TranslateInBody(const Position& positionBody, FRAME_CONVENTION fc);
+        void TranslateInBody(const Translation &translationInBody, FRAME_CONVENTION fc);
         void TranslateInBody(const Direction& directionBody, double distance, FRAME_CONVENTION fc);
 
-        void TranslateInWorld(const Position& positionWorld, FRAME_CONVENTION fc);
+        void TranslateInWorld(const Translation &translationInWorld, FRAME_CONVENTION fc);
         void TranslateInWorld(const Direction& directionWorld, double distance, FRAME_CONVENTION fc);
 
 
