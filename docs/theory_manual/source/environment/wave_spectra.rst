@@ -3,8 +3,6 @@
 Wave spectra
 ~~~~~~~~~~~~
 
-In construction
-
 Pierson-Moskowitz spectrum
 --------------------------
 
@@ -75,7 +73,7 @@ The spreading parameter is defined constant and can be set by the user.
 
 
 References
-~~~~~~~~~~
+----------
 
 .. [LonguetHiggins1963] Longuet-Higgins, M.S., et al, *Observations of the Directional Spectrum of Sea Waves Using the Motions of a Floating Buoy*, Ocean Wave Spectra, Prentice-Hall, Inc., Englewood Cliffs, N. J., pp 111-13, 1963
 .. [KIM20008]           Kim, C.H., *Nonlinear Waves and Offshore structures*, World Scientific Publishing Company, Vol.27, 2008

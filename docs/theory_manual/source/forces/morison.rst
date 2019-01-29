@@ -1,5 +1,7 @@
 .. _morison_force:
 
+Morison model and force
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Morison model
 -------------
@@ -19,7 +21,7 @@ the cylinder and a discretization.
 
     Example of an Morison model for a platform
 
-Morison Force on a Morison element
+Morison force on a Morison element
 ----------------------------------
 
 Each Morison element is associated to a local frame located at the middle of the Morison element (Figure 4).
@@ -45,4 +47,8 @@ where
 
 In this formulation, anisotropic Morison element can be represented by a set of anisotropic definition of the added mass
 and drag coefficients in function of the axis direction.
+
+References
+----------
+
 

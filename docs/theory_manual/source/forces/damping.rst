@@ -1,7 +1,7 @@
 .. _damping_forces:
 
 Linear damping
-______________
+--------------
 
 The linear damping force, applied on a body, can be expressed using generalized notations:
 
@@ -15,7 +15,7 @@ The velocity of the body can be taken relatively to a fluid flow velocity (air o
 
 
 Quadratic damping
-_________________
+-----------------
 
 The quadratic damping force is only applied on the translational velocity of a body, and therefor cannot be given using
 generalized notations:
@@ -34,7 +34,7 @@ where
 - :math:`\mathbf{u} = \begin{bmatrix}u_x & u_y & u_z \end{bmatrix}` is the body velocity. It can also be taken relatively to a fluid flow velocity, but be careful not to use a :any:`flow force<flow_force>` which might be redundant.
 
 Manoeuvring damping
-___________________
+-------------------
 
 The manoeuvring damping force concerns surge, sway and yaw degrees of freedom. Each component of the damping force
 is defined as the sum of non-linear terms depending in surge, sway and yaw velocities of the body.
@@ -46,3 +46,8 @@ where
 
 - :math:`C_X(k)`, :math:`C_Y(k)`, :math:`C_N(k)`  are the coefficients for the components respectively in surge, sway and yaw.
 - :math:`u`, :math:`v`, :math:`w` are respectively the translational velocities in surge, sway and angular velocity in yaw.
+
+
+References
+----------
+
