@@ -416,10 +416,10 @@ namespace frydom {
 //        m_otherPhysicsList.push_back(otherPhysics);
 //    }
 
-    void FrOffshoreSystem_::AddCable(std::shared_ptr<frydom::FrCable_> cable) {
-        m_chronoSystem->AddOtherPhysicsItem(cable->GetChronoPhysicsItem());
-        cable->m_system = this;
-    }
+//    void FrOffshoreSystem_::AddCable(std::shared_ptr<frydom::FrCable_> cable) {
+//        m_chronoSystem->AddOtherPhysicsItem(cable->GetChronoPhysicsItem());
+//        cable->m_system = this;
+//    }
 
 //    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics) {
 //        assert(std::dynamic_pointer_cast<FrPrePhysicsItem_>(otherPhysics) ||

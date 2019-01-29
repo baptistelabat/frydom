@@ -562,7 +562,7 @@ namespace frydom {
         double GetPeakFreq(FREQUENCY_UNIT unit) const;
 
         /// Set the peak frequency : period (S), circular frequency (RADS), frequency (HZ), etc.
-        /// \param Tp peak frequency
+        /// \param Fp peak frequency
         /// \param unit unit of the peak frequency (S/RADS/HZ/...)
         void SetPeakFreq(double Fp, FREQUENCY_UNIT unit);
 
@@ -634,9 +634,10 @@ namespace frydom {
     private:
 
         /// Search by dichotomy method.
-        /// \param wmin
-        /// \param wmax
-        /// \return
+        /// \param wmin minimium value
+        /// \param wmax maximum value
+        /// \param threshold threshold
+        /// \return result
         double dichotomySearch(double wmin, double wmax, double threshold) const;
 
     };

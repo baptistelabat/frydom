@@ -90,7 +90,7 @@ namespace frydom {
         void Set(double q0, double q1, double q2, double q3, bool non_normalized, FRAME_CONVENTION fc);
 
         /// Set the quaternion using an other quaternion
-        /// \param other quaternion
+        /// \param quaternion quaternion
         void Set(const FrUnitQuaternion_& quaternion);
 
         /// Set the quaternion using a direction and an angle
@@ -317,6 +317,7 @@ namespace frydom {
 
         /// Get the axis of the rotation
         /// \param axis direction of the rotation, normalized
+        /// \param fc frame convention (NED/NWU)
         void GetAxis(Direction& axis, FRAME_CONVENTION fc);
 
         /// Get the angle in rotation in space (in radians)

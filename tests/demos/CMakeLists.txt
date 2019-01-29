@@ -10,6 +10,7 @@ set(DEMOS
         demo_Body
         demo_Rotation_and_Frame
         demo_Morison
+        demo_Cable
         )
 
 

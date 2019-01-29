@@ -364,9 +364,9 @@ namespace frydom {
 
         void AddLink(std::shared_ptr<FrLink_> link);
 
-        /// Add a cable to the offshore system
-        /// \param cable to be added
-        void AddCable(std::shared_ptr<FrCable_> cable);
+//        /// Add a cable to the offshore system
+//        /// \param cable to be added
+//        void AddCable(std::shared_ptr<FrCable_> cable);
 
 //        void AddOtherPhysics(std::shared_ptr<FrOtherPhysics_> otherPhysics);
 
