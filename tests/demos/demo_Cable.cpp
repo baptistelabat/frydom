@@ -135,14 +135,12 @@ int main(int argc, char* argv[]) {
                 // Set the initial position
                 sphere->SetPosition(Position(0., diameter * ib, 0.), NWU);
                 if (ib == 0) {
-//                    sphere->SetPosition(Position(0., -30., 10.), NWU);
+                    sphere->SetPosition(Position(0., -30., 10.), NWU);
                 }
 //                sphere->SetVelocityInWorldNoRotation(Velocity(0., 0., 0.), NWU);
 
                 // Create the nodes
                 auto sphereNode = sphere->NewNode();
-                auto nodePos = sphereNode->GetPositionInWorld(NWU);
-                auto spherePos = sphere->GetPosition(NWU);
 
                 auto worldNode1 = system.GetWorldBody()->NewNode();
                 worldNode1->SetPositionInBody(Position(10., diameter * ib, 50.), NWU);

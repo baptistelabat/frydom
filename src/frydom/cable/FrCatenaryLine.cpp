@@ -568,6 +568,7 @@ namespace frydom {
     void FrCatenaryLine_::Initialize() {
 
         // First guess for the tension
+        // FIXME: supprimer ces initialize de node et mettre en place la séparation des SetupInitial des FrPhysicsItems en fonction des Pre, Mid et Post.
         m_startNode->Initialize();
         m_endNode->Initialize();
         guess_tension();
