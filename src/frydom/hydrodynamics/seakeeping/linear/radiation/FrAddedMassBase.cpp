@@ -21,13 +21,12 @@ namespace frydom {
 
             for (auto BEMBody = m_HDB->begin(); BEMBody!=m_HDB->end(); BEMBody++) {
 
-                auto chronoBody = m_HDB->GetBody(BEMBody->get())->GetChronoBody();
-                auto residualOffset = off + chronoBody->GetOffset_w();
+                auto residualOffset = off + GetBodyOffset(BEMBody->get());
 
-                for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion!=m_HDB->end(); BEMBodyMotion++) {
+                //for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion!=m_HDB->end(); BEMBodyMotion++) {
+                    auto BEMBodyMotion = BEMBody;
 
-                    auto chronoBodyMotion = m_HDB->GetBody(BEMBodyMotion->get())->GetChronoBody();
-                    auto bodyOffset = off + chronoBodyMotion->GetOffset_w();
+                    auto bodyOffset = off + GetBodyOffset(BEMBodyMotion->get());
 
                     auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get());
 
@@ -40,13 +39,51 @@ namespace frydom {
 
                     R.PasteSumVector(Mw, residualOffset, 0);
                     R.PasteSumVector(Iw, residualOffset + 3, 0);
-                }
+                //}
             }
         }
 
+        void FrAddedMassBase::IntToDescriptor(const unsigned int off_v, const chrono::ChStateDelta& v,
+                                              const chrono::ChVectorDynamic<>& R, const unsigned int off_L,
+                                              const chrono::ChVectorDynamic<>& L, const chrono::ChVectorDynamic<>& Qc) {
+
+            for (auto BEMBody = m_HDB->begin(); BEMBody!=m_HDB->end(); BEMBody++) {
+
+                auto bodyOffset = GetBodyOffset(BEMBody->get());
+
+                m_variables->Get_qb().PasteClippedMatrix(v, bodyOffset, 0, 6, 1, bodyOffset, 0);
+            }
+
+        }
+
+        void FrAddedMassBase::IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
+                                                const unsigned int off_L, chrono::ChVectorDynamic<>& L) {
+
+            for (auto BEMBody = m_HDB->begin(); BEMBody!=m_HDB->end(); BEMBody++) {
+
+                auto bodyOffset = GetBodyOffset(BEMBody->get());
+
+                v.PasteClippedMatrix(m_variables->Get_qb(), bodyOffset, 0, 6, 1, bodyOffset, 0);
+
+            }
+
+        }
+
         void FrAddedMassBase::InjectVariables(chrono::ChSystemDescriptor &mdescriptor) {
-            m_variables->SetDisabled(!this->IsActive());
             mdescriptor.InsertVariables(m_variables.get());
+        }
+
+        void FrAddedMassBase::VariablesFbReset() {
+            m_variables->Get_fb().FillElem(0.0);
+        }
+
+        void FrAddedMassBase::VariablesFbIncrementMq() {
+            m_variables->Compute_inc_Mb_v(m_variables->Get_fb(), m_variables->Get_qb());
+        }
+
+        int FrAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody) const {
+            auto chronoBody = m_HDB->GetBody(BEMBody)->GetChronoBody();
+            return chronoBody->GetOffset_w();
         }
 
     }

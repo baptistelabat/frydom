@@ -12,17 +12,20 @@ namespace frydom {
 
     namespace internal {
 
+        class FrBEMBody_;
+        class FrAddedMassBase;
+
         class FrVariablesAddedMassBase : public chrono::ChVariablesBodyOwnMass {
 
         private:
+
+            FrAddedMassBase* m_addedMassBase;
 
         public:
 
             FrVariablesAddedMassBase();
 
             void Initialize();
-
-            void SetInfiniteAddedMass(const Eigen::MatrixXd InfiniteAddedMass);
 
             void Compute_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
 
@@ -36,6 +39,11 @@ namespace frydom {
             void DiagonalAdd(chrono::ChMatrix<double>& result, const double c_a) const override;
 
             void Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) override;
+
+        protected:
+
+            int GetBodyOffset(FrBEMBody_* BEMBody) const;
+
 
         };
 

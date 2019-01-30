@@ -13,6 +13,7 @@ namespace frydom {
     namespace internal {
 
         class FrHydroDB_;
+        class FrBEMBody_;
 
         class FrAddedMassBase : public chrono::ChPhysicsItem {
 
@@ -37,7 +38,28 @@ namespace frydom {
                                     const double c
             ) override;
 
+            void IntToDescriptor(const unsigned int off_v, const chrono::ChStateDelta& v,
+                                 const chrono::ChVectorDynamic<>& R, const unsigned int off_L,
+                                 const chrono::ChVectorDynamic<>& L, const chrono::ChVectorDynamic<>& Qc) override;
+
+            void IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
+                                   const unsigned int off_L, chrono::ChVectorDynamic<>& L) override;
+
             void InjectVariables(chrono::ChSystemDescriptor& mdescriptor) override;
+
+            void VariablesFbReset() override;
+
+            void VariablesFbIncrementMq() override;
+
+            // IntStateGatherAcceleration TODO : ??//
+            // IntStateScatterAcceleration TODO : ??//
+            // IntStateIncrement TODO : ??//
+
+            FrHydroDB_* GetHDB() const { return m_HDB; }
+
+        protected:
+
+            int GetBodyOffset(FrBEMBody_* BEMBody) const;
 
         };
     }
