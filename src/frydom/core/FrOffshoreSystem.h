@@ -392,6 +392,15 @@ namespace frydom {
         /// Update in last certain components of the offshore system
         void PostUpdate();
 
+
+        void PrePhysicsUpdate(double time, bool update_assets);
+
+        void MidPhysicsUpdate(double time, bool update_assets);
+
+        void PostPhysicsUpdate(double time, bool update_assets);
+
+
+
         /// Initialize the state of the offshore system and its components (Environment, systemBase)
         void Initialize() override;
 

@@ -2,10 +2,7 @@
 // Created by frongere on 23/01/19.
 //
 #include "FrPrismaticLink.h"
-
-//#include "frydom/core/common/FrNode.h"
-
-#include <chrono/physics/ChLinkLock.h>
+//#include <chrono/physics/ChLinkLock.h>
 
 
 namespace frydom {
@@ -13,14 +10,10 @@ namespace frydom {
 
     FrPrismaticLink::FrPrismaticLink(std::shared_ptr<frydom::FrNode_> node1, std::shared_ptr<frydom::FrNode_> node2,
                                      frydom::FrOffshoreSystem_ *system) : FrLink_(node1, node2, system) {
-        m_chronoLink = std::make_shared<chrono::ChLinkLockPrismatic>();
-
-        SetMarkers(node1.get(), node2.get());
-
-
+        m_chronoLink->SetLinkType(PRISMATIC);
     }
 
-    void FrPrismaticLink::SetSpringDamper(double stiffness, double dampingCoeff) {
+    void FrPrismaticLink::SetSpringDamper(double stiffness, double dampingCoeff, double restLength) {
 
     }
 
@@ -41,10 +34,13 @@ namespace frydom {
     }
 
     void FrPrismaticLink::Initialize() {
-
+        FrLink_::Initialize();
     }
 
     void FrPrismaticLink::Update(double time) {
+
+        std::cout << "coucou" << std::endl;
+
 
     }
 

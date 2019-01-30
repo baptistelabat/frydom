@@ -107,15 +107,49 @@ namespace frydom {
 
     };
 
+    /// Different type of links implemented in FRyDO
+    enum LINK_TYPE {
+        CYLINDRICAL,
+        FIXED_LINK,
+        FREE_LINK,
+        PRISMATIC,
+        REVOLUTE,
+//        SCREW,
+        SPHERICAL
+    };
+
+
+
+    // Forward declaration
+    class FrLink_;
+
+    namespace internal {
+
+        struct FrLinkLockBase : public chrono::ChLinkLock {
+
+            FrLink_* m_frydomLink;
+
+
+            explicit FrLinkLockBase(FrLink_* frydomLink);
+
+            void SetLinkType(LINK_TYPE lt);
+
+            void SetupInitial() override;
+
+            void Update(bool update_assets) override;
+
+
+        };
+
+    }  // end namespace frydom::internal
+
 
 
 
     class FrLink_ : public FrLinkBase_ {
 
     protected:
-        std::shared_ptr<chrono::ChLinkLock> m_chronoLink;
-
-
+        std::shared_ptr<internal::FrLinkLockBase> m_chronoLink;
 
     public:
         FrLink_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system);
@@ -131,6 +165,7 @@ namespace frydom {
         bool IsActive() const override;
 
 
+        virtual void SetThisConfigurationAsReference();
 
         const Force GetLinkReactionForceInLinkFrame1() const override;
 
@@ -145,10 +180,11 @@ namespace frydom {
 
         const Torque GetLinkReactionTorqueInWorldFrame(FRAME_CONVENTION fc) const override;
 
+        virtual void Initialize() override;
 
 
     protected:
-        friend class FrNode_;
+        friend class FrNode_; // To make possible to declare SetMarkers friend in FrNode_
         void SetMarkers(FrNode_* node1, FrNode_* node2) override;
 
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;

@@ -97,6 +97,10 @@ namespace frydom {
         TranslateInBody(distance * tmpDirection, fc);
     }
 
+    void FrNode_::TranslateInBody(double x, double y, double z, FRAME_CONVENTION fc) {
+        TranslateInBody(Translation(x, y, z), fc);
+    }
+
     void FrNode_::TranslateInWorld(const Translation &translationInWorld, FRAME_CONVENTION fc) {
         auto currentFrameInWorld = GetFrameInWorld();
         currentFrameInWorld.TranslateInParent(translationInWorld, fc);
@@ -107,6 +111,10 @@ namespace frydom {
         auto tmpDirection = directionWorld;
         tmpDirection.Normalize();
         TranslateInWorld(distance * tmpDirection, fc);
+    }
+
+    void FrNode_::TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc) {
+        TranslateInWorld(Translation(x, y, z), fc);
     }
 
     void FrNode_::SetOrientationInBody(const FrRotation_& rotation) {
