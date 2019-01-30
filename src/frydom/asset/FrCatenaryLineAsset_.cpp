@@ -13,7 +13,7 @@ namespace frydom{
     void FrCatenaryLineAsset_::Initialize() { // TODO : il semble que ChLine soit capable de rendre des lignes courbes
 
         // Generating line segments
-        double ds = m_catenaryLine->GetStretchedLength() / m_catenaryLine->GetNbElements();
+        double ds = m_catenaryLine->GetUnstretchedLength() / m_catenaryLine->GetNbElements();
 
         chrono::ChVector<double> p0, p1;
         chrono::ChColor color;

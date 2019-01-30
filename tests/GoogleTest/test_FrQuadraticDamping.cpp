@@ -69,7 +69,7 @@ TEST_F(TestQuadraticDamping, TestCurrentVelocity) {
 
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
     auto frameAtCOG = body->GetFrameAtCOG(NWU);
-    Velocity flowVelocity = frameAtCOG.ProjectVectorFrameInParent(Velocity(-0.5, 1.3, 0.));
+    Velocity flowVelocity = frameAtCOG.ProjectVectorFrameInParent(Velocity(-0.5, 1.3, 0.), NWU);
     system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()->Set(flowVelocity, NWU, GOTO);
     body->SetVelocityInBodyNoRotation(Velocity(0., 0., 0.1), NWU);
     force->SetRelative2Fluid(true);
@@ -93,7 +93,7 @@ TEST_F(TestQuadraticDamping, TestWindVelocity) {
 
     system.GetEnvironment()->GetAtmosphere()->GetWind()->MakeFieldUniform();
     auto frameAtCOG = body->GetFrameAtCOG(NWU);
-    Velocity flowVelocity = frameAtCOG.ProjectVectorFrameInParent(Velocity(-0.5, 1.3, 0.));
+    Velocity flowVelocity = frameAtCOG.ProjectVectorFrameInParent(Velocity(-0.5, 1.3, 0.), NWU);
     system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()->Set(flowVelocity, NWU, GOTO);
     body->SetVelocityInBodyNoRotation(Velocity(0., 0., 0.1), NWU);
     system.Initialize();

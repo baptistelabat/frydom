@@ -54,13 +54,13 @@ namespace frydom {
     }
 
     FrFrame_ FrNode_::GetFrameInBody() const {
-        auto pos = m_body->GetCOG(NWU) + internal::ChVectorToVector3d<Position>(m_chronoMarker->GetPos()); // pos wrt body reference frame, not COG..
+        Position pos = m_body->GetCOG(NWU) + internal::ChVectorToVector3d<Position>(m_chronoMarker->GetPos()); // pos wrt body reference frame, not COG..
         auto quat = internal::Ch2FrQuaternion(m_chronoMarker->GetRot());
         return FrFrame_(pos, quat, NWU);
     }
 
     void FrNode_::SetFrameInBody(const FrFrame_& frameInBody) {
-        auto localPosition_WRT_COG = frameInBody.GetPosition(NWU) - m_body->GetCOG(NWU);
+        Position localPosition_WRT_COG = frameInBody.GetPosition(NWU) - m_body->GetCOG(NWU);
         auto chCoord = chrono::ChCoordsys<double>(
                 internal::Vector3dToChVector(localPosition_WRT_COG),
                 internal::Fr2ChQuaternion(frameInBody.GetQuaternion())
@@ -219,14 +219,16 @@ namespace frydom {
 
 
     Position FrNode_::GetNodePositionInBody(FRAME_CONVENTION fc) const {
+        return GetFrameInBody().GetPosition(fc);
 //        Position NodePositionInBodyFromCOG = internal::ChVectorToVector3d<Position>(m_chronoMarker->GetRest_Coord().pos);
 //        Position NodePositionInBody = NodePositionInBodyFromCOG + m_body->GetCOG(NWU);
 //        if (IsNED(fc)) internal::SwapFrameConvention<Position>(NodePositionInBody);
 //        return  NodePositionInBody;
     }
 
-    // FIXME : le coord interne de ChMarker est local par rapport au corps auquel il est rattache
+
     Position FrNode_::GetPositionInWorld(FRAME_CONVENTION fc) const {
+        return GetFrameInWorld().GetPosition(fc);
 //        auto PositionInWorld = internal::ChVectorToVector3d<Position>(m_chronoMarker->GetAbsCoord().pos);
 //        if (IsNED(fc)) internal::SwapFrameConvention<Position>(PositionInWorld);
 //        return PositionInWorld;
