@@ -2,6 +2,9 @@
 // Created by frongere on 23/01/19.
 //
 #include "FrPrismaticLink.h"
+
+#include "frydom/core/common/FrNode.h"
+
 //#include <chrono/physics/ChLinkLock.h>
 
 
@@ -18,11 +21,11 @@ namespace frydom {
     }
 
     Direction FrPrismaticLink::GetLinkDirectionInWorld() const {
-
+//        m_chronoLink->GetLinkRelativeCoords();
     }
 
     double FrPrismaticLink::GetLinkPosition() const {
-
+        return -m_chronoLink->GetRelM().pos[2]; // Plutot appeler des methodes de FrLinkLockBase
     }
 
     double FrPrismaticLink::GetLinkVelocity() const {
@@ -39,7 +42,19 @@ namespace frydom {
 
     void FrPrismaticLink::Update(double time) {
 
-        std::cout << "coucou" << std::endl;
+        std::cout << m_chronoLink->GetRelativeAcceleration() << std::endl;
+
+        // Position relative entre marqueurs
+//        m_chronoLink->GetLinkRelativeCoords()
+//        m_node1-
+//        m_node1->GetZAxisInWorld();
+
+        // TODO : continuer a tester !!!
+
+
+
+
+
 
 
     }

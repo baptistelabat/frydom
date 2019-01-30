@@ -78,11 +78,73 @@ namespace frydom {
             m_frydomLink->Initialize();
         }
 
-        void FrLinkLockBase::Update(bool update_assets) {
-            chrono::ChLinkLock::Update(update_assets);
-//            m_frydomLink->Update();  // Voir eventuellement pour faire un update a notre sauce pour les links...
+        void FrLinkLockBase::Update(double time, bool update_assets) {
+            chrono::ChLinkLock::Update(time, update_assets);
+            m_frydomLink->Update(time);
         }
 
+        // TODO : voir si on a pas interet a mettre en cache les differentes valeurs suivantes
+        // pour des raisons de performance
+
+        FrFrame_ FrLinkLockBase::GetRelativeFrame() const {
+            return internal::ChCoordsys2FrFrame(GetRelM()).Inverse();
+        }
+
+        Position FrLinkLockBase::GetRelativePosition() const {
+            return GetRelativeFrame().GetPosition(NWU);
+        }
+
+        FrUnitQuaternion_ FrLinkLockBase::GetRelativeOrientation() const {
+            return GetRelativeFrame().GetQuaternion();
+        }
+
+        GeneralizedVelocity FrLinkLockBase::GetRelativeGeneralizedVelocity() const {
+            auto frame = GetRelativeFrame();
+
+            Velocity velocity = - frame.ProjectVectorFrameInParent(
+                    internal::ChVectorToVector3d<Velocity>(GetRelM_dt().pos),
+                    NWU
+                    );
+
+            AngularVelocity angularVelocity = - frame.ProjectVectorFrameInParent<AngularVelocity>(
+                    internal::ChVectorToVector3d<AngularVelocity>(GetRelWvel()),
+                    NWU
+                    );
+
+            return {velocity, angularVelocity};
+        }
+
+        Velocity FrLinkLockBase::GetRelativeVelocity() const {
+            return GetRelativeGeneralizedVelocity().GetVelocity();
+        }
+
+        AngularVelocity FrLinkLockBase::GetRelativeAngularVelocity() const {
+            return GetRelativeGeneralizedVelocity().GetAngularVelocity();
+        }
+
+        GeneralizedAcceleration FrLinkLockBase::GetRelativeGeneralizedAcceleration() const {
+            auto frame = GetRelativeFrame();
+
+            Acceleration acceleration = - frame.ProjectVectorFrameInParent(
+                    internal::ChVectorToVector3d<Acceleration>(GetRelM_dtdt().pos),
+                    NWU
+            );
+
+            AngularAcceleration angularAcceleration = - frame.ProjectVectorFrameInParent<AngularAcceleration>(
+                    internal::ChVectorToVector3d<AngularAcceleration>(GetRelWacc()),
+                    NWU
+            );
+
+            return {acceleration, angularAcceleration};
+        }
+
+        Acceleration FrLinkLockBase::GetRelativeAcceleration() const {
+            return GetRelativeGeneralizedAcceleration().GetAcceleration();
+        }
+
+        AngularAcceleration FrLinkLockBase::GetRelativeAngularAcceleration() const {
+            return GetRelativeGeneralizedAcceleration().GetAngularAcceleration();
+        }
 
     }
 

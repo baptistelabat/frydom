@@ -38,7 +38,7 @@ int main() {
 
 
     auto m1 = body1->NewNode();
-    m1->TranslateInBody(10, 0, -1, NWU);
+    m1->TranslateInBody(10, 5, -1, NWU);
     m1->RotateAroundYInWorld(90*DEG2RAD, NWU);
 
 

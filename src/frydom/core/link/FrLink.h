@@ -136,7 +136,32 @@ namespace frydom {
 
             void SetupInitial() override;
 
-            void Update(bool update_assets) override;
+//            void Update(bool update_assets) override;
+
+            void Update(double time, bool update_assets) override;
+
+
+            FrFrame_ GetRelativeFrame() const;
+
+            /// Get the relative position of marker 2 with respect to 1, expressed in marker 1 frame
+            Position GetRelativePosition() const;
+
+            /// Get the relative orientation of frame 2 with respect to 1
+            FrUnitQuaternion_ GetRelativeOrientation() const;
+
+            GeneralizedVelocity GetRelativeGeneralizedVelocity() const;
+
+            Velocity GetRelativeVelocity() const;
+
+            AngularVelocity GetRelativeAngularVelocity() const;
+
+            GeneralizedAcceleration GetRelativeGeneralizedAcceleration() const;
+
+            Acceleration GetRelativeAcceleration() const;
+
+            AngularAcceleration GetRelativeAngularAcceleration() const;
+
+
 
 
         };
