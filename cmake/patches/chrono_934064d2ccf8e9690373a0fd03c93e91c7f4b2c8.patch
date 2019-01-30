@@ -190,3 +190,15 @@ index 3ae1ff0e2..49a9226f6 100644
  
      //
      // SERIALIZATION
+diff --git a/src/chrono/physics/ChPhysicsItem.h b/src/chrono/physics/ChPhysicsItem.h
+index 4e533bb49..344d355dc 100644
+--- a/src/chrono/physics/ChPhysicsItem.h
++++ b/src/chrono/physics/ChPhysicsItem.h
+@@ -43,7 +43,6 @@ class ChApi ChPhysicsItem : public ChObj {
+     unsigned int offset_w;  ///< offset in vector of state (speed part)
+     unsigned int offset_L;  ///< offset in vector of lagrangian multipliers
+ 
+-  private:
+     virtual void SetupInitial() {}
+ 
+   public:

@@ -377,6 +377,14 @@ namespace frydom {
             return chrono::ChCoordsys<double>(pos, quat);
         }
 
+        inline FrFrame_ ChCoordsys2FrFrame(const chrono::ChCoordsys<double> &coordSys) {
+            return FrFrame_(
+                    internal::ChVectorToVector3d<Position>(coordSys.pos),
+                    internal::Ch2FrQuaternion(coordSys.rot),
+                    NWU
+                    );
+        }
+
     }  // end namespace internal
 
 
