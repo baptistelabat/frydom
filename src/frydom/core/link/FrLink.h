@@ -108,12 +108,60 @@ namespace frydom {
     };
 
 
+    enum LINK_TYPE {
+        CYLINDRICAL,
+        FIXED_LINK,
+        FREE_LINK,
+        PRISMATIC,
+        REVOLUTE,
+//        SCREW,
+        SPHERICAL
+    };
+
+
+    namespace internal {
+
+        class FrLinkLockBase : public chrono::ChLinkLock {
+
+        public:
+            FrLinkLockBase() : chrono::ChLinkLock() {}
+
+            void SetLinkType(LINK_TYPE lt) {
+                switch (lt) {
+                    case CYLINDRICAL:
+                        ChangeLinkType(chrono::ChLinkLock::LinkType::CYLINDRICAL);
+                        break;
+                    case FIXED_LINK:
+                        ChangeLinkType(chrono::ChLinkLock::LinkType::LOCK);
+                        break;
+                    case FREE_LINK:
+                        ChangeLinkType(chrono::ChLinkLock::LinkType::FREE);
+                        break;
+                    case PRISMATIC:
+                        ChangeLinkType(chrono::ChLinkLock::LinkType::PRISMATIC);
+                        break;
+                    case REVOLUTE:
+                        ChangeLinkType(chrono::ChLinkLock::LinkType::REVOLUTE);
+                        break;
+//                    case SCREW:
+//                        ChangeLinkType(chrono::ChLinkLock::LinkType::CYLINDRICAL);
+//                        break;
+                    case SPHERICAL:
+                        ChangeLinkType(chrono::ChLinkLock::LinkType::SPHERICAL);
+                        break;
+                }
+            }
+        };
+
+    }  // end namespace internal
+
+
 
 
     class FrLink_ : public FrLinkBase_ {
 
     protected:
-        std::shared_ptr<chrono::ChLinkLock> m_chronoLink;
+        std::shared_ptr<internal::FrLinkLockBase> m_chronoLink;
 
 
 

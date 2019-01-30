@@ -13,10 +13,12 @@ namespace frydom {
 
     FrPrismaticLink::FrPrismaticLink(std::shared_ptr<frydom::FrNode_> node1, std::shared_ptr<frydom::FrNode_> node2,
                                      frydom::FrOffshoreSystem_ *system) : FrLink_(node1, node2, system) {
-        m_chronoLink = std::make_shared<chrono::ChLinkLockPrismatic>();
-
-        SetMarkers(node1.get(), node2.get());
-
+//        m_chronoLink = std::make_shared<chrono::ChLinkLockPrismatic>();
+//
+//        SetMarkers(node1.get(), node2.get());
+//        m_chronoLink->ChangeLinkType(chrono::ChLinkLock::LinkType::PRISMATIC);
+        m_chronoLink->SetLinkType(PRISMATIC);
+//        ChangeLinkType(LinkType::REVOLUTE)
 
     }
 

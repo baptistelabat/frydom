@@ -12,7 +12,7 @@ using namespace frydom;
 int main() {
 
     FrOffshoreSystem_ system;
-//    system.SetGravityAcceleration(0.01);
+    system.SetGravityAcceleration(0.01);
 
     // Body 1 definition (fixed body)
     auto body1 = system.NewBody();
