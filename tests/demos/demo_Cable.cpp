@@ -133,25 +133,27 @@ int main(int argc, char* argv[]) {
                 makeItSphere(sphere, 0.5*diameter, density);
 
                 // Set the initial position
-                sphere->SetPosition(Position(0., diameter * (ib - n_sphere/2.), 0.), NWU);
+                sphere->SetPosition(Position(0., diameter * ib, 0.), NWU);
                 if (ib == 0) {
-                    sphere->SetPosition(Position(0., diameter * (ib - n_sphere/2.) -30., 10.), NWU);
+//                    sphere->SetPosition(Position(0., -30., 10.), NWU);
                 }
 //                sphere->SetVelocityInWorldNoRotation(Velocity(0., 0., 0.), NWU);
 
                 // Create the nodes
                 auto sphereNode = sphere->NewNode();
+                auto nodePos = sphereNode->GetPositionInWorld(NWU);
+                auto spherePos = sphere->GetPosition(NWU);
 
                 auto worldNode1 = system.GetWorldBody()->NewNode();
-                worldNode1->SetPositionInBody(Position(10., diameter * (ib - n_sphere/2.), 50.), NWU);
+                worldNode1->SetPositionInBody(Position(10., diameter * ib, 50.), NWU);
                 auto worldNode2 = system.GetWorldBody()->NewNode();
-                worldNode2->SetPositionInBody(Position(-10., diameter * (ib - n_sphere/2.), 50.), NWU);
+                worldNode2->SetPositionInBody(Position(-10., diameter * ib, 50.), NWU);
 
                 // Create the catenary lines, using the nodes and line properties previously defined
-                auto CatenaryLine1 = std::make_shared<FrCatenaryLine_>(sphereNode, worldNode1, elastic, YoungModulus,
+                auto CatenaryLine1 = std::make_shared<FrCatenaryLine_>(worldNode1, sphereNode, elastic, YoungModulus,
                                                                        sectionArea, unstretchedLength, linearDensity,
                                                                        u, fc);
-                auto CatenaryLine2 = std::make_shared<FrCatenaryLine_>(sphereNode, worldNode2, elastic, YoungModulus,
+                auto CatenaryLine2 = std::make_shared<FrCatenaryLine_>(worldNode2, sphereNode, elastic, YoungModulus,
                                                                        sectionArea, unstretchedLength, linearDensity,
                                                                        u, fc);
                 // Set the number of drawn elements on the catenary lines (the more, the slower the simulation)

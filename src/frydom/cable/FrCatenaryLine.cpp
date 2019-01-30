@@ -340,9 +340,6 @@ namespace frydom {
         c_Umat.SetIdentity();
         c_Umat -= u*(u.transpose().eval());
 
-        // First guess for the tension
-        guess_tension();
-        solve();
     }
 
     FrCatenaryLineAsset_ *FrCatenaryLine_::GetLineAsset() const {
@@ -569,6 +566,11 @@ namespace frydom {
     }
 
     void FrCatenaryLine_::Initialize() {
+
+        // First guess for the tension
+        m_startNode->Initialize();
+        m_endNode->Initialize();
+        guess_tension();
         solve();
 
         // Building the catenary forces and adding them to bodies

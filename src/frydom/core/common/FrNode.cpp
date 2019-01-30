@@ -261,7 +261,7 @@ namespace frydom {
 
 
     void FrNode_::Initialize() {
-
+        m_chronoMarker->UpdateState();
     }
 
     void FrNode_::StepFinalize() {

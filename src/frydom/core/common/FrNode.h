@@ -75,6 +75,18 @@ namespace frydom {
     // Forward declarations
     class FrBody_;
     class FrFrame_;
+    class FrNode_;
+
+    namespace internal{
+
+    struct _FrMarkerBase_ : public chrono::ChMarker {
+        FrNode_ * m_frydomNode;
+
+        _FrMarkerBase_(FrNode_* node) {m_frydomNode = node;}
+    };
+
+
+    }
 
 
     class FrNode_ : public FrObject {
@@ -215,6 +227,8 @@ namespace frydom {
 
         /// StepFinalize method not implemented yet
         void StepFinalize() override;
+
+
 
         // =============================================================================================================
         // PROJECTIONS
