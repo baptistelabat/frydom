@@ -95,7 +95,6 @@ namespace frydom {
     FrLink_::FrLink_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2,
                      FrOffshoreSystem_ *system) : FrLinkBase_(node1, node2, system) {
         m_chronoLink = std::make_shared<internal::FrLinkLockBase>(this);
-//        SetMarkers(node1.get(), node2.get());  // A mettre dans le Initialize
     }
 
 

@@ -13,6 +13,8 @@ int main() {
 
     FrOffshoreSystem_ system;
     system.SetGravityAcceleration(1);
+    system.GetEnvironment()->GetOcean()->GetFreeSurface()->ShowFreeSurface(false);
+
 
     // Body 1 definition (fixed body)
     auto body1 = system.NewBody();
@@ -21,7 +23,7 @@ int main() {
     body1->SetCollide(false);
     body1->SetColor(Yellow);
 
-    body1->SetRotation(FrRotation_(Direction(0, 1, 0), 5*DEG2RAD, NWU));
+//    body1->SetRotation(FrRotation_(Direction(0, 1, 0), 5*DEG2RAD, NWU));
 
 
     // Body 2 definition (linked body)
@@ -46,9 +48,7 @@ int main() {
 
     auto prismaticLink = make_prismatic_link(m1, m2, &system);
 
-
-//    system.Initialize(); // pas obligatoire en viewer mode
-
+    system.SetTimeStep(0.02);
     system.RunInViewer(0, 50, false);
 
 

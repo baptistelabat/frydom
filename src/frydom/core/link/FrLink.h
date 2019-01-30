@@ -119,6 +119,7 @@ namespace frydom {
     };
 
 
+
     // Forward declaration
     class FrLink_;
 
@@ -140,7 +141,7 @@ namespace frydom {
 
         };
 
-    }  // end namespace internal
+    }  // end namespace frydom::internal
 
 
 
@@ -149,8 +150,6 @@ namespace frydom {
 
     protected:
         std::shared_ptr<internal::FrLinkLockBase> m_chronoLink;
-
-
 
     public:
         FrLink_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system);
@@ -181,17 +180,11 @@ namespace frydom {
 
         const Torque GetLinkReactionTorqueInWorldFrame(FRAME_CONVENTION fc) const override;
 
-
-
-
         virtual void Initialize() override;
 
 
-
-
-
     protected:
-        friend class FrNode_;
+        friend class FrNode_; // To make possible to declare SetMarkers friend in FrNode_
         void SetMarkers(FrNode_* node1, FrNode_* node2) override;
 
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
