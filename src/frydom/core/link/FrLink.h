@@ -24,15 +24,19 @@ namespace chrono {
 
 namespace frydom {
 
-
-
     // Forward declarations
     class FrOffshoreSystem_;
     class FrNode_;
 
+    // TODO : mettre FrLinkBase dans un repertoire common. FrLink_ devra etre deplace dans le repertoire linkk_lib de
+    // meme que les enums associes
 
 
-    /// Pure abstract class for every FRyDoM constraint
+    /*
+     * FrLinkBase_
+     */
+
+    /// Pure abstract class for every FRyDoM constraints (FrLink_, FrConstraint_, FrActuator_)
     class FrLinkBase_ : public FrPhysicsItem_ {
 
     protected:
@@ -94,8 +98,6 @@ namespace frydom {
         /// Returns the second body of the link
         FrBody_* GetBody2();
 
-
-
     protected:  // TODO : voir si on rend cela private
         virtual void SetMarkers(FrNode_* node1, FrNode_* node2) = 0;
 
@@ -106,6 +108,8 @@ namespace frydom {
 
 
     };
+
+
 
     /// Different type of links implemented in FRyDO
     enum LINK_TYPE {
@@ -119,7 +123,6 @@ namespace frydom {
     };
 
 
-
     // Forward declaration
     class FrLink_;
 
@@ -129,18 +132,19 @@ namespace frydom {
 
             FrLink_* m_frydomLink;
 
-
+            /// Constructor
             explicit FrLinkLockBase(FrLink_* frydomLink);
 
+            /// Set the link type based on LINK_TYPE enum
             void SetLinkType(LINK_TYPE lt);
 
+            /// Initialize the link (calls the Initialize method of FrLink_
             void SetupInitial() override;
 
-//            void Update(bool update_assets) override;
-
+            /// Update (calls the ChLinkLock Update method then the FrLink_Update method
             void Update(double time, bool update_assets) override;
 
-
+            /// Returns the marker 2 frame relatively to marker 1
             FrFrame_ GetRelativeFrame() const;
 
             /// Get the relative position of marker 2 with respect to 1, expressed in marker 1 frame
@@ -149,27 +153,34 @@ namespace frydom {
             /// Get the relative orientation of frame 2 with respect to 1
             FrUnitQuaternion_ GetRelativeOrientation() const;
 
+            /// Get the relative generalized velocity (stacked linear and angular vectors) of marker 2 with respect to
+            /// marker 1, expressed in marker 1 frame
             GeneralizedVelocity GetRelativeGeneralizedVelocity() const;
 
+            /// Get the velocity of marker 2 with respect to marker 1, expressed in marker 1 frame
             Velocity GetRelativeVelocity() const;
 
+            /// Get the relative angular velocity of marker 2 with respect to marker 1, expressed in marker 1 frame
             AngularVelocity GetRelativeAngularVelocity() const;
 
+            /// Get the relative generalized acceleration (stacked linear and angular vectors) of marker 2 with respect
+            /// to marker 1, expressed in marker 1 frame
             GeneralizedAcceleration GetRelativeGeneralizedAcceleration() const;
 
+            /// Get the relative acceleration of marker 2 with respect to marker 1, expressed in marker 1 frame
             Acceleration GetRelativeAcceleration() const;
 
+            /// Get the relative angular acceleration of marker 2 with respect to marker 1, expressed in marker 1 frame
             AngularAcceleration GetRelativeAngularAcceleration() const;
-
-
-
 
         };
 
     }  // end namespace frydom::internal
 
 
-
+    /*
+     * FrLink_
+     */
 
     class FrLink_ : public FrLinkBase_ {
 
@@ -207,6 +218,8 @@ namespace frydom {
 
         virtual void Initialize() override;
 
+        virtual void Update(double time) override;
+
 
     protected:
         friend class FrNode_; // To make possible to declare SetMarkers friend in FrNode_
@@ -215,44 +228,6 @@ namespace frydom {
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
 
     };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    class FrActuator_ : public FrLinkBase_ {
-//
-//
-//    protected:
-//        std::shared_ptr<chrono::ChLinkMotor> m_chronoLink;
-//
-//
-//    public:
-//
-//
-//    protected:
-//        friend class FrNode_;
-//        void SetMarkers(FrNode_* node1, FrNode_* node2) override;
-//
-//        std::shared_ptr<chrono::ChLink> GetChronoLink() override;
-//
-//    };
-
-
-
-
 
 
 }  // end namespace frydom

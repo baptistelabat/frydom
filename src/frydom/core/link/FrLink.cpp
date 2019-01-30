@@ -15,8 +15,9 @@
 
 namespace frydom {
 
-
-    // FrLinkBase_ method definitions
+    /*
+     * FrLinkBase_ method definitions
+     */
 
     FrLinkBase_::FrLinkBase_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system) :
             m_node1(node1), m_node2(node2) {
@@ -99,6 +100,7 @@ namespace frydom {
         }
 
         GeneralizedVelocity FrLinkLockBase::GetRelativeGeneralizedVelocity() const {
+            // Changing the Chrono convention that a link quantities are expressed relatively to marker 2 frame
             auto frame = GetRelativeFrame();
 
             Velocity velocity = - frame.ProjectVectorFrameInParent(
@@ -123,6 +125,7 @@ namespace frydom {
         }
 
         GeneralizedAcceleration FrLinkLockBase::GetRelativeGeneralizedAcceleration() const {
+            // Changing the Chrono convention that a link quantities are expressed relatively to marker 2 frame
             auto frame = GetRelativeFrame();
 
             Acceleration acceleration = - frame.ProjectVectorFrameInParent(
@@ -146,7 +149,7 @@ namespace frydom {
             return GetRelativeGeneralizedAcceleration().GetAngularAcceleration();
         }
 
-    }
+    }  // end namespace frydom::internal
 
 
     /*
@@ -224,7 +227,19 @@ namespace frydom {
         SetMarkers(m_node1.get(), m_node2.get());
     }
 
+    void FrLink_::Update(double time) {
+        // TODO : Ici, on met en cache les differentes quantites utiles a FrLink_ mise en convention frydom ie
+        // les donnes de la liaison sont relatives a un mouvement du node 2 par rapport au node 1
+        // On fait appel aux methodes de FrLinkLockBase pour faciliter
+        // Du coup, l'update de l'objet Chrono doit etre fait avant l'objet frydom
 
+
+
+
+
+
+
+    }
 
 
 

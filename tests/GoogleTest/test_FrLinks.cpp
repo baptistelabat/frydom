@@ -23,7 +23,7 @@ int main() {
     body1->SetCollide(false);
     body1->SetColor(Yellow);
 
-//    body1->SetRotation(FrRotation_(Direction(0, 1, 0), 5*DEG2RAD, NWU));
+    body1->SetRotation(FrRotation_(Direction(0, 1, 0), 1*DEG2RAD, NWU));
 
 
     // Body 2 definition (linked body)

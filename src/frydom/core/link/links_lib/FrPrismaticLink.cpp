@@ -22,18 +22,20 @@ namespace frydom {
 
     Direction FrPrismaticLink::GetLinkDirectionInWorld() const {
 //        m_chronoLink->GetLinkRelativeCoords();
+        // TODO : Recuperer le frame du node1 puis demander la
+
     }
 
     double FrPrismaticLink::GetLinkPosition() const {
-        return -m_chronoLink->GetRelM().pos[2]; // Plutot appeler des methodes de FrLinkLockBase
+        return m_chronoLink->GetRelativePosition()[2];
     }
 
     double FrPrismaticLink::GetLinkVelocity() const {
-
+        return m_chronoLink->GetRelativeVelocity()[2];
     }
 
     double FrPrismaticLink::GetLinkAcceleration() const {
-
+        return m_chronoLink->GetRelativeAcceleration()[2];
     }
 
     void FrPrismaticLink::Initialize() {
@@ -41,6 +43,7 @@ namespace frydom {
     }
 
     void FrPrismaticLink::Update(double time) {
+        FrLink_::Update(time); // It is mandatory to invoke this before all update operations from frydom
 
         std::cout << m_chronoLink->GetRelativeAcceleration() << std::endl;
 
