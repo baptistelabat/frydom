@@ -12,7 +12,7 @@ using namespace frydom;
 int main() {
 
     FrOffshoreSystem_ system;
-    system.SetGravityAcceleration(0.01);
+    system.SetGravityAcceleration(1);
 
     // Body 1 definition (fixed body)
     auto body1 = system.NewBody();
@@ -45,6 +45,9 @@ int main() {
     m2->TranslateInBody(-1, -1, -20, NWU);
 
     auto prismaticLink = make_prismatic_link(m1, m2, &system);
+
+
+//    system.Initialize(); // pas obligatoire en viewer mode
 
     system.RunInViewer(0, 50, false);
 

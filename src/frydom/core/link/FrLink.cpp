@@ -44,16 +44,58 @@ namespace frydom {
     }
 
 
+    namespace internal {
+
+        FrLinkLockBase::FrLinkLockBase(frydom::FrLink_ *frydomLink) : m_frydomLink(frydomLink), chrono::ChLinkLock() {}
+
+        void FrLinkLockBase::SetLinkType(LINK_TYPE lt) {
+            switch (lt) {
+                case CYLINDRICAL:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::CYLINDRICAL);
+                    break;
+                case FIXED_LINK:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::LOCK);
+                    break;
+                case FREE_LINK:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::FREE);
+                    break;
+                case PRISMATIC:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::PRISMATIC);
+                    break;
+                case REVOLUTE:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::REVOLUTE);
+                    break;
+//                    case SCREW:
+//                        ChangeLinkType(chrono::ChLinkLock::LinkType::CYLINDRICAL);
+//                        break;
+                case SPHERICAL:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::SPHERICAL);
+                    break;
+            }
+        }
+
+        void FrLinkLockBase::SetupInitial() {
+            m_frydomLink->Initialize();
+        }
+
+        void FrLinkLockBase::Update(bool update_assets) {
+            chrono::ChLinkLock::Update(update_assets);
+//            m_frydomLink->Update();  // Voir eventuellement pour faire un update a notre sauce pour les links...
+        }
 
 
+    }
 
 
-    // FrLink_ method definitions
+    /*
+     * FrLink_ method definitions
+     *
+     */
 
     FrLink_::FrLink_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2,
                      FrOffshoreSystem_ *system) : FrLinkBase_(node1, node2, system) {
-        m_chronoLink = std::make_shared<internal::FrLinkLockBase>();
-        SetMarkers(node1.get(), node2.get());
+        m_chronoLink = std::make_shared<internal::FrLinkLockBase>(this);
+//        SetMarkers(node1.get(), node2.get());  // A mettre dans le Initialize
     }
 
 
@@ -115,6 +157,10 @@ namespace frydom {
 
     const Torque FrLink_::GetLinkReactionTorqueInWorldFrame(FRAME_CONVENTION fc) const { // TODO : tester
         return m_node2->ProjectVectorInWorld<Torque>(GetLinkReactionForceInLinkFrame2(), fc);
+    }
+
+    void FrLink_::Initialize() {
+        SetMarkers(m_node1.get(), m_node2.get());
     }
 
 

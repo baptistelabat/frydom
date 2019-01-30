@@ -19,6 +19,7 @@ namespace frydom {
 //        m_chronoLink->ChangeLinkType(chrono::ChLinkLock::LinkType::PRISMATIC);
         m_chronoLink->SetLinkType(PRISMATIC);
 //        ChangeLinkType(LinkType::REVOLUTE)
+        SetMarkers(node1.get(), node2.get());
 
     }
 
@@ -43,7 +44,7 @@ namespace frydom {
     }
 
     void FrPrismaticLink::Initialize() {
-
+        FrLink_::Initialize();
     }
 
     void FrPrismaticLink::Update(double time) {

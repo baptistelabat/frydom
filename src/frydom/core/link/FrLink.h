@@ -107,7 +107,7 @@ namespace frydom {
 
     };
 
-
+    /// Different type of links implemented in FRyDO
     enum LINK_TYPE {
         CYLINDRICAL,
         FIXED_LINK,
@@ -119,38 +119,25 @@ namespace frydom {
     };
 
 
+    // Forward declaration
+    class FrLink_;
+
     namespace internal {
 
-        class FrLinkLockBase : public chrono::ChLinkLock {
+        struct FrLinkLockBase : public chrono::ChLinkLock {
 
-        public:
-            FrLinkLockBase() : chrono::ChLinkLock() {}
+            FrLink_* m_frydomLink;
 
-            void SetLinkType(LINK_TYPE lt) {
-                switch (lt) {
-                    case CYLINDRICAL:
-                        ChangeLinkType(chrono::ChLinkLock::LinkType::CYLINDRICAL);
-                        break;
-                    case FIXED_LINK:
-                        ChangeLinkType(chrono::ChLinkLock::LinkType::LOCK);
-                        break;
-                    case FREE_LINK:
-                        ChangeLinkType(chrono::ChLinkLock::LinkType::FREE);
-                        break;
-                    case PRISMATIC:
-                        ChangeLinkType(chrono::ChLinkLock::LinkType::PRISMATIC);
-                        break;
-                    case REVOLUTE:
-                        ChangeLinkType(chrono::ChLinkLock::LinkType::REVOLUTE);
-                        break;
-//                    case SCREW:
-//                        ChangeLinkType(chrono::ChLinkLock::LinkType::CYLINDRICAL);
-//                        break;
-                    case SPHERICAL:
-                        ChangeLinkType(chrono::ChLinkLock::LinkType::SPHERICAL);
-                        break;
-                }
-            }
+
+            explicit FrLinkLockBase(FrLink_* frydomLink);
+
+            void SetLinkType(LINK_TYPE lt);
+
+            void SetupInitial() override;
+
+            void Update(bool update_assets) override;
+
+
         };
 
     }  // end namespace internal
@@ -179,7 +166,7 @@ namespace frydom {
         bool IsActive() const override;
 
 
-        void SetThisConfigurationAsReference();
+        virtual void SetThisConfigurationAsReference();
 
         const Force GetLinkReactionForceInLinkFrame1() const override;
 
@@ -193,6 +180,12 @@ namespace frydom {
         const Torque GetLinkReactionTorqueInLinkFrame2() const override;
 
         const Torque GetLinkReactionTorqueInWorldFrame(FRAME_CONVENTION fc) const override;
+
+
+
+
+        virtual void Initialize() override;
+
 
 
 
