@@ -17,7 +17,7 @@ set(GOOGLE_TESTS
         test_FrEquilibriumFrame_
         test_FrWaveField_
         test_FrMorisonElement_
-        test_FrLinearHydrostaticForce_
+#        test_FrLinearHydrostaticForce_
         test_FrRecorder_
         test_FrStandardWindForce
         test_FrStandardCurrentForce

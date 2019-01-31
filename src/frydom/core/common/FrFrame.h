@@ -63,66 +63,66 @@ namespace frydom {
 
 
         // Cartesian Position
-        /// Set the position in world reference frame of the origin of the present frame, using doubles
+        /// Set the position in parent reference frame of the origin of the present frame, using doubles
         /// \param x X position of the frame
         /// \param y Y position of the frame
         /// \param z Z position of the frame
         /// \param fc Frame convention (NED/NWU)
         void SetPosition(double x, double y, double z, FRAME_CONVENTION fc);
 
-        /// Set the position in world reference frame of the origin of the present frame, using a Position
+        /// Set the position in parent reference frame of the origin of the present frame, using a Position
         /// \param position Position of the frame
         /// \param fc Frame convention (NED/NWU)
         void SetPosition(const Position& position, FRAME_CONVENTION fc);
 
-        /// Get the position in world reference frame of the origin of the present frame
+        /// Get the position in parent reference frame of the origin of the present frame
         /// \param x X position of the frame
         /// \param y Y position of the frame
         /// \param z Z position of the frame
         /// \param fc Frame convention (NED/NWU)
         void GetPosition(double& x, double& y, double& z, FRAME_CONVENTION fc) const;
 
-        /// Get the position in world reference frame of the origin of the present frame
+        /// Get the position in parent reference frame of the origin of the present frame
         /// \param position Position of the frame
         /// \param fc Frame convention (NED/NWU)
         void GetPosition(Position& position, FRAME_CONVENTION fc) const;
 
-        /// Get the position in world reference frame of the origin of the present frame
+        /// Get the position in parent reference frame of the origin of the present frame
         /// \param fc Frame convention (NED/NWU)
         /// \return  the position of the frame
         Position GetPosition(FRAME_CONVENTION fc) const;
 
-        /// Set the X position in world reference frame of the origin of the present frame
+        /// Set the X position in parent reference frame of the origin of the present frame
         /// \param x X position of the frame
         /// \param fc Frame convention (NED/NWU)
         void SetX(double x, FRAME_CONVENTION fc);
 
-        /// Set the Y position in world reference frame of the origin of the present frame
+        /// Set the Y position in parent reference frame of the origin of the present frame
         /// \param y Y position of the frame
         /// \param fc Frame convention (NED/NWU)
         void SetY(double y, FRAME_CONVENTION fc);
 
-        /// Set the Z position in world reference frame of the origin of the present frame
+        /// Set the Z position in parent reference frame of the origin of the present frame
         /// \param z Z position of the frame
         /// \param fc Frame convention (NED/NWU)
         void SetZ(double z, FRAME_CONVENTION fc);
 
-        /// Get the X position in world reference frame of the origin of the present frame
+        /// Get the X position in parent reference frame of the origin of the present frame
         /// \param fc Frame convention (NED/NWU)
         /// \return  the x position of the frame
         double GetX(FRAME_CONVENTION fc) const;
 
-        /// Get the Y position in world reference frame of the origin of the present frame
+        /// Get the Y position in parent reference frame of the origin of the present frame
         /// \param fc Frame convention (NED/NWU)
         /// \return  the y position of the frame
         double GetY(FRAME_CONVENTION fc) const;
 
-        /// Get the Z position in world reference frame of the origin of the present frame
+        /// Get the Z position in parent reference frame of the origin of the present frame
         /// \param fc Frame convention (NED/NWU)
         /// \return  the z position of the frame
         double GetZ(FRAME_CONVENTION fc) const;
 
-        /// Set the position and axis in world reference frame
+        /// Set the position and axis in parent reference frame
         /// \param pos Position of the frame
         /// \param e1 direction of the x-axis
         /// \param e2 direction of the y-axis
