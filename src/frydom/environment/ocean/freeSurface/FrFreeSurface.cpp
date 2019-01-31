@@ -440,8 +440,8 @@ namespace frydom {
 //        m_body = std::make_shared<FrBody_>();
 //        m_body->SetName("FreeSurface");
 //        m_body->SetPosition(Position(0., 0., 0.), NWU);
-//        m_body->SetBodyFixed(true);
-//        m_body->SetCollide(false);
+//        m_body->SetFixedInWorld(true);
+//        m_body->AllowCollision(false);
 //
 //        m_ocean->GetEnvironment()->GetSystem()->AddBody(m_body);
 //

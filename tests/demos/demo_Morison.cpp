@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem_ system;
 
-    
+
     // ------------------ Wave Field ------------------ //
 
     auto FreeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
         cylinder->SetColor(LightGoldenRodYellow);
         cylinder->SetPosition(Position(0., 0., -0.5 * height), fc);
 
-        cylinder->SetBodyFixed(true);
+        cylinder->SetFixedInWorld(true);
 
 
         // ------------------ Morison Model ------------------ //
@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
 
         Platform->AddMeshAsset("GVA7500.obj");
 
-        Platform->SetBodyFixed(true);
+        Platform->SetFixedInWorld(true);
 
         // Morison Model
         auto MorisonModel = make_MorisonModel(Platform.get());

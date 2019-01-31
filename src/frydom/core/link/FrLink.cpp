@@ -52,25 +52,25 @@ namespace frydom {
         void FrLinkLockBase::SetLinkType(LINK_TYPE lt) {
             switch (lt) {
                 case CYLINDRICAL:
-                    ChangeLinkType(chrono::ChLinkLock::LinkType::CYLINDRICAL);
+                    ChangeLinkType(ChronoLinkType::CYLINDRICAL);
                     break;
                 case FIXED_LINK:
-                    ChangeLinkType(chrono::ChLinkLock::LinkType::LOCK);
+                    ChangeLinkType(ChronoLinkType::LOCK);
                     break;
                 case FREE_LINK:
-                    ChangeLinkType(chrono::ChLinkLock::LinkType::FREE);
+                    ChangeLinkType(ChronoLinkType::FREE);
                     break;
                 case PRISMATIC:
-                    ChangeLinkType(chrono::ChLinkLock::LinkType::PRISMATIC);
+                    ChangeLinkType(ChronoLinkType::PRISMATIC);
                     break;
                 case REVOLUTE:
-                    ChangeLinkType(chrono::ChLinkLock::LinkType::REVOLUTE);
+                    ChangeLinkType(ChronoLinkType::REVOLUTE);
                     break;
 //                    case SCREW:
-//                        ChangeLinkType(chrono::ChLinkLock::LinkType::CYLINDRICAL);
+//                        ChangeLinkType(ChronoLinkType::CYLINDRICAL);
 //                        break;
                 case SPHERICAL:
-                    ChangeLinkType(chrono::ChLinkLock::LinkType::SPHERICAL);
+                    ChangeLinkType(ChronoLinkType::SPHERICAL);
                     break;
             }
         }

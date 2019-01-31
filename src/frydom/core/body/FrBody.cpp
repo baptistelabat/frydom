@@ -176,7 +176,7 @@ namespace frydom {
         m_chronoBody->SetName(name);
     }
 
-    void FrBody_::SetBodyFixed(bool state) {
+    void FrBody_::SetFixedInWorld(bool state) {
         m_chronoBody->SetBodyFixed(state);
     }
 
@@ -351,7 +351,7 @@ namespace frydom {
 //        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, cogFrame, fc));
 //    }
 
-    void FrBody_::SetCollide(bool isColliding) {
+    void FrBody_::AllowCollision(bool isColliding) {
         m_chronoBody->SetCollide(isColliding);
     }
 

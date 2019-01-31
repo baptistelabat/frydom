@@ -349,7 +349,7 @@ namespace frydom {
 
         /// Make the body fixed
         /// \param state true if body is fixed, false otherwise
-        void SetBodyFixed(bool state);
+        void SetFixedInWorld(bool state);
 
 
         // =============================================================================================================
@@ -411,7 +411,7 @@ namespace frydom {
         /// Set the collide mode. If true, a collision shape must be set and the body will participate in physical
         /// collision with other physical collision enabled items
         /// \param isColliding true if a collision model is to be defined, false otherwise
-        void SetCollide(bool isColliding);
+        void AllowCollision(bool isColliding);
 
         std::shared_ptr<chrono::ChMaterialSurfaceSMC> GetMaterialSurface() {return m_chronoBody->GetMaterialSurfaceSMC();}
 

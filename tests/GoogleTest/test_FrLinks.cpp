@@ -18,9 +18,9 @@ int main() {
 
     // Body 1 definition (fixed body)
     auto body1 = system.NewBody();
-    body1->SetBodyFixed(true);
+    body1->SetFixedInWorld(true);
     makeItBox(body1, 20, 10, 2, 1000);
-    body1->SetCollide(false);
+    body1->AllowCollision(false);
     body1->SetColor(Yellow);
 
     body1->SetRotation(FrRotation_(Direction(0, 1, 0), 1*DEG2RAD, NWU));
@@ -30,7 +30,7 @@ int main() {
     auto body2 = system.NewBody();
     makeItBox(body2, 2, 2, 40, 2000);
     body2->SetColor(Black);
-//    body2->SetBodyFixed(true);
+//    body2->SetFixedInWorld(true);
 
     body2->SetRotation(FrRotation_(Direction(0, 1, 0), 90*DEG2RAD, NWU));
 

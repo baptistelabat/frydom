@@ -853,7 +853,7 @@ namespace frydom {
 
     void FrOffshoreSystem_::CreateWorldBody() {
         m_worldBody = std::make_shared<FrBody_>();
-        m_worldBody->SetBodyFixed(true);
+        m_worldBody->SetFixedInWorld(true);
         m_worldBody->SetName("WorldBody");
         AddBody(m_worldBody);
     }

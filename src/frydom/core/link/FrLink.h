@@ -128,7 +128,9 @@ namespace frydom {
 
     namespace internal {
 
-        struct FrLinkLockBase : public chrono::ChLinkLock {
+        struct FrLinkLockBase : public chrono::ChLinkLock { // TODO : essayer de mettre en protected... avec friend
+
+            using ChronoLinkType = chrono::ChLinkLock::LinkType;
 
             FrLink_* m_frydomLink;
 
@@ -188,25 +190,41 @@ namespace frydom {
         std::shared_ptr<internal::FrLinkLockBase> m_chronoLink;
 
     public:
+
+        /// Constructor taking the nodes attached to the two bodies implied in the link and the system
         FrLink_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system);
 
+        /// Tells if all constraints of this link are currently turned on or off by the user.
         bool IsDisabled() const override;
 
+        /// User can use this to enable/disable all the constraint of the link as desired.
         void SetDisabled(bool disabled) override;
 
+        /// Tells if the link is broken, for excess of pulling/pushing. // TODO : implementer de quoi 'casser' les liaisons si trop d'effort -> foncteurs ?
         bool IsBroken() const override;
 
+        /// Set the 'broken' status vof this link.
         void SetBroken(bool broken) override;
 
+        /// Tells if the link is currently active, in general,
+        /// that is tells if it must be included into the system solver or not.
+        /// This method cumulates the effect of various flags (so a link may
+        /// be not active either because disabled, or broken, or not valid)
         bool IsActive() const override;
 
-
+        /// Freezes the current configuration as being the reference configuration from which the generalized
+        /// position measurement are given (ie. length from the rest length for a prismatic link)
         virtual void SetThisConfigurationAsReference();
 
+
+        // FIXME est-ce bien utile de differentier link 1 et 2 ici ???
+        /// Get the link reaction force seen by marker 1 in marker 1 frame
         const Force GetLinkReactionForceInLinkFrame1() const override;
 
+        /// Get the link reaction force seen by marker 2 in marker 2 frame
         const Force GetLinkReactionForceInLinkFrame2() const override;
 
+        /// Get the link reaction force seen by marker 1 in world frame
         const Force GetLinkReactionForceInWorldFrame(FRAME_CONVENTION fc) const override;
 
 

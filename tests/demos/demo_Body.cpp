@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     // Make the body fixed : If true, it does not move respect to the absolute world, despite constraints, forces, etc.
     // By default a body is not fixed.
-//    body->SetBodyFixed(true);
+//    body->SetFixedInWorld(true);
 
     // =============================================================================================================
     // VISUAL ASSETS
