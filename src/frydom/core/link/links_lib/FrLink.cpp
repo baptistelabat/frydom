@@ -280,7 +280,29 @@ namespace frydom {
 
     }
 
+    void FrLink_::SetLinkForceAtMarker1(const Force &force) {
+        // force doit etre exprime dans le repere 1
+        // On doit exprimer la force dans le repere 2
+        m_chronoLink->GetLinkForce() =
+                - internal::Vector3dToChVector(GetMarker1FrameWRTMarker2Frame().ProjectVectorFrameInParent<Force>(force, NWU));
+    }
 
+    void FrLink_::SetLinkTorqueAtMarker1(const Torque &torque) {
+
+    }
+
+    const Force FrLink_::GetLinkForceAtMarker1(FRAME_CONVENTION fc) const {
+
+    }
+
+    const Torque FrLink_::GetLinkTorqueAtMarker1(FRAME_CONVENTION fc) const {
+
+    }
+
+    double FrLink_::GetLinkPower() const {
+        return GetLinkForceAtMarker1(NWU).dot(GetVelocityOfMarker2WRTMarker1(NWU))
+             + GetLinkTorqueAtMarker1(NWU).dot(GetAngularVelocityOfMarker2WRTMarker1(NWU));
+    }
 
 
 }  // end namespace frydom

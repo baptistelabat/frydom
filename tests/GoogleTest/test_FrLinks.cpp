@@ -48,6 +48,9 @@ int main() {
 
     auto prismaticLink = make_prismatic_link(m1, m2, &system);
 
+    prismaticLink->SetSpringDamper(1e3, 1e3);
+    prismaticLink->SetRestLength(4);
+
     system.SetTimeStep(0.02);
     system.RunInViewer(0, 50, false);
 

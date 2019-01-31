@@ -52,7 +52,13 @@ namespace frydom {
     void FrPrismaticLink::Update(double time) {
         FrLink_::Update(time); // It is mandatory to invoke this before all update operations from frydom
 
-        std::cout << GetLinkReactionForceOnMarker2(NWU) << std::endl;
+        // ICI on appelle de quoi calculer la force dans la liaison
+
+
+
+
+
+        std::cout << GetLinkPower() << std::endl;
 
         // Position relative entre marqueurs
 //        m_chronoLink->GetLinkRelativeCoords()
@@ -60,8 +66,10 @@ namespace frydom {
 //        m_node1->GetZAxisInWorld();
 
         // TODO : continuer a tester !!!
+        Force force;
+        force.GetFz() = -m_stiffness * GetLinkPosition() - m_damping * GetLinkVelocity();
 
-
+        SetLinkForceAtMarker1(force);
 
 
 

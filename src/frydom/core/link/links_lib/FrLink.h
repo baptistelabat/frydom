@@ -84,6 +84,14 @@ namespace frydom {
 
             void GenerateCache();
 
+            chrono::ChVector<double>& GetLinkForce() {
+                return C_force;
+            }
+
+            chrono::ChVector<double>& GetLinkTorque() {
+                return C_torque;
+            }
+
         };
 
     }  // end namespace frydom::internal
@@ -231,6 +239,15 @@ namespace frydom {
         /// Note this is the torque applied on the body
         const Torque GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const;
 
+        /// Set the link force expressed in marker 1 frame
+        const Force GetLinkForceAtMarker1(FRAME_CONVENTION fc) const;
+
+        /// Set the link torque expressed in marker 2 frame and applied at marker 2
+        const Torque GetLinkTorqueAtMarker1(FRAME_CONVENTION fc) const;
+
+        virtual double GetLinkPower() const;
+
+
         virtual void Initialize() override;
 
         virtual void Update(double time) override;
@@ -244,6 +261,24 @@ namespace frydom {
 
         /// Get the embedded Chrono object
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
+
+        /*
+         * Methods allowing child classes to access chrono link forces
+         */
+
+        /// Set the link force expressed in marker 1 frame
+        void SetLinkForceAtMarker1(const Force& force);
+
+        /// Set the link torque expressed in marker 1 frame and applied at marker 1
+        void SetLinkTorqueAtMarker1(const Torque& torque);
+
+
+
+
+
+
+
+
 
     };
 
