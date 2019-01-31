@@ -575,17 +575,20 @@ namespace frydom {
         solve();
 
         // Building the catenary forces and adding them to bodies
-        m_startingForce = std::make_shared<FrCatenaryForce_>(this, LINE_START);
-        auto starting_body = m_startNode->GetBody();
-        starting_body->AddExternalForce(m_startingForce);
+        if (!m_startingForce) {
+            m_startingForce = std::make_shared<FrCatenaryForce_>(this, LINE_START);
+            auto starting_body = m_startNode->GetBody();
+            starting_body->AddExternalForce(m_startingForce);
+        }
 
-
-        m_endingForce = std::make_shared<FrCatenaryForce_>(this, LINE_END);
-        auto ending_body = m_endNode->GetBody();
-        ending_body->AddExternalForce(m_endingForce);
+        if (!m_endingForce) {
+            m_endingForce = std::make_shared<FrCatenaryForce_>(this, LINE_END);
+            auto ending_body = m_endNode->GetBody();
+            ending_body->AddExternalForce(m_endingForce);
+        }
 
         // Generate assets for the cable
-        if (is_lineAsset) {
+        if (is_lineAsset and !m_lineAsset) {
             m_lineAsset = std::make_unique<FrCatenaryLineAsset_>(this);
             m_lineAsset->Initialize();
         }

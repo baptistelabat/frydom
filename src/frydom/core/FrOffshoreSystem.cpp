@@ -891,7 +891,7 @@ namespace frydom {
 
     void FrOffshoreSystem_::RunInViewer(double endTime, double dist, bool recordVideo) {
 
-//        Initialize();  // So thtat system is automatically initialized when run in viewer mode
+//        Initialize();  // So that system is automatically initialized when run in viewer mode
 
         FrIrrApp_ app(m_chronoSystem.get(), dist);
 
