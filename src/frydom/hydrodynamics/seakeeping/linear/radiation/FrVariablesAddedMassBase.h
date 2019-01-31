@@ -20,6 +20,7 @@ namespace frydom {
         private:
 
             FrAddedMassBase* m_addedMassBase;
+            std::unordered_map<FrBEMBody_*, Eigen::MatrixXd> m_invAddedMassCorrection;
 
         public:
 

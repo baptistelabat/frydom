@@ -64,9 +64,7 @@ namespace frydom {
                 auto bodyOffset = GetBodyOffset(BEMBody->get());
 
                 v.PasteClippedMatrix(m_variables->Get_qb(), bodyOffset, 0, 6, 1, bodyOffset, 0);
-
             }
-
         }
 
         void FrAddedMassBase::InjectVariables(chrono::ChSystemDescriptor &mdescriptor) {

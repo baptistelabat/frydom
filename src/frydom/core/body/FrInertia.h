@@ -86,6 +86,8 @@ namespace frydom {
         /// Set the cog position
         void SetCOGPosition(const Position& cogPosition, FRAME_CONVENTION fc);
 
+        Matrix66<double> GetMatrix() const;
+
 
     private:
 

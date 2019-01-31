@@ -17,6 +17,23 @@ namespace frydom {
 
         void FrVariablesAddedMassBase::Initialize() {
 
+            auto HDB = m_addedMassBase->GetHDB();
+
+            for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
+
+                auto body = HDB->GetBody(BEMBody->get());
+
+                auto generalizedMass = body->GetInertiaTensor(NWU).GetMatrix();
+                auto invGeneralizedMass = generalizedMass.inverse();
+
+                auto infiniteAddedMass = BEMBody->get()->GetSelfInfiniteAddedMass();
+                auto invInfiniteAddedMass = infiniteAddedMass.inverse();
+
+                auto sumMatrixMass = generalizedMass + infiniteAddedMass;
+                auto invSumMatrixMax = sumMatrixMass.inverse();
+
+                m_invAddedMassCorrection[BEMBody->get()] = - invGeneralizedMass * infiniteAddedMass * invSumMatrixMax;
+            }
         }
 
         void FrVariablesAddedMassBase::Compute_invMb_v(chrono::ChMatrix<double>& result,
@@ -33,12 +50,12 @@ namespace frydom {
 
                     auto bodyOffset = GetBodyOffset(BEMBodyMotion->get());
 
-                    auto invGeneralizedMass = GetInverseGeneralizedMass(BEMBody, BEMBodyMotion);
+                    auto invAddedMassCorrection = m_invAddedMassCorrection[BEMBody->get()];
 
                     for (int i=0; i<6; i++) {
                         result(resultOffset + i) = 0.;
                         for (int j=0; j<6; j++) {
-                            result(resultOffset + i) += invGeneralizedMass(i, j) * vect(bodyOffset + j);
+                            result(resultOffset + i) += invAddedMassCorrection(i, j) * vect(bodyOffset + j);
                         }
                     };
                 //}
@@ -59,11 +76,11 @@ namespace frydom {
 
                     auto bodyOffset = GetBodyOffset(BEMBodyMotion->get());
 
-                    auto invGeneralizedMass = GetInverseGeneralizedMass(BEMBody, BEMBodyMotion);
+                    auto invAddedMassCorrection = m_invAddedMassCorrection[BEMBody->get()];
 
                     for (int i=0; i<6; i++) {
                         for (int j=0; j<6; j++) {
-                            result(resultOffset + i) += invGeneralizedMass(i, j) * vect(bodyOffset + j);
+                            result(resultOffset + i) += invAddedMassCorrection(i, j) * vect(bodyOffset + j);
                         }
                     };
                 //}
@@ -83,7 +100,7 @@ namespace frydom {
 
                     auto bodyOffset = GetBodyOffset(BEMBodyMotion->get());
 
-                    auto generalizedMass = GetGeneralizedMass(BEMBody->get(), BEMBodyMotion->get());
+                    auto generalizedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get());
 
                     for (int i=0; i<6; i++) {
                         for (int j=0; j<6; j++) {
@@ -103,7 +120,7 @@ namespace frydom {
 
                 auto bodyOffset = GetBodyOffset(BEMBody->get());
 
-                auto generalizedMass = GetGeneralizedMass(BEMBody->get(), BEMBody->get());
+                auto generalizedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
 
                 for (int i=0; i<6; i++) {
                     for (int j=0; j<6; j++) {
@@ -121,14 +138,14 @@ namespace frydom {
 
                 auto bodyOffset = GetBodyOffset(BEMBody->get());
 
-                auto generalizedMass = GetGeneralizedMass(BEMBody->get(), BEMBody->get());
+                auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
 
-                result(bodyOffset + 0) += c_a * generalizedMass(0, 0);
-                result(bodyOffset + 1) += c_a * generalizedMass(1, 1);
-                result(bodyOffset + 2) += c_a * generalizedMass(2, 2);
-                result(bodyOffset + 3) += c_a * generalizedMass(3, 3);
-                result(bodyOffset + 4) += c_a * generalizedMass(4, 4);
-                result(bodyOffset + 5) += c_a * generalizedMass(5, 5);
+                result(bodyOffset + 0) += c_a * infiniteAddedMass(0, 0);
+                result(bodyOffset + 1) += c_a * infiniteAddedMass(1, 1);
+                result(bodyOffset + 2) += c_a * infiniteAddedMass(2, 2);
+                result(bodyOffset + 3) += c_a * infiniteAddedMass(3, 3);
+                result(bodyOffset + 4) += c_a * infiniteAddedMass(4, 4);
+                result(bodyOffset + 5) += c_a * infiniteAddedMass(5, 5);
             }
         }
 
@@ -141,11 +158,11 @@ namespace frydom {
 
                 auto bodyOffset = GetBodyOffset(BEMBody->get());
 
-                auto generalizedMass = GetGeneralizedMass(BEMBody->get(), BEMBody->get());
+                auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
 
                 for (int i=0; i<6; i++) {
                     for (int j=0; j<6; j++) {
-                        storage.SetElement(insrow + i, inscol + j, c_a * generalizedMass(i, j));
+                        storage.SetElement(insrow + i, inscol + j, c_a * infiniteAddedMass(i, j));
                     }
                 }
             }

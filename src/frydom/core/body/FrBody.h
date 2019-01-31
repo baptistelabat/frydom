@@ -1178,6 +1178,7 @@ namespace frydom {
 
         friend int internal::FrAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody) const;
         friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody) const;
+        friend void internal::FrVariablesAddedMassBase::Initialize();
 
     };
 
