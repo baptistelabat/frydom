@@ -992,7 +992,7 @@ namespace frydom {
         }
     }
 
-    void FrBEMBody_::SetStiffnessMatrix(const Matrix33<double>& hydrostaticStiffnessMatrix) {
+    void FrBEMBody_::SetStiffnessMatrix(const Matrix33& hydrostaticStiffnessMatrix) {
         m_hydrostaticStiffnessMatrix = hydrostaticStiffnessMatrix;
     }
 

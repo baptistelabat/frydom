@@ -20,6 +20,7 @@ namespace frydom {
         }
 
         void FrAddedMassBase::SetupInitial() {
+            offset_w = 0;
             m_frydomRadiationModel->Initialize();
             m_variables->Initialize();
         }
@@ -40,12 +41,12 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto residualOffset = off + GetBodyOffset( HDB->GetBody(BEMBody->get()) );
+                auto residualOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) ); //+off
 
                 //for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion!=m_HDB->end(); BEMBodyMotion++) {
                     auto BEMBodyMotion = BEMBody;
 
-                    auto bodyOffset = off + GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
+                    auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) ); //+off
 
                     auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get());
 
@@ -54,7 +55,7 @@ namespace frydom {
 
                     Eigen::VectorXd Mv = c * infiniteAddedMass * q;
                     auto Mw = chrono::ChVector<>(Mv(0), Mv(1), Mv(2));
-                    auto Iw = chrono::ChVector<>(Mv(3), Mv(4), Mv(6));
+                    auto Iw = chrono::ChVector<>(Mv(3), Mv(4), Mv(5));
 
                     R.PasteSumVector(Mw, residualOffset, 0);
                     R.PasteSumVector(Iw, residualOffset + 3, 0);
@@ -103,9 +104,8 @@ namespace frydom {
         }
 
         int FrAddedMassBase::GetBodyOffset(FrBody_* body) const {
-            //auto chronoBody = body->GetChronoBody();
-            //return chronoBody->GetOffset_w();
-            return 0;
+            auto chronoBody = body->GetChronoBody();
+            return chronoBody->GetOffset_w();
         }
 
 
