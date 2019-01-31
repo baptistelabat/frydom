@@ -76,7 +76,7 @@ namespace frydom {
         }
 
         void FrLinkLockBase::SetupInitial() {
-            m_frydomLink->Initialize();
+            chrono::ChLinkLock::SetupInitial();
         }
 
         void FrLinkLockBase::Update(double time, bool update_assets) {
@@ -223,6 +223,11 @@ namespace frydom {
         return m_node2->ProjectVectorInWorld<Torque>(GetLinkReactionForceInLinkFrame2(), fc);
     }
 
+    void FrLink_::SetupInitial() {
+        m_chronoLink->SetupInitial();
+        Initialize();
+    }
+
     void FrLink_::Initialize() {
         SetMarkers(m_node1.get(), m_node2.get());
     }
@@ -240,7 +245,6 @@ namespace frydom {
 
 
     }
-
 
 
 }  // end namespace frydom

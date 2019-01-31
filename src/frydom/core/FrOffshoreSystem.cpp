@@ -483,8 +483,32 @@ namespace frydom {
         // Initializing environment before bodies
         m_environment->Initialize();
 
-        // Initializing embedded chrono system
-        m_chronoSystem->SetupInitial(); // Actually do nothing but called for consistency
+        for (auto& item : m_PrePhysicsList) {
+            item->SetupInitial();
+        }
+
+        for (auto& item : m_bodyList){
+            item->SetupInitial();
+        }
+
+        for (auto& item : m_MidPhysicsList) {
+            item->SetupInitial();
+        }
+
+        for (auto& item : m_linkList) {
+            item->SetupInitial();
+        }
+
+        for (auto& item : m_PostPhysicsList) {
+            item->SetupInitial();
+        }
+
+        m_chronoSystem->Update();
+
+
+
+//        // Initializing embedded chrono system
+//        m_chronoSystem->SetupInitial(); // Actually do nothing but called for consistency
 
 //        // Initializing bodies
 //        auto bodyIter = body_begin();

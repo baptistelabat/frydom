@@ -216,9 +216,11 @@ namespace frydom {
 
         const Torque GetLinkReactionTorqueInWorldFrame(FRAME_CONVENTION fc) const override;
 
-        virtual void Initialize() override;
+        void SetupInitial() override;
 
-        virtual void Update(double time) override;
+        void Initialize() override;
+
+        void Update(double time) override;
 
 
     protected:
