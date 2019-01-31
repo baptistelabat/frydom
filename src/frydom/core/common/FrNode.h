@@ -168,6 +168,9 @@ namespace frydom {
         /// \return the node frame in the body reference frame
         FrFrame_ GetFrameInBody() const;
 
+        /// Get the node frame with respect to the COG in body reference coordinates
+        /// \return the node frame with respect to COG
+        FrFrame_ GetFrameWRT_COG_InBody() const;
 
         void SetFrameInBody(const FrFrame_& frameInBody);
 

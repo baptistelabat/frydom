@@ -58,37 +58,49 @@ namespace frydom {
         virtual bool IsActive() const = 0;
 
 
-        /// Returns the force in the link in 3 dof in the link frame 1 coordinate system
-        virtual const Force GetLinkReactionForceInLinkFrame1() const = 0;
-
-        /// Returns the force in the link in 3 dof in the link frame 2 coordinate system
-        virtual const Force GetLinkReactionForceInLinkFrame2() const = 0;
-
-        /// Returns the force in the link in 3 dof in the world frame coordinate system
-        virtual const Force GetLinkReactionForceInWorldFrame(FRAME_CONVENTION fc) const = 0;
-
-
-        /// Returns the torque in the link in 3 dof in the link frame coordinate system
-        virtual const Torque GetLinkReactionTorqueInLinkFrame1() const = 0;
-
-        /// Returns the torque in the link in 3 dof in the link frame coordinate system
-        virtual const Torque GetLinkReactionTorqueInLinkFrame2() const = 0;
-
-        /// Returns the torque in the link in 3 dof in the world frame coordinate system
-        virtual const Torque GetLinkReactionTorqueInWorldFrame(FRAME_CONVENTION fc) const = 0;
+//        /// Get the link reaction force as seen by body 1 at its marker, expressed in marker 1 frame
+//        virtual const Force GetLinkReactionForceOnMarker1(FRAME_CONVENTION fc) const = 0;
+//
+//        /// Get the link reaction force as seen by body 2 at its marker, expressed in marker 2 frame
+//        virtual const Force GetLinkReactionForceOnMarker2(FRAME_CONVENTION fc) const = 0;
+//
+//        /// Get the link reaction force as seen by body 1 at its COG. It is expressed in Body 1 reference frame
+//        virtual const Force GetLinkReactionForceOnBody1(FRAME_CONVENTION fc) const = 0;
+//
+//        /// Get the link reaction force as seen by body 2 at its COG. It is expressed in Body 2 reference frame
+//        virtual const Force GetLinkReactionForceOnBody2(FRAME_CONVENTION fc) const = 0;
+//
+//
+//
+//
+//        /// Get the link reaction torque as seen by body 1 at its marker, expressed in marker 1 frame
+//        virtual const Torque GetLinkReactionTorqueOnMarker1(FRAME_CONVENTION fc) const = 0;
+//
+//        /// Get the link reaction torque as seen by body 2 at its marker, expressed in marker 2 frame
+//        virtual const Torque GetLinkReactionTorqueOnMarker2(FRAME_CONVENTION fc) const = 0;
+//
+//        /// Get the link reaction torque as seen by body 1 at its COG. It is expressed in Body 1 reference frame
+//        virtual const Torque GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const = 0;
+//
+//        /// Get the link reaction torque as seen by body 2 at its COG. It is expressed in Body 2 reference frame
+//        virtual const Torque GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const = 0;
 
 
         /// Returns the first node of the link
         FrNode_* GetNode1();
+        const FrNode_* GetNode1() const;
 
         /// Returns the second node of the link
         FrNode_* GetNode2();
+        const FrNode_* GetNode2() const;
 
         /// Returns the first body of the link
         FrBody_* GetBody1();
+        const FrBody_* GetBody1() const;
 
         /// Returns the second body of the link
         FrBody_* GetBody2();
+        const  FrBody_* GetBody2() const;
 
     protected:  // TODO : voir si on rend cela private
         virtual void SetMarkers(FrNode_* node1, FrNode_* node2) = 0;
@@ -96,7 +108,7 @@ namespace frydom {
         friend void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLinkBase_> link);
         virtual std::shared_ptr<chrono::ChLink> GetChronoLink() = 0;
 
-        FrFrame_ GetTransformFromFrame2ToFrame1() const;
+//        FrFrame_ GetTransformFromFrame2ToFrame1() const;
 
 
     };

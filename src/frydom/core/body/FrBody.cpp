@@ -487,7 +487,7 @@ namespace frydom {
         FrFrame_ cogFrame;
         cogFrame.SetPosition(bodyPos, fc);
         m_chronoBody->UpdateMarkerPositionToCOG(internal::Vector3dToChVector(cogFrame.GetPosition(NWU)));
-        m_chronoBody->SetFrame_COG_to_REF(internal::Fr2ChFrame(cogFrame));
+        m_chronoBody->SetFrame_COG_to_REF(internal::FrFrame2ChFrame(cogFrame));
     }
 
     Position FrBody_::GetCOG(FRAME_CONVENTION fc) const {
@@ -509,7 +509,7 @@ namespace frydom {
     void FrBody_::SetPosition(const Position &worldPos, FRAME_CONVENTION fc) {
         auto bodyFrame = GetFrame();
         bodyFrame.SetPosition(worldPos, fc);
-        m_chronoBody->SetFrame_REF_to_abs(internal::Fr2ChFrame(bodyFrame));
+        m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(bodyFrame));
         m_chronoBody->UpdateAfterMove();
     }
 
@@ -597,14 +597,14 @@ namespace frydom {
     void FrBody_::TranslateInWorld(const Position &worldTranslation, FRAME_CONVENTION fc) {
         auto refFrame = GetFrame();
         refFrame.SetPosition(refFrame.GetPosition(fc) + worldTranslation, fc);
-        m_chronoBody->SetFrame_REF_to_abs(internal::Fr2ChFrame(refFrame));
+        m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(refFrame));
         m_chronoBody->UpdateAfterMove();
     }
 
     void FrBody_::TranslateInBody(const Position &bodyTranslation, FRAME_CONVENTION fc) {
         auto refFrame = GetFrame();
         refFrame.SetPosition(refFrame.GetPosition(fc) + ProjectVectorInWorld<Position>(bodyTranslation, fc), fc);
-        m_chronoBody->SetFrame_REF_to_abs(internal::Fr2ChFrame(refFrame));
+        m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(refFrame));
         m_chronoBody->UpdateAfterMove();
     }
 

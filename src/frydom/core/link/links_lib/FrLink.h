@@ -50,11 +50,25 @@ namespace frydom {
 
     namespace internal {
 
-        struct FrLinkLockBase : public chrono::ChLinkLock { // TODO : essayer de mettre en protected... avec friend
+        struct FrLinkLockBase : public chrono::ChLinkLock {
 
             using ChronoLinkType = chrono::ChLinkLock::LinkType;
 
-            FrLink_* m_frydomLink;
+            FrLink_* m_frydomLink; ///> Pointer to frydom link object container
+
+            // Cache data for performance
+            FrFrame_ c_frame1WRT2;
+            FrFrame_ c_frame2WRT1;
+
+            GeneralizedVelocity c_generalizedVelocity1WRT2;
+            GeneralizedVelocity c_generalizedVelocity2WRT1;
+
+            GeneralizedAcceleration c_generalizedAcceleration1WRT2;
+            GeneralizedAcceleration c_generalizedAcceleration2WRT1;
+
+            GeneralizedForce c_generalizedForceOnMarker2;
+            GeneralizedForce c_generalizedForceOnMarker1;
+
 
             /// Constructor
             explicit FrLinkLockBase(FrLink_* frydomLink);
@@ -68,34 +82,7 @@ namespace frydom {
             /// Update (calls the ChLinkLock Update method then the FrLink_Update method
             void Update(double time, bool update_assets) override;
 
-            /// Returns the marker 2 frame relatively to marker 1
-            FrFrame_ GetRelativeFrame() const;
-
-            /// Get the relative position of marker 2 with respect to 1, expressed in marker 1 frame
-            Position GetRelativePosition() const;
-
-            /// Get the relative orientation of frame 2 with respect to 1
-            FrUnitQuaternion_ GetRelativeOrientation() const;
-
-            /// Get the relative generalized velocity (stacked linear and angular vectors) of marker 2 with respect to
-            /// marker 1, expressed in marker 1 frame
-            GeneralizedVelocity GetRelativeGeneralizedVelocity() const;
-
-            /// Get the velocity of marker 2 with respect to marker 1, expressed in marker 1 frame
-            Velocity GetRelativeVelocity() const;
-
-            /// Get the relative angular velocity of marker 2 with respect to marker 1, expressed in marker 1 frame
-            AngularVelocity GetRelativeAngularVelocity() const;
-
-            /// Get the relative generalized acceleration (stacked linear and angular vectors) of marker 2 with respect
-            /// to marker 1, expressed in marker 1 frame
-            GeneralizedAcceleration GetRelativeGeneralizedAcceleration() const;
-
-            /// Get the relative acceleration of marker 2 with respect to marker 1, expressed in marker 1 frame
-            Acceleration GetRelativeAcceleration() const;
-
-            /// Get the relative angular acceleration of marker 2 with respect to marker 1, expressed in marker 1 frame
-            AngularAcceleration GetRelativeAngularAcceleration() const;
+            void GenerateCache();
 
         };
 
@@ -109,7 +96,10 @@ namespace frydom {
     class FrLink_ : public FrLinkBase_ {
 
     protected:
+
         std::shared_ptr<internal::FrLinkLockBase> m_chronoLink;
+
+        FrFrame_ m_frame2WRT1_reference;
 
     public:
 
@@ -139,22 +129,107 @@ namespace frydom {
         virtual void SetThisConfigurationAsReference();
 
 
-        // FIXME est-ce bien utile de differentier link 1 et 2 ici ???
-        /// Get the link reaction force seen by marker 1 in marker 1 frame
-        const Force GetLinkReactionForceInLinkFrame1() const override;
+        /*
+         * Position related methods
+         */
 
-        /// Get the link reaction force seen by marker 2 in marker 2 frame
-        const Force GetLinkReactionForceInLinkFrame2() const override;
+        /// Get the Marker 2 frame relatively to marker 1 frame
+        const FrFrame_ GetMarker2FrameWRTMarker1Frame() const;
 
-        /// Get the link reaction force seen by marker 1 in world frame
-        const Force GetLinkReactionForceInWorldFrame(FRAME_CONVENTION fc) const override;
+        /// Get the Marker 1 frame relatively to marker 2 frame
+        const FrFrame_ GetMarker1FrameWRTMarker2Frame() const;
 
+        /// Get the Marker 2 position relatively to marker 1, expressed in marker 1 frame
+        const Position GetMarker2PositionWRTMarker1(FRAME_CONVENTION fc) const;
 
-        const Torque GetLinkReactionTorqueInLinkFrame1() const override;
+        /// Get the Marker 1 position relatively to marker 2, expressed in marker 2 frame
+        const Position GetMarker1PositionWRTMarker2(FRAME_CONVENTION fc) const;
 
-        const Torque GetLinkReactionTorqueInLinkFrame2() const override;
+        /// Get the Marker 2 orientation relatively to marker 1
+        const FrRotation_ GetMarker2OrientationWRTMarker1() const;
 
-        const Torque GetLinkReactionTorqueInWorldFrame(FRAME_CONVENTION fc) const override;
+        /// Get the Marker 1 orientation relatively to marker 2
+        const FrRotation_ GetMarker1OrientationWRTMarker2() const;
+
+        /*
+         * Velocity related methods
+         */
+
+        /// Get the Marker 2 generalized velocity with respect to marker 1, expressed in marker 1 frame
+        const GeneralizedVelocity GetGeneralizedVelocityOfMarker2WRTMarker1(FRAME_CONVENTION fc) const;
+
+        /// Get the Marker 1 generalized velocity with respect to marker 2, expressed in marker 2 frame
+        const GeneralizedVelocity GetGeneralizedVelocityOfMarker1WRTMarker2(FRAME_CONVENTION fc) const;
+
+        /// Get the Marker 2 velocity with respect to marker 1, expressed in marker 1 frame
+        const Velocity GetVelocityOfMarker2WRTMarker1(FRAME_CONVENTION fc) const;
+
+        /// Get the Marker 1 velocity with respect to marker 2, expressed in marker 2 frame
+        const Velocity GetVelocityOfMarker1WRTMarker2(FRAME_CONVENTION fc) const;
+
+        /// Get the Marker 2 angular velocity with respect to marker 1, expressed in marker 1 frame
+        const AngularVelocity GetAngularVelocityOfMarker2WRTMarker1(FRAME_CONVENTION fc) const;
+
+        /// Get the Marker 1 angular velocity with respect to marker 2, expressed in marker 2 frame
+        const AngularVelocity GetAngularVelocityOfMarker1WRTMarker2(FRAME_CONVENTION fc) const;
+
+        /*
+         * Acceleration related methods
+         */
+
+        /// Get the Marker 2 generalized acceleration with respect to marker 1, expressed in marker 1 frame
+        const GeneralizedAcceleration GetGeneralizedAccelerationOfMarker2WRTMarker1(FRAME_CONVENTION fc) const;
+
+        /// Get the Marker 1 generalized acceleration with respect to marker 2, expressed in marker 2 frame
+        const GeneralizedAcceleration GetGeneralizedAccelerationOfMarker1WRTMarker2(FRAME_CONVENTION fc) const;
+
+        /// Get the Marker 2 acceleration with respect to marker 1, expressed in marker 1 frame
+        const Acceleration GetAccelerationOfMarker1WRTMarker2(FRAME_CONVENTION fc) const;
+
+        /// Get the Marker 1 acceleration with respect to marker 2, expressed in marker 2 frame
+        const Acceleration GetAccelerationOfMarker2WRTMarker1(FRAME_CONVENTION fc) const;
+
+        /// Get the Marker 2 angular acceleration with respect to marker 1, expressed in marker 1 frame
+        const AngularAcceleration GetAngularAccelerationOfMarker2WRTMarker1(FRAME_CONVENTION fc) const;
+
+        /// Get the Marker 1 angular acceleration with respect to marker 2, expressed in marker 2 frame
+        const AngularAcceleration GetAngularAccelerationOfMarker1WRTMarker2(FRAME_CONVENTION fc) const;
+
+        /*
+         * Force related methods
+         */
+
+        /// Get the link reaction force applied at marker 1, expressed in marker 1 frame.
+        /// Note this is the force applied on the body
+        const Force GetLinkReactionForceOnMarker1(FRAME_CONVENTION fc) const;
+
+        /// Get the link reaction force applied at marker 2, expressed in marker 2 frame
+        /// Note this is the force applied on the body
+        const Force GetLinkReactionForceOnMarker2(FRAME_CONVENTION fc) const;
+
+        /// Get the link reaction force applied at marker 1, expressed in body 1 frame.
+        /// Note this is the force applied on the body
+        const Force GetLinkReactionForceOnBody1(FRAME_CONVENTION fc) const;
+
+        /// Get the link reaction force applied at marker 2, expressed in body 2 frame
+        /// Note this is the force applied on the body
+        const Force GetLinkReactionForceOnBody2(FRAME_CONVENTION fc) const;
+
+        /// Get the link reaction torque applied at marker 1, expressed in marker 1 frame.
+        /// Note this is the torque applied on the body
+        const Torque GetLinkReactionTorqueOnMarker1(FRAME_CONVENTION fc) const;
+
+        /// Get the link reaction torque applied at marker 2, expressed in marker 2 frame.
+        /// Note this is the torque applied on the body
+        const Torque GetLinkReactionTorqueOnMarker2(FRAME_CONVENTION fc) const;
+
+        /// Get the link reaction torque applied at body 1 COG, expressed in body 1 reference frame
+        /// Note this is the torque applied on the body
+        const Torque GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const;
+
+        /// Get the link reaction torque applied at body 2 COG, expressed in body 2 reference frame
+        /// Note this is the torque applied on the body
+        const Torque GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const;
 
         virtual void Initialize() override;
 
@@ -163,8 +238,11 @@ namespace frydom {
 
     protected:
         friend class FrNode_; // To make possible to declare SetMarkers friend in FrNode_
+
+        /// Set the markers of the link. This method must be used during the Initialization of the link
         void SetMarkers(FrNode_* node1, FrNode_* node2) override;
 
+        /// Get the embedded Chrono object
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
 
     };

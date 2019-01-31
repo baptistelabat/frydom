@@ -18,7 +18,15 @@ namespace frydom {
         return m_node1.get();
     }
 
+    const FrNode_* FrLinkBase_::GetNode1() const {
+        return m_node1.get();
+    }
+
     FrNode_* FrLinkBase_::GetNode2() {
+        return m_node2.get();
+    }
+
+    const FrNode_* FrLinkBase_::GetNode2() const {
         return m_node2.get();
     }
 
@@ -29,10 +37,10 @@ namespace frydom {
     FrBody_* FrLinkBase_::GetBody2() {
         return m_node2->GetBody();
     }
-
-    FrFrame_ FrLinkBase_::GetTransformFromFrame2ToFrame1() const {
-        return m_node2->GetFrameInWorld().GetOtherFrameRelativeTransform_WRT_ThisFrame(m_node1->GetFrameInWorld());
-    }
+//
+//    FrFrame_ FrLinkBase_::GetTransformFromFrame2ToFrame1() const {
+//        return m_node2->GetFrameInWorld().GetOtherFrameRelativeTransform_WRT_ThisFrame(m_node1->GetFrameInWorld());
+//    }
 
 
 }  // end namespace frydom

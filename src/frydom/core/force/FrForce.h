@@ -345,12 +345,6 @@ namespace frydom {
 
     protected:
 
-        /// Return the force as a chrono object.
-        /// \return Force vector as a chrono object
-        std::shared_ptr<chrono::ChForce> GetChronoForce();
-
-        friend class FrBody_;
-
         // The following methods are to be used in the implementation of Update method to set the force and torque
         // of the force model used
 
@@ -445,6 +439,12 @@ namespace frydom {
         /// \param fc Frame convention
         void SetForceTorqueInBodyAtPointInWorld(const Force &bodyForce, const Torque &bodyTorque,
                                                 const Position &worldPos, FRAME_CONVENTION fc);
+
+
+        friend class FrBody_;
+        /// Return the force as a chrono object.
+        /// \return Force vector as a chrono object
+        std::shared_ptr<chrono::ChForce> GetChronoForce();
 
     };
 

@@ -50,13 +50,21 @@ namespace frydom {
     }
 
     FrFrame_ FrNode_::GetFrameInWorld() const {
-        return internal::Ch2FrFrame(m_chronoMarker->GetAbsFrame());
+        return internal::ChFrame2FrFrame(m_chronoMarker->GetAbsFrame());
     }
 
     FrFrame_ FrNode_::GetFrameInBody() const {
-        Position pos = m_body->GetCOG(NWU) + internal::ChVectorToVector3d<Position>(m_chronoMarker->GetPos()); // pos wrt body reference frame, not COG..
-        auto quat = internal::Ch2FrQuaternion(m_chronoMarker->GetRot());
-        return FrFrame_(pos, quat, NWU);
+        auto frame = GetFrameWRT_COG_InBody();
+//        frame.SetPosition(frame.GetPosition(NWU) + m_body->GetCOG(NWU), NWU);
+        frame.TranslateInParent(m_body->GetCOG(NWU), NWU);  // TODO : comparer cette implementation a la ligne precendente...
+        return frame;
+    }
+
+    FrFrame_ FrNode_::GetFrameWRT_COG_InBody() const {
+        return FrFrame_(
+                internal::ChVectorToVector3d<Position>(m_chronoMarker->GetPos()),
+                internal::Ch2FrQuaternion(m_chronoMarker->GetRot()),
+                NWU);
     }
 
     void FrNode_::SetFrameInBody(const FrFrame_& frameInBody) {
@@ -69,7 +77,7 @@ namespace frydom {
     }
 
     void FrNode_::SetFrameInWorld(const FrFrame_& frameInWorld) {
-        auto chCoord = internal::Fr2ChCoordsys(frameInWorld);
+        auto chCoord = internal::FrFrame2ChCoordsys(frameInWorld);
         m_chronoMarker->Impose_Abs_Coord(chCoord);
     }
 
@@ -221,7 +229,7 @@ namespace frydom {
 //    }
 
 //    void FrNode_::_SetWorldFrame(const frydom::FrFrame_ &frame) {
-//        auto chCoord = internal::Fr2ChCoordsys(frame);
+//        auto chCoord = internal::FrFrame2ChCoordsys(frame);
 //        m_chronoMarker->Impose_Abs_Coord(chCoord);
 //    }
 
