@@ -6,13 +6,14 @@
 #define FRYDOM_FRVARIABLESADDEDMASSBASE_H
 
 #include "chrono/solver/ChVariablesBodyOwnMass.h"
-#include "frydom/core/body/FrBody.h"
+#include "frydom/core/math/FrMatrix.h"
 
 namespace frydom {
 
+    class FrBEMBody_;
+
     namespace internal {
 
-        class FrBEMBody_;
         class FrAddedMassBase;
 
         class FrVariablesAddedMassBase : public chrono::ChVariablesBodyOwnMass {
@@ -24,7 +25,7 @@ namespace frydom {
 
         public:
 
-            FrVariablesAddedMassBase();
+            FrVariablesAddedMassBase(FrAddedMassBase* addedMassBase);
 
             void Initialize();
 
@@ -41,7 +42,7 @@ namespace frydom {
 
             void Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) override;
 
-            int GetBodyOffset(FrBEMBody_* BEMBody) const;
+            int GetBodyOffset(FrBody_* body) const;
 
         };
 

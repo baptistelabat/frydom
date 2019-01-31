@@ -11,6 +11,7 @@
 //
 //
 #include <frydom/utils/FrIrrApp.h>
+//#include <frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h>
 //#include <frydom/cable/FrCable.h>
 //#include <frydom/cable/FrCatway.h>
 #include "chrono/physics/ChSystemSMC.h"
@@ -719,6 +720,7 @@ namespace frydom {
         ConstLinkIter link_begin() const;
         LinkIter link_end();
         ConstLinkIter link_end() const;
+
 
 //        OtherPhysicsIter otherphysics_begin();
 //        ConstOtherPhysicsIter otherphysics_begin() const;

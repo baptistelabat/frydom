@@ -3,21 +3,24 @@
 //
 
 
+
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
+#include "frydom/core/body/FrBody.h"
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModel.h"
+
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
 #include "FrAddedMassBase.h"
-#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 
 namespace frydom {
 
     namespace internal {
 
-        FrVariablesAddedMassBase::FrVariablesAddedMassBase() {
-
-        }
+        FrVariablesAddedMassBase::FrVariablesAddedMassBase(FrAddedMassBase* addedMassBase)
+            : m_addedMassBase(addedMassBase) { }
 
         void FrVariablesAddedMassBase::Initialize() {
 
-            auto HDB = m_addedMassBase->GetHDB();
+            auto HDB = m_addedMassBase->GetRadiationModel()->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
@@ -39,16 +42,16 @@ namespace frydom {
         void FrVariablesAddedMassBase::Compute_invMb_v(chrono::ChMatrix<double>& result,
                                                         const chrono::ChMatrix<double>& vect) const {
 
-            auto HDB = m_addedMassBase->GetHDB();
+            auto HDB = m_addedMassBase->GetRadiationModel()->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto resultOffset = GetBodyOffset(BEMBody->get());
+                auto resultOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
                 //for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
                     auto BEMBodyMotion = BEMBody;
 
-                    auto bodyOffset = GetBodyOffset(BEMBodyMotion->get());
+                    auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
 
                     auto invAddedMassCorrection = m_invAddedMassCorrection[BEMBody->get()];
 
@@ -65,16 +68,16 @@ namespace frydom {
         void FrVariablesAddedMassBase::Compute_inc_invMb_v(chrono::ChMatrix<double>& result,
                                                             const chrono::ChMatrix<double>& vect) const {
 
-            auto HDB = m_addedMassBase->GetHDB();
+            auto HDB = m_addedMassBase->GetRadiationModel()->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto resultOffset = GetBodyOffset(BEMBody->get());
+                auto resultOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
                 //for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
                     auto BEMBodyMotion = BEMBody;
 
-                    auto bodyOffset = GetBodyOffset(BEMBodyMotion->get());
+                    auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
 
                     auto invAddedMassCorrection = m_invAddedMassCorrection[BEMBody->get()];
 
@@ -89,16 +92,16 @@ namespace frydom {
 
         void FrVariablesAddedMassBase::Compute_inc_Mb_v(chrono::ChMatrix<double>& result,
                                                          const chrono::ChMatrix<double>& vect) const {
-            auto HDB = m_addedMassBase->GetHDB();
+            auto HDB = m_addedMassBase->GetRadiationModel()->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto resultOffset = GetBodyOffset(BEMBody->get());
+                auto resultOffset = GetBodyOffset(HDB->GetBody(BEMBody->get()) );
 
                 //for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
                     auto BEMBodyMotion = BEMBody;
 
-                    auto bodyOffset = GetBodyOffset(BEMBodyMotion->get());
+                    auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
 
                     auto generalizedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get());
 
@@ -114,11 +117,11 @@ namespace frydom {
         void FrVariablesAddedMassBase::MultiplyAndAdd(chrono::ChMatrix<double> &result,
                                                       const chrono::ChMatrix<double> &vect, const double c_a) const {
 
-            auto HDB = m_addedMassBase->GetHDB();
+            auto HDB = m_addedMassBase->GetRadiationModel()->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto bodyOffset = GetBodyOffset(BEMBody->get());
+                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
                 auto generalizedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
 
@@ -132,11 +135,11 @@ namespace frydom {
 
         void FrVariablesAddedMassBase::DiagonalAdd(chrono::ChMatrix<double> &result, const double c_a) const {
 
-            auto HDB = m_addedMassBase->GetHDB();
+            auto HDB = m_addedMassBase->GetRadiationModel()->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto bodyOffset = GetBodyOffset(BEMBody->get());
+                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
                 auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
 
@@ -152,11 +155,11 @@ namespace frydom {
         void FrVariablesAddedMassBase::Build_M(chrono::ChSparseMatrix &storage, int insrow, int inscol,
                                                const double c_a) {
 
-            auto HDB = m_addedMassBase->GetHDB();
+            auto HDB = m_addedMassBase->GetRadiationModel()->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto bodyOffset = GetBodyOffset(BEMBody->get());
+                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
                 auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
 
@@ -168,9 +171,10 @@ namespace frydom {
             }
         }
 
-        int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody) const {
-            auto chronoBody = m_addedMassBase->GetHDB()->GetBody(BEMBody)->GetChronoBody();
-            return chronoBody->GetOffset_w();
+        int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody_* body) const {
+            //auto chronoBody = body->GetChronoBody();
+            //return chronoBody->GetOffset_w();
+            return 0;
         }
 
     }   // end namespace internal

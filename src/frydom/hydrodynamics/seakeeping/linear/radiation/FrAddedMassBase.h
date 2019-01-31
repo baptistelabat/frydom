@@ -6,31 +6,33 @@
 #define FRYDOM_FRADDEDMASSBASE_H
 
 #include "chrono/physics/ChPhysicsItem.h"
-#include "FrVariablesAddedMassBase.h"
 
 namespace frydom {
 
+    class FrRadiationModel_;
+
     namespace internal {
 
-        class FrHydroDB_;
-        class FrBEMBody_;
+        // forward declaration
+        //class FrBEMBody_;
+        class FrVariablesAddedMassBase;
 
         class FrAddedMassBase : public chrono::ChPhysicsItem {
 
         private:
 
-            FrHydroDB_* m_HDB;
+            FrRadiationModel_* m_radiationModel;
             std::shared_ptr<FrVariablesAddedMassBase> m_variables;
 
         public:
 
-            FrAddedMassBase(FrHydroDB_* HDB);
+            explicit FrAddedMassBase(FrRadiationModel_* radiationModel);
 
             void SetupInitial() override;
 
-            void Update(bool update_assets) override;
+            //void Update(bool update_assets) override {};
 
-            void Update(double time, bool update_assets) override;
+            //void Update(double time, bool update_assets) override {};
 
             void IntLoadResidual_Mv(const unsigned int off,
                                     chrono::ChVectorDynamic<>& R,
@@ -55,9 +57,12 @@ namespace frydom {
             // IntStateScatterAcceleration TODO : ??//
             // IntStateIncrement TODO : ??//
 
-            FrHydroDB_* GetHDB() const { return m_HDB; }
+            int GetBodyOffset(FrBody_* body) const;
 
-            int GetBodyOffset(FrBEMBody_* BEMBody) const;
+            FrRadiationModel_* GetRadiationModel() const { return m_radiationModel; }
+
+            //void SetSystem(FrOffshoreSystem_* system);
+            void SetSystem(chrono::ChSystem* system);
 
         };
     }
