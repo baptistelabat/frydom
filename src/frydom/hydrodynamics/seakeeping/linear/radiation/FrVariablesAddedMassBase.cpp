@@ -168,7 +168,7 @@ namespace frydom {
             }
         }
 
-        int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody) const {
+        int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody) {
             auto chronoBody = m_addedMassBase->GetHDB()->GetBody(BEMBody)->GetChronoBody();
             return chronoBody->GetOffset_w();
         }

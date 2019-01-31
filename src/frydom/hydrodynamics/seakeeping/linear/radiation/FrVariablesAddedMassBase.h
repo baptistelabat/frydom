@@ -41,10 +41,7 @@ namespace frydom {
 
             void Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) override;
 
-        protected:
-
-            int GetBodyOffset(FrBEMBody_* BEMBody) const;
-
+            int GetBodyOffset(FrBEMBody_* BEMBody);
 
         };
 

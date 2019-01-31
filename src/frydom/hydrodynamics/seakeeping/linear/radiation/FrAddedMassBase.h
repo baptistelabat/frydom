@@ -57,9 +57,7 @@ namespace frydom {
 
             FrHydroDB_* GetHDB() const { return m_HDB; }
 
-        protected:
-
-            int GetBodyOffset(FrBEMBody_* BEMBody) const;
+            int GetBodyOffset(FrBEMBody_* BEMBody);
 
         };
     }
