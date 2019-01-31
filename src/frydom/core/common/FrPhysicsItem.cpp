@@ -13,7 +13,7 @@ namespace frydom {
         _FrPhysicsItemBase::_FrPhysicsItemBase(FrPhysicsItem_ *item) : m_frydomPhysicsItem(item) {}
 
         void _FrPhysicsItemBase::SetupInitial() {
-            m_frydomPhysicsItem->Initialize();
+            chrono::ChPhysicsItem::SetupInitial();
         }
 
         void _FrPhysicsItemBase::Update(bool update_assets) {
@@ -61,6 +61,11 @@ namespace frydom {
         auto colorAsset = std::make_shared<chrono::ChColorAsset>(
                 chrono::ChColor(color.R, color.G, color.B));
         m_chronoPhysicsItem->AddAsset(colorAsset);
+    }
+
+    void FrPhysicsItem_::SetupInitial() {
+        m_chronoPhysicsItem->SetupInitial();
+        Initialize();
     }
 
 }

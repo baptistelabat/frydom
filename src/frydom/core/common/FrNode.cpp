@@ -235,14 +235,16 @@ namespace frydom {
 
 
     Position FrNode_::GetNodePositionInBody(FRAME_CONVENTION fc) const {
+        return GetFrameInBody().GetPosition(fc);
 //        Position NodePositionInBodyFromCOG = internal::ChVectorToVector3d<Position>(m_chronoMarker->GetRest_Coord().pos);
 //        Position NodePositionInBody = NodePositionInBodyFromCOG + m_body->GetCOG(NWU);
 //        if (IsNED(fc)) internal::SwapFrameConvention<Position>(NodePositionInBody);
 //        return  NodePositionInBody;
     }
 
-    // FIXME : le coord interne de ChMarker est local par rapport au corps auquel il est rattache
+
     Position FrNode_::GetPositionInWorld(FRAME_CONVENTION fc) const {
+        return GetFrameInWorld().GetPosition(fc);
 //        auto PositionInWorld = internal::ChVectorToVector3d<Position>(m_chronoMarker->GetAbsCoord().pos);
 //        if (IsNED(fc)) internal::SwapFrameConvention<Position>(PositionInWorld);
 //        return PositionInWorld;
@@ -275,7 +277,7 @@ namespace frydom {
 
 
     void FrNode_::Initialize() {
-
+        m_chronoMarker->UpdateState();
     }
 
     void FrNode_::StepFinalize() {

@@ -273,7 +273,7 @@ namespace frydom {
         // Verifying the directions are orthogonal
         assert(mathutils::IsClose<double>(xaxis.dot(yaxis), 0.));
         assert(mathutils::IsClose<double>(xaxis.dot(zaxis), 0.));
-        assert(mathutils::IsClose<double>(xaxis.dot(xaxis), 0.));
+        assert(mathutils::IsClose<double>(yaxis.dot(zaxis), 0.));
 
         assert(xaxis.IsUnit());
         assert(yaxis.IsUnit());

@@ -102,13 +102,15 @@ int main(int argc, char* argv[]) {
 
     // Position of the node, expressed in the body reference frame
     Position NodePos(1.,0.,5.);
-    auto Node0 = body->NewNode(NodePos,fc);
+    auto Node0 = body->NewNode();
+    Node0->SetPositionInBody(NodePos,fc);
 
     // Frame of the node, expressed in the body reference frame
     FrRotation_ NodeRot;
     NodeRot.SetNullRotation();
     FrFrame_ frameNode1(NodePos, NodeRot, fc);
-    auto Node1 = body->NewNode(frameNode1);
+    auto Node1 = body->NewNode();
+    Node1->SetFrameInBody(frameNode1);
 
     // =============================================================================================================
     // POSITIONS

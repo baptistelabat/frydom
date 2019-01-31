@@ -13,7 +13,7 @@ namespace frydom{
     void FrCatenaryLineAsset_::Initialize() { // TODO : il semble que ChLine soit capable de rendre des lignes courbes
 
         // Generating line segments
-        double ds = m_catenaryLine->GetStretchedLength() / m_catenaryLine->GetNbElements();
+        double ds = m_catenaryLine->GetUnstretchedLength() / m_catenaryLine->GetNbElements();
 
         chrono::ChVector<double> p0, p1;
         chrono::ChColor color;
@@ -22,7 +22,7 @@ namespace frydom{
         double s1 = ds;
 //        for (int i = 1; i < m_nbDrawnElements; i++) {
 
-        while (s1 <= m_catenaryLine->GetUnstretchedLength()) {
+        while (s1 < m_catenaryLine->GetUnstretchedLength()) {
 
             p1 = internal::Vector3dToChVector(m_catenaryLine->GetAbsPosition(s1, NWU));
             auto newElement = std::make_shared<chrono::ChLineShape>();
@@ -38,8 +38,22 @@ namespace frydom{
             s0 = s1;
             s1 += ds;
         }
-        InitRangeTensionColor();
 
+        // For the last element
+        auto last_ele = m_elements.back();
+        if (std::get<1>(last_ele)<m_catenaryLine->GetUnstretchedLength()){
+            p0 = std::get<1>(last_ele);
+            p1 = internal::Vector3dToChVector(m_catenaryLine->GetEndingNode()->GetPositionInWorld(NWU));
+            auto newElement = std::make_shared<chrono::ChLineShape>();
+            color = chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetEndingNodeTension(NWU).norm(), 0, m_maxTension, true);
+            newElement->SetColor(color);
+            newElement->SetLineGeometry(std::make_shared<chrono::geometry::ChLineSegment>(p0, p1));
+
+            m_elements.push_back(make_triplet(s0, s1, newElement));
+            m_catenaryLine->GetChronoPhysicsItem()->AddAsset(newElement);
+        }
+
+        InitRangeTensionColor();
     }
 
     void FrCatenaryLineAsset_::Update() {

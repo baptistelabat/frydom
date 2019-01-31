@@ -400,7 +400,7 @@ namespace frydom {
         void PostPhysicsUpdate(double time, bool update_assets);
 
 
-
+        // FIXME: Get sure Initialize is not called twice !!
         /// Initialize the state of the offshore system and its components (Environment, systemBase)
         void Initialize() override;
 

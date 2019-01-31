@@ -35,8 +35,10 @@ int main(int argc, char* argv[]) {
         // stretched length.
         case FixedLine: {
             // Create the nodes from the world body (which is fixed)
-            auto Node1 = system.GetWorldBody()->NewNode(Position(-10., 0., 0.), NWU);
-            auto Node2 = system.GetWorldBody()->NewNode(Position(10., 0., 0.), NWU);
+            auto Node1 = system.GetWorldBody()->NewNode();
+            Node1->SetPositionInBody(Position(-10., 0., 0.), NWU);
+            auto Node2 = system.GetWorldBody()->NewNode();
+            Node2->SetPositionInBody(Position(10., 0., 0.), NWU);
 
             // Line properties :
             bool elastic = true;                    // non elastic catenary lines are only available for non stretched lines
@@ -69,8 +71,9 @@ int main(int argc, char* argv[]) {
             //        sphere->SetFixedInWorld(true);
 
             // create the nodes from the sphere and the world body.
-            auto sphereNode = sphere->NewNode(Position(0., 0., 0.), NWU);
-            auto worldNode = system.GetWorldBody()->NewNode(Position(0., 0., 50.), NWU);
+            auto sphereNode = sphere->NewNode();
+            auto worldNode = system.GetWorldBody()->NewNode();
+            worldNode->SetPositionInBody(Position(0., 0., 50.), NWU);
 
             // Line properties :
             bool elastic = true;                    // non elastic catenary lines are only available for non stretched lines
@@ -95,7 +98,7 @@ int main(int argc, char* argv[]) {
         case Newton_Pendulum: {
             // spheres properties
             int n_sphere = 5;               // number of spheres wanted
-            double diameter = 4;              // diameter of the spheres
+            double diameter = 4;            // diameter of the spheres
             double density = 1000;          // density of the spheres
             float steelYoungModulus = 1e12; // Young modulus of the sphere (for contact)
             float steelNormalDamping = 1e12;// Normal damping of the sphere (for contact)
@@ -133,20 +136,22 @@ int main(int argc, char* argv[]) {
                 sphere->SetPosition(Position(0., diameter * ib, 0.), NWU);
                 if (ib == 0) {
                     sphere->SetPosition(Position(0., -30., 10.), NWU);
-                    //sphere->SetVelocityInWorldNoRotation(Velocity(0., 50., 0.), NWU);
                 }
+//                sphere->SetVelocityInWorldNoRotation(Velocity(0., 0., 0.), NWU);
 
                 // Create the nodes
-                auto sphereNode = sphere->NewNode(Position(0., 0., 0.), NWU);
+                auto sphereNode = sphere->NewNode();
 
-                auto worldNode1 = system.GetWorldBody()->NewNode(Position(10., diameter * ib, 50.), NWU);
-                auto worldNode2 = system.GetWorldBody()->NewNode(Position(-10., diameter * ib, 50.), NWU);
+                auto worldNode1 = system.GetWorldBody()->NewNode();
+                worldNode1->SetPositionInBody(Position(10., diameter * ib, 50.), NWU);
+                auto worldNode2 = system.GetWorldBody()->NewNode();
+                worldNode2->SetPositionInBody(Position(-10., diameter * ib, 50.), NWU);
 
                 // Create the catenary lines, using the nodes and line properties previously defined
-                auto CatenaryLine1 = std::make_shared<FrCatenaryLine_>(sphereNode, worldNode1, elastic, YoungModulus,
+                auto CatenaryLine1 = std::make_shared<FrCatenaryLine_>(worldNode1, sphereNode, elastic, YoungModulus,
                                                                        sectionArea, unstretchedLength, linearDensity,
                                                                        u, fc);
-                auto CatenaryLine2 = std::make_shared<FrCatenaryLine_>(sphereNode, worldNode2, elastic, YoungModulus,
+                auto CatenaryLine2 = std::make_shared<FrCatenaryLine_>(worldNode2, sphereNode, elastic, YoungModulus,
                                                                        sectionArea, unstretchedLength, linearDensity,
                                                                        u, fc);
                 // Set the number of drawn elements on the catenary lines (the more, the slower the simulation)

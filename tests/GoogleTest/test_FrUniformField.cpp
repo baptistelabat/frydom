@@ -5,7 +5,7 @@
 #include "boost/assign/list_of.hpp"
 #include "frydom/frydom.h"
 #include "gtest/gtest.h"
-#include "frydom/core/FrVector.h"
+//#include "frydom/core/FrVector.h"
 
 using namespace frydom;
 
