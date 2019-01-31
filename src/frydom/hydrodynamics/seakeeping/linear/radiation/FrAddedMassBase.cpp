@@ -79,7 +79,7 @@ namespace frydom {
             m_variables->Compute_inc_Mb_v(m_variables->Get_fb(), m_variables->Get_qb());
         }
 
-        int FrAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody) {
+        int FrAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody) const {
             auto chronoBody = m_HDB->GetBody(BEMBody)->GetChronoBody();
             return chronoBody->GetOffset_w();
         }

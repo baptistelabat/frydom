@@ -1176,8 +1176,8 @@ namespace frydom {
         friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_>);
         friend void FrGridAsset::Initialize();
 
-        friend int internal::FrAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody);
-        friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody);
+        friend int internal::FrAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody) const;
+        friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBEMBody_* BEMBody) const ;
         friend void internal::FrVariablesAddedMassBase::Initialize();
 
     };
