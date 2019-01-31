@@ -6,7 +6,7 @@
 #define FRYDOM_FRPRISMATICLINK_H
 
 
-#include "frydom/core/link/FrLink.h"
+#include "FrLink.h"
 
 
 namespace frydom {

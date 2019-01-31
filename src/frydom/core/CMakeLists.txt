@@ -37,7 +37,7 @@ list(APPEND SRC_FILES
 # LINK
 list(APPEND SRC_FILES
 
-        link/FrLink.cpp
+        link/FrLinkBase.cpp
 
         link/actuators/FrAngularActuatorAngle.cpp
         link/actuators/FrAngularActuatorVelocity.cpp
@@ -55,6 +55,7 @@ list(APPEND SRC_FILES
         link/constraints/FrPointOnPlaneConstraint.cpp
         link/constraints/FrPointOnSplineConstraint.cpp
 
+        link/links_lib/FrLink.cpp
         link/links_lib/FrCylindricalLink.cpp
         link/links_lib/FrFixedLink.cpp
         link/links_lib/FrFreeLink.cpp
