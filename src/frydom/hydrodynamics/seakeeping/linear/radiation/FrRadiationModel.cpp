@@ -10,8 +10,6 @@
 
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 
-#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
-
 namespace frydom {
 
 
@@ -367,12 +365,15 @@ namespace frydom {
     // Radiation model
     // ----------------------------------------------------------------
 
+    FrRadiationModel_::FrRadiationModel_() {
+        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this);
+    }
 
-    FrRadiationModel_::FrRadiationModel_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) { }
+    FrRadiationModel_::FrRadiationModel_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {
+        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this);
+    }
 
     void FrRadiationModel_::Initialize() {
-        m_addedMass = std::make_shared<internal::FrAddedMassBase>(this);
-        //m_addedMass->SetSystem(m_system->GetChronoSystem());
     }
 
     FrHydroMapper_* FrRadiationModel_::GetMapper() const {

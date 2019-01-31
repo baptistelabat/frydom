@@ -8,25 +8,35 @@
 #include "frydom/core/body/FrBody.h"
 
 #include "FrVariablesAddedMassBase.h"
-#include "FrRadiationModel.h"
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModel.h"
 
 namespace frydom {
 
     namespace internal {
 
-        FrAddedMassBase::FrAddedMassBase(FrRadiationModel_* radiationModel) {
-            m_radiationModel = radiationModel;
-            m_variables = std::make_shared<FrVariablesAddedMassBase>(*this);
+        FrAddedMassBase::FrAddedMassBase(FrRadiationModel_* radiationModel) :
+                m_frydomRadiationModel(radiationModel), _FrPhysicsItemBase(radiationModel) {
+            m_variables = std::make_shared<FrVariablesAddedMassBase>(this);
         }
 
         void FrAddedMassBase::SetupInitial() {
+            m_frydomRadiationModel->Initialize();
             m_variables->Initialize();
+        }
+
+        void FrAddedMassBase::Update(bool update_assets) {
+            this->Update(ChTime, update_assets);
+        }
+
+        void FrAddedMassBase::Update(double time, bool update_assets) {
+            m_frydomRadiationModel->Update(time);
+            ChPhysicsItem::Update(time, update_assets);
         }
 
         void FrAddedMassBase::IntLoadResidual_Mv(const unsigned int off, chrono::ChVectorDynamic<> &R,
                                                  const chrono::ChVectorDynamic<> &w, const double c) {
 
-            auto HDB = m_radiationModel->GetHydroDB();
+            auto HDB = m_frydomRadiationModel->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
@@ -56,7 +66,7 @@ namespace frydom {
                                               const chrono::ChVectorDynamic<>& R, const unsigned int off_L,
                                               const chrono::ChVectorDynamic<>& L, const chrono::ChVectorDynamic<>& Qc) {
 
-            auto HDB = m_radiationModel->GetHydroDB();
+            auto HDB = m_frydomRadiationModel->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
@@ -70,7 +80,7 @@ namespace frydom {
         void FrAddedMassBase::IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
                                                 const unsigned int off_L, chrono::ChVectorDynamic<>& L) {
 
-            auto HDB = m_radiationModel->GetHydroDB();
+            auto HDB = m_frydomRadiationModel->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
@@ -98,10 +108,6 @@ namespace frydom {
             return 0;
         }
 
-        void FrAddedMassBase::SetSystem(chrono::ChSystem* system) {
-            //chrono::ChPhysicsItem::SetSystem(system->GetChronoSystem());
-            chrono::ChPhysicsItem::SetSystem(system);
-        }
 
     }
 }

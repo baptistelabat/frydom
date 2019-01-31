@@ -53,7 +53,7 @@ namespace frydom {
 
                     auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
 
-                    auto invAddedMassCorrection = m_invAddedMassCorrection[BEMBody->get()];
+                    auto invAddedMassCorrection = m_invAddedMassCorrection.at(BEMBody->get());
 
                     for (int i=0; i<6; i++) {
                         result(resultOffset + i) = 0.;
@@ -79,7 +79,7 @@ namespace frydom {
 
                     auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
 
-                    auto invAddedMassCorrection = m_invAddedMassCorrection[BEMBody->get()];
+                    auto invAddedMassCorrection = m_invAddedMassCorrection.at(BEMBody->get());
 
                     for (int i=0; i<6; i++) {
                         for (int j=0; j<6; j++) {

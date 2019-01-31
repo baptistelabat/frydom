@@ -702,7 +702,6 @@ namespace frydom {
 //        /// \param otherPhysics other physic item to be added
 //        void AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics);
 
-
 //        friend class FrIrrApp_;
 
 
@@ -720,7 +719,6 @@ namespace frydom {
         ConstLinkIter link_begin() const;
         LinkIter link_end();
         ConstLinkIter link_end() const;
-
 
 //        OtherPhysicsIter otherphysics_begin();
 //        ConstOtherPhysicsIter otherphysics_begin() const;

@@ -20,7 +20,7 @@
 
 #include "frydom/core/common/FrPhysicsItem.h"
 
-//#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
 
 
 namespace frydom {
@@ -119,9 +119,9 @@ namespace frydom {
 
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
-    namespace internal {
-        class FrAddedMassBase;
-    }
+    //namespace internal {
+    //    class FrAddedMassBase;
+    //}
 
     // ---------------------------------------------------------------------
     // Radiation model
@@ -138,7 +138,7 @@ namespace frydom {
 
     public:
 
-        FrRadiationModel_() = default;
+        FrRadiationModel_();
 
         explicit FrRadiationModel_(std::shared_ptr<FrHydroDB_> HDB);
 
