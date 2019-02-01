@@ -133,14 +133,14 @@ TEST(FrFrame,PositionAndRotation){
     }
     EXPECT_TRUE(OtherFrame.GetRotation()==TotalRotation);
 
-    auto testTransf = frame.GetOtherFrameRelativeTransform_WRT_ThisFrame(OtherFrame,fc);
+    auto testTransf = frame.GetOtherFrameRelativeTransform_WRT_ThisFrame(OtherFrame);
     testPosition = testTransf.GetPosition(fc) - Transf2OtherFrame.GetPosition(fc);
     EXPECT_TRUE(testPosition.isZero());
     EXPECT_TRUE(testTransf.GetRotation() == Transf2OtherFrame.GetRotation());
 
 
     // Test of GetThisFrameRelativeTransform_WRT_OtherFrame, using GetInverse()
-    auto testTransfInv = frame.GetThisFrameRelativeTransform_WRT_OtherFrame(OtherFrame,fc);
+    auto testTransfInv = frame.GetThisFrameRelativeTransform_WRT_OtherFrame(OtherFrame);
     testPosition = testTransfInv.GetPosition(fc) - (testTransf.GetInverse()).GetPosition(fc);
     EXPECT_TRUE(testPosition.isZero());
     EXPECT_TRUE(testTransfInv.GetRotation() == (testTransf.GetInverse()).GetRotation());

@@ -75,6 +75,18 @@ namespace frydom {
     // Forward declarations
     class FrBody_;
     class FrFrame_;
+    class FrNode_;
+
+    namespace internal{
+
+    struct _FrMarkerBase_ : public chrono::ChMarker {
+        FrNode_ * m_frydomNode;
+
+        _FrMarkerBase_(FrNode_* node) {m_frydomNode = node;}
+    };
+
+
+    }
 
 
     class FrNode_ : public FrObject {
@@ -130,9 +142,11 @@ namespace frydom {
 
         void TranslateInBody(const Translation &translationInBody, FRAME_CONVENTION fc);
         void TranslateInBody(const Direction& directionBody, double distance, FRAME_CONVENTION fc);
+        void TranslateInBody(double x, double y, double z, FRAME_CONVENTION fc);
 
         void TranslateInWorld(const Translation &translationInWorld, FRAME_CONVENTION fc);
         void TranslateInWorld(const Direction& directionWorld, double distance, FRAME_CONVENTION fc);
+        void TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc);
 
 
         void SetOrientationInBody(const FrRotation_& rotation);
@@ -215,6 +229,8 @@ namespace frydom {
 
         /// StepFinalize method not implemented yet
         void StepFinalize() override;
+
+
 
         // =============================================================================================================
         // PROJECTIONS

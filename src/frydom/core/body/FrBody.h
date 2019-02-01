@@ -1150,6 +1150,8 @@ namespace frydom {
 
     public:
 
+        void SetupInitial();
+
         /// Body initialization method
         void Initialize() override;
 

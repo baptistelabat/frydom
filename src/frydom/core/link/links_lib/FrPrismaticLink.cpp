@@ -3,9 +3,9 @@
 //
 #include "FrPrismaticLink.h"
 
-//#include "frydom/core/common/FrNode.h"
+#include "frydom/core/common/FrNode.h"
 
-#include <chrono/physics/ChLinkLock.h>
+//#include <chrono/physics/ChLinkLock.h>
 
 
 namespace frydom {
@@ -13,38 +13,52 @@ namespace frydom {
 
     FrPrismaticLink::FrPrismaticLink(std::shared_ptr<frydom::FrNode_> node1, std::shared_ptr<frydom::FrNode_> node2,
                                      frydom::FrOffshoreSystem_ *system) : FrLink_(node1, node2, system) {
-        m_chronoLink = std::make_shared<chrono::ChLinkLockPrismatic>();
-
-        SetMarkers(node1.get(), node2.get());
-
-
+        m_chronoLink->SetLinkType(PRISMATIC);
     }
 
-    void FrPrismaticLink::SetSpringDamper(double stiffness, double dampingCoeff) {
+    void FrPrismaticLink::SetSpringDamper(double stiffness, double dampingCoeff, double restLength) {
 
     }
 
     Direction FrPrismaticLink::GetLinkDirectionInWorld() const {
+//        m_chronoLink->GetLinkRelativeCoords();
+        // TODO : Recuperer le frame du node1 puis demander la
 
     }
 
     double FrPrismaticLink::GetLinkPosition() const {
-
+        return m_chronoLink->GetRelativePosition()[2];
     }
 
     double FrPrismaticLink::GetLinkVelocity() const {
-
+        return m_chronoLink->GetRelativeVelocity()[2];
     }
 
     double FrPrismaticLink::GetLinkAcceleration() const {
-
+        return m_chronoLink->GetRelativeAcceleration()[2];
     }
 
     void FrPrismaticLink::Initialize() {
-
+        FrLink_::Initialize();
     }
 
     void FrPrismaticLink::Update(double time) {
+        FrLink_::Update(time); // It is mandatory to invoke this before all update operations from frydom
+
+        std::cout << m_chronoLink->GetRelativeAcceleration() << std::endl;
+
+        // Position relative entre marqueurs
+//        m_chronoLink->GetLinkRelativeCoords()
+//        m_node1-
+//        m_node1->GetZAxisInWorld();
+
+        // TODO : continuer a tester !!!
+
+
+
+
+
+
 
     }
 

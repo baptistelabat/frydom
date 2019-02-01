@@ -116,7 +116,7 @@ namespace frydom {
         _FrBodyBase::_FrBodyBase(FrBody_ *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
 
         void _FrBodyBase::SetupInitial() {
-            m_frydomBody->Initialize();
+            chrono::ChBodyAuxRef::SetupInitial();
         }
 
         void _FrBodyBase::Update(bool update_assets) {
@@ -178,6 +178,11 @@ namespace frydom {
 
     void FrBody_::SetBodyFixed(bool state) {
         m_chronoBody->SetBodyFixed(state);
+    }
+
+    void FrBody_::SetupInitial() {
+        m_chronoBody->SetupInitial();
+        Initialize();
     }
 
     void FrBody_::Initialize() {

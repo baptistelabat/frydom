@@ -295,25 +295,36 @@ namespace frydom {
 
         timer_update.start();  // Timer for profiling
 
+        // Pre updates that are not about multibody dynamics
         m_offshoreSystem_->PreUpdate();
 
         // Executes the "forUpdate" in all controls of controlslist
         ExecuteControlsForUpdate();
 
-        for (auto& physicsItem : otherphysicslist) {
-            physicsItem->Update(ChTime, update_assets);
-        }
+        // Physics item that have to be updated before all
+        m_offshoreSystem_->PrePhysicsUpdate(ChTime, update_assets);
+
+        // Bodies updates  // FIXME : appeler les updates directement des objets frydom !
         for (auto& body : bodylist) {
             body->Update(ChTime, update_assets);
         }
+
+        // Physics items that have to be updated between bodies and links
+        m_offshoreSystem_->MidPhysicsUpdate(ChTime, update_assets);
+
+        // Links updates  // FIXME : appeler les updates directement des objets frydom !
         for (auto& link : linklist) {
             link->Update(ChTime, update_assets);
         }
 
-        m_offshoreSystem_->PostUpdate();
+        // Physics items that have to be updated after all
+        m_offshoreSystem_->PostPhysicsUpdate(ChTime, update_assets);
 
         // Update all contacts, if any
         contact_container->Update(ChTime, update_assets);
+
+        // Post updates that are not about multibody dynamics
+        m_offshoreSystem_->PostUpdate();
 
         timer_update.stop();
 
@@ -440,17 +451,30 @@ namespace frydom {
     }
 
     void FrOffshoreSystem_::PreUpdate() {
+        // TODO : voir si on ne met pas l'environnement comme un physics Item update en tant que PrePhysicsItem
         m_environment->Update(m_chronoSystem->GetChTime());
-
-//        // Updating catenary cables
-//        for(auto& cable : m_catenaryCables) { // TODO : faire update des assets de cable...
-//            cable->Update();
-//        }
-
     }
 
     void FrOffshoreSystem_::PostUpdate() {
         // TODO
+    }
+
+    void FrOffshoreSystem_::PrePhysicsUpdate(double time, bool update_assets) {
+        for (auto& item : m_PrePhysicsList) {
+            item->Update(time);
+        }
+    }
+
+    void FrOffshoreSystem_::MidPhysicsUpdate(double time, bool update_assets) {
+        for (auto& item : m_MidPhysicsList) {
+            item->Update(time);
+        }
+    }
+
+    void FrOffshoreSystem_::PostPhysicsUpdate(double time, bool update_assets) {
+        for (auto& item : m_PostPhysicsList) {
+            item->Update(time);
+        }
     }
 
 
@@ -459,8 +483,32 @@ namespace frydom {
         // Initializing environment before bodies
         m_environment->Initialize();
 
-        // Initializing embedded chrono system
-        m_chronoSystem->SetupInitial(); // Actually do nothing but called for consistency
+        for (auto& item : m_PrePhysicsList) {
+            item->SetupInitial();
+        }
+
+        for (auto& item : m_bodyList){
+            item->SetupInitial();
+        }
+
+        for (auto& item : m_MidPhysicsList) {
+            item->SetupInitial();
+        }
+
+        for (auto& item : m_linkList) {
+            item->SetupInitial();
+        }
+
+        for (auto& item : m_PostPhysicsList) {
+            item->SetupInitial();
+        }
+
+        m_chronoSystem->Update();
+
+
+
+//        // Initializing embedded chrono system
+//        m_chronoSystem->SetupInitial(); // Actually do nothing but called for consistency
 
 //        // Initializing bodies
 //        auto bodyIter = body_begin();
@@ -867,11 +915,25 @@ namespace frydom {
 
     void FrOffshoreSystem_::RunInViewer(double endTime, double dist, bool recordVideo) {
 
+        Initialize();  // So that system is automatically initialized when run in viewer mode
+
         FrIrrApp_ app(m_chronoSystem.get(), dist);
 
         app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
         app.Run(endTime);
+
+    }
+
+    void FrOffshoreSystem_::Visualize( double dist, bool recordVideo) {
+
+        Initialize();  // So that system is automatically initialized when run in viewer mode
+
+        FrIrrApp_ app(m_chronoSystem.get(), dist);
+
+        app.SetTimestep(m_chronoSystem->GetStep());
+        app.SetVideoframeSave(recordVideo);
+        app.Visualize();
 
     }
 

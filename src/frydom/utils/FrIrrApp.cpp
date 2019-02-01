@@ -193,22 +193,17 @@ namespace frydom {
 
     }
 
+    void FrIrrApp_::Visualize() {
+        AssetBindAll();
+        AssetUpdateAll();
 
+        while (GetDevice()->run()) {
+            BeginScene();
+            DrawAll();
+            EndScene();
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 
 
 }  // end namespace frydom

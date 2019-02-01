@@ -15,8 +15,9 @@
 
 namespace frydom {
 
-
-    // FrLinkBase_ method definitions
+    /*
+     * FrLinkBase_ method definitions
+     */
 
     FrLinkBase_::FrLinkBase_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system) :
             m_node1(node1), m_node2(node2) {
@@ -44,14 +45,122 @@ namespace frydom {
     }
 
 
+    namespace internal {
+
+        FrLinkLockBase::FrLinkLockBase(frydom::FrLink_ *frydomLink) : m_frydomLink(frydomLink), chrono::ChLinkLock() {}
+
+        void FrLinkLockBase::SetLinkType(LINK_TYPE lt) {
+            switch (lt) {
+                case CYLINDRICAL:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::CYLINDRICAL);
+                    break;
+                case FIXED_LINK:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::LOCK);
+                    break;
+                case FREE_LINK:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::FREE);
+                    break;
+                case PRISMATIC:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::PRISMATIC);
+                    break;
+                case REVOLUTE:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::REVOLUTE);
+                    break;
+//                    case SCREW:
+//                        ChangeLinkType(chrono::ChLinkLock::LinkType::CYLINDRICAL);
+//                        break;
+                case SPHERICAL:
+                    ChangeLinkType(chrono::ChLinkLock::LinkType::SPHERICAL);
+                    break;
+            }
+        }
+
+        void FrLinkLockBase::SetupInitial() {
+            chrono::ChLinkLock::SetupInitial();
+        }
+
+        void FrLinkLockBase::Update(double time, bool update_assets) {
+            chrono::ChLinkLock::Update(time, update_assets);
+            m_frydomLink->Update(time);
+        }
+
+        // TODO : voir si on a pas interet a mettre en cache les differentes valeurs suivantes
+        // pour des raisons de performance
+
+        FrFrame_ FrLinkLockBase::GetRelativeFrame() const {
+            return internal::ChCoordsys2FrFrame(GetRelM()).Inverse();
+        }
+
+        Position FrLinkLockBase::GetRelativePosition() const {
+            return GetRelativeFrame().GetPosition(NWU);
+        }
+
+        FrUnitQuaternion_ FrLinkLockBase::GetRelativeOrientation() const {
+            return GetRelativeFrame().GetQuaternion();
+        }
+
+        GeneralizedVelocity FrLinkLockBase::GetRelativeGeneralizedVelocity() const {
+            // Changing the Chrono convention that a link quantities are expressed relatively to marker 2 frame
+            auto frame = GetRelativeFrame();
+
+            Velocity velocity = - frame.ProjectVectorFrameInParent(
+                    internal::ChVectorToVector3d<Velocity>(GetRelM_dt().pos),
+                    NWU
+                    );
+
+            AngularVelocity angularVelocity = - frame.ProjectVectorFrameInParent<AngularVelocity>(
+                    internal::ChVectorToVector3d<AngularVelocity>(GetRelWvel()),
+                    NWU
+                    );
+
+            return {velocity, angularVelocity};
+        }
+
+        Velocity FrLinkLockBase::GetRelativeVelocity() const {
+            return GetRelativeGeneralizedVelocity().GetVelocity();
+        }
+
+        AngularVelocity FrLinkLockBase::GetRelativeAngularVelocity() const {
+            return GetRelativeGeneralizedVelocity().GetAngularVelocity();
+        }
+
+        GeneralizedAcceleration FrLinkLockBase::GetRelativeGeneralizedAcceleration() const {
+            // Changing the Chrono convention that a link quantities are expressed relatively to marker 2 frame
+            auto frame = GetRelativeFrame();
+
+            Acceleration acceleration = - frame.ProjectVectorFrameInParent(
+                    internal::ChVectorToVector3d<Acceleration>(GetRelM_dtdt().pos),
+                    NWU
+            );
+
+            AngularAcceleration angularAcceleration = - frame.ProjectVectorFrameInParent<AngularAcceleration>(
+                    internal::ChVectorToVector3d<AngularAcceleration>(GetRelWacc()),
+                    NWU
+            );
+
+            return {acceleration, angularAcceleration};
+        }
+
+        Acceleration FrLinkLockBase::GetRelativeAcceleration() const {
+            return GetRelativeGeneralizedAcceleration().GetAcceleration();
+        }
+
+        AngularAcceleration FrLinkLockBase::GetRelativeAngularAcceleration() const {
+            return GetRelativeGeneralizedAcceleration().GetAngularAcceleration();
+        }
+
+    }  // end namespace frydom::internal
 
 
-
-
-    // FrLink_ method definitions
+    /*
+     * FrLink_ method definitions
+     *
+     */
 
     FrLink_::FrLink_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2,
-                     FrOffshoreSystem_ *system) : FrLinkBase_(node1, node2, system) {}
+                     FrOffshoreSystem_ *system) : FrLinkBase_(node1, node2, system) {
+        m_chronoLink = std::make_shared<internal::FrLinkLockBase>(this);
+    }
 
 
     void FrLink_::SetMarkers(FrNode_* node1, FrNode_* node2) {
@@ -82,6 +191,10 @@ namespace frydom {
         return m_chronoLink->IsActive();
     }
 
+    void FrLink_::SetThisConfigurationAsReference() {
+        // TODO
+    }
+
     const Force FrLink_::GetLinkReactionForceInLinkFrame1() const { // TODO : tester
         auto transform2To1 = GetTransformFromFrame2ToFrame1();
         auto forceIn2 = GetLinkReactionForceInLinkFrame2();
@@ -110,8 +223,28 @@ namespace frydom {
         return m_node2->ProjectVectorInWorld<Torque>(GetLinkReactionForceInLinkFrame2(), fc);
     }
 
+    void FrLink_::SetupInitial() {
+        m_chronoLink->SetupInitial();
+        Initialize();
+    }
+
+    void FrLink_::Initialize() {
+        SetMarkers(m_node1.get(), m_node2.get());
+    }
+
+    void FrLink_::Update(double time) {
+        // TODO : Ici, on met en cache les differentes quantites utiles a FrLink_ mise en convention frydom ie
+        // les donnes de la liaison sont relatives a un mouvement du node 2 par rapport au node 1
+        // On fait appel aux methodes de FrLinkLockBase pour faciliter
+        // Du coup, l'update de l'objet Chrono doit etre fait avant l'objet frydom
 
 
+
+
+
+
+
+    }
 
 
 }  // end namespace frydom

@@ -163,7 +163,7 @@ TEST(FrQuaternion,Quaternion) {
     matrix << 0., -1., 0.,
               1., 0., 0.,
               0., 0., 1.;
-    Quat.Set(matrix);
+    Quat.Set(matrix,fc);
 
     testDirection = Quat.GetXAxis(NWU) - Direction(0,1,0);
     EXPECT_TRUE(testDirection.isZero());
@@ -272,7 +272,7 @@ TEST(FrRotation,Rotation){
 
     // Test set rotation from direction
     testRotation.SetNullRotation();
-    testRotation.Set(Direction(0, 1, 0), Direction(-1, 0, 0.), Direction(0., 0., 1.));
+    testRotation.Set(Direction(0, 1, 0), Direction(-1, 0, 0.), Direction(0., 0., 1.),fc);
 
     testDirection = testRotation.GetXAxis(NWU) - Direction(0,1,0);
     EXPECT_TRUE(testDirection.isZero());
