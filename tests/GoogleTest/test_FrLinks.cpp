@@ -51,6 +51,28 @@ int main() {
     prismaticLink->SetSpringDamper(2e3, 1e2);
     prismaticLink->SetRestLength(0);
 
+
+
+    auto body3 = system.NewBody();
+    makeItBox(body3, 2, 2, 6, 500);
+    body3->AllowCollision(false);
+    body3->SetColor(Red);
+    body3->Rotate(FrRotation_(Direction(0, 1, 0), 90*DEG2RAD, NWU));
+
+
+    auto m3 = body1->NewNode();
+    m3->TranslateInBody(-10, 5, -1, NWU);
+    m3->RotateAroundYInBody(90*DEG2RAD, NWU);
+
+    auto m4 = body3->NewNode();
+//    m4->TranslateInBody()
+
+
+    auto revoluteLink = make_revolute_link(m3, m4, &system);
+    revoluteLink->SetSpringDamper(1e3, 1e3);
+    revoluteLink->SetRestAngle(45*DEG2RAD);
+
+
     system.SetTimeStep(0.01);
     system.RunInViewer(0, 50, false);
 

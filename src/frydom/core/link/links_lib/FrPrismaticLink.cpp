@@ -57,7 +57,7 @@ namespace frydom {
 
         SetLinkForceOnBody2InFrame2AtOrigin2(force, Torque());
 
-        std::cout << GetLinkPower() << std::endl;
+//        std::cout << GetLinkPower() << std::endl;
 
     }
 

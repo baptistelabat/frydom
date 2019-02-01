@@ -16,8 +16,8 @@ namespace frydom {
     class FrPrismaticLink : public FrLink_ {
 
     private:
-        double m_stiffness = 0.;
-        double m_damping = 0.;
+        double m_stiffness = 0.; ///> Link linear stiffness
+        double m_damping = 0.;   ///> Link linear damping
 
     public:
         FrPrismaticLink(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);

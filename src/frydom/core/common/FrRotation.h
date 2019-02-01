@@ -334,7 +334,7 @@ namespace frydom {
         /// \param axis direction of the rotation, normalized
         /// \param angleRAD angle in radians
         /// \param fc frame convention (NED/NWU)
-        void GetAxisAngle(Direction& axis, double& angleRAD, FRAME_CONVENTION fc);
+        void GetAxisAngle(Direction& axis, double& angleRAD, FRAME_CONVENTION fc) const;
 
         /// Get the axis of the rotation
         /// \param axis direction of the rotation, normalized
@@ -343,7 +343,11 @@ namespace frydom {
 
         /// Get the angle in rotation in space (in radians)
         /// \param angle angle in radians
-        void GetAngle(double& angle);
+        void GetAngle(double& angle) const;
+
+        /// Get the angle in rotation in space (in radians)
+        /// \param angle angle in radians
+        double GetAngle() const;
 
         /// Get the rotation matrix representation
         /// \return 3x3 rotation matrix
