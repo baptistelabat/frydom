@@ -21,7 +21,7 @@ int main() {
     body1->SetFixedInWorld(true);
     makeItBox(body1, 20, 10, 2, 1000);
     body1->AllowCollision(false);
-    body1->SetColor(Pink);
+    body1->SetColor(MediumVioletRed);
 
 //    body1->SetRotation(FrRotation_(Direction(0, 1, 0), 1*DEG2RAD, NWU));
 

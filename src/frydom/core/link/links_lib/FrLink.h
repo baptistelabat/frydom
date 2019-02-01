@@ -84,12 +84,21 @@ namespace frydom {
 
             void GenerateCache();
 
-            chrono::ChVector<double>& GetLinkForce() {
-                return C_force;
+            /// Set the link force applying on Body 2 in marker 2 frame
+            void SetLinkForceOnBody1InFrame2AtOrigin1(const Force &force) {
+                C_force = internal::Vector3dToChVector(force);
             }
 
-            chrono::ChVector<double>& GetLinkTorque() {
-                return C_torque;
+            void SetLinkTorqueOnBody1InFrame2AtOrigin1(const Torque& torque) {
+                C_torque = internal::Vector3dToChVector(torque);
+            }
+
+            Force GetLinkForceOnBody1InFrame2AtOrigin1() {
+                return internal::ChVectorToVector3d<Force>(C_force);
+            }
+
+            Torque GetLinkTorqueOnBody1InFrame2ArOrigin1() {
+                return internal::ChVectorToVector3d<Torque>(C_torque);
             }
 
         };
@@ -239,11 +248,34 @@ namespace frydom {
         /// Note this is the torque applied on the body
         const Torque GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const;
 
-        /// Set the link force expressed in marker 1 frame
-        const Force GetLinkForceAtMarker1(FRAME_CONVENTION fc) const;
+        /*
+         * Link force in free degree of freedom (ie spring damping)
+         */
 
-        /// Set the link torque expressed in marker 2 frame and applied at marker 2
-        const Torque GetLinkTorqueAtMarker1(FRAME_CONVENTION fc) const;
+        /// Get the force in link applying on body 1 at marker 1 origin, expressed in frame 1
+        const Force GetLinkForceOnBody1InFrame1AtOrigin1(FRAME_CONVENTION fc) const;
+
+        /// Get the force in link applying on body 2 at marker 2 origin, expressed in frame 2
+        const Force GetLinkForceOnBody2InFrame2AtOrigin2(FRAME_CONVENTION fc) const;
+
+        /// Get the torque in link applying on body 1 at marker 1 origin, expressed in frame 1
+        const Torque GetLinkTorqueOnBody1InFrame1AtOrigin1(FRAME_CONVENTION fc) const;
+
+        /// Get the torque in link applying on body 2 at marker 2 origin, expressed in frame 2
+        const Torque GetLinkTorqueOnBody2InFrame2AtOrigin2(FRAME_CONVENTION fc) const;
+
+        /// Get the force in link applying on body 1 at marker 1 origin, expressed in frame 2
+        const Force GetLinkForceOnBody1InFrame2AtOrigin1(FRAME_CONVENTION fc) const;
+
+        /// Get the force in link applying on body 2 at marker 2 origin, expressed in frame 1
+        const Force GetLinkForceOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const;
+
+        /// Get the torque in link applying on body 1 at marker 1 origin, expressed in frame 2
+        const Torque GetLinkTorqueOnBody1InFrame2AtOrigin1(FRAME_CONVENTION fc) const;
+
+        /// Get the torque in link applying on body 2 at marker 2 origin, expressed in frame 1
+        const Torque GetLinkTorqueOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const;
+
 
         virtual double GetLinkPower() const;
 
@@ -267,10 +299,10 @@ namespace frydom {
          */
 
         /// Set the link force expressed in marker 1 frame
-        void SetLinkForceAtMarker1(const Force& force);
+        void SetLinkForceOnBody2InFrame2AtOrigin2(const Force &force, const Torque& torque);
 
-        /// Set the link torque expressed in marker 1 frame and applied at marker 1
-        void SetLinkTorqueAtMarker1(const Torque& torque);
+//        /// Set the link torque expressed in marker 1 frame and applied at marker 1
+//        void SetLinkTorqueOtMarker2InFrame2AtOrigin2(const Torque &torque);
 
 
 

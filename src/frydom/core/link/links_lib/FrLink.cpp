@@ -280,28 +280,64 @@ namespace frydom {
 
     }
 
-    void FrLink_::SetLinkForceAtMarker1(const Force &force) {
-        // force doit etre exprime dans le repere 1
-        // On doit exprimer la force dans le repere 2
-        m_chronoLink->GetLinkForce() =
-                - internal::Vector3dToChVector(GetMarker1FrameWRTMarker2Frame().ProjectVectorFrameInParent<Force>(force, NWU));
+    void FrLink_::SetLinkForceOnBody2InFrame2AtOrigin2(const Force &force, const Torque& torque) {
+        /* From Chrono comments in ChLinkMasked::UpdateForces :
+         * C_force and C_torque   are considered in the reference coordsystem
+         * of marker2  (the MAIN marker), and their application point is considered the
+         * origin of marker1 (the SLAVE marker)
+         */
+
+        // Force
+        m_chronoLink->SetLinkForceOnBody1InFrame2AtOrigin1(-force); // The minus signe is to get the force applied on body 1
+
+        // Torque transport
+        auto O1O2 = -m_chronoLink->c_frame1WRT2.GetPosition(NWU);
+
+        Torque torque_M1 = -torque + O1O2.cross(-force);
+        m_chronoLink->SetLinkTorqueOnBody1InFrame2AtOrigin1(torque_M1);
     }
 
-    void FrLink_::SetLinkTorqueAtMarker1(const Torque &torque) {
-
+    const Force FrLink_::GetLinkForceOnBody1InFrame1AtOrigin1(FRAME_CONVENTION fc) const {
+        auto force = m_chronoLink->GetLinkForceOnBody1InFrame2AtOrigin1();
+        return m_chronoLink->c_frame2WRT1.ProjectVectorFrameInParent<Force>(force, fc);
     }
 
-    const Force FrLink_::GetLinkForceAtMarker1(FRAME_CONVENTION fc) const {
-
+    const Force FrLink_::GetLinkForceOnBody2InFrame2AtOrigin2(FRAME_CONVENTION fc) const {
+        return - m_chronoLink->GetLinkForceOnBody1InFrame2AtOrigin1();
     }
 
-    const Torque FrLink_::GetLinkTorqueAtMarker1(FRAME_CONVENTION fc) const {
-
+    const Torque FrLink_::GetLinkTorqueOnBody1InFrame1AtOrigin1(FRAME_CONVENTION fc) const {
+        auto torque = m_chronoLink->GetLinkTorqueOnBody1InFrame2ArOrigin1();
+        return m_chronoLink->c_frame2WRT1.ProjectVectorFrameInParent<Force>(torque, fc);
     }
+
+    const Torque FrLink_::GetLinkTorqueOnBody2InFrame2AtOrigin2(FRAME_CONVENTION fc) const {
+        auto torque_O1_2 = m_chronoLink->GetLinkTorqueOnBody1InFrame2ArOrigin1();
+        auto force_2 = m_chronoLink->GetLinkForceOnBody1InFrame2AtOrigin1();
+        auto O2O1_2 = m_chronoLink->c_frame1WRT2.GetPosition(NWU);
+        return -(torque_O1_2 + O2O1_2.cross(force_2));
+    }
+
+    const Force FrLink_::GetLinkForceOnBody1InFrame2AtOrigin1(FRAME_CONVENTION fc) const {
+        return m_chronoLink->GetLinkForceOnBody1InFrame2AtOrigin1();
+    }
+
+    const Force FrLink_::GetLinkForceOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const {
+        return m_chronoLink->c_frame2WRT1.ProjectVectorFrameInParent<Force>(GetLinkForceOnBody2InFrame2AtOrigin2(fc), fc);
+    }
+
+    const Torque FrLink_::GetLinkTorqueOnBody1InFrame2AtOrigin1(FRAME_CONVENTION fc) const {
+        return m_chronoLink->GetLinkTorqueOnBody1InFrame2ArOrigin1();
+    }
+
+    const Torque FrLink_::GetLinkTorqueOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const {
+        return m_chronoLink->c_frame2WRT1.ProjectVectorFrameInParent<Torque>(GetLinkTorqueOnBody2InFrame2AtOrigin2(fc), fc);
+    }
+
 
     double FrLink_::GetLinkPower() const {
-        return GetLinkForceAtMarker1(NWU).dot(GetVelocityOfMarker2WRTMarker1(NWU))
-             + GetLinkTorqueAtMarker1(NWU).dot(GetAngularVelocityOfMarker2WRTMarker1(NWU));
+        return GetLinkForceOnBody2InFrame1AtOrigin2(NWU).dot(GetVelocityOfMarker2WRTMarker1(NWU))
+             + GetLinkTorqueOnBody2InFrame1AtOrigin2(NWU).dot(GetAngularVelocityOfMarker2WRTMarker1(NWU));
     }
 
 
