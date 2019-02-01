@@ -12,8 +12,8 @@
 #include "FrCatenaryForce.h"
 #include "frydom/core/common/FrNode.h"
 #include "FrCable.h"
-#include "FrAssetComponent.h"
-#include "FrAssetBuoy.h"
+#include "frydom/asset/FrAssetComponent.h"
+#include "frydom/asset/FrAssetBuoy.h"
 
 #include "frydom/asset/FrCatenaryLineAsset_.h"
 

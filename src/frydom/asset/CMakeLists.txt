@@ -7,6 +7,8 @@ set(SRC_FILES
         FrSeabedGridAsset.cpp
         FrFreeSurfaceGridAsset.cpp
         FrCatenaryLineAsset_.cpp
+        FrAssetBuoy.cpp
+        FrAssetComponent.cpp
 )
 
 set(FRYDOM_ASSET_SOURCES "")

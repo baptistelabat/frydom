@@ -1,9 +1,6 @@
 message(STATUS "    ...Cable")
 
 set(SRC_FILES
-        FrAssetComponent.cpp
-        FrAssetBuoy.cpp
-        FrAssetComponent.cpp
         FrCable.cpp
         FrCatenaryForce.cpp
         FrCatenaryLine.cpp
