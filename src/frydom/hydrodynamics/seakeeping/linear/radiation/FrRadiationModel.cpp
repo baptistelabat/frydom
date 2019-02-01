@@ -366,11 +366,11 @@ namespace frydom {
     // ----------------------------------------------------------------
 
     FrRadiationModel_::FrRadiationModel_() {
-        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this);
+        //m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this);
     }
 
     FrRadiationModel_::FrRadiationModel_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {
-        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this);
+        //m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this);
     }
 
     void FrRadiationModel_::Initialize() {

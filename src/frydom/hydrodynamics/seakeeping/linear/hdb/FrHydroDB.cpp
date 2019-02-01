@@ -607,11 +607,17 @@ namespace frydom {
             for (unsigned int imotion=0; imotion<bodyMotion->GetNbMotionMode(); ++imotion) {
                 sprintf(buffer, "/DOF_%d", imotion);
                 impulseResponseFunctionsK.push_back(reader.ReadDoubleArray(IRFPath + buffer));
-                impulseResponseFunctionsKU.push_back(reader.ReadDoubleArray(IRFUPath + buffer));
             }
-
             BEMBody->SetImpulseResponseFunctionK(bodyMotion, impulseResponseFunctionsK);
-            BEMBody->SetImpulseResponseFunctionKu(bodyMotion, impulseResponseFunctionsKU);
+
+            if (reader.GroupExist(IRFUPath)) {
+
+                for (unsigned int imotion=0; imotion<bodyMotion->GetNbMotionMode(); ++imotion) {
+                    sprintf(buffer, "/DOF_%d", imotion);
+                    impulseResponseFunctionsKU.push_back(reader.ReadDoubleArray(IRFUPath + buffer));
+                }
+                BEMBody->SetImpulseResponseFunctionKu(bodyMotion, impulseResponseFunctionsKU);
+            }
         }
     }
 

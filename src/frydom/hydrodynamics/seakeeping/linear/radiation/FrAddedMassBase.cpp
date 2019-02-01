@@ -18,7 +18,7 @@ namespace frydom {
                 m_frydomRadiationModel(radiationModel), _FrPhysicsItemBase(radiationModel) {
             auto nBodies = radiationModel->GetHydroDB()->GetNbBodies();
             int nDof = 6*nBodies;
-            m_variables = std::make_shared<FrVariablesAddedMassBase>(this, nDof);
+            //m_variables = std::make_shared<FrVariablesAddedMassBase>(this, nDof);
         }
 
         void FrAddedMassBase::SetupInitial() {
@@ -108,7 +108,7 @@ namespace frydom {
         }
 
         void FrAddedMassBase::InjectVariables(chrono::ChSystemDescriptor &mdescriptor) {
-            mdescriptor.InsertVariables(m_variables.get());
+            //mdescriptor.InsertVariables(m_variables.get());
         }
 
         void FrAddedMassBase::VariablesFbReset() {

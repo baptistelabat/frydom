@@ -11,6 +11,7 @@ set(DEMOS
         demo_Rotation_and_Frame
         demo_Morison
         demo_Cable
+        bench_SphereDecay
         )
 
 
@@ -38,3 +39,4 @@ configure_file(../../data/skybox/sky_lf.jpg . COPYONLY)
 configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
 
 configure_file(../data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
+configure_file(../data/sphere_hdb.h5 . COPYONLY)
