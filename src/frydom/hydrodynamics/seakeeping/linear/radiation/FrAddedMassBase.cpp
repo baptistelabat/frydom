@@ -16,11 +16,12 @@ namespace frydom {
 
         FrAddedMassBase::FrAddedMassBase(FrRadiationModel_* radiationModel) :
                 m_frydomRadiationModel(radiationModel), _FrPhysicsItemBase(radiationModel) {
-            m_variables = std::make_shared<FrVariablesAddedMassBase>(this);
+            auto nBodies = radiationModel->GetHydroDB()->GetNbBodies();
+            int nDof = 6*nBodies;
+            m_variables = std::make_shared<FrVariablesAddedMassBase>(this, nDof);
         }
 
         void FrAddedMassBase::SetupInitial() {
-            offset_w = 0;
             m_frydomRadiationModel->Initialize();
             m_variables->Initialize();
         }
@@ -57,8 +58,8 @@ namespace frydom {
                     auto Mw = chrono::ChVector<>(Mv(0), Mv(1), Mv(2));
                     auto Iw = chrono::ChVector<>(Mv(3), Mv(4), Mv(5));
 
-                    R.PasteSumVector(Mw, residualOffset, 0);
-                    R.PasteSumVector(Iw, residualOffset + 3, 0);
+                    //R.PasteSumVector(Mw, residualOffset, 0);
+                    //R.PasteSumVector(Iw, residualOffset + 3, 0);
                 //}
             }
         }
@@ -69,11 +70,26 @@ namespace frydom {
 
             auto HDB = m_frydomRadiationModel->GetHydroDB();
 
+            //m_variables->Get_qb().Reset();
+
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
+                auto bodyOffset = off_v - offset_w + GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
                 m_variables->Get_qb().PasteClippedMatrix(v, bodyOffset, 0, 6, 1, bodyOffset, 0);
+                //m_variables->Get_fb().PasteClippedMatrix(R, bodyOffset, 0, 6, 1, bodyOffset, 0);
+
+                mathutils::Matrix66<double> infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
+
+                Eigen::VectorXd q(6);
+                for (int i = 0; i < 6; i++) { q(i) = v(bodyOffset + i); }
+
+                Eigen::VectorXd Mv = infiniteAddedMass * q;
+                auto Mw = chrono::ChVector<>(Mv(0), Mv(1), Mv(2));
+                auto Iw = chrono::ChVector<>(Mv(3), Mv(4), Mv(5));
+
+                m_variables->Get_fb().PasteVector(Mw, bodyOffset, 0);
+                m_variables->Get_fb().PasteVector(Iw, bodyOffset + 3, 0);
             }
 
         }
@@ -85,9 +101,9 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
+                auto bodyOffset = off_v - offset_w + GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
-                v.PasteClippedMatrix(m_variables->Get_qb(), bodyOffset, 0, 6, 1, bodyOffset, 0);
+                v.PasteSumClippedMatrix(m_variables->Get_qb(), bodyOffset, 0, 6, 1, bodyOffset, 0);
             }
         }
 

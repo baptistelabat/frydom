@@ -16,18 +16,20 @@ namespace frydom {
 
         class FrAddedMassBase;
 
-        class FrVariablesAddedMassBase : public chrono::ChVariablesBodyOwnMass {
+        class FrVariablesAddedMassBase : public chrono::ChVariables {
 
         private:
 
             FrAddedMassBase* m_addedMassBase;
-            std::unordered_map<FrBEMBody_*, Eigen::MatrixXd> m_invAddedMassCorrection;
+            std::unordered_map<FrBEMBody_*, mathutils::Matrix66<double>> m_invAddedMassCorrection;
 
         public:
 
-            FrVariablesAddedMassBase(FrAddedMassBase* addedMassBase);
+            FrVariablesAddedMassBase(FrAddedMassBase* addedMassBase, int ndof);
 
             void Initialize();
+
+            //void Compute_fb() override;
 
             void Compute_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
 
@@ -43,6 +45,8 @@ namespace frydom {
             void Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) override;
 
             int GetBodyOffset(FrBody_* body) const;
+
+            //void SetOffset(int moff) override { offset = 0; }
 
         };
 

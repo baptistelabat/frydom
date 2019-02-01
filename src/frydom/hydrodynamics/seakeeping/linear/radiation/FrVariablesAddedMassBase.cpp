@@ -15,8 +15,8 @@ namespace frydom {
 
     namespace internal {
 
-        FrVariablesAddedMassBase::FrVariablesAddedMassBase(FrAddedMassBase* addedMassBase)
-            : m_addedMassBase(addedMassBase) { }
+        FrVariablesAddedMassBase::FrVariablesAddedMassBase(FrAddedMassBase* addedMassBase, int ndof)
+            : ChVariables(ndof), m_addedMassBase(addedMassBase) { }
 
         void FrVariablesAddedMassBase::Initialize() {
 
@@ -26,16 +26,29 @@ namespace frydom {
 
                 auto body = HDB->GetBody(BEMBody->get());
 
-                auto generalizedMass = body->GetInertiaTensor(NWU).GetMatrix();
-                auto invGeneralizedMass = generalizedMass.inverse();
+                mathutils::Matrix66<double> generalizedMass = body->GetInertiaTensor(NWU).GetMatrix();
+                mathutils::Matrix66<double> invGeneralizedMass = generalizedMass;
+                invGeneralizedMass.Inverse();
 
-                auto infiniteAddedMass = BEMBody->get()->GetSelfInfiniteAddedMass();
-                auto invInfiniteAddedMass = infiniteAddedMass.inverse();
+                generalizedMass.print("Generalize Mass");
+                invGeneralizedMass.print("Inverse Generalized Mass");
 
-                auto sumMatrixMass = generalizedMass + infiniteAddedMass;
-                auto invSumMatrixMax = sumMatrixMass.inverse();
+                mathutils::Matrix66<double> infiniteAddedMass = BEMBody->get()->GetSelfInfiniteAddedMass();
+                mathutils::Matrix66<double> invInfiniteAddedMass = infiniteAddedMass.inverse();
 
-                m_invAddedMassCorrection[BEMBody->get()] = - invGeneralizedMass * infiniteAddedMass * invSumMatrixMax;
+                infiniteAddedMass.print("Infinite added Mass");
+                invInfiniteAddedMass.print("Inverse Infinite Added mass");
+
+                mathutils::Matrix66<double> sumMatrixMass = generalizedMass + infiniteAddedMass;
+                mathutils::Matrix66<double> invSumMatrixMass = sumMatrixMass;
+                invSumMatrixMass.Inverse();
+
+                sumMatrixMass.print("Sum of the mass matrix");
+                invSumMatrixMass.print("Inverse of the sum mass matrix");
+
+                m_invAddedMassCorrection[BEMBody->get()] = - invGeneralizedMass * infiniteAddedMass * invSumMatrixMass;
+
+                m_invAddedMassCorrection[BEMBody->get()].print("Correction matrix");
             }
         }
 
