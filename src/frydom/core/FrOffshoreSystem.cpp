@@ -915,13 +915,25 @@ namespace frydom {
 
     void FrOffshoreSystem_::RunInViewer(double endTime, double dist, bool recordVideo) {
 
-//        Initialize();  // So that system is automatically initialized when run in viewer mode
+        Initialize();  // So that system is automatically initialized when run in viewer mode
 
         FrIrrApp_ app(m_chronoSystem.get(), dist);
 
         app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
         app.Run(endTime);
+
+    }
+
+    void FrOffshoreSystem_::Visualize( double dist, bool recordVideo) {
+
+        Initialize();  // So that system is automatically initialized when run in viewer mode
+
+        FrIrrApp_ app(m_chronoSystem.get(), dist);
+
+        app.SetTimestep(m_chronoSystem->GetStep());
+        app.SetVideoframeSave(recordVideo);
+        app.Visualize();
 
     }
 

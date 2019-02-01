@@ -118,6 +118,8 @@ namespace frydom {
 
         void Run(double endTime);
 
+        void Visualize();
+
     };
 
 } // end namespace frydom
