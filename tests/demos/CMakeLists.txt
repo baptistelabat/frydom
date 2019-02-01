@@ -11,6 +11,7 @@ set(DEMOS
         demo_Rotation_and_Frame
         demo_Morison
         demo_Cable
+        demo_Hub_installation
         )
 
 

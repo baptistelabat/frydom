@@ -50,10 +50,8 @@ int main(int argc, char* argv[]) {
             double YoungModulus = EA / sectionArea; // Young modulus of the line
 
             // Create the catenary line, using the nodes and line properties previously defined
-            auto CatenaryLine = std::make_shared<FrCatenaryLine_>(Node1, Node2, elastic, YoungModulus, sectionArea, unstretchedLength, linearDensity, u, fc);
+            auto CatenaryLine = makeCatenaryLine(Node1, Node2, &system, elastic, YoungModulus, sectionArea, unstretchedLength, linearDensity, u, fc);
 
-            // Don't forgot to add the line to the system !
-            system.Add(CatenaryLine);
             break;
         }
         // This case features a pendulum : a sphere balancing at the end of a catenary line, with its other end fixed.
@@ -85,11 +83,8 @@ int main(int argc, char* argv[]) {
             double YoungModulus = EA / sectionArea; // Young modulus of the line
 
             // Create the catenary line, using the nodes and line properties previously defined
-            auto CatenaryLine = std::make_shared<FrCatenaryLine_>(sphereNode, worldNode, elastic, YoungModulus,
+            auto CatenaryLine = makeCatenaryLine(sphereNode, worldNode, &system, elastic, YoungModulus,
                                                                   sectionArea, unstretchedLength, linearDensity, u, fc);
-
-            // Don't forgot to add the line to the system !
-            system.Add(CatenaryLine);
             break;
         }
         // This case features a Newton pendulum, consisting of a series of identically sized metal balls suspended in a
@@ -148,18 +143,15 @@ int main(int argc, char* argv[]) {
                 worldNode2->SetPositionInBody(Position(-10., diameter * ib, 50.), NWU);
 
                 // Create the catenary lines, using the nodes and line properties previously defined
-                auto CatenaryLine1 = std::make_shared<FrCatenaryLine_>(worldNode1, sphereNode, elastic, YoungModulus,
+                auto CatenaryLine1 = makeCatenaryLine(worldNode1, sphereNode, &system, elastic, YoungModulus,
                                                                        sectionArea, unstretchedLength, linearDensity,
                                                                        u, fc);
-                auto CatenaryLine2 = std::make_shared<FrCatenaryLine_>(worldNode2, sphereNode, elastic, YoungModulus,
+                auto CatenaryLine2 = makeCatenaryLine(worldNode2, sphereNode, &system, elastic, YoungModulus,
                                                                        sectionArea, unstretchedLength, linearDensity,
                                                                        u, fc);
                 // Set the number of drawn elements on the catenary lines (the more, the slower the simulation)
                 CatenaryLine1->SetNbElements(10);
                 CatenaryLine2->SetNbElements(10);
-                // Don't forgot to add the lines to the system !
-                system.Add(CatenaryLine1);
-                system.Add(CatenaryLine2);
             }
             break;
         }
