@@ -22,6 +22,11 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------
     // Environment
     // --------------------------------------------------
+
+    auto SeabedGridAsset = system.GetEnvironment()->GetOcean()->GetSeabed()->GetSeabedGridAsset();
+    SeabedGridAsset->SetGrid(-150., 150., 3., -150., 150., 3.);
+
+
     auto FreeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
     // To manipulate the free surface grid asset, you first need to access it, through the free surface object.
     auto FSAsset = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset();
@@ -135,9 +140,83 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------
     // Mooring Lines
     // --------------------------------------------------
+    double buoyRadius = 0.75;
+    double buoyMass = 100;
+    double buoyDamping = 1000;
 
 
+    auto buoySE = std::make_shared<FrMooringBuoy>(buoyRadius, buoyMass, true, buoyDamping);
+    system.Add(buoySE);
+    buoySE->SetPosition(Position(-50.,-25.,0.), NWU);
+    buoySE->SetColor(Red);
+    auto buoyNodeSE = buoySE->NewNode();
 
+    auto buoySW = std::make_shared<FrMooringBuoy>(buoyRadius, buoyMass, true, buoyDamping);
+    system.Add(buoySW);
+    buoySW->SetPosition(Position(-50.,25.,0.), NWU);
+    buoySW->SetColor(Red);
+    auto buoyNodeSW = buoySW->NewNode();
+
+    auto buoyNE = std::make_shared<FrMooringBuoy>(buoyRadius, buoyMass, true, buoyDamping);
+    system.Add(buoyNE);
+    buoyNE->SetPosition(Position(50.,-25.,0.), NWU);
+    buoyNE->SetColor(Red);
+    auto buoyNodeNE = buoyNE->NewNode();
+
+    auto buoyNW = std::make_shared<FrMooringBuoy>(buoyRadius, buoyMass, true, buoyDamping);
+    system.Add(buoyNW);
+    buoyNW->SetPosition(Position(50.,25.,0.), NWU);
+    buoyNW->SetColor(Red);
+    auto buoyNodeNW = buoyNW->NewNode();
+
+
+    auto worldNodeSE = system.GetWorldBody()->NewNode();
+    worldNodeSE->SetPositionInBody(Position(-125.,-75.,-system.GetEnvironment()->GetOcean()->GetDepth(fc)), fc);
+    auto worldNodeNE = system.GetWorldBody()->NewNode();
+    worldNodeNE->SetPositionInBody(Position(125.,-75.,-system.GetEnvironment()->GetOcean()->GetDepth(fc)), fc);
+    auto worldNodeSW = system.GetWorldBody()->NewNode();
+    worldNodeSW->SetPositionInBody(Position(-125.,75.,-system.GetEnvironment()->GetOcean()->GetDepth(fc)), fc);
+    auto worldNodeNW = system.GetWorldBody()->NewNode();
+    worldNodeNW->SetPositionInBody(Position(125.,75.,-system.GetEnvironment()->GetOcean()->GetDepth(fc)), fc);
+
+    auto bargeNodeSE = barge->NewNode();
+    bargeNodeSE->SetPositionInBody(Position(-12.5,-5.,0.),fc);
+    auto bargeNodeSW = barge->NewNode();
+    bargeNodeSW->SetPositionInBody(Position(-12.5,5.,0.),fc);
+    auto bargeNodeNE = barge->NewNode();
+    bargeNodeNE->SetPositionInBody(Position(12.5,-5.,0.),fc);
+    auto bargeNodeNW = barge->NewNode();
+    bargeNodeNW->SetPositionInBody(Position(12.5,5.,0.),fc);
+
+    /// Mooring lines length
+
+    unstretchedLength = 95;
+    linearDensity = 20.;
+    EA = 5e6;
+    sectionArea = 0.025;
+    YoungModulus = EA / sectionArea;
+    double Lv = 42.5;
+    breakTensionAsset = 50000;
+
+    auto mooringLineSE = makeCatenaryLine(worldNodeSE,buoyNodeSE,&system, elastic, YoungModulus, sectionArea,
+            unstretchedLength, linearDensity, u, fc );
+    auto tetherLineSE = makeCatenaryLine(bargeNodeSE,buoyNodeSE,&system, elastic, YoungModulus, sectionArea,
+                                         Lv, linearDensity, u, fc );
+
+    auto mooringLineSW = makeCatenaryLine(worldNodeSW,buoyNodeSW,&system, elastic, YoungModulus, sectionArea,
+                                          unstretchedLength, linearDensity, u, fc );
+    auto tetherLineSW = makeCatenaryLine(bargeNodeSW,buoyNodeSW,&system, elastic, YoungModulus, sectionArea,
+                                         Lv, linearDensity, u, fc );
+
+    auto mooringLineNE = makeCatenaryLine(worldNodeNE,buoyNodeNE,&system, elastic, YoungModulus, sectionArea,
+                                          unstretchedLength, linearDensity, u, fc );
+    auto tetherLineNE = makeCatenaryLine(bargeNodeNE,buoyNodeNE,&system, elastic, YoungModulus, sectionArea,
+                                         Lv, linearDensity, u, fc );
+
+    auto mooringLineNW = makeCatenaryLine(worldNodeNW,buoyNodeNW,&system, elastic, YoungModulus, sectionArea,
+                                          unstretchedLength, linearDensity, u, fc );
+    auto tetherLineNW = makeCatenaryLine(bargeNodeNW,buoyNodeNW,&system, elastic, YoungModulus, sectionArea,
+                                         Lv, linearDensity, u, fc );
 
     // ------------------ Run ------------------ //
 

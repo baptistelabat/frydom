@@ -1153,8 +1153,9 @@ namespace frydom {
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
+        //FIXME : FrBody doit-il dériver de FrPhysicsItem ?
         /// Body update method
-        void Update();
+        virtual void Update();
 
 
         // Linear iterators on external forces
