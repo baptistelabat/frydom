@@ -334,6 +334,8 @@ namespace frydom {
 //        using CatenaryCableContainer = std::vector<std::shared_ptr<FrCatway>>;
 //        CatenaryCableContainer m_catenaryCables;
 
+        bool m_isInitialized = false;
+
 
     public:
 
@@ -712,7 +714,7 @@ namespace frydom {
 
 
 //        friend class FrIrrApp_;
-
+        void CheckInitialize();
 
 
 

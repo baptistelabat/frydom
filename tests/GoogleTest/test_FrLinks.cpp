@@ -13,7 +13,7 @@ int main() {
 
     FrOffshoreSystem_ system;
     system.SetGravityAcceleration(1);
-    system.GetEnvironment()->GetOcean()->GetFreeSurface()->ShowFreeSurface(false);
+    system.GetEnvironment()->ShowFreeSurface(false);
 
 
     // Body 1 definition (fixed body)
@@ -21,7 +21,7 @@ int main() {
     body1->SetFixedInWorld(true);
     makeItBox(body1, 20, 10, 2, 1000);
     body1->AllowCollision(false);
-    body1->SetColor(Yellow);
+    body1->SetColor(Pink);
 
 //    body1->SetRotation(FrRotation_(Direction(0, 1, 0), 1*DEG2RAD, NWU));
 
@@ -32,14 +32,14 @@ int main() {
     body2->SetColor(Black);
 //    body2->SetFixedInWorld(true);
 
-    body2->SetRotation(FrRotation_(Direction(0, 1, 0), 90*DEG2RAD, NWU));
+//    body2->SetRotation(FrRotation_(Direction(0, 1, 0), 90*DEG2RAD, NWU));
 
     std::cout << body1->GetCOG(NWU) << body1->GetPosition(NWU) << std::endl;
 
 
     auto m1 = body1->NewNode();
     m1->TranslateInBody(10, 5, -1, NWU);
-    m1->RotateAroundYInWorld(90*DEG2RAD, NWU);
+//    m1->RotateAroundYInWorld(90*DEG2RAD, NWU);
 
 
 
@@ -48,10 +48,10 @@ int main() {
 
     auto prismaticLink = make_prismatic_link(m1, m2, &system);
 
-    prismaticLink->SetSpringDamper(1e3, 1e3);
-    prismaticLink->SetRestLength(4);
+    prismaticLink->SetSpringDamper(2e3, 1e2);
+    prismaticLink->SetRestLength(0);
 
-    system.SetTimeStep(0.02);
+    system.SetTimeStep(0.01);
     system.RunInViewer(0, 50, false);
 
 
