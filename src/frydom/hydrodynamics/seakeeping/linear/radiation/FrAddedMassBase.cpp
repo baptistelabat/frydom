@@ -18,7 +18,7 @@ namespace frydom {
                 m_frydomRadiationModel(radiationModel), _FrPhysicsItemBase(radiationModel) {
             auto nBodies = radiationModel->GetHydroDB()->GetNbBodies();
             int nDof = 6*nBodies;
-            //m_variables = std::make_shared<FrVariablesAddedMassBase>(this, nDof);
+            m_variables = std::make_shared<FrVariablesAddedMassBase>(this, nDof);
         }
 
         void FrAddedMassBase::SetupInitial() {
@@ -58,8 +58,8 @@ namespace frydom {
                     auto Mw = chrono::ChVector<>(Mv(0), Mv(1), Mv(2));
                     auto Iw = chrono::ChVector<>(Mv(3), Mv(4), Mv(5));
 
-                    //R.PasteSumVector(Mw, residualOffset, 0);
-                    //R.PasteSumVector(Iw, residualOffset + 3, 0);
+                    R.PasteSumVector(Mw, residualOffset, 0);
+                    R.PasteSumVector(Iw, residualOffset + 3, 0);
                 //}
             }
         }
@@ -77,8 +77,9 @@ namespace frydom {
                 auto bodyOffset = off_v - offset_w + GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
                 m_variables->Get_qb().PasteClippedMatrix(v, bodyOffset, 0, 6, 1, bodyOffset, 0);
-                //m_variables->Get_fb().PasteClippedMatrix(R, bodyOffset, 0, 6, 1, bodyOffset, 0);
+                m_variables->Get_fb().PasteClippedMatrix(R, bodyOffset, 0, 6, 1, bodyOffset, 0);
 
+                /*
                 mathutils::Matrix66<double> infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
 
                 Eigen::VectorXd q(6);
@@ -90,6 +91,7 @@ namespace frydom {
 
                 m_variables->Get_fb().PasteVector(Mw, bodyOffset, 0);
                 m_variables->Get_fb().PasteVector(Iw, bodyOffset + 3, 0);
+                */
             }
 
         }
@@ -103,12 +105,13 @@ namespace frydom {
 
                 auto bodyOffset = off_v - offset_w + GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
-                v.PasteSumClippedMatrix(m_variables->Get_qb(), bodyOffset, 0, 6, 1, bodyOffset, 0);
+                //v.PasteSumClippedMatrix(m_variables->Get_qb(), bodyOffset, 0, 6, 1, bodyOffset, 0);
+                v.PasteClippedMatrix(m_variables->Get_qb(), bodyOffset, 0, 6, 1, bodyOffset, 0);
             }
         }
 
         void FrAddedMassBase::InjectVariables(chrono::ChSystemDescriptor &mdescriptor) {
-            //mdescriptor.InsertVariables(m_variables.get());
+            mdescriptor.InsertVariables(m_variables.get());
         }
 
         void FrAddedMassBase::VariablesFbReset() {

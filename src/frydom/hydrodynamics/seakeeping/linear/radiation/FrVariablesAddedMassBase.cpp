@@ -46,7 +46,9 @@ namespace frydom {
                 sumMatrixMass.print("Sum of the mass matrix");
                 invSumMatrixMass.print("Inverse of the sum mass matrix");
 
-                m_invAddedMassCorrection[BEMBody->get()] = - invGeneralizedMass * infiniteAddedMass * invSumMatrixMass;
+                // ##CC FIXME : test debug
+                //m_invAddedMassCorrection[BEMBody->get()] = - invGeneralizedMass * infiniteAddedMass * invSumMatrixMass;
+                m_invAddedMassCorrection[BEMBody->get()] = invSumMatrixMass;
 
                 m_invAddedMassCorrection[BEMBody->get()].print("Correction matrix");
             }
