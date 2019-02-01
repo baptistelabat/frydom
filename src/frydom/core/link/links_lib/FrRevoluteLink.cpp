@@ -4,10 +4,33 @@
 
 #include "FrRevoluteLink.h"
 
+#include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrNode.h"
 
 
 namespace frydom {
+
+    namespace internal {
+
+        FrLinkMotorRotationSpeedBase::FrLinkMotorRotationSpeedBase(frydom::FrLink_ *frydomLink) : m_frydomLink(frydomLink) {
+            SetSpindleConstraint(chrono::ChLinkMotorRotation::SpindleConstraint::FREE);
+        }
+
+        void FrLinkMotorRotationSpeedBase::Initialize() {
+
+            // Based on ChLinkMateGeneric::Initialize
+
+            this->Body1 = m_frydomLink->GetBody1()->GetChronoBody().get();
+            this->Body2 = m_frydomLink->GetBody2()->GetChronoBody().get();
+
+            this->mask->SetTwoBodiesVariables(&Body1->Variables(), &Body2->Variables());
+
+            this->frame1 = internal::FrFrame2ChFrame(m_frydomLink->GetNode1()->GetFrameWRT_COG_InBody());
+            this->frame2 = internal::FrFrame2ChFrame(m_frydomLink->GetNode2()->GetFrameWRT_COG_InBody());
+        }
+
+    }  // end namespace frydom::internal
+
 
 
     FrRevoluteLink::FrRevoluteLink(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2,
@@ -45,7 +68,14 @@ namespace frydom {
     }
 
     void FrRevoluteLink::Initialize() {
+        // Initialization of the constraint part
         FrLink_::Initialize();
+
+        // Initialization of the motor part
+        if (m_speedMotor) {
+            m_speedMotor->Initialize();
+        }
+
     }
 
     void FrRevoluteLink::Update(double time) {
@@ -62,10 +92,21 @@ namespace frydom {
     }
 
 
+    void FrRevoluteLink::MotorizeSpeed() {
+        m_speedMotor = std::make_shared<internal::FrLinkMotorRotationSpeedBase>(this);
+        m_system->Add(m_speedMotor);
+    }
+
+
+
     std::shared_ptr<FrRevoluteLink>
     make_revolute_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system) {
         auto link = std::make_shared<FrRevoluteLink>(node1, node2, system);
         system->AddLink(link);
         return link;
     }
+
+
+
+
 }  // end namespace frydom

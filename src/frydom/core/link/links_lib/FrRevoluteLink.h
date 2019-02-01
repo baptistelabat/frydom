@@ -7,7 +7,40 @@
 
 #include "FrLink.h"
 
+
+#include "chrono/physics/ChLinkMotorRotationSpeed.h"
+
+
+
 namespace frydom {
+
+
+
+    enum MOTOR_TYPE {
+        LINEAR_MOTOR,
+        ANGULAR_MOTOR,
+        SPEED_MOTOR,
+        FORCE_MOTOR
+    };
+
+
+
+
+
+    namespace internal {
+
+        struct FrLinkMotorRotationSpeedBase : public chrono::ChLinkMotorRotationSpeed {
+
+            FrLink_* m_frydomLink;
+
+            explicit FrLinkMotorRotationSpeedBase(FrLink_* frydomLink);
+
+            void Initialize();
+
+        };
+
+    }  // end namespace frydom::internal
+
 
 
     class FrRevoluteLink : public FrLink_ {
@@ -15,6 +48,9 @@ namespace frydom {
     private:
         double m_stiffness = 0.; ///> Link rotational stiffness (N)
         double m_damping = 0.;   ///> Link rotational damping (Nm/s)
+
+        std::shared_ptr<internal::FrLinkMotorRotationSpeedBase> m_speedMotor;
+
 
     public:
 
@@ -40,6 +76,11 @@ namespace frydom {
 
         void StepFinalize() override;
 
+
+        void MotorizeSpeed(double Fr);
+
+
+    private:
 
     };
 

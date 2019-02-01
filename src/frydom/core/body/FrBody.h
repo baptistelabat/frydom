@@ -27,6 +27,8 @@
 
 #include "frydom/environment/FrFluidType.h"
 
+#include "frydom/core/link/links_lib/FrRevoluteLink.h"
+
 
 namespace frydom {
 
@@ -1142,6 +1144,17 @@ namespace frydom {
         friend void makeItSphere(std::shared_ptr<FrBody_>, double, double);
 
         friend FrNode_::FrNode_(FrBody_*);
+
+        friend class internal::FrLinkMotorRotationSpeedBase;
+
+//        namespace internal {
+//
+//        }
+
+//        void cu()  {
+//            internal::FrLinkMotorRotationSpeedBase
+//        }
+//        friend struct internal::FrFrLinkMotorRotationSpeedBase;
 
     public:
 
