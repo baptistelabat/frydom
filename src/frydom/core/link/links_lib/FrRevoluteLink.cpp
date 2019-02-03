@@ -56,6 +56,18 @@ namespace frydom {
     }
 
     double FrRevoluteLink::GetLinkAngle() const {
+        /*
+         *
+         * FIXME : le premier angle donne bien l'angle entre le marker 2 et le marker 1 mais ne compte pas les tours
+         * Du coup, on a un angle qui se reinitialise lorsqu'on fait un tour et le modele d'effort se met a tirer dans
+         * le mauvais sens !
+         * Il convient de compter les tours et de permettre de recuperer un angle total, un angle entre 0 et pi et un
+         * angle entre -pi et pi
+         * Regarder comment est fait le motorLink de Chrono !!
+         *
+         * ChLinkMotorRotation::Update met en place le tracking !!! --> recopier la maniere de faire :)
+         */
+
         return GetMarker2OrientationWRTMarker1().GetAngle() - GetRestAngle();
     }
 
