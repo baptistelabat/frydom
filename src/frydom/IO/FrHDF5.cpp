@@ -32,7 +32,7 @@ namespace frydom {
 
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> FrHDF5Reader::ReadDoubleArray(std::string h5Path) const {
 
-        DataSet dset = m_file->openDataSet(h5Path); // TODO: try
+        DataSet dset = m_file->openDataSet(h5Path);
         DataSpace dspace = dset.getSpace();
         const int ndims = dspace.getSimpleExtentNdims();
 
@@ -100,7 +100,6 @@ namespace frydom {
         }
 
         return res;
-
     }
 
     Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> FrHDF5Reader::ReadIntArray(std::string h5Path) const {
