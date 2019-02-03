@@ -1,14 +1,35 @@
-.frydom:
-    script: &test_script
-    - source /home/dice/anaconda2/bin/activate python2
-    - pip install -e .
-    - python setup.py test
-    - coverage run setup.py test
-    - coverage report
-    - source /home/dice/anaconda2/bin/deactivate python2
+#.frydom:
+#    script: &test_script
+#    - source /home/dice/anaconda2/bin/activate python2
+#    - pip install -e .
+#    - python setup.py test
+#    - coverage run setup.py test
+#    - coverage report
+#    - source /home/dice/anaconda2/bin/deactivate python2
+#
+#frydom:
+#    stage: test
+#    script: *test_script
 
-frydom:
-    stage: test
-    script: *test_script
 
+image: alpine
 
+test:
+    script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - make all test
+    except:
+        - master
+
+pages:
+    script:
+        - cd docs/doxygen
+        - doxygen Doxyfile
+        - mv html/ ../../public/
+    artifacts:
+        paths:
+            - public
+    only:
+        - master

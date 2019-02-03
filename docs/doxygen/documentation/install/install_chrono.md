@@ -12,15 +12,47 @@ Only the GNU C++ compiler for Linux-based platforms has been tested so far. To i
 
 <small>Other compilers could work as well, but they might require changes to the CMake scripts.</small>
 
-## 2) Install [CMake](http://www.cmake.org/cmake/resources/software.html)
+## 2) Install CMake
 
 The free CMake utility is used to manage the building process. However CMake 3.11 or higher is required. This version is
-already embedded in the CLion 2018.3. It will also need some related packages (libcurl)<br>
+already embedded in the CLion 2018.3, but not in Ubuntu 18.04. It will also need some related packages (libcurl).
 
-    apt-get install cmake
-    apt-get install libcurl-dev
+Start by installing libcurl and libssl:
+
+<br>
+
+    sudo apt-get install libcurl-dev 
+    sudo apt-get install libsssl-dev
     
-You can check [here](https://peshmerge.io/how-to-install-cmake-3-11-0-on-ubuntu-16-04/) how to install the CMake 3.11.0.
+then you can download the latest version of CMake, at the [official CMake webpage](https://cmake.org/download/).
+You can extract the downloaded package in the /opt/ folder, in case you need to uninstall CMake later. 
+
+<br>
+
+    tar -xzvf cmake-$version.$build.tar.gz
+    mv cmake-$version.$build /opt/
+    
+where version and build correspond to the version and build of the CMake you downloaded. (for me: it's cmake-3.13.3)
+
+Once extracted, install CMake by running the following commands in the extracted folder:
+
+<br>
+
+    cd /opt/cmake-$version.$build
+    ./bootstrap --system-curl
+    make
+    sudo make install
+    
+Check CMake version (you may need to close and reopen your terminal):
+
+<br>
+
+    cmake --version 
+ 
+ For more details, check 
+ 
+ * https://askubuntu.com/questions/355565/how-do-i-install-the-latest-version-of-cmake-from-the-command-line
+ * https://github.com/ruslo/hunter/issues/328
 
 ## 3) Install a GIT client
 

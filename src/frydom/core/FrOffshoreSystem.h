@@ -684,6 +684,11 @@ namespace frydom {
         /// \param recordVideo record snapshots if turned true
         void RunInViewer(double endTime, double dist=100, bool recordVideo=false);
 
+        /// Visualize the scene as you set up, no simulation involved
+        /// \param dist distance of the camera from the subject, in the viewer environment
+        /// \param recordVideo record snapshots if turned true
+        void Visualize(double dist=100, bool recordVideo=false);
+
         /// Add an optional asset (it can be used to define visualization shapes, or textures, or custom attached
         /// properties that the user can define by creating his class inherited from FrAssetComponent)
         /// \param asset asset to be added to the offshore system
