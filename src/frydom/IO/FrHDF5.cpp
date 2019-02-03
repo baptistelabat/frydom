@@ -9,20 +9,20 @@ namespace frydom {
 
     FrHDF5Reader::FrHDF5Reader() = default;
 
-    FrHDF5Reader::FrHDF5Reader(const std::string &filename, FrHDF5Reader::MODE mode)
+    FrHDF5Reader::FrHDF5Reader(const std::string &filename, HDF5_READ_MODE mode)
             : m_filename(filename), m_file(std::make_unique<H5File>(filename, mode)) {}
 
     FrHDF5Reader::~FrHDF5Reader() {
         m_file->close();
-//            std::cout << std::endl << "HDF5 file " << m_filename << " has been properly closed" << std::endl;
     }
 
-    void FrHDF5Reader::SetFilename(const std::string &filename, FrHDF5Reader::MODE mode) {
+    void FrHDF5Reader::SetFilename(const std::string &filename, HDF5_READ_MODE mode) {
         m_filename = filename;
         m_file.release();
         try {
             m_file = std::make_unique<H5File>(filename, mode);
         } catch (const H5::FileIException& e) {
+            // TODO : throw a frydom exception
             std::cout << "   --- ERROR : HDF5 file '" << filename << "' not found.";
             throw (e);
         }
@@ -37,6 +37,7 @@ namespace frydom {
         const int ndims = dspace.getSimpleExtentNdims();
 
         if (ndims > 2) {
+            // TODO : throw a frydom exception
             throw("Too much dimensions"); // TODO: better error msg
         }
 
@@ -62,6 +63,7 @@ namespace frydom {
                 nb_elt = nb_rows * nb_cols;
                 break;
             default:
+                // TODO : throw a frydom exception
                 std::cout << "Cannot read multidimensional array yet..." << std::endl;
 
         }
@@ -108,6 +110,7 @@ namespace frydom {
         const int ndims = dspace.getSimpleExtentNdims();
 
         if (ndims > 2) {
+            // TODO : throw a frydom exception
             throw("Too much dimensions"); // TODO: better error msg
         }
 
@@ -133,6 +136,7 @@ namespace frydom {
                 nb_elt = nb_rows * nb_cols;
                 break;
             default:
+                // TODO : throw a frydom exception
                 std::cout << "Cannot read multidimensional array yet..." << std::endl;
 
         }
@@ -203,9 +207,13 @@ namespace frydom {
         return str;
     }
 
-    void FrHDF5Reader::CreateGroup(std::string h5Path) {}
+    void FrHDF5Reader::CreateGroup(std::string h5Path) {
+        // TODO
+    }
 
-    void FrHDF5Reader::CreateDataset(std::string h5Path) {}
+    void FrHDF5Reader::CreateDataset(std::string h5Path) {
+        // TODO
+    }
 
     bool FrHDF5Reader::GroupExist(const std::string& h5Path) const {
         return H5Lexists(m_file->getId(), h5Path.c_str(), H5P_DEFAULT);
