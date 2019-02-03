@@ -303,7 +303,7 @@ namespace frydom {
             /// \param newCOG new Center Of Gravity
             void UpdateMarkerPositionToCOG(const chrono::ChVector<> newCOG);
 
-            ///
+            /// Removes an asset given its shared pointer
             void RemoveAsset(std::shared_ptr<chrono::ChAsset> asset);
 
         };
@@ -317,6 +317,8 @@ namespace frydom {
     class FrOffshoreSystem_;
     class FrGeographicCoord;
     class FrAsset;
+    class FrBodyDOFMask;
+    class FrLink_;
 
     /// Main class for a FRyDoM rigid body
     class FrBody_ : public FrObject {
@@ -335,6 +337,10 @@ namespace frydom {
 
         using CONTACT_TYPE = FrOffshoreSystem_::SYSTEM_TYPE;
         CONTACT_TYPE m_contactType = CONTACT_TYPE::SMOOTH_CONTACT; ///< The contact method that has to be consistent with that of the FrOffshoreSystem
+
+
+        std::unique_ptr<FrBodyDOFMask> m_DOFMask;
+        std::shared_ptr<FrLink_> m_DOFLink;
 
 
     public:
@@ -1054,7 +1060,7 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         /// \return vector in body reference frame
         template <class Vector>
-        Vector& ProjectGenerallizedVectorInBody(Vector& worldVector, FRAME_CONVENTION fc) const {
+        Vector& ProjectGeneralizedVectorInBody(Vector &worldVector, FRAME_CONVENTION fc) const {
             worldVector = GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
             return worldVector;
         }
@@ -1063,12 +1069,10 @@ namespace frydom {
         // CONSTRAINTS ON DOF
         // =============================================================================================================
 
-        // TODO : tenir a jour un masque de degres de liberte bloques...
+        FrBodyDOFMask* GetDOFMask();
 
-        // Motion constraints  : FIXME : experimental !!!!
-        void ConstainDOF(bool cx, bool cy, bool cz, bool crx, bool cry, bool crz);
 
-//        void ConstrainInVx(double Vx);
+
 
 
     protected:
@@ -1138,23 +1142,18 @@ namespace frydom {
             return m_chronoBody;
         }
 
+        void InitializeLockedDOF();
+
         // Friends of FrBody_ : they can have access to chrono internals
         friend void makeItBox(std::shared_ptr<FrBody_>, double, double, double, double);
         friend void makeItCylinder(std::shared_ptr<FrBody_>, double, double, double);
         friend void makeItSphere(std::shared_ptr<FrBody_>, double, double);
 
+
         friend FrNode_::FrNode_(FrBody_*);
 
         friend class internal::FrLinkMotorRotationSpeedBase;
 
-//        namespace internal {
-//
-//        }
-
-//        void cu()  {
-//            internal::FrLinkMotorRotationSpeedBase
-//        }
-//        friend struct internal::FrFrLinkMotorRotationSpeedBase;
 
     public:
 

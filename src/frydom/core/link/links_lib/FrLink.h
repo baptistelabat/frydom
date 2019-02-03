@@ -6,12 +6,9 @@
 #define FRYDOM_FRLINK_H
 
 
-//#include "frydom/core/common/FrPhysicsItem.h"
-//#include "frydom/core/math/FrVector.h"
-//#include "frydom/core/common/FrConvention.h"
-//#include "frydom/core/common/FrFrame.h"
-
 #include "frydom/core/link/FrLinkBase.h"
+
+
 
 
 #include <memory>
@@ -47,6 +44,7 @@ namespace frydom {
 
     // Forward declaration
     class FrLink_;
+    class FrBodyDOFMask;
 
     namespace internal {
 
@@ -56,9 +54,11 @@ namespace frydom {
 
             FrLink_* m_frydomLink; ///> Pointer to frydom link object container
 
-            // Cache data for performance
-            FrFrame_ c_frame1WRT2;
-            FrFrame_ c_frame2WRT1;
+            /*
+             * Cache data for performance
+             */
+            FrFrame_ c_frame1WRT2; ///> the current relative frame of node 1 WRT node 2
+            FrFrame_ c_frame2WRT1; ///> the current relative frame of node 2 WRT node 1
 
             GeneralizedVelocity c_generalizedVelocity1WRT2;
             GeneralizedVelocity c_generalizedVelocity2WRT1;
@@ -82,33 +82,37 @@ namespace frydom {
             /// Update (calls the ChLinkLock Update method then the FrLink_Update method
             void Update(double time, bool update_assets) override;
 
+            /// Generates the cache variables to speedup further requests on inner link state (frame, velocity, forces...)
             void GenerateCache();
 
-            /// Set the link force applying on Body 2 in marker 2 frame
-            void SetLinkForceOnBody1InFrame2AtOrigin1(const Force &force) {
-                C_force = internal::Vector3dToChVector(force);
-            }
+            /// Set a mask. Mainly used in the case of body constraints with the world where we do not use specialized
+            // classes for the link
+            void SetMask(FrBodyDOFMask* mask);
 
-            void SetLinkTorqueOnBody1InFrame2AtOrigin1(const Torque& torque) {
-                C_torque = internal::Vector3dToChVector(torque);
-            }
+            /// Set the link force applying on Body 1 (as external) expressed in marker 2 frame and on marker 1 origin
+            void SetLinkForceOnBody1InFrame2AtOrigin1(const Force &force);
 
-            Force GetLinkForceOnBody1InFrame2AtOrigin1() {
-                return internal::ChVectorToVector3d<Force>(C_force);
-            }
+            /// Set the link torque applying on Body 1 (as external) expressed in marker 2 frame and on marker 1 origin
+            void SetLinkTorqueOnBody1InFrame2AtOrigin1(const Torque& torque);
 
-            Torque GetLinkTorqueOnBody1InFrame2ArOrigin1() {
-                return internal::ChVectorToVector3d<Torque>(C_torque);
-            }
+            /// Get the link force applying on Body 1 (as external) expressed in marker 2 frame and on marker 1 origin
+            Force GetLinkForceOnBody1InFrame2AtOrigin1();
+
+            /// Get the link torque applying on Body 1 (as external) expressed in marker 2 frame and on marker 1 origin
+            Torque GetLinkTorqueOnBody1InFrame2ArOrigin1();
 
         };
 
     }  // end namespace frydom::internal
 
 
+
     /*
      * FrLink_
      */
+
+    // Forward declaration
+    class FrBodyDOFMask;
 
     class FrLink_ : public FrLinkBase_ {
 
@@ -279,10 +283,13 @@ namespace frydom {
 
         virtual double GetLinkPower() const;
 
+        void InitializeWithBodyDOFMask(FrBodyDOFMask* mask);
 
         virtual void Initialize() override;
 
         virtual void Update(double time) override;
+
+        virtual void StepFinalize() override {}
 
 
     protected:
@@ -304,15 +311,76 @@ namespace frydom {
 //        /// Set the link torque expressed in marker 1 frame and applied at marker 1
 //        void SetLinkTorqueOtMarker2InFrame2AtOrigin2(const Torque &torque);
 
+    };
 
 
 
+    /*
+     * Defining a mask class to make the constraint on bodies WRT to world easier
+     */
 
+    class FrBodyDOFMask {
 
+    private:
 
+        bool m_xLocked = false;
+        bool m_yLocked = false;
+        bool m_zLocked = false;
+        bool m_RxLocked = false;
+        bool m_RyLocked = false;
+        bool m_RzLocked = false;
 
+    public:
+
+        FrBodyDOFMask();
+
+        // TODO : plutot utiliser ChLinkLockMaskLF en interne et faire des conversions pour les angles vers les coeffs de quaternion
+        /*
+         * Pour les angles, un blocage en
+         */
+        void SetLock_X(bool lock);
+
+        void SetLock_Y(bool lock);
+
+        void SetLock_Z(bool lock);
+
+        void SetLock_Rx(bool lock);
+
+        void SetLock_Ry(bool lock);
+
+        void SetLock_Rz(bool lock);
+
+        void LockXZPlane();  // On bloque y, rx, rz
+        void LockXYPlane();  // On bloque z, ry
+
+        bool GetLock_X() const;
+
+        bool GetLock_Y() const;
+
+        bool GetLock_Z() const;
+
+        bool GetLock_Rx() const;
+
+        bool GetLock_Ry() const;
+
+        bool GetLock_Rz() const;
+
+        bool HasLockedDOF() const;
+
+        bool IsFree() const;
+
+        void MakeItFree();
+
+        void MakeItLocked();
+
+        unsigned int GetNbLockedDOF() const;
+
+        unsigned int GetNbFreeDOF() const;
 
     };
+
+
+
 
 
 }  // end namespace frydom

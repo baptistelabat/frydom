@@ -77,7 +77,7 @@ namespace frydom {
         void StepFinalize() override;
 
 
-        void MotorizeSpeed(double Fr);
+        void MotorizeSpeed();
 
 
     private:

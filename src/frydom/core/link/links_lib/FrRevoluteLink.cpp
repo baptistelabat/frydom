@@ -94,7 +94,7 @@ namespace frydom {
 
     void FrRevoluteLink::MotorizeSpeed() {
         m_speedMotor = std::make_shared<internal::FrLinkMotorRotationSpeedBase>(this);
-        m_system->Add(m_speedMotor);
+//        m_system->Add(m_speedMotor);
     }
 
 

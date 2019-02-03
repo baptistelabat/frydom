@@ -8,9 +8,7 @@
 #include "chrono/physics/ChLinkMotor.h"
 
 #include <frydom/core/common/FrNode.h>
-
-
-
+#include "frydom/core/body/FrBody.h"
 
 
 namespace frydom {
@@ -90,6 +88,36 @@ namespace frydom {
                     - c_frame2WRT1.ProjectVectorFrameInParent(c_generalizedForceOnMarker2.GetTorque(), NWU)
                     + c_frame2WRT1.GetPosition(NWU).cross(c_generalizedForceOnMarker1.GetForce())
                     );
+        }
+
+        void FrLinkLockBase::SetMask(FrBodyDOFMask* mask) {
+            chrono::ChLinkMaskLF chronoMask;
+            chronoMask.SetLockMask(
+                    mask->GetLock_X(),  // x
+                    mask->GetLock_Y(),  // y
+                    mask->GetLock_Z(),  // z
+                    false,              // e0
+                    mask->GetLock_Rx(), // e1
+                    mask->GetLock_Ry(), // e2
+                    mask->GetLock_Rz()  // e3
+            );
+            BuildLink(&chronoMask);
+        }
+
+        void FrLinkLockBase::SetLinkForceOnBody1InFrame2AtOrigin1(const Force &force) {
+            C_force = internal::Vector3dToChVector(force);
+        }
+
+        void FrLinkLockBase::SetLinkTorqueOnBody1InFrame2AtOrigin1(const Torque& torque) {
+            C_torque = internal::Vector3dToChVector(torque);
+        }
+
+        Force FrLinkLockBase::GetLinkForceOnBody1InFrame2AtOrigin1() {
+            return internal::ChVectorToVector3d<Force>(C_force);
+        }
+
+        Torque FrLinkLockBase::GetLinkTorqueOnBody1InFrame2ArOrigin1() {
+            return internal::ChVectorToVector3d<Torque>(C_torque);
         }
 
     }  // end namespace frydom::internal
@@ -338,6 +366,96 @@ namespace frydom {
     double FrLink_::GetLinkPower() const {
         return GetLinkForceOnBody2InFrame1AtOrigin2(NWU).dot(GetVelocityOfMarker2WRTMarker1(NWU))
              + GetLinkTorqueOnBody2InFrame1AtOrigin2(NWU).dot(GetAngularVelocityOfMarker2WRTMarker1(NWU));
+    }
+
+
+    /*
+     * FrBodyDOFMask definitions
+     */
+
+    FrBodyDOFMask::FrBodyDOFMask() = default;
+
+    void FrBodyDOFMask::SetLock_X(bool lock) { m_xLocked = lock; }
+
+    void FrBodyDOFMask::SetLock_Y(bool lock) { m_yLocked = lock; }
+
+    void FrBodyDOFMask::SetLock_Z(bool lock) { m_zLocked = lock; }
+
+    void FrBodyDOFMask::SetLock_Rx(bool lock) { m_RxLocked = lock; }
+
+    void FrBodyDOFMask::SetLock_Ry(bool lock) { m_RyLocked = lock; }
+
+    void FrBodyDOFMask::SetLock_Rz(bool lock) { m_RzLocked = lock; }
+
+    void FrBodyDOFMask::LockXZPlane() {
+        MakeItFree();
+        SetLock_Y(true);
+        SetLock_Rx(true);
+        SetLock_Rz(true);
+    }
+
+    void FrBodyDOFMask::LockXYPlane() {
+        MakeItFree();
+        SetLock_Z(true);
+        SetLock_Rx(true);
+        SetLock_Ry(true);
+    }
+
+    bool FrBodyDOFMask::GetLock_X() const { return m_xLocked; }
+
+    bool FrBodyDOFMask::GetLock_Y() const { return m_yLocked; }
+
+    bool FrBodyDOFMask::GetLock_Z() const { return m_zLocked; }
+
+    bool FrBodyDOFMask::GetLock_Rx() const { return m_RxLocked; }
+
+    bool FrBodyDOFMask::GetLock_Ry() const { return m_RyLocked; }
+
+    bool FrBodyDOFMask::GetLock_Rz() const { return m_RzLocked; }
+
+    bool FrBodyDOFMask::HasLockedDOF() const {
+        return m_xLocked || m_yLocked || m_zLocked || m_RxLocked || m_RyLocked || m_RzLocked;
+    }
+
+    bool FrBodyDOFMask::IsFree() const {
+        return !HasLockedDOF();
+    }
+
+    void FrBodyDOFMask::MakeItFree() {
+        m_xLocked = false;
+        m_yLocked = false;
+        m_zLocked = false;
+        m_RxLocked = false;
+        m_RyLocked = false;
+        m_RzLocked = false;
+    }
+
+    void FrBodyDOFMask::MakeItLocked() {
+        m_xLocked = true;
+        m_yLocked = true;
+        m_zLocked = true;
+        m_RxLocked = true;
+        m_RyLocked = true;
+        m_RzLocked = true;
+    }
+
+    unsigned int FrBodyDOFMask::GetNbLockedDOF() const {
+        unsigned int nb = 0;
+        if (m_xLocked) nb++;
+        if (m_yLocked) nb++;
+        if (m_zLocked) nb++;
+        if (m_RxLocked) nb++;
+        if (m_RyLocked) nb++;
+        if (m_RzLocked) nb++;
+        return nb;
+    }
+
+    unsigned int FrBodyDOFMask::GetNbFreeDOF() const {
+        return 6 - GetNbLockedDOF();
+    }
+
+    void FrLink_::InitializeWithBodyDOFMask(FrBodyDOFMask *mask) {
+        m_chronoLink->SetMask(mask);
     }
 
 

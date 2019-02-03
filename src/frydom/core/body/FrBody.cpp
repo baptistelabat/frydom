@@ -24,6 +24,7 @@
 #include "frydom/core/common/FrException.h"
 //#include "FrCore.h"
 
+#include "frydom/core/link/links_lib/FrLink.h"
 
 
 namespace frydom {
@@ -166,6 +167,8 @@ namespace frydom {
         m_chronoBody = std::make_shared<internal::_FrBodyBase>(this);
         m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
+
+        m_DOFMask = std::make_unique<FrBodyDOFMask>();
     }
 
     FrOffshoreSystem_* FrBody_::GetSystem() const {
@@ -192,6 +195,12 @@ namespace frydom {
         for (; forceIter != force_end(); forceIter++) {
             (*forceIter)->Initialize();
         }
+
+        // BodyDOF constraints Initialization
+        if (m_DOFMask->HasLockedDOF()) {
+            InitializeLockedDOF();
+        }
+
 
         // TODO : initialiser les logs
 
@@ -280,39 +289,9 @@ namespace frydom {
         m_chronoBody->AddAsset(colorAsset);
     }
 
-
-
-
-    void FrBody_::ConstainDOF(bool cx, bool cy, bool cz, bool crx, bool cry, bool crz) {
-
-//        auto link = std::make_shared<>()
-
-    }
-
-//    void FrBody_::ConstrainInVx(double Vx) {
-//
-//        auto motor = std::make_shared<chrono::ChLinkMotorLinearSpeed>();
-//
-//        auto frame = chrono::ChFrame<double>();
-//
-//
-//        motor->Initialize(m_chronoBody, GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->m_body->m_chronoBody, frame);
-//
-//        m_system->AddLink(motor);
-//
-//
-//        auto rampConst = std::make_shared<FrFunction>(Vx);
-//
-//        motor->SetSpeedFunction(rampConst);
-//
-//
-//
-//    }
-
     double FrBody_::GetMass() const {
         return m_chronoBody->GetMass();
     }
-
 
     FrInertiaTensor_ FrBody_::GetInertiaTensor(FRAME_CONVENTION fc) const {
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
@@ -857,6 +836,7 @@ namespace frydom {
     FrGeographicCoord FrBody_::CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) const {
         return GetSystem()->GetEnvironment()->GetGeographicServices()->CartToGeo(cartPos, fc);
     }
+
     FrGeographicCoord FrBody_::CartToGeo(const Position &cartPos, FRAME_CONVENTION fc) {
         return GetSystem()->GetEnvironment()->GetGeographicServices()->CartToGeo(cartPos, fc);
     }
@@ -865,6 +845,7 @@ namespace frydom {
     void FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc) const {
         cartPos = GeoToCart(geoCoord, fc);
     }
+
     void FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, Position& cartPos, FRAME_CONVENTION fc) {
         cartPos = GeoToCart(geoCoord, fc);
     }
@@ -872,9 +853,45 @@ namespace frydom {
     Position FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) const {
         return GetSystem()->GetEnvironment()->GetGeographicServices()->GeoToCart(geoCoord, fc);
     }
+
     Position FrBody_::GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc) {
         return GetSystem()->GetEnvironment()->GetGeographicServices()->GeoToCart(geoCoord, fc);
     }
+
+    void FrBody_::InitializeLockedDOF() {
+
+        // TODO : voir si n'accepte pas de definir des offset sur les ddl bloques...
+
+        // Getting the markers that enter in the link
+
+        // Body marker placed at the current COG body position  // TODO : voir si on se donne d'autres regles que le COG...
+        auto bodyNode = NewNode();
+
+        auto cogPositionInWorld= GetCOGPositionInWorld(NWU);
+        auto bodyOrientationInWorld = GetQuaternion();
+
+        auto bodyNodeFrameInWorld = FrFrame_(cogPositionInWorld, bodyOrientationInWorld, NWU);
+        bodyNode->SetFrameInWorld(bodyNodeFrameInWorld);
+
+        // World Marker placed at the current COG body position
+        auto worldNode = GetSystem()->GetWorldBody()->NewNode();
+        worldNode->SetFrameInBody(bodyNodeFrameInWorld);
+
+        // Creating the link
+        m_DOFLink = std::make_shared<FrLink_>(worldNode, bodyNode, GetSystem());
+
+        // Initializing the link with the DOFMask
+        m_DOFLink->InitializeWithBodyDOFMask(m_DOFMask.get());
+
+        // Adding the link to the system
+        m_system->AddLink(m_DOFLink);
+
+    }
+
+    FrBodyDOFMask* FrBody_::GetDOFMask() {
+        return m_DOFMask.get();
+    }
+
 
 
 }  // end namespace frydom
