@@ -409,19 +409,21 @@ namespace frydom {
 
     void FrRadiationConvolutionModel_::Initialize() {
 
-        double Te, dt;
         unsigned int N;
-        GetImpulseResponseSize(Te, dt, N);
+        if (m_Te < DBL_EPSILON or m_dt < DBL_EPSILON) GetImpulseResponseSize(m_Te, m_dt, N);
 
         std::cout << "Initialize radiation convolution model" << std::endl;
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
 
-            m_recorder[BEMBody->get()] = FrTimeRecorder_<GeneralizedVelocity>(Te, dt);
+            if (m_recorder.find(BEMBody->get()) == m_recorder.end()) {
+                m_recorder[BEMBody->get()] = FrTimeRecorder_<GeneralizedVelocity>(m_Te, m_dt);
+            }
+
             m_recorder[BEMBody->get()].Initialize();
 
-            auto body = m_HDB->GetBody(BEMBody->get());
-            body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this));
+            //auto body = m_HDB->GetBody(BEMBody->get());
+            //body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this));
 
             std::cout << "Adding radiation force" << std::endl;
         }
@@ -554,6 +556,22 @@ namespace frydom {
 
         return radiationForce;
 
+    }
+
+    void FrRadiationConvolutionModel_::SetImpulseResponseSize(FrBEMBody_ *BEMBody, double Te, double dt) {
+        m_recorder[BEMBody] = FrTimeRecorder_<GeneralizedVelocity>(Te, dt);
+    }
+
+    void FrRadiationConvolutionModel_::SetImpulseResponseSize(FrBody_* body, double Te, double dt) {
+        auto BEMBody = m_HDB->GetBody(body);
+        this->SetImpulseResponseSize(BEMBody, Te, dt);
+    }
+
+    void FrRadiationConvolutionModel_::SetImpulseResponseSize(double Te, double dt) {
+        assert(Te > DBL_EPSILON);
+        assert(dt > DBL_EPSILON);
+        m_Te = Te;
+        m_dt = dt;
     }
 
 

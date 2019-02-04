@@ -56,6 +56,11 @@ int main(int argc, char* argv[]) {
     auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(hdb);
     system.AddPhysicsItem(radiationModel);
 
+    auto radiationForce = std::make_shared<FrRadiationConvolutionForce_>(radiationModel.get());
+    body->AddExternalForce(radiationForce);
+
+    radiationModel->SetImpulseResponseSize(6., 0.01);
+
     // -- Simulation
 
     auto dt = 0.005;

@@ -169,6 +169,8 @@ namespace frydom {
 
     private:
         std::unordered_map<FrBEMBody_*, FrTimeRecorder_<GeneralizedVelocity> > m_recorder;
+        double m_Te = -9.;
+        double m_dt = -9.;
 
     public:
 
@@ -179,6 +181,12 @@ namespace frydom {
         void Update(double time) override;
 
         void StepFinalize() override;
+
+        void SetImpulseResponseSize(FrBEMBody_* BEMBody, double Te, double dt);
+
+        void SetImpulseResponseSize(FrBody_* body, double Te, double dt);
+
+        void SetImpulseResponseSize(double Te, double dt);
 
     private:
 
