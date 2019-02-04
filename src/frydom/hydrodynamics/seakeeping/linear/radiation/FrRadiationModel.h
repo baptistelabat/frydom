@@ -20,6 +20,8 @@
 
 #include "frydom/core/common/FrPhysicsItem.h"
 
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
+
 
 namespace frydom {
 
@@ -28,9 +30,9 @@ namespace frydom {
 
     protected:
 
-        FrHydroDB* m_HDB = nullptr;
+        FrHydroDB *m_HDB = nullptr;
 
-        FrOffshoreSystem* m_system = nullptr;
+        FrOffshoreSystem *m_system = nullptr;
 
         double m_time = -1.;  // Quick hack to force update at first time step...
 
@@ -38,26 +40,26 @@ namespace frydom {
 
         int m_HydroMapIndex = 0; // TODO : patch hydro map multibody
 
-        bool m_speed_dependent =  false;
+        bool m_speed_dependent = false;
 
 
     public:
 
         FrRadiationModel() = default;
 
-        explicit FrRadiationModel(FrHydroDB* HDB, FrOffshoreSystem* system);
+        explicit FrRadiationModel(FrHydroDB *HDB, FrOffshoreSystem *system);
 
         void SetHydroMapIndex(const int id);  // TODO : patch hydro map multibody
 
         int GetHydroMapIndex() const;  // TODO : patch hydro map multibody
 
-        void SetHydroDB(FrHydroDB* HDB);
+        void SetHydroDB(FrHydroDB *HDB);
 
-        FrHydroDB* GetHydroDB() const;
+        FrHydroDB *GetHydroDB() const;
 
-        void SetSystem(FrOffshoreSystem* system);
+        void SetSystem(FrOffshoreSystem *system);
 
-        FrOffshoreSystem* GetSystem() const;
+        FrOffshoreSystem *GetSystem() const;
 
         unsigned int GetNbInteractingBodies() const;
 
@@ -69,10 +71,10 @@ namespace frydom {
 
         virtual void Update(double time) = 0;
 
-        void GetRadiationForce(FrHydroBody* hydroBody, chrono::ChVector<double>& force, chrono::ChVector<double>& moment);
+        void
+        GetRadiationForce(FrHydroBody *hydroBody, chrono::ChVector<double> &force, chrono::ChVector<double> &moment);
 
         void SetSpeedDependent(bool time_dependent = true);
-
 
 
     };
@@ -90,7 +92,7 @@ namespace frydom {
 
     public:
 
-        FrRadiationConvolutionModel(FrHydroDB* HDB, FrOffshoreSystem* system);
+        FrRadiationConvolutionModel(FrHydroDB *HDB, FrOffshoreSystem *system);
 
 
         void Initialize() override;
@@ -99,9 +101,9 @@ namespace frydom {
         void Update(double time) override;
 
         /// Update the convolution term relative to the advance speed of the vessel
-        void UpdateSpeedDependentTerm(std::shared_ptr<FrBEMBody>& bemBody_i,
+        void UpdateSpeedDependentTerm(std::shared_ptr<FrBEMBody> &bemBody_i,
                                       unsigned int iforceBody,
-                                      chrono::ChVectorDynamic<double>& generalizedForce);
+                                      chrono::ChVectorDynamic<double> &generalizedForce);
 
         std::shared_ptr<FrRadiationConvolutionForce> AddRadiationForceToHydroBody(std::shared_ptr<FrHydroBody>);
 
@@ -110,16 +112,21 @@ namespace frydom {
 
     private:
 
-        void GetImpulseResponseSize(double& Te, double &dt, unsigned int& N) const;
+        void GetImpulseResponseSize(double &Te, double &dt, unsigned int &N) const;
 
     };
 
 
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
+    //namespace internal {
+    //    class FrAddedMassBase;
+    //}
+
     // ---------------------------------------------------------------------
     // Radiation model
     // ---------------------------------------------------------------------
+
 
     class FrRadiationModel_ : public FrPrePhysicsItem_ {
 
@@ -127,12 +134,13 @@ namespace frydom {
 
         std::shared_ptr<FrHydroDB_> m_HDB;
         std::unordered_map<FrBEMBody_*, GeneralizedForce> m_radiationForce;
+        std::shared_ptr<internal::FrAddedMassBase> m_addedMass;
 
     public:
 
-        FrRadiationModel_() = default;
+        FrRadiationModel_();
 
-        explicit FrRadiationModel_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {}
+        explicit FrRadiationModel_(std::shared_ptr<FrHydroDB_> HDB);
 
         FrHydroDB_* GetHydroDB() const { return m_HDB.get(); }
 
@@ -161,16 +169,24 @@ namespace frydom {
 
     private:
         std::unordered_map<FrBEMBody_*, FrTimeRecorder_<GeneralizedVelocity> > m_recorder;
+        double m_Te = -9.;
+        double m_dt = -9.;
 
     public:
 
-        FrRadiationConvolutionModel_(std::shared_ptr<FrHydroDB_> HDB) : FrRadiationModel_(HDB) {}
+        FrRadiationConvolutionModel_(std::shared_ptr<FrHydroDB_> HDB);
 
         void Initialize() override;
 
         void Update(double time) override;
 
         void StepFinalize() override;
+
+        void SetImpulseResponseSize(FrBEMBody_* BEMBody, double Te, double dt);
+
+        void SetImpulseResponseSize(FrBody_* body, double Te, double dt);
+
+        void SetImpulseResponseSize(double Te, double dt);
 
     private:
 

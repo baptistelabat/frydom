@@ -76,17 +76,17 @@ namespace frydom {
 
     protected:
 
-        std::shared_ptr<FrRadiationModel_> m_radiationModel;
+        FrRadiationModel_* m_radiationModel;
 
     public:
 
         FrRadiationForce_() = default;
 
-        explicit FrRadiationForce_(const std::shared_ptr<FrRadiationModel_> radiationModel);
+        explicit FrRadiationForce_(FrRadiationModel_* radiationModel);
 
-        void SetRadiationModel(const std::shared_ptr<FrRadiationModel_> radiationModel);
+        void SetRadiationModel(FrRadiationModel_* radiationModel);
 
-        std::shared_ptr<FrRadiationModel_> GetRadiationModel() const;
+        FrRadiationModel_* GetRadiationModel() const;
 
         void StepFinalize() override { }
 
@@ -98,7 +98,7 @@ namespace frydom {
 
     public:
 
-        explicit FrRadiationConvolutionForce_(std::shared_ptr<FrRadiationConvolutionModel_> radiationModel);
+        explicit FrRadiationConvolutionForce_(FrRadiationConvolutionModel_* radiationModel);
 
         void Initialize() override;
 
