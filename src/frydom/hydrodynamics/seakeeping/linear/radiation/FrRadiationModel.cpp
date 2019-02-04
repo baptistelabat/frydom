@@ -413,14 +413,17 @@ namespace frydom {
         unsigned int N;
         GetImpulseResponseSize(Te, dt, N);
 
+        std::cout << "Initialize radiation convolution model" << std::endl;
+
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
 
             m_recorder[BEMBody->get()] = FrTimeRecorder_<GeneralizedVelocity>(Te, dt);
             m_recorder[BEMBody->get()].Initialize();
 
-            auto radiationForce = std::make_shared<FrRadiationConvolutionForce_>(this);
             auto body = m_HDB->GetBody(BEMBody->get());
-            body->AddExternalForce(radiationForce);
+            body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this));
+
+            std::cout << "Adding radiation force" << std::endl;
         }
     }
 

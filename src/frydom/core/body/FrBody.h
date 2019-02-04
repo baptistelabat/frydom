@@ -1154,11 +1154,8 @@ namespace frydom {
 
         friend FrNode_::FrNode_(FrBody_*);
 
-<<<<<<< HEAD
-=======
         friend class internal::FrLinkMotorRotationSpeedBase;
 
->>>>>>> feature/FR_refactoring_open_source
 
     public:
 

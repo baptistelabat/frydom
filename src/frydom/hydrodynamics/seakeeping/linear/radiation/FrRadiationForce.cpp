@@ -85,7 +85,6 @@ namespace frydom {
             : FrRadiationForce_(radiationModel) {}
 
     void FrRadiationConvolutionForce_::Initialize() {
-        m_radiationModel->Initialize();
         FrRadiationForce_::Initialize();
     }
 
