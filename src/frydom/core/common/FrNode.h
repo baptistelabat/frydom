@@ -5,16 +5,13 @@
 #ifndef FRYDOM_FRNODE_H
 #define FRYDOM_FRNODE_H
 
-#include <frydom/core/link/FrLink.h>
-
 #include "chrono/physics/ChMarker.h"
 #include "FrObject.h"
 #include "frydom/core/math/FrVector.h"
 #include "FrRotation.h"
 #include "FrFrame.h"
 
-
-#include "frydom/core/link/FrLink.h"
+#include "frydom/core/link/links_lib/FrLink.h"
 
 
 namespace frydom {
@@ -183,6 +180,9 @@ namespace frydom {
         /// \return the node frame in the body reference frame
         FrFrame_ GetFrameInBody() const;
 
+        /// Get the node frame with respect to the COG in body reference coordinates
+        /// \return the node frame with respect to COG
+        FrFrame_ GetFrameWRT_COG_InBody() const;
 
         void SetFrameInBody(const FrFrame_& frameInBody);
 

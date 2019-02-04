@@ -25,9 +25,6 @@
 #include "flow/FrFlowBase.h"
 
 
-//#include "tidal/FrTidalModel.h"
-//#include "seabed/FrSeabed.h"
-
 namespace frydom {
 
 
@@ -329,6 +326,15 @@ namespace frydom {
         auto lt = GetTimeZone()->GetUTCTime();
         date::year_month_day ymd{date::floor<date::days>(lt)};
         return int(ymd.year());
+    }
+
+    void FrEnvironment_::ShowFreeSurface(bool show) {
+        GetOcean()->GetFreeSurface()->ShowFreeSurface(show);
+    }
+
+    void FrEnvironment_::ShowSeabed(bool show) {
+//        GetOcean()->GetSeabed()->Show
+        // TODO
     }
 
     FrTimeZone *FrEnvironment_::GetTimeZone() const {return m_timeZone.get();}

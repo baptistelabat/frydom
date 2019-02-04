@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     makeItBox(floorBox,100.,100.,2.,1000.);
     floorBox->SetColor(Green);
     floorBox->SetPosition(Position(0.,0.,0.),fc);
-    floorBox->SetBodyFixed(true);
+    floorBox->SetFixedInWorld(true);
 
     // ------------------ Balls ------------------ //
 

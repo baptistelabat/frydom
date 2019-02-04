@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
             // Set its initial position and velocity
             sphere->SetPosition(Position(0., 0., 0.), NWU);
             sphere->SetVelocityInWorldNoRotation(Velocity(0., 20., 0.), NWU);
-            //        sphere->SetBodyFixed(true);
+            //        sphere->SetFixedInWorld(true);
 
             // create the nodes from the sphere and the world body.
             auto sphereNode = sphere->NewNode();

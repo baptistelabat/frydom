@@ -354,6 +354,15 @@ namespace frydom {
         /// \return year
         int GetYear() const;
 
+        //---------------------------- Environment assets hiding helpers ---------------------------- //
+
+        /// (Un)show the free surface
+        void ShowFreeSurface(bool show);
+
+        /// (Un)show the seabed
+        void ShowSeabed(bool show);
+
+
         //---------------------------- Update-Initialize-StepFinalize ---------------------------- //
 
         /// Update the state of the environment

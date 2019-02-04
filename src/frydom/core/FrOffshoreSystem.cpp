@@ -7,7 +7,7 @@
 #include "FrOffshoreSystem.h"
 
 #include "frydom/core/body/FrBody.h"
-#include "frydom/core/link/FrLink.h"
+#include "frydom/core/link/links_lib/FrLink.h"
 #include "frydom/core/common/FrPhysicsItem.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
@@ -530,6 +530,7 @@ namespace frydom {
 //        }
 
 
+        m_isInitialized = true;
 
     }
 
@@ -854,14 +855,17 @@ namespace frydom {
     }
 
     bool FrOffshoreSystem_::AdvanceOneStep(double stepSize) {
+        CheckInitialize();
         return (bool)m_chronoSystem->DoStepDynamics(stepSize);
     }
 
     bool FrOffshoreSystem_::AdvanceTo(double nextTime) {
+        CheckInitialize();
         return m_chronoSystem->DoFrameDynamics(nextTime);
     }
 
     bool FrOffshoreSystem_::RunDynamics(double frameStep) {
+        CheckInitialize();
         m_chronoSystem->Setup();
         m_chronoSystem->DoAssembly(chrono::AssemblyLevel::POSITION |
                                    chrono::AssemblyLevel::VELOCITY |
@@ -877,7 +881,7 @@ namespace frydom {
 
     void FrOffshoreSystem_::CreateWorldBody() {
         m_worldBody = std::make_shared<FrBody_>();
-        m_worldBody->SetBodyFixed(true);
+        m_worldBody->SetFixedInWorld(true);
         m_worldBody->SetName("WorldBody");
         AddBody(m_worldBody);
     }
@@ -915,7 +919,7 @@ namespace frydom {
 
     void FrOffshoreSystem_::RunInViewer(double endTime, double dist, bool recordVideo) {
 
-        Initialize();  // So that system is automatically initialized when run in viewer mode
+        CheckInitialize();
 
         FrIrrApp_ app(m_chronoSystem.get(), dist);
 
@@ -939,6 +943,10 @@ namespace frydom {
 
     void FrOffshoreSystem_::AddAsset(std::shared_ptr<chrono::ChAsset> asset) {
         m_chronoSystem->AddAsset(std::move(asset));
+    }
+
+    void FrOffshoreSystem_::CheckInitialize() {
+        if (!m_isInitialized) Initialize();
     }
 
 

@@ -16,26 +16,33 @@ namespace frydom {
         m_chronoLink->SetLinkType(PRISMATIC);
     }
 
-    void FrPrismaticLink::SetSpringDamper(double stiffness, double dampingCoeff, double restLength) {
-
+    void FrPrismaticLink::SetSpringDamper(double stiffness, double damping) {
+        m_stiffness = stiffness;
+        m_damping = damping;
     }
 
-    Direction FrPrismaticLink::GetLinkDirectionInWorld() const {
-//        m_chronoLink->GetLinkRelativeCoords();
-        // TODO : Recuperer le frame du node1 puis demander la
+    void FrPrismaticLink::SetRestLength(double restLength) {
+        m_frame2WRT1_reference.SetZ(restLength, NWU); // TODO : voir si on parametre le FRAME_CONVENTION...
+    }
 
+    double FrPrismaticLink::GetRestLength() const {
+        return m_frame2WRT1_reference.GetZ(NWU); // TODO : voir si on parametre le FRAME_CONVENTION...
+    }
+
+    const Direction FrPrismaticLink::GetLinkDirectionInWorld(FRAME_CONVENTION fc) const {
+        return GetNode1()->GetFrameInWorld().GetZAxisInParent(fc);
     }
 
     double FrPrismaticLink::GetLinkPosition() const {
-        return m_chronoLink->GetRelativePosition()[2];
+        return GetMarker2PositionWRTMarker1(NWU).GetZ() - GetRestLength(); // TODO : voir si on parametre le FRAME_CONVENTION...
     }
 
     double FrPrismaticLink::GetLinkVelocity() const {
-        return m_chronoLink->GetRelativeVelocity()[2];
+        return GetVelocityOfMarker2WRTMarker1(NWU).GetVz(); // TODO : voir si on parametre le FRAME_CONVENTION...
     }
 
     double FrPrismaticLink::GetLinkAcceleration() const {
-        return m_chronoLink->GetRelativeAcceleration()[2];
+        return GetAccelerationOfMarker2WRTMarker1(NWU).GetAccZ(); // TODO : voir si on parametre le FRAME_CONVENTION...
     }
 
     void FrPrismaticLink::Initialize() {
@@ -45,20 +52,12 @@ namespace frydom {
     void FrPrismaticLink::Update(double time) {
         FrLink_::Update(time); // It is mandatory to invoke this before all update operations from frydom
 
-        std::cout << m_chronoLink->GetRelativeAcceleration() << std::endl;
+        Force force;
+        force.GetFz() = - m_stiffness * GetLinkPosition() - m_damping * GetLinkVelocity();
 
-        // Position relative entre marqueurs
-//        m_chronoLink->GetLinkRelativeCoords()
-//        m_node1-
-//        m_node1->GetZAxisInWorld();
+        SetLinkForceOnBody2InFrame2AtOrigin2(force, Torque());
 
-        // TODO : continuer a tester !!!
-
-
-
-
-
-
+//        std::cout << GetLinkPower() << std::endl;
 
     }
 

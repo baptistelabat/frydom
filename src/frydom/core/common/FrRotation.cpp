@@ -246,7 +246,7 @@ namespace frydom {
         m_frQuaternion.Set(axis, angleRAD, fc);
     }
 
-    void FrRotation_::GetAxisAngle(Direction &axis, double &angleRAD, FRAME_CONVENTION fc) {
+    void FrRotation_::GetAxisAngle(Direction &axis, double &angleRAD, FRAME_CONVENTION fc) const {
         m_frQuaternion.Get(axis, angleRAD, fc);
     }
 
@@ -255,9 +255,15 @@ namespace frydom {
         GetAxisAngle(axis, angle, fc);
     }
 
-    void FrRotation_::GetAngle(double &angle) {
+    void FrRotation_::GetAngle(double &angle) const {
         Direction axis;
         GetAxisAngle(axis, angle, NWU);
+    }
+
+    double FrRotation_::GetAngle() const {
+        double angle;
+        GetAngle(angle);
+        return angle;
     }
 
     mathutils::Matrix33<double> FrRotation_::GetRotationMatrix() const {
