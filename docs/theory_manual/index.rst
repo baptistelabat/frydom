@@ -62,6 +62,15 @@ Cables
 
    source/cable/index
 
+Benchmark 
+*********
+
+.. toctree::
+    :maxdepth: 2
+
+    source/benchmark/index
+
+
 Indices and tables
 ******************
 

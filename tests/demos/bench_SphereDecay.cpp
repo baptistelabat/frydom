@@ -71,11 +71,11 @@ int main(int argc, char* argv[]) {
 
     // ##CC
     std::ofstream myfile;
-    myfile.open("sphere_position_allforce_new.csv");
+    myfile.open("sphere_position.csv");
     myfile << "time;X;Y;Z" << std::endl;
     // ##CC
 
-    while (time < 20.) {
+    while (time < 40.) {
 
         time += dt;
         system.AdvanceTo(time);
