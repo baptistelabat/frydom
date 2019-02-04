@@ -29,8 +29,6 @@ namespace frydom {
 
             void Initialize();
 
-            //void Compute_fb() override;
-
             void Compute_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
 
             void Compute_inc_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
@@ -45,8 +43,6 @@ namespace frydom {
             void Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) override;
 
             int GetBodyOffset(FrBody_* body) const;
-
-            //void SetOffset(int moff) override { offset = 0; }
 
         };
 

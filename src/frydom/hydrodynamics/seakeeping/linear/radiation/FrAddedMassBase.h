@@ -14,8 +14,6 @@ namespace frydom {
 
     namespace internal {
 
-        // forward declaration
-        //class FrBEMBody_;
         class FrVariablesAddedMassBase;
 
         class FrAddedMassBase : public _FrPhysicsItemBase {
@@ -62,17 +60,9 @@ namespace frydom {
 
             void VariablesFbIncrementMq() override;
 
-            // IntStateGatherAcceleration TODO : ??//
-            // IntStateScatterAcceleration TODO : ??//
-            // IntStateIncrement TODO : ??//
-
             int GetBodyOffset(FrBody_* body) const;
 
             FrRadiationModel_* GetRadiationModel() const { return m_frydomRadiationModel; }
-
-            //void SetSystem(FrOffshoreSystem_* system);
-            //void SetSystem(chrono::ChSystem* system);
-
         };
     }
 }

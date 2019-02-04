@@ -174,7 +174,7 @@ namespace frydom {
 
     public:
 
-        FrRadiationConvolutionModel_(std::shared_ptr<FrHydroDB_> HDB) : FrRadiationModel_(HDB) {}
+        FrRadiationConvolutionModel_(std::shared_ptr<FrHydroDB_> HDB);
 
         void Initialize() override;
 

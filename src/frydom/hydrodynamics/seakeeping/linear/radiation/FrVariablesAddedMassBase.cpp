@@ -20,6 +20,8 @@ namespace frydom {
 
         void FrVariablesAddedMassBase::Initialize() {
 
+            // TODO : void s'il est possible d'éviter l'override des variables de FrBody
+
             auto HDB = m_addedMassBase->GetRadiationModel()->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
@@ -27,30 +29,18 @@ namespace frydom {
                 auto body = HDB->GetBody(BEMBody->get());
 
                 mathutils::Matrix66<double> generalizedMass = body->GetInertiaTensor(NWU).GetMatrix();
-                mathutils::Matrix66<double> invGeneralizedMass = generalizedMass;
-                invGeneralizedMass.Inverse();
-
-                generalizedMass.print("Generalize Mass");
-                invGeneralizedMass.print("Inverse Generalized Mass");
+                //mathutils::Matrix66<double> invGeneralizedMass = generalizedMass;
+                //invGeneralizedMass.Inverse();
 
                 mathutils::Matrix66<double> infiniteAddedMass = BEMBody->get()->GetSelfInfiniteAddedMass();
-                mathutils::Matrix66<double> invInfiniteAddedMass = infiniteAddedMass.inverse();
-
-                infiniteAddedMass.print("Infinite added Mass");
-                invInfiniteAddedMass.print("Inverse Infinite Added mass");
+                //mathutils::Matrix66<double> invInfiniteAddedMass = infiniteAddedMass.inverse();
 
                 mathutils::Matrix66<double> sumMatrixMass = generalizedMass + infiniteAddedMass;
                 mathutils::Matrix66<double> invSumMatrixMass = sumMatrixMass;
                 invSumMatrixMass.Inverse();
 
-                sumMatrixMass.print("Sum of the mass matrix");
-                invSumMatrixMass.print("Inverse of the sum mass matrix");
-
-                // ##CC FIXME : test debug
                 //m_invAddedMassCorrection[BEMBody->get()] = - invGeneralizedMass * infiniteAddedMass * invSumMatrixMass;
                 m_invAddedMassCorrection[BEMBody->get()] = invSumMatrixMass;
-
-                m_invAddedMassCorrection[BEMBody->get()].print("Correction matrix");
             }
         }
 
