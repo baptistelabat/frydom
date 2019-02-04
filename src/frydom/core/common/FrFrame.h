@@ -323,11 +323,28 @@ namespace frydom {
         /// \return projected frame
         FrFrame_ ProjectToXYPlane(FRAME_CONVENTION fc) const;
 
+        /// Get the frame X axis expressed in the parent frame
+        /// \return the X Direction
+        Direction GetXAxisInParent(FRAME_CONVENTION fc) const;
+
+        /// Get the frame Y axis expressed in the parent frame
+        /// \return the Y Direction
+        Direction GetYAxisInParent(FRAME_CONVENTION fc) const;
+
+        /// Get the frame Z axis expressed in the parent frame
+        /// \return the Z Direction
+        Direction GetZAxisInParent(FRAME_CONVENTION fc) const;
+
+
+        /// Projects a vector expresseed in parent frame into the current frame coordinates
+        /// \return the projected vector
         template <class Vector>
         Vector ProjectVectorParentInFrame(const Vector& parentVector, FRAME_CONVENTION fc) const {  // FIXME : et si le vecteur place en entree est en NED ????
             return GetQuaternion().GetInverse().Rotate<Vector>(parentVector, fc);
         };
 
+        /// Projects a vector expressed in the current frame into the parent frame coordinates
+        /// \return the projected vector
         template <class Vector>
         Vector ProjectVectorFrameInParent(const Vector &frameVector, FRAME_CONVENTION fc) const {  // FIXME : et si le vecteur place en entree est en NED ????
             return GetQuaternion().Rotate<Vector>(frameVector, fc);
@@ -350,40 +367,38 @@ namespace frydom {
 
 
     namespace internal {
+        /// Here we define some conversion functions between
 
-        inline FrFrame_ Ch2FrFrame(const chrono::ChFrame<double>& chFrame) {  // OK
+        /// Converts a ChFrame into a FrFrame_
+        inline FrFrame_ ChFrame2FrFrame(const chrono::ChFrame<double> &chFrame) {  // OK
             return FrFrame_(ChVectorToVector3d<Position>(chFrame.GetPos()),  // In NWU
                             Ch2FrQuaternion(chFrame.GetRot()), // In NWU
                             NWU);
         }
 
-        inline FrFrame_ Ch2FrFrame(const chrono::ChCoordsys<double>& chCoordsys) {
-            return FrFrame_(
-                    ChVectorToVector3d<Position>(chCoordsys.pos), // In NWU
-                    Ch2FrQuaternion(chCoordsys.rot),
-                    NWU
-                    );
-        }
-
-        inline chrono::ChFrame<double> Fr2ChFrame(const FrFrame_& frFrame) {
+        /// Converts a FrFrame_ into a ChFrame
+        inline chrono::ChFrame<double> FrFrame2ChFrame(const FrFrame_ &frFrame) {
             auto pos = Vector3dToChVector(frFrame.GetPosition(NWU));
             auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
             return chrono::ChFrame<double>(pos, quat);
         }
 
-        inline chrono::ChCoordsys<double> Fr2ChCoordsys(const FrFrame_& frFrame) {
+        /// Converts a FrFrame into a ChCoordSys
+        inline chrono::ChCoordsys<double> FrFrame2ChCoordsys(const FrFrame_ &frFrame) {
             auto pos = Vector3dToChVector(frFrame.GetPosition(NWU));
             auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
             return chrono::ChCoordsys<double>(pos, quat);
         }
 
-        inline FrFrame_ ChCoordsys2FrFrame(const chrono::ChCoordsys<double> &coordSys) {
+        /// Converts a ChCoordsys to a FrFrame
+        inline FrFrame_ ChCoordsys2FrFrame(const chrono::ChCoordsys<double> &chCoordsys) {
             return FrFrame_(
-                    internal::ChVectorToVector3d<Position>(coordSys.pos),
-                    internal::Ch2FrQuaternion(coordSys.rot),
+                    ChVectorToVector3d<Position>(chCoordsys.pos), // In NWU
+                    Ch2FrQuaternion(chCoordsys.rot),
                     NWU
-                    );
+            );
         }
+
 
     }  // end namespace internal
 

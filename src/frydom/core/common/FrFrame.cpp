@@ -370,23 +370,35 @@ namespace frydom {
     }
 
     FrFrame_ FrFrame_::GetInverse() const {  // OK
-        return internal::Ch2FrFrame(m_chronoFrame.GetInverse());
+        return internal::ChFrame2FrFrame(m_chronoFrame.GetInverse());
     }
 
     FrFrame_ FrFrame_::ProjectToXYPlane(FRAME_CONVENTION fc) const {
 
-        Direction xaxis = this->GetRotation().GetXAxis(fc);
+        Direction xaxis = GetXAxisInParent(fc);
         xaxis.z() = 0.;
         xaxis.normalize();
 
-        Direction yaxis = this->GetRotation().GetYAxis(fc);
+        Direction yaxis = GetYAxisInParent(fc);
         yaxis.z() = 0.;
         yaxis.normalize();
 
         Direction zaxis = Direction(0., 0., 1.);
-        Position origin = this->GetPosition(fc);
+        Position origin = GetPosition(fc);
 
         return FrFrame_(origin, FrRotation_(xaxis, yaxis, zaxis, fc), fc);
+    }
+
+    Direction FrFrame_::GetXAxisInParent(FRAME_CONVENTION fc) const {
+        return GetQuaternion().GetXAxis(fc);
+    }
+
+    Direction FrFrame_::GetYAxisInParent(FRAME_CONVENTION fc) const {
+        return GetQuaternion().GetYAxis(fc);
+    }
+
+    Direction FrFrame_::GetZAxisInParent(FRAME_CONVENTION fc) const {
+        return GetQuaternion().GetZAxis(fc);
     }
 
 

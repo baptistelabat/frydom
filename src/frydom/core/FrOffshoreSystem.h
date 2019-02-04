@@ -335,6 +335,8 @@ namespace frydom {
 //        using CatenaryCableContainer = std::vector<std::shared_ptr<FrCatway>>;
 //        CatenaryCableContainer m_catenaryCables;
 
+        bool m_isInitialized = false;
+
 
     public:
 
@@ -717,7 +719,7 @@ namespace frydom {
 //        void AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics);
 
 //        friend class FrIrrApp_;
-
+        void CheckInitialize();
 
 
 
