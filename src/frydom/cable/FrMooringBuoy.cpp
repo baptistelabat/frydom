@@ -44,7 +44,7 @@ namespace frydom {
         collisionModel->ClearModel();
         collisionModel->AddSphere(radius, chrono::ChVector<double>());  // TODO: permettre de specifier les coords relatives dans le modele !!
         collisionModel->BuildModel();
-        SetCollide(true);  // A retirer ?
+        AllowCollision(true);  // A retirer ?
         SetSmoothContact();  // Smooth contact by default
 
         // Asset

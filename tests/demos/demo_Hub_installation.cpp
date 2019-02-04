@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
     makeItBox(barge, 25., 15., 3., (1137.6-180.6)*1000);
 //    barge->AddMeshAsset("Barge.obj");
     barge->SetColor(Yellow);
-    barge->SetBodyFixed(true); //FIXME : delete this once HydroDB is added.
+    barge->SetFixedInWorld(true); //FIXME : delete this once HydroDB is added.
 
 //    barge->SetInertiaTensor(FrInertiaTensor_((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., FrFrame_(), NWU));
 
