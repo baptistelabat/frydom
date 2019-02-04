@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
         // ##CC
     }
 
-    //myfile.close();
+    myfile.close();
 
     std::cout << "============================== End ===================================== " << std::endl;
 
