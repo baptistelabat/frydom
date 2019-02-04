@@ -52,13 +52,17 @@ namespace frydom {
     void FrPrismaticLink::Update(double time) {
         FrLink_::Update(time); // It is mandatory to invoke this before all update operations from frydom
 
+        // Update total link measure
+
+        UpdateForces(time);
+
+    }
+
+    void FrPrismaticLink::UpdateForces(double time) {
         Force force;
         force.GetFz() = - m_stiffness * GetLinkPosition() - m_damping * GetLinkVelocity();
 
         SetLinkForceOnBody2InFrame2AtOrigin2(force, Torque());
-
-//        std::cout << GetLinkPower() << std::endl;
-
     }
 
     void FrPrismaticLink::StepFinalize() {

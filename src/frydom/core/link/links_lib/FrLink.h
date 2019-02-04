@@ -311,6 +311,9 @@ namespace frydom {
 //        /// Set the link torque expressed in marker 1 frame and applied at marker 1
 //        void SetLinkTorqueOtMarker2InFrame2AtOrigin2(const Torque &torque);
 
+        virtual void UpdateCache();
+
+
     };
 
 

@@ -48,6 +48,8 @@ namespace frydom {
         void StepFinalize() override;
 
 
+        void UpdateForces(double time);
+
     };
 
 

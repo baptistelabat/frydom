@@ -48,7 +48,7 @@ int main() {
 
     auto prismaticLink = make_prismatic_link(m1, m2, &system);
 
-    prismaticLink->SetSpringDamper(2e3, 1e2);
+    prismaticLink->SetSpringDamper(2e3, 1e4);
     prismaticLink->SetRestLength(0);
 
 
@@ -57,20 +57,28 @@ int main() {
     makeItBox(body3, 2, 2, 6, 500);
     body3->AllowCollision(false);
     body3->SetColor(Red);
-    body3->Rotate(FrRotation_(Direction(0, 1, 0), 90*DEG2RAD, NWU));
+//    body3->Rotate(FrRotation_(Direction(0, 1, 0), 90*DEG2RAD, NWU));
+    body3->TranslateInWorld(-10, 5, -1, NWU);
+//    body3->TranslateInWorld(0, 5, -1, NWU);
+    body3->SetMaxRotationSpeed(1*RAD2DEG); // FIXME : ne semble pas etre pris en compte...
+
 
 
     auto m3 = body1->NewNode();
     m3->TranslateInBody(-10, 5, -1, NWU);
-    m3->RotateAroundYInBody(90*DEG2RAD, NWU);
+//    m3->RotateAroundYInBody(90*DEG2RAD, NWU);
 
     auto m4 = body3->NewNode();
 //    m4->TranslateInBody()
 
 
     auto revoluteLink = make_revolute_link(m3, m4, &system);
-    revoluteLink->SetSpringDamper(1e3, 1e3);
+//    revoluteLink->SetSpringDamper(1e2, 1e1);
+    revoluteLink->SetSpringDamper(1e3, 0);
+//    revoluteLink->SetSpringDamper(1e4, 1e5);
     revoluteLink->SetRestAngle(45*DEG2RAD);
+
+
 
 
     system.SetTimeStep(0.01);

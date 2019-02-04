@@ -677,15 +677,28 @@ namespace frydom {
         /// which are updated
         /// \param worldTranslation translation to be applied to the body, expressed in world reference frame
         /// \param fc frame convention (NED/NWU)
-        void TranslateInWorld(const Position& worldTranslation, FRAME_CONVENTION fc);
+        void TranslateInWorld(const Translation& worldTranslation, FRAME_CONVENTION fc);
+
+        /// Translate the body along a translation vector whose coordinates are given in the world frame
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        /// \param worldTranslation translation to be applied to the body, expressed in world reference frame
+        /// \param fc frame convention (NED/NWU)
+        void TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc);
 
         /// Translate the body along a translation vector whose coordinates are given in the body frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param bodyTranslation translation to be applied to the body, expressed in body reference frame
         /// \param fc frame convention (NED/NWU)
-        void TranslateInBody(const Position& bodyTranslation, FRAME_CONVENTION fc);
+        void TranslateInBody(const Translation& bodyTranslation, FRAME_CONVENTION fc);
 
+        /// Translate the body along a translation vector whose coordinates are given in the body frame
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        /// \param bodyTranslation translation to be applied to the body, expressed in body reference frame
+        /// \param fc frame convention (NED/NWU)
+        void TranslateInBody(double x, double y, double z, FRAME_CONVENTION fc);
 
         /// Rotate the body with respect to its current orientation in world using a rotation object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)

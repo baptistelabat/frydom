@@ -483,28 +483,29 @@ namespace frydom {
         // Initializing environment before bodies
         m_environment->Initialize();
 
-        for (auto& item : m_PrePhysicsList) {
-            item->SetupInitial();
-        }
+//        for (auto& item : m_PrePhysicsList) {
+//            item->SetupInitial();
+//        }
+//
+//        for (auto& item : m_bodyList){
+//            item->SetupInitial();
+//        }
+//
+//        for (auto& item : m_MidPhysicsList) {
+//            item->SetupInitial();
+//        }
+//
+//        for (auto& item : m_linkList) {
+//            item->SetupInitial();
+//        }
+//
+//        for (auto& item : m_PostPhysicsList) {
+//            item->SetupInitial();
+//        }
 
-        for (auto& item : m_bodyList){
-            item->SetupInitial();
-        }
+//        m_chronoSystem->Update();
 
-        for (auto& item : m_MidPhysicsList) {
-            item->SetupInitial();
-        }
-
-        for (auto& item : m_linkList) {
-            item->SetupInitial();
-        }
-
-        for (auto& item : m_PostPhysicsList) {
-            item->SetupInitial();
-        }
-
-        m_chronoSystem->Update();
-
+        m_chronoSystem->SetupInitial();
 
 
 //        // Initializing embedded chrono system
@@ -536,6 +537,17 @@ namespace frydom {
 
     void FrOffshoreSystem_::StepFinalize() {
         m_environment->StepFinalize();
+
+        for (auto& body : m_bodyList) {
+            body->StepFinalize();
+        }
+
+        for (auto& link : m_linkList) {
+            link->StepFinalize();
+        }
+
+        // TODO : faire aussi pour les physicsItems !
+
     }
 
     void FrOffshoreSystem_::SetSystemType(SYSTEM_TYPE type, bool checkCompat) {

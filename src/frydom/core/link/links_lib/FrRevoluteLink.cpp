@@ -45,10 +45,11 @@ namespace frydom {
 
     void FrRevoluteLink::SetRestAngle(double restAngle) {
         m_frame2WRT1_reference.SetRotZ_RADIANS(restAngle, NWU);
+        UpdateCache();
     }
 
     double FrRevoluteLink::GetRestAngle() const {
-        return m_frame2WRT1_reference.GetRotation().GetAngle();
+        return m_restAngle;
     }
 
     const Direction FrRevoluteLink::GetLinkAxisInWorld(FRAME_CONVENTION fc) const {
@@ -68,15 +69,15 @@ namespace frydom {
          * ChLinkMotorRotation::Update met en place le tracking !!! --> recopier la maniere de faire :)
          */
 
-        return GetMarker2OrientationWRTMarker1().GetAngle() - GetRestAngle();
+        return m_totalLinkAngle - GetRestAngle();
     }
 
     double FrRevoluteLink::GetLinkAngularVelocity() const {
-        return GetAngularVelocityOfMarker2WRTMarker1(NWU).GetWz();
+        return m_linkAngularVelocity;
     }
 
     double FrRevoluteLink::GetLinkAngularAcceleration() const {
-        return GetAngularAccelerationOfMarker2WRTMarker1(NWU).GetWzp();
+        return m_linkAngularAcceleration;
     }
 
     void FrRevoluteLink::Initialize() {
@@ -91,24 +92,94 @@ namespace frydom {
     }
 
     void FrRevoluteLink::Update(double time) {
+
         FrLink_::Update(time);
 
+        // Update total angle measure (not on 0-2pi but continuous)
+        double lastTotalAngle = m_totalLinkAngle;
+        double lastRelativeAngle = remainder(lastTotalAngle, MU_2_PI);
+        double lastTurn = lastTotalAngle - lastRelativeAngle;
+
+        auto currentRotation = GetMarker2OrientationWRTMarker1().GetRotationVector(NWU);
+
+
+//        double newAngle = remainder(GetMarker2OrientationWRTMarker1().GetAngle(), MU_2_PI); // FIXME : ne serait-on pas plus secure si on ne prenait que la composante suicant z ?
+        // FIXME : cette partie ne fonctionne pas du tout !!!!!! --> En fait, on ne sait pas ce que renvoie le GetAngle() ci-dessus !!!
+
+        double newAngle = mathutils::Normalize__PI_PI(currentRotation[2]);
+
+        m_totalLinkAngle = lastTurn + newAngle;
+
+        // Essai de virer ces 2 clauses qui foutent la merde...
+//        if (fabs(newAngle + MU_2_PI - lastTotalAngle) < fabs(newAngle - lastTotalAngle))
+//            m_totalLinkAngle = lastTurn + newAngle + MU_2_PI;
+//        if (fabs(newAngle - MU_2_PI - lastTotalAngle) < fabs(newAngle - lastTotalAngle))
+//            m_totalLinkAngle = lastTurn + newAngle - MU_2_PI;
+
+//        std::cout << "Total angle = " << m_totalLinkAngle * RAD2DEG << std::endl;
+
+        m_linkAngularVelocity = GetAngularVelocityOfMarker2WRTMarker1(NWU).GetWz();
+        m_linkAngularAcceleration = GetAngularAccelerationOfMarker2WRTMarker1(NWU).GetWzp();
+
+        UpdateForces(time);
+
+    }
+
+    void FrRevoluteLink::UpdateForces(double time) {
         Torque torque;
         torque.GetMz() = -m_stiffness * GetLinkAngle() - m_damping * GetLinkAngularVelocity();
 
         SetLinkForceOnBody2InFrame2AtOrigin2(Force(), torque);
+
+
+
+
+
     }
 
     void FrRevoluteLink::StepFinalize() {
+        std::cout << "Total angle = " << GetLinkAngle() * RAD2DEG << std::endl;
+        std::cout << "Torque = " << GetLinkTorqueOnBody2InFrame1AtOrigin2(NWU).GetMz() << std::endl;
+        std::cout << "LinkVelocity = " << GetLinkAngularVelocity() << std::endl;
 
+        std::cout << std::endl;
     }
 
 
     void FrRevoluteLink::MotorizeSpeed() {
         m_speedMotor = std::make_shared<internal::FrLinkMotorRotationSpeedBase>(this);
 //        m_system->Add(m_speedMotor);
+        // TODO : terminer
+
     }
 
+    int FrRevoluteLink::GetNbTurns() const {
+        return int(GetTurnAngle() / MU_2_PI);
+    }
+
+    double FrRevoluteLink::GetTurnAngle() const {
+        return m_totalLinkAngle - remainder(m_totalLinkAngle, MU_2_PI);
+    }
+
+
+
+//    double FrRevoluteLink::GetAngleFromX() const {
+//
+//
+//
+//        GetMarker2OrientationWRTMarker1().GetAngle()
+//
+//
+//
+//
+//
+//    }
+
+
+    void FrRevoluteLink::UpdateCache() {
+        // Updating the rest angle
+        m_restAngle = m_frame2WRT1_reference.GetRotation().GetAngle();
+    }
 
 
     std::shared_ptr<FrRevoluteLink>
@@ -117,6 +188,8 @@ namespace frydom {
         system->AddLink(link);
         return link;
     }
+
+
 
 
 

@@ -165,7 +165,8 @@ namespace frydom {
     }
 
     void FrLink_::SetThisConfigurationAsReference() {
-        m_frame2WRT1_reference = m_chronoLink->c_frame2WRT1;
+        m_frame2WRT1_reference = m_chronoLink->c_frame2WRT1;  // FIXME : cette methode devrait trigger l'update des caches de classes derivees
+        UpdateCache();
     }
 
 
@@ -457,6 +458,10 @@ namespace frydom {
     void FrLink_::InitializeWithBodyDOFMask(FrBodyDOFMask *mask) {
         m_chronoLink->SetMask(mask);
     }
+
+    void FrLink_::UpdateCache() {}
+
+
 
 
 }  // end namespace frydom

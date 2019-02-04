@@ -250,6 +250,13 @@ namespace frydom {
         m_frQuaternion.Get(axis, angleRAD, fc);
     }
 
+    Vector3d<double> FrRotation_::GetRotationVector(FRAME_CONVENTION fc) const {
+        Direction axis;
+        double angle;
+        GetAxisAngle(axis, angle, fc);
+        return axis * angle;
+    }
+
     void FrRotation_::GetAxis(Direction &axis, FRAME_CONVENTION fc) {
         double angle=0.;
         GetAxisAngle(axis, angle, fc);

@@ -49,6 +49,13 @@ namespace frydom {
         double m_stiffness = 0.; ///> Link rotational stiffness (N)
         double m_damping = 0.;   ///> Link rotational damping (Nm/s)
 
+
+        double m_restAngle = 0.;
+
+        double m_totalLinkAngle = 0.;  /// The total angle of the link, accounting for numti-turn but not on rest angle
+        double m_linkAngularVelocity = 0.;
+        double m_linkAngularAcceleration = 0.;
+
         std::shared_ptr<internal::FrLinkMotorRotationSpeedBase> m_speedMotor;
 
 
@@ -60,11 +67,15 @@ namespace frydom {
 
         void SetRestAngle(double restAngle);
 
-        double GetRestAngle() const;
+
 
         const Direction GetLinkAxisInWorld(FRAME_CONVENTION fc) const;
 
+        /// Get the current link rotation in rad, including errors as well as rest angle etc.
+        /// It keeps track of multiple turns
         double GetLinkAngle() const;
+
+        double GetRestAngle() const;
 
         double GetLinkAngularVelocity() const;
 
@@ -76,11 +87,26 @@ namespace frydom {
 
         void StepFinalize() override;
 
+        /// Compute the link force. Here this is essentially a torque with a default spring damper.
+        void UpdateForces(double time); // TODO : mettre en abstrait dans FrLink_ pour que toutes les classes possedent ca
 
         void MotorizeSpeed();
 
+        int GetNbTurns() const;
+
 
     private:
+
+        double GetTurnAngle() const;
+
+        void UpdateCache() override;
+
+//        /// Get the angle from the X axis. Does not refer to the rest angle. It keeps track of the number of turns
+//        double GetAngleFromX() const;
+
+
+
+
 
     };
 

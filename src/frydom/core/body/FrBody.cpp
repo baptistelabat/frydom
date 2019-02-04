@@ -578,18 +578,26 @@ namespace frydom {
         TranslateInWorld(translation, fc);
     }
 
-    void FrBody_::TranslateInWorld(const Position &worldTranslation, FRAME_CONVENTION fc) {
+    void FrBody_::TranslateInWorld(const Translation &worldTranslation, FRAME_CONVENTION fc) {
         auto refFrame = GetFrame();
         refFrame.SetPosition(refFrame.GetPosition(fc) + worldTranslation, fc);
         m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(refFrame));
         m_chronoBody->UpdateAfterMove();
     }
 
-    void FrBody_::TranslateInBody(const Position &bodyTranslation, FRAME_CONVENTION fc) {
+    void FrBody_::TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc) {
+        TranslateInWorld(Translation(x, y, z), fc);
+    }
+
+    void FrBody_::TranslateInBody(const Translation &bodyTranslation, FRAME_CONVENTION fc) {
         auto refFrame = GetFrame();
         refFrame.SetPosition(refFrame.GetPosition(fc) + ProjectVectorInWorld<Position>(bodyTranslation, fc), fc);
         m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(refFrame));
         m_chronoBody->UpdateAfterMove();
+    }
+
+    void FrBody_::TranslateInBody(double x, double y, double z, FRAME_CONVENTION fc) {
+        TranslateInBody(Translation(x, y, z), fc);
     }
 
     void FrBody_::Rotate(const FrRotation_ &relRotation) {
