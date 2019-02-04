@@ -374,6 +374,7 @@ namespace frydom {
     }
 
     void FrRadiationModel_::Initialize() {
+
     }
 
     FrHydroMapper_* FrRadiationModel_::GetMapper() const {
@@ -413,8 +414,13 @@ namespace frydom {
         GetImpulseResponseSize(Te, dt, N);
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
+
             m_recorder[BEMBody->get()] = FrTimeRecorder_<GeneralizedVelocity>(Te, dt);
             m_recorder[BEMBody->get()].Initialize();
+
+            auto radiationForce = std::make_shared<FrRadiationConvolutionForce_>(this);
+            auto body = m_HDB->GetBody(BEMBody->get());
+            body->AddExternalForce(radiationForce);
         }
     }
 

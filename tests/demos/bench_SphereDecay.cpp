@@ -56,10 +56,6 @@ int main(int argc, char* argv[]) {
     auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(hdb);
     system.AddPhysicsItem(radiationModel);
 
-    auto radiationForce = std::make_shared<FrRadiationConvolutionForce_>(radiationModel);
-
-    body->AddExternalForce(radiationForce);
-
     // -- Simulation
 
     auto dt = 0.005;
@@ -71,15 +67,18 @@ int main(int argc, char* argv[]) {
 
     auto time = 0.;
 
+    // ##CC
     std::ofstream myfile;
     myfile.open("sphere_position_allforce_new.csv");
     myfile << "time;X;Y;Z" << std::endl;
+    // ##CC
 
     while (time < 20.) {
 
         time += dt;
         system.AdvanceTo(time);
 
+        // ##CC
         std::cout << "time : " << time << " ; position of the body = "
                   << body->GetPosition(NWU).GetX() << " ; "
                   << body->GetPosition(NWU).GetY() << " ; "
@@ -89,6 +88,7 @@ int main(int argc, char* argv[]) {
         myfile << time << ";" << body->GetPosition(NWU).GetX() << ";"
                               << body->GetPosition(NWU).GetY() << ";"
                               << body->GetPosition(NWU).GetZ() << std::endl;
+        // ##CC
     }
 
     //myfile.close();
