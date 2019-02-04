@@ -107,6 +107,7 @@ namespace frydom {
 
 
     void FrLinearHydrostaticForce_::Initialize() {
+        FrForce_::Initialize();
         m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
         m_stiffnessMatrix.SetData(m_HDB->GetBody(m_body)->GetHydrostaticStiffnessMatrix());
     }

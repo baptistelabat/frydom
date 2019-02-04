@@ -41,3 +41,5 @@ configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
 
 configure_file(../data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
 configure_file(../data/sphere_hdb.h5 . COPYONLY)
+
+configure_file(../data/Barge/Barge_frydom.h5 . COPYONLY)

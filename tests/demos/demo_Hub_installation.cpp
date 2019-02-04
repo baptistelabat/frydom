@@ -57,10 +57,10 @@ int main(int argc, char* argv[]) {
 
     auto barge = system.NewBody();
     barge->SetName("Barge");
-    makeItBox(barge, 25., 15., 3., (1137.6-180.6)*1000);
+    makeItBox(barge, 25., 15., 3., (1137.6-180.7)*1000);
 //    barge->AddMeshAsset("Barge.obj");
     barge->SetColor(Yellow);
-    barge->SetFixedInWorld(true); //FIXME : delete this once HydroDB is added.
+//    barge->SetFixedInWorld(true); //FIXME : delete this once HydroDB is added.
 
 //    barge->SetInertiaTensor(FrInertiaTensor_((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., FrFrame_(), NWU));
 
@@ -71,6 +71,28 @@ int main(int argc, char* argv[]) {
     steel->SetGn(steelNormalDamping);
     steel->young_modulus = steelYoungModulus;
     steel->restitution = 0;
+
+    // -- Hydrodynamics
+
+    auto hdb = std::make_shared<FrHydroDB_>("Barge_frydom.h5");
+
+    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(barge.get());
+    system.AddPhysicsItem(eqFrame);
+
+    hdb->Map(0, barge.get(), eqFrame);
+
+    // -- Hydrostatic
+
+    auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb.get());
+    barge->AddExternalForce(forceHst);
+
+
+    // -- Radiation
+
+    auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(hdb);
+    system.AddPhysicsItem(radiationModel);
+
+    radiationModel->SetImpulseResponseSize(barge.get(), 6., 0.1);
 
     // TODO: Add the HydroDB with the hydrodynamic forces
 
