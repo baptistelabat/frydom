@@ -27,7 +27,7 @@ if (NOT yaml-cpp_FOUND)
 
         # yaml-cpp BUILD OPTIONS
         set(BUILD_SHARED_LIBS TRUE)
-        set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "Build yamp-cpp tests")
+        set(YAML_CPP_BUILD_TESTS OFF) # CACHE BOOL "Build yamp-cpp tests")
         set(YAML_CPP_BUILD_TOOLS OFF)
         set(YAML_CPP_BUILD_CONTRIB OFF)
 
