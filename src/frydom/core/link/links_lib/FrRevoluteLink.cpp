@@ -32,7 +32,6 @@ namespace frydom {
     }  // end namespace frydom::internal
 
 
-
     FrRevoluteLink::FrRevoluteLink(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2,
                                    FrOffshoreSystem_ *system) : FrLink_(node1, node2, system) {
         m_chronoLink->SetLinkType(REVOLUTE);
@@ -57,19 +56,15 @@ namespace frydom {
     }
 
     double FrRevoluteLink::GetLinkAngle() const {
-        /*
-         *
-         * FIXME : le premier angle donne bien l'angle entre le marker 2 et le marker 1 mais ne compte pas les tours
-         * Du coup, on a un angle qui se reinitialise lorsqu'on fait un tour et le modele d'effort se met a tirer dans
-         * le mauvais sens !
-         * Il convient de compter les tours et de permettre de recuperer un angle total, un angle entre 0 et pi et un
-         * angle entre -pi et pi
-         * Regarder comment est fait le motorLink de Chrono !!
-         *
-         * ChLinkMotorRotation::Update met en place le tracking !!! --> recopier la maniere de faire :)
-         */
+        return m_totalLinkAngle - m_restAngle;
+    }
 
-        return m_totalLinkAngle - GetRestAngle();
+    double FrRevoluteLink::GetRelativeLinkAngle() const {
+        return fmod(m_totalLinkAngle, MU_2PI) - m_restAngle;
+    }
+
+    int FrRevoluteLink::GetNbTurns() const {
+        return int( (GetLinkAngle() - GetRelativeLinkAngle()) / MU_2PI );
     }
 
     double FrRevoluteLink::GetLinkAngularVelocity() const {
@@ -78,6 +73,14 @@ namespace frydom {
 
     double FrRevoluteLink::GetLinkAngularAcceleration() const {
         return m_linkAngularAcceleration;
+    }
+
+    double FrRevoluteLink::GetLinkTorque() const {
+        return GetLinkTorqueOnBody2InFrame2AtOrigin2(NWU).GetMz();
+    }
+
+    double FrRevoluteLink::GetLinkPower() const {
+        return GetLinkAngularVelocity() * GetLinkTorque();
     }
 
     void FrRevoluteLink::Initialize() {
@@ -89,64 +92,38 @@ namespace frydom {
             m_speedMotor->Initialize();
         }
 
+        // Log initialization
+        l_message.SetNameAndDescription("RevoluteLink", "");
+        l_message.AddCSVSerializer();
+        l_message.AddField<double>("time", "s", "", &l_time);
+        l_message.AddField<double>("total_angle", "deg", "", &l_angleDeg);
+        l_message.AddField<double>("angVel", "rad/s", "", &m_linkAngularVelocity);
+        l_message.AddField<double>("AnfAcc", "rad/s2", "", &m_linkAngularAcceleration);
+        l_message.AddField<double>("Torque", "N.m", "", &l_torque);
+
+        l_message.Initialize();
+        l_message.Send();
+
     }
 
     void FrRevoluteLink::Update(double time) {
 
         FrLink_::Update(time);
 
-        // Update total angle measure (not on 0-2pi but continuous)
-//        double lastTotalAngle = m_totalLinkAngle;
-//        double lastRelativeAngle = remainder(lastTotalAngle, MU_2_PI);
-//        double lastTurn = lastTotalAngle - lastRelativeAngle;
-//
-        auto currentRotation = GetMarker2OrientationWRTMarker1().GetRotationVector(NWU);
-//
-//
-////        double newAngle = remainder(GetMarker2OrientationWRTMarker1().GetAngle(), MU_2_PI); // FIXME : ne serait-on pas plus secure si on ne prenait que la composante suicant z ?
-//        // FIXME : cette partie ne fonctionne pas du tout !!!!!! --> En fait, on ne sait pas ce que renvoie le GetAngle() ci-dessus !!!
-//
-//        double newAngle = mathutils::Normalize_0_2PI(currentRotation[2]);
-//
-//
-//
-//        m_totalLinkAngle = lastTurn + newAngle;
-
-        // Essai de virer ces 2 clauses qui foutent la merde...
-//        if (fabs(newAngle + MU_2_PI - lastTotalAngle) < fabs(newAngle - lastTotalAngle))
-//            m_totalLinkAngle = lastTurn + newAngle + MU_2_PI;
-//        if (fabs(newAngle - MU_2_PI - lastTotalAngle) < fabs(newAngle - lastTotalAngle))
-//            m_totalLinkAngle = lastTurn + newAngle - MU_2_PI;
-
-//        std::cout << "Total angle = " << m_totalLinkAngle * RAD2DEG << std::endl;
-
-
-
-        // TODO : voir a externaliser cet algo dans MathUtils !!! -> utile dans plein d'autres cas !!
-
-        // TODO : compter les tours et les enregistrer ??
-
-        // TODO : monitorer seulement l'angle fourni par le currentRelativeAngle --> voir s'il y a des sautes et quand
-
-        double lastAngle = mathutils::Normalize__PI_PI(m_totalLinkAngle);
-        double turnsAngle = remainder(lastAngle, MU_2_PI);
-
-        double lastRelativeAngle = mathutils::Normalize__PI_PI(lastAngle - turnsAngle);
-
-        double currentRelativeAngle =
-                mathutils::Normalize__PI_PI(m_chronoLink->c_frame2WRT1.GetRotation().GetRotationVector(NWU)[2]);
+        double lastRelativeAngle = GetRelativeLinkAngle() + m_restAngle; // Making it relative to x, not the rest angle
+        double updatedRelativeAngle = GetUpdatedRelativeAngle();
 
         // TODO : voir a definir un RotationVector dans FrVector...
+        // Computing the angle increment between current relative angle and the last relative angle to increment
+        // the total link angle
         double angleIncrement;
-        if (fabs(currentRelativeAngle + MU_2_PI - lastRelativeAngle) < fabs(currentRelativeAngle - lastRelativeAngle)) {
-            angleIncrement = currentRelativeAngle + MU_2_PI - lastRelativeAngle;
-        } else if (fabs(currentRelativeAngle - MU_2_PI - lastRelativeAngle) < fabs(currentRelativeAngle - lastRelativeAngle)) {
-            angleIncrement = currentRelativeAngle - MU_2_PI - lastRelativeAngle;
+        if (fabs(updatedRelativeAngle + MU_2PI - lastRelativeAngle) < fabs(updatedRelativeAngle - lastRelativeAngle)) {
+            angleIncrement = updatedRelativeAngle + MU_2PI - lastRelativeAngle;
+        } else if (fabs(updatedRelativeAngle - MU_2PI - lastRelativeAngle) < fabs(updatedRelativeAngle - lastRelativeAngle)) {
+            angleIncrement = updatedRelativeAngle - MU_2PI - lastRelativeAngle;
         } else {
-            angleIncrement = currentRelativeAngle - lastRelativeAngle;
+            angleIncrement = updatedRelativeAngle - lastRelativeAngle;
         }
-
-        std::cout << "Angle increment : " << angleIncrement * RAD2DEG << std::endl;
 
         m_totalLinkAngle += angleIncrement;
 
@@ -157,62 +134,58 @@ namespace frydom {
 
     }
 
-    void FrRevoluteLink::UpdateForces(double time) {
-        Torque torque;
-        torque.GetMz() = -m_stiffness * GetLinkAngle() - m_damping * GetLinkAngularVelocity();
-
-        // TODO : voir si on applique pas un couple sur le mauvais axe dans le cas de contraintes mal resolues...
-        SetLinkForceOnBody2InFrame2AtOrigin2(Force(), torque);  // TODO : verifier qu'on set la bonne chose...
-
-        // TODO : si on a moteur force, on l'appelle ici et on ne prend pas en compte le spring damper...
-
-    }
-
     void FrRevoluteLink::StepFinalize() {
-        std::cout << "Total angle = " << GetLinkAngle() * RAD2DEG << std::endl;
-        std::cout << "Torque = " << GetLinkTorqueOnBody2InFrame1AtOrigin2(NWU).GetMz() << std::endl;
-        std::cout << "LinkVelocity = " << GetLinkAngularVelocity() << std::endl;
 
-        std::cout << std::endl;
+        // Log
+        l_time = m_system->GetTime();
+        l_torque = GetLinkTorqueOnBody2InFrame1AtOrigin2(NWU).GetMz();
+        l_angleDeg = m_totalLinkAngle * RAD2DEG;
+
+        l_message.Serialize();
+        l_message.Send();
+
+        // Log
     }
 
+    void FrRevoluteLink::UpdateForces(double time) {
+
+        // Default spring damper force model
+        Force force;
+        Torque torque;
+
+        torque.GetMz() = - m_stiffness * GetLinkAngle() - m_damping * GetLinkAngularVelocity();
+
+        // Using force model from motor
+        /*
+         * TODO : si on a moteur force, on l'appelle ici et on ne prend pas en compte le spring damper...
+         * Si on a un moteur, faut-il deconnecter le modele spring damper ??
+         */
+
+        // Set the link force
+        SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
+    }
 
     void FrRevoluteLink::MotorizeSpeed() {
         m_speedMotor = std::make_shared<internal::FrLinkMotorRotationSpeedBase>(this);
 //        m_system->Add(m_speedMotor);
         // TODO : terminer
 
+
+
+
     }
 
-    int FrRevoluteLink::GetNbTurns() const {
-        return int(GetTurnAngle() / MU_2_PI);
+    double FrRevoluteLink::GetUpdatedRelativeAngle() const {
+        return mathutils::Normalize__PI_PI(m_chronoLink->c_frame2WRT1.GetRotation().GetRotationVector(NWU)[2]);
     }
-
-    double FrRevoluteLink::GetTurnAngle() const {
-        return m_totalLinkAngle - remainder(m_totalLinkAngle, MU_2_PI);
-    }
-
-
-
-//    double FrRevoluteLink::GetAngleFromX() const {
-//
-//
-//
-//        GetMarker2OrientationWRTMarker1().GetAngle()
-//
-//
-//
-//
-//
-//    }
-
 
     void FrRevoluteLink::UpdateCache() {
         // Updating the rest angle
         m_restAngle = mathutils::Normalize__PI_PI(m_frame2WRT1_reference.GetRotation().GetAngle());
         // TODO : ne pas prendre GetAngle mais la composante z de RotationVector
-    }
 
+        // FIXME : attention si la liaison n'est pas resolue !!! Ca ne fonctionne pas
+    }
 
     std::shared_ptr<FrRevoluteLink>
     make_revolute_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system) {
@@ -220,9 +193,6 @@ namespace frydom {
         system->AddLink(link);
         return link;
     }
-
-
-
 
 
 

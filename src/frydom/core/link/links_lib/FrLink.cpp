@@ -309,7 +309,7 @@ namespace frydom {
 
     }
 
-    void FrLink_::SetLinkForceOnBody2InFrame2AtOrigin2(const Force &force, const Torque& torque) {
+    void FrLink_::SetLinkForceTorqueOnBody2InFrame2AtOrigin2(const Force &force, const Torque &torque) {
         /* From Chrono comments in ChLinkMasked::UpdateForces :
          * C_force and C_torque   are considered in the reference coordsystem
          * of marker2  (the MAIN marker), and their application point is considered the

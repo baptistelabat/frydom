@@ -280,9 +280,12 @@ namespace frydom {
         /// Get the torque in link applying on body 2 at marker 2 origin, expressed in frame 1
         const Torque GetLinkTorqueOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const;
 
-
+        /// Generic computation of the power delivered in a FrLink_
         virtual double GetLinkPower() const;
 
+        /// Initialize a FrLink_ with a FrBodyDOFMask. Essentially used by the DOF restricting mechanism of bodies
+        /// Users should not use this method to make links between bodies but directly use the specialized classes
+        /// (FrPrismaticLink, FrRevoluteLink...)
         void InitializeWithBodyDOFMask(FrBodyDOFMask* mask);
 
         virtual void Initialize() override;
@@ -306,7 +309,7 @@ namespace frydom {
          */
 
         /// Set the link force expressed in marker 1 frame
-        void SetLinkForceOnBody2InFrame2AtOrigin2(const Force &force, const Torque& torque);
+        void SetLinkForceTorqueOnBody2InFrame2AtOrigin2(const Force &force, const Torque &torque);
 
 //        /// Set the link torque expressed in marker 1 frame and applied at marker 1
 //        void SetLinkTorqueOtMarker2InFrame2AtOrigin2(const Torque &torque);
