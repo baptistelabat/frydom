@@ -365,10 +365,12 @@ namespace frydom {
 
     void FrBody_::SetMaxSpeed(double maxSpeed_ms) {
         m_chronoBody->SetMaxSpeed((float)maxSpeed_ms);
+        ActivateSpeedLimits(true);
     }
 
     void FrBody_::SetMaxRotationSpeed(double wMax_rads) {
         m_chronoBody->SetMaxWvel((float)wMax_rads);
+        ActivateSpeedLimits(true);
     }
 
     void FrBody_::RemoveGravity(bool val) { // TODO : ajouter la force d'accumulation a l'initialisation --> cas ou le systeme n'a pas encore ete precise pour la gravite...

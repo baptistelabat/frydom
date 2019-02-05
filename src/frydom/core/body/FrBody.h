@@ -1165,7 +1165,7 @@ namespace frydom {
 
         friend FrNode_::FrNode_(FrBody_*);
 
-        friend class internal::FrLinkMotorRotationSpeedBase;
+        friend class internal::FrLinkMotorRotationSpeedBase; // FIXME : bofbof ce couplage...
 
 
     public:

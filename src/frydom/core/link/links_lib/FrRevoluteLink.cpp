@@ -96,19 +96,21 @@ namespace frydom {
         FrLink_::Update(time);
 
         // Update total angle measure (not on 0-2pi but continuous)
-        double lastTotalAngle = m_totalLinkAngle;
-        double lastRelativeAngle = remainder(lastTotalAngle, MU_2_PI);
-        double lastTurn = lastTotalAngle - lastRelativeAngle;
-
+//        double lastTotalAngle = m_totalLinkAngle;
+//        double lastRelativeAngle = remainder(lastTotalAngle, MU_2_PI);
+//        double lastTurn = lastTotalAngle - lastRelativeAngle;
+//
         auto currentRotation = GetMarker2OrientationWRTMarker1().GetRotationVector(NWU);
-
-
-//        double newAngle = remainder(GetMarker2OrientationWRTMarker1().GetAngle(), MU_2_PI); // FIXME : ne serait-on pas plus secure si on ne prenait que la composante suicant z ?
-        // FIXME : cette partie ne fonctionne pas du tout !!!!!! --> En fait, on ne sait pas ce que renvoie le GetAngle() ci-dessus !!!
-
-        double newAngle = mathutils::Normalize__PI_PI(currentRotation[2]);
-
-        m_totalLinkAngle = lastTurn + newAngle;
+//
+//
+////        double newAngle = remainder(GetMarker2OrientationWRTMarker1().GetAngle(), MU_2_PI); // FIXME : ne serait-on pas plus secure si on ne prenait que la composante suicant z ?
+//        // FIXME : cette partie ne fonctionne pas du tout !!!!!! --> En fait, on ne sait pas ce que renvoie le GetAngle() ci-dessus !!!
+//
+//        double newAngle = mathutils::Normalize_0_2PI(currentRotation[2]);
+//
+//
+//
+//        m_totalLinkAngle = lastTurn + newAngle;
 
         // Essai de virer ces 2 clauses qui foutent la merde...
 //        if (fabs(newAngle + MU_2_PI - lastTotalAngle) < fabs(newAngle - lastTotalAngle))
@@ -117,6 +119,36 @@ namespace frydom {
 //            m_totalLinkAngle = lastTurn + newAngle - MU_2_PI;
 
 //        std::cout << "Total angle = " << m_totalLinkAngle * RAD2DEG << std::endl;
+
+
+
+        // TODO : voir a externaliser cet algo dans MathUtils !!! -> utile dans plein d'autres cas !!
+
+        // TODO : compter les tours et les enregistrer ??
+
+        // TODO : monitorer seulement l'angle fourni par le currentRelativeAngle --> voir s'il y a des sautes et quand
+
+        double lastAngle = mathutils::Normalize__PI_PI(m_totalLinkAngle);
+        double turnsAngle = remainder(lastAngle, MU_2_PI);
+
+        double lastRelativeAngle = mathutils::Normalize__PI_PI(lastAngle - turnsAngle);
+
+        double currentRelativeAngle =
+                mathutils::Normalize__PI_PI(m_chronoLink->c_frame2WRT1.GetRotation().GetRotationVector(NWU)[2]);
+
+        // TODO : voir a definir un RotationVector dans FrVector...
+        double angleIncrement;
+        if (fabs(currentRelativeAngle + MU_2_PI - lastRelativeAngle) < fabs(currentRelativeAngle - lastRelativeAngle)) {
+            angleIncrement = currentRelativeAngle + MU_2_PI - lastRelativeAngle;
+        } else if (fabs(currentRelativeAngle - MU_2_PI - lastRelativeAngle) < fabs(currentRelativeAngle - lastRelativeAngle)) {
+            angleIncrement = currentRelativeAngle - MU_2_PI - lastRelativeAngle;
+        } else {
+            angleIncrement = currentRelativeAngle - lastRelativeAngle;
+        }
+
+        std::cout << "Angle increment : " << angleIncrement * RAD2DEG << std::endl;
+
+        m_totalLinkAngle += angleIncrement;
 
         m_linkAngularVelocity = GetAngularVelocityOfMarker2WRTMarker1(NWU).GetWz();
         m_linkAngularAcceleration = GetAngularAccelerationOfMarker2WRTMarker1(NWU).GetWzp();
@@ -129,11 +161,10 @@ namespace frydom {
         Torque torque;
         torque.GetMz() = -m_stiffness * GetLinkAngle() - m_damping * GetLinkAngularVelocity();
 
-        SetLinkForceOnBody2InFrame2AtOrigin2(Force(), torque);
+        // TODO : voir si on applique pas un couple sur le mauvais axe dans le cas de contraintes mal resolues...
+        SetLinkForceOnBody2InFrame2AtOrigin2(Force(), torque);  // TODO : verifier qu'on set la bonne chose...
 
-
-
-
+        // TODO : si on a moteur force, on l'appelle ici et on ne prend pas en compte le spring damper...
 
     }
 
@@ -178,7 +209,8 @@ namespace frydom {
 
     void FrRevoluteLink::UpdateCache() {
         // Updating the rest angle
-        m_restAngle = m_frame2WRT1_reference.GetRotation().GetAngle();
+        m_restAngle = mathutils::Normalize__PI_PI(m_frame2WRT1_reference.GetRotation().GetAngle());
+        // TODO : ne pas prendre GetAngle mais la composante z de RotationVector
     }
 
 

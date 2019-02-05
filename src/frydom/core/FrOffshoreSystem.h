@@ -719,7 +719,7 @@ namespace frydom {
 
 
 //        friend class FrIrrApp_;
-        void CheckInitialize();
+        void CheckIsInitialized();
 
 
 

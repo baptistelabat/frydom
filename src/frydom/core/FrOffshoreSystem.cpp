@@ -867,17 +867,17 @@ namespace frydom {
     }
 
     bool FrOffshoreSystem_::AdvanceOneStep(double stepSize) {
-        CheckInitialize();
+        CheckIsInitialized();
         return (bool)m_chronoSystem->DoStepDynamics(stepSize);
     }
 
     bool FrOffshoreSystem_::AdvanceTo(double nextTime) {
-        CheckInitialize();
+        CheckIsInitialized();
         return m_chronoSystem->DoFrameDynamics(nextTime);
     }
 
     bool FrOffshoreSystem_::RunDynamics(double frameStep) {
-        CheckInitialize();
+        CheckIsInitialized();
         m_chronoSystem->Setup();
         m_chronoSystem->DoAssembly(chrono::AssemblyLevel::POSITION |
                                    chrono::AssemblyLevel::VELOCITY |
@@ -931,7 +931,7 @@ namespace frydom {
 
     void FrOffshoreSystem_::RunInViewer(double endTime, double dist, bool recordVideo) {
 
-        CheckInitialize();
+        CheckIsInitialized();
 
         FrIrrApp_ app(m_chronoSystem.get(), dist);
 
@@ -957,7 +957,7 @@ namespace frydom {
         m_chronoSystem->AddAsset(std::move(asset));
     }
 
-    void FrOffshoreSystem_::CheckInitialize() {
+    void FrOffshoreSystem_::CheckIsInitialized() {
         if (!m_isInitialized) Initialize();
     }
 

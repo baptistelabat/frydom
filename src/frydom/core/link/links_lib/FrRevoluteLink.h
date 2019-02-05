@@ -50,9 +50,9 @@ namespace frydom {
         double m_damping = 0.;   ///> Link rotational damping (Nm/s)
 
 
-        double m_restAngle = 0.;
+        double m_restAngle = 0.;  ///> The rest angle (reference) for which the measurement is taken. Between ]-pi, pi]
 
-        double m_totalLinkAngle = 0.;  /// The total angle of the link, accounting for numti-turn but not on rest angle
+        double m_totalLinkAngle = 0.;  /// The total angle of the link, accounting for numti-turn but not on rest angle. Defined on the continuous real line, centered on 0 rad
         double m_linkAngularVelocity = 0.;
         double m_linkAngularAcceleration = 0.;
 

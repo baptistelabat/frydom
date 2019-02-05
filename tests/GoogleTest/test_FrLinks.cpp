@@ -60,8 +60,8 @@ int main() {
 //    body3->Rotate(FrRotation_(Direction(0, 1, 0), 90*DEG2RAD, NWU));
     body3->TranslateInWorld(-10, 5, -1, NWU);
 //    body3->TranslateInWorld(0, 5, -1, NWU);
-    body3->SetMaxRotationSpeed(1*RAD2DEG); // FIXME : ne semble pas etre pris en compte...
-
+    body3->SetMaxRotationSpeed(1*RAD2DEG);
+    body3->ActivateSpeedLimits(true);
 
 
     auto m3 = body1->NewNode();
@@ -74,7 +74,7 @@ int main() {
 
     auto revoluteLink = make_revolute_link(m3, m4, &system);
 //    revoluteLink->SetSpringDamper(1e2, 1e1);
-    revoluteLink->SetSpringDamper(1e3, 0);
+    revoluteLink->SetSpringDamper(1e2, 0);
 //    revoluteLink->SetSpringDamper(1e4, 1e5);
     revoluteLink->SetRestAngle(45*DEG2RAD);
 
