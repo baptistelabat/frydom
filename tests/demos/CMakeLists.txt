@@ -12,6 +12,7 @@ set(DEMOS
         demo_Morison
         demo_Cable
         bench_SphereDecay
+        bench_SphereRegular
         )
 
 

@@ -25,6 +25,13 @@ int main(int argc, char* argv[]) {
 
     body->SetPosition(Position(0., 0., 0.), NWU);
 
+    body->GetDOFMask()->SetLock_X(true);
+    body->GetDOFMask()->SetLock_Y(true);
+    body->GetDOFMask()->SetLock_X(true);
+    body->GetDOFMask()->SetLock_Rx(true);
+    body->GetDOFMask()->SetLock_Ry(true);
+    body->GetDOFMask()->SetLock_Rz(true);
+
     // -- Inertia
 
     double mass = 2.618E5;

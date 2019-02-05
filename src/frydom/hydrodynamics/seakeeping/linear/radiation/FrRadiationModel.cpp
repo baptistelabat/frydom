@@ -374,7 +374,7 @@ namespace frydom {
     }
 
     void FrRadiationModel_::Initialize() {
-
+        FrPrePhysicsItem_::Initialize();
     }
 
     FrHydroMapper_* FrRadiationModel_::GetMapper() const {
@@ -418,6 +418,8 @@ namespace frydom {
 
     void FrRadiationConvolutionModel_::Initialize() {
 
+        FrRadiationModel_::Initialize();
+
         unsigned int N;
         if (m_Te < DBL_EPSILON or m_dt < DBL_EPSILON) GetImpulseResponseSize(m_Te, m_dt, N);
 
@@ -429,6 +431,7 @@ namespace frydom {
 
             m_recorder[BEMBody->get()].Initialize();
         }
+
     }
 
     void FrRadiationConvolutionModel_::Update(double time) {

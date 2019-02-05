@@ -62,6 +62,8 @@ namespace frydom {
 
             int GetBodyOffset(FrBody_* body) const;
 
+            void SetVariables(FrBody_* body, chrono::ChMatrix<double>& qb, int offset) const;
+
             FrRadiationModel_* GetRadiationModel() const { return m_frydomRadiationModel; }
         };
     }
