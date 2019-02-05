@@ -107,7 +107,13 @@ namespace frydom {
         double SquaredVelocity = m_fluxVelocityInBody.squaredNorm();
         auto res = coeff * SquaredVelocity;
 
-        auto frame = m_body->GetFrameAtCOG(NWU).ProjectToXYPlane(NWU);
+        // Build the projected rotation in the XoY plane.
+        double phi, theta, psi;
+        m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+        auto bodyRotation = FrRotation_(Direction(0.,0.,1.), psi, NWU);
+        auto frame = FrFrame_(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
+
+//        auto frame = m_body->GetFrameAtCOG(NWU).ProjectToXYPlane(NWU);
         auto worldForce = frame.ProjectVectorFrameInParent(Force(res[0], res[1], 0), NWU);
         auto worldTorque = frame.ProjectVectorFrameInParent(Torque(0., 0., res[2]), NWU);
 

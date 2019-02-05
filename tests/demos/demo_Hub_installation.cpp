@@ -7,8 +7,8 @@
 using namespace frydom;
 
 int main(int argc, char* argv[]) {
-    /** This demo presents cable features, either catenary line (quasi-static) alone, bound to the fixed world body, or
-     * within a pendulum/Newton pendulum.
+    /** 
+     * 
      */
 
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
@@ -93,8 +93,6 @@ int main(int argc, char* argv[]) {
     system.AddPhysicsItem(radiationModel);
 
     radiationModel->SetImpulseResponseSize(barge.get(), 6., 0.1);
-
-    // TODO: Add the HydroDB with the hydrodynamic forces
 
     // --------------------------------------------------
     // Crane model

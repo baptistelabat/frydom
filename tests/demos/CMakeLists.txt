@@ -42,6 +42,7 @@ configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
 
 configure_file(../data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
 configure_file(../data/DeepSea_Stavanger/DeepSeaStavanger.hdb5 . COPYONLY)
+configure_file(../data/DeepSea_Stavanger/PolarCurrentCoeffs_NC.yml . COPYONLY)
 
 configure_file(../data/sphere_hdb.h5 . COPYONLY)
 
