@@ -10,6 +10,7 @@
 
 #include "chrono/physics/ChLinkMotorRotationSpeed.h"
 
+#include "frydom/core/functions/FrFunction.h"
 
 #include "hermes/hermes.h"
 
@@ -31,15 +32,46 @@ namespace frydom {
 
         struct FrLinkMotorRotationSpeedBase : public chrono::ChLinkMotorRotationSpeed {
 
-            FrLink_* m_frydomLink;
+            FrLinkBase_* m_frydomLink;
 
-            explicit FrLinkMotorRotationSpeedBase(FrLink_* frydomLink);
+            explicit FrLinkMotorRotationSpeedBase(FrLinkBase_* frydomLink);
+
+            void SetupInitial() override;
 
             void Initialize();
 
         };
 
     }  // end namespace frydom::internal
+
+    class FrRotationActuator : public FrLinkBase_ {
+
+    public:
+        FrRotationActuator();
+
+
+
+    };
+
+
+    class FrRotationActuatorForSpeed : public FrRotationActuator {
+
+        // TODO : mettre en place des rampes pour les montees en vitesse...
+
+    private:
+//        std::shared_ptr<internal::FrLinkMotorRotationSpeedBase> m_chronoMotor;
+
+    public:
+        FrRotationActuatorForSpeed();
+
+        void SetConstantAngularVelocity(double angularVelocity);
+
+
+        void SetSpeedFunction(std::shared_ptr<FrFunction_> function);
+
+
+
+    };
 
 
     /// Specialized class for revolute link between two bodies
@@ -57,7 +89,12 @@ namespace frydom {
         double m_linkAngularVelocity = 0.;
         double m_linkAngularAcceleration = 0.;
 
-        std::shared_ptr<internal::FrLinkMotorRotationSpeedBase> m_speedMotor;
+
+        // Motors
+        std::shared_ptr<FrRotationActuator> m_motor;
+
+
+
 
         // LOG
         hermes::Message l_message;

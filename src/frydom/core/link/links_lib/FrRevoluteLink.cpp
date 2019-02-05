@@ -12,7 +12,7 @@ namespace frydom {
 
     namespace internal {
 
-        FrLinkMotorRotationSpeedBase::FrLinkMotorRotationSpeedBase(frydom::FrLink_ *frydomLink) : m_frydomLink(frydomLink) {
+        FrLinkMotorRotationSpeedBase::FrLinkMotorRotationSpeedBase(FrLinkBase_ *frydomLink) : m_frydomLink(frydomLink) {
             SetSpindleConstraint(chrono::ChLinkMotorRotation::SpindleConstraint::FREE);
         }
 
@@ -29,7 +29,17 @@ namespace frydom {
             this->frame2 = internal::FrFrame2ChFrame(m_frydomLink->GetNode2()->GetFrameWRT_COG_InBody());
         }
 
+
+
+
+
+
     }  // end namespace frydom::internal
+
+
+
+
+
 
 
     FrRevoluteLink::FrRevoluteLink(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2,
@@ -88,8 +98,8 @@ namespace frydom {
         FrLink_::Initialize();
 
         // Initialization of the motor part
-        if (m_speedMotor) {
-            m_speedMotor->Initialize();
+        if (m_motor) {
+            m_motor->Initialize();
         }
 
         // Log initialization
@@ -166,9 +176,13 @@ namespace frydom {
     }
 
     void FrRevoluteLink::MotorizeSpeed() {
-        m_speedMotor = std::make_shared<internal::FrLinkMotorRotationSpeedBase>(this);
-//        m_system->Add(m_speedMotor);
-        // TODO : terminer
+//        m_motor = std::make_shared<internal::FrLinkMotorRotationSpeedBase>(this);
+//
+//        m_system->AddLink(m_motor);
+//
+//
+//
+//        // TODO : terminer
 
 
 
