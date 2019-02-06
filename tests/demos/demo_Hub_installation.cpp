@@ -116,7 +116,7 @@ int main(int argc, char* argv[]) {
     auto arm_crane = system.NewBody();
     arm_crane->SetName("Arm_Crane");
     makeItBox(arm_crane,19.,1.5,1.5,20e3);
-    arm_crane->SetColor(Green);
+    arm_crane->SetColor(DarkGreen);
     arm_crane->SetPositionOfBodyPoint(Position(-9.0,0.,0.), Position(-7.5,0.,4.5), fc);
 
     FrRotation_ arm_Rotation;
@@ -163,28 +163,20 @@ int main(int argc, char* argv[]) {
     double buoyDamping = 1000;
 
 
-    auto buoySE = std::make_shared<FrMooringBuoy>(buoyRadius, buoyMass, true, buoyDamping);
-    system.Add(buoySE);
+    auto buoySE = make_mooring_buoy(&system, buoyRadius, buoyMass, true, buoyDamping);
     buoySE->SetPosition(Position(-50.,-25.,0.), NWU);
-    buoySE->SetColor(Red);
     auto buoyNodeSE = buoySE->NewNode();
 
-    auto buoySW = std::make_shared<FrMooringBuoy>(buoyRadius, buoyMass, true, buoyDamping);
-    system.Add(buoySW);
+    auto buoySW = make_mooring_buoy(&system, buoyRadius, buoyMass, true, buoyDamping);
     buoySW->SetPosition(Position(-50.,25.,0.), NWU);
-    buoySW->SetColor(Red);
     auto buoyNodeSW = buoySW->NewNode();
 
-    auto buoyNE = std::make_shared<FrMooringBuoy>(buoyRadius, buoyMass, true, buoyDamping);
-    system.Add(buoyNE);
+    auto buoyNE = make_mooring_buoy(&system, buoyRadius, buoyMass, true, buoyDamping);
     buoyNE->SetPosition(Position(50.,-25.,0.), NWU);
-    buoyNE->SetColor(Red);
     auto buoyNodeNE = buoyNE->NewNode();
 
-    auto buoyNW = std::make_shared<FrMooringBuoy>(buoyRadius, buoyMass, true, buoyDamping);
-    system.Add(buoyNW);
+    auto buoyNW = make_mooring_buoy(&system, buoyRadius, buoyMass, true, buoyDamping);
     buoyNW->SetPosition(Position(50.,25.,0.), NWU);
-    buoyNW->SetColor(Red);
     auto buoyNodeNW = buoyNW->NewNode();
 
 

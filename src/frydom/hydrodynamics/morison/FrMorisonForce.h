@@ -93,7 +93,9 @@ namespace frydom {
         void StepFinalize() override;
     };
 
-
+    std::shared_ptr<FrMorisonForce_>
+    make_morison_force(std::shared_ptr<FrMorisonElement_> model, std::shared_ptr<FrBody_> body);
+    
 }
 
 #endif //FRYDOM_FRMORISONFORCE_H

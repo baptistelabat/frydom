@@ -63,4 +63,15 @@ namespace frydom {
         if (GetPosition(NWU).GetZ()>m_radius) {return -m_radius;}
         else {return -GetPosition(NWU).GetZ();}
     }
+
+
+    std::shared_ptr<FrMooringBuoy>
+    make_mooring_buoy(FrOffshoreSystem_* system, double radius, double mass, bool visual_asset, double damping){
+        auto buoy = std::make_shared<FrMooringBuoy>(radius, mass, true, damping);
+        system->Add(buoy);
+        buoy->SetColor(DarkRed);
+        return buoy;
+    }
+
+
 }// end namespace frydom

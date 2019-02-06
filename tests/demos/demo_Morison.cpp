@@ -73,14 +73,11 @@ int main(int argc, char* argv[]) {
         // Add an element, with parameters corresponding to the cylinder.
         MorisonModel->AddElement(FrFrame_(), height, 2. * radius, AddedMassCoeff, DragCoeff, frictionCoeff);
 
-        // Instantiate a Morison Force, using a Morison model
-        auto MorisonForce = std::make_shared<FrMorisonForce_>(MorisonModel);
+        // Instantiate a Morison Force, using a Morison model, and add it to the cylinder
+        auto MorisonForce = make_morison_force(MorisonModel, cylinder);
 
         // Make the asset (a vector) for the Morison force visible
         MorisonForce->SetIsForceAsset(true);
-
-        // Don't forget to add the Morison force to the body !
-        cylinder->AddExternalForce(MorisonForce);
     }
     else
     {
@@ -115,15 +112,11 @@ int main(int argc, char* argv[]) {
         MorisonModel->AddElement(Position(-32.3,23.04,-17.10)-cog,Position(-32.3,-23.04,-17.10)-cog, diameter, AddedMassCoeff, MorisonCoeff(123., 2928.), frictionCoeff);
         MorisonModel->AddElement(Position( 32.3,23.04,-17.10)-cog,Position( 32.3,-23.04,-17.10)-cog, diameter, AddedMassCoeff, MorisonCoeff(123., 2928.), frictionCoeff);
 
-
-        // Instantiate a Morison Force, using a Morison model
-        auto MorisonForce = std::make_shared<FrMorisonForce_>(MorisonModel);
+        // Instantiate a Morison Force, using a Morison model, and add it to the cylinder
+        auto MorisonForce = make_morison_force(MorisonModel, Platform);
 
         // Make the asset (a vector) for the Morison force visible
         MorisonForce->SetIsForceAsset(true);
-
-        // Don't forget to add the Morison force to the body !
-        Platform->AddExternalForce(MorisonForce);
     }
 
     // ------------------ Run ------------------ //

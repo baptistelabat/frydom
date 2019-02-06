@@ -44,10 +44,10 @@ namespace frydom {
             c_volume = M_PI/3 * (Zt*(3*m_radius*m_radius - Zt*Zt) + 2*pow(m_radius,3));
         }
 
-
-
-
     };
+    
+    std::shared_ptr<FrMooringBuoy>
+    make_mooring_buoy(FrOffshoreSystem_* system, double radius, double mass, bool visual_asset = true, double damping=0);
 } //end namespace frydom
 
 #endif //FRYDOM_FRMOORINGBUOY_H
