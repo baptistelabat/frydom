@@ -25,6 +25,12 @@ int main(int argc, char* argv[]) {
 
     body->SetPosition(Position(0., 0., 0.), NWU);
 
+    body->GetDOFMask()->SetLock_X(true);
+    body->GetDOFMask()->SetLock_Y(true);
+    body->GetDOFMask()->SetLock_Rx(true);
+    body->GetDOFMask()->SetLock_Ry(true);
+    body->GetDOFMask()->SetLock_Rz(true);
+
     // -- Inertia
 
     double mass = 2.618E5;
@@ -39,7 +45,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = std::make_shared<FrHydroDB_>("sphere_hdb.h5");
+    auto hdb = make_hydrodynamic_database("sphere_hdb.h5");
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());
     system.AddPhysicsItem(eqFrame);
@@ -48,13 +54,11 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrostatic
 
-    auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb.get());
-    body->AddExternalForce(forceHst);
+    auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
     // -- Radiation
 
-    auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(hdb);
-    system.AddPhysicsItem(radiationModel);
+    auto radiationModel = make_radiation_convolution_model(hdb, &system);
 
     radiationModel->SetImpulseResponseSize(body.get(), 6., 0.1);
 
@@ -71,11 +75,11 @@ int main(int argc, char* argv[]) {
 
     // ##CC
     std::ofstream myfile;
-    myfile.open("sphere_position_allforce_new.csv");
+    myfile.open("sphere_position.csv");
     myfile << "time;X;Y;Z" << std::endl;
     // ##CC
 
-    while (time < 20.) {
+    while (time < 40.) {
 
         time += dt;
         system.AdvanceTo(time);

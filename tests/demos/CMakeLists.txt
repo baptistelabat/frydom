@@ -14,6 +14,7 @@ set(DEMOS
         demo_Cable
         demo_Hub_installation
         bench_SphereDecay
+        bench_SphereRegular
         )
 
 
@@ -47,5 +48,6 @@ configure_file(../data/DeepSea_Stavanger/PolarWindCoeffs_NC.yml . COPYONLY)
 configure_file(../data/DeepSea_Stavanger/DeepSea_WaveDriftCoeff.h5 . COPYONLY)
 
 configure_file(../data/sphere_hdb.h5 . COPYONLY)
+configure_file(../data/bench_sphere_regular.h5 . COPYONLY)
 
 configure_file(../data/Barge/Barge_frydom.h5 . COPYONLY)
