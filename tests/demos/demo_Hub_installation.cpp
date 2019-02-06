@@ -146,19 +146,19 @@ int main(int argc, char* argv[]) {
     double unstretchedLength = crane_node->GetPositionInWorld(fc).GetZ() - hub_node->GetPositionInWorld(fc).GetZ();
     auto u = Direction(0, 0, -1);
     double linearDensity = 600;
-    double EA = 5e8;
+    double EA = 5e7;
     double sectionArea = 0.05;
     double YoungModulus = EA / sectionArea;
     double breakTensionAsset = 500000;
 
     auto CatenaryLine = make_catenary_line(crane_node, hub_node, &system, elastic, YoungModulus, sectionArea,
-                                           unstretchedLength, linearDensity, u, fc);
+                                           unstretchedLength, linearDensity, FLUID_TYPE::AIR);
 
 
     // --------------------------------------------------
     // Mooring Lines
     // --------------------------------------------------
-    double buoyRadius = 0.75;
+    double buoyRadius = 1.5;
     double buoyMass = 100;
     double buoyDamping = 1000;
 
@@ -201,32 +201,32 @@ int main(int argc, char* argv[]) {
     /// Mooring lines length
 
     unstretchedLength = 95;
-    linearDensity = 20.;
-    EA = 5e6;
-    sectionArea = 0.025;
-    YoungModulus = EA / sectionArea;
+//    linearDensity = 20.;
+//    EA = 5e7;
+//    sectionArea = 0.025;
+//    YoungModulus = EA / sectionArea;
     double Lv = 42.5;
     breakTensionAsset = 50000;
 
     auto mooringLineSE = make_catenary_line(worldNodeSE, buoyNodeSE, &system, elastic, YoungModulus, sectionArea,
-                                            unstretchedLength, linearDensity, u, fc);
+                                            unstretchedLength, linearDensity, WATER);
     auto tetherLineSE = make_catenary_line(bargeNodeSE, buoyNodeSE, &system, elastic, YoungModulus, sectionArea,
-                                           Lv, linearDensity, u, fc);
+                                           Lv, linearDensity, WATER);
 
     auto mooringLineSW = make_catenary_line(worldNodeSW, buoyNodeSW, &system, elastic, YoungModulus, sectionArea,
-                                            unstretchedLength, linearDensity, u, fc);
+                                            unstretchedLength, linearDensity, WATER);
     auto tetherLineSW = make_catenary_line(bargeNodeSW, buoyNodeSW, &system, elastic, YoungModulus, sectionArea,
-                                           Lv, linearDensity, u, fc);
+                                           Lv, linearDensity, WATER);
 
     auto mooringLineNE = make_catenary_line(worldNodeNE, buoyNodeNE, &system, elastic, YoungModulus, sectionArea,
-                                            unstretchedLength, linearDensity, u, fc);
+                                            unstretchedLength, linearDensity, WATER);
     auto tetherLineNE = make_catenary_line(bargeNodeNE, buoyNodeNE, &system, elastic, YoungModulus, sectionArea,
-                                           Lv, linearDensity, u, fc);
+                                           Lv, linearDensity, WATER);
 
     auto mooringLineNW = make_catenary_line(worldNodeNW, buoyNodeNW, &system, elastic, YoungModulus, sectionArea,
-                                            unstretchedLength, linearDensity, u, fc);
+                                            unstretchedLength, linearDensity, WATER);
     auto tetherLineNW = make_catenary_line(bargeNodeNW, buoyNodeNW, &system, elastic, YoungModulus, sectionArea,
-                                           Lv, linearDensity, u, fc);
+                                           Lv, linearDensity, WATER);
 
     // ------------------ Run ------------------ //
 
