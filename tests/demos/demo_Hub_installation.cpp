@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = std::make_shared<FrHydroDB_>("Barge_frydom.h5");
+    auto hdb = make_hydrodynamic_database("Barge_frydom.h5");
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(barge.get());
     system.AddPhysicsItem(eqFrame);
@@ -82,15 +82,13 @@ int main(int argc, char* argv[]) {
     hdb->Map(0, barge.get(), eqFrame);
 
     // -- Hydrostatic
+    auto hydrostaticForce = make_linear_hydrostatic_force(hdb, barge);
 
-    auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb.get());
-    barge->AddExternalForce(forceHst);
-
+    // -- Excitation force
+    auto excitationForce = make_linear_excitation_force(hdb, barge);
 
     // -- Radiation
-
-    auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(hdb);
-    system.AddPhysicsItem(radiationModel);
+    auto radiationModel = make_radiation_convolution_model(hdb, &system);
 
     radiationModel->SetImpulseResponseSize(barge.get(), 6., 0.1);
 

@@ -196,6 +196,9 @@ namespace frydom {
 
     };
 
+    std::shared_ptr<FrRadiationConvolutionModel_>
+    make_radiation_convolution_model(std::shared_ptr<FrHydroDB_> HDB, FrOffshoreSystem_* system);
+
 }  // end namespace frydom
 
 

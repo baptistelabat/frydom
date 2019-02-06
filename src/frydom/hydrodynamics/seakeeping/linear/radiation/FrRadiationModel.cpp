@@ -546,5 +546,14 @@ namespace frydom {
         m_Te = Te;
         m_dt = dt;
     }
+
+
+    std::shared_ptr<FrRadiationConvolutionModel_>
+    make_radiation_convolution_model(std::shared_ptr<FrHydroDB_> HDB, FrOffshoreSystem_* system){
+        auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(HDB);
+        system->AddPhysicsItem(radiationModel);
+        return radiationModel;
+    }
+
 }
 

@@ -95,47 +95,42 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
+    // Create a hydrodynamic database (hdb) and load data from the input file.
     auto hdb = make_hydrodynamic_database("DeepSeaStavanger.hdb5");
-//    auto hdb = std::make_shared<FrHydroDB_>("DeepSeaStavanger.hdb5");
-//
+
+    // Create an equilibrium frame for the platform and add it to the system
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(platform.get());
     system.AddPhysicsItem(eqFrame);
 
+    // Map the equilibrium frame and the body in the hdb mapper
     hdb->Map(0, platform.get(), eqFrame);
 
     // -- Hydrostatic
+    // Create the linear hydrostatic force and add it to the platform
     auto forceHst = make_linear_hydrostatic_force(hdb, platform);
-//    auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb);
-//    platform->AddExternalForce(forceHst);
 
     // -- Excitation
+    // Create the linear excitation force and add it to the platform
     auto excitationForce = make_linear_excitation_force(hdb, platform);
-//    auto excitationForce = std::make_shared<FrLinearExcitationForce_>(hdb);
-//    platform->AddExternalForce(excitationForce);
 
-//    // -- Radiation
-//
-//    auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(hdb);
-//    system.AddPhysicsItem(radiationModel);
-//
+    // -- Radiation
+    //FIXME
+//    auto radiationModel = make_radiation_convolution_model(hdb, &system);
 //    radiationModel->SetImpulseResponseSize(platform.get(), 12., 0.1);
 
     // -- Wave drift force
+    //TODO
 //    auto waveDriftForce = std::make_shared<>(hdb.get());
 //    platform->AddExternalForce(waveDriftForce);
 
 
     // -- Current model force, based on polar coefficients
+    // Create the current model force and add it to the platform
     auto currentForce = make_current_force("PolarCurrentCoeffs_NC.yml", platform);
-//    auto currentForce = std::make_shared<FrCurrentForce2_>("PolarCurrentCoeffs_NC.yml");
-////    currentForce->SetIsForceAsset(true);
-//    platform->AddExternalForce(currentForce);
 
     // -- Wind model force, based on polar coefficients
+    // Create the model model force and add it to the platform
     auto windForce = make_wind_force("PolarWindCoeffs_NC.yml", platform);
-//    auto windForce = std::make_shared<FrWindForce2_>("PolarWindCoeffs_NC.yml");
-////    windForce->SetIsForceAsset(true);
-//    platform->AddExternalForce(windForce);
 
 
     // ------------------ Run ------------------ //
@@ -144,7 +139,7 @@ int main(int argc, char* argv[]) {
     system.SetTimeStep(0.01);
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
-    // the time length of the simulation (here 15) and the distance from the camera to the objectif (75m).
+    // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
     // For saving snapshots of the simulation, just turn the boolean to true.
 //    system.Visualize(50.,false);
     system.RunInViewer(60, 300, false);
