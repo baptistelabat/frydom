@@ -203,7 +203,7 @@ namespace frydom {
 
         FrHydroDB_() = default;
 
-        FrHydroDB_(std::string h5file);
+        explicit FrHydroDB_(std::string h5file);
 
         void ModeReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
 
@@ -265,6 +265,9 @@ namespace frydom {
 
         std::vector<std::unique_ptr<FrBEMBody_>>::iterator end() { return m_bodies.end(); }
     };
+
+
+    std::shared_ptr<FrHydroDB_> make_hydrodynamic_database(std::string h5file);
 
 }  // end namespace frydom
 

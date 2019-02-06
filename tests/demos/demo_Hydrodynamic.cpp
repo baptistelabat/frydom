@@ -95,7 +95,8 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = std::make_shared<FrHydroDB_>("DeepSeaStavanger.hdb5");
+    auto hdb = make_hydrodynamic_database("DeepSeaStavanger.hdb5");
+//    auto hdb = std::make_shared<FrHydroDB_>("DeepSeaStavanger.hdb5");
 //
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(platform.get());
     system.AddPhysicsItem(eqFrame);
@@ -103,14 +104,14 @@ int main(int argc, char* argv[]) {
     hdb->Map(0, platform.get(), eqFrame);
 
     // -- Hydrostatic
-
-    auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb.get());
-    platform->AddExternalForce(forceHst);
+    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
+//    auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb);
+//    platform->AddExternalForce(forceHst);
 
     // -- Excitation
-
-    auto excitationForce = std::make_shared<FrLinearExcitationForce_>(hdb, eqFrame);
-    platform->AddExternalForce(excitationForce);
+    auto excitationForce = make_linear_excitation_force(hdb, platform);
+//    auto excitationForce = std::make_shared<FrLinearExcitationForce_>(hdb);
+//    platform->AddExternalForce(excitationForce);
 
 //    // -- Radiation
 //
@@ -125,14 +126,16 @@ int main(int argc, char* argv[]) {
 
 
     // -- Current model force, based on polar coefficients
-    auto currentForce = std::make_shared<FrCurrentForce2_>("PolarCurrentCoeffs_NC.yml");
-//    currentForce->SetIsForceAsset(true);
-    platform->AddExternalForce(currentForce);
+    auto currentForce = make_current_force("PolarCurrentCoeffs_NC.yml", platform);
+//    auto currentForce = std::make_shared<FrCurrentForce2_>("PolarCurrentCoeffs_NC.yml");
+////    currentForce->SetIsForceAsset(true);
+//    platform->AddExternalForce(currentForce);
 
     // -- Wind model force, based on polar coefficients
-    auto windForce = std::make_shared<FrWindForce2_>("PolarWindCoeffs_NC.yml");
-//    windForce->SetIsForceAsset(true);
-    platform->AddExternalForce(windForce);
+    auto windForce = make_wind_force("PolarWindCoeffs_NC.yml", platform);
+//    auto windForce = std::make_shared<FrWindForce2_>("PolarWindCoeffs_NC.yml");
+////    windForce->SetIsForceAsset(true);
+//    platform->AddExternalForce(windForce);
 
 
     // ------------------ Run ------------------ //

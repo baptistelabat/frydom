@@ -146,4 +146,17 @@ namespace frydom {
         FrFlowForce::Update(time);
     }
 
+    std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body){
+        auto currentForce = std::make_shared<FrCurrentForce2_>(yamlFile);
+        body->AddExternalForce(currentForce);
+        return currentForce;
+    }
+
+    std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body){
+        auto windForce = std::make_shared<FrWindForce2_>(yamlFile);
+        body->AddExternalForce(windForce);
+        return windForce;
+
+    }
+
 } // end of namespace frydom

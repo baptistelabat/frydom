@@ -101,7 +101,8 @@ namespace frydom {
 
     private:
 
-        FrHydroDB_* m_HDB;
+        std::shared_ptr<FrHydroDB_> m_HDB;
+        //TODO: passed the raw to shared ptr, need some modif in the mapper.
         FrEquilibriumFrame_* m_equilibriumFrame;
 
         std::vector<Eigen::MatrixXcd> m_Fexc;
@@ -111,8 +112,7 @@ namespace frydom {
 
     public:
 
-        FrLinearExcitationForce_(std::shared_ptr<FrHydroDB_>& HDB, std::shared_ptr<FrEquilibriumFrame_>& eqFrame)
-                : m_HDB(HDB.get()), m_equilibriumFrame(eqFrame.get()) {};
+        FrLinearExcitationForce_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {};
 
         void Initialize() override;
 
@@ -122,7 +122,8 @@ namespace frydom {
 
     };
 
-
+    std::shared_ptr<FrLinearExcitationForce_>
+    make_linear_excitation_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body);
 }  // end namespace frydom
 
 #endif //FRYDOM_FRLINEAREXCITATIONFORCE_H

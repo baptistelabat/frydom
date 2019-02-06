@@ -50,7 +50,8 @@ int main(int argc, char* argv[]) {
             double YoungModulus = EA / sectionArea; // Young modulus of the line
 
             // Create the catenary line, using the nodes and line properties previously defined
-            auto CatenaryLine = makeCatenaryLine(Node1, Node2, &system, elastic, YoungModulus, sectionArea, unstretchedLength, linearDensity, u, fc);
+            auto CatenaryLine = make_catenary_line(Node1, Node2, &system, elastic, YoungModulus, sectionArea,
+                                                   unstretchedLength, linearDensity, u, fc);
 
             break;
         }
@@ -83,8 +84,8 @@ int main(int argc, char* argv[]) {
             double YoungModulus = EA / sectionArea; // Young modulus of the line
 
             // Create the catenary line, using the nodes and line properties previously defined
-            auto CatenaryLine = makeCatenaryLine(sphereNode, worldNode, &system, elastic, YoungModulus,
-                                                                  sectionArea, unstretchedLength, linearDensity, u, fc);
+            auto CatenaryLine = make_catenary_line(sphereNode, worldNode, &system, elastic, YoungModulus,
+                                                   sectionArea, unstretchedLength, linearDensity, u, fc);
             break;
         }
         // This case features a Newton pendulum, consisting of a series of identically sized metal balls suspended in a
@@ -143,12 +144,12 @@ int main(int argc, char* argv[]) {
                 worldNode2->SetPositionInBody(Position(-10., diameter * ib, 50.), NWU);
 
                 // Create the catenary lines, using the nodes and line properties previously defined
-                auto CatenaryLine1 = makeCatenaryLine(worldNode1, sphereNode, &system, elastic, YoungModulus,
-                                                                       sectionArea, unstretchedLength, linearDensity,
-                                                                       u, fc);
-                auto CatenaryLine2 = makeCatenaryLine(worldNode2, sphereNode, &system, elastic, YoungModulus,
-                                                                       sectionArea, unstretchedLength, linearDensity,
-                                                                       u, fc);
+                auto CatenaryLine1 = make_catenary_line(worldNode1, sphereNode, &system, elastic, YoungModulus,
+                                                        sectionArea, unstretchedLength, linearDensity,
+                                                        u, fc);
+                auto CatenaryLine2 = make_catenary_line(worldNode2, sphereNode, &system, elastic, YoungModulus,
+                                                        sectionArea, unstretchedLength, linearDensity,
+                                                        u, fc);
                 // Set the number of drawn elements on the catenary lines (the more, the slower the simulation)
                 CatenaryLine1->SetNbElements(10);
                 CatenaryLine2->SetNbElements(10);

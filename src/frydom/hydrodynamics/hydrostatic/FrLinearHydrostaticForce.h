@@ -86,12 +86,13 @@ namespace frydom {
     class FrLinearHydrostaticForce_ : public FrForce_ {
 
     private:
-        FrHydroDB_* m_HDB;
+        std::shared_ptr<FrHydroDB_> m_HDB;
         FrLinearHydrostaticStiffnessMatrix_ m_stiffnessMatrix;      ///< Hydrostatic stiffness matrix
+        //TODO: passed the raw to shared ptr, need some modif in the mapper.
         FrEquilibriumFrame_* m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
 
     public:
-        FrLinearHydrostaticForce_(FrHydroDB_* HDB) : m_HDB(HDB) { }
+        FrLinearHydrostaticForce_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) { }
 
         /// Get the stiffness matrix of the hydrostatic force
         /// \return Hydrostatic stiffness matrix
@@ -107,6 +108,11 @@ namespace frydom {
         /// Methods to be applied at the end of each time steps
         void StepFinalize() override { }
     };
+
+
+    std::shared_ptr<FrLinearHydrostaticForce_>
+    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body);
+
 
 }  // end namespace frydom
 
