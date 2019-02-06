@@ -5,6 +5,6 @@
 #ifndef FRYDOM_FRFUNCTIONSINC_H
 #define FRYDOM_FRFUNCTIONSINC_H
 
-#include "FrFunction.h"
+#include "FrRamp.h"
 
 #endif //FRYDOM_FRFUNCTIONSINC_H

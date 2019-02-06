@@ -67,14 +67,9 @@ namespace frydom {
 
         virtual void SetupInitial();
 
-        void Initialize() override {};
-
     protected:
 
         virtual std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() const ;
-
-//        friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPhysicsItem_>);
-
 
     };
 

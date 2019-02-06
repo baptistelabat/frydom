@@ -8,6 +8,7 @@
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOceanInc.h"
+#include "frydom/core/functions/FrRamp.h"
 
 
 namespace frydom {
@@ -119,7 +120,8 @@ namespace frydom {
         auto waveRamp = m_waveProbe->GetWaveField()->GetWaveRamp();
         if (waveRamp && waveRamp->IsActive()) {
             for (unsigned int imode=0; imode<nbMode; ++imode) {
-                waveRamp->Apply(ChTime, forceMode[imode]); // TODO: WaveRamp doit pouvoir s'appliquer a des vecteurs...
+                forceMode[imode] *= waveRamp->Get_y(ChTime); // TODO: WaveRamp doit pouvoir s'appliquer a des vecteurs...
+//                waveRamp->Apply(ChTime, forceMode[imode]); // TODO: WaveRamp doit pouvoir s'appliquer a des vecteurs...
             }
         }
 

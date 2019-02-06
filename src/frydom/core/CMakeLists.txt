@@ -32,6 +32,7 @@ list(APPEND SRC_FILES
 # FUNCTIONS
 list(APPEND SRC_FILES
         functions/FrFunction.cpp
+        functions/FrRamp.cpp
         )
 
 # LINK // TODO : cmakiser les repertoires !!

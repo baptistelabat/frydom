@@ -4,10 +4,11 @@
 
 #include "FrEnvironment.h"
 
-#include <GeographicLib/LocalCartesian.hpp>
-#include <GeographicLib/MagneticModel.hpp>
-#include <frydom/core/common/FrException.h>
-#include "frydom/core/functions/FrFunction.h"
+#include "GeographicLib/LocalCartesian.hpp"
+#include "GeographicLib/MagneticModel.hpp"
+#include "frydom/core/common/FrException.h"
+
+#include "frydom/core/functions/FrRamp.h"
 
 #include "frydom/core/FrOffshoreSystem.h"
 
@@ -333,14 +334,14 @@ namespace frydom {
     }
 
     void FrEnvironment_::ShowSeabed(bool show) {
-//        GetOcean()->GetSeabed()->Show
+//        GetOcean()->GetSeabed()->
         // TODO
     }
 
     FrTimeZone *FrEnvironment_::GetTimeZone() const {return m_timeZone.get();}
 
     void FrEnvironment_::Update(double time) {
-        m_timeRamp->Update(time);
+//        m_timeRamp->Update(time);
         m_ocean->Update(time);
         m_atmosphere->Update(time);
         m_timeZone->Update(time);
@@ -348,6 +349,8 @@ namespace frydom {
 
     void FrEnvironment_::Initialize() {
         m_timeRamp->Initialize();
+        m_timeRamp->SetActive(false);
+
         m_ocean->Initialize();
         m_atmosphere->Initialize();
         m_timeZone->Initialize();

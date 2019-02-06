@@ -6,10 +6,6 @@
 #define FRYDOM_FRWAVEFIELD_H
 
 
-//#include <vector>
-//#include <complex>
-//#include <random>
-
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/math/FrVector.h"
 
@@ -21,14 +17,6 @@
 #include "frydom/core/math/FrComplex.h"
 
 
-//#include "frydom/core/FrConstants.h"
-//#include "FrWaveSpectrum.h"
-//#include "FrWaveDispersionRelation.h"
-//#include "frydom/utils/FrUtils.h"
-//
-//#include "frydom/environment/waves/FrKinematicStretching.h"
-
-
 namespace frydom {
 
     // Forward declarations
@@ -38,47 +26,47 @@ namespace frydom {
     class FrLinearFlowSensor;
 
 
-    class FrRamp : public FrObject {  // TODO: placer cette classe dans son propre fichier
-
-    private:
-        bool m_active = true;
-
-        bool m_increasing = true;
-        double m_t0 = 0.;
-        double m_t1 = 20.;
-
-        double m_min = 0.;
-        double m_max = 1.;
-
-        double c_a = 0.;
-        double c_b = 1.;
-
-
-    public:
-
-        void SetDuration(double duration);
-
-        void SetIncrease();
-
-        void SetDecrease();
-
-        void SetMinVal(double minVal);
-
-        void SetMaxVal(double maxVal);
-
-        bool IsActive();
-
-        void Deactivate();
-
-        void Initialize();
-
-        void Apply(const double t, double& value);
-
-        void Apply(const double t, chrono::ChVector<double>& vect);
-
-        virtual void StepFinalize() override;
-
-    };
+//    class FrRamp : public FrObject {  // TODO: placer cette classe dans son propre fichier
+//
+//    private:
+//        bool m_active = true;
+//
+//        bool m_increasing = true;
+//        double m_t0 = 0.;
+//        double m_t1 = 20.;
+//
+//        double m_min = 0.;
+//        double m_max = 1.;
+//
+//        double c_a = 0.;
+//        double c_b = 1.;
+//
+//
+//    public:
+//
+//        void SetDuration(double duration);
+//
+//        void SetIncrease();
+//
+//        void SetDecrease();
+//
+//        void SetMinVal(double minVal);
+//
+//        void SetMaxVal(double maxVal);
+//
+//        bool IsActive();
+//
+//        void Deactivate();
+//
+//        void Initialize();
+//
+//        void Apply(const double t, double& value);
+//
+//        void Apply(const double t, chrono::ChVector<double>& vect);
+//
+//        virtual void StepFinalize() override;
+//
+//    };
 
 
 
@@ -93,6 +81,7 @@ namespace frydom {
 
     // Forward declarations
     class FrFreeSurface;
+    class FrRamp_;
 
     class FrWaveField : public FrObject {
 
@@ -107,7 +96,7 @@ namespace frydom {
 
         std::unique_ptr<FrWaveSpectrum> m_waveSpectrum = nullptr;
 
-        std::shared_ptr<FrRamp> m_waveRamp;  // TODO : passer en unique
+        std::shared_ptr<FrRamp_> m_waveRamp;  // TODO : passer en unique
 
         double m_depth = 0.;                     ///< Water depth (m) // TODO: aller chercher dans le seabed...
         bool m_infinite_depth = true;              ///< if true water depth is considered as infinite
@@ -126,7 +115,7 @@ namespace frydom {
 
         WAVE_MODEL GetWaveModel() const;
 
-        std::shared_ptr<FrRamp> GetWaveRamp() const;
+        std::shared_ptr<FrRamp_> GetWaveRamp() const;
 
         virtual double GetElevation(double x, double y) const = 0;
 

@@ -6,14 +6,12 @@
 
 #include <random>
 
-#include "frydom/core/functions/FrFunction.h"
+#include "frydom/core/functions/FrRamp.h"
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/FrOcean_.h"
 #include "frydom/environment/ocean/seabed/FrSeabed.h"
-//#include "frydom/core/FrOffshoreSystem.h"
-//#include "frydom/environment/ocean/FrOcean_.h"
 
 #include "FrWaveProbe.h"
 #include "FrFlowSensor.h"
@@ -26,85 +24,85 @@
 namespace frydom {
 
 
-    // FrRamp definitions
-
-    void FrRamp::SetDuration(double duration) {
-        m_t1 = m_t0 + duration;
-    }
-
-    void FrRamp::SetIncrease() {
-        m_increasing = true;
-        Initialize();
-    }
-
-    void FrRamp::SetDecrease() {
-        m_increasing = false;
-        Initialize();
-    }
-
-    void FrRamp::SetMinVal(double minVal) { m_min = minVal; }
-
-    void FrRamp::SetMaxVal(double maxVal) { m_max = maxVal; }
-
-    bool FrRamp::IsActive() {
-        return m_active;
-    }
-
-    void FrRamp::Deactivate() {
-        m_active = false;
-    }
-
-    void FrRamp::Initialize() {
-        double y0, y1;
-
-        if (m_increasing) {
-            y0 = m_min;
-            y1 = m_max;
-        } else {
-            y0 = m_max;
-            y1 = m_min;
-        }
-        c_a = (y1 - y0) / (m_t1 - m_t0);
-        c_b = y0 - c_a * m_t0;
-    }
-
-    void FrRamp::Apply(const double t, double &value) {
-
-        if (!m_active) {
-            return;
-        }
-
-        double y0, y1;
-        if (m_increasing) {
-            y0 = m_min;
-            y1 = m_max;
-        } else {
-            y0 = m_max;
-            y1 = m_min;
-        }
-
-
-        if (t < m_t0) {
-            value *= y0;
-            return;
-        }
-
-        if (t <= m_t1) {
-            value *= c_a * t + c_b;
-            return;
-        }
-
-        value *= y1;
-
-    }
-
-    void FrRamp::Apply(const double t, chrono::ChVector<double> &vect) {
-        Apply(t, vect.x());
-        Apply(t, vect.y());
-        Apply(t, vect.z());
-    }
-
-    void FrRamp::StepFinalize() {}
+//    // FrRamp definitions
+//
+//    void FrRamp::SetDuration(double duration) {
+//        m_t1 = m_t0 + duration;
+//    }
+//
+//    void FrRamp::SetIncrease() {
+//        m_increasing = true;
+//        Initialize();
+//    }
+//
+//    void FrRamp::SetDecrease() {
+//        m_increasing = false;
+//        Initialize();
+//    }
+//
+//    void FrRamp::SetMinVal(double minVal) { m_min = minVal; }
+//
+//    void FrRamp::SetMaxVal(double maxVal) { m_max = maxVal; }
+//
+//    bool FrRamp::IsActive() {
+//        return m_active;
+//    }
+//
+//    void FrRamp::Deactivate() {
+//        m_active = false;
+//    }
+//
+//    void FrRamp::Initialize() {
+//        double y0, y1;
+//
+//        if (m_increasing) {
+//            y0 = m_min;
+//            y1 = m_max;
+//        } else {
+//            y0 = m_max;
+//            y1 = m_min;
+//        }
+//        c_a = (y1 - y0) / (m_t1 - m_t0);
+//        c_b = y0 - c_a * m_t0;
+//    }
+//
+//    void FrRamp::Apply(const double t, double &value) {
+//
+//        if (!m_active) {
+//            return;
+//        }
+//
+//        double y0, y1;
+//        if (m_increasing) {
+//            y0 = m_min;
+//            y1 = m_max;
+//        } else {
+//            y0 = m_max;
+//            y1 = m_min;
+//        }
+//
+//
+//        if (t < m_t0) {
+//            value *= y0;
+//            return;
+//        }
+//
+//        if (t <= m_t1) {
+//            value *= c_a * t + c_b;
+//            return;
+//        }
+//
+//        value *= y1;
+//
+//    }
+//
+//    void FrRamp::Apply(const double t, chrono::ChVector<double> &vect) {
+//        Apply(t, vect.x());
+//        Apply(t, vect.y());
+//        Apply(t, vect.z());
+//    }
+//
+//    void FrRamp::StepFinalize() {}
 
 
     // FrWaveField definitions
@@ -119,21 +117,13 @@ namespace frydom {
 
     double FrWaveField::GetTime() const { return m_time; }
 
-//    FrFlowSensor* FrWaveField::SetFlowSensor(double x, double y, double z) const {
-//        return new FrFlowSensor(x, y, z);
-//    }
-//
-//    FrFlowSensor* FrWaveField::SetFlowSensor(chrono::ChVector<> pos) const {
-//        return new FrFlowSensor(pos);
-//    }
-
     void FrWaveField::SetWaveSpectrum(WAVE_SPECTRUM_TYPE type) {
         m_waveSpectrum = MakeWaveSpectrum(type);
     }
 
     WAVE_MODEL FrWaveField::GetWaveModel() const { return m_waveModel; }
 
-    std::shared_ptr<FrRamp> FrWaveField::GetWaveRamp() const {
+    std::shared_ptr<FrRamp_> FrWaveField::GetWaveRamp() const {
         return m_waveRamp;
     }
 
@@ -332,7 +322,8 @@ namespace frydom {
         Initialize();
         Update(0.);
 
-        m_waveRamp = std::make_shared<FrRamp>();
+        m_waveRamp = std::make_shared<FrRamp_>();
+//        m_waveRamp->
         m_waveRamp->Initialize();
 
         m_verticalFactor = std::make_shared<FrKinematicStretching>();
@@ -490,6 +481,8 @@ namespace frydom {
         if (m_wavePhases==nullptr) {
             this->GenerateRandomWavePhases();
         }
+
+        m_waveRamp->Initialize();
 
         FrWaveField::Initialize();
         Update(0.);
@@ -754,7 +747,7 @@ namespace frydom {
         chrono::ChVector<double> realAcceleration = ChReal(acceleration);
 
         if (m_waveRamp && m_waveRamp->IsActive()) {
-            m_waveRamp->Apply(m_time, realAcceleration);
+            realAcceleration *= m_waveRamp->Get_y(m_time);
         }
 
         return realAcceleration;
@@ -912,7 +905,7 @@ namespace frydom {
     }
 
     void FrWaveField_::StepFinalize() {
-        c_ramp = m_freeSurface->GetOcean()->GetEnvironment()->GetTimeRamp()->GetFunctionValue();
+        c_ramp = m_freeSurface->GetOcean()->GetEnvironment()->GetTimeRamp()->Get_y(c_time);
     }
 
     std::vector<std::vector<double>>

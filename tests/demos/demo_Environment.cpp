@@ -210,28 +210,21 @@ int main(int argc, char* argv[]) {
         //  -------------+-------+--------
         //              t0       t1
 
-        auto TimeRamp = system.GetEnvironment()->GetTimeRamp();
+        auto timeRamp = system.GetEnvironment()->GetTimeRamp();
 
         // By default this function is deactivated.
-        TimeRamp->Activate();
+        timeRamp->SetActive(true);
 
-        // The function can be set increasing or decreasing. It has no effect on the min and max values : in both cases,
-        // be sure to set y0<=y1;
-        TimeRamp->SetDecrease();
-        TimeRamp->SetIncrease();
-
-        // You can set its starting (t0) and ending (t1) times as well as its initial (y0) and final (y1) values.
-        double t0=0, t1=10, y0=0, y1=1;
-        TimeRamp->SetMinTime(t0);
-        TimeRamp->SetMaxTime(t1);
-        TimeRamp->SetMinVal(y0);
-        TimeRamp->SetMaxVal(y1);
-        // The SetDuration() method modifies only the ending time, taking for reference the starting time : t1 = t0 + d
-        TimeRamp->SetDuration(t1-t0);
+        // You can set its starting (t0) and ending (t1) times as well as its intercept and slope values so that it starts
+        // at 0. and finish at 1. after t1 seconds.
+        double t0=0, t1=10;
+        timeRamp->SetXLimits(t0, t1);
+        timeRamp->SetY0(0.);
+        timeRamp->SetSlope(1. / t1);
 
         // To add this function to custom objects, you just need to be sure to call the Update() method, which stores
         // a cached value of the simulation time, by your object.
-        // TimeRamp->Update(time);
+        // timeRamp->Update(time);
         // The GetFunctionValue() method then returns the value of the time ramp function for the cached time.
     }
 

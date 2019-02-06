@@ -11,26 +11,17 @@
 namespace frydom {
 
 
+    namespace internal {
+
+         FrMarker::FrMarker(frydom::FrNode_ *node) : m_frydomNode(node) {}
+
+    }  // end namespace frydom::internal
+
+
     FrNode_::FrNode_(frydom::FrBody_ *body) : m_body(body) {
-        m_chronoMarker = std::make_shared<chrono::ChMarker>();
+        m_chronoMarker = std::make_shared<internal::FrMarker>(this);
         body->GetChronoBody()->AddMarker(m_chronoMarker);  //Chrono body can be retrieved because this constructor is a friend of FrBody_
     }
-
-//    FrNode_::FrNode_(FrBody_ *body, const Position &position, FRAME_CONVENTION fc) : FrNode_(body) {
-//        _SetLocalFrame(FrFrame_(position, FrUnitQuaternion_(), fc));
-//    }
-//
-//    FrNode_::FrNode_(FrBody_ *body, const Position &position, const FrRotation_ &rotation, FRAME_CONVENTION fc) : FrNode_(body) {
-//        _SetLocalFrame(FrFrame_(position, rotation, fc));
-//    }
-//
-//    FrNode_::FrNode_(FrBody_ *body, const Position &position, const FrUnitQuaternion_ &quaternion, FRAME_CONVENTION fc) : FrNode_(body) {
-//        _SetLocalFrame(FrFrame_(position, quaternion, fc));
-//    }
-//
-//    FrNode_::FrNode_(FrBody_ *body, const FrFrame_ &frame) : FrNode_(body) {
-//        _SetLocalFrame(frame);
-//    }
 
     FrBody_* FrNode_::GetBody() {
         return m_body;

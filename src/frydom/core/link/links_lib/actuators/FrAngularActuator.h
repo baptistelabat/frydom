@@ -17,7 +17,7 @@ namespace frydom {
     class FrAngularActuator : public FrActuator {
 
     public:
-        FrAngularActuator(FrLink_* associatedLink);
+        FrAngularActuator(FrLink_* actuatedLink);
 
 
         // TODO : ajouter des methodes communes a tous les actuateurs angulaires tel que GetRPM()...

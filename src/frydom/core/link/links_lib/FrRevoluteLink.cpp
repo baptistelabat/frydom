@@ -7,40 +7,10 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrNode.h"
 
+#include "actuators/FrAngularActuatorInc.h"
+
 
 namespace frydom {
-
-//    namespace internal {
-//
-//        FrLinkMotorRotationSpeedBase::FrLinkMotorRotationSpeedBase(FrLinkBase_ *frydomLink) : m_frydomLink(frydomLink) {
-//            SetSpindleConstraint(chrono::ChLinkMotorRotation::SpindleConstraint::FREE);
-//        }
-//
-//        void FrLinkMotorRotationSpeedBase::Initialize() {
-//
-//            // Based on ChLinkMateGeneric::Initialize
-//
-//            this->Body1 = m_frydomLink->GetBody1()->GetChronoBody().get();
-//            this->Body2 = m_frydomLink->GetBody2()->GetChronoBody().get();
-//
-//            this->mask->SetTwoBodiesVariables(&Body1->Variables(), &Body2->Variables());
-//
-//            this->frame1 = internal::FrFrame2ChFrame(m_frydomLink->GetNode1()->GetFrameWRT_COG_InBody());
-//            this->frame2 = internal::FrFrame2ChFrame(m_frydomLink->GetNode2()->GetFrameWRT_COG_InBody());
-//        }
-//
-//
-//
-//
-//
-//
-//    }  // end namespace frydom::internal
-
-
-
-
-
-
 
     FrRevoluteLink::FrRevoluteLink(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2,
                                    FrOffshoreSystem_ *system) : FrLink_(node1, node2, system) {
@@ -98,9 +68,9 @@ namespace frydom {
         FrLink_::Initialize();
 
         // Initialization of the motor part
-//        if (m_motor) {
-//            m_motor->Initialize();
-//        }
+        if (m_actuator) {
+            m_actuator->Initialize();
+        }
 
         // Log initialization
         l_message.SetNameAndDescription("RevoluteLink", "");
@@ -176,21 +146,16 @@ namespace frydom {
     }
 
     void FrRevoluteLink::MotorizeSpeed() {
-//        m_motor = std::make_shared<internal::FrLinkMotorRotationSpeedBase>(this);
-//
-//        m_system->AddLink(m_motor);
-//
-//
-//
-//        // TODO : terminer
 
-
+        // INFO : Pour le moment, je ne permets que de faire de la motorisation en vitesse
+        m_actuator = std::make_shared<FrAngularActuatorVelocity>(this);
 
 
     }
 
     double FrRevoluteLink::GetUpdatedRelativeAngle() const {
         return mathutils::Normalize__PI_PI(m_chronoLink->c_frame2WRT1.GetRotation().GetRotationVector(NWU)[2]);
+//        return mathutils::Normalize__PI_PI(m_chronoLink->GetRelAngle()); // INFO : fonctionne bien moins bien que ci-dessus !
     }
 
     void FrRevoluteLink::UpdateCache() {

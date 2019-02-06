@@ -98,82 +98,208 @@ namespace frydom {
 
     // REFACTORING ------------->>>>>>>>>>>>>>>>>>
 
-    class FrFunction_ : public FrObject {
-    protected:
-        double m_functionValue = 1.;    ///< value of the function to return
-        double c_time = 0.;             ///< cached value of the time, updated using the Update method
-    public:
 
-        /// Get the function value
-        /// \return function value
-        double GetFunctionValue() const;
+//    class FrFunction_ : public FrObject {
+//    protected:
+//        double m_functionValue = 1.;    ///< value of the function to return
+//        double c_time = 0.;             ///< cached value of the time, updated using the Update method
+//    public:
+//
+//        /// Get the function value
+//        /// \return function value
+//        double GetFunctionValue() const;
+//
+//        /// Update the state of the function, including the cached value of the time. This method needs to  be called
+//        /// by the container of this function.
+//        /// \param time time of the simulation
+//        void Update(double time);
+//    };
+//
+//
+//
+//
+//    class FrRamp_ : public FrFunction_ {
+//
+//    private:
+//        bool m_active = false;      ///< bool checking if the ramp is active
+//        bool m_increasing = true;   ///< bool checking if the ramp is increasing (true) of decreasing (false)
+//
+//        double m_t0 = 0.;           ///< start time of the ramp
+//        double m_t1 = 20.;          ///< end time of the ramp
+//
+//        double m_min = 0.;          ///< start value of the ramp if it's increasing, end otherwise
+//        double m_max = 1.;          ///< end value of the ramp if it's increasing, start otherwise
+//
+//        double c_a = 0.;            ///< cached coefficient of the ramp (slope)
+//        double c_b = 1.;            ///< cached coefficient of the ramp (y offset)
+//
+//    public:
+//
+//        /// Set the duration of the ramp, meaning m_t1-m_t0
+//        /// \param duration duration of the ramp
+//        void SetDuration(double duration);
+//
+//        /// Set the ramp to an increasing one
+//        void SetIncrease();
+//
+//        /// Set the ramp to a decreasing one
+//        void SetDecrease();
+//
+//        /// Set the min time of the ramp, m_t0
+//        /// \param minTime min time of the ramp
+//        void SetMinTime(double minTime);
+//
+//        /// Set the max time of the ramp, m_t1
+//        /// \param maxTime max time of the ramp
+//        void SetMaxTime(double maxTime);
+//
+//        /// Set the min value of the ramp, m_min
+//        /// \param minVal min value of the ramp
+//        void SetMinVal(double minVal);
+//
+//        /// Set the max value of the ramp, m_max
+//        /// \param maxVal max value of the ramp
+//        void SetMaxVal(double maxVal);
+//
+//        /// Check is the ramp is active
+//        /// \return true if the ramp is active, false otherwise
+//        bool IsActive();
+//
+//        /// Activate the ramp (set active)
+//        void Activate();
+//
+//        /// De-activate the ramp (set inactive)
+//        void Deactivate();
+//
+//        /// Initialize the state of the ramp
+//        void Initialize() override;
+//
+//        /// Method called at the send of a time step. Logging may be used here
+//        void StepFinalize() override;
+//
+//    };
 
-        /// Update the state of the function, including the cached value of the time. This method needs to  be called
-        /// by the container of this function.
-        /// \param time time of the simulation
-        void Update(double time);
-    };
 
-    class FrRamp_ : public FrFunction_ {
+
+
+
+
+//////////// ----------- >>>>> REFACTORING OF THE REFACTORING :) :)
+
+
+//    // Forward declaration
+//    class FrFunction_;
+//
+//    namespace internal {
+//
+//        struct FrFunctionWrapper : public chrono::ChFunction {
+//
+//            FrFunction_* m_frydomFunction;
+//
+//            explicit FrFunctionWrapper(FrFunction_* frydomFunction);
+//
+//            double Get_y(double x) const override;
+//
+//            double Get_y_dx(double x) const override;
+//
+//            double Get_y_dxdx(double x) const override;
+//
+//        };
+//
+//    }  // end namespace frydom::internal
+
+
+    class FrFunctionBase : public FrObject, public std::enable_shared_from_this<FrFunctionBase> {
 
     private:
-        bool m_active = false;      ///< bool checking if the ramp is active
-        bool m_increasing = true;   ///< bool checking if the ramp is increasing (true) of decreasing (false)
+        bool m_isActive = true;
 
-        double m_t0 = 0.;           ///< start time of the ramp
-        double m_t1 = 20.;          ///< end time of the ramp
-
-        double m_min = 0.;          ///< start value of the ramp if it's increasing, end otherwise
-        double m_max = 1.;          ///< end value of the ramp if it's increasing, start otherwise
-
-        double c_a = 0.;            ///< cached coefficient of the ramp (slope)
-        double c_b = 1.;            ///< cached coefficient of the ramp (y offset)
 
     public:
 
-        /// Set the duration of the ramp, meaning m_t1-m_t0
-        /// \param duration duration of the ramp
-        void SetDuration(double duration);
+        bool IsActive() const;
 
-        /// Set the ramp to an increasing one
-        void SetIncrease();
+        void SetActive(bool active);
 
-        /// Set the ramp to a decreasing one
-        void SetDecrease();
+        virtual double Get_y(double x) const = 0;
 
-        /// Set the min time of the ramp, m_t0
-        /// \param minTime min time of the ramp
-        void SetMinTime(double minTime);
+        virtual double Get_y_dx(double x) const = 0;
 
-        /// Set the max time of the ramp, m_t1
-        /// \param maxTime max time of the ramp
-        void SetMaxTime(double maxTime);
+        virtual double Get_y_dxdx(double x) const = 0;
 
-        /// Set the min value of the ramp, m_min
-        /// \param minVal min value of the ramp
-        void SetMinVal(double minVal);
+        std::shared_ptr<FrFunctionBase> operator+(const std::shared_ptr<FrFunctionBase>& otherFunction) const;
 
-        /// Set the max value of the ramp, m_max
-        /// \param maxVal max value of the ramp
-        void SetMaxVal(double maxVal);
+        std::shared_ptr<FrFunctionBase> operator-() const;
 
-        /// Check is the ramp is active
-        /// \return true if the ramp is active, false otherwise
-        bool IsActive();
+        std::shared_ptr<FrFunctionBase> operator-(const std::shared_ptr<FrFunctionBase>& otherFunction) const;
 
-        /// Activate the ramp (set active)
-        void Activate();
+        std::shared_ptr<FrFunctionBase> operator*(const std::shared_ptr<FrFunctionBase>& otherFunction) const;
 
-        /// De-activate the ramp (set inactive)
-        void Deactivate();
+        std::shared_ptr<FrFunctionBase> operator/(const std::shared_ptr<FrFunctionBase>& otherFunction) const;
 
-        /// Initialize the state of the ramp
-        void Initialize() override;
 
-        /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override;
+        // TODO : VOIR SI ON GARDE
+        void Initialize() override {}
+//        void Update(double time) {}
+        void StepFinalize() override {}
+
+
 
     };
+
+
+
+
+    class FrFunction_ : public FrFunctionBase {
+
+    protected:
+
+        std::shared_ptr<chrono::ChFunction> m_chronoFunction;
+
+    public:
+//        FrFunction_();
+
+        double Get_y(double x) const override;
+
+        double Get_y_dx(double x) const override;
+
+        double Get_y_dxdx(double x) const override;
+
+
+    };
+
+
+
+    class FrCompositeFunction : public FrFunctionBase {
+        friend class FrFunctionBase;
+
+    protected:
+        enum OPERATOR {
+            ADD,
+            SUB,
+            MUL,
+            DIV
+        };
+
+    private:
+        std::shared_ptr<FrFunctionBase> m_function1;
+        std::shared_ptr<FrFunctionBase> m_function2;
+        OPERATOR m_operator;
+
+    public:
+
+        double Get_y(double x) const override;
+
+        double Get_y_dx(double x) const override;
+
+        double Get_y_dxdx(double x) const override;
+
+
+    };
+
+
+
+
 
 
 }  // end namespace frydom

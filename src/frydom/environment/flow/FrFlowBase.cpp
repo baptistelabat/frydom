@@ -5,7 +5,7 @@
 
 #include "FrFlowBase.h"
 #include "frydom/core/common/FrFrame.h"
-#include "frydom/core/functions/FrFunction.h"
+#include "frydom/core/functions/FrRamp.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean_.h"
 #include "frydom/environment/atmosphere/FrAtmosphere_.h"
@@ -52,16 +52,17 @@ namespace frydom {
 
     void FrFlowBase::Initialize() {
         m_field->Initialize();
-        c_ramp = GetEnvironment()->GetTimeRamp()->GetFunctionValue();
+        c_ramp = GetEnvironment()->GetTimeRamp()->Get_y(m_time);
     }
 
     void FrFlowBase::Update(double time) {
         m_field->Update(time);
+        m_time = time;
     }
 
     void FrFlowBase::StepFinalize() {
         m_field->StepFinalize();
-        c_ramp = GetEnvironment()->GetTimeRamp()->GetFunctionValue();
+        c_ramp = GetEnvironment()->GetTimeRamp()->Get_y(m_time);
     }
 
     // ---------------------------------------------------------

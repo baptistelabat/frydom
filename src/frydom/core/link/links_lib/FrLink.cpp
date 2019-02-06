@@ -4,11 +4,12 @@
 
 #include "FrLink.h"
 
-#include "chrono/physics/ChLinkLock.h"
-#include "chrono/physics/ChLinkMotor.h"
+//#include "chrono/physics/ChLinkLock.h"
+//#include "chrono/physics/ChLinkMotor.h"
 
-#include <frydom/core/common/FrNode.h>
+#include "frydom/core/common/FrNode.h"
 #include "frydom/core/body/FrBody.h"
+#include "actuators/FrActuator.h"
 
 
 namespace frydom {
@@ -120,6 +121,10 @@ namespace frydom {
             return internal::ChVectorToVector3d<Torque>(C_torque);
         }
 
+        FrFrame_ FrLinkLockBase::GetConstraintViolation() { // TODO : voir si c'est bien la violation de 2 par rapport a 1, dans 1 !! sinon, renvoyer l'inverse
+            return internal::ChCoordsys2FrFrame(GetRelC());
+        }
+
     }  // end namespace frydom::internal
 
 
@@ -150,6 +155,17 @@ namespace frydom {
 
     void FrLink_::SetDisabled(bool disabled) {
         m_chronoLink->SetDisabled(disabled);
+        if (IsMotorized()) {
+            m_actuator->SetDisabled(disabled);
+        }
+    }
+
+    void FrLink_::SetBreakable(bool breakable) {
+        m_breakable = breakable;
+    }
+
+    bool FrLink_::IsBreakable() const {
+        return m_breakable;
     }
 
     bool FrLink_::IsBroken() const {
@@ -157,11 +173,20 @@ namespace frydom {
     }
 
     void FrLink_::SetBroken(bool broken) {
+        if (!IsBreakable()) return;
+
         m_chronoLink->SetBroken(broken);
+        if (IsMotorized()) {
+            m_actuator->SetDisabled(broken);
+        }
     }
 
     bool FrLink_::IsActive() const {
         return m_chronoLink->IsActive();
+    }
+
+    bool FrLink_::IsMotorized() const {
+        return (m_actuator && m_actuator->IsActive());
     }
 
     void FrLink_::SetThisConfigurationAsReference() {
@@ -169,6 +194,8 @@ namespace frydom {
         UpdateCache();
     }
 
+    // Must be reimplemented in
+//    bool FrLink_::IsMotorized() const { return false; }
 
     const FrFrame_ FrLink_::GetMarker2FrameWRTMarker1Frame() const {
         return m_chronoLink->c_frame2WRT1;
@@ -457,6 +484,10 @@ namespace frydom {
 
     void FrLink_::InitializeWithBodyDOFMask(FrBodyDOFMask *mask) {
         m_chronoLink->SetMask(mask);
+    }
+
+    FrFrame_ FrLink_::GetConstraintViolation() const {
+        return m_chronoLink->GetConstraintViolation();
     }
 
     void FrLink_::UpdateCache() {}

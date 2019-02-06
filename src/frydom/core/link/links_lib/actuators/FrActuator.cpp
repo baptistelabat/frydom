@@ -10,9 +10,31 @@
 namespace frydom {
 
 
-    FrActuator::FrActuator(FrLink_ *associatedLink) :
-        FrLinkBase_(associatedLink->GetNode1(), associatedLink->GetNode2(), associatedLink->GetSystem()),
-        m_associatedLink(associatedLink) {}
+    FrActuator::FrActuator(FrLink_ *actuatedLink) :
+        FrLinkBase_(actuatedLink->GetNode1(), actuatedLink->GetNode2(), actuatedLink->GetSystem()),
+        m_actuatedLink(actuatedLink) {}
+
+    bool FrActuator::IsDisabled() const {
+        return m_chronoMotor->GetDisabled(); // TODO : voir si on teste aussi m_actuatedLink
+    }
+
+    void FrActuator::SetDisabled(bool disabled) {
+        m_chronoMotor->MakeDisabled(disabled);
+    }
+
+//    bool FrActuator::IsBroken() const {
+//        return m_chronoMotor->IsBroken();
+//    }
+//
+//    void FrActuator::SetBroken(bool broken) {
+//
+//    }
+
+    bool FrActuator::IsActive() const {
+        return false;
+    }
+
+
 
 
 

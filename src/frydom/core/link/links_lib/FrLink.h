@@ -101,6 +101,8 @@ namespace frydom {
             /// Get the link torque applying on Body 1 (as external) expressed in marker 2 frame and on marker 1 origin
             Torque GetLinkTorqueOnBody1InFrame2ArOrigin1();
 
+            FrFrame_ GetConstraintViolation();
+
         };
 
     }  // end namespace frydom::internal
@@ -113,6 +115,7 @@ namespace frydom {
 
     // Forward declaration
     class FrBodyDOFMask;
+    class FrActuator;
 
     class FrLink_ : public FrLinkBase_ {
 
@@ -121,6 +124,12 @@ namespace frydom {
         std::shared_ptr<internal::FrLinkLockBase> m_chronoLink;
 
         FrFrame_ m_frame2WRT1_reference;
+
+        bool m_breakable = false; // TODO : utiliser et permettre de declencher la cassure de la liaison
+
+
+        // Actuator
+        std::shared_ptr<FrActuator> m_actuator;
 
     public:
 
@@ -133,11 +142,17 @@ namespace frydom {
         /// User can use this to enable/disable all the constraint of the link as desired.
         void SetDisabled(bool disabled) override;
 
+        /// Make the link breakable
+        void SetBreakable(bool breakable);
+
+        /// Is this link breakable ?
+        bool IsBreakable() const;
+
         /// Tells if the link is broken, for excess of pulling/pushing. // TODO : implementer de quoi 'casser' les liaisons si trop d'effort -> foncteurs ?
-        bool IsBroken() const override;
+        bool IsBroken() const;
 
         /// Set the 'broken' status vof this link.
-        void SetBroken(bool broken) override;
+        void SetBroken(bool broken);
 
         /// Tells if the link is currently active, in general,
         /// that is tells if it must be included into the system solver or not.
@@ -145,9 +160,13 @@ namespace frydom {
         /// be not active either because disabled, or broken, or not valid)
         bool IsActive() const override;
 
+        /// Does this link is motorized ?
+        bool IsMotorized() const;
+
         /// Freezes the current configuration as being the reference configuration from which the generalized
         /// position measurement are given (ie. length from the rest length for a prismatic link)
         virtual void SetThisConfigurationAsReference();
+
 
 
         /*
@@ -286,7 +305,13 @@ namespace frydom {
         /// Initialize a FrLink_ with a FrBodyDOFMask. Essentially used by the DOF restricting mechanism of bodies
         /// Users should not use this method to make links between bodies but directly use the specialized classes
         /// (FrPrismaticLink, FrRevoluteLink...)
-        void InitializeWithBodyDOFMask(FrBodyDOFMask* mask);
+        void InitializeWithBodyDOFMask(FrBodyDOFMask* mask); // FIXME passer dans une classe dediee specialisee FrBodyCaptive
+
+        /// Get the constraint violation of the link (ie the
+        FrFrame_ GetConstraintViolation() const;  // FIXME : verifier que cette violation ne prend pas en compte la position relative normale de la liaison
+
+
+
 
         virtual void Initialize() override;
 
@@ -299,7 +324,7 @@ namespace frydom {
         friend class FrNode_; // To make possible to declare SetMarkers friend in FrNode_
 
         /// Set the markers of the link. This method must be used during the Initialization of the link
-        void SetMarkers(FrNode_* node1, FrNode_* node2) override;
+        void SetMarkers(FrNode_* node1, FrNode_* node2);
 
         /// Get the embedded Chrono object
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
@@ -324,6 +349,9 @@ namespace frydom {
     /*
      * Defining a mask class to make the constraint on bodies WRT to world easier
      */
+
+    // TODO : creer une classe speciale derivant de FrLink_ pour fixer les dof des corps en mode captif..
+    // FrBodyCaptive... --> on mettra le IsMotorized en virtuel pur !
 
     class FrBodyDOFMask {
 
