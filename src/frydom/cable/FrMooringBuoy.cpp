@@ -67,7 +67,7 @@ namespace frydom {
 
     std::shared_ptr<FrMooringBuoy>
     make_mooring_buoy(FrOffshoreSystem_* system, double radius, double mass, bool visual_asset, double damping){
-        auto buoy = std::make_shared<FrMooringBuoy>(radius, mass, true, damping);
+        auto buoy = std::make_shared<FrMooringBuoy>(radius, mass, visual_asset, damping);
         system->Add(buoy);
         buoy->SetColor(DarkRed);
         return buoy;
