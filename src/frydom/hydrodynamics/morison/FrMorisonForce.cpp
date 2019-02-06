@@ -96,9 +96,11 @@ namespace frydom {
     void FrMorisonForce_::StepFinalize() {
 
     }
-    
+
+
     std::shared_ptr<FrMorisonForce_>
     make_morison_force(std::shared_ptr<FrMorisonElement_> model, std::shared_ptr<FrBody_> body){
+        assert(body.get() == model->GetNode()->GetBody());
         auto MorisonForce = std::make_shared<FrMorisonForce_>(model);
         body->AddExternalForce(MorisonForce);
         return MorisonForce;

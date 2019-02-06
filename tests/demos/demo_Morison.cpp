@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
         // Several ways exist to add a Morison model to a body. Remember that a Morison model is a composition of Morison
         // elements (using a composition pattern). Morison elements can be added simply to a Morison model. Note that you
         // can also provide a Morison Force with a Morison element, if you got only one element.
-        auto MorisonModel = make_MorisonModel(cylinder.get());
+        auto MorisonModel = make_morison_model(cylinder.get());
 
         // Define the added mass and drag Morison Coefficients.
         MorisonCoeff AddedMassCoeff(0.5, 0.7);
@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
         Platform->SetFixedInWorld(true);
 
         // Morison Model
-        auto MorisonModel = make_MorisonModel(Platform.get());
+        auto MorisonModel = make_morison_model(Platform.get());
 
         // Define the added mass and friction coefficients.
         MorisonCoeff AddedMassCoeff(0., 0.); // The added mass is not taken into account
