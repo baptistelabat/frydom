@@ -45,7 +45,14 @@ namespace frydom {
         }
 
     };
-    
+
+    /// Maker for the mooring buoy class: instantiate and return a FrMooringBuoy. It also add it to the system provided.
+    /// \param system system in charge of the buoy
+    /// \param radius radius of the buoy
+    /// \param mass mass of the buoy
+    /// \param visual_asset true if an asset is to be viewed
+    /// \param damping damping coefficient affected to the diagonal terms of a linear damping force.
+    /// \return FrMooringBuoy instance
     std::shared_ptr<FrMooringBuoy>
     make_mooring_buoy(FrOffshoreSystem_* system, double radius, double mass, bool visual_asset = true, double damping=0);
 } //end namespace frydom
