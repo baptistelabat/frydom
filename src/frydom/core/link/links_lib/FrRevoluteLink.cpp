@@ -10,31 +10,31 @@
 
 namespace frydom {
 
-    namespace internal {
-
-        FrLinkMotorRotationSpeedBase::FrLinkMotorRotationSpeedBase(FrLinkBase_ *frydomLink) : m_frydomLink(frydomLink) {
-            SetSpindleConstraint(chrono::ChLinkMotorRotation::SpindleConstraint::FREE);
-        }
-
-        void FrLinkMotorRotationSpeedBase::Initialize() {
-
-            // Based on ChLinkMateGeneric::Initialize
-
-            this->Body1 = m_frydomLink->GetBody1()->GetChronoBody().get();
-            this->Body2 = m_frydomLink->GetBody2()->GetChronoBody().get();
-
-            this->mask->SetTwoBodiesVariables(&Body1->Variables(), &Body2->Variables());
-
-            this->frame1 = internal::FrFrame2ChFrame(m_frydomLink->GetNode1()->GetFrameWRT_COG_InBody());
-            this->frame2 = internal::FrFrame2ChFrame(m_frydomLink->GetNode2()->GetFrameWRT_COG_InBody());
-        }
-
-
-
-
-
-
-    }  // end namespace frydom::internal
+//    namespace internal {
+//
+//        FrLinkMotorRotationSpeedBase::FrLinkMotorRotationSpeedBase(FrLinkBase_ *frydomLink) : m_frydomLink(frydomLink) {
+//            SetSpindleConstraint(chrono::ChLinkMotorRotation::SpindleConstraint::FREE);
+//        }
+//
+//        void FrLinkMotorRotationSpeedBase::Initialize() {
+//
+//            // Based on ChLinkMateGeneric::Initialize
+//
+//            this->Body1 = m_frydomLink->GetBody1()->GetChronoBody().get();
+//            this->Body2 = m_frydomLink->GetBody2()->GetChronoBody().get();
+//
+//            this->mask->SetTwoBodiesVariables(&Body1->Variables(), &Body2->Variables());
+//
+//            this->frame1 = internal::FrFrame2ChFrame(m_frydomLink->GetNode1()->GetFrameWRT_COG_InBody());
+//            this->frame2 = internal::FrFrame2ChFrame(m_frydomLink->GetNode2()->GetFrameWRT_COG_InBody());
+//        }
+//
+//
+//
+//
+//
+//
+//    }  // end namespace frydom::internal
 
 
 
@@ -98,9 +98,9 @@ namespace frydom {
         FrLink_::Initialize();
 
         // Initialization of the motor part
-        if (m_motor) {
-            m_motor->Initialize();
-        }
+//        if (m_motor) {
+//            m_motor->Initialize();
+//        }
 
         // Log initialization
         l_message.SetNameAndDescription("RevoluteLink", "");

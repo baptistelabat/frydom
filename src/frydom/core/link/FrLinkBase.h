@@ -87,12 +87,12 @@ namespace frydom {
 
 
         /// Returns the first node of the link
-        FrNode_* GetNode1();
-        const FrNode_* GetNode1() const;
+        std::shared_ptr<FrNode_> GetNode1();
+        const std::shared_ptr<FrNode_> GetNode1() const;
 
         /// Returns the second node of the link
-        FrNode_* GetNode2();
-        const FrNode_* GetNode2() const;
+        std::shared_ptr<FrNode_> GetNode2();
+        const std::shared_ptr<FrNode_> GetNode2() const;
 
         /// Returns the first body of the link
         FrBody_* GetBody1();
@@ -108,9 +108,8 @@ namespace frydom {
         friend void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLinkBase_> link);
         virtual std::shared_ptr<chrono::ChLink> GetChronoLink() = 0;
 
-//        FrFrame_ GetTransformFromFrame2ToFrame1() const;
-
-
+        std::shared_ptr<chrono::ChBody> GetChronoBody1();
+        std::shared_ptr<chrono::ChBody> GetChronoBody2();
     };
 
 

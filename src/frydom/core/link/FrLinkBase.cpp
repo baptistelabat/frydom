@@ -4,6 +4,7 @@
 
 #include "FrLinkBase.h"
 
+#include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrNode.h"
 
 
@@ -14,20 +15,20 @@ namespace frydom {
         m_system = system;
     }
 
-    FrNode_* FrLinkBase_::GetNode1() {
-        return m_node1.get();
+    std::shared_ptr<FrNode_> FrLinkBase_::GetNode1() {
+        return m_node1;
     }
 
-    const FrNode_* FrLinkBase_::GetNode1() const {
-        return m_node1.get();
+    const std::shared_ptr<FrNode_> FrLinkBase_::GetNode1() const {
+        return m_node1;
     }
 
-    FrNode_* FrLinkBase_::GetNode2() {
-        return m_node2.get();
+    std::shared_ptr<FrNode_> FrLinkBase_::GetNode2() {
+        return m_node2;
     }
 
-    const FrNode_* FrLinkBase_::GetNode2() const {
-        return m_node2.get();
+    const std::shared_ptr<FrNode_> FrLinkBase_::GetNode2() const {
+        return m_node2;
     }
 
     FrBody_* FrLinkBase_::GetBody1() {
@@ -36,6 +37,14 @@ namespace frydom {
 
     FrBody_* FrLinkBase_::GetBody2() {
         return m_node2->GetBody();
+    }
+
+    std::shared_ptr<chrono::ChBody> FrLinkBase_::GetChronoBody1() {
+        return GetBody1()->GetChronoBody();
+    }
+
+    std::shared_ptr<chrono::ChBody> FrLinkBase_::GetChronoBody2() {
+        return GetBody1()->GetChronoBody();
     }
 //
 //    FrFrame_ FrLinkBase_::GetTransformFromFrame2ToFrame1() const {

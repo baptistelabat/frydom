@@ -20,58 +20,58 @@ namespace frydom {
 
 
 
-    enum MOTOR_TYPE {
-        LINEAR_MOTOR,
-        ANGULAR_MOTOR,
-        SPEED_MOTOR,
-        FORCE_MOTOR
-    };
+//    enum MOTOR_TYPE {
+//        LINEAR_MOTOR,
+//        ANGULAR_MOTOR,
+//        SPEED_MOTOR,
+//        FORCE_MOTOR
+//    };
+//
+//
+//    namespace internal {
+//
+//        struct FrLinkMotorRotationSpeedBase : public chrono::ChLinkMotorRotationSpeed {
+//
+//            FrLinkBase_* m_frydomLink;
+//
+//            explicit FrLinkMotorRotationSpeedBase(FrLinkBase_* frydomLink);
+//
+////            void SetupInitial() override;
+////
+//            void Initialize();
+//
+//        };
+//
+//    }  // end namespace frydom::internal
+//
+//    class FrRotationActuator : public FrLinkBase_ {
+//
+//    public:
+//        FrRotationActuator();
+//
+//
+//
+//    };
 
 
-    namespace internal {
-
-        struct FrLinkMotorRotationSpeedBase : public chrono::ChLinkMotorRotationSpeed {
-
-            FrLinkBase_* m_frydomLink;
-
-            explicit FrLinkMotorRotationSpeedBase(FrLinkBase_* frydomLink);
-
-            void SetupInitial() override;
-
-            void Initialize();
-
-        };
-
-    }  // end namespace frydom::internal
-
-    class FrRotationActuator : public FrLinkBase_ {
-
-    public:
-        FrRotationActuator();
-
-
-
-    };
-
-
-    class FrRotationActuatorForSpeed : public FrRotationActuator {
-
-        // TODO : mettre en place des rampes pour les montees en vitesse...
-
-    private:
-//        std::shared_ptr<internal::FrLinkMotorRotationSpeedBase> m_chronoMotor;
-
-    public:
-        FrRotationActuatorForSpeed();
-
-        void SetConstantAngularVelocity(double angularVelocity);
-
-
-        void SetSpeedFunction(std::shared_ptr<FrFunction_> function);
-
-
-
-    };
+//    class FrRotationActuatorForSpeed : public FrRotationActuator {
+//
+//        // TODO : mettre en place des rampes pour les montees en vitesse...
+//
+//    private:
+////        std::shared_ptr<internal::FrLinkMotorRotationSpeedBase> m_chronoMotor;
+//
+////    public:
+////        FrRotationActuatorForSpeed();
+////
+////        void SetConstantAngularVelocity(double angularVelocity);
+////
+////
+////        void SetSpeedFunction(std::shared_ptr<FrFunction_> function);
+////
+////
+////
+//    };
 
 
     /// Specialized class for revolute link between two bodies
@@ -91,7 +91,7 @@ namespace frydom {
 
 
         // Motors
-        std::shared_ptr<FrRotationActuator> m_motor;
+//        std::shared_ptr<FrRotationActuator> m_motor;
 
 
 

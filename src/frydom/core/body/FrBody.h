@@ -1086,21 +1086,17 @@ namespace frydom {
 
 
 
-
-
     protected:
 
-        enum FRAME {
-            WORLD,
-            BODY
-        };
+//        enum FRAME {
+//            WORLD,
+//            BODY
+//        };
 
         /// Set the COG position in the body reference frame
         /// \param bodyPos COG position in the body reference frame
         /// \param fc frame convention (NED/NWU)
         void SetCOG(const Position& bodyPos, FRAME_CONVENTION fc);
-
-//        void _SetPointPosition(const Position& point, FRAME pointFrame, const Position& pos, FRAME posFrame, FRAME_CONVENTION fc);
 
         /// Convert a cartesian position to a geographic position, using the geographic service of FrEnvironment
         /// \param cartPos cartesian position to convert
@@ -1165,7 +1161,9 @@ namespace frydom {
 
         friend FrNode_::FrNode_(FrBody_*);
 
-        friend class internal::FrLinkMotorRotationSpeedBase; // FIXME : bofbof ce couplage...
+//        friend std::shared_ptr<chrono::ChBody> FrLinkBase_::GetChronoBody1();
+//        friend std::shared_ptr<chrono::ChBody> FrLinkBase_::GetChronoBody2();
+        friend class FrLinkBase_;
 
 
     public:
