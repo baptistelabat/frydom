@@ -61,7 +61,7 @@ namespace frydom {
 
                     auto bodyOffset = GetBodyOffset(body);
 
-                    auto fb = GetVariablesFb(body);   // FIXME
+                    auto fb = GetVariablesFb(body);
 
                     auto invAddedMassCorrection = m_invAddedMassCorrection.at(BEMBody->get());
 
@@ -69,10 +69,10 @@ namespace frydom {
                         result(resultOffset + i) = 0.;
                         for (int j=0; j<6; j++) {
                             //result(resultOffset + i) += invAddedMassCorrection(i, j) * vect(bodyOffset + j);
-                            result(resultOffset + i) += invAddedMassCorrection(i, j) * fb(j);   // FIXME
+                            result(resultOffset + i) += invAddedMassCorrection(i, j) * fb(j);
                         }
                     };
-                    this->SetVariables(body, result, bodyOffset);   // FIXME
+                    this->SetVariables(body, result, bodyOffset);
                 //}
             }
         }
@@ -93,17 +93,17 @@ namespace frydom {
 
                     auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
 
-                    auto fb = GetVariablesFb(body); // FIXME
+                    auto fb = GetVariablesFb(body);
 
                     auto invAddedMassCorrection = m_invAddedMassCorrection.at(BEMBody->get());
 
                     for (int i=0; i<6; i++) {
                         for (int j=0; j<6; j++) {
                             //result(resultOffset + i) += invAddedMassCorrection(i, j) * vect(bodyOffset + j);
-                            result(resultOffset + i) += invAddedMassCorrection(i, j) * fb(j);  // FIXME
+                            result(resultOffset + i) += invAddedMassCorrection(i, j) * fb(j);
                         }
                     };
-                    this->SetVariables(body, result, bodyOffset); // FIXME
+                    this->SetVariables(body, result, bodyOffset);
                 //}
             }
         }
@@ -121,7 +121,7 @@ namespace frydom {
                 //for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
                     auto BEMBodyMotion = BEMBody;
 
-                    auto fb = GetVariablesFb(body); // FIXME
+                    auto fb = GetVariablesFb(body);
 
                     auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
 
@@ -130,10 +130,10 @@ namespace frydom {
                     for (int i=0; i<6; i++) {
                         for (int j=0; j<6; j++) {
                             //result(resultOffset + i) += generalizedMass(i, j) * vect(bodyOffset + j);
-                            result(resultOffset + i) += generalizedMass(i, j) * fb(j); // FIXME
+                            result(resultOffset + i) += generalizedMass(i, j) * fb(j);
                         }
                     };
-                    this->SetVariables(body, result, bodyOffset); // FIXME
+                    this->SetVariables(body, result, bodyOffset);
                 //}
             }
         }
@@ -148,18 +148,18 @@ namespace frydom {
                 auto body = HDB->GetBody(BEMBody->get());
                 auto bodyOffset = GetBodyOffset(body);
 
-                auto fb = this->GetVariablesFb(body);   // FIXME
+                auto fb = this->GetVariablesFb(body);
 
                 auto generalizedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
 
                 for (int i=0; i<6; i++) {
                     for (int j=0; j<6; j++) {
                         //result(bodyOffset + i) += c_a * generalizedMass(i, j) * vect(bodyOffset + j);
-                        result(bodyOffset + i) += c_a * generalizedMass(i, j) * fb(j); // FIXME
+                        result(bodyOffset + i) += c_a * generalizedMass(i, j) * fb(j);
                     }
                 }
 
-                this->SetVariables(body, result, bodyOffset);   // FIXME
+                this->SetVariables(body, result, bodyOffset);
             }
         }
 
@@ -180,7 +180,7 @@ namespace frydom {
                 result(bodyOffset + 4) += c_a * infiniteAddedMass(4, 4);
                 result(bodyOffset + 5) += c_a * infiniteAddedMass(5, 5);
 
-                this->SetVariables(HDB->GetBody(BEMBody->get()), result, bodyOffset);   // FIXME
+                this->SetVariables(HDB->GetBody(BEMBody->get()), result, bodyOffset);
             }
         }
 

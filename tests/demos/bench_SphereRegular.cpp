@@ -38,6 +38,15 @@ void ValidationResults(const std::vector<double> vtime, const std::vector<double
     std::cout << " T = " << period << " , H = " << wave_height << ", Steepness = " << steepness << std::endl;
     std::cout << " RAO = " << rao << " bench : " << rao_bench << "error rel. : " << err_rel << std::endl;
 
+    // Print to file
+    std::ofstream myfile;
+    myfile.open("sphere_regular.csv", std::ios::out | std::ios::app);
+
+    myfile << period << ";" << wave_height << ";" << steepness << ";"
+           << rao << ";" << ";" << rao_bench << ";" << err_rel << std::endl;
+
+    myfile.close();
+
 }
 
 std::vector<double> ReadParam(const std::string dbfile, const int iperiod, const int isteepness) {
@@ -71,8 +80,8 @@ int main(int argc, char* argv[]) {
     int iPeriod = 0;
     int iSteepness = 0;
 
-    //if (argv[1]) { iPeriod = atoi(argv[1]); }
-    //if (argv[2]) { iSteepness = atoi(argv[2]); }
+    if (argv[1]) { iPeriod = atoi(argv[1]); }
+    if (argv[2]) { iSteepness = atoi(argv[2]); }
 
     // -- System
 
@@ -182,8 +191,5 @@ int main(int argc, char* argv[]) {
     ValidationResults(vtime, heave, iPeriod, iSteepness);
 
     std::cout << " ================================= End ======================= " << std::endl;
-
-
-
 
 }
