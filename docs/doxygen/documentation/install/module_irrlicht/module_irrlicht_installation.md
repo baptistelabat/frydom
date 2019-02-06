@@ -4,17 +4,24 @@ Install the IRRLICHT module {#module_irrlicht_installation}
 [TOC]
 
 Irrlicht is the default visualization system used by Chrono::Engine. It is one of the few dependency that can't be
-managed by cmake. You have to install it on your system
+managed by cmake. 
 
-    apt-get install libirrlicht-dev
+It requires several packages:
 
-along with several packages:
-- build-essential 
-- x11-common 
-- libxxf86vm-dev 
-- libglu1-mesa-dev 
-- freeglut3 
-- xorg-dev. 
+    sudo apt-get install x11-common 
+    sudo apt-get install libxxf86vm-dev 
+    sudo apt-get install libglu1-mesa-dev 
+    sudo apt-get install freeglut3 
+    sudo apt-get install freeglut3-dev
+    sudo apt-get install xorg-dev
+
+If it is not already done, build-essential needs to be installed:
+
+    sudo apt-get install build-essential
+    
+Then, you have to install Irrlicht on your system
+
+    sudo apt-get install libirrlicht-dev
 
 ## Features
 
