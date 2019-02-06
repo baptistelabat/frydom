@@ -42,13 +42,17 @@ int main(int argc, char* argv[]) {
     auto current = Ocean->GetCurrent()->GetFieldUniform();
     current->SetEast(6., KNOT, GOTO);
 
+    // ----- Wind
+    // The wind model is set exactly in the same manner as the current:
+    auto wind = system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform();
+    wind->SetNorth(6., KNOT, GOTO);
+
     // ----- Free surface
     auto FreeSurface = Ocean->GetFreeSurface();
     // To manipulate the free surface grid asset, you first need to access it, through the free surface object.
     auto FSAsset = FreeSurface->GetFreeSurfaceGridAsset();
 
-    // The free surface grid is defined here as a squared one ranging from -100m to 100m (in north and west
-    // directions) with a 2m steps.
+    // Set the size of the free surface grid asset.
     FSAsset->SetGrid(-200., 200, 10, -200, 200, 10);
 
     // You have to specify if you want the free surface asset to be updated during the simulation. By default, the
@@ -70,6 +74,7 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------
     // Platform
     // --------------------------------------------------
+    //
     auto platform = system.NewBody();
     platform->SetName("Platform");
     platform->AddMeshAsset("GVA7500.obj");
@@ -102,19 +107,32 @@ int main(int argc, char* argv[]) {
     auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb.get());
     platform->AddExternalForce(forceHst);
 
+    // -- Excitation
+
+    auto excitationForce = std::make_shared<FrLinearExcitationForce_>(hdb, eqFrame);
+    platform->AddExternalForce(excitationForce);
 
 //    // -- Radiation
 //
 //    auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(hdb);
 //    system.AddPhysicsItem(radiationModel);
 //
-//    radiationModel->SetImpulseResponseSize(platform.get(), 6., 0.1);
+//    radiationModel->SetImpulseResponseSize(platform.get(), 12., 0.1);
+
+    // -- Wave drift force
+//    auto waveDriftForce = std::make_shared<>(hdb.get());
+//    platform->AddExternalForce(waveDriftForce);
+
 
     // -- Current model force, based on polar coefficients
     auto currentForce = std::make_shared<FrCurrentForce2_>("PolarCurrentCoeffs_NC.yml");
-    currentForce->SetIsForceAsset(true);
-
+//    currentForce->SetIsForceAsset(true);
     platform->AddExternalForce(currentForce);
+
+    // -- Wind model force, based on polar coefficients
+    auto windForce = std::make_shared<FrWindForce2_>("PolarWindCoeffs_NC.yml");
+//    windForce->SetIsForceAsset(true);
+    platform->AddExternalForce(windForce);
 
 
     // ------------------ Run ------------------ //
