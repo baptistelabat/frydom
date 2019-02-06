@@ -16,15 +16,15 @@ Parameters                Values
 Radius                    5 m
 Initial sphere location   (0, 0, 0)
 Center of gravity         (0, 0, -2)
-Mass	                  :math:`261.8 x 10^3` kg
-Ixx                       :math:`1.690E6`
-Iyy                       :math:`1.690E6`
-Izz                       :math:`2.606E6`
+Mass	                  :math:`261,8.10^3` kg
+Ixx                       :math:`1,690.10^6`
+Iyy                       :math:`1,690.10^6`
+Izz                       :math:`2,606.10^6`
 Water detph               Inf
-Water density             :math:`1000' :math:`kg/m^3`
-K33                       7.695E5
-K44                       5.126E6
-K55                       5.126E6  
+Water density             :math:`1000 kg/m^3`  
+K33                       :math:`7,695.10^5`
+K44                       :math:`5,126.10^6`
+K55                       :math:`5,126.10^6`  
 ========================= =======================
 
 At initial time the sphere is placed at a distance of 1m abose the mean water level and droped without velocity (Fig. <_fig_decay_description>).

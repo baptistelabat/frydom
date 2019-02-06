@@ -13,6 +13,7 @@ set(DEMOS
         demo_Cable
         bench_SphereDecay
         bench_SphereRegular
+        bench_DTMB5512_captive
         )
 
 
@@ -42,3 +43,4 @@ configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
 configure_file(../data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
 configure_file(../data/sphere_hdb.h5 . COPYONLY)
 configure_file(../data/bench_sphere_regular.h5 . COPYONLY)
+configure_file(../data/DTMB5512/DTMB5512.hdb5 . COPYONLY)

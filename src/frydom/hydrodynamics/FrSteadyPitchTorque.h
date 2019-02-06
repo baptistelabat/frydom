@@ -5,6 +5,7 @@
 #ifndef FRYDOM_FRSTEADYPITCHTORQUE_H
 #define FRYDOM_FRSTEADYPITCHTORQUE_H
 
+// TODO : Plus utilisée dans le refactoring a supprimer
 
 #include "frydom/core/force/FrForce.h"
 
