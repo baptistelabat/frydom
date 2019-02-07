@@ -90,9 +90,13 @@ namespace frydom {
 
         void StepFinalize() override;
 
-    private:
+    protected:
 
         std::vector<double> GetRelativeWaveDir() const;
+
+        std::vector<std::vector<double>> GetEncounterWaveFrequencies(Velocity speed) const;
+
+
 
 
 

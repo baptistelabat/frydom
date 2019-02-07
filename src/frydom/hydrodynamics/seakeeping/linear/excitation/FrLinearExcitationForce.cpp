@@ -195,10 +195,10 @@ namespace frydom {
         auto BEMBody = m_HDB->GetBody(m_body);
 
         auto freqs = waveField->GetWaveFrequencies(RADS);
-        auto directions = waveField->GetWaveDirections(DEG, NWU, GOTO);
+        auto directions = waveField->GetWaveDirections(RAD, NWU, GOTO);
 
         if (m_Fexc.empty()) {
-            m_Fexc = BEMBody->GetExcitationInterp(freqs, directions, DEG);
+            m_Fexc = BEMBody->GetExcitationInterp(freqs, directions, RAD);
         }
 
         FrForce_::Initialize();
@@ -214,7 +214,7 @@ namespace frydom {
 
         auto nbMode = m_HDB->GetBody(m_body)->GetNbForceMode();
         auto nbFreq = waveField->GetWaveFrequencies(RADS).size();
-        auto nbWaveDir = waveField->GetWaveDirections(DEG, NWU, GOTO).size();
+        auto nbWaveDir = waveField->GetWaveDirections(RAD, NWU, GOTO).size();
 
         Eigen::VectorXd forceMode(nbMode);
         forceMode.setZero();

@@ -194,7 +194,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrostatic
 
-    auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb.get());
+    auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb);
     body->AddExternalForce(forceHst);
 
     // -- Radiation
@@ -206,15 +206,13 @@ int main(int argc, char* argv[]) {
 
     // -- Excitation
 
-    auto excitationForce = std::make_shared<FrLinearExcitationForce_>(hdb, eqFrame);
+    auto excitationForce = std::make_shared<FrLinearExcitationForce_>(hdb);
     body->AddExternalForce(excitationForce);
 
     // -- Wave Drift force
 
-    auto waveDriftForce = std::make_shared<SteadyPitchTorque>();
-
-    //auto waveDriftForce = std::make_shared<FrWaveDriftForceRAO_>();
-    //body->AddExternalForce(waveDriftForce);
+    auto waveDriftForce = std::make_shared<FrWaveDriftForce_>(hdb);
+    body->AddExternalForce(waveDriftForce);
 
     // -- ITTC57
 

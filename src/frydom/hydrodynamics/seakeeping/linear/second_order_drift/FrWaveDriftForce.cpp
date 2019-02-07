@@ -203,30 +203,85 @@ namespace frydom {
 
     void FrWaveDriftForce_::Update(double time) {
 
-        auto ocean = m_body->GetSystem()->GetEnvironment()->GetOcean();
-        auto waveAmplitude = ocean->GetFreeSurface()->GetWaveField()->GetWaveAmplitudes();
-        auto waveFrequencies = ocean->GetFreeSurface()->GetWaveField()->GetWaveFrequencies(RADS);
-        auto waveDir = GetRelativeWaveDir();
-
         auto force = Force();
         auto torque = Torque();
 
+        auto ocean = m_body->GetSystem()->GetEnvironment()->GetOcean();
+        auto waveAmplitude = ocean->GetFreeSurface()->GetWaveField()->GetWaveAmplitudes();
+
+        // Wave encounter frequencies
+
+        auto eqFrame = m_hdb->GetMapper()->GetEquilibriumFrame(m_body);
+        auto waveFrequencies = GetEncounterWaveFrequencies(eqFrame->GetVelocityInWorld(NWU));
+        auto nbFreq = waveFrequencies[0].size();
+
+        // Wave direction
+
+        auto waveDir = GetRelativeWaveDir();
         auto nbWaveDir = waveDir.size();
-        auto nbFreq = waveFrequencies.size();
 
-        for (unsigned int idir=0; idir<nbWaveDir; idir++) {
+        // Compute Wave drift force
 
-            auto angle = waveDir[idir];
-
-            for (unsigned int ifreq=0; ifreq<nbFreq; ifreq++) {
-
-                auto freq = waveFrequencies[ifreq];
-
-                force.GetFx() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("surge", angle, freq);
-                force.GetFy() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("sway", angle, freq);
-                torque.GetMz() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("yaw", angle, freq);
+        if (m_table->HasSurge()) {
+            for (unsigned int idir=0; idir<nbWaveDir; idir++) {
+                auto angle = waveDir[idir];
+                for (unsigned int ifreq = 0; ifreq < nbFreq; ifreq++) {
+                    auto freq = waveFrequencies[idir][ifreq];
+                    force.GetFx() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("surge", angle, freq);
+                }
             }
         }
+
+        if (m_table->HasSway()) {
+            for (unsigned int idir=0; idir<nbWaveDir; idir++) {
+                auto angle = waveDir[idir];
+                for (unsigned int ifreq = 0; ifreq < nbFreq; ifreq++) {
+                    auto freq = waveFrequencies[idir][ifreq];
+                    force.GetFy() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("sway", angle, freq);
+                }
+            }
+        }
+
+        if (m_table->HasHeave()) {
+            for (unsigned int idir=0; idir<nbWaveDir; idir++) {
+                auto angle = waveDir[idir];
+                for (unsigned int ifreq = 0; ifreq < nbFreq; ifreq++) {
+                    auto freq = waveFrequencies[idir][ifreq];
+                    force.GetFz() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("heave", angle, freq);
+                }
+            }
+        }
+
+        if (m_table->HasRoll()) {
+            for (unsigned int idir=0; idir<nbWaveDir; idir++) {
+                auto angle = waveDir[idir];
+                for (unsigned int ifreq = 0; ifreq < nbFreq; ifreq++) {
+                    auto freq = waveFrequencies[idir][ifreq];
+                    torque.GetMx() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("roll", angle, freq);
+                }
+            }
+        }
+
+        if (m_table->HasPitch()) {
+            for (unsigned int idir=0; idir<nbWaveDir; idir++) {
+                auto angle = waveDir[idir];
+                for (unsigned int ifreq = 0; ifreq < nbFreq; ifreq++) {
+                    auto freq = waveFrequencies[idir][ifreq];
+                    torque.GetMy() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("pitch", angle, freq);
+                }
+            }
+        }
+
+        if (m_table->HasYaw()) {
+            for (unsigned int idir=0; idir<nbWaveDir; idir++) {
+                auto angle = waveDir[idir];
+                for (unsigned int ifreq = 0; ifreq < nbFreq; ifreq++) {
+                    auto freq = waveFrequencies[idir][ifreq];
+                    torque.GetMz() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("yaw", angle, freq);
+                }
+            }
+        }
+
         SetForceTorqueInBodyAtCOG(force, torque, NWU);
     }
 
@@ -253,6 +308,44 @@ namespace frydom {
         for (auto& val: waveDir) { val -= psi; }
 
         return waveDir;
+    }
+
+    std::vector<std::vector<double>> FrWaveDriftForce_::GetEncounterWaveFrequencies(Velocity speed) const {
+
+        auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()
+                ->GetFreeSurface()->GetWaveField();
+
+        auto waveDir = waveField->GetWaveDirections(RAD, NWU, GOTO);
+        auto nbDir = waveDir.size();
+
+        // Get the speed component aligned with wave directions
+
+        std::vector<double> velocity;
+        for (auto& dir: waveDir) {
+            auto vect = Direction(cos(dir), sin(dir), 0.);
+            velocity.push_back( speed.dot(vect));
+        }
+
+        // Encounter frequencies
+
+        std::vector<std::vector<double>> waveEncounterFrequencies;
+
+        auto waveFrequencies = waveField->GetWaveFrequencies(RADS);
+        auto waveNumbers = waveField->GetWaveNumbers();
+        auto nbFreq = waveFrequencies.size();
+
+        waveEncounterFrequencies.reserve(nbDir);
+        for (unsigned int idir=0; idir<nbDir; idir++) {
+            std::vector<double> freqDir;
+            freqDir.reserve(nbFreq);
+            for (unsigned int ifreq=0; ifreq<nbFreq; ifreq++) {
+                freqDir.push_back(waveFrequencies[ifreq] - waveNumbers[ifreq] * velocity[idir]);
+            }
+            waveEncounterFrequencies.push_back(freqDir);
+        }
+
+        return waveEncounterFrequencies;
+
     }
 
 }

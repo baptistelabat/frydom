@@ -818,7 +818,7 @@ namespace frydom {
     }
 
     double FrWaveDriftPolarData::Eval(const std::string name, double x, double y) const {
-        m_table->Eval(name, x, y);
+        return m_table->Eval(name, x, y);
     }
     //
     // FrBEMBody
@@ -836,8 +836,8 @@ namespace frydom {
         return m_HDB->GetNbWaveDirections();
     }
 
-    std::vector<double> FrBEMBody_::GetWaveDirections() const {
-        return m_HDB->GetWaveDirections();
+    std::vector<double> FrBEMBody_::GetWaveDirections(ANGLE_UNIT angleUnit, FRAME_CONVENTION fc) const {
+        return m_HDB->GetWaveDirections(angleUnit, fc);
     }
 
     unsigned int FrBEMBody_::GetNbBodies() const {
@@ -1075,7 +1075,7 @@ namespace frydom {
         m_waveDirInterpolators.clear();
         m_waveDirInterpolators.reserve(nbForceModes);
 
-        auto angles = std::make_shared<std::vector<double>>(GetWaveDirections());
+        auto angles = std::make_shared<std::vector<double>>(GetWaveDirections(RAD, NWU));
 
         auto interpolators = std::vector<Interp1dLinear<double, std::complex<double>>>();
         interpolators.reserve(nbFreq);

@@ -372,6 +372,18 @@ namespace frydom {
         void AddData(std::string& name, std::vector<double> coeffs);
 
         double Eval(const std::string name, double x, double y) const;
+
+        bool HasSurge() const { return m_table->HasSerie("surge"); }
+
+        bool HasSway() const { return m_table->HasSerie("sway"); }
+
+        bool HasHeave() const { return m_table->HasSerie("heave"); }
+
+        bool HasPitch() const { return m_table->HasSerie("pitch"); }
+
+        bool HasRoll() const { return m_table->HasSerie("roll"); }
+
+        bool HasYaw() const { return m_table->HasSerie("yaw"); }
     };
 
 
@@ -417,7 +429,7 @@ namespace frydom {
 
         unsigned int GetNbWaveDirections() const;
 
-        std::vector<double> GetWaveDirections() const;
+        std::vector<double> GetWaveDirections(ANGLE_UNIT angleUnit, FRAME_CONVENTION fc) const;
 
         unsigned int GetNbBodies() const;
 
