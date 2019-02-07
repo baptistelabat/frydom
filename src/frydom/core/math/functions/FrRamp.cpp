@@ -7,35 +7,34 @@
 
 namespace frydom {
 
-    FrRamp_::FrRamp_() {
-        m_chronoFunction = std::make_shared<chrono::ChFunction_Ramp>();
+    FrRamp_::FrRamp_() : FrFunction_() {
+//        Initialize();
     }
 
     void FrRamp_::SetY0(double intercept) {
-        GetChronoElement()->Set_y0(intercept);
+        m_intercept = intercept;
     }
 
-    double FrRamp_::GetY0() {
-        return GetChronoElement()->Get_y0();
+    double FrRamp_::GetY0() const {
+        return m_intercept;
     }
 
     void FrRamp_::SetSlope(double slope) {
-        GetChronoElement()->Set_ang(slope);
+        m_slope = slope;
     }
 
-    double FrRamp_::GetSlope() {
-        return GetChronoElement()->Get_ang();
+    double FrRamp_::GetSlope() const {
+        return m_slope;
     }
 
     void FrRamp_::Set(double intercept, double slope) {
-        auto chronoElement = GetChronoElement();
-        chronoElement->Set_y0(intercept);
-        chronoElement->Set_ang(slope);
+        m_intercept = intercept;
+        m_slope = slope;
     }
 
     void FrRamp_::SetIsWindowed(bool limit) {
         m_isWindowed = limit;
-        if (limit) Initialize();
+        if (limit) Eval(c_x);
     }
 
     bool FrRamp_::GetIsLimited() const {
@@ -46,65 +45,28 @@ namespace frydom {
         m_xmin = xmin;
         m_xmax = xmax;
         m_isWindowed = true;
-        Initialize();
+        Eval(c_x);
     }
 
     void FrRamp_::SetByTwoPoints(double xmin, double ymin, double xmax, double ymax, bool isWindowed) {
         SetSlope((ymax-ymin) / (xmax-xmin));
         SetY0(ymin - GetSlope() * xmin);
+        // TODO : utiliser isWindowed
     }
 
     void FrRamp_::Initialize() {
-        if (m_isWindowed) {
-            c_ymin = m_chronoFunction->Get_y(m_xmin);
-            c_ymax = m_chronoFunction->Get_y(m_xmax);
-        }
+
     }
 
-    chrono::ChFunction_Ramp *FrRamp_::GetChronoElement() {
-        return dynamic_cast<chrono::ChFunction_Ramp*>(m_chronoFunction.get());
+    void FrRamp_::Eval(double x) const {
+        if (IsEval(x)) return;
+        c_x = x;
+
+        c_y = m_slope * x + m_intercept;
+        c_y_dx = m_slope;
+        c_y_dxdx = 0.;
+
     }
 
-    double FrRamp_::Get_y(double x) const {
-        if (m_isWindowed) {
-            if (x <= m_xmin) {
-                return c_ymin;
-            } else if (x >= m_xmax) {
-                return c_ymax;
-            } else {
-                return FrFunction_::Get_y(x);
-            }
-        } else {
-            return FrFunction_::Get_y(x);
-        }
-    }
-
-    double FrRamp_::Get_y_dx(double x) const {
-        if (m_isWindowed) {
-            if (x <= m_xmin) {
-                return 0.;
-            } else if (x >= m_xmax) {
-                return 0.;
-            } else {
-                return FrFunction_::Get_y_dx(x);
-            }
-        } else {
-            return FrFunction_::Get_y_dx(x);
-        }
-    }
-
-    double FrRamp_::Get_y_dxdx(double x) const {
-        if (m_isWindowed) {
-            if (x <= m_xmin) {
-                return 0.;
-            } else if (x >= m_xmax) {
-                return 0.;
-            } else {
-                return FrFunction_::Get_y_dxdx(x);
-            }
-        } else {
-            return FrFunction_::Get_y_dxdx(x);
-        }
-    }
 
 }  // end namespace frydom

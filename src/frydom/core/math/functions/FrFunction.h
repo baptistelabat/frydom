@@ -73,140 +73,9 @@ namespace frydom {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // REFACTORING ------------->>>>>>>>>>>>>>>>>>
 
 
-//    class FrFunction_ : public FrObject {
-//    protected:
-//        double m_functionValue = 1.;    ///< value of the function to return
-//        double c_time = 0.;             ///< cached value of the time, updated using the Update method
-//    public:
-//
-//        /// Get the function value
-//        /// \return function value
-//        double GetFunctionValue() const;
-//
-//        /// Update the state of the function, including the cached value of the time. This method needs to  be called
-//        /// by the container of this function.
-//        /// \param time time of the simulation
-//        void Update(double time);
-//    };
-//
-//
-//
-//
-//    class FrRamp_ : public FrFunction_ {
-//
-//    private:
-//        bool m_active = false;      ///< bool checking if the ramp is active
-//        bool m_increasing = true;   ///< bool checking if the ramp is increasing (true) of decreasing (false)
-//
-//        double m_t0 = 0.;           ///< start time of the ramp
-//        double m_t1 = 20.;          ///< end time of the ramp
-//
-//        double m_min = 0.;          ///< start value of the ramp if it's increasing, end otherwise
-//        double m_max = 1.;          ///< end value of the ramp if it's increasing, start otherwise
-//
-//        double c_a = 0.;            ///< cached coefficient of the ramp (slope)
-//        double c_b = 1.;            ///< cached coefficient of the ramp (y offset)
-//
-//    public:
-//
-//        /// Set the duration of the ramp, meaning m_t1-m_t0
-//        /// \param duration duration of the ramp
-//        void SetDuration(double duration);
-//
-//        /// Set the ramp to an increasing one
-//        void SetIncrease();
-//
-//        /// Set the ramp to a decreasing one
-//        void SetDecrease();
-//
-//        /// Set the min time of the ramp, m_t0
-//        /// \param minTime min time of the ramp
-//        void SetMinTime(double minTime);
-//
-//        /// Set the max time of the ramp, m_t1
-//        /// \param maxTime max time of the ramp
-//        void SetMaxTime(double maxTime);
-//
-//        /// Set the min value of the ramp, m_min
-//        /// \param minVal min value of the ramp
-//        void SetMinVal(double minVal);
-//
-//        /// Set the max value of the ramp, m_max
-//        /// \param maxVal max value of the ramp
-//        void SetMaxVal(double maxVal);
-//
-//        /// Check is the ramp is active
-//        /// \return true if the ramp is active, false otherwise
-//        bool IsActive();
-//
-//        /// Activate the ramp (set active)
-//        void Activate();
-//
-//        /// De-activate the ramp (set inactive)
-//        void Deactivate();
-//
-//        /// Initialize the state of the ramp
-//        void Initialize() override;
-//
-//        /// Method called at the send of a time step. Logging may be used here
-//        void StepFinalize() override;
-//
-//    };
-
-
-
-
-
-
-//////////// ----------- >>>>> REFACTORING OF THE REFACTORING :) :)
-
-
-//    // Forward declaration
-//    class FrFunction_;
-//
-//    namespace internal {
-//
-//        struct FrFunctionWrapper : public chrono::ChFunction {
-//
-//            FrFunction_* m_frydomFunction;
-//
-//            explicit FrFunctionWrapper(FrFunction_* frydomFunction);
-//
-//            double Get_y(double x) const override;
-//
-//            double Get_y_dx(double x) const override;
-//
-//            double Get_y_dxdx(double x) const override;
-//
-//        };
-//
-//    }  // end namespace frydom::internal
 
 
 
@@ -227,6 +96,28 @@ namespace frydom {
      *
      */
 
+    // Forward declaration
+    class FrFunction_;
+
+    namespace internal {
+
+        struct FrChronoFunctionWrapper : public chrono::ChFunction {
+
+            FrFunction_* m_frydomFunction;
+
+            explicit FrChronoFunctionWrapper(FrFunction_* frydomFunction);
+
+            FrChronoFunctionWrapper* Clone() const override;
+
+            double Get_y(double x) const override;
+
+            double Get_y_dx(double x) const override;
+
+            double Get_y_dxdx(double x) const override;
+
+        };
+
+    }  // end namespace frydom::internal
 
     // Forward declaration
     class FrCompositeFunction;
@@ -234,78 +125,87 @@ namespace frydom {
     class FrMultiplyByScalarFunction;
     class FrInverseFunction;
 
-    class FrBaseFunction : public FrObject {
+    /*
+     * FrFunction_
+     */
+
+    class FrFunction_ : public FrObject {
 
     private:
+
+        std::shared_ptr<internal::FrChronoFunctionWrapper> m_chronoFunction;
+
         bool m_isActive = true;
 
+    protected:
+
+        // Cache
+        mutable double c_x;
+        mutable double c_y;
+        mutable double c_y_dx;
+        mutable double c_y_dxdx;
 
     public:
 
-        bool IsActive() const;  // TODO : supprimer cette fonctionnalite, repercuter dans le reste du code...
+        FrFunction_();
 
+        bool IsActive() const;  // TODO : supprimer cette fonctionnalite, repercuter dans le reste du code...
         void SetActive(bool active);
 
-        virtual double Get_y(double x) const = 0;
+        double Get_y(double x) const;
+        double Get_y_dx(double x) const;
+        double Get_y_dxdx(double x) const;
 
-        virtual double Get_y_dx(double x) const = 0;
+        void Initialize() override {}
+        void StepFinalize() override;
 
-        virtual double Get_y_dxdx(double x) const = 0;
-
-        std::shared_ptr<FrCompositeFunction> operator+(std::shared_ptr<FrBaseFunction> otherFunction);
+        std::shared_ptr<FrCompositeFunction> operator+(std::shared_ptr<FrFunction_> otherFunction);
 
         std::shared_ptr<FrNegateFunction> operator-();
 
-        std::shared_ptr<FrCompositeFunction> operator-(std::shared_ptr<FrBaseFunction> otherFunction);
+        std::shared_ptr<FrCompositeFunction> operator-(std::shared_ptr<FrFunction_> otherFunction);
 
-        std::shared_ptr<FrCompositeFunction> operator*(std::shared_ptr<FrBaseFunction> otherFunction);
+        std::shared_ptr<FrCompositeFunction> operator*(std::shared_ptr<FrFunction_> otherFunction);
 
-        std::shared_ptr<FrCompositeFunction> operator/(std::shared_ptr<FrBaseFunction> otherFunction);
+        std::shared_ptr<FrCompositeFunction> operator/(std::shared_ptr<FrFunction_> otherFunction);
 
-        std::shared_ptr<FrCompositeFunction> operator<<(std::shared_ptr<FrBaseFunction> otherFunction);
+        std::shared_ptr<FrCompositeFunction> operator<<(std::shared_ptr<FrFunction_> otherFunction);
 
         std::shared_ptr<FrMultiplyByScalarFunction> operator*(double alpha);
 
         std::shared_ptr<FrMultiplyByScalarFunction> operator/(double alpha);
 
-        // TODO : VOIR SI ON GARDE
-        void Initialize() override {}
-//        void Update(double time) {}
-        void StepFinalize() override {}
+    protected:
+
+        virtual void Eval(double x) const = 0;
+
+        std::shared_ptr<chrono::ChFunction> GetChronoFunction();
+
+        double Estimate_y_dx(double x) const;
+
+        double Estimate_y_dxdx(double x) const;
+
+        inline bool IsEval(double x) const {
+            return c_x == x;
+        }
 
     };
 
     /// Left multiplication of a function by a scalar
-    std::shared_ptr<FrMultiplyByScalarFunction> operator*(double alpha, std::shared_ptr<FrBaseFunction> otherFunction);
+    std::shared_ptr<FrMultiplyByScalarFunction> operator*(double alpha, std::shared_ptr<FrFunction_> otherFunction);
 
-    std::shared_ptr<FrInverseFunction> operator/(double alpha, std::shared_ptr<FrBaseFunction> otherFunction);
-
-
-
-    class FrFunction_ : public FrBaseFunction {
-
-    protected:
-
-        std::shared_ptr<chrono::ChFunction> m_chronoFunction;
-
-    public:
-//        FrFunction_();
-
-        double Get_y(double x) const override;
-
-        double Get_y_dx(double x) const override;
-
-        double Get_y_dxdx(double x) const override;
-
-
-    };
+    std::shared_ptr<FrInverseFunction> operator/(double alpha, std::shared_ptr<FrFunction_> otherFunction);
 
 
 
-    class FrCompositeFunction : public FrBaseFunction {
-        friend class FrBaseFunction;
+    /*
+     * FrCompositeFunction
+     */
+
+    class FrCompositeFunction : public FrFunction_ {
 
     protected:
+        friend class FrFunction_;
         enum OPERATOR {
             ADD, // +
             SUB, // -
@@ -315,75 +215,107 @@ namespace frydom {
         };
 
     private:
-        FrBaseFunction* m_f1; // Il va certainement falloir stocker la fonction produite quelque part !
-        FrBaseFunction* m_f2;
+        FrFunction_* m_f1; // Il va certainement falloir stocker la fonction produite quelque part !
+        FrFunction_* m_f2;
         OPERATOR m_operator;
 
     public:
 
-        FrCompositeFunction(FrBaseFunction* function1, FrBaseFunction* function2, OPERATOR op);
+        FrCompositeFunction(FrFunction_* function1, FrFunction_* function2, OPERATOR op);
 
-        double Get_y(double x) const override;
-
-        double Get_y_dx(double x) const override;
-
-        double Get_y_dxdx(double x) const override;
-
-    };
+//        double Get_y(double x) const override;
+//
+//        double Get_y_dx(double x) const override;
+//
+//        double Get_y_dxdx(double x) const override;
 
 
-
-
-    class FrNegateFunction : public FrBaseFunction {
 
     private:
-        FrBaseFunction* m_functionToNegate;
 
-    public:
-        explicit FrNegateFunction(FrBaseFunction* functionToNegate);
+        void Eval(double x) const override;
 
-        double Get_y(double x) const override;
+        void EvalADD() const;
+        void EvalSUB() const;
+        void EvalMUL() const;
+        void EvalDIV() const;
+        void EvalCOM() const;
 
-        double Get_y_dx(double x) const override;
+        inline void EvalFunctions(double& u, double& u_dx, double& u_dxdx, double& v, double& v_dx, double& v_dxdx) const {
+            u = m_f1->Get_y(c_x);
+            v = m_f2->Get_y(c_x);
 
-        double Get_y_dxdx(double x) const override;
+            u_dx = m_f1->Get_y_dx(c_x);
+            v_dx = m_f2->Get_y_dx(c_x);
+
+            u_dxdx = m_f1->Get_y_dxdx(c_x);
+            v_dxdx = m_f2->Get_y_dxdx(c_x);
+        }
 
     };
 
 
 
-    class FrMultiplyByScalarFunction : public FrBaseFunction {
+
+    class FrNegateFunction : public FrFunction_ {
+
+    private:
+        FrFunction_* m_functionToNegate;
+
+    public:
+        explicit FrNegateFunction(FrFunction_* functionToNegate);
+
+//        double Get_y(double x) const override;
+//
+//        double Get_y_dx(double x) const override;
+//
+//        double Get_y_dxdx(double x) const override;
+
+    protected:
+        void Eval(double x) const override;
+
+    };
+
+
+
+    class FrMultiplyByScalarFunction : public FrFunction_ {
 
     private:
         double m_alpha;
-        FrBaseFunction* m_functionToScale;
+        FrFunction_* m_functionToScale;
 
     public:
-        FrMultiplyByScalarFunction(FrBaseFunction* functionToScale, double alpha);
+        FrMultiplyByScalarFunction(FrFunction_* functionToScale, double alpha);
 
-        double Get_y(double x) const override;
+//        double Get_y(double x) const override;
+//
+//        double Get_y_dx(double x) const override;
+//
+//        double Get_y_dxdx(double x) const override;
 
-        double Get_y_dx(double x) const override;
-
-        double Get_y_dxdx(double x) const override;
+    protected:
+        void Eval(double x) const override;
 
     };
 
 
-    class FrInverseFunction : public FrBaseFunction { // TODO : mettre des gardes fou pour la division par 0...
+    class FrInverseFunction : public FrFunction_ { // TODO : mettre des gardes fou pour la division par 0...
 
     private:
         double m_alpha;
-        FrBaseFunction* m_functionToInverse;
+        FrFunction_* m_functionToInverse;
 
     public:
-        FrInverseFunction(FrBaseFunction* functionToScale, double alpha);
+        FrInverseFunction(FrFunction_* functionToScale, double alpha);
 
-        double Get_y(double x) const override;
+//        double Get_y(double x) const override;
+//
+//        double Get_y_dx(double x) const override;
+//
+//        double Get_y_dxdx(double x) const override;
 
-        double Get_y_dx(double x) const override;
-
-        double Get_y_dxdx(double x) const override;
+    protected:
+        void Eval(double x) const override;
 
     };
 

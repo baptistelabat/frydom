@@ -7,347 +7,265 @@
 
 namespace frydom {
 
+    /*
+     * Chrono ChFunction wrapper
+     */
 
+    namespace internal {
 
-//    // FrFunction_ definitions
-//
-//    double FrFunction_::GetFunctionValue() const {
-//        return m_functionValue;
-//    }
-//
-//    void FrFunction_::Update(double time) {c_time = time;}
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    // FrRamp_ definitions
-//
-//    void FrRamp_::SetDuration(double duration) {
-//        m_t1 = m_t0 + duration;
-//    }
-//
-//    void FrRamp_::SetIncrease() {
-//        m_increasing = true;
-//        Initialize();
-//    }
-//
-//    void FrRamp_::SetDecrease() {
-//        m_increasing = false;
-//        Initialize();
-//    }
-//
-//    void FrRamp_::SetMinTime(double minTime) { m_t0 = minTime;}
-//
-//    void FrRamp_::SetMaxTime(double maxTime) { m_t1 = maxTime;}
-//
-//    void FrRamp_::SetMinVal(double minVal) { m_min = minVal; }
-//
-//    void FrRamp_::SetMaxVal(double maxVal) { m_max = maxVal; }
-//
-//    bool FrRamp_::IsActive() {
-//        return m_active;
-//    }
-//
-//    void FrRamp_::Activate() {m_active = true;}
-//
-//    void FrRamp_::Deactivate() {m_active = false;}
-//
-//    void FrRamp_::Initialize() {
-//        assert(m_min<=m_max);
-//        double y0, y1;
-//
-//        if (m_increasing) {
-//            y0 = m_min;
-//            y1 = m_max;
-//        } else {
-//            y0 = m_max;
-//            y1 = m_min;
-//        }
-//        c_a = (y1 - y0) / (m_t1 - m_t0);
-//        c_b = y0 - c_a * m_t0;
-//    }
-//
-//    void FrRamp_::StepFinalize() {
-//        if (!m_active) {
-//            return;
-//        }
-//
-//        double y0, y1;
-//        if (m_increasing) {
-//            y0 = m_min;
-//            y1 = m_max;
-//        } else {
-//            y0 = m_max;
-//            y1 = m_min;
-//        }
-//
-//
-//        if (c_time < m_t0) {
-//            m_functionValue = y0;
-//            return;
-//        }
-//
-//        if (c_time <= m_t1) {
-//            m_functionValue = c_a * c_time + c_b;
-//            return;
-//        }
-//
-//        m_functionValue = y1;
-//
-//
-//    }
+        FrChronoFunctionWrapper::FrChronoFunctionWrapper(FrFunction_* frydomFunction) :
+                m_frydomFunction(frydomFunction) {}
+
+        FrChronoFunctionWrapper* FrChronoFunctionWrapper::Clone() const {
+            return new FrChronoFunctionWrapper(m_frydomFunction);
+        }
+
+        double FrChronoFunctionWrapper::Get_y(double x) const {
+            return m_frydomFunction->Get_y(x);
+        }
+
+        double FrChronoFunctionWrapper::Get_y_dx(double x) const {
+            return m_frydomFunction->Get_y_dx(x);
+        }
+
+        double FrChronoFunctionWrapper::Get_y_dxdx(double x) const {
+            return m_frydomFunction->Get_y_dxdx(x);
+        }
+
+    }  // end namespace frydom::internal
 
 
 
+    /*
+     * FrFunction_
+     */
 
+    FrFunction_::FrFunction_() {
+        m_chronoFunction = std::make_shared<internal::FrChronoFunctionWrapper>(this);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-    ///////////////// REFACTORING
-
-
-    bool FrBaseFunction::IsActive() const {
+    bool FrFunction_::IsActive() const {
         return m_isActive;
     }
 
-    void FrBaseFunction::SetActive(bool active) {
+    void FrFunction_::SetActive(bool active) {
         m_isActive = active;
     }
 
+    double FrFunction_::Get_y(double x) const {
+        Eval(x);
+        return c_y;
+    }
+
+    double FrFunction_::Get_y_dx(double x) const {
+        Eval(x);
+        return c_y_dx;
+    }
+
+    double FrFunction_::Get_y_dxdx(double x) const {
+        Eval(x);
+        return c_y_dxdx;
+    }
+
+//    void FrFunction_::Initialize() {
+//        Eval(0.);
+//    }
+
+    void FrFunction_::StepFinalize() {}
 
     std::shared_ptr<FrCompositeFunction>
-    FrBaseFunction::operator+(std::shared_ptr<FrBaseFunction> otherFunction) {
+    FrFunction_::operator+(std::shared_ptr<FrFunction_> otherFunction) {
         return std::make_shared<FrCompositeFunction>(this, otherFunction.get(), FrCompositeFunction::ADD);
     }
 
-    std::shared_ptr<FrNegateFunction> FrBaseFunction::operator-() {
+    std::shared_ptr<FrNegateFunction> FrFunction_::operator-() {
         return std::make_shared<FrNegateFunction>(this);
     }
 
     std::shared_ptr<FrCompositeFunction>
-    FrBaseFunction::operator-(std::shared_ptr<FrBaseFunction> otherFunction) {
+    FrFunction_::operator-(std::shared_ptr<FrFunction_> otherFunction) {
         return std::make_shared<FrCompositeFunction>(this, otherFunction.get(), FrCompositeFunction::SUB);
     }
 
     std::shared_ptr<FrCompositeFunction>
-    FrBaseFunction::operator*(std::shared_ptr<FrBaseFunction> otherFunction) {
+    FrFunction_::operator*(std::shared_ptr<FrFunction_> otherFunction) {
         return std::make_shared<FrCompositeFunction>(this, otherFunction.get(), FrCompositeFunction::MUL);
     }
 
     std::shared_ptr<FrCompositeFunction>
-    FrBaseFunction::operator/(std::shared_ptr<FrBaseFunction> otherFunction) {
+    FrFunction_::operator/(std::shared_ptr<FrFunction_> otherFunction) {
         return std::make_shared<FrCompositeFunction>(this, otherFunction.get(), FrCompositeFunction::DIV);
     }
 
     std::shared_ptr<FrCompositeFunction>
-    FrBaseFunction::operator<<(std::shared_ptr<FrBaseFunction> otherFunction) {
+    FrFunction_::operator<<(std::shared_ptr<FrFunction_> otherFunction) {
         return std::make_shared<FrCompositeFunction>(this, otherFunction.get(), FrCompositeFunction::COM);
     }
 
     std::shared_ptr<FrMultiplyByScalarFunction>
-    FrBaseFunction::operator*(double alpha) {
+    FrFunction_::operator*(double alpha) {
         return std::make_shared<FrMultiplyByScalarFunction>(this, alpha);
     }
 
     std::shared_ptr<FrMultiplyByScalarFunction>
-    FrBaseFunction::operator/(double alpha) {
-        return std::make_shared<FrMultiplyByScalarFunction>(this, 1/alpha);
+    FrFunction_::operator/(double alpha) {
+        return std::make_shared<FrMultiplyByScalarFunction>(this, 1./alpha);
     }
 
-    std::shared_ptr<FrMultiplyByScalarFunction> operator*(double alpha, std::shared_ptr<FrBaseFunction> otherFunction) {
+    std::shared_ptr<FrMultiplyByScalarFunction> operator*(double alpha, std::shared_ptr<FrFunction_> otherFunction) {
         return (*otherFunction) * alpha;
     }
 
-    std::shared_ptr<FrInverseFunction> operator/(double alpha, std::shared_ptr<FrBaseFunction> otherFunction) {
+    std::shared_ptr<FrInverseFunction> operator/(double alpha, std::shared_ptr<FrFunction_> otherFunction) {
         return std::make_shared<FrInverseFunction>(otherFunction.get(), alpha);
     }
 
-
-
-
-
-
-    double FrFunction_::Get_y(double x) const {
-        return m_chronoFunction->Get_y(x);
+    std::shared_ptr<chrono::ChFunction> FrFunction_::GetChronoFunction() {
+        return m_chronoFunction;
     }
 
-    double FrFunction_::Get_y_dx(double x) const {
-        return m_chronoFunction->Get_y_dx(x);
+    double FrFunction_::Estimate_y_dx(double x) const {
+        // TODO
     }
 
-    double FrFunction_::Get_y_dxdx(double x) const {
-        return m_chronoFunction->Get_y_dxdx(x);
+    double FrFunction_::Estimate_y_dxdx(double x) const {
+        // TODO
     }
 
 
+    /*
+     * FrCompositeFunction
+     */
 
-    FrCompositeFunction::FrCompositeFunction(frydom::FrBaseFunction *function1, frydom::FrBaseFunction *function2,
+    FrCompositeFunction::FrCompositeFunction(frydom::FrFunction_ *function1, frydom::FrFunction_ *function2,
                                              frydom::FrCompositeFunction::OPERATOR op) :
                                                 m_f1(function1),
                                                 m_f2(function2),
                                                 m_operator(op) {}
 
-    double FrCompositeFunction::Get_y(double x) const { // TODO : inserer tu try pour DIV pour les divisions par 0 et autres...
+    void FrCompositeFunction::Eval(double x) const {
+        if (IsEval(x)) return;
+
+        c_x = x;
+
         switch (m_operator) {
             case ADD: // (u+v)
-                return m_f1->Get_y(x) + m_f2->Get_y(x);
+                EvalADD();
+                break;
 
             case SUB: // (u-v)
-                return m_f1->Get_y(x) - m_f2->Get_y(x);
+                EvalSUB();
+                break;
 
             case MUL: // (u*v)
-                return m_f1->Get_y(x) * m_f2->Get_y(x);
+                EvalMUL();
+                break;
 
             case DIV: // (u/v)
-                return m_f1->Get_y(x) / m_f2->Get_y(x);
+                EvalDIV();
+                break;
 
-            case COM: // (u o v)
-                return m_f1->Get_y(m_f2->Get_y(x));
+            case COM: // (u o v) operator (u << v)
+                EvalCOM();
+                break;
         }
     }
 
-    double FrCompositeFunction::Get_y_dx(double x) const { // TODO : inserer tu try pour DIV pour les divisions par 0 et autres...
-        double u, v;
-        double u_dx = m_f1->Get_y_dx(x);
-        double v_dx = m_f2->Get_y_dx(x);
-
-        switch (m_operator) {
-            case ADD: // (u+v)'
-                return u_dx + v_dx;
-
-            case SUB: // (u-v)'
-                return u_dx - v_dx;
-
-            case MUL: // (u*v)'
-                u = m_f1->Get_y(x);
-                v = m_f2->Get_y(x);
-                return u_dx * v + v_dx * u;
-
-            case DIV: // (u/v)'
-                u = m_f1->Get_y(x);
-                v = m_f2->Get_y(x);
-                return (u_dx * v - v_dx * u) / (v*v);
-
-            case COM: // (u o v)'
-                v = m_f2->Get_y(x);
-                return v_dx * m_f1->Get_y_dx(v);
-        }
+    void FrCompositeFunction::EvalADD() const {
+        c_y      = m_f1->Get_y(c_x) + m_f2->Get_y(c_x);
+        c_y_dx   = m_f1->Get_y_dx(c_x) + m_f2->Get_y_dx(c_x);
+        c_y_dxdx = m_f1->Get_y_dxdx(c_x) + m_f2->Get_y_dxdx(c_x);
     }
 
-    double FrCompositeFunction::Get_y_dxdx(double x) const { // TODO : inserer tu try pour DIV pour les divisions par 0 et autres...
+    void FrCompositeFunction::EvalSUB() const {
+        c_y = m_f1->Get_y(c_x) - m_f2->Get_y(c_x);
+        c_y_dx   = m_f1->Get_y_dx(c_x) - m_f2->Get_y_dx(c_x);
+        c_y_dxdx = m_f1->Get_y_dxdx(c_x) - m_f2->Get_y_dxdx(c_x);
+    }
 
-        double u, v, u_dx, v_dx, f, f_dx, f_dxdx;
+    void FrCompositeFunction::EvalMUL() const {
+        double u, u_dx, u_dxdx, v, v_dx, v_dxdx;
+        EvalFunctions(u, u_dx, u_dxdx, v, v_dx, v_dxdx);
 
-        double u_dxdx = m_f1->Get_y_dxdx(x);
-        double v_dxdx = m_f2->Get_y_dxdx(x);
+        c_y      = u * v;
+        c_y_dx   = u_dx * v + v_dx * u;
+        c_y_dxdx = u_dxdx*v + 2.*u_dx*v_dx + v_dxdx*u;
 
+    }
 
-        switch (m_operator) {
-            case ADD: // (u+v)''
-                return u_dxdx + v_dxdx;
+    void FrCompositeFunction::EvalDIV() const {
+        double u, u_dx, u_dxdx, v, v_dx, v_dxdx;
+        EvalFunctions(u, u_dx, u_dxdx, v, v_dx, v_dxdx);
 
-            case SUB: // (u-v)''
-                return u_dxdx - v_dxdx;
+        c_y = u / v;
+        c_y_dx = (u_dx * v - v_dx * u) / (v*v);
+        c_y_dxdx = (u_dxdx - 2. * c_y_dx * v_dx - c_y * v_dxdx) / v;
+    }
 
-            case MUL: // (u*v)''
-                u = m_f1->Get_y(x);
-                v = m_f2->Get_y(x);
+    void FrCompositeFunction::EvalCOM() const {
+        double v    = m_f2->Get_y(c_x);
+        double v_dx = m_f2->Get_y_dx(c_x);
+        double v_dxdx = m_f2->Get_y_dxdx(c_x);
 
-                u_dx = m_f1->Get_y_dx(x);
-                v_dx = m_f2->Get_y_dx(x);
-
-                return (u_dx * v - v_dx * u) / (v*v);
-
-            case DIV: // (u/v)''
-                u = m_f1->Get_y(x);
-                v = m_f2->Get_y(x);
-
-                u_dx = m_f1->Get_y_dx(x);
-                v_dx = m_f2->Get_y_dx(x);
-
-                f = u / v;
-                f_dx = (u_dx * v - u * v_dx) / (v*v);
-                f_dxdx = (u_dxdx - 2. * f_dx * v_dx - f * v_dxdx) / v;
-
-                return f_dxdx;
-
-            case COM: // (u o v)''
-                v = m_f2->Get_y(x);
-                v_dx = m_f2->Get_y_dx(x);
-
-                return v_dxdx * m_f1->Get_y_dx(v) + v_dx*v_dx * m_f1->Get_y_dxdx(v);
-
-        }
+        c_y = m_f1->Get_y(v);
+        c_y_dx = v_dx * m_f1->Get_y_dx(v);
+        c_y_dxdx = v_dxdx * m_f1->Get_y_dx(v) + v_dx*v_dx * m_f1->Get_y_dxdx(v);
     }
 
 
+    /*
+     * FrNegateFunction
+     */
 
-    FrNegateFunction::FrNegateFunction(frydom::FrBaseFunction *functionToNegate) : m_functionToNegate(functionToNegate) {}
+    FrNegateFunction::FrNegateFunction(frydom::FrFunction_ *functionToNegate) : m_functionToNegate(functionToNegate) {}
 
-    double FrNegateFunction::Get_y(double x) const {
-        return - m_functionToNegate->Get_y(x);
+    void FrNegateFunction::Eval(double x) const {
+        if (IsEval(x)) return;
+        c_x = x;
+        c_y = - m_functionToNegate->Get_y(x);
+        c_y_dx = - m_functionToNegate->Get_y_dx(x);
+        c_y_dxdx = - m_functionToNegate->Get_y_dxdx(x);
+
     }
 
-    double FrNegateFunction::Get_y_dx(double x) const {
-        return - m_functionToNegate->Get_y_dx(x);
-    }
+    /*
+     * FrMultiplyByScalarFunction
+     */
 
-    double FrNegateFunction::Get_y_dxdx(double x) const {
-        return - m_functionToNegate->Get_y_dxdx(x);
-    }
-
-
-
-
-
-    FrMultiplyByScalarFunction::FrMultiplyByScalarFunction(FrBaseFunction *functionToScale, double alpha) :
+    FrMultiplyByScalarFunction::FrMultiplyByScalarFunction(FrFunction_ *functionToScale, double alpha) :
             m_functionToScale(functionToScale), m_alpha(alpha) {}
 
-    double FrMultiplyByScalarFunction::Get_y(double x) const {
-        return m_alpha * m_functionToScale->Get_y(x);
-    }
-
-    double FrMultiplyByScalarFunction::Get_y_dx(double x) const {
-        return m_alpha * m_functionToScale->Get_y_dx(x);
-    }
-
-    double FrMultiplyByScalarFunction::Get_y_dxdx(double x) const {
-        return m_alpha * m_functionToScale->Get_y_dxdx(x);
+    void FrMultiplyByScalarFunction::Eval(double x) const {
+        if (IsEval(x)) return;
+        c_x = x;
+        c_y = m_alpha * m_functionToScale->Get_y(x);
+        c_y_dx = m_alpha * m_functionToScale->Get_y_dx(x);
+        c_y_dxdx = m_alpha * m_functionToScale->Get_y_dxdx(x);
     }
 
 
+    /*
+     * FrInverseFunction
+     */
 
-
-    FrInverseFunction::FrInverseFunction(FrBaseFunction *functionToInverse, double alpha) :
+    FrInverseFunction::FrInverseFunction(FrFunction_ *functionToInverse, double alpha) :
             m_functionToInverse(functionToInverse), m_alpha(alpha) {}
 
-    double FrInverseFunction::Get_y(double x) const {
-        return m_functionToInverse->Get_y(x) / m_alpha;
+    void FrInverseFunction::Eval(double x) const {
+        if (IsEval(x)) return;
+        c_x = x;
+
+        double u = m_functionToInverse->Get_y(x);
+        double u_dx = m_functionToInverse->Get_y_dx(x);
+        double u_dxdx = m_functionToInverse->Get_y_dxdx(x);
+
+        c_y = m_alpha / u;
+        c_y_dx = - m_alpha * u_dx / (u*u);
+        c_y_dxdx = - m_alpha * (2.*c_y_dx*u_dx + c_y*u_dxdx) / u;
+
     }
 
-    double FrInverseFunction::Get_y_dx(double x) const {
-        return m_functionToInverse->Get_y_dx(x) / m_alpha;
-    }
 
-    double FrInverseFunction::Get_y_dxdx(double x) const {
-        return m_functionToInverse->Get_y_dxdx(x) / m_alpha;
-    }
 
 
 }  // end namespace frydom
