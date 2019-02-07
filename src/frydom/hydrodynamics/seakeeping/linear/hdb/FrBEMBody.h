@@ -358,9 +358,6 @@ namespace frydom {
 
 
     struct FrWaveDriftPolarData {
-        bool m_xSym;            // TODO : peut être plus utile
-        bool m_ySym;            //
-        std::string m_mode;
         std::vector<double> m_angles;
         std::vector<double> m_freqs;
         std::vector<double> m_data;
