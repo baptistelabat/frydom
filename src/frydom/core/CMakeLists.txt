@@ -29,11 +29,11 @@ list(APPEND SRC_FILES
         force/FrForce.cpp
         )
 
-# FUNCTIONS
-list(APPEND SRC_FILES
-        functions/FrFunction.cpp
-        functions/FrRamp.cpp
-        )
+## FUNCTIONS
+#list(APPEND SRC_FILES
+#        functions/FrFunction.cpp
+#        functions/FrRamp.cpp
+#        )
 
 # LINK // TODO : cmakiser les repertoires !!
 list(APPEND SRC_FILES
@@ -67,13 +67,15 @@ list(APPEND SRC_FILES
         link/links_lib/FrRevoluteLink.cpp
         link/links_lib/FrScrewLink.cpp
         link/links_lib/FrSphericalLink.cpp
-
         )
 
 # MATH
 list(APPEND SRC_FILES
         math/FrMatrix.cpp
         math/FrVector.cpp
+
+        math/functions/FrFunction.cpp
+        math/functions/FrRamp.cpp
         )
 
 # MISC

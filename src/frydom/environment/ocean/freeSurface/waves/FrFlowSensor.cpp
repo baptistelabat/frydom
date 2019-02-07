@@ -7,7 +7,7 @@
 #include "FrWaveField.h"
 #include "frydom/utils/FrUtils.h"
 
-#include "frydom/core/functions/FrRamp.h"
+#include "frydom/core/math/functions/FrRamp.h"
 
 
 namespace frydom {

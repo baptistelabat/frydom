@@ -20,7 +20,7 @@
 #include "frydom/asset/FrAsset.h"
 #include "frydom/asset/FrForceAsset.h"
 
-#include "frydom/core/functions/FrFunction.h"
+#include "frydom/core/math/functions/FrFunction.h"
 #include "frydom/core/common/FrException.h"
 //#include "FrCore.h"
 

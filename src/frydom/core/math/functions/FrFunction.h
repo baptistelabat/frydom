@@ -209,7 +209,32 @@ namespace frydom {
 //    }  // end namespace frydom::internal
 
 
-    class FrFunctionBase : public FrObject, public std::enable_shared_from_this<FrFunctionBase> {
+
+    /*
+     * TODO : voir pour faire :
+     *
+     * sin
+     * tan
+     * exp
+     * log
+     * ch
+     * sh
+     * th -> utilisation particuliere en tant que rampe
+     * polynomial (arbitrary order)
+     * spline
+     * depuis fichier
+     *
+     *
+     */
+
+
+    // Forward declaration
+    class FrCompositeFunction;
+    class FrNegateFunction;
+    class FrMultiplyByScalarFunction;
+    class FrInverseFunction;
+
+    class FrBaseFunction : public FrObject {
 
     private:
         bool m_isActive = true;
@@ -217,7 +242,7 @@ namespace frydom {
 
     public:
 
-        bool IsActive() const;
+        bool IsActive() const;  // TODO : supprimer cette fonctionnalite, repercuter dans le reste du code...
 
         void SetActive(bool active);
 
@@ -227,30 +252,37 @@ namespace frydom {
 
         virtual double Get_y_dxdx(double x) const = 0;
 
-        std::shared_ptr<FrFunctionBase> operator+(const std::shared_ptr<FrFunctionBase>& otherFunction) const;
+        std::shared_ptr<FrCompositeFunction> operator+(std::shared_ptr<FrBaseFunction> otherFunction);
 
-        std::shared_ptr<FrFunctionBase> operator-() const;
+        std::shared_ptr<FrNegateFunction> operator-();
 
-        std::shared_ptr<FrFunctionBase> operator-(const std::shared_ptr<FrFunctionBase>& otherFunction) const;
+        std::shared_ptr<FrCompositeFunction> operator-(std::shared_ptr<FrBaseFunction> otherFunction);
 
-        std::shared_ptr<FrFunctionBase> operator*(const std::shared_ptr<FrFunctionBase>& otherFunction) const;
+        std::shared_ptr<FrCompositeFunction> operator*(std::shared_ptr<FrBaseFunction> otherFunction);
 
-        std::shared_ptr<FrFunctionBase> operator/(const std::shared_ptr<FrFunctionBase>& otherFunction) const;
+        std::shared_ptr<FrCompositeFunction> operator/(std::shared_ptr<FrBaseFunction> otherFunction);
 
+        std::shared_ptr<FrCompositeFunction> operator<<(std::shared_ptr<FrBaseFunction> otherFunction);
+
+        std::shared_ptr<FrMultiplyByScalarFunction> operator*(double alpha);
+
+        std::shared_ptr<FrMultiplyByScalarFunction> operator/(double alpha);
 
         // TODO : VOIR SI ON GARDE
         void Initialize() override {}
 //        void Update(double time) {}
         void StepFinalize() override {}
 
-
-
     };
 
+    /// Left multiplication of a function by a scalar
+    std::shared_ptr<FrMultiplyByScalarFunction> operator*(double alpha, std::shared_ptr<FrBaseFunction> otherFunction);
+
+    std::shared_ptr<FrInverseFunction> operator/(double alpha, std::shared_ptr<FrBaseFunction> otherFunction);
 
 
 
-    class FrFunction_ : public FrFunctionBase {
+    class FrFunction_ : public FrBaseFunction {
 
     protected:
 
@@ -270,23 +302,26 @@ namespace frydom {
 
 
 
-    class FrCompositeFunction : public FrFunctionBase {
-        friend class FrFunctionBase;
+    class FrCompositeFunction : public FrBaseFunction {
+        friend class FrBaseFunction;
 
     protected:
         enum OPERATOR {
-            ADD,
-            SUB,
-            MUL,
-            DIV
+            ADD, // +
+            SUB, // -
+            MUL, // *
+            DIV, // /
+            COM  // << (composition of functions)
         };
 
     private:
-        std::shared_ptr<FrFunctionBase> m_function1;
-        std::shared_ptr<FrFunctionBase> m_function2;
+        FrBaseFunction* m_f1; // Il va certainement falloir stocker la fonction produite quelque part !
+        FrBaseFunction* m_f2;
         OPERATOR m_operator;
 
     public:
+
+        FrCompositeFunction(FrBaseFunction* function1, FrBaseFunction* function2, OPERATOR op);
 
         double Get_y(double x) const override;
 
@@ -294,10 +329,63 @@ namespace frydom {
 
         double Get_y_dxdx(double x) const override;
 
+    };
+
+
+
+
+    class FrNegateFunction : public FrBaseFunction {
+
+    private:
+        FrBaseFunction* m_functionToNegate;
+
+    public:
+        explicit FrNegateFunction(FrBaseFunction* functionToNegate);
+
+        double Get_y(double x) const override;
+
+        double Get_y_dx(double x) const override;
+
+        double Get_y_dxdx(double x) const override;
 
     };
 
 
+
+    class FrMultiplyByScalarFunction : public FrBaseFunction {
+
+    private:
+        double m_alpha;
+        FrBaseFunction* m_functionToScale;
+
+    public:
+        FrMultiplyByScalarFunction(FrBaseFunction* functionToScale, double alpha);
+
+        double Get_y(double x) const override;
+
+        double Get_y_dx(double x) const override;
+
+        double Get_y_dxdx(double x) const override;
+
+    };
+
+
+    class FrInverseFunction : public FrBaseFunction { // TODO : mettre des gardes fou pour la division par 0...
+
+    private:
+        double m_alpha;
+        FrBaseFunction* m_functionToInverse;
+
+    public:
+        FrInverseFunction(FrBaseFunction* functionToScale, double alpha);
+
+        double Get_y(double x) const override;
+
+        double Get_y_dx(double x) const override;
+
+        double Get_y_dxdx(double x) const override;
+
+    };
 
 
 

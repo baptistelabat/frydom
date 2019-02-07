@@ -8,7 +8,7 @@
 #include "GeographicLib/MagneticModel.hpp"
 #include "frydom/core/common/FrException.h"
 
-#include "frydom/core/functions/FrRamp.h"
+#include "frydom/core/math/functions/FrRamp.h"
 
 #include "frydom/core/FrOffshoreSystem.h"
 

@@ -218,7 +218,7 @@ int main(int argc, char* argv[]) {
         // You can set its starting (t0) and ending (t1) times as well as its intercept and slope values so that it starts
         // at 0. and finish at 1. after t1 seconds.
         double t0=0, t1=10;
-        timeRamp->SetXLimits(t0, t1);
+        timeRamp->SetXWindow(t0, t1);
         timeRamp->SetY0(0.);
         timeRamp->SetSlope(1. / t1);
 

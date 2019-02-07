@@ -5,6 +5,8 @@
 #ifndef FRYDOM_FRMATHINC_H
 #define FRYDOM_FRMATHINC_H
 
+#include "functions/FrFunctionsInc.h"
+
 #include "FrComplex.h"
 #include "FrEulerAngles.h"
 #include "FrMatrix.h"

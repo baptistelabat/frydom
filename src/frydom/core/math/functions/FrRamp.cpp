@@ -15,8 +15,16 @@ namespace frydom {
         GetChronoElement()->Set_y0(intercept);
     }
 
+    double FrRamp_::GetY0() {
+        return GetChronoElement()->Get_y0();
+    }
+
     void FrRamp_::SetSlope(double slope) {
         GetChronoElement()->Set_ang(slope);
+    }
+
+    double FrRamp_::GetSlope() {
+        return GetChronoElement()->Get_ang();
     }
 
     void FrRamp_::Set(double intercept, double slope) {
@@ -25,24 +33,29 @@ namespace frydom {
         chronoElement->Set_ang(slope);
     }
 
-    void FrRamp_::SetIsLimited(bool limit) {
-        m_isLimited = limit;
+    void FrRamp_::SetIsWindowed(bool limit) {
+        m_isWindowed = limit;
         if (limit) Initialize();
     }
 
     bool FrRamp_::GetIsLimited() const {
-        return m_isLimited;
+        return m_isWindowed;
     }
 
-    void FrRamp_::SetXLimits(double xmin, double xmax) {
+    void FrRamp_::SetXWindow(double xmin, double xmax) {
         m_xmin = xmin;
         m_xmax = xmax;
-        m_isLimited = true;
+        m_isWindowed = true;
         Initialize();
     }
 
+    void FrRamp_::SetByTwoPoints(double xmin, double ymin, double xmax, double ymax, bool isWindowed) {
+        SetSlope((ymax-ymin) / (xmax-xmin));
+        SetY0(ymin - GetSlope() * xmin);
+    }
+
     void FrRamp_::Initialize() {
-        if (m_isLimited) {
+        if (m_isWindowed) {
             c_ymin = m_chronoFunction->Get_y(m_xmin);
             c_ymax = m_chronoFunction->Get_y(m_xmax);
         }
@@ -53,7 +66,7 @@ namespace frydom {
     }
 
     double FrRamp_::Get_y(double x) const {
-        if (m_isLimited) {
+        if (m_isWindowed) {
             if (x <= m_xmin) {
                 return c_ymin;
             } else if (x >= m_xmax) {
@@ -67,7 +80,7 @@ namespace frydom {
     }
 
     double FrRamp_::Get_y_dx(double x) const {
-        if (m_isLimited) {
+        if (m_isWindowed) {
             if (x <= m_xmin) {
                 return 0.;
             } else if (x >= m_xmax) {
@@ -81,7 +94,7 @@ namespace frydom {
     }
 
     double FrRamp_::Get_y_dxdx(double x) const {
-        if (m_isLimited) {
+        if (m_isWindowed) {
             if (x <= m_xmin) {
                 return 0.;
             } else if (x >= m_xmax) {

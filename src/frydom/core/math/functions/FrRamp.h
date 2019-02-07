@@ -21,7 +21,7 @@ namespace frydom {
 
     private:
 
-        bool m_isLimited = false;
+        bool m_isWindowed = false;
         double m_xmin = 0.;
         double m_xmax = 0.;
 
@@ -34,15 +34,21 @@ namespace frydom {
 
         void SetY0(double intercept);
 
+        double GetY0();
+
         void SetSlope(double slope);
+
+        double GetSlope();
 
         void Set(double intercept, double slope);
 
-        void SetIsLimited(bool limit);
+        void SetIsWindowed(bool limit);
 
         bool GetIsLimited() const;
 
-        void SetXLimits(double xmin, double xmax);
+        void SetXWindow(double xmin, double xmax);
+
+        void SetByTwoPoints(double xmin, double ymin, double xmax, double ymax, bool isWindowed);
 
         double Get_y(double x) const override;
 

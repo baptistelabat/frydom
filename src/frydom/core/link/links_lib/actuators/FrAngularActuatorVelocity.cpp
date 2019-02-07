@@ -8,7 +8,7 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/link/FrLinkBase.h"
 
-#include "frydom/core/functions/FrFunctionsInc.h"
+#include "frydom/core/math/functions/FrFunctionsInc.h"
 
 
 namespace frydom {
