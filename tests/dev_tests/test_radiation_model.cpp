@@ -64,23 +64,15 @@ int main(int argc, char* argv[]) {
 
     // - Hydrostatic
 
-    auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb.get());
-    body->AddExternalForce(forceHst);
+    auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
     // - Excitation
 
-    auto excitationForce = std::make_shared<FrLinearExcitationForce_>(hdb, eqFrame);
-    body->AddExternalForce(excitationForce);
+    auto excitationForce = make_linear_excitation_force(hdb, body);
 
     // - Radiation
 
-    auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(hdb);
-
-    system.AddPhysicsItem(radiationModel);
-
-    auto radiationForce = std::make_shared<FrRadiationConvolutionForce_>(radiationModel);
-
-    body->AddExternalForce(radiationForce);
+    auto radiationModel = make_radiation_convolution_model(hdb, &system);
 
     // --- Simulation
 

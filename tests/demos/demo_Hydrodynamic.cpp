@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
     // -- Wind model force, based on polar coefficients
     // Create the model model force and add it to the platform
     auto windForce = make_wind_force("PolarWindCoeffs_NC.yml", platform);
-
+    windForce->SetIsForceAsset(true);
 
     // ------------------ Run ------------------ //
 

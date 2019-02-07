@@ -1,15 +1,13 @@
 
-message(STATUS "    ...REFACTORING TESTS :")
-
-
+message(STATUS "    ...DEV TESTS :")
 
 set(REFACTORING_TESTS
-#        test_tug_refactoring
-        demo_AiryIrregularWaveField
-        test_TimeRecorder
-#        test_MorisonElement
+        test_body_mapper
+        test_hydrostatic_new_hdb
+        test_radiation_model
         )
 
+include(Add_matplotlib-cpp)
 
 foreach(test ${REFACTORING_TESTS})
     message(STATUS "        ...add ${test}")
@@ -29,7 +27,10 @@ endforeach ()
 
 
 # Adding resource files
-configure_file(../data/frydom_logo.png . COPYONLY)
+configure_file(../../data/frydom_logo.png . COPYONLY)
 configure_file(../../data/skybox/sky_dn.jpg . COPYONLY)
 configure_file(../../data/skybox/sky_lf.jpg . COPYONLY)
 configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
+
+
+configure_file(../data/DeepSea_Stavanger/DeepSeaStavanger.hdb5 . COPYONLY)
