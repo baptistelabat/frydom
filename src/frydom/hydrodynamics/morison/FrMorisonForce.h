@@ -93,7 +93,15 @@ namespace frydom {
         void StepFinalize() override;
     };
 
-
+    /// Maker of a Morison model force : instantiate and return a FrMorisonForce, based on a Morison element.
+    /// The makers also add the force to the list of external forces applied on the body.
+    /// \param model Morison model, containing the different parameters associated to the model
+    /// \param body body on which the force is applied
+    /// \return Morison force
+    // TODO : delete the body variable, and get it from the node contained in the model?
+    std::shared_ptr<FrMorisonForce_>
+    make_morison_force(std::shared_ptr<FrMorisonElement_> model, std::shared_ptr<FrBody_> body);
+    
 }
 
 #endif //FRYDOM_FRMORISONFORCE_H
