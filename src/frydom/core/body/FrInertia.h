@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 01/10/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRINERTIA_H
 #define FRYDOM_FRINERTIA_H
@@ -21,6 +29,11 @@ namespace frydom {
     ///     - inertia matrix expressed at COG in the body reference frame
     /// Internally, the frame convention used is NWU but it is still possible to get or set parameters in any frame
     /// convention
+
+    /**
+     * \class FrInertiaTensor_
+     * \brief Class for defining the intertia tensor of a rigid body.
+     */
     class FrInertiaTensor_ {
 
         using InertiaMatrix = mathutils::Matrix33<double>;

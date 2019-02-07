@@ -161,7 +161,7 @@ int main(int argc, char* argv[]) {
     // ------------------ Run ------------------ //
 
     // You can change the dynamical simulation time step using.
-    system.SetTimeStep(0.01);
+    system.SetTimeStep(0.005);
 
     // You can modify solver and time stepper parameters :
 //    system.SetSolver(FrOffshoreSystem_::SOLVER::MINRES);
@@ -175,7 +175,7 @@ int main(int argc, char* argv[]) {
 
     // Don't forget to initialize the offshore system : it will initialize every physical objects and environmental
     // components it contains.
-    system.Initialize();
+//    system.Initialize();
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 15) and the distance from the camera to the objectif (75m).

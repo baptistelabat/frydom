@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 11/09/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRLINEARDAMPING_H
 #define FRYDOM_FRLINEARDAMPING_H
@@ -13,6 +21,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrLinearDamping
+     * \brief Class for computing additional linear damping loads.
+     */
     class FrLinearDamping : public FrForce {
 
     private:
@@ -103,6 +115,10 @@ namespace frydom {
     // REFACTORING ---------->>>>>>>>>>>>>>>>
 
 
+    /**
+     * \class FrLinearDamping_
+     * \brief Class for computing additional linear damping loads.
+     */
     class FrLinearDamping_ : public FrForce_ {
 
     public:

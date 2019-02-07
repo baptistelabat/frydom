@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by Lucas Letournel on 26/09/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRGEOGRAPHICSERVICES_H
 #define FRYDOM_FRGEOGRAPHICSERVICES_H
@@ -25,6 +33,10 @@ namespace frydom {
     class Position;
 
     /// Class defining geographic coordinates : (latitude, longitude and height).
+    /**
+     * \class FrGeographicCoord
+     * \brief Class defining geographic coordinates : (latitude, longitude and height).
+     */
     class FrGeographicCoord {
 
     private:
@@ -63,6 +75,11 @@ namespace frydom {
     /// It can also compute the magnetic declination of a position given either in geographic or cartesian coordinates.
     /// In GeographicServices, the cartesian reference frame depends on the frame convention given (NED/NWU).
     /// In GeographicLib, the cartesian coordinates is defined as ENU (x=East, y= North, z=Up).
+
+    /**
+     * \class FrGeographicServices
+     * \brief Class to provide convert methods between geographic coordinates and Cartesian positions.
+     */
     class FrGeographicServices {
 
     private:

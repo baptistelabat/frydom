@@ -54,7 +54,8 @@ Chakrabarti stretching:
 In this method, proposed by Chakrabarti [Chakrabarti1971]_, the transformation is applied on the water depth. The term
 scaling factor becomes:
 
-.. math::`E(z) = \frac{\cosh(k(z+h))}{\sinh(k(h+\eta))}`.
+.. math::
+	E(z) = \frac{\cosh(k(z+h))}{\sinh(k(h+\eta))}
 
 Delta-stretching:
 -----------------

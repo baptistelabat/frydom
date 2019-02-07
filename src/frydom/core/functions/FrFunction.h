@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 12/10/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRFUNCTION_H
 #define FRYDOM_FRFUNCTION_H
@@ -16,6 +24,10 @@ namespace frydom {
 
     // TODO : continuer le dev...
 
+    /**
+     * \class FrFunction
+     * \brief Class for dealing with real functions (ramp, etc.).
+     */
     class FrFunction : public chrono::ChFunction {
 
 //    protected:
@@ -98,6 +110,10 @@ namespace frydom {
 
     // REFACTORING ------------->>>>>>>>>>>>>>>>>>
 
+    /**
+     * \class FrFunction_
+     * \brief Class for dealing with real functions (ramp, etc.).
+     */
     class FrFunction_ : public FrObject {
     protected:
         double m_functionValue = 1.;    ///< value of the function to return
@@ -114,6 +130,10 @@ namespace frydom {
         void Update(double time);
     };
 
+    /**
+     * \class FrRamp_
+     * \brief Class for dealing with the ramp function.
+     */
     class FrRamp_ : public FrFunction_ {
 
     private:

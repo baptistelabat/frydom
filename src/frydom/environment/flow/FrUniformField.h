@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 27/02/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRUNIFORMFIELD_H
 #define FRYDOM_FRUNIFORMFIELD_H
@@ -18,6 +26,10 @@ using namespace mathutils;
 
 namespace frydom {
 
+        /**
+        * \class FrUniformCurrentField
+        * \brief Class for defining a uniform current.
+        */
         class FrUniformCurrentField : virtual public FrObject,
                                       public std::enable_shared_from_this<FrUniformCurrentField> {
 
@@ -103,7 +115,10 @@ namespace frydom {
 
         // REFACTORING ------------>>>>>>>>>>>>>>>>>>><
 
-
+        /**
+        * \class FrUniformField
+        * \brief Class for defining a uniform field (current or wind).
+        */
         class FrUniformField : public FrFieldBase {
 
             // TODO: Avoir un current asset sur le meme modele que FrForceAsset qui place un vecteur

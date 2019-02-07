@@ -1,17 +1,14 @@
 // =============================================================================
-// PROJECT FRyDoM
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Copyright (c) 2017 Ecole Centrale de Nantes
-// All right reserved.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
-//
-// =============================================================================
-// Authors: Francois Rongere
-// =============================================================================
-//
-// Base for marine current modeling.
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
 //
 // =============================================================================
+
 
 #ifndef FRYDOM_FRCURRENT_H
 #define FRYDOM_FRCURRENT_H
@@ -37,6 +34,10 @@ namespace frydom {
     // FrCurrent : Base current field
     // ===============================================================
 
+    /**
+     * \class FrCurrent
+     * \brief Class defining a current field.
+     */
     class FrCurrent : public FrObject {
 
     public:
@@ -64,6 +65,10 @@ namespace frydom {
     // FrUniformCurrent : uniform current profile class
     // ================================================================
 
+    /**
+     * \class FrUniformCurrent
+     * \brief Class for defining a uniform current.
+     */
     class FrUniformCurrent : virtual public FrCurrent,
                              virtual public FrUniformField {
         /// Inheritance of the base constructor

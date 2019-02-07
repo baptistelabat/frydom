@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 29/05/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FROFFSHORESYSTEM_H
 #define FRYDOM_FROFFSHORESYSTEM_H
@@ -45,6 +53,10 @@ namespace frydom {
 
 
     // TODO: voir aussi a deriver de ChSystemSMC pour comparer les 2 ? Avoir une classe de base virtuelle derivant de ChSystem ???
+    /**
+    * \class FrOffshoreSystem
+    * \brief Main class for a FRyDoM offshore system, representing a multibody physical system,.
+    */
     class FrOffshoreSystem :
             public chrono::ChSystemSMC,
             public std::enable_shared_from_this<FrOffshoreSystem>,

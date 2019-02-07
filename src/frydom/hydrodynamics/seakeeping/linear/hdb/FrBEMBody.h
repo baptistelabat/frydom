@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 11/01/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRBEMBODY_H
 #define FRYDOM_FRBEMBODY_H
@@ -17,6 +25,10 @@ using namespace mathutils;
 
 namespace frydom {
 
+    /**
+     * \class FrDiscretization1D
+     * \brief Class for the linear discretization (frequency and angle).
+     */
     class FrDiscretization1D {
     private:
         double m_xmin = 0.;
@@ -51,7 +63,10 @@ namespace frydom {
 
     };
 
-
+    /**
+     * \class FrBEMMode
+     * \brief
+     */
     class FrBEMMode {
     public:
         enum TYPE {
@@ -96,6 +111,10 @@ namespace frydom {
     class FrHydroDB;
     class FrHydroBody;
 
+    /**
+     * \class FrBEMBody
+     * \brief Class for defining a body subject to hydrodynamic loads using a BEM solver.
+     */
     class FrBEMBody {
 
         // =================================================================================================================
@@ -319,6 +338,10 @@ namespace frydom {
 
     class FrHydroDB_;
 
+    /**
+     * \class FrBEMBody_
+     * \brief
+     */
     class FrBEMMode_ {
 
     public:

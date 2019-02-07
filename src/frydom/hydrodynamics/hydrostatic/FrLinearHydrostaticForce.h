@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 21/06/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRLINEARHYDROSTATICFORCE_H
 #define FRYDOM_FRLINEARHYDROSTATICFORCE_H
@@ -24,6 +32,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrLinearHydrostaticForce
+     * \brief Class for computing linear hydrostatic loads.
+     */
     class FrLinearHydrostaticForce : public FrForce {
 
     private:
@@ -83,6 +95,10 @@ namespace frydom {
     /// It is supposed that the equilibrium frame has the z-axis pointing upwards and its
     /// position equals the position of the COG of the body at equilibrium
 
+    /**
+     * \class FrLinearHydrostaticForce_
+     * \brief Class for computing linear hydrostatic loads.
+     */
     class FrLinearHydrostaticForce_ : public FrForce_ {
 
     private:

@@ -5,9 +5,8 @@ Full portability is not operational yet, the cmake was developed for Linux only.
 
 ## 1) Install a C++ compiler
 
-Only the GNU C++ compiler for Linux-based platforms has been tested so far. To install it, you need the following packages
+Only the GNU C++ compiler for Linux-based platforms has been tested so far. To install it, you need the following package
 
-    sudo apt-get install gcc
     sudo apt-get install build-essential
 
 <small>Other compilers could work as well, but they might require changes to the CMake scripts.</small>
@@ -19,16 +18,12 @@ already embedded in the CLion 2018.3, but not in Ubuntu 18.04. It will also need
 
 Start by installing libcurl, libssl and zlib:
 
-<br>
-
     sudo apt-get install libssl-dev
     sudo apt-get install libcurl4-openssl-dev
     sudo apt-get install zlib1g-dev
     
 then you can download the latest version of CMake, at the [official CMake webpage](https://cmake.org/download/).
 You can extract the downloaded package in the /opt/ folder, in case you need to uninstall CMake later. 
-
-<br>
 
     tar -xzvf cmake-$version.$build.tar.gz
     mv cmake-$version.$build /opt/
@@ -37,16 +32,12 @@ where version and build correspond to the version and build of the CMake you dow
 
 Once extracted, install CMake by running the following commands in the extracted folder:
 
-<br>
-
     cd /opt/cmake-$version.$build
     sudo ./bootstrap --system-curl
     sudo make
     sudo make install
     
 Check CMake version (you may need to close and reopen your terminal):
-
-<br>
 
     cmake --version 
  

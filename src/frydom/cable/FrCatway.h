@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 05/10/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRCATWAY_H
 #define FRYDOM_FRCATWAY_H
@@ -71,6 +79,10 @@ namespace frydom {
     }  // end namespace internal
 
 
+    /**
+     * \class FrCatway
+     * \brief Class for defining a catenary.
+     */
     class FrCatway : public FrCable_ {
 
     private:
@@ -123,7 +135,10 @@ namespace frydom {
 
     };
 
-
+    /**
+     * \class FrCatForce
+     * \brief Class for getting the cable .
+     */
     class FrCatForce : public FrForce_ { // Doit etre mis en std::shared_ptr<FrForce_> dans FrBody_...
 
         enum SIDE {
@@ -184,7 +199,10 @@ namespace frydom {
 //
 //    }  // end namespace internal
 
-
+    /**
+     * \class CatenaryCableAsset
+     * \brief Class for a caterary cable asset.
+     */
     class CatenaryCableAsset {
 
     private:
@@ -218,7 +236,10 @@ namespace frydom {
 
 
 
-
+    /**
+     * \class FrCatwayEnvironmentInterface
+     * \brief Class for defining the environment data for a catenary.
+     */
     class FrCatwayEnvironmentInterface : public catenary::CatenaryEnvironmentInterface {
 
         // TODO : terminer !! Nécessite de changer de paradigme pour l'interface environnement dans Catway (abandonner le pattern singleton)
@@ -248,7 +269,10 @@ namespace frydom {
     };
 
 
-
+    /**
+     * \class FrCatenaryMorrison
+     * \brief Class for adding Morison loads when using a catenary line.
+     */
     class FrCatenaryMorrison : public catenary::CatenaryUniformLoad { // TODO : voir a ajouter morrison directement dans Catway !!
 
     private:

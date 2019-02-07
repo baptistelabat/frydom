@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by Lucas Letournel on 03/12/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRAIRYIRREGULARWAVEFIELD_H
 #define FRYDOM_FRAIRYIRREGULARWAVEFIELD_H
@@ -12,7 +20,10 @@ namespace frydom {
     //Forward Declaration
     class FrFreeSurface_;
 
-
+    /**
+     * \class FrAiryIrregularWaveField
+     * \brief Class which deals with irregular wave field.
+     */
     class FrAiryIrregularWaveField : public FrWaveField_ {
     protected:
 

@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 08/09/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRNODE_H
 #define FRYDOM_FRNODE_H
@@ -18,6 +26,10 @@ namespace frydom {
 
 //    class FrBody;
 
+    /**
+     * \class FrNode
+     * \brief Class for defining nodes (in order to add links).
+     */
     class FrNode : public chrono::ChMarker, public FrObject {
 //    private:
 //        FrBody* Body;
@@ -85,7 +97,10 @@ namespace frydom {
 
     }
 
-
+    /**
+     * \class FrNode_
+     * \brief Class for defining nodes (in order to add links).
+     */
     class FrNode_ : public FrObject {
 
     private:

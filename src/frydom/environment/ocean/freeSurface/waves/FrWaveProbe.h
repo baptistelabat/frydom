@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 30/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRWAVEPROBE_H
 #define FRYDOM_FRWAVEPROBE_H
@@ -99,6 +107,10 @@ namespace frydom {
     /// Specialization of the wave probe for linear wave field and moving frame.
     /// Assumed moving frame and encounter frequency
 
+    /**
+     * \class FrLinearWaveProbe
+     * \brief Class for defining a wave probe in case of a linear wave field.
+     */
     class FrLinearWaveProbe : public FrWaveProbe {
 
     protected:
@@ -134,6 +146,10 @@ namespace frydom {
     /// Assumed linear wave field and fixe position if the global reference frame.
     /// Assumed only time frequency dependance.
 
+    /**
+     * \class FrLinearWaveProbeSteady
+     * \brief Class for defining and optimizing a wave probe in case of linear wave field.
+     */
     class FrLinearWaveProbeSteady : public FrLinearWaveProbe {  // TODO: mettre en cache la steady elevation pour les params x, y
 
     private:

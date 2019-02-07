@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 09/04/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRVARIABLESBEMBODYMASS_H
 #define FRYDOM_FRVARIABLESBEMBODYMASS_H
@@ -15,6 +23,10 @@ namespace frydom {
         variablesStandard
     };
 
+    /**
+    * \class FrVariablesBEMBodyMass
+    * \brief Class for dealing with added masses.
+    */
     class FrVariablesBEMBodyMass : public chrono::ChVariablesBodyOwnMass {
 
     private:

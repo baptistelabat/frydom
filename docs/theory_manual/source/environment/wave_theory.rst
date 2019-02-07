@@ -23,12 +23,12 @@ where :math:`\bar{x} = x \cos(\theta) + y \sin(\theta)`.
 The potential of the regular wave, at a position :math:`(x,y,z)` and a time :math:`t` is given by:
 
 .. math::
-    \phi (x,y,z,t) = \Im\left(-\frac{A j g}{\omega}   \exp(jk\bar{x} - j\omega t) \frac{\cosh(k(z+H)}{\cosh(kH)} \right)
+    \phi (x,y,z,t) = -\frac{A g}{\omega}\frac{\cosh(k(z+H)}{\cosh(kH)}\cos(\bar{x} - \omega t)
 
 The wave dispersion relation, :math:`\omega^2 = gk\tanh(kh)`, introduced in the previous equation, yields
 
 .. math::
-    \phi (x,y,z,t) = \Im\left(\frac{-A j \omega}{k}   \exp(jk\bar{x} - j\omega t) \frac{\cosh(k(z+H)}{\sinh(kH)} \right)
+    \phi (x,y,z,t) = -\frac{A \omega}{k}\frac{\cosh(k(z+H)}{\sinh(kH)}\cos(\bar{x} - \omega t)
 
 The last term is called the scaling factor, and can be subject to transformations (see :any:`kinematic stretching<wave_stretching>`)
 
@@ -39,7 +39,7 @@ Airy irregular wave model
 -------------------------
 
 The Airy irregular wave is a linear superposition of Airy regular waves of different wave circular frequency :math:`\omega_m` and
-direction :math:`\theta_n`, with random wave phases :math:`\Phi_mn`.
+direction :math:`\theta_n`, with random wave phases :math:`\Phi_{mn}`.
 
 .. math::
     \eta(x,y,t) = \sum_m \sum_n \Im(A_{mn} \exp(jk_m\bar{x}_n - j\omega_m t + \Phi_{mn}))

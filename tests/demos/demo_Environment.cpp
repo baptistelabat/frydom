@@ -46,8 +46,8 @@ int main(int argc, char* argv[]) {
         // get first this uniform field.
         auto wind = Atmosphere->GetWind()->GetFieldUniform();
 
-        // Several methods are available to set the wind characteristics : velocity amplitude, direction, etc.. In all
-        // these methods, you must specify the direction convention used (GOT/COMEFROM). The frame convention is implicit
+        // Several methods are available to set the wind characteristics : velocity amplitude, direction, etc. In all
+        // these methods, you must specify the direction convention used (GOTO/COMEFROM). The frame convention is implicit
         // for those with a cardinal direction in their name. Otherwise, you have to specify the frame convention (NED/NWU)
         // as well.
         double windAmplitude = 6.; // in knots (KNOT), but can be in m/s (MS) or in km/h (KMH)
@@ -91,8 +91,8 @@ int main(int argc, char* argv[]) {
         // you need to get first this uniform field.
         auto current = Ocean->GetCurrent()->GetFieldUniform();
 
-        // Several methods are available to set the current characteristics : velocity amplitude, direction, etc.. In all
-        // these methods, you must specify the direction convention used (GOT/COMEFROM). The frame convention is implicit
+        // Several methods are available to set the current characteristics : velocity amplitude, direction, etc. In all
+        // these methods, you must specify the direction convention used (GOTO/COMEFROM). The frame convention is implicit
         // for those with a cardinal direction in their name. Otherwise, you have to specify the frame convention (NED/NWU)
         // as well.
         double currentAmplitude = 6.; // in knots (KNOT), but can be in m/s (MS) or in km/h (KMH)
