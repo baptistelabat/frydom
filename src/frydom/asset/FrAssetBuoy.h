@@ -15,7 +15,7 @@
 
 #include "chrono/physics/ChBodyEasy.h"
 #include "chrono/assets/ChColorAsset.h"
-#include "frydom/cable/FrAssetComponent.h"
+#include "FrAssetComponent.h"
 
 namespace frydom {
 /*

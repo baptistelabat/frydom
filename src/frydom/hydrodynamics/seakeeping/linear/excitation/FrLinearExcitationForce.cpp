@@ -194,6 +194,9 @@ namespace frydom {
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
     void FrLinearExcitationForce_::Initialize() {
+        FrForce_::Initialize();
+
+        m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
 
         auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
@@ -252,5 +255,13 @@ namespace frydom {
 
     }
 
+
+    std::shared_ptr<FrLinearExcitationForce_>
+    make_linear_excitation_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body){
+        auto excitationForce = std::make_shared<FrLinearExcitationForce_>(HDB);
+        body->AddExternalForce(excitationForce);
+        return excitationForce;
+
+    }
 
 }  // end namespace frydom

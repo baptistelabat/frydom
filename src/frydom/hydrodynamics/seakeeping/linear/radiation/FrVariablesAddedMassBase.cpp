@@ -59,21 +59,28 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto resultOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
+                auto body = HDB->GetBody(BEMBody->get());
+                auto resultOffset = GetBodyOffset(body);
 
                 //for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
+
+
                     auto BEMBodyMotion = BEMBody;
 
-                    auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
+                    auto bodyOffset = GetBodyOffset(body);
+
+                    auto fb = GetVariablesFb(body);
 
                     auto invAddedMassCorrection = m_invAddedMassCorrection.at(BEMBody->get());
 
                     for (int i=0; i<6; i++) {
                         result(resultOffset + i) = 0.;
                         for (int j=0; j<6; j++) {
-                            result(resultOffset + i) += invAddedMassCorrection(i, j) * vect(bodyOffset + j);
+                            //result(resultOffset + i) += invAddedMassCorrection(i, j) * vect(bodyOffset + j);
+                            result(resultOffset + i) += invAddedMassCorrection(i, j) * fb(j);
                         }
                     };
+                    this->SetVariables(body, result, bodyOffset);
                 //}
             }
         }
@@ -85,20 +92,26 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto resultOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
+                auto body = HDB->GetBody(BEMBody->get());
+
+                auto resultOffset = GetBodyOffset(body);
 
                 //for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
                     auto BEMBodyMotion = BEMBody;
 
                     auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
 
+                    auto fb = GetVariablesFb(body);
+
                     auto invAddedMassCorrection = m_invAddedMassCorrection.at(BEMBody->get());
 
                     for (int i=0; i<6; i++) {
                         for (int j=0; j<6; j++) {
-                            result(resultOffset + i) += invAddedMassCorrection(i, j) * vect(bodyOffset + j);
+                            //result(resultOffset + i) += invAddedMassCorrection(i, j) * vect(bodyOffset + j);
+                            result(resultOffset + i) += invAddedMassCorrection(i, j) * fb(j);
                         }
                     };
+                    this->SetVariables(body, result, bodyOffset);
                 //}
             }
         }
@@ -109,10 +122,14 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto resultOffset = GetBodyOffset(HDB->GetBody(BEMBody->get()) );
+                auto body = HDB->GetBody(BEMBody->get());
+
+                auto resultOffset = GetBodyOffset(body);
 
                 //for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
                     auto BEMBodyMotion = BEMBody;
+
+                    auto fb = GetVariablesFb(body);
 
                     auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
 
@@ -120,9 +137,11 @@ namespace frydom {
 
                     for (int i=0; i<6; i++) {
                         for (int j=0; j<6; j++) {
-                            result(resultOffset + i) += generalizedMass(i, j) * vect(bodyOffset + j);
+                            //result(resultOffset + i) += generalizedMass(i, j) * vect(bodyOffset + j);
+                            result(resultOffset + i) += generalizedMass(i, j) * fb(j);
                         }
                     };
+                    this->SetVariables(body, result, bodyOffset);
                 //}
             }
         }
@@ -134,15 +153,21 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
+                auto body = HDB->GetBody(BEMBody->get());
+                auto bodyOffset = GetBodyOffset(body);
+
+                auto fb = this->GetVariablesFb(body);
 
                 auto generalizedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
 
                 for (int i=0; i<6; i++) {
                     for (int j=0; j<6; j++) {
-                        result(bodyOffset + i) += c_a * generalizedMass(i, j) * vect(bodyOffset + j);
+                        //result(bodyOffset + i) += c_a * generalizedMass(i, j) * vect(bodyOffset + j);
+                        result(bodyOffset + i) += c_a * generalizedMass(i, j) * fb(j);
                     }
                 }
+
+                this->SetVariables(body, result, bodyOffset);
             }
         }
 
@@ -162,6 +187,8 @@ namespace frydom {
                 result(bodyOffset + 3) += c_a * infiniteAddedMass(3, 3);
                 result(bodyOffset + 4) += c_a * infiniteAddedMass(4, 4);
                 result(bodyOffset + 5) += c_a * infiniteAddedMass(5, 5);
+
+                this->SetVariables(HDB->GetBody(BEMBody->get()), result, bodyOffset);
             }
         }
 
@@ -187,6 +214,17 @@ namespace frydom {
         int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody_* body) const {
             auto chronoBody = body->GetChronoBody();
             return chronoBody->GetOffset_w();
+        }
+
+        void internal::FrVariablesAddedMassBase::SetVariables(FrBody_* body, chrono::ChMatrix<double> &result,
+                                                              int offset) const {
+            auto chronoBody = body->GetChronoBody();
+            chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(result, offset, 0, 6, 1, 0, 0);
+        }
+
+        chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody_* body) const {
+            auto chronoBody = body->GetChronoBody();
+            return chronoBody->GetVariables1()->Get_fb();
         }
 
     }   // end namespace internal

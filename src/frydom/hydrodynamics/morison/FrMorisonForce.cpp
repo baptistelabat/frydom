@@ -12,6 +12,7 @@
 
 #include "FrMorisonForce.h"
 #include "frydom/hydrodynamics/morison/FrMorisonModel.h"
+#include "frydom/core/body/FrBody.h"
 
 namespace frydom {
 
@@ -104,5 +105,13 @@ namespace frydom {
 
     }
 
+
+    std::shared_ptr<FrMorisonForce_>
+    make_morison_force(std::shared_ptr<FrMorisonElement_> model, std::shared_ptr<FrBody_> body){
+        assert(body.get() == model->GetNode()->GetBody());
+        auto MorisonForce = std::make_shared<FrMorisonForce_>(model);
+        body->AddExternalForce(MorisonForce);
+        return MorisonForce;
+    }
 
 }  // end namespace frydom

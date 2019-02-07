@@ -161,7 +161,12 @@ namespace frydom {
         torque.y() = 0.;
         torque.z() = force.y() * m2 * m_lpp;
 
-        auto frame = FrameAtCOG.ProjectToXYPlane(NWU);
+        // Build the projected rotation in the XoY plane.
+        double phi, theta, psi;
+        m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+        auto bodyRotation = FrRotation_(Direction(0.,0.,1.), psi, NWU);
+        auto frame = FrFrame_(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
+
         auto worldForce = frame.ProjectVectorFrameInParent(force, NWU);
         auto worldTorque = frame.ProjectVectorFrameInParent(torque, NWU);
 

@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index d2d8810..084cba3 100644
+index d2d8810..1ff278b 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -346,6 +346,11 @@ if(UNIX)
+@@ -346,13 +346,18 @@ if(UNIX)
  	install(FILES ${PC_FILE} DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
  endif()
  
@@ -14,3 +14,13 @@ index d2d8810..084cba3 100644
  
  ###
  ### Extras
+ ###
+-if(YAML_CPP_BUILD_TESTS)
+-	add_subdirectory(test)
+-endif()
++#if(YAML_CPP_BUILD_TESTS)
++#	add_subdirectory(test)
++#endif()
+ if(YAML_CPP_BUILD_TOOLS)
+ 	add_subdirectory(util)
+ endif()

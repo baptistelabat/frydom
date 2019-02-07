@@ -84,21 +84,19 @@ namespace frydom {
     //forward declaration
 
     class FrHydroDB_;
-
+    
     /**
-    * \class FrWaveDriftForceRAO_
+    * \class FrWaveDriftForce_
     * \brief Class for computing the wave drift force.
     */
-    class FrWaveDriftForceRAO_ : public FrForce_ {
+    class FrWaveDriftForce_ : public FrForce_ {
 
     private:
-
         std::shared_ptr<FrHydroDB_> m_hdb;
-        std::vector<std::unique_ptr<mathutils::LookupTable2d<>>> m_table;
 
     public:
 
-        FrWaveDriftForceRAO_(const FrHydroDB_& hdb);
+        FrWaveDriftForce_(std::shared_ptr<FrHydroDB_> hdb);
 
         void Initialize() override;
 

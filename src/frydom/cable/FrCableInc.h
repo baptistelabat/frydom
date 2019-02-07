@@ -18,10 +18,7 @@
 #include "FrCatenaryLine.h"
 #include "FrDynamicCable.h"
 #include "FrCatenaryNode.h"
-#include "FrAssetComponent.h"
-#include "FrAssetBuoy.h"
-#include "FrAssetClumpWeight.h"
-
 #include "FrCatway.h"
+#include "FrMooringBuoy.h"
 
 #endif //FRYDOM_FRCABLEINC_H

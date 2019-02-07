@@ -679,4 +679,9 @@ namespace frydom {
         BEMBody->SetStiffnessMatrix(matrix);
     }
 
+
+    std::shared_ptr<FrHydroDB_> make_hydrodynamic_database(std::string h5file) {
+        return std::make_shared<FrHydroDB_>(h5file);
+    }
+
 }  // end namespace frydom

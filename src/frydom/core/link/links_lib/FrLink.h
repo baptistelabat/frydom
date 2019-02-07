@@ -58,6 +58,8 @@ namespace frydom {
 
         struct FrLinkLockBase : public chrono::ChLinkLock {
 
+            friend class FrNode_;
+
             using ChronoLinkType = chrono::ChLinkLock::LinkType;
 
             FrLink_* m_frydomLink; ///> Pointer to frydom link object container

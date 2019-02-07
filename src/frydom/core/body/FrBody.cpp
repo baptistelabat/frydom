@@ -220,6 +220,7 @@ namespace frydom {
 
     void FrBody_::Update() {
         // TODO
+
     }
 
     void FrBody_::SetSmoothContact() {
@@ -884,6 +885,13 @@ namespace frydom {
         // World Marker placed at the current COG body position
         auto worldNode = GetSystem()->GetWorldBody()->NewNode();
         worldNode->SetFrameInBody(bodyNodeFrameInWorld);
+
+        // ##CC
+        auto wPos = worldNode->GetPositionInWorld(NWU);
+        auto bPos = bodyNode->GetPositionInWorld(NWU);
+        std::cout << "debug: DOF: worldNode: " << wPos.GetX() << ";" << wPos.GetY() << ";" << wPos.GetZ() << std::endl;
+        std::cout << "debug: DOF: bodyNode: " << bPos.GetX() << ";" << bPos.GetY() << bPos.GetZ() << std::endl;
+        // ##CC
 
         // Creating the link
         m_DOFLink = std::make_shared<FrLink_>(worldNode, bodyNode, GetSystem());

@@ -202,7 +202,7 @@ namespace frydom {
 
         // Force Asset
         bool m_isForceAsset = false;            ///< A ForceAsset (vector) is displayed if true
-        FrForceAsset_* m_forceAsset;            ///< pointer to the ForceAsset object.
+        FrForceAsset_* m_forceAsset = nullptr;  ///< pointer to the ForceAsset object.
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise

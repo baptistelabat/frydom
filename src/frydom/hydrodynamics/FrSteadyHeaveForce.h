@@ -15,6 +15,8 @@
 
 #include "frydom/core/force/FrForce.h"
 
+// TODO : plus utilisée dans le refactoring à supprimer
+
 namespace frydom {
 
     /**

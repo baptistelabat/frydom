@@ -7,6 +7,8 @@ from math import degrees, radians, pi
 from copy import deepcopy
 from scipy import interpolate
 
+import time
+
 import matplotlib.pyplot as plt
 
 # from meshmagick.mmio import load_MAR
@@ -632,7 +634,7 @@ class RadiationDB(_FreqDB):
     @property
     def infinite_added_mass(self):
         if self._cm_inf is None:
-            return
+            return 
         else:
             return self._cm_inf * self._flags
     
@@ -974,8 +976,10 @@ class RadiationDB(_FreqDB):
         else:
             body_motion = self.body_mapper.bodies[ibody_motion]
             j1, j2 = body_motion.motion_modes[0].general_index, body_motion.motion_modes[-1].general_index + 1
-    
-        return self.infinite_added_mass[i1:i2, j1:j2]
+
+        result = self.infinite_added_mass
+
+        return result[i1:i2, j1:j2]
     
     def plot(self, ibody_motion, idof, ibody_force, iforce, **kwargs):
         """Plots the radiation coefficients of a given modes set

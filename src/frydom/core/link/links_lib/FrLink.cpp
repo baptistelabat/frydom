@@ -56,11 +56,42 @@ namespace frydom {
         }
 
         void FrLinkLockBase::Update(double time, bool update_assets) {
-            chrono::ChLinkLock::Update(time, update_assets);
 
             GenerateCache();
 
+            auto node1 = m_frydomLink->GetNode1()->GetPositionInWorld(NWU);
+            auto node2 = m_frydomLink->GetNode2()->GetPositionInWorld(NWU);
+
+            //marker1->GetPos().x() = node1.GetX();
+            //marker1->GetPos().y() = node1.GetY();
+            //marker1->GetPos().z() = node1.GetZ();
+
+            //marker2->GetPos().x() = node2.GetX();
+            //marker2->GetPos().y() = node2.GetY();
+            //marker2->GetPos().z() = node2.GetZ();
+
             m_frydomLink->Update(time);
+
+            // ##CC
+            /*
+            std::cout << "debug: FrLinkLockBase: marker1: " << marker1->GetPos().x() << ";"
+                                                            << marker1->GetPos().y() << ";"
+                                                            << marker1->GetPos().z() << std::endl;
+            std::cout << "debug: FrLinkLockBase: marker2: " << marker2->GetPos().x() << ";"
+                                                            << marker2->GetPos().y() << ";"
+                                                            << marker2->GetPos().z() << std::endl;
+
+
+            std::cout << "debug: FrLinkLockBase: node1: " << node1.GetX() << ";"
+                                                          << node1.GetY() << ";"
+                                                          << node1.GetZ() << std::endl;
+            std::cout << "debug: FrLinkLockBase: node2: " << node2.GetX() << ";"
+                                                          << node2.GetY() << ";"
+                                                          << node2.GetZ() << std::endl;
+            */
+            // ##CC
+
+            chrono::ChLinkLock::Update(time, update_assets);
         }
 
         void FrLinkLockBase::GenerateCache() {
@@ -96,18 +127,20 @@ namespace frydom {
                     - c_frame2WRT1.ProjectVectorFrameInParent(c_generalizedForceOnMarker2.GetTorque(), NWU)
                     + c_frame2WRT1.GetPosition(NWU).cross(c_generalizedForceOnMarker1.GetForce())
                     );
+
+
         }
 
-        void FrLinkLockBase::SetMask(FrBodyDOFMask* mask) {
+        void FrLinkLockBase::SetMask(FrBodyDOFMask* vmask) {
             chrono::ChLinkMaskLF chronoMask;
             chronoMask.SetLockMask(
-                    mask->GetLock_X(),  // x
-                    mask->GetLock_Y(),  // y
-                    mask->GetLock_Z(),  // z
+                    vmask->GetLock_X(),  // x
+                    vmask->GetLock_Y(),  // y
+                    vmask->GetLock_Z(),  // z
                     false,              // e0
-                    mask->GetLock_Rx(), // e1
-                    mask->GetLock_Ry(), // e2
-                    mask->GetLock_Rz()  // e3
+                    vmask->GetLock_Rx(), // e1
+                    vmask->GetLock_Ry(), // e2
+                    vmask->GetLock_Rz()  // e3
             );
             BuildLink(&chronoMask);
         }
@@ -145,7 +178,8 @@ namespace frydom {
 
 
     void FrLink_::SetMarkers(FrNode_* node1, FrNode_* node2) {
-        m_chronoLink->SetUpMarkers(node1->m_chronoMarker.get(), node2->m_chronoMarker.get());
+        //m_chronoLink->SetUpMarkers(node1->m_chronoMarker.get(), node2->m_chronoMarker.get());
+        m_chronoLink->ReferenceMarkers(node1->m_chronoMarker.get(), node2->m_chronoMarker.get());
     }
 
     std::shared_ptr<chrono::ChLink> FrLink_::GetChronoLink() {
@@ -312,7 +346,6 @@ namespace frydom {
         // les donnes de la liaison sont relatives a un mouvement du node 2 par rapport au node 1
         // On fait appel aux methodes de FrLinkLockBase pour faciliter
         // Du coup, l'update de l'objet Chrono doit etre fait avant l'objet frydom
-
 
     }
 

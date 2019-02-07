@@ -20,10 +20,11 @@
 #include "FrCatenaryForce.h"
 #include "frydom/core/common/FrNode.h"
 #include "FrCable.h"
-#include "FrAssetComponent.h"
-#include "FrAssetBuoy.h"
+#include "frydom/asset/FrAssetComponent.h"
+#include "frydom/asset/FrAssetBuoy.h"
 
 #include "frydom/asset/FrCatenaryLineAsset_.h"
+#include "frydom/environment/FrFluidType.h"
 
 
 // TODO: prevoir une discretisation automatique pour laquelle on precise la taille cible d'un element
@@ -255,11 +256,12 @@ namespace frydom {
         bool m_elastic = true;              ///< Is the catenary line elastic
         mathutils::Vector3d<double> m_t0;   ///< Tension vector at the starting node
         double m_q;                         ///< Uniform distributed load weight (linear density + hydrostatic)
-        Direction m_u;                      ///< Uniform distributed load direction
+        Direction m_u = {0.,0.,-1.};        ///< Uniform distributed load direction
         //--------------------------------------------------------------------------------------------------------------
 
         //--------------------------------------------------------------------------------------------------------------
         // Cached values
+        FLUID_TYPE c_fluid;                 ///< cached value of the fluid type in which the catenary line is mostly in.
         mathutils::Vector3d<double> c_qvec; ///< cached value of the uniform distributed load : qvec = u.q
         mathutils::Matrix33<double> c_Umat; ///< cached value of the jacobian matrix
         //--------------------------------------------------------------------------------------------------------------
@@ -296,19 +298,17 @@ namespace frydom {
         /// \param elastic true if the catenary line is elastic (remember only an elastic line can be stretched !)
         /// \param youngModulus Young modulus of the catenary line
         /// \param sectionArea Section area of the catenary line
-        /// \param cableLength Unstretched length of the catenary line
-        /// \param q Uniformly distributed load of the catenary line
-        /// \param u direction of the distributed load
-        /// \param fc frame convention (NED/NWU)
+        /// \param unstretchedLength Unstretched length of the catenary line
+        /// \param linearDensity Uniformly distributed load of the catenary line
+        /// \param fluid fluid type in which the catenary line is mostly in
         FrCatenaryLine_(const std::shared_ptr<FrNode_>& startingNode,
                         const std::shared_ptr<FrNode_>& endingNode,
                         bool elastic,
                         double youngModulus,
                         double sectionArea,
-                        double cableLength,
-                        double q,  // TODO: pour q, lier a la densite du cable !!!
-                        Direction u,
-                        FRAME_CONVENTION fc
+                        double unstretchedLength,
+                        double linearDensity,
+                        FLUID_TYPE fluid
         );
 
         //--------------------------------------------------------------------------------------------------------------
@@ -450,10 +450,9 @@ namespace frydom {
     };
 
     std::shared_ptr<FrCatenaryLine_>
-    makeCatenaryLine(const std::shared_ptr<FrNode_> &startingNode, const std::shared_ptr<FrNode_> &endingNode,
-                     FrOffshoreSystem_ *system, bool elastic, double youngModulus, double sectionArea,
-                     double cableLength, double linearDensity, Direction u, FRAME_CONVENTION fc);
-
+    make_catenary_line(const std::shared_ptr<FrNode_> &startingNode, const std::shared_ptr<FrNode_> &endingNode,
+                       FrOffshoreSystem_ *system, bool elastic, double youngModulus, double sectionArea,
+                       double unstretchedLength, double linearDensity, FLUID_TYPE fluid);
 
 }// end namespace frydom
 

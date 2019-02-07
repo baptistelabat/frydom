@@ -30,7 +30,7 @@ namespace frydom {
         }
 
         void FrAddedMassBase::SetupInitial() {
-            m_frydomRadiationModel->Initialize();
+            //m_frydomRadiationModel->Initialize();
             m_variables->Initialize();
         }
 
@@ -96,7 +96,9 @@ namespace frydom {
 
                 auto bodyOffset = off_v - offset_w + GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
-                v.PasteClippedMatrix(m_variables->Get_qb(), bodyOffset, 0, 6, 1, bodyOffset, 0);
+                //v.PasteClippedMatrix(m_variables->Get_qb(), bodyOffset, 0, 6, 1, bodyOffset, 0);  // FIXME
+
+                //SetVariables(HDB->GetBody(BEMBody->get()), m_variables->Get_qb(), bodyOffset);    // FIXME
             }
         }
 
@@ -117,5 +119,9 @@ namespace frydom {
             return chronoBody->GetOffset_w();
         }
 
+        void FrAddedMassBase::SetVariables(FrBody_* body, chrono::ChMatrix<double>& qb, int offset) const {
+            auto chronoBody = body->GetChronoBody();
+            chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(qb, offset, 0, 6, 1, 0, 0);
+        }
     }
 }

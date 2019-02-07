@@ -293,7 +293,11 @@ namespace frydom {
         vtime.push_back(0.);
 
         if (m_deltaTime > FLT_EPSILON && m_data.size() > 1) {
-            for (int i = 0; i < m_data.size() - 1; ++i) {
+            vtime.push_back(m_deltaTime);
+        }
+
+        if (m_data.size() > 1) {
+            for (int i = 1; i < m_data.size() - 1; ++i) {
                 vtime.push_back(m_deltaTime + i * m_timeStep);
             }
         }

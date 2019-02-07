@@ -52,6 +52,10 @@ namespace frydom {
 
             int GetBodyOffset(FrBody_* body) const;
 
+            void SetVariables(FrBody_* body, chrono::ChMatrix<double>& result, int offset) const;
+
+            chrono::ChMatrix<double> GetVariablesFb(FrBody_* body) const;
+
         };
 
     }

@@ -1183,8 +1183,9 @@ namespace frydom {
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
+        //FIXME : FrBody doit-il dériver de FrPhysicsItem ?
         /// Body update method
-        void Update();
+        virtual void Update();
 
 
         // Linear iterators on external forces
@@ -1207,6 +1208,10 @@ namespace frydom {
 
         friend int internal::FrAddedMassBase::GetBodyOffset(FrBody_* body) const;
         friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody_* body) const ;
+        friend void internal::FrVariablesAddedMassBase::SetVariables(FrBody_ *body, chrono::ChMatrix<double> &result,
+                                                                     int offset) const;
+        friend void internal::FrAddedMassBase::SetVariables(FrBody_ *body, chrono::ChMatrix<double> &qb, int offset) const;
+        friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody_ *body) const;
         //friend void internal::FrVariablesAddedMassBase::Initialize();
 
     };
