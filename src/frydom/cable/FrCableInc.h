@@ -18,7 +18,6 @@
 #include "FrCatenaryLine.h"
 #include "FrDynamicCable.h"
 #include "FrCatenaryNode.h"
-#include "FrCatway.h"
 #include "FrMooringBuoy.h"
 
 #endif //FRYDOM_FRCABLEINC_H
