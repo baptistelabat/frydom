@@ -1,6 +1,6 @@
 
 # catway BUILD OPTIONS
-set(CATWAY_BUILD_TESTS OFF)
+set(CATWAY_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
 find_package(catway QUIET)
 
