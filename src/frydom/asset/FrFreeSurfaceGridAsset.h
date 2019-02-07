@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by Lucas Letournel on 05/12/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRFREESURFACEPHYSICITEM_H
 #define FRYDOM_FRFREESURFACEPHYSICITEM_H
@@ -13,6 +21,10 @@ namespace frydom {
     class FrFreeSurface_;
     class FrTriangleMeshConnected;
 
+    /**
+     * \class FrFreeSurfaceGridAsset
+     * \brief Class for displaying the free surface grid.
+     */
     class FrFreeSurfaceGridAsset : public FrGridAsset{
 
     private:

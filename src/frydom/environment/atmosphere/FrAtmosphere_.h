@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by Lucas Letournel on 22/11/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRATMOSPHERE_H
 #define FRYDOM_FRATMOSPHERE_H
@@ -17,6 +25,10 @@ namespace frydom {
     class FrWind_;
 
 
+    /**
+     * \class FrAtmosphere_
+     * \brief Class for defining the atmosphere.
+     */
     class FrAtmosphere_ : public FrObject{
 
     private:

@@ -16,8 +16,9 @@ where
 - :math:`C_t` is the total resistance coefficient associated
 
 This coefficient is given by
+
 .. math::
-    C_t = (1+k)C_f + C_r + C_a + C_{aa} + C{app}
+    C_t = (1+k) C_{f} + C_{r} + C_{a} + C_{aa} + C_{app}
 
 where
 
@@ -39,13 +40,13 @@ Except :math:`C_f`, all other coefficients must be given by the user. They are g
 or experiments. The residual coefficient can be obtained, for example, from model tests:
 
 .. math::
-    C_r = C_{tm} - (1+k)C_{fm}
+    C_r = C_{t}^{meas} - (1+k)C_{f}^{meas}
 
-where :math:`C_{tm}` and :math:`C_{fm}` are the total measured resistance coefficient and calculated model frictional
+where :math:`C_{t}^{meas}` and :math:`C_{f}^{meas}` are the total measured resistance coefficient and calculated model frictional
 coefficient.
 
 The form factor :math:`1+k` is usually determined from the resistance tests at low speed range or by Prohaska’s plot
-of :math:`C_{fm}` against :math:`F_n^4`:
+of :math:`C_{f}^{meas}` against :math:`F_n^4`:
 
 .. math::
     \frac{C_t}{C_f} = (1+k) + y \frac{F_n^4}{C_f}

@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 27/09/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRVECTOR_H
 #define FRYDOM_FRVECTOR_H
@@ -195,7 +203,10 @@ namespace frydom {
 
     };
 
-
+    /**
+     * \class Direction
+     * \brief Class for defining a direction.
+     */
     class Direction : public mathutils::Vector3d<double> {
 
     public:
@@ -248,6 +259,10 @@ namespace frydom {
 
     // TODO : avoir un generalizedDirection ?? (direction lineaire + direction en rotation) --> definir produit vectoriel -> utile pour maillage
 
+    /**
+     * \class Velocity
+     * \brief Class for defining a linear velocity.
+     */
     class Velocity : public mathutils::Vector3d<double> {
 
     public:
@@ -293,6 +308,10 @@ namespace frydom {
 
     };
 
+    /**
+     * \class AngularVelocity
+     * \brief Class for defining an angular velocity.
+     */
     class AngularVelocity : public mathutils::Vector3d<double> {
 
     public:
@@ -337,7 +356,10 @@ namespace frydom {
         }
     };
 
-
+    /**
+     * \class GeneralizedVelocity
+     * \brief Class for defining a generalized velocity.
+     */
     class GeneralizedVelocity : public mathutils::Vector6d<double> {
 
     public:
@@ -390,6 +412,10 @@ namespace frydom {
     const mathutils::Vector3d<double> NORTH_WEST(FRAME_CONVENTION fc);
 
 
+    /**
+     * \class Acceleration
+     * \brief Class for defining a linear acceleration.
+     */
     class Acceleration : public mathutils::Vector3d<double> {
 
     public:
@@ -434,7 +460,10 @@ namespace frydom {
         }
     };
 
-
+    /**
+     * \class AngularAcceleration
+     * \brief Class for defining an angular acceleration.
+     */
     class AngularAcceleration : public mathutils::Vector3d<double> {
 
     public:
@@ -479,7 +508,10 @@ namespace frydom {
         }
     };
 
-
+    /**
+     * \class GeneralizedAcceleration
+     * \brief Class for defining a generalized acceleration.
+     */
     class GeneralizedAcceleration : public mathutils::Vector6d<double> {
 
     public:
@@ -518,7 +550,10 @@ namespace frydom {
 
     };
 
-
+    /**
+     * \class Force
+     * \brief Class for defining a force.
+     */
     class Force : public mathutils::Vector3d<double> {
 
     public:
@@ -563,6 +598,10 @@ namespace frydom {
         }
     };
 
+    /**
+     * \class Torque
+     * \brief Class for defining a torque.
+     */
     class Torque : public mathutils::Vector3d<double> {
 
     public:
@@ -607,7 +646,10 @@ namespace frydom {
         }
     };
 
-
+    /**
+     * \class GeneralizedForce
+     * \brief Class for defining a generalized force.
+     */
     class GeneralizedForce : public mathutils::Vector6d<double> {
 
     public:

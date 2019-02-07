@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 14/06/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRFORCEASSET_H
 #define FRYDOM_FRFORCEASSET_H
@@ -16,6 +24,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrForceAsset
+     * \brief Class to display the loads.
+     */
     class FrForceAsset : public chrono::ChGlyphs {
 
     private:
@@ -67,7 +79,10 @@ namespace frydom {
 
 
 
-
+    /**
+     * \class FrForceAsset_
+     * \brief Class to display the loads.
+     */
     class FrForceAsset_;
 
     namespace internal{

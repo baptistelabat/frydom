@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 17/07/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRCURRENTSTANDARDFORCE_H
 #define FRYDOM_FRCURRENTSTANDARDFORCE_H
@@ -14,6 +22,10 @@ namespace frydom {
     /// Standard current drag force from DNV standard
     /// DNV-GL Station Keeping 01111
 
+    /**
+     * \class FrCurrentStandardForce
+     * \brief Class for computing current loads following the DNV standard.
+     */
     class FrCurrentStandardForce : public FrForce {
 
     private:
@@ -105,6 +117,10 @@ namespace frydom {
     /// Standard current drag force from DNV standard
     /// DNV-GL Station Keeping 01111
 
+    /**
+     * \class FrCurrentStandardForce_
+     * \brief Class for computing current loads following the DNV standard.
+     */
     class FrCurrentStandardForce_ : public FrForce_ {
 
     private:

@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 17/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRRADIATIONFORCE_H
 #define FRYDOM_FRRADIATIONFORCE_H
@@ -15,6 +23,10 @@ namespace frydom {
     class FrRadiationModel;
 
     // TODO: les forces de radiation doivent pouvoir etre extraites depuis le modele de radiation...
+    /**
+     * \class FrRadiationForce
+     * \brief Class for computing the radiation loads.
+     */
     class FrRadiationForce : public FrForce {
 
         // FIXME : enum a placer dans RadiationModel
@@ -44,6 +56,10 @@ namespace frydom {
     // Forward declaration
     class FrRadiationConvolutionModel;
 
+    /**
+     * \class FrRadiationConvolutionForce
+     * \brief Class for computing the hydrodynamic damping loads.
+     */
     class FrRadiationConvolutionForce : public FrRadiationForce {
 
     private:
@@ -72,6 +88,10 @@ namespace frydom {
 
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
+    /**
+     * \class FrRadiationForce_
+     * \brief Class for computing the radiation loads.
+     */
     class FrRadiationForce_ : public FrForce_ {
 
     protected:
@@ -93,7 +113,10 @@ namespace frydom {
     };
 
 
-
+    /**
+     * \class FrRadiationConvolutionForce_
+     * \brief Class for computing the hydrodynamic damping loads.
+     */
     class FrRadiationConvolutionForce_: public FrRadiationForce_ {
 
     public:

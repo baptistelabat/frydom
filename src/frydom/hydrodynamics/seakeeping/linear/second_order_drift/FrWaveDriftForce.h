@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 14/12/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRWAVEDRIFTFORCE_H
 #define FRYDOM_FRWAVEDRIFTFORCE_H
@@ -12,6 +20,10 @@
 
 namespace frydom {
 
+    /**
+    * \class FrWaveDriftForce
+    * \brief Class for computing the wave drift force.
+    */
     class FrWaveDriftForce : public FrForce {
 
     private:
@@ -73,6 +85,10 @@ namespace frydom {
 
     class FrHydroDB_;
 
+    /**
+    * \class FrWaveDriftForceRAO_
+    * \brief Class for computing the wave drift force.
+    */
     class FrWaveDriftForceRAO_ : public FrForce_ {
 
     private:

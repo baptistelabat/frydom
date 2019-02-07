@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 10/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRSEABED_H
 #define FRYDOM_FRSEABED_H
@@ -23,6 +31,10 @@ namespace frydom {
     class FrBody;
     class FrTriangleMeshConnected;
 
+    /**
+     * \class FrSeabed
+     * \brief Class for defining a seabed.
+     */
     class FrSeabed  : public FrObject {
     public:
 
@@ -143,6 +155,10 @@ namespace frydom {
     class FrSeabedGridAsset;
 //    using FrSeabedGridAsset = FrGridAsset;
 
+    /**
+     * \class FrSeabed_
+     * \brief Class for defining a seabed with either a finite or infinite water depth.
+     */
     class FrSeabed_  : public FrObject {
     protected:
 
@@ -204,6 +220,10 @@ namespace frydom {
 
     };
 
+    /**
+     * \class FrNullSeabed_
+     * \brief Class for defining a seabed in case of infinite water depth.
+     */
     class FrNullSeabed_  : public FrSeabed_ {
     public:
 
@@ -248,6 +268,10 @@ namespace frydom {
         void StepFinalize() override;
     };
 
+    /**
+     * \class FrMeanSeabed_
+     * \brief Class for defining a mean seabed in case of finite and constant water depth.
+     */
     class FrMeanSeabed_  : public FrSeabed_ {
     protected:
 

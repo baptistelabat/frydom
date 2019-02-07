@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 02/11/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRLINEARHYDROSTATICSTIFFNESSMATRIX_H
 #define FRYDOM_FRLINEARHYDROSTATICSTIFFNESSMATRIX_H
@@ -14,6 +22,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrLinearHydrostaticStiffnessMatrix
+     * \brief Class for defning the hydrostatic restoring matrix.
+     */
     class FrLinearHydrostaticStiffnessMatrix {
 
     private:
@@ -130,6 +142,10 @@ namespace frydom {
     /// This class defines the hydrostatic stiffness matrix for the linear hydrostatic force
     /// Only non null values are stored in the data.
 
+    /**
+     * \class FrLinearHydrostaticStiffnessMatrix_
+     * \brief Class for defning the hydrostatic restoring matrix.
+     */
     class FrLinearHydrostaticStiffnessMatrix_ {
 
     protected:

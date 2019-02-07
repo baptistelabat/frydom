@@ -7,7 +7,7 @@ A body contains a reference frame and inertial quantities (mass :math:`m`, inert
 on a point :math:`G`), which can be united in an inertia tensor :math:`\mathbb{I}`.
 
 .. math::
-    \mathbb{I} = \Biggl \lbrace { \mathbf{M} \atop \mathbf{I}_G } \Biggr \rbrace_G
+    \mathbb{I} = \Biggl \lbrace { m \atop \mathbf{I}_G } \Biggr \rbrace_G
 
 Inertia
 -------

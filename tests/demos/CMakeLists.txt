@@ -38,5 +38,7 @@ configure_file(../../data/skybox/sky_dn.jpg . COPYONLY)
 configure_file(../../data/skybox/sky_lf.jpg . COPYONLY)
 configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
 
+configure_file(../data/DTMB5512/DTMB5512.obj . COPYONLY)
+configure_file(../data/Ship/Ship.obj . COPYONLY)
 configure_file(../data/DeepSea_Stavanger/GVA7500.obj . COPYONLY)
 configure_file(../data/sphere_hdb.h5 . COPYONLY)

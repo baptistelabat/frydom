@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 17/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRHYDRODB_H
 #define FRYDOM_FRHYDRODB_H
@@ -20,7 +28,10 @@ namespace frydom {
     // Forward declarations
     class FrHydroMapper;
 
-
+    /**
+     * \class FrHydroDB
+     * \brief Class for setting the computation of the HDB.
+     */
     class FrHydroDB {
 
     // =================================================================================================================
@@ -148,6 +159,10 @@ namespace frydom {
     // FrDiscretization1D
     // ----------------------------------------------------------
 
+    /**
+     * \class FrDiscretization1D_
+     * \brief Class for the linear discretization (frequency and angle).
+     */
     class FrDiscretization1D_ {
     private:
         double m_xmin = 0.;
@@ -182,6 +197,10 @@ namespace frydom {
     // FrHydroDB
     // --------------------------------------------------------
 
+    /**
+     * \class FrHydroDB_
+     * \brief Class for setting the computation of the HDB.
+     */
     class FrHydroDB_ {
 
     private:

@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 03/07/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRWIND_H
 #define FRYDOM_FRWIND_H
@@ -22,6 +30,10 @@ namespace frydom {
     // FrWind : Base wind field
     // ================================================================
 
+    /**
+    * \class FrWind
+    * \brief Class for defining a wind.
+    */
     class FrWind : public FrObject {
 
     public:
@@ -44,6 +56,10 @@ namespace frydom {
     // FrUniformWind : uniform wind profile class
     // ================================================================
 
+    /**
+    * \class FrUniformWind
+    * \brief Class for defining a uniform wind.
+    */
     class FrUniformWind : virtual public FrWind,
                           virtual public FrUniformField {
     public:

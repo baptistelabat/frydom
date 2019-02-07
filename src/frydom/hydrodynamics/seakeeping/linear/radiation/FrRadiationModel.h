@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 11/01/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRRADIATIONMODEL_H
 #define FRYDOM_FRRADIATIONMODEL_H
@@ -26,6 +34,10 @@
 namespace frydom {
 
     /// Base class
+    /**
+     * \class FrRadiationModel
+     * \brief Class for computing the radiation loads.
+     */
     class FrRadiationModel : public FrObject {
 
     protected:
@@ -81,7 +93,10 @@ namespace frydom {
 
     class FrRadiationConvolutionForce;
 
-
+    /**
+     * \class FrRadiationConvolutionModel
+     * \brief Class for computing the convolution integrals.
+     */
     class FrRadiationConvolutionModel :
             public FrRadiationModel,
             public std::enable_shared_from_this<FrRadiationConvolutionModel> {
@@ -93,7 +108,6 @@ namespace frydom {
     public:
 
         FrRadiationConvolutionModel(FrHydroDB *HDB, FrOffshoreSystem *system);
-
 
         void Initialize() override;
 
@@ -127,7 +141,10 @@ namespace frydom {
     // Radiation model
     // ---------------------------------------------------------------------
 
-
+    /**
+     * \class FrRadiationModel_
+     * \brief Class for computing the radiation loads.
+     */
     class FrRadiationModel_ : public FrPrePhysicsItem_ {
 
     protected:
@@ -165,6 +182,10 @@ namespace frydom {
     // Radiation model with convolution
     // -------------------------------------------------------------------------
 
+    /**
+     * \class FrRadiationConvolutionModel_
+     * \brief Class for computing the convolution integrals.
+     */
     class FrRadiationConvolutionModel_ : public FrRadiationModel_ {
 
     private:

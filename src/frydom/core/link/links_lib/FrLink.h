@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 20/09/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRLINK_H
 #define FRYDOM_FRLINK_H
@@ -114,6 +122,10 @@ namespace frydom {
     // Forward declaration
     class FrBodyDOFMask;
 
+    /**
+     * \class FrLink_
+     * \brief Class to deal with links.
+     */
     class FrLink_ : public FrLinkBase_ {
 
     protected:
@@ -319,6 +331,10 @@ namespace frydom {
      * Defining a mask class to make the constraint on bodies WRT to world easier
      */
 
+    /**
+     * \class FrBodyDOFMask
+     * \brief Class for defining the constraints on bodies with respect to world easier.
+     */
     class FrBodyDOFMask {
 
     private:

@@ -25,8 +25,8 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem_ system;
 
     // Specify the size of the free surface asset.
-    auto FSAsset = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset();
-    FSAsset->SetGrid(-100., 100, 2, -100, 100, 2);
+//    auto FSAsset = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset();
+//    FSAsset->SetGrid(-100., 100, 2, -100, 100, 2);
 
 
     // Creating a new body is really simple, you just have to call the NewBody() method of offshore system. This way,
@@ -48,11 +48,14 @@ int main(int argc, char* argv[]) {
     // completely different from the one you used to compute hydrodynamic loads.
 
     // Three default visual assets are available : sphere, cylinder and box shaped assets.
-    body->AddSphereShape(20.); // radius = 20m
+//    body->AddSphereShape(20.); // radius = 20m
+//    body->AddSphereShape(10.); // radius = 10m
+    body->AddSphereShape(1.); // radius = 1m
 
     // For adding your own mesh, specify a WaveFront .obj file name. MeshMagic software can help you convert other
     // mesh format into .obj : https://github.com/LHEEA/meshmagick.
-    // body->AddMeshAsset("Ship.obj");
+//    body->AddMeshAsset("Ship.obj");
+//    body->AddMeshAsset("DTMB5512.obj");
 
     // Select the color of your body, in the NAMED_COLOR enum (FrColors.h for more details).
     body->SetColor(IndianRed);
@@ -186,7 +189,6 @@ int main(int argc, char* argv[]) {
     // the time length of the simulation (here 30s) and the distance from the camera to the objectif (100m).
     // For saving snapshots of the simulation, just turn the boolean to true.
     system.RunInViewer(30, 100, false);
-
 
 
 }

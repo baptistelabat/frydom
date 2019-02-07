@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 25/04/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRKINEMATICSTRETCHING_H
 #define FRYDOM_FRKINEMATICSTRETCHING_H
@@ -29,6 +37,10 @@ namespace frydom {
     // Base class for the kinematic stretching
     // --------------------------------------------------------
 
+    /**
+     * \class FrKinematicStretching
+     * \brief Class for defining the kinematic stretching model.
+     */
     class FrKinematicStretching {
 
     protected:
@@ -88,6 +100,10 @@ namespace frydom {
     // Vertical stretching
     // ------------------------------------------------------
 
+    /**
+     * \class FrKinStretchingVertical
+     * \brief Class for using the vertical stretching model.
+     */
     class FrKinStretchingVertical : public FrKinematicStretching {
 
     public:
@@ -102,6 +118,10 @@ namespace frydom {
     // Extrapolation stretching
     // -------------------------------------------------------
 
+    /**
+     * \class FrKinStretchingExtrapol
+     * \brief Class for using the extrapolation stretching model.
+     */
     class FrKinStretchingExtrapol : public FrKinematicStretching {
 
     public:
@@ -116,6 +136,10 @@ namespace frydom {
     // Wheeler stretching
     // --------------------------------------------------------
 
+    /**
+     * \class FrKinStretchingWheeler
+     * \brief Class for using the Wheeler stretching model.
+     */
     class FrKinStretchingWheeler : public FrKinematicStretching {
 
     private:
@@ -147,6 +171,10 @@ namespace frydom {
     // Chakrabarti
     // -------------------------------------------------------------------
 
+    /**
+     * \class FrKinStretchingChakrabarti
+     * \brief Class for using the Chakrabarti stretching model.
+     */
     class FrKinStretchingChakrabarti : public FrKinematicStretching {
 
     private:
@@ -171,6 +199,10 @@ namespace frydom {
     // Delta-stretching
     // ---------------------------------------------------------------------
 
+    /**
+     * \class FrKinStretchingDelta
+     * \brief Class for using the delta-stretching model.
+     */
     class FrKinStretchingDelta : public FrKinematicStretching {
 
     private:
@@ -238,6 +270,10 @@ namespace frydom {
     // Base class for the kinematic stretching
     // --------------------------------------------------------
 
+    /**
+     * \class FrKinematicStretching_
+     * \brief Class for defining the kinematic stretching model.
+     */
     class FrKinematicStretching_ {
 
     protected:
@@ -298,6 +334,10 @@ namespace frydom {
     // Vertical stretching
     // ------------------------------------------------------
 
+    /**
+     * \class FrKinStretchingVertical_
+     * \brief Class for using the vertical stretching model.
+     */
     class FrKinStretchingVertical_ : public FrKinematicStretching_ {
 
     public:
@@ -312,6 +352,10 @@ namespace frydom {
     // Extrapolation stretching
     // -------------------------------------------------------
 
+    /**
+     * \class FrKinStretchingExtrapol_
+     * \brief Class for using the extrapolation stretching model.
+     */
     class FrKinStretchingExtrapol_ : public FrKinematicStretching_ {
 
     public:
@@ -330,6 +374,11 @@ namespace frydom {
     /// which means that z'+h = h (z+h)/(h+eta)
     /// h is the water depth and eta is the instantaneous wave elevation.
     /// The wheeler stretching is then defined for : h < z < eta
+
+    /**
+     * \class FrKinStretchingWheeler_
+     * \brief Class for using the Wheeler stretching model.
+     */
     class FrKinStretchingWheeler_ : public FrKinematicStretching_ {
 
     private:
@@ -362,6 +411,11 @@ namespace frydom {
     /// -------------------------------------------------------------------
     /// This method, proposed by Chakrabarti[1971], modifies the original expression ch(k(z+h))/sh(kh)
     /// by adapting the water depth. The previous term is then modified in           ch(k(z+h))/sh(k(h+eta))
+
+    /**
+     * \class FrKinStretchingChakrabarti_
+     * \brief Class for using the Chakrabarti stretching model.
+     */
     class FrKinStretchingChakrabarti_ : public FrKinematicStretching_ {
 
     private:
@@ -394,6 +448,11 @@ namespace frydom {
     /// if h_Delta = h and Delta = 1 --> extrapolation stretching
     /// Rodenbush and Forristall[1986] recommend using Delta = 0.3 and h_Delta = Hs/2. However Molin[2002] suggests that
     /// h_Delta = h, the water depth, is usually chosen.
+
+    /**
+     * \class FrKinStretchingDelta_
+     * \brief Class for using the delta-stretching model.
+     */
     class FrKinStretchingDelta_ : public FrKinematicStretching_ {
 
     private:
@@ -430,6 +489,11 @@ namespace frydom {
     /// HDelta-stretching
     /// ---------------------------------------------------------------------
     /// Same method as Delta stretching but, h_Delta is fixed as h, the water depth
+
+    /**
+     * \class FrKinStretchingDelta_
+     * \brief Class for using the Hdelta-stretching model.
+     */
     class FrKinStretchingHDelta_ : public FrKinematicStretching_ {
 
     private:

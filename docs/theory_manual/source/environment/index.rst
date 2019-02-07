@@ -70,11 +70,11 @@ to occur under average meteorological conditions and under any combination of as
 
 Several heights can be given using this chart datum (see :any:`following figure <heights>`):
 
-- :math:`B(x,y,)` : bathymetry, varying in space,
+- :math:`B(x,y)` : bathymetry, varying in space,
 - :math:`H(t)` : tidal height, given by the tidal model,
 - :math:`\eta(x,y,t)` : wave elevation, given by the :any:`wave field model<wave_theory>`,
 - :math:`H(t)+\eta(x,y,t)` : free surface position, relatively to the LAT,
-- :math:`H(t)-B(x,y,)` : ocean depth, relatively to the free surface.
+- :math:`H(t)-B(x,y)` : ocean depth, relatively to the free surface.
 
 .. _heights:
 .. figure:: _static/heights.png

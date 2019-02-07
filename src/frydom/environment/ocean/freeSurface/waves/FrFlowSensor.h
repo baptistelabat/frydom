@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 18/04/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRFLOWSENSOR_H
 #define FRYDOM_FRFLOWSENSOR_H
@@ -32,6 +40,10 @@ namespace frydom {
     /// Useful when the position of the measurement is fixed in the global coordinate system
     /// to limit computation time.
 
+    /**
+     * \class FrFlowSensor
+     * \brief Class to measure the velocity and pressure of a flow at a specific point.
+     */
     class FrFlowSensor : public FrObject {
 
     protected:
@@ -109,6 +121,10 @@ namespace frydom {
     /// Class to measure the flow velocity and pressure at a specific point.
     /// Used when linear wave field is activated
 
+    /**
+     * \class FrLinearFlowSensor
+     * \brief Class to measure the flow velocity and pressure at a specific point when linear wave field is activated.
+     */
     class FrLinearFlowSensor : public FrFlowSensor {
 
     private:
