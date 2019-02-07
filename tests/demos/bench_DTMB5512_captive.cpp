@@ -257,6 +257,12 @@ int main(int argc, char* argv[]) {
                   << body->GetPosition(NWU).GetZ()
                   << std::endl;
 
+        std::cout << " Position of the Equilibrium frame : "
+                  << eqFrame->GetPosition(NWU).GetX() << ";"
+                  << eqFrame->GetPosition(NWU).GetY() << ";"
+                  << eqFrame->GetPosition(NWU).GetZ() << std::endl;
+
+
         log.Write(time,
             body->GetPosition(NWU), body->GetRotation(),
             forceHst->GetForceInWorld(NWU),forceHst->GetTorqueInBodyAtCOG(NWU),

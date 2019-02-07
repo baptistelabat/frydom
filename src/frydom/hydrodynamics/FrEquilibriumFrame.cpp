@@ -107,6 +107,23 @@ namespace frydom {
 
         if (m_initPositionFromBody) this->SetPositionToBodyPosition();
         if (m_initSpeedFromBody) this->SetVelocityToBodyVelocity();
+
+        m_prevTime = 0.;
+    }
+
+    void FrEquilibriumFrame_::Update(double time) {
+
+        if (std::abs(time - m_prevTime) < FLT_EPSILON) {
+            return;
+        }
+
+        auto dt = time - m_prevTime;
+        auto prevPosition = this->GetPosition(NWU);
+
+        this->SetPosition( prevPosition + m_velocity * dt, NWU);
+        this->RotZ_RADIANS(m_angularVelocity * dt, NWU ,true);
+
+        m_prevTime = time;
     }
 
     // -----------------------------------------------------------------------
