@@ -370,6 +370,8 @@ namespace frydom {
         void SetFrequencies(const std::vector<double>& freqs);
 
         void AddData(std::string& name, std::vector<double> coeffs);
+
+        double Eval(const std::string name, double x, double y) const;
     };
 
 
@@ -397,7 +399,7 @@ namespace frydom {
 
         std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
-        std::unique_ptr<FrWaveDriftPolarData> m_waveDrift;
+        std::shared_ptr<FrWaveDriftPolarData> m_waveDrift;
 
         mathutils::Matrix33<double> m_hydrostaticStiffnessMatrix;
 
@@ -492,7 +494,7 @@ namespace frydom {
 
         mathutils::Matrix33<double> GetHydrostaticStiffnessMatrix() const { return m_hydrostaticStiffnessMatrix; }
 
-        FrWaveDriftPolarData* GetWaveDrift() const;
+        std::shared_ptr<FrWaveDriftPolarData> GetWaveDrift() const;
         //
         // Interpolators
         //

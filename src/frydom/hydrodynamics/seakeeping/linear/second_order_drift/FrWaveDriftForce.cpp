@@ -8,6 +8,10 @@
 #include "frydom/IO/FrHDF5.h"
 
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
+#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrBEMBody.h"
 
 
 namespace frydom {
@@ -199,25 +203,56 @@ namespace frydom {
 
     void FrWaveDriftForce_::Update(double time) {
 
-        auto waveAmplitude = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+        auto ocean = m_body->GetSystem()->GetEnvironment()->GetOcean();
+        auto waveAmplitude = ocean->GetFreeSurface()->GetWaveField()->GetWaveAmplitudes();
+        auto waveFrequencies = ocean->GetFreeSurface()->GetWaveField()->GetWaveFrequencies(RADS);
+        auto waveDir = GetRelativeWaveDir();
 
+        auto force = Force();
+        auto torque = Torque();
+
+        auto nbWaveDir = waveDir.size();
+        auto nbFreq = waveFrequencies.size();
+
+        for (unsigned int idir=0; idir<nbWaveDir; idir++) {
+
+            auto angle = waveDir[idir];
+
+            for (unsigned int ifreq=0; ifreq<nbFreq; ifreq++) {
+
+                auto freq = waveFrequencies[ifreq];
+
+                force.GetFx() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("surge", angle, freq);
+                force.GetFy() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("sway", angle, freq);
+                torque.GetMz() += std::pow(waveAmplitude[idir][ifreq], 2) * m_table->Eval("yaw", angle, freq);
+            }
+        }
+        SetForceTorqueInBodyAtCOG(force, torque, NWU);
     }
 
     void FrWaveDriftForce_::Initialize() {
         FrForce_::Initialize();
-
+        m_table= m_hdb->GetBody(m_body)->GetWaveDrift();
     }
 
     void FrWaveDriftForce_::StepFinalize() {
 
     }
 
-    void FrWaveDriftForce_::SetInterpolationTable() {
+    std::vector<double> FrWaveDriftForce_::GetRelativeWaveDir() const {
 
-        auto polarData = m_hdb->GetBody(m_body)->GetWaveDrift();
+        auto ocean = m_body->GetSystem()->GetEnvironment()->GetOcean();
+        auto waveDir = ocean->GetFreeSurface()->GetWaveField()->GetWaveDirections(RAD, NWU, GOTO);
 
+        auto BEMBody= m_hdb->GetBody(m_body);
+        auto eqFrame = m_hdb->GetMapper()->GetEquilibriumFrame(BEMBody);
 
+        double phi, theta, psi;
+        eqFrame->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
 
+        for (auto& val: waveDir) { val -= psi; }
+
+        return waveDir;
     }
 
 }

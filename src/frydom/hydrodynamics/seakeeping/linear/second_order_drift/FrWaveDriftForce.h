@@ -72,11 +72,13 @@ namespace frydom {
     //forward declaration
 
     class FrHydroDB_;
+    class FrWaveDriftPolarData;
 
     class FrWaveDriftForce_ : public FrForce_ {
 
     private:
         std::shared_ptr<FrHydroDB_> m_hdb;
+        std::shared_ptr<FrWaveDriftPolarData> m_table;
 
     public:
 
@@ -89,7 +91,8 @@ namespace frydom {
         void StepFinalize() override;
 
     private:
-         void SetInterpolationTable();
+
+        std::vector<double> GetRelativeWaveDir() const;
 
 
 

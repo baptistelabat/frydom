@@ -817,6 +817,9 @@ namespace frydom {
         m_table->AddData(name, coeffs);
     }
 
+    double FrWaveDriftPolarData::Eval(const std::string name, double x, double y) const {
+        m_table->Eval(name, x, y);
+    }
     //
     // FrBEMBody
     //
@@ -1145,8 +1148,8 @@ namespace frydom {
         return Fexc;
     }
 
-    FrWaveDriftPolarData* FrBEMBody_::GetWaveDrift() const {
-        return m_waveDrift.get();
+    std::shared_ptr<FrWaveDriftPolarData> FrBEMBody_::GetWaveDrift() const {
+        return m_waveDrift;
     }
 
 }  // end namespace frydom
