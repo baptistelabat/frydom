@@ -184,7 +184,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = std::make_shared<FrHydroDB_>("DTMB5512.hdb5");
+    auto hdb = make_hydrodynamic_database("DTMB5512.hdb5");
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());
     eqFrame->InitSpeedFromBody(true);
