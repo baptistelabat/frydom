@@ -166,21 +166,23 @@ namespace frydom {
 
         double operator()(double x) const;
 
-        std::shared_ptr<FrCompositeFunction> operator+(std::shared_ptr<FrFunction_> otherFunction);
+        // TODO : ajouter operateurs pour ajout de scalaire...
 
-        std::shared_ptr<FrNegateFunction> operator-();
+        FrCompositeFunction operator+(const FrFunction_& otherFunction);
 
-        std::shared_ptr<FrCompositeFunction> operator-(std::shared_ptr<FrFunction_> otherFunction);
+        FrNegateFunction operator-();
 
-        std::shared_ptr<FrCompositeFunction> operator*(std::shared_ptr<FrFunction_> otherFunction);
+        FrCompositeFunction operator-(const FrFunction_& otherFunction);
 
-        std::shared_ptr<FrCompositeFunction> operator/(std::shared_ptr<FrFunction_> otherFunction);
+        FrCompositeFunction operator*(const FrFunction_& otherFunction);
 
-        std::shared_ptr<FrCompositeFunction> operator<<(std::shared_ptr<FrFunction_> otherFunction);
+        FrCompositeFunction operator/(const FrFunction_& otherFunction);
 
-        std::shared_ptr<FrMultiplyByScalarFunction> operator*(double alpha);
+        FrCompositeFunction operator<<(const FrFunction_& otherFunction);
 
-        std::shared_ptr<FrMultiplyByScalarFunction> operator/(double alpha);
+        FrMultiplyByScalarFunction operator*(double alpha);
+
+        FrMultiplyByScalarFunction operator/(double alpha);
 
         void WriteToGnuPlotFile(double xmin, double xmax, double dx, std::string filename = "functionOutput") const;
 
@@ -201,9 +203,9 @@ namespace frydom {
     };
 
     /// Left multiplication of a function by a scalar
-    std::shared_ptr<FrMultiplyByScalarFunction> operator*(double alpha, std::shared_ptr<FrFunction_> otherFunction);
+    FrMultiplyByScalarFunction operator*(double alpha, const FrFunction_& otherFunction);
 
-    std::shared_ptr<FrInverseFunction> operator/(double alpha, std::shared_ptr<FrFunction_> otherFunction);
+    FrInverseFunction operator/(double alpha, const FrFunction_& otherFunction);
 
 
 
