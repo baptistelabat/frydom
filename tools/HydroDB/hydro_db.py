@@ -977,9 +977,10 @@ class RadiationDB(_FreqDB):
             body_motion = self.body_mapper.bodies[ibody_motion]
             j1, j2 = body_motion.motion_modes[0].general_index, body_motion.motion_modes[-1].general_index + 1
 
-        result = self.infinite_added_mass
+        if self.infinite_added_mass is None:
+            self.eval_infinite_added_mass()
 
-        return result[i1:i2, j1:j2]
+        return self.infinite_added_mass[i1:i2, j1:j2]
     
     def plot(self, ibody_motion, idof, ibody_force, iforce, **kwargs):
         """Plots the radiation coefficients of a given modes set
