@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by Lucas Letournel on 07/08/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRASSETCOMPONENT_H
 #define FRYDOM_FRASSETCOMPONENT_H
@@ -11,6 +19,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrAssetComponent
+     * \brief Class the assets of all components (buoys, clump weights, etc.).
+     */
     class FrAssetComponent : public FrObject {
 
     protected:

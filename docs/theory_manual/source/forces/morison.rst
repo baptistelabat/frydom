@@ -6,8 +6,8 @@ Morison model and force
 Morison model
 -------------
 
-The Morison model is generally designed to incorporate in the simulation second order wave load on a
-structure coming from drag and inertial effect such as viscous effects or turbulence. In the FRyDoM
+The Morison model is generally designed to incorporate in the simulation second order wave loads on a
+structure coming from drag and inertial effects such as viscous effects or turbulence. The Morison model is also used in case of a small body compared to the wave length. In the FRyDoM
 framework, the Morison model can be applied to any offshore structure. A Morison model can be
 composed of multiple Morison elements, corresponding to a cylinder with drag and added mass
 coefficients. :any:`The following figure <fig_morison_model>` represents the definition a Morison structure applied on a platform. A Morison

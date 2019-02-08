@@ -17,19 +17,17 @@ int main(int argc, char* argv[]) {
     auto body = system.NewBody();
 
     std::cout << "--> Load HDB ... " << std::endl;
-    auto hdb = std::make_shared<FrHydroDB_>("DeepSeaStavanger.hdb5");
+    auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
 
     std::cout << "--> Eq Frame ... " << std::endl;
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());
+    system.AddPhysicsItem(eqFrame);
 
     std::cout << "--> Set Map ..." << std::endl;
     hdb->Map(0, body.get(), eqFrame);
 
     std::cout << "--> Create hydrostatic force ... " << std::endl;
-    auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb.get());
-
-    std::cout << "--> Adding external force to the body ..." << std::endl;
-    body->AddExternalForce(forceHst);
+    auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
     std::cout << "--> Initialize force ..." << std::endl;
     forceHst->Initialize();

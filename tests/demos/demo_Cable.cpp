@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
 
             // Create the catenary line, using the nodes and line properties previously defined
             auto CatenaryLine = make_catenary_line(Node1, Node2, &system, elastic, YoungModulus, sectionArea,
-                                                   unstretchedLength, linearDensity, u, fc);
+                                                   unstretchedLength, linearDensity, WATER);
 
             break;
         }
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
 
             // Create the catenary line, using the nodes and line properties previously defined
             auto CatenaryLine = make_catenary_line(sphereNode, worldNode, &system, elastic, YoungModulus,
-                                                   sectionArea, unstretchedLength, linearDensity, u, fc);
+                                                   sectionArea, unstretchedLength, linearDensity, WATER);
             break;
         }
         // This case features a Newton pendulum, consisting of a series of identically sized metal balls suspended in a
@@ -145,11 +145,9 @@ int main(int argc, char* argv[]) {
 
                 // Create the catenary lines, using the nodes and line properties previously defined
                 auto CatenaryLine1 = make_catenary_line(worldNode1, sphereNode, &system, elastic, YoungModulus,
-                                                        sectionArea, unstretchedLength, linearDensity,
-                                                        u, fc);
+                                                        sectionArea, unstretchedLength, linearDensity, WATER);
                 auto CatenaryLine2 = make_catenary_line(worldNode2, sphereNode, &system, elastic, YoungModulus,
-                                                        sectionArea, unstretchedLength, linearDensity,
-                                                        u, fc);
+                                                        sectionArea, unstretchedLength, linearDensity, WATER);
                 // Set the number of drawn elements on the catenary lines (the more, the slower the simulation)
                 CatenaryLine1->SetNbElements(10);
                 CatenaryLine2->SetNbElements(10);
@@ -173,12 +171,8 @@ int main(int argc, char* argv[]) {
 //    system.SetTimeStepper(FrOffshoreSystem_::TIME_STEPPER::EULER_IMPLICIT);
 //    system.SetTimeStepper(FrOffshoreSystem_::TIME_STEPPER::EULER_IMPLICIT_LINEARIZED);
 
-    // Don't forget to initialize the offshore system : it will initialize every physical objects and environmental
-    // components it contains.
-    system.Initialize();
-
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
-    // the time length of the simulation (here 15) and the distance from the camera to the objectif (75m).
+    // the time length of the simulation (here 30) and the distance from the camera to the objectif (50).
     // For saving snapshots of the simulation, just turn the boolean to true.
     system.RunInViewer(30, 50, false);
 }

@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem_ system;
 
     // Turn this variable to false if you want to visualize an irregular wave field, rather than a regular one.
-    bool Regular = true;
+    bool Regular = false;
 
     //--------------------------------------------------------------------------------------------------------------
     // The free surface object contains the tidal and the wave field models, along with a visualization asset of the
@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
 
         // You have to specify if you want the free surface asset to be updated during the simulation. By default, the
         // update is not activated.
-        FSAsset->SetUpdateStep(10);
+        FSAsset->SetUpdateStep(5);
 
     }
 
@@ -138,10 +138,6 @@ int main(int argc, char* argv[]) {
 
     // You can change the dynamical simulation time step using.
     system.SetTimeStep(0.04);
-
-    // Don't forget to initialize the offshore system : it will initialize every physical objects and environmental
-    // components it contains.
-    system.Initialize();
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 30s) and the distance from the camera to the objectif (100m).

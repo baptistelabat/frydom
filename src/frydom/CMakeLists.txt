@@ -43,12 +43,10 @@ include(Add_GeographicLib)
 include(Add_fmt)
 include(Add_TimeZone)
 include(Add_hermes)
-include(Add_catway)
 
 if (TARGET hermes)
     get_target_property(INC hermes INCLUDE_DIRECTORIES)
     message(STATUS "hermes INCLUDE_DIRS : ${INC}")
-#    target_include_directories(yaml-cpp INTERFACE ${INC})
 endif()
 
 # =============================================================================
@@ -61,7 +59,6 @@ target_link_libraries(FRyDoM_Engine
         ChronoEngine
         ChronoEngine_fea
         ChronoEngine_irrlicht
-#        ChronoEngine_potprocess
         MathUtils::MathUtils
         yaml-cpp
         HDF5
@@ -69,12 +66,8 @@ target_link_libraries(FRyDoM_Engine
         fmt
         tz
         hermes
-        CatenaryEngine
         )
-#target_link_libraries(FRyDoM_Engine yaml-cpp)
 
-
-#message(${CMAKE_CURRENT_SOURCE_DIR}/..)
 target_include_directories(FRyDoM_Engine PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/..
         )
@@ -82,10 +75,6 @@ target_include_directories(FRyDoM_Engine PUBLIC
 get_target_property(INC FRyDoM_Engine INTERFACE_LINK_LIBRARIES)
 message(STATUS "FRyDoM_INCLUDE_DIRECTORIES : ${INC}")
 
-
-
-## Adding tests as target
-#add_subdirectory(tests)
 
 # TODO: voir si on passe ce CMakeLists.txt dans le repertoire parent pour ne pas avoir a faire .. dans l'include
 

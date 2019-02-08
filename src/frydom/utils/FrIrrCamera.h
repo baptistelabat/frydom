@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by Lucas Letournel on 24/08/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRIRRCAMERA_H
 #define FRYDOM_FRIRRCAMERA_H
@@ -16,6 +24,11 @@ namespace frydom {
 /// the Maya camera but hasn't the problems that the Maya camera has in
 /// Irrlicht 1.5.
 /// This code is based on work by "CmdKewin" (from the Irrlicht forum).
+
+    /**
+     * \class FrIrrCamera
+     * \brief Class for creating an interactive videocamera in Irrlicht.
+     */
     class FrIrrCamera : public irr::scene::ICameraSceneNode {
     public:
 

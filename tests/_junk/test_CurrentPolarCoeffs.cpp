@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
     ship->Set3DOF_ON(); // TODO: Attention, il faut que le corps soit deja renseigne dans system... permettre de differer ...
 
 
-    // Ship propertie
+    // ship propertie
     ship->SetName("Magne Viking");
     ship->SetMass(7.7e6);
     ship->SetInertiaXX(chrono::ChVector<>(1e8, 5e9, 5e9));
@@ -54,12 +54,12 @@ int main(int argc, char* argv[]) {
     ship->SetLateralUnderWaterArea(500.);
     ship->SetLpp(76.2);
 
-    // Ship initial position and orientation
+    // ship initial position and orientation
     ship->SetPos(ChVector<>(0., 0., 0.));
     ship->SetNEDHeading(SOUTH_WEST);
 //    ship->SetNEDHeading(180, DEG);
 
-    // Ship initial velocity
+    // ship initial velocity
     auto ship_velocity = ship->TransformDirectionLocalToParent(chrono::ChVector<>(KNOT2MS(25.), 0., 0.)); // SetLocalVelocity
     ship->SetPos_dt(ship_velocity);
     // TODO: ajouter une methode SetVelocity avec la possibilite de preciser des noeuds...

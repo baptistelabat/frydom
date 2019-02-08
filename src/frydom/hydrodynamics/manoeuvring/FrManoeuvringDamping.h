@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 28/05/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRMANOEUVRINGDAMPING_H
 #define FRYDOM_FRMANOEUVRINGDAMPING_H
@@ -9,12 +17,19 @@
 
 namespace frydom {
 
+    /**
+     * \class FrManoeuvringDamping
+     * \brief Class not used.
+     */
     class FrManoeuvringDamping : public FrForce {
 
 
     };
 
-
+    /**
+     * \class FrTaylorManDamping
+     * \brief Class not used.
+     */
     class FrTaylorManDamping : public FrForce {
 
         struct TypeCoeff {

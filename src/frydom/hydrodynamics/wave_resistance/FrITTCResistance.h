@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 13/06/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRITTC57_H
 #define FRYDOM_FRITTC57_H
@@ -10,6 +18,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrITTC57
+     * \brief Class for setting fluid and ship properties in order to compute the wave resistance.
+     */
     class FrITTC57 : public FrForce {
 
       private:
@@ -68,6 +80,10 @@ namespace frydom {
     // Forward Declaration
     class FrEnvironment_;
 
+    /**
+     * \class FrITTCResistance_
+     * \brief Class for computing the wave resistance.
+     */
     class FrITTCResistance_ : public FrForce_ {
 
       private:

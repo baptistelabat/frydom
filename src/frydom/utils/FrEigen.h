@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 18/09/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FREIGEN_H
 #define FRYDOM_FREIGEN_H
@@ -149,6 +157,10 @@ namespace frydom {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * \class QR_decomposition
+     * \brief Class to perform a QR decomposition.
+     */
     template <class Scalar>
     class QR_decomposition {
 
@@ -182,6 +194,10 @@ namespace frydom {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * \class LU_decomposition
+     * \brief Class to perform a LU decomposition.
+     */
     template <class Scalar>
     class LU_decomposition {
 
@@ -217,6 +233,10 @@ namespace frydom {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * \class Cholesky_decomposition
+     * \brief Class to perform a Cholesky decomposition.
+     */
     template <class Scalar>
     class Cholesky_decomposition {
 
@@ -237,10 +257,12 @@ namespace frydom {
 //            }
         }
 
+        /// Get the L-matrix of the Cholesky decomposition.
         Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> GetL() const {
             return chol.matrixL();
         }
 
+        /// Get the A-matrix of the Cholesky decomposition.
         Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> GetA() const {
             auto L = GetL();
             return L * L.transpose();
@@ -249,6 +271,10 @@ namespace frydom {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * \class SVD_decomposition
+     * \brief Class to perform a SVD decomposition.
+     */
     template <class Scalar>
     class SVD_decomposition {
 

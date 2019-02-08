@@ -19,9 +19,10 @@ if (NOT TimeZone_FOUND)
         FetchContent_Populate(TimeZone)
 
         # TimeZone BUILD OPTIONS
-        #set(BUILD_SHARED_LIBS TRUE)
-        #set(TIMEZONE_TEST OFF)
-
+        set(USE_SYSTEM_TZ_DB OFF CACHE BOOL "Use the operating system's timezone database" FORCE)
+        set(USE_TZ_DB_IN_DOT OFF CACHE BOOL "Save the timezone database in the current folder" FORCE)
+        set(BUILD_SHARED_LIBS ON CACHE BOOL "Build a shared version of library" FORCE)
+        set(ENABLE_DATE_TESTING OFF CACHE BOOL "Enable unit tests" FORCE)
 
         message(STATUS ${timezone_SOURCE_DIR})
         message(STATUS ${timezone_BINARY_DIR})

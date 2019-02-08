@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 30/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRLINEAREXCITATIONFORCE_H
 #define FRYDOM_FRLINEAREXCITATIONFORCE_H
@@ -23,6 +31,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrLinearExcitationForce
+     * \brief Class for computing the linear excitation loads.
+     */
     class FrLinearExcitationForce : public FrForce {
 
     private:
@@ -97,6 +109,10 @@ namespace frydom {
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
 
+    /**
+     * \class FrLinearExcitationForce_
+     * \brief Class for computing the linear excitation loads.
+     */
     class FrLinearExcitationForce_ : public FrForce_ {
 
     private:

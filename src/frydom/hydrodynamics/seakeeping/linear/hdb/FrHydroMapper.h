@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 11/01/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRHYDROMAPPER_H
 #define FRYDOM_FRHYDROMAPPER_H
@@ -18,7 +26,10 @@ namespace frydom {
     typedef boost::bimaps::bimap<FrHydroBody*, unsigned int> myBimap;
     typedef myBimap::value_type mapping;
 
-
+    /**
+     * \class FrHydroMapper
+     * \brief Class for mapping the bodies with the HDB.
+     */
     class FrHydroMapper {
 
     private:
@@ -73,6 +84,10 @@ namespace frydom {
 
     class FrEquilibriumFrame_;
 
+    /**
+     * \class FrHydroMapper_
+     * \brief Class for mapping the bodies with the HDB.
+     */
     class FrHydroMapper_ {
 
     private:

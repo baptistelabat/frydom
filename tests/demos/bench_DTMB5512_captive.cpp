@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = std::make_shared<FrHydroDB_>("DTMB5512.hdb5");
+    auto hdb = make_hydrodynamic_database("DTMB5512.hdb5");
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());
     eqFrame->InitSpeedFromBody(true);
@@ -195,20 +195,19 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrostatic
 
-    auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb);
-    body->AddExternalForce(forceHst);
+    //auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb);
+    //body->AddExternalForce(forceHst);
+    auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
     // -- Radiation
 
-    auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(hdb);
-    system.AddPhysicsItem(radiationModel);
+    auto radiationModel = make_radiation_convolution_model(hdb, &system);
 
     radiationModel->SetImpulseResponseSize(body.get(), 6., 0.1);
 
     // -- Excitation
 
-    auto excitationForce = std::make_shared<FrLinearExcitationForce_>(hdb);
-    body->AddExternalForce(excitationForce);
+    auto excitationForce = make_linear_excitation_force(hdb, body);
 
     // -- Wave Drift force
 

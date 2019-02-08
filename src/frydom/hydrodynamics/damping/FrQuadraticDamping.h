@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by Lucas Letournel on 12/09/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRQUADRATICDAMPING_H
 #define FRYDOM_FRQUADRATICDAMPING_H
@@ -88,7 +96,7 @@ namespace frydom {
 
 
      /**
-     * \class FrQuadraticDamping
+     * \class FrQuadraticDamping_
      * \brief Class implementing a quadratic damping force:
       * Fqd = -1/2*rho*S*C*v*|v|
       * the velocity of the body,v, must be expressed in the local (body) frame,

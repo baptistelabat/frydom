@@ -11,13 +11,13 @@ The Pierson-Moskowitz spectrum :math:`S_{PM}(\omega)` is given by [DNV]_:
 .. math::
     S_{PM}(\omega) = \frac{5}{16} \cdot H_S^2 \omega_p^4 \cdot \omega^{-5} \exp\left[-\frac{5}{4}\left(\frac{\omega}{\omega_p}\right)^{-4}\right]
 
-where :math:`\omega_p = 2\pi / T_p` is the angular spectral peak frequency.
+where :math:`\omega_p = 2\pi / T_p` is the angular spectral peak frequency and :math:`H_S` is the significant wave height.
 
 JONSWAP spectrum
 ----------------
 
 The JONSWAP wave spectrum is an extension of the Pierson-Moskovitz wave spectrum, for a developing sea state in a fetch limited situation,
-with an extra peak enhancement factor :math:`\gamma^r`. The spreading function is given by [DNV]_ [KIM20008]_ [MOLIN2002]_:
+with an extra peak enhancement factor :math:`\gamma`. The spreading function is given by [DNV]_ [KIM20008]_ [MOLIN2002]_:
 
 .. math::
     S_j(\omega) = \alpha_{\gamma} S_{PM}(\omega)  \gamma^{\exp \left[-\frac{(\omega-\omega_p)^2}{2\sigma^2\omega_p^2} \right]}

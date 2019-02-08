@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
 
 
     platform->SetName("DeepSea Stavanger");
-    platform->SetHydroMesh("GVA7500.obj", true);
+    platform->SetHydroMesh("Platform_GVA7500.obj", true);
 
     // Data for current model
     platform->SetLateralUnderWaterArea(1680.);
@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
 
     // Creating linear hydrodynamics database and mapping
     // --------------------------------------------------
-    auto HDB = LoadHDB5("DeepSeaStavanger.hdb5");  // Hydro database
+    auto HDB = LoadHDB5("Platform_HDB.hdb5");  // Hydro database
 
     // Mapping
     // TODO: reprendre globalement le fonctionnement du mapper pour simplifier
@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
 
     // Current force
     // -------------
-    auto currentForce = std::make_shared<FrCurrentForce>("PolarCurrentCoeffs_NC.yml");
+    auto currentForce = std::make_shared<FrCurrentForce>("Platform_PolarCurrentCoeffs_NC.yml");
     platform->AddForce(currentForce);
 
 

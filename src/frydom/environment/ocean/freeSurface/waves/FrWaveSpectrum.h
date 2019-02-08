@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 04/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRWAVESPECTRUM_H
 #define FRYDOM_FRWAVESPECTRUM_H
@@ -26,6 +34,10 @@ namespace frydom {
 
     // =================================================================================================================
 
+    /**
+     * \class FrWaveDirectionalModel
+     * \brief Class for setting the wave directional model.
+     */
     class FrWaveDirectionalModel {
     public:
 
@@ -46,6 +58,10 @@ namespace frydom {
 
     // =================================================================================================================
 
+    /**
+     * \class FrCos2sDirectionalModel
+     * \brief Class for defining a wave spectrum with a directional model based on a cos2s-law.
+     */
     class FrCos2sDirectionalModel : public FrWaveDirectionalModel {
 
     private:
@@ -117,6 +133,10 @@ namespace frydom {
         PIERSON_MOSKOWITZ
     };
 
+    /**
+     * \class FrWaveSpectrum
+     * \brief Class for defining a wave spectrum.
+     */
     class FrWaveSpectrum : public FrObject {
 
     protected:
@@ -272,6 +292,10 @@ namespace frydom {
 #define _SIGMA2_1_left (1./(0.07*0.07))
 #define _SIGMA2_1_right (1./(0.09*0.09))
 
+    /**
+     * \class FrJonswapWaveSpectrum
+     * \brief Class for defining a Jonswap wave spectrum.
+     */
     class FrJonswapWaveSpectrum : public FrWaveSpectrum {
 
     private:
@@ -334,6 +358,10 @@ namespace frydom {
 
     // =================================================================================================================
 
+    /**
+     * \class FrPiersonMoskowitzWaveSpectrum
+     * \brief Class for defining a Pierson-Moskowitz wave spectrum.
+     */
     class FrPiersonMoskowitzWaveSpectrum : public FrWaveSpectrum {
 
     public:
@@ -397,6 +425,10 @@ namespace frydom {
 
     //TODO: Changer la discrétisation en direction, de manière à obtenir une énergie spectrale constante pour toutes les composantes
     // voir OrcaFlex Equal Energy dans Frequency spectrum discretisation.
+    /**
+     * \class FrWaveDirectionalModel_
+     * \brief Class for setting the wave directional model.
+     */
     class FrWaveDirectionalModel_ {
     public:
 
@@ -659,6 +691,10 @@ namespace frydom {
     ///
     //TODO : Implémenter les recommandations de DNV pour la valeur de gamma.
     //TODO : S'appuyer sur le calcul du spectre de Pierson-Moskowitz pour celui de JONSWAP?
+    /**
+     * \class FrJonswapWaveSpectrum_
+     * \brief Class for defining a Jonswap wave spectrum.
+     */
     class FrJonswapWaveSpectrum_ : public FrWaveSpectrum_ {
 
     private:
@@ -703,6 +739,10 @@ namespace frydom {
     /// FrPiersonMoskowitzWaveSpectrum_
     /// -------------------------------------------------------------------
     /// Class for a Pierson Moskowitz wave spectrum
+    /**
+     * \class FrPiersonMoskowitzWaveSpectrum_
+     * \brief Class for defining a Pierson-Moskowitz wave spectrum.
+     */
     class FrPiersonMoskowitzWaveSpectrum_ : public FrWaveSpectrum_ {
 
     public:

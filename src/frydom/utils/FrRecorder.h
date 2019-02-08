@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 19/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRTIMERINGBUFFER_H
 #define FRYDOM_FRTIMERINGBUFFER_H
@@ -18,6 +26,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrRecorder
+     * \brief Class for recording velocities used in the convolution integral.
+     */
     template <class T>
     class FrRecorder {
     private:
@@ -118,7 +130,10 @@ namespace frydom {
 
     // >>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
-
+    /**
+     * \class FrRecorder_
+     * \brief Class for recording velocities used in the convolution integral.
+     */
     template <class T>
     class FrRecorder_ {
 
@@ -136,7 +151,10 @@ namespace frydom {
     };
 
 
-
+    /**
+     * \class FrTimeRecorder_
+     * \brief Class for recording the time.
+     */
     template <class T>
     class FrTimeRecorder_ {
 

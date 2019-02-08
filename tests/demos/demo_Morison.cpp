@@ -81,11 +81,11 @@ int main(int argc, char* argv[]) {
     }
     else
     {
-        // ------------------ Platform ------------------ //
+        // ------------------ platform ------------------ //
         auto Platform = system.NewBody();
-        Platform->SetName("Platform");
+        Platform->SetName("platform");
 
-        Platform->AddMeshAsset("GVA7500.obj");
+        Platform->AddMeshAsset("Platform_GVA7500.obj");
 
         Platform->SetFixedInWorld(true);
 
@@ -124,12 +124,8 @@ int main(int argc, char* argv[]) {
     // You can change the dynamical simulation time step using.
     system.SetTimeStep(0.04);
 
-    // Don't forget to initialize the offshore system : it will initialize every physical objects and environmental
-    // components it contains.
-//    system.Initialize();
-
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
-    // the time length of the simulation (here 15) and the distance from the camera to the objectif (75m).
+    // the time length of the simulation (here 150) and the distance from the camera to the objectif (155m).
     // For saving snapshots of the simulation, just turn the boolean to true.
     system.RunInViewer(150, 155, false);
 

@@ -26,10 +26,10 @@ if (NOT yaml-cpp_FOUND)
         FetchContent_Populate(yaml-cpp)
 
         # yaml-cpp BUILD OPTIONS
-        set(BUILD_SHARED_LIBS TRUE)
-        set(YAML_CPP_BUILD_TESTS OFF) # CACHE BOOL "Build yamp-cpp tests")
-        set(YAML_CPP_BUILD_TOOLS OFF)
-        set(YAML_CPP_BUILD_CONTRIB OFF)
+        set(BUILD_SHARED_LIBS TRUE CACHE BOOL "" FORCE)
+        set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)# CACHE BOOL "Build yamp-cpp tests")
+        set(YAML_CPP_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
+        set(YAML_CPP_BUILD_CONTRIB OFF CACHE BOOL "" FORCE)
 
 
         # TODO: ici, on peut reconstuire la target yaml-cpp a base de find_path et find_library

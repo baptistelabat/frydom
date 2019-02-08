@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 05/06/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRSPRINGDAMPINGFORCE_H
 #define FRYDOM_FRSPRINGDAMPINGFORCE_H
@@ -13,6 +21,10 @@ namespace frydom {
     // Forward declaration
     class FrNode;
 
+    /**
+     * \class FrSpringDampingForce
+     * \brief Class for computing spring-damper loads.
+     */
     class FrSpringDampingForce : public FrForce {
 
     protected:

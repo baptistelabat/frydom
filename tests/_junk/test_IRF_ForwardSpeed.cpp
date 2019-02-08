@@ -1,14 +1,12 @@
 //
-// Created by camille on 01/06/18.
+// Created by camille on 18/06/18.
 //
 
 #include <matplotlibcpp.h>
 #include "frydom/frydom.h"
 
-#include "frydom/core/FrNode.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h"
-#include "frydom/core/FrSpringDampingForce.h"
-#include "frydom/core/FrNodeDynamic.h"
+#include <iostream>
+#include <fstream>
 
 using namespace frydom;
 
@@ -42,31 +40,12 @@ void PlotResults(const std::vector<double>& vtime, const std::vector<chrono::ChV
 
 }
 
-class FrTestForce : public FrForce {
-
-public:
-
-    void SetForce(const chrono::ChVector<> vect) { force = vect; }
-    void SetMoment(const chrono::ChVector<> vect) { moment = vect; }
-
-    void UpdateState() override {
-
-        force.x() = 1e10;
-        force.y() = 0.;
-        force.z() = 0.;
-
-        moment.x() = 0.;
-        moment.y() = 0.;
-        moment.z() = 0.;
-    }
-
-};
 
 std::shared_ptr<FrShip> Platform(FrOffshoreSystem* system) {
 
     auto platform = std::make_shared<FrShip>();
     platform->SetName("Deepsea_Stavanger");
-    platform->SetHydroMesh("GVA7500.obj", true);
+    platform->SetHydroMesh("Platform_GVA7500.obj", true);
     platform->SetLpp(108.8);
     platform->SetMass(3.22114e7);
     platform->SetCOG(chrono::ChVector<double>(0., 0., 8.65));
@@ -86,20 +65,21 @@ std::shared_ptr<FrShip> Platform(FrOffshoreSystem* system) {
     platform->AddForce(hstForce);
 
     // Hydrodynamic load
-    system->SetHydroDB("DeepSeaStavanger.hdb5");
+    system->SetHydroDB("Platform_HDB.hdb5");
     auto HydroMapIndex = system->GetHydroMapNb() - 1;
     system->GetHydroMapper(HydroMapIndex)->Map(platform, 0);
 
     auto radModel = std::make_shared<FrRadiationConvolutionModel>(system->GetHydroDB(HydroMapIndex), system);
     radModel->SetHydroMapIndex(HydroMapIndex); // TODO : patch hydro map multibody
     radModel->AddRadiationForceToHydroBody(platform);
+    radModel->SetSpeedDependent(false);
 
     // Wind load
-    auto wind_force = std::make_shared<FrWindForce>("PolarWindCoeffs_NC.yml");
+    auto wind_force = std::make_shared<FrWindForce>("Platform_PolarWindCoeffs_NC.yml");
     platform->AddForce(wind_force);
 
     // Current load
-    auto current_force = std::make_shared<FrCurrentForce>("PolarCurrentCoeffs_NC.yml");
+    auto current_force = std::make_shared<FrCurrentForce>("Platform_PolarCurrentCoeffs_NC.yml");
     platform->AddForce(current_force);
 
     // Additional damping
@@ -118,11 +98,10 @@ std::shared_ptr<FrShip> Platform(FrOffshoreSystem* system) {
     waveProbe->Initialize();
 
     // Wave Drift Force
-    auto DriftForce = std::make_shared<FrWaveDriftForce>("DeepSea_WaveDriftCoeff.h5");
+    auto DriftForce = std::make_shared<FrWaveDriftForce>("Platform_WaveDriftCoeff.h5");
     platform->AddForce(DriftForce);
     DriftForce->SetBody(platform);
     DriftForce->SetWaveProbe(waveProbe);
-    DriftForce->SetCmplxElevation();
 
     // Wave Excitation force
     auto excForce = std::make_shared<FrLinearExcitationForce>();
@@ -130,17 +109,17 @@ std::shared_ptr<FrShip> Platform(FrOffshoreSystem* system) {
     excForce->SetWaveProbe(waveProbe);
     excForce->SetHydroMapIndex(HydroMapIndex);
 
+
     return platform;
 };
-
 
 std::shared_ptr<FrShip> Ship(FrOffshoreSystem* system) {
 
     auto ship_pos = chrono::ChVector<double>(0., 0., 0.);
 
     auto ship = std::make_shared<FrShip>();
-    ship->SetName("Ship");
-    ship->SetHydroMesh("Ship.obj", true);
+    ship->SetName("ship");
+    ship->SetHydroMesh("ship.obj", true);
     ship->SetLpp(76.20);
     ship->SetMass(8.531e6);
     ship->SetCOG(chrono::ChVector<double>(0., 0., 0.));
@@ -159,7 +138,7 @@ std::shared_ptr<FrShip> Ship(FrOffshoreSystem* system) {
     ship->AddForce(hstForce);
 
     // Hydrodynamic load
-    system->SetHydroDB("Ship.h5");
+    system->SetHydroDB("ship.h5");
     auto HydroMapIndex = system->GetHydroMapNb()-1;
     system->GetHydroMapper(HydroMapIndex)->Map(ship, 0);
 
@@ -172,8 +151,8 @@ std::shared_ptr<FrShip> Ship(FrOffshoreSystem* system) {
     //ship->AddForce(wind_force);
 
     // Current load
-    auto current_force = std::make_shared<FrCurrentForce>("Ship_PolarCurrentCoeffs.yml");
-    ship->AddForce(current_force);
+    //auto current_force = std::make_shared<FrCurrentForce>("Ship_PolarCurrentCoeffs.yml");
+    //ship->AddForce(current_force);
 
     // Wave Probe
     auto waveField = system->GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
@@ -211,105 +190,48 @@ std::shared_ptr<FrShip> Ship(FrOffshoreSystem* system) {
 
 int main(int argc, char* argv[]) {
 
-    // --------------------------------------------------------
+    // -----------------------------------------------
     // System
-    // --------------------------------------------------------
+    // -----------------------------------------------
+
     FrOffshoreSystem system;
 
     // --------------------------------------------------------
     // Environment
     // --------------------------------------------------------
+    // Uniform wind
     system.GetEnvironment()->SetWind(FrWind::UNIFORM);
     system.GetEnvironment()->GetWind()->Set(NORTH, 0., KNOT, NED, COMEFROM);
 
+    // Uniform current
     system.GetEnvironment()->SetCurrent(FrCurrent::UNIFORM);
     system.GetEnvironment()->GetCurrent()->Set(EAST, 0., KNOT, NED, COMEFROM);
 
-
+    // Irregular wave
     system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_IRREGULAR);
     auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
     waveField->SetMeanWaveDirection(0., DEG);  // TODO: permettre de mettre une convention GOTO/COMEFROM
     waveField->SetWavePulsations(0.5, 2., 80, RADS);
-    waveField->GetWaveSpectrum()->SetHs(5.);
+    waveField->GetWaveSpectrum()->SetHs(2.);
     waveField->GetWaveSpectrum()->SetTp(10.);
     waveField->GetWaveRamp()->Deactivate();
     waveField->GetSteadyElevation(0, 0);
 
-/*
-    system.GetEnvironment()->GetFreeSurface()->SetLinearWaveField(LINEAR_REGULAR);
-    auto waveField = system.GetEnvironment()->GetFreeSurface()->GetLinearWaveField();
-    waveField->SetWaveHeight(3.);
-    waveField->SetWavePeriod(10.);
-    waveField->SetMeanWaveDirection(0., DEG);
-
-    waveField->GetWaveRamp()->Deactivate();
-
-    waveField->GetSteadyElevation(0, 0);
-*/
-    // ----------------------------------------------------------
+    // -----------------------------------------------------
     // Body
-    // ----------------------------------------------------------
+    // -----------------------------------------------------
     auto ship = Platform(&system);
     ship->SetPos_dt(chrono::ChVector<double>(0.5, 0., 0.));
-
-    // ----------------------------------------------------------
-    // Node
-    // ----------------------------------------------------------
-
-    // Dynamic
-
-    auto body_sensor = std::make_shared<FrNodeDynamic>();
-    system.Add(body_sensor);
-    body_sensor->SetSpringDamping(ship.get());
-
-    // Fixed
-    auto fixed_sensor = ship->CreateNode();
-
-    // Mean motion
-    auto mean_sensor = std::make_shared<FrNodeMeanMotion>();
-    system.Add(mean_sensor);
-    //mean_sensor->SetNodeRef(ship.get());
-    mean_sensor->AttachedBody(ship.get());
-    mean_sensor->SetTmax(60.);
-
-    //ship->SetEquilibriumFrame(DampingSpring, 10., 0.5);
     ship->SetEquilibriumFrame(MeanMotion, 60.);
-    //ship->SetEquilibriumFrame(WorldFixed, chrono::ChVector<double>(0., 0., 0.));
 
-    // ----------------------------------------------------------
-    // Wave probe
-    // ----------------------------------------------------------
-
-    auto waveProbe = std::make_shared<FrLinearWaveProbe>();
-    waveProbe->AttachedNode(body_sensor);
-    waveField->AddWaveProbe(waveProbe);
-
-    //auto waveProbe_fixed = waveField->NewWaveProbe();
-    auto waveProbe_fixed = std::make_shared<FrLinearWaveProbeSteady>();
-    waveProbe_fixed->AttachedNode(fixed_sensor);
-    waveField->AddWaveProbe(waveProbe_fixed);
-    waveProbe_fixed->Initialize();
-
-    // Wave Probe
-    auto waveProbe0 = waveField->NewWaveProbe(ship->GetPos().x(), ship->GetPos().y());
-    waveProbe0->Initialize();
-
-    // Mean wave probe
-    auto waveProbe_mean = std::make_shared<FrLinearWaveProbe>();
-    waveProbe_mean->AttachedNode(mean_sensor);
-    waveField->AddWaveProbe(waveProbe_mean);
-
-    // ----------------------------------------------------------
+    // ------------------------------------------------------
     // Simulation
-    // ----------------------------------------------------------
+    // ------------------------------------------------------
 
-    std::vector<chrono::ChVector<double>> position_sensor, position_body;
-    std::vector<chrono::ChVector<double>> velocity_sensor, velocity_body;
-    std::vector<chrono::ChVector<double>> mean_velocity, mean_position;
-    std::vector<double> wp_fix_x, wp_fix_y;
-    std::vector<double> wp_dyn_x, wp_dyn_y;
-    std::vector<double> wp0_x, wp0_y;
-    std::vector<double> vtime, eta_fix, eta_dyn, eta0;
+    std::vector<chrono::ChVector<double>> position_body, velocity_body;
+    std::vector<chrono::ChVector<double>> steady_velocity;
+    std::vector<chrono::ChVector<double>> pert_velocity;
+    std::vector<double> vtime;
 
     double time = 0.;
     double dt = 0.1;
@@ -325,57 +247,55 @@ int main(int argc, char* argv[]) {
 
         vtime.push_back(time);
 
-        position_sensor.push_back(body_sensor->GetPosition());
         position_body.push_back(ship->GetPosition());
-        velocity_sensor.push_back(body_sensor->GetVelocity());
         velocity_body.push_back(ship->GetVelocity());
-
-        eta_fix.push_back(waveProbe_fixed->GetElevation(time));
-        eta_dyn.push_back(waveProbe->GetElevation(time));
-
-        wp_fix_x.push_back(waveProbe_fixed->GetX());
-        wp_fix_y.push_back(waveProbe_fixed->GetY());
-
-        wp_dyn_x.push_back(waveProbe->GetX());
-        wp_dyn_y.push_back(waveProbe->GetY());
-
-        wp0_x.push_back(waveProbe0->GetX());
-        wp0_y.push_back(waveProbe0->GetY());
-
-        //mean_position.push_back(mean_sensor->GetPosition());
-        //mean_velocity.push_back(mean_sensor->GetVelocity());
-        mean_position.push_back(ship->GetEquilibriumFrame()->GetPos());
-        mean_velocity.push_back(ship->GetEquilibriumFrame()->GetPos_dt());
+        steady_velocity.push_back(ship->GetSteadyVelocity());
+        pert_velocity.push_back(ship->GetLinearVelocityPert());
 
     }
 
-    // ---------------------------------------------------------------
-    // Output PLOT
-    // ---------------------------------------------------------------
+    // -------------------------------------------------------
+    // Output plot
+    // -------------------------------------------------------
 
     matplotlibcpp::subplot(2,1,1);
-    //PlotResults(vtime, position_sensor, "sensor", "position", "--");
     PlotResults(vtime, position_body, "body", "position", "-");
-    PlotResults(vtime, mean_position, "mean", "position", "--");
+
     matplotlibcpp::subplot(2,1,2);
-    //PlotResults(vtime, velocity_sensor, "sensor", "velocity", "--");
     PlotResults(vtime, velocity_body, "body", "velocity", "-");
-    PlotResults(vtime, mean_velocity, "mean" ,"velocity", "--");
+    PlotResults(vtime, steady_velocity, "mean" ,"velocity", "--");
+
     matplotlibcpp::show();
 
-    matplotlibcpp::named_plot("wp_fix_x", vtime, wp_fix_x);
-    matplotlibcpp::named_plot("wp_fix_y", vtime, wp_fix_y);
-    matplotlibcpp::named_plot("wp_dyn_x", vtime, wp_dyn_x, "--");
-    matplotlibcpp::named_plot("wp_dyn_y", vtime, wp_dyn_y, "--");
+    PlotResults(vtime, pert_velocity, "perturbation", "velocity");
     matplotlibcpp::show();
 
-    matplotlibcpp::named_plot("eta_fix", vtime, eta_fix);
-    matplotlibcpp::named_plot("eta_dyn", vtime, eta_dyn);
-    matplotlibcpp::named_plot("eta0", vtime, eta0);
-    matplotlibcpp::show();
+    // --------------------------------------------------------
+    // Write CSV
+    // --------------------------------------------------------
 
-    matplotlibcpp::named_plot("eta0_x", vtime, wp0_x);
-    matplotlibcpp::named_plot("eta0_y", vtime, wp0_y);
-    matplotlibcpp::show();
+    unsigned int nt = vtime.size();
+    std::string sep = ";";
+
+    std::ofstream csvfile;
+    csvfile.open("radiation_no_forward_speed.csv");
+
+    csvfile << "time" << sep;
+    csvfile << "X" << sep << "Y" << sep << "Z" << sep;
+    csvfile << "VX" << sep << "VY" << sep << "VZ" << sep;
+    csvfile << "Xs" << sep << "Ys" << sep << "Zs" << sep;
+    csvfile << "Xp" << sep << "Yp" << sep << "Zp";
+    csvfile << "\n";
+
+    for (unsigned int i=0; i<nt; i++) {
+        csvfile << vtime[i] << sep;
+        csvfile << position_body[i].x() << sep << position_body[i].y() << sep << position_body[i].z() << sep;
+        csvfile << velocity_body[i].x() << sep << velocity_body[i].y() << sep << velocity_body[i].z() << sep;
+        csvfile << steady_velocity[i].x() << sep << steady_velocity[i].y() << sep << steady_velocity[i].z() << sep;
+        csvfile << pert_velocity[i].x() << sep << pert_velocity[i].y() << sep << pert_velocity[i].z();
+        csvfile << "\n";
+    }
+
+    csvfile.close();
 
 }

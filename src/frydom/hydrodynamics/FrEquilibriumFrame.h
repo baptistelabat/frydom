@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 20/11/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FREQUILIBRIUMFRAME_H
 #define FRYDOM_FREQUILIBRIUMFRAME_H
@@ -22,6 +30,10 @@ namespace frydom {
     /// are not defined by the user, they are initialized to the values given by the body at COG
     /// during the initialization stage.
 
+    /**
+     * \class FrEquilibriumFrame_
+     * \brief This class defines an generic equilibrium frame linked with a body.
+     */
     class FrEquilibriumFrame_ : public FrFrame_,
                                 public FrPrePhysicsItem_ {
 
@@ -153,6 +165,10 @@ namespace frydom {
     /// The spring-damping system is defined from T0, the cutoff time in seconds, and
     /// psi the damping rate coefficient.
 
+    /**
+     * \class FrEqFrameSpringDamping_
+     * \brief This class defines an equilibrium frame with a spring-damping system.
+     */
     class FrEqFrameSpringDamping_ : public FrEquilibriumFrame_ {
 
     private:
@@ -235,6 +251,10 @@ namespace frydom {
 
     // TODO : il faudrait pouvoir retrancher une difference de position moyenne
 
+    /**
+     * \class FrEqFrameMeanMotion_
+     * \brief This class defines an equilibrium frame with a velocity equal to the mean motion of a body.
+     */
     class FrEqFrameMeanMotion_ : public FrEquilibriumFrame_ {
 
     private:

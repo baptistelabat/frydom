@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 11/01/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRVELOCITYRECORDER_H
 #define FRYDOM_FRVELOCITYRECORDER_H
@@ -16,6 +24,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrVelocityRecorder
+     * \brief Class not used.
+     */
     class FrVelocityRecorder : public chrono::ChProbe, public FrObject {
 
     private:
@@ -68,6 +80,10 @@ namespace frydom {
 
 
 
+    /**
+     * \class FrPerturbationVelocityRecorder
+     * \brief Class not used.
+     */
     class FrPerturbationVelocityRecorder : public FrVelocityRecorder {
 
     protected:

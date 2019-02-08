@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 17/07/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRWINDSTANDARDFORCE_H
 #define FRYDOM_FRWINDSTANDARDFORCE_H
@@ -14,6 +22,10 @@ namespace frydom {
     /// Standard wind drag force from DNV standard
     /// DNV-GL station keeping 01111
 
+    /**
+     * \class FrWindStandardForce
+     * \brief Class for computing the wind loads following the DNV guidelines.
+     */
     class FrWindStandardForce : public FrForce {
 
     private:
@@ -84,6 +96,10 @@ namespace frydom {
     /// Standard wind drag force from DNV standard
     /// DNV-GL station keeping 01111
 
+    /**
+     * \class FrWindStandardForce_
+     * \brief Class for computing the wind loads following the DNV guidelines.
+     */
     class FrWindStandardForce_ : public FrForce_ {
 
     private:

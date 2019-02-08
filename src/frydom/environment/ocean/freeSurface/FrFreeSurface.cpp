@@ -1,17 +1,14 @@
 // =============================================================================
-// PROJECT FRyDoM
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Copyright (c) 2017 Ecole Centrale de Nantes
-// All right reserved.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
-//
-// =============================================================================
-// Authors: Francois Rongere
-// =============================================================================
-//
-// Base class for a water free surface system
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
 //
 // =============================================================================
+
 
 //#include <thread>
 

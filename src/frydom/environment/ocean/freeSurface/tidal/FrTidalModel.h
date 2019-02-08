@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 09/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRTIDALMODEL_H
 #define FRYDOM_FRTIDALMODEL_H
@@ -26,6 +34,10 @@ namespace frydom {
     // FIXME: utiliser https://github.com/HowardHinnant/date comme sous module !!!
 
     // TODO: utiliser boost ou une autre lib speciale pour la gestion des geoides
+    /**
+    * \class FrUTCTime
+    * \brief Class for dealing with UTC time.
+    */
     class FrUTCTime {
     private:
         unsigned int m_hours = 0;
@@ -57,7 +69,10 @@ namespace frydom {
 
     };
 
-
+    /**
+     * \class FrTidal
+     * \brief Class for defining tidals.
+     */
     class FrTidal : public FrObject {
 
         enum TidalLevel {
@@ -124,7 +139,10 @@ namespace frydom {
 
     class FrFreeSurface_;
 
-
+    /**
+     * \class FrTidal_
+     * \brief Class for defining tidals.
+     */
     class FrTidal_ : public FrObject {
 
         enum TidalLevel {
