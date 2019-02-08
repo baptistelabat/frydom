@@ -254,7 +254,7 @@ namespace frydom {
     class Velocity;
     class FrFrame_;
 
-    class FrRamp_;
+    class FrRampFunction_;
 
 
     /// Class to store the different elements composing the offshore environment
@@ -269,7 +269,7 @@ namespace frydom {
         std::unique_ptr<FrTimeZone> m_timeZone;     ///< Zoned time conversion service, can give time during simulation in a specified time zone.
 
 
-        std::unique_ptr<FrRamp_> m_timeRamp;        ///< Time ramp, can be applied on wave field, current field, wind field, etc.
+        std::unique_ptr<FrRampFunction_> m_timeRamp;        ///< Time ramp, can be applied on wave field, current field, wind field, etc.
 
 
         std::unique_ptr<FrOcean_> m_ocean;    ///> Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
@@ -301,7 +301,7 @@ namespace frydom {
 
         /// Get the time ramp attached to the environment
         /// \return time ramp
-        FrRamp_* GetTimeRamp() const;
+        FrRampFunction_* GetTimeRamp() const;
 
         /// Get the gravity acceleration on the vertical axis
         /// \return gravity acceleration on the vertical axis, in m/s²

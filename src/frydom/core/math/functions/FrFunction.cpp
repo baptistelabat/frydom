@@ -4,6 +4,8 @@
 
 #include "FrFunction.h"
 
+#include "fmt/format.h"
+
 
 namespace frydom {
 
@@ -52,26 +54,34 @@ namespace frydom {
         m_isActive = active;
     }
 
+    void FrFunction_::SetXOffset(double xOffset) {
+        m_xOffset = xOffset;
+    }
+
+    double FrFunction_::GetXOffset() const {
+        return m_xOffset;
+    }
+
     double FrFunction_::Get_y(double x) const {
-        Eval(x);
+        Eval(x - m_xOffset);
         return c_y;
     }
 
     double FrFunction_::Get_y_dx(double x) const {
-        Eval(x);
+        Eval(x - m_xOffset);
         return c_y_dx;
     }
 
     double FrFunction_::Get_y_dxdx(double x) const {
-        Eval(x);
+        Eval(x - m_xOffset);
         return c_y_dxdx;
     }
 
-//    void FrFunction_::Initialize() {
-//        Eval(0.);
-//    }
-
     void FrFunction_::StepFinalize() {}
+
+    double FrFunction_::operator()(double x) const {
+        return Get_y(x);
+    }
 
     std::shared_ptr<FrCompositeFunction>
     FrFunction_::operator+(std::shared_ptr<FrFunction_> otherFunction) {
@@ -122,6 +132,40 @@ namespace frydom {
 
     std::shared_ptr<chrono::ChFunction> FrFunction_::GetChronoFunction() {
         return m_chronoFunction;
+    }
+
+    void FrFunction_::WriteToGnuPlotFile(double xmin, double xmax, double dx, std::string filename) const {
+
+        fmt::MemoryWriter mw;
+
+        mw << "#x\ty\tdy\tdydy\n";
+        double x(xmin);
+        while (x <= xmax) {
+            mw << x << "\t"
+               << Get_y(x) << "\t"
+               << Get_y_dx(x) << "\t"
+               << Get_y_dxdx(x) << "\n";
+            x += dx;
+        }
+
+        // Writing data file
+        std::ofstream dataFile;
+        dataFile.open(filename+".dat", std::ios::trunc);
+        dataFile << mw.str();
+        dataFile.close();
+        mw.clear();
+
+        // Writing gnuplot file
+        mw.write("set grid\n");
+        mw.write("plot \"{:s}.dat\" using 1:2 with lines title \"y\", ", filename);
+        mw.write("\"{:s}.dat\" using 1:3 with lines title \"dy\", ", filename);
+        mw.write("\"{:s}.dat\" using 1:4 with lines title \"dydy\"\n", filename);
+
+        std::ofstream gnuFile;
+        gnuFile.open(filename+".gnuplot", std::ios::trunc);
+        gnuFile << mw.str();
+        gnuFile.close();
+
     }
 
     double FrFunction_::Estimate_y_dx(double x) const {

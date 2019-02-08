@@ -8,7 +8,7 @@
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOceanInc.h"
-#include "frydom/core/math/functions/FrRamp.h"
+#include "frydom/core/math/functions/FrLinearRampFunction.h"
 
 
 namespace frydom {

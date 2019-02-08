@@ -135,9 +135,11 @@ namespace frydom {
 
         std::shared_ptr<internal::FrChronoFunctionWrapper> m_chronoFunction;
 
-        bool m_isActive = true;
+        bool m_isActive = true; // TODO : retirer ?
 
     protected:
+
+        double m_xOffset = 0.;
 
         // Cache
         mutable double c_x;
@@ -152,12 +154,17 @@ namespace frydom {
         bool IsActive() const;  // TODO : supprimer cette fonctionnalite, repercuter dans le reste du code...
         void SetActive(bool active);
 
+        void SetXOffset(double xOffset);
+        double GetXOffset() const;
+
         double Get_y(double x) const;
         double Get_y_dx(double x) const;
         double Get_y_dxdx(double x) const;
 
         void Initialize() override {}
         void StepFinalize() override;
+
+        double operator()(double x) const;
 
         std::shared_ptr<FrCompositeFunction> operator+(std::shared_ptr<FrFunction_> otherFunction);
 
@@ -174,6 +181,8 @@ namespace frydom {
         std::shared_ptr<FrMultiplyByScalarFunction> operator*(double alpha);
 
         std::shared_ptr<FrMultiplyByScalarFunction> operator/(double alpha);
+
+        void WriteToGnuPlotFile(double xmin, double xmax, double dx, std::string filename = "functionOutput") const;
 
     protected:
 

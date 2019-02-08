@@ -81,7 +81,7 @@ namespace frydom {
 
     // Forward declarations
     class FrFreeSurface;
-    class FrRamp_;
+    class FrRampFunction_;
 
     class FrWaveField : public FrObject {
 
@@ -96,7 +96,7 @@ namespace frydom {
 
         std::unique_ptr<FrWaveSpectrum> m_waveSpectrum = nullptr;
 
-        std::shared_ptr<FrRamp_> m_waveRamp;  // TODO : passer en unique
+        std::shared_ptr<FrRampFunction_> m_waveRamp;  // TODO : passer en unique
 
         double m_depth = 0.;                     ///< Water depth (m) // TODO: aller chercher dans le seabed...
         bool m_infinite_depth = true;              ///< if true water depth is considered as infinite
@@ -115,7 +115,7 @@ namespace frydom {
 
         WAVE_MODEL GetWaveModel() const;
 
-        std::shared_ptr<FrRamp_> GetWaveRamp() const;
+        std::shared_ptr<FrRampFunction_> GetWaveRamp() const;
 
         virtual double GetElevation(double x, double y) const = 0;
 
@@ -376,7 +376,7 @@ namespace frydom {
 
     // Forward declarations
     class FrFreeSurface_;
-    class FrRamp_;
+    class FrRampFunction_;
 
     class FrWaveField_ : public FrObject {
 

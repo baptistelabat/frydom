@@ -6,7 +6,7 @@
 #include "FrWaveProbe.h"
 #include "frydom/core/junk/FrHydroBody.h"
 #include "frydom/core/common/FrNode.h"
-#include "frydom/core/math/functions/FrRamp.h"
+#include "frydom/core/math/functions/FrLinearRampFunction.h"
 
 
 namespace frydom {
