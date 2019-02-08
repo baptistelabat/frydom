@@ -120,8 +120,13 @@ namespace frydom {
         auto dt = time - m_prevTime;
         auto prevPosition = this->GetPosition(NWU);
 
-        this->SetPosition( prevPosition + m_velocity * dt, NWU);
-        this->RotZ_RADIANS(m_angularVelocity * dt, NWU ,true);
+        if (m_velocity.squaredNorm() > FLT_EPSILON) {
+            this->SetPosition(prevPosition + m_velocity * dt, NWU);
+        }
+
+        if (std::abs(m_angularVelocity) > FLT_EPSILON) {
+            this->RotZ_RADIANS(m_angularVelocity * dt, NWU, true);
+        }
 
         m_prevTime = time;
     }

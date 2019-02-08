@@ -145,8 +145,9 @@ int main(int argc, char* argv[]) {
     // -- Ocean
 
     auto ocean = system.GetEnvironment()->GetOcean();
+    ocean->GetSeabed()->SetBathymetry(-3.048, NWU);
 
-    auto waveField = ocean->GetFreeSurface()->SetAiryRegularOptimWaveField();
+    auto waveField = ocean->GetFreeSurface()->SetAiryRegularWaveField();
     waveField->SetWaveHeight(ak);
     waveField->SetWavePeriod(Tk);
     waveField->SetDirection(180., DEG, NWU, GOTO);
