@@ -11,6 +11,17 @@ namespace frydom {
 
     FrSinFunction::FrSinFunction() = default;
 
+    FrSinFunction::FrSinFunction(const FrSinFunction& other) : FrFunction_() {
+        m_amplitude = other.m_amplitude;
+        m_angularFrequency = other.m_angularFrequency;
+        m_phase = other.m_phase;
+        m_YOffset = other.m_YOffset;
+    }
+
+    FrSinFunction* FrSinFunction::Clone() const {
+        return new FrSinFunction(*this);
+    }
+
     void FrSinFunction::SetAmplitude(double amplitude) {
         m_amplitude = amplitude;
     }

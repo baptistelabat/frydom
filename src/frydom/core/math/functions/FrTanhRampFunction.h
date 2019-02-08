@@ -17,13 +17,17 @@ namespace frydom {
 
         double m_width = 1.;
         double m_height = 1.;
-        double m_yOffset = 0.;
+        double m_yOffset = 0.; // TODO : placer dans la classe de base !!
 
         double c_a;
 
     public:
 
         FrTanhRampFunction();
+
+        FrTanhRampFunction(const FrTanhRampFunction& other);
+
+        FrTanhRampFunction* Clone() const;
 
         void SetTolerance(double tolerance);
 

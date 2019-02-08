@@ -12,6 +12,17 @@ namespace frydom {
         ComputeA();
     }
 
+    FrTanhRampFunction::FrTanhRampFunction(const FrTanhRampFunction& other) : FrFunction_() {
+        m_tolerance = other.m_tolerance;
+        m_width = other.m_width;
+        m_height = other.m_height;
+        m_yOffset = other.m_yOffset;
+    }
+
+    FrTanhRampFunction* FrTanhRampFunction::Clone() const {
+        return new FrTanhRampFunction(*this);
+    }
+
     void FrTanhRampFunction::SetTolerance(double tolerance) {
         m_tolerance = tolerance;
         ComputeA();

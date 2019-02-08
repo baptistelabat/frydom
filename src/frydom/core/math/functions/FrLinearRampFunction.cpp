@@ -11,6 +11,17 @@ namespace frydom {
 //        Initialize();
     }
 
+    FrRampFunction_::FrRampFunction_(const frydom::FrRampFunction_ &other) : FrFunction_() {
+        m_slope = other.m_slope;
+        m_intercept = other.m_intercept;
+        m_x0 = other.m_x0;
+        m_x1 = other.m_x1;
+    }
+
+    FrRampFunction_* FrRampFunction_::Clone() const {
+        return new FrRampFunction_(*this);
+    }
+
     void FrRampFunction_::SetY0(double intercept) {
         m_intercept = intercept;
     }

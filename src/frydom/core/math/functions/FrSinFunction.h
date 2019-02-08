@@ -21,6 +21,10 @@ namespace frydom {
 
         FrSinFunction();
 
+        FrSinFunction(const FrSinFunction& other);
+
+        FrSinFunction* Clone() const;
+
         void SetAmplitude(double amplitude);
 
         double GetAmplitude() const;

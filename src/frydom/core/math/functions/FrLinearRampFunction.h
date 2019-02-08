@@ -34,6 +34,10 @@ namespace frydom {
 
         FrRampFunction_();
 
+        FrRampFunction_(const FrRampFunction_& other);
+
+        FrRampFunction_* Clone() const;
+
         void SetY0(double intercept);
 
         double GetY0() const;

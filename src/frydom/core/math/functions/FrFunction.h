@@ -97,15 +97,15 @@ namespace frydom {
      */
 
     // Forward declaration
-    class FrFunction_;
+    class FrFunctionBase;
 
     namespace internal {
 
         struct FrChronoFunctionWrapper : public chrono::ChFunction {
 
-            FrFunction_* m_frydomFunction;
+            FrFunctionBase* m_frydomFunction;
 
-            explicit FrChronoFunctionWrapper(FrFunction_* frydomFunction);
+            explicit FrChronoFunctionWrapper(FrFunctionBase* frydomFunction);
 
             FrChronoFunctionWrapper* Clone() const override;
 
@@ -124,12 +124,13 @@ namespace frydom {
     class FrNegateFunction;
     class FrMultiplyByScalarFunction;
     class FrInverseFunction;
+    class FrAddScalarToFunction;
 
     /*
      * FrFunction_
      */
 
-    class FrFunction_ : public FrObject {
+    class FrFunctionBase : public FrObject {
 
     private:
 
@@ -149,7 +150,10 @@ namespace frydom {
 
     public:
 
-        FrFunction_();
+        FrFunctionBase();
+
+        /// Virtual copy constructor
+        virtual FrFunctionBase* Clone() const = 0;
 
         bool IsActive() const;  // TODO : supprimer cette fonctionnalite, repercuter dans le reste du code...
         void SetActive(bool active);
@@ -168,23 +172,42 @@ namespace frydom {
 
         // TODO : ajouter operateurs pour ajout de scalaire...
 
-        FrCompositeFunction operator+(const FrFunction_& otherFunction);
+        void WriteToGnuPlotFile(double xmin, double xmax, double dx, std::string filename = "functionOutput") const;
 
+        /*
+         * Operators
+         */
+
+        /// Add two functions
+        FrCompositeFunction operator+(FrFunctionBase& other);
+
+        /// Substract two functions
+        FrCompositeFunction operator-(FrFunctionBase& other);
+
+        /// Multiplpy two functions
+        FrCompositeFunction operator*(FrFunctionBase& other);
+
+        /// Divide two functions
+        FrCompositeFunction operator/(FrFunctionBase& other);
+
+        /// Compose two functions -> this(other(x))
+        FrCompositeFunction operator<<(FrFunctionBase& other);
+
+        /// Negate a function
         FrNegateFunction operator-();
 
-        FrCompositeFunction operator-(const FrFunction_& otherFunction);
-
-        FrCompositeFunction operator*(const FrFunction_& otherFunction);
-
-        FrCompositeFunction operator/(const FrFunction_& otherFunction);
-
-        FrCompositeFunction operator<<(const FrFunction_& otherFunction);
-
+        /// Right multiply a function by a scalar
         FrMultiplyByScalarFunction operator*(double alpha);
 
-        FrMultiplyByScalarFunction operator/(double alpha);
+        /// Add a scalar to the function to the right
+        FrAddScalarToFunction operator+(double alpha);
 
-        void WriteToGnuPlotFile(double xmin, double xmax, double dx, std::string filename = "functionOutput") const;
+        /// Substract a scalar to the function to the right
+        FrAddScalarToFunction operator-(double alpha);
+
+
+
+
 
     protected:
 
@@ -202,10 +225,27 @@ namespace frydom {
 
     };
 
-    /// Left multiplication of a function by a scalar
-    FrMultiplyByScalarFunction operator*(double alpha, const FrFunction_& otherFunction);
+    /// Left multiply a function by a scalar
+    FrMultiplyByScalarFunction operator*(double alpha, FrFunctionBase& functionToScale);
 
-    FrInverseFunction operator/(double alpha, const FrFunction_& otherFunction);
+    /// Add a scalar to the function to the left
+    FrAddScalarToFunction operator+(double alpha, FrFunctionBase& functionToAddScalar);
+
+    /// Inverse a function and multiply by a scalar
+    FrInverseFunction operator/(double alpha, FrFunctionBase& functionToInverse);
+
+
+
+    /*
+     * FrFunction_
+     */
+
+    class FrFunction_ : public FrFunctionBase {
+
+    public:
+        FrFunction_();
+
+    };
 
 
 
@@ -213,10 +253,10 @@ namespace frydom {
      * FrCompositeFunction
      */
 
-    class FrCompositeFunction : public FrFunction_ {
+    class FrCompositeFunction : public FrFunctionBase {
 
     protected:
-        friend class FrFunction_;
+        friend class FrFunctionBase;
         enum OPERATOR {
             ADD, // +
             SUB, // -
@@ -226,20 +266,17 @@ namespace frydom {
         };
 
     private:
-        FrFunction_* m_f1; // Il va certainement falloir stocker la fonction produite quelque part !
-        FrFunction_* m_f2;
+        FrFunctionBase* m_f1; // Il va certainement falloir stocker la fonction produite quelque part !
+        FrFunctionBase* m_f2;
         OPERATOR m_operator;
 
     public:
 
-        FrCompositeFunction(FrFunction_* function1, FrFunction_* function2, OPERATOR op);
+        FrCompositeFunction(FrFunctionBase& function1, FrFunctionBase& function2, OPERATOR op);
 
-//        double Get_y(double x) const override;
-//
-//        double Get_y_dx(double x) const override;
-//
-//        double Get_y_dxdx(double x) const override;
+        FrCompositeFunction(const FrCompositeFunction& other);
 
+        FrCompositeFunction* Clone() const;
 
 
     private:
@@ -268,19 +305,20 @@ namespace frydom {
 
 
 
-    class FrNegateFunction : public FrFunction_ {
+    class FrNegateFunction : public FrFunctionBase {
 
     private:
-        FrFunction_* m_functionToNegate;
+        FrFunctionBase* m_functionToNegate;
 
     public:
-        explicit FrNegateFunction(FrFunction_* functionToNegate);
 
-//        double Get_y(double x) const override;
-//
-//        double Get_y_dx(double x) const override;
-//
-//        double Get_y_dxdx(double x) const override;
+        explicit FrNegateFunction(FrFunctionBase& functionToNegate);
+
+        FrNegateFunction(const FrNegateFunction& other);
+
+        FrNegateFunction* Clone() const;
+
+
 
     protected:
         void Eval(double x) const override;
@@ -289,41 +327,18 @@ namespace frydom {
 
 
 
-    class FrMultiplyByScalarFunction : public FrFunction_ {
-
-    private:
-        double m_alpha;
-        FrFunction_* m_functionToScale;
-
-    public:
-        FrMultiplyByScalarFunction(FrFunction_* functionToScale, double alpha);
-
-//        double Get_y(double x) const override;
-//
-//        double Get_y_dx(double x) const override;
-//
-//        double Get_y_dxdx(double x) const override;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-
-    class FrInverseFunction : public FrFunction_ { // TODO : mettre des gardes fou pour la division par 0...
+    class FrMultiplyByScalarFunction : public FrFunctionBase {
 
     private:
         double m_alpha;
-        FrFunction_* m_functionToInverse;
+        FrFunctionBase* m_functionToScale;
 
     public:
-        FrInverseFunction(FrFunction_* functionToScale, double alpha);
+        FrMultiplyByScalarFunction(FrFunctionBase& functionToScale, double alpha);
 
-//        double Get_y(double x) const override;
-//
-//        double Get_y_dx(double x) const override;
-//
-//        double Get_y_dxdx(double x) const override;
+        FrMultiplyByScalarFunction(const FrMultiplyByScalarFunction& other);
+
+        FrMultiplyByScalarFunction* Clone() const;
 
     protected:
         void Eval(double x) const override;
@@ -331,6 +346,42 @@ namespace frydom {
     };
 
 
+    class FrInverseFunction : public FrFunctionBase { // TODO : mettre des gardes fou pour la division par 0...
+
+    private:
+        double m_alpha;
+        FrFunctionBase* m_functionToInverse;
+
+    public:
+        FrInverseFunction(FrFunctionBase& m_functionToInverse, double alpha);
+
+        FrInverseFunction(const FrInverseFunction& other);
+
+        FrInverseFunction* Clone() const;
+
+    protected:
+        void Eval(double x) const override;
+
+    };
+
+
+    class FrAddScalarToFunction : public FrFunctionBase {
+
+    private:
+        double m_alpha;
+        FrFunctionBase* m_functionToAddScalar;
+
+    public:
+        FrAddScalarToFunction(FrFunctionBase& functionToAddScalar, double alpha);
+
+        FrAddScalarToFunction(const FrAddScalarToFunction& other);
+
+        FrAddScalarToFunction* Clone() const;
+
+    protected:
+        void Eval(double x) const override;
+
+    };
 
 
 }  // end namespace frydom
