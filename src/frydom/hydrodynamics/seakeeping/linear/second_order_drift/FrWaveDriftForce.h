@@ -84,7 +84,7 @@ namespace frydom {
     //forward declaration
 
     class FrHydroDB_;
-    
+
     /**
     * \class FrWaveDriftForce_
     * \brief Class for computing the wave drift force.

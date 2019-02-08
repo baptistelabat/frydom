@@ -321,7 +321,7 @@ namespace frydom {
         using MidPhysicsContainer = std::vector<std::shared_ptr<FrMidPhysicsItem_>>;
         using PostPhysicsContainer = std::vector<std::shared_ptr<FrPostPhysicsItem_>>;
 
-        // TODO : bouger les iterateurs proche des methodes d'iteration...
+        // TODO : bouger les iterateurs proches des methodes d'iteration...
         using BodyIter          = BodyContainer::iterator;
         using ConstBodyIter     = BodyContainer::const_iterator;
 

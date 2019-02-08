@@ -187,12 +187,16 @@ namespace frydom {
         AssetBindAll();
         AssetUpdateAll();
 
+        // Temporal loop.
         while (GetDevice()->run()) {
+
             BeginScene();
             DrawAll();
-            DoStep();
+            // Time-stepping.
+            DoStep(); // m_system->GetChTime() is also updated here.
             EndScene();
 
+            // Condition to stop the time-domain simulation using the time after time-stepping.
             if (endTime > 0. && m_system->GetChTime() > endTime) break; // If the endTime given is negative or null, the loop is infinite :)
 
             std::cout << "Time : " << m_system->GetChTime() << std::endl;

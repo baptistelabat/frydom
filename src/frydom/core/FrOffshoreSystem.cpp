@@ -347,6 +347,7 @@ namespace frydom {
 //        m_offshoreSystem_->Initialize();
 //    }
 
+
     FrOffshoreSystem_::FrOffshoreSystem_(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
 
         // Creating the chrono System backend. It drives the way contact are modelled
@@ -933,7 +934,7 @@ namespace frydom {
 
         app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
-        app.Run(endTime);
+        app.Run(endTime); // The temporal loop is here.
 
     }
 

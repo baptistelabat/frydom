@@ -190,5 +190,4 @@ int main(int argc, char* argv[]) {
     // For saving snapshots of the simulation, just turn the boolean to true.
     system.RunInViewer(30, 100, false);
 
-
 }
