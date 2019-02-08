@@ -81,11 +81,11 @@ int main(int argc, char* argv[]) {
     }
     else
     {
-        // ------------------ Platform ------------------ //
+        // ------------------ platform ------------------ //
         auto Platform = system.NewBody();
-        Platform->SetName("Platform");
+        Platform->SetName("platform");
 
-        Platform->AddMeshAsset("GVA7500.obj");
+        Platform->AddMeshAsset("Platform_GVA7500.obj");
 
         Platform->SetFixedInWorld(true);
 

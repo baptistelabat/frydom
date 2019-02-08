@@ -33,4 +33,4 @@ configure_file(../../data/skybox/sky_lf.jpg . COPYONLY)
 configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
 
 
-configure_file(../data/DeepSea_Stavanger/DeepSeaStavanger.hdb5 . COPYONLY)
+configure_file(../data/platform/Platform_HDB.hdb5 . COPYONLY)

@@ -72,12 +72,12 @@ int main(int argc, char* argv[]) {
     waveField->SetDirection(waveDirection, fc, dc);
     
     // --------------------------------------------------
-    // Platform
+    // platform
     // --------------------------------------------------
     //
     auto platform = system.NewBody();
-    platform->SetName("Platform");
-    platform->AddMeshAsset("GVA7500.obj");
+    platform->SetName("platform");
+    platform->AddMeshAsset("Platform_GVA7500.obj");
     platform->SetColor(Yellow);
 
     // Inertia Tensor
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
     // -- Hydrodynamics
 
     // Create a hydrodynamic database (hdb) and load data from the input file.
-    auto hdb = make_hydrodynamic_database("DeepSeaStavanger.hdb5");
+    auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
 
     // Create an equilibrium frame for the platform and add it to the system
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(platform.get());
@@ -126,11 +126,11 @@ int main(int argc, char* argv[]) {
 
     // -- Current model force, based on polar coefficients
     // Create the current model force and add it to the platform
-    auto currentForce = make_current_force("PolarCurrentCoeffs_NC.yml", platform);
+    auto currentForce = make_current_force("Platform_PolarCurrentCoeffs_NC.yml", platform);
 
     // -- Wind model force, based on polar coefficients
     // Create the model model force and add it to the platform
-    auto windForce = make_wind_force("PolarWindCoeffs_NC.yml", platform);
+    auto windForce = make_wind_force("Platform_PolarWindCoeffs_NC.yml", platform);
     windForce->SetIsForceAsset(true);
 
     // ------------------ Run ------------------ //

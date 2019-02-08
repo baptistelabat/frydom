@@ -66,7 +66,7 @@ std::shared_ptr<FrShip> Platform(FrOffshoreSystem* system) {
 
     auto platform = std::make_shared<FrShip>();
     platform->SetName("Deepsea_Stavanger");
-    platform->SetHydroMesh("GVA7500.obj", true);
+    platform->SetHydroMesh("Platform_GVA7500.obj", true);
     platform->SetLpp(108.8);
     platform->SetMass(3.22114e7);
     platform->SetCOG(chrono::ChVector<double>(0., 0., 8.65));
@@ -86,7 +86,7 @@ std::shared_ptr<FrShip> Platform(FrOffshoreSystem* system) {
     platform->AddForce(hstForce);
 
     // Hydrodynamic load
-    system->SetHydroDB("DeepSeaStavanger.hdb5");
+    system->SetHydroDB("Platform_HDB.hdb5");
     auto HydroMapIndex = system->GetHydroMapNb() - 1;
     system->GetHydroMapper(HydroMapIndex)->Map(platform, 0);
 
@@ -95,11 +95,11 @@ std::shared_ptr<FrShip> Platform(FrOffshoreSystem* system) {
     radModel->AddRadiationForceToHydroBody(platform);
 
     // Wind load
-    auto wind_force = std::make_shared<FrWindForce>("PolarWindCoeffs_NC.yml");
+    auto wind_force = std::make_shared<FrWindForce>("Platform_PolarWindCoeffs_NC.yml");
     platform->AddForce(wind_force);
 
     // Current load
-    auto current_force = std::make_shared<FrCurrentForce>("PolarCurrentCoeffs_NC.yml");
+    auto current_force = std::make_shared<FrCurrentForce>("Platform_PolarCurrentCoeffs_NC.yml");
     platform->AddForce(current_force);
 
     // Additional damping
@@ -118,7 +118,7 @@ std::shared_ptr<FrShip> Platform(FrOffshoreSystem* system) {
     waveProbe->Initialize();
 
     // Wave Drift Force
-    auto DriftForce = std::make_shared<FrWaveDriftForce>("DeepSea_WaveDriftCoeff.h5");
+    auto DriftForce = std::make_shared<FrWaveDriftForce>("Platform_WaveDriftCoeff.h5");
     platform->AddForce(DriftForce);
     DriftForce->SetBody(platform);
     DriftForce->SetWaveProbe(waveProbe);
@@ -139,8 +139,8 @@ std::shared_ptr<FrShip> Ship(FrOffshoreSystem* system) {
     auto ship_pos = chrono::ChVector<double>(0., 0., 0.);
 
     auto ship = std::make_shared<FrShip>();
-    ship->SetName("Ship");
-    ship->SetHydroMesh("Ship.obj", true);
+    ship->SetName("ship");
+    ship->SetHydroMesh("ship.obj", true);
     ship->SetLpp(76.20);
     ship->SetMass(8.531e6);
     ship->SetCOG(chrono::ChVector<double>(0., 0., 0.));
@@ -159,7 +159,7 @@ std::shared_ptr<FrShip> Ship(FrOffshoreSystem* system) {
     ship->AddForce(hstForce);
 
     // Hydrodynamic load
-    system->SetHydroDB("Ship.h5");
+    system->SetHydroDB("ship.h5");
     auto HydroMapIndex = system->GetHydroMapNb()-1;
     system->GetHydroMapper(HydroMapIndex)->Map(ship, 0);
 

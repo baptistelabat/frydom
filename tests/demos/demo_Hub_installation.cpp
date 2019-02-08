@@ -52,13 +52,13 @@ int main(int argc, char* argv[]) {
 
 
     // --------------------------------------------------
-    // Barge model
+    // barge model
     // --------------------------------------------------
 
     auto barge = system.NewBody();
-    barge->SetName("Barge");
+    barge->SetName("barge");
     makeItBox(barge, 25., 15., 3., (1137.6-180.7)*1000);
-//    barge->AddMeshAsset("Barge.obj");
+//    barge->AddMeshAsset("barge.obj");
     barge->SetColor(Yellow);
 //    barge->SetFixedInWorld(true); //FIXME : delete this once HydroDB is added.
 
@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    auto hdb = make_hydrodynamic_database("Barge_frydom.h5");
+    auto hdb = make_hydrodynamic_database("Barge_HDB.h5");
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(barge.get());
     system.AddPhysicsItem(eqFrame);

@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
     auto body = system.NewBody();
 
     std::cout << "--> Load HDB ... " << std::endl;
-    auto hdb = make_hydrodynamic_database("DeepSeaStavanger.hdb5");
+    auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
 
     std::cout << "--> Eq Frame ... " << std::endl;
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());

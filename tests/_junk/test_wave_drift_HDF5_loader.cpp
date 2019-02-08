@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     // New ship model
     auto platforme = std::make_shared<FrHydroBody>();
     platforme->SetName("Deepsea_Stanvenger");
-    platforme->SetHydroMesh("GVA7500.obj", true);
+    platforme->SetHydroMesh("Platform_GVA7500.obj", true);
     platforme->SetLpp(116.6);
     platforme->SetMass(3.22114e7);
     platforme->SetCOG(chrono::ChVector<double>(0., 0., 8.65));

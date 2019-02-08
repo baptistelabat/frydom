@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
 
     // For adding your own mesh, specify a WaveFront .obj file name. MeshMagic software can help you convert other
     // mesh format into .obj : https://github.com/LHEEA/meshmagick.
-    body->AddMeshAsset("Ship.obj");
+    body->AddMeshAsset("ship.obj");
 
     // Select the color of your body, in the NAMED_COLOR enum (FrColors.h for more details).
     body->SetColor(IndianRed);
