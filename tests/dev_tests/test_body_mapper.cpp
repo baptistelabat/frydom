@@ -16,8 +16,8 @@ int main(int argc, char* argv[]) {
     std::cout << "--> Create body..." << std::endl;
     auto body = system.NewBody();
 
-    std::cout << "--> Read file : DeepSeaStavanger.hdb5" << std::endl;
-    auto hdb = std::make_shared<FrHydroDB_>("DeepSeaStavanger.hdb5");
+    std::cout << "--> Read file : Platform_HDB.hdb5" << std::endl;
+    auto hdb = std::make_shared<FrHydroDB_>("Platform_HDB.hdb5");
 
     std::cout << "--> Create eqFrame..." << std::endl;
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());

@@ -22,7 +22,7 @@ if (NOT hermes_FOUND)
         FetchContent_Populate(hermes)
 
         # hermes BUILD OPTIONS
-        set(HERMES_BUILD_TESTS OFF)
+        set(HERMES_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
         add_subdirectory(${hermes_SOURCE_DIR} ${hermes_BINARY_DIR})
     else()

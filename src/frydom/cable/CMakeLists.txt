@@ -6,7 +6,6 @@ set(SRC_FILES
         FrCatenaryLine.cpp
         FrCatenaryNode.cpp
         FrDynamicCable.cpp
-        FrCatway.cpp
         FrMooringBuoy.cpp
 )
 

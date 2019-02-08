@@ -48,7 +48,7 @@ int main() {
 
     FrOffshoreSystem_ system;
 
-    // Ship
+    // ship
 
     auto ship = std::make_shared<FrBody_>();
     system.AddBody(ship);

@@ -25,8 +25,8 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem_ system;
 
     // Specify the size of the free surface asset.
-//    auto FSAsset = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset();
-//    FSAsset->SetGrid(-100., 100, 2, -100, 100, 2);
+    auto FSAsset = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset();
+    FSAsset->SetGrid(-100., 100, 2, -100, 100, 2);
 
 
     // Creating a new body is really simple, you just have to call the NewBody() method of offshore system. This way,
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     // Make the body fixed : If true, it does not move respect to the absolute world, despite constraints, forces, etc.
     // By default a body is not fixed.
-//    body->SetFixedInWorld(true);
+    body->SetFixedInWorld(true);
 
     // =============================================================================================================
     // VISUAL ASSETS
@@ -47,15 +47,21 @@ int main(int argc, char* argv[]) {
     // Add a visual asset to your body. It is only a matter of visualization, you can have a visual asset which is
     // completely different from the one you used to compute hydrodynamic loads.
 
+    double radius = 5, height = 10., xSize = 5., ySize = 5., zSize = 10., Mass = 1000.;
     // Three default visual assets are available : sphere, cylinder and box shaped assets.
-//    body->AddSphereShape(20.); // radius = 20m
-//    body->AddSphereShape(10.); // radius = 10m
-    body->AddSphereShape(1.); // radius = 1m
+//    body->AddSphereShape(radius); // radius = 20m
+//    body->AddCylinderShape(radius, height); // radius = 10m, height = 20m
+//    body->AddBoxShape(xSize, ySize, zSize); // xSize = 5m, ySize = 10m, zSize = 20m
+
+    // However you can make your body a sphere, cylinder or box using the following functions :
+    // These functions set the inertia parameters, the collision model and the visual asset.
+//    makeItSphere(body, radius, Mass);
+//    makeItCylinder(body,radius, height, Mass);
+//    makeItBox(body,xSize, ySize, zSize, Mass);
 
     // For adding your own mesh, specify a WaveFront .obj file name. MeshMagic software can help you convert other
     // mesh format into .obj : https://github.com/LHEEA/meshmagick.
-//    body->AddMeshAsset("Ship.obj");
-//    body->AddMeshAsset("DTMB5512.obj");
+    body->AddMeshAsset("ship.obj");
 
     // Select the color of your body, in the NAMED_COLOR enum (FrColors.h for more details).
     body->SetColor(IndianRed);
@@ -180,10 +186,6 @@ int main(int argc, char* argv[]) {
 
     // You can change the dynamical simulation time step using.
     system.SetTimeStep(0.04);
-
-    // Don't forget to initialize the offshore system : it will initialize every physical objects and environmental
-    // components it contains.
-    system.Initialize();
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 30s) and the distance from the camera to the objectif (100m).

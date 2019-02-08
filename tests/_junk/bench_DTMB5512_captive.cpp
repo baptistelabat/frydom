@@ -79,7 +79,7 @@ void PlotResult(std::vector<double>& vtime, std::vector<ChVector<double>>& vposi
 
 
 // ----------------------------------------------------------
-// Ship model : DTMB5512 (IIHR - Yoon 2009)
+// ship model : DTMB5512 (IIHR - Yoon 2009)
 // ----------------------------------------------------------
 
 std::shared_ptr<FrShip> DTMB5512(FrOffshoreSystem* system) {
