@@ -182,8 +182,12 @@ namespace frydom {
         return FrAddScalarToFunction(functionToAddScalar, alpha);
     }
 
+//    FrAddScalarToFunction operator+(double&& alpha, const FrFunctionBase& functionToAddScalar) {
+//        return FrAddScalarToFunction(functionToAddScalar, alpha);
+//    }
+
     FrInverseFunction operator/(double alpha, FrFunctionBase& functionToInverse) {
-        // TODO
+        return FrInverseFunction(functionToInverse, alpha);
     }
 
 

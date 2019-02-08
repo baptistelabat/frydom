@@ -86,9 +86,11 @@ int main() {
 
 //    auto op = 1. + -2 * ramp1 * 0.5 + 4;
 //    auto op = 1 + (1 * ramp1) + 3; // Voir si on peut faire fonctionner ça !!
-    auto op = ramp1 << ((1 * ramp1) - 10);
+    auto op =  ((1 * ramp1) - 10);
+    FrSinFunction sin;
+//    auto op2 =  1 + (sin << thRamp);
 
-    op.WriteToGnuPlotFile(-2, 4, 0.01, "op");
+    op2.WriteToGnuPlotFile(-2, 4, 0.01, "op");
 
     return 0;
 }

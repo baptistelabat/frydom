@@ -230,6 +230,7 @@ namespace frydom {
 
     /// Add a scalar to the function to the left
     FrAddScalarToFunction operator+(double alpha, FrFunctionBase& functionToAddScalar);
+//    FrAddScalarToFunction operator+(double&& alpha, const FrFunctionBase& functionToAddScalar);
 
     /// Inverse a function and multiply by a scalar
     FrInverseFunction operator/(double alpha, FrFunctionBase& functionToInverse);
