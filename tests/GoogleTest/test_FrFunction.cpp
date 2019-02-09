@@ -88,7 +88,7 @@ int main() {
 //    auto op = 1 + (1 * ramp1) + 3; // Voir si on peut faire fonctionner ça !!
     auto op =  ((1 * ramp1) - 10);
     FrSinFunction sin;
-//    auto op2 =  1 + (sin << thRamp);
+    auto op2 =  1/ (1 + (sin << ramp1) / 3) + 5.;
 
     op2.WriteToGnuPlotFile(-2, 4, 0.01, "op");
 

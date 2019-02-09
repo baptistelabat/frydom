@@ -138,23 +138,23 @@ namespace frydom {
      * Operators
      */
 
-    FrCompositeFunction FrFunctionBase::operator+(FrFunctionBase& other) {
+    FrCompositeFunction FrFunctionBase::operator+(const FrFunctionBase& other) {
         return FrCompositeFunction(*this, other, FrCompositeFunction::OPERATOR::ADD);
     }
 
-    FrCompositeFunction FrFunctionBase::operator-(FrFunctionBase& other) {
+    FrCompositeFunction FrFunctionBase::operator-(const FrFunctionBase& other) {
         return FrCompositeFunction(*this, other, FrCompositeFunction::OPERATOR::SUB);
     }
 
-    FrCompositeFunction FrFunctionBase::operator*(FrFunctionBase& other) {
+    FrCompositeFunction FrFunctionBase::operator*(const FrFunctionBase& other) {
         return FrCompositeFunction(*this, other, FrCompositeFunction::OPERATOR::MUL);
     }
 
-    FrCompositeFunction FrFunctionBase::operator/(FrFunctionBase& other) {
+    FrCompositeFunction FrFunctionBase::operator/(const FrFunctionBase& other) {
         return FrCompositeFunction(*this, other, FrCompositeFunction::OPERATOR::DIV);
     }
 
-    FrCompositeFunction FrFunctionBase::operator<<(FrFunctionBase& other) {
+    FrCompositeFunction FrFunctionBase::operator<<(const FrFunctionBase& other) {
         return FrCompositeFunction(*this, other, FrCompositeFunction::OPERATOR::COM);
     }
 
@@ -166,7 +166,11 @@ namespace frydom {
         return FrMultiplyByScalarFunction(*this, alpha);
     }
 
-    FrMultiplyByScalarFunction operator*(double alpha, FrFunctionBase& functionToScale) {
+    FrMultiplyByScalarFunction FrFunctionBase::operator/(double alpha) {
+        return FrMultiplyByScalarFunction(*this, 1./alpha);
+    }
+
+    FrMultiplyByScalarFunction operator*(double alpha, const FrFunctionBase& functionToScale) {
         return FrMultiplyByScalarFunction(functionToScale, alpha);
     }
 
@@ -178,19 +182,15 @@ namespace frydom {
         return FrAddScalarToFunction(*this, -alpha);
     }
 
-    FrAddScalarToFunction operator+(double alpha, FrFunctionBase& functionToAddScalar) {
+    FrAddScalarToFunction operator+(double alpha, const FrFunctionBase& functionToAddScalar) {
         return FrAddScalarToFunction(functionToAddScalar, alpha);
     }
 
-//    FrAddScalarToFunction operator+(double&& alpha, const FrFunctionBase& functionToAddScalar) {
-//        return FrAddScalarToFunction(functionToAddScalar, alpha);
-//    }
-
-    FrInverseFunction operator/(double alpha, FrFunctionBase& functionToInverse) {
+    FrInverseFunction operator/(double alpha, const FrFunctionBase& functionToInverse) {
         return FrInverseFunction(functionToInverse, alpha);
     }
 
-
+//    FrPowerFunction pow(const FrFunctionBase& functionToPow, double pow);
 
     /*
      * FrFunction_
@@ -204,7 +204,7 @@ namespace frydom {
      * FrCompositeFunction
      */
 
-    FrCompositeFunction::FrCompositeFunction(frydom::FrFunctionBase& function1, frydom::FrFunctionBase& function2,
+    FrCompositeFunction::FrCompositeFunction(frydom::FrFunctionBase& function1, const frydom::FrFunctionBase& function2,
                                              FrCompositeFunction::OPERATOR op) :
                                                 FrFunctionBase(),
                                                 m_operator(op) {
@@ -213,7 +213,7 @@ namespace frydom {
 
     }
 
-    FrCompositeFunction::FrCompositeFunction(const frydom::FrCompositeFunction &other) : FrFunctionBase() {
+    FrCompositeFunction::FrCompositeFunction(const FrCompositeFunction &other) : FrFunctionBase() {
         m_f1 = other.m_f1;
         m_f2 = other.m_f2;
         m_operator = other.m_operator;
@@ -324,7 +324,7 @@ namespace frydom {
      * FrMultiplyByScalarFunction
      */
 
-    FrMultiplyByScalarFunction::FrMultiplyByScalarFunction(FrFunctionBase& functionToScale, double alpha) :
+    FrMultiplyByScalarFunction::FrMultiplyByScalarFunction(const FrFunctionBase& functionToScale, double alpha) :
         FrFunctionBase() , m_alpha(alpha) {
         m_functionToScale = functionToScale.Clone();
     }
@@ -351,7 +351,7 @@ namespace frydom {
      * FrInverseFunction
      */
 
-    FrInverseFunction::FrInverseFunction(FrFunctionBase& functionToInverse, double alpha) :
+    FrInverseFunction::FrInverseFunction(const FrFunctionBase& functionToInverse, double alpha) :
         FrFunctionBase(), m_alpha(alpha) {
         m_functionToInverse = functionToInverse.Clone();
     }
@@ -384,7 +384,7 @@ namespace frydom {
      * FrAddScalarToFunction
      */
 
-    FrAddScalarToFunction::FrAddScalarToFunction(FrFunctionBase& functionToInverse, double alpha) :
+    FrAddScalarToFunction::FrAddScalarToFunction(const FrFunctionBase& functionToInverse, double alpha) :
         FrFunctionBase(), m_alpha(alpha) {
         m_functionToAddScalar = functionToInverse.Clone();
     }
