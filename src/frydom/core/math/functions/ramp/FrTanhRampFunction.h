@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRTANHRAMP_H
 #define FRYDOM_FRTANHRAMP_H
 
-#include "FrFunction.h"
+#include "frydom/core/math/functions/FrFunctionBase.h"
 
 namespace frydom {
 

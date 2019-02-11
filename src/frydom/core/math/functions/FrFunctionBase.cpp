@@ -2,9 +2,11 @@
 // Created by frongere on 12/10/18.
 //
 
-#include "FrFunction.h"
+#include "FrFunctionBase.h"
 
 #include "fmt/format.h"
+
+#define BDF  1e-7
 
 
 namespace frydom {
@@ -126,11 +128,11 @@ namespace frydom {
     }
 
     double FrFunctionBase::Estimate_y_dx(double x) const {
-        // TODO
+        return (Get_y(x + BDF) - Get_y(x)) / BDF;
     }
 
     double FrFunctionBase::Estimate_y_dxdx(double x) const {
-        // TODO
+        return (Get_y_dx(x + BDF) - Get_y_dx(x)) / BDF;
     }
 
 

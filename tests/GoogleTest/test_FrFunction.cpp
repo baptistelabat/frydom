@@ -70,27 +70,27 @@ int main() {
 //    auto complex_func = *(*(*(*ramp1 + ramp1)) / 2. * 2) << ramp1;
 
 
-    auto sinFcn = FrSinFunction();
-    sinFcn.SetPeriod(2);
-    sinFcn.SetYOffset(0.5);
-    sinFcn.SetPhase(MU_PI);
-    sinFcn.WriteToGnuPlotFile(0, 20, 0.01, "sinFunction");
+//    auto sinFcn = FrSinFunction();
+//    sinFcn.SetPeriod(2);
+//    sinFcn.SetYOffset(0.5);
+//    sinFcn.SetPhase(MU_PI);
+//    sinFcn.WriteToGnuPlotFile(0, 20, 0.01, "sinFunction");
 
 
 
-    auto thRamp = FrTanhRampFunction();
-    thRamp.SetByTwoPoints(0, 1, 1, 1);
-//    thRamp.SetXOffset(1.); // FIXME -> ne fonctionne pas !!
-    thRamp.WriteToGnuPlotFile(-2., 4., 0.01, "thRamp");
-
-
-//    auto op = 1. + -2 * ramp1 * 0.5 + 4;
-//    auto op = 1 + (1 * ramp1) + 3; // Voir si on peut faire fonctionner ça !!
-    auto op =  ((1 * ramp1) - 10);
-    FrSinFunction sin;
-    auto op2 =  1/ (1 + (sin << ramp1) / 3) + 5.;
-
-    op2.WriteToGnuPlotFile(-2, 4, 0.01, "op");
+//    auto thRamp = FrTanhRampFunction();
+//    thRamp.SetByTwoPoints(0, 1, 1, 1);
+////    thRamp.SetXOffset(1.); // FIXME -> ne fonctionne pas !!
+//    thRamp.WriteToGnuPlotFile(-2., 4., 0.01, "thRamp");
+//
+//
+////    auto op = 1. + -2 * ramp1 * 0.5 + 4;
+////    auto op = 1 + (1 * ramp1) + 3; // Voir si on peut faire fonctionner ça !!
+//    auto op =  ((1 * ramp1) - 10);
+//    FrSinFunction sin;
+//    auto op2 =  1/ (1 + (sin << ramp1) / 3) + 5.;
+//
+//    op2.WriteToGnuPlotFile(-2, 4, 0.01, "op");
 
     return 0;
 }

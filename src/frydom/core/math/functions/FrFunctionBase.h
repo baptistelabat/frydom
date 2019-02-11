@@ -125,27 +125,27 @@ namespace frydom {
     class FrMultiplyByScalarFunction;
     class FrInverseFunction;
     class FrAddScalarToFunction;
-    class FrPowerFunction;
 
-    class FrPowerOfFunction;
-    class FrExpOfFunction;
-    class FrLogOfFunction;
-    class FrSinOfFunction;
-    class FrCosOfFunction;
-    class FrTanOfFunction;
-    class FrASinOfFunction;
-    class FrAcosOfFunction;
-    class FrATanOfFunction;
-    class FrSinhOfFunction;
-    class FrAsinhOfFunction;
-    class FrCoshOfFunction;
-    class FrACoshOfFunction;
-    class FrTanhOfFunction;
-    class FrATanhOfFunction;
-    class FrSqrtOfFunction;
-    class FrSqrtOfFunction;
-    class FrAbsOfFunction;
-    class FrSgnOfFunction;
+
+//    class FrPowerOfFunction;
+//    class FrExpOfFunction;
+//    class FrLogOfFunction;
+//    class FrSinOfFunction;
+//    class FrCosOfFunction;
+//    class FrTanOfFunction;
+//    class FrASinOfFunction;
+//    class FrAcosOfFunction;
+//    class FrATanOfFunction;
+//    class FrSinhOfFunction;
+//    class FrAsinhOfFunction;
+//    class FrCoshOfFunction;
+//    class FrACoshOfFunction;
+//    class FrTanhOfFunction;
+//    class FrATanhOfFunction;
+//    class FrSqrtOfFunction;
+//    class FrSqrtOfFunction;
+//    class FrAbsOfFunction;
+//    class FrSgnOfFunction;
 
 
     /*
@@ -256,26 +256,7 @@ namespace frydom {
     /// Inverse a function and multiply by a scalar
     FrInverseFunction operator/(double alpha, const FrFunctionBase& functionToInverse);
 
-    /// Raises a function to a power
-    FrPowerOfFunction pow(const FrFunctionBase& functionToPow, double pow);
-    FrExpOfFunction   exp(const FrFunctionBase& functionToPow);
-    FrLogOfFunction   log(const FrFunctionBase& functionToPow);
-    FrSinOfFunction   sin(const FrFunctionBase& functionToPow);
-    FrCosOfFunction   cos(const FrFunctionBase& functionToPow);
-    FrTanOfFunction   tan(const FrFunctionBase& functionToPow);
-    FrASinOfFunction  asin(const FrFunctionBase& functionToPow);
-    FrAcosOfFunction  acos(const FrFunctionBase& functionToPow);
-    FrATanOfFunction  atan(const FrFunctionBase& functionToPow);
-    FrSinhOfFunction  sinh(const FrFunctionBase& functionToPow);
-    FrAsinhOfFunction asinh(const FrFunctionBase& functionToPow);
-    FrCoshOfFunction  cosh(const FrFunctionBase& functionToPow);
-    FrACoshOfFunction acosh(const FrFunctionBase& functionToPow);
-    FrTanhOfFunction  tanh(const FrFunctionBase& functionToPow);
-    FrATanhOfFunction atanh(const FrFunctionBase& functionToPow);
-    FrSqrtOfFunction  sqrt(const FrFunctionBase& functionToPow);
-    FrSqrtOfFunction  sqrt(const FrFunctionBase& functionToPow, double alpha);
-    FrAbsOfFunction   abs(const FrFunctionBase& functionToPow);
-    FrSgnOfFunction   sgn(const FrFunctionBase& functionToPow);
+
 
 
 
@@ -293,10 +274,11 @@ namespace frydom {
 
 
     /*
-     * FrCompositeFunction
+     * FrCompositeFunction, Result of binary operators
      */
 
-    class FrCompositeFunction : public FrFunctionBase {
+    // FIXME : en vrai cette classe devrait etre la classe de base de toutes les fonctions binaires du type f1 op f2
+    class FrCompositeFunction : public FrFunctionBase { // TODO : splitter en 5 classes
 
     protected:
         friend class FrFunctionBase;
@@ -346,8 +328,12 @@ namespace frydom {
     };
 
 
+    /*
+     * Results of unary operators
+     */
 
 
+    /// Class for the result of - operator on FrFunctionBase
     class FrNegateFunction : public FrFunctionBase {
 
     private:
@@ -369,7 +355,7 @@ namespace frydom {
     };
 
 
-
+    /// Class for the result of a multiplication of of FrFunctionBase by a scalar
     class FrMultiplyByScalarFunction : public FrFunctionBase {
 
     private:
@@ -389,6 +375,7 @@ namespace frydom {
     };
 
 
+    /// Class for the result of a scalar divided by a FrFunctionBase
     class FrInverseFunction : public FrFunctionBase { // TODO : mettre des gardes fou pour la division par 0...
 
     private:
@@ -408,6 +395,7 @@ namespace frydom {
     };
 
 
+    /// Class for the result of addition of a FrFunctionBase and a scalar
     class FrAddScalarToFunction : public FrFunctionBase {
 
     private:
@@ -426,350 +414,6 @@ namespace frydom {
 
     };
 
-
-
-
-    class FrPowerOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrPowerOfFunction(const FrFunctionBase& function);
-
-        FrPowerOfFunction(const FrPowerOfFunction& other);
-
-        FrPowerOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrExpOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrExpOfFunction(const FrFunctionBase& function);
-
-        FrExpOfFunction(const FrExpOfFunction& other);
-
-        FrExpOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrLogOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrLogOfFunction(const FrFunctionBase& function);
-
-        FrLogOfFunction(const FrLogOfFunction& other);
-
-        FrLogOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrSinOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrSinOfFunction(const FrFunctionBase& function);
-
-        FrSinOfFunction(const FrSinOfFunction& other);
-
-        FrSinOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrCosOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrCosOfFunction(const FrFunctionBase& function);
-
-        FrCosOfFunction(const FrCosOfFunction& other);
-
-        FrCosOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrTanOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrTanOfFunction(const FrFunctionBase& function);
-
-        FrTanOfFunction(const FrTanOfFunction& other);
-
-        FrTanOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrASinOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrASinOfFunction(const FrFunctionBase& function);
-
-        FrASinOfFunction(const FrASinOfFunction& other);
-
-        FrASinOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrAcosOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrAcosOfFunction(const FrFunctionBase& function);
-
-        FrAcosOfFunction(const FrAcosOfFunction& other);
-
-        FrAcosOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrATanOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrATanOfFunction(const FrFunctionBase& function);
-
-        FrATanOfFunction(const FrATanOfFunction& other);
-
-        FrATanOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrSinhOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrSinhOfFunction(const FrFunctionBase& function);
-
-        FrSinhOfFunction(const FrSinhOfFunction& other);
-
-        FrSinhOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrAsinhOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrAsinhOfFunction(const FrFunctionBase& function);
-
-        FrAsinhOfFunction(const FrAsinhOfFunction& other);
-
-        FrAsinhOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrCoshOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrCoshOfFunction(const FrFunctionBase& function);
-
-        FrCoshOfFunction(const FrCoshOfFunction& other);
-
-        FrCoshOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrACoshOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrACoshOfFunction(const FrFunctionBase& function);
-
-        FrACoshOfFunction(const FrACoshOfFunction& other);
-
-        FrACoshOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrTanhOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrTanhOfFunction(const FrFunctionBase& function);
-
-        FrTanhOfFunction(const FrTanhOfFunction& other);
-
-        FrTanhOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrATanhOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrATanhOfFunction(const FrFunctionBase& function);
-
-        FrATanhOfFunction(const FrATanhOfFunction& other);
-
-        FrATanhOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrSqrtOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrSqrtOfFunction(const FrFunctionBase& function);
-
-        FrSqrtOfFunction(const FrSqrtOfFunction& other);
-
-        FrSqrtOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrAbsOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrAbsOfFunction(const FrFunctionBase& function);
-
-        FrAbsOfFunction(const FrAbsOfFunction& other);
-
-        FrAbsOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
-
-    class FrSgnOfFunction : public FrFunctionBase {
-
-    private:
-
-        FrFunctionBase* m_function;
-
-    public:
-
-        FrSgnOfFunction(const FrFunctionBase& function);
-
-        FrSgnOfFunction(const FrSgnOfFunction& other);
-
-        FrSgnOfFunction * Clone() const;
-
-    protected:
-        void Eval(double x) const override;
-
-    };
 
 
 

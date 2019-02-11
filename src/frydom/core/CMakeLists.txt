@@ -31,7 +31,7 @@ list(APPEND SRC_FILES
 
 ## FUNCTIONS
 #list(APPEND SRC_FILES
-#        functions/FrFunction.cpp
+#        functions/FrFunctionBase.cpp
 #        functions/FrRamp.cpp
 #        )
 
@@ -74,13 +74,13 @@ list(APPEND SRC_FILES
         math/FrMatrix.cpp
         math/FrVector.cpp
 
-        math/functions/FrFunction.cpp
-        math/functions/FrExpFunction.cpp
-        math/functions/FrLinearRampFunction.cpp
-        math/functions/FrLogFunction.cpp
-        math/functions/FrSinFunction.cpp
-        math/functions/FrTanFunction.cpp
-        math/functions/FrTanhRampFunction.cpp
+        math/functions/FrFunctionBase.cpp
+
+        math/functions/ramp/FrLinearRampFunction.cpp
+        math/functions/ramp/FrTanhRampFunction.cpp
+
+
+
         )
 
 # MISC
