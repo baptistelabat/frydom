@@ -54,6 +54,8 @@ namespace frydom {
 
         void Initialize() override;
 
+        std::string GetRepr() const override;
+
     protected:
         void Eval(double x) const override;
 

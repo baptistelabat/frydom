@@ -39,6 +39,7 @@ namespace frydom {
 
         void SetByTwoPoints(double x0, double y0, double x1, double y1);
 
+        std::string GetRepr() const override;
 
     private:
         void ComputeA();

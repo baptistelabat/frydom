@@ -140,59 +140,75 @@ namespace frydom {
      * Operators
      */
 
-    FrCompositeFunction FrFunctionBase::operator+(const FrFunctionBase& other) {
-        return FrCompositeFunction(*this, other, FrCompositeFunction::OPERATOR::ADD);
+
+    FrUnarySignFunction FrFunctionBase::operator-() {
+        return FrUnarySignFunction(*this, true);
     }
 
-    FrCompositeFunction FrFunctionBase::operator-(const FrFunctionBase& other) {
-        return FrCompositeFunction(*this, other, FrCompositeFunction::OPERATOR::SUB);
+    FrUnarySignFunction FrFunctionBase::operator+() {
+        return FrUnarySignFunction(*this, false);
     }
 
-    FrCompositeFunction FrFunctionBase::operator*(const FrFunctionBase& other) {
-        return FrCompositeFunction(*this, other, FrCompositeFunction::OPERATOR::MUL);
+
+
+    FrAddFunction FrFunctionBase::operator+(const FrFunctionBase& other) {
+        return FrAddFunction(*this, other);
     }
 
-    FrCompositeFunction FrFunctionBase::operator/(const FrFunctionBase& other) {
-        return FrCompositeFunction(*this, other, FrCompositeFunction::OPERATOR::DIV);
+    FrSubFunction FrFunctionBase::operator-(const FrFunctionBase& other) {
+        return FrSubFunction(*this, other);
     }
 
-    FrCompositeFunction FrFunctionBase::operator<<(const FrFunctionBase& other) {
-        return FrCompositeFunction(*this, other, FrCompositeFunction::OPERATOR::COM);
+    FrMulFunction FrFunctionBase::operator*(const FrFunctionBase& other) {
+        return FrMulFunction(*this, other);
     }
 
-    FrNegateFunction FrFunctionBase::operator-() {
-        return FrNegateFunction(*this);
+    FrdivFunction FrFunctionBase::operator/(const FrFunctionBase& other) {
+        return FrdivFunction(*this, other);
     }
 
-    FrMultiplyByScalarFunction FrFunctionBase::operator*(double alpha) {
-        return FrMultiplyByScalarFunction(*this, alpha);
+    FrCompFunction FrFunctionBase::operator<<(const FrFunctionBase& other) {
+        return FrCompFunction(*this, other);
     }
 
-    FrMultiplyByScalarFunction FrFunctionBase::operator/(double alpha) {
-        return FrMultiplyByScalarFunction(*this, 1./alpha);
+
+
+
+    FrMulFunction FrFunctionBase::operator*(double alpha) {
+        return FrMulFunction(*this, FrConstantFunction(alpha));
     }
 
-    FrMultiplyByScalarFunction operator*(double alpha, const FrFunctionBase& functionToScale) {
-        return FrMultiplyByScalarFunction(functionToScale, alpha);
+    FrdivFunction FrFunctionBase::operator/(double alpha) {
+        return FrdivFunction(*this, FrConstantFunction(alpha));
     }
 
-    FrAddScalarToFunction FrFunctionBase::operator+(double alpha) {
-        return FrAddScalarToFunction(*this, alpha);
+    FrAddFunction FrFunctionBase::operator+(double alpha) {
+        return FrAddFunction(*this, FrConstantFunction(alpha));
     }
 
-    FrAddScalarToFunction FrFunctionBase::operator-(double alpha) {
-        return FrAddScalarToFunction(*this, -alpha);
+    FrSubFunction FrFunctionBase::operator-(double alpha) {
+        return FrSubFunction(*this, FrConstantFunction(alpha));
     }
 
-    FrAddScalarToFunction operator+(double alpha, const FrFunctionBase& functionToAddScalar) {
-        return FrAddScalarToFunction(functionToAddScalar, alpha);
+
+
+
+    FrAddFunction operator+(double alpha, const FrFunctionBase& function) {
+        return FrAddFunction(FrConstantFunction(alpha), function);
     }
 
-    FrInverseFunction operator/(double alpha, const FrFunctionBase& functionToInverse) {
-        return FrInverseFunction(functionToInverse, alpha);
+    FrSubFunction operator-(double alpha, const FrFunctionBase& function) {
+        return FrSubFunction(FrConstantFunction(alpha), function);
     }
 
-//    FrPowerFunction pow(const FrFunctionBase& functionToPow, double pow);
+    FrMulFunction operator*(double alpha, const FrFunctionBase& function) {
+        return FrMulFunction(FrConstantFunction(alpha), function);
+    }
+
+    FrdivFunction operator/(double alpha, const FrFunctionBase& function) {
+        return FrdivFunction(FrConstantFunction(alpha), function);
+    }
+
 
     /*
      * FrFunction_
@@ -201,81 +217,195 @@ namespace frydom {
     FrFunction_::FrFunction_() : FrFunctionBase() {};
 
 
-
     /*
-     * FrCompositeFunction
+     * FrConstantFunction
      */
 
-    FrCompositeFunction::FrCompositeFunction(frydom::FrFunctionBase& function1, const frydom::FrFunctionBase& function2,
-                                             FrCompositeFunction::OPERATOR op) :
-                                                FrFunctionBase(),
-                                                m_operator(op) {
-        m_f1 = function1.Clone();
-        m_f2 = function2.Clone();
-
+    FrConstantFunction::FrConstantFunction(double scalar) {
+        c_y = scalar;
+        c_y_dx = 0.;
+        c_y_dxdx = 0.;
     }
 
-    FrCompositeFunction::FrCompositeFunction(const FrCompositeFunction &other) : FrFunctionBase() {
-        m_f1 = other.m_f1;
-        m_f2 = other.m_f2;
-        m_operator = other.m_operator;
+    FrConstantFunction::FrConstantFunction(const frydom::FrConstantFunction &other) {
+        c_y = other.c_y;
+        c_y_dx = 0.;
+        c_y_dxdx = 0.;
     }
 
-    FrCompositeFunction* FrCompositeFunction::Clone() const {
-        return new FrCompositeFunction(*this);
+    FrConstantFunction* FrConstantFunction::Clone() const {
+        return new FrConstantFunction(*this);
     }
 
-    void FrCompositeFunction::Eval(double x) const {
+    void FrConstantFunction::Set(double scalar) {
+        c_y = scalar;
+    }
+
+    double FrConstantFunction::Get() const {
+        return c_y;
+    }
+
+    double FrConstantFunction::operator()() const {
+        return c_y;
+    }
+
+    double& FrConstantFunction::operator()() {
+        return c_y;
+    }
+
+    std::string FrConstantFunction::GetRepr() const {
+        fmt::MemoryWriter mw;
+        mw << c_y;
+        return mw.str();
+    }
+
+    void FrConstantFunction::Eval(double x) const {}
+
+
+    /*
+     * FrUnarySignFunction
+     */
+
+    FrUnarySignFunction::FrUnarySignFunction(const FrFunctionBase& function, bool negate) : FrFunctionBase() {
+        m_function = function.Clone();
+        m_negate = negate;
+    }
+
+    FrUnarySignFunction::FrUnarySignFunction(const FrUnarySignFunction &other) : FrFunctionBase() {
+        m_function = other.m_function;
+        m_negate = other.m_negate;
+    }
+
+    FrUnarySignFunction* FrUnarySignFunction::Clone() const {
+        return new FrUnarySignFunction(*this);
+    }
+
+    std::string FrUnarySignFunction::GetRepr() const {
+        fmt::MemoryWriter mw;
+        if (m_negate) mw << '-';
+
+        mw << m_function->GetRepr();
+        return mw.str();
+    }
+
+    void FrUnarySignFunction::Eval(double x) const {
         if (IsEval(x)) return;
-
         c_x = x;
-
-        switch (m_operator) {
-            case ADD: // (u+v)
-                EvalADD();
-                break;
-
-            case SUB: // (u-v)
-                EvalSUB();
-                break;
-
-            case MUL: // (u*v)
-                EvalMUL();
-                break;
-
-            case DIV: // (u/v)
-                EvalDIV();
-                break;
-
-            case COM: // (u o v) operator (u << v)
-                EvalCOM();
-                break;
+        if (m_negate) {
+            c_y = -m_function->Get_y(x);
+            c_y_dx = -m_function->Get_y_dx(x);
+            c_y_dxdx = -m_function->Get_y_dxdx(x);
+        } else {
+            c_y = m_function->Get_y(x);
+            c_y_dx = m_function->Get_y_dx(x);
+            c_y_dxdx = m_function->Get_y_dxdx(x);
         }
     }
 
-    void FrCompositeFunction::EvalADD() const {
-        c_y      = m_f1->Get_y(c_x) + m_f2->Get_y(c_x);
-        c_y_dx   = m_f1->Get_y_dx(c_x) + m_f2->Get_y_dx(c_x);
-        c_y_dxdx = m_f1->Get_y_dxdx(c_x) + m_f2->Get_y_dxdx(c_x);
+
+
+    FrBinaryOpFunction::FrBinaryOpFunction(const FrFunctionBase& f1, const FrFunctionBase& f2) : FrFunctionBase() {
+        m_f1 = f1.Clone();
+        m_f2 = f2.Clone();
     }
 
-    void FrCompositeFunction::EvalSUB() const {
+    FrBinaryOpFunction::FrBinaryOpFunction(const FrBinaryOpFunction& other) : FrFunctionBase() {
+        m_f1 = other.m_f1;
+        m_f2 = other.m_f2;
+    }
+
+
+    FrAddFunction::FrAddFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
+
+    FrAddFunction::FrAddFunction(const FrAddFunction &other) : FrBinaryOpFunction(*other.m_f1, *other.m_f2) {}
+
+    FrAddFunction *FrAddFunction::Clone() const {
+        return new FrAddFunction(*this);
+    }
+
+    std::string FrAddFunction::GetRepr() const {
+        fmt::MemoryWriter mw;
+        mw << m_f1->GetRepr() << " + " << m_f2->GetRepr();
+        return mw.str();
+    }
+
+    void FrAddFunction::Eval(double x) const {
+        if (IsEval(x)) return;
+
+        c_x = x;
+        c_y = m_f1->Get_y(x) + m_f2->Get_y(x);
+        c_y_dx = m_f1->Get_y_dx(x) + m_f2->Get_y_dx(x);
+        c_y_dxdx = m_f1->Get_y_dxdx(x) + m_f2->Get_y_dxdx(x);
+
+    }
+
+    FrSubFunction::FrSubFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
+
+    FrSubFunction::FrSubFunction(const FrSubFunction &other) : FrBinaryOpFunction(*other.m_f1, *other.m_f2) {}
+
+    FrSubFunction *FrSubFunction::Clone() const {
+        return new FrSubFunction(*this);
+    }
+
+    std::string FrSubFunction::GetRepr() const {
+        fmt::MemoryWriter mw;
+        mw << m_f1->GetRepr() << " - " << m_f2->GetRepr();
+        return mw.str();
+    }
+
+    void FrSubFunction::Eval(double x) const {
+        if (IsEval(x)) return;
+
+        c_x = x;
         c_y = m_f1->Get_y(c_x) - m_f2->Get_y(c_x);
         c_y_dx   = m_f1->Get_y_dx(c_x) - m_f2->Get_y_dx(c_x);
         c_y_dxdx = m_f1->Get_y_dxdx(c_x) - m_f2->Get_y_dxdx(c_x);
     }
 
-    void FrCompositeFunction::EvalMUL() const {
+    FrMulFunction::FrMulFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
+
+    FrMulFunction::FrMulFunction(const FrMulFunction &other) : FrBinaryOpFunction(*other.m_f1, *other.m_f2) {}
+
+    FrMulFunction *FrMulFunction::Clone() const {
+        return new FrMulFunction(*this);
+    }
+
+    std::string FrMulFunction::GetRepr() const {
+        fmt::MemoryWriter mw;
+        mw << m_f1->GetRepr() << " * " << m_f2->GetRepr();
+        return mw.str();
+    }
+
+    void FrMulFunction::Eval(double x) const {
+        if (IsEval(x)) return;
+
+        c_x = x;
         double u, u_dx, u_dxdx, v, v_dx, v_dxdx;
         EvalFunctions(u, u_dx, u_dxdx, v, v_dx, v_dxdx);
 
         c_y      = u * v;
         c_y_dx   = u_dx * v + v_dx * u;
         c_y_dxdx = u_dxdx*v + 2.*u_dx*v_dx + v_dxdx*u;
-
     }
 
-    void FrCompositeFunction::EvalDIV() const {
+    FrdivFunction::FrdivFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
+
+    FrdivFunction::FrdivFunction(const FrdivFunction &other) : FrBinaryOpFunction(*other.m_f1, *other.m_f2) {}
+
+    FrdivFunction *FrdivFunction::Clone() const {
+        return new FrdivFunction(*this);
+    }
+
+    std::string FrdivFunction::GetRepr() const {
+        fmt::MemoryWriter mw;
+        mw << m_f1->GetRepr() << " / " << m_f2->GetRepr();
+        return mw.str();
+    }
+
+    void FrdivFunction::Eval(double x) const {
+        if (IsEval(x)) return;
+
+        c_x = x;
         double u, u_dx, u_dxdx, v, v_dx, v_dxdx;
         EvalFunctions(u, u_dx, u_dxdx, v, v_dx, v_dxdx);
 
@@ -284,7 +414,25 @@ namespace frydom {
         c_y_dxdx = (u_dxdx - 2. * c_y_dx * v_dx - c_y * v_dxdx) / v;
     }
 
-    void FrCompositeFunction::EvalCOM() const {
+    FrCompFunction::FrCompFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
+
+    FrCompFunction::FrCompFunction(const FrCompFunction &other) : FrBinaryOpFunction(*other.m_f1, *other.m_f2) {}
+
+    FrCompFunction *FrCompFunction::Clone() const {
+        return new FrCompFunction(*this);
+    }
+
+    std::string FrCompFunction::GetRepr() const {
+        fmt::MemoryWriter mw;
+
+//        mw <<
+        // TODO
+    }
+
+    void FrCompFunction::Eval(double x) const {
+        if (IsEval(x)) return;
+
+        c_x = x;
         double v    = m_f2->Get_y(c_x);
         double v_dx = m_f2->Get_y_dx(c_x);
         double v_dxdx = m_f2->Get_y_dxdx(c_x);
@@ -293,124 +441,6 @@ namespace frydom {
         c_y_dx = v_dx * m_f1->Get_y_dx(v);
         c_y_dxdx = v_dxdx * m_f1->Get_y_dx(v) + v_dx*v_dx * m_f1->Get_y_dxdx(v);
     }
-
-
-    /*
-     * FrNegateFunction
-     */
-
-    FrNegateFunction::FrNegateFunction(FrFunctionBase& functionToNegate) : FrFunctionBase() {
-        m_functionToNegate = functionToNegate.Clone();
-    }
-
-    FrNegateFunction::FrNegateFunction(const frydom::FrNegateFunction &other) : FrFunctionBase() {
-        m_functionToNegate = other.m_functionToNegate;
-    }
-
-    FrNegateFunction* FrNegateFunction::Clone() const {
-        return new FrNegateFunction(*this);
-    }
-
-
-
-    void FrNegateFunction::Eval(double x) const {
-        if (IsEval(x)) return;
-        c_x = x;
-        c_y = - m_functionToNegate->Get_y(x);
-        c_y_dx = - m_functionToNegate->Get_y_dx(x);
-        c_y_dxdx = - m_functionToNegate->Get_y_dxdx(x);
-
-    }
-
-    /*
-     * FrMultiplyByScalarFunction
-     */
-
-    FrMultiplyByScalarFunction::FrMultiplyByScalarFunction(const FrFunctionBase& functionToScale, double alpha) :
-        FrFunctionBase() , m_alpha(alpha) {
-        m_functionToScale = functionToScale.Clone();
-    }
-
-    FrMultiplyByScalarFunction::FrMultiplyByScalarFunction(const FrMultiplyByScalarFunction &other) {
-        m_alpha = other.m_alpha;
-        m_functionToScale = other.m_functionToScale;
-    }
-
-    FrMultiplyByScalarFunction* FrMultiplyByScalarFunction::Clone() const {
-        return new FrMultiplyByScalarFunction(*this);
-    }
-
-    void FrMultiplyByScalarFunction::Eval(double x) const {
-        if (IsEval(x)) return;
-        c_x = x;
-        c_y = m_alpha * m_functionToScale->Get_y(x);
-        c_y_dx = m_alpha * m_functionToScale->Get_y_dx(x);
-        c_y_dxdx = m_alpha * m_functionToScale->Get_y_dxdx(x);
-    }
-
-
-    /*
-     * FrInverseFunction
-     */
-
-    FrInverseFunction::FrInverseFunction(const FrFunctionBase& functionToInverse, double alpha) :
-        FrFunctionBase(), m_alpha(alpha) {
-        m_functionToInverse = functionToInverse.Clone();
-    }
-
-    FrInverseFunction::FrInverseFunction(const frydom::FrInverseFunction &other) {
-        m_alpha = other.m_alpha;
-        m_functionToInverse = other.m_functionToInverse;
-//        m_xOffset = m_xOffset;
-    }
-
-    FrInverseFunction* FrInverseFunction::Clone() const {
-        return new FrInverseFunction(*this);
-    }
-
-    void FrInverseFunction::Eval(double x) const {
-        if (IsEval(x)) return;
-        c_x = x;
-
-        double u = m_functionToInverse->Get_y(x);
-        double u_dx = m_functionToInverse->Get_y_dx(x);
-        double u_dxdx = m_functionToInverse->Get_y_dxdx(x);
-
-        c_y = m_alpha / u;
-        c_y_dx = - m_alpha * u_dx / (u*u);
-        c_y_dxdx = - m_alpha * (2.*c_y_dx*u_dx + c_y*u_dxdx) / u;
-
-    }
-
-    /*
-     * FrAddScalarToFunction
-     */
-
-    FrAddScalarToFunction::FrAddScalarToFunction(const FrFunctionBase& functionToInverse, double alpha) :
-        FrFunctionBase(), m_alpha(alpha) {
-        m_functionToAddScalar = functionToInverse.Clone();
-    }
-
-    FrAddScalarToFunction::FrAddScalarToFunction(const FrAddScalarToFunction &other) {
-        m_alpha = other.m_alpha;
-        m_functionToAddScalar = other.m_functionToAddScalar;
-//        m_xOffset = m_xOffset;
-    }
-
-    FrAddScalarToFunction* FrAddScalarToFunction::Clone() const {
-        return new FrAddScalarToFunction(*this);
-    }
-
-    void FrAddScalarToFunction::Eval(double x) const {
-        if (IsEval(x)) return;
-        c_x = x;
-
-        c_y = m_alpha + m_functionToAddScalar->Get_y(x);
-        c_y_dx = m_functionToAddScalar->Get_y_dx(x);
-        c_y_dxdx = m_functionToAddScalar->Get_y_dxdx(x);
-    }
-
-
 
 
 }  // end namespace frydom

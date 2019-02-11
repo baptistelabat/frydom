@@ -79,6 +79,7 @@ list(APPEND SRC_FILES
         math/functions/ramp/FrLinearRampFunction.cpp
         math/functions/ramp/FrTanhRampFunction.cpp
 
+        math/functions/lib/FrPolynomialFunction.cpp
 
 
         )

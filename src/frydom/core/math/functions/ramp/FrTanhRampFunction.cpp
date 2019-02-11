@@ -51,6 +51,10 @@ namespace frydom {
         c_a = 0.5 * log((1-m_tolerance) / m_tolerance);
     }
 
+    std::string FrTanhRampFunction::GetRepr() const {
+        return ""; // TODO
+    }
+
     void FrTanhRampFunction::Eval(double x) const {
         double xTmp(x);
         if (xTmp <= m_xOffset) {

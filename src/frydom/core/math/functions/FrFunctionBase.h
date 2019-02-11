@@ -73,28 +73,14 @@ namespace frydom {
 
 
 
+
+
+
+
+
+
     // REFACTORING ------------->>>>>>>>>>>>>>>>>>
 
-
-
-
-
-    /*
-     * TODO : voir pour faire :
-     *
-     * sin
-     * tan
-     * exp
-     * log
-     * ch
-     * sh
-     * th -> utilisation particuliere en tant que rampe
-     * polynomial (arbitrary order)
-     * spline
-     * depuis fichier
-     *
-     *
-     */
 
     // Forward declaration
     class FrFunctionBase;
@@ -120,43 +106,23 @@ namespace frydom {
     }  // end namespace frydom::internal
 
     // Forward declaration
-    class FrCompositeFunction;
-    class FrNegateFunction;
-    class FrMultiplyByScalarFunction;
-    class FrInverseFunction;
-    class FrAddScalarToFunction;
-
-
-//    class FrPowerOfFunction;
-//    class FrExpOfFunction;
-//    class FrLogOfFunction;
-//    class FrSinOfFunction;
-//    class FrCosOfFunction;
-//    class FrTanOfFunction;
-//    class FrASinOfFunction;
-//    class FrAcosOfFunction;
-//    class FrATanOfFunction;
-//    class FrSinhOfFunction;
-//    class FrAsinhOfFunction;
-//    class FrCoshOfFunction;
-//    class FrACoshOfFunction;
-//    class FrTanhOfFunction;
-//    class FrATanhOfFunction;
-//    class FrSqrtOfFunction;
-//    class FrSqrtOfFunction;
-//    class FrAbsOfFunction;
-//    class FrSgnOfFunction;
+    class FrUnarySignFunction;
+    class FrAddFunction;
+    class FrSubFunction;
+    class FrMulFunction;
+    class FrdivFunction;
+    class FrCompFunction;
 
 
     /*
-     * FrFunction_
+     * FrFunctionBase
      */
 
     class FrFunctionBase : public FrObject {
 
     private:
 
-        std::shared_ptr<internal::FrChronoFunctionWrapper> m_chronoFunction;
+        std::shared_ptr<internal::FrChronoFunctionWrapper> m_chronoFunction;  // TODO : deleguer cet attribut a du chrono interface qu'on placera en interne ?
 
         bool m_isActive = true; // TODO : retirer ?
 
@@ -194,41 +160,47 @@ namespace frydom {
 
         // TODO : ajouter operateurs pour ajout de scalaire...
 
+        virtual std::string GetRepr() const = 0;
+
         void WriteToGnuPlotFile(double xmin, double xmax, double dx, std::string filename = "functionOutput") const;
 
         /*
          * Operators
          */
 
+        /// Negate a function
+        FrUnarySignFunction operator-();
+        FrUnarySignFunction operator+();
+
+
         /// Add two functions
-        FrCompositeFunction operator+(const FrFunctionBase& other);
+        FrAddFunction operator+(const FrFunctionBase& other);
 
         /// Substract two functions
-        FrCompositeFunction operator-(const FrFunctionBase& other);
+        FrSubFunction operator-(const FrFunctionBase& other);
 
         /// Multiplpy two functions
-        FrCompositeFunction operator*(const FrFunctionBase& other);
+        FrMulFunction operator*(const FrFunctionBase& other);
 
         /// Divide two functions
-        FrCompositeFunction operator/(const FrFunctionBase& other);
+        FrdivFunction operator/(const FrFunctionBase& other);
 
         /// Compose two functions -> this(other(x))
-        FrCompositeFunction operator<<(const FrFunctionBase& other);
+        FrCompFunction operator<<(const FrFunctionBase& other);
 
-        /// Negate a function
-        FrNegateFunction operator-();
 
-        /// Right multiply a function by a scalar
-        FrMultiplyByScalarFunction operator*(double alpha);
 
         /// Right multiply a function by a scalar
-        FrMultiplyByScalarFunction operator/(double alpha);
+        FrMulFunction operator*(double alpha);
+
+        /// Right divide a function by a scalar
+        FrdivFunction operator/(double alpha);
 
         /// Add a scalar to the function to the right
-        FrAddScalarToFunction operator+(double alpha);
+        FrAddFunction operator+(double alpha);
 
         /// Substract a scalar to the function to the right
-        FrAddScalarToFunction operator-(double alpha);
+        FrSubFunction operator-(double alpha);
 
 
     protected:
@@ -247,16 +219,17 @@ namespace frydom {
 
     };
 
-    /// Left multiply a function by a scalar
-    FrMultiplyByScalarFunction operator*(double alpha, const FrFunctionBase& functionToScale);
+    /// Add a scalar to the function to the left
+    FrAddFunction operator+(double alpha, const FrFunctionBase& function);
 
     /// Add a scalar to the function to the left
-    FrAddScalarToFunction operator+(double alpha, const FrFunctionBase& functionToAddScalar);
+    FrSubFunction operator-(double alpha, const FrFunctionBase& function);
+
+    /// Left multiply a function by a scalar
+    FrMulFunction operator*(double alpha, const FrFunctionBase& function);
 
     /// Inverse a function and multiply by a scalar
-    FrInverseFunction operator/(double alpha, const FrFunctionBase& functionToInverse);
-
-
+    FrdivFunction operator/(double alpha, const FrFunctionBase& function);
 
 
 
@@ -266,53 +239,74 @@ namespace frydom {
 
     class FrFunction_ : public FrFunctionBase {
 
+//    private:
+//        std::shared_ptr<internal::FrChronoFunctionWrapper> m_chronoFunction;
+
     public:
         FrFunction_();
 
     };
 
 
-
-    /*
-     * FrCompositeFunction, Result of binary operators
-     */
-
-    // FIXME : en vrai cette classe devrait etre la classe de base de toutes les fonctions binaires du type f1 op f2
-    class FrCompositeFunction : public FrFunctionBase { // TODO : splitter en 5 classes
-
-    protected:
-        friend class FrFunctionBase;
-        enum OPERATOR {
-            ADD, // +
-            SUB, // -
-            MUL, // *
-            DIV, // /
-            COM  // << (composition of functions)
-        };
-
-    private:
-        FrFunctionBase* m_f1; // Il va certainement falloir stocker la fonction produite quelque part !
-        FrFunctionBase* m_f2;
-        OPERATOR m_operator;
+    class FrConstantFunction : public FrFunctionBase {
 
     public:
+        explicit FrConstantFunction(double scalar);
+        FrConstantFunction(const FrConstantFunction& other);
+        FrConstantFunction* Clone() const;
 
-        FrCompositeFunction(FrFunctionBase& function1, const FrFunctionBase& function2, OPERATOR op);
+        void Set(double scalar);
+        double Get() const;
+        double operator()() const;
+        double& operator()();
+        std::string GetRepr() const override;
 
-        FrCompositeFunction(const FrCompositeFunction& other);
-
-        FrCompositeFunction* Clone() const;
-
-
-    private:
-
+    protected:
         void Eval(double x) const override;
 
-        void EvalADD() const;
-        void EvalSUB() const;
-        void EvalMUL() const;
-        void EvalDIV() const;
-        void EvalCOM() const;
+    };
+
+
+
+    /*
+     * Results of unary operators
+     */
+
+    class FrUnarySignFunction : public FrFunctionBase {
+
+    private:
+        FrFunctionBase* m_function;
+        bool m_negate = false;
+
+    public:
+        FrUnarySignFunction(const FrFunctionBase& function, bool negate);
+        FrUnarySignFunction(const FrUnarySignFunction& other);
+        FrUnarySignFunction* Clone() const;
+        std::string GetRepr() const override;
+
+    protected:
+        void Eval(double x) const override;
+
+    };
+
+
+    /*
+     * Results of binary operators
+     */
+
+
+    /// Base class for functions that result from a binary operation (abstract)
+    class FrBinaryOpFunction : public FrFunctionBase {
+
+    protected:
+        FrFunctionBase* m_f1;
+        FrFunctionBase* m_f2;
+
+    public:
+        FrBinaryOpFunction(const FrFunctionBase& f1, const FrFunctionBase& f2);
+        FrBinaryOpFunction(const FrBinaryOpFunction& other);
+
+    protected:
 
         inline void EvalFunctions(double& u, double& u_dx, double& u_dxdx, double& v, double& v_dx, double& v_dxdx) const {
             u = m_f1->Get_y(c_x);
@@ -328,94 +322,75 @@ namespace frydom {
     };
 
 
-    /*
-     * Results of unary operators
-     */
 
-
-    /// Class for the result of - operator on FrFunctionBase
-    class FrNegateFunction : public FrFunctionBase {
-
-    private:
-        FrFunctionBase* m_functionToNegate;
+    /// Class that result from adding two functions
+    class FrAddFunction : public FrBinaryOpFunction {
 
     public:
+        FrAddFunction(const FrFunctionBase& f1, const FrFunctionBase& f2);
+        FrAddFunction(const FrAddFunction& other);
+        FrAddFunction* Clone() const;
+        std::string GetRepr() const override;
 
-        explicit FrNegateFunction(FrFunctionBase& functionToNegate);
+    protected:
+        void Eval(double x) const override;
 
-        FrNegateFunction(const FrNegateFunction& other);
+    };
+    /// Class that result from subtracting two functions
+    class FrSubFunction : public FrBinaryOpFunction {
 
-        FrNegateFunction* Clone() const;
-
-
+    public:
+        FrSubFunction(const FrFunctionBase& f1, const FrFunctionBase& f2);
+        FrSubFunction(const FrSubFunction& other);
+        FrSubFunction* Clone() const;
+        std::string GetRepr() const override;
 
     protected:
         void Eval(double x) const override;
 
     };
 
-
-    /// Class for the result of a multiplication of of FrFunctionBase by a scalar
-    class FrMultiplyByScalarFunction : public FrFunctionBase {
-
-    private:
-        double m_alpha;
-        FrFunctionBase* m_functionToScale;
+    /// Class that result from multiplying two functions
+    class FrMulFunction : public FrBinaryOpFunction {
 
     public:
-        FrMultiplyByScalarFunction(const FrFunctionBase& functionToScale, double alpha);
-
-        FrMultiplyByScalarFunction(const FrMultiplyByScalarFunction& other);
-
-        FrMultiplyByScalarFunction* Clone() const;
+        FrMulFunction(const FrFunctionBase& f1, const FrFunctionBase& f2);
+        FrMulFunction(const FrMulFunction& other);
+        FrMulFunction* Clone() const;
+        std::string GetRepr() const override;
 
     protected:
         void Eval(double x) const override;
 
     };
 
-
-    /// Class for the result of a scalar divided by a FrFunctionBase
-    class FrInverseFunction : public FrFunctionBase { // TODO : mettre des gardes fou pour la division par 0...
-
-    private:
-        double m_alpha;
-        FrFunctionBase* m_functionToInverse;
+    /// Class that result from dividing two functions
+    class FrdivFunction : public FrBinaryOpFunction {
 
     public:
-        FrInverseFunction(const FrFunctionBase& m_functionToInverse, double alpha);
-
-        FrInverseFunction(const FrInverseFunction& other);
-
-        FrInverseFunction* Clone() const;
+        FrdivFunction(const FrFunctionBase& f1, const FrFunctionBase& f2);
+        FrdivFunction(const FrdivFunction& other);
+        FrdivFunction* Clone() const;
+        std::string GetRepr() const override;
 
     protected:
         void Eval(double x) const override;
 
     };
 
-
-    /// Class for the result of addition of a FrFunctionBase and a scalar
-    class FrAddScalarToFunction : public FrFunctionBase {
-
-    private:
-        double m_alpha;
-        FrFunctionBase* m_functionToAddScalar;
+    /// Class that result from composing two functions
+    class FrCompFunction : public FrBinaryOpFunction {
 
     public:
-        FrAddScalarToFunction(const FrFunctionBase& functionToAddScalar, double alpha);
-
-        FrAddScalarToFunction(const FrAddScalarToFunction& other);
-
-        FrAddScalarToFunction* Clone() const;
+        FrCompFunction(const FrFunctionBase& f1, const FrFunctionBase& f2);
+        FrCompFunction(const FrCompFunction& other);
+        FrCompFunction* Clone() const;
+        std::string GetRepr() const override;
 
     protected:
         void Eval(double x) const override;
 
     };
-
-
-
 
 
 }  // end namespace frydom

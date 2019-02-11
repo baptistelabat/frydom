@@ -5,15 +5,8 @@
 #ifndef FRYDOM_FRFUNCTIONSINC_H
 #define FRYDOM_FRFUNCTIONSINC_H
 
-// Ramp functions
-#include "ramp/FrLinearRampFunction.h"
-#include "ramp/FrTanhRampFunction.h"
+#include "ramp/FrRampFunctionInc.h"
+#include "lib/FrFunctionLibInc.h"
 
 
-
-//#include "FrLogFunction.h"
-//#include "FrSinFunction.h"
-//#include "FrTanFunction.h"
-
-//#include "FrExpFunction.h"
 #endif //FRYDOM_FRFUNCTIONSINC_H
