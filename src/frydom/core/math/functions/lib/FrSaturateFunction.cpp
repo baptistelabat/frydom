@@ -12,7 +12,7 @@ namespace frydom {
         m_function = function.Clone();
     }
 
-    FrSaturateFunction::FrSaturateFunction(const FrSaturateFunction& other) {
+    FrSaturateFunction::FrSaturateFunction(const FrSaturateFunction& other) : FrFunctionBase(other) {
         m_ymin = other.m_ymin;
         m_ymax = other.m_ymax;
     }
@@ -38,6 +38,7 @@ namespace frydom {
     void FrSaturateFunction::Eval(double x) const {
 
         c_x = x;
+
         c_y = m_function->Get_y(x);
         c_y_dx = m_function->Get_y_dx(x);
         c_y_dxdx = m_function->Get_y_dxdx(x);
@@ -54,6 +55,25 @@ namespace frydom {
             c_y_dxdx = 0.;
         }
 
+    }
+
+    FrSaturateFunction saturate_high(const FrFunctionBase& function, double ymax) {
+        auto func = FrSaturateFunction(function);
+        func.SetYMax(ymax);
+        return func;
+    }
+
+    FrSaturateFunction saturate_low(const FrFunctionBase& function, double ymin) {
+        auto func = FrSaturateFunction(function);
+        func.SetYMin(ymin);
+        return func;
+    }
+
+    FrSaturateFunction saturate_both(const FrFunctionBase& function, double ymin, double ymax) {
+        auto func = FrSaturateFunction(function);
+        func.SetYMin(ymin);
+        func.SetYMax(ymax);
+        return func;
     }
 
 

@@ -12,7 +12,7 @@ namespace frydom {
         ComputeA();
     }
 
-    FrTanhRampFunction::FrTanhRampFunction(const FrTanhRampFunction& other) : FrFunction_() {
+    FrTanhRampFunction::FrTanhRampFunction(const FrTanhRampFunction& other) : FrFunctionBase() {
         m_tolerance = other.m_tolerance;
         m_width = other.m_width;
         m_height = other.m_height;

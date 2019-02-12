@@ -9,13 +9,13 @@
 
 namespace frydom {
 
-    class FrPowFunction : public FrFunction_ {
+    class FrPowFunction : public FrFunctionBase {
 
     private:
         double m_power = 1.;
 
     public:
-        explicit FrPowFunction(double power);
+        FrPowFunction(const FrFunctionBase& function, double power);
         FrPowFunction(const FrPowFunction& other);
         FrPowFunction* Clone() const override;
 
@@ -27,6 +27,8 @@ namespace frydom {
         void Eval(double x) const;
 
     };
+
+    FrPowFunction pow(const FrFunctionBase& function, double power);
 
 }  // end namespace frydom
 

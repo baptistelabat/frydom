@@ -9,13 +9,12 @@
 namespace frydom {
 
     FrLinearFunction::FrLinearFunction(double intercept, double slope) : m_intercept(intercept), m_slope(slope) {
-//        *this = slope * FrPowFunction(1) + FrConstantFunction(intercept);
+        m_function = (slope * FrVarXFunction() + intercept).Clone();
     }
 
-    FrLinearFunction::FrLinearFunction(const FrLinearFunction& other) {
+    FrLinearFunction::FrLinearFunction(const FrLinearFunction& other) : FrFunctionBase(other) {
         m_intercept = other.m_intercept;
         m_slope = other.m_slope;
-
     }
 
     FrLinearFunction* FrLinearFunction::Clone() const {
@@ -53,7 +52,12 @@ namespace frydom {
     }
 
     void FrLinearFunction::Eval(double x) const {
+        if (IsEval(x)) return;
 
+        c_x = x;
+        c_y = m_function->Get_y(x);
+        c_y_dx = m_function->Get_y_dx(x);
+        c_y_dxdx = m_function->Get_y_dxdx(x);
     }
 
 

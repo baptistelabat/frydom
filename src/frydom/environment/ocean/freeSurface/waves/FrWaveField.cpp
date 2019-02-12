@@ -123,7 +123,7 @@ namespace frydom {
 
     WAVE_MODEL FrWaveField::GetWaveModel() const { return m_waveModel; }
 
-    std::shared_ptr<FrRampFunction_> FrWaveField::GetWaveRamp() const {
+    std::shared_ptr<FrLinearRampFunction_> FrWaveField::GetWaveRamp() const {
         return m_waveRamp;
     }
 
@@ -322,7 +322,7 @@ namespace frydom {
         Initialize();
         Update(0.);
 
-        m_waveRamp = std::make_shared<FrRampFunction_>();
+        m_waveRamp = std::make_shared<FrLinearRampFunction_>();
 //        m_waveRamp->
         m_waveRamp->Initialize();
 

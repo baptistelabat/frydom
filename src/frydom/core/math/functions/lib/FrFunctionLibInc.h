@@ -8,5 +8,7 @@
 #include "FrPowFunction.h"
 #include "FrLinearFunction.h"
 #include "FrSaturateFunction.h"
+#include "FrClampFunction.h"
+#include "FrPolynomialFunction.h"
 
 #endif //FRYDOM_FRFUNCTIONLIBINC_H

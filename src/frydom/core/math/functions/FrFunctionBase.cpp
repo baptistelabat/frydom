@@ -45,12 +45,26 @@ namespace frydom {
      */
 
     FrFunctionBase::FrFunctionBase() {
-        m_chronoFunction = std::make_shared<internal::FrChronoFunctionWrapper>(this);
+//        m_chronoFunction = std::make_shared<internal::FrChronoFunctionWrapper>(this);
     }
 
-//    FrFunctionBase::FrFunctionBase(const frydom::FrCompositeFunction &other) {
-//        this = other.Clone();
-//    }
+    FrFunctionBase::~FrFunctionBase() {
+        delete m_function;
+    }
+
+    FrFunctionBase::FrFunctionBase(const FrFunctionBase& other) {
+        if (other.m_function) {
+            m_function = other.m_function->Clone();
+        } else {
+            m_function = nullptr;
+        }
+
+        // Copying the cache
+        c_x = other.c_x;
+        c_y = other.c_y;
+        c_y_dx = other.c_y_dx;
+        c_y_dxdx = other.c_y_dxdx;
+    }
 
     bool FrFunctionBase::IsActive() const {
         return m_isActive;
@@ -89,9 +103,9 @@ namespace frydom {
         return Get_y(x);
     }
 
-    std::shared_ptr<chrono::ChFunction> FrFunctionBase::GetChronoFunction() {
-        return m_chronoFunction;
-    }
+//    std::shared_ptr<chrono::ChFunction> FrFunctionBase::GetChronoFunction() {
+//        return m_chronoFunction;
+//    }
 
     void FrFunctionBase::WriteToGnuPlotFile(double xmin, double xmax, double dx, std::string filename) const {
 
@@ -190,6 +204,38 @@ namespace frydom {
         return FrSubFunction(*this, FrConstantFunction(alpha));
     }
 
+    void FrFunctionBase::operator+=(const FrFunctionBase& other) {
+        m_function = FrAddFunction(*m_function, other).Clone();
+    }
+
+    void FrFunctionBase::operator-=(const FrFunctionBase& other) {
+        m_function = FrSubFunction(*m_function, other).Clone();
+    }
+
+    void FrFunctionBase::operator*=(const FrFunctionBase& other) {
+        m_function = FrMulFunction(*m_function, other).Clone();
+    }
+
+    void FrFunctionBase::operator/=(const FrFunctionBase& other) {
+        m_function = FrdivFunction(*m_function, other).Clone();
+    }
+
+    void FrFunctionBase::operator+=(double alpha) {
+        m_function = FrAddFunction(*m_function, FrConstantFunction(alpha)).Clone();
+    }
+
+    void FrFunctionBase::operator-=(double alpha) {
+        m_function = FrSubFunction(*m_function, FrConstantFunction(alpha)).Clone();
+    }
+
+    void FrFunctionBase::operator*=(double alpha) {
+        m_function = FrMulFunction(*m_function, FrConstantFunction(alpha)).Clone();
+    }
+
+    void FrFunctionBase::operator/=(double alpha) {
+        m_function = FrdivFunction(*m_function, FrConstantFunction(alpha)).Clone();
+    }
+
 
 
 
@@ -211,23 +257,37 @@ namespace frydom {
 
 
 
-    FrXFunction::FrXFunction() = default;
+    FrVarXFunction::FrVarXFunction() {
+        m_function = nullptr;
+    };
 
-    FrXFunction::FrXFunction(const FrXFunction& other) {}
-
-    FrXFunction* FrXFunction::Clone() const {
-        return new FrXFunction(*this);
+    FrVarXFunction::FrVarXFunction(std::string varname) : FrVarXFunction() {
+        m_varname = varname;
     }
 
-    std::string FrXFunction::GetRepr() const {
-        return "x";
+    FrVarXFunction::FrVarXFunction(const FrVarXFunction& other) : FrFunctionBase(other) {}
+
+    FrVarXFunction* FrVarXFunction::Clone() const {
+        return new FrVarXFunction(*this);
     }
 
-    void FrXFunction::Eval(double x) const {
+    std::string FrVarXFunction::GetRepr() const {
+        return m_varname;
+    }
+
+    void FrVarXFunction::Eval(double x) const {
         c_x = x;
         c_y = x;
         c_y_dx = 1;
         c_y_dxdx = 0.;
+    }
+
+    FrVarXFunction new_var() {
+        return FrVarXFunction();
+    }
+
+    FrVarXFunction new_var(std::string varname) {
+        return FrVarXFunction(varname);
     }
 
 
@@ -235,7 +295,17 @@ namespace frydom {
      * FrFunction_
      */
 
-    FrFunction_::FrFunction_() : FrFunctionBase() {};
+//    FrFunction_::FrFunction_() : FrFunctionBase() {
+//        m_function = new FrVarXFunction();
+//    };
+//
+//    FrFunction_::FrFunction_(const FrFunctionBase& function) {
+//        m_function = function.Clone();
+//    }
+//
+//    FrFunction_::~FrFunction_() {
+//        delete m_function; // TODO : voir si ca fonctionne ...
+//    }
 
 
     /*
@@ -243,16 +313,13 @@ namespace frydom {
      */
 
     FrConstantFunction::FrConstantFunction(double scalar) {
+        m_function = nullptr;
         c_y = scalar;
         c_y_dx = 0.;
         c_y_dxdx = 0.;
     }
 
-    FrConstantFunction::FrConstantFunction(const frydom::FrConstantFunction &other) {
-        c_y = other.c_y;
-        c_y_dx = 0.;
-        c_y_dxdx = 0.;
-    }
+    FrConstantFunction::FrConstantFunction(const frydom::FrConstantFunction &other) : FrFunctionBase(other) {}
 
     FrConstantFunction* FrConstantFunction::Clone() const {
         return new FrConstantFunction(*this);
@@ -287,13 +354,12 @@ namespace frydom {
      * FrUnarySignFunction
      */
 
-    FrUnarySignFunction::FrUnarySignFunction(const FrFunctionBase& function, bool negate) : FrFunctionBase() {
+    FrUnarySignFunction::FrUnarySignFunction(const FrFunctionBase& function, bool negate) {
         m_function = function.Clone();
         m_negate = negate;
     }
 
-    FrUnarySignFunction::FrUnarySignFunction(const FrUnarySignFunction &other) : FrFunctionBase() {
-        m_function = other.m_function;
+    FrUnarySignFunction::FrUnarySignFunction(const FrUnarySignFunction &other) : FrFunctionBase(other) {
         m_negate = other.m_negate;
     }
 
@@ -326,19 +392,18 @@ namespace frydom {
 
 
     FrBinaryOpFunction::FrBinaryOpFunction(const FrFunctionBase& f1, const FrFunctionBase& f2) : FrFunctionBase() {
-        m_f1 = f1.Clone();
-        m_f2 = f2.Clone();
+        m_function = f1.Clone();
+        m_rightFunction = f2.Clone();
     }
 
-    FrBinaryOpFunction::FrBinaryOpFunction(const FrBinaryOpFunction& other) : FrFunctionBase() {
-        m_f1 = other.m_f1;
-        m_f2 = other.m_f2;
+    FrBinaryOpFunction::FrBinaryOpFunction(const FrBinaryOpFunction& other) : FrFunctionBase(other) {
+        m_rightFunction = other.m_rightFunction->Clone();
     }
 
 
     FrAddFunction::FrAddFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
 
-    FrAddFunction::FrAddFunction(const FrAddFunction &other) : FrBinaryOpFunction(*other.m_f1, *other.m_f2) {}
+    FrAddFunction::FrAddFunction(const FrAddFunction &other) : FrBinaryOpFunction(other) {}
 
     FrAddFunction *FrAddFunction::Clone() const {
         return new FrAddFunction(*this);
@@ -346,7 +411,7 @@ namespace frydom {
 
     std::string FrAddFunction::GetRepr() const {
         fmt::MemoryWriter mw;
-        mw << m_f1->GetRepr() << " + " << m_f2->GetRepr();
+        mw << m_function->GetRepr() << " + " << m_rightFunction->GetRepr();
         return mw.str();
     }
 
@@ -354,15 +419,15 @@ namespace frydom {
         if (IsEval(x)) return;
 
         c_x = x;
-        c_y = m_f1->Get_y(x) + m_f2->Get_y(x);
-        c_y_dx = m_f1->Get_y_dx(x) + m_f2->Get_y_dx(x);
-        c_y_dxdx = m_f1->Get_y_dxdx(x) + m_f2->Get_y_dxdx(x);
+        c_y = m_function->Get_y(x) + m_rightFunction->Get_y(x);
+        c_y_dx = m_function->Get_y_dx(x) + m_rightFunction->Get_y_dx(x);
+        c_y_dxdx = m_function->Get_y_dxdx(x) + m_rightFunction->Get_y_dxdx(x);
 
     }
 
     FrSubFunction::FrSubFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
 
-    FrSubFunction::FrSubFunction(const FrSubFunction &other) : FrBinaryOpFunction(*other.m_f1, *other.m_f2) {}
+    FrSubFunction::FrSubFunction(const FrSubFunction &other) : FrBinaryOpFunction(other) {}
 
     FrSubFunction *FrSubFunction::Clone() const {
         return new FrSubFunction(*this);
@@ -370,7 +435,7 @@ namespace frydom {
 
     std::string FrSubFunction::GetRepr() const {
         fmt::MemoryWriter mw;
-        mw << m_f1->GetRepr() << " - " << m_f2->GetRepr();
+        mw << m_function->GetRepr() << " - " << m_rightFunction->GetRepr();
         return mw.str();
     }
 
@@ -378,14 +443,14 @@ namespace frydom {
         if (IsEval(x)) return;
 
         c_x = x;
-        c_y = m_f1->Get_y(c_x) - m_f2->Get_y(c_x);
-        c_y_dx   = m_f1->Get_y_dx(c_x) - m_f2->Get_y_dx(c_x);
-        c_y_dxdx = m_f1->Get_y_dxdx(c_x) - m_f2->Get_y_dxdx(c_x);
+        c_y = m_function->Get_y(c_x) - m_rightFunction->Get_y(c_x);
+        c_y_dx   = m_function->Get_y_dx(c_x) - m_rightFunction->Get_y_dx(c_x);
+        c_y_dxdx = m_function->Get_y_dxdx(c_x) - m_rightFunction->Get_y_dxdx(c_x);
     }
 
     FrMulFunction::FrMulFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
 
-    FrMulFunction::FrMulFunction(const FrMulFunction &other) : FrBinaryOpFunction(*other.m_f1, *other.m_f2) {}
+    FrMulFunction::FrMulFunction(const FrMulFunction &other) : FrBinaryOpFunction(other) {}
 
     FrMulFunction *FrMulFunction::Clone() const {
         return new FrMulFunction(*this);
@@ -393,7 +458,7 @@ namespace frydom {
 
     std::string FrMulFunction::GetRepr() const {
         fmt::MemoryWriter mw;
-        mw << m_f1->GetRepr() << " * " << m_f2->GetRepr();
+        mw << m_function->GetRepr() << " * " << m_rightFunction->GetRepr();
         return mw.str();
     }
 
@@ -411,7 +476,7 @@ namespace frydom {
 
     FrdivFunction::FrdivFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
 
-    FrdivFunction::FrdivFunction(const FrdivFunction &other) : FrBinaryOpFunction(*other.m_f1, *other.m_f2) {}
+    FrdivFunction::FrdivFunction(const FrdivFunction &other) : FrBinaryOpFunction(other) {}
 
     FrdivFunction *FrdivFunction::Clone() const {
         return new FrdivFunction(*this);
@@ -419,7 +484,7 @@ namespace frydom {
 
     std::string FrdivFunction::GetRepr() const {
         fmt::MemoryWriter mw;
-        mw << m_f1->GetRepr() << " / " << m_f2->GetRepr();
+        mw << m_function->GetRepr() << " / " << m_rightFunction->GetRepr();
         return mw.str();
     }
 
@@ -437,7 +502,7 @@ namespace frydom {
 
     FrCompFunction::FrCompFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
 
-    FrCompFunction::FrCompFunction(const FrCompFunction &other) : FrBinaryOpFunction(*other.m_f1, *other.m_f2) {}
+    FrCompFunction::FrCompFunction(const FrCompFunction &other) : FrBinaryOpFunction(other) {}
 
     FrCompFunction *FrCompFunction::Clone() const {
         return new FrCompFunction(*this);
@@ -454,13 +519,13 @@ namespace frydom {
         if (IsEval(x)) return;
 
         c_x = x;
-        double v    = m_f2->Get_y(c_x);
-        double v_dx = m_f2->Get_y_dx(c_x);
-        double v_dxdx = m_f2->Get_y_dxdx(c_x);
+        double v    = m_rightFunction->Get_y(c_x);
+        double v_dx = m_rightFunction->Get_y_dx(c_x);
+        double v_dxdx = m_rightFunction->Get_y_dxdx(c_x);
 
-        c_y = m_f1->Get_y(v);
-        c_y_dx = v_dx * m_f1->Get_y_dx(v);
-        c_y_dxdx = v_dxdx * m_f1->Get_y_dx(v) + v_dx*v_dx * m_f1->Get_y_dxdx(v);
+        c_y = m_function->Get_y(v);
+        c_y_dx = v_dx * m_function->Get_y_dx(v);
+        c_y_dxdx = v_dxdx * m_function->Get_y_dx(v) + v_dx*v_dx * m_function->Get_y_dxdx(v);
     }
 
 

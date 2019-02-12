@@ -10,7 +10,7 @@
 
 namespace frydom {
 
-    class FrSaturateFunction : public FrFunction_ {
+    class FrSaturateFunction : public FrFunctionBase {
 
     private:
 
@@ -33,6 +33,10 @@ namespace frydom {
 
 
     };
+
+    FrSaturateFunction saturate_high(const FrFunctionBase& function, double ymax);
+    FrSaturateFunction saturate_low(const FrFunctionBase& function, double ymin);
+    FrSaturateFunction saturate_both(const FrFunctionBase& function, double ymin, double ymax);
 
 }  // end namesapce frydom
 

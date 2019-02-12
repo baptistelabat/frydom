@@ -9,7 +9,7 @@
 
 namespace frydom {
 
-    class FrTanhRampFunction : public FrFunction_ {
+    class FrTanhRampFunction : public FrFunctionBase {
 
     private:
 

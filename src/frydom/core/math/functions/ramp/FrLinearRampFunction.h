@@ -20,37 +20,39 @@ namespace frydom {
     /// --------
     ///
     ///
-    class FrRampFunction_ : public FrFunction_ {
+    class FrLinearRampFunction_ : public FrFunctionBase {
 
     private:
 
-        double m_slope = 1.;
-        double m_intercept = 0.;
-
-        double m_x0 = 0.; // TODO : plutot reposer sur l'offset de la fonction de base !
-        double m_x1 = 1.;
+//        double m_slope = 1.;
+//        double m_intercept = 0.;
+//
+//        double m_x0 = 0.; // TODO : plutot reposer sur l'offset de la fonction de base !
+//        double m_x1 = 1.;
 
     public:
 
-        FrRampFunction_();
+        FrLinearRampFunction_();
 
-        FrRampFunction_(const FrRampFunction_& other);
+        FrLinearRampFunction_(double x0, double y0, double x1, double y1);
 
-        FrRampFunction_* Clone() const;
+        FrLinearRampFunction_(const FrLinearRampFunction_& other);
 
-        void SetY0(double intercept);
+        FrLinearRampFunction_* Clone() const override;
 
-        double GetY0() const;
-
-        void SetSlope(double slope);
-
-        double GetSlope() const;
-
-        void SetInterceptAndSlope(double intercept, double slope);
-
-        void SetXWindow(double x0, double x1);
-
-        void SetByTwoPoints(double x0, double y0, double x1, double y1);
+//        void SetY0(double intercept);
+//
+//        double GetY0() const;
+//
+//        void SetSlope(double slope);
+//
+//        double GetSlope() const;
+//
+//        void SetInterceptAndSlope(double intercept, double slope);
+//
+//        void SetXWindow(double x0, double x1);
+//
+//        void SetByTwoPoints(double x0, double y0, double x1, double y1);
 
         void Initialize() override;
 

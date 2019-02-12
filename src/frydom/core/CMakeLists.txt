@@ -82,8 +82,10 @@ list(APPEND SRC_FILES
         math/functions/lib/FrPowFunction.cpp
         math/functions/lib/FrLinearFunction.cpp
         math/functions/lib/FrSaturateFunction.cpp
+        math/functions/lib/FrClampFunction.cpp
+        math/functions/lib/FrPolynomialFunction.cpp
 
-#        math/functions/lib/FrPolynomialFunction.cpp
+
         )
 
 # MISC

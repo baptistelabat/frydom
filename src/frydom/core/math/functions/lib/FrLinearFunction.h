@@ -11,7 +11,7 @@
 
 namespace frydom {
 
-    class FrLinearFunction : public FrFunction_ {
+    class FrLinearFunction : public FrFunctionBase {
 
     private:
         double m_intercept = 0.;  //

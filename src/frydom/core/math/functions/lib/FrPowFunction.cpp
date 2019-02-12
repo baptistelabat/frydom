@@ -5,12 +5,16 @@
 #include "FrPowFunction.h"
 #include "fmt/format.h"
 
+#include <cmath>
+
 
 namespace frydom {
 
-    FrPowFunction::FrPowFunction(double power) : m_power(power) {}
+    FrPowFunction::FrPowFunction(const frydom::FrFunctionBase &function, double power) : m_power(power) {
+        m_function = function.Clone();
+    }
 
-    FrPowFunction::FrPowFunction(const FrPowFunction& other) {
+    FrPowFunction::FrPowFunction(const FrPowFunction& other) : FrFunctionBase(other) {
         m_power = other.m_power;
     }
 
@@ -32,11 +36,19 @@ namespace frydom {
         if (IsEval(x)) return;
 
         c_x = x;
-        c_y = pow(x, m_power);
-        double p_1 = m_power-1;
-        c_y_dx = m_power * pow(x, p_1);
-        c_y_dxdx = m_power * p_1 * pow(x, m_power-2);
 
+        double u = m_function->Get_y(x);
+        double p_1 = m_power-1;
+
+        c_y = std::pow(u, m_power);
+        c_y_dx = m_power * std::pow(u, p_1);
+        c_y_dxdx = m_power * p_1 * std::pow(u, m_power-2);
+
+    }
+
+
+    FrPowFunction pow(const FrFunctionBase& function, double power) {
+        return FrPowFunction(function, power);
     }
 
 }  // end namespace frydom

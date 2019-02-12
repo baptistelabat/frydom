@@ -122,13 +122,15 @@ namespace frydom {
 
     private:
 
-        std::shared_ptr<internal::FrChronoFunctionWrapper> m_chronoFunction;  // TODO : deleguer cet attribut a du chrono interface qu'on placera en interne ?
+//        std::shared_ptr<internal::FrChronoFunctionWrapper> m_chronoFunction;  // TODO : deleguer cet attribut a du chrono interface qu'on placera en interne ?
 
         bool m_isActive = true; // TODO : retirer ?
 
     protected:
 
-        double m_xOffset = 0.;
+        FrFunctionBase* m_function; /// The function on which we apply the current function
+
+        double m_xOffset = 0.;  // TODO : supprimer et faire plutot une fonciton retard qui agit sur x...
 
         // Cache
         mutable double c_x;
@@ -139,6 +141,12 @@ namespace frydom {
     public:
 
         FrFunctionBase();
+
+        ~FrFunctionBase();
+
+
+        /// Constructor specifying the function on which we apply the current function
+        FrFunctionBase(const FrFunctionBase& other);
 
         /// Virtual copy constructor
         virtual FrFunctionBase* Clone() const = 0;
@@ -202,12 +210,37 @@ namespace frydom {
         /// Substract a scalar to the function to the right
         FrSubFunction operator-(double alpha);
 
+        /// Add an other function to this function
+        void operator+=(const FrFunctionBase& other);
+
+        /// Substract an other function to this function
+        void operator-=(const FrFunctionBase& other);
+
+        /// Multiply this function by another function
+        void operator*=(const FrFunctionBase& other);
+
+        /// Divide this function by another function
+        void operator/=(const FrFunctionBase& other);
+
+
+        /// Add an other function to this function
+        void operator+=(double alpha);
+
+        /// Substract an other function to this function
+        void operator-=(double alpha);
+
+        /// Multiply this function by another function
+        void operator*=(double alpha);
+
+        /// Divide this function by another function
+        void operator/=(double alpha);
+
 
     protected:
 
         virtual void Eval(double x) const = 0;
 
-        std::shared_ptr<chrono::ChFunction> GetChronoFunction();
+//        std::shared_ptr<chrono::ChFunction> GetChronoFunction();
 
         double Estimate_y_dx(double x) const;
 
@@ -233,12 +266,18 @@ namespace frydom {
 
 
 
-    class FrXFunction : public FrFunctionBase {
+
+
+    class FrVarXFunction : public FrFunctionBase {
+
+    private:
+        std::string m_varname = "x";
 
     public:
-        FrXFunction();
-        FrXFunction(const FrXFunction& other);
-        FrXFunction* Clone() const override;
+        FrVarXFunction();
+        FrVarXFunction(std::string varname);
+        FrVarXFunction(const FrVarXFunction& other);
+        FrVarXFunction* Clone() const override;
         std::string GetRepr() const override;
 
     protected:
@@ -246,21 +285,26 @@ namespace frydom {
 
     };
 
+    FrVarXFunction new_var();
+    FrVarXFunction new_var(std::string varname);
+
 
 
     /*
      * FrFunction_
      */
 
-    class FrFunction_ : public FrFunctionBase {
-
-//    private:
-//        std::shared_ptr<internal::FrChronoFunctionWrapper> m_chronoFunction;
-
-    public:
-        FrFunction_();
-
-    };
+//    class FrFunction_ : public FrFunctionBase {
+//
+////    private:
+////        FrFunctionBase* m_function;
+//
+//    public:
+//        FrFunction_();
+//        explicit FrFunction_(const FrFunctionBase& function);
+//        ~FrFunction_();
+//
+//    };
 
 
     class FrConstantFunction : public FrFunctionBase {
@@ -290,7 +334,6 @@ namespace frydom {
     class FrUnarySignFunction : public FrFunctionBase {
 
     private:
-        FrFunctionBase* m_function;
         bool m_negate = false;
 
     public:
@@ -314,8 +357,7 @@ namespace frydom {
     class FrBinaryOpFunction : public FrFunctionBase {
 
     protected:
-        FrFunctionBase* m_f1;
-        FrFunctionBase* m_f2;
+        FrFunctionBase* m_rightFunction;
 
     public:
         FrBinaryOpFunction(const FrFunctionBase& f1, const FrFunctionBase& f2);
@@ -324,14 +366,14 @@ namespace frydom {
     protected:
 
         inline void EvalFunctions(double& u, double& u_dx, double& u_dxdx, double& v, double& v_dx, double& v_dxdx) const {
-            u = m_f1->Get_y(c_x);
-            v = m_f2->Get_y(c_x);
+            u = m_function->Get_y(c_x);
+            v = m_rightFunction->Get_y(c_x);
 
-            u_dx = m_f1->Get_y_dx(c_x);
-            v_dx = m_f2->Get_y_dx(c_x);
+            u_dx = m_function->Get_y_dx(c_x);
+            v_dx = m_rightFunction->Get_y_dx(c_x);
 
-            u_dxdx = m_f1->Get_y_dxdx(c_x);
-            v_dxdx = m_f2->Get_y_dxdx(c_x);
+            u_dxdx = m_function->Get_y_dxdx(c_x);
+            v_dxdx = m_rightFunction->Get_y_dxdx(c_x);
         }
 
     };
@@ -406,6 +448,8 @@ namespace frydom {
         void Eval(double x) const override;
 
     };
+
+
 
 
 

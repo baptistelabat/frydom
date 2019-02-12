@@ -69,7 +69,7 @@ namespace frydom {
         double GetUnrollingSpeed() const { return m_unrollingSpeed; }
 
         void SetDiameter(const double d) {
-            m_sectionArea = M_PI * pow(d*0.5, 2);
+            m_sectionArea = M_PI * std::pow(d*0.5, 2);
         }
 
         double GetDiameter() const {
