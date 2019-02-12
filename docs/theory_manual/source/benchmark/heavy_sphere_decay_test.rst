@@ -27,14 +27,14 @@ K44                       :math:`5,126.10^6`
 K55                       :math:`5,126.10^6`  
 ========================= =======================
 
-At initial time the sphere is placed at a distance of 1m abose the mean water level and droped without velocity (Fig. <_fig_decay_description>).
+At initial time the sphere is placed at a distance of 1m above the mean water level and dropped without velocity (Fig. <_fig_decay_description>).
 
 .. _fig_decay_description
 .. figure:: _static/sphere_decay_description.png
     :align: center
     :alt: Sphere decay test
 
-    Decription of the heavy sphere test cases.
+    Description of the heavy sphere test cases.
 
 Results
 -------
