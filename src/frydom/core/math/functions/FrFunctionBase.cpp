@@ -157,12 +157,12 @@ namespace frydom {
      */
 
 
-    FrUnarySignFunction FrFunctionBase::operator-() {
-        return FrUnarySignFunction(*this, true);
+    FrUnaryOpFunction FrFunctionBase::operator-() {
+        return FrUnaryOpFunction(*this, true);
     }
 
-    FrUnarySignFunction FrFunctionBase::operator+() {
-        return FrUnarySignFunction(*this, false);
+    FrUnaryOpFunction FrFunctionBase::operator+() {
+        return FrUnaryOpFunction(*this, false);
     }
 
 
@@ -305,23 +305,6 @@ namespace frydom {
 
 
     /*
-     * FrFunction_
-     */
-
-//    FrFunction_::FrFunction_() : FrFunctionBase() {
-//        m_function = new FrVarXFunction();
-//    };
-//
-//    FrFunction_::FrFunction_(const FrFunctionBase& function) {
-//        m_function = function.Clone();
-//    }
-//
-//    FrFunction_::~FrFunction_() {
-//        delete m_function; // TODO : voir si ca fonctionne ...
-//    }
-
-
-    /*
      * FrConstantFunction
      */
 
@@ -364,23 +347,23 @@ namespace frydom {
 
 
     /*
-     * FrUnarySignFunction
+     * FrUnaryOpFunction
      */
 
-    FrUnarySignFunction::FrUnarySignFunction(const FrFunctionBase& function, bool negate) {
+    FrUnaryOpFunction::FrUnaryOpFunction(const FrFunctionBase& function, bool negate) {
         m_function = function.Clone();
         m_negate = negate;
     }
 
-    FrUnarySignFunction::FrUnarySignFunction(const FrUnarySignFunction &other) : FrFunctionBase(other) {
+    FrUnaryOpFunction::FrUnaryOpFunction(const FrUnaryOpFunction &other) : FrFunctionBase(other) {
         m_negate = other.m_negate;
     }
 
-    FrUnarySignFunction* FrUnarySignFunction::Clone() const {
-        return new FrUnarySignFunction(*this);
+    FrUnaryOpFunction* FrUnaryOpFunction::Clone() const {
+        return new FrUnaryOpFunction(*this);
     }
 
-    std::string FrUnarySignFunction::GetRepr() const {
+    std::string FrUnaryOpFunction::GetRepr() const {
         fmt::MemoryWriter mw;
         if (m_negate) mw << '-';
 
@@ -388,7 +371,7 @@ namespace frydom {
         return mw.str();
     }
 
-    void FrUnarySignFunction::Eval(double x) const {
+    void FrUnaryOpFunction::Eval(double x) const {
         if (IsEval(x)) return;
         c_x = x;
         if (m_negate) {
@@ -410,7 +393,7 @@ namespace frydom {
     }
 
     FrBinaryOpFunction::FrBinaryOpFunction(const FrBinaryOpFunction& other) : FrFunctionBase(other) {
-        m_rightFunction = other.m_rightFunction->Clone();
+        m_rightFunction = other.m_rightFunction->Clone(); // FIXME : tester sans, voir si on passe ici... c'est a priori fait pas le constructeur par copie de FrFunctionBase....
     }
 
 

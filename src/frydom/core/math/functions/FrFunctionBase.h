@@ -106,7 +106,7 @@ namespace frydom {
     }  // end namespace frydom::internal
 
     // Forward declaration
-    class FrUnarySignFunction;
+    class FrUnaryOpFunction;
     class FrAddFunction;
     class FrSubFunction;
     class FrMulFunction;
@@ -176,10 +176,17 @@ namespace frydom {
          * Operators
          */
 
-        /// Negate a function
-        FrUnarySignFunction operator-();
-        FrUnarySignFunction operator+();
+        /*
+         * Unary operations on a function
+         */
 
+        /// Negate a function
+        FrUnaryOpFunction operator-();
+        FrUnaryOpFunction operator+();
+
+        /*
+         * Binary operations with another function
+         */
 
         /// Add two functions
         FrAddFunction operator+(const FrFunctionBase& other);
@@ -196,7 +203,9 @@ namespace frydom {
         /// Compose two functions -> this(other(x))
         FrCompFunction operator<<(const FrFunctionBase& other);
 
-
+        /*
+         * Binary operations with a scalar on the right
+         */
 
         /// Right multiply a function by a scalar
         FrMulFunction operator*(double alpha);
@@ -210,6 +219,10 @@ namespace frydom {
         /// Substract a scalar to the function to the right
         FrSubFunction operator-(double alpha);
 
+        /*
+         * Inner operations with another function
+         */
+
         /// Add an other function to this function
         void operator+=(const FrFunctionBase& other);
 
@@ -222,6 +235,9 @@ namespace frydom {
         /// Divide this function by another function
         void operator/=(const FrFunctionBase& other);
 
+        /*
+         * Inner operations with a scalar
+         */
 
         /// Add an other function to this function
         void operator+=(double alpha);
@@ -240,8 +256,6 @@ namespace frydom {
 
         virtual void Eval(double x) const = 0;
 
-//        std::shared_ptr<chrono::ChFunction> GetChronoFunction();
-
         double Estimate_y_dx(double x) const;
 
         double Estimate_y_dxdx(double x) const;
@@ -251,6 +265,10 @@ namespace frydom {
         }
 
     };
+
+    /*
+     * Binary operations of functions with a scalar on the left
+     */
 
     /// Add a scalar to the function to the left
     FrAddFunction operator+(double alpha, const FrFunctionBase& function);
@@ -267,6 +285,8 @@ namespace frydom {
 
     namespace internal {
 
+        /// This class is used internally to add a chrono function object to be added into chrono objects that accept
+        /// a ChFunction
         class FrFunctionChronoInterface : public FrFunctionBase {
 
         private:
@@ -299,28 +319,14 @@ namespace frydom {
 
     };
 
+    /// Create a symbolic variable (default variable name is 'x')
     FrVarXFunction new_var();
+
+    /// Create a symbolic variables named "varname"
     FrVarXFunction new_var(std::string varname);
 
 
-
-    /*
-     * FrFunction_
-     */
-
-//    class FrFunction_ : public FrFunctionBase {
-//
-////    private:
-////        FrFunctionBase* m_function;
-//
-//    public:
-//        FrFunction_();
-//        explicit FrFunction_(const FrFunctionBase& function);
-//        ~FrFunction_();
-//
-//    };
-
-
+    /// The constant function
     class FrConstantFunction : public FrFunctionBase {
 
     public:
@@ -345,15 +351,15 @@ namespace frydom {
      * Results of unary operators
      */
 
-    class FrUnarySignFunction : public FrFunctionBase {
+    class FrUnaryOpFunction : public FrFunctionBase {
 
     private:
         bool m_negate = false;
 
     public:
-        FrUnarySignFunction(const FrFunctionBase& function, bool negate);
-        FrUnarySignFunction(const FrUnarySignFunction& other);
-        FrUnarySignFunction* Clone() const;
+        FrUnaryOpFunction(const FrFunctionBase& function, bool negate);
+        FrUnaryOpFunction(const FrUnaryOpFunction& other);
+        FrUnaryOpFunction* Clone() const;
         std::string GetRepr() const override;
 
     protected:
