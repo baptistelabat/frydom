@@ -84,7 +84,9 @@ list(APPEND SRC_FILES
         math/functions/lib/FrSaturateFunction.cpp
         math/functions/lib/FrClampFunction.cpp
         math/functions/lib/FrPolynomialFunction.cpp
-
+        math/functions/lib/FrTrigonometricFunctions.cpp
+        math/functions/lib/FrHyperbolicTrigonometricFunctions.cpp
+        math/functions/lib/FrMiscFunctions.cpp
 
         )
 

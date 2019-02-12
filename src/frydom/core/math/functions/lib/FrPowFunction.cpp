@@ -38,11 +38,14 @@ namespace frydom {
         c_x = x;
 
         double u = m_function->Get_y(x);
+        double u_dx = m_function->Get_y_dx(x);
+        double u_dxdx = m_function->Get_y_dxdx(x);
         double p_1 = m_power-1;
+        double upow = std::pow(u, p_1);
 
         c_y = std::pow(u, m_power);
-        c_y_dx = m_power * std::pow(u, p_1);
-        c_y_dxdx = m_power * p_1 * std::pow(u, m_power-2);
+        c_y_dx = m_power * u_dx * upow;
+        c_y_dxdx = m_power * (u_dxdx * upow + p_1 * u_dx*u_dx * std::pow(u, m_power-2));
 
     }
 

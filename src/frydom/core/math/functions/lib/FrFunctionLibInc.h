@@ -10,5 +10,8 @@
 #include "FrSaturateFunction.h"
 #include "FrClampFunction.h"
 #include "FrPolynomialFunction.h"
+#include "FrTrigonometricFunctions.h"
+#include "FrHyperbolicTrigonometricFunctions.h"
+#include "FrMiscFunctions.h"
 
 #endif //FRYDOM_FRFUNCTIONLIBINC_H

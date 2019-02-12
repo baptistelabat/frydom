@@ -14,15 +14,25 @@ int main() {
 
 
 
-//    auto linearFcn = clamp_before(clamp_after(3*pow(x, 2)+2, 1), -1);
+    //    auto linearFcn = clamp_before(clamp_after(3*pow(x, 2)+2, 1), -1);
     auto linearFcn = FrLinearFunction(2, 3) << pow(x, 2);
 
-//    std::cout << linearFcn.Get_y(2.) << std::endl;
 
 
     linearFcn.WriteToGnuPlotFile(-3, 3, 0.01, "linear");
 
-    auto linearRamp = FrLinearRampFunction_(0, 1, 4, -1) << pow(x, 2);
+    auto linearRamp = FrLinearRampFunction_(0, 1, 4, -1);
+
+    auto absLinearRamp = abs(linearRamp);
+    absLinearRamp.WriteToGnuPlotFile(-1, 5, 0.01, "absLinearRamp");
+
+
+    auto newf = (3 * pow(x, 2) +1 ) /sqrt(x);
+
+    newf.WriteToGnuPlotFile(0.08, 5, 0.01, "newf");
+
+
+
 
     linearRamp.WriteToGnuPlotFile(-2, 6, 0.01, "ramp");
 
@@ -43,37 +53,23 @@ int main() {
 
 
 
-//    // Ramp 1
-//    auto ramp1 = FrLinearRampFunction_();
-//    ramp1.SetByTwoPoints(0, 0, 3, 3);
-//
-//
-//    auto newFcn1 = + ramp1;
-//    auto newFcn2 = - ramp1;
-//
-//    ramp1.WriteToGnuPlotFile(-2, 5, 0.01, "ramp1");
-//    newFcn1.WriteToGnuPlotFile(-2, 5, 0.01, "newFcn1");
-//    newFcn2.WriteToGnuPlotFile(-2, 5, 0.01, "newFcn2");
-//
-//    (newFcn1 - newFcn2).WriteToGnuPlotFile(-2, 5, 0.01, "sum");
-//    (newFcn1 << newFcn2).WriteToGnuPlotFile(-2, 5, 0.01, "sum");
-//
-//    std::cout << (newFcn1 - newFcn2).GetRepr() << std::endl;
-//
-//
-//    // Test monomial
-//    auto monomial = FrPowFunction(2);
-//    monomial.WriteToGnuPlotFile(-10, 10, 0.01, "pow2");
-//
-//
-//
-////    // Testing polynomial
-////    auto poly = FrPolynomialFunction();
-////    poly.Add(3, 2);
-////    poly.Add(6, 1);
-////    poly.Add(1, 0);
-////
-////    poly.WriteToGnuPlotFile(-10, 10, 0.01, "poly");
+    auto cosine = (1 + cos(2*x)) / 2;
+
+
+    cosine.WriteToGnuPlotFile(-10, 10, 0.01, "cosine");
+
+
+    auto verif = pow(cos(x), 2);
+    verif.WriteToGnuPlotFile(-10, 10, 0.01, "verif"); // FIXME : il y a des problemes avec les derivees !!!
+
+
+    std::cout << (4*atan(FrConstantFunction(1))).Get_y(0) << std::endl;
+
+
+    auto tanhfcn = tanh(x);
+
+    tanhfcn.WriteToGnuPlotFile(-10, 10, 0.01, "tanh");
+
 
 
 

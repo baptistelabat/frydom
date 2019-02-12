@@ -133,7 +133,7 @@ namespace frydom {
         double m_xOffset = 0.;  // TODO : supprimer et faire plutot une fonciton retard qui agit sur x...
 
         // Cache
-        mutable double c_x;
+        mutable double c_x = INFINITY;
         mutable double c_y;
         mutable double c_y_dx;
         mutable double c_y_dxdx;

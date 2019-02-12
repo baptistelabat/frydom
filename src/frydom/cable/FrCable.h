@@ -73,7 +73,7 @@ namespace frydom {
         }
 
         double GetDiameter() const {
-            return sqrt(4. * m_sectionArea / M_PI);
+            return std::sqrt(4. * m_sectionArea / M_PI);
         }
 
         double GetEA() const {
