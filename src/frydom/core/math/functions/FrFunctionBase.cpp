@@ -255,6 +255,20 @@ namespace frydom {
     }
 
 
+    namespace internal {
+
+        FrFunctionChronoInterface::FrFunctionChronoInterface(const frydom::FrFunctionBase &frydomFunction) {
+            m_chronoFunction = std::make_shared<internal::FrChronoFunctionWrapper>(this);
+            m_function = frydomFunction.Clone();
+        }
+
+        std::shared_ptr<internal::FrChronoFunctionWrapper> FrFunctionChronoInterface::GetChronoFunction() {
+            return m_chronoFunction;
+        }
+
+    }  // end namespace frydom::internal
+
+
 
     FrVarXFunction::FrVarXFunction() {
         m_function = nullptr;

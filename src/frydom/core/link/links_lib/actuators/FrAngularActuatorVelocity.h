@@ -37,12 +37,14 @@ namespace frydom {
     }  // end namespace frydom::internal
 
 
-    class FrFunction_;
+    class FrFunctionBase;
 
     class FrAngularActuatorVelocity : public FrAngularActuator {
 
     private:
         std::shared_ptr<internal::FrLinkMotorRotationSpeed> m_chronoActuator;
+
+//        std::shared_ptr<FrFunctionInterface> m_function;
 
 
     public:
@@ -50,7 +52,7 @@ namespace frydom {
 
         void SetConstantAngularVelocity(double velocity);
 
-        void SetAngularVelocityFunction(std::shared_ptr<FrFunction_> function);
+        void SetAngularVelocityFunction(std::shared_ptr<FrFunctionBase> function);
 
         void Initialize() override;
 

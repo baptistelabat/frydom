@@ -92,6 +92,7 @@ namespace frydom {
             */
             // ##CC
 
+            // FIXME : les C_force et C_torque appliques a l'update precedent sont ecrases
             chrono::ChLinkLock::Update(time, update_assets);
         }
 

@@ -265,7 +265,21 @@ namespace frydom {
     FrdivFunction operator/(double alpha, const FrFunctionBase& function);
 
 
+    namespace internal {
 
+        class FrFunctionChronoInterface : public FrFunctionBase {
+
+        private:
+            std::shared_ptr<internal::FrChronoFunctionWrapper> m_chronoFunction;
+
+        public:
+            explicit FrFunctionChronoInterface(const FrFunctionBase& frydomFunction);
+
+            std::shared_ptr<internal::FrChronoFunctionWrapper> GetChronoFunction();
+
+        };
+
+    }
 
 
     class FrVarXFunction : public FrFunctionBase {
