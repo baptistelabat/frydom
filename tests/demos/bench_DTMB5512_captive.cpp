@@ -122,6 +122,31 @@ public:
     void StepFinalize() override {}
 };
 
+// -----------------------------------------------------------
+// ITTC57 : residual coefficient
+// -----------------------------------------------------------
+
+double ResidualITTC(double speed) {
+
+    if (std::abs(speed - 1.04) < 1E-2) {
+        return 5.3696e-4;
+    } else if (std::abs(speed - 1.532) < 1E-2) {
+        return 9.0677e-4;
+    } else if (std::abs(speed - 1.86) < 1E-2) {
+        return 1.6812e-3;
+    } else if (std::abs(speed - 2.243) < 1E-2) {
+        return 4.02529e-3;
+    } else {
+        std::cout << "warning : no residual coefficient for this speed value" << std::endl;
+        std::cout << "        : residual set to 0. " << std::endl;
+    }
+    return 0.;
+};
+
+
+// ------------------------------------------------------------
+// Benchmark : main
+// ------------------------------------------------------------
 
 int main(int argc, char* argv[]) {
 
@@ -146,6 +171,7 @@ int main(int argc, char* argv[]) {
 
     auto ocean = system.GetEnvironment()->GetOcean();
     ocean->GetSeabed()->SetBathymetry(-3.048, NWU);
+    ocean->SetDensity(1000.);
 
     auto waveField = ocean->GetFreeSurface()->SetAiryRegularWaveField();
     waveField->SetWaveHeight(ak);
@@ -203,7 +229,7 @@ int main(int argc, char* argv[]) {
 
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
 
-    radiationModel->SetImpulseResponseSize(body.get(), 6., 0.1);
+    radiationModel->SetImpulseResponseSize(body.get(), 8., 0.01);
 
     // -- Excitation
 
@@ -219,8 +245,9 @@ int main(int argc, char* argv[]) {
     auto lpp = 3.048;
     auto wettedSurfaceArea = 1.371;
 
-    auto forceResistance = std::make_shared<FrITTCResistance_>(lpp, wettedSurfaceArea, 0.12);
-    //body->AddExternalForce(forceResistance);
+    auto ct = ResidualITTC(speed);
+    auto forceResistance = std::make_shared<FrITTCResistance_>(lpp, wettedSurfaceArea, ct, 0.03);
+    body->AddExternalForce(forceResistance);
 
     // -- Steady force
 
