@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 03/07/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRWINDFORCE_H
 #define FRYDOM_FRWINDFORCE_H
@@ -11,7 +19,10 @@
 
 namespace frydom {
 
-
+    /**
+     * \class FrWindForce
+     * \brief Class for computing the wind loads.
+     */
     class FrWindForce : public FrForce {
 
     public:
@@ -52,6 +63,10 @@ namespace frydom {
 
     // REFACTORING ------>>>>>>>>>>>>>>
 
+    /**
+     * \class FrWindForce_
+     * \brief Class for computing the wind loads.
+     */
     class FrWindForce_ : public FrForce_ {
 
 

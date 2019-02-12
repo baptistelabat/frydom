@@ -1,14 +1,28 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 01/08/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRSTEADYHEAVEFORCE_H
 #define FRYDOM_FRSTEADYHEAVEFORCE_H
 
 #include "frydom/core/force/FrForce.h"
 
+// TODO : plus utilisée dans le refactoring à supprimer
+
 namespace frydom {
 
+    /**
+     * \class FrSteadyHeaveForce
+     * \brief Class for computing a steady heave load.
+     */
     class FrSteadyHeaveForce : public FrForce {
 
     private:

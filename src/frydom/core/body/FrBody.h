@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 21/06/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRBODY_H
 #define FRYDOM_FRBODY_H
@@ -27,13 +35,19 @@
 
 #include "frydom/environment/FrFluidType.h"
 
+// TODO : voir si il n'y a pas moyen de passer ces includes
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
 #include "frydom/core/link/links_lib/FrRevoluteLink.h"
-
 
 namespace frydom {
 
     class FrNode;
 
+    /**
+     * \class FrBody
+     * \brief Class for defining a body.
+     */
     class FrBody : public chrono::ChBodyAuxRef,
                    public std::enable_shared_from_this<FrBody>,
                    public FrObject
@@ -321,6 +335,10 @@ namespace frydom {
     class FrLink_;
 
     /// Main class for a FRyDoM rigid body
+    /**
+     * \class FrBody_
+     * \brief Class for defining a body.
+     */
     class FrBody_ : public FrObject {
 
     protected:
@@ -1176,8 +1194,9 @@ namespace frydom {
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
+        //FIXME : FrBody doit-il dériver de FrPhysicsItem ?
         /// Body update method
-        void Update();
+        virtual void Update();
 
 
         // Linear iterators on external forces
@@ -1198,6 +1217,13 @@ namespace frydom {
         friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_>);
         friend void FrGridAsset::Initialize();
 
+        friend int internal::FrAddedMassBase::GetBodyOffset(FrBody_* body) const;
+        friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody_* body) const ;
+        friend void internal::FrVariablesAddedMassBase::SetVariables(FrBody_ *body, chrono::ChMatrix<double> &result,
+                                                                     int offset) const;
+        friend void internal::FrAddedMassBase::SetVariables(FrBody_ *body, chrono::ChMatrix<double> &qb, int offset) const;
+        friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody_ *body) const;
+        //friend void internal::FrVariablesAddedMassBase::Initialize();
 
     };
 

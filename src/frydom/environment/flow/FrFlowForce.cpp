@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 15/11/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #include "FrFlowForce.h"
 
@@ -107,7 +115,13 @@ namespace frydom {
         double SquaredVelocity = m_fluxVelocityInBody.squaredNorm();
         auto res = coeff * SquaredVelocity;
 
-        auto frame = m_body->GetFrameAtCOG(NWU).ProjectToXYPlane(NWU);
+        // Build the projected rotation in the XoY plane.
+        double phi, theta, psi;
+        m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+        auto bodyRotation = FrRotation_(Direction(0.,0.,1.), psi, NWU);
+        auto frame = FrFrame_(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
+
+//        auto frame = m_body->GetFrameAtCOG(NWU).ProjectToXYPlane(NWU);
         auto worldForce = frame.ProjectVectorFrameInParent(Force(res[0], res[1], 0), NWU);
         auto worldTorque = frame.ProjectVectorFrameInParent(Torque(0., 0., res[2]), NWU);
 
@@ -138,6 +152,19 @@ namespace frydom {
                 ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
 
         FrFlowForce::Update(time);
+    }
+
+    std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body){
+        auto currentForce = std::make_shared<FrCurrentForce2_>(yamlFile);
+        body->AddExternalForce(currentForce);
+        return currentForce;
+    }
+
+    std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body){
+        auto windForce = std::make_shared<FrWindForce2_>(yamlFile);
+        body->AddExternalForce(windForce);
+        return windForce;
+
     }
 
 } // end of namespace frydom

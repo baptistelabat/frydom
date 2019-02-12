@@ -1,9 +1,18 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 29/10/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #include "FrMorisonForce.h"
 #include "frydom/hydrodynamics/morison/FrMorisonModel.h"
+#include "frydom/core/body/FrBody.h"
 
 namespace frydom {
 
@@ -96,5 +105,13 @@ namespace frydom {
 
     }
 
+
+    std::shared_ptr<FrMorisonForce_>
+    make_morison_force(std::shared_ptr<FrMorisonElement_> model, std::shared_ptr<FrBody_> body){
+        assert(body.get() == model->GetNode()->GetBody());
+        auto MorisonForce = std::make_shared<FrMorisonForce_>(model);
+        body->AddExternalForce(MorisonForce);
+        return MorisonForce;
+    }
 
 }  // end namespace frydom

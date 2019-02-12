@@ -1,13 +1,21 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 28/07/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #include "FrCatenaryLine.h"
 #include "FrCatenaryForce.h"
 #include "frydom/asset/FrCatenaryLineAsset_.h"
 #include "frydom/core/body/FrBody.h"
 
-
+#include "frydom/environment/FrEnvironment.h"
 
 namespace frydom {
 
@@ -325,20 +333,12 @@ namespace frydom {
 
     //>>>>>>>>>>>>>>> REFACTO
 
-    FrCatenaryLine_::FrCatenaryLine_(const std::shared_ptr<FrNode_> &startingNode, const std::shared_ptr<FrNode_> &endingNode,
-                                     bool elastic, double youngModulus, double sectionArea, double cableLength,
-                                     double q, Direction u, FRAME_CONVENTION fc)
-            : m_elastic(elastic),
-              m_q(q),
-              FrCable_(startingNode, endingNode, cableLength, youngModulus, sectionArea, q)
-    {
-        if(IsNED(fc)) {internal::SwapFrameConvention(u);}
-        m_u = u;
-        c_qvec = q*u;
-
-        // Initializing U matrix
-        c_Umat.SetIdentity();
-        c_Umat -= u*(u.transpose().eval());
+    FrCatenaryLine_::FrCatenaryLine_(const std::shared_ptr<FrNode_> &startingNode,
+                                     const std::shared_ptr<FrNode_> &endingNode, bool elastic, double youngModulus,
+                                     double sectionArea, double unstretchedLength, double linearDensity,
+                                     FLUID_TYPE fluid) :
+                                     m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
+                                     FrCable_(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity){
 
     }
 
@@ -567,6 +567,13 @@ namespace frydom {
 
     void FrCatenaryLine_::Initialize() {
 
+        m_q = GetLinearDensity() - m_sectionArea * GetSystem()->GetEnvironment()->GetFluidDensity(c_fluid);
+        c_qvec = m_q*m_u;
+
+        // Initializing U matrix
+        c_Umat.SetIdentity();
+        c_Umat -= m_u*(m_u.transpose().eval());
+
         // First guess for the tension
         // FIXME: supprimer ces initialize de node et mettre en place la séparation des SetupInitial des FrPhysicsItems en fonction des Pre, Mid et Post.
         m_startNode->Initialize();
@@ -623,15 +630,14 @@ namespace frydom {
     }
 
     std::shared_ptr<FrCatenaryLine_>
-    makeCatenaryLine(const std::shared_ptr<FrNode_> &startingNode, const std::shared_ptr<FrNode_> &endingNode,
-                     FrOffshoreSystem_ *system, bool elastic, double youngModulus, double sectionArea,
-                     double cableLength, double linearDensity, Direction u, FRAME_CONVENTION fc) {
-
+    make_catenary_line(const std::shared_ptr<FrNode_> &startingNode, const std::shared_ptr<FrNode_> &endingNode,
+                       FrOffshoreSystem_ *system, bool elastic, double youngModulus, double sectionArea,
+                       double unstretchedLength, double linearDensity, FLUID_TYPE fluid){
         auto CatenaryLine = std::make_shared<FrCatenaryLine_>(startingNode, endingNode, elastic, youngModulus,
-                                                              sectionArea, cableLength, linearDensity,
-                                                              u, fc);
+                                                              sectionArea, unstretchedLength, linearDensity, fluid);
         system->Add(CatenaryLine);
         return CatenaryLine;
+
     }
 
 }// end namespace frydom

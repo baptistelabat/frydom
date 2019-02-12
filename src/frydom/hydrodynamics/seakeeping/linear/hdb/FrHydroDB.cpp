@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 17/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 //#include <boost/filesystem.hpp>
 
@@ -607,11 +615,17 @@ namespace frydom {
             for (unsigned int imotion=0; imotion<bodyMotion->GetNbMotionMode(); ++imotion) {
                 sprintf(buffer, "/DOF_%d", imotion);
                 impulseResponseFunctionsK.push_back(reader.ReadDoubleArray(IRFPath + buffer));
-                impulseResponseFunctionsKU.push_back(reader.ReadDoubleArray(IRFUPath + buffer));
             }
-
             BEMBody->SetImpulseResponseFunctionK(bodyMotion, impulseResponseFunctionsK);
-            BEMBody->SetImpulseResponseFunctionKu(bodyMotion, impulseResponseFunctionsKU);
+
+            if (reader.GroupExist(IRFUPath)) {
+
+                for (unsigned int imotion=0; imotion<bodyMotion->GetNbMotionMode(); ++imotion) {
+                    sprintf(buffer, "/DOF_%d", imotion);
+                    impulseResponseFunctionsKU.push_back(reader.ReadDoubleArray(IRFUPath + buffer));
+                }
+                BEMBody->SetImpulseResponseFunctionKu(bodyMotion, impulseResponseFunctionsKU);
+            }
         }
     }
 
@@ -663,6 +677,11 @@ namespace frydom {
 
         Matrix66<double> matrix = reader.ReadDoubleArray(path + "/StiffnessMatrix");
         BEMBody->SetStiffnessMatrix(matrix);
+    }
+
+
+    std::shared_ptr<FrHydroDB_> make_hydrodynamic_database(std::string h5file) {
+        return std::make_shared<FrHydroDB_>(h5file);
     }
 
 }  // end namespace frydom

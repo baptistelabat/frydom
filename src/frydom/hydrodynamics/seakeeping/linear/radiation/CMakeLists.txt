@@ -4,6 +4,8 @@ set(SRC_FILES
         FrVariablesBEMBodyMass.cpp
         FrRadiationForce.cpp
         FrRadiationModel.cpp
+        FrVariablesAddedMassBase.cpp
+        FrAddedMassBase.cpp
         )
 
 set(FRYDOM_HYDRODYNAMICS_RADIATION_SOURCES "")

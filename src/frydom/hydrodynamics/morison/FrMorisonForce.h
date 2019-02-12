@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 17/04/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRMORISONFORCE_H
 #define FRYDOM_FRMORISONFORCE_H
@@ -12,6 +20,10 @@ namespace frydom {
 
     class FrMorisonModel;
 
+    /**
+     * \class FrMorisonForce
+     * \brief Class for computing Morison loads.
+     */
     class FrMorisonForce : public FrForce {
 
     private:
@@ -71,6 +83,10 @@ namespace frydom {
     class FrMorisonCompositeElement_;
 
 
+    /**
+     * \class FrMorisonForce_
+     * \brief Class for computing Morison loads.
+     */
     class FrMorisonForce_ : public FrForce_ {
 
 
@@ -93,7 +109,15 @@ namespace frydom {
         void StepFinalize() override;
     };
 
-
+    /// Maker of a Morison model force : instantiate and return a FrMorisonForce, based on a Morison element.
+    /// The makers also add the force to the list of external forces applied on the body.
+    /// \param model Morison model, containing the different parameters associated to the model
+    /// \param body body on which the force is applied
+    /// \return Morison force
+    // TODO : delete the body variable, and get it from the node contained in the model?
+    std::shared_ptr<FrMorisonForce_>
+    make_morison_force(std::shared_ptr<FrMorisonElement_> model, std::shared_ptr<FrBody_> body);
+    
 }
 
 #endif //FRYDOM_FRMORISONFORCE_H

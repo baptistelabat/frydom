@@ -1,11 +1,22 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 14/12/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/environment/FrEnvironmentInc.h"
 #include "FrWaveDriftForce.h"
 #include "frydom/IO/FrHDF5.h"
+
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
+
 
 namespace frydom {
 
@@ -191,33 +202,30 @@ namespace frydom {
 
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
-    FrWaveDriftForceRAO_::FrWaveDriftForceRAO_(const FrHydroDB_& hdb)
-          { }
+    FrWaveDriftForce_::FrWaveDriftForce_(std::shared_ptr<FrHydroDB_> hdb)
+        : m_hdb(hdb) {}
 
-    void FrWaveDriftForceRAO_::Update(double time) {
+    void FrWaveDriftForce_::Update(double time) {
 
         auto waveAmplitude = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
     }
 
-    void FrWaveDriftForceRAO_::Initialize() {
+    void FrWaveDriftForce_::Initialize() {
         FrForce_::Initialize();
-        this->SetInterpolationTable();
 
     }
 
-    void FrWaveDriftForceRAO_::StepFinalize() {
+    void FrWaveDriftForce_::StepFinalize() {
 
     }
 
-    void FrWaveDriftForceRAO_::SetInterpolationTable() {
+    void FrWaveDriftForce_::SetInterpolationTable() {
+
+        auto polarData = m_hdb->GetBody(m_body)->GetWaveDrift();
 
 
 
     }
-
-
-
-
 
 }

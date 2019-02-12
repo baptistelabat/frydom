@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 08/06/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRFORCE_H
 #define FRYDOM_FRFORCE_H
@@ -23,6 +31,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrForce
+     * \brief Class for computing the loads in general.
+     */
     class FrForce :
             public chrono::ChForce,
             public FrObject
@@ -135,6 +147,10 @@ namespace frydom {
     // REFACTORING ------------->>>>>>>>>>>>><
 
 
+    /**
+     * \class FrForce_
+     * \brief Class to compute the loads in general.
+     */
     class FrForce_;
 
     namespace internal {
@@ -173,6 +189,7 @@ namespace frydom {
     class FrForceAsset_;
 
     /**
+     * \class FrForce_
      * \brief  Class defining an effort with force and torque vector
      */
     class FrForce_ : public FrObject {
@@ -185,7 +202,7 @@ namespace frydom {
 
         // Force Asset
         bool m_isForceAsset = false;            ///< A ForceAsset (vector) is displayed if true
-        FrForceAsset_* m_forceAsset;            ///< pointer to the ForceAsset object.
+        FrForceAsset_* m_forceAsset = nullptr;  ///< pointer to the ForceAsset object.
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise

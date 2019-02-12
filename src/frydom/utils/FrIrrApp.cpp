@@ -1,6 +1,13 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 02/06/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
 
 #include "FrIrrApp.h"
 #include "chrono_irrlicht/ChIrrWizard.h"
@@ -179,16 +186,18 @@ namespace frydom {
         AssetBindAll();
         AssetUpdateAll();
 
+        // Temporal loop.
         while (GetDevice()->run()) {
-
             std::cout << "Time : " << m_system->GetChTime() << std::endl;
-
             BeginScene();
             DrawAll();
-            DoStep();
+            // Time-stepping.
+            DoStep(); // m_system->GetChTime() is also updated here.
             EndScene();
 
+            // Condition to stop the time-domain simulation using the time after time-stepping.
             if (endTime > 0. && m_system->GetChTime() > endTime) break; // If the endTime given is negative or null, the loop is infinite :)
+
 
         }
 

@@ -1,6 +1,13 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 23/01/19.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
 
 #ifndef FRYDOM_FRREVOLUTELINK_H
 #define FRYDOM_FRREVOLUTELINK_H
@@ -44,7 +51,9 @@ namespace frydom {
         double l_angleDeg = 0.;
         // LOG
 
+
     public:
+
         /// Constructor from two nodes and a pointer to the system.
         /// It automatically adds the link to the system
         FrRevoluteLink(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
@@ -107,7 +116,6 @@ namespace frydom {
 
         /// Update the link cache
         void UpdateCache() override;
-
     };
 
     /// Helper function to make it easy to link two nodes by a revolute link

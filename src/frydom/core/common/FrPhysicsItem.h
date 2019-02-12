@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 20/11/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRPHYSICSITEM_H
 #define FRYDOM_FRPHYSICSITEM_H
@@ -36,10 +44,13 @@ namespace frydom {
     }
 
 
-
     class FrOffshoreSystem_;
     class FrTriangleMeshConnected;
 
+    /**
+     * \class FrPhysicsItem_
+     * \brief Class for defining objects which are neither bodies nor links, for instance caterany lines.
+     */
     class FrPhysicsItem_: public FrObject {
 
     protected:
@@ -73,16 +84,28 @@ namespace frydom {
 
     };
 
+    /**
+     * \class FrPrePhysicsItem_
+     * \brief Class for defining physics items updated before bodies.
+     */
     class FrPrePhysicsItem_ : public FrPhysicsItem_{
     protected:
         friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem_>);
     };
 
+    /**
+     * \class FrMidPhysicsItem_
+     * \brief Class for defining physics items updated after bodies but before links.
+     */
     class FrMidPhysicsItem_ : public FrPhysicsItem_{
     protected:
         friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem_>);
     };
 
+    /**
+     * \class FrPostPhysicsItem_
+     * \brief Class for defining physics items updated after links.
+     */
     class FrPostPhysicsItem_ : public FrPhysicsItem_{
     protected:
         friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem_>);

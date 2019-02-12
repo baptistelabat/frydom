@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 29/05/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #include <frydom/cable/FrDynamicCable.h>
 #include <chrono/utils/ChProfiler.h>
@@ -338,6 +346,7 @@ namespace frydom {
 //        chrono::ChSystem::SetupInitial();
 //        m_offshoreSystem_->Initialize();
 //    }
+
 
     FrOffshoreSystem_::FrOffshoreSystem_(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
 
@@ -937,7 +946,7 @@ namespace frydom {
 
         app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
-        app.Run(endTime);
+        app.Run(endTime); // The temporal loop is here.
 
     }
 

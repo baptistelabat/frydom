@@ -97,6 +97,8 @@ namespace frydom {
         return c_y_dxdx;
     }
 
+    void FrFunctionBase::Initialize() {}
+
     void FrFunctionBase::StepFinalize() {}
 
     double FrFunctionBase::operator()(double x) const {
@@ -235,9 +237,6 @@ namespace frydom {
     void FrFunctionBase::operator/=(double alpha) {
         m_function = FrdivFunction(*m_function, FrConstantFunction(alpha)).Clone();
     }
-
-
-
 
     FrAddFunction operator+(double alpha, const FrFunctionBase& function) {
         return FrAddFunction(FrConstantFunction(alpha), function);

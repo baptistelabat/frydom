@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 30/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRLINEAREXCITATIONFORCE_H
 #define FRYDOM_FRLINEAREXCITATIONFORCE_H
@@ -23,6 +31,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrLinearExcitationForce
+     * \brief Class for computing the linear excitation loads.
+     */
     class FrLinearExcitationForce : public FrForce {
 
     private:
@@ -97,11 +109,16 @@ namespace frydom {
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
 
+    /**
+     * \class FrLinearExcitationForce_
+     * \brief Class for computing the linear excitation loads.
+     */
     class FrLinearExcitationForce_ : public FrForce_ {
 
     private:
 
-        FrHydroDB_* m_HDB;
+        std::shared_ptr<FrHydroDB_> m_HDB;
+        //TODO: passed the raw to shared ptr, need some modif in the mapper.
         FrEquilibriumFrame_* m_equilibriumFrame;
 
         std::vector<Eigen::MatrixXcd> m_Fexc;
@@ -111,8 +128,7 @@ namespace frydom {
 
     public:
 
-        FrLinearExcitationForce_(std::shared_ptr<FrHydroDB_>& HDB, std::shared_ptr<FrEquilibriumFrame_>& eqFrame)
-                : m_HDB(HDB.get()), m_equilibriumFrame(eqFrame.get()) {};
+        FrLinearExcitationForce_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {};
 
         void Initialize() override;
 
@@ -122,7 +138,8 @@ namespace frydom {
 
     };
 
-
+    std::shared_ptr<FrLinearExcitationForce_>
+    make_linear_excitation_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body);
 }  // end namespace frydom
 
 #endif //FRYDOM_FRLINEAREXCITATIONFORCE_H

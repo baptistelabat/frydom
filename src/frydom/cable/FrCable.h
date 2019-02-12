@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 10/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRCABLE_H
 #define FRYDOM_FRCABLE_H
@@ -15,6 +23,10 @@
 namespace frydom {
 
     /// Abstract base class for cables
+    /**
+     * \class FrCable
+     * \brief Class for defining cables.
+     */
     class FrCable : public FrObject {
 
     protected:
@@ -50,56 +62,41 @@ namespace frydom {
                   m_youngModulus(youngModulus),
                   m_sectionArea(sectionArea) {}
 
-        void SetYoungModulus(const double E) { m_youngModulus = E; }
+        void SetYoungModulus(const double E);
 
-        double GetYoungModulus() const { return m_youngModulus; }
+        double GetYoungModulus() const;
 
-        void SetSectionArea(const double A) { m_sectionArea = A; }
+        void SetSectionArea(const double A);
 
-        double GetSectionArea() const { return m_sectionArea; }
+        double GetSectionArea() const;
 
-        void SetCableLength(const double L) { m_cableLength = L; }
+        void SetCableLength(const double L);
 
-        double GetCableLength() const { return m_cableLength; }
+        double GetCableLength() const;
 
         /// Definition of the linear unrolling speed of the cable in m/s
-        void SetUnrollingSpeed(const double unrollingSpeed) { m_unrollingSpeed = unrollingSpeed; }
+        void SetUnrollingSpeed(const double unrollingSpeed);
 
         /// Return the linear unrolling speed of the cable in m/s
-        double GetUnrollingSpeed() const { return m_unrollingSpeed; }
+        double GetUnrollingSpeed() const;
 
-        void SetDiameter(const double d) {
-            m_sectionArea = M_PI * std::pow(d*0.5, 2);
-        }
+        void SetDiameter(const double d);
 
-        double GetDiameter() const {
-            return std::sqrt(4. * m_sectionArea / M_PI);
-        }
+        double GetDiameter() const;
 
-        double GetEA() const {
-            return m_youngModulus * m_sectionArea;
-        }
+        double GetEA() const;
 
-        void SetLinearDensity(const double lambda) { m_linearDensity = lambda; }
+        void SetLinearDensity(const double lambda);
 
-        double GetLinearDensity() const { return m_linearDensity; }
+        double GetLinearDensity() const;
 
-        void SetDensity(const double rho) {
-            m_linearDensity = rho * m_sectionArea;
-        }
+        void SetDensity(const double rho);
 
-        double GetDensity() const {
-            return m_linearDensity / m_sectionArea;
-        }
+        double GetDensity() const;
 
-        void SetStartingNode(std::shared_ptr<FrNode> startingNode) {
-            // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
-            m_startingNode = startingNode;
-        }
+        void SetStartingNode(std::shared_ptr<FrNode> startingNode);
 
-        std::shared_ptr<FrNode> GetStartingNode() const {
-            return m_startingNode;
-        }
+        std::shared_ptr<FrNode> GetStartingNode() const;
 
         void SetEndingNode(std::shared_ptr<FrNode> endingNode) {
             // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud

@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 01/10/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #include "FrInertia.h"
 
@@ -121,6 +129,19 @@ namespace frydom {
     void FrInertiaTensor_::SetCOGPosition(const frydom::Position &cogPosition, frydom::FRAME_CONVENTION fc) {
         m_cogPosition = cogPosition;
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(m_cogPosition);
+    }
+
+    Matrix66<double> FrInertiaTensor_::GetMatrix() const {
+
+        auto mat = Matrix66<double>();
+        mat.SetNull();
+
+        mat(0,0) = m_mass;
+        mat(1,1) = m_mass;
+        mat(2,2) = m_mass;
+        mat.block<3,3>(3, 3) = m_inertiaAtCOG;
+
+        return mat;
     }
 
 

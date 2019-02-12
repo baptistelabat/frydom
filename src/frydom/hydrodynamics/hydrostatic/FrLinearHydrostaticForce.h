@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 21/06/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRLINEARHYDROSTATICFORCE_H
 #define FRYDOM_FRLINEARHYDROSTATICFORCE_H
@@ -24,6 +32,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrLinearHydrostaticForce
+     * \brief Class for computing linear hydrostatic loads.
+     */
     class FrLinearHydrostaticForce : public FrForce {
 
     private:
@@ -83,15 +95,20 @@ namespace frydom {
     /// It is supposed that the equilibrium frame has the z-axis pointing upwards and its
     /// position equals the position of the COG of the body at equilibrium
 
+    /**
+     * \class FrLinearHydrostaticForce_
+     * \brief Class for computing linear hydrostatic loads.
+     */
     class FrLinearHydrostaticForce_ : public FrForce_ {
 
     private:
-        FrHydroDB_* m_HDB;
+        std::shared_ptr<FrHydroDB_> m_HDB;
         FrLinearHydrostaticStiffnessMatrix_ m_stiffnessMatrix;      ///< Hydrostatic stiffness matrix
+        //TODO: passed the raw to shared ptr, need some modif in the mapper.
         FrEquilibriumFrame_* m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
 
     public:
-        FrLinearHydrostaticForce_(FrHydroDB_* HDB) : m_HDB(HDB) { }
+        FrLinearHydrostaticForce_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) { }
 
         /// Get the stiffness matrix of the hydrostatic force
         /// \return Hydrostatic stiffness matrix
@@ -107,6 +124,11 @@ namespace frydom {
         /// Methods to be applied at the end of each time steps
         void StepFinalize() override { }
     };
+
+
+    std::shared_ptr<FrLinearHydrostaticForce_>
+    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body);
+
 
 }  // end namespace frydom
 

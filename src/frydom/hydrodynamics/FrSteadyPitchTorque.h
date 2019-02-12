@@ -1,15 +1,28 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 01/08/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRSTEADYPITCHTORQUE_H
 #define FRYDOM_FRSTEADYPITCHTORQUE_H
 
+// TODO : Plus utilisée dans le refactoring a supprimer
 
 #include "frydom/core/force/FrForce.h"
 
 namespace frydom {
 
+    /**
+     * \class FrSteadyPitchTorque
+     * \brief Class for computing a steady pitch torque.
+     */
     class FrSteadyPitchTorque : public FrForce {
 
     private:

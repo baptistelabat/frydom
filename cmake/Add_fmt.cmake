@@ -18,8 +18,8 @@ if (NOT fmt_FOUND)
         FetchContent_Populate(fmt)
 
         # FMT BUILD OPTIONS
-        set(BUILD_SHARED_LIBS TRUE)
-        set(FMT_TEST OFF)
+        set(BUILD_SHARED_LIBS TRUE CACHE BOOL "" FORCE)
+        set(FMT_TEST OFF CACHE BOOL "" FORCE)
 
         add_subdirectory(${fmt_SOURCE_DIR} ${fmt_BINARY_DIR})
 

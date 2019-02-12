@@ -1,6 +1,13 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 20/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
 
 #ifndef FRYDOM_FRHDF5_H
 #define FRYDOM_FRHDF5_H
@@ -22,7 +29,10 @@ namespace frydom {
         READWRITE
     };
 
-    /// Class for reading an writing from/into HDF5 files
+    /**
+     * \class FrHDF5Reader
+     * \brief Class for reading HDF5 files.
+     */
     class FrHDF5Reader {
         // TODO : use something else than the Eigen container to store data from HDF5. Something like multidimentional
         // arrays from the std lib / boost ? -> If boost is the only alternative, then keep using Eigen !

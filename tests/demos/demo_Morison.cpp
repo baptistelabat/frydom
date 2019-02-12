@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
         // Several ways exist to add a Morison model to a body. Remember that a Morison model is a composition of Morison
         // elements (using a composition pattern). Morison elements can be added simply to a Morison model. Note that you
         // can also provide a Morison Force with a Morison element, if you got only one element.
-        auto MorisonModel = make_MorisonModel(cylinder.get());
+        auto MorisonModel = make_morison_model(cylinder.get());
 
         // Define the added mass and drag Morison Coefficients.
         MorisonCoeff AddedMassCoeff(0.5, 0.7);
@@ -73,27 +73,24 @@ int main(int argc, char* argv[]) {
         // Add an element, with parameters corresponding to the cylinder.
         MorisonModel->AddElement(FrFrame_(), height, 2. * radius, AddedMassCoeff, DragCoeff, frictionCoeff);
 
-        // Instantiate a Morison Force, using a Morison model
-        auto MorisonForce = std::make_shared<FrMorisonForce_>(MorisonModel);
+        // Instantiate a Morison Force, using a Morison model, and add it to the cylinder
+        auto MorisonForce = make_morison_force(MorisonModel, cylinder);
 
         // Make the asset (a vector) for the Morison force visible
         MorisonForce->SetIsForceAsset(true);
-
-        // Don't forget to add the Morison force to the body !
-        cylinder->AddExternalForce(MorisonForce);
     }
     else
     {
-        // ------------------ Platform ------------------ //
+        // ------------------ platform ------------------ //
         auto Platform = system.NewBody();
-        Platform->SetName("Platform");
+        Platform->SetName("platform");
 
-        Platform->AddMeshAsset("GVA7500.obj");
+        Platform->AddMeshAsset("Platform_GVA7500.obj");
 
         Platform->SetFixedInWorld(true);
 
         // Morison Model
-        auto MorisonModel = make_MorisonModel(Platform.get());
+        auto MorisonModel = make_morison_model(Platform.get());
 
         // Define the added mass and friction coefficients.
         MorisonCoeff AddedMassCoeff(0., 0.); // The added mass is not taken into account
@@ -115,15 +112,11 @@ int main(int argc, char* argv[]) {
         MorisonModel->AddElement(Position(-32.3,23.04,-17.10)-cog,Position(-32.3,-23.04,-17.10)-cog, diameter, AddedMassCoeff, MorisonCoeff(123., 2928.), frictionCoeff);
         MorisonModel->AddElement(Position( 32.3,23.04,-17.10)-cog,Position( 32.3,-23.04,-17.10)-cog, diameter, AddedMassCoeff, MorisonCoeff(123., 2928.), frictionCoeff);
 
-
-        // Instantiate a Morison Force, using a Morison model
-        auto MorisonForce = std::make_shared<FrMorisonForce_>(MorisonModel);
+        // Instantiate a Morison Force, using a Morison model, and add it to the cylinder
+        auto MorisonForce = make_morison_force(MorisonModel, Platform);
 
         // Make the asset (a vector) for the Morison force visible
         MorisonForce->SetIsForceAsset(true);
-
-        // Don't forget to add the Morison force to the body !
-        Platform->AddExternalForce(MorisonForce);
     }
 
     // ------------------ Run ------------------ //
@@ -131,12 +124,8 @@ int main(int argc, char* argv[]) {
     // You can change the dynamical simulation time step using.
     system.SetTimeStep(0.04);
 
-    // Don't forget to initialize the offshore system : it will initialize every physical objects and environmental
-    // components it contains.
-    system.Initialize();
-
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
-    // the time length of the simulation (here 15) and the distance from the camera to the objectif (75m).
+    // the time length of the simulation (here 150) and the distance from the camera to the objectif (155m).
     // For saving snapshots of the simulation, just turn the boolean to true.
     system.RunInViewer(150, 155, false);
 

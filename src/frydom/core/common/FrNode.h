@@ -1,6 +1,13 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 08/09/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
 
 #ifndef FRYDOM_FRNODE_H
 #define FRYDOM_FRNODE_H
@@ -18,6 +25,10 @@ namespace frydom {
 
 //    class FrBody;
 
+    /**
+     * \class FrNode
+     * \brief Class for defining nodes (in order to add links).
+     */
     class FrNode : public chrono::ChMarker, public FrObject {
 //    private:
 //        FrBody* Body;
@@ -88,7 +99,10 @@ namespace frydom {
     // Forward declarations
     class FrBody_;
 
-
+    /**
+     * \class FrNode_
+     * \brief Class for defining nodes (in order to add links).
+     */
     class FrNode_ : public FrObject {
 
     private:
@@ -101,6 +115,7 @@ namespace frydom {
         /// Default Constructor
         /// \param body body to which the node belongs
         explicit FrNode_(FrBody_* body);
+
 
         /// Set node position and direction axis, with respect to body reference frame
         /// \param pos relative position of the frame node with respect to body reference frame
@@ -125,6 +140,7 @@ namespace frydom {
         void TranslateInWorld(const Translation &translationInWorld, FRAME_CONVENTION fc);
         void TranslateInWorld(const Direction& directionWorld, double distance, FRAME_CONVENTION fc);
         void TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc);
+
 
         void SetOrientationInBody(const FrRotation_& rotation);
         void SetOrientationInBody(const FrUnitQuaternion_& quaternion);
@@ -167,6 +183,7 @@ namespace frydom {
         void SetFrameInBody(const FrFrame_& frameInBody);
 
         void SetFrameInWorld(const FrFrame_& frameInWorld);
+
 
         /// Get the node position in world reference frame
         /// \param fc Frame convention (NED/NWU)

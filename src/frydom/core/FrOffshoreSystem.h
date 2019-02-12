@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 29/05/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FROFFSHORESYSTEM_H
 #define FRYDOM_FROFFSHORESYSTEM_H
@@ -11,8 +19,8 @@
 //
 //
 #include <frydom/utils/FrIrrApp.h>
+//#include <frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h>
 //#include <frydom/cable/FrCable.h>
-//#include <frydom/cable/FrCatway.h>
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/physics/ChSystemNSC.h"
 //
@@ -44,6 +52,10 @@ namespace frydom {
 
 
     // TODO: voir aussi a deriver de ChSystemSMC pour comparer les 2 ? Avoir une classe de base virtuelle derivant de ChSystem ???
+    /**
+    * \class FrOffshoreSystem
+    * \brief Main class for a FRyDoM offshore system, representing a multibody physical system,.
+    */
     class FrOffshoreSystem :
             public chrono::ChSystemSMC,
             public std::enable_shared_from_this<FrOffshoreSystem>,
@@ -308,7 +320,7 @@ namespace frydom {
         using MidPhysicsContainer = std::vector<std::shared_ptr<FrMidPhysicsItem_>>;
         using PostPhysicsContainer = std::vector<std::shared_ptr<FrPostPhysicsItem_>>;
 
-        // TODO : bouger les iterateurs proche des methodes d'iteration...
+        // TODO : bouger les iterateurs proches des methodes d'iteration...
         using BodyIter          = BodyContainer::iterator;
         using ConstBodyIter     = BodyContainer::const_iterator;
 
@@ -716,7 +728,6 @@ namespace frydom {
 //        /// Add other physics item to the offshore system
 //        /// \param otherPhysics other physic item to be added
 //        void AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics);
-
 
 //        friend class FrIrrApp_;
         void CheckIsInitialized();

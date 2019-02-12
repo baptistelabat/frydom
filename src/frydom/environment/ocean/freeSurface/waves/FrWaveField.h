@@ -1,9 +1,17 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 31/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
 
 #ifndef FRYDOM_FRWAVEFIELD_H
 #define FRYDOM_FRWAVEFIELD_H
+
 
 
 #include "frydom/core/common/FrObject.h"
@@ -15,6 +23,8 @@
 #include "FrKinematicStretching.h"
 
 #include "frydom/core/math/FrComplex.h"
+
+
 
 
 namespace frydom {
@@ -83,6 +93,10 @@ namespace frydom {
     class FrFreeSurface;
     class FrLinearRampFunction_;
 
+    /**
+     * \class FrWaveField
+     * \brief Class for defining a wave field (null or linear).
+     */
     class FrWaveField : public FrObject {
 
     protected:
@@ -155,6 +169,10 @@ namespace frydom {
     };
 
 
+    /**
+     * \class FrNullWaveField
+     * \brief Class for defining a null wave field.
+     */
     class FrNullWaveField : public FrWaveField {
 
     private:
@@ -191,6 +209,10 @@ namespace frydom {
 
     // =================================================================================================================
 
+    /**
+     * \class FrLinearWaveField
+     * \brief Class for defining a linear wave field.
+     */
     class FrLinearWaveField : public FrWaveField {
 
     private:
@@ -378,6 +400,10 @@ namespace frydom {
     class FrFreeSurface_;
     class FrLinearRampFunction_;
 
+    /**
+     * \class FrWaveField_
+     * \brief Class for defining a wave field (null or linear).
+     */
     class FrWaveField_ : public FrObject {
 
     protected:
@@ -511,6 +537,10 @@ namespace frydom {
     };
 
 
+    /**
+     * \class FrNullWaveField_
+     * \brief Class for defining a null wave field.
+     */
     class FrNullWaveField_ : public FrWaveField_ {
 
     public:

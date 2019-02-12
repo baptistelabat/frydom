@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 13/11/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRFIELDBASE_H
 #define FRYDOM_FRFIELDBASE_H
@@ -10,6 +18,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrFieldBase
+     * \brief Class for defining in general the type of flow field used (uniform field, current or wind).
+     */
     class FrFieldBase : public FrObject {
 
     public:

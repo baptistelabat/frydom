@@ -1,6 +1,14 @@
-//Class Name
-// Created by frongere on 21/06/17.
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
+//
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRHYDROBODY_H
 #define FRYDOM_FRHYDROBODY_H
@@ -32,6 +40,10 @@ namespace frydom {
         BodyFixed
     };
 
+    /**
+     * \class FrHydroBodyProperties
+     * \brief Class for defining the properties of a body subject to hydrodynamic loads.
+     */
     class FrHydroBodyProperties {
 
     private:
@@ -81,6 +93,10 @@ namespace frydom {
 
     };
 
+    /**
+     * \class FrHydroBody
+     * \brief Class not used.
+     */
     class FrHydroBody : public FrBody {
 
     protected:

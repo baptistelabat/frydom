@@ -4,9 +4,9 @@ Linear potential flow theory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The linear potential flow theory is a common approach for seakeeping analysis of offshore structures. It is based on the
-following assumptions: incompressible and non viscous fluid, and irrotational flow.
+following assumptions: incompressible and irrotational flow and non viscous fluid.
 
-The position of the body is also linearized around an equilibrium position, defined in FRyDoM by the  :any:`equilibrium frame <equilibrium_frame>`.
+By assuming small amplitude motions of the body, the position of the body is linearized around an equilibrium position, defined in FRyDoM by the  :any:`equilibrium frame <equilibrium_frame>`. 
 For offshore structure with no forward speed, this position is the position of the body at the equilibrium state.
 For offshore structure with non-zero forward speed, the equilibrium frame follows the constant steady velocity of the structure.
 :any:`The following figure<fig_equilibrium_frame>` represents the instantaneous position of the body and the equilibrium frame position.
@@ -18,6 +18,8 @@ For offshore structure with non-zero forward speed, the equilibrium frame follow
 
     Representation of the instantaneous position of the ship (grey) and equilibrium position (white)
 
+By assuming small wave amplitude, the free surface is linearized around the mean sea level `z = 0`.
+
 In time domain, the dynamic of the body due to wave loads is represented by the Cummin’s equation:
 
 .. math::
@@ -27,12 +29,12 @@ where
 
 - :math:`\mathbf{x}` is the generalized position vector in respect to the equilibrium frame,
 - :math:`U` is the steady forward speed of the body,
-- :math:`M` is the generalized mass matrix of the body,
+- :math:`\mathbf{M}` is the generalized mass matrix of the body,
 - :math:`\mathbf{A}_{\infty}` and :math:`\mathbf{B}_{\infty}` are the infinite added mass and damping coefficients,
 - :math:`\mathbf{K}` is the impulse response function,
 - :math:`\mathbf{K}_h` is the stiffness matrix,
 - :math:`\mathbf{f}_e` is the generalized wave excitation force,
-- :math:`\mathbf{f}_{ext}` is the generalized external force,
+- :math:`\mathbf{f}_{ext}` is the generalized external force.
 
 Hydrostatic force
 -----------------
@@ -45,7 +47,7 @@ The generalized hydrostatic static force expression for the linear approximation
 where
 
 - :math:`\mathbf{x}` is the generalized position vector, in respect to the equilibrium frame,
-- :math:`\mathbf{K}_h` is the stiffness matrix.
+- :math:`\mathbf{K}_h` is the hydrostatic stiffness matrix.
 
 Stiffness coefficients for the horizontal degrees of freedom (surge, sway and yaw) are zero. The stiffness components
 for the heave, roll and pitch degrees of freedom are specified in respect to the equilibrium frame.
@@ -63,11 +65,11 @@ where
 
 - :math:`\omega_e = \omega - kU` is the encounter circular frequency, calculated using the steady forward speed,
 - :math:`A_{\omega}` is the wave amplitude for the circular frequency :math:`\omega`,
-- :math:`\mathbf{f}_e(\omega)` is the excitation force component for the circular frequency :math:`\omega`.
+- :math:`\mathbf{f}_e(\omega)` is the frequency-domain excitation force component for the circular frequency :math:`\omega`.
 
-The excitation force components are given by a linear potential flow solver (Nemoh, etc.). It is the combination of diffraction
+The excitation force components are given by a linear potential flow based solver (Nemoh, WAMIT, etc.). It is the combination of diffraction
 force components and Froude-Krylov force components (integration of the pressure due to incident wave profile on the
-wetted hull.)
+wetted hull).
 
 Radiation force
 ---------------
@@ -84,8 +86,8 @@ where
 - :math:`\mathbf{A}_{\infty} (U)` and :math:`\mathbf{B}_{\infty} (U)` are the infinite added mass and damping coefficient,
 - :math:`\mathbf{K}` is the impulse response function.
 
-The infinite added mass and damping coefficients are given by a linear potential flow solver. The impulse response can be
-computed from the damping coefficients.
+The infinite added mass and damping coefficients are given by a linear potential flow based solver. The impulse response can be
+computed from the frequency-domain damping coefficients.
 
 .. math::
     \mathbf{K}(t) = \frac{2}{\pi} \int_0^{\infty} \mathbf{B}(\omega) \cos(\omega t) d\omega

@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 17/04/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRMORISONMODEL_H
 #define FRYDOM_FRMORISONMODEL_H
@@ -30,6 +38,10 @@ namespace frydom {
     // MORISON ELEMENT
     // --------------------------------------------------------------------------
 
+    /**
+     * \class FrMorisonModel
+     * \brief Class for defining the Morison model.
+     */
     class FrMorisonModel {
 
     protected:
@@ -74,6 +86,10 @@ namespace frydom {
     // SINGLE ELEMENT
     // ---------------------------------------------------------------------------
 
+    /**
+     * \class FrSingleElement
+     * \brief Class for computing the Morison loads for a simple element.
+     */
     class FrSingleElement : public FrMorisonModel {
 
     private:
@@ -134,7 +150,6 @@ namespace frydom {
             m_cd_y = cd_y;
         }
 
-
         /// Definition of the friction coefficient (-) (for tangential force component)
         void SetFriction(const double cf) { m_cf = cf; }
 
@@ -184,6 +199,10 @@ namespace frydom {
     // COMPOSITE ELEMENT
     // -----------------------------------------------------------------------------
 
+    /**
+     * \class FrCompositeElement
+     * \brief Class for computing the Morison loads for a composite element (made of several simple elements).
+     */
     class FrCompositeElement : public FrMorisonModel {
 
     protected:
@@ -368,9 +387,12 @@ namespace frydom {
 
     class FrMorisonCompositeElement_;
 
-    std::shared_ptr<FrMorisonCompositeElement_> make_MorisonModel(FrBody_* body);
+    /// Maker for a Morison model : instantiate and return a FrMorisonCompositeElement
+    /// \param body body related to the morison model
+    /// \return Morison model, as a Morison composite element
+    std::shared_ptr<FrMorisonCompositeElement_> make_morison_model(FrBody_ *body);
 
-//    std::shared_ptr<FrMorisonCompositeElement_> make_MorisonModel(FrBody_* body, FrFrame_& Frame){
+//    std::shared_ptr<FrMorisonCompositeElement_> make_morison_model(FrBody_* body, FrFrame_& Frame){
 //            return std::make_shared<FrMorisonCompositeElement_>(body, Frame);
 //    }
 

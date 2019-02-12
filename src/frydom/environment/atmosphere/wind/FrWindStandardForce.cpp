@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 17/07/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #include "FrWindStandardForce.h"
 #include "frydom/core/junk/FrHydroBody.h"
@@ -139,7 +147,12 @@ namespace frydom {
         torque.y() = 0.;
         torque.z() = force.y() * m1 * m_lpp;
 
-        auto frame = FrameAtCOG.ProjectToXYPlane(NWU);
+        // Build the projected rotation in the XoY plane.
+        double phi, theta, psi;
+        m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+        auto bodyRotation = FrRotation_(Direction(0.,0.,1.), psi, NWU);
+        auto frame = FrFrame_(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
+
         auto worldForce = frame.ProjectVectorFrameInParent(force, NWU);
         auto worldTorque = frame.ProjectVectorFrameInParent(torque, NWU);
 

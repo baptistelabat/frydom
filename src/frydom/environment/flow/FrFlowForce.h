@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 15/11/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRFLOWFORCE_H
 #define FRYDOM_FRFLOWFORCE_H
@@ -11,6 +19,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrFlowForce
+     * \brief Class for computing the flow force.
+     */
     class FrFlowForce : public FrForce_ {
 
     protected:
@@ -44,6 +56,10 @@ namespace frydom {
     };
 
 
+    /**
+     * \class FrCurrentForce2_
+     * \brief Class for computing the current loads.
+     */
     class FrCurrentForce2_ : public FrFlowForce {
 
 
@@ -54,6 +70,10 @@ namespace frydom {
     };
 
 
+    /**
+     * \class FrWindForce2_
+     * \brief Class for computing the wind loads.
+     */
     class FrWindForce2_ : public FrFlowForce {
 
     public:
@@ -62,6 +82,10 @@ namespace frydom {
         void Update(double time) override;
 
     };
+
+    std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body);
+
+    std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body);
 
 } // end of namespace frydom
 

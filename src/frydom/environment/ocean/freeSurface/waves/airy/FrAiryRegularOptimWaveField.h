@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by Lucas Letournel on 11/12/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRAIRYREGULAROPTIMWAVEFIELD_H
 #define FRYDOM_FRAIRYREGULAROPTIMWAVEFIELD_H
@@ -9,6 +17,10 @@
 
 namespace frydom {
 
+    /**
+     * \class FrAiryRegularOptimWaveField
+     * \brief Class which deals with regular wave fields, from FrAiryRegularWaveField.
+     */
     class FrAiryRegularOptimWaveField : public FrAiryRegularWaveField {
     private:
 

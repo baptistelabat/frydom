@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 17/10/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #include "FrRadiationForce.h"
 
@@ -64,15 +72,14 @@ namespace frydom {
 
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
-
     // --------------------------------------------------
     // FrRadiationForce
     // --------------------------------------------------
 
-    FrRadiationForce_::FrRadiationForce_(const std::shared_ptr<FrRadiationModel_> radiationModel)
+    FrRadiationForce_::FrRadiationForce_(FrRadiationModel_* radiationModel)
             : m_radiationModel(radiationModel) {}
 
-    void FrRadiationForce_::SetRadiationModel(const std::shared_ptr<FrRadiationModel_> radiationModel) {
+    void FrRadiationForce_::SetRadiationModel(FrRadiationModel_* radiationModel) {
         m_radiationModel = radiationModel;
     }
 
@@ -81,11 +88,10 @@ namespace frydom {
     // --------------------------------------------------
 
     FrRadiationConvolutionForce_::FrRadiationConvolutionForce_(
-            std::shared_ptr<FrRadiationConvolutionModel_> radiationModel)
+            FrRadiationConvolutionModel_* radiationModel)
             : FrRadiationForce_(radiationModel) {}
 
     void FrRadiationConvolutionForce_::Initialize() {
-        m_radiationModel->Initialize();
         FrRadiationForce_::Initialize();
     }
 

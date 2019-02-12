@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 11/01/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #include "FrRadiationModel.h"
 
@@ -365,9 +373,16 @@ namespace frydom {
     // Radiation model
     // ----------------------------------------------------------------
 
+    FrRadiationModel_::FrRadiationModel_() {
+        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this);
+    }
+
+    FrRadiationModel_::FrRadiationModel_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {
+        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this);
+    }
 
     void FrRadiationModel_::Initialize() {
-
+        FrPrePhysicsItem_::Initialize();
     }
 
     FrHydroMapper_* FrRadiationModel_::GetMapper() const {
@@ -400,16 +415,32 @@ namespace frydom {
     // Radiation model with convolution
     // ----------------------------------------------------------------
 
+    FrRadiationConvolutionModel_::FrRadiationConvolutionModel_(std::shared_ptr<FrHydroDB_> HDB)
+        : FrRadiationModel_(HDB) {
+
+        // FIXME : a passer dans la méthode initialize pour eviter les pb de précédence vis a vis de la HDB
+        for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
+            auto body = m_HDB->GetBody(BEMBody->get());
+            body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this));
+        }
+    }
+
     void FrRadiationConvolutionModel_::Initialize() {
 
-        double Te, dt;
+        FrRadiationModel_::Initialize();
+
         unsigned int N;
-        GetImpulseResponseSize(Te, dt, N);
+        if (m_Te < DBL_EPSILON or m_dt < DBL_EPSILON) GetImpulseResponseSize(m_Te, m_dt, N);
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
-            m_recorder[BEMBody->get()] = FrTimeRecorder_<GeneralizedVelocity>(Te, dt);
+
+            if (m_recorder.find(BEMBody->get()) == m_recorder.end()) {
+                m_recorder[BEMBody->get()] = FrTimeRecorder_<GeneralizedVelocity>(m_Te, m_dt);
+            }
+
             m_recorder[BEMBody->get()].Initialize();
         }
+
     }
 
     void FrRadiationConvolutionModel_::Update(double time) {
@@ -418,14 +449,6 @@ namespace frydom {
         for (auto BEMBody = m_HDB->begin(); BEMBody != m_HDB->end(); BEMBody++) {
             auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->get());
             m_recorder[BEMBody->get()].Record(time, eqFrame->GetPerturbationGeneralizedVelocityInFrame());
-
-            //##CC
-            //auto vp = eqFrame->GetPerturbationGeneralizedVelocityInFrame().GetVelocity();
-            //auto vrp = eqFrame->GetPerturbationGeneralizedVelocityInFrame().GetAngularVelocity();
-            //std::cout << "debug: radiation force: record perturbation velocity:"
-            //          << vp.x() <<  ";" << vp.y() << ";" << vp.z()
-            //          << vrp.x() << ";"  << vrp.y() << ";"  << vrp.z() << std::endl;
-            //##CC
         }
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
@@ -446,13 +469,6 @@ namespace frydom {
                     kernel.reserve(vtime.size());
                     for (unsigned int it = 0; it < vtime.size(); ++it) {
                         kernel.push_back(interpK->Eval(vtime[it]).cwiseProduct(velocity.at(it)));
-
-                        //##CC
-                        //std::cout << "debug: radiation force: time= " << vtime[it] << ";"
-                        //          << "kernel:" << kernel[it].at(0) << ";" << kernel[it].at(1) << ";" << kernel[it].at(2)
-                        //          << ";" << kernel[it].at(3) << ";" << kernel[it].at(4) << ";" << kernel[it].at(5)
-                        //          << std::endl;
-                        //##CC
                     }
                     radiationForce += TrapzLoc(vtime, kernel);
                 }
@@ -461,27 +477,12 @@ namespace frydom {
             auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->get());
             auto meanSpeed = eqFrame->GetVelocityInFrame();
 
-            // ##CC
-            //std::cout << "debug: radiation force: meanSpeed = " << meanSpeed.x() << ";"
-            //          << meanSpeed.y() << ";" << meanSpeed.z() << std::endl;
-            //##CC
-
             if (meanSpeed.squaredNorm() > FLT_EPSILON) {
-
-                //##CC
-                //std::cout << "debug: radiation force: compute Ku" << std::endl;
-                //##CC
                 radiationForce += ConvolutionKu(meanSpeed.norm());
             }
 
             auto forceInWorld = eqFrame->ProjectVectorFrameInParent(radiationForce.GetForce(), NWU);
             auto TorqueInWorld = eqFrame->ProjectVectorFrameInParent(radiationForce.GetTorque(), NWU);
-
-            // ##CC
-            //std::cout << "debug: radiation force Fx=" << forceInWorld.GetFx() << " Fy=" << forceInWorld.GetFy()
-            //          << " Fz=" << forceInWorld.GetFz() << " Mx=" << TorqueInWorld.GetMx()
-            //          << " My=" << TorqueInWorld.GetMy() << " Mz=" << TorqueInWorld.GetMz() << std::endl;
-            // ##CC
 
             m_radiationForce[BEMBody->get()] = - GeneralizedForce(forceInWorld, TorqueInWorld);
         }
@@ -541,16 +542,29 @@ namespace frydom {
 
     }
 
+    void FrRadiationConvolutionModel_::SetImpulseResponseSize(FrBEMBody_ *BEMBody, double Te, double dt) {
+        m_recorder[BEMBody] = FrTimeRecorder_<GeneralizedVelocity>(Te, dt);
+    }
+
+    void FrRadiationConvolutionModel_::SetImpulseResponseSize(FrBody_* body, double Te, double dt) {
+        auto BEMBody = m_HDB->GetBody(body);
+        this->SetImpulseResponseSize(BEMBody, Te, dt);
+    }
+
+    void FrRadiationConvolutionModel_::SetImpulseResponseSize(double Te, double dt) {
+        assert(Te > DBL_EPSILON);
+        assert(dt > DBL_EPSILON);
+        m_Te = Te;
+        m_dt = dt;
+    }
 
 
-
-
-
-
-
-
-
-
+    std::shared_ptr<FrRadiationConvolutionModel_>
+    make_radiation_convolution_model(std::shared_ptr<FrHydroDB_> HDB, FrOffshoreSystem_* system){
+        auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(HDB);
+        system->AddPhysicsItem(radiationModel);
+        return radiationModel;
+    }
 
 }
 

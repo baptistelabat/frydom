@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by camille on 13/11/18.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRFLOWBASE_H
 #define FRYDOM_FRFLOWBASE_H
@@ -24,6 +32,10 @@ namespace frydom {
     /// FrFlowBase : Base flow field
     ///
 
+    /**
+     * \class FrFlowBase
+     * \brief Class for defining in general the type of flow used (current or wind).
+     */
     class FrFlowBase : public FrObject {
 
     private:
@@ -90,6 +102,10 @@ namespace frydom {
     class FrOcean_;
     class FrAtmosphere_;
 
+    /**
+     * \class FrCurrent
+     * \brief Class defining a current field.
+     */
     class FrCurrent_ : public FrFlowBase {
     private:
 
@@ -110,7 +126,10 @@ namespace frydom {
 
 
 
-
+    /**
+    * \class FrWind_
+    * \brief Class for defining a wind.
+    */
     class FrWind_ : public FrFlowBase {
     private:
 

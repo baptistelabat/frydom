@@ -1,6 +1,14 @@
-//NED
-// Created by frongere on 20/09/18.
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
+//
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #ifndef FRYDOM_FRROTATION_H
 #define FRYDOM_FRROTATION_H
@@ -20,7 +28,10 @@ namespace frydom {
 
     // WARNING: chrono object must always be in NWU convention. Conversion to NED must be applied on FRyDoM objects
 
-
+    /**
+    * \class FrUnitQuaternion_
+    * \brief Class for using quaternion.
+    */
     class FrUnitQuaternion_ {
         /// This quaternion class is only used in FRyDoM to represent rotations, in contrary to Chrono.
         /// The unit quaternion is then ALWAYS defined normalized.
@@ -279,7 +290,10 @@ namespace frydom {
      *
      */
 
-
+    /**
+     * \class FrRotation_
+     * \brief Class for defining a rotation.
+     */
     class FrRotation_ {
 
     private:

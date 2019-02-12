@@ -1,6 +1,14 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 21/06/17.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
+
 
 #include "FrLinearHydrostaticForce.h"
 
@@ -107,6 +115,7 @@ namespace frydom {
 
 
     void FrLinearHydrostaticForce_::Initialize() {
+        FrForce_::Initialize();
         m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
         m_stiffnessMatrix.SetData(m_HDB->GetBody(m_body)->GetHydrostaticStiffnessMatrix());
     }
@@ -128,6 +137,13 @@ namespace frydom {
 
         auto localTorque = Torque(forceState[1], forceState[2], 0.);
         SetTorqueInBodyAtCOG(localTorque, NWU);
+    }
+
+    std::shared_ptr<FrLinearHydrostaticForce_>
+    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body){
+        auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(HDB);
+        body->AddExternalForce(forceHst);
+        return forceHst;
     }
 
 

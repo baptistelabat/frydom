@@ -1,6 +1,13 @@
+// =============================================================================
+// FRyDoM - frydom-ce.gitlab.host.io
 //
-// Created by frongere on 23/01/19.
+// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDOM.
+//
+// =============================================================================
 
 #ifndef FRYDOM_FRPRISMATICLINK_H
 #define FRYDOM_FRPRISMATICLINK_H
@@ -11,13 +18,17 @@
 
 namespace frydom {
 
-    /// Specialized class for prismatic link between two bodies
+
+
+    /**
+     * \class FrPrismaticLink
+     * \brief Class for defining a prismatic link.
+     */
     class FrPrismaticLink : public FrLink_ {
 
     private:
         double m_stiffness = 0.; ///> Link linear stiffness
         double m_damping = 0.;   ///> Link linear damping
-
         double m_restLength = 0.;
 
         double m_linkPosition = 0.;
@@ -38,8 +49,11 @@ namespace frydom {
         /// Get the rest length of the link
         double GetRestLength() const;
 
+
+
         /// Get the direction of the link in world woordinate system
         const Direction GetLinkDirectionInWorld(FRAME_CONVENTION fc) const;
+
 
         /// Get the link position with respect to the rest length
         double GetLinkPosition() const;
@@ -75,8 +89,10 @@ namespace frydom {
 
     };
 
+
     /// Helper function to make it easy to link two nodes by a prismatic link
     std::shared_ptr<FrPrismaticLink> make_prismatic_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
+
 
 }  // end namespace frydom
 

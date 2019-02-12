@@ -1,0 +1,3 @@
+ - Quel modèle de "kinematic stretching" est utilisé en pratique ?
+ - L'effort d'amortissement linéaire ne devrait-il pas s'écrire f_LD = -M_LD*V plutôt ?
+ - Que sont les "generalized notations" ? Les coordonnées Cartésiennes ?
