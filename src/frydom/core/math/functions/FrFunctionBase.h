@@ -233,6 +233,21 @@ namespace frydom {
 
 
 
+    class FrXFunction : public FrFunctionBase {
+
+    public:
+        FrXFunction();
+        FrXFunction(const FrXFunction& other);
+        FrXFunction* Clone() const override;
+        std::string GetRepr() const override;
+
+    protected:
+        void Eval(double x) const;
+
+    };
+
+
+
     /*
      * FrFunction_
      */
@@ -391,6 +406,8 @@ namespace frydom {
         void Eval(double x) const override;
 
     };
+
+
 
 
 }  // end namespace frydom

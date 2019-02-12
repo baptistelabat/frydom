@@ -79,9 +79,11 @@ list(APPEND SRC_FILES
         math/functions/ramp/FrLinearRampFunction.cpp
         math/functions/ramp/FrTanhRampFunction.cpp
 
-        math/functions/lib/FrPolynomialFunction.cpp
+        math/functions/lib/FrPowFunction.cpp
+        math/functions/lib/FrLinearFunction.cpp
+        math/functions/lib/FrSaturateFunction.cpp
 
-
+#        math/functions/lib/FrPolynomialFunction.cpp
         )
 
 # MISC

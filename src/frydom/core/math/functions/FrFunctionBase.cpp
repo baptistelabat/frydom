@@ -210,6 +210,27 @@ namespace frydom {
     }
 
 
+
+    FrXFunction::FrXFunction() = default;
+
+    FrXFunction::FrXFunction(const FrXFunction& other) {}
+
+    FrXFunction* FrXFunction::Clone() const {
+        return new FrXFunction(*this);
+    }
+
+    std::string FrXFunction::GetRepr() const {
+        return "x";
+    }
+
+    void FrXFunction::Eval(double x) const {
+        c_x = x;
+        c_y = x;
+        c_y_dx = 1;
+        c_y_dxdx = 0.;
+    }
+
+
     /*
      * FrFunction_
      */

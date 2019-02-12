@@ -27,13 +27,19 @@ int main() {
     std::cout << (newFcn1 - newFcn2).GetRepr() << std::endl;
 
 
-    // Testing polynomial
-    auto poly = FrPolynomialFunction();
-    poly.Add(3, 2);
-    poly.Add(6, 1);
-    poly.Add(1, 0);
+    // Test monomial
+    auto monomial = FrPowFunction(2);
+    monomial.WriteToGnuPlotFile(-10, 10, 0.01, "pow2");
 
-    poly.WriteToGnuPlotFile(-10, 10, 0.01, "poly");
+
+
+//    // Testing polynomial
+//    auto poly = FrPolynomialFunction();
+//    poly.Add(3, 2);
+//    poly.Add(6, 1);
+//    poly.Add(1, 0);
+//
+//    poly.WriteToGnuPlotFile(-10, 10, 0.01, "poly");
 
 
 
