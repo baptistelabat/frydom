@@ -58,42 +58,12 @@ namespace frydom {
 
         void FrLinkLockBase::Update(double time, bool update_assets) {
 
+            chrono::ChLinkLock::Update(time, update_assets);
+
             GenerateCache();
-
-            auto node1 = m_frydomLink->GetNode1()->GetPositionInWorld(NWU);
-            auto node2 = m_frydomLink->GetNode2()->GetPositionInWorld(NWU);
-
-            //marker1->GetPos().x() = node1.GetX();
-            //marker1->GetPos().y() = node1.GetY();
-            //marker1->GetPos().z() = node1.GetZ();
-
-            //marker2->GetPos().x() = node2.GetX();
-            //marker2->GetPos().y() = node2.GetY();
-            //marker2->GetPos().z() = node2.GetZ();
 
             m_frydomLink->Update(time);
 
-            // ##CC
-            /*
-            std::cout << "debug: FrLinkLockBase: marker1: " << marker1->GetPos().x() << ";"
-                                                            << marker1->GetPos().y() << ";"
-                                                            << marker1->GetPos().z() << std::endl;
-            std::cout << "debug: FrLinkLockBase: marker2: " << marker2->GetPos().x() << ";"
-                                                            << marker2->GetPos().y() << ";"
-                                                            << marker2->GetPos().z() << std::endl;
-
-
-            std::cout << "debug: FrLinkLockBase: node1: " << node1.GetX() << ";"
-                                                          << node1.GetY() << ";"
-                                                          << node1.GetZ() << std::endl;
-            std::cout << "debug: FrLinkLockBase: node2: " << node2.GetX() << ";"
-                                                          << node2.GetY() << ";"
-                                                          << node2.GetZ() << std::endl;
-            */
-            // ##CC
-
-            // FIXME : les C_force et C_torque appliques a l'update precedent sont ecrases
-            chrono::ChLinkLock::Update(time, update_assets);
         }
 
         void FrLinkLockBase::GenerateCache() {
