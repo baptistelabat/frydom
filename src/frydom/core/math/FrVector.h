@@ -706,12 +706,6 @@ namespace frydom {
             return out;
         }
 
-//        inline chrono::ChVector<double>& SwapFrameConvention(chrono::ChVector<double>& vector) {
-//            vector[1] = -vector[1];
-//            vector[2] = -vector[2];
-//            return vector;
-//        }
-
         /// Convert a chrono 3D vector into a FRyDoM Vector
         template <class Vector>
         inline Vector ChVectorToVector3d(const chrono::ChVector<double>& vector) {
@@ -723,20 +717,12 @@ namespace frydom {
             return chrono::ChVector<double>(vector3d[0], vector3d[1], vector3d[2]);
         }
 
-//        inline chrono::ChVector<double> MakeNWUChVector(double& x, double& y, double& z, FRAME_CONVENTION fc) {
-//            if (IsNED(fc)) {
-//                return chrono::ChVector<double>(x, -y, -z);
-//            } else {
-//                return chrono::ChVector<double>(x, y, z);
-//            }
-//        }
-
         inline void SwapCoordinateConvention(double& x, double& y, double& z) {
             y = -y;
             z = -z;
         }
 
-    }  // end namespace internal
+    }  // end namespace frydom::internal
 
 
 

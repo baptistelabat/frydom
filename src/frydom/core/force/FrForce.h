@@ -33,7 +33,7 @@ namespace frydom {
 
     /**
      * \class FrForce
-     * \brief Class for computing the loads in general.
+     * \brief Base class for every external forces on bodies
      */
     class FrForce :
             public chrono::ChForce,
@@ -149,7 +149,7 @@ namespace frydom {
 
     /**
      * \class FrForce_
-     * \brief Class to compute the loads in general.
+     * \brief Base class for every external forces on bodies
      */
     class FrForce_;
 

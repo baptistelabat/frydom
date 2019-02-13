@@ -14,72 +14,72 @@
 namespace frydom {
 
 
-    // TODO : continuer le dev...
-
-    class FrFunction : public chrono::ChFunction {
-
-//    protected:
+//    // TODO : continuer le dev...
 //
-//        std::shared_ptr<chrono::ChFunction> m_chronoFunction;
-
-        double m_C = 0.;
-
-        double Tramp = 50;
-
-        double c_a;
-
-    public:
-
-
-        FrFunction(double C) : chrono::ChFunction(), m_C(C) {
-
-            double eps = 1e-3;
-            c_a = 0.5 * log((1-eps) / eps);
-
-        }
-
-
-        double Get_y(double x) const override {
-
+//    class FrFunction : public chrono::ChFunction {
+//
+////    protected:
+////
+////        std::shared_ptr<chrono::ChFunction> m_chronoFunction;
+//
+//        double m_C = 0.;
+//
+//        double Tramp = 50;
+//
+//        double c_a;
+//
+//    public:
+//
+//
+//        FrFunction(double C) : chrono::ChFunction(), m_C(C) {
+//
+//            double eps = 1e-3;
+//            c_a = 0.5 * log((1-eps) / eps);
+//
+//        }
+//
+//
+//        double Get_y(double x) const override {
+//
+////            double val;
+////            if (x <= Tramp) {
+////                val = 0.5 * m_C * (1. + tanh(2.* c_a * x - c_a * Tramp));
+////            } else {
+////                val = m_C;
+////            }
+////            return val;
+//
 //            double val;
 //            if (x <= Tramp) {
-//                val = 0.5 * m_C * (1. + tanh(2.* c_a * x - c_a * Tramp));
+//                val = m_C * x / Tramp;
 //            } else {
 //                val = m_C;
 //            }
 //            return val;
-
-            double val;
-            if (x <= Tramp) {
-                val = m_C * x / Tramp;
-            } else {
-                val = m_C;
-            }
-            return val;
-
-
-        }
-
-        FrFunction* Clone() const {
-            return new FrFunction(*this);
-        }
-
-
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // REFACTORING ------------->>>>>>>>>>>>>>>>>>
+//
+//
+//        }
+//
+//        FrFunction* Clone() const {
+//            return new FrFunction(*this);
+//        }
+//
+//
+//    };
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//     REFACTORING ------------->>>>>>>>>>>>>>>>>>
 
 
     // Forward declaration
@@ -287,7 +287,7 @@ namespace frydom {
 
         /// This class is used internally to add a chrono function object to be added into chrono objects that accept
         /// a ChFunction
-        class FrFunctionChronoInterface : public FrFunctionBase {
+        class FrFunctionChronoInterface : public FrFunctionBase { // TODOD : doit-on heriter de FrFunctionBase ? -> oui !
 
         private:
             std::shared_ptr<internal::FrChronoFunctionWrapper> m_chronoFunction;
@@ -295,6 +295,8 @@ namespace frydom {
         public:
             explicit FrFunctionChronoInterface(const FrFunctionBase& frydomFunction);
 
+
+        protected:
             std::shared_ptr<internal::FrChronoFunctionWrapper> GetChronoFunction();
 
         };

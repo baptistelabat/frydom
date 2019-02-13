@@ -37,6 +37,7 @@ namespace frydom {
     }  // end namespace frydom::internal
 
 
+    // Forward declaration
     class FrFunctionBase;
 
     class FrAngularActuatorVelocity : public FrAngularActuator {

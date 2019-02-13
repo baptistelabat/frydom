@@ -58,6 +58,20 @@ namespace frydom {
 
     void FrAngularActuatorVelocity::SetAngularVelocityFunction(std::shared_ptr<FrFunctionBase> function) {
 //        m_
+
+        // TODO : ici, on definit la fonction de pilotage de la vitesse
+//        auto chronoFunctionInterface = internal::FrFunctionChronoInterface(*function.get());
+
+
+
+
+
+
+
+
+
+
+
     }
 
     void FrAngularActuatorVelocity::Initialize() {

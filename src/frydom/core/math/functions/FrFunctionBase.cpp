@@ -6,7 +6,10 @@
 
 #include "fmt/format.h"
 
-#define BDF  1e-7
+
+
+// Defines the dx for numerical differentiation
+#define FR_BDF  1e-7
 
 
 namespace frydom {
@@ -49,7 +52,7 @@ namespace frydom {
     }
 
     FrFunctionBase::~FrFunctionBase() {
-        delete m_function;
+        delete m_function; // TODO : voir le concept de virtual destructor, voir aussi si on a des fuites memoire de ce fait...
     }
 
     FrFunctionBase::FrFunctionBase(const FrFunctionBase& other) {
@@ -113,6 +116,7 @@ namespace frydom {
 
         fmt::MemoryWriter mw;
 
+        // Building Gnuplot dat file as a single string
         mw << "#x\ty\tdy\tdydy\n";
         double x(xmin);
         while (x <= xmax) {
@@ -130,7 +134,7 @@ namespace frydom {
         dataFile.close();
         mw.clear();
 
-        // Writing gnuplot file
+        // Writing gnuplot file along with gnuplot script syntax
         mw.write("set grid\n");
         mw.write("plot \"{:s}.dat\" using 1:2 with lines title \"y\", ", filename);
         mw.write("\"{:s}.dat\" using 1:3 with lines title \"dy\", ", filename);
@@ -144,11 +148,11 @@ namespace frydom {
     }
 
     double FrFunctionBase::Estimate_y_dx(double x) const {
-        return (Get_y(x + BDF) - Get_y(x)) / BDF;
+        return (Get_y(x + FR_BDF) - Get_y(x)) / FR_BDF;
     }
 
     double FrFunctionBase::Estimate_y_dxdx(double x) const {
-        return (Get_y_dx(x + BDF) - Get_y_dx(x)) / BDF;
+        return (Get_y_dx(x + FR_BDF) - Get_y_dx(x)) / FR_BDF;
     }
 
 

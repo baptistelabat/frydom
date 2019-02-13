@@ -44,10 +44,10 @@ include(Add_fmt)
 include(Add_TimeZone)
 include(Add_hermes)
 
-if (TARGET hermes)
-    get_target_property(INC hermes INCLUDE_DIRECTORIES)
-    message(STATUS "hermes INCLUDE_DIRS : ${INC}")
-endif()
+#if (TARGET hermes)
+#    get_target_property(INC hermes INCLUDE_DIRECTORIES)
+#    message(STATUS "hermes INCLUDE_DIRS : ${INC}")
+#endif()
 
 # =============================================================================
 # FRyDoM DEPENDENCIES

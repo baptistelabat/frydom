@@ -12,9 +12,6 @@
 
 #include "FrLink.h"
 
-//#include "chrono/physics/ChLinkLock.h"
-//#include "chrono/physics/ChLinkMotor.h"
-
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/body/FrBody.h"
 #include "actuators/FrActuator.h"
@@ -100,7 +97,6 @@ namespace frydom {
                     + c_frame2WRT1.GetPosition(NWU).cross(c_generalizedForceOnMarker1.GetForce())
                     );
 
-
         }
 
         void FrLinkLockBase::SetMask(FrBodyDOFMask* vmask) {
@@ -154,7 +150,6 @@ namespace frydom {
 
 
     void FrLink_::SetMarkers(FrNode_* node1, FrNode_* node2) {
-        //m_chronoLink->SetUpMarkers(node1->m_chronoMarker.get(), node2->m_chronoMarker.get());
         m_chronoLink->ReferenceMarkers(node1->m_chronoMarker.get(), node2->m_chronoMarker.get());
     }
 
