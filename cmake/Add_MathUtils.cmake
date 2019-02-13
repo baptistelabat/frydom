@@ -5,7 +5,7 @@ if (NOT mathutils_FOUND)
 
 #    set(FETCHCONTENT_QUIET OFF)
 
-    set(MathUtils_URL "git@d-ice.githost.io:essai_cmake/MathUtils.git") # TODO: pointer vers un depot git distant...
+    set(MathUtils_URL "git@frydom-ce.org:frydom-ce/mathutils.git") # TODO: pointer vers un depot git distant...
     FetchContent_Declare(mathutils
             GIT_REPOSITORY ${MathUtils_URL}
             GIT_TAG master
