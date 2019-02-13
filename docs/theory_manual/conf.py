@@ -43,7 +43,7 @@ extensions = [
     'sphinx.ext.graphviz',
     # 'sphinxarg.ext',
     #'sphinxcontrib.programoutput',
-    'sphinxcontrib.bibtex',
+    #'sphinxcontrib.bibtex',
     'sphinx.ext.autosummary'
 ]
 
