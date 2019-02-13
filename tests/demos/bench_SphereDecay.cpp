@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
     system.SetTimeStep(dt);
     system.Initialize();
 
-    body->SetPosition(Position(0., 0., 3.), NWU);
+    body->SetPosition(Position(0., 0., 1.), NWU);
 
     auto time = 0.;
 

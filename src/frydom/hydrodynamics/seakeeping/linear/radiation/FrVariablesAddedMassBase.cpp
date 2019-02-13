@@ -64,7 +64,6 @@ namespace frydom {
 
                 //for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
-
                     auto BEMBodyMotion = BEMBody;
 
                     auto bodyOffset = GetBodyOffset(body);
@@ -80,8 +79,8 @@ namespace frydom {
                             result(resultOffset + i) += invAddedMassCorrection(i, j) * fb(j);
                         }
                     };
-                    this->SetVariables(body, result, bodyOffset);
                 //}
+                this->SetVariables(body, result, resultOffset);
             }
         }
 
@@ -111,8 +110,8 @@ namespace frydom {
                             result(resultOffset + i) += invAddedMassCorrection(i, j) * fb(j);
                         }
                     };
-                    this->SetVariables(body, result, bodyOffset);
                 //}
+                this->SetVariables(body, result, resultOffset);
             }
         }
 
@@ -141,8 +140,8 @@ namespace frydom {
                             result(resultOffset + i) += generalizedMass(i, j) * fb(j);
                         }
                     };
-                    this->SetVariables(body, result, bodyOffset);
                 //}
+                this->SetVariables(body, result, resultOffset);
             }
         }
 
@@ -166,7 +165,6 @@ namespace frydom {
                         result(bodyOffset + i) += c_a * generalizedMass(i, j) * fb(j);
                     }
                 }
-
                 this->SetVariables(body, result, bodyOffset);
             }
         }

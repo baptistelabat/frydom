@@ -161,7 +161,7 @@ int main(int argc, char* argv[]) {
     double Tk = atof(argv[3]);
     std::string name = argv[4];
 
-    bool captive_test = true;
+    bool captive_test = false;
 
     // -- System
 
@@ -195,6 +195,10 @@ int main(int argc, char* argv[]) {
     if (captive_test) {
         body->GetDOFMask()->SetLock_Z(true);
         body->GetDOFMask()->SetLock_Ry(true);
+    } else {
+        body->GetDOFMask()->SetLock_X(true);
+        system.GetEnvironment()->GetTimeRamp()->Activate();
+        system.GetEnvironment()->GetTimeRamp()->SetDuration(20.);
     }
 
     // -- Inertia
@@ -229,7 +233,7 @@ int main(int argc, char* argv[]) {
 
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
 
-    radiationModel->SetImpulseResponseSize(body.get(), 8., 0.01);
+    radiationModel->SetImpulseResponseSize(body.get(), 6., 0.1);
 
     // -- Excitation
 
@@ -266,13 +270,12 @@ int main(int argc, char* argv[]) {
 
     double time = 0.;
 
-
     // ##CC
     Logging log;
     log.Open(name);
     // ##CC
 
-    while (time < 40.) {
+    while (time < 120.) {
         time += dt;
         body->SetVelocityInBodyNoRotation(Velocity(speed, 0., 0.) ,NWU);
         system.AdvanceTo(time);
@@ -284,10 +287,16 @@ int main(int argc, char* argv[]) {
                   << body->GetPosition(NWU).GetZ()
                   << std::endl;
 
-        std::cout << " Position of the Equilibrium frame : "
-                  << eqFrame->GetPosition(NWU).GetX() << ";"
-                  << eqFrame->GetPosition(NWU).GetY() << ";"
-                  << eqFrame->GetPosition(NWU).GetZ() << std::endl;
+        std::cout << " velocity of the body = "
+                  << body->GetVelocityInWorld(NWU).GetVx() << ";"
+                  << body->GetVelocityInWorld(NWU).GetVy() << ";"
+                  << body->GetVelocityInWorld(NWU).GetVz()
+                  << std::endl;
+
+        //std::cout << " Position of the Equilibrium frame : "
+        //          << eqFrame->GetPosition(NWU).GetX() << ";"
+        //          << eqFrame->GetPosition(NWU).GetY() << ";"
+        //          << eqFrame->GetPosition(NWU).GetZ() << std::endl;
 
 
         log.Write(time,

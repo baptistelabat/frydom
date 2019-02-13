@@ -419,10 +419,12 @@ namespace frydom {
         : FrRadiationModel_(HDB) {
 
         // FIXME : a passer dans la méthode initialize pour eviter les pb de précédence vis a vis de la HDB
+
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
             auto body = m_HDB->GetBody(BEMBody->get());
             body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this));
         }
+
     }
 
     void FrRadiationConvolutionModel_::Initialize() {
@@ -437,7 +439,6 @@ namespace frydom {
             if (m_recorder.find(BEMBody->get()) == m_recorder.end()) {
                 m_recorder[BEMBody->get()] = FrTimeRecorder_<GeneralizedVelocity>(m_Te, m_dt);
             }
-
             m_recorder[BEMBody->get()].Initialize();
         }
 
@@ -454,10 +455,23 @@ namespace frydom {
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
 
             auto radiationForce = GeneralizedForce();
+            radiationForce.SetNull();
 
             for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion != m_HDB->end(); ++BEMBodyMotion) {
 
                 auto velocity = m_recorder[BEMBodyMotion->get()].GetData();
+
+                // ##CC
+                /*
+                if (velocity.size() > 4) {
+                    std::cout << "debug: time : << " << time
+                              << " ; velocity : " << velocity[0].at(2) << ";"
+                              << velocity[1].at(2) << ";"
+                              << velocity[2].at(2) << ";"
+                              << velocity[3].at(2) << std::endl;
+                }
+                */
+                // ##CC
 
                 auto vtime = m_recorder[BEMBodyMotion->get()].GetTime();
 
@@ -466,9 +480,16 @@ namespace frydom {
                     auto interpK = BEMBody->get()->GetIRFInterpolatorK(BEMBodyMotion->get(), idof);
 
                     std::vector<mathutils::Vector6d<double>> kernel;
+                    //std::vector<double> kernel;
                     kernel.reserve(vtime.size());
                     for (unsigned int it = 0; it < vtime.size(); ++it) {
-                        kernel.push_back(interpK->Eval(vtime[it]).cwiseProduct(velocity.at(it)));
+                        // ##CC
+                        //auto ti = vtime[it];
+                        //auto Ki = interpK->Eval(vtime[it]);
+                        //std::cout << "debug: idof : " << idof << "ti = " << ti << ";" << " Ki0 = " << Ki[0] << std::endl;
+                        //std::cout << "debug: idof : " << idof << " ; it : " << it << " ; velocity[it][idof] : " << velocity.at(it).at(idof) << std::endl;
+                        // ##CC
+                        kernel.push_back(interpK->Eval(vtime[it]) * velocity.at(it).at(idof));
                     }
                     radiationForce += TrapzLoc(vtime, kernel);
                 }
