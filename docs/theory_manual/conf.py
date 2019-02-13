@@ -42,7 +42,7 @@ extensions = [
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.graphviz',
     # 'sphinxarg.ext',
-    'sphinxcontrib.programoutput',
+    #'sphinxcontrib.programoutput',
     'sphinxcontrib.bibtex',
     'sphinx.ext.autosummary'
 ]
