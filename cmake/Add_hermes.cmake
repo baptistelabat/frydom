@@ -11,7 +11,6 @@ if (NOT hermes_FOUND)
             )
 
     FetchContent_GetProperties(hermes)
-
     if(NOT hermes_POPULATED)
         message(STATUS "Downloading, Configuring and Generating 'hermes' dependency")
         FetchContent_Populate(hermes)

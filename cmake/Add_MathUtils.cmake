@@ -11,7 +11,6 @@ if (NOT mathutils_FOUND)
             )
 
     FetchContent_GetProperties(mathutils)
-
     if(NOT mathutils_POPULATED)
         message(STATUS "Downloading, Configuring and Generating 'MathUtils' dependency")
         FetchContent_Populate(mathutils)
