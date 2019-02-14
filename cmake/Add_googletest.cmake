@@ -1,10 +1,9 @@
 if (NOT googletest_FOUND)
     include(FetchContent)
 
-    set(googletest_URL "https://github.com/google/googletest.git")
     FetchContent_Declare(googletest
         GIT_REPOSITORY ${googletest_URL}
-        GIT_TAG "release-1.8.1"
+        GIT_TAG ${googletest_TAG}
         )
 
     FetchContent_GetProperties(googletest)
@@ -30,7 +29,7 @@ if (NOT googletest_FOUND)
 
         message(STATUS ${googletest_SOURCE_DIR})
         message(STATUS ${googletest_BINARY_DIR})
-        
+
         message(STATUS "DONE")
     endif()
 endif()

@@ -7,13 +7,13 @@ set(REFACTORING_TESTS
         test_radiation_model
         )
 
-include(Add_matplotlib-cpp)
+#include(Add_matplotlib-cpp)
 
 foreach(test ${REFACTORING_TESTS})
     message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
-    target_link_libraries(${test} FRyDoM_Engine matplotlib-cpp)
+    target_link_libraries(${test} FRyDoM_Engine)
 
 endforeach()
 
