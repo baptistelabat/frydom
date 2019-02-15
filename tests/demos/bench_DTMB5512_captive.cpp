@@ -275,7 +275,7 @@ int main(int argc, char* argv[]) {
     body->GetDOFMask()->SetLock_Rz(true);
 
     // ##CC
-    body->GetDOFMask()->SetLock_X(true);
+    //body->GetDOFMask()->SetLock_X(true);
     //body->GetDOFMask()->SetLock_Z(true);
     //body->GetDOFMask()->SetLock_Ry(true);
     // ##CC
@@ -370,12 +370,13 @@ int main(int argc, char* argv[]) {
     log.Open(name);
     // ##CC
 
-    while (time < 40.) {
+    while (time < 100.) {
         time += dt;
 
         // ##CC test user define velocity
         auto vel = body->GetVelocityInWorld(NWU);
-        body->SetVelocityInWorldNoRotation(Velocity(speed, vel.y(), vel.z()) ,NWU);
+        body->SetGeneralizedVelocityInWorld(Velocity(speed, vel.y(), vel.z()),
+                                            body->GetAngularVelocityInWorld(NWU), NWU);
         //body->SetVelocityInBodyNoRotation(BodyVelocity(time, Tk, 2.*ak), NWU);
         //body->SetCOGAngularVelocityInWorld(BodyAngularVelocity(time, Tk, 10.), NWU);
         // ##CC
