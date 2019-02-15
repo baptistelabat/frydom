@@ -1,0 +1,689 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HydroDB.wave_drift_db &mdash; Nemoh2HDB  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Nemoh2HDB
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Source/Tutorials.html">Tutorial</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Source/Source_code_doc.html">Source code documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Nemoh2HDB</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>HydroDB.wave_drift_db</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for HydroDB.wave_drift_db</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#  -*- coding: utf-8 -*-</span>
+<span class="c1"># ==========================================================================</span>
+<span class="c1"># FRyDoM - frydom-ce.org</span>
+<span class="c1"># </span>
+<span class="c1"># Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1"># </span>
+<span class="c1"># Use of this source code is governed by a GPLv3 license that can be found</span>
+<span class="c1"># in the LICENSE file of FRyDoM.</span>
+<span class="c1"># </span>
+<span class="c1"># ==========================================================================</span>
+<span class="sd">&quot;&quot;&quot;Module to load wave drift polar coefficients&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">interp1d</span>
+
+
+<div class="viewcode-block" id="CoeffData"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.CoeffData">[docs]</a><span class="k">class</span> <span class="nc">CoeffData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class for dealing with wave drift polar coefficients.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor of the class CoeffData.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heading</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heading_index</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="WaveDriftDB"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB">[docs]</a><span class="k">class</span> <span class="nc">WaveDriftDB</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for dealing with wave drift polar coefficients.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor of the class WaveDriftDB.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_heading_index</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sym_x</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sym_y</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nb_frequencies</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discrete_frequency</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discrete_wave_dir</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">modes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine gives the modes of the polar coefficients.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary of the modes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sym_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine indicates if a symmetry in the plane xOZ is present.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if a symmetry along x is present, false otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sym_x</span>
+
+    <span class="nd">@sym_x</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">sym_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine sets presence of a symmetry along x.</span>
+
+<span class="sd">        Parameter</span>
+<span class="sd">        ----------</span>
+<span class="sd">        float : value</span>
+<span class="sd">            True if a symmetry along x is present, false otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sym_x</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;warning : wrong type value, must be a boolean&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sym_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine indicates if a symmetry along y is present.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if a symmetry along y is present, false otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sym_y</span>
+
+    <span class="nd">@sym_y</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">sym_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine sets presence of a symmetry along y.</span>
+
+<span class="sd">        Parameter</span>
+<span class="sd">        ----------</span>
+<span class="sd">        float : value</span>
+<span class="sd">            True if a symmetry along y is present, false otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sym_y</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;warning : wrong type value, must be a boolean&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">heading_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine gives the heading index.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Heading index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_heading_index</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nb_frequencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine gives the number of frequencies.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Number of frequencies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb_frequencies</span>
+
+    <span class="nd">@nb_frequencies</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">nb_frequencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine sets the number of frequencies.</span>
+
+<span class="sd">        Parameter</span>
+<span class="sd">        ----------</span>
+<span class="sd">        int : value</span>
+<span class="sd">            Number of frequencies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nb_frequencies</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">discrete_wave_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine gives the wave direction discretization.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Array of floats</span>
+<span class="sd">            Wave direction discretization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discrete_wave_dir</span>
+
+    <span class="nd">@discrete_wave_dir</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">discrete_wave_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine sets the wave direction vector.</span>
+
+<span class="sd">        Parameter</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Array of floats : value</span>
+<span class="sd">            Wave direction vector for the discretization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_discrete_wave_dir</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;warning : dimension must be equal to 1&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;warning : type must be nd array&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">discrete_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine gives the frequency discretization.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Array of floats</span>
+<span class="sd">            Frequency discretization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discrete_frequency</span>
+
+<div class="viewcode-block" id="WaveDriftDB.scaling_mode"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.scaling_mode">[docs]</a>    <span class="k">def</span> <span class="nf">scaling_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine scales the polar coefficients.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        string : mode</span>
+<span class="sd">            Mode.</span>
+<span class="sd">        float : factor</span>
+<span class="sd">            Scaling factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[:]</span> <span class="o">*=</span> <span class="n">factor</span></div>
+
+<div class="viewcode-block" id="WaveDriftDB.add"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="o">=</span><span class="s1">&#39;rads&#39;</span><span class="p">,</span> <span class="n">unit_dir</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine adds the polar coefficients.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        string : mode</span>
+<span class="sd">            Mode.</span>
+<span class="sd">        Array of floats : freq</span>
+<span class="sd">            Frequency vector.</span>
+<span class="sd">        Array of floats : data</span>
+<span class="sd">            Wave drift polar coefficients.</span>
+<span class="sd">        Array of floats : wave_dir</span>
+<span class="sd">            Wave directions.</span>
+<span class="sd">        string : unit_freq, optional</span>
+<span class="sd">            Frequency unit, by default rad/s.</span>
+<span class="sd">        string : unit_dir</span>
+<span class="sd">            wave direction unit, by default rad.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">unit_freq</span> <span class="o">==</span> <span class="s1">&#39;Hz&#39;</span><span class="p">:</span>
+            <span class="n">freq</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">freq</span>
+        <span class="k">elif</span> <span class="n">unit_freq</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>
+            <span class="n">freq</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="n">freq</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">unit_dir</span> <span class="o">==</span> <span class="s2">&quot;deg&quot;</span><span class="p">:</span>
+            <span class="n">wave_dir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">wave_dir</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span> <span class="o">=</span> <span class="n">CoeffData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">mode</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">heading</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wave_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="WaveDriftDB.add_cx"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.add_cx">[docs]</a>    <span class="k">def</span> <span class="nf">add_cx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="o">=</span><span class="s1">&#39;rads&#39;</span><span class="p">,</span> <span class="n">unit_dir</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine adds the cx (surge) polar coefficients.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        string : mode</span>
+<span class="sd">            Mode.</span>
+<span class="sd">        Array of floats : freq</span>
+<span class="sd">            Frequency vector.</span>
+<span class="sd">        Array of floats : data</span>
+<span class="sd">            Wave drift polar coefficients.</span>
+<span class="sd">        Array of floats : wave_dir</span>
+<span class="sd">            Wave directions.</span>
+<span class="sd">        string : unit_freq, optional</span>
+<span class="sd">            Frequency unit, by default rad/s.</span>
+<span class="sd">        string : unit_dir</span>
+<span class="sd">            wave direction unit, by default rad.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;surge&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="p">,</span> <span class="n">unit_dir</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaveDriftDB.add_cy"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.add_cy">[docs]</a>    <span class="k">def</span> <span class="nf">add_cy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="o">=</span><span class="s1">&#39;rads&#39;</span><span class="p">,</span> <span class="n">unit_dir</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine adds the cy (sway) polar coefficients.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        string : mode</span>
+<span class="sd">            Mode.</span>
+<span class="sd">        Array of floats : freq</span>
+<span class="sd">            Frequency vector.</span>
+<span class="sd">        Array of floats : data</span>
+<span class="sd">            Wave drift polar coefficients.</span>
+<span class="sd">        Array of floats : wave_dir</span>
+<span class="sd">            Wave directions.</span>
+<span class="sd">        string : unit_freq, optional</span>
+<span class="sd">            Frequency unit, by default rad/s.</span>
+<span class="sd">        string : unit_dir</span>
+<span class="sd">            wave direction unit, by default rad.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;sway&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="p">,</span> <span class="n">unit_dir</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaveDriftDB.add_cz"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.add_cz">[docs]</a>    <span class="k">def</span> <span class="nf">add_cz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="o">=</span><span class="s1">&#39;rads&#39;</span><span class="p">,</span> <span class="n">unit_dir</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine adds the cz (heave) polar coefficients.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        string : mode</span>
+<span class="sd">            Mode.</span>
+<span class="sd">        Array of floats : freq</span>
+<span class="sd">            Frequency vector.</span>
+<span class="sd">        Array of floats : data</span>
+<span class="sd">            Wave drift polar coefficients.</span>
+<span class="sd">        Array of floats : wave_dir</span>
+<span class="sd">            Wave directions.</span>
+<span class="sd">        string : unit_freq, optional</span>
+<span class="sd">            Frequency unit, by default rad/s.</span>
+<span class="sd">        string : unit_dir</span>
+<span class="sd">            wave direction unit, by default rad.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;heave&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="p">,</span> <span class="n">unit_dir</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaveDriftDB.add_cr"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.add_cr">[docs]</a>    <span class="k">def</span> <span class="nf">add_cr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="o">=</span><span class="s1">&#39;rads&#39;</span><span class="p">,</span> <span class="n">unit_dir</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine adds the cr (roll) polar coefficients.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        string : mode</span>
+<span class="sd">            Mode.</span>
+<span class="sd">        Array of floats : freq</span>
+<span class="sd">            Frequency vector.</span>
+<span class="sd">        Array of floats : data</span>
+<span class="sd">            Wave drift polar coefficients.</span>
+<span class="sd">        Array of floats : wave_dir</span>
+<span class="sd">            Wave directions.</span>
+<span class="sd">        string : unit_freq, optional</span>
+<span class="sd">            Frequency unit, by default rad/s.</span>
+<span class="sd">        string : unit_dir</span>
+<span class="sd">            wave direction unit, by default rad.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;roll&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="p">,</span> <span class="n">unit_dir</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaveDriftDB.add_cm"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.add_cm">[docs]</a>    <span class="k">def</span> <span class="nf">add_cm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="o">=</span><span class="s1">&#39;rads&#39;</span><span class="p">,</span> <span class="n">unit_dir</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine adds the cm (pitch) polar coefficients.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        string : mode</span>
+<span class="sd">            Mode.</span>
+<span class="sd">        Array of floats : freq</span>
+<span class="sd">            Frequency vector.</span>
+<span class="sd">        Array of floats : data</span>
+<span class="sd">            Wave drift polar coefficients.</span>
+<span class="sd">        Array of floats : wave_dir</span>
+<span class="sd">            Wave directions.</span>
+<span class="sd">        string : unit_freq, optional</span>
+<span class="sd">            Frequency unit, by default rad/s.</span>
+<span class="sd">        string : unit_dir</span>
+<span class="sd">            wave direction unit, by default rad.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;pitch&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="p">,</span> <span class="n">unit_dir</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaveDriftDB.add_cn"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.add_cn">[docs]</a>    <span class="k">def</span> <span class="nf">add_cn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="o">=</span><span class="s1">&#39;rads&#39;</span><span class="p">,</span> <span class="n">unit_dir</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine adds the cn (yaw) polar coefficients.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        string : mode</span>
+<span class="sd">            Mode.</span>
+<span class="sd">        Array of floats : freq</span>
+<span class="sd">            Frequency vector.</span>
+<span class="sd">        Array of floats : data</span>
+<span class="sd">            Wave drift polar coefficients.</span>
+<span class="sd">        Array of floats : wave_dir</span>
+<span class="sd">            Wave directions.</span>
+<span class="sd">        string : unit_freq, optional</span>
+<span class="sd">            Frequency unit, by default rad/s.</span>
+<span class="sd">        string : unit_dir</span>
+<span class="sd">            wave direction unit, by default rad.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;yaw&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wave_dir</span><span class="p">,</span> <span class="n">unit_freq</span><span class="p">,</span> <span class="n">unit_dir</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaveDriftDB.get_min_frequency"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.get_min_frequency">[docs]</a>    <span class="k">def</span> <span class="nf">get_min_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine gives the minimum frequency.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Floats</span>
+<span class="sd">            Minimum frequency.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">f_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">999.</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">f_min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">f_min</span><span class="p">,</span> <span class="nb">max</span><span class="p">([</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">freq</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">f_min</span></div>
+
+<div class="viewcode-block" id="WaveDriftDB.get_max_frequency"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.get_max_frequency">[docs]</a>    <span class="k">def</span> <span class="nf">get_max_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine gives the maximum frequency.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Floats</span>
+<span class="sd">            Maximum frequency.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">f_max</span> <span class="o">=</span> <span class="mf">999.</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">f_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">f_max</span><span class="p">,</span> <span class="nb">min</span><span class="p">([</span><span class="n">val</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">freq</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">f_max</span></div>
+
+    <span class="k">def</span> <span class="nf">_set_discrete_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine sets the frequency vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">f_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_min_frequency</span><span class="p">()</span>
+        <span class="n">f_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_max_frequency</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discrete_frequency</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">f_min</span><span class="p">,</span> <span class="n">f_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nb_frequencies</span><span class="p">)</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="WaveDriftDB.initialize"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This subroutine sorts the data with respect to the wave direction according to an increasing order and interpolates the data wrt the frequencies and the wave directions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_discrete_frequency</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">:</span>
+
+            <span class="c1"># Sorting the data with respect to the wave directions.</span>
+            <span class="n">headings</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">heading_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">heading</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span><span class="p">)):</span>
+                <span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="c1"># Interpolation with respect to the wave frequencies.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discrete_frequency</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discrete_frequency</span>
+
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-2</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pi</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-2</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pi</span>
+
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">heading</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="c1"># Interpolation with respect to the wave directions.</span>
+            <span class="n">f_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">f_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discrete_wave_dir</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">heading</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discrete_wave_dir</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="WaveDriftDB.get_structure"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.wave_drift_db.WaveDriftDB.get_structure">[docs]</a>    <span class="k">def</span> <span class="nf">get_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This subroutine prints the modes, the headings and the frequencies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">for</span> <span class="n">i_dir</span><span class="p">,</span> <span class="n">angle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">heading</span><span class="p">):</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mode: </span><span class="si">%s</span><span class="s2"> ;heading_</span><span class="si">%i</span><span class="s2">:</span><span class="si">%16.8f</span><span class="s2"> ;size_freq(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">i_dir</span><span class="p">,</span> <span class="n">angle</span> <span class="o">*</span> <span class="mf">180.</span><span class="o">/</span><span class="n">pi</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i_dir</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">)))</span></div></div>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, D-ICE Engineering
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

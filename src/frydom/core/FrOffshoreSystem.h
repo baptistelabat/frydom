@@ -1,13 +1,13 @@
-// =============================================================================
-// FRyDoM - frydom-ce.gitlab.host.io
-//
-// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// ==========================================================================
+// FRyDoM - frydom-ce.org
+// 
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-//
+// 
 // Use of this source code is governed by a GPLv3 license that can be found
-// in the LICENSE file of FRyDOM.
-//
-// =============================================================================
+// in the LICENSE file of FRyDoM.
+// 
+// ==========================================================================
 
 
 #ifndef FRYDOM_FROFFSHORESYSTEM_H
@@ -200,7 +200,7 @@ namespace frydom {
     /// classes, which are used to represent mechanisms.
     /// Moreover, it also owns some global settings and features, like the environment components (ocean, atmosphere, etc.),
     /// the gravity acceleration, the global time and so on.
-    ///This object will be responsible of performing the entire physical simulation (dynamics, kinematics, statics, etc.),
+    /// This object will be responsible of performing the entire physical simulation (dynamics, kinematics, statics, etc.),
     /// so you need at least one FrOffshoreSystem_ object in your program, in order to perform simulations
     /// (you'll insert rigid bodies and links into it..).
     class FrOffshoreSystem_ : public FrObject {
@@ -313,6 +313,7 @@ namespace frydom {
                                                             ///< equilibrium, with the nonlinear and relaxation methods
         STATICS_METHOD  m_staticsMethod;                    ///< method to find the static equilibrium
 
+        // Container: definition.
         using BodyContainer = std::vector<std::shared_ptr<FrBody_>>;
         using LinkContainer = std::vector<std::shared_ptr<FrLinkBase_>>;
 
@@ -320,6 +321,7 @@ namespace frydom {
         using MidPhysicsContainer = std::vector<std::shared_ptr<FrMidPhysicsItem_>>;
         using PostPhysicsContainer = std::vector<std::shared_ptr<FrPostPhysicsItem_>>;
 
+        // Iterators.
         // TODO : bouger les iterateurs proches des methodes d'iteration...
         using BodyIter          = BodyContainer::iterator;
         using ConstBodyIter     = BodyContainer::const_iterator;
@@ -336,7 +338,7 @@ namespace frydom {
         using PostPhysicsIter = PostPhysicsContainer::iterator;
         using ConstPostPhysicsIter = PostPhysicsContainer::const_iterator;
 
-
+        // Container: list of objects.
         BodyContainer m_bodyList;   ///< list of bodies managed by this offshore system
         LinkContainer m_linkList;   ///< list of links between bodies managed by this offhsore system
         PrePhysicsContainer m_PrePhysicsList;   ///< list of physics items, updated before the bodies

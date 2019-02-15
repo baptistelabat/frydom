@@ -1,6 +1,13 @@
-//
-// Created by Lucas Letournel on 20/12/18.
-//
+// ==========================================================================
+// FRyDoM - frydom-ce.org
+// 
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
+// 
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+// 
+// ==========================================================================
 
 #include "frydom/frydom.h"
 
@@ -49,7 +56,7 @@ int main(int argc, char* argv[]) {
 
     double radius = 5, height = 10., xSize = 5., ySize = 5., zSize = 10., Mass = 1000.;
     // Three default visual assets are available : sphere, cylinder and box shaped assets.
-//    body->AddSphereShape(radius); // radius = 20m
+    body->AddSphereShape(radius); // radius = 20m
 //    body->AddCylinderShape(radius, height); // radius = 10m, height = 20m
 //    body->AddBoxShape(xSize, ySize, zSize); // xSize = 5m, ySize = 10m, zSize = 20m
 
@@ -59,9 +66,9 @@ int main(int argc, char* argv[]) {
 //    makeItCylinder(body,radius, height, Mass);
 //    makeItBox(body,xSize, ySize, zSize, Mass);
 
-    // For adding your own mesh, specify a WaveFront .obj file name. MeshMagic software can help you convert other
+    // For adding your own mesh, specify a WaveFront .obj file name. Meshmagick software can help you convert other
     // mesh format into .obj : https://github.com/LHEEA/meshmagick.
-    body->AddMeshAsset("ship.obj");
+//    body->AddMeshAsset("ship.obj");
 
     // Select the color of your body, in the NAMED_COLOR enum (FrColors.h for more details).
     body->SetColor(IndianRed);

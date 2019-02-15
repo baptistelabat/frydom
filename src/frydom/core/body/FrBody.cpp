@@ -1,13 +1,13 @@
-// =============================================================================
-// FRyDoM - frydom-ce.gitlab.host.io
-//
-// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// ==========================================================================
+// FRyDoM - frydom-ce.org
+// 
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-//
+// 
 // Use of this source code is governed by a GPLv3 license that can be found
-// in the LICENSE file of FRyDOM.
-//
-// =============================================================================
+// in the LICENSE file of FRyDoM.
+// 
+// ==========================================================================
 
 
 
@@ -396,6 +396,7 @@ namespace frydom {
     }
 
     void FrBody_::AddExternalForce(std::shared_ptr<frydom::FrForce_> force) {
+        /// This subroutine is used for adding the hydrodynamic loads.
         m_chronoBody->AddForce(force->GetChronoForce());  // FrBody_ is a friend class of FrForce_
 
         force->m_body = this;

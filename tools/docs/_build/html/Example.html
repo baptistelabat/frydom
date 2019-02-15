@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Recommendations on how to write doc in Sphinx &mdash; Nemoh2HDB  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Nemoh2HDB
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="Source/Tutorials.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Source/Source_code_doc.html">Source code documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Nemoh2HDB</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Recommendations on how to write doc in Sphinx</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Example.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="recommendations-on-how-to-write-doc-in-sphinx">
+<h1>Recommendations on how to write doc in Sphinx<a class="headerlink" href="#recommendations-on-how-to-write-doc-in-sphinx" title="Permalink to this headline">¶</a></h1>
+<p>You can find here some notation conventions to write new entries to the theory manual. Click on the “View page source to
+visualize the source code and the different sphinx commands.</p>
+<p>You can have access to 6 levels of titles, with the following notations :</p>
+<p>*****
+Title
+*****
+Title 1
+*******
+Title 2
+=======
+Title 3
+——-
+Title 4
+~~~~~~~
+Title 5
+_______</p>
+<div class="section" id="notation-conventions">
+<h2>Notation conventions<a class="headerlink" href="#notation-conventions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>For vectors, use mathbf{} and lowercase : <span class="math notranslate nohighlight">\(\mathbf{u}\)</span></li>
+<li>For matrix, use mathbf{} and uppercase : <span class="math notranslate nohighlight">\(\mathbf{M}\)</span></li>
+<li>For tensor, use mathcal and uppercase : <span class="math notranslate nohighlight">\(\mathcal{M}\)</span></li>
+<li>For inertia tensor, use mathbb and upercase : <span class="math notranslate nohighlight">\(\mathbb{I}\)</span></li>
+</ul>
+</div>
+<div class="section" id="arborescence">
+<h2>Arborescence<a class="headerlink" href="#arborescence" title="Permalink to this headline">¶</a></h2>
+<p>to include .rst, use</p>
+<dl class="docutils">
+<dt>.. toctree::</dt>
+<dd><p class="first">:maxdepth: 1</p>
+<p class="last">fileName</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="example-of-references">
+<h2>Example of References<a class="headerlink" href="#example-of-references" title="Permalink to this headline">¶</a></h2>
+<p>In the text: [LEONARD2001]_</p>
+<p>at the end:
+.. [LEONARD2001] Leonard, W., <em>Control of electrical drivers</em>, 3rd ed. Springer, 2001</p>
+</div>
+</div>
+<div class="section" id="thruster-model">
+<span id="thruster"></span><h1>Thruster Model<a class="headerlink" href="#thruster-model" title="Permalink to this headline">¶</a></h1>
+<p>The thruster model contains all elements to represent the system of propulsion of a ship. They are composed of four main items :</p>
+<blockquote>
+<div><ul class="simple">
+<li>marine engine system</li>
+<li>shaft speed transmission system</li>
+<li>propeller model</li>
+<li>force / moment model</li>
+</ul>
+</div></blockquote>
+<p>These four elements have to be defined for each propulsion system before assignement to the ship model. These elements are defined in next sections.</p>
+<img alt="_images/prop_chaine.png" src="_images/prop_chaine.png" />
+<p>Two kind of marine engine can be used for the motor :</p>
+<ul class="simple">
+<li>the electric engine</li>
+<li>the diesel engine</li>
+</ul>
+<div class="section" id="electric-engine">
+<h2>Electric Engine<a class="headerlink" href="#electric-engine" title="Permalink to this headline">¶</a></h2>
+<p>In the electric engine, the motor torque is controlled by the current, voltage and fluxes. The motor torque dynamic can be represented by a first order filter <a class="reference internal" href="#leonard2001" id="id1">[LEONARD2001]</a>.</p>
+<div class="math notranslate nohighlight">
+\[\dot{Q_m} = \frac{1}{T_m} (Q_{m_d} - Q_m)\]</div>
+<p>where <span class="math notranslate nohighlight">\(T_m\)</span> is the time response of the motor, <span class="math notranslate nohighlight">\(Q_m\)</span> the control command of the torque. For large propeller, the motor torque controller can be considered faster than the shaft dynamic and it can be assumed that <span class="math notranslate nohighlight">\(Q_m = Q_{m_d}\)</span>.</p>
+</div>
+<div class="section" id="diesel-engine">
+<h2>Diesel Engine<a class="headerlink" href="#diesel-engine" title="Permalink to this headline">¶</a></h2>
+<p>Following <a class="reference internal" href="#andersen1974" id="id2">[ANDERSEN1974]</a> <a class="reference internal" href="#blanke1981" id="id3">[BLANKE1981]</a> , the motor dynamics can be approximated by a first order transfert function which accounts for the gradual bluid up of cylinder pressure and the discrete nature of cylinder firings.</p>
+<div class="math notranslate nohighlight">
+\[Q_m(s) = e^{-s \tau_m} \frac{K_y}{1 + s T_m} Y(s)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\tau_m\)</span> is the time delay, <span class="math notranslate nohighlight">\(T_m\)</span> a time constant, <span class="math notranslate nohighlight">\(K_y\)</span> a motor torque constant and <span class="math notranslate nohighlight">\(Y(s)\)</span> the fuel index. <span class="math notranslate nohighlight">\(Q_{m_d}\)</span> is given by :</p>
+<div class="math notranslate nohighlight">
+\[Q_{m_d}(t) = K_y y(t)\]</div>
+<p>In time domain, this model is equivalent to the following differential equation:</p>
+<div class="math notranslate nohighlight">
+\[\dot{Q}_m = \frac{1}{T_m} (Q_{m_d} (t-\tau) - Q_m(T))\]</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The time integration of the motor dynamic equation is defined in the the Update function. An Euler eplicit scheme is used to udpate the value of the motor torque <span class="math notranslate nohighlight">\(Q_m\)</span>.</p>
+</div>
+<div class="section" id="shaft-speed-transmission">
+<h3>Shaft speed transmission<a class="headerlink" href="#shaft-speed-transmission" title="Permalink to this headline">¶</a></h3>
+<p>The system of propulsion from the motor command to the angular velocity of the propeller can be represented by the next figure.</p>
+<img alt="_images/propulsion_system.png" src="_images/propulsion_system.png" />
+<p>where <span class="math notranslate nohighlight">\(\omega\)</span> is the angular velocity of the propeller, <span class="math notranslate nohighlight">\(Q_p\)</span> is the moment of the propeller, <span class="math notranslate nohighlight">\(Q_f\)</span> is the moment due to friction, <span class="math notranslate nohighlight">\(Q_m\)</span> and <span class="math notranslate nohighlight">\(\omega_m\)</span> are respectively the motor torque and velocity,  <span class="math notranslate nohighlight">\(Q_{m_d}\)</span> and <span class="math notranslate nohighlight">\(\omega_{m_d}\)</span> are respectively the motor torque and velocity command.</p>
+<p>The angular velocity of the propeller <span class="math notranslate nohighlight">\(\omega_m\)</span> is solution of the following differential equation :</p>
+<div class="math notranslate nohighlight">
+\[J_m \dot{\omega} = Q_m - Q_f - Q_p\]</div>
+<p>where <span class="math notranslate nohighlight">\(J_m\)</span> is the total angular mass inertia of the system.</p>
+<p>An Euler explit firt order scheme is used to solve this Ordinary Differential Equation (OED).</p>
+</div>
+<div class="section" id="propeller">
+<h3>Propeller<a class="headerlink" href="#propeller" title="Permalink to this headline">¶</a></h3>
+<p>Two kind of propeller system are represented :</p>
+<blockquote>
+<div><ul class="simple">
+<li>standard propeller : fixed in the body coordinate system. The force / moment have a constant direction</li>
+<li>azimuthal propeller : a rotation is allowed around the z-axis in the propulsion system’s coordinate system.</li>
+</ul>
+</div></blockquote>
+<p>The position and direction of the propeller <span class="math notranslate nohighlight">\((O', x', y', z')\)</span> is defined in the reference frame of the propulsion system <span class="math notranslate nohighlight">\((O, x, y, z)\)</span> as represented in next figure</p>
+<a class="reference internal image-reference" href="_images/prop_frame.png"><img alt="_images/prop_frame.png" class="align-center" src="_images/prop_frame.png" /></a>
+<p>For the standard propeller, the thrust and moment are applied along <span class="math notranslate nohighlight">\(\vec{n}\)</span> corresponding to the <em>x’</em> vector fixed in time. The azimuthal propeller can rotate along the z-axis. The direction of the thrust and moment are defined such that</p>
+<div class="math notranslate nohighlight">
+\[\vec{n} = rot_z(\alpha) \cdot \vec{x'}\]</div>
+<p>where <span class="math notranslate nohighlight">\(rot_z\)</span> is the matrix of rotation along <em>z</em> with the angle <span class="math notranslate nohighlight">\(\alpha\)</span>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The standard propeller model must be linked with a rudder model for ship manoeuvrability. For general concern, the rudder is defined outside the propuslion system since it can be defined without the definition of a propulsion system (for sail boat for example).</p>
+</div>
+</div>
+<div class="section" id="force-moment-model">
+<h3>Force / Moment model<a class="headerlink" href="#force-moment-model" title="Permalink to this headline">¶</a></h3>
+<p>The thrust and moment generated by the propeller along its normal direction are defined in the force / moment model. Open-water model in first quadrant and four-quadrant are used.</p>
+<img alt="_images/four_quad_model.png" class="align-center" src="_images/four_quad_model.png" />
+</div>
+</div>
+<div class="section" id="first-quadrant-model">
+<h2>First quadrant model<a class="headerlink" href="#first-quadrant-model" title="Permalink to this headline">¶</a></h2>
+<p>The first-quadrant model allows to represent the behaviour of the propeller in the first quadrant only, when ship velocity is headway with thrusting ahead.
+It is based on the <span class="math notranslate nohighlight">\(K_T\)</span> and <span class="math notranslate nohighlight">\(K_Q\)</span> coefficients for the thrust and torque force respectively. These coefficients depend on the propeller geometry and the advance speed ratio <span class="math notranslate nohighlight">\(J\)</span> defined as follows :</p>
+<div class="math notranslate nohighlight">
+\[J = \frac{2 \pi V_a}{\omega D}\]</div>
+<p>where <span class="math notranslate nohighlight">\(V_a\)</span> is the axial velocity of the water through the propeller, <span class="math notranslate nohighlight">\(\omega\)</span> is the angular velocity of the propeller in <em>rad/s</em> and <span class="math notranslate nohighlight">\(D\)</span> the diameter of the propeller in <em>m</em>.</p>
+<p>The thrust <span class="math notranslate nohighlight">\(T_a\)</span> and moment <span class="math notranslate nohighlight">\(Q_a\)</span> of the propeller are defined as follow :</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}T_a = \frac{1}{4 \pi^2} \rho_w D^4 K_T(J) |\omega| \omega \\
+Q_a = \frac{1}{4 \pi^2} \rho_w D^5 K_Q(J) |\omega| \omega\end{split}\]</div>
+<p>where :math:<a href="#id4"><span class="problematic" id="id5">`</span></a>rho_w`is the density of water.</p>
+<p><span class="math notranslate nohighlight">\(K_T\)</span> and <span class="math notranslate nohighlight">\(K_Q\)</span> have been computed for a large serie of propeller and Wageningen B-series can be used to estimate this parameters.</p>
+</div>
+<div class="section" id="four-quadrants-model">
+<h2>Four quadrants model<a class="headerlink" href="#four-quadrants-model" title="Permalink to this headline">¶</a></h2>
+<p>The four-quadratn model allows to represent the behaviour of the propeller in the four quadrants. It is based on the <span class="math notranslate nohighlight">\(c_T\)</span> and <span class="math notranslate nohighlight">\(c_Q\)</span> coefficients which depend on the propeller blade advance angle <span class="math notranslate nohighlight">\(\beta\)</span> defined such that :</p>
+<div class="math notranslate nohighlight">
+\[\beta = \pi - atan2(V_a, V_p)\]</div>
+<p>where <span class="math notranslate nohighlight">\(V_a\)</span> is the axial velocity and <span class="math notranslate nohighlight">\(V_p = 0.7 \pi \omega D\)</span>.</p>
+<p>The thrust <span class="math notranslate nohighlight">\(T_a\)</span> and moment <span class="math notranslate nohighlight">\(Q_a\)</span> of the propeller are defined as follow :</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}T_a = \frac{1}{2} \rho_w c_T(\beta) ( V_a^2 + V_p^2) \pi R^2 \\
+Q_a = - \frac{1}{2} \rho_w c_Q(\beta) ( V_a^2 + V_p^2) \pi R^2 D\end{split}\]</div>
+<p><span class="math notranslate nohighlight">\(c_T\)</span> and <span class="math notranslate nohighlight">\(c_Q\)</span> coefficients for various propellers are given by van Lammeren et al / Oosterveld, Healey et al’s approximation or L-model.</p>
+<div class="section" id="friction">
+<h3>Friction<a class="headerlink" href="#friction" title="Permalink to this headline">¶</a></h3>
+<p>The friction model is based on a semi-empirical model presented in <a class="reference internal" href="#pivano208" id="id6">[PIVANO208]</a>.</p>
+<div class="math notranslate nohighlight">
+\[Q_f(\omega) = k_{f_1} arctan( \frac{\omega}{\epsilon} ) + k_{f_2} \omega + k_{f_3} arctan( k_{f_4} \omega)\]</div>
+<p>where <span class="math notranslate nohighlight">\(k_{f_i}\)</span> and <span class="math notranslate nohighlight">\(\epsilon\)</span> are constant and positive coefficients. The Coulomb effect is represented by a term in <span class="math notranslate nohighlight">\(arctan\)</span> in order to avoid discontinuites in <span class="math notranslate nohighlight">\(\omega = 0\)</span>. The coefficients are found by experiments.</p>
+</div>
+<div class="section" id="references">
+<h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<table class="docutils citation" frame="void" id="leonard2001" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[LEONARD2001]</a></td><td>Leonard, W., <em>Control of electrical drivers</em>, 3rd ed. Springer, 2001</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="andersen1974" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[ANDERSEN1974]</a></td><td>Andersen, T.E., <em>On dynamics of large ship diesel engines</em>, Master’s thesis, Technical University of Denmark, 1974.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="blanke1981" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[BLANKE1981]</a></td><td>Blanke, M., <em>Ship propulsion losses related to automatic steering and prime mover control</em>, PhD thesis, Technical University of Denmark, 1981.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="pivano208" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[PIVANO208]</a></td><td>Pivano, L., <em>Thrust estimation and control of marine propellers in four-quadrant operations</em>, PhD thesis, Norwegian University of Science and Technology, 2008</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, D-ICE Engineering
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
