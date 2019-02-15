@@ -442,6 +442,20 @@ namespace frydom {
         m_externalForces.clear();
     }
 
+    // ##CC adding for monitoring load
+
+    Force FrBody_::GetTotalForceInWorld(FRAME_CONVENTION fc) const {
+        auto chronoForce = m_chronoBody->Get_Xforce();
+        return Force(chronoForce.x(), chronoForce.y(), chronoForce.z());
+    }
+
+    Torque FrBody_::GetTotalTorqueInBodyAtCOG(FRAME_CONVENTION fc) const {
+        auto chronoTorque = m_chronoBody->Get_Xtorque();
+        return Torque(chronoTorque.x(), chronoTorque.y(), chronoTorque.z());
+    }
+
+    // ##CC
+
 
 
     // Nodes
@@ -710,6 +724,12 @@ namespace frydom {
         if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngVelTmp);
         m_chronoBody->SetWvel_par(internal::Vector3dToChVector(worldAngVelTmp));
         m_chronoBody->UpdateAfterMove();
+    }
+
+    void FrBody_::SetCOGAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+        auto worldAngVelTmp = worldAngVel;
+        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngVelTmp);
+        m_chronoBody->SetWvel_par(internal::Vector3dToChVector(worldAngVelTmp));
     }
 
     void FrBody_::SetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {

@@ -420,10 +420,10 @@ namespace frydom {
 
         // FIXME : a passer dans la méthode initialize pour eviter les pb de précédence vis a vis de la HDB
 
-        for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
-            auto body = m_HDB->GetBody(BEMBody->get());
-            body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this));
-        }
+        //for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
+        //    auto body = m_HDB->GetBody(BEMBody->get());
+        //    body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this));
+        //}
 
     }
 

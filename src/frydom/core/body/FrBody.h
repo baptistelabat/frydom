@@ -527,6 +527,11 @@ namespace frydom {
         /// Remove all forces from the body
         void RemoveAllForces();
 
+        // ##CC adding for monitoring force
+        Force GetTotalForceInWorld(FRAME_CONVENTION fc) const;
+        Torque GetTotalTorqueInBodyAtCOG(FRAME_CONVENTION fc) const;
+        // ##CC
+
 
         // =============================================================================================================
         // NODES
@@ -845,6 +850,8 @@ namespace frydom {
         /// \param worldAngVel body angular velocity in world reference frame
         /// \param fc frame convention (NED/NWU)
         void SetAngularVelocityInWorld(const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
+
+        void SetCOGAngularVelocityInWorld(const AngularVelocity& worldAngVel, FRAME_CONVENTION fc);
 
         /// Set the body angular velocity from a vector expressed in BODY frame
         /// \param bodyAngVel body angular velocity in body reference frame
