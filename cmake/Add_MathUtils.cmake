@@ -5,17 +5,12 @@ if (NOT mathutils_FOUND)
 
 #    set(FETCHCONTENT_QUIET OFF)
 
-    set(MathUtils_URL "git@d-ice.githost.io:essai_cmake/MathUtils.git") # TODO: pointer vers un depot git distant...
     FetchContent_Declare(mathutils
-            GIT_REPOSITORY ${MathUtils_URL}
-            GIT_TAG master
+            GIT_REPOSITORY ${mathutils_URL}
+            GIT_TAG ${mathutils_TAG}
             )
 
     FetchContent_GetProperties(mathutils)
-#        message(STATUS MATHUTILS)
-#        message(STATUS ${mathutils_POPULATED})
-#        message(STATUS ${mathutils_SOURCE_DIR})
-#        message(STATUS ${mathutils_BINARY_DIR})
     if(NOT mathutils_POPULATED)
         message(STATUS "Downloading, Configuring and Generating 'MathUtils' dependency")
         FetchContent_Populate(mathutils)

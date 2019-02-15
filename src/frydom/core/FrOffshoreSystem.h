@@ -732,7 +732,7 @@ namespace frydom {
 //        void AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics);
 
 //        friend class FrIrrApp_;
-        void CheckInitialize();
+        void CheckIsInitialized();
 
 
 

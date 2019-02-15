@@ -32,15 +32,15 @@ namespace frydom {
 
     public:
 
-        std::shared_ptr<chrono::ChColorAsset> GetColorAsset() {return m_color;}
+        std::shared_ptr<chrono::ChColorAsset> GetColorAsset();
 
-        std::shared_ptr<chrono::ChVisualization> GetShapeAsset() {return m_shape;}
+        std::shared_ptr<chrono::ChVisualization> GetShapeAsset();
 
-        chrono::ChColor GetColor(){return m_color->GetColor();}
+        chrono::ChColor GetColor();  // FIXME : pas de chrono !!!!
 
-        void Initialize()override {};
+        void Initialize() override;
 
-        void StepFinalize()override {};
+        void StepFinalize()override;
 
     };
 }

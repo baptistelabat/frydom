@@ -10,15 +10,11 @@
 // ==========================================================================
 
 
-#ifndef FRYDOM_FRACTUATORSINC_H
-#define FRYDOM_FRACTUATORSINC_H
+#ifndef FRYDOM_FRFUNCTIONSINC_H
+#define FRYDOM_FRFUNCTIONSINC_H
 
-#include "FrAngularActuatorAngle.h"
-#include "FrAngularActuatorVelocity.h"
-#include "FrAngularActuatorTorque.h"
+#include "ramp/FrRampFunctionInc.h"
+#include "lib/FrFunctionLibInc.h"
 
-#include "FrLinearActuatorPosition.h"
-#include "FrLinearActuatorVelocity.h"
-#include "FrLinearActuatorForce.h"
 
-#endif //FRYDOM_FRACTUATORSINC_H
+#endif //FRYDOM_FRFUNCTIONSINC_H

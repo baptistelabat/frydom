@@ -9,7 +9,6 @@
 // 
 // ==========================================================================
 
-
 #ifndef FRYDOM_FRHDF5_H
 #define FRYDOM_FRHDF5_H
 
@@ -24,6 +23,7 @@ using namespace H5;
 
 namespace frydom {
 
+    /// Enum for READ and READWRITE modes for HDF5 files
     enum HDF5_READ_MODE {
         READ,
         READWRITE
@@ -34,18 +34,22 @@ namespace frydom {
      * \brief Class for reading HDF5 files.
      */
     class FrHDF5Reader {
+        // TODO : use something else than the Eigen container to store data from HDF5. Something like multidimentional
+        // arrays from the std lib / boost ? -> If boost is the only alternative, then keep using Eigen !
 
     private:
 
-        HDF5_READ_MODE m_mode = READ;
+        HDF5_READ_MODE m_mode = READ;    ///> The file opening mode
 
-        std::string m_filename;
-        std::unique_ptr<H5File> m_file;
+        std::string m_filename;          ///> The file path name
+        std::unique_ptr<H5File> m_file;  ///> The HDF5 file object
 
     public:
 
+        /// Default constructor
         FrHDF5Reader();
 
+        /// Constructor taking the HDF5 file path and the mode (READ or READWRITE)
         explicit FrHDF5Reader(const std::string &filename, HDF5_READ_MODE mode=READ);
 
         /// Destructor that closes properly the HDF5 file

@@ -15,7 +15,7 @@
 #include "FrWaveField.h"
 #include "frydom/utils/FrUtils.h"
 
-
+#include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
 
 
 namespace frydom {
@@ -123,7 +123,8 @@ namespace frydom {
 
         auto waveRamp = m_waveField->GetWaveRamp();
         if (waveRamp && waveRamp->IsActive()) {
-            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(),realVelocity);
+            realVelocity *= m_waveField->GetWaveRamp()->Get_y(m_waveField->GetTime());
+//            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(),realVelocity);
         }
 
         return realVelocity;
@@ -143,7 +144,8 @@ namespace frydom {
 
         auto waveRamp = m_waveField->GetWaveRamp();
         if (waveRamp && waveRamp->IsActive()) {
-            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(), realAcceleration);
+            realAcceleration *= m_waveField->GetWaveRamp()->Get_y(m_waveField->GetTime());
+//            m_waveField->GetWaveRamp()->Apply(m_waveField->GetTime(), realAcceleration);
         }
 
         return realAcceleration;

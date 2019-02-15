@@ -695,15 +695,28 @@ namespace frydom {
         /// which are updated
         /// \param worldTranslation translation to be applied to the body, expressed in world reference frame
         /// \param fc frame convention (NED/NWU)
-        void TranslateInWorld(const Position& worldTranslation, FRAME_CONVENTION fc);
+        void TranslateInWorld(const Translation& worldTranslation, FRAME_CONVENTION fc);
+
+        /// Translate the body along a translation vector whose coordinates are given in the world frame
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        /// \param worldTranslation translation to be applied to the body, expressed in world reference frame
+        /// \param fc frame convention (NED/NWU)
+        void TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc);
 
         /// Translate the body along a translation vector whose coordinates are given in the body frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param bodyTranslation translation to be applied to the body, expressed in body reference frame
         /// \param fc frame convention (NED/NWU)
-        void TranslateInBody(const Position& bodyTranslation, FRAME_CONVENTION fc);
+        void TranslateInBody(const Translation& bodyTranslation, FRAME_CONVENTION fc);
 
+        /// Translate the body along a translation vector whose coordinates are given in the body frame
+        /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
+        /// which are updated
+        /// \param bodyTranslation translation to be applied to the body, expressed in body reference frame
+        /// \param fc frame convention (NED/NWU)
+        void TranslateInBody(double x, double y, double z, FRAME_CONVENTION fc);
 
         /// Rotate the body with respect to its current orientation in world using a rotation object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
@@ -1091,21 +1104,17 @@ namespace frydom {
 
 
 
-
-
     protected:
 
-        enum FRAME {
-            WORLD,
-            BODY
-        };
+//        enum FRAME {
+//            WORLD,
+//            BODY
+//        };
 
         /// Set the COG position in the body reference frame
         /// \param bodyPos COG position in the body reference frame
         /// \param fc frame convention (NED/NWU)
         void SetCOG(const Position& bodyPos, FRAME_CONVENTION fc);
-
-//        void _SetPointPosition(const Position& point, FRAME pointFrame, const Position& pos, FRAME posFrame, FRAME_CONVENTION fc);
 
         /// Convert a cartesian position to a geographic position, using the geographic service of FrEnvironment
         /// \param cartPos cartesian position to convert
@@ -1170,7 +1179,9 @@ namespace frydom {
 
         friend FrNode_::FrNode_(FrBody_*);
 
-        friend class internal::FrLinkMotorRotationSpeedBase;
+//        friend std::shared_ptr<chrono::ChBody> FrLinkBase_::GetChronoBody1();
+//        friend std::shared_ptr<chrono::ChBody> FrLinkBase_::GetChronoBody2();
+        friend class FrLinkBase_;
 
 
     public:

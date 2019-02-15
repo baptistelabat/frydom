@@ -3,10 +3,9 @@ find_package(TimeZone QUIET)
 if (NOT TimeZone_FOUND)
     include(FetchContent)
 
-    set(TimeZone_URL https://github.com/HowardHinnant/date.git)
     FetchContent_Declare(TimeZone
-            GIT_REPOSITORY ${TimeZone_URL}
-            GIT_TAG v2.4.1
+            GIT_REPOSITORY ${timezone_URL}
+            GIT_TAG ${timezone_TAG}
             )
 
     FetchContent_GetProperties(TimeZone)

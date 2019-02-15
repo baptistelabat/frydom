@@ -63,7 +63,7 @@ void TestLinearDamping_::SetUp() {
 
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
     system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()->Set(flowVelocity, NWU, GOTO);
-    system.GetEnvironment()->GetTimeRamp()->Deactivate();
+    system.GetEnvironment()->GetTimeRamp()->SetActive(false);
 
 
     body = system.NewBody();

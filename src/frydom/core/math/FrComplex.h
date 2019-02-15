@@ -15,10 +15,11 @@
 
 #include "complex"
 
+#define JJ Complex(0, 1)
+
 namespace frydom {
 
     using Complex = std::complex<double>;
-    #define JJ Complex(0, 1)
 
 }
 

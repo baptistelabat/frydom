@@ -28,7 +28,7 @@ namespace frydom {
      * \class FrVelocityRecorder
      * \brief Class not used.
      */
-    class FrVelocityRecorder : public chrono::ChProbe, public FrObject {
+    class FrVelocityRecorder : public chrono::ChProbe, public FrObject {  // FIXME : pas de derivation directe d'objets chrono !!!!
 
     private:
 
@@ -56,7 +56,7 @@ namespace frydom {
 
         unsigned int GetNStep() const;
 
-        void SetBody(FrBody* body) { m_body=body; }  // TODO : retirer, seulement le constructeur
+        void SetBody(FrBody* body);  // TODO : retirer, seulement le constructeur
 
         FrBody* GetBody() const;
 

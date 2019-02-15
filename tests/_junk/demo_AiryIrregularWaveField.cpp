@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 
     // Activate the time ramp, embedded in the environment
     auto timeRamp = system.GetEnvironment()->GetTimeRamp();
-    timeRamp->Activate();
+    timeRamp->SetActive(true);
 
     // Set the water depth to infinite. Note that the water depth is set with a frame convention. In NWU, it is then set
     // negatively.
