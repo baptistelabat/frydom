@@ -1,6 +1,0 @@
-discretization_db.py
---------------------
-.. automodule:: discretization_db
-   :members:
-   :undoc-members:
-   :show-inheritance:

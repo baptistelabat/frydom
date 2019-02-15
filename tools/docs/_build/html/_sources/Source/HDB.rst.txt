@@ -1,7 +1,0 @@
-HDB.py
-------
-
-.. automodule:: HDB5
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -250,7 +250,6 @@ namespace frydom {
         for (unsigned int ibody=0; ibody<nbBodies; ibody++) {
             m_radiationForces.emplace_back(chrono::ChVectorDynamic<double>(6));
         }
-
     }
 
     std::shared_ptr<FrHydroMapper> FrRadiationModel::GetMapper() const {
@@ -383,6 +382,7 @@ namespace frydom {
 
     void FrRadiationModel_::Initialize() {
         FrPrePhysicsItem_::Initialize();
+        m_chronoPhysicsItem->SetupInitial();
     }
 
     FrHydroMapper_* FrRadiationModel_::GetMapper() const {

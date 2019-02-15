@@ -52,7 +52,7 @@ namespace frydom {
 //
 //        void SetXWindow(double x0, double x1);
 //
-//        void SetByTwoPoints(double x0, double y0, double x1, double y1);
+        void SetByTwoPoints(double x0, double y0, double x1, double y1);
 
         void Initialize() override;
 

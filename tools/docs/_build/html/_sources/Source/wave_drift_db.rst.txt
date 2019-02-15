@@ -1,6 +1,0 @@
-Wave_drift_db.py
-----------------
-.. automodule:: HydroDB.wave_drift_db
-   :members:
-   :undoc-members:
-   :show-inheritance:

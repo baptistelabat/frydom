@@ -492,35 +492,34 @@ namespace frydom {
         }
     }
 
-
     void FrOffshoreSystem_::Initialize() {
 
         // Initializing environment before bodies
         m_environment->Initialize();
 
-//        for (auto& item : m_PrePhysicsList) {
-//            item->SetupInitial();
-//        }
-//
-//        for (auto& item : m_bodyList){
-//            item->SetupInitial();
-//        }
-//
-//        for (auto& item : m_MidPhysicsList) {
-//            item->SetupInitial();
-//        }
-//
-//        for (auto& item : m_linkList) {
-//            item->SetupInitial();
-//        }
-//
-//        for (auto& item : m_PostPhysicsList) {
-//            item->SetupInitial();
-//        }
+        for (auto& item : m_PrePhysicsList) {
+            item->Initialize();
+        }
 
-//        m_chronoSystem->Update();
+        for (auto& item : m_bodyList){
+            item->Initialize();
+        }
 
-        m_chronoSystem->SetupInitial();
+        for (auto& item : m_MidPhysicsList) {
+            item->Initialize();
+        }
+
+        for (auto& item : m_linkList) {
+            item->Initialize();
+        }
+
+        for (auto& item : m_PostPhysicsList) {
+            item->Initialize();
+        }
+
+        m_chronoSystem->Update();
+
+//        m_chronoSystem->SetupInitial();
 
 
 //        // Initializing embedded chrono system

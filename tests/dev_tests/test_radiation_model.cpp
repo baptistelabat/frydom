@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     waveField->SetDirection(SOUTH(NWU), NWU, GOTO);
 
     auto timeRamp = system.GetEnvironment()->GetTimeRamp();
-    timeRamp->Deactivate();
+    timeRamp->SetActive(false);
 
     // --- Body
 
