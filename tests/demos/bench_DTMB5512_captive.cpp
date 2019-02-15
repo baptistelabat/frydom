@@ -286,8 +286,7 @@ int main(int argc, char* argv[]) {
     } else {
         //body->GetDOFMask()->SetLock_X(true);
         //body->GetDOFMask()->SetLock_Ry(true);
-        system.GetEnvironment()->GetTimeRamp()->Activate();
-        system.GetEnvironment()->GetTimeRamp()->SetDuration(20.);
+        system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 20., 1.);
     }
 
     // -- Inertia
@@ -375,7 +374,8 @@ int main(int argc, char* argv[]) {
         time += dt;
 
         // ##CC test user define velocity
-        //body->SetVelocityInBodyNoRotation(Velocity(speed, 0., 0.) ,NWU);
+        auto vel = body->GetVelocityInWorld(NWU);
+        body->SetVelocityInWorldNoRotation(Velocity(speed, vel.y(), vel.z()) ,NWU);
         //body->SetVelocityInBodyNoRotation(BodyVelocity(time, Tk, 2.*ak), NWU);
         //body->SetCOGAngularVelocityInWorld(BodyAngularVelocity(time, Tk, 10.), NWU);
         // ##CC
