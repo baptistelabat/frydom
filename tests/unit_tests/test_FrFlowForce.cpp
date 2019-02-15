@@ -155,7 +155,7 @@ void TestFrFlowForce::TestForce() {
             system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()->Set(dir(i), speed(i), angleUnit, speedUnit, frame,
                                                                    convention);
         }
-        force->Update(false);
+        force->Update(0.);
         force->GetForceInWorld(forceTemp, NWU);
         force->GetTorqueInBodyAtCOG(torqueTemp, NWU);
 
@@ -167,7 +167,7 @@ void TestFrFlowForce::TestForce() {
 
 TEST_F(TestFrFlowForce, TestCurrentForce) {
     LoadData("TNR_database.h5", "/current_force/");
-    MakeForce(WATER, "../Ship_PolarCurrentCoeffs.yml");
+    MakeForce(WATER, "Ship_PolarCurrentCoeffs.yml");
     system.Initialize();
     TestForce();
 };
@@ -175,7 +175,7 @@ TEST_F(TestFrFlowForce, TestCurrentForce) {
 
 TEST_F(TestFrFlowForce, TestWindForce) {
     LoadData("TNR_database.h5", "/wind_force/");
-    MakeForce(FLUID_TYPE::AIR, "../Ship_PolarWindCoeffs.yml");
+    MakeForce(FLUID_TYPE::AIR, "Ship_PolarWindCoeffs.yml");
     system.Initialize();
     TestForce();
 };
