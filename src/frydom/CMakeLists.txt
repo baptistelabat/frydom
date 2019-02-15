@@ -37,6 +37,8 @@ endforeach()
 
 include(URL.conf)
 
+include(Add_googletest)
+
 include(Add_chrono)
 include(Add_MathUtils)
 include(Add_HDF5)

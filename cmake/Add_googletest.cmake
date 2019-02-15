@@ -1,6 +1,11 @@
 if (NOT googletest_FOUND)
     include(FetchContent)
 
+
+    message(STATUS ${googletest_URL})
+    message(STATUS ${googletest_TAG})
+
+
     FetchContent_Declare(googletest
         GIT_REPOSITORY ${googletest_URL}
         GIT_TAG ${googletest_TAG}

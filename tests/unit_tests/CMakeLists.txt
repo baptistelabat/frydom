@@ -35,6 +35,8 @@ set(UNIT_TESTS
 
 #enable_testing()
 #include(Add_googletest)il
+#include(URL.conf)
+#include(Add_googletest)
 
 
 foreach(test ${UNIT_TESTS})
