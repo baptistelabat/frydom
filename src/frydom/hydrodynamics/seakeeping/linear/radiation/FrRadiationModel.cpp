@@ -545,7 +545,7 @@ namespace frydom {
 
                     std::vector<mathutils::Vector6d<double>> kernel;
                     for (unsigned int it = 0; it < vtime.size(); ++it) {
-                        kernel.push_back(interpKu->Eval(vtime[it]).cwiseProduct(velocity[it]));
+                        kernel.push_back(interpKu->Eval(vtime[it]) * velocity[it].at(idof));
                     }
                     radiationForce += TrapzLoc(vtime, kernel) * meanSpeed ;
                 }
