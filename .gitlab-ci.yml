@@ -21,10 +21,11 @@ test:
         - cd build
         - cmake ..
         - make all test -j4
-    except:
-        - master
+#    except:
+#        - master
 
 pages:
+    stage: deploy
     script:
         - cd docs/doxygen
         - doxygen Doxyfile
@@ -32,12 +33,14 @@ pages:
     artifacts:
         paths:
             - public
-    only:
-        - master
+#    only:
+#        - feature/FR_refactoring_open_source
 
 theory:
     script:
         - cd docs/theory_manual
         - make html
         - scp -r ./build/html/* frydomusqo@ssh.cluster027.hosting.ovh.net:/homez.363/frydomusqo/theory-guide
+    only:
+        - master
 
