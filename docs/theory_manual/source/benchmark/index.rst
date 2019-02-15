@@ -3,13 +3,13 @@
 Benchmark cases
 ===============
 
-Heavy sphere
-~~~~~~~~~~~~
+Heaving sphere
+~~~~~~~~~~~~~~
 .. toctree::
     :maxdepth: 2
 
-    heavy_sphere_decay_test
-    heavy_sphere_regular_wave
+    heaving_sphere_decay_test
+    heaving_sphere_regular_wave
 
 DTM5415
 ~~~~~~~
