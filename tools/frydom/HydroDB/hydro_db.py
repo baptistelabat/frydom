@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 #  -*- coding: utf-8 -*-
+# ==========================================================================
+# FRyDoM - frydom-ce.org
+# 
+# Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+# All rights reserved.
+# 
+# Use of this source code is governed by a GPLv3 license that can be found
+# in the LICENSE file of FRyDoM.
+# 
+# ==========================================================================
+
 """Module to load hydrodynamic BEM data from Nemoh code"""
 
 import numpy as np
@@ -27,7 +38,15 @@ inf = float('inf')  # Definition of infinity for depth
 #  de mouvement correspond respectivement un index de ligne ou de colonne dans la base de donnees
 #  hydro.
 class _FreqDB(object):
+    """Class _FreqDB for dealing with hydrodynamic databases.
+    """
+
     def __init__(self):
+
+        """
+        Constructor of the _FreqDB class.
+        """
+
         self._min_frequency = 0.
         self._max_frequency = 0.
         self._nb_frequencies = 0
@@ -36,10 +55,28 @@ class _FreqDB(object):
     
     @property
     def min_frequency(self):
+
+        """This subroutine gives the minimum wave frequency.
+
+        Returns
+        -------
+        float
+            Minimum wave frequency.
+        """
+
         return self._min_frequency
     
     @property
     def max_frequency(self):
+
+        """This subroutine gives the maximum wave frequency.
+
+        Returns
+        -------
+        float
+            Maximum wave frequency.
+        """
+
         if self._iwcut is None:
             return self._max_frequency
         else:
@@ -47,6 +84,15 @@ class _FreqDB(object):
     
     @property
     def nb_frequencies(self):
+
+        """This subroutine gives the number of wave frequencies.
+
+        Returns
+        -------
+        int
+            Number of wave frequencies.
+        """
+
         return len(self.omega)
     
     @property
@@ -68,6 +114,15 @@ class _FreqDB(object):
     
     @property
     def wcut(self):
+
+        """This subroutine gives the cutting wave frequency.
+
+        Returns
+        -------
+        float
+            Cutting wave frequency.
+        """
+
         if self._iwcut is None:
             return None
         else:
@@ -76,6 +131,15 @@ class _FreqDB(object):
         
     @wcut.setter
     def wcut(self, wcut):  # TODO: finir l'implementation
+
+        """This subroutine sets the cutting wave frequency.
+
+        Parameter
+        ----------
+        wcut : float
+            Cutting wave frequency.
+        """
+
         if wcut is None:
             self._iwcut = None
         else:
@@ -84,6 +148,19 @@ class _FreqDB(object):
             self._iwcut = np.where(w >= wcut)[0][0]  # TODO: a verifier
     
     def set_frequencies(self, wmin, wmax, nw):
+
+        """This subroutine sets the minimum and maximum frequencies and the number of frequencies.
+
+        Parameters
+        ----------
+        wmin : float
+            Minimum frequency.
+        wmax : float
+            Maximum frequency.
+        nw : int
+            Number of frequencies.
+        """
+
         assert 0. < wmin < wmax
         assert nw > 0
         
@@ -92,6 +169,26 @@ class _FreqDB(object):
         self._nb_frequencies = nw
     
     def get_frequency_discretization(self):  # FIXME: BUG tres probable avec wcut !!!
+
+        """This subroutine gives the minimum and maximum frequencies and the number of frequencies.
+
+        Parameters
+        ----------
+        omega : float
+            Frequency (rad/s) at which we want to get the maximum edge length.
+        n : int, optional
+            Minimal number of faces by wave length. Default is 10.
+
+        Returns
+        -------
+        float
+            Minimum frequency.
+        float
+            Maximum frequency.
+        int
+            Number of frequencies.
+        """
+
         return self._min_frequency, self._max_frequency, self._nb_frequencies
     
 
@@ -160,6 +257,14 @@ class HydroDB(_FreqDB):
 
     @property
     def radiation_db(self):  # TODO: renseigner les frequences et wcut...
+
+        """This subroutine gives the radiation (added mass and damping) coefficients.
+
+        Returns
+        -------
+        RadiationDB
+        """
+
         db = deepcopy(self._radiation_db)
         db.set_frequencies(self._min_frequency, self._max_frequency, self._nb_frequencies)
         db.wcut = self.wcut
@@ -168,6 +273,14 @@ class HydroDB(_FreqDB):
     
     @property
     def diffraction_db(self):  # TODO: renseigner les frequences et wcut...
+
+        """This subroutine gives the diffraction loads.
+
+        Returns
+        -------
+        DiffractionDB
+        """
+
         db = deepcopy(self._diffraction_db)
         db.set_frequencies(self._min_frequency, self._max_frequency, self._nb_frequencies)
         db.set_wave_dir(self.min_wave_dir, self.max_wave_dir, self.nb_wave_dir)
@@ -179,55 +292,114 @@ class HydroDB(_FreqDB):
     
     @property
     def froude_krylov_db(self):
+        """This subroutine gives and computes the Froude-Krylov loads.
+
+        Returns
+        -------
+        FroudeKrylovDB
+        """
+
         db = self._froude_krylov_db
         if not self._has_froude_krylov:
             db.set_frequencies(self._min_frequency, self._max_frequency, self._nb_frequencies)
             db.set_wave_dir(self.min_wave_dir, self.max_wave_dir, self.nb_wave_dir)
             db.wcut = self.wcut
             db.body_mapper = self.body_mapper
+
+            # Computation of the Froude-Krylov loads.
             db.eval(self.rho_water, self.grav, self.depth, self.x_wave_measure, self.y_wave_measure)
-            
+
             db._x_wave_measure = self.x_wave_measure
             db._y_wave_measure = self.y_wave_measure
-            
+
             self._froude_krylov_db = db
             self._has_froude_krylov = True
-            
+
         return db
-    
+
     @property
     def wave_excitation_db(self):
+
+        """This subroutine gives and computes the excitation loads.
+
+        Returns
+        -------
+        WaveExcitationDB
+        """
+
         diffraction_db = self.diffraction_db
         froude_krylov_db = self.froude_krylov_db
-        
+
         db = WaveExcitationDB()
         db.set_frequencies(self._min_frequency, self._max_frequency, self._nb_frequencies)
         db.set_wave_dir(self.min_wave_dir, self.max_wave_dir, self.nb_wave_dir)
         db.wcut = self.wcut
         db.body_mapper = self.body_mapper
-        
-        db.data = diffraction_db.data + froude_krylov_db.data  # Summing diffraction and Froude-Krylov contributions
-        
+
+        db.data = diffraction_db.data + froude_krylov_db.data  # Summing diffraction and Froude-Krylov contributions.
+
         db._x_wave_measure = self.x_wave_measure
         db._y_wave_measure = self.y_wave_measure
-        
+
         return db
 
     @property
     def wave_dirs(self):
+        """This subroutine gives the wave directions.
+
+        Returns
+        -------
+        Array of floats
+        """
+
         return self._wave_dirs
 
     def set_wave_direction(self, min_wave_dir, max_wave_dir, nb_wave_dir):
+
+        """This subroutine sets the wave directions.
+
+        Parameters
+        ----------
+        min_wave_dir : float
+            Minimum wave direction.
+        max_wave_dir : float
+            Maximum wave direction.
+        nb_wave_dir : int
+            Wave direction angular step.
+        """
+
         # self._diffraction_db.set_wave_dir(min_wave_dir, max_wave_dir, nb_wave_dir)
         self.min_wave_dir = min_wave_dir
         self.max_wave_dir = max_wave_dir
         self.nb_wave_dir = nb_wave_dir
-        
+
     def set_diffraction_data(self, data):
+
+        """This subroutine sets the diffraction loads.
+
+        Parameters
+        ----------
+        data : Array of floats
+            Diffraction loads.
+        """
+
         # TODO: faire verif !!
         self._diffraction_db.data = data
-        
+
     def set_radiation_data(self, radiation_damping, added_mass, infinite_added_mass=None):
+
+        """This subroutine sets the radiation coefficients.
+
+        Parameters
+        ----------
+        radiation_damping : Array of floats
+            Damping coefficients.
+        added_mass : Array of floats
+            Added-mass coefficients.
+        infinite_added_mass : Array of floats, optional
+            Infinite-frequency added mass coefficients.
+        """
+
         # TODO: faire verifs !!
         self._radiation_db.set_data(radiation_damping, added_mass, cm_inf=infinite_added_mass)
 
@@ -235,44 +407,87 @@ class HydroDB(_FreqDB):
 class WaveExcitationError(Exception):
     pass
 
-    
+
 class WaveExcitation(_FreqDB):
+
+    """Class WaveExcitation for dealing with excitation loads.
+    """
+
     _type = ''
     _type_extended = ''
-    
+
     def __init__(self):
+
+        """
+            Constructor of the WaveExcitation class.
+        """
+
         super(WaveExcitation, self).__init__()
         # super(DiffractionDB, self).__init__()
         # self.min_frequency = 0.
         # self.max_frequency = 0.
         # self.nb_frequency = 0
-        
+
         self._x_wave_measure = 0.
         self._y_wave_measure = 0.
-        
+
         self.min_wave_dir = 0.
         self.max_wave_dir = 0.
         self.nb_wave_dir = 0
-        
+
         self.data = np.empty(0, dtype=np.complex)
-        
+
         self.body_mapper = HydroBodySetMapping()
-    
+
     def get_wave_measure_position(self):
+
+        """This subroutine gives the position of the wave probe.
+
+        Returns
+        -------
+        float
+            x-position.
+        float
+            y-position.
+        """
+
         return self._x_wave_measure, self._y_wave_measure
-    
+
     def set_data(self, diffraction_data):
+
+        """This subroutine sets the diffraction or FK loads.
+
+        Parameters
+        ----------
+        diffraction_data : Array of floats
+            Diffraction or FK loads.
+        """
+
         # TODO: faire les verifs...
         self.data = np.asarray(diffraction_data, dtype=np.complex)
-    
+
     def get_body_data(self, ibody):
+
+        """This subroutine gives the diffraction or FK loads for a body.
+
+        Parameters
+        ----------
+        ibody : int
+            Index of the body.
+
+        Returns
+        -------
+        Array of floats
+            Diffraction or FK loads.
+        """
+
         nb_dof = self.body_mapper.bodies[ibody].nb_dof
-        
+
         istart = self.body_mapper.get_general_force_index(ibody, 0)
         # istop = self.body_mapper.get_general_force_index(ibody, nb_dof-1)
-        
+
         return self.data[istart:istart+nb_dof, :, :]
-    
+
     def interp(self, omega, wave_dir, ibody=None, unit='deg'):
         """Interpolate wave excitation hydrodynamic coefficient over frequency and wave directions
         
@@ -360,6 +575,19 @@ class WaveExcitation(_FreqDB):
         return fexc_interp
 
     def set_wave_dir(self, min_wave_dir, max_wave_dir, nb_wave_dir):
+
+        """This subroutine sets the wave directions.
+
+        Parameters
+        ----------
+        min_wave_dir : float
+            Minimum wave direction.
+        max_wave_dir : float
+            Maximum wave direction.
+        nb_wave_dir : int
+            Wave direction angular step.
+        """
+
         assert min_wave_dir <= max_wave_dir
         assert nb_wave_dir > 0
         self.min_wave_dir = min_wave_dir
@@ -400,7 +628,7 @@ class WaveExcitation(_FreqDB):
             iwave = np.fabs(self.wave_dir - radians(iwave)).argmin()
         
         # gal_idx = self.body_mapper.
-        gal_idx = self.body_mapper.get_general_force_index(ibody, iforce)
+        gal_idx = self.body_mapper.get_general_force_index(ibody, iforce) # gal = general index.
         if self._iwcut is None:
             return self.data[gal_idx, :, iwave]  # is
         else:
@@ -462,18 +690,35 @@ class WaveExcitation(_FreqDB):
     
 
 class DiffractionDB(WaveExcitation):
+
+    """Class DiffractionDB for dealing with diffraction loads.
+    """
+
     _type = 'diff'
     _type_extended = 'Diffraction'
     
     def __init__(self):
+        """
+            Constructor of the DiffractionDB class.
+        """
+
         super(DiffractionDB, self).__init__()
         
         
 class FroudeKrylovDB(WaveExcitation):
+
+    """Class FroudeKrylovDB for dealing with diffraction loads.
+    """
+
     _type = 'FK'
     _type_extended = 'Froude Krylov'
     
     def __init__(self):
+
+        """
+            Constructor of the FroudeKrylovDB class.
+        """
+
         super(FroudeKrylovDB, self).__init__()
         # self.depth = depth
         # self.grav = grav
@@ -481,7 +726,23 @@ class FroudeKrylovDB(WaveExcitation):
         # self.y_wave_measure = y_wave_measure
 
     def eval(self, rho_water, grav, depth, x_wave_measure, y_wave_measure):
-        #  de FroudeKrylovDB
+
+        """This subroutine computes the Froude-Krylov complex coefficients from the incident wave field.
+
+        Parameters
+        ----------
+        rho_water : float
+            Water density.
+        grav : float
+            Gravity.
+        depth : float
+            Water depth
+        x_wave_measure : float
+            x-position of the wave probe.
+        y_wave_measure : float
+            y-position of the wave probe.
+        """
+
         """Computes the Froude-Krylov complex coefficients from indident wave field"""
         # Remarque: l'evaluation est faite sur le full range de frequence (wcut est bypassed)
         # TODO: sortir le potentiel, les pressions et les vitesses normales...
@@ -559,36 +820,33 @@ class FroudeKrylovDB(WaveExcitation):
     
 
 class WaveExcitationDB(WaveExcitation):
+
+    """Class WaveExcitationDB for dealing with exciting loads.
+    """
+
     _type = 'exc'
     _type_extended = 'Excitation'
     
     def __init__(self):
+
+        """
+            Constructor of the DiffractionDB class.
+        """
+
         super(WaveExcitationDB, self).__init__()
 
 
 # TODO: voir a faire une moyenne des coeffs hors diag pour le meme corps
 class RadiationDB(_FreqDB):
     """Class to hold hydrodynamic radiation coefficients
-
-    Parameters
-    ----------
-    wmin : float
-        Minimum angular frequency (rad/s)
-    wmax : float
-        Maximum angular frequency (rad/s)
-    nw : int
-        Number of frequency samples
-    ca : array_like
-        array of radiation damping coefficients samples
-    cm : array_like
-        array of radiation added mass coefficients samples
-    bodies : list
-        List of HydroBody objects involved in the hydrodynamic model
-    cm_inf : array_like, optional
-        array of infinite frequency added mass coefficients
     """
     
     def __init__(self):
+
+        """
+            Constructor of the FroudeKrylovDB class.
+        """
+
         super(RadiationDB, self).__init__()
         
         self._ca = None
@@ -603,6 +861,18 @@ class RadiationDB(_FreqDB):
         self._flags = np.empty(0, dtype=np.bool)
         
     def set_data(self, ca, cm, cm_inf=None):
+
+        """This subroutine sets the radiation coefficients.
+
+        Parameters
+        ----------
+        ca : Array of floats
+            Damping coefficients.
+        cm : Array of floats
+            Added mass coefficients.
+        cm_inf : Array of floats, optional
+            Infinite-frequency added mass coefficients.
+        """
         
         self._ca = np.asarray(ca, dtype=np.float)
         self._cm = np.asarray(cm, dtype=np.float)
@@ -617,6 +887,15 @@ class RadiationDB(_FreqDB):
     
     @property
     def radiation_damping(self):
+
+        """This subroutine gives the damping coefficients.
+
+        Returns
+        -------
+        Array of floats
+            Damping coefficients.
+        """
+
         if self._iwcut is None:
             ca = self._ca
         else:
@@ -625,6 +904,15 @@ class RadiationDB(_FreqDB):
     
     @property
     def added_mass(self):
+
+        """This subroutine gives the added-mass coefficients.
+
+        Returns
+        -------
+        Array of floats
+            Added-mass coefficients.
+        """
+
         if self._iwcut is None:
             cm = self._cm
         else:
@@ -633,6 +921,15 @@ class RadiationDB(_FreqDB):
     
     @property
     def infinite_added_mass(self):
+
+        """This subroutine gives the infinite-frequency added mass coefficients.
+
+        Returns
+        -------
+        Array of floats
+            Infinite-frequency added mass coefficients.
+        """
+
         if self._cm_inf is None:
             return 
         else:
@@ -667,12 +964,15 @@ class RadiationDB(_FreqDB):
         if self._cm_inf is None:
             self.eval_infinite_added_mass()
     
-        cminf = self.infinite_added_mass
+        cminf = self.infinite_added_masslot
     
         return ca + np.einsum('j, ijk -> ijk', 1j * self.omega, cm - cminf[:, np.newaxis, :])
     
     def clean(self):  # FIXME: affiner la methode !!!!!!
-        
+
+        """This subroutine cleans the impulse response functions.
+        """
+
         irf_db = self.eval_impulse_response_function()
         irf_db.clean()
         self.flags = irf_db.flags
@@ -701,7 +1001,7 @@ class RadiationDB(_FreqDB):
         """
         kjw = self.frequency_response
         
-        idof_gal, iforce_gal = self.body_mapper.get_general_indexes(ibody_motion, idof, ibody_force, iforce)
+        idof_gal, iforce_gal = self.body_mapper.get_general_indexes(ibody_motion, idof, ibody_force, iforce) # gal = general index.
         
         if self._flags[idof_gal, iforce_gal]:
             return kjw[iforce_gal, :, idof_gal]
@@ -709,14 +1009,14 @@ class RadiationDB(_FreqDB):
             return np.zeros(self.nb_frequencies, dtype=np.float)
     
     def get_added_mass_coeff(self, ibody_motion, idof, ibody_force, iforce):
-        """Get the frequency dependent added mass coefficient
+        """Get the frequency dependent added-mass coefficients.
 
         Parameters
         ----------
         ibody_motion : int
             Index of the body having a motion
         idof : int
-            Index of the local body's raditation mode (motion)
+            Index of the local body's radiation mode (motion)
         ibody_force : int
             Index of the body where the radiation force is applied
         iforce : int
@@ -735,10 +1035,31 @@ class RadiationDB(_FreqDB):
             return np.zeros(self.nb_frequencies, dtype=np.float)
 
     def get_added_mass(self, ibody_force, ibody_motion):
-        idof_start, iforce_start = self.body_mapper.get_general_indexes(ibody_motion, 0, ibody_force, 0)
+
+        """This subroutine gets the frequency-dependent added-mass matrices.
+
+        Parameters
+        ----------
+        ibody_force : int
+            Index of the body where the radiation force is applied
+        ibody_motion : int
+            Index of the body having a motion
+
+        Returns
+        -------
+        np.ndarray
+            Frequency-dependent added-mass matrices.
+        """
+
+        # First index.
+        idof_start, iforce_start = self.body_mapper.get_general_indexes(ibody_motion, 0, ibody_force, 0) # 0 = first index.
+
         nb_force = self.body_mapper.get_body(ibody_force).nb_force_modes
         nb_dof = self.body_mapper.get_body(ibody_motion).nb_dof
-        idof_end, iforce_end = self.body_mapper.get_general_indexes(ibody_motion, nb_dof-1, ibody_force, nb_force-1)
+
+        # Last index.
+        idof_end, iforce_end = self.body_mapper.get_general_indexes(ibody_motion, nb_dof-1, ibody_force, nb_force-1) # nb_dof-1 and nb_force-1 = last indexes.
+
         return self.added_mass[iforce_start:iforce_end+1, :, idof_start:idof_end+1]
 
     def get_radiation_damping_coeff(self, ibody_motion, idof, ibody_force, iforce):
@@ -761,13 +1082,29 @@ class RadiationDB(_FreqDB):
             nb_frequencies array of radiation damping frequency components
         """
 
-        idof_gal, iforce_gal = self.body_mapper.get_general_indexes(ibody_motion, idof, ibody_force, iforce)
+        idof_gal, iforce_gal = self.body_mapper.get_general_indexes(ibody_motion, idof, ibody_force, iforce) # gal = general index.
         if self._flags[idof_gal, iforce_gal]:
             return self.radiation_damping[iforce_gal, :, idof_gal]
         else:
             return np.zeros(self.nb_frequencies, dtype=np.float)
 
     def get_radiation_damping(self, ibody_force, ibody_motion):
+
+        """This subroutine gets the frequency-dependent damping matrices.
+
+        Parameters
+        ----------
+        ibody_force : int
+            Index of the body where the radiation force is applied
+        ibody_motion : int
+            Index of the body having a motion
+
+        Returns
+        -------
+        np.ndarray
+            Frequency-dependent damping matrices.
+        """
+
         idof_start, iforce_start = self.body_mapper.get_general_indexes(ibody_motion, 0, ibody_force, 0)
         nb_force = self.body_mapper.get_body(ibody_force).nb_force_modes
         nb_dof = self.body_mapper.get_body(ibody_motion).nb_dof
@@ -833,6 +1170,15 @@ class RadiationDB(_FreqDB):
         return irf_db
 
     def get_irf_db(self):
+
+        """This subroutine gives the impulse response function.
+
+        Returns
+        -------
+        RadiationIRFDB:
+            Radiation Impulse Response Database object.
+        """
+
         if self._irf_db is None:
             self.eval_impulse_response_function(tf=100, dt=0.1)
         return self._irf_db
@@ -905,6 +1251,15 @@ class RadiationDB(_FreqDB):
         return irf_db
 
     def get_irf_ku(self):
+
+        """This subroutine gives the impulse response function relative to the ship advance speed.
+
+       Returns
+       -------
+       RadiationIRFDB:
+           Radiation Impulse Response Database object.
+       """
+
         if self._irf_ku_db is None:
             self.eval_impulse_response_function_Ku(tf=100, dt=0.1)
         return self._irf_ku_db
@@ -990,7 +1345,7 @@ class RadiationDB(_FreqDB):
         ibody_motion : int
             Index of the body having a motion
         idof : int
-            Index of the local body's raditation mode (motion)
+            Index of the local body's radiation mode (motion)
         ibody_force : int
             Index of the body where the radiation force is applied
         iforce : int
@@ -1002,13 +1357,13 @@ class RadiationDB(_FreqDB):
             has_cminf = False
         else:
             has_cminf = True
-        
+
         ca = self.get_radiation_damping_coeff(ibody_motion, idof, ibody_force, iforce)
         cm = self.get_added_mass_coeff(ibody_motion, idof, ibody_force, iforce)
         cminf = None
         
         if has_cminf:
-            idof_gal, iforce_gal = self.body_mapper.get_general_indexes(ibody_motion, idof, ibody_force, iforce)
+            idof_gal, iforce_gal = self.body_mapper.get_general_indexes(ibody_motion, idof, ibody_force, iforce) # gal = general index.
             cminf = self._cm_inf[iforce_gal, idof_gal]
     
         xlabel = r'$\omega (rad/s)$'
@@ -1138,12 +1493,21 @@ class RadiationDB(_FreqDB):
     
 
 class RadiationIRFDB(object):
+
+    """Class for dealing with impulse response functions.
+    """
+
     # TODO: meme en cas d'unique force et mouvement, data devrait de shape (1, 1, nt) !!
     # NOTE: data is of shape nb_forces x nb_motion x nb_time_samples
     
     # (nb_force_modes x nb_motion_modes x nb_time_irf)
     
     def __init__(self):
+
+        """
+        Constructor of the class RadiationIRFDB.
+        """
+
         self._tf = 0.
         self._dt = 0.
         self.data = np.empty(0, dtype=np.float)
@@ -1153,9 +1517,23 @@ class RadiationIRFDB(object):
         self._flags = np.empty(0, dtype=np.bool)
 
     def set_data(self, tf, dt, data):
+
+        """This subroutine sets the data and temporal parameters of the impulse response functions.
+
+        Parameters
+        ----------
+        tf : float
+            Final time.
+        dt : float
+            Time step.
+        data : Array of floats
+            Array of impulse response functions.
+
+        """
+
         self._tf = tf
         self._dt = dt
-        
+
         data = np.asarray(data, dtype=np.float)
         assert data.shape[2] == len(self.time), "Inconsistent number of sample in IRF"
         self.data = data
@@ -1164,18 +1542,54 @@ class RadiationIRFDB(object):
 
     @property
     def irf(self):
+
+        """This subroutine gives the array of the impulse response functions.
+
+        Returns
+        -------
+        Array of floats
+            Array of impulse response functions.
+        """
+
         return self.data
 
     @property
     def tmax(self):
+
+        """This subroutine gives the final time to evaluate the impulse response functions.
+
+        Returns
+        -------
+        Float
+            Final time.
+        """
+
         return self._tf
 
     @property
     def dt(self):
+
+        """This subroutine gives the time step to evaluate the impulse response functions.
+
+        Returns
+        -------
+        Float
+            Time step.
+        """
+
         return self._dt
     
     @property
     def is_empty(self):
+
+        """This subroutine indicates if an array of impulse response functions is stored or not.
+
+        Returns
+        -------
+        Bool
+            True if some data are stored, false otherwise.
+        """
+
         if self.data is None:
             return True
         else:
@@ -1183,18 +1597,54 @@ class RadiationIRFDB(object):
     
     @property
     def nb_force_modes(self):
+
+        """This subroutine gives the number of force modes.
+
+        Returns
+        -------
+        int
+            Number of force modes.
+        """
+
         return self.data.shape[0]
     
     @property
     def nb_motion_modes(self):
+
+        """This subroutine gives the number of motion modes.
+
+        Returns
+        -------
+        int
+            Number of motion modes.
+        """
+
         return self.data.shape[1]
     
     @property
     def nb_time_samples(self):
+
+        """This subroutine gives the size of the time vector used to evaluate the impulse response functions.
+
+        Returns
+        -------
+        int
+            Size of the temporal vector.
+        """
+
         return self.data.shape[2]
     
     @property
     def time(self):
+
+        """This subroutine gives the time vector.
+
+        Returns
+        -------
+        Array
+            Time vector.
+        """
+
         dt = self._dt
         return np.arange(0., self._tf + dt, dt, dtype=np.float)
 
@@ -1238,7 +1688,7 @@ class RadiationIRFDB(object):
         ibody_motion : int
             Index of the body having a motion
         idof : int
-            Index of the local body's raditation mode (motion)
+            Index of the local body's radiation mode (motion)
         ibody_force : int
             Index of the body where the radiation force is applied
         iforce : int
@@ -1249,12 +1699,27 @@ class RadiationIRFDB(object):
         np.ndarray
         """
 
-        idof_gal = self.body_mapper.get_general_motion_index(ibody_motion, idof)
+        idof_gal = self.body_mapper.get_general_motion_index(ibody_motion, idof) # gal = general index.
         iforce_gal = self.body_mapper.get_general_force_index(ibody_force, iforce)
 
         return self.data[iforce_gal, idof_gal, :]
 
     def get_impulse_response(self, ibody_force, ibody_motion):
+
+        """This subroutine gives the impulse response functions for a body.
+
+        Parameters
+        ----------
+        ibody_force : int
+            Index of the body where the radiation force is applied
+        ibody_motion : int
+            Index of the body having a motion
+
+        Returns
+        -------
+        np.ndarray
+        """
+
         idof_start, iforce_start = self.body_mapper.get_general_indexes(ibody_motion, 0, ibody_force, 0)
         nb_force = self.body_mapper.get_body(ibody_force).nb_force_modes
         nb_dof = self.body_mapper.get_body(ibody_motion).nb_dof
@@ -1309,165 +1774,18 @@ class RadiationIRFDB(object):
 
     
 class KochinFunction(_FreqDB):
+
+    """Class for dealing with Kochin functions.
+    """
+
     def __init__(self):
+
+        """
+        Constructor of the class KochinFunction.
+        """
+
         super(KochinFunction, self).__init__()
         raise NotImplementedError
-
-
-# TODO : classe a retirer
-        
-class NemohBEMData(object):  # FIXME: n'est plus utilise !!! A RETIRER DES QUE TOUTES LES METHODES SERONT MIGREES
-    """Class to manage a Hydrodynamic database for several bodies
-
-    At that moment, it only deals with 1st order hydrodynamics but in the future, it should also deal with second
-    order (mean drift, QTF)
-
-    Attributes
-    ----------
-    dirname : str
-        The root directory where the BEM computations have taken place
-    rho_water : float
-        Water density (kg/m**3)
-    grav : float
-        Gravity acceleration (m/s**2)
-    depth : float
-        Water depth (meters)
-    x_wave_measure : float
-        x position of free surface elevation measure
-    y_wave_measure : float
-        y position of free surface elevation measure
-    nb_frequencies : int
-        Number of frequency discretization in BEM computations
-    min_frequency : float
-        Min frequency (rad/s) of frequency discretization. Should usually not be 0.
-    max_frequency : float
-        Max frequency of frequency (rad/s) discretization.
-    nb_wave_directions : int
-        Number of wave directions in BEM computations
-    min_wave_dir : float
-        Min wave direction (deg) of waves
-    max_wave_dir : float
-        Max wave direction (def) of waves
-    diffraction : np.array
-        (nb_force_modes x nb_frequencies x nb_motion_modes) complex numbers array of wave diffraction coefficients
-    added_mass : np.ndarray
-        (nb_force_modes x nb_frequencies x nb_motion_modes) array of added mass coefficients
-    radiation_damping : np.ndarray
-        (nb_force_modes x nb_frequencies x nb_motion_modes) array of radiation damping coefficients
-    radiation_flags : np.ndarray
-        (nb_force_modes x nb_motion_mods) boolean array of hydrodynamic modes that are significant (True if significant)
-    _irf : RadiationIRFDB
-         Impulse response functions of the system
-    dt_irf : float
-        Time step to take to compute impulse response functions (seconds)
-    tf_irf : float
-        Final time to take to compute impulse response functions (seconds)
-    has_kochin : bool
-        True if we load Kochin functions
-    kochin_radiation : np.ndarray
-        (nb_motion_modes x nb_frequencies x nb_dir_kochin) complex array of Kochin functions for radiation modes
-    kochin_diffraction : np.ndarray
-        (nb_wave_dir x nb_frequencies x nb_dir_kochin) complex array of Kochin functions for diffraction modes
-    nb_dir_kochin : int
-        Number of directions used to evaluate Kochin functions
-    min_dir_kochin : float
-        Min angle (deg) used to evaluate Kochin functions
-    max_dir_kochin : float
-        Max angle (deg) used to evaluate Kochin functions
-    free_surface : np.ndarray
-        Not used
-    nx_fs : int
-        Not used
-    ny_fs : int
-        Not used
-    xlim_fs : float
-        Not used
-    ylim_fs : float
-        Not used
-    bodies : list
-        List of HydroBody objects taken in BEM computations
-        
-    Note:
-    -----
-    Instanciate the method and just load Nemoh computations using the set_calulation_file('Nemoh.cal') method.
-    """
-    def __init__(self):
-        self.dirname = ''
-        
-        # General parameters
-        self.rho_water = 1000.
-        self.grav = 9.81
-        self.depth = inf
-        self.x_wave_measure = 0.
-        self.y_wave_measure = 0.
-        
-        # Waves  # TODO: ou mettre les infos de vague (principalement diffraction)
-        self.nb_wave_directions = 1
-        self.min_wave_dir = 0.
-        self.max_wave_dir = 0.
-        
-        # Hydrodynamic database
-        self.diffraction = None
-        self._froude_krylov = None
-        
-        self.radiation_db = None
-        
-        # Frequency  # TODO: ou mettre les infos de frequence (radiation + diffraction)?
-        self.nb_frequencies = 1
-        self.min_frequency = 0.
-        self.max_frequency = 0.
-        
-        # TODO: faire disparaitre ces donnees une fois RadiationDB implemente
-        self.added_mass = None
-        self._infinite_added_mass = None
-        self.radiation_damping = None
-        self.radiation_flags = None  # TODO: utiliser ce tableau (etabli dans clean_radiation) afin de
-        # dynamiquement annuler les coeffs non significatifs
-        
-        self._irf = RadiationIRFDB()  # TODO: utiliser un objet
-        self.has_kochin = False
-        self.kochin_radiation = None  # TODO: utiliser un objet
-        self.kochin_diffraction = None
-        self.nb_dir_kochin = 0
-        self.min_dir_kochin = 0.
-        self.max_dir_kochin = 0.
-        self.free_surface = None
-        self.nx_fs = 0
-        self.ny_fs = 0
-        self.xlim_fs = 0.
-        self.ylim_fs = 0.
-
-        self.bodies = HydroBodySetMapping()
-        
-        self._force_mod_dict = dict()
-        self._motion_mod_dict = dict()
-    
-    @property
-    def kochin_directions(self):  # TODO: methode de KochinFcn
-        """Angles array taken for Kochin functions computations
-        
-        Returns
-        -------
-        np.ndarray
-            angles array in radians
-        """
-        return np.radians(np.linspace(self.min_dir_kochin, self.max_dir_kochin, self.nb_dir_kochin))
-    
-    @property
-    def fs_grid(self):  # TODO: methode de HydroDB
-        """Grid taken to compute the free surface elevation from BEM computations
-        
-        Returns
-        -------
-        np.ndarray, np.ndarray
-            A tuple abtained by meshgrid
-        """
-        x = np.linspace(0., self.xlim_fs, self.nx_fs)
-        y = np.linspace(0., self.ylim_fs, self.ny_fs)
-        return np.meshgrid(x, y, indexing='ij')  # TODO: voir l'indexing correspondant a Nemoh
-    
-# TODO: fin de classe a retirer
-    
     
 class HydroBody(object):
     """Class to represent a hydrodynamic body
@@ -1476,6 +1794,11 @@ class HydroBody(object):
     enclose integration and radiation modes on a per body fashion.
     """
     def __init__(self, ibody, mesh):
+
+        """
+        Constructor of the class HydroBody.
+        """
+
         self.ibody = ibody
         self.mesh = mesh
         self.motion_modes = list()
@@ -1484,10 +1807,38 @@ class HydroBody(object):
         self._nds = None
     
     def append_motion_mode(self, motion):
+
+        """This subroutine checks if the input is part of the classes TranslationMode or RotationMode.
+
+        Parameters
+        ----------
+        motion : Array
+            Motion mode
+
+        Returns
+        -------
+        Bool
+            True if the input is part of the classes TranslationMode or RotationMode, false otherwise.
+        """
+
         assert isinstance(motion, (TranslationMode, RotationMode))
         self.motion_modes.append(motion)
         
     def append_force_mode(self, force):
+
+        """This subroutine checks if the input is part of the classes ForceMode or MomentMode.
+
+        Parameters
+        ----------
+        motion : Array
+            Motion mode
+
+        Returns
+        -------
+        Bool
+            True if the input is part of the classes ForceMode or MomentMode, false otherwise.
+        """
+
         assert isinstance(force, (ForceMode, MomentMode))
         self.force_modes.append(force)
     
@@ -1578,7 +1929,7 @@ class HydroBody(object):
         
         
 class _Mode(object):
-    """Base class to define modes (motion or force)
+    """Base class to define modes (motion or force).
     
     Parameters
     ----------
@@ -1592,6 +1943,10 @@ class _Mode(object):
         Index of the body that belongs that mode
     """
     def __init__(self, direction, point, general_index, ibody):
+
+        """ Constructor of the class _Mode.
+        """
+
         self.direction = np.asarray(direction, dtype=np.float)
         self.point = np.asarray(point, dtype=np.float)
         self.general_index = general_index
@@ -1599,8 +1954,11 @@ class _Mode(object):
         
         
 class TranslationMode(_Mode):
-    """Class representing a translation mode (radiation)"""
+    """Class representing a translation mode (radiation)."""
     def __init__(self, direction, point, general_index, ibody):
+        """ Constructor of the class TranslationMode.
+        """
+
         super(TranslationMode, self).__init__(direction, point, general_index, ibody)
     
     def __str__(self):
@@ -1609,8 +1967,12 @@ class TranslationMode(_Mode):
         
         
 class RotationMode(_Mode):
-    """Class representing a rotation mode (radiation)"""
+    """Class representing a rotation mode (radiation)."""
     def __init__(self, direction, point, general_index, ibody):
+
+        """ Constructor of the class RotationMode.
+        """
+
         super(RotationMode, self).__init__(direction, point, general_index, ibody)
 
     def __str__(self):
@@ -1621,8 +1983,12 @@ class RotationMode(_Mode):
 
 
 class ForceMode(_Mode):
-    """Class representing a pure force mode"""
+    """Class representing a pure force mode."""
     def __init__(self, direction, point, general_index, ibody):
+
+        """ Constructor of the class ForceMode.
+        """
+
         super(ForceMode, self).__init__(direction, point, general_index, ibody)
 
     def __str__(self):
@@ -1631,8 +1997,12 @@ class ForceMode(_Mode):
 
 
 class MomentMode(_Mode):
-    """Class representing a moment mode"""
+    """Class representing a moment mode."""
     def __init__(self, direction, point, general_index, ibody):
+
+        """ Constructor of the class MomentMode.
+        """
+
         super(MomentMode, self).__init__(direction, point, general_index, ibody)
 
     def __str__(self):
@@ -1643,7 +2013,14 @@ class MomentMode(_Mode):
 
 
 class UnknownMotionMode(Exception):
+
+    """Class representing an unknown motion mode (sic)."""
+
     def __init__(self, i, cal_file):
+
+        """ Constructor of the class UnknownMotionMode.
+        """
+
         self.type = i
         self.cal_file = cal_file
         
@@ -1652,7 +2029,14 @@ class UnknownMotionMode(Exception):
 
 
 class UnknownForceMode(Exception):
+
+    """Class representing an unknown force mode (sic)."""
+
     def __init__(self, i, cal_file):
+
+        """ Constructor of the class UnknownForceMode.
+        """
+
         self.type = i
         self.cal_file = cal_file
         
@@ -1661,17 +2045,43 @@ class UnknownForceMode(Exception):
         
 
 class HydroBodySetMapping(object):
+
+    """Class for dealing with hydrodynamic interactions."""
+
     def __init__(self):
+
+        """
+        Constructor of the class HydroBodySetMapping.
+        """
+
         self.bodies = list()
         self._motion_mod_dict = dict()
         self._force_mod_dict = dict()
     
     def append(self, body):
+
+        """This subroutine adds a body.
+
+        Parameter
+        ----------
+        HydroBody : body
+            Hydrodynamic body.
+        """
+
         assert isinstance(body, HydroBody)
         self.bodies.append(body)
     
     @property
     def nb_bodies(self):
+
+        """This subroutine gives the number of bodies.
+
+        Returns
+        -------
+        int
+            Number of bodies.
+        """
+
         return len(self.bodies)
     
     @property
@@ -1702,10 +2112,19 @@ class HydroBodySetMapping(object):
 
     @property
     def body(self):
+
+        """This subroutine gives all the bodies.
+
+        Returns
+        -------
+        HydroBody
+            All the bodies.
+        """
+
         return self.bodies
 
     def get_body(self, ibody):  # TODO: Methode de HydroBodySetMapping
-        """Get the HydroBody object specified by its number
+        """Get the HydroBody object specified by its number.
 
         Parameters
         ----------
@@ -1724,24 +2143,110 @@ class HydroBodySetMapping(object):
                              % (self.nb_bodies, ibody))
 
     def get_general_motion_index(self, ibody, idof):  # TODO: Methode de HydroBodySetMapping
+
+        """This subroutine gives the general motion mode of a body.
+
+        Parameters
+        ----------
+        ibody : int
+            Index of the HydroBody.
+        idof : int
+            Index of the dof.
+
+        Returns
+        -------
+        int
+            Index of the motion mode in the general index.
+        """
+
         try:
             return self.bodies[ibody].motion_modes[idof].general_index
         except IndexError:
             raise IndexError('Body number or local motion id is out of range.')
 
     def get_general_force_index(self, ibody, iforce):  # TODO: Methode de HydroBodySetMapping
+
+        """This subroutine gives the general force mode of a body.
+
+        Parameters
+        ----------
+        ibody : int
+            Index of the HydroBody.
+        iforce : int
+            Force mode index.
+
+        Returns
+        -------
+        int
+            Index of the force mode in the general index.
+        """
         try:
             return self.bodies[ibody].force_modes[iforce].general_index
         except IndexError:
             raise IndexError('Body number or local force id is out of range.')
     
     def get_general_indexes(self, ibody_motion, idof, ibody_force, iforce):
+
+        """This subroutine gives the general motion and force modes of a body.
+
+        Parameters
+        ----------
+        ibody_motion : int
+            Index of the body having a motion
+        idof : int
+            Index of the local body's raditation mode (motion)
+        ibody_force : int
+            Index of the body where the radiation force is applied
+        iforce : int
+            Index of the local body's force mode
+
+        Returns
+        -------
+        int : idof_gal
+            Index of the motion mode in the general index.
+        int : iforce_gal
+            Index of the force mode in the general index.
+        """
+
         idof_gal = self.get_general_motion_index(ibody_motion, idof)
         iforce_gal = self.get_general_force_index(ibody_force, iforce)
-        return idof_gal, iforce_gal
+
+        return idof_gal, iforce_gal # gal = general index.
     
     def get_force_mode(self, ibody, iforce):
+
+        """This subroutine explains the general force mode of a body.
+
+        Parameters
+        ----------
+        ibody : int
+            Index of the HydroBody.
+        iforce : int
+            Force mode index.
+
+        Returns
+        -------
+        string
+            Explanation about the force mode of the body.
+        """
+
         return self.bodies[ibody].force_modes[iforce]
     
     def get_motion_mode(self, ibody, idof):
+
+        """This subroutine explains the general motion mode of a body.
+
+        Parameters
+        ----------
+        ibody : int
+            Index of the HydroBody.
+        iforce : int
+            Force mode index.
+
+        Returns
+        -------
+        string
+            Explanation about the motion mode of the body.
+        """
+
         return self.bodies[ibody].motion_modes[idof]

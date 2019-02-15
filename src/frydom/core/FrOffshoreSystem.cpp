@@ -1,13 +1,13 @@
-// =============================================================================
-// FRyDoM - frydom-ce.gitlab.host.io
-//
-// Copyright (c) D-ICE Engineering and Ecole Centrale de Nantes (LHEEA lab.)
+// ==========================================================================
+// FRyDoM - frydom-ce.org
+// 
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-//
+// 
 // Use of this source code is governed by a GPLv3 license that can be found
-// in the LICENSE file of FRyDOM.
-//
-// =============================================================================
+// in the LICENSE file of FRyDoM.
+// 
+// ==========================================================================
 
 
 #include <frydom/cable/FrDynamicCable.h>
@@ -294,6 +294,9 @@ namespace frydom {
 
     // REFACTORING ------------->>>>>>>>>>>>>>>
 
+    // This script contains all the getters, setters used for the class FrOffshoreSystem_ along with a wrapper for the time-stepping.
+    // Iterators over the containers are also defined here.
+
     _FrSystemBaseSMC::_FrSystemBaseSMC(frydom::FrOffshoreSystem_ *offshoreSystem) :
             chrono::ChSystemSMC(), m_offshoreSystem_(offshoreSystem) {}
 
@@ -347,7 +350,10 @@ namespace frydom {
 //        m_offshoreSystem_->Initialize();
 //    }
 
-
+    /// Default constructor
+    /// \param systemType contact method system (SMOOTH_CONTACT/NONSMOOTH_CONTACT)
+    /// \param timeStepper time stepper type
+    /// \param solver solver type
     FrOffshoreSystem_::FrOffshoreSystem_(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
 
         // Creating the chrono System backend. It drives the way contact are modelled
@@ -940,8 +946,16 @@ namespace frydom {
 
     void FrOffshoreSystem_::RunInViewer(double endTime, double dist, bool recordVideo) {
 
+        /// This subroutine runs the numerical simulation.
+
+        /// \param endTime End time.
+        /// \param dist Distance of the video camera.
+        /// \param recordVideo True if the video is recorded, false otherwise.
+
+        // Initialization of the system if not already done.
         CheckIsInitialized();
 
+        // Definition and initialization of the Irrlicht application.
         FrIrrApp_ app(m_chronoSystem.get(), dist);
 
         app.SetTimestep(m_chronoSystem->GetStep());

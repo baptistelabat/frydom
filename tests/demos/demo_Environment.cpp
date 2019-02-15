@@ -1,6 +1,13 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by Lucas Letournel on 19/12/18.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 #include "frydom/frydom.h"
 
 using namespace frydom;
@@ -218,9 +225,7 @@ int main(int argc, char* argv[]) {
         // You can set its starting (t0) and ending (t1) times as well as its intercept and slope values so that it starts
         // at 0. and finish at 1. after t1 seconds.
         double t0=0, t1=10;
-        timeRamp->SetXWindow(t0, t1);
-        timeRamp->SetY0(0.);
-        timeRamp->SetSlope(1. / t1);
+        timeRamp->SetByTwoPoints(t0, 0., t1, 1.);
 
         // To add this function to custom objects, you just need to be sure to call the Update() method, which stores
         // a cached value of the simulation time, by your object.
