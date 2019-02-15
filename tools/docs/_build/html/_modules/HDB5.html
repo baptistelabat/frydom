@@ -1,0 +1,692 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HDB5 &mdash; Nemoh2HDB  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Nemoh2HDB
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../Source/Tutorials.html">Tutorial</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Source/Source_code_doc.html">Source code documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Nemoh2HDB</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>HDB5</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for HDB5</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#  -*- coding: utf-8 -*-</span>
+<span class="c1"># ==========================================================================</span>
+<span class="c1"># FRyDoM - frydom-ce.org</span>
+<span class="c1"># </span>
+<span class="c1"># Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1"># </span>
+<span class="c1"># Use of this source code is governed by a GPLv3 license that can be found</span>
+<span class="c1"># in the LICENSE file of FRyDoM.</span>
+<span class="c1"># </span>
+<span class="c1"># ==========================================================================</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module to create a hydrodynamic database for FRyDoM.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">h5py</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">HydroDB.bem_reader</span> <span class="k">import</span> <span class="n">NemohReader</span>
+<span class="kn">from</span> <span class="nn">HydroDB.body_db</span> <span class="k">import</span> <span class="n">BodyDB</span>
+
+<span class="kn">from</span> <span class="nn">environment_db</span> <span class="k">import</span> <span class="n">EnvironmentDB</span>
+<span class="kn">from</span> <span class="nn">discretization_db</span> <span class="k">import</span> <span class="n">DiscretizationDB</span>
+
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">interpolate</span>
+
+<div class="viewcode-block" id="symetrize"><a class="viewcode-back" href="../Source/Source_code_doc.html#HDB5.symetrize">[docs]</a><span class="k">def</span> <span class="nf">symetrize</span><span class="p">(</span><span class="n">wave_dirs</span><span class="p">,</span> <span class="n">fk_db</span><span class="p">,</span> <span class="n">diff_db</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;This subroutine updates the hdb due to a modification of the wave direction convention.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wave_dirs : float</span>
+<span class="sd">        Wave directions.</span>
+<span class="sd">    fk_db : float</span>
+<span class="sd">        Froude-Krylov loads.</span>
+<span class="sd">    diff_db : float</span>
+<span class="sd">        Diffraction loads.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="p">[</span><span class="n">nmode</span><span class="p">,</span> <span class="n">nbody</span><span class="p">,</span> <span class="n">ndir</span><span class="p">]</span> <span class="o">=</span> <span class="n">fk_db</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndir</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">wave_dirs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mf">0.</span><span class="p">):</span>
+
+            <span class="c1"># New wave direction</span>
+            <span class="n">new_dir</span> <span class="o">=</span> <span class="o">-</span><span class="n">wave_dirs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">%</span> <span class="mi">360</span>
+            <span class="k">if</span> <span class="n">new_dir</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_dir</span> <span class="o">+=</span> <span class="mf">360.</span>
+
+            <span class="c1"># Add corresponding data</span>
+            <span class="n">wave_dirs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wave_dirs</span><span class="p">,</span> <span class="n">new_dir</span><span class="p">)</span>
+
+            <span class="n">fk_db_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">fk_db</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">])</span>
+            <span class="n">fk_db_temp</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">:]</span> <span class="o">=</span> <span class="o">-</span><span class="n">fk_db_temp</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">:]</span>
+
+            <span class="n">fk_db</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">fk_db</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">fk_db_temp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nmode</span><span class="p">,</span> <span class="n">nbody</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">diff_db_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">diff_db</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">])</span>
+            <span class="n">diff_db_temp</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">:]</span> <span class="o">=</span> <span class="o">-</span><span class="n">diff_db_temp</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">:]</span>
+            <span class="n">diff_db</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">diff_db</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">diff_db_temp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nmode</span><span class="p">,</span> <span class="n">nbody</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wave_dirs</span><span class="p">,</span> <span class="n">fk_db</span><span class="p">,</span> <span class="n">diff_db</span></div>
+
+
+<div class="viewcode-block" id="HDB5"><a class="viewcode-back" href="../Source/Source_code_doc.html#HDB5.HDB5">[docs]</a><span class="k">class</span> <span class="nc">HDB5</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class HDB5 for dealing with *.h5 files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Constructor of the class HDB5.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_environment</span> <span class="o">=</span> <span class="n">EnvironmentDB</span><span class="p">()</span> <span class="c1"># Initialization of Environment.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span> <span class="o">=</span> <span class="n">DiscretizationDB</span><span class="p">()</span> <span class="c1"># Parameters for the new discretization of the HDB.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bodies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wave_direction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wave_frequencies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_initialized</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">body</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine returns all the bodies.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        BodyDB</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bodies</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">discretization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine returns the parameters of the discretization.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DiscretizationDB</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span>
+
+<div class="viewcode-block" id="HDB5.nemoh_reader"><a class="viewcode-back" href="../Source/Source_code_doc.html#HDB5.HDB5.nemoh_reader">[docs]</a>    <span class="k">def</span> <span class="nf">nemoh_reader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_directory</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">nb_faces_by_wavelength</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine reads the *.cal file and stores the data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_directory : string, optional</span>
+<span class="sd">            Path to directory of *.cal file.</span>
+<span class="sd">        nb_faces_by_wavelength : float, optional</span>
+<span class="sd">            Number of panels per wave length.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">input_directory</span><span class="p">):</span>
+            <span class="n">input_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_directory</span><span class="p">)</span>
+
+        <span class="c1"># Verifying there is the Nemoh.cal file inside input_directory</span>
+        <span class="n">nemoh_cal_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_directory</span><span class="p">,</span> <span class="s1">&#39;Nemoh.cal&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">nemoh_cal_file</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;Folder </span><span class="si">%s</span><span class="s1"> seems not to be a Nemoh calculation folder as &#39;</span>
+                                 <span class="s1">&#39;we did not find Nemoh.cal&#39;</span> <span class="o">%</span> <span class="n">input_directory</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;========================&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading Nemoh results...&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;========================&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">nb_faces_by_wavelength</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nb_faces_by_wavelength</span> <span class="o">=</span> <span class="mi">10</span>
+
+        <span class="c1"># Reading *.cal.</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">NemohReader</span><span class="p">(</span><span class="n">cal_file</span><span class="o">=</span><span class="n">nemoh_cal_file</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nb_face_by_wave_length</span><span class="o">=</span><span class="n">nb_faces_by_wavelength</span><span class="p">)</span>
+
+        <span class="c1"># Storing the whole database.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">hydro_db</span>
+
+        <span class="c1"># Saving the environment.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_environment</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">hydro_db</span><span class="p">)</span>
+
+        <span class="c1"># Save the discretization</span>
+        <span class="c1">#self._discretization.load_data(reader.hydro_db)</span>
+
+        <span class="c1"># Load bodies</span>
+        <span class="k">for</span> <span class="n">i_body</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">body_mapper</span><span class="o">.</span><span class="n">nb_bodies</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bodies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BodyDB</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="p">,</span> <span class="n">i_body</span><span class="p">))</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-------&gt; Nemoh data successfully loaded from &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">input_directory</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HDB5.get_body_list"><a class="viewcode-back" href="../Source/Source_code_doc.html#HDB5.HDB5.get_body_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_body_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine gives the name and the number of each body.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bodies</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;body id: </span><span class="si">%i</span><span class="s2">, name : </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">body</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="HDB5.get_body"><a class="viewcode-back" href="../Source/Source_code_doc.html#HDB5.HDB5.get_body">[docs]</a>    <span class="k">def</span> <span class="nf">get_body</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine returns a body.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        id : int, optional</span>
+<span class="sd">            Number of a body.</span>
+<span class="sd">        name : float, optional</span>
+<span class="sd">            Name of a body.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        BodyDB</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_body_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bodies</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;warning : id or name must be defined&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="k">def</span> <span class="nf">_find_body_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine returns a body from its name.</span>
+
+<span class="sd">        Parameter</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : float, optional</span>
+<span class="sd">            Name of a body.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        BodyDB</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bodies</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">body</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;warning : no body found with name </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine updates and improve the hydrodynamic database (computation of RK and diffraction loads, impulse response functions, interpolation, etc.)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Computing Froude-Krylov loads.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">froude_krylov_db</span>
+
+        <span class="c1"># Storing diffraction loads.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">diffraction_db</span>
+
+        <span class="c1"># Updating the wave directions.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_wave_dir</span><span class="p">()</span>
+
+        <span class="c1"># Printing input data.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="p">)</span>
+
+        <span class="c1"># Impule response functions for radiation damping.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">radiation_db</span><span class="o">.</span><span class="n">eval_impulse_response_function</span><span class="p">(</span><span class="n">tf</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+        <span class="c1"># Infinite masses.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">radiation_db</span><span class="o">.</span><span class="n">eval_infinite_added_mass</span><span class="p">()</span>
+
+        <span class="c1"># Impule response functions for advance speed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">radiation_db</span><span class="o">.</span><span class="n">eval_impulse_response_function_Ku</span><span class="p">(</span><span class="n">tf</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+        <span class="c1"># Interpolation of the diffraction loads with respect to the wave directions and the wave frequencies.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interpolate_diffraction</span><span class="p">()</span>
+
+        <span class="c1"># Interpolation of the Froude-Krylov loads with respect to the wave directions and the wave frequencies.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interpolate_froude_krylov</span><span class="p">()</span>
+
+        <span class="c1">#self._interpolate_radiation_damping()  # FIXME : ne marche pas ...</span>
+
+        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bodies</span><span class="p">:</span>
+
+            <span class="c1"># Parameters for the new discretization of the HDB.</span>
+            <span class="n">body</span><span class="o">.</span><span class="n">discretization</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span>
+
+            <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">wave_drift</span><span class="p">:</span>
+                <span class="n">body</span><span class="o">.</span><span class="n">wave_drift</span><span class="o">.</span><span class="n">discrete_wave_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">wave_dirs</span> <span class="o">*</span> <span class="n">pi</span><span class="o">/</span> <span class="mf">180.</span>
+                <span class="n">body</span><span class="o">.</span><span class="n">wave_drift</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_initialized</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_wave_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine updates the wave directions by adjusting the convention with the one used in FRyDoM, the FK and diffraction loads are updated accordingly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Vector of wave directions.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">min_wave_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">max_wave_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">nb_wave_dir</span><span class="p">)</span>
+
+        <span class="n">fk_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">froude_krylov_db</span>
+        <span class="n">diff_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">diffraction_db</span>
+
+        <span class="c1"># Adjusting convention of wage direction to GOTO.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">min_wave_dir</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">max_wave_dir</span> <span class="o">&lt;=</span> <span class="mf">180.</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span> <span class="o">=</span> <span class="mf">180.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span><span class="p">,</span> <span class="n">fk_db</span><span class="p">,</span> <span class="n">diff_db</span> <span class="o">=</span> <span class="n">symetrize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span><span class="p">,</span> <span class="n">fk_db</span><span class="p">,</span> <span class="n">diff_db</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fmod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span> <span class="o">+</span> <span class="mf">180.</span><span class="p">,</span> <span class="mf">360.</span><span class="p">)</span>
+
+        <span class="c1"># Updating the FK and diffraction loads accordingly.</span>
+        <span class="n">n180</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">i360</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9</span>
+        <span class="k">for</span> <span class="n">idir</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="n">wave_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span><span class="p">[</span><span class="n">idir</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wave_dir</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">:</span>
+                <span class="n">i360</span> <span class="o">=</span> <span class="n">idir</span>
+            <span class="k">elif</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wave_dir</span> <span class="o">-</span> <span class="mi">180</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">:</span>
+                <span class="n">n180</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">n180</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span><span class="p">[</span><span class="n">idir</span><span class="p">]</span> <span class="o">=</span> <span class="mf">360.</span>
+                    <span class="n">fk_db</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">idir</span><span class="p">]</span> <span class="o">=</span> <span class="n">fk_db</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i360</span><span class="p">]</span>
+                    <span class="n">diff_db</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">idir</span><span class="p">]</span> <span class="o">=</span> <span class="n">diff_db</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i360</span><span class="p">]</span>
+
+        <span class="c1"># Sorting wave directions and creates the final FK and diffraction loads data.</span>
+        <span class="n">sort_dirs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span><span class="p">[</span><span class="n">sort_dirs</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_froude_krylov_db</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">fk_db</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">sort_dirs</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_diffraction_db</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">diff_db</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">sort_dirs</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">min_wave_dir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">max_wave_dir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">nb_wave_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_wave_dirs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="HDB5.set_direction"><a class="viewcode-back" href="../Source/Source_code_doc.html#HDB5.HDB5.set_direction">[docs]</a>    <span class="k">def</span> <span class="nf">set_direction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_angle</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine sets the wave directions (still used?).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        d_angle : float</span>
+<span class="sd">            Angular step.</span>
+<span class="sd">        unit : string, optional</span>
+<span class="sd">            Unit of the angular step: &#39;deg&#39; (by default) or &#39;rad&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s1">&#39;deg&#39;</span><span class="p">:</span>
+            <span class="n">d_angle</span> <span class="o">*=</span> <span class="n">pi</span><span class="o">/</span><span class="mf">180.</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="n">d_angle</span><span class="p">)</span>
+        <span class="n">d_angle</span> <span class="o">=</span> <span class="mf">2.</span><span class="o">*</span><span class="n">pi</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wave_direction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.</span><span class="o">*</span><span class="n">pi</span><span class="p">,</span> <span class="n">d_angle</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="HDB5.set_frequencies"><a class="viewcode-back" href="../Source/Source_code_doc.html#HDB5.HDB5.set_frequencies">[docs]</a>    <span class="k">def</span> <span class="nf">set_frequencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_min</span><span class="p">,</span> <span class="n">f_max</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;rads&#39;</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine sets the wave frequencies by wrapping the same subroutine of the DiscretizationDB class (still used?).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        f_min : float</span>
+<span class="sd">            Minimum frequency.</span>
+<span class="sd">        f_max : float</span>
+<span class="sd">            Maximum frequency.</span>
+<span class="sd">        df : float</span>
+<span class="sd">            Frequency step.</span>
+<span class="sd">        unit : string, optional</span>
+<span class="sd">            Unit of the frequency step: &#39;rads&#39; (by default) or &#39;Hz&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">set_wave_frequencies</span><span class="p">(</span><span class="n">f_min</span><span class="p">,</span> <span class="n">f_max</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">set_directions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_angle</span><span class="p">,</span> <span class="n">max_angle</span><span class="p">,</span> <span class="n">delta_angle</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine sets the wave directions by wrapping the same subroutine of the DiscretizationDB class (still used?).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        min_angle : float</span>
+<span class="sd">            Minimum wave direction.</span>
+<span class="sd">        max_angle : float</span>
+<span class="sd">            Maximum wave direction.</span>
+<span class="sd">        delta_angle : float</span>
+<span class="sd">            Wave direction angular step.</span>
+<span class="sd">        unit : string, optional</span>
+<span class="sd">            Unit of the angular step: &#39;rad&#39; (by default) or &#39;deg&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">set_wave_direction</span><span class="p">(</span><span class="n">min_angle</span><span class="p">,</span> <span class="n">max_angle</span><span class="p">,</span> <span class="n">delta_angle</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HDB5.set_directions"><a class="viewcode-back" href="../Source/Source_code_doc.html#HDB5.HDB5.set_directions">[docs]</a>    <span class="k">def</span> <span class="nf">set_directions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta_angle</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine sets the wave directions between 0 and 2*pi by wrapping the same subroutine of the DiscretizationDB class (still used?).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        delta_angle : float</span>
+<span class="sd">            Wave direction angular step.</span>
+<span class="sd">        unit : string, optional</span>
+<span class="sd">            Unit of the angular step: &#39;rad&#39; (by default) or &#39;deg&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s1">&#39;deg&#39;</span><span class="p">:</span>
+            <span class="n">delta_angle</span> <span class="o">*=</span> <span class="n">pi</span><span class="o">/</span><span class="mf">180.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">set_wave_direction</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="o">*</span><span class="n">pi</span><span class="p">,</span> <span class="n">delta_angle</span><span class="p">,</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">_interpolate_diffraction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine interpolates the diffractions loads with respect to the wave directions and the wave frequencies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Interpolation of the diffraction loads with respect to the wave directions.</span>
+        <span class="n">f_interp_dir</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">wave_dirs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_diffraction_db</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># axis = 2 -&gt; wave directions.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_diffraction_db</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">f_interp_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">wave_dirs</span><span class="p">)</span> <span class="c1"># Application of the interpolation.</span>
+
+        <span class="c1"># Interpolation of the diffraction loads with respect to the wave frequencies.</span>
+        <span class="n">f_interp_freq</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_diffraction_db</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># axis = 1 -&gt; wave frequencies.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_diffraction_db</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">f_interp_freq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">wave_frequencies</span><span class="p">)</span>
+
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_interpolate_froude_krylov</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine interpolates the Froude-Krylov loads with respect to the wave directions and the wave frequencies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Interpolation of the Froude-Krylov loads with respect to the wave directions.</span>
+        <span class="n">f_interp_dir</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">wave_dirs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">froude_krylov_db</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># axis = 2 -&gt; wave directions.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">froude_krylov_db</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">f_interp_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">wave_dirs</span><span class="p">)</span>
+
+        <span class="c1"># Interpolation of the Froude-Krylov loads with respect to the wave frequencies.</span>
+        <span class="n">f_interp_freq</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">froude_krylov_db</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># axis = 1 -&gt; wave frequencies.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">froude_krylov_db</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">f_interp_freq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">wave_frequencies</span><span class="p">)</span>
+
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_interpolate_radiation_damping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine interpolates the radiation damping with respect to the wave directions and the wave frequencies (not used?).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1">#self._hdb.radiation_db._min_frequency = self.discretization.min_frequency</span>
+        <span class="c1">#self._hdb.radiation_db._max_frequency = self.discretization.max_frequency</span>
+        <span class="c1">#self._hdb.radiation_db._nb_frequencies = self.discretization.nb_frequencies</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nb frequencies : </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">wave_frequencies</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; shape ca (before) : &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">radiation_db</span><span class="o">.</span><span class="n">_ca</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="n">f_interp_freq</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">radiation_db</span><span class="o">.</span><span class="n">_ca</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_radiation_db</span><span class="o">.</span><span class="n">_ca</span> <span class="o">=</span> <span class="n">f_interp_freq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">wave_frequencies</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; shape ca (after) : &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">radiation_db</span><span class="o">.</span><span class="n">_ca</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="n">f_interp_freq</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">radiation_db</span><span class="o">.</span><span class="n">_cm</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hdb</span><span class="o">.</span><span class="n">_radiation_db</span><span class="o">.</span><span class="n">_cm</span> <span class="o">=</span> <span class="n">f_interp_freq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">wave_frequencies</span><span class="p">)</span>
+
+        <span class="k">return</span>
+
+
+<div class="viewcode-block" id="HDB5.write_hdb5"><a class="viewcode-back" href="../Source/Source_code_doc.html#HDB5.HDB5.write_hdb5">[docs]</a>    <span class="k">def</span> <span class="nf">write_hdb5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;This subroutine writes the hydrodynamic database into a *.hdb5 file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output_file : string, optional</span>
+<span class="sd">            Name of the hdf5 output file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_initialized</span><span class="p">:</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;========================&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Intialize HDB5 database...&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;========================&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">()</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;========================&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Writing HDB5 database...&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;========================&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">output_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">hdb5_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;frydom.hdb5&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Verifying that the output file has the extension .hdb5</span>
+            <span class="n">root</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;.hdb5&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Please register the output file with a .hdb5 extension&#39;</span><span class="p">)</span>
+
+            <span class="n">hdb5_file</span> <span class="o">=</span> <span class="n">output_file</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">output_file</span><span class="p">):</span>
+                <span class="n">hdb5_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">hdb5_file</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Writing all the data from _environment, _discretization and body data structures.</span>
+            <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdb5_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_environment</span><span class="o">.</span><span class="n">write_hdb5</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_discretization</span><span class="o">.</span><span class="n">write_hdb5</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bodies</span><span class="p">:</span>
+                    <span class="n">body</span><span class="o">.</span><span class="n">write_hdb5</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Problem in writing HDB5 file at location </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">hdb5_file</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-------&gt; &quot;</span><span class="si">%s</span><span class="s1">&quot; has been written&#39;</span> <span class="o">%</span> <span class="n">hdb5_file</span><span class="p">)</span></div></div>
+
+
+
+
+
+
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, D-ICE Engineering
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

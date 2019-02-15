@@ -1,42 +1,30 @@
 #!/usr/bin/env python
 #  -*- coding: utf-8 -*-
+# ==========================================================================
+# FRyDoM - frydom-ce.org
+# 
+# Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+# All rights reserved.
+# 
+# Use of this source code is governed by a GPLv3 license that can be found
+# in the LICENSE file of FRyDoM.
+# 
+# ==========================================================================
 """Module to create the discretization database for frydom hydrodynamic database"""
 
 from math import *
 import numpy as np
 
-
-def symetrize(wave_dirs, fk_db, diff_db):
-
-    [nmode, nbody, ndir] = fk_db.data.shape
-
-    for i in range(ndir):
-
-        if wave_dirs[i] > np.float32(0.):
-
-            # New wave direction
-            new_dir = -wave_dirs[i] % 360
-            if new_dir < 0:
-                new_dir += 360.
-
-            # Add corresponding data
-            wave_dirs = np.append(wave_dirs, new_dir)
-
-            fk_db_temp = np.copy(fk_db.data[:, :, i])
-            fk_db_temp[(1, 4, 5), :] = -fk_db_temp[(1, 4, 5), :]
-
-            fk_db.data = np.concatenate((fk_db.data, fk_db_temp.reshape(nmode, nbody, 1)), axis=2)
-
-            diff_db_temp = np.copy(diff_db.data[:, :, i])
-            diff_db_temp[(1, 4, 5), :] = -diff_db_temp[(1, 4, 5), :]
-            diff_db.data = np.concatenate((diff_db.data, diff_db_temp.reshape(nmode, nbody, 1)), axis=2)
-
-    return wave_dirs, fk_db, diff_db
-
-
 class DiscretizationDB(object):
 
+    """Class for dealing with discretization parameters."""
+
     def __init__(self):
+
+        """
+        Constructor of the class DiscretizationDB.
+        """
+
         # Frequency discretization
         self._wave_frequencies = None
         self._max_frequency = None
@@ -53,18 +41,54 @@ class DiscretizationDB(object):
 
     @property
     def max_frequency(self):
+
+        """This subroutine gives the maximum frequency.
+
+        Returns
+        -------
+        float
+            Maximum frequency.
+        """
+
         return self._max_frequency
 
     @property
     def min_frequency(self):
+
+        """This subroutine gives the minimum frequency.
+
+        Returns
+        -------
+        float
+            Minimum frequency.
+        """
+
         return self._min_frequency
 
     @property
     def nb_frequencies(self):
+
+        """This subroutine gives the number of frequencies.
+
+        Returns
+        -------
+        int
+            Number of frequencies.
+        """
+
         return self._nb_frequencies
 
     @nb_frequencies.setter
     def nb_frequencies(self, value):
+
+        """This subroutine sets the number of frequencies.
+
+        Parameter
+        ----------
+        int : value
+            Number of frequencies.
+        """
+
         if isinstance(value, int):
             self._nb_frequencies = value
         else:
@@ -72,26 +96,80 @@ class DiscretizationDB(object):
 
     @property
     def final_time(self):
+
+        """This subroutine gives the final time.
+
+        Returns
+        -------
+        float
+            Final time.
+        """
+
         return self._final_time
 
     @property
     def nb_time_sample(self):
+
+        """This subroutine gives the number of discretizations.
+
+        Returns
+        -------
+        int
+            Number of discretizations.
+        """
+
         return self._nb_time_sample
 
     @property
     def max_angle(self):
+
+        """This subroutine gives the maximum wave direction.
+
+        Returns
+        -------
+        float
+            Maximum wave direction.
+        """
+
         return self._max_angle
 
     @property
     def min_angle(self):
+
+        """This subroutine gives the minimum wave direction.
+
+        Returns
+        -------
+        float
+            Minimum wave direction.
+        """
+
         return self._min_angle
 
     @property
     def nb_wave_directions(self):
+
+        """This subroutine gives the number of wave directions.
+
+        Returns
+        -------
+        int
+            Number of wave directions.
+        """
+
         return self._nb_wave_directions
 
     @nb_wave_directions.setter
     def nb_wave_directions(self, value):
+
+        """This subroutine sets the number of wave directions.
+
+        Parameter
+        ----------
+        int : value
+            Number of wave directions.
+        """
+
         if isinstance(value, int):
             self._nb_wave_directions = value
             print("warning : wave dir set to %i" % value)
@@ -100,17 +178,52 @@ class DiscretizationDB(object):
 
     @property
     def wave_dirs(self):
+
+        """This subroutine gives all the wave directions.
+
+        Returns
+        -------
+        Array of floats
+            Wave directions.
+        """
+
         return self._wave_dirs
 
     @property
     def wave_frequencies(self):
+
+        """This subroutine gives all the frequencies.
+
+        Returns
+        -------
+        Array of floats
+            Frequencies.
+        """
+
         return self._wave_frequencies
 
     @property
     def time(self):
+
+        """This subroutine gives the time vector.
+
+        Returns
+        -------
+        Array of floats
+            Time vector.
+        """
+
         return np.linspace(0., self._final_time, self._nb_time_sample)
 
     def initialize(self, hdb):
+
+        """This subroutine peform the initialization of the dicretization from the hydrodynamic database.
+
+        Returns
+        -------
+        HydroDB
+            Hydrodynamic database.
+        """
 
         print("")
         print("-- Initialize --")
@@ -159,6 +272,20 @@ class DiscretizationDB(object):
 
     def set_wave_frequencies(self, f_min, f_max, df, unit='rads'):
 
+        """This subroutine sets the wave frequencies (still used?).
+
+        Parameters
+        ----------
+        f_min : float
+            Minimum frequency.
+        f_max : float
+            Maximum frequency.
+        df : float
+            Frequency step.
+        unit : string, optional
+            Unit of the angular step: 'rads' (by default) or 'Hz'.
+        """
+
         if unit == 'Hz':
             f_min *= 2.*pi
             f_max *= 2.*pi
@@ -176,6 +303,20 @@ class DiscretizationDB(object):
 
     def set_wave_direction(self, min_angle, max_angle, delta_angle, unit='rad'):
 
+        """This subroutine sets the wave directions (still used?).
+
+        Parameters
+        ----------
+        min_angle : float
+            Minimum wave direction.
+        max_angle : float
+            Maximum wave direction.
+        delta_angle : float
+            Wave direction angular step.
+        unit : string, optional
+            Unit of the angular step: 'rad' (by default) or 'deg'.
+        """
+
         if unit == 'deg':
             min_angle *= pi/180.
             max_angle *= pi/180.
@@ -189,6 +330,14 @@ class DiscretizationDB(object):
         return
 
     def write_hdb5(self, writer):
+
+        """This subroutine writes the discretization data into the *.hdb5 file.
+
+        Parameters
+        ----------
+        Writer : string
+            *.hdb5 file.
+        """
 
         # Frequency discretization
 
@@ -233,46 +382,5 @@ class DiscretizationDB(object):
         dset = writer.create_dataset(time_path + "/FinalTime", data=self._final_time)
         dset.attrs['Unit'] = "s"
         dset.attrs['Description'] = "Final time for the impulse response function"
-
-        return
-
-    def compute_wave_dirs(self, hdb):
-
-        self._wave_dirs = np.linspace(hdb.min_wave_dir, hdb.max_wave_dir, hdb.nb_wave_dir)
-
-        fk_db = hdb.froude_krylov_db
-        diff_db = hdb.diffraction_db
-
-        # --- Adjust convention of wage direction to GOTO
-        if hdb.min_wave_dir >= -np.float32() and hdb.max_wave_dir <= 180. + np.float32():
-            self._wave_dirs = 180. - self._wave_dirs
-            self._wave_dirs,  fk_db, diff_db = symetrize(self._wave_dirs, fk_db, diff_db)
-        else:
-            self._wave_dirs = np.fmod(self._wave_dirs + 180., 360.)
-
-        n180 = 0
-        i360 = -9
-        for idir in range(self._wave_dirs.size):
-            wave_dir = self._wave_dirs[idir]
-
-            if abs(wave_dir) < 0.01:
-                i360 = idir
-            elif abs(wave_dir - 180) < 0.01:
-                n180 += 1
-                if n180 == 2:
-                    self._wave_dirs[idir] = 360.
-                    fk_db.data[:, :, idir] = fk_db.data[:, :, i360]
-                    diff_db.data[:, :, idir] = diff_db.data[:, :, i360]
-
-        # -- sort direction
-        sort_dirs = np.argsort(self._wave_dirs)
-        self._wave_dirs = self._wave_dirs[sort_dirs]
-        hdb._froude_krylov_db.data = fk_db.data[:, :, sort_dirs]
-        hdb._diffraction_db.data = diff_db.data[:, :, sort_dirs]
-        hdb._wave_dirs = self._wave_dirs
-
-        self._max_angle = np.max(self._wave_dirs)
-        self._min_angle = np.min(self._wave_dirs)
-        self._nb_wave_directions = self._wave_dirs.shape[0]
 
         return

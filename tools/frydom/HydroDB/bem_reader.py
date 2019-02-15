@@ -1,5 +1,15 @@
 #!/usr/bin/env python
 #  -*- coding: utf-8 -*-
+# ==========================================================================
+# FRyDoM - frydom-ce.org
+# 
+# Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+# All rights reserved.
+# 
+# Use of this source code is governed by a GPLv3 license that can be found
+# in the LICENSE file of FRyDoM.
+# 
+# ==========================================================================
 
 import numpy as np
 import os
@@ -20,7 +30,22 @@ from meshmagick.mesh import Mesh, Plane
 
 
 class _BEMReader(object):  # TODO: le parametre n pour le nb de facette par lambda devra etre reglable...
+
+    """
+        Class _BEMReader for checking some quantities into *.cal files.
+    """
+
     def __init__(self, nb_face_by_wave_length=None):
+
+        """
+        Constructor of the class _BEMReader.
+
+        Parameters
+        ----------
+        nb_faces_by_wavelength: float, optional
+            Number of panels per wave length.
+        """
+
         self.hydro_db = HydroDB()
         
         if nb_face_by_wave_length is None:
@@ -29,26 +54,26 @@ class _BEMReader(object):  # TODO: le parametre n pour le nb de facette par lamb
             self.nb_face_by_wave_length = int(nb_face_by_wave_length)
     
     def get_max_edge_length(self, omega):  # FIXME: methode generique BEM
-        """Get the maximum mesh's edge length allowed for accurate BEM computations for a given frequency
+        """This subroutine gets the maximum mesh's edge length allowed for accurate BEM computations for a given frequency.
 
         Parameters
         ----------
         omega : float
-            Frequency (rad/s) at which we want to get the maximum edge length
+            Frequency (rad/s) at which we want to get the maximum edge length.
         n : int, optional
             Minimal number of faces by wave length. Default is 10.
 
         Returns
         -------
         float
-            Maximum edge length (meters)
+            Maximum edge length (meters).
         """
         wave_number = solve_wave_dispersion_relation(omega, self.hydro_db.depth, self.hydro_db.grav)
         wave_length = 2. * pi / wave_number
         return wave_length / self.nb_face_by_wave_length
     
     def get_max_frequency(self, edge_length):
-        """Get the maximum wave frequency allowed for a given mesh's edge length for accurate BEM computations
+        """This subroutine gets the maximum wave frequency allowed for a given mesh's edge length for accurate BEM computations
 
         Parameters
         ----------
@@ -60,7 +85,7 @@ class _BEMReader(object):  # TODO: le parametre n pour le nb de facette par lamb
         Returns
         -------
         float
-            Maximum wave frequency (rad/s)
+            Maximum wave frequency (rad/s).
         """
         wave_length = self.nb_face_by_wave_length * edge_length
         wave_number = 2. * pi / wave_length
@@ -70,7 +95,7 @@ class _BEMReader(object):  # TODO: le parametre n pour le nb de facette par lamb
         return sqrt(w2)
     
     def plot_edge_length_vs_frequency(self):
-        """Plots the maximum allowed edge length vs the frequency
+        """This subroutine plots the maximum allowed edge length vs the frequency
 
         Parameters
         ----------
@@ -149,38 +174,56 @@ class NemohReaderError(Exception):
 
 
 class NemohReader(_BEMReader):
+
+    """
+        Class NemohReader, derived from _BEMReader, for reading the Nemoh calculation files (*.cal).
+    """
+
     def __init__(self, cal_file=None, test=True, nb_face_by_wave_length=None):  # TODO: ajouter le critere
+        """ Constructor of the class NemohReader.
+
+         Parameters
+        ----------
+        cal_file : string, optional
+            Path to the Nemoh's calculation file *.cal.
+        test : bool, optional
+            If true (default), tests the consistency between frequency range and the mesh discretization.
+        nb_faces_by_wave_length : float, optional
+            Number of panels per wave length.
+        """
+
+        # Initialization of the superclass (_BEMReader) by using the super function.
         super(NemohReader, self).__init__(nb_face_by_wave_length=nb_face_by_wave_length)
         
         self.dirname = ''
-        
-        # self.hydro_db = HydroDB()
-        
+
         self.has_pressure = False
         
         if cal_file is not None:
             self.set_calculation_file(cal_file, test=test)
     
     def set_calculation_file(self, cal_file, test=True):
-        """Set the Nemoh calculation file to retrieve BEM computations parameters
-
-        The file is generally named Nemoh.cal. It encloses every parameters to specify a Nemoh BEM run
+        """Reads the *.cal file parameters and loads the hdb and the Kochin numerical results.
 
         Parameters
         ----------
-        cal_file : str
-            Path to the Nemoh's calculation file
+        cal_file : string
+            Path to the *.cal file.
         test : bool, optional
-            If true (default), it will test the consistency between frequency range of BEM computations and meshe's
-            discretizations
+            If true (default), tests the consistency between frequency range and the mesh discretization.
+
+        Returns
+        -------
+        hydro_db : HydroDB
+            The hydrodynamic database.
         """
-        # Reading nemoh parameters
+        # Reading nemoh parameters.
         self._read_nemoh_parameters(cal_file, test=test)
         
-        # Loading hydrodynamic coefficients from Forces.dat
+        # Loading hydrodynamic coefficients from Forces.dat.
         self._read_nemoh_results()
         
-        # Loading Kochin function data
+        # Loading Kochin function data.
         if self.hydro_db.has_kochin:
             self._read_kochin_function_file()
         
@@ -413,9 +456,3 @@ class NemohReader(_BEMReader):
                 # Radiation problem
                 i_bem_problem += 1
                 self.kochin_radiation[imotion, ifreq, :] = read(i_bem_problem)
-    
-    def write_hydro_db(self, filename=None, format='python'):
-        if filename is None:
-            filename = "hydro_db.pyhdb"
-        with open(filename, 'w') as f:
-            cPickle.dump(self.hydro_db, f)

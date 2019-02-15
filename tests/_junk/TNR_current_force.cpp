@@ -1,6 +1,13 @@
-//
-// Created by camille on 05/11/18.
-//
+// ==========================================================================
+// FRyDoM - frydom-ce.org
+// 
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
+// 
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+// 
+// ==========================================================================
 
 #include "boost/assign/list_of.hpp"
 #include "frydom/frydom.h"

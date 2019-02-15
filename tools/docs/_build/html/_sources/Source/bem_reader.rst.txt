@@ -1,0 +1,6 @@
+bem_reader.py
+-------------
+.. automodule:: HydroDB.bem_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,656 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HydroDB.bem_reader &mdash; Nemoh2HDB  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Nemoh2HDB
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Source/Tutorials.html">Tutorial</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Source/Source_code_doc.html">Source code documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Nemoh2HDB</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>HydroDB.bem_reader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for HydroDB.bem_reader</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#  -*- coding: utf-8 -*-</span>
+<span class="c1"># ==========================================================================</span>
+<span class="c1"># FRyDoM - frydom-ce.org</span>
+<span class="c1"># </span>
+<span class="c1"># Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1"># </span>
+<span class="c1"># Use of this source code is governed by a GPLv3 license that can be found</span>
+<span class="c1"># in the LICENSE file of FRyDoM.</span>
+<span class="c1"># </span>
+<span class="c1"># ==========================================================================</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">tanh</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">cPickle</span>
+
+<span class="kn">from</span> <span class="nn">wave_dispersion_relation</span> <span class="k">import</span> <span class="n">solve_wave_dispersion_relation</span>
+<span class="kn">from</span> <span class="nn">hydro_db</span> <span class="k">import</span> <span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">HydroDB</span><span class="p">,</span> <span class="n">HydroBody</span><span class="p">,</span> <span class="n">TranslationMode</span><span class="p">,</span> <span class="n">RotationMode</span><span class="p">,</span>
+                      <span class="n">ForceMode</span><span class="p">,</span> <span class="n">MomentMode</span><span class="p">,</span> <span class="n">UnknownForceMode</span><span class="p">,</span> <span class="n">UnknownMotionMode</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">meshmagick.mmio</span> <span class="k">import</span> <span class="n">load_MAR</span>  <span class="c1"># FIXME: Mesh doit etre builtin dans frydom et plane dans geometry,</span>
+<span class="kn">from</span> <span class="nn">meshmagick.mesh</span> <span class="k">import</span> <span class="n">Mesh</span><span class="p">,</span> <span class="n">Plane</span>
+
+<span class="c1"># FIXME: les classes BEMReader ne se justifient pas, il faut juste avoir une fonction qui lit et renvoie un objet</span>
+<span class="c1"># HydroDB...</span>
+
+
+<span class="k">class</span> <span class="nc">_BEMReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>  <span class="c1"># TODO: le parametre n pour le nb de facette par lambda devra etre reglable...</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class _BEMReader for checking some quantities into *.cal files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_face_by_wave_length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor of the class _BEMReader.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nb_faces_by_wavelength: float, optional</span>
+<span class="sd">            Number of panels per wave length.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span> <span class="o">=</span> <span class="n">HydroDB</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="n">nb_face_by_wave_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nb_face_by_wave_length</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nb_face_by_wave_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nb_face_by_wave_length</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">get_max_edge_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega</span><span class="p">):</span>  <span class="c1"># FIXME: methode generique BEM</span>
+        <span class="sd">&quot;&quot;&quot;This subroutine gets the maximum mesh&#39;s edge length allowed for accurate BEM computations for a given frequency.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        omega : float</span>
+<span class="sd">            Frequency (rad/s) at which we want to get the maximum edge length.</span>
+<span class="sd">        n : int, optional</span>
+<span class="sd">            Minimal number of faces by wave length. Default is 10.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Maximum edge length (meters).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wave_number</span> <span class="o">=</span> <span class="n">solve_wave_dispersion_relation</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">grav</span><span class="p">)</span>
+        <span class="n">wave_length</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="n">wave_number</span>
+        <span class="k">return</span> <span class="n">wave_length</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_face_by_wave_length</span>
+    
+    <span class="k">def</span> <span class="nf">get_max_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge_length</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This subroutine gets the maximum wave frequency allowed for a given mesh&#39;s edge length for accurate BEM computations</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        edge_length : float</span>
+<span class="sd">            Mesh characteristic edge length</span>
+<span class="sd">        n : int, optional</span>
+<span class="sd">            Minimal number of faces by wave length. Default is 10.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Maximum wave frequency (rad/s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wave_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_face_by_wave_length</span> <span class="o">*</span> <span class="n">edge_length</span>
+        <span class="n">wave_number</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="n">wave_length</span>
+        <span class="n">w2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">grav</span> <span class="o">*</span> <span class="n">wave_number</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">depth</span> <span class="o">!=</span> <span class="n">inf</span><span class="p">:</span>
+            <span class="n">w2</span> <span class="o">*=</span> <span class="n">tanh</span><span class="p">(</span><span class="n">wave_number</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">w2</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">plot_edge_length_vs_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This subroutine plots the maximum allowed edge length vs the frequency</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : int, optional</span>
+<span class="sd">            Minimal number of faces by wave length. Default is 10.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">wave_number</span> <span class="o">=</span> <span class="n">solve_wave_dispersion_relation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">grav</span><span class="p">)</span>
+        <span class="n">wave_length</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="n">wave_number</span>
+        <span class="n">edge_length</span> <span class="o">=</span> <span class="n">wave_length</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_face_by_wave_length</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="n">edge_length</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\omega\;(rad/s)$)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Edge length $(m)$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Edge length VS. angular frequency for a depth=</span><span class="si">%.3f</span><span class="s1"> m&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">test_mesh_frequency_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>  <span class="c1"># FIXME: methode generique BEM</span>
+        <span class="sd">&quot;&quot;&quot;Tests whether the frequency range taken for BEM computations is consistent with the meshes discretizations.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : int, optional</span>
+<span class="sd">            Minimal number of faces by wave length. Default is 10.</span>
+
+<span class="sd">        Warnings</span>
+<span class="sd">        --------</span>
+<span class="sd">        Returns a warning if the maximum frequency taken for BEM computations if higher than the maximum allowed</span>
+<span class="sd">        frequency by the discretization of the meshes. It provides advices on the range of frequency that should be</span>
+<span class="sd">        confidently used for further analysis and on the mesh discretization we should have for the given max</span>
+<span class="sd">        frequency. This is based on the assumption that we should at least have n=10 faces by wave length.</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        Reference face size is taken as the shortest edge over every mesh given (one by hydrodynamic body).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_face_by_wave_length</span>
+        
+        <span class="n">max_edge_length_lst</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">body_mapper</span><span class="o">.</span><span class="n">bodies</span><span class="p">:</span>
+            <span class="n">max_edge_length_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">max_edge_length</span><span class="p">)</span>
+            
+        <span class="n">max_edge_from_mesh</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_edge_length_lst</span><span class="p">)</span>
+        <span class="n">max_edge_from_frequency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_max_edge_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">max_frequency</span><span class="p">)</span>
+        <span class="n">wmax_mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_max_frequency</span><span class="p">(</span><span class="n">max_edge_from_mesh</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">max_edge_from_mesh</span> <span class="o">&gt;</span> <span class="n">max_edge_from_frequency</span><span class="p">:</span>
+            <span class="n">wmax_bem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">max_frequency</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            </span><span class="se">\n</span><span class="s2">WARNING:</span>
+<span class="s2">            The maximum wave frequency (</span><span class="si">%.3f</span><span class="s2"> rad/s) chosen for BEM computations impose a maximum mesh&#39;s</span>
+<span class="s2">            edge length of </span><span class="si">%.3f</span><span class="s2"> m, based on the rule that we must have at least </span><span class="si">%u</span><span class="s2"> faces by wave length</span>
+<span class="s2">            (the lowest wave length corresponding to the highest wave frequency by the dispersion relation).</span>
+<span class="s2">            Current maximum edge length is </span><span class="si">%.3f</span><span class="s2"> m, which is bigger.</span>
+
+<span class="s2">            Any BEM data calculated at frequencies higher that </span><span class="si">%.3f</span><span class="s2"> rad/s may be very inaccurate and</span>
+<span class="s2">            should not be used for analysis. Alternatively, you could provide a new refined mesh for BEM</span>
+<span class="s2">            computations with a new maximum edge length not bigger than </span><span class="si">%.3f</span><span class="s2"> m which complies with the</span>
+<span class="s2">            current frequency range.&quot;&quot;&quot;</span> \
+                  <span class="o">%</span> <span class="p">(</span><span class="n">wmax_bem</span><span class="p">,</span> <span class="n">max_edge_from_frequency</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">max_edge_from_mesh</span><span class="p">,</span> <span class="n">wmax_mesh</span><span class="p">,</span> <span class="n">max_edge_from_frequency</span><span class="p">)</span>
+            
+            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            </span><span class="se">\n</span><span class="s2">-&gt; Mesh discretization is sufficient for the given frequency range for accurate BEM computations.</span>
+<span class="s2">            For your information, the maximum allowed frequency was </span><span class="si">%.3f</span><span class="s2"> rad/s. Your max frequency is </span><span class="si">%.3f</span><span class="s2"> rad/s.</span>
+<span class="s2">            This is based on the assumption of having at least </span><span class="si">%u</span><span class="s2"> faces by wave length corresponding to the higher</span>
+<span class="s2">            wave frequency.</span>
+<span class="s2">            &quot;&quot;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">wmax_mesh</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">max_frequency</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="n">msg</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="NemohReaderError"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.bem_reader.NemohReaderError">[docs]</a><span class="k">class</span> <span class="nc">NemohReaderError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="NemohReader"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.bem_reader.NemohReader">[docs]</a><span class="k">class</span> <span class="nc">NemohReader</span><span class="p">(</span><span class="n">_BEMReader</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class NemohReader, derived from _BEMReader, for reading the Nemoh calculation files (*.cal).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cal_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nb_face_by_wave_length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># TODO: ajouter le critere</span>
+        <span class="sd">&quot;&quot;&quot; Constructor of the class NemohReader.</span>
+
+<span class="sd">         Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cal_file : string, optional</span>
+<span class="sd">            Path to the Nemoh&#39;s calculation file *.cal.</span>
+<span class="sd">        test : bool, optional</span>
+<span class="sd">            If true (default), tests the consistency between frequency range and the mesh discretization.</span>
+<span class="sd">        nb_faces_by_wave_length : float, optional</span>
+<span class="sd">            Number of panels per wave length.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Initialization of the superclass (_BEMReader) by using the super function.</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NemohReader</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nb_face_by_wave_length</span><span class="o">=</span><span class="n">nb_face_by_wave_length</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirname</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_pressure</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="k">if</span> <span class="n">cal_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_calculation_file</span><span class="p">(</span><span class="n">cal_file</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="n">test</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="NemohReader.set_calculation_file"><a class="viewcode-back" href="../../Source/Source_code_doc.html#HydroDB.bem_reader.NemohReader.set_calculation_file">[docs]</a>    <span class="k">def</span> <span class="nf">set_calculation_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cal_file</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads the *.cal file parameters and loads the hdb and the Kochin numerical results.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cal_file : string</span>
+<span class="sd">            Path to the *.cal file.</span>
+<span class="sd">        test : bool, optional</span>
+<span class="sd">            If true (default), tests the consistency between frequency range and the mesh discretization.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        hydro_db : HydroDB</span>
+<span class="sd">            The hydrodynamic database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Reading nemoh parameters.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_read_nemoh_parameters</span><span class="p">(</span><span class="n">cal_file</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="n">test</span><span class="p">)</span>
+        
+        <span class="c1"># Loading hydrodynamic coefficients from Forces.dat.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_read_nemoh_results</span><span class="p">()</span>
+        
+        <span class="c1"># Loading Kochin function data.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">has_kochin</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_read_kochin_function_file</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span></div>
+    
+    <span class="k">def</span> <span class="nf">_read_nemoh_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cal_file</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads the Nemoh parameters from the Nemoh.cal file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cal_file : str</span>
+<span class="sd">            Path (relative or absolute) to the Nemoh.cal file</span>
+<span class="sd">        test : bool, optional</span>
+<span class="sd">            If True (default), it will test against consistency between frequencies taken for BEM computations and</span>
+<span class="sd">            meshe&#39;s discretization</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cal_file</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;File </span><span class="si">%s</span><span class="s2"> not found&quot;</span> <span class="o">%</span> <span class="n">cal_file</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cal_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            
+            <span class="c1"># Getting root directory of the Nemoh computation project</span>
+            <span class="n">abspath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">cal_file</span><span class="p">)</span>
+            <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">abspath</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">dirname</span> <span class="o">=</span> <span class="n">dirname</span>
+            
+            <span class="k">def</span> <span class="nf">skip_line</span><span class="p">():</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            
+            <span class="c1"># Environment parameters</span>
+            <span class="n">skip_line</span><span class="p">()</span>
+            <span class="n">rho_water</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">grav</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">depth</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">depth</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+                <span class="n">depth</span> <span class="o">=</span> <span class="n">inf</span>
+            <span class="n">xeff</span><span class="p">,</span> <span class="n">yeff</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">2</span><span class="p">])</span>
+            
+            <span class="c1"># Number of bodies</span>
+            <span class="n">skip_line</span><span class="p">()</span>
+            <span class="n">nb_bodies</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">rho_water</span> <span class="o">=</span> <span class="n">rho_water</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">grav</span> <span class="o">=</span> <span class="n">grav</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">depth</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">x_wave_measure</span> <span class="o">=</span> <span class="n">xeff</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">y_wave_measure</span> <span class="o">=</span> <span class="n">yeff</span>
+            
+            <span class="n">body_mapper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">body_mapper</span>
+            
+            <span class="n">motion_mod_idx</span> <span class="o">=</span> <span class="n">force_mod_idx</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1"># bodies = []</span>
+            <span class="k">for</span> <span class="n">ibody</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">nb_bodies</span><span class="p">):</span>
+                <span class="n">skip_line</span><span class="p">()</span>
+                <span class="n">meshfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">abs_meshfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">meshfile</span><span class="p">)</span>
+                
+                <span class="c1"># Instantiating mesh object</span>
+                <span class="n">vertices</span><span class="p">,</span> <span class="n">faces</span> <span class="o">=</span> <span class="n">load_MAR</span><span class="p">(</span><span class="n">abs_meshfile</span><span class="p">)</span>
+                <span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">faces</span><span class="p">)</span>
+                
+                <span class="n">nb_vertices</span><span class="p">,</span> <span class="n">nb_faces</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">2</span><span class="p">])</span>
+                <span class="c1"># Verification of mesh information consistency</span>
+                <span class="k">assert</span> <span class="n">nb_vertices</span> <span class="o">==</span> <span class="n">mesh</span><span class="o">.</span><span class="n">nb_vertices</span>
+                <span class="k">assert</span> <span class="n">nb_faces</span> <span class="o">==</span> <span class="n">mesh</span><span class="o">.</span><span class="n">nb_faces</span>
+                
+                <span class="c1"># De-symmetrizing meshes</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">abs_meshfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fmesh</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">isym</span> <span class="o">=</span> <span class="n">fmesh</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">isym</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Mesh is symmetric</span>
+                    <span class="n">mesh</span><span class="o">.</span><span class="n">symmetrize</span><span class="p">(</span><span class="n">Plane</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+                
+                <span class="n">mesh</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">meshfile</span><span class="p">)</span>
+                
+                <span class="c1"># Instantiating HydroBody</span>
+                <span class="n">body</span> <span class="o">=</span> <span class="n">HydroBody</span><span class="p">(</span><span class="n">ibody</span><span class="p">,</span> <span class="n">mesh</span><span class="p">)</span>
+                
+                <span class="c1"># RADIATION</span>
+                <span class="c1"># radiation_modes = []</span>
+                <span class="n">nb_dof</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">idof</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">nb_dof</span><span class="p">):</span>
+                    <span class="n">dof</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">7</span><span class="p">]</span>
+                    <span class="n">motion_type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dof</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">direction</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">dof</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+                    <span class="n">point</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">dof</span><span class="p">[</span><span class="mi">4</span><span class="p">:])</span>
+                    
+                    <span class="k">if</span> <span class="n">motion_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Translation</span>
+                        <span class="n">motion_mod</span> <span class="o">=</span> <span class="n">TranslationMode</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">motion_mod_idx</span><span class="p">,</span> <span class="n">ibody</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">motion_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Rotation</span>
+                        <span class="n">motion_mod</span> <span class="o">=</span> <span class="n">RotationMode</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">motion_mod_idx</span><span class="p">,</span> <span class="n">ibody</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">UnknownMotionMode</span><span class="p">(</span><span class="n">motion_type</span><span class="p">,</span> <span class="n">abspath</span><span class="p">)</span>
+                    <span class="n">body_mapper</span><span class="o">.</span><span class="n">_motion_mod_dict</span><span class="p">[</span><span class="n">motion_mod_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ibody</span><span class="p">,</span> <span class="n">idof</span><span class="p">)</span>  <span class="c1"># TODO: voir a faire ca mieux...</span>
+                    <span class="n">motion_mod_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                    
+                    <span class="n">body</span><span class="o">.</span><span class="n">append_motion_mode</span><span class="p">(</span><span class="n">motion_mod</span><span class="p">)</span>
+                
+                <span class="c1"># INTEGRATION</span>
+                <span class="c1"># force_modes = []</span>
+                <span class="n">nb_force</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">iforce</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">nb_force</span><span class="p">):</span>
+                    <span class="n">force</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">7</span><span class="p">]</span>
+                    <span class="n">force_type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">force</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">direction</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">force</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+                    <span class="n">point</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">force</span><span class="p">[</span><span class="mi">4</span><span class="p">:])</span>
+                    <span class="k">if</span> <span class="n">force_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Pure force</span>
+                        <span class="n">force_mod</span> <span class="o">=</span> <span class="n">ForceMode</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">force_mod_idx</span><span class="p">,</span> <span class="n">ibody</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">force_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">force_mod</span> <span class="o">=</span> <span class="n">MomentMode</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">force_mod_idx</span><span class="p">,</span> <span class="n">ibody</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">UnknownForceMode</span><span class="p">(</span><span class="n">force_type</span><span class="p">,</span> <span class="n">abspath</span><span class="p">)</span>
+                    <span class="n">body_mapper</span><span class="o">.</span><span class="n">_force_mod_dict</span><span class="p">[</span><span class="n">force_mod_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ibody</span><span class="p">,</span> <span class="n">iforce</span><span class="p">)</span>  <span class="c1"># TODO: voir a faire ca mieux</span>
+                    <span class="n">force_mod_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                    
+                    <span class="n">body</span><span class="o">.</span><span class="n">append_force_mode</span><span class="p">(</span><span class="n">force_mod</span><span class="p">)</span>
+                
+                <span class="c1"># Skipping additional lines</span>
+                <span class="n">nb_add_line</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">i_add_line</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">nb_add_line</span><span class="p">):</span>
+                    <span class="n">skip_line</span><span class="p">()</span>
+                
+                <span class="n">body_mapper</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+            
+            <span class="c1"># Reading discretization</span>
+            <span class="n">skip_line</span><span class="p">()</span>
+            
+            <span class="c1"># Getting frequency discretization</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">nb_frequencies</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">min_frequency</span><span class="p">,</span> <span class="n">max_frequency</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">set_frequencies</span><span class="p">(</span><span class="n">min_frequency</span><span class="p">,</span> <span class="n">max_frequency</span><span class="p">,</span> <span class="n">nb_frequencies</span><span class="p">)</span>
+            
+            <span class="c1"># Getting wave directions discretization</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">3</span><span class="p">]</span>
+            
+            <span class="n">nb_wave_directions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">min_wave_dir</span><span class="p">,</span> <span class="n">max_wave_dir</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">set_wave_direction</span><span class="p">(</span><span class="n">min_wave_dir</span><span class="p">,</span> <span class="n">max_wave_dir</span><span class="p">,</span> <span class="n">nb_wave_directions</span><span class="p">)</span>
+            
+            <span class="c1"># Getting post-processing information</span>
+            <span class="n">skip_line</span><span class="p">()</span>
+            
+            <span class="c1"># Impulse response function</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="c1"># has_irf = bool(int(data[0]))</span>
+            <span class="c1"># if has_irf:</span>
+            <span class="c1">#     self.dt_irf, self.tf_irf = map(float, data[1:])</span>
+            
+            <span class="c1"># TODO: si ok lire  -&gt; remettre en place si besoin...</span>
+            <span class="c1"># Show pressure</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">has_pressure</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
+            
+            <span class="c1"># Kochin function</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">has_kochin</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">has_kochin</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">nb_dir_kochin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">min_dir_kochin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span><span class="o">.</span><span class="n">max_dir_kochin</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                
+            <span class="c1"># # TODO: si ok, lire  -&gt; remettre en place si besoin...</span>
+            <span class="c1"># # Free surface elevation</span>
+            <span class="c1"># data = f.readline().split()[:4]</span>
+            <span class="c1"># has_fs_elevation = bool(int(data[0]))</span>
+            <span class="c1"># if has_fs_elevation:</span>
+            <span class="c1">#     self.nx_fs, self.ny_fs = map(int, data[:2])</span>
+            <span class="c1">#     self.xlim_fs, self.ylim_fs = map(float, data[2:])</span>
+        
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_mesh_frequency_consistency</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_read_nemoh_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># FIXME: methode de reader nemoh</span>
+        <span class="sd">&quot;&quot;&quot;Reads the Nemoh&#39;s results from the Forces.dat file&quot;&quot;&quot;</span>
+        <span class="n">bem_results_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirname</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="s1">&#39;Forces.dat&#39;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">bem_results_file</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">NemohReaderError</span><span class="p">(</span><span class="s2">&quot;Nemoh result file &#39;Forces.dat&#39; does not exists in directory </span><span class="si">%s</span><span class="s2">.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                                   <span class="s2">&quot;&gt;&gt;&gt; PLEASE VERIFY THAT NEMOH COMPUTATIONS HAVE BEEN RUN.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span>
+                                   <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirname</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">))</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bem_results_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        
+        <span class="n">hydro_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydro_db</span>
+        
+        <span class="n">nw</span> <span class="o">=</span> <span class="n">hydro_db</span><span class="o">.</span><span class="n">nb_frequencies</span>
+        <span class="n">n_wave</span> <span class="o">=</span> <span class="n">hydro_db</span><span class="o">.</span><span class="n">diffraction_db</span><span class="o">.</span><span class="n">nb_wave_dir</span>
+        <span class="n">n_forces</span> <span class="o">=</span> <span class="n">hydro_db</span><span class="o">.</span><span class="n">body_mapper</span><span class="o">.</span><span class="n">nb_force_modes</span>
+        <span class="n">n_dof</span> <span class="o">=</span> <span class="n">hydro_db</span><span class="o">.</span><span class="n">body_mapper</span><span class="o">.</span><span class="n">nb_motion_modes</span>
+        
+        <span class="n">res</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n_forces</span><span class="p">,</span> <span class="n">nw</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_wave</span> <span class="o">+</span> <span class="n">n_dof</span><span class="p">)))</span>
+        
+        <span class="n">diffraction_data</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n_wave</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">res</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n_wave</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">added_mass_data</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_wave</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">radiation_damping_data</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_wave</span> <span class="o">+</span> <span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># TODO: adapter tout ca au nouveau format RadiationDB</span>
+        
+        <span class="n">hydro_db</span><span class="o">.</span><span class="n">set_diffraction_data</span><span class="p">(</span><span class="n">diffraction_data</span><span class="p">)</span>  <span class="c1"># FIXME: bug, on recupere un copie...</span>
+        <span class="n">hydro_db</span><span class="o">.</span><span class="n">set_radiation_data</span><span class="p">(</span><span class="n">radiation_damping_data</span><span class="p">,</span> <span class="n">added_mass_data</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">_read_kochin_function_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># TODO: A REMETTRE D&#39;APLOMB APRES MIGRATION</span>
+        <span class="sd">&quot;&quot;&quot;Read the Kochin function values data from Nemoh&#39;s Kochin.%5u.dat files&quot;&quot;&quot;</span>
+        
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        
+        <span class="n">res_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirname</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">)</span>
+        
+        <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res_dir</span><span class="p">,</span> <span class="s1">&#39;Kochin.</span><span class="si">%5u</span><span class="s1">.dat&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">arr</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">arr</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span>
+        
+        <span class="n">ntheta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_dir_kochin</span>
+        <span class="n">nw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_frequencies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kochin_diffraction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_wave_directions</span><span class="p">,</span> <span class="n">nw</span><span class="p">,</span> <span class="n">ntheta</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kochin_radiation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_motion_modes</span><span class="p">,</span> <span class="n">nw</span><span class="p">,</span> <span class="n">ntheta</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex</span><span class="p">)</span>
+        
+        <span class="n">i_bem_problem</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ifreq</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_frequencies</span><span class="p">):</span>
+            
+            <span class="k">for</span> <span class="n">iwave</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_wave_directions</span><span class="p">):</span>
+                <span class="c1"># Diffraction problem</span>
+                <span class="n">i_bem_problem</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kochin_diffraction</span><span class="p">[</span><span class="n">iwave</span><span class="p">,</span> <span class="n">ifreq</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">i_bem_problem</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">imotion</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_motion_modes</span><span class="p">):</span>
+                <span class="c1"># Radiation problem</span>
+                <span class="n">i_bem_problem</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kochin_radiation</span><span class="p">[</span><span class="n">imotion</span><span class="p">,</span> <span class="n">ifreq</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">i_bem_problem</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, D-ICE Engineering
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
