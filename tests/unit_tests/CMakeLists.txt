@@ -30,10 +30,13 @@ set(UNIT_TESTS
         test_FrWaveSpectrum
         test_FrQuadraticDamping
         test_FrLinks
+        test_FrFunction
         )
 
 #enable_testing()
 #include(Add_googletest)il
+#include(URL.conf)
+#include(Add_googletest)
 
 
 foreach(test ${UNIT_TESTS})

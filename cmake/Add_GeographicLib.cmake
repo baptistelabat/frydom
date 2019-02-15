@@ -6,10 +6,9 @@ find_package(GeographicLib QUIET)
 if (NOT GeographicLib_FOUND)
     include(FetchContent)
 
-    set(GeographicLib_URL https://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-1.49.tar.gz/download)
     FetchContent_Declare(GeographicLib
-            URL ${GeographicLib_URL}
-            PATCH_COMMAND patch < "${PROJECT_SOURCE_DIR}/cmake/patches/GeographicLib.patch"
+            URL ${geographiclib_URL}
+            PATCH_COMMAND patch < "${PROJECT_SOURCE_DIR}/cmake/patches/${geographiclib_PATCH}"
             )
 
     FetchContent_GetProperties(GeographicLib)

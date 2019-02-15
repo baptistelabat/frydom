@@ -13,6 +13,8 @@
 #ifndef FRYDOM_FRLINKSLIBINC_H
 #define FRYDOM_FRLINKSLIBINC_H
 
+#include "actuators/FrActuatorsInc.h"
+
 #include "FrCylindricalLink.h"
 #include "FrFixedLink.h"
 #include "FrFreeLink.h"

@@ -12,11 +12,9 @@
 
 #include "FrLink.h"
 
-#include "chrono/physics/ChLinkLock.h"
-#include "chrono/physics/ChLinkMotor.h"
-
-#include <frydom/core/common/FrNode.h>
+#include "frydom/core/common/FrNode.h"
 #include "frydom/core/body/FrBody.h"
+#include "actuators/FrActuator.h"
 
 
 namespace frydom {
@@ -57,41 +55,12 @@ namespace frydom {
 
         void FrLinkLockBase::Update(double time, bool update_assets) {
 
+            chrono::ChLinkLock::Update(time, update_assets);
+
             GenerateCache();
-
-            auto node1 = m_frydomLink->GetNode1()->GetPositionInWorld(NWU);
-            auto node2 = m_frydomLink->GetNode2()->GetPositionInWorld(NWU);
-
-            //marker1->GetPos().x() = node1.GetX();
-            //marker1->GetPos().y() = node1.GetY();
-            //marker1->GetPos().z() = node1.GetZ();
-
-            //marker2->GetPos().x() = node2.GetX();
-            //marker2->GetPos().y() = node2.GetY();
-            //marker2->GetPos().z() = node2.GetZ();
 
             m_frydomLink->Update(time);
 
-            // ##CC
-            /*
-            std::cout << "debug: FrLinkLockBase: marker1: " << marker1->GetPos().x() << ";"
-                                                            << marker1->GetPos().y() << ";"
-                                                            << marker1->GetPos().z() << std::endl;
-            std::cout << "debug: FrLinkLockBase: marker2: " << marker2->GetPos().x() << ";"
-                                                            << marker2->GetPos().y() << ";"
-                                                            << marker2->GetPos().z() << std::endl;
-
-
-            std::cout << "debug: FrLinkLockBase: node1: " << node1.GetX() << ";"
-                                                          << node1.GetY() << ";"
-                                                          << node1.GetZ() << std::endl;
-            std::cout << "debug: FrLinkLockBase: node2: " << node2.GetX() << ";"
-                                                          << node2.GetY() << ";"
-                                                          << node2.GetZ() << std::endl;
-            */
-            // ##CC
-
-            chrono::ChLinkLock::Update(time, update_assets);
         }
 
         void FrLinkLockBase::GenerateCache() {
@@ -128,7 +97,6 @@ namespace frydom {
                     + c_frame2WRT1.GetPosition(NWU).cross(c_generalizedForceOnMarker1.GetForce())
                     );
 
-
         }
 
         void FrLinkLockBase::SetMask(FrBodyDOFMask* vmask) {
@@ -161,6 +129,10 @@ namespace frydom {
             return internal::ChVectorToVector3d<Torque>(C_torque);
         }
 
+        FrFrame_ FrLinkLockBase::GetConstraintViolation() { // TODO : voir si c'est bien la violation de 2 par rapport a 1, dans 1 !! sinon, renvoyer l'inverse
+            return internal::ChCoordsys2FrFrame(GetRelC());
+        }
+
     }  // end namespace frydom::internal
 
 
@@ -178,7 +150,6 @@ namespace frydom {
 
 
     void FrLink_::SetMarkers(FrNode_* node1, FrNode_* node2) {
-        //m_chronoLink->SetUpMarkers(node1->m_chronoMarker.get(), node2->m_chronoMarker.get());
         m_chronoLink->ReferenceMarkers(node1->m_chronoMarker.get(), node2->m_chronoMarker.get());
     }
 
@@ -192,6 +163,17 @@ namespace frydom {
 
     void FrLink_::SetDisabled(bool disabled) {
         m_chronoLink->SetDisabled(disabled);
+        if (IsMotorized()) {
+            m_actuator->SetDisabled(disabled);
+        }
+    }
+
+    void FrLink_::SetBreakable(bool breakable) {
+        m_breakable = breakable;
+    }
+
+    bool FrLink_::IsBreakable() const {
+        return m_breakable;
     }
 
     bool FrLink_::IsBroken() const {
@@ -199,17 +181,29 @@ namespace frydom {
     }
 
     void FrLink_::SetBroken(bool broken) {
+        if (!IsBreakable()) return;
+
         m_chronoLink->SetBroken(broken);
+        if (IsMotorized()) {
+            m_actuator->SetDisabled(broken);
+        }
     }
 
     bool FrLink_::IsActive() const {
         return m_chronoLink->IsActive();
     }
 
-    void FrLink_::SetThisConfigurationAsReference() {
-        m_frame2WRT1_reference = m_chronoLink->c_frame2WRT1;
+    bool FrLink_::IsMotorized() const {
+        return (m_actuator && m_actuator->IsActive());
     }
 
+    void FrLink_::SetThisConfigurationAsReference() {
+        m_frame2WRT1_reference = m_chronoLink->c_frame2WRT1;  // FIXME : cette methode devrait trigger l'update des caches de classes derivees
+        UpdateCache();
+    }
+
+    // Must be reimplemented in
+//    bool FrLink_::IsMotorized() const { return false; }
 
     const FrFrame_ FrLink_::GetMarker2FrameWRTMarker1Frame() const {
         return m_chronoLink->c_frame2WRT1;
@@ -349,7 +343,7 @@ namespace frydom {
 
     }
 
-    void FrLink_::SetLinkForceOnBody2InFrame2AtOrigin2(const Force &force, const Torque& torque) {
+    void FrLink_::SetLinkForceTorqueOnBody2InFrame2AtOrigin2(const Force &force, const Torque &torque) {
         /* From Chrono comments in ChLinkMasked::UpdateForces :
          * C_force and C_torque   are considered in the reference coordsystem
          * of marker2  (the MAIN marker), and their application point is considered the
@@ -498,6 +492,14 @@ namespace frydom {
     void FrLink_::InitializeWithBodyDOFMask(FrBodyDOFMask *mask) {
         m_chronoLink->SetMask(mask);
     }
+
+    FrFrame_ FrLink_::GetConstraintViolation() const {
+        return m_chronoLink->GetConstraintViolation();
+    }
+
+    void FrLink_::UpdateCache() {}
+
+
 
 
 }  // end namespace frydom

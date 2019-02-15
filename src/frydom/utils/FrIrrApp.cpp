@@ -9,7 +9,6 @@
 //
 // =============================================================================
 
-
 #include "FrIrrApp.h"
 #include "chrono_irrlicht/ChIrrWizard.h"
 
@@ -189,7 +188,7 @@ namespace frydom {
 
         // Temporal loop.
         while (GetDevice()->run()) {
-
+            std::cout << "Time : " << m_system->GetChTime() << std::endl;
             BeginScene();
             DrawAll();
             // Time-stepping.
@@ -199,7 +198,6 @@ namespace frydom {
             // Condition to stop the time-domain simulation using the time after time-stepping.
             if (endTime > 0. && m_system->GetChTime() > endTime) break; // If the endTime given is negative or null, the loop is infinite :)
 
-            std::cout << "Time : " << m_system->GetChTime() << std::endl;
 
         }
 

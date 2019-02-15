@@ -18,6 +18,9 @@
 
 namespace frydom {
 
+    // FIXME : ne plus reposer sur l'heritage chrono. Proposer une fonction de conversion depuis openmesh vers
+    // le format de maillage chrono
+
     /**
      * \class FrTriangleMeshConnected
      * \brief Class for dealing with connected triangle meshes.

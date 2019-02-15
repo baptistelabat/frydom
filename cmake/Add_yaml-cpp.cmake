@@ -4,16 +4,10 @@
 if (NOT yaml-cpp_FOUND)
     include(FetchContent)
 
-
-#    message(STATUS "YAML-CPP PATCH ${PROJECT_SOURCE_DIR}")
-
-
-
-    set(yaml-cpp_URL "https://github.com/jbeder/yaml-cpp.git")
     FetchContent_Declare(yaml-cpp
-            GIT_REPOSITORY ${yaml-cpp_URL}
-            GIT_TAG "yaml-cpp-0.6.2"
-            PATCH_COMMAND git apply "${PROJECT_SOURCE_DIR}/cmake/patches/yaml-cpp.patch"
+            GIT_REPOSITORY ${yamlcpp_URL}
+            GIT_TAG ${yamlcpp_TAG}
+            PATCH_COMMAND git apply ${PROJECT_SOURCE_DIR}/cmake/patches/${yamlcpp_PATCH}
             )
 
     FetchContent_GetProperties(yaml-cpp)

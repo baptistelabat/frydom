@@ -74,5 +74,7 @@ namespace frydom {
 
     void FrVelocityRecorder::StepFinalize() {}
 
+    void FrVelocityRecorder::SetBody(FrBody *body) { m_body=body; }
+
 
 }  // end namespace frydom

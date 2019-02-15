@@ -28,7 +28,7 @@
 #include "frydom/asset/FrAsset.h"
 #include "frydom/asset/FrForceAsset.h"
 
-#include "frydom/core/functions/FrFunction.h"
+#include "frydom/core/math/functions/FrFunctionBase.h"
 #include "frydom/core/common/FrException.h"
 //#include "FrCore.h"
 
@@ -374,10 +374,12 @@ namespace frydom {
 
     void FrBody_::SetMaxSpeed(double maxSpeed_ms) {
         m_chronoBody->SetMaxSpeed((float)maxSpeed_ms);
+        ActivateSpeedLimits(true);
     }
 
     void FrBody_::SetMaxRotationSpeed(double wMax_rads) {
         m_chronoBody->SetMaxWvel((float)wMax_rads);
+        ActivateSpeedLimits(true);
     }
 
     void FrBody_::RemoveGravity(bool val) { // TODO : ajouter la force d'accumulation a l'initialisation --> cas ou le systeme n'a pas encore ete precise pour la gravite...
@@ -601,18 +603,26 @@ namespace frydom {
         TranslateInWorld(translation, fc);
     }
 
-    void FrBody_::TranslateInWorld(const Position &worldTranslation, FRAME_CONVENTION fc) {
+    void FrBody_::TranslateInWorld(const Translation &worldTranslation, FRAME_CONVENTION fc) {
         auto refFrame = GetFrame();
         refFrame.SetPosition(refFrame.GetPosition(fc) + worldTranslation, fc);
         m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(refFrame));
         m_chronoBody->UpdateAfterMove();
     }
 
-    void FrBody_::TranslateInBody(const Position &bodyTranslation, FRAME_CONVENTION fc) {
+    void FrBody_::TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc) {
+        TranslateInWorld(Translation(x, y, z), fc);
+    }
+
+    void FrBody_::TranslateInBody(const Translation &bodyTranslation, FRAME_CONVENTION fc) {
         auto refFrame = GetFrame();
         refFrame.SetPosition(refFrame.GetPosition(fc) + ProjectVectorInWorld<Position>(bodyTranslation, fc), fc);
         m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(refFrame));
         m_chronoBody->UpdateAfterMove();
+    }
+
+    void FrBody_::TranslateInBody(double x, double y, double z, FRAME_CONVENTION fc) {
+        TranslateInBody(Translation(x, y, z), fc);
     }
 
     void FrBody_::Rotate(const FrRotation_ &relRotation) {

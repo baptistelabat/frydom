@@ -16,5 +16,13 @@
 namespace frydom {
 
 
+    std::shared_ptr<chrono::ChColorAsset> FrAssetComponent::GetColorAsset() {return m_color;}
 
+    std::shared_ptr<chrono::ChVisualization> FrAssetComponent::GetShapeAsset() {return m_shape;}
+
+    chrono::ChColor FrAssetComponent::GetColor() {return m_color->GetColor();}
+
+    void FrAssetComponent::Initialize() {}
+
+    void FrAssetComponent::StepFinalize() {}
 }  // end namespace frydom

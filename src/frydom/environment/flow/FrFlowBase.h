@@ -41,6 +41,8 @@ namespace frydom {
     private:
         std::unique_ptr<FrFieldBase> m_field;        ///< Flow field model
     protected:
+        double m_time = 0.;
+
         double c_ramp=1.;   ///> cache value of the time ramp applied on the flow field
     public:
 

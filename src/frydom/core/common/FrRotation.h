@@ -350,6 +350,9 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         void GetAxisAngle(Direction& axis, double& angleRAD, FRAME_CONVENTION fc) const;
 
+        /// Get the rotation vector, ie the Angle * Axis vector
+        Vector3d<double> GetRotationVector(FRAME_CONVENTION fc) const;
+
         /// Get the axis of the rotation
         /// \param axis direction of the rotation, normalized
         /// \param fc frame convention (NED/NWU)

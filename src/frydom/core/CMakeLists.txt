@@ -29,22 +29,26 @@ list(APPEND SRC_FILES
         force/FrForce.cpp
         )
 
-# FUNCTIONS
-list(APPEND SRC_FILES
-        functions/FrFunction.cpp
-        )
+## FUNCTIONS
+#list(APPEND SRC_FILES
+#        functions/FrFunctionBase.cpp
+#        functions/FrRamp.cpp
+#        )
 
-# LINK
+# LINK // TODO : cmakiser les repertoires !!
 list(APPEND SRC_FILES
 
         link/FrLinkBase.cpp
 
-        link/actuators/FrAngularActuatorAngle.cpp
-        link/actuators/FrAngularActuatorVelocity.cpp
-        link/actuators/FrAngularActuatorTorque.cpp
-        link/actuators/FrLinearActuatorPosition.cpp
-        link/actuators/FrLinearActuatorVelocity.cpp
-        link/actuators/FrLinearActuatorForce.cpp
+        link/links_lib/actuators/FrActuator.cpp
+        link/links_lib/actuators/FrAngularActuator.cpp
+        link/links_lib/actuators/FrAngularActuatorAngle.cpp
+        link/links_lib/actuators/FrAngularActuatorVelocity.cpp
+        link/links_lib/actuators/FrAngularActuatorTorque.cpp
+        link/links_lib/actuators/FrLinearActuator.cpp
+        link/links_lib/actuators/FrLinearActuatorPosition.cpp
+        link/links_lib/actuators/FrLinearActuatorVelocity.cpp
+        link/links_lib/actuators/FrLinearActuatorForce.cpp
 
         link/constraints/FrDistanceBetweenPointsConstraint.cpp
         link/constraints/FrParallelConstraint.cpp
@@ -63,13 +67,27 @@ list(APPEND SRC_FILES
         link/links_lib/FrRevoluteLink.cpp
         link/links_lib/FrScrewLink.cpp
         link/links_lib/FrSphericalLink.cpp
-
         )
 
 # MATH
 list(APPEND SRC_FILES
         math/FrMatrix.cpp
         math/FrVector.cpp
+
+        math/functions/FrFunctionBase.cpp
+
+        math/functions/ramp/FrLinearRampFunction.cpp
+        math/functions/ramp/FrTanhRampFunction.cpp
+
+        math/functions/lib/FrPowFunction.cpp
+        math/functions/lib/FrLinearFunction.cpp
+        math/functions/lib/FrSaturateFunction.cpp
+        math/functions/lib/FrClampFunction.cpp
+        math/functions/lib/FrPolynomialFunction.cpp
+        math/functions/lib/FrTrigonometricFunctions.cpp
+        math/functions/lib/FrHyperbolicTrigonometricFunctions.cpp
+        math/functions/lib/FrMiscFunctions.cpp
+
         )
 
 # MISC

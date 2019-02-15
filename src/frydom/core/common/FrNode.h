@@ -9,7 +9,6 @@
 //
 // =============================================================================
 
-
 #ifndef FRYDOM_FRNODE_H
 #define FRYDOM_FRNODE_H
 
@@ -82,20 +81,23 @@ namespace frydom {
 
 
     // Forward declarations
-    class FrBody_;
-    class FrFrame_;
     class FrNode_;
 
     namespace internal{
 
-    struct _FrMarkerBase_ : public chrono::ChMarker {
-        FrNode_ * m_frydomNode;
+        struct FrMarker : public chrono::ChMarker {
 
-        _FrMarkerBase_(FrNode_* node) {m_frydomNode = node;}
-    };
+            FrNode_ * m_frydomNode;
 
+            explicit FrMarker(FrNode_* node);
+
+        };
 
     }
+
+
+    // Forward declarations
+    class FrBody_;
 
     /**
      * \class FrNode_
@@ -106,7 +108,7 @@ namespace frydom {
     private:
 
         FrBody_* m_body;                                    ///< Pointer to the body containing this node
-        std::shared_ptr<chrono::ChMarker> m_chronoMarker;   ///< Chrono class for nodes/marker.
+        std::shared_ptr<internal::FrMarker> m_chronoMarker;   ///< Chrono class for nodes/marker.
 
     public:
 
@@ -114,27 +116,6 @@ namespace frydom {
         /// \param body body to which the node belongs
         explicit FrNode_(FrBody_* body);
 
-//        /// Constructor from a Position
-//        /// \param body body to which the node belongs
-//        /// \param position relative position of the node with respect to body reference frame
-//        FrNode_(FrBody_* body, const Position& position, FRAME_CONVENTION fc);
-//
-//        /// Constructor from a Position and a Rotation
-//        /// \param body body to which the node belongs
-//        /// \param position relative position of the frame node with respect to body reference frame
-//        /// \param rotation relative rotation of the frame node with respect to body reference frame
-//        FrNode_(FrBody_* body, const Position& position, const FrRotation_& rotation, FRAME_CONVENTION fc);
-//
-//        /// Constructor from a Position and a Quaternion
-//        /// \param body body to which the node belongs
-//        /// \param position relative position of the frame node with respect to body reference frame
-//        /// \param quaternion relative rotation of the frame node with respect to body reference frame, given as quaternion
-//        FrNode_(FrBody_* body, const Position& position, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc);
-//
-//        /// Constructor from a frame
-//        /// \param body body to which the node belongs
-//        /// \param frame relative frame node, with respect to body reference frame
-//        FrNode_(FrBody_* body, const FrFrame_& frame);
 
         /// Set node position and direction axis, with respect to body reference frame
         /// \param pos relative position of the frame node with respect to body reference frame

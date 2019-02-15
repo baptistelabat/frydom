@@ -18,7 +18,6 @@
 
 namespace frydom {
 
-
     FrPrismaticLink::FrPrismaticLink(std::shared_ptr<frydom::FrNode_> node1, std::shared_ptr<frydom::FrNode_> node2,
                                      frydom::FrOffshoreSystem_ *system) : FrLink_(node1, node2, system) {
         m_chronoLink->SetLinkType(PRISMATIC);
@@ -30,11 +29,12 @@ namespace frydom {
     }
 
     void FrPrismaticLink::SetRestLength(double restLength) {
-        m_frame2WRT1_reference.SetZ(restLength, NWU); // TODO : voir si on parametre le FRAME_CONVENTION...
+        m_frame2WRT1_reference.SetZ(restLength, NWU);
+        UpdateCache();
     }
 
     double FrPrismaticLink::GetRestLength() const {
-        return m_frame2WRT1_reference.GetZ(NWU); // TODO : voir si on parametre le FRAME_CONVENTION...
+        return m_restLength;
     }
 
     const Direction FrPrismaticLink::GetLinkDirectionInWorld(FRAME_CONVENTION fc) const {
@@ -42,30 +42,44 @@ namespace frydom {
     }
 
     double FrPrismaticLink::GetLinkPosition() const {
-        return GetMarker2PositionWRTMarker1(NWU).GetZ() - GetRestLength(); // TODO : voir si on parametre le FRAME_CONVENTION...
+        return m_linkPosition - m_restLength;
     }
 
     double FrPrismaticLink::GetLinkVelocity() const {
-        return GetVelocityOfMarker2WRTMarker1(NWU).GetVz(); // TODO : voir si on parametre le FRAME_CONVENTION...
+        return m_linkVelocity;
     }
 
     double FrPrismaticLink::GetLinkAcceleration() const {
-        return GetAccelerationOfMarker2WRTMarker1(NWU).GetAccZ(); // TODO : voir si on parametre le FRAME_CONVENTION...
+        return m_linkAcceleration;
+    }
+
+    double FrPrismaticLink::GetLinkForce() const {
+        return GetLinkForceOnBody2InFrame2AtOrigin2(NWU).GetFz();
+    }
+
+    double FrPrismaticLink::GetLinkPower() const {
+        return GetLinkVelocity() * GetLinkForce();
     }
 
     void FrPrismaticLink::Initialize() {
         FrLink_::Initialize();
+
+        // Initializing the motor part
+        // TODO
+
+        // Initializing the logs
     }
 
     void FrPrismaticLink::Update(double time) {
         FrLink_::Update(time); // It is mandatory to invoke this before all update operations from frydom
 
-        Force force;
-        force.GetFz() = - m_stiffness * GetLinkPosition() - m_damping * GetLinkVelocity();
+        // Update total link measure
+        m_linkPosition = GetMarker2PositionWRTMarker1(NWU).GetZ();
+        m_linkVelocity = GetVelocityOfMarker2WRTMarker1(NWU).GetVz();
+        m_linkAcceleration = GetAccelerationOfMarker2WRTMarker1(NWU).GetAccZ();
 
-        SetLinkForceOnBody2InFrame2AtOrigin2(force, Torque());
 
-//        std::cout << GetLinkPower() << std::endl;
+        UpdateForces(time);
 
     }
 
@@ -73,6 +87,20 @@ namespace frydom {
 
     }
 
+    void FrPrismaticLink::UpdateForces(double time) {
+        Force force;
+        Torque torque;
+        force.GetFz() = - m_stiffness * GetLinkPosition() - m_damping * GetLinkVelocity();
+
+        // Using force model from motor
+
+        SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
+    }
+
+    void FrPrismaticLink::UpdateCache() {
+        m_restLength = m_frame2WRT1_reference.GetZ(NWU);
+        // FIXME : attention si la liaison n'est pas resolue !!! Ca ne fonctionne pas
+    }
 
     std::shared_ptr<FrPrismaticLink>
     make_prismatic_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system) {

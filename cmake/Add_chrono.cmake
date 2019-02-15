@@ -7,19 +7,15 @@ find_package(chrono QUIET)
 if (NOT chrono_FOUND)
     include(FetchContent)
 
-    set(chrono_URL "https://github.com/projectchrono/chrono.git")
     FetchContent_Declare(chrono
             GIT_REPOSITORY ${chrono_URL}
-            GIT_TAG 934064d2ccf8e9690373a0fd03c93e91c7f4b2c8
+            GIT_TAG ${chrono_TAG}
             GIT_PROGRESS 1
-            PATCH_COMMAND git apply "${PROJECT_SOURCE_DIR}/cmake/patches/chrono_934064d2ccf8e9690373a0fd03c93e91c7f4b2c8.patch"
+            PATCH_COMMAND git apply ${PROJECT_SOURCE_DIR}/cmake/patches/${chrono_PATCH}
             )
 
 
     FetchContent_GetProperties(chrono)
-#    message(STATUS ${chrono_POPULATED})
-#    message(STATUS ${chrono_SOURCE_DIR})
-#    message(STATUS ${chrono_BINARY_DIR})
     if(NOT chrono_POPULATED)
 
         message(STATUS "Downloading, Configuring and Generating 'chrono' dependency")

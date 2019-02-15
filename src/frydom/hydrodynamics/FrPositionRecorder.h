@@ -38,49 +38,31 @@ namespace frydom {
         FrPositionRecorder() = default;
 
         /// Set size of the recorder
-        void SetSize(unsigned int size) { m_size = size; }
+        void SetSize(unsigned int size);
 
         /// Return the size of the recorder
-        unsigned int GetSize() const { return m_size; }
+        unsigned int GetSize() const;
 
         /// Set the body object linked to the recorder
-        void SetBody(FrBody* body) { m_body = body; }
+        void SetBody(FrBody* body);
 
         /// Return the body object linked to the recorder
-        FrBody* GetBody() const { return m_body; }
+        FrBody* GetBody() const;
 
         /// Initialization step
-        void Initialize() override {
-            m_positions.reserve(3);
-            for (unsigned int i=0; i<3; i++) {
-                m_positions.emplace_back(boost::circular_buffer<double>(m_size, m_size, 0.));
-            }
-        }
+        void Initialize() override;
 
         /// Return last time saved in the recorder
-        double GetTime() const { return m_lastTime; }
+        double GetTime() const;
 
         /// Save current velocity into recorder
-        void RecordPosition() {
-
-            auto currentTime = m_body->GetChTime();
-            if (m_lastTime == currentTime) return;
-            m_lastTime = currentTime;
-
-            auto linear_position = m_body->GetPos();
-
-            m_positions[0].push_front(linear_position[0]);
-            m_positions[1].push_front(linear_position[1]);
-            m_positions[2].push_front(linear_position[2]);
-        }
+        void RecordPosition();
 
         /// Return the velocity recorded for specific dof
-        boost::circular_buffer<double> GetRecordOnDOF(unsigned int iDOF) const {
-            return m_positions[iDOF];
-        }
+        boost::circular_buffer<double> GetRecordOnDOF(unsigned int iDOF) const;
 
         /// Method executed at the end of each time step
-        void StepFinalize() override {}
+        void StepFinalize() override;
     };
 
 }   // end namespace frydom

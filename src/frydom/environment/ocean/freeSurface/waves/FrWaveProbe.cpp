@@ -14,6 +14,7 @@
 #include "FrWaveProbe.h"
 #include "frydom/core/junk/FrHydroBody.h"
 #include "frydom/core/common/FrNode.h"
+#include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
 
 
 namespace frydom {
@@ -118,10 +119,11 @@ namespace frydom {
         // Applying the wave ramp
         auto waveRamp = m_waveField->GetWaveRamp();
         if (waveRamp && waveRamp->IsActive()) {
-            m_waveField->GetWaveRamp()->Apply(
-                    m_waveField->GetTime(),
-                    realElev
-            );
+            realElev *= waveRamp->Get_y(m_waveField->GetTime());
+//            m_waveField->GetWaveRamp()->Apply(
+//                    m_waveField->GetTime(),
+//                    realElev
+//            );
         }
         return realElev;
 
@@ -229,10 +231,11 @@ namespace frydom {
         // Applying the wave ramp
         auto waveRamp = m_waveField->GetWaveRamp();
         if (waveRamp && waveRamp->IsActive()) {
-            m_waveField->GetWaveRamp()->Apply(
-                    m_waveField->GetTime(),
-                    realElev
-            );
+            realElev *= waveRamp->Get_y(m_waveField->GetTime());
+//            m_waveField->GetWaveRamp()->Apply(
+//                    m_waveField->GetTime(),
+//                    realElev
+//            );
         }
         return realElev;
     }

@@ -16,6 +16,7 @@ image: alpine
 
 test:
     script:
+        - rm -rf build
         - mkdir build
         - cd build
         - cmake ..
@@ -33,3 +34,10 @@ pages:
             - public
     only:
         - master
+        
+theory:
+    script:
+        - cd docs/theory_manual
+        - make html
+        - scp -r ./build/html/* frydomusqo@ssh.cluster027.hosting.ovh.net:/homez.363/frydomusqo/theory-guide
+        

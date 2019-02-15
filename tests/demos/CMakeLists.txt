@@ -23,7 +23,7 @@ foreach(test ${DEMOS})
     message(STATUS "        ...add ${test}")
 
     add_executable(${test} ${test}.cpp)
-    target_link_libraries(${test} FRyDoM_Engine matplotlib-cpp)
+    target_link_libraries(${test} FRyDoM_Engine)
 
 endforeach()
 
