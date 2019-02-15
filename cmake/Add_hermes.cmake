@@ -6,10 +6,10 @@ if (NOT hermes_FOUND)
 
     #    set(FETCHCONTENT_QUIET OFF)
 
-    set(hermes_URL "git@d-ice.githost.io:essai_cmake/hermes.git")
+    set(hermes_URL git@frydom-ce.org:ce/hermes.git)
     FetchContent_Declare(hermes
             GIT_REPOSITORY ${hermes_URL}
-            GIT_TAG master
+            GIT_TAG v1.0
             )
 
     FetchContent_GetProperties(hermes)
