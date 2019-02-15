@@ -60,7 +60,11 @@ namespace frydom {
 
     void FrFlowBase::Initialize() {
         m_field->Initialize();
-        c_ramp = GetEnvironment()->GetTimeRamp()->Get_y(m_time);
+        if (GetEnvironment()->GetTimeRamp()->IsActive()) {
+            c_ramp = GetEnvironment()->GetTimeRamp()->Get_y(m_time);
+        } else {
+            c_ramp = 1.;
+        }
     }
 
     void FrFlowBase::Update(double time) {
@@ -70,7 +74,11 @@ namespace frydom {
 
     void FrFlowBase::StepFinalize() {
         m_field->StepFinalize();
-        c_ramp = GetEnvironment()->GetTimeRamp()->Get_y(m_time);
+        if (GetEnvironment()->GetTimeRamp()->IsActive()) {
+            c_ramp = GetEnvironment()->GetTimeRamp()->Get_y(m_time);
+        } else {
+            c_ramp = 1.;
+        }
     }
 
     // ---------------------------------------------------------
