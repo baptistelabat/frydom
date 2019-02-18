@@ -46,6 +46,8 @@ TEST(FrWaveField,regularWaveField){
     waveField->SetWavePeriod(wavePeriod);
     waveField->SetDirection(waveDirection, fc, dc);
 
+    system.Initialize();
+
     // Test getters
     EXPECT_NEAR(waveHeight, waveField->GetWaveHeight(), 1e-8);
     EXPECT_NEAR(wavePeriod, waveField->GetWavePeriod(S), 1e-8);
