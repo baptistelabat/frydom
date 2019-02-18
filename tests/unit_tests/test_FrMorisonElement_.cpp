@@ -225,7 +225,7 @@ void TestMorison::SetUp() {
     body = std::make_shared<FrBody_>();
     system.AddBody(body);
 //    system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
-//    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(-41.38,NWU);
+    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(-41.38,NWU);
 }
 
 void TestMorison::LoadData(std::string filename) {
