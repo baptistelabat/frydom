@@ -47,7 +47,8 @@ namespace frydom {
 
         double computeDraft();
 
-        double inline computeVolume(double Zt){
+        double inline computeVolume(){
+            auto Zt = computeDraft();
             c_volume = M_PI/3 * (Zt*(3*m_radius*m_radius - Zt*Zt) + 2*std::pow(m_radius,3));
         }
 
