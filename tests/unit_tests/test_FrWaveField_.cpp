@@ -46,11 +46,13 @@ TEST(FrWaveField,regularWaveField){
     waveField->SetWavePeriod(wavePeriod);
     waveField->SetDirection(waveDirection, fc, dc);
 
+    system.Initialize();
+
     // Test getters
-    EXPECT_DOUBLE_EQ(waveHeight, waveField->GetWaveHeight());
-    EXPECT_DOUBLE_EQ(wavePeriod, waveField->GetWavePeriod(S));
-    EXPECT_DOUBLE_EQ(waveLength, waveField->GetWaveLength());
-    EXPECT_DOUBLE_EQ(0.,waveField->GetDirectionAngle(DEG,fc,dc));
+    EXPECT_NEAR(waveHeight, waveField->GetWaveHeight(), 1e-8);
+    EXPECT_NEAR(wavePeriod, waveField->GetWavePeriod(S), 1e-8);
+    EXPECT_NEAR(waveLength, waveField->GetWaveLength(), 1e-8);
+    EXPECT_NEAR(0.,waveField->GetDirectionAngle(DEG,fc,dc), 1e-8);
     Direction testDirection = Direction(NORTH(fc)) - waveField->GetDirection(fc,dc);
     EXPECT_TRUE(testDirection.isZero());
 
@@ -71,14 +73,14 @@ TEST(FrWaveField,regularWaveField){
 
     // test at T = Tw/4
     system.AdvanceOneStep(0.25*wavePeriod);
-    EXPECT_DOUBLE_EQ(0.25*wavePeriod,system.GetTime());
+    EXPECT_NEAR(0.25*wavePeriod,system.GetTime(), 1e-8);
     //          test Elevation
-    EXPECT_DOUBLE_EQ(waveHeight, -waveField->GetElevation(0.,0., fc));
-    EXPECT_DOUBLE_EQ(waveHeight, -waveField->GetElevation(waveLength,0., fc));
-    EXPECT_DOUBLE_EQ(waveHeight,  waveField->GetElevation(0.5*waveLength,0., fc));
-    EXPECT_DOUBLE_EQ(waveHeight, -waveField->GetElevation(0,1., fc));
+    EXPECT_NEAR(waveHeight, -waveField->GetElevation(0.,0., fc), 1e-8);
+    EXPECT_NEAR(waveHeight, -waveField->GetElevation(waveLength,0., fc), 1e-8);
+    EXPECT_NEAR(waveHeight,  waveField->GetElevation(0.5*waveLength,0., fc), 1e-8);
+    EXPECT_NEAR(waveHeight, -waveField->GetElevation(0,1., fc), 1e-8);
     //          test Velocity
-    EXPECT_DOUBLE_EQ(waveHeight*omega, -waveField->GetVelocity(0.,0.,0., fc).GetVx());
+    EXPECT_NEAR(waveHeight*omega, -waveField->GetVelocity(0.,0.,0., fc).GetVx(), 1e-8);
     EXPECT_NEAR(0., waveField->GetVelocity(0.,0.,0., fc).GetVy(), 1e-8);
     EXPECT_NEAR(0., waveField->GetVelocity(0.,0.,0., fc).GetVz(), 1e-8);
     //          test Acceleration
@@ -94,7 +96,7 @@ TEST(FrWaveField,regularWaveField){
     system.AdvanceOneStep(0.25*wavePeriod); // to be sure the wave is not symmetric around the origin
     auto testElevation = waveField->GetElevation(-0.1*waveLength,0., fc);
     system.AdvanceOneStep(0.1*wavePeriod);
-    EXPECT_DOUBLE_EQ(testElevation, waveField->GetElevation(0.,0., fc));
+    EXPECT_NEAR(testElevation, waveField->GetElevation(0.,0., fc), 1e-8);
 
     //
 

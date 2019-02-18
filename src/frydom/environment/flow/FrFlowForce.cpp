@@ -88,7 +88,7 @@ namespace frydom {
         });
 
         // Adding last term for angle equal to 2pi
-        new_element.first = 2* M_PI;
+        new_element.first = 2.* M_PI;
         new_element.second =  polar.begin()->second;
         polar.push_back( new_element );
 
