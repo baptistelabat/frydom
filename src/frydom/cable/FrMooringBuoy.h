@@ -53,7 +53,8 @@ namespace frydom {
             else {return -GetPos().z();}
         }
 
-        double inline computeVolume(double Zt){
+        double inline computeVolume(){
+            auto Zt = computeDraft();
             m_volume = M_PI/3 * (Zt*(3*m_radius*m_radius - Zt*Zt) + 2*pow(m_radius,3));
         }
 
@@ -62,8 +63,7 @@ namespace frydom {
 
         void Update(bool update_assets = true) override{
 
-            auto Zt =computeDraft();
-            m_volume = computeVolume(computeDraft());
+            computeVolume();
 
             // update parent class
             chrono::ChBodyAuxRef::Update(update_assets);

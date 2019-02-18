@@ -79,8 +79,7 @@ int main(int argc, char* argv[]) {
     // Linear Damping
 
     auto HsDamping = std::make_shared<FrLinearDamping>();
-    HsDamping->SetSeakeepingDampings(1e6, 1e6, 1e6);
-    HsDamping->SetManeuveuringDampings(1e6, 1e6, 1e6);
+    HsDamping->SetDiagonalDamping(1e6, 1e6, 1e6,1e6, 1e6, 1e6);
     barge->AddForce(HsDamping);
 
     // Hydrodynamics
