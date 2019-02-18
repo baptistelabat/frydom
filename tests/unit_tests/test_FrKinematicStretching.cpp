@@ -24,7 +24,8 @@ TEST(FrKinematicStretching,FrKinematicStretching){
 
     FrOffshoreSystem_ system;
     auto wavefield = system.GetEnvironment()->GetOcean()->GetFreeSurface()->SetAiryRegularWaveField(1.,10.,0.,RAD,NWU,GOTO);
-//    wavefield->Initialize();
+
+    system.Initialize();
 
     // No kinematic stretching
     FrKinematicStretching_ kinStretch;
