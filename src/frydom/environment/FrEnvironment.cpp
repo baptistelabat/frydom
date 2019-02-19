@@ -275,6 +275,7 @@ namespace frydom {
         m_atmosphere            = std::make_unique<FrAtmosphere_>(this);
 
         m_timeRamp              = std::make_unique<FrLinearRampFunction_>();
+        m_timeRamp->SetActive(false);
 
 //        if (not(m_infinite_depth)) m_seabed->SetEnvironment(this); // TODO : voir a porter ca dans seabed...
 
@@ -357,7 +358,6 @@ namespace frydom {
 
     void FrEnvironment_::Initialize() {
         m_timeRamp->Initialize();
-        m_timeRamp->SetActive(false);
 
         m_ocean->Initialize();
         m_atmosphere->Initialize();

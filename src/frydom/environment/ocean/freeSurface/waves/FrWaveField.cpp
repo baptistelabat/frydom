@@ -974,7 +974,9 @@ namespace frydom {
 
     void FrWaveField_::Update(double time) {
         c_time = time;
-        c_ramp = m_freeSurface->GetOcean()->GetEnvironment()->GetTimeRamp()->Get_y(c_time);
+        if (m_freeSurface->GetOcean()->GetEnvironment()->GetTimeRamp()->IsActive()) {
+            c_ramp = m_freeSurface->GetOcean()->GetEnvironment()->GetTimeRamp()->Get_y(c_time);
+        }
         if (!m_infinite_depth) {c_depth = m_freeSurface->GetOcean()->GetDepth(NWU);};
     }
 
