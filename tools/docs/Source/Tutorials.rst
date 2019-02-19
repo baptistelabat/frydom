@@ -8,7 +8,7 @@ Starting from an empty Python script, it is necessary to include two libraries:
 
 .. code-block:: python
 
-    from HDF5 import HDB5
+    from HDB5 import HDB5
     import numpy as np
 
 A main function has to be defined:
@@ -21,7 +21,7 @@ The script ends with:
 
 .. code-block:: python
 
-    if __name__ = "__main__":
+    if __name__ == "__main__":
        main()
 
 The name of the script along with its location are unimportant. Every directory for both the input and output files will be specified in the script.
