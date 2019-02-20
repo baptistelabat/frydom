@@ -46,4 +46,9 @@ namespace frydom {
 
     }
 
+    void FrForceAsset_::StepFinalize() {
+
+
+    }
+
 } // end namespace frydom

@@ -214,20 +214,6 @@ namespace frydom{
         // Add these assets to the chronoAsset
         m_chronoAsset->AddAsset(meshAsset);
         m_chronoAsset->AddAsset(colorAsset);
-
-//        m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
-//        m_meshAsset->SetMesh(*mesh);
-//
-//        auto color = FrColor(m_color);
-//        m_colorAsset = std::make_shared<chrono::ChColorAsset>(chrono::ChColor(color.R, color.G, color.B));
-//
-//        // Create an asset level for meshAsset and colorAsset
-//        auto GridAssetLevel = std::make_shared<chrono::ChAssetLevel>();
-//        GridAssetLevel->AddAsset(m_meshAsset);
-//        GridAssetLevel->AddAsset(m_colorAsset);
-
-        // Add the asset level to the body
-//        m_body->m_chronoBody->AddAsset(GridAssetLevel);
     }
 
     void FrGridAsset::SetGridHeight(double height) {m_gridHeight = height;}

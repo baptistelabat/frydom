@@ -223,7 +223,8 @@ namespace frydom {
         /// This subroutine initializes the object FrForce.
         void Initialize() override;
 
-//        void StepFinalize() override;
+        // TODO : boucle de StepFinalize à mettre en place dans FrBody_
+        void StepFinalize() override;
 
         /// Virtual function to allow updating the child object from the solver
         /// \param time Current time of the simulation from begining, in seconds

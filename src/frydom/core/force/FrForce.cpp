@@ -208,6 +208,12 @@ namespace frydom{
         }
     }
 
+    void FrForce_::StepFinalize() {
+        if (m_isForceAsset) {
+            m_forceAsset->StepFinalize();
+        }
+    }
+
     std::shared_ptr<chrono::ChForce> FrForce_::GetChronoForce() {
         return m_chronoForce;
     }
