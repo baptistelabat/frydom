@@ -253,8 +253,10 @@ namespace frydom {
                     break;
             }
         }
-        this->SetForceTorqueInBodyAtCOG(force, torque, NWU);
+        auto worldForce = m_equilibriumFrame->ProjectVectorFrameInParent(force, NWU);
+        auto worldTorque = m_equilibriumFrame->ProjectVectorFrameInParent(torque, NWU);
 
+        this->SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
     }
 
 

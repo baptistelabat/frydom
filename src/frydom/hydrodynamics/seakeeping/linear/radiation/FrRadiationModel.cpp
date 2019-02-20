@@ -442,6 +442,13 @@ namespace frydom {
             m_recorder[BEMBody->get()].Initialize();
         }
 
+        // ##CC
+        /*
+        l_kuFile.open("radKu.csv", std::fstream::out);
+        l_kuFile << "time;Fx;Fy;Fz;Mx;My;Mz" << std::endl;
+        */
+        // ##CC
+
     }
 
     void FrRadiationConvolutionModel_::Update(double time) {
@@ -500,6 +507,18 @@ namespace frydom {
 
             if (meanSpeed.squaredNorm() > FLT_EPSILON) {
                 radiationForce += ConvolutionKu(meanSpeed.norm());
+
+                // ##CC debug
+                /*
+                auto radKu = ConvolutionKu(meanSpeed.norm());
+                l_kuFile << time << ";" << radKu.GetForce().GetFx() << ";"
+                                        << radKu.GetForce().GetFy() << ";"
+                                        << radKu.GetForce().GetFz() << ";"
+                                        << radKu.GetTorque().GetMx() << ";"
+                                        << radKu.GetTorque().GetMy() << ";"
+                                        << radKu.GetTorque().GetMz() << std::endl;
+                */
+                // ##CC
             }
 
             auto forceInWorld = eqFrame->ProjectVectorFrameInParent(radiationForce.GetForce(), NWU);
@@ -539,7 +558,7 @@ namespace frydom {
                 auto velocity = m_recorder.at(BEMBodyMotion->get()).GetData();
                 auto vtime = m_recorder.at(BEMBodyMotion->get()).GetTime();
 
-                for (unsigned int idof=0; idof<6; idof++) {
+                for (unsigned int idof=4; idof<6; idof++) {
 
                     auto interpKu = BEMBody->get()->GetIRFInterpolatorKu(BEMBodyMotion->get(), idof);
 
@@ -553,7 +572,7 @@ namespace frydom {
                 auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBodyMotion->get());
                 auto angular = eqFrame->GetAngularPerturbationVelocityInFrame();
 
-                auto damping = Ainf.col(2) * angular.y() - Ainf.col(1) * angular.x();
+                auto damping = Ainf.col(2) * angular.y() - Ainf.col(1) * angular.z();
                 radiationForce += meanSpeed * damping;
             }
 

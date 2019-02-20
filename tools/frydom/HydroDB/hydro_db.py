@@ -1236,6 +1236,10 @@ class RadiationDB(_FreqDB):
         for j in range(w.size):
             cm_diff[:, j, :] = cm_inf[:, :] - cm[:, j, :]
 
+        cm_diff[:, :, 0] = 0.
+        cm_diff[:, :, 1] = 0.
+        cm_diff[:, :, 2] = 0.
+        cm_diff(:, :, 3] = 0.
         cm_diff[:, :, 4] = -cm_diff[:, :, 2]
         cm_diff[:, :, 5] = cm_diff[:, :, 1]
 

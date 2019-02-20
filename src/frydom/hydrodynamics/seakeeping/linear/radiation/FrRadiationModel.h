@@ -193,9 +193,17 @@ namespace frydom {
         double m_Te = -9.;
         double m_dt = -9.;
 
+        std::fstream l_kuFile; // TODO : debug
+
     public:
 
         FrRadiationConvolutionModel_(std::shared_ptr<FrHydroDB_> HDB);
+
+        // ##CC
+        /*
+        ~FrRadiationConvolutionModel_() {l_kuFile.close(); }
+        */
+        // ##CC
 
         void Initialize() override;
 

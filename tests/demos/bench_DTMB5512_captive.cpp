@@ -66,6 +66,7 @@ public:
 
         outfile.open(filename + ".csv", std::fstream::out);
         outfile << "time;x;y;z;rx;ry;rz;"
+                << "x_eq;y_eq;z_eq;rx_eq;ry_eq;rz_eq;"
                 << "Fh_X;Fh_Y;Fh_Z;Fh_MX;Fh_MY;Fh_MZ;"
                 << "Fe_X;Fe_Y;Fe_Z;Fe_MX;Fe_MY;Fe_MZ;"
                 << "Fwd_X;Fwd_Y;Fwd_Z;Fwd_MX;Fwd_MY;Fwd_MZ;"
@@ -78,6 +79,7 @@ public:
                 << std::endl;
 
         outfile << "s;m;m;m;rad;rad;rad;"
+                << "m;m;m;rad;rad;rad;"
                 << "N;N;N;Nm;Nm;Nm;"
                 << "N;N;N;Nm;Nm;Nm;"
                 << "N;N;N;Nm;Nm;Nm;"
@@ -91,6 +93,7 @@ public:
     }
 
     void Write(double time, Position bodyPosition, FrRotation_ bodyRotation,
+               Position eqPos, FrRotation_ eqRot,
                Force Fh_force, Torque Fh_torque,
                Force Fe_force, Torque Fe_torque,
                Force Fwd_force, Torque Fwd_torque,
@@ -104,6 +107,9 @@ public:
         double Rx, Ry, Rz;
         bodyRotation.GetCardanAngles_RADIANS(Rx, Ry, Rz, NWU);
 
+        double rxEq, ryEq, rzEq;
+        eqRot.GetCardanAngles_RADIANS(rxEq, ryEq, rzEq, NWU);
+
         Force Fdelta_force = Ftot_force
                             - Fh_force - Fe_force - Fwd_force - Fittc_force
                             - Fuser_pitch_force - Fuser_heave_force - Frad_conv_force;
@@ -115,6 +121,8 @@ public:
         outfile << time << ";"
                 << bodyPosition.GetX() << ";" << bodyPosition.GetY() << ";" << bodyPosition.GetZ() << ";"
                 << Rx << ";" << Ry << ";" << Rz << ";"
+                << eqPos.GetX() << ";" << eqPos.GetY() << ";" << eqPos.GetZ() << ";"
+                << rxEq << ";" << ryEq << ";" << rzEq << ";"
                 << Fh_force.GetFx() << ";" << Fh_force.GetFy() << ";" << Fh_force.GetFz() << ";"
                 << Fh_torque.GetMx() << ";" << Fh_torque.GetMy() << ";" << Fh_torque.GetMz() << ";"
                 << Fe_force.GetFx() << ";" << Fe_force.GetFy() << ";" << Fe_force.GetFz() << ";"
@@ -253,8 +261,8 @@ int main(int argc, char* argv[]) {
 
     // -- Ocean
     auto ocean = system.GetEnvironment()->GetOcean();
-    ocean->GetSeabed()->SetBathymetry(-3.048, NWU);
-    ocean->SetDensity(1000.);
+    //ocean->GetSeabed()->SetBathymetry(-3.048, NWU);
+    ocean->SetDensity(1025.); // 1000.
 
     auto waveField = ocean->GetFreeSurface()->SetAiryRegularWaveField();
     waveField->SetWaveHeight(ak); // ak
@@ -264,7 +272,7 @@ int main(int argc, char* argv[]) {
 
     auto body = system.NewBody();
 
-    Position COGPosition(0., 0., 0.03);
+    Position COGPosition(0., 0., 0.038);
     FrFrame_ COGFrame(COGPosition, FrRotation_(), NWU);
 
     body->SetPosition(Position(0., 0., 0.), NWU);
@@ -286,7 +294,7 @@ int main(int argc, char* argv[]) {
     } else {
         //body->GetDOFMask()->SetLock_X(true);
         //body->GetDOFMask()->SetLock_Ry(true);
-        system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 20., 1.);
+        system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(5., 0., 20., 1.);
     }
 
     // -- Inertia
@@ -301,12 +309,26 @@ int main(int argc, char* argv[]) {
 
     body->SetInertiaTensor(InertiaTensor);
 
+    // ##CC
+    std::cout << "debug: body cog (in body): " << body->GetCOG(NWU).GetX() << ";"
+                                               << body->GetCOG(NWU).GetY() << ";"
+                                               << body->GetCOG(NWU).GetZ() << std::endl;
+
+    std::cout << "debug: body cog (in world): " << body->GetCOGPositionInWorld(NWU).GetX() << ";"
+              << body->GetCOGPositionInWorld(NWU).GetY() << ";"
+              << body->GetCOGPositionInWorld(NWU).GetZ() << std::endl;
+    // ##CC
+
     // -- Hydrodynamics
 
     auto hdb = make_hydrodynamic_database("DTMB5512.hdb5");
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());
+    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get(), false);
     //eqFrame->InitSpeedFromBody(true);
+    //auto eqFrame = std::make_shared<FrEqFrameMeanMotion_>(body.get(), 60., 0.01, false);
+    eqFrame->SetPosition(Position(0., 0., 0.), NWU);
+    eqFrame->SetVelocityInWorld(Velocity(speed, 0., 0.), NWU);
+
     system.AddPhysicsItem(eqFrame);
 
     hdb->Map(0, body.get(), eqFrame);
@@ -324,7 +346,7 @@ int main(int argc, char* argv[]) {
     auto radiationForce = std::make_shared<FrRadiationConvolutionForce_>(radiationModel.get());
     body->AddExternalForce(radiationForce);
 
-    radiationModel->SetImpulseResponseSize(body.get(), 10., 0.01);
+    radiationModel->SetImpulseResponseSize(body.get(), 20., 0.01);
 
     // ##CC for monitoring
     auto radiationAddedMassForce = std::make_shared<AddedMassRadiationForce>(hdb.get(), body.get());
@@ -351,10 +373,10 @@ int main(int argc, char* argv[]) {
     // -- Steady force
 
     auto forcePitch = std::make_shared<SteadyPitchTorque>();
-    body->AddExternalForce(forcePitch);
+    //body->AddExternalForce(forcePitch);
 
     auto forceHeave = std::make_shared<SteadyHeaveForce>();
-    body->AddExternalForce(forceHeave);
+    //body->AddExternalForce(forceHeave);
 
     // -- Simulation
 
@@ -363,6 +385,17 @@ int main(int argc, char* argv[]) {
     system.SetTimeStep(dt);
     system.Initialize();
 
+    // ##CC
+    std::cout << "debug: after initiliaze" << std::endl;
+    std::cout << "debug: body cog (in body): " << body->GetCOG(NWU).GetX() << ";"
+              << body->GetCOG(NWU).GetY() << ";"
+              << body->GetCOG(NWU).GetZ() << std::endl;
+
+    std::cout << "debug: body cog (in world): " << body->GetCOGPositionInWorld(NWU).GetX() << ";"
+              << body->GetCOGPositionInWorld(NWU).GetY() << ";"
+              << body->GetCOGPositionInWorld(NWU).GetZ() << std::endl;
+    // ##CC
+
     double time = 0.;
 
     // ##CC
@@ -370,18 +403,17 @@ int main(int argc, char* argv[]) {
     log.Open(name);
     // ##CC
 
-    while (time < 100.) {
+    while (time < 50.) {
         time += dt;
+        system.AdvanceTo(time);
 
         // ##CC test user define velocity
-        auto vel = body->GetVelocityInWorld(NWU);
-        body->SetGeneralizedVelocityInWorld(Velocity(speed, vel.y(), vel.z()),
+        auto vel = body->GetCOGVelocityInWorld(NWU);
+        body->SetGeneralizedVelocityInWorldAtPointInBody(body->GetCOG(NWU), Velocity(speed, vel.y(), vel.z()),
                                             body->GetAngularVelocityInWorld(NWU), NWU);
         //body->SetVelocityInBodyNoRotation(BodyVelocity(time, Tk, 2.*ak), NWU);
         //body->SetCOGAngularVelocityInWorld(BodyAngularVelocity(time, Tk, 10.), NWU);
         // ##CC
-
-        system.AdvanceTo(time);
 
         // ##CC monitoring
         std::cout << "time : " << time << " ; position of the body = "
@@ -396,15 +428,21 @@ int main(int argc, char* argv[]) {
                   << body->GetVelocityInWorld(NWU).GetVz()
                   << std::endl;
 
-        //std::cout << " Position of the Equilibrium frame : "
-        //          << eqFrame->GetPosition(NWU).GetX() << ";"
-        //          << eqFrame->GetPosition(NWU).GetY() << ";"
-        //          << eqFrame->GetPosition(NWU).GetZ() << std::endl;
+        std::cout << " Position of the Equilibrium frame : "
+                  << eqFrame->GetPosition(NWU).GetX() << ";"
+                  << eqFrame->GetPosition(NWU).GetY() << ";"
+                  << eqFrame->GetPosition(NWU).GetZ() << std::endl;
+
+        std::cout << " Velocity of the Equilibrium frame : "
+                  << eqFrame->GetVelocityInWorld(NWU).GetVx() << ";"
+                  << eqFrame->GetVelocityInWorld(NWU).GetVy() << ";"
+                  << eqFrame->GetVelocityInWorld(NWU).GetVz() << std::endl;
 
         radiationAddedMassForce->Update(body.get());
 
         log.Write(time,
-            body->GetPosition(NWU), body->GetRotation(),
+            body->GetCOGPositionInWorld(NWU), body->GetRotation(),
+            eqFrame->GetPosition(NWU), eqFrame->GetRotation(),
             forceHst->GetForceInWorld(NWU),forceHst->GetTorqueInBodyAtCOG(NWU),
             excitationForce->GetForceInWorld(NWU), excitationForce->GetTorqueInBodyAtCOG(NWU),
             waveDriftForce->GetForceInWorld(NWU), waveDriftForce->GetTorqueInBodyAtCOG(NWU),
