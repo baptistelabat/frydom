@@ -202,9 +202,9 @@ namespace frydom{
 
         if (m_isForceAsset) {
             assert(m_forceAsset==nullptr);
-            auto ForceAsset = std::make_shared<FrForceAsset_>(this);
-            m_forceAsset = ForceAsset.get();
-            m_body->AddAsset(ForceAsset);
+            m_forceAsset = std::make_shared<FrForceAsset_>(this);
+            m_forceAsset->Initialize();
+            m_body->AddAsset(m_forceAsset);
         }
     }
 

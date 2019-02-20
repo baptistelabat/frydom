@@ -125,7 +125,7 @@ namespace frydom {
         _FrBodyBase::_FrBodyBase(FrBody_ *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
 
         void _FrBodyBase::SetupInitial() {
-            chrono::ChBodyAuxRef::SetupInitial();
+//            chrono::ChBodyAuxRef::SetupInitial();
         }
 
         void _FrBodyBase::Update(bool update_assets) {
@@ -417,7 +417,7 @@ namespace frydom {
 
             bool asserted=false;
             for (int ia=0;ia<m_assets.size();++ia){
-                if (m_assets[ia].get()==force->m_forceAsset){
+                if (m_assets[ia]==force->m_forceAsset){
                     m_assets.erase(m_assets.begin()+ia);
                     asserted=true;
                 }

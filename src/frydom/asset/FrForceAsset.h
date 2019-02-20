@@ -85,25 +85,25 @@ namespace frydom {
      */
     class FrForceAsset_;
 
-    namespace internal{
-
-        struct FrForceAssetBase_ : public chrono::ChGlyphs {
-
-            FrForceAsset_ * m_frydomForceAsset;
-
-            explicit FrForceAssetBase_(FrForceAsset_ * forceAsset);
-
-            void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) override;
-
-        };
-
-    }
+//    namespace internal{
+//
+//        struct FrForceAssetBase_ : public chrono::ChGlyphs {
+//
+//            FrForceAsset_ * m_frydomForceAsset;
+//
+//            explicit FrForceAssetBase_(FrForceAsset_ * forceAsset);
+//
+//            void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) override;
+//
+//        };
+//
+//    }
 
 
     class FrForceAsset_ : public FrAsset {
 
     private:
-        std::shared_ptr<internal::FrForceAssetBase_> m_chronoAsset;
+//        std::shared_ptr<internal::FrForceAssetBase_> m_chronoForceAsset;
 
         FrForce_* m_force;  //< The force that this asset represents
         double OrderOfMagnitude;
@@ -116,13 +116,17 @@ namespace frydom {
         // TODO ajouter flag pour dire si on affiche la force qui s'applique ou la force delivree pour la visu (propulseurs...)
 
     protected:
-        std::shared_ptr<chrono::ChAsset> GetChronoAsset() override;
+//        std::shared_ptr<chrono::ChAsset> GetChronoAsset() override;
 
     public:
 
         explicit FrForceAsset_(FrForce_* force);
 
-        void Update();
+        void Initialize() override;
+
+        void Update() override;
+
+        void StepFinalize() override {};
 
         friend void FrBody_::RemoveExternalForce(std::shared_ptr<frydom::FrForce_>);
 
