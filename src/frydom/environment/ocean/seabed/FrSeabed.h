@@ -275,7 +275,7 @@ namespace frydom {
     class FrMeanSeabed_  : public FrSeabed_ {
     protected:
 
-        FrOcean_* m_ocean;            ///< Pointer to the ocean containing this asset
+//        FrOcean_* m_ocean;            ///< Pointer to the ocean containing this asset
         bool m_showSeabed = true;     ///< Boolean checking if the seabed is shown/exists
                                       ///< It is turned to false also if the infinite depth condition is enforced.
         std::shared_ptr<FrSeabedGridAsset> m_SeabedGridAsset;    ///> Seabed grid asset, containing also its asset visualization

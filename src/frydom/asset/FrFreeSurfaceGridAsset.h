@@ -39,6 +39,8 @@ namespace frydom {
         /// \param time time of the simulation
 //        void Update(double time) override;
 
+        void Update() override {};
+
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 

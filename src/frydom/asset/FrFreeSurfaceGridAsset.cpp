@@ -32,7 +32,8 @@ namespace frydom{
     void FrFreeSurfaceGridAsset::StepFinalize() {
         FrGridAsset::StepFinalize();
         if (fmod(c_currentStep,m_updateStep)==0) {
-            auto& mesh = m_meshAsset->GetMesh();
+//            auto& mesh = m_meshAsset->GetMesh();
+            auto& mesh = dynamic_cast<chrono::ChTriangleMeshShape*>(m_chronoAsset->GetAssetN(0).get())->GetMesh();
             auto nbNodes = mesh.m_vertices.size();
             for (unsigned int inode = 0; inode < nbNodes; ++inode) {
                 mesh.m_vertices[inode].z() = m_freeSurface->GetPosition(mesh.m_vertices[inode].x(),

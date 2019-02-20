@@ -561,6 +561,7 @@ namespace frydom {
             m_tidal->Initialize();
             m_waveField->Initialize();
             m_freeSurfaceGridAsset->Initialize();
+            m_ocean->GetEnvironment()->GetSystem()->GetWorldBody()->AddAsset(m_freeSurfaceGridAsset);
         }
     }
 

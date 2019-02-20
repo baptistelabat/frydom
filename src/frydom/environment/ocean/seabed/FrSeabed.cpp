@@ -302,7 +302,11 @@ namespace frydom {
     void FrMeanSeabed_::Update(double time) {}
 
     void FrMeanSeabed_::Initialize() {
-        if (m_showSeabed) m_SeabedGridAsset->Initialize();
+        if (m_showSeabed) {
+            m_SeabedGridAsset->Initialize();
+            m_ocean->GetEnvironment()->GetSystem()->GetWorldBody()->AddAsset(m_SeabedGridAsset);
+        }
+
     }
 
     void FrMeanSeabed_::StepFinalize() {
