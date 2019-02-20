@@ -262,7 +262,7 @@ int main(int argc, char* argv[]) {
     // -- Ocean
     auto ocean = system.GetEnvironment()->GetOcean();
     //ocean->GetSeabed()->SetBathymetry(-3.048, NWU);
-    ocean->SetDensity(1025.); // 1000.
+    ocean->SetDensity(1000.); // 1000.
 
     auto waveField = ocean->GetFreeSurface()->SetAiryRegularWaveField();
     waveField->SetWaveHeight(ak); // ak
@@ -272,7 +272,7 @@ int main(int argc, char* argv[]) {
 
     auto body = system.NewBody();
 
-    Position COGPosition(0., 0., 0.038);
+    Position COGPosition(0., 0., 0.03);
     FrFrame_ COGFrame(COGPosition, FrRotation_(), NWU);
 
     body->SetPosition(Position(0., 0., 0.), NWU);
@@ -326,7 +326,7 @@ int main(int argc, char* argv[]) {
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get(), false);
     //eqFrame->InitSpeedFromBody(true);
     //auto eqFrame = std::make_shared<FrEqFrameMeanMotion_>(body.get(), 60., 0.01, false);
-    eqFrame->SetPosition(Position(0., 0., 0.), NWU);
+    eqFrame->SetPosition(Position(0., 0., 0.03), NWU);
     eqFrame->SetVelocityInWorld(Velocity(speed, 0., 0.), NWU);
 
     system.AddPhysicsItem(eqFrame);
@@ -373,10 +373,10 @@ int main(int argc, char* argv[]) {
     // -- Steady force
 
     auto forcePitch = std::make_shared<SteadyPitchTorque>();
-    //body->AddExternalForce(forcePitch);
+    body->AddExternalForce(forcePitch);
 
     auto forceHeave = std::make_shared<SteadyHeaveForce>();
-    //body->AddExternalForce(forceHeave);
+    body->AddExternalForce(forceHeave);
 
     // -- Simulation
 
