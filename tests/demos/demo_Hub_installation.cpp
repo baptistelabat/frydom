@@ -27,6 +27,9 @@ int main(int argc, char* argv[]) {
     // Environment
     // --------------------------------------------------
 
+    system.GetEnvironment()->GetTimeRamp()->SetActive(true);
+    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 30., 1.);
+
     auto SeabedGridAsset = system.GetEnvironment()->GetOcean()->GetSeabed()->GetSeabedGridAsset();
     SeabedGridAsset->SetGrid(-150., 150., 3., -150., 150., 3.);
 
@@ -64,7 +67,7 @@ int main(int argc, char* argv[]) {
     makeItBox(barge, 25., 15., 3., (1137.6-180.7)*1000);
 //    barge->AddMeshAsset("barge.obj");
     barge->SetColor(Yellow);
-//    barge->SetFixedInWorld(true); //FIXME : delete this once HydroDB is added.
+//    barge->SetFixedInWorld(true);
 
 //    barge->SetInertiaTensor(FrInertiaTensor_((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., FrFrame_(), NWU));
 

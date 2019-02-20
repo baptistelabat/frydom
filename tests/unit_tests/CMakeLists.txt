@@ -29,7 +29,7 @@ set(UNIT_TESTS
         test_FrKinematicStretching
         test_FrWaveSpectrum
         test_FrQuadraticDamping
-        test_FrLinks
+        #test_FrLinks
         test_FrFunction
         )
 
@@ -58,4 +58,6 @@ foreach (subdir ${subdirs})
 endforeach ()
 
 configure_file(../data/TNR_database.h5 . COPYONLY)
+configure_file(../data/ship/Ship_PolarCurrentCoeffs.yml . COPYONLY)
+configure_file(../data/ship/Ship_PolarWindCoeffs.yml . COPYONLY)
 

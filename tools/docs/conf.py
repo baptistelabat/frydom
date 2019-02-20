@@ -51,8 +51,8 @@ extensions = [
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.graphviz',
     # 'sphinxarg.ext',
-    'sphinxcontrib.programoutput',
-    'sphinxcontrib.bibtex',
+#    'sphinxcontrib.programoutput',
+#    'sphinxcontrib.bibtex',
     'sphinx.ext.autosummary'
 ]
 

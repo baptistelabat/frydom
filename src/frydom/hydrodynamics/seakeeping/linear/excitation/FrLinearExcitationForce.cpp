@@ -197,6 +197,7 @@ namespace frydom {
 
     void FrLinearExcitationForce_::Initialize() {
 
+
         /// This subroutine initializes the excitation force object.
 
         // Initialization of the parent class.
@@ -232,7 +233,7 @@ namespace frydom {
         // Wave field structure.
         auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
-        // Wave elavtion.
+        // Wave elevation.
         auto complexElevations = waveField->GetComplexElevation(m_equilibriumFrame->GetX(NWU),
                                                               m_equilibriumFrame->GetY(NWU),
                                                               NWU);
@@ -260,6 +261,7 @@ namespace frydom {
         // From vector to force and torque structures.
         auto force = Force();
         auto torque = Torque();
+
         for (unsigned int imode=0; imode<nbMode; ++imode) {
 
             auto mode = m_HDB->GetBody(m_body)->GetForceMode(imode);
@@ -273,11 +275,14 @@ namespace frydom {
                     break;
             }
         }
-
-        // Settings: torque is already computed at CoG.
-        this->SetForceTorqueInBodyAtCOG(force, torque, NWU);
+        auto worldForce = m_equilibriumFrame->ProjectVectorFrameInParent(force, NWU);
+        auto worldTorque = m_equilibriumFrame->ProjectVectorFrameInParent(torque, NWU);
+	
+	// Settings: torque is already computed at CoG.
+        SetForceTorqueInWorldAtCOG(worldForce,worldTorque, NWU);
 
     }
+
 
     std::shared_ptr<FrLinearExcitationForce_>
     make_linear_excitation_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body){
@@ -291,6 +296,7 @@ namespace frydom {
         body->AddExternalForce(excitationForce);
 
         return excitationForce;
+
     }
 
 }  // end namespace frydom
