@@ -195,6 +195,7 @@ namespace frydom {
 
     public:
 
+        // Constructor.
         FrRadiationConvolutionModel_(std::shared_ptr<FrHydroDB_> HDB);
 
         void Initialize() override;

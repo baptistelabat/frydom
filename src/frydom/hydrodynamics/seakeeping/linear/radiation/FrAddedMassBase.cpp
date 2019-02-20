@@ -24,8 +24,13 @@ namespace frydom {
 
         FrAddedMassBase::FrAddedMassBase(FrRadiationModel_* radiationModel) :
                 m_frydomRadiationModel(radiationModel), _FrPhysicsItemBase(radiationModel) {
+
+            /// Constructor of the class.
+
             auto nBodies = radiationModel->GetHydroDB()->GetNbBodies();
             int nDof = 6*nBodies;
+
+            // Creation of a FrVariablesAddedMassBase class.
             m_variables = std::make_shared<FrVariablesAddedMassBase>(this, nDof);
         }
 

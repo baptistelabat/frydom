@@ -21,7 +21,7 @@
 
 namespace frydom {
 
-    /// This class defines an generic equilibrium frame linked with a body
+    /// This class defines a generic equilibrium frame linked with a body.
     ///
     /// The equilibrium frame is a frame with the z-axis pointing upward, internal
     /// velocities and dynamic behaviour. The generic equilibrium frame has
@@ -32,7 +32,7 @@ namespace frydom {
 
     /**
      * \class FrEquilibriumFrame_
-     * \brief This class defines an generic equilibrium frame linked with a body.
+     * \brief This class defines a generic equilibrium frame linked with a body.
      */
     class FrEquilibriumFrame_ : public FrFrame_,
                                 public FrPrePhysicsItem_ {

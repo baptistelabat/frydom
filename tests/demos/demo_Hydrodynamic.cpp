@@ -9,16 +9,103 @@
 // 
 // ==========================================================================
 
-
-
 #include "frydom/frydom.h"
 
 using namespace frydom;
 
+
+class AddedMassRadiationForce {
+
+protected :
+    FrHydroDB_* m_HDB;
+    GeneralizedForce m_force;
+    FrBody_* m_body;
+
+public:
+
+    AddedMassRadiationForce(FrHydroDB_* HDB, FrBody_* body) : m_HDB(HDB), m_body(body) {}
+
+    void Update(FrBody_* body) {
+
+        auto BEMBody = m_HDB->GetBody(body);
+        auto infiniteAddedMass = BEMBody->GetInfiniteAddedMass(BEMBody);
+
+        GeneralizedAcceleration acc;
+        acc.SetAcceleration(body->GetCOGAccelerationInWorld(NWU));
+        acc.SetAngularAcceleration(body->GetAngularAccelerationInBody(NWU));
+
+        m_force = -infiniteAddedMass * acc;
+    }
+
+    Force GetForceInWorld() {
+        return m_force.GetForce();
+    }
+
+    Torque GetTorqueInWorldAtCOG() {
+        return m_force.GetTorque();
+    }
+};
+
+class Logging {
+
+protected:
+    std::fstream outfile;
+
+public:
+
+    Logging() = default;
+
+    ~Logging() { outfile.close(); }
+
+    void Open(std::string filename) {
+
+        std::cout << "open file : " << filename << std::endl;
+
+        outfile.open(filename + ".csv", std::fstream::out);
+        outfile << "time;x;y;z;rx;ry;rz;"
+                << "vx;vy;vz;vRx;vRy;vRz;"
+                << "ax;ay;az;aRx;aRy;aRz;"
+                << "Fe_X;Fe_Y;Fe_Z;Fe_MX;Fe_MY;Fe_MZ;"
+                << "Ft_X;Ft_Y;Ft_Z;Ft_MX;Ft_MY;Ft_MZ"
+                << std::endl;
+
+        outfile << "s;m;m;m;rad;rad;rad;"
+                << "ms;ms;ms;rads;rads;rads;"
+                << "ms2;ms2;ms2;rads2;rads2;rads2;"
+                << "N;N;N;Nm;Nm;Nm;"
+                << "N;N;N;Nm;Nm;Nm"
+                << std::endl;
+    }
+
+    void Write(double time, Position bodyPosition, FrRotation_ bodyRotation,
+               Velocity bodyVelocity, AngularVelocity bodyAngularVelocity,
+               Acceleration bodyAcc, AngularAcceleration bodyAngularAcc,
+               Force Fe_force, Torque Fe_torque, Force Ft_force, Torque Ft_torque) {
+
+        double Rx, Ry, Rz;
+        bodyRotation.GetCardanAngles_RADIANS(Rx, Ry, Rz, NWU);
+
+        outfile << time << ";"
+                << bodyPosition.GetX() << ";" << bodyPosition.GetY() << ";" << bodyPosition.GetZ() << ";"
+                << Rx << ";" << Ry << ";" << Rz << ";"
+                << bodyVelocity.GetVx() << ";" << bodyVelocity.GetVy() << ";" << bodyVelocity.GetVz() << ";"
+                << bodyAngularVelocity.GetWx() << ";" << bodyAngularVelocity.GetWy() << ";" << bodyAngularVelocity.GetWz() << ";"
+                << bodyAcc.GetAccX() << ";" << bodyAcc.GetAccY() << ";" << bodyAcc.GetAccZ() << ";"
+                << bodyAngularAcc.GetWxp() << ";" << bodyAngularAcc.GetWyp() << ";" << bodyAngularAcc.GetWzp() << ";"
+                << Fe_force.GetFx() << ";" << Fe_force.GetFy() << ";" << Fe_force.GetFz() << ";"
+                << Fe_torque.GetMx() << ";" << Fe_torque.GetMy() << ";" << Fe_torque.GetMz() << ";"
+                << Ft_force.GetFx() << ";" << Ft_force.GetFy() << ";" << Ft_force.GetFz() << ";"
+                << Ft_torque.GetMx() << ";" << Ft_torque.GetMy() << ";" << Ft_torque.GetMz()
+                << std::endl;
+    };
+
+    void Close() {
+        outfile.close();
+    }
+};
+
+
 int main(int argc, char* argv[]) {
-    /** 
-     * 
-     */
 
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
     FRAME_CONVENTION fc = NWU;
@@ -38,21 +125,24 @@ int main(int argc, char* argv[]) {
     // ----- Seabed
     // Set the size of the seabed grid asset.
     auto Seabed = Ocean->GetSeabed();
-    Seabed->GetSeabedGridAsset()->SetGrid(-300., 300., 100., -300., 300., 100.);
+//    Seabed->GetSeabedGridAsset()->SetGrid(-300., 300., 100., -300., 300., 100.);
 
-    // Set the bathymetry
+    // Set the bathymetry.
     Seabed->SetBathymetry(-100, NWU);
+
+    // Ramp.
+//    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0,0,30,1);
 
     // ----- Current
     // A uniform field is also set by default for the current model. In order to set the current characteristics,
     // you need to get first this uniform field.
-    auto current = Ocean->GetCurrent()->GetFieldUniform();
-    current->SetEast(6., KNOT, GOTO);
+//    auto current = Ocean->GetCurrent()->GetFieldUniform();
+//    current->SetEast(6., KNOT, GOTO);
 
     // ----- Wind
     // The wind model is set exactly in the same manner as the current:
-    auto wind = system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform();
-    wind->SetNorth(6., KNOT, GOTO);
+//    auto wind = system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform();
+//    wind->SetNorth(6., KNOT, GOTO);
 
     // ----- Free surface
     auto FreeSurface = Ocean->GetFreeSurface();
@@ -70,7 +160,8 @@ int main(int argc, char* argv[]) {
     auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
 
     // The Airy regular wave parameters are its height, period and direction.
-    double waveHeight = 2.;
+//    double waveHeight = 2.;
+    double waveHeight = 0.1;
     double wavePeriod = 10.;
     Direction waveDirection = Direction(SOUTH(fc));
 
@@ -81,7 +172,7 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------
     // platform
     // --------------------------------------------------
-    //
+
     auto platform = system.NewBody();
     platform->SetName("platform");
     platform->AddMeshAsset("Platform_GVA7500.obj");
@@ -100,13 +191,28 @@ int main(int argc, char* argv[]) {
 
     platform->SetInertiaTensor(platformInertia);
 
+    // Initial position.
+    Position InitPosPlatform(0,0,0.1);
+    platform->SetPosition(InitPosPlatform,NWU);
+
+    // DOF
+    platform->GetDOFMask()->SetLock_X(true);
+    platform->GetDOFMask()->SetLock_Y(true);
+//    platform->GetDOFMask()->SetLock_Z(true);
+    platform->GetDOFMask()->SetLock_Rx(true);
+    platform->GetDOFMask()->SetLock_Ry(true);
+    platform->GetDOFMask()->SetLock_Rz(true);
+
     // -- Hydrodynamics
 
-    // Create a hydrodynamic database (hdb) and load data from the input file.
-    auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
+//     Create a hydrodynamic database (hdb), load data from the input file and creates and initialize the BEMBody.
+//    auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
+    auto hdb = make_hydrodynamic_database("Platform_HDB_Without_drift.hdb5");
 
-    // Create an equilibrium frame for the platform and add it to the system
-    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(platform.get());
+    // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
+//    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(platform.get());
+    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(platform.get(),false);
+    eqFrame->SetPosition(platformCoG,NWU);
     system.AddPhysicsItem(eqFrame);
 
     // Map the equilibrium frame and the body in the hdb mapper
@@ -122,34 +228,87 @@ int main(int argc, char* argv[]) {
 
     // -- Radiation
     //FIXME
-//    auto radiationModel = make_radiation_convolution_model(hdb, &system);
-//    radiationModel->SetImpulseResponseSize(platform.get(), 12., 0.1);
+    auto radiationModel = make_radiation_convolution_model(hdb, &system);
+    radiationModel->SetImpulseResponseSize(platform.get(), 40., 0.01);
+//    auto radiationAddedMassForce = std::make_shared<AddedMassRadiationForce>(hdb.get(), platform.get());
 
     // -- Wave drift force
     //TODO
 //    auto waveDriftForce = std::make_shared<>(hdb.get());
 //    platform->AddExternalForce(waveDriftForce);
 
-
     // -- Current model force, based on polar coefficients
     // Create the current model force and add it to the platform
-    auto currentForce = make_current_force("Platform_PolarCurrentCoeffs_NC.yml", platform);
+//    auto currentForce = make_current_force("Platform_PolarCurrentCoeffs_NC.yml", platform);
 
     // -- Wind model force, based on polar coefficients
     // Create the model model force and add it to the platform
-    auto windForce = make_wind_force("Platform_PolarWindCoeffs_NC.yml", platform);
-    windForce->SetIsForceAsset(true);
+//    auto windForce = make_wind_force("Platform_PolarWindCoeffs_NC.yml", platform);
+//    windForce->SetIsForceAsset(true);
 
-    // ------------------ Run ------------------ //
+    // ------------------ Run with Irrlicht ------------------ //
 
     // You can change the dynamical simulation time step using.
-    system.SetTimeStep(0.01);
+//    system.SetTimeStep(0.01);
+//    system.SetTimeStep(0.1);
+//    system.SetTimeStep(0.025);
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
     // For saving snapshots of the simulation, just turn the boolean to true.
 //    system.Visualize(50.,false);
-    system.RunInViewer(60, 300, false);
-    
-    
+//    system.RunInViewer(300, 200, false);
+
+    // ------------------ Run without Irrlicht ------------------ //
+
+    std::string name = "Output_FRyDoM";
+    Logging log;
+    log.Open(name);
+
+    auto dt = 0.01;
+    double time = 0.;
+    double Duration = 300.;
+    system.SetTimeStep(dt);
+    system.Initialize();
+
+    while (time < Duration) {
+        time += dt;
+
+        system.AdvanceTo(time);
+        std::cout << "time : "<< time << std::endl;
+
+        // ##CC monitoring
+        std::cout << "time : " << time << " ; position of the body = "
+                  << platform->GetPosition(NWU).GetX() << " ; "
+                  << platform->GetPosition(NWU).GetY() << " ; "
+                  << platform->GetPosition(NWU).GetZ()
+                  << std::endl;
+//
+//        std::cout << " velocity of the body = "
+//                  << platform->GetVelocityInWorld(NWU).GetVx() << ";"
+//                  << platform->GetVelocityInWorld(NWU).GetVy() << ";"
+//                  << platform->GetVelocityInWorld(NWU).GetVz()
+//                  << std::endl;
+
+        //std::cout << " Position of the Equilibrium frame : "
+        //          << eqFrame->GetPosition(NWU).GetX() << ";"
+        //          << eqFrame->GetPosition(NWU).GetY() << ";"
+        //          << eqFrame->GetPosition(NWU).GetZ() << std::endl;
+
+//        radiationAddedMassForce->Update(body.get());
+
+        log.Write(time,
+                  platform->GetPosition(NWU), platform->GetRotation(),
+                  platform->GetVelocityInWorld(NWU), platform->GetAngularVelocityInWorld(NWU),
+                  platform->GetCOGAccelerationInWorld(NWU), platform->GetAngularAccelerationInWorld(NWU),
+                  excitationForce->GetForceInWorld(NWU), excitationForce->GetTorqueInBodyAtCOG(NWU),
+                  platform->GetTotalForceInWorld(NWU), platform->GetTotalTorqueInBodyAtCOG(NWU)
+        );
+
+    }
+
+    log.Close();
+
+    std::cout << "====================== End ========================" << std::endl;
+
 }

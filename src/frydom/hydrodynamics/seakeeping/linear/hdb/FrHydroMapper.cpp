@@ -82,6 +82,9 @@ namespace frydom {
     /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
     void FrHydroMapper_::Map(FrBEMBody_* BEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame) {
+
+        /// This subroutine makes the mapping between a FrBody, a BEMBody and a FrEquilibriumFrame.
+
         m_mapBEMToBody[BEMBody] = body;
         m_mapBodyToBEM[body] = BEMBody;
         m_mapEqFrame[BEMBody] = eqFrame;

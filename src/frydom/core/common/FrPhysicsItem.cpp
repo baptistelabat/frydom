@@ -18,6 +18,7 @@ namespace frydom {
 
     namespace internal {
 
+        /// Constructor of the class.
         _FrPhysicsItemBase::_FrPhysicsItemBase(FrPhysicsItem_ *item) : m_frydomPhysicsItem(item) {}
 
         void _FrPhysicsItemBase::SetupInitial() {

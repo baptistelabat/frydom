@@ -21,10 +21,9 @@ namespace frydom {
     //Forward Declaration
     class FrFreeSurface_;
 
-
     /**
      * \class FrAiryRegularWaveField
-     * \brief Class which deals with regular wave fields.
+     * \brief Class which deals with regular wave fields without optimization for a better parallelization.
      */
     class FrAiryRegularWaveField : public FrWaveField_ {
     protected:

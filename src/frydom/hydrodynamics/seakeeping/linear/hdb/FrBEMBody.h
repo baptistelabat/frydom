@@ -447,8 +447,10 @@ namespace frydom {
 
         unsigned int GetNbTimeSamples() const;
 
+        /// This subroutine allocates the arrays for the hdb.
         void Initialize();
 
+        /// This subroutine runs the interpolators.
         void Finalize();
 
         //
@@ -479,6 +481,7 @@ namespace frydom {
 
         void SetExcitation(unsigned int iangle, const Eigen::MatrixXcd& excitationMatrix);
 
+        /// This subroutine computes the excitation loads from the diffraction loads and the Froude-Krylov loads.
         void ComputeExcitation();
 
         void SetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion, const Eigen::MatrixXd& CMInf);
@@ -523,6 +526,7 @@ namespace frydom {
         // Interpolators
         //
 
+        /// This subroutine interpolates the excitation loads with respect to the wave direction.
         void BuildWaveExcitationInterpolators();
 
         std::vector<Eigen::MatrixXcd> GetExcitationInterp(std::vector<double> waveFrequencies,

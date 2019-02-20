@@ -125,7 +125,6 @@ namespace frydom {
 
         Matrix66<std::complex<double>> m_steadyForce;
 
-
     public:
 
         FrLinearExcitationForce_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {};

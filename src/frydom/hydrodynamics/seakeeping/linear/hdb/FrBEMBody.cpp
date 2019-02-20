@@ -768,6 +768,8 @@ namespace frydom {
     }
 
     void FrBEMBody::SetBEMVariables() {
+
+
         m_hydroBody->SetVariables(variablesHydro);
         m_hydroBody->GetVariables<FrVariablesBEMBodyMass>()->SetInfiniteAddedMass(m_InfiniteAddedMass[0]);
     }
@@ -853,14 +855,15 @@ namespace frydom {
         return m_HDB->GetNbTimeSamples();
     }
 
-
     void FrBEMBody_::Initialize() {
+
+        /// This subroutine allocates the arrays for the hdb.
 
         assert(!m_forceModes.empty() && !m_motionModes.empty());
 
         auto nbForce = GetNbForceMode();
 
-        // --> Allocating arrays for excitations
+        /// --> Allocating arrays for excitations
 
         auto nbWaveDir = GetNbWaveDirections();
         m_excitationMask = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>(nbForce, nbWaveDir);
@@ -877,8 +880,7 @@ namespace frydom {
             m_excitation.push_back(mat);
         }
 
-        // --> Allocating arrays for radiation
-
+        /// --> Allocating arrays for radiation
         auto nbBodies = GetNbBodies();
         m_radiationMask.reserve(nbBodies);
 
@@ -897,6 +899,9 @@ namespace frydom {
     }
 
     void FrBEMBody_::Finalize() {
+
+        /// This subroutine runs the interpolators.
+
         BuildWaveExcitationInterpolators();
         //BuildIRFInterpolators();
     }
@@ -949,6 +954,9 @@ namespace frydom {
     }
 
     void FrBEMBody_::ComputeExcitation() {
+
+        /// This subroutine computes the excitation loads from the diffraction loads and the Froude-Krylov loads.
+
         for (unsigned int iangle=0; iangle<GetNbWaveDirections(); ++iangle) {
             m_excitation[iangle] = m_diffraction[iangle] + m_froudeKrylov[iangle];
         }
@@ -1072,6 +1080,8 @@ namespace frydom {
     //
 
     void FrBEMBody_::BuildWaveExcitationInterpolators() {
+
+        /// This subroutine interpolates the excitation loads with respect to the wave direction.
 
         auto nbWaveDirections = GetNbWaveDirections();
         auto nbFreq = GetNbFrequencies();

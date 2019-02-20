@@ -15,7 +15,7 @@
 namespace frydom {
 
     void FrAiryRegularOptimWaveField::InternalUpdate() {
-        c_expJwt = m_height * exp(-JJ * m_omega * c_time);
+        c_expJwt = m_height * exp(-JJ * m_omega * c_time); // m_height = Amplitude.
         c_cosTheta = cos(m_dirAngle);
         c_sinTheta = sin(m_dirAngle);
     }

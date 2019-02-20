@@ -220,6 +220,7 @@ namespace frydom {
 //        /// Force Destructor, delete the related force asset and remove it from the asset container of the body
 //        ~FrForce_();
 
+        /// This subroutine initializes the object FrForce.
         void Initialize() override;
 
 //        void StepFinalize() override;

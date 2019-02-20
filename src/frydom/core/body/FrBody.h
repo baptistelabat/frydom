@@ -527,6 +527,10 @@ namespace frydom {
         /// Remove all forces from the body
         void RemoveAllForces();
 
+        // ##CC adding for monitoring force
+        Force GetTotalForceInWorld(FRAME_CONVENTION fc) const;
+        Torque GetTotalTorqueInBodyAtCOG(FRAME_CONVENTION fc) const;
+        // ##CC
 
         // =============================================================================================================
         // NODES

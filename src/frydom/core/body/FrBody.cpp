@@ -445,7 +445,19 @@ namespace frydom {
         m_externalForces.clear();
     }
 
+    // ##CC adding for monitoring load
 
+    Force FrBody_::GetTotalForceInWorld(FRAME_CONVENTION fc) const {
+        auto chronoForce = m_chronoBody->Get_Xforce();
+        return Force(chronoForce.x(), chronoForce.y(), chronoForce.z());
+    }
+
+    Torque FrBody_::GetTotalTorqueInBodyAtCOG(FRAME_CONVENTION fc) const {
+        auto chronoTorque = m_chronoBody->Get_Xtorque();
+        return Torque(chronoTorque.x(), chronoTorque.y(), chronoTorque.z());
+    }
+
+    // ##CC
 
     // Nodes
 
@@ -503,6 +515,9 @@ namespace frydom {
     }
 
     void FrBody_::SetPosition(const Position &worldPos, FRAME_CONVENTION fc) {
+
+        /// This subroutine sets the initial position of a body in world.
+
         auto bodyFrame = GetFrame();
         bodyFrame.SetPosition(worldPos, fc);
         m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(bodyFrame));

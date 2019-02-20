@@ -197,6 +197,9 @@ namespace frydom{
 //    }
 
     void FrForce_::Initialize() {
+
+        // This subroutine initializes the object FrForce.
+
         if (m_isForceAsset) {
             assert(m_forceAsset==nullptr);
             auto ForceAsset = std::make_shared<FrForceAsset_>(this);
@@ -345,7 +348,12 @@ namespace frydom{
     // =================================================================================================================
 
     void FrForce_::SetForceInWorldAtCOG(const Force &worldForce, FRAME_CONVENTION fc) {
+
+        /// This subroutine sets a force expressed in the world at the CoG body in Chrono.
+
         auto forceTmp = worldForce;
+
+        // Transformation if not in NWU.
         if (IsNED(fc)) {
             internal::SwapFrameConvention<Force>(forceTmp);  // In NWU
         }
@@ -387,7 +395,12 @@ namespace frydom{
     }
 
     void FrForce_::SetTorqueInBodyAtCOG(const Torque& bodyTorque, FRAME_CONVENTION fc) {
+
+        /// This subroutine sets a torque expressed in the world at the CoG body in Chrono.
+
         auto torqueTmp = bodyTorque;
+
+        // Transformation if not in NWU.
         if (IsNED(fc)) {
             internal::SwapFrameConvention<Torque>(torqueTmp);  // In NWU
         }

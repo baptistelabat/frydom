@@ -271,12 +271,12 @@ class HDB5(object):
         fk_db = self._hdb.froude_krylov_db
         diff_db = self._hdb.diffraction_db
 
-        # Adjusting convention of wage direction to GOTO.
+        # Adjusting convention of wave direction to GOTO.
         if self._hdb.min_wave_dir >= -np.float32() and self._hdb.max_wave_dir <= 180. + np.float32():
-            self._hdb._wave_dirs = 180. - self._hdb._wave_dirs
+            # self._hdb._wave_dirs = 180. - self._hdb._wave_dirs
             self._hdb._wave_dirs, fk_db, diff_db = symetrize(self._hdb._wave_dirs, fk_db, diff_db)
-        else:
-            self._hdb._wave_dirs = np.fmod(self._hdb._wave_dirs + 180., 360.)
+        # else:
+            # self._hdb._wave_dirs = np.fmod(self._hdb._wave_dirs + 180., 360.)
 
         # Updating the FK and diffraction loads accordingly.
         n180 = 0
