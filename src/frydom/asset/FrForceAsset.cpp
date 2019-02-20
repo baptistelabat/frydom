@@ -14,20 +14,6 @@
 
 namespace frydom {
 
-//    namespace internal {
-//
-//        FrForceAssetBase_::FrForceAssetBase_(frydom::FrForceAsset_ *forceAsset) : m_frydomForceAsset(
-//                forceAsset) {
-//            SetDrawMode(eCh_GlyphType::GLYPH_VECTOR);
-//        }
-//
-//        void FrForceAssetBase_::Update(chrono::ChPhysicsItem *updater, const chrono::ChCoordsys<> &coords) {
-//            m_frydomForceAsset->Update();
-//        }
-//
-//
-//    } // end namespace internal
-
 
     FrForceAsset_::FrForceAsset_(FrForce_* force) : m_force(force), m_CharacteristicLength(0.005), FrAsset(){
         m_symbolscolor = chrono::ChColor(0, 0.5, 0.5, 0);
@@ -60,7 +46,4 @@ namespace frydom {
 
     }
 
-//    std::shared_ptr<chrono::ChAsset> FrForceAsset_::GetChronoAsset() {
-//        return m_chronoAsset;
-//    }
 } // end namespace frydom
