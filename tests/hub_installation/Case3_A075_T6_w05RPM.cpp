@@ -351,6 +351,6 @@ int main(int argc, char* argv[]) {
 
     auto app = FrIrrApp(system, 75);
     //app.SetShowInfos(true);
-    app.SetVideoframeSave(false);
-    app.Run();
+    app.SetVideoframeSave(true);
+    app.Run(false, true, 6000);
 }

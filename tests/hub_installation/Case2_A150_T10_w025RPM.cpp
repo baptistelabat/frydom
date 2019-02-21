@@ -34,8 +34,8 @@ int main(int argc, char* argv[]) {
     freeSurface->UpdateAssetON(); // Comment if you don't want the free surface asset to be updated during the visualisation
 
     auto linearWaveField = freeSurface->GetLinearWaveField();
-    linearWaveField->SetRegularWaveHeight(0.75);
-    linearWaveField->SetRegularWavePeriod(6);
+    linearWaveField->SetRegularWaveHeight(1.5);
+    linearWaveField->SetRegularWavePeriod(10);
     linearWaveField->SetMeanWaveDirection(180);
 
 //    system.GetEnvironment()->GetCurrent()->Set(WEST, 1.5, NED, COMEFROM, KNOT);
@@ -351,6 +351,6 @@ int main(int argc, char* argv[]) {
 
     auto app = FrIrrApp(system, 75);
     //app.SetShowInfos(true);
-    app.SetVideoframeSave(false);
-    app.Run();
+    app.SetVideoframeSave(true);
+    app.Run(false,true,6000);
 }

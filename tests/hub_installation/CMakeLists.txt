@@ -4,9 +4,9 @@
 set(HUB_INSTALLATION_TESTS
         test_hub_installation
         PoC_hub_installation
-        Case1_A075_T6_w025RPM_no_current_wind
-        Case2_A075_T6_w025RPM_with_current_wind
-        Case3_A075_T6_w05RPM_with_current_wind
+        Case1_A075_T6_w025RPM
+        Case2_A150_T10_w025RPM
+        Case3_A075_T6_w05RPM
         )
 
 # set(CMAKE_CXX_FLAGS " -lIrrlicht")
