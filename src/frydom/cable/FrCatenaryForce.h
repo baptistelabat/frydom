@@ -82,7 +82,7 @@ namespace frydom {
         void Update(double time) override;
 
         /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override {};
+        void StepFinalize() override;;
 
     };
 

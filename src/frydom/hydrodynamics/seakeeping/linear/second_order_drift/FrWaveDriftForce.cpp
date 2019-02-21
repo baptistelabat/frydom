@@ -217,7 +217,7 @@ namespace frydom {
     }
 
     void FrWaveDriftForce_::StepFinalize() {
-
+        FrForce_::StepFinalize();
     }
 
     void FrWaveDriftForce_::SetInterpolationTable() {

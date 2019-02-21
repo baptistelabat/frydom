@@ -157,6 +157,10 @@ namespace frydom {
         SetTorqueInBodyAtCOG(localTorque, NWU);
     }
 
+    void FrLinearHydrostaticForce_::StepFinalize() {
+        FrForce_::StepFinalize();
+    }
+
     std::shared_ptr<FrLinearHydrostaticForce_>
     make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body){
 

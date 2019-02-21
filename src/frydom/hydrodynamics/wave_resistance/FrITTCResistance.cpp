@@ -145,7 +145,7 @@ namespace frydom{
     }
 
     void FrITTCResistance_::StepFinalize() {
-
+        FrForce_::StepFinalize();
     }
 
 }  // end namespace frydom

@@ -40,16 +40,8 @@ namespace frydom {
             POLAR
         };
     protected:
-        /// body containing the grid asset
-        FrBody_* m_body;
-        /// Mesh asset for the visualization
-//        std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
-        /// Color asset for the visualization
-//        std::shared_ptr<chrono::ChColorAsset> m_colorAsset;
 
-        /// Boolean to check if the grid asset is updated (in position, color, etc.) during the simulation
-//        bool m_updateAsset = false;
-        /// The free surface grid asset position is updated every m_updateStep simulation steps
+        /// The grid asset position is updated every m_updateStep simulation steps
         int m_updateStep = 0;
         int c_currentStep;
 
@@ -77,7 +69,7 @@ namespace frydom {
 
     public:
         /// Default constructor of the grid asset
-        explicit FrGridAsset(FrBody_* body);
+        explicit FrGridAsset();
 
         /// grid asset is set to NOGRID and the asset is not visualized or updated
         void SetNoGrid();

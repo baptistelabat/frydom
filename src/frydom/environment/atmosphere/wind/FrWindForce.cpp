@@ -155,5 +155,9 @@ namespace frydom {
 
     }
 
+    void FrWindForce_::StepFinalize() {
+        FrForce_::StepFinalize();
+    }
+
 
 }  // end namespace frydom

@@ -33,7 +33,10 @@ namespace frydom {
     }
 
     void FrForceAsset_::Update() {
-        // TODO: voir à passer dans le StepFinalize ?
+
+    }
+
+    void FrForceAsset_::StepFinalize() {
 
         // Get the glyph asset form the AssetLevel
         auto GlyphAsset = dynamic_cast<chrono::ChGlyphs*> (m_chronoAsset->GetAssetN(0).get());
@@ -43,11 +46,6 @@ namespace frydom {
         auto forcevect = internal::Vector3dToChVector(m_force->GetForceInWorld(NWU)) * m_CharacteristicLength;
 
         GlyphAsset->SetGlyphVector(0, point, forcevect, m_symbolscolor);
-
-    }
-
-    void FrForceAsset_::StepFinalize() {
-
 
     }
 

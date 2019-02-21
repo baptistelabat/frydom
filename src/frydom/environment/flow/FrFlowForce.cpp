@@ -132,6 +132,10 @@ namespace frydom {
         FrForce_::Initialize();
     }
 
+    void FrFlowForce::StepFinalize() {
+        FrForce_::StepFinalize();
+    }
+
     void FrCurrentForce2_::Update(double time) {
 
         FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);

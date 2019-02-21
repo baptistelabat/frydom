@@ -160,7 +160,7 @@ namespace frydom {
     }
 
     void FrWindStandardForce_::StepFinalize() {
-
+        FrForce_::StepFinalize();
     }
 
 

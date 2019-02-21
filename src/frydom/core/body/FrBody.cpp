@@ -216,6 +216,12 @@ namespace frydom {
 
     void FrBody_::StepFinalize() {
         // TODO
+        // StepFinalize of forces
+        auto forceIter = force_begin();
+        for (; forceIter != force_end(); forceIter++) {
+            (*forceIter)->StepFinalize();
+        }
+
     }
 
     void FrBody_::Update() {

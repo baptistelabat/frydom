@@ -25,7 +25,9 @@ namespace frydom {
         class FrSphereNonLinearHydrostaticForce : public FrForce_{
         public:
             void Update(double time) override;
-            void StepFinalize() override {};
+            void StepFinalize() override {
+                FrForce_::StepFinalize();
+            };
         };
 
 

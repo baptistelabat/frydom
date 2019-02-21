@@ -243,7 +243,7 @@ namespace frydom {
         void Initialize() override;
 
         /// Applied method at the end of each time step
-        void StepFinalize() override {}
+        void StepFinalize() override;
 
         /// Clear all coefficients definition
         void ClearAll();

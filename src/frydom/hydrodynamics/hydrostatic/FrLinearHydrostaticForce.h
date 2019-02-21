@@ -124,7 +124,7 @@ namespace frydom {
         void Initialize() override;
 
         /// Methods to be applied at the end of each time steps
-        void StepFinalize() override { }
+        void StepFinalize() override;
     };
 
     /// This subroutine reads the modes of a body.

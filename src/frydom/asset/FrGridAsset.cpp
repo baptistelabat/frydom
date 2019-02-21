@@ -23,7 +23,7 @@
 namespace frydom{
 
 
-    FrGridAsset::FrGridAsset(FrBody_ *body): m_body(body), FrAsset() {}
+    FrGridAsset::FrGridAsset(): FrAsset() {}
 
     void FrGridAsset::SetGridType(GRID_TYPE gridType) {
         m_gridType = gridType;

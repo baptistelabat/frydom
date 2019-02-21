@@ -174,7 +174,7 @@ namespace frydom {
     }
 
     void FrCurrentStandardForce_::StepFinalize() {
-
+        FrForce_::StepFinalize();
     }
 
 

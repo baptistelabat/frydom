@@ -137,7 +137,7 @@ namespace frydom {
     }
 
     void FrQuadraticDamping_::StepFinalize() {
-
+        FrForce_::StepFinalize();
     }
 
 

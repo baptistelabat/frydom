@@ -90,7 +90,7 @@ namespace frydom {
 
         void Initialize() override {};
 
-        void StepFinalize() override {};
+        void StepFinalize() override;;
 
     private:
 

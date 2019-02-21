@@ -144,7 +144,7 @@ namespace frydom {
     }
 
     void FrLinearDamping_::StepFinalize() {
-
+        FrForce_::StepFinalize();
     }
 
     void FrLinearDamping_::Check() const {

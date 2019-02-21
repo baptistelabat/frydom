@@ -133,7 +133,7 @@ namespace frydom {
 
         void Update(double time) override;
 
-        void StepFinalize() override { }
+        void StepFinalize() override;
 
     };
 
