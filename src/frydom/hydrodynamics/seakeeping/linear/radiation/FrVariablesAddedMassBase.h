@@ -57,6 +57,8 @@ namespace frydom {
 
             chrono::ChMatrix<double> GetVariablesFb(FrBody_* body) const;
 
+            chrono::ChMatrix<double> GetVariablesQb(FrBody_* body) const;
+
         };
 
     }
