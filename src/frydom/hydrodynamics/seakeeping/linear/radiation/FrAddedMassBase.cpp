@@ -87,8 +87,8 @@ namespace frydom {
 
                 auto bodyOffset = off_v - offset_w + GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
-                m_variables->Get_qb().PasteClippedMatrix(v, bodyOffset, 0, 6, 1, bodyOffset, 0);
-                m_variables->Get_fb().PasteClippedMatrix(R, bodyOffset, 0, 6, 1, bodyOffset, 0);
+                m_variables->Get_qb().PasteClippedMatrix(v, bodyOffset, 0, 6, 1, 0, 0);
+                m_variables->Get_fb().PasteClippedMatrix(R, bodyOffset, 0, 6, 1, 0, 0);
             }
         }
 
