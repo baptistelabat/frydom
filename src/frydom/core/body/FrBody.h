@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -220,19 +220,19 @@ namespace frydom {
             m_bodyMsg.AddField<double>("Xbody_MZ", "N.m", "moment acting on the body at COG (in body reference frame)", &Xtorque.z());
 
 
-            for (auto force: forcelist) {
-                auto dforce = dynamic_cast<FrForce *>(force.get());
-                m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
-            }
+//            for (auto force: forcelist) {
+//                auto dforce = dynamic_cast<FrForce *>(force.get());
+//                m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
+//            }
         }
 
         virtual void AddMessageLog(std::shared_ptr<FrForce> dforce) {
-            m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
+//            m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
             //dforce->DeactivateLog();
         }
 
         virtual void AddMessageLog(FrForce* dforce) {
-            m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
+//            m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
             //dforce->DeactivateLog();
         }
 
@@ -359,6 +359,8 @@ namespace frydom {
 
         std::unique_ptr<FrBodyDOFMask> m_DOFMask;
         std::shared_ptr<FrLink_> m_DOFLink;
+
+
 
 
     public:
