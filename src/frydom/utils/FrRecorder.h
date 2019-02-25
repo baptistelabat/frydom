@@ -292,7 +292,8 @@ namespace frydom {
 
         vtime.push_back(0.);
 
-        if (m_deltaTime > FLT_EPSILON && m_data.size() > 1) {
+        //if (m_deltaTime > FLT_EPSILON && m_data.size() > 1) {
+        if (m_data.size() > 1) {
             vtime.push_back(m_deltaTime);
         }
 

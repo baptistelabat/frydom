@@ -152,10 +152,10 @@ public:
 
 // ##CC impose speed
 
-Velocity BodyVelocity(double time, double period, double amplitude) {
+Velocity BodyVelocity(double time, double period, double amplitude, double speed) {
 
     double omega = 2.*M_PI / period;
-    return Velocity(0., 0., amplitude * cos(omega*time));
+    return Velocity(speed, 0., amplitude * cos(omega*time));
 }
 
 AngularVelocity BodyAngularVelocity(double time, double period, double amplitude) {
@@ -272,7 +272,7 @@ int main(int argc, char* argv[]) {
 
     auto body = system.NewBody();
 
-    Position COGPosition(0., 0., 0.03);
+    Position COGPosition(0., 0., 0.03); // 0.03
     FrFrame_ COGFrame(COGPosition, FrRotation_(), NWU);
 
     body->SetPosition(Position(0., 0., 0.), NWU);
@@ -310,6 +310,7 @@ int main(int argc, char* argv[]) {
     body->SetInertiaTensor(InertiaTensor);
 
     // ##CC
+    /*
     std::cout << "debug: body cog (in body): " << body->GetCOG(NWU).GetX() << ";"
                                                << body->GetCOG(NWU).GetY() << ";"
                                                << body->GetCOG(NWU).GetZ() << std::endl;
@@ -317,6 +318,7 @@ int main(int argc, char* argv[]) {
     std::cout << "debug: body cog (in world): " << body->GetCOGPositionInWorld(NWU).GetX() << ";"
               << body->GetCOGPositionInWorld(NWU).GetY() << ";"
               << body->GetCOGPositionInWorld(NWU).GetZ() << std::endl;
+    */
     // ##CC
 
     // -- Hydrodynamics
@@ -346,7 +348,7 @@ int main(int argc, char* argv[]) {
     auto radiationForce = std::make_shared<FrRadiationConvolutionForce_>(radiationModel.get());
     body->AddExternalForce(radiationForce);
 
-    radiationModel->SetImpulseResponseSize(body.get(), 20., 0.01);
+    radiationModel->SetImpulseResponseSize(body.get(), 50., 0.008);
 
     // ##CC for monitoring
     auto radiationAddedMassForce = std::make_shared<AddedMassRadiationForce>(hdb.get(), body.get());
@@ -386,6 +388,7 @@ int main(int argc, char* argv[]) {
     system.Initialize();
 
     // ##CC
+    /*
     std::cout << "debug: after initiliaze" << std::endl;
     std::cout << "debug: body cog (in body): " << body->GetCOG(NWU).GetX() << ";"
               << body->GetCOG(NWU).GetY() << ";"
@@ -394,6 +397,7 @@ int main(int argc, char* argv[]) {
     std::cout << "debug: body cog (in world): " << body->GetCOGPositionInWorld(NWU).GetX() << ";"
               << body->GetCOGPositionInWorld(NWU).GetY() << ";"
               << body->GetCOGPositionInWorld(NWU).GetZ() << std::endl;
+    */
     // ##CC
 
     double time = 0.;
@@ -411,21 +415,23 @@ int main(int argc, char* argv[]) {
         auto vel = body->GetCOGVelocityInWorld(NWU);
         body->SetGeneralizedVelocityInWorldAtPointInBody(body->GetCOG(NWU), Velocity(speed, vel.y(), vel.z()),
                                             body->GetAngularVelocityInWorld(NWU), NWU);
-        //body->SetVelocityInBodyNoRotation(BodyVelocity(time, Tk, 2.*ak), NWU);
-        //body->SetCOGAngularVelocityInWorld(BodyAngularVelocity(time, Tk, 10.), NWU);
+        //body->SetGeneralizedVelocityInWorldAtPointInBody(body->GetCOG(NWU),
+        //                                                 BodyVelocity(time, Tk, 0.14, speed),
+        //                                                 BodyAngularVelocity(time, Tk, 0.), NWU);
         // ##CC
+
 
         // ##CC monitoring
         std::cout << "time : " << time << " ; position of the body = "
-                  << body->GetPosition(NWU).GetX() << " ; "
-                  << body->GetPosition(NWU).GetY() << " ; "
-                  << body->GetPosition(NWU).GetZ()
+                  << body->GetCOGPositionInWorld(NWU).GetX() << " ; "
+                  << body->GetCOGPositionInWorld(NWU).GetY() << " ; "
+                  << body->GetCOGPositionInWorld(NWU).GetZ()
                   << std::endl;
 
         std::cout << " velocity of the body = "
-                  << body->GetVelocityInWorld(NWU).GetVx() << ";"
-                  << body->GetVelocityInWorld(NWU).GetVy() << ";"
-                  << body->GetVelocityInWorld(NWU).GetVz()
+                  << body->GetCOGVelocityInWorld(NWU).GetVx() << ";"
+                  << body->GetCOGVelocityInWorld(NWU).GetVy() << ";"
+                  << body->GetCOGVelocityInWorld(NWU).GetVz()
                   << std::endl;
 
         std::cout << " Position of the Equilibrium frame : "
@@ -437,6 +443,7 @@ int main(int argc, char* argv[]) {
                   << eqFrame->GetVelocityInWorld(NWU).GetVx() << ";"
                   << eqFrame->GetVelocityInWorld(NWU).GetVy() << ";"
                   << eqFrame->GetVelocityInWorld(NWU).GetVz() << std::endl;
+
 
         radiationAddedMassForce->Update(body.get());
 

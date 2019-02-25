@@ -1230,6 +1230,7 @@ namespace frydom {
                                                                      int offset) const;
         friend void internal::FrAddedMassBase::SetVariables(FrBody_ *body, chrono::ChMatrix<double> &qb, int offset) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody_ *body) const;
+        friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody_ *body) const;
         //friend void internal::FrVariablesAddedMassBase::Initialize();
 
     };

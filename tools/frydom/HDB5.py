@@ -231,13 +231,13 @@ class HDB5(object):
         self._discretization.initialize(self._hdb)
 
         # Impule response functions for radiation damping.
-        self._hdb.radiation_db.eval_impulse_response_function(tf=100, dt=0.1)
+        self._hdb.radiation_db.eval_impulse_response_function(tf=100., dt=0.008)
 
         # Infinite masses.
         self._hdb.radiation_db.eval_infinite_added_mass()
 
         # Impule response functions for advance speed.
-        self._hdb.radiation_db.eval_impulse_response_function_Ku(tf=100, dt=0.1)
+        self._hdb.radiation_db.eval_impulse_response_function_Ku(tf=100., dt=0.008)
 
         # Interpolation of the diffraction loads with respect to the wave directions and the wave frequencies.
         self._interpolate_diffraction()
