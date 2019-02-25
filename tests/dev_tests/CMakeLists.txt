@@ -6,6 +6,7 @@ set(REFACTORING_TESTS
         test_hydrostatic_new_hdb
         test_radiation_model
         how_to_cppfs
+        test_logging
         )
 
 #include(Add_matplotlib-cpp)
