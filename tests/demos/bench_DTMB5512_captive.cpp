@@ -309,18 +309,6 @@ int main(int argc, char* argv[]) {
 
     body->SetInertiaTensor(InertiaTensor);
 
-    // ##CC
-    /*
-    std::cout << "debug: body cog (in body): " << body->GetCOG(NWU).GetX() << ";"
-                                               << body->GetCOG(NWU).GetY() << ";"
-                                               << body->GetCOG(NWU).GetZ() << std::endl;
-
-    std::cout << "debug: body cog (in world): " << body->GetCOGPositionInWorld(NWU).GetX() << ";"
-              << body->GetCOGPositionInWorld(NWU).GetY() << ";"
-              << body->GetCOGPositionInWorld(NWU).GetZ() << std::endl;
-    */
-    // ##CC
-
     // -- Hydrodynamics
 
     auto hdb = make_hydrodynamic_database("DTMB5512.hdb5");
@@ -345,8 +333,8 @@ int main(int argc, char* argv[]) {
 
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
 
-    auto radiationForce = std::make_shared<FrRadiationConvolutionForce_>(radiationModel.get());
-    body->AddExternalForce(radiationForce);
+    //auto radiationForce = std::make_shared<FrRadiationConvolutionForce_>(radiationModel.get());
+    //body->AddExternalForce(radiationForce);
 
     radiationModel->SetImpulseResponseSize(body.get(), 50., 0.008);
 
@@ -403,8 +391,8 @@ int main(int argc, char* argv[]) {
     double time = 0.;
 
     // ##CC
-    Logging log;
-    log.Open(name);
+    //Logging log;
+    //log.Open(name);
     // ##CC
 
     while (time < 50.) {
@@ -447,6 +435,7 @@ int main(int argc, char* argv[]) {
 
         radiationAddedMassForce->Update(body.get());
 
+        /*
         log.Write(time,
             body->GetCOGPositionInWorld(NWU), body->GetRotation(),
             eqFrame->GetPosition(NWU), eqFrame->GetRotation(),
@@ -460,11 +449,12 @@ int main(int argc, char* argv[]) {
             body->GetTotalForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU),
             radiationAddedMassForce->GetForceInWorld(), radiationAddedMassForce->GetTorqueInWorldAtCOG()
         );
+        */
         // ##CC
 
     }
 
-    log.Close();
+    //log.Close();
 
     std::cout << "=============================== End ========================" << std::endl;
 

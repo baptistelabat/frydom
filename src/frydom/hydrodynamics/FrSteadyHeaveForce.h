@@ -43,10 +43,6 @@ namespace frydom {
                 - 2.8696 * std::pow(vx, 2);
 
         force.z() = forceZ;
-
-        // ##CC monitoring force heave
-        //std::cout << " ##### STEADY HEAVE FORCE : " << forceZ << std::endl;
-        // ##CC
     }
 
 }

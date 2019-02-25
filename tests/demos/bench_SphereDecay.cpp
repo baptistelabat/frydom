@@ -206,14 +206,8 @@ int main(int argc, char* argv[]) {
     auto time = 0.;
 
     // ##CC
-    std::ofstream myfile;
-    myfile.open("sphere_position.csv");
-    myfile << "time;X;Y;Z" << std::endl;
-
-    // ##CC
     Logging log;
     log.Open("sphere");
-
     // ##CC
 
     while (time < 40.) {
@@ -221,29 +215,11 @@ int main(int argc, char* argv[]) {
         time += dt;
         system.AdvanceTo(time);
 
-        // ##CC
-
-        // ##CC test user define velocity
-        body->SetVelocityInBodyNoRotation(BodyVelocity(time, 3., 1.), NWU);
-        // ##CC
-
         std::cout << "time : " << time << " ; position of the body = "
                   << body->GetPosition(NWU).GetX() << " ; "
                   << body->GetPosition(NWU).GetY() << " ; "
                   << body->GetPosition(NWU).GetZ()
                   << std::endl;
-        /*
-        std::cout << "     : " << "acceleration of the body = "
-                  << body->GetCOGAccelerationInWorld(NWU).GetAccX() << ";"
-                  << body->GetCOGAccelerationInWorld(NWU).GetAccY() << ";"
-                  << body->GetCOGAccelerationInWorld(NWU).GetAccZ()
-                  << std::endl;
-        */
-
-        myfile << time << ";" << body->GetPosition(NWU).GetX() << ";"
-                              << body->GetPosition(NWU).GetY() << ";"
-                              << body->GetPosition(NWU).GetZ() << std::endl;
-        // ##CC
 
         radiationAddedMassForce->Update(body.get());
 
@@ -255,10 +231,7 @@ int main(int argc, char* argv[]) {
                   body->GetTotalForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU)
         );
 
-        // ##CC
     }
-
-    myfile.close();
 
     std::cout << "============================== End ===================================== " << std::endl;
 

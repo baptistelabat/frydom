@@ -76,6 +76,8 @@ namespace frydom {
                                               const chrono::ChVectorDynamic<>& R, const unsigned int off_L,
                                               const chrono::ChVectorDynamic<>& L, const chrono::ChVectorDynamic<>& Qc) {
 
+            // FIXME : Nothing to do since added mass variables encapsulate the body variables
+
             auto HDB = m_frydomRadiationModel->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
@@ -90,16 +92,7 @@ namespace frydom {
         void FrAddedMassBase::IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
                                                 const unsigned int off_L, chrono::ChVectorDynamic<>& L) {
 
-            auto HDB = m_frydomRadiationModel->GetHydroDB();
-
-            for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
-
-                auto bodyOffset = off_v - offset_w + GetBodyOffset( HDB->GetBody(BEMBody->get()) );
-
-                //v.PasteClippedMatrix(m_variables->Get_qb(), bodyOffset, 0, 6, 1, bodyOffset, 0);  // FIXME
-
-                //SetVariables(HDB->GetBody(BEMBody->get()), m_variables->Get_qb(), bodyOffset);    // FIXME
-            }
+            // Nothing to do since added mass variables encapsulate the body variables
         }
 
         void FrAddedMassBase::InjectVariables(chrono::ChSystemDescriptor &mdescriptor) {

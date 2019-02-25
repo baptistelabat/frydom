@@ -976,13 +976,6 @@ namespace frydom {
                 vdata->push_back(IRF.col(j));
             }
 
-            // ##CC debug monitoring
-            //auto ltime = m_HDB->GetTimeDiscretization();
-            //std::cout << "ncols = " << IRF.cols() << std::endl;
-            //auto vdata0 = vdata->at(0);
-            //auto vdata1 = vdata->at(1);
-            // ##CC
-
             auto interp = std::make_shared<Interp1dLinear<double, Vector6d<double>>>();
             interp->Initialize(vtime, vdata);
 

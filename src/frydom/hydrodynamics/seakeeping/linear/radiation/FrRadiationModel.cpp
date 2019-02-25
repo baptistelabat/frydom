@@ -420,10 +420,10 @@ namespace frydom {
 
         // FIXME : a passer dans la méthode initialize pour eviter les pb de précédence vis a vis de la HDB
 
-        //for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
-        //    auto body = m_HDB->GetBody(BEMBody->get());
-        //    body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this));
-        //}
+        for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
+            auto body = m_HDB->GetBody(BEMBody->get());
+            body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this));
+        }
 
     }
 
@@ -441,23 +441,12 @@ namespace frydom {
             }
             m_recorder[BEMBody->get()].Initialize();
         }
-
-        // ##CC
-        l_kuFile.open("radKu.csv", std::fstream::out);
-        l_kuFile << "time;Fx;Fy;Fz;Mx;My;Mz" << std::endl;
-
-        l_kFile.open("radK.csv", std::fstream::out);
-        l_kFile << "time;vtime(0);vtime(1);vtime(2);v(0);v(1);v(2);K22(0);K22(1);K22(2);kernel(0);kernel(1);kernel(2);rad2" << std::endl;
-        // ##CC
-
     }
 
     void FrRadiationConvolutionModel_::Update(double time) {
 
-        // ##CC debug test
         if (std::abs(time - GetSystem()->GetTime()) < 0.1*GetSystem()->GetTimeStep() and
                 time > FLT_EPSILON) return;
-        // ##CC
 
         // Update speed recorder
         for (auto BEMBody = m_HDB->begin(); BEMBody != m_HDB->end(); BEMBody++) {
@@ -474,18 +463,6 @@ namespace frydom {
 
                 auto velocity = m_recorder[BEMBodyMotion->get()].GetData();
 
-                // ##CC
-
-                //if (velocity.size() > 4) {
-                //    std::cout << "debug: time : << " << time
-                //              << " ; velocity : " << velocity[0].at(2) << ";"
-                //              << velocity[1].at(2) << ";"
-                //              << velocity[2].at(2) << ";"
-                //              << velocity[3].at(2) << std::endl;
-                //}
-
-                // ##CC
-
                 auto vtime = m_recorder[BEMBodyMotion->get()].GetTime();
 
                 for (unsigned int idof = 0; idof < 6; idof++) {
@@ -493,29 +470,12 @@ namespace frydom {
                     auto interpK = BEMBody->get()->GetIRFInterpolatorK(BEMBodyMotion->get(), idof);
 
                     std::vector<mathutils::Vector6d<double>> kernel;
-                    //std::vector<double> kernel;
                     kernel.reserve(vtime.size());
                     for (unsigned int it = 0; it < vtime.size(); ++it) {
-                        // ##CC
-                        //auto ti = vtime[it];
-                        //auto Ki = interpK->Eval(vtime[it]);
-                        //std::cout << "debug: idof : " << idof << "ti = " << ti << ";" << " Ki0 = " << Ki[0] << std::endl;
-                        //std::cout << "debug: idof : " << idof << " ; it : " << it << " ; velocity[it][idof] : " << velocity.at(it).at(idof) << std::endl;
-                        // ##CC
                         kernel.push_back(interpK->Eval(vtime[it]) * velocity.at(it).at(idof));
                     }
                     radiationForce += TrapzLoc(vtime, kernel);
 
-                    // ##CC debug
-                    if (idof==2 and vtime.size() > 3) {
-                        l_kFile << time << ";" << vtime[0] << ";" << vtime[1] << ";" << vtime[2] << ";"
-                                << velocity[0].at(2) << ";" << velocity[1].at(2) << ";" << velocity[2].at(2) << ";"
-                                << interpK->Eval(vtime[0]).at(2) << ";" << interpK->Eval(vtime[1]).at(2) << ";"
-                                << interpK->Eval(vtime[2]).at(2) << ";"
-                                << kernel[0].at(2) << ";" << kernel[1].at(2) << ";" << kernel[2].at(2) << ";"
-                                << radiationForce.GetForce().GetFz() << std::endl;
-                    }
-                    // ##CC
                 }
             }
 
@@ -524,16 +484,6 @@ namespace frydom {
 
             if (meanSpeed.squaredNorm() > FLT_EPSILON) {
                 radiationForce += ConvolutionKu(meanSpeed.norm());
-
-                // ##CC debug
-                auto radKu = ConvolutionKu(meanSpeed.norm());
-                l_kuFile << time << ";" << radKu.GetForce().GetFx() << ";"
-                                        << radKu.GetForce().GetFy() << ";"
-                                        << radKu.GetForce().GetFz() << ";"
-                                        << radKu.GetTorque().GetMx() << ";"
-                                        << radKu.GetTorque().GetMy() << ";"
-                                        << radKu.GetTorque().GetMz() << std::endl;
-                // ##CC
             }
 
             auto forceInWorld = eqFrame->ProjectVectorFrameInParent(radiationForce.GetForce(), NWU);
