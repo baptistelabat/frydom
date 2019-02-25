@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -23,64 +23,64 @@
 
 namespace frydom {
 
-    typedef boost::bimaps::bimap<FrHydroBody*, unsigned int> myBimap;
-    typedef myBimap::value_type mapping;
-
-    /**
-     * \class FrHydroMapper
-     * \brief Class for mapping the bodies with the HDB.
-     */
-    class FrHydroMapper {
-
-    private:
-
-        FrHydroDB* m_HDB;
-        myBimap m_mapper;
-
-
-    public:
-
-        explicit FrHydroMapper(FrHydroDB* HDB);
-
-        void Map(const std::shared_ptr<FrHydroBody> hydroBody, unsigned int iBEMBody);
-
-        unsigned int GetNbMappings() const;
-
-        FrHydroBody* GetHydroBody(unsigned int iBEMBody) const;
-
-        unsigned int GetBEMBodyIndex(std::shared_ptr<FrHydroBody> hydroBody);
-
-        unsigned int GetBEMBodyIndex(FrHydroBody* hydroBody);
-
-        std::shared_ptr<FrBEMBody> GetBEMBody(std::shared_ptr<FrHydroBody> hydroBody);
-
-        std::shared_ptr<FrBEMBody> GetBEMBody(FrHydroBody* hydroBody);
-
-        virtual void IntLoadResidual_Mv(const unsigned int off,
-                                        chrono::ChVectorDynamic<>& R,
-                                        const chrono::ChVectorDynamic<>& w,
-                                        const double c);
-
-        //virtual void VariablesFbIncrementMq() { m_HDB->VariablesFbIncrementMq(); }
-
-
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<< REFACTORING
+//    typedef boost::bimaps::bimap<FrHydroBody*, unsigned int> myBimap;
+//    typedef myBimap::value_type mapping;
+//
+//    /**
+//     * \class FrHydroMapper
+//     * \brief Class for mapping the bodies with the HDB.
+//     */
+//    class FrHydroMapper {
+//
+//    private:
+//
+//        FrHydroDB* m_HDB;
+//        myBimap m_mapper;
+//
+//
+//    public:
+//
+//        explicit FrHydroMapper(FrHydroDB* HDB);
+//
+//        void Map(const std::shared_ptr<FrHydroBody> hydroBody, unsigned int iBEMBody);
+//
+//        unsigned int GetNbMappings() const;
+//
+//        FrHydroBody* GetHydroBody(unsigned int iBEMBody) const;
+//
+//        unsigned int GetBEMBodyIndex(std::shared_ptr<FrHydroBody> hydroBody);
+//
+//        unsigned int GetBEMBodyIndex(FrHydroBody* hydroBody);
+//
+//        std::shared_ptr<FrBEMBody> GetBEMBody(std::shared_ptr<FrHydroBody> hydroBody);
+//
+//        std::shared_ptr<FrBEMBody> GetBEMBody(FrHydroBody* hydroBody);
+//
+//        virtual void IntLoadResidual_Mv(const unsigned int off,
+//                                        chrono::ChVectorDynamic<>& R,
+//                                        const chrono::ChVectorDynamic<>& w,
+//                                        const double c);
+//
+//        //virtual void VariablesFbIncrementMq() { m_HDB->VariablesFbIncrementMq(); }
+//
+//
+//    };
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<< REFACTORING
 
     class FrEquilibriumFrame_;
 

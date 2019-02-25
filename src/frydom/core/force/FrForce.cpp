@@ -86,54 +86,54 @@ namespace frydom{
 //        force += vectforce;                                           // Fw
 //        relforce = my_body->TransformDirectionParentToLocal(force);  // Fo1 = [A]'Fw
 //    }
-
-    void FrForce::SetLog() {
-
-        if (m_logPrefix == "") { SetLogPrefix(); }  // Set default log prefix if not defined
-
-        //m_log.AddField("time","s","Current time of the simulation",&ChTime);
-        m_log.AddField(m_logPrefix + "FX", "N", "Force in x-direction", &force.x());
-        m_log.AddField(m_logPrefix + "FY", "N", "Force in y-direction", &force.y());
-        m_log.AddField(m_logPrefix + "FZ", "N", "Force in z-direction", &force.z());
-        m_log.AddField(m_logPrefix + "MX", "N.m", "Moment along x-direction", &moment.x());
-        m_log.AddField(m_logPrefix + "MY", "N.m", "Moment along y-direction", &moment.y());
-        m_log.AddField(m_logPrefix + "MZ", "N.m", "Moment along z-direction", &moment.z());
-
-        m_log.AddCSVSerializer("Force_" + GetUUID());
-    }
-
-    void FrForce::InitializeLogs() {
-
-        m_log.Initialize();
-        m_log.Send();
-    }
-
-    void FrForce::UpdateLogs() {
-        m_log.Serialize();
-        m_log.Send();
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // REFACTORING -------------6>>>>>>>>>>>>>>>>>
+//
+//    void FrForce::SetLog() {
+//
+//        if (m_logPrefix == "") { SetLogPrefix(); }  // Set default log prefix if not defined
+//
+//        //m_log.AddField("time","s","Current time of the simulation",&ChTime);
+//        m_log.AddField(m_logPrefix + "FX", "N", "Force in x-direction", &force.x());
+//        m_log.AddField(m_logPrefix + "FY", "N", "Force in y-direction", &force.y());
+//        m_log.AddField(m_logPrefix + "FZ", "N", "Force in z-direction", &force.z());
+//        m_log.AddField(m_logPrefix + "MX", "N.m", "Moment along x-direction", &moment.x());
+//        m_log.AddField(m_logPrefix + "MY", "N.m", "Moment along y-direction", &moment.y());
+//        m_log.AddField(m_logPrefix + "MZ", "N.m", "Moment along z-direction", &moment.z());
+//
+//        m_log.AddCSVSerializer("Force_" + GetUUID());
+//    }
+//
+//    void FrForce::InitializeLogs() {
+//
+//        m_log.Initialize();
+//        m_log.Send();
+//    }
+//
+//    void FrForce::UpdateLogs() {
+//        m_log.Serialize();
+//        m_log.Send();
+//    }
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    // REFACTORING -------------6>>>>>>>>>>>>>>>>>
 
     namespace internal {
 

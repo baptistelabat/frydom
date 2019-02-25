@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -32,58 +32,58 @@
 
 namespace frydom {
 
-    /**
-     * \class FrLinearHydrostaticForce
-     * \brief Class for computing linear hydrostatic loads.
-     */
-    class FrLinearHydrostaticForce : public FrForce {
-
-    private:
-        FrLinearHydrostaticStiffnessMatrix m_stiffnessMatrix;
-
-        // ##CC fix log
-        double m_delta_z;
-        double m_body_z;
-        double m_eqframe_z;
-        // ##CC
-
-    public:
-
-        FrLinearHydrostaticForce();
-
-        FrLinearHydrostaticStiffnessMatrix* GetStiffnessMatrix();
-
-
-        void UpdateState() override;
-
-        // ##CC Fix pour le log
-        void InitializeLogs() override;
-        // ##CC
-
-        void SetLogPrefix(std::string prefix_name) override;
-
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+//    /**
+//     * \class FrLinearHydrostaticForce
+//     * \brief Class for computing linear hydrostatic loads.
+//     */
+//    class FrLinearHydrostaticForce : public FrForce {
+//
+//    private:
+//        FrLinearHydrostaticStiffnessMatrix m_stiffnessMatrix;
+//
+//        // ##CC fix log
+//        double m_delta_z;
+//        double m_body_z;
+//        double m_eqframe_z;
+//        // ##CC
+//
+//    public:
+//
+//        FrLinearHydrostaticForce();
+//
+//        FrLinearHydrostaticStiffnessMatrix* GetStiffnessMatrix();
+//
+//
+//        void UpdateState() override;
+//
+//        // ##CC Fix pour le log
+//        void InitializeLogs() override;
+//        // ##CC
+//
+//        void SetLogPrefix(std::string prefix_name) override;
+//
+//    };
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
 
     // forward declaration
 

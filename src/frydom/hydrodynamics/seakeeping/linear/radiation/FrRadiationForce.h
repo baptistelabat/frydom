@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -19,74 +19,74 @@
 
 namespace frydom {
 
-    // Forward declaration
-    class FrRadiationModel;
-
-    // TODO: les forces de radiation doivent pouvoir etre extraites depuis le modele de radiation...
-    /**
-     * \class FrRadiationForce
-     * \brief Class for computing the radiation loads.
-     */
-    class FrRadiationForce : public FrForce {
-
-        // FIXME : enum a placer dans RadiationModel
-//        enum class Type {
-//            CONVOLUTION,
-//            STATE_SPACE // Not used...
-//        };  // TODO : utiliser !!!
-
-    protected:
-        std::shared_ptr<FrRadiationModel> m_radiationModel;  // TODO : il faut que le modele de radiation soit en mesure de generer les forces de radiation
-        // Une possibilite serait qu'a l'initialisation du modele de radiation, les forces de radiation soient ajoutees automatiquemet aux corps...
-
-    public:
-        FrRadiationForce() = default;
-
-        explicit FrRadiationForce(std::shared_ptr<FrRadiationModel> radiationModel);
-
-        void SetRadiationModel(const std::shared_ptr<FrRadiationModel> radiationModel);
-
-        std::shared_ptr<FrRadiationModel> GetRadiationModel() const;
-
-        void SetLogPrefix(std::string prefix_name) override;
-
-    };
-
-
-    // Forward declaration
-    class FrRadiationConvolutionModel;
-
-    /**
-     * \class FrRadiationConvolutionForce
-     * \brief Class for computing the hydrodynamic damping loads.
-     */
-    class FrRadiationConvolutionForce : public FrRadiationForce {
-
-    private:
-
-
-    public:
-
-        explicit FrRadiationConvolutionForce(std::shared_ptr<FrRadiationConvolutionModel> radiationConvolutionModel);
-
-        void Initialize() override;
-
-        void UpdateState() override;
-
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
+//    // Forward declaration
+//    class FrRadiationModel;
+//
+//    // TODO: les forces de radiation doivent pouvoir etre extraites depuis le modele de radiation...
+//    /**
+//     * \class FrRadiationForce
+//     * \brief Class for computing the radiation loads.
+//     */
+//    class FrRadiationForce : public FrForce {
+//
+//        // FIXME : enum a placer dans RadiationModel
+////        enum class Type {
+////            CONVOLUTION,
+////            STATE_SPACE // Not used...
+////        };  // TODO : utiliser !!!
+//
+//    protected:
+//        std::shared_ptr<FrRadiationModel> m_radiationModel;  // TODO : il faut que le modele de radiation soit en mesure de generer les forces de radiation
+//        // Une possibilite serait qu'a l'initialisation du modele de radiation, les forces de radiation soient ajoutees automatiquemet aux corps...
+//
+//    public:
+//        FrRadiationForce() = default;
+//
+//        explicit FrRadiationForce(std::shared_ptr<FrRadiationModel> radiationModel);
+//
+//        void SetRadiationModel(const std::shared_ptr<FrRadiationModel> radiationModel);
+//
+//        std::shared_ptr<FrRadiationModel> GetRadiationModel() const;
+//
+//        void SetLogPrefix(std::string prefix_name) override;
+//
+//    };
+//
+//
+//    // Forward declaration
+//    class FrRadiationConvolutionModel;
+//
+//    /**
+//     * \class FrRadiationConvolutionForce
+//     * \brief Class for computing the hydrodynamic damping loads.
+//     */
+//    class FrRadiationConvolutionForce : public FrRadiationForce {
+//
+//    private:
+//
+//
+//    public:
+//
+//        explicit FrRadiationConvolutionForce(std::shared_ptr<FrRadiationConvolutionModel> radiationConvolutionModel);
+//
+//        void Initialize() override;
+//
+//        void UpdateState() override;
+//
+//    };
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
     /**
      * \class FrRadiationForce_

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -31,120 +31,120 @@
 
 namespace frydom {
 
-    /**
-     * \class FrForce
-     * \brief Base class for every external forces on bodies
-     */
-    class FrForce :
-            public chrono::ChForce,
-            public FrObject
-    {
-
-    protected:
-//        chrono::ChBody* Body;
-//        chrono::ChVector<> force = chrono::VNULL;
-        chrono::ChVector<> moment = chrono::VNULL;
-        hermes::Message m_log;
-        bool is_log = true;
-
-        std::string m_logPrefix = "";           //TODO : à definir dans hermes
-
-    public:
-
-//        FrForce() : moment(chrono::VNULL) {};
-//        FrForce() = default;
-
-
-        /// Updates the time of the object and other stuff that are time-dependent
-        /// into the object
-        void UpdateTime(double mytime) {
-            ChTime = mytime;
-
-            // ... put time-domain stuff here
-        }
-
-        /// Update the force object.
-        /// Must be implemented into the child classes.
-        virtual void UpdateState() = 0;
-
-        /// Get the force-torque applied to rigid, body as force vector.
-        /// CAUTION !!!! : The force must be returned in the absolute coordinates while the torque must be
-        /// expressed in body coordinates
-        void GetBodyForceTorque(chrono::ChVector<>& body_force, chrono::ChVector<>& body_torque) const {
-            body_force = force;
-            body_torque = moment;
-        }
-
-        /// Return the moment of the force
-        virtual chrono::ChVector<> GetTorque() const { return moment; }
-
-        virtual void Initialize() override {
-            if (is_log) {
-                SetLog();
-                InitializeLogs();
-            }
-        }
-
-        virtual void StepFinalize() override {
-            if (is_log) {
-                UpdateLogs();
-            }
-        }
-
-        /// Set the definition of the log message
-        virtual void SetLog();
-
-        virtual void SetLogNameAndDescription(std::string name = "Force_message",
-                                         std::string description = "Message of the force") {
-            m_log.SetNameAndDescription(name, description);
-            is_log = true;
-        }
-
-        /// Deactivate the generation of log from the body
-        virtual void DeactivateLog() { is_log = false; };
-
-        /// Initialization of the log message
-        virtual void InitializeLogs();
-
-        /// Update of the log message
-        virtual void UpdateLogs();
-
-        hermes::Message* GetLog() { return &m_log; }
-
-        /// Definition of the log messsage name
-        virtual void SetLogPrefix(std::string prefix_name = "") { m_logPrefix = prefix_name; };
-
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // REFACTORING ------------->>>>>>>>>>>>><
+//    /**
+//     * \class FrForce
+//     * \brief Base class for every external forces on bodies
+//     */
+//    class FrForce :
+//            public chrono::ChForce,
+//            public FrObject
+//    {
+//
+//    protected:
+////        chrono::ChBody* Body;
+////        chrono::ChVector<> force = chrono::VNULL;
+//        chrono::ChVector<> moment = chrono::VNULL;
+//        hermes::Message m_log;
+//        bool is_log = true;
+//
+//        std::string m_logPrefix = "";           //TODO : à definir dans hermes
+//
+//    public:
+//
+////        FrForce() : moment(chrono::VNULL) {};
+////        FrForce() = default;
+//
+//
+//        /// Updates the time of the object and other stuff that are time-dependent
+//        /// into the object
+//        void UpdateTime(double mytime) {
+//            ChTime = mytime;
+//
+//            // ... put time-domain stuff here
+//        }
+//
+//        /// Update the force object.
+//        /// Must be implemented into the child classes.
+//        virtual void UpdateState() = 0;
+//
+//        /// Get the force-torque applied to rigid, body as force vector.
+//        /// CAUTION !!!! : The force must be returned in the absolute coordinates while the torque must be
+//        /// expressed in body coordinates
+//        void GetBodyForceTorque(chrono::ChVector<>& body_force, chrono::ChVector<>& body_torque) const {
+//            body_force = force;
+//            body_torque = moment;
+//        }
+//
+//        /// Return the moment of the force
+//        virtual chrono::ChVector<> GetTorque() const { return moment; }
+//
+//        virtual void Initialize() override {
+//            if (is_log) {
+//                SetLog();
+//                InitializeLogs();
+//            }
+//        }
+//
+//        virtual void StepFinalize() override {
+//            if (is_log) {
+//                UpdateLogs();
+//            }
+//        }
+//
+//        /// Set the definition of the log message
+//        virtual void SetLog();
+//
+//        virtual void SetLogNameAndDescription(std::string name = "Force_message",
+//                                         std::string description = "Message of the force") {
+//            m_log.SetNameAndDescription(name, description);
+//            is_log = true;
+//        }
+//
+//        /// Deactivate the generation of log from the body
+//        virtual void DeactivateLog() { is_log = false; };
+//
+//        /// Initialization of the log message
+//        virtual void InitializeLogs();
+//
+//        /// Update of the log message
+//        virtual void UpdateLogs();
+//
+//        hermes::Message* GetLog() { return &m_log; }
+//
+//        /// Definition of the log messsage name
+//        virtual void SetLogPrefix(std::string prefix_name = "") { m_logPrefix = prefix_name; };
+//
+//    };
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    // REFACTORING ------------->>>>>>>>>>>>><
 
 
     /**

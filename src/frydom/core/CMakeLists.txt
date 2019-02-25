@@ -95,14 +95,14 @@ list(APPEND SRC_FILES
         misc/FrColors.cpp
         )
 
-# JUNK FIXME : a supprimer
-list(APPEND SRC_FILES
-        junk/FrHydroBody.cpp
-        junk/FrNodeDynamic.cpp
-        junk/FrShip.cpp
-        junk/FrSpringDampingForce.cpp
-        junk/FrUpdatable.cpp
-        )
+## JUNK FIXME : a supprimer
+#list(APPEND SRC_FILES
+#        junk/FrHydroBody.cpp
+#        junk/FrNodeDynamic.cpp
+#        junk/FrShip.cpp
+#        junk/FrSpringDampingForce.cpp
+#        junk/FrUpdatable.cpp
+#        )
 
 
 

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -17,41 +17,41 @@
 
 namespace frydom {
 
-    class FrCatenaryLine;
-
+//    class FrCatenaryLine;
+//
     enum line_side {
         LINE_START,
         LINE_END
     };
-
-    /**
-     * \class FrCatenaryForce
-     * \brief Class for computing catenary loads.
-     */
-    class FrCatenaryForce : public FrForce {
-
-    private:
-
-        FrCatenaryLine* m_line; ///< The parent line
-        line_side m_line_side;  ///< The side of the line where the tension is applied
-
-    public:
-
-        FrCatenaryForce(FrCatenaryLine* p_line, line_side p_side) : m_line(p_line), m_line_side(p_side) {};
-
-        void UpdateState() override;
-
-    };
-
-
-
-
-
-
-
-
-
-    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTO
+//
+//    /**
+//     * \class FrCatenaryForce
+//     * \brief Class for computing catenary loads.
+//     */
+//    class FrCatenaryForce : public FrForce {
+//
+//    private:
+//
+//        FrCatenaryLine* m_line; ///< The parent line
+//        line_side m_line_side;  ///< The side of the line where the tension is applied
+//
+//    public:
+//
+//        FrCatenaryForce(FrCatenaryLine* p_line, line_side p_side) : m_line(p_line), m_line_side(p_side) {};
+//
+//        void UpdateState() override;
+//
+//    };
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTO
 
     // Forward declaration
     class FrCatenaryLine_;

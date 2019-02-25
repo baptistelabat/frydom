@@ -1,42 +1,49 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FROFFSHORESYSTEM_H
 #define FRYDOM_FROFFSHORESYSTEM_H
 
+
+#include "chrono/physics/ChSystemSMC.h"
+#include "chrono/physics/ChSystemNSC.h"
+
+#include "frydom/core/common/FrObject.h"
+#include "frydom/utils/FrIrrApp.h"
+
+
 //#include <frydom/hydrodynamics/FrHydroDB.h>
 //
 //#include "frydom/core/FrException.h"
 //
 //
-#include <frydom/utils/FrIrrApp.h>
+//#include <frydom/utils/FrIrrApp.h>
 //#include <frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h>
 //#include <frydom/cable/FrCable.h>
-#include "chrono/physics/ChSystemSMC.h"
-#include "chrono/physics/ChSystemNSC.h"
+
 //
 //
 //#include "chrono/timestepper/ChState.h"
 //#include "chrono/core/ChMatrixNM.h"
 //#include "chrono/core/ChMatrix33.h"
 //
-#include "frydom/core/common/FrObject.h"
+
 //#include "frydom/environment/waves/FrFreeSurface.h"
 //#include "frydom/environment/current/FrCurrent.h"
 //#include "frydom/core/FrBody.h"
 //
 //#include "frydom/environment/FrEnvironment.h"
 
-#include "frydom/utils/FrIrrApp.h"
+
 
 
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
@@ -45,108 +52,108 @@
 
 namespace frydom {
 
-    class FrBody;
-    class FrEnvironment;
-    class FrHydroMapper;
-    class FrHydroDB;
-
-
-    // TODO: voir aussi a deriver de ChSystemSMC pour comparer les 2 ? Avoir une classe de base virtuelle derivant de ChSystem ???
-    /**
-    * \class FrOffshoreSystem
-    * \brief Main class for a FRyDoM offshore system, representing a multibody physical system,.
-    */
-    class FrOffshoreSystem :
-            public chrono::ChSystemSMC,
-            public std::enable_shared_from_this<FrOffshoreSystem>,
-            public FrObject
-    {  // TODO: supprimer cette dependance !
-
-    private:
-
-        std::shared_ptr<FrBody> world_body;
-
-        chrono::ChFrame<double> NEDframe;                            ///< Frame that has Z pointing down to have a well defined heading
-
-        std::unique_ptr<FrEnvironment> m_environment;
-
-        int m_nHDB = 0;
-        std::vector<std::shared_ptr<FrHydroDB>> m_HDB;
-        std::vector<std::shared_ptr<FrHydroMapper>> m_hydroMapper;  // TODO : patch vector hydro map multibody
-
-        int m_NsampleOutput = 1;    ///< number of time sample between two outputs
-        int m_NitterOutput = 0;     ///< current iteration between two outputs
-
-
-    public:
-        /// Default constructor
-        explicit FrOffshoreSystem(bool use_material_properties = true,
-                                  unsigned int max_objects = 16000,
-                                  double scene_size = 500);
-
-        /// Default destructor
-        ~FrOffshoreSystem() = default;
-
-        /// Copy constructor
-        //FrOffshoreSystem(const FrOffshoreSystem& system) {};
-
-        /// Default destructor
-        //~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
-
-        FrEnvironment* GetEnvironment() const;
-
-        /// Get NED frame
-        chrono::ChFrame<double> GetNEDFrame() const;
-
-        /// Get the world body
-        chrono::ChBody* GetWorldBodyPtr() const;
-
-        std::shared_ptr<FrBody> GetWorldBody() const;
-
-        void SetHydroMapper(std::shared_ptr<FrHydroMapper> hydroMapper);
-
-        std::shared_ptr<FrHydroMapper> GetHydroMapper(const int id) const;
-
-        void SetHydroDB(const std::string filename);
-
-        FrHydroDB* GetHydroDB(const int id) const;
-
-        int GetHydroMapNb() const;
-
-        /// Updates all the auxiliary data and children of
-        /// bodies, forces, links, given their current state
-        /// as well as environment prior to everything.
-        void Update(bool update_assets = true) override;
-
-        void StateScatter(const chrono::ChState& x, const chrono::ChStateDelta& v, const double T) override;
-
-        bool Integrate_Y() override;
-
-        void CustomEndOfStep() override;
-
-        void Initialize() override;
-
-        void StepFinalize() override;
-
-        void SetNsampleOutput(const int n) { m_NsampleOutput = n; }
-
-        virtual void IntLoadResidual_Mv(const unsigned int off,
-                                        chrono::ChVectorDynamic<>& R,
-                                        const chrono::ChVectorDynamic<>& w,
-                                        const double c) override;
-
-        virtual void VariablesFbIncrementMq() override;
-
-    };  // class FrOffshoreSystem
-
-
-
-
-
-
-
-
-    // REFACTORING ---->>>>>>>>>>>>
+//    class FrBody;
+//    class FrEnvironment;
+//    class FrHydroMapper;
+//    class FrHydroDB;
+//
+//
+//    // TODO: voir aussi a deriver de ChSystemSMC pour comparer les 2 ? Avoir une classe de base virtuelle derivant de ChSystem ???
+//    /**
+//    * \class FrOffshoreSystem
+//    * \brief Main class for a FRyDoM offshore system, representing a multibody physical system,.
+//    */
+//    class FrOffshoreSystem :
+//            public chrono::ChSystemSMC,
+//            public std::enable_shared_from_this<FrOffshoreSystem>,
+//            public FrObject
+//    {  // TODO: supprimer cette dependance !
+//
+//    private:
+//
+//        std::shared_ptr<FrBody> world_body;
+//
+//        chrono::ChFrame<double> NEDframe;                            ///< Frame that has Z pointing down to have a well defined heading
+//
+//        std::unique_ptr<FrEnvironment> m_environment;
+//
+//        int m_nHDB = 0;
+//        std::vector<std::shared_ptr<FrHydroDB>> m_HDB;
+//        std::vector<std::shared_ptr<FrHydroMapper>> m_hydroMapper;  // TODO : patch vector hydro map multibody
+//
+//        int m_NsampleOutput = 1;    ///< number of time sample between two outputs
+//        int m_NitterOutput = 0;     ///< current iteration between two outputs
+//
+//
+//    public:
+//        /// Default constructor
+//        explicit FrOffshoreSystem(bool use_material_properties = true,
+//                                  unsigned int max_objects = 16000,
+//                                  double scene_size = 500);
+//
+//        /// Default destructor
+//        ~FrOffshoreSystem() = default;
+//
+//        /// Copy constructor
+//        //FrOffshoreSystem(const FrOffshoreSystem& system) {};
+//
+//        /// Default destructor
+//        //~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
+//
+//        FrEnvironment* GetEnvironment() const;
+//
+//        /// Get NED frame
+//        chrono::ChFrame<double> GetNEDFrame() const;
+//
+//        /// Get the world body
+//        chrono::ChBody* GetWorldBodyPtr() const;
+//
+//        std::shared_ptr<FrBody> GetWorldBody() const;
+//
+//        void SetHydroMapper(std::shared_ptr<FrHydroMapper> hydroMapper);
+//
+//        std::shared_ptr<FrHydroMapper> GetHydroMapper(const int id) const;
+//
+//        void SetHydroDB(const std::string filename);
+//
+//        FrHydroDB* GetHydroDB(const int id) const;
+//
+//        int GetHydroMapNb() const;
+//
+//        /// Updates all the auxiliary data and children of
+//        /// bodies, forces, links, given their current state
+//        /// as well as environment prior to everything.
+//        void Update(bool update_assets = true) override;
+//
+//        void StateScatter(const chrono::ChState& x, const chrono::ChStateDelta& v, const double T) override;
+//
+//        bool Integrate_Y() override;
+//
+//        void CustomEndOfStep() override;
+//
+//        void Initialize() override;
+//
+//        void StepFinalize() override;
+//
+//        void SetNsampleOutput(const int n) { m_NsampleOutput = n; }
+//
+//        virtual void IntLoadResidual_Mv(const unsigned int off,
+//                                        chrono::ChVectorDynamic<>& R,
+//                                        const chrono::ChVectorDynamic<>& w,
+//                                        const double c) override;
+//
+//        virtual void VariablesFbIncrementMq() override;
+//
+//    };  // class FrOffshoreSystem
+//
+//
+//
+//
+//
+//
+//
+//
+//    // REFACTORING ---->>>>>>>>>>>>
 
     class FrOffshoreSystem_;
 

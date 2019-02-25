@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -19,49 +19,49 @@
 
 namespace frydom {
 
-    /**
-     * \class FrWindForce
-     * \brief Class for computing the wind loads.
-     */
-    class FrWindForce : public FrForce {
-
-    public:
-
-        /// Constructor from yaml file
-        explicit FrWindForce(const std::string& yaml_file);
-
-        /// Read the drag and lift coefficient from yaml file
-        void ReadTable(const std::string& yaml_file);
-
-        //
-        //  UPDATE
-        //
-
-        /// Update procedure containing implementation of the wind drag force model
-        void UpdateState() override;
-
-        //
-        // LOG
-        //
-
-        void SetLogPrefix(std::string prefix_name) override;
-
-    private:
-
-        chrono::ChVector<> m_wind_relative_velocity;    ///< Relative velocity of the wind inflow
-        double m_wind_relative_angle;                   ///< Relative angle of the wind
-        mathutils::LookupTable1D<double, double> m_table;       ///< table of coefficient
-
-    };
-
-
-
-
-
-
-
-
-    // REFACTORING ------>>>>>>>>>>>>>>
+//    /**
+//     * \class FrWindForce
+//     * \brief Class for computing the wind loads.
+//     */
+//    class FrWindForce : public FrForce {
+//
+//    public:
+//
+//        /// Constructor from yaml file
+//        explicit FrWindForce(const std::string& yaml_file);
+//
+//        /// Read the drag and lift coefficient from yaml file
+//        void ReadTable(const std::string& yaml_file);
+//
+//        //
+//        //  UPDATE
+//        //
+//
+//        /// Update procedure containing implementation of the wind drag force model
+//        void UpdateState() override;
+//
+//        //
+//        // LOG
+//        //
+//
+//        void SetLogPrefix(std::string prefix_name) override;
+//
+//    private:
+//
+//        chrono::ChVector<> m_wind_relative_velocity;    ///< Relative velocity of the wind inflow
+//        double m_wind_relative_angle;                   ///< Relative angle of the wind
+//        mathutils::LookupTable1D<double, double> m_table;       ///< table of coefficient
+//
+//    };
+//
+//
+//
+//
+//
+//
+//
+//
+//    // REFACTORING ------>>>>>>>>>>>>>>
 
     /**
      * \class FrWindForce_

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -44,13 +44,13 @@
 #include "manoeuvring/FrManoeuvringDamping.h"
 #include "seakeeping/linear/second_order_drift/FrWaveDriftForce.h"
 
-#include "FrVelocityRecorder.h"
-#include "FrPositionRecorder.h"
+//#include "FrVelocityRecorder.h"
+//#include "FrPositionRecorder.h"
 
-#include "FrSteadyPitchTorque.h"
-#include "FrSteadyHeaveForce.h"
+//#include "FrSteadyPitchTorque.h"
+//#include "FrSteadyHeaveForce.h"
 
 #include "FrEquilibriumFrame.h"
-#include "FrVelocityRecorder.h"
+//#include "FrVelocityRecorder.h"
 
 #endif //FRYDOM_FRHYDRODYNAMICS_H
