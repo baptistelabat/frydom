@@ -14,67 +14,6 @@
 
 namespace frydom {
 
-//    void FrCable::SetYoungModulus(const double E) { m_youngModulus = E; }
-//
-//    double FrCable::GetYoungModulus() const { return m_youngModulus; }
-//
-//    void FrCable::SetSectionArea(const double A) { m_sectionArea = A; }
-//
-//    double FrCable::GetSectionArea() const { return m_sectionArea; }
-//
-//    void FrCable::SetCableLength(const double L) { m_cableLength = L; }
-//
-//    double FrCable::GetCableLength() const { return m_cableLength; }
-//
-//    void FrCable::SetUnrollingSpeed(const double unrollingSpeed) { m_unrollingSpeed = unrollingSpeed; }
-//
-//    double FrCable::GetUnrollingSpeed() const { return m_unrollingSpeed; }
-//
-//    void FrCable::SetDiameter(const double d) {
-//        m_sectionArea = M_PI * std::pow(d*0.5, 2);
-//    }
-//
-//    double FrCable::GetDiameter() const {
-//        return std::sqrt(4. * m_sectionArea / M_PI);
-//    }
-//
-//    double FrCable::GetEA() const {
-//        return m_youngModulus * m_sectionArea;
-//    }
-//
-//    void FrCable::SetLinearDensity(const double lambda) { m_linearDensity = lambda; }
-//
-//    double FrCable::GetLinearDensity() const { return m_linearDensity; }
-//
-//    void FrCable::SetDensity(const double rho) {
-//        m_linearDensity = rho * m_sectionArea;
-//    }
-//
-//    double FrCable::GetDensity() const {
-//        return m_linearDensity / m_sectionArea;
-//    }
-//
-//    void FrCable::SetStartingNode(std::shared_ptr<FrNode> startingNode) {
-//        // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
-//        m_startingNode = startingNode;
-//    }
-//
-//    std::shared_ptr<FrNode> FrCable::GetStartingNode() const {
-//        return m_startingNode;
-//    }
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    ///////// REFACTO
-
-
-
     FrCable_::FrCable_() = default;
 
     FrCable_::~FrCable_() = default;
@@ -177,6 +116,4 @@ namespace frydom {
         return m_unrollingSpeed;
     }
 
-
-
-}
+}  // end namespace frydom

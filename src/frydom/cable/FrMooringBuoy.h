@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #ifndef FRYDOM_FRMOORINGBUOY_H
@@ -65,6 +65,7 @@ namespace frydom {
     /// \return FrMooringBuoy instance
     std::shared_ptr<FrMooringBuoy>
     make_mooring_buoy(FrOffshoreSystem_* system, double radius, double mass, bool visual_asset = true, double damping=0);
-} //end namespace frydom
+
+}  //end namespace frydom
 
 #endif //FRYDOM_FRMOORINGBUOY_H

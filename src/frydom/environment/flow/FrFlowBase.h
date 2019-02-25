@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -23,10 +23,6 @@ namespace frydom {
     // Forward declarations
     class FrEnvironment_;
     class FrFrame_;
-
-    enum FIELD {
-        UNIFORM
-    };
 
     ///
     /// FrFlowBase : Base flow field
@@ -94,58 +90,6 @@ namespace frydom {
         void StepFinalize() override;
 
         virtual FrEnvironment_* GetEnvironment() const = 0;
-
-    };
-
-
-    //Forward Declaration
-    class FrOcean_;
-    class FrAtmosphere_;
-
-    /**
-     * \class FrCurrent
-     * \brief Class defining a current field.
-     */
-    class FrCurrent_ : public FrFlowBase {
-    private:
-
-        FrOcean_* m_ocean;  ///> Pointer to the ocean containing this current model
-
-    public:
-        /// Default constructor
-        /// \param ocean ocean containing this current model
-        explicit FrCurrent_(FrOcean_* ocean) : FrFlowBase() { m_ocean = ocean;}
-
-        /// Get the ocean containing this current model
-        /// \return ocean containing this current model
-        FrOcean_* GetOcean() const {return m_ocean;}
-
-        FrEnvironment_* GetEnvironment() const override;
-
-    };
-
-
-
-    /**
-    * \class FrWind_
-    * \brief Class for defining a wind.
-    */
-    class FrWind_ : public FrFlowBase {
-    private:
-
-        FrAtmosphere_* m_atmosphere;  ///> Pointer to the atmosphere containing this wind model
-
-    public:
-
-        /// Default constructor
-        /// \param atmosphere containing this wind model
-        explicit FrWind_(FrAtmosphere_* atmosphere) : FrFlowBase() { m_atmosphere = atmosphere;}
-
-        /// Get the atmosphere containing this wind model
-        /// \return atmosphere containing this wind model
-        FrAtmosphere_* GetAtmosphere() const {return m_atmosphere;}
-
-        FrEnvironment_* GetEnvironment() const override;
 
     };
 

@@ -16,32 +16,6 @@
 
 #include "frydom/core/common/FrObject.h"
 
-//#include <frydom/environment/wind/FrWind.h>
-
-
-// Time includes
-//#include "FrTimeZone.h"
-
-// Current includes
-//#include "current/FrCurrent.h"
-//#include "current/FrCurrentPolarCoeffs.h"
-//#include "current/FrCurrentForce.h"
-//#include "current/FrCurrentStandardForce.h"
-
-// Waves includes
-//#include "waves/FrFreeSurface.h"
-//#include "waves/FrWaveSpectrum.h"
-//#include "waves/FrWaveField.h"
-//#include "tidal/FrTidalModel.h"
-
-// Wind includes
-//#include "wind/FrWind.h"
-//#include "wind/FrWindForce.h"
-//#include "wind/FrWindStandardForce.h"
-
-// Seabed includes
-//#include "seabed/FrSeabed.h"
-
 // GeographicLib includes
 #include "frydom/environment/geographicServices/FrGeographicServices.h"
 #include "frydom/core/common/FrConvention.h"
@@ -53,224 +27,16 @@ namespace GeographicLib {
 
 namespace frydom {
 
-//    // Forward declarations
-//    class FrOffshoreSystem;
+    // Forward declarations
     class FrTimeZone;
-//    class FrFreeSurface;
-//    class FrTidal;
-//    class FrCurrent;
-////    class FrUniformCurrent;
-//    class FrWind;
-////    class FrUniformWind;
-//
-//    class FrSeabed;
-//
-//
-//    /// Class to store the different elements composing the offshore environment
-//
-//    /**
-//     * \class FrEnvironment
-//     * \brief Class for defining the environmental data.
-//     */
-//    class FrEnvironment : public FrObject {
-//
-//    private:
-//
-//        FrOffshoreSystem* m_system;
-//
-//        double m_time;
-//        std::unique_ptr<FrTimeZone> m_timeZone;
-//
-//        // Environment components
-//        std::unique_ptr<FrFreeSurface> m_freeSurface;
-//        std::unique_ptr<FrCurrent> m_current;
-//        std::unique_ptr<FrWind> m_wind;
-//        std::unique_ptr<FrSeabed> m_seabed;
-//
-//        /// Wrap for GeographicLib, contains the origin of geographic coordinates
-//        std::unique_ptr<GeographicLib::LocalCartesian> m_localCartesian;
-//
-//        // Environments scalars
-//        double m_waterDensity = 1025.;
-//        double m_airDensity = 1.204;
-//
-//        double m_gravityAcceleration = 9.81;
-//
-//        double m_seaTemperature = 15.;
-//        double m_airtemperature = 20.;
-//
-//        double m_waterKinematicViscosity;
-//
-//        double m_atmosphericPressure;
-//
-//        bool m_infinite_depth = false;
-//
-//        bool m_showSeabed = true;
-//        bool m_showFreeSurface = true;
-//
-//    public:
-//
-//        FrEnvironment();
-//
-//        ~FrEnvironment();
-//
-//        void SetSystem(FrOffshoreSystem* system);
-//
-//        FrOffshoreSystem* GetSystem();
-//
-//        void SetInfiniteDepth(bool is_infinite);
-//        bool GetInfiniteDepth();
-//
-//        void SetShowSeabed(bool is_shown) {m_showSeabed = is_shown;}
-//        bool GetShowSeabed() { return m_showSeabed;}
-//
-//        void SetShowFreeSurface(bool is_shown) {m_showFreeSurface = is_shown;}
-//        bool GetShowFreeSurface() { return m_showFreeSurface;}
-//
-//        void SetTime(double time);
-//
-//        double GetTime() const;
-//
-//        double GetWaterDensity() const;
-//
-//        void SetWaterDensity(const double waterDensity);
-//
-//        double GetAirDensity() const;
-//
-//        void SetAirDensity(double airDensity);
-//
-//        double GetGravityAcceleration() const;
-//
-//        void SetGravityAcceleration(double gravityAcceleration);
-//
-//        double GetSeaTemperature() const;
-//
-//        void SetSeaTemperature(double seaTemperature);
-//
-//        double GetAirtemperature() const;
-//
-//        void SetAirtemperature(double airtemperature);
-//
-//        double GetWaterKinematicViscosity() const;
-//
-//        void SetWaterKinematicViscosity(double waterKinematicViscosity);
-//
-//        double GetAtmosphericPressure() const;
-//
-//        void SetAtmosphericPressure(double atmosphericPressure);
-//
-//        FrFreeSurface* GetFreeSurface() const;
-//
-////        void SetFreeSurface(FrFreeSurface* freeSurface);
-//
-//        FrTidal* GetTidal() const;
-////
-////        void SetTidal(FrTidal* tidal) {
-////            m_tidal = std::unique_ptr<FrTidal>(tidal);
-////        }
-//
-//        template <class T=FrCurrent>
-//        T* GetCurrent() const;
-//
-//        template <class T=FrWind>
-//        T* GetWind() const;
-//
-////        void SetCurrent(FrCurrent* current);
-//
-////        void SetCurrent (const FrCurrent::MODEL type=FrCurrent::UNIFORM);
-////
-////        void SetWind(const FrWind::MODEL type=FrWind::UNIFORM);
-//
-//        inline FrSeabed* GetSeabed() const;
-//
-//        void SetSeabed(FrSeabed* seabed);
-//
-//        // TODO : encapsuler ces methodes dans un GeographicService
-//
-//        GeographicLib::LocalCartesian* GetGeoLib() const;
-//
-//        void SetGeographicOrigin(double lat0, double lon0, double h0);
-//
-//        void Convert_GeoToCart(double lat, double lon, double h, double& x, double& y, double& z);
-//
-//        void Convert_CartToGeo(double x, double y, double z, double& lat, double& lon, double& h);
-//
-//        double ComputeMagneticDeclination(double x, double y, double z);
-//
-//        /* TODO : DEBUG memory leak due to ptr to m_geoServices
-//        FrGeographicServices* GetGeoServices() const {
-//            return m_geoServices.get();
-//        }
-//
-//        void SetGeographicOrigin(double lat0, double lon0, double h0){
-//            m_geoServices->SetGeographicOrigin(lat0,lon0,h0);
-//        }
-//
-//        void Convert_GeoToCart(double lat, double lon, double h, double& x, double& y, double& z){
-//            m_geoServices->GeoToCart(lat,lon,h,x,y,z);
-//        }
-//
-//        void Convert_CartToGeo(double x, double y, double z, double& lat, double& lon, double& h){
-//            m_geoServices->CartToGeo(x,y,z,lat,lon,h);
-//        }
-//
-//        double ComputeMagneticDeclination(double x, double y, double z){
-//            m_geoServices->GetDeclinationFromCart(x,y,z,GetYear());
-//        }*/
-//
-//        FrTimeZone* GetTimeZone() const;
-//        //void SetTimeZoneName(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
-//
-//        int GetYear() const;  // FIXME : ne devrait pas etre direct dans environment mais dans un servixce de temps...
-//
-//        void Update(double time);
-//
-//        void Initialize() override;
-//
-//        void StepFinalize() override;
-//
-//    };
-//
-//    template<class T>
-//    T* FrEnvironment::GetCurrent() const { return dynamic_cast<T*>(m_current.get()); }
-//
-//    template<class T>
-//    T* FrEnvironment::GetWind() const { return dynamic_cast<T*>(m_wind.get()); }
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    // REFACTORING ---->>>>
-//
-//
-
-
-
-
-
     class FrOffshoreSystem_;
-
     class FrOcean_;
     class FrAtmosphere_;
     class FrGeographicServices;
-
     class Velocity;
     class FrFrame_;
-
     class FrLinearRampFunction_;
 
-
-    /// Class to store the different elements composing the offshore environment
 
     /**
      * \class FrEnvironment
@@ -284,17 +50,13 @@ namespace frydom {
 
         //---------------------------- Environment elements ----------------------------//
         // TODO : faire un service de temps, NEED REFACTO
-        std::unique_ptr<FrTimeZone> m_timeZone;     ///< Zoned time conversion service, can give time during simulation in a specified time zone.
+        std::unique_ptr<FrTimeZone> m_timeZone;                         ///< Zoned time conversion service, can give time during simulation in a specified time zone.
 
+        std::unique_ptr<FrLinearRampFunction_> m_timeRamp;              ///< Time ramp, can be applied on wave field, current field, wind field, etc.
 
-        std::unique_ptr<FrLinearRampFunction_> m_timeRamp;        ///< Time ramp, can be applied on wave field, current field, wind field, etc.
+        std::unique_ptr<FrOcean_> m_ocean;                              ///> Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
 
-
-        std::unique_ptr<FrOcean_> m_ocean;    ///> Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
-
-
-        std::unique_ptr<FrAtmosphere_> m_atmosphere;    ///> Atmosphere element of the simulation, contains wind model, air properties.
-
+        std::unique_ptr<FrAtmosphere_> m_atmosphere;                    ///> Atmosphere element of the simulation, contains wind model, air properties.
 
         std::unique_ptr<FrGeographicServices> m_geographicServices;    ///> Service converting local coordinates to geographic coordinates, contains the geocoord origins.
 
@@ -393,10 +155,6 @@ namespace frydom {
         void StepFinalize() override;
 
     };
-
-
-
-
 
 }  // end namespace frydom
 

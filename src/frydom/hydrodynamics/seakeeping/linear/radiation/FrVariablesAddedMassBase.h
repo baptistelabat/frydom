@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -16,12 +16,17 @@
 #include "chrono/solver/ChVariablesBodyOwnMass.h"
 #include "frydom/core/math/FrMatrix.h"
 
+#include "MathUtils/Matrix66.h"
+
 namespace frydom {
 
+    // Forward declaration
+    class FrBody_;
     class FrBEMBody_;
 
     namespace internal {
 
+        // Forward declaration
         class FrAddedMassBase;
 
         class FrVariablesAddedMassBase : public chrono::ChVariables {
@@ -61,9 +66,9 @@ namespace frydom {
 
         };
 
-    }
+    }  // end namespace frydom::internal
 
-}
+}  // end namespace frydom
 
 
 #endif //FRYDOM_FRADDEDMASSVARIABLE_H

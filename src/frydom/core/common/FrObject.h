@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -25,6 +25,9 @@ namespace frydom {
      * \brief Class for defining objects in FRyDoM.
      */
     class FrObject {
+
+        // TODO : abandonner les uuid boost au profit d'un nameServer qui s'assure de l'unicite des noms donnes par l'utilisateur
+        // La resolution de nom devra avoir lieu lors de l'initialisation des classes et le nameServer fera parti du OffshoreSystem...
 
     private:
         std::string m_UUID;

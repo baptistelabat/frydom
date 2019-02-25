@@ -23,13 +23,9 @@
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/core/force/FrForce.h"
 #include "frydom/core/math/FrEulerAngles.h" // TODO : devrait disparaitre
-
-//#include "frydom/asset/FrGridAsset.h"
-
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 
 #include "FrInertia.h"
-//#include "FrForce.h"
 #include "frydom/core/misc/FrColors.h"
 #include "frydom/core/common/FrNode.h"
 
@@ -40,252 +36,14 @@
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
 #include "frydom/core/link/links_lib/FrRevoluteLink.h"
 
+
+#define DEFAULT_MAX_SPEED (float)10.
+#define DEFAULT_MAX_ROTATION_SPEED (float)(180.*DEG2RAD)
+
 namespace frydom {
 
-//    class FrNode;
-//
-//    /**
-//     * \class FrBody
-//     * \brief Class for defining a body.
-//     */
-//    class FrBody : public chrono::ChBodyAuxRef,
-//                   public std::enable_shared_from_this<FrBody>,
-//                   public FrObject
-//    {  // TODO: voir a supprimer cet heritage...
-//
-//    protected:
-//        std::vector<std::shared_ptr<FrForce>> external_force_list;
-//        std::shared_ptr<FrTriangleMeshConnected> m_visu_mesh;
-//        hermes::Message m_bodyMsg;
-//        bool is_log = true;
-//
-//        // ##CC : fix pour logger les angles de rotation via hermes
-//        // TODO : ameliorer hermes pour permettre le log de variable non définis en attributs
-//        chrono::ChVector<double> m_angles_rotation;
-//        chrono::ChVector<double> m_angles_speed; ///< local coordinate system
-//        // ##CC
-//
-//    public:
-//
-//        FrBody() {
-//            SetLogNameAndDescription("Body_msg", "Message for a body");
-//        }
-//
-//        std::shared_ptr<FrBody> GetSharedPtr() {
-//            return shared_from_this();
-//        }
-//
-//        void SetAbsPos(const chrono::ChVector<double>& REFabsPos) {
-//            auto frame = chrono::ChFrame<double>();
-//            frame.SetPos(REFabsPos);
-//            SetFrame_REF_to_abs(frame);
-//        }
-//
-//        /// Get the body absolute position (this of its reference point)
-//        chrono::ChVector<> GetPosition(FRAME_CONVENTION frame = NWU) const{
-//            switch (frame) {
-//                case NWU:
-//                    return GetPos();
-//                case NED:
-////                    return internal::swap_NED_NWU(GetPos());
-//                    auto pos = GetPos();
-//                    pos[1] = -pos[1];
-//                    pos[2] = -pos[2];
-//                    return pos;
-////                    return internal::swap_NED_NWU(GetPos());
-//            }
-//        }
-//
-//        /// Get the body orientation
-//        chrono::ChVector<> GetOrientation(FRAME_CONVENTION frame= NWU) const{
-//            // TODO
-//        }
-//
-//        /// Get the body velocity
-//        chrono::ChVector<> GetVelocity(FRAME_CONVENTION frame= NWU) const{
-//            switch (frame) {
-//                case NWU:
-//                    return GetPos_dt();
-//                case NED:
-//                    auto vel = GetPos_dt();
-//                    vel[1] = -vel[1];
-//                    vel[2] = -vel[2];
-//                    return vel;
-////                    return internal::swap_NED_NWU(GetPos_dt());
-//            }
-//        }
-//
-//        /// Get the body angular velocity
-//        chrono::ChVector<> GetAngularVelocity(FRAME_CONVENTION frame= NWU) {
-//            //TODO
-//        }
-//
-//        void AddNode(std::shared_ptr<FrNode> node);
-//        // TODO: implementer aussi les removeMarker etc...
-//
-//        std::shared_ptr<FrNode> CreateNode();
-//        std::shared_ptr<FrNode> CreateNode(const chrono::ChVector<double> relpos);
-//
-////        std::shared_ptr<FrBody> CreateNodeDynamic();
-////        std::shared_ptr<FrBody> CreateNodeDynamic(const chrono::ChVector<double> relpos);
-//
-//        /// Set the position of the COG with respect to the body's reference frame (in local coordinates)
-//        void SetCOG(const chrono::ChVector<double>& COGRelPos) {
-//            auto COGFrame = chrono::ChFrame<double>();
-//
-//            COGFrame.SetPos(COGRelPos);
-//            SetFrame_COG_to_REF(COGFrame);
-//        }
-//
-//        const chrono::ChVector<double> GetAbsCOG() const {
-//            auto COGFrame = GetFrame_COG_to_abs();
-//            return COGFrame.GetPos();
-//        }
-//
-//        const chrono::ChVector<double> GetRelCOG() const {
-//            auto COGFrame = GetFrame_COG_to_REF();
-//            return COGFrame.GetPos();
-//        }
-//
-//        /// Set the mesh used for visualization from a mesh shared instance
-//        void SetVisuMesh(std::shared_ptr<FrTriangleMeshConnected> mesh);
-//
-//        /// Set the mesh used for visualization from a wavefront obj file
-//        void SetVisuMesh(std::string obj_filename);
-//
-//        virtual void Initialize() override {
-//            // TODO: mettre l'initialisation de message dans une methode privee qu'on appelle ici...
-//
-//            // Initializing forces
-//            for (int iforce=0; iforce<forcelist.size(); iforce++) {
-//                auto force = dynamic_cast<FrForce*>(forcelist[iforce].get());
-//                if (force) {
-//                    force->Initialize();
-//                }
-//            }
-//
-//            if (is_log) {
-//                InitializeLog();
-//            }
-//        }
-//
-//        /// Define the name and the description of the log message of the body
-//        virtual void SetLogNameAndDescription(std::string name="ShipLog",
-//                                              std::string description="Log of the body position and force at COG") {
-//            m_bodyMsg.SetNameAndDescription(name, description);
-//            is_log = true;
-//        }
-//
-//        /// Deactivate the generation of log from the body
-//        virtual void DeactivateLog() { is_log = false; }
-//
-//        /// Definition of the field to log
-//        virtual void SetLogDefault() {
-//
-//            // Initializing message
-//            if (m_bodyMsg.GetName() == "") {
-//                m_bodyMsg.SetNameAndDescription(
-//                        fmt::format("Body_{}", GetUUID()),
-//                        "Message of a body");
-//            }
-//
-//            m_bodyMsg.AddCSVSerializer("Body_" + GetUUID());
-//            //m_bodyMsg.AddPrintSerializer();
-//
-//            // Adding fields
-//            m_bodyMsg.AddField<double>("time", "s", "Current time of the simulation", &ChTime);
-//
-//            m_bodyMsg.AddField<double>("x", "m", "x position of the body reference frame origin", &coord.pos.x());
-//            m_bodyMsg.AddField<double>("y", "m", "y position of the body reference frame origin", &coord.pos.y());
-//            m_bodyMsg.AddField<double>("z", "m", "z position of the body reference frame origin", &coord.pos.z());
-//
-//            m_bodyMsg.AddField<double>("vx", "m/s", "velocity of the body along x-axis", &coord_dt.pos.x());
-//            m_bodyMsg.AddField<double>("vy", "m/s", "velocity of the body along x-axis", &coord_dt.pos.y());
-//            m_bodyMsg.AddField<double>("vz", "m/s", "velocity of the body along x-axis", &coord_dt.pos.z());
-//
-//            m_bodyMsg.AddField<double>("rx", "rad", "euler angle along the x-direction (body ref frame)", &m_angles_rotation.x());
-//            m_bodyMsg.AddField<double>("ry", "rad", "euler angle along the y-direction (body ref frame)", &m_angles_rotation.y());
-//            m_bodyMsg.AddField<double>("rz", "rad", "euler angle along the z-direction (body ref frame)", &m_angles_rotation.z());
-//
-//            m_bodyMsg.AddField<double>("vrx", "rad/s", "angular speed around x-axis (expressed in local coords)", &m_angles_speed.x());
-//            m_bodyMsg.AddField<double>("vry", "rad/s", "angular speed around y-axis (expressed in local coords)", &m_angles_speed.y());
-//            m_bodyMsg.AddField<double>("vrz", "rad/s", "angular speed around z-axis (expressed in local coords)", &m_angles_speed.z());
-//
-//            m_bodyMsg.AddField<double>("Xbody_FX", "N", "force acting on the body at COG (in absolute reference frame)", &Xforce.x());
-//            m_bodyMsg.AddField<double>("Xbody_FY", "N", "force acting on the body at COG (in absolute reference frame)", &Xforce.y());
-//            m_bodyMsg.AddField<double>("Xbody_FZ", "N", "force acting on the body at COG (in absolute reference frame)", &Xforce.z());
-//
-//            m_bodyMsg.AddField<double>("Xbody_MX", "N.m", "moment acting on the body at COG (in body reference frame)", &Xtorque.x());
-//            m_bodyMsg.AddField<double>("Xbody_MY", "N.m", "moment acting on the body at COG (in body reference frame)", &Xtorque.y());
-//            m_bodyMsg.AddField<double>("Xbody_MZ", "N.m", "moment acting on the body at COG (in body reference frame)", &Xtorque.z());
-//
-//
-////            for (auto force: forcelist) {
-////                auto dforce = dynamic_cast<FrForce *>(force.get());
-////                m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
-////            }
-//        }
-//
-//        virtual void AddMessageLog(std::shared_ptr<FrForce> dforce) {
-////            m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
-//            //dforce->DeactivateLog();
-//        }
-//
-//        virtual void AddMessageLog(FrForce* dforce) {
-////            m_bodyMsg.AddField<hermes::Message>("force", "-", "external force on a body", dforce->GetLog());
-//            //dforce->DeactivateLog();
-//        }
-//
-//        /// Initialize log file and serialize body field
-//        virtual void InitializeLog() {
-//            m_bodyMsg.Initialize();
-//            m_bodyMsg.Send();
-//        }
-//
-//        /// Return the object message of the body
-//        hermes::Message& Log() { return m_bodyMsg; }
-//
-//        virtual void UpdateLog() {
-//            m_bodyMsg.Serialize();
-//            m_bodyMsg.Send();
-//        }
-//
-//        virtual void StepFinalize() override {
-//
-//            m_angles_rotation = internal::quat_to_euler(GetRot());    // FIXME : ceci est un fixe pour permettre de logger l'angle de rotation
-//            m_angles_speed = GetWvel_loc();
-//
-//            for (auto& iforce: forcelist) {
-//                auto force = dynamic_cast<FrForce*>(iforce.get());
-//                if (force) {
-//                    force->StepFinalize();
-//                }
-//            }
-//
-//            m_bodyMsg.Serialize();
-//            m_bodyMsg.Send();
-//        }
-//
-//    };
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    // REFACTORING ------>>>>>>>>>>>>>>
 
+    // Forward declarations
     class FrUnitQuaternion_;
     class FrBody_;
 
@@ -361,8 +119,6 @@ namespace frydom {
         std::shared_ptr<FrLink_> m_DOFLink;
 
 
-
-
     public:
 
         /// Default constructor
@@ -387,33 +143,12 @@ namespace frydom {
         /// Get the body mass in kg
         double GetMass() const;
 
-//        /// Set the body mass in kg
-//        /// \param mass body mass in kg
-//        void SetMass(double mass);
-//
-
         /// Get the inertia parameters as a FrInertiaTensor_ object
         // TODO : gerer la frame convention !
         FrInertiaTensor_ GetInertiaTensor(FRAME_CONVENTION fc) const; // TODO : voir pour une methode renvoyant une reference non const
 
         /// Set the inertia parameters as a FrInertiaTensor_ object
         void SetInertiaTensor(const FrInertiaTensor_ &inertia);
-
-//        /// Set the principal inertia parameters given as coefficients expressed in coeffsFrame that can be different
-//        /// from the local COG position cogPosition (expressed in body reference coordinate system)
-//        void SetInertiaParams(double mass,
-//                              double Ixx, double Iyy, double Izz,
-//                              double Ixy, double Ixz, double Iyz,
-//                              const FrFrame_& coeffsFrame,
-//                              const Position& cogPosition,
-//                              FRAME_CONVENTION fc);
-//
-//        /// Set the inertia parameters given in cogFrame relative to
-//        void SetInertiaParams(double mass,
-//                              double Ixx, double Iyy, double Izz,
-//                              double Ixy, double Ixz, double Iyz,
-//                              const FrFrame_& cogFrame,
-//                              FRAME_CONVENTION fc);
 
         // =============================================================================================================
         // CONTACT
@@ -542,32 +277,6 @@ namespace frydom {
         /// reference frame
         /// \return node created
         std::shared_ptr<FrNode_> NewNode();
-
-//        /// Get a new node attached to the body given a frame defined with respect to the body reference frame
-//        /// \param nodeFrame frame of the node, given in body reference frame
-//        /// \return node created
-//        std::shared_ptr<FrNode_> NewNode(const FrFrame_& nodeFrame);
-//
-//        /// Get a new node attached to the body given a position and a rotation defined with respect to the body
-//        /// reference frame
-//        /// \param bodyFrame frame of the node, given in body reference frame
-//        /// \return node created
-//        std::shared_ptr<FrNode_> NewNode(const Position& nodeLocalPosition, const FrRotation_& nodeLocalRotation,
-//                                         FRAME_CONVENTION fc);
-//
-//        /// Get a new node attached to the body given a position of the node expressed into the body reference frame
-//        /// \param nodeLocalPosition position of the node, in the body reference frame
-//        /// \param fc frame convention (NED/NWU)
-//        /// \return node created
-//        std::shared_ptr<FrNode_> NewNode(const Position& nodeLocalPosition, FRAME_CONVENTION fc);
-//
-//        /// Get a new node attached to the body given a position of the node expressed into the body reference frame
-//        /// \param x x position of the node in the body reference frame
-//        /// \param y y position of the node in the body reference frame
-//        /// \param z z position of the node in the body reference frame
-//        /// \param fc frame convention (NED/NWU)
-//        /// \return node created
-//        std::shared_ptr<FrNode_> NewNode(double x, double y, double z, FRAME_CONVENTION fc);
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame_ !
 
@@ -1110,14 +819,7 @@ namespace frydom {
 
         FrBodyDOFMask* GetDOFMask();
 
-
-
     protected:
-
-//        enum FRAME {
-//            WORLD,
-//            BODY
-//        };
 
         /// Set the COG position in the body reference frame
         /// \param bodyPos COG position in the body reference frame
@@ -1186,9 +888,6 @@ namespace frydom {
 
 
         friend FrNode_::FrNode_(FrBody_*);
-
-//        friend std::shared_ptr<chrono::ChBody> FrLinkBase_::GetChronoBody1();
-//        friend std::shared_ptr<chrono::ChBody> FrLinkBase_::GetChronoBody2();
         friend class FrLinkBase_;
 
 
@@ -1218,12 +917,10 @@ namespace frydom {
         ConstForceIter  force_end() const;
 
 
-
         // friend declarations
         // This one is made for the FrOffshoreSystem to be able to add the embedded chrono object into the embedded
         // chrono system (ChSystem)
         friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_>);
-//        friend void FrGridAsset::Initialize();
 
         friend int internal::FrAddedMassBase::GetBodyOffset(FrBody_* body) const;
         friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody_* body) const ;
@@ -1232,7 +929,6 @@ namespace frydom {
         friend void internal::FrAddedMassBase::SetVariables(FrBody_ *body, chrono::ChMatrix<double> &qb, int offset) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody_ *body) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody_ *body) const;
-        //friend void internal::FrVariablesAddedMassBase::Initialize();
 
     };
 

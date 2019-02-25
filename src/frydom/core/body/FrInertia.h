@@ -22,17 +22,17 @@
 
 namespace frydom {
 
-    /// Class to define the inertia tensor of a rigid body
-    /// It stores the principal inertia parameters :
-    ///     - mass
-    ///     - local COG position expressed in the body reference frame
-    ///     - inertia matrix expressed at COG in the body reference frame
-    /// Internally, the frame convention used is NWU but it is still possible to get or set parameters in any frame
-    /// convention
-
     /**
      * \class FrInertiaTensor_
      * \brief Class for defining the intertia tensor of a rigid body.
+     *
+     * It stores the principal inertia parameters :
+     *     - mass
+     *     - local COG position expressed in the body reference frame
+     *     - inertia matrix expressed at COG in the body reference frame
+     *
+     * Internally, the frame convention used is NWU but it is still possible to get or set parameters in any frame
+     * convention
      */
     class FrInertiaTensor_ {
 
@@ -47,20 +47,6 @@ namespace frydom {
         InertiaMatrix m_inertiaAtCOG;  ///< Inertia matrix expressed at COG in reference frame
 
     public:
-
-        // Dans inertia tensor, on stocke les coefficients de la matrice d'inertie exprimee au centre de gravite
-        // dans le repere de reference dans lequel les coords du centre de gravite sont donnes
-
-//      Chrono can't work with null inertia !!!
-//        /// Default constructor with every inertia parameters set to null (COG position, mass, inertia matrix)
-//        FrInertiaTensor_();
-//
-//        /// Constructor taking only a mass. COG Position and inertia matrix are set to null. Mass is in kg.
-//        explicit FrInertiaTensor_(double mass);
-//
-//        /// Constructor taking only a  mass and a COG Position. The inertia matrix is set to null. Mass is in kg.
-//        /// The frame convention holds on the COG Position.
-//        FrInertiaTensor_(double mass, const Position& cogPosition, FRAME_CONVENTION fc);
 
         /// Constructor from standard inertia parameters. Inertia coefficients are expressed in coeffsFrame that can be
         /// different from the cogPosition. Both coeffsFrame and corPosition are relative to body reference coordinate
@@ -119,7 +105,7 @@ namespace frydom {
             Ixz = -Ixz;
         }
 
-    }  // end namespace internal
+    }  // end namespace frydom::internal
 
 
 }  // end namespace frydom

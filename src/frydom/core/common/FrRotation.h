@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -25,15 +25,12 @@
 
 namespace frydom {
 
-
-    // WARNING: chrono object must always be in NWU convention. Conversion to NED must be applied on FRyDoM objects
-
     /**
     * \class FrUnitQuaternion_
     * \brief Class for using quaternion.
     */
     class FrUnitQuaternion_ {
-        /// This quaternion class is only used in FRyDoM to represent rotations, in contrary to Chrono.
+        /// INFO : This quaternion class is only used in FRyDoM to represent rotations, in contrary to Chrono.
         /// The unit quaternion is then ALWAYS defined normalized.
 
     private:
@@ -643,7 +640,7 @@ namespace frydom {
             quat.e3() = quat.e3();
         }
 
-    }
+    }  // end namespace frydom::internal
 
 }  // end namespace frydom
 

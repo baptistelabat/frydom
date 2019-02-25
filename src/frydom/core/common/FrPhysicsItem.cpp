@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -18,11 +18,10 @@ namespace frydom {
 
     namespace internal {
 
-        /// Constructor of the class.
+
         _FrPhysicsItemBase::_FrPhysicsItemBase(FrPhysicsItem_ *item) : m_frydomPhysicsItem(item) {}
 
         void _FrPhysicsItemBase::SetupInitial() {
-//            chrono::ChPhysicsItem::SetupInitial();
         }
 
         void _FrPhysicsItemBase::Update(bool update_assets) {
@@ -34,7 +33,9 @@ namespace frydom {
             ChPhysicsItem::Update(time, update_assets);
         }
 
-    }
+    }  // end namespace frydom::internal
+
+
 
     FrPhysicsItem_::FrPhysicsItem_() {
         m_chronoPhysicsItem = std::make_shared<internal::_FrPhysicsItemBase>(this);
@@ -77,4 +78,4 @@ namespace frydom {
         Initialize();
     }
 
-}
+}  // end namespace frydom

@@ -17,61 +17,6 @@
 
 namespace frydom {
 
-
-//    FrRadiationForce::FrRadiationForce(std::shared_ptr<FrRadiationModel> radiationModel) : m_radiationModel(radiationModel) {}
-//
-//    void FrRadiationForce::SetRadiationModel(const std::shared_ptr<FrRadiationModel> radiationModel) { m_radiationModel = radiationModel; }
-//
-//    std::shared_ptr<FrRadiationModel> FrRadiationForce::GetRadiationModel() const { return m_radiationModel; }
-//
-//    void FrRadiationForce::SetLogPrefix(std::string prefix_name) {
-//        if (prefix_name=="") {
-//            m_logPrefix = "Frad_" + FrForce::m_logPrefix;
-//        } else {
-//            m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
-//        }
-//    }
-//
-//    FrRadiationConvolutionForce::FrRadiationConvolutionForce(
-//            std::shared_ptr<FrRadiationConvolutionModel> radiationConvolutionModel)
-//            : FrRadiationForce(radiationConvolutionModel) {}
-//
-//    void FrRadiationConvolutionForce::Initialize() {
-//        m_radiationModel->Initialize();
-//        FrRadiationForce::Initialize();
-//    }
-//
-//    void FrRadiationConvolutionForce::UpdateState() {
-//        // TODO: appeler le Update du RadiationModel
-//        m_radiationModel->Update(ChTime);  // TODO: verifier que le ChTime est le bon temps courant !!
-//
-//        // Current Hydrodynamic body
-//        auto hydroBody = dynamic_cast<FrHydroBody*>(GetBody());
-//
-//        // Get the forces
-//        m_radiationModel->GetRadiationForce(hydroBody, force, moment);
-//
-//        moment = hydroBody->Dir_World2Body(moment);  // Moment expressed in the local coordinate frame
-//        // TODO: verifier que c'est la bonne fonction
-//
-//        // moment in local
-////            force = m_radiationModel->GetRadiationForce(hydroBody);
-////            moment = m_radiationModel->GetRadiationMoment(hydroBody);
-//
-//    }
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
-
     // --------------------------------------------------
     // FrRadiationForce
     // --------------------------------------------------
@@ -106,7 +51,5 @@ namespace frydom {
 
         SetForceTorqueInWorldAtCOG(force, torque, NWU);
     }
-
-
 
 }  // end namespace frydom

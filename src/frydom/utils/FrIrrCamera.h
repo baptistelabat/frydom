@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -19,11 +19,11 @@
 
 namespace frydom {
 
-/// Copied from ChIrrCamera and modified to get UpVector on Z.
-/// Class to create an interactive videocamera in Irrlicht, that is similar to
-/// the Maya camera but hasn't the problems that the Maya camera has in
-/// Irrlicht 1.5.
-/// This code is based on work by "CmdKewin" (from the Irrlicht forum).
+    /// Copied from ChIrrCamera and modified to get UpVector on Z.
+    /// Class to create an interactive videocamera in Irrlicht, that is similar to
+    /// the Maya camera but hasn't the problems that the Maya camera has in
+    /// Irrlicht 1.5.
+    /// This code is based on work by "CmdKewin" (from the Irrlicht forum).
 
     /**
      * \class FrIrrCamera
@@ -186,6 +186,7 @@ namespace frydom {
 
 
     };
-}
+
+}  // end namespace frydom
 
 #endif //FRYDOM_FRIRRCAMERA_H

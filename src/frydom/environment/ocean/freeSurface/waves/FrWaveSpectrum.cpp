@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -352,11 +352,11 @@ namespace frydom {
 
             double a = exp(-pow(w - m_peak_frequency, 2) / (2. * wp2));
             if (w <= m_peak_frequency) {
-                a = pow(a, _SIGMA2_1_left);
+                a = std::pow(a, _SIGMA2_1_left);
             } else {
-                a = pow(a, _SIGMA2_1_right);
+                a = std::pow(a, _SIGMA2_1_right);
             }
-            S_w *= pow(m_gamma, a);
+            S_w *= std::pow(m_gamma, a);
         }
 
         return S_w;
@@ -383,15 +383,4 @@ namespace frydom {
         return 1.;
     }
 
-    std::unique_ptr<FrWaveSpectrum> MakeWaveSpectrum(WAVE_SPECTRUM_TYPE type) {
-        switch (type) {
-
-            case JONSWAP:
-                return std::make_unique<FrJonswapWaveSpectrum>();
-
-            case PIERSON_MOSKOWITZ:
-                return std::make_unique<FrPiersonMoskowitzWaveSpectrum>();
-
-        }
-    }
 }  // end namespace frydom

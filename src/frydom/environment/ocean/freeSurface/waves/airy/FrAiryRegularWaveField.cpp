@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -18,7 +18,6 @@
 #include "frydom/environment/ocean/seabed/FrSeabed.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
-//#include "../FrWaveDispersionRelation.h"
 
 namespace frydom {
 
@@ -43,15 +42,6 @@ namespace frydom {
         // Set the wave number, using the wave dispersion relation
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
 
-//        try {
-//            m_k = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(NWU), m_omega, gravityAcceleration);
-//            m_infinite_depth = 3. / m_k < m_freeSurface->GetOcean()->GetDepth(NWU);
-//        }
-//        catch(FrException& e) {
-//            m_k = m_omega*m_omega/gravityAcceleration;
-//            m_infinite_depth = true;
-//        }
-
         if (m_infinite_depth) {
             m_k = m_omega*m_omega/gravityAcceleration;
         }
@@ -75,8 +65,6 @@ namespace frydom {
         if (IsCOMEFROM(dc)) m_dirAngle -= MU_PI;
 
         mathutils::Normalize_0_2PI(m_dirAngle);
-
-//        m_direction = Direction(cos(m_dirAngle), sin(m_dirAngle), 0.);
 
     }
 
@@ -128,11 +116,6 @@ namespace frydom {
         m_verticalFactor->SetInfDepth(m_infinite_depth);
     }
 
-
-
-
-
-
     std::vector<std::vector<Complex>> FrAiryRegularWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
         double NWUsign = 1;
         if (IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
@@ -153,7 +136,6 @@ namespace frydom {
 
         return {Vx,Vy,Vz};
     }
-
 
     double FrAiryRegularWaveField::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
         return std::imag( GetComplexElevation(x, y, fc)[0][0]);
@@ -197,5 +179,4 @@ namespace frydom {
         return std::vector<double>(1, direction);
     }
 
-
-}
+}  // end namespace frydom

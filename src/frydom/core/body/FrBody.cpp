@@ -30,103 +30,17 @@
 
 #include "frydom/core/math/functions/FrFunctionBase.h"
 #include "frydom/core/common/FrException.h"
-//#include "FrCore.h"
 
 #include "frydom/core/link/links_lib/FrLink.h"
 
 
 namespace frydom {
 
-//    void FrBody::AddNode(std::shared_ptr<FrNode> node) {
-//        // Adding the node as a marker to the body
-//        AddMarker(node);
-//        // TODO: PUT Force related stuff here
-//
-//    }
-//
-//    std::shared_ptr<FrNode> FrBody::CreateNode() {
-//
-//        // Creating the node and updating its position
-//        auto node = std::make_shared<FrNode>();
-//        node->SetBody(this);  // FIXME: a priori, c'est deja fait dans AddMarker lors de l'appele a AddNode... A retirer
-//        node->UpdateState();  // TODO: voir s'il est besoin d'appeler l'update...
-//
-//        AddNode(node);
-//        return node;
-//    }
-//
-//    std::shared_ptr<FrNode> FrBody::CreateNode(const chrono::ChVector<double> relpos) {
-//
-//        auto node = CreateNode();
-//
-////        node->SetPos(relpos);  // TODO: Voir a utiliser ImposeRelPos tel que demande sur la liste chrono
-//        chrono::ChCoordsys<> coord;
-//        coord.pos = relpos;
-//        node->Impose_Rel_Coord(coord);
-//        node-> UpdateState();
-//
-//        return node;
-//    }
-//
-//
-//    void FrBody::SetVisuMesh(std::shared_ptr<FrTriangleMeshConnected> mesh) {
-//
-//        m_visu_mesh = mesh;
-//
-//        auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
-//        shape->SetMesh(*mesh);
-//        AddAsset(shape);
-//
-//    }
-//
-//    void FrBody::SetVisuMesh(std::string obj_filename) {
-//        auto mesh=std::make_shared<FrTriangleMeshConnected>();
-//        mesh->LoadWavefrontMesh(obj_filename);
-//        SetVisuMesh(mesh);
-//    }
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    // REFACTORING ------------->>>>>>>>>>>>>>>
-
-
-    #define DEFAULT_MAX_SPEED (float)10.
-    #define DEFAULT_MAX_ROTATION_SPEED (float)(180.*DEG2RAD)
-
     namespace internal {
 
         _FrBodyBase::_FrBodyBase(FrBody_ *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
 
-        void _FrBodyBase::SetupInitial() {
-//            chrono::ChBodyAuxRef::SetupInitial();
-        }
+        void _FrBodyBase::SetupInitial() {}
 
         void _FrBodyBase::Update(bool update_assets) {
             chrono::ChBodyAuxRef::Update(update_assets);
@@ -169,7 +83,7 @@ namespace frydom {
                     std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset));
         }
 
-    }  // end namespace internal
+    }  // end namespace frydom::internal
 
     FrBody_::FrBody_() {
         m_chronoBody = std::make_shared<internal::_FrBodyBase>(this);
@@ -338,23 +252,6 @@ namespace frydom {
 
     }
 
-//    void FrBody_::SetInertiaParams(double mass,
-//                          double Ixx, double Iyy, double Izz,
-//                          double Ixy, double Ixz, double Iyz,
-//                          const FrFrame_& coeffsFrame,
-//                          const Position& cogPosition,
-//                          FRAME_CONVENTION fc) {
-//        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, coeffsFrame, cogPosition, fc));
-//    }
-//
-//    void FrBody_::SetInertiaParams(double mass,
-//                          double Ixx, double Iyy, double Izz,
-//                          double Ixy, double Ixz, double Iyz,
-//                          const FrFrame_& cogFrame,
-//                          FRAME_CONVENTION fc) {
-//        SetInertiaParams(FrInertiaTensor_(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, cogFrame, fc));
-//    }
-
     void FrBody_::AllowCollision(bool isColliding) {
         m_chronoBody->SetCollide(isColliding);
     }
@@ -436,12 +333,6 @@ namespace frydom {
             assert(asserted);
             force->m_forceAsset=nullptr;
 
-//            { // just to make sure this shared pointer is not used anywhere else.
-//                auto sharedAsset = std::make_shared<FrForceAsset_>(force->m_forceAsset);
-//                m_assets.erase(
-//                        std::find<std::vector<std::shared_ptr<FrAsset>>::iterator>(m_assets.begin(), m_assets.end(),
-//                                                                                   sharedAsset));
-//            }
         }
 
 
@@ -468,39 +359,12 @@ namespace frydom {
         return Torque(chronoTorque.x(), chronoTorque.y(), chronoTorque.z());
     }
 
-    // ##CC
 
     // Nodes
 
     std::shared_ptr<FrNode_> FrBody_::NewNode() {
         return std::make_shared<FrNode_>(this);
     }
-
-//    std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::FrFrame_ &nodeFrame) {
-//        return std::make_shared<FrNode_>(this, nodeFrame);
-//    }
-//
-//    std::shared_ptr<FrNode_> FrBody_::NewNode(const Position& nodeLocalPosition, const FrRotation_& nodeLocalRotation,
-//                                     FRAME_CONVENTION fc) {
-//        return NewNode(FrFrame_(nodeLocalPosition, nodeLocalRotation, fc));
-//    }
-//
-//    std::shared_ptr<FrNode_> FrBody_::NewNode(const frydom::Position &nodeLocalPosition, FRAME_CONVENTION fc) {
-//        auto NodePositionInBody = nodeLocalPosition;
-//        if (IsNED(fc)) internal::SwapFrameConvention<Position>(NodePositionInBody);
-//        return std::make_shared<FrNode_>(this, NodePositionInBody);
-//    }
-//
-//    std::shared_ptr<FrNode_> FrBody_::NewNode(double x, double y, double z, FRAME_CONVENTION fc) {
-//        auto NodePositionInBody = Position(x, y, z);
-//        if (IsNED(fc)) internal::SwapFrameConvention<Position>(NodePositionInBody);
-//        return std::make_shared<FrNode_>(this, NodePositionInBody);
-//    }
-
-
-//    void FrBody_::SetMass(double mass) {
-//        m_chronoBody->SetMass(mass);
-//    }
 
     void FrBody_::SetCOG(const Position& bodyPos, FRAME_CONVENTION fc) {
         FrFrame_ cogFrame;

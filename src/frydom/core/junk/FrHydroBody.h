@@ -407,16 +407,16 @@
 //        // METHODS ABOUT ADDED MASS
 //        // ==========================================================================
 //
-//        void SetVariables(const FrVariablesBody vtype);
+//        void SetVariables(const VARIABLES_BODY vtype);
 //
-//        /// Return the variablesHydro component
+//        /// Return the HYDRO_VAR component
 //        chrono::ChVariablesBodyOwnMass& VariablesBody() override { return dynamic_cast<chrono::ChVariablesBodyOwnMass&>(*variables_ptr); }
 //        chrono::ChVariables& Variables() override { return *variables_ptr; }
 //
-//        /// Add a variable of type variablesHydro in system descriptor
+//        /// Add a variable of type HYDRO_VAR in system descriptor
 //        virtual void InjectVariables(chrono::ChSystemDescriptor& mdescriptor) override;
 //
-//        /// Definition of the infinite added mass (from BEMBody) FIXME : pass to variablesHydro
+//        /// Definition of the infinite added mass (from BEMBody) FIXME : pass to HYDRO_VAR
 //        void SetInfiniteAddedMass(const Eigen::MatrixXd& CMInf);
 //
 //        void IntToDescriptor(const unsigned int off_v,  // offset in v, R

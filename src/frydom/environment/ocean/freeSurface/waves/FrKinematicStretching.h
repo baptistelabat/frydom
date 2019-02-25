@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -27,243 +27,8 @@ namespace frydom {
         HDELTA
     };
 
-    // --------------------------------------------------------
+
     // Forward declaration
-    // --------------------------------------------------------
-
-    class FrWaveField;
-
-    // --------------------------------------------------------
-    // Base class for the kinematic stretching
-    // --------------------------------------------------------
-
-    /**
-     * \class FrKinematicStretching
-     * \brief Class for defining the kinematic stretching model.
-     */
-    class FrKinematicStretching {
-
-    protected:
-        bool is_steady = true;                      ///< The expression is not time dependant
-        bool m_infinite_depth = false;              ///< Infinite depth is active
-
-    public:
-        /// Set the infinite depth value
-        void SetInfDepth(const bool infinite_depth);
-
-        /// Activate the infinite depth
-        void SetInfDepth_ON();
-
-        /// Set if the expresion is time dependant (is_steady=true) or not (is_steady=false)
-        void SetSteady(const bool steady);
-
-        /// Return true if the scale factor is not time dependant. False otherwise
-        bool IsSteady() const;
-
-        /// Return the vertical scale coefficient for linear wave velocity
-        virtual double Eval(const double& z, const double& konde, const double& depth) const;
-
-        /// Return the vertical scale coefficient for linear wave velocity
-        virtual double Eval(const double& x, const double& y, const double& z,
-                                   const double& konde, const double& depth) const;
-
-        /// Return the vertical scale coefficient for linear wave velocity
-        virtual double Eval(const chrono::ChVector<>& pos, const double& konde, const double& depth) const;
-
-        /// Return a list of vertical scale coefficient for linear wave velocity
-        virtual std::vector<double> Eval(const double& x, const double& y, const double& z,
-                            const std::vector<double>& vkonde, const double& depth) const;
-
-        /// Return the vertical derivative of the scale factor
-        virtual double EvalDZ(const double& z, const double& konde, const double& depth) const;
-
-        /// Return the vertical derivative of the scale factor
-        virtual double EvalDZ(const double&x, const double& y, const double& z,
-                                     const double& konde, const double& depth) const;
-
-        /// Return the vertical derivatice of the scale factor
-        virtual double EvalDZ(const chrono::ChVector<>& pos, const double& konde, const double& depth) const;
-
-        /// Return a list of vertical derivative of the scale factor
-        virtual std::vector<double> EvalDZ(const double& x, const double& y, const double& z,
-                                           const std::vector<double>& vkonde, const double& depth) const;
-
-    protected:
-        /// Definition of the vertical scale coefficient for linear wave velocity
-        double Ez(const double& z, const double& konde, const double& depth) const;
-
-        /// Definition of the derivative according to z-direction for the scale factor
-        double diffEz(const double& z, const double& konde, const double& depth) const;
-    };
-
-    // ------------------------------------------------------
-    // Vertical stretching
-    // ------------------------------------------------------
-
-    /**
-     * \class FrKinStretchingVertical
-     * \brief Class for using the vertical stretching model.
-     */
-    class FrKinStretchingVertical : public FrKinematicStretching {
-
-    public:
-        /// Return the vertical scaling coefficient with vertical stretching
-        double Eval(const double& z, const double& konde, const double& depth) const override;
-
-        /// Return the vertical derivative of the scale factor with vertical stretching
-        double EvalDZ(const double& z, const double& konde, const double& depth) const override;
-    };
-
-    // -------------------------------------------------------
-    // Extrapolation stretching
-    // -------------------------------------------------------
-
-    /**
-     * \class FrKinStretchingExtrapol
-     * \brief Class for using the extrapolation stretching model.
-     */
-    class FrKinStretchingExtrapol : public FrKinematicStretching {
-
-    public:
-        /// Return the vertical scaling coefficient with extrapolation stretching
-        double Eval(const double& z, const double& konde, const double& depth) const override;
-
-        /// Return the vertical derivative of the scale coefficient
-        double EvalDZ(const double& z, const double& konde, const double& depth) const override;
-    };
-
-    // --------------------------------------------------------
-    // Wheeler stretching
-    // --------------------------------------------------------
-
-    /**
-     * \class FrKinStretchingWheeler
-     * \brief Class for using the Wheeler stretching model.
-     */
-    class FrKinStretchingWheeler : public FrKinematicStretching {
-
-    private:
-        FrWaveField* m_waveField;           ///< Wave field definition
-
-    public:
-        /// Default constructor
-        explicit FrKinStretchingWheeler(FrWaveField* waveField);
-
-        /// Define the linear wave field to which the stretching is applied
-        void SetWaveField(FrWaveField* waveField);
-
-        double Eval(const double& z, const double& konde, const double& depth) const override;
-
-        double EvalDZ(const double& z, const double& konde, const double& depth) const override;
-
-        /// Return the vertical scaling coefficient with Wheeler stretching
-        double Eval(const double& x, const double& y, const double& z,
-                           const double& konde, const double& depth) const override;
-
-        /// Return the vertical derivative of the scale factor
-        double EvalDZ(const double& x, const double& y, const double& z,
-                             const double& konde, const double& depth) const override;
-
-    };
-
-
-    // -------------------------------------------------------------------
-    // Chakrabarti
-    // -------------------------------------------------------------------
-
-    /**
-     * \class FrKinStretchingChakrabarti
-     * \brief Class for using the Chakrabarti stretching model.
-     */
-    class FrKinStretchingChakrabarti : public FrKinematicStretching {
-
-    private:
-        FrWaveField* m_waveField;           ///< Wave field definition
-
-    public:
-        /// Default constructor
-        explicit FrKinStretchingChakrabarti(FrWaveField* waveField);
-
-        /// Define the linear wave field to which the stretching is applied
-        void SetWaveField(FrWaveField* waveField);
-
-        /// Return the vertical scaling factor with the Chakrabati stretching
-        double Eval(const double& x, const double& y, const double& z, const double& konde, const double& depth) const override;
-
-        /// Return the derivative of the vertical scaling factor
-        double EvalDZ(const double& x, const double& y, const double& z, const double& konde, const double& depth) const override;
-
-    };
-
-    // ---------------------------------------------------------------------
-    // Delta-stretching
-    // ---------------------------------------------------------------------
-
-    /**
-     * \class FrKinStretchingDelta
-     * \brief Class for using the delta-stretching model.
-     */
-    class FrKinStretchingDelta : public FrKinematicStretching {
-
-    private:
-        FrWaveField* m_waveField;           ///< Wave field definition
-        double m_delta;                     ///< Delta parameter in [0 , 1]
-        double m_hd;                        ///< water depth to which the delta-stretching is applied
-
-    public:
-        /// Default constructor
-        explicit FrKinStretchingDelta(FrWaveField* waveField);
-
-        /// Define the linear wave field to which the stretching is applied
-        void SetWaveField(FrWaveField* waveField);
-
-        /// Define the water depth and delta parameters
-        void SetParam(const double hd, const double delta);
-
-        /// Return the vertical scaling factor with the delta stretching
-        double Eval(const double& x, const double& y, const double& z, const double& konde, const double& depth) const override;
-
-        /// Return the derivative of the vertical scaling factor
-        double EvalDZ(const double& x, const double& y, const double& z, const double& konde, const double& depth) const override;
-
-    private:
-        /// Return the modified vertical coordinate
-        double Zp(const double& x, const double& y, const double& z) const;
-
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // REFACTORING --------------->>>>>>>>>>>>>>>>
-
-
-
-
-//    enum FrStretchingType {
-//        NO_STRETCHING,
-//        VERTICAL,
-//        EXTRAPOLATE,
-//        WHEELER,
-//        CHAKRABARTI,
-//        DELTA
-//    };
-
-    // --------------------------------------------------------
-    // Forward declaration
-    // --------------------------------------------------------
-
     class FrWaveField_;
 
     // --------------------------------------------------------
@@ -525,7 +290,7 @@ namespace frydom {
 
     };
 
-}
+}  // end namespace frydom
 
 
 #endif //FRYDOM_FRKINEMATICSTRETCHING_H

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -33,7 +33,7 @@ namespace frydom {
 
     // FIXME: utiliser https://github.com/HowardHinnant/date comme sous module !!!
 
-    // TODO: utiliser boost ou une autre lib speciale pour la gestion des geoides
+//    // TODO: utiliser boost ou une autre lib speciale pour la gestion des geoides
     /**
     * \class FrUTCTime
     * \brief Class for dealing with UTC time.
@@ -69,74 +69,7 @@ namespace frydom {
 
     };
 
-    /**
-     * \class FrTidal
-     * \brief Class for defining tidals.
-     */
-    class FrTidal : public FrObject {
-
-        enum TidalLevel {
-            LOW,
-            HIGH
-        };
-
-        enum TidalMode {
-            NO_TIDAL,
-            TWELFTH_RULE
-        };
-
-    private:
-
-        std::unique_ptr<chrono::ChFrame<double>> m_tidalFrame;
-
-        double m_time = 0.;
-
-        TidalMode m_mode = NO_TIDAL;
-
-        TidalLevel m_level1;
-        FrUTCTime m_t1;
-        double m_h1 = 0.;
-
-        TidalLevel m_level2;
-        FrUTCTime m_t2;
-        double m_h2;
-
-//        double c_waterHeight = 0.;
-
-        LookupTable1D<double, double> tidalTable;
-
-        void BuildTable();
-
-        void BuildTwelfthRuleTable();
-
-    public:
-
-        FrTidal();
-
-        ~FrTidal();
-
-        FrTidal(const FrUTCTime t1, const double h1, TidalLevel level1, const FrUTCTime t2, const double h2, TidalLevel level2);
-
-        void Update(const double time);
-
-        const double GetWaterHeight() const;
-
-        const chrono::ChFrame<double>* GetTidalFrame() const;
-
-        virtual void Initialize() override;
-
-        virtual void StepFinalize() override;
-
-    };
-
-
-
-
-
-
-
-    // REFACTORING --------------->>>>>>>>>>>>>>>
-
+    // Forward declaration
     class FrFreeSurface_;
 
     /**
@@ -183,7 +116,7 @@ namespace frydom {
 
     public:
 
-        FrTidal_(FrFreeSurface_* freeSurface);
+        explicit FrTidal_(FrFreeSurface_* freeSurface);
 
         FrTidal_(FrFreeSurface_* freeSurface, const FrUTCTime t1, const double h1, TidalLevel level1, const FrUTCTime t2, const double h2, TidalLevel level2);
 

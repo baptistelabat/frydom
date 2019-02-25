@@ -1,19 +1,18 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #include "FrOcean_.h"
 
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/flow/FrFlowBase.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
 #include "freeSurface/FrFreeSurface.h"
@@ -21,6 +20,8 @@
 
 #include "frydom/asset/FrSeabedGridAsset.h"
 #include "frydom/asset/FrFreeSurfaceGridAsset.h"
+
+#include "current/FrCurrent.h"
 
 
 namespace frydom{
@@ -119,4 +120,5 @@ namespace frydom{
 
     void FrOcean_::SetInfiniteDepth() {ShowSeabed(false);}
 
-}
+
+}  // end namespace frydom

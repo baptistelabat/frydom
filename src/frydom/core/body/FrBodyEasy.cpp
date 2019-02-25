@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -95,27 +95,21 @@ namespace frydom {
     }
 
     std::shared_ptr<FrBody_> make_BoxBody(double xSize, double ySize, double zSize, double mass) {
-
         auto box = std::make_shared<FrBody_>();
         makeItBox(box, xSize, ySize, zSize, mass);
         return box;
-
     }
 
     std::shared_ptr<FrBody_> make_CylinderBody(double radius, double height, double mass) {
-
         auto cylinder = std::make_shared<FrBody_>();
         makeItCylinder(cylinder, radius, height, mass);
         return cylinder;
-
     }
 
     std::shared_ptr<FrBody_> make_SphereBody(double radius, double mass) {
-
         auto sphere = std::make_shared<FrBody_>();
         makeItSphere(sphere, radius, mass);
         return sphere;
-
     }
 
 }  // end namespace frydom

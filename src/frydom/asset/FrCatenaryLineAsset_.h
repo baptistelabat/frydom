@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -17,6 +17,8 @@
 #include <memory>
 #include <vector>
 
+
+// Chrono forward declaration
 namespace chrono {
     class ChLineShape;
 }
@@ -32,6 +34,8 @@ namespace frydom {
      * Line elements of ChLineShape are updated in position and color (related to the tension) in this class
      */
     class FrCatenaryLineAsset_ {
+
+        // TODO : ne pas reposer sur les objets chrono!!!
 
     private:
 
@@ -67,6 +71,10 @@ namespace frydom {
         static Triplet make_triplet(double s0, double s1, std::shared_ptr<chrono::ChLineShape> lineShape) {
             return std::make_tuple(s0, s1, lineShape);
         }
+
     };
+
+
 }//end namespace frydom
+
 #endif //FRYDOM_FRCATENARYLINEASSET_H

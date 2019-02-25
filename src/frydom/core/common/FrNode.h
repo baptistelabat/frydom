@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #ifndef FRYDOM_FRNODE_H
@@ -23,67 +23,10 @@
 
 namespace frydom {
 
-//    class FrBody;
-
-    /**
-     * \class FrNode
-     * \brief Class for defining nodes (in order to add links).
-     */
-    class FrNode : public chrono::ChMarker, public FrObject {
-//    private:
-//        FrBody* Body;
-
-    public:
-
-//        FrBody* GetBody() const { return Body; }
-
-        FrNode() : chrono::ChMarker() {
-//            SetMotionType(M_MOTION_EXTERNAL); // Hack to keep the relative position unchanged
-        }
-
-//        FrNode(char myname[], FrBody* myBody,
-//               chrono::Coordsys myrel_pos, chrono::Coordsys myrel_pos_dt, chrono::Coordsys myrel_pos_dtdt)
-//            : chrono::ChMarker(myname, myBody, myrel_pos, myrel_pos_dt, myrel_pos_dtdt) {
-//            SetMotionType(M_MOTION_EXTERNAL); // Hack to keep the relative position unchanged
-//        }
-
-        chrono::ChVector<double> GetAbsPos() {
-            return GetAbsCoord().pos;
-        }
-
-//        std::shared_ptr<FrBody> GetSharedBody() {
-//            return Body->shared_from_this();
-//        }
-
-        chrono::Coordsys GetRelPos() const {
-            return GetRest_Coord();
-        }
-
-        virtual void Initialize() override {}
-
-        virtual void StepFinalize() override {}
-
-    };  // end class FrNode
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // REFACTORING ----------->>>>>>>>>>>>>>>>>
-
-
     // Forward declarations
     class FrNode_;
 
-    namespace internal{
+    namespace internal {
 
         struct FrMarker : public chrono::ChMarker {
 
@@ -93,7 +36,7 @@ namespace frydom {
 
         };
 
-    }
+    } // end namespace frydom::internal
 
 
     // Forward declarations
@@ -277,45 +220,8 @@ namespace frydom {
         }
 
     private:
-        /*
-         * The following methods are for internal use only. Everything must be passed as NWU referenced values !
-         */
-
-//        /// Set the node position, with respect to the body reference frame
-//        /// \param position node position, with respect to the body reference frame
-//        void SetLocalPosition(const Position& position);
-//
-//        /// Set the node position, given in the body reference frame
-//        /// \param x x position, with respect to the body reference frame
-//        /// \param y y position, with respect to the body reference frame
-//        /// \param z z position, with respect to the body reference frame
-//        void SetLocalPosition(double x, double y, double z);
-//
-////        void SetWorldPosition(const Position& position);  // TODO : tester !!!!
-//
-//
-//
-//
-//        /// Set the node rotation, with respect to the body reference frame
-//        /// \param quaternion rotation, as quaternion, with respect to the body reference frame
-//        void SetLocalQuaternion(const FrUnitQuaternion_& quaternion);
-//
-//        /// Set the node rotation, with respect to the body reference frame
-//        /// \param rotation rotation, with respect to the body reference frame
-//        void SetLocalRotation(const FrRotation_& rotation);
-
-
-        // TODO : voir si on garde les 2 methodes suivantes privees...
-
-        /// Set the node frame, with respect to the body reference frame
-        /// \param frame frame, with respect to the body reference frame
-//        void _SetLocalFrame(const FrFrame_ &frame);
-//
-//        void _SetWorldFrame(const FrFrame_ &frame);
-
 
         friend void FrLink_::SetMarkers(FrNode_*, FrNode_*);
-//        friend void FrActuator_::SetMarkers(FrNode_*, FrNode_*);
 
     };
 

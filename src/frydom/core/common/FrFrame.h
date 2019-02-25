@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -25,9 +25,6 @@ namespace frydom {
     // Forward declaration
     class FrBody_;
     class FrOffshoreSystem_;
-
-
-
 
 
     /// Class defining a frame from a position and a rotation.
@@ -222,14 +219,17 @@ namespace frydom {
 
         /// Translate the present frame along in its own axes
         void TranslateInFrame(const Translation& translation, FRAME_CONVENTION fc);
+        /// Translate the present frame along in its own axes
         void TranslateInFrame(const Direction& direction, double distance, FRAME_CONVENTION fc);
+        /// Translate the present frame along in its own axes
         void TranslateInFrame(double x, double y, double z, FRAME_CONVENTION fc);
+
+        /// Translate the present frame along the world axis
         void TranslateInParent(const Translation& translation, FRAME_CONVENTION fc);
+        /// Translate the present frame along the world axis
         void TranslateInParent(const Direction& direction, double distance, FRAME_CONVENTION fc);
+        /// Translate the present frame along the world axis
         void TranslateInParent(double x, double y, double z, FRAME_CONVENTION fc);
-
-
-
 
 
         /// Rotate the present frame, around the X axis of the present frame (if localAxis)
@@ -370,6 +370,7 @@ namespace frydom {
 
     };
 
+
     /// Transform between frames which is also a frame.
     using FrTransform = FrFrame_;
 
@@ -407,9 +408,7 @@ namespace frydom {
             );
         }
 
-
-    }  // end namespace internal
-
+    }  // end namespace frydom::internal
 
 }  // end namespace frydom
 

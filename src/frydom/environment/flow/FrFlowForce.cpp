@@ -1,25 +1,28 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #include "FrFlowForce.h"
 
 #include "frydom/core/body/FrBody.h"
-#include "FrFlowBase.h"
+//#include "FrFlowBase.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean_.h"
 #include "frydom/environment/atmosphere/FrAtmosphere_.h"
 #include "frydom/IO/FrLoader.h"
 #include "frydom/core/common/FrFrame.h"
 #include "MathUtils/Vector3d.h"
+
+#include "frydom/environment/ocean/current/FrCurrent.h"
+#include "frydom/environment/atmosphere/wind/FrWind.h"
 
 
 namespace frydom {
@@ -141,8 +144,8 @@ namespace frydom {
         FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
 
-        m_fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()
-                ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
+        m_fluxVelocityInBody =
+                m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
 
         FrFlowForce::Update(time);
     }
@@ -152,8 +155,8 @@ namespace frydom {
         FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
 
-        m_fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()
-                ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
+        m_fluxVelocityInBody =
+                m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
 
         FrFlowForce::Update(time);
     }

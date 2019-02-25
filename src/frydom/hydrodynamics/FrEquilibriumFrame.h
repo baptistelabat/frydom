@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -21,18 +21,17 @@
 
 namespace frydom {
 
-    /// This class defines a generic equilibrium frame linked with a body.
-    ///
-    /// The equilibrium frame is a frame with the z-axis pointing upward, internal
-    /// velocities and dynamic behaviour. The generic equilibrium frame has
-    /// a constant speed in the horizontal plane and eventually a constant rotation
-    /// speed around Z. If the position, orientation and velocity of the equilibrium frame
-    /// are not defined by the user, they are initialized to the values given by the body at COG
-    /// during the initialization stage.
-
     /**
      * \class FrEquilibriumFrame_
      * \brief This class defines a generic equilibrium frame linked with a body.
+     *
+     * The equilibrium frame is a frame with the z-axis pointing upward, internal
+     * velocities and dynamic behaviour. The generic equilibrium frame has
+     * a constant speed in the horizontal plane and eventually a constant rotation
+     * speed around Z. If the position, orientation and velocity of the equilibrium frame
+     * are not defined by the user, they are initialized to the values given by the body at COG
+     * during the initialization stage.
+     *
      */
     class FrEquilibriumFrame_ : public FrFrame_,
                                 public FrPrePhysicsItem_ {
@@ -157,17 +156,15 @@ namespace frydom {
     };
 
 
-
-    /// This class defines an equilibrium frame with a spring-damping system
-    ///
-    /// The velocity of the equilibrium frame is solution of a dynamic equation with spring
-    /// and damping forces. This system creates a low pass filter on the velocity of the body.
-    /// The spring-damping system is defined from T0, the cutoff time in seconds, and
-    /// psi the damping rate coefficient.
-
     /**
      * \class FrEqFrameSpringDamping_
      * \brief This class defines an equilibrium frame with a spring-damping system.
+     *
+     * The velocity of the equilibrium frame is solution of a dynamic equation with spring
+     * and damping forces. This system creates a low pass filter on the velocity of the body.
+     * The spring-damping system is defined from T0, the cutoff time in seconds, and
+     * psi the damping rate coefficient.
+     *
      */
     class FrEqFrameSpringDamping_ : public FrEquilibriumFrame_ {
 
@@ -243,17 +240,15 @@ namespace frydom {
 
 
 
-    /// This class defines an equilibrium frame with a velocity equal to the mean motion of a body
-    ///
-    /// The velocity of the frame is equal to the mean value of the body velocity
-    /// during a period of time specified by the user. Past velocities are recorded
-    /// in a buffer with a specific time stepper.
-
     // TODO : il faudrait pouvoir retrancher une difference de position moyenne
 
     /**
      * \class FrEqFrameMeanMotion_
      * \brief This class defines an equilibrium frame with a velocity equal to the mean motion of a body.
+     *
+     * The velocity of the frame is equal to the mean value of the body velocity
+     * during a period of time specified by the user. Past velocities are recorded
+     * in a buffer with a specific time stepper.
      */
     class FrEqFrameMeanMotion_ : public FrEquilibriumFrame_ {
 
@@ -318,6 +313,6 @@ namespace frydom {
 
     };
 
-}  // end of the namespace frydom
+}  // end namespace frydom
 
 #endif //FRYDOM_FREQUILIBRIUMFRAME_H

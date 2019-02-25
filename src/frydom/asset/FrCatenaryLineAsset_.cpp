@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -26,9 +26,9 @@ namespace frydom{
         chrono::ChVector<double> p0, p1;
         chrono::ChColor color;
         p0 = internal::Vector3dToChVector(m_catenaryLine->GetStartingNode()->GetPositionInWorld(NWU));
+
         double s0 = 0.;
         double s1 = ds;
-//        for (int i = 1; i < m_nbDrawnElements; i++) {
 
         while (s1 < m_catenaryLine->GetUnstretchedLength()) {
 
@@ -107,7 +107,7 @@ namespace frydom{
                 auto LocalTension = m_catenaryLine->GetTension(i*ds, NWU).norm();
                 if (LocalTension > max) max = LocalTension;
             }
-            m_maxTension = 1.25*max;
+            m_maxTension = 1.25*max;  // TODO : affiner le critere...
         }
 
     }

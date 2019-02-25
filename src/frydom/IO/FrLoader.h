@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -16,12 +16,10 @@
 
 #include <string>
 #include <vector>
-//#include "MathUtils/MathUtils.h"
 
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/environment/ocean/current/FrCurrentPolarCoeffs.h"
 
-//using namespace mathutils;  // TODO: mettre LookupTable en forward declaration
 
 namespace frydom {
 

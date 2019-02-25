@@ -25,68 +25,13 @@
 
 // <<<<<<<<<<<<<<<<<<
 
-
 // FIXME: bien travailler sur le bon placement de la force hydrostatique lineaire !!!!
 
 // TODO: Attention, il faut fonctionner avec une difference de position
 
 namespace frydom {
 
-//    /**
-//     * \class FrLinearHydrostaticForce
-//     * \brief Class for computing linear hydrostatic loads.
-//     */
-//    class FrLinearHydrostaticForce : public FrForce {
-//
-//    private:
-//        FrLinearHydrostaticStiffnessMatrix m_stiffnessMatrix;
-//
-//        // ##CC fix log
-//        double m_delta_z;
-//        double m_body_z;
-//        double m_eqframe_z;
-//        // ##CC
-//
-//    public:
-//
-//        FrLinearHydrostaticForce();
-//
-//        FrLinearHydrostaticStiffnessMatrix* GetStiffnessMatrix();
-//
-//
-//        void UpdateState() override;
-//
-//        // ##CC Fix pour le log
-//        void InitializeLogs() override;
-//        // ##CC
-//
-//        void SetLogPrefix(std::string prefix_name) override;
-//
-//    };
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
-
-    // forward declaration
-
+    // Forward declaration
     class FrEquilibriumFrame_;
 
     /// This class defines the linear hydrostatic restoring force applied to a hydrodynamic body.
@@ -110,7 +55,7 @@ namespace frydom {
     public:
 
         /// Constructor.
-        FrLinearHydrostaticForce_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) { }
+        explicit FrLinearHydrostaticForce_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) { }
 
         /// Get the stiffness matrix of the hydrostatic force
         /// \return Hydrostatic stiffness matrix
@@ -125,6 +70,7 @@ namespace frydom {
 
         /// Methods to be applied at the end of each time steps
         void StepFinalize() override;
+
     };
 
     /// This subroutine reads the modes of a body.

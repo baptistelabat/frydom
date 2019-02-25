@@ -1,14 +1,13 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
-
 
 #include "FrFreeSurfaceGridAsset.h"
 #include "frydom/mesh/FrTriangleMeshConnected.h"
@@ -21,7 +20,6 @@
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
 namespace frydom{
-
 
     FrFreeSurfaceGridAsset::FrFreeSurfaceGridAsset(FrFreeSurface_* freeSurface) : FrGridAsset() {
         m_freeSurface = freeSurface;
@@ -39,7 +37,6 @@ namespace frydom{
                                                                                  mesh.m_vertices[inode].y(),NWU);
             }
         }
-
     }
 
-}
+}  // end namespace frydom

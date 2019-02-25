@@ -1,17 +1,19 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRAIRYIRREGULARWAVEFIELD_H
 #define FRYDOM_FRAIRYIRREGULARWAVEFIELD_H
+
+
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 
 
@@ -46,7 +48,7 @@ namespace frydom {
                                                                            ///< made unique to check at initialize() if wavePhases were given by the users,
                                                                            ///< or if they need to be randomly generated.
         std::unique_ptr<FrKinematicStretching_> m_verticalFactor;    ///< Vertical scale velocity factor with stretching
-        
+
     public:
 
         /// Default constructor
@@ -189,7 +191,7 @@ namespace frydom {
 
     };
 
-};
+}  // end namespace frydom
 
 
 #endif //FRYDOM_FRAIRYIRREGULARWAVEFIELD_H

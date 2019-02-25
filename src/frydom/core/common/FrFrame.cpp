@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -182,49 +182,6 @@ namespace frydom {
         return frame.cout(os);
     }
 
-//    void FrFrame_::RotateInFrame(const Direction &direction, double angleRad, FRAME_CONVENTION fc) {
-//
-//
-//
-//
-//
-////        auto tmpDirection = direction;
-////        if (localAxis) {
-////            tmpDirection = ProjectVectorFrameInParent<Direction>(tmpDirection, fc);
-////            // FIXME : les donnees (position, orientation) de FrFrame_ sont relatives au repere parent.
-////            // Pour la position, c'est la position de l'origine du repere courant par rapport au repere parent, exprime
-////            // dans les axes du repere parent.
-////            // Pour la rotation, c'est la matrice qui multipliee par un vecteur exprime dans le vecteur courant, donne
-////            // les coordonnees de ce meme vecteur dans le repere parent.
-////        }
-////
-////        FrUnitQuaternion_ rotQuat(tmpDirection, angleRad, fc);
-//
-//
-////        GetQuaternion()
-//
-//
-//        /*
-//         * Reflexion sur le Rotate ou Translate sur un frame ou node :
-//         *
-//         * Pour la rotation, soit on multiplie a gauche, soit a droite.
-//         *
-//         * Si on pose iRj la rotation qui fait iu = iRj ju, alors:
-//         *
-//         * En multipliant a gauche par kRi permet d'avroi ku = kRi iRj ju = kRj ju   soit on incremente la rotation
-//         *
-//         *
-//         * TRES BIEN : A RETENIR !!!!!!!!!!!!!!!!!!!!
-//         *
-//         * Lorsqu'on multiplie par une rotation exprimee dans le repere parent, on multiplie a gauche
-//         * Lorsqu'on multiplie par une rotation exprimee dans le repere cible, on multiplie a droite...
-//         *
-//         */
-//
-//
-//
-//    }
-
     void FrFrame_::RotateInFrame(const FrUnitQuaternion_& quaternion) {
         m_chronoFrame.SetRot(m_chronoFrame.GetRot() * internal::Fr2ChQuaternion(quaternion));
     }
@@ -288,7 +245,6 @@ namespace frydom {
     void FrFrame_::TranslateInParent(double x, double y, double z, FRAME_CONVENTION fc) {
         TranslateInParent(Translation(x, y, z), fc);
     }
-
 
 
     // FIXME : c'est une multiplication a gauche !

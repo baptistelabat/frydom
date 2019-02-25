@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -184,75 +184,18 @@ namespace frydom {
         RotateInWorld(quaternion);
     }
 
-
-
-//    void FrNode_::SetLocalPosition(const Position &position) {
-//        Position localPositionFromCOG = position - m_body->GetCOG(NWU);
-//        auto coord = chrono::ChCoordsys<double>(chrono::ChVector<double>(internal::Vector3dToChVector(localPositionFromCOG)));
-//        m_chronoMarker->Impose_Rel_Coord(coord);
-//    }
-//
-//    void FrNode_::SetLocalPosition(double x, double y, double z) {
-//        SetLocalPosition(Position(x, y, z));
-//    }
-//
-//    void FrNode_::SetWorldPosition(const Position& position) {
-//        auto coord = chrono::ChCoordsys<double>(
-//                internal::Vector3dToChVector(position),
-//                m_chronoMarker->GetAbsFrame().GetRot()  // Retrieving the current node orientation wrt world
-//                );
-//        m_chronoMarker->Impose_Abs_Coord(coord);
-//    }
-//
-//    void FrNode_::SetLocalQuaternion(const FrUnitQuaternion_ &quaternion) {
-//        auto coord = chrono::ChCoordsys<double>(chrono::VNULL, internal::Fr2ChQuaternion(quaternion));
-//        m_chronoMarker->Impose_Rel_Coord(coord);
-//    }
-//
-//    void FrNode_::SetLocalRotation(const FrRotation_ &rotation) {
-//        SetLocalQuaternion(rotation.GetQuaternion());
-//    }
-
-
-
-
-
-
-//    void FrNode_::_SetLocalFrame(const FrFrame_ &frame) {
-//        Position localPositionFromCOG = frame.GetPosition(NWU) - m_body->GetCOG(NWU);
-//        auto chCoord = chrono::ChCoordsys<double>(
-//                internal::Vector3dToChVector(localPositionFromCOG),
-//                internal::Fr2ChQuaternion(frame.GetQuaternion())
-//                );
-//        m_chronoMarker->Impose_Rel_Coord(chCoord);
-//    }
-
-//    void FrNode_::_SetWorldFrame(const frydom::FrFrame_ &frame) {
-//        auto chCoord = internal::FrFrame2ChCoordsys(frame);
-//        m_chronoMarker->Impose_Abs_Coord(chCoord);
-//    }
-
-
     Position FrNode_::GetNodePositionInBody(FRAME_CONVENTION fc) const {
         return GetFrameInBody().GetPosition(fc);
-//        Position NodePositionInBodyFromCOG = internal::ChVectorToVector3d<Position>(m_chronoMarker->GetRest_Coord().pos);
-//        Position NodePositionInBody = NodePositionInBodyFromCOG + m_body->GetCOG(NWU);
-//        if (IsNED(fc)) internal::SwapFrameConvention<Position>(NodePositionInBody);
-//        return  NodePositionInBody;
     }
 
 
     Position FrNode_::GetPositionInWorld(FRAME_CONVENTION fc) const {
         return GetFrameInWorld().GetPosition(fc);
-//        auto PositionInWorld = internal::ChVectorToVector3d<Position>(m_chronoMarker->GetAbsCoord().pos);
-//        if (IsNED(fc)) internal::SwapFrameConvention<Position>(PositionInWorld);
-//        return PositionInWorld;
     }
 
     void FrNode_::GetPositionInWorld(Position &position, FRAME_CONVENTION fc) {
         position = GetPositionInWorld(fc);
     }
-
 
     Velocity FrNode_::GetVelocityInWorld(FRAME_CONVENTION fc) const {
         Velocity VelocityInWorld = internal::ChVectorToVector3d<Velocity>(m_chronoMarker->GetAbsCoord_dt().pos);
@@ -274,7 +217,6 @@ namespace frydom {
         return ProjectVectorInNode<Acceleration>(GetAccelerationInWorld(fc),fc);
     }
 
-
     void FrNode_::Initialize() {
         m_chronoMarker->UpdateState();
     }
@@ -282,8 +224,5 @@ namespace frydom {
     void FrNode_::StepFinalize() {
 
     }
-
-
-
 
 }  // end namespace frydom

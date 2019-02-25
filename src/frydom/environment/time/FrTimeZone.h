@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -20,12 +20,12 @@
 
 namespace frydom {
 
-/// Class providing services for the conversion of zoned time, based on "date" project : https://github.com/HowardHinnant/date
-/// List of tz database time zones : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    /// Class providing services for the conversion of zoned time, based on "date" project : https://github.com/HowardHinnant/date
+    /// List of tz database time zones : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
     class FrTimeZone {
 
     public:
-        
+
         enum UTC_LOCAL {
             UTC,
             LOCAL
@@ -84,5 +84,6 @@ namespace frydom {
 
     };
 
-}
+}  // end namespace frydom
+
 #endif //FRYDOM_FRTIMEZONE_H

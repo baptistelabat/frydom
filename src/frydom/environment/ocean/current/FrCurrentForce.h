@@ -14,64 +14,9 @@
 #define FRYDOM_FRCURRENTFORCE_H
 
 #include "frydom/core/force/FrForce.h"
-//#include "frydom/core/FrHydroBody.h"
 #include "FrCurrentPolarCoeffs.h"
 
 namespace frydom {
-
-//    // Forward declarations
-//    class FrCurrentPolarCoeffs;
-//    class FrCurrent;
-//    class FrHydroBody;
-//
-//    /**
-//     * \class FrCurrentForce
-//     * \brief Class for computing the current loads.
-//     */
-//    class FrCurrentForce : public FrForce {
-//
-//    private:
-//
-//        FrCurrentPolarCoeffs coeffs_table;
-//
-//    public:
-//
-//        /// Default constructor
-//        FrCurrentForce() = default;
-//
-//        /// Constructor from a YAML file
-//        explicit FrCurrentForce(std::string yaml_file);
-//
-//        /// Get the parent body that must be a FrHydroBody
-////        FrHydroBody* GetBody() override { return dynamic_cast<FrHydroBody*>(Body); }
-//
-//        /// Sets the parent body (the force belongs to this rigid body)
-////        void SetBody(FrHydroBody* newRB) { Body = newRB; }
-//
-//        /// Update the state of the force
-//        void UpdateState() override;
-//
-//        void SetCoeffs(FrCurrentPolarCoeffs table) {
-//            //coeffs_table = std::move(table);
-//        }
-//
-//        //
-//        // LOG
-//        //
-//
-//        /// Define the prefix of the message of the current force
-//        void SetLogPrefix(std::string prefix_name) override;
-//
-//    };
-//
-//
-//
-//
-//
-//
-//
-//
-//    // REFACTORING ------>>>>>>>>>>>>>>
 
     /**
      * \class FrCurrentForce_
@@ -97,10 +42,7 @@ namespace frydom {
 
         void StepFinalize() override;;
 
-        //void SetCoeffs(FrCurrentPolarCoeffs coeffsTable);
-
     };
-
 
 }  // end namespace frydom
 

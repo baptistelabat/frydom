@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -35,7 +35,6 @@ namespace frydom {
         }
 
         void FrAddedMassBase::SetupInitial() {
-            //m_frydomRadiationModel->Initialize();
             m_variables->Initialize();
         }
 
@@ -57,7 +56,6 @@ namespace frydom {
 
                 auto residualOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) ); //+off
 
-                //for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion!=m_HDB->end(); BEMBodyMotion++) {
                     auto BEMBodyMotion = BEMBody;
 
                     auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) ); //+off
@@ -82,7 +80,6 @@ namespace frydom {
                                               const chrono::ChVectorDynamic<>& L, const chrono::ChVectorDynamic<>& Qc) {
 
             // FIXME : Nothing to do since added mass variables encapsulate the body variables
-
             auto HDB = m_frydomRadiationModel->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
@@ -121,5 +118,7 @@ namespace frydom {
             auto chronoBody = body->GetChronoBody();
             chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(qb, offset, 0, 6, 1, 0, 0);
         }
-    }
-}
+
+    }  // end namespace frydom::internal
+
+}  // end namespace frydom

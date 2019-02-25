@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -17,10 +17,14 @@
 
 namespace frydom {
 
+
+    // Forward declarations
     class FrRadiationModel_;
     class FrBody_;
 
+
     namespace internal {
+
 
         class FrVariablesAddedMassBase;
 
@@ -76,7 +80,9 @@ namespace frydom {
             FrRadiationModel_* GetRadiationModel() const { return m_frydomRadiationModel; }
         };
     }
-}
+
+
+}  // end namespace frydom::internal
 
 
 #endif //FRYDOM_FRADDEDMASSBASE_H

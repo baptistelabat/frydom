@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -18,14 +18,6 @@
 
 #include "frydom/core/common/FrException.h"
 
-// TODO : placer ici les services de geographie et l'inclusion de GeographicLib
-
-
-// Forward declaration
-namespace chrono {
-    template <class Real>
-    class ChVector;
-}
 
 namespace frydom {
 
@@ -56,11 +48,6 @@ namespace frydom {
 
     }
 
-
-    enum FrRefSyst {  // TODO : a retirer et n'utiliser que FRAME_CONVENTION
-        LOCAL,
-        PARENT,
-    };
 
 
     enum DIRECTION_CONVENTION {

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -17,181 +17,7 @@
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 
 
-
-// Forward declarations
-namespace chrono {
-
-    class ChBody;
-
-    class ChTriangleMeshShape;
-}
-
-
 namespace frydom {
-
-    // Forward declaration
-//    class FrOffshoreSystem;
-    class FrTidal;
-//    class FrWaveField;
-//    class FrLinearWaveField;
-    class FrLinearWaveProbe;
-
-    class FrTriangleMeshConnected;
-
-
-
-
-    /// Pure Virtual Base class for a free surface system.
-    /**
-     * \class FrFreeSurface
-     * \brief Class for defining the free surface.
-     */
-    class FrFreeSurface : public FrObject {
-
-    public:
-
-        enum GRID_TYPE {
-            CARTESIAN,
-            POLAR
-        };
-        // FIXME: Il faut que ce soit cette classe qui comprenne un modele de maree !!
-
-
-        std::shared_ptr<chrono::ChBody> m_Body;  // TODO : mettre en protected !!
-
-    protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
-
-        double m_time = 0.;
-        bool m_updateAsset = false;
-
-
-        std::unique_ptr<FrTidal> m_tidal;
-
-        WAVE_MODEL m_waveModel = NO_WAVES;
-        std::unique_ptr<FrWaveField> m_waveField;
-
-        std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
-
-        std::vector<std::shared_ptr<FrLinearWaveProbe>> m_waveProbeGrid; // TODO: passer a la classe de base...
-
-        std::vector<double> m_gridHeights; // TODO: preallouer a l'initialisation
-
-        GRID_TYPE m_gridType = CARTESIAN;
-        double m_xmin = -50.;
-        double m_xmax = 50.;
-        double m_dx = 1.;
-        double m_ymin = -50.;
-        double m_ymax = 50.;
-        double m_dy = 1.;
-
-        double m_xc0 = 0.;
-        double m_yc0 = 0.;
-        double m_diameter = 50.;
-        int m_nbR = 50;
-        int m_nbTheta = 36;
-
-    protected:
-
-        /// Private method in charge of the building of the free surface mesh as a rectangular grid.
-        FrTriangleMeshConnected BuildRectangularMeshGrid(double xmin, double xmax, double dx,
-                                                         double ymin, double ymax, double dy);
-
-        /// Private method in charge of the building of the free surface mesh as a polar grid.
-        FrTriangleMeshConnected BuildPolarMeshGrid(double xc0, double yc0, // center
-                                                   double diameter,
-                                                   unsigned int nbR, unsigned int nbTheta);
-    public:
-
-        FrFreeSurface();
-
-        ~FrFreeSurface();
-
-        void NoWaves();
-
-        void SetLinearWaveField(LINEAR_WAVE_TYPE waveType);
-
-        FrLinearWaveField* GetLinearWaveField() const;
-
-        double GetMeanHeight(double x, double y);
-
-        double GetHeight(double x, double y);
-
-        virtual void Initialize() override;
-
-        void SetGridType(GRID_TYPE gridType);
-
-        /// Initializes the free surface system
-        /// In any case, a mesh grid is used.
-        /// this version concerns a rectangular grid
-        void SetGrid(double xmin,
-                     double xmax,
-                     double dx,
-                     double ymin,
-                     double ymax,
-                     double dy
-        );
-
-        /// Initializes the free surface system
-        /// In any case, a mesh grid is used.
-        /// this version concerns a square grid
-        void SetGrid(double lmin,
-                     double lmax,
-                     double dl
-        );
-
-        void SetGrid(double xc0,
-                     double yc0,
-                     double diameter,
-                     int nbR,
-                     int nbTheta
-        );
-
-
-        /// Get the free surface's mesh
-//        FrTriangleMeshConnected getMesh(void) const;
-
-        void UpdateAssetON() { m_updateAsset = true; }
-
-        void UpdateAssetOFF() { m_updateAsset = false; }
-
-        /// Update the state of the free surface
-        virtual void Update(double time);
-
-        void UpdateGrid();
-
-        void UpdateGridRange(std::pair<unsigned int, unsigned int> range);
-
-
-        FrTidal* GetTidal() const;
-
-        /// get the body that represents the free surface
-        std::shared_ptr<chrono::ChBody> GetBody();
-
-//        void SetWaveField(std::shared_ptr<FrWaveField> waveField) { m_waveField = waveField; }
-
-        FrWaveField* GetWaveField() const;
-
-//        const chrono::ChFrame<double>* GetFrame() const;
-
-        virtual void StepFinalize() override {}
-
-    };
-
-
-
-
-
-
-
-
-
-
-
-    // REFACTORING -------->>>>>>>>>>>
-
-
-
-
 
 
     // Forward declarations
@@ -215,11 +41,6 @@ namespace frydom {
      */
     class FrFreeSurface_ : public FrObject {
 
-    public:
-
-//        //TODO : TO BE DELETED
-//        std::shared_ptr<FrBody_> m_body;
-
     protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
 
         FrOcean_* m_ocean;                            ///< Pointer to the ocean containing this free surface
@@ -231,11 +52,6 @@ namespace frydom {
 
         // Visualization asset
         std::shared_ptr<FrFreeSurfaceGridAsset> m_freeSurfaceGridAsset;    ///> free surface grid asset, containing also the visualization asset
-
-//    protected:
-//
-//        //TODO : TO BE DELETED
-//        void CreateFreeSurfaceBody();
 
     public:
 
@@ -367,10 +183,6 @@ namespace frydom {
         /// \return Airy irregular wave field
         FrAiryIrregularOptimWaveField* SetAiryIrregularOptimWaveField();
 
-//        void SetLinearWaveField(LINEAR_WAVE_TYPE waveType);
-//
-//        FrLinearWaveField* GetLinearWaveField() const;
-
         //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
         /// Initialize the state of the free surface
@@ -383,7 +195,6 @@ namespace frydom {
         void StepFinalize() override;
 
     };
-
 
 }  // end namespace frydom
 

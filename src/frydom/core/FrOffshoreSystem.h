@@ -21,174 +21,48 @@
 #include "frydom/utils/FrIrrApp.h"
 
 
-//#include <frydom/hydrodynamics/FrHydroDB.h>
-//
-//#include "frydom/core/FrException.h"
-//
-//
-//#include <frydom/utils/FrIrrApp.h>
-//#include <frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h>
-//#include <frydom/cable/FrCable.h>
-
-//
-//
-//#include "chrono/timestepper/ChState.h"
-//#include "chrono/core/ChMatrixNM.h"
-//#include "chrono/core/ChMatrix33.h"
-//
-
-//#include "frydom/environment/waves/FrFreeSurface.h"
-//#include "frydom/environment/current/FrCurrent.h"
-//#include "frydom/core/FrBody.h"
-//
-//#include "frydom/environment/FrEnvironment.h"
-
-
-
-
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
 // vent, vagues, courant, fond...
 
 
 namespace frydom {
 
-//    class FrBody;
-//    class FrEnvironment;
-//    class FrHydroMapper;
-//    class FrHydroDB;
-//
-//
-//    // TODO: voir aussi a deriver de ChSystemSMC pour comparer les 2 ? Avoir une classe de base virtuelle derivant de ChSystem ???
-//    /**
-//    * \class FrOffshoreSystem
-//    * \brief Main class for a FRyDoM offshore system, representing a multibody physical system,.
-//    */
-//    class FrOffshoreSystem :
-//            public chrono::ChSystemSMC,
-//            public std::enable_shared_from_this<FrOffshoreSystem>,
-//            public FrObject
-//    {  // TODO: supprimer cette dependance !
-//
-//    private:
-//
-//        std::shared_ptr<FrBody> world_body;
-//
-//        chrono::ChFrame<double> NEDframe;                            ///< Frame that has Z pointing down to have a well defined heading
-//
-//        std::unique_ptr<FrEnvironment> m_environment;
-//
-//        int m_nHDB = 0;
-//        std::vector<std::shared_ptr<FrHydroDB>> m_HDB;
-//        std::vector<std::shared_ptr<FrHydroMapper>> m_hydroMapper;  // TODO : patch vector hydro map multibody
-//
-//        int m_NsampleOutput = 1;    ///< number of time sample between two outputs
-//        int m_NitterOutput = 0;     ///< current iteration between two outputs
-//
-//
-//    public:
-//        /// Default constructor
-//        explicit FrOffshoreSystem(bool use_material_properties = true,
-//                                  unsigned int max_objects = 16000,
-//                                  double scene_size = 500);
-//
-//        /// Default destructor
-//        ~FrOffshoreSystem() = default;
-//
-//        /// Copy constructor
-//        //FrOffshoreSystem(const FrOffshoreSystem& system) {};
-//
-//        /// Default destructor
-//        //~FrOffshoreSystem() override {std::cout << "OffshoreSystem deleted" << "\n";};
-//
-//        FrEnvironment* GetEnvironment() const;
-//
-//        /// Get NED frame
-//        chrono::ChFrame<double> GetNEDFrame() const;
-//
-//        /// Get the world body
-//        chrono::ChBody* GetWorldBodyPtr() const;
-//
-//        std::shared_ptr<FrBody> GetWorldBody() const;
-//
-//        void SetHydroMapper(std::shared_ptr<FrHydroMapper> hydroMapper);
-//
-//        std::shared_ptr<FrHydroMapper> GetHydroMapper(const int id) const;
-//
-//        void SetHydroDB(const std::string filename);
-//
-//        FrHydroDB* GetHydroDB(const int id) const;
-//
-//        int GetHydroMapNb() const;
-//
-//        /// Updates all the auxiliary data and children of
-//        /// bodies, forces, links, given their current state
-//        /// as well as environment prior to everything.
-//        void Update(bool update_assets = true) override;
-//
-//        void StateScatter(const chrono::ChState& x, const chrono::ChStateDelta& v, const double T) override;
-//
-//        bool Integrate_Y() override;
-//
-//        void CustomEndOfStep() override;
-//
-//        void Initialize() override;
-//
-//        void StepFinalize() override;
-//
-//        void SetNsampleOutput(const int n) { m_NsampleOutput = n; }
-//
-//        virtual void IntLoadResidual_Mv(const unsigned int off,
-//                                        chrono::ChVectorDynamic<>& R,
-//                                        const chrono::ChVectorDynamic<>& w,
-//                                        const double c) override;
-//
-//        virtual void VariablesFbIncrementMq() override;
-//
-//    };  // class FrOffshoreSystem
-//
-//
-//
-//
-//
-//
-//
-//
-//    // REFACTORING ---->>>>>>>>>>>>
-
+    // Forward declaration
     class FrOffshoreSystem_;
 
-    /// Base class inheriting from chrono ChSystemSMC for physical system in which contact is modeled using a smooth
-    /// (penalty-based) method. This class must not be used by external FRyDoM users.
-    /// It is used in composition rule along with the FrOffshoreSystem_ FRyDoM class
-    class _FrSystemBaseSMC : public chrono::ChSystemSMC {
+    namespace internal {
 
-    private:
-        FrOffshoreSystem_* m_offshoreSystem_;   ///< pointer to the offshore system
+        /// Base class inheriting from chrono ChSystemSMC for physical system in which contact is modeled using a smooth
+        /// (penalty-based) method. This class must not be used by external FRyDoM users.
+        /// It is used in composition rule along with the FrOffshoreSystem_ FRyDoM class
+        class _FrSystemBaseSMC : public chrono::ChSystemSMC {
 
-    public:
-        /// Constructor of the systemBase
-        /// \param offshoreSystem pointer to the offshore system
-        explicit _FrSystemBaseSMC(FrOffshoreSystem_* offshoreSystem);
+        private:
+            FrOffshoreSystem_ *m_offshoreSystem_;   ///< pointer to the offshore system
 
-        /// Update the state of the systemBase, called from chrono, call the Update of the offshore system
-        /// \param update_assets check if the assets are updated
-        void Update(bool update_assets) override;
+        public:
+            /// Constructor of the systemBase
+            /// \param offshoreSystem pointer to the offshore system
+            explicit _FrSystemBaseSMC(FrOffshoreSystem_ *offshoreSystem);
 
-        /// This method overrides a ChSystemSMC method, called by chrono, call StepFinalize of the offshore system
-        /// at the end of each step
-        void CustomEndOfStep() override;
+            /// Update the state of the systemBase, called from chrono, call the Update of the offshore system
+            /// \param update_assets check if the assets are updated
+            void Update(bool update_assets) override;
 
-//        void SetupInitial() override;
+            /// This method overrides a ChSystemSMC method, called by chrono, call StepFinalize of the offshore system
+            /// at the end of each step
+            void CustomEndOfStep() override;
 
-    };
+        };
 
-    /// Base class inheriting from chrono ChSystemNSC for physical system in which contact is modeled using a non-smooth
-    /// (complementarity-based) method.. This class must not be used by external FRyDoM users.
-    /// It is used in composition rule along with the FrOffshoreSystem_ FRyDoM class
-    class _FrSystemBaseNSC : public chrono::ChSystemNSC {
+        /// Base class inheriting from chrono ChSystemNSC for physical system in which contact is modeled using a non-smooth
+        /// (complementarity-based) method.. This class must not be used by external FRyDoM users.
+        /// It is used in composition rule along with the FrOffshoreSystem_ FRyDoM class
+        class _FrSystemBaseNSC : public chrono::ChSystemNSC {
             // TODO
-    };
+        };
 
+    }  // end namespace frydom::internal
 
 
 
@@ -734,13 +608,7 @@ namespace frydom {
         /// \return systemBase
         chrono::ChSystem* GetChronoSystem();
 
-//        /// Add other physics item to the offshore system
-//        /// \param otherPhysics other physic item to be added
-//        void AddPhysicsItem(std::shared_ptr<FrPhysicsItem_> otherPhysics);
-
-//        friend class FrIrrApp_;
-        void CheckIsInitialized();
-
+        void IsInitialized();
 
 
     public:
@@ -756,24 +624,8 @@ namespace frydom {
         LinkIter link_end();
         ConstLinkIter link_end() const;
 
-//        OtherPhysicsIter otherphysics_begin();
-//        ConstOtherPhysicsIter otherphysics_begin() const;
-//        OtherPhysicsIter otherphysics_end();
-//        ConstOtherPhysicsIter otherphysics_end() const;
 
     };
-
-
-//    namespace internal {
-//        void AddBodyToSystem(FrOffshoreSystem* system, std::shared_ptr<FrBody> body) {
-//            system->AddBody()
-//        }
-//    }
-
-
-
-
-
 
 } // end namespace frydom
 
