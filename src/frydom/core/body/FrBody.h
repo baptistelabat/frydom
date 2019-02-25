@@ -189,7 +189,7 @@ namespace frydom {
                         "Message of a body");
             }
 
-            m_bodyMsg.AddCSVSerializer();
+            m_bodyMsg.AddCSVSerializer("Body_" + GetUUID());
             //m_bodyMsg.AddPrintSerializer();
 
             // Adding fields

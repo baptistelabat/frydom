@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -99,7 +99,7 @@ namespace frydom{
         m_log.AddField(m_logPrefix + "MY", "N.m", "Moment along y-direction", &moment.y());
         m_log.AddField(m_logPrefix + "MZ", "N.m", "Moment along z-direction", &moment.z());
 
-        m_log.AddCSVSerializer();
+        m_log.AddCSVSerializer("Force_" + GetUUID());
     }
 
     void FrForce::InitializeLogs() {
