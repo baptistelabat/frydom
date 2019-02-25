@@ -299,7 +299,7 @@ namespace frydom {
     }
 
     void FrWaveDriftForce_::StepFinalize() {
-
+        FrForce_::StepFinalize();
     }
 
     std::vector<double> FrWaveDriftForce_::GetRelativeWaveDir() const {

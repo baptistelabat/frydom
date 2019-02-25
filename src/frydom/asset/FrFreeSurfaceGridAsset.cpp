@@ -23,7 +23,7 @@
 namespace frydom{
 
 
-    FrFreeSurfaceGridAsset::FrFreeSurfaceGridAsset(FrBody_ *body, FrFreeSurface_* freeSurface) : FrGridAsset(body) {
+    FrFreeSurfaceGridAsset::FrFreeSurfaceGridAsset(FrFreeSurface_* freeSurface) : FrGridAsset() {
         m_freeSurface = freeSurface;
         m_gridHeight = m_freeSurface->GetTidal()->GetHeight(NWU);
         m_color = DodgerBlue;
@@ -32,7 +32,7 @@ namespace frydom{
     void FrFreeSurfaceGridAsset::StepFinalize() {
         FrGridAsset::StepFinalize();
         if (fmod(c_currentStep,m_updateStep)==0) {
-            auto& mesh = m_meshAsset->GetMesh();
+            auto& mesh = dynamic_cast<chrono::ChTriangleMeshShape*>(m_chronoAsset->GetAssetN(0).get())->GetMesh();
             auto nbNodes = mesh.m_vertices.size();
             for (unsigned int inode = 0; inode < nbNodes; ++inode) {
                 mesh.m_vertices[inode].z() = m_freeSurface->GetPosition(mesh.m_vertices[inode].x(),

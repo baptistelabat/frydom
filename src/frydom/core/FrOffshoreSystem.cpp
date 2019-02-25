@@ -552,12 +552,24 @@ namespace frydom {
     void FrOffshoreSystem_::StepFinalize() {
         m_environment->StepFinalize();
 
-        for (auto& body : m_bodyList) {
-            body->StepFinalize();
+        for (auto& item : m_PrePhysicsList) {
+            item->StepFinalize();
         }
 
-        for (auto& link : m_linkList) {
-            link->StepFinalize();
+        for (auto& item : m_bodyList){
+            item->StepFinalize();
+        }
+
+        for (auto& item : m_MidPhysicsList) {
+            item->StepFinalize();
+        }
+
+        for (auto& item : m_linkList) {
+            item->StepFinalize();
+        }
+
+        for (auto& item : m_PostPhysicsList) {
+            item->StepFinalize();
         }
 
         // TODO : faire aussi pour les physicsItems !

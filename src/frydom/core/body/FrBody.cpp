@@ -125,7 +125,7 @@ namespace frydom {
         _FrBodyBase::_FrBodyBase(FrBody_ *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
 
         void _FrBodyBase::SetupInitial() {
-            chrono::ChBodyAuxRef::SetupInitial();
+//            chrono::ChBodyAuxRef::SetupInitial();
         }
 
         void _FrBodyBase::Update(bool update_assets) {
@@ -216,6 +216,12 @@ namespace frydom {
 
     void FrBody_::StepFinalize() {
         // TODO
+        // StepFinalize of forces
+        auto forceIter = force_begin();
+        for (; forceIter != force_end(); forceIter++) {
+            (*forceIter)->StepFinalize();
+        }
+
     }
 
     void FrBody_::Update() {
@@ -417,7 +423,7 @@ namespace frydom {
 
             bool asserted=false;
             for (int ia=0;ia<m_assets.size();++ia){
-                if (m_assets[ia].get()==force->m_forceAsset){
+                if (m_assets[ia]==force->m_forceAsset){
                     m_assets.erase(m_assets.begin()+ia);
                     asserted=true;
                 }
@@ -458,8 +464,6 @@ namespace frydom {
     }
 
     // ##CC
-
-
 
     // Nodes
 
@@ -517,6 +521,9 @@ namespace frydom {
     }
 
     void FrBody_::SetPosition(const Position &worldPos, FRAME_CONVENTION fc) {
+
+        /// This subroutine sets the initial position of a body in world.
+
         auto bodyFrame = GetFrame();
         bodyFrame.SetPosition(worldPos, fc);
         m_chronoBody->SetFrame_REF_to_abs(internal::FrFrame2ChFrame(bodyFrame));

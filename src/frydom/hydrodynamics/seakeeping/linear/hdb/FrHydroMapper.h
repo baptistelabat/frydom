@@ -91,14 +91,16 @@ namespace frydom {
     class FrHydroMapper_ {
 
     private:
-        std::unordered_map<FrBEMBody_*, FrBody_*> m_mapBEMToBody;
-        std::unordered_map<FrBody_*, FrBEMBody_*> m_mapBodyToBEM;
-        std::unordered_map<FrBEMBody_*, std::shared_ptr<FrEquilibriumFrame_>> m_mapEqFrame;
+        std::unordered_map<FrBEMBody_*, FrBody_*> m_mapBEMToBody; // Mapping of FrBEMBodies with FrBodies.
+        std::unordered_map<FrBody_*, FrBEMBody_*> m_mapBodyToBEM; // Mapping of FrBodies with FrBEMBodies.
+        std::unordered_map<FrBEMBody_*, std::shared_ptr<FrEquilibriumFrame_>> m_mapEqFrame; // Mapping of BEMBodies with FrEquilibriumFrame.
 
     public:
 
+        /// Constructor.
         FrHydroMapper_() = default;
 
+        /// This subroutine makes the mapping between a FrBody, a BEMBody and a FrEquilibriumFrame.
         void Map(FrBEMBody_* BEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame);
 
         unsigned long GetNbMappings() const;

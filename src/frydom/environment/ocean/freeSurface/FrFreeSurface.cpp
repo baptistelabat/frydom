@@ -427,7 +427,7 @@ namespace frydom {
         // Creating a waveField and a tidal model
         m_waveField         = std::make_unique<FrNullWaveField_>(this);
         m_tidal             = std::make_unique<FrTidal_>(this);
-        m_freeSurfaceGridAsset    = std::make_shared<FrFreeSurfaceGridAsset>(ocean->GetEnvironment()->GetSystem()->GetWorldBody().get(),this);
+        m_freeSurfaceGridAsset    = std::make_shared<FrFreeSurfaceGridAsset>(this);
 
 //        CreateFreeSurfaceBody();
     }
@@ -561,6 +561,7 @@ namespace frydom {
             m_tidal->Initialize();
             m_waveField->Initialize();
             m_freeSurfaceGridAsset->Initialize();
+            m_ocean->GetEnvironment()->GetSystem()->GetWorldBody()->AddAsset(m_freeSurfaceGridAsset);
         }
     }
 

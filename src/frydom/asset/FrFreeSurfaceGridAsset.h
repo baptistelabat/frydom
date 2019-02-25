@@ -33,11 +33,13 @@ namespace frydom {
     public:
         /// Default constructor
         /// \param body body containing this asset (usually WorldBody)
-        explicit FrFreeSurfaceGridAsset(FrBody_* body, FrFreeSurface_* freeSurface);
+        explicit FrFreeSurfaceGridAsset(FrFreeSurface_* freeSurface);
 
         /// FrFreeSurfaceGridAsset update method
         /// \param time time of the simulation
 //        void Update(double time) override;
+
+        void Update() override {};
 
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;

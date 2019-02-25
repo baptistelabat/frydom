@@ -24,8 +24,13 @@ namespace frydom {
 
         FrAddedMassBase::FrAddedMassBase(FrRadiationModel_* radiationModel) :
                 m_frydomRadiationModel(radiationModel), _FrPhysicsItemBase(radiationModel) {
+
+            /// Constructor of the class.
+
             auto nBodies = radiationModel->GetHydroDB()->GetNbBodies();
             int nDof = 6*nBodies;
+
+            // Creation of a FrVariablesAddedMassBase class.
             m_variables = std::make_shared<FrVariablesAddedMassBase>(this, nDof);
         }
 
@@ -84,8 +89,8 @@ namespace frydom {
 
                 auto bodyOffset = off_v - offset_w + GetBodyOffset( HDB->GetBody(BEMBody->get()) );
 
-                m_variables->Get_qb().PasteClippedMatrix(v, bodyOffset, 0, 6, 1, bodyOffset, 0);
-                m_variables->Get_fb().PasteClippedMatrix(R, bodyOffset, 0, 6, 1, bodyOffset, 0);
+                m_variables->Get_qb().PasteClippedMatrix(v, bodyOffset, 0, 6, 1, 0, 0);
+                m_variables->Get_fb().PasteClippedMatrix(R, bodyOffset, 0, 6, 1, 0, 0);
             }
         }
 

@@ -479,9 +479,9 @@ namespace frydom {
         os << std::endl;
         os << "Rotation (cardan angles in deg, NWU convention) :\n";
         os << "Cardan angle (deg) : ";
-        os << "phi   = " << phi;
+        os << "phi = " << phi;
         os << "; theta = " << theta;
-        os << "; psi   = " << psi;
+        os << "; psi = " << psi;
         os << std::endl;
 
     }

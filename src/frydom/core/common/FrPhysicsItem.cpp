@@ -18,10 +18,11 @@ namespace frydom {
 
     namespace internal {
 
+        /// Constructor of the class.
         _FrPhysicsItemBase::_FrPhysicsItemBase(FrPhysicsItem_ *item) : m_frydomPhysicsItem(item) {}
 
         void _FrPhysicsItemBase::SetupInitial() {
-            chrono::ChPhysicsItem::SetupInitial();
+//            chrono::ChPhysicsItem::SetupInitial();
         }
 
         void _FrPhysicsItemBase::Update(bool update_assets) {

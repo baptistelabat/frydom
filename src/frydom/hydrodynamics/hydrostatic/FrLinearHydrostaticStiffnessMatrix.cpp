@@ -64,6 +64,7 @@ namespace frydom {
         K45 = this->GetK45();
     }
 
+    // This subroutine sets the reduced hydrostatic matrix (3x3).
     void FrLinearHydrostaticStiffnessMatrix_::SetData(const mathutils::Matrix33<double> &data) { m_data = data; }
 
     mathutils::Vector3d<double>

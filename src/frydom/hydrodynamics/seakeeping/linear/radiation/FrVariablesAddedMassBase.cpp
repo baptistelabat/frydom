@@ -23,6 +23,7 @@ namespace frydom {
 
     namespace internal {
 
+        /// Constructor of the class.
         FrVariablesAddedMassBase::FrVariablesAddedMassBase(FrAddedMassBase* addedMassBase, int ndof)
             : ChVariables(ndof), m_addedMassBase(addedMassBase) { }
 
@@ -30,20 +31,27 @@ namespace frydom {
 
             // TODO : void s'il est possible d'éviter l'override des variables de FrBody
 
+            // HDB (of all bodies).
             auto HDB = m_addedMassBase->GetRadiationModel()->GetHydroDB();
 
+            // Loop over the bodies subject to hydrodynamique loads.
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
                 auto body = HDB->GetBody(BEMBody->get());
 
+                // Mass.
                 mathutils::Matrix66<double> generalizedMass = body->GetInertiaTensor(NWU).GetMatrix();
                 //mathutils::Matrix66<double> invGeneralizedMass = generalizedMass;
                 //invGeneralizedMass.Inverse();
 
+                // Added mass for infinite frequency.
                 mathutils::Matrix66<double> infiniteAddedMass = BEMBody->get()->GetSelfInfiniteAddedMass();
                 //mathutils::Matrix66<double> invInfiniteAddedMass = infiniteAddedMass.inverse();
 
+                // Sum of all masses.
                 mathutils::Matrix66<double> sumMatrixMass = generalizedMass + infiniteAddedMass;
+
+                // Inversion of the sum of all masses.
                 mathutils::Matrix66<double> invSumMatrixMass = sumMatrixMass;
                 invSumMatrixMass.Inverse();
 
@@ -143,7 +151,7 @@ namespace frydom {
                             qb(i) += generalizedMass(i, j) * fb(j);
                         }
                     };
-                //}
+                // };
                 this->SetVariables(body, qb, 0);
             }
         }

@@ -33,6 +33,7 @@ namespace frydom {
 
         public:
 
+            /// Constructor of the class.
             FrVariablesAddedMassBase(FrAddedMassBase* addedMassBase, int ndof);
 
             void Initialize();

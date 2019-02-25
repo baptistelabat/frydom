@@ -16,7 +16,9 @@
 #include <chrono/assets/ChAssetLevel.h>
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include "chrono/assets/ChColorAsset.h"
+
 #include "frydom/core/common/FrObject.h"
+#include "frydom/asset/FrAsset.h"
 #include "frydom/core/misc/FrColors.h"
 
 namespace frydom {
@@ -29,7 +31,8 @@ namespace frydom {
      * \class FrFreeSurfaceGridAsset
      * \brief Class to display the different types of grids (free surface, seabed).
      */
-    class FrGridAsset : public FrObject  {
+
+    class FrGridAsset : public FrAsset {
     public:
         enum GRID_TYPE {
             NOGRID,  // TODO: utiliser si on ne veut pas montrer la SL
@@ -37,16 +40,8 @@ namespace frydom {
             POLAR
         };
     protected:
-        /// body containing the grid asset
-        FrBody_* m_body;
-        /// Mesh asset for the visualization
-        std::shared_ptr<chrono::ChTriangleMeshShape> m_meshAsset;
-        /// Color asset for the visualization
-        std::shared_ptr<chrono::ChColorAsset> m_colorAsset;
 
-        /// Boolean to check if the grid asset is updated (in position, color, etc.) during the simulation
-//        bool m_updateAsset = false;
-        /// The free surface grid asset position is updated every m_updateStep simulation steps
+        /// The grid asset position is updated every m_updateStep simulation steps
         int m_updateStep = 0;
         int c_currentStep;
 
@@ -74,7 +69,7 @@ namespace frydom {
 
     public:
         /// Default constructor of the grid asset
-        explicit FrGridAsset(FrBody_* body);
+        explicit FrGridAsset();
 
         /// grid asset is set to NOGRID and the asset is not visualized or updated
         void SetNoGrid();
@@ -132,7 +127,7 @@ namespace frydom {
         void Initialize() override;
 
         /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override;;
+        void StepFinalize() override;
 
     protected:
 

@@ -60,8 +60,7 @@ namespace frydom {
 
     void FrMooringBuoy::Update() {
 
-        auto Zt =computeDraft();
-        c_volume = computeVolume(computeDraft());
+        computeVolume();
 
     }
 

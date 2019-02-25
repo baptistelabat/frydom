@@ -91,5 +91,9 @@ namespace frydom {
 
     }
 
+    void FrCatenaryForce_::StepFinalize() {
+        FrForce_::StepFinalize();
+    }
+
 
 }  // end namespace frydom

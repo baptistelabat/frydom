@@ -202,7 +202,7 @@ namespace frydom {
 
         // Force Asset
         bool m_isForceAsset = false;            ///< A ForceAsset (vector) is displayed if true
-        FrForceAsset_* m_forceAsset = nullptr;  ///< pointer to the ForceAsset object.
+        std::shared_ptr<FrForceAsset_> m_forceAsset = nullptr;  ///< pointer to the ForceAsset object.
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise
@@ -220,9 +220,11 @@ namespace frydom {
 //        /// Force Destructor, delete the related force asset and remove it from the asset container of the body
 //        ~FrForce_();
 
+        /// This subroutine initializes the object FrForce.
         void Initialize() override;
 
-//        void StepFinalize() override;
+        // TODO : boucle de StepFinalize à mettre en place dans FrBody_
+        void StepFinalize() override;
 
         /// Virtual function to allow updating the child object from the solver
         /// \param time Current time of the simulation from begining, in seconds

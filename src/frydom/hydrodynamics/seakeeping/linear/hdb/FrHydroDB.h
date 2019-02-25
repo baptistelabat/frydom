@@ -220,20 +220,28 @@ namespace frydom {
 
     public:
 
+        /// Constructor of the class.
         FrHydroDB_() = default;
 
+        /// Constructor of the class.
         explicit FrHydroDB_(std::string h5file);
 
+        /// This subroutine reads the modes of a body.
         void ModeReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
 
+        /// This subroutine reads the excitation loads from the *.HDB5 input file.
         void ExcitationReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
 
+        /// This subroutine reads the radiation coefficients from the *.HDB5 input file.
         void RadiationReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
 
+        /// This subroutine reads the wave drift coefficients.
         void WaveDriftReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
 
+        /// This subroutine reads the hydrostatic matrix.
         void HydrostaticReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
 
+        /// This subroutine gives the number of bodies.
         unsigned int GetNbBodies() const { return (uint)m_bodies.size(); };
 
         void SetWaveDirectionDiscretization(const double minAngle, const double maxAngle, const unsigned int nbAngle);

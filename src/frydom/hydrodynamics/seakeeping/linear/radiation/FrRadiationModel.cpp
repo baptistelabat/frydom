@@ -377,7 +377,9 @@ namespace frydom {
     }
 
     FrRadiationModel_::FrRadiationModel_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {
-        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this);
+
+        // Creation of an AddedMassBase object.
+        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this); // this = FrRadiationModel_
     }
 
     void FrRadiationModel_::Initialize() {
@@ -416,13 +418,16 @@ namespace frydom {
     // ----------------------------------------------------------------
 
     FrRadiationConvolutionModel_::FrRadiationConvolutionModel_(std::shared_ptr<FrHydroDB_> HDB)
-        : FrRadiationModel_(HDB) {
+        : FrRadiationModel_(HDB) { /// Initialization of the the parent class FrRadiationModel_.
+
+        /// Constructor of the class FrRadiationConvolutionModel_.
 
         // FIXME : a passer dans la méthode initialize pour eviter les pb de précédence vis a vis de la HDB
 
+        // Loop over every body subject to hydrodynamic loads.
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
             auto body = m_HDB->GetBody(BEMBody->get());
-            body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this));
+            body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this)); // Addition of the hydrodynamic loads to every body.
         }
 
     }
@@ -513,6 +518,7 @@ namespace frydom {
     GeneralizedForce FrRadiationConvolutionModel_::ConvolutionKu(double meanSpeed) const {
 
         auto radiationForce = GeneralizedForce();
+        radiationForce.SetNull();
 
         for (auto BEMBody = m_HDB->begin(); BEMBody != m_HDB->end(); BEMBody++) {
 
@@ -563,11 +569,17 @@ namespace frydom {
         m_dt = dt;
     }
 
-
     std::shared_ptr<FrRadiationConvolutionModel_>
     make_radiation_convolution_model(std::shared_ptr<FrHydroDB_> HDB, FrOffshoreSystem_* system){
+
+        /// This subroutine creates and adds the radiation convulation model to the offshore system from the HDB.
+
+        // Construction and initialization of the classes dealing with radiation models.
         auto radiationModel = std::make_shared<FrRadiationConvolutionModel_>(HDB);
+
+        // Addition to the system.
         system->AddPhysicsItem(radiationModel);
+
         return radiationModel;
     }
 

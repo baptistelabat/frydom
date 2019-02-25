@@ -108,6 +108,8 @@ namespace frydom {
         FrEquilibriumFrame_* m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
 
     public:
+
+        /// Constructor.
         FrLinearHydrostaticForce_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) { }
 
         /// Get the stiffness matrix of the hydrostatic force
@@ -122,10 +124,10 @@ namespace frydom {
         void Initialize() override;
 
         /// Methods to be applied at the end of each time steps
-        void StepFinalize() override { }
+        void StepFinalize() override;
     };
 
-
+    /// This subroutine reads the modes of a body.
     std::shared_ptr<FrLinearHydrostaticForce_>
     make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body);
 

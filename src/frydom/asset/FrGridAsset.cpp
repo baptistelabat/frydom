@@ -22,6 +22,9 @@
 
 namespace frydom{
 
+
+    FrGridAsset::FrGridAsset(): FrAsset() {}
+
     void FrGridAsset::SetGridType(GRID_TYPE gridType) {
         m_gridType = gridType;
         if (gridType == NOGRID) {UpdateAssetOFF();}
@@ -199,19 +202,18 @@ namespace frydom{
             case NOGRID:
                 return;
         }
-        m_meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
-        m_meshAsset->SetMesh(*mesh);
 
+        // Mesh asset
+        auto meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
+        meshAsset->SetMesh(*mesh);
+
+        // Color asset
         auto color = FrColor(m_color);
-        m_colorAsset = std::make_shared<chrono::ChColorAsset>(chrono::ChColor(color.R, color.G, color.B));
+        auto colorAsset = std::make_shared<chrono::ChColorAsset>(chrono::ChColor(color.R, color.G, color.B));
 
-        // Create an asset level for meshAsset and colorAsset
-        auto FreeSurfaceAssetLevel = std::make_shared<chrono::ChAssetLevel>();
-        FreeSurfaceAssetLevel->AddAsset(m_meshAsset);
-        FreeSurfaceAssetLevel->AddAsset(m_colorAsset);
-
-        // Add the asset level to the body
-        m_body->m_chronoBody->AddAsset(FreeSurfaceAssetLevel);
+        // Add these assets to the chronoAsset
+        m_chronoAsset->AddAsset(meshAsset);
+        m_chronoAsset->AddAsset(colorAsset);
     }
 
     void FrGridAsset::SetGridHeight(double height) {m_gridHeight = height;}
@@ -223,11 +225,6 @@ namespace frydom{
     void FrGridAsset::SetGridColor(NAMED_COLOR color) {m_color = color;}
 
     void FrGridAsset::SetNoGrid() {SetGridType(NOGRID);}
-
-    FrGridAsset::FrGridAsset(FrBody_ *body) {
-        m_body = body;
-
-    }
 
     void FrGridAsset::StepFinalize() {
         c_currentStep +=1;

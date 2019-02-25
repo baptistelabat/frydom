@@ -29,6 +29,7 @@ namespace frydom {
 
             FrPhysicsItem_ *m_frydomPhysicsItem;
 
+            /// Constructor.
             explicit _FrPhysicsItemBase(FrPhysicsItem_ *item);
 
             void SetupInitial() override;

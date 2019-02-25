@@ -274,4 +274,8 @@ namespace frydom {
     void FrManDampingTaylorExpansion_::Initialize() {
         FrForce_::Initialize();
     }
+
+    void FrManDampingTaylorExpansion_::StepFinalize() {
+        FrForce_::StepFinalize();
+    }
 }

@@ -18,20 +18,40 @@
 
 namespace frydom {
 
+    class FrAsset;
+
+    namespace internal{
+
+        struct FrAssetBase_ : public chrono::ChAssetLevel {
+
+            FrAsset * m_frydomAsset;
+
+            explicit FrAssetBase_(FrAsset * asset);
+
+            void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) override;
+
+        };
+
+    }
+
     /**
      * \class FrAsset
      * \brief
      */
-    class FrAsset {
+    class FrAsset : public FrObject {
 
     protected:
+        std::shared_ptr<internal::FrAssetBase_> m_chronoAsset;
 
-        virtual std::shared_ptr<chrono::ChAsset> GetChronoAsset() = 0;
+        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
 
     public:
 
-        friend void FrBody_::AddAsset(std::shared_ptr<FrAsset>);
+        FrAsset();
 
+        virtual void Update() = 0;
+
+        friend void FrBody_::AddAsset(std::shared_ptr<FrAsset>);
     };
 
 }   // end namespace frydom

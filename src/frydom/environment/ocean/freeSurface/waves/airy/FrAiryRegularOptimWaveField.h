@@ -19,7 +19,7 @@ namespace frydom {
 
     /**
      * \class FrAiryRegularOptimWaveField
-     * \brief Class which deals with regular wave fields, from FrAiryRegularWaveField.
+     * \brief Class which deals with regular wave fields with optimization (cos(theta), etc.), from FrAiryRegularWaveField.
      */
     class FrAiryRegularOptimWaveField : public FrAiryRegularWaveField {
     private:

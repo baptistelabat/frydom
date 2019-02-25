@@ -175,6 +175,7 @@ namespace frydom {
         void SplitCoeffs(double& K33, double& K44, double& K55,
                          double& K34, double& K35, double& K45);
 
+        // This subroutine sets the reduced hydrostatic matrix (3x3).
         void SetData(const mathutils::Matrix33<double>& data);
 
         mathutils::Vector3d<double> operator*(const mathutils::Vector3d<double>& state) const;

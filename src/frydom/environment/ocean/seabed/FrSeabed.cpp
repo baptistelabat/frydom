@@ -276,7 +276,7 @@ namespace frydom {
     // FrMeanSeabed descriptions
 
     FrMeanSeabed_::FrMeanSeabed_(FrOcean_ *ocean) :FrSeabed_(ocean){
-        m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(ocean->GetEnvironment()->GetSystem()->GetWorldBody().get(),this);
+        m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(this);
     }
 
     void FrMeanSeabed_::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
@@ -302,7 +302,11 @@ namespace frydom {
     void FrMeanSeabed_::Update(double time) {}
 
     void FrMeanSeabed_::Initialize() {
-        if (m_showSeabed) m_SeabedGridAsset->Initialize();
+        if (m_showSeabed) {
+            m_SeabedGridAsset->Initialize();
+            m_ocean->GetEnvironment()->GetSystem()->GetWorldBody()->AddAsset(m_SeabedGridAsset);
+        }
+
     }
 
     void FrMeanSeabed_::StepFinalize() {

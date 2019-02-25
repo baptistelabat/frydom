@@ -83,6 +83,10 @@ namespace frydom {
         m_radiationModel = radiationModel;
     }
 
+    void FrRadiationForce_::StepFinalize() {
+        FrForce_::StepFinalize();
+    }
+
     // --------------------------------------------------
     // FrRadiationConvolutionForce
     // --------------------------------------------------

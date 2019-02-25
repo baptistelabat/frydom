@@ -102,7 +102,7 @@ namespace frydom {
     }
 
     void FrMorisonForce_::StepFinalize() {
-
+        FrForce_::StepFinalize();
     }
 
 

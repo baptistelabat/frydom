@@ -196,38 +196,60 @@ namespace frydom {
     /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
 
     void FrLinearExcitationForce_::Initialize() {
-        FrForce_::Initialize();
 
+
+        /// This subroutine initializes the excitation force object.
+
+        // Initialization of the parent class.
+//        FrForce_::Initialize();
+
+        // Equilibrium frame of the body.
         m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
 
+        // Wave field.
         auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
+        // BEMBody.
         auto BEMBody = m_HDB->GetBody(m_body);
 
+        // Frequency and wave direction discretization.
         auto freqs = waveField->GetWaveFrequencies(RADS);
         auto directions = waveField->GetWaveDirections(RAD, NWU, GOTO);
 
+        // Interpolation of the exciting loads if not already done.
         if (m_Fexc.empty()) {
             m_Fexc = BEMBody->GetExcitationInterp(freqs, directions, RAD);
         }
 
+        // Initialization of the parent class.
         FrForce_::Initialize();
 
     }
 
     void FrLinearExcitationForce_::Update(double time) {
 
+        // This subroutine computes the linear excitation forces from Nemoh results.
+
+        // Wave field structure.
         auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
+
+        // Wave elevation.
         auto complexElevations = waveField->GetComplexElevation(m_equilibriumFrame->GetX(NWU),
                                                               m_equilibriumFrame->GetY(NWU),
                                                               NWU);
 
+        // DOF.
         auto nbMode = m_HDB->GetBody(m_body)->GetNbForceMode();
+
+        // Number of wave frequencies.
         auto nbFreq = waveField->GetWaveFrequencies(RADS).size();
+
+        // Number of wave directions.
         auto nbWaveDir = waveField->GetWaveDirections(RAD, NWU, GOTO).size();
 
+        // Fexc(t) = eta*Fexc(Nemoh).
         Eigen::VectorXd forceMode(nbMode);
-        forceMode.setZero();
+        forceMode.setZero(); // Initialization.
         for (unsigned int imode=0; imode<nbMode; ++imode) {
             for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq) {
                 for (unsigned int idir=0; idir<nbWaveDir; ++idir) {
@@ -236,14 +258,14 @@ namespace frydom {
             }
         }
 
+        // From vector to force and torque structures.
         auto force = Force();
         auto torque = Torque();
 
         for (unsigned int imode=0; imode<nbMode; ++imode) {
 
             auto mode = m_HDB->GetBody(m_body)->GetForceMode(imode);
-            Direction direction = mode->GetDirection();
-
+            Direction direction = mode->GetDirection(); // Unit vector for the force direction.
             switch (mode->GetType()) {
                 case FrBEMMode_::LINEAR:
                     force += direction * forceMode(imode);
@@ -257,13 +279,29 @@ namespace frydom {
         auto worldTorque = m_equilibriumFrame->ProjectVectorFrameInParent(torque, NWU);
 
         this->SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
+
+
+	// Settings: torque is already computed at CoG.
+        SetForceTorqueInWorldAtCOG(worldForce,worldTorque, NWU);
+
+    }
+
+    void FrLinearExcitationForce_::StepFinalize() {
+        FrForce_::StepFinalize();
     }
 
 
     std::shared_ptr<FrLinearExcitationForce_>
     make_linear_excitation_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body){
+
+        /// This subroutine creates the hydrostatic force object for computing the hydrostatic loads.
+
+        // Construction of the excitation force object from the HDB.
         auto excitationForce = std::make_shared<FrLinearExcitationForce_>(HDB);
+
+        // Add the excitation force object as an external force to the body.
         body->AddExternalForce(excitationForce);
+
         return excitationForce;
 
     }

@@ -51,7 +51,7 @@ namespace frydom {
         void Initialize() override;
 
         /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override {}
+        void StepFinalize() override;
 
     };
 

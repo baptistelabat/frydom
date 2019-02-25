@@ -19,7 +19,7 @@
 #include <frydom/environment/ocean/seabed/FrSeabed.h>
 
 namespace frydom{
-    FrSeabedGridAsset::FrSeabedGridAsset(FrBody_ *body, FrSeabed_* seabed): FrGridAsset(body)  {
+    FrSeabedGridAsset::FrSeabedGridAsset(FrSeabed_* seabed): FrGridAsset()  {
         m_seabed = seabed;
         SetGridColor(Chocolate);
     }

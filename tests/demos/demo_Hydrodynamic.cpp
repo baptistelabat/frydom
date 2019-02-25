@@ -9,16 +9,11 @@
 // 
 // ==========================================================================
 
-
-
 #include "frydom/frydom.h"
 
 using namespace frydom;
 
 int main(int argc, char* argv[]) {
-    /** 
-     * 
-     */
 
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
     FRAME_CONVENTION fc = NWU;
@@ -40,8 +35,12 @@ int main(int argc, char* argv[]) {
     auto Seabed = Ocean->GetSeabed();
     Seabed->GetSeabedGridAsset()->SetGrid(-300., 300., 100., -300., 300., 100.);
 
-    // Set the bathymetry
+    // Set the bathymetry.
     Seabed->SetBathymetry(-100, NWU);
+
+    // Ramp.
+    system.GetEnvironment()->GetTimeRamp()->SetActive(true);
+    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0,0,20,1);
 
     // ----- Current
     // A uniform field is also set by default for the current model. In order to set the current characteristics,
@@ -81,7 +80,7 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------
     // platform
     // --------------------------------------------------
-    //
+
     auto platform = system.NewBody();
     platform->SetName("platform");
     platform->AddMeshAsset("Platform_GVA7500.obj");
@@ -102,10 +101,11 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-    // Create a hydrodynamic database (hdb) and load data from the input file.
-    auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
+//     Create a hydrodynamic database (hdb), load data from the input file and creates and initialize the BEMBody.
+//    auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
+    auto hdb = make_hydrodynamic_database("Platform_HDB_Without_drift.hdb5");
 
-    // Create an equilibrium frame for the platform and add it to the system
+    // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
     auto eqFrame = std::make_shared<FrEquilibriumFrame_>(platform.get());
     system.AddPhysicsItem(eqFrame);
 
@@ -121,15 +121,13 @@ int main(int argc, char* argv[]) {
     auto excitationForce = make_linear_excitation_force(hdb, platform);
 
     // -- Radiation
-    //FIXME
-//    auto radiationModel = make_radiation_convolution_model(hdb, &system);
-//    radiationModel->SetImpulseResponseSize(platform.get(), 12., 0.1);
+    auto radiationModel = make_radiation_convolution_model(hdb, &system);
+    radiationModel->SetImpulseResponseSize(platform.get(), 40., 0.01);
 
     // -- Wave drift force
     //TODO
 //    auto waveDriftForce = std::make_shared<>(hdb.get());
 //    platform->AddExternalForce(waveDriftForce);
-
 
     // -- Current model force, based on polar coefficients
     // Create the current model force and add it to the platform
@@ -140,7 +138,7 @@ int main(int argc, char* argv[]) {
     auto windForce = make_wind_force("Platform_PolarWindCoeffs_NC.yml", platform);
     windForce->SetIsForceAsset(true);
 
-    // ------------------ Run ------------------ //
+    // ------------------ Run with Irrlicht ------------------ //
 
     // You can change the dynamical simulation time step using.
     system.SetTimeStep(0.01);
@@ -149,7 +147,6 @@ int main(int argc, char* argv[]) {
     // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
     // For saving snapshots of the simulation, just turn the boolean to true.
 //    system.Visualize(50.,false);
-    system.RunInViewer(60, 300, false);
-    
-    
+    system.RunInViewer(100, 200, false);
+
 }
