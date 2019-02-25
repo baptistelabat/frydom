@@ -1180,7 +1180,7 @@ class RadiationDB(_FreqDB):
         """
 
         if self._irf_db is None:
-            self.eval_impulse_response_function(tf=100, dt=0.1)
+            self.eval_impulse_response_function(tf=100., dt=0.008)
         return self._irf_db
 
     def eval_impulse_response_function_Ku(self, tf=30., dt=None, full=True):
@@ -1238,6 +1238,10 @@ class RadiationDB(_FreqDB):
 
         cm_diff[:, :, 4] = -cm_diff[:, :, 2]
         cm_diff[:, :, 5] = cm_diff[:, :, 1]
+        cm_diff[:, :, 0] = 0.
+        cm_diff[:, :, 1] = 0.
+        cm_diff[:, :, 2] = 0.
+        cm_diff[:, :, 3] = 0.
 
         kernel = np.einsum('ijk, jl -> ijkl', cm_diff, cwt)  # is nb_forces x nb_motions x nt
 
@@ -1261,7 +1265,7 @@ class RadiationDB(_FreqDB):
        """
 
         if self._irf_ku_db is None:
-            self.eval_impulse_response_function_Ku(tf=100, dt=0.1)
+            self.eval_impulse_response_function_Ku(tf=100., dt=0.008)
         return self._irf_ku_db
 
     def eval_infinite_added_mass(self, full=True):

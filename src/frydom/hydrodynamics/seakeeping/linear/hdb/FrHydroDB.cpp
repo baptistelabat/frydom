@@ -362,6 +362,21 @@ namespace frydom {
         m_frequencyDiscretization.SetNbSample(nbFreq);
     }
 
+    std::vector<double> FrHydroDB_::GetWaveDirections(ANGLE_UNIT angleUnit, FRAME_CONVENTION fc) const {
+
+        auto waveDir = m_waveDirectionDiscretization.GetVector();
+
+        if (angleUnit == RAD) {
+            for (auto& angle: waveDir) { angle *= DEG2RAD; }
+        }
+
+        if (IsNED(fc)) {
+            for (auto& angle: waveDir) { angle = -angle; }
+        }
+
+        return waveDir;
+    }
+
     FrBEMBody_* FrHydroDB_::NewBody(std::string bodyName) {
         m_bodies.push_back( std::make_unique<FrBEMBody_>(GetNbBodies(), bodyName, this));
         return m_bodies.back().get();
@@ -657,10 +672,7 @@ namespace frydom {
         auto freqs = std::vector<double>(data[0]);
 
         BEMBody->GetWaveDrift()->SetFrequencies(freqs);
-        BEMBody->GetWaveDrift()->SetAngles(GetWaveDirections());
-
-        bool xSym = (bool)reader.ReadBool(path + "/sym_x");
-        bool ySym = (bool)reader.ReadBool(path + "/sym_y");
+        BEMBody->GetWaveDrift()->SetAngles(GetWaveDirections(RAD, NWU));
 
         auto nbWaveDirection = GetNbWaveDirections();
 
@@ -671,20 +683,15 @@ namespace frydom {
             if (reader.GroupExist(modePath)) {
 
                 auto coeffs = std::vector<double>();
-                //auto headings = std::vector<double>();
 
                 for (unsigned int i_dir=0; i_dir<nbWaveDirection; ++i_dir) {
 
                     sprintf(buffer, "%d", i_dir);
                     auto idirPath = modePath + "/heading_" + buffer;
 
-                    //auto angle = reader.ReadDouble(idirPath + "/heading");
-                    //headings.push_back(angle);
-
                     auto data = reader.ReadDoubleArraySTD(idirPath + "/data");
                     coeffs.insert(std::end(coeffs), std::begin(data[0]), std::end(data[0]));
                 }
-
                 BEMBody->GetWaveDrift()->AddData(mode, coeffs);
             }
         }

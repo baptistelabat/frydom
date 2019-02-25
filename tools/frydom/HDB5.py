@@ -231,13 +231,15 @@ class HDB5(object):
         self._discretization.initialize(self._hdb)
 
         # Impule response functions for radiation damping.
-        self._hdb.radiation_db.eval_impulse_response_function(tf=100, dt=0.1)
+        tf = self.discretization.final_time
+        dt = self.discretization.delta_time
+        self._hdb.radiation_db.eval_impulse_response_function(tf=tf, dt=dt)
 
         # Infinite masses.
         self._hdb.radiation_db.eval_infinite_added_mass()
 
         # Impule response functions for advance speed.
-        self._hdb.radiation_db.eval_impulse_response_function_Ku(tf=100, dt=0.1)
+        self._hdb.radiation_db.eval_impulse_response_function_Ku(tf=tf, dt=dt)
 
         # Interpolation of the diffraction loads with respect to the wave directions and the wave frequencies.
         self._interpolate_diffraction()
@@ -271,12 +273,9 @@ class HDB5(object):
         fk_db = self._hdb.froude_krylov_db
         diff_db = self._hdb.diffraction_db
 
-        # Adjusting convention of wave direction to GOTO.
+        # Symmetrize
         if self._hdb.min_wave_dir >= -np.float32() and self._hdb.max_wave_dir <= 180. + np.float32():
-            # self._hdb._wave_dirs = 180. - self._hdb._wave_dirs
             self._hdb._wave_dirs, fk_db, diff_db = symetrize(self._hdb._wave_dirs, fk_db, diff_db)
-        # else:
-            # self._hdb._wave_dirs = np.fmod(self._hdb._wave_dirs + 180., 360.)
 
         # Updating the FK and diffraction loads accordingly.
         n180 = 0

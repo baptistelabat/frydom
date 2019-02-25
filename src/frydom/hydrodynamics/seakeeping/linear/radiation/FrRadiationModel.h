@@ -151,7 +151,7 @@ namespace frydom {
 
         std::shared_ptr<FrHydroDB_> m_HDB;
         std::unordered_map<FrBEMBody_*, GeneralizedForce> m_radiationForce;
-        std::shared_ptr<internal::FrAddedMassBase> m_addedMass;
+        std::shared_ptr<internal::FrAddedMassBase> m_addedMass; // FIXME : a supprimer
 
     public:
 

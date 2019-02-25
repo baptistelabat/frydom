@@ -423,11 +423,13 @@ namespace frydom {
         /// Constructor of the class FrRadiationConvolutionModel_.
 
         // FIXME : a passer dans la méthode initialize pour eviter les pb de précédence vis a vis de la HDB
+
         // Loop over every body subject to hydrodynamic loads.
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
             auto body = m_HDB->GetBody(BEMBody->get());
             body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce_>(this)); // Addition of the hydrodynamic loads to every body.
         }
+
     }
 
     void FrRadiationConvolutionModel_::Initialize() {
@@ -442,13 +444,14 @@ namespace frydom {
             if (m_recorder.find(BEMBody->get()) == m_recorder.end()) {
                 m_recorder[BEMBody->get()] = FrTimeRecorder_<GeneralizedVelocity>(m_Te, m_dt);
             }
-
             m_recorder[BEMBody->get()].Initialize();
         }
-
     }
 
     void FrRadiationConvolutionModel_::Update(double time) {
+
+        if (std::abs(time - GetSystem()->GetTime()) < 0.1*GetSystem()->GetTimeStep() and
+                time > FLT_EPSILON) return;
 
         // Update speed recorder
         for (auto BEMBody = m_HDB->begin(); BEMBody != m_HDB->end(); BEMBody++) {
@@ -477,6 +480,7 @@ namespace frydom {
                         kernel.push_back(interpK->Eval(vtime[it]) * velocity.at(it).at(idof));
                     }
                     radiationForce += TrapzLoc(vtime, kernel);
+
                 }
             }
 
@@ -525,7 +529,7 @@ namespace frydom {
                 auto velocity = m_recorder.at(BEMBodyMotion->get()).GetData();
                 auto vtime = m_recorder.at(BEMBodyMotion->get()).GetTime();
 
-                for (unsigned int idof=0; idof<6; idof++) {
+                for (unsigned int idof=4; idof<6; idof++) {
 
                     auto interpKu = BEMBody->get()->GetIRFInterpolatorKu(BEMBodyMotion->get(), idof);
 
@@ -539,7 +543,7 @@ namespace frydom {
                 auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBodyMotion->get());
                 auto angular = eqFrame->GetAngularPerturbationVelocityInFrame();
 
-                auto damping = Ainf.col(2) * angular.y() - Ainf.col(1) * angular.x();
+                auto damping = Ainf.col(2) * angular.y() - Ainf.col(1) * angular.z();
                 radiationForce += meanSpeed * damping;
             }
 

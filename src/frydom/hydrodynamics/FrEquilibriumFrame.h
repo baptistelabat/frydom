@@ -38,6 +38,7 @@ namespace frydom {
                                 public FrPrePhysicsItem_ {
 
     protected:
+        double m_prevTime;
         FrBody_* m_body = nullptr;               ///< Link to the body to which the equilibrium frame if applied
         Velocity m_velocity;                     ///< translational velocity of the frame in world coordinates
         double m_angularVelocity;                ///< angular velocity of the frame around Z-direction
@@ -145,7 +146,7 @@ namespace frydom {
 
         /// Update the velocity and position of the frame
         /// \param time Current time of the simulation from the beginning
-        void Update(double time) override { }
+        void Update(double time) override;
 
         /// Initialization of the position and velocity of the equilibrium frame
         void Initialize() override;

@@ -77,8 +77,7 @@ namespace frydom {
                     auto bodyOffset = GetBodyOffset(body);
 
                     auto fb = GetVariablesFb(body);
-                    auto qb = chrono::ChMatrixDynamic<double>(6,1);
-//                    qb.Resize(6, 1);
+                    auto qb = GetVariablesQb(body);
 
                     auto invAddedMassCorrection = m_invAddedMassCorrection.at(BEMBody->get());
 
@@ -86,11 +85,11 @@ namespace frydom {
                         qb(i) = 0.;
                         for (int j=0; j<6; j++) {
                             //result(resultOffset + i) += invAddedMassCorrection(i, j) * vect(bodyOffset + j);
-                            qb(i) += invAddedMassCorrection(i, j) * fb(j);
+                           qb(i) += invAddedMassCorrection(i, j) * fb(j);
                         }
                     };
-                    this->SetVariables(body, qb, 0);
                 //}
+                this->SetVariables(body, qb, 0);
             }
         }
 
@@ -121,8 +120,8 @@ namespace frydom {
                             qb(i) += invAddedMassCorrection(i, j) * fb(j);
                         }
                     };
-                    this->SetVariables(body, qb, 0);
                 //}
+                this->SetVariables(body, qb, 0);
             }
         }
 
@@ -152,8 +151,8 @@ namespace frydom {
                             qb(i) += generalizedMass(i, j) * fb(j);
                         }
                     };
-                    this->SetVariables(body, qb, 0);
-                //}
+                // };
+                this->SetVariables(body, qb, 0);
             }
         }
 
@@ -178,7 +177,6 @@ namespace frydom {
                         qb(i) += c_a * generalizedMass(i, j) * fb(j);
                     }
                 }
-
                 this->SetVariables(body, qb, 0);
             }
         }

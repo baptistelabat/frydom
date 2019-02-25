@@ -32,7 +32,8 @@ class DiscretizationDB(object):
         self._nb_frequencies = None
         # Time discretization
         self._final_time = None
-        self._nb_time_sample = 0
+        self._nb_time_sample = None
+        self._delta_time = None
         # Wave directions discretization
         self._wave_dirs = None
         self._max_angle = None
@@ -107,6 +108,21 @@ class DiscretizationDB(object):
 
         return self._final_time
 
+    @final_time.setter
+    def final_time(self, value):
+        """ This subroutines gives the final time the time discretizations
+
+        Parameter:
+        ---------
+        float value:
+            Final time (in second)
+        """
+
+        if value > -1e-8:
+            self._final_time = value
+        else:
+            print("warning : final time must be >= 0")
+
     @property
     def nb_time_sample(self):
 
@@ -119,6 +135,50 @@ class DiscretizationDB(object):
         """
 
         return self._nb_time_sample
+
+    @nb_time_sample.setter
+    def nb_time_sample(self, value):
+        """ This subroutine set the number of time samples
+
+        Parameter:
+        ---------
+        int value:
+            Number of time sample
+        """
+
+        if isinstance(value, int) and value >= 0:
+            self._nb_time_sample = value
+        else:
+            print("warning : nb of time simple must be an integer >= 0")
+
+    @property
+    def delta_time(self):
+
+        """ This subroutine gives the size of the time discretizations
+
+        Returns
+        -------
+        float
+            Delta time of the discretization (in second)
+
+        """
+
+        return self._delta_time
+
+    @delta_time.setter
+    def delta_time(self, value):
+        """ This subroutines set the delta time size discretization
+
+        Parameter:
+        ---------
+        float
+            Delta time of the time discretization (in second)
+        """
+
+        if value > -1e-8:
+            self._delta_time = value
+        else:
+            print("warning : delta time muse be >0")
 
     @property
     def max_angle(self):
@@ -264,9 +324,18 @@ class DiscretizationDB(object):
 
         # Time
 
-        time = hdb.radiation_db.get_irf_db().time
-        self._final_time = time[-1]
-        self._nb_time_sample = len(time)
+        if self._final_time is None and self._nb_time_sample is None:
+            time = hdb.radiation_db.get_irf_db().time
+            self._final_time = time[-1]
+            self._nb_time_sample = len(time)
+            self._delta_time = time[1] - time[0]
+
+        elif self._delta_time is None:
+            self._delta_time = self.final_time / (self.nb_time_sample - 1)
+
+        elif self._nb_time_sample is None:
+            self._nb_time_sample = int(self.final_time / self._delta_time) + 1
+            self._delta_time = self.final_time / (self.nb_time_sample - 1)
 
         return
 

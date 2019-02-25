@@ -17,9 +17,9 @@ import numpy as np
 
 import sys
 import hydro_db
-from hydrostatic_db import HydrostaticDB
-from wave_drift_db import WaveDriftDB
-from discretization_db import DiscretizationDB
+from frydom.HydroDB.hydrostatic_db import HydrostaticDB
+from frydom.HydroDB.wave_drift_db import WaveDriftDB
+from frydom.discretization_db import DiscretizationDB
 import matplotlib.pyplot as plt
 from scipy import interpolate
 

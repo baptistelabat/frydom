@@ -214,11 +214,11 @@ namespace frydom {
 
         // Frequency and wave direction discretization.
         auto freqs = waveField->GetWaveFrequencies(RADS);
-        auto directions = waveField->GetWaveDirections(DEG, NWU, GOTO);
+        auto directions = waveField->GetWaveDirections(RAD, NWU, GOTO);
 
         // Interpolation of the exciting loads if not already done.
         if (m_Fexc.empty()) {
-            m_Fexc = BEMBody->GetExcitationInterp(freqs, directions, DEG);
+            m_Fexc = BEMBody->GetExcitationInterp(freqs, directions, RAD);
         }
 
         // Initialization of the parent class.
@@ -245,7 +245,7 @@ namespace frydom {
         auto nbFreq = waveField->GetWaveFrequencies(RADS).size();
 
         // Number of wave directions.
-        auto nbWaveDir = waveField->GetWaveDirections(DEG, NWU, GOTO).size();
+        auto nbWaveDir = waveField->GetWaveDirections(RAD, NWU, GOTO).size();
 
         // Fexc(t) = eta*Fexc(Nemoh).
         Eigen::VectorXd forceMode(nbMode);
@@ -277,7 +277,10 @@ namespace frydom {
         }
         auto worldForce = m_equilibriumFrame->ProjectVectorFrameInParent(force, NWU);
         auto worldTorque = m_equilibriumFrame->ProjectVectorFrameInParent(torque, NWU);
-	
+
+        this->SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
+
+
 	// Settings: torque is already computed at CoG.
         SetForceTorqueInWorldAtCOG(worldForce,worldTorque, NWU);
 

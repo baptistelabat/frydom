@@ -252,7 +252,7 @@ namespace frydom {
 
         std::vector<double> GetFrequencies() const { return m_frequencyDiscretization.GetVector(); }
 
-        std::vector<double> GetWaveDirections() const { return m_waveDirectionDiscretization.GetVector(); }
+        std::vector<double> GetWaveDirections(ANGLE_UNIT angleUnit, FRAME_CONVENTION fc) const;
 
         unsigned int GetNbFrequencies() const { return m_frequencyDiscretization.GetNbSample(); }
 

@@ -47,10 +47,6 @@ namespace frydom {
         m_GeneralizedMass(2,2) += GetBodyMass();
         m_GeneralizedMass.block<3,3>(3,3) += ChEig(GetBodyInertia());
         m_invGeneralizedMass = m_GeneralizedMass.inverse();
-
-//        std::cout << m_invGeneralizedMass(0,0) << ";" << m_invGeneralizedMass(1,1) << ";" << m_invGeneralizedMass(2,2) << std::endl;
-//        std::cout << m_invGeneralizedMass(0,1) << ";" << m_invGeneralizedMass(0,2) << ";" << m_invGeneralizedMass(1,2) << std::endl;
-
     }
 
     void FrVariablesBEMBodyMass::Compute_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const {

@@ -393,6 +393,20 @@ namespace frydom {
         void SetFrequencies(const std::vector<double>& freqs);
 
         void AddData(std::string& name, std::vector<double> coeffs);
+
+        double Eval(const std::string name, double x, double y) const;
+
+        bool HasSurge() const { return m_table->HasSerie("surge"); }
+
+        bool HasSway() const { return m_table->HasSerie("sway"); }
+
+        bool HasHeave() const { return m_table->HasSerie("heave"); }
+
+        bool HasPitch() const { return m_table->HasSerie("pitch"); }
+
+        bool HasRoll() const { return m_table->HasSerie("roll"); }
+
+        bool HasYaw() const { return m_table->HasSerie("yaw"); }
     };
 
     /**
@@ -423,7 +437,7 @@ namespace frydom {
 
         std::vector<std::vector<Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
-        std::unique_ptr<FrWaveDriftPolarData> m_waveDrift;
+        std::shared_ptr<FrWaveDriftPolarData> m_waveDrift;
 
         mathutils::Matrix33<double> m_hydrostaticStiffnessMatrix;
 
@@ -441,7 +455,7 @@ namespace frydom {
 
         unsigned int GetNbWaveDirections() const;
 
-        std::vector<double> GetWaveDirections() const;
+        std::vector<double> GetWaveDirections(ANGLE_UNIT angleUnit, FRAME_CONVENTION fc) const;
 
         unsigned int GetNbBodies() const;
 
@@ -521,7 +535,7 @@ namespace frydom {
 
         mathutils::Matrix33<double> GetHydrostaticStiffnessMatrix() const { return m_hydrostaticStiffnessMatrix; }
 
-        FrWaveDriftPolarData* GetWaveDrift() const;
+        std::shared_ptr<FrWaveDriftPolarData> GetWaveDrift() const;
         //
         // Interpolators
         //

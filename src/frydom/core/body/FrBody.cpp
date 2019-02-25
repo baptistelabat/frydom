@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include <cppfs/fs.h>
@@ -223,6 +223,9 @@ namespace frydom {
 
 
         // TODO : initialiser les logs
+
+
+
 
     }
 
@@ -760,6 +763,12 @@ namespace frydom {
         m_chronoBody->UpdateAfterMove();
     }
 
+    void FrBody_::SetCOGAngularVelocityInWorld(const AngularVelocity &worldAngVel, FRAME_CONVENTION fc) {
+        auto worldAngVelTmp = worldAngVel;
+        if (IsNED(fc)) internal::SwapFrameConvention<AngularVelocity>(worldAngVelTmp);
+        m_chronoBody->SetWvel_par(internal::Vector3dToChVector(worldAngVelTmp));
+    }
+
     void FrBody_::SetAngularVelocityInBody(const AngularVelocity &bodyAngVel, FRAME_CONVENTION fc) {
         SetAngularVelocityInWorld(ProjectVectorInWorld(bodyAngVel, fc), fc);
     }
@@ -870,17 +879,14 @@ namespace frydom {
         SetAngularVelocityInBody(bodyAngVel, fc);
     }
 
-
     void FrBody_::SetGeneralizedAccelerationInBodyAtCOG(const Acceleration &bodyAcc, const AngularAcceleration &bodyAngAcc, FRAME_CONVENTION fc) {
         SetAccelerationInBodyNoRotation(bodyAcc, fc);
         SetAngularAccelerationInBody(bodyAngAcc, fc);
-
     }
 
     void FrBody_::SetGeneralizedAccelerationInWorldAtCOG(const Acceleration &worldAcc, const AngularAcceleration &worldAngAcc, FRAME_CONVENTION fc) {
         SetAccelerationInWorldNoRotation(worldAcc, fc);
         SetAngularAccelerationInWorld(worldAngAcc, fc);
-
     }
 
     void FrBody_::CartToGeo(const Position &cartPos, FrGeographicCoord &geoCoord, FRAME_CONVENTION fc) const {
@@ -933,13 +939,6 @@ namespace frydom {
         // World Marker placed at the current COG body position
         auto worldNode = GetSystem()->GetWorldBody()->NewNode();
         worldNode->SetFrameInBody(bodyNodeFrameInWorld);
-
-        // ##CC
-        auto wPos = worldNode->GetPositionInWorld(NWU);
-        auto bPos = bodyNode->GetPositionInWorld(NWU);
-        std::cout << "debug: DOF: worldNode: " << wPos.GetX() << ";" << wPos.GetY() << ";" << wPos.GetZ() << std::endl;
-        std::cout << "debug: DOF: bodyNode: " << bPos.GetX() << ";" << bPos.GetY() << bPos.GetZ() << std::endl;
-        // ##CC
 
         // Creating the link
         m_DOFLink = std::make_shared<FrLink_>(worldNode, bodyNode, GetSystem());
