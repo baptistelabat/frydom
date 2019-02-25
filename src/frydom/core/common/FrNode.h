@@ -110,6 +110,8 @@ namespace frydom {
         FrBody_* m_body;                                    ///< Pointer to the body containing this node
         std::shared_ptr<internal::FrMarker> m_chronoMarker;   ///< Chrono class for nodes/marker.
 
+        hermes::Message m_nodeMessage;
+
     public:
 
         /// Default Constructor
@@ -226,6 +228,9 @@ namespace frydom {
         /// StepFinalize method not implemented yet
         void StepFinalize() override;
 
+        // Logging
+
+        void InitializeLog();
 
 
         // =============================================================================================================

@@ -1062,7 +1062,7 @@ namespace frydom {
         cppfs::FilePath relPathToSystem = fmt::format("run_{0}/system_{0}/system.csv",GetUUID());
 
         // Set the path to system log file
-//        SetFilePath(workspacePath.resolve(relPathToSystem).path());
+        SetFilePath(workspacePath.resolve(relPathToSystem).path());
 
     }
 

@@ -13,7 +13,7 @@
 #ifndef FRYDOM_FROBJECT_H
 #define FRYDOM_FROBJECT_H
 
-#include "hermes/hermes.h"
+//#include "hermes/hermes.h"
 
 #include "boost/lexical_cast.hpp"
 #include "boost/uuid/uuid_io.hpp"
@@ -33,11 +33,16 @@ namespace frydom {
 
     protected:
 //        hermes::Message m_message;
+        std::string m_logPath;
 
     public:
         FrObject() : m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()())) {}
 
         std::string GetUUID() const{ return m_UUID; }
+
+        void SetFilePath (std::string path) { m_logPath = path; }
+
+        std::string GetFilePath() const { return m_logPath; }
 
 //        void SetFilePath (std::string path) { m_message.SetFilePath(path); }
 //

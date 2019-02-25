@@ -9,6 +9,9 @@
 // 
 // ==========================================================================
 
+#include <cppfs/fs.h>
+#include <cppfs/FileHandle.h>
+#include <cppfs/FilePath.h>
 
 
 #include "FrBody.h"
@@ -198,10 +201,19 @@ namespace frydom {
 
     void FrBody_::Initialize() {
 
+        // Init the logs
+        InitializeLog();
+
         // Initializing forces
         auto forceIter = force_begin();
         for (; forceIter != force_end(); forceIter++) {
             (*forceIter)->Initialize();
+        }
+
+        // Initializing forces
+        auto nodeIter = node_begin();
+        for (; nodeIter != node_end(); nodeIter++) {
+            (*nodeIter)->Initialize();
         }
 
         // BodyDOF constraints Initialization
@@ -221,6 +233,10 @@ namespace frydom {
         for (; forceIter != force_end(); forceIter++) {
             (*forceIter)->StepFinalize();
         }
+
+        // Send the message to the logging system
+        m_bodyMessage.Serialize();
+        m_bodyMessage.Send();
 
     }
 
@@ -940,6 +956,50 @@ namespace frydom {
         return m_DOFMask.get();
     }
 
+    void FrBody_::InitializeLog() {
+
+        cppfs::FilePath systemPath = m_system->GetFilePath();
+
+        // Create the directory for the body logs
+        cppfs::FilePath bodyLogPath = systemPath.resolve(fmt::format("Body_{}_{}/body.csv",m_chronoBody->GetName(),GetUUID()));
+        auto bodyLogDir = cppfs::fs::open(bodyLogPath.directoryPath());
+        bodyLogDir.createDirectory();
+
+        // Create the directory for the forces logs
+        cppfs::FilePath forcesLogPath = bodyLogPath.resolve("Forces/");
+        auto forcesLogDir = cppfs::fs::open(forcesLogPath.path());
+        forcesLogDir.createDirectory();
+
+        // Create the directory for the nodes logs
+        cppfs::FilePath nodesLogPath = bodyLogPath.resolve("Nodes/");
+        auto nodesLogDir = cppfs::fs::open(nodesLogPath.path());
+        nodesLogDir.createDirectory();
+
+        // Set the path of the body log (to be accessible from the forces, nodes, etc.)
+        SetFilePath(bodyLogPath.path());
+
+        // Initializing message
+        if (m_bodyMessage.GetName().empty()) {
+            m_bodyMessage.SetNameAndDescription(
+                    bodyLogPath.path(),
+                    "Message of a body");
+        }
+
+        // Add a serializer
+        m_bodyMessage.AddCSVSerializer();
+
+        // Add the fields
+        std::function<double ()> GetTime = [this] () {
+            return m_chronoBody->GetChTime();
+        };
+        m_bodyMessage.AddField<double>("time", "s", "Current time of the simulation", &GetTime);
+
+
+        // Init the message
+        m_bodyMessage.Initialize();
+        m_bodyMessage.Send();
+
+    }
 
 
 }  // end namespace frydom

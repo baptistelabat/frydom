@@ -350,6 +350,9 @@ namespace frydom {
         using ForceContainer = std::vector<std::shared_ptr<FrForce_>>;
         ForceContainer m_externalForces;            ///< Container of the external forces acting on body
 
+        using NodeContainer = std::vector<std::shared_ptr<FrNode_>>;
+        NodeContainer m_nodes;                    ///< Container of the nodes belonging to the body
+
         using AssetContainer = std::vector<std::shared_ptr<FrAsset>>;
         AssetContainer m_assets;                    ///< Container of the assets added to the body
 
@@ -360,6 +363,7 @@ namespace frydom {
         std::unique_ptr<FrBodyDOFMask> m_DOFMask;
         std::shared_ptr<FrLink_> m_DOFLink;
 
+        hermes::Message m_bodyMessage;              ///< Logging message, serialized, send and managed by hermes
 
     public:
 
@@ -376,6 +380,13 @@ namespace frydom {
         /// Make the body fixed
         /// \param state true if body is fixed, false otherwise
         void SetFixedInWorld(bool state);
+
+
+        // =============================================================================================================
+        // LOGGING
+        // =============================================================================================================
+
+        void InitializeLog();
 
 
         // =============================================================================================================
@@ -1212,6 +1223,16 @@ namespace frydom {
 
         ForceIter       force_end();
         ConstForceIter  force_end() const;
+
+        // Linear iterators on nodes
+        using NodeIter = NodeContainer::iterator;
+        using ConstNodeIter = NodeContainer::const_iterator;
+
+        NodeIter       node_begin();
+        ConstNodeIter  node_begin() const;
+
+        NodeIter       node_end();
+        ConstNodeIter  node_end() const;
 
 
 
