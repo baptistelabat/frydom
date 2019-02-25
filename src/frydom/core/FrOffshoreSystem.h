@@ -37,6 +37,7 @@
 //#include "frydom/environment/FrEnvironment.h"
 
 #include "frydom/utils/FrIrrApp.h"
+#include "frydom/core/common/FrConvention.h"
 
 
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
@@ -350,6 +351,10 @@ namespace frydom {
 
         bool m_isInitialized = false;
 
+        // Logs
+        std::string m_outputPath;
+        FRAME_CONVENTION m_logFrameConvention;
+
 
     public:
 
@@ -423,6 +428,29 @@ namespace frydom {
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
+        // Logging
+
+        /// Read the config file
+        void ReadConfig();
+
+        /// Initialize the logs (log files and folders creation)
+        void InitializeLog();
+
+        /// Set the frame convention for the logs
+        /// \param fc frame convention (NED/NWU)
+        void SetLogFrameConvention(FRAME_CONVENTION fc);
+
+        /// Get the frame convention for the logs
+        /// \return frame convention (NED/NWU)
+        FRAME_CONVENTION GetLogFrameConvention() const;
+
+        /// Set the path for the output directory, containing all log files
+        /// \param path path for the output directory
+        void SetLogOutputPath(std::string path);
+
+        /// Get the path for the output directory, containing all log files
+        /// \return path for the output directory
+        std::string GetLogOutputPath() const;
 
         // Constraint solver
 
