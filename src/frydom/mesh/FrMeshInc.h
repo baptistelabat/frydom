@@ -13,8 +13,12 @@
 #ifndef FRYDOM_FRMESHINC_H
 #define FRYDOM_FRMESHINC_H
 
-
 #include "FrTriangleMeshConnected.h"
-
+#include "FrCache.h"
+#include "FrhydrostaticsProperties.h"
+#include "FrMesh.h"
+#include "FrMeshClipper.h"
+#include "FrTrinagleIntegrations.h"
+#include "FrTriangleMeshConnected.h"
 
 #endif //FRYDOM_FRMESHINC_H
