@@ -15,27 +15,32 @@
 
 
 #include "FrBody.h"
+
+#include "frydom/asset/FrAsset.h"
+#include "frydom/asset/FrForceAsset.h"
+
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/common/FrRotation.h"
-#include "frydom/core/math/FrMatrix.h"
-
-#include "chrono/assets/ChTriangleMeshShape.h"
 #include "frydom/core/common/FrFrame.h"
+#include "frydom/core/common/FrException.h"
+
+#include "frydom/core/link/links_lib/FrLink.h"
+
+#include "frydom/core/math/FrMatrix.h"
+#include "frydom/core/math/functions/FrFunctionBase.h"
 
 #include "frydom/core/force/FrForce.h"
 
 #include "frydom/environment/FrEnvironmentInc.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 
-#include <chrono/physics/ChLinkMotorLinearSpeed.h>  // FIXME : a retirer
-#include "frydom/asset/FrAsset.h"
-#include "frydom/asset/FrForceAsset.h"
+#include "frydom/IO/FrLogManager.h"
 
-#include "frydom/core/math/functions/FrFunctionBase.h"
-#include "frydom/core/common/FrException.h"
+#include "chrono/assets/ChTriangleMeshShape.h"
+#include <chrono/physics/ChLinkMotorLinearSpeed.h>  // FIXME : a retirer
+
 //#include "FrCore.h"
 
-#include "frydom/core/link/links_lib/FrLink.h"
 
 
 namespace frydom {
@@ -175,6 +180,9 @@ namespace frydom {
     }  // end namespace internal
 
     FrBody_::FrBody_() {
+
+        m_typeName = "Body";
+
         m_chronoBody = std::make_shared<internal::_FrBodyBase>(this);
         m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
@@ -188,6 +196,10 @@ namespace frydom {
 
     void FrBody_::SetName(const char *name) {
         m_chronoBody->SetName(name);
+    }
+
+    const char* FrBody_::GetName() const {
+        return m_chronoBody->GetName();
     }
 
     void FrBody_::SetFixedInWorld(bool state) {
@@ -230,7 +242,6 @@ namespace frydom {
     }
 
     void FrBody_::StepFinalize() {
-        // TODO
         // StepFinalize of forces
         auto forceIter = force_begin();
         for (; forceIter != force_end(); forceIter++) {
@@ -238,8 +249,8 @@ namespace frydom {
         }
 
         // Send the message to the logging system
-        m_bodyMessage.Serialize();
-        m_bodyMessage.Send();
+        m_message.Serialize();
+        m_message.Send();
 
     }
 
@@ -276,8 +287,7 @@ namespace frydom {
     }
 
 
-    // Linear iterators
-
+    // Force linear iterators
     FrBody_::ForceIter FrBody_::force_begin() {
         return m_externalForces.begin();
     }
@@ -292,6 +302,23 @@ namespace frydom {
 
     FrBody_::ConstForceIter FrBody_::force_end() const {
         return m_externalForces.cend();
+    }
+
+    // Node linear iterators
+    FrBody_::NodeIter FrBody_::node_begin() {
+        return m_nodes.begin();
+    }
+
+    FrBody_::ConstNodeIter FrBody_::node_begin() const {
+        return m_nodes.cbegin();
+    }
+
+    FrBody_::NodeIter FrBody_::node_end() {
+        return m_nodes.end();
+    }
+
+    FrBody_::ConstNodeIter FrBody_::node_end() const {
+        return m_nodes.cend();
     }
 
 
@@ -957,46 +984,25 @@ namespace frydom {
 
     void FrBody_::InitializeLog() {
 
-        cppfs::FilePath systemPath = m_system->GetFilePath();
-
-        // Create the directory for the body logs
-        cppfs::FilePath bodyLogPath = systemPath.resolve(fmt::format("Body_{}_{}/body.csv",m_chronoBody->GetName(),GetUUID()));
-        auto bodyLogDir = cppfs::fs::open(bodyLogPath.directoryPath());
-        bodyLogDir.createDirectory();
-
-        // Create the directory for the forces logs
-        cppfs::FilePath forcesLogPath = bodyLogPath.resolve("Forces/");
-        auto forcesLogDir = cppfs::fs::open(forcesLogPath.path());
-        forcesLogDir.createDirectory();
-
-        // Create the directory for the nodes logs
-        cppfs::FilePath nodesLogPath = bodyLogPath.resolve("Nodes/");
-        auto nodesLogDir = cppfs::fs::open(nodesLogPath.path());
-        nodesLogDir.createDirectory();
-
-        // Set the path of the body log (to be accessible from the forces, nodes, etc.)
-        SetFilePath(bodyLogPath.path());
+        auto bodyLogPath = m_system->GetLogManager()->NewBodyLog(this);
 
         // Initializing message
-        if (m_bodyMessage.GetName().empty()) {
-            m_bodyMessage.SetNameAndDescription(
-                    bodyLogPath.path(),
+        if (m_message.GetName().empty()) {
+            m_message.SetNameAndDescription(
+                    fmt::format("{}_{}_{}",GetTypeName(),GetName(),GetUUID()),
                     "Message of a body");
         }
 
         // Add a serializer
-        m_bodyMessage.AddCSVSerializer();
+        m_message.AddCSVSerializer(bodyLogPath);
 
         // Add the fields
-        std::function<double ()> GetTime = [this] () {
-            return m_chronoBody->GetChTime();
-        };
-        m_bodyMessage.AddField<double>("time", "s", "Current time of the simulation", &GetTime);
+        m_message.AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoBody->GetChTime();});
 
 
         // Init the message
-        m_bodyMessage.Initialize();
-        m_bodyMessage.Send();
+        m_message.Initialize();
+        m_message.Send();
 
     }
 

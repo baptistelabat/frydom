@@ -195,6 +195,7 @@ namespace frydom {
     class FrPostPhysicsItem_;
     class FrEnvironment_;
     class FrCable_;
+    class FrLogManager;
 
     /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
     /// so it acts also as a database for most items involved in simulations, most noticeably objects of FrBody and FrLink
@@ -352,8 +353,7 @@ namespace frydom {
         bool m_isInitialized = false;
 
         // Logs
-        std::string m_outputPath;
-        FRAME_CONVENTION m_logFrameConvention;
+        std::unique_ptr<FrLogManager> m_logManager;
 
 
     public:
@@ -430,27 +430,12 @@ namespace frydom {
 
         // Logging
 
-        /// Read the config file
-        void ReadConfig();
+        /// Get access to the log manager service
+        /// \return log manager service
+        FrLogManager* GetLogManager() const;
 
         /// Initialize the logs (log files and folders creation)
         void InitializeLog();
-
-        /// Set the frame convention for the logs
-        /// \param fc frame convention (NED/NWU)
-        void SetLogFrameConvention(FRAME_CONVENTION fc);
-
-        /// Get the frame convention for the logs
-        /// \return frame convention (NED/NWU)
-        FRAME_CONVENTION GetLogFrameConvention() const;
-
-        /// Set the path for the output directory, containing all log files
-        /// \param path path for the output directory
-        void SetLogOutputPath(std::string path);
-
-        /// Get the path for the output directory, containing all log files
-        /// \return path for the output directory
-        std::string GetLogOutputPath() const;
 
         // Constraint solver
 

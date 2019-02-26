@@ -110,7 +110,7 @@ namespace frydom {
         FrBody_* m_body;                                    ///< Pointer to the body containing this node
         std::shared_ptr<internal::FrMarker> m_chronoMarker;   ///< Chrono class for nodes/marker.
 
-        hermes::Message m_nodeMessage;
+//        hermes::Message m_nodeMessage;
 
     public:
 

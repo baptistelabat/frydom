@@ -201,8 +201,8 @@ namespace frydom{
 
     void FrForce_::Initialize() {
 
-        // Init the forces log
-        InitializeLog();
+//        // Init the forces log
+//        InitializeLog();
 
         // This subroutine initializes the object FrForce.
 
@@ -219,9 +219,9 @@ namespace frydom{
             m_forceAsset->StepFinalize();
         }
 
-        // Send the message to the logging system
-        m_forceMessage.Serialize();
-        m_forceMessage.Send();
+//        // Send the message to the logging system
+//        m_message.Serialize();
+//        m_message.Send();
 
     }
 
@@ -233,38 +233,38 @@ namespace frydom{
         return m_body->GetSystem();
     }
 
-    void FrForce_::InitializeLog() {
-
-        cppfs::FilePath bodyPath = m_body->GetFilePath();
-
-        cppfs::FilePath forceLogPath = bodyPath.resolve(fmt::format("Force_{}_{}.csv",m_forceType,GetUUID()));
-
-        // Set the path of the force log
-        SetFilePath(forceLogPath.path());
-
-        // Initializing message
-        if (m_forceMessage.GetName().empty()) {
-            m_forceMessage.SetNameAndDescription(
-                    forceLogPath.path(),
-                    "Message of a body");
-        }
-
-        // Add a serializer
-        m_forceMessage.AddCSVSerializer();
-
-        // Add the fields
-        std::function<double ()> GetTime = [this] () {
-            return m_chronoForce->GetChTime();
-        };
-        m_forceMessage.AddField<double>("time", "s", "Current time of the simulation", &GetTime);
-
-
-        // Init the message
-        m_forceMessage.Initialize();
-        m_forceMessage.Send();
-
-
-    }
+//    void FrForce_::InitializeLog() {
+//
+//        cppfs::FilePath bodyPath = m_body->GetFilePath();
+//
+//        cppfs::FilePath forceLogPath = bodyPath.resolve(fmt::format("Force_{}_{}.csv",m_forceType,GetUUID()));
+//
+//        // Set the path of the force log
+//        SetFilePath(forceLogPath.path());
+//
+//        // Initializing message
+//        if (m_forceMessage.GetName().empty()) {
+//            m_forceMessage.SetNameAndDescription(
+//                    forceLogPath.path(),
+//                    "Message of a body");
+//        }
+//
+//        // Add a serializer
+//        m_forceMessage.AddCSVSerializer(forceLogPath.path());
+//
+//        // Add the fields
+//        std::function<double ()> GetTime = [this] () {
+//            return m_chronoForce->GetChTime();
+//        };
+////        m_forceMessage.AddField<double>("time", "s", "Current time of the simulation", &GetTime);
+//
+//
+//        // Init the message
+//        m_forceMessage.Initialize();
+//        m_forceMessage.Send();
+//
+//
+//    }
 
 
     bool FrForce_::IsForceAsset() {

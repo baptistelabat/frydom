@@ -33,7 +33,10 @@ namespace frydom {
 
     protected:
 //        hermes::Message m_message;
+
         std::string m_logPath;
+
+        std::string m_typeName;
 
     public:
         FrObject() : m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()())) {}
@@ -43,6 +46,8 @@ namespace frydom {
         void SetFilePath (std::string path) { m_logPath = path; }
 
         std::string GetFilePath() const { return m_logPath; }
+
+        std::string GetTypeName() const { return m_typeName; }
 
 //        void SetFilePath (std::string path) { m_message.SetFilePath(path); }
 //

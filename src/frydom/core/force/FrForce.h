@@ -238,8 +238,8 @@ namespace frydom {
 
         // Logging
 
-        /// Initialize the log
-        void InitializeLog();
+//        /// Initialize the log
+//        void InitializeLog();
 
         // Force Asset
         /// Inquire if a ForceAsset is displayed

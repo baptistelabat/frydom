@@ -363,7 +363,7 @@ namespace frydom {
         std::unique_ptr<FrBodyDOFMask> m_DOFMask;
         std::shared_ptr<FrLink_> m_DOFLink;
 
-        hermes::Message m_bodyMessage;              ///< Logging message, serialized, send and managed by hermes
+        hermes::Message m_message;              ///< Logging message, serialized, send and managed by hermes
 
 
 
@@ -378,6 +378,10 @@ namespace frydom {
         /// Set the body name
         /// \param name body name
         void SetName(const char name[]);
+
+        /// Get the body name
+        /// \return body name
+        const char* GetName() const;
 
         /// Make the body fixed
         /// \param state true if body is fixed, false otherwise

@@ -33,6 +33,7 @@
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 #include "frydom/core/body/FrBody.h"
 
+#include "frydom/IO/FrLogManager.h"
 
 #include "frydom/cable/FrCable.h"
 
@@ -365,7 +366,7 @@ namespace frydom {
     /// \param solver solver type
     FrOffshoreSystem_::FrOffshoreSystem_(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
 
-        ReadConfig();
+        m_typeName = "System";
 
         // Creating the chrono System backend. It drives the way contact are modelled
         SetSystemType(systemType, false);
@@ -387,6 +388,9 @@ namespace frydom {
 
         // Creating the environment
         m_environment = std::make_unique<FrEnvironment_>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
+
+        // Creating the log manager service
+        m_logManager = std::make_unique<FrLogManager>();
 
     }
 
@@ -1046,45 +1050,13 @@ namespace frydom {
 
     void FrOffshoreSystem_::InitializeLog() {
 
-        cppfs::FilePath workspacePath = m_outputPath;
+        auto systemPath = m_logManager->NewSystemLog(this);
 
-        // Open the FRyDom workspace directory
-        cppfs::FileHandle workspaceDir = cppfs::fs::open(workspacePath.path());
-        // Create directory if it does not yet exist
-        if (!workspaceDir.isDirectory()) workspaceDir.createDirectory();
 
-        // Create the run directory
-        // TODO add the date to the run directory name, once TimeZone is refactored (need TimeZone to be brought back from Environment to the system?)
-        cppfs::FileHandle runDir = cppfs::fs::open(workspacePath.resolve(fmt::format("run_{}/",GetUUID())).path());
-        runDir.createDirectory();
-
-        // Relative path to the system log file, from the workspace dir
-        cppfs::FilePath relPathToSystem = fmt::format("run_{0}/system_{0}/system.csv",GetUUID());
-
-        // Set the path to system log file
-        SetFilePath(workspacePath.resolve(relPathToSystem).path());
 
     }
 
-    void FrOffshoreSystem_::ReadConfig() {
-
-
-        cppfs::FilePath homePath = cppfs::system::homeDir();
-        cppfs::FilePath configPath = homePath.resolve(".frydom/config");
-
-        // Get the workspace directory path, located in the output_path in the FRyDOM config file.
-        // TODO: change to JSON format
-        YAML::Node data = YAML::LoadFile(configPath.path());  // TODO: throw exception if not found !
-
-        m_outputPath = data["output_path"].as<std::string>();
-
-        try {
-            m_logFrameConvention = STRING2FRAME(data["frame_convention"].as<std::string>());
-        } catch (YAML::BadConversion& err) {
-            std::cout << " warning : frame convention must be NED or NWU" << std::endl;
-        }
-
-    }
+    FrLogManager *FrOffshoreSystem_::GetLogManager() const { return m_logManager.get(); }
 
 
 }  // end namespace frydom
