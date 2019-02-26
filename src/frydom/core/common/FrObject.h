@@ -20,6 +20,9 @@
 #include "boost/uuid/uuid.hpp"
 #include "boost/uuid/uuid_generators.hpp"
 
+#include "frydom/core/common/FrConvention.h"
+#include "frydom/IO/FrLogManager.h"
+
 namespace frydom {
 
     /**
@@ -48,6 +51,9 @@ namespace frydom {
 
     };
 
+    // Forward declarations
+    class FrForce_;
+
     /**
      * \class FrObject
      * \brief Class for defining objects in FRyDoM.
@@ -61,6 +67,8 @@ namespace frydom {
 
         // Logging
         bool m_isLogged = false;
+
+        FRAME_CONVENTION c_logFrameConvention; // from LogManager
 
         std::string m_typeName;
         std::string m_logPath;
@@ -95,6 +103,9 @@ namespace frydom {
         virtual void Initialize() = 0;
 
         virtual void StepFinalize() = 0;
+
+        // friend declarations
+        friend std::string FrLogManager::NewForceLog(FrForce_*);
 
     };
 

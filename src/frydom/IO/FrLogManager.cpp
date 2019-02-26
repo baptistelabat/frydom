@@ -17,6 +17,7 @@
 #include "FrLogManager.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/body/FrBody.h"
+#include "frydom/core/force/FrForce.h"
 
 
 namespace frydom{
@@ -91,10 +92,11 @@ namespace frydom{
         // just keep the directory path, not the path to the system log file
         systemPath = systemPath.directoryPath();
 
-        // Create the directory for the body logs
+        // Create the path for the body log
         auto relBodyLogPath = fmt::format("{}_{}_{}/body.csv",body->GetTypeName(),body->GetName(),body->GetShortenUUID());
         cppfs::FilePath bodyLogPath = systemPath.resolve(relBodyLogPath);
 
+        // Create the directory for the body logs
         cppfs::FilePath bodyDirPath = bodyLogPath.directoryPath();
         auto bodyLogDir = cppfs::fs::open(bodyDirPath.path());
         bodyLogDir.createDirectory();
@@ -112,6 +114,23 @@ namespace frydom{
         body->SetFilePath(bodyLogPath.path());
 
         return bodyLogPath.path();
+    }
+
+    std::string FrLogManager::NewForceLog(FrForce_ *force) {
+
+        force->c_logFrameConvention = m_logFrameConvention;
+        // Get the path to the body log path
+        cppfs::FilePath bodyPath = force->GetBody()->GetFilePath();
+        // just keep the directory path, not the path to the system log file
+        bodyPath = bodyPath.directoryPath();
+
+        // Create the directory for the body logs
+        auto relForceLogPath = fmt::format("Forces/{}_{}.csv",force->GetTypeName(),force->GetShortenUUID());
+        cppfs::FilePath forceLogPath = bodyPath.resolve(relForceLogPath);
+
+        force->SetFilePath(forceLogPath.path());
+
+        return forceLogPath.path();
     }
 
     void FrLogManager::SetLogFrameConvention(FRAME_CONVENTION fc) {

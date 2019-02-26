@@ -23,6 +23,7 @@ namespace frydom {
     //Forward declaration
     class FrBody_;
     class FrOffshoreSystem_;
+    class FrForce_;
 
     class FrLogManager {
     private:
@@ -64,11 +65,16 @@ namespace frydom {
         /// \return path to the system log file
         std::string NewSystemLog(FrOffshoreSystem_* system);
 
-        /// Declare a new body log instance : create the body log directory and return the path to the body log file
+        /// Declare a new body log instance : create the body log directory, along with the force and node log directories
+        /// and return the path to the body log file
         /// \param body body for which a log is declared
         /// \return path to the body log file
         std::string NewBodyLog(FrBody_* body);
 
+        /// Declare a new force log instance : return the path to the force log file
+        /// \param force force for which a log is declared
+        /// \return path to the force log file
+        std::string NewForceLog(FrForce_* force);
     private:
         /// Read the config file
         void ReadConfig();

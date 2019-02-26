@@ -15,7 +15,6 @@
 
 #include "frydom/core/common/FrConvention.h"
 #include "chrono/physics/ChForce.h"
-#include "hermes/hermes.h"
 
 #include "frydom/core/math/FrVector.h"
 
@@ -210,7 +209,6 @@ namespace frydom {
         double m_torqueLimit = 1e20;            ///< setting the values individually.
 
         std::string m_forceType = "force";      ///< type of force (subclass of FrForce), for logging purpose only
-        hermes::Message m_forceMessage;         ///< Logging message, serialized, send and managed by hermes
 
     public:
 
@@ -236,10 +234,12 @@ namespace frydom {
         /// \return Offshore system object pointer
         FrOffshoreSystem_* GetSystem();
 
+        FrBody_* GetBody() const;
+
         // Logging
 
-//        /// Initialize the log
-//        void InitializeLog();
+        /// Initialize the log
+        void InitializeLog();
 
         // Force Asset
         /// Inquire if a ForceAsset is displayed

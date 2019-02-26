@@ -9,17 +9,14 @@
 //
 // ==========================================================================
 
-
-#include <cppfs/fs.h>
-#include <cppfs/FileHandle.h>
-#include <cppfs/FilePath.h>
-
 #include "FrForce.h"
 
 #include "frydom/core/body/FrBody.h"
 
 #include "frydom/core/common/FrNode.h"
 #include "frydom/asset/FrForceAsset.h"
+
+#include "frydom/IO/FrLogManager.h"
 
 
 namespace frydom{
@@ -233,38 +230,35 @@ namespace frydom{
         return m_body->GetSystem();
     }
 
-//    void FrForce_::InitializeLog() {
-//
-//        cppfs::FilePath bodyPath = m_body->GetFilePath();
-//
-//        cppfs::FilePath forceLogPath = bodyPath.resolve(fmt::format("Force_{}_{}.csv",m_forceType,GetUUID()));
-//
-//        // Set the path of the force log
-//        SetFilePath(forceLogPath.path());
-//
-//        // Initializing message
-//        if (m_forceMessage.GetName().empty()) {
-//            m_forceMessage.SetNameAndDescription(
-//                    forceLogPath.path(),
-//                    "Message of a body");
-//        }
-//
-//        // Add a serializer
-//        m_forceMessage.AddCSVSerializer(forceLogPath.path());
-//
-//        // Add the fields
-//        std::function<double ()> GetTime = [this] () {
-//            return m_chronoForce->GetChTime();
-//        };
-////        m_forceMessage.AddField<double>("time", "s", "Current time of the simulation", &GetTime);
-//
-//
-//        // Init the message
-//        m_forceMessage.Initialize();
-//        m_forceMessage.Send();
-//
-//
-//    }
+    void FrForce_::InitializeLog() {
+
+        auto forceLogPath = GetSystem()->GetLogManager()->NewForceLog(this);
+
+        // Initializing message
+        if (m_message->GetName().empty()) {
+            m_message->SetNameAndDescription(
+                    fmt::format("{}_{}",GetTypeName(),GetShortenUUID()),
+                    "Message of a body");
+        }
+
+        // Add a serializer
+        m_message->AddCSVSerializer(forceLogPath);
+
+        // Add the fields
+        std::function<double ()> GetTime = [this] () {
+            return m_chronoForce->GetChTime();
+        };
+        m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoForce->GetChTime();});
+
+        m_message->AddField<double>("FX", "m", "longitudinal force in body reference frame", [this] () {
+            auto force = GetForceInBody(c_logFrameConvention); return force.GetFx();});
+
+        // Init the message
+        m_message->Initialize();
+        m_message->Send();
+
+
+    }
 
 
     bool FrForce_::IsForceAsset() {
@@ -491,6 +485,10 @@ namespace frydom{
                                                       const Position &worldPos, FRAME_CONVENTION fc) {
         SetForceInBodyAtPointInWorld(bodyForce, worldPos, fc);
         SetTorqueInBodyAtCOG(GetTorqueInBodyAtCOG(fc) + bodyTorque, fc);
+    }
+
+    FrBody_ *FrForce_::GetBody() const {
+        return m_body;
     }
 
 
