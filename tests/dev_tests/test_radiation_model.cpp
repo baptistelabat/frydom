@@ -26,13 +26,8 @@ int main(int argc, char* argv[]) {
 
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
 
-    //auto waveField = freeSurface->SetAiryIrregularWaveField();
-    //auto Jonswap = waveField->SetJonswapWaveSpectrum(0.1, 9.);
-    //waveField->SetWaveFrequencies(0.5, 2., 40.);
-    //waveField->SetMeanWaveDirection(SOUTH(NWU), NWU, GOTO);
-
     auto waveField = freeSurface->SetAiryRegularWaveField();
-    waveField->SetWavePeriod(9., mathutils::S);
+    waveField->SetWavePeriod(9.);
     waveField->SetWaveHeight(0.);
     waveField->SetDirection(SOUTH(NWU), NWU, GOTO);
 

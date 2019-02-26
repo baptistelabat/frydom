@@ -31,10 +31,10 @@ namespace frydom {
 
     double FrAiryRegularWaveField::GetWaveHeight() const {return m_height;}
 
-    void FrAiryRegularWaveField::SetWavePeriod(double period, FREQUENCY_UNIT unit) {
+    void FrAiryRegularWaveField::SetWavePeriod(double period) {
 
         // Set the wave period in seconds
-        m_period = convert_frequency(period, unit, mathutils::S);
+        m_period = period;
 
         // Set the wave pulsation from the wave period, in rad/s
         m_omega = mathutils::S2RADS(m_period);

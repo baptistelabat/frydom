@@ -26,7 +26,7 @@ namespace frydom {
     class FrEnvironment;
     class FrFreeSurface;
     class FrCurrent;
-    class FrSeabed_;
+    class FrSeabed;
     class FrFluidProperties;
 
 
@@ -42,7 +42,7 @@ namespace frydom {
 
         //---------------------------- FrOcean elements ----------------------------//
 
-        std::unique_ptr <FrSeabed_> m_seabed;               ///> Seabed element, with bathymetry model information
+        std::unique_ptr <FrSeabed> m_seabed;               ///> Seabed element, with bathymetry model information
         std::unique_ptr <FrFreeSurface> m_freeSurface;     ///> Free surface element, with tidal, wavefield models information
         std::unique_ptr <FrCurrent> m_current;             ///> Current, with current model information
         std::unique_ptr <FrFluidProperties> m_waterProp;    ///> Water properties
@@ -141,7 +141,7 @@ namespace frydom {
 
         /// Get the seabed element
         /// \return the seabed element
-        FrSeabed_* GetSeabed() const;
+        FrSeabed* GetSeabed() const;
 
         /// Enforce the infinite depth condition on the Seabed object.
         /// A NullSeabed is then considered, with no grid asset and no bathymetry getters

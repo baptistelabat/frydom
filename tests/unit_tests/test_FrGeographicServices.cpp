@@ -15,7 +15,7 @@
 
 using namespace frydom;
 
-TEST(FrGeographicServices,GeographicServices){
+TEST(FrGeographicServices, GeographicServices) {
     FRAME_CONVENTION fc = NWU;
 
     FrGeographicServices geoServices;

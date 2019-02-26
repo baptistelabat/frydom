@@ -50,7 +50,7 @@ namespace frydom {
         /// Set the wave period of the regular Airy wave filed
         /// \param period wave period
         /// \param unit unit of the wave period, (seconds by default)
-        void SetWavePeriod(double period, FREQUENCY_UNIT unit);
+        void SetWavePeriod(double period);
 
         /// Set the wave direction of the regular Airy wave filed, using angle, from North direction
         /// \param dirAngle wave direction

@@ -14,8 +14,8 @@
 #define FRYDOM_FRAIRYIRREGULARWAVEFIELD_H
 
 
-#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
 
 
@@ -112,19 +112,17 @@ namespace frydom {
 //        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
 
         /// Set a Jonswap wave spectrum
-        /// \param Hs significant height
-        /// \param Tp peak period
-        /// \param unit unit of the peak period
+        /// \param Hs significant height (meters)
+        /// \param Tp peak period (seconds)
         /// \param gamma gamma factor of the Jonswap wave spectrum
         /// \return wave spectrum
-        FrJonswapWaveSpectrum* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit, double gamma);
+        FrJonswapWaveSpectrum* SetJonswapWaveSpectrum(double Hs, double Tp, double gamma=3.3);
 
         /// Set a Pierson Moskowitz wave spectrum
-        /// \param Hs significant height
-        /// \param Tp peak period
-        /// \param unit unit of the peak period
+        /// \param Hs significant height (meters)
+        /// \param Tp peak period (seconds)
         /// \return wave spectrum
-        FrPiersonMoskowitzWaveSpectrum* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit);
+        FrPiersonMoskowitzWaveSpectrum* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp);
 
         /// Set a wave spectrum, based on the TEST wave spectrum type
         /// \return the TEST wave spectrum
@@ -152,7 +150,7 @@ namespace frydom {
         /// \param y y position
         /// \param fc frame convention (NED/NWU)
         /// \return complex wave elevation, in meters
-        virtual std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const override;
+        std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const override;
 
         /// Return the complex eulerian fluid particule velocity in global reference frame (implemented in child)
         /// \param x x position

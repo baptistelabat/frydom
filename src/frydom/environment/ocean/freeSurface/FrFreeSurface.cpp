@@ -77,7 +77,7 @@ namespace frydom {
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularWaveField();
         waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod, mathutils::S);
+        waveField->SetWavePeriod(wavePeriod);
         waveField->SetDirection(waveDirAngle, unit, fc, dc);
         return dynamic_cast<FrAiryRegularWaveField*>(m_waveField.get());
     }
@@ -88,7 +88,7 @@ namespace frydom {
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularWaveField();
         waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod, mathutils::S);
+        waveField->SetWavePeriod(wavePeriod);
         waveField->SetDirection(waveDirection, fc, dc);
         return waveField;
     }
@@ -105,7 +105,7 @@ namespace frydom {
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularOptimWaveField();
         waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod, mathutils::S);
+        waveField->SetWavePeriod(wavePeriod);
         waveField->SetDirection(waveDirAngle, unit, fc, dc);
         return waveField;
     }
@@ -115,7 +115,7 @@ namespace frydom {
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularOptimWaveField();
         waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod, mathutils::S);
+        waveField->SetWavePeriod(wavePeriod);
         waveField->SetDirection(waveDirection, fc, dc);
         return waveField;
     }

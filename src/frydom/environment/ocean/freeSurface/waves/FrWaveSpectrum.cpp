@@ -110,9 +110,9 @@ namespace frydom {
     // =================================================================================================================
     // FrWaveSpectrum descriptions
 
-    FrWaveSpectrum::FrWaveSpectrum(double hs, double tp, FREQUENCY_UNIT unit) :
+    FrWaveSpectrum::FrWaveSpectrum(double hs, double tp) :
             m_significant_height(hs),
-            m_peak_frequency(convert_frequency(tp, unit, mathutils::RADS)) {}
+            m_peak_frequency(convert_frequency(tp, mathutils::S, mathutils::RADS)) {}
 
     void FrWaveSpectrum::SetCos2sDirectionalModel(double spreadingFactor) {
         m_dir_model_type = COS2S;
@@ -317,8 +317,8 @@ namespace frydom {
     // =================================================================================================================
     // FrJonswapWaveSpectrum descriptions
 
-    FrJonswapWaveSpectrum::FrJonswapWaveSpectrum(double hs, double tp, FREQUENCY_UNIT unit, double gamma) :
-            FrWaveSpectrum(hs, tp, unit),
+    FrJonswapWaveSpectrum::FrJonswapWaveSpectrum(double hs, double tp, double gamma) :
+            FrWaveSpectrum(hs, tp),
             m_gamma(gamma) {
         CheckGamma();
     }
@@ -366,8 +366,8 @@ namespace frydom {
 
     // =================================================================================================================
     // FrPiersonMoskowitzWaveSpectrum descriptions
-    FrPiersonMoskowitzWaveSpectrum::FrPiersonMoskowitzWaveSpectrum(double hs, double tp, FREQUENCY_UNIT unit) :
-            FrWaveSpectrum(hs, tp, unit) {}
+    FrPiersonMoskowitzWaveSpectrum::FrPiersonMoskowitzWaveSpectrum(double hs, double tp) :
+            FrWaveSpectrum(hs, tp) {}
 
     double FrPiersonMoskowitzWaveSpectrum::Eval(double w) const {
 

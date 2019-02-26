@@ -3,28 +3,25 @@ message(STATUS "    ...UNIT TESTS :")
 
 set(UNIT_TESTS
         # include test source files here (without .cpp)
-#        test_FrCurrentForce_
-#        test_FrWindForce_
-        test_FrForce_
+        test_FrForce
         test_internal
-        test_FrBody_
+        test_FrBody
         test_FrUniformField
         test_FrFlowBase
         test_FrFlowForce
-        test_FrFrame_
-        test_FrNode_
-        test_FrRotation_
+        test_FrFrame
+        test_FrNode
+        test_FrRotation
         test_FrGeographicServices
-        test_FrEquilibriumFrame_
-        test_FrWaveField_
-        test_FrMorisonElement_
-#        test_FrLinearHydrostaticForce_
-        test_FrRecorder_
+        test_FrEquilibriumFrame
+        test_FrWaveField
+        test_FrMorisonElement
+        test_FrRecorder
         test_FrStandardWindForce
         test_FrStandardCurrentForce
         test_FrInertia
         test_FrManoeuvringDamping
-        test_FrLinearDamping_
+        test_FrLinearDamping
         test_FrITTCResistance
         test_FrKinematicStretching
         test_FrWaveSpectrum
@@ -60,4 +57,3 @@ endforeach ()
 configure_file(../data/TNR_database.h5 . COPYONLY)
 configure_file(../data/ship/Ship_PolarCurrentCoeffs.yml . COPYONLY)
 configure_file(../data/ship/Ship_PolarWindCoeffs.yml . COPYONLY)
-

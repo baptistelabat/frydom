@@ -71,7 +71,7 @@ namespace frydom{
 
     FrCurrent *FrOcean::GetCurrent() const { return m_current.get();}
 
-    FrSeabed_ *FrOcean::GetSeabed() const { return m_seabed.get();}
+    FrSeabed *FrOcean::GetSeabed() const { return m_seabed.get();}
 
     void FrOcean::Update(double time) {
 

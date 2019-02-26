@@ -88,28 +88,12 @@ TEST(FrWaveField,regularWaveField){
     EXPECT_NEAR(0., waveField->GetAcceleration(0.,0.,0., fc).GetAccY(), 1e-8);
     EXPECT_NEAR(waveHeight*omega*omega, waveField->GetAcceleration(0.,0.,0., fc).GetAccZ(), 1e-8);
 
-//    // test that we have the correct wavePeriod
-//    system.AdvanceOneStep(wavePeriod);
-//    EXPECT_DOUBLE_EQ(waveHeight, -waveField->GetElevation(0.,0.));
-
     // test GOTO
     system.AdvanceOneStep(0.25*wavePeriod); // to be sure the wave is not symmetric around the origin
     auto testElevation = waveField->GetElevation(-0.1*waveLength,0., fc);
     system.AdvanceOneStep(0.1*wavePeriod);
     EXPECT_NEAR(testElevation, waveField->GetElevation(0.,0., fc), 1e-8);
 
-    //
-
-
-
-//    auto waveField = FrLinearWaveField(LINEAR_REGULAR);
-//    waveField.SetRegularWaveHeight(3);
-//    waveField.SetRegularWavePeriod(9);
-//    waveField.SetMeanWaveDirection(0., DEG);
-//
-//    waveField.GetSteadyElevation(0, 0);
-//
-//    freeSurface->SetLinearWaveField(waveField);
 
 }
 
@@ -239,16 +223,11 @@ TEST(FrWaveField,BiChromaticWaveInfDepth) {
     // test at T = 0s
     double t = system.GetTime();
     //          test Elevation
-//    EXPECT_NEAR(0, waveField->GetElevation(0.,0.), 1e-8);
-//    EXPECT_NEAR(0, waveField->GetElevation(0,1.), 1e-8);
     EXPECT_NEAR(WaveRef.GetElevation(0.,0.,t), waveField->GetElevation(0.,0., fc), 1e-8);
     EXPECT_NEAR(WaveRef.GetElevation(0.,1.,t), waveField->GetElevation(0.,1., fc), 1e-8);
     EXPECT_NEAR(WaveRef.GetElevation(1.,0.,t), waveField->GetElevation(1.,0., fc), 1e-8);
 
     //          test Velocity
-//    EXPECT_NEAR(0., waveField->GetVelocity(0.,0.,0.).GetVx(), 1e-8);
-//    EXPECT_NEAR(0., waveField->GetVelocity(0.,0.,0.).GetVy(), 1e-8);
-//    EXPECT_NEAR(Amp*(w1+w2), -waveField->GetVelocity(0.,0.,0.).GetVz(), 1e-8);
     EXPECT_NEAR(WaveRef.GetVx(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0., fc).GetVx(), 1e-8);
     EXPECT_NEAR(WaveRef.GetVy(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0., fc).GetVy(), 1e-8);
     EXPECT_NEAR(WaveRef.GetVz(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0., fc).GetVz(), 1e-8);
@@ -257,9 +236,6 @@ TEST(FrWaveField,BiChromaticWaveInfDepth) {
     EXPECT_NEAR(WaveRef.GetVz(0.,0.,-1.,t), waveField->GetVelocity(0.,0.,-1., fc).GetVz(), 1e-8);
 
     //          test Acceleration
-//    EXPECT_NEAR(Amp*(w1*w1+w2*w2), -waveField->GetAcceleration(0.,0.,0.).GetAccX(), 1e-8);
-//    EXPECT_NEAR(0., waveField->GetAcceleration(0.,0.,0.).GetAccY(), 1e-8);
-//    EXPECT_NEAR(0., waveField->GetAcceleration(0.,0.,0.).GetAccZ(), 1e-8);
     EXPECT_NEAR(WaveRef.GetAx(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0., fc).GetAccX(), 1e-8);
     EXPECT_NEAR(WaveRef.GetAy(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0., fc).GetAccY(), 1e-8);
     EXPECT_NEAR(WaveRef.GetAz(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0., fc).GetAccZ(), 1e-8);
@@ -271,19 +247,13 @@ TEST(FrWaveField,BiChromaticWaveInfDepth) {
     // test at T = T2/2
     system.AdvanceOneStep(0.5*T2);
     t = system.GetTime();
-//    EXPECT_DOUBLE_EQ(0.5*T2,t);
     //          test Elevation
-//    EXPECT_NEAR(Amp, -waveField->GetElevation(0.,0.), 1e-8);
     EXPECT_NEAR(WaveRef.GetElevation(0.,0.,t), waveField->GetElevation(0.,0., fc), 1e-8);
     //          test Velocity
-//    EXPECT_NEAR(Amp*w1, -waveField->GetVelocity(0.,0.,0.).GetVx(), 1e-8);
-//    EXPECT_NEAR(Amp*w2, waveField->GetVelocity(0.,0.,0.).GetVz(), 1e-8);
     EXPECT_NEAR(WaveRef.GetVx(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0., fc).GetVx(), 1e-8);
     EXPECT_NEAR(WaveRef.GetVy(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0., fc).GetVy(), 1e-8);
     EXPECT_NEAR(WaveRef.GetVz(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0., fc).GetVz(), 1e-8);
     //          test Acceleration
-//    EXPECT_NEAR(Amp*w2*w2, waveField->GetAcceleration(0.,0.,0.).GetAccX(), 1e-8);
-//    EXPECT_NEAR(Amp*w1*w1, waveField->GetAcceleration(0.,0.,0.).GetAccZ(), 1e-8);
     EXPECT_NEAR(WaveRef.GetAx(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0., fc).GetAccX(), 1e-8);
     EXPECT_NEAR(WaveRef.GetAy(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0., fc).GetAccY(), 1e-8);
     EXPECT_NEAR(WaveRef.GetAz(0.,0.,0.,t), waveField->GetAcceleration(0.,0.,0., fc).GetAccZ(), 1e-8);
@@ -291,9 +261,7 @@ TEST(FrWaveField,BiChromaticWaveInfDepth) {
     // test at T = T2
     system.AdvanceOneStep(0.5*T2);
     t = system.GetTime();
-//    EXPECT_DOUBLE_EQ(T2,t);
     //          test Elevation
-//    EXPECT_NEAR(0, waveField->GetElevation(0.,0.), 1e-8);
     EXPECT_NEAR(WaveRef.GetElevation(0.,0.,t), waveField->GetElevation(0.,0., fc), 1e-8);
     //          test Velocity
     EXPECT_NEAR(WaveRef.GetVx(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0., fc).GetVx(), 1e-8);
@@ -307,9 +275,7 @@ TEST(FrWaveField,BiChromaticWaveInfDepth) {
     // test at T = 3/2.T2
     system.AdvanceOneStep(0.5*T2);
     t = system.GetTime();
-//    EXPECT_DOUBLE_EQ(1.5*T2,t);
     //          test Elevation
-//    EXPECT_NEAR(Amp, waveField->GetElevation(0.,0.), 1e-8);
     EXPECT_NEAR(WaveRef.GetElevation(0.,0.,t), waveField->GetElevation(0.,0., fc), 1e-8);
     //          test Velocity
     EXPECT_NEAR(WaveRef.GetVx(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0., fc).GetVx(), 1e-8);
@@ -323,9 +289,7 @@ TEST(FrWaveField,BiChromaticWaveInfDepth) {
     // test at T = T1s = 2*T2
     system.AdvanceOneStep(0.5*T2);
     t = system.GetTime();
-//    EXPECT_DOUBLE_EQ(T1,t);
     //          test Elevation
-//    EXPECT_NEAR(0., waveField->GetElevation(0.,0.), 1e-8);
     EXPECT_NEAR(WaveRef.GetElevation(0.,0.,t), waveField->GetElevation(0.,0., fc), 1e-8);
     //          test Velocity
     EXPECT_NEAR(WaveRef.GetVx(0.,0.,0.,t), waveField->GetVelocity(0.,0.,0., fc).GetVx(), 1e-8);

@@ -20,5 +20,6 @@
 #include "ocean/FrOceanInc.h"
 #include "atmosphere/FrAtmosphereInc.h"
 #include "flow/FrFlowInc.h"
+#include "geographicServices/FrGeographicServicesInc.h"
 
 #endif //FRYDOM_FRENVIRONMENTINC_H

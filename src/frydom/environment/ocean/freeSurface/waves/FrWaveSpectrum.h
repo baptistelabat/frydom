@@ -157,8 +157,7 @@ namespace frydom {
         /// Constructor of the wave spectrum, based on a significant height and peak period, with its associated unit.
         /// \param hs significant height
         /// \param tp peak period
-        /// \param unit peak period unit
-        FrWaveSpectrum(double hs, double tp, FREQUENCY_UNIT unit);
+        FrWaveSpectrum(double hs, double tp);
 
         /// Set the wave directional model to a cos2s, with a spreading factor
         /// \param spreadingFactor spreading factor of the cos2s model
@@ -314,9 +313,8 @@ namespace frydom {
         /// and a gamma factor
         /// \param hs significant height
         /// \param tp peak frequency
-        /// \param unit peak frequency unit
         /// \param gamma gamma factor of the Jonswap spectrum
-        FrJonswapWaveSpectrum(double hs, double tp, FREQUENCY_UNIT unit, double gamma);
+        FrJonswapWaveSpectrum(double hs, double tp, double gamma); // TODO : virer le FREQUENCY_UNIT, on passe des secondes quoi qu'il arrive
 
         /// Check that the gamma factor is correctly defined between 1. and 10.
         void CheckGamma();
@@ -357,8 +355,7 @@ namespace frydom {
         /// and its associated unit
         /// \param hs significant height
         /// \param tp peak frequency
-        /// \param unit peak frequency unit
-        FrPiersonMoskowitzWaveSpectrum(double hs, double tp, FREQUENCY_UNIT unit);
+        FrPiersonMoskowitzWaveSpectrum(double hs, double tp);
 
         /// Eval the spectrum at one frequency
         /// \param w circular frequency for which the wave spectrum is evaluated

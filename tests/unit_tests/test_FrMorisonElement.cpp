@@ -9,10 +9,9 @@
 //
 // ==========================================================================
 
-#include <memory>
 #include "frydom/frydom.h"
+
 #include "gtest/gtest.h"
-//#include "frydom/core/FrVector.h"
 
 using namespace frydom;
 
@@ -240,7 +239,7 @@ void TestMorison::LoadData(std::string filename) {
 
     auto waveField = system.GetEnvironment()->GetOcean()->GetFreeSurface()->SetAiryRegularWaveField();
     waveField->SetWaveHeight(waveHeight);
-    waveField->SetWavePeriod(wavePeriod, S);
+    waveField->SetWavePeriod(wavePeriod);
 
     auto pointRef = ReadVector<Position>(reader, group + "PointRef");
     body->SetPosition(pointRef, NWU);

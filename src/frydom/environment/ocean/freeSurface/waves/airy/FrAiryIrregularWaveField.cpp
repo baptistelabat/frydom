@@ -144,13 +144,13 @@ namespace frydom{
         m_wavePhases = std::make_unique<std::vector<std::vector<double>>>(wavePhases);
     }
 
-    FrJonswapWaveSpectrum *FrAiryIrregularWaveField::SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit, double gamma) {
-        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum>(Hs,Tp,unit,gamma);
+    FrJonswapWaveSpectrum *FrAiryIrregularWaveField::SetJonswapWaveSpectrum(double Hs, double Tp, double gamma) {
+        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum>(Hs, Tp, gamma);
         return dynamic_cast<FrJonswapWaveSpectrum*>(m_waveSpectrum.get());
     }
 
-    FrPiersonMoskowitzWaveSpectrum *FrAiryIrregularWaveField::SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit) {
-        m_waveSpectrum = std::make_unique<FrPiersonMoskowitzWaveSpectrum>(Hs,Tp,unit);
+    FrPiersonMoskowitzWaveSpectrum *FrAiryIrregularWaveField::SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp) {
+        m_waveSpectrum = std::make_unique<FrPiersonMoskowitzWaveSpectrum>(Hs,Tp);
         return dynamic_cast<FrPiersonMoskowitzWaveSpectrum*>(m_waveSpectrum.get());
     }
 

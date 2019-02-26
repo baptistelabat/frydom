@@ -27,7 +27,7 @@ namespace frydom {
      * \class FrSeabed_
      * \brief Class for defining a seabed with either a finite or infinite water depth.
      */
-    class FrSeabed_  : public FrObject {
+    class FrSeabed  : public FrObject {
     protected:
 
         FrOcean *m_ocean;            ///< Pointer to the ocean containing this asset
@@ -36,10 +36,10 @@ namespace frydom {
     public:
         /// Default constructor
         /// \param ocean ocean containing this seabed
-        explicit FrSeabed_(FrOcean* ocean);
+        explicit FrSeabed(FrOcean* ocean);
 
         /// Default destructor
-        ~FrSeabed_() = default;
+        ~FrSeabed() = default;
 
         //---------------------------- Asset ----------------------------//
 
@@ -92,7 +92,7 @@ namespace frydom {
      * \class FrNullSeabed_
      * \brief Class for defining a seabed in case of infinite water depth.
      */
-    class FrNullSeabed_  : public FrSeabed_ {
+    class FrNullSeabed_  : public FrSeabed {
     public:
 
         /// Default constructor
@@ -140,7 +140,7 @@ namespace frydom {
      * \class FrMeanSeabed_
      * \brief Class for defining a mean seabed in case of finite and constant water depth.
      */
-    class FrMeanSeabed_  : public FrSeabed_ {
+    class FrMeanSeabed_  : public FrSeabed {
     protected:
 
         bool m_showSeabed = true;     ///< Boolean checking if the seabed is shown/exists

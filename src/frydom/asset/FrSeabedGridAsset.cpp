@@ -17,7 +17,7 @@
 
 namespace frydom{
 
-    FrSeabedGridAsset::FrSeabedGridAsset(FrSeabed_* seabed): FrGridAsset()  {
+    FrSeabedGridAsset::FrSeabedGridAsset(FrSeabed* seabed): FrGridAsset()  {
         m_seabed = seabed;
         SetGridColor(Chocolate);
     }

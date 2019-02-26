@@ -48,13 +48,14 @@ TEST(FrWaveSpectrum,FrCos2sDirectionalModel){
 
 
 TEST(FrWaveSpectrum,Jonswap){
-    double Hs = 3., Tp = S2RADS(9.);
+    double Hs = 3.;
+    double Tp = 9.;
     double Gamma = 3.3;
 
     std::vector<double> wVect; wVect.clear();
     wVect = linspace(0.5,2.,21);
 
-    FrJonswapWaveSpectrum JonswapSpectrum(Hs,Tp,RADS,Gamma);
+    FrJonswapWaveSpectrum JonswapSpectrum(Hs, Tp, Gamma);
 
     auto waveAmp = JonswapSpectrum.GetWaveAmplitudes(wVect);
 
@@ -75,6 +76,7 @@ TEST(FrWaveSpectrum,Jonswap){
 
     EXPECT_NEAR(wminFromPython,wmin,1.E-8);
     EXPECT_NEAR(wmaxFromPython,wmax,1.E-8);
+    
 }
 
 
