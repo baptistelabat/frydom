@@ -392,6 +392,8 @@ namespace frydom {
         // Creating the log manager service
         m_logManager = std::make_unique<FrLogManager>();
 
+        m_message = std::make_unique<hermes::Message>();
+
     }
 
     FrOffshoreSystem_::~FrOffshoreSystem_() = default;
@@ -1052,7 +1054,23 @@ namespace frydom {
 
         auto systemPath = m_logManager->NewSystemLog(this);
 
+        // Initializing message
+        if (m_message->GetName().empty()) {
+            m_message->SetNameAndDescription(
+                    fmt::format("{}_{}",GetTypeName(),GetUUID()),
+                    "Message of an offshore system");
+        }
 
+        // Add a serializer
+        m_message->AddCSVSerializer(systemPath);
+
+        // Add the fields
+        m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoSystem->GetChTime();});
+
+
+        // Init the message
+        m_message->Initialize();
+        m_message->Send();
 
     }
 

@@ -188,6 +188,8 @@ namespace frydom {
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
 
         m_DOFMask = std::make_unique<FrBodyDOFMask>();
+
+        m_message = std::make_unique<hermes::Message>();
     }
 
     FrOffshoreSystem_* FrBody_::GetSystem() const {
@@ -249,8 +251,8 @@ namespace frydom {
         }
 
         // Send the message to the logging system
-        m_message.Serialize();
-        m_message.Send();
+        m_message->Serialize();
+        m_message->Send();
 
     }
 
@@ -987,22 +989,22 @@ namespace frydom {
         auto bodyLogPath = m_system->GetLogManager()->NewBodyLog(this);
 
         // Initializing message
-        if (m_message.GetName().empty()) {
-            m_message.SetNameAndDescription(
+        if (m_message->GetName().empty()) {
+            m_message->SetNameAndDescription(
                     fmt::format("{}_{}_{}",GetTypeName(),GetName(),GetUUID()),
                     "Message of a body");
         }
 
         // Add a serializer
-        m_message.AddCSVSerializer(bodyLogPath);
+        m_message->AddCSVSerializer(bodyLogPath);
 
         // Add the fields
-        m_message.AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoBody->GetChTime();});
+        m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoBody->GetChTime();});
 
 
         // Init the message
-        m_message.Initialize();
-        m_message.Send();
+        m_message->Initialize();
+        m_message->Send();
 
     }
 

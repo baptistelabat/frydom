@@ -363,7 +363,7 @@ namespace frydom {
         std::unique_ptr<FrBodyDOFMask> m_DOFMask;
         std::shared_ptr<FrLink_> m_DOFLink;
 
-        hermes::Message m_message;              ///< Logging message, serialized, send and managed by hermes
+        std::unique_ptr<hermes::Message> m_message;              ///< Logging message, serialized, send and managed by hermes
 
 
 

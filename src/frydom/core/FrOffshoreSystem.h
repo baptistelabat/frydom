@@ -39,6 +39,8 @@
 #include "frydom/utils/FrIrrApp.h"
 #include "frydom/core/common/FrConvention.h"
 
+#include "hermes/hermes.h"
+
 
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
 // vent, vagues, courant, fond...
@@ -354,6 +356,7 @@ namespace frydom {
 
         // Logs
         std::unique_ptr<FrLogManager> m_logManager;
+        std::unique_ptr<hermes::Message> m_message;
 
 
     public:
