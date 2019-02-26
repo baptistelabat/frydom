@@ -15,13 +15,9 @@
 
 #include <iostream>
 
-
-
-//#include "chrono/core/ChMatrix33.h"
-
 #include "frydom/core/math/FrVector.h"
-//#include "frydom/core/common/FrConvention.h"
 #include "frydom/core/common/FrFrame.h"
+
 
 
 namespace frydom {

@@ -11,17 +11,18 @@
 
 
 #include "FrWindForce.h"
-//#include "frydom/environment/flow/FrFlowBase.h"
-//
-//#include "frydom/core/common/FrConvention.h"
-//#include "frydom/IO/FrLoader.h"
-//
-//#include "frydom/core/body/FrBody.h"
-//
-//
-//#include "frydom/environment/FrEnvironment.h"
-//#include "frydom/environment/atmosphere/FrAtmosphere_.h"
-//#include "FrWind.h"
+
+#include "MathUtils/Angles.h"
+
+#include "frydom/core/common/FrUnits.h"
+#include "frydom/IO/FrLoader.h"
+#include "frydom/core/common/FrFrame.h"
+#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/atmosphere/FrAtmosphere_.h"
+#include "FrWind.h"
+#include "frydom/core/body/FrBody.h"
+
 
 namespace frydom {
 
@@ -42,8 +43,8 @@ namespace frydom {
         assert(Cy.size() == n);
         assert(Cm.size() == n);
 
-        if (unit == DEG) {
-            deg2rad(angle);
+        if (unit == mathutils::DEG) {
+            mathutils::deg2rad(angle);
         }
 
         m_table.SetX(angle);
@@ -59,8 +60,8 @@ namespace frydom {
 
         Velocity cogRelVel = m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetRelativeVelocityInFrame(cogFrame, cogWorldVel, NWU);
 
-        double alpha = cogRelVel.GetProjectedAngleAroundZ(RAD)+M_PI;
-        alpha = Normalize_0_2PI(alpha);
+        double alpha = cogRelVel.GetProjectedAngleAroundZ(mathutils::RAD) + MU_PI;
+        alpha = mathutils::Normalize_0_2PI(alpha);
 
         auto cx = m_table.Eval("Cx", alpha);
         auto cy = m_table.Eval("Cy", alpha);

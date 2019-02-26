@@ -12,12 +12,12 @@
 
 #include "FrAiryRegularWaveField.h"
 
-//#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
-//#include "frydom/environment/FrEnvironment.h"
-//#include "frydom/environment/ocean/FrOcean_.h"
-//#include "frydom/environment/ocean/seabed/FrSeabed.h"
-//#include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
-//#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
+
+#include "MathUtils/Angles.h"
 
 namespace frydom {
 
@@ -34,10 +34,10 @@ namespace frydom {
     void FrAiryRegularWaveField::SetWavePeriod(double period, FREQUENCY_UNIT unit) {
 
         // Set the wave period in seconds
-        m_period = convert_frequency(period, unit, S);
+        m_period = convert_frequency(period, unit, mathutils::S);
 
         // Set the wave pulsation from the wave period, in rad/s
-        m_omega = S2RADS(m_period);
+        m_omega = mathutils::S2RADS(m_period);
 
         // Set the wave number, using the wave dispersion relation
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
@@ -53,14 +53,14 @@ namespace frydom {
 
     }
 
-    double FrAiryRegularWaveField::GetWavePeriod(FREQUENCY_UNIT unit) const { return convert_frequency(m_period ,S, unit);}
+    double FrAiryRegularWaveField::GetWavePeriod(FREQUENCY_UNIT unit) const { return convert_frequency(m_period , mathutils::S, unit);}
 
 
     void FrAiryRegularWaveField::SetDirection(double dirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc,
                                               DIRECTION_CONVENTION dc) {
         // The wave direction angle is used internally with the convention NWU, GOTO, and RAD unit.
         m_dirAngle = dirAngle;
-        if (unit == DEG) m_dirAngle *= DEG2RAD;
+        if (unit == mathutils::DEG) m_dirAngle *= DEG2RAD;
         if (IsNED(fc)) m_dirAngle = - m_dirAngle;
         if (IsCOMEFROM(dc)) m_dirAngle -= MU_PI;
 
@@ -71,7 +71,7 @@ namespace frydom {
     void FrAiryRegularWaveField::SetDirection(const Direction& direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         assert(mathutils::IsClose(direction.Getuz(),0.));
         double dirAngle = atan2(direction.Getuy(),direction.Getux());
-        SetDirection(dirAngle, RAD, fc, dc);
+        SetDirection(dirAngle, mathutils::RAD, fc, dc);
     }
 
     double
@@ -79,19 +79,19 @@ namespace frydom {
         double dirAngle = m_dirAngle;
         if (IsNED(fc)) dirAngle = - dirAngle;
         if (IsCOMEFROM(dc)) dirAngle -= MU_PI;
-        if (unit == DEG) dirAngle *= RAD2DEG;
+        if (unit == mathutils::DEG) dirAngle *= RAD2DEG;
 
         return mathutils::Normalize_0_360(dirAngle);
     }
 
     Direction FrAiryRegularWaveField::GetDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const {
-        auto dirAngle = GetDirectionAngle(RAD, fc, dc);
+        auto dirAngle = GetDirectionAngle(mathutils::RAD, fc, dc);
         return {cos(dirAngle), sin(dirAngle), 0.};
     }
 
     double FrAiryRegularWaveField::GetWaveLength() const {return 2.*M_PI/m_k;}
 
-    void FrAiryRegularWaveField::SetStretching(FrStretchingType type) {
+    void FrAiryRegularWaveField::SetStretching(STRETCHING_TYPE type) {
         switch (type) {
             case NO_STRETCHING:
                 m_verticalFactor = std::make_unique<FrKinematicStretching_>();
@@ -156,7 +156,7 @@ namespace frydom {
     // ------------------------------------- Wave characteristics ----------------------------
 
     std::vector<double> FrAiryRegularWaveField::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
-        auto omega = convert_frequency(m_omega, RADS, unit);
+        auto omega = convert_frequency(m_omega, mathutils::RADS, unit);
         return std::vector<double>(1, omega);
     }
 
@@ -173,8 +173,8 @@ namespace frydom {
 
         if(IsNED(fc)) direction = -direction;
         if(dc == COMEFROM) direction += MU_PI;
-        Normalize_0_2PI(direction);
-        if (unit == DEG) direction *= MU_180_PI;
+        mathutils::Normalize_0_2PI(direction);
+        if (unit == mathutils::DEG) direction *= MU_180_PI;
 
         return std::vector<double>(1, direction);
     }

@@ -13,15 +13,11 @@
 #define FRYDOM_FRWAVEFIELD_H
 
 
-//#include "frydom/core/common/FrObject.h"
-//#include "frydom/core/math/FrVector.h"
-//
-//#include "chrono/core/ChVector.h"
-//
-//#include "FrWaveSpectrum.h"
-//#include "FrKinematicStretching.h"
-//
-//#include "frydom/core/math/FrComplex.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/common/FrConvention.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrUnits.h"
+#include "frydom/core/math/FrComplex.h"
 
 
 namespace frydom {

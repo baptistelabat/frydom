@@ -14,27 +14,16 @@
 #define FRYDOM_FRBODY_H
 
 #include "chrono/physics/ChBodyAuxRef.h"
-//
-//#include "hermes/hermes.h"
-//
+
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/FrOffshoreSystem.h"
-//#include "frydom/core/math/FrVector.h"
-//#include "frydom/core/common/FrConvention.h"
-//#include "frydom/core/force/FrForce.h"
-//#include "frydom/core/math/FrEulerAngles.h" // TODO : devrait disparaitre
-//#include "frydom/mesh/FrTriangleMeshConnected.h"
-//
 #include "FrInertiaTensor.h"
 #include "frydom/core/misc/FrColors.h"
 #include "frydom/core/common/FrNode.h"
-//
-//#include "frydom/environment/FrFluidType.h"
-//
-//// TODO : voir si il n'y a pas moyen de passer ces includes
+
+////// TODO : voir si il n'y a pas moyen de passer ces includes
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
-//#include "frydom/core/link/links_lib/FrRevoluteLink.h"
 
 
 #define DEFAULT_MAX_SPEED (float)10.

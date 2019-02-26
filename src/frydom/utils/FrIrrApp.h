@@ -14,8 +14,9 @@
 #define FRYDOM_FRIRRAPP_H
 
 #include "chrono_irrlicht/ChIrrApp.h"
-//
-//#include "FrIrrCamera.h"
+
+
+
 
 namespace frydom {
 

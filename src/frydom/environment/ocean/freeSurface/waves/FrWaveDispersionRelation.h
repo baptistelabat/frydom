@@ -14,8 +14,7 @@
 #define FRYDOM_FRWAVEDISPERSIONRELATION_H
 
 
-//#include <vector>
-//#include <cmath>
+#include <vector>
 
 namespace frydom {
 

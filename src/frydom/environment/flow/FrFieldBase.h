@@ -13,8 +13,9 @@
 #ifndef FRYDOM_FRFIELDBASE_H
 #define FRYDOM_FRFIELDBASE_H
 
-//#include "frydom/core/common/FrObject.h"
-//#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrConvention.h"
 
 namespace frydom {
 

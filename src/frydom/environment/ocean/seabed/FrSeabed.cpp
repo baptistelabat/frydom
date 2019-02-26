@@ -9,18 +9,11 @@
 //
 // ==========================================================================
 
+#include <iostream>
 
 #include "FrSeabed.h"
 
-#include <iostream>
-
 #include "frydom/asset/FrSeabedGridAsset.h"
-//
-//#include <thread>
-//#include "chrono/assets/ChTriangleMeshShape.h"
-//#include <chrono/assets/ChColorAsset.h>
-//#include <frydom/core/FrOffshoreSystem.h>
-//#include "frydom/core/body/FrBody.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean_.h"
 

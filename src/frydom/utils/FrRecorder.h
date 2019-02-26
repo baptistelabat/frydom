@@ -13,15 +13,10 @@
 #ifndef FRYDOM_FRTIMERINGBUFFER_H
 #define FRYDOM_FRTIMERINGBUFFER_H
 
-//#include <vector>
-//#include <cassert>
-//#include <deque>
-//#include <cfloat>
-//#include <iostream>
-//
-//#include "boost/circular_buffer.hpp"
+#include <vector>
+#include <cfloat>
 
-//#include "chrono/core/ChVector.h"
+#include "boost/circular_buffer.hpp"
 
 
 namespace frydom {
@@ -37,7 +32,7 @@ namespace frydom {
     private:
 
         double m_timePersistence = 1800.;
-        double m_timeStep;
+        double m_timeStep = 0.01;
 
         unsigned int m_size = 0;
         unsigned int m_nstep = 0;

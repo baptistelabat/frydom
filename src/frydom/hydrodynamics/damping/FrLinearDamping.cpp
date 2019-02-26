@@ -10,12 +10,12 @@
 // ==========================================================================
 
 
-//#include "MathUtils/Vector6d.h"
-
 #include "FrLinearDamping.h"
-//#include "frydom/core/common/FrException.h"
-//
-//#include "frydom/environment/FrEnvironmentInc.h"
+
+#include "frydom/core/common/FrFrame.h"
+#include "frydom/core/body/FrBody.h"
+#include "frydom/environment/FrEnvironment.h"
+
 
 
 namespace frydom {

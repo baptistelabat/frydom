@@ -19,7 +19,6 @@
 #include "frydom/core/common/FrNode.h"
 
 
-
 namespace frydom{
 
     FrCatenaryLineAsset_::FrCatenaryLineAsset_(FrCatenaryLine_ *line) : m_catenaryLine(line) {}

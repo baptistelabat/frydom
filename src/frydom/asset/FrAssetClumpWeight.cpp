@@ -9,13 +9,11 @@
 //
 // ==========================================================================
 
-
-#include "FrAssetClumpWeight.h"
-
 #include "chrono/geometry/ChCylinder.h"
 #include "chrono/assets/ChCylinderShape.h"
 #include "chrono/assets/ChColorAsset.h"
 
+#include "FrAssetClumpWeight.h"
 
 namespace frydom {
 

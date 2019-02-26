@@ -14,6 +14,7 @@
 #define FRYDOM_FRAIRYREGULARWAVEFIELD_H
 
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
 
 namespace frydom {
 
@@ -49,7 +50,7 @@ namespace frydom {
         /// Set the wave period of the regular Airy wave filed
         /// \param period wave period
         /// \param unit unit of the wave period, (seconds by default)
-        void SetWavePeriod(double period, FREQUENCY_UNIT unit = S);
+        void SetWavePeriod(double period, FREQUENCY_UNIT unit);
 
         /// Set the wave direction of the regular Airy wave filed, using angle, from North direction
         /// \param dirAngle wave direction
@@ -66,7 +67,7 @@ namespace frydom {
 
         /// Set the stretching type, to avoid irregularities for quantities calculated above the free surface
         /// \param type stretching type (NO_STRETCHING/VERTICAL/EXTRAPOLATE/WHEELER/CHAKRABARTI/DELTA)
-        void SetStretching(FrStretchingType type);
+        void SetStretching(STRETCHING_TYPE type);
 
         /// Get the wave height of the regular Airy wave field
         /// \return wave height, in meters
@@ -75,7 +76,7 @@ namespace frydom {
         /// Get the wave period of the regular Airy wave field
         /// \param unit wave period unit (seconds by default)
         /// \return wave period
-        double GetWavePeriod(FREQUENCY_UNIT unit = S) const;;
+        double GetWavePeriod(FREQUENCY_UNIT unit) const;;
 
         /// Get the wave direction angle, from North direction, of the regular Airy wave field
         /// \param unit angle unit

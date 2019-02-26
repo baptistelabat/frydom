@@ -20,6 +20,4 @@
 #include "math/FrMathInc.h"
 #include "misc/FrMiscInc.h"
 
-//#include "junk/JunkInc.h" // FIXME : a retirer !!!
-
 #endif //FRYDOM_FRCORE_H_H

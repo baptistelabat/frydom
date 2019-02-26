@@ -13,8 +13,6 @@
 #include "FrBodyEasy.h"
 
 #include "FrBody.h"
-//
-//#include "chrono/physics/ChBodyEasy.h"
 
 
 namespace frydom {

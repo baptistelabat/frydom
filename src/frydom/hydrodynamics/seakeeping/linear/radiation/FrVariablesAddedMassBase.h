@@ -13,10 +13,10 @@
 #ifndef FRYDOM_FRVARIABLESADDEDMASSBASE_H
 #define FRYDOM_FRVARIABLESADDEDMASSBASE_H
 
-//#include "chrono/solver/ChVariablesBodyOwnMass.h"
-//#include "frydom/core/math/FrMatrix.h"
-//
-//#include "MathUtils/Matrix66.h"
+#include "MathUtils/Matrix66.h"
+
+#include "chrono/solver/ChVariables.h"
+
 
 namespace frydom {
 

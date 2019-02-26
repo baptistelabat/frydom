@@ -13,9 +13,12 @@
 #ifndef FRYDOM_FRIRRCAMERA_H
 #define FRYDOM_FRIRRCAMERA_H
 
-//
-//#include <chrono_irrlicht/ChIrrCamera.h>
-////#include "chrono_irrlicht/ChApiIrr.h"
+
+#include "chrono_irrlicht/ChIrrCamera.h"
+#include "chrono_irrlicht/ChApiIrr.h"
+
+
+
 
 namespace frydom {
 

@@ -16,13 +16,8 @@
 
 #include "chrono/core/ChQuaternion.h"
 
-#include "MathUtils/Vector3d.h"
-
-//#include "FrRotation.h"
 #include "FrConvention.h"
-//
 #include "frydom/core/math/FrEulerAngles.h"
-//
 #include "frydom/core/math/FrVector.h"
 
 

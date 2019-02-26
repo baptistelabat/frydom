@@ -14,10 +14,13 @@
 #define FRYDOM_FRRADIATIONFORCE_H
 
 
-//#include "frydom/core/force/FrForce.h"
-//#include "FrRadiationModel.h"
+#include "frydom/core/force/FrForce.h"
+
 
 namespace frydom {
+
+    // Forward declaration
+    class FrRadiationModel_;
 
     /**
      * \class FrRadiationForce_
@@ -43,6 +46,9 @@ namespace frydom {
 
     };
 
+
+    // Forward declaration
+    class FrRadiationConvolutionModel_;
 
     /**
      * \class FrRadiationConvolutionForce_

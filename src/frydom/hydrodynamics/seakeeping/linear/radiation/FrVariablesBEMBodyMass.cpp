@@ -10,7 +10,7 @@
 // ==========================================================================
 
 
-//#include "frydom/utils/FrEigen.h"
+#include "frydom/utils/FrEigen.h"
 #include "FrVariablesBEMBodyMass.h"
 
 namespace frydom {

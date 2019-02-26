@@ -12,12 +12,12 @@
 #ifndef FRYDOM_FRNODE_H
 #define FRYDOM_FRNODE_H
 
-//#include "chrono/physics/ChMarker.h"
-//#include "FrObject.h"
-//#include "frydom/core/math/FrVector.h"
-//#include "FrRotation.h"
-//#include "FrFrame.h"
-//
+
+#include "chrono/physics/ChMarker.h"
+#include "FrRotation.h"
+#include "FrFrame.h"
+#include "FrObject.h"
+
 #include "frydom/core/link/links_lib/FrLink.h"
 
 

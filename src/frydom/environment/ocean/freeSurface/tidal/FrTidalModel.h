@@ -17,10 +17,6 @@
 
 #include "MathUtils/LookupTable1D.h"
 
-//#include <cassert>
-//
-//#include "MathUtils/MathUtils.h"
-//
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/common/FrConvention.h"
 
@@ -95,7 +91,7 @@ namespace frydom {
 
         FrFreeSurface_* m_freeSurface;
 
-        std::unique_ptr<chrono::ChFrame<double>> m_tidalFrame;
+        std::unique_ptr<chrono::ChFrame<double>> m_tidalFrame;  // FIXME : utiliser un FrFrame_ !!!
 
         double m_time = 0.;
 
@@ -108,8 +104,6 @@ namespace frydom {
         TidalLevel m_level2;
         FrUTCTime m_t2;
         double m_h2;
-
-//        double c_waterHeight = 0.;
 
         mathutils::LookupTable1D<double, double> tidalTable;
 

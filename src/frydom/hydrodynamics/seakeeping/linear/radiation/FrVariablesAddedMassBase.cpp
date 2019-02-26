@@ -10,14 +10,11 @@
 // ==========================================================================
 
 
+#include "FrLinearRadiationInc.h"
 
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
+#include "frydom/core/body/FrBody.h"
 
-//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
-//#include "frydom/core/body/FrBody.h"
-//#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModel.h"
-//
-//#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
-#include "FrAddedMassBase.h"
 
 namespace frydom {
 

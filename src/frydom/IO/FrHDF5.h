@@ -13,11 +13,13 @@
 #define FRYDOM_FRHDF5_H
 
 
-//#include <memory>
-//#include <iostream>
-//#include "H5Cpp.h"
-//
-//#include "frydom/utils/FrEigen.h"
+#include <memory>
+#include <vector>
+#include "H5Cpp.h"
+
+#include "MathUtils/Matrix.h"
+
+
 
 using namespace H5;
 

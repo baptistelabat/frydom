@@ -12,13 +12,6 @@
 #include "FrFreeSurfaceGridAsset.h"
 
 #include "chrono/assets/ChTriangleMeshShape.h"
-
-//#include "frydom/mesh/FrTriangleMeshConnected.h"
-//
-//#include "frydom/core/body/FrBody.h"
-//#include "frydom/environment/FrEnvironment.h"
-//#include "frydom/environment/ocean/FrOcean_.h"
-//
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 

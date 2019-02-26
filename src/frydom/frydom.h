@@ -15,12 +15,9 @@
 #include <cstdlib>
 #include <irrlicht.h>
 
-
-// Chrono related headers
 #include "chrono/solver/ChSolverMINRES.h" // FIXME: trouver moyen d'avoir un import plus global des headers chrono...
 
 // FRyDoM related headers
-
 #include "core/FrCore.h"
 #include "environment/FrEnvironmentInc.h"
 #include "frydom/hydrodynamics/FrHydrodynamicsInc.h"
@@ -31,5 +28,6 @@
 #include "asset/FrAssetInc.h"
 
 #include <H5Cpp.h>
+
 
 #endif //FRYDOM_FRYDOM_H

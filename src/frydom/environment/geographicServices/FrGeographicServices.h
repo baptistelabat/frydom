@@ -13,12 +13,10 @@
 #ifndef FRYDOM_FRGEOGRAPHICSERVICES_H
 #define FRYDOM_FRGEOGRAPHICSERVICES_H
 
-//#include <memory>
-#include "frydom/core/common/FrConvention.h"
 
-// GeographicLib includes
+#include "frydom/core/common/FrConvention.h"
 #include "GeographicLib/LocalCartesian.hpp"
-////#include "GagneticModel.hpp"
+
 
 namespace frydom {
 

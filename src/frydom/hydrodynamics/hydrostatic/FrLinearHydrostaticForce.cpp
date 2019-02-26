@@ -12,12 +12,11 @@
 
 #include "FrLinearHydrostaticForce.h"
 
-//// >>>>>>>>>>>>>>>>> from refactoring
-//
-//#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
-//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
-//
-//// <<<<<<<<<<<<<<<<<<<<
+#include "frydom/core/body/FrBody.h"
+#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
+
+
 
 namespace frydom {
 
@@ -46,7 +45,7 @@ namespace frydom {
         auto deltaFrame = m_equilibriumFrame->GetInverse() * bodyFrame;
 
         // Position of the body frame with respect to the equilibrium frame expressed in the equilibrium frame.
-        Vector3d<double> state; double temp;
+        mathutils::Vector3d<double> state; double temp;
         state[0] = deltaFrame.GetPosition(NWU).z();
 
         // Angular position of the body frame with respect to the equilibrium frame expressed in the equilibrium frame.

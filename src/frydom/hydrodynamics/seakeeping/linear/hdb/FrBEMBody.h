@@ -14,12 +14,11 @@
 #define FRYDOM_FRBEMBODY_H
 
 
-//#include "MathUtils/MathUtils.h"
-//#include "chrono/core/ChVectorDynamic.h"
-//
-///// <<<<<<<<<<<<<<<<<<<< ADDITIONAL INCLUDE
-//
-//#include "frydom/core/math/FrVector.h"
+#include "frydom/core/math/FrVector.h"
+
+#include "MathUtils/LookupTable2D.h"
+#include "MathUtils/Interp1d.h"
+
 
 namespace frydom {
 
@@ -72,7 +71,7 @@ namespace frydom {
         std::vector<double> m_angles;
         std::vector<double> m_freqs;
         std::vector<double> m_data;
-        std::unique_ptr<mathutils::LookupTable2d<>> m_table;
+        std::unique_ptr<mathutils::LookupTable2d<double>> m_table;
 
         FrWaveDriftPolarData();
 
@@ -84,17 +83,17 @@ namespace frydom {
 
         double Eval(const std::string name, double x, double y) const;
 
-        bool HasSurge() const { return m_table->HasSerie("surge"); }
+        bool HasSurge() const;
 
-        bool HasSway() const { return m_table->HasSerie("sway"); }
+        bool HasSway() const;
 
-        bool HasHeave() const { return m_table->HasSerie("heave"); }
+        bool HasHeave() const;
 
-        bool HasPitch() const { return m_table->HasSerie("pitch"); }
+        bool HasPitch() const;
 
-        bool HasRoll() const { return m_table->HasSerie("roll"); }
+        bool HasRoll() const;
 
-        bool HasYaw() const { return m_table->HasSerie("yaw"); }
+        bool HasYaw() const;
     };
 
     /**

@@ -10,15 +10,14 @@
 // ==========================================================================
 
 
-//#include "frydom/core/body/FrBody.h"
-
 #include "FrQuadraticDamping.h"
 
-//#include "chrono/physics/ChBody.h"
-//
-//#include <cmath>
-//
-//#include "frydom/environment/FrEnvironment.h"
+#include "frydom/core/common/FrFrame.h"
+#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/core/body/FrBody.h"
+#include "frydom/environment/FrEnvironment.h"
+
+
 
 namespace frydom {
 
@@ -75,9 +74,9 @@ namespace frydom {
         double w = cogRelVel.GetVz();
 
         SetForceInBody(Force(
-                - 0.5 * rho * m_Su * m_Cu * u*fabs(u),
-                - 0.5 * rho * m_Sv * m_Cv * v*fabs(v),
-                - 0.5 * rho * m_Sw * m_Cw * w*fabs(w)
+                - 0.5 * rho * m_Su * m_Cu * u*std::fabs(u),
+                - 0.5 * rho * m_Sv * m_Cv * v*std::fabs(v),
+                - 0.5 * rho * m_Sw * m_Cw * w*std::fabs(w)
                 ), NWU);
 
     }

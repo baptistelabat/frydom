@@ -12,11 +12,13 @@
 
 #include "FrRadiationModel.h"
 
-//#include "FrRadiationForce.h"
-//
-///// <<<<<<<<<<<<<<<<<<<<<< Refactoring
-//
-//#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+#include "FrAddedMassBase.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
+#include "frydom/core/body/FrBody.h"
+#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+
+#include "FrRadiationForce.h"
+
 
 namespace frydom {
 

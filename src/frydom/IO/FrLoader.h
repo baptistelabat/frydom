@@ -16,13 +16,11 @@
 
 #include <string>
 #include <vector>
-//
 
 #include "MathUtils/LookupTable1D.h"
 #include "MathUtils/Vector3d.h"
 
 #include "frydom/core/common/FrConvention.h"
-//#include "frydom/environment/ocean/current/FrCurrentPolarCoeffs.h"
 #include "frydom/core/common/FrUnits.h"
 
 

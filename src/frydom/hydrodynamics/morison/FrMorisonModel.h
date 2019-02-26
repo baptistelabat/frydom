@@ -13,24 +13,18 @@
 #ifndef FRYDOM_FRMORISONMODEL_H
 #define FRYDOM_FRMORISONMODEL_H
 
-//// <<<<<<<<<<<<< Head
-//
-//#include <vector>
-//#include <frydom/core/common/FrPhysicsItem.h>
-//
-//#include "frydom/core/common/FrConvention.h"
-//#include "frydom/core/common/FrNode.h"
-//#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
-//
-//// <<<<<<<<<<<<< Adding header for refactoring
-//
-//#include "frydom/core/force/FrForce.h"
+#include <memory>
+
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrFrame.h"
 
 
 namespace frydom {
 
-    // Forward declaration
+    // Forward declarations
     class FrMorisonCompositeElement_;
+    class FrBody_;
+    class FrNode_;
 
     /// Maker for a Morison model : instantiate and return a FrMorisonCompositeElement
     /// \param body body related to the morison model
@@ -46,7 +40,7 @@ namespace frydom {
     class FrMorisonElement_ {
 
     protected:
-        std::shared_ptr<FrNode_> m_frame;   ///< Frame at the center position of the morison element with z-axis along its direction
+        std::shared_ptr<FrNode_> m_node;   ///< Frame at the center position of the morison element with z-axis along its direction
         Force m_force;                      ///< Force at COG of the body in world-coordinates
         Torque m_torque;                    ///< Torque at COG of the body in body-coordinates
 
@@ -68,11 +62,11 @@ namespace frydom {
 
         /// Get the local frame of the morison model
         /// \return Local frame
-        FrFrame_ GetFrame() const { return m_frame->GetFrameInWorld(); }
+        FrFrame_ GetFrame() const;
 
         /// Get the local frame of the morison model as node
         /// \return Node
-        std::shared_ptr<FrNode_> GetNode() const { return m_frame; }
+        std::shared_ptr<FrNode_> GetNode() const { return m_node; }
 
         /// Get the force vector at COG in world reference frame
         /// \param fc Frame convention

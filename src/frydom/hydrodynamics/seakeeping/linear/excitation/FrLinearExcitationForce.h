@@ -13,19 +13,23 @@
 #ifndef FRYDOM_FRLINEAREXCITATIONFORCE_H
 #define FRYDOM_FRLINEAREXCITATIONFORCE_H
 
-//#include "frydom/core/force/FrForce.h"
-//#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
-//
-//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
-//
-//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
-//
-//// <<<<<<<<<<<<<<<<<<<<<< include refactoring
-//
-//#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+#include <memory>
+#include <vector>
+
+#include "MathUtils/Matrix66.h"
+
+#include "frydom/core/force/FrForce.h"
+
 
 
 namespace frydom {
+
+    // Forward declaration
+    class FrHydroDB_;
+    class FrBody_;
+    class FrEquilibriumFrame_;
+
+
 
     /**
      * \class FrLinearExcitationForce_
@@ -41,11 +45,11 @@ namespace frydom {
 
         std::vector<Eigen::MatrixXcd> m_Fexc;
 
-        Matrix66<std::complex<double>> m_steadyForce;
+        mathutils::Matrix66<std::complex<double>> m_steadyForce;
 
     public:
 
-        FrLinearExcitationForce_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {};
+        explicit FrLinearExcitationForce_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {};
 
         void Initialize() override;
 

@@ -13,10 +13,11 @@
 #ifndef FRYDOM_FRVARIABLESBEMBODYMASS_H
 #define FRYDOM_FRVARIABLESBEMBODYMASS_H
 
-////#include "frydom/utils/FrEigen.h"
-//#include "chrono/solver/ChVariablesBodyOwnMass.h"
-//
-//#include "MathUtils/MathUtils.h"
+#include "chrono/solver/ChVariablesBodyOwnMass.h"
+
+#include "MathUtils/Matrix.h"
+
+
 
 namespace frydom {
 

@@ -14,17 +14,16 @@
 #define FRYDOM_FREIGEN_H
 
 
-//#include <chrono/core/ChMatrix33.h>
-//#include "chrono/core/ChVector.h"
-//#include "chrono/core/ChMatrix.h"
-//#include "chrono/core/ChMatrixDynamic.h"
-//
-//#include "MathUtils/MathUtils.h"
+#include "chrono/core/ChMatrix33.h"
+#include "chrono/core/ChVector.h"
+
+#include "MathUtils/Matrix.h"
 
 
 namespace frydom {
 
     namespace internal {
+
         /// chrono::ChVector <--> Eigen::Matrix
         template<class Real=double>
         Eigen::Matrix<Real, 3, 1> ChEig(const chrono::ChVector<Real> &vect) {

@@ -12,8 +12,9 @@
 
 #include "FrAtmosphere_.h"
 
-//#include "frydom/environment/FrEnvironment.h"
-//#include "wind/FrWind.h"
+#include "wind/FrWind.h"
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/FrFluidType.h"
 
 
 namespace frydom{
@@ -58,7 +59,7 @@ namespace frydom{
     }
 
     double FrAtmosphere_::GetFroudeNumberInAir(double characteristicLength, double velocity) const {
-        return fabs(velocity) / sqrt(m_environment->GetGravityAcceleration() * characteristicLength);
+        return fabs(velocity) / std::sqrt(m_environment->GetGravityAcceleration() * characteristicLength);
     }
 
     FrWind_ *FrAtmosphere_::GetWind() const { return m_wind.get();}

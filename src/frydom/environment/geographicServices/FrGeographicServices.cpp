@@ -12,9 +12,8 @@
 
 #include "FrGeographicServices.h"
 
-//#include "GeographicLib/LocalCartesian.hpp"
-//#include <GeographicLib/MagneticModel.hpp>
-//#include <frydom/core/math/FrVector.h>
+#include "GeographicLib/MagneticModel.hpp"
+#include "frydom/core/math/FrVector.h"
 
 
 /*

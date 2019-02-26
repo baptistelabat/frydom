@@ -9,15 +9,17 @@
 //
 // ==========================================================================
 
+#include <random>
 
 #include "FrAiryIrregularWaveField.h"
-#include <random>
+
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean_.h"
-#include "frydom/environment/ocean/seabed/FrSeabed.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
+
+#include "MathUtils/VectorGeneration.h"
+#include "MathUtils/Angles.h"
 
 namespace frydom{
 
@@ -42,7 +44,7 @@ namespace frydom{
             m_waveFrequencies.push_back(m_minFreq);
         }
         else {
-            m_waveFrequencies = linspace(m_minFreq, m_maxFreq, m_nbFreq);
+            m_waveFrequencies = mathutils::linspace(m_minFreq, m_maxFreq, m_nbFreq);
         }
 
         // Caching wave numbers
@@ -73,7 +75,7 @@ namespace frydom{
                                                              DIRECTION_CONVENTION dc) {
         // The wave direction angle is used internally with the convention NWU, GOTO, and RAD unit.
         m_meanDir = dirAngle;
-        if (unit == DEG) m_meanDir *= DEG2RAD;
+        if (unit == mathutils::DEG) m_meanDir *= DEG2RAD;
         if (IsNED(fc)) m_meanDir = - m_meanDir;
         if (IsCOMEFROM(dc)) m_meanDir -= MU_PI;
 
@@ -85,7 +87,7 @@ namespace frydom{
     FrAiryIrregularWaveField::SetMeanWaveDirection(Direction direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         assert(mathutils::IsClose(direction.Getuz(),0.));
         double dirAngle = atan2(direction.Getuy(),direction.Getux());
-        SetMeanWaveDirectionAngle(dirAngle, RAD, fc, dc);
+        SetMeanWaveDirectionAngle(dirAngle, mathutils::RAD, fc, dc);
     }
 
     void FrAiryIrregularWaveField::SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WAVE_DIRECTIONAL_MODEL dirType) {
@@ -120,10 +122,10 @@ namespace frydom{
                 break;
             case COS2S:
                 m_waveSpectrum->GetDirectionalModel()->GetDirectionBandwidth(theta_min, theta_max, m_meanDir);
-                m_waveDirections = linspace(theta_min, theta_max, m_nbDir);
+                m_waveDirections = mathutils::linspace(theta_min, theta_max, m_nbDir);
                 break;
             case DIRTEST:
-                m_waveDirections = linspace(m_meanDir, m_meanDir + 0.1, m_nbDir);
+                m_waveDirections = mathutils::linspace(m_meanDir, m_meanDir + 0.1, m_nbDir);
                 break;
         }
 
@@ -159,7 +161,7 @@ namespace frydom{
 
     FrWaveSpectrum_ *FrAiryIrregularWaveField::GetWaveSpectrum() const { return m_waveSpectrum.get(); }
 
-    void FrAiryIrregularWaveField::SetStretching(FrStretchingType type) {
+    void FrAiryIrregularWaveField::SetStretching(STRETCHING_TYPE type) {
         switch (type) {
             case NO_STRETCHING:
                 m_verticalFactor = std::make_unique<FrKinematicStretching_>();
@@ -212,9 +214,9 @@ namespace frydom{
 
     std::vector<double> FrAiryIrregularWaveField::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
         std::vector<double> freqs = m_waveFrequencies;
-        if (unit != RADS) {
+        if (unit != mathutils::RADS) {
             for (auto &freq: freqs) {
-                freq = convert_frequency(freq, RADS, unit);
+                freq = convert_frequency(freq, mathutils::RADS, unit);
             }
         }
         return freqs;
@@ -226,8 +228,8 @@ namespace frydom{
 
         if(IsNED(fc)) for (auto& dir: directions) {dir = -dir; }
         if(dc == COMEFROM) for (auto& dir: directions) { dir += M_PI; }
-        for (auto& dir: directions) Normalize_0_2PI(dir);
-        if(unit==DEG) for (auto& dir: directions) { dir *= MU_180_PI; }
+        for (auto& dir: directions) mathutils::Normalize_0_2PI(dir);
+        if(unit==mathutils::DEG) for (auto& dir: directions) { dir *= MU_180_PI; }
 
         return directions;
 
@@ -372,13 +374,13 @@ namespace frydom{
         double dirAngle = m_meanDir;
         if (IsNED(fc)) dirAngle = - dirAngle;
         if (IsCOMEFROM(dc)) dirAngle -= MU_PI;
-        if (unit == DEG) dirAngle *= RAD2DEG;
+        if (unit == mathutils::DEG) dirAngle *= RAD2DEG;
 
         return mathutils::Normalize_0_360(dirAngle);
     }
 
     Direction FrAiryIrregularWaveField::GetMeanWaveDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const {
-        auto dirAngle = GetMeanWaveDirectionAngle(RAD, fc, dc);
+        auto dirAngle = GetMeanWaveDirectionAngle(mathutils::RAD, fc, dc);
         return {cos(dirAngle), sin(dirAngle), 0.};
     }
 

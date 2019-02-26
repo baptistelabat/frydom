@@ -13,7 +13,11 @@
 #ifndef FRYDOM_FRADDEDMASSBASE_H
 #define FRYDOM_FRADDEDMASSBASE_H
 
-//#include "frydom/core/common/FrPhysicsItem.h"
+#include <memory>
+
+#include "frydom/core/common/FrPhysicsItem.h"
+
+
 
 namespace frydom {
 

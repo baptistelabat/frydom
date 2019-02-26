@@ -10,28 +10,11 @@
 // ==========================================================================
 
 
-//#include "MathUtils/MathUtils.h"
-
 #include "FrFreeSurface.h"
-//#include "frydom/core/FrOffshoreSystem.h"
-//
-//#include "chrono/assets/ChTriangleMeshShape.h"
-//#include "chrono/assets/ChColorAsset.h"
-//#include "chrono/assets/ChTexture.h"
-//#include "frydom/asset/FrFreeSurfaceGridAsset.h"
-//
-//#include "frydom/mesh/FrTriangleMeshConnected.h"
-//
-//#include "frydom/environment/FrEnvironment.h"
-//#include "frydom/environment/ocean/FrOcean_.h"
-//#include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
-//#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
-//#include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryRegularWaveField.h"
-//#include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryRegularOptimWaveField.h"
-//#include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryIrregularWaveField.h"
-//#include "frydom/environment/ocean/freeSurface/waves/airy/FrAiryIrregularOptimWaveField.h"
 
-
+#include "frydom/asset/FrFreeSurfaceGridAsset.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
+#include "frydom/environment/FrEnvironmentInc.h"
 #include "frydom/core/body/FrBody.h"
 
 
@@ -94,7 +77,7 @@ namespace frydom {
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularWaveField();
         waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod);
+        waveField->SetWavePeriod(wavePeriod, mathutils::S);
         waveField->SetDirection(waveDirAngle, unit, fc, dc);
         return dynamic_cast<FrAiryRegularWaveField*>(m_waveField.get());
     }
@@ -105,7 +88,7 @@ namespace frydom {
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularWaveField();
         waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod);
+        waveField->SetWavePeriod(wavePeriod, mathutils::S);
         waveField->SetDirection(waveDirection, fc, dc);
         return waveField;
     }
@@ -122,7 +105,7 @@ namespace frydom {
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularOptimWaveField();
         waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod);
+        waveField->SetWavePeriod(wavePeriod, mathutils::S);
         waveField->SetDirection(waveDirAngle, unit, fc, dc);
         return waveField;
     }
@@ -132,7 +115,7 @@ namespace frydom {
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularOptimWaveField();
         waveField->SetWaveHeight(waveHeight);
-        waveField->SetWavePeriod(wavePeriod);
+        waveField->SetWavePeriod(wavePeriod, mathutils::S);
         waveField->SetDirection(waveDirection, fc, dc);
         return waveField;
     }

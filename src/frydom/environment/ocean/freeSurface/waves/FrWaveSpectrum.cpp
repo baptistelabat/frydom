@@ -12,6 +12,8 @@
 
 #include "FrWaveSpectrum.h"
 
+#include "MathUtils/VectorGeneration.h"
+
 namespace frydom {
 
     // FrWaveDirectionalModel_ descriptions
@@ -110,7 +112,7 @@ namespace frydom {
 
     FrWaveSpectrum_::FrWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit) :
             m_significant_height(hs),
-            m_peak_frequency(convert_frequency(tp, unit, RADS)) {}
+            m_peak_frequency(convert_frequency(tp, unit, mathutils::RADS)) {}
 
     void FrWaveSpectrum_::SetCos2sDirectionalModel(double spreadingFactor) {
         m_dir_model_type = COS2S;
@@ -155,11 +157,11 @@ namespace frydom {
     void FrWaveSpectrum_::SetHs(double Hs) { m_significant_height = Hs; }
 
     double FrWaveSpectrum_::GetPeakFreq(FREQUENCY_UNIT unit) const {
-        return convert_frequency(m_peak_frequency, RADS, unit);
+        return convert_frequency(m_peak_frequency, mathutils::RADS, unit);
     }
 
     void FrWaveSpectrum_::SetPeakFreq(double Fp, FREQUENCY_UNIT unit) {
-        m_peak_frequency = convert_frequency(Fp, unit, RADS);
+        m_peak_frequency = convert_frequency(Fp, unit, mathutils::RADS);
     }
 
     void FrWaveSpectrum_::SetHsTp(double Hs, double Tp, FREQUENCY_UNIT unit) {
@@ -254,7 +256,7 @@ namespace frydom {
     std::vector<double>
     FrWaveSpectrum_::GetWaveAmplitudes(unsigned int nb_waves, double wmin, double wmax) {
 
-        auto wVect = linspace(wmin, wmax, nb_waves);
+        auto wVect = mathutils::linspace(wmin, wmax, nb_waves);
         double dw = wVect[1] - wVect[0];
 
         std::vector<double> wave_ampl;
@@ -269,8 +271,8 @@ namespace frydom {
     FrWaveSpectrum_::GetWaveAmplitudes(unsigned int nb_waves, double wmin, double wmax,
                                       unsigned int nb_dir, double theta_min, double theta_max, double theta_mean) {
 
-        auto wVect = linspace(wmin, wmax, nb_waves);
-        auto thetaVect = linspace(theta_min, theta_max, nb_dir);
+        auto wVect = mathutils::linspace(wmin, wmax, nb_waves);
+        auto thetaVect = mathutils::linspace(theta_min, theta_max, nb_dir);
         return GetWaveAmplitudes(wVect,thetaVect);
 
     }
@@ -287,8 +289,8 @@ namespace frydom {
         double m0 = pow(m_significant_height,2)/16.;
         double threshold = m0*0.01;
 
-        wmin = dichotomySearch(1E-4,GetPeakFreq(RADS),threshold);
-        wmax = dichotomySearch(GetPeakFreq(RADS),10.,threshold);
+        wmin = dichotomySearch(1E-4,GetPeakFreq(mathutils::RADS),threshold);
+        wmax = dichotomySearch(GetPeakFreq(mathutils::RADS),10.,threshold);
     }
 
     double FrWaveSpectrum_::dichotomySearch(double wmin, double wmax, double threshold) const {
@@ -340,7 +342,7 @@ namespace frydom {
         double wp2 = m_peak_frequency * m_peak_frequency;
         double wp4 = wp2 * wp2;
 
-        double w4_1 = pow(w, -4);
+        double w4_1 = std::pow(w, -4.);
         double w5_1 = w4_1 / w;
 
         double hs2 = m_significant_height * m_significant_height;
@@ -348,9 +350,9 @@ namespace frydom {
         double S_w = 0.;
         if (w > 0.) {
 
-            S_w = 0.3125 * hs2 * wp4 * w5_1 * exp(-1.25 * wp4 * w4_1) * (1 - 0.287 * log(m_gamma));
+            S_w = 0.3125 * hs2 * wp4 * w5_1 * std::exp(-1.25 * wp4 * w4_1) * (1 - 0.287 * std::log(m_gamma));
 
-            double a = exp(-pow(w - m_peak_frequency, 2) / (2. * wp2));
+            double a = std::exp(-std::pow(w - m_peak_frequency, 2) / (2. * wp2));
             if (w <= m_peak_frequency) {
                 a = std::pow(a, _SIGMA2_1_left);
             } else {
@@ -369,13 +371,13 @@ namespace frydom {
 
     double FrPiersonMoskowitzWaveSpectrum_::Eval(double w) const {
 
-        double Tz = RADS2S(m_peak_frequency) / 1.408;  // Up-crossing period
+        double Tz = mathutils::RADS2S(m_peak_frequency) / 1.408;  // Up-crossing period
 
-        double A = pow(MU_2PI/Tz, 4) / (M_PI * pow(w, 4));
+        double A = std::pow(MU_2PI/Tz, 4) / (M_PI * std::pow(w, 4));
 
         double Hs2 = m_significant_height * m_significant_height;
 
-        return 0.25 * A * (Hs2 / w) * exp(-A);
+        return 0.25 * A * (Hs2 / w) * std::exp(-A);
 
     }
 

@@ -14,8 +14,6 @@
 #define FRYDOM_FRFLUIDTYPE_H
 
 
-//#include "frydom/core/common/FrUnits.h"
-
 namespace frydom {
 
     // TODO : placer les pptes de fluide dans des classes air et water...
@@ -45,12 +43,12 @@ namespace frydom {
             m_pressure = 0.;
         }
 
-        FrFluidProperties(double Temperature, double Density, double DynamicViscosity, double KinematicViscosity,
+        FrFluidProperties(double temperature, double density, double dynamicViscosity, double kinematicViscosity,
                           double Salinity, double Pressure) {
-            m_temperature = Temperature;
-            m_density = Density;
-            m_dynamicViscosity = DynamicViscosity;
-            m_kinematicViscosity = KinematicViscosity;
+            m_temperature = temperature;
+            m_density = density;
+            m_dynamicViscosity = dynamicViscosity;
+            m_kinematicViscosity = kinematicViscosity;
             m_salinity = Salinity;
             m_pressure = Pressure;
         }

@@ -11,13 +11,14 @@
 
 
 #include "FrLoader.h"
-//#include "frydom/environment/ocean/current/FrCurrentPolarCoeffs.h"
-//#include <iostream>
-//#include <fstream>
-//
-//#include "MathUtils/MathUtils.h"
-//
-//#include "yaml-cpp/yaml.h"
+
+#include "MathUtils/Angles.h"
+#include "MathUtils/LookupTable1D.h"
+
+#include "yaml-cpp/yaml.h"
+
+#include "frydom/environment/ocean/current/FrCurrentPolarCoeffs.h"
+
 
 
 namespace frydom {
@@ -55,14 +56,14 @@ namespace frydom {
 
         YAML::Node data = YAML::LoadFile(yaml_file);  // TODO: throw exception if not found !
 
-        ANGLE_UNIT unit = RAD;
+        ANGLE_UNIT unit = mathutils::RAD;
 
         if (data["PolarCurrentCoeffs"]) {
             auto node = data["PolarCurrentCoeffs"];
             // All 4 angles, cx, cy, and cz must be present in the yaml file into the PolarCurrentCoeffs node.
 
             try {
-                unit = STRING2ANGLE(node["unit"].as<std::string>());
+                unit = mathutils::STRING2ANGLE(node["unit"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
@@ -74,8 +75,8 @@ namespace frydom {
                 throw("Cannot read angles");
             }
 
-            if (unit == RAD) {
-                rad2deg(angles);
+            if (unit == mathutils::RAD) {
+                mathutils::rad2deg(angles);
             }
 
             // Getting cx Node
@@ -123,7 +124,7 @@ namespace frydom {
             auto node = data["PolarWindCoeffs"];
 
             try {
-                unit = STRING2ANGLE(node["unit"].as<std::string>());
+                unit = mathutils::STRING2ANGLE(node["unit"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
@@ -156,12 +157,12 @@ namespace frydom {
 
     }
 
-    LookupTable1D<double> MakeWindPolarCoeffTable(const std::string& yaml_file, ANGLE_UNIT unit) {
+    mathutils::LookupTable1D<double> MakeWindPolarCoeffTable(const std::string& yaml_file, ANGLE_UNIT unit) {
 
         std::vector<double> angles, cx, cy, cz;
         LoadWindTableFromYaml(yaml_file, angles, cx, cy, cz, unit);
 
-        LookupTable1D<double, double> lut;
+        mathutils::LookupTable1D<double, double> lut;
         lut.SetX(angles);
         lut.AddY("cx", cx);
         lut.AddY("cy", cy);
@@ -190,7 +191,7 @@ namespace frydom {
             auto node = data["PolarFlowCoeffs"];
 
             try {
-                angle_unit = STRING2ANGLE(node["unit"].as<std::string>());
+                angle_unit = mathutils::STRING2ANGLE(node["unit"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
@@ -236,7 +237,7 @@ namespace frydom {
     }
 
     void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
-                                    std::vector<std::pair<double, Vector3d<double>>>& polar,
+                                    std::vector<std::pair<double, mathutils::Vector3d<double>>>& polar,
                                     ANGLE_UNIT& unit,
                                     FRAME_CONVENTION& fc,
                                     DIRECTION_CONVENTION& dc) {
@@ -251,9 +252,9 @@ namespace frydom {
         assert(cy.size() == n);
         assert(cn.size() == n);
 
-        std::pair<double, Vector3d<double>> new_element;
+        std::pair<double, mathutils::Vector3d<double>> new_element;
         for (int i=0; i<angles.size(); i++) {
-            polar.push_back( std::pair<double, Vector3d<double>>(angles[i], Vector3d<double>(cx[i], cy[i], cn[i])));
+            polar.push_back( std::pair<double, mathutils::Vector3d<double>>(angles[i], mathutils::Vector3d<double>(cx[i], cy[i], cn[i])));
         }
     }
 

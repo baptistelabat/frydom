@@ -12,10 +12,7 @@
 
 #include "FrInertiaTensor.h"
 
-//#include "chrono/core/ChMatrix.h"
 #include "chrono/core/ChMatrixDynamic.h"
-//
-//#include "frydom/core/math/FrVector.h"
 #include "frydom/core/math/FrMatrix.h"
 
 

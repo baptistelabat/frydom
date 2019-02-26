@@ -13,12 +13,10 @@
 #ifndef FRYDOM_FRWAVESPECTRUM_H
 #define FRYDOM_FRWAVESPECTRUM_H
 
-//#include <vector>
-//#include "MathUtils/MathUtils.h"
-//
-//#include "frydom/core/common/FrObject.h"
+#include <vector>
 
-//using namespace mathutils;
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/common/FrUnits.h"
 
 namespace frydom {
 
@@ -144,7 +142,7 @@ namespace frydom {
     protected:
         double m_significant_height = 3.;       ///< Significant height (in meters): mean wave height (trough to crest)
                                                 ///<  of the highest third of the waves (H1/3)
-        double m_peak_frequency = S2RADS(9.);   ///< Peak circular frequency (in radians/s),
+        double m_peak_frequency = mathutils::S2RADS(9.);   ///< Peak circular frequency (in radians/s),
                                                 ///< is the wave frequency with the highest energy
 
         WAVE_DIRECTIONAL_MODEL m_dir_model_type = NONE;   ///< wave directional model type (NONE/COS2S/DIRTEST)
@@ -160,7 +158,7 @@ namespace frydom {
         /// \param hs significant height
         /// \param tp peak period
         /// \param unit peak period unit
-        FrWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit=S);;
+        FrWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit);
 
         /// Set the wave directional model to a cos2s, with a spreading factor
         /// \param spreadingFactor spreading factor of the cos2s model
@@ -318,7 +316,7 @@ namespace frydom {
         /// \param tp peak frequency
         /// \param unit peak frequency unit
         /// \param gamma gamma factor of the Jonswap spectrum
-        FrJonswapWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit=S, double gamma=3.3);
+        FrJonswapWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit, double gamma);
 
         /// Check that the gamma factor is correctly defined between 1. and 10.
         void CheckGamma();
@@ -360,7 +358,7 @@ namespace frydom {
         /// \param hs significant height
         /// \param tp peak frequency
         /// \param unit peak frequency unit
-        FrPiersonMoskowitzWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit=S);
+        FrPiersonMoskowitzWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit);
 
         /// Eval the spectrum at one frequency
         /// \param w circular frequency for which the wave spectrum is evaluated

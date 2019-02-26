@@ -13,24 +13,28 @@
 #ifndef FRYDOM_FRRADIATIONMODEL_H
 #define FRYDOM_FRRADIATIONMODEL_H
 
-//#include "frydom/core/FrOffshoreSystem.h"
-//#include "frydom/core/common/FrObject.h"
-//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
-////#include "FrRadiationForce.h
-//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
-//
-//#include <iostream>
-//#include <fstream>
-/////  <<<<<<<<<<<<< Refactoring include
-//
-//#include "frydom/utils/FrRecorder.h"
-//
-//#include "frydom/core/common/FrPhysicsItem.h"
-//
-//#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
+#include <memory>
+#include <unordered_map>
+
+#include "frydom/utils/FrRecorder.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrPhysicsItem.h"
 
 
 namespace frydom {
+
+
+    // Forward declarations
+    class FrHydroDB_;
+    class FrBEMBody_;
+    class FrHydroMapper_;
+    class FrBody_;
+    class FrOffshoreSystem_;
+
+    namespace internal {
+        class FrAddedMassBase;
+    }
+
 
     /**
      * \class FrRadiationModel_

@@ -19,7 +19,6 @@
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/common/FrConvention.h"
-//#include "FrFieldBase.h"
 #include "FrUniformField.h"  // TODO : enlever et utiliser du virtual copy constructor
 
 namespace frydom {

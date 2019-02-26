@@ -12,15 +12,10 @@
 
 #include "FrWindStandardForce.h"
 
-//#include "frydom/core/FrOffshoreSystem.h"
-//#include "frydom/core/body/FrBody.h"
-//
-//#include "frydom/environment/FrEnvironment.h"
-//
-//#include "frydom/environment/atmosphere/FrAtmosphere_.h"
-//#include "frydom/environment/flow/FrFlowBase.h"
-//
-//#include "FrWind.h"
+#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/core/body/FrBody.h"
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/atmosphere/FrAtmosphereInc.h"
 
 
 namespace frydom {

@@ -13,11 +13,11 @@
 #ifndef FRYDOM_FRKINEMATICSTRETCHING_H
 #define FRYDOM_FRKINEMATICSTRETCHING_H
 
-//#include "chrono/core/ChVector.h"
+#include "chrono/core/ChVector.h"  // TODO : virer les vecteurs chrono !!!
 
 namespace frydom {
 
-    enum FrStretchingType {
+    enum STRETCHING_TYPE {
         NO_STRETCHING,
         VERTICAL,
         EXTRAPOLATE,

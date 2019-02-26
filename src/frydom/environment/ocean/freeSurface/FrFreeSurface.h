@@ -18,12 +18,8 @@
 #include "MathUtils/Unit.h"
 
 #include "frydom/core/common/FrObject.h"
-
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/core/math/FrVector.h"
-
-
-//#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 
 
 namespace frydom {

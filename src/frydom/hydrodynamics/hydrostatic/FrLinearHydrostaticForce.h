@@ -13,25 +13,17 @@
 #ifndef FRYDOM_FRLINEARHYDROSTATICFORCE_H
 #define FRYDOM_FRLINEARHYDROSTATICFORCE_H
 
-// FIXME: attention, on a d'autres fichiers FrHydrostaticForce.h et .cpp
-//#include "chrono/physics/ChBody.h"
-//#include <frydom/core/force/FrForce.h>
-//#include "FrLinearHydrostaticStiffnessMatrix.h"
 
-// <<<<<<<<<<<<<<<<<<< Additional include from refactoring
+#include <memory>
+#include "frydom/core/force/FrForce.h"
+#include "FrLinearHydrostaticStiffnessMatrix.h"
 
-//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
-
-// <<<<<<<<<<<<<<<<<<
-
-// FIXME: bien travailler sur le bon placement de la force hydrostatique lineaire !!!!
-
-// TODO: Attention, il faut fonctionner avec une difference de position
 
 namespace frydom {
 
-    // Forward declaration
+    // Forward declarations
     class FrEquilibriumFrame_;
+    class FrHydroDB_;
 
     /// This class defines the linear hydrostatic restoring force applied to a hydrodynamic body.
     /// The force take into account the position of the body (at COG) regards to the equilibrium frame.

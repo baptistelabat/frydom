@@ -13,13 +13,8 @@
 #ifndef FRYDOM_FRUNIFORMFIELD_H
 #define FRYDOM_FRUNIFORMFIELD_H
 
-//#include "chrono/core/ChVector.h"  // TODO supprimer a terme
-//
-//#include "frydom/core/common/FrObject.h"
 #include "FrFieldBase.h"
-//
 #include "frydom/core/math/FrVector.h"
-//#include "frydom/core/common/FrConvention.h"
 #include "frydom/core/common/FrUnits.h"
 
 

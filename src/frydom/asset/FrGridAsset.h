@@ -13,13 +13,6 @@
 #ifndef FRYDOM_FRGRIDASSET_H
 #define FRYDOM_FRGRIDASSET_H
 
-//#include <chrono/assets/ChAssetLevel.h>
-//#include "chrono/assets/ChTriangleMeshShape.h"
-//#include "chrono/assets/ChColorAsset.h"
-//
-//#include "frydom/core/common/FrObject.h"
-
-
 
 #include "frydom/asset/FrAsset.h"
 #include "frydom/core/misc/FrColors.h"

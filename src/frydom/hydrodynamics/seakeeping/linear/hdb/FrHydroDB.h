@@ -13,13 +13,11 @@
 #ifndef FRYDOM_FRHYDRODB_H
 #define FRYDOM_FRHYDRODB_H
 
-//#include <vector>
-//#include "MathUtils/MathUtils.h"
-//#include "frydom/utils/FrEigen.h" // TODO: Eigen est maintenant deja importe de MathUtils... ne plus reposer sur le sous module frydom
-//
-//#include "FrBEMBody.h"
+#include <vector>
+#include <memory>
 
-// TODO: utiliser plutot des std::vector a la place des matrices eigen ...
+#include "frydom/core/common/FrConvention.h"
+#include "frydom/core/common/FrUnits.h"
 
 
 namespace frydom {
@@ -128,7 +126,7 @@ namespace frydom {
 
         std::vector<double> GetFrequencies() const { return m_frequencyDiscretization.GetVector(); }
 
-        std::vector<double> GetWaveDirections(mathutils::ANGLE_UNIT angleUnit, FRAME_CONVENTION fc) const;
+        std::vector<double> GetWaveDirections(ANGLE_UNIT angleUnit, FRAME_CONVENTION fc) const;
 
         unsigned int GetNbFrequencies() const { return m_frequencyDiscretization.GetNbSample(); }
 

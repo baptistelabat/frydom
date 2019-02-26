@@ -13,11 +13,11 @@
 #ifndef FRYDOM_FRTRIANGLEMESHCONNECTED_H
 #define FRYDOM_FRTRIANGLEMESHCONNECTED_H
 
-//#include "chrono/core/ChVector.h"
-
 #include <iostream>
 
 #include "chrono/geometry/ChTriangleMeshConnected.h"
+
+
 
 namespace frydom {
 

@@ -1,16 +1,18 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
+#include <cmath>
 
 #include "FrWaveDispersionRelation.h"
+
 
 namespace frydom {
 
@@ -37,16 +39,16 @@ namespace frydom {
             double A = w2_g * water_height;
             double X = A; // Initial value as deep water wave number (X = kh)
 
-            double thX = tanh(X);
+            double thX = std::tanh(X);
             double residue = A - X * thX;
 
             double Cdot;  // Derivative
-            while (fabs(residue) > tol) {
+            while (std::fabs(residue) > tol) {
                 Cdot = -thX - X * (1 - thX * thX);
 
                 X -= residue / Cdot; // Update
 
-                thX = tanh(X);
+                thX = std::tanh(X);
                 residue = A - X * thX;
             }
             wave_number = X / water_height;

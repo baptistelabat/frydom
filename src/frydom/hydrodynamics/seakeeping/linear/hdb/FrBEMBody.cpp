@@ -10,12 +10,10 @@
 // ==========================================================================
 
 
-//#include "MathUtils/MathUtils.h"
-//
-//#include "chrono/core/ChVectorDynamic.h"
-//#include "frydom/utils/FrEigen.h"
-//#include "FrHydroDB.h"
 #include "FrBEMBody.h"
+
+#include "FrHydroDB.h"
+
 
 
 namespace frydom {
@@ -43,6 +41,18 @@ namespace frydom {
     double FrWaveDriftPolarData::Eval(const std::string name, double x, double y) const {
         return m_table->Eval(name, x, y);
     }
+
+    bool FrWaveDriftPolarData::HasSurge() const { return m_table->HasSerie("surge"); }
+
+    bool FrWaveDriftPolarData::HasSway() const { return m_table->HasSerie("sway"); }
+
+    bool FrWaveDriftPolarData::HasHeave() const { return m_table->HasSerie("heave"); }
+
+    bool FrWaveDriftPolarData::HasPitch() const { return m_table->HasSerie("pitch"); }
+
+    bool FrWaveDriftPolarData::HasRoll() const { return m_table->HasSerie("roll"); }
+
+    bool FrWaveDriftPolarData::HasYaw() const { return m_table->HasSerie("yaw"); }
     //
     // FrBEMBody
     //

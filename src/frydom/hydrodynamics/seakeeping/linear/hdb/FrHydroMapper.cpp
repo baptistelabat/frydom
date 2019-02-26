@@ -11,9 +11,7 @@
 
 
 #include "FrHydroMapper.h"
-//#include "FrBEMBody.h"
-//
-//#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+#include "FrBEMBody.h"
 
 
 namespace frydom {

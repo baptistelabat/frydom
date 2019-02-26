@@ -9,10 +9,11 @@
 //
 // ==========================================================================
 
-//#include "FrIrrApp.h"
-//#include "chrono_irrlicht/ChIrrWizard.h"
-//
-//#include "frydom/core/FrOffshoreSystem.h"
+#include "FrIrrApp.h"
+
+#include "FrIrrCamera.h"
+
+
 
 #define SQ2_2 (sqrt(2.)/2.)
 

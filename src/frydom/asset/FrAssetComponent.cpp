@@ -10,11 +10,10 @@
 // ==========================================================================
 
 
-#include "FrAssetComponent.h"
-
 #include "chrono/assets/ChColorAsset.h"
 #include "chrono/assets/ChVisualization.h"
 
+#include "FrAssetComponent.h"
 
 namespace frydom {
 

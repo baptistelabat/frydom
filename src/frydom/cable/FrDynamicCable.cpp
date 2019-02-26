@@ -12,10 +12,6 @@
 
 #include "FrDynamicCable.h"
 
-//#include "frydom/core/body/FrBody.h"
-
-
-
 namespace frydom {
 
 //    FrDynamicCable::FrDynamicCable() = default;

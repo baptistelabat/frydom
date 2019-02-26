@@ -13,9 +13,8 @@
 #ifndef FRYDOM_FRWINDFORCE_H
 #define FRYDOM_FRWINDFORCE_H
 
-//#include "frydom/core/force/FrForce.h"
-//
-//#include "MathUtils/MathUtils.h"
+#include "frydom/core/force/FrForce.h"
+#include "MathUtils/LookupTable1D.h"
 
 namespace frydom {
 
@@ -53,4 +52,6 @@ namespace frydom {
 
 
 }  // end namespace frydom
+
+
 #endif //FRYDOM_FRWINDFORCE_H

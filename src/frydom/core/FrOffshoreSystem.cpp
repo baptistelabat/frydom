@@ -10,30 +10,14 @@
 // ==========================================================================
 
 
-//#include <frydom/cable/FrDynamicCable.h>
-#include <chrono/utils/ChProfiler.h>
-
-//
-//#include "frydom/core/body/FrBody.h"
-#include "frydom/core/link/links_lib/FrLink.h"
-//#include "frydom/core/common/FrPhysicsItem.h"
-//#include "frydom/environment/FrEnvironment.h"
-//#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
-//
-//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
-//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
-#include "frydom/core/body/FrBody.h"
-
-#include "frydom/environment/FrEnvironment.h"
-
-#include "frydom/utils/FrIrrApp.h"
-//
-//
-//#include "frydom/cable/FrCable.h"
-
-
 #include "FrOffshoreSystem.h"
 
+#include "chrono/utils/ChProfiler.h"
+
+#include "frydom/core/link/links_lib/FrLink.h"
+#include "frydom/core/body/FrBody.h"
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/utils/FrIrrApp.h"
 
 
 namespace frydom {

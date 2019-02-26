@@ -13,7 +13,12 @@
 #ifndef FRYDOM_FRMANOEUVRINGDAMPING_H
 #define FRYDOM_FRMANOEUVRINGDAMPING_H
 
-//#include "frydom/core/force/FrForce.h"
+
+#include <utility>
+
+#include "frydom/core/force/FrForce.h"
+
+
 
 namespace frydom {
 

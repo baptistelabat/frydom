@@ -14,14 +14,10 @@
 #define FRYDOM_FRCURRENTPOLARCOEFFS_H
 
 
-//#include <frydom/core/common/FrConvention.h>
-//#include "MathUtils/MathUtils.h"
-
 #include "MathUtils/LookupTable1D.h"
 
 #include "frydom/core/common/FrConvention.h"
 
-//using namespace mathutils;
 
 // TODO: supprimer cette classe et utiliser directement la LUT dans la classe courant
 namespace frydom {

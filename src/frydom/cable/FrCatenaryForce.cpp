@@ -11,12 +11,7 @@
 
 #include "FrCatenaryForce.h"
 
-
 #include "frydom/core/common/FrNode.h"
-
-//#include "FrCatenaryLine.h"
-
-
 #include "frydom/core/body/FrBody.h"
 
 

@@ -13,16 +13,16 @@
 #ifndef FRYDOM_FRHYDROMAPPER_H
 #define FRYDOM_FRHYDROMAPPER_H
 
-//#include "boost/bimap.hpp"
-//
-//#include "FrHydroDB.h"
-//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrBEMBody.h"
-
+#include <unordered_map>
+#include <memory>
 
 
 namespace frydom {
 
     // Forward declaration
+    class FrEquilibriumFrame_;
+    class FrBEMBody_;
+    class FrBody_;
     class FrEquilibriumFrame_;
 
     /**

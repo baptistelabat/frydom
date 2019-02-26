@@ -13,8 +13,12 @@
 #ifndef FRYDOM_FRWAVEDRIFTFORCE_H
 #define FRYDOM_FRWAVEDRIFTFORCE_H
 
-//#include <frydom/core/force/FrForce.h>
-//#include <MathUtils/MathUtils.h>
+#include <memory>
+#include <vector>
+
+#include "frydom/core/force/FrForce.h"
+
+
 
 namespace frydom {
 
@@ -34,7 +38,7 @@ namespace frydom {
 
     public:
 
-        FrWaveDriftForce_(std::shared_ptr<FrHydroDB_> hdb);
+        explicit FrWaveDriftForce_(std::shared_ptr<FrHydroDB_> hdb);
 
         void Initialize() override;
 

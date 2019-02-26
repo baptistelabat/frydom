@@ -12,16 +12,10 @@
 
 #include "FrFlowForce.h"
 
-//#include "frydom/core/body/FrBody.h"
-//#include "frydom/environment/FrEnvironment.h"
-//#include "frydom/environment/ocean/FrOcean_.h"
-//#include "frydom/environment/atmosphere/FrAtmosphere_.h"
-//#include "frydom/IO/FrLoader.h"
-//#include "frydom/core/common/FrFrame.h"
-//#include "MathUtils/Vector3d.h"
-//
-//#include "frydom/environment/ocean/current/FrCurrent.h"
-//#include "frydom/environment/atmosphere/wind/FrWind.h"
+#include "frydom/core/common/FrUnits.h"
+#include "frydom/core/body/FrBody.h"
+#include "frydom/IO/FrLoader.h"
+#include "frydom/environment/FrEnvironmentInc.h"
 
 
 namespace frydom {
@@ -32,15 +26,15 @@ namespace frydom {
 
     void FrFlowForce::ReadTable(const std::string& yamlFile) {
 
-        std::vector<std::pair<double, Vector3d<double>>> polar;
-        std::pair<double, Vector3d<double>> new_element;
+        std::vector<std::pair<double, mathutils::Vector3d<double>>> polar;
+        std::pair<double, mathutils::Vector3d<double>> new_element;
         ANGLE_UNIT angle_unit;
         FRAME_CONVENTION fc;
         DIRECTION_CONVENTION dc;
 
         LoadFlowPolarCoeffFromYaml(yamlFile, polar, angle_unit, fc, dc);
 
-        if (angle_unit == DEG) {
+        if (angle_unit == mathutils::DEG) {
             for (auto it=polar.begin(); it != polar.end(); ++it) { it->first *= DEG2RAD; }
         }
 
@@ -82,7 +76,7 @@ namespace frydom {
         }
 
         // Normalized angle in [0, 2pi]
-        for (auto it=polar.begin(); it != polar.end(); ++it) { it->first = Normalize_0_2PI(it->first); }
+        for (auto it=polar.begin(); it != polar.end(); ++it) { it->first = mathutils::Normalize_0_2PI(it->first); }
 
         // Sort element according to increasing angles
         std::sort(polar.begin(), polar.end(), [](auto const &a, auto const &b) {
@@ -97,7 +91,7 @@ namespace frydom {
 
         // Complete lookup table
         std::vector<double> anglesL;
-        std::vector<Vector3d<double>> vectL;
+        std::vector<mathutils::Vector3d<double>> vectL;
 
         for (auto it=polar.begin(); it != polar.end(); ++it) {
             anglesL.push_back(it->first);
@@ -110,8 +104,8 @@ namespace frydom {
 
     void FrFlowForce::Update(double time) {
 
-        double alpha = m_fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
-        alpha = Normalize_0_2PI(alpha);
+        double alpha = m_fluxVelocityInBody.GetProjectedAngleAroundZ(mathutils::RAD);
+        alpha = mathutils::Normalize_0_2PI(alpha);
 
         auto coeff = m_table.Eval("coeff", alpha);
         double SquaredVelocity = m_fluxVelocityInBody.squaredNorm();

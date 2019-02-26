@@ -13,9 +13,10 @@
 #ifndef FRYDOM_FRATMOSPHERE_H
 #define FRYDOM_FRATMOSPHERE_H
 
-//#include "frydom/environment/FrFluidType.h"
-//#include "frydom/core/math/FrVector.h"
-//#include "frydom/core/common/FrObject.h"
+#include <memory>
+
+#include "frydom/core/common/FrObject.h"
+
 
 namespace frydom {
 
@@ -23,13 +24,14 @@ namespace frydom {
 
     class FrEnvironment_;
     class FrWind_;
+    class FrFluidProperties;
 
 
     /**
      * \class FrAtmosphere_
      * \brief Class for defining the atmosphere.
      */
-    class FrAtmosphere_ : public FrObject{
+    class FrAtmosphere_ : public FrObject {
 
     private:
 

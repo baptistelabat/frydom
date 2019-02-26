@@ -15,12 +15,16 @@
 
 
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
 
 
 namespace frydom {
 
     //Forward Declaration
     class FrFreeSurface_;
+    class FrWaveSpectrum_;
+    class FrKinematicStretching_;
 
     /**
      * \class FrAiryIrregularWaveField
@@ -103,7 +107,7 @@ namespace frydom {
 
         /// Set the stretching type used to compute velocity and acceleration on positions above the free surface elevation
         /// \param type stretching type (NO_STRETCHING, VERTICAL, EXTRAPOLATE, WHEELER, CHAKRABARTI, DELTA)
-        void SetStretching(FrStretchingType type);
+        void SetStretching(STRETCHING_TYPE type);
 
 //        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
 
@@ -113,14 +117,14 @@ namespace frydom {
         /// \param unit unit of the peak period
         /// \param gamma gamma factor of the Jonswap wave spectrum
         /// \return wave spectrum
-        FrJonswapWaveSpectrum_* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S, double gamma=3.3);
+        FrJonswapWaveSpectrum_* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit, double gamma);
 
         /// Set a Pierson Moskowitz wave spectrum
         /// \param Hs significant height
         /// \param Tp peak period
         /// \param unit unit of the peak period
         /// \return wave spectrum
-        FrPiersonMoskowitzWaveSpectrum_* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S);
+        FrPiersonMoskowitzWaveSpectrum_* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit);
 
         /// Set a wave spectrum, based on the TEST wave spectrum type
         /// \return the TEST wave spectrum

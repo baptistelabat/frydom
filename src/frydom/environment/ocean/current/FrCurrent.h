@@ -20,7 +20,6 @@
 // repliquer le code concernant la gestion des unites de vitesse, des conventions de direction ("vient de")
 // et des reperes d'expression.
 
-//using namespace mathutils;
 
 namespace frydom {
 

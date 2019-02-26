@@ -15,9 +15,9 @@
 namespace frydom {
 
     void FrAiryRegularOptimWaveField::InternalUpdate() {
-        c_expJwt = m_height * exp(-JJ * m_omega * c_time); // m_height = Amplitude.
-        c_cosTheta = cos(m_dirAngle);
-        c_sinTheta = sin(m_dirAngle);
+        c_expJwt = m_height * std::exp(-JJ * m_omega * c_time); // m_height = Amplitude.
+        c_cosTheta = std::cos(m_dirAngle);
+        c_sinTheta = std::sin(m_dirAngle);
     }
 
     void FrAiryRegularOptimWaveField::Initialize() {
@@ -34,11 +34,11 @@ namespace frydom {
         double NWUsign = 1;
         if(IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
         double kdir = x * c_cosTheta + y * c_sinTheta;
-        Complex cmplxElevation = c_expJwt * exp(JJ * m_k * kdir) * NWUsign * c_ramp;
+        Complex cmplxElevation = c_expJwt * std::exp(JJ * m_k * kdir) * NWUsign * c_ramp;
         return std::vector<std::vector<Complex>>(1, std::vector<Complex>(1, cmplxElevation));
     }
 
-    Vector3d<frydom::Complex>
+    mathutils::Vector3d<frydom::Complex>
     FrAiryRegularOptimWaveField::GetComplexVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
         double NWUsign = 1;
         if(IsNED(fc)) {y=-y; z=-z; NWUsign = -NWUsign;}

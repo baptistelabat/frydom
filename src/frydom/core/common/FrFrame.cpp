@@ -13,10 +13,7 @@
 #include "FrFrame.h"
 #include "frydom/core/math/FrMatrix.h"
 
-#include "chrono/core/ChMatrixDynamic.h"
-
-//#include "FrRotation.h"
-//#include "frydom/core/FrOffshoreSystem.h"
+#include "chrono/core/ChMatrixDynamic.h" // TODO : voir pourquoi on doit avoir cet include...
 
 
 namespace frydom {

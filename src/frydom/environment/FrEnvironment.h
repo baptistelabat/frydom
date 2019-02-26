@@ -16,12 +16,11 @@
 #include <memory>
 
 #include "frydom/core/common/FrObject.h"
-//
-//// GeographicLib includes
-//#include "frydom/environment/geographicServices/FrGeographicServices.h"
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/environment/FrFluidType.h"
 
+
+// Forward declaration
 namespace GeographicLib {
     class LocalCartesian;
 }

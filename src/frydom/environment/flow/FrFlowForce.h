@@ -13,9 +13,11 @@
 #ifndef FRYDOM_FRFLOWFORCE_H
 #define FRYDOM_FRFLOWFORCE_H
 
-//#include "MathUtils/Vector3d.h"
-//#include "frydom/core/force/FrForce.h"
-//#include "MathUtils/MathUtils.h"
+
+#include "frydom/core/force/FrForce.h"
+#include "frydom/core/math/FrVector.h"
+
+#include "MathUtils/LookupTable1D.h"
 
 namespace frydom {
 

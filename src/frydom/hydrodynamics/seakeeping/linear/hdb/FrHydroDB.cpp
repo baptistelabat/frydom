@@ -10,15 +10,14 @@
 // ==========================================================================
 
 
-//#include <boost/filesystem.hpp>
-
-//#include "yaml-cpp/yaml.h"
-
 #include "FrHydroDB.h"
-//#include "FrHydroMapper.h"
-//#include "frydom/IO/FrHDF5.h"
-//#include "FrBEMBody.h"
 
+#include "FrHydroMapper.h"
+#include "FrBEMBody.h"
+#include "frydom/IO/FrHDF5.h"
+
+#include "MathUtils/VectorGeneration.h"
+#include "MathUtils/Constants.h"
 
 
 // TODO: utiliser boost/multi_array.hpp a la place des vector<vector<Eigen::Matrix>>> ?????

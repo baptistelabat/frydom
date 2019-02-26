@@ -5,9 +5,10 @@
 #ifndef FRYDOM_FRLINEARRADIATIONINC_H
 #define FRYDOM_FRLINEARRADIATIONINC_H
 
-#include "FrRadiationModel.h"
+#include "FrAddedMassBase.h"
 #include "FrRadiationForce.h"
+#include "FrRadiationModel.h"
 #include "FrVariablesBEMBodyMass.h"
-
+#include "FrVariablesAddedMassBase.h"
 
 #endif //FRYDOM_FRLINEARRADIATIONINC_H

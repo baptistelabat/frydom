@@ -13,13 +13,17 @@
 #ifndef FRYDOM_FREQUILIBRIUMFRAME_H
 #define FRYDOM_FREQUILIBRIUMFRAME_H
 
-//#include "frydom/utils/FrRecorder.h"
-//#include "frydom/core/common/FrFrame.h"
-//#include "frydom/core/math/FrVector.h"
-//#include "frydom/core/common/FrPhysicsItem.h"
-//#include "frydom/core/body/FrBody.h"
+#include "frydom/core/common/FrFrame.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrPhysicsItem.h"
+
+
 
 namespace frydom {
+
+    // Forward declaration
+    class FrBody_;
+
 
     /**
      * \class FrEquilibriumFrame_
@@ -241,6 +245,10 @@ namespace frydom {
 
 
     // TODO : il faudrait pouvoir retrancher une difference de position moyenne
+
+    // Forward declaration
+    template <typename T>
+    class FrTimeRecorder_;
 
     /**
      * \class FrEqFrameMeanMotion_

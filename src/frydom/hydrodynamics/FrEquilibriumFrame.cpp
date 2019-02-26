@@ -12,6 +12,10 @@
 
 #include "FrEquilibriumFrame.h"
 
+#include "frydom/core/body/FrBody.h"
+#include "frydom/utils/FrRecorder.h"
+
+
 namespace frydom {
 
     // ---------------------------------------------------------------------
