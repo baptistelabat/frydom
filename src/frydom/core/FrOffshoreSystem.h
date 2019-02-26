@@ -207,7 +207,7 @@ namespace frydom {
     /// This object will be responsible of performing the entire physical simulation (dynamics, kinematics, statics, etc.),
     /// so you need at least one FrOffshoreSystem_ object in your program, in order to perform simulations
     /// (you'll insert rigid bodies and links into it..).
-    class FrOffshoreSystem_ : public FrObject {
+    class FrOffshoreSystem_ : public FrObject_ {
 
     public:
 
@@ -356,7 +356,7 @@ namespace frydom {
 
         // Logs
         std::unique_ptr<FrLogManager> m_logManager;
-        std::unique_ptr<hermes::Message> m_message;
+//        std::unique_ptr<hermes::Message> m_message;
 
 
     public:
@@ -375,7 +375,7 @@ namespace frydom {
 
         /// Add an item (body, link, etc.) to the offshore sytem
         /// \param item item to be added to the offshore system
-        void Add(std::shared_ptr<FrObject> item); // TODO : faire des dynamic_pointer_cast sur les classes pouvant etre ajoutees...
+        void Add(std::shared_ptr<FrObject_> item); // TODO : faire des dynamic_pointer_cast sur les classes pouvant etre ajoutees...
 
         /// Add a body to the offshore system
         /// \param body body to add

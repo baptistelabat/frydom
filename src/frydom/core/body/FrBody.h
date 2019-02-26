@@ -339,7 +339,7 @@ namespace frydom {
      * \class FrBody_
      * \brief Class for defining a body.
      */
-    class FrBody_ : public FrObject {
+    class FrBody_ : public FrObject_ {
 
     protected:
 
@@ -363,7 +363,7 @@ namespace frydom {
         std::unique_ptr<FrBodyDOFMask> m_DOFMask;
         std::shared_ptr<FrLink_> m_DOFLink;
 
-        std::unique_ptr<hermes::Message> m_message;              ///< Logging message, serialized, send and managed by hermes
+//        std::unique_ptr<hermes::Message> m_message;              ///< Logging message, serialized, send and managed by hermes
 
 
 

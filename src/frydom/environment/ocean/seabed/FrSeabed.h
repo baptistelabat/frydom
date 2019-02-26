@@ -159,7 +159,7 @@ namespace frydom {
      * \class FrSeabed_
      * \brief Class for defining a seabed with either a finite or infinite water depth.
      */
-    class FrSeabed_  : public FrObject {
+    class FrSeabed_  : public FrObject_ {
     protected:
 
         FrOcean_ *m_ocean;            ///< Pointer to the ocean containing this asset

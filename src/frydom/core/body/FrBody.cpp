@@ -189,7 +189,7 @@ namespace frydom {
 
         m_DOFMask = std::make_unique<FrBodyDOFMask>();
 
-        m_message = std::make_unique<hermes::Message>();
+//        m_message = std::make_unique<hermes::Message>();
     }
 
     FrOffshoreSystem_* FrBody_::GetSystem() const {

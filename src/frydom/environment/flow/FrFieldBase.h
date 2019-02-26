@@ -22,7 +22,7 @@ namespace frydom {
      * \class FrFieldBase
      * \brief Class for defining in general the type of flow field used (uniform field, current or wind).
      */
-    class FrFieldBase : public FrObject {
+    class FrFieldBase : public FrObject_ {
 
     public:
         /// Default constructor

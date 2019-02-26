@@ -52,7 +52,7 @@ namespace frydom {
      * \class FrPhysicsItem_
      * \brief Class for defining objects which are neither bodies nor links, for instance caterany lines.
      */
-    class FrPhysicsItem_: public FrObject {
+    class FrPhysicsItem_: public FrObject_ {
 
     protected:
         std::shared_ptr<internal::_FrPhysicsItemBase> m_chronoPhysicsItem;

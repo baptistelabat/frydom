@@ -118,7 +118,7 @@ namespace frydom {
      * FrFunctionBase
      */
 
-    class FrFunctionBase : public FrObject {
+    class FrFunctionBase : public FrObject_ {
 
     private:
 

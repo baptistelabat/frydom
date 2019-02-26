@@ -32,7 +32,7 @@ namespace frydom {
      * \class FrOcean_
      * \brief Class for defining the ocean.
      */
-    class FrOcean_ : public FrObject{
+    class FrOcean_ : public FrObject_ {
 
     private:
 

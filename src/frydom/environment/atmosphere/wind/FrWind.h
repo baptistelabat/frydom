@@ -34,7 +34,7 @@ namespace frydom {
     * \class FrWind
     * \brief Class for defining a wind.
     */
-    class FrWind : public FrObject {
+    class FrWind : public FrObject_ {
 
     public:
 

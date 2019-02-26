@@ -192,7 +192,7 @@ namespace frydom {
      * \class FrForce_
      * \brief  Class defining an effort with force and torque vector
      */
-    class FrForce_ : public FrObject {
+    class FrForce_ : public FrObject_ {
 
     protected:
 

@@ -404,7 +404,7 @@ namespace frydom {
      * \class FrWaveField_
      * \brief Class for defining a wave field (null or linear).
      */
-    class FrWaveField_ : public FrObject {
+    class FrWaveField_ : public FrObject_ {
 
     protected:
 

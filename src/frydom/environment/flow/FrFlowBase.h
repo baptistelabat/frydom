@@ -36,7 +36,7 @@ namespace frydom {
      * \class FrFlowBase
      * \brief Class for defining in general the type of flow used (current or wind).
      */
-    class FrFlowBase : public FrObject {
+    class FrFlowBase : public FrObject_ {
 
     private:
         std::unique_ptr<FrFieldBase> m_field;        ///< Flow field model

@@ -38,7 +38,7 @@ namespace frydom {
      * \class FrAsset
      * \brief
      */
-    class FrAsset : public FrObject {
+    class FrAsset : public FrObject_ {
 
     protected:
         std::shared_ptr<internal::FrAssetBase_> m_chronoAsset;

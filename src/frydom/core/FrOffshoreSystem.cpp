@@ -392,12 +392,12 @@ namespace frydom {
         // Creating the log manager service
         m_logManager = std::make_unique<FrLogManager>();
 
-        m_message = std::make_unique<hermes::Message>();
+//        m_message = std::make_unique<hermes::Message>();
 
     }
 
     FrOffshoreSystem_::~FrOffshoreSystem_() = default;
-    void FrOffshoreSystem_::Add(std::shared_ptr<FrObject> newItem) {
+    void FrOffshoreSystem_::Add(std::shared_ptr<FrObject_> newItem) {
         assert(std::dynamic_pointer_cast<FrBody_>(newItem) ||
                std::dynamic_pointer_cast<FrLink_>(newItem) ||
                std::dynamic_pointer_cast<FrPhysicsItem_>(newItem));

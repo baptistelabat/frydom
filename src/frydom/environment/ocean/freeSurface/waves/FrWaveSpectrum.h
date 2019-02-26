@@ -534,7 +534,7 @@ namespace frydom {
 
     //TODO: Changer la discrétisation en fréquence, de manière à obtenir une énergie spectrale constante pour toutes les composantes
     // voir OrcaFlex Equal Energy dans Frequency spectrum discretisation.
-    class FrWaveSpectrum_ : public FrObject {
+    class FrWaveSpectrum_ : public FrObject_ {
 
     protected:
         double m_significant_height = 3.;       ///< Significant height (in meters): mean wave height (trough to crest)

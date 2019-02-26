@@ -276,7 +276,7 @@ namespace frydom {
      * \class FrEnvironment
      * \brief Class for defining the environmental data.
      */
-    class FrEnvironment_ : public FrObject {
+    class FrEnvironment_ : public FrObject_ {
 
     private:
 
