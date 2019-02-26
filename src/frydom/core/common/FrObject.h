@@ -52,7 +52,7 @@ namespace frydom {
     };
 
     // Forward declarations
-    class FrForce_;
+//    class FrForce_;
 
     /**
      * \class FrObject
@@ -81,6 +81,8 @@ namespace frydom {
             m_message = std::make_unique<hermes::Message>();
         }
 
+        void SetLogFrameConvention(FRAME_CONVENTION fc) { c_logFrameConvention = fc; }
+
         bool IsLogged() { return m_isLogged; }
 
         void SetLogged(bool isLogged) { m_isLogged = isLogged; }
@@ -103,9 +105,6 @@ namespace frydom {
         virtual void Initialize() = 0;
 
         virtual void StepFinalize() = 0;
-
-        // friend declarations
-        friend std::string FrLogManager::NewForceLog(FrForce_*);
 
     };
 

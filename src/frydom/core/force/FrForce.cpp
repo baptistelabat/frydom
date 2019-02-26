@@ -198,9 +198,6 @@ namespace frydom{
 
     void FrForce_::Initialize() {
 
-//        // Init the forces log
-//        InitializeLog();
-
         // This subroutine initializes the object FrForce.
 
         if (m_isForceAsset) {
@@ -216,9 +213,9 @@ namespace frydom{
             m_forceAsset->StepFinalize();
         }
 
-//        // Send the message to the logging system
-//        m_message.Serialize();
-//        m_message.Send();
+        // Send the message to the logging system
+        m_message->Serialize();
+        m_message->Send();
 
     }
 
@@ -250,7 +247,7 @@ namespace frydom{
         };
         m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoForce->GetChTime();});
 
-        m_message->AddField<double>("FX", "m", "longitudinal force in body reference frame", [this] () {
+        m_message->AddField<double>("FX", "N", "longitudinal force in body reference frame", [this] () {
             auto force = GetForceInBody(c_logFrameConvention); return force.GetFx();});
 
         // Init the message

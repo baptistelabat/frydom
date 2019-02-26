@@ -211,8 +211,8 @@ namespace frydom {
 
     void FrBody_::Initialize() {
 
-        // Init the logs
-        if (IsLogged()) InitializeLog();
+//        // Init the logs
+//        if (IsLogged()) InitializeLog();
 
         // Initializing forces
         auto forceIter = force_begin();
@@ -230,12 +230,6 @@ namespace frydom {
         if (m_DOFMask->HasLockedDOF()) {
             InitializeLockedDOF();
         }
-
-
-        // TODO : initialiser les logs
-
-
-
 
     }
 

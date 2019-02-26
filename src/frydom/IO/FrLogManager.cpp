@@ -87,6 +87,7 @@ namespace frydom{
 
     std::string FrLogManager::NewBodyLog(FrBody_* body){
 
+        body->SetLogFrameConvention(m_logFrameConvention);
         // Get the path to the system log path
         cppfs::FilePath systemPath = body->GetSystem()->GetFilePath();
         // just keep the directory path, not the path to the system log file
@@ -118,7 +119,7 @@ namespace frydom{
 
     std::string FrLogManager::NewForceLog(FrForce_ *force) {
 
-        force->c_logFrameConvention = m_logFrameConvention;
+        force->SetLogFrameConvention(m_logFrameConvention);
         // Get the path to the body log path
         cppfs::FilePath bodyPath = force->GetBody()->GetFilePath();
         // just keep the directory path, not the path to the system log file

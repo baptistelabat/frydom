@@ -507,8 +507,6 @@ namespace frydom {
 
     void FrOffshoreSystem_::Initialize() {
 
-        // Init the logs
-        if (IsLogged()) InitializeLog();
 
         // Initializing environment before bodies
         m_environment->Initialize();
@@ -560,6 +558,8 @@ namespace frydom {
 //            (*otherPhysicsIter)->Initialize();
 //        }
 
+        // Init the logs
+        if (IsLogged()) InitializeLog();
 
         m_isInitialized = true;
 
@@ -1054,23 +1054,46 @@ namespace frydom {
 
         auto systemPath = m_logManager->NewSystemLog(this);
 
-        // Initializing message
-        if (m_message->GetName().empty()) {
-            m_message->SetNameAndDescription(
-                    fmt::format("{}_{}",GetTypeName(),GetUUID()),
-                    "Message of an offshore system");
+        // Initializing environment before bodies
+//        m_environment->InitializeLog();
+
+        for (auto& item : m_PrePhysicsList) {
+//            item->InitializeLog();
         }
 
-        // Add a serializer
-        m_message->AddCSVSerializer(systemPath);
+        for (auto& item : m_bodyList){
+            item->InitializeLog();
+        }
 
-        // Add the fields
-        m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoSystem->GetChTime();});
+        for (auto& item : m_MidPhysicsList) {
+//            item->InitializeLog();
+        }
 
+        for (auto& item : m_linkList) {
+//            item->InitializeLog();
+        }
 
-        // Init the message
-        m_message->Initialize();
-        m_message->Send();
+        for (auto& item : m_PostPhysicsList) {
+//            item->InitializeLog();
+        }
+
+//        // Initializing message
+//        if (m_message->GetName().empty()) {
+//            m_message->SetNameAndDescription(
+//                    fmt::format("{}_{}",GetTypeName(),GetUUID()),
+//                    "Message of an offshore system");
+//        }
+//
+//        // Add a serializer
+//        m_message->AddCSVSerializer(systemPath);
+//
+//        // Add the fields
+//        m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoSystem->GetChTime();});
+//
+//
+//        // Init the message
+//        m_message->Initialize();
+//        m_message->Send();
 
     }
 
