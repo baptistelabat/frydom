@@ -18,7 +18,7 @@
 #include "frydom/core/common/FrFrame.h"
 
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/FrOcean.h"
 #include "FrCurrent.h"
 
 namespace frydom {
@@ -68,7 +68,7 @@ namespace frydom {
 
         auto rho = GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
 
-        FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+        FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
 
         auto bodyVelocity = m_body->GetVelocityInWorld(NWU);
         bodyVelocity.z() = 0.;
@@ -98,8 +98,8 @@ namespace frydom {
         // Build the projected rotation in the XoY plane.
         double phi, theta, psi;
         m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
-        auto bodyRotation = FrRotation_(Direction(0.,0.,1.), psi, NWU);
-        auto frame = FrFrame_(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
+        auto bodyRotation = FrRotation(Direction(0.,0.,1.), psi, NWU);
+        auto frame = FrFrame(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
 
         auto worldForce = frame.ProjectVectorFrameInParent(force, NWU);
         auto worldTorque = frame.ProjectVectorFrameInParent(torque, NWU);
@@ -108,7 +108,7 @@ namespace frydom {
     }
 
     void FrCurrentStandardForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+        FrForce::StepFinalize();
     }
 
 

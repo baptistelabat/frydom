@@ -25,18 +25,18 @@ namespace frydom {
 
 
     // Forward declaration
-    class FrLink_;
+    class FrLink;
 
-    class FrActuator : public FrLinkBase_ {
+    class FrActuator : public FrLinkBase {
 
     protected:
         std::shared_ptr<internal::FrMotorBase> m_chronoMotor;
 
-        FrLink_* m_actuatedLink;
+        FrLink* m_actuatedLink;
 
 
     public:
-        FrActuator(FrLink_* actuatedLink);
+        FrActuator(FrLink* actuatedLink);
 
 
         // TODO : ajouter des methodes communes a tous les actuateurs tel que GetPower() ...

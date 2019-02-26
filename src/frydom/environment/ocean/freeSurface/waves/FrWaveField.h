@@ -23,14 +23,14 @@
 namespace frydom {
 
     // Forward declarations
-    class FrFreeSurface_;
-    class FrLinearRampFunction_;
+    class FrFreeSurface;
+    class FrLinearRampFunction;
 
     /**
      * \class FrWaveField_
      * \brief Class for defining a wave field (null or linear).
      */
-    class FrWaveField_ : public FrObject {
+    class FrWaveField : public FrObject {
 
     public:
 
@@ -42,7 +42,7 @@ namespace frydom {
 
     protected:
 
-        FrFreeSurface_* m_freeSurface;        ///< Pointer to the free surface containing this wave field
+        FrFreeSurface* m_freeSurface;        ///< Pointer to the free surface containing this wave field
         WAVE_MODEL m_waveModel = NO_WAVES;    ///< wave model (NO_WAVES, LINEAR_WAVES)
 
         // Cache attributes
@@ -55,10 +55,10 @@ namespace frydom {
 
         /// Default Constructor
         /// \param freeSurface free surface containing this wave field
-        explicit  FrWaveField_(FrFreeSurface_* freeSurface);
+        explicit  FrWaveField(FrFreeSurface* freeSurface);
 
         /// Default destructor
-        ~FrWaveField_() = default;
+        ~FrWaveField() = default;
 
         /// Get the wave model
         /// \return wave model (NO_WAVES, LINEAR_WAVES)
@@ -175,10 +175,10 @@ namespace frydom {
      * \class FrNullWaveField_
      * \brief Class for defining a null wave field.
      */
-    class FrNullWaveField_ : public FrWaveField_ {
+    class FrNullWaveField_ : public FrWaveField {
 
     public:
-        explicit FrNullWaveField_(FrFreeSurface_* freeSurface);
+        explicit FrNullWaveField_(FrFreeSurface* freeSurface);
 
         /// Get the wave elevation on the horizontal position (x,y)
         /// \param x x position

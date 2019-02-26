@@ -32,7 +32,7 @@ namespace frydom {
      * \class FrWaveDirectionalModel_
      * \brief Class for setting the wave directional model.
      */
-    class FrWaveDirectionalModel_ {
+    class FrWaveDirectionalModel {
     public:
 
         /// Get the type of the directional model
@@ -73,7 +73,7 @@ namespace frydom {
     /// the spreading function is given by
     /// spreading_fcn = c_s * cos^2s[(theta-theta0)/2]
     /// where c_s = [ 2^(2s-1)]/Pi . [Gamma²(s+1)]/[Gamma(2s+1)]
-    class FrCos2sDirectionalModel_ : public FrWaveDirectionalModel_ {
+    class FrCos2sDirectionalModel : public FrWaveDirectionalModel {
 
     private:
 
@@ -91,7 +91,7 @@ namespace frydom {
 
         /// Constructor for the FrCos2sDirectionalModel_
         /// \param spreading_factor spreading factor s
-        explicit FrCos2sDirectionalModel_(double spreading_factor=10.);
+        explicit FrCos2sDirectionalModel(double spreading_factor=10.);
 
         /// Get the type of the directional model
         /// \return type of directional model, here COS2S
@@ -115,7 +115,7 @@ namespace frydom {
 
     // =================================================================================================================
     /// For test use only
-    class FrTestDirectionalModel_ : public FrWaveDirectionalModel_ {
+    class FrTestDirectionalModel : public FrWaveDirectionalModel {
     public:
 
         /// Get the type of the directional model
@@ -137,7 +137,7 @@ namespace frydom {
 
     //TODO: Changer la discrétisation en fréquence, de manière à obtenir une énergie spectrale constante pour toutes les composantes
     // voir OrcaFlex Equal Energy dans Frequency spectrum discretisation.
-    class FrWaveSpectrum_ : public FrObject {
+    class FrWaveSpectrum : public FrObject {
 
     protected:
         double m_significant_height = 3.;       ///< Significant height (in meters): mean wave height (trough to crest)
@@ -147,18 +147,18 @@ namespace frydom {
 
         WAVE_DIRECTIONAL_MODEL m_dir_model_type = NONE;   ///< wave directional model type (NONE/COS2S/DIRTEST)
 
-        std::unique_ptr<FrWaveDirectionalModel_> m_directional_model = nullptr; ///< wave directional model
+        std::unique_ptr<FrWaveDirectionalModel> m_directional_model = nullptr; ///< wave directional model
 
     public:
 
         /// Default constructor of the wave spectrum
-        FrWaveSpectrum_() = default;
+        FrWaveSpectrum() = default;
 
         /// Constructor of the wave spectrum, based on a significant height and peak period, with its associated unit.
         /// \param hs significant height
         /// \param tp peak period
         /// \param unit peak period unit
-        FrWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit);
+        FrWaveSpectrum(double hs, double tp, FREQUENCY_UNIT unit);
 
         /// Set the wave directional model to a cos2s, with a spreading factor
         /// \param spreadingFactor spreading factor of the cos2s model
@@ -170,11 +170,11 @@ namespace frydom {
 
         /// Set the wave directional model to use from object
         /// \param dir_model wave directional model
-        void SetDirectionalModel(FrWaveDirectionalModel_* dir_model);
+        void SetDirectionalModel(FrWaveDirectionalModel* dir_model);
 
         /// Get the wave directional model
         /// \return wave directional model
-        FrWaveDirectionalModel_* GetDirectionalModel() const;
+        FrWaveDirectionalModel* GetDirectionalModel() const;
 
         /// Set the wave spectrum as multi-directional
         /// \param model wave directional model type
@@ -282,7 +282,7 @@ namespace frydom {
     #define _SIGMA2_1_left (1./(0.07*0.07))
     #define _SIGMA2_1_right (1./(0.09*0.09))
     /// -------------------------------------------------------------------
-    /// FrJonswapWaveSpectrum_
+    /// FrJonswapWaveSpectrum
     /// -------------------------------------------------------------------
     /// Class for a JONSWAP wave spectrum
     ///
@@ -298,7 +298,7 @@ namespace frydom {
      * \class FrJonswapWaveSpectrum_
      * \brief Class for defining a Jonswap wave spectrum.
      */
-    class FrJonswapWaveSpectrum_ : public FrWaveSpectrum_ {
+    class FrJonswapWaveSpectrum : public FrWaveSpectrum {
 
     private:
         double m_gamma = 3.3;   ///< Peakedness factor of the Jonswap wave spectrum,
@@ -308,7 +308,7 @@ namespace frydom {
     public:
 
         /// Default constructor
-        FrJonswapWaveSpectrum_() = default;
+        FrJonswapWaveSpectrum() = default;
 
         /// Constructor for a JONSWAP wave spectrum, based on the significant height, peak frequency and its associated unit
         /// and a gamma factor
@@ -316,7 +316,7 @@ namespace frydom {
         /// \param tp peak frequency
         /// \param unit peak frequency unit
         /// \param gamma gamma factor of the Jonswap spectrum
-        FrJonswapWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit, double gamma);
+        FrJonswapWaveSpectrum(double hs, double tp, FREQUENCY_UNIT unit, double gamma);
 
         /// Check that the gamma factor is correctly defined between 1. and 10.
         void CheckGamma();
@@ -339,26 +339,26 @@ namespace frydom {
 
     // =================================================================================================================
     /// -------------------------------------------------------------------
-    /// FrPiersonMoskowitzWaveSpectrum_
+    /// FrPiersonMoskowitzWaveSpectrum
     /// -------------------------------------------------------------------
     /// Class for a Pierson Moskowitz wave spectrum
     /**
      * \class FrPiersonMoskowitzWaveSpectrum_
      * \brief Class for defining a Pierson-Moskowitz wave spectrum.
      */
-    class FrPiersonMoskowitzWaveSpectrum_ : public FrWaveSpectrum_ {
+    class FrPiersonMoskowitzWaveSpectrum : public FrWaveSpectrum {
 
     public:
 
         /// Default constructor of a Pierson Moskowitz wave spectrum
-        FrPiersonMoskowitzWaveSpectrum_() = default;
+        FrPiersonMoskowitzWaveSpectrum() = default;
 
         /// Constructor for a Pierson Moskowitz wave spectrum, based on the significant height, peak frequency
         /// and its associated unit
         /// \param hs significant height
         /// \param tp peak frequency
         /// \param unit peak frequency unit
-        FrPiersonMoskowitzWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit);
+        FrPiersonMoskowitzWaveSpectrum(double hs, double tp, FREQUENCY_UNIT unit);
 
         /// Eval the spectrum at one frequency
         /// \param w circular frequency for which the wave spectrum is evaluated
@@ -370,9 +370,9 @@ namespace frydom {
 
     // =================================================================================================================
     /// For test use only
-    class FrTestWaveSpectrum_ : public FrWaveSpectrum_ {
+    class FrTestWaveSpectrum : public FrWaveSpectrum {
     public:
-        FrTestWaveSpectrum_() = default;
+        FrTestWaveSpectrum() = default;
         double Eval(double w) const final;
 
     };

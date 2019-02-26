@@ -14,12 +14,12 @@
 
 #include "frydom/core/body/FrBody.h"
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/FrOcean.h"
 
 
 namespace frydom{
 
-    void FrITTCResistance_::Update(double time) {
+    void FrITTCResistance::Update(double time) {
 
         Velocity cogBodyVel = m_body->GetCOGVelocityInBody(NWU);
         double  ux = cogBodyVel.GetVx();
@@ -39,21 +39,21 @@ namespace frydom{
         SetForceInBody(Force(Rt, 0., 0.), NWU);
     }
 
-    void FrITTCResistance_::SetRoughnessFromLength(double Lwl, double surfaceRoughness) {
+    void FrITTCResistance::SetRoughnessFromLength(double Lwl, double surfaceRoughness) {
         m_ca = (105. * std::pow(surfaceRoughness / Lwl, 1./3.) - 0.64) * 0.001;
     }
 
-    void FrITTCResistance_::SetAirResistanceFromArea(double area) {
+    void FrITTCResistance::SetAirResistanceFromArea(double area) {
         m_caa = area / (1000. * m_hullWetSurface);
     }
 
-    void FrITTCResistance_::Initialize() {
-        FrForce_::Initialize();
+    void FrITTCResistance::Initialize() {
+        FrForce::Initialize();
         m_environment = GetSystem()->GetEnvironment(); // To reduce the number of indirections during update
     }
 
-    void FrITTCResistance_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrITTCResistance::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
 }  // end namespace frydom

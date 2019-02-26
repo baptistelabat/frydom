@@ -20,12 +20,12 @@
 
 namespace frydom {
 
-    void FrLinearHydrostaticForce_::Initialize() {
+    void FrLinearHydrostaticForce::Initialize() {
 
         /// This subroutine initializes the hydrostatic force object.
 
         // Initialization of the parent class.
-        FrForce_::Initialize();
+        FrForce::Initialize();
 
         // Equilibrium frame of the body.
         m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
@@ -34,7 +34,7 @@ namespace frydom {
         m_stiffnessMatrix.SetData(m_HDB->GetBody(m_body)->GetHydrostaticStiffnessMatrix());
     }
 
-    void FrLinearHydrostaticForce_::Update(double time) {
+    void FrLinearHydrostaticForce::Update(double time) {
 
         /// This subroutine computes the hydrostatic loads.
 
@@ -64,17 +64,17 @@ namespace frydom {
         SetTorqueInBodyAtCOG(localTorque, NWU);
     }
 
-    void FrLinearHydrostaticForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrLinearHydrostaticForce::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
-    std::shared_ptr<FrLinearHydrostaticForce_>
-    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body){
+    std::shared_ptr<FrLinearHydrostaticForce>
+    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
 
         /// This subroutine creates the hydrostatic force object for computing the hydrostatic loads.
 
         // Construction of the hydrostatic force object from the HDB.
-        auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(HDB);
+        auto forceHst = std::make_shared<FrLinearHydrostaticForce>(HDB);
 
         // Add the hydrostatic force object as an external force to the body.
         body->AddExternalForce(forceHst);

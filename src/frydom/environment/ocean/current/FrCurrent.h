@@ -24,28 +24,28 @@
 namespace frydom {
 
     // Forward declaration
-    class FrOcean_;
+    class FrOcean;
 
 
     /**
     * \class FrCurrent
     * \brief Class defining a current field.
     */
-    class FrCurrent_ : public FrFlowBase {
+    class FrCurrent : public FrFlowBase {
     private:
 
-        FrOcean_* m_ocean;  ///> Pointer to the ocean containing this current model
+        FrOcean* m_ocean;  ///> Pointer to the ocean containing this current model
 
     public:
         /// Default constructor
         /// \param ocean ocean containing this current model
-        explicit FrCurrent_(FrOcean_* ocean) : FrFlowBase() { m_ocean = ocean;}
+        explicit FrCurrent(FrOcean* ocean) : FrFlowBase() { m_ocean = ocean;}
 
         /// Get the ocean containing this current model
         /// \return ocean containing this current model
-        FrOcean_* GetOcean() const {return m_ocean;}
+        FrOcean* GetOcean() const {return m_ocean;}
 
-        FrEnvironment_* GetEnvironment() const override;
+        FrEnvironment* GetEnvironment() const override;
 
     };
 

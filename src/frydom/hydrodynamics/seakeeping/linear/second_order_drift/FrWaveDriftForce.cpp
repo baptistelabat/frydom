@@ -22,10 +22,10 @@
 
 namespace frydom {
 
-    FrWaveDriftForce_::FrWaveDriftForce_(std::shared_ptr<FrHydroDB_> hdb)
+    FrWaveDriftForce::FrWaveDriftForce(std::shared_ptr<FrHydroDB> hdb)
         : m_hdb(hdb) {}
 
-    void FrWaveDriftForce_::Update(double time) {
+    void FrWaveDriftForce::Update(double time) {
 
         auto force = Force();
         auto torque = Torque();
@@ -106,16 +106,16 @@ namespace frydom {
         SetForceTorqueInBodyAtCOG(force, torque, NWU);
     }
 
-    void FrWaveDriftForce_::Initialize() {
-        FrForce_::Initialize();
+    void FrWaveDriftForce::Initialize() {
+        FrForce::Initialize();
         m_table= m_hdb->GetBody(m_body)->GetWaveDrift();
     }
 
-    void FrWaveDriftForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrWaveDriftForce::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
-    std::vector<double> FrWaveDriftForce_::GetRelativeWaveDir() const {
+    std::vector<double> FrWaveDriftForce::GetRelativeWaveDir() const {
 
         auto ocean = m_body->GetSystem()->GetEnvironment()->GetOcean();
         auto waveDir = ocean->GetFreeSurface()->GetWaveField()->GetWaveDirections(RAD, NWU, GOTO);
@@ -131,7 +131,7 @@ namespace frydom {
         return waveDir;
     }
 
-    std::vector<std::vector<double>> FrWaveDriftForce_::GetEncounterWaveFrequencies(Velocity speed) const {
+    std::vector<std::vector<double>> FrWaveDriftForce::GetEncounterWaveFrequencies(Velocity speed) const {
 
         auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()
                 ->GetFreeSurface()->GetWaveField();

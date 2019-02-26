@@ -19,7 +19,7 @@
 
 namespace frydom {
 
-    FrIrrApp_::FrIrrApp_(chrono::ChSystem* system, double dist)
+    FrIrrApp::FrIrrApp(chrono::ChSystem* system, double dist)
             : chrono::irrlicht::ChIrrApp(system,
                                          L"FRyDoM viewer",
                                          irr::core::dimension2d<irr::u32>(800, 600),
@@ -38,13 +38,13 @@ namespace frydom {
         AddTypicalLogo("frydom_logo.png");
     }
 
-    FrIrrApp_::~FrIrrApp_() = default;
+    FrIrrApp::~FrIrrApp() = default;
 
     // -----------------------------------------------------------------------------
     // Create a skybox that has Z pointing up.
     // Note that the default ChIrrApp::AddTypicalSky() uses Y up.
     // -----------------------------------------------------------------------------
-    void FrIrrApp_::SetSkyBox() {
+    void FrIrrApp::SetSkyBox() {
         std::string str_lf = "sky_lf.jpg";
         std::string str_up = "sky_up.jpg";
         std::string str_dn = "sky_dn.jpg";
@@ -63,7 +63,7 @@ namespace frydom {
 
     }
 
-    FrIrrCamera* FrIrrApp_::AddCustomCamera(irr::core::vector3df mpos, irr::core::vector3df mtarg) {
+    FrIrrCamera* FrIrrApp::AddCustomCamera(irr::core::vector3df mpos, irr::core::vector3df mtarg) {
 
         // create and init camera
         auto camera = new FrIrrCamera(GetDevice(), GetSceneManager()->getRootSceneNode(), GetSceneManager(),
@@ -78,7 +78,7 @@ namespace frydom {
         return camera;
     }
 
-    void FrIrrApp_::AddCustomLights(irr::core::vector3df pos1, irr::core::vector3df pos2,
+    void FrIrrApp::AddCustomLights(irr::core::vector3df pos1, irr::core::vector3df pos2,
                                    double rad1, double rad2,
                                    irr::video::SColorf col1, irr::video::SColorf col2)  {
         // create lights
@@ -89,7 +89,7 @@ namespace frydom {
         mlight2->enableCastShadow(false);
     }
 
-    void FrIrrApp_::Run(double endTime) {
+    void FrIrrApp::Run(double endTime) {
 
         AssetBindAll();
         AssetUpdateAll();
@@ -111,7 +111,7 @@ namespace frydom {
 
     }
 
-    void FrIrrApp_::Visualize() {
+    void FrIrrApp::Visualize() {
         AssetBindAll();
         AssetUpdateAll();
 

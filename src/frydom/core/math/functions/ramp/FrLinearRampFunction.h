@@ -20,7 +20,7 @@ namespace frydom {
     /// --------
     ///
     ///
-    class FrLinearRampFunction_ : public FrFunctionBase {
+    class FrLinearRampFunction : public FrFunctionBase {
 
     private:
 
@@ -32,13 +32,13 @@ namespace frydom {
 
     public:
 
-        FrLinearRampFunction_();
+        FrLinearRampFunction();
 
-        FrLinearRampFunction_(double x0, double y0, double x1, double y1);
+        FrLinearRampFunction(double x0, double y0, double x1, double y1);
 
-        FrLinearRampFunction_(const FrLinearRampFunction_& other);
+        FrLinearRampFunction(const FrLinearRampFunction& other);
 
-        FrLinearRampFunction_* Clone() const override;
+        FrLinearRampFunction* Clone() const override;
 
 //        void SetY0(double intercept);
 //

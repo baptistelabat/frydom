@@ -69,39 +69,39 @@ namespace frydom {
     };
 
     // Forward declaration
-    class FrFreeSurface_;
+    class FrFreeSurface;
 
     /**
      * \class FrTidal_
      * \brief Class for defining tidals.
      */
-    class FrTidal_ : public FrObject {
+    class FrTidal : public FrObject {
 
-        enum TidalLevel {
+        enum TIDAL_LEVEL {
             LOW,
             HIGH
         };
 
-        enum TidalMode {
+        enum TIDAL_MODE {
             NO_TIDAL,
             TWELFTH_RULE
         };
 
     private:
 
-        FrFreeSurface_* m_freeSurface;
+        FrFreeSurface* m_freeSurface;
 
-        std::unique_ptr<chrono::ChFrame<double>> m_tidalFrame;  // FIXME : utiliser un FrFrame_ !!!
+        std::unique_ptr<chrono::ChFrame<double>> m_tidalFrame;  // FIXME : utiliser un FrFrame !!!
 
         double m_time = 0.;
 
-        TidalMode m_mode = NO_TIDAL;
+        TIDAL_MODE m_mode = NO_TIDAL;
 
-        TidalLevel m_level1;
+        TIDAL_LEVEL m_level1;
         FrUTCTime m_t1;
         double m_h1 = 0.;
 
-        TidalLevel m_level2;
+        TIDAL_LEVEL m_level2;
         FrUTCTime m_t2;
         double m_h2;
 
@@ -113,11 +113,11 @@ namespace frydom {
 
     public:
 
-        explicit FrTidal_(FrFreeSurface_* freeSurface);
+        explicit FrTidal(FrFreeSurface* freeSurface);
 
-        FrTidal_(FrFreeSurface_* freeSurface, const FrUTCTime t1, const double h1, TidalLevel level1, const FrUTCTime t2, const double h2, TidalLevel level2);
+        FrTidal(FrFreeSurface* freeSurface, const FrUTCTime t1, const double h1, TIDAL_LEVEL level1, const FrUTCTime t2, const double h2, TIDAL_LEVEL level2);
 
-        ~FrTidal_();
+        ~FrTidal();
 
         void SetNoTidal();
 

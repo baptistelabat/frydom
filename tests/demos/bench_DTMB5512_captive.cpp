@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -20,15 +20,15 @@ using namespace frydom;
 class AddedMassRadiationForce {
 
 protected :
-    FrHydroDB_* m_HDB;
+    FrHydroDB* m_HDB;
     GeneralizedForce m_force;
-    FrBody_* m_body;
+    FrBody* m_body;
 
 public:
 
-    AddedMassRadiationForce(FrHydroDB_* HDB, FrBody_* body) : m_HDB(HDB), m_body(body) {}
+    AddedMassRadiationForce(FrHydroDB* HDB, FrBody* body) : m_HDB(HDB), m_body(body) {}
 
-    void Update(FrBody_* body) {
+    void Update(FrBody* body) {
 
         auto BEMBody = m_HDB->GetBody(body);
         auto infiniteAddedMass = BEMBody->GetInfiniteAddedMass(BEMBody);
@@ -92,8 +92,8 @@ public:
                 << std::endl;
     }
 
-    void Write(double time, Position bodyPosition, FrRotation_ bodyRotation,
-               Position eqPos, FrRotation_ eqRot,
+    void Write(double time, Position bodyPosition, FrRotation bodyRotation,
+               Position eqPos, FrRotation eqRot,
                Force Fh_force, Torque Fh_torque,
                Force Fe_force, Torque Fe_torque,
                Force Fwd_force, Torque Fwd_torque,
@@ -170,7 +170,7 @@ AngularVelocity BodyAngularVelocity(double time, double period, double amplitude
 // Steady Pitch Torque
 // ----------------------------------------------------------
 
-class SteadyPitchTorque : public FrForce_ {
+class SteadyPitchTorque : public FrForce {
 
 public:
 
@@ -195,7 +195,7 @@ public:
 // Steady Heave Force
 // ----------------------------------------------------------
 
-class SteadyHeaveForce : public FrForce_ {
+class SteadyHeaveForce : public FrForce {
 
 public:
 
@@ -257,7 +257,7 @@ int main(int argc, char* argv[]) {
 
     // -- System
 
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     // -- Ocean
     auto ocean = system.GetEnvironment()->GetOcean();
@@ -273,7 +273,7 @@ int main(int argc, char* argv[]) {
     auto body = system.NewBody();
 
     Position COGPosition(0., 0., 0.03); // 0.03
-    FrFrame_ COGFrame(COGPosition, FrRotation_(), NWU);
+    FrFrame COGFrame(COGPosition, FrRotation(), NWU);
 
     body->SetPosition(Position(0., 0., 0.), NWU);
     body->SetVelocityInBodyNoRotation(Velocity(speed, 0., 0.) ,NWU);
@@ -313,7 +313,7 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database("DTMB5512.hdb5");
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get(), false);
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get(), false);
     //eqFrame->InitSpeedFromBody(true);
     //auto eqFrame = std::make_shared<FrEqFrameMeanMotion_>(body.get(), 60., 0.01, false);
     eqFrame->SetPosition(Position(0., 0., 0.03), NWU);
@@ -325,7 +325,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrostatic
 
-    //auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(hdb);
+    //auto forceHst = std::make_shared<FrLinearHydrostaticForce>(hdb);
     //body->AddExternalForce(forceHst);
     auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
@@ -333,7 +333,7 @@ int main(int argc, char* argv[]) {
 
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
 
-    //auto radiationForce = std::make_shared<FrRadiationConvolutionForce_>(radiationModel.get());
+    //auto radiationForce = std::make_shared<FrRadiationConvolutionForce>(radiationModel.get());
     //body->AddExternalForce(radiationForce);
 
     radiationModel->SetImpulseResponseSize(body.get(), 50., 0.008);
@@ -348,7 +348,7 @@ int main(int argc, char* argv[]) {
 
     // -- Wave Drift force
 
-    auto waveDriftForce = std::make_shared<FrWaveDriftForce_>(hdb);
+    auto waveDriftForce = std::make_shared<FrWaveDriftForce>(hdb);
     body->AddExternalForce(waveDriftForce);
 
     // -- ITTC57
@@ -357,7 +357,7 @@ int main(int argc, char* argv[]) {
     auto wettedSurfaceArea = 1.371;
 
     auto ct = ResidualITTC(speed);
-    auto forceResistance = std::make_shared<FrITTCResistance_>(lpp, wettedSurfaceArea, ct, 0.03);
+    auto forceResistance = std::make_shared<FrITTCResistance>(lpp, wettedSurfaceArea, ct, 0.03);
     body->AddExternalForce(forceResistance);
 
     // -- Steady force

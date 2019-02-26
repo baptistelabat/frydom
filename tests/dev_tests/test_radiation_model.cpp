@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
 
     // ---- System
 
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
 
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
     auto body = system.NewBody();
 
     Position COGPos(0.22, 0.22, 2.92);
-    FrFrame_ COGFrame(COGPos, FrRotation_(), NWU);
+    FrFrame COGFrame(COGPos, FrRotation(), NWU);
 
     body->SetPosition(Position(0., 0., 0.), NWU);
 
@@ -62,9 +62,9 @@ int main(int argc, char* argv[]) {
 
     // --- Hydrodynamic
 
-    auto hdb = std::make_shared<FrHydroDB_>("Platform_HDB.hdb5");
+    auto hdb = std::make_shared<FrHydroDB>("Platform_HDB.hdb5");
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
     system.AddPhysicsItem(eqFrame);
 
     hdb->Map(0, body.get(), eqFrame);

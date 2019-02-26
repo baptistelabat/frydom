@@ -26,7 +26,7 @@ namespace frydom {
       * but can be taken relatively or not to the current velocity (using m_relativeVelocity).
       * The resulting damping force (calculated in local frame) is then transformed in global frame.
      * */
-    class FrQuadraticDamping_ : public FrForce_ {
+    class FrQuadraticDamping : public FrForce {
 
     private:
         /// Damping coefficients in translation.
@@ -45,7 +45,7 @@ namespace frydom {
 
     public:
 
-        FrQuadraticDamping_(FLUID_TYPE ft, bool relativeToFluid);
+        FrQuadraticDamping(FLUID_TYPE ft, bool relativeToFluid);
 
         /// Setter for the damping coefficients.
         void SetDampingCoefficients(double Cu, double Cv, double Cw);

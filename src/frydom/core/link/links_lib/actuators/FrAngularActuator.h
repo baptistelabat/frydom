@@ -12,12 +12,12 @@
 namespace frydom {
 
     // Forward declaration
-    class FrLink_;
+    class FrLink;
 
     class FrAngularActuator : public FrActuator {
 
     public:
-        FrAngularActuator(FrLink_* actuatedLink);
+        FrAngularActuator(FrLink* actuatedLink);
 
 
         // TODO : ajouter des methodes communes a tous les actuateurs angulaires tel que GetRPM()...

@@ -25,11 +25,11 @@ namespace frydom {
 
 
     // Forward declarations
-    class FrHydroDB_;
-    class FrBEMBody_;
-    class FrHydroMapper_;
-    class FrBody_;
-    class FrOffshoreSystem_;
+    class FrHydroDB;
+    class FrBEMBody;
+    class FrHydroMapper;
+    class FrBody;
+    class FrOffshoreSystem;
 
     namespace internal {
         class FrAddedMassBase;
@@ -40,33 +40,33 @@ namespace frydom {
      * \class FrRadiationModel_
      * \brief Class for computing the radiation loads.
      */
-    class FrRadiationModel_ : public FrPrePhysicsItem_ {
+    class FrRadiationModel : public FrPrePhysicsItem {
 
     protected:
 
-        std::shared_ptr<FrHydroDB_> m_HDB;
-        std::unordered_map<FrBEMBody_*, GeneralizedForce> m_radiationForce;
+        std::shared_ptr<FrHydroDB> m_HDB;
+        std::unordered_map<FrBEMBody*, GeneralizedForce> m_radiationForce;
         std::shared_ptr<internal::FrAddedMassBase> m_addedMass; // FIXME : a supprimer
 
     public:
 
-        FrRadiationModel_();
+        FrRadiationModel();
 
-        explicit FrRadiationModel_(std::shared_ptr<FrHydroDB_> HDB);
+        explicit FrRadiationModel(std::shared_ptr<FrHydroDB> HDB);
 
-        FrHydroDB_* GetHydroDB() const { return m_HDB.get(); }
+        FrHydroDB* GetHydroDB() const { return m_HDB.get(); }
 
-        Force GetRadiationForce(FrBEMBody_* BEMBody) const;
+        Force GetRadiationForce(FrBEMBody* BEMBody) const;
 
-        Force GetRadiationForce(FrBody_* body) const;
+        Force GetRadiationForce(FrBody* body) const;
 
-        Torque GetRadiationTorque(FrBEMBody_* BEMBody) const;
+        Torque GetRadiationTorque(FrBEMBody* BEMBody) const;
 
-        Torque GetRadiationTorque(FrBody_* body) const;
+        Torque GetRadiationTorque(FrBody* body) const;
 
         void Initialize() override;
 
-        FrHydroMapper_* GetMapper() const;
+        FrHydroMapper* GetMapper() const;
 
         void Update(double time) override;
 
@@ -81,17 +81,17 @@ namespace frydom {
      * \class FrRadiationConvolutionModel_
      * \brief Class for computing the convolution integrals.
      */
-    class FrRadiationConvolutionModel_ : public FrRadiationModel_ {
+    class FrRadiationConvolutionModel : public FrRadiationModel {
 
     private:
-        std::unordered_map<FrBEMBody_*, FrTimeRecorder_<GeneralizedVelocity> > m_recorder;
+        std::unordered_map<FrBEMBody*, FrTimeRecorder<GeneralizedVelocity> > m_recorder;
         double m_Te = -9.;
         double m_dt = -9.;
 
     public:
 
         // Constructor.
-        FrRadiationConvolutionModel_(std::shared_ptr<FrHydroDB_> HDB);
+        FrRadiationConvolutionModel(std::shared_ptr<FrHydroDB> HDB);
 
         void Initialize() override;
 
@@ -99,9 +99,9 @@ namespace frydom {
 
         void StepFinalize() override;
 
-        void SetImpulseResponseSize(FrBEMBody_* BEMBody, double Te, double dt);
+        void SetImpulseResponseSize(FrBEMBody* BEMBody, double Te, double dt);
 
-        void SetImpulseResponseSize(FrBody_* body, double Te, double dt);
+        void SetImpulseResponseSize(FrBody* body, double Te, double dt);
 
         void SetImpulseResponseSize(double Te, double dt);
 
@@ -113,8 +113,8 @@ namespace frydom {
 
     };
 
-    std::shared_ptr<FrRadiationConvolutionModel_>
-    make_radiation_convolution_model(std::shared_ptr<FrHydroDB_> HDB, FrOffshoreSystem_* system);
+    std::shared_ptr<FrRadiationConvolutionModel>
+    make_radiation_convolution_model(std::shared_ptr<FrHydroDB> HDB, FrOffshoreSystem* system);
 
 }  // end namespace frydom
 

@@ -22,7 +22,7 @@ namespace frydom {
      * \class FrWindForce_
      * \brief Class for computing the wind loads.
      */
-    class FrWindForce_ : public FrForce_ {
+    class FrWindForce_ : public FrForce {
 
 
     private:

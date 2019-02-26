@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -19,14 +19,14 @@ using namespace frydom;
 //
 
 
-class TestFrForce_ : public FrForce_ {
+class TestFrForce_ : public FrForce {
 
 private:
     Position m_PointCOGInWorld;                 ///< Position of the COG in world
     Position m_PointCOGInBody;                  ///< Position of the COG in body
     Position m_PointREFInWorld;                 ///< Position of the body in world
 
-    FrFrame_ m_frameREF;                        ///< Body frame
+    FrFrame m_frameREF;                        ///< Body frame
     FrUnitQuaternion_ m_quatREF;                    ///< Rotation of the body in world
 
     Position m_PointInBody;                     ///< Position of a point of the body in body
@@ -158,7 +158,7 @@ void TestFrForce_::LoadData(std::string filename) {
     direction.normalize();
     auto angle = reader.ReadDouble(group + "RotationAngle/");
     m_quatREF =  FrUnitQuaternion_(direction, angle, NWU);
-    m_frameREF = FrFrame_(m_PointREFInWorld, m_quatREF, NWU);
+    m_frameREF = FrFrame(m_PointREFInWorld, m_quatREF, NWU);
 
     m_forceInWorldAtPoint  = ReadForce(reader, group + "ForceInWorldAtPoint/");
     m_forceInBodyAtPoint   = ReadForce(reader, group + "ForceInBodyAtPoint/");
@@ -611,15 +611,15 @@ class TestBase : public ::testing::Test {
 protected:
 
     /// Environment objects
-    FrOffshoreSystem_ system;
-    std::shared_ptr<FrBody_> body;
+    FrOffshoreSystem system;
+    std::shared_ptr<FrBody> body;
     std::shared_ptr<TestFrForce_> force;
 
     /// Initialize environment
     void SetUp() override;
 
     /// Create a new body object with position and orientation of the test
-    std::shared_ptr<FrBody_> NewBody(std::shared_ptr<TestFrForce_> test);
+    std::shared_ptr<FrBody> NewBody(std::shared_ptr<TestFrForce_> test);
 
 };
 
@@ -630,12 +630,12 @@ void TestBase::SetUp() {
     system.AddBody(body);
 }
 
-std::shared_ptr<FrBody_> TestBase::NewBody(std::shared_ptr<TestFrForce_> test) {
+std::shared_ptr<FrBody> TestBase::NewBody(std::shared_ptr<TestFrForce_> test) {
 
-    auto body = std::make_shared<FrBody_>();
+    auto body = std::make_shared<FrBody>();
     body->SetPosition(test->GetPointREFInWorld(), NWU);
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(test->GetPointCOGInBody(),FrRotation_(),NWU),NWU);
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(test->GetPointCOGInBody(),FrRotation(),NWU),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     body->SetRotation(test->GetQuatREF());

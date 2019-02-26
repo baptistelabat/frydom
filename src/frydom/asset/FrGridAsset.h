@@ -20,9 +20,9 @@
 
 namespace frydom {
 
-    class FrFreeSurface_;
+    class FrFreeSurface;
     class FrTriangleMeshConnected;
-    class FrBody_;
+    class FrBody;
 
     /**
      * \class FrFreeSurfaceGridAsset

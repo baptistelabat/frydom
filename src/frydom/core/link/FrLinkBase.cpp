@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -18,44 +18,44 @@
 
 namespace frydom {
 
-    FrLinkBase_::FrLinkBase_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system) :
+    FrLinkBase::FrLinkBase(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem *system) :
             m_node1(node1), m_node2(node2) {
         m_system = system;
     }
 
-    std::shared_ptr<FrNode_> FrLinkBase_::GetNode1() {
+    std::shared_ptr<FrNode> FrLinkBase::GetNode1() {
         return m_node1;
     }
 
-    const std::shared_ptr<FrNode_> FrLinkBase_::GetNode1() const {
+    const std::shared_ptr<FrNode> FrLinkBase::GetNode1() const {
         return m_node1;
     }
 
-    std::shared_ptr<FrNode_> FrLinkBase_::GetNode2() {
+    std::shared_ptr<FrNode> FrLinkBase::GetNode2() {
         return m_node2;
     }
 
-    const std::shared_ptr<FrNode_> FrLinkBase_::GetNode2() const {
+    const std::shared_ptr<FrNode> FrLinkBase::GetNode2() const {
         return m_node2;
     }
 
-    FrBody_* FrLinkBase_::GetBody1() {
+    FrBody* FrLinkBase::GetBody1() {
         return m_node1->GetBody();
     }
 
-    FrBody_* FrLinkBase_::GetBody2() {
+    FrBody* FrLinkBase::GetBody2() {
         return m_node2->GetBody();
     }
 
-    std::shared_ptr<chrono::ChBody> FrLinkBase_::GetChronoBody1() {
+    std::shared_ptr<chrono::ChBody> FrLinkBase::GetChronoBody1() {
         return GetBody1()->GetChronoBody();
     }
 
-    std::shared_ptr<chrono::ChBody> FrLinkBase_::GetChronoBody2() {
+    std::shared_ptr<chrono::ChBody> FrLinkBase::GetChronoBody2() {
         return GetBody1()->GetChronoBody();
     }
 //
-//    FrFrame_ FrLinkBase_::GetTransformFromFrame2ToFrame1() const {
+//    FrFrame FrLinkBase::GetTransformFromFrame2ToFrame1() const {
 //        return m_node2->GetFrameInWorld().GetOtherFrameRelativeTransform_WRT_ThisFrame(m_node1->GetFrameInWorld());
 //    }
 

@@ -51,7 +51,7 @@ namespace frydom {
         return (double)m_hours*3600 + (double)m_minutes*60 + (double)m_seconds;
     }
 
-    void FrTidal_::BuildTable() {
+    void FrTidal::BuildTable() {
         switch (m_mode) {
             case NO_TIDAL:
                 return;
@@ -60,7 +60,7 @@ namespace frydom {
         }
     }
 
-    void FrTidal_::BuildTwelfthRuleTable() {
+    void FrTidal::BuildTwelfthRuleTable() {
         double h_twelfth = fabs(m_h2 - m_h1) / 12.; // One twelfth
 
         double t1 = m_t1.GetMinutes();
@@ -97,13 +97,13 @@ namespace frydom {
         tidalTable.AddY("tidal_height", hVect);
     }
 
-    FrTidal_::FrTidal_(FrFreeSurface_* freeSurface) : m_freeSurface(freeSurface) {
+    FrTidal::FrTidal(FrFreeSurface* freeSurface) : m_freeSurface(freeSurface) {
         m_tidalFrame = std::make_unique<chrono::ChFrame<double>>();
     }
 
-    FrTidal_::FrTidal_(FrFreeSurface_* freeSurface,
-                       const FrUTCTime t1, const double h1, FrTidal_::TidalLevel level1, const FrUTCTime t2,
-                       const double h2, FrTidal_::TidalLevel level2) :
+    FrTidal::FrTidal(FrFreeSurface* freeSurface,
+                       const FrUTCTime t1, const double h1, FrTidal::TIDAL_LEVEL level1, const FrUTCTime t2,
+                       const double h2, FrTidal::TIDAL_LEVEL level2) :
                                         m_t1(t1),
                                         m_h1(h1),
                                         m_level1(level1),
@@ -121,9 +121,9 @@ namespace frydom {
 
     }
 
-    FrTidal_::~FrTidal_() = default;
+    FrTidal::~FrTidal() = default;
 
-    void FrTidal_::Update(const double time) {
+    void FrTidal::Update(const double time) {
         double waterHeight = 0.;
 
         if (m_mode == NO_TIDAL) {
@@ -137,25 +137,25 @@ namespace frydom {
         m_tidalFrame->GetPos().z() = waterHeight;
     }
 
-    const double FrTidal_::GetHeight(FRAME_CONVENTION fc) const {
+    const double FrTidal::GetHeight(FRAME_CONVENTION fc) const {
         double ZPos = m_tidalFrame->GetPos().z();
         if (IsNED(fc)) {ZPos = -ZPos;}
         return ZPos;
     }
 
-    const chrono::ChFrame<double> *FrTidal_::GetTidalFrame() const {
+    const chrono::ChFrame<double> *FrTidal::GetTidalFrame() const {
         return m_tidalFrame.get();
     }
 
-    void FrTidal_::Initialize() {
+    void FrTidal::Initialize() {
 
     }
 
-    void FrTidal_::StepFinalize() {
+    void FrTidal::StepFinalize() {
 
     }
 
-    void FrTidal_::SetNoTidal() {m_mode = NO_TIDAL;}
+    void FrTidal::SetNoTidal() {m_mode = NO_TIDAL;}
 
 
 }  // end namespace frydom

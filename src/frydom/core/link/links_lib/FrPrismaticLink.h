@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #ifndef FRYDOM_FRPRISMATICLINK_H
@@ -24,7 +24,7 @@ namespace frydom {
      * \class FrPrismaticLink
      * \brief Class for defining a prismatic link.
      */
-    class FrPrismaticLink : public FrLink_ {
+    class FrPrismaticLink : public FrLink {
 
     private:
         double m_stiffness = 0.; ///> Link linear stiffness
@@ -38,7 +38,7 @@ namespace frydom {
     public:
         /// Constructor from two nodes and a pointer to the system.
         /// It automatically adds the link to the system
-        FrPrismaticLink(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
+        FrPrismaticLink(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);
 
         /// Set the spring and damper coefficients
         void SetSpringDamper(double stiffness, double damping);
@@ -91,7 +91,7 @@ namespace frydom {
 
 
     /// Helper function to make it easy to link two nodes by a prismatic link
-    std::shared_ptr<FrPrismaticLink> make_prismatic_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
+    std::shared_ptr<FrPrismaticLink> make_prismatic_link(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);
 
 
 }  // end namespace frydom

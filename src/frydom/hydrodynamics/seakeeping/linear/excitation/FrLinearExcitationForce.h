@@ -25,9 +25,9 @@
 namespace frydom {
 
     // Forward declaration
-    class FrHydroDB_;
-    class FrBody_;
-    class FrEquilibriumFrame_;
+    class FrHydroDB;
+    class FrBody;
+    class FrEquilibriumFrame;
 
 
 
@@ -35,13 +35,13 @@ namespace frydom {
      * \class FrLinearExcitationForce_
      * \brief Class for computing the linear excitation loads.
      */
-    class FrLinearExcitationForce_ : public FrForce_ {
+    class FrLinearExcitationForce : public FrForce {
 
     private:
 
-        std::shared_ptr<FrHydroDB_> m_HDB;
+        std::shared_ptr<FrHydroDB> m_HDB;
         //TODO: passed the raw to shared ptr, need some modif in the mapper.
-        FrEquilibriumFrame_* m_equilibriumFrame;
+        FrEquilibriumFrame* m_equilibriumFrame;
 
         std::vector<Eigen::MatrixXcd> m_Fexc;
 
@@ -49,7 +49,7 @@ namespace frydom {
 
     public:
 
-        explicit FrLinearExcitationForce_(std::shared_ptr<FrHydroDB_> HDB) : m_HDB(HDB) {};
+        explicit FrLinearExcitationForce(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) {};
 
         void Initialize() override;
 
@@ -59,8 +59,8 @@ namespace frydom {
 
     };
 
-    std::shared_ptr<FrLinearExcitationForce_>
-    make_linear_excitation_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body);
+    std::shared_ptr<FrLinearExcitationForce>
+    make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body);
 
 
 }  // end namespace frydom

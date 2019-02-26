@@ -24,8 +24,8 @@ namespace frydom {
 
     namespace internal {
 
-        FrAddedMassBase::FrAddedMassBase(FrRadiationModel_* radiationModel) :
-                m_frydomRadiationModel(radiationModel), _FrPhysicsItemBase(radiationModel) {
+        FrAddedMassBase::FrAddedMassBase(FrRadiationModel* radiationModel) :
+                m_frydomRadiationModel(radiationModel), FrPhysicsItemBase(radiationModel) {
 
             /// Constructor of the class.
 
@@ -111,12 +111,12 @@ namespace frydom {
             m_variables->Compute_inc_Mb_v(m_variables->Get_fb(), m_variables->Get_qb());
         }
 
-        int FrAddedMassBase::GetBodyOffset(FrBody_* body) const {
+        int FrAddedMassBase::GetBodyOffset(FrBody* body) const {
             auto chronoBody = body->GetChronoBody();
             return chronoBody->GetOffset_w();
         }
 
-        void FrAddedMassBase::SetVariables(FrBody_* body, chrono::ChMatrix<double>& qb, int offset) const {
+        void FrAddedMassBase::SetVariables(FrBody* body, chrono::ChMatrix<double>& qb, int offset) const {
             auto chronoBody = body->GetChronoBody();
             chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(qb, offset, 0, 6, 1, 0, 0);
         }

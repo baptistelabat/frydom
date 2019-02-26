@@ -218,23 +218,23 @@ namespace frydom {
             }
         }
 
-        int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody_* body) const {
+        int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody* body) const {
             auto chronoBody = body->GetChronoBody();
             return chronoBody->GetOffset_w();
         }
 
-        void internal::FrVariablesAddedMassBase::SetVariables(FrBody_* body, chrono::ChMatrix<double> &result,
+        void internal::FrVariablesAddedMassBase::SetVariables(FrBody* body, chrono::ChMatrix<double> &result,
                                                               int offset) const {
             auto chronoBody = body->GetChronoBody();
             chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(result, offset, 0, 6, 1, 0, 0);
         }
 
-        chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody_* body) const {
+        chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody* body) const {
             auto chronoBody = body->GetChronoBody();
             return chronoBody->GetVariables1()->Get_fb();
         }
 
-        chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody_* body) const {
+        chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody* body) const {
             auto chronoBody = body->GetChronoBody();
             return chronoBody->GetVariables1()->Get_qb();
         }

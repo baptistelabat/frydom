@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -24,7 +24,7 @@ using namespace frydom;
 
 TEST(TestRecorder, ParamSetter) {
 
-    auto recorder = std::make_shared<FrTimeRecorder_<double>>();
+    auto recorder = std::make_shared<FrTimeRecorder<double>>();
 
     recorder->SetTimePersistence(10.);
     EXPECT_FLOAT_EQ(10, recorder->GetTimePersistence());
@@ -32,10 +32,10 @@ TEST(TestRecorder, ParamSetter) {
     recorder->SetTimeStep(0.1);
     EXPECT_FLOAT_EQ(0.1, recorder->GetTimeStep());
 
-    recorder = std::make_shared<FrTimeRecorder_<double>>(150.);
+    recorder = std::make_shared<FrTimeRecorder<double>>(150.);
     EXPECT_FLOAT_EQ(150., recorder->GetTimePersistence());
 
-    recorder = std::make_shared<FrTimeRecorder_<double>>(100., 0.5);
+    recorder = std::make_shared<FrTimeRecorder<double>>(100., 0.5);
     EXPECT_FLOAT_EQ(100., recorder->GetTimePersistence());
     EXPECT_FLOAT_EQ(0.5, recorder->GetTimeStep());
 

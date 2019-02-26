@@ -8,7 +8,7 @@
 namespace frydom {
 
 
-    FrAngularActuator::FrAngularActuator(FrLink_* actuatedLink) : FrActuator(actuatedLink) {}
+    FrAngularActuator::FrAngularActuator(FrLink* actuatedLink) : FrActuator(actuatedLink) {}
 
 
 

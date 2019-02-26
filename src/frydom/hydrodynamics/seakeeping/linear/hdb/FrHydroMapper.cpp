@@ -16,34 +16,34 @@
 
 namespace frydom {
 
-    void FrHydroMapper_::Map(FrBEMBody_* BEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame) {
+    void FrHydroMapper::Map(FrBEMBody* BEMBody, FrBody* body, std::shared_ptr<FrEquilibriumFrame> eqFrame) {
         m_mapBEMToBody[BEMBody] = body;
         m_mapBodyToBEM[body] = BEMBody;
         m_mapEqFrame[BEMBody] = eqFrame;
     }
 
-    unsigned long FrHydroMapper_::GetNbMappings() const {
+    unsigned long FrHydroMapper::GetNbMappings() const {
         return m_mapBEMToBody.size();
     }
 
-    FrBody_* FrHydroMapper_::GetBody(FrBEMBody_* BEMBody) const {
+    FrBody* FrHydroMapper::GetBody(FrBEMBody* BEMBody) const {
         return m_mapBEMToBody.at(BEMBody);
     }
 
-    FrBEMBody_* FrHydroMapper_::GetBEMBody(FrBody_* body) const {
+    FrBEMBody* FrHydroMapper::GetBEMBody(FrBody* body) const {
         return m_mapBodyToBEM.at(body);
     }
 
-    unsigned int FrHydroMapper_::GetBEMBodyIndex(FrBody_* body) const {
+    unsigned int FrHydroMapper::GetBEMBodyIndex(FrBody* body) const {
         auto BEMBody = m_mapBodyToBEM.at(body);
         return BEMBody->GetID();
     }
 
-    FrEquilibriumFrame_* FrHydroMapper_::GetEquilibriumFrame(FrBEMBody_* BEMBody) const {
+    FrEquilibriumFrame* FrHydroMapper::GetEquilibriumFrame(FrBEMBody* BEMBody) const {
         return m_mapEqFrame.at(BEMBody).get();
     }
 
-    FrEquilibriumFrame_* FrHydroMapper_::GetEquilibriumFrame(FrBody_* body) const {
+    FrEquilibriumFrame* FrHydroMapper::GetEquilibriumFrame(FrBody* body) const {
         auto BEMBody = this->GetBEMBody(body);
         return m_mapEqFrame.at(BEMBody).get();
     }

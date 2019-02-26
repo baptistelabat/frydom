@@ -49,7 +49,7 @@ namespace frydom {
 
 
     public:
-        explicit FrAngularActuatorVelocity(FrLink_* actuatedLink);
+        explicit FrAngularActuatorVelocity(FrLink* actuatedLink);
 
         void SetConstantAngularVelocity(double velocity);
 

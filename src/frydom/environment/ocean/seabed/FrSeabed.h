@@ -20,7 +20,7 @@
 namespace frydom {
 
     // Forward declarations
-    class FrOcean_;
+    class FrOcean;
     class FrSeabedGridAsset;
 
     /**
@@ -30,13 +30,13 @@ namespace frydom {
     class FrSeabed_  : public FrObject {
     protected:
 
-        FrOcean_ *m_ocean;            ///< Pointer to the ocean containing this asset
+        FrOcean *m_ocean;            ///< Pointer to the ocean containing this asset
         bool m_infiniteDepth = false; ///< true if the infinite depth condition is applied
 
     public:
         /// Default constructor
         /// \param ocean ocean containing this seabed
-        explicit FrSeabed_(FrOcean_* ocean);
+        explicit FrSeabed_(FrOcean* ocean);
 
         /// Default destructor
         ~FrSeabed_() = default;
@@ -51,7 +51,7 @@ namespace frydom {
 
         /// Get the ocean containing this seabed
         /// \return ocean containing this seabed
-        FrOcean_* GetOcean() const;
+        FrOcean* GetOcean() const;
 
         /// Set the mean bathymetry of the seabed (negative in NWU/positive in NED)
         /// \param bathymetry mean bathymetry of the seabed
@@ -97,7 +97,7 @@ namespace frydom {
 
         /// Default constructor
         /// \param ocean ocean containing this seabed
-        explicit FrNullSeabed_(FrOcean_* ocean);
+        explicit FrNullSeabed_(FrOcean* ocean);
 
         //---------------------------- Asset ----------------------------//
 
@@ -154,7 +154,7 @@ namespace frydom {
 
         /// Default constructor
         /// \param ocean ocean containing this seabed
-        explicit FrMeanSeabed_(FrOcean_* ocean);
+        explicit FrMeanSeabed_(FrOcean* ocean);
 
         /// Default destructor
         ~FrMeanSeabed_() = default;

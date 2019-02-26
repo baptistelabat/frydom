@@ -17,7 +17,7 @@
 
 namespace frydom {
 
-    void makeItBox(std::shared_ptr<FrBody_> body, double xSize, double ySize, double zSize, double mass) {
+    void makeItBox(std::shared_ptr<FrBody> body, double xSize, double ySize, double zSize, double mass) {
 
         // Properties of the box
         double xSize2 = xSize * xSize;
@@ -30,7 +30,7 @@ namespace frydom {
         double Izz = (1./12.) * mass * (xSize2 + ySize2);
 
         // Building the chrono body
-        body->SetInertiaTensor(FrInertiaTensor_(mass, Ixx, Iyy, Izz, 0., 0., 0., FrFrame_(), NWU));
+        body->SetInertiaTensor(FrInertiaTensor_(mass, Ixx, Iyy, Izz, 0., 0., 0., FrFrame(), NWU));
 
 
         // Collision
@@ -46,7 +46,7 @@ namespace frydom {
 
     }
 
-    void makeItCylinder(std::shared_ptr<FrBody_> body, double radius, double height, double mass) {
+    void makeItCylinder(std::shared_ptr<FrBody> body, double radius, double height, double mass) {
 
         // Properties of the cylinder
         double r2 = radius * radius;
@@ -56,7 +56,7 @@ namespace frydom {
         double Izz = Ixx;
 
         // Building the chrono body
-        body->SetInertiaTensor(FrInertiaTensor_(mass, Ixx, Iyy, Izz, 0., 0., 0., FrFrame_(), NWU));
+        body->SetInertiaTensor(FrInertiaTensor_(mass, Ixx, Iyy, Izz, 0., 0., 0., FrFrame(), NWU));
 
         // Collision
         auto collisionModel = body->m_chronoBody->GetCollisionModel();
@@ -71,13 +71,13 @@ namespace frydom {
 
     }
 
-    void makeItSphere(std::shared_ptr<FrBody_> body, double radius, double mass) {
+    void makeItSphere(std::shared_ptr<FrBody> body, double radius, double mass) {
 
         // Properties of the sphere
         double inertia = (2.0 / 5.0) * mass * radius * radius;
 
         // Building the Chrono body
-        body->SetInertiaTensor(FrInertiaTensor_(mass, inertia, inertia, inertia, 0., 0., 0., FrFrame_(), NWU));
+        body->SetInertiaTensor(FrInertiaTensor_(mass, inertia, inertia, inertia, 0., 0., 0., FrFrame(), NWU));
 
         // Collision
         auto collisionModel = body->m_chronoBody->GetCollisionModel();
@@ -92,20 +92,20 @@ namespace frydom {
 
     }
 
-    std::shared_ptr<FrBody_> make_BoxBody(double xSize, double ySize, double zSize, double mass) {
-        auto box = std::make_shared<FrBody_>();
+    std::shared_ptr<FrBody> make_BoxBody(double xSize, double ySize, double zSize, double mass) {
+        auto box = std::make_shared<FrBody>();
         makeItBox(box, xSize, ySize, zSize, mass);
         return box;
     }
 
-    std::shared_ptr<FrBody_> make_CylinderBody(double radius, double height, double mass) {
-        auto cylinder = std::make_shared<FrBody_>();
+    std::shared_ptr<FrBody> make_CylinderBody(double radius, double height, double mass) {
+        auto cylinder = std::make_shared<FrBody>();
         makeItCylinder(cylinder, radius, height, mass);
         return cylinder;
     }
 
-    std::shared_ptr<FrBody_> make_SphereBody(double radius, double mass) {
-        auto sphere = std::make_shared<FrBody_>();
+    std::shared_ptr<FrBody> make_SphereBody(double radius, double mass) {
+        auto sphere = std::make_shared<FrBody>();
         makeItSphere(sphere, radius, mass);
         return sphere;
     }

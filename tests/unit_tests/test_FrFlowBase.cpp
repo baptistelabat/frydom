@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -25,14 +25,14 @@ using namespace frydom;
 class TestFrFlowBase : public ::testing::Test {
 
 protected:
-    FrOffshoreSystem_ system;               ///< system environment
+    FrOffshoreSystem system;               ///< system environment
     std::shared_ptr<FrFlowBase> flow;       ///< flow instanciation for the test
     Velocity m_VelocityInWorld;             ///< Uniform velocity of the flow in world
     Velocity m_RelativeVelocityInFrame;     ///< Velocity of the flow relative to the frame express into the frame
     Position m_PointInWorld;                ///< Position of the frame in world (NWU)
     Velocity m_FrameVelocityInWorld;        ///< Velocity of the frame in world (NWU)
     FrUnitQuaternion_ m_quat;                   ///< Orientation of the frame (quaternion) / world
-    FrFrame_ m_frame;                       ///< Local frame
+    FrFrame m_frame;                       ///< Local frame
 
 protected:
     /// Initialization of the environment
@@ -64,7 +64,7 @@ void TestFrFlowBase::SetUp() {
 
     LoadData("TNR_database.h5");
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
-    flow = std::make_shared<FrCurrent_>(system.GetEnvironment()->GetOcean());
+    flow = std::make_shared<FrCurrent>(system.GetEnvironment()->GetOcean());
     flow->MakeFieldUniform();
     flow->GetFieldUniform()->Set(m_VelocityInWorld, NWU, GOTO);
 }
@@ -81,7 +81,7 @@ void TestFrFlowBase::LoadData(std::string filename) {
     direction.normalize();
     auto angle = reader.ReadDouble(group + "RotationAngle");
     m_quat = FrUnitQuaternion_(direction, angle, NWU);
-    m_frame = FrFrame_(m_PointInWorld, m_quat, NWU);
+    m_frame = FrFrame(m_PointInWorld, m_quat, NWU);
 
     m_FrameVelocityInWorld = ReadVector<Velocity>(reader, group + "FrameVelocityInWorld");
     m_VelocityInWorld = ReadVector<Velocity>(reader, group + "VelocityInWorld");

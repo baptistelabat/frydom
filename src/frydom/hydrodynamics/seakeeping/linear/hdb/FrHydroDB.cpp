@@ -29,15 +29,15 @@ namespace frydom {
     // FrDiscretization1D
     // ----------------------------------------------
 
-    std::vector<double> FrDiscretization1D_::GetVector() const {
+    std::vector<double> FrDiscretization1D::GetVector() const {
         return mathutils::linspace<double>(m_xmin, m_xmax, m_nx);
     }
 
-    void FrDiscretization1D_::SetStep(double delta) {
+    void FrDiscretization1D::SetStep(double delta) {
         m_nx = 1 + (unsigned int)((m_xmax - m_xmin) / delta);
     }
 
-    double FrDiscretization1D_::GetStep() const {
+    double FrDiscretization1D::GetStep() const {
         return (m_xmax-m_xmin) / double(m_nx-1);
     }
 
@@ -45,27 +45,27 @@ namespace frydom {
     // FrHydroDB
     // ----------------------------------------------------
 
-    void FrHydroDB_::SetWaveDirectionDiscretization(const double minAngle, const double maxAngle,
+    void FrHydroDB::SetWaveDirectionDiscretization(const double minAngle, const double maxAngle,
                                                     const unsigned int nbAngle) {
         m_waveDirectionDiscretization.SetMin(minAngle);
         m_waveDirectionDiscretization.SetMax(maxAngle);
         m_waveDirectionDiscretization.SetNbSample(nbAngle);
     }
 
-    void FrHydroDB_::SetTimeDiscretization(const double finalTime, const unsigned int nbTimeSamples) {
+    void FrHydroDB::SetTimeDiscretization(const double finalTime, const unsigned int nbTimeSamples) {
         m_timeDiscretization.SetMin(0.);
         m_timeDiscretization.SetMax(finalTime);
         m_timeDiscretization.SetNbSample(nbTimeSamples);
     }
 
-    void FrHydroDB_::SetFrequencyDiscretization(const double minFreq, const double maxFreq,
+    void FrHydroDB::SetFrequencyDiscretization(const double minFreq, const double maxFreq,
                                                 const unsigned int nbFreq) {
         m_frequencyDiscretization.SetMin(minFreq);
         m_frequencyDiscretization.SetMax(maxFreq);
         m_frequencyDiscretization.SetNbSample(nbFreq);
     }
 
-    std::vector<double> FrHydroDB_::GetWaveDirections(mathutils::ANGLE_UNIT angleUnit, FRAME_CONVENTION fc) const {
+    std::vector<double> FrHydroDB::GetWaveDirections(mathutils::ANGLE_UNIT angleUnit, FRAME_CONVENTION fc) const {
 
         auto waveDir = m_waveDirectionDiscretization.GetVector();
 
@@ -80,40 +80,40 @@ namespace frydom {
         return waveDir;
     }
 
-    FrBEMBody_* FrHydroDB_::NewBody(std::string bodyName) {
-        m_bodies.push_back( std::make_unique<FrBEMBody_>(GetNbBodies(), bodyName, this));
+    FrBEMBody* FrHydroDB::NewBody(std::string bodyName) {
+        m_bodies.push_back( std::make_unique<FrBEMBody>(GetNbBodies(), bodyName, this));
         return m_bodies.back().get();
     }
 
-    FrBEMBody_* FrHydroDB_::GetBody(std::shared_ptr<FrBody_> body) {
+    FrBEMBody* FrHydroDB::GetBody(std::shared_ptr<FrBody> body) {
         return m_mapper->GetBEMBody(body.get());
     }
 
-    FrBEMBody_* FrHydroDB_::GetBody(FrBody_* body) {
+    FrBEMBody* FrHydroDB::GetBody(FrBody* body) {
         return m_mapper->GetBEMBody(body);
     }
 
-    FrBEMBody_* FrHydroDB_::GetBody(int ibody) {
+    FrBEMBody* FrHydroDB::GetBody(int ibody) {
         return m_bodies[ibody].get();
     }
 
-    FrBody_* FrHydroDB_::GetBody(FrBEMBody_* body) {
+    FrBody* FrHydroDB::GetBody(FrBEMBody* body) {
         return m_mapper->GetBody(body);
     }
 
-    FrHydroMapper_* FrHydroDB_::GetMapper() {
+    FrHydroMapper* FrHydroDB::GetMapper() {
         return m_mapper.get();
     }
 
-    void FrHydroDB_::Map(FrBEMBody_* BEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame) {
+    void FrHydroDB::Map(FrBEMBody* BEMBody, FrBody* body, std::shared_ptr<FrEquilibriumFrame> eqFrame) {
         m_mapper->Map(BEMBody, body, eqFrame);
     }
 
-    void FrHydroDB_::Map(int iBEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame) {
+    void FrHydroDB::Map(int iBEMBody, FrBody* body, std::shared_ptr<FrEquilibriumFrame> eqFrame) {
         m_mapper->Map(m_bodies[iBEMBody].get(), body, eqFrame);
     }
 
-    FrHydroDB_::FrHydroDB_(std::string h5file) {
+    FrHydroDB::FrHydroDB(std::string h5file) {
 
         /// Constructor of the class.
         /// This subroutine generates the FrHydroDB_ object from the *.HDB5 input file.
@@ -130,7 +130,7 @@ namespace frydom {
         m_nbody = reader.ReadInt("/NbBody");
 
         /// Creation of the mapper object for hydrodynamic bodies.
-        m_mapper = std::make_unique<FrHydroMapper_>();
+        m_mapper = std::make_unique<FrHydroMapper>();
 
         /// ----> Reading discretization path
         std::string discretization_path = "/Discretizations";
@@ -213,7 +213,7 @@ namespace frydom {
         }
     }
 
-    void FrHydroDB_::ModeReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
+    void FrHydroDB::ModeReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
 
         /// This subroutine reads the modes of a body.
 
@@ -231,7 +231,7 @@ namespace frydom {
             auto imodePath = modePath + buffer;
 
             // Building the force mode
-            FrBEMForceMode_ mode;
+            FrBEMForceMode mode;
 
             auto modeType = reader.ReadString(imodePath + "/Type");
             Direction direction = reader.ReadDoubleArray(imodePath + "/Direction");
@@ -260,7 +260,7 @@ namespace frydom {
             sprintf(buffer, "%d", imotion);
             auto imodePath = modePath + buffer;
 
-            FrBEMMotionMode_ mode;
+            FrBEMMotionMode mode;
 
             auto modeType = reader.ReadString(imodePath + "/Type");
             Direction direction = reader.ReadDoubleArray(imodePath + "/Direction");
@@ -281,7 +281,7 @@ namespace frydom {
 
     }
 
-    void FrHydroDB_::ExcitationReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
+    void FrHydroDB::ExcitationReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
 
         /// This subroutine reads the excitation loads from the *.HDB5 input file.
 
@@ -318,7 +318,7 @@ namespace frydom {
         BEMBody->ComputeExcitation();
     }
 
-    void FrHydroDB_::RadiationReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
+    void FrHydroDB::RadiationReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
 
         /// This subroutine reads the radiation coefficients from the *.HDB5 input file.
 
@@ -362,7 +362,7 @@ namespace frydom {
         }
     }
 
-    void FrHydroDB_::WaveDriftReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
+    void FrHydroDB::WaveDriftReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
 
         /// This subroutine reads the wave drift coefficients.
 
@@ -400,7 +400,7 @@ namespace frydom {
         }
     }
 
-    void FrHydroDB_::HydrostaticReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody) {
+    void FrHydroDB::HydrostaticReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
 
         /// This subroutine reads the hydrostatic matrix.
 
@@ -409,11 +409,11 @@ namespace frydom {
     }
 
 
-    std::shared_ptr<FrHydroDB_> make_hydrodynamic_database(std::string h5file) {
+    std::shared_ptr<FrHydroDB> make_hydrodynamic_database(std::string h5file) {
 
         /// This subroutine reads the HDB from the *.HDB5 input file. All the necessary structures (FrHydroDB, FrBEMBody, etc.) are generated and initialized.
 
-        return std::make_shared<FrHydroDB_>(h5file);
+        return std::make_shared<FrHydroDB>(h5file);
     }
 
 }  // end namespace frydom

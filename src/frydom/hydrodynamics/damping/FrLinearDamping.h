@@ -27,7 +27,7 @@ namespace frydom {
      * \class FrLinearDamping_
      * \brief Class for computing additional linear damping loads.
      */
-    class FrLinearDamping_ : public FrForce_ {
+    class FrLinearDamping : public FrForce {
 
     public:
         using DampingMatrix = mathutils::Matrix66<double>; // TODO : disposer d'une Matrix66 dans mathutils
@@ -40,7 +40,7 @@ namespace frydom {
 
     public:
 
-        FrLinearDamping_(FLUID_TYPE ft, bool relativeToFluid);
+        FrLinearDamping(FLUID_TYPE ft, bool relativeToFluid);
 
         void SetNull();
 

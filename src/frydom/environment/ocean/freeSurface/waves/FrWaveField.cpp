@@ -15,19 +15,19 @@
 #include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
-#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/seabed/FrSeabed.h"
 
 
 namespace frydom {
 
-    FrWaveField_::FrWaveField_(FrFreeSurface_ *freeSurface) : m_freeSurface(freeSurface) {
+    FrWaveField::FrWaveField(FrFreeSurface *freeSurface) : m_freeSurface(freeSurface) {
         m_infinite_depth = freeSurface->GetOcean()->GetSeabed()->GetInfiniteDepth();
     }
 
-    FrWaveField_::WAVE_MODEL FrWaveField_::GetWaveModel() const { return m_waveModel; }
+    FrWaveField::WAVE_MODEL FrWaveField::GetWaveModel() const { return m_waveModel; }
 
-    Velocity FrWaveField_::GetVelocity(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const {
+    Velocity FrWaveField::GetVelocity(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const {
 
         if (cutoff) {
             auto wave_elevation = GetElevation(x, y, fc);
@@ -38,11 +38,11 @@ namespace frydom {
         return GetVelocity(x, y, z, fc);
     }
 
-    Velocity FrWaveField_::GetVelocity(const Position& worldPos, FRAME_CONVENTION fc) const {
+    Velocity FrWaveField::GetVelocity(const Position& worldPos, FRAME_CONVENTION fc) const {
         return GetVelocity(worldPos.GetX(), worldPos.GetY(), worldPos.GetZ(), fc);
     }
 
-    Acceleration FrWaveField_::GetAcceleration(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const {
+    Acceleration FrWaveField::GetAcceleration(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const {
 
         if (cutoff) {
             auto wave_elevation = GetElevation(x, y, fc);
@@ -53,20 +53,20 @@ namespace frydom {
         return GetAcceleration(x, y, z, fc);
     }
 
-    Acceleration FrWaveField_::GetAcceleration(const Position& worldPos, FRAME_CONVENTION fc) const {
+    Acceleration FrWaveField::GetAcceleration(const Position& worldPos, FRAME_CONVENTION fc) const {
         return GetAcceleration(worldPos.GetX(), worldPos.GetY(), worldPos.GetZ(), fc);
     }
 
-    void FrWaveField_::Initialize() {
+    void FrWaveField::Initialize() {
         m_infinite_depth = m_freeSurface->GetOcean()->GetSeabed()->GetInfiniteDepth();
         if (!m_infinite_depth) {c_depth = m_freeSurface->GetOcean()->GetDepth(NWU);};
     }
 
-    void FrWaveField_::StepFinalize() {
+    void FrWaveField::StepFinalize() {
     }
 
     std::vector<std::vector<double>>
-    FrWaveField_::GetElevation(const std::vector<double> &xVect, const std::vector<double> &yVect, FRAME_CONVENTION fc) const {
+    FrWaveField::GetElevation(const std::vector<double> &xVect, const std::vector<double> &yVect, FRAME_CONVENTION fc) const {
         auto nx = xVect.size();
         auto ny = yVect.size();
 
@@ -91,7 +91,7 @@ namespace frydom {
     }
 
     std::vector<std::vector<std::vector<Velocity>>>
-    FrWaveField_::GetVelocity(const std::vector<double> &xvect, const std::vector<double> &yvect,
+    FrWaveField::GetVelocity(const std::vector<double> &xvect, const std::vector<double> &yvect,
                               const std::vector<double> &zvect, FRAME_CONVENTION fc) const {
         auto nx = xvect.size();
         auto ny = yvect.size();
@@ -122,7 +122,7 @@ namespace frydom {
         return velocity;
     }
 
-    void FrWaveField_::Update(double time) {
+    void FrWaveField::Update(double time) {
         c_time = time;
         if (m_freeSurface->GetOcean()->GetEnvironment()->GetTimeRamp()->IsActive()) {
             c_ramp = m_freeSurface->GetOcean()->GetEnvironment()->GetTimeRamp()->Get_y(c_time);
@@ -133,7 +133,7 @@ namespace frydom {
 
     // FrNullWaveField definitions
 
-    FrNullWaveField_::FrNullWaveField_(FrFreeSurface_* freeSurface) : FrWaveField_(freeSurface) {
+    FrNullWaveField_::FrNullWaveField_(FrFreeSurface* freeSurface) : FrWaveField(freeSurface) {
         m_waveModel = NO_WAVES;
     }
 

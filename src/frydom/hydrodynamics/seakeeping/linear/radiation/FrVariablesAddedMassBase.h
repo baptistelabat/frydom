@@ -21,8 +21,8 @@
 namespace frydom {
 
     // Forward declaration
-    class FrBody_;
-    class FrBEMBody_;
+    class FrBody;
+    class FrBEMBody;
 
     namespace internal {
 
@@ -34,7 +34,7 @@ namespace frydom {
         private:
 
             FrAddedMassBase* m_addedMassBase;
-            std::unordered_map<FrBEMBody_*, mathutils::Matrix66<double>> m_invAddedMassCorrection;
+            std::unordered_map<FrBEMBody*, mathutils::Matrix66<double>> m_invAddedMassCorrection;
 
         public:
 
@@ -56,13 +56,13 @@ namespace frydom {
 
             void Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) override;
 
-            int GetBodyOffset(FrBody_* body) const;
+            int GetBodyOffset(FrBody* body) const;
 
-            void SetVariables(FrBody_* body, chrono::ChMatrix<double>& result, int offset) const;
+            void SetVariables(FrBody* body, chrono::ChMatrix<double>& result, int offset) const;
 
-            chrono::ChMatrix<double> GetVariablesFb(FrBody_* body) const;
+            chrono::ChMatrix<double> GetVariablesFb(FrBody* body) const;
 
-            chrono::ChMatrix<double> GetVariablesQb(FrBody_* body) const;
+            chrono::ChMatrix<double> GetVariablesQb(FrBody* body) const;
 
         };
 

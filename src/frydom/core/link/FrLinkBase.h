@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -32,23 +32,23 @@ namespace chrono {
 namespace frydom {
 
     // Forward declarations
-    class FrNode_;
-    class FrBody_;
+    class FrNode;
+    class FrBody;
 
 
     /**
      * \class FrLinkBase_
      * \brief Pure abstract class for every FRyDoM constraints (FrLink_, FrConstraint_, FrActuator_).
      */
-    class FrLinkBase_ : public FrPhysicsItem_ {
+    class FrLinkBase : public FrPhysicsItem {
 
     protected:
 
-        std::shared_ptr<FrNode_> m_node1;   ///< the node on body 1 of the link
-        std::shared_ptr<FrNode_> m_node2;   ///< the node on body 2 of the link
+        std::shared_ptr<FrNode> m_node1;   ///< the node on body 1 of the link
+        std::shared_ptr<FrNode> m_node2;   ///< the node on body 2 of the link
 
     public:
-        FrLinkBase_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
+        FrLinkBase(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);
 
         /// Tells if all constraints of this link are currently turned on or off by the user.
         virtual bool IsDisabled() const = 0;
@@ -72,25 +72,25 @@ namespace frydom {
 
 
         /// Returns the first node of the link
-        std::shared_ptr<FrNode_> GetNode1();
-        const std::shared_ptr<FrNode_> GetNode1() const;
+        std::shared_ptr<FrNode> GetNode1();
+        const std::shared_ptr<FrNode> GetNode1() const;
 
         /// Returns the second node of the link
-        std::shared_ptr<FrNode_> GetNode2();
-        const std::shared_ptr<FrNode_> GetNode2() const;
+        std::shared_ptr<FrNode> GetNode2();
+        const std::shared_ptr<FrNode> GetNode2() const;
 
         /// Returns the first body of the link
-        FrBody_* GetBody1();
-//        const FrBody_* GetBody1() const;
+        FrBody* GetBody1();
+//        const FrBody* GetBody1() const;
 
         /// Returns the second body of the link
-        FrBody_* GetBody2();
-//        const  FrBody_* GetBody2() const;
+        FrBody* GetBody2();
+//        const  FrBody* GetBody2() const;
 
     protected:  // TODO : voir si on rend cela private
 
 
-        friend void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLinkBase_> link);
+        friend void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link);
         virtual std::shared_ptr<chrono::ChLink> GetChronoLink() = 0;
 
         std::shared_ptr<chrono::ChBody> GetChronoBody1();

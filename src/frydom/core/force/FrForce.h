@@ -26,17 +26,17 @@ namespace frydom {
      * \class FrForce_
      * \brief Base class for every external forces on bodies
      */
-    class FrForce_;
+    class FrForce;
 
     namespace internal {
 
         struct _FrForceBase : public chrono::ChForce {
 
-            FrForce_ *m_frydomForce;
+            FrForce *m_frydomForce;
             chrono::ChVector<double> m_torque; // Expressed in body coordinates at COG
 
 
-            explicit _FrForceBase(FrForce_ *force);
+            explicit _FrForceBase(FrForce *force);
 
             void UpdateState() override;
 
@@ -58,26 +58,26 @@ namespace frydom {
     }  // end namespace frydom::internal
 
     // Forward declaration;
-    class FrOffshoreSystem_;
-    class FrBody_;
-    class FrNode_;
-    class FrForceAsset_;
+    class FrOffshoreSystem;
+    class FrBody;
+    class FrNode;
+    class FrForceAsset;
 
     /**
      * \class FrForce_
      * \brief  Class defining an effort with force and torque vector
      */
-    class FrForce_ : public FrObject {
+    class FrForce : public FrObject {
 
     protected:
 
-        FrBody_* m_body;                ///< Pointer to the body to which the force is applied
+        FrBody* m_body;                ///< Pointer to the body to which the force is applied
 
         std::shared_ptr<internal::_FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
 
         // Force Asset
         bool m_isForceAsset = false;            ///< A ForceAsset (vector) is displayed if true
-        std::shared_ptr<FrForceAsset_> m_forceAsset = nullptr;  ///< pointer to the ForceAsset object.
+        std::shared_ptr<FrForceAsset> m_forceAsset = nullptr;  ///< pointer to the ForceAsset object.
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise
@@ -88,12 +88,12 @@ namespace frydom {
     public:
 
         /// Default constructor that builds a new force with zero force and torque
-        FrForce_();
+        FrForce();
 
         /// This subroutine initializes the object FrForce.
         void Initialize() override;
 
-        // TODO : boucle de StepFinalize à mettre en place dans FrBody_
+        // TODO : boucle de StepFinalize à mettre en place dans FrBody
         void StepFinalize() override;
 
         /// Virtual function to allow updating the child object from the solver
@@ -102,7 +102,7 @@ namespace frydom {
 
         /// Return the system to which the force is linked
         /// \return Offshore system object pointer
-        FrOffshoreSystem_* GetSystem();
+        FrOffshoreSystem* GetSystem();
 
         // Force Asset
         /// Inquire if a ForceAsset is displayed
@@ -334,7 +334,7 @@ namespace frydom {
         std::shared_ptr<chrono::ChForce> GetChronoForce();
 
 
-        friend class FrBody_;
+        friend class FrBody;
 
     };
 

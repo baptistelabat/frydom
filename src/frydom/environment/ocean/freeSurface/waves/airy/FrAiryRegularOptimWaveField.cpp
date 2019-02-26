@@ -21,12 +21,12 @@ namespace frydom {
     }
 
     void FrAiryRegularOptimWaveField::Initialize() {
-        FrWaveField_::Initialize();
+        FrWaveField::Initialize();
         InternalUpdate();
     }
 
     void FrAiryRegularOptimWaveField::StepFinalize() {
-        FrWaveField_::StepFinalize();
+        FrWaveField::StepFinalize();
         InternalUpdate();
     }
 
@@ -53,7 +53,7 @@ namespace frydom {
         return {Vx, Vy, Vz};
     }
 
-    FrAiryRegularOptimWaveField::FrAiryRegularOptimWaveField(frydom::FrFreeSurface_ *freeSurface)
+    FrAiryRegularOptimWaveField::FrAiryRegularOptimWaveField(frydom::FrFreeSurface *freeSurface)
             : FrAiryRegularWaveField(
             freeSurface) {
 

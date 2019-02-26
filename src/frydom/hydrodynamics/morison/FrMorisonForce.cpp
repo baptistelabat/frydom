@@ -19,17 +19,17 @@
 
 namespace frydom {
 
-    FrMorisonSingleElement_* FrMorisonForce_::SetSingleElementModel(FrBody_* body) {
-        m_model = std::make_shared<FrMorisonSingleElement_>(body);
-        return dynamic_cast<FrMorisonSingleElement_*>(m_model.get());
+    FrMorisonSingleElement* FrMorisonForce::SetSingleElementModel(FrBody* body) {
+        m_model = std::make_shared<FrMorisonSingleElement>(body);
+        return dynamic_cast<FrMorisonSingleElement*>(m_model.get());
     }
 
-    FrMorisonCompositeElement_* FrMorisonForce_::SetCompositeElementModel(FrBody_* body) {
-        m_model = std::make_shared<FrMorisonCompositeElement_>(body);
-        return dynamic_cast<FrMorisonCompositeElement_*>(m_model.get());
+    FrMorisonCompositeElement* FrMorisonForce::SetCompositeElementModel(FrBody* body) {
+        m_model = std::make_shared<FrMorisonCompositeElement>(body);
+        return dynamic_cast<FrMorisonCompositeElement*>(m_model.get());
     }
 
-    void FrMorisonForce_::Update(double time) {
+    void FrMorisonForce::Update(double time) {
 
         m_model->Update(time);
 
@@ -37,20 +37,20 @@ namespace frydom {
         SetTorqueInBodyAtCOG(m_model->GetTorqueInBody(), NWU);
     }
 
-    void FrMorisonForce_::Initialize() {
+    void FrMorisonForce::Initialize() {
 
-        FrForce_::Initialize();
+        FrForce::Initialize();
         m_model->Initialize();
     }
 
-    void FrMorisonForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrMorisonForce::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
-    std::shared_ptr<FrMorisonForce_>
-    make_morison_force(std::shared_ptr<FrMorisonElement_> model, std::shared_ptr<FrBody_> body){
+    std::shared_ptr<FrMorisonForce>
+    make_morison_force(std::shared_ptr<FrMorisonElement> model, std::shared_ptr<FrBody> body){
         assert(body.get() == model->GetNode()->GetBody());
-        auto MorisonForce = std::make_shared<FrMorisonForce_>(model);
+        auto MorisonForce = std::make_shared<FrMorisonForce>(model);
         body->AddExternalForce(MorisonForce);
         return MorisonForce;
     }

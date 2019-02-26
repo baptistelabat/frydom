@@ -20,18 +20,18 @@
 
 namespace frydom {
 
-    FrCatenaryLine_::FrCatenaryLine_(const std::shared_ptr<FrNode_> &startingNode,
-                                     const std::shared_ptr<FrNode_> &endingNode, bool elastic, double youngModulus,
+    FrCatenaryLine::FrCatenaryLine(const std::shared_ptr<FrNode> &startingNode,
+                                     const std::shared_ptr<FrNode> &endingNode, bool elastic, double youngModulus,
                                      double sectionArea, double unstretchedLength, double linearDensity,
                                      FLUID_TYPE fluid) :
                                      m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
-                                     FrCable_(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity) {}
+                                     FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity) {}
 
-    FrCatenaryLineAsset_ *FrCatenaryLine_::GetLineAsset() const {
+    FrCatenaryLineAsset_ *FrCatenaryLine::GetLineAsset() const {
         return m_lineAsset.get();
     }
 
-    void FrCatenaryLine_::guess_tension() {
+    void FrCatenaryLine::guess_tension() {
 
         Position p0pL = GetEndingNode()->GetPositionInWorld(NWU) - GetStartingNode()->GetPositionInWorld(NWU);
         auto lx = p0pL[0];
@@ -56,38 +56,38 @@ namespace frydom {
         m_t0 = fu * m_u + fv * v;
     }
 
-    Force FrCatenaryLine_::GetTension(double s, FRAME_CONVENTION fc) const {
+    Force FrCatenaryLine::GetTension(double s, FRAME_CONVENTION fc) const {
         Force tension = m_t0 - c_qvec * s;
         if(IsNED(fc)) {internal::SwapFrameConvention(tension);}
         return tension;
     }
 
-    std::shared_ptr<FrCatenaryForce_> FrCatenaryLine_::GetStartingForce() {
+    std::shared_ptr<FrCatenaryForce> FrCatenaryLine::GetStartingForce() {
         return m_startingForce;
     }
 
-    std::shared_ptr<FrCatenaryForce_> FrCatenaryLine_::GetEndingForce() {
+    std::shared_ptr<FrCatenaryForce> FrCatenaryLine::GetEndingForce() {
         return m_endingForce;
     }
 
-    Force FrCatenaryLine_::getStartingNodeTension(FRAME_CONVENTION fc) const {
+    Force FrCatenaryLine::getStartingNodeTension(FRAME_CONVENTION fc) const {
         Force t0 = m_t0;
         if(IsNED(fc)) {internal::SwapFrameConvention(t0);}
         return t0;
     }
 
-    Force FrCatenaryLine_::GetEndingNodeTension(FRAME_CONVENTION fc) const {
+    Force FrCatenaryLine::GetEndingNodeTension(FRAME_CONVENTION fc) const {
         Force t0 = m_t0 - c_qvec * m_cableLength;
         if(IsNED(fc)) {internal::SwapFrameConvention(t0);}
         return -t0;
     }
 
-    double FrCatenaryLine_::_rho(double s) const {
+    double FrCatenaryLine::_rho(double s) const {
         auto t0_qS = GetTension(s, NWU);
         return t0_qS.norm() - m_u.dot(t0_qS);
     }
 
-    Position FrCatenaryLine_::GetUnstrainedChord(double s, FRAME_CONVENTION fc) const {
+    Position FrCatenaryLine::GetUnstrainedChord(double s, FRAME_CONVENTION fc) const {
 
         Position pc = - (m_u/m_q) * ( (GetTension(s, NWU)).norm() - m_t0.norm() );
         auto rho_0 = _rho(0.);  // TODO: calculer directement
@@ -103,14 +103,14 @@ namespace frydom {
 
     }
 
-    Position FrCatenaryLine_::GetElasticIncrement(double s, FRAME_CONVENTION fc) const {
+    Position FrCatenaryLine::GetElasticIncrement(double s, FRAME_CONVENTION fc) const {
         Position Inc(0.,0.,0.);
         if (m_elastic) {Inc = m_q * s * (m_t0 / m_q - 0.5 * m_u * s) / GetEA();}
         if (IsNED(fc)) {internal::SwapFrameConvention(Inc);}
         return Inc;
     }
 
-    Position FrCatenaryLine_::GetAbsPosition(double s, FRAME_CONVENTION fc) const {
+    Position FrCatenaryLine::GetAbsPosition(double s, FRAME_CONVENTION fc) const {
 
         Position pos;
         pos += GetStartingNode()->GetPositionInWorld(fc);
@@ -120,7 +120,7 @@ namespace frydom {
 
     }
 
-    double FrCatenaryLine_::GetStretchedLength() const {
+    double FrCatenaryLine::GetStretchedLength() const {
         double cl = 0.;
         int n = 1000;
 
@@ -136,11 +136,11 @@ namespace frydom {
         return cl;
     }
 
-    Position FrCatenaryLine_::get_residual(FRAME_CONVENTION fc) const {
+    Position FrCatenaryLine::get_residual(FRAME_CONVENTION fc) const {
         return GetAbsPosition(m_cableLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
     }
 
-    mathutils::Matrix33<double> FrCatenaryLine_::analytical_jacobian() const {
+    mathutils::Matrix33<double> FrCatenaryLine::analytical_jacobian() const {
         auto t0n = m_t0.norm();
 
         auto tL = m_t0 - c_qvec * m_cableLength;
@@ -192,19 +192,19 @@ namespace frydom {
         return jac;
     }
 
-    void FrCatenaryLine_::SetSolverTolerance(double tol) {
+    void FrCatenaryLine::SetSolverTolerance(double tol) {
         m_tolerance = tol;
     }
 
-    void FrCatenaryLine_::SetSolverMaxIter(unsigned int maxiter) {
+    void FrCatenaryLine::SetSolverMaxIter(unsigned int maxiter) {
         m_itermax = maxiter;
     }
 
-    void FrCatenaryLine_::SetSolverInitialRelaxFactor(double relax) {
+    void FrCatenaryLine::SetSolverInitialRelaxFactor(double relax) {
         m_relax = relax;
     }
 
-    void FrCatenaryLine_::solve() {
+    void FrCatenaryLine::solve() {
 
         auto res = get_residual(NWU);
         auto jac = analytical_jacobian();
@@ -245,7 +245,7 @@ namespace frydom {
 
     }
 
-    void FrCatenaryLine_::Initialize() {
+    void FrCatenaryLine::Initialize() {
 
         m_q = GetLinearDensity() - m_sectionArea * GetSystem()->GetEnvironment()->GetFluidDensity(c_fluid);
         c_qvec = m_q*m_u;
@@ -263,13 +263,13 @@ namespace frydom {
 
         // Building the catenary forces and adding them to bodies
         if (!m_startingForce) {
-            m_startingForce = std::make_shared<FrCatenaryForce_>(this, LINE_START);
+            m_startingForce = std::make_shared<FrCatenaryForce>(this, LINE_START);
             auto starting_body = m_startNode->GetBody();
             starting_body->AddExternalForce(m_startingForce);
         }
 
         if (!m_endingForce) {
-            m_endingForce = std::make_shared<FrCatenaryForce_>(this, LINE_END);
+            m_endingForce = std::make_shared<FrCatenaryForce>(this, LINE_END);
             auto ending_body = m_endNode->GetBody();
             ending_body->AddExternalForce(m_endingForce);
         }
@@ -281,7 +281,7 @@ namespace frydom {
         }
     }
 
-    void FrCatenaryLine_::Update(double time) {
+    void FrCatenaryLine::Update(double time) {
         UpdateTime(time);
         UpdateState();
         if (is_lineAsset) {
@@ -289,31 +289,31 @@ namespace frydom {
         }
     }
 
-    void FrCatenaryLine_::UpdateTime(double time) {
+    void FrCatenaryLine::UpdateTime(double time) {
         m_time_step = time - m_time;
         m_time = time;
     }
 
-    void FrCatenaryLine_::UpdateState() {
+    void FrCatenaryLine::UpdateState() {
         if (std::abs(m_unrollingSpeed) > DBL_EPSILON and std::abs(m_time_step) > DBL_EPSILON) {
             m_cableLength += m_unrollingSpeed * m_time_step;
         }
         solve();
     }
 
-    void FrCatenaryLine_::SetNbElements(unsigned int n) {
+    void FrCatenaryLine::SetNbElements(unsigned int n) {
         m_nbDrawnElements = n;
     }
 
-    unsigned int FrCatenaryLine_::GetNbElements() {
+    unsigned int FrCatenaryLine::GetNbElements() {
         return m_nbDrawnElements;
     }
 
-    std::shared_ptr<FrCatenaryLine_>
-    make_catenary_line(const std::shared_ptr<FrNode_> &startingNode, const std::shared_ptr<FrNode_> &endingNode,
-                       FrOffshoreSystem_ *system, bool elastic, double youngModulus, double sectionArea,
+    std::shared_ptr<FrCatenaryLine>
+    make_catenary_line(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
+                       FrOffshoreSystem *system, bool elastic, double youngModulus, double sectionArea,
                        double unstretchedLength, double linearDensity, FLUID_TYPE fluid){
-        auto CatenaryLine = std::make_shared<FrCatenaryLine_>(startingNode, endingNode, elastic, youngModulus,
+        auto CatenaryLine = std::make_shared<FrCatenaryLine>(startingNode, endingNode, elastic, youngModulus,
                                                               sectionArea, unstretchedLength, linearDensity, fluid);
         system->Add(CatenaryLine);
         return CatenaryLine;

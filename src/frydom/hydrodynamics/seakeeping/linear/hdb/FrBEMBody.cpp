@@ -57,31 +57,31 @@ namespace frydom {
     // FrBEMBody
     //
 
-    unsigned int FrBEMBody_::GetNbFrequencies() const {
+    unsigned int FrBEMBody::GetNbFrequencies() const {
         return m_HDB->GetNbFrequencies();
     }
 
-    std::vector<double> FrBEMBody_::GetFrequencies() const {
+    std::vector<double> FrBEMBody::GetFrequencies() const {
         return m_HDB->GetFrequencies();
     }
 
-    unsigned int FrBEMBody_::GetNbWaveDirections() const {
+    unsigned int FrBEMBody::GetNbWaveDirections() const {
         return m_HDB->GetNbWaveDirections();
     }
 
-    std::vector<double> FrBEMBody_::GetWaveDirections(mathutils::ANGLE_UNIT angleUnit, FRAME_CONVENTION fc) const {
+    std::vector<double> FrBEMBody::GetWaveDirections(mathutils::ANGLE_UNIT angleUnit, FRAME_CONVENTION fc) const {
         return m_HDB->GetWaveDirections(angleUnit, fc);
     }
 
-    unsigned int FrBEMBody_::GetNbBodies() const {
+    unsigned int FrBEMBody::GetNbBodies() const {
         return m_HDB->GetNbBodies();
     }
 
-    unsigned int FrBEMBody_::GetNbTimeSamples() const {
+    unsigned int FrBEMBody::GetNbTimeSamples() const {
         return m_HDB->GetNbTimeSamples();
     }
 
-    void FrBEMBody_::Initialize() {
+    void FrBEMBody::Initialize() {
 
         /// This subroutine allocates the arrays for the hdb.
 
@@ -124,7 +124,7 @@ namespace frydom {
 
     }
 
-    void FrBEMBody_::Finalize() {
+    void FrBEMBody::Finalize() {
 
         /// This subroutine runs the interpolators.
 
@@ -135,21 +135,21 @@ namespace frydom {
     // Generalized modes
     //
 
-    FrBEMForceMode_* FrBEMBody_::GetForceMode(unsigned int imode) {
+    FrBEMForceMode* FrBEMBody::GetForceMode(unsigned int imode) {
         assert(imode < GetNbForceMode());
         return &m_forceModes[imode];
     }
 
-    FrBEMMotionMode_* FrBEMBody_::GetMotionMode(unsigned int imode) {
+    FrBEMMotionMode* FrBEMBody::GetMotionMode(unsigned int imode) {
         assert(imode < GetNbMotionMode());
         return &m_motionModes[imode];
     }
 
-    void FrBEMBody_::AddForceMode(FrBEMForceMode_& mode) {
+    void FrBEMBody::AddForceMode(FrBEMForceMode& mode) {
         m_forceModes.push_back(mode);
     }
 
-    void FrBEMBody_::AddMotionMode(FrBEMMotionMode_& mode) {
+    void FrBEMBody::AddMotionMode(FrBEMMotionMode& mode) {
         m_motionModes.push_back(mode);
     }
 
@@ -157,28 +157,28 @@ namespace frydom {
     // Setters
     //
 
-    void FrBEMBody_::SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd &diffractionMatrix) {
+    void FrBEMBody::SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd &diffractionMatrix) {
         assert(iangle < GetNbWaveDirections());
         assert(diffractionMatrix.rows() == GetNbForceMode());
         assert(diffractionMatrix.cols() == GetNbFrequencies());
         m_diffraction[iangle] = diffractionMatrix;
     }
 
-    void FrBEMBody_::SetFroudeKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix) {
+    void FrBEMBody::SetFroudeKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix) {
         assert(iangle < GetNbWaveDirections());
         assert(froudeKrylovMatrix.rows() == GetNbForceMode());
         assert(froudeKrylovMatrix.cols() == GetNbFrequencies());
         m_froudeKrylov[iangle] = froudeKrylovMatrix;
     }
 
-    void FrBEMBody_::SetExcitation(unsigned int iangle, const Eigen::MatrixXcd& excitationMatrix) {
+    void FrBEMBody::SetExcitation(unsigned int iangle, const Eigen::MatrixXcd& excitationMatrix) {
         assert(iangle < GetNbWaveDirections());
         assert(excitationMatrix.rows() == GetNbForceMode());
         assert(excitationMatrix.cols() == GetNbFrequencies());
         m_excitation[iangle] = excitationMatrix;
     }
 
-    void FrBEMBody_::ComputeExcitation() {
+    void FrBEMBody::ComputeExcitation() {
 
         /// This subroutine computes the excitation loads from the diffraction loads and the Froude-Krylov loads.
 
@@ -187,13 +187,13 @@ namespace frydom {
         }
     }
 
-    void FrBEMBody_::SetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion, const Eigen::MatrixXd& CMInf) {
+    void FrBEMBody::SetInfiniteAddedMass(FrBEMBody* BEMBodyMotion, const Eigen::MatrixXd& CMInf) {
         assert(CMInf.rows() == 6);
         assert(CMInf.cols() == 6);
         m_infiniteAddedMass[BEMBodyMotion] = CMInf;
     }
 
-    void FrBEMBody_::SetImpulseResponseFunctionK(FrBEMBody_* BEMBodyMotion, const std::vector<Eigen::MatrixXd>& listIRF) {
+    void FrBEMBody::SetImpulseResponseFunctionK(FrBEMBody* BEMBodyMotion, const std::vector<Eigen::MatrixXd>& listIRF) {
 
         for (auto& IRF: listIRF) {
             assert(IRF.rows() == 6);
@@ -213,7 +213,7 @@ namespace frydom {
         }
     }
 
-    void FrBEMBody_::SetImpulseResponseFunctionKu(FrBEMBody_* BEMBodyMotion, const std::vector<Eigen::MatrixXd> &listIRF) {
+    void FrBEMBody::SetImpulseResponseFunctionKu(FrBEMBody* BEMBodyMotion, const std::vector<Eigen::MatrixXd> &listIRF) {
 
         for (auto& IRF: listIRF) {
             assert(IRF.rows() == 6);
@@ -233,15 +233,15 @@ namespace frydom {
         }
     }
 
-    void FrBEMBody_::SetStiffnessMatrix(const mathutils::Matrix33<double>& hydrostaticStiffnessMatrix) {
+    void FrBEMBody::SetStiffnessMatrix(const mathutils::Matrix33<double>& hydrostaticStiffnessMatrix) {
         m_hydrostaticStiffnessMatrix = hydrostaticStiffnessMatrix;
     }
 
-    void FrBEMBody_::SetStiffnessMatrix(const mathutils::Matrix66<double>& hydrostaticStiffnessMatrix) {
+    void FrBEMBody::SetStiffnessMatrix(const mathutils::Matrix66<double>& hydrostaticStiffnessMatrix) {
         m_hydrostaticStiffnessMatrix = hydrostaticStiffnessMatrix.block<3, 3>(2, 2);
     }
 
-    void FrBEMBody_::SetWaveDrift() {
+    void FrBEMBody::SetWaveDrift() {
         m_waveDrift = std::make_unique<FrWaveDriftPolarData>();
     }
 
@@ -249,55 +249,55 @@ namespace frydom {
     // Getters
     //
 
-    Eigen::MatrixXcd FrBEMBody_::GetDiffraction(const unsigned int iangle) const {
+    Eigen::MatrixXcd FrBEMBody::GetDiffraction(const unsigned int iangle) const {
         assert(iangle < this->GetNbWaveDirections());
         return m_diffraction[iangle];
     }
 
-    Eigen::VectorXcd FrBEMBody_::GetDiffraction(const unsigned int iangle, const unsigned iforce) const {
+    Eigen::VectorXcd FrBEMBody::GetDiffraction(const unsigned int iangle, const unsigned iforce) const {
         assert(iangle < this->GetNbWaveDirections());
         assert(iforce < this->GetNbForceMode());
         return m_diffraction[iangle].row(iforce);
     }
 
-    Eigen::MatrixXcd FrBEMBody_::GetFroudeKrylov(const unsigned int iangle) const {
+    Eigen::MatrixXcd FrBEMBody::GetFroudeKrylov(const unsigned int iangle) const {
         assert(iangle < this->GetNbWaveDirections());
         return m_froudeKrylov[iangle];
     }
 
-    Eigen::VectorXcd FrBEMBody_::GetFroudeKrylov(const unsigned int iangle, const unsigned iforce) const {
+    Eigen::VectorXcd FrBEMBody::GetFroudeKrylov(const unsigned int iangle, const unsigned iforce) const {
         assert(iangle < this->GetNbWaveDirections());
         assert(iforce < this->GetNbForceMode());
         return m_froudeKrylov[iangle].row(iforce);
     }
 
-    Eigen::MatrixXcd FrBEMBody_::GetExcitation(const unsigned int iangle) const {
+    Eigen::MatrixXcd FrBEMBody::GetExcitation(const unsigned int iangle) const {
         assert(iangle < this->GetNbWaveDirections());
         return m_excitation[iangle];
     }
 
-    Eigen::VectorXcd FrBEMBody_::GetExcitation(const unsigned int iangle, const unsigned iforce) const {
+    Eigen::VectorXcd FrBEMBody::GetExcitation(const unsigned int iangle, const unsigned iforce) const {
         assert(iangle < this->GetNbWaveDirections());
         assert(iforce < this->GetNbForceMode());
         return m_excitation[iangle].row(iforce);
     }
 
-    mathutils::Matrix66<double> FrBEMBody_::GetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion) const {
+    mathutils::Matrix66<double> FrBEMBody::GetInfiniteAddedMass(FrBEMBody* BEMBodyMotion) const {
         return m_infiniteAddedMass.at(BEMBodyMotion);
     }
 
-    mathutils::Matrix66<double> FrBEMBody_::GetSelfInfiniteAddedMass() {
+    mathutils::Matrix66<double> FrBEMBody::GetSelfInfiniteAddedMass() {
         return m_infiniteAddedMass[this];
     }
 
     mathutils::Interp1d<double, mathutils::Vector6d<double>>*
-    FrBEMBody_::GetIRFInterpolatorK(FrBEMBody_* BEMBodyMotion, unsigned int idof) {
+    FrBEMBody::GetIRFInterpolatorK(FrBEMBody* BEMBodyMotion, unsigned int idof) {
         assert(idof < 6);
         return m_interpK[BEMBodyMotion][idof].get();
     };
 
     mathutils::Interp1d<double, mathutils::Vector6d<double>>*
-    FrBEMBody_::GetIRFInterpolatorKu(FrBEMBody_* BEMBodyMotion, unsigned int idof) {
+    FrBEMBody::GetIRFInterpolatorKu(FrBEMBody* BEMBodyMotion, unsigned int idof) {
         assert(idof < 6);
         return m_interpKu[BEMBodyMotion][idof].get();
     };
@@ -306,7 +306,7 @@ namespace frydom {
     // Interpolators for the excitation force
     //
 
-    void FrBEMBody_::BuildWaveExcitationInterpolators() {
+    void FrBEMBody::BuildWaveExcitationInterpolators() {
 
         /// This subroutine interpolates the excitation loads with respect to the wave direction.
 
@@ -345,7 +345,7 @@ namespace frydom {
     }
 
     std::vector<Eigen::MatrixXcd>
-    FrBEMBody_::GetExcitationInterp(std::vector<double> waveFrequencies,
+    FrBEMBody::GetExcitationInterp(std::vector<double> waveFrequencies,
                                     std::vector<double> waveDirections,
                                     mathutils::ANGLE_UNIT angleUnit) {
 
@@ -390,7 +390,7 @@ namespace frydom {
         return Fexc;
     }
 
-    std::shared_ptr<FrWaveDriftPolarData> FrBEMBody_::GetWaveDrift() const {
+    std::shared_ptr<FrWaveDriftPolarData> FrBEMBody::GetWaveDrift() const {
         return m_waveDrift;
     }
 

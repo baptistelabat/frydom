@@ -23,18 +23,18 @@
 namespace frydom {
 
     // Forward declaration
-    class FrForce_;
+    class FrForce;
 
 
     /**
      * \class FrForceAsset_
      * \brief Class to display the loads.
      */
-    class FrForceAsset_ : public FrAsset {
+    class FrForceAsset : public FrAsset {
 
     private:
 
-        FrForce_* m_force;  //< The force that this asset represents
+        FrForce* m_force;  //< The force that this asset represents
         double OrderOfMagnitude;
         bool adaptive_OOM;
 
@@ -46,7 +46,7 @@ namespace frydom {
 
     public:
 
-        explicit FrForceAsset_(FrForce_* force);
+        explicit FrForceAsset(FrForce* force);
 
         void Initialize() override;
 
@@ -54,7 +54,7 @@ namespace frydom {
 
         void StepFinalize() override;
 
-        friend void FrBody_::RemoveExternalForce(std::shared_ptr<frydom::FrForce_>);
+        friend void FrBody::RemoveExternalForce(std::shared_ptr<frydom::FrForce>);
 
     };
 

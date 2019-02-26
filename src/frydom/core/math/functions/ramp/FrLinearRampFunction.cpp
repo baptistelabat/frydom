@@ -8,57 +8,57 @@
 
 namespace frydom {
 
-    FrLinearRampFunction_::FrLinearRampFunction_() {
+    FrLinearRampFunction::FrLinearRampFunction() {
         m_function = clamp_after(clamp_before(FrVarXFunction(), 0), 1).Clone();
     }
 
-    FrLinearRampFunction_::FrLinearRampFunction_(double x0, double y0, double x1, double y1) : FrFunctionBase() {
+    FrLinearRampFunction::FrLinearRampFunction(double x0, double y0, double x1, double y1) : FrFunctionBase() {
         SetByTwoPoints(x0, y0, x1, y1);
     }
 
-    FrLinearRampFunction_::FrLinearRampFunction_(const frydom::FrLinearRampFunction_ &other) : FrFunctionBase(other) {}
+    FrLinearRampFunction::FrLinearRampFunction(const frydom::FrLinearRampFunction &other) : FrFunctionBase(other) {}
 
-    FrLinearRampFunction_* FrLinearRampFunction_::Clone() const {
-        return new FrLinearRampFunction_(*this);
+    FrLinearRampFunction* FrLinearRampFunction::Clone() const {
+        return new FrLinearRampFunction(*this);
     }
 
-//    void FrLinearRampFunction_::SetY0(double intercept) {
+//    void FrLinearRampFunction::SetY0(double intercept) {
 //        m_intercept = intercept;
 //    }
 //
-//    double FrLinearRampFunction_::GetY0() const {
+//    double FrLinearRampFunction::GetY0() const {
 //        return m_intercept;
 //    }
 //
-//    void FrLinearRampFunction_::SetSlope(double slope) {
+//    void FrLinearRampFunction::SetSlope(double slope) {
 //        m_slope = slope;
 //    }
 //
-//    double FrLinearRampFunction_::GetSlope() const {
+//    double FrLinearRampFunction::GetSlope() const {
 //        return m_slope;
 //    }
 //
-//    void FrLinearRampFunction_::SetInterceptAndSlope(double intercept, double slope) {
+//    void FrLinearRampFunction::SetInterceptAndSlope(double intercept, double slope) {
 //        m_intercept = intercept;
 //        m_slope = slope;
 //    }
 //
-//    void FrLinearRampFunction_::SetXWindow(double x0, double x1) {
+//    void FrLinearRampFunction::SetXWindow(double x0, double x1) {
 //        m_x0 = x0;
 //        m_x1 = x1;
 //    }
 //
-    void FrLinearRampFunction_::SetByTwoPoints(double x0, double y0, double x1, double y1) {
+    void FrLinearRampFunction::SetByTwoPoints(double x0, double y0, double x1, double y1) {
         double slope = (y1-y0) / (x1-x0);
         double intercept = (y0 - slope*x0);
         m_function = clamp_after(clamp_before((slope*FrVarXFunction() + intercept), x0), x1).Clone();
     }
 
-    void FrLinearRampFunction_::Initialize() {
+    void FrLinearRampFunction::Initialize() {
 
     }
 
-    std::string FrLinearRampFunction_::GetRepr() const {
+    std::string FrLinearRampFunction::GetRepr() const {
         fmt::MemoryWriter mw;
 
 //        mw.write("Ramp(({:.3g}, {:.3g}), ({:.3g}, {:.3g}))", m_x0, Get_y(m_x0), m_x1, Get_y(m_x1));
@@ -66,7 +66,7 @@ namespace frydom {
         return ""; // TODO
     }
 
-    void FrLinearRampFunction_::Eval(double x) const {
+    void FrLinearRampFunction::Eval(double x) const {
 
         if (IsEval(x)) return;
 

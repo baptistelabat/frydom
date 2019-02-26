@@ -73,8 +73,8 @@ int main(int argc, char* argv[]) {
     // A FrRotation object embedded a unit quaternion. It can then be instantiated using a quaternion or a direction and
     // angle.
 
-    FrRotation_ Rotation(Quat);
-    FrRotation_ RotationA(QuatDir,M_PI,fc);
+    FrRotation Rotation(Quat);
+    FrRotation RotationA(QuatDir,M_PI,fc);
 
     // A Null rotation can also be set, with the following method
     Rotation.SetNullRotation();
@@ -117,8 +117,8 @@ int main(int argc, char* argv[]) {
     Position Pos(0.,0.,0.);
 
     // You can either instantiate a frame from a FrRotation object or a FrUnitQuaternion object.
-    FrFrame_ Frame(Pos, Rotation, fc);
-    FrFrame_ FrameA(Pos, Quat, fc);
+    FrFrame Frame(Pos, Rotation, fc);
+    FrFrame FrameA(Pos, Quat, fc);
 
     // You can also specify separately the position and the orientation of the frame.
     Frame.SetPosition(Pos, fc);
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
     FrameA.SetPosition(Position(4.,5.,6.),fc);
     FrameA.SetRotation(QuatA);
 
-    FrFrame_ FrameB(Position(1.,2.,3.),Quat,fc);
+    FrFrame FrameB(Position(1.,2.,3.),Quat,fc);
 
 
     // The '*' operator transforms a coordinate system, so

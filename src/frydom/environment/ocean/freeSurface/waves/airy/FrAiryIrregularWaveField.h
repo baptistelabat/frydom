@@ -22,15 +22,15 @@
 namespace frydom {
 
     //Forward Declaration
-    class FrFreeSurface_;
-    class FrWaveSpectrum_;
-    class FrKinematicStretching_;
+    class FrFreeSurface;
+    class FrWaveSpectrum;
+    class FrKinematicStretching;
 
     /**
      * \class FrAiryIrregularWaveField
      * \brief Class which deals with irregular wave field.
      */
-    class FrAiryIrregularWaveField : public FrWaveField_ {
+    class FrAiryIrregularWaveField : public FrWaveField {
     protected:
 
 
@@ -41,7 +41,7 @@ namespace frydom {
         double m_meanDir = 0;           ///< Mean wave direction
         unsigned int m_nbDir = 1;       ///< Number of directions to discretize
 
-        std::unique_ptr<FrWaveSpectrum_> m_waveSpectrum;    ///< Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
+        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum;    ///< Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
 
         std::vector<double> m_waveDirections;    ///< Wave directions vector
         std::vector<double> m_waveFrequencies;   ///< Wave frequencies vector
@@ -51,13 +51,13 @@ namespace frydom {
         std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases;    ///< Table of wave phases,of dimensions (m_nbDir,m_nbFreq)
                                                                            ///< made unique to check at initialize() if wavePhases were given by the users,
                                                                            ///< or if they need to be randomly generated.
-        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;    ///< Vertical scale velocity factor with stretching
+        std::unique_ptr<FrKinematicStretching> m_verticalFactor;    ///< Vertical scale velocity factor with stretching
 
     public:
 
         /// Default constructor
         /// \param freeSurface pointer to the free surface, to which the wave field belongs
-        explicit FrAiryIrregularWaveField(FrFreeSurface_* freeSurface);
+        explicit FrAiryIrregularWaveField(FrFreeSurface* freeSurface);
 
         /// Set the wave frequencies, ie frequency discretization
         /// \param minFreq minimum frequency
@@ -117,22 +117,22 @@ namespace frydom {
         /// \param unit unit of the peak period
         /// \param gamma gamma factor of the Jonswap wave spectrum
         /// \return wave spectrum
-        FrJonswapWaveSpectrum_* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit, double gamma);
+        FrJonswapWaveSpectrum* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit, double gamma);
 
         /// Set a Pierson Moskowitz wave spectrum
         /// \param Hs significant height
         /// \param Tp peak period
         /// \param unit unit of the peak period
         /// \return wave spectrum
-        FrPiersonMoskowitzWaveSpectrum_* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit);
+        FrPiersonMoskowitzWaveSpectrum* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit);
 
         /// Set a wave spectrum, based on the TEST wave spectrum type
         /// \return the TEST wave spectrum
-        FrTestWaveSpectrum_* SetTestWaveSpectrum();
+        FrTestWaveSpectrum* SetTestWaveSpectrum();
 
         /// Get the wave spectrum
         /// \return wave spectrum
-        FrWaveSpectrum_* GetWaveSpectrum() const;
+        FrWaveSpectrum* GetWaveSpectrum() const;
 
         ///Generate random wave phases
         void GenerateRandomWavePhases();

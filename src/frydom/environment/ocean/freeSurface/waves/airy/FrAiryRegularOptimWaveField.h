@@ -29,7 +29,7 @@ namespace frydom {
         double c_sinTheta;   ///< cache attribute for the sin(theta) value
 
     public:
-        explicit FrAiryRegularOptimWaveField(FrFreeSurface_* freeSurface);
+        explicit FrAiryRegularOptimWaveField(FrFreeSurface* freeSurface);
 
         /// Get the complex wave elevation at the position (x,y,0), of the regular Airy wave field
         /// \param x x position

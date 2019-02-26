@@ -22,14 +22,14 @@
 namespace frydom {
 
     // Forward declarations
-    class FrMorisonCompositeElement_;
-    class FrBody_;
-    class FrNode_;
+    class FrMorisonCompositeElement;
+    class FrBody;
+    class FrNode;
 
     /// Maker for a Morison model : instantiate and return a FrMorisonCompositeElement
     /// \param body body related to the morison model
     /// \return Morison model, as a Morison composite element
-    std::shared_ptr<FrMorisonCompositeElement_> make_morison_model(FrBody_ *body);
+    std::shared_ptr<FrMorisonCompositeElement> make_morison_model(FrBody *body);
 
 
     // --------------------------------------------------------------------------
@@ -37,10 +37,10 @@ namespace frydom {
     // --------------------------------------------------------------------------
 
     /// This class is a base class for morison model with only one single element or composite elements.
-    class FrMorisonElement_ {
+    class FrMorisonElement {
 
     protected:
-        std::shared_ptr<FrNode_> m_node;   ///< Frame at the center position of the morison element with z-axis along its direction
+        std::shared_ptr<FrNode> m_node;   ///< Frame at the center position of the morison element with z-axis along its direction
         Force m_force;                      ///< Force at COG of the body in world-coordinates
         Torque m_torque;                    ///< Torque at COG of the body in body-coordinates
 
@@ -53,20 +53,20 @@ namespace frydom {
         /// \param posA Position of the first extremity of the morison element
         /// \param posB Position of the second extremity of the morison element
         /// \param vect x-axis of the frame is built such as is perpendicular to the morison element direction and this vector
-        void SetFrame(FrBody_* body, Position posA, Position posB, Direction vect = Direction(0., 0., 1.));
+        void SetFrame(FrBody* body, Position posA, Position posB, Direction vect = Direction(0., 0., 1.));
 
         /// Set the local frame of the morison model from another frame
         /// \param body Body to which the frame is attached
         /// \param frame Other frame
-        void SetFrame(FrBody_* body, const FrFrame_& frame);
+        void SetFrame(FrBody* body, const FrFrame& frame);
 
         /// Get the local frame of the morison model
         /// \return Local frame
-        FrFrame_ GetFrame() const;
+        FrFrame GetFrame() const;
 
         /// Get the local frame of the morison model as node
         /// \return Node
-        std::shared_ptr<FrNode_> GetNode() const { return m_node; }
+        std::shared_ptr<FrNode> GetNode() const { return m_node; }
 
         /// Get the force vector at COG in world reference frame
         /// \param fc Frame convention
@@ -141,11 +141,11 @@ namespace frydom {
     /// This class defines a morison model.
     /// It can be instanciate when the morison model is composed by only one single element
     /// The pointer to the body must be specified before to create a new morison model with single element
-    class FrMorisonSingleElement_ : public FrMorisonElement_ {
+    class FrMorisonSingleElement : public FrMorisonElement {
 
     protected:
-        std::shared_ptr<FrNode_> m_nodeA;               ///< First extremity node of the morison element
-        std::shared_ptr<FrNode_> m_nodeB;               ///< Second extremity node of the morison element
+        std::shared_ptr<FrNode> m_nodeA;               ///< First extremity node of the morison element
+        std::shared_ptr<FrNode> m_nodeB;               ///< Second extremity node of the morison element
 
         MorisonElementProperty m_property;              ///< Container of the morison property (diameter, drag coeff...)
 
@@ -153,7 +153,7 @@ namespace frydom {
     public:
         /// Constructor of a new morison element without property definition
         /// \param body Body to which the morison force is applied
-        FrMorisonSingleElement_(FrBody_* body);
+        FrMorisonSingleElement(FrBody* body);
 
         /// Constructor of a new morison element with property
         /// \param nodeA First extremity node of the morison element
@@ -163,8 +163,8 @@ namespace frydom {
         /// \param cd Drag coefficient
         /// \param cf Friction coefficient
         /// \param perpendicular x-axis is built such as is perpendicular to the morison element direction and this vector
-        FrMorisonSingleElement_(std::shared_ptr<FrNode_>& nodeA,
-                                std::shared_ptr<FrNode_>& nodeB,
+        FrMorisonSingleElement(std::shared_ptr<FrNode>& nodeA,
+                                std::shared_ptr<FrNode>& nodeB,
                                 double diameter, MorisonCoeff ca, MorisonCoeff cd, double cf,
                                 Direction perpendicular = Direction(0., 0., 1.));
 
@@ -177,7 +177,7 @@ namespace frydom {
         /// \param cd Drag coefficient
         /// \param cf Friction coefficient
         /// \param perpendicular x-axis is built such as is perpendicular to the morison element direction and this vector
-        FrMorisonSingleElement_(FrBody_* body, Position posA, Position posB,
+        FrMorisonSingleElement(FrBody* body, Position posA, Position posB,
                                 double diameter, MorisonCoeff ca, MorisonCoeff cd, double cf,
                                 Direction perpendicular = Direction(0., 0., 1.));
 
@@ -189,19 +189,19 @@ namespace frydom {
         /// \param ca Added mass
         /// \param cd Drag coefficients
         /// \param cf Friction coefficient
-        FrMorisonSingleElement_(FrBody_* body, FrFrame_ frame, double diameter, double length,
+        FrMorisonSingleElement(FrBody* body, FrFrame frame, double diameter, double length,
                                 MorisonCoeff ca, MorisonCoeff cd, double cf);
 
         /// Defines nodes at the extremities of the morison element
         /// \param nodeA First extremity node
         /// \param nodeB Second extremity node
-        void SetNodes(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB);
+        void SetNodes(std::shared_ptr<FrNode>& nodeA, std::shared_ptr<FrNode>& nodeB);
 
         /// Defines nodes from position and body link
         /// \param body Body to which the nodes are linked
         /// \param posA Position of the first node
         /// \param posB Position of the second node
-        void SetNodes(FrBody_* body, Position posA, Position posB);
+        void SetNodes(FrBody* body, Position posA, Position posB);
 
         /// Set the added mass of the morison element (only if extended version is used)
         /// \param ca Added mass coefficients (double of {double, double})
@@ -277,26 +277,26 @@ namespace frydom {
     /// The resultant force and torque are the sum of the force and torque of each morison model component
     /// computed at the center of gravity of the body. The force is expressed in the world coordinates system
     /// and the torque in the body coordinate system.
-    class FrMorisonCompositeElement_ : public FrMorisonElement_ {
+    class FrMorisonCompositeElement : public FrMorisonElement {
 
     protected:
-        std::vector<std::unique_ptr<FrMorisonElement_>> m_morison;      ///< morison model components of the composite model
+        std::vector<std::unique_ptr<FrMorisonElement>> m_morison;      ///< morison model components of the composite model
         MorisonElementProperty m_property = MorisonElementProperty();   ///< default element properties
 
     public:
         /// Constructor of a new composite model of the morison force
         /// \param body Body to which the morison model is applied
-        FrMorisonCompositeElement_(FrBody_* body);
+        explicit FrMorisonCompositeElement(FrBody* body);
 
         /// Constructor of a new composite model of the morison force with frame local frame
         /// \param body BOdy to which the morison model is applied
         /// \param frame Local frame
-        FrMorisonCompositeElement_(FrBody_* body, FrFrame_& frame);
+        FrMorisonCompositeElement(FrBody* body, FrFrame& frame);
 
         /// Add a new morison model to the composite model
         /// \param model Morison model (can be single or composite elements)
-        void AddElement(FrMorisonElement_* model) {
-            m_morison.push_back(std::unique_ptr<FrMorisonElement_>(model));
+        void AddElement(FrMorisonElement* model) {
+            m_morison.push_back(std::unique_ptr<FrMorisonElement>(model));
         }
 
         /// Add a new single element to the composite model from nodes
@@ -307,7 +307,7 @@ namespace frydom {
         /// \param cd Drag coefficient
         /// \param cf Friction coefficient
         /// \param perpendicular x-axis is built such as is perpendicular to the morison element direction and this vector
-        void AddElement(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB,
+        void AddElement(std::shared_ptr<FrNode>& nodeA, std::shared_ptr<FrNode>& nodeB,
                         double diameter, MorisonCoeff ca,  MorisonCoeff cd, double cf,
                         Direction perpendicular = Direction(0., 0, 1.));
 
@@ -315,7 +315,7 @@ namespace frydom {
         /// \param nodeA Node at the first extremity of the morison model
         /// \param nodeB Node at the second extremity of the morison model
         /// \param perpendicular x-axis is built such as is perpendicular to the morison element direction and this vector
-        void AddElement(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB,
+        void AddElement(std::shared_ptr<FrNode>& nodeA, std::shared_ptr<FrNode>& nodeB,
                         Direction perpendicular = Direction(0., 0, 1.));
 
         /// Add a new single element to the composite model from positions
@@ -346,12 +346,12 @@ namespace frydom {
         /// \param ca Added mass coefficient
         /// \param Cd Drag coefficient
         /// \param cf Friction coefficient
-        void AddElement(FrFrame_ frame, double length, double diameter,  MorisonCoeff ca, MorisonCoeff Cd, double cf);
+        void AddElement(FrFrame frame, double length, double diameter,  MorisonCoeff ca, MorisonCoeff Cd, double cf);
 
         /// Add a new single element to the composite model from frame definition with default properties
         /// \param frame Local frame of the morison element
         /// \param length Length of the morison element
-        void AddElement(FrFrame_ frame, double length);
+        void AddElement(FrFrame frame, double length);
 
         /// Set the default drag coefficient for composite element
         /// \param cd Drag coefficient

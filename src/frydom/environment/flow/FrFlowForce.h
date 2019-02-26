@@ -25,7 +25,7 @@ namespace frydom {
      * \class FrFlowForce
      * \brief Class for computing the flow force.
      */
-    class FrFlowForce : public FrForce_ {
+    class FrFlowForce : public FrForce {
 
     protected:
 
@@ -85,9 +85,9 @@ namespace frydom {
 
     };
 
-    std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body);
+    std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody> body);
 
-    std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body);
+    std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody> body);
 
 
 } // end of namespace frydom

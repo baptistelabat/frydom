@@ -21,7 +21,7 @@ int main() {
 
     linearFcn.WriteToGnuPlotFile(-3, 3, 0.01, "linear");
 
-    auto linearRamp = FrLinearRampFunction_(0, 1, 4, -1);
+    auto linearRamp = FrLinearRampFunction(0, 1, 4, -1);
 
     auto absLinearRamp = abs(linearRamp);
     absLinearRamp.WriteToGnuPlotFile(-1, 5, 0.01, "absLinearRamp");

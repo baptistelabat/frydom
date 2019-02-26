@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #ifndef FRYDOM_FRREVOLUTELINK_H
@@ -26,7 +26,7 @@ namespace frydom {
 //    class FrAngularActuator;
 
     /// Specialized class for revolute link between two bodies
-    class FrRevoluteLink : public FrLink_ {
+    class FrRevoluteLink : public FrLink {
 
     private:
         double m_stiffness = 0.; ///> Link rotational stiffness (N)
@@ -56,7 +56,7 @@ namespace frydom {
 
         /// Constructor from two nodes and a pointer to the system.
         /// It automatically adds the link to the system
-        FrRevoluteLink(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
+        FrRevoluteLink(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);
 
         /// Set the spring and damper coefficients
         void SetSpringDamper(double stiffness, double damping);
@@ -103,7 +103,7 @@ namespace frydom {
         void StepFinalize() override;
 
         /// Compute the link force. Here this is essentially a torque with a default spring damper.
-        void UpdateForces(double time); // TODO : mettre en abstrait dans FrLink_ pour que toutes les classes possedent ca
+        void UpdateForces(double time); // TODO : mettre en abstrait dans FrLink pour que toutes les classes possedent ca
 
         /// Motorize the link to make it driven // TODO : work in progress
         void MotorizeSpeed();
@@ -119,7 +119,7 @@ namespace frydom {
     };
 
     /// Helper function to make it easy to link two nodes by a revolute link
-    std::shared_ptr<FrRevoluteLink> make_revolute_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_* system);
+    std::shared_ptr<FrRevoluteLink> make_revolute_link(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);
 
 }  // end namespace frydom
 

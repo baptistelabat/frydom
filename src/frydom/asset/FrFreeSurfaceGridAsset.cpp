@@ -19,7 +19,7 @@
 namespace frydom{
 
 
-    FrFreeSurfaceGridAsset::FrFreeSurfaceGridAsset(FrFreeSurface_* freeSurface) : FrGridAsset() {
+    FrFreeSurfaceGridAsset::FrFreeSurfaceGridAsset(FrFreeSurface* freeSurface) : FrGridAsset() {
         m_freeSurface = freeSurface;
         m_gridHeight = m_freeSurface->GetTidal()->GetHeight(NWU);
         m_color = DodgerBlue;

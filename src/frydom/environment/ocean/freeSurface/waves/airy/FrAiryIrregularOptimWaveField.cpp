@@ -14,7 +14,7 @@
 
 namespace frydom {
 
-    FrAiryIrregularOptimWaveField::FrAiryIrregularOptimWaveField(frydom::FrFreeSurface_ *freeSurface)
+    FrAiryIrregularOptimWaveField::FrAiryIrregularOptimWaveField(frydom::FrFreeSurface *freeSurface)
             : FrAiryIrregularWaveField(freeSurface) {}
 
     std::vector<std::vector<Complex>>
@@ -111,7 +111,7 @@ namespace frydom {
     }
 
     void FrAiryIrregularOptimWaveField::StepFinalize() {
-        FrWaveField_::StepFinalize();
+        FrWaveField::StepFinalize();
         InternalUpdate();
     }
 

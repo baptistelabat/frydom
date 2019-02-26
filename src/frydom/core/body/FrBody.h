@@ -21,7 +21,7 @@
 #include "frydom/core/misc/FrColors.h"
 #include "frydom/core/common/FrNode.h"
 
-////// TODO : voir si il n'y a pas moyen de passer ces includes
+// TODO : voir si il n'y a pas moyen de passer ces includes
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
 
@@ -34,20 +34,20 @@ namespace frydom {
 
     // Forward declarations
     class FrUnitQuaternion_;
-    class FrBody_;
+    class FrBody;
 
 
     namespace internal {
 
         /// Base class inheriting from chrono ChBodyAuxRef
         /// This class must not be used by external FRyDoM users. It is used in composition rule along with the FrBody_ FRyDoM class
-        struct _FrBodyBase : public chrono::ChBodyAuxRef {
+        struct FrBodyBase : public chrono::ChBodyAuxRef {
 
-            FrBody_ *m_frydomBody;                      ///< pointer to the FrBody containing this bodyBase
+            FrBody *m_frydomBody;                      ///< pointer to the FrBody containing this bodyBase
 
             /// Constructor of the bodyBase
             /// \param body body containing this bodyBase
-            explicit _FrBodyBase(FrBody_ *body);
+            explicit FrBodyBase(FrBody *body);
 
             /// Initial setup of the bodyBase, called from chrono, call the Initialize of the body
             void SetupInitial() override;
@@ -73,13 +73,13 @@ namespace frydom {
 
 
     // Forward declarations
-    class FrForce_;
-    class FrFrame_;
-    class FrRotation_;
+    class FrForce;
+    class FrFrame;
+    class FrRotation;
     class FrGeographicCoord;
     class FrAsset;
     class FrBodyDOFMask;
-    class FrLink_;
+    class FrLink;
     class FrTriangleMeshConnected;
 
     /// Main class for a FRyDoM rigid body
@@ -87,35 +87,35 @@ namespace frydom {
      * \class FrBody_
      * \brief Class for defining a body.
      */
-    class FrBody_ : public FrObject {
+    class FrBody : public FrObject {
 
     protected:
 
-        std::shared_ptr<internal::_FrBodyBase> m_chronoBody;  ///< Embedded Chrono body Object
+        std::shared_ptr<internal::FrBodyBase> m_chronoBody;  ///< Embedded Chrono body Object
 
-        FrOffshoreSystem_* m_system;                ///< Pointer to the FrOffshoreSystem where the body has been registered
+        FrOffshoreSystem* m_system;                ///< Pointer to the FrOffshoreSystem where the body has been registered
 
-        using ForceContainer = std::vector<std::shared_ptr<FrForce_>>;
+        using ForceContainer = std::vector<std::shared_ptr<FrForce>>;
         ForceContainer m_externalForces;            ///< Container of the external forces acting on body
 
         using AssetContainer = std::vector<std::shared_ptr<FrAsset>>;
         AssetContainer m_assets;                    ///< Container of the assets added to the body
 
-        using CONTACT_TYPE = FrOffshoreSystem_::SYSTEM_TYPE;
+        using CONTACT_TYPE = FrOffshoreSystem::SYSTEM_TYPE;
         CONTACT_TYPE m_contactType = CONTACT_TYPE::SMOOTH_CONTACT; ///< The contact method that has to be consistent with that of the FrOffshoreSystem
 
 
         std::unique_ptr<FrBodyDOFMask> m_DOFMask;
-        std::shared_ptr<FrLink_> m_DOFLink;
+        std::shared_ptr<FrLink> m_DOFLink;
 
 
     public:
 
         /// Default constructor
-        FrBody_();
+        FrBody();
 
         /// Get the FrOffshoreSystem where the body has been registered
-        FrOffshoreSystem_* GetSystem() const;
+        FrOffshoreSystem* GetSystem() const;
 
         /// Set the body name
         /// \param name body name
@@ -245,11 +245,11 @@ namespace frydom {
 
         /// Add an external force to the body
         /// \param force force to be added to the body
-        void AddExternalForce(std::shared_ptr<FrForce_> force);
+        void AddExternalForce(std::shared_ptr<FrForce> force);
 
         /// Remove an external force to the body
         /// \param force force to be removed to the body
-        void RemoveExternalForce(std::shared_ptr<FrForce_> force);
+        void RemoveExternalForce(std::shared_ptr<FrForce> force);
 
         /// Remove all forces from the body
         void RemoveAllForces();
@@ -266,9 +266,9 @@ namespace frydom {
         /// Generates a new node attached to the body which position and orientation are coincident with the body
         /// reference frame
         /// \return node created
-        std::shared_ptr<FrNode_> NewNode();
+        std::shared_ptr<FrNode> NewNode();
 
-        // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame_ !
+        // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame !
 
         // =============================================================================================================
         // POSITIONS
@@ -301,13 +301,13 @@ namespace frydom {
 
         /// Get the rotation object that represents the orientation of the body reference frame in the world frame
         /// \return rotation object that represents the orientation of the body reference frame in the world frame
-        FrRotation_ GetRotation() const;
+        FrRotation GetRotation() const;
 
         /// Set the orientation of the body reference frame in world using a rotation object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param rotation orientation of the body reference frame in world frame
-        void SetRotation(const FrRotation_& rotation);
+        void SetRotation(const FrRotation& rotation);
 
         /// Get the quaternion object that represents the orientation of the body reference frame in the world frame
         /// \return quaternion object that represents the orientation of the body reference frame in the world frame
@@ -325,25 +325,25 @@ namespace frydom {
 
         /// Get the body reference frame expressed in the world frame
         /// \return body reference frame expressed in the world frame
-        FrFrame_ GetFrame() const;
+        FrFrame GetFrame() const;
 
         /// Set the body reference frame expressed in the world frame
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param worldFrame body reference frame expressed in the world frame
-        void SetFrame(const FrFrame_& worldFrame);
+        void SetFrame(const FrFrame& worldFrame);
 
         /// Get a frame object whose origin is located at a body point expressed in BODY frame and orientation is that
         /// of the body reference frame
         /// \param bodyPoint origin of the frame to return
         /// \param fc frame convention (NED/NWU)
         /// \return body frame
-        FrFrame_ GetFrameAtPoint(const Position& bodyPoint, FRAME_CONVENTION fc);
+        FrFrame GetFrameAtPoint(const Position& bodyPoint, FRAME_CONVENTION fc);
 
         /// Get a frame object whose origin is locate at COG and orientation is that of the body reference frame
         /// \param fc frame convention (NED/NWU)
         /// \return body frame
-        FrFrame_ GetFrameAtCOG(FRAME_CONVENTION fc);
+        FrFrame GetFrameAtCOG(FRAME_CONVENTION fc);
 
 
         /// Get the position in world frame of a body fixed point whose position is given in body reference frame
@@ -427,7 +427,7 @@ namespace frydom {
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param relRotation relative rotation to be applied
-        void Rotate(const FrRotation_& relRotation);
+        void Rotate(const FrRotation& relRotation);
 
         /// Rotate the body with respect to its current orientation in world using a quaternion object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
@@ -444,7 +444,7 @@ namespace frydom {
         /// \param rot rotation to be applied
         /// \param worldPos point position around which the body is to be rotated, given in world reference frame
         /// \param fc frame convention (NED/NWU)
-        void RotateAroundPointInWorld(const FrRotation_& rot, const Position& worldPos, FRAME_CONVENTION fc);
+        void RotateAroundPointInWorld(const FrRotation& rot, const Position& worldPos, FRAME_CONVENTION fc);
 
         /// Rotate the body around a point, given in body reference frame,  with respect to its current orientation
         /// in world using a rotation object.
@@ -453,14 +453,14 @@ namespace frydom {
         /// \param rot rotation to be applied
         /// \param worldPos point position around which the body is to be rotated, given in body reference frame
         /// \param fc frame convention (NED/NWU)
-        void RotateAroundPointInBody(const FrRotation_& rot, const Position& bodyPos, FRAME_CONVENTION fc);
+        void RotateAroundPointInBody(const FrRotation& rot, const Position& bodyPos, FRAME_CONVENTION fc);
 
         /// Rotate the body around COG with respect to its current orientation in world using a rotation object.
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param rot rotation to be applied
         /// \param fc frame convention (NED/NWU)
-        void RotateAroundCOG(const FrRotation_& rot, FRAME_CONVENTION fc);
+        void RotateAroundCOG(const FrRotation& rot, FRAME_CONVENTION fc);
 
         /// Rotate the body around a point, given in world reference frame,  with respect to its current orientation
         /// in world using a quaternion object.
@@ -871,14 +871,14 @@ namespace frydom {
 
         void InitializeLockedDOF();
 
-        // Friends of FrBody_ : they can have access to chrono internals
-        friend void makeItBox(std::shared_ptr<FrBody_>, double, double, double, double);
-        friend void makeItCylinder(std::shared_ptr<FrBody_>, double, double, double);
-        friend void makeItSphere(std::shared_ptr<FrBody_>, double, double);
+        // Friends of FrBody : they can have access to chrono internals
+        friend void makeItBox(std::shared_ptr<FrBody>, double, double, double, double);
+        friend void makeItCylinder(std::shared_ptr<FrBody>, double, double, double);
+        friend void makeItSphere(std::shared_ptr<FrBody>, double, double);
 
 
-        friend FrNode_::FrNode_(FrBody_*);
-        friend class FrLinkBase_;
+        friend FrNode::FrNode(FrBody*);
+        friend class FrLinkBase;
 
 
     public:
@@ -910,15 +910,15 @@ namespace frydom {
         // friend declarations
         // This one is made for the FrOffshoreSystem to be able to add the embedded chrono object into the embedded
         // chrono system (ChSystem)
-        friend void FrOffshoreSystem_::AddBody(std::shared_ptr<frydom::FrBody_>);
+        friend void FrOffshoreSystem::AddBody(std::shared_ptr<frydom::FrBody>);
 
-        friend int internal::FrAddedMassBase::GetBodyOffset(FrBody_* body) const;
-        friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody_* body) const ;
-        friend void internal::FrVariablesAddedMassBase::SetVariables(FrBody_ *body, chrono::ChMatrix<double> &result,
+        friend int internal::FrAddedMassBase::GetBodyOffset(FrBody* body) const;
+        friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody* body) const ;
+        friend void internal::FrVariablesAddedMassBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &result,
                                                                      int offset) const;
-        friend void internal::FrAddedMassBase::SetVariables(FrBody_ *body, chrono::ChMatrix<double> &qb, int offset) const;
-        friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody_ *body) const;
-        friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody_ *body) const;
+        friend void internal::FrAddedMassBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
+        friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody *body) const;
+        friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody *body) const;
 
     };
 

@@ -28,9 +28,8 @@ namespace frydom {
 
 
     // Forward declarations:
-    class FrCatenaryForce_;
-//    class FrCatenaryLineAsset_;
-    class FrNode_;
+    class FrCatenaryForce;
+    class FrNode;
 
     /**
      * \class FrCatenaryLine_ FrCatenaryLine.h
@@ -44,7 +43,7 @@ namespace frydom {
      * International Journal of Solids and Structures,pp 1521-1533, 2014
      */
     //TODO: check that the chrono_objects are deleted correctly, when the frydom objects are deleted (assets included)
-    class FrCatenaryLine_ : public FrCable_ {
+    class FrCatenaryLine : public FrCable {
 
     public:
 
@@ -81,9 +80,9 @@ namespace frydom {
 
         //--------------------------------------------------------------------------------------------------------------
         // Forces to apply to bodies
-        std::shared_ptr<FrCatenaryForce_> m_startingForce;  ///< Force applied by the catenary line to the body at the
+        std::shared_ptr<FrCatenaryForce> m_startingForce;  ///< Force applied by the catenary line to the body at the
                                                             ///< starting node
-        std::shared_ptr<FrCatenaryForce_> m_endingForce;    ///< Force applied by the catenary line to the body at the
+        std::shared_ptr<FrCatenaryForce> m_endingForce;    ///< Force applied by the catenary line to the body at the
                                                             ///< ending node
         //--------------------------------------------------------------------------------------------------------------
 
@@ -105,8 +104,8 @@ namespace frydom {
         /// \param unstretchedLength Unstretched length of the catenary line
         /// \param linearDensity Uniformly distributed load of the catenary line
         /// \param fluid fluid type in which the catenary line is mostly in
-        FrCatenaryLine_(const std::shared_ptr<FrNode_>& startingNode,
-                        const std::shared_ptr<FrNode_>& endingNode,
+        FrCatenaryLine(const std::shared_ptr<FrNode>& startingNode,
+                        const std::shared_ptr<FrNode>& endingNode,
                         bool elastic,
                         double youngModulus,
                         double sectionArea,
@@ -137,11 +136,11 @@ namespace frydom {
         // Force accessors
         /// Get the starting force of the line
         /// \return the starting force of the line
-        std::shared_ptr<FrCatenaryForce_> GetStartingForce();
+        std::shared_ptr<FrCatenaryForce> GetStartingForce();
 
         /// Get the ending force of the line
         /// \return the ending force of the line
-        std::shared_ptr<FrCatenaryForce_> GetEndingForce();
+        std::shared_ptr<FrCatenaryForce> GetEndingForce();
 
         // TODO: accessors pour le champ de force distribue
         /// Get the inside line tension at the lagrangian coordinate s, from the starting node to the ending node
@@ -255,9 +254,9 @@ namespace frydom {
 
     };
 
-    std::shared_ptr<FrCatenaryLine_>
-    make_catenary_line(const std::shared_ptr<FrNode_> &startingNode, const std::shared_ptr<FrNode_> &endingNode,
-                       FrOffshoreSystem_ *system, bool elastic, double youngModulus, double sectionArea,
+    std::shared_ptr<FrCatenaryLine>
+    make_catenary_line(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
+                       FrOffshoreSystem *system, bool elastic, double youngModulus, double sectionArea,
                        double unstretchedLength, double linearDensity, FLUID_TYPE fluid);
 
 }// end namespace frydom

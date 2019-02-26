@@ -24,11 +24,11 @@ namespace frydom {
 
     namespace internal {
 
-        struct FrAssetBase_ : public chrono::ChAssetLevel {
+        struct FrAssetBase : public chrono::ChAssetLevel {
 
             FrAsset * m_frydomAsset;
 
-            explicit FrAssetBase_(FrAsset * asset);
+            explicit FrAssetBase(FrAsset * asset);
 
             void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) override;
 
@@ -43,7 +43,7 @@ namespace frydom {
     class FrAsset {
 
     protected:
-        std::shared_ptr<internal::FrAssetBase_> m_chronoAsset;
+        std::shared_ptr<internal::FrAssetBase> m_chronoAsset;
 
     public:
 
@@ -60,7 +60,7 @@ namespace frydom {
 
     private:
 
-        friend void FrBody_::AddAsset(std::shared_ptr<FrAsset>);
+        friend void FrBody::AddAsset(std::shared_ptr<FrAsset>);
     };
 
 

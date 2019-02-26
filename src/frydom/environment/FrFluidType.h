@@ -23,7 +23,7 @@ namespace frydom {
         WATER
     };
 
-    struct FrFluidProperties{
+    struct FrFluidProperties {
         //TODO : ITTC Recommended Procedures : Fresh Water and Seawater Properties
         // Fluid properties:
 

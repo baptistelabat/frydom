@@ -20,7 +20,7 @@
 
 namespace frydom {
 
-    FrWindStandardForce_::FrWindStandardForce_() : FrForce_() { }
+    FrWindStandardForce_::FrWindStandardForce_() : FrForce() { }
 
     void FrWindStandardForce_::SetLateralArea(double lateralArea) {
         assert(lateralArea > FLT_EPSILON);
@@ -54,7 +54,7 @@ namespace frydom {
 
         auto rho = GetSystem()->GetEnvironment()->GetAtmosphere()->GetDensity();
 
-        FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+        FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
 
         auto bodyVelocity = m_body->GetVelocityInWorld(NWU);
         bodyVelocity.z()= 0.;
@@ -83,8 +83,8 @@ namespace frydom {
         // Build the projected rotation in the XoY plane.
         double phi, theta, psi;
         m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
-        auto bodyRotation = FrRotation_(Direction(0.,0.,1.), psi, NWU);
-        auto frame = FrFrame_(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
+        auto bodyRotation = FrRotation(Direction(0.,0.,1.), psi, NWU);
+        auto frame = FrFrame(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
 
         auto worldForce = frame.ProjectVectorFrameInParent(force, NWU);
         auto worldTorque = frame.ProjectVectorFrameInParent(torque, NWU);
@@ -93,7 +93,7 @@ namespace frydom {
     }
 
     void FrWindStandardForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+        FrForce::StepFinalize();
     }
 
 }  // end namespace frydom

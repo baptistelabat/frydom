@@ -29,34 +29,34 @@ namespace frydom {
 
     // Forward declarations
     class FrTimeZone;
-    class FrOffshoreSystem_;
-    class FrOcean_;
-    class FrAtmosphere_;
+    class FrOffshoreSystem;
+    class FrOcean;
+    class FrAtmosphere;
     class FrGeographicServices;
     class Velocity;
-    class FrFrame_;
-    class FrLinearRampFunction_;
+    class FrFrame;
+    class FrLinearRampFunction;
 
 
     /**
      * \class FrEnvironment
      * \brief Class for defining the environmental data.
      */
-    class FrEnvironment_ : public FrObject {
+    class FrEnvironment : public FrObject {
 
     private:
 
-        FrOffshoreSystem_* m_system;    ///< Offshore sytem containing this Environment
+        FrOffshoreSystem* m_system;    ///< Offshore sytem containing this Environment
 
         //---------------------------- Environment elements ----------------------------//
         // TODO : faire un service de temps, NEED REFACTO
         std::unique_ptr<FrTimeZone> m_timeZone;                         ///< Zoned time conversion service, can give time during simulation in a specified time zone.
 
-        std::unique_ptr<FrLinearRampFunction_> m_timeRamp;              ///< Time ramp, can be applied on wave field, current field, wind field, etc.
+        std::unique_ptr<FrLinearRampFunction> m_timeRamp;              ///< Time ramp, can be applied on wave field, current field, wind field, etc.
 
-        std::unique_ptr<FrOcean_> m_ocean;                              ///> Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
+        std::unique_ptr<FrOcean> m_ocean;                              ///> Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
 
-        std::unique_ptr<FrAtmosphere_> m_atmosphere;                    ///> Atmosphere element of the simulation, contains wind model, air properties.
+        std::unique_ptr<FrAtmosphere> m_atmosphere;                    ///> Atmosphere element of the simulation, contains wind model, air properties.
 
         std::unique_ptr<FrGeographicServices> m_geographicServices;    ///> Service converting local coordinates to geographic coordinates, contains the geocoord origins.
 
@@ -64,14 +64,14 @@ namespace frydom {
 
         /// Default constructor
         /// \param system offshore system containing this environment
-        explicit FrEnvironment_(FrOffshoreSystem_* system);
+        explicit FrEnvironment(FrOffshoreSystem* system);
 
         /// Destructor
-        ~FrEnvironment_();
+        ~FrEnvironment();
 
         /// Get the offshore system, containing this environment
         /// \return offshore system
-        FrOffshoreSystem_* GetSystem();
+        FrOffshoreSystem* GetSystem();
 
         //---------------------------- Environment scalars methods ----------------------------//
 
@@ -81,7 +81,7 @@ namespace frydom {
 
         /// Get the time ramp attached to the environment
         /// \return time ramp
-        FrLinearRampFunction_* GetTimeRamp() const;
+        FrLinearRampFunction* GetTimeRamp() const;
 
         /// Get the gravity acceleration on the vertical axis
         /// \return gravity acceleration on the vertical axis, in m/s²
@@ -97,7 +97,7 @@ namespace frydom {
         /// \param ft fluid type (AIR/WATER)
         /// \param fc Frame convention (NED/NWU)
         /// \return Velocity in local frame
-        Velocity GetRelativeVelocityInFrame(const FrFrame_& frame, const Velocity& worldVel,
+        Velocity GetRelativeVelocityInFrame(const FrFrame& frame, const Velocity& worldVel,
                                             FLUID_TYPE ft, FRAME_CONVENTION fc);
 
         /// Get the fluid density
@@ -109,11 +109,11 @@ namespace frydom {
 
         /// Get the Ocean element
         /// \return Ocean element
-        FrOcean_* GetOcean() const;
+        FrOcean* GetOcean() const;
 
         /// Get the Atmosphere element
         /// \return Atmosphere element
-        FrAtmosphere_* GetAtmosphere() const;
+        FrAtmosphere* GetAtmosphere() const;
 
 
         //---------------------------- Geographic coordinates manipulations---------------------------- //

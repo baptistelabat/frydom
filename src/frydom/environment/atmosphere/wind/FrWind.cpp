@@ -12,12 +12,12 @@
 
 #include "FrWind.h"
 
-#include "frydom/environment/atmosphere/FrAtmosphere_.h"
+#include "frydom/environment/atmosphere/FrAtmosphere.h"
 
 
 namespace frydom {
 
-    FrEnvironment_* FrWind_::GetEnvironment() const {
+    FrEnvironment* FrWind::GetEnvironment() const {
         return m_atmosphere->GetEnvironment();
     }
 

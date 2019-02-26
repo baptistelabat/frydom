@@ -12,7 +12,7 @@
 #include "FrMooringBuoy.h"
 
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/hydrodynamics/damping/FrLinearDamping.h"
 
 
@@ -32,7 +32,7 @@ namespace frydom {
         m_hydrostaticForce = std::make_shared<FrSphereNonLinearHydrostaticForce>();
         AddExternalForce(m_hydrostaticForce);
 
-        m_dampingForce = std::make_shared<FrLinearDamping_>(WATER,false);
+        m_dampingForce = std::make_shared<FrLinearDamping>(WATER,false);
         m_dampingForce->SetDiagonalDamping(damping,damping,damping,damping,damping,damping);
         AddExternalForce(m_dampingForce);
 
@@ -43,7 +43,7 @@ namespace frydom {
 //            makeItSphere(this,radius,mass);
 
         // Building the Chrono body
-        SetInertiaTensor(FrInertiaTensor_(mass, inertia, inertia, inertia, 0., 0., 0., FrFrame_(), NWU));
+        SetInertiaTensor(FrInertiaTensor_(mass, inertia, inertia, inertia, 0., 0., 0., FrFrame(), NWU));
 
         // Collision
         auto collisionModel = m_chronoBody->GetCollisionModel();
@@ -69,7 +69,7 @@ namespace frydom {
 
 
     std::shared_ptr<FrMooringBuoy>
-    make_mooring_buoy(FrOffshoreSystem_* system, double radius, double mass, bool visual_asset, double damping){
+    make_mooring_buoy(FrOffshoreSystem* system, double radius, double mass, bool visual_asset, double damping){
         auto buoy = std::make_shared<FrMooringBuoy>(radius, mass, visual_asset, damping);
         system->Add(buoy);
         buoy->SetColor(DarkRed);

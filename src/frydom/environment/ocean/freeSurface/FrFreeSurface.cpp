@@ -20,60 +20,60 @@
 
 namespace frydom {
 
-    FrFreeSurface_::~FrFreeSurface_() = default;
+    FrFreeSurface::~FrFreeSurface() = default;
 
-    FrFreeSurface_::FrFreeSurface_(FrOcean_* ocean) : m_ocean(ocean) {
+    FrFreeSurface::FrFreeSurface(FrOcean* ocean) : m_ocean(ocean) {
 
         // Creating a waveField and a tidal model
         m_waveField         = std::make_unique<FrNullWaveField_>(this);
-        m_tidal             = std::make_unique<FrTidal_>(this);
+        m_tidal             = std::make_unique<FrTidal>(this);
         m_freeSurfaceGridAsset    = std::make_shared<FrFreeSurfaceGridAsset>(this);
 
     }
 
-    FrAtmosphere_ *FrFreeSurface_::GetAtmosphere() const { return m_ocean->GetEnvironment()->GetAtmosphere(); }
+    FrAtmosphere *FrFreeSurface::GetAtmosphere() const { return m_ocean->GetEnvironment()->GetAtmosphere(); }
 
-    FrOcean_ *FrFreeSurface_::GetOcean() const { return m_ocean; }
+    FrOcean *FrFreeSurface::GetOcean() const { return m_ocean; }
 
-    FrTidal_ *FrFreeSurface_::GetTidal() const { return m_tidal.get(); }
+    FrTidal *FrFreeSurface::GetTidal() const { return m_tidal.get(); }
 
-    FrWaveField_ * FrFreeSurface_::GetWaveField() const { return m_waveField.get(); }
+    FrWaveField * FrFreeSurface::GetWaveField() const { return m_waveField.get(); }
 
-    double FrFreeSurface_::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
+    double FrFreeSurface::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
         m_waveField->GetElevation(x,y, fc);
     }
 
-    FrFreeSurfaceGridAsset *FrFreeSurface_::GetFreeSurfaceGridAsset() const {return m_freeSurfaceGridAsset.get();}
+    FrFreeSurfaceGridAsset *FrFreeSurface::GetFreeSurfaceGridAsset() const {return m_freeSurfaceGridAsset.get();}
 
-    double FrFreeSurface_::GetPosition(FRAME_CONVENTION fc) const {
+    double FrFreeSurface::GetPosition(FRAME_CONVENTION fc) const {
         return GetPosition(0.,0.,fc);
     }
 
-    double FrFreeSurface_::GetPosition(double x, double y, FRAME_CONVENTION fc) const {
+    double FrFreeSurface::GetPosition(double x, double y, FRAME_CONVENTION fc) const {
         return m_tidal->GetHeight(fc) + m_waveField->GetElevation(x, y, fc);
     }
 
-    double FrFreeSurface_::GetPosition(const Position worldPos, FRAME_CONVENTION fc) const {
+    double FrFreeSurface::GetPosition(const Position worldPos, FRAME_CONVENTION fc) const {
         return GetPosition(worldPos[0],worldPos[1],fc);
     }
 
-    void FrFreeSurface_::GetPosition(Position& worldPos, FRAME_CONVENTION fc) const {
+    void FrFreeSurface::GetPosition(Position& worldPos, FRAME_CONVENTION fc) const {
         worldPos[2] = GetPosition(worldPos[0],worldPos[1],fc);
     }
 
 
-    void FrFreeSurface_::NoWaves() {
+    void FrFreeSurface::NoWaves() {
         m_waveField = std::make_unique<FrNullWaveField_>(this);
     }
 
     FrAiryRegularWaveField*
-    FrFreeSurface_::SetAiryRegularWaveField() {
+    FrFreeSurface::SetAiryRegularWaveField() {
         m_waveField = std::make_unique<FrAiryRegularWaveField>(this);
         return dynamic_cast<FrAiryRegularWaveField*>(m_waveField.get());
     }
 
     FrAiryRegularWaveField*
-    FrFreeSurface_::SetAiryRegularWaveField(double waveHeight, double wavePeriod, double waveDirAngle, ANGLE_UNIT unit,
+    FrFreeSurface::SetAiryRegularWaveField(double waveHeight, double wavePeriod, double waveDirAngle, ANGLE_UNIT unit,
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularWaveField();
         waveField->SetWaveHeight(waveHeight);
@@ -84,7 +84,7 @@ namespace frydom {
 
 
     FrAiryRegularWaveField*
-    FrFreeSurface_::SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
+    FrFreeSurface::SetAiryRegularWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularWaveField();
         waveField->SetWaveHeight(waveHeight);
@@ -95,13 +95,13 @@ namespace frydom {
 
 
     FrAiryRegularOptimWaveField*
-    FrFreeSurface_::SetAiryRegularOptimWaveField() {
+    FrFreeSurface::SetAiryRegularOptimWaveField() {
         m_waveField = std::make_unique<FrAiryRegularOptimWaveField>(this);
         return dynamic_cast<FrAiryRegularOptimWaveField*>(m_waveField.get());
     }
 
     FrAiryRegularOptimWaveField*
-    FrFreeSurface_::SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, double waveDirAngle, ANGLE_UNIT unit,
+    FrFreeSurface::SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, double waveDirAngle, ANGLE_UNIT unit,
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularOptimWaveField();
         waveField->SetWaveHeight(waveHeight);
@@ -111,7 +111,7 @@ namespace frydom {
     }
 
     FrAiryRegularOptimWaveField*
-    FrFreeSurface_::SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
+    FrFreeSurface::SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, const Direction& waveDirection,
                                             FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         auto waveField = SetAiryRegularOptimWaveField();
         waveField->SetWaveHeight(waveHeight);
@@ -122,18 +122,18 @@ namespace frydom {
 
 
     FrAiryIrregularWaveField*
-    FrFreeSurface_::SetAiryIrregularWaveField() {
+    FrFreeSurface::SetAiryIrregularWaveField() {
         m_waveField = std::make_unique<FrAiryIrregularWaveField>(this);
         return dynamic_cast<FrAiryIrregularWaveField*>(m_waveField.get());
     }
 
     FrAiryIrregularOptimWaveField*
-    FrFreeSurface_::SetAiryIrregularOptimWaveField() {
+    FrFreeSurface::SetAiryIrregularOptimWaveField() {
         m_waveField = std::make_unique<FrAiryIrregularOptimWaveField>(this);
         return dynamic_cast<FrAiryIrregularOptimWaveField*>(m_waveField.get());
     }
 
-    void FrFreeSurface_::Initialize() {
+    void FrFreeSurface::Initialize() {
         if (m_showFreeSurface) {
             m_tidal->Initialize();
             m_waveField->Initialize();
@@ -142,14 +142,14 @@ namespace frydom {
         }
     }
 
-    void FrFreeSurface_::Update(double time) {
+    void FrFreeSurface::Update(double time) {
         if (m_showFreeSurface) {
             m_tidal->Update(time);
             m_waveField->Update(time);
         }
     }
 
-    void FrFreeSurface_::ShowFreeSurface(bool showFreeSurface) {
+    void FrFreeSurface::ShowFreeSurface(bool showFreeSurface) {
         if (showFreeSurface && m_showFreeSurface!=showFreeSurface) {
             std::cout<< "Be careful to set new free surface grid, wave field and tidal model"<<std::endl;
         }
@@ -161,7 +161,7 @@ namespace frydom {
         }
     }
 
-    void FrFreeSurface_::StepFinalize() {
+    void FrFreeSurface::StepFinalize() {
         if (m_showFreeSurface) {
             m_waveField->StepFinalize();
             m_freeSurfaceGridAsset->StepFinalize();

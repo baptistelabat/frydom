@@ -25,19 +25,19 @@ namespace frydom {
      * A differenciation is done on which side of the cable (starting or ending), the force is applied.
      * \see FrCatenaryLine_, FrForce_
      */
-    class FrCatenaryForce_ : public FrForce_ {
+    class FrCatenaryForce : public FrForce {
 
     private:
 
-        FrCatenaryLine_* m_line; ///< The parent line
-        FrCatenaryLine_::LINE_SIDE m_line_side;   ///< The side of the line where the tension is applied
+        FrCatenaryLine* m_line; ///< The parent line
+        FrCatenaryLine::LINE_SIDE m_line_side;   ///< The side of the line where the tension is applied
 
     public:
 
         /// FrCatenaryForce constructor, from a catenary line, and the description of the side of this line
         /// \param line catenary line applying a tension
         /// \param side side of the line (starting or ending)
-        FrCatenaryForce_(FrCatenaryLine_* line, FrCatenaryLine_::LINE_SIDE side) : m_line(line), m_line_side(side) {};
+        FrCatenaryForce(FrCatenaryLine* line, FrCatenaryLine::LINE_SIDE side) : m_line(line), m_line_side(side) {};
 
         /// Update the catenary force : get the tension applied by the line on the corresponding node
         /// \param time time of the simulation

@@ -21,46 +21,46 @@
 
 namespace frydom {
 
-    FrQuadraticDamping_::FrQuadraticDamping_(FLUID_TYPE ft, bool relativeToFluid) :
+    FrQuadraticDamping::FrQuadraticDamping(FLUID_TYPE ft, bool relativeToFluid) :
             m_fluidType(ft), m_relative2Fluid(relativeToFluid) {}
 
-    void FrQuadraticDamping_::SetDampingCoefficients(double Cu, double Cv, double Cw) {
+    void FrQuadraticDamping::SetDampingCoefficients(double Cu, double Cv, double Cw) {
         m_Cu = Cu;
         m_Cv = Cv;
         m_Cw = Cw;
     }
 
-    void FrQuadraticDamping_::GetDampingCoefficients(double &Cu, double &Cv, double &Cw) {
+    void FrQuadraticDamping::GetDampingCoefficients(double &Cu, double &Cv, double &Cw) {
         Cu = m_Cu;
         Cv = m_Cv;
         Cw = m_Cw;
     }
 
-    void FrQuadraticDamping_::SetProjectedSections(double Su, double Sv, double Sw) {
+    void FrQuadraticDamping::SetProjectedSections(double Su, double Sv, double Sw) {
         m_Su = Su;
         m_Sv = Sv;
         m_Sw = Sw;
     }
 
-    void FrQuadraticDamping_::GetProjectedSections(double &Su, double &Sv, double &Sw) {
+    void FrQuadraticDamping::GetProjectedSections(double &Su, double &Sv, double &Sw) {
         Su = m_Su;
         Sv = m_Sv;
         Sw = m_Sw;
     }
 
-    void FrQuadraticDamping_::SetRelative2Fluid(bool relativeVelocity) { m_relative2Fluid = relativeVelocity; }
+    void FrQuadraticDamping::SetRelative2Fluid(bool relativeVelocity) { m_relative2Fluid = relativeVelocity; }
 
-    bool FrQuadraticDamping_::GetRelative2Fluid() {return m_relative2Fluid;}
+    bool FrQuadraticDamping::GetRelative2Fluid() {return m_relative2Fluid;}
 
-    void FrQuadraticDamping_::Initialize() {
-        FrForce_::Initialize();
+    void FrQuadraticDamping::Initialize() {
+        FrForce::Initialize();
     }
 
-    void FrQuadraticDamping_::Update(double time) {
+    void FrQuadraticDamping::Update(double time) {
 
         Velocity cogRelVel;
         if (m_relative2Fluid) {
-            FrFrame_ cogFrame = m_body->GetFrameAtCOG(NWU);
+            FrFrame cogFrame = m_body->GetFrameAtCOG(NWU);
             cogRelVel = -m_body->GetSystem()->GetEnvironment()->GetRelativeVelocityInFrame(
                     cogFrame, m_body->GetCOGVelocityInWorld(NWU), m_fluidType, NWU);
         } else {
@@ -81,8 +81,8 @@ namespace frydom {
 
     }
 
-    void FrQuadraticDamping_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrQuadraticDamping::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
 }  // end namespace frydom

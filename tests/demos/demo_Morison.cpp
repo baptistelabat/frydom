@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     DIRECTION_CONVENTION dc = GOTO;
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
 
     // ------------------ Wave Field ------------------ //
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
         double frictionCoeff = 0.1;
 
         // Add an element, with parameters corresponding to the cylinder.
-        MorisonModel->AddElement(FrFrame_(), height, 2. * radius, AddedMassCoeff, DragCoeff, frictionCoeff);
+        MorisonModel->AddElement(FrFrame(), height, 2. * radius, AddedMassCoeff, DragCoeff, frictionCoeff);
 
         // Instantiate a Morison Force, using a Morison model, and add it to the cylinder
         auto MorisonForce = make_morison_force(MorisonModel, cylinder);

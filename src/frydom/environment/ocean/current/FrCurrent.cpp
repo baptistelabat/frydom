@@ -11,11 +11,11 @@
 
 #include "FrCurrent.h"
 
-#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/FrOcean.h"
 
 namespace frydom {
 
-    FrEnvironment_* FrCurrent_::GetEnvironment() const {
+    FrEnvironment* FrCurrent::GetEnvironment() const {
         return m_ocean->GetEnvironment();
     }
 

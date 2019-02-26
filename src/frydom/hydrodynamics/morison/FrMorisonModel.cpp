@@ -21,15 +21,15 @@
 namespace frydom {
 
 
-    std::shared_ptr<FrMorisonCompositeElement_> make_morison_model(FrBody_ *body){
-        return std::make_shared<FrMorisonCompositeElement_>(body);
+    std::shared_ptr<FrMorisonCompositeElement> make_morison_model(FrBody *body){
+        return std::make_shared<FrMorisonCompositeElement>(body);
     }
 
     // -----------------------------------------------------------------
     // MORISON MODEL
     // -----------------------------------------------------------------
 
-    void FrMorisonElement_::SetFrame(FrBody_* body, Position posA, Position posB, Direction vect) {
+    void FrMorisonElement::SetFrame(FrBody* body, Position posA, Position posB, Direction vect) {
 
         Position position = 0.5*(posA + posB);
 
@@ -46,45 +46,45 @@ namespace frydom {
         Direction e2 = e3.cross(e1);
         e2.normalize();
 
-//        m_node = std::make_shared<FrNode_>(body, position, FrRotation_(e1, e2, e3, NWU));
-        m_node = std::make_shared<FrNode_>(body);  // TODO : doit etre gere par la classe de base !!
-        m_node->SetFrameInBody(FrFrame_(position, FrRotation_(e1, e2, e3, NWU), NWU));
+//        m_node = std::make_shared<FrNode>(body, position, FrRotation(e1, e2, e3, NWU));
+        m_node = std::make_shared<FrNode>(body);  // TODO : doit etre gere par la classe de base !!
+        m_node->SetFrameInBody(FrFrame(position, FrRotation(e1, e2, e3, NWU), NWU));
     }
 
-    void FrMorisonElement_::SetFrame(FrBody_* body, const FrFrame_& frame) {
-        m_node = std::make_shared<FrNode_>(body);
+    void FrMorisonElement::SetFrame(FrBody* body, const FrFrame& frame) {
+        m_node = std::make_shared<FrNode>(body);
         m_node->SetFrameInBody(frame);
     }
 
-    Force FrMorisonElement_::GetForceInWorld(FRAME_CONVENTION fc) const {
+    Force FrMorisonElement::GetForceInWorld(FRAME_CONVENTION fc) const {
         auto force = m_force;
         if (IsNED(fc)) internal::SwapFrameConvention(force);
         return force;
     }
 
-    Torque FrMorisonElement_::GetTorqueInBody() const {
+    Torque FrMorisonElement::GetTorqueInBody() const {
         return m_torque;
     }
 
-    FrFrame_ FrMorisonElement_::GetFrame() const { return m_node->GetFrameInWorld(); }
+    FrFrame FrMorisonElement::GetFrame() const { return m_node->GetFrameInWorld(); }
 
 
     // ---------------------------------------------------------------------
     // MORISON SINGLE ELEMENT
     // ---------------------------------------------------------------------
 
-    FrMorisonSingleElement_::FrMorisonSingleElement_(FrBody_* body) {
-        m_node = std::make_shared<FrNode_>(body);
+    FrMorisonSingleElement::FrMorisonSingleElement(FrBody* body) {
+        m_node = std::make_shared<FrNode>(body);
     }
 
-    FrMorisonSingleElement_::FrMorisonSingleElement_(FrBody_* body, Position posA, Position posB, double diameter,
+    FrMorisonSingleElement::FrMorisonSingleElement(FrBody* body, Position posA, Position posB, double diameter,
                                                      MorisonCoeff ca, MorisonCoeff cd, double cf,
                                                      Direction perpendicular) {
         SetAddedMass(ca);
         SetDragCoeff(cd);
         SetFrictionCoeff(cf);
 
-        //m_node = std::make_shared<FrNode_>(body);
+        //m_node = std::make_shared<FrNode>(body);
         SetFrame(body, posA, posB, perpendicular);
 
         SetDiameter(diameter);
@@ -92,8 +92,8 @@ namespace frydom {
         SetVolume();
     }
 
-    FrMorisonSingleElement_::FrMorisonSingleElement_(std::shared_ptr<FrNode_>& nodeA,
-                                                     std::shared_ptr<FrNode_>& nodeB,
+    FrMorisonSingleElement::FrMorisonSingleElement(std::shared_ptr<FrNode>& nodeA,
+                                                     std::shared_ptr<FrNode>& nodeB,
                                                      double diameter, MorisonCoeff ca, MorisonCoeff cd, double cf,
                                                      Direction perpendicular) {
         SetNodes(nodeA, nodeB);
@@ -102,7 +102,7 @@ namespace frydom {
         SetDragCoeff(cd);
         SetFrictionCoeff(cf);
 
-        //m_node = std::make_shared<FrNode_>(nodeA->GetBody());
+        //m_node = std::make_shared<FrNode>(nodeA->GetBody());
         SetFrame(nodeA->GetBody(), nodeA->GetNodePositionInBody(NWU), nodeB->GetNodePositionInBody(NWU), perpendicular);
 
         SetDiameter(diameter);
@@ -110,7 +110,7 @@ namespace frydom {
         SetVolume();
     }
 
-    FrMorisonSingleElement_::FrMorisonSingleElement_(FrBody_* body, FrFrame_ frame, double diameter, double length,
+    FrMorisonSingleElement::FrMorisonSingleElement(FrBody* body, FrFrame frame, double diameter, double length,
                                                      MorisonCoeff ca, MorisonCoeff cd, double cf) {
         SetAddedMass(ca);
         SetDragCoeff(cd);
@@ -124,51 +124,51 @@ namespace frydom {
     }
 
 
-    void FrMorisonSingleElement_::SetNodes(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB) {
+    void FrMorisonSingleElement::SetNodes(std::shared_ptr<FrNode>& nodeA, std::shared_ptr<FrNode>& nodeB) {
         m_nodeA = nodeA;
         m_nodeB = nodeB;
     }
 
-    void FrMorisonSingleElement_::SetNodes(FrBody_* body, Position posA, Position posB) {
-        m_nodeA = std::make_shared<FrNode_>(body);
+    void FrMorisonSingleElement::SetNodes(FrBody* body, Position posA, Position posB) {
+        m_nodeA = std::make_shared<FrNode>(body);
         m_nodeA->SetPositionInBody(posA, NWU);
-        m_nodeB = std::make_shared<FrNode_>(body);
+        m_nodeB = std::make_shared<FrNode>(body);
         m_nodeB->SetPositionInBody(posB, NWU);
         SetLength(m_nodeA->GetPositionInWorld(NWU), m_nodeB->GetPositionInWorld(NWU));
     }
 
-    void FrMorisonSingleElement_::SetAddedMass(MorisonCoeff ca) {
+    void FrMorisonSingleElement::SetAddedMass(MorisonCoeff ca) {
         assert(ca.x >= -FLT_EPSILON or std::abs(ca.x) <= FLT_EPSILON);
         assert(ca.y >= -FLT_EPSILON or std::abs(ca.y) <= FLT_EPSILON);
         m_property.ca = ca;
     }
 
-    void FrMorisonSingleElement_::SetDragCoeff(MorisonCoeff cd) {
+    void FrMorisonSingleElement::SetDragCoeff(MorisonCoeff cd) {
         assert(cd.x >= -FLT_EPSILON or std::abs(cd.x) <= FLT_EPSILON);
         assert(cd.y >= -FLT_EPSILON or std::abs(cd.y) <= FLT_EPSILON);
         m_property.cd = cd;
     }
 
-    void FrMorisonSingleElement_::SetFrictionCoeff(double cf) {
+    void FrMorisonSingleElement::SetFrictionCoeff(double cf) {
         assert(cf >= -FLT_EPSILON or std::abs(cf) <= FLT_EPSILON);
         m_property.cf = cf;
     }
 
-    void FrMorisonSingleElement_::SetDiameter(const double diameter) {
+    void FrMorisonSingleElement::SetDiameter(const double diameter) {
         assert(diameter >= -FLT_EPSILON or std::abs(diameter) <= FLT_EPSILON);
         m_property.diameter = diameter;
     }
 
-    void FrMorisonSingleElement_::SetLength(Position posA, Position posB) {
+    void FrMorisonSingleElement::SetLength(Position posA, Position posB) {
         m_property.length = (posB - posA).norm();
     }
 
-    void FrMorisonSingleElement_::SetVolume() {
+    void FrMorisonSingleElement::SetVolume() {
         m_property.volume = MU_PI_4 * GetDiameter() * GetDiameter() * GetLength();
     }
 
 
-    Velocity FrMorisonSingleElement_::GetFlowVelocity() {
+    Velocity FrMorisonSingleElement::GetFlowVelocity() {
 
         Velocity velocity;
         Position worldPos = m_node->GetPositionInWorld(NWU);
@@ -187,7 +187,7 @@ namespace frydom {
         return m_node->GetFrameInWorld().ProjectVectorParentInFrame(velocityBody, NWU);
     }
 
-    Acceleration FrMorisonSingleElement_::GetFlowAcceleration() {
+    Acceleration FrMorisonSingleElement::GetFlowAcceleration() {
 
         Acceleration acceleration;
         Position worldPos = m_node->GetPositionInWorld(NWU);
@@ -206,7 +206,7 @@ namespace frydom {
     // UPDATE
     //
 
-    void FrMorisonSingleElement_::Update(double time) {
+    void FrMorisonSingleElement::Update(double time) {
 
         Force localForce;
 
@@ -234,7 +234,7 @@ namespace frydom {
         m_torque = relPos.cross(forceBody);
     }
 
-    void FrMorisonSingleElement_::Initialize() {
+    void FrMorisonSingleElement::Initialize() {
         assert(m_node);
         assert(m_node->GetBody());
         assert(m_property.length > FLT_EPSILON);
@@ -242,7 +242,7 @@ namespace frydom {
         SetVolume();
     }
 
-    void FrMorisonSingleElement_::StepFinalize() {
+    void FrMorisonSingleElement::StepFinalize() {
 
     }
 
@@ -251,28 +251,28 @@ namespace frydom {
     // MORISON COMPOSITE FORCE MODEL
     // -------------------------------------------------------------------
 
-    FrMorisonCompositeElement_::FrMorisonCompositeElement_(FrBody_* body) {
-        m_node = std::make_shared<FrNode_>(body);
+    FrMorisonCompositeElement::FrMorisonCompositeElement(FrBody* body) {
+        m_node = std::make_shared<FrNode>(body);
     }
 
-    FrMorisonCompositeElement_::FrMorisonCompositeElement_(FrBody_* body, FrFrame_& frame) {
-        m_node = std::make_shared<FrNode_>(body); // TODO : Devrait etre instancie dans la classe de base
+    FrMorisonCompositeElement::FrMorisonCompositeElement(FrBody* body, FrFrame& frame) {
+        m_node = std::make_shared<FrNode>(body); // TODO : Devrait etre instancie dans la classe de base
         m_node->SetFrameInBody(frame);
     }
 
-    void FrMorisonCompositeElement_::AddElement(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB, double diameter,
+    void FrMorisonCompositeElement::AddElement(std::shared_ptr<FrNode>& nodeA, std::shared_ptr<FrNode>& nodeB, double diameter,
                                                 MorisonCoeff ca, MorisonCoeff cd, double cf, Direction perpendicular) {
-        m_morison.push_back(std::make_unique<FrMorisonSingleElement_>(nodeA, nodeB, diameter, ca, cd, cf, perpendicular));
+        m_morison.push_back(std::make_unique<FrMorisonSingleElement>(nodeA, nodeB, diameter, ca, cd, cf, perpendicular));
     }
 
-    void FrMorisonCompositeElement_::AddElement(std::shared_ptr<FrNode_>& nodeA, std::shared_ptr<FrNode_>& nodeB,
+    void FrMorisonCompositeElement::AddElement(std::shared_ptr<FrNode>& nodeA, std::shared_ptr<FrNode>& nodeB,
                                                 Direction perpendicular) {
-        m_morison.push_back(std::make_unique<FrMorisonSingleElement_>(nodeA, nodeB, m_property.diameter,
+        m_morison.push_back(std::make_unique<FrMorisonSingleElement>(nodeA, nodeB, m_property.diameter,
                                                                       m_property.ca, m_property.cd,
                                                                       m_property.cf, perpendicular));
     }
 
-    void FrMorisonCompositeElement_::AddElement(Position posA, Position posB, double diameter,
+    void FrMorisonCompositeElement::AddElement(Position posA, Position posB, double diameter,
                                                 MorisonCoeff ca, MorisonCoeff cd, double cf, unsigned int n,
                                                 Direction perpendicular) {
         Direction dV = (posB - posA) / n;
@@ -280,42 +280,42 @@ namespace frydom {
         Position pos;
         for (unsigned int i=0; i<n; ++i) {
             pos = posA + dV * i;
-            m_morison.push_back(std::make_unique<FrMorisonSingleElement_>(m_node->GetBody(), pos, pos + dV, diameter,
+            m_morison.push_back(std::make_unique<FrMorisonSingleElement>(m_node->GetBody(), pos, pos + dV, diameter,
                                                                           ca, cd, cf, perpendicular));
         }
     }
 
-    void FrMorisonCompositeElement_::AddElement(Position posA, Position posB, unsigned int n, Direction perpendicular) {
+    void FrMorisonCompositeElement::AddElement(Position posA, Position posB, unsigned int n, Direction perpendicular) {
         AddElement(posA, posB, m_property.diameter, m_property.ca, m_property.cd, m_property.cf, n, perpendicular);
     }
 
-    void FrMorisonCompositeElement_::AddElement(FrFrame_ frame, double length, double diameter,
+    void FrMorisonCompositeElement::AddElement(FrFrame frame, double length, double diameter,
                                                 MorisonCoeff ca, MorisonCoeff cd, double cf) {
-        m_morison.push_back(std::make_unique<FrMorisonSingleElement_>(m_node->GetBody(), frame, diameter,
+        m_morison.push_back(std::make_unique<FrMorisonSingleElement>(m_node->GetBody(), frame, diameter,
                                                                       length, ca, cd, cf));
     }
 
-    void FrMorisonCompositeElement_::AddElement(FrFrame_ frame, double length) {
+    void FrMorisonCompositeElement::AddElement(FrFrame frame, double length) {
         AddElement(frame, length, m_property.diameter, m_property.ca, m_property.cd, m_property.cf);
     }
 
-    void FrMorisonCompositeElement_::SetDragCoeff(MorisonCoeff cd) {
+    void FrMorisonCompositeElement::SetDragCoeff(MorisonCoeff cd) {
         m_property.cd = cd;
     }
 
-    void FrMorisonCompositeElement_::SetFrictionCoeff(double cf) {
+    void FrMorisonCompositeElement::SetFrictionCoeff(double cf) {
         m_property.cf = cf;
     }
 
-    void FrMorisonCompositeElement_::SetAddedMass(MorisonCoeff ca) {
+    void FrMorisonCompositeElement::SetAddedMass(MorisonCoeff ca) {
         m_property.ca = ca;
     }
 
-    void FrMorisonCompositeElement_::SetDiameter(double diameter) {
+    void FrMorisonCompositeElement::SetDiameter(double diameter) {
         m_property.diameter = diameter;
     }
 
-    void FrMorisonCompositeElement_::Initialize() {
+    void FrMorisonCompositeElement::Initialize() {
 
         for (auto& element: m_morison) {
             element->Initialize();
@@ -323,7 +323,7 @@ namespace frydom {
         }
     }
 
-    void FrMorisonCompositeElement_::Update(double time) {
+    void FrMorisonCompositeElement::Update(double time) {
 
         m_force.SetNull();
         m_torque.SetNull();

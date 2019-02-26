@@ -23,13 +23,13 @@
 namespace frydom {
 
     // Forward declaration
-    class FrHydroDB_;
+    class FrHydroDB;
 
     /**
-     * \class FrBEMBody_
+     * \class FrBEMMode
      * \brief
      */
-    class FrBEMMode_ {
+    class FrBEMMode {
 
     public:
         enum TYPE {
@@ -44,7 +44,7 @@ namespace frydom {
         bool m_active = true;
 
     public:
-        FrBEMMode_() = default;
+        FrBEMMode() = default;
 
         void SetTypeLINEAR() { m_type = LINEAR; }
         void SetTypeANGULAR() { m_type = ANGULAR; }
@@ -63,8 +63,8 @@ namespace frydom {
 
     };
 
-    typedef FrBEMMode_ FrBEMForceMode_;
-    typedef FrBEMMode_ FrBEMMotionMode_;
+    typedef FrBEMMode FrBEMForceMode;
+    typedef FrBEMMode FrBEMMotionMode;
 
 
     struct FrWaveDriftPolarData {
@@ -100,17 +100,17 @@ namespace frydom {
      * \class FrBEMBody_
      * \brief Class for defining a body subject to hydrodynamic loads using a BEM solver.
      */
-    class FrBEMBody_ {
+    class FrBEMBody {
 
     private:
 
-        FrHydroDB_* m_HDB;
+        FrHydroDB* m_HDB;
         unsigned int m_id;
         std::string m_name;
         Position m_position;
 
-        std::vector<FrBEMForceMode_> m_forceModes;
-        std::vector<FrBEMMotionMode_> m_motionModes;
+        std::vector<FrBEMForceMode> m_forceModes;
+        std::vector<FrBEMMotionMode> m_motionModes;
 
         Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> m_excitationMask;
         std::vector<Eigen::MatrixXcd> m_excitation;
@@ -118,9 +118,9 @@ namespace frydom {
         std::vector<Eigen::MatrixXcd> m_diffraction;
 
         std::vector<Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>> m_radiationMask;
-        std::unordered_map<FrBEMBody_*, mathutils::Matrix66<double>> m_infiniteAddedMass;
-        std::unordered_map<FrBEMBody_*, std::vector< std::shared_ptr<mathutils::Interp1d<double, mathutils::Vector6d<double>>> >> m_interpK;
-        std::unordered_map<FrBEMBody_*, std::vector< std::shared_ptr<mathutils::Interp1d<double, mathutils::Vector6d<double>>> >> m_interpKu;
+        std::unordered_map<FrBEMBody*, mathutils::Matrix66<double>> m_infiniteAddedMass;
+        std::unordered_map<FrBEMBody*, std::vector< std::shared_ptr<mathutils::Interp1d<double, mathutils::Vector6d<double>>> >> m_interpK;
+        std::unordered_map<FrBEMBody*, std::vector< std::shared_ptr<mathutils::Interp1d<double, mathutils::Vector6d<double>>> >> m_interpKu;
 
         std::vector<std::vector<mathutils::Interp1dLinear<double, std::complex<double>>>> m_waveDirInterpolators;
 
@@ -129,7 +129,7 @@ namespace frydom {
         mathutils::Matrix33<double> m_hydrostaticStiffnessMatrix;
 
     public:
-        FrBEMBody_(unsigned int id, std::string name,  FrHydroDB_* HDB)
+        FrBEMBody(unsigned int id, std::string name,  FrHydroDB* HDB)
                 : m_id(id), m_name(name), m_HDB(HDB) { }
 
         std::string GetName() const { return m_name; }
@@ -162,13 +162,13 @@ namespace frydom {
 
         unsigned int GetNbMotionMode() const { return (uint)m_motionModes.size(); }
 
-        FrBEMForceMode_* GetForceMode(unsigned int imode);
+        FrBEMForceMode* GetForceMode(unsigned int imode);
 
-        FrBEMMotionMode_* GetMotionMode(unsigned int imode);
+        FrBEMMotionMode* GetMotionMode(unsigned int imode);
 
-        void AddForceMode(FrBEMForceMode_& mode);
+        void AddForceMode(FrBEMForceMode& mode);
 
-        void AddMotionMode(FrBEMMotionMode_& mode);
+        void AddMotionMode(FrBEMMotionMode& mode);
 
         //
         // Setters
@@ -185,11 +185,11 @@ namespace frydom {
         /// This subroutine computes the excitation loads from the diffraction loads and the Froude-Krylov loads.
         void ComputeExcitation();
 
-        void SetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion, const Eigen::MatrixXd& CMInf);
+        void SetInfiniteAddedMass(FrBEMBody* BEMBodyMotion, const Eigen::MatrixXd& CMInf);
 
-        void SetImpulseResponseFunctionK(FrBEMBody_* BEMBodyMotion, const std::vector<Eigen::MatrixXd>& listIRF);
+        void SetImpulseResponseFunctionK(FrBEMBody* BEMBodyMotion, const std::vector<Eigen::MatrixXd>& listIRF);
 
-        void SetImpulseResponseFunctionKu(FrBEMBody_* BEMBodyMotion, const std::vector<Eigen::MatrixXd>& listIRF);
+        void SetImpulseResponseFunctionKu(FrBEMBody* BEMBodyMotion, const std::vector<Eigen::MatrixXd>& listIRF);
 
         void SetStiffnessMatrix(const mathutils::Matrix33<double>& hydrostaticStiffnessMatrix);
 
@@ -212,13 +212,13 @@ namespace frydom {
 
         Eigen::VectorXcd GetExcitation(unsigned int iangle, unsigned int iforce) const;
 
-        mathutils::Matrix66<double> GetInfiniteAddedMass(FrBEMBody_* BEMBodyMotion) const;
+        mathutils::Matrix66<double> GetInfiniteAddedMass(FrBEMBody* BEMBodyMotion) const;
 
         mathutils::Matrix66<double> GetSelfInfiniteAddedMass();
 
-        mathutils::Interp1d<double, mathutils::Vector6d<double>>* GetIRFInterpolatorK(FrBEMBody_* BEMBodyMotion, unsigned int idof);
+        mathutils::Interp1d<double, mathutils::Vector6d<double>>* GetIRFInterpolatorK(FrBEMBody* BEMBodyMotion, unsigned int idof);
 
-        mathutils::Interp1d<double, mathutils::Vector6d<double>>* GetIRFInterpolatorKu(FrBEMBody_* BEMBodyMotion, unsigned int idof);
+        mathutils::Interp1d<double, mathutils::Vector6d<double>>* GetIRFInterpolatorKu(FrBEMBody* BEMBodyMotion, unsigned int idof);
 
         mathutils::Matrix33<double> GetHydrostaticStiffnessMatrix() const { return m_hydrostaticStiffnessMatrix; }
 

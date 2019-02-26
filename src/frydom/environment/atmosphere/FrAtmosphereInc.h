@@ -13,7 +13,7 @@
 #ifndef FRYDOM_FRATMOSPHEREINC_H
 #define FRYDOM_FRATMOSPHEREINC_H
 
-#include "FrAtmosphere_.h"
+#include "FrAtmosphere.h"
 
 #include "wind/FrWindInc.h"
 

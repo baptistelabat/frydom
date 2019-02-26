@@ -29,7 +29,7 @@ namespace frydom {
 
 
     // Forward declaration
-    class FrWaveField_;
+    class FrWaveField;
 
     // --------------------------------------------------------
     // Base class for the kinematic stretching
@@ -39,7 +39,8 @@ namespace frydom {
      * \class FrKinematicStretching_
      * \brief Class for defining the kinematic stretching model.
      */
-    class FrKinematicStretching_ {
+    class FrKinematicStretching
+            {
 
     protected:
         bool is_steady = true;                      ///< The expression is not time dependant
@@ -103,7 +104,7 @@ namespace frydom {
      * \class FrKinStretchingVertical_
      * \brief Class for using the vertical stretching model.
      */
-    class FrKinStretchingVertical_ : public FrKinematicStretching_ {
+    class FrKinStretchingVertical_ : public FrKinematicStretching {
 
     public:
         /// Return the vertical scaling coefficient with vertical stretching
@@ -121,7 +122,7 @@ namespace frydom {
      * \class FrKinStretchingExtrapol_
      * \brief Class for using the extrapolation stretching model.
      */
-    class FrKinStretchingExtrapol_ : public FrKinematicStretching_ {
+    class FrKinStretchingExtrapol_ : public FrKinematicStretching {
 
     public:
         /// Return the vertical scaling coefficient with extrapolation stretching
@@ -144,14 +145,14 @@ namespace frydom {
      * \class FrKinStretchingWheeler_
      * \brief Class for using the Wheeler stretching model.
      */
-    class FrKinStretchingWheeler_ : public FrKinematicStretching_ {
+    class FrKinStretchingWheeler_ : public FrKinematicStretching {
 
     private:
-        FrWaveField_* m_waveField;           ///< Wave field definition
+        FrWaveField* m_waveField;           ///< Wave field definition
 
     public:
         /// Default constructor
-        explicit FrKinStretchingWheeler_(FrWaveField_* waveField);
+        explicit FrKinStretchingWheeler_(FrWaveField* waveField);
 
 //        /// Define the linear wave field to which the stretching is applied
 //        void SetWaveField(FrWaveField* waveField);
@@ -181,14 +182,14 @@ namespace frydom {
      * \class FrKinStretchingChakrabarti_
      * \brief Class for using the Chakrabarti stretching model.
      */
-    class FrKinStretchingChakrabarti_ : public FrKinematicStretching_ {
+    class FrKinStretchingChakrabarti_ : public FrKinematicStretching {
 
     private:
-        FrWaveField_* m_waveField;           ///< Wave field definition
+        FrWaveField* m_waveField;           ///< Wave field definition
 
     public:
         /// Default constructor
-        explicit FrKinStretchingChakrabarti_(FrWaveField_* waveField);
+        explicit FrKinStretchingChakrabarti_(FrWaveField* waveField);
 
 //        /// Define the linear wave field to which the stretching is applied
 //        void SetWaveField(FrWaveField* waveField);
@@ -218,16 +219,16 @@ namespace frydom {
      * \class FrKinStretchingDelta_
      * \brief Class for using the delta-stretching model.
      */
-    class FrKinStretchingDelta_ : public FrKinematicStretching_ {
+    class FrKinStretchingDelta_ : public FrKinematicStretching {
 
     private:
-        FrWaveField_* m_waveField;           ///< Wave field definition
+        FrWaveField* m_waveField;           ///< Wave field definition
         double m_delta;                     ///< Delta parameter in [0 , 1]
         double m_hd;                        ///< water depth to which the delta-stretching is applied
 
     public:
         /// Default constructor
-        explicit FrKinStretchingDelta_(FrWaveField_* waveField);
+        explicit FrKinStretchingDelta_(FrWaveField* waveField);
 
 //        /// Define the linear wave field to which the stretching is applied
 //        void SetWaveField(FrWaveField* waveField);
@@ -259,15 +260,15 @@ namespace frydom {
      * \class FrKinStretchingDelta_
      * \brief Class for using the Hdelta-stretching model.
      */
-    class FrKinStretchingHDelta_ : public FrKinematicStretching_ {
+    class FrKinStretchingHDelta_ : public FrKinematicStretching {
 
     private:
-        FrWaveField_* m_waveField;           ///< Wave field definition
+        FrWaveField* m_waveField;           ///< Wave field definition
         double m_delta = 0.3;                     ///< Delta parameter in [0 , 1]
 
     public:
         /// Default constructor
-        explicit FrKinStretchingHDelta_(FrWaveField_* waveField);
+        explicit FrKinStretchingHDelta_(FrWaveField* waveField);
 
 //        /// Define the linear wave field to which the stretching is applied
 //        void SetWaveField(FrWaveField* waveField);

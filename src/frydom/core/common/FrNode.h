@@ -24,15 +24,15 @@
 namespace frydom {
 
     // Forward declarations
-    class FrNode_;
+    class FrNode;
 
     namespace internal {
 
         struct FrMarker : public chrono::ChMarker {
 
-            FrNode_ * m_frydomNode;
+            FrNode * m_frydomNode;
 
-            explicit FrMarker(FrNode_* node);
+            explicit FrMarker(FrNode* node);
 
         };
 
@@ -40,24 +40,24 @@ namespace frydom {
 
 
     // Forward declarations
-    class FrBody_;
+    class FrBody;
 
     /**
      * \class FrNode_
      * \brief Class for defining nodes (in order to add links).
      */
-    class FrNode_ : public FrObject {
+    class FrNode : public FrObject {
 
     private:
 
-        FrBody_* m_body;                                    ///< Pointer to the body containing this node
+        FrBody* m_body;                                    ///< Pointer to the body containing this node
         std::shared_ptr<internal::FrMarker> m_chronoMarker;   ///< Chrono class for nodes/marker.
 
     public:
 
         /// Default Constructor
         /// \param body body to which the node belongs
-        explicit FrNode_(FrBody_* body);
+        explicit FrNode(FrBody* body);
 
 
         /// Set node position and direction axis, with respect to body reference frame
@@ -85,13 +85,13 @@ namespace frydom {
         void TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc);
 
 
-        void SetOrientationInBody(const FrRotation_& rotation);
+        void SetOrientationInBody(const FrRotation& rotation);
         void SetOrientationInBody(const FrUnitQuaternion_& quaternion);
 
-        void RotateInBody(const FrRotation_& rotation);
+        void RotateInBody(const FrRotation& rotation);
         void RotateInBody(const FrUnitQuaternion_& quaternion);
 
-        void RotateInWorld(const FrRotation_& rotation);
+        void RotateInWorld(const FrRotation& rotation);
         void RotateInWorld(const FrUnitQuaternion_& quaternion);
 
         void RotateAroundXInBody(double angleRad, FRAME_CONVENTION fc);
@@ -105,27 +105,27 @@ namespace frydom {
 
 
         /// Destructor
-        ~FrNode_() = default;
+        ~FrNode() = default;
 
         /// Get the body pointer
         /// \return the body to which the node belongs
-        FrBody_* GetBody();
+        FrBody* GetBody();
 
         /// Get the node frame, given in the world reference frame
         /// \return the node frame in the world reference frame
-        FrFrame_ GetFrameInWorld() const;
+        FrFrame GetFrameInWorld() const;
 
         /// Get the node frame, given in the body reference frame
         /// \return the node frame in the body reference frame
-        FrFrame_ GetFrameInBody() const;
+        FrFrame GetFrameInBody() const;
 
         /// Get the node frame with respect to the COG in body reference coordinates
         /// \return the node frame with respect to COG
-        FrFrame_ GetFrameWRT_COG_InBody() const;
+        FrFrame GetFrameWRT_COG_InBody() const;
 
-        void SetFrameInBody(const FrFrame_& frameInBody);
+        void SetFrameInBody(const FrFrame& frameInBody);
 
-        void SetFrameInWorld(const FrFrame_& frameInWorld);
+        void SetFrameInWorld(const FrFrame& frameInWorld);
 
 
         /// Get the node position in world reference frame
@@ -221,7 +221,7 @@ namespace frydom {
 
     private:
 
-        friend void FrLink_::SetMarkers(FrNode_*, FrNode_*);
+        friend void FrLink::SetMarkers(FrNode*, FrNode*);
 
     };
 

@@ -15,29 +15,29 @@
 
 namespace frydom {
 
-    void FrKinematicStretching_::SetInfDepth(bool infinite_depth) { c_infinite_depth = infinite_depth; }
+    void FrKinematicStretching::SetInfDepth(bool infinite_depth) { c_infinite_depth = infinite_depth; }
 
-    void FrKinematicStretching_::SetInfDepth_ON() { this->SetInfDepth(true); }
+    void FrKinematicStretching::SetInfDepth_ON() { this->SetInfDepth(true); }
 
-    void FrKinematicStretching_::SetSteady(bool steady) { is_steady = steady; }
+    void FrKinematicStretching::SetSteady(bool steady) { is_steady = steady; }
 
-    bool FrKinematicStretching_::IsSteady() const { return is_steady; }
+    bool FrKinematicStretching::IsSteady() const { return is_steady; }
 
-    double FrKinematicStretching_::Eval(const double &z, const double &konde, const double &depth) const {
+    double FrKinematicStretching::Eval(const double &z, const double &konde, const double &depth) const {
         return Ez(z, konde, depth);
     }
 
-    double FrKinematicStretching_::Eval(const double &x, const double &y, const double &z, const double &konde,
+    double FrKinematicStretching::Eval(const double &x, const double &y, const double &z, const double &konde,
                                        const double &depth) const {
         return Ez(z, konde, depth);
     }
 
-    double FrKinematicStretching_::Eval(const chrono::ChVector<> &pos, const double &konde, const double &depth) const {
+    double FrKinematicStretching::Eval(const chrono::ChVector<> &pos, const double &konde, const double &depth) const {
         return Eval(pos.z(), konde, depth);
     }
 
     std::vector<double>
-    FrKinematicStretching_::Eval(const double &x, const double &y, const double &z, const std::vector<double> &vkonde,
+    FrKinematicStretching::Eval(const double &x, const double &y, const double &z, const std::vector<double> &vkonde,
                                 const double &depth) const {
         std::vector<double> result;
         for (auto& konde: vkonde) {
@@ -46,21 +46,21 @@ namespace frydom {
         return result;
     }
 
-    double FrKinematicStretching_::EvalDZ(const double &z, const double &konde, const double &depth) const {
+    double FrKinematicStretching::EvalDZ(const double &z, const double &konde, const double &depth) const {
         return diffEz(z, konde, depth);
     }
 
-    double FrKinematicStretching_::EvalDZ(const double &x, const double &y, const double &z, const double &konde,
+    double FrKinematicStretching::EvalDZ(const double &x, const double &y, const double &z, const double &konde,
                                          const double &depth) const {
         return EvalDZ(z, konde, depth);
     }
 
-    double FrKinematicStretching_::EvalDZ(const chrono::ChVector<> &pos, const double &konde, const double &depth) const {
+    double FrKinematicStretching::EvalDZ(const chrono::ChVector<> &pos, const double &konde, const double &depth) const {
         return EvalDZ(pos.z(), konde, depth);
     }
 
     std::vector<double>
-    FrKinematicStretching_::EvalDZ(const double &x, const double &y, const double &z, const std::vector<double> &vkonde,
+    FrKinematicStretching::EvalDZ(const double &x, const double &y, const double &z, const std::vector<double> &vkonde,
                                   const double &depth) const {
         std::vector<double> result;
         for (auto& konde: vkonde) {
@@ -69,7 +69,7 @@ namespace frydom {
         return result;
     }
 
-    double FrKinematicStretching_::Ez(const double &z, const double &konde, const double &depth) const {
+    double FrKinematicStretching::Ez(const double &z, const double &konde, const double &depth) const {
         if (c_infinite_depth) {
             return exp(konde * z);
         } else {
@@ -77,7 +77,7 @@ namespace frydom {
         }
     }
 
-    double FrKinematicStretching_::diffEz(const double &z, const double &konde, const double &depth) const {
+    double FrKinematicStretching::diffEz(const double &z, const double &konde, const double &depth) const {
         if (c_infinite_depth) {
             return konde * exp(konde * z);
         } else {
@@ -153,7 +153,7 @@ namespace frydom {
 
     }
 
-    FrKinStretchingWheeler_::FrKinStretchingWheeler_(FrWaveField_* waveField) : m_waveField(waveField) {
+    FrKinStretchingWheeler_::FrKinStretchingWheeler_(FrWaveField* waveField) : m_waveField(waveField) {
         SetSteady(false);
     }
 
@@ -195,7 +195,7 @@ namespace frydom {
 
     }
 
-    FrKinStretchingChakrabarti_::FrKinStretchingChakrabarti_(FrWaveField_ *waveField) : m_waveField(waveField) {
+    FrKinStretchingChakrabarti_::FrKinStretchingChakrabarti_(FrWaveField *waveField) : m_waveField(waveField) {
         SetSteady(false);
     }
 
@@ -255,7 +255,7 @@ namespace frydom {
         return drz;
     }
 
-    FrKinStretchingDelta_::FrKinStretchingDelta_(FrWaveField_ *waveField) : m_waveField(waveField),
+    FrKinStretchingDelta_::FrKinStretchingDelta_(FrWaveField *waveField) : m_waveField(waveField),
                                                                          m_delta(0.3), m_hd(0.)
     {
         SetSteady(false);
@@ -310,7 +310,7 @@ namespace frydom {
 
     }
 
-    FrKinStretchingHDelta_::FrKinStretchingHDelta_(FrWaveField_ *waveField) : m_waveField(waveField)
+    FrKinStretchingHDelta_::FrKinStretchingHDelta_(FrWaveField *waveField) : m_waveField(waveField)
     {
         SetSteady(false);
     }

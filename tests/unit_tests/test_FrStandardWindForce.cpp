@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -18,8 +18,8 @@ class TestFrStandardWindForce : public ::testing::Test {
 
 protected:
 
-    FrOffshoreSystem_ system;
-    std::shared_ptr<FrBody_> body;
+    FrOffshoreSystem system;
+    std::shared_ptr<FrBody> body;
     std::shared_ptr<FrWindStandardForce_> force;
 
     double m_frontalArea;
@@ -72,7 +72,7 @@ void TestFrStandardWindForce::SetUp() {
 
     body = system.NewBody();
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(),NWU);
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     body->AddExternalForce(force);
@@ -111,7 +111,7 @@ TEST_F(TestFrStandardWindForce, TestTransport) {
     system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()
             ->Set(m_direction(i), m_windSpeed, DEG, MS, NED, COMEFROM);
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(Position(0.1, 0., 0.),FrRotation_(),NWU),NWU);
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(Position(0.1, 0., 0.),FrRotation(),NWU),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     body->Initialize();

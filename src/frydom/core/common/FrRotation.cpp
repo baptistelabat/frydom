@@ -214,78 +214,78 @@ namespace frydom {
     /*
      *
      *
-     * FrRotation_
+     * FrRotation
      *
      *
      */
 
-    FrRotation_::FrRotation_() : m_frQuaternion() {}
+    FrRotation::FrRotation() : m_frQuaternion() {}
 
-    FrRotation_::FrRotation_(FrUnitQuaternion_ quaternion) : m_frQuaternion(quaternion) {}
+    FrRotation::FrRotation(FrUnitQuaternion_ quaternion) : m_frQuaternion(quaternion) {}
 
-    FrRotation_::FrRotation_(const Direction& axis, double angleRAD, FRAME_CONVENTION fc) :
+    FrRotation::FrRotation(const Direction& axis, double angleRAD, FRAME_CONVENTION fc) :
                         m_frQuaternion(axis, angleRAD, fc) {}
 
-    FrRotation_::FrRotation_(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis, FRAME_CONVENTION fc) {
+    FrRotation::FrRotation(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis, FRAME_CONVENTION fc) {
         this->Set(xaxis, yaxis, zaxis, fc);
     }
 
-    void FrRotation_::SetNullRotation() {
+    void FrRotation::SetNullRotation() {
         m_frQuaternion.SetNullRotation();
     }
 
-    void FrRotation_::Set(const FrUnitQuaternion_& quat) {
+    void FrRotation::Set(const FrUnitQuaternion_& quat) {
         m_frQuaternion.Set(quat);
     }
 
-    FrUnitQuaternion_& FrRotation_::GetQuaternion() {
+    FrUnitQuaternion_& FrRotation::GetQuaternion() {
         return m_frQuaternion;
     }
 
-    const FrUnitQuaternion_& FrRotation_::GetQuaternion() const {
+    const FrUnitQuaternion_& FrRotation::GetQuaternion() const {
         return m_frQuaternion;
     }
 
-    void FrRotation_::SetAxisAngle(const Direction &axis, double angleRAD, FRAME_CONVENTION fc) {
+    void FrRotation::SetAxisAngle(const Direction &axis, double angleRAD, FRAME_CONVENTION fc) {
         m_frQuaternion.Set(axis, angleRAD, fc);
     }
 
-    void FrRotation_::GetAxisAngle(Direction &axis, double &angleRAD, FRAME_CONVENTION fc) const {
+    void FrRotation::GetAxisAngle(Direction &axis, double &angleRAD, FRAME_CONVENTION fc) const {
         m_frQuaternion.Get(axis, angleRAD, fc);
     }
 
-    Vector3d<double> FrRotation_::GetRotationVector(FRAME_CONVENTION fc) const {
+    Vector3d<double> FrRotation::GetRotationVector(FRAME_CONVENTION fc) const {
         Direction axis;
         double angle;
         GetAxisAngle(axis, angle, fc);
         return axis * angle;
     }
 
-    void FrRotation_::GetAxis(Direction &axis, FRAME_CONVENTION fc) {
+    void FrRotation::GetAxis(Direction &axis, FRAME_CONVENTION fc) {
         double angle=0.;
         GetAxisAngle(axis, angle, fc);
     }
 
-    void FrRotation_::GetAngle(double &angle) const {
+    void FrRotation::GetAngle(double &angle) const {
         Direction axis;
         GetAxisAngle(axis, angle, NWU);
     }
 
-    double FrRotation_::GetAngle() const {
+    double FrRotation::GetAngle() const {
         double angle;
         GetAngle(angle);
         return angle;
     }
 
-    mathutils::Matrix33<double> FrRotation_::GetRotationMatrix() const {
+    mathutils::Matrix33<double> FrRotation::GetRotationMatrix() const {
         return m_frQuaternion.GetRotationMatrix();
     }
 
-    mathutils::Matrix33<double> FrRotation_::GetInverseRotationMatrix() const{
+    mathutils::Matrix33<double> FrRotation::GetInverseRotationMatrix() const{
         return m_frQuaternion.GetInverseRotationMatrix();
     }
 
-    void FrRotation_::Set(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis, FRAME_CONVENTION fc) {
+    void FrRotation::Set(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis, FRAME_CONVENTION fc) {
 
         // Verifying the directions are orthogonal
         assert(mathutils::IsClose<double>(xaxis.dot(yaxis), 0.));
@@ -304,7 +304,7 @@ namespace frydom {
         m_frQuaternion.Set(matrix, fc);
     }
 
-    void FrRotation_::SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) {
+    void FrRotation::SetEulerAngles_RADIANS(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) {
 
         assert(seq == CARDAN || seq == XYZ);
         if (IsNED(fc)) {  // FIXME : la convention n'est valable que pour une sequence se terminant par yz...
@@ -317,19 +317,19 @@ namespace frydom {
 
     }
 
-    void FrRotation_::SetEulerAngles_DEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) {
+    void FrRotation::SetEulerAngles_DEGREES(double phi, double theta, double psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) {
         SetEulerAngles_RADIANS(phi * DEG2RAD, theta * DEG2RAD, psi * DEG2RAD, seq, fc);
     }
 
-    void FrRotation_::SetCardanAngles_RADIANS(double phi, double theta, double psi, FRAME_CONVENTION fc) {
+    void FrRotation::SetCardanAngles_RADIANS(double phi, double theta, double psi, FRAME_CONVENTION fc) {
         SetEulerAngles_RADIANS(phi, theta, psi, EULER_SEQUENCE::CARDAN, fc);
     }
 
-    void FrRotation_::SetCardanAngles_DEGREES(double phi, double theta, double psi, FRAME_CONVENTION fc) {
+    void FrRotation::SetCardanAngles_DEGREES(double phi, double theta, double psi, FRAME_CONVENTION fc) {
         SetCardanAngles_RADIANS(phi * DEG2RAD, theta * DEG2RAD, psi * DEG2RAD, fc);
     }
 
-    void FrRotation_::GetEulerAngles_RADIANS(double &phi, double &theta, double &psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const {
+    void FrRotation::GetEulerAngles_RADIANS(double &phi, double &theta, double &psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const {
         // FIXME : voir a supprimer ce besoin de friend method !!!
         // Par exemple en ajoutant des fonctions ne prenant que des coefficients de quaternions dans EulerAngles.h
         auto vec = internal::quat_to_euler(m_frQuaternion.GetChronoQuaternion(), seq);  // In NWU  // TODO : avoir methode ne manipulat pas de ChVector
@@ -344,123 +344,123 @@ namespace frydom {
         }
     }
 
-    void FrRotation_::GetEulerAngles_DEGREES(double &phi, double &theta, double &psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const {
+    void FrRotation::GetEulerAngles_DEGREES(double &phi, double &theta, double &psi, EULER_SEQUENCE seq, FRAME_CONVENTION fc) const {
         GetEulerAngles_RADIANS(phi, theta, psi, seq, fc);
         phi   *= RAD2DEG;
         theta *= RAD2DEG;
         psi   *= RAD2DEG;
     }
 
-    void FrRotation_::GetCardanAngles_RADIANS(double &phi, double &theta, double &psi, FRAME_CONVENTION fc) const {
+    void FrRotation::GetCardanAngles_RADIANS(double &phi, double &theta, double &psi, FRAME_CONVENTION fc) const {
         GetEulerAngles_RADIANS(phi, theta, psi, EULER_SEQUENCE::CARDAN, fc);
     }
 
-    void FrRotation_::GetCardanAngles_DEGREES(double &phi, double &theta, double &psi, FRAME_CONVENTION fc) const {
+    void FrRotation::GetCardanAngles_DEGREES(double &phi, double &theta, double &psi, FRAME_CONVENTION fc) const {
         GetEulerAngles_DEGREES(phi, theta, psi, EULER_SEQUENCE::CARDAN, fc);
     }
 
-    void FrRotation_::GetFixedAxisAngles_RADIANS(double &rx, double &ry, double &rz, FRAME_CONVENTION fc) const {
+    void FrRotation::GetFixedAxisAngles_RADIANS(double &rx, double &ry, double &rz, FRAME_CONVENTION fc) const {
         // TODO : utiliser
     }
 
-    void FrRotation_::GetFixedAxisAngles_DEGREES(double &rx, double &ry, double &rz, FRAME_CONVENTION fc) const {
+    void FrRotation::GetFixedAxisAngles_DEGREES(double &rx, double &ry, double &rz, FRAME_CONVENTION fc) const {
         // TODO
     }
 
-    FrRotation_& FrRotation_::operator=(const FrRotation_ &other) {
+    FrRotation& FrRotation::operator=(const FrRotation &other) {
         m_frQuaternion = other.m_frQuaternion;
     }
 
-    FrRotation_ FrRotation_::operator*(const FrRotation_ &other) const {
-        return FrRotation_(m_frQuaternion * other.m_frQuaternion);
+    FrRotation FrRotation::operator*(const FrRotation &other) const {
+        return FrRotation(m_frQuaternion * other.m_frQuaternion);
     }
 
-    FrRotation_ & FrRotation_::operator*=(const FrRotation_ &other) {
+    FrRotation & FrRotation::operator*=(const FrRotation &other) {
         m_frQuaternion *= other.m_frQuaternion;
     }
 
-    bool FrRotation_::operator==(const FrRotation_& other) const {
+    bool FrRotation::operator==(const FrRotation& other) const {
         return m_frQuaternion == other.m_frQuaternion;
     }
 
-    mathutils::Matrix33<double> FrRotation_::LeftMultiply(const mathutils::Matrix33<double>& matrix) const {
+    mathutils::Matrix33<double> FrRotation::LeftMultiply(const mathutils::Matrix33<double>& matrix) const {
         return GetRotationMatrix() * matrix;
     }
 
-    mathutils::Matrix33<double> FrRotation_::LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
+    mathutils::Matrix33<double> FrRotation::LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
         return GetInverseRotationMatrix() * matrix;
     }
 
-    mathutils::Matrix33<double> FrRotation_::RightMultiply(const mathutils::Matrix33<double>& matrix) const {
+    mathutils::Matrix33<double> FrRotation::RightMultiply(const mathutils::Matrix33<double>& matrix) const {
         return matrix * GetRotationMatrix();
     }
 
-    mathutils::Matrix33<double> FrRotation_::RightMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
+    mathutils::Matrix33<double> FrRotation::RightMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
         return matrix * GetInverseRotationMatrix();
     }
 
-    FrRotation_& FrRotation_::RotAxisAngle_RADIANS(const Direction &axis, double angle, FRAME_CONVENTION fc) {
-        *this *= FrRotation_(axis, angle, fc);
+    FrRotation& FrRotation::RotAxisAngle_RADIANS(const Direction &axis, double angle, FRAME_CONVENTION fc) {
+        *this *= FrRotation(axis, angle, fc);
         return *this;
     }
 
-    FrRotation_& FrRotation_::RotAxisAngle_DEGREES(const Direction &axis, double angle, FRAME_CONVENTION fc) {
+    FrRotation& FrRotation::RotAxisAngle_DEGREES(const Direction &axis, double angle, FRAME_CONVENTION fc) {
         RotAxisAngle_RADIANS(axis, angle*DEG2RAD, fc);
     }
 
-    FrRotation_& FrRotation_::RotX_RADIANS(double angle, FRAME_CONVENTION fc) {
+    FrRotation& FrRotation::RotX_RADIANS(double angle, FRAME_CONVENTION fc) {
         RotAxisAngle_RADIANS(Direction(1., 0., 0.), angle, fc);
     }
 
-    FrRotation_& FrRotation_::RotX_DEGREES(double angle, FRAME_CONVENTION fc) {
+    FrRotation& FrRotation::RotX_DEGREES(double angle, FRAME_CONVENTION fc) {
         RotX_RADIANS(angle*DEG2RAD, fc);
     }
 
-    FrRotation_& FrRotation_::RotY_RADIANS(double angle, FRAME_CONVENTION fc) {
+    FrRotation& FrRotation::RotY_RADIANS(double angle, FRAME_CONVENTION fc) {
         RotAxisAngle_RADIANS(Direction(0., 1., 0.), angle, fc);
     }
 
-    FrRotation_& FrRotation_::RotY_DEGREES(double angle, FRAME_CONVENTION fc) {
+    FrRotation& FrRotation::RotY_DEGREES(double angle, FRAME_CONVENTION fc) {
         RotY_RADIANS(angle*DEG2RAD, fc);
     }
 
-    FrRotation_& FrRotation_::RotZ_RADIANS(double angle, FRAME_CONVENTION fc) {
+    FrRotation& FrRotation::RotZ_RADIANS(double angle, FRAME_CONVENTION fc) {
         RotAxisAngle_RADIANS(Direction(0., 0., 1.), angle, fc);
     }
 
-    FrRotation_& FrRotation_::RotZ_DEGREES(double angle, FRAME_CONVENTION fc) {
+    FrRotation& FrRotation::RotZ_DEGREES(double angle, FRAME_CONVENTION fc) {
         RotZ_RADIANS(angle*DEG2RAD, fc);
     }
 
-    void FrRotation_::RotateInParent(const FrUnitQuaternion_& leftQuaternion) {
+    void FrRotation::RotateInParent(const FrUnitQuaternion_& leftQuaternion) {
         m_frQuaternion.RotateInParent(leftQuaternion);
     }
 
-    void FrRotation_::RotateInFrame(const FrUnitQuaternion_& rightQuaternion) {
+    void FrRotation::RotateInFrame(const FrUnitQuaternion_& rightQuaternion) {
         m_frQuaternion.RotateInFrame(rightQuaternion);
     }
 
-    void FrRotation_::RotateInParent(const FrRotation_& leftRotation) {
+    void FrRotation::RotateInParent(const FrRotation& leftRotation) {
         RotateInParent(leftRotation.GetQuaternion());
     }
 
-    void FrRotation_::RotateInFrame(const FrRotation_& rightRotation) {
+    void FrRotation::RotateInFrame(const FrRotation& rightRotation) {
         RotateInFrame(rightRotation.GetQuaternion());
     }
 
-    Direction FrRotation_::GetXAxis(FRAME_CONVENTION fc) const {
+    Direction FrRotation::GetXAxis(FRAME_CONVENTION fc) const {
         return m_frQuaternion.GetXAxis(fc);
     }
 
-    Direction FrRotation_::GetYAxis(FRAME_CONVENTION fc) const {
+    Direction FrRotation::GetYAxis(FRAME_CONVENTION fc) const {
         return m_frQuaternion.GetYAxis(fc);
     }
 
-    Direction FrRotation_::GetZAxis(FRAME_CONVENTION fc) const {
+    Direction FrRotation::GetZAxis(FRAME_CONVENTION fc) const {
         return m_frQuaternion.GetZAxis(fc);
     }
 
-    std::ostream& FrRotation_::cout(std::ostream &os) const {
+    std::ostream& FrRotation::cout(std::ostream &os) const {
 
         double phi, theta, psi;
         GetCardanAngles_DEGREES(phi, theta, psi, NWU);
@@ -475,7 +475,7 @@ namespace frydom {
 
     }
 
-    std::ostream& operator<<(std::ostream& os, const FrRotation_& rotation) {
+    std::ostream& operator<<(std::ostream& os, const FrRotation& rotation) {
         return rotation.cout(os);
     }
 

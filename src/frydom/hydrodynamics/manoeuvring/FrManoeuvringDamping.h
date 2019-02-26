@@ -33,7 +33,7 @@ namespace frydom {
     ///     u: translational velocity in surge
     ///     v: translational velocity in sway
     ///     w: angular velocity in yaw
-    class FrManDampingTaylorExpansion_ : public FrForce_ {
+    class FrManDampingTaylorExpansion : public FrForce {
 
         /// This structure contains the parameters defining the terms in manoeuvring damping force
         struct TypeParam_ {
@@ -60,7 +60,7 @@ namespace frydom {
     public:
 
         /// Default constructor
-        FrManDampingTaylorExpansion_() = default;
+        FrManDampingTaylorExpansion() = default;
 
         /// Definition of a manoeuvring force component from string definition and scalar value
         /// \param tag : shape definition (ex: "Xuuv")

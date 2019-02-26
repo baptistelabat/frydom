@@ -25,7 +25,7 @@ namespace frydom {
      * \class FrCurrentStandardForce_
      * \brief Class for computing current loads following the DNV standard.
      */
-    class FrCurrentStandardForce_ : public FrForce_ {
+    class FrCurrentStandardForce_ : public FrForce {
 
     private:
         double m_breadth = -1;

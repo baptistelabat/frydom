@@ -22,29 +22,29 @@
 namespace frydom {
 
     // Forward declarations
-    class FrMorisonElement_;
-    class FrMorisonSingleElement_;
-    class FrMorisonCompositeElement_;
+    class FrMorisonElement;
+    class FrMorisonSingleElement;
+    class FrMorisonCompositeElement;
 
 
     /**
      * \class FrMorisonForce_
      * \brief Class for computing Morison loads.
      */
-    class FrMorisonForce_ : public FrForce_ {
+    class FrMorisonForce : public FrForce {
 
 
     private:
-        std::shared_ptr<FrMorisonElement_> m_model;
+        std::shared_ptr<FrMorisonElement> m_model;
 
     public:
 
-        FrMorisonForce_(std::shared_ptr<FrMorisonElement_> model)
+        explicit FrMorisonForce(std::shared_ptr<FrMorisonElement> model)
             : m_model(model) { }
 
-        FrMorisonSingleElement_* SetSingleElementModel(FrBody_* body);
+        FrMorisonSingleElement* SetSingleElementModel(FrBody* body);
 
-        FrMorisonCompositeElement_* SetCompositeElementModel(FrBody_* body);
+        FrMorisonCompositeElement* SetCompositeElementModel(FrBody* body);
 
         void Update(double time) override;
 
@@ -59,8 +59,8 @@ namespace frydom {
     /// \param body body on which the force is applied
     /// \return Morison force
     // TODO : delete the body variable, and get it from the node contained in the model?
-    std::shared_ptr<FrMorisonForce_>
-    make_morison_force(std::shared_ptr<FrMorisonElement_> model, std::shared_ptr<FrBody_> body);
+    std::shared_ptr<FrMorisonForce>
+    make_morison_force(std::shared_ptr<FrMorisonElement> model, std::shared_ptr<FrBody> body);
 
 }  // end namespace frydom
 

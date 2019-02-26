@@ -14,16 +14,16 @@
 
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
 
 #include "MathUtils/Angles.h"
 
 namespace frydom {
 
-    FrAiryRegularWaveField::FrAiryRegularWaveField(FrFreeSurface_* freeSurface) : FrWaveField_(freeSurface) {
+    FrAiryRegularWaveField::FrAiryRegularWaveField(FrFreeSurface* freeSurface) : FrWaveField(freeSurface) {
         m_waveModel = LINEAR_WAVES;
-        m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+        m_verticalFactor = std::make_unique<FrKinematicStretching>();
         m_verticalFactor->SetInfDepth(m_infinite_depth);
     }
 
@@ -94,7 +94,7 @@ namespace frydom {
     void FrAiryRegularWaveField::SetStretching(STRETCHING_TYPE type) {
         switch (type) {
             case NO_STRETCHING:
-                m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+                m_verticalFactor = std::make_unique<FrKinematicStretching>();
                 break;
             case VERTICAL:
                 m_verticalFactor = std::make_unique<FrKinStretchingVertical_>();
@@ -110,7 +110,7 @@ namespace frydom {
             case DELTA:
                 m_verticalFactor = std::make_unique<FrKinStretchingDelta_>(this);
             default:
-                m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+                m_verticalFactor = std::make_unique<FrKinematicStretching>();
                 break;
         }
         m_verticalFactor->SetInfDepth(m_infinite_depth);

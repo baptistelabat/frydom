@@ -22,7 +22,7 @@ namespace frydom {
      * \class FrCurrentForce_
      * \brief Class for computing the current loads.
      */
-    class FrCurrentForce_ : public FrForce_ {
+    class FrCurrentForce_ : public FrForce {
 
     private:
         FrCurrentPolarCoeffs m_coeffsTable;

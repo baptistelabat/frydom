@@ -22,17 +22,17 @@
 
 namespace frydom {
 
-    class FrPhysicsItem_;
+    class FrPhysicsItem;
 
 
     namespace internal {
 
-        struct _FrPhysicsItemBase : public chrono::ChPhysicsItem {
+        struct FrPhysicsItemBase : public chrono::ChPhysicsItem {
 
-            FrPhysicsItem_ *m_frydomPhysicsItem;
+            FrPhysicsItem *m_frydomPhysicsItem;
 
             /// Constructor.
-            explicit _FrPhysicsItemBase(FrPhysicsItem_ *item);
+            explicit FrPhysicsItemBase(FrPhysicsItem *item);
 
             void SetupInitial() override;
 
@@ -47,25 +47,25 @@ namespace frydom {
     }  // end namespace frydom::internal
 
 
-    class FrOffshoreSystem_;
+    class FrOffshoreSystem;
     class FrTriangleMeshConnected;
 
     /**
      * \class FrPhysicsItem_
      * \brief Class for defining objects which are neither bodies nor links, for instance caterany lines.
      */
-    class FrPhysicsItem_: public FrObject {
+    class FrPhysicsItem: public FrObject {
 
     protected:
-        std::shared_ptr<internal::_FrPhysicsItemBase> m_chronoPhysicsItem;
+        std::shared_ptr<internal::FrPhysicsItemBase> m_chronoPhysicsItem;
 
-        FrOffshoreSystem_* m_system;
+        FrOffshoreSystem* m_system;
 
     public:
 
-        FrPhysicsItem_();
+        FrPhysicsItem();
 
-        FrOffshoreSystem_* GetSystem();
+        FrOffshoreSystem* GetSystem();
 
         void SetName(const char name[]);
 
@@ -92,27 +92,27 @@ namespace frydom {
      * \class FrPrePhysicsItem_
      * \brief Class for defining physics items updated before bodies.
      */
-    class FrPrePhysicsItem_ : public FrPhysicsItem_{
+    class FrPrePhysicsItem : public FrPhysicsItem{
     protected:
-        friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem_>);
+        friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem>);
     };
 
     /**
      * \class FrMidPhysicsItem_
      * \brief Class for defining physics items updated after bodies but before links.
      */
-    class FrMidPhysicsItem_ : public FrPhysicsItem_{
+    class FrMidPhysicsItem : public FrPhysicsItem{
     protected:
-        friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem_>);
+        friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem>);
     };
 
     /**
      * \class FrPostPhysicsItem_
      * \brief Class for defining physics items updated after links.
      */
-    class FrPostPhysicsItem_ : public FrPhysicsItem_{
+    class FrPostPhysicsItem : public FrPhysicsItem{
     protected:
-        friend void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem_>);
+        friend void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem>);
     };
 
 }  // end namespace frydom

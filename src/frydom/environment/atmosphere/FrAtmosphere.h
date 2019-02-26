@@ -10,64 +10,49 @@
 // ==========================================================================
 
 
-#ifndef FRYDOM_FROCEAN_H
-#define FRYDOM_FROCEAN_H
+#ifndef FRYDOM_FRATMOSPHERE_H
+#define FRYDOM_FRATMOSPHERE_H
 
 #include <memory>
 
-#include "frydom/core/common/FrConvention.h"
 #include "frydom/core/common/FrObject.h"
-
 
 
 namespace frydom {
 
-    // Forward Declarations
-    class FrEnvironment_;
-    class FrFreeSurface_;
-    class FrCurrent_;
-    class FrSeabed_;
+    // Forward Declarations:
+
+    class FrEnvironment;
+    class FrWind;
     class FrFluidProperties;
 
 
     /**
-     * \class FrOcean_
-     * \brief Class for defining the ocean.
+     * \class FrAtmosphere_
+     * \brief Class for defining the atmosphere.
      */
-    class FrOcean_ : public FrObject {
+    class FrAtmosphere : public FrObject {
 
     private:
 
-        FrEnvironment_* m_environment;    ///> pointer to the container
+        FrEnvironment* m_environment;    ///< pointer to the container
 
-        //---------------------------- FrOcean elements ----------------------------//
+        //---------------------------- Atmosphere elements ----------------------------//
 
-        std::unique_ptr <FrSeabed_> m_seabed;               ///> Seabed element, with bathymetry model information
-        std::unique_ptr <FrFreeSurface_> m_freeSurface;     ///> Free surface element, with tidal, wavefield models information
-        std::unique_ptr <FrCurrent_> m_current;             ///> Current, with current model information
-        std::unique_ptr <FrFluidProperties> m_waterProp;    ///> Water properties
+        std::unique_ptr<FrWind>     m_wind;    ///< Wind, with wind model information
+        std::unique_ptr <FrFluidProperties> m_airProp;  ///< Air properties
 
     public:
 
         /// Default constructor
-        /// \param environment environment containing this ocean
-        explicit FrOcean_(FrEnvironment_* environment);
+        /// \param environment environment containing this atmosphere
+        explicit FrAtmosphere(FrEnvironment* environment);
 
-        /// Get the environment containing this ocean
-        /// \return environment containing this ocean
-        FrEnvironment_* GetEnvironment() const;
+        /// Get the environment containing this atmosphere
+        /// \return environment containing this atmosphere
+        FrEnvironment* GetEnvironment() const;
 
-        //---------------------------- Assets ----------------------------//
-
-        /// Set if the seabed is to be shown/exist
-        /// \param showSeabed showseabed true means the seabed exists
-        void ShowSeabed(bool showSeabed);
-
-        /// Set if the free surface is to be shown/exist
-        /// \param showFreeSurface showfreesurface true means the free surface exists
-        void ShowFreeSurface(bool showFreeSurface);
-
-        //---------------------------- Fluid properties methods ----------------------------//
+        //----------------------------Fluid properties methods----------------------------//
 
         /// Set the fluid temperature
         /// \param Temperature temperature of the fluid
@@ -121,50 +106,26 @@ namespace frydom {
         /// \param characteristicLength characteristic length L, in meters
         /// \param velocity fluid velocity U, in m/s
         /// \return Reynolds number, no dimension
-        double GetReynoldsNumberInWater(double characteristicLength, double velocity) const;
+        double GetReynoldsNumberInAir(double characteristicLength, double velocity) const;
 
         /// Get Froude number (Fe = U/sqrt(g.L) )
         /// \param characteristicLength characteristic length L, in meters
         /// \param velocity fluid velocity U, in m/s
         /// \return Froude number, no dimension
-        double GetFroudeNumberInWater(double characteristicLength, double velocity) const;
+        double GetFroudeNumberInAir(double characteristicLength, double velocity) const;
 
         //---------------------------- Ocean elements Getters ----------------------------//
 
-        /// Get the free surface element
-        /// \return the free surface element
-        FrFreeSurface_* GetFreeSurface() const;
-
-        /// Get The current element
-        /// \return the current element
-        FrCurrent_* GetCurrent() const;
-
-        /// Get the seabed element
-        /// \return the seabed element
-        FrSeabed_* GetSeabed() const;
-
-        /// Enforce the infinite depth condition on the Seabed object.
-        /// A NullSeabed is then considered, with no grid asset and no bathymetry getters
-        void SetInfiniteDepth();;
-
-        /// Get mean ocean depth (tidal height + mean bathymetry)
-        /// \param fc frame convention (NED/NWU)
-        /// \return mean ocean depth, in meters
-        double GetDepth(FRAME_CONVENTION fc) const;
-
-        /// Get ocean depth at a position (x,y) (tidal height + bathymetry at position (x,y))
-        /// \param x x position
-        /// \param y y position
-        /// \param fc frame convention (NED/NWU)
-        /// \return ocean depth at position (x,y)
-        double GetDepth(double x, double y, FRAME_CONVENTION fc) const;
+        /// Get The wind element
+        /// \return the wind element
+        FrWind* GetWind() const;
 
         //---------------------------- Update-Initialize-StepFinalize ----------------------------//
 
-        /// Update the state of the ocean
+        /// Update the state of the atmosphere
         void Update(double time);
 
-        /// Initialize the state of the ocean
+        /// Initialize the state of the atmosphere
         void Initialize() override;
 
         /// Method called at the send of a time step. Logging may be used here
@@ -172,6 +133,7 @@ namespace frydom {
 
     };
 
+
 }  // end namespace frydom
 
-#endif //FRYDOM_FROCEAN_H
+#endif //FRYDOM_FRATMOSPHERE_H

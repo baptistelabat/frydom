@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "boost/assign/list_of.hpp"
@@ -48,8 +48,8 @@ class TestFrFlowForce : public testing::Test {
 
 protected:
 
-    FrOffshoreSystem_ system;                                       ///< offshore system
-    std::shared_ptr<FrBody_> body;                                  ///< hydrodynamic body
+    FrOffshoreSystem system;                                       ///< offshore system
+    std::shared_ptr<FrBody> body;                                  ///< hydrodynamic body
     std::shared_ptr<FrFlowForce> force;                            ///< flow force
 
     const Position bodyPositionInWorld = Position(0., 0., 0.);      ///< Position of Point in world
@@ -89,10 +89,10 @@ public:
 };
 
 void TestFrFlowForce::SetUp() {
-    body = std::make_shared<FrBody_>();
+    body = std::make_shared<FrBody>();
     body->SetPosition(bodyPositionInWorld, NWU);
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(COGPosition,FrRotation_(),NWU),NWU);
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(COGPosition,FrRotation(),NWU),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     system.AddBody(body);

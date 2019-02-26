@@ -3,7 +3,7 @@ message(STATUS "        ...Atmosphere")
 add_subdirectory(wind)
 
 set(SRC_FILES
-        FrAtmosphere_.cpp
+        FrAtmosphere.cpp
         )
 
 set(ATMOSPHERE_FILES "")

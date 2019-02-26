@@ -22,7 +22,7 @@ namespace frydom {
     FrInertiaTensor_::FrInertiaTensor_(double mass,
                                        double Ixx, double Iyy, double Izz,
                                        double Ixy, double Ixz, double Iyz,
-                                       const FrFrame_& coeffsFrame,
+                                       const FrFrame& coeffsFrame,
                                        const Position& cogPosition,
                                        FRAME_CONVENTION fc) {
 
@@ -47,7 +47,7 @@ namespace frydom {
     }
 
     FrInertiaTensor_::FrInertiaTensor_(double mass, double Ixx, double Iyy, double Izz, double Ixy, double Ixz,
-                                       double Iyz, const FrFrame_ &cogFrame, FRAME_CONVENTION fc) {
+                                       double Iyz, const FrFrame &cogFrame, FRAME_CONVENTION fc) {
 
         m_inertiaAtCOG << Ixx, Ixy, Ixz,
                           Ixy, Iyy, Iyz,

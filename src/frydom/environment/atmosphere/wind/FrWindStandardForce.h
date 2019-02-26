@@ -25,7 +25,7 @@ namespace frydom {
      * \class FrWindStandardForce_
      * \brief Class for computing the wind loads following the DNV guidelines.
      */
-    class FrWindStandardForce_ : public FrForce_ {
+    class FrWindStandardForce_ : public FrForce {
 
     private:
         double m_transverseArea = -1;

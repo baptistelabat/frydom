@@ -24,8 +24,8 @@
 namespace frydom {
 
     // Forward declarations
-    class FrEnvironment_;
-    class FrFrame_;
+    class FrEnvironment;
+    class FrFrame;
     class FrFieldBase;
 
     /**
@@ -60,7 +60,7 @@ namespace frydom {
         /// \param worldVel Translation velocity of the frame in world frame
         /// \param fc Frame convention (NED/NWU)
         /// \return Velocity in local frame
-        Velocity GetRelativeVelocityInFrame(const FrFrame_ &frame, const Velocity &worldVel, FRAME_CONVENTION fc) const;
+        Velocity GetRelativeVelocityInFrame(const FrFrame &frame, const Velocity &worldVel, FRAME_CONVENTION fc) const;
 
         /// Create a new templated field
         /// \tparam Field templated field
@@ -90,7 +90,7 @@ namespace frydom {
         //// Method to be applied at the end of each time step
         void StepFinalize() override;
 
-        virtual FrEnvironment_* GetEnvironment() const = 0;
+        virtual FrEnvironment* GetEnvironment() const = 0;
 
     };
 

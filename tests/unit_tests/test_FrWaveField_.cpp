@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -25,7 +25,7 @@ TEST(FrWaveField,regularWaveField){
     DIRECTION_CONVENTION dc = GOTO;
 
     // create a system
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     // Airy regular wave parameters
     double waveHeight = 1.;
@@ -192,7 +192,7 @@ TEST(FrWaveField,BiChromaticWaveInfDepth) {
     DIRECTION_CONVENTION dc = GOTO;
 
     // create a system
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     // Set depth to infinite
     system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
@@ -428,7 +428,7 @@ TEST(FrWaveField,BiDirectionalWaveInfDepth) {
     DIRECTION_CONVENTION dc = GOTO;
 
     // create a system
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     // Set depth to infinite
     system.GetEnvironment()->GetOcean()->SetInfiniteDepth();

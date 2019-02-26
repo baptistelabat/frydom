@@ -5,7 +5,7 @@ add_subdirectory(seabed)
 add_subdirectory(freeSurface)
 
 set(SRC_FILES
-        FrOcean_.cpp
+        FrOcean.cpp
         )
 
 set(OCEAN_FILES "")

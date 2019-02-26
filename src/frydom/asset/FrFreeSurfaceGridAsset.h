@@ -18,7 +18,7 @@
 
 namespace frydom {
 
-    class FrFreeSurface_;
+    class FrFreeSurface;
     class FrTriangleMeshConnected;
 
     /**
@@ -29,12 +29,12 @@ namespace frydom {
 
     private:
 
-        FrFreeSurface_* m_freeSurface;    ///> Pointer to the free surface containing this asset
+        FrFreeSurface* m_freeSurface;    ///> Pointer to the free surface containing this asset
 
     public:
         /// Default constructor
         /// \param body body containing this asset (usually WorldBody)
-        explicit FrFreeSurfaceGridAsset(FrFreeSurface_* freeSurface);
+        explicit FrFreeSurfaceGridAsset(FrFreeSurface* freeSurface);
 
         void Update() override {};
 

@@ -18,21 +18,21 @@
 namespace frydom {
 
     // Forward declaration
-    class FrBody_;
+    class FrBody;
 
 
-    void makeItBox(std::shared_ptr<FrBody_> body, double xSize, double ySize, double zSize, double mass);
+    void makeItBox(std::shared_ptr<FrBody> body, double xSize, double ySize, double zSize, double mass);
 
-    void makeItCylinder(std::shared_ptr<FrBody_> body, double radius, double height, double mass);
+    void makeItCylinder(std::shared_ptr<FrBody> body, double radius, double height, double mass);
 
-    void makeItSphere(std::shared_ptr<FrBody_> body, double radius, double mass);
+    void makeItSphere(std::shared_ptr<FrBody> body, double radius, double mass);
 
 
-    std::shared_ptr<FrBody_> make_BoxBody(double xSize, double ySize, double zSize, double mass);
+    std::shared_ptr<FrBody> make_BoxBody(double xSize, double ySize, double zSize, double mass);
 
-    std::shared_ptr<FrBody_> make_CylinderBody(double radius, double height, double mass);
+    std::shared_ptr<FrBody> make_CylinderBody(double radius, double height, double mass);
 
-    std::shared_ptr<FrBody_> make_SphereBody(double radius, double mass);
+    std::shared_ptr<FrBody> make_SphereBody(double radius, double mass);
 
 
     // TODO : faire le make_ConeBody ---> mat d'eolienne...

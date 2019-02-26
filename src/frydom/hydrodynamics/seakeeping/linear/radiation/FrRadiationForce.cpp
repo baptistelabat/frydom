@@ -21,30 +21,30 @@ namespace frydom {
     // FrRadiationForce
     // --------------------------------------------------
 
-    FrRadiationForce_::FrRadiationForce_(FrRadiationModel_* radiationModel)
+    FrRadiationForce::FrRadiationForce(FrRadiationModel* radiationModel)
             : m_radiationModel(radiationModel) {}
 
-    void FrRadiationForce_::SetRadiationModel(FrRadiationModel_* radiationModel) {
+    void FrRadiationForce::SetRadiationModel(FrRadiationModel* radiationModel) {
         m_radiationModel = radiationModel;
     }
 
-    void FrRadiationForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrRadiationForce::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
     // --------------------------------------------------
     // FrRadiationConvolutionForce
     // --------------------------------------------------
 
-    FrRadiationConvolutionForce_::FrRadiationConvolutionForce_(
-            FrRadiationConvolutionModel_* radiationModel)
-            : FrRadiationForce_(radiationModel) {}
+    FrRadiationConvolutionForce::FrRadiationConvolutionForce(
+            FrRadiationConvolutionModel* radiationModel)
+            : FrRadiationForce(radiationModel) {}
 
-    void FrRadiationConvolutionForce_::Initialize() {
-        FrRadiationForce_::Initialize();
+    void FrRadiationConvolutionForce::Initialize() {
+        FrRadiationForce::Initialize();
     }
 
-    void FrRadiationConvolutionForce_::Update(double time) {
+    void FrRadiationConvolutionForce::Update(double time) {
 
         auto force = m_radiationModel->GetRadiationForce(m_body);
         auto torque = m_radiationModel->GetRadiationTorque(m_body);

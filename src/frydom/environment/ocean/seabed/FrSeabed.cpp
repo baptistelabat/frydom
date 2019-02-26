@@ -15,17 +15,17 @@
 
 #include "frydom/asset/FrSeabedGridAsset.h"
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/FrOcean.h"
 
 
 namespace frydom {
 
     // FrSeabed descriptions
 
-    FrSeabed_::FrSeabed_(FrOcean_ *ocean) :m_ocean(ocean){
+    FrSeabed_::FrSeabed_(FrOcean *ocean) :m_ocean(ocean){
     }
 
-    FrOcean_ *FrSeabed_::GetOcean() const {return m_ocean;}
+    FrOcean *FrSeabed_::GetOcean() const {return m_ocean;}
 
     bool FrSeabed_::GetInfiniteDepth() { return m_infiniteDepth;}
 
@@ -37,7 +37,7 @@ namespace frydom {
         catch(FrException& e) {std::cout<<e.what()<<std::endl; exit(EXIT_FAILURE);}
     }
 
-    FrNullSeabed_::FrNullSeabed_(FrOcean_ *ocean) :FrSeabed_(ocean) {m_infiniteDepth = true;}
+    FrNullSeabed_::FrNullSeabed_(FrOcean *ocean) :FrSeabed_(ocean) {m_infiniteDepth = true;}
 
     void FrNullSeabed_::SetBathymetry(double bathymetry, FRAME_CONVENTION fc) {
         try {throw FrException("a null seabed cannot return a bathymetry.");}
@@ -69,7 +69,7 @@ namespace frydom {
     //------------------------------------------------------------------------------------------------------------------
     // FrMeanSeabed descriptions
 
-    FrMeanSeabed_::FrMeanSeabed_(FrOcean_ *ocean) :FrSeabed_(ocean){
+    FrMeanSeabed_::FrMeanSeabed_(FrOcean *ocean) :FrSeabed_(ocean){
         m_SeabedGridAsset = std::make_shared<FrSeabedGridAsset>(this);
     }
 

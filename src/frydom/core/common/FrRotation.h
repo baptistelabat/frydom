@@ -40,7 +40,7 @@ namespace frydom {
         /// \return Chrono quaternion object
         const chrono::ChQuaternion<double>& GetChronoQuaternion() const;
 
-        friend class FrRotation_;
+        friend class FrRotation;
 
 
     public:
@@ -280,7 +280,7 @@ namespace frydom {
 
     /*==================================================================================================================
      *
-     * FrRotation_
+     * FrRotation
      *
      *
      */
@@ -289,7 +289,7 @@ namespace frydom {
      * \class FrRotation_
      * \brief Class for defining a rotation.
      */
-    class FrRotation_ {
+    class FrRotation {
 
     private:
 
@@ -298,19 +298,19 @@ namespace frydom {
     public:
 
         /// Default rotation constructor. This is the null rotation
-        FrRotation_();
+        FrRotation();
 
         /// Constructor from a quaternion
         /// \param quaternion Unit quaternion representing the rotation
-        explicit FrRotation_(FrUnitQuaternion_ quaternion);
+        explicit FrRotation(FrUnitQuaternion_ quaternion);
 
         /// Constructor from axis angle rotation (angle in radians)
         /// \param axis direction of the rotation, MUST be normalized
         /// \param angleRAD angle in radians
         /// \param fc frame convention (NED/NWU)
-        FrRotation_(const Direction& axis, double angleRAD, FRAME_CONVENTION fc);
+        FrRotation(const Direction& axis, double angleRAD, FRAME_CONVENTION fc);
 
-        FrRotation_(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis, FRAME_CONVENTION fc);
+        FrRotation(const Direction& xaxis, const Direction& yaxis, const Direction& zaxis, FRAME_CONVENTION fc);
 
         /// Set the null rotation
         void SetNullRotation();
@@ -463,50 +463,50 @@ namespace frydom {
         /// \param angle angle in radians
         /// \param fc frame convention (NED/NWU)
         /// \return the rotation resulting from the combination of both rotations
-        FrRotation_& RotAxisAngle_RADIANS(const Direction& axis, double angle, FRAME_CONVENTION fc);
+        FrRotation& RotAxisAngle_RADIANS(const Direction& axis, double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation to the current rotation by the axis angle representation (angle in degrees)
         /// \param axis direction of the rotation, MUST be normalized
         /// \param angle angle in degrees
         /// \param fc frame convention (NED/NWU)
         /// \return the rotation resulting from the combination of both rotations
-        FrRotation_& RotAxisAngle_DEGREES(const Direction& axis, double angle, FRAME_CONVENTION fc);
+        FrRotation& RotAxisAngle_DEGREES(const Direction& axis, double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the X axis to the current rotation (angle in radians)
         /// \param angle angle in radians
         /// \param fc frame convention (NED/NWU)
         /// \return the rotation resulting from the combination of both rotations
-        FrRotation_& RotX_RADIANS(double angle, FRAME_CONVENTION fc);
+        FrRotation& RotX_RADIANS(double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the X axis to the current rotation (angle in degrees)
         /// \param angle angle in degrees
         /// \param fc frame convention (NED/NWU)
         /// \return the rotation resulting from the combination of both rotations
-        FrRotation_& RotX_DEGREES(double angle, FRAME_CONVENTION fc);
+        FrRotation& RotX_DEGREES(double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the Y axis to the current rotation (angle in radians)
         /// \param angle angle in radians
         /// \param fc frame convention (NED/NWU)
         /// \return the rotation resulting from the combination of both rotations
-        FrRotation_& RotY_RADIANS(double angle, FRAME_CONVENTION fc);
+        FrRotation& RotY_RADIANS(double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the Y axis to the current rotation (angle in degrees)
         /// \param angle angle in degrees
         /// \param fc frame convention (NED/NWU)
         /// \return the rotation resulting from the combination of both rotations
-        FrRotation_& RotY_DEGREES(double angle, FRAME_CONVENTION fc);
+        FrRotation& RotY_DEGREES(double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the Z axis to the current rotation (angle in radians)
         /// \param angle angle in radians
         /// \param fc frame convention (NED/NWU)
         /// \return the rotation resulting from the combination of both rotations
-        FrRotation_& RotZ_RADIANS(double angle, FRAME_CONVENTION fc);
+        FrRotation& RotZ_RADIANS(double angle, FRAME_CONVENTION fc);
 
         /// Apply a rotation around the Z axis to the current rotation (angle in degrees)
         /// \param angle angle in degrees
         /// \param fc frame convention (NED/NWU)
         /// \return the rotation resulting from the combination of both rotations
-        FrRotation_& RotZ_DEGREES(double angle, FRAME_CONVENTION fc);
+        FrRotation& RotZ_DEGREES(double angle, FRAME_CONVENTION fc);
 
         // =============================================================================================================
         // Operators
@@ -515,22 +515,22 @@ namespace frydom {
         /// Assign the other rotation to the current rotation
         /// \param other other rotation, to assign
         /// \return assigned rotation
-        FrRotation_& operator=(const FrRotation_& other);
+        FrRotation& operator=(const FrRotation& other);
 
         /// Compose the current rotation with the other. In a matrix form it would be result = this*other.
         /// \param other other rotation, to compose
         /// \return total rotation
-        FrRotation_ operator*(const FrRotation_& other) const;
+        FrRotation operator*(const FrRotation& other) const;
 
         /// Compose the current rotation with the other inplace. In a matrix form it would be this = this*other.
         /// \param other other rotation, to compose
         /// \return total rotation
-        FrRotation_&operator*=(const FrRotation_& other);
+        FrRotation&operator*=(const FrRotation& other);
 
         /// Component-wise comparison operator.
         /// \param other other FrRotation to compare
         /// \return true if FrRotation are equals, false otherwise
-        bool operator==(const FrRotation_& other) const;
+        bool operator==(const FrRotation& other) const;
 
         /// Multiply a matrix by this rotation on the left
         /// \param matrix 3x3 matrix to be multiplied
@@ -577,12 +577,12 @@ namespace frydom {
         /// Apply rotation before this rotation.
         /// It corresponds to applying a rotation to the parent and must be expressed in the current parent frame
         /// Practically, this is a left rotation composition
-        void RotateInParent(const FrRotation_& leftRotation);
+        void RotateInParent(const FrRotation& leftRotation);
 
         /// Apply rotation after this rotation.
         /// It corresponds to applying a rotation to the target frame and must be expressed in the current target frame
         /// Practically, this is a right rotation composition
-        void RotateInFrame(const FrRotation_& rightRotation);
+        void RotateInFrame(const FrRotation& rightRotation);
 
         /// Get the X axis of the coordinate system obtained by the rotation
         /// \param fc frame convention (NED/NWU)
@@ -600,7 +600,7 @@ namespace frydom {
         Direction GetZAxis(FRAME_CONVENTION fc) const;
 
 
-        friend std::ostream& operator<<(std::ostream& os, const FrRotation_& rotation);
+        friend std::ostream& operator<<(std::ostream& os, const FrRotation& rotation);
 
 
     private:

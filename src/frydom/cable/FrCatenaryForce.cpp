@@ -17,19 +17,19 @@
 
 namespace frydom {
 
-    void FrCatenaryForce_::Update(double time) {
+    void FrCatenaryForce::Update(double time) {
 
         Position relpos;
         Force ForceInWorld;
 
         // Get the line tension from the corresponding node
         switch (m_line_side) {
-            case FrCatenaryLine_::LINE_START:
+            case FrCatenaryLine::LINE_START:
                 ForceInWorld = m_line->getStartingNodeTension(NWU);
                 relpos = m_line->GetStartingNode()->GetNodePositionInBody(NWU);
                 break;
 
-            case FrCatenaryLine_::LINE_END:
+            case FrCatenaryLine::LINE_END:
                 ForceInWorld = m_line->GetEndingNodeTension(NWU);
                 relpos = m_line->GetEndingNode()->GetNodePositionInBody(NWU);
                 break;
@@ -44,8 +44,8 @@ namespace frydom {
 
     }
 
-    void FrCatenaryForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrCatenaryForce::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
 

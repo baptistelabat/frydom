@@ -16,7 +16,7 @@
 #include "frydom/core/common/FrFrame.h"
 #include "frydom/IO/FrLoader.h"
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/current/FrCurrent.h"
 
 
@@ -28,7 +28,7 @@ namespace frydom {
 
     void FrCurrentForce_::Update(double time) {
 
-        FrFrame_ cogFrame = m_body->GetFrameAtCOG(NWU);
+        FrFrame cogFrame = m_body->GetFrameAtCOG(NWU);
         Velocity cogWorldVel = m_body->GetCOGVelocityInWorld(NWU);
 
         Velocity cogRelVel = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(cogFrame, cogWorldVel, NWU);
@@ -51,7 +51,7 @@ namespace frydom {
     }
 
     void FrCurrentForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+        FrForce::StepFinalize();
     }
 
 

@@ -19,13 +19,13 @@
 namespace frydom {
 
     //Forward Declaration
-    class FrFreeSurface_;
+    class FrFreeSurface;
 
     /**
      * \class FrAiryRegularWaveField
      * \brief Class which deals with regular wave fields without optimization for a better parallelization.
      */
-    class FrAiryRegularWaveField : public FrWaveField_ {
+    class FrAiryRegularWaveField : public FrWaveField {
     protected:
 
         double m_height = 0.;   ///< Wave amplitude
@@ -35,13 +35,13 @@ namespace frydom {
         double m_dirAngle = 0.; ///< Wave direction
                                 ///< used internally with the conventions : NWU, GOTO, and unit : RAD; [0,2PI]
 
-        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;    /// Vertical scale velocity factor with stretching
+        std::unique_ptr<FrKinematicStretching> m_verticalFactor;    /// Vertical scale velocity factor with stretching
 
     public:
 
         /// Default constructor
         /// \param freeSurface pointer to the free surface, to which the wave field belongs
-        explicit FrAiryRegularWaveField(FrFreeSurface_* freeSurface);
+        explicit FrAiryRegularWaveField(FrFreeSurface* freeSurface);
 
         /// Set the wave height of the regular Airy wave filed
         /// \param height wave height

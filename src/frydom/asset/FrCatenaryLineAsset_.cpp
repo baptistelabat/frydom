@@ -21,7 +21,7 @@
 
 namespace frydom{
 
-    FrCatenaryLineAsset_::FrCatenaryLineAsset_(FrCatenaryLine_ *line) : m_catenaryLine(line) {}
+    FrCatenaryLineAsset_::FrCatenaryLineAsset_(FrCatenaryLine *line) : m_catenaryLine(line) {}
 
     void FrCatenaryLineAsset_::Initialize() { // TODO : il semble que ChLine soit capable de rendre des lignes courbes
 

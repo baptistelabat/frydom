@@ -19,7 +19,7 @@
 #include "frydom/core/common/FrFrame.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/atmosphere/FrAtmosphere_.h"
+#include "frydom/environment/atmosphere/FrAtmosphere.h"
 #include "FrWind.h"
 #include "frydom/core/body/FrBody.h"
 
@@ -55,7 +55,7 @@ namespace frydom {
 
     void FrWindForce_::Update(double time) {
 
-        FrFrame_ cogFrame = m_body->GetFrameAtCOG(NWU);
+        FrFrame cogFrame = m_body->GetFrameAtCOG(NWU);
         Velocity cogWorldVel = m_body->GetCOGVelocityInWorld(NWU);
 
         Velocity cogRelVel = m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetRelativeVelocityInFrame(cogFrame, cogWorldVel, NWU);
@@ -78,7 +78,7 @@ namespace frydom {
     }
 
     void FrWindForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+        FrForce::StepFinalize();
     }
 
 

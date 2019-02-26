@@ -54,7 +54,7 @@ namespace frydom {
         FrInertiaTensor_(double mass,
                          double Ixx, double Iyy, double Izz,
                          double Ixy, double Ixz, double Iyz,
-                         const FrFrame_& coeffsFrame, const Position& cogPosition, FRAME_CONVENTION fc);
+                         const FrFrame& coeffsFrame, const Position& cogPosition, FRAME_CONVENTION fc);
 
         /// Constructor from standard inertia parameters. Inertia coefficients are expressed at COG frame that is
         /// expressed relative to body reference coordinate system. Mass is in kg. The frame convention holds on
@@ -62,7 +62,7 @@ namespace frydom {
         FrInertiaTensor_(double mass,
                          double Ixx, double Iyy, double Izz,
                          double Ixy, double Ixz, double Iyz,
-                         const FrFrame_& cogFrame, FRAME_CONVENTION fc);
+                         const FrFrame& cogFrame, FRAME_CONVENTION fc);
 
         /// Get the mass in kg
         double GetMass() const;

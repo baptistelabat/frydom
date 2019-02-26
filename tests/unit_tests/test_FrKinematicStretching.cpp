@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -22,13 +22,13 @@ TEST(FrKinematicStretching,FrKinematicStretching){
     double z = 0.25;
     double depth = 100;
 
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
     auto wavefield = system.GetEnvironment()->GetOcean()->GetFreeSurface()->SetAiryRegularWaveField(1.,10.,0.,RAD,NWU,GOTO);
 
     system.Initialize();
 
     // No kinematic stretching
-    FrKinematicStretching_ kinStretch;
+    FrKinematicStretching kinStretch;
 
     // Test Ez
     auto testEz = cosh(konde*(z+depth)) / sinh(konde*depth);
@@ -96,7 +96,7 @@ TEST(FrKinematicStretching,FrKinematicStretching){
     DeltaStretching.SetParam(depth,1);
     EXPECT_NEAR(extStretch.Eval(z,konde,depth), DeltaStretching.Eval(x,y,z,konde,depth), 1E-8);
     EXPECT_NEAR(extStretch.EvalDZ(z,konde,depth), DeltaStretching.EvalDZ(x,y,z,konde,depth), 1E-8);
-    
+
     // HDelta stretching
     FrKinStretchingHDelta_ HDeltaStretching(wavefield);
     HDeltaStretching.SetDelta(delta);

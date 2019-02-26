@@ -26,13 +26,13 @@ namespace frydom {
 
 
     // Forward declarations
-    class FrOffshoreSystem_;
-    class FrEnvironment_;
-    class FrAtmosphere_;
-    class FrOcean_;
-    class FrWaveField_;
-    class FrTidal_;
-    class FrBody_;
+    class FrOffshoreSystem;
+    class FrEnvironment;
+    class FrAtmosphere;
+    class FrOcean;
+    class FrWaveField;
+    class FrTidal;
+    class FrBody;
     class FrAiryRegularWaveField;
     class FrAiryRegularOptimWaveField;
     class FrAiryIrregularWaveField;
@@ -45,16 +45,16 @@ namespace frydom {
      * \class FrFreeSurface_
      * \brief Class for defining the free surface.
      */
-    class FrFreeSurface_ : public FrObject {
+    class FrFreeSurface : public FrObject {
 
     protected:;  // Disallow the default constructor to be used as a public method // TODO: mettre private???
 
-        FrOcean_* m_ocean;                            ///< Pointer to the ocean containing this free surface
+        FrOcean* m_ocean;                            ///< Pointer to the ocean containing this free surface
         bool m_showFreeSurface = true;                ///< Boolean testing if the free surface is to be shown/exist
 
         // Free surface elements
-        std::unique_ptr<FrTidal_> m_tidal;            ///< Tidal model
-        std::unique_ptr<FrWaveField_> m_waveField;    ///< Wave field model
+        std::unique_ptr<FrTidal> m_tidal;            ///< Tidal model
+        std::unique_ptr<FrWaveField> m_waveField;    ///< Wave field model
 
         // Visualization asset
         std::shared_ptr<FrFreeSurfaceGridAsset> m_freeSurfaceGridAsset;    ///> free surface grid asset, containing also the visualization asset
@@ -63,10 +63,10 @@ namespace frydom {
 
         /// Default constructor
         /// \param ocean ocean containing this free surface
-        explicit FrFreeSurface_(FrOcean_* ocean);
+        explicit FrFreeSurface(FrOcean* ocean);
 
         /// Default destructor
-        ~FrFreeSurface_();
+        ~FrFreeSurface();
 
         //---------------------------- Asset ----------------------------//
 
@@ -82,19 +82,19 @@ namespace frydom {
 
         /// Get the ocean containing this free surface
         /// \return ocean containing this free surface
-        FrOcean_* GetOcean() const;
+        FrOcean* GetOcean() const;
 
         /// Get the atmosphere above the ocean
         /// \return atmosphere above the ocean
-        FrAtmosphere_* GetAtmosphere() const;;
+        FrAtmosphere* GetAtmosphere() const;;
 
         /// Get the tidal model
         /// \return tidal model
-        FrTidal_* GetTidal() const;
+        FrTidal* GetTidal() const;
 
         /// Get the wave field model
         /// \return wave field model
-        FrWaveField_* GetWaveField() const;
+        FrWaveField* GetWaveField() const;
 
         /// Get the wave elevation at the position (x,y,0), given by the wave field model
         /// \param x x position

@@ -23,8 +23,8 @@ namespace frydom {
 
 
     // Forward declarations
-    class FrRadiationModel_;
-    class FrBody_;
+    class FrRadiationModel;
+    class FrBody;
 
 
     namespace internal {
@@ -32,17 +32,17 @@ namespace frydom {
 
         class FrVariablesAddedMassBase;
 
-        class FrAddedMassBase : public _FrPhysicsItemBase {
+        class FrAddedMassBase : public FrPhysicsItemBase {
 
         private:
 
-            FrRadiationModel_* m_frydomRadiationModel;
+            FrRadiationModel* m_frydomRadiationModel;
             std::shared_ptr<FrVariablesAddedMassBase> m_variables;
 
         public:
 
             /// Constructor of the class.
-            explicit FrAddedMassBase(FrRadiationModel_* radiationModel);
+            explicit FrAddedMassBase(FrRadiationModel* radiationModel);
 
             //
             // Update
@@ -77,11 +77,11 @@ namespace frydom {
 
             void VariablesFbIncrementMq() override;
 
-            int GetBodyOffset(FrBody_* body) const;
+            int GetBodyOffset(FrBody* body) const;
 
-            void SetVariables(FrBody_* body, chrono::ChMatrix<double>& qb, int offset) const;
+            void SetVariables(FrBody* body, chrono::ChMatrix<double>& qb, int offset) const;
 
-            FrRadiationModel_* GetRadiationModel() const { return m_frydomRadiationModel; }
+            FrRadiationModel* GetRadiationModel() const { return m_frydomRadiationModel; }
         };
     }
 

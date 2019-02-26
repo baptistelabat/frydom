@@ -24,10 +24,10 @@ namespace frydom {
 
     namespace internal {
 
-        _FrSystemBaseSMC::_FrSystemBaseSMC(frydom::FrOffshoreSystem_ *offshoreSystem) :
+        FrSystemBaseSMC::FrSystemBaseSMC(frydom::FrOffshoreSystem *offshoreSystem) :
                 chrono::ChSystemSMC(), m_offshoreSystem_(offshoreSystem) {}
 
-        void _FrSystemBaseSMC::Update(bool update_assets) {
+        void FrSystemBaseSMC::Update(bool update_assets) {
 
             CH_PROFILE("Update");
 
@@ -68,7 +68,7 @@ namespace frydom {
 
         }
 
-        void _FrSystemBaseSMC::CustomEndOfStep() {
+        void FrSystemBaseSMC::CustomEndOfStep() {
             m_offshoreSystem_->StepFinalize();
         }
 
@@ -79,7 +79,7 @@ namespace frydom {
     /// \param systemType contact method system (SMOOTH_CONTACT/NONSMOOTH_CONTACT)
     /// \param timeStepper time stepper type
     /// \param solver solver type
-    FrOffshoreSystem_::FrOffshoreSystem_(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
+    FrOffshoreSystem::FrOffshoreSystem(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
 
         // Creating the chrono System backend. It drives the way contact are modelled
         SetSystemType(systemType, false);
@@ -100,50 +100,50 @@ namespace frydom {
         CreateWorldBody();
 
         // Creating the environment
-        m_environment = std::make_unique<FrEnvironment_>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
+        m_environment = std::make_unique<FrEnvironment>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
 
     }
 
-    FrOffshoreSystem_::~FrOffshoreSystem_() = default;
-    void FrOffshoreSystem_::Add(std::shared_ptr<FrObject> newItem) {
-        assert(std::dynamic_pointer_cast<FrBody_>(newItem) ||
-               std::dynamic_pointer_cast<FrLink_>(newItem) ||
-               std::dynamic_pointer_cast<FrPhysicsItem_>(newItem));
+    FrOffshoreSystem::~FrOffshoreSystem() = default;
+    void FrOffshoreSystem::Add(std::shared_ptr<FrObject> newItem) {
+        assert(std::dynamic_pointer_cast<FrBody>(newItem) ||
+               std::dynamic_pointer_cast<FrLink>(newItem) ||
+               std::dynamic_pointer_cast<FrPhysicsItem>(newItem));
 
-        if (auto item = std::dynamic_pointer_cast<FrBody_>(newItem)) {
+        if (auto item = std::dynamic_pointer_cast<FrBody>(newItem)) {
             AddBody(item);
             return;
         }
 
-        if (auto item = std::dynamic_pointer_cast<FrLink_>(newItem)) {
+        if (auto item = std::dynamic_pointer_cast<FrLink>(newItem)) {
             AddLink(item);
             return;
         }
 
-        if (auto item = std::dynamic_pointer_cast<FrPrePhysicsItem_>(newItem)) {
+        if (auto item = std::dynamic_pointer_cast<FrPrePhysicsItem>(newItem)) {
             AddPhysicsItem(item);
             return;
         }
 
-        if (auto item = std::dynamic_pointer_cast<FrMidPhysicsItem_>(newItem)) {
+        if (auto item = std::dynamic_pointer_cast<FrMidPhysicsItem>(newItem)) {
             AddPhysicsItem(item);
             return;
         }
 
-        if (auto item = std::dynamic_pointer_cast<FrPostPhysicsItem_>(newItem)) {
+        if (auto item = std::dynamic_pointer_cast<FrPostPhysicsItem>(newItem)) {
             AddPhysicsItem(item);
             return;
         }
 
     }
 
-    void FrOffshoreSystem_::AddBody(std::shared_ptr<FrBody_> body) {
+    void FrOffshoreSystem::AddBody(std::shared_ptr<FrBody> body) {
 
         if (!CheckBodyContactMethod(body)) { // TODO : voir si on set pas d'autorite le mode de contact a celui du systeme plutot que de faire un if...
             body->SetContactMethod(m_systemType);
         }
 
-        m_chronoSystem->AddBody(body->GetChronoBody());  // Authorized because this method is a friend of FrBody_
+        m_chronoSystem->AddBody(body->GetChronoBody());  // Authorized because this method is a friend of FrBody
         m_bodyList.push_back(body);
 
         body->m_system = this;
@@ -151,65 +151,65 @@ namespace frydom {
     }
 
 
-    void FrOffshoreSystem_::AddLink(std::shared_ptr<FrLinkBase_> link) {
+    void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link) {
         m_chronoSystem->AddLink(link->GetChronoLink());
         m_linkList.push_back(link);
     }
 
-    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem_> otherPhysics) {
+    void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics) {
         m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
         otherPhysics->m_system = this;
         m_PrePhysicsList.push_back(otherPhysics);
     }
 
-    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem_> otherPhysics) {
+    void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics) {
         m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
         otherPhysics->m_system = this;
         m_MidPhysicsList.push_back(otherPhysics);
     }
 
-    void FrOffshoreSystem_::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem_> otherPhysics) {
+    void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics) {
         m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
         otherPhysics->m_system = this;
         m_PostPhysicsList.push_back(otherPhysics);
     }
 
-    FrEnvironment_ *FrOffshoreSystem_::GetEnvironment() const {
+    FrEnvironment *FrOffshoreSystem::GetEnvironment() const {
         return m_environment.get();
     }
 
-    std::shared_ptr<FrBody_> FrOffshoreSystem_::GetWorldBody() const {
+    std::shared_ptr<FrBody> FrOffshoreSystem::GetWorldBody() const {
         return m_worldBody;
     }
 
-    void FrOffshoreSystem_::PreUpdate() {
+    void FrOffshoreSystem::PreUpdate() {
         // TODO : voir si on ne met pas l'environnement comme un physics Item update en tant que PrePhysicsItem
         m_environment->Update(m_chronoSystem->GetChTime());
     }
 
-    void FrOffshoreSystem_::PostUpdate() {
+    void FrOffshoreSystem::PostUpdate() {
         // TODO
     }
 
-    void FrOffshoreSystem_::PrePhysicsUpdate(double time, bool update_assets) {
+    void FrOffshoreSystem::PrePhysicsUpdate(double time, bool update_assets) {
         for (auto& item : m_PrePhysicsList) {
             item->Update(time);
         }
     }
 
-    void FrOffshoreSystem_::MidPhysicsUpdate(double time, bool update_assets) {
+    void FrOffshoreSystem::MidPhysicsUpdate(double time, bool update_assets) {
         for (auto& item : m_MidPhysicsList) {
             item->Update(time);
         }
     }
 
-    void FrOffshoreSystem_::PostPhysicsUpdate(double time, bool update_assets) {
+    void FrOffshoreSystem::PostPhysicsUpdate(double time, bool update_assets) {
         for (auto& item : m_PostPhysicsList) {
             item->Update(time);
         }
     }
 
-    void FrOffshoreSystem_::Initialize() {
+    void FrOffshoreSystem::Initialize() {
 
         // Initializing environment before bodies
         m_environment->Initialize();
@@ -240,7 +240,7 @@ namespace frydom {
 
     }
 
-    void FrOffshoreSystem_::StepFinalize() {
+    void FrOffshoreSystem::StepFinalize() {
         m_environment->StepFinalize();
 
         for (auto& item : m_PrePhysicsList) {
@@ -267,18 +267,18 @@ namespace frydom {
 
     }
 
-    void FrOffshoreSystem_::SetSystemType(SYSTEM_TYPE type, bool checkCompat) {
+    void FrOffshoreSystem::SetSystemType(SYSTEM_TYPE type, bool checkCompat) {
 
         if (m_chronoSystem) Clear(); // Clear the system from every bodies etc...
 
         // Creating the chrono System backend. It drives the way contact are modelled
         switch (type) {
             case SMOOTH_CONTACT:
-                m_chronoSystem = std::make_unique<internal::_FrSystemBaseSMC>(this);
+                m_chronoSystem = std::make_unique<internal::FrSystemBaseSMC>(this);
                 break;
             case NONSMOOTH_CONTACT:
                 std::cout << "NSC systems is not tested for now !!!!" << std::endl;
-                m_chronoSystem = std::make_unique<internal::_FrSystemBaseNSC>();
+                m_chronoSystem = std::make_unique<internal::FrSystemBaseNSC>();
                 break;
         }
 
@@ -287,18 +287,18 @@ namespace frydom {
         if (checkCompat) CheckCompatibility();
     }
 
-    void FrOffshoreSystem_::CheckCompatibility() const {
+    void FrOffshoreSystem::CheckCompatibility() const {
         // TODO : verifier la compatibilite entre type systeme, solveur et integrateur temporel
 
 
 
     }
 
-    bool FrOffshoreSystem_::CheckBodyContactMethod(std::shared_ptr<FrBody_> body) {
+    bool FrOffshoreSystem::CheckBodyContactMethod(std::shared_ptr<FrBody> body) {
         return m_systemType == body->GetContactType();
     }
 
-    void FrOffshoreSystem_::SetSolver(SOLVER solver, bool checkCompat) {
+    void FrOffshoreSystem::SetSolver(SOLVER solver, bool checkCompat) {
 
         using SOLVERS = chrono::ChSolver::Type;
 
@@ -334,43 +334,43 @@ namespace frydom {
         if (checkCompat) CheckCompatibility();
     }
 
-    void FrOffshoreSystem_::SetSolverWarmStarting(bool useWarm) {
+    void FrOffshoreSystem::SetSolverWarmStarting(bool useWarm) {
         m_chronoSystem->SetSolverWarmStarting(useWarm);
     }
 
-    void FrOffshoreSystem_::SetSolverOverrelaxationParam(double omega) {
+    void FrOffshoreSystem::SetSolverOverrelaxationParam(double omega) {
         m_chronoSystem->SetSolverOverrelaxationParam(omega);
     }
 
-    void FrOffshoreSystem_::SetSolverSharpnessParam(double momega) {
+    void FrOffshoreSystem::SetSolverSharpnessParam(double momega) {
         m_chronoSystem->SetSolverSharpnessParam(momega);
     }
 
-    void FrOffshoreSystem_::SetParallelThreadNumber(int nbThreads) {
+    void FrOffshoreSystem::SetParallelThreadNumber(int nbThreads) {
         m_chronoSystem->SetParallelThreadNumber(nbThreads);
     }
 
-    void FrOffshoreSystem_::SetSolverMaxIterSpeed(int maxIter) {
+    void FrOffshoreSystem::SetSolverMaxIterSpeed(int maxIter) {
         m_chronoSystem->SetMaxItersSolverSpeed(maxIter);
     }
 
-    void FrOffshoreSystem_::SetSolverMaxIterStab(int maxIter) {
+    void FrOffshoreSystem::SetSolverMaxIterStab(int maxIter) {
         m_chronoSystem->SetMaxItersSolverStab(maxIter);
     }
 
-    void FrOffshoreSystem_::SetSolverMaxIterAssembly(int maxIter) {
+    void FrOffshoreSystem::SetSolverMaxIterAssembly(int maxIter) {
         m_chronoSystem->SetMaxiter(maxIter);
     }
 
-    void FrOffshoreSystem_::SetSolverGeometricTolerance(double tol) {
+    void FrOffshoreSystem::SetSolverGeometricTolerance(double tol) {
         m_chronoSystem->SetTol(tol);
     }
 
-    void FrOffshoreSystem_::SetSolverForceTolerance(double tol) {
+    void FrOffshoreSystem::SetSolverForceTolerance(double tol) {
         m_chronoSystem->SetTolForce(tol);
     }
 
-    void FrOffshoreSystem_::UseMaterialProperties(bool use) {
+    void FrOffshoreSystem::UseMaterialProperties(bool use) {
         if (m_systemType == SMOOTH_CONTACT) {
             dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get())->UseMaterialProperties(use);
         } else {
@@ -378,7 +378,7 @@ namespace frydom {
         }
     }
 
-    void FrOffshoreSystem_::SetContactForceModel(FrOffshoreSystem_::CONTACT_MODEL model) {
+    void FrOffshoreSystem::SetContactForceModel(FrOffshoreSystem::CONTACT_MODEL model) {
         if (m_systemType == SMOOTH_CONTACT) {
             auto systemSMC = dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get());
             using ContactForceModel = chrono::ChSystemSMC::ContactForceModel;
@@ -398,7 +398,7 @@ namespace frydom {
         }
     }
 
-    void FrOffshoreSystem_::SetAdhesionForceModel(FrOffshoreSystem_::ADHESION_MODEL model) {
+    void FrOffshoreSystem::SetAdhesionForceModel(FrOffshoreSystem::ADHESION_MODEL model) {
         if (m_systemType == SMOOTH_CONTACT) {
             auto systemSMC = dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get());
             using AdhesionForceModel = chrono::ChSystemSMC::AdhesionForceModel ;
@@ -415,7 +415,7 @@ namespace frydom {
         }
     }
 
-    void FrOffshoreSystem_::SetTangentialDisplacementModel(FrOffshoreSystem_::TANGENTIAL_DISP_MODEL model) {
+    void FrOffshoreSystem::SetTangentialDisplacementModel(FrOffshoreSystem::TANGENTIAL_DISP_MODEL model) {
         if (m_systemType == SMOOTH_CONTACT) {
             auto systemSMC = dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get());
             using TangentialDisplacementModel = chrono::ChSystemSMC::TangentialDisplacementModel ;
@@ -435,7 +435,7 @@ namespace frydom {
         }
     }
 
-    void FrOffshoreSystem_::SetStiffContact(bool isStiff) {
+    void FrOffshoreSystem::SetStiffContact(bool isStiff) {
         if (m_systemType == SMOOTH_CONTACT) {
             dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get())->SetStiffContact(isStiff);
         } else {
@@ -443,7 +443,7 @@ namespace frydom {
         }
     }
 
-    void FrOffshoreSystem_::SetSlipVelocityThreshold(double velocity) {
+    void FrOffshoreSystem::SetSlipVelocityThreshold(double velocity) {
         if (m_systemType == SMOOTH_CONTACT) {
             dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get())->SetSlipVelocitythreshold(velocity);
         } else {
@@ -451,7 +451,7 @@ namespace frydom {
         }
     }
 
-    void FrOffshoreSystem_::SetCharacteristicImpactVelocity(double velocity) {
+    void FrOffshoreSystem::SetCharacteristicImpactVelocity(double velocity) {
         if (m_systemType == SMOOTH_CONTACT) {
             dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get())->SetCharacteristicImpactVelocity(velocity);
         } else {
@@ -459,59 +459,59 @@ namespace frydom {
         }
     }
 
-    void FrOffshoreSystem_::SetMinBounceSpeed(double speed) {
+    void FrOffshoreSystem::SetMinBounceSpeed(double speed) {
         m_chronoSystem->SetMinBounceSpeed(speed);
     }
 
-    void FrOffshoreSystem_::SetMaxPenetrationRecoverySpeed(double speed) {
+    void FrOffshoreSystem::SetMaxPenetrationRecoverySpeed(double speed) {
         m_chronoSystem->SetMaxPenetrationRecoverySpeed(speed);
     }
 
-    int FrOffshoreSystem_::GetNbPositionCoords() const {
+    int FrOffshoreSystem::GetNbPositionCoords() const {
         return m_chronoSystem->GetNcoords();
     }
 
-    int FrOffshoreSystem_::GetNbVelocityCoords() const {
+    int FrOffshoreSystem::GetNbVelocityCoords() const {
         return m_chronoSystem->GetNcoords_w();
     }
 
-    int FrOffshoreSystem_::GetNbConstraintsCoords() const {
+    int FrOffshoreSystem::GetNbConstraintsCoords() const {
         return m_chronoSystem->GetNdoc_w();
     }
 
-    int FrOffshoreSystem_::GetNbDOF() const {
+    int FrOffshoreSystem::GetNbDOF() const {
         return m_chronoSystem->GetNdof();
     }
 
-    int FrOffshoreSystem_::GetNbBodies() const {
+    int FrOffshoreSystem::GetNbBodies() const {
         return m_chronoSystem->GetNbodies();
     }
 
-    int FrOffshoreSystem_::GetNbFixedBodies() const {
+    int FrOffshoreSystem::GetNbFixedBodies() const {
         return m_chronoSystem->GetNbodiesFixed();
     }
 
-    int FrOffshoreSystem_::GetNbSleepingBodies() const {
+    int FrOffshoreSystem::GetNbSleepingBodies() const {
         return m_chronoSystem->GetNbodiesSleeping();
     }
 
-    void FrOffshoreSystem_::SetUseSleepingBodies(bool useSleeping) {
+    void FrOffshoreSystem::SetUseSleepingBodies(bool useSleeping) {
         m_chronoSystem->SetUseSleeping(useSleeping);
     }
 
-    double FrOffshoreSystem_::GetGravityAcceleration() const {
+    double FrOffshoreSystem::GetGravityAcceleration() const {
         return fabs(m_chronoSystem->Get_G_acc()[2]);
     }
 
-    void FrOffshoreSystem_::SetGravityAcceleration(double gravityAcceleration) {
+    void FrOffshoreSystem::SetGravityAcceleration(double gravityAcceleration) {
         m_chronoSystem->Set_G_acc(chrono::ChVector<double>(0., 0., -gravityAcceleration));
     }
 
-    void FrOffshoreSystem_::SetNbStepsStatics(int nSteps) {
+    void FrOffshoreSystem::SetNbStepsStatics(int nSteps) {
         m_nbStepStatics = nSteps;
     }
 
-    bool FrOffshoreSystem_::SolveStaticEquilibrium(FrOffshoreSystem_::STATICS_METHOD method) {
+    bool FrOffshoreSystem::SolveStaticEquilibrium(FrOffshoreSystem::STATICS_METHOD method) {
         switch (method) {
             case LINEAR:
                 return m_chronoSystem->DoStaticLinear();
@@ -523,7 +523,7 @@ namespace frydom {
         // FIXME : il semble que les solveurs retournent toujours true...
     }
 
-    void FrOffshoreSystem_::SetTimeStepper(TIME_STEPPER type, bool checkCompat) {
+    void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type, bool checkCompat) {
 
         using timeStepperType = chrono::ChTimestepper::Type;
 
@@ -563,37 +563,37 @@ namespace frydom {
 
     }
 
-    void FrOffshoreSystem_::SetTimeStep(double timeStep) {
+    void FrOffshoreSystem::SetTimeStep(double timeStep) {
         m_chronoSystem->SetStep(timeStep);
     }
 
-    double FrOffshoreSystem_::GetTimeStep() const {
+    double FrOffshoreSystem::GetTimeStep() const {
         return m_chronoSystem->GetStep();
     }
 
-    void FrOffshoreSystem_::SetMinTimeStep(double minTimeStep) {
+    void FrOffshoreSystem::SetMinTimeStep(double minTimeStep) {
         m_chronoSystem->SetStepMin(minTimeStep);
     }
 
-    void FrOffshoreSystem_::SetMaxTimeStep(double maxTimeStep) {
+    void FrOffshoreSystem::SetMaxTimeStep(double maxTimeStep) {
         m_chronoSystem->SetStepMax(maxTimeStep);
     }
 
-    double FrOffshoreSystem_::GetTime() const {
+    double FrOffshoreSystem::GetTime() const {
         return m_chronoSystem->GetChTime();
     }
 
-    bool FrOffshoreSystem_::AdvanceOneStep(double stepSize) {
+    bool FrOffshoreSystem::AdvanceOneStep(double stepSize) {
         IsInitialized();
         return (bool)m_chronoSystem->DoStepDynamics(stepSize);
     }
 
-    bool FrOffshoreSystem_::AdvanceTo(double nextTime) {
+    bool FrOffshoreSystem::AdvanceTo(double nextTime) {
         IsInitialized();
         return m_chronoSystem->DoFrameDynamics(nextTime);
     }
 
-    bool FrOffshoreSystem_::RunDynamics(double frameStep) {
+    bool FrOffshoreSystem::RunDynamics(double frameStep) {
         IsInitialized();
         m_chronoSystem->Setup();
         m_chronoSystem->DoAssembly(chrono::AssemblyLevel::POSITION |
@@ -608,15 +608,15 @@ namespace frydom {
         return true;
     }
 
-    void FrOffshoreSystem_::CreateWorldBody() {
-        m_worldBody = std::make_shared<FrBody_>();
+    void FrOffshoreSystem::CreateWorldBody() {
+        m_worldBody = std::make_shared<FrBody>();
         m_worldBody->SetFixedInWorld(true);
         m_worldBody->SetName("WorldBody");
         AddBody(m_worldBody);
     }
 
-    std::shared_ptr<FrBody_> FrOffshoreSystem_::NewBody() {
-        auto body = std::make_shared<FrBody_>();  // TODO : suivant le type de systeme SMC ou NSC, regler le type de surface...
+    std::shared_ptr<FrBody> FrOffshoreSystem::NewBody() {
+        auto body = std::make_shared<FrBody>();  // TODO : suivant le type de systeme SMC ou NSC, regler le type de surface...
 
         switch (m_systemType) {
             case SMOOTH_CONTACT:
@@ -631,21 +631,21 @@ namespace frydom {
         return body;
     }
 
-    void FrOffshoreSystem_::Clear() {
+    void FrOffshoreSystem::Clear() {
         m_chronoSystem->Clear();
         m_bodyList.clear();
 //        m_linkList.clear();
 //        m_otherPhysicsList.clear(); // FIXME : continuer les clear !!!
     }
 
-    chrono::ChSystem* FrOffshoreSystem_::GetChronoSystem() {
+    chrono::ChSystem* FrOffshoreSystem::GetChronoSystem() {
         return m_chronoSystem.get();
     }
 
 
     // Irrlicht visualization
 
-    void FrOffshoreSystem_::RunInViewer(double endTime, double dist, bool recordVideo) {
+    void FrOffshoreSystem::RunInViewer(double endTime, double dist, bool recordVideo) {
 
         /// This subroutine runs the numerical simulation.
 
@@ -657,7 +657,7 @@ namespace frydom {
         IsInitialized();
 
         // Definition and initialization of the Irrlicht application.
-        FrIrrApp_ app(m_chronoSystem.get(), dist);
+        FrIrrApp app(m_chronoSystem.get(), dist);
 
         app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
@@ -665,11 +665,11 @@ namespace frydom {
 
     }
 
-    void FrOffshoreSystem_::Visualize( double dist, bool recordVideo) {
+    void FrOffshoreSystem::Visualize( double dist, bool recordVideo) {
 
         Initialize();  // So that system is automatically initialized when run in viewer mode
 
-        FrIrrApp_ app(m_chronoSystem.get(), dist);
+        FrIrrApp app(m_chronoSystem.get(), dist);
 
         app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
@@ -677,46 +677,46 @@ namespace frydom {
 
     }
 
-    void FrOffshoreSystem_::AddAsset(std::shared_ptr<chrono::ChAsset> asset) {
+    void FrOffshoreSystem::AddAsset(std::shared_ptr<chrono::ChAsset> asset) {
         m_chronoSystem->AddAsset(std::move(asset));
     }
 
-    void FrOffshoreSystem_::IsInitialized() {
+    void FrOffshoreSystem::IsInitialized() {
         if (!m_isInitialized) Initialize();
     }
 
 
     // Iterators
 
-    FrOffshoreSystem_::BodyIter FrOffshoreSystem_::body_begin() {
+    FrOffshoreSystem::BodyIter FrOffshoreSystem::body_begin() {
         return m_bodyList.begin();
     }
 
-    FrOffshoreSystem_::ConstBodyIter FrOffshoreSystem_::body_begin() const {
+    FrOffshoreSystem::ConstBodyIter FrOffshoreSystem::body_begin() const {
         return m_bodyList.cbegin();
     }
 
-    FrOffshoreSystem_::BodyIter FrOffshoreSystem_::body_end() {
+    FrOffshoreSystem::BodyIter FrOffshoreSystem::body_end() {
         return m_bodyList.end();
     }
 
-    FrOffshoreSystem_::ConstBodyIter FrOffshoreSystem_::body_end() const {
+    FrOffshoreSystem::ConstBodyIter FrOffshoreSystem::body_end() const {
         return m_bodyList.cend();
     }
 
-    FrOffshoreSystem_::LinkIter FrOffshoreSystem_::link_begin() {
+    FrOffshoreSystem::LinkIter FrOffshoreSystem::link_begin() {
         return m_linkList.begin();
     }
 
-    FrOffshoreSystem_::ConstLinkIter FrOffshoreSystem_::link_begin() const {
+    FrOffshoreSystem::ConstLinkIter FrOffshoreSystem::link_begin() const {
         return m_linkList.cbegin();
     }
 
-    FrOffshoreSystem_::LinkIter FrOffshoreSystem_::link_end() {
+    FrOffshoreSystem::LinkIter FrOffshoreSystem::link_end() {
         return m_linkList.end();
     }
 
-    FrOffshoreSystem_::ConstLinkIter FrOffshoreSystem_::link_end() const {
+    FrOffshoreSystem::ConstLinkIter FrOffshoreSystem::link_end() const {
         return m_linkList.cend();
     }
 

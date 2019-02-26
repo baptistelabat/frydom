@@ -21,7 +21,7 @@
 namespace frydom {
 
     // Forward declaration
-    class FrOffshoreSystem_;
+    class FrOffshoreSystem;
     class FrIrrCamera;
 
 
@@ -29,16 +29,16 @@ namespace frydom {
      * \class FrIrrApp_
      * \brief Class for Irrlicht applications (visualization).
      */
-    class FrIrrApp_ : public chrono::irrlicht::ChIrrApp {
+    class FrIrrApp : public chrono::irrlicht::ChIrrApp {
 
     private:
         chrono::ChSystem* m_system;
 
     public:
 
-        explicit FrIrrApp_(chrono::ChSystem* system, double dist=100);
+        explicit FrIrrApp(chrono::ChSystem* system, double dist=100);
 
-        ~FrIrrApp_() final;
+        ~FrIrrApp() final;
 
         /// Create a skybox that has Z pointing up.
         /// Note that the default ChIrrApp::AddTypicalSky() uses Y up.

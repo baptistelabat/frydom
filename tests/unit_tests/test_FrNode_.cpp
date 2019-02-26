@@ -19,13 +19,13 @@ TEST(FrNode,Position) {
     FRAME_CONVENTION fc = NED;
 
     /// Create a body
-    auto body = std::make_shared<FrBody_>();
+    auto body = std::make_shared<FrBody>();
 
     ///         Set Position
     body->SetPosition(Position(1.,2.,3.), fc);
 
     ///         Set Orientation
-    FrRotation_ BodyRotationInWorld; BodyRotationInWorld.SetCardanAngles_DEGREES(1.,2.,3.,fc);
+    FrRotation BodyRotationInWorld; BodyRotationInWorld.SetCardanAngles_DEGREES(1.,2.,3.,fc);
     body->SetRotation(BodyRotationInWorld);
 
     ///         Set Velocity
@@ -103,8 +103,8 @@ TEST(FrNode,Position) {
 
 
     /// Create a node from a frame;
-    FrRotation_ NodeRotation; NodeRotation.SetCardanAngles_DEGREES(5.,9.,1.,fc);
-    FrFrame_ NodeFrame;
+    FrRotation NodeRotation; NodeRotation.SetCardanAngles_DEGREES(5.,9.,1.,fc);
+    FrFrame NodeFrame;
     NodeFrame.SetPosition(NodePositionInBody,fc);
     NodeFrame.SetRotation(NodeRotation);
 

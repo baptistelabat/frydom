@@ -26,7 +26,7 @@ namespace frydom {
      * \brief Class for recording the time.
      */
     template <class T>
-    class FrTimeRecorder_ {
+    class FrTimeRecorder {
 
 
     private:
@@ -45,11 +45,11 @@ namespace frydom {
 
     public:
 
-        FrTimeRecorder_() = default;
+        FrTimeRecorder() = default;
 
-        explicit FrTimeRecorder_(double timePersistence) : m_timePersistence(timePersistence) { }
+        explicit FrTimeRecorder(double timePersistence) : m_timePersistence(timePersistence) { }
 
-        explicit FrTimeRecorder_(double timePersistence, double timeStep)
+        explicit FrTimeRecorder(double timePersistence, double timeStep)
             : m_timePersistence(timePersistence), m_timeStep(timeStep) { }
 
         void SetTimePersistence(const double timePersistence);
@@ -82,40 +82,40 @@ namespace frydom {
 
 
     template <class T>
-    void FrTimeRecorder_<T>::SetTimePersistence(const double timePersistence) {
+    void FrTimeRecorder<T>::SetTimePersistence(const double timePersistence) {
         assert(timePersistence > DBL_EPSILON);
         m_timePersistence = timePersistence;
     }
 
     template <class T>
-    double FrTimeRecorder_<T>::GetTimePersistence() const {
+    double FrTimeRecorder<T>::GetTimePersistence() const {
         return m_timePersistence;
     }
 
     template <class T>
-    double FrTimeRecorder_<T>::GetRecordDuration() const {
+    double FrTimeRecorder<T>::GetRecordDuration() const {
         // TODO
     }
 
     template <class T>
-    void FrTimeRecorder_<T>::SetTimeStep(double timeStep) {
+    void FrTimeRecorder<T>::SetTimeStep(double timeStep) {
         assert(timeStep > DBL_EPSILON);
         m_timeStep = timeStep;
     }
 
     template <class T>
-    double FrTimeRecorder_<T>::GetTimeStep() const {
+    double FrTimeRecorder<T>::GetTimeStep() const {
         return m_timeStep;
     }
 
     template <class T>
-    void FrTimeRecorder_<T>::Initialize() {
+    void FrTimeRecorder<T>::Initialize() {
         m_size = int(m_timePersistence / m_timeStep);
         m_data.set_capacity(m_size);
     }
 
     template <class T>
-    void FrTimeRecorder_<T>::Record(const double time, const T &data) {
+    void FrTimeRecorder<T>::Record(const double time, const T &data) {
 
         if (m_data.empty()) {
             m_data.push_front(data);
@@ -142,7 +142,7 @@ namespace frydom {
     }
 
     template <class T>
-    T FrTimeRecorder_<T>::Interpolate(const double intTime, const T& data, const double& time) {
+    T FrTimeRecorder<T>::Interpolate(const double intTime, const T& data, const double& time) {
 
         auto data_prev = m_data.front();
         auto a = (data - data_prev)/(time - m_lastTime);
@@ -153,10 +153,10 @@ namespace frydom {
 
 
     template <class T>
-    boost::circular_buffer<T> FrTimeRecorder_<T>::GetData() const { return m_data; }
+    boost::circular_buffer<T> FrTimeRecorder<T>::GetData() const { return m_data; }
 
     template <class T>
-    std::vector<double> FrTimeRecorder_<T>::GetTime() const {
+    std::vector<double> FrTimeRecorder<T>::GetTime() const {
 
         std::vector<double> vtime;
 
@@ -177,11 +177,11 @@ namespace frydom {
     }
 
     template <class T>
-    double FrTimeRecorder_<T>::GetLastTime() const { return m_lastTime; }
+    double FrTimeRecorder<T>::GetLastTime() const { return m_lastTime; }
 
 
     template <class T>
-    T FrTimeRecorder_<T>::GetMean() const {
+    T FrTimeRecorder<T>::GetMean() const {
 
         auto result = T();
         for (auto val: m_data) {

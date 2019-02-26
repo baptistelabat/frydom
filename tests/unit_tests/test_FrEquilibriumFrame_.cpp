@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -20,16 +20,16 @@ class TestFrEquilibriumFrame : public testing::Test {
 
 protected:
 
-    FrOffshoreSystem_ system;
-    std::shared_ptr<FrBody_> body;
-    std::shared_ptr<FrEquilibriumFrame_> m_eqFrame;
+    FrOffshoreSystem system;
+    std::shared_ptr<FrBody> body;
+    std::shared_ptr<FrEquilibriumFrame> m_eqFrame;
 
     Position m_PositionInWorld;
     Velocity m_VelocityInWorld;
     Velocity m_VelocityInFrame;
 
     FrUnitQuaternion_ m_quat;
-    FrFrame_ m_frame;
+    FrFrame m_frame;
 
     double m_angularVelocity = 0.01;
 
@@ -68,11 +68,11 @@ Vector TestFrEquilibriumFrame::ReadVector(FrHDF5Reader& reader, std::string fiel
 void TestFrEquilibriumFrame::SetUp() {
     LoadData("TNR_database.h5", "/equilibrium_frame/");
 
-    body = std::make_shared<FrBody_>();
+    body = std::make_shared<FrBody>();
     body->SetPosition(m_PositionInWorld, NWU);
     body->SetRotation(m_quat);
 
-    m_eqFrame = std::make_unique<FrEquilibriumFrame_>();
+    m_eqFrame = std::make_unique<FrEquilibriumFrame>();
     m_eqFrame->SetPosition(m_PositionInWorld, NWU);
     m_eqFrame->SetRotation(m_quat);
     m_eqFrame->SetBody(body.get());
@@ -103,7 +103,7 @@ void  TestFrEquilibriumFrame::LoadData(std::string filename, std::string group) 
     direction.normalize();
     auto angle = reader.ReadDouble(group + "RotationAngle");
     m_quat = FrUnitQuaternion_(direction, angle, NWU);
-    m_frame = FrFrame_(m_PositionInWorld, m_quat, NWU);
+    m_frame = FrFrame(m_PositionInWorld, m_quat, NWU);
 }
 
 void TestFrEquilibriumFrame::TestSetVelocityInWorld() {

@@ -19,13 +19,13 @@
 namespace frydom {
 
     // Forward Declaration
-    class FrEnvironment_;
+    class FrEnvironment;
 
     /**
      * \class FrITTCResistance_
      * \brief Class for computing the wave resistance.
      */
-    class FrITTCResistance_ : public FrForce_ {
+    class FrITTCResistance : public FrForce {
 
       private:
 
@@ -37,7 +37,7 @@ namespace frydom {
         double m_caa;  ///< air resistance coefficient
         double m_capp; ///< appendage resistance coefficient
 
-        FrEnvironment_* m_environment;
+        FrEnvironment* m_environment;
 
       public:
 
@@ -49,7 +49,7 @@ namespace frydom {
         /// \param ca Surface roughness coefficient
         /// \param caa Air resistance coefficient
         /// \param capp Appendage resistance coefficient
-        FrITTCResistance_(double Lpp, double hullWetSurface, double cr, double k = 0.,
+        FrITTCResistance(double Lpp, double hullWetSurface, double cr, double k = 0.,
                          double ca = 0., double caa=0., double capp=0.) :
             m_Lpp(Lpp), m_hullWetSurface(hullWetSurface), m_k(k), m_cr(cr), m_ca(ca), m_caa(caa), m_capp(capp) {}
 

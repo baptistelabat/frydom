@@ -33,7 +33,7 @@ namespace frydom {
 
         /// Default constructor
         /// \param freeSurface free surface containing this wave field
-        explicit FrAiryIrregularOptimWaveField(FrFreeSurface_* freeSurface);
+        explicit FrAiryIrregularOptimWaveField(FrFreeSurface* freeSurface);
 
         /// Get the complex wave elevation at the position (x,y,0), of the regular Airy wave field
         /// \param x x position

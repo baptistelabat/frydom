@@ -20,27 +20,27 @@
 namespace frydom {
 
     // Forward declaration
-    class FrRadiationModel_;
+    class FrRadiationModel;
 
     /**
      * \class FrRadiationForce_
      * \brief Class for computing the radiation loads.
      */
-    class FrRadiationForce_ : public FrForce_ {
+    class FrRadiationForce : public FrForce {
 
     protected:
 
-        FrRadiationModel_* m_radiationModel;
+        FrRadiationModel* m_radiationModel;
 
     public:
 
-        FrRadiationForce_() = default;
+        FrRadiationForce() = default;
 
-        explicit FrRadiationForce_(FrRadiationModel_* radiationModel);
+        explicit FrRadiationForce(FrRadiationModel* radiationModel);
 
-        void SetRadiationModel(FrRadiationModel_* radiationModel);
+        void SetRadiationModel(FrRadiationModel* radiationModel);
 
-//        FrRadiationModel_* GetRadiationModel() const;
+//        FrRadiationModel* GetRadiationModel() const;
 
         void StepFinalize() override;
 
@@ -48,17 +48,17 @@ namespace frydom {
 
 
     // Forward declaration
-    class FrRadiationConvolutionModel_;
+    class FrRadiationConvolutionModel;
 
     /**
      * \class FrRadiationConvolutionForce_
      * \brief Class for computing the hydrodynamic damping loads.
      */
-    class FrRadiationConvolutionForce_: public FrRadiationForce_ {
+    class FrRadiationConvolutionForce: public FrRadiationForce {
 
     public:
 
-        explicit FrRadiationConvolutionForce_(FrRadiationConvolutionModel_* radiationModel);
+        explicit FrRadiationConvolutionForce(FrRadiationConvolutionModel* radiationModel);
 
         void Initialize() override;
 

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -33,15 +33,15 @@ protected:
 
     Position COGPosition = Position(0.2, 0.3, 0.5);
 
-    FrLinearDamping_::DampingMatrix damp;
+    FrLinearDamping::DampingMatrix damp;
 
     Velocity flowVelocity = Velocity(1., 1.5, 0.);
     // ----------------------------------------------------
 
 
-    FrOffshoreSystem_ system;
-    std::shared_ptr<FrBody_> body;
-    std::shared_ptr<FrLinearDamping_> force;
+    FrOffshoreSystem system;
+    std::shared_ptr<FrBody> body;
+    std::shared_ptr<FrLinearDamping> force;
 
     void SetUp() override;
 
@@ -73,13 +73,13 @@ void TestLinearDamping_::SetUp() {
 
     body->SetRotation(FrUnitQuaternion_(rotationDirection, rotationAngle, NWU));
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(COGPosition,FrRotation_(),NWU),NWU);
+    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(COGPosition,FrRotation(),NWU),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     body->SetGeneralizedVelocityInBodyAtPointInBody(body->GetCOG(NWU), Velocity(vx, vy, vz),
                                                     AngularVelocity(vp, vq, vr), NWU);
 
-    force = std::make_shared<FrLinearDamping_>(WATER, false);
+    force = std::make_shared<FrLinearDamping>(WATER, false);
     body->AddExternalForce(force);
 
     damp << 1.5, 0., 3.5, 6.5, 1.5, 0.,

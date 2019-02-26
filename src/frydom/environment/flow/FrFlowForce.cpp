@@ -114,8 +114,8 @@ namespace frydom {
         // Build the projected rotation in the XoY plane.
         double phi, theta, psi;
         m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
-        auto bodyRotation = FrRotation_(Direction(0.,0.,1.), psi, NWU);
-        auto frame = FrFrame_(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
+        auto bodyRotation = FrRotation(Direction(0.,0.,1.), psi, NWU);
+        auto frame = FrFrame(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
 
 //        auto frame = m_body->GetFrameAtCOG(NWU).ProjectToXYPlane(NWU);
         auto worldForce = frame.ProjectVectorFrameInParent(Force(res[0], res[1], 0), NWU);
@@ -125,16 +125,16 @@ namespace frydom {
     }
 
     void FrFlowForce::Initialize() {
-        FrForce_::Initialize();
+        FrForce::Initialize();
     }
 
     void FrFlowForce::StepFinalize() {
-        FrForce_::StepFinalize();
+        FrForce::StepFinalize();
     }
 
     void FrCurrentForce2_::Update(double time) {
 
-        FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+        FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
 
         m_fluxVelocityInBody =
@@ -145,7 +145,7 @@ namespace frydom {
 
     void FrWindForce2_::Update(double time) {
 
-        FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+        FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
 
         m_fluxVelocityInBody =
@@ -154,13 +154,13 @@ namespace frydom {
         FrFlowForce::Update(time);
     }
 
-    std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body){
+    std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody> body){
         auto currentForce = std::make_shared<FrCurrentForce2_>(yamlFile);
         body->AddExternalForce(currentForce);
         return currentForce;
     }
 
-    std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body){
+    std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody> body){
         auto windForce = std::make_shared<FrWindForce2_>(yamlFile);
         body->AddExternalForce(windForce);
         return windForce;

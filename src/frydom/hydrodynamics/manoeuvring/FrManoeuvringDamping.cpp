@@ -18,7 +18,7 @@
 
 namespace frydom {
 
-    FrManDampingTaylorExpansion_::TypeParam_ FrManDampingTaylorExpansion_::SetParams(double val, int m, int n, int p) {
+    FrManDampingTaylorExpansion::TypeParam_ FrManDampingTaylorExpansion::SetParams(double val, int m, int n, int p) {
         TypeParam_ param;
         if (m > 0) {
             param.cm = true;
@@ -39,14 +39,14 @@ namespace frydom {
         return param;
     }
 
-    FrManDampingTaylorExpansion_::TypeParam_ FrManDampingTaylorExpansion_::SetParams(std::string tag, double val) {
+    FrManDampingTaylorExpansion::TypeParam_ FrManDampingTaylorExpansion::SetParams(std::string tag, double val) {
         auto m = int(std::count(tag.begin(), tag.end(), 'u'));
         auto n = int(std::count(tag.begin(), tag.end(), 'v'));
         auto p = int(std::count(tag.begin(), tag.end(), 'w'));
         return SetParams(val, m, n, p);
     }
 
-    double FrManDampingTaylorExpansion_::ForceComponent(const TypeParam_ param, double vx, double vy, double vrz) const {
+    double FrManDampingTaylorExpansion::ForceComponent(const TypeParam_ param, double vx, double vy, double vrz) const {
         double res;
         res = param.val;
         if (param.cm) {
@@ -61,7 +61,7 @@ namespace frydom {
         return res;
     }
 
-   void FrManDampingTaylorExpansion_::Set(std::string tag, double val) {
+   void FrManDampingTaylorExpansion::Set(std::string tag, double val) {
 
        if (tag.at(0) == 'X') {
            SetX(tag, val);
@@ -74,37 +74,37 @@ namespace frydom {
        }
    }
 
-    void FrManDampingTaylorExpansion_::SetX(std::string tag, double val) {
+    void FrManDampingTaylorExpansion::SetX(std::string tag, double val) {
         m_cx.push_back(SetParams(tag, val));
     }
 
-    void FrManDampingTaylorExpansion_::SetY(std::string tag, double val) {
+    void FrManDampingTaylorExpansion::SetY(std::string tag, double val) {
         m_cy.push_back(SetParams(tag, val));
     }
 
-    void FrManDampingTaylorExpansion_::SetN(std::string tag, double val) {
+    void FrManDampingTaylorExpansion::SetN(std::string tag, double val) {
         m_cn.push_back(SetParams(tag, val));
     }
 
-    void FrManDampingTaylorExpansion_::SetX(double val, int m, int n, int p) {
+    void FrManDampingTaylorExpansion::SetX(double val, int m, int n, int p) {
         m_cx.push_back(SetParams(val, m, n, p));
     }
 
-    void FrManDampingTaylorExpansion_::SetY(double val, int m, int n, int p) {
+    void FrManDampingTaylorExpansion::SetY(double val, int m, int n, int p) {
         m_cy.push_back(SetParams(val, m, n, p));
     }
 
-    void FrManDampingTaylorExpansion_::SetN(double val, int m, int n, int p) {
+    void FrManDampingTaylorExpansion::SetN(double val, int m, int n, int p) {
         m_cn.push_back(SetParams(val, m, n, p));
     }
 
-    void FrManDampingTaylorExpansion_::ClearAll() {
+    void FrManDampingTaylorExpansion::ClearAll() {
         m_cx.clear();
         m_cy.clear();
         m_cn.clear();
     }
 
-    void FrManDampingTaylorExpansion_::Update(double time) {
+    void FrManDampingTaylorExpansion::Update(double time) {
 
         auto force = Force();
         auto torque = Torque();
@@ -126,12 +126,12 @@ namespace frydom {
         SetForceTorqueInBodyAtCOG(force ,torque, NWU);
     }
 
-    void FrManDampingTaylorExpansion_::Initialize() {
-        FrForce_::Initialize();
+    void FrManDampingTaylorExpansion::Initialize() {
+        FrForce::Initialize();
     }
 
-    void FrManDampingTaylorExpansion_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrManDampingTaylorExpansion::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
 }  // end namespace frydom

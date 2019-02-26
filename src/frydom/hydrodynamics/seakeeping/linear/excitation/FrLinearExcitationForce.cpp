@@ -22,7 +22,7 @@
 
 namespace frydom {
 
-    void FrLinearExcitationForce_::Initialize() {
+    void FrLinearExcitationForce::Initialize() {
 
         // Equilibrium frame of the body.
         m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
@@ -43,11 +43,11 @@ namespace frydom {
         }
 
         // Initialization of the parent class.
-        FrForce_::Initialize();
+        FrForce::Initialize();
 
     }
 
-    void FrLinearExcitationForce_::Update(double time) {
+    void FrLinearExcitationForce::Update(double time) {
 
         // This subroutine computes the linear excitation forces from Nemoh results.
 
@@ -88,10 +88,10 @@ namespace frydom {
             auto mode = m_HDB->GetBody(m_body)->GetForceMode(imode);
             Direction direction = mode->GetDirection(); // Unit vector for the force direction.
             switch (mode->GetType()) {
-                case FrBEMMode_::LINEAR:
+                case FrBEMMode::LINEAR:
                     force += direction * forceMode(imode);
                     break;
-                case FrBEMMode_::ANGULAR:
+                case FrBEMMode::ANGULAR:
                     torque += direction * forceMode(imode);
                     break;
             }
@@ -107,18 +107,18 @@ namespace frydom {
 
     }
 
-    void FrLinearExcitationForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrLinearExcitationForce::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
 
-    std::shared_ptr<FrLinearExcitationForce_>
-    make_linear_excitation_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body){
+    std::shared_ptr<FrLinearExcitationForce>
+    make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
 
         /// This subroutine creates the hydrostatic force object for computing the hydrostatic loads.
 
         // Construction of the excitation force object from the HDB.
-        auto excitationForce = std::make_shared<FrLinearExcitationForce_>(HDB);
+        auto excitationForce = std::make_shared<FrLinearExcitationForce>(HDB);
 
         // Add the excitation force object as an external force to the body.
         body->AddExternalForce(excitationForce);

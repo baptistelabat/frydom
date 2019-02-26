@@ -25,13 +25,13 @@ namespace frydom {
      * \class FrLinearHydrostaticStiffnessMatrix_
      * \brief Class for defning the hydrostatic stiffness matrix.
      */
-    class FrLinearHydrostaticStiffnessMatrix_ {
+    class FrLinearHydrostaticStiffnessMatrix {
 
     protected:
         mathutils::Matrix33<double> m_data;
 
     public:
-        FrLinearHydrostaticStiffnessMatrix_();
+        FrLinearHydrostaticStiffnessMatrix();
 
         void SetK33(double K33);
         void SetK44(double K44);

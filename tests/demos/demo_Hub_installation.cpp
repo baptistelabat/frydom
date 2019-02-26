@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     DIRECTION_CONVENTION dc = GOTO;
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     // --------------------------------------------------
     // Environment
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
     barge->SetColor(Yellow);
 //    barge->SetFixedInWorld(true);
 
-//    barge->SetInertiaTensor(FrInertiaTensor_((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., FrFrame_(), NWU));
+//    barge->SetInertiaTensor(FrInertiaTensor_((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., FrFrame(), NWU));
 
     float steelYoungModulus = 1e12; // Young modulus (for contact)
     float steelNormalDamping = 1e20;// Normal damping (for contact)
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database("Barge_HDB.h5");
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(barge.get());
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(barge.get());
     system.AddPhysicsItem(eqFrame);
 
     hdb->Map(0, barge.get(), eqFrame);
@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
     arm_crane->SetColor(DarkGreen);
     arm_crane->SetPositionOfBodyPoint(Position(-9.0,0.,0.), Position(-7.5,0.,4.5), fc);
 
-    FrRotation_ arm_Rotation;
+    FrRotation arm_Rotation;
     arm_Rotation.SetCardanAngles_DEGREES(0.,-45.,0., fc);
     arm_crane->RotateAroundPointInBody(arm_Rotation, Position(-9.0,0.,0.), fc);
 

@@ -15,11 +15,11 @@
 
 namespace frydom {
 
-    FrCable_::FrCable_() = default;
+    FrCable::FrCable() = default;
 
-    FrCable_::~FrCable_() = default;
+    FrCable::~FrCable() = default;
 
-    FrCable_::FrCable_(const std::shared_ptr<FrNode_> startingNode, const std::shared_ptr<FrNode_> endingNode,
+    FrCable::FrCable(const std::shared_ptr<FrNode> startingNode, const std::shared_ptr<FrNode> endingNode,
                        double cableLength, double youngModulus, double sectionArea,
                        double linearDensity)
             : m_startNode(startingNode),
@@ -29,91 +29,91 @@ namespace frydom {
               m_youngModulus(youngModulus),
               m_sectionArea(sectionArea),
               m_linearDensity(linearDensity),
-              FrMidPhysicsItem_(){}
+              FrMidPhysicsItem(){}
 
-    void FrCable_::SetYoungModulus(double E) {
+    void FrCable::SetYoungModulus(double E) {
         m_youngModulus = E;
     }
 
-    double FrCable_::GetYoungModulus() const {
+    double FrCable::GetYoungModulus() const {
         return m_youngModulus;
     }
 
-    void FrCable_::SetSectionArea(double A) {
+    void FrCable::SetSectionArea(double A) {
         m_sectionArea = A;
     }
 
-    double FrCable_::GetSectionArea() const {
+    double FrCable::GetSectionArea() const {
         return m_sectionArea;
     }
 
-    void FrCable_::SetUnstretchedLength(double L) {
+    void FrCable::SetUnstretchedLength(double L) {
         m_cableLength = L;
     }
 
-    double FrCable_::GetUnstretchedLength() const {
+    double FrCable::GetUnstretchedLength() const {
         return m_cableLength;
     }
 
-    void FrCable_::SetDiameter(double d) {
+    void FrCable::SetDiameter(double d) {
         m_sectionArea = M_PI * pow(d*0.5, 2);
     }
 
-    double FrCable_::GetDiameter() const {
+    double FrCable::GetDiameter() const {
         return sqrt(4. * m_sectionArea / M_PI);
     }
 
-    double FrCable_::GetEA() const {
+    double FrCable::GetEA() const {
         return m_youngModulus * m_sectionArea;
     }
 
-    void FrCable_::SetLinearDensity(double lambda) {
+    void FrCable::SetLinearDensity(double lambda) {
         m_linearDensity = lambda;
     }
 
-    double FrCable_::GetLinearDensity() const {
+    double FrCable::GetLinearDensity() const {
         return m_linearDensity;
     }
 
-    void FrCable_::SetDensity(double rho) {
+    void FrCable::SetDensity(double rho) {
         m_linearDensity = rho * m_sectionArea;
     }
 
-    double FrCable_::GetDensity() const {
+    double FrCable::GetDensity() const {
         return m_linearDensity / m_sectionArea;
     }
 
-    void FrCable_::SetStartingNode(std::shared_ptr<FrNode_> startingNode) {
+    void FrCable::SetStartingNode(std::shared_ptr<FrNode> startingNode) {
         // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
         m_startNode = startingNode;
     }
 
-    std::shared_ptr<FrNode_> FrCable_::GetStartingNode() const {
+    std::shared_ptr<FrNode> FrCable::GetStartingNode() const {
         return m_startNode;
     }
 
-    void FrCable_::SetEndingNode(std::shared_ptr<FrNode_> endingNode) {
+    void FrCable::SetEndingNode(std::shared_ptr<FrNode> endingNode) {
         // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
         m_endNode = endingNode;
     }
 
-    std::shared_ptr<FrNode_> FrCable_::GetEndingNode() const {
+    std::shared_ptr<FrNode> FrCable::GetEndingNode() const {
         return m_endNode;
     }
 
-    void FrCable_::SetBreakingTension(double tension) {
+    void FrCable::SetBreakingTension(double tension) {
         m_breakingTension = tension;
     }
 
-    double FrCable_::GetBreakingTension() const {
+    double FrCable::GetBreakingTension() const {
         return m_breakingTension;
     }
 
-    void FrCable_::SetUnrollingSpeed(double unrollingSpeed) {
+    void FrCable::SetUnrollingSpeed(double unrollingSpeed) {
         m_unrollingSpeed = unrollingSpeed;
     }
 
-    double FrCable_::GetUnrollingSpeed() const {
+    double FrCable::GetUnrollingSpeed() const {
         return m_unrollingSpeed;
     }
 

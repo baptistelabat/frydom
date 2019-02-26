@@ -26,22 +26,22 @@
 namespace frydom {
 
     // Forward declaration
-    class FrOffshoreSystem_;
+    class FrOffshoreSystem;
 
     namespace internal {
 
         /// Base class inheriting from chrono ChSystemSMC for physical system in which contact is modeled using a smooth
         /// (penalty-based) method. This class must not be used by external FRyDoM users.
         /// It is used in composition rule along with the FrOffshoreSystem_ FRyDoM class
-        class _FrSystemBaseSMC : public chrono::ChSystemSMC {
+        class FrSystemBaseSMC : public chrono::ChSystemSMC {
 
         private:
-            FrOffshoreSystem_ *m_offshoreSystem_;   ///< pointer to the offshore system
+            FrOffshoreSystem *m_offshoreSystem_;   ///< pointer to the offshore system
 
         public:
             /// Constructor of the systemBase
             /// \param offshoreSystem pointer to the offshore system
-            explicit _FrSystemBaseSMC(FrOffshoreSystem_ *offshoreSystem);
+            explicit FrSystemBaseSMC(FrOffshoreSystem *offshoreSystem);
 
             /// Update the state of the systemBase, called from chrono, call the Update of the offshore system
             /// \param update_assets check if the assets are updated
@@ -56,7 +56,7 @@ namespace frydom {
         /// Base class inheriting from chrono ChSystemNSC for physical system in which contact is modeled using a non-smooth
         /// (complementarity-based) method.. This class must not be used by external FRyDoM users.
         /// It is used in composition rule along with the FrOffshoreSystem_ FRyDoM class
-        class _FrSystemBaseNSC : public chrono::ChSystemNSC {
+        class FrSystemBaseNSC : public chrono::ChSystemNSC {
             // TODO
         };
 
@@ -65,14 +65,14 @@ namespace frydom {
 
 
     // Forward declarations
-    class FrBody_;
-    class FrLinkBase_;
-    class FrPhysicsItem_;
-    class FrPrePhysicsItem_;
-    class FrMidPhysicsItem_;
-    class FrPostPhysicsItem_;
-    class FrEnvironment_;
-    class FrCable_;
+    class FrBody;
+    class FrLinkBase;
+    class FrPhysicsItem;
+    class FrPrePhysicsItem;
+    class FrMidPhysicsItem;
+    class FrPostPhysicsItem;
+    class FrEnvironment;
+    class FrCable;
 
     /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
     /// so it acts also as a database for most items involved in simulations, most noticeably objects of FrBody and FrLink
@@ -82,7 +82,7 @@ namespace frydom {
     /// This object will be responsible of performing the entire physical simulation (dynamics, kinematics, statics, etc.),
     /// so you need at least one FrOffshoreSystem_ object in your program, in order to perform simulations
     /// (you'll insert rigid bodies and links into it..).
-    class FrOffshoreSystem_ : public FrObject {
+    class FrOffshoreSystem : public FrObject {
 
     public:
 
@@ -178,9 +178,9 @@ namespace frydom {
 
         std::unique_ptr<chrono::ChSystem> m_chronoSystem;   ///< The real Chrono system (may be SMC or NSC)
 
-        std::shared_ptr<FrBody_> m_worldBody;               ///< A fixed body that span the world and where things may be attached
+        std::shared_ptr<FrBody> m_worldBody;               ///< A fixed body that span the world and where things may be attached
 
-        std::unique_ptr<FrEnvironment_> m_environment;      ///< The offshore environment
+        std::unique_ptr<FrEnvironment> m_environment;      ///< The offshore environment
 
         SYSTEM_TYPE     m_systemType;                       ///< type of contact method
         TIME_STEPPER    m_timeStepper;                      ///< timesteppers, i.e., time integrators that can advance a
@@ -193,12 +193,12 @@ namespace frydom {
         STATICS_METHOD  m_staticsMethod;                    ///< method to find the static equilibrium
 
         // Container: definition.
-        using BodyContainer = std::vector<std::shared_ptr<FrBody_>>;
-        using LinkContainer = std::vector<std::shared_ptr<FrLinkBase_>>;
+        using BodyContainer = std::vector<std::shared_ptr<FrBody>>;
+        using LinkContainer = std::vector<std::shared_ptr<FrLinkBase>>;
 
-        using PrePhysicsContainer = std::vector<std::shared_ptr<FrPrePhysicsItem_>>;
-        using MidPhysicsContainer = std::vector<std::shared_ptr<FrMidPhysicsItem_>>;
-        using PostPhysicsContainer = std::vector<std::shared_ptr<FrPostPhysicsItem_>>;
+        using PrePhysicsContainer = std::vector<std::shared_ptr<FrPrePhysicsItem>>;
+        using MidPhysicsContainer = std::vector<std::shared_ptr<FrMidPhysicsItem>>;
+        using PostPhysicsContainer = std::vector<std::shared_ptr<FrPostPhysicsItem>>;
 
         // Iterators.
         // TODO : bouger les iterateurs proches des methodes d'iteration...
@@ -237,12 +237,12 @@ namespace frydom {
         /// \param timeStepper time stepper type
         /// \param solver solver type
         explicit
-        FrOffshoreSystem_(SYSTEM_TYPE systemType   = SMOOTH_CONTACT,
+        FrOffshoreSystem(SYSTEM_TYPE systemType   = SMOOTH_CONTACT,
                           TIME_STEPPER timeStepper = EULER_IMPLICIT_LINEARIZED,
                           SOLVER solver            = MINRES);
 
         /// Destructor
-        ~FrOffshoreSystem_();
+        ~FrOffshoreSystem();
 
         /// Add an item (body, link, etc.) to the offshore sytem
         /// \param item item to be added to the offshore system
@@ -250,32 +250,32 @@ namespace frydom {
 
         /// Add a body to the offshore system
         /// \param body body to add
-        void AddBody(std::shared_ptr<FrBody_> body);
+        void AddBody(std::shared_ptr<FrBody> body);
 
         /// Add a link between bodies to the offshore system
         /// \param link link to be added
-        void AddLink(std::shared_ptr<FrLinkBase_> link);
+        void AddLink(std::shared_ptr<FrLinkBase> link);
 
 
         /// Add other physics item to the offshore system
         /// \param otherPhysics other physic item to be added
-        void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem_> otherPhysics);
+        void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics);
 
         /// Add other physics item to the offshore system
         /// \param otherPhysics other physic item to be added
-        void AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem_> otherPhysics);
+        void AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics);
 
         /// Add other physics item to the offshore system
         /// \param otherPhysics other physic item to be added
-        void AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem_> otherPhysics);
+        void AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics);
 
         /// Get the environment embedded in the offshore system
         /// \return environment embedded in the offshore system
-        FrEnvironment_* GetEnvironment() const;
+        FrEnvironment* GetEnvironment() const;
 
         /// Get the world body embedded in the offshore system
         /// \return world body embedded in the offshore system
-        std::shared_ptr<FrBody_> GetWorldBody() const;
+        std::shared_ptr<FrBody> GetWorldBody() const;
 
         // TODO: voir si les 3 methodes ci-dessous doivent etre privees (pas Initialize)
 
@@ -563,7 +563,7 @@ namespace frydom {
         /// Create a new body, managed by the offshore system. The body characteristics can then be setted using the
         /// shared pointer returned by this method.
         /// \return new body
-        std::shared_ptr<FrBody_> NewBody();
+        std::shared_ptr<FrBody> NewBody();
 
         /// Removes all bodies/marker/forces/links/contacts, also resets timers and events.
         void Clear();
@@ -600,7 +600,7 @@ namespace frydom {
         void CheckCompatibility() const;
 
         /// Check the compatibility between the system contact method and the specified body contact type
-        bool CheckBodyContactMethod(std::shared_ptr<FrBody_> body);
+        bool CheckBodyContactMethod(std::shared_ptr<FrBody> body);
 
         /// Get the systemBase, embedded in the offshore system
         /// \return systemBase

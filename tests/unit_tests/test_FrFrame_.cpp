@@ -20,7 +20,7 @@ TEST(FrFrame,PositionAndRotation){
     FRAME_CONVENTION fc = NWU;
 
     // Frame to test
-    FrFrame_ frame;
+    FrFrame frame;
 
     // Frame Position
     const Position framePosition(1.,2.,3.);
@@ -62,12 +62,12 @@ TEST(FrFrame,PositionAndRotation){
         std::cout<<Position(0.,0.,0.)<<std::endl;
     }
     FrUnitQuaternion_ IdentityQuat(1.,0.,0.,0.,fc);
-    FrRotation_ IdentityRotation; IdentityRotation.Set(IdentityQuat);
+    FrRotation IdentityRotation; IdentityRotation.Set(IdentityQuat);
     EXPECT_TRUE(frame.GetRotation() == IdentityRotation);
     EXPECT_TRUE(frame.GetQuaternion() == IdentityQuat);
 
     // Test on Setter for the rotation
-    FrRotation_ frameRotation; frameRotation.SetCardanAngles_DEGREES(3.,2.,1.,fc);
+    FrRotation frameRotation; frameRotation.SetCardanAngles_DEGREES(3.,2.,1.,fc);
     frame.SetRotation(frameRotation);
     EXPECT_TRUE(frame.GetRotation() == frameRotation);
 
@@ -79,10 +79,10 @@ TEST(FrFrame,PositionAndRotation){
 
     //Test of the Rot methods with local axes.
     //      Rotation to an easy transformation
-    FrRotation_ Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,fc);
-    FrRotation_ Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,fc);
-    FrRotation_ Rotation3; Rotation3.SetCardanAngles_DEGREES(0.,0.,90.,fc);
-    FrRotation_ TotalRotation = Rotation1*Rotation2 *Rotation3;
+    FrRotation Rotation1; Rotation1.SetCardanAngles_DEGREES(90.,0.,0.,fc);
+    FrRotation Rotation2; Rotation2.SetCardanAngles_DEGREES(0.,90.,0.,fc);
+    FrRotation Rotation3; Rotation3.SetCardanAngles_DEGREES(0.,0.,90.,fc);
+    FrRotation TotalRotation = Rotation1*Rotation2 *Rotation3;
     frame.SetRotation(TotalRotation);
 
     //      Applying the inverse rotations using the Rot methods
@@ -125,11 +125,11 @@ TEST(FrFrame,PositionAndRotation){
     // Test of GetOtherFrameRelativeTransform_WRT_ThisFrame
     frame.SetNoRotation();
 
-    FrFrame_ Transf2OtherFrame;
+    FrFrame Transf2OtherFrame;
     Transf2OtherFrame.SetPosition(Position(5.,8.,2.),fc);
     Transf2OtherFrame.SetRotation(TotalRotation);
 
-    FrFrame_ OtherFrame = Transf2OtherFrame * frame;
+    FrFrame OtherFrame = Transf2OtherFrame * frame;
 
     testPosition = OtherFrame.GetPosition(fc) - (frame.GetPosition(fc) + Transf2OtherFrame.GetPosition(fc));
     EXPECT_TRUE(testPosition.isZero());

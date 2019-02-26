@@ -26,7 +26,7 @@ namespace chrono {
 namespace frydom {
 
     // Forward declarations:
-    class FrCatenaryLine_;
+    class FrCatenaryLine;
 
     /**
      * \class FrCatenaryLineAsset_
@@ -39,7 +39,7 @@ namespace frydom {
 
     private:
 
-        FrCatenaryLine_ *m_catenaryLine;    ///< Catenary line containing this asset
+        FrCatenaryLine *m_catenaryLine;    ///< Catenary line containing this asset
 
         using Triplet = std::tuple<double, double, std::shared_ptr<chrono::ChLineShape>>;
         std::vector<Triplet> m_elements;    ///< container of elements based on ChLineShape
@@ -50,7 +50,7 @@ namespace frydom {
 
         /// Catenary line asset constructor
         /// \param line catenary line containing this asset
-        explicit FrCatenaryLineAsset_(FrCatenaryLine_ * line);
+        explicit FrCatenaryLineAsset_(FrCatenaryLine * line);
 
         /// Update the elements position and color
         void Update();

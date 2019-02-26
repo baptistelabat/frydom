@@ -14,7 +14,7 @@
 #include "FrAiryIrregularWaveField.h"
 
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
+#include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
 
@@ -23,11 +23,11 @@
 
 namespace frydom{
 
-    FrAiryIrregularWaveField::FrAiryIrregularWaveField(FrFreeSurface_ *freeSurface) : FrWaveField_(freeSurface) {
+    FrAiryIrregularWaveField::FrAiryIrregularWaveField(FrFreeSurface *freeSurface) : FrWaveField(freeSurface) {
         m_waveModel = LINEAR_WAVES;
-        m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+        m_verticalFactor = std::make_unique<FrKinematicStretching>();
 
-        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum_>();
+        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum>();
     }
 
     void FrAiryIrregularWaveField::SetWaveFrequencies(double minFreq, double maxFreq, unsigned int nbFreq) {
@@ -144,27 +144,27 @@ namespace frydom{
         m_wavePhases = std::make_unique<std::vector<std::vector<double>>>(wavePhases);
     }
 
-    FrJonswapWaveSpectrum_ *FrAiryIrregularWaveField::SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit, double gamma) {
-        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum_>(Hs,Tp,unit,gamma);
-        return dynamic_cast<FrJonswapWaveSpectrum_*>(m_waveSpectrum.get());
+    FrJonswapWaveSpectrum *FrAiryIrregularWaveField::SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit, double gamma) {
+        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum>(Hs,Tp,unit,gamma);
+        return dynamic_cast<FrJonswapWaveSpectrum*>(m_waveSpectrum.get());
     }
 
-    FrPiersonMoskowitzWaveSpectrum_ *FrAiryIrregularWaveField::SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit) {
-        m_waveSpectrum = std::make_unique<FrPiersonMoskowitzWaveSpectrum_>(Hs,Tp,unit);
-        return dynamic_cast<FrPiersonMoskowitzWaveSpectrum_*>(m_waveSpectrum.get());
+    FrPiersonMoskowitzWaveSpectrum *FrAiryIrregularWaveField::SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit) {
+        m_waveSpectrum = std::make_unique<FrPiersonMoskowitzWaveSpectrum>(Hs,Tp,unit);
+        return dynamic_cast<FrPiersonMoskowitzWaveSpectrum*>(m_waveSpectrum.get());
     }
 
-    FrTestWaveSpectrum_ *FrAiryIrregularWaveField::SetTestWaveSpectrum() {
-        m_waveSpectrum = std::make_unique<FrTestWaveSpectrum_>();
-        return dynamic_cast<FrTestWaveSpectrum_*>(m_waveSpectrum.get());
+    FrTestWaveSpectrum *FrAiryIrregularWaveField::SetTestWaveSpectrum() {
+        m_waveSpectrum = std::make_unique<FrTestWaveSpectrum>();
+        return dynamic_cast<FrTestWaveSpectrum*>(m_waveSpectrum.get());
     }
 
-    FrWaveSpectrum_ *FrAiryIrregularWaveField::GetWaveSpectrum() const { return m_waveSpectrum.get(); }
+    FrWaveSpectrum *FrAiryIrregularWaveField::GetWaveSpectrum() const { return m_waveSpectrum.get(); }
 
     void FrAiryIrregularWaveField::SetStretching(STRETCHING_TYPE type) {
         switch (type) {
             case NO_STRETCHING:
-                m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+                m_verticalFactor = std::make_unique<FrKinematicStretching>();
                 break;
             case VERTICAL:
                 m_verticalFactor = std::make_unique<FrKinStretchingVertical_>();
@@ -182,7 +182,7 @@ namespace frydom{
             case HDELTA:
                 m_verticalFactor = std::make_unique<FrKinStretchingHDelta_>(this);
             default:
-                m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+                m_verticalFactor = std::make_unique<FrKinematicStretching>();
                 break;
         }
         m_verticalFactor->SetInfDepth(m_infinite_depth);
@@ -236,7 +236,7 @@ namespace frydom{
     }
 
     void FrAiryIrregularWaveField::Initialize() {
-        FrWaveField_::Initialize();
+        FrWaveField::Initialize();
         m_verticalFactor->SetInfDepth(m_infinite_depth);
 
         if (m_waveDirections.empty()){m_waveDirections.push_back(m_meanDir);}

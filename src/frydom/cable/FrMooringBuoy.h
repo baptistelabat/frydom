@@ -18,18 +18,18 @@
 namespace frydom {
 
     // Forward declaration
-    class FrLinearDamping_;
+    class FrLinearDamping;
 
 
-    class FrMooringBuoy : public FrBody_ {
+    class FrMooringBuoy : public FrBody {
 
     private:
-        class FrSphereNonLinearHydrostaticForce : public FrForce_ {
+        class FrSphereNonLinearHydrostaticForce : public FrForce {
 
         public:
             void Update(double time) override;
             void StepFinalize() override {
-                FrForce_::StepFinalize();
+                FrForce::StepFinalize();
             }
         };
 
@@ -37,7 +37,7 @@ namespace frydom {
         double m_radius = 1.;
         double c_volume;
         std::shared_ptr<FrSphereNonLinearHydrostaticForce> m_hydrostaticForce;
-        std::shared_ptr<FrLinearDamping_> m_dampingForce;
+        std::shared_ptr<FrLinearDamping> m_dampingForce;
 
     public:
 
@@ -67,7 +67,7 @@ namespace frydom {
     /// \param damping damping coefficient affected to the diagonal terms of a linear damping force.
     /// \return FrMooringBuoy instance
     std::shared_ptr<FrMooringBuoy>
-    make_mooring_buoy(FrOffshoreSystem_* system, double radius, double mass, bool visual_asset = true, double damping=0);
+    make_mooring_buoy(FrOffshoreSystem* system, double radius, double mass, bool visual_asset = true, double damping=0);
 
 }  //end namespace frydom
 

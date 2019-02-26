@@ -186,16 +186,16 @@ TEST(FrRotation,Rotation){
     double eps = 1e-8;
 
     // Test SetNullRotation
-    FrRotation_ NullRotation;
+    FrRotation NullRotation;
     NullRotation.SetNullRotation();
 
-    FrRotation_ Rotation;
+    FrRotation Rotation;
     EXPECT_TRUE(Rotation == NullRotation);
 
     // Test SetAxisAngle & associated constructor
     Direction Axis(1.,2.,3.); Axis.normalize();
     double angle = 0.05;
-    FrRotation_ AxisAngleRot(Axis, angle, fc);
+    FrRotation AxisAngleRot(Axis, angle, fc);
 //    AxisAngleRot.SetAxisAngle(Axis, angle, fc);
 
     // Test GetAxisAngle
@@ -216,9 +216,9 @@ TEST(FrRotation,Rotation){
     EXPECT_TRUE(Rotation == NewRot);
 
     // Rotation to an easy transformation
-    FrRotation_ XRotation; XRotation.SetCardanAngles_DEGREES(90.,0.,0.,fc);
-    FrRotation_ YRotation; YRotation.SetCardanAngles_DEGREES(0.,90.,0.,fc);
-    FrRotation_ TotalRotation = XRotation*YRotation ;
+    FrRotation XRotation; XRotation.SetCardanAngles_DEGREES(90.,0.,0.,fc);
+    FrRotation YRotation; YRotation.SetCardanAngles_DEGREES(0.,90.,0.,fc);
+    FrRotation TotalRotation = XRotation*YRotation ;
 
     // Test GetCardanAngles
     double rx, ry, rz;
@@ -271,7 +271,7 @@ TEST(FrRotation,Rotation){
 
 
     // Test RotAxisAngle_DEGREES
-    FrRotation_ testRotation = XRotation.RotAxisAngle_DEGREES(Direction(0,1,0),90.,fc);
+    FrRotation testRotation = XRotation.RotAxisAngle_DEGREES(Direction(0,1,0),90.,fc);
     EXPECT_TRUE(testRotation == TotalRotation);
 
 //    testRotation = XRotation.RotY_DEGREES(90.,fc);

@@ -22,7 +22,7 @@
 namespace frydom {
 
     // Forward declaration
-    class FrNode_;
+    class FrNode;
 
 
     /**
@@ -35,7 +35,7 @@ namespace frydom {
      * \see FrMidPhysicsItem_, FrCatenaryLine_, FrDynamicCable_, FrNode_
      *
      */
-    class FrCable_ : public FrMidPhysicsItem_ {
+    class FrCable : public FrMidPhysicsItem {
 
     protected:
 
@@ -46,8 +46,8 @@ namespace frydom {
 
         //--------------------------------------------------------------------------------------------------------------
         // Nodes
-        std::shared_ptr<FrNode_> m_startNode;       ///< starting node
-        std::shared_ptr<FrNode_> m_endNode;         ///< ending node
+        std::shared_ptr<FrNode> m_startNode;       ///< starting node
+        std::shared_ptr<FrNode> m_endNode;         ///< ending node
 
         //--------------------------------------------------------------------------------------------------------------
         // Cable properties
@@ -64,7 +64,7 @@ namespace frydom {
         //--------------------------------------------------------------------------------------------------------------
         // Constructor - destructor
         /// Default constructor
-        FrCable_();
+        FrCable();
 
         /// FrCable_ constructor, using two nodes and cable properties
         /// \param startingNode starting node
@@ -73,15 +73,15 @@ namespace frydom {
         /// \param youngModulus Young modulus
         /// \param sectionArea section area
         /// \param linearDensity linear density
-        FrCable_(const std::shared_ptr<FrNode_> startingNode,
-                 const std::shared_ptr<FrNode_> endingNode,
+        FrCable(const std::shared_ptr<FrNode> startingNode,
+                 const std::shared_ptr<FrNode> endingNode,
                  double cableLength,
                  double youngModulus,
                  double sectionArea,
                  double linearDensity);
 
         /// Default destructor
-        ~FrCable_();
+        ~FrCable();
 
         //--------------------------------------------------------------------------------------------------------------
         // cable properties accessors
@@ -147,19 +147,19 @@ namespace frydom {
         // Node accessors
         /// Set the starting node of the cable
         /// \param startingNode starting node
-        void SetStartingNode(std::shared_ptr<FrNode_> startingNode);
+        void SetStartingNode(std::shared_ptr<FrNode> startingNode);
 
         /// Get the starting node of the cable
         /// \return starting node
-        std::shared_ptr<FrNode_> GetStartingNode() const;
+        std::shared_ptr<FrNode> GetStartingNode() const;
 
         /// Set the ending node of the cable
         /// \param endingNode ending node
-        void SetEndingNode(std::shared_ptr<FrNode_> endingNode);
+        void SetEndingNode(std::shared_ptr<FrNode> endingNode);
 
         /// Get the ending node of the cable
         /// \return ending node
-        std::shared_ptr<FrNode_> GetEndingNode() const;
+        std::shared_ptr<FrNode> GetEndingNode() const;
 
         //--------------------------------------------------------------------------------------------------------------
         // pure virtual methods

@@ -20,29 +20,29 @@
 namespace frydom {
 
     // Forward declarations
-    class FrEnvironment_;
-    class FrAtmosphere_;
+    class FrEnvironment;
+    class FrAtmosphere;
 
     /**
     * \class FrWind_
     * \brief Class for defining a wind.
     */
-    class FrWind_ : public FrFlowBase {
+    class FrWind : public FrFlowBase {
     private:
 
-        FrAtmosphere_* m_atmosphere;  ///> Pointer to the atmosphere containing this wind model
+        FrAtmosphere* m_atmosphere;  ///> Pointer to the atmosphere containing this wind model
 
     public:
 
         /// Default constructor
         /// \param atmosphere containing this wind model
-        explicit FrWind_(FrAtmosphere_* atmosphere) : FrFlowBase() { m_atmosphere = atmosphere;}
+        explicit FrWind(FrAtmosphere* atmosphere) : FrFlowBase() { m_atmosphere = atmosphere;}
 
         /// Get the atmosphere containing this wind model
         /// \return atmosphere containing this wind model
-        FrAtmosphere_* GetAtmosphere() const {return m_atmosphere;}
+        FrAtmosphere* GetAtmosphere() const {return m_atmosphere;}
 
-        FrEnvironment_* GetEnvironment() const override;
+        FrEnvironment* GetEnvironment() const override;
 
     };
 
