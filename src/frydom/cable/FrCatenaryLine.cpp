@@ -1,62 +1,50 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 28/07/17.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
+
 
 #include "FrCatenaryLine.h"
+
+#include "frydom/core/common/FrNode.h"
+#include "FrCatenaryForce.h"
+#include "frydom/core/body/FrBody.h"
+#include "frydom/environment/FrEnvironment.h"
 
 
 namespace frydom {
 
+    FrCatenaryLine::FrCatenaryLine(const std::shared_ptr<FrNode> &startingNode,
+                                     const std::shared_ptr<FrNode> &endingNode, bool elastic, double youngModulus,
+                                     double sectionArea, double unstretchedLength, double linearDensity,
+                                     FLUID_TYPE fluid) :
+                                     m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
+                                     FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity) {}
 
-    FrCatenaryLine::FrCatenaryLine(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
-                                   bool elastic, const double youngModulus, const double sectionArea,
-                                   const double cableLength,
-                                   const double q, const chrono::ChVector<double> u)
-            : m_elastic(elastic),
-              m_q(q),
-              m_u(u),
-              c_qvec(q*u),
-              FrCable(startingNode, endingNode, cableLength, youngModulus, sectionArea)
-    {
-
-        // Initializing U matrix
-        c_Umat.Set33Identity();
-        c_Umat -= chrono::TensorProduct(u, u);
-
-        // First guess for the tension
-        guess_tension();
-        solve();
-
-        // Building the catenary forces and adding them to bodies
-        m_startingForce = std::make_shared<FrCatenaryForce>(this, LINE_START);
-        auto starting_body = m_startingNode->GetBody();
-        starting_body->AddForce(m_startingForce);
-
-
-        m_endingForce = std::make_shared<FrCatenaryForce>(this, LINE_END);
-        auto ending_body = m_endingNode->GetBody();
-        ending_body->AddForce(m_endingForce);
-
-        // Completing the ChLink required parameters
-        Body1 = m_startingNode->GetBody();
-        Body2 = m_endingNode  ->GetBody();
-
+    FrCatenaryLineAsset_ *FrCatenaryLine::GetLineAsset() const {
+        return m_lineAsset.get();
     }
 
     void FrCatenaryLine::guess_tension() {
 
-        auto p0pL = GetPosEndingNode() - GetPosStartingNode();
+        Position p0pL = GetEndingNode()->GetPositionInWorld(NWU) - GetStartingNode()->GetPositionInWorld(NWU);
         auto lx = p0pL[0];
         auto ly = p0pL[1];
         auto lz = p0pL[2];
 
-        auto chord_length = p0pL.Length();
-        auto v = m_u.Cross(p0pL/chord_length).Cross(m_u);
+        auto chord_length = p0pL.norm();
+        auto v = m_u.cross(p0pL/chord_length).cross(m_u);
 
         double lambda = 0;
         if (m_cableLength <= chord_length) {
             lambda = 0.2;
-        } else if ( (m_u.Cross(p0pL)).Length() < 1e-4 ) {
+        } else if ( (m_u.cross(p0pL)).norm() < 1e-4 ) {
             lambda = 1e6;
         } else {
             lambda = sqrt(3. * (m_cableLength*m_cableLength - lz*lz) / (lx*lx + ly*ly));
@@ -68,58 +56,95 @@ namespace frydom {
         m_t0 = fu * m_u + fv * v;
     }
 
-    chrono::ChVector<double> FrCatenaryLine::GetTension(const double s) const {
-        return m_t0 - c_qvec * s;
+    Force FrCatenaryLine::GetTension(double s, FRAME_CONVENTION fc) const {
+        Force tension = m_t0 - c_qvec * s;
+        if(IsNED(fc)) {internal::SwapFrameConvention(tension);}
+        return tension;
     }
 
-    chrono::ChVector<double> FrCatenaryLine::GetEndingNodeTension() const {
-        return m_t0 - c_qvec * m_cableLength;
+    std::shared_ptr<FrCatenaryForce> FrCatenaryLine::GetStartingForce() {
+        return m_startingForce;
     }
 
-    chrono::ChVector<double> FrCatenaryLine::GetUnstrainedChord(const double s) const {
+    std::shared_ptr<FrCatenaryForce> FrCatenaryLine::GetEndingForce() {
+        return m_endingForce;
+    }
 
-        chrono::ChVector<double> pc;
-        pc = - (m_u/m_q) * ( (GetTension(s)).Length() - m_t0.Length() );
+    Force FrCatenaryLine::getStartingNodeTension(FRAME_CONVENTION fc) const {
+        Force t0 = m_t0;
+        if(IsNED(fc)) {internal::SwapFrameConvention(t0);}
+        return t0;
+    }
+
+    Force FrCatenaryLine::GetEndingNodeTension(FRAME_CONVENTION fc) const {
+        Force t0 = m_t0 - c_qvec * m_cableLength;
+        if(IsNED(fc)) {internal::SwapFrameConvention(t0);}
+        return -t0;
+    }
+
+    double FrCatenaryLine::_rho(double s) const {
+        auto t0_qS = GetTension(s, NWU);
+        return t0_qS.norm() - m_u.dot(t0_qS);
+    }
+
+    Position FrCatenaryLine::GetUnstrainedChord(double s, FRAME_CONVENTION fc) const {
+
+        Position pc = - (m_u/m_q) * ( (GetTension(s, NWU)).norm() - m_t0.norm() );
         auto rho_0 = _rho(0.);  // TODO: calculer directement
+
         if (rho_0 > 0.) {
             auto rho_s = _rho(s);  // TODO: calculer directement
             if (rho_s > 0.) {
-                pc += (c_Umat.Matr_x_Vect(m_t0) / m_q) * log(rho_s / rho_0);
+                pc += (c_Umat*m_t0 / m_q) * log(rho_s / rho_0);
             }
         }
+        if (IsNED(fc)) {internal::SwapFrameConvention(pc);}
         return pc;
 
     }
 
-    chrono::ChVector<double> FrCatenaryLine::GetElasticIncrement(const double s) const {
-
-        if (m_elastic) {
-            return m_q * s * (m_t0 / m_q - 0.5 * m_u * s) / GetEA();
-        } else {
-            return chrono::VNULL;
-        }
-
+    Position FrCatenaryLine::GetElasticIncrement(double s, FRAME_CONVENTION fc) const {
+        Position Inc(0.,0.,0.);
+        if (m_elastic) {Inc = m_q * s * (m_t0 / m_q - 0.5 * m_u * s) / GetEA();}
+        if (IsNED(fc)) {internal::SwapFrameConvention(Inc);}
+        return Inc;
     }
 
-    chrono::ChVector<double> FrCatenaryLine::GetAbsPosition(const double s) const {
+    Position FrCatenaryLine::GetAbsPosition(double s, FRAME_CONVENTION fc) const {
 
-        auto pos = chrono::VNULL;
-        pos += GetPosStartingNode();
-        pos += GetUnstrainedChord(s);
-        pos += GetElasticIncrement(s);
+        Position pos;
+        pos += GetStartingNode()->GetPositionInWorld(fc);
+        pos += GetUnstrainedChord(s, fc);
+        pos += GetElasticIncrement(s, fc);
         return pos;
 
     }
 
-    chrono::ChVector<double> FrCatenaryLine::get_residual() const {
-        return GetAbsPosition(m_cableLength) - GetPosEndingNode();
+    double FrCatenaryLine::GetStretchedLength() const {
+        double cl = 0.;
+        int n = 1000;
+
+        double ds = m_cableLength / (n-1);
+        auto pos_prev = GetAbsPosition(0., NWU);
+
+        for (uint i=0; i<n; ++i) {
+            auto s = i*ds;
+            auto pos = GetAbsPosition(s, NWU);
+            cl += (pos - pos_prev).norm();
+            pos_prev = pos;
+        }
+        return cl;
     }
 
-    chrono::ChMatrix33<double> FrCatenaryLine::analytical_jacobian() const {
-        auto t0n = m_t0.Length();
+    Position FrCatenaryLine::get_residual(FRAME_CONVENTION fc) const {
+        return GetAbsPosition(m_cableLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
+    }
+
+    mathutils::Matrix33<double> FrCatenaryLine::analytical_jacobian() const {
+        auto t0n = m_t0.norm();
 
         auto tL = m_t0 - c_qvec * m_cableLength;
-        auto tLn = tL.Length();
+        auto tLn = tL.norm();
 
         auto rho_0 = _rho(0.);  // TODO: calculer directement
         double ln_q = 0.;
@@ -132,34 +157,34 @@ namespace frydom {
         double L_EA = 0.;
         if (m_elastic) L_EA = m_cableLength / GetEA();
 
-        chrono::ChVector<double> Ui;
+        mathutils::Vector3d<double> Ui;
         double Uit0;
         double jac_ij;
         double diff_ln;
-        auto jac = chrono::ChMatrix33<double>();
+        auto jac = mathutils::Matrix33<double>();
         for (uint i=0; i<3; ++i) {
             Ui.x() = c_Umat(i, 0);
             Ui.y() = c_Umat(i, 1);
             Ui.z() = c_Umat(i, 2);
 
-            Uit0 = chrono::Vdot(Ui, m_t0) / m_q;
+            Uit0 = Ui.dot(m_t0) / m_q;
 
             for (uint j=i; j<3; ++j) {
 
                 jac_ij = - (tL[j]/tLn - m_t0[j]/t0n) * m_u[i] / m_q;
 
                 if (rho_0 > 0.) {
-                    jac_ij += c_Umat.Get33Element(i, j) * ln_q;
+                    jac_ij += c_Umat.at(i, j) * ln_q;
                     diff_ln = (tL[j]/tLn - m_u[j]) / rho_L - (m_t0[j]/t0n - m_u[j]) / rho_0;
                     jac_ij += Uit0 * diff_ln;
                 }
 
                 if ( i==j ) {  // elasticity
                     jac_ij += L_EA;  // L_EA is null if no elasticity
-                    jac.SetElement(i, j, jac_ij);
+                    jac(i, j)= jac_ij;
                 } else {
-                    jac.SetElement(i, j, jac_ij);
-                    jac.SetElement(j, i, jac_ij);
+                    jac(i, j)= jac_ij;
+                    jac(j, i)= jac_ij;
                 }
             } // end for j
         } // end for i
@@ -167,54 +192,42 @@ namespace frydom {
         return jac;
     }
 
+    void FrCatenaryLine::SetSolverTolerance(double tol) {
+        m_tolerance = tol;
+    }
+
+    void FrCatenaryLine::SetSolverMaxIter(unsigned int maxiter) {
+        m_itermax = maxiter;
+    }
+
+    void FrCatenaryLine::SetSolverInitialRelaxFactor(double relax) {
+        m_relax = relax;
+    }
+
     void FrCatenaryLine::solve() {
 
-
-        auto res = get_residual();
+        auto res = get_residual(NWU);
         auto jac = analytical_jacobian();
 
-        chrono::ChVector<double> delta_t0;
-        chrono::ChMatrixNM<double, 3, 1> b;
-        chrono::ChMatrixNM<double, 3, 1> sol;
-
-        b.SetElement(0, 0, -res.x());
-        b.SetElement(1, 0, -res.y());
-        b.SetElement(2, 0, -res.z());
-
-        // Solving system
-        chrono::ChLinearAlgebra::Solve_LinSys(jac, &b, &sol);
-
-        // Updating the tension
-        delta_t0.x() = sol.GetElement(0, 0);
-        delta_t0.y() = sol.GetElement(1, 0);
-        delta_t0.z() = sol.GetElement(2, 0);
+        jac.Inverse();
+        mathutils::Vector3d<double> delta_t0 = jac*(-res);
 
         m_t0 += m_relax * delta_t0;
 
-        res = get_residual();
-        double err = res.LengthInf();
+        res = get_residual(NWU);
+        double err = res.infNorm();
 
-        chrono::ChVector<double> delta_t0_temp;
         unsigned int iter = 1;
         while ((err > m_tolerance) && (iter < m_itermax)) {
-
             iter++;
 
-            res = get_residual();
+            res = get_residual(NWU);
             jac = analytical_jacobian();
 
-            b.SetElement(0, 0, -res.x());
-            b.SetElement(1, 0, -res.y());
-            b.SetElement(2, 0, -res.z());
+            jac.Inverse();
+            mathutils::Vector3d<double> delta_t0_temp = jac*(-res);
 
-            // TODO: voir a remplacer par une resolution via Eigen
-            chrono::ChLinearAlgebra::Solve_LinSys(jac, &b, &sol);
-
-            delta_t0_temp.x() = sol.GetElement(0, 0);
-            delta_t0_temp.y() = sol.GetElement(1, 0);
-            delta_t0_temp.z() = sol.GetElement(2, 0);
-
-            while (delta_t0.LengthInf() < (m_relax*delta_t0_temp).LengthInf()) {
+            while (delta_t0.infNorm() < m_relax*delta_t0_temp.infNorm()) {
                 m_relax *= 0.5;
                 if (m_relax < Lmin) {
                     std::cout << "DAMPING TOO STRONG. NO CATENARY CONVERGENCE." << std::endl;
@@ -224,88 +237,87 @@ namespace frydom {
             delta_t0 = delta_t0_temp;
             m_t0 += m_relax * delta_t0;
 
-            m_relax = chrono::ChMin(1., m_relax*2.);
+            m_relax = std::min(1., m_relax*2.);
 
-            res = get_residual();
-            err = res.LengthInf();
+            res = get_residual(NWU);
+            err = res.infNorm();
         }  // end while
 
-//        if (iter < m_itermax) {
-//            std::cout << "Catenary convergence reached in " << iter << " iterations." << std::endl;
-//        } else {
-//            std::cout << "NO CONVERGENCE AFTER " << m_itermax << " iterations" << std::endl;
-//        }
     }
 
-    double FrCatenaryLine::GetCableLength(const double n) const {
-        double cl = 0.;
+    void FrCatenaryLine::Initialize() {
 
-        double ds = m_cableLength / (n-1);
-        auto pos_prev = GetAbsPosition(0.);
-        chrono::ChVector<double> pos;
-        double s;
+        m_q = GetLinearDensity() - m_sectionArea * GetSystem()->GetEnvironment()->GetFluidDensity(c_fluid);
+        c_qvec = m_q*m_u;
 
-        for (uint i=0; i<n; ++i) {
-            s = i*ds;
-            pos = GetAbsPosition(s);
-            cl += (pos - pos_prev).Length();
-            pos_prev = pos;
+        // Initializing U matrix
+        c_Umat.SetIdentity();
+        c_Umat -= m_u*(m_u.transpose().eval());
+
+        // First guess for the tension
+        // FIXME: supprimer ces initialize de node et mettre en place la séparation des SetupInitial des FrPhysicsItems en fonction des Pre, Mid et Post.
+        m_startNode->Initialize();
+        m_endNode->Initialize();
+        guess_tension();
+        solve();
+
+        // Building the catenary forces and adding them to bodies
+        if (!m_startingForce) {
+            m_startingForce = std::make_shared<FrCatenaryForce>(this, LINE_START);
+            auto starting_body = m_startNode->GetBody();
+            starting_body->AddExternalForce(m_startingForce);
         }
-        return cl;
-    }
 
-    ////////////////////////////////////////////////
-    // Visu
-    ////////////////////////////////////////////////
+        if (!m_endingForce) {
+            m_endingForce = std::make_shared<FrCatenaryForce>(this, LINE_END);
+            auto ending_body = m_endNode->GetBody();
+            ending_body->AddExternalForce(m_endingForce);
+        }
 
-    void FrCatenaryLine::GenerateAssets() {
-        // Assets for the cable visualisation
-        if (m_drawCableElements) {
-            double ds = m_cableLength/(m_nbDrawnElements-1);
-            auto Pos0 = Body2->TransformPointParentToLocal(GetAbsPosition(0));
-            for (int i=1; i<m_nbDrawnElements; i++){
-                auto Pos1 = Body2->TransformPointParentToLocal(GetAbsPosition(ds*i));
-                auto newLine = std::make_shared<chrono::geometry::ChLineSegment>(Pos0,Pos1);
-                auto newElement = std::make_shared<chrono::ChLineShape>();
-                auto myColor = chrono::ChColor::ComputeFalseColor(GetTension(ds*i).Length(),0,m_maxTension,true);
-                newElement->SetColor(myColor);
-                newElement->SetLineGeometry(newLine);
-                m_cableElements.push_back(newElement);
-                AddAsset(newElement);
-                Pos0 = Pos1;
-            }
+        // Generate assets for the cable
+        if (is_lineAsset and !m_lineAsset) {
+            m_lineAsset = std::make_unique<FrCatenaryLineAsset_>(this);
+            m_lineAsset->Initialize();
         }
     }
 
-    void FrCatenaryLine::UpdateAsset() {
-        if (m_drawCableElements) {
-            double ds = m_cableLength/(m_nbDrawnElements-1);
-            auto Pos0 = Body2->TransformPointParentToLocal(GetAbsPosition(0));
-            for (int i=1; i<m_nbDrawnElements; i++){
-                auto Pos1 = Body2->TransformPointParentToLocal(GetAbsPosition(i*ds));
-                auto newLine = std::make_shared<chrono::geometry::ChLineSegment>(Pos0,Pos1);
-                m_cableElements[i-1]->SetLineGeometry(newLine);
-                auto myColor = chrono::ChColor::ComputeFalseColor(GetTension(ds*i).Length(),0,m_maxTension,true);
-                m_cableElements[i-1]->SetColor(myColor);
-                Pos0 = Pos1;
-            }
+    void FrCatenaryLine::Update(double time) {
+        UpdateTime(time);
+        UpdateState();
+        if (is_lineAsset) {
+            m_lineAsset->Update();
         }
     }
 
-    void FrCatenaryLine::InitRangeTensionColor() {
-        if (m_breakingTension>0){
-            m_maxTension = m_breakingTension;
-        }
-        else{
-            double ds = m_cableLength/m_nbDrawnElements;
-            double max = GetTension(0).Length();
-            for (int i=1; i<m_nbDrawnElements; i++){
-                auto LocalTension = GetTension(i*ds).Length();
-                if (LocalTension > max) max = LocalTension;
-            }
-            m_maxTension = 1.25*max;
-        }
+    void FrCatenaryLine::UpdateTime(double time) {
+        m_time_step = time - m_time;
+        m_time = time;
     }
 
+    void FrCatenaryLine::UpdateState() {
+        if (std::abs(m_unrollingSpeed) > DBL_EPSILON and std::abs(m_time_step) > DBL_EPSILON) {
+            m_cableLength += m_unrollingSpeed * m_time_step;
+        }
+        solve();
+    }
 
-}// end namespace frydom
+    void FrCatenaryLine::SetNbElements(unsigned int n) {
+        m_nbDrawnElements = n;
+    }
+
+    unsigned int FrCatenaryLine::GetNbElements() {
+        return m_nbDrawnElements;
+    }
+
+    std::shared_ptr<FrCatenaryLine>
+    make_catenary_line(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
+                       FrOffshoreSystem *system, bool elastic, double youngModulus, double sectionArea,
+                       double unstretchedLength, double linearDensity, FLUID_TYPE fluid){
+        auto CatenaryLine = std::make_shared<FrCatenaryLine>(startingNode, endingNode, elastic, youngModulus,
+                                                              sectionArea, unstretchedLength, linearDensity, fluid);
+        system->Add(CatenaryLine);
+        return CatenaryLine;
+
+    }
+
+}  // end namespace frydom

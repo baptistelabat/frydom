@@ -1,121 +1,192 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 10/10/17.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
+
 
 #ifndef FRYDOM_FRCABLE_H
 #define FRYDOM_FRCABLE_H
 
-#include "frydom/core/FrObject.h"
-#include "frydom/core/FrNode.h"
-#include "chrono/physics/ChLink.h"
+
+#include "frydom/core/common/FrPhysicsItem.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrConvention.h"
+
 
 namespace frydom {
 
-    /// Abstract base class for cables
-    class FrCable : public FrObject {
+    // Forward declaration
+    class FrNode;
+
+
+    /**
+     * \class FrCable_ FrCable.h
+     * \brief Abstract base class for cables, subclass of FrMidPhysicsItem_, superclass of FrCatenaryLine_ and
+     * FrDynamicCable_ .
+     * This means cables are updated between bodies and links.
+     * A cable is connected to two nodes : a starting node and an ending node. Nodes are contained by at
+     * least one body, and used to connect bodies to other components (cables, links,etc.)
+     * \see FrMidPhysicsItem_, FrCatenaryLine_, FrDynamicCable_, FrNode_
+     *
+     */
+    class FrCable : public FrMidPhysicsItem {
 
     protected:
 
-        double m_time = 0.;
-        double m_time_step = 0.;
+        //--------------------------------------------------------------------------------------------------------------
+        // time cached values
+        double m_time = 0.;                         ///< cached value of the simulation time
+        double m_time_step = 0.;                    ///< cached value of the simulation time step
 
-        std::shared_ptr<FrNode> m_startingNode;
-        std::shared_ptr<FrNode> m_endingNode;
+        //--------------------------------------------------------------------------------------------------------------
+        // Nodes
+        std::shared_ptr<FrNode> m_startNode;       ///< starting node
+        std::shared_ptr<FrNode> m_endNode;         ///< ending node
 
-        double m_youngModulus; // FIXME: mettre des valeurs par defaut non verolees !!!
-        double m_sectionArea;
-        double m_cableLength;
-        double m_unrollingSpeed;                ///< linear unrolling speed of the cable in m/s
-
-        double m_linearDensity; // in kg/m
-
-        bool m_initialized = false;
+        //--------------------------------------------------------------------------------------------------------------
+        // Cable properties
+        // FIXME: mettre des valeurs par defaut non verolees !!!
+        double m_youngModulus = 3.1416E10;          ///< Yound modulus of the cable in Pa
+        double m_sectionArea = 0.05;                ///< Section area of the cable in m²
+        double m_cableLength = 100;                 ///< Unstretched length of the cable in m
+        double m_unrollingSpeed = 0;                ///< linear unrolling speed of the cable in m/s
+        double m_linearDensity = 616.538;           ///< Linear density of the cable in kg/m
+        double m_breakingTension = 0;               ///< breaking tension in N (for visualization purpose for now)
 
     public:
 
-        FrCable() = default;
+        //--------------------------------------------------------------------------------------------------------------
+        // Constructor - destructor
+        /// Default constructor
+        FrCable();
 
+        /// FrCable_ constructor, using two nodes and cable properties
+        /// \param startingNode starting node
+        /// \param endingNode ending node
+        /// \param cableLength unstretched length
+        /// \param youngModulus Young modulus
+        /// \param sectionArea section area
+        /// \param linearDensity linear density
         FrCable(const std::shared_ptr<FrNode> startingNode,
-                const std::shared_ptr<FrNode> endingNode,
-                const double cableLength,
-                const double youngModulus,
-                const double sectionArea)
-                : m_startingNode(startingNode),
-                  m_endingNode(endingNode),
-                  m_cableLength(cableLength),
-                  m_unrollingSpeed(0.),
-                  m_youngModulus(youngModulus),
-                  m_sectionArea(sectionArea) {}
+                 const std::shared_ptr<FrNode> endingNode,
+                 double cableLength,
+                 double youngModulus,
+                 double sectionArea,
+                 double linearDensity);
 
-        void SetYoungModulus(const double E) { m_youngModulus = E; }
+        /// Default destructor
+        ~FrCable();
 
-        double GetYoungModulus() const { return m_youngModulus; }
+        //--------------------------------------------------------------------------------------------------------------
+        // cable properties accessors
+        ///Set the Young modulus of the cable
+        /// \param E Young modulus
+        void SetYoungModulus(double E);
 
-        void SetSectionArea(const double A) { m_sectionArea = A; }
+        /// Get the Young modulus of the cable
+        /// \return Young modulus
+        double GetYoungModulus() const;
 
-        double GetSectionArea() const { return m_sectionArea; }
+        /// Set the section area of the cable
+        /// \param A section area
+        void SetSectionArea(double A);
 
-        void SetCableLength(const double L) { m_cableLength = L; }
+        /// Get the section area of the cable
+        /// \return section area
+        double GetSectionArea() const;
 
-        double GetCableLength() const { return m_cableLength; }
+        /// Set the section area through the diameter of the cable
+        /// \param d diameter
+        void SetDiameter(double d);
 
-        /// Definition of the linear unrolling speed of the cable in m/s
-        void SetUnrollingSpeed(const double unrollingSpeed) { m_unrollingSpeed = unrollingSpeed; }
+        /// Get the diameter of the cable
+        /// \return diameter
+        double GetDiameter() const;
 
-        /// Return the linear unrolling speed of the cable in m/s
-        double GetUnrollingSpeed() const { return m_unrollingSpeed; }
+        /// Get the product of the Young modulus and the section area
+        /// \return product of the Young modulus and the section area
+        double GetEA() const;
 
-        void SetDiameter(const double d) {
-            m_sectionArea = M_PI * pow(d*0.5, 2);
-        }
+        /// Set the linear density of the cable
+        /// \param lambda linear density
+        void SetLinearDensity(double lambda);
 
-        double GetDiameter() const {
-            return sqrt(4. * m_sectionArea / M_PI);
-        }
+        /// Get the linear density of the cable
+        /// \return linear density
+        double GetLinearDensity() const;
 
-        double GetEA() const {
-            return m_youngModulus * m_sectionArea;
-        }
+        /// Set the density of the cable (lambda = A.rho)
+        /// \param rho denisty
+        void SetDensity(double rho);
 
-        void SetLinearDensity(const double lambda) { m_linearDensity = lambda; }
+        /// Get the density of the cable
+        /// \return denisty
+        double GetDensity() const;
 
-        double GetLinearDensity() const { return m_linearDensity; }
+        /// Set the unstretched length of the cable
+        /// \param L unstretched length
+        void SetUnstretchedLength(double L);
 
-        void SetDensity(const double rho) {
-            m_linearDensity = rho * m_sectionArea;
-        }
+        /// Get the unstretched length of the cable
+        /// \return unstretched length
+        double GetUnstretchedLength() const;
 
-        double GetDensity() const {
-            return m_linearDensity / m_sectionArea;
-        }
+        /// Set the linear unrolling speed of the cable in m/s
+        void SetUnrollingSpeed(double unrollingSpeed);
 
-        void SetStartingNode(std::shared_ptr<FrNode> startingNode) {
-            // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
-            m_startingNode = startingNode;
-        }
+        /// Get the linear unrolling speed of the cable in m/s
+        double GetUnrollingSpeed() const;
 
-        std::shared_ptr<FrNode> GetStartingNode() const {
-            return m_startingNode;
-        }
+        //--------------------------------------------------------------------------------------------------------------
+        // Node accessors
+        /// Set the starting node of the cable
+        /// \param startingNode starting node
+        void SetStartingNode(std::shared_ptr<FrNode> startingNode);
 
-        void SetEndingNode(std::shared_ptr<FrNode> endingNode) {
-            // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
-            m_endingNode = endingNode;
-        }
+        /// Get the starting node of the cable
+        /// \return starting node
+        std::shared_ptr<FrNode> GetStartingNode() const;
 
-        std::shared_ptr<FrNode> GetEndingNode() const {
-            return m_endingNode;
-        }
+        /// Set the ending node of the cable
+        /// \param endingNode ending node
+        void SetEndingNode(std::shared_ptr<FrNode> endingNode);
 
-        virtual chrono::ChVector<double> GetTension(const double s) const = 0;
+        /// Get the ending node of the cable
+        /// \return ending node
+        std::shared_ptr<FrNode> GetEndingNode() const;
 
-        virtual chrono::ChVector<double> GetAbsPosition(const double s) const = 0;
+        //--------------------------------------------------------------------------------------------------------------
+        // pure virtual methods
+        /// Get the inside line tension at the lagrangian coordinate s, from the starting node to the ending node
+        /// \param s lagrangian coordinate
+        /// \param fc frame convention (NED/NWU)
+        /// \return inside line tension
+        virtual Force GetTension(double s, FRAME_CONVENTION fc) const = 0;
 
-        virtual void Initialize() override {};
+        /// Get the line position at lagrangian coordinate s
+        /// \param s lagrangian coordinate
+        /// \param fc frame convention (NED/NWU)
+        /// \return line position
+        virtual Position GetAbsPosition(double s, FRAME_CONVENTION fc) const = 0;
 
-        virtual void StepFinalize() override {}
+        /// Get the stretched length of the cable
+        /// \return stretched length
+        virtual double GetStretchedLength() const = 0;
 
+        //--------------------------------------------------------------------------------------------------------------
+        /// Set the breaking tension of the cable (for visualization purpose only for now)
+        /// \param tension breaking tension
+        void SetBreakingTension(double tension);
 
+        /// Get the breaking tension of the cable
+        /// \return breaking tension
+        double GetBreakingTension() const;
 
     };
 

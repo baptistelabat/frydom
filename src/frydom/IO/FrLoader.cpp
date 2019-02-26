@@ -1,15 +1,24 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 13/07/17.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
+
 
 #include "FrLoader.h"
-#include "frydom/environment/current/FrCurrentPolarCoeffs.h"
-#include <iostream>
-#include <fstream>
 
-#include "MathUtils/MathUtils.h"
+#include "MathUtils/Angles.h"
+#include "MathUtils/LookupTable1D.h"
 
 #include "yaml-cpp/yaml.h"
+
+#include "frydom/environment/ocean/current/FrCurrentPolarCoeffs.h"
+
 
 
 namespace frydom {
@@ -47,14 +56,14 @@ namespace frydom {
 
         YAML::Node data = YAML::LoadFile(yaml_file);  // TODO: throw exception if not found !
 
-        ANGLE_UNIT unit = RAD;
+        ANGLE_UNIT unit = mathutils::RAD;
 
         if (data["PolarCurrentCoeffs"]) {
             auto node = data["PolarCurrentCoeffs"];
             // All 4 angles, cx, cy, and cz must be present in the yaml file into the PolarCurrentCoeffs node.
 
             try {
-                unit = STRING2ANGLE(node["unit"].as<std::string>());
+                unit = mathutils::STRING2ANGLE(node["unit"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
@@ -66,8 +75,8 @@ namespace frydom {
                 throw("Cannot read angles");
             }
 
-            if (unit == RAD) {
-                rad2deg(angles);
+            if (unit == mathutils::RAD) {
+                mathutils::rad2deg(angles);
             }
 
             // Getting cx Node
@@ -115,7 +124,7 @@ namespace frydom {
             auto node = data["PolarWindCoeffs"];
 
             try {
-                unit = STRING2ANGLE(node["unit"].as<std::string>());
+                unit = mathutils::STRING2ANGLE(node["unit"].as<std::string>());
             } catch (YAML::BadConversion& err) {
                 std::cout << " warning : unit must be DEG or RAD" << std::endl;
             }
@@ -148,12 +157,12 @@ namespace frydom {
 
     }
 
-    LookupTable1D<double> MakeWindPolarCoeffTable(const std::string& yaml_file, ANGLE_UNIT unit) {
+    mathutils::LookupTable1D<double> MakeWindPolarCoeffTable(const std::string& yaml_file, ANGLE_UNIT unit) {
 
         std::vector<double> angles, cx, cy, cz;
         LoadWindTableFromYaml(yaml_file, angles, cx, cy, cz, unit);
 
-        LookupTable1D<double> lut;
+        mathutils::LookupTable1D<double, double> lut;
         lut.SetX(angles);
         lut.AddY("cx", cx);
         lut.AddY("cy", cy);
@@ -162,5 +171,91 @@ namespace frydom {
         return lut;
     }
 
+
+    // >>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
+
+
+    void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
+                                    std::vector<double>& angle,
+                                    std::vector<double>& cx,
+                                    std::vector<double>& cy,
+                                    std::vector<double>& cn,
+                                    ANGLE_UNIT& angle_unit,
+                                    FRAME_CONVENTION& fc,
+                                    DIRECTION_CONVENTION& dc) {
+
+        YAML::Node data = YAML::LoadFile(yamlFile);
+
+        if (data["PolarFlowCoeffs"]) {
+
+            auto node = data["PolarFlowCoeffs"];
+
+            try {
+                angle_unit = mathutils::STRING2ANGLE(node["unit"].as<std::string>());
+            } catch (YAML::BadConversion& err) {
+                std::cout << " warning : unit must be DEG or RAD" << std::endl;
+            }
+
+            try {
+                fc = STRING2FRAME(node["FRAME_CONVENTION"].as<std::string>());
+            } catch (YAML::BadConversion& err) {
+                std::cout << " error : reading frame convention. Must be NWU or NED." << std::endl;
+            }
+
+            try {
+                dc = STRING2DIRECTION(node["DIRECTION_CONVENTION"].as<std::string>());
+            } catch (YAML::BadConversion& err) {
+                std::cout << " error : reading direction convention. Must be GOTO or COMEFROM." << std::endl;
+            }
+
+            try {
+                angle = node["angles"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+            try {
+                cx = node["cx"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+            try {
+                cy = node["cy"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+            try {
+                cn = node["cn"].as<std::vector<double>>();
+            } catch (YAML::BadConversion& err) {
+                // TODO : throw exception
+            }
+
+        }
+
+    }
+
+    void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
+                                    std::vector<std::pair<double, mathutils::Vector3d<double>>>& polar,
+                                    ANGLE_UNIT& unit,
+                                    FRAME_CONVENTION& fc,
+                                    DIRECTION_CONVENTION& dc) {
+
+        std::vector<double> angles;
+        std::vector<double> cx, cy, cn;
+
+        LoadFlowPolarCoeffFromYaml(yamlFile, angles, cx, cy, cn, unit, fc, dc);
+
+        auto n = angles.size();
+        assert(cx.size() == n);
+        assert(cy.size() == n);
+        assert(cn.size() == n);
+
+        std::pair<double, mathutils::Vector3d<double>> new_element;
+        for (int i=0; i<angles.size(); i++) {
+            polar.push_back( std::pair<double, mathutils::Vector3d<double>>(angles[i], mathutils::Vector3d<double>(cx[i], cy[i], cn[i])));
+        }
+    }
 
 }  // end namespace frydom

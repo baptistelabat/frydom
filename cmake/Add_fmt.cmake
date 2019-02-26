@@ -2,10 +2,9 @@ find_package(fmt QUIET)
 if (NOT fmt_FOUND)
     include(FetchContent)
 
-    set(fmt_URL https://github.com/fmtlib/fmt.git)
     FetchContent_Declare(fmt
             GIT_REPOSITORY ${fmt_URL}
-            GIT_TAG 4.1.0
+            GIT_TAG ${fmt_TAG}
             )
 
     FetchContent_GetProperties(fmt)
@@ -18,8 +17,8 @@ if (NOT fmt_FOUND)
         FetchContent_Populate(fmt)
 
         # FMT BUILD OPTIONS
-        set(BUILD_SHARED_LIBS TRUE)
-        set(FMT_TEST OFF)
+        set(BUILD_SHARED_LIBS TRUE CACHE BOOL "" FORCE)
+        set(FMT_TEST OFF CACHE BOOL "" FORCE)
 
         add_subdirectory(${fmt_SOURCE_DIR} ${fmt_BINARY_DIR})
 

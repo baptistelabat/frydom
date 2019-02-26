@@ -1,0 +1,71 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
+//
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
+//
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
+
+
+#ifndef FRYDOM_FRRADIATIONFORCE_H
+#define FRYDOM_FRRADIATIONFORCE_H
+
+
+#include "frydom/core/force/FrForce.h"
+
+
+namespace frydom {
+
+    // Forward declaration
+    class FrRadiationModel;
+
+    /**
+     * \class FrRadiationForce_
+     * \brief Class for computing the radiation loads.
+     */
+    class FrRadiationForce : public FrForce {
+
+    protected:
+
+        FrRadiationModel* m_radiationModel;
+
+    public:
+
+        FrRadiationForce() = default;
+
+        explicit FrRadiationForce(FrRadiationModel* radiationModel);
+
+        void SetRadiationModel(FrRadiationModel* radiationModel);
+
+//        FrRadiationModel* GetRadiationModel() const;
+
+        void StepFinalize() override;
+
+    };
+
+
+    // Forward declaration
+    class FrRadiationConvolutionModel;
+
+    /**
+     * \class FrRadiationConvolutionForce_
+     * \brief Class for computing the hydrodynamic damping loads.
+     */
+    class FrRadiationConvolutionForce: public FrRadiationForce {
+
+    public:
+
+        explicit FrRadiationConvolutionForce(FrRadiationConvolutionModel* radiationModel);
+
+        void Initialize() override;
+
+        void Update(double time) override;
+
+    };
+
+}  // end namespace frydom
+
+#endif //FRYDOM_FRRADIATIONFORCE_H

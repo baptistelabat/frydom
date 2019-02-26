@@ -61,4 +61,7 @@ add_subdirectory(src/frydom)
 #=============================================================================
 # Adding tests
 #=============================================================================
+enable_testing()
+include(Add_googletest)
+
 add_subdirectory(tests)

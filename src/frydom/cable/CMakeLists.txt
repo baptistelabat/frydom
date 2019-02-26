@@ -1,14 +1,11 @@
 message(STATUS "    ...Cable")
 
 set(SRC_FILES
-        FrAssetComponent.cpp
-        FrAssetBuoy.cpp
-        FrAssetClumpWeight.h
         FrCable.cpp
         FrCatenaryForce.cpp
         FrCatenaryLine.cpp
-        FrCatenaryNode.cpp
         FrDynamicCable.cpp
+        FrMooringBuoy.cpp
 )
 
 set(FRYDOM_CABLE_SOURCES "")

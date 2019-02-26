@@ -1,285 +1,158 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 10/07/17.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
+
 
 #ifndef FRYDOM_FRENVIRONMENT_H
 #define FRYDOM_FRENVIRONMENT_H
 
-#include "frydom/core/FrObject.h"
+#include <memory>
 
-// Time includes
-#include "FrTimeZone.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/common/FrConvention.h"
+#include "frydom/environment/FrFluidType.h"
 
-// Current includes
-#include "current/FrCurrent.h"
-#include "current/FrCurrentPolarCoeffs.h"
-#include "current/FrCurrentForce.h"
-#include "current/FrCurrentStandardForce.h"
 
-// Waves includes
-#include "waves/FrFreeSurface.h"
-#include "waves/FrWaveSpectrum.h"
-#include "waves/FrWaveField.h"
-#include "tidal/FrTidalModel.h"
-
-// Wind includes
-#include "wind/FrWind.h"
-#include "wind/FrWindForce.h"
-#include "wind/FrWindStandardForce.h"
-
-// Seabed includes
-#include "seabed/FrSeabed.h"
-
-// GeographicLib includes
-#include "frydom/utils/FrGeographicServices.h"
+// Forward declaration
+namespace GeographicLib {
+    class LocalCartesian;
+}
 
 namespace frydom {
-    /// Class to store the different elements composing the offshore environment
+
+    // Forward declarations
+    class FrTimeZone;
+    class FrOffshoreSystem;
+    class FrOcean;
+    class FrAtmosphere;
+    class FrGeographicServices;
+    class Velocity;
+    class FrFrame;
+    class FrLinearRampFunction;
+
+
+    /**
+     * \class FrEnvironment
+     * \brief Class for defining the environmental data.
+     */
     class FrEnvironment : public FrObject {
 
     private:
 
-        FrOffshoreSystem* m_system;
+        FrOffshoreSystem* m_system;    ///< Offshore sytem containing this Environment
 
-        double m_time;
-        std::unique_ptr<FrTimeZone> m_timeZone;
+        //---------------------------- Environment elements ----------------------------//
+        // TODO : faire un service de temps, NEED REFACTO
+        std::unique_ptr<FrTimeZone> m_timeZone;     ///< Zoned time conversion service, can give time during simulation in a specified time zone.
 
-        // Environment components
-        std::unique_ptr<FrFreeSurface> m_freeSurface;
-        std::shared_ptr<FrCurrent> m_current;
-        std::shared_ptr<FrWind> m_wind;
-        std::unique_ptr<FrSeabed> m_seabed;
+        std::unique_ptr<FrLinearRampFunction> m_timeRamp;              ///< Time ramp, can be applied on wave field, current field, wind field, etc.
 
-        /// Wrap for GeographicLib, contains the origin of geographic coordinates
-        std::unique_ptr<GeographicLib::LocalCartesian> m_localCartesian;
+        std::unique_ptr<FrOcean> m_ocean;                              ///> Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
 
-        // Environments scalars
-        double m_waterDensity = 1025.;
-        double m_airDensity = 1.204;
+        std::unique_ptr<FrAtmosphere> m_atmosphere;                    ///> Atmosphere element of the simulation, contains wind model, air properties.
 
-        double m_gravityAcceleration = 9.81;
-
-        double m_seaTemperature = 15.;
-        double m_airtemperature = 20.;
-
-        double m_waterKinematicViscosity;
-
-        double m_atmosphericPressure;
-
-        bool m_showSeabed = true;
-        bool m_showFreeSurface = true;
+        std::unique_ptr<FrGeographicServices> m_geographicServices;    ///> Service converting local coordinates to geographic coordinates, contains the geocoord origins.
 
     public:
 
-        FrEnvironment() {
+        /// Default constructor
+        /// \param system offshore system containing this environment
+        explicit FrEnvironment(FrOffshoreSystem* system);
 
-            m_freeSurface = std::make_unique<FrFreeSurface>();
-            m_current = std::make_shared<FrUniformCurrent>();
-            m_wind = std::make_shared<FrUniformWind>();
-            m_seabed = std::make_unique<FrSeabed>();
-            if (m_showSeabed) m_seabed->SetEnvironment(this);
-            m_localCartesian = std::make_unique<GeographicLib::LocalCartesian>();
-            m_timeZone = std::make_unique<FrTimeZone>();
-        }
+        /// Destructor
+        ~FrEnvironment();
 
-        void SetSystem(FrOffshoreSystem* system) {
-            m_system = system;
-        }
+        /// Get the offshore system, containing this environment
+        /// \return offshore system
+        FrOffshoreSystem* GetSystem();
 
-        FrOffshoreSystem* GetSystem() { return m_system; }
+        //---------------------------- Environment scalars methods ----------------------------//
 
-        void SetShowSeabed(bool is_shown) {m_showSeabed = is_shown;}
-        bool GetShowSeabed() { return m_showSeabed;}
+        /// Get the simulation time (given by Chrono)
+        /// \return simulation time
+        double GetTime() const;
 
-        void SetShowFreeSurface(bool is_shown) {m_showFreeSurface = is_shown;}
-        bool GetShowFreeSurface() { return m_showFreeSurface;}
+        /// Get the time ramp attached to the environment
+        /// \return time ramp
+        FrLinearRampFunction* GetTimeRamp() const;
+
+        /// Get the gravity acceleration on the vertical axis
+        /// \return gravity acceleration on the vertical axis, in m/s²
+        double GetGravityAcceleration() const;
+
+        /// Set the gravity acceleration on the vertical axis
+        /// \param gravityAcceleration gravity acceleration, in m/s²
+        void SetGravityAcceleration(double gravityAcceleration);
+
+        /// Return the flow velocity observed from the local frame
+        /// \param frame Local frame in which the velocity is computed
+        /// \param worldVel Translation velocity of the frame in world frame
+        /// \param ft fluid type (AIR/WATER)
+        /// \param fc Frame convention (NED/NWU)
+        /// \return Velocity in local frame
+        Velocity GetRelativeVelocityInFrame(const FrFrame& frame, const Velocity& worldVel,
+                                            FLUID_TYPE ft, FRAME_CONVENTION fc);
+
+        /// Get the fluid density
+        /// \param ft fluid type (AIR/WATER)
+        /// \return fluid density
+        double GetFluidDensity(FLUID_TYPE ft) const;;
+
+        //---------------------------- Environment elements Getters ----------------------------//
+
+        /// Get the Ocean element
+        /// \return Ocean element
+        FrOcean* GetOcean() const;
+
+        /// Get the Atmosphere element
+        /// \return Atmosphere element
+        FrAtmosphere* GetAtmosphere() const;
 
 
-        void SetTime(double time) { m_time = time; }
+        //---------------------------- Geographic coordinates manipulations---------------------------- //
 
-        double GetTime() const { return m_time; }
+        /// Get the geographic service (convert cartesian to geographic position, compute magnetic declination, etc.)
+        /// \return the geographic service
+        FrGeographicServices* GetGeographicServices() const;
 
-        double GetWaterDensity() const {
-            return m_waterDensity;
-        }
 
-        void SetWaterDensity(const double waterDensity) {
-            m_waterDensity = waterDensity;
-        }
+        //---------------------------- Zoned time conversion manipulations---------------------------- //
+        // TODO : ajouter des methodes permettant de recuperer l'heure UTC, de regler le temps origine...
 
-        double GetAirDensity() const {
-            return m_airDensity;
-        }
+        /// Get the zoned time conversion service
+        /// \return zoned time conversion service
+        FrTimeZone* GetTimeZone() const;
 
-        void SetAirDensity(double airDensity) {
-            m_airDensity = m_airDensity;
-        }
+        /// Get the year given by the zoned time conversion service
+        /// \return year
+        int GetYear() const;
 
-        double GetGravityAcceleration() const {
-            return m_gravityAcceleration;
-        }
+        //---------------------------- Environment assets hiding helpers ---------------------------- //
 
-        void SetGravityAcceleration(double gravityAcceleration) {
-            m_gravityAcceleration = m_gravityAcceleration;
-        }
+        /// (Un)show the free surface
+        void ShowFreeSurface(bool show);
 
-        double GetSeaTemperature() const {
-            return m_seaTemperature;
-        }
+        /// (Un)show the seabed
+        void ShowSeabed(bool show);
 
-        void SetSeaTemperature(double seaTemperature) {
-            m_seaTemperature = m_seaTemperature;
-        }
 
-        double GetAirtemperature() const {
-            return m_airtemperature;
-        }
+        //---------------------------- Update-Initialize-StepFinalize ---------------------------- //
 
-        void SetAirtemperature(double airtemperature) {
-            m_airtemperature = m_airtemperature;
-        }
+        /// Update the state of the environment
+        void Update(double time);
 
-        double GetWaterKinematicViscosity() const {
-            // TODO: gerer la temperature
-            return m_waterKinematicViscosity;
-        }
+        /// Initialize the state of the environment
+        void Initialize() override;
 
-        void SetWaterKinematicViscosity(double waterKinematicViscosity) {
-            m_waterKinematicViscosity = m_waterKinematicViscosity;
-        }
-
-        double GetAtmosphericPressure() const {
-            return m_atmosphericPressure;
-        }
-
-        void SetAtmosphericPressure(double atmosphericPressure) {
-            m_atmosphericPressure = m_atmosphericPressure;
-        }
-
-        inline FrFreeSurface* GetFreeSurface() const {
-            return m_freeSurface.get();
-        }
-
-        void SetFreeSurface(FrFreeSurface* freeSurface);
-
-        FrTidal* GetTidal() const {
-            return m_freeSurface->GetTidal();
-        }
-//
-//        void SetTidal(FrTidal* tidal) {
-//            m_tidal = std::unique_ptr<FrTidal>(tidal);
-//        }
-
-        template <class T=FrUniformCurrent>
-        T* GetCurrent() const { return dynamic_cast<T*>(m_current.get()); }
-
-        template <class T=FrUniformWind>
-        T* GetWind() const { return dynamic_cast<T*>(m_wind.get()); }
-
-        void SetCurrent(FrCurrent* current) {
-            m_current = std::shared_ptr<FrCurrent>(current);
-        }
-
-        void SetCurrent (const FrCurrent::MODEL type=FrCurrent::UNIFORM) {
-
-            switch (type) {
-                case FrCurrent::UNIFORM:
-                        m_current = std::make_shared<FrUniformCurrent>();
-                        break;
-                default:
-                        break;
-                }
-        }
-
-        void SetWind(const FrWind::MODEL type=FrWind::UNIFORM) {
-
-            switch (type) {
-                case FrWind::UNIFORM:
-                    m_wind = std::make_shared<FrUniformWind>();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        inline FrSeabed* GetSeabed() const {
-            return m_seabed.get();
-        }
-
-        void SetSeabed(FrSeabed* seabed) {
-            m_seabed = std::unique_ptr<FrSeabed>(seabed);
-        }
-
-        /// Getter of the LocalCartesian variable
-        GeographicLib::LocalCartesian *GetGeoLib() const {
-            return m_localCartesian.get();
-        }
-
-        void SetGeographicOrigin(double lat0, double lon0, double h0){
-            m_localCartesian->Reset(lat0, lon0, h0);
-        }
-
-        void Convert_GeoToCart(double lat, double lon, double h, double& x, double& y, double& z){
-            m_localCartesian->Forward(lat, lon, h, y, x, z);
-            z = -z;
-        }
-
-        void Convert_CartToGeo(double x, double y, double z, double& lat, double& lon, double& h){
-            m_localCartesian->Reverse(y, x, -z, lat, lon, h);
-        }
-
-        double ComputeMagneticDeclination(double x, double y, double z);
-
-        /* TODO : DEBUG memory leak due to ptr to m_geoServices
-        FrGeographicServices* GetGeoServices() const {
-            return m_geoServices.get();
-        }
-
-        void SetGeographicOrigin(double lat0, double lon0, double h0){
-            m_geoServices->SetGeographicOrigin(lat0,lon0,h0);
-        }
-
-        void Convert_GeoToCart(double lat, double lon, double h, double& x, double& y, double& z){
-            m_geoServices->Convert_GeoToCart(lat,lon,h,x,y,z);
-        }
-
-        void Convert_CartToGeo(double x, double y, double z, double& lat, double& lon, double& h){
-            m_geoServices->Convert_CartToGeo(x,y,z,lat,lon,h);
-        }
-
-        double ComputeMagneticDeclination(double x, double y, double z){
-            m_geoServices->ComputeMagneticDeclination(x,y,z,GetYear());
-        }*/
-
-        FrTimeZone* GetTimeZone() const {return m_timeZone.get();}
-        //void SetTimeZoneName(FrTimeZone* TimeZone) {m_timeZoneName = TimeZone;}
-
-        int GetYear();
-
-        void Update(double time) {
-            if (m_showFreeSurface) m_freeSurface->Update(time);
-            m_current->Update(time);
-            m_wind->Update(time);
-            if (m_showSeabed) m_seabed->Update(time);
-            m_time = time;
-            m_timeZone->Update(time);
-        }
-
-        void Initialize() override {
-            // TODO: appeler les methodes Initialize() sur les attributs
-            if (m_showFreeSurface) m_freeSurface->Initialize();
-            m_current->Initialize();
-            m_wind->Initialize();
-            if (m_showSeabed) m_seabed->Initialize();
-            m_timeZone->Initialize();
-        }
-
-        void StepFinalize() override {
-            if (m_showFreeSurface) m_freeSurface->StepFinalize();
-            m_current->StepFinalize();
-            m_wind->StepFinalize();
-            if (m_showSeabed) m_seabed->StepFinalize();
-        }
+        /// Method called at the send of a time step. Logging may be used here
+        void StepFinalize() override;
 
     };
 
