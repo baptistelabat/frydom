@@ -13,12 +13,15 @@
 #ifndef FRYDOM_FROBJECT_H
 #define FRYDOM_FROBJECT_H
 
+#include "hermes/hermes.h"
 
 #include "boost/lexical_cast.hpp"
 #include "boost/uuid/uuid_io.hpp"
 #include "boost/uuid/uuid.hpp"
 #include "boost/uuid/uuid_generators.hpp"
 
+#include "frydom/core/common/FrConvention.h"
+#include "frydom/IO/FrLogManager.h"
 
 namespace frydom {
 
@@ -34,10 +37,40 @@ namespace frydom {
     private:
         std::string m_UUID;
 
-    public:
-        FrObject() : m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()())) {}
+    protected:
 
-        std::string GetUUID() const{ return m_UUID; }
+        // Logging
+        bool m_isLogged = false;
+
+        FRAME_CONVENTION c_logFrameConvention; // from LogManager
+
+        std::string m_typeName;
+        std::string m_logPath;
+
+        std::unique_ptr<hermes::Message> m_message;
+
+    public:
+
+        FrObject() : m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()())) {
+
+            m_message = std::make_unique<hermes::Message>();
+        }
+
+        void SetLogFrameConvention(FRAME_CONVENTION fc) { c_logFrameConvention = fc; }
+
+        bool IsLogged() { return m_isLogged; }
+
+        void SetLogged(bool isLogged) { m_isLogged = isLogged; }
+
+        std::string GetUUID() const { return m_UUID; }
+
+        std::string GetShortenUUID() const { return m_UUID.substr(0,5); };
+
+        void SetFilePath (std::string path) { m_logPath = path; }
+
+        std::string GetFilePath() const { return m_logPath; }
+
+        std::string GetTypeName() const { return m_typeName; }
 
         /// Base method for Initialization of FryDoM objects
         ///

@@ -81,6 +81,9 @@ namespace frydom {
     /// \param solver solver type
     FrOffshoreSystem::FrOffshoreSystem(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
 
+        m_typeName = "System";
+        SetLogged(true);
+
         // Creating the chrono System backend. It drives the way contact are modelled
         SetSystemType(systemType, false);
 
@@ -101,6 +104,11 @@ namespace frydom {
 
         // Creating the environment
         m_environment = std::make_unique<FrEnvironment>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
+
+        // Creating the log manager service
+        m_logManager = std::make_unique<FrLogManager>();
+
+//        m_message = std::make_unique<hermes::Message>();
 
     }
 
@@ -236,6 +244,9 @@ namespace frydom {
 
         m_chronoSystem->Update();
 
+        // Init the logs
+        if (IsLogged()) InitializeLog();
+
         m_isInitialized = true;
 
     }
@@ -263,7 +274,10 @@ namespace frydom {
             item->StepFinalize();
         }
 
-        // TODO : faire aussi pour les physicsItems !
+        if (IsLogged()) {
+            m_message->Serialize();
+            m_message->Send();
+        }
 
     }
 
@@ -612,6 +626,7 @@ namespace frydom {
         m_worldBody = std::make_shared<FrBody>();
         m_worldBody->SetFixedInWorld(true);
         m_worldBody->SetName("WorldBody");
+        m_worldBody->SetLogged(false);
         AddBody(m_worldBody);
     }
 
@@ -633,6 +648,7 @@ namespace frydom {
 
     void FrOffshoreSystem::Clear() {
         m_chronoSystem->Clear();
+
         m_bodyList.clear();
 //        m_linkList.clear();
 //        m_otherPhysicsList.clear(); // FIXME : continuer les clear !!!
@@ -719,6 +735,38 @@ namespace frydom {
     FrOffshoreSystem::ConstLinkIter FrOffshoreSystem::link_end() const {
         return m_linkList.cend();
     }
+
+    void FrOffshoreSystem::InitializeLog() {
+
+        auto systemPath = m_logManager->NewSystemLog(this);
+
+        // Initializing environment before bodies
+//        m_environment->InitializeLog();
+
+        for (auto& item : m_PrePhysicsList) {
+//            item->InitializeLog();
+        }
+
+        for (auto& item : m_bodyList){
+            item->InitializeLog();
+        }
+
+        for (auto& item : m_MidPhysicsList) {
+//            item->InitializeLog();
+        }
+
+        for (auto& item : m_linkList) {
+//            item->InitializeLog();
+        }
+
+        for (auto& item : m_PostPhysicsList) {
+//            item->InitializeLog();
+        }
+
+
+    }
+
+    FrLogManager *FrOffshoreSystem::GetLogManager() const { return m_logManager.get(); }
 
 
 }  // end namespace frydom

@@ -9,11 +9,11 @@
 //
 // ==========================================================================
 
-
-
 #include "FrForce.h"
 
 #include "frydom/asset/FrForceAsset.h"
+
+#include "frydom/IO/FrLogManager.h"
 
 
 namespace frydom{
@@ -91,6 +91,11 @@ namespace frydom{
         if (m_isForceAsset) {
             m_forceAsset->StepFinalize();
         }
+
+        // Send the message to the logging system
+        m_message->Serialize();
+        m_message->Send();
+
     }
 
     std::shared_ptr<chrono::ChForce> FrForce::GetChronoForce() {
@@ -99,6 +104,36 @@ namespace frydom{
 
     FrOffshoreSystem* FrForce::GetSystem() {
         return m_body->GetSystem();
+    }
+
+    void FrForce::InitializeLog() {
+
+        auto forceLogPath = GetSystem()->GetLogManager()->NewForceLog(this);
+
+        // Initializing message
+        if (m_message->GetName().empty()) {
+            m_message->SetNameAndDescription(
+                    fmt::format("{}_{}",GetTypeName(),GetShortenUUID()),
+                    "Message of a body");
+        }
+
+        // Add a serializer
+        m_message->AddCSVSerializer(forceLogPath);
+
+        // Add the fields
+        std::function<double ()> GetTime = [this] () {
+            return m_chronoForce->GetChTime();
+        };
+        m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoForce->GetChTime();});
+
+        m_message->AddField<double>("FX", "N", "longitudinal force in body reference frame", [this] () {
+            auto force = GetForceInBody(c_logFrameConvention); return force.GetFx();});
+
+        // Init the message
+        m_message->Initialize();
+        m_message->Send();
+
+
     }
 
 
@@ -326,6 +361,10 @@ namespace frydom{
                                                       const Position &worldPos, FRAME_CONVENTION fc) {
         SetForceInBodyAtPointInWorld(bodyForce, worldPos, fc);
         SetTorqueInBodyAtCOG(GetTorqueInBodyAtCOG(fc) + bodyTorque, fc);
+    }
+
+    FrBody *FrForce::GetBody() const {
+        return m_body;
     }
 
 

@@ -50,7 +50,7 @@ namespace frydom {
 
         //---------------------------- Environment elements ----------------------------//
         // TODO : faire un service de temps, NEED REFACTO
-        std::unique_ptr<FrTimeZone> m_timeZone;                         ///< Zoned time conversion service, can give time during simulation in a specified time zone.
+        std::unique_ptr<FrTimeZone> m_timeZone;     ///< Zoned time conversion service, can give time during simulation in a specified time zone.
 
         std::unique_ptr<FrLinearRampFunction> m_timeRamp;              ///< Time ramp, can be applied on wave field, current field, wind field, etc.
 

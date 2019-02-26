@@ -39,7 +39,7 @@ namespace frydom {
 
     protected:
         double m_time = 0.;
-        double c_ramp=1.;   ///> cache value of the time ramp applied on the flow field
+        double c_ramp = 1.;   ///> cache value of the time ramp applied on the flow field // TODO : ne pas passer par cette valeur de cache... utiliser directement la fonction !
 
     public:
 

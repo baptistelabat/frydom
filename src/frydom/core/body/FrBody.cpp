@@ -80,6 +80,10 @@ namespace frydom {
     }  // end namespace frydom::internal
 
     FrBody::FrBody() {
+
+        m_typeName = "Body";
+        SetLogged(true);
+
         m_chronoBody = std::make_shared<internal::FrBodyBase>(this);
         m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
@@ -93,6 +97,10 @@ namespace frydom {
 
     void FrBody::SetName(const char *name) {
         m_chronoBody->SetName(name);
+    }
+
+    const char* FrBody::GetName() const {
+        return m_chronoBody->GetName();
     }
 
     void FrBody::SetFixedInWorld(bool state) {
@@ -112,29 +120,31 @@ namespace frydom {
             (*forceIter)->Initialize();
         }
 
+        // Initializing forces
+        auto nodeIter = node_begin();
+        for (; nodeIter != node_end(); nodeIter++) {
+            (*nodeIter)->Initialize();
+        }
+
         // BodyDOF constraints Initialization
         if (m_DOFMask->HasLockedDOF()) {
             InitializeLockedDOF();
         }
 
-
-        // TODO : initialiser les logs
-
-
-
-
     }
 
     void FrBody::StepFinalize() {
-        // TODO
         // StepFinalize of forces
         auto forceIter = force_begin();
         for (; forceIter != force_end(); forceIter++) {
             (*forceIter)->StepFinalize();
         }
 
-
-
+        // Send the message to the logging system
+        if (IsLogged()) {
+            m_message->Serialize();
+            m_message->Send();
+        }
     }
 
     void FrBody::Update() {
@@ -170,8 +180,7 @@ namespace frydom {
     }
 
 
-    // Linear iterators
-
+    // Force linear iterators
     FrBody::ForceIter FrBody::force_begin() {
         return m_externalForces.begin();
     }
@@ -188,6 +197,22 @@ namespace frydom {
         return m_externalForces.cend();
     }
 
+    // Node linear iterators
+    FrBody::NodeIter FrBody::node_begin() {
+        return m_nodes.begin();
+    }
+
+    FrBody::ConstNodeIter FrBody::node_begin() const {
+        return m_nodes.cbegin();
+    }
+
+    FrBody::NodeIter FrBody::node_end() {
+        return m_nodes.end();
+    }
+
+    FrBody::ConstNodeIter FrBody::node_end() const {
+        return m_nodes.cend();
+    }
 
     void FrBody::AddMeshAsset(std::string obj_filename) {
 
@@ -799,6 +824,29 @@ namespace frydom {
         return m_DOFMask.get();
     }
 
+    void FrBody::InitializeLog() {
+
+        auto bodyLogPath = m_system->GetLogManager()->NewBodyLog(this);
+
+        // Initializing message
+        if (m_message->GetName().empty()) {
+            m_message->SetNameAndDescription(
+                    fmt::format("{}_{}_{}",GetTypeName(),GetName(),GetUUID()),
+                    "Message of a body");
+        }
+
+        // Add a serializer
+        m_message->AddCSVSerializer(bodyLogPath);
+
+        // Add the fields
+        m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoBody->GetChTime();});
+
+
+        // Init the message
+        m_message->Initialize();
+        m_message->Send();
+
+    }
 
 
 }  // end namespace frydom

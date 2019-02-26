@@ -84,6 +84,7 @@ namespace frydom {
         double m_forceLimit  = 1e20;            ///< Taking very high values by default in case we just set limit to true without
         double m_torqueLimit = 1e20;            ///< setting the values individually.
 
+        std::string m_forceType = "force";      ///< type of force (subclass of FrForce), for logging purpose only
 
     public:
 
@@ -103,6 +104,13 @@ namespace frydom {
         /// Return the system to which the force is linked
         /// \return Offshore system object pointer
         FrOffshoreSystem* GetSystem();
+
+        FrBody* GetBody() const;
+
+        // Logging
+
+        /// Initialize the log
+        void InitializeLog();
 
         // Force Asset
         /// Inquire if a ForceAsset is displayed

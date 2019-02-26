@@ -73,6 +73,7 @@ namespace frydom {
     class FrPostPhysicsItem;
     class FrEnvironment;
     class FrCable;
+    class FrLogManager;
 
     /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
     /// so it acts also as a database for most items involved in simulations, most noticeably objects of FrBody and FrLink
@@ -229,6 +230,10 @@ namespace frydom {
 
         bool m_isInitialized = false;
 
+        // Logs
+        std::unique_ptr<FrLogManager> m_logManager;
+//        std::unique_ptr<hermes::Message> m_message;
+
 
     public:
 
@@ -302,6 +307,14 @@ namespace frydom {
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
+        // Logging
+
+        /// Get access to the log manager service
+        /// \return log manager service
+        FrLogManager* GetLogManager() const;
+
+        /// Initialize the logs (log files and folders creation)
+        void InitializeLog();
 
         // Constraint solver
 

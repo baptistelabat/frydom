@@ -169,6 +169,9 @@ namespace frydom {
         /// StepFinalize method not implemented yet
         void StepFinalize() override;
 
+        // Logging
+
+        void InitializeLog();
 
 
         // =============================================================================================================
