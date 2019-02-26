@@ -63,12 +63,12 @@ namespace frydom{
 
         // Create the run directory
         // TODO add the date to the run directory name, once TimeZone is refactored (need TimeZone to be brought back from Environment to the system?)
-        cppfs::FilePath runPath = workspacePath.resolve(fmt::format("run_{}/",system->GetUUID()));
+        cppfs::FilePath runPath = workspacePath.resolve(fmt::format("run_{}/",system->GetShortenUUID()));
         cppfs::FileHandle runDir = cppfs::fs::open(runPath.path());
         runDir.createDirectory();
 
         // Create the system directory
-        cppfs::FilePath systemPath = runPath.resolve(fmt::format("{}_{}/",system->GetTypeName(),system->GetUUID()));
+        cppfs::FilePath systemPath = runPath.resolve(fmt::format("{}_{}/",system->GetTypeName(),system->GetShortenUUID()));
         cppfs::FileHandle systemDir = cppfs::fs::open(systemPath.path());
         systemDir.createDirectory();
 
@@ -92,7 +92,8 @@ namespace frydom{
         systemPath = systemPath.directoryPath();
 
         // Create the directory for the body logs
-        cppfs::FilePath bodyLogPath = systemPath.resolve(fmt::format("{}_{}_{}/body.csv",body->GetTypeName(),body->GetName(),body->GetUUID()));
+        auto relBodyLogPath = fmt::format("{}_{}_{}/body.csv",body->GetTypeName(),body->GetName(),body->GetShortenUUID());
+        cppfs::FilePath bodyLogPath = systemPath.resolve(relBodyLogPath);
         auto bodyLogDir = cppfs::fs::open(bodyLogPath.directoryPath());
         bodyLogDir.createDirectory();
 

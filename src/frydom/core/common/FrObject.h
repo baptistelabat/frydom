@@ -70,7 +70,9 @@ namespace frydom {
             m_message = std::make_unique<hermes::Message>();
         }
 
-        std::string GetUUID() const{ return m_UUID; }
+        std::string GetUUID() const { return m_UUID; }
+
+        std::string GetShortenUUID() const { return m_UUID.substr(0,5); };
 
         void SetFilePath (std::string path) { m_logPath = path; }
 
