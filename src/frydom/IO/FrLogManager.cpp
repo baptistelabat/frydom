@@ -94,16 +94,18 @@ namespace frydom{
         // Create the directory for the body logs
         auto relBodyLogPath = fmt::format("{}_{}_{}/body.csv",body->GetTypeName(),body->GetName(),body->GetShortenUUID());
         cppfs::FilePath bodyLogPath = systemPath.resolve(relBodyLogPath);
-        auto bodyLogDir = cppfs::fs::open(bodyLogPath.directoryPath());
+
+        cppfs::FilePath bodyDirPath = bodyLogPath.directoryPath();
+        auto bodyLogDir = cppfs::fs::open(bodyDirPath.path());
         bodyLogDir.createDirectory();
 
         // Create the directory for the forces logs
-        cppfs::FilePath forcesLogPath = bodyLogPath.resolve("Forces/");
+        cppfs::FilePath forcesLogPath = bodyDirPath.resolve("Forces/");
         auto forcesLogDir = cppfs::fs::open(forcesLogPath.path());
         forcesLogDir.createDirectory();
 
         // Create the directory for the nodes logs
-        cppfs::FilePath nodesLogPath = bodyLogPath.resolve("Nodes/");
+        cppfs::FilePath nodesLogPath = bodyDirPath.resolve("Nodes/");
         auto nodesLogDir = cppfs::fs::open(nodesLogPath.path());
         nodesLogDir.createDirectory();
 

@@ -367,6 +367,7 @@ namespace frydom {
     FrOffshoreSystem_::FrOffshoreSystem_(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
 
         m_typeName = "System";
+        SetLogged(true);
 
         // Creating the chrono System backend. It drives the way contact are modelled
         SetSystemType(systemType, false);
@@ -512,7 +513,7 @@ namespace frydom {
     void FrOffshoreSystem_::Initialize() {
 
         // Init the logs
-        InitializeLog();
+        if (IsLogged()) InitializeLog();
 
         // Initializing environment before bodies
         m_environment->Initialize();
@@ -592,7 +593,10 @@ namespace frydom {
             item->StepFinalize();
         }
 
-        // TODO : faire aussi pour les physicsItems !
+        if (IsLogged()) {
+            m_message->Serialize();
+            m_message->Send();
+        }
 
     }
 
@@ -941,6 +945,7 @@ namespace frydom {
         m_worldBody = std::make_shared<FrBody_>();
         m_worldBody->SetFixedInWorld(true);
         m_worldBody->SetName("WorldBody");
+        m_worldBody->SetLogged(false);
         AddBody(m_worldBody);
     }
 

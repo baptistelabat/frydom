@@ -58,17 +58,24 @@ namespace frydom {
         std::string m_UUID;
 
     protected:
-        std::unique_ptr<hermes::Message> m_message;
 
-        std::string m_logPath;
+        // Logging
+        bool m_isLogged = false;
 
         std::string m_typeName;
+        std::string m_logPath;
+
+        std::unique_ptr<hermes::Message> m_message;
 
     public:
         FrObject_() : m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()())) {
 
             m_message = std::make_unique<hermes::Message>();
         }
+
+        bool IsLogged() { return m_isLogged; }
+
+        void SetLogged(bool isLogged) { m_isLogged = isLogged; }
 
         std::string GetUUID() const { return m_UUID; }
 

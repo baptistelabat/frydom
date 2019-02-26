@@ -182,6 +182,7 @@ namespace frydom {
     FrBody_::FrBody_() {
 
         m_typeName = "Body";
+        SetLogged(true);
 
         m_chronoBody = std::make_shared<internal::_FrBodyBase>(this);
         m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
@@ -216,7 +217,7 @@ namespace frydom {
     void FrBody_::Initialize() {
 
         // Init the logs
-        InitializeLog();
+        if (IsLogged()) InitializeLog();
 
         // Initializing forces
         auto forceIter = force_begin();
@@ -251,9 +252,10 @@ namespace frydom {
         }
 
         // Send the message to the logging system
-        m_message->Serialize();
-        m_message->Send();
-
+        if (IsLogged()) {
+            m_message->Serialize();
+            m_message->Send();
+        }
     }
 
     void FrBody_::Update() {
