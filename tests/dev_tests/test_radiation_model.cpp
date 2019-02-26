@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     //waveField->SetMeanWaveDirection(SOUTH(NWU), NWU, GOTO);
 
     auto waveField = freeSurface->SetAiryRegularWaveField();
-    waveField->SetWavePeriod(9.);
+    waveField->SetWavePeriod(9., mathutils::S);
     waveField->SetWaveHeight(0.);
     waveField->SetDirection(SOUTH(NWU), NWU, GOTO);
 
