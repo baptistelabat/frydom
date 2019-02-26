@@ -17,17 +17,20 @@
 
 namespace frydom {
 
+    // Forward declaration
     class FrLinearDamping_;
 
-    class FrMooringBuoy : public FrBody_ {
-    private:
 
-        class FrSphereNonLinearHydrostaticForce : public FrForce_{
+    class FrMooringBuoy : public FrBody_ {
+
+    private:
+        class FrSphereNonLinearHydrostaticForce : public FrForce_ {
+
         public:
             void Update(double time) override;
             void StepFinalize() override {
                 FrForce_::StepFinalize();
-            };
+            }
         };
 
 

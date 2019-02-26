@@ -13,14 +13,17 @@
 #ifndef FRYDOM_FRTIDALMODEL_H
 #define FRYDOM_FRTIDALMODEL_H
 
-#include <cassert>
+#include <memory>
 
-#include "MathUtils/MathUtils.h"
+#include "MathUtils/LookupTable1D.h"
 
+//#include <cassert>
+//
+//#include "MathUtils/MathUtils.h"
+//
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/common/FrConvention.h"
 
-using namespace mathutils;
 // TODO: La hauteur de marée (+ sonde a recuperer de seabed) doivent etre retranscrite sur le corps embarque dans la
 // surface libre.
 
@@ -108,7 +111,7 @@ namespace frydom {
 
 //        double c_waterHeight = 0.;
 
-        LookupTable1D<double, double> tidalTable;
+        mathutils::LookupTable1D<double, double> tidalTable;
 
         void BuildTable();
 

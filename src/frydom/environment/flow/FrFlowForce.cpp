@@ -12,17 +12,16 @@
 
 #include "FrFlowForce.h"
 
-#include "frydom/core/body/FrBody.h"
-//#include "FrFlowBase.h"
-#include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
-#include "frydom/environment/atmosphere/FrAtmosphere_.h"
-#include "frydom/IO/FrLoader.h"
-#include "frydom/core/common/FrFrame.h"
-#include "MathUtils/Vector3d.h"
-
-#include "frydom/environment/ocean/current/FrCurrent.h"
-#include "frydom/environment/atmosphere/wind/FrWind.h"
+//#include "frydom/core/body/FrBody.h"
+//#include "frydom/environment/FrEnvironment.h"
+//#include "frydom/environment/ocean/FrOcean_.h"
+//#include "frydom/environment/atmosphere/FrAtmosphere_.h"
+//#include "frydom/IO/FrLoader.h"
+//#include "frydom/core/common/FrFrame.h"
+//#include "MathUtils/Vector3d.h"
+//
+//#include "frydom/environment/ocean/current/FrCurrent.h"
+//#include "frydom/environment/atmosphere/wind/FrWind.h"
 
 
 namespace frydom {
@@ -49,13 +48,13 @@ namespace frydom {
         auto max_angle = polar.back().first;
         auto min_angle = polar[0].first;
 
-        if (std::abs(min_angle) < 10e-2 and std::abs(max_angle - M_PI) < 10e-2) {
+        if (std::abs(min_angle) < 10e-2 and std::abs(max_angle - MU_PI) < 10e-2) {
             for (unsigned int i=polar.size()-2; i>=1; i--) {
-                new_element.first = 2.* M_PI - polar[i].first;
+                new_element.first = 2.* MU_PI - polar[i].first;
                 new_element.second = { polar[i].second[0], -polar[i].second[1], -polar[i].second[2] };
                 polar.push_back(new_element);
             }
-        } else if (std::abs(min_angle + M_PI) < 10e-2 and std::abs(max_angle) < 10e-2) {
+        } else if (std::abs(min_angle + MU_PI) < 10e-2 and std::abs(max_angle) < 10e-2) {
             for (unsigned int i=polar.size()-2; i>=1; i--) {
                 new_element.first = -polar[i].first;
                 new_element.second = { polar[i].second[0], -polar[i].second[1], -polar[i].second[2] };
@@ -64,8 +63,8 @@ namespace frydom {
         }
 
         // Delete double term
-        if ( std::abs(polar[0].first) < 10e-2 and std::abs(polar.back().first - 2.* M_PI) < 10e-2
-                or std::abs(polar[0].first + M_PI) < 10e-2 and std::abs(polar.back().first - M_PI) < 10e-2)  {
+        if ( std::abs(polar[0].first) < 10e-2 and std::abs(polar.back().first - 2.* MU_PI) < 10e-2
+                or std::abs(polar[0].first + MU_PI) < 10e-2 and std::abs(polar.back().first - MU_PI) < 10e-2)  {
             polar.pop_back();
         }
 
@@ -79,7 +78,7 @@ namespace frydom {
 
         // Conversion to GOTO if COMEFROM convention is used
         if (dc == COMEFROM) {
-            for (auto it=polar.begin(); it!= polar.end(); ++it) { it->first += M_PI; }
+            for (auto it=polar.begin(); it!= polar.end(); ++it) { it->first += MU_PI; }
         }
 
         // Normalized angle in [0, 2pi]
@@ -91,7 +90,7 @@ namespace frydom {
         });
 
         // Adding last term for angle equal to 2pi
-        new_element.first = 2.* M_PI;
+        new_element.first = 2.* MU_PI;
         new_element.second =  polar.begin()->second;
         polar.push_back( new_element );
 
@@ -171,7 +170,7 @@ namespace frydom {
         auto windForce = std::make_shared<FrWindForce2_>(yamlFile);
         body->AddExternalForce(windForce);
         return windForce;
-
     }
+
 
 } // end of namespace frydom

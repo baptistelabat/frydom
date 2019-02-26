@@ -13,16 +13,16 @@
 #ifndef FRYDOM_FRWAVESPECTRUM_H
 #define FRYDOM_FRWAVESPECTRUM_H
 
-#include <vector>
-#include "MathUtils/MathUtils.h"
+//#include <vector>
+//#include "MathUtils/MathUtils.h"
+//
+//#include "frydom/core/common/FrObject.h"
 
-#include "frydom/core/common/FrObject.h"
-
-using namespace mathutils;
+//using namespace mathutils;
 
 namespace frydom {
 
-    enum WaveDirectionalModelType {
+    enum WAVE_DIRECTIONAL_MODEL {  // TODO : passer dans la classe...
         NONE,
         COS2S,
         DIRTEST
@@ -39,7 +39,7 @@ namespace frydom {
 
         /// Get the type of the directional model
         /// \return type of directional model (COS2S/NONE/DIRTEST)
-        virtual WaveDirectionalModelType GetType() const  = 0;
+        virtual WAVE_DIRECTIONAL_MODEL GetType() const  = 0;
 
         /// Get the spreading function for a vector of wave directions thetaVect
         /// \param thetaVect vector of wave directions
@@ -97,7 +97,7 @@ namespace frydom {
 
         /// Get the type of the directional model
         /// \return type of directional model, here COS2S
-        WaveDirectionalModelType GetType() const override;
+        WAVE_DIRECTIONAL_MODEL GetType() const override;
 
         /// Get the spreading factor s of the cos2s directional model
         /// \return spreading factor s of the cos2s directional model
@@ -122,7 +122,7 @@ namespace frydom {
 
         /// Get the type of the directional model
         /// \return type of directional model, here DIRTEST
-        WaveDirectionalModelType GetType() const override;
+        WAVE_DIRECTIONAL_MODEL GetType() const override;
 
         /// Evaluate the spreading function for a wave direction
         /// \param theta wave direction
@@ -147,7 +147,7 @@ namespace frydom {
         double m_peak_frequency = S2RADS(9.);   ///< Peak circular frequency (in radians/s),
                                                 ///< is the wave frequency with the highest energy
 
-        WaveDirectionalModelType m_dir_model_type = NONE;   ///< wave directional model type (NONE/COS2S/DIRTEST)
+        WAVE_DIRECTIONAL_MODEL m_dir_model_type = NONE;   ///< wave directional model type (NONE/COS2S/DIRTEST)
 
         std::unique_ptr<FrWaveDirectionalModel_> m_directional_model = nullptr; ///< wave directional model
 
@@ -168,7 +168,7 @@ namespace frydom {
 
         /// Set the wave directional model to use from type
         /// \param model wave directional model type
-        void SetDirectionalModel(WaveDirectionalModelType model);
+        void SetDirectionalModel(WAVE_DIRECTIONAL_MODEL model);
 
         /// Set the wave directional model to use from object
         /// \param dir_model wave directional model
@@ -180,7 +180,7 @@ namespace frydom {
 
         /// Set the wave spectrum as multi-directional
         /// \param model wave directional model type
-        void DirectionalON(WaveDirectionalModelType model=COS2S);
+        void DirectionalON(WAVE_DIRECTIONAL_MODEL model=COS2S);
 
         /// Set the wave spectrum as unidirectional
         void DirectionalOFF();

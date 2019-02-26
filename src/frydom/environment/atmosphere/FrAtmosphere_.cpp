@@ -12,8 +12,8 @@
 
 #include "FrAtmosphere_.h"
 
-#include "frydom/environment/FrEnvironment.h"
-#include "wind/FrWind.h"
+//#include "frydom/environment/FrEnvironment.h"
+//#include "wind/FrWind.h"
 
 
 namespace frydom{

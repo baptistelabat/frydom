@@ -11,10 +11,14 @@
 
 
 #include "FrCatenaryLine.h"
-#include "FrCatenaryForce.h"
-#include "frydom/asset/FrCatenaryLineAsset_.h"
-#include "frydom/core/body/FrBody.h"
 
+#include "frydom/core/common/FrNode.h"
+
+
+#include "FrCatenaryForce.h"
+//#include "frydom/asset/FrCatenaryLineAsset_.h"
+#include "frydom/core/body/FrBody.h"
+//
 #include "frydom/environment/FrEnvironment.h"
 
 namespace frydom {

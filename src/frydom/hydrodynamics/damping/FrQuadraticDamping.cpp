@@ -10,16 +10,15 @@
 // ==========================================================================
 
 
-#include "frydom/core/body/FrBody.h"
+//#include "frydom/core/body/FrBody.h"
 
-#include <frydom/core/junk/FrHydroBody.h>
 #include "FrQuadraticDamping.h"
 
-#include "chrono/physics/ChBody.h"
-
-#include <cmath>
-
-#include "frydom/environment/FrEnvironment.h"
+//#include "chrono/physics/ChBody.h"
+//
+//#include <cmath>
+//
+//#include "frydom/environment/FrEnvironment.h"
 
 namespace frydom {
 

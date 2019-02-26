@@ -15,10 +15,10 @@
 
 // TODO: mettre en place les methodes de transport des raideurs dans d'autres reperes...
 
-#include <chrono/core/ChVector.h>
-
-#include "frydom/core/math/FrMatrix.h"
-#include "MathUtils/Vector3d.h"
+//#include <chrono/core/ChVector.h>
+//
+//#include "frydom/core/math/FrMatrix.h"
+//#include "MathUtils/Vector3d.h"
 
 namespace frydom {
 

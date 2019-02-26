@@ -13,11 +13,18 @@
 #ifndef FRYDOM_FRASSETCLUMPWEIGHT_H
 #define FRYDOM_FRASSETCLUMPWEIGHT_H
 
-#include "chrono/physics/ChBodyEasy.h"
+
 #include "FrAssetComponent.h"
+
+// Forward declarations
+namespace chrono {
+    template <typename Scalar>
+    class ChVector;
+}
 
 
 namespace frydom {
+
 
     /**
      * \class FrAssetClumpWeight
@@ -28,14 +35,17 @@ namespace frydom {
 
     public:
 
-        FrAssetClumpWeight(double mradius,chrono::ChColor mcolor,chrono::ChVector<> P1, chrono::ChVector<> P2);
+        FrAssetClumpWeight(double mradius, chrono::ChColor mcolor, chrono::ChVector<double> P1, chrono::ChVector<double> P2);
 
-        FrAssetClumpWeight(double mradius,chrono::ChVector<> P1, chrono::ChVector<> P2);
+        FrAssetClumpWeight(double mradius, chrono::ChVector<double> P1, chrono::ChVector<double> P2);
 
         explicit FrAssetClumpWeight(double mradius);
 
         FrAssetClumpWeight();
 
     };
-}
+
+
+}  // end namespace frydom
+
 #endif //FRYDOM_FRASSETCLUMPWEIGHT_H

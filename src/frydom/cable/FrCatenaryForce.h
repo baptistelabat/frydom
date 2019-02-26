@@ -18,11 +18,6 @@
 
 namespace frydom {
 
-
-
-//    // Forward declaration
-//    class FrCatenaryLine_;
-
     /**
      * \class FrCatenaryForce_ FrCatenaryForce.h
      * \brief Class for getting the tension from the catenary line, subclass of FrForce_.

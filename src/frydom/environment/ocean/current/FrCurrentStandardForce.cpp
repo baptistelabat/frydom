@@ -12,6 +12,10 @@
 
 #include "FrCurrentStandardForce.h"
 
+#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/core/body/FrBody.h"
+#include "frydom/core/common/FrRotation.h"
+#include "frydom/core/common/FrFrame.h"
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean_.h"
@@ -106,5 +110,6 @@ namespace frydom {
     void FrCurrentStandardForce_::StepFinalize() {
         FrForce_::StepFinalize();
     }
+
 
 }  // end namespace frydom

@@ -10,13 +10,17 @@
 // ==========================================================================
 
 
-#ifndef FRYDOM_FRINERTIA_H
-#define FRYDOM_FRINERTIA_H
+#ifndef FRYDOM_FRINERTIATENSOR_H
+#define FRYDOM_FRINERTIATENSOR_H
+
+#include <iostream>
+
+
 
 //#include "chrono/core/ChMatrix33.h"
 
 #include "frydom/core/math/FrVector.h"
-#include "frydom/core/common/FrConvention.h"
+//#include "frydom/core/common/FrConvention.h"
 #include "frydom/core/common/FrFrame.h"
 
 
@@ -110,4 +114,4 @@ namespace frydom {
 
 }  // end namespace frydom
 
-#endif //FRYDOM_FRINERTIA_H
+#endif //FRYDOM_FRINERTIATENSOR_H

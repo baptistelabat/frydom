@@ -4,7 +4,6 @@ set(SRC_FILES
         FrMorisonForce.cpp
         FrMorisonModel.cpp
 #        FrMorrisonElement.cpp
-        FrMorrisonForce.cpp
         )
 
 set(FRYDOM_MORISON_SOURCES "")

@@ -13,14 +13,25 @@
 #ifndef FRYDOM_FRCABLE_H
 #define FRYDOM_FRCABLE_H
 
-#include "frydom/core/common/FrObject.h"
-#include "frydom/core/common/FrNode.h"
-#include "frydom/core/math/FrVector.h"
+//#include "frydom/core/common/FrObject.h"
+//#include "frydom/core/common/FrNode.h"
+//
+//
+
+//#include "frydom/core/FrOffshoreSystem.h"
+
+
 
 #include "frydom/core/common/FrPhysicsItem.h"
-#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrConvention.h"
+
 
 namespace frydom {
+
+    // Forward declaration
+    class FrNode_;
+
 
     /**
      * \class FrCable_ FrCable.h

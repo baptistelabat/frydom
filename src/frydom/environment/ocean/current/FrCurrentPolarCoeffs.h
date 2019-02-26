@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -14,10 +14,14 @@
 #define FRYDOM_FRCURRENTPOLARCOEFFS_H
 
 
-#include <frydom/core/common/FrConvention.h>
-#include "MathUtils/MathUtils.h"
+//#include <frydom/core/common/FrConvention.h>
+//#include "MathUtils/MathUtils.h"
 
-using namespace mathutils;
+#include "MathUtils/LookupTable1D.h"
+
+#include "frydom/core/common/FrConvention.h"
+
+//using namespace mathutils;
 
 // TODO: supprimer cette classe et utiliser directement la LUT dans la classe courant
 namespace frydom {
@@ -26,7 +30,7 @@ namespace frydom {
      * \class FrCurrentPolarCoeffs
      * \brief Class for defining polar coefficients for a current field.
      */
-    class FrCurrentPolarCoeffs : public LookupTable1D<double, double> {
+    class FrCurrentPolarCoeffs : public mathutils::LookupTable1D<double, double> {
 
     private:
 
@@ -99,6 +103,7 @@ namespace frydom {
             return cc;
         }
     };
+
 
 }  // end namespace frydom
 

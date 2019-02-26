@@ -12,26 +12,47 @@
 
 
 #include "FrBody.h"
-#include "frydom/core/common/FrNode.h"
-#include "frydom/core/common/FrRotation.h"
+
+
+//#include "frydom/core/common/FrNode.h"
+//#include "frydom/core/common/FrRotation.h"
 #include "frydom/core/math/FrMatrix.h"
-
-#include "chrono/assets/ChTriangleMeshShape.h"
-#include "frydom/core/common/FrFrame.h"
-
+//
+//#include "chrono/assets/ChTriangleMeshShape.h"
+//#include "frydom/core/common/FrFrame.h"
+//
 #include "frydom/core/force/FrForce.h"
-
-#include "frydom/environment/FrEnvironmentInc.h"
-#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
-
-#include <chrono/physics/ChLinkMotorLinearSpeed.h>  // FIXME : a retirer
 #include "frydom/asset/FrAsset.h"
+#include "frydom/mesh/FrTriangleMeshConnected.h"
+
+#include "frydom/environment/FrEnvironment.h"
+
+//#include "chrono/geometry/ChTriangleMeshConnected.h"
+#include "chrono/assets/ChColor.h"
+#include "chrono/assets/ChColorAsset.h"
+#include "chrono/assets/ChTriangleMeshShape.h"
+
+
+#include "chrono/assets/ChCylinderShape.h"
+#include "chrono/assets/ChBoxShape.h"
+#include "chrono/assets/ChSphereShape.h"
+
+
+#include "frydom/environment/geographicServices/FrGeographicServices.h"
+
+
+//
+//#include "frydom/environment/FrEnvironmentInc.h"
+//#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
+//
+//#include <chrono/physics/ChLinkMotorLinearSpeed.h>  // FIXME : a retirer
+//#include "frydom/asset/FrAsset.h"
 #include "frydom/asset/FrForceAsset.h"
-
-#include "frydom/core/math/functions/FrFunctionBase.h"
-#include "frydom/core/common/FrException.h"
-
-#include "frydom/core/link/links_lib/FrLink.h"
+//
+//#include "frydom/core/math/functions/FrFunctionBase.h"
+//#include "frydom/core/common/FrException.h"
+//
+//#include "frydom/core/link/links_lib/FrLink.h"
 
 
 namespace frydom {

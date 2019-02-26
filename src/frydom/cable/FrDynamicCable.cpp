@@ -12,7 +12,7 @@
 
 #include "FrDynamicCable.h"
 
-#include "frydom/core/body/FrBody.h"
+//#include "frydom/core/body/FrBody.h"
 
 
 

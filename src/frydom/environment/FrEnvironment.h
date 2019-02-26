@@ -13,11 +13,12 @@
 #ifndef FRYDOM_FRENVIRONMENT_H
 #define FRYDOM_FRENVIRONMENT_H
 
+#include <memory>
 
 #include "frydom/core/common/FrObject.h"
-
-// GeographicLib includes
-#include "frydom/environment/geographicServices/FrGeographicServices.h"
+//
+//// GeographicLib includes
+//#include "frydom/environment/geographicServices/FrGeographicServices.h"
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/environment/FrFluidType.h"
 

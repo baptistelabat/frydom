@@ -13,11 +13,11 @@
 #ifndef FRYDOM_FRHYDRODB_H
 #define FRYDOM_FRHYDRODB_H
 
-#include <vector>
-#include "MathUtils/MathUtils.h"
-#include "frydom/utils/FrEigen.h" // TODO: Eigen est maintenant deja importe de MathUtils... ne plus reposer sur le sous module frydom
-
-#include "FrBEMBody.h"
+//#include <vector>
+//#include "MathUtils/MathUtils.h"
+//#include "frydom/utils/FrEigen.h" // TODO: Eigen est maintenant deja importe de MathUtils... ne plus reposer sur le sous module frydom
+//
+//#include "FrBEMBody.h"
 
 // TODO: utiliser plutot des std::vector a la place des matrices eigen ...
 

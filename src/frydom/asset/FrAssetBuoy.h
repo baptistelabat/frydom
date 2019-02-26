@@ -13,9 +13,19 @@
 #ifndef FRYDOM_FRASSETBUOY_H
 #define FRYDOM_FRASSETBUOY_H
 
-#include "chrono/physics/ChBodyEasy.h"
-#include "chrono/assets/ChColorAsset.h"
+
 #include "FrAssetComponent.h"
+
+
+// Forward declaration
+namespace chrono {
+
+    template <typename Scalar>
+    class ChVector;
+
+    class ChColorAsset;
+    class ChSphereShape;
+}
 
 namespace frydom {
 
@@ -29,7 +39,7 @@ namespace frydom {
 
     public:
 
-        FrAssetBuoy(chrono::ChVector<> mPos, double mRadius, chrono::ChColor mColor);
+        FrAssetBuoy(chrono::ChVector<double> mPos, double mRadius, chrono::ChColor mColor);
 
         FrAssetBuoy(double mRadius, chrono::ChColor mColor);
 
@@ -38,6 +48,7 @@ namespace frydom {
         FrAssetBuoy();
 
         void SetColorAsset(std::shared_ptr<chrono::ChColorAsset> color); // FIXME : utiliser FrColor !!
+
         void SetShapeAsset(std::shared_ptr<chrono::ChSphereShape> shape); // FIXME : pourquoi public ?
 
     };

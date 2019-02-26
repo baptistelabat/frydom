@@ -11,6 +11,9 @@
 
 
 #include "FrPhysicsItem.h"
+//
+#include "chrono/assets/ChTriangleMeshShape.h"
+#include "chrono/assets/ChColorAsset.h"
 
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 

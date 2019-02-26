@@ -13,18 +13,11 @@
 #ifndef FRYDOM_FRCATENARYLINE_H
 #define FRYDOM_FRCATENARYLINE_H
 
-#include "chrono/physics/ChMarker.h"
-#include "chrono/core/ChLinearAlgebra.h"
-#include "chrono/core/ChMatrix33.h"
-#include "chrono/assets/ChPointPointDrawing.h"
-#include "frydom/core/common/FrNode.h"
+
 #include "FrCable.h"
-#include "frydom/asset/FrAssetComponent.h"
-#include "frydom/asset/FrAssetBuoy.h"
-
-#include "frydom/asset/FrCatenaryLineAsset_.h"
-
+#include "frydom/core/math/FrVector.h"
 #include "frydom/environment/FrFluidType.h"
+#include "frydom/asset/FrCatenaryLineAsset_.h"
 
 
 // TODO: prevoir une discretisation automatique pour laquelle on precise la taille cible d'un element
@@ -36,8 +29,8 @@ namespace frydom {
 
     // Forward declarations:
     class FrCatenaryForce_;
-    class FrCatenaryLineAsset_;
-
+//    class FrCatenaryLineAsset_;
+    class FrNode_;
 
     /**
      * \class FrCatenaryLine_ FrCatenaryLine.h

@@ -15,11 +15,14 @@
 
 
 #include "chrono/core/ChQuaternion.h"
-#include "FrRotation.h"
+
+#include "MathUtils/Vector3d.h"
+
+//#include "FrRotation.h"
 #include "FrConvention.h"
-
+//
 #include "frydom/core/math/FrEulerAngles.h"
-
+//
 #include "frydom/core/math/FrVector.h"
 
 
@@ -348,7 +351,7 @@ namespace frydom {
         void GetAxisAngle(Direction& axis, double& angleRAD, FRAME_CONVENTION fc) const;
 
         /// Get the rotation vector, ie the Angle * Axis vector
-        Vector3d<double> GetRotationVector(FRAME_CONVENTION fc) const;
+        mathutils::Vector3d<double> GetRotationVector(FRAME_CONVENTION fc) const;
 
         /// Get the axis of the rotation
         /// \param axis direction of the rotation, normalized

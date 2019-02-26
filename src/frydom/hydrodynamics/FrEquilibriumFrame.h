@@ -13,11 +13,11 @@
 #ifndef FRYDOM_FREQUILIBRIUMFRAME_H
 #define FRYDOM_FREQUILIBRIUMFRAME_H
 
-#include "frydom/utils/FrRecorder.h"
-#include "frydom/core/common/FrFrame.h"
-#include "frydom/core/math/FrVector.h"
-#include "frydom/core/common/FrPhysicsItem.h"
-#include "frydom/core/body/FrBody.h"
+//#include "frydom/utils/FrRecorder.h"
+//#include "frydom/core/common/FrFrame.h"
+//#include "frydom/core/math/FrVector.h"
+//#include "frydom/core/common/FrPhysicsItem.h"
+//#include "frydom/core/body/FrBody.h"
 
 namespace frydom {
 

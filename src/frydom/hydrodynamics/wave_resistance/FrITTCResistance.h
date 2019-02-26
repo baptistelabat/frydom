@@ -13,7 +13,7 @@
 #ifndef FRYDOM_FRITTC57_H
 #define FRYDOM_FRITTC57_H
 
-#include "frydom/core/force/FrForce.h"
+//#include "frydom/core/force/FrForce.h"
 
 
 namespace frydom {

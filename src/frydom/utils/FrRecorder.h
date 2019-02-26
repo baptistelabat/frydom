@@ -13,38 +13,18 @@
 #ifndef FRYDOM_FRTIMERINGBUFFER_H
 #define FRYDOM_FRTIMERINGBUFFER_H
 
-#include <vector>
-#include <cassert>
-#include <deque>
-#include <cfloat>
-#include <iostream>
-
-#include "boost/circular_buffer.hpp"
+//#include <vector>
+//#include <cassert>
+//#include <deque>
+//#include <cfloat>
+//#include <iostream>
+//
+//#include "boost/circular_buffer.hpp"
 
 //#include "chrono/core/ChVector.h"
 
 
 namespace frydom {
-
-//    /**
-//     * \class FrRecorder_
-//     * \brief Class for recording velocities used in the convolution integral.
-//     */
-//    template <class T>
-//    class FrRecorder_ {
-//
-//    private:
-//
-//        unsigned int m_size = 0;
-//        unsigned int m_step = 0;
-//
-//        boost::circular_buffer<std::pair<double, T>> m_data;
-//
-//    public:
-//
-//
-//    };
-
 
     /**
      * \class FrTimeRecorder_

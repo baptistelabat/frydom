@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -14,10 +14,11 @@
 #define FRYDOM_FRFLUIDTYPE_H
 
 
-#include "frydom/core/common/FrUnits.h"
+//#include "frydom/core/common/FrUnits.h"
 
 namespace frydom {
 
+    // TODO : placer les pptes de fluide dans des classes air et water...
 
     enum FLUID_TYPE {
         AIR,

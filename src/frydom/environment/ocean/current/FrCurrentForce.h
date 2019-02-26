@@ -44,6 +44,8 @@ namespace frydom {
 
     };
 
+
 }  // end namespace frydom
+
 
 #endif //FRYDOM_FRCURRENTFORCE_H

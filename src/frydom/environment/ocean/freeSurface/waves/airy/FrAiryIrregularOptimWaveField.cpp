@@ -15,9 +15,7 @@
 namespace frydom {
 
     FrAiryIrregularOptimWaveField::FrAiryIrregularOptimWaveField(frydom::FrFreeSurface_ *freeSurface)
-            : FrAiryIrregularWaveField(freeSurface) {
-
-    }
+            : FrAiryIrregularWaveField(freeSurface) {}
 
     std::vector<std::vector<Complex>>
     FrAiryIrregularOptimWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {

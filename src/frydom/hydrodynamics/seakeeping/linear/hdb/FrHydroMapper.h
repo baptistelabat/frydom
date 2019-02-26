@@ -13,11 +13,10 @@
 #ifndef FRYDOM_FRHYDROMAPPER_H
 #define FRYDOM_FRHYDROMAPPER_H
 
-#include "boost/bimap.hpp"
-
-#include "frydom/core/junk/FrHydroBody.h"
-#include "FrHydroDB.h"
-#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrBEMBody.h"
+//#include "boost/bimap.hpp"
+//
+//#include "FrHydroDB.h"
+//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrBEMBody.h"
 
 
 

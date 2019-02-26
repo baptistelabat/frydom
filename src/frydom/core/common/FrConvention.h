@@ -13,9 +13,11 @@
 #ifndef FRYDOM_CONSTANTS_H
 #define FRYDOM_CONSTANTS_H
 
-#include <cmath>
-#include <iostream>
+//#include <cmath>
+//#include <iostream>
+//
 
+#include <string>
 #include "frydom/core/common/FrException.h"
 
 

@@ -13,17 +13,17 @@
 #ifndef FRYDOM_FRDYNAMICCABLE_H
 #define FRYDOM_FRDYNAMICCABLE_H
 
-#include <memory>
-#include "chrono/physics/ChSystem.h"
-#include <frydom/core/common/FrNode.h>
-#include <chrono_fea/ChVisualizationFEAmesh.h>
-#include <frydom/cable/FrCatenaryLine.h>
-
-#include "chrono_fea/ChBeamSection.h"
-#include "chrono_fea/ChElementCableANCF.h"
-#include "chrono_fea/ChLinkPointFrame.h"
-#include "chrono_fea/ChMesh.h"
-#include "FrCable.h"
+//#include <memory>
+//#include "chrono/physics/ChSystem.h"
+//#include <frydom/core/common/FrNode.h>
+//#include <chrono_fea/ChVisualizationFEAmesh.h>
+//#include <frydom/cable/FrCatenaryLine.h>
+//
+//#include "chrono_fea/ChBeamSection.h"
+//#include "chrono_fea/ChElementCableANCF.h"
+//#include "chrono_fea/ChLinkPointFrame.h"
+//#include "chrono_fea/ChMesh.h"
+//#include "FrCable.h"
 
 
 
@@ -44,7 +44,7 @@
 
 // TODO: mettre en place un (de)raffinement automatique...
 
-using namespace chrono::fea;
+//using namespace chrono::fea;
 
 namespace frydom {
 

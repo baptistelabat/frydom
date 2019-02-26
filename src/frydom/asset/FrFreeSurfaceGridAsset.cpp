@@ -10,16 +10,21 @@
 // ==========================================================================
 
 #include "FrFreeSurfaceGridAsset.h"
-#include "frydom/mesh/FrTriangleMeshConnected.h"
 
-#include "frydom/core/body/FrBody.h"
-#include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
+#include "chrono/assets/ChTriangleMeshShape.h"
 
+//#include "frydom/mesh/FrTriangleMeshConnected.h"
+//
+//#include "frydom/core/body/FrBody.h"
+//#include "frydom/environment/FrEnvironment.h"
+//#include "frydom/environment/ocean/FrOcean_.h"
+//
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
+
 namespace frydom{
+
 
     FrFreeSurfaceGridAsset::FrFreeSurfaceGridAsset(FrFreeSurface_* freeSurface) : FrGridAsset() {
         m_freeSurface = freeSurface;
@@ -38,5 +43,6 @@ namespace frydom{
             }
         }
     }
+
 
 }  // end namespace frydom

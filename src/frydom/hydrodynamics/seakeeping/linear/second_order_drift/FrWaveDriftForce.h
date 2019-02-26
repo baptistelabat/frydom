@@ -13,10 +13,8 @@
 #ifndef FRYDOM_FRWAVEDRIFTFORCE_H
 #define FRYDOM_FRWAVEDRIFTFORCE_H
 
-#include <frydom/core/force/FrForce.h>
-#include <frydom/environment/ocean/freeSurface/waves/FrWaveProbe.h>
-#include <frydom/core/junk/FrHydroBody.h>
-#include <MathUtils/MathUtils.h>
+//#include <frydom/core/force/FrForce.h>
+//#include <MathUtils/MathUtils.h>
 
 namespace frydom {
 

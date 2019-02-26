@@ -9,11 +9,11 @@
 //
 // ==========================================================================
 
-
-#include "chrono/core/ChVector.h"
-
-
 #include "FrCatenaryForce.h"
+
+
+#include "frydom/core/common/FrNode.h"
+
 //#include "FrCatenaryLine.h"
 
 

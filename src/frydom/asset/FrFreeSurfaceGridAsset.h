@@ -14,7 +14,7 @@
 #define FRYDOM_FRFREESURFACEPHYSICITEM_H
 
 #include "frydom/asset/FrGridAsset.h"
-#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
+
 
 namespace frydom {
 
@@ -25,7 +25,7 @@ namespace frydom {
      * \class FrFreeSurfaceGridAsset
      * \brief Class for displaying the free surface grid.
      */
-    class FrFreeSurfaceGridAsset : public FrGridAsset{
+    class FrFreeSurfaceGridAsset : public FrGridAsset {
 
     private:
 

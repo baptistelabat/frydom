@@ -12,11 +12,11 @@
 
 #include "FrLinearExcitationForce.h"
 
-/// <<<<<<<<<<<<<< REFACTORING INCLUDE
-
-#include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOceanInc.h"
-#include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
+///// <<<<<<<<<<<<<< REFACTORING INCLUDE
+//
+//#include "frydom/environment/FrEnvironment.h"
+//#include "frydom/environment/ocean/FrOceanInc.h"
+//#include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
 
 
 namespace frydom {

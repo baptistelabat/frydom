@@ -99,7 +99,7 @@ namespace frydom {
         /// \param nbDir direction discretization
         /// \param spreadingFactor spreading factor
         /// \param dirType directional model type (NONE, COS2S, TEST(for tests only))
-        void SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WaveDirectionalModelType dirType=COS2S);
+        void SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WAVE_DIRECTIONAL_MODEL dirType=COS2S);
 
         /// Set the stretching type used to compute velocity and acceleration on positions above the free surface elevation
         /// \param type stretching type (NO_STRETCHING, VERTICAL, EXTRAPOLATE, WHEELER, CHAKRABARTI, DELTA)

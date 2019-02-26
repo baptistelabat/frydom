@@ -12,12 +12,12 @@
 
 #include "FrAiryRegularWaveField.h"
 
-#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
-#include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
-#include "frydom/environment/ocean/seabed/FrSeabed.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
+//#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
+//#include "frydom/environment/FrEnvironment.h"
+//#include "frydom/environment/ocean/FrOcean_.h"
+//#include "frydom/environment/ocean/seabed/FrSeabed.h"
+//#include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
+//#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
 
 namespace frydom {
 

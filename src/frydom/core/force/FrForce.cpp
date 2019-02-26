@@ -13,9 +13,9 @@
 
 #include "FrForce.h"
 
-#include "frydom/core/body/FrBody.h"
-
-#include "frydom/core/common/FrNode.h"
+//#include "frydom/core/body/FrBody.h"
+//
+//#include "frydom/core/common/FrNode.h"
 #include "frydom/asset/FrForceAsset.h"
 
 

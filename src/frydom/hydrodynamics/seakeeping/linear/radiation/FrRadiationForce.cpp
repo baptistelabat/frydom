@@ -12,7 +12,7 @@
 
 #include "FrRadiationForce.h"
 
-#include "FrRadiationModel.h"
+//#include "FrRadiationModel.h"
 
 
 namespace frydom {

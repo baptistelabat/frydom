@@ -13,10 +13,12 @@
 #ifndef FRYDOM_FROBJECT_H
 #define FRYDOM_FROBJECT_H
 
+
 #include "boost/lexical_cast.hpp"
 #include "boost/uuid/uuid_io.hpp"
 #include "boost/uuid/uuid.hpp"
 #include "boost/uuid/uuid_generators.hpp"
+
 
 namespace frydom {
 

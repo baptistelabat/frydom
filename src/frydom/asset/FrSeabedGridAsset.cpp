@@ -12,11 +12,13 @@
 
 #include "FrSeabedGridAsset.h"
 
-#include "frydom/core/body/FrBody.h"
-#include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
+//#include "frydom/core/body/FrBody.h"
+//#include "frydom/environment/FrEnvironment.h"
+//#include "frydom/environment/ocean/FrOcean_.h"
 
-#include <frydom/environment/ocean/seabed/FrSeabed.h>
+
+#include "frydom/environment/ocean/seabed/FrSeabed.h"
+
 
 namespace frydom{
 

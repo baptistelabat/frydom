@@ -13,8 +13,10 @@
 #ifndef FRYDOM_FRASSET_H
 #define FRYDOM_FRASSET_H
 
-#include <chrono/assets/ChAsset.h>
+#include "chrono/assets/ChAssetLevel.h"
+
 #include "frydom/core/body/FrBody.h"
+
 
 namespace frydom {
 
@@ -32,28 +34,37 @@ namespace frydom {
 
         };
 
-    }
+    }  // end namespace frydom::internal
 
     /**
      * \class FrAsset
      * \brief
      */
-    class FrAsset : public FrObject {
+    class FrAsset {
 
     protected:
         std::shared_ptr<internal::FrAssetBase_> m_chronoAsset;
-
-        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
 
     public:
 
         FrAsset();
 
+        virtual void Initialize() = 0;
+
         virtual void Update() = 0;
+
+        virtual void StepFinalize() = 0;
+
+    protected:
+        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+
+    private:
 
         friend void FrBody_::AddAsset(std::shared_ptr<FrAsset>);
     };
 
+
 }   // end namespace frydom
+
 
 #endif //FRYDOM_FRASSET_H

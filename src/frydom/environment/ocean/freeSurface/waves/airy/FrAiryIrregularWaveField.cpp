@@ -88,7 +88,7 @@ namespace frydom{
         SetMeanWaveDirectionAngle(dirAngle, RAD, fc, dc);
     }
 
-    void FrAiryIrregularWaveField::SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WaveDirectionalModelType dirType) {
+    void FrAiryIrregularWaveField::SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WAVE_DIRECTIONAL_MODEL dirType) {
         m_nbDir = nbDir;
         m_waveDirections.clear();
         switch (dirType) {

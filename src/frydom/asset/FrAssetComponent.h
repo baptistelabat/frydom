@@ -13,9 +13,15 @@
 #ifndef FRYDOM_FRASSETCOMPONENT_H
 #define FRYDOM_FRASSETCOMPONENT_H
 
-#include <chrono/assets/ChColorAsset.h>
-#include <chrono/assets/ChVisualization.h>
-#include "frydom/core/common/FrObject.h"
+#include "chrono/assets/ChColor.h"  // TODO : retirer et utiliser FrColor !!!
+
+
+// Forward declarations
+namespace chrono {
+    class ChColorAsset;
+    class ChVisualization;
+}
+
 
 namespace frydom {
 
@@ -23,7 +29,7 @@ namespace frydom {
      * \class FrAssetComponent
      * \brief Class the assets of all components (buoys, clump weights, etc.).
      */
-    class FrAssetComponent : public FrObject {
+    class FrAssetComponent {
 
         // FIXME : ne pas reposer sur les objets chrono !!!
 
@@ -39,10 +45,6 @@ namespace frydom {
         std::shared_ptr<chrono::ChVisualization> GetShapeAsset();
 
         chrono::ChColor GetColor();  // FIXME : pas de chrono !!!!
-
-        void Initialize() override;
-
-        void StepFinalize()override;
 
     };
 

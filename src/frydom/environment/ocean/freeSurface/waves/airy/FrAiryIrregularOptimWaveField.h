@@ -21,7 +21,7 @@ namespace frydom {
      * \class FrAiryIrregularOptimWaveField
      * \brief Class which deals with irregular wave field, from FrAiryIrregularWaveField.
      */
-    class FrAiryIrregularOptimWaveField : public FrAiryIrregularWaveField{
+    class FrAiryIrregularOptimWaveField : public FrAiryIrregularWaveField {
     private:
 
         std::vector<Complex> c_expJwt;    ///< Cache value of exp(-j.w_m.t) for the different w_m frequencies

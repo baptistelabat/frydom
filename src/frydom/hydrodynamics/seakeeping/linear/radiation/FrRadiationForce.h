@@ -14,8 +14,8 @@
 #define FRYDOM_FRRADIATIONFORCE_H
 
 
-#include "frydom/core/force/FrForce.h"
-#include "FrRadiationModel.h"
+//#include "frydom/core/force/FrForce.h"
+//#include "FrRadiationModel.h"
 
 namespace frydom {
 

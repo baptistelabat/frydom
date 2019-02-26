@@ -11,9 +11,10 @@
 
 #include "FrMooringBuoy.h"
 
-#include "frydom/core/body/FrBodyEasy.h"
+//#include "frydom/core/body/FrBodyEasy.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean_.h"
+
 #include "frydom/hydrodynamics/damping/FrLinearDamping.h"
 
 
@@ -59,9 +60,7 @@ namespace frydom {
     }
 
     void FrMooringBuoy::Update() {
-
         computeVolume();
-
     }
 
     double FrMooringBuoy::computeDraft() {

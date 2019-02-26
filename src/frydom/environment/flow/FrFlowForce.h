@@ -1,21 +1,21 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRFLOWFORCE_H
 #define FRYDOM_FRFLOWFORCE_H
 
-#include "MathUtils/Vector3d.h"
-#include "frydom/core/force/FrForce.h"
-#include "MathUtils/MathUtils.h"
+//#include "MathUtils/Vector3d.h"
+//#include "frydom/core/force/FrForce.h"
+//#include "MathUtils/MathUtils.h"
 
 namespace frydom {
 
@@ -86,6 +86,7 @@ namespace frydom {
     std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body);
 
     std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body);
+
 
 } // end of namespace frydom
 

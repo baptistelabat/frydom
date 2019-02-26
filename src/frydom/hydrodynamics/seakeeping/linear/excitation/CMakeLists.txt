@@ -1,7 +1,6 @@
 message(STATUS "    ...excitation")
 
 set(SRC_FILES
-        FrFroudeKrylov.cpp
         FrLinearExcitationForce.cpp
         )
 

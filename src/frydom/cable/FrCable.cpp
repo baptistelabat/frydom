@@ -12,6 +12,7 @@
 
 #include "FrCable.h"
 
+
 namespace frydom {
 
     FrCable_::FrCable_() = default;

@@ -10,16 +10,16 @@
 // ==========================================================================
 
 
-#include <cmath>
-
-#include "chrono/physics/ChBody.h"  // TODO : a retirer
+//#include <cmath>
+//
+////#include "chrono/physics/ChBody.h"  // TODO : a retirer
 
 #include "FrITTCResistance.h"
-//#include "frydom/core/FrOffshoreSystem.h"
-#include "frydom/environment/FrEnvironmentInc.h"
-//#include "frydom/environment/current/FrCurrent.h"
-#include "frydom/environment/flow/FrFlowBase.h"
-#include "frydom/core/body/FrBody.h"
+////#include "frydom/core/FrOffshoreSystem.h"
+//#include "frydom/environment/FrEnvironmentInc.h"
+////#include "frydom/environment/current/FrCurrent.h"
+//#include "frydom/environment/flow/FrFlowBase.h"
+//#include "frydom/core/body/FrBody.h"
 
 
 namespace frydom{

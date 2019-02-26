@@ -12,11 +12,11 @@
 
 #include "FrWind.h"
 
-#include "chrono/core/ChMatrixDynamic.h"  // TODO : voir pourquoi on est oblige d'inclure
-
-#include "frydom/core/common/FrFrame.h"
-
-#include "frydom/environment/atmosphere/FrAtmosphere_.h"
+//#include "chrono/core/ChMatrixDynamic.h"  // TODO : voir pourquoi on est oblige d'inclure
+//
+//#include "frydom/core/common/FrFrame.h"
+//
+//#include "frydom/environment/atmosphere/FrAtmosphere_.h"
 
 
 namespace frydom {

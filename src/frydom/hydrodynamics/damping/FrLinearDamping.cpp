@@ -10,14 +10,12 @@
 // ==========================================================================
 
 
-#include "MathUtils/Vector6d.h"
+//#include "MathUtils/Vector6d.h"
 
-#include <frydom/core/junk/FrHydroBody.h> // TODO : Doit dirsparaitre
 #include "FrLinearDamping.h"
-#include "chrono/physics/ChBody.h" // TODO : Doit disparaitre
-#include "frydom/core/common/FrException.h"
-
-#include "frydom/environment/FrEnvironmentInc.h"
+//#include "frydom/core/common/FrException.h"
+//
+//#include "frydom/environment/FrEnvironmentInc.h"
 
 
 namespace frydom {

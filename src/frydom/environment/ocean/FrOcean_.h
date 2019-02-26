@@ -13,10 +13,14 @@
 #ifndef FRYDOM_FROCEAN_H
 #define FRYDOM_FROCEAN_H
 
-#include "frydom/environment/FrFluidType.h"
-#include "frydom/core/math/FrVector.h"
+#include <memory>
+
+#include "frydom/core/common/FrConvention.h"
+
+//#include "frydom/environment/FrFluidType.h"
+//#include "frydom/core/math/FrVector.h"
 #include "frydom/core/common/FrObject.h"
-#include "frydom/asset/FrGridAsset.h"
+//#include "frydom/asset/FrGridAsset.h"
 
 namespace frydom {
 
@@ -25,13 +29,14 @@ namespace frydom {
     class FrFreeSurface_;
     class FrCurrent_;
     class FrSeabed_;
+    class FrFluidProperties;
 
 
     /**
      * \class FrOcean_
      * \brief Class for defining the ocean.
      */
-    class FrOcean_ : public FrObject{
+    class FrOcean_ : public FrObject {
 
     private:
 

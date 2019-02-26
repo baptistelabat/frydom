@@ -13,8 +13,17 @@
 #ifndef FR_FREE_SURFACE_H
 #define FR_FREE_SURFACE_H
 
+#include <memory>
+
+#include "MathUtils/Unit.h"
+
 #include "frydom/core/common/FrObject.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
+
+#include "frydom/core/common/FrConvention.h"
+#include "frydom/core/math/FrVector.h"
+
+
+//#include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 
 
 namespace frydom {
@@ -25,6 +34,7 @@ namespace frydom {
     class FrEnvironment_;
     class FrAtmosphere_;
     class FrOcean_;
+    class FrWaveField_;
     class FrTidal_;
     class FrBody_;
     class FrAiryRegularWaveField;
@@ -138,7 +148,7 @@ namespace frydom {
         /// \param dc direction convention (GOTO/COMEFROM)
         /// \return Airy regular wave field
         FrAiryRegularWaveField* SetAiryRegularWaveField(double waveHeight, double wavePeriod, double waveDirAngle,
-                                                        ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+                                                        mathutils::ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
         /// Set the wave field model to an Airy regular wave field
         /// \param waveHeight wave height
@@ -163,7 +173,7 @@ namespace frydom {
         /// \param dc direction convention (GOTO/COMEFROM)
         /// \return Airy regular wave field
         FrAiryRegularOptimWaveField* SetAiryRegularOptimWaveField(double waveHeight, double wavePeriod, double waveDirAngle,
-                                                        ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
+                                                                  mathutils::ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc);
 
         /// Set the wave field model to an Airy regular wave field optimized
         /// \param waveHeight wave height

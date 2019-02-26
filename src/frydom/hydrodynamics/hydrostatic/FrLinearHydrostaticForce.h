@@ -14,14 +14,13 @@
 #define FRYDOM_FRLINEARHYDROSTATICFORCE_H
 
 // FIXME: attention, on a d'autres fichiers FrHydrostaticForce.h et .cpp
-#include "chrono/physics/ChBody.h"
-#include <frydom/core/force/FrForce.h>
-#include <frydom/core/junk/FrHydroBody.h>
-#include "FrLinearHydrostaticStiffnessMatrix.h"
+//#include "chrono/physics/ChBody.h"
+//#include <frydom/core/force/FrForce.h>
+//#include "FrLinearHydrostaticStiffnessMatrix.h"
 
 // <<<<<<<<<<<<<<<<<<< Additional include from refactoring
 
-#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
+//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 
 // <<<<<<<<<<<<<<<<<<
 

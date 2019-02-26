@@ -15,7 +15,6 @@
 
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
 
-
 namespace frydom {
 
     //Forward Declaration

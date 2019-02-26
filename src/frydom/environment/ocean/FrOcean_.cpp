@@ -14,14 +14,16 @@
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
-
+//
 #include "freeSurface/FrFreeSurface.h"
 #include "seabed/FrSeabed.h"
-
-#include "frydom/asset/FrSeabedGridAsset.h"
-#include "frydom/asset/FrFreeSurfaceGridAsset.h"
-
+//
+//#include "frydom/asset/FrSeabedGridAsset.h"
+//#include "frydom/asset/FrFreeSurfaceGridAsset.h"
+//
 #include "current/FrCurrent.h"
+
+#include "frydom/environment/FrFluidType.h"
 
 
 namespace frydom{

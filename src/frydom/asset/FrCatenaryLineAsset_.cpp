@@ -12,7 +12,13 @@
 
 #include "FrCatenaryLineAsset_.h"
 
+#include "chrono/assets/ChColor.h"
+#include "chrono/assets/ChLineShape.h"
+
 #include "frydom/cable/FrCatenaryLine.h"
+#include "frydom/core/common/FrNode.h"
+
+
 
 namespace frydom{
 

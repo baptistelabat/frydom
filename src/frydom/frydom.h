@@ -25,7 +25,7 @@
 #include "environment/FrEnvironmentInc.h"
 #include "frydom/hydrodynamics/FrHydrodynamicsInc.h"
 #include "cable/FrCableInc.h"
-#include "IO/FrIO.h"  // TODO: pour respecter le nommage, paser le repertoire IO en io
+#include "frydom/IO/FrIOInc.h"  // TODO: pour respecter le nommage, paser le repertoire IO en io
 #include "mesh/FrMeshInc.h"
 #include "utils/FrIrrApp.h"
 #include "asset/FrAssetInc.h"

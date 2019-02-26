@@ -75,7 +75,7 @@ namespace frydom {
         EvalCs();
     }
 
-    WaveDirectionalModelType FrCos2sDirectionalModel_::GetType() const { return COS2S; }
+    WAVE_DIRECTIONAL_MODEL FrCos2sDirectionalModel_::GetType() const { return COS2S; }
 
     double FrCos2sDirectionalModel_::GetSpreadingFactor() const { return m_spreading_factor; }
 
@@ -98,7 +98,7 @@ namespace frydom {
     // =================================================================================================================
     // FrTestDirectionalModel_ descriptions
 
-    WaveDirectionalModelType FrTestDirectionalModel_::GetType() const { return DIRTEST; }
+    WAVE_DIRECTIONAL_MODEL FrTestDirectionalModel_::GetType() const { return DIRTEST; }
 
     double FrTestDirectionalModel_::Eval(double theta, double theta_mean) const {
         return 1.;
@@ -117,7 +117,7 @@ namespace frydom {
         m_directional_model = std::make_unique<FrCos2sDirectionalModel_>(spreadingFactor);
     }
 
-    void FrWaveSpectrum_::SetDirectionalModel(WaveDirectionalModelType model) {
+    void FrWaveSpectrum_::SetDirectionalModel(WAVE_DIRECTIONAL_MODEL model) {
         switch (model) {
             case NONE:
                 DirectionalOFF();
@@ -141,7 +141,7 @@ namespace frydom {
         return m_directional_model.get();
     }
 
-    void FrWaveSpectrum_::DirectionalON(WaveDirectionalModelType model) {
+    void FrWaveSpectrum_::DirectionalON(WAVE_DIRECTIONAL_MODEL model) {
         SetDirectionalModel(model);
     }
 

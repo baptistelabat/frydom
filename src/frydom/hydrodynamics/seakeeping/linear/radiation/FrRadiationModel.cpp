@@ -12,11 +12,11 @@
 
 #include "FrRadiationModel.h"
 
-#include "FrRadiationForce.h"
-
-/// <<<<<<<<<<<<<<<<<<<<<< Refactoring
-
-#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+//#include "FrRadiationForce.h"
+//
+///// <<<<<<<<<<<<<<<<<<<<<< Refactoring
+//
+//#include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 
 namespace frydom {
 

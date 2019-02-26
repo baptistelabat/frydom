@@ -1,38 +1,30 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRGEOGRAPHICSERVICES_H
 #define FRYDOM_FRGEOGRAPHICSERVICES_H
 
-#include <memory>
+//#include <memory>
 #include "frydom/core/common/FrConvention.h"
 
 // GeographicLib includes
 #include "GeographicLib/LocalCartesian.hpp"
-#include "GeographicLib/MagneticModel.hpp"
-
-
-
-//namespace GeographicLib {
-//    class LocalCartesian;
-//    class MagneticModel;
-//}
+////#include "GagneticModel.hpp"
 
 namespace frydom {
 
     //Forward Declaration
     class Position;
 
-    /// Class defining geographic coordinates : (latitude, longitude and height).
     /**
      * \class FrGeographicCoord
      * \brief Class defining geographic coordinates : (latitude, longitude and height).
@@ -71,14 +63,16 @@ namespace frydom {
     };
 
 
-    /// FrGeographicServices is a service providing convert methods between geographic coordinates and cartesian positions.
-    /// It can also compute the magnetic declination of a position given either in geographic or cartesian coordinates.
-    /// In GeographicServices, the cartesian reference frame depends on the frame convention given (NED/NWU).
-    /// In GeographicLib, the cartesian coordinates is defined as ENU (x=East, y= North, z=Up).
 
     /**
      * \class FrGeographicServices
      * \brief Class to provide convert methods between geographic coordinates and Cartesian positions.
+     *
+     * FrGeographicServices is a service providing convert methods between geographic coordinates and cartesian positions.
+     * It can also compute the magnetic declination of a position given either in geographic or cartesian coordinates.
+     * In GeographicServices, the cartesian reference frame depends on the frame convention given (NED/NWU).
+     * In GeographicLib, the cartesian coordinates is defined as ENU (x=East, y= North, z=Up).
+     *
      */
     class FrGeographicServices {
 
@@ -202,5 +196,8 @@ namespace frydom {
 
     };
 
+
 } // end namespace frydom
+
+
 #endif //FRYDOM_FRGEOGRAPHICSERVICES_H

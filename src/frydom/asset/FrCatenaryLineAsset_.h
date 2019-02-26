@@ -75,6 +75,6 @@ namespace frydom {
     };
 
 
-}//end namespace frydom
+}  //end namespace frydom
 
 #endif //FRYDOM_FRCATENARYLINEASSET_H

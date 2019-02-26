@@ -12,11 +12,16 @@
 
 #include "FrAssetBuoy.h"
 
+// FIXME : include a suivre a faire disparaitre..
+#include "chrono/core/ChVector.h"
+#include "chrono/assets/ChColorAsset.h"
+#include "chrono/assets/ChSphereShape.h"
+
 
 namespace frydom {
 
 
-    FrAssetBuoy::FrAssetBuoy(chrono::ChVector<> mPos, double mRadius, chrono::ChColor mColor) {
+    FrAssetBuoy::FrAssetBuoy(chrono::ChVector<double> mPos, double mRadius, chrono::ChColor mColor) {
         chrono::geometry::ChSphere msphere(mPos, mRadius);
         m_shape = std::make_shared<chrono::ChSphereShape>(msphere);
         m_color = std::make_shared<chrono::ChColorAsset>(mColor);
@@ -31,4 +36,6 @@ namespace frydom {
     void FrAssetBuoy::SetColorAsset(std::shared_ptr<chrono::ChColorAsset> color) {m_color = color;}
 
     void FrAssetBuoy::SetShapeAsset(std::shared_ptr<chrono::ChSphereShape> shape) {m_shape = shape;}
+
+
 }  // end namespace frydom

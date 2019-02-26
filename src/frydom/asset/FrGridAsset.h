@@ -1,25 +1,29 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRGRIDASSET_H
 #define FRYDOM_FRGRIDASSET_H
 
-#include <chrono/assets/ChAssetLevel.h>
-#include "chrono/assets/ChTriangleMeshShape.h"
-#include "chrono/assets/ChColorAsset.h"
+//#include <chrono/assets/ChAssetLevel.h>
+//#include "chrono/assets/ChTriangleMeshShape.h"
+//#include "chrono/assets/ChColorAsset.h"
+//
+//#include "frydom/core/common/FrObject.h"
 
-#include "frydom/core/common/FrObject.h"
+
+
 #include "frydom/asset/FrAsset.h"
 #include "frydom/core/misc/FrColors.h"
+
 
 namespace frydom {
 

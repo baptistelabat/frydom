@@ -13,20 +13,21 @@
 #ifndef FRYDOM_FRFLOWBASE_H
 #define FRYDOM_FRFLOWBASE_H
 
+
+#include <memory>
+
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/math/FrVector.h"
-#include "FrFieldBase.h"
-#include "FrUniformField.h"
+#include "frydom/core/common/FrConvention.h"
+//#include "FrFieldBase.h"
+#include "FrUniformField.h"  // TODO : enlever et utiliser du virtual copy constructor
 
 namespace frydom {
 
     // Forward declarations
     class FrEnvironment_;
     class FrFrame_;
-
-    ///
-    /// FrFlowBase : Base flow field
-    ///
+    class FrFieldBase;
 
     /**
      * \class FrFlowBase
@@ -36,10 +37,11 @@ namespace frydom {
 
     private:
         std::unique_ptr<FrFieldBase> m_field;        ///< Flow field model
+
     protected:
         double m_time = 0.;
-
         double c_ramp=1.;   ///> cache value of the time ramp applied on the flow field
+
     public:
 
         /// Default constructor

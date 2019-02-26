@@ -16,9 +16,9 @@
 
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/physics/ChSystemNSC.h"
-
+//
 #include "frydom/core/common/FrObject.h"
-#include "frydom/utils/FrIrrApp.h"
+//#include "frydom/utils/FrIrrApp.h"
 
 
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:

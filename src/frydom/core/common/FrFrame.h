@@ -13,10 +13,13 @@
 #ifndef FRYDOM_FRFRAME_H
 #define FRYDOM_FRFRAME_H
 
-#include "chrono/core/ChMatrixDynamic.h"
+//#include "chrono/core/ChMatrixDynamic.h"
+
+
 #include "chrono/core/ChFrame.h"
 
 #include "frydom/core/math/FrVector.h"
+#include "frydom/core/math/FrEulerAngles.h"
 #include "FrRotation.h"
 
 
@@ -39,7 +42,7 @@ namespace frydom {
     class FrFrame_ {
 
     private:
-
+        // TODO : wrapper ChFrame avec un FrFrameBase en internal !!
         chrono::ChFrame<double> m_chronoFrame;   ///< Chrono objects are always stored in NWU frame convention
 
     public:
