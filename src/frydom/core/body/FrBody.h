@@ -132,6 +132,9 @@ namespace frydom {
         /// \param state true if body is fixed, false otherwise
         void SetFixedInWorld(bool state);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "Body"; }
 
         // =============================================================================================================
         // LOGGING

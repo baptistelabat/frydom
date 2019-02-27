@@ -58,6 +58,10 @@ namespace frydom {
 
     public:
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "RadiationConvolutionForce"; }
+
         explicit FrRadiationConvolutionForce(FrRadiationConvolutionModel* radiationModel);
 
         void Initialize() override;

@@ -38,6 +38,10 @@ namespace frydom {
         /// \param atmosphere containing this wind model
         explicit FrWind(FrAtmosphere* atmosphere) : FrFlowBase() { m_atmosphere = atmosphere;}
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "Wind"; }
+
         /// Get the atmosphere containing this wind model
         /// \return atmosphere containing this wind model
         FrAtmosphere* GetAtmosphere() const {return m_atmosphere;}

@@ -59,6 +59,10 @@ namespace frydom {
         /// \param body body to which the node belongs
         explicit FrNode(FrBody* body);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "Node"; }
+
 
         /// Set node position and direction axis, with respect to body reference frame
         /// \param pos relative position of the frame node with respect to body reference frame

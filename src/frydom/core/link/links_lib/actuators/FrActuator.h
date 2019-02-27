@@ -59,6 +59,8 @@ namespace frydom {
         /// be not active either because disabled, or broken, or not valid)
         virtual bool IsActive() const override;
 
+        std::string GetTypeName() const override { return "Actuator"; }
+
 
 
     protected:

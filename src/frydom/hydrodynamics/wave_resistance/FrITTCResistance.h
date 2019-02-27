@@ -53,6 +53,10 @@ namespace frydom {
                          double ca = 0., double caa=0., double capp=0.) :
             m_Lpp(Lpp), m_hullWetSurface(hullWetSurface), m_k(k), m_cr(cr), m_ca(ca), m_caa(caa), m_capp(capp) {}
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "ITTCResistance"; }
+
         /// Set the length between perpendicular of the ship
         /// \param Lpp Length between perpendicular (m)
         void SetLpp(double Lpp) { m_Lpp = Lpp; }

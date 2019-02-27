@@ -40,6 +40,10 @@ namespace frydom {
 
         explicit FrWaveDriftForce(std::shared_ptr<FrHydroDB> hdb);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "WaveDriftForce"; }
+
         void Initialize() override;
 
         void Update(double time) override;

@@ -248,6 +248,10 @@ namespace frydom {
         /// Destructor
         ~FrOffshoreSystem();
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "OffshoreSystem"; }
+
         /// Add an item (body, link, etc.) to the offshore sytem
         /// \param item item to be added to the offshore system
         void Add(std::shared_ptr<FrObject> item); // TODO : faire des dynamic_pointer_cast sur les classes pouvant etre ajoutees...

@@ -27,7 +27,13 @@ namespace frydom {
         class FrSphereNonLinearHydrostaticForce : public FrForce {
 
         public:
+
+            /// Get the type name of this object
+            /// \return type name of this object
+            std::string GetTypeName() const override { return "SphereNonLinearHydrostaticForce"; }
+
             void Update(double time) override;
+
             void StepFinalize() override {
                 FrForce::StepFinalize();
             }
@@ -41,7 +47,11 @@ namespace frydom {
 
     public:
 
-        FrMooringBuoy(double radius, double mass, bool visual_asset = true, double damping=0);;
+        FrMooringBuoy(double radius, double mass, bool visual_asset = true, double damping=0);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "MooringBuoy"; }
 
         double GetVolume() {return c_volume;}
 

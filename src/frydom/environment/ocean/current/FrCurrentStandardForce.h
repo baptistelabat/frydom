@@ -39,6 +39,10 @@ namespace frydom {
 
         FrCurrentStandardForce_() = default;
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "CurrentStandardForce"; }
+
         void SetMaximumBreadth(double breadth);
 
         double GetMaximumBreadth() const { return m_breadth; }

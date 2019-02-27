@@ -107,6 +107,10 @@ namespace frydom {
 
         FrBody* GetBody() const;
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "Force"; }
+
         // Logging
 
         /// Initialize the log

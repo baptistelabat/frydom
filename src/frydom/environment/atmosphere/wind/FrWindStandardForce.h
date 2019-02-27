@@ -37,6 +37,10 @@ namespace frydom {
 
         FrWindStandardForce_();
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "WindStandardForce"; }
+
         void SetLateralArea(double lateralArea);
 
         double GetLateralArea() const { return m_lateralArea; }

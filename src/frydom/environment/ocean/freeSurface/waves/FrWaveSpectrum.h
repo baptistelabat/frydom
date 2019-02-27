@@ -316,6 +316,10 @@ namespace frydom {
         /// \param gamma gamma factor of the Jonswap spectrum
         FrJonswapWaveSpectrum(double hs, double tp, double gamma); // TODO : virer le FREQUENCY_UNIT, on passe des secondes quoi qu'il arrive
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "JonswapWaveSpectrum"; }
+
         /// Check that the gamma factor is correctly defined between 1. and 10.
         void CheckGamma();
 
@@ -357,6 +361,10 @@ namespace frydom {
         /// \param tp peak frequency
         FrPiersonMoskowitzWaveSpectrum(double hs, double tp);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "PiersonMoskowitzWaveSpectrum"; }
+
         /// Eval the spectrum at one frequency
         /// \param w circular frequency for which the wave spectrum is evaluated
         /// \return evaluation of the wave spectrum
@@ -370,6 +378,10 @@ namespace frydom {
     class FrTestWaveSpectrum : public FrWaveSpectrum {
     public:
         FrTestWaveSpectrum() = default;
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "TestWaveSpectrum"; }
         double Eval(double w) const final;
 
     };

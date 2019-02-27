@@ -41,6 +41,10 @@ namespace frydom {
         /// \param yamlFile Name of the YAML file containing the polar coefficients
         explicit FrFlowForce(const std::string& yamlFile);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "FlowForce"; }
+
         /// Extract polar coeffients from YAML table
         /// \param yamlFile Name of the YAML file containing the polar coefficients
         void ReadTable(const std::string& yamlFile);
@@ -66,6 +70,11 @@ namespace frydom {
 
 
     public:
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "CurrentForce"; }
+
         explicit FrCurrentForce2_(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
 
         void Update(double time) override;
@@ -79,6 +88,11 @@ namespace frydom {
     class FrWindForce2_ : public FrFlowForce {
 
     public:
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "WindForce"; }
+
         explicit FrWindForce2_(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
 
         void Update(double time) override;

@@ -68,6 +68,10 @@ namespace frydom {
         /// Default destructor
         ~FrFreeSurface();
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "FreeSurface"; }
+
         //---------------------------- Asset ----------------------------//
 
         /// Set if the free surface is to be shown/exist

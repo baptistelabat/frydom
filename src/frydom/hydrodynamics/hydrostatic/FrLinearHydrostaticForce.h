@@ -48,6 +48,10 @@ namespace frydom {
         /// Constructor.
         explicit FrLinearHydrostaticForce(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) { }
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "LinearHydrostaticForce"; }
+
         /// Get the stiffness matrix of the hydrostatic force
         /// \return Hydrostatic stiffness matrix
         FrLinearHydrostaticStiffnessMatrix* GetStiffnessMatrix() { return &m_stiffnessMatrix; }

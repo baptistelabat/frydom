@@ -39,6 +39,10 @@ namespace frydom {
             /// Default constructor: No field
             FrUniformField() = default;
 
+            /// Get the type name of this object
+            /// \return type name of this object
+            std::string GetTypeName() const override { return "UniformField"; }
+
             /// Definition of the uniform field from flux vector
             /// \param velocity Flux vector of the field
             /// \param fc Frame convention (NED/NWU)

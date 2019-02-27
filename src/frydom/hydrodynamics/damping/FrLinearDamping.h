@@ -42,6 +42,10 @@ namespace frydom {
 
         FrLinearDamping(FLUID_TYPE ft, bool relativeToFluid);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "LinearDamping"; }
+
         void SetNull();
 
         /// Setter for the whole damping matrix. Translations are upper left and rotations are lower right.

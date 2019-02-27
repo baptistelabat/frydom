@@ -58,6 +58,10 @@ namespace frydom {
         /// It automatically adds the link to the system
         FrRevoluteLink(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "RevoluteLink"; }
+
         /// Set the spring and damper coefficients
         void SetSpringDamper(double stiffness, double damping);
 

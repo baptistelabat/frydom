@@ -28,6 +28,8 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "SaturateFunction"; }
+
     protected:
         void Eval(double x) const;
 

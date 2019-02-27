@@ -31,6 +31,10 @@ namespace frydom {
     public:
         explicit FrAiryRegularOptimWaveField(FrFreeSurface* freeSurface);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "AiryRegularOptimWaveField"; }
+
         /// Get the complex wave elevation at the position (x,y,0), of the regular Airy wave field
         /// \param x x position
         /// \param y y position

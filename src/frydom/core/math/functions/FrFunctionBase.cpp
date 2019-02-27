@@ -183,8 +183,8 @@ namespace frydom {
         return FrMulFunction(*this, other);
     }
 
-    FrdivFunction FrFunctionBase::operator/(const FrFunctionBase& other) {
-        return FrdivFunction(*this, other);
+    FrDivFunction FrFunctionBase::operator/(const FrFunctionBase& other) {
+        return FrDivFunction(*this, other);
     }
 
     FrCompFunction FrFunctionBase::operator<<(const FrFunctionBase& other) {
@@ -198,8 +198,8 @@ namespace frydom {
         return FrMulFunction(*this, FrConstantFunction(alpha));
     }
 
-    FrdivFunction FrFunctionBase::operator/(double alpha) {
-        return FrdivFunction(*this, FrConstantFunction(alpha));
+    FrDivFunction FrFunctionBase::operator/(double alpha) {
+        return FrDivFunction(*this, FrConstantFunction(alpha));
     }
 
     FrAddFunction FrFunctionBase::operator+(double alpha) {
@@ -223,7 +223,7 @@ namespace frydom {
     }
 
     void FrFunctionBase::operator/=(const FrFunctionBase& other) {
-        m_function = FrdivFunction(*m_function, other).Clone();
+        m_function = FrDivFunction(*m_function, other).Clone();
     }
 
     void FrFunctionBase::operator+=(double alpha) {
@@ -239,7 +239,7 @@ namespace frydom {
     }
 
     void FrFunctionBase::operator/=(double alpha) {
-        m_function = FrdivFunction(*m_function, FrConstantFunction(alpha)).Clone();
+        m_function = FrDivFunction(*m_function, FrConstantFunction(alpha)).Clone();
     }
 
     FrAddFunction operator+(double alpha, const FrFunctionBase& function) {
@@ -254,8 +254,8 @@ namespace frydom {
         return FrMulFunction(FrConstantFunction(alpha), function);
     }
 
-    FrdivFunction operator/(double alpha, const FrFunctionBase& function) {
-        return FrdivFunction(FrConstantFunction(alpha), function);
+    FrDivFunction operator/(double alpha, const FrFunctionBase& function) {
+        return FrDivFunction(FrConstantFunction(alpha), function);
     }
 
 
@@ -474,21 +474,21 @@ namespace frydom {
         c_y_dxdx = u_dxdx*v + 2.*u_dx*v_dx + v_dxdx*u;
     }
 
-    FrdivFunction::FrdivFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
+    FrDivFunction::FrDivFunction(const FrFunctionBase &f1, const FrFunctionBase &f2) : FrBinaryOpFunction(f1, f2) {}
 
-    FrdivFunction::FrdivFunction(const FrdivFunction &other) : FrBinaryOpFunction(other) {}
+    FrDivFunction::FrDivFunction(const FrDivFunction &other) : FrBinaryOpFunction(other) {}
 
-    FrdivFunction *FrdivFunction::Clone() const {
-        return new FrdivFunction(*this);
+    FrDivFunction *FrDivFunction::Clone() const {
+        return new FrDivFunction(*this);
     }
 
-    std::string FrdivFunction::GetRepr() const {
+    std::string FrDivFunction::GetRepr() const {
         fmt::MemoryWriter mw;
         mw << m_function->GetRepr() << " / " << m_rightFunction->GetRepr();
         return mw.str();
     }
 
-    void FrdivFunction::Eval(double x) const {
+    void FrDivFunction::Eval(double x) const {
         if (IsEval(x)) return;
 
         c_x = x;

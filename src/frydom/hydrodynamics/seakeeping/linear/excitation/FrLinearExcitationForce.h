@@ -51,6 +51,10 @@ namespace frydom {
 
         explicit FrLinearExcitationForce(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) {};
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "LinearExcitationForce"; }
+
         void Initialize() override;
 
         void Update(double time) override;

@@ -216,6 +216,10 @@ namespace frydom {
         FrEqFrameSpringDamping_(const FrFrame& otherFrame, FrBody* body,
                                 double T0, double psi);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "EqFrameSpringDamping"; }
+
         /// Set the spring-damping parameters
         /// \param T0 Cutoff time period
         /// \param psi Damping ratio
@@ -305,6 +309,10 @@ namespace frydom {
         /// \param timePersistence Time windows for the mean velocity computation
         /// \param timeStep Time step for the recorder
         FrEqFrameMeanMotion_(const FrFrame &otherFrame, FrBody* body, double timePersistence, double timeStep);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "EqFrameMeanMotion"; }
 
         void SetPositionCorrection(double timePersistence, double timeStep, double posCoeff, double angleCoeff);
 

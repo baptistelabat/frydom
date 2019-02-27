@@ -59,6 +59,10 @@ namespace frydom {
         /// \param freeSurface pointer to the free surface, to which the wave field belongs
         explicit FrAiryIrregularWaveField(FrFreeSurface* freeSurface);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "AiryIrregularWaveField"; }
+
         /// Set the wave frequencies, ie frequency discretization
         /// \param minFreq minimum frequency
         /// \param maxFreq maximum frequency

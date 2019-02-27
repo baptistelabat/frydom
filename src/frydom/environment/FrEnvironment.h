@@ -73,6 +73,10 @@ namespace frydom {
         /// \return offshore system
         FrOffshoreSystem* GetSystem();
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "Environment"; }
+
         //---------------------------- Environment scalars methods ----------------------------//
 
         /// Get the simulation time (given by Chrono)

@@ -47,6 +47,10 @@ namespace frydom {
 
         FrQuadraticDamping(FLUID_TYPE ft, bool relativeToFluid);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "QuadraticDamping"; }
+
         /// Setter for the damping coefficients.
         void SetDampingCoefficients(double Cu, double Cv, double Cw);
 

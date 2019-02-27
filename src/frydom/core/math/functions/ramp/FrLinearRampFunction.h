@@ -58,6 +58,8 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "LinearRampFunction"; }
+
     protected:
         void Eval(double x) const override;
 

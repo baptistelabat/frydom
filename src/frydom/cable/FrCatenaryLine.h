@@ -114,6 +114,10 @@ namespace frydom {
                         FLUID_TYPE fluid
         );
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "CatenaryLine"; }
+
         //--------------------------------------------------------------------------------------------------------------
         // Asset
         /// Get the catenary line asset, created at the initialization of the catenary line (don't try to get it before initializing the line)

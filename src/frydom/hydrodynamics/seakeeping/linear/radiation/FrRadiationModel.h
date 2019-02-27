@@ -54,6 +54,10 @@ namespace frydom {
 
         explicit FrRadiationModel(std::shared_ptr<FrHydroDB> HDB);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "RadiationModel"; }
+
         FrHydroDB* GetHydroDB() const { return m_HDB.get(); }
 
         Force GetRadiationForce(FrBEMBody* BEMBody) const;
@@ -92,6 +96,10 @@ namespace frydom {
 
         // Constructor.
         FrRadiationConvolutionModel(std::shared_ptr<FrHydroDB> HDB);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "RadiationConvolutionModel"; }
 
         void Initialize() override;
 

@@ -44,8 +44,6 @@ namespace frydom {
 
         FRAME_CONVENTION c_logFrameConvention; // from LogManager
 
-        std::string m_typeName;
-
         std::unique_ptr<hermes::Message> m_message;
 
     public:
@@ -65,7 +63,7 @@ namespace frydom {
 
         std::string GetShortenUUID() const { return m_UUID.substr(0,5); };
 
-        std::string GetTypeName() const { return m_typeName; }
+        virtual std::string GetTypeName() const = 0;
 
         /// Base method for Initialization of FryDoM objects
         ///

@@ -57,6 +57,10 @@ namespace frydom {
         /// \return environment containing this ocean
         FrEnvironment* GetEnvironment() const;
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "Ocean"; }
+
         //---------------------------- Assets ----------------------------//
 
         /// Set if the seabed is to be shown/exist

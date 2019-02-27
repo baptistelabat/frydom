@@ -42,6 +42,10 @@ namespace frydom {
         explicit FrMorisonForce(std::shared_ptr<FrMorisonElement> model)
             : m_model(model) { }
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "MorisonForce"; }
+
         FrMorisonSingleElement* SetSingleElementModel(FrBody* body);
 
         FrMorisonCompositeElement* SetCompositeElementModel(FrBody* body);
