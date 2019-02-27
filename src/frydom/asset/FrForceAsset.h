@@ -27,7 +27,7 @@ namespace frydom {
 
 
     /**
-     * \class FrForceAsset_
+     * \class FrForceAsset
      * \brief Class to display the loads.
      */
     class FrForceAsset : public FrAsset {

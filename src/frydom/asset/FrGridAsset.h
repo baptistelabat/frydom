@@ -25,7 +25,7 @@ namespace frydom {
     class FrBody;
 
     /**
-     * \class FrFreeSurfaceGridAsset
+     * \class FrGridAsset
      * \brief Class to display the different types of grids (free surface, seabed).
      */
 

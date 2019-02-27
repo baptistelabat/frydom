@@ -84,7 +84,7 @@ namespace frydom {
 
     /// Main class for a FRyDoM rigid body
     /**
-     * \class FrBody_
+     * \class FrBody
      * \brief Class for defining a body.
      */
     class FrBody : public FrObject {

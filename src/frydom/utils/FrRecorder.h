@@ -22,7 +22,7 @@
 namespace frydom {
 
     /**
-     * \class FrTimeRecorder_
+     * \class FrTimeRecorder
      * \brief Class for recording the time.
      */
     template <class T>

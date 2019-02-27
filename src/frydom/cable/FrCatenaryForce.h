@@ -19,7 +19,7 @@
 namespace frydom {
 
     /**
-     * \class FrCatenaryForce_ FrCatenaryForce.h
+     * \class FrCatenaryForce FrCatenaryForce.h
      * \brief Class for getting the tension from the catenary line, subclass of FrForce_.
      * This class get the tension computed by the catenary line class, to the body on which the force is applied.
      * A differenciation is done on which side of the cable (starting or ending), the force is applied.

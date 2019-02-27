@@ -27,7 +27,7 @@ namespace frydom {
     class FrLinearRampFunction;
 
     /**
-     * \class FrWaveField_
+     * \class FrWaveField
      * \brief Class for defining a wave field (null or linear).
      */
     class FrWaveField : public FrObject {
@@ -172,7 +172,7 @@ namespace frydom {
 
 
     /**
-     * \class FrNullWaveField_
+     * \class FrNullWaveField
      * \brief Class for defining a null wave field.
      */
     class FrNullWaveField : public FrWaveField {

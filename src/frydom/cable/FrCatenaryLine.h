@@ -32,7 +32,7 @@ namespace frydom {
     class FrNode;
 
     /**
-     * \class FrCatenaryLine_ FrCatenaryLine.h
+     * \class FrCatenaryLine FrCatenaryLine.h
      * \brief Class for catenary line objects, subclass of FrCable_
      * The catenary line can be specified elastic or not. However be careful not to stretch the line if it has been
      * defined as non elastic. Only an elastic line can be stretched !

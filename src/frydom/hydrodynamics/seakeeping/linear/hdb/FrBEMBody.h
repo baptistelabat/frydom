@@ -97,7 +97,7 @@ namespace frydom {
     };
 
     /**
-     * \class FrBEMBody_
+     * \class FrBEMBody
      * \brief Class for defining a body subject to hydrodynamic loads using a BEM solver.
      */
     class FrBEMBody {

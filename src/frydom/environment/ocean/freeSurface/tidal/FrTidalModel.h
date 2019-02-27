@@ -72,7 +72,7 @@ namespace frydom {
     class FrFreeSurface;
 
     /**
-     * \class FrTidal_
+     * \class FrTidal
      * \brief Class for defining tidals.
      */
     class FrTidal : public FrObject {

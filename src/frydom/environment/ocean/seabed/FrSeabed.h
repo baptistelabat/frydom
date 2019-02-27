@@ -24,7 +24,7 @@ namespace frydom {
     class FrSeabedGridAsset;
 
     /**
-     * \class FrSeabed_
+     * \class FrSeabed
      * \brief Class for defining a seabed with either a finite or infinite water depth.
      */
     class FrSeabed  : public FrObject {

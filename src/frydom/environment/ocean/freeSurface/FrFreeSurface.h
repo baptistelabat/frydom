@@ -42,7 +42,7 @@ namespace frydom {
 
     /// Class for a free surface system.
     /**
-     * \class FrFreeSurface_
+     * \class FrFreeSurface
      * \brief Class for defining the free surface.
      */
     class FrFreeSurface : public FrObject {

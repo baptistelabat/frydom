@@ -26,7 +26,7 @@ namespace frydom {
 
 
     /**
-     * \class FrEquilibriumFrame_
+     * \class FrEquilibriumFrame
      * \brief This class defines a generic equilibrium frame linked with a body.
      *
      * The equilibrium frame is a frame with the z-axis pointing upward, internal
@@ -161,7 +161,7 @@ namespace frydom {
 
 
     /**
-     * \class FrEqFrameSpringDamping_
+     * \class FrEqFrameSpringDamping
      * \brief This class defines an equilibrium frame with a spring-damping system.
      *
      * The velocity of the equilibrium frame is solution of a dynamic equation with spring
@@ -255,7 +255,7 @@ namespace frydom {
     class FrTimeRecorder;
 
     /**
-     * \class FrEqFrameMeanMotion_
+     * \class FrEqFrameMeanMotion
      * \brief This class defines an equilibrium frame with a velocity equal to the mean motion of a body.
      *
      * The velocity of the frame is equal to the mean value of the body velocity

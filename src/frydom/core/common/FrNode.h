@@ -43,7 +43,7 @@ namespace frydom {
     class FrBody;
 
     /**
-     * \class FrNode_
+     * \class FrNode
      * \brief Class for defining nodes (in order to add links).
      */
     class FrNode : public FrObject {

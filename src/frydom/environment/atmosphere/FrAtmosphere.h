@@ -28,7 +28,7 @@ namespace frydom {
 
 
     /**
-     * \class FrAtmosphere_
+     * \class FrAtmosphere
      * \brief Class for defining the atmosphere.
      */
     class FrAtmosphere : public FrObject {

@@ -51,7 +51,7 @@ namespace frydom {
     class FrTriangleMeshConnected;
 
     /**
-     * \class FrPhysicsItem_
+     * \class FrPhysicsItem
      * \brief Class for defining objects which are neither bodies nor links, for instance caterany lines.
      */
     class FrPhysicsItem: public FrObject {
@@ -89,7 +89,7 @@ namespace frydom {
     };
 
     /**
-     * \class FrPrePhysicsItem_
+     * \class FrPrePhysicsItem
      * \brief Class for defining physics items updated before bodies.
      */
     class FrPrePhysicsItem : public FrPhysicsItem{
@@ -98,7 +98,7 @@ namespace frydom {
     };
 
     /**
-     * \class FrMidPhysicsItem_
+     * \class FrMidPhysicsItem
      * \brief Class for defining physics items updated after bodies but before links.
      */
     class FrMidPhysicsItem : public FrPhysicsItem{
@@ -107,7 +107,7 @@ namespace frydom {
     };
 
     /**
-     * \class FrPostPhysicsItem_
+     * \class FrPostPhysicsItem
      * \brief Class for defining physics items updated after links.
      */
     class FrPostPhysicsItem : public FrPhysicsItem{

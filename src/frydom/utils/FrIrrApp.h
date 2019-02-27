@@ -26,7 +26,7 @@ namespace frydom {
 
 
     /**
-     * \class FrIrrApp_
+     * \class FrIrrApp
      * \brief Class for Irrlicht applications (visualization).
      */
     class FrIrrApp : public chrono::irrlicht::ChIrrApp {
