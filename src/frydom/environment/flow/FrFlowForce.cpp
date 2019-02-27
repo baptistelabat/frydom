@@ -132,7 +132,7 @@ namespace frydom {
         FrForce::StepFinalize();
     }
 
-    void FrCurrentForce2_::Update(double time) {
+    void FrCurrentForce::Update(double time) {
 
         FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
@@ -143,7 +143,7 @@ namespace frydom {
         FrFlowForce::Update(time);
     }
 
-    void FrWindForce2_::Update(double time) {
+    void FrWindForce::Update(double time) {
 
         FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
@@ -154,14 +154,14 @@ namespace frydom {
         FrFlowForce::Update(time);
     }
 
-    std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody> body){
-        auto currentForce = std::make_shared<FrCurrentForce2_>(yamlFile);
+    std::shared_ptr<FrCurrentForce> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody> body){
+        auto currentForce = std::make_shared<FrCurrentForce>(yamlFile);
         body->AddExternalForce(currentForce);
         return currentForce;
     }
 
-    std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody> body){
-        auto windForce = std::make_shared<FrWindForce2_>(yamlFile);
+    std::shared_ptr<FrWindForce> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody> body){
+        auto windForce = std::make_shared<FrWindForce>(yamlFile);
         body->AddExternalForce(windForce);
         return windForce;
     }

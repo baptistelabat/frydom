@@ -20,7 +20,7 @@ protected:
 
     FrOffshoreSystem system;
     std::shared_ptr<FrBody> body;
-    std::shared_ptr<FrCurrentStandardForce_> force;
+    std::shared_ptr<FrCurrentStandardForce> force;
 
     double m_frontalArea;
     double m_lateralArea;
@@ -65,7 +65,7 @@ void TestFrStandardCurrentForce::SetUp() {
 
     LoadData("TNR_database.h5");
 
-    force = std::make_shared<FrCurrentStandardForce_>();
+    force = std::make_shared<FrCurrentStandardForce>();
     force->SetLengthBetweenPerpendicular(m_lengthBetweenPerpendicular);
     force->SetLateralArea(m_lateralArea);
     force->SetTransverseArea(m_frontalArea);

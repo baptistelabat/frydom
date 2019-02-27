@@ -117,9 +117,9 @@ void TestFrFlowForce::LoadData(std::string filename, std::string group) {
 void TestFrFlowForce::MakeForce(FLUID_TYPE type, std::string filename) {
     m_type = type;
     if (type==FLUID_TYPE::WATER) {
-        force = std::make_shared<FrCurrentForce2_>(filename);
+        force = std::make_shared<FrCurrentForce>(filename);
     } else if (type==FLUID_TYPE::AIR) {
-        force = std::make_shared<FrWindForce2_>(filename);
+        force = std::make_shared<FrWindForce>(filename);
     }
     body->AddExternalForce(force);
 }

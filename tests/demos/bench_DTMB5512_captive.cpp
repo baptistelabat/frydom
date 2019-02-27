@@ -315,7 +315,7 @@ int main(int argc, char* argv[]) {
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get(), false);
     //eqFrame->InitSpeedFromBody(true);
-    //auto eqFrame = std::make_shared<FrEqFrameMeanMotion_>(body.get(), 60., 0.01, false);
+    //auto eqFrame = std::make_shared<FrEqFrameMeanMotion>(body.get(), 60., 0.01, false);
     eqFrame->SetPosition(Position(0., 0., 0.03), NWU);
     eqFrame->SetVelocityInWorld(Velocity(speed, 0., 0.), NWU);
 

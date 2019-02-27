@@ -66,7 +66,7 @@ namespace frydom {
      * \class FrCurrentForce2_
      * \brief Class for computing the current loads.
      */
-    class FrCurrentForce2_ : public FrFlowForce {
+    class FrCurrentForce : public FrFlowForce {
 
 
     public:
@@ -75,7 +75,7 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "CurrentForce"; }
 
-        explicit FrCurrentForce2_(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
+        explicit FrCurrentForce(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
 
         void Update(double time) override;
     };
@@ -85,7 +85,7 @@ namespace frydom {
      * \class FrWindForce2_
      * \brief Class for computing the wind loads.
      */
-    class FrWindForce2_ : public FrFlowForce {
+    class FrWindForce : public FrFlowForce {
 
     public:
 
@@ -93,15 +93,15 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "WindForce"; }
 
-        explicit FrWindForce2_(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
+        explicit FrWindForce(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
 
         void Update(double time) override;
 
     };
 
-    std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody> body);
+    std::shared_ptr<FrCurrentForce> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody> body);
 
-    std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody> body);
+    std::shared_ptr<FrWindForce> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody> body);
 
 
 } // end of namespace frydom

@@ -20,34 +20,34 @@
 
 namespace frydom {
 
-    FrWindStandardForce_::FrWindStandardForce_() : FrForce() { }
+    FrWindStandardForce::FrWindStandardForce() : FrForce() { }
 
-    void FrWindStandardForce_::SetLateralArea(double lateralArea) {
+    void FrWindStandardForce::SetLateralArea(double lateralArea) {
         assert(lateralArea > FLT_EPSILON);
         m_lateralArea = lateralArea;
     }
 
-    void FrWindStandardForce_::SetTransverseArea(double transverseArea) {
+    void FrWindStandardForce::SetTransverseArea(double transverseArea) {
         assert(transverseArea > FLT_EPSILON);
         m_transverseArea = transverseArea;
     }
 
-    void FrWindStandardForce_::SetXCenter(double xCenter) {
+    void FrWindStandardForce::SetXCenter(double xCenter) {
         m_xCenter = xCenter;
     }
 
-    void FrWindStandardForce_::SetLenghtBetweenPerpendicular(double lpp) {
+    void FrWindStandardForce::SetLenghtBetweenPerpendicular(double lpp) {
         assert(lpp > FLT_EPSILON);
         m_lpp = lpp;
     }
 
-    void FrWindStandardForce_::Initialize() {
+    void FrWindStandardForce::Initialize() {
         if (m_transverseArea < FLT_EPSILON) throw FrException(" error value transverse area");
         if (m_lateralArea < FLT_EPSILON) throw FrException("error value lateral area");
         if (m_lpp < FLT_EPSILON) throw FrException("error value length between perpendicular");
     }
 
-    void FrWindStandardForce_::Update(double time) {
+    void FrWindStandardForce::Update(double time) {
 
         Force force;
         Torque torque;
@@ -92,7 +92,7 @@ namespace frydom {
         SetForceTorqueInWorldAtPointInBody(worldForce, worldTorque, Position(m_xCenter, 0., 0.), NWU);
     }
 
-    void FrWindStandardForce_::StepFinalize() {
+    void FrWindStandardForce::StepFinalize() {
         FrForce::StepFinalize();
     }
 

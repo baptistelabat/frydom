@@ -175,10 +175,10 @@ namespace frydom {
      * \class FrNullWaveField_
      * \brief Class for defining a null wave field.
      */
-    class FrNullWaveField_ : public FrWaveField {
+    class FrNullWaveField : public FrWaveField {
 
     public:
-        explicit FrNullWaveField_(FrFreeSurface* freeSurface);
+        explicit FrNullWaveField(FrFreeSurface* freeSurface);
 
         /// Get the type name of this object
         /// \return type name of this object

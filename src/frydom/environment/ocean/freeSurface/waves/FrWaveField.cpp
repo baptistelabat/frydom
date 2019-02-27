@@ -133,40 +133,40 @@ namespace frydom {
 
     // FrNullWaveField definitions
 
-    FrNullWaveField_::FrNullWaveField_(FrFreeSurface* freeSurface) : FrWaveField(freeSurface) {
+    FrNullWaveField::FrNullWaveField(FrFreeSurface* freeSurface) : FrWaveField(freeSurface) {
         m_waveModel = NO_WAVES;
     }
 
-    double FrNullWaveField_::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
+    double FrNullWaveField::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
         return 0.;
     }
 
-    Velocity FrNullWaveField_::GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
+    Velocity FrNullWaveField::GetVelocity(double x, double y, double z, FRAME_CONVENTION fc) const {
         return {0.,0.,0.};
     }
 
-    Acceleration FrNullWaveField_::GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const {
+    Acceleration FrNullWaveField::GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const {
         return {0.,0.,0.};
     }
 
-    std::vector<double> FrNullWaveField_::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
+    std::vector<double> FrNullWaveField::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
         return std::vector<double>(1, 0.);
     }
 
-    std::vector<double> FrNullWaveField_::GetWaveNumbers() const {
+    std::vector<double> FrNullWaveField::GetWaveNumbers() const {
         return std::vector<double>(1, 0.);
     }
 
-    std::vector<std::vector<double>> FrNullWaveField_::GetWaveAmplitudes() const {
+    std::vector<std::vector<double>> FrNullWaveField::GetWaveAmplitudes() const {
         return std::vector<std::vector<double>>(1, std::vector<double>(1, 0.));
     }
 
-    std::vector<double> FrNullWaveField_::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc,
+    std::vector<double> FrNullWaveField::GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc,
                                                             DIRECTION_CONVENTION dc) const {
         return std::vector<double>(1, 0.);
     }
 
-    std::vector<std::vector<Complex>> FrNullWaveField_::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
+    std::vector<std::vector<Complex>> FrNullWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
         return std::vector<std::vector<Complex>>(1, std::vector<Complex>(1, 0.));
     }
 

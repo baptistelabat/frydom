@@ -2,7 +2,6 @@ message(STATUS "            ...wind")
 
 set(WIND_FILES_LOCAL
         FrWind.cpp
-        FrWindForce.cpp
         FrWindStandardForce.cpp
         )
 

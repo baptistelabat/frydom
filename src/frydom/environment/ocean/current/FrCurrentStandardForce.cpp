@@ -23,36 +23,36 @@
 
 namespace frydom {
 
-    void FrCurrentStandardForce_::SetMaximumBreadth(double breadth) {
+    void FrCurrentStandardForce::SetMaximumBreadth(double breadth) {
         assert(breadth > FLT_EPSILON);
         m_breadth = breadth;
     }
 
-    void FrCurrentStandardForce_::SetDraft(double draft) {
+    void FrCurrentStandardForce::SetDraft(double draft) {
         assert(draft > FLT_EPSILON);
         m_draft = draft;
     }
 
-    void FrCurrentStandardForce_::SetLateralArea(double lateralArea) {
+    void FrCurrentStandardForce::SetLateralArea(double lateralArea) {
         assert(lateralArea > FLT_EPSILON);
         m_lateralArea = lateralArea;
     }
 
-    void FrCurrentStandardForce_::SetTransverseArea(double transverseArea) {
+    void FrCurrentStandardForce::SetTransverseArea(double transverseArea) {
         assert(transverseArea > FLT_EPSILON);
         m_transverseArea = transverseArea;
     }
 
-    void FrCurrentStandardForce_::SetXCenter(double xCenter) {
+    void FrCurrentStandardForce::SetXCenter(double xCenter) {
         m_xCenter = xCenter;
     }
 
-    void FrCurrentStandardForce_::SetLengthBetweenPerpendicular(double lpp) {
+    void FrCurrentStandardForce::SetLengthBetweenPerpendicular(double lpp) {
         assert(lpp > FLT_EPSILON);
         m_lpp = lpp;
     }
 
-    void FrCurrentStandardForce_::Initialize() {
+    void FrCurrentStandardForce::Initialize() {
         if (m_transverseArea < FLT_EPSILON and m_draft > FLT_EPSILON and m_breadth > FLT_EPSILON) {
             m_transverseArea = m_draft * m_breadth;
         }
@@ -61,7 +61,7 @@ namespace frydom {
         if (m_lpp < FLT_EPSILON) throw  FrException("error value length between perpendicular");
     }
 
-    void FrCurrentStandardForce_::Update(double time) {
+    void FrCurrentStandardForce::Update(double time) {
 
         Force force;
         Torque torque;
@@ -107,7 +107,7 @@ namespace frydom {
         SetForceTorqueInWorldAtPointInBody(worldForce, worldTorque, Position(m_xCenter, 0., 0.), NWU);
     }
 
-    void FrCurrentStandardForce_::StepFinalize() {
+    void FrCurrentStandardForce::StepFinalize() {
         FrForce::StepFinalize();
     }
 

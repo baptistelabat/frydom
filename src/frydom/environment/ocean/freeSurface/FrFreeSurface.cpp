@@ -25,7 +25,7 @@ namespace frydom {
     FrFreeSurface::FrFreeSurface(FrOcean* ocean) : m_ocean(ocean) {
 
         // Creating a waveField and a tidal model
-        m_waveField         = std::make_unique<FrNullWaveField_>(this);
+        m_waveField         = std::make_unique<FrNullWaveField>(this);
         m_tidal             = std::make_unique<FrTidal>(this);
         m_freeSurfaceGridAsset    = std::make_shared<FrFreeSurfaceGridAsset>(this);
 
@@ -63,7 +63,7 @@ namespace frydom {
 
 
     void FrFreeSurface::NoWaves() {
-        m_waveField = std::make_unique<FrNullWaveField_>(this);
+        m_waveField = std::make_unique<FrNullWaveField>(this);
     }
 
     FrAiryRegularWaveField*
@@ -155,7 +155,7 @@ namespace frydom {
         }
         m_showFreeSurface = showFreeSurface;
         if (!showFreeSurface) {
-            m_waveField = std::make_unique<FrNullWaveField_>(this);
+            m_waveField = std::make_unique<FrNullWaveField>(this);
             m_tidal->SetNoTidal();
             m_freeSurfaceGridAsset->SetNoGrid();
         }

@@ -146,21 +146,21 @@ namespace frydom {
     // Equilibrium frame with spring damping restoring force
     // -----------------------------------------------------------------------
 
-    FrEqFrameSpringDamping_::FrEqFrameSpringDamping_(FrBody* body, double T0, double psi, bool initPos)
+    FrEqFrameSpringDamping::FrEqFrameSpringDamping(FrBody* body, double T0, double psi, bool initPos)
         : FrEquilibriumFrame(body, initPos) { this->SetSpringDamping(T0, psi); }
 
-    FrEqFrameSpringDamping_::FrEqFrameSpringDamping_(const Position &pos, const FrRotation &rotation,
+    FrEqFrameSpringDamping::FrEqFrameSpringDamping(const Position &pos, const FrRotation &rotation,
                                                      FRAME_CONVENTION fc, FrBody* body, double T0, double psi)
             : FrEquilibriumFrame(pos, rotation, fc, body) { this->SetSpringDamping(T0, psi); }
 
-    FrEqFrameSpringDamping_::FrEqFrameSpringDamping_(const Position &pos, const FrUnitQuaternion_& quaternion,
+    FrEqFrameSpringDamping::FrEqFrameSpringDamping(const Position &pos, const FrUnitQuaternion_& quaternion,
                                                      FRAME_CONVENTION fc, FrBody* body, double T0, double psi)
             : FrEquilibriumFrame(pos, quaternion, fc, body) { this->SetSpringDamping(T0, psi); }
 
-    FrEqFrameSpringDamping_::FrEqFrameSpringDamping_(const FrFrame& otherFrame, FrBody* body, double T0, double psi)
+    FrEqFrameSpringDamping::FrEqFrameSpringDamping(const FrFrame& otherFrame, FrBody* body, double T0, double psi)
             : FrEquilibriumFrame(otherFrame, body) { this->SetSpringDamping(T0, psi); }
 
-    void FrEqFrameSpringDamping_::SetSpringDamping(const double T0, const double psi) {
+    void FrEqFrameSpringDamping::SetSpringDamping(const double T0, const double psi) {
 
         m_w0 = 2.*M_PI / T0;
         m_psi = psi;
@@ -169,7 +169,7 @@ namespace frydom {
         m_stiffness = m_w0 * m_w0;
     }
 
-    void FrEqFrameSpringDamping_::Update(double time) {
+    void FrEqFrameSpringDamping::Update(double time) {
 
         if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
 
@@ -205,29 +205,29 @@ namespace frydom {
     // Equilibrium frame with updated mean velocity
     // ----------------------------------------------------------------
 
-    FrEqFrameMeanMotion_::FrEqFrameMeanMotion_(const Position &pos, const FrRotation &rotation, FRAME_CONVENTION fc,
+    FrEqFrameMeanMotion::FrEqFrameMeanMotion(const Position &pos, const FrRotation &rotation, FRAME_CONVENTION fc,
                                                FrBody* body, double timePersistence, double timeStep)
             : FrEquilibriumFrame(pos, rotation, fc, body) { this->SetRecorders(timePersistence, timeStep); }
 
-    FrEqFrameMeanMotion_::FrEqFrameMeanMotion_(const Position &pos, const FrUnitQuaternion_ &quaternion, FRAME_CONVENTION fc,
+    FrEqFrameMeanMotion::FrEqFrameMeanMotion(const Position &pos, const FrUnitQuaternion_ &quaternion, FRAME_CONVENTION fc,
                                                FrBody* body, double timePersistence, double timeStep)
             : FrEquilibriumFrame(pos, quaternion, fc, body) { this->SetRecorders(timePersistence, timeStep); }
 
-    FrEqFrameMeanMotion_::FrEqFrameMeanMotion_(const FrFrame &otherFrame, FrBody* body, double timePersistence, double timeStep)
+    FrEqFrameMeanMotion::FrEqFrameMeanMotion(const FrFrame &otherFrame, FrBody* body, double timePersistence, double timeStep)
             : FrEquilibriumFrame(otherFrame, body) { this->SetRecorders(timePersistence, timeStep); }
 
-    FrEqFrameMeanMotion_::FrEqFrameMeanMotion_(FrBody *body, double timePersistence, double timeStep, bool initPos)
+    FrEqFrameMeanMotion::FrEqFrameMeanMotion(FrBody *body, double timePersistence, double timeStep, bool initPos)
     : FrEquilibriumFrame(body, initPos) { this->SetRecorders(timePersistence, timeStep); }
 
 
-    void FrEqFrameMeanMotion_::SetRecorders(double timePersistence, double timeStep) {
+    void FrEqFrameMeanMotion::SetRecorders(double timePersistence, double timeStep) {
         m_TrSpeedRec = std::make_unique<FrTimeRecorder<Velocity>>(timePersistence, timeStep);
         m_TrSpeedRec->Initialize();
         m_AglSpeedRec = std::make_unique<FrTimeRecorder<double>>(timePersistence, timeStep);
         m_AglSpeedRec->Initialize();
     }
 
-    void FrEqFrameMeanMotion_::SetPositionCorrection(double timePersistence, double timeStep,
+    void FrEqFrameMeanMotion::SetPositionCorrection(double timePersistence, double timeStep,
                                                      double posCoeff, double angleCoeff) {
         m_ErrPositionRec = std::make_unique<FrTimeRecorder<Position>>(timePersistence, timeStep);
         m_ErrPositionRec->Initialize();
@@ -237,7 +237,7 @@ namespace frydom {
         m_errAngleCoeff = angleCoeff;
     }
 
-    void FrEqFrameMeanMotion_::Update(double time) {
+    void FrEqFrameMeanMotion::Update(double time) {
 
         if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
 

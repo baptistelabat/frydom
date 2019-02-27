@@ -170,7 +170,7 @@ namespace frydom {
      * psi the damping rate coefficient.
      *
      */
-    class FrEqFrameSpringDamping_ : public FrEquilibriumFrame {
+    class FrEqFrameSpringDamping : public FrEquilibriumFrame {
 
     private:
         double m_w0 = 0;                    ///< cutoff frequency
@@ -186,7 +186,7 @@ namespace frydom {
         /// \param T0 Cutoff time period
         /// \param psi Damping ratio
         /// \param initPos If true the frame is initialized with the position of the body
-        FrEqFrameSpringDamping_(FrBody* body, double T0, double psi, bool initPos = true);
+        FrEqFrameSpringDamping(FrBody* body, double T0, double psi, bool initPos = true);
 
         /// Constructor of a new equilibrium frame with body link, position, orientation and spring-dampign parameters
         /// \param pos Position of the frame in world coordinates
@@ -195,7 +195,7 @@ namespace frydom {
         /// \param body Body link
         /// \param T0 Cutoff time period
         /// \param psi Damping ratio
-        FrEqFrameSpringDamping_(const Position &pos, const FrRotation &rotation,
+        FrEqFrameSpringDamping(const Position &pos, const FrRotation &rotation,
                                 FRAME_CONVENTION fc, FrBody* body, double T0, double psi);
 
         /// Constructor of a new equilibrium frame with body link, position, rotation and spring-damping parameters
@@ -205,7 +205,7 @@ namespace frydom {
         /// \param body Body link
         /// \param T0 Cutoff time
         /// \param psi Damping ratio
-        FrEqFrameSpringDamping_(const Position& pos, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc,
+        FrEqFrameSpringDamping(const Position& pos, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc,
                                FrBody* body, double T0, double psi);
 
         /// Constructor of a new equilibrium frame from a given frame with body link and spring-damping parameters
@@ -213,7 +213,7 @@ namespace frydom {
         /// \param body Body link
         /// \param T0 Cutoff time period
         /// \param psi Damping ratio
-        FrEqFrameSpringDamping_(const FrFrame& otherFrame, FrBody* body,
+        FrEqFrameSpringDamping(const FrFrame& otherFrame, FrBody* body,
                                 double T0, double psi);
 
         /// Get the type name of this object
@@ -262,7 +262,7 @@ namespace frydom {
      * during a period of time specified by the user. Past velocities are recorded
      * in a buffer with a specific time stepper.
      */
-    class FrEqFrameMeanMotion_ : public FrEquilibriumFrame {
+    class FrEqFrameMeanMotion : public FrEquilibriumFrame {
 
     private:
 
@@ -281,7 +281,7 @@ namespace frydom {
         /// \param timePersistence Time windows for the mean velocity computation
         /// \param timeStep Time step of the recorder
         /// \param initPos If true the frame is initialized with the position of the body
-        FrEqFrameMeanMotion_(FrBody* body, double timePersistence, double timeStep, bool initPos = true) ;
+        FrEqFrameMeanMotion(FrBody* body, double timePersistence, double timeStep, bool initPos = true) ;
 
         /// Constructor of a new equilibrium frame with body link, position, rotation and mean function parameters
         /// \param pos Position of the frame in world coordinates
@@ -290,7 +290,7 @@ namespace frydom {
         /// \param body Body link
         /// \param timePersistence Time windows for mean velocity computation
         /// \param timeStep Time step for the recorder
-        FrEqFrameMeanMotion_(const Position &pos, const FrRotation &rotation, FRAME_CONVENTION fc,
+        FrEqFrameMeanMotion(const Position &pos, const FrRotation &rotation, FRAME_CONVENTION fc,
                              FrBody* body, double timePersistence, double timeStep);
 
         /// Constructor of a new equilibrium frame with body link, position , rotation and mean function parameters
@@ -300,7 +300,7 @@ namespace frydom {
         /// \param body Body link
         /// \param timePersistence Time windows for mean velocity computation
         /// \param timeStep Time step for the recorder
-        FrEqFrameMeanMotion_(const Position &pos, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc,
+        FrEqFrameMeanMotion(const Position &pos, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc,
                              FrBody* body, double timePersistence, double timeStep);
 
         /// Constructor of a new equilibrium frame with body link, frame definition and mean function parameters
@@ -308,7 +308,7 @@ namespace frydom {
         /// \param body Body link
         /// \param timePersistence Time windows for the mean velocity computation
         /// \param timeStep Time step for the recorder
-        FrEqFrameMeanMotion_(const FrFrame &otherFrame, FrBody* body, double timePersistence, double timeStep);
+        FrEqFrameMeanMotion(const FrFrame &otherFrame, FrBody* body, double timePersistence, double timeStep);
 
         /// Get the type name of this object
         /// \return type name of this object
