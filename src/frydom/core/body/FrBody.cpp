@@ -81,7 +81,6 @@ namespace frydom {
 
     FrBody::FrBody() {
 
-        m_typeName = "Body";
         SetLogged(true);
 
         m_chronoBody = std::make_shared<internal::FrBodyBase>(this);

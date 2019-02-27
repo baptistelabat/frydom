@@ -146,6 +146,10 @@ namespace frydom {
         /// Constructor taking the nodes attached to the two bodies implied in the link and the system
         FrLink(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem *system);
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "Link"; }
+
         /// Tells if all constraints of this link are currently turned on or off by the user.
         bool IsDisabled() const override;
 

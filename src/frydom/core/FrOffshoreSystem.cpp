@@ -81,7 +81,6 @@ namespace frydom {
     /// \param solver solver type
     FrOffshoreSystem::FrOffshoreSystem(SYSTEM_TYPE systemType, TIME_STEPPER timeStepper, SOLVER solver) {
 
-        m_typeName = "System";
         SetLogged(true);
 
         // Creating the chrono System backend. It drives the way contact are modelled
