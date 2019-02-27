@@ -120,7 +120,7 @@ namespace frydom {
             (*forceIter)->Initialize();
         }
 
-        // Initializing forces
+        // Initializing nodes
         auto nodeIter = node_begin();
         for (; nodeIter != node_end(); nodeIter++) {
             (*nodeIter)->Initialize();
@@ -826,7 +826,7 @@ namespace frydom {
 
     void FrBody::InitializeLog() {
 
-        auto bodyLogPath = m_system->GetLogManager()->NewBodyLog(this);
+        auto bodyLogPath = m_system->GetPathManager()->BuildBodyPath(this);
 
         // Initializing message
         if (m_message->GetName().empty()) {
@@ -845,6 +845,19 @@ namespace frydom {
         // Init the message
         m_message->Initialize();
         m_message->Send();
+
+        // Initializing forces
+        auto forceIter = force_begin();
+        for (; forceIter != force_end(); forceIter++) {
+            (*forceIter)->InitializeLog();
+        }
+
+        // Initializing nodes
+        auto nodeIter = node_begin();
+        for (; nodeIter != node_end(); nodeIter++) {
+            (*nodeIter)->InitializeLog();
+        }
+
 
     }
 

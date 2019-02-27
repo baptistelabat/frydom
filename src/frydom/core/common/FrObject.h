@@ -21,7 +21,7 @@
 #include "boost/uuid/uuid_generators.hpp"
 
 #include "frydom/core/common/FrConvention.h"
-#include "frydom/IO/FrLogManager.h"
+#include "frydom/IO/FrPathManager.h"
 
 namespace frydom {
 
@@ -45,7 +45,6 @@ namespace frydom {
         FRAME_CONVENTION c_logFrameConvention; // from LogManager
 
         std::string m_typeName;
-        std::string m_logPath;
 
         std::unique_ptr<hermes::Message> m_message;
 
@@ -65,10 +64,6 @@ namespace frydom {
         std::string GetUUID() const { return m_UUID; }
 
         std::string GetShortenUUID() const { return m_UUID.substr(0,5); };
-
-        void SetFilePath (std::string path) { m_logPath = path; }
-
-        std::string GetFilePath() const { return m_logPath; }
 
         std::string GetTypeName() const { return m_typeName; }
 

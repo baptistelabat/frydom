@@ -17,6 +17,6 @@
 
 #include "FrHDF5.h"
 #include "FrLoader.h"
-#include "FrLogManager.h"
+#include "FrPathManager.h"
 
 #endif //FRYDOM_IO_H

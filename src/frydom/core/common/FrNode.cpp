@@ -220,46 +220,35 @@ namespace frydom {
 
     void FrNode::Initialize() {
         m_chronoMarker->UpdateState();
-
-        InitializeLog();
     }
 
     void FrNode::StepFinalize() {
 
-//        m_nodeMessage.Serialize();
-//        m_nodeMessage.Send();
+//        m_message->Serialize();
+//        m_message->Send();
 
     }
 
     void FrNode::InitializeLog(){
 
-//        cppfs::FilePath bodyPath = m_body->GetFilePath();
-//
-////        cppfs::FilePath nodeLogPath = bodyPath.resolve(fmt::format("Node_{}.csv",GetUUID()));
-//
-//        // Set the path of the node log
-////        SetFilePath(nodeLogPath.path());
+
 //
 //        // Initializing message
-//        if (m_nodeMessage.GetName().empty()) {
-//            m_nodeMessage.SetNameAndDescription(
+//        if (m_message.GetName().empty()) {
+//            m_message.SetNameAndDescription(
 //                    nodeLogPath.path(),
 //                    "Message of a body");
 //        }
 //
 //        // Add a serializer
-//        m_nodeMessage.AddCSVSerializer();
+//        m_message.AddCSVSerializer();
 //
 //        // Add the fields
-//        std::function<double ()> GetTime = [this] () {
-//            return m_chronoMarker->GetChTime();
-//        };
-////        m_nodeMessage.AddField<double>("time", "s", "Current time of the simulation", &GetTime);
 //
 //
 //        // Init the message
-//        m_nodeMessage.Initialize();
-//        m_nodeMessage.Send();
+//        m_message.Initialize();
+//        m_message.Send();
 
 
     }

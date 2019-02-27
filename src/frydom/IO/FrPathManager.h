@@ -25,18 +25,19 @@ namespace frydom {
     class FrOffshoreSystem;
     class FrForce;
 
-    class FrLogManager {
+    class FrPathManager {
     private:
 
         FRAME_CONVENTION m_logFrameConvention;
 
         cppfs::FilePath m_outputPath;
+        cppfs::FilePath m_runPath;
 
     public:
 
         /// Constructor for a log manager service
         /// \param system system providing the log manager service
-        explicit FrLogManager();
+        explicit FrPathManager();
 
 
         /// Set the frame convention for the logs
@@ -59,22 +60,20 @@ namespace frydom {
         ///Initialize the log manager serice
         void Initialize();
 
-        /// Declare a new system log instance : create the run and system log directories
-        /// and return the path to the system log file
+        /// Build the path and directories needed for the system log
         /// \param system system for which a log is declared
         /// \return path to the system log file
-        std::string NewSystemLog(FrOffshoreSystem* system);
+        std::string BuildSystemPath(FrOffshoreSystem *system);
 
-        /// Declare a new body log instance : create the body log directory, along with the force and node log directories
-        /// and return the path to the body log file
+        /// Build the path and directories needed for the body log
         /// \param body body for which a log is declared
         /// \return path to the body log file
-        std::string NewBodyLog(FrBody* body);
+        std::string BuildBodyPath(FrBody *body);
 
-        /// Declare a new force log instance : return the path to the force log file
+        /// Build the path and directories needed for the force log
         /// \param force force for which a log is declared
         /// \return path to the force log file
-        std::string NewForceLog(FrForce* force);
+        std::string BuildForcePath(FrForce *force);
     private:
         /// Read the config file
         void ReadConfig();

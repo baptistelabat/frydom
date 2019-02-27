@@ -13,7 +13,7 @@
 
 #include "frydom/asset/FrForceAsset.h"
 
-#include "frydom/IO/FrLogManager.h"
+#include "frydom/IO/FrPathManager.h"
 
 
 namespace frydom{
@@ -108,7 +108,7 @@ namespace frydom{
 
     void FrForce::InitializeLog() {
 
-        auto forceLogPath = GetSystem()->GetLogManager()->NewForceLog(this);
+        auto forceLogPath = GetSystem()->GetPathManager()->BuildForcePath(this);
 
         // Initializing message
         if (m_message->GetName().empty()) {
@@ -121,9 +121,6 @@ namespace frydom{
         m_message->AddCSVSerializer(forceLogPath);
 
         // Add the fields
-        std::function<double ()> GetTime = [this] () {
-            return m_chronoForce->GetChTime();
-        };
         m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoForce->GetChTime();});
 
         m_message->AddField<double>("FX", "N", "longitudinal force in body reference frame", [this] () {

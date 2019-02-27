@@ -106,7 +106,7 @@ namespace frydom {
         m_environment = std::make_unique<FrEnvironment>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
 
         // Creating the log manager service
-        m_logManager = std::make_unique<FrLogManager>();
+        m_pathManager = std::make_unique<FrPathManager>();
 
 //        m_message = std::make_unique<hermes::Message>();
 
@@ -738,35 +738,56 @@ namespace frydom {
 
     void FrOffshoreSystem::InitializeLog() {
 
-        auto systemPath = m_logManager->NewSystemLog(this);
+        if (IsLogged()) {
 
-        // Initializing environment before bodies
-//        m_environment->InitializeLog();
+            auto systemPath = m_pathManager->BuildSystemPath(this);
 
-        for (auto& item : m_PrePhysicsList) {
-//            item->InitializeLog();
+            // Initializing message
+            if (m_message->GetName().empty()) {
+                m_message->SetNameAndDescription(
+                        fmt::format("{}_{}", GetTypeName(), GetUUID()),
+                        "Message of an offshore system");
+            }
+
+            // Add a serializer
+            m_message->AddCSVSerializer(systemPath);
+
+            // Add the fields
+            // TODO A completer
+//            m_message->AddField<double>("time", "s", "Current time of the simulation",
+//                    [this]() { return m_chronoSystem->GetChTime(); });
+
+            // Init the message
+            m_message->Initialize();
+            m_message->Send();
+
+            // Initializing environment before bodies
+//        if (m_environment->IsLogged()) m_environment->InitializeLog();
+
+            for (auto &item : m_PrePhysicsList) {
+//                if (item->IsLogged()) item->InitializeLog();
+            }
+
+            for (auto &item : m_bodyList) {
+                if (item->IsLogged()) item->InitializeLog();
+            }
+
+            for (auto &item : m_MidPhysicsList) {
+//                if (item->IsLogged()) item->InitializeLog();
+            }
+
+            for (auto &item : m_linkList) {
+//                if (item->IsLogged()) item->InitializeLog();
+            }
+
+            for (auto &item : m_PostPhysicsList) {
+//                if (item->IsLogged()) item->InitializeLog();
+            }
+
         }
-
-        for (auto& item : m_bodyList){
-            item->InitializeLog();
-        }
-
-        for (auto& item : m_MidPhysicsList) {
-//            item->InitializeLog();
-        }
-
-        for (auto& item : m_linkList) {
-//            item->InitializeLog();
-        }
-
-        for (auto& item : m_PostPhysicsList) {
-//            item->InitializeLog();
-        }
-
-
     }
 
-    FrLogManager *FrOffshoreSystem::GetLogManager() const { return m_logManager.get(); }
+    FrPathManager *FrOffshoreSystem::GetPathManager() const { return m_pathManager.get(); }
 
 
 }  // end namespace frydom
