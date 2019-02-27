@@ -32,18 +32,26 @@ namespace frydom{
     void FrLogManager::ReadConfig() {
 
         cppfs::FilePath homePath = cppfs::system::homeDir();
-        cppfs::FilePath configPath = homePath.resolve(".frydom/config");
+        cppfs::FilePath configPath = homePath.resolve(".frydom");
 
         // Get the workspace directory path, located in the output_path in the FRyDOM config file.
         // TODO: change to JSON format
-        YAML::Node data = YAML::LoadFile(configPath.path());  // TODO: throw exception if not found !
-
-        m_outputPath = data["output_path"].as<std::string>();
-
         try {
-            m_logFrameConvention = STRING2FRAME(data["frame_convention"].as<std::string>());
-        } catch (YAML::BadConversion& err) {
-            std::cout << " warning : frame convention must be NED or NWU" << std::endl;
+            YAML::Node data = YAML::LoadFile(configPath.path());  // TODO: throw exception if not found !
+
+            m_outputPath = data["output_path"].as<std::string>();
+
+            try {
+                m_logFrameConvention = STRING2FRAME(data["frame_convention"].as<std::string>());
+            } catch (YAML::BadConversion& err) {
+                std::cout << " warning : frame convention must be NED or NWU" << std::endl;
+            }
+        }
+        catch (YAML::BadFile& err){
+            std::cout << " warning : no .frydom found in your home. Please add one with:" << std::endl;
+            std::cout << " output_path: \"path/wanted\" \n frame_convention: NED " << std::endl;
+            m_outputPath = ".";
+            m_logFrameConvention = NED;
         }
 
     }
