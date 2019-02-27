@@ -22,18 +22,20 @@ int main() {
     MeshClipper clipper;
     FrMesh mesh_clipped = clipper(mesh);
 
+    mesh_clipped.Write("BARGE_clipped.obj");
+
 
 //    std::cout << "Waterplane Area = " << mesh_clipped.GetBoundaryPolygonsSurfaceIntegral(POLY_1) << std::endl;
-
-
+//
+//
 //    std::cout << mesh_clipped.data(*mesh.faces_begin()).GetSurfaceIntegral(POLY_1) << std::endl;
-
+//
 //    mesh_clipped.UpdateAllProperties();
-
+//
 //    std::cout << mesh_clipped.GetVolume();
 
-    auto inertia = CalcPlainInertiaProperties(mesh_clipped, 1030);
-    std::cout << "Full inertia : \n" << inertia.ReportString() << std::endl;
+//    auto inertia = CalcPlainInertiaProperties(mesh_clipped, 1030);
+//    std::cout << "Full inertia : \n" << inertia.ReportString() << std::endl;
 
 
 //    auto inertia = CalcShellInertiaProperties(mesh, 7850, 0.02);
@@ -56,13 +58,13 @@ int main() {
 
 //    mesh_clipped.Write("clip.obj");
 //    auto inertiaProps = CalcShellInertiaProperties(mesh_clipped, 1030, 0.02);
-
-    FrHydrostaticsProperties hsp(1030, 9.81);  // TODO: enlever le s de hydrostatics
-    mathutils::Vector3d<double> cog(46.372, 0, 7.3);
+//
+//    FrHydrostaticsProperties hsp(1030, 9.81);  // TODO: enlever le s de hydrostatics
+//    mathutils::Vector3d<double> cog(46.372, 0, 7.3);
 //    hsp.Load(mesh_clipped, inertiaProps.m_cog);
-    hsp.Load(mesh_clipped, cog);
-    std::cout << hsp.GetReport() << std::endl;
-
+//    hsp.Load(mesh_clipped, cog);
+//    std::cout << hsp.GetReport() << std::endl;
+//
 //    std::cout << hsp.GetHydrostaticMatrix() << std::endl;
 
 //    mesh_clipped.UpdateBoundaries();

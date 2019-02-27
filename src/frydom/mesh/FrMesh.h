@@ -127,7 +127,7 @@ namespace frydom {
             FINITE_DEPTH_GREEN_FUNCTION
         };
 
-        struct DMeshTraits : public DefaultTraits {
+        struct FrMeshTraits : public DefaultTraits {
             typedef Vec3d Point;
 
             VertexAttributes(Attributes::Normal |
@@ -201,8 +201,10 @@ namespace frydom {
 
                 const Point &Center() const { return m_center; }
 
+                /// This function sets the position of the face centroid.
                 void SetCenter(const Point &center) { m_center = center; }
 
+                /// This function gives the surface integral of a face.
                 const double GetSurfaceIntegral(IntegrandType type) const { // TODO: abandonner les enums pour les integrandes et preferer les accessors voir mieux, des fonctors...
                     switch (type) {
                         case POLY_1:
@@ -311,8 +313,10 @@ namespace frydom {
 
                 const VertexPosition &Position() const { return m_position; }
 
+                /// This function gives the type of position of the vertex (above/below/on the clipping surface).
                 void SetPositionType(VertexPosition vPos) { m_position = vPos; }
 
+                /// This function
                 void SetAbove() { m_position = VP_ABOVE_SURFACE; }
 
                 void SetOn() { m_position = VP_ON_SURFACE; }
@@ -385,7 +389,7 @@ namespace frydom {
 
         };
 
-        class FrMesh : public TriMesh_ArrayKernelT<DMeshTraits> {
+        class FrMesh : public TriMesh_ArrayKernelT<FrMeshTraits> { // FrMesh must be a triangular mesh.
 
         private:
             meshutils::IncrementalMeshWriter m_writer;
@@ -405,6 +409,7 @@ namespace frydom {
                 double m_Int_y2 = 0.0;
 
             public:
+                /// This function gives the surface integral of a mesh.
                 double GetSurfaceIntegral(IntegrandType type) {
                     switch (type) {
                         case POLY_1:
@@ -436,10 +441,14 @@ namespace frydom {
 
 
         public:
+
+            /// Constructor of the class.
             FrMesh() = default;
 
+            /// Constructor of the class.
             explicit FrMesh(std::string meshfile);
 
+            /// This function loads the mesh file.
             void Load(std::string meshfile);
 
             void Translate(const Point t);
@@ -452,13 +461,16 @@ namespace frydom {
 
             void WriteInc();
 
+            /// This function updates all properties of faces and vertices (normals, centroids, surface integrals).
             void UpdateAllProperties();
 
+            /// This function computes the normal vectors everywhere and the centroid of faces.
             void UpdateBaseProperties();
 
+            /// This function updates the computations of the polynomial surface integrals.
             void UpdateFacesPolynomialIntegrals();
 
-            // Computes triangular faces surface integration of some polynomial itegrands using analytical formulas
+            // Computes triangular faces surface integration of some polynomial integrands using analytical formulas
             // established by transforming surface integrals into contour integrals and deriving analytical expressions.
             // Extended from Eberly... TODO: mettre la referece
             void CalcFacePolynomialIntegrals(const FrMesh::FaceHandle &fh);
@@ -493,6 +505,7 @@ namespace frydom {
 //
 //            }
 
+            /// This function gives the value of a surface integral over the waterline area.
             double GetBoundaryPolygonsSurfaceIntegral(IntegrandType type);
 
             void UpdateBoundariesSurfacePolynomialIntegrals();

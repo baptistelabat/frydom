@@ -133,11 +133,16 @@ namespace frydom {
         }
 
         FrMesh::FrMesh(std::string meshfile) {
-            // Loading mesh file
+
+            // Constructor of the class.
+
             Load(std::move(meshfile));
         }
 
         void FrMesh::Load(std::string meshfile) {
+
+            // This function loads the mesh file.
+
             if (!IO::read_mesh(*this, meshfile)) {
                 std::cerr << "Meshfile " << meshfile << " could not be read\n";
                 exit(1);
@@ -175,15 +180,24 @@ namespace frydom {
         }
 
         void FrMesh::UpdateAllProperties() {
+
+            // This function updates all properties of faces and vertices (normals, centroids, surface integrals).
+
+            // Computation of normal vectors and centroids.
             UpdateBaseProperties();
+
+            // Computation of surface polynomial integrals.
             UpdateFacesPolynomialIntegrals();
         }
 
         void FrMesh::UpdateBaseProperties() {
 
+            // This function computes the normal vectors everywhere and the centroid of faces.
+
+            // Computation of the normal vectors of faces, vertices and half edges.
             update_normals();  // Update normals for both faces and vertices
 
-            // Update face's center properties
+            // Update face's center properties.
             Point center;
             for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
                 data(*f_iter).SetCenter(calc_face_centroid(*f_iter));
@@ -192,12 +206,17 @@ namespace frydom {
         }
 
         void FrMesh::UpdateFacesPolynomialIntegrals() {
+
+            // This function updates the computations of the polynomial surface integrals.
+
             for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
                 CalcFacePolynomialIntegrals(*f_iter);
             }
         }
 
         void FrMesh::CalcFacePolynomialIntegrals(const FrMesh::FaceHandle &fh) {  // TODO: mettre en private
+
+            // This function computes the polynomial surface integrals over the faces.
 
             typedef Vec3d Point;
 
@@ -243,7 +262,8 @@ namespace frydom {
             g1 = f2 + P1 * (f1 + P1);
             g2 = f2 + P2 * (f1 + P2);
 
-            // My Extended Eberly's Formulas
+            // My Extended Eberly's Formulas.
+            // Surface integrals are transformed into contour integrals.
             data(fh).SetSurfaceIntegral(POLY_1, delta / 2.);
 
             data(fh).SetSurfaceIntegral(POLY_X, delta * f1[0] / 6.);
@@ -433,6 +453,9 @@ namespace frydom {
         }
 
         double FrMesh::GetBoundaryPolygonsSurfaceIntegral(IntegrandType type) {
+
+            // This function gives the value of a surface integral over the waterline area.
+
             if (!c_polygonSurfaceIntegrals.IsValid()) {
                 UpdateBoundariesSurfacePolynomialIntegrals();
             }
