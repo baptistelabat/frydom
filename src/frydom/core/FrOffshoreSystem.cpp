@@ -273,10 +273,8 @@ namespace frydom {
             item->StepFinalize();
         }
 
-        if (IsLogged()) {
-            m_message->Serialize();
-            m_message->Send();
-        }
+        // Serialize and send the message log
+        FrObject::SendLog();
 
     }
 
@@ -750,26 +748,26 @@ namespace frydom {
             FrObject::InitializeLog(logPath);
 
             // Initializing environment before bodies
-//            if (m_environment->IsLogged()) m_environment->InitializeLog();
+//            m_environment->InitializeLog();
 
             for (auto &item : m_PrePhysicsList) {
-                if (item->IsLogged()) item->InitializeLog();
+                item->InitializeLog();
             }
 
             for (auto &item : m_bodyList) {
-                if (item->IsLogged()) item->InitializeLog();
+                item->InitializeLog();
             }
 
             for (auto &item : m_MidPhysicsList) {
-                if (item->IsLogged()) item->InitializeLog();
+                item->InitializeLog();
             }
 
             for (auto &item : m_linkList) {
-                if (item->IsLogged()) item->InitializeLog();
+                item->InitializeLog();
             }
 
             for (auto &item : m_PostPhysicsList) {
-                if (item->IsLogged()) item->InitializeLog();
+                item->InitializeLog();
             }
 
         }

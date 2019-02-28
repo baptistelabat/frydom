@@ -107,6 +107,11 @@ namespace frydom {
 
         void StepFinalize() override;
 
+        // Logging
+
+        /// Initialize the log
+        void InitializeLog() override;
+
         void SetImpulseResponseSize(FrBEMBody* BEMBody, double Te, double dt);
 
         void SetImpulseResponseSize(FrBody* body, double Te, double dt);

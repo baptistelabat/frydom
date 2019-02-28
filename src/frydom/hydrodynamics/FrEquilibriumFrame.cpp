@@ -142,6 +142,30 @@ namespace frydom {
         m_prevTime = time;
     }
 
+    void FrEquilibriumFrame::InitializeLog() {
+
+        if (IsLogged()) {
+
+            // Build the log path
+            auto logPath = m_system->GetPathManager()->BuildPhysicsItemPath(this);
+
+            // Add the fields to be logged here
+            // TODO: A completer
+            m_message->AddField<double>("time", "s", "Current time of the simulation",
+                                        [this]() { return m_chronoPhysicsItem->GetChTime(); });
+
+            // Initialize the message
+            FrObject::InitializeLog(logPath);
+        }
+    }
+
+    void FrEquilibriumFrame::StepFinalize() {
+
+        // Serialize and send the message log
+        FrObject::SendLog();
+
+    }
+
     // -----------------------------------------------------------------------
     // Equilibrium frame with spring damping restoring force
     // -----------------------------------------------------------------------

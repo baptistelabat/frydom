@@ -231,25 +231,19 @@ namespace frydom {
 
     void FrNode::InitializeLog(){
 
-        auto nodeLogPath = m_body->GetSystem()->GetPathManager()->BuildNodePath(this);
+        if (IsLogged()) {
 
-        // Initializing message
-        if (m_message->GetName().empty()) {
-            m_message->SetNameAndDescription(
-                    fmt::format("{}_{}",GetTypeName(),GetUUID()),
-                    "Message of a node");
+            // Build the path for the node log
+            auto logPath = m_body->GetSystem()->GetPathManager()->BuildNodePath(this);
+
+            // Add the fields to be logged here
+            m_message->AddField<double>("time", "s", "Current time of the simulation",
+                                        [this]() { return m_chronoMarker->GetChTime(); });
+
+            // Initialize the message
+            FrObject::InitializeLog(logPath);
+
         }
-
-        // Add a serializer
-        m_message->AddCSVSerializer(nodeLogPath);
-
-        // Add the fields
-        m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoMarker->GetChTime();});
-
-        // Init the message
-        m_message->Initialize();
-        m_message->Send();
-
 
     }
 

@@ -240,7 +240,7 @@ namespace frydom {
         virtual void UpdateState();
 
         /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override {}
+        void StepFinalize() override;
 
         /// Initialize the log
         void InitializeLog() override;

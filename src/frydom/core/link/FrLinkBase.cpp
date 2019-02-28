@@ -56,15 +56,20 @@ namespace frydom {
     }
 
     void FrLinkBase::InitializeLog() {
-        // Build the path to the link log
-        auto logPath = m_system->GetPathManager()->BuildPhysicsItemPath(this);
 
-        // Add the fields to be logged// Add the fields to be logged
-        // TODO: A completer
-        m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoPhysicsItem->GetChTime();});
+        if (IsLogged()) {
 
-        // Initialize the message
-        FrObject::InitializeLog(logPath);
+            // Build the path to the link log
+            auto logPath = m_system->GetPathManager()->BuildPhysicsItemPath(this);
+
+            // Add the fields to be logged
+            // TODO: A completer
+            m_message->AddField<double>("time", "s", "Current time of the simulation",
+                                        [this]() { return m_chronoPhysicsItem->GetChTime(); });
+
+            // Initialize the message
+            FrObject::InitializeLog(logPath);
+        }
 
     }
 //

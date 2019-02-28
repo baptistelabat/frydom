@@ -74,8 +74,14 @@ namespace frydom {
 
         virtual void StepFinalize() = 0;
 
+        // Logging
+
+        // Initialize the message log
         void InitializeLog(std::string path);
 
+    protected:
+        // Serialize and send the message
+        void SendLog();
     };
 
 }  // end namespace frydom

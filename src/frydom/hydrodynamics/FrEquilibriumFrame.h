@@ -159,7 +159,12 @@ namespace frydom {
         void Initialize() override;
 
         /// Method to be applied after each time steps
-        void StepFinalize() override { }
+        void StepFinalize() override;
+
+        // Logging
+
+        // Initialize the log
+        void InitializeLog() override;
 
     };
 

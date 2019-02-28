@@ -825,26 +825,30 @@ namespace frydom {
 
     void FrBody::InitializeLog() {
 
-        auto logPath = m_system->GetPathManager()->BuildBodyPath(this);
+        if (IsLogged()) {
 
-        // Add the fields
-        m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoBody->GetChTime();});
+            auto logPath = m_system->GetPathManager()->BuildBodyPath(this);
 
-        // Initialize the message
-        FrObject::InitializeLog(logPath);
+            // Add the fields
+            m_message->AddField<double>("time", "s", "Current time of the simulation",
+                                        [this]() { return m_chronoBody->GetChTime(); });
 
-        // Initializing forces
-        auto forceIter = force_begin();
-        for (; forceIter != force_end(); forceIter++) {
-            (*forceIter)->InitializeLog();
+            // Initialize the message
+            FrObject::InitializeLog(logPath);
+
+            // Initializing forces
+            auto forceIter = force_begin();
+            for (; forceIter != force_end(); forceIter++) {
+                (*forceIter)->InitializeLog();
+            }
+
+            // Initializing nodes
+            auto nodeIter = node_begin();
+            for (; nodeIter != node_end(); nodeIter++) {
+                (*nodeIter)->InitializeLog();
+            }
+
         }
-
-        // Initializing nodes
-        auto nodeIter = node_begin();
-        for (; nodeIter != node_end(); nodeIter++) {
-            (*nodeIter)->InitializeLog();
-        }
-
 
     }
 

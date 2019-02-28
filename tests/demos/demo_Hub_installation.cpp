@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------
 
     auto barge = system.NewBody();
-    barge->SetName("barge");
+    barge->SetName("Barge");
     makeItBox(barge, 25., 15., 3., (1137.6-180.7)*1000);
 //    barge->AddMeshAsset("barge.obj");
     barge->SetColor(Yellow);
@@ -84,6 +84,7 @@ int main(int argc, char* argv[]) {
     auto hdb = make_hydrodynamic_database("Barge_HDB.h5");
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(barge.get());
+    eqFrame->SetLogged(true);
     system.AddPhysicsItem(eqFrame);
 
     hdb->Map(0, barge.get(), eqFrame);
@@ -96,6 +97,7 @@ int main(int argc, char* argv[]) {
 
     // -- Radiation
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
+    radiationModel->SetLogged(true);
 
     radiationModel->SetImpulseResponseSize(barge.get(), 6., 0.1);
 
@@ -110,11 +112,13 @@ int main(int argc, char* argv[]) {
     base_crane->SetPosition(Position(-7.5,0,2.5), fc);
 
     auto base_crane_1 = system.NewBody();
+    base_crane_1->SetName("Base_Crane_1");
     makeItBox(base_crane_1,2.5,1.5,2, 10e3);
     base_crane_1->SetColor(Red);
     base_crane_1->SetPosition(Position(-7.5,1.75,4.5), fc);
 
     auto base_crane_2 = system.NewBody();
+    base_crane_2->SetName("Base_Crane_2");
     makeItBox(base_crane_2,2.5,1.5,2, 10e3);
     base_crane_2->SetColor(Red);
     base_crane_2->SetPosition(Position(-7.5,-1.75,4.5), fc);
@@ -160,7 +164,7 @@ int main(int argc, char* argv[]) {
 
     auto CatenaryLine = make_catenary_line(crane_node, hub_node, &system, elastic, YoungModulus, sectionArea,
                                            unstretchedLength, linearDensity, FLUID_TYPE::AIR);
-
+    CatenaryLine->SetLogged(true);
 
     // --------------------------------------------------
     // Mooring Lines
@@ -171,18 +175,22 @@ int main(int argc, char* argv[]) {
 
 
     auto buoySE = make_mooring_buoy(&system, buoyRadius, buoyMass, true, buoyDamping);
+    buoySE->SetName("SE");
     buoySE->SetPosition(Position(-50.,-25.,0.), NWU);
     auto buoyNodeSE = buoySE->NewNode();
 
     auto buoySW = make_mooring_buoy(&system, buoyRadius, buoyMass, true, buoyDamping);
+    buoySW->SetName("SW");
     buoySW->SetPosition(Position(-50.,25.,0.), NWU);
     auto buoyNodeSW = buoySW->NewNode();
 
     auto buoyNE = make_mooring_buoy(&system, buoyRadius, buoyMass, true, buoyDamping);
+    buoyNE->SetName("NE");
     buoyNE->SetPosition(Position(50.,-25.,0.), NWU);
     auto buoyNodeNE = buoyNE->NewNode();
 
     auto buoyNW = make_mooring_buoy(&system, buoyRadius, buoyMass, true, buoyDamping);
+    buoyNW->SetName("NW");
     buoyNW->SetPosition(Position(50.,25.,0.), NWU);
     auto buoyNodeNW = buoyNW->NewNode();
 
