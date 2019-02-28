@@ -90,7 +90,7 @@ namespace frydom {
         // Asset parameters
         bool is_lineAsset = true;                           ///< Is the line asset shown
         unsigned int m_nbDrawnElements = 40;                ///< Numbers of asset elements depicted
-        std::shared_ptr<FrCatenaryLineAsset_> m_lineAsset;   ///< Line asset
+        std::shared_ptr<FrCatenaryLineAsset> m_lineAsset;   ///< Line asset
         //--------------------------------------------------------------------------------------------------------------
 
     public:

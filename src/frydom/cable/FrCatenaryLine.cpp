@@ -277,7 +277,7 @@ namespace frydom {
         // Generate assets for the cable
         if (is_lineAsset) {
 
-            m_lineAsset = std::make_shared<FrCatenaryLineAsset_>(this);
+            m_lineAsset = std::make_shared<FrCatenaryLineAsset>(this);
             m_lineAsset->Initialize();
             AddAsset(m_lineAsset);
 //            m_lineAsset = std::make_unique<FrCatenaryLineAsset>(this);
@@ -335,7 +335,7 @@ namespace frydom {
     void FrCatenaryLine::StepFinalize() {
 
         if (is_lineAsset) m_lineAsset->StepFinalize();
-        
+
         // Serialize and send the log message
         FrObject::SendLog();
 
