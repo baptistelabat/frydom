@@ -27,7 +27,7 @@ namespace frydom {
     class FrWaveDriftPolarData;
 
     /**
-    * \class FrWaveDriftForce_
+    * \class FrWaveDriftForce
     * \brief Class for computing the wave drift force.
     */
     class FrWaveDriftForce : public FrForce {

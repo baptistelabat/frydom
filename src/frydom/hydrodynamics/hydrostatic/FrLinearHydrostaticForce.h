@@ -32,7 +32,7 @@ namespace frydom {
     /// position equals the position of the COG of the body at equilibrium
 
     /**
-     * \class FrLinearHydrostaticForce_
+     * \class FrLinearHydrostaticForce
      * \brief Class for computing linear hydrostatic loads.
      */
     class FrLinearHydrostaticForce : public FrForce {

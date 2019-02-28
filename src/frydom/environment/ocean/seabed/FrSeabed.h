@@ -93,7 +93,7 @@ namespace frydom {
     };
 
     /**
-     * \class FrNullSeabed_
+     * \class FrNullSeabed
      * \brief Class for defining a seabed in case of infinite water depth.
      */
     class FrNullSeabed  : public FrSeabed {
@@ -141,7 +141,7 @@ namespace frydom {
     };
 
     /**
-     * \class FrMeanSeabed_
+     * \class FrMeanSeabed
      * \brief Class for defining a mean seabed in case of finite and constant water depth.
      */
     class FrMeanSeabed  : public FrSeabed {

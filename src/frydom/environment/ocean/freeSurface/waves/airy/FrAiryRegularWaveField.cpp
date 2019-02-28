@@ -97,18 +97,18 @@ namespace frydom {
                 m_verticalFactor = std::make_unique<FrKinematicStretching>();
                 break;
             case VERTICAL:
-                m_verticalFactor = std::make_unique<FrKinStretchingVertical_>();
+                m_verticalFactor = std::make_unique<FrKinStretchingVertical>();
                 break;
             case EXTRAPOLATE:
-                m_verticalFactor = std::make_unique<FrKinStretchingExtrapol_>();
+                m_verticalFactor = std::make_unique<FrKinStretchingExtrapol>();
                 break;
             case WHEELER:
-                m_verticalFactor = std::make_unique<FrKinStretchingWheeler_>(this);
+                m_verticalFactor = std::make_unique<FrKinStretchingWheeler>(this);
                 break;
             case CHAKRABARTI:
-                m_verticalFactor = std::make_unique<FrKinStretchingChakrabarti_>(this);
+                m_verticalFactor = std::make_unique<FrKinStretchingChakrabarti>(this);
             case DELTA:
-                m_verticalFactor = std::make_unique<FrKinStretchingDelta_>(this);
+                m_verticalFactor = std::make_unique<FrKinStretchingDelta>(this);
             default:
                 m_verticalFactor = std::make_unique<FrKinematicStretching>();
                 break;

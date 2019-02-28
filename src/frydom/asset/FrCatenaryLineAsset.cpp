@@ -10,7 +10,7 @@
 // ==========================================================================
 
 
-#include "FrCatenaryLineAsset_.h"
+#include "FrCatenaryLineAsset.h"
 
 #include "chrono/assets/ChColor.h"
 #include "chrono/assets/ChLineShape.h"
@@ -21,9 +21,9 @@
 
 namespace frydom{
 
-    FrCatenaryLineAsset_::FrCatenaryLineAsset_(FrCatenaryLine *line) : m_catenaryLine(line) {}
+    FrCatenaryLineAsset::FrCatenaryLineAsset(FrCatenaryLine *line) : m_catenaryLine(line) {}
 
-    void FrCatenaryLineAsset_::Initialize() { // TODO : il semble que ChLine soit capable de rendre des lignes courbes
+    void FrCatenaryLineAsset::Initialize() { // TODO : il semble que ChLine soit capable de rendre des lignes courbes
 
         // Generating line segments
         double ds = m_catenaryLine->GetUnstretchedLength() / m_catenaryLine->GetNbElements();
@@ -69,7 +69,7 @@ namespace frydom{
         InitRangeTensionColor();
     }
 
-    void FrCatenaryLineAsset_::Update() {
+    void FrCatenaryLineAsset::Update() {
 
         std::shared_ptr<chrono::geometry::ChLineSegment> lineGeom;
         chrono::ChVector<double> p0, p1;
@@ -100,7 +100,7 @@ namespace frydom{
         }
     }
 
-    void FrCatenaryLineAsset_::InitRangeTensionColor() {
+    void FrCatenaryLineAsset::InitRangeTensionColor() {
         auto breakingTension = m_catenaryLine->GetBreakingTension();
         if (breakingTension>0){
             m_maxTension = breakingTension;

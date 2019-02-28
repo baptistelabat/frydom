@@ -57,7 +57,7 @@ namespace frydom {
         /// \param pos Position of the frame
         /// \param quaternion Quaternion of the frame
         /// \param fc Frame convention (NED/NWU)
-        FrFrame(const Position &pos, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc);
+        FrFrame(const Position &pos, const FrUnitQuaternion& quaternion, FRAME_CONVENTION fc);
 
         /// Copy Constructor from an other frame
         /// \param otherFrame Frame to be copied
@@ -162,7 +162,7 @@ namespace frydom {
 
         /// Set the rotation of the present frame, using FrQuaternion
         /// \param quaternion Quaternion to be set
-        void SetRotation(const FrUnitQuaternion_& quaternion);
+        void SetRotation(const FrUnitQuaternion& quaternion);
 
         /// Nullify any rotation of the present frame
         void SetNoRotation();
@@ -179,7 +179,7 @@ namespace frydom {
 
         /// Get the rotation of the present frame, as FrQuaternion
         /// \return the quaternion of the frame/transformation frame
-        FrUnitQuaternion_ GetQuaternion() const;
+        FrUnitQuaternion GetQuaternion() const;
 
         // FIXME : Du coup en vrai, je ne vois pas l'interet de localAxis ... Retirer ?
 
@@ -187,7 +187,7 @@ namespace frydom {
 
         /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
         /// multiplication of the frame current rotation by the given rotation
-        void RotateInFrame(const FrUnitQuaternion_& quaternion);
+        void RotateInFrame(const FrUnitQuaternion& quaternion);
 
         /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
         /// multiplication of the frame current rotation by the given rotation
@@ -203,7 +203,7 @@ namespace frydom {
 
         /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
         /// multiplication of the frame current rotation by the given rotation
-        void RotateInParent(const FrUnitQuaternion_& quaternion);
+        void RotateInParent(const FrUnitQuaternion& quaternion);
 
         /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
         /// multiplication of the frame current rotation by the given rotation
@@ -365,7 +365,7 @@ namespace frydom {
 
         std::ostream& cout(std::ostream& os) const;
 
-        friend class FrInertiaTensor_;  // TODO : voir pourquoi on definit cette amitie... (et voir si on peut retirer !)
+        friend class FrInertiaTensor;  // TODO : voir pourquoi on definit cette amitie... (et voir si on peut retirer !)
 
 
     };
@@ -378,14 +378,14 @@ namespace frydom {
     namespace internal {
         /// Here we define some conversion functions between
 
-        /// Converts a ChFrame into a FrFrame_
+        /// Converts a ChFrame into a FrFrame
         inline FrFrame ChFrame2FrFrame(const chrono::ChFrame<double> &chFrame) {  // OK
             return FrFrame(ChVectorToVector3d<Position>(chFrame.GetPos()),  // In NWU
                             Ch2FrQuaternion(chFrame.GetRot()), // In NWU
                             NWU);
         }
 
-        /// Converts a FrFrame_ into a ChFrame
+        /// Converts a FrFrame into a ChFrame
         inline chrono::ChFrame<double> FrFrame2ChFrame(const FrFrame &frFrame) {
             auto pos = Vector3dToChVector(frFrame.GetPosition(NWU));
             auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());

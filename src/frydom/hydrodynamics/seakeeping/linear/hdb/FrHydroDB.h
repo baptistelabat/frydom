@@ -34,7 +34,7 @@ namespace frydom {
     // ----------------------------------------------------------
 
     /**
-     * \class FrDiscretization1D_
+     * \class FrDiscretization1D
      * \brief Class for the linear discretization (frequency and angle).
      */
     class FrDiscretization1D {
@@ -72,7 +72,7 @@ namespace frydom {
     // --------------------------------------------------------
 
     /**
-     * \class FrHydroDB_
+     * \class FrHydroDB
      * \brief Class for dealling with hydrodynamic databases.
      */
     class FrHydroDB {

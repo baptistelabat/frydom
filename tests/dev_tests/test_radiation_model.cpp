@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     double Iyy               = 2.3e11;
     double Izz               = 2e12;
 
-    FrInertiaTensor_ InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
+    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
 
     body->SetInertiaTensor(InertiaTensor);
 

@@ -29,11 +29,11 @@ namespace frydom {
     class FrCatenaryLine;
 
     /**
-     * \class FrCatenaryLineAsset_
+     * \class FrCatenaryLineAsset
      * \brief Class for a catenary line asset, using chrono::ChLineShape in aggregation
      * Line elements of ChLineShape are updated in position and color (related to the tension) in this class
      */
-    class FrCatenaryLineAsset_ {
+    class FrCatenaryLineAsset {
 
         // TODO : ne pas reposer sur les objets chrono!!!
 
@@ -50,7 +50,7 @@ namespace frydom {
 
         /// Catenary line asset constructor
         /// \param line catenary line containing this asset
-        explicit FrCatenaryLineAsset_(FrCatenaryLine * line);
+        explicit FrCatenaryLineAsset(FrCatenaryLine * line);
 
         /// Update the elements position and color
         void Update();

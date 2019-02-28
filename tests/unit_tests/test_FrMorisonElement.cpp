@@ -246,13 +246,13 @@ void TestMorison::LoadData(std::string filename) {
 
     auto posCOG = ReadVector<Position>(reader, group + "COG");
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(posCOG,FrRotation(),NWU),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(posCOG,FrRotation(),NWU),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     auto direction = ReadVector<Direction>(reader, group + "RotationDirection");
     direction.normalize();
     auto angle = reader.ReadDouble(group + "RotationAngle");
-    body->SetRotation(FrUnitQuaternion_(direction, angle, NWU));
+    body->SetRotation(FrUnitQuaternion(direction, angle, NWU));
 
     auto bodyVelocity = ReadVector<Velocity>(reader, group + "BodyVelocity");
     auto bodyAngularVelocity = ReadVector<Velocity>(reader, group + "BodyAngularVelocity");

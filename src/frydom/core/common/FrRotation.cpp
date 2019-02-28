@@ -18,33 +18,33 @@
 namespace frydom {
 
 
-    // FrUnitQuaternion_
+    // FrUnitQuaternion
 
-    FrUnitQuaternion_::FrUnitQuaternion_() : m_chronoQuaternion() {
+    FrUnitQuaternion::FrUnitQuaternion() : m_chronoQuaternion() {
         SetNullRotation();
     }
 
-    FrUnitQuaternion_::FrUnitQuaternion_(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc) {
+    FrUnitQuaternion::FrUnitQuaternion(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc) {
         Set(q0, q1, q2, q3, fc);
     }
 
-    FrUnitQuaternion_::FrUnitQuaternion_(double q0, double q1, double q2, double q3, bool non_normalized, FRAME_CONVENTION fc) {
+    FrUnitQuaternion::FrUnitQuaternion(double q0, double q1, double q2, double q3, bool non_normalized, FRAME_CONVENTION fc) {
         Set(q0, q1, q2, q3, non_normalized, fc);
     }
 
-    FrUnitQuaternion_::FrUnitQuaternion_(const Direction &axis, double angleRAD, FRAME_CONVENTION fc) {
+    FrUnitQuaternion::FrUnitQuaternion(const Direction &axis, double angleRAD, FRAME_CONVENTION fc) {
         Set(axis, angleRAD, fc);
     }
 
-    FrUnitQuaternion_::FrUnitQuaternion_(const FrUnitQuaternion_ &other) {
+    FrUnitQuaternion::FrUnitQuaternion(const FrUnitQuaternion &other) {
         Set(other);
     }
 
-    void FrUnitQuaternion_::Set(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc) {
+    void FrUnitQuaternion::Set(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc) {
         Set(q0, q1, q2, q3, false, fc);
     }
 
-    void FrUnitQuaternion_::Set(double q0, double q1, double q2, double q3, bool non_normalized, FRAME_CONVENTION fc) {
+    void FrUnitQuaternion::Set(double q0, double q1, double q2, double q3, bool non_normalized, FRAME_CONVENTION fc) {
         if (IsNED(fc)) internal::SwapQuaternionElementsFrameConvention(q0, q1, q2, q3); // Internal chrono quaternion must always be in NWU convention
         m_chronoQuaternion.Set(q0, q1, q2, q3);
         if (non_normalized) Normalize();
@@ -52,12 +52,12 @@ namespace frydom {
 
     }
 
-    void FrUnitQuaternion_::Set(const FrUnitQuaternion_ &quaternion) {
+    void FrUnitQuaternion::Set(const FrUnitQuaternion &quaternion) {
         m_chronoQuaternion.Set(quaternion.m_chronoQuaternion);
         assert(IsRotation());
     }
 
-    void FrUnitQuaternion_::Set(const Direction& axis, double angleRAD, FRAME_CONVENTION fc) {
+    void FrUnitQuaternion::Set(const Direction& axis, double angleRAD, FRAME_CONVENTION fc) {
         assert((axis.norm()-1.) < 1e-8);
         auto axisTmp = axis;
         if (IsNED(fc)) internal::SwapFrameConvention<Direction>(axisTmp);
@@ -65,30 +65,30 @@ namespace frydom {
         assert(IsRotation());
     }
 
-    void FrUnitQuaternion_::Set(const mathutils::Matrix33<double>& matrix, FRAME_CONVENTION fc) {
+    void FrUnitQuaternion::Set(const mathutils::Matrix33<double>& matrix, FRAME_CONVENTION fc) {
         chrono::ChMatrix33<double> chronoMatrix = internal::Matrix33ToChMatrix33(matrix);
         m_chronoQuaternion = chronoMatrix.Get_A_quaternion();
         if (IsNED(fc)) internal::SwapChQuaternionFrameConvention(m_chronoQuaternion);
     }
 
 
-    void FrUnitQuaternion_::SetNullRotation() {
+    void FrUnitQuaternion::SetNullRotation() {
         m_chronoQuaternion.SetUnit();
     }
 
-    void FrUnitQuaternion_::Normalize() {
+    void FrUnitQuaternion::Normalize() {
         m_chronoQuaternion.Normalize();
     }
 
-    double FrUnitQuaternion_::Norm() const {
+    double FrUnitQuaternion::Norm() const {
         return m_chronoQuaternion.Length();
     }
 
-    bool FrUnitQuaternion_::IsRotation() const {
+    bool FrUnitQuaternion::IsRotation() const {
         return (mathutils::IsClose<double>(Norm(), 1.));
     }
 
-    void FrUnitQuaternion_::Get(double &q0, double &q1, double &q2, double &q3, FRAME_CONVENTION fc) const {
+    void FrUnitQuaternion::Get(double &q0, double &q1, double &q2, double &q3, FRAME_CONVENTION fc) const {
         q0 = m_chronoQuaternion[0];
         q1 = m_chronoQuaternion[1];
         q2 = m_chronoQuaternion[2];
@@ -96,77 +96,77 @@ namespace frydom {
         if (IsNED(fc)) internal::SwapQuaternionElementsFrameConvention(q0, q1, q2, q3); // Internal chrono quaternion is always in NWU convention
     }
 
-    void FrUnitQuaternion_::Get(Direction& axis, double& angleRAD, FRAME_CONVENTION fc) const {
+    void FrUnitQuaternion::Get(Direction& axis, double& angleRAD, FRAME_CONVENTION fc) const {
         chrono::ChVector<double> chronoAxis;
         chrono::Q_to_AngAxis(m_chronoQuaternion, angleRAD, chronoAxis); // In NWU
         axis = internal::ChVectorToVector3d<Direction>(chronoAxis); // In NWU
         if (IsNED(fc)) internal::SwapFrameConvention<Direction>(axis);
     }
 
-    Direction FrUnitQuaternion_::GetXAxis(FRAME_CONVENTION fc) const {
+    Direction FrUnitQuaternion::GetXAxis(FRAME_CONVENTION fc) const {
         auto axis = internal::ChVectorToVector3d<Direction>(m_chronoQuaternion.GetXaxis());  // NWU
         if (IsNED(fc)) internal::SwapFrameConvention<Direction>(axis);
         return axis;
     }
 
-    Direction FrUnitQuaternion_::GetYAxis(FRAME_CONVENTION fc) const {
+    Direction FrUnitQuaternion::GetYAxis(FRAME_CONVENTION fc) const {
         auto axis = internal::ChVectorToVector3d<Direction>(m_chronoQuaternion.GetYaxis());  // NWU
         if (IsNED(fc)) internal::SwapFrameConvention<Direction>(axis);
         return axis;
     }
 
-    Direction FrUnitQuaternion_::GetZAxis(FRAME_CONVENTION fc) const {
+    Direction FrUnitQuaternion::GetZAxis(FRAME_CONVENTION fc) const {
         auto axis = internal::ChVectorToVector3d<Direction>(m_chronoQuaternion.GetZaxis());  // NWU
         if (IsNED(fc)) internal::SwapFrameConvention<Direction>(axis);
         return axis;
     }
 
-    FrUnitQuaternion_ &FrUnitQuaternion_::operator=(const FrUnitQuaternion_ &other) {
+    FrUnitQuaternion &FrUnitQuaternion::operator=(const FrUnitQuaternion &other) {
         m_chronoQuaternion = other.m_chronoQuaternion;
     }
 
-    FrUnitQuaternion_ FrUnitQuaternion_::operator*(const FrUnitQuaternion_ &other) const {
-        auto newQuat = FrUnitQuaternion_(*this);
+    FrUnitQuaternion FrUnitQuaternion::operator*(const FrUnitQuaternion &other) const {
+        auto newQuat = FrUnitQuaternion(*this);
         newQuat *= other;
         return newQuat;
     }
 
-    FrUnitQuaternion_ &FrUnitQuaternion_::operator*=(const FrUnitQuaternion_ &other) {
+    FrUnitQuaternion &FrUnitQuaternion::operator*=(const FrUnitQuaternion &other) {
 //        m_chronoQuaternion *= other.m_chronoQuaternion; // FIXME : this Chrono operator is currently buggy (07/11/2018)
         m_chronoQuaternion = m_chronoQuaternion * other.m_chronoQuaternion;
         // TODO : wait for a new release of Chrono for a fix to *= to use it... A message has been sent to the Chrono list by Lucas (07/11/2018)
         return *this;
     }
 
-    bool FrUnitQuaternion_::operator==(const frydom::FrUnitQuaternion_ &other) const {
+    bool FrUnitQuaternion::operator==(const frydom::FrUnitQuaternion &other) const {
         return m_chronoQuaternion == other.m_chronoQuaternion;
     }
 
-    const chrono::ChQuaternion<double>& FrUnitQuaternion_::GetChronoQuaternion() const {  // TODO : supprimer le besoin de cette methode
+    const chrono::ChQuaternion<double>& FrUnitQuaternion::GetChronoQuaternion() const {  // TODO : supprimer le besoin de cette methode
         return m_chronoQuaternion;
     }
 
-    void FrUnitQuaternion_::RotateInParent(const FrUnitQuaternion_& leftQuaternion) {
+    void FrUnitQuaternion::RotateInParent(const FrUnitQuaternion& leftQuaternion) {
         m_chronoQuaternion >>= leftQuaternion.m_chronoQuaternion;  // FIXME : VERIFIER !!!!
 
     }
 
-    void FrUnitQuaternion_::RotateInFrame(const FrUnitQuaternion_& rightQuaternion) {
+    void FrUnitQuaternion::RotateInFrame(const FrUnitQuaternion& rightQuaternion) {
         m_chronoQuaternion *= rightQuaternion.m_chronoQuaternion;  // FIXME : VERIFIER !!!!
     }
 
-    FrUnitQuaternion_& FrUnitQuaternion_::Inverse() {
+    FrUnitQuaternion& FrUnitQuaternion::Inverse() {
         // We can use only m_chronoQuaternion.Conjugate() and not m_chronoQuaternion.Inverse()
         // because we know for sure our Unit quaternion is already normalized.
         m_chronoQuaternion.Conjugate();
         return *this;
     }
 
-    FrUnitQuaternion_ FrUnitQuaternion_::GetInverse() const {
-        return FrUnitQuaternion_(*this).Inverse();
+    FrUnitQuaternion FrUnitQuaternion::GetInverse() const {
+        return FrUnitQuaternion(*this).Inverse();
     }
 
-    std::ostream& FrUnitQuaternion_::cout(std::ostream &os) const {
+    std::ostream& FrUnitQuaternion::cout(std::ostream &os) const {
 
         os << std::endl;
         os << "Quaternion : q0 = "<< m_chronoQuaternion.e0()
@@ -178,35 +178,35 @@ namespace frydom {
         return os;
     }
 
-    std::ostream& operator<<(std::ostream& os, const FrUnitQuaternion_& quaternion) {
+    std::ostream& operator<<(std::ostream& os, const FrUnitQuaternion& quaternion) {
         return quaternion.cout(os);
     }
 
-    mathutils::Matrix33<double> FrUnitQuaternion_::GetRotationMatrix() const {
+    mathutils::Matrix33<double> FrUnitQuaternion::GetRotationMatrix() const {
         chrono::ChMatrix33<double> chronoMatrix;
         chronoMatrix.Set_A_quaternion(m_chronoQuaternion);
         return internal::ChMatrix33ToMatrix33(chronoMatrix);
     }
 
-    mathutils::Matrix33<double> FrUnitQuaternion_::GetInverseRotationMatrix() const {
+    mathutils::Matrix33<double> FrUnitQuaternion::GetInverseRotationMatrix() const {
         chrono::ChMatrix33<double> chronoMatrix;
         chronoMatrix.Set_A_quaternion(m_chronoQuaternion.GetInverse());
         return internal::ChMatrix33ToMatrix33(chronoMatrix);
     }
 
-    mathutils::Matrix33<double> FrUnitQuaternion_::LeftMultiply(const mathutils::Matrix33<double>& matrix) const {
+    mathutils::Matrix33<double> FrUnitQuaternion::LeftMultiply(const mathutils::Matrix33<double>& matrix) const {
         return GetRotationMatrix() * matrix;
     }
 
-    mathutils::Matrix33<double> FrUnitQuaternion_::RightMultiply(const mathutils::Matrix33<double>& matrix) const {
+    mathutils::Matrix33<double> FrUnitQuaternion::RightMultiply(const mathutils::Matrix33<double>& matrix) const {
         return matrix * GetRotationMatrix();
     }
 
-    mathutils::Matrix33<double> FrUnitQuaternion_::LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
+    mathutils::Matrix33<double> FrUnitQuaternion::LeftMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
         return GetInverseRotationMatrix() * matrix;
     }
 
-    mathutils::Matrix33<double> FrUnitQuaternion_::RightMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
+    mathutils::Matrix33<double> FrUnitQuaternion::RightMultiplyInverse(const mathutils::Matrix33<double>& matrix) const {
         return matrix * GetInverseRotationMatrix();
     }
 
@@ -221,7 +221,7 @@ namespace frydom {
 
     FrRotation::FrRotation() : m_frQuaternion() {}
 
-    FrRotation::FrRotation(FrUnitQuaternion_ quaternion) : m_frQuaternion(quaternion) {}
+    FrRotation::FrRotation(FrUnitQuaternion quaternion) : m_frQuaternion(quaternion) {}
 
     FrRotation::FrRotation(const Direction& axis, double angleRAD, FRAME_CONVENTION fc) :
                         m_frQuaternion(axis, angleRAD, fc) {}
@@ -234,15 +234,15 @@ namespace frydom {
         m_frQuaternion.SetNullRotation();
     }
 
-    void FrRotation::Set(const FrUnitQuaternion_& quat) {
+    void FrRotation::Set(const FrUnitQuaternion& quat) {
         m_frQuaternion.Set(quat);
     }
 
-    FrUnitQuaternion_& FrRotation::GetQuaternion() {
+    FrUnitQuaternion& FrRotation::GetQuaternion() {
         return m_frQuaternion;
     }
 
-    const FrUnitQuaternion_& FrRotation::GetQuaternion() const {
+    const FrUnitQuaternion& FrRotation::GetQuaternion() const {
         return m_frQuaternion;
     }
 
@@ -432,11 +432,11 @@ namespace frydom {
         RotZ_RADIANS(angle*DEG2RAD, fc);
     }
 
-    void FrRotation::RotateInParent(const FrUnitQuaternion_& leftQuaternion) {
+    void FrRotation::RotateInParent(const FrUnitQuaternion& leftQuaternion) {
         m_frQuaternion.RotateInParent(leftQuaternion);
     }
 
-    void FrRotation::RotateInFrame(const FrUnitQuaternion_& rightQuaternion) {
+    void FrRotation::RotateInFrame(const FrUnitQuaternion& rightQuaternion) {
         m_frQuaternion.RotateInFrame(rightQuaternion);
     }
 

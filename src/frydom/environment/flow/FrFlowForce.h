@@ -63,7 +63,7 @@ namespace frydom {
 
 
     /**
-     * \class FrCurrentForce2_
+     * \class FrCurrentForce
      * \brief Class for computing the current loads.
      */
     class FrCurrentForce : public FrFlowForce {
@@ -82,7 +82,7 @@ namespace frydom {
 
 
     /**
-     * \class FrWindForce2_
+     * \class FrWindForce
      * \brief Class for computing the wind loads.
      */
     class FrWindForce : public FrFlowForce {

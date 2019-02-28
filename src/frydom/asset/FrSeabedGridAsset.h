@@ -30,7 +30,6 @@ namespace frydom {
 
     public:
         /// Default constructor
-        /// \param body body containing this asset (usually WorldBody)
         /// \param seabed pointer ot the seabed
         explicit FrSeabedGridAsset(FrSeabed* seabed);
 

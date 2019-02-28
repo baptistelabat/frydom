@@ -22,7 +22,7 @@ namespace frydom {
     /// DNV-GL Station Keeping 01111
 
     /**
-     * \class FrCurrentStandardForce_
+     * \class FrCurrentStandardForce
      * \brief Class for computing current loads following the DNV standard.
      */
     class FrCurrentStandardForce : public FrForce {

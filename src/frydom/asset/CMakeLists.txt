@@ -7,7 +7,7 @@ set(SRC_FILES
         FrGridAsset.cpp
         FrSeabedGridAsset.cpp
         FrFreeSurfaceGridAsset.cpp
-        FrCatenaryLineAsset_.cpp
+        FrCatenaryLineAsset.cpp
         FrAssetBuoy.cpp
         FrAssetComponent.cpp
 )

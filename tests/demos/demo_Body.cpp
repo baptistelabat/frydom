@@ -93,14 +93,14 @@ int main(int argc, char* argv[]) {
     COGOrientation.SetCardanAngles_DEGREES(0.,0.,90.,fc); // COGFrame has a 90 yaw rotation, compared to the body reference frame.
 
     FrFrame COGFrame(COGPos,COGOrientation,fc); // creating COGFrame, from the COG position and orientation.
-    FrInertiaTensor_ InertiaTensor(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,COGFrame,fc);
+    FrInertiaTensor InertiaTensor(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,COGFrame,fc);
 
     // Or you may got your inertia coefficients expressed in a frame, auxFrame, that can be different from the
     // COGPosition. The inertia are then automatically transported to the CoG Position specified, by this following
     // constructor.
     FrFrame auxFrame; // defined from the position and orientation you got.
 
-    FrInertiaTensor_ InertiaTensor0(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,auxFrame,COGPos,fc);
+    FrInertiaTensor InertiaTensor0(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,auxFrame,COGPos,fc);
 
     // Set now the inertia tensor you want in the body.
     body->SetInertiaTensor(InertiaTensor);
@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
     // SetRotation and Rotation methods : For constructing rotations, see demo_Frame_and_Rotation.
 
     // Set the body reference frame orientation, using quaternions
-    FrUnitQuaternion_ IdQuaternion(1.,0.,0.,0.,fc); // Id quaternion means no rotation.
+    FrUnitQuaternion IdQuaternion(1.,0.,0.,0.,fc); // Id quaternion means no rotation.
     body->SetRotation(IdQuaternion);
     // or rotation, based on quaternions:
     FrRotation bodyRotation(IdQuaternion);

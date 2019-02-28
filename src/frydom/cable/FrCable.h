@@ -26,13 +26,13 @@ namespace frydom {
 
 
     /**
-     * \class FrCable_ FrCable.h
-     * \brief Abstract base class for cables, subclass of FrMidPhysicsItem_, superclass of FrCatenaryLine_ and
-     * FrDynamicCable_ .
+     * \class FrCable FrCable.h
+     * \brief Abstract base class for cables, subclass of FrMidPhysicsItem, superclass of FrCatenaryLine and
+     * FrDynamicCable .
      * This means cables are updated between bodies and links.
      * A cable is connected to two nodes : a starting node and an ending node. Nodes are contained by at
      * least one body, and used to connect bodies to other components (cables, links,etc.)
-     * \see FrMidPhysicsItem_, FrCatenaryLine_, FrDynamicCable_, FrNode_
+     * \see FrMidPhysicsItem, FrCatenaryLine, FrDynamicCable, FrNode
      *
      */
     class FrCable : public FrMidPhysicsItem {
@@ -66,7 +66,7 @@ namespace frydom {
         /// Default constructor
         FrCable();
 
-        /// FrCable_ constructor, using two nodes and cable properties
+        /// FrCable constructor, using two nodes and cable properties
         /// \param startingNode starting node
         /// \param endingNode ending node
         /// \param cableLength unstretched length

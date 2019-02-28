@@ -31,19 +31,19 @@ int main(int argc, char* argv[]) {
     // Unit quaternions are rotations by definition, since they have a unit norm. It is not to be confused with the
     // identity quaternion (1,0,0,0) which represent a null rotation. The following quaternion is set to the identity
     // quaternion using its basic constructor.
-    FrUnitQuaternion_ IdQuaternion(1.,0.,0.,0.,fc);
+    FrUnitQuaternion IdQuaternion(1.,0.,0.,0.,fc);
     // You can also set a quaternion to the identity using the following method.
     IdQuaternion.SetNullRotation();
 
     // It is also possible to instantiate a quaternion, using four doubles, which is not normalized yet. The constructor
     // is then normalizing the quaternion to be sure it is a unit quaternion.
     bool is_non_Normalized = true;
-    FrUnitQuaternion_ QuatNotNormalized(1.,2.,3.,4.,is_non_Normalized,fc);
+    FrUnitQuaternion QuatNotNormalized(1.,2.,3.,4.,is_non_Normalized,fc);
 
     // If you are not familiar with quaternion, you can instantiate one by specifying the direction and the angle (in RAD)
     // of the rotation. The following rotation is for example a rotation around the z axis of an angle Pi.
     Direction QuatDir(0.,0.,1.);
-    FrUnitQuaternion_ Quat(QuatDir,M_PI,fc);
+    FrUnitQuaternion Quat(QuatDir,M_PI,fc);
 
     // Quaternions can also be defined, using set methods with the same arguments than the above constructors.
     Quat.Set(1.,0.,0.,0.,fc);
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 
     // Remember that the quaternion can be composed, but their product is not commutable.
     QuatDir.Set(1.,0.,0.);
-    FrUnitQuaternion_ QuatA(QuatDir,M_PI,fc);
+    FrUnitQuaternion QuatA(QuatDir,M_PI,fc);
 
     auto QuatB = Quat*QuatA;
     auto QuatC = QuatA*Quat;

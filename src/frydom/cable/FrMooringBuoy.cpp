@@ -43,7 +43,7 @@ namespace frydom {
 //            makeItSphere(this,radius,mass);
 
         // Building the Chrono body
-        SetInertiaTensor(FrInertiaTensor_(mass, inertia, inertia, inertia, 0., 0., 0., FrFrame(), NWU));
+        SetInertiaTensor(FrInertiaTensor(mass, inertia, inertia, inertia, 0., 0., 0., FrFrame(), NWU));
 
         // Collision
         auto collisionModel = m_chronoBody->GetCollisionModel();

@@ -27,7 +27,7 @@ namespace frydom {
                                      m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
                                      FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity) {}
 
-    FrCatenaryLineAsset_ *FrCatenaryLine::GetLineAsset() const {
+    FrCatenaryLineAsset *FrCatenaryLine::GetLineAsset() const {
         return m_lineAsset.get();
     }
 
@@ -276,7 +276,7 @@ namespace frydom {
 
         // Generate assets for the cable
         if (is_lineAsset and !m_lineAsset) {
-            m_lineAsset = std::make_unique<FrCatenaryLineAsset_>(this);
+            m_lineAsset = std::make_unique<FrCatenaryLineAsset>(this);
             m_lineAsset->Initialize();
         }
     }

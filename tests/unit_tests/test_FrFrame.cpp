@@ -61,7 +61,7 @@ TEST(FrFrame,PositionAndRotation){
         std::cout<<frame.GetPosition(fc)<<std::endl;
         std::cout<<Position(0.,0.,0.)<<std::endl;
     }
-    FrUnitQuaternion_ IdentityQuat(1.,0.,0.,0.,fc);
+    FrUnitQuaternion IdentityQuat(1.,0.,0.,0.,fc);
     FrRotation IdentityRotation; IdentityRotation.Set(IdentityQuat);
     EXPECT_TRUE(frame.GetRotation() == IdentityRotation);
     EXPECT_TRUE(frame.GetQuaternion() == IdentityQuat);

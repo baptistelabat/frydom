@@ -28,7 +28,7 @@ namespace frydom {
 
 
     /**
-     * \class FrMorisonForce_
+     * \class FrMorisonForce
      * \brief Class for computing Morison loads.
      */
     class FrMorisonForce : public FrForce {

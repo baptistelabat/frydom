@@ -23,20 +23,20 @@
 namespace frydom {
 
     /**
-     * \class FrForce_
+     * \class FrForce
      * \brief Base class for every external forces on bodies
      */
     class FrForce;
 
     namespace internal {
 
-        struct _FrForceBase : public chrono::ChForce {
+        struct FrForceBase : public chrono::ChForce {
 
             FrForce *m_frydomForce;
             chrono::ChVector<double> m_torque; // Expressed in body coordinates at COG
 
 
-            explicit _FrForceBase(FrForce *force);
+            explicit FrForceBase(FrForce *force);
 
             void UpdateState() override;
 
@@ -51,7 +51,7 @@ namespace frydom {
 
             void SetTorqueInBodyNWU(const Torque &body_torque);
 
-            friend class FrForce_;
+            friend class FrForce;
 
         };
 
@@ -64,7 +64,7 @@ namespace frydom {
     class FrForceAsset;
 
     /**
-     * \class FrForce_
+     * \class FrForce
      * \brief  Class defining an effort with force and torque vector
      */
     class FrForce : public FrObject {
@@ -73,7 +73,7 @@ namespace frydom {
 
         FrBody* m_body;                ///< Pointer to the body to which the force is applied
 
-        std::shared_ptr<internal::_FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
+        std::shared_ptr<internal::FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
 
         // Force Asset
         bool m_isForceAsset = false;            ///< A ForceAsset (vector) is displayed if true

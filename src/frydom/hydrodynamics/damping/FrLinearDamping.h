@@ -24,7 +24,7 @@ namespace frydom {
 
 
     /**
-     * \class FrLinearDamping_
+     * \class FrLinearDamping
      * \brief Class for computing additional linear damping loads.
      */
     class FrLinearDamping : public FrForce {

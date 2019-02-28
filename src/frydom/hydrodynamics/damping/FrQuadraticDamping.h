@@ -19,7 +19,7 @@
 namespace frydom {
 
      /**
-     * \class FrQuadraticDamping_
+     * \class FrQuadraticDamping
      * \brief Class implementing a quadratic damping force:
       * Fqd = -1/2*rho*S*C*v*|v|
       * the velocity of the body,v, must be expressed in the local (body) frame,

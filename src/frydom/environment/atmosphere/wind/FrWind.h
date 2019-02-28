@@ -24,7 +24,7 @@ namespace frydom {
     class FrAtmosphere;
 
     /**
-    * \class FrWind_
+    * \class FrWind
     * \brief Class for defining a wind.
     */
     class FrWind : public FrFlowBase {

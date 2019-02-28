@@ -19,7 +19,7 @@
 namespace frydom {
 
 
-    FrInertiaTensor_::FrInertiaTensor_(double mass,
+    FrInertiaTensor::FrInertiaTensor(double mass,
                                        double Ixx, double Iyy, double Izz,
                                        double Ixy, double Ixz, double Iyz,
                                        const FrFrame& coeffsFrame,
@@ -46,7 +46,7 @@ namespace frydom {
 
     }
 
-    FrInertiaTensor_::FrInertiaTensor_(double mass, double Ixx, double Iyy, double Izz, double Ixy, double Ixz,
+    FrInertiaTensor::FrInertiaTensor(double mass, double Ixx, double Iyy, double Izz, double Ixy, double Ixz,
                                        double Iyz, const FrFrame &cogFrame, FRAME_CONVENTION fc) {
 
         m_inertiaAtCOG << Ixx, Ixy, Ixz,
@@ -58,25 +58,25 @@ namespace frydom {
 
     }
 
-    double FrInertiaTensor_::GetMass() const {
+    double FrInertiaTensor::GetMass() const {
         return m_mass;
     }
 
-    const Position FrInertiaTensor_::GetCOGPosition(FRAME_CONVENTION fc) const {
+    const Position FrInertiaTensor::GetCOGPosition(FRAME_CONVENTION fc) const {
         auto cogPos = m_cogPosition;
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
         return cogPos;
     }
 
     void
-    FrInertiaTensor_::GetInertiaCoeffs(double &Ixx, double &Iyy, double &Izz, double &Ixy, double &Ixz, double &Iyz,
+    FrInertiaTensor::GetInertiaCoeffs(double &Ixx, double &Iyy, double &Izz, double &Ixy, double &Ixz, double &Iyz,
                                        FRAME_CONVENTION fc) const {
         SplitMatrix33IntoCoeffs(m_inertiaAtCOG, Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
 
         if (IsNED(fc)) internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
     }
 
-    FrInertiaTensor_::InertiaMatrix FrInertiaTensor_::GetPointMassInertiaMatrix(double mass,
+    FrInertiaTensor::InertiaMatrix FrInertiaTensor::GetPointMassInertiaMatrix(double mass,
                                                                                 const frydom::Position &cogPos) {
 
         // TODO : voir a implementer la version alternative avec le outer product ?? -> annexe technique Innosea
@@ -97,7 +97,7 @@ namespace frydom {
         return inertiaMatrix;
     }
 
-    std::ostream& FrInertiaTensor_::cout(std::ostream &os) const {  // OK
+    std::ostream& FrInertiaTensor::cout(std::ostream &os) const {  // OK
 
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
         SplitMatrix33IntoCoeffs(m_inertiaAtCOG, Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
@@ -114,21 +114,21 @@ namespace frydom {
 
     }
 
-    std::ostream& operator<<(std::ostream& os, const FrInertiaTensor_& inertia) {
+    std::ostream& operator<<(std::ostream& os, const FrInertiaTensor& inertia) {
         return inertia.cout(os);
     }
 
 
-    void FrInertiaTensor_::SetMass(double mass_kg) {
+    void FrInertiaTensor::SetMass(double mass_kg) {
         m_mass = mass_kg;
     }
 
-    void FrInertiaTensor_::SetCOGPosition(const frydom::Position &cogPosition, frydom::FRAME_CONVENTION fc) {
+    void FrInertiaTensor::SetCOGPosition(const frydom::Position &cogPosition, frydom::FRAME_CONVENTION fc) {
         m_cogPosition = cogPosition;
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(m_cogPosition);
     }
 
-    Matrix66<double> FrInertiaTensor_::GetMatrix() const {
+    Matrix66<double> FrInertiaTensor::GetMatrix() const {
 
         auto mat = Matrix66<double>();
         mat.SetNull();

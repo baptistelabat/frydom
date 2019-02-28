@@ -89,7 +89,7 @@ namespace frydom {
     // Vertical stretching
     // --------------------------------------------------------
 
-    double FrKinStretchingVertical_::Eval(const double &z, const double &konde, const double &depth) const {
+    double FrKinStretchingVertical::Eval(const double &z, const double &konde, const double &depth) const {
         if (z < DBL_EPSILON) {
             return Ez(z, konde, depth);
         } else {
@@ -97,7 +97,7 @@ namespace frydom {
         }
     }
 
-    double FrKinStretchingVertical_::EvalDZ(const double &z, const double &konde, const double &depth) const {
+    double FrKinStretchingVertical::EvalDZ(const double &z, const double &konde, const double &depth) const {
         if (z < DBL_EPSILON) {
             return diffEz(z, konde, depth);
         } else {
@@ -109,7 +109,7 @@ namespace frydom {
     // Extrapolation stretching
     // -------------------------------------------------------
 
-    double FrKinStretchingExtrapol_::Eval(const double &z, const double &konde, const double &depth) const {
+    double FrKinStretchingExtrapol::Eval(const double &z, const double &konde, const double &depth) const {
         if (z < DBL_EPSILON) {
             return Ez(z, konde, depth);
         } else {
@@ -117,7 +117,7 @@ namespace frydom {
         }
     }
 
-    double FrKinStretchingExtrapol_::EvalDZ(const double &z, const double &konde, const double &depth) const {
+    double FrKinStretchingExtrapol::EvalDZ(const double &z, const double &konde, const double &depth) const {
         if (z < DBL_EPSILON) {
             return diffEz(z, konde, depth);
         } else {
@@ -129,7 +129,7 @@ namespace frydom {
     // Wheeler stretching
     // --------------------------------------------------------
 
-    double FrKinStretchingWheeler_::Eval(const double &x, const double &y, const double &z,
+    double FrKinStretchingWheeler::Eval(const double &x, const double &y, const double &z,
                                         const double &konde, const double &depth) const {
 
         auto eta = m_waveField->GetElevation(x, y, NWU);
@@ -141,7 +141,7 @@ namespace frydom {
     }
 
 
-    double FrKinStretchingWheeler_::EvalDZ(const double &x, const double &y, const double &z,
+    double FrKinStretchingWheeler::EvalDZ(const double &x, const double &y, const double &z,
                                           const double &konde, const double &depth) const {
 
         auto eta = m_waveField->GetElevation(x, y, NWU);
@@ -153,18 +153,18 @@ namespace frydom {
 
     }
 
-    FrKinStretchingWheeler_::FrKinStretchingWheeler_(FrWaveField* waveField) : m_waveField(waveField) {
+    FrKinStretchingWheeler::FrKinStretchingWheeler(FrWaveField* waveField) : m_waveField(waveField) {
         SetSteady(false);
     }
 
-//    void FrKinStretchingWheeler_::SetWaveField(FrWaveField *waveField) { m_waveField = waveField; }
+//    void FrKinStretchingWheeler::SetWaveField(FrWaveField *waveField) { m_waveField = waveField; }
 
-    double FrKinStretchingWheeler_::Eval(const double &z, const double &konde, const double &depth) const {
+    double FrKinStretchingWheeler::Eval(const double &z, const double &konde, const double &depth) const {
         std::cout << "warning : 3D-coordinate is missing for wheeler stretching" << std::endl;
         return 1.;
     }
 
-    double FrKinStretchingWheeler_::EvalDZ(const double &z, const double &konde, const double &depth) const {
+    double FrKinStretchingWheeler::EvalDZ(const double &z, const double &konde, const double &depth) const {
         std::cout << "warning : 3D-coordinate is missing for wheeler stretching" << std::endl;
         return 1.;
     }
@@ -173,7 +173,7 @@ namespace frydom {
     // Chakrabati
     // -------------------------------------------------------------------
 
-    double FrKinStretchingChakrabarti_::Eval(const double &x, const double &y, const double &z,
+    double FrKinStretchingChakrabarti::Eval(const double &x, const double &y, const double &z,
                                             const double &konde, const double &depth) const {
         if (c_infinite_depth) {
             return exp(konde * z);
@@ -183,7 +183,7 @@ namespace frydom {
         }
     }
 
-    double FrKinStretchingChakrabarti_::EvalDZ(const double &x, const double &y, const double &z,
+    double FrKinStretchingChakrabarti::EvalDZ(const double &x, const double &y, const double &z,
                                               const double &konde, const double &depth) const {
 
         if (c_infinite_depth) {
@@ -195,17 +195,17 @@ namespace frydom {
 
     }
 
-    FrKinStretchingChakrabarti_::FrKinStretchingChakrabarti_(FrWaveField *waveField) : m_waveField(waveField) {
+    FrKinStretchingChakrabarti::FrKinStretchingChakrabarti(FrWaveField *waveField) : m_waveField(waveField) {
         SetSteady(false);
     }
 
-//    void FrKinStretchingChakrabarti_::SetWaveField(FrWaveField *waveField) { m_waveField = waveField; }
+//    void FrKinStretchingChakrabarti::SetWaveField(FrWaveField *waveField) { m_waveField = waveField; }
 
     // ---------------------------------------------------------------------
     // Delta-stretching
     // ---------------------------------------------------------------------
 
-    double FrKinStretchingDelta_::Eval(const double& x, const double& y, const double& z,
+    double FrKinStretchingDelta::Eval(const double& x, const double& y, const double& z,
                                       const double& konde, const double& depth) const {
 
         auto zp = Zp(x, y, z);
@@ -216,7 +216,7 @@ namespace frydom {
         }
     }
 
-    double FrKinStretchingDelta_::EvalDZ(const double& x, const double& y, const double& z,
+    double FrKinStretchingDelta::EvalDZ(const double& x, const double& y, const double& z,
                                         const double& konde, const double& depth) const {
 
         auto zp = Zp(x, y, z);
@@ -229,7 +229,7 @@ namespace frydom {
 
     }
 
-    double FrKinStretchingDelta_::Zp(const double &x, const double &y, const double &z) const {
+    double FrKinStretchingDelta::Zp(const double &x, const double &y, const double &z) const {
 
         auto eta = m_waveField->GetElevation(x, y, NWU);
 
@@ -242,7 +242,7 @@ namespace frydom {
         return zp;
     }
 
-    double FrKinStretchingDelta_::DZp(const double &x, const double &y, const double &z) const {
+    double FrKinStretchingDelta::DZp(const double &x, const double &y, const double &z) const {
 
         auto eta = m_waveField->GetElevation(x, y, NWU);
 
@@ -255,15 +255,15 @@ namespace frydom {
         return drz;
     }
 
-    FrKinStretchingDelta_::FrKinStretchingDelta_(FrWaveField *waveField) : m_waveField(waveField),
+    FrKinStretchingDelta::FrKinStretchingDelta(FrWaveField *waveField) : m_waveField(waveField),
                                                                          m_delta(0.3), m_hd(0.)
     {
         SetSteady(false);
     }
 
-//    void FrKinStretchingDelta_::SetWaveField(FrWaveField *waveField) { m_waveField = waveField; }
+//    void FrKinStretchingDelta::SetWaveField(FrWaveField *waveField) { m_waveField = waveField; }
 
-    void FrKinStretchingDelta_::SetParam(double hd, double delta) {
+    void FrKinStretchingDelta::SetParam(double hd, double delta) {
         m_hd = hd;
         m_delta = delta;
     }
@@ -272,7 +272,7 @@ namespace frydom {
     // HDelta-stretching
     // ---------------------------------------------------------------------
 
-    double FrKinStretchingHDelta_::Eval(const double& x, const double& y, const double& z,
+    double FrKinStretchingHDelta::Eval(const double& x, const double& y, const double& z,
                                        const double& konde, const double& depth) const {
 
         auto zp = Zp(x, y, z, depth);
@@ -283,7 +283,7 @@ namespace frydom {
         }
     }
 
-    double FrKinStretchingHDelta_::EvalDZ(const double& x, const double& y, const double& z,
+    double FrKinStretchingHDelta::EvalDZ(const double& x, const double& y, const double& z,
                                          const double& konde, const double& depth) const {
 
         auto zp = Zp(x, y, z, depth);
@@ -296,27 +296,27 @@ namespace frydom {
 
     }
 
-    double FrKinStretchingHDelta_::Zp(const double &x, const double &y, const double &z, const double& depth) const {
+    double FrKinStretchingHDelta::Zp(const double &x, const double &y, const double &z, const double& depth) const {
 
         auto eta = m_waveField->GetElevation(x, y, NWU);
         return (z + depth) * (depth + m_delta * eta) / (depth + eta) - depth;
 
     }
 
-    double FrKinStretchingHDelta_::DZp(const double &x, const double &y, const double &z, const double& depth) const {
+    double FrKinStretchingHDelta::DZp(const double &x, const double &y, const double &z, const double& depth) const {
 
         auto eta = m_waveField->GetElevation(x, y, NWU);
         return (depth + m_delta * eta) / (depth + eta);
 
     }
 
-    FrKinStretchingHDelta_::FrKinStretchingHDelta_(FrWaveField *waveField) : m_waveField(waveField)
+    FrKinStretchingHDelta::FrKinStretchingHDelta(FrWaveField *waveField) : m_waveField(waveField)
     {
         SetSteady(false);
     }
 
 
-    void FrKinStretchingHDelta_::SetDelta(double delta) {
+    void FrKinStretchingHDelta::SetDelta(double delta) {
         m_delta = delta;
     }
 

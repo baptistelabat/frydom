@@ -245,7 +245,7 @@ namespace frydom {
         return m_chronoBody->GetMass();
     }
 
-    FrInertiaTensor_ FrBody::GetInertiaTensor(FRAME_CONVENTION fc) const {
+    FrInertiaTensor FrBody::GetInertiaTensor(FRAME_CONVENTION fc) const {
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
         SplitMatrix33IntoCoeffs(internal::ChMatrix33ToMatrix33(m_chronoBody->GetInertia()),
                 Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
@@ -256,7 +256,7 @@ namespace frydom {
         return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(GetCOG(fc), FrRotation(), fc), fc};
     }
 
-    void FrBody::SetInertiaTensor(const FrInertiaTensor_ &inertia) {
+    void FrBody::SetInertiaTensor(const FrInertiaTensor &inertia) {
 
         m_chronoBody->SetMass(inertia.GetMass());
 
@@ -429,11 +429,11 @@ namespace frydom {
         SetRotation(rotation.GetQuaternion());
     }
 
-    FrUnitQuaternion_ FrBody::GetQuaternion() const {
+    FrUnitQuaternion FrBody::GetQuaternion() const {
         return internal::Ch2FrQuaternion(m_chronoBody->GetRot());
     }
 
-    void FrBody::SetRotation(const FrUnitQuaternion_ &quaternion) {
+    void FrBody::SetRotation(const FrUnitQuaternion &quaternion) {
         Position bodyWorldPos = GetPosition(NWU);
         m_chronoBody->SetRot(internal::Fr2ChQuaternion(quaternion));
         SetPosition(bodyWorldPos, NWU);
@@ -524,7 +524,7 @@ namespace frydom {
         SetRotation(GetRotation() * relRotation);
     }
 
-    void FrBody::Rotate(const FrUnitQuaternion_ &relQuaternion) {
+    void FrBody::Rotate(const FrUnitQuaternion &relQuaternion) {
         SetRotation(GetQuaternion() * relQuaternion);
     }
 
@@ -536,13 +536,13 @@ namespace frydom {
         RotateAroundPointInBody(rot.GetQuaternion(), bodyPos, fc);
     }
 
-    void FrBody::RotateAroundPointInWorld(const FrUnitQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc) {
+    void FrBody::RotateAroundPointInWorld(const FrUnitQuaternion& rot, const Position& worldPos, FRAME_CONVENTION fc) {
         Position bodyPos = GetPointPositionInBody(worldPos, fc);
         Rotate(rot);
         SetPositionOfBodyPoint(bodyPos, worldPos, fc);
     }
 
-    void FrBody::RotateAroundPointInBody(const FrUnitQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc) {
+    void FrBody::RotateAroundPointInBody(const FrUnitQuaternion& rot, const Position& bodyPos, FRAME_CONVENTION fc) {
         Position worldPos = GetPointPositionInWorld(bodyPos, fc);
         Rotate(rot);
         SetPositionOfBodyPoint(bodyPos, worldPos, fc);
@@ -552,7 +552,7 @@ namespace frydom {
         RotateAroundPointInBody(rot, GetCOG(fc), fc);
     }
 
-    void FrBody::RotateAroundCOG(const FrUnitQuaternion_& rot, FRAME_CONVENTION fc) {
+    void FrBody::RotateAroundCOG(const FrUnitQuaternion& rot, FRAME_CONVENTION fc) {
         RotateAroundPointInBody(rot, GetCOG(fc), fc);
     }
 

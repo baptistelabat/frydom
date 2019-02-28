@@ -27,7 +27,7 @@ private:
     Position m_PointREFInWorld;                 ///< Position of the body in world
 
     FrFrame m_frameREF;                        ///< Body frame
-    FrUnitQuaternion_ m_quatREF;                    ///< Rotation of the body in world
+    FrUnitQuaternion m_quatREF;                    ///< Rotation of the body in world
 
     Position m_PointInBody;                     ///< Position of a point of the body in body
     Position m_PointInWorld;                    ///< Position of a point of the boyd in world
@@ -100,7 +100,7 @@ public:
     /// Accessor
     Position GetPointREFInWorld() const { return m_PointREFInWorld; }
     Position GetPointCOGInBody()  const { return m_PointCOGInBody; }
-    FrUnitQuaternion_ GetQuatREF()    const { return m_quatREF; }
+    FrUnitQuaternion GetQuatREF()    const { return m_quatREF; }
 
     /// Methods
     void LoadData(std::string filename);
@@ -157,7 +157,7 @@ void TestFrForce_::LoadData(std::string filename) {
     auto direction = ReadDirection(reader, group + "RotationDirection/");
     direction.normalize();
     auto angle = reader.ReadDouble(group + "RotationAngle/");
-    m_quatREF =  FrUnitQuaternion_(direction, angle, NWU);
+    m_quatREF =  FrUnitQuaternion(direction, angle, NWU);
     m_frameREF = FrFrame(m_PointREFInWorld, m_quatREF, NWU);
 
     m_forceInWorldAtPoint  = ReadForce(reader, group + "ForceInWorldAtPoint/");
@@ -635,7 +635,7 @@ std::shared_ptr<FrBody> TestBase::NewBody(std::shared_ptr<TestFrForce_> test) {
     auto body = std::make_shared<FrBody>();
     body->SetPosition(test->GetPointREFInWorld(), NWU);
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(test->GetPointCOGInBody(),FrRotation(),NWU),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(test->GetPointCOGInBody(),FrRotation(),NWU),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     body->SetRotation(test->GetQuatREF());

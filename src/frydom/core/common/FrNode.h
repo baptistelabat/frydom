@@ -69,6 +69,7 @@ namespace frydom {
         /// \param e1 direction of the x-axis with respect to reference frame
         /// \param e2 direction of the y-axis with respect to reference frame
         /// \param e3 direction of the z-axis with respect to reference frame
+        /// \param fc frame convention (NED/NWU)
         void Set(const Position& pos, const Direction& e1, const Direction& e2, const Direction& e3, FRAME_CONVENTION fc);
 
 
@@ -90,13 +91,13 @@ namespace frydom {
 
 
         void SetOrientationInBody(const FrRotation& rotation);
-        void SetOrientationInBody(const FrUnitQuaternion_& quaternion);
+        void SetOrientationInBody(const FrUnitQuaternion& quaternion);
 
         void RotateInBody(const FrRotation& rotation);
-        void RotateInBody(const FrUnitQuaternion_& quaternion);
+        void RotateInBody(const FrUnitQuaternion& quaternion);
 
         void RotateInWorld(const FrRotation& rotation);
-        void RotateInWorld(const FrUnitQuaternion_& quaternion);
+        void RotateInWorld(const FrUnitQuaternion& quaternion);
 
         void RotateAroundXInBody(double angleRad, FRAME_CONVENTION fc);
         void RotateAroundYInBody(double angleRad, FRAME_CONVENTION fc);
@@ -207,7 +208,7 @@ namespace frydom {
 
         /// Project a vector from world reference frame to node reference frame
         /// \tparam Vector vector template
-        /// \param nodeVector vector to be projected, given in the world reference frame
+        /// \param worldVector vector to be projected, given in the world reference frame
         /// \param fc Frame convention (NED/NWU)
         /// \return the vector projected in the node reference frame
         template <class Vector>
@@ -217,7 +218,7 @@ namespace frydom {
 
         /// Project a vector from world reference frame to node reference frame
         /// \tparam Vector vector template
-        /// \param nodeVector vector to be projected, given in the world reference frame
+        /// \param worldVector vector to be projected, given in the world reference frame
         /// \param fc Frame convention (NED/NWU)
         /// \return the vector projected in the node reference frame
         template <class Vector>

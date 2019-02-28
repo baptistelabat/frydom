@@ -43,7 +43,7 @@ namespace frydom {
                     e1.Getuy(), e2.Getuy(), e3.Getuy(),
                     e1.Getuz(), e2.Getuz(), e3.Getuz();
 
-        FrUnitQuaternion_ quaternion;
+        FrUnitQuaternion quaternion;
         quaternion.Set(matrix, fc);
 
         SetFrameInBody(FrFrame(position, quaternion, fc));
@@ -129,7 +129,7 @@ namespace frydom {
         SetOrientationInBody(rotation.GetQuaternion());
     }
 
-    void FrNode::SetOrientationInBody(const FrUnitQuaternion_& quaternion) {
+    void FrNode::SetOrientationInBody(const FrUnitQuaternion& quaternion) {
         auto currentFrameInBody = GetFrameInBody();
         currentFrameInBody.SetRotation(quaternion);
         SetFrameInBody(currentFrameInBody);
@@ -139,7 +139,7 @@ namespace frydom {
         RotateInBody(rotation.GetQuaternion());
     }
 
-    void FrNode::RotateInBody(const FrUnitQuaternion_& quaternion) {
+    void FrNode::RotateInBody(const FrUnitQuaternion& quaternion) {
         auto currentFrameInBody = GetFrameInBody();
         currentFrameInBody.RotateInFrame(quaternion);
         SetFrameInBody(currentFrameInBody);
@@ -149,39 +149,39 @@ namespace frydom {
         RotateInWorld(rotation.GetQuaternion());
     }
 
-    void FrNode::RotateInWorld(const FrUnitQuaternion_& quaternion) {
+    void FrNode::RotateInWorld(const FrUnitQuaternion& quaternion) {
         auto currentFrameInWorld = GetFrameInWorld();
         currentFrameInWorld.RotateInFrame(quaternion);
         SetFrameInWorld(currentFrameInWorld);
     }
 
     void FrNode::RotateAroundXInBody(double angleRad, FRAME_CONVENTION fc) {
-        FrUnitQuaternion_ quaternion(Direction(1, 0, 0), angleRad, fc);
+        FrUnitQuaternion quaternion(Direction(1, 0, 0), angleRad, fc);
         RotateInBody(quaternion);
     }
 
     void FrNode::RotateAroundYInBody(double angleRad, FRAME_CONVENTION fc) {
-        FrUnitQuaternion_ quaternion(Direction(0, 1, 0), angleRad, fc);
+        FrUnitQuaternion quaternion(Direction(0, 1, 0), angleRad, fc);
         RotateInBody(quaternion);
     }
 
     void FrNode::RotateAroundZInBody(double angleRad, FRAME_CONVENTION fc) {
-        FrUnitQuaternion_ quaternion(Direction(0, 0, 1), angleRad, fc);
+        FrUnitQuaternion quaternion(Direction(0, 0, 1), angleRad, fc);
         RotateInBody(quaternion);
     }
 
     void FrNode::RotateAroundXInWorld(double angleRad, FRAME_CONVENTION fc) {
-        FrUnitQuaternion_ quaternion(Direction(1, 0, 0), angleRad, fc);
+        FrUnitQuaternion quaternion(Direction(1, 0, 0), angleRad, fc);
         RotateInWorld(quaternion);
     }
 
     void FrNode::RotateAroundYInWorld(double angleRad, FRAME_CONVENTION fc) {
-        FrUnitQuaternion_ quaternion(Direction(0, 1, 0), angleRad, fc);
+        FrUnitQuaternion quaternion(Direction(0, 1, 0), angleRad, fc);
         RotateInWorld(quaternion);
     }
 
     void FrNode::RotateAroundZInWorld(double angleRad, FRAME_CONVENTION fc) {
-        FrUnitQuaternion_ quaternion(Direction(0, 0, 1), angleRad, fc);
+        FrUnitQuaternion quaternion(Direction(0, 0, 1), angleRad, fc);
         RotateInWorld(quaternion);
     }
 

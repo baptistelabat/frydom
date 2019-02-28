@@ -20,9 +20,9 @@ namespace frydom{
 
     namespace internal {
 
-        _FrForceBase::_FrForceBase(FrForce *force) : m_frydomForce(force) {}
+        FrForceBase::FrForceBase(FrForce *force) : m_frydomForce(force) {}
 
-        void _FrForceBase::UpdateState() {
+        void FrForceBase::UpdateState() {
 
             // Calling the FRyDoM interface for Update
             m_frydomForce->Update(ChTime);
@@ -44,25 +44,25 @@ namespace frydom{
             }
         }
 
-        void _FrForceBase::GetBodyForceTorque(chrono::ChVector<double> &body_force,
+        void FrForceBase::GetBodyForceTorque(chrono::ChVector<double> &body_force,
                                               chrono::ChVector<double> &body_torque) const {
             body_force = force;    // In absolute coordinates
             body_torque = m_torque; // In body coordinates expressed at COG
         }
 
-        void _FrForceBase::GetForceInWorldNWU(Force &body_force) const {
+        void FrForceBase::GetForceInWorldNWU(Force &body_force) const {
             body_force = internal::ChVectorToVector3d<Force>(force);
         }
 
-        void _FrForceBase::GetTorqueInBodyNWU(Torque &body_torque) const {
+        void FrForceBase::GetTorqueInBodyNWU(Torque &body_torque) const {
             body_torque = internal::ChVectorToVector3d<Torque>(m_torque);
         }
 
-        void _FrForceBase::SetForceInWorldNWU(const Force &body_force) {
+        void FrForceBase::SetForceInWorldNWU(const Force &body_force) {
             force = internal::Vector3dToChVector(body_force);
         }
 
-        void _FrForceBase::SetTorqueInBodyNWU(const Torque &body_torque) {
+        void FrForceBase::SetTorqueInBodyNWU(const Torque &body_torque) {
             m_torque = internal::Vector3dToChVector(body_torque);
         }
 
@@ -72,7 +72,7 @@ namespace frydom{
     // FrForce methods implementations
 
     FrForce::FrForce() {
-        m_chronoForce = std::make_shared<internal::_FrForceBase>(this);
+        m_chronoForce = std::make_shared<internal::FrForceBase>(this);
     }
 
     void FrForce::Initialize() {

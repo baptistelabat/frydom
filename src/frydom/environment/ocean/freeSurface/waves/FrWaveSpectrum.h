@@ -29,7 +29,7 @@ namespace frydom {
     //TODO: Changer la discrétisation en direction, de manière à obtenir une énergie spectrale constante pour toutes les composantes
     // voir OrcaFlex Equal Energy dans Frequency spectrum discretisation.
     /**
-     * \class FrWaveDirectionalModel_
+     * \class FrWaveDirectionalModel
      * \brief Class for setting the wave directional model.
      */
     class FrWaveDirectionalModel {
@@ -131,7 +131,7 @@ namespace frydom {
 
     // =================================================================================================================
     /// -------------------------------------------------------------------
-    /// FrWaveSpectrum_
+    /// FrWaveSpectrum
     /// -------------------------------------------------------------------
     /// Virtual base class for the wave spectra.
 
@@ -294,7 +294,7 @@ namespace frydom {
     //TODO : Implémenter les recommandations de DNV pour la valeur de gamma.
     //TODO : S'appuyer sur le calcul du spectre de Pierson-Moskowitz pour celui de JONSWAP?
     /**
-     * \class FrJonswapWaveSpectrum_
+     * \class FrJonswapWaveSpectrum
      * \brief Class for defining a Jonswap wave spectrum.
      */
     class FrJonswapWaveSpectrum : public FrWaveSpectrum {
@@ -345,7 +345,7 @@ namespace frydom {
     /// -------------------------------------------------------------------
     /// Class for a Pierson Moskowitz wave spectrum
     /**
-     * \class FrPiersonMoskowitzWaveSpectrum_
+     * \class FrPiersonMoskowitzWaveSpectrum
      * \brief Class for defining a Pierson-Moskowitz wave spectrum.
      */
     class FrPiersonMoskowitzWaveSpectrum : public FrWaveSpectrum {

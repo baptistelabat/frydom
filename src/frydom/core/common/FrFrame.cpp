@@ -26,7 +26,7 @@ namespace frydom {
         SetRotation(rotation);
     }
 
-    FrFrame::FrFrame(const Position &pos, const frydom::FrUnitQuaternion_ &quaternion, FRAME_CONVENTION fc) {  // OK
+    FrFrame::FrFrame(const Position &pos, const frydom::FrUnitQuaternion &quaternion, FRAME_CONVENTION fc) {  // OK
         SetPosition(pos, fc);
         SetRotation(quaternion);
     }
@@ -111,7 +111,7 @@ namespace frydom {
         SetRotation(rotation.GetQuaternion());
     }
 
-    void FrFrame::SetRotation(const FrUnitQuaternion_ &quaternion) {  // OK
+    void FrFrame::SetRotation(const FrUnitQuaternion &quaternion) {  // OK
         m_chronoFrame.SetRot(internal::Fr2ChQuaternion(quaternion));
     }
 
@@ -133,7 +133,7 @@ namespace frydom {
         return FrRotation(GetQuaternion());
     }
 
-    FrUnitQuaternion_ FrFrame::GetQuaternion() const {  // OK
+    FrUnitQuaternion FrFrame::GetQuaternion() const {  // OK
         return internal::Ch2FrQuaternion(m_chronoFrame.GetRot());  // In NWU
     }
 
@@ -179,7 +179,7 @@ namespace frydom {
         return frame.cout(os);
     }
 
-    void FrFrame::RotateInFrame(const FrUnitQuaternion_& quaternion) {
+    void FrFrame::RotateInFrame(const FrUnitQuaternion& quaternion) {
         m_chronoFrame.SetRot(m_chronoFrame.GetRot() * internal::Fr2ChQuaternion(quaternion));
     }
 
@@ -188,7 +188,7 @@ namespace frydom {
     }
 
     void FrFrame::RotateInFrame(const Direction &direction, double angleRad, FRAME_CONVENTION fc) {
-        RotateInFrame(FrUnitQuaternion_(direction, angleRad, fc));
+        RotateInFrame(FrUnitQuaternion(direction, angleRad, fc));
     }
 
     void FrFrame::RotateInFrame(double phiRad, double thetaRad, double psiRad,  EULER_SEQUENCE seq, FRAME_CONVENTION fc) {
@@ -197,7 +197,7 @@ namespace frydom {
         RotateInFrame(rotation);
     }
 
-    void FrFrame::RotateInParent(const FrUnitQuaternion_& quaternion) {
+    void FrFrame::RotateInParent(const FrUnitQuaternion& quaternion) {
         m_chronoFrame.SetRot(internal::Fr2ChQuaternion(quaternion) * m_chronoFrame.GetRot());
     }
 
@@ -206,7 +206,7 @@ namespace frydom {
     }
 
     void FrFrame::RotateInParent(const Direction &direction, double angleRad, FRAME_CONVENTION fc) {
-        RotateInParent(FrUnitQuaternion_(direction, angleRad, fc));
+        RotateInParent(FrUnitQuaternion(direction, angleRad, fc));
     }
 
     void FrFrame::RotateInParent(double phiRad, double thetaRad, double psiRad,  EULER_SEQUENCE seq, FRAME_CONVENTION fc) {

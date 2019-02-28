@@ -37,8 +37,8 @@ namespace frydom {
 
 
     /**
-     * \class FrLinkBase_
-     * \brief Pure abstract class for every FRyDoM constraints (FrLink_, FrConstraint_, FrActuator_).
+     * \class FrLinkBase
+     * \brief Pure abstract class for every FRyDoM constraints (FrLink, FrConstraint_, FrActuator_).
      */
     class FrLinkBase : public FrPhysicsItem {
 

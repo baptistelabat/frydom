@@ -24,10 +24,10 @@
 namespace frydom {
 
     /**
-    * \class FrUnitQuaternion_
+    * \class FrUnitQuaternion
     * \brief Class for using quaternion.
     */
-    class FrUnitQuaternion_ {
+    class FrUnitQuaternion {
         /// INFO : This quaternion class is only used in FRyDoM to represent rotations, in contrary to Chrono.
         /// The unit quaternion is then ALWAYS defined normalized.
 
@@ -47,7 +47,7 @@ namespace frydom {
 
         /// Default constructor.
         /// Note that this constructs a {1,0,0,0} unit quaternion, not a null quaternion {0,0,0,0}.
-        FrUnitQuaternion_();
+        FrUnitQuaternion();
 
         /// Constructor from four doubles. The first is the real part, others are i,j,k imaginary parts
         /// the quaternion represented by {q0,q1,q2,q3} MUST be normalized.
@@ -56,7 +56,7 @@ namespace frydom {
         /// \param q2 second imaginary part
         /// \param q3 third imaginary part
         /// \param fc frame convention (NED/NWU)
-        FrUnitQuaternion_(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc);
+        FrUnitQuaternion(double q0, double q1, double q2, double q3, FRAME_CONVENTION fc);
 
         /// Constructor from four doubles. The first is the real part, others are i,j,k imaginary parts
         /// \param q0 real part
@@ -65,17 +65,17 @@ namespace frydom {
         /// \param q3 third imaginary part
         /// \param non_normalized bool to check if the quaternion represented by (q0,q1,q2,q3) is already normalized
         /// \param fc frame convention (NED/NWU)
-        FrUnitQuaternion_(double q0, double q1, double q2, double q3, bool non_normalized, FRAME_CONVENTION fc);
+        FrUnitQuaternion(double q0, double q1, double q2, double q3, bool non_normalized, FRAME_CONVENTION fc);
 
         /// Constructor from a direction and an angle
         /// \param axis direction of the rotation, MUST be normalized
         /// \param angleRAD angle in radians
         /// \param fc frame convention (NED/NWU)
-        FrUnitQuaternion_(const Direction &axis, double angleRAD, FRAME_CONVENTION fc);
+        FrUnitQuaternion(const Direction &axis, double angleRAD, FRAME_CONVENTION fc);
 
         /// Copy Constructor from an other quaternion
         /// \param other quaternion copied
-        FrUnitQuaternion_(const FrUnitQuaternion_& other);
+        FrUnitQuaternion(const FrUnitQuaternion& other);
 
         /// Set the quaternion real part and imaginary parts,
         /// the quaternion reprented by {q0,q1,q2,q3} MUST be normalized.
@@ -96,8 +96,8 @@ namespace frydom {
         void Set(double q0, double q1, double q2, double q3, bool non_normalized, FRAME_CONVENTION fc);
 
         /// Set the quaternion using an other quaternion
-        /// \param other quaternion
-        void Set(const FrUnitQuaternion_& quaternion); // TODO : supprimer, on a deja l'operateur =.
+        /// \param quaternion quaternion
+        void Set(const FrUnitQuaternion& quaternion); // TODO : supprimer, on a deja l'operateur =.
 
         /// Set the quaternion using a direction and an angle
         /// \param axis direction of the rotation, MUST be normalized
@@ -155,7 +155,7 @@ namespace frydom {
         /// Assignment operator: copy from another quaternion.
         /// \param other quaternion to be assigned
         /// \return the quaternion assigned
-        FrUnitQuaternion_& operator=(const FrUnitQuaternion_& other);
+        FrUnitQuaternion& operator=(const FrUnitQuaternion& other);
 
         /// Operator for quaternion product: A*B means the typical quaternion product.
         /// Notes:
@@ -166,7 +166,7 @@ namespace frydom {
         /// - quaternion product is not commutative.
         /// \param other quaternion to be multiplied
         /// \return product of quaternions
-        FrUnitQuaternion_ operator*(const FrUnitQuaternion_& other) const;
+        FrUnitQuaternion operator*(const FrUnitQuaternion& other) const;
         // TODO : definir un operateur * template pour les vecteurs
 
         /// Operator for quaternion product and assignment:
@@ -177,12 +177,12 @@ namespace frydom {
         /// - quaternion product is not commutative.
         /// \param other quaternion to be multiplied
         /// \return product of quaternions
-        FrUnitQuaternion_& operator*=(const FrUnitQuaternion_& other);
+        FrUnitQuaternion& operator*=(const FrUnitQuaternion& other);
 
         /// Quaternions comparison operator.
         /// \param other other FrUnitQuaternion to compare
         /// \return true if FrUnitQuaternion are equals, false otherwise
-        bool operator==(const FrUnitQuaternion_& other) const;
+        bool operator==(const FrUnitQuaternion& other) const;
 
         /// Rotate a templated vector A, of type Vector, of a rotation,
         /// on the basis of this quaternion: res=p*[0,A]*p'
@@ -208,19 +208,19 @@ namespace frydom {
         /// Apply rotation before this rotation.
         /// It corresponds to applying a rotation to the parent and must be expressed in the current parent frame
         /// Practically, this is a left rotation composition
-        void RotateInParent(const FrUnitQuaternion_& leftQuaternion);
+        void RotateInParent(const FrUnitQuaternion& leftQuaternion);
 
         /// Apply rotation after this rotation.
         /// It corresponds to applying a rotation to the target frame and must be expressed in the current target frame
         /// Practically, this is a right rotation composition
-        void RotateInFrame(const FrUnitQuaternion_& rightQuaternion);
+        void RotateInFrame(const FrUnitQuaternion& rightQuaternion);
         /// Inverse the quaternion to get its inverse in place (its vectorial part changes sign).
         /// \return the quaternion conjugate in place
-        FrUnitQuaternion_& Inverse();
+        FrUnitQuaternion& Inverse();
 
         /// Get the inverse of the quaternion
         /// \return the quaternion inverse
-        FrUnitQuaternion_ GetInverse() const;
+        FrUnitQuaternion GetInverse() const;
 
         /// Get the 3x3 matrix as a rotation matrix corresponding
         /// to the rotation expressed by the quaternion.
@@ -259,7 +259,7 @@ namespace frydom {
         mathutils::Matrix33<double> RightMultiplyInverse(const mathutils::Matrix33<double>& matrix) const;
 
 
-        friend std::ostream& operator<<(std::ostream& os, const FrUnitQuaternion_& quaternion);
+        friend std::ostream& operator<<(std::ostream& os, const FrUnitQuaternion& quaternion);
 
 
     private:
@@ -286,14 +286,14 @@ namespace frydom {
      */
 
     /**
-     * \class FrRotation_
+     * \class FrRotation
      * \brief Class for defining a rotation.
      */
     class FrRotation {
 
     private:
 
-        FrUnitQuaternion_ m_frQuaternion;  ///< The internal quaternion.
+        FrUnitQuaternion m_frQuaternion;  ///< The internal quaternion.
 
     public:
 
@@ -302,7 +302,7 @@ namespace frydom {
 
         /// Constructor from a quaternion
         /// \param quaternion Unit quaternion representing the rotation
-        explicit FrRotation(FrUnitQuaternion_ quaternion);
+        explicit FrRotation(FrUnitQuaternion quaternion);
 
         /// Constructor from axis angle rotation (angle in radians)
         /// \param axis direction of the rotation, MUST be normalized
@@ -320,15 +320,15 @@ namespace frydom {
 
         /// Set the quaternion of the rotation
         /// \param quat Unit quaternion representing the rotation
-        void Set(const FrUnitQuaternion_ &quat);
+        void Set(const FrUnitQuaternion &quat);
 
         /// Get the quaternion
         /// \return Unit quaternion representing the rotation
-        FrUnitQuaternion_& GetQuaternion();
+        FrUnitQuaternion& GetQuaternion();
 
         /// Get the quaternion (const)
         /// \return Unit quaternion representing the rotation
-        const FrUnitQuaternion_& GetQuaternion() const;
+        const FrUnitQuaternion& GetQuaternion() const;
 
 
         // Axis angle representation
@@ -358,7 +358,7 @@ namespace frydom {
         void GetAngle(double& angle) const;
 
         /// Get the angle in rotation in space (in radians)
-        /// \param angle angle in radians
+        /// \return angle in radians
         double GetAngle() const;
 
         /// Get the rotation matrix representation
@@ -567,12 +567,12 @@ namespace frydom {
         /// Apply rotation before this rotation.
         /// It corresponds to applying a rotation to the parent and must be expressed in the current parent frame
         /// Practically, this is a left rotation composition
-        void RotateInParent(const FrUnitQuaternion_& leftQuaternion);
+        void RotateInParent(const FrUnitQuaternion& leftQuaternion);
 
         /// Apply rotation after this rotation.
         /// It corresponds to applying a rotation to the target frame and must be expressed in the current target frame
         /// Practically, this is a right rotation composition
-        void RotateInFrame(const FrUnitQuaternion_& rightQuaternion);
+        void RotateInFrame(const FrUnitQuaternion& rightQuaternion);
 
         /// Apply rotation before this rotation.
         /// It corresponds to applying a rotation to the parent and must be expressed in the current parent frame
@@ -615,15 +615,15 @@ namespace frydom {
         // Conversion functions between Chrono quaternions and FRyDoM quaternions
 
         /// Convert a FRyDoM quaternion into a Chrono quaternion
-        inline chrono::ChQuaternion<double> Fr2ChQuaternion(const FrUnitQuaternion_& frQuaternion) {  // OK
+        inline chrono::ChQuaternion<double> Fr2ChQuaternion(const FrUnitQuaternion& frQuaternion) {  // OK
             double q0, q1, q2, q3;
             frQuaternion.Get(q0, q1, q2, q3, NWU);
             return chrono::ChQuaternion<double>(q0, q1, q2, q3);
         }
 
         /// Convert a Chrono quaternion into a FRyDoM quaternion
-        inline FrUnitQuaternion_ Ch2FrQuaternion(const chrono::ChQuaternion<double>& chQuaternion) {  // OK
-            return FrUnitQuaternion_(chQuaternion.e0(), chQuaternion.e1(), chQuaternion.e2(), chQuaternion.e3(), NWU);
+        inline FrUnitQuaternion Ch2FrQuaternion(const chrono::ChQuaternion<double>& chQuaternion) {  // OK
+            return FrUnitQuaternion(chQuaternion.e0(), chQuaternion.e1(), chQuaternion.e2(), chQuaternion.e3(), NWU);
         }
 
         /// Swap the frame convention (NED/NWU) of quaternion coefficients

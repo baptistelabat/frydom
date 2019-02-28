@@ -32,7 +32,7 @@ namespace frydom {
 
 
     /**
-     * \class FrLinearExcitationForce_
+     * \class FrLinearExcitationForce
      * \brief Class for computing the linear excitation loads.
      */
     class FrLinearExcitationForce : public FrForce {

@@ -37,6 +37,8 @@ namespace frydom {
     /// \param cy Polar coefficient in sway
     /// \param cn Polar coefficient in yaw
     /// \param unit Unit of the angle direction
+    /// \param fc frame convention (NED/NWU)
+    /// \param dc direction convention (GOTO/COMEFROM)
     void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
                                     std::vector<double>& angle,
                                     std::vector<double>& cx,

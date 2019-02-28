@@ -107,9 +107,9 @@ namespace frydom {
     // ----------------------------------------------------------------
 
     FrRadiationConvolutionModel::FrRadiationConvolutionModel(std::shared_ptr<FrHydroDB> HDB)
-        : FrRadiationModel(HDB) { /// Initialization of the the parent class FrRadiationModel_.
+        : FrRadiationModel(HDB) { /// Initialization of the the parent class FrRadiationModel.
 
-        /// Constructor of the class FrRadiationConvolutionModel_.
+        /// Constructor of the class FrRadiationConvolutionModel.
 
         // FIXME : a passer dans la méthode initialize pour eviter les pb de précédence vis a vis de la HDB
 

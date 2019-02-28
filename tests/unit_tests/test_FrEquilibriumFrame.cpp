@@ -28,7 +28,7 @@ protected:
     Velocity m_VelocityInWorld;
     Velocity m_VelocityInFrame;
 
-    FrUnitQuaternion_ m_quat;
+    FrUnitQuaternion m_quat;
     FrFrame m_frame;
 
     double m_angularVelocity = 0.01;
@@ -102,7 +102,7 @@ void  TestFrEquilibriumFrame::LoadData(std::string filename, std::string group) 
     auto direction = ReadVector<Direction>(reader, group + "RotationDirection");
     direction.normalize();
     auto angle = reader.ReadDouble(group + "RotationAngle");
-    m_quat = FrUnitQuaternion_(direction, angle, NWU);
+    m_quat = FrUnitQuaternion(direction, angle, NWU);
     m_frame = FrFrame(m_PositionInWorld, m_quat, NWU);
 }
 

@@ -23,7 +23,7 @@ namespace frydom {
     class FrRadiationModel;
 
     /**
-     * \class FrRadiationForce_
+     * \class FrRadiationForce
      * \brief Class for computing the radiation loads.
      */
     class FrRadiationForce : public FrForce {
@@ -51,7 +51,7 @@ namespace frydom {
     class FrRadiationConvolutionModel;
 
     /**
-     * \class FrRadiationConvolutionForce_
+     * \class FrRadiationConvolutionForce
      * \brief Class for computing the hydrodynamic damping loads.
      */
     class FrRadiationConvolutionForce: public FrRadiationForce {

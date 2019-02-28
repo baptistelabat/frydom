@@ -26,7 +26,7 @@ namespace frydom {
     class FrEquilibriumFrame;
 
     /**
-     * \class FrHydroMapper_
+     * \class FrHydroMapper
      * \brief Class for mapping the bodies with the HDB.
      */
     class FrHydroMapper {

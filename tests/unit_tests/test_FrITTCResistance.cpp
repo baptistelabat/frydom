@@ -48,9 +48,9 @@ void TestITTCResistance::SetUp() {
     body->SetPosition(Position(105., -2., 0.3), NWU);
     auto direction = Direction(0.1, 0.3, 0.9);
     direction.normalize();
-    body->SetRotation(FrUnitQuaternion_(direction, M_PI/5., NWU));
+    body->SetRotation(FrUnitQuaternion(direction, M_PI/5., NWU));
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(Position(0.2, 0.2, 0.1),FrRotation(),NWU),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(Position(0.2, 0.2, 0.1),FrRotation(),NWU),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();

@@ -17,7 +17,7 @@
 #include "FrCable.h"
 #include "frydom/core/math/FrVector.h"
 #include "frydom/environment/FrFluidType.h"
-#include "frydom/asset/FrCatenaryLineAsset_.h"
+#include "frydom/asset/FrCatenaryLineAsset.h"
 
 
 // TODO: prevoir une discretisation automatique pour laquelle on precise la taille cible d'un element
@@ -33,7 +33,7 @@ namespace frydom {
 
     /**
      * \class FrCatenaryLine FrCatenaryLine.h
-     * \brief Class for catenary line objects, subclass of FrCable_
+     * \brief Class for catenary line objects, subclass of FrCable
      * The catenary line can be specified elastic or not. However be careful not to stretch the line if it has been
      * defined as non elastic. Only an elastic line can be stretched !
      * The model for the catenary line is a quasi-static approach, based on uniform distributed load. In water, the
@@ -90,7 +90,7 @@ namespace frydom {
         // Asset parameters
         bool is_lineAsset = true;                           ///< Is the line asset shown
         unsigned int m_nbDrawnElements = 40;                ///< Numbers of asset elements depicted
-        std::unique_ptr<FrCatenaryLineAsset_> m_lineAsset;  ///< Line asset
+        std::unique_ptr<FrCatenaryLineAsset> m_lineAsset;  ///< Line asset
         //--------------------------------------------------------------------------------------------------------------
 
     public:
@@ -122,7 +122,7 @@ namespace frydom {
         // Asset
         /// Get the catenary line asset, created at the initialization of the catenary line (don't try to get it before initializing the line)
         /// \return catenary line asset
-        FrCatenaryLineAsset_* GetLineAsset() const;
+        FrCatenaryLineAsset* GetLineAsset() const;
 
         /// Set the number of asset elements depicted
         /// \param n number of asset elements
@@ -254,7 +254,7 @@ namespace frydom {
         mathutils::Matrix33<double> analytical_jacobian() const;
 
 
-        friend void FrCatenaryLineAsset_::Initialize();
+        friend void FrCatenaryLineAsset::Initialize();
 
     };
 

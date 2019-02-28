@@ -37,7 +37,7 @@ namespace frydom {
 
 
     /**
-     * \class FrRadiationModel_
+     * \class FrRadiationModel
      * \brief Class for computing the radiation loads.
      */
     class FrRadiationModel : public FrPrePhysicsItem {
@@ -82,7 +82,7 @@ namespace frydom {
     // -------------------------------------------------------------------------
 
     /**
-     * \class FrRadiationConvolutionModel_
+     * \class FrRadiationConvolutionModel
      * \brief Class for computing the convolution integrals.
      */
     class FrRadiationConvolutionModel : public FrRadiationModel {

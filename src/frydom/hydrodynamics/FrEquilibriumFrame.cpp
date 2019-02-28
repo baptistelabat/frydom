@@ -153,7 +153,7 @@ namespace frydom {
                                                      FRAME_CONVENTION fc, FrBody* body, double T0, double psi)
             : FrEquilibriumFrame(pos, rotation, fc, body) { this->SetSpringDamping(T0, psi); }
 
-    FrEqFrameSpringDamping::FrEqFrameSpringDamping(const Position &pos, const FrUnitQuaternion_& quaternion,
+    FrEqFrameSpringDamping::FrEqFrameSpringDamping(const Position &pos, const FrUnitQuaternion& quaternion,
                                                      FRAME_CONVENTION fc, FrBody* body, double T0, double psi)
             : FrEquilibriumFrame(pos, quaternion, fc, body) { this->SetSpringDamping(T0, psi); }
 
@@ -209,7 +209,7 @@ namespace frydom {
                                                FrBody* body, double timePersistence, double timeStep)
             : FrEquilibriumFrame(pos, rotation, fc, body) { this->SetRecorders(timePersistence, timeStep); }
 
-    FrEqFrameMeanMotion::FrEqFrameMeanMotion(const Position &pos, const FrUnitQuaternion_ &quaternion, FRAME_CONVENTION fc,
+    FrEqFrameMeanMotion::FrEqFrameMeanMotion(const Position &pos, const FrUnitQuaternion &quaternion, FRAME_CONVENTION fc,
                                                FrBody* body, double timePersistence, double timeStep)
             : FrEquilibriumFrame(pos, quaternion, fc, body) { this->SetRecorders(timePersistence, timeStep); }
 

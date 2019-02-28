@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
     double Ixx               = 2.4e11;
     double Iyy               = 2.3e11;
     double Izz               = 2e12;
-    FrInertiaTensor_ platformInertia(Mass, Ixx, Iyy, Izz, 0., 0., 0.,platformCoGFrame, NWU);
+    FrInertiaTensor platformInertia(Mass, Ixx, Iyy, Izz, 0., 0., 0.,platformCoGFrame, NWU);
 
     platform->SetInertiaTensor(platformInertia);
 

@@ -23,7 +23,7 @@
 namespace frydom {
 
     /**
-     * \class FrInertiaTensor_
+     * \class FrInertiaTensor
      * \brief Class for defining the intertia tensor of a rigid body.
      *
      * It stores the principal inertia parameters :
@@ -34,7 +34,7 @@ namespace frydom {
      * Internally, the frame convention used is NWU but it is still possible to get or set parameters in any frame
      * convention
      */
-    class FrInertiaTensor_ {
+    class FrInertiaTensor {
 
         using InertiaMatrix = mathutils::Matrix33<double>;
 
@@ -51,7 +51,7 @@ namespace frydom {
         /// Constructor from standard inertia parameters. Inertia coefficients are expressed in coeffsFrame that can be
         /// different from the cogPosition. Both coeffsFrame and corPosition are relative to body reference coordinate
         /// system. Mass is in kg. The frame convention holds on inertia coefficients and COG Position.
-        FrInertiaTensor_(double mass,
+        FrInertiaTensor(double mass,
                          double Ixx, double Iyy, double Izz,
                          double Ixy, double Ixz, double Iyz,
                          const FrFrame& coeffsFrame, const Position& cogPosition, FRAME_CONVENTION fc);
@@ -59,7 +59,7 @@ namespace frydom {
         /// Constructor from standard inertia parameters. Inertia coefficients are expressed at COG frame that is
         /// expressed relative to body reference coordinate system. Mass is in kg. The frame convention holds on
         /// inertia coefficients.
-        FrInertiaTensor_(double mass,
+        FrInertiaTensor(double mass,
                          double Ixx, double Iyy, double Izz,
                          double Ixy, double Ixz, double Iyz,
                          const FrFrame& cogFrame, FRAME_CONVENTION fc);
@@ -90,7 +90,7 @@ namespace frydom {
 
     private:
 
-        friend std::ostream&operator<<(std::ostream& os, const FrInertiaTensor_& inertia);
+        friend std::ostream&operator<<(std::ostream& os, const FrInertiaTensor& inertia);
         std::ostream& cout(std::ostream& os) const;
 
     };

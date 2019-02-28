@@ -33,7 +33,7 @@ namespace frydom {
 
 
     // Forward declarations
-    class FrUnitQuaternion_;
+    class FrUnitQuaternion;
     class FrBody;
 
 
@@ -150,12 +150,12 @@ namespace frydom {
         /// Get the body mass in kg
         double GetMass() const;
 
-        /// Get the inertia parameters as a FrInertiaTensor_ object
+        /// Get the inertia parameters as a FrInertiaTensor object
         // TODO : gerer la frame convention !
-        FrInertiaTensor_ GetInertiaTensor(FRAME_CONVENTION fc) const; // TODO : voir pour une methode renvoyant une reference non const
+        FrInertiaTensor GetInertiaTensor(FRAME_CONVENTION fc) const; // TODO : voir pour une methode renvoyant une reference non const
 
-        /// Set the inertia parameters as a FrInertiaTensor_ object
-        void SetInertiaTensor(const FrInertiaTensor_ &inertia);
+        /// Set the inertia parameters as a FrInertiaTensor object
+        void SetInertiaTensor(const FrInertiaTensor &inertia);
 
         // =============================================================================================================
         // CONTACT
@@ -328,13 +328,13 @@ namespace frydom {
 
         /// Get the quaternion object that represents the orientation of the body reference frame in the world frame
         /// \return quaternion object that represents the orientation of the body reference frame in the world frame
-        FrUnitQuaternion_ GetQuaternion() const;
+        FrUnitQuaternion GetQuaternion() const;
 
         /// Set the orientation of the body reference frame in world frame using a quaterion object
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param quaternion orientation of the body reference frame in world frame
-        void SetRotation(const FrUnitQuaternion_& quaternion);
+        void SetRotation(const FrUnitQuaternion& quaternion);
 
         //TODO : ajouter ici toutes les methodes portant sur d'autres representations de la rotation
 
@@ -450,7 +450,7 @@ namespace frydom {
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param relQuaternion relative rotation, defined with quaternion, to be applied
-        void Rotate(const FrUnitQuaternion_& relQuaternion);
+        void Rotate(const FrUnitQuaternion& relQuaternion);
         // FIXME : reflechir de nouveau a ce que sont les eux methodes precedentes... on tourne autour de quoi ?
         // Possible que ca n'ait pas de sens...
 
@@ -486,7 +486,7 @@ namespace frydom {
         /// \param rot rotation to be applied, with a quaternion object
         /// \param worldPos point position around which the body is to be rotated, given in world reference frame
         /// \param fc frame convention (NED/NWU)
-        void RotateAroundPointInWorld(const FrUnitQuaternion_& rot, const Position& worldPos, FRAME_CONVENTION fc);
+        void RotateAroundPointInWorld(const FrUnitQuaternion& rot, const Position& worldPos, FRAME_CONVENTION fc);
 
         /// Rotate the body around a point, given in body reference frame,  with respect to its current orientation
         /// in world using a quaternion object.
@@ -495,14 +495,14 @@ namespace frydom {
         /// \param rot rotation to be applied, with a quaternion object
         /// \param worldPos point position around which the body is to be rotated, given in body reference frame
         /// \param fc frame convention (NED/NWU)
-        void RotateAroundPointInBody(const FrUnitQuaternion_& rot, const Position& bodyPos, FRAME_CONVENTION fc);
+        void RotateAroundPointInBody(const FrUnitQuaternion& rot, const Position& bodyPos, FRAME_CONVENTION fc);
 
         /// Rotate the body around COG with respect to its current orientation in world using a quaternion object.
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param rot rotation to be applied, with a quaternion object
         /// \param fc frame convention (NED/NWU)
-        void RotateAroundCOG(const FrUnitQuaternion_& rot, FRAME_CONVENTION fc);
+        void RotateAroundCOG(const FrUnitQuaternion& rot, FRAME_CONVENTION fc);
 
 
 

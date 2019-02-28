@@ -63,8 +63,8 @@ TEST(FrQuaternion,Quaternion) {
     FRAME_CONVENTION fc = NED;
     double eps = 1e-8;
 
-    FrUnitQuaternion_ Quat;
-    EXPECT_TRUE(Quat == FrUnitQuaternion_(1.,0.,0.,0.,fc));
+    FrUnitQuaternion Quat;
+    EXPECT_TRUE(Quat == FrUnitQuaternion(1.,0.,0.,0.,fc));
 
     // Test IsRotation(), Normalize() using the assert contained in this setter
     // Test Setter and Getter using doubles
@@ -80,7 +80,7 @@ TEST(FrQuaternion,Quaternion) {
 
     // Test of SetNullRotation
     Quat.SetNullRotation();
-    EXPECT_TRUE(Quat == FrUnitQuaternion_(1.,0.,0.,0.,fc));
+    EXPECT_TRUE(Quat == FrUnitQuaternion(1.,0.,0.,0.,fc));
 
     // Test of the Setter and Getter, using direction and angle
     Direction QuatDir(5.,6.,1.); QuatDir.normalize();
@@ -117,22 +117,22 @@ TEST(FrQuaternion,Quaternion) {
     EXPECT_TRUE(testDirection.isZero());
 
     // Test of the Copy Constructor
-    FrUnitQuaternion_ CopyQuat(Quat); //lol copyQuat
+    FrUnitQuaternion CopyQuat(Quat); //lol copyQuat
     EXPECT_TRUE(CopyQuat == Quat);
 
-    FrUnitQuaternion_ xRot(Direction(1.,0.,0.),90.*DEG2RAD,fc);
-    FrUnitQuaternion_ yRot(Direction(0.,1.,0.),90.*DEG2RAD,fc);
+    FrUnitQuaternion xRot(Direction(1.,0.,0.),90.*DEG2RAD,fc);
+    FrUnitQuaternion yRot(Direction(0.,1.,0.),90.*DEG2RAD,fc);
 
     // Test GetInverse
     auto TotalRot  = xRot;
     TotalRot *= xRot.GetInverse();
-    EXPECT_TRUE(TotalRot == FrUnitQuaternion_(1,0,0,0,fc));
+    EXPECT_TRUE(TotalRot == FrUnitQuaternion(1,0,0,0,fc));
 
     // Test Inverse
     TotalRot = xRot;
     TotalRot.Inverse();
     TotalRot *= xRot;
-    EXPECT_TRUE(TotalRot == FrUnitQuaternion_(1,0,0,0,fc));
+    EXPECT_TRUE(TotalRot == FrUnitQuaternion(1,0,0,0,fc));
 
     // Test Rotate
     testDirection.Set(0.,1.,0.);
@@ -207,7 +207,7 @@ TEST(FrRotation,Rotation){
     EXPECT_NEAR(angle,testAngle,eps);
 
     // Test Setter from a FrUnitQuaternion
-    FrUnitQuaternion_ AxisAngleQuat(Axis,angle,fc);
+    FrUnitQuaternion AxisAngleQuat(Axis,angle,fc);
     Rotation.Set(AxisAngleQuat);
     EXPECT_TRUE(Rotation == AxisAngleRot);
 
@@ -228,7 +228,7 @@ TEST(FrRotation,Rotation){
     EXPECT_TRUE(testDirection.isZero());
 
     // Test GetQuaternion
-    FrUnitQuaternion_ xRotQuat(Direction(1,0,0),90.*DEG2RAD,fc);
+    FrUnitQuaternion xRotQuat(Direction(1,0,0),90.*DEG2RAD,fc);
     auto xQuat = XRotation.GetQuaternion();
     EXPECT_TRUE(xRotQuat == xQuat);
 

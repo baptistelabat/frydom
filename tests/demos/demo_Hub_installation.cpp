@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
     barge->SetColor(Yellow);
 //    barge->SetFixedInWorld(true);
 
-//    barge->SetInertiaTensor(FrInertiaTensor_((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., FrFrame(), NWU));
+//    barge->SetInertiaTensor(FrInertiaTensor((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., FrFrame(), NWU));
 
     float steelYoungModulus = 1e12; // Young modulus (for contact)
     float steelNormalDamping = 1e20;// Normal damping (for contact)

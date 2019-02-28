@@ -22,7 +22,7 @@ namespace frydom {
     /// DNV-GL station keeping 01111
 
     /**
-     * \class FrWindStandardForce_
+     * \class FrWindStandardForce
      * \brief Class for computing the wind loads following the DNV guidelines.
      */
     class FrWindStandardForce : public FrForce {

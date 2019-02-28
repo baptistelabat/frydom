@@ -83,10 +83,10 @@ namespace frydom {
             /// Set the link type based on LINK_TYPE enum
             void SetLinkType(LINK_TYPE lt);
 
-            /// Initialize the link (calls the Initialize method of FrLink_
+            /// Initialize the link (calls the Initialize method of FrLink
             void SetupInitial() override;
 
-            /// Update (calls the ChLinkLock Update method then the FrLink_Update method
+            /// Update (calls the ChLinkLock Update method then the FrLinkUpdate method
             void Update(double time, bool update_assets) override;
 
             /// Generates the cache variables to speedup further requests on inner link state (frame, velocity, forces...)
@@ -125,7 +125,7 @@ namespace frydom {
     class FrActuator;
 
     /**
-     * \class FrLink_
+     * \class FrLink
      * \brief Class to deal with links.
      */
     class FrLink : public FrLinkBase {
@@ -311,10 +311,10 @@ namespace frydom {
         const Torque GetLinkTorqueOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const;
 
 
-        /// Generic computation of the power delivered in a FrLink_
+        /// Generic computation of the power delivered in a FrLink
         virtual double GetLinkPower() const;
 
-        /// Initialize a FrLink_ with a FrBodyDOFMask. Essentially used by the DOF restricting mechanism of bodies
+        /// Initialize a FrLink with a FrBodyDOFMask. Essentially used by the DOF restricting mechanism of bodies
         /// Users should not use this method to make links between bodies but directly use the specialized classes
         /// (FrPrismaticLink, FrRevoluteLink...)
         void InitializeWithBodyDOFMask(FrBodyDOFMask* mask); // FIXME passer dans une classe dediee specialisee FrBodyCaptive

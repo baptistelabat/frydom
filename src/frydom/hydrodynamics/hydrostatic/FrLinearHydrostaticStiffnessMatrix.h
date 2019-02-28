@@ -22,7 +22,7 @@
 namespace frydom {
 
     /**
-     * \class FrLinearHydrostaticStiffnessMatrix_
+     * \class FrLinearHydrostaticStiffnessMatrix
      * \brief Class for defning the hydrostatic stiffness matrix.
      */
     class FrLinearHydrostaticStiffnessMatrix {

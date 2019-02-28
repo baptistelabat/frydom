@@ -22,7 +22,7 @@ namespace frydom {
     class FrEnvironment;
 
     /**
-     * \class FrITTCResistance_
+     * \class FrITTCResistance
      * \brief Class for computing the wave resistance.
      */
     class FrITTCResistance : public FrForce {

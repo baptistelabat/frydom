@@ -36,7 +36,6 @@ namespace frydom {
     public:
 
         /// Constructor for a log manager service
-        /// \param system system providing the log manager service
         explicit FrPathManager();
 
 
