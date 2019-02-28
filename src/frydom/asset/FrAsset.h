@@ -17,6 +17,7 @@
 
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrPhysicsItem.h"
+#include "frydom/asset/FrAssetOwner.h"
 
 
 namespace frydom {
@@ -60,8 +61,9 @@ namespace frydom {
 
     private:
 
+        friend void FrAssetOwner::AddAsset(std::shared_ptr<FrAsset>);
+
         friend void FrBody::AddAsset(std::shared_ptr<FrAsset>);
-        friend void FrPhysicsItem::AddAsset(std::shared_ptr<FrAsset>);
     };
 
 

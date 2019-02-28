@@ -14,6 +14,7 @@
 #define FRYDOM_FRASSETINC_H
 
 #include "FrAsset.h"
+#include "FrAssetOwner.h"
 #include "FrForceAsset.h"
 #include "FrGridAsset.h"
 #include "FrFreeSurfaceGridAsset.h"

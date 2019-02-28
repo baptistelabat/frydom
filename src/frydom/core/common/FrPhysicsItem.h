@@ -16,6 +16,7 @@
 #include "chrono/physics/ChPhysicsItem.h"
 
 #include "FrObject.h"
+#include "frydom/asset/FrAssetOwner.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/misc/FrColors.h"
 
@@ -55,14 +56,14 @@ namespace frydom {
      * \class FrPhysicsItem
      * \brief Class for defining objects which are neither bodies nor links, for instance caterany lines.
      */
-    class FrPhysicsItem: public FrObject {
+    class FrPhysicsItem: public FrObject, public FrAssetOwner {
 
     protected:
         std::shared_ptr<internal::FrPhysicsItemBase> m_chronoPhysicsItem;
 
         FrOffshoreSystem* m_system;
 
-
+        internal::FrPhysicsItemBase* GetChronoItem() override { return m_chronoPhysicsItem.get(); }
 
     public:
 
@@ -76,19 +77,11 @@ namespace frydom {
 
         virtual void Update(double time) = 0;
 
-        /// Add an asset for visualization, based on FrAsset, to the body.
-        /// Check FrAsset for a list of all its subclasses.
-        /// \param asset asset to be added
-        void AddAsset(std::shared_ptr<FrAsset> asset);
-
-        void AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh);
-
-        void SetColor(NAMED_COLOR colorName);
-
-        void SetColor(const FrColor& color);
-
-
-
+//        void AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh);
+//
+//        void SetColor(NAMED_COLOR colorName);
+//
+//        void SetColor(const FrColor& color);
 
 
         virtual void SetupInitial();
@@ -96,6 +89,9 @@ namespace frydom {
         virtual void InitializeLog() = 0;
 
         void Initialize() override {};
+
+        void StepFinalize() override;
+
     protected:
 
         virtual std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() const ;

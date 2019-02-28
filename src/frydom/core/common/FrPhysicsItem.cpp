@@ -61,31 +61,30 @@ namespace frydom {
         return m_chronoPhysicsItem;
     }
 
-    void FrPhysicsItem::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh) {
-        auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
-        shape->SetMesh(*mesh);
-        m_chronoPhysicsItem->AddAsset(shape);
-    }
-
-    void FrPhysicsItem::SetColor(NAMED_COLOR colorName) {
-        SetColor(FrColor(colorName));
-    }
-
-    void FrPhysicsItem::SetColor(const FrColor& color) {
-        auto colorAsset = std::make_shared<chrono::ChColorAsset>(
-                chrono::ChColor(color.R, color.G, color.B));
-        m_chronoPhysicsItem->AddAsset(colorAsset);
-    }
+//    void FrPhysicsItem::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh) {
+//        auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
+//        shape->SetMesh(*mesh);
+//        m_chronoPhysicsItem->AddAsset(shape);
+//    }
+//
+//    void FrPhysicsItem::SetColor(NAMED_COLOR colorName) {
+//        SetColor(FrColor(colorName));
+//    }
+//
+//    void FrPhysicsItem::SetColor(const FrColor& color) {
+//        auto colorAsset = std::make_shared<chrono::ChColorAsset>(
+//                chrono::ChColor(color.R, color.G, color.B));
+//        m_chronoPhysicsItem->AddAsset(colorAsset);
+//    }
 
     void FrPhysicsItem::SetupInitial() {
         m_chronoPhysicsItem->SetupInitial();
         Initialize();
     }
 
-    void FrPhysicsItem::AddAsset(std::shared_ptr<FrAsset> asset) {
-        
-//        m_assets.push_back(asset);
-        m_chronoPhysicsItem->AddAsset(asset->GetChronoAsset());
+    void FrPhysicsItem::StepFinalize() {
+
+        FrAssetOwner::UpdateAsset();
 
     }
 

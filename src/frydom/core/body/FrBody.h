@@ -889,6 +889,8 @@ namespace frydom {
             return m_chronoBody;
         }
 
+        chrono::ChPhysicsItem* GetChronoItem() { return m_chronoBody.get(); }
+
         void InitializeLockedDOF();
 
         // Friends of FrBody : they can have access to chrono internals
