@@ -13,7 +13,8 @@ using namespace frydom;
 
 int main() {
 
-    FrMesh mesh("BARGE.obj");
+//    FrMesh mesh("BARGE.obj");
+    FrMesh mesh("searev.obj");
 
 //    std::cout << "Mesh is watertight = " << mesh.IsWatertight() << std::endl;
 
@@ -22,7 +23,7 @@ int main() {
     MeshClipper clipper;
     FrMesh mesh_clipped = clipper(mesh);
 
-    mesh_clipped.Write("BARGE_clipped.obj");
+    mesh_clipped.Write("SEAREV_clipped.obj");
 
 
 //    std::cout << "Waterplane Area = " << mesh_clipped.GetBoundaryPolygonsSurfaceIntegral(POLY_1) << std::endl;
