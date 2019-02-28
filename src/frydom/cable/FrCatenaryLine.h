@@ -80,9 +80,9 @@ namespace frydom {
 
         //--------------------------------------------------------------------------------------------------------------
         // Forces to apply to bodies
-        std::shared_ptr<FrCatenaryForce> m_startingForce;  ///< Force applied by the catenary line to the body at the
+        std::shared_ptr<FrCatenaryForce> m_startingForce;   ///< Force applied by the catenary line to the body at the
                                                             ///< starting node
-        std::shared_ptr<FrCatenaryForce> m_endingForce;    ///< Force applied by the catenary line to the body at the
+        std::shared_ptr<FrCatenaryForce> m_endingForce;     ///< Force applied by the catenary line to the body at the
                                                             ///< ending node
         //--------------------------------------------------------------------------------------------------------------
 
@@ -90,7 +90,7 @@ namespace frydom {
         // Asset parameters
         bool is_lineAsset = true;                           ///< Is the line asset shown
         unsigned int m_nbDrawnElements = 40;                ///< Numbers of asset elements depicted
-        std::unique_ptr<FrCatenaryLineAsset> m_lineAsset;  ///< Line asset
+        std::shared_ptr<FrCatenaryLineAsset_> m_lineAsset;   ///< Line asset
         //--------------------------------------------------------------------------------------------------------------
 
     public:
@@ -120,9 +120,9 @@ namespace frydom {
 
         //--------------------------------------------------------------------------------------------------------------
         // Asset
-        /// Get the catenary line asset, created at the initialization of the catenary line (don't try to get it before initializing the line)
-        /// \return catenary line asset
-        FrCatenaryLineAsset* GetLineAsset() const;
+//        /// Get the catenary line asset, created at the initialization of the catenary line (don't try to get it before initializing the line)
+//        /// \return catenary line asset
+//        FrCatenaryLineAsset* GetLineAsset() const;
 
         /// Set the number of asset elements depicted
         /// \param n number of asset elements

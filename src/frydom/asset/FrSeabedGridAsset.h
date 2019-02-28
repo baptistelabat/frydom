@@ -37,8 +37,6 @@ namespace frydom {
         /// \return
         double GetGridHeight() const override;
 
-        void Update() override {};
-
     };
 
 }  // end namespace frydom

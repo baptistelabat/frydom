@@ -133,17 +133,22 @@ namespace frydom {
     }
 
     void FrBody::StepFinalize() {
+
         // StepFinalize of forces
         auto forceIter = force_begin();
         for (; forceIter != force_end(); forceIter++) {
             (*forceIter)->StepFinalize();
         }
 
-        // Send the message to the logging system
-        if (IsLogged()) {
-            m_message->Serialize();
-            m_message->Send();
+        // StepFinalize of assets
+        auto assetIter = asset_begin();
+        for (; assetIter != asset_end(); assetIter++) {
+            (*assetIter)->StepFinalize();
         }
+
+        // Send the message to the logging system
+        FrObject::SendLog();
+
     }
 
     void FrBody::Update() {
@@ -176,6 +181,23 @@ namespace frydom {
 
     FrBody::CONTACT_TYPE FrBody::GetContactType() const {
         return m_contactType;
+    }
+
+    // Asset linear iterators
+    FrBody::AssetIter FrBody::asset_begin() {
+        return m_assets.begin();
+    }
+
+    FrBody::ConstAssetIter FrBody::asset_begin() const {
+        return m_assets.cbegin();
+    }
+
+    FrBody::AssetIter FrBody::asset_end() {
+        return m_assets.end();
+    }
+
+    FrBody::ConstAssetIter FrBody::asset_end() const {
+        return m_assets.cend();
     }
 
 

@@ -49,6 +49,7 @@ namespace frydom {
 
     class FrOffshoreSystem;
     class FrTriangleMeshConnected;
+    class FrAsset;
 
     /**
      * \class FrPhysicsItem
@@ -60,6 +61,8 @@ namespace frydom {
         std::shared_ptr<internal::FrPhysicsItemBase> m_chronoPhysicsItem;
 
         FrOffshoreSystem* m_system;
+
+
 
     public:
 
@@ -73,11 +76,20 @@ namespace frydom {
 
         virtual void Update(double time) = 0;
 
+        /// Add an asset for visualization, based on FrAsset, to the body.
+        /// Check FrAsset for a list of all its subclasses.
+        /// \param asset asset to be added
+        void AddAsset(std::shared_ptr<FrAsset> asset);
+
         void AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh);
 
         void SetColor(NAMED_COLOR colorName);
 
         void SetColor(const FrColor& color);
+
+
+
+
 
         virtual void SetupInitial();
 

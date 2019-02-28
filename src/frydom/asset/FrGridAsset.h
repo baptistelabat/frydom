@@ -123,7 +123,7 @@ namespace frydom {
         /// GridAsset initialization method
         void Initialize() override;
 
-        /// Method called at the send of a time step. Logging may be used here
+        /// Update the state of the asset, at the end of a time step
         void StepFinalize() override;
 
     protected:

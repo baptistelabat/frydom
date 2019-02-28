@@ -37,10 +37,6 @@ namespace frydom {
         m_chronoAsset->AddAsset(glyphAsset);
     }
 
-    void FrForceAsset::Update() {
-
-    }
-
     void FrForceAsset::StepFinalize() {
 
         // Get the glyph asset form the AssetLevel

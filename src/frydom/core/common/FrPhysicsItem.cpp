@@ -15,6 +15,7 @@
 #include "chrono/assets/ChTriangleMeshShape.h"
 #include "chrono/assets/ChColorAsset.h"
 
+#include "frydom/asset/FrAsset.h"
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 
 namespace frydom {
@@ -79,6 +80,13 @@ namespace frydom {
     void FrPhysicsItem::SetupInitial() {
         m_chronoPhysicsItem->SetupInitial();
         Initialize();
+    }
+
+    void FrPhysicsItem::AddAsset(std::shared_ptr<FrAsset> asset) {
+        
+//        m_assets.push_back(asset);
+        m_chronoPhysicsItem->AddAsset(asset->GetChronoAsset());
+
     }
 
 }  // end namespace frydom

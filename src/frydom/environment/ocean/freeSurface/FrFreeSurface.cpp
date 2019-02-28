@@ -164,7 +164,6 @@ namespace frydom {
     void FrFreeSurface::StepFinalize() {
         if (m_showFreeSurface) {
             m_waveField->StepFinalize();
-            m_freeSurfaceGridAsset->StepFinalize();
         }
     }
 

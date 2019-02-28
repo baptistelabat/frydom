@@ -50,8 +50,6 @@ namespace frydom {
 
         void Initialize() override;
 
-        void Update() override;
-
         void StepFinalize() override;
 
         friend void FrBody::RemoveExternalForce(std::shared_ptr<frydom::FrForce>);

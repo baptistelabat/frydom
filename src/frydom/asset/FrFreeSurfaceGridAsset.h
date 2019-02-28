@@ -19,7 +19,6 @@
 namespace frydom {
 
     class FrFreeSurface;
-    class FrTriangleMeshConnected;
 
     /**
      * \class FrFreeSurfaceGridAsset
@@ -36,9 +35,7 @@ namespace frydom {
         /// \param body body containing this asset (usually WorldBody)
         explicit FrFreeSurfaceGridAsset(FrFreeSurface* freeSurface);
 
-        void Update() override {};
-
-        /// Method called at the send of a time step. Logging may be used here
+        /// Update the state of the asset, at the end of a time step
         void StepFinalize() override;
 
     };

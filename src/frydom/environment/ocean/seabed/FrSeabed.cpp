@@ -103,7 +103,7 @@ namespace frydom {
     }
 
     void FrMeanSeabed::StepFinalize() {
-        if (m_showSeabed) m_SeabedGridAsset->StepFinalize();
+
     }
 
     FrSeabedGridAsset *FrMeanSeabed::GetSeabedGridAsset() {return m_SeabedGridAsset.get();}

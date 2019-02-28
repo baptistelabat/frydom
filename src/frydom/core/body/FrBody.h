@@ -215,6 +215,9 @@ namespace frydom {
         /// \param mesh mesh of the asset to be added
         void AddMeshAsset(std::shared_ptr<FrTriangleMeshConnected> mesh);
 
+        /// Add an asset for visualization, based on FrAsset, to the body.
+        /// Check FrAsset for a list of all its subclasses.
+        /// \param asset asset to be added
         void AddAsset(std::shared_ptr<FrAsset> asset);
 
         /// Set the asset color in visualization given a color id
@@ -912,6 +915,15 @@ namespace frydom {
         /// Body update method
         virtual void Update();
 
+        // Linear iterators on assets
+        using AssetIter = AssetContainer::iterator;
+        using ConstAssetIter = AssetContainer::const_iterator;
+
+        AssetIter       asset_begin();
+        ConstAssetIter  asset_begin() const;
+
+        AssetIter       asset_end();
+        ConstAssetIter  asset_end() const;
 
         // Linear iterators on external forces
         using ForceIter = ForceContainer::iterator;

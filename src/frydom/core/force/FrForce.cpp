@@ -88,13 +88,9 @@ namespace frydom{
     }
 
     void FrForce::StepFinalize() {
-        if (m_isForceAsset) {
-            m_forceAsset->StepFinalize();
-        }
 
         // Send the message to the logging system
-        m_message->Serialize();
-        m_message->Send();
+        FrObject::SendLog();
 
     }
 

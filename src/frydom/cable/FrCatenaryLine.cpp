@@ -27,9 +27,9 @@ namespace frydom {
                                      m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
                                      FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity) {}
 
-    FrCatenaryLineAsset *FrCatenaryLine::GetLineAsset() const {
-        return m_lineAsset.get();
-    }
+//    FrCatenaryLineAsset *FrCatenaryLine::GetLineAsset() const {
+//        return m_lineAsset.get();
+//    }
 
     void FrCatenaryLine::guess_tension() {
 
@@ -275,18 +275,22 @@ namespace frydom {
         }
 
         // Generate assets for the cable
-        if (is_lineAsset and !m_lineAsset) {
-            m_lineAsset = std::make_unique<FrCatenaryLineAsset>(this);
+        if (is_lineAsset) {
+
+            m_lineAsset = std::make_shared<FrCatenaryLineAsset_>(this);
             m_lineAsset->Initialize();
+            AddAsset(m_lineAsset);
+//            m_lineAsset = std::make_unique<FrCatenaryLineAsset>(this);
+//            m_lineAsset->Initialize();
         }
     }
 
     void FrCatenaryLine::Update(double time) {
         UpdateTime(time);
         UpdateState();
-        if (is_lineAsset) {
-            m_lineAsset->Update();
-        }
+//        if (is_lineAsset) {
+//            m_lineAsset->Update();
+//        }
     }
 
     void FrCatenaryLine::UpdateTime(double time) {
@@ -330,6 +334,8 @@ namespace frydom {
 
     void FrCatenaryLine::StepFinalize() {
 
+        if (is_lineAsset) m_lineAsset->StepFinalize();
+        
         // Serialize and send the log message
         FrObject::SendLog();
 

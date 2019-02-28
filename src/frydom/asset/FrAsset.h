@@ -16,6 +16,7 @@
 #include "chrono/assets/ChAssetLevel.h"
 
 #include "frydom/core/body/FrBody.h"
+#include "frydom/core/common/FrPhysicsItem.h"
 
 
 namespace frydom {
@@ -30,7 +31,7 @@ namespace frydom {
 
             explicit FrAssetBase(FrAsset * asset);
 
-            void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) override;
+//            void Update(chrono::ChPhysicsItem* updater, const chrono::ChCoordsys<>& coords) override;
 
         };
 
@@ -51,8 +52,7 @@ namespace frydom {
 
         virtual void Initialize() = 0;
 
-        virtual void Update() = 0;
-
+        /// Update the state of the asset, at the end of a time step
         virtual void StepFinalize() = 0;
 
     protected:
@@ -61,6 +61,7 @@ namespace frydom {
     private:
 
         friend void FrBody::AddAsset(std::shared_ptr<FrAsset>);
+        friend void FrPhysicsItem::AddAsset(std::shared_ptr<FrAsset>);
     };
 
 

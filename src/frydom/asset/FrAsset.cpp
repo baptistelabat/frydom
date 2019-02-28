@@ -19,9 +19,9 @@ namespace frydom {
 
         }
 
-        void FrAssetBase::Update(chrono::ChPhysicsItem *updater, const chrono::ChCoordsys<> &coords) {
-            m_frydomAsset->Update();
-        }
+//        void FrAssetBase::Update(chrono::ChPhysicsItem *updater, const chrono::ChCoordsys<> &coords) {
+//            m_frydomAsset->Update();
+//        }
 
     } // end namespace frydom::internal
 
