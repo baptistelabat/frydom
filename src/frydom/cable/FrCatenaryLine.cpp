@@ -313,6 +313,7 @@ namespace frydom {
         auto logPath = m_system->GetPathManager()->BuildPhysicsItemPath(this);
 
         // Add the fields to be logged
+        // TODO: A completer
         m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoPhysicsItem->GetChTime();});
 
         // Initialize the message

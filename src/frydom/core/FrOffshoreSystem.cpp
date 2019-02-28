@@ -765,7 +765,7 @@ namespace frydom {
             }
 
             for (auto &item : m_linkList) {
-//                if (item->IsLogged()) item->InitializeLog();
+                if (item->IsLogged()) item->InitializeLog();
             }
 
             for (auto &item : m_PostPhysicsList) {

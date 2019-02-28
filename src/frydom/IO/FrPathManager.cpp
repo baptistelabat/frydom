@@ -120,8 +120,6 @@ namespace frydom{
         return PILogPath.path();
     }
 
-
-
     std::string FrPathManager::BuildBodyPath(FrBody *body){
 
         body->SetLogFrameConvention(m_logFrameConvention);

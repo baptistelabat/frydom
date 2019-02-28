@@ -26,6 +26,7 @@ namespace frydom {
     class FrForce;
     class FrNode;
     class FrPhysicsItem;
+    class FrLinkBase;
 
     class FrPathManager {
     private:
@@ -71,17 +72,17 @@ namespace frydom {
         /// \return path to the physics item log file
         std::string BuildPhysicsItemPath(FrPhysicsItem *pi);
 
-        /// Build the path and directories needed for the body log
+        /// Build the path and directories needed for a body log
         /// \param body body for which a log is declared
         /// \return path to the body log file
         std::string BuildBodyPath(FrBody *body);
 
-        /// Build the path and directories needed for the force log
+        /// Build the path and directories needed for a log
         /// \param force force for which a log is declared
         /// \return path to the force log file
         std::string BuildForcePath(FrForce *force);
 
-        /// Build the path and directories needed for the node log
+        /// Build the path and directories needed for a node log
         /// \param node node for which a log is declared
         /// \return path to the node log file
         std::string BuildNodePath(FrNode *node);

@@ -68,6 +68,10 @@ namespace frydom {
         /// be not active either because disabled, or broken, or not valid)
         virtual bool IsActive() const = 0;
 
+        // Logging
+
+        /// Initialize the log
+        void InitializeLog() override;
 
 
 
