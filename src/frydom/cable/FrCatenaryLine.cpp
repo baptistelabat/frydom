@@ -309,6 +309,17 @@ namespace frydom {
         return m_nbDrawnElements;
     }
 
+    void FrCatenaryLine::InitializeLog() {
+        auto logPath = m_system->GetPathManager()->BuildPhysicsItemPath(this);
+
+        // Add the fields to be logged
+        m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoPhysicsItem->GetChTime();});
+
+        // Initialize the message
+        FrObject::InitializeLog(logPath);
+
+    }
+
     std::shared_ptr<FrCatenaryLine>
     make_catenary_line(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
                        FrOffshoreSystem *system, bool elastic, double youngModulus, double sectionArea,

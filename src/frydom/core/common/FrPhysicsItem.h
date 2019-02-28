@@ -81,6 +81,8 @@ namespace frydom {
 
         virtual void SetupInitial();
 
+        virtual void InitializeLog() = 0;
+
         void Initialize() override {};
     protected:
 

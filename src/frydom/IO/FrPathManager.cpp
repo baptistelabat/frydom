@@ -60,6 +60,22 @@ namespace frydom{
 
     }
 
+    void FrPathManager::SetLogFrameConvention(FRAME_CONVENTION fc) {
+        m_logFrameConvention = fc;
+    }
+
+    FRAME_CONVENTION FrPathManager::GetLogFrameConvention() const {
+        return m_logFrameConvention;
+    }
+
+    void FrPathManager::SetLogOutputPath(std::string path) {
+        m_outputPath = path;
+    }
+
+    std::string FrPathManager::GetLogOutputPath() const {
+        return m_outputPath.path();
+    }
+
 
     std::string FrPathManager::BuildSystemPath(FrOffshoreSystem *system){
 
@@ -84,6 +100,24 @@ namespace frydom{
 
         return systemLogPath.path();
 
+    }
+
+    std::string FrPathManager::BuildPhysicsItemPath(FrPhysicsItem *pi) {
+        pi->SetLogFrameConvention(m_logFrameConvention);
+        // Create the system directory
+        auto system = pi->GetSystem();
+        cppfs::FilePath systemPath = m_runPath.resolve(fmt::format("{}_{}/",system->GetTypeName(),system->GetShortenUUID()));
+
+        // Create the path for the PI log
+        auto relPILogPath = fmt::format("{0}_{1}_{2}/{0}.csv",pi->GetTypeName(),pi->GetName(),pi->GetShortenUUID());
+        cppfs::FilePath PILogPath = systemPath.resolve(relPILogPath);
+
+        // Create the directory for the PI logs
+        cppfs::FilePath PIDirPath = PILogPath.directoryPath();
+        auto PILogDir = cppfs::fs::open(PIDirPath.path());
+        PILogDir.createDirectory();
+
+        return PILogPath.path();
     }
 
 
@@ -138,20 +172,25 @@ namespace frydom{
         return forceLogPath.path();
     }
 
-    void FrPathManager::SetLogFrameConvention(FRAME_CONVENTION fc) {
-        m_logFrameConvention = fc;
-    }
+    std::string FrPathManager::BuildNodePath(FrNode *node) {
 
-    FRAME_CONVENTION FrPathManager::GetLogFrameConvention() const {
-        return m_logFrameConvention;
-    }
+        node->SetLogFrameConvention(m_logFrameConvention);
 
-    void FrPathManager::SetLogOutputPath(std::string path) {
-        m_outputPath = path;
-    }
+        auto body = node->GetBody();
+        auto system = body->GetSystem();
 
-    std::string FrPathManager::GetLogOutputPath() const {
-        return m_outputPath.path();
+        // Create the system directory
+        cppfs::FilePath systemPath = m_runPath.resolve(fmt::format("{}_{}/",system->GetTypeName(),system->GetShortenUUID()));
+
+        // Create the path for the body log
+        auto relBodyLogPath = fmt::format("{}_{}_{}/",body->GetTypeName(),body->GetName(),body->GetShortenUUID());
+        cppfs::FilePath bodyPath = systemPath.resolve(relBodyLogPath);
+
+        // Create the directory for the body logs
+        auto relNodeLogPath = fmt::format("Nodes/{}_{}.csv",node->GetTypeName(),node->GetShortenUUID());
+        cppfs::FilePath nodeLogPath = bodyPath.resolve(relNodeLogPath);
+
+        return nodeLogPath.path();
     }
 
 

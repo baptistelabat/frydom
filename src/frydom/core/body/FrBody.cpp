@@ -825,25 +825,13 @@ namespace frydom {
 
     void FrBody::InitializeLog() {
 
-        auto bodyLogPath = m_system->GetPathManager()->BuildBodyPath(this);
-
-        // Initializing message
-        if (m_message->GetName().empty()) {
-            m_message->SetNameAndDescription(
-                    fmt::format("{}_{}_{}",GetTypeName(),GetName(),GetUUID()),
-                    "Message of a body");
-        }
-
-        // Add a serializer
-        m_message->AddCSVSerializer(bodyLogPath);
+        auto logPath = m_system->GetPathManager()->BuildBodyPath(this);
 
         // Add the fields
         m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoBody->GetChTime();});
 
-
-        // Init the message
-        m_message->Initialize();
-        m_message->Send();
+        // Initialize the message
+        FrObject::InitializeLog(logPath);
 
         // Initializing forces
         auto forceIter = force_begin();

@@ -74,6 +74,8 @@ namespace frydom {
 
         virtual void StepFinalize() = 0;
 
+        void InitializeLog(std::string path);
+
     };
 
 }  // end namespace frydom

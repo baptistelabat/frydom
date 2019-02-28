@@ -242,6 +242,9 @@ namespace frydom {
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override {}
 
+        /// Initialize the log
+        void InitializeLog() override;
+
         //--------------------------------------------------------------------------------------------------------------
     private :
         /// Cached function to compute ||t(s)|| - u.t(s)

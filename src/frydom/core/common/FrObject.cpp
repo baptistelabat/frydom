@@ -1,3 +1,5 @@
+#include <utility>
+
 // ==========================================================================
 // FRyDoM - frydom-ce.org
 //
@@ -13,6 +15,22 @@
 #include "FrObject.h"
 
 namespace frydom {
+
+        void FrObject::InitializeLog(std::string path) {
+            // Initializing message
+            if (m_message->GetName().empty()) {
+                m_message->SetNameAndDescription(
+                        fmt::format("{}_{}",GetTypeName(),GetShortenUUID()),
+                        fmt::format("\"Message of a {}}",GetTypeName()));
+            }
+
+            // Add a serializer
+            m_message->AddCSVSerializer(std::move(path));
+
+            // Init the message
+            m_message->Initialize();
+            m_message->Send();
+        }
 
 
 

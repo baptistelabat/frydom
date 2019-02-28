@@ -739,17 +739,7 @@ namespace frydom {
 
         if (IsLogged()) {
 
-            auto systemPath = m_pathManager->BuildSystemPath(this);
-
-            // Initializing message
-            if (m_message->GetName().empty()) {
-                m_message->SetNameAndDescription(
-                        fmt::format("{}_{}", GetTypeName(), GetUUID()),
-                        "Message of an offshore system");
-            }
-
-            // Add a serializer
-            m_message->AddCSVSerializer(systemPath);
+            auto logPath = m_pathManager->BuildSystemPath(this);
 
             // Add the fields
             // TODO A completer
@@ -757,14 +747,13 @@ namespace frydom {
 //                    [this]() { return m_chronoSystem->GetChTime(); });
 
             // Init the message
-            m_message->Initialize();
-            m_message->Send();
+            FrObject::InitializeLog(logPath);
 
             // Initializing environment before bodies
-//        if (m_environment->IsLogged()) m_environment->InitializeLog();
+//            if (m_environment->IsLogged()) m_environment->InitializeLog();
 
             for (auto &item : m_PrePhysicsList) {
-//                if (item->IsLogged()) item->InitializeLog();
+                if (item->IsLogged()) item->InitializeLog();
             }
 
             for (auto &item : m_bodyList) {
@@ -772,7 +761,7 @@ namespace frydom {
             }
 
             for (auto &item : m_MidPhysicsList) {
-//                if (item->IsLogged()) item->InitializeLog();
+                if (item->IsLogged()) item->InitializeLog();
             }
 
             for (auto &item : m_linkList) {
@@ -780,7 +769,7 @@ namespace frydom {
             }
 
             for (auto &item : m_PostPhysicsList) {
-//                if (item->IsLogged()) item->InitializeLog();
+                if (item->IsLogged()) item->InitializeLog();
             }
 
         }

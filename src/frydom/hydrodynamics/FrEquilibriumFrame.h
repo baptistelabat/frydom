@@ -84,6 +84,10 @@ namespace frydom {
         FrEquilibriumFrame(const FrFrame& otherFrame, FrBody* body)
                 : FrFrame(otherFrame), FrPrePhysicsItem(), m_body(body), m_initPositionFromBody(false) { }
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "EquilibriumFrame"; }
+
         /// Define the body to which the equilibrium frame is linked
         /// \param body Body link
         /// \param initPos Boolean, if true the position of the frame is equal to the position of the body during initialization

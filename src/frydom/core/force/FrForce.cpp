@@ -108,28 +108,17 @@ namespace frydom{
 
     void FrForce::InitializeLog() {
 
-        auto forceLogPath = GetSystem()->GetPathManager()->BuildForcePath(this);
+        // Build the path to the force log
+        auto logPath = GetSystem()->GetPathManager()->BuildForcePath(this);
 
-        // Initializing message
-        if (m_message->GetName().empty()) {
-            m_message->SetNameAndDescription(
-                    fmt::format("{}_{}",GetTypeName(),GetShortenUUID()),
-                    "Message of a body");
-        }
-
-        // Add a serializer
-        m_message->AddCSVSerializer(forceLogPath);
-
-        // Add the fields
+        // Add the fields to be logged
         m_message->AddField<double>("time", "s", "Current time of the simulation", [this] () { return m_chronoForce->GetChTime();});
 
         m_message->AddField<double>("FX", "N", "longitudinal force in body reference frame", [this] () {
             auto force = GetForceInBody(c_logFrameConvention); return force.GetFx();});
 
-        // Init the message
-        m_message->Initialize();
-        m_message->Send();
-
+        // Initialize the message
+        FrObject::InitializeLog(logPath);
 
     }
 
