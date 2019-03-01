@@ -113,10 +113,11 @@ namespace frydom{
             m_message->AddField<double>("time", "s", "Current time of the simulation",
                                         [this]() { return m_chronoForce->GetChTime(); });
 
-            m_message->AddField<double>("FX", "N", "longitudinal force in body reference frame", [this]() {
-                auto force = GetForceInBody(c_logFrameConvention);
-                return force.GetFx();
-            });
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>("Force","N", "force in body reference frame",
+                                                             [this]() {return GetForceInBody(c_logFrameConvention);});
+
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>("Torque","Nm", "torque in body reference frame at COG",
+                                                             [this]() {return GetTorqueInBodyAtCOG(c_logFrameConvention);});
 
             // Initialize the message
             FrObject::InitializeLog(logPath);

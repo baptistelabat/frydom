@@ -237,7 +237,11 @@ namespace frydom {
         void RemoveAllForces();
 
         // ##CC adding for monitoring force
-        Force GetTotalForceInWorld(FRAME_CONVENTION fc) const;
+
+        Force GetTotalExtForceInWorld(FRAME_CONVENTION fc) const;
+
+        Force GetTotalExtForceInBody(FRAME_CONVENTION fc) const;
+
         Torque GetTotalTorqueInBodyAtCOG(FRAME_CONVENTION fc) const;
         // ##CC
 
@@ -529,6 +533,16 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         void SetAccelerationInBodyNoRotation(const Acceleration &bodyAcc, FRAME_CONVENTION fc);
 
+        /// Get the acceleration of the body reference frame with a vector expressed in WORLD frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return body acceleration in world reference frame
+        Acceleration GetAccelerationInWorld(FRAME_CONVENTION fc) const;
+
+        /// Get the acceleration of the body reference frame with a vector expressed in BODY frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return body acceleration in body reference frame
+        Acceleration GetAccelerationInBody(FRAME_CONVENTION fc) const;
+
         /// Get the acceleration of the body COG with a vector expressed in WORLD frame
         /// \param fc frame convention (NED/NWU)
         /// \return COG acceleration in world reference frame
@@ -612,7 +626,6 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         /// \return body velocity expressed in body reference frame
         Velocity GetVelocityInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
-
 
 
         /// Get the acceleration expressed in world frame of a body fixed point whose coordinates are given in world frame

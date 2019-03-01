@@ -446,7 +446,7 @@ int main(int argc, char* argv[]) {
             forcePitch->GetForceInWorld(NWU), forcePitch->GetTorqueInBodyAtCOG(NWU),
             forceHeave->GetForceInWorld(NWU), forceHeave->GetTorqueInBodyAtCOG(NWU),
             radiationForce->GetForceInWorld(NWU), radiationForce->GetTorqueInBodyAtCOG(NWU),
-            body->GetTotalForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU),
+            body->GetTotalExtForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU),
             radiationAddedMassForce->GetForceInWorld(), radiationAddedMassForce->GetTorqueInWorldAtCOG()
         );
         */

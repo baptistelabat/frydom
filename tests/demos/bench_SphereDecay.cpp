@@ -228,7 +228,7 @@ int main(int argc, char* argv[]) {
                   forceHst->GetForceInWorld(NWU),forceHst->GetTorqueInBodyAtCOG(NWU),
                   radiationForce->GetForceInWorld(NWU), radiationForce->GetTorqueInBodyAtCOG(NWU),
                   radiationAddedMassForce->GetForceInWorld(), radiationAddedMassForce->GetTorqueInWorldAtCOG(),
-                  body->GetTotalForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU)
+                  body->GetTotalExtForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU)
         );
 
     }
