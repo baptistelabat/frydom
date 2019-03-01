@@ -96,6 +96,9 @@ namespace frydom {
         /// Set the position of the equilibrium frame equal to the position of the body at COG
         void SetPositionToBodyPosition();
 
+        FrFrame GetPerturbationFrame();
+
+
         /// Set the velocity of the equilibrium frame equal to the velocity of the body at COG
         void SetVelocityToBodyVelocity();
 
