@@ -21,6 +21,7 @@
 namespace frydom {
 
     //Forward declaration
+    class FrObject;
     class FrBody;
     class FrOffshoreSystem;
     class FrForce;
@@ -60,33 +61,32 @@ namespace frydom {
 
 
         ///Initialize the log manager serice
-        void Initialize();
+        void Initialize(FrOffshoreSystem* system);
 
         /// Build the path and directories needed for the system log
         /// \param system system for which a log is declared
         /// \return path to the system log file
-        std::string BuildSystemPath(FrOffshoreSystem *system);
+        std::string BuildPath(FrOffshoreSystem *system, std::string relPath);
 
         /// Build the path and directories needed for a physics item log
         /// \param pi physics item for which a log is declared
         /// \return path to the physics item log file
-        std::string BuildPhysicsItemPath(FrPhysicsItem *pi);
+        std::string BuildPath(FrPhysicsItem *pi, std::string relPath);
 
         /// Build the path and directories needed for a body log
         /// \param body body for which a log is declared
         /// \return path to the body log file
-        std::string BuildBodyPath(FrBody *body);
+        std::string BuildPath(FrBody *body, std::string relPath);
 
-        /// Build the path and directories needed for a log
+        /// Build the path and directories needed for a force log
         /// \param force force for which a log is declared
         /// \return path to the force log file
-        std::string BuildForcePath(FrForce *force);
+        std::string BuildPath(FrForce *force, std::string relPath);
 
         /// Build the path and directories needed for a node log
         /// \param node node for which a log is declared
         /// \return path to the node log file
-        std::string BuildNodePath(FrNode *node);
-
+        std::string BuildPath(FrNode *node, std::string relPath);
 
 
     private:

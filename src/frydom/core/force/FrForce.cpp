@@ -107,17 +107,27 @@ namespace frydom{
         if (IsLogged()) {
 
             // Build the path to the force log
-            auto logPath = GetSystem()->GetPathManager()->BuildForcePath(this);
+            auto logPath = GetSystem()->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged
             m_message->AddField<double>("time", "s", "Current time of the simulation",
                                         [this]() { return m_chronoForce->GetChTime(); });
 
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>("Force","N", "force in body reference frame",
-                                                             [this]() {return GetForceInBody(c_logFrameConvention);});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+            ("Body Force","N", fmt::format("force in body reference frame in {}", c_logFrameConvention),
+                    [this]() {return GetForceInBody(c_logFrameConvention);});
 
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>("Torque","Nm", "torque in body reference frame at COG",
-                                                             [this]() {return GetTorqueInBodyAtCOG(c_logFrameConvention);});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+            ("Body Torque","Nm", fmt::format("torque at COG in body reference frame in {}", c_logFrameConvention),
+                    [this]() {return GetTorqueInBodyAtCOG(c_logFrameConvention);});
+
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+            ("World Force","N", fmt::format("force in world reference frame in {}", c_logFrameConvention),
+                    [this]() {return GetForceInWorld(c_logFrameConvention);});
+
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+            ("World Torque","Nm", fmt::format("torque at COG in world reference frame in {}", c_logFrameConvention),
+                    [this]() {return GetTorqueInWorldAtCOG(c_logFrameConvention);});
 
             // Initialize the message
             FrObject::InitializeLog(logPath);

@@ -805,7 +805,7 @@ namespace frydom {
 
         if (IsLogged()) {
 
-            auto logPath = m_system->GetPathManager()->BuildBodyPath(this);
+            auto logPath = m_system->GetPathManager()->BuildPath(this, "body.csv");
 
             // Add the fields
             m_message->AddField<double>("time", "s", "Current time of the simulation",

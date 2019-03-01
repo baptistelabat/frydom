@@ -70,7 +70,7 @@ namespace frydom {
         return m_endingForce;
     }
 
-    Force FrCatenaryLine::getStartingNodeTension(FRAME_CONVENTION fc) const {
+    Force FrCatenaryLine::GetStartingNodeTension(FRAME_CONVENTION fc) const {
         Force t0 = m_t0;
         if(IsNED(fc)) {internal::SwapFrameConvention(t0);}
         return t0;
@@ -318,12 +318,24 @@ namespace frydom {
         if (IsLogged()) {
 
             // Build the path to the catenary line log
-            auto logPath = m_system->GetPathManager()->BuildPhysicsItemPath(this);
+            auto logPath = m_system->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
-            // TODO: A completer
             m_message->AddField<double>("time", "s", "Current time of the simulation",
                                         [this]() { return GetTime(); });
+
+            m_message->AddField<double>("Stretched Length", "m", "Stretched length of the catenary line",
+                                        [this]() { return GetStretchedLength(); });
+
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+            ("Starting Node Tension","N", fmt::format("Starting node tension in world reference frame in {}",c_logFrameConvention),
+                    [this]() {return GetStartingNodeTension(c_logFrameConvention);});
+
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+            ("Ending Node Tension","N", fmt::format("Ending node tension in world reference frame in {}",c_logFrameConvention),
+                    [this]() {return GetEndingNodeTension(c_logFrameConvention);});
+
+            //TODO : logger la position de la ligne pour un ensemble d'abscisses curvilignes?
 
             // Initialize the message
             FrObject::InitializeLog(logPath);

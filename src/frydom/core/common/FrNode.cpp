@@ -234,11 +234,27 @@ namespace frydom {
         if (IsLogged()) {
 
             // Build the path for the node log
-            auto logPath = m_body->GetSystem()->GetPathManager()->BuildNodePath(this);
+            auto logPath = m_body->GetSystem()->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
             m_message->AddField<double>("time", "s", "Current time of the simulation",
                                         [this]() { return m_chronoMarker->GetChTime(); });
+
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+            ("Node Position","m", fmt::format("Node position in world reference frame in {}",c_logFrameConvention),
+                    [this]() {return GetPositionInWorld(c_logFrameConvention);});
+
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+            ("Node Velocity","m/s", fmt::format("Node velocity in world reference frame in {}",c_logFrameConvention),
+                    [this]() {return GetVelocityInWorld(c_logFrameConvention);});
+
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+            ("Node Acceleration","m/s²", fmt::format("Node acceleration in world reference frame in {}",c_logFrameConvention),
+                    [this]() {return GetAccelerationInWorld(c_logFrameConvention);});
+
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+            ("Node Position in Body","m", fmt::format("Node position in body reference frame in {}",c_logFrameConvention),
+                    [this]() {return GetNodePositionInBody(c_logFrameConvention);});
 
             // Initialize the message
             FrObject::InitializeLog(logPath);

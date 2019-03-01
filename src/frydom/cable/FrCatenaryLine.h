@@ -156,7 +156,7 @@ namespace frydom {
         /// This tension is applied by the line on its node
         /// \param fc frame convention (NED/NWU)
         /// \return tension applied by the line on the starting node
-        Force getStartingNodeTension(FRAME_CONVENTION fc) const;
+        Force GetStartingNodeTension(FRAME_CONVENTION fc) const;
 
         /// Returns the cartesian tension at the end of the line.
         /// This tension is applied by the line on its node

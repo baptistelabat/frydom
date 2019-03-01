@@ -146,8 +146,8 @@ namespace frydom {
 
         if (IsLogged()) {
 
-            // Build the log path
-            auto logPath = m_system->GetPathManager()->BuildPhysicsItemPath(this);
+            // Build the log path (the equilibrium frame log is located inside the related body folder)
+            auto logPath = m_system->GetPathManager()->BuildPath(m_body, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
             // TODO: A completer

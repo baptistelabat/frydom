@@ -25,7 +25,7 @@ namespace frydom {
         // Get the line tension from the corresponding node
         switch (m_line_side) {
             case FrCatenaryLine::LINE_START:
-                ForceInWorld = m_line->getStartingNodeTension(NWU);
+                ForceInWorld = m_line->GetStartingNodeTension(NWU);
                 relpos = m_line->GetStartingNode()->GetNodePositionInBody(NWU);
                 break;
 

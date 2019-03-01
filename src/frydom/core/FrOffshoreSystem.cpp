@@ -737,7 +737,9 @@ namespace frydom {
 
         if (IsLogged()) {
 
-            auto logPath = m_pathManager->BuildSystemPath(this);
+            m_pathManager->Initialize(this);
+
+            auto logPath = m_pathManager->BuildPath(this, "system.csv");
 
             // Add the fields
             // TODO A completer

@@ -60,7 +60,7 @@ namespace frydom {
         if (IsLogged()) {
 
             // Build the path to the link log
-            auto logPath = m_system->GetPathManager()->BuildPhysicsItemPath(this);
+            auto logPath = m_system->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged
             // TODO: A completer

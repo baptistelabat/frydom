@@ -16,6 +16,7 @@
 
 #include "FrPathManager.h"
 #include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/core/common/FrObject.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/force/FrForce.h"
 
@@ -56,7 +57,18 @@ namespace frydom{
 
     }
 
-    void FrPathManager::Initialize() {
+    void FrPathManager::Initialize(FrOffshoreSystem* system) {
+
+        // Open the FRyDom workspace directory
+        cppfs::FileHandle workspaceDir = cppfs::fs::open(m_outputPath.path());
+        // Create directory if it does not yet exist
+        if (!workspaceDir.isDirectory()) workspaceDir.createDirectory();
+
+        // Create the run directory
+        // TODO add the date to the run directory name, once TimeZone is refactored (need TimeZone to be brought back from Environment to the system?)
+        m_runPath = m_outputPath.resolve(fmt::format("run_{}/",system->GetShortenUUID()));
+        cppfs::FileHandle runDir = cppfs::fs::open(m_runPath.path());
+        runDir.createDirectory();
 
     }
 
@@ -77,118 +89,105 @@ namespace frydom{
     }
 
 
-    std::string FrPathManager::BuildSystemPath(FrOffshoreSystem *system){
+    std::string FrPathManager::BuildPath(FrOffshoreSystem *system, std::string relPath){
 
-        // Open the FRyDom workspace directory
-        cppfs::FileHandle workspaceDir = cppfs::fs::open(m_outputPath.path());
-        // Create directory if it does not yet exist
-        if (!workspaceDir.isDirectory()) workspaceDir.createDirectory();
-
-        // Create the run directory
-        // TODO add the date to the run directory name, once TimeZone is refactored (need TimeZone to be brought back from Environment to the system?)
-        m_runPath = m_outputPath.resolve(fmt::format("run_{}/",system->GetShortenUUID()));
-        cppfs::FileHandle runDir = cppfs::fs::open(m_runPath.path());
-        runDir.createDirectory();
+        system->SetLogFrameConvention(m_logFrameConvention);
 
         // Create the system directory
-        cppfs::FilePath systemPath = m_runPath.resolve(fmt::format("{}_{}/",system->GetTypeName(),system->GetShortenUUID()));
-        cppfs::FileHandle systemDir = cppfs::fs::open(systemPath.path());
+        cppfs::FilePath systemPath = m_runPath.resolve(fmt::format("{}_{}/{}",
+                system->GetTypeName(), system->GetShortenUUID(), relPath));
+
+        cppfs::FileHandle systemDir = cppfs::fs::open(systemPath.directoryPath());
         systemDir.createDirectory();
 
-        // System log file path
-        cppfs::FilePath systemLogPath = systemPath.resolve("system.csv");
-
-        return systemLogPath.path();
+        return systemPath.path();
 
     }
 
-    std::string FrPathManager::BuildPhysicsItemPath(FrPhysicsItem *pi) {
+    std::string FrPathManager::BuildPath(FrPhysicsItem *pi, std::string relPath) {
+
         pi->SetLogFrameConvention(m_logFrameConvention);
-        // Create the system directory
+
         auto system = pi->GetSystem();
-        cppfs::FilePath systemPath = m_runPath.resolve(fmt::format("{}_{}/",system->GetTypeName(),system->GetShortenUUID()));
 
         // Create the path for the PI log
-        auto relPILogPath = fmt::format("{0}_{1}_{2}/{0}.csv",pi->GetTypeName(),pi->GetName(),pi->GetShortenUUID());
-        cppfs::FilePath PILogPath = systemPath.resolve(relPILogPath);
+        auto relPILogPath = fmt::format("{}_{}/{}_{}_{}/{}",
+                system->GetTypeName(),system->GetShortenUUID(),
+                pi->GetTypeName(),pi->GetName(),pi->GetShortenUUID(),
+                relPath);
+        cppfs::FilePath PILogPath = m_runPath.resolve(relPILogPath);
 
         // Create the directory for the PI logs
-        cppfs::FilePath PIDirPath = PILogPath.directoryPath();
-        auto PILogDir = cppfs::fs::open(PIDirPath.path());
+        auto PILogDir = cppfs::fs::open(PILogPath.directoryPath());
         PILogDir.createDirectory();
 
         return PILogPath.path();
+
     }
 
-    std::string FrPathManager::BuildBodyPath(FrBody *body){
+    std::string FrPathManager::BuildPath(FrBody *body, std::string relPath){
 
         body->SetLogFrameConvention(m_logFrameConvention);
-        // Create the system directory
+
         auto system = body->GetSystem();
-        cppfs::FilePath systemPath = m_runPath.resolve(fmt::format("{}_{}/",system->GetTypeName(),system->GetShortenUUID()));
 
         // Create the path for the body log
-        auto relBodyLogPath = fmt::format("{}_{}_{}/body.csv",body->GetTypeName(),body->GetName(),body->GetShortenUUID());
-        cppfs::FilePath bodyLogPath = systemPath.resolve(relBodyLogPath);
+        auto relBodyLogPath = fmt::format("{}_{}/{}_{}_{}/{}",
+                system->GetTypeName(),system->GetShortenUUID(),
+                body->GetTypeName(),body->GetName(),body->GetShortenUUID(),
+                relPath);
+        cppfs::FilePath bodyLogPath = m_runPath.resolve(relBodyLogPath);
 
         // Create the directory for the body logs
-        cppfs::FilePath bodyDirPath = bodyLogPath.directoryPath();
-        auto bodyLogDir = cppfs::fs::open(bodyDirPath.path());
-        bodyLogDir.createDirectory();
-
-        // Create the directory for the forces logs
-        cppfs::FilePath forcesLogPath = bodyDirPath.resolve("Forces/");
-        auto forcesLogDir = cppfs::fs::open(forcesLogPath.path());
-        forcesLogDir.createDirectory();
-
-        // Create the directory for the nodes logs
-        cppfs::FilePath nodesLogPath = bodyDirPath.resolve("Nodes/");
-        auto nodesLogDir = cppfs::fs::open(nodesLogPath.path());
-        nodesLogDir.createDirectory();
+        auto bodyDir = cppfs::fs::open(bodyLogPath.directoryPath());
+        bodyDir.createDirectory();
 
         return bodyLogPath.path();
+
     }
 
-    std::string FrPathManager::BuildForcePath(FrForce *force) {
+    std::string FrPathManager::BuildPath(FrForce *force, std::string relPath) {
 
         force->SetLogFrameConvention(m_logFrameConvention);
 
         auto body = force->GetBody();
         auto system = body->GetSystem();
 
-        // Create the system directory
-        cppfs::FilePath systemPath = m_runPath.resolve(fmt::format("{}_{}/",system->GetTypeName(),system->GetShortenUUID()));
+        // Build the path for the force log
+        auto relForceDirPath = fmt::format("{}_{}/{}_{}_{}/Forces/{}",
+                system->GetTypeName(), system->GetShortenUUID(),
+                body->GetTypeName(), body->GetName(), body->GetShortenUUID(),
+                relPath);
+        cppfs::FilePath forceLogPath = m_runPath.resolve(relForceDirPath);
 
-        // Create the path for the body log
-        auto relBodyLogPath = fmt::format("{}_{}_{}/",body->GetTypeName(),body->GetName(),body->GetShortenUUID());
-        cppfs::FilePath bodyPath = systemPath.resolve(relBodyLogPath);
-
-        // Create the directory for the body logs
-        auto relForceLogPath = fmt::format("Forces/{}_{}.csv",force->GetTypeName(),force->GetShortenUUID());
-        cppfs::FilePath forceLogPath = bodyPath.resolve(relForceLogPath);
+        // Create the directory for the force logs, if not already created
+        auto forceDir = cppfs::fs::open(forceLogPath.directoryPath());
+        forceDir.createDirectory();
 
         return forceLogPath.path();
+
     }
 
-    std::string FrPathManager::BuildNodePath(FrNode *node) {
+    std::string FrPathManager::BuildPath(FrNode *node, std::string relPath) {
 
         node->SetLogFrameConvention(m_logFrameConvention);
 
         auto body = node->GetBody();
         auto system = body->GetSystem();
 
-        // Create the system directory
-        cppfs::FilePath systemPath = m_runPath.resolve(fmt::format("{}_{}/",system->GetTypeName(),system->GetShortenUUID()));
+        // Build the path for the node log
+        auto relNodeDirPath = fmt::format("{}_{}/{}_{}_{}/Nodes/{}",
+                system->GetTypeName(), system->GetShortenUUID(),
+                body->GetTypeName(), body->GetName(), body->GetShortenUUID(),
+                relPath);
+        cppfs::FilePath nodeLogPath = m_runPath.resolve(relNodeDirPath);
 
-        // Create the path for the body log
-        auto relBodyLogPath = fmt::format("{}_{}_{}/",body->GetTypeName(),body->GetName(),body->GetShortenUUID());
-        cppfs::FilePath bodyPath = systemPath.resolve(relBodyLogPath);
-
-        // Create the directory for the body logs
-        auto relNodeLogPath = fmt::format("Nodes/{}_{}.csv",node->GetTypeName(),node->GetShortenUUID());
-        cppfs::FilePath nodeLogPath = bodyPath.resolve(relNodeLogPath);
+        // Create the directory for the force logs, if not already created
+        auto nodeDir = cppfs::fs::open(nodeLogPath.directoryPath());
+        nodeDir.createDirectory();
 
         return nodeLogPath.path();
+
     }
 
 
