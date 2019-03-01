@@ -62,8 +62,6 @@ namespace frydom {
     private:
 
         friend void FrAssetOwner::AddAsset(std::shared_ptr<FrAsset>);
-
-        friend void FrBody::AddAsset(std::shared_ptr<FrAsset>);
     };
 
 

@@ -49,15 +49,7 @@ namespace frydom {
         return m_system;
     }
 
-    void FrPhysicsItem::SetName(const char *name) {
-        m_chronoPhysicsItem->SetName(name);
-    }
-
-    std::string FrPhysicsItem::GetName() const {
-        return m_chronoPhysicsItem->GetNameString();
-    }
-
-    std::shared_ptr<chrono::ChPhysicsItem> FrPhysicsItem::GetChronoPhysicsItem() const {
+    std::shared_ptr<internal::FrPhysicsItemBase> FrPhysicsItem::GetChronoPhysicsItem() const {
         return m_chronoPhysicsItem;
     }
 

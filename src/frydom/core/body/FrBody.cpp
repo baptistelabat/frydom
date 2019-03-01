@@ -15,9 +15,6 @@
 
 #include "chrono/assets/ChColorAsset.h"
 #include "chrono/assets/ChTriangleMeshShape.h"
-#include "chrono/assets/ChCylinderShape.h"
-#include "chrono/assets/ChBoxShape.h"
-#include "chrono/assets/ChSphereShape.h"
 
 #include "frydom/core/math/FrMatrix.h"
 #include "frydom/core/force/FrForce.h"
@@ -94,14 +91,6 @@ namespace frydom {
         return m_system;
     }
 
-    void FrBody::SetName(const char *name) {
-        m_chronoBody->SetName(name);
-    }
-
-    const char* FrBody::GetName() const {
-        return m_chronoBody->GetName();
-    }
-
     void FrBody::SetFixedInWorld(bool state) {
         m_chronoBody->SetBodyFixed(state);
     }
@@ -134,17 +123,20 @@ namespace frydom {
 
     void FrBody::StepFinalize() {
 
+        // Update the asset
+        FrAssetOwner::UpdateAsset();
+
         // StepFinalize of forces
         auto forceIter = force_begin();
         for (; forceIter != force_end(); forceIter++) {
             (*forceIter)->StepFinalize();
         }
 
-        // StepFinalize of assets
-        auto assetIter = asset_begin();
-        for (; assetIter != asset_end(); assetIter++) {
-            (*assetIter)->StepFinalize();
-        }
+//        // StepFinalize of assets
+//        auto assetIter = asset_begin();
+//        for (; assetIter != asset_end(); assetIter++) {
+//            (*assetIter)->StepFinalize();
+//        }
 
         // Send the message to the logging system
         FrObject::SendLog();
@@ -182,24 +174,6 @@ namespace frydom {
     FrBody::CONTACT_TYPE FrBody::GetContactType() const {
         return m_contactType;
     }
-
-    // Asset linear iterators
-    FrBody::AssetIter FrBody::asset_begin() {
-        return m_assets.begin();
-    }
-
-    FrBody::ConstAssetIter FrBody::asset_begin() const {
-        return m_assets.cbegin();
-    }
-
-    FrBody::AssetIter FrBody::asset_end() {
-        return m_assets.end();
-    }
-
-    FrBody::ConstAssetIter FrBody::asset_end() const {
-        return m_assets.cend();
-    }
-
 
     // Force linear iterators
     FrBody::ForceIter FrBody::force_begin() {
@@ -248,21 +222,6 @@ namespace frydom {
         m_chronoBody->AddAsset(shape);
     }
 
-    void FrBody::AddAsset(std::shared_ptr<FrAsset> asset) {
-        m_assets.push_back(asset);
-        m_chronoBody->AddAsset(asset->GetChronoAsset());
-    }
-
-    void FrBody::SetColor(NAMED_COLOR colorName) {
-        SetColor(FrColor(colorName));
-    }
-
-    void FrBody::SetColor(const FrColor& color) {
-        auto colorAsset = std::make_shared<chrono::ChColorAsset>(
-                chrono::ChColor(color.R, color.G, color.B));
-        m_chronoBody->AddAsset(colorAsset);
-    }
-
     double FrBody::GetMass() const {
         return m_chronoBody->GetMass();
     }
@@ -294,26 +253,6 @@ namespace frydom {
 
     void FrBody::AllowCollision(bool isColliding) {
         m_chronoBody->SetCollide(isColliding);
-    }
-
-    void FrBody::AddBoxShape(double xSize, double ySize, double zSize) {
-        auto shape = std::make_shared<chrono::ChBoxShape>();
-        shape->GetBoxGeometry().SetLengths(chrono::ChVector<double>(xSize, ySize, zSize));
-        m_chronoBody->AddAsset(shape);
-    }
-
-    void FrBody::AddCylinderShape(double radius, double height) {
-        auto shape = std::make_shared<chrono::ChCylinderShape>();
-        shape->GetCylinderGeometry().p1 = chrono::ChVector<double>(0., -height*0.5, 0.);
-        shape->GetCylinderGeometry().p2 = chrono::ChVector<double>(0.,  height*0.5, 0.);
-        shape->GetCylinderGeometry().rad = radius;
-        m_chronoBody->AddAsset(shape);
-    }
-
-    void FrBody::AddSphereShape(double radius) {
-        auto shape = std::make_shared<chrono::ChSphereShape>();
-        shape->GetSphereGeometry().rad = radius;
-        m_chronoBody->AddAsset(shape);
     }
 
     void FrBody::ActivateSpeedLimits(bool activate) {
@@ -853,7 +792,7 @@ namespace frydom {
 
             // Add the fields
             m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return m_chronoBody->GetChTime(); });
+                                        [this]() { return GetTime(); });
 
             // Initialize the message
             FrObject::InitializeLog(logPath);

@@ -65,17 +65,13 @@ namespace frydom {
 
         internal::FrPhysicsItemBase* GetChronoItem() const override { return m_chronoPhysicsItem.get(); }
 
-        virtual std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() const ;
+        virtual std::shared_ptr<internal::FrPhysicsItemBase> GetChronoPhysicsItem() const ;
 
     public:
 
         FrPhysicsItem();
 
         FrOffshoreSystem* GetSystem();
-
-        void SetName(const char name[]);
-
-        std::string GetName() const;
 
         virtual void Update(double time) = 0;
 

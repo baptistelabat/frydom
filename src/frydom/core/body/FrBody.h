@@ -20,6 +20,7 @@
 #include "FrInertiaTensor.h"
 #include "frydom/core/misc/FrColors.h"
 #include "frydom/core/common/FrNode.h"
+#include "frydom/asset/FrAssetOwner.h"
 
 // TODO : voir si il n'y a pas moyen de passer ces includes
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
@@ -87,7 +88,7 @@ namespace frydom {
      * \class FrBody
      * \brief Class for defining a body.
      */
-    class FrBody : public FrObject {
+    class FrBody : public FrObject, public FrAssetOwner {
 
     protected:
 
@@ -100,9 +101,6 @@ namespace frydom {
 
         using NodeContainer = std::vector<std::shared_ptr<FrNode>>;
         NodeContainer m_nodes;                    ///< Container of the nodes belonging to the body
-
-        using AssetContainer = std::vector<std::shared_ptr<FrAsset>>;
-        AssetContainer m_assets;                    ///< Container of the assets added to the body
 
         using CONTACT_TYPE = FrOffshoreSystem::SYSTEM_TYPE;
         CONTACT_TYPE m_contactType = CONTACT_TYPE::SMOOTH_CONTACT; ///< The contact method that has to be consistent with that of the FrOffshoreSystem
@@ -119,14 +117,6 @@ namespace frydom {
 
         /// Get the FrOffshoreSystem where the body has been registered
         FrOffshoreSystem* GetSystem() const;
-
-        /// Set the body name
-        /// \param name body name
-        void SetName(const char name[]);
-
-        /// Get the body name
-        /// \return body name
-        const char* GetName() const;
 
         /// Make the body fixed
         /// \param state true if body is fixed, false otherwise
@@ -192,21 +182,6 @@ namespace frydom {
         // =============================================================================================================
 //        void AssetActive() // TODO
 
-        /// Add a box shape to the body with its dimensions defined in absolute coordinates. Dimensions in meters
-        /// \param xSize size of the box along the x absolute coordinates
-        /// \param ySize size of the box along the y absolute coordinates
-        /// \param zSize size of the box along the z absolute coordinates
-        void AddBoxShape(double xSize, double ySize, double zSize);  // TODO : definir plutot les dimensions dans le repere local du corps...
-
-        /// Add a cylinder shape to the body with its dimensions defined in ???? Dimensions in meters
-        /// \param radius radius of the cylinder shape.
-        /// \param height height of the cylinder shape.
-        void AddCylinderShape(double radius, double height);  // FIXME : travailler la possibilite de definir un axe... dans le repere local du corps
-
-        /// Add a sphere shape to the body. Dimensions in meters.
-        /// \param radius radius of the sphere shape.
-        void AddSphereShape(double radius);  // TODO : permettre de definir un centre en coords locales du corps
-
         /// Add a mesh as an asset for visualization given a WaveFront .obj file name
         /// \param obj_filename filename of the asset to be added
         void AddMeshAsset(std::string obj_filename);
@@ -214,19 +189,6 @@ namespace frydom {
         /// Add a mesh as an asset for visualization given a FrTriangleMeshConnected mesh object
         /// \param mesh mesh of the asset to be added
         void AddMeshAsset(std::shared_ptr<FrTriangleMeshConnected> mesh);
-
-        /// Add an asset for visualization, based on FrAsset, to the body.
-        /// Check FrAsset for a list of all its subclasses.
-        /// \param asset asset to be added
-        void AddAsset(std::shared_ptr<FrAsset> asset);
-
-        /// Set the asset color in visualization given a color id
-        /// \param colorName color of the asset
-        void SetColor(NAMED_COLOR colorName);
-
-        /// Set the asset color in visualization given a FrColor object
-        /// \param color color of the asset
-        void SetColor(const FrColor& color);
 
         // =============================================================================================================
         // SPEED LIMITATIONS TO STABILIZE SIMULATIONS
@@ -889,7 +851,9 @@ namespace frydom {
             return m_chronoBody;
         }
 
-        chrono::ChPhysicsItem* GetChronoItem() { return m_chronoBody.get(); }
+        /// Get the chronoBody attribute
+        /// \return chronoBody attribute
+        internal::FrBodyBase* GetChronoItem() const override { return m_chronoBody.get(); }
 
         void InitializeLockedDOF();
 
@@ -916,16 +880,6 @@ namespace frydom {
         //FIXME : FrBody doit-il dériver de FrPhysicsItem ?
         /// Body update method
         virtual void Update();
-
-        // Linear iterators on assets
-        using AssetIter = AssetContainer::iterator;
-        using ConstAssetIter = AssetContainer::const_iterator;
-
-        AssetIter       asset_begin();
-        ConstAssetIter  asset_begin() const;
-
-        AssetIter       asset_end();
-        ConstAssetIter  asset_end() const;
 
         // Linear iterators on external forces
         using ForceIter = ForceContainer::iterator;
