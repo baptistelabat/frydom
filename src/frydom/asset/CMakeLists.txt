@@ -4,14 +4,11 @@ set(SRC_FILES
         FrAsset.cpp
         FrAssetOwner.cpp
         FrForceAsset.cpp
-        FrAssetClumpWeight.cpp
         FrGridAsset.cpp
         FrSeabedGridAsset.cpp
         FrFreeSurfaceGridAsset.cpp
         FrCatenaryLineAsset.cpp
-        FrAssetBuoy.cpp
-        FrAssetComponent.cpp
-)
+        )
 
 set(FRYDOM_ASSET_SOURCES "")
 foreach(file ${SRC_FILES})

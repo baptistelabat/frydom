@@ -20,8 +20,5 @@
 #include "FrFreeSurfaceGridAsset.h"
 #include "FrSeabedGridAsset.h"
 #include "FrCatenaryLineAsset.h"
-#include "FrAssetBuoy.h"
-#include "FrAssetComponent.h"
-#include "FrAssetClumpWeight.h"
 
 #endif //FRYDOM_FRASSETINC_H
