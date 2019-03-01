@@ -161,6 +161,8 @@ namespace frydom {
 
     void FrEquilibriumFrame::StepFinalize() {
 
+        FrPhysicsItem::StepFinalize();
+
         // Serialize and send the message log
         FrObject::SendLog();
 

@@ -63,7 +63,9 @@ namespace frydom {
 
         FrOffshoreSystem* m_system;
 
-        internal::FrPhysicsItemBase* GetChronoItem() override { return m_chronoPhysicsItem.get(); }
+        internal::FrPhysicsItemBase* GetChronoItem() const override { return m_chronoPhysicsItem.get(); }
+
+        virtual std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() const ;
 
     public:
 
@@ -77,13 +79,6 @@ namespace frydom {
 
         virtual void Update(double time) = 0;
 
-//        void AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh);
-//
-//        void SetColor(NAMED_COLOR colorName);
-//
-//        void SetColor(const FrColor& color);
-
-
         virtual void SetupInitial();
 
         virtual void InitializeLog() = 0;
@@ -91,10 +86,6 @@ namespace frydom {
         void Initialize() override {};
 
         void StepFinalize() override;
-
-    protected:
-
-        virtual std::shared_ptr<chrono::ChPhysicsItem> GetChronoPhysicsItem() const ;
 
     };
 

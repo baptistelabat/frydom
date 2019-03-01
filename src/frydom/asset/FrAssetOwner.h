@@ -27,7 +27,7 @@ namespace frydom {
         using AssetContainer = std::vector<std::shared_ptr<FrAsset>>;
         AssetContainer m_assets;                    ///< Container of the assets added to the body
 
-        virtual chrono::ChPhysicsItem* GetChronoItem() = 0;
+        virtual chrono::ChPhysicsItem* GetChronoItem() const = 0;
 
     public:
 
