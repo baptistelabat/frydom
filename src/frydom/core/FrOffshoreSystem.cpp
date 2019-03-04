@@ -456,7 +456,7 @@ namespace frydom {
 
     void FrOffshoreSystem::SetSlipVelocityThreshold(double velocity) {
         if (m_systemType == SMOOTH_CONTACT) {
-            dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get())->SetSlipVelocityThreshold(velocity);
+            dynamic_cast<chrono::ChSystemSMC*>(m_chronoSystem.get())->SetSlipVelocitythreshold(velocity);
         } else {
             std::cerr << "Slip Velocity Threshold is only for SMOOTH_CONTACT systems" << std::endl;
         }

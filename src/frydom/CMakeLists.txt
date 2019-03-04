@@ -63,7 +63,7 @@ include(Add_hermes)
 add_library(FRyDoM_Engine SHARED ${FRYDOM_SRC_FILES})
 target_link_libraries(FRyDoM_Engine
         ChronoEngine
-#        ChronoEngine_fea
+        ChronoEngine_fea
         ChronoEngine_irrlicht
         MathUtils::MathUtils
         yaml-cpp
