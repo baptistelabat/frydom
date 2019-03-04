@@ -19,6 +19,8 @@ if (NOT cppfs_FOUND)
         # CPPFS BUILD OPTIONS
 #        set(BUILD_SHARED_LIBS TRUE CACHE BOOL "" FORCE)
         set(OPTION_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+#        set(OPTION_CPPCHECK_ENABLED OFF CACHE BOOL "" FORCE)
+#        set(OPTION_CLANG_TIDY_ENABLED OFF CACHE BOOL "" FORCE)
 
         add_subdirectory(${cppfs_SOURCE_DIR} ${cppfs_BINARY_DIR})
 

@@ -218,7 +218,7 @@ namespace frydom {
 
     void FrBody::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh) {
         auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
-        shape->SetMesh(*mesh);
+        shape->SetMesh(mesh);
         m_chronoBody->AddAsset(shape);
     }
 

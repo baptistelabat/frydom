@@ -205,7 +205,7 @@ namespace frydom{
 
         // Mesh asset
         auto meshAsset = std::make_shared<chrono::ChTriangleMeshShape>();
-        meshAsset->SetMesh(*mesh);
+        meshAsset->SetMesh(mesh);
 
         // Color asset
         auto color = FrColor(m_color);
