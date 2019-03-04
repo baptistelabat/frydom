@@ -35,6 +35,7 @@
 
 #include "hydrostatic/FrLinearHydrostaticForce.h"
 #include "hydrostatic/FrLinearHydrostaticStiffnessMatrix.h"
+#include "hydrostatic/FrWeaklyNonlinearHydrostaticForce.h"
 
 #include "morison/FrMorrisonElement.h"
 #include "morison/FrMorrisonForce.h"

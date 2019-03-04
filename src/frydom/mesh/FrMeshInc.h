@@ -15,10 +15,10 @@
 
 #include "FrTriangleMeshConnected.h"
 #include "FrCache.h"
-#include "FrhydrostaticsProperties.h"
+#include "FrHydrostaticsProperties.h"
 #include "FrMesh.h"
 #include "FrMeshClipper.h"
-#include "FrTrinagleIntegrations.h"
+#include "FrTriangleIntegrations.h"
 #include "FrTriangleMeshConnected.h"
 
 #endif //FRYDOM_FRMESHINC_H

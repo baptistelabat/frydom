@@ -451,8 +451,10 @@ namespace frydom {
             /// This function loads the mesh file.
             void Load(std::string meshfile);
 
+            /// This function translates the mesh.
             void Translate(const Point t);
 
+            /// This function rotates the mesh.
             void Rotate(double phi, double theta, double psi);
 
             void Write(std::string meshfile) const;

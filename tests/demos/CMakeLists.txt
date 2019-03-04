@@ -13,6 +13,7 @@ set(DEMOS
         demo_Morison
         demo_Cable
         demo_Hub_installation
+	demo_WNL_and_NL_hydrostatics
         bench_SphereDecay
         bench_SphereRegular
         bench_DTMB5512_captive
@@ -59,3 +60,9 @@ configure_file(../data/bench/DTMB5512/DTMB5512.hdb5 . COPYONLY)
 configure_file(../data/barge/Barge_HDB.h5 . COPYONLY)
 
 configure_file(../data/platform/Platform_HDB_Without_drift.hdb5 . COPYONLY)
+
+configure_file(../data/Mesh_clipper/MagneViking.obj . COPYONLY)
+configure_file(../data/Mesh_clipper/MagneViking_clip.obj . COPYONLY)
+configure_file(../data/Mesh_clipper/searev.obj . COPYONLY)
+configure_file(../data/Mesh_clipper/searev_clip.obj . COPYONLY)
+configure_file(../data/Mesh_clipper/BARGE.obj . COPYONLY)

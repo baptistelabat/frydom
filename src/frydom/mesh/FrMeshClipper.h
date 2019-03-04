@@ -153,7 +153,7 @@ namespace frydom {
                 double phi = 0.;
                 double t = 0;
 
-                return A*sin(k*(x*cos(beta)+y*sin(beta))-w*t+phi) - m_meanHeight;
+                return A*std::sin(k*(x*std::cos(beta)+y*std::sin(beta))-w*t+phi) - m_meanHeight;
             }
 
             /// This function gives the distance to the incident Airy wave.
@@ -208,7 +208,7 @@ namespace frydom {
                     }
                     else if(n == 0){
                         // The dichotomy loop was not used.
-                        if(abs(z0) <= abs(z1)){
+                        if(std::abs(z0) <= std::abs(z1)){
                             Pout = p0;
                         }
                         else{
@@ -239,9 +239,9 @@ namespace frydom {
             FrMesh m_InitMesh;
 
             /// Clipping surface, by default the plane z = 0.
-//            std::shared_ptr<ClippingSurface> m_clippingSurface = std::make_shared<ClippingPlane>(0.);
+            std::shared_ptr<ClippingSurface> m_clippingSurface = std::make_shared<ClippingPlane>(0.);
 //            std::shared_ptr<ClippingSurface> m_clippingSurface = std::make_shared<ClippingPlane>(3.);
-            std::shared_ptr<ClippingSurface> m_clippingSurface = std::make_shared<ClippingWaveSurface>(0.);
+//            std::shared_ptr<ClippingSurface> m_clippingSurface = std::make_shared<ClippingWaveSurface>(0.);
 
             double m_Threshold = 1e-4;
 //            double m_Threshold = 0.5;

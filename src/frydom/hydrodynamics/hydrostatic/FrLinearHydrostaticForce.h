@@ -90,7 +90,7 @@ namespace frydom {
     class FrEquilibriumFrame_;
 
     /// This class defines the linear hydrostatic restoring force applied to a hydrodynamic body.
-    /// The force take into account the position of the body (at COG) regards to the equilibrium frame.
+    /// The force takes into account the position of the body (at COG) regards to the equilibrium frame.
     /// For rotation, cardan angle are considered.
     /// It is supposed that the equilibrium frame has the z-axis pointing upwards and its
     /// position equals the position of the COG of the body at equilibrium
@@ -120,7 +120,7 @@ namespace frydom {
         /// \param time Current time of the simulation from begining
         void Update(double time) override;
 
-        /// Intialize the hydrostatic force model
+        /// Intialize the linear hydrostatic force model
         void Initialize() override;
 
         /// Methods to be applied at the end of each time steps

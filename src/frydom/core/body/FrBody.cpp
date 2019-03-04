@@ -283,13 +283,21 @@ namespace frydom {
 
     void FrBody_::AddMeshAsset(std::string obj_filename) {
 
+        // This function reads the input mesh file.
+
         auto mesh = std::make_shared<FrTriangleMeshConnected>();
+
+        // Reading of the mesh file.
         mesh->LoadWavefrontMesh(obj_filename);
+
+        // Add as asset.
         AddMeshAsset(mesh);
     }
 
     void FrBody_::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh) {
         auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
+
+        // FrTriangleMeshConnected -> ChTriangleMeshShape.
         shape->SetMesh(*mesh);
         m_chronoBody->AddAsset(shape);
     }

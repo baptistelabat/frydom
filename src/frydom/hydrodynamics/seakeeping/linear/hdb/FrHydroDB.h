@@ -291,6 +291,12 @@ namespace frydom {
         std::vector<std::unique_ptr<FrBEMBody_>>::iterator begin() { return m_bodies.begin(); }
 
         std::vector<std::unique_ptr<FrBEMBody_>>::iterator end() { return m_bodies.end(); }
+
+        /// This function gives the water density from the input HDB5 file.
+        double GetWaterDensity() const { return m_waterDensity; }
+
+        /// This function gives the gravity constant from the input HDB5 file.
+        double GetGravityAcc() const { return m_gravityAcc; }
     };
 
 

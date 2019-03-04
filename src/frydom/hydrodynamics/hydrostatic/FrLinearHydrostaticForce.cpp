@@ -129,7 +129,7 @@ namespace frydom {
 
     void FrLinearHydrostaticForce_::Update(double time) {
 
-        /// This subroutine computes the hydrostatic loads.
+        /// This subroutine computes the linear hydrostatic loads.
 
         // Body frame.
         auto bodyFrame = m_body->GetFrameAtCOG(NWU);
@@ -164,7 +164,7 @@ namespace frydom {
     std::shared_ptr<FrLinearHydrostaticForce_>
     make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body){
 
-        /// This subroutine creates the hydrostatic force object for computing the hydrostatic loads.
+        /// This subroutine creates the linear hydrostatic force object for computing the linear hydrostatic loads.
 
         // Construction of the hydrostatic force object from the HDB.
         auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(HDB);

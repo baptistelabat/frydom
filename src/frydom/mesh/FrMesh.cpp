@@ -151,6 +151,9 @@ namespace frydom {
         }
 
         void FrMesh::Translate(const VectorT<double, 3> t) {
+
+            // This function translates the mesh.
+
             Point p;
             for (VertexIter v_iter = vertices_begin(); v_iter != vertices_end(); ++v_iter) {
                 point(*v_iter) += t;
@@ -159,7 +162,62 @@ namespace frydom {
         }
 
         void FrMesh::Rotate(double phi, double theta, double psi) {
-            // TODO
+
+            // This function rotates the mesh.
+
+            // Rotation matrix.
+            double Norm_angles = std::sqrt(phi*phi + theta*theta + psi*psi);
+            double nx = phi / Norm_angles;
+            double ny = theta / Norm_angles;
+            double nz = psi / Norm_angles;
+            double nxny = nx*ny;
+            double nxnz = nx*nz;
+            double nynz = ny*nz;
+            double nx2 = nx*nx;
+            double ny2 = ny*ny;
+            double nz2 = nz*nz;
+            double ctheta = std::cos(theta);
+            double stheta = std::sin(theta);
+
+            mathutils::Matrix33<double> Rot_matrix;
+
+            if(Norm_angles == 0){
+                Rot_matrix.SetIdentity();
+            }
+            else{
+
+                mathutils::Matrix33<double> Identity;
+                Identity.SetIdentity();
+
+                mathutils::Matrix33<double> Nsym;
+                Nsym << nx2, nxny, nxnz,
+                        nxny, ny2, nynz,
+                        nxnz, nynz, nz2;
+
+                mathutils::Matrix33<double> Nnosym;
+                Nnosym << 0., -nz, ny,
+                        nz, 0., -nx,
+                        -ny, nx, 0.;
+
+                Rot_matrix = ctheta*Identity + (1-ctheta)*Nsym + stheta*Nnosym;
+
+                // Update the positions of every node.
+                for (VertexIter v_iter = vertices_begin(); v_iter != vertices_end(); ++v_iter) {
+
+                    // x = R*x (made with the same data structure).
+                    mathutils::Vector3d<double> Node_position;
+                    Node_position[0] = point(*v_iter)[0];
+                    Node_position[1] = point(*v_iter)[1];
+                    Node_position[2] = point(*v_iter)[2];
+                    Node_position = Rot_matrix*Node_position;
+                    point(*v_iter)[0] = Node_position[0];
+                    point(*v_iter)[1] = Node_position[1];
+                    point(*v_iter)[2] = Node_position[2];
+                }
+
+            }
+
+            UpdateAllProperties();
         }
 
         void FrMesh::Write(std::string meshfile) const {

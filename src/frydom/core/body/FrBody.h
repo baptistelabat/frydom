@@ -356,12 +356,8 @@ namespace frydom {
         using CONTACT_TYPE = FrOffshoreSystem_::SYSTEM_TYPE;
         CONTACT_TYPE m_contactType = CONTACT_TYPE::SMOOTH_CONTACT; ///< The contact method that has to be consistent with that of the FrOffshoreSystem
 
-
         std::unique_ptr<FrBodyDOFMask> m_DOFMask;
         std::shared_ptr<FrLink_> m_DOFLink;
-
-
-
 
     public:
 
@@ -957,8 +953,6 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         /// \return body acceleration expressed in body reference frame
         Acceleration GetAccelerationInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
-
-
 
         /// Set the velocity expressed in WORLD frame of a body fixed point whose coordinates are given in WORLD frame
         /// along with the angular velocity expressed in WORLD frame so that the velocity state is totally defined
