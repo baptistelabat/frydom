@@ -41,6 +41,19 @@ index eda7bbcb1..ce769a003 100644
 
  #------------------------------------------------------------
  # Defer configuration of all Chrono libraries and programs
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index c3e9d5feb..dffe10c0e 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -273,7 +273,7 @@ if(CUDA_FOUND)
+     set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --compiler-options -fPIC)
+   endif()
+
+-  include(${CMAKE_SOURCE_DIR}/cmake/FindCudaArch.cmake)
++  include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/FindCudaArch.cmake)
+   SELECT_NVCC_ARCH_FLAGS(NVCC_FLAGS_EXTRA)
+   list(APPEND CUDA_NVCC_FLAGS ${NVCC_FLAGS_EXTRA})
+
 diff --git a/src/chrono/physics/ChForce.h b/src/chrono/physics/ChForce.h
 index 3ae1ff0e2..49a9226f6 100644
 --- a/src/chrono/physics/ChForce.h
