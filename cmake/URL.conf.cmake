@@ -3,8 +3,8 @@
 
 # Chrono
 set(chrono_URL "https://github.com/projectchrono/chrono.git")
-set(chrono_TAG 934064d2ccf8e9690373a0fd03c93e91c7f4b2c8)
-set(chrono_PATCH chrono_934064d2ccf8e9690373a0fd03c93e91c7f4b2c8.patch)
+set(chrono_TAG 4.0.0)
+set(chrono_PATCH chrono_V4.0.0.patch)
 
 
 # fmt
