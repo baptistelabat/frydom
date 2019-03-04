@@ -27,7 +27,7 @@ set(UNIT_TESTS
         test_FrWaveSpectrum
         test_FrQuadraticDamping
         #test_FrLinks
-        test_FrFunction
+#        test_FrFunction
         )
 
 #enable_testing()
