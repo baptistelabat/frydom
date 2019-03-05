@@ -29,4 +29,4 @@ Damping force
 -------------
 
 Mooring buoys posses a linear damping force, which diagonal damping coefficients must be specified at creation.
-See :any:`Other damping<_other_damping>` for more information.
+See :any:`other damping<other_damping>` for more information.

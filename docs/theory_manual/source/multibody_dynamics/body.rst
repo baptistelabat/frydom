@@ -1,7 +1,7 @@
-.. body:
+.. _body:
 
-Body
-====
+Bodies
+======
 
 Bodies are basic object within FRyDoM framework, on which can be applied forces, links, motors, cables, collisions box, etc.
 Several frames of references can be used when referring to bodies.
@@ -16,11 +16,11 @@ Frames of reference
     ../hydrodynamics/frames_of_reference
 
 
-Inertia
--------
+Mass and inertia
+----------------
 
-A body contains a reference frame and inertial quantities (mass :math:`m`, inertia matrix :math:`\mathbf{I}_G`, expressed
-on a point :math:`G`), which can be grouped in an inertia tensor :math:`\mathbb{I}`.
+All bodies must contain mass and inertial quantities (mass :math:`m`, inertia matrix :math:`\mathbf{I}_G`, expressed
+on a point :math:`G`); all three can be grouped in an inertia tensor :math:`\mathbb{I}`.
 
 .. math::
     \mathbb{I} = \Biggl \lbrace { m \atop \mathbf{I}_G } \Biggr \rbrace_G

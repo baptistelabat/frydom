@@ -1,4 +1,4 @@
-.. coordinate_system:
+.. _coordinate_system:
 
 Coordinate systems
 ******************
@@ -10,7 +10,7 @@ Several reference frames are defined within FRyDoM. Frame definition, transforma
 :any:`frame theory <frame>`.
 
 The main reference frame is the world reference frame, denoted  `W_{XYZ}`, which origin can be set at a specific geographic
-position (see :any:`Geographic-Cartesian conversion <geographic>`). Lots of reference frame are then defined, for bodies,
+position. Lots of reference frame are then defined, for bodies,
 nodes on bodies (for locating kinematic links and cables), etc.
 
 Coordinates systems are defined in FRyDoM as right-handed and positive rotations are clockwise. The following figure
@@ -18,8 +18,9 @@ illustrates the world reference frame and a body, with its coordinates system.
 
 .. todo: .. images: _static/reference_frame.png
 
-Two :any:`frame conventiond <convention>` are available in FRyDoM (NWU and NED). The frame convention is to be specified
+Two :any:`frame conventions <conventions>` are available in FRyDoM (NWU and NED). A frame convention must be specified
 for setting/getting positions, velocities, directions, etc.
+
 Environment related items (wind, current, waves, etc.) are generally given in the world reference frame. Position, velocity
 and acceleration of a body can be specified in both world reference frame of local body coordinates system. Properties
 of bodies depending of its orientation are usually given in the body local reference frame : drag, polar coefficients,
@@ -50,6 +51,6 @@ Conversion from/to cartesian coordinates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 GeographicLib provides methods to convert geographic coordinates from/to cartesian coordinates, which are wrapped in
-FRyDoM. The :any:`World reference frame origin <reference_frame>` can be set at a specified geographic coordinates, and
+FRyDoM. The world reference frame origin can be set at a specified geographic coordinates, and
 bodies position can be returned as geographic coordinates as well. Other FRyDoM methods using GeographicLib are
 implemented.

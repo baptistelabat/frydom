@@ -1,4 +1,4 @@
-.. conventions:
+.. _conventions:
 
 Convention and notations
 ************************

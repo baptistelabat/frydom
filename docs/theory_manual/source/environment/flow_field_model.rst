@@ -1,5 +1,8 @@
 .. flow_field_model
 
+Flow field model (wind and current)
+===================================
+
 In construction
 
 Uniform flow field

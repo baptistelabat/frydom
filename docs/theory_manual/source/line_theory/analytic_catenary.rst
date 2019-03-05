@@ -1,4 +1,4 @@
-.. analytic_catenary:
+.. _analytic_catenary:
 
 Quasi static catenary line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
