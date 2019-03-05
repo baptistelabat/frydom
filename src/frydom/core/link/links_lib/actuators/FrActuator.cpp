@@ -10,8 +10,8 @@
 namespace frydom {
 
 
-    FrActuator::FrActuator(FrLink_ *actuatedLink) :
-        FrLinkBase_(actuatedLink->GetNode1(), actuatedLink->GetNode2(), actuatedLink->GetSystem()),
+    FrActuator::FrActuator(FrLink *actuatedLink) :
+        FrLinkBase(actuatedLink->GetNode1(), actuatedLink->GetNode2(), actuatedLink->GetSystem()),
         m_actuatedLink(actuatedLink) {}
 
     bool FrActuator::IsDisabled() const {

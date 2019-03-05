@@ -1,25 +1,21 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #include "FrFlowForce.h"
 
+#include "frydom/core/common/FrUnits.h"
 #include "frydom/core/body/FrBody.h"
-#include "FrFlowBase.h"
-#include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
-#include "frydom/environment/atmosphere/FrAtmosphere_.h"
 #include "frydom/IO/FrLoader.h"
-#include "frydom/core/common/FrFrame.h"
-#include "MathUtils/Vector3d.h"
+#include "frydom/environment/FrEnvironmentInc.h"
 
 
 namespace frydom {
@@ -30,15 +26,15 @@ namespace frydom {
 
     void FrFlowForce::ReadTable(const std::string& yamlFile) {
 
-        std::vector<std::pair<double, Vector3d<double>>> polar;
-        std::pair<double, Vector3d<double>> new_element;
+        std::vector<std::pair<double, mathutils::Vector3d<double>>> polar;
+        std::pair<double, mathutils::Vector3d<double>> new_element;
         ANGLE_UNIT angle_unit;
         FRAME_CONVENTION fc;
         DIRECTION_CONVENTION dc;
 
         LoadFlowPolarCoeffFromYaml(yamlFile, polar, angle_unit, fc, dc);
 
-        if (angle_unit == DEG) {
+        if (angle_unit == mathutils::DEG) {
             for (auto it=polar.begin(); it != polar.end(); ++it) { it->first *= DEG2RAD; }
         }
 
@@ -46,13 +42,13 @@ namespace frydom {
         auto max_angle = polar.back().first;
         auto min_angle = polar[0].first;
 
-        if (std::abs(min_angle) < 10e-2 and std::abs(max_angle - M_PI) < 10e-2) {
+        if (std::abs(min_angle) < 10e-2 and std::abs(max_angle - MU_PI) < 10e-2) {
             for (unsigned int i=polar.size()-2; i>=1; i--) {
-                new_element.first = 2.* M_PI - polar[i].first;
+                new_element.first = 2.* MU_PI - polar[i].first;
                 new_element.second = { polar[i].second[0], -polar[i].second[1], -polar[i].second[2] };
                 polar.push_back(new_element);
             }
-        } else if (std::abs(min_angle + M_PI) < 10e-2 and std::abs(max_angle) < 10e-2) {
+        } else if (std::abs(min_angle + MU_PI) < 10e-2 and std::abs(max_angle) < 10e-2) {
             for (unsigned int i=polar.size()-2; i>=1; i--) {
                 new_element.first = -polar[i].first;
                 new_element.second = { polar[i].second[0], -polar[i].second[1], -polar[i].second[2] };
@@ -61,8 +57,8 @@ namespace frydom {
         }
 
         // Delete double term
-        if ( std::abs(polar[0].first) < 10e-2 and std::abs(polar.back().first - 2.* M_PI) < 10e-2
-                or std::abs(polar[0].first + M_PI) < 10e-2 and std::abs(polar.back().first - M_PI) < 10e-2)  {
+        if ( std::abs(polar[0].first) < 10e-2 and std::abs(polar.back().first - 2.* MU_PI) < 10e-2
+                or std::abs(polar[0].first + MU_PI) < 10e-2 and std::abs(polar.back().first - MU_PI) < 10e-2)  {
             polar.pop_back();
         }
 
@@ -76,11 +72,11 @@ namespace frydom {
 
         // Conversion to GOTO if COMEFROM convention is used
         if (dc == COMEFROM) {
-            for (auto it=polar.begin(); it!= polar.end(); ++it) { it->first += M_PI; }
+            for (auto it=polar.begin(); it!= polar.end(); ++it) { it->first += MU_PI; }
         }
 
         // Normalized angle in [0, 2pi]
-        for (auto it=polar.begin(); it != polar.end(); ++it) { it->first = Normalize_0_2PI(it->first); }
+        for (auto it=polar.begin(); it != polar.end(); ++it) { it->first = mathutils::Normalize_0_2PI(it->first); }
 
         // Sort element according to increasing angles
         std::sort(polar.begin(), polar.end(), [](auto const &a, auto const &b) {
@@ -88,14 +84,14 @@ namespace frydom {
         });
 
         // Adding last term for angle equal to 2pi
-        new_element.first = 2.* M_PI;
+        new_element.first = 2.* MU_PI;
         new_element.second =  polar.begin()->second;
         polar.push_back( new_element );
 
 
         // Complete lookup table
         std::vector<double> anglesL;
-        std::vector<Vector3d<double>> vectL;
+        std::vector<mathutils::Vector3d<double>> vectL;
 
         for (auto it=polar.begin(); it != polar.end(); ++it) {
             anglesL.push_back(it->first);
@@ -108,8 +104,8 @@ namespace frydom {
 
     void FrFlowForce::Update(double time) {
 
-        double alpha = m_fluxVelocityInBody.GetProjectedAngleAroundZ(RAD);
-        alpha = Normalize_0_2PI(alpha);
+        double alpha = m_fluxVelocityInBody.GetProjectedAngleAroundZ(mathutils::RAD);
+        alpha = mathutils::Normalize_0_2PI(alpha);
 
         auto coeff = m_table.Eval("coeff", alpha);
         double SquaredVelocity = m_fluxVelocityInBody.squaredNorm();
@@ -118,8 +114,8 @@ namespace frydom {
         // Build the projected rotation in the XoY plane.
         double phi, theta, psi;
         m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
-        auto bodyRotation = FrRotation_(Direction(0.,0.,1.), psi, NWU);
-        auto frame = FrFrame_(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
+        auto bodyRotation = FrRotation(Direction(0.,0.,1.), psi, NWU);
+        auto frame = FrFrame(m_body->GetCOGPositionInWorld(NWU), bodyRotation, NWU);
 
 //        auto frame = m_body->GetFrameAtCOG(NWU).ProjectToXYPlane(NWU);
         auto worldForce = frame.ProjectVectorFrameInParent(Force(res[0], res[1], 0), NWU);
@@ -129,46 +125,46 @@ namespace frydom {
     }
 
     void FrFlowForce::Initialize() {
-        FrForce_::Initialize();
+        FrForce::Initialize();
     }
 
     void FrFlowForce::StepFinalize() {
-        FrForce_::StepFinalize();
+        FrForce::StepFinalize();
     }
 
-    void FrCurrentForce2_::Update(double time) {
+    void FrCurrentForce::Update(double time) {
 
-        FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+        FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
 
-        m_fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()
-                ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
+        m_fluxVelocityInBody =
+                m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
 
         FrFlowForce::Update(time);
     }
 
-    void FrWindForce2_::Update(double time) {
+    void FrWindForce::Update(double time) {
 
-        FrFrame_ FrameAtCOG = m_body->GetFrameAtCOG(NWU);
+        FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
 
-        m_fluxVelocityInBody = m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()
-                ->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
+        m_fluxVelocityInBody =
+                m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
 
         FrFlowForce::Update(time);
     }
 
-    std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body){
-        auto currentForce = std::make_shared<FrCurrentForce2_>(yamlFile);
+    std::shared_ptr<FrCurrentForce> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody> body){
+        auto currentForce = std::make_shared<FrCurrentForce>(yamlFile);
         body->AddExternalForce(currentForce);
         return currentForce;
     }
 
-    std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body){
-        auto windForce = std::make_shared<FrWindForce2_>(yamlFile);
+    std::shared_ptr<FrWindForce> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody> body){
+        auto windForce = std::make_shared<FrWindForce>(yamlFile);
         body->AddExternalForce(windForce);
         return windForce;
-
     }
+
 
 } // end of namespace frydom

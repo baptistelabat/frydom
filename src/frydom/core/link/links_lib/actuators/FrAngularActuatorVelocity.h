@@ -49,7 +49,11 @@ namespace frydom {
 
 
     public:
-        explicit FrAngularActuatorVelocity(FrLink_* actuatedLink);
+        explicit FrAngularActuatorVelocity(FrLink* actuatedLink);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "AngularActuatorVelocity"; }
 
         void SetConstantAngularVelocity(double velocity);
 

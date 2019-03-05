@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -15,9 +15,6 @@
 #include "frydom/core/common/FrFrame.h"
 #include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
-#include "frydom/environment/atmosphere/FrAtmosphere_.h"
-#include "FrUniformField.h"
 
 namespace frydom {
 
@@ -33,7 +30,7 @@ namespace frydom {
         return m_field->GetFluxVelocityInWorld(worldPos, fc) * c_ramp;
     }
 
-    Velocity FrFlowBase::GetRelativeVelocityInFrame(const FrFrame_ &frame, const Velocity &worldVel,
+    Velocity FrFlowBase::GetRelativeVelocityInFrame(const FrFrame &frame, const Velocity &worldVel,
                                                     FRAME_CONVENTION fc) const {
         Velocity fluxVelocityInWorld = GetFluxVelocityInWorld(frame.GetPosition(fc), fc) - worldVel;
         if (IsNED(fc)) { internal::SwapFrameConvention(fluxVelocityInWorld); }
@@ -81,19 +78,4 @@ namespace frydom {
         }
     }
 
-    // ---------------------------------------------------------
-    // WIND
-    // ---------------------------------------------------------
-
-    FrEnvironment_* FrWind_::GetEnvironment() const {
-        return m_atmosphere->GetEnvironment();
-    }
-
-    // ---------------------------------------------------------
-    // CURRENT
-    // ---------------------------------------------------------
-
-    FrEnvironment_* FrCurrent_::GetEnvironment() const {
-        return m_ocean->GetEnvironment();
-    }
-}
+}  // end namespace frydom

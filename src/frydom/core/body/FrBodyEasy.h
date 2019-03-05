@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -15,75 +15,24 @@
 
 #include <memory>
 
-//#include <chrono/physics/ChBodyEasy.h>
-////#include "chrono/physics/ChMaterialSurface.h"
-//#include "FrBody.h"
-//#include "FrHydroBody.h"
-
 namespace frydom {
 
-
-//    class FrSphere : public FrBody {
-//    public:
-//        /// Creates a ChBody plus adds a visualization shape and, optionally,
-//        /// a collision shape. Mass and inertia are set automatically depending
-//        /// on density.
-//        /// Sphere is assumed with center at body reference coordsystem.
-//        FrSphere(double radius, double mass, bool visual_asset = true) {
-//
-////            double mmass = mdensity * ((4.0 / 3.0) * M_PI * pow(radius, 3));
-//            double inertia = (2.0 / 5.0) * mass * pow(radius, 2);
-//
-////            this->SetDensity((float)mdensity);
-//            this->SetMass(mass);
-//            this->SetInertiaXX(chrono::ChVector<>(inertia, inertia, inertia));
-//
-//            // TODO: remettre en place les modeles de collision.
-////            if (collide) {
-////                GetCollisionModel()->ClearModel();
-////                GetCollisionModel()->AddSphere(radius);  // radius, radius, height on y
-////                GetCollisionModel()->BuildModel();
-////                SetCollide(true);
-////            }
-//            if (visual_asset) {
-//                std::shared_ptr<chrono::ChSphereShape> vshape(new chrono::ChSphereShape());
-//                vshape->GetSphereGeometry().rad = radius;
-//                this->AddAsset(vshape);
-//            }
-//        }
-//    };
-
-//    // TODO: creer un FrBuoy qui gere automatiquement des modeles hydro et qui derive de FrSphere
-//    class FrHydroCylinder : public FrHydroBody {
-//
-//
-//    };
-
-
-
-
-
-
-
-
-
-    // REFACTORING ----------->>>>>
-
     // Forward declaration
-    class FrBody_;
-
-    void makeItBox(std::shared_ptr<FrBody_> body, double xSize, double ySize, double zSize, double mass);
-
-    void makeItCylinder(std::shared_ptr<FrBody_> body, double radius, double height, double mass);
-
-    void makeItSphere(std::shared_ptr<FrBody_> body, double radius, double mass);
+    class FrBody;
 
 
-    std::shared_ptr<FrBody_> make_BoxBody(double xSize, double ySize, double zSize, double mass);
+    void makeItBox(std::shared_ptr<FrBody> body, double xSize, double ySize, double zSize, double mass);
 
-    std::shared_ptr<FrBody_> make_CylinderBody(double radius, double height, double mass);
+    void makeItCylinder(std::shared_ptr<FrBody> body, double radius, double height, double mass);
 
-    std::shared_ptr<FrBody_> make_SphereBody(double radius, double mass);
+    void makeItSphere(std::shared_ptr<FrBody> body, double radius, double mass);
+
+
+    std::shared_ptr<FrBody> make_BoxBody(double xSize, double ySize, double zSize, double mass);
+
+    std::shared_ptr<FrBody> make_CylinderBody(double radius, double height, double mass);
+
+    std::shared_ptr<FrBody> make_SphereBody(double radius, double mass);
 
 
     // TODO : faire le make_ConeBody ---> mat d'eolienne...

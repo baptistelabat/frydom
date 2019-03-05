@@ -48,7 +48,7 @@ namespace frydom {
 
 
 
-    FrAngularActuatorVelocity::FrAngularActuatorVelocity(FrLink_ *actuatedLink) : FrAngularActuator(actuatedLink) {
+    FrAngularActuatorVelocity::FrAngularActuatorVelocity(FrLink *actuatedLink) : FrAngularActuator(actuatedLink) {
         m_chronoMotor = std::make_shared<internal::FrLinkMotorRotationSpeed>(this);
     }
 

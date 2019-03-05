@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
     DIRECTION_CONVENTION dc = GOTO;
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     {
         //

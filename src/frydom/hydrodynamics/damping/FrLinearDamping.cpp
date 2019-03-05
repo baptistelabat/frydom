@@ -1,126 +1,70 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
-#include "MathUtils/Vector6d.h"
-
-#include <frydom/core/junk/FrHydroBody.h> // TODO : Doit dirsparaitre
 #include "FrLinearDamping.h"
-#include "chrono/physics/ChBody.h" // TODO : Doit disparaitre
-#include "frydom/core/common/FrException.h"
 
-#include "frydom/environment/FrEnvironmentInc.h"
+#include "frydom/core/common/FrFrame.h"
+#include "frydom/core/body/FrBody.h"
+#include "frydom/environment/FrEnvironment.h"
+
 
 
 namespace frydom {
 
-
-    void FrLinearDamping::UpdateState() {
-        /// Body linear velocity expressed in local (body) frame, relatively or not to the current velocity.
-        chrono::ChVector<double> linear_vel;
-        if (m_relative2Current)
-            linear_vel = dynamic_cast<FrHydroBody*>(Body)->GetCurrentRelativeVelocity(NWU,LOCAL);
-        else
-            linear_vel = Body->TransformDirectionParentToLocal(Body->GetPos_dt());
-        /// Body angular velocity expressed in local frame.
-        auto angularVelocity = Body->GetWvel_loc();
-        /// Convert to eigen vector
-        Eigen::VectorXd Velocity = Eigen::VectorXd::Zero(6);
-        Velocity(0) = linear_vel.x();
-        Velocity(1) = linear_vel.y();
-        Velocity(2) = linear_vel.z();
-        Velocity(3) = angularVelocity.x();
-        Velocity(4) = angularVelocity.y();
-        Velocity(5) = angularVelocity.z();
-        /// Compute the resulting damping force
-        Eigen::VectorXd ResultingForce = Eigen::VectorXd::Zero(6);
-        ResultingForce = - m_dampings*Velocity;
-        /// Convert back to ChVector
-        force.x() = ResultingForce(0);
-        force.y() = ResultingForce(1);
-        force.z() = ResultingForce(2);
-        moment.x() = ResultingForce(3);
-        moment.y() = ResultingForce(4);
-        moment.z() = ResultingForce(5);
-        /// Transforms the linear force back to global frame, but keep angular force (moment) in local frame (imposed by ChForce)
-        force = Body->TransformDirectionLocalToParent(force);
-    }
-
-    void FrLinearDamping::SetRelative2Current(bool relativeVelocity) {
-        m_relative2Current = relativeVelocity;}
-
-    void FrLinearDamping::Initialize() {
-        FrForce::Initialize();
-        /// YOU CAN'T set m_relative2Current to true, if your body is not at least a FrHydroBody !
-        assert(!(m_relative2Current && (dynamic_cast<FrHydroBody*>(Body)== nullptr)));
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    // REFACTORING ---------->>>>>>>>>>
-
-    FrLinearDamping_::FrLinearDamping_(FLUID_TYPE ft, bool relativeToFluid) : m_fluidType(ft), m_relativeToFluid(relativeToFluid) {
+    FrLinearDamping::FrLinearDamping(FLUID_TYPE ft, bool relativeToFluid) : m_fluidType(ft), m_relativeToFluid(relativeToFluid) {
         SetNull();
     }
 
-    void FrLinearDamping_::SetNull() {
+    void FrLinearDamping::SetNull() {
         m_dampingMatrix.SetNull();
     }
 
-    void FrLinearDamping_::SetDampingMatrix(const FrLinearDamping_::DampingMatrix &dampingMatrix) {
+    void FrLinearDamping::SetDampingMatrix(const FrLinearDamping::DampingMatrix &dampingMatrix) {
         m_dampingMatrix = dampingMatrix;
     }
 
-    void FrLinearDamping_::SetDiagonalDamping(double Du, double Dv, double Dw, double Dp, double Dq, double Dr) {
+    void FrLinearDamping::SetDiagonalDamping(double Du, double Dv, double Dw, double Dp, double Dq, double Dr) {
         SetDiagonalTranslationDamping(Du, Dv, Dw);
         SetDiagonalRotationDamping(Dp, Dq, Dr);
     }
 
-    void FrLinearDamping_::SetDiagonalTranslationDamping(double Du, double Dv, double Dw) {
+    void FrLinearDamping::SetDiagonalTranslationDamping(double Du, double Dv, double Dw) {
         m_dampingMatrix(0,0) = Du;
         m_dampingMatrix(1,1) = Dv;
         m_dampingMatrix(2,2) = Dw;
     }
 
-    void FrLinearDamping_::SetDiagonalRotationDamping(double Dp, double Dq, double Dr) {
+    void FrLinearDamping::SetDiagonalRotationDamping(double Dp, double Dq, double Dr) {
         m_dampingMatrix(3,3) = Dp;
         m_dampingMatrix(4,4) = Dq;
         m_dampingMatrix(5,5) = Dr;
     }
 
-    void FrLinearDamping_::SetDampingCoeff(unsigned int iRow, unsigned int iCol, double coeff) {
+    void FrLinearDamping::SetDampingCoeff(unsigned int iRow, unsigned int iCol, double coeff) {
         m_dampingMatrix(iRow, iCol) = coeff;
     }
 
-    void FrLinearDamping_::SetRelativeToFluid(bool isRelative) {
+    void FrLinearDamping::SetRelativeToFluid(bool isRelative) {
         m_relativeToFluid = isRelative;
     }
 
-    bool FrLinearDamping_::GetRelativeToFluid() {return m_relativeToFluid;}
+    bool FrLinearDamping::GetRelativeToFluid() {return m_relativeToFluid;}
 
-    void FrLinearDamping_::Update(double time) {
+    void FrLinearDamping::Update(double time) {
 
         // Body Velocity at COG in body coordinates
         Velocity cogRelVel;
         if (m_relativeToFluid) {
-            FrFrame_ cogFrame = m_body->GetFrameAtCOG(NWU);
+            FrFrame cogFrame = m_body->GetFrameAtCOG(NWU);
             cogRelVel = -m_body->GetSystem()->GetEnvironment()->GetRelativeVelocityInFrame(
                     cogFrame, m_body->GetCOGVelocityInWorld(NWU), m_fluidType, NWU);
 
@@ -138,16 +82,16 @@ namespace frydom {
 
     }
 
-    void FrLinearDamping_::Initialize() {
-        FrForce_::Initialize();
+    void FrLinearDamping::Initialize() {
+        FrForce::Initialize();
         Check();
     }
 
-    void FrLinearDamping_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrLinearDamping::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
-    void FrLinearDamping_::Check() const {
+    void FrLinearDamping::Check() const {
         // Here we check if every damping coefficient is positive
         for (unsigned int iRow=0; iRow<6; iRow++) {
             for (unsigned int iCol=0; iCol<6; iCol++) {

@@ -1,26 +1,25 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRTIDALMODEL_H
 #define FRYDOM_FRTIDALMODEL_H
 
-#include <cassert>
+#include <memory>
 
-#include "MathUtils/MathUtils.h"
+#include "MathUtils/LookupTable1D.h"
 
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/common/FrConvention.h"
 
-using namespace mathutils;
 // TODO: La hauteur de marée (+ sonde a recuperer de seabed) doivent etre retranscrite sur le corps embarque dans la
 // surface libre.
 
@@ -33,7 +32,7 @@ namespace frydom {
 
     // FIXME: utiliser https://github.com/HowardHinnant/date comme sous module !!!
 
-    // TODO: utiliser boost ou une autre lib speciale pour la gestion des geoides
+//    // TODO: utiliser boost ou une autre lib speciale pour la gestion des geoides
     /**
     * \class FrUTCTime
     * \brief Class for dealing with UTC time.
@@ -69,41 +68,44 @@ namespace frydom {
 
     };
 
+    // Forward declaration
+    class FrFreeSurface;
+
     /**
      * \class FrTidal
      * \brief Class for defining tidals.
      */
     class FrTidal : public FrObject {
 
-        enum TidalLevel {
+        enum TIDAL_LEVEL {
             LOW,
             HIGH
         };
 
-        enum TidalMode {
+        enum TIDAL_MODE {
             NO_TIDAL,
             TWELFTH_RULE
         };
 
     private:
 
-        std::unique_ptr<chrono::ChFrame<double>> m_tidalFrame;
+        FrFreeSurface* m_freeSurface;
+
+        std::unique_ptr<chrono::ChFrame<double>> m_tidalFrame;  // FIXME : utiliser un FrFrame !!!
 
         double m_time = 0.;
 
-        TidalMode m_mode = NO_TIDAL;
+        TIDAL_MODE m_mode = NO_TIDAL;
 
-        TidalLevel m_level1;
+        TIDAL_LEVEL m_level1;
         FrUTCTime m_t1;
         double m_h1 = 0.;
 
-        TidalLevel m_level2;
+        TIDAL_LEVEL m_level2;
         FrUTCTime m_t2;
         double m_h2;
 
-//        double c_waterHeight = 0.;
-
-        LookupTable1D<double, double> tidalTable;
+        mathutils::LookupTable1D<double, double> tidalTable;
 
         void BuildTable();
 
@@ -111,83 +113,15 @@ namespace frydom {
 
     public:
 
-        FrTidal();
+        explicit FrTidal(FrFreeSurface* freeSurface);
+
+        FrTidal(FrFreeSurface* freeSurface, const FrUTCTime t1, const double h1, TIDAL_LEVEL level1, const FrUTCTime t2, const double h2, TIDAL_LEVEL level2);
 
         ~FrTidal();
 
-        FrTidal(const FrUTCTime t1, const double h1, TidalLevel level1, const FrUTCTime t2, const double h2, TidalLevel level2);
-
-        void Update(const double time);
-
-        const double GetWaterHeight() const;
-
-        const chrono::ChFrame<double>* GetTidalFrame() const;
-
-        virtual void Initialize() override;
-
-        virtual void StepFinalize() override;
-
-    };
-
-
-
-
-
-
-
-    // REFACTORING --------------->>>>>>>>>>>>>>>
-
-    class FrFreeSurface_;
-
-    /**
-     * \class FrTidal_
-     * \brief Class for defining tidals.
-     */
-    class FrTidal_ : public FrObject {
-
-        enum TidalLevel {
-            LOW,
-            HIGH
-        };
-
-        enum TidalMode {
-            NO_TIDAL,
-            TWELFTH_RULE
-        };
-
-    private:
-
-        FrFreeSurface_* m_freeSurface;
-
-        std::unique_ptr<chrono::ChFrame<double>> m_tidalFrame;
-
-        double m_time = 0.;
-
-        TidalMode m_mode = NO_TIDAL;
-
-        TidalLevel m_level1;
-        FrUTCTime m_t1;
-        double m_h1 = 0.;
-
-        TidalLevel m_level2;
-        FrUTCTime m_t2;
-        double m_h2;
-
-//        double c_waterHeight = 0.;
-
-        LookupTable1D<double, double> tidalTable;
-
-        void BuildTable();
-
-        void BuildTwelfthRuleTable();
-
-    public:
-
-        FrTidal_(FrFreeSurface_* freeSurface);
-
-        FrTidal_(FrFreeSurface_* freeSurface, const FrUTCTime t1, const double h1, TidalLevel level1, const FrUTCTime t2, const double h2, TidalLevel level2);
-
-        ~FrTidal_();
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "Tidal"; }
 
         void SetNoTidal();
 

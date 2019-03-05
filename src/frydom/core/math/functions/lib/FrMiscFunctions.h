@@ -19,6 +19,8 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "SqrtFunction"; }
+
     protected:
         void Eval(double x) const override;
 
@@ -37,6 +39,8 @@ namespace frydom {
         FrAbsFunction* Clone() const override;
 
         std::string GetRepr() const override;
+
+        std::string GetTypeName() const override { return "AbsFunction"; }
 
     protected:
         void Eval(double x) const override;

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -92,7 +92,7 @@ int main(int argc, char* argv[]) {
 
     // -- System
 
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     // -- Ocean
 
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
     auto body = system.NewBody();
 
     Position COGPosition(0., 0., -2.);
-    FrFrame_ COGFrame(COGPosition, FrRotation_(), NWU);
+    FrFrame COGFrame(COGPosition, FrRotation(), NWU);
 
     body->SetPosition(Position(0., 0., 0.), NWU);
 
@@ -135,7 +135,7 @@ int main(int argc, char* argv[]) {
     double Iyy = 1.690E6;
     double Izz = 2.606E6;
 
-    FrInertiaTensor_ InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
+    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
 
     body->SetInertiaTensor(InertiaTensor);
 
@@ -143,7 +143,7 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database("sphere_hdb.h5");
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
     system.AddPhysicsItem(eqFrame);
 
     hdb->Map(0, body.get(), eqFrame);

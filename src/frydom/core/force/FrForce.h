@@ -1,33 +1,24 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRFORCE_H
 #define FRYDOM_FRFORCE_H
 
-#include "frydom/core/common/FrConvention.h"
+
 #include "chrono/physics/ChForce.h"
-#include "hermes/hermes.h"
 
 #include "frydom/core/math/FrVector.h"
-
 #include "frydom/core/common/FrObject.h"
 
-// Forward declaration
-//namespace chrono {
-//    class ChForce;
-//
-//    template <class Real=double>
-//    class ChVector;
-//}
 
 namespace frydom {
 
@@ -35,133 +26,17 @@ namespace frydom {
      * \class FrForce
      * \brief Base class for every external forces on bodies
      */
-    class FrForce :
-            public chrono::ChForce,
-            public FrObject
-    {
-
-    protected:
-//        chrono::ChBody* Body;
-//        chrono::ChVector<> force = chrono::VNULL;
-        chrono::ChVector<> moment = chrono::VNULL;
-        hermes::Message m_log;
-        bool is_log = true;
-
-        std::string m_logPrefix = "";           //TODO : à definir dans hermes
-
-    public:
-
-//        FrForce() : moment(chrono::VNULL) {};
-//        FrForce() = default;
-
-
-        /// Updates the time of the object and other stuff that are time-dependent
-        /// into the object
-        void UpdateTime(double mytime) {
-            ChTime = mytime;
-
-            // ... put time-domain stuff here
-        }
-
-        /// Update the force object.
-        /// Must be implemented into the child classes.
-        virtual void UpdateState() = 0;
-
-        /// Get the force-torque applied to rigid, body as force vector.
-        /// CAUTION !!!! : The force must be returned in the absolute coordinates while the torque must be
-        /// expressed in body coordinates
-        void GetBodyForceTorque(chrono::ChVector<>& body_force, chrono::ChVector<>& body_torque) const {
-            body_force = force;
-            body_torque = moment;
-        }
-
-        /// Return the moment of the force
-        virtual chrono::ChVector<> GetTorque() const { return moment; }
-
-        virtual void Initialize() override {
-            if (is_log) {
-                SetLog();
-                InitializeLogs();
-            }
-        }
-
-        virtual void StepFinalize() override {
-            if (is_log) {
-                UpdateLogs();
-            }
-        }
-
-        /// Set the definition of the log message
-        virtual void SetLog();
-
-        virtual void SetLogNameAndDescription(std::string name = "Force_message",
-                                         std::string description = "Message of the force") {
-            m_log.SetNameAndDescription(name, description);
-            is_log = true;
-        }
-
-        /// Deactivate the generation of log from the body
-        virtual void DeactivateLog() { is_log = false; };
-
-        /// Initialization of the log message
-        virtual void InitializeLogs();
-
-        /// Update of the log message
-        virtual void UpdateLogs();
-
-        hermes::Message* GetLog() { return &m_log; }
-
-        /// Definition of the log messsage name
-        virtual void SetLogPrefix(std::string prefix_name = "") { m_logPrefix = prefix_name; };
-
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // REFACTORING ------------->>>>>>>>>>>>><
-
-
-    /**
-     * \class FrForce_
-     * \brief Base class for every external forces on bodies
-     */
-    class FrForce_;
+    class FrForce;
 
     namespace internal {
 
-        struct _FrForceBase : public chrono::ChForce {
+        struct FrForceBase : public chrono::ChForce {
 
-            FrForce_ *m_frydomForce;
+            FrForce *m_frydomForce;
             chrono::ChVector<double> m_torque; // Expressed in body coordinates at COG
 
 
-            explicit _FrForceBase(FrForce_ *force);
+            explicit FrForceBase(FrForce *force);
 
             void UpdateState() override;
 
@@ -176,54 +51,50 @@ namespace frydom {
 
             void SetTorqueInBodyNWU(const Torque &body_torque);
 
-            friend class FrForce_;
+            friend class FrForce;
 
         };
 
-    }  // end namespace internal
+    }  // end namespace frydom::internal
 
     // Forward declaration;
-    class FrOffshoreSystem_;
-    class FrBody_;
-    class FrNode_;
-    class FrForceAsset_;
+    class FrOffshoreSystem;
+    class FrBody;
+    class FrNode;
+    class FrForceAsset;
 
     /**
-     * \class FrForce_
+     * \class FrForce
      * \brief  Class defining an effort with force and torque vector
      */
-    class FrForce_ : public FrObject {
+    class FrForce : public FrObject {
 
     protected:
 
-        FrBody_* m_body;                ///< Pointer to the body to which the force is applied
+        FrBody* m_body;                ///< Pointer to the body to which the force is applied
 
-        std::shared_ptr<internal::_FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
+        std::shared_ptr<internal::FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
 
         // Force Asset
         bool m_isForceAsset = false;            ///< A ForceAsset (vector) is displayed if true
-        std::shared_ptr<FrForceAsset_> m_forceAsset = nullptr;  ///< pointer to the ForceAsset object.
+        std::shared_ptr<FrForceAsset> m_forceAsset = nullptr;  ///< pointer to the ForceAsset object.
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise
         double m_forceLimit  = 1e20;            ///< Taking very high values by default in case we just set limit to true without
         double m_torqueLimit = 1e20;            ///< setting the values individually.
 
+        std::string m_forceType = "force";      ///< type of force (subclass of FrForce), for logging purpose only
 
     public:
 
         /// Default constructor that builds a new force with zero force and torque
-        FrForce_();
-
-//        explicit FrForce_(FrBody_* body);
-
-//        /// Force Destructor, delete the related force asset and remove it from the asset container of the body
-//        ~FrForce_();
+        FrForce();
 
         /// This subroutine initializes the object FrForce.
         void Initialize() override;
 
-        // TODO : boucle de StepFinalize à mettre en place dans FrBody_
+        // TODO : boucle de StepFinalize à mettre en place dans FrBody
         void StepFinalize() override;
 
         /// Virtual function to allow updating the child object from the solver
@@ -232,7 +103,18 @@ namespace frydom {
 
         /// Return the system to which the force is linked
         /// \return Offshore system object pointer
-        FrOffshoreSystem_* GetSystem();
+        FrOffshoreSystem* GetSystem();
+
+        FrBody* GetBody() const;
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "Force"; }
+
+        // Logging
+
+        /// Initialize the log
+        void InitializeLog();
 
         // Force Asset
         /// Inquire if a ForceAsset is displayed
@@ -459,11 +341,12 @@ namespace frydom {
         void SetForceTorqueInBodyAtPointInWorld(const Force &bodyForce, const Torque &bodyTorque,
                                                 const Position &worldPos, FRAME_CONVENTION fc);
 
-
-        friend class FrBody_;
         /// Return the force as a chrono object.
         /// \return Force vector as a chrono object
         std::shared_ptr<chrono::ChForce> GetChronoForce();
+
+
+        friend class FrBody;
 
     };
 

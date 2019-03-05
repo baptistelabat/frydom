@@ -5,9 +5,7 @@ add_subdirectory(airy)
 set(WAVES_FILES_LOCAL
         FrWaveDispersionRelation.cpp
         FrWaveField.cpp
-        FrWaveProbe.cpp
         FrWaveSpectrum.cpp
-        FrFlowSensor.cpp
         FrKinematicStretching.cpp
         )
 

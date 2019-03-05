@@ -20,8 +20,8 @@
 
 namespace frydom {
 
-    FrRevoluteLink::FrRevoluteLink(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2,
-                                   FrOffshoreSystem_ *system) : FrLink_(node1, node2, system) {
+    FrRevoluteLink::FrRevoluteLink(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2,
+                                   FrOffshoreSystem *system) : FrLink(node1, node2, system) {
         m_chronoLink->SetLinkType(REVOLUTE);
     }
 
@@ -73,7 +73,7 @@ namespace frydom {
 
     void FrRevoluteLink::Initialize() {
         // Initialization of the constraint part
-        FrLink_::Initialize();
+        FrLink::Initialize();
 
         // Initialization of the motor part
         if (m_actuator) {
@@ -96,7 +96,7 @@ namespace frydom {
 
     void FrRevoluteLink::Update(double time) {
 
-        FrLink_::Update(time);
+        FrLink::Update(time);
 
         double lastRelativeAngle = GetRelativeLinkAngle() + m_restAngle; // Making it relative to x, not the rest angle
         double updatedRelativeAngle = GetUpdatedRelativeAngle();
@@ -175,7 +175,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrRevoluteLink>
-    make_revolute_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system) {
+    make_revolute_link(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem *system) {
         auto link = std::make_shared<FrRevoluteLink>(node1, node2, system);
         system->AddLink(link);
         return link;

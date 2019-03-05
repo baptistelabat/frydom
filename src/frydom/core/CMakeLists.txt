@@ -9,31 +9,23 @@ set(SRC_FILES
 list(APPEND SRC_FILES
         body/FrBody.cpp
         body/FrBodyEasy.cpp
-        body/FrInertia.cpp
+        body/FrInertiaTensor.cpp
         )
 
 # COMMON
 list(APPEND SRC_FILES
-        common/FrConvention.cpp
         common/FrException.cpp
         common/FrFrame.cpp
         common/FrNode.cpp
         common/FrObject.cpp
         common/FrPhysicsItem.cpp
         common/FrRotation.cpp
-        common/FrUnits.cpp
         )
 
 # FORCE
 list(APPEND SRC_FILES
         force/FrForce.cpp
         )
-
-## FUNCTIONS
-#list(APPEND SRC_FILES
-#        functions/FrFunctionBase.cpp
-#        functions/FrRamp.cpp
-#        )
 
 # LINK // TODO : cmakiser les repertoires !!
 list(APPEND SRC_FILES
@@ -95,22 +87,11 @@ list(APPEND SRC_FILES
         misc/FrColors.cpp
         )
 
-# JUNK FIXME : a supprimer
-list(APPEND SRC_FILES
-        junk/FrHydroBody.cpp
-        junk/FrNodeDynamic.cpp
-        junk/FrShip.cpp
-        junk/FrSpringDampingForce.cpp
-        junk/FrUpdatable.cpp
-        )
-
-
 
 set(FRYDOM_CORE_SOURCES "")
 foreach(file ${SRC_FILES})
     list(APPEND FRYDOM_CORE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 
-#message(${FRYDOM_CORE_SOURCES})
 
 set(FRYDOM_CORE_SOURCES ${FRYDOM_CORE_SOURCES} PARENT_SCOPE)

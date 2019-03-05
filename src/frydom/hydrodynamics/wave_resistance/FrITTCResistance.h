@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -18,73 +18,14 @@
 
 namespace frydom {
 
-    /**
-     * \class FrITTC57
-     * \brief Class for setting fluid and ship properties in order to compute the wave resistance.
-     */
-    class FrITTC57 : public FrForce {
-
-      private:
-        double rho;  ///< Water density (kg/m**3)  // TODO : aller chercher dans environment
-        double nu;   ///< Kinematic viscosity of water (m**2/s) // TODO : aller chercher dans environment
-
-        double Lpp;  ///< Characteristic length (length between perpendicular for ships) (meters)
-        double k;    ///< Hull form factor
-        double S;    ///< Hull wetted surface (m**2)
-        double Ax;   ///< Hull frontal projected area (m**2)
-
-
-      public:
-
-        FrITTC57();
-
-        void SetWaterDensity(double myrho);
-
-        double GetWaterDensity();
-
-        void SetWaterKinematicViscosity(double mynu);
-
-        double GetWaterKinematicViscosity();
-
-        void SetCharacteristicLength(double myLpp);
-
-        double GetCharacteristicLength();
-
-        void SetHullFormFactor(double myk);
-
-        double GetHullFormFactor();
-
-        void SetHullWettedSurface(double myS);
-
-        double GetHullWettedSurface();
-
-        void SetHullFrontalProjectedArea(double myAx);
-
-        double GetHullFrontalProjectedArea();
-
-        void UpdateState() override;
-
-        void SetLogPrefix(std::string prefix_name) override;
-
-    };
-
-
-
-
-
-
-
-    ///// REFACTORING -------------->>>>>>>>>>
-
-
     // Forward Declaration
-    class FrEnvironment_;
+    class FrEnvironment;
 
     /**
-     * \class FrITTCResistance_
+     * \class FrITTCResistance
      * \brief Class for computing the wave resistance.
      */
-    class FrITTCResistance_ : public FrForce_ {
+    class FrITTCResistance : public FrForce {
 
       private:
 
@@ -96,7 +37,7 @@ namespace frydom {
         double m_caa;  ///< air resistance coefficient
         double m_capp; ///< appendage resistance coefficient
 
-        FrEnvironment_* m_environment;
+        FrEnvironment* m_environment;
 
       public:
 
@@ -108,9 +49,13 @@ namespace frydom {
         /// \param ca Surface roughness coefficient
         /// \param caa Air resistance coefficient
         /// \param capp Appendage resistance coefficient
-        FrITTCResistance_(double Lpp, double hullWetSurface, double cr, double k = 0.,
+        FrITTCResistance(double Lpp, double hullWetSurface, double cr, double k = 0.,
                          double ca = 0., double caa=0., double capp=0.) :
             m_Lpp(Lpp), m_hullWetSurface(hullWetSurface), m_k(k), m_cr(cr), m_ca(ca), m_caa(caa), m_capp(capp) {}
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "ITTCResistance"; }
 
         /// Set the length between perpendicular of the ship
         /// \param Lpp Length between perpendicular (m)

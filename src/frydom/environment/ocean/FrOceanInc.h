@@ -13,7 +13,7 @@
 #ifndef FRYDOM_FROCEANINC_H
 #define FRYDOM_FROCEANINC_H
 
-#include "FrOcean_.h"
+#include "FrOcean.h"
 
 #include "current/FrCurrentInc.h"
 #include "freeSurface/FrFreeSurfaceInc.h"

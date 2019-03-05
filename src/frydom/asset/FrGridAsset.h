@@ -1,34 +1,31 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRGRIDASSET_H
 #define FRYDOM_FRGRIDASSET_H
 
-#include <chrono/assets/ChAssetLevel.h>
-#include "chrono/assets/ChTriangleMeshShape.h"
-#include "chrono/assets/ChColorAsset.h"
 
-#include "frydom/core/common/FrObject.h"
 #include "frydom/asset/FrAsset.h"
 #include "frydom/core/misc/FrColors.h"
 
+
 namespace frydom {
 
-    class FrFreeSurface_;
+    class FrFreeSurface;
     class FrTriangleMeshConnected;
-    class FrBody_;
+    class FrBody;
 
     /**
-     * \class FrFreeSurfaceGridAsset
+     * \class FrGridAsset
      * \brief Class to display the different types of grids (free surface, seabed).
      */
 
@@ -126,7 +123,7 @@ namespace frydom {
         /// GridAsset initialization method
         void Initialize() override;
 
-        /// Method called at the send of a time step. Logging may be used here
+        /// Update the state of the asset, at the end of a time step
         void StepFinalize() override;
 
     protected:

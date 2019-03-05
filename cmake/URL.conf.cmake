@@ -3,8 +3,8 @@
 
 # Chrono
 set(chrono_URL "https://github.com/projectchrono/chrono.git")
-set(chrono_TAG 934064d2ccf8e9690373a0fd03c93e91c7f4b2c8)
-set(chrono_PATCH chrono_934064d2ccf8e9690373a0fd03c93e91c7f4b2c8.patch)
+set(chrono_TAG 4.0.0)
+set(chrono_PATCH chrono_V4.0.0.patch)
 
 
 # fmt
@@ -41,3 +41,7 @@ set(timezone_TAG v2.4.1)
 set(yamlcpp_URL https://github.com/jbeder/yaml-cpp.git)
 set(yamlcpp_TAG yaml-cpp-0.6.2)
 set(yamlcpp_PATCH yaml-cpp.patch)
+
+# CPPFS
+set(cppfs_URL https://github.com/cginternals/cppfs.git)
+set(cppfs_TAG v1.2.0)

@@ -1,33 +1,30 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRFRAME_H
 #define FRYDOM_FRFRAME_H
 
-#include "chrono/core/ChMatrixDynamic.h"
 #include "chrono/core/ChFrame.h"
 
 #include "frydom/core/math/FrVector.h"
+#include "frydom/core/math/FrEulerAngles.h"
 #include "FrRotation.h"
 
 
 namespace frydom {
 
     // Forward declaration
-    class FrBody_;
-    class FrOffshoreSystem_;
-
-
-
+    class FrBody;
+    class FrOffshoreSystem;
 
 
     /// Class defining a frame from a position and a rotation.
@@ -39,33 +36,33 @@ namespace frydom {
     /// Conversions between conventions are done transparently while calling setters and getters. Note that frame
     /// convention does not need to be given when manipulating FrRotation objects as these objects does neither hold the
     /// frame convention notion internally, conversions are also automatic.
-    class FrFrame_ {
+    class FrFrame {
 
     private:
-
+        // TODO : wrapper ChFrame avec un FrFrameBase en internal !!
         chrono::ChFrame<double> m_chronoFrame;   ///< Chrono objects are always stored in NWU frame convention
 
     public:
 
         /// Default constructor that builds a new frame with zero position and rotation
-        FrFrame_();
+        FrFrame();
 
         /// Constructor taking a position and a rotation. Position is given in frame convention
         /// \param pos Position of the frame
         /// \param rotation Rotation of the frame
         /// \param fc Frame convention (NED/NWU)
-        FrFrame_(const Position &pos, const FrRotation_ &rotation, FRAME_CONVENTION fc);
+        FrFrame(const Position &pos, const FrRotation &rotation, FRAME_CONVENTION fc);
 
         /// Constructor taking a position and a quaternion. Position is given in frame convention
         /// \param pos Position of the frame
         /// \param quaternion Quaternion of the frame
         /// \param fc Frame convention (NED/NWU)
-        FrFrame_(const Position &pos, const FrUnitQuaternion_& quaternion, FRAME_CONVENTION fc);
+        FrFrame(const Position &pos, const FrUnitQuaternion& quaternion, FRAME_CONVENTION fc);
 
         /// Copy Constructor from an other frame
         /// \param otherFrame Frame to be copied
         /// \return the new frame
-        FrFrame_& FrFrame(const FrFrame_& otherFrame);
+        FrFrame(const FrFrame& otherFrame);
 
         // TODO : permettre de definir des parametres de Denavit-Hartenberg modifies...
 
@@ -149,23 +146,23 @@ namespace frydom {
         /// This operation is not commutative.
         /// \param otherFrame old_frame
         /// \return new_frame
-        FrFrame_ operator*(const FrFrame_& otherFrame) const;
+        FrFrame operator*(const FrFrame& otherFrame) const;
 
         /// Performs post-multiplication of this frame by another
         /// frame, for example: A*=T means  A'=A*T
         /// \param otherFrame T
-        void operator*=(const FrFrame_& otherFrame);
+        void operator*=(const FrFrame& otherFrame);
 
 
         // Rotation
 
         /// Set the rotation of the present frame, using FrRotation
         /// \param rotation Rotation to be set
-        void SetRotation(const FrRotation_& rotation);
+        void SetRotation(const FrRotation& rotation);
 
         /// Set the rotation of the present frame, using FrQuaternion
         /// \param quaternion Quaternion to be set
-        void SetRotation(const FrUnitQuaternion_& quaternion);
+        void SetRotation(const FrUnitQuaternion& quaternion);
 
         /// Nullify any rotation of the present frame
         void SetNoRotation();
@@ -178,11 +175,11 @@ namespace frydom {
 
         /// Get the rotation of the present frame, as FrRotation
         /// \return the rotation of the frame/transformation frame
-        FrRotation_ GetRotation() const;
+        FrRotation GetRotation() const;
 
         /// Get the rotation of the present frame, as FrQuaternion
         /// \return the quaternion of the frame/transformation frame
-        FrUnitQuaternion_ GetQuaternion() const;
+        FrUnitQuaternion GetQuaternion() const;
 
         // FIXME : Du coup en vrai, je ne vois pas l'interet de localAxis ... Retirer ?
 
@@ -190,11 +187,11 @@ namespace frydom {
 
         /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
         /// multiplication of the frame current rotation by the given rotation
-        void RotateInFrame(const FrUnitQuaternion_& quaternion);
+        void RotateInFrame(const FrUnitQuaternion& quaternion);
 
         /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
         /// multiplication of the frame current rotation by the given rotation
-        void RotateInFrame(const FrRotation_& rotation);
+        void RotateInFrame(const FrRotation& rotation);
 
         /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
         /// multiplication of the frame current rotation by the given rotation
@@ -206,11 +203,11 @@ namespace frydom {
 
         /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
         /// multiplication of the frame current rotation by the given rotation
-        void RotateInParent(const FrUnitQuaternion_& quaternion);
+        void RotateInParent(const FrUnitQuaternion& quaternion);
 
         /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
         /// multiplication of the frame current rotation by the given rotation
-        void RotateInParent(const FrRotation_& rotation);
+        void RotateInParent(const FrRotation& rotation);
 
         /// Rotate the present frame around an axis defined in the current frame. This is equivalent to a right
         /// multiplication of the frame current rotation by the given rotation
@@ -222,14 +219,17 @@ namespace frydom {
 
         /// Translate the present frame along in its own axes
         void TranslateInFrame(const Translation& translation, FRAME_CONVENTION fc);
+        /// Translate the present frame along in its own axes
         void TranslateInFrame(const Direction& direction, double distance, FRAME_CONVENTION fc);
+        /// Translate the present frame along in its own axes
         void TranslateInFrame(double x, double y, double z, FRAME_CONVENTION fc);
+
+        /// Translate the present frame along the world axis
         void TranslateInParent(const Translation& translation, FRAME_CONVENTION fc);
+        /// Translate the present frame along the world axis
         void TranslateInParent(const Direction& direction, double distance, FRAME_CONVENTION fc);
+        /// Translate the present frame along the world axis
         void TranslateInParent(double x, double y, double z, FRAME_CONVENTION fc);
-
-
-
 
 
         /// Rotate the present frame, around the X axis of the present frame (if localAxis)
@@ -310,26 +310,26 @@ namespace frydom {
         /// \param otherFrame other frame from which the transformation frame is searched
         /// \param fc frame convention (NED/NWU)
         /// \return the transformation frame
-        FrFrame_ GetOtherFrameRelativeTransform_WRT_ThisFrame(const FrFrame_ &otherFrame) const;
+        FrFrame GetOtherFrameRelativeTransform_WRT_ThisFrame(const FrFrame &otherFrame) const;
 
         /// Get the transformation frame, transforming an other frame to this frame
         /// \param otherFrame other frame from which the transformation frame is searched
         /// \param fc frame convention (NED/NWU)
         /// \return the transformation frame
-        FrFrame_ GetThisFrameRelativeTransform_WRT_OtherFrame(const FrFrame_ &otherFrame) const;
+        FrFrame GetThisFrameRelativeTransform_WRT_OtherFrame(const FrFrame &otherFrame) const;
 
         /// Inverse a frame transformation
         /// \return the inverse frame transformation
-        FrFrame_& Inverse();
+        FrFrame& Inverse();
 
         /// Get the inverse of a frame transformation
         /// \return the inverse frame transformation
-        FrFrame_ GetInverse() const;
+        FrFrame GetInverse() const;
 
         /// Get the projection of the current frame into the parent frame XY plane so that the new frame share its z axis
         /// with the parent frame
         /// \return projected frame
-        FrFrame_ ProjectToXYPlane(FRAME_CONVENTION fc) const;
+        FrFrame ProjectToXYPlane(FRAME_CONVENTION fc) const;
 
         /// Get the frame X axis expressed in the parent frame
         /// \return the X Direction
@@ -359,57 +359,56 @@ namespace frydom {
         }
 
 
-        friend std::ostream&operator<<(std::ostream& os, const FrFrame_& frame);
+        friend std::ostream&operator<<(std::ostream& os, const FrFrame& frame);
 
     private:
 
         std::ostream& cout(std::ostream& os) const;
 
-        friend class FrInertiaTensor_;  // TODO : voir pourquoi on definit cette amitie... (et voir si on peut retirer !)
+        friend class FrInertiaTensor;  // TODO : voir pourquoi on definit cette amitie... (et voir si on peut retirer !)
 
 
     };
 
+
     /// Transform between frames which is also a frame.
-    using FrTransform = FrFrame_;
+    using FrTransform = FrFrame;
 
 
     namespace internal {
         /// Here we define some conversion functions between
 
-        /// Converts a ChFrame into a FrFrame_
-        inline FrFrame_ ChFrame2FrFrame(const chrono::ChFrame<double> &chFrame) {  // OK
-            return FrFrame_(ChVectorToVector3d<Position>(chFrame.GetPos()),  // In NWU
+        /// Converts a ChFrame into a FrFrame
+        inline FrFrame ChFrame2FrFrame(const chrono::ChFrame<double> &chFrame) {  // OK
+            return FrFrame(ChVectorToVector3d<Position>(chFrame.GetPos()),  // In NWU
                             Ch2FrQuaternion(chFrame.GetRot()), // In NWU
                             NWU);
         }
 
-        /// Converts a FrFrame_ into a ChFrame
-        inline chrono::ChFrame<double> FrFrame2ChFrame(const FrFrame_ &frFrame) {
+        /// Converts a FrFrame into a ChFrame
+        inline chrono::ChFrame<double> FrFrame2ChFrame(const FrFrame &frFrame) {
             auto pos = Vector3dToChVector(frFrame.GetPosition(NWU));
             auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
             return chrono::ChFrame<double>(pos, quat);
         }
 
         /// Converts a FrFrame into a ChCoordSys
-        inline chrono::ChCoordsys<double> FrFrame2ChCoordsys(const FrFrame_ &frFrame) {
+        inline chrono::ChCoordsys<double> FrFrame2ChCoordsys(const FrFrame &frFrame) {
             auto pos = Vector3dToChVector(frFrame.GetPosition(NWU));
             auto quat = Fr2ChQuaternion(frFrame.GetQuaternion());
             return chrono::ChCoordsys<double>(pos, quat);
         }
 
         /// Converts a ChCoordsys to a FrFrame
-        inline FrFrame_ ChCoordsys2FrFrame(const chrono::ChCoordsys<double> &chCoordsys) {
-            return FrFrame_(
+        inline FrFrame ChCoordsys2FrFrame(const chrono::ChCoordsys<double> &chCoordsys) {
+            return FrFrame(
                     ChVectorToVector3d<Position>(chCoordsys.pos), // In NWU
                     Ch2FrQuaternion(chCoordsys.rot),
                     NWU
             );
         }
 
-
-    }  // end namespace internal
-
+    }  // end namespace frydom::internal
 
 }  // end namespace frydom
 

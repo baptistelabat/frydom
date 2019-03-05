@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -15,7 +15,7 @@ using namespace frydom;
 
 // ##CC Quick logging class
 
-class FrNullForce : public FrForce_ {
+class FrNullForce : public FrForce {
 
 public :
 
@@ -30,15 +30,15 @@ public :
 class AddedMassRadiationForce {
 
 protected :
-    FrHydroDB_* m_HDB;
+    FrHydroDB* m_HDB;
     GeneralizedForce m_force;
-    FrBody_* m_body;
+    FrBody* m_body;
 
 public:
 
-    AddedMassRadiationForce(FrHydroDB_* HDB, FrBody_* body) : m_HDB(HDB), m_body(body) {}
+    AddedMassRadiationForce(FrHydroDB* HDB, FrBody* body) : m_HDB(HDB), m_body(body) {}
 
-    void Update(FrBody_* body) {
+    void Update(FrBody* body) {
 
         auto BEMBody = m_HDB->GetBody(body);
         auto infiniteAddedMass = BEMBody->GetInfiniteAddedMass(BEMBody);
@@ -97,7 +97,7 @@ public:
                 << std::endl;
     }
 
-    void Write(double time, Position bodyPosition, FrRotation_ bodyRotation,
+    void Write(double time, Position bodyPosition, FrRotation bodyRotation,
                Force Fh_force, Torque Fh_torque,
                Force Frad_conv_force, Torque Frad_conv_torque,
                Force Frad_minf_force, Torque Frad_minf_torque,
@@ -138,14 +138,14 @@ int main(int argc, char* argv[]) {
 
     // -- System
 
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     // -- Body
 
     auto body = system.NewBody();
 
     Position COGPosition(0., 0., -2.);
-    FrFrame_ COGFrame(COGPosition, FrRotation_(), NWU);
+    FrFrame COGFrame(COGPosition, FrRotation(), NWU);
 
     body->SetPosition(Position(0., 0., 0.), NWU);
 
@@ -163,7 +163,7 @@ int main(int argc, char* argv[]) {
     double Iyy  = 1.690E6;
     double Izz  = 2.606E6;
 
-    FrInertiaTensor_ InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
+    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
 
     body->SetInertiaTensor(InertiaTensor);
 
@@ -171,7 +171,7 @@ int main(int argc, char* argv[]) {
 
     auto hdb = make_hydrodynamic_database("sphere_hdb.h5");
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
     system.AddPhysicsItem(eqFrame);
 
     hdb->Map(0, body.get(), eqFrame);
@@ -184,7 +184,7 @@ int main(int argc, char* argv[]) {
 
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
 
-    auto radiationForce = std::make_shared<FrRadiationConvolutionForce_>(radiationModel.get());
+    auto radiationForce = std::make_shared<FrRadiationConvolutionForce>(radiationModel.get());
     //auto radiationForce = std::make_shared<FrNullForce>();
     body->AddExternalForce(radiationForce);
 
@@ -228,7 +228,7 @@ int main(int argc, char* argv[]) {
                   forceHst->GetForceInWorld(NWU),forceHst->GetTorqueInBodyAtCOG(NWU),
                   radiationForce->GetForceInWorld(NWU), radiationForce->GetTorqueInBodyAtCOG(NWU),
                   radiationAddedMassForce->GetForceInWorld(), radiationAddedMassForce->GetTorqueInWorldAtCOG(),
-                  body->GetTotalForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU)
+                  body->GetTotalExtForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU)
         );
 
     }

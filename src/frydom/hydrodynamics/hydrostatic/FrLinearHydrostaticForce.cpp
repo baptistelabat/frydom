@@ -1,124 +1,31 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #include "FrLinearHydrostaticForce.h"
 
-// >>>>>>>>>>>>>>>>> from refactoring
-
+#include "frydom/core/body/FrBody.h"
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
-#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
 
-// <<<<<<<<<<<<<<<<<<<<
+
 
 namespace frydom {
 
-
-    FrLinearHydrostaticForce::FrLinearHydrostaticForce() {
-        force.SetNull();
-        moment.SetNull();
-    }
-
-    FrLinearHydrostaticStiffnessMatrix *FrLinearHydrostaticForce::GetStiffnessMatrix() { return &m_stiffnessMatrix; }
-
-    void FrLinearHydrostaticForce::UpdateState() {
-        // Getting the differential frame from
-
-        auto eqFrame = dynamic_cast<FrHydroBody*>(Body)->GetEquilibriumFrame();
-        auto bodyFrame = Body->GetFrame_REF_to_abs();
-        //auto deltaFrame = bodyFrame >> eqFrame->GetInverse();
-        auto deltaFrame = eqFrame->GetInverse() * bodyFrame;
-
-        double heave = deltaFrame.GetPos().z();
-
-        // ##CC fixe pour monitorer les variations de heave
-        m_eqframe_z = eqFrame->GetPos().z();
-        m_body_z = bodyFrame.GetPos().z();
-        m_delta_z = heave;
-        // ##CC
-
-        // Hydrostatic stiffness torque forces directly computed from cardan angles.
-        auto cardan_angles = internal::quat_to_euler(deltaFrame.GetRot(),CARDAN,RAD);
-
-        // Multiplying the stiffness matrix with the state vector (heave, roll, pitch)
-        auto values = - (m_stiffnessMatrix * chrono::ChVector<double>(heave,cardan_angles.x(),cardan_angles.y()));
-
-        // Distribution of the resulting force in the different hydrostatic components, according to the state vector
-        force.z() = values.x();
-
-        // Cancelling gravity on body FIXME : pb de generalisation de la methode
-        force -= Body->GetSystem()->Get_G_acc() * Body->GetMass();
-
-        moment.x() = values.y();
-        moment.y() = values.z();
-    }
-
-    void FrLinearHydrostaticForce::InitializeLogs() {
-
-        m_log.AddField("eqFrame_z","m","Position of the equilibrium frame in z-direction",&m_eqframe_z);
-        m_log.AddField("delta_z","m","Pertubation of the position in the z-direction", &m_delta_z);
-        m_log.AddField("body_z","m","Position of the body in ref frame",&m_body_z);
-
-        FrForce::InitializeLogs();
-    }
-
-    void FrLinearHydrostaticForce::SetLogPrefix(std::string prefix_name) {
-        if (prefix_name=="") {
-            m_logPrefix = "Fh_" + FrForce::m_logPrefix;
-        } else {
-            m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
-
-    void FrLinearHydrostaticForce_::Initialize() {
+    void FrLinearHydrostaticForce::Initialize() {
 
         /// This subroutine initializes the hydrostatic force object.
 
         // Initialization of the parent class.
-        FrForce_::Initialize();
+        FrForce::Initialize();
 
         // Equilibrium frame of the body.
         m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
@@ -127,7 +34,7 @@ namespace frydom {
         m_stiffnessMatrix.SetData(m_HDB->GetBody(m_body)->GetHydrostaticStiffnessMatrix());
     }
 
-    void FrLinearHydrostaticForce_::Update(double time) {
+    void FrLinearHydrostaticForce::Update(double time) {
 
         /// This subroutine computes the linear hydrostatic loads.
 
@@ -138,7 +45,7 @@ namespace frydom {
         auto deltaFrame = m_equilibriumFrame->GetInverse() * bodyFrame;
 
         // Position of the body frame with respect to the equilibrium frame expressed in the equilibrium frame.
-        Vector3d<double> state; double temp;
+        mathutils::Vector3d<double> state; double temp;
         state[0] = deltaFrame.GetPosition(NWU).z();
 
         // Angular position of the body frame with respect to the equilibrium frame expressed in the equilibrium frame.
@@ -157,17 +64,17 @@ namespace frydom {
         SetTorqueInBodyAtCOG(localTorque, NWU);
     }
 
-    void FrLinearHydrostaticForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrLinearHydrostaticForce::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
-    std::shared_ptr<FrLinearHydrostaticForce_>
-    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body){
+    std::shared_ptr<FrLinearHydrostaticForce>
+    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
 
         /// This subroutine creates the linear hydrostatic force object for computing the linear hydrostatic loads.
 
         // Construction of the hydrostatic force object from the HDB.
-        auto forceHst = std::make_shared<FrLinearHydrostaticForce_>(HDB);
+        auto forceHst = std::make_shared<FrLinearHydrostaticForce>(HDB);
 
         // Add the hydrostatic force object as an external force to the body.
         body->AddExternalForce(forceHst);

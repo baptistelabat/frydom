@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     DIRECTION_CONVENTION dc = GOTO;
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     // Hide the free surface and seabed visual assets.
     system.GetEnvironment()->GetOcean()->ShowFreeSurface(false);
@@ -169,14 +169,14 @@ int main(int argc, char* argv[]) {
     system.SetTimeStep(0.01);
 
     // You can modify solver and time stepper parameters :
-//    system.SetSolver(FrOffshoreSystem_::SOLVER::MINRES);
+//    system.SetSolver(FrOffshoreSystem::SOLVER::MINRES);
 //    system.SetSolverWarmStarting(true);
 //    system.SetSolverMaxIterSpeed(1000);
 //    system.SetSolverMaxIterStab(200);
 //    system.SetSolverForceTolerance(1e-13);
 
-//    system.SetTimeStepper(FrOffshoreSystem_::TIME_STEPPER::EULER_IMPLICIT);
-//    system.SetTimeStepper(FrOffshoreSystem_::TIME_STEPPER::EULER_IMPLICIT_LINEARIZED);
+//    system.SetTimeStepper(FrOffshoreSystem::TIME_STEPPER::EULER_IMPLICIT);
+//    system.SetTimeStepper(FrOffshoreSystem::TIME_STEPPER::EULER_IMPLICIT_LINEARIZED);
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 30) and the distance from the camera to the objectif (50).

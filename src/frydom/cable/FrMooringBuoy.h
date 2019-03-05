@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #ifndef FRYDOM_FRMOORINGBUOY_H
@@ -17,28 +17,41 @@
 
 namespace frydom {
 
-    class FrLinearDamping_;
+    // Forward declaration
+    class FrLinearDamping;
 
-    class FrMooringBuoy : public FrBody_ {
+
+    class FrMooringBuoy : public FrBody {
+
     private:
+        class FrSphereNonLinearHydrostaticForce : public FrForce {
 
-        class FrSphereNonLinearHydrostaticForce : public FrForce_{
         public:
+
+            /// Get the type name of this object
+            /// \return type name of this object
+            std::string GetTypeName() const override { return "SphereNonLinearHydrostaticForce"; }
+
             void Update(double time) override;
+
             void StepFinalize() override {
-                FrForce_::StepFinalize();
-            };
+                FrForce::StepFinalize();
+            }
         };
 
 
         double m_radius = 1.;
         double c_volume;
         std::shared_ptr<FrSphereNonLinearHydrostaticForce> m_hydrostaticForce;
-        std::shared_ptr<FrLinearDamping_> m_dampingForce;
+        std::shared_ptr<FrLinearDamping> m_dampingForce;
 
     public:
 
-        FrMooringBuoy(double radius, double mass, bool visual_asset = true, double damping=0);;
+        FrMooringBuoy(double radius, double mass, bool visual_asset = true, double damping=0);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "MooringBuoy"; }
 
         double GetVolume() {return c_volume;}
 
@@ -64,7 +77,8 @@ namespace frydom {
     /// \param damping damping coefficient affected to the diagonal terms of a linear damping force.
     /// \return FrMooringBuoy instance
     std::shared_ptr<FrMooringBuoy>
-    make_mooring_buoy(FrOffshoreSystem_* system, double radius, double mass, bool visual_asset = true, double damping=0);
-} //end namespace frydom
+    make_mooring_buoy(FrOffshoreSystem* system, double radius, double mass, bool visual_asset = true, double damping=0);
+
+}  //end namespace frydom
 
 #endif //FRYDOM_FRMOORINGBUOY_H

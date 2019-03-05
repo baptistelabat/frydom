@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -14,17 +14,16 @@
 #define FRYDOM_FRFLUIDTYPE_H
 
 
-#include "frydom/core/common/FrUnits.h"
-
 namespace frydom {
 
+    // TODO : placer les pptes de fluide dans des classes air et water...
 
     enum FLUID_TYPE {
         AIR,
         WATER
     };
 
-    struct FrFluidProperties{
+    struct FrFluidProperties {
         //TODO : ITTC Recommended Procedures : Fresh Water and Seawater Properties
         // Fluid properties:
 
@@ -44,12 +43,12 @@ namespace frydom {
             m_pressure = 0.;
         }
 
-        FrFluidProperties(double Temperature, double Density, double DynamicViscosity, double KinematicViscosity,
+        FrFluidProperties(double temperature, double density, double dynamicViscosity, double kinematicViscosity,
                           double Salinity, double Pressure) {
-            m_temperature = Temperature;
-            m_density = Density;
-            m_dynamicViscosity = DynamicViscosity;
-            m_kinematicViscosity = KinematicViscosity;
+            m_temperature = temperature;
+            m_density = density;
+            m_dynamicViscosity = dynamicViscosity;
+            m_kinematicViscosity = kinematicViscosity;
             m_salinity = Salinity;
             m_pressure = Pressure;
         }

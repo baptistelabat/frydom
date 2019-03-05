@@ -22,6 +22,8 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "CosHFunction"; }
+
     protected:
         void Eval(double x) const override;
 
@@ -42,6 +44,8 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "SinHFunction"; }
+
     protected:
         void Eval(double x) const override;
 
@@ -61,6 +65,8 @@ namespace frydom {
         FrTanHFunction* Clone() const override;
 
         std::string GetRepr() const override;
+
+        std::string GetTypeName() const override { return "TanHFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -84,6 +90,8 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "ACosHFunction"; }
+
     protected:
         void Eval(double x) const override;
 
@@ -104,6 +112,8 @@ namespace frydom {
 
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "ASinHFunction"; }
+
     protected:
         void Eval(double x) const override;
 
@@ -123,6 +133,8 @@ namespace frydom {
         FrATanHFunction* Clone() const override;
 
         std::string GetRepr() const override;
+
+        std::string GetTypeName() const override { return "ATanHFunction"; }
 
     protected:
         void Eval(double x) const override;

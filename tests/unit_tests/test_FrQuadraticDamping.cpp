@@ -1,15 +1,16 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
+
 #include "gtest/gtest.h"
 
 using namespace frydom;
@@ -18,9 +19,9 @@ class TestQuadraticDamping : public ::testing::Test {
 
 protected:
 
-    FrOffshoreSystem_ system;
-    std::shared_ptr<FrBody_> body;
-    std::shared_ptr<FrQuadraticDamping_> force;
+    FrOffshoreSystem system;
+    std::shared_ptr<FrBody> body;
+    std::shared_ptr<FrQuadraticDamping> force;
 
     Position bodyPosition = Position(150., 3., 0.5);
     Position cogPosition = Position(0.2, 0.2, 0.3);
@@ -42,15 +43,15 @@ protected:
 
 void TestQuadraticDamping::SetUp() {
     body = system.NewBody();
-    force = std::make_shared<FrQuadraticDamping_>(WATER, false);
+    force = std::make_shared<FrQuadraticDamping>(WATER, false);
     body->AddExternalForce(force);
     body->SetPosition(bodyPosition, NWU);
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(cogPosition,FrRotation_(),NWU),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(cogPosition,FrRotation(),NWU),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     rotationDirection.normalize();
-    body->SetRotation(FrUnitQuaternion_(rotationDirection, rotationAngle, NWU));
+    body->SetRotation(FrUnitQuaternion(rotationDirection, rotationAngle, NWU));
 }
 
 TEST_F(TestQuadraticDamping, TestBodyVelocity) {
@@ -92,7 +93,7 @@ TEST_F(TestQuadraticDamping, TestCurrentVelocity) {
 
 TEST_F(TestQuadraticDamping, TestWindVelocity) {
 
-    auto windDamping = std::make_shared<FrQuadraticDamping_>(AIR, true);
+    auto windDamping = std::make_shared<FrQuadraticDamping>(AIR, true);
     body->AddExternalForce(windDamping);
 
     windDamping->SetDampingCoefficients(Cu, Cv, Cw);

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -14,16 +14,18 @@
 
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 #include "frydom/core/body/FrBody.h"
-
 #include "FrVariablesAddedMassBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModel.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrBEMBody.h"
+
+
 
 namespace frydom {
 
     namespace internal {
 
-        FrAddedMassBase::FrAddedMassBase(FrRadiationModel_* radiationModel) :
-                m_frydomRadiationModel(radiationModel), _FrPhysicsItemBase(radiationModel) {
+        FrAddedMassBase::FrAddedMassBase(FrRadiationModel* radiationModel) :
+                m_frydomRadiationModel(radiationModel), FrPhysicsItemBase(radiationModel) {
 
             /// Constructor of the class.
 
@@ -35,7 +37,6 @@ namespace frydom {
         }
 
         void FrAddedMassBase::SetupInitial() {
-            //m_frydomRadiationModel->Initialize();
             m_variables->Initialize();
         }
 
@@ -57,7 +58,6 @@ namespace frydom {
 
                 auto residualOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) ); //+off
 
-                //for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion!=m_HDB->end(); BEMBodyMotion++) {
                     auto BEMBodyMotion = BEMBody;
 
                     auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) ); //+off
@@ -82,7 +82,6 @@ namespace frydom {
                                               const chrono::ChVectorDynamic<>& L, const chrono::ChVectorDynamic<>& Qc) {
 
             // FIXME : Nothing to do since added mass variables encapsulate the body variables
-
             auto HDB = m_frydomRadiationModel->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
@@ -112,14 +111,16 @@ namespace frydom {
             m_variables->Compute_inc_Mb_v(m_variables->Get_fb(), m_variables->Get_qb());
         }
 
-        int FrAddedMassBase::GetBodyOffset(FrBody_* body) const {
+        int FrAddedMassBase::GetBodyOffset(FrBody* body) const {
             auto chronoBody = body->GetChronoBody();
             return chronoBody->GetOffset_w();
         }
 
-        void FrAddedMassBase::SetVariables(FrBody_* body, chrono::ChMatrix<double>& qb, int offset) const {
+        void FrAddedMassBase::SetVariables(FrBody* body, chrono::ChMatrix<double>& qb, int offset) const {
             auto chronoBody = body->GetChronoBody();
             chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(qb, offset, 0, 6, 1, 0, 0);
         }
-    }
-}
+
+    }  // end namespace frydom::internal
+
+}  // end namespace frydom

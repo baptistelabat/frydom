@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #ifndef FRYDOM_FRLINK_H
@@ -31,10 +31,10 @@ namespace chrono {
 namespace frydom {
 
     // Forward declarations
-    class FrOffshoreSystem_;
-    class FrNode_;
+    class FrOffshoreSystem;
+    class FrNode;
 
-    // TODO : mettre FrLinkBase dans un repertoire common. FrLink_ devra etre deplace dans le repertoire linkk_lib de
+    // TODO : mettre FrLinkBase dans un repertoire common. FrLink devra etre deplace dans le repertoire linkk_lib de
     // meme que les enums associes
 
     /// Different type of links implemented in FRyDO
@@ -50,7 +50,7 @@ namespace frydom {
 
 
     // Forward declaration
-    class FrLink_;
+    class FrLink;
     class FrBodyDOFMask;
 
     namespace internal {
@@ -59,13 +59,13 @@ namespace frydom {
 
             using ChronoLinkType = chrono::ChLinkLock::LinkType;
 
-            FrLink_* m_frydomLink; ///> Pointer to frydom link object container
+            FrLink* m_frydomLink; ///> Pointer to frydom link object container
 
             /*
              * Cache data for performance
              */
-            FrFrame_ c_frame1WRT2; ///> the current relative frame of node 1 WRT node 2
-            FrFrame_ c_frame2WRT1; ///> the current relative frame of node 2 WRT node 1
+            FrFrame c_frame1WRT2; ///> the current relative frame of node 1 WRT node 2
+            FrFrame c_frame2WRT1; ///> the current relative frame of node 2 WRT node 1
 
             GeneralizedVelocity c_generalizedVelocity1WRT2;
             GeneralizedVelocity c_generalizedVelocity2WRT1;
@@ -78,15 +78,15 @@ namespace frydom {
 
 
             /// Constructor
-            explicit FrLinkLockBase(FrLink_* frydomLink);
+            explicit FrLinkLockBase(FrLink* frydomLink);
 
             /// Set the link type based on LINK_TYPE enum
             void SetLinkType(LINK_TYPE lt);
 
-            /// Initialize the link (calls the Initialize method of FrLink_
+            /// Initialize the link (calls the Initialize method of FrLink
             void SetupInitial() override;
 
-            /// Update (calls the ChLinkLock Update method then the FrLink_Update method
+            /// Update (calls the ChLinkLock Update method then the FrLinkUpdate method
             void Update(double time, bool update_assets) override;
 
             /// Generates the cache variables to speedup further requests on inner link state (frame, velocity, forces...)
@@ -107,8 +107,8 @@ namespace frydom {
 
             /// Get the link torque applying on Body 1 (as external) expressed in marker 2 frame and on marker 1 origin
             Torque GetLinkTorqueOnBody1InFrame2ArOrigin1();
-            
-            FrFrame_ GetConstraintViolation();
+
+            FrFrame GetConstraintViolation();
 
         };
 
@@ -117,7 +117,7 @@ namespace frydom {
 
 
     /*
-     * FrLink_
+     * FrLink
      */
 
     // Forward declaration
@@ -125,16 +125,16 @@ namespace frydom {
     class FrActuator;
 
     /**
-     * \class FrLink_
+     * \class FrLink
      * \brief Class to deal with links.
      */
-    class FrLink_ : public FrLinkBase_ {
+    class FrLink : public FrLinkBase {
 
     protected:
 
         std::shared_ptr<internal::FrLinkLockBase> m_chronoLink;
 
-        FrFrame_ m_frame2WRT1_reference;
+        FrFrame m_frame2WRT1_reference;
         bool m_breakable = false; // TODO : utiliser et permettre de declencher la cassure de la liaison
 
 
@@ -144,7 +144,11 @@ namespace frydom {
     public:
 
         /// Constructor taking the nodes attached to the two bodies implied in the link and the system
-        FrLink_(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system);
+        FrLink(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem *system);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "Link"; }
 
         /// Tells if all constraints of this link are currently turned on or off by the user.
         bool IsDisabled() const override;
@@ -181,10 +185,10 @@ namespace frydom {
          */
 
         /// Get the Marker 2 frame relatively to marker 1 frame
-        const FrFrame_ GetMarker2FrameWRTMarker1Frame() const;
+        const FrFrame GetMarker2FrameWRTMarker1Frame() const;
 
         /// Get the Marker 1 frame relatively to marker 2 frame
-        const FrFrame_ GetMarker1FrameWRTMarker2Frame() const;
+        const FrFrame GetMarker1FrameWRTMarker2Frame() const;
 
         /// Get the Marker 2 position relatively to marker 1, expressed in marker 1 frame
         const Position GetMarker2PositionWRTMarker1(FRAME_CONVENTION fc) const;
@@ -193,10 +197,10 @@ namespace frydom {
         const Position GetMarker1PositionWRTMarker2(FRAME_CONVENTION fc) const;
 
         /// Get the Marker 2 orientation relatively to marker 1
-        const FrRotation_ GetMarker2OrientationWRTMarker1() const;
+        const FrRotation GetMarker2OrientationWRTMarker1() const;
 
         /// Get the Marker 1 orientation relatively to marker 2
-        const FrRotation_ GetMarker1OrientationWRTMarker2() const;
+        const FrRotation GetMarker1OrientationWRTMarker2() const;
 
         /*
          * Velocity related methods
@@ -307,16 +311,16 @@ namespace frydom {
         const Torque GetLinkTorqueOnBody2InFrame1AtOrigin2(FRAME_CONVENTION fc) const;
 
 
-        /// Generic computation of the power delivered in a FrLink_
+        /// Generic computation of the power delivered in a FrLink
         virtual double GetLinkPower() const;
 
-        /// Initialize a FrLink_ with a FrBodyDOFMask. Essentially used by the DOF restricting mechanism of bodies
+        /// Initialize a FrLink with a FrBodyDOFMask. Essentially used by the DOF restricting mechanism of bodies
         /// Users should not use this method to make links between bodies but directly use the specialized classes
         /// (FrPrismaticLink, FrRevoluteLink...)
         void InitializeWithBodyDOFMask(FrBodyDOFMask* mask); // FIXME passer dans une classe dediee specialisee FrBodyCaptive
 
         /// Get the constraint violation of the link (ie the
-        FrFrame_ GetConstraintViolation() const;  // FIXME : verifier que cette violation ne prend pas en compte la position relative normale de la liaison
+        FrFrame GetConstraintViolation() const;  // FIXME : verifier que cette violation ne prend pas en compte la position relative normale de la liaison
 
         virtual void Initialize() override;
 
@@ -326,10 +330,10 @@ namespace frydom {
 
 
     protected:
-        friend class FrNode_; // To make possible to declare SetMarkers friend in FrNode_
+        friend class FrNode; // To make possible to declare SetMarkers friend in FrNode
 
         /// Set the markers of the link. This method must be used during the Initialization of the link
-        void SetMarkers(FrNode_* node1, FrNode_* node2);
+        void SetMarkers(FrNode* node1, FrNode* node2);
 
         /// Get the embedded Chrono object
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
@@ -352,7 +356,7 @@ namespace frydom {
     /*
      * Defining a mask class to make the constraint on bodies WRT to world easier
      */
-    // TODO : creer une classe speciale derivant de FrLink_ pour fixer les dof des corps en mode captif..
+    // TODO : creer une classe speciale derivant de FrLink pour fixer les dof des corps en mode captif..
     // FrBodyCaptive... --> on mettra le IsMotorized en virtuel pur !
 
     /**

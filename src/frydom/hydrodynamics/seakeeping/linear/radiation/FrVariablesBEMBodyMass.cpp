@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -45,7 +45,7 @@ namespace frydom {
         m_GeneralizedMass(0,0) += GetBodyMass();
         m_GeneralizedMass(1,1) += GetBodyMass();
         m_GeneralizedMass(2,2) += GetBodyMass();
-        m_GeneralizedMass.block<3,3>(3,3) += ChEig(GetBodyInertia());
+        m_GeneralizedMass.block<3,3>(3,3) += internal::ChEig(GetBodyInertia());
         m_invGeneralizedMass = m_GeneralizedMass.inverse();
     }
 
@@ -84,12 +84,12 @@ namespace frydom {
 
     }
 
-// Computes the product of the corresponding block in the
-// system matrix (ie. the mass matrix) by 'vect', scale by c_a, and add to 'result'.
-// NOTE: the 'vect' and 'result' vectors must already have
-// the size of the total variables&constraints in the system; the procedure
-// will use the ChVariable offsets (that must be already updated) to know the
-// indexes in result and vect.
+    // Computes the product of the corresponding block in the
+    // system matrix (ie. the mass matrix) by 'vect', scale by c_a, and add to 'result'.
+    // NOTE: the 'vect' and 'result' vectors must already have
+    // the size of the total variables&constraints in the system; the procedure
+    // will use the ChVariable offsets (that must be already updated) to know the
+    // indexes in result and vect.
     void FrVariablesBEMBodyMass::MultiplyAndAdd(chrono::ChMatrix<double>& result,
                                                 const chrono::ChMatrix<double>& vect,
                                                 const double c_a) const {
@@ -102,10 +102,10 @@ namespace frydom {
         }
     }
 
-// Add the diagonal of the mass matrix scaled by c_a to 'result'.
-// NOTE: the 'result' vector must already have the size of system unknowns, ie
-// the size of the total variables&constraints in the system; the procedure
-// will use the ChVariable offset (that must be already updated) as index.
+    // Add the diagonal of the mass matrix scaled by c_a to 'result'.
+    // NOTE: the 'result' vector must already have the size of system unknowns, ie
+    // the size of the total variables&constraints in the system; the procedure
+    // will use the ChVariable offset (that must be already updated) as index.
     void FrVariablesBEMBodyMass::DiagonalAdd(chrono::ChMatrix<double>& result, const double c_a) const {
         assert(result.GetColumns() == 1);
         result(this->offset + 0) += c_a * m_GeneralizedMass(0, 0);
@@ -116,10 +116,10 @@ namespace frydom {
         result(this->offset + 5) += c_a * m_GeneralizedMass(5, 5);
     }
 
-// Build the mass matrix (for these variables) scaled by c_a, storing
-// it in 'storage' sparse matrix, at given column/row offset.
-// Note, most iterative solvers don't need to know mass matrix explicitly.
-// Optimized: doesn't fill unneeded elements except mass and 3x3 inertia.
+    // Build the mass matrix (for these variables) scaled by c_a, storing
+    // it in 'storage' sparse matrix, at given column/row offset.
+    // Note, most iterative solvers don't need to know mass matrix explicitly.
+    // Optimized: doesn't fill unneeded elements except mass and 3x3 inertia.
     void FrVariablesBEMBodyMass::Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) {
         for (int i=0; i<6; i++) {
             for (int j=0; j<6; j++) {

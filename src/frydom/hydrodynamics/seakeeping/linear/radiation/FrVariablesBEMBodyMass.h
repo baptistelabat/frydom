@@ -1,26 +1,29 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRVARIABLESBEMBODYMASS_H
 #define FRYDOM_FRVARIABLESBEMBODYMASS_H
 
-#include "frydom/utils/FrEigen.h"
 #include "chrono/solver/ChVariablesBodyOwnMass.h"
+
+#include "MathUtils/Matrix.h"
+
+
 
 namespace frydom {
 
-    enum FrVariablesBody {
-        variablesHydro,
-        variablesStandard
+    enum VARIABLES_BODY {
+        HYDRO_VAR,
+        STANDARD_VAR
     };
 
     /**
@@ -94,10 +97,9 @@ namespace frydom {
         /// Computes the inverse of the generalized mass matrix
         void SetGeneralizedMass();
 
-
     };
 
-}
+}  // end namespace frydom
 
 
 #endif //FRYDOM_FRVARIABLESBEMBODYMASS_H

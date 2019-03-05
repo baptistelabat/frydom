@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -22,13 +22,13 @@ TEST(FrKinematicStretching,FrKinematicStretching){
     double z = 0.25;
     double depth = 100;
 
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
     auto wavefield = system.GetEnvironment()->GetOcean()->GetFreeSurface()->SetAiryRegularWaveField(1.,10.,0.,RAD,NWU,GOTO);
 
     system.Initialize();
 
     // No kinematic stretching
-    FrKinematicStretching_ kinStretch;
+    FrKinematicStretching kinStretch;
 
     // Test Ez
     auto testEz = cosh(konde*(z+depth)) / sinh(konde*depth);
@@ -43,19 +43,19 @@ TEST(FrKinematicStretching,FrKinematicStretching){
     EXPECT_NE(kinStretch.EvalDZ(0.,konde,depth), kinStretch.EvalDZ(1.,konde,depth));
 
     // Vertical stretching
-    FrKinStretchingVertical_ vertStretch;
+    FrKinStretchingVertical vertStretch;
 
     EXPECT_NEAR(vertStretch.Eval(0.,konde,depth), vertStretch.Eval(z,konde,depth), 1E-8);
     EXPECT_NEAR(vertStretch.EvalDZ(0.,konde,depth), vertStretch.EvalDZ(z,konde,depth), 1E-8);
 
     // Extrapolation stretching
-    FrKinStretchingExtrapol_ extStretch;
+    FrKinStretchingExtrapol extStretch;
 
     EXPECT_NEAR(extStretch.Eval(0.,konde,depth) + konde*z, extStretch.Eval(z,konde,depth), 1E-8);
     EXPECT_NEAR(extStretch.EvalDZ(0.,konde,depth) + konde, extStretch.EvalDZ(z,konde,depth), 1E-8);
 
     // Wheeler stretching
-    FrKinStretchingWheeler_ wheelStretch(wavefield);
+    FrKinStretchingWheeler wheelStretch(wavefield);
     auto eta = wavefield->GetElevation(x, y, NWU);
     auto rz = (depth + z) / (depth + eta);
     auto zp = depth * (rz - 1.);
@@ -65,7 +65,7 @@ TEST(FrKinematicStretching,FrKinematicStretching){
     EXPECT_NEAR(kinStretch.EvalDZ(zp,konde,depth)*drz, wheelStretch.EvalDZ(x,y,z,konde,depth), 1E-8);
 
     // Chakrabarti stretching
-    FrKinStretchingChakrabarti_ ChakStretching(wavefield);
+    FrKinStretchingChakrabarti ChakStretching(wavefield);
 
     auto test = cosh(konde * (z + depth)) / sinh(konde * (depth + eta));
     EXPECT_NEAR(test, ChakStretching.Eval(x,y,z,konde,depth), 1E-8);
@@ -74,7 +74,7 @@ TEST(FrKinematicStretching,FrKinematicStretching){
     EXPECT_NEAR(test, ChakStretching.EvalDZ(x,y,z,konde,depth), 1E-8);
 
     // Delta stretching
-    FrKinStretchingDelta_ DeltaStretching(wavefield);
+    FrKinStretchingDelta DeltaStretching(wavefield);
     double delta = 0.3, hd = 0.5;
     DeltaStretching.SetParam(hd,delta);
 
@@ -96,9 +96,9 @@ TEST(FrKinematicStretching,FrKinematicStretching){
     DeltaStretching.SetParam(depth,1);
     EXPECT_NEAR(extStretch.Eval(z,konde,depth), DeltaStretching.Eval(x,y,z,konde,depth), 1E-8);
     EXPECT_NEAR(extStretch.EvalDZ(z,konde,depth), DeltaStretching.EvalDZ(x,y,z,konde,depth), 1E-8);
-    
+
     // HDelta stretching
-    FrKinStretchingHDelta_ HDeltaStretching(wavefield);
+    FrKinStretchingHDelta HDeltaStretching(wavefield);
     HDeltaStretching.SetDelta(delta);
     DeltaStretching.SetParam(depth,delta);
 

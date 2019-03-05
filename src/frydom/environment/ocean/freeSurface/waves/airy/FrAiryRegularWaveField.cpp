@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -14,17 +14,16 @@
 
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
-#include "frydom/environment/ocean/seabed/FrSeabed.h"
+#include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
-//#include "../FrWaveDispersionRelation.h"
+
+#include "MathUtils/Angles.h"
 
 namespace frydom {
 
-    FrAiryRegularWaveField::FrAiryRegularWaveField(FrFreeSurface_* freeSurface) : FrWaveField_(freeSurface) {
+    FrAiryRegularWaveField::FrAiryRegularWaveField(FrFreeSurface* freeSurface) : FrWaveField(freeSurface) {
         m_waveModel = LINEAR_WAVES;
-        m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+        m_verticalFactor = std::make_unique<FrKinematicStretching>();
         m_verticalFactor->SetInfDepth(m_infinite_depth);
     }
 
@@ -32,25 +31,16 @@ namespace frydom {
 
     double FrAiryRegularWaveField::GetWaveHeight() const {return m_height;}
 
-    void FrAiryRegularWaveField::SetWavePeriod(double period, FREQUENCY_UNIT unit) {
+    void FrAiryRegularWaveField::SetWavePeriod(double period) {
 
         // Set the wave period in seconds
-        m_period = convert_frequency(period, unit, S);
+        m_period = period;
 
         // Set the wave pulsation from the wave period, in rad/s
-        m_omega = S2RADS(m_period);
+        m_omega = mathutils::S2RADS(m_period);
 
         // Set the wave number, using the wave dispersion relation
         auto gravityAcceleration = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
-
-//        try {
-//            m_k = SolveWaveDispersionRelation(m_freeSurface->GetOcean()->GetDepth(NWU), m_omega, gravityAcceleration);
-//            m_infinite_depth = 3. / m_k < m_freeSurface->GetOcean()->GetDepth(NWU);
-//        }
-//        catch(FrException& e) {
-//            m_k = m_omega*m_omega/gravityAcceleration;
-//            m_infinite_depth = true;
-//        }
 
         if (m_infinite_depth) {
             m_k = m_omega*m_omega/gravityAcceleration;
@@ -63,27 +53,25 @@ namespace frydom {
 
     }
 
-    double FrAiryRegularWaveField::GetWavePeriod(FREQUENCY_UNIT unit) const { return convert_frequency(m_period ,S, unit);}
+    double FrAiryRegularWaveField::GetWavePeriod(FREQUENCY_UNIT unit) const { return convert_frequency(m_period , mathutils::S, unit);}
 
 
     void FrAiryRegularWaveField::SetDirection(double dirAngle, ANGLE_UNIT unit, FRAME_CONVENTION fc,
                                               DIRECTION_CONVENTION dc) {
         // The wave direction angle is used internally with the convention NWU, GOTO, and RAD unit.
         m_dirAngle = dirAngle;
-        if (unit == DEG) m_dirAngle *= DEG2RAD;
+        if (unit == mathutils::DEG) m_dirAngle *= DEG2RAD;
         if (IsNED(fc)) m_dirAngle = - m_dirAngle;
         if (IsCOMEFROM(dc)) m_dirAngle -= MU_PI;
 
         mathutils::Normalize_0_2PI(m_dirAngle);
-
-//        m_direction = Direction(cos(m_dirAngle), sin(m_dirAngle), 0.);
 
     }
 
     void FrAiryRegularWaveField::SetDirection(const Direction& direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         assert(mathutils::IsClose(direction.Getuz(),0.));
         double dirAngle = atan2(direction.Getuy(),direction.Getux());
-        SetDirection(dirAngle, RAD, fc, dc);
+        SetDirection(dirAngle, mathutils::RAD, fc, dc);
     }
 
     double
@@ -91,47 +79,42 @@ namespace frydom {
         double dirAngle = m_dirAngle;
         if (IsNED(fc)) dirAngle = - dirAngle;
         if (IsCOMEFROM(dc)) dirAngle -= MU_PI;
-        if (unit == DEG) dirAngle *= RAD2DEG;
+        if (unit == mathutils::DEG) dirAngle *= RAD2DEG;
 
         return mathutils::Normalize_0_360(dirAngle);
     }
 
     Direction FrAiryRegularWaveField::GetDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const {
-        auto dirAngle = GetDirectionAngle(RAD, fc, dc);
+        auto dirAngle = GetDirectionAngle(mathutils::RAD, fc, dc);
         return {cos(dirAngle), sin(dirAngle), 0.};
     }
 
     double FrAiryRegularWaveField::GetWaveLength() const {return 2.*M_PI/m_k;}
 
-    void FrAiryRegularWaveField::SetStretching(FrStretchingType type) {
+    void FrAiryRegularWaveField::SetStretching(STRETCHING_TYPE type) {
         switch (type) {
             case NO_STRETCHING:
-                m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+                m_verticalFactor = std::make_unique<FrKinematicStretching>();
                 break;
             case VERTICAL:
-                m_verticalFactor = std::make_unique<FrKinStretchingVertical_>();
+                m_verticalFactor = std::make_unique<FrKinStretchingVertical>();
                 break;
             case EXTRAPOLATE:
-                m_verticalFactor = std::make_unique<FrKinStretchingExtrapol_>();
+                m_verticalFactor = std::make_unique<FrKinStretchingExtrapol>();
                 break;
             case WHEELER:
-                m_verticalFactor = std::make_unique<FrKinStretchingWheeler_>(this);
+                m_verticalFactor = std::make_unique<FrKinStretchingWheeler>(this);
                 break;
             case CHAKRABARTI:
-                m_verticalFactor = std::make_unique<FrKinStretchingChakrabarti_>(this);
+                m_verticalFactor = std::make_unique<FrKinStretchingChakrabarti>(this);
             case DELTA:
-                m_verticalFactor = std::make_unique<FrKinStretchingDelta_>(this);
+                m_verticalFactor = std::make_unique<FrKinStretchingDelta>(this);
             default:
-                m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+                m_verticalFactor = std::make_unique<FrKinematicStretching>();
                 break;
         }
         m_verticalFactor->SetInfDepth(m_infinite_depth);
     }
-
-
-
-
-
 
     std::vector<std::vector<Complex>> FrAiryRegularWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
         double NWUsign = 1;
@@ -154,7 +137,6 @@ namespace frydom {
         return {Vx,Vy,Vz};
     }
 
-
     double FrAiryRegularWaveField::GetElevation(double x, double y, FRAME_CONVENTION fc) const {
         return std::imag( GetComplexElevation(x, y, fc)[0][0]);
     }
@@ -174,7 +156,7 @@ namespace frydom {
     // ------------------------------------- Wave characteristics ----------------------------
 
     std::vector<double> FrAiryRegularWaveField::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
-        auto omega = convert_frequency(m_omega, RADS, unit);
+        auto omega = convert_frequency(m_omega, mathutils::RADS, unit);
         return std::vector<double>(1, omega);
     }
 
@@ -191,11 +173,10 @@ namespace frydom {
 
         if(IsNED(fc)) direction = -direction;
         if(dc == COMEFROM) direction += MU_PI;
-        Normalize_0_2PI(direction);
-        if (unit == DEG) direction *= MU_180_PI;
+        mathutils::Normalize_0_2PI(direction);
+        if (unit == mathutils::DEG) direction *= MU_180_PI;
 
         return std::vector<double>(1, direction);
     }
 
-
-}
+}  // end namespace frydom

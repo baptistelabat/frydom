@@ -1,31 +1,33 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
+#include <random>
 
 #include "FrAiryIrregularWaveField.h"
-#include <random>
+
 #include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean_.h"
-#include "frydom/environment/ocean/seabed/FrSeabed.h"
+#include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveDispersionRelation.h"
-#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
+
+#include "MathUtils/VectorGeneration.h"
+#include "MathUtils/Angles.h"
 
 namespace frydom{
 
-    FrAiryIrregularWaveField::FrAiryIrregularWaveField(FrFreeSurface_ *freeSurface) : FrWaveField_(freeSurface) {
+    FrAiryIrregularWaveField::FrAiryIrregularWaveField(FrFreeSurface *freeSurface) : FrWaveField(freeSurface) {
         m_waveModel = LINEAR_WAVES;
-        m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+        m_verticalFactor = std::make_unique<FrKinematicStretching>();
 
-        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum_>();
+        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum>();
     }
 
     void FrAiryIrregularWaveField::SetWaveFrequencies(double minFreq, double maxFreq, unsigned int nbFreq) {
@@ -42,7 +44,7 @@ namespace frydom{
             m_waveFrequencies.push_back(m_minFreq);
         }
         else {
-            m_waveFrequencies = linspace(m_minFreq, m_maxFreq, m_nbFreq);
+            m_waveFrequencies = mathutils::linspace(m_minFreq, m_maxFreq, m_nbFreq);
         }
 
         // Caching wave numbers
@@ -73,7 +75,7 @@ namespace frydom{
                                                              DIRECTION_CONVENTION dc) {
         // The wave direction angle is used internally with the convention NWU, GOTO, and RAD unit.
         m_meanDir = dirAngle;
-        if (unit == DEG) m_meanDir *= DEG2RAD;
+        if (unit == mathutils::DEG) m_meanDir *= DEG2RAD;
         if (IsNED(fc)) m_meanDir = - m_meanDir;
         if (IsCOMEFROM(dc)) m_meanDir -= MU_PI;
 
@@ -85,10 +87,10 @@ namespace frydom{
     FrAiryIrregularWaveField::SetMeanWaveDirection(Direction direction, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) {
         assert(mathutils::IsClose(direction.Getuz(),0.));
         double dirAngle = atan2(direction.Getuy(),direction.Getux());
-        SetMeanWaveDirectionAngle(dirAngle, RAD, fc, dc);
+        SetMeanWaveDirectionAngle(dirAngle, mathutils::RAD, fc, dc);
     }
 
-    void FrAiryIrregularWaveField::SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WaveDirectionalModelType dirType) {
+    void FrAiryIrregularWaveField::SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WAVE_DIRECTIONAL_MODEL dirType) {
         m_nbDir = nbDir;
         m_waveDirections.clear();
         switch (dirType) {
@@ -120,10 +122,10 @@ namespace frydom{
                 break;
             case COS2S:
                 m_waveSpectrum->GetDirectionalModel()->GetDirectionBandwidth(theta_min, theta_max, m_meanDir);
-                m_waveDirections = linspace(theta_min, theta_max, m_nbDir);
+                m_waveDirections = mathutils::linspace(theta_min, theta_max, m_nbDir);
                 break;
             case DIRTEST:
-                m_waveDirections = linspace(m_meanDir, m_meanDir + 0.1, m_nbDir);
+                m_waveDirections = mathutils::linspace(m_meanDir, m_meanDir + 0.1, m_nbDir);
                 break;
         }
 
@@ -142,49 +144,45 @@ namespace frydom{
         m_wavePhases = std::make_unique<std::vector<std::vector<double>>>(wavePhases);
     }
 
-    FrJonswapWaveSpectrum_ *FrAiryIrregularWaveField::SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit, double gamma) {
-        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum_>(Hs,Tp,unit,gamma);
-        return dynamic_cast<FrJonswapWaveSpectrum_*>(m_waveSpectrum.get());
+    FrJonswapWaveSpectrum *FrAiryIrregularWaveField::SetJonswapWaveSpectrum(double Hs, double Tp, double gamma) {
+        m_waveSpectrum = std::make_unique<FrJonswapWaveSpectrum>(Hs, Tp, gamma);
+        return dynamic_cast<FrJonswapWaveSpectrum*>(m_waveSpectrum.get());
     }
 
-    FrPiersonMoskowitzWaveSpectrum_ *FrAiryIrregularWaveField::SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit) {
-        m_waveSpectrum = std::make_unique<FrPiersonMoskowitzWaveSpectrum_>(Hs,Tp,unit);
-        return dynamic_cast<FrPiersonMoskowitzWaveSpectrum_*>(m_waveSpectrum.get());
+    FrPiersonMoskowitzWaveSpectrum *FrAiryIrregularWaveField::SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp) {
+        m_waveSpectrum = std::make_unique<FrPiersonMoskowitzWaveSpectrum>(Hs,Tp);
+        return dynamic_cast<FrPiersonMoskowitzWaveSpectrum*>(m_waveSpectrum.get());
     }
 
-    FrTestWaveSpectrum_ *FrAiryIrregularWaveField::SetTestWaveSpectrum() {
-        m_waveSpectrum = std::make_unique<FrTestWaveSpectrum_>();
-        return dynamic_cast<FrTestWaveSpectrum_*>(m_waveSpectrum.get());
+    FrTestWaveSpectrum *FrAiryIrregularWaveField::SetTestWaveSpectrum() {
+        m_waveSpectrum = std::make_unique<FrTestWaveSpectrum>();
+        return dynamic_cast<FrTestWaveSpectrum*>(m_waveSpectrum.get());
     }
 
-//    void FrAiryIrregularWaveField::SetWaveSpectrum(WAVE_SPECTRUM_TYPE type) {
-//        m_waveSpectrum = MakeWaveSpectrum(type);
-//    }
+    FrWaveSpectrum *FrAiryIrregularWaveField::GetWaveSpectrum() const { return m_waveSpectrum.get(); }
 
-    FrWaveSpectrum_ *FrAiryIrregularWaveField::GetWaveSpectrum() const { return m_waveSpectrum.get(); }
-
-    void FrAiryIrregularWaveField::SetStretching(FrStretchingType type) {
+    void FrAiryIrregularWaveField::SetStretching(STRETCHING_TYPE type) {
         switch (type) {
             case NO_STRETCHING:
-                m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+                m_verticalFactor = std::make_unique<FrKinematicStretching>();
                 break;
             case VERTICAL:
-                m_verticalFactor = std::make_unique<FrKinStretchingVertical_>();
+                m_verticalFactor = std::make_unique<FrKinStretchingVertical>();
                 break;
             case EXTRAPOLATE:
-                m_verticalFactor = std::make_unique<FrKinStretchingExtrapol_>();
+                m_verticalFactor = std::make_unique<FrKinStretchingExtrapol>();
                 break;
             case WHEELER:
-                m_verticalFactor = std::make_unique<FrKinStretchingWheeler_>(this);
+                m_verticalFactor = std::make_unique<FrKinStretchingWheeler>(this);
                 break;
             case CHAKRABARTI:
-                m_verticalFactor = std::make_unique<FrKinStretchingChakrabarti_>(this);
+                m_verticalFactor = std::make_unique<FrKinStretchingChakrabarti>(this);
             case DELTA:
-                m_verticalFactor = std::make_unique<FrKinStretchingDelta_>(this);
+                m_verticalFactor = std::make_unique<FrKinStretchingDelta>(this);
             case HDELTA:
-                m_verticalFactor = std::make_unique<FrKinStretchingHDelta_>(this);
+                m_verticalFactor = std::make_unique<FrKinStretchingHDelta>(this);
             default:
-                m_verticalFactor = std::make_unique<FrKinematicStretching_>();
+                m_verticalFactor = std::make_unique<FrKinematicStretching>();
                 break;
         }
         m_verticalFactor->SetInfDepth(m_infinite_depth);
@@ -216,9 +214,9 @@ namespace frydom{
 
     std::vector<double> FrAiryIrregularWaveField::GetWaveFrequencies(FREQUENCY_UNIT unit) const {
         std::vector<double> freqs = m_waveFrequencies;
-        if (unit != RADS) {
+        if (unit != mathutils::RADS) {
             for (auto &freq: freqs) {
-                freq = convert_frequency(freq, RADS, unit);
+                freq = convert_frequency(freq, mathutils::RADS, unit);
             }
         }
         return freqs;
@@ -230,15 +228,15 @@ namespace frydom{
 
         if(IsNED(fc)) for (auto& dir: directions) {dir = -dir; }
         if(dc == COMEFROM) for (auto& dir: directions) { dir += M_PI; }
-        for (auto& dir: directions) Normalize_0_2PI(dir);
-        if(unit==DEG) for (auto& dir: directions) { dir *= MU_180_PI; }
+        for (auto& dir: directions) mathutils::Normalize_0_2PI(dir);
+        if(unit==mathutils::DEG) for (auto& dir: directions) { dir *= MU_180_PI; }
 
         return directions;
 
     }
 
     void FrAiryIrregularWaveField::Initialize() {
-        FrWaveField_::Initialize();
+        FrWaveField::Initialize();
         m_verticalFactor->SetInfDepth(m_infinite_depth);
 
         if (m_waveDirections.empty()){m_waveDirections.push_back(m_meanDir);}
@@ -371,65 +369,19 @@ namespace frydom{
         return Acc;
     }
 
-
-//    Velocity FrAiryIrregularWaveField::GetVelocity(double x, double y, double z) const {
-//        double Vx = 0, Vy = 0, Vz = 0;
-//        double Stretching, StretchingDZ;
-//        double ki, wi, thetaj;
-//
-//        auto ComplexElevation = GetComplexElevation(x,y);
-//
-//        for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
-//            ki = m_waveNumbers[ifreq];
-//            wi = m_waveFrequencies[ifreq];
-//            Stretching = m_verticalFactor->Eval(x,y,z,ki,c_depth);
-//            StretchingDZ = m_verticalFactor->EvalDZ(x,y,z,ki,c_depth);
-//            for (unsigned int idir=0; idir<m_nbDir; ++idir) {
-//                thetaj = m_waveDirections[idir];
-//                Vx += std::imag( cos(thetaj) * wi * ComplexElevation[idir][ifreq] * Stretching );
-//                Vy += std::imag( sin(thetaj) * wi * ComplexElevation[idir][ifreq] * Stretching );
-//                Vz += std::imag(   - JJ / ki * wi * ComplexElevation[idir][ifreq] * StretchingDZ);
-//            }
-//        }
-//        return {Vx,Vy,Vz};
-//    }
-//
-//    Acceleration FrAiryIrregularWaveField::GetAcceleration(double x, double y, double z) const {
-//
-//        double Ax = 0, Ay = 0, Az = 0;
-//        double Stretching, StretchingDZ;
-//        double ki, wi, thetaj;
-//
-//        auto ComplexElevation = GetComplexElevation(x,y);
-//
-//        for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
-//            ki = m_waveNumbers[ifreq];
-//            wi = m_waveFrequencies[ifreq];
-//            Stretching = m_verticalFactor->Eval(x,y,z,ki,c_depth);
-//            StretchingDZ = m_verticalFactor->EvalDZ(x,y,z,ki,c_depth);
-//            for (unsigned int idir=0; idir<m_nbDir; ++idir) {
-//                thetaj = m_waveDirections[idir];
-//                Ax += std::imag( - JJ * cos(thetaj) * wi * wi * ComplexElevation[idir][ifreq] * Stretching );
-//                Ay += std::imag( - JJ * sin(thetaj) * wi * wi * ComplexElevation[idir][ifreq] * Stretching );
-//                Az += std::imag( - 1.0 / ki * wi * wi * ComplexElevation[idir][ifreq] * StretchingDZ);
-//            }
-//        }
-//        return {Ax,Ay,Az};
-//    }
-
     double FrAiryIrregularWaveField::GetMeanWaveDirectionAngle(ANGLE_UNIT unit, FRAME_CONVENTION fc,
                                                                DIRECTION_CONVENTION dc) const {
         double dirAngle = m_meanDir;
         if (IsNED(fc)) dirAngle = - dirAngle;
         if (IsCOMEFROM(dc)) dirAngle -= MU_PI;
-        if (unit == DEG) dirAngle *= RAD2DEG;
+        if (unit == mathutils::DEG) dirAngle *= RAD2DEG;
 
         return mathutils::Normalize_0_360(dirAngle);
     }
 
     Direction FrAiryIrregularWaveField::GetMeanWaveDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const {
-        auto dirAngle = GetMeanWaveDirectionAngle(RAD, fc, dc);
+        auto dirAngle = GetMeanWaveDirectionAngle(mathutils::RAD, fc, dc);
         return {cos(dirAngle), sin(dirAngle), 0.};
     }
 
-}
+}  // end namespace frydom

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     std::cout << " ========================= Test hydrostatic =================== " << std::endl;
 
     std::cout << "--> Create a system ..." << std::endl;
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     std::cout << "--> Create a body ..." << std::endl;
     auto body = system.NewBody();
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
 
     std::cout << "--> Eq Frame ... " << std::endl;
-    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
     system.AddPhysicsItem(eqFrame);
 
     std::cout << "--> Set Map ..." << std::endl;

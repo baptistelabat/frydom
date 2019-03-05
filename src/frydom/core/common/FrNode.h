@@ -1,120 +1,67 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #ifndef FRYDOM_FRNODE_H
 #define FRYDOM_FRNODE_H
 
+
 #include "chrono/physics/ChMarker.h"
-#include "FrObject.h"
-#include "frydom/core/math/FrVector.h"
 #include "FrRotation.h"
 #include "FrFrame.h"
+#include "FrObject.h"
 
 #include "frydom/core/link/links_lib/FrLink.h"
 
 
 namespace frydom {
 
-//    class FrBody;
+    // Forward declarations
+    class FrNode;
+
+    namespace internal {
+
+        struct FrMarker : public chrono::ChMarker {
+
+            FrNode * m_frydomNode;
+
+            explicit FrMarker(FrNode* node);
+
+        };
+
+    } // end namespace frydom::internal
+
+
+    // Forward declarations
+    class FrBody;
 
     /**
      * \class FrNode
      * \brief Class for defining nodes (in order to add links).
      */
-    class FrNode : public chrono::ChMarker, public FrObject {
-//    private:
-//        FrBody* Body;
-
-    public:
-
-//        FrBody* GetBody() const { return Body; }
-
-        FrNode() : chrono::ChMarker() {
-//            SetMotionType(M_MOTION_EXTERNAL); // Hack to keep the relative position unchanged
-        }
-
-//        FrNode(char myname[], FrBody* myBody,
-//               chrono::Coordsys myrel_pos, chrono::Coordsys myrel_pos_dt, chrono::Coordsys myrel_pos_dtdt)
-//            : chrono::ChMarker(myname, myBody, myrel_pos, myrel_pos_dt, myrel_pos_dtdt) {
-//            SetMotionType(M_MOTION_EXTERNAL); // Hack to keep the relative position unchanged
-//        }
-
-        chrono::ChVector<double> GetAbsPos() {
-            return GetAbsCoord().pos;
-        }
-
-//        std::shared_ptr<FrBody> GetSharedBody() {
-//            return Body->shared_from_this();
-//        }
-
-        chrono::Coordsys GetRelPos() const {
-            return GetRest_Coord();
-        }
-
-        virtual void Initialize() override {}
-
-        virtual void StepFinalize() override {}
-
-    };  // end class FrNode
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // REFACTORING ----------->>>>>>>>>>>>>>>>>
-
-
-    // Forward declarations
-    class FrNode_;
-
-    namespace internal{
-
-        struct FrMarker : public chrono::ChMarker {
-
-            FrNode_ * m_frydomNode;
-
-            explicit FrMarker(FrNode_* node);
-
-        };
-
-    }
-
-
-    // Forward declarations
-    class FrBody_;
-
-    /**
-     * \class FrNode_
-     * \brief Class for defining nodes (in order to add links).
-     */
-    class FrNode_ : public FrObject {
+    class FrNode : public FrObject {
 
     private:
 
-        FrBody_* m_body;                                    ///< Pointer to the body containing this node
+        FrBody* m_body;                                    ///< Pointer to the body containing this node
         std::shared_ptr<internal::FrMarker> m_chronoMarker;   ///< Chrono class for nodes/marker.
 
     public:
 
         /// Default Constructor
         /// \param body body to which the node belongs
-        explicit FrNode_(FrBody_* body);
+        explicit FrNode(FrBody* body);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "Node"; }
 
 
         /// Set node position and direction axis, with respect to body reference frame
@@ -122,6 +69,7 @@ namespace frydom {
         /// \param e1 direction of the x-axis with respect to reference frame
         /// \param e2 direction of the y-axis with respect to reference frame
         /// \param e3 direction of the z-axis with respect to reference frame
+        /// \param fc frame convention (NED/NWU)
         void Set(const Position& pos, const Direction& e1, const Direction& e2, const Direction& e3, FRAME_CONVENTION fc);
 
 
@@ -142,14 +90,14 @@ namespace frydom {
         void TranslateInWorld(double x, double y, double z, FRAME_CONVENTION fc);
 
 
-        void SetOrientationInBody(const FrRotation_& rotation);
-        void SetOrientationInBody(const FrUnitQuaternion_& quaternion);
+        void SetOrientationInBody(const FrRotation& rotation);
+        void SetOrientationInBody(const FrUnitQuaternion& quaternion);
 
-        void RotateInBody(const FrRotation_& rotation);
-        void RotateInBody(const FrUnitQuaternion_& quaternion);
+        void RotateInBody(const FrRotation& rotation);
+        void RotateInBody(const FrUnitQuaternion& quaternion);
 
-        void RotateInWorld(const FrRotation_& rotation);
-        void RotateInWorld(const FrUnitQuaternion_& quaternion);
+        void RotateInWorld(const FrRotation& rotation);
+        void RotateInWorld(const FrUnitQuaternion& quaternion);
 
         void RotateAroundXInBody(double angleRad, FRAME_CONVENTION fc);
         void RotateAroundYInBody(double angleRad, FRAME_CONVENTION fc);
@@ -162,27 +110,27 @@ namespace frydom {
 
 
         /// Destructor
-        ~FrNode_() = default;
+        ~FrNode() = default;
 
         /// Get the body pointer
         /// \return the body to which the node belongs
-        FrBody_* GetBody();
+        FrBody* GetBody();
 
         /// Get the node frame, given in the world reference frame
         /// \return the node frame in the world reference frame
-        FrFrame_ GetFrameInWorld() const;
+        FrFrame GetFrameInWorld() const;
 
         /// Get the node frame, given in the body reference frame
         /// \return the node frame in the body reference frame
-        FrFrame_ GetFrameInBody() const;
+        FrFrame GetFrameInBody() const;
 
         /// Get the node frame with respect to the COG in body reference coordinates
         /// \return the node frame with respect to COG
-        FrFrame_ GetFrameWRT_COG_InBody() const;
+        FrFrame GetFrameWRT_COG_InBody() const;
 
-        void SetFrameInBody(const FrFrame_& frameInBody);
+        void SetFrameInBody(const FrFrame& frameInBody);
 
-        void SetFrameInWorld(const FrFrame_& frameInWorld);
+        void SetFrameInWorld(const FrFrame& frameInWorld);
 
 
         /// Get the node position in world reference frame
@@ -226,6 +174,9 @@ namespace frydom {
         /// StepFinalize method not implemented yet
         void StepFinalize() override;
 
+        // Logging
+
+        void InitializeLog();
 
 
         // =============================================================================================================
@@ -257,7 +208,7 @@ namespace frydom {
 
         /// Project a vector from world reference frame to node reference frame
         /// \tparam Vector vector template
-        /// \param nodeVector vector to be projected, given in the world reference frame
+        /// \param worldVector vector to be projected, given in the world reference frame
         /// \param fc Frame convention (NED/NWU)
         /// \return the vector projected in the node reference frame
         template <class Vector>
@@ -267,7 +218,7 @@ namespace frydom {
 
         /// Project a vector from world reference frame to node reference frame
         /// \tparam Vector vector template
-        /// \param nodeVector vector to be projected, given in the world reference frame
+        /// \param worldVector vector to be projected, given in the world reference frame
         /// \param fc Frame convention (NED/NWU)
         /// \return the vector projected in the node reference frame
         template <class Vector>
@@ -277,45 +228,8 @@ namespace frydom {
         }
 
     private:
-        /*
-         * The following methods are for internal use only. Everything must be passed as NWU referenced values !
-         */
 
-//        /// Set the node position, with respect to the body reference frame
-//        /// \param position node position, with respect to the body reference frame
-//        void SetLocalPosition(const Position& position);
-//
-//        /// Set the node position, given in the body reference frame
-//        /// \param x x position, with respect to the body reference frame
-//        /// \param y y position, with respect to the body reference frame
-//        /// \param z z position, with respect to the body reference frame
-//        void SetLocalPosition(double x, double y, double z);
-//
-////        void SetWorldPosition(const Position& position);  // TODO : tester !!!!
-//
-//
-//
-//
-//        /// Set the node rotation, with respect to the body reference frame
-//        /// \param quaternion rotation, as quaternion, with respect to the body reference frame
-//        void SetLocalQuaternion(const FrUnitQuaternion_& quaternion);
-//
-//        /// Set the node rotation, with respect to the body reference frame
-//        /// \param rotation rotation, with respect to the body reference frame
-//        void SetLocalRotation(const FrRotation_& rotation);
-
-
-        // TODO : voir si on garde les 2 methodes suivantes privees...
-
-        /// Set the node frame, with respect to the body reference frame
-        /// \param frame frame, with respect to the body reference frame
-//        void _SetLocalFrame(const FrFrame_ &frame);
-//
-//        void _SetWorldFrame(const FrFrame_ &frame);
-
-
-        friend void FrLink_::SetMarkers(FrNode_*, FrNode_*);
-//        friend void FrActuator_::SetMarkers(FrNode_*, FrNode_*);
+        friend void FrLink::SetMarkers(FrNode*, FrNode*);
 
     };
 

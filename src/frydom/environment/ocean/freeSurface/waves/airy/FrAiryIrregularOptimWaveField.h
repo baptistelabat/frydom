@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -21,7 +21,7 @@ namespace frydom {
      * \class FrAiryIrregularOptimWaveField
      * \brief Class which deals with irregular wave field, from FrAiryIrregularWaveField.
      */
-    class FrAiryIrregularOptimWaveField : public FrAiryIrregularWaveField{
+    class FrAiryIrregularOptimWaveField : public FrAiryIrregularWaveField {
     private:
 
         std::vector<Complex> c_expJwt;    ///< Cache value of exp(-j.w_m.t) for the different w_m frequencies
@@ -33,7 +33,11 @@ namespace frydom {
 
         /// Default constructor
         /// \param freeSurface free surface containing this wave field
-        explicit FrAiryIrregularOptimWaveField(FrFreeSurface_* freeSurface);
+        explicit FrAiryIrregularOptimWaveField(FrFreeSurface* freeSurface);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "AiryIrregularOptimWaveField"; }
 
         /// Get the complex wave elevation at the position (x,y,0), of the regular Airy wave field
         /// \param x x position
@@ -58,7 +62,9 @@ namespace frydom {
 
         /// Update of the internal cache attributes
         void InternalUpdate();
+
     };
+
 } //end namespace frydom
 
 #endif //FRYDOM_FRAIRYIRREGULAROPTIMWAVEFIELD_H

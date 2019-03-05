@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -18,9 +18,9 @@ class TestFrStandardWindForce : public ::testing::Test {
 
 protected:
 
-    FrOffshoreSystem_ system;
-    std::shared_ptr<FrBody_> body;
-    std::shared_ptr<FrWindStandardForce_> force;
+    FrOffshoreSystem system;
+    std::shared_ptr<FrBody> body;
+    std::shared_ptr<FrWindStandardForce> force;
 
     double m_frontalArea;
     double m_lateralArea;
@@ -64,7 +64,7 @@ void TestFrStandardWindForce::SetUp() {
 
     LoadData("TNR_database.h5");
 
-    force = std::make_shared<FrWindStandardForce_>();
+    force = std::make_shared<FrWindStandardForce>();
     force->SetLenghtBetweenPerpendicular(m_lengthBetweenPerpendicular);
     force->SetLateralArea(m_lateralArea);
     force->SetTransverseArea(m_frontalArea);
@@ -72,7 +72,7 @@ void TestFrStandardWindForce::SetUp() {
 
     body = system.NewBody();
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     body->AddExternalForce(force);
@@ -111,7 +111,7 @@ TEST_F(TestFrStandardWindForce, TestTransport) {
     system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()
             ->Set(m_direction(i), m_windSpeed, DEG, MS, NED, COMEFROM);
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(Position(0.1, 0., 0.),FrRotation_(),NWU),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(Position(0.1, 0., 0.),FrRotation(),NWU),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     body->Initialize();

@@ -1,23 +1,20 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
+#include "FrLinearRadiationInc.h"
 
-
-#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
 #include "frydom/core/body/FrBody.h"
-#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModel.h"
 
-#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
-#include "FrAddedMassBase.h"
 
 namespace frydom {
 
@@ -221,27 +218,27 @@ namespace frydom {
             }
         }
 
-        int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody_* body) const {
+        int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody* body) const {
             auto chronoBody = body->GetChronoBody();
             return chronoBody->GetOffset_w();
         }
 
-        void internal::FrVariablesAddedMassBase::SetVariables(FrBody_* body, chrono::ChMatrix<double> &result,
+        void internal::FrVariablesAddedMassBase::SetVariables(FrBody* body, chrono::ChMatrix<double> &result,
                                                               int offset) const {
             auto chronoBody = body->GetChronoBody();
             chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(result, offset, 0, 6, 1, 0, 0);
         }
 
-        chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody_* body) const {
+        chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody* body) const {
             auto chronoBody = body->GetChronoBody();
             return chronoBody->GetVariables1()->Get_fb();
         }
 
-        chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody_* body) const {
+        chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody* body) const {
             auto chronoBody = body->GetChronoBody();
             return chronoBody->GetVariables1()->Get_qb();
         }
 
-    }   // end namespace internal
+    }   // end namespace frydom::internal
 
 } // end namespace frydom

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -14,156 +14,30 @@
 #define FRYDOM_FRHYDRODB_H
 
 #include <vector>
-#include "MathUtils/MathUtils.h"
-#include "frydom/utils/FrEigen.h" // TODO: Eigen est maintenant deja importe de MathUtils... ne plus reposer sur le sous module frydom
+#include <memory>
 
-#include "FrBEMBody.h"
+#include "frydom/core/common/FrConvention.h"
+#include "frydom/core/common/FrUnits.h"
 
-// TODO: utiliser plutot des std::vector a la place des matrices eigen ...
-
-using namespace mathutils;
 
 namespace frydom {
 
     // Forward declarations
     class FrHydroMapper;
-
-    /**
-     * \class FrHydroDB
-     * \brief Class for setting the computation of the HDB.
-     */
-    class FrHydroDB {
-
-    // =================================================================================================================
-
-    private:
-
-        double m_GravityAcc            = 9.81;
-        double m_NormalizationLength   = 1.;
-        double m_WaterDensity          = 1000.;
-        double m_WaterDepth            = 0.;
-
-        std::vector<std::shared_ptr<FrBEMBody>> m_Bodies;
-        FrDiscretization1D m_FrequencyDiscretization;
-        FrDiscretization1D m_WaveDirectionDiscretization;
-        FrDiscretization1D m_TimeDiscretization;
-
-    public:
-
-        FrHydroDB() = default;
-
-        FrHydroDB(std::string h5file);
-
-        unsigned int GetNbBodies() const { return (unsigned int)m_Bodies.size(); }
-
-        double GetGravityAcc() const { return m_GravityAcc; }
-
-        void SetGravityAcc(const double GravityAcc) { m_GravityAcc = GravityAcc; }
-
-        double GetNormalizationLength() const { return m_NormalizationLength; }
-
-        void SetNormalizationLength(const double NormalizationLength) { m_NormalizationLength = NormalizationLength; }
-
-        double GetWaterDensity() const { return m_WaterDensity; }
-
-        void SetWaterDensity(const double WaterDensity) { m_WaterDensity = WaterDensity; }
-
-        double GetWaterDepth() const { return m_WaterDepth; }
-
-        void SetWaterDepth(const double WaterDepth) { m_WaterDepth = WaterDepth; }
-
-        void SetFrequencyDiscretization(const double MinFreq, const double MaxFreq, const unsigned int NbFreq) {
-            m_FrequencyDiscretization.SetMin(MinFreq);
-            m_FrequencyDiscretization.SetMax(MaxFreq);
-            m_FrequencyDiscretization.SetNbSample(NbFreq);
-        }
-
-        std::vector<double> GetFrequencies() const { return m_FrequencyDiscretization.GetVector(); } // TODO: gerer les unites...
-
-        void SetWaveDirectionDiscretization(const double MinAngle, const double MaxAngle, const unsigned int NbAngle) {
-            m_WaveDirectionDiscretization.SetMin(MinAngle);
-            m_WaveDirectionDiscretization.SetMax(MaxAngle);
-            m_WaveDirectionDiscretization.SetNbSample(NbAngle);
-        }
-
-        std::vector<double> GetWaveDirections() const { return m_WaveDirectionDiscretization.GetVector(); } // TODO: gerer les unites...
-
-        void SetTimeDiscretization(const double FinalTime, const unsigned int NbTimeSamples) {
-            m_TimeDiscretization.SetMin(0.);
-            m_TimeDiscretization.SetMax(FinalTime);
-            m_TimeDiscretization.SetNbSample(NbTimeSamples);
-        }
-
-        unsigned int GetNbFrequencies() const { return m_FrequencyDiscretization.GetNbSample(); }
-
-        double GetMaxFrequency() const { return m_FrequencyDiscretization.GetMax(); }
-
-        double GetMinFrequency() const { return m_FrequencyDiscretization.GetMin(); }
-
-        double GetStepFrequency() const {return m_FrequencyDiscretization.GetStep(); }
-
-        unsigned int GetNbWaveDirections() const { return m_WaveDirectionDiscretization.GetNbSample(); }
-
-        unsigned int GetNbTimeSamples() const { return m_TimeDiscretization.GetNbSample(); }
-
-        double GetFinalTime() const { return m_TimeDiscretization.GetMax(); }
-
-        double GetTimeStep() const { return m_TimeDiscretization.GetStep(); }
-
-        std::shared_ptr<FrBEMBody> NewBody(std::string BodyName) {
-            auto BEMBody = std::make_shared<FrBEMBody>(GetNbBodies(), BodyName);
-            BEMBody->SetHDB(this);
-            m_Bodies.push_back(BEMBody);
-            return BEMBody;
-        }
-
-        std::shared_ptr<FrBEMBody> GetBody(unsigned int ibody) { return m_Bodies[ibody]; }
-
-        void GenerateImpulseResponseFunctions(double tf = 30., double dt = 0.);
-
-        void GenerateSpeedDependentIRF();
-
-        std::shared_ptr<FrHydroMapper> GetMapper();
-
-        void IntLoadResidual_Mv(const unsigned int off, chrono::ChVectorDynamic<>& Res,
-                                const chrono::ChVectorDynamic<>& w, const double c) ;
-
-        //void VariablesFbIncrementMq();
-
-    };  // end class FrHydroDB
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> REFACTORING
-
-    // Forward declarations
-
-    class FrHydroMapper_;
-    class FrBEMBody_;
-    class FrBody_;
+    class FrBEMBody;
+    class FrBody;
     class FrHDF5Reader;
-    class FrEquilibriumFrame_;
+    class FrEquilibriumFrame;
 
     // ----------------------------------------------------------
     // FrDiscretization1D
     // ----------------------------------------------------------
 
     /**
-     * \class FrDiscretization1D_
+     * \class FrDiscretization1D
      * \brief Class for the linear discretization (frequency and angle).
      */
-    class FrDiscretization1D_ {
+    class FrDiscretization1D {
     private:
         double m_xmin = 0.;
         double m_xmax = 0.;
@@ -171,9 +45,9 @@ namespace frydom {
 
     public:
 
-        FrDiscretization1D_() = default;
+        FrDiscretization1D() = default;
 
-        FrDiscretization1D_(double xmin, double xmax, unsigned int nx)
+        FrDiscretization1D(double xmin, double xmax, unsigned int nx)
                 : m_xmin(xmin), m_xmax(xmax), m_nx(nx) {}
 
         double GetMin() const { return m_xmin; }
@@ -198,10 +72,10 @@ namespace frydom {
     // --------------------------------------------------------
 
     /**
-     * \class FrHydroDB_
+     * \class FrHydroDB
      * \brief Class for dealling with hydrodynamic databases.
      */
-    class FrHydroDB_ {
+    class FrHydroDB {
 
     private:
 
@@ -211,35 +85,35 @@ namespace frydom {
         double m_normalizationLength;
         int m_nbody;
 
-        std::vector<std::unique_ptr<FrBEMBody_>> m_bodies;
-        std::unique_ptr<FrHydroMapper_> m_mapper;
+        std::vector<std::unique_ptr<FrBEMBody>> m_bodies;
+        std::unique_ptr<FrHydroMapper> m_mapper;
 
-        FrDiscretization1D_ m_frequencyDiscretization;
-        FrDiscretization1D_ m_waveDirectionDiscretization;
-        FrDiscretization1D_ m_timeDiscretization;
+        FrDiscretization1D m_frequencyDiscretization;
+        FrDiscretization1D m_waveDirectionDiscretization;
+        FrDiscretization1D m_timeDiscretization;
 
     public:
 
         /// Constructor of the class.
-        FrHydroDB_() = default;
+        FrHydroDB() = default;
 
         /// Constructor of the class.
-        explicit FrHydroDB_(std::string h5file);
+        explicit FrHydroDB(std::string h5file);
 
         /// This subroutine reads the modes of a body.
-        void ModeReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
+        void ModeReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody);
 
         /// This subroutine reads the excitation loads from the *.HDB5 input file.
-        void ExcitationReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
+        void ExcitationReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody);
 
         /// This subroutine reads the radiation coefficients from the *.HDB5 input file.
-        void RadiationReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
+        void RadiationReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody);
 
         /// This subroutine reads the wave drift coefficients.
-        void WaveDriftReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
+        void WaveDriftReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody);
 
         /// This subroutine reads the hydrostatic matrix.
-        void HydrostaticReader(FrHDF5Reader& reader, std::string path, FrBEMBody_* BEMBody);
+        void HydrostaticReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody);
 
         /// This subroutine gives the number of bodies.
         unsigned int GetNbBodies() const { return (uint)m_bodies.size(); };
@@ -272,35 +146,30 @@ namespace frydom {
 
         std::vector<double> GetTimeDiscretization() const { return m_timeDiscretization.GetVector(); }
 
-        FrBEMBody_* NewBody(std::string bodyName);
+        FrBEMBody* NewBody(std::string bodyName);
 
-        FrBEMBody_* GetBody(int ibody);
+        FrBEMBody* GetBody(int ibody);
 
-        FrBEMBody_* GetBody(std::shared_ptr<FrBody_> body);
+        FrBEMBody* GetBody(std::shared_ptr<FrBody> body);
 
-        FrBEMBody_* GetBody(FrBody_* body);
+        FrBEMBody* GetBody(FrBody* body);
 
-        FrBody_* GetBody(FrBEMBody_* body);
+        FrBody* GetBody(FrBEMBody* body);
 
-        FrHydroMapper_* GetMapper();
+        FrHydroMapper* GetMapper();
 
-        void Map(FrBEMBody_* BEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame);
+        void Map(FrBEMBody* BEMBody, FrBody* body, std::shared_ptr<FrEquilibriumFrame> eqFrame);
 
-        void Map(int iBEMBody, FrBody_* body, std::shared_ptr<FrEquilibriumFrame_> eqFrame);
+        void Map(int iBEMBody, FrBody* body, std::shared_ptr<FrEquilibriumFrame> eqFrame);
 
-        std::vector<std::unique_ptr<FrBEMBody_>>::iterator begin() { return m_bodies.begin(); }
+        std::vector<std::unique_ptr<FrBEMBody>>::iterator begin() { return m_bodies.begin(); }
 
-        std::vector<std::unique_ptr<FrBEMBody_>>::iterator end() { return m_bodies.end(); }
-
-        /// This function gives the water density from the input HDB5 file.
-        double GetWaterDensity() const { return m_waterDensity; }
-
-        /// This function gives the gravity constant from the input HDB5 file.
-        double GetGravityAcc() const { return m_gravityAcc; }
+        std::vector<std::unique_ptr<FrBEMBody>>::iterator end() { return m_bodies.end(); }
     };
 
 
-    std::shared_ptr<FrHydroDB_> make_hydrodynamic_database(std::string h5file);
+    std::shared_ptr<FrHydroDB> make_hydrodynamic_database(std::string h5file);
+
 
 }  // end namespace frydom
 

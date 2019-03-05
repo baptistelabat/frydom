@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -33,9 +33,9 @@ protected:
     double lengthAtWaterLine;
     double m_waterDensity;
 
-    FrOffshoreSystem_ system;
-    std::shared_ptr<FrBody_> body;
-    std::shared_ptr<FrITTCResistance_> force;
+    FrOffshoreSystem system;
+    std::shared_ptr<FrBody> body;
+    std::shared_ptr<FrITTCResistance> force;
 
     void SetUp() override;
 
@@ -48,9 +48,9 @@ void TestITTCResistance::SetUp() {
     body->SetPosition(Position(105., -2., 0.3), NWU);
     auto direction = Direction(0.1, 0.3, 0.9);
     direction.normalize();
-    body->SetRotation(FrUnitQuaternion_(direction, M_PI/5., NWU));
+    body->SetRotation(FrUnitQuaternion(direction, M_PI/5., NWU));
 
-    FrInertiaTensor_ InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame_(Position(0.2, 0.2, 0.1),FrRotation_(),NWU),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(Position(0.2, 0.2, 0.1),FrRotation(),NWU),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();
@@ -87,7 +87,7 @@ void TestITTCResistance::LoadData(std::string filename) {
 }
 
 TEST_F(TestITTCResistance, test0) {
-    force = std::make_shared<FrITTCResistance_>(LengthBetweenPerpendicular, hullWetSurface, m_cr);
+    force = std::make_shared<FrITTCResistance>(LengthBetweenPerpendicular, hullWetSurface, m_cr);
     force->SetHullFormFactor(hullFormFactor);
     force->SetRoughnessFromLength(lengthAtWaterLine);
     force->SetAirResistanceFromArea(frontalArea);

@@ -1,36 +1,32 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRFLOWBASE_H
 #define FRYDOM_FRFLOWBASE_H
 
+
+#include <memory>
+
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/math/FrVector.h"
-#include "FrFieldBase.h"
-#include "FrUniformField.h"
+#include "frydom/core/common/FrConvention.h"
+#include "FrUniformField.h"  // TODO : enlever et utiliser du virtual copy constructor
 
 namespace frydom {
 
     // Forward declarations
-    class FrEnvironment_;
-    class FrFrame_;
-
-    enum FIELD {
-        UNIFORM
-    };
-
-    ///
-    /// FrFlowBase : Base flow field
-    ///
+    class FrEnvironment;
+    class FrFrame;
+    class FrFieldBase;
 
     /**
      * \class FrFlowBase
@@ -40,10 +36,11 @@ namespace frydom {
 
     private:
         std::unique_ptr<FrFieldBase> m_field;        ///< Flow field model
+
     protected:
         double m_time = 0.;
+        double c_ramp = 1.;   ///> cache value of the time ramp applied on the flow field // TODO : ne pas passer par cette valeur de cache... utiliser directement la fonction !
 
-        double c_ramp=1.;   ///> cache value of the time ramp applied on the flow field
     public:
 
         /// Default constructor
@@ -63,7 +60,7 @@ namespace frydom {
         /// \param worldVel Translation velocity of the frame in world frame
         /// \param fc Frame convention (NED/NWU)
         /// \return Velocity in local frame
-        Velocity GetRelativeVelocityInFrame(const FrFrame_ &frame, const Velocity &worldVel, FRAME_CONVENTION fc) const;
+        Velocity GetRelativeVelocityInFrame(const FrFrame &frame, const Velocity &worldVel, FRAME_CONVENTION fc) const;
 
         /// Create a new templated field
         /// \tparam Field templated field
@@ -93,59 +90,7 @@ namespace frydom {
         //// Method to be applied at the end of each time step
         void StepFinalize() override;
 
-        virtual FrEnvironment_* GetEnvironment() const = 0;
-
-    };
-
-
-    //Forward Declaration
-    class FrOcean_;
-    class FrAtmosphere_;
-
-    /**
-     * \class FrCurrent
-     * \brief Class defining a current field.
-     */
-    class FrCurrent_ : public FrFlowBase {
-    private:
-
-        FrOcean_* m_ocean;  ///> Pointer to the ocean containing this current model
-
-    public:
-        /// Default constructor
-        /// \param ocean ocean containing this current model
-        explicit FrCurrent_(FrOcean_* ocean) : FrFlowBase() { m_ocean = ocean;}
-
-        /// Get the ocean containing this current model
-        /// \return ocean containing this current model
-        FrOcean_* GetOcean() const {return m_ocean;}
-
-        FrEnvironment_* GetEnvironment() const override;
-
-    };
-
-
-
-    /**
-    * \class FrWind_
-    * \brief Class for defining a wind.
-    */
-    class FrWind_ : public FrFlowBase {
-    private:
-
-        FrAtmosphere_* m_atmosphere;  ///> Pointer to the atmosphere containing this wind model
-
-    public:
-
-        /// Default constructor
-        /// \param atmosphere containing this wind model
-        explicit FrWind_(FrAtmosphere_* atmosphere) : FrFlowBase() { m_atmosphere = atmosphere;}
-
-        /// Get the atmosphere containing this wind model
-        /// \return atmosphere containing this wind model
-        FrAtmosphere_* GetAtmosphere() const {return m_atmosphere;}
-
-        FrEnvironment_* GetEnvironment() const override;
+        virtual FrEnvironment* GetEnvironment() const = 0;
 
     };
 

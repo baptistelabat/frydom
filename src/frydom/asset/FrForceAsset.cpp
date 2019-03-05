@@ -1,25 +1,30 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #include "FrForceAsset.h"
 
+#include "chrono/assets/ChGlyphs.h"
+
+#include "frydom/core/body/FrBody.h"
+#include "frydom/core/force/FrForce.h"
+
 namespace frydom {
 
 
-    FrForceAsset_::FrForceAsset_(FrForce_* force) : m_force(force), m_CharacteristicLength(0.005), FrAsset(){
+    FrForceAsset::FrForceAsset(FrForce* force) : m_force(force), m_CharacteristicLength(0.005), FrAsset(){
         m_symbolscolor = chrono::ChColor(0, 0.5, 0.5, 0);
     }
 
-    void FrForceAsset_::Initialize() {
+    void FrForceAsset::Initialize() {
         auto point = internal::Vector3dToChVector(m_force->GetForceApplicationPointInBody(NWU));
         auto forcevect = internal::Vector3dToChVector(m_force->GetForceInBody(NWU)) * m_CharacteristicLength;
 
@@ -32,11 +37,7 @@ namespace frydom {
         m_chronoAsset->AddAsset(glyphAsset);
     }
 
-    void FrForceAsset_::Update() {
-
-    }
-
-    void FrForceAsset_::StepFinalize() {
+    void FrForceAsset::StepFinalize() {
 
         // Get the glyph asset form the AssetLevel
         auto GlyphAsset = dynamic_cast<chrono::ChGlyphs*> (m_chronoAsset->GetAssetN(0).get());

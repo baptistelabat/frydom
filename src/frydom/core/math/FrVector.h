@@ -1,23 +1,22 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRVECTOR_H
 #define FRYDOM_FRVECTOR_H
 
-#include "chrono/core/ChVector.h" // TODO : a priori, devrait disparaitre !!
+#include "chrono/core/ChVector.h"
 
 #include "MathUtils/Vector3d.h"
 #include "MathUtils/Vector6d.h"
-#include "MathUtils/Matrix.h"
 
 #include "frydom/core/common/FrConvention.h"
 
@@ -402,14 +401,14 @@ namespace frydom {
     // SYMBOLIC VELOCITY FUNCTION EXPRESSED WITH CARDINAL
     // =================================================================================================================
 
-    const mathutils::Vector3d<double> NORTH(FRAME_CONVENTION fc);
-    const mathutils::Vector3d<double> NORTH_EAST(FRAME_CONVENTION fc);
-    const mathutils::Vector3d<double> EAST(FRAME_CONVENTION fc);
-    const mathutils::Vector3d<double> SOUTH_EAST(FRAME_CONVENTION fc);
-    const mathutils::Vector3d<double> SOUTH(FRAME_CONVENTION fc);
-    const mathutils::Vector3d<double> SOUTH_WEST(FRAME_CONVENTION fc);
-    const mathutils::Vector3d<double> WEST(FRAME_CONVENTION fc);
-    const mathutils::Vector3d<double> NORTH_WEST(FRAME_CONVENTION fc);
+    const Direction NORTH(FRAME_CONVENTION fc);
+    const Direction NORTH_EAST(FRAME_CONVENTION fc);
+    const Direction EAST(FRAME_CONVENTION fc);
+    const Direction SOUTH_EAST(FRAME_CONVENTION fc);
+    const Direction SOUTH(FRAME_CONVENTION fc);
+    const Direction SOUTH_WEST(FRAME_CONVENTION fc);
+    const Direction WEST(FRAME_CONVENTION fc);
+    const Direction NORTH_WEST(FRAME_CONVENTION fc);
 
 
     /**

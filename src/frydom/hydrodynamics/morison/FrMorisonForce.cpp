@@ -1,93 +1,35 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #include "FrMorisonForce.h"
+
 #include "frydom/hydrodynamics/morison/FrMorisonModel.h"
 #include "frydom/core/body/FrBody.h"
+#include "frydom/core/common/FrNode.h"
+
 
 namespace frydom {
 
-
-    frydom::FrMorisonForce::FrMorisonForce() : m_element(NULL) {}
-
-    FrMorisonForce::FrMorisonForce(FrMorisonModel *element) {
-        m_element = element;
+    FrMorisonSingleElement* FrMorisonForce::SetSingleElementModel(FrBody* body) {
+        m_model = std::make_shared<FrMorisonSingleElement>(body);
+        return dynamic_cast<FrMorisonSingleElement*>(m_model.get());
     }
 
-    void FrMorisonForce::SetElement(FrMorisonModel *element) {
-        m_element = element;
+    FrMorisonCompositeElement* FrMorisonForce::SetCompositeElementModel(FrBody* body) {
+        m_model = std::make_shared<FrMorisonCompositeElement>(body);
+        return dynamic_cast<FrMorisonCompositeElement*>(m_model.get());
     }
 
-    void FrMorisonForce::UpdateState() {
-        m_element->UpdateState();
-    }
-
-    void FrMorisonForce::UpdateTime(const double time) {
-        ChTime = time;
-    }
-
-    void FrMorisonForce::Update(const double time) {
-        UpdateTime(time);
-        UpdateState();
-    }
-
-    void FrMorisonForce::Initialize() {
-
-        if(is_log && m_element->LogIsActive()) {
-            is_log = true;
-        } else {
-            is_log = false;
-        }
-
-        m_element->Initialize();
-        FrForce::Initialize();
-    }
-
-    void FrMorisonForce::SetLogPrefix(std::string prefix_name) {
-        if (prefix_name=="") {
-            m_logPrefix = "Fmorison_" + FrForce::m_logPrefix;
-        } else {
-            m_logPrefix = prefix_name + "_" + FrForce::m_logPrefix;
-        }
-    }
-
-    void FrMorisonForce::SetBodyForce(chrono::ChVector<> mforce) { force = mforce; }
-
-    chrono::ChVector<double> FrMorisonForce::GetBodyForce() const { return force; }
-
-    void FrMorisonForce::SetBodyTorque(chrono::ChVector<> torque) { moment = torque; }
-
-    chrono::ChVector<double> FrMorisonForce::GetBodyTorque() const { return moment; }
-
-
-
-
-
-
-
-
-    /// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
-
-    FrMorisonSingleElement_* FrMorisonForce_::SetSingleElementModel(FrBody_* body) {
-        m_model = std::make_shared<FrMorisonSingleElement_>(body);
-        return dynamic_cast<FrMorisonSingleElement_*>(m_model.get());
-    }
-
-    FrMorisonCompositeElement_* FrMorisonForce_::SetCompositeElementModel(FrBody_* body) {
-        m_model = std::make_shared<FrMorisonCompositeElement_>(body);
-        return dynamic_cast<FrMorisonCompositeElement_*>(m_model.get());
-    }
-
-    void FrMorisonForce_::Update(double time) {
+    void FrMorisonForce::Update(double time) {
 
         m_model->Update(time);
 
@@ -95,21 +37,20 @@ namespace frydom {
         SetTorqueInBodyAtCOG(m_model->GetTorqueInBody(), NWU);
     }
 
-    void FrMorisonForce_::Initialize() {
+    void FrMorisonForce::Initialize() {
 
-        FrForce_::Initialize();
+        FrForce::Initialize();
         m_model->Initialize();
     }
 
-    void FrMorisonForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrMorisonForce::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
-
-    std::shared_ptr<FrMorisonForce_>
-    make_morison_force(std::shared_ptr<FrMorisonElement_> model, std::shared_ptr<FrBody_> body){
+    std::shared_ptr<FrMorisonForce>
+    make_morison_force(std::shared_ptr<FrMorisonElement> model, std::shared_ptr<FrBody> body){
         assert(body.get() == model->GetNode()->GetBody());
-        auto MorisonForce = std::make_shared<FrMorisonForce_>(model);
+        auto MorisonForce = std::make_shared<FrMorisonForce>(model);
         body->AddExternalForce(MorisonForce);
         return MorisonForce;
     }

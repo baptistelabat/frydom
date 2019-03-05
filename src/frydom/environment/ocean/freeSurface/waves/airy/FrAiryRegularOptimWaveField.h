@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -29,7 +29,11 @@ namespace frydom {
         double c_sinTheta;   ///< cache attribute for the sin(theta) value
 
     public:
-        explicit FrAiryRegularOptimWaveField(FrFreeSurface_* freeSurface);
+        explicit FrAiryRegularOptimWaveField(FrFreeSurface* freeSurface);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "AiryRegularOptimWaveField"; }
 
         /// Get the complex wave elevation at the position (x,y,0), of the regular Airy wave field
         /// \param x x position
@@ -58,4 +62,5 @@ namespace frydom {
     };
 
 } // end namespace frydom
+
 #endif //FRYDOM_FRAIRYREGULAROPTIMWAVEFIELD_H

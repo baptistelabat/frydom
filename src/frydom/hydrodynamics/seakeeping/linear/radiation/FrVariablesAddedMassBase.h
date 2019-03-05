@@ -1,27 +1,32 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRVARIABLESADDEDMASSBASE_H
 #define FRYDOM_FRVARIABLESADDEDMASSBASE_H
 
-#include "chrono/solver/ChVariablesBodyOwnMass.h"
-#include "frydom/core/math/FrMatrix.h"
+#include "MathUtils/Matrix66.h"
+
+#include "chrono/solver/ChVariables.h"
+
 
 namespace frydom {
 
-    class FrBEMBody_;
+    // Forward declaration
+    class FrBody;
+    class FrBEMBody;
 
     namespace internal {
 
+        // Forward declaration
         class FrAddedMassBase;
 
         class FrVariablesAddedMassBase : public chrono::ChVariables {
@@ -29,7 +34,7 @@ namespace frydom {
         private:
 
             FrAddedMassBase* m_addedMassBase;
-            std::unordered_map<FrBEMBody_*, mathutils::Matrix66<double>> m_invAddedMassCorrection;
+            std::unordered_map<FrBEMBody*, mathutils::Matrix66<double>> m_invAddedMassCorrection;
 
         public:
 
@@ -51,19 +56,19 @@ namespace frydom {
 
             void Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) override;
 
-            int GetBodyOffset(FrBody_* body) const;
+            int GetBodyOffset(FrBody* body) const;
 
-            void SetVariables(FrBody_* body, chrono::ChMatrix<double>& result, int offset) const;
+            void SetVariables(FrBody* body, chrono::ChMatrix<double>& result, int offset) const;
 
-            chrono::ChMatrix<double> GetVariablesFb(FrBody_* body) const;
+            chrono::ChMatrix<double> GetVariablesFb(FrBody* body) const;
 
-            chrono::ChMatrix<double> GetVariablesQb(FrBody_* body) const;
+            chrono::ChMatrix<double> GetVariablesQb(FrBody* body) const;
 
         };
 
-    }
+    }  // end namespace frydom::internal
 
-}
+}  // end namespace frydom
 
 
 #endif //FRYDOM_FRADDEDMASSVARIABLE_H

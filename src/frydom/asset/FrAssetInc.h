@@ -14,13 +14,11 @@
 #define FRYDOM_FRASSETINC_H
 
 #include "FrAsset.h"
+#include "FrAssetOwner.h"
 #include "FrForceAsset.h"
 #include "FrGridAsset.h"
 #include "FrFreeSurfaceGridAsset.h"
 #include "FrSeabedGridAsset.h"
-#include "FrCatenaryLineAsset_.h"
-#include "FrAssetBuoy.h"
-#include "FrAssetComponent.h"
-#include "FrAssetClumpWeight.h"
+#include "FrCatenaryLineAsset.h"
 
 #endif //FRYDOM_FRASSETINC_H

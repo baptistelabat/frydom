@@ -1,30 +1,36 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRAIRYIRREGULARWAVEFIELD_H
 #define FRYDOM_FRAIRYIRREGULARWAVEFIELD_H
+
+
+#include "frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
+#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
 
 
 namespace frydom {
 
     //Forward Declaration
-    class FrFreeSurface_;
+    class FrFreeSurface;
+    class FrWaveSpectrum;
+    class FrKinematicStretching;
 
     /**
      * \class FrAiryIrregularWaveField
      * \brief Class which deals with irregular wave field.
      */
-    class FrAiryIrregularWaveField : public FrWaveField_ {
+    class FrAiryIrregularWaveField : public FrWaveField {
     protected:
 
 
@@ -35,7 +41,7 @@ namespace frydom {
         double m_meanDir = 0;           ///< Mean wave direction
         unsigned int m_nbDir = 1;       ///< Number of directions to discretize
 
-        std::unique_ptr<FrWaveSpectrum_> m_waveSpectrum;    ///< Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
+        std::unique_ptr<FrWaveSpectrum> m_waveSpectrum;    ///< Wave spectrum, by default JONSWAP (Hs=3m,Tp=9s,Gamma=3.3)
 
         std::vector<double> m_waveDirections;    ///< Wave directions vector
         std::vector<double> m_waveFrequencies;   ///< Wave frequencies vector
@@ -45,13 +51,17 @@ namespace frydom {
         std::unique_ptr<std::vector<std::vector<double>>> m_wavePhases;    ///< Table of wave phases,of dimensions (m_nbDir,m_nbFreq)
                                                                            ///< made unique to check at initialize() if wavePhases were given by the users,
                                                                            ///< or if they need to be randomly generated.
-        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;    ///< Vertical scale velocity factor with stretching
-        
+        std::unique_ptr<FrKinematicStretching> m_verticalFactor;    ///< Vertical scale velocity factor with stretching
+
     public:
 
         /// Default constructor
         /// \param freeSurface pointer to the free surface, to which the wave field belongs
-        explicit FrAiryIrregularWaveField(FrFreeSurface_* freeSurface);
+        explicit FrAiryIrregularWaveField(FrFreeSurface* freeSurface);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "AiryIrregularWaveField"; }
 
         /// Set the wave frequencies, ie frequency discretization
         /// \param minFreq minimum frequency
@@ -97,36 +107,34 @@ namespace frydom {
         /// \param nbDir direction discretization
         /// \param spreadingFactor spreading factor
         /// \param dirType directional model type (NONE, COS2S, TEST(for tests only))
-        void SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WaveDirectionalModelType dirType=COS2S);
+        void SetDirectionalParameters(unsigned int nbDir, double spreadingFactor, WAVE_DIRECTIONAL_MODEL dirType=COS2S);
 
         /// Set the stretching type used to compute velocity and acceleration on positions above the free surface elevation
         /// \param type stretching type (NO_STRETCHING, VERTICAL, EXTRAPOLATE, WHEELER, CHAKRABARTI, DELTA)
-        void SetStretching(FrStretchingType type);
+        void SetStretching(STRETCHING_TYPE type);
 
 //        void SetWaveSpectrum(WAVE_SPECTRUM_TYPE type);
 
         /// Set a Jonswap wave spectrum
-        /// \param Hs significant height
-        /// \param Tp peak period
-        /// \param unit unit of the peak period
+        /// \param Hs significant height (meters)
+        /// \param Tp peak period (seconds)
         /// \param gamma gamma factor of the Jonswap wave spectrum
         /// \return wave spectrum
-        FrJonswapWaveSpectrum_* SetJonswapWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S, double gamma=3.3);
+        FrJonswapWaveSpectrum* SetJonswapWaveSpectrum(double Hs, double Tp, double gamma=3.3);
 
         /// Set a Pierson Moskowitz wave spectrum
-        /// \param Hs significant height
-        /// \param Tp peak period
-        /// \param unit unit of the peak period
+        /// \param Hs significant height (meters)
+        /// \param Tp peak period (seconds)
         /// \return wave spectrum
-        FrPiersonMoskowitzWaveSpectrum_* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp, FREQUENCY_UNIT unit=S);
+        FrPiersonMoskowitzWaveSpectrum* SetPiersonMoskovitzWaveSpectrum(double Hs, double Tp);
 
         /// Set a wave spectrum, based on the TEST wave spectrum type
         /// \return the TEST wave spectrum
-        FrTestWaveSpectrum_* SetTestWaveSpectrum();
+        FrTestWaveSpectrum* SetTestWaveSpectrum();
 
         /// Get the wave spectrum
         /// \return wave spectrum
-        FrWaveSpectrum_* GetWaveSpectrum() const;
+        FrWaveSpectrum* GetWaveSpectrum() const;
 
         ///Generate random wave phases
         void GenerateRandomWavePhases();
@@ -146,7 +154,7 @@ namespace frydom {
         /// \param y y position
         /// \param fc frame convention (NED/NWU)
         /// \return complex wave elevation, in meters
-        virtual std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const override;
+        std::vector<std::vector<Complex>> GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const override;
 
         /// Return the complex eulerian fluid particule velocity in global reference frame (implemented in child)
         /// \param x x position
@@ -189,7 +197,7 @@ namespace frydom {
 
     };
 
-};
+}  // end namespace frydom
 
 
 #endif //FRYDOM_FRAIRYIRREGULARWAVEFIELD_H

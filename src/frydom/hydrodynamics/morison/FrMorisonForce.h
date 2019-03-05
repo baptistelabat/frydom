@@ -1,24 +1,31 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRMORISONFORCE_H
 #define FRYDOM_FRMORISONFORCE_H
 
+#include <memory>
+
 #include "frydom/core/force/FrForce.h"
+
+
 
 namespace frydom {
 
+    // Forward declarations
+    class FrMorisonElement;
+    class FrMorisonSingleElement;
+    class FrMorisonCompositeElement;
 
-    class FrMorisonModel;
 
     /**
      * \class FrMorisonForce
@@ -26,81 +33,22 @@ namespace frydom {
      */
     class FrMorisonForce : public FrForce {
 
+
     private:
-        FrMorisonModel* m_element;
+        std::shared_ptr<FrMorisonElement> m_model;
 
     public:
 
-        /// Default constructor of the morison force
-        FrMorisonForce();;
-
-        /// Constructor with definition of the morison model
-        FrMorisonForce(FrMorisonModel* element);
-
-        /// Definition of the model
-        void SetElement(FrMorisonModel* element);
-
-        /// Update of the morison model
-        void UpdateState() override;
-
-        void UpdateTime(const double time) override;
-
-        void Update(const double time) override;
-
-        /// Initialize the morison elements
-        void Initialize() override;
-
-        /// Definition of the prefix used in log file
-        void SetLogPrefix(std::string prefix_name) override;
-
-        /// Apply an external force to the body
-        void SetBodyForce(chrono::ChVector<> mforce);
-
-        /// Return the force applied to the body
-        chrono::ChVector<double> GetBodyForce() const;
-
-        /// Apply an external moment to the body
-        void SetBodyTorque(chrono::ChVector<> torque);
-
-        /// Return the moment applied to the body
-        chrono::ChVector<double> GetBodyTorque() const;
-
-    };
-
-
-
-
-
-
-
-
-
-
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REFACTORING
-
-    class FrMorisonElement_;
-    class FrMorisonSingleElement_;
-    class FrMorisonCompositeElement_;
-
-
-    /**
-     * \class FrMorisonForce_
-     * \brief Class for computing Morison loads.
-     */
-    class FrMorisonForce_ : public FrForce_ {
-
-
-    private:
-        std::shared_ptr<FrMorisonElement_> m_model;
-
-    public:
-
-        FrMorisonForce_(std::shared_ptr<FrMorisonElement_> model)
+        explicit FrMorisonForce(std::shared_ptr<FrMorisonElement> model)
             : m_model(model) { }
 
-        FrMorisonSingleElement_* SetSingleElementModel(FrBody_* body);
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "MorisonForce"; }
 
-        FrMorisonCompositeElement_* SetCompositeElementModel(FrBody_* body);
+        FrMorisonSingleElement* SetSingleElementModel(FrBody* body);
+
+        FrMorisonCompositeElement* SetCompositeElementModel(FrBody* body);
 
         void Update(double time) override;
 
@@ -115,10 +63,10 @@ namespace frydom {
     /// \param body body on which the force is applied
     /// \return Morison force
     // TODO : delete the body variable, and get it from the node contained in the model?
-    std::shared_ptr<FrMorisonForce_>
-    make_morison_force(std::shared_ptr<FrMorisonElement_> model, std::shared_ptr<FrBody_> body);
-    
-}
+    std::shared_ptr<FrMorisonForce>
+    make_morison_force(std::shared_ptr<FrMorisonElement> model, std::shared_ptr<FrBody> body);
+
+}  // end namespace frydom
 
 #endif //FRYDOM_FRMORISONFORCE_H
 

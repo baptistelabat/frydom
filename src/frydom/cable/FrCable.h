@@ -1,147 +1,41 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRCABLE_H
 #define FRYDOM_FRCABLE_H
 
-#include "frydom/core/common/FrObject.h"
-#include "frydom/core/common/FrNode.h"
-#include "frydom/core/math/FrVector.h"
 
 #include "frydom/core/common/FrPhysicsItem.h"
-#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrConvention.h"
+
 
 namespace frydom {
 
-    /// Abstract base class for cables
-    /**
-     * \class FrCable
-     * \brief Class for defining cables.
-     */
-    class FrCable : public FrObject {
-
-    protected:
-
-        double m_time = 0.;
-        double m_time_step = 0.;
-
-        std::shared_ptr<FrNode> m_startingNode;
-        std::shared_ptr<FrNode> m_endingNode;
-
-        double m_youngModulus; // FIXME: mettre des valeurs par defaut non verolees !!!
-        double m_sectionArea;
-        double m_cableLength;
-        double m_unrollingSpeed;                ///< linear unrolling speed of the cable in m/s
-
-        double m_linearDensity; // in kg/m
-
-        bool m_initialized = false;
-
-    public:
-
-        FrCable() = default;
-
-        FrCable(const std::shared_ptr<FrNode> startingNode,
-                const std::shared_ptr<FrNode> endingNode,
-                const double cableLength,
-                const double youngModulus,
-                const double sectionArea)
-                : m_startingNode(startingNode),
-                  m_endingNode(endingNode),
-                  m_cableLength(cableLength),
-                  m_unrollingSpeed(0.),
-                  m_youngModulus(youngModulus),
-                  m_sectionArea(sectionArea) {}
-
-        void SetYoungModulus(const double E);
-
-        double GetYoungModulus() const;
-
-        void SetSectionArea(const double A);
-
-        double GetSectionArea() const;
-
-        void SetCableLength(const double L);
-
-        double GetCableLength() const;
-
-        /// Definition of the linear unrolling speed of the cable in m/s
-        void SetUnrollingSpeed(const double unrollingSpeed);
-
-        /// Return the linear unrolling speed of the cable in m/s
-        double GetUnrollingSpeed() const;
-
-        void SetDiameter(const double d);
-
-        double GetDiameter() const;
-
-        double GetEA() const;
-
-        void SetLinearDensity(const double lambda);
-
-        double GetLinearDensity() const;
-
-        void SetDensity(const double rho);
-
-        double GetDensity() const;
-
-        void SetStartingNode(std::shared_ptr<FrNode> startingNode);
-
-        std::shared_ptr<FrNode> GetStartingNode() const;
-
-        void SetEndingNode(std::shared_ptr<FrNode> endingNode) {
-            // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
-            m_endingNode = endingNode;
-        }
-
-        std::shared_ptr<FrNode> GetEndingNode() const {
-            return m_endingNode;
-        }
-
-        virtual chrono::ChVector<double> GetTension(const double s) const = 0;
-
-        virtual chrono::ChVector<double> GetAbsPosition(const double s) const = 0;
-
-        virtual void Initialize() override {};
-
-        virtual void StepFinalize() override {}
-
-
-
-    };
-
-
-
-
-
-
-
-
-
-
-    //  REFACTORING ------------------>>>>>>>>>>>>>>>>>>>>>>
+    // Forward declaration
+    class FrNode;
 
 
     /**
-     * \class FrCable_ FrCable.h
-     * \brief Abstract base class for cables, subclass of FrMidPhysicsItem_, superclass of FrCatenaryLine_ and
-     * FrDynamicCable_ .
+     * \class FrCable FrCable.h
+     * \brief Abstract base class for cables, subclass of FrMidPhysicsItem, superclass of FrCatenaryLine and
+     * FrDynamicCable .
      * This means cables are updated between bodies and links.
      * A cable is connected to two nodes : a starting node and an ending node. Nodes are contained by at
      * least one body, and used to connect bodies to other components (cables, links,etc.)
-     * \see FrMidPhysicsItem_, FrCatenaryLine_, FrDynamicCable_, FrNode_
+     * \see FrMidPhysicsItem, FrCatenaryLine, FrDynamicCable, FrNode
      *
      */
-    class FrCable_ : public FrMidPhysicsItem_ {
+    class FrCable : public FrMidPhysicsItem {
 
     protected:
 
@@ -152,8 +46,8 @@ namespace frydom {
 
         //--------------------------------------------------------------------------------------------------------------
         // Nodes
-        std::shared_ptr<FrNode_> m_startNode;       ///< starting node
-        std::shared_ptr<FrNode_> m_endNode;         ///< ending node
+        std::shared_ptr<FrNode> m_startNode;       ///< starting node
+        std::shared_ptr<FrNode> m_endNode;         ///< ending node
 
         //--------------------------------------------------------------------------------------------------------------
         // Cable properties
@@ -170,24 +64,24 @@ namespace frydom {
         //--------------------------------------------------------------------------------------------------------------
         // Constructor - destructor
         /// Default constructor
-        FrCable_();
+        FrCable();
 
-        /// FrCable_ constructor, using two nodes and cable properties
+        /// FrCable constructor, using two nodes and cable properties
         /// \param startingNode starting node
         /// \param endingNode ending node
         /// \param cableLength unstretched length
         /// \param youngModulus Young modulus
         /// \param sectionArea section area
         /// \param linearDensity linear density
-        FrCable_(const std::shared_ptr<FrNode_> startingNode,
-                 const std::shared_ptr<FrNode_> endingNode,
+        FrCable(const std::shared_ptr<FrNode> startingNode,
+                 const std::shared_ptr<FrNode> endingNode,
                  double cableLength,
                  double youngModulus,
                  double sectionArea,
                  double linearDensity);
 
         /// Default destructor
-        ~FrCable_();
+        ~FrCable();
 
         //--------------------------------------------------------------------------------------------------------------
         // cable properties accessors
@@ -253,19 +147,19 @@ namespace frydom {
         // Node accessors
         /// Set the starting node of the cable
         /// \param startingNode starting node
-        void SetStartingNode(std::shared_ptr<FrNode_> startingNode);
+        void SetStartingNode(std::shared_ptr<FrNode> startingNode);
 
         /// Get the starting node of the cable
         /// \return starting node
-        std::shared_ptr<FrNode_> GetStartingNode() const;
+        std::shared_ptr<FrNode> GetStartingNode() const;
 
         /// Set the ending node of the cable
         /// \param endingNode ending node
-        void SetEndingNode(std::shared_ptr<FrNode_> endingNode);
+        void SetEndingNode(std::shared_ptr<FrNode> endingNode);
 
         /// Get the ending node of the cable
         /// \return ending node
-        std::shared_ptr<FrNode_> GetEndingNode() const;
+        std::shared_ptr<FrNode> GetEndingNode() const;
 
         //--------------------------------------------------------------------------------------------------------------
         // pure virtual methods

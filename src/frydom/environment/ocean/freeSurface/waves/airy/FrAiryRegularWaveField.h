@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
@@ -14,18 +14,18 @@
 #define FRYDOM_FRAIRYREGULARWAVEFIELD_H
 
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
-
+#include "frydom/environment/ocean/freeSurface/waves/FrKinematicStretching.h"
 
 namespace frydom {
 
     //Forward Declaration
-    class FrFreeSurface_;
+    class FrFreeSurface;
 
     /**
      * \class FrAiryRegularWaveField
      * \brief Class which deals with regular wave fields without optimization for a better parallelization.
      */
-    class FrAiryRegularWaveField : public FrWaveField_ {
+    class FrAiryRegularWaveField : public FrWaveField {
     protected:
 
         double m_height = 0.;   ///< Wave amplitude
@@ -35,13 +35,17 @@ namespace frydom {
         double m_dirAngle = 0.; ///< Wave direction
                                 ///< used internally with the conventions : NWU, GOTO, and unit : RAD; [0,2PI]
 
-        std::unique_ptr<FrKinematicStretching_> m_verticalFactor;    /// Vertical scale velocity factor with stretching
+        std::unique_ptr<FrKinematicStretching> m_verticalFactor;    /// Vertical scale velocity factor with stretching
 
     public:
 
         /// Default constructor
         /// \param freeSurface pointer to the free surface, to which the wave field belongs
-        explicit FrAiryRegularWaveField(FrFreeSurface_* freeSurface);
+        explicit FrAiryRegularWaveField(FrFreeSurface* freeSurface);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "AiryRegularWaveField"; }
 
         /// Set the wave height of the regular Airy wave filed
         /// \param height wave height
@@ -50,7 +54,7 @@ namespace frydom {
         /// Set the wave period of the regular Airy wave filed
         /// \param period wave period
         /// \param unit unit of the wave period, (seconds by default)
-        void SetWavePeriod(double period, FREQUENCY_UNIT unit = S);
+        void SetWavePeriod(double period);
 
         /// Set the wave direction of the regular Airy wave filed, using angle, from North direction
         /// \param dirAngle wave direction
@@ -67,7 +71,7 @@ namespace frydom {
 
         /// Set the stretching type, to avoid irregularities for quantities calculated above the free surface
         /// \param type stretching type (NO_STRETCHING/VERTICAL/EXTRAPOLATE/WHEELER/CHAKRABARTI/DELTA)
-        void SetStretching(FrStretchingType type);
+        void SetStretching(STRETCHING_TYPE type);
 
         /// Get the wave height of the regular Airy wave field
         /// \return wave height, in meters
@@ -76,7 +80,7 @@ namespace frydom {
         /// Get the wave period of the regular Airy wave field
         /// \param unit wave period unit (seconds by default)
         /// \return wave period
-        double GetWavePeriod(FREQUENCY_UNIT unit = S) const;;
+        double GetWavePeriod(FREQUENCY_UNIT unit) const;;
 
         /// Get the wave direction angle, from North direction, of the regular Airy wave field
         /// \param unit angle unit
@@ -146,6 +150,7 @@ namespace frydom {
         std::vector<double> GetWaveDirections(ANGLE_UNIT unit, FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const override;
 
     };
-}
+
+}  // end namespace frydom
 
 #endif //FRYDOM_FRAIRYREGULARWAVEFIELD_H

@@ -1,21 +1,23 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #ifndef FRYDOM_FRFLOWFORCE_H
 #define FRYDOM_FRFLOWFORCE_H
 
-#include "MathUtils/Vector3d.h"
+
 #include "frydom/core/force/FrForce.h"
-#include "MathUtils/MathUtils.h"
+#include "frydom/core/math/FrVector.h"
+
+#include "MathUtils/LookupTable1D.h"
 
 namespace frydom {
 
@@ -23,7 +25,7 @@ namespace frydom {
      * \class FrFlowForce
      * \brief Class for computing the flow force.
      */
-    class FrFlowForce : public FrForce_ {
+    class FrFlowForce : public FrForce {
 
     protected:
 
@@ -38,6 +40,10 @@ namespace frydom {
         /// Constructor of the flow force with polar coeffients from YAML table
         /// \param yamlFile Name of the YAML file containing the polar coefficients
         explicit FrFlowForce(const std::string& yamlFile);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "FlowForce"; }
 
         /// Extract polar coeffients from YAML table
         /// \param yamlFile Name of the YAML file containing the polar coefficients
@@ -57,35 +63,46 @@ namespace frydom {
 
 
     /**
-     * \class FrCurrentForce2_
+     * \class FrCurrentForce
      * \brief Class for computing the current loads.
      */
-    class FrCurrentForce2_ : public FrFlowForce {
+    class FrCurrentForce : public FrFlowForce {
 
 
     public:
-        explicit FrCurrentForce2_(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "CurrentForce"; }
+
+        explicit FrCurrentForce(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
 
         void Update(double time) override;
     };
 
 
     /**
-     * \class FrWindForce2_
+     * \class FrWindForce
      * \brief Class for computing the wind loads.
      */
-    class FrWindForce2_ : public FrFlowForce {
+    class FrWindForce : public FrFlowForce {
 
     public:
-        explicit FrWindForce2_(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "WindForce"; }
+
+        explicit FrWindForce(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
 
         void Update(double time) override;
 
     };
 
-    std::shared_ptr<FrCurrentForce2_> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body);
+    std::shared_ptr<FrCurrentForce> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody> body);
 
-    std::shared_ptr<FrWindForce2_> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody_> body);
+    std::shared_ptr<FrWindForce> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody> body);
+
 
 } // end of namespace frydom
 

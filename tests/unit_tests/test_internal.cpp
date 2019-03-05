@@ -21,10 +21,10 @@ TEST(Internal,FrFrame){
     Position myPosition(1.,2.,3.);
 
     // Init a Rotation
-    FrRotation_ myRotation;    myRotation.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
+    FrRotation myRotation;    myRotation.SetCardanAngles_DEGREES(90.,0.,0.,NWU);
 
     // Init a Frame from these Position and Rotation
-    FrFrame_ FRyDoMFrame(myPosition, myRotation, NWU);
+    FrFrame FRyDoMFrame(myPosition, myRotation, NWU);
 
     // Test on the Getters for the Position and Rotation
     Position testPosition = FRyDoMFrame.GetPosition(NWU)-myPosition;
@@ -49,7 +49,7 @@ TEST(Internal,FrFrame){
     EXPECT_DOUBLE_EQ(ChQuaternion.e3(), q3);
 
     // Convert back to FrFrame
-    FrFrame_ BackToFRFrame = ChFrame2FrFrame(ChronoFrame);
+    FrFrame BackToFRFrame = ChFrame2FrFrame(ChronoFrame);
     // Test on the Getters for the Position and Rotation
     testPosition = FRyDoMFrame.GetPosition(NWU)-myPosition;
     EXPECT_TRUE(testPosition.isZero());

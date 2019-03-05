@@ -14,74 +14,6 @@
 namespace frydom {
 
 
-//    // TODO : continuer le dev...
-//
-//    class FrFunction : public chrono::ChFunction {
-//
-////    protected:
-////
-////        std::shared_ptr<chrono::ChFunction> m_chronoFunction;
-//
-//        double m_C = 0.;
-//
-//        double Tramp = 50;
-//
-//        double c_a;
-//
-//    public:
-//
-//
-//        FrFunction(double C) : chrono::ChFunction(), m_C(C) {
-//
-//            double eps = 1e-3;
-//            c_a = 0.5 * log((1-eps) / eps);
-//
-//        }
-//
-//
-//        double Get_y(double x) const override {
-//
-////            double val;
-////            if (x <= Tramp) {
-////                val = 0.5 * m_C * (1. + tanh(2.* c_a * x - c_a * Tramp));
-////            } else {
-////                val = m_C;
-////            }
-////            return val;
-//
-//            double val;
-//            if (x <= Tramp) {
-//                val = m_C * x / Tramp;
-//            } else {
-//                val = m_C;
-//            }
-//            return val;
-//
-//
-//        }
-//
-//        FrFunction* Clone() const {
-//            return new FrFunction(*this);
-//        }
-//
-//
-//    };
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//     REFACTORING ------------->>>>>>>>>>>>>>>>>>
-
-
     // Forward declaration
     class FrFunctionBase;
 
@@ -110,7 +42,7 @@ namespace frydom {
     class FrAddFunction;
     class FrSubFunction;
     class FrMulFunction;
-    class FrdivFunction;
+    class FrDivFunction;
     class FrCompFunction;
 
 
@@ -198,7 +130,7 @@ namespace frydom {
         FrMulFunction operator*(const FrFunctionBase& other);
 
         /// Divide two functions
-        FrdivFunction operator/(const FrFunctionBase& other);
+        FrDivFunction operator/(const FrFunctionBase& other);
 
         /// Compose two functions -> this(other(x))
         FrCompFunction operator<<(const FrFunctionBase& other);
@@ -211,7 +143,7 @@ namespace frydom {
         FrMulFunction operator*(double alpha);
 
         /// Right divide a function by a scalar
-        FrdivFunction operator/(double alpha);
+        FrDivFunction operator/(double alpha);
 
         /// Add a scalar to the function to the right
         FrAddFunction operator+(double alpha);
@@ -280,7 +212,7 @@ namespace frydom {
     FrMulFunction operator*(double alpha, const FrFunctionBase& function);
 
     /// Inverse a function and multiply by a scalar
-    FrdivFunction operator/(double alpha, const FrFunctionBase& function);
+    FrDivFunction operator/(double alpha, const FrFunctionBase& function);
 
 
     namespace internal {
@@ -316,6 +248,8 @@ namespace frydom {
         FrVarXFunction* Clone() const override;
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "VarXFunction"; }
+
     protected:
         void Eval(double x) const;
 
@@ -342,6 +276,8 @@ namespace frydom {
         double& operator()();
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "ConstantFunction"; }
+
     protected:
         void Eval(double x) const override;
 
@@ -363,6 +299,8 @@ namespace frydom {
         FrUnaryOpFunction(const FrUnaryOpFunction& other);
         FrUnaryOpFunction* Clone() const;
         std::string GetRepr() const override;
+
+        std::string GetTypeName() const override { return "UnaryOpFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -411,6 +349,8 @@ namespace frydom {
         FrAddFunction* Clone() const;
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "AddFunction"; }
+
     protected:
         void Eval(double x) const override;
 
@@ -423,6 +363,8 @@ namespace frydom {
         FrSubFunction(const FrSubFunction& other);
         FrSubFunction* Clone() const;
         std::string GetRepr() const override;
+
+        std::string GetTypeName() const override { return "SubFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -438,19 +380,23 @@ namespace frydom {
         FrMulFunction* Clone() const;
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "MulFunction"; }
+
     protected:
         void Eval(double x) const override;
 
     };
 
     /// Class that result from dividing two functions
-    class FrdivFunction : public FrBinaryOpFunction {
+    class FrDivFunction : public FrBinaryOpFunction {
 
     public:
-        FrdivFunction(const FrFunctionBase& f1, const FrFunctionBase& f2);
-        FrdivFunction(const FrdivFunction& other);
-        FrdivFunction* Clone() const;
+        FrDivFunction(const FrFunctionBase& f1, const FrFunctionBase& f2);
+        FrDivFunction(const FrDivFunction& other);
+        FrDivFunction* Clone() const;
         std::string GetRepr() const override;
+
+        std::string GetTypeName() const override { return "divFunction"; }
 
     protected:
         void Eval(double x) const override;
@@ -466,14 +412,12 @@ namespace frydom {
         FrCompFunction* Clone() const;
         std::string GetRepr() const override;
 
+        std::string GetTypeName() const override { return "CompFunction"; }
+
     protected:
         void Eval(double x) const override;
 
     };
-
-
-
-
 
 
 }  // end namespace frydom

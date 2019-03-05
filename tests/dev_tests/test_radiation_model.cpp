@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -20,16 +20,11 @@ int main(int argc, char* argv[]) {
 
     // ---- System
 
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
 
     auto freeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
-
-    //auto waveField = freeSurface->SetAiryIrregularWaveField();
-    //auto Jonswap = waveField->SetJonswapWaveSpectrum(0.1, 9.);
-    //waveField->SetWaveFrequencies(0.5, 2., 40.);
-    //waveField->SetMeanWaveDirection(SOUTH(NWU), NWU, GOTO);
 
     auto waveField = freeSurface->SetAiryRegularWaveField();
     waveField->SetWavePeriod(9.);
@@ -44,7 +39,7 @@ int main(int argc, char* argv[]) {
     auto body = system.NewBody();
 
     Position COGPos(0.22, 0.22, 2.92);
-    FrFrame_ COGFrame(COGPos, FrRotation_(), NWU);
+    FrFrame COGFrame(COGPos, FrRotation(), NWU);
 
     body->SetPosition(Position(0., 0., 0.), NWU);
 
@@ -56,15 +51,15 @@ int main(int argc, char* argv[]) {
     double Iyy               = 2.3e11;
     double Izz               = 2e12;
 
-    FrInertiaTensor_ InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
+    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
 
     body->SetInertiaTensor(InertiaTensor);
 
     // --- Hydrodynamic
 
-    auto hdb = std::make_shared<FrHydroDB_>("Platform_HDB.hdb5");
+    auto hdb = std::make_shared<FrHydroDB>("Platform_HDB.hdb5");
 
-    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(body.get());
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(body.get());
     system.AddPhysicsItem(eqFrame);
 
     hdb->Map(0, body.get(), eqFrame);

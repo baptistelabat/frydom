@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "FrPrismaticLink.h"
@@ -18,8 +18,8 @@
 
 namespace frydom {
 
-    FrPrismaticLink::FrPrismaticLink(std::shared_ptr<frydom::FrNode_> node1, std::shared_ptr<frydom::FrNode_> node2,
-                                     frydom::FrOffshoreSystem_ *system) : FrLink_(node1, node2, system) {
+    FrPrismaticLink::FrPrismaticLink(std::shared_ptr<frydom::FrNode> node1, std::shared_ptr<frydom::FrNode> node2,
+                                     frydom::FrOffshoreSystem *system) : FrLink(node1, node2, system) {
         m_chronoLink->SetLinkType(PRISMATIC);
     }
 
@@ -62,7 +62,7 @@ namespace frydom {
     }
 
     void FrPrismaticLink::Initialize() {
-        FrLink_::Initialize();
+        FrLink::Initialize();
 
         // Initializing the motor part
         // TODO
@@ -71,7 +71,7 @@ namespace frydom {
     }
 
     void FrPrismaticLink::Update(double time) {
-        FrLink_::Update(time); // It is mandatory to invoke this before all update operations from frydom
+        FrLink::Update(time); // It is mandatory to invoke this before all update operations from frydom
 
         // Update total link measure
         m_linkPosition = GetMarker2PositionWRTMarker1(NWU).GetZ();
@@ -103,7 +103,7 @@ namespace frydom {
     }
 
     std::shared_ptr<FrPrismaticLink>
-    make_prismatic_link(std::shared_ptr<FrNode_> node1, std::shared_ptr<FrNode_> node2, FrOffshoreSystem_ *system) {
+    make_prismatic_link(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem *system) {
         auto link = std::make_shared<FrPrismaticLink>(node1, node2, system);
         system->AddLink(link);
 

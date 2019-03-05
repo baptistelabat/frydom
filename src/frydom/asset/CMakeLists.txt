@@ -2,14 +2,13 @@ message(STATUS "    ...Asset")
 
 set(SRC_FILES
         FrAsset.cpp
+        FrAssetOwner.cpp
         FrForceAsset.cpp
         FrGridAsset.cpp
         FrSeabedGridAsset.cpp
         FrFreeSurfaceGridAsset.cpp
-        FrCatenaryLineAsset_.cpp
-        FrAssetBuoy.cpp
-        FrAssetComponent.cpp
-)
+        FrCatenaryLineAsset.cpp
+        )
 
 set(FRYDOM_ASSET_SOURCES "")
 foreach(file ${SRC_FILES})

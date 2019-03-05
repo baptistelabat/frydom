@@ -43,7 +43,6 @@ int main(int argc, char* argv[]) {
     waveField->SetWavePulsations(wmin, wmax, nbFreq, RADS);
     waveField->SetMeanWaveDirection(0., DEG);
 
-
     //freeSurface->SetWaveField(waveField);
 
     // Body

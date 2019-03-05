@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -17,9 +17,9 @@ using namespace frydom;
 class TestManDampingTaylorExpansion : public ::testing::Test {
 
 protected:
-    FrOffshoreSystem_ system;
-    std::shared_ptr<FrBody_> body;
-    std::shared_ptr<FrManDampingTaylorExpansion_> force;
+    FrOffshoreSystem system;
+    std::shared_ptr<FrBody> body;
+    std::shared_ptr<FrManDampingTaylorExpansion> force;
 
 protected:
 
@@ -43,7 +43,7 @@ public:
 
 void TestManDampingTaylorExpansion::SetUp() {
     body = system.NewBody();
-    force = std::make_shared<FrManDampingTaylorExpansion_>();
+    force = std::make_shared<FrManDampingTaylorExpansion>();
     body->AddExternalForce(force);
 }
 

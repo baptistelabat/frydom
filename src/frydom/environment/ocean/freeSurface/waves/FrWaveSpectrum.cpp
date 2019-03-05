@@ -1,23 +1,25 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #include "FrWaveSpectrum.h"
 
+#include "MathUtils/VectorGeneration.h"
+
 namespace frydom {
 
-    // FrWaveDirectionalModel_ descriptions
+    // FrWaveDirectionalModel descriptions
 
     std::vector<double>
-    FrWaveDirectionalModel_::GetSpreadingFunction(const std::vector<double> &thetaVect, double theta_mean) {
+    FrWaveDirectionalModel::GetSpreadingFunction(const std::vector<double> &thetaVect, double theta_mean) {
         std::vector<double> spreading_fcn;
         spreading_fcn.clear();
         spreading_fcn.reserve(thetaVect.size());
@@ -30,7 +32,7 @@ namespace frydom {
         return spreading_fcn;
     }
 
-    void FrWaveDirectionalModel_::GetDirectionBandwidth(double &theta_min, double &theta_max, double theta_mean) const {
+    void FrWaveDirectionalModel::GetDirectionBandwidth(double &theta_min, double &theta_max, double theta_mean) const {
         double threshold = 0.01;
 
         theta_min = dichotomySearch(theta_mean,threshold);
@@ -38,7 +40,7 @@ namespace frydom {
         theta_max = theta_min + 2.*Dtheta;
     }
 
-    double FrWaveDirectionalModel_::dichotomySearch(double theta_mean, double threshold) const {
+    double FrWaveDirectionalModel::dichotomySearch(double theta_mean, double threshold) const {
         double theta_min = theta_mean - M_PI;
         double theta_max = theta_mean;
 
@@ -63,111 +65,111 @@ namespace frydom {
 
     // FrCos2sDirectionalModel descriptions
 
-    void FrCos2sDirectionalModel_::CheckSpreadingFactor() {
+    void FrCos2sDirectionalModel::CheckSpreadingFactor() {
         // TODO: utiliser un warning ver la stderr
         if (m_spreading_factor < 1. || m_spreading_factor > 100.) {
             std::cout << "The spreading factor of a cos2s directional spectrum model should lie between 1. and 100." << std::endl;
         }
     }
 
-    FrCos2sDirectionalModel_::FrCos2sDirectionalModel_(double spreading_factor) : m_spreading_factor(spreading_factor) {
+    FrCos2sDirectionalModel::FrCos2sDirectionalModel(double spreading_factor) : m_spreading_factor(spreading_factor) {
         CheckSpreadingFactor();
         EvalCs();
     }
 
-    WaveDirectionalModelType FrCos2sDirectionalModel_::GetType() const { return COS2S; }
+    WAVE_DIRECTIONAL_MODEL FrCos2sDirectionalModel::GetType() const { return COS2S; }
 
-    double FrCos2sDirectionalModel_::GetSpreadingFactor() const { return m_spreading_factor; }
+    double FrCos2sDirectionalModel::GetSpreadingFactor() const { return m_spreading_factor; }
 
-    double FrCos2sDirectionalModel_::Eval(double theta, double theta_mean) const {
+    double FrCos2sDirectionalModel::Eval(double theta, double theta_mean) const {
         return c_s * pow(cos(0.5 * (theta - theta_mean)), 2. * m_spreading_factor);
     }
 
-    void FrCos2sDirectionalModel_::SetSpreadingFactor(const double spreading_factor) {
+    void FrCos2sDirectionalModel::SetSpreadingFactor(const double spreading_factor) {
         m_spreading_factor = spreading_factor;
         CheckSpreadingFactor();
         EvalCs();
     }
 
-    void FrCos2sDirectionalModel_::EvalCs() {
+    void FrCos2sDirectionalModel::EvalCs() {
         double s = m_spreading_factor;
         double two_s = 2. * s;
         c_s = ( pow(2., two_s - 1.) / M_PI ) * pow(std::tgamma(s + 1.), 2.) / std::tgamma(two_s + 1.);
     }
 
     // =================================================================================================================
-    // FrTestDirectionalModel_ descriptions
+    // FrTestDirectionalModel descriptions
 
-    WaveDirectionalModelType FrTestDirectionalModel_::GetType() const { return DIRTEST; }
+    WAVE_DIRECTIONAL_MODEL FrTestDirectionalModel::GetType() const { return DIRTEST; }
 
-    double FrTestDirectionalModel_::Eval(double theta, double theta_mean) const {
+    double FrTestDirectionalModel::Eval(double theta, double theta_mean) const {
         return 1.;
     }
 
 
     // =================================================================================================================
-    // FrWaveSpectrum_ descriptions
+    // FrWaveSpectrum descriptions
 
-    FrWaveSpectrum_::FrWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit) :
+    FrWaveSpectrum::FrWaveSpectrum(double hs, double tp) :
             m_significant_height(hs),
-            m_peak_frequency(convert_frequency(tp, unit, RADS)) {}
+            m_peak_frequency(convert_frequency(tp, mathutils::S, mathutils::RADS)) {}
 
-    void FrWaveSpectrum_::SetCos2sDirectionalModel(double spreadingFactor) {
+    void FrWaveSpectrum::SetCos2sDirectionalModel(double spreadingFactor) {
         m_dir_model_type = COS2S;
-        m_directional_model = std::make_unique<FrCos2sDirectionalModel_>(spreadingFactor);
+        m_directional_model = std::make_unique<FrCos2sDirectionalModel>(spreadingFactor);
     }
 
-    void FrWaveSpectrum_::SetDirectionalModel(WaveDirectionalModelType model) {
+    void FrWaveSpectrum::SetDirectionalModel(WAVE_DIRECTIONAL_MODEL model) {
         switch (model) {
             case NONE:
                 DirectionalOFF();
                 break;
             case COS2S:
                 m_dir_model_type = COS2S;
-                m_directional_model = std::make_unique<FrCos2sDirectionalModel_>();
+                m_directional_model = std::make_unique<FrCos2sDirectionalModel>();
                 break;
             case DIRTEST:
                 m_dir_model_type = DIRTEST;
-                m_directional_model = std::make_unique<FrTestDirectionalModel_>();
+                m_directional_model = std::make_unique<FrTestDirectionalModel>();
         }
     }
 
-    void FrWaveSpectrum_::SetDirectionalModel(FrWaveDirectionalModel_ *dir_model) {
+    void FrWaveSpectrum::SetDirectionalModel(FrWaveDirectionalModel *dir_model) {
         m_dir_model_type = dir_model->GetType();
-        m_directional_model = std::unique_ptr<FrWaveDirectionalModel_>(dir_model);
+        m_directional_model = std::unique_ptr<FrWaveDirectionalModel>(dir_model);
     }
 
-    FrWaveDirectionalModel_ *FrWaveSpectrum_::GetDirectionalModel() const {
+    FrWaveDirectionalModel *FrWaveSpectrum::GetDirectionalModel() const {
         return m_directional_model.get();
     }
 
-    void FrWaveSpectrum_::DirectionalON(WaveDirectionalModelType model) {
+    void FrWaveSpectrum::DirectionalON(WAVE_DIRECTIONAL_MODEL model) {
         SetDirectionalModel(model);
     }
 
-    void FrWaveSpectrum_::DirectionalOFF() {
+    void FrWaveSpectrum::DirectionalOFF() {
         m_dir_model_type = NONE;
         m_directional_model = nullptr;
     }
 
-    double FrWaveSpectrum_::GetHs() const { return m_significant_height; }
+    double FrWaveSpectrum::GetHs() const { return m_significant_height; }
 
-    void FrWaveSpectrum_::SetHs(double Hs) { m_significant_height = Hs; }
+    void FrWaveSpectrum::SetHs(double Hs) { m_significant_height = Hs; }
 
-    double FrWaveSpectrum_::GetPeakFreq(FREQUENCY_UNIT unit) const {
-        return convert_frequency(m_peak_frequency, RADS, unit);
+    double FrWaveSpectrum::GetPeakFreq(FREQUENCY_UNIT unit) const {
+        return convert_frequency(m_peak_frequency, mathutils::RADS, unit);
     }
 
-    void FrWaveSpectrum_::SetPeakFreq(double Fp, FREQUENCY_UNIT unit) {
-        m_peak_frequency = convert_frequency(Fp, unit, RADS);
+    void FrWaveSpectrum::SetPeakFreq(double Fp, FREQUENCY_UNIT unit) {
+        m_peak_frequency = convert_frequency(Fp, unit, mathutils::RADS);
     }
 
-    void FrWaveSpectrum_::SetHsTp(double Hs, double Tp, FREQUENCY_UNIT unit) {
+    void FrWaveSpectrum::SetHsTp(double Hs, double Tp, FREQUENCY_UNIT unit) {
         SetHs(Hs);
         SetPeakFreq(Tp,unit);
     }
 
-    std::vector<double> FrWaveSpectrum_::Eval(const std::vector<double> &wVect) const {
+    std::vector<double> FrWaveSpectrum::Eval(const std::vector<double> &wVect) const {
         std::vector<double> S_w;
         auto nw = wVect.size();
         S_w.reserve(nw);
@@ -178,7 +180,7 @@ namespace frydom {
         return S_w;
     }
 
-    std::vector<double> FrWaveSpectrum_::vectorDiscretization(std::vector<double> vect) {
+    std::vector<double> FrWaveSpectrum::vectorDiscretization(std::vector<double> vect) {
         assert(!vect.empty());
         std::vector<double> discretization;
         unsigned long Nv = vect.size()-1;
@@ -203,7 +205,7 @@ namespace frydom {
         return discretization;
     }
 
-    std::vector<double> FrWaveSpectrum_::GetWaveAmplitudes(std::vector<double> waveFrequencies) {
+    std::vector<double> FrWaveSpectrum::GetWaveAmplitudes(std::vector<double> waveFrequencies) {
         std::vector<double> wave_ampl;
         auto nbFreq = waveFrequencies.size();
         wave_ampl.reserve(nbFreq);
@@ -217,7 +219,7 @@ namespace frydom {
     }
 
     std::vector<std::vector<double>>
-    FrWaveSpectrum_::GetWaveAmplitudes(std::vector<double> waveFrequencies, std::vector<double> waveDirections) {
+    FrWaveSpectrum::GetWaveAmplitudes(std::vector<double> waveFrequencies, std::vector<double> waveDirections) {
         auto nbDir = waveDirections.size();
         auto nbFreq = waveFrequencies.size();
 
@@ -252,9 +254,9 @@ namespace frydom {
     }
 
     std::vector<double>
-    FrWaveSpectrum_::GetWaveAmplitudes(unsigned int nb_waves, double wmin, double wmax) {
+    FrWaveSpectrum::GetWaveAmplitudes(unsigned int nb_waves, double wmin, double wmax) {
 
-        auto wVect = linspace(wmin, wmax, nb_waves);
+        auto wVect = mathutils::linspace(wmin, wmax, nb_waves);
         double dw = wVect[1] - wVect[0];
 
         std::vector<double> wave_ampl;
@@ -266,11 +268,11 @@ namespace frydom {
     }
 
     std::vector<std::vector<double>>
-    FrWaveSpectrum_::GetWaveAmplitudes(unsigned int nb_waves, double wmin, double wmax,
+    FrWaveSpectrum::GetWaveAmplitudes(unsigned int nb_waves, double wmin, double wmax,
                                       unsigned int nb_dir, double theta_min, double theta_max, double theta_mean) {
 
-        auto wVect = linspace(wmin, wmax, nb_waves);
-        auto thetaVect = linspace(theta_min, theta_max, nb_dir);
+        auto wVect = mathutils::linspace(wmin, wmax, nb_waves);
+        auto thetaVect = mathutils::linspace(theta_min, theta_max, nb_dir);
         return GetWaveAmplitudes(wVect,thetaVect);
 
     }
@@ -283,15 +285,15 @@ namespace frydom {
 //    ----------
 //    Prevosto M., Effect of Directional Spreading and Spectral Bandwidth on the Nonlinearity of the Irregular Waves,
 //    Proceedings of the Eighth (1998) International Offshore and Polar Engineering Conference, Montreal, Canada
-    void FrWaveSpectrum_::GetFrequencyBandwidth(double& wmin, double& wmax) const {
+    void FrWaveSpectrum::GetFrequencyBandwidth(double& wmin, double& wmax) const {
         double m0 = pow(m_significant_height,2)/16.;
         double threshold = m0*0.01;
 
-        wmin = dichotomySearch(1E-4,GetPeakFreq(RADS),threshold);
-        wmax = dichotomySearch(GetPeakFreq(RADS),10.,threshold);
+        wmin = dichotomySearch(1E-4,GetPeakFreq(mathutils::RADS),threshold);
+        wmax = dichotomySearch(GetPeakFreq(mathutils::RADS),10.,threshold);
     }
 
-    double FrWaveSpectrum_::dichotomySearch(double wmin, double wmax, double threshold) const {
+    double FrWaveSpectrum::dichotomySearch(double wmin, double wmax, double threshold) const {
 
         double wresult, epsilon = 1.E-10;
 
@@ -313,34 +315,34 @@ namespace frydom {
     }
 
     // =================================================================================================================
-    // FrJonswapWaveSpectrum_ descriptions
+    // FrJonswapWaveSpectrum descriptions
 
-    FrJonswapWaveSpectrum_::FrJonswapWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit, double gamma) :
-            FrWaveSpectrum_(hs, tp, unit),
+    FrJonswapWaveSpectrum::FrJonswapWaveSpectrum(double hs, double tp, double gamma) :
+            FrWaveSpectrum(hs, tp),
             m_gamma(gamma) {
         CheckGamma();
     }
 
-    void FrJonswapWaveSpectrum_::CheckGamma() {
+    void FrJonswapWaveSpectrum::CheckGamma() {
         if (m_gamma < 1. || m_gamma > 10.) {
             // TODO: utiliser un vrai warning sur stderr
             std::cout << "WARNING: Valid values of gamma parameter in JONSWAP wave spectrum are between 1 and 10. " << std::endl;
         }
     }
 
-    double FrJonswapWaveSpectrum_::GetGamma() const { return m_gamma; }
+    double FrJonswapWaveSpectrum::GetGamma() const { return m_gamma; }
 
-    void FrJonswapWaveSpectrum_::SetGamma(double gamma) {
+    void FrJonswapWaveSpectrum::SetGamma(double gamma) {
         m_gamma = gamma;
         CheckGamma();
     }
 
-    double FrJonswapWaveSpectrum_::Eval(double w) const {
+    double FrJonswapWaveSpectrum::Eval(double w) const {
 
         double wp2 = m_peak_frequency * m_peak_frequency;
         double wp4 = wp2 * wp2;
 
-        double w4_1 = pow(w, -4);
+        double w4_1 = std::pow(w, -4.);
         double w5_1 = w4_1 / w;
 
         double hs2 = m_significant_height * m_significant_height;
@@ -348,50 +350,39 @@ namespace frydom {
         double S_w = 0.;
         if (w > 0.) {
 
-            S_w = 0.3125 * hs2 * wp4 * w5_1 * exp(-1.25 * wp4 * w4_1) * (1 - 0.287 * log(m_gamma));
+            S_w = 0.3125 * hs2 * wp4 * w5_1 * std::exp(-1.25 * wp4 * w4_1) * (1 - 0.287 * std::log(m_gamma));
 
-            double a = exp(-pow(w - m_peak_frequency, 2) / (2. * wp2));
+            double a = std::exp(-std::pow(w - m_peak_frequency, 2) / (2. * wp2));
             if (w <= m_peak_frequency) {
-                a = pow(a, _SIGMA2_1_left);
+                a = std::pow(a, _SIGMA2_1_left);
             } else {
-                a = pow(a, _SIGMA2_1_right);
+                a = std::pow(a, _SIGMA2_1_right);
             }
-            S_w *= pow(m_gamma, a);
+            S_w *= std::pow(m_gamma, a);
         }
 
         return S_w;
     }
 
     // =================================================================================================================
-    // FrPiersonMoskowitzWaveSpectrum_ descriptions
-    FrPiersonMoskowitzWaveSpectrum_::FrPiersonMoskowitzWaveSpectrum_(double hs, double tp, FREQUENCY_UNIT unit) :
-            FrWaveSpectrum_(hs, tp, unit) {}
+    // FrPiersonMoskowitzWaveSpectrum descriptions
+    FrPiersonMoskowitzWaveSpectrum::FrPiersonMoskowitzWaveSpectrum(double hs, double tp) :
+            FrWaveSpectrum(hs, tp) {}
 
-    double FrPiersonMoskowitzWaveSpectrum_::Eval(double w) const {
+    double FrPiersonMoskowitzWaveSpectrum::Eval(double w) const {
 
-        double Tz = RADS2S(m_peak_frequency) / 1.408;  // Up-crossing period
+        double Tz = mathutils::RADS2S(m_peak_frequency) / 1.408;  // Up-crossing period
 
-        double A = pow(MU_2PI/Tz, 4) / (M_PI * pow(w, 4));
+        double A = std::pow(MU_2PI/Tz, 4) / (M_PI * std::pow(w, 4));
 
         double Hs2 = m_significant_height * m_significant_height;
 
-        return 0.25 * A * (Hs2 / w) * exp(-A);
+        return 0.25 * A * (Hs2 / w) * std::exp(-A);
 
     }
 
-    double FrTestWaveSpectrum_::Eval(double w) const {
+    double FrTestWaveSpectrum::Eval(double w) const {
         return 1.;
     }
 
-    std::unique_ptr<FrWaveSpectrum> MakeWaveSpectrum(WAVE_SPECTRUM_TYPE type) {
-        switch (type) {
-
-            case JONSWAP:
-                return std::make_unique<FrJonswapWaveSpectrum>();
-
-            case PIERSON_MOSKOWITZ:
-                return std::make_unique<FrPiersonMoskowitzWaveSpectrum>();
-
-        }
-    }
 }  // end namespace frydom

@@ -1,12 +1,12 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 #include "frydom/frydom.h"
@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     DIRECTION_CONVENTION dc = GOTO;
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     // Specify the size of the free surface asset.
     auto FSAsset = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset();
@@ -89,18 +89,18 @@ int main(int argc, char* argv[]) {
     // not be the body orientation).
 
     Position COGPos(10.,-5.,-3.);
-    FrRotation_ COGOrientation;
+    FrRotation COGOrientation;
     COGOrientation.SetCardanAngles_DEGREES(0.,0.,90.,fc); // COGFrame has a 90 yaw rotation, compared to the body reference frame.
 
-    FrFrame_ COGFrame(COGPos,COGOrientation,fc); // creating COGFrame, from the COG position and orientation.
-    FrInertiaTensor_ InertiaTensor(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,COGFrame,fc);
+    FrFrame COGFrame(COGPos,COGOrientation,fc); // creating COGFrame, from the COG position and orientation.
+    FrInertiaTensor InertiaTensor(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,COGFrame,fc);
 
     // Or you may got your inertia coefficients expressed in a frame, auxFrame, that can be different from the
     // COGPosition. The inertia are then automatically transported to the CoG Position specified, by this following
     // constructor.
-    FrFrame_ auxFrame; // defined from the position and orientation you got.
+    FrFrame auxFrame; // defined from the position and orientation you got.
 
-    FrInertiaTensor_ InertiaTensor0(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,auxFrame,COGPos,fc);
+    FrInertiaTensor InertiaTensor0(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,auxFrame,COGPos,fc);
 
     // Set now the inertia tensor you want in the body.
     body->SetInertiaTensor(InertiaTensor);
@@ -122,9 +122,9 @@ int main(int argc, char* argv[]) {
     Node0->SetPositionInBody(NodePos,fc);
 
     // Frame of the node, expressed in the body reference frame
-    FrRotation_ NodeRot;
+    FrRotation NodeRot;
     NodeRot.SetNullRotation();
-    FrFrame_ frameNode1(NodePos, NodeRot, fc);
+    FrFrame frameNode1(NodePos, NodeRot, fc);
     auto Node1 = body->NewNode();
     Node1->SetFrameInBody(frameNode1);
 
@@ -164,10 +164,10 @@ int main(int argc, char* argv[]) {
     // SetRotation and Rotation methods : For constructing rotations, see demo_Frame_and_Rotation.
 
     // Set the body reference frame orientation, using quaternions
-    FrUnitQuaternion_ IdQuaternion(1.,0.,0.,0.,fc); // Id quaternion means no rotation.
+    FrUnitQuaternion IdQuaternion(1.,0.,0.,0.,fc); // Id quaternion means no rotation.
     body->SetRotation(IdQuaternion);
     // or rotation, based on quaternions:
-    FrRotation_ bodyRotation(IdQuaternion);
+    FrRotation bodyRotation(IdQuaternion);
     body->SetRotation(bodyRotation);
 
     // Rotate the body around its reference frame, based on its current orientation, using quaternions or a rotation.

@@ -46,6 +46,7 @@ include(Add_HDF5)
 include(Add_yaml-cpp)
 include(Add_GeographicLib)
 include(Add_fmt)
+include(Add_cppfs)
 include(Add_TimeZone)
 include(Add_hermes)
 include(Add_OpenMesh)
@@ -63,13 +64,13 @@ include(Add_OpenMesh)
 add_library(FRyDoM_Engine SHARED ${FRYDOM_SRC_FILES})
 target_link_libraries(FRyDoM_Engine
         ChronoEngine
-        ChronoEngine_fea
         ChronoEngine_irrlicht
         MathUtils::MathUtils
         yaml-cpp
         HDF5
         GeographicLib
         fmt
+        cppfs
         tz
         hermes
 	OpenMeshCore

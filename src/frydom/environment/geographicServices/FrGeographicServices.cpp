@@ -1,20 +1,19 @@
 // ==========================================================================
 // FRyDoM - frydom-ce.org
-// 
+//
 // Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
 // All rights reserved.
-// 
+//
 // Use of this source code is governed by a GPLv3 license that can be found
 // in the LICENSE file of FRyDoM.
-// 
+//
 // ==========================================================================
 
 
 #include "FrGeographicServices.h"
 
-#include "GeographicLib/LocalCartesian.hpp"
-#include <GeographicLib/MagneticModel.hpp>
-#include <frydom/core/math/FrVector.h>
+#include "GeographicLib/MagneticModel.hpp"
+#include "frydom/core/math/FrVector.h"
 
 
 /*
@@ -147,4 +146,4 @@ namespace frydom {
     }
 
 
-}
+}  // end namespace frydom
