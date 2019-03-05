@@ -6,6 +6,7 @@ set(SRC_FILES
         FrCatenaryLine.cpp
         FrDynamicCable.cpp
         FrMooringBuoy.cpp
+        FrANCFCable.cpp
 )
 
 set(FRYDOM_CABLE_SOURCES "")
