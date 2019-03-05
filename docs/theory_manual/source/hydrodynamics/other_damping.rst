@@ -1,4 +1,4 @@
-.. other_damping:
+.. _other_damping:
 
 Linear damping
 --------------

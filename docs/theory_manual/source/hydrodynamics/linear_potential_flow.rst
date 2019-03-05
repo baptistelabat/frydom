@@ -1,4 +1,4 @@
-.. _hydrodynamic_forces:
+.. _linear_potential_flow_theory:
 
 Linear potential flow theory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -3,14 +3,27 @@
 Body
 ====
 
-A body contains a reference frame and inertial quantities (mass :math:`m`, inertia matrix :math:`\mathbf{I}_G`, expressed
-on a point :math:`G`), which can be united in an inertia tensor :math:`\mathbb{I}`.
+Bodies are basic object within FRyDoM framework, on which can be applied forces, links, motors, cables, collisions box, etc.
+Several frames of references can be used when referring to bodies.
 
-.. math::
-    \mathbb{I} = \Biggl \lbrace { m \atop \mathbf{I}_G } \Biggr \rbrace_G
+
+Frames of reference
+-------------------
+
+.. toctree::
+    :maxdepth: 1
+
+    ../hydrodynamics/frames_of_reference
+
 
 Inertia
 -------
+
+A body contains a reference frame and inertial quantities (mass :math:`m`, inertia matrix :math:`\mathbf{I}_G`, expressed
+on a point :math:`G`), which can be grouped in an inertia tensor :math:`\mathbb{I}`.
+
+.. math::
+    \mathbb{I} = \Biggl \lbrace { m \atop \mathbf{I}_G } \Biggr \rbrace_G
 
 The inertia matrix of a body depends on the choice of the reference point. The generalized Huygens theorem can be used to
 express the inertia matrix on an other point:

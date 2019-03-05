@@ -26,7 +26,7 @@ Welcome to FRyDoM's documentation!
 
     source/coordinate_systems
     source/conventions
-    source/3D_buoy_theory
+..
     source/friction_theory
     source/shape_theory
     source/slamming_theory
@@ -39,22 +39,6 @@ Environment theory
    :maxdepth: 2
 
    source/environment/index
-
-Static analysis
-***************
-
-.. toctree::
-   :maxdepth: 2
-
-   source/static_analysis/index
-
-Dynamic analysis
-****************
-
-.. toctree::
-   :maxdepth: 2
-
-   source/dynamic_analysis/index
 
 Multibody dynamics
 ******************
@@ -87,6 +71,24 @@ Benchmark
     :maxdepth: 2
 
     source/benchmark/index
+
+..
+   Static analysis
+   ***************
+
+.. toctree::
+   :maxdepth: 2
+
+  .. source/static_analysis/index
+
+..
+   Dynamic analysis
+   ****************
+
+.. toctree::
+   :maxdepth: 2
+
+  .. source/dynamic_analysis/index
 
 
 Indices and tables

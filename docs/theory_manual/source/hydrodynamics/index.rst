@@ -3,22 +3,6 @@
 Hydrodynamics
 *************
 
-Body rotations
-==============
-
-.. toctree::
-    :maxdepth: 1
-
-    body_rotations
-
-Current and wind loads
-======================
-
-.. toctree::
-    :maxdepth: 1
-
-    current_and_wind_loads
-
 
 Frames of reference
 ===================
@@ -28,14 +12,22 @@ Frames of reference
 
     frames_of_reference
 
-
-Frequency domain
-================
+Body rotations
+==============
 
 .. toctree::
     :maxdepth: 1
 
-    frequency_domain
+    body_rotations
+
+
+Linear potential flow theory
+==========
+
+.. toctree::
+    :maxdepth: 2
+
+    linear_potential_flow
 
 
 Impulse response and convolution
@@ -55,9 +47,17 @@ Morison model
 
     morison
 
+Current and wind loads
+======================
 
-ITTC78 resistance force
-=======================
+.. toctree::
+    :maxdepth: 1
+
+    current_and_wind_loads
+
+
+ITTC78 wave resistance force
+============================
 
 .. toctree::
     :maxdepth: 1
@@ -71,7 +71,7 @@ Manoeuvring loads
 .. toctree::
     :maxdepth: 1
 
-    manoeuvring_load
+    manoeuvring
 
 
 Other damping
@@ -82,50 +82,33 @@ Other damping
 
     other_damping
 
-
-RAOs and phases
-===============
-
-.. toctree::
-    :maxdepth: 1
-
-    RAO_and_phases
-
-
-RAO quality checks
-==================
+..
+    Frequency domain
+    ================
 
 .. toctree::
     :maxdepth: 1
 
-    RAO_quality_checks
+   .. frequency_domain
 
-
-Sea-state disturbance
-=====================
-
-.. toctree::
-    :maxdepth: 1
-
-    sea_state_disturbance
-
-
-Stiffness, added mass and damping
-=================================
+..
+    RAOs and phases
+    ===============
 
 .. toctree::
     :maxdepth: 1
 
-    stiffness_added_mass_and_damping
+    .. RAO_and_phases
 
-
-Wave drift and sum frequency loads
-==================================
+..
+    RAO quality checks
+    ==================
 
 .. toctree::
     :maxdepth: 1
 
-    wavedrift_and_sum_frequency_loads
+    .. RAO_quality_checks
+
 
 
 
