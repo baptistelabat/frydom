@@ -21,19 +21,19 @@
 
 namespace frydom {
 
-    void FrWeaklyNonlinearHydrostaticForce_::Initialize() {
+    void FrWeaklyNonlinearHydrostaticForce::Initialize() {
 
         // This function initializes the hydrostatic force object.
 
         // Initialization of the parent class.
-        FrForce_::Initialize();
+        FrForce::Initialize();
 
         // Equilibrium frame of the body.
         m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
 
     }
 
-    void FrWeaklyNonlinearHydrostaticForce_::Update(double time) {
+    void FrWeaklyNonlinearHydrostaticForce::Update(double time) {
 
         // This function computes the weakly nonlinear hydrostatic loads.
 
@@ -42,7 +42,7 @@ namespace frydom {
 
         // Body linear and angular position.
         Position PositionOfBodyInWorld = m_body->GetPosition(NWU);
-        FrRotation_ CardanAnglesBody = m_body->GetRotation();
+        FrRotation CardanAnglesBody = m_body->GetRotation();
         double phi, theta, psi;
         CardanAnglesBody.GetCardanAngles_RADIANS(phi, theta, psi, NWU);
 
@@ -72,17 +72,17 @@ namespace frydom {
 
     }
 
-    void FrWeaklyNonlinearHydrostaticForce_::StepFinalize() {
-        FrForce_::StepFinalize();
+    void FrWeaklyNonlinearHydrostaticForce::StepFinalize() {
+        FrForce::StepFinalize();
     }
 
-    std::shared_ptr<FrWeaklyNonlinearHydrostaticForce_>
-    make_weakly_nonlinear_hydrostatic_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body, std::string meshfile){
+    std::shared_ptr<FrWeaklyNonlinearHydrostaticForce>
+    make_weakly_nonlinear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile){
 
         // This function creates the weakly nonlinear hydrostatic force object for computing the weakly nonlinear hydrostatic loads.
 
         // Construction of the hydrostatic force object from the HDB.
-        auto forceHst = std::make_shared<FrWeaklyNonlinearHydrostaticForce_>(HDB,meshfile);
+        auto forceHst = std::make_shared<FrWeaklyNonlinearHydrostaticForce>(HDB,meshfile);
 
         // Add the hydrostatic force object as an external force to the body.
         body->AddExternalForce(forceHst);

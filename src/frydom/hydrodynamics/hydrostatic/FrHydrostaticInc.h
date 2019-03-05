@@ -7,5 +7,6 @@
 
 #include "FrLinearHydrostaticForce.h"
 #include "FrLinearHydrostaticStiffnessMatrix.h"
+#include "FrWeaklyNonlinearHydrostaticForce.h"
 
 #endif //FRYDOM_FRHYDROSTATICINC_H

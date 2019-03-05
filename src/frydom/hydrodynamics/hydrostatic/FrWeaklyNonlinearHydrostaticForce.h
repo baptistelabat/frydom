@@ -13,15 +13,14 @@
 #ifndef FRYDOM_FRWEAKLYNONLINEARHYDROSTATICFORCE_H
 #define FRYDOM_FRWEAKLYNONLINEARHYDROSTATICFORCE_H
 
-// FIXME: attention, on a d'autres fichiers FrHydrostaticForce.h et .cpp
 #include <frydom/core/force/FrForce.h>
 #include "frydom/core/math/FrVector.h"
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 
 namespace frydom {
 
-    class FrEquilibriumFrame_;
-    class FrBody_;
+    class FrEquilibriumFrame;
+    class FrBody;
 
     /// This class defines the weakly nonlinear hydrostatic force applied to a hydrodynamic body.
     /// The force is computed based on the real position of the body with a linearized free surface by integeration of the hydrostatic pressure over the body mesh.
@@ -32,17 +31,17 @@ namespace frydom {
      * \class FrWeaklyNonlinearHydrostaticForce_
      * \brief Class for computing weakly nonlinear hydrostatic loads.
      */
-    class FrWeaklyNonlinearHydrostaticForce_ : public FrForce_ {
+    class FrWeaklyNonlinearHydrostaticForce : public FrForce {
 
     private:
-        std::shared_ptr<FrHydroDB_> m_HDB;
-        FrEquilibriumFrame_* m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
+        std::shared_ptr<FrHydroDB> m_HDB;
+        FrEquilibriumFrame* m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
         std::string meshfilename; // Input mesh file.
 
     public:
 
         /// Constructor.
-        FrWeaklyNonlinearHydrostaticForce_(std::shared_ptr<FrHydroDB_> HDB, std::string meshfile) : m_HDB(HDB) {meshfilename = meshfile; }
+        FrWeaklyNonlinearHydrostaticForce(std::shared_ptr<FrHydroDB> HDB, std::string meshfile) : m_HDB(HDB) {meshfilename = meshfile; }
 
         /// Update weakly nonlinear hydrostatic force
         /// \param time Current time of the simulation from begining
@@ -56,8 +55,8 @@ namespace frydom {
     };
 
     /// This subroutine reads the modes of a body.
-    std::shared_ptr<FrWeaklyNonlinearHydrostaticForce_>
-    make_weakly_nonlinear_hydrostatic_force(std::shared_ptr<FrHydroDB_> HDB, std::shared_ptr<FrBody_> body, std::string meshfile);
+    std::shared_ptr<FrWeaklyNonlinearHydrostaticForce>
+    make_weakly_nonlinear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile);
 
 }  // end namespace frydom
 

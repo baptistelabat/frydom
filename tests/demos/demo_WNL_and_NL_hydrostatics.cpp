@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     DIRECTION_CONVENTION dc = GOTO;
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
 
     // --------------------------------------------------
     // Environment
@@ -92,13 +92,13 @@ int main(int argc, char* argv[]) {
 //    double Mass              = 3.22114e7;
     double Mass = 68321.544*1025;
     Position platformCoG(0.22, 0.22, 2.92);
-    FrFrame_ platformCoGFrame(platformCoG, FrRotation_(), NWU);
+    FrFrame platformCoGFrame(platformCoG, FrRotation(), NWU);
 
     // Inertia
     double Ixx               = 2.4e11;
     double Iyy               = 2.3e11;
     double Izz               = 2e12;
-    FrInertiaTensor_ platformInertia(Mass, Ixx, Iyy, Izz, 0., 0., 0.,platformCoGFrame, NWU);
+    FrInertiaTensor platformInertia(Mass, Ixx, Iyy, Izz, 0., 0., 0.,platformCoGFrame, NWU);
 
     platform->SetInertiaTensor(platformInertia);
 
@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
     auto hdb = make_hydrodynamic_database("Platform_HDB_Without_drift.hdb5");
 
     // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
-    auto eqFrame = std::make_shared<FrEquilibriumFrame_>(platform.get());
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(platform.get());
     system.AddPhysicsItem(eqFrame);
 
     // Map the equilibrium frame and the body in the hdb mapper
