@@ -246,7 +246,6 @@ namespace frydom {
             double m_Threshold = 1e-4;
 //            double m_Threshold = 0.5;
             double m_ProjectionThresholdRatio = 1 / 4.;
-//            double m_ProjectionThresholdRatio = 1 / 10.;
 
             /// Vector to store the faces which are on and/or above the incident free surface and have to be deleted.
             std::vector<FrMesh::FaceHandle> c_FacesToDelete;

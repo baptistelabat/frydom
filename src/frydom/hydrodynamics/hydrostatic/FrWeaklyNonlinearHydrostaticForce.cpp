@@ -37,32 +37,6 @@ namespace frydom {
 
         // This function computes the weakly nonlinear hydrostatic loads.
 
-//        // Body frame.
-//        auto bodyFrame = m_body->GetFrameAtCOG(NWU);
-//
-//        // Transformation from the body frame to equilibrium frame/
-//        auto deltaFrame = m_equilibriumFrame->GetInverse() * bodyFrame;
-//
-//        // Position of the body frame with respect to the equilibrium frame expressed in the equilibrium frame.
-//        Vector3d<double> state; double temp;
-//        state[0] = deltaFrame.GetPosition(NWU).z();
-//
-//        // Angular position of the body frame with respect to the equilibrium frame expressed in the equilibrium frame.
-//        deltaFrame.GetRotation().GetCardanAngles_RADIANS(state[1], state[2], temp, NWU);
-//
-//        // Fh = -Kh*X. in the equilibrium frame: only heave, roll and pitch are considered here.
-//        auto forceState = - (m_stiffnessMatrix * state); // m_stiffnessMatrix is a 3x3 matrix.
-//
-//        // Linear hydrostatic force: assumed in the world frame.
-//        auto worldForce = Force(0., 0., forceState[0]); // Only the heave component is used from forceState, so the first one.
-//        worldForce.z() += m_body->GetSystem()->GetGravityAcceleration() * m_body->GetMass(); // WARNING: It is assumed that the displacement is equal to the mass, which can be false.
-//        SetForceInWorldAtCOG( worldForce, NWU);
-//
-//        // Linear hydrostatic torque: assumed in the body frame/
-//        auto localTorque = Torque(forceState[1], forceState[2], 0.);
-//        SetTorqueInBodyAtCOG(localTorque, NWU);
-
-
         // Loading the input mesh file.
         mesh::FrMesh mesh(meshfilename);
 
@@ -84,35 +58,17 @@ namespace frydom {
         // Rotation.
         mesh.Rotate(phi,theta,psi);
 
-        // Mesh clipping.
-//        mesh::MeshClipper clipper;
-//        mesh::FrMesh mesh_clipped = clipper(mesh);
-//        mesh_clipped.Write("Mesh_clipped.obj");
-
         // Clipping and computation of the hydrostatic force.
-        Force force = Force();
-        Torque torque = Torque();
         NonlinearHydrostatics NLhydrostatics(m_HDB->GetWaterDensity(),m_HDB->GetGravityAcc()); // Creation of the NonlinearHydrostatics structure.
-
-        mathutils::Vector3d<double> cog;
-        Position CoGBody = m_body->GetCOGPositionInWorld(NWU);
-        cog[0] = CoGBody[0];
-        cog[1] = CoGBody[1];
-        cog[2] = CoGBody[2];
-        NLhydrostatics.Load(mesh, cog); // The mesh clipping and the hydrostatic computation are performed here.
+        NLhydrostatics.Load(mesh); // The mesh clipping and the hydrostatic computation are performed here.
 
         // Writting the clipped mesh in an output file.
         mesh::FrMesh mesh_clipped = NLhydrostatics.GetClippedMesh();
         mesh_clipped.Write("Mesh_clipped.obj");
 
-
-
-
-
-
-
-        // Setting hydrostatic loads in world.
-//        this->SetForceTorqueInWorldAtCOG(force, torque, NWU);
+        // Setting the weakly nonlinear loads in world.
+        Force force = NLhydrostatics.GetWeaklyNonlinearForce();
+        this->SetForceInWorldAtPointInWorld(force,NLhydrostatics.GetCenterOfBuoyancy(),NWU); // The torque is computed from the hydrostatic force and the center of buoyancy.
 
     }
 

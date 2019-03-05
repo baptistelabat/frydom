@@ -184,14 +184,11 @@ namespace frydom {
         /// Gravity constant.
         double m_gravityAcceleration = 9.81;
 
-        /// Center of gravity in world.
-        mathutils::Vector3d<double> m_centerOfGravity = {0., 0., 0.};
+        /// Center of buoyancy in world.
+        Position m_centerOfBuoyancy = Position(0.,0.,0.);
 
         /// Hydrostatic force.
-        Force m_force = Force(0,0,0);
-
-        /// Hydrostatic torque.
-        Torque m_torque = Torque(0,0,0);
+        Force m_force = Force(0.,0.,0.);
 
     public:
 
@@ -204,7 +201,7 @@ namespace frydom {
                 m_gravityAcceleration(gravityAcceleration) {}
 
         /// This function loads the clipped mesh and computes the hydrostatic computation.
-        void Load(const mesh::FrMesh& mesh, mathutils::Vector3d<double> cog);
+        void Load(const mesh::FrMesh& mesh);
 
         /// This function gives the clipped mesh.
         mesh::FrMesh GetClippedMesh(){
@@ -213,6 +210,12 @@ namespace frydom {
 
         /// This function performs the hydrostatic pressure integration.
         void CalcPressureIntegration();
+
+        /// This function gives the weakly nonlinear hydrostatic force.
+        Force GetWeaklyNonlinearForce(){return m_force;};
+
+        /// This function gives the center of buoyancy of the immersed mesh.
+        Position GetCenterOfBuoyancy(){return m_centerOfBuoyancy;};
 
     };
 

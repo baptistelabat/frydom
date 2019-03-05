@@ -89,7 +89,8 @@ int main(int argc, char* argv[]) {
     platform->SetColor(Yellow);
 
     // Inertia Tensor
-    double Mass              = 3.22114e7;
+//    double Mass              = 3.22114e7;
+    double Mass = 68321.544*1025;
     Position platformCoG(0.22, 0.22, 2.92);
     FrFrame_ platformCoGFrame(platformCoG, FrRotation_(), NWU);
 
