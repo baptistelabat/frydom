@@ -72,6 +72,8 @@ namespace frydom {
         /// \param showAsset true if a ForceAsset is to be displayed
         void ShowAsset(bool showAsset);;
 
+        FrNodeAsset* GetAsset();
+
         /// Set node position and direction axis, with respect to body reference frame
         /// \param pos relative position of the frame node with respect to body reference frame
         /// \param e1 direction of the x-axis with respect to reference frame
