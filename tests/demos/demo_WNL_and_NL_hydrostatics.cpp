@@ -127,6 +127,7 @@ int main(int argc, char* argv[]) {
     // Create the linear hydrostatic force and add it to the platform
 //    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
     auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
+    forceHst->ShowAsset(true);
 //    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500.obj");
 //    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
 
