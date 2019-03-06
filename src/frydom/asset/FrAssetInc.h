@@ -15,6 +15,7 @@
 
 #include "FrAsset.h"
 #include "FrAssetOwner.h"
+#include "FrNodeAsset.h"
 #include "FrForceAsset.h"
 #include "FrGridAsset.h"
 #include "FrFreeSurfaceGridAsset.h"

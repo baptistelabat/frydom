@@ -301,18 +301,18 @@ namespace frydom {
         m_externalForces.erase(
                 std::find<std::vector<std::shared_ptr<FrForce>>::iterator>(m_externalForces.begin(), m_externalForces.end(), force));
 
-        if (force->m_forceAsset!=nullptr) {
-            m_chronoBody->RemoveAsset(force->m_forceAsset->GetChronoAsset());
+        if (force->m_asset!=nullptr) {
+            m_chronoBody->RemoveAsset(force->m_asset->GetChronoAsset());
 
             bool asserted=false;
             for (int ia=0;ia<m_assets.size();++ia){
-                if (m_assets[ia]==force->m_forceAsset){
+                if (m_assets[ia]==force->m_asset){
                     m_assets.erase(m_assets.begin()+ia);
                     asserted=true;
                 }
             }
             assert(asserted);
-            force->m_forceAsset=nullptr;
+            force->m_asset=nullptr;
 
         }
 
@@ -351,7 +351,9 @@ namespace frydom {
     // Nodes
 
     std::shared_ptr<FrNode> FrBody::NewNode() {
-        return std::make_shared<FrNode>(this);
+        auto node = std::make_shared<FrNode>(this);
+        m_nodes.push_back(node);
+        return node;
     }
 
     void FrBody::SetCOG(const Position& bodyPos, FRAME_CONVENTION fc) {

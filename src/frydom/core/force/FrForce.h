@@ -76,8 +76,8 @@ namespace frydom {
         std::shared_ptr<internal::FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
 
         // Force Asset
-        bool m_isForceAsset = false;            ///< A ForceAsset (vector) is displayed if true
-        std::shared_ptr<FrForceAsset> m_forceAsset = nullptr;  ///< pointer to the ForceAsset object.
+        bool m_showAsset = false;                         ///< A ForceAsset (vector) is displayed if true
+        std::shared_ptr<FrForceAsset> m_asset = nullptr;  ///< pointer to the ForceAsset object.
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise
@@ -123,7 +123,7 @@ namespace frydom {
 
         /// Set if a ForceAsset is to be displayed
         /// \param isAsset true if a ForceAsset is to be displayed
-        void SetIsForceAsset(bool isAsset);
+        void ShowAsset(bool isAsset);
 
         // Force Limits
 
