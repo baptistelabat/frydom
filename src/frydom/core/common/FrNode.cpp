@@ -223,8 +223,6 @@ namespace frydom {
         m_chronoMarker->UpdateState();
 
         if (m_showAsset) {
-            assert(m_asset==nullptr);
-            m_asset = std::make_shared<FrNodeAsset>(this);
             m_asset->Initialize();
             m_body->AddAsset(m_asset);
         }
@@ -274,6 +272,10 @@ namespace frydom {
 
     void FrNode::ShowAsset(bool showAsset) {
         m_showAsset = showAsset;
+        if (showAsset) {
+            assert(m_asset == nullptr);
+            m_asset = std::make_shared<FrNodeAsset>(this);
+        }
     }
 
     FrNodeAsset *FrNode::GetAsset() {
