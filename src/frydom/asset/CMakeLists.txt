@@ -3,6 +3,7 @@ message(STATUS "    ...Asset")
 set(SRC_FILES
         FrAsset.cpp
         FrAssetOwner.cpp
+        FrNodeAsset.cpp
         FrForceAsset.cpp
         FrGridAsset.cpp
         FrSeabedGridAsset.cpp

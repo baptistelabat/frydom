@@ -79,11 +79,11 @@ namespace frydom{
 
         // This subroutine initializes the object FrForce.
 
-        if (m_isForceAsset) {
-            assert(m_forceAsset==nullptr);
-            m_forceAsset = std::make_shared<FrForceAsset>(this);
-            m_forceAsset->Initialize();
-            m_body->AddAsset(m_forceAsset);
+        if (m_showAsset) {
+            assert(m_asset==nullptr);
+            m_asset = std::make_shared<FrForceAsset>(this);
+            m_asset->Initialize();
+            m_body->AddAsset(m_asset);
         }
     }
 
@@ -136,11 +136,11 @@ namespace frydom{
 
 
     bool FrForce::IsForceAsset() {
-        return m_isForceAsset;
+        return m_showAsset;
     }
 
-    void FrForce::SetIsForceAsset(bool isAsset) {
-        m_isForceAsset = isAsset;
+    void FrForce::ShowAsset(bool isAsset) {
+        m_showAsset = isAsset;
     }
 
     void FrForce::SetMaxForceLimit(double fmax) {
