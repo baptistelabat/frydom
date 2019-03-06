@@ -132,6 +132,12 @@ namespace frydom {
             (*forceIter)->StepFinalize();
         }
 
+        // Initializing nodes
+        auto nodeIter = node_begin();
+        for (; nodeIter != node_end(); nodeIter++) {
+            (*nodeIter)->StepFinalize();
+        }
+
 //        // StepFinalize of assets
 //        auto assetIter = asset_begin();
 //        for (; assetIter != asset_end(); assetIter++) {

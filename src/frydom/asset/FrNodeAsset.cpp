@@ -20,7 +20,7 @@ namespace frydom {
         auto glyphAsset = std::make_shared<chrono::ChGlyphs>();
         glyphAsset->SetDrawMode(chrono::ChGlyphs::eCh_GlyphType::GLYPH_COORDSYS);
 
-        chrono::ChCoordsys<double> nodeFrame = internal::FrFrame2ChCoordsys(m_node->GetFrameInWorld());
+        chrono::ChCoordsys<double> nodeFrame = internal::FrFrame2ChCoordsys(m_node->GetFrameInBody());
 
         glyphAsset->SetGlyphCoordsys(0,nodeFrame);
 
@@ -37,7 +37,7 @@ namespace frydom {
         GlyphAsset->SetGlyphsSize(m_CharacteristicLength);
 
         // Here, the asset point is automatically following the motion but the force has to be updated
-        chrono::ChCoordsys<double> nodeFrame = internal::FrFrame2ChCoordsys(m_node->GetFrameInWorld());
+        chrono::ChCoordsys<double> nodeFrame = internal::FrFrame2ChCoordsys(m_node->GetFrameInBody());
 
         GlyphAsset->SetGlyphCoordsys(0,nodeFrame);
 
