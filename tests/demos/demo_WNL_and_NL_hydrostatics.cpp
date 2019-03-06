@@ -103,6 +103,13 @@ int main(int argc, char* argv[]) {
 
     platform->SetInertiaTensor(platformInertia);
 
+    // Node.
+    auto Node = platform->NewNode();
+    Node->ShowAsset(true);
+    Node->SetLogged(true);
+    auto AssetNode = Node->GetAsset();
+    AssetNode->SetSize(20);
+
     // -- Hydrodynamics
 
 //     Create a hydrodynamic database (hdb), load data from the input file and creates and initialize the BEMBody.
@@ -119,8 +126,8 @@ int main(int argc, char* argv[]) {
     // -- Hydrostatics
     // Create the linear hydrostatic force and add it to the platform
 //    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
-//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
-    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500.obj");
+    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
+//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500.obj");
 //    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
 
     // -- Excitation
