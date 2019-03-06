@@ -28,8 +28,7 @@ namespace frydom {
               m_unrollingSpeed(0.),
               m_youngModulus(youngModulus),
               m_sectionArea(sectionArea),
-              m_linearDensity(linearDensity),
-              FrMidPhysicsItem(){}
+              m_linearDensity(linearDensity){}
 
     void FrCable::SetYoungModulus(double E) {
         m_youngModulus = E;
@@ -115,6 +114,17 @@ namespace frydom {
 
     double FrCable::GetUnrollingSpeed() const {
         return m_unrollingSpeed;
+    }
+
+    void FrCable::UpdateTime(const double time) {
+        m_time_step = time - m_time;
+        m_time = time;
+    }
+
+    void FrCable::UpdateState() {
+        if (std::abs(m_unrollingSpeed) > DBL_EPSILON and std::abs(m_time_step) > DBL_EPSILON) {
+            m_cableLength += m_unrollingSpeed * m_time_step;
+        }
     }
 
 }  // end namespace frydom

@@ -156,8 +156,8 @@ int main(int argc, char* argv[]) {
                 auto CatenaryLine2 = make_catenary_line(worldNode2, sphereNode, &system, elastic, YoungModulus,
                                                         sectionArea, unstretchedLength, linearDensity, WATER);
                 // Set the number of drawn elements on the catenary lines (the more, the slower the simulation)
-                CatenaryLine1->SetNbElements(10);
-                CatenaryLine2->SetNbElements(10);
+                CatenaryLine1->SetAssetElements(10);
+                CatenaryLine2->SetAssetElements(10);
             }
             break;
         }

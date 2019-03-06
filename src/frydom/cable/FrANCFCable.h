@@ -7,6 +7,7 @@
 
 #include "FrCable.h"
 #include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrFEAMesh.h"
 
 #include <chrono/fea/ChMesh.h>
 //#include <chrono/fea/ChNodeFEAxyzD.h>
@@ -36,8 +37,9 @@ namespace frydom {
             std::shared_ptr<chrono::fea::ChNodeFEAxyzD> m_starting_node_fea;
             std::shared_ptr<chrono::fea::ChNodeFEAxyzD> m_ending_node_fea;
 
-            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_startingHinge;
-            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_endingHinge;
+            // TODO Passer en FrLink? générer les links entre FEAMesh et bodies en dehors de FEAMesh
+//            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_startingHinge;
+//            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_endingHinge;
 
             std::shared_ptr<chrono::fea::ChBeamSectionCable> m_section;
             FrANCFCable* m_frydomCable;
@@ -49,14 +51,13 @@ namespace frydom {
             void InitializeSection();
 
             /// Initialize the links between the cable and the bodies
-            void InitializeLinks();
+            // TODO : générer les links entre FEAMesh et bodies à l'extérieur.
+//            void InitializeLinks();
 
             /// Generate assets for the cable
             void GenerateAssets();
 
             void Update(double time, bool update_assets) override;
-
-            void AddToChronoSystem();
 
             void SetStartingNode(Position position, Direction direction);
             void SetEndingNode(Position position, Direction direction);
@@ -68,7 +69,7 @@ namespace frydom {
 
 
 
-    class FrANCFCable: public FrCable {
+    class FrANCFCable: public FrCable, public FrFEAMesh {
 
     private:
 
@@ -81,6 +82,12 @@ namespace frydom {
         double m_drawCableElementRadius = 0.05;
         double m_drawCableNodeSize = 0.1;
 
+    protected:
+
+        internal::FrANCFCableBase* GetChronoItem() const override { return m_chronoCable.get(); }
+
+        std::shared_ptr<chrono::fea::ChMesh> GetChronoMesh() override { return m_chronoCable; }
+
     public:
 
         FrANCFCable(const std::shared_ptr<FrNode> startingNode,
@@ -89,6 +96,10 @@ namespace frydom {
                     double youngModulus,
                     double sectionArea,
                     double linearDensity);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "ANCFCable"; }
 
         void SetRayleighDamping(const double damping);
 
@@ -129,15 +140,9 @@ namespace frydom {
         //
 
         /// Initialize the cable with given data
-        void Initialize();
+        void Initialize() override;
 
-        virtual void StepFinalize() override;
-
-
-        /// Update internal time and time step for dynamic behaviour of the cable
-        virtual void UpdateTime(const double time);;
-
-        void Update();
+//        void StepFinalize() override;
 
     };
 

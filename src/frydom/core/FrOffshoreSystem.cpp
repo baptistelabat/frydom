@@ -16,6 +16,7 @@
 
 #include "frydom/core/link/links_lib/FrLink.h"
 #include "frydom/core/body/FrBody.h"
+#include "frydom/core/common/FrFEAMesh.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/utils/FrIrrApp.h"
 
@@ -155,6 +156,14 @@ namespace frydom {
 
         body->m_system = this;
 
+    }
+
+    void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh){
+        m_chronoSystem->AddMesh(feaMesh->GetChronoMesh());  // Authorized because this method is a friend of FrFEAMesh
+        m_chronoSystem->Add(feaMesh->GetChronoMesh());
+
+        feaMesh->m_system = this;
+        m_feaMeshList.push_back(feaMesh);
     }
 
 

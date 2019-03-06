@@ -71,6 +71,7 @@ namespace frydom {
     class FrPrePhysicsItem;
     class FrMidPhysicsItem;
     class FrPostPhysicsItem;
+    class FrFEAMesh;
     class FrEnvironment;
     class FrCable;
     class FrPathManager;
@@ -201,6 +202,8 @@ namespace frydom {
         using MidPhysicsContainer = std::vector<std::shared_ptr<FrMidPhysicsItem>>;
         using PostPhysicsContainer = std::vector<std::shared_ptr<FrPostPhysicsItem>>;
 
+        using FEAMeshContainer = std::vector<std::shared_ptr<FrFEAMesh>>;
+
         // Iterators.
         // TODO : bouger les iterateurs proches des methodes d'iteration...
         using BodyIter          = BodyContainer::iterator;
@@ -218,12 +221,16 @@ namespace frydom {
         using PostPhysicsIter = PostPhysicsContainer::iterator;
         using ConstPostPhysicsIter = PostPhysicsContainer::const_iterator;
 
+        using FEAMestIter = FEAMeshContainer::iterator;
+        using ConstFEAMestIter = FEAMeshContainer::const_iterator;
+
         // Container: list of objects.
         BodyContainer m_bodyList;   ///< list of bodies managed by this offshore system
         LinkContainer m_linkList;   ///< list of links between bodies managed by this offhsore system
         PrePhysicsContainer m_PrePhysicsList;   ///< list of physics items, updated before the bodies
         MidPhysicsContainer m_MidPhysicsList;   ///< list of physics items, updated between the bodies and links
         PostPhysicsContainer m_PostPhysicsList; ///< list of physics items, updated after the links
+        FEAMeshContainer m_feaMeshList;         ///< list of FEA mesh items, managed by this offshore system
 
 //        using CatenaryCableContainer = std::vector<std::shared_ptr<FrCatway>>;
 //        CatenaryCableContainer m_catenaryCables;
@@ -264,6 +271,9 @@ namespace frydom {
         /// \param link link to be added
         void AddLink(std::shared_ptr<FrLinkBase> link);
 
+        /// Add a FEA mesh to the offshore system
+        /// \param feaMesh FEA mesh to be added
+        void AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
 
         /// Add other physics item to the offshore system
         /// \param otherPhysics other physic item to be added

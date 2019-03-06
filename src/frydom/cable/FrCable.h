@@ -27,15 +27,15 @@ namespace frydom {
 
     /**
      * \class FrCable FrCable.h
-     * \brief Abstract base class for cables, subclass of FrMidPhysicsItem, superclass of FrCatenaryLine and
+     * \brief Abstract base class for cables, superclass of FrCatenaryLine and
      * FrDynamicCable .
      * This means cables are updated between bodies and links.
      * A cable is connected to two nodes : a starting node and an ending node. Nodes are contained by at
      * least one body, and used to connect bodies to other components (cables, links,etc.)
-     * \see FrMidPhysicsItem, FrCatenaryLine, FrDynamicCable, FrNode
+     * \see FrCatenaryLine, FrDynamicCable, FrNode
      *
      */
-    class FrCable : public FrMidPhysicsItem {
+    class FrCable {
 
     protected:
 
@@ -187,6 +187,13 @@ namespace frydom {
         /// Get the breaking tension of the cable
         /// \return breaking tension
         double GetBreakingTension() const;
+
+        /// Update internal time and time step for dynamic behaviour of the cable
+        /// \param time time of the simulation
+        virtual void UpdateTime(const double time);
+
+        /// Update the length of the cable if unrolling speed is defined.
+        virtual void UpdateState();
 
     };
 

@@ -30,20 +30,20 @@ namespace frydom {
 
 
 
-        void FrANCFCableBase::InitializeLinks() {  // TODO: mettre en private
-            auto system = m_frydomCable->GetSystem();  // FIXME: il faut que le corps ou le noeud soit deja enregistre...
-
-            m_startingHinge = std::make_shared<chrono::fea::ChLinkPointFrame>();
-            auto starting_body = m_frydomCable->GetStartingNode()->GetBody()->m_chronoBody;
-
-            m_startingHinge->Initialize(m_starting_node_fea, starting_body);
-
-            m_endingHinge = std::make_shared<chrono::fea::ChLinkPointFrame>();
-            auto ending_body = m_frydomCable->GetEndingNode()->GetBody()->m_chronoBody;
-
-            m_endingHinge->Initialize(m_ending_node_fea, ending_body);
-
-        }
+//        void FrANCFCableBase::InitializeLinks() {  // TODO: mettre en private
+//            auto system = m_frydomCable->GetSystem();  // FIXME: il faut que le corps ou le noeud soit deja enregistre...
+//
+//            m_startingHinge = std::make_shared<chrono::fea::ChLinkPointFrame>();
+//            auto starting_body = m_frydomCable->GetStartingNode()->GetBody()->m_chronoBody;
+//
+//            m_startingHinge->Initialize(m_starting_node_fea, starting_body);
+//
+//            m_endingHinge = std::make_shared<chrono::fea::ChLinkPointFrame>();
+//            auto ending_body = m_frydomCable->GetEndingNode()->GetBody()->m_chronoBody;
+//
+//            m_endingHinge->Initialize(m_ending_node_fea, ending_body);
+//
+//        }
 
         void FrANCFCableBase::GenerateAssets() {
             // Assets for the cable visualisation
@@ -67,15 +67,6 @@ namespace frydom {
                 node_assets->SetZbufferHide(false);
                 ChMesh::AddAsset(node_assets);
             }
-
-        }
-
-        void FrANCFCableBase::AddToChronoSystem() {
-
-            auto system = m_frydomCable->GetSystem()->m_chronoSystem;
-
-            system->Add(m_startingHinge);
-            system->Add(m_endingHinge);
 
         }
 
@@ -165,7 +156,7 @@ namespace frydom {
 
             // Generate constraints between boundaries and bodies
             // FIXME: suivant qu'on utilise cette methode pour creer les contraintes ou qu'on specifie directement les contraintes directement sur les noeuds, on a une violation des liaisons
-            InitializeLinks();
+//            InitializeLinks();
 
             // Generate assets for the cable
             GenerateAssets();
@@ -175,7 +166,7 @@ namespace frydom {
         void FrANCFCableBase::Update(double time, bool update_assets) {
 
             chrono::fea::ChMesh::Update(time, update_assets);
-            m_frydomCable->Update();
+            m_frydomCable->Update(time);
 
         }
 
@@ -239,15 +230,9 @@ namespace frydom {
 
     }
 
-    void FrANCFCable::StepFinalize() {}
-
-    void FrANCFCable::UpdateTime(const double time) {
-        m_time_step = time - m_time;
-        m_time = time;
-    }
-
-    void FrANCFCable::Update() {
-        UpdateTime(time);
-    }
+//    void FrANCFCable::StepFinalize() {
+//
+//
+//    }
 
 } // end namespace frydom

@@ -25,11 +25,32 @@ namespace frydom {
                                      double sectionArea, double unstretchedLength, double linearDensity,
                                      FLUID_TYPE fluid) :
                                      m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
-                                     FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity) {}
+                                     FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity),
+                                     FrMidPhysicsItem() {}
 
 //    FrCatenaryLineAsset *FrCatenaryLine::GetLineAsset() const {
 //        return m_lineAsset.get();
 //    }
+
+    void FrCatenaryLine::SetAssetElements(unsigned int n) {
+        m_nbDrawnElements = n;
+    }
+
+    unsigned int FrCatenaryLine::GetAssetElements() {
+        return m_nbDrawnElements;
+    }
+
+    void FrCatenaryLine::SetSolverTolerance(double tol) {
+        m_tolerance = tol;
+    }
+
+    void FrCatenaryLine::SetSolverMaxIter(unsigned int maxiter) {
+        m_itermax = maxiter;
+    }
+
+    void FrCatenaryLine::SetSolverInitialRelaxFactor(double relax) {
+        m_relax = relax;
+    }
 
     void FrCatenaryLine::guess_tension() {
 
@@ -192,18 +213,6 @@ namespace frydom {
         return jac;
     }
 
-    void FrCatenaryLine::SetSolverTolerance(double tol) {
-        m_tolerance = tol;
-    }
-
-    void FrCatenaryLine::SetSolverMaxIter(unsigned int maxiter) {
-        m_itermax = maxiter;
-    }
-
-    void FrCatenaryLine::SetSolverInitialRelaxFactor(double relax) {
-        m_relax = relax;
-    }
-
     void FrCatenaryLine::solve() {
 
         auto res = get_residual(NWU);
@@ -280,37 +289,22 @@ namespace frydom {
             auto lineAsset = std::make_shared<FrCatenaryLineAsset>(this);
             lineAsset->Initialize();
             AddAsset(lineAsset);
-//            m_lineAsset = std::make_unique<FrCatenaryLineAsset>(this);
-//            m_lineAsset->Initialize();
+
         }
     }
 
     void FrCatenaryLine::Update(double time) {
+
         UpdateTime(time);
         UpdateState();
-//        if (is_lineAsset) {
-//            m_lineAsset->Update();
-//        }
-    }
 
-    void FrCatenaryLine::UpdateTime(double time) {
-        m_time_step = time - m_time;
-        m_time = time;
     }
 
     void FrCatenaryLine::UpdateState() {
-        if (std::abs(m_unrollingSpeed) > DBL_EPSILON and std::abs(m_time_step) > DBL_EPSILON) {
-            m_cableLength += m_unrollingSpeed * m_time_step;
-        }
+
+        FrCable::UpdateState();
         solve();
-    }
 
-    void FrCatenaryLine::SetNbElements(unsigned int n) {
-        m_nbDrawnElements = n;
-    }
-
-    unsigned int FrCatenaryLine::GetNbElements() {
-        return m_nbDrawnElements;
     }
 
     void FrCatenaryLine::InitializeLog() {

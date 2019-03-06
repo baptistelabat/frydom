@@ -26,8 +26,6 @@
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
 
-#include "frydom/cable/FrANCFCable.h"
-
 
 #define DEFAULT_MAX_SPEED (float)10.
 #define DEFAULT_MAX_ROTATION_SPEED (float)(180.*DEG2RAD)
@@ -930,9 +928,6 @@ namespace frydom {
         friend void internal::FrAddedMassBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody *body) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody *body) const;
-
-
-        friend void internal::FrANCFCableBase::InitializeLinks();
 
     };
 
