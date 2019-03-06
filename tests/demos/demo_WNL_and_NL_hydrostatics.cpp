@@ -70,8 +70,8 @@ int main(int argc, char* argv[]) {
     auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
 
     // The Airy regular wave parameters are its height, period and direction.
-//    double waveHeight = 2.;
-    double waveHeight = 0.;
+    double waveHeight = 2.;
+//    double waveHeight = 0.;
     double wavePeriod = 10.;
     Direction waveDirection = Direction(SOUTH(fc));
 
@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
     // -- Hydrostatics
     // Create the linear hydrostatic force and add it to the platform
 //    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
-    auto forceHst = make_weakly_nonlinear_hydrostatic_force(hdb,platform,"Platform_GVA7500.obj");
+    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
 
     // -- Excitation
     // Create the linear excitation force and add it to the platform

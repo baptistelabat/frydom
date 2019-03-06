@@ -7,7 +7,6 @@
 
 namespace frydom {
 
-
     mathutils::MatrixMN<double> FrHydrostaticMatrixTensor::GetHydrostaticMatrix() const {
         mathutils::MatrixMN<double> tensor(3, 3);
         tensor(0, 0) = K33;
@@ -130,28 +129,19 @@ namespace frydom {
         return mat;
     }
 
-    void NonlinearHydrostatics::Load(const mesh::FrMesh& mesh) {
-
-        // This function loads the clipped mesh and computes the hydrostatic computation.
-
-        mesh::MeshClipper clipper;
-        m_clippedMesh = clipper(mesh);
-        CalcPressureIntegration();
-    }
-
-    void NonlinearHydrostatics::CalcPressureIntegration(){
+    void NonlinearHydrostatics::CalcPressureIntegration(const mesh::FrMesh& clipped_mesh){
 
         // This function performs the hydrostatic pressure integration.
 
         mesh::FrMesh::Normal Normal;
         double Pressure;
-        for (mesh::FrMesh::FaceIter f_iter = m_clippedMesh.faces_begin(); f_iter != m_clippedMesh.faces_end(); ++f_iter) {
+        for (mesh::FrMesh::FaceIter f_iter = clipped_mesh.faces_begin(); f_iter != clipped_mesh.faces_end(); ++f_iter) {
 
             // Normal.
-            Normal = m_clippedMesh.normal(*f_iter);
+            Normal = clipped_mesh.normal(*f_iter);
 
             // Pressure.
-            Pressure = m_clippedMesh.data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
+            Pressure = clipped_mesh.data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
 
             // Hydrostatic force without the term rho*g.
             m_force[0] = m_force[0] + Pressure*Normal[0];
@@ -161,7 +151,7 @@ namespace frydom {
         }
 
         // Buoyancy center.
-        VectorT<double, 3> CoB = m_clippedMesh.GetCOG(); // Center of gravity of the immersed mesh.
+        VectorT<double, 3> CoB = clipped_mesh.GetCOG(); // Center of gravity of the immersed mesh.
         m_centerOfBuoyancy[0] = CoB[0];
         m_centerOfBuoyancy[1] = CoB[1];
         m_centerOfBuoyancy[2] = CoB[2];

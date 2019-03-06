@@ -175,9 +175,6 @@ namespace frydom {
 
     private:
 
-        /// Mesh.
-        mesh::FrMesh m_clippedMesh;
-
         /// Water density.
         double m_waterDensity = 1023.;
 
@@ -200,16 +197,8 @@ namespace frydom {
                 m_waterDensity(waterDensity),
                 m_gravityAcceleration(gravityAcceleration) {}
 
-        /// This function loads the clipped mesh and computes the hydrostatic computation.
-        void Load(const mesh::FrMesh& mesh);
-
-        /// This function gives the clipped mesh.
-        mesh::FrMesh GetClippedMesh(){
-            return m_clippedMesh;
-        }
-
         /// This function performs the hydrostatic pressure integration.
-        void CalcPressureIntegration();
+        void CalcPressureIntegration(const mesh::FrMesh& clipped_mesh);
 
         /// This function gives the weakly nonlinear hydrostatic force.
         Force GetWeaklyNonlinearForce(){return m_force;};

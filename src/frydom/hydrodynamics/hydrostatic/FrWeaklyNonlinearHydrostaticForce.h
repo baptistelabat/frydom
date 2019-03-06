@@ -21,6 +21,7 @@ namespace frydom {
 
     class FrEquilibriumFrame;
     class FrBody;
+    class FrOffshoreSystem;
 
     /// This class defines the weakly nonlinear hydrostatic force applied to a hydrodynamic body.
     /// The force is computed based on the real position of the body with a linearized free surface by integeration of the hydrostatic pressure over the body mesh.
@@ -34,14 +35,23 @@ namespace frydom {
     class FrWeaklyNonlinearHydrostaticForce : public FrForce {
 
     private:
+
+        /// Offshore system.
+        FrOffshoreSystem* m_system;
+
+        /// Hydrodynamic database.
         std::shared_ptr<FrHydroDB> m_HDB;
-        FrEquilibriumFrame* m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
+
+        /// Input mesh file.
         std::string meshfilename; // Input mesh file.
 
     public:
 
         /// Constructor.
-        FrWeaklyNonlinearHydrostaticForce(std::shared_ptr<FrHydroDB> HDB, std::string meshfile) : m_HDB(HDB) {meshfilename = meshfile; }
+        FrWeaklyNonlinearHydrostaticForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroDB> HDB, std::string meshfile) : m_HDB(HDB) {
+            m_system = system;
+            meshfilename = meshfile;
+        }
 
         /// Update weakly nonlinear hydrostatic force
         /// \param time Current time of the simulation from begining
@@ -56,7 +66,7 @@ namespace frydom {
 
     /// This subroutine reads the modes of a body.
     std::shared_ptr<FrWeaklyNonlinearHydrostaticForce>
-    make_weakly_nonlinear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile);
+    make_weakly_nonlinear_hydrostatic_force(FrOffshoreSystem* system,std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile);
 
 }  // end namespace frydom
 

@@ -240,7 +240,6 @@ namespace frydom {
 
             /// Clipping surface, by default the plane z = 0.
             std::shared_ptr<ClippingSurface> m_clippingSurface = std::make_shared<ClippingPlane>(0.);
-//            std::shared_ptr<ClippingSurface> m_clippingSurface = std::make_shared<ClippingPlane>(3.);
 //            std::shared_ptr<ClippingSurface> m_clippingSurface = std::make_shared<ClippingWaveSurface>(0.);
 
             double m_Threshold = 1e-4;
@@ -257,9 +256,10 @@ namespace frydom {
 
             MeshClipper() = default;
 
+            /// This function gives the clipping surface.
             std::shared_ptr<ClippingSurface> GetClippingSurface() { return m_clippingSurface; }
 
-            /// This function initializes the MeshClipper object from an input mesh.
+            /// This function initializes the MeshClipper object from an input mesh and performs the clipping.
             FrMesh &operator()(const FrMesh &mesh) {
 
                 // Cleaning of the initial mesh structure.
@@ -286,8 +286,14 @@ namespace frydom {
                 m_ProjectionThresholdRatio = projectionThresholdRatio;
             }
 
-            void SetPlaneClippingSurface(const double &meanHeight = 0.) {
+            /// This function sets a clipping plane.
+            ClippingPlane SetPlaneClippingSurface(const double &meanHeight = 0.) {
                 m_clippingSurface = std::make_unique<ClippingPlane>(meanHeight);
+            }
+
+            /// This function sets a clipping wave surface.
+            ClippingWaveSurface SetWaveClippingSurface(const double &meanHeight = 0.) {
+                m_clippingSurface = std::make_unique<ClippingWaveSurface>(meanHeight);
             }
 
         private:

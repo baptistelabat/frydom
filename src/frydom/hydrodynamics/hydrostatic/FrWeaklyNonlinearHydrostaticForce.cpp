@@ -19,6 +19,11 @@
 #include "frydom/mesh/FrMeshClipper.h"
 #include "frydom/mesh/FrHydrostaticsProperties.h"
 
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
+#include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
+
 namespace frydom {
 
     void FrWeaklyNonlinearHydrostaticForce::Initialize() {
@@ -27,9 +32,6 @@ namespace frydom {
 
         // Initialization of the parent class.
         FrForce::Initialize();
-
-        // Equilibrium frame of the body.
-        m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
 
     }
 
@@ -58,12 +60,23 @@ namespace frydom {
         // Rotation.
         mesh.Rotate(phi,theta,psi);
 
-        // Clipping and computation of the hydrostatic force.
+        // Clipper.
+        mesh::MeshClipper clipper;
+
+        // Tidal height.
+        double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
+
+        // Clipping surface.
+        mesh::ClippingPlane clippingSurface = clipper.SetPlaneClippingSurface(TidalHeight);
+
+        // Clipping.
+        mesh::FrMesh mesh_clipped = clipper(mesh);
+
+        // Computation of the hydrostatic force.
         NonlinearHydrostatics NLhydrostatics(m_HDB->GetWaterDensity(),m_HDB->GetGravityAcc()); // Creation of the NonlinearHydrostatics structure.
-        NLhydrostatics.Load(mesh); // The mesh clipping and the hydrostatic computation are performed here.
+        NLhydrostatics.CalcPressureIntegration(mesh_clipped);
 
         // Writting the clipped mesh in an output file.
-        mesh::FrMesh mesh_clipped = NLhydrostatics.GetClippedMesh();
         mesh_clipped.Write("Mesh_clipped.obj");
 
         // Setting the weakly nonlinear loads in world.
@@ -77,12 +90,12 @@ namespace frydom {
     }
 
     std::shared_ptr<FrWeaklyNonlinearHydrostaticForce>
-    make_weakly_nonlinear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile){
+    make_weakly_nonlinear_hydrostatic_force(FrOffshoreSystem *system, std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile){
 
         // This function creates the weakly nonlinear hydrostatic force object for computing the weakly nonlinear hydrostatic loads.
 
         // Construction of the hydrostatic force object from the HDB.
-        auto forceHst = std::make_shared<FrWeaklyNonlinearHydrostaticForce>(HDB,meshfile);
+        auto forceHst = std::make_shared<FrWeaklyNonlinearHydrostaticForce>(system,HDB,meshfile);
 
         // Add the hydrostatic force object as an external force to the body.
         body->AddExternalForce(forceHst);
