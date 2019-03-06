@@ -1,7 +1,8 @@
-.. body_rotations:
+.. _body_rotations:
 
-définition des angles de rotation utilisé : Euler, Cardan
+..
+    définition des angles de rotation utilisés : Euler, Cardan
 
-conventions de rotations : sens.
+    décrire les conventions de rotations : sens.
 
-ordre d'application des rotations
+    décrirer l'ordre d'application des rotations

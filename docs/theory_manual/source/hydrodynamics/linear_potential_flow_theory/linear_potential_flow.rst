@@ -7,7 +7,7 @@ The linear potential flow theory is a common approach for seakeeping analysis of
 following assumptions: incompressible and irrotational flow and non viscous fluid.
 
 By assuming small amplitude motions of the body, the position of the body is linearized around an equilibrium position,
-defined in FRyDoM by the  :any:`equilibrium frame <frames_of_reference>`.
+defined in FRyDoM by the  :any:`equilibrium frame <equilibrium_frame>`.
 For offshore structure with no forward speed, this position is the position of the body at the equilibrium state.
 For offshore structure with non-zero forward speed, the equilibrium frame follows the constant steady velocity of the structure.
 :any:`The following figure<fig_equilibrium_frame>` represents the instantaneous position of the body and the equilibrium frame position.

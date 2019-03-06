@@ -7,7 +7,7 @@ Multibody dynamics
     :maxdepth: 1
 
     frame
-    body
+    body/body
     physics_item
     link/link
     motors/motors

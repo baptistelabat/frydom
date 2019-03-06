@@ -23,8 +23,6 @@ The surge and sway forces are calculated in the body reference frame and project
 reference frame afterwards, so that we do not get any vertical components. The yaw moment is also projected, so that
 the moment acts about the vertical direction only.
 
-.. todo:: add some figures to illustrate the flow velocity, etc.
-
 .. figure:: _static/flow_velocity.png
     :align: center
     :alt: Relative flow velocity
@@ -32,7 +30,7 @@ the moment acts about the vertical direction only.
     Relative flow velocity, past the body
 
 
-The computations are done within FRyDoM in NWU and GOT conventions, however you can give polar coefficient in NED or NWU
+The computations are done within FRyDoM in NWU and GOT conventions, however you can give polar coefficients in NED or NWU
 and in GOTO or COMEFROM, convention.
 
 

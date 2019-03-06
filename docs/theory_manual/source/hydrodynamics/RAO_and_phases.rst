@@ -1,2 +1,4 @@
-.. RAO_and_phases
+.. _RAO_and_phases
 
+..
+    Définition des phases utilisées

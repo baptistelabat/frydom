@@ -19,6 +19,12 @@ matrix. Note that a frame has no reference to its parent frame.
 .. todo: .. images: _static/frame_definition.png
 
 
+The world reference frame is the arbitrary frame of reference of the simulation. Its geographic origin can be set up,
+however it's orientation is mostly defined : the x axis is always pointing North. The 2 available :any:`frame conventions <convention>`
+are indeed North-West-Up or North-East-Down.
+
+
+
 .. In order to have a fully explicit frame notation, we need to specify the parent frame. We then chose the following notation: :math:`^j\mathbb{F}_i` corresponds to the frame :math:`i`, expressed in the frame :math:`j`. It can also represent the frame transformation from frame :math:`i` to frame :math:`j`. In the same manner, :math:`^iv_j` is the velocity of frame :math:`i`, expressed in :math:`j`. It can be expressed in
 
 
