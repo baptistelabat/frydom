@@ -50,4 +50,8 @@ namespace frydom {
 
     }
 
+    void FrForceAsset::SetSize(double size) {
+        m_CharacteristicLength = size;
+    }
+
 } // end namespace frydom

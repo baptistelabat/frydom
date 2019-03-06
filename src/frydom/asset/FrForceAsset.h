@@ -48,6 +48,8 @@ namespace frydom {
 
         explicit FrForceAsset(FrForce* force);
 
+        void SetSize(double size);
+
         void Initialize() override;
 
         void StepFinalize() override;
