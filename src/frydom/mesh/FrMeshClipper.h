@@ -7,6 +7,7 @@
 
 #include <memory>
 #include "FrMesh.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 
 namespace frydom {
 
@@ -94,37 +95,37 @@ namespace frydom {
         * \class ClippingAiryWavesSurface
         * \brief Class used when the clipping incident wave field is an Airy wave.
         */
-        class ClippingAiryWavesSurface : ClippingSurface {
-
-        private:
-            // TODO Garder le FrOffshoreSystem en pointeur pour acceder a l'evironnement
-
-        public:
-
-            /// Constructor.
-            ClippingAiryWavesSurface() = default;
-
-            /// Constructor.
-            explicit ClippingAiryWavesSurface(const double &meanHeight) : ClippingSurface(meanHeight) {}
-
-            /// This function gives the wave elevation of the incident airy wave.
-            double GetElevation(const double &x, const double &y) const override {
-                // TODO
-                return 0.;
-            }
-
-            /// This function gives the distance to the incident Airy wave.
-            inline virtual double GetDistance(const FrMesh::Point &point) const {
-                // TODO
-                return 0.;
-            }
-
-            /// This function is probably useless.
-            FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) override {
-
-            }
-
-        };
+//        class ClippingAiryWavesSurface : ClippingSurface {
+//
+//        private:
+//            // TODO Garder le FrOffshoreSystem en pointeur pour acceder a l'evironnement
+//
+//        public:
+//
+//            /// Constructor.
+//            ClippingAiryWavesSurface() = default;
+//
+//            /// Constructor.
+//            explicit ClippingAiryWavesSurface(const double &meanHeight) : ClippingSurface(meanHeight) {}
+//
+//            /// This function gives the wave elevation of the incident airy wave.
+//            double GetElevation(const double &x, const double &y) const override {
+//                // TODO
+//                return 0.;
+//            }
+//
+//            /// This function gives the distance to the incident Airy wave.
+//            inline virtual double GetDistance(const FrMesh::Point &point) const {
+//                // TODO
+//                return 0.;
+//            }
+//
+//            /// This function is probably useless.
+//            FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) override {
+//
+//            }
+//
+//        };
 
         /**
         * \class ClippingWavesSurface
@@ -133,7 +134,9 @@ namespace frydom {
         class ClippingWaveSurface : public ClippingSurface {
 
         private:
-            // Nothing
+
+            /// FreeSurface.
+            FrFreeSurface* m_freesurface;
 
         public:
 
@@ -141,19 +144,14 @@ namespace frydom {
             ClippingWaveSurface() = default;
 
             /// Constructor.
-            explicit ClippingWaveSurface(const double &meanHeight) : ClippingSurface(meanHeight) {}
+            explicit ClippingWaveSurface(const double &meanHeight, FrFreeSurface* FreeSurface) : ClippingSurface(meanHeight) {
+                m_freesurface = FreeSurface;
+            }
 
             /// This function gives the wave elevation of the incident wave field.
             double GetElevation(const double &x, const double &y) const override {
 
-                double A = 0.5;
-                double k = 2*3.14159/10;
-                double w = std::sqrt(k*9.81);
-                double beta = 3.14159/2;
-                double phi = 0.;
-                double t = 0;
-
-                return A*std::sin(k*(x*std::cos(beta)+y*std::sin(beta))-w*t+phi) - m_meanHeight;
+                return m_freesurface->GetPosition(x,y,NWU);
             }
 
             /// This function gives the distance to the incident Airy wave.
@@ -292,8 +290,8 @@ namespace frydom {
             }
 
             /// This function sets a clipping wave surface.
-            ClippingWaveSurface SetWaveClippingSurface(const double &meanHeight = 0.) {
-                m_clippingSurface = std::make_unique<ClippingWaveSurface>(meanHeight);
+            ClippingWaveSurface SetWaveClippingSurface(const double &meanHeight, FrFreeSurface *FreeSurface) {
+                m_clippingSurface = std::make_unique<ClippingWaveSurface>(meanHeight,FreeSurface);
             }
 
         private:

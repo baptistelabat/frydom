@@ -5,6 +5,7 @@ set(SRC_FILES
         FrLinearHydrostaticForce.cpp
         FrLinearHydrostaticStiffnessMatrix.cpp
 	FrWeaklyNonlinearHydrostaticForce.cpp
+        FrNonlinearHydrostaticForce.cpp
         )
 
 set(FRYDOM_HYDROSTATIC_SOURCES "")

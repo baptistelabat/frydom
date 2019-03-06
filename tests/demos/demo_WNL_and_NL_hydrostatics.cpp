@@ -70,8 +70,8 @@ int main(int argc, char* argv[]) {
     auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
 
     // The Airy regular wave parameters are its height, period and direction.
-    double waveHeight = 2.;
-//    double waveHeight = 0.;
+//    double waveHeight = 2.;
+    double waveHeight = 0.;
     double wavePeriod = 10.;
     Direction waveDirection = Direction(SOUTH(fc));
 
@@ -90,7 +90,8 @@ int main(int argc, char* argv[]) {
 
     // Inertia Tensor
 //    double Mass              = 3.22114e7;
-    double Mass = 68321.544*1025;
+//    double Mass = 68321.544*1025; // Maillage visu.
+    double Mass = 53412.462*1025; // Maillage Nemoh.
     Position platformCoG(0.22, 0.22, 2.92);
     FrFrame platformCoGFrame(platformCoG, FrRotation(), NWU);
 
@@ -118,7 +119,9 @@ int main(int argc, char* argv[]) {
     // -- Hydrostatics
     // Create the linear hydrostatic force and add it to the platform
 //    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
-    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
+//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
+    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500.obj");
+//    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
 
     // -- Excitation
     // Create the linear excitation force and add it to the platform
@@ -145,7 +148,8 @@ int main(int argc, char* argv[]) {
     // ------------------ Run with Irrlicht ------------------ //
 
     // You can change the dynamical simulation time step using.
-    system.SetTimeStep(0.01);
+//    system.SetTimeStep(0.01);
+    system.SetTimeStep(0.1);
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
