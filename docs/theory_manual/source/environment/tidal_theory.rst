@@ -1,6 +1,7 @@
 .. tidal_theory:
 
-Tidal theory
-============
+..
+    Tidal theory
+    ============
 
-In construction
+    In construction

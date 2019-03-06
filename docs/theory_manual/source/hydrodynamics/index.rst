@@ -4,10 +4,10 @@ Hydrodynamics
 *************
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     body_rotations
-    linear_potential_flow_theory/frames_of_reference
+    linear_potential_flow_theory/equilibrium_frame
     linear_potential_flow_theory/linear_potential_flow
     linear_potential_flow_theory/impulse_response_and_convolution
     morison

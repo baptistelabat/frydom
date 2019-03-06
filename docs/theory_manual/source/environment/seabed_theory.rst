@@ -1,6 +1,7 @@
 .. seabed_theory:
 
-Seabed theory
-=============
+..
+    Seabed theory
+    =============
 
-In construction
+    In construction

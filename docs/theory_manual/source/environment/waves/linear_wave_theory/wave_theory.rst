@@ -1,6 +1,7 @@
-.. wave_theory:
+.. _wave_theory:
 
-Wave theory
+
+Airy models
 ~~~~~~~~~~~
 
 Two linear wave field models are available, based on the Airy approximation : the regular and irregular wave models.

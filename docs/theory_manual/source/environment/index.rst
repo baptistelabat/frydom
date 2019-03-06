@@ -7,11 +7,11 @@ The environment model contains all information about the surrounding of the stud
 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
 
     flow_field_model
     fluid_physical_properties
-    waves/index
+    waves/linear_wave_theory/index
     chart_datums
     tidal_theory
     seabed_theory

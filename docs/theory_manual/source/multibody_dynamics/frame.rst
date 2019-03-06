@@ -20,7 +20,7 @@ matrix. Note that a frame has no reference to its parent frame.
 
 
 The world reference frame is the arbitrary frame of reference of the simulation. Its geographic origin can be set up,
-however it's orientation is mostly defined : the x axis is always pointing North. The 2 available :any:`frame conventions <convention>`
+however it's orientation is mostly defined : the x axis is always pointing North. The 2 available :any:`frame conventions <conventions>`
 are indeed North-West-Up or North-East-Down.
 
 

@@ -7,7 +7,7 @@ Analytic catenary
 =================
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     analytic_catenary
 
