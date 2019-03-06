@@ -232,11 +232,9 @@ namespace frydom {
     }
 
     void FrNode::StepFinalize() {
-        
-        
 
-//        m_message->Serialize();
-//        m_message->Send();
+        // Send the message to the logging system
+        FrObject::SendLog();
 
     }
 
@@ -274,6 +272,12 @@ namespace frydom {
 
     }
 
-    void FrNode::ShowAsset(bool showAsset) {m_showAsset = showAsset;}
+    void FrNode::ShowAsset(bool showAsset) {
+        m_showAsset = showAsset;
+    }
+
+    FrNodeAsset *FrNode::GetAsset() {
+        return m_asset.get();
+    }
 
 }  // end namespace frydom
