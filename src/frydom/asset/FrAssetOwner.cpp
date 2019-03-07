@@ -25,14 +25,6 @@ namespace frydom{
         GetChronoItem()->GetChTime();
     }
 
-    void FrAssetOwner::SetName(const char *name) {
-        GetChronoItem()->SetName(name);
-    }
-
-    const char* FrAssetOwner::GetName() const {
-        return GetChronoItem()->GetName();
-    }
-
     void FrAssetOwner::AddBoxShape(double xSize, double ySize, double zSize) {
         auto shape = std::make_shared<chrono::ChBoxShape>();
         shape->GetBoxGeometry().SetLengths(chrono::ChVector<double>(xSize, ySize, zSize));
