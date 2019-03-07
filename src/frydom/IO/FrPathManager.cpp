@@ -11,6 +11,7 @@
 #include <cppfs/system.h>
 
 #include <fmt/format.h>
+#include <iomanip>
 
 #include "yaml-cpp/yaml.h"
 
@@ -65,8 +66,11 @@ namespace frydom{
         if (!workspaceDir.isDirectory()) workspaceDir.createDirectory();
 
         // Create the run directory
-        // TODO add the date to the run directory name, once TimeZone is refactored (need TimeZone to be brought back from Environment to the system?)
-        m_runPath = m_outputPath.resolve(fmt::format("run_{}/",system->GetShortenUUID()));
+        auto tt = std::chrono::system_clock::to_time_t ( std::chrono::system_clock::now() );
+        std::stringstream ss;
+        ss << std::put_time(std::localtime(&tt), "%Y-%m-%d_%HH%M");
+
+        m_runPath = m_outputPath.resolve(fmt::format("{}_{}",system->GetName(),ss.str()));
         cppfs::FileHandle runDir = cppfs::fs::open(m_runPath.path());
         runDir.createDirectory();
 

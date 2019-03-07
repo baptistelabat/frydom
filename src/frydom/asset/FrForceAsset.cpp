@@ -43,11 +43,15 @@ namespace frydom {
         auto GlyphAsset = dynamic_cast<chrono::ChGlyphs*> (m_chronoAsset->GetAssetN(0).get());
 
         // Here, the asset point is automatically following the motion but the force has to be updated
-        auto point = internal::Vector3dToChVector(m_force->GetForceApplicationPointInWorld(NWU));
-        auto forcevect = internal::Vector3dToChVector(m_force->GetForceInWorld(NWU)) * m_CharacteristicLength;
+        auto point = internal::Vector3dToChVector(m_force->GetForceApplicationPointInBody(NWU));
+        auto forcevect = internal::Vector3dToChVector(m_force->GetForceInBody(NWU)) * m_CharacteristicLength;
 
         GlyphAsset->SetGlyphVector(0, point, forcevect, m_symbolscolor);
 
+    }
+
+    void FrForceAsset::SetSize(double size) {
+        m_CharacteristicLength = size;
     }
 
 } // end namespace frydom

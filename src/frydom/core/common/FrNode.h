@@ -41,6 +41,7 @@ namespace frydom {
 
     // Forward declarations
     class FrBody;
+    class FrNodeAsset;
 
     /**
      * \class FrNode
@@ -53,6 +54,10 @@ namespace frydom {
         FrBody* m_body;                                    ///< Pointer to the body containing this node
         std::shared_ptr<internal::FrMarker> m_chronoMarker;   ///< Chrono class for nodes/marker.
 
+        // Asset for a node
+        bool m_showAsset;
+        std::shared_ptr<FrNodeAsset> m_asset;
+
     public:
 
         /// Default Constructor
@@ -63,6 +68,11 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "Node"; }
 
+        /// Set if an asset is to be displayed
+        /// \param showAsset true if a ForceAsset is to be displayed
+        void ShowAsset(bool showAsset);;
+
+        FrNodeAsset* GetAsset();
 
         /// Set node position and direction axis, with respect to body reference frame
         /// \param pos relative position of the frame node with respect to body reference frame

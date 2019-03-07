@@ -14,6 +14,7 @@
 #include <cppfs/FilePath.h>
 
 #include "FrNode.h"
+#include "frydom/asset/FrNodeAsset.h"
 #include "frydom/core/body/FrBody.h"
 
 
@@ -220,12 +221,18 @@ namespace frydom {
 
     void FrNode::Initialize() {
         m_chronoMarker->UpdateState();
+
+        if (m_showAsset) {
+            m_asset->Initialize();
+            m_body->AddAsset(m_asset);
+        }
+
     }
 
     void FrNode::StepFinalize() {
 
-//        m_message->Serialize();
-//        m_message->Send();
+        // Send the message to the logging system
+        FrObject::SendLog();
 
     }
 
@@ -261,6 +268,18 @@ namespace frydom {
 
         }
 
+    }
+
+    void FrNode::ShowAsset(bool showAsset) {
+        m_showAsset = showAsset;
+        if (showAsset) {
+            assert(m_asset == nullptr);
+            m_asset = std::make_shared<FrNodeAsset>(this);
+        }
+    }
+
+    FrNodeAsset *FrNode::GetAsset() {
+        return m_asset.get();
     }
 
 }  // end namespace frydom

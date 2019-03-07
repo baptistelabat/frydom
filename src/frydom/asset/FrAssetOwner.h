@@ -37,14 +37,6 @@ namespace frydom {
         /// \return simulation time of this object
         double GetTime();
 
-        /// Set the body name
-        /// \param name body name
-        void SetName(const char name[]);
-
-        /// Get the body name
-        /// \return body name
-        const char* GetName() const;
-
         /// Update the assets
         void UpdateAsset();
 
