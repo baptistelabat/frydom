@@ -36,6 +36,7 @@ namespace frydom {
 
     private:
         std::string m_UUID;
+        std::string m_name;
 
     protected:
 
@@ -64,6 +65,16 @@ namespace frydom {
         std::string GetShortenUUID() const { return m_UUID.substr(0,5); };
 
         virtual std::string GetTypeName() const = 0;
+
+        /// Gets the name of the object as C Ascii null-terminated string -for reading only!
+        const char* GetName() const { return m_name.c_str(); }
+        /// Sets the name of this object, as ascii string
+        void SetName(const char myname[]) { m_name = myname; }
+
+        /// Gets the name of the object as C Ascii null-terminated string.
+        std::string GetNameString() const { return m_name; }
+        /// Sets the name of this object, as std::string
+        void SetNameString(const std::string& myname) { m_name = myname; }
 
         /// Base method for Initialization of FryDoM objects
         ///

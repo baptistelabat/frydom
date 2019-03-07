@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
-
+    system.SetName("demo_Morison");
 
     // ------------------ Wave Field ------------------ //
 

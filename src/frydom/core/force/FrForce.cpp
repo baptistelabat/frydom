@@ -367,5 +367,9 @@ namespace frydom{
         return m_body;
     }
 
+    FrForceAsset *FrForce::GetAsset() {
+        return m_asset.get();
+    }
+
 
 }  // end namespace frydom

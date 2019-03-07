@@ -125,6 +125,10 @@ namespace frydom {
         /// \param isAsset true if a ForceAsset is to be displayed
         void ShowAsset(bool isAsset);
 
+        /// Get the asset related to the force
+        /// \return force asset
+        FrForceAsset* GetAsset();
+
         // Force Limits
 
         /// Define the maximum force amplitude. If the force amplitude is higher to this value
