@@ -68,7 +68,7 @@ namespace frydom{
         // Create the run directory
         auto tt = std::chrono::system_clock::to_time_t ( std::chrono::system_clock::now() );
         std::stringstream ss;
-        ss << std::put_time(std::localtime(&tt), "%Y-%m-%d_%H:%M");
+        ss << std::put_time(std::localtime(&tt), "%Y-%m-%d_%HH%M");
 
         m_runPath = m_outputPath.resolve(fmt::format("{}_{}",system->GetName(),ss.str()));
         cppfs::FileHandle runDir = cppfs::fs::open(m_runPath.path());
