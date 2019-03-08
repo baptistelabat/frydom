@@ -7,6 +7,7 @@ set(REFACTORING_TESTS
         test_radiation_model
         how_to_cppfs
         test_logging
+        test_ANCFCable
         )
 
 #include(Add_matplotlib-cpp)

@@ -8,6 +8,7 @@
 #include "FrCable.h"
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/common/FrFEAMesh.h"
+#include "frydom/core/FrOffshoreSystem.h"
 
 #include <chrono/fea/ChMesh.h>
 //#include <chrono/fea/ChNodeFEAxyzD.h>
@@ -38,11 +39,13 @@ namespace frydom {
             std::shared_ptr<chrono::fea::ChNodeFEAxyzD> m_ending_node_fea;
 
             // TODO Passer en FrLink? générer les links entre FEAMesh et bodies en dehors de FEAMesh
-//            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_startingHinge;
-//            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_endingHinge;
+            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_startingHinge;
+            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_endingHinge;
 
             std::shared_ptr<chrono::fea::ChBeamSectionCable> m_section;
             FrANCFCable* m_frydomCable;
+
+            FrANCFCableBase(FrANCFCable* cable);
 
             /// Initialize the cable
             void Initialize();
@@ -52,7 +55,7 @@ namespace frydom {
 
             /// Initialize the links between the cable and the bodies
             // TODO : générer les links entre FEAMesh et bodies à l'extérieur.
-//            void InitializeLinks();
+            void InitializeLinks();
 
             /// Generate assets for the cable
             void GenerateAssets();
@@ -95,7 +98,9 @@ namespace frydom {
                     double cableLength,
                     double youngModulus,
                     double sectionArea,
-                    double linearDensity);
+                    double linearDensity,
+                    double rayleighDamping,
+                    unsigned int nbElements);
 
         /// Get the type name of this object
         /// \return type name of this object
@@ -124,17 +129,17 @@ namespace frydom {
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)
         /// \return inside line tension
-        virtual Force GetTension(double s, FRAME_CONVENTION fc) const = 0;
+        Force GetTension(double s, FRAME_CONVENTION fc) const override {};
 
         /// Get the line position at lagrangian coordinate s
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)
         /// \return line position
-        virtual Position GetAbsPosition(double s, FRAME_CONVENTION fc) const = 0;
+        Position GetAbsPosition(double s, FRAME_CONVENTION fc) const override {};
 
         /// Get the stretched length of the cable
         /// \return stretched length
-        virtual double GetStretchedLength() const = 0;
+        double GetStretchedLength() const override {};
 
 
         //
@@ -142,7 +147,13 @@ namespace frydom {
         /// Initialize the cable with given data
         void Initialize() override;
 
+        void Update(double time) override {};
+
+        void InitializeLog() override {};
+
 //        void StepFinalize() override;
+
+        friend void FrOffshoreSystem::AddANCFCable(std::shared_ptr<FrANCFCable>);
 
     };
 
