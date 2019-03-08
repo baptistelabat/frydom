@@ -40,7 +40,7 @@ Airy irregular wave model
 -------------------------
 
 The Airy irregular wave is a linear superposition of Airy regular waves of different wave circular frequency :math:`\omega_m` and
-direction :math:`\theta_n`, with random wave phases :math:`\Phi_{mn}`.
+direction :math:`\theta_n`, with random or specified wave phases :math:`\Phi_{mn}`.
 
 .. math::
     \eta(x,y,t) = \sum_m \sum_n \Im(A_{mn} \exp(jk_m\bar{x}_n - j\omega_m t + \Phi_{mn}))

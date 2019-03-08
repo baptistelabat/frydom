@@ -20,13 +20,13 @@ Frames of reference
 Several frames of references can be used when referring to bodies.
 
 
-
+.. TODO
 .. _fig_reference_frames:
-.. figure:: _static/equilibrium_frame.png
+.. figure:: _static/todo.png
     :align: center
     :alt: Frames of reference on a body
 
-    Representation of the body reference frame (white) and COG reference frame (grey)
+    Representation of the body and COG reference frames
 
 
 Body reference frame
@@ -134,5 +134,25 @@ References
 .. [DIEBEL] Diebel, J., Representing Attitude: Euler Angles, Unit Quaternions, and Rotation Vectors, 2006, Standford University, https://www.astro.rug.nl/software/kapteyn/_downloads/attitude.pdf
 
 
+Connections to components
+-------------------------
+
+Bodies can be connected using :any:`links <links>`, :any:`motors <motors>` or :any:`cables <cables>`. To position bodies
+and their components, FRyDoM relies on nodes, which posses their own reference frame, and defined relatively to the body frame.
+
+
+Nodes
+~~~~~
+
+..
+    Node descriptions
+
+Degrees of freedom
+~~~~~~~~~~~~~~~~~
+
+Body's degrees of frydom can be restricted or set free.
+
+..
+    a décrire : world body, DOF Mask, etc...
 
 

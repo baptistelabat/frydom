@@ -9,7 +9,7 @@ Multibody dynamics
     frame
     body/body
     physics_item
-    link/link
+    links/links
     motors/motors
     constraint_solver
     time_stepper
