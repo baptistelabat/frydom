@@ -76,3 +76,63 @@ where, for :math:`\mathbf{OG} = \begin{bmatrix} a \\ b \\ c \end{bmatrix}`:
 .. math::
     \mathbf{I}(m,\mathbf{OG}) = m \begin{bmatrix} b^2 + c^2 & -ab & -ac\\ -ab & a^2 + c^2 & -bc \\ -ac & -bc & a^2 + b^2 \end{bmatrix}
 
+
+
+Rotations
+---------
+
+FRyDoM internal body dynamics is based on the use of quaternion to avoid gimbal lock. However FRyDoM allows users to work
+with different rotation formats, including quaternions and Euler angles.
+
+The direction of the rotation (positive or negative) is given by the direct definition of the frames of reference.
+A :math:`\pi /2`  positive rotation around z axis transforms the x axis into y axis.
+
+Unit quaternions
+~~~~~~~~~~~~~~~~
+
+
+.. définition des unit quaternions
+
+Euler angles
+~~~~~~~~~~~~
+
+The Euler angles are a combination of three rotation angles used to represent any rotation or the orientation of a frame
+relatively to another. These angles are elemental rotations around the axis of a frame of reference. They are usually
+called :math:`(\phi,\theta,\psi)` but different sequences exists.
+
+Cardan sequence
+***************
+
+.. Euler Angle Sequence (1,2,3)
+
+The Cardan angles are denoted as yaw, pitch and roll, and correspond to the Euler sequence (1,2,3).
+It consists of three consecutive rotations, as shown in  :any:`this figure <fig_Cardan_angles>` :
+
+- first rotation of an angle :math:`\psi` around the z axis,
+- second rotation of an angle :math:`\theta` around the y''' axis,
+- third rotation of an angle :math:`phi` around the x'' axis.
+
+The body reference frame x axis is defined toward the front of the body for both NED and NWU :any:`frame convention <conventions>`.
+However in NED the y axis is along the starboard while the z axis downward. In NWU, the y axis point to port and the z upward.
+The direct implications on rotation is that a positive change in :math:`\theta` corresponds to pitching downward in NWU,
+and upward in NED.
+
+
+.. _fig_Cardan_angles:
+.. figure:: _static/Cardan_angles.png
+    :align: center
+    :alt: Cardan angles
+
+    Representation of the Cardan angles, from Diebel [DIEBEL]_
+
+For more information on rotation matrix, and function thats pas Cardan angles to their corresponding unit quaternion,
+please refer to Diebel [DIEBEL]_.
+
+
+References
+
+.. [DIEBEL] Diebel, J., Representing Attitude: Euler Angles, Unit Quaternions, and Rotation Vectors, 2006, Standford University, https://www.astro.rug.nl/software/kapteyn/_downloads/attitude.pdf
+
+
+
+
