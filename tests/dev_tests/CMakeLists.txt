@@ -8,6 +8,7 @@ set(REFACTORING_TESTS
         how_to_cppfs
         test_logging
         test_ANCFCable
+        test_cable_chrono
         )
 
 #include(Add_matplotlib-cpp)
