@@ -533,10 +533,13 @@ namespace frydom {
             FrMesh::Point P0, P1;
             double x0, x1, y0, y1;
             double dx, dy, px, py, a, b;
+
             for (auto& polygon : polygonSet) {
 
                 P0 = point(from_vertex_handle(polygon[0]));
-                for (const HalfedgeHandle& heh : polygon) {
+
+                for (const HalfedgeHandle &heh : polygon) {
+
                     P1 = point(to_vertex_handle(heh));
 
                     x0 = P0[0];
@@ -552,9 +555,9 @@ namespace frydom {
                     a = x0 * x0 + x1 * x1;
                     b = y0 * y0 + y1 * y1;
 
-                    integrals.m_Int_1  += dy * px;
-                    integrals.m_Int_x  += dy * (px * px - x0 * x1);
-                    integrals.m_Int_y  += dx * (py * py - y0 * y1);
+                    integrals.m_Int_1 += dy * px;
+                    integrals.m_Int_x += dy * (px * px - x0 * x1);
+                    integrals.m_Int_y += dx * (py * py - y0 * y1);
                     integrals.m_Int_xy += dy * (py * a + 2 * px * (x0 * y0 + x1 * y1));
                     integrals.m_Int_x2 += dy * a * px;
                     integrals.m_Int_y2 += dx * b * py;
@@ -563,14 +566,15 @@ namespace frydom {
 
                 }
 
-                integrals.m_Int_1  /= 2.;
-                integrals.m_Int_x  /= 6.;
-                integrals.m_Int_y  /= -6.;
-                integrals.m_Int_xy /= 24.;
-                integrals.m_Int_x2 /= 12.;
-                integrals.m_Int_y2 /= -12.;
-
             }
+
+            integrals.m_Int_1  /= 2.;
+            integrals.m_Int_x  /= 6.;
+            integrals.m_Int_y  /= -6.;
+            integrals.m_Int_xy /= 24.;
+            integrals.m_Int_x2 /= 12.;
+            integrals.m_Int_y2 /= -12.;
+
             c_polygonSurfaceIntegrals = integrals;
         }
 
