@@ -176,8 +176,8 @@ namespace frydom {
             double nx2 = nx*nx;
             double ny2 = ny*ny;
             double nz2 = nz*nz;
-            double ctheta = std::cos(theta);
-            double stheta = std::sin(theta);
+            double ctheta = std::cos(Norm_angles);
+            double stheta = std::sin(Norm_angles);
 
             mathutils::Matrix33<double> Rot_matrix;
 
