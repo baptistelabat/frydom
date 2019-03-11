@@ -118,14 +118,14 @@ namespace frydom {
         return reporter(*this);
     }
 
-    mathutils::MatrixMN<double> FrHydrostaticsProperties::GetHydrostaticMatrix() const { // FIXME: ne fonctionne pas
+    mathutils::MatrixMN<double> FrHydrostaticsProperties::GetHydrostaticMatrix() const {
         mathutils::MatrixMN<double> mat(3, 3);
         mat(0, 0) = m_hydrostaticTensor.K33;
         mat(1, 1) = m_hydrostaticTensor.K44;
         mat(2, 2) = m_hydrostaticTensor.K55;
         mat(0, 1) = mat(1, 0) = m_hydrostaticTensor.K34;
         mat(0, 2) = mat(2, 0) = m_hydrostaticTensor.K35;
-        mat(1, 2) = mat(2, 1) = m_hydrostaticTensor.K34;
+        mat(1, 2) = mat(2, 1) = m_hydrostaticTensor.K45;
         return mat;
     }
 
