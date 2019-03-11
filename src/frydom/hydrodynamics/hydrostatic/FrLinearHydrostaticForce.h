@@ -17,13 +17,14 @@
 #include <memory>
 #include "frydom/core/force/FrForce.h"
 #include "FrLinearHydrostaticStiffnessMatrix.h"
-
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
+#include "frydom/mesh/FrHydrostaticsProperties.h"
 
 namespace frydom {
 
     // Forward declarations
     class FrEquilibriumFrame;
-    class FrHydroDB;
+//    class FrHydroDB;
 
     /// This class defines the linear hydrostatic restoring force applied to a hydrodynamic body.
     /// The force takes into account the position of the body (at COG) regards to the equilibrium frame.
@@ -43,18 +44,28 @@ namespace frydom {
         //TODO: passed the raw to shared ptr, need some modif in the mapper.
         FrEquilibriumFrame* m_equilibriumFrame;    ///< Equilibrium frame of the body to which the force is applied
 
+        /// Boolean to know if the hydrostatic matrix is obtained from the HDB5 file (true) or not (false).
+        bool HydrostaticsMatrixHDB5 = true;
+
     public:
 
         /// Constructor.
-        explicit FrLinearHydrostaticForce(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) { }
+        explicit FrLinearHydrostaticForce(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) {
+        }
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "LinearHydrostaticForce"; }
 
-        /// Get the stiffness matrix of the hydrostatic force
+        /// Get the hydrostatic stiffness matrix of the hydrostatic force
         /// \return Hydrostatic stiffness matrix
         FrLinearHydrostaticStiffnessMatrix* GetStiffnessMatrix() { return &m_stiffnessMatrix; }
+
+        /// This function sets the hydrostatic stiffness matrix.
+        void SetStiffnessMatrix(FrLinearHydrostaticStiffnessMatrix HydrostaticMatrix);
+
+        /// This function sets the hydrostatic stiffness matrix.
+        void SetStiffnessMatrix(mathutils::MatrixMN<double> HydrostaticMatrix);
 
         /// Update linear hydrostatic force
         /// \param time Current time of the simulation from begining
@@ -71,7 +82,6 @@ namespace frydom {
     /// This subroutine reads the modes of a body.
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body);
-
 
 }  // end namespace frydom
 
