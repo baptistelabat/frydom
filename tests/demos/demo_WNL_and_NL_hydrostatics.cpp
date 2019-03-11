@@ -23,6 +23,7 @@ int main(int argc, char* argv[]) {
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
+    system.SetName("Hydrostatics_platform");
 
     // --------------------------------------------------
     // Environment
@@ -90,10 +91,20 @@ int main(int argc, char* argv[]) {
 
     // Inertia Tensor
 //    double Mass              = 3.22114e7;
-//    double Mass = 68321.544*1025; // Maillage visu.
-    double Mass = 53412.462*1025; // Maillage Nemoh.
-    Position platformCoG(0.22, 0.22, 2.92);
+    double Mass = 68321.544*1025; // Maillage visu.
+//    double Mass = 53412.462*1025; // Maillage Nemoh.
+//    Position platformCoG(0.22, 0.22, 2.92);
+    Position platformCoG(0., 0., 2.92);
+//    Position platformCoG(0.01, 0.01, 2.92);
     FrFrame platformCoGFrame(platformCoG, FrRotation(), NWU);
+
+    // Dof.
+//    platform->GetDOFMask()->SetLock_X(true);
+//    platform->GetDOFMask()->SetLock_Y(true);
+//    platform->GetDOFMask()->SetLock_Z(true);
+//    platform->GetDOFMask()->SetLock_Rx(true);
+//    platform->GetDOFMask()->SetLock_Ry(true);
+//    platform->GetDOFMask()->SetLock_Rz(true);
 
     // Inertia
     double Ixx               = 2.4e11;
@@ -125,11 +136,43 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrostatics
     // Create the linear hydrostatic force and add it to the platform
+
+    // Linear hydrostatic loads with a hydrostatic stiffness matrix from the HDB5 file.
 //    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
-    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
-    forceHst->ShowAsset(true);
-//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500.obj");
+
+    // Linear hydrostatic loads with a hydrostatic stiffness matrix given in input of frydom.
+//    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
+//    FrLinearHydrostaticStiffnessMatrix HydrostaMat;
+//    HydrostaMat.SetK33(100);
+//    forceHst->SetStiffnessMatrix(HydrostaMat);
+
+    // Linear hydrostatic loads with a hydrostatic stiffness matrix computed with FrMesh.
+    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
+    FrHydrostaticsProperties hsp(1025,9.81);
+    mesh::FrMesh mesh("Platform_GVA7500.obj");
+    Vector3d<double> cog;
+    cog[0] = platformCoG[0];
+    cog[1] = platformCoG[1];
+    cog[2] = platformCoG[2];
+    hsp.Load(mesh,cog);
+    forceHst->SetStiffnessMatrix(hsp.GetHydrostaticMatrix());
+
+    // Weakly nonlinear hydrostatic loads with the input mesh used for the visualization.
+//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj"); // Visu.
+
+    // Weakly nonlinear hydrostatic loads with the input mesh used for the Nemoh computation.
+//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500.obj"); // Nemoh.
+
+    // Weakly nonlinear hydrostatic loads with the input mesh used for the Nemoh computation with a symmetry plane.
+//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500_Sym.obj"); // Nemoh sym.
+
+    // Nonlinear hydrostatic loads with the input mesh used for the visualization.
 //    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
+
+    forceHst->SetLogged(true);
+    forceHst->ShowAsset(true);
+    auto ForceHstAsset = forceHst->GetAsset();
+    ForceHstAsset->SetSize(0.00000015);
 
     // -- Excitation
     // Create the linear excitation force and add it to the platform
@@ -163,6 +206,6 @@ int main(int argc, char* argv[]) {
     // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
     // For saving snapshots of the simulation, just turn the boolean to true.
 //    system.Visualize(50.,false);
-    system.RunInViewer(100, 200, false);
+    system.RunInViewer(1000, 200, false);
 
 }

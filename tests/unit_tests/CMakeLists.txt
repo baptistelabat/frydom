@@ -65,6 +65,7 @@ configure_file(../data/Mesh_clipper/MagneViking_clip.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/searev.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/searev_clip.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/BARGE.obj . COPYONLY)
+configure_file(../data/platform/Platform_GVA7500.obj . COPY)
 
 
 
