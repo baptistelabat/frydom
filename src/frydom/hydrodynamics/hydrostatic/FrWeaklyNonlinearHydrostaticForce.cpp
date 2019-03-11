@@ -15,7 +15,6 @@
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroMapper.h"
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/body/FrBody.h"
-#include "frydom/mesh/FrMesh.h"
 #include "frydom/mesh/FrMeshClipper.h"
 #include "frydom/mesh/FrHydrostaticsProperties.h"
 
@@ -32,6 +31,16 @@ namespace frydom {
 
         // Initialization of the parent class.
         FrForce::Initialize();
+
+    }
+
+    void FrWeaklyNonlinearHydrostaticForce::InitializeLog(){
+
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("Center of buoyancy","m", fmt::format("Center of buoyancy in world reference frame in {}", c_logFrameConvention),
+                 [this]() {return GetCoB();});
+
+        FrForce::InitializeLog();
 
     }
 
@@ -70,23 +79,25 @@ namespace frydom {
         mesh::ClippingPlane clippingSurface = clipper.SetPlaneClippingSurface(TidalHeight);
 
         // Clipping.
-        mesh::FrMesh mesh_clipped = clipper(mesh);
+        m_clipped_mesh = clipper(mesh);
 
         // Computation of the hydrostatic force.
         NonlinearHydrostatics NLhydrostatics(m_HDB->GetWaterDensity(),m_HDB->GetGravityAcc()); // Creation of the NonlinearHydrostatics structure.
-        NLhydrostatics.CalcPressureIntegration(mesh_clipped);
-
-        // Writting the clipped mesh in an output file.
-        mesh_clipped.Write("Mesh_clipped.obj");
+        NLhydrostatics.CalcPressureIntegration(m_clipped_mesh);
 
         // Setting the weakly nonlinear loads in world.
         Force force = NLhydrostatics.GetWeaklyNonlinearForce();
-        this->SetForceInWorldAtPointInWorld(force,NLhydrostatics.GetCenterOfBuoyancy(),NWU); // The torque is computed from the hydrostatic force and the center of buoyancy.
+        m_CoB = NLhydrostatics.GetCenterOfBuoyancy();
+        this->SetForceInWorldAtPointInWorld(force,m_CoB,NWU); // The torque is computed from the hydrostatic force and the center of buoyancy.
 
     }
 
     void FrWeaklyNonlinearHydrostaticForce::StepFinalize() {
         FrForce::StepFinalize();
+
+        // Writting the clipped mesh in an output file.
+//        m_clipped_mesh.Write("Mesh_clipped.obj");
+
     }
 
     std::shared_ptr<FrWeaklyNonlinearHydrostaticForce>

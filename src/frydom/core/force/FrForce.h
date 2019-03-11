@@ -114,7 +114,7 @@ namespace frydom {
         // Logging
 
         /// Initialize the log
-        void InitializeLog();
+        virtual void InitializeLog();
 
         // Force Asset
         /// Inquire if a ForceAsset is displayed

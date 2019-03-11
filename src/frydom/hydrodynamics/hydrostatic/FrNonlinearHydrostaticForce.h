@@ -16,6 +16,7 @@
 #include <frydom/core/force/FrForce.h>
 #include "frydom/core/math/FrVector.h"
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
+#include "frydom/mesh/FrMesh.h"
 
 namespace frydom {
 
@@ -45,6 +46,12 @@ namespace frydom {
         /// Input mesh file.
         std::string meshfilename; // Input mesh file.
 
+        /// Center of buoyancy.
+        Position m_CoB;
+
+        /// Clipped mesh.
+        mesh::FrMesh m_clipped_mesh;
+
     public:
 
         /// Constructor.
@@ -53,6 +60,10 @@ namespace frydom {
             meshfilename = meshfile;
         }
 
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "NonlinearHydrostaticForce"; }
+
         /// Update nonlinear hydrostatic force.
         /// \param time Current time of the simulation from beginning.
         void Update(double time) override;
@@ -60,8 +71,15 @@ namespace frydom {
         /// Intialize the nonlinear hydrostatic force model.
         void Initialize() override;
 
+        /// Initialize the log
+        void InitializeLog() override;
+
         /// Methods to be applied at the end of each time steps.
         void StepFinalize() override;
+
+        /// This function gives the center of buoyancy.
+        Position GetCoB(){ return m_CoB;};
+
     };
 
     /// This function creates the nonlinear hydrostatic force object for computing the nonlinear hydrostatic loads.
