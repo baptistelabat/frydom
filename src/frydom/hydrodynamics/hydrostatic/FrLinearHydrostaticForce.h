@@ -79,9 +79,13 @@ namespace frydom {
 
     };
 
-    /// This subroutine reads the modes of a body.
+    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads from the HDB5 input file.
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body);
+
+    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads from FrMesh.
+    std::shared_ptr<FrLinearHydrostaticForce>
+    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile);
 
 }  // end namespace frydom
 

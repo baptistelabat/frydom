@@ -147,15 +147,7 @@ int main(int argc, char* argv[]) {
 //    forceHst->SetStiffnessMatrix(HydrostaMat);
 
     // Linear hydrostatic loads with a hydrostatic stiffness matrix computed with FrMesh.
-    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
-    FrHydrostaticsProperties hsp(1025,9.81);
-    mesh::FrMesh mesh("Platform_GVA7500.obj");
-    Vector3d<double> cog;
-    cog[0] = platformCoG[0];
-    cog[1] = platformCoG[1];
-    cog[2] = platformCoG[2];
-    hsp.Load(mesh,cog);
-    forceHst->SetStiffnessMatrix(hsp.GetHydrostaticMatrix());
+//    auto forceHst = make_linear_hydrostatic_force(hdb, platform,"Platform_GVA7500.obj");
 
     // Weakly nonlinear hydrostatic loads with the input mesh used for the visualization.
 //    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj"); // Visu.

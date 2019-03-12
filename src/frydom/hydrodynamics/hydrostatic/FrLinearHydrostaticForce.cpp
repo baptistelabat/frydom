@@ -104,4 +104,29 @@ namespace frydom {
         return forceHst;
     }
 
+    std::shared_ptr<FrLinearHydrostaticForce>
+    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile){
+
+        // This function creates the linear hydrostatic force object for computing the linear hydrostatic loads.
+
+        // Construction of the hydrostatic force object from the HDB.
+        auto forceHst = std::make_shared<FrLinearHydrostaticForce>(HDB);
+
+        // Add the hydrostatic force object as an external force to the body.
+        body->AddExternalForce(forceHst);
+
+        // Computation of the hydrostatic stiffness matrix.
+        FrHydrostaticsProperties hsp(HDB->GetWaterDensity(),HDB->GetGravityAcc());
+        mesh::FrMesh mesh(meshfile);
+        Position BodyCoG = body->GetCOGPositionInWorld(NWU);
+        Vector3d<double> cog;
+        cog[0] = BodyCoG[0];
+        cog[1] = BodyCoG[1];
+        cog[2] = BodyCoG[2];
+        hsp.Load(mesh,cog);
+        forceHst->SetStiffnessMatrix(hsp.GetHydrostaticMatrix());
+
+        return forceHst;
+    }
+
 }  // end namespace frydom
