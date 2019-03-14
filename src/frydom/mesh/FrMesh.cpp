@@ -202,10 +202,10 @@ namespace frydom {
                 Rot_matrix = ctheta*Identity + (1-ctheta)*Nsym + stheta*Nnosym;
 
                 // Update the positions of every node.
+                mathutils::Vector3d<double> Node_position;
                 for (VertexIter v_iter = vertices_begin(); v_iter != vertices_end(); ++v_iter) {
 
                     // x = R*x (made with the same data structure).
-                    mathutils::Vector3d<double> Node_position;
                     Node_position[0] = point(*v_iter)[0];
                     Node_position[1] = point(*v_iter)[1];
                     Node_position[2] = point(*v_iter)[2];

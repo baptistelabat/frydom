@@ -52,6 +52,9 @@ namespace frydom {
         /// Clipped mesh.
         mesh::FrMesh m_clipped_mesh;
 
+        /// Input mesh file.
+        mesh::FrMesh m_mesh_init;
+
     public:
 
         /// Constructor.

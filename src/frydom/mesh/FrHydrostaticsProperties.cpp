@@ -151,7 +151,7 @@ namespace frydom {
         }
 
         // Buoyancy center.
-        VectorT<double, 3> CoB = clipped_mesh.GetCOG(); // Center of gravity of the immersed mesh.
+        VectorT<double, 3> CoB = clipped_mesh.GetCOG(); // Center of gravity of the immersed part (clipped mesh).
         m_centerOfBuoyancy[0] = CoB[0];
         m_centerOfBuoyancy[1] = CoB[1];
         m_centerOfBuoyancy[2] = CoB[2];

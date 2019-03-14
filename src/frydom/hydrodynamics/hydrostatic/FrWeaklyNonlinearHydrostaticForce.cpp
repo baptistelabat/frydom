@@ -32,6 +32,9 @@ namespace frydom {
         // Initialization of the parent class.
         FrForce::Initialize();
 
+        // Loading the input mesh file.
+        m_mesh_init = mesh::FrMesh(meshfilename);
+
     }
 
     void FrWeaklyNonlinearHydrostaticForce::InitializeLog(){
@@ -49,25 +52,37 @@ namespace frydom {
         // This function computes the weakly nonlinear hydrostatic loads.
 
         // Loading the input mesh file.
-        mesh::FrMesh mesh(meshfilename);
+        mesh::FrMesh current_mesh = m_mesh_init;
 
         // Body linear and angular position.
         Position PositionOfBodyInWorld = m_body->GetPosition(NWU);
-        FrRotation CardanAnglesBody = m_body->GetRotation();
+        Position PositionOfCoGInWorld = m_body->GetCOGPositionInWorld(NWU);
         double phi, theta, psi;
-        CardanAnglesBody.GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+        m_body->GetRotation().GetCardanAngles_RADIANS(phi,theta,psi, NWU);
 
         // Transport of the mesh at its good position and updates its orientation.
+        VectorT<double, 3> trans;
+
+        // Translation. of -OG.
+        trans[0] = -PositionOfCoGInWorld.GetX();
+        trans[1] = -PositionOfCoGInWorld.GetY();
+        trans[2] = -PositionOfCoGInWorld.GetZ();
+        current_mesh.Translate(trans);
+
+        // Rotation around the CoG of the body.
+        current_mesh.Rotate(phi,theta,psi);
+
+        // Translation. of +OG.
+        trans[0] = PositionOfCoGInWorld.GetX();
+        trans[1] = PositionOfCoGInWorld.GetY();
+        trans[2] = PositionOfCoGInWorld.GetZ();
+        current_mesh.Translate(trans);
 
         // Translation.
-        VectorT<double, 3> trans;
         trans[0] = PositionOfBodyInWorld.GetX();
         trans[1] = PositionOfBodyInWorld.GetY();
         trans[2] = PositionOfBodyInWorld.GetZ();
-        mesh.Translate(trans);
-
-        // Rotation.
-        mesh.Rotate(phi,theta,psi);
+        current_mesh.Translate(trans);
 
         // Clipper.
         mesh::MeshClipper clipper;
@@ -79,7 +94,7 @@ namespace frydom {
         mesh::ClippingPlane clippingSurface = clipper.SetPlaneClippingSurface(TidalHeight);
 
         // Clipping.
-        m_clipped_mesh = clipper(mesh);
+        m_clipped_mesh = clipper(current_mesh);
 
         // Computation of the hydrostatic force.
         NonlinearHydrostatics NLhydrostatics(m_HDB->GetWaterDensity(),m_HDB->GetGravityAcc()); // Creation of the NonlinearHydrostatics structure.
