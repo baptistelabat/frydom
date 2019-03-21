@@ -290,7 +290,7 @@ namespace frydom{
                 ki = m_waveNumbers[ifreq];
                 aik = amplitudeTemp[ifreq];
                 phi_ik = m_wavePhases->at(idir)[ifreq];
-                elevation = aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * c_time - phi_ik) ) * NWUsign * c_ramp;
+                elevation = aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * c_time + phi_ik) ) * NWUsign * c_ramp;
                 ComplexElevation_temp.push_back(elevation);
             }
             ComplexElevation.push_back(ComplexElevation_temp);
