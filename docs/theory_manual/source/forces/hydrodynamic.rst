@@ -27,31 +27,69 @@ In time domain, the dynamic of the body due to wave loads is represented by the 
 
 where
 
-- :math:`\mathbf{x}` is the generalized position vector in respect to the equilibrium frame,
-- :math:`U` is the steady forward speed of the body,
-- :math:`\mathbf{M}` is the generalized mass matrix of the body,
-- :math:`\mathbf{A}_{\infty}` and :math:`\mathbf{B}_{\infty}` are the infinite added mass and damping coefficients,
-- :math:`\mathbf{K}` is the impulse response function,
-- :math:`\mathbf{K}_h` is the stiffness matrix,
-- :math:`\mathbf{f}_e` is the generalized wave excitation force,
+- :math:`\mathbf{x}` is the generalized position vector in respect to the equilibrium frame;
+- :math:`U` is the steady forward speed of the body;
+- :math:`\mathbf{M}` is the generalized mass matrix of the body;
+- :math:`\mathbf{A}_{\infty}` and :math:`\mathbf{B}_{\infty}` are the infinite added mass and damping coefficients;
+- :math:`\mathbf{K}` is the impulse response function;
+- :math:`\mathbf{K}_h` is the stiffness matrix;
+- :math:`\mathbf{f}_e` is the generalized wave excitation force;
 - :math:`\mathbf{f}_{ext}` is the generalized external force.
 
 Hydrostatic force
 -----------------
 
-The generalized hydrostatic static force expression for the linear approximation is given by
+Three models of computation of the hydrostatic loads are present:
+- : a linear model;
+- : a weakly nonlinear model;
+- : a fully nonlinear model.
+
+Linear model
+************
+
+The generalized hydrostatic static force expression for the linear approximation is given by:
 
 .. math::
-    \mathbf{f}_H = \mathbf{K}_h \mathbf{x}
+    \mathbf{f}_H = -\mathbf{K}_h \mathbf{x}
 
 where
 
-- :math:`\mathbf{x}` is the generalized position vector, in respect to the equilibrium frame,
+- :math:`\mathbf{x}` is the generalized position vector, with respect to the equilibrium frame;
 - :math:`\mathbf{K}_h` is the hydrostatic stiffness matrix.
 
-Stiffness coefficients for the horizontal degrees of freedom (surge, sway and yaw) are zero. The stiffness components
-for the heave, roll and pitch degrees of freedom are specified in respect to the equilibrium frame.
+The stiffness coefficients for the horizontal degrees of freedom (surge, sway and yaw) are zero. The coefficients
+for the heave, roll and pitch degrees of freedom are specified with respect to the equilibrium frame.
 
+This hydrostatic stiffness matrix is given in input of the numerical model and is constant during the simulation.
+
+Weakly nonlinear model
+**********************
+
+In the linear model, the mesh used for the computation of the hydrostatic stiffness matrix is fixed. In the weakly nonlinear model, the loads are computed by the hydrostatic pressure integration over the body mesh at its real position. The free surface is represented by the plane :math:`z = 0`. Consequently, at every evaluation of the hydrostatic loads, the body mesh is clipped by the plane :math:`z = 0`. The expression of the hydrostatic force is:
+
+.. math::
+    \mathbf{f}_H = -\iint_{S_0} \rho gz \mathbf{n} dS
+
+where
+
+- :math:`\rho` is the water density;
+- :math:`n` denotes the gravity constant;
+- :math:`\mathbf{n}` is normal vector, pointing outward the body surface;
+- :math:`S_0` representes the wetted body surface delimited by the plane `z = 0`.
+
+This force, applied at the center of buoyancy, is transport to the center of gravity to evaluate the hydrostatic torque.
+
+Fully nonlinear model
+*********************
+
+In the fully nonlinear model, the mesh used for the pressure integration is delimited by the incident wave field :math:`z = \eta_I` and not the plane :math:`z = 0` as in the weakly nonlinear model. Consequently, the expression of the hydrostatic force becomes:
+
+.. math::
+    \mathbf{f}_H = -\iint_{S_I} \rho gz \mathbf{n} dS
+
+where :math:`S_I` is the wetted body surface delimited by the incident wave field `z = \eta_I`.
+
+The computation of the hydrostatic torque follows the same principle as in the weakly nonlinear model.
 
 Excitation force
 ----------------
@@ -82,8 +120,8 @@ The generalized radiation force, given by the linear approximation, is:
 
 where
 
-- :math:`\mathbf{x}` is the generalized position vector, in respect to the equilibrium frame,
-- :math:`\mathbf{A}_{\infty} (U)` and :math:`\mathbf{B}_{\infty} (U)` are the infinite added mass and damping coefficient,
+- :math:`\mathbf{x}` is the generalized position vector, in respect to the equilibrium frame;
+- :math:`\mathbf{A}_{\infty} (U)` and :math:`\mathbf{B}_{\infty} (U)` are the infinite added mass and damping coefficient;
 - :math:`\mathbf{K}` is the impulse response function.
 
 The infinite added mass and damping coefficients are given by a linear potential flow based solver. The impulse response can be
@@ -103,10 +141,10 @@ The generalized mean wave drift force, given by the linear approximation, is:
 
 where
 
-- :math:`A_(\omega,\theta)` is the wave amplitude for the circular frequency :math:`\omega`, and wave direction :math:`\theta`,
-- :math:`\omega_e` is the encounter circular frequency, which depends on :math:`(\omega,\theta)`,
-- :math:`\alpha` is the relative angle between the wave direction and body heading.
-- :math:`\mathbf{C}(\omega_e,\alpha)` are the polar wave drift coefficients, which depend on :math:`(\omega_e,\alpha)`
+- :math:`A_(\omega,\theta)` is the wave amplitude for the circular frequency :math:`\omega`, and wave direction :math:`\theta`;
+- :math:`\omega_e` is the encounter circular frequency, which depends on :math:`(\omega,\theta)`;
+- :math:`\alpha` is the relative angle between the wave direction and body heading;
+- :math:`\mathbf{C}(\omega_e,\alpha)` are the polar wave drift coefficients, which depend on :math:`(\omega_e,\alpha)`.
 
 
 
