@@ -14,6 +14,7 @@ set(DEMOS
         demo_Cable
         demo_Hub_installation
 	demo_WNL_and_NL_hydrostatics
+	demo_Cylinder
         bench_SphereDecay
         bench_SphereRegular
         bench_DTMB5512_captive
@@ -69,3 +70,11 @@ configure_file(../data/Mesh_clipper/MagneViking_clip.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/searev.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/searev_clip.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/BARGE.obj . COPYONLY)
+
+configure_file(../data/Cylinder/Free_cylinder_Coarse.obj . COPY)
+configure_file(../data/Cylinder/Free_cylinder_Medium.obj . COPY)
+configure_file(../data/Cylinder/Free_cylinder_Fine.obj . COPY)
+
+configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPY)
+configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPY)
+configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPY)
