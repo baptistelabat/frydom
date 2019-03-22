@@ -130,6 +130,16 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         void GetPosition(Position &worldPos, FRAME_CONVENTION fc) const;
 
+        //---------------------------- Pressure ----------------------------//
+
+
+        /// This function gives the pressure.
+        /// \param x x position.
+        /// \param y y position.
+        /// \param fc frame convention (NED/NWU).
+        /// \return Pressure at the position (x,y,z) in frame convention.
+        double GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const;
+
         //---------------------------- Wave field makers ----------------------------//
 
         /// Set the wave field model to a null wave field
