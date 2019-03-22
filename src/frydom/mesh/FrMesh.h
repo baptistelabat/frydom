@@ -1,6 +1,13 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 15/05/18.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 
 #ifndef FRYDOM_DICE_DMESH_H
 #define FRYDOM_DICE_DMESH_H
@@ -439,7 +446,6 @@ namespace frydom {
 
             mutable FrCache<double> c_meshArea;
 
-
         public:
 
             /// Constructor of the class.
@@ -536,9 +542,7 @@ namespace frydom {
 
             const mathutils::MatrixMN<double> GetTensorMatrix() const;
 
-
         private:
-
 
         };
 
@@ -556,7 +560,6 @@ namespace frydom {
 
         InertialProperties
         CalcShellInertiaProperties(const FrMesh &mesh, double rho, double thickness);
-
 
         template <typename Scalar=double>
         mathutils::Vector3d<Scalar> OpenMeshPointToMathUtilsVector3d(const mesh::FrMesh::Point &point);

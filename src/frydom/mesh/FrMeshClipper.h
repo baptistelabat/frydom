@@ -1,6 +1,13 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 16/05/18.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 
 #ifndef FRYDOM_DICE_MESHCLIPPER_H
 #define FRYDOM_DICE_MESHCLIPPER_H
@@ -8,6 +15,8 @@
 #include <memory>
 #include "FrMesh.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
+#include "frydom/core/body/FrBody.h"
+#include "MathUtils/MathUtils.h"
 
 namespace frydom {
 
@@ -22,6 +31,15 @@ namespace frydom {
         protected:
             double m_meanHeight = 0.;
             double m_ThresholdDichotomy = 1e-4;
+
+            /// Body.
+            FrBody* m_body;
+
+            /// Mesh frame offset in the body frame.
+            Position m_MeshOffset;
+
+            /// Rotation of the mesh frame compared to the body frame.
+            mathutils::Matrix33<double> m_Rotation;
 
         public:
 
@@ -42,6 +60,41 @@ namespace frydom {
 
             /// This function gives the intersection node position between an edge and an incident wave field.
             virtual FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) = 0;
+
+            /// This function sets the offset of the mesh frame in the body frame.
+            void SetMeshOffsetRotation(const Position Offset, const mathutils::Matrix33<double> Rotation){
+                m_MeshOffset = Offset;
+                m_Rotation = Rotation;
+            }
+
+            /// This function gives the body.
+            void SetBody(FrBody* body){
+                m_body = body;
+            }
+
+            /// This function gives the position in the world frame at the good position (with horizontal translation) of a node in the world frame without horizontal translation.
+            FrMesh::Point GetNodePositionInWorld(FrMesh::Point point) const{
+
+                mathutils::Vector3d<double> NodeInWorldWithoutTranslation;
+                NodeInWorldWithoutTranslation[0] = point[0];
+                NodeInWorldWithoutTranslation[1] = point[1];
+                NodeInWorldWithoutTranslation[2] = point[2];
+
+                // Application of the translation.
+                Position NodeInWorldFrame;
+                Position BodyPos = m_body->GetPosition(NWU);
+                NodeInWorldFrame[0] = BodyPos[0] + NodeInWorldWithoutTranslation[0]; // x.
+                NodeInWorldFrame[1] = BodyPos[1] + NodeInWorldWithoutTranslation[1]; // y.
+                NodeInWorldFrame[2] = NodeInWorldWithoutTranslation[2]; // z.
+
+                FrMesh::Point Pout;
+                Pout[0] = NodeInWorldFrame[0];
+                Pout[1] = NodeInWorldFrame[1];
+                Pout[2] = NodeInWorldFrame[2];
+
+                return Pout;
+
+            }
 
         };
 
@@ -81,51 +134,22 @@ namespace frydom {
 
                 // TODO: projeter !
 
+                // It is useless because it does not depend on the horizontal position of the mesh.
+
                 return point[2] - m_meanHeight;
             }
 
             /// This function gives the intersection node position between an edge and the plane.
             FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) override {
+
+                // It is useless because it does not depend on the horizontal position of the mesh.
+
                 double t = (p0[2] - m_meanHeight) / (p0[2] - p1[2]);
                 return p0 * (1 - t) + p1 * t;
-            }
-        };
 
-        /**
-        * \class ClippingAiryWavesSurface
-        * \brief Class used when the clipping incident wave field is an Airy wave.
-        */
-//        class ClippingAiryWavesSurface : ClippingSurface {
-//
-//        private:
-//            // TODO Garder le FrOffshoreSystem en pointeur pour acceder a l'evironnement
-//
-//        public:
-//
-//            /// Constructor.
-//            ClippingAiryWavesSurface() = default;
-//
-//            /// Constructor.
-//            explicit ClippingAiryWavesSurface(const double &meanHeight) : ClippingSurface(meanHeight) {}
-//
-//            /// This function gives the wave elevation of the incident airy wave.
-//            double GetElevation(const double &x, const double &y) const override {
-//                // TODO
-//                return 0.;
-//            }
-//
-//            /// This function gives the distance to the incident Airy wave.
-//            inline virtual double GetDistance(const FrMesh::Point &point) const {
-//                // TODO
-//                return 0.;
-//            }
-//
-//            /// This function is probably useless.
-//            FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) override {
-//
-//            }
-//
-//        };
+            }
+
+        };
 
         /**
         * \class ClippingWavesSurface
@@ -154,14 +178,20 @@ namespace frydom {
                 return m_freesurface->GetPosition(x,y,NWU);
             }
 
-            /// This function gives the distance to the incident Airy wave.
+            /// This function gives the distance to the incident wave.
             inline virtual double GetDistance(const FrMesh::Point &point) const {
 
-                return point[2] - GetElevation(point[0],point[1]);
+                // It is necessary to add the horizontal translation to the mesh because of the wave elevation which depends on the node position in the world frame.
+                FrMesh::Point PointInWorld = GetNodePositionInWorld(point);
+                return PointInWorld[2] - GetElevation(PointInWorld[0],PointInWorld[1]);
+
             }
 
             /// This function performs a bisection method to track the intersection node.
             FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) override {
+
+                // The good position of the mesh is automatically found by using the function GetDistance.
+                // The position of Pout depends on the positions of p0 and p1 so no transformation is required.
 
                 FrMesh::Point Pout;
                 Pout[0] = 0;
@@ -187,7 +217,7 @@ namespace frydom {
                 while((d > m_ThresholdDichotomy) && (n <= nmax)){
                     n = n + 1;
                     s = 0.5*(s0+s1);
-                    P = s*p1 + (1-s)*p0; // Equation of the stright line between p0 and p1.
+                    P = s*p1 + (1-s)*p0; // Equation of the straight line between p0 and p1.
                     deltaz = GetDistance(P);
                     if((deltaz > 0. && z1 > 0.) || (deltaz <= 0. && z1 <= 0.)){
                         s1 = s;
@@ -229,7 +259,7 @@ namespace frydom {
             }
         };
 
-        class MeshClipper {  // Pour le moment, on coupe par un plan.
+        class MeshClipper {
 
         private:
 
@@ -238,10 +268,8 @@ namespace frydom {
 
             /// Clipping surface, by default the plane z = 0.
             std::shared_ptr<ClippingSurface> m_clippingSurface = std::make_shared<ClippingPlane>(0.);
-//            std::shared_ptr<ClippingSurface> m_clippingSurface = std::make_shared<ClippingWaveSurface>(0.);
 
             double m_Threshold = 1e-4;
-//            double m_Threshold = 0.5;
             double m_ProjectionThresholdRatio = 1 / 4.;
 
             /// Vector to store the faces which are on and/or above the incident free surface and have to be deleted.
@@ -249,6 +277,16 @@ namespace frydom {
 
             /// Vector to store the faces which need to be clipped.
             std::vector<FrMesh::FaceHandle *> c_FacesToUpdate;
+
+            /// Body.
+            FrBody* m_body;
+
+            /// Mesh frame offset in the body frame.
+            Position m_MeshOffset;
+
+            /// Rotation of the mesh frame compared to the body frame.
+            mathutils::Matrix33<double> m_Rotation;
+
 
         public:
 
@@ -265,6 +303,9 @@ namespace frydom {
 
                 // Storage of the input mesh file.
                 m_InitMesh = FrMesh(mesh);
+
+                // Transport of the mesh from the mesh frame to the body frame, then applies the rotation of mesh in the world frame.
+                UpdateMeshPositionInWorld();
 
                 // Partition of the mesh.
                 Initialize();
@@ -285,13 +326,68 @@ namespace frydom {
             }
 
             /// This function sets a clipping plane.
-            ClippingPlane SetPlaneClippingSurface(const double &meanHeight = 0.) {
-                m_clippingSurface = std::make_unique<ClippingPlane>(meanHeight);
+            void SetPlaneClippingSurface(const double &meanHeight = 0.) {
+
+                m_clippingSurface = std::make_shared<ClippingPlane>(meanHeight);
+
             }
 
             /// This function sets a clipping wave surface.
-            ClippingWaveSurface SetWaveClippingSurface(const double &meanHeight, FrFreeSurface *FreeSurface) {
-                m_clippingSurface = std::make_unique<ClippingWaveSurface>(meanHeight,FreeSurface);
+            void SetWaveClippingSurface(const double &meanHeight, FrFreeSurface *FreeSurface) {
+
+                m_clippingSurface = std::make_shared<ClippingWaveSurface>(meanHeight,FreeSurface);
+
+            }
+
+            /// This function sets the offset and the rotation matrix of the mesh frame in the body frame in the clipping surface object.
+            void SetMeshOffsetRotation(const Position Offset, const mathutils::Matrix33<double> Rotation){
+                m_clippingSurface->SetMeshOffsetRotation(Offset,Rotation);
+                m_MeshOffset = Offset;
+                m_Rotation = Rotation;
+            }
+
+            /// This function sets the body in the clipping surface object.
+            void SetBody(FrBody* body){
+                m_clippingSurface->SetBody(body);
+                m_body = body;
+            }
+
+            void UpdateMeshPositionInWorld(){
+
+                // This function transports the mesh from the mesh frame to the body frame, then applies the rotation of mesh in the world frame.
+
+                // Iterating on vertices to get their place wrt to plane
+                VertexHandle vh;
+                Position NodeInBody, NodeInWorld;
+                Position BodyPos = m_body->GetPosition(NWU);
+
+
+                // Loop over the vertices.
+                for (FrMesh::VertexIter vh_iter = m_InitMesh.vertices_begin();
+                     vh_iter != m_InitMesh.vertices_end(); ++vh_iter) {
+
+                    vh = *vh_iter;
+
+                    // From the mesh frame to the body frame.
+                    m_InitMesh.point(vh) = GetNodePositionInBody(m_InitMesh.point(vh));
+
+                    NodeInBody[0] = m_InitMesh.point(vh)[0];
+                    NodeInBody[1] = m_InitMesh.point(vh)[1];
+                    NodeInBody[2] = m_InitMesh.point(vh)[2];
+
+                    // Rotation from the body frame to the world frame (just the rotation and the vertical translation, not the horizontal translation of the mesh at the good position in the world mesh).
+                    // The horizontal translation is not done to avoid numerical errors.
+                    NodeInWorld = m_body->ProjectVectorInWorld<Position>(NodeInBody, NWU);
+
+                    // Vertical translation.
+                    NodeInWorld[2] = NodeInWorld[2] + BodyPos[2]; // x.
+
+                    m_InitMesh.point(vh)[0] = NodeInWorld[0];
+                    m_InitMesh.point(vh)[1] = NodeInWorld[1];
+                    m_InitMesh.point(vh)[2] = NodeInWorld[2];
+
+                }
+
             }
 
         private:
@@ -340,7 +436,7 @@ namespace frydom {
             inline VertexPosition ClassifyVertex(const FrMesh::VertexHandle &vh) const {
                 double distance = GetVertexDistanceToSurface(vh);
 
-                // This function computes the distance wrt the plane and classifies the nodes.
+                // This function computes the distance wrt the incident wave and classifies the nodes.
 
                 // TODO: On peut projeter le vertex si distance est petit (si plus petit que meanEdgeLength * m_threshold)
 
@@ -660,12 +756,6 @@ namespace frydom {
                 double dz_1 = GetVertexDistanceToSurface(m_InitMesh.to_vertex_handle(heh));
                 double prod = dz_0 * dz_1;
                 bool out;
-//                if (fabs(prod) < m_Threshold) {
-//                    out = false;
-//                } else {
-//                    // If prof is negative, the two vertices are not on the same side of the free surface.
-//                    out = (prod < 0.);
-//                }
 
                 if(fabs(dz_0) < m_Threshold || fabs(dz_1) < m_Threshold){
                     out = false;
@@ -765,6 +855,7 @@ namespace frydom {
                 /// This function gives the distance of a node to the incident wave field.
 
                 return m_clippingSurface->GetDistance(m_InitMesh.point(vh));
+
             }
 
             void ApplyFaceDeletion() { // TODO: mettre en prive
@@ -816,6 +907,36 @@ namespace frydom {
 
 
             }
+
+            /// This function gives the position in the body frame of a node in the mesh frame.
+            FrMesh::Point GetNodePositionInBody(FrMesh::Point point) const{
+
+                // From the mesh frame to the body frame: OmP = ObOm + bRm*OmP.
+                mathutils::Vector3d<double> NodeInMeshFrameVect;
+                NodeInMeshFrameVect[0] = point[0];
+                NodeInMeshFrameVect[1] = point[1];
+                NodeInMeshFrameVect[2] = point[2];
+
+                mathutils::Vector3d<double> TmpVect;
+                TmpVect = m_Rotation*NodeInMeshFrameVect;
+
+                Position NodeInBodyFrame;
+                NodeInBodyFrame[0] = m_MeshOffset[0] + TmpVect[0];
+                NodeInBodyFrame[1] = m_MeshOffset[1] + TmpVect[1];
+                NodeInBodyFrame[2] = m_MeshOffset[2] + TmpVect[2];
+
+                // Position -> point.
+                FrMesh::Point Pout;
+                Pout[0] = NodeInBodyFrame[0];
+                Pout[1] = NodeInBodyFrame[1];
+                Pout[2] = NodeInBodyFrame[2];
+
+                return Pout;
+
+            }
+
+
+
 
         };
 

@@ -135,6 +135,7 @@ namespace frydom {
 
         mesh::FrMesh::Normal Normal;
         double Pressure;
+
         for (mesh::FrMesh::FaceIter f_iter = clipped_mesh.faces_begin(); f_iter != clipped_mesh.faces_end(); ++f_iter) {
 
             // Normal.

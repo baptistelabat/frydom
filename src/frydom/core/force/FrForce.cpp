@@ -303,6 +303,7 @@ namespace frydom{
     }
 
     void FrForce::SetForceInBodyAtPointInBody(const Force& bodyForce, const Position& bodyPos, FRAME_CONVENTION fc) {
+
         SetForceInWorldAtPointInBody(m_body->ProjectVectorInWorld<Force>(bodyForce, fc), bodyPos, fc);
     }
 

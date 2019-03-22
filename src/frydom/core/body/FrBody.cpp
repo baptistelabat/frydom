@@ -454,7 +454,6 @@ namespace frydom {
         return cogPos;
     }
 
-
     FrGeographicCoord FrBody::GetGeoPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const {
         return CartToGeo(GetPointPositionInWorld(bodyPos, fc), fc);
     }

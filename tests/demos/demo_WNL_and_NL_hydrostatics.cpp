@@ -34,21 +34,21 @@ int main(int argc, char* argv[]) {
 
     // ----- Seabed
     // Set the size of the seabed grid asset.
-    auto Seabed = Ocean->GetSeabed();
-    Seabed->GetSeabedGridAsset()->SetGrid(-300., 300., 100., -300., 300., 100.);
+//    auto Seabed = Ocean->GetSeabed();
+//    Seabed->GetSeabedGridAsset()->SetGrid(-300., 300., 100., -300., 300., 100.);
 
     // Set the bathymetry.
-    Seabed->SetBathymetry(-100, NWU);
+//    Seabed->SetBathymetry(-100, NWU);
 
     // Ramp.
-    system.GetEnvironment()->GetTimeRamp()->SetActive(true);
-    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0,0,20,1);
+//    system.GetEnvironment()->GetTimeRamp()->SetActive(true);
+//    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0,0,20,1);
 
     // ----- Current
     // A uniform field is also set by default for the current model. In order to set the current characteristics,
     // you need to get first this uniform field.
-    auto current = Ocean->GetCurrent()->GetFieldUniform();
-    current->SetEast(6., KNOT, GOTO);
+//    auto current = Ocean->GetCurrent()->GetFieldUniform();
+//    current->SetEast(6., KNOT, GOTO);
 
     // ----- Wind
     // The wind model is set exactly in the same manner as the current:
@@ -68,7 +68,8 @@ int main(int argc, char* argv[]) {
     FSAsset->SetUpdateStep(10);
 
     // ----- WaveField
-    auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
+//    auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
+    auto waveField = FreeSurface->SetAiryRegularWaveField();
 
     // The Airy regular wave parameters are its height, period and direction.
 //    double waveHeight = 2.;
@@ -91,11 +92,12 @@ int main(int argc, char* argv[]) {
 
     // Inertia Tensor
 //    double Mass              = 3.22114e7;
-    double Mass = 68321.544*1025; // Maillage visu.
-//    double Mass = 53412.462*1025; // Maillage Nemoh.
+//    double Mass = 68321.544*1025; // Maillage visu.
+    double Mass = 53412.462*1025; // Maillage Nemoh.
 //    Position platformCoG(0.22, 0.22, 2.92);
-    Position platformCoG(0., 0., 2.92);
-//    Position platformCoG(0.01, 0.01, 2.92);
+//    Position platformCoG(0., 0., 2.92);
+    Position platformCoG(0.22, 0.22, 0.);
+//    Position platformCoG(0., 0., 0.);
     FrFrame platformCoGFrame(platformCoG, FrRotation(), NWU);
 
     // Dof.
@@ -120,6 +122,10 @@ int main(int argc, char* argv[]) {
     Node->SetLogged(true);
     auto AssetNode = Node->GetAsset();
     AssetNode->SetSize(20);
+
+    // Extra linear damping force.
+    auto LinearDampingForce = make_linear_damping_force(platform, WATER, false);
+    LinearDampingForce->SetDiagonalDamping(10e8,10e8,10e8,10e10,10e10,10e10);
 
     // -- Hydrodynamics
 
@@ -160,6 +166,11 @@ int main(int argc, char* argv[]) {
 
     // Nonlinear hydrostatic loads with the input mesh used for the visualization.
 //    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
+    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500_Sym.obj");
+    mathutils::Matrix33<double> Rotation;
+    Rotation.SetIdentity();
+    Position MeshOffset(0,0,0);
+    forceHst->SetMeshOffsetRotation(MeshOffset,Rotation);
 
     forceHst->SetLogged(true);
     forceHst->ShowAsset(true);
@@ -191,8 +202,8 @@ int main(int argc, char* argv[]) {
     // ------------------ Run with Irrlicht ------------------ //
 
     // You can change the dynamical simulation time step using.
-//    system.SetTimeStep(0.01);
-    system.SetTimeStep(0.1);
+    system.SetTimeStep(0.01);
+//    system.SetTimeStep(0.1);
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).

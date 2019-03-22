@@ -46,8 +46,8 @@ namespace frydom {
         /// Input mesh file.
         std::string meshfilename; // Input mesh file.
 
-        /// Center of buoyancy.
-        Position m_CoB;
+        /// Center of buoyancy in world.
+        Position m_CoBInWorld;
 
         /// Clipped mesh.
         mesh::FrMesh m_clipped_mesh;
@@ -55,12 +55,23 @@ namespace frydom {
         /// Input mesh file.
         mesh::FrMesh m_mesh_init;
 
+        /// Mesh frame offset in the body frame.
+        Position m_MeshOffset;
+
+        /// Rotation of the mesh frame compared to the body frame.
+        mathutils::Matrix33<double> m_Rotation;
+
     public:
 
         /// Constructor.
         FrWeaklyNonlinearHydrostaticForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroDB> HDB, std::string meshfile) : m_HDB(HDB) {
             m_system = system;
             meshfilename = meshfile;
+
+            // Initilization by default.
+            m_Rotation.SetIdentity();
+            m_MeshOffset = Position(0,0,0);
+
         }
 
         /// Get the type name of this object
@@ -81,7 +92,14 @@ namespace frydom {
         void StepFinalize() override;
 
         /// This function gives the center of buoyancy.
-        Position GetCoB(){ return m_CoB;};
+        Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);
+
+        /// This function sets the offset of the mesh frame in the body frame.
+        void SetMeshOffsetRotation(const Position Offset, const mathutils::Matrix33<double> Rotation){
+            m_MeshOffset = Offset;
+            m_Rotation = Rotation;
+        };
+
     };
 
     /// This subroutine reads the modes of a body.

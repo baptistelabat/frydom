@@ -41,7 +41,7 @@ namespace frydom {
 
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
                 ("Center of buoyancy","m", fmt::format("Center of buoyancy in world reference frame in {}", c_logFrameConvention),
-                 [this]() {return GetCoB();});
+                 [this]() {return GetCenterOfBuoyancyInBody(c_logFrameConvention);});
 
         FrForce::InitializeLog();
 
@@ -54,36 +54,6 @@ namespace frydom {
         // Loading the input mesh file.
         mesh::FrMesh current_mesh = m_mesh_init;
 
-        // Body linear and angular position.
-        Position PositionOfBodyInWorld = m_body->GetPosition(NWU);
-        Position PositionOfCoGInWorld = m_body->GetCOGPositionInWorld(NWU);
-        double phi, theta, psi;
-        m_body->GetRotation().GetCardanAngles_RADIANS(phi,theta,psi, NWU);
-
-        // Transport of the mesh at its good position and updates its orientation.
-        VectorT<double, 3> trans;
-
-        // Translation. of -OG.
-        trans[0] = -PositionOfCoGInWorld.GetX();
-        trans[1] = -PositionOfCoGInWorld.GetY();
-        trans[2] = -PositionOfCoGInWorld.GetZ();
-        current_mesh.Translate(trans);
-
-        // Rotation around the CoG of the body.
-        current_mesh.Rotate(phi,theta,psi);
-
-        // Translation. of +OG.
-        trans[0] = PositionOfCoGInWorld.GetX();
-        trans[1] = PositionOfCoGInWorld.GetY();
-        trans[2] = PositionOfCoGInWorld.GetZ();
-        current_mesh.Translate(trans);
-
-        // Translation.
-        trans[0] = PositionOfBodyInWorld.GetX();
-        trans[1] = PositionOfBodyInWorld.GetY();
-        trans[2] = PositionOfBodyInWorld.GetZ();
-        current_mesh.Translate(trans);
-
         // Clipper.
         mesh::MeshClipper clipper;
 
@@ -91,19 +61,26 @@ namespace frydom {
         double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
 
         // Clipping surface.
-        mesh::ClippingPlane clippingSurface = clipper.SetPlaneClippingSurface(TidalHeight);
+        clipper.SetPlaneClippingSurface(TidalHeight);
+
+        // Body.
+        clipper.SetBody(m_body);
+
+        // Position and orientation of the mesh frame compared to the body frame.
+        clipper.SetMeshOffsetRotation(m_MeshOffset,m_Rotation);
 
         // Clipping.
         m_clipped_mesh = clipper(current_mesh);
 
         // Computation of the hydrostatic force.
         NonlinearHydrostatics NLhydrostatics(m_HDB->GetWaterDensity(),m_HDB->GetGravityAcc()); // Creation of the NonlinearHydrostatics structure.
-        NLhydrostatics.CalcPressureIntegration(m_clipped_mesh);
+        NLhydrostatics.CalcPressureIntegration(m_clipped_mesh,m_body);
 
         // Setting the weakly nonlinear loads in world.
         Force force = NLhydrostatics.GetWeaklyNonlinearForce();
-        m_CoB = NLhydrostatics.GetCenterOfBuoyancy();
-        this->SetForceInWorldAtPointInWorld(force,m_CoB,NWU); // The torque is computed from the hydrostatic force and the center of buoyancy.
+        m_CoBInWorld = m_body->GetPosition(NWU) + NLhydrostatics.GetCenterOfBuoyancy(); // The translation of the body was not done for avoiding numerical erros.
+
+        this->SetForceInWorldAtPointInWorld(force,m_CoBInWorld,NWU); // The torque is computed from the hydrostatic force and the center of buoyancy.
 
     }
 
@@ -113,6 +90,14 @@ namespace frydom {
         // Writting the clipped mesh in an output file.
 //        m_clipped_mesh.Write("Mesh_clipped.obj");
 
+    }
+
+    Position FrWeaklyNonlinearHydrostaticForce::GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc){
+
+        // This function gives the center of buoyancy in the body frame.
+
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(m_CoBInWorld);
+        return m_CoBInWorld;
     }
 
     std::shared_ptr<FrWeaklyNonlinearHydrostaticForce>
