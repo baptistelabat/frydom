@@ -79,7 +79,7 @@ namespace frydom {
 
         // Computation of the hydrostatic force.
         NonlinearHydrostatics NLhydrostatics(m_HDB->GetWaterDensity(),m_HDB->GetGravityAcc()); // Creation of the NonlinearHydrostatics structure.
-        NLhydrostatics.CalcPressureIntegration(m_clipped_mesh,m_body);
+        NLhydrostatics.CalcPressureIntegration(m_clipped_mesh);
 
         // Setting the nonlinear loads in world at the CoB in world.
         Force force = NLhydrostatics.GetWeaklyNonlinearForce();
