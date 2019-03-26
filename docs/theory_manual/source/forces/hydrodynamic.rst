@@ -87,7 +87,7 @@ In the fully nonlinear model, the mesh used for the pressure integration is deli
 .. math::
     \mathbf{f}_H = -\iint_{S_I} \rho gz \mathbf{n} dS
 
-where :math:`S_I` is the wetted body surface delimited by the incident wave field `z = \eta_I`.
+where :math:`S_I` is the wetted body surface delimited by the incident wave field :math:`z = \eta_I`.
 
 The computation of the hydrostatic torque follows the same principle as in the weakly nonlinear model.
 

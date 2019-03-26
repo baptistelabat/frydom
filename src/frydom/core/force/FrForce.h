@@ -95,6 +95,7 @@ namespace frydom {
         void Initialize() override;
 
         // TODO : boucle de StepFinalize à mettre en place dans FrBody
+        /// This function is called at the end of the time step, after the last step of the integration scheme.
         void StepFinalize() override;
 
         /// Virtual function to allow updating the child object from the solver

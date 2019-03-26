@@ -87,7 +87,7 @@ namespace frydom {
         /// Initialize the log
         void InitializeLog() override;
 
-        /// Methods to be applied at the end of each time steps.
+        /// This function is called at the end of the time step, after the last step of the integration scheme.
         void StepFinalize() override;
 
         /// This function gives the center of buoyancy.

@@ -51,26 +51,40 @@ namespace frydom {
 
         // This function computes the weakly nonlinear hydrostatic loads.
 
-        // Loading the input mesh file.
-        mesh::FrMesh current_mesh = m_mesh_init;
+        // To know which force object (HS or FK) clips the mesh, to avoid doing that twice.
+        if(m_body->GetHSFK() == 0){
+            m_body->SetHSFK(1); // 1 for hydrostatic, -1 for Froude-Krylov.
+        }
 
-        // Clipper.
-        mesh::MeshClipper clipper;
+        if(m_body->GetHSFK() == 1) { // If 1, then the mesh is clipped here and the Froude-Krylov force object will use it too.
 
-        // Tidal height.
-        double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
+            // Loading the input mesh file.
+            mesh::FrMesh current_mesh = m_mesh_init;
 
-        // Clipping surface.
-        clipper.SetPlaneClippingSurface(TidalHeight);
+            // Clipper.
+            mesh::MeshClipper clipper;
 
-        // Body.
-        clipper.SetBody(m_body);
+            // Tidal height.
+            double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
 
-        // Position and orientation of the mesh frame compared to the body frame.
-        clipper.SetMeshOffsetRotation(m_MeshOffset,m_Rotation);
+            // Clipping surface.
+            clipper.SetPlaneClippingSurface(TidalHeight);
 
-        // Clipping.
-        m_clipped_mesh = clipper(current_mesh);
+            // Body.
+            clipper.SetBody(m_body);
+
+            // Position and orientation of the mesh frame compared to the body frame.
+            clipper.SetMeshOffsetRotation(m_MeshOffset, m_Rotation);
+
+            // Clipping.
+            m_clipped_mesh = clipper(current_mesh);
+
+            // Storage of the clipped for using in the computation of the weakly or fully nonlinear Froude-Krylov loads.
+            m_body->SetClippedMesh(&m_clipped_mesh);
+        }
+        else{ // If -1, then the mesh is clipped by the Froude-Krylov force object and is also used here.
+            m_clipped_mesh = *m_body->GetClippedMesh();
+        }
 
         // Computation of the hydrostatic force.
         NonlinearHydrostatics NLhydrostatics(m_HDB->GetWaterDensity(),m_HDB->GetGravityAcc()); // Creation of the NonlinearHydrostatics structure.

@@ -2,6 +2,7 @@ message(STATUS "    ...excitation")
 
 set(SRC_FILES
         FrLinearExcitationForce.cpp
+	FrNonLinearExcitationForce.cpp
         )
 
 set(FRYDOM_HYDRODYNAMICS_EXCITATION_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${file})

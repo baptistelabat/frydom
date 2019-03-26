@@ -227,12 +227,16 @@ namespace frydom {
         // Interpolators
         //
 
-        /// This subroutine interpolates the excitation loads with respect to the wave direction.
+        /// This function interpolates the excitation loads with respect to the wave direction.
         void BuildWaveExcitationInterpolators();
 
         std::vector<Eigen::MatrixXcd> GetExcitationInterp(std::vector<double> waveFrequencies,
                                                           std::vector<double> waveDirections,
                                                           mathutils::ANGLE_UNIT angleUnit);
+
+        /// This function interpolates the diffraction loads with respect to the wave direction.
+        void BuildDiffractionInterpolators();
+
     };
 
 }  // end namespace frydom

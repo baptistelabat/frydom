@@ -180,6 +180,11 @@ int main(int argc, char* argv[]) {
     // -- Excitation
     // Create the linear excitation force and add it to the platform
 //    auto excitationForce = make_linear_excitation_force(hdb, platform);
+//    excitationForce->SetLogged(true);
+
+    // Create the nonlinear excitation force and add it to the platform
+    auto excitationForce = make_nonlinear_excitation_force(&system,hdb, platform,"mesh_Platform_GVA7500_Sym.obj");
+    excitationForce->SetLogged(true);
 
     // -- Radiation
 //    auto radiationModel = make_radiation_convolution_model(hdb, &system);

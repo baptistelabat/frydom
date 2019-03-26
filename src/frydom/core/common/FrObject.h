@@ -83,6 +83,7 @@ namespace frydom {
         /// FrOffshoreSystem::Initialize() is done.
         virtual void Initialize() = 0;
 
+        /// This function is called at the end of the time step, after the last step of the integration scheme.
         virtual void StepFinalize() = 0;
 
         // Logging

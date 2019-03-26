@@ -21,6 +21,7 @@
 #include "frydom/core/misc/FrColors.h"
 #include "frydom/core/common/FrNode.h"
 #include "frydom/asset/FrAssetOwner.h"
+#include "frydom/mesh/FrMesh.h"
 
 // TODO : voir si il n'y a pas moyen de passer ces includes
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
@@ -109,6 +110,11 @@ namespace frydom {
         std::unique_ptr<FrBodyDOFMask> m_DOFMask;
         std::shared_ptr<FrLink> m_DOFLink;
 
+        /// Clipped mesh.
+        mesh::FrMesh* m_clipped_mesh;
+
+        /// Integer to know which force object clips the mesh first (HS: hydrostatics = 1, FK: Froude-Krylov = -1).
+        int m_HSFK = 0; // Initialization before setting to 1 (HS) or -1 (FK).
 
     public:
 
@@ -805,7 +811,29 @@ namespace frydom {
 
         FrBodyDOFMask* GetDOFMask();
 
+        // =============================================================================================================
+        // Clipped mesh
+        // =============================================================================================================
 
+        /// This function sets a clipped mesh.
+        void SetClippedMesh(mesh::FrMesh* clipped_mesh){
+            m_clipped_mesh = clipped_mesh;
+        };
+
+        /// This function returns the clipped mesh.
+        mesh::FrMesh* GetClippedMesh(){
+            return m_clipped_mesh;
+        };
+
+        /// This function returns the interger indicating which force object clips the mesh first (HS: hydrostatics = 1, FK: Froude-Krylov = -1).
+        int GetHSFK(){
+            return m_HSFK;
+        }
+
+        /// This function sets the integer indicating which force object clips the mesh first (HS: hydrostatics = 1, FK: Froude-Krylov = -1).
+        void SetHSFK(int HSFK){
+            m_HSFK = HSFK;
+        }
 
     protected:
 
