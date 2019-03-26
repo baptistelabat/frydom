@@ -103,6 +103,8 @@ namespace frydom {
 
         void Initialize() override;
 
+        void Clear();
+
         void Update(double time) override;
 
         void StepFinalize() override;

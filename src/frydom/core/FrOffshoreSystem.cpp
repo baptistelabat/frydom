@@ -593,7 +593,7 @@ namespace frydom {
             case QUASISTATIC:
 //                m_chronoSystem->DoStaticRelaxing(m_nbStepStatics);
                 if (m_systemType==SMOOTH_CONTACT)
-                    test = dynamic_cast<internal::FrSystemBaseSMC*>(m_chronoSystem.get())->DoQuasiStatic(m_nbStepStatics,50);
+                    test = dynamic_cast<internal::FrSystemBaseSMC*>(m_chronoSystem.get())->DoQuasiStatic(m_nbStepStatics,200);
                 if (m_systemType == NONSMOOTH_CONTACT)
                     std::cout<<"QuasiStatic method for NSC not implemented yet !"<<std::endl;
                 break;

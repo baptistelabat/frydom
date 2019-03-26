@@ -137,6 +137,14 @@ namespace frydom {
         }
     }
 
+    void FrRadiationConvolutionModel::Clear() {
+
+        for (auto &BEMBody : *m_HDB) {
+            m_recorder[BEMBody.get()].Clear();
+        }
+
+    }
+
     void FrRadiationConvolutionModel::Update(double time) {
 
         if (std::abs(time - GetSystem()->GetTime()) < 0.1*GetSystem()->GetTimeStep() and
