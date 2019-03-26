@@ -55,7 +55,9 @@ namespace frydom {
             /// \param nsteps every nsteps, the velocity and acceleration are reset
             /// \param niter number of total iteration
             /// \return
-            void DoQuasiStatic(int niter = 100, int nsteps = 20);
+            bool DoQuasiStatic(int niter = 100, int nsteps = 20);
+
+            void Relax();
 
         };
 

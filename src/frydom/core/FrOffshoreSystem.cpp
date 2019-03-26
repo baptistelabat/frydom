@@ -77,45 +77,50 @@ namespace frydom {
         // **** EQUILIBRIUM OF THE SYSTEM, WITH ITERATIVE SOLUTION
         // -----------------------------------------------------------------------------
 
-        void FrSystemBaseSMC::DoQuasiStatic(int niter, int nsteps) {
+        bool FrSystemBaseSMC::DoQuasiStatic(int niter, int nsteps) {
 
             double m_undotime = GetChTime();
+            bool reach_tolerance = false;
 
             if ((ncoords > 0) && (ndof >= 0)) {
                 for (int m_iter = 0; m_iter < niter; m_iter++) {
+                    // Get the speed of the bodies to check the convergence
                     double bodyVel = 0;
-                    // Set no speed and accel. on bodies, meshes and other physics items
                     for (auto &body : bodylist) {
                         bodyVel += body->GetPos_dt().Length2();
-                        body->SetNoSpeedNoAcceleration();
                     }
-                    for (auto& mesh : meshlist) {
-                        mesh->SetNoSpeedNoAcceleration();
-                    }
-                    for (auto &ip : otherphysicslist) {
-                        ip->SetNoSpeedNoAcceleration();
-                    }
-//                    std::cout<<m_iter<<", "<<GetChTime()<<", "<<bodyVel<<std::endl;
+
+                    // Set no speed and accel. on bodies, meshes and other physics items
+                    Relax();
+
+                    std::cout<<m_iter<<", "<<GetChTime()<<", "<<bodyVel<<std::endl;
                     // TODO : introduce a tolerance parameter
                     if (bodyVel < 1E-5 && GetChTime()>m_undotime+step*nsteps) {
+                        reach_tolerance = true;
                         break;
                     }
                     DoFrameDynamics(m_undotime + m_iter * step * nsteps);
                 }
 
                 // Set no speed and accel. on bodies, meshes and other physics items
-                for (auto &body : bodylist) {
-                    body->SetNoSpeedNoAcceleration();
-                }
-                for (auto& mesh : meshlist) {
-                    mesh->SetNoSpeedNoAcceleration();
-                }
-                for (auto &ip : otherphysicslist) {
-                    ip->SetNoSpeedNoAcceleration();
-                }
+                Relax();
             }
 
             SetChTime(m_undotime);
+            return reach_tolerance;
+        }
+
+        void FrSystemBaseSMC::Relax() {
+            // Set no speed and accel. on bodies, meshes and other physics items
+            for (auto &body : bodylist) {
+                body->SetNoSpeedNoAcceleration();
+            }
+            for (auto& mesh : meshlist) {
+                mesh->SetNoSpeedNoAcceleration();
+            }
+            for (auto &ip : otherphysicslist) {
+                ip->SetNoSpeedNoAcceleration();
+            }
         }
 
     }  // end namespace frydom::internal
@@ -576,6 +581,8 @@ namespace frydom {
 
         IsInitialized();
 
+        bool test = false;
+
         switch (method) {
             case LINEAR:
                 m_chronoSystem->DoStaticLinear();
@@ -586,7 +593,7 @@ namespace frydom {
             case QUASISTATIC:
 //                m_chronoSystem->DoStaticRelaxing(m_nbStepStatics);
                 if (m_systemType==SMOOTH_CONTACT)
-                    dynamic_cast<internal::FrSystemBaseSMC*>(m_chronoSystem.get())->DoQuasiStatic(m_nbStepStatics,10);
+                    test = dynamic_cast<internal::FrSystemBaseSMC*>(m_chronoSystem.get())->DoQuasiStatic(m_nbStepStatics,50);
                 if (m_systemType == NONSMOOTH_CONTACT)
                     std::cout<<"QuasiStatic method for NSC not implemented yet !"<<std::endl;
                 break;
@@ -594,6 +601,7 @@ namespace frydom {
 
         // Executes custom processing at the end of step
         StepFinalize();
+        return test;
         // FIXME : il semble que les solveurs retournent toujours true...
     }
 
