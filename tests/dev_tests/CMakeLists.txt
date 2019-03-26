@@ -8,6 +8,7 @@ set(REFACTORING_TESTS
         how_to_cppfs
         test_logging
         test_FrLinks
+        test_static_analysis
         )
 
 #include(Add_matplotlib-cpp)

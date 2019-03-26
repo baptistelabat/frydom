@@ -83,8 +83,10 @@ namespace frydom {
 
             if ((ncoords > 0) && (ndof >= 0)) {
                 for (int m_iter = 0; m_iter < niter; m_iter++) {
+                    double bodyVel = 0;
                     // Set no speed and accel. on bodies, meshes and other physics items
                     for (auto &body : bodylist) {
+                        bodyVel += body->GetPos_dt().Length2();
                         body->SetNoSpeedNoAcceleration();
                     }
                     for (auto& mesh : meshlist) {
@@ -92,6 +94,11 @@ namespace frydom {
                     }
                     for (auto &ip : otherphysicslist) {
                         ip->SetNoSpeedNoAcceleration();
+                    }
+//                    std::cout<<m_iter<<", "<<GetChTime()<<", "<<bodyVel<<std::endl;
+                    // TODO : introduce a tolerance parameter
+                    if (bodyVel < 1E-5 && GetChTime()>m_undotime+step*nsteps) {
+                        break;
                     }
                     DoFrameDynamics(m_undotime + m_iter * step * nsteps);
                 }
@@ -579,7 +586,7 @@ namespace frydom {
             case QUASISTATIC:
 //                m_chronoSystem->DoStaticRelaxing(m_nbStepStatics);
                 if (m_systemType==SMOOTH_CONTACT)
-                    dynamic_cast<internal::FrSystemBaseSMC*>(m_chronoSystem.get())->DoQuasiStatic(m_nbStepStatics);
+                    dynamic_cast<internal::FrSystemBaseSMC*>(m_chronoSystem.get())->DoQuasiStatic(m_nbStepStatics,10);
                 if (m_systemType == NONSMOOTH_CONTACT)
                     std::cout<<"QuasiStatic method for NSC not implemented yet !"<<std::endl;
                 break;
