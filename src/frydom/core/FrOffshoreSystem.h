@@ -51,6 +51,12 @@ namespace frydom {
             /// at the end of each step
             void CustomEndOfStep() override;
 
+            /// Solve the static equilibrium using a relaxation method
+            /// \param nsteps every nsteps, the velocity and acceleration are reset
+            /// \param niter number of total iteration
+            /// \return
+            void DoQuasiStatic(int niter = 100, int nsteps = 50);
+
         };
 
         /// Base class inheriting from chrono ChSystemNSC for physical system in which contact is modeled using a non-smooth
@@ -149,7 +155,7 @@ namespace frydom {
                         ///< To be used mostly for FEM problems with small deformations.
             NONLINEAR,  ///< This tries to solve the equilibrium for the nonlinear problem (large displacements).
                         ///< The larger nsteps, the more the CPU time but the less likely the divergence.
-            RELAXATION  ///< Since a truncated iterative method is used, you may need to call this method multiple times
+            QUASISTATIC  ///< Since a truncated iterative method is used, you may need to call this method multiple times
                         ///< in case of large nonlinearities before coming to the precise static solution.
         };
 

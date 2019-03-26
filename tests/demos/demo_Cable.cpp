@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     enum cableCase{ FixedLine, Pendulum, Newton_Pendulum};
 
     // Chose the one you want to run
-    cableCase Case = Newton_Pendulum;
+    cableCase Case = Pendulum;
 
     switch (Case) {
         // This case features one catenary line, with fixed ending and starting nodes. We can check the line profile and
@@ -72,8 +72,11 @@ int main(int argc, char* argv[]) {
             makeItSphere(sphere, 1, 1000);
 
             // Set its initial position and velocity
-            sphere->SetPosition(Position(0., 0., 0.), NWU);
-            sphere->SetVelocityInWorldNoRotation(Velocity(0., 20., 0.), NWU);
+            double alpha = 10*DEG2RAD;
+            double y = 50.*sin(alpha);
+            double z = 50.*(1.-cos(alpha));
+            sphere->SetPosition(Position(0., y, z), NWU);
+//            sphere->SetVelocityInWorldNoRotation(Velocity(0., 20., 0.), NWU);
             //        sphere->SetFixedInWorld(true);
 
             // create the nodes from the sphere and the world body.
@@ -86,7 +89,7 @@ int main(int argc, char* argv[]) {
             auto u = Direction(0., 0., -1.);        // definition of the direction of the uniform load distribution
             double unstretchedLength = 50.;         // unstretched length
             double linearDensity = 616.538;         // linear density of the line
-            double EA = 1.5708e9;                   //
+            double EA = 1.5708e8;                   //
             double sectionArea = 0.05;              // section area
             double YoungModulus = EA / sectionArea; // Young modulus of the line
 
@@ -181,5 +184,8 @@ int main(int argc, char* argv[]) {
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 30) and the distance from the camera to the objectif (50).
     // For saving snapshots of the simulation, just turn the boolean to true.
-    system.RunInViewer(30, 50, false);
+//    system.RunInViewer(30, 50, false);
+
+    system.SolveStaticEquilibrium(FrOffshoreSystem::STATICS_METHOD::NONLINEAR);
+    system.Visualize(50,false);
 }

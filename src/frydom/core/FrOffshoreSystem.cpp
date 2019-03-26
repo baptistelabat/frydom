@@ -72,6 +72,45 @@ namespace frydom {
             m_offshoreSystem_->StepFinalize();
         }
 
+        // -----------------------------------------------------------------------------
+        // **** PERFORM THE STATIC ANALYSIS, FINDING THE STATIC
+        // **** EQUILIBRIUM OF THE SYSTEM, WITH ITERATIVE SOLUTION
+        // -----------------------------------------------------------------------------
+
+        void FrSystemBaseSMC::DoQuasiStatic(int niter, int nsteps) {
+
+            double m_undotime = GetChTime();
+
+            if ((ncoords > 0) && (ndof >= 0)) {
+                for (int m_iter = 0; m_iter < niter; m_iter++) {
+                    // Set no speed and accel. on bodies, meshes and other physics items
+                    for (auto &body : bodylist) {
+                        body->SetNoSpeedNoAcceleration();
+                    }
+                    for (auto& mesh : meshlist) {
+                        mesh->SetNoSpeedNoAcceleration();
+                    }
+                    for (auto &ip : otherphysicslist) {
+                        ip->SetNoSpeedNoAcceleration();
+                    }
+                    DoFrameDynamics(m_undotime + m_iter * step * nsteps);
+                }
+
+                // Set no speed and accel. on bodies, meshes and other physics items
+                for (auto &body : bodylist) {
+                    body->SetNoSpeedNoAcceleration();
+                }
+                for (auto& mesh : meshlist) {
+                    mesh->SetNoSpeedNoAcceleration();
+                }
+                for (auto &ip : otherphysicslist) {
+                    ip->SetNoSpeedNoAcceleration();
+                }
+            }
+
+            SetChTime(m_undotime);
+        }
+
     }  // end namespace frydom::internal
 
 
@@ -218,6 +257,7 @@ namespace frydom {
 
     void FrOffshoreSystem::Initialize() {
 
+
         // Initializing environment before bodies
         m_environment->Initialize();
 
@@ -240,6 +280,9 @@ namespace frydom {
         for (auto& item : m_PostPhysicsList) {
             item->Initialize();
         }
+
+        // Full assembly -computes also forces-
+        m_chronoSystem->DoFullAssembly();
 
         m_chronoSystem->Update();
 
@@ -523,14 +566,27 @@ namespace frydom {
     }
 
     bool FrOffshoreSystem::SolveStaticEquilibrium(FrOffshoreSystem::STATICS_METHOD method) {
+
+        IsInitialized();
+
         switch (method) {
             case LINEAR:
-                return m_chronoSystem->DoStaticLinear();
+                m_chronoSystem->DoStaticLinear();
+                break;
             case NONLINEAR:
-                return m_chronoSystem->DoStaticNonlinear(m_nbStepStatics);
-            case RELAXATION:
-                return m_chronoSystem->DoStaticRelaxing(m_nbStepStatics);
+                m_chronoSystem->DoStaticNonlinear(m_nbStepStatics);
+                break;
+            case QUASISTATIC:
+//                m_chronoSystem->DoStaticRelaxing(m_nbStepStatics);
+                if (m_systemType==SMOOTH_CONTACT)
+                    dynamic_cast<internal::FrSystemBaseSMC*>(m_chronoSystem.get())->DoQuasiStatic(m_nbStepStatics);
+                if (m_systemType == NONSMOOTH_CONTACT)
+                    std::cout<<"QuasiStatic method for NSC not implemented yet !"<<std::endl;
+                break;
         }
+
+        // Executes custom processing at the end of step
+        StepFinalize();
         // FIXME : il semble que les solveurs retournent toujours true...
     }
 
@@ -647,8 +703,10 @@ namespace frydom {
         m_chronoSystem->Clear();
 
         m_bodyList.clear();
-//        m_linkList.clear();
-//        m_otherPhysicsList.clear(); // FIXME : continuer les clear !!!
+        m_linkList.clear();
+        m_PrePhysicsList.clear();
+        m_MidPhysicsList.clear();
+        m_PostPhysicsList.clear();
     }
 
     chrono::ChSystem* FrOffshoreSystem::GetChronoSystem() {
@@ -680,7 +738,7 @@ namespace frydom {
 
     void FrOffshoreSystem::Visualize( double dist, bool recordVideo) {
 
-        Initialize();  // So that system is automatically initialized when run in viewer mode
+        IsInitialized();  // So that system is automatically initialized when run in viewer mode
 
         FrIrrApp app(m_chronoSystem.get(), dist);
 
