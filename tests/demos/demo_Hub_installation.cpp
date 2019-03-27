@@ -283,7 +283,7 @@ int main(int argc, char* argv[]) {
 //    system.SetNbStepsStatics(1200);
     system.SolveStaticEquilibrium(FrOffshoreSystem::STATICS_METHOD::QUASISTATIC);
 
-    system.Visualize(75.,false);
+//    system.Visualize(75.,false);
     radiationModel->Clear();
 
     system.RunInViewer(0, 75, false);
