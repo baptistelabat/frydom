@@ -280,17 +280,17 @@ int main(int argc, char* argv[]) {
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 30) and the distance from the camera to the objectif (75m).
     // For saving snapshots of the simulation, just turn the boolean to true.
-//    system.SetNbStepsStatics(10);
-//    auto test = system.SolveStaticEquilibrium(FrOffshoreSystem::STATICS_METHOD::QUASISTATIC);
+//    system.SetNbIterationStatics(-1);
 
-//    auto test = system.SolveStaticWithRelaxation(0,100,1E-3,FrOffshoreSystem::RELAXTYPE::VELOCITYANDACCELERATION);
+    system.SetNbStepsStatics(100);
+    system.SetRelaxationStatics(FrOffshoreSystem::RELAXTYPE::ACCELERATION);
+    auto test = system.SolveStaticWithRelaxation();
+    system.Visualize(75.,false);
 
-    system.SetNbStepsStatics(50);
-    system.VisualizeStaticAnalysis(75.,false);
+//    system.VisualizeStaticAnalysis(75.,false);
 
-//    system.Visualize(75.,false);
-    radiationModel->Clear();
-
+//    radiationModel->Clear();
+//
 //    system.RunInViewer(0, 75, false);
 
 //    return test;

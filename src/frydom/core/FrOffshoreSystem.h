@@ -51,13 +51,13 @@ namespace frydom {
             /// at the end of each step
             void CustomEndOfStep() override;
 
-            /// Solve the static equilibrium using a relaxation method
-            /// \param nsteps every nsteps, the velocity and acceleration are reset
-            /// \param niter number of total iteration
-            /// \return
-            bool DoQuasiStatic(int niter = 100, int nsteps = 20);
+//            /// Solve the static equilibrium using a relaxation method
+//            /// \param nsteps every nsteps, the velocity and acceleration are reset
+//            /// \param niter number of total iteration
+//            /// \return
+//            bool DoQuasiStatic(int niter = 100, int nsteps = 20);
 
-            void Relax();
+            bool DoStaticLinear() override;
 
         };
 

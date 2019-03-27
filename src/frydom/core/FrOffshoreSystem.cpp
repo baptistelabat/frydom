@@ -72,45 +72,45 @@ namespace frydom {
             m_offshoreSystem_->StepFinalize();
         }
 
-        // -----------------------------------------------------------------------------
-        // **** PERFORM THE STATIC ANALYSIS, FINDING THE STATIC
-        // **** EQUILIBRIUM OF THE SYSTEM, WITH ITERATIVE SOLUTION
-        // -----------------------------------------------------------------------------
+//        // -----------------------------------------------------------------------------
+//        // **** PERFORM THE STATIC ANALYSIS, FINDING THE STATIC
+//        // **** EQUILIBRIUM OF THE SYSTEM, WITH ITERATIVE SOLUTION
+//        // -----------------------------------------------------------------------------
+//
+//        bool FrSystemBaseSMC::DoQuasiStatic(int niter, int nsteps) {
+//
+//            double m_undotime = GetChTime();
+//            bool reach_tolerance = false;
+//
+//            if ((ncoords > 0) && (ndof >= 0)) {
+//                for (int m_iter = 0; m_iter < niter; m_iter++) {
+//                    // Get the speed of the bodies to check the convergence
+//                    double bodyVel = 0;
+//                    for (auto &body : bodylist) {
+//                        bodyVel += body->GetPos_dt().Length2();
+//                    }
+//
+//                    // Set no speed and accel. on bodies, meshes and other physics items
+//                    Relax();
+//
+//                    std::cout<<m_iter<<", "<<GetChTime()<<", "<<bodyVel<<std::endl;
+//                    // TODO : introduce a tolerance parameter
+//                    if (bodyVel < 1E-5 && GetChTime()>m_undotime+step*nsteps) {
+//                        reach_tolerance = true;
+//                        break;
+//                    }
+//                    DoFrameDynamics(m_undotime + m_iter * step * nsteps);
+//                }
+//
+//                // Set no speed and accel. on bodies, meshes and other physics items
+//                Relax();
+//            }
+//
+//            SetChTime(m_undotime);
+//            return reach_tolerance;
+//        }
 
-        bool FrSystemBaseSMC::DoQuasiStatic(int niter, int nsteps) {
-
-            double m_undotime = GetChTime();
-            bool reach_tolerance = false;
-
-            if ((ncoords > 0) && (ndof >= 0)) {
-                for (int m_iter = 0; m_iter < niter; m_iter++) {
-                    // Get the speed of the bodies to check the convergence
-                    double bodyVel = 0;
-                    for (auto &body : bodylist) {
-                        bodyVel += body->GetPos_dt().Length2();
-                    }
-
-                    // Set no speed and accel. on bodies, meshes and other physics items
-                    Relax();
-
-                    std::cout<<m_iter<<", "<<GetChTime()<<", "<<bodyVel<<std::endl;
-                    // TODO : introduce a tolerance parameter
-                    if (bodyVel < 1E-5 && GetChTime()>m_undotime+step*nsteps) {
-                        reach_tolerance = true;
-                        break;
-                    }
-                    DoFrameDynamics(m_undotime + m_iter * step * nsteps);
-                }
-
-                // Set no speed and accel. on bodies, meshes and other physics items
-                Relax();
-            }
-
-            SetChTime(m_undotime);
-            return reach_tolerance;
-        }
-
-        void FrSystemBaseSMC::Relax() {
+        bool FrSystemBaseSMC::DoStaticLinear() {
             // Set no speed and accel. on bodies, meshes and other physics items
             for (auto &body : bodylist) {
                 body->SetNoSpeedNoAcceleration();
