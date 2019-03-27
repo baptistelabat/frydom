@@ -296,7 +296,7 @@ namespace frydom {
             std::shared_ptr<ClippingSurface> GetClippingSurface() { return m_clippingSurface; }
 
             /// This function initializes the MeshClipper object from an input mesh and performs the clipping.
-            FrMesh &operator()(const FrMesh &mesh) {
+            FrMesh & Apply(const FrMesh &mesh) {
 
                 // Cleaning of the initial mesh structure.
                 Clear();

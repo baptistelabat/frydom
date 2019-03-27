@@ -18,7 +18,8 @@
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
-
+#include "frydom/mesh/FrMeshClipper.h"
+#include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
 namespace frydom {
 
@@ -54,8 +55,11 @@ namespace frydom {
         /// Boolean to know if the mesh is clipped by a wave (True) or a plane (False).
         bool m_WNL_or_NL;
 
-        /// Body;
+        /// Body.
         std::shared_ptr<FrBody> m_body;
+
+        /// Clipper.
+        std::unique_ptr<mesh::MeshClipper> m_clipper;
 
     public:
 
@@ -70,6 +74,36 @@ namespace frydom {
             // Initilization by default.
             m_Rotation.SetIdentity();
             m_MeshOffset = Position(0,0,0);
+
+            // m_clipper.
+            m_clipper = std::make_unique<mesh::MeshClipper>();
+
+            // Loading the input mesh file.
+            m_mesh_init = mesh::FrMesh(m_meshfilename);
+
+            // Tidal height.
+            double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
+
+            // Clipping surface.
+            if(m_WNL_or_NL = true) { // Incident wave field.
+
+                // Incident free surface.
+                FrFreeSurface *FreeSurface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface();
+
+                // Setting the free surface.
+                m_clipper->SetWaveClippingSurface(TidalHeight, FreeSurface);
+            }
+            else{ // Plane.
+
+                // Setting the free surface.
+                m_clipper->SetPlaneClippingSurface(TidalHeight);
+            }
+
+            // Body.
+            m_clipper->SetBody(m_body.get());
+
+            // Position and orientation of the mesh frame compared to the body frame.
+            m_clipper->SetMeshOffsetRotation(m_MeshOffset, m_Rotation);
         }
 
         /// Get the type name of this object

@@ -12,8 +12,6 @@
 #include "FrHydroMesh.h"
 
 #include "frydom/core/body/FrBody.h"
-#include "frydom/mesh/FrMeshClipper.h"
-#include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
 namespace frydom {
 
@@ -25,48 +23,13 @@ namespace frydom {
         FrPrePhysicsItem::Initialize();
         m_chronoPhysicsItem->SetupInitial();
 
-        // Loading the input mesh file.
-        m_mesh_init = mesh::FrMesh(m_meshfilename);
-
     }
 
     void FrHydroMesh::Update(double time) {
 
         // This function computes the nonlinear hydrostatic loads.
 
-        // Loading the input mesh file.
-        mesh::FrMesh current_mesh = m_mesh_init;
-
-        // Clipper.
-        mesh::MeshClipper clipper;
-
-        // Tidal height.
-        double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
-
-        // Clipping surface.
-        if(m_WNL_or_NL = true) { // Incident wave field.
-
-            // Incident free surface.
-            FrFreeSurface *FreeSurface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface();
-
-            // Setting the free surface.
-            clipper.SetWaveClippingSurface(TidalHeight, FreeSurface);
-        }
-        else{ // Plane.
-
-            // Setting the free surface.
-            clipper.SetPlaneClippingSurface(TidalHeight);
-        }
-
-        // Body.
-        clipper.SetBody(m_body.get());
-
-        // Position and orientation of the mesh frame compared to the body frame.
-        clipper.SetMeshOffsetRotation(m_MeshOffset, m_Rotation);
-
-        // Clipping.
-        m_clipped_mesh = clipper(current_mesh);
-
+        m_clipped_mesh = m_clipper->Apply(m_mesh_init);
     }
 
     Position FrHydroMesh::GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc){

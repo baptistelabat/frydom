@@ -21,7 +21,7 @@ namespace frydom {
     void FrHydrostaticsProperties::Load(const mesh::FrMesh& mesh, mathutils::Vector3d<double> cog){
         m_centerOfGravity = cog;
         mesh::MeshClipper clipper;
-        m_clippedMesh = clipper(mesh);
+        m_clippedMesh = clipper.Apply(mesh);
         Process();
     }
 
