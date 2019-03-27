@@ -28,7 +28,7 @@ namespace frydom {
     }  // end namespace frydom::internal
 
 
-    FrNode::FrNode(frydom::FrBody *body) : m_body(body) {
+    FrNode::FrNode(frydom::FrBody *body) : m_body(body), m_showAsset(false) {
         m_chronoMarker = std::make_shared<internal::FrMarker>(this);
         body->GetChronoBody()->AddMarker(m_chronoMarker);  //Chrono body can be retrieved because this constructor is a friend of FrBody
     }
