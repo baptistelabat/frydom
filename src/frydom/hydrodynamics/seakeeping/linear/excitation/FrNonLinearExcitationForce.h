@@ -24,6 +24,7 @@
 #include "frydom/environment/ocean/FrOcean.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/mesh/FrHydroMesh.h"
 
 namespace frydom {
 
@@ -49,22 +50,8 @@ namespace frydom {
 
         std::vector<Eigen::MatrixXcd> m_Fdiff;
 
-        mathutils::Matrix66<std::complex<double>> m_steadyForce;
-
-        /// Input mesh file.
-        std::string meshfilename; // Input mesh file.
-
         /// Clipped mesh.
         mesh::FrMesh m_clipped_mesh;
-
-        /// Input mesh file.
-        mesh::FrMesh m_mesh_init;
-
-        /// Mesh frame offset in the body frame.
-        Position m_MeshOffset;
-
-        /// Rotation of the mesh frame compared to the body frame.
-        mathutils::Matrix33<double> m_Rotation;
 
         /// Free surface object.
         FrFreeSurface* m_free_surface;
@@ -75,16 +62,15 @@ namespace frydom {
         /// Froude-Krylov torque;
         Torque m_FKtorque;
 
+        /// Hydrodynamic mesh.
+        std::shared_ptr<FrHydroMesh> m_hydro_mesh;
+
     public:
 
-        explicit FrNonLinearExcitationForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroDB> HDB, std::string meshfile) : m_HDB(HDB) {
+        explicit FrNonLinearExcitationForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrHydroMesh> HydroMesh) : m_HDB(HDB) {
             m_system = system;
-            meshfilename = meshfile;
-
-            // Initilization by default.
-            m_Rotation.SetIdentity();
-            m_MeshOffset = Position(0,0,0);
-            m_free_surface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface();
+            m_hydro_mesh = HydroMesh;
+            m_free_surface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface(); // Used to evaluate the incident pressure.
         };
 
         /// Get the type name of this object
@@ -97,21 +83,14 @@ namespace frydom {
 
         void StepFinalize() override;
 
-        /// This function sets the offset of the mesh frame in the body frame.
-        void SetMeshOffsetRotation(const Position Offset, const mathutils::Matrix33<double> Rotation){
-            m_MeshOffset = Offset;
-            m_Rotation = Rotation;
-        };
-
         /// This function compute the incident pressure integration.
         void CalcIncidentPressureIntegration();
 
     };
 
-    /// This subroutine creates the nonlinear excitation force object.
+    /// This function creates a (fully or weakly) nonlinear excitation force object.
     std::shared_ptr<FrNonLinearExcitationForce>
-    make_nonlinear_excitation_force(FrOffshoreSystem* system,std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile);
-
+    make_nonlinear_excitation_force(FrOffshoreSystem* system,std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
 
 }  // end namespace frydom
 

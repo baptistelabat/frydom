@@ -7,6 +7,7 @@ set(SRC_FILES
 	FrTriangleIntegrations.cpp
 	FrHydrostaticsProperties.cpp
 	FrMeshClipper.cpp
+	FrHydroMesh.cpp
         )
 
 set(FRYDOM_MESH_SOURCES "")

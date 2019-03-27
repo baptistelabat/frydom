@@ -17,10 +17,13 @@
 #include "frydom/core/math/FrVector.h"
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 #include "frydom/mesh/FrMesh.h"
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
+#include "frydom/mesh/FrHydroMesh.h"
 
 namespace frydom {
 
-    class FrEquilibriumFrame;
     class FrBody;
     class FrOffshoreSystem;
 
@@ -43,34 +46,21 @@ namespace frydom {
         /// Hydrodynamic database.
         std::shared_ptr<FrHydroDB> m_HDB;
 
-        /// Input mesh file.
-        std::string meshfilename; // Input mesh file.
-
         /// Center of buoyancy in world.
         Position m_CoBInWorld;
 
         /// Clipped mesh.
         mesh::FrMesh m_clipped_mesh;
 
-        /// Input mesh file.
-        mesh::FrMesh m_mesh_init;
-
-        /// Mesh frame offset in the body frame.
-        Position m_MeshOffset;
-
-        /// Rotation of the mesh frame compared to the body frame.
-        mathutils::Matrix33<double> m_Rotation;
+        /// Hydrodynamic mesh.
+        std::shared_ptr<FrHydroMesh> m_hydro_mesh;
 
     public:
 
         /// Constructor.
-        FrNonlinearHydrostaticForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroDB> HDB, std::string meshfile) : m_HDB(HDB) {
+        FrNonlinearHydrostaticForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrHydroMesh> HydroMesh) : m_HDB(HDB) {
             m_system = system;
-            meshfilename = meshfile;
-
-            // Initilization by default.
-            m_Rotation.SetIdentity();
-            m_MeshOffset = Position(0,0,0);
+            m_hydro_mesh = HydroMesh;
         }
 
         /// Get the type name of this object
@@ -90,22 +80,15 @@ namespace frydom {
         /// This function is called at the end of the time step, after the last step of the integration scheme.
         void StepFinalize() override;
 
-        /// This function gives the center of buoyancy.
+        /// This function gives the center of buoyancy in the world frame.
         Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);
-
-        /// This function sets the offset of the mesh frame in the body frame.
-        void SetMeshOffsetRotation(const Position Offset, const mathutils::Matrix33<double> Rotation){
-            m_MeshOffset = Offset;
-            m_Rotation = Rotation;
-        };
 
     };
 
-    /// This function creates the nonlinear hydrostatic force object for computing the nonlinear hydrostatic loads.
+    /// This function creates a (fully or weakly) nonlinear hydrostatic force object.
     std::shared_ptr<FrNonlinearHydrostaticForce>
-    make_nonlinear_hydrostatic_force(FrOffshoreSystem* system,std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile);
+    make_nonlinear_hydrostatic_force(FrOffshoreSystem* system,std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
 
 }  // end namespace frydom
-
 
 #endif //FRYDOM_FRNONLINEARHYDROSTATICFORCE_H

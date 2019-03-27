@@ -4,7 +4,6 @@ set(SRC_FILES
 #        FrHydrostaticForce.cpp
         FrLinearHydrostaticForce.cpp
         FrLinearHydrostaticStiffnessMatrix.cpp
-	FrWeaklyNonlinearHydrostaticForce.cpp
         FrNonlinearHydrostaticForce.cpp
         )
 

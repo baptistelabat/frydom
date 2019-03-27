@@ -201,7 +201,7 @@ namespace frydom {
         void CalcPressureIntegration(const mesh::FrMesh& clipped_mesh);
 
         /// This function gives the weakly or fully nonlinear hydrostatic force.
-        Force GetWeaklyNonlinearForce(){return m_force;};
+        Force GetNonlinearForce(){return m_force;};
 
         /// This function gives the center of buoyancy of the immersed mesh.
         Position GetCenterOfBuoyancy(){return m_centerOfBuoyancy;};

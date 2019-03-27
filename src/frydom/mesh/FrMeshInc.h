@@ -20,5 +20,6 @@
 #include "FrMeshClipper.h"
 #include "FrTriangleIntegrations.h"
 #include "FrTriangleMeshConnected.h"
+#include "FrHydroMesh.h"
 
 #endif //FRYDOM_FRMESHINC_H

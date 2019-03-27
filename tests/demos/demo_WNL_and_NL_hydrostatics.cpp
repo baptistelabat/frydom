@@ -72,8 +72,8 @@ int main(int argc, char* argv[]) {
     auto waveField = FreeSurface->SetAiryRegularWaveField();
 
     // The Airy regular wave parameters are its height, period and direction.
-//    double waveHeight = 2.;
-    double waveHeight = 0.;
+    double waveHeight = 2.;
+//    double waveHeight = 0.;
     double wavePeriod = 10.;
     Direction waveDirection = Direction(SOUTH(fc));
 
@@ -140,6 +140,13 @@ int main(int argc, char* argv[]) {
     // Map the equilibrium frame and the body in the hdb mapper
     hdb->Map(0, platform.get(), eqFrame);
 
+    // -- Hydrodynamic mesh
+    auto PlatformMesh = make_hydro_mesh_nonlinear(&system,platform,"mesh_Platform_GVA7500_Sym.obj");
+    mathutils::Matrix33<double> Rotation;
+    Rotation.SetIdentity();
+    Position MeshOffset(0,0,0);
+    PlatformMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
+
     // -- Hydrostatics
     // Create the linear hydrostatic force and add it to the platform
 
@@ -166,11 +173,9 @@ int main(int argc, char* argv[]) {
 
     // Nonlinear hydrostatic loads with the input mesh used for the visualization.
 //    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
-    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500_Sym.obj");
-    mathutils::Matrix33<double> Rotation;
-    Rotation.SetIdentity();
-    Position MeshOffset(0,0,0);
-    forceHst->SetMeshOffsetRotation(MeshOffset,Rotation);
+//    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500_Sym.obj");
+
+    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,PlatformMesh);
 
     forceHst->SetLogged(true);
     forceHst->ShowAsset(true);
@@ -183,7 +188,7 @@ int main(int argc, char* argv[]) {
 //    excitationForce->SetLogged(true);
 
     // Create the nonlinear excitation force and add it to the platform
-    auto excitationForce = make_nonlinear_excitation_force(&system,hdb, platform,"mesh_Platform_GVA7500_Sym.obj");
+    auto excitationForce = make_nonlinear_excitation_force(&system,hdb, platform,PlatformMesh);
     excitationForce->SetLogged(true);
 
     // -- Radiation

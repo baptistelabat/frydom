@@ -47,9 +47,6 @@ namespace frydom {
         // Initialization of the parent class.
         FrForce::Initialize();
 
-        // Loading the input mesh file.
-        m_mesh_init = mesh::FrMesh(meshfilename);
-
     }
 
     void FrNonLinearExcitationForce::Update(double time) {
@@ -60,41 +57,8 @@ namespace frydom {
         //                                      Froude-Krylov loads
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        if(m_body->GetHSFK() == 0){
-            m_body->SetHSFK(-1);
-        }
-
-        if(m_body->GetHSFK() == -1) { // If -1, then the mesh is clipped here and the hydrostatic force object will use it too.
-
-            // Loading the input mesh file.
-            mesh::FrMesh current_mesh = m_mesh_init;
-
-            // Clipper.
-            mesh::MeshClipper clipper;
-
-            // Tidal height.
-            double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
-
-            // Clipping surface.
-            clipper.SetWaveClippingSurface(TidalHeight, m_free_surface);
-
-            // Body.
-            clipper.SetBody(m_body);
-
-            // Position and orientation of the mesh frame compared to the body frame.
-            clipper.SetMeshOffsetRotation(m_MeshOffset, m_Rotation);
-
-            // Clipping.
-            m_clipped_mesh = clipper(current_mesh);
-
-            // Storage of the clipped for using in the computation of the weakly or fully nonlinear Froude-Krylov loads.
-            m_body->SetClippedMesh(&m_clipped_mesh);
-
-        }
-        else{ // If 1, then the mesh is clipped by the hydrostatic force object and is also used here.
-
-            m_clipped_mesh = *m_body->GetClippedMesh();
-        }
+        // Clipped mesh.
+        m_clipped_mesh = m_hydro_mesh->GetClippedMesh();
 
         // Computation of the Froude-Krylov force.
         CalcIncidentPressureIntegration();
@@ -162,7 +126,6 @@ namespace frydom {
         // Setting the nonlinear Froude-Krylov loads in world at the CoG in world.
         this->SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
 
-
 	    // Settings: torque is already computed at CoG.
         SetForceTorqueInWorldAtCOG(worldForce,worldTorque, NWU);
 
@@ -222,26 +185,22 @@ namespace frydom {
 
         }
 
-//        std::cout << "" << std::endl;
-//        std::cout << "FK loads" << std::endl;
-//        std::cout << m_FKforce << std::endl;
-//        std::cout << "" << std::endl;
-//        std::cout << m_FKtorque << std::endl;
-
     }
 
     void FrNonLinearExcitationForce::StepFinalize() {
         FrForce::StepFinalize();
+
+        // Writing the clipped mesh in an output file.
+//        m_clipped_mesh.Write("Mesh_clipped_Froude_Krylov.obj");
     }
 
-
     std::shared_ptr<FrNonLinearExcitationForce>
-    make_nonlinear_excitation_force(FrOffshoreSystem *system, std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile){
+    make_nonlinear_excitation_force(FrOffshoreSystem *system, std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh){
 
-        // This subroutine creates the nonlinear excitation force object.
+        // This subroutine creates a (fully or weakly) nonlinear excitation force object.
 
-        // Construction of the excitation force object from the HDB.
-        auto excitationForce = std::make_shared<FrNonLinearExcitationForce>(system,HDB,meshfile);
+        // Construction of the (fully or weakly) excitation force object from the HDB.
+        auto excitationForce = std::make_shared<FrNonLinearExcitationForce>(system,HDB,HydroMesh);
 
         // Add the excitation force object as an external force to the body.
         body->AddExternalForce(excitationForce);
