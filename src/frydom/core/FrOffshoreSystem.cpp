@@ -574,35 +574,108 @@ namespace frydom {
     }
 
     void FrOffshoreSystem::SetNbStepsStatics(int nSteps) {
-        m_nbStepStatics = nSteps;
+//        m_nbStepStatics = nSteps;
+        m_staticParam.m_nSteps = nSteps;
     }
 
-    bool FrOffshoreSystem::SolveStaticEquilibrium(FrOffshoreSystem::STATICS_METHOD method) {
+    void FrOffshoreSystem::SetNbIterationStatics(int nIter) {
+        m_staticParam.m_nIterations = nIter;
+    }
+
+    void FrOffshoreSystem::SetRelaxationStatics(frydom::FrOffshoreSystem::RELAXTYPE relax) {
+        m_staticParam.m_relax = relax;
+    }
+
+    void FrOffshoreSystem::SetToleranceStatics(double tol) {
+        m_staticParam.m_tolerance = tol;
+    }
+
+//    bool FrOffshoreSystem::SolveStaticEquilibrium(FrOffshoreSystem::STATICS_METHOD method) {
+//
+//        IsInitialized();
+//
+//        bool test = false;
+//
+//        switch (method) {
+//            case LINEAR:
+//                m_chronoSystem->DoStaticLinear();
+//                break;
+//            case NONLINEAR:
+//                m_chronoSystem->DoStaticNonlinear(m_nbStepStatics);
+//                break;
+//            case QUASISTATIC:
+////                m_chronoSystem->DoStaticRelaxing(m_nbStepStatics);
+//                if (m_systemType==SMOOTH_CONTACT)
+//                    test = dynamic_cast<internal::FrSystemBaseSMC*>(m_chronoSystem.get())->DoQuasiStatic(m_nbStepStatics,100);
+//                if (m_systemType == NONSMOOTH_CONTACT)
+//                    std::cout<<"QuasiStatic method for NSC not implemented yet !"<<std::endl;
+//                break;
+//        }
+//
+//        // Executes custom processing at the end of step
+//        StepFinalize();
+//        return test;
+//        // FIXME : il semble que les solveurs retournent toujours true...
+//    }
+
+
+    bool FrOffshoreSystem::SolveStaticWithRelaxation() {
 
         IsInitialized();
 
-        bool test = false;
+        double m_undotime = m_chronoSystem->GetChTime();
+        bool reach_tolerance = false;
+        int iter = 0;
 
-        switch (method) {
-            case LINEAR:
-                m_chronoSystem->DoStaticLinear();
-                break;
-            case NONLINEAR:
-                m_chronoSystem->DoStaticNonlinear(m_nbStepStatics);
-                break;
-            case QUASISTATIC:
-//                m_chronoSystem->DoStaticRelaxing(m_nbStepStatics);
-                if (m_systemType==SMOOTH_CONTACT)
-                    test = dynamic_cast<internal::FrSystemBaseSMC*>(m_chronoSystem.get())->DoQuasiStatic(m_nbStepStatics,200);
-                if (m_systemType == NONSMOOTH_CONTACT)
-                    std::cout<<"QuasiStatic method for NSC not implemented yet !"<<std::endl;
-                break;
+//        for (int m_iter = 0; m_iter < nIter; m_iter++) {
+         while (!(reach_tolerance || iter==m_staticParam.m_nIterations)) {
+
+            // Set no speed and accel. on bodies, meshes and other physics items
+            Relax(m_staticParam.m_relax);
+
+            m_chronoSystem->DoFrameDynamics(m_undotime + iter * m_chronoSystem->GetStep() * m_staticParam.m_nSteps);
+
+             // Get the speed of the bodies to check the convergence
+             double bodyVel = 0;
+             for (auto &body : m_bodyList) {
+                 bodyVel += body->GetVelocityInWorld(NWU).norm();
+             }
+             std::cout<<iter<<", "<<m_chronoSystem->GetChTime()<<", "<<bodyVel<<std::endl;
+             // TODO : introduce a tolerance parameter
+             if (bodyVel < m_staticParam.m_tolerance && m_chronoSystem->GetChTime()>m_undotime+m_chronoSystem->GetStep()*m_staticParam.m_nSteps) {
+                 reach_tolerance = true;
+             }
+
+             iter ++;
+
         }
 
-        // Executes custom processing at the end of step
-        StepFinalize();
-        return test;
-        // FIXME : il semble que les solveurs retournent toujours true...
+        // Set no speed and accel. on bodies, meshes and other physics items
+        Relax(m_staticParam.m_relax);
+
+        m_chronoSystem->SetChTime(m_undotime);
+        return reach_tolerance;
+    }
+
+    void FrOffshoreSystem::Relax(RELAXTYPE relax) {
+
+        for (auto& body:m_bodyList) {
+            switch (relax) {
+                case NORELAX :
+                    break;
+                case VELOCITY :
+                    body->SetVelocityInWorldNoRotation(Velocity(), NWU);
+                    break;
+                case ACCELERATION :
+                    body->SetAccelerationInBodyNoRotation(Acceleration(), NWU);
+                    break;
+                case VELOCITYANDACCELERATION :
+                    body->SetVelocityInWorldNoRotation(Velocity(), NWU);
+                    body->SetAccelerationInBodyNoRotation(Acceleration(), NWU);
+                    break;
+            }
+        }
+
     }
 
     void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type, bool checkCompat) {
@@ -743,7 +816,7 @@ namespace frydom {
         IsInitialized();
 
         // Definition and initialization of the Irrlicht application.
-        FrIrrApp app(m_chronoSystem.get(), dist);
+        FrIrrApp app(this, m_chronoSystem.get(), dist);
 
         app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
@@ -755,11 +828,23 @@ namespace frydom {
 
         IsInitialized();  // So that system is automatically initialized when run in viewer mode
 
-        FrIrrApp app(m_chronoSystem.get(), dist);
+        FrIrrApp app(this, m_chronoSystem.get(), dist);
 
         app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
         app.Visualize();
+
+    }
+
+    void FrOffshoreSystem::VisualizeStaticAnalysis( double dist, bool recordVideo) {
+
+        IsInitialized();  // So that system is automatically initialized when run in viewer mode
+
+        FrIrrApp app(this, m_chronoSystem.get(), dist);
+
+        app.SetTimestep(m_chronoSystem->GetStep());
+        app.SetVideoframeSave(recordVideo);
+        app.VisualizeStaticAnalysis();
 
     }
 

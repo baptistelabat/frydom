@@ -181,7 +181,25 @@ namespace frydom {
             MULTI_STEP  ///< use contact history (from contact initiation)
         };
 
+        /// enum for the relaxation methods
+        enum RELAXTYPE {
+            NORELAX,                ///< no relaxation
+            VELOCITY,               ///< velocities are set to null
+            ACCELERATION,           ///< accelelrations are set to null
+            VELOCITYANDACCELERATION ///< velocities and accelerations are set to null
+        };
 
+        struct FrStaticAnalysisParam {
+
+            int m_nIterations = 10;     ///< Number of iterations for the static procedure
+                                        /// each iteration contains m_nSteps steps; after each iteration a relaxation is applied
+            int m_nSteps = 100;         ///< Relaxation is applied every m_nSteps steps
+
+            double m_tolerance = 1E-3;  ///< tolerance value, to check if the static equilibrium is reached
+
+            RELAXTYPE m_relax = VELOCITYANDACCELERATION;    ///< relaxation method used
+
+        };
 
     private:
 
@@ -200,6 +218,8 @@ namespace frydom {
         int m_nbStepStatics = 10;                           ///< maximum number of iterative steps to find the static
                                                             ///< equilibrium, with the nonlinear and relaxation methods
         STATICS_METHOD  m_staticsMethod;                    ///< method to find the static equilibrium
+
+        FrStaticAnalysisParam m_staticParam;
 
         // Container: definition.
         using BodyContainer = std::vector<std::shared_ptr<FrBody>>;
@@ -514,11 +534,21 @@ namespace frydom {
         /// \param nSteps maximum number of iterative steps
         void SetNbStepsStatics(int nSteps);
 
-        /// Solve the static equilibrium with the specified method, default is NONLINEAR.
-        /// \param method method to find the static equilibrium
-        /// \return true if the static equilibrium has been reached
-        // FIXME : il semble que les solveurs retournent toujours true...
-        bool SolveStaticEquilibrium(STATICS_METHOD method=NONLINEAR);
+        void SetNbIterationStatics(int nIter);
+
+        void SetRelaxationStatics(RELAXTYPE relax);
+
+        void SetToleranceStatics(double tol);
+
+//        /// Solve the static equilibrium with the specified method, default is NONLINEAR.
+//        /// \param method method to find the static equilibrium
+//        /// \return true if the static equilibrium has been reached
+//        // FIXME : il semble que les solveurs retournent toujours true...
+//        bool SolveStaticEquilibrium(STATICS_METHOD method);
+
+        bool SolveStaticWithRelaxation();
+
+        void Relax(RELAXTYPE relax);
 
 
         // Time Stepping settings
@@ -605,6 +635,11 @@ namespace frydom {
         /// \param dist distance of the camera from the subject, in the viewer environment
         /// \param recordVideo record snapshots if turned true
         void Visualize(double dist=100, bool recordVideo=false);
+
+        /// Visualize the scene as you set up, no simulation involved
+        /// \param dist distance of the camera from the subject, in the viewer environment
+        /// \param recordVideo record snapshots if turned true
+        void VisualizeStaticAnalysis(double dist=100, bool recordVideo=false);
 
         /// Add an optional asset (it can be used to define visualization shapes, or textures, or custom attached
         /// properties that the user can define by creating his class inherited from FrAssetComponent)
