@@ -7,5 +7,6 @@
 
 #include "FrLinearRampFunction.h"
 #include "FrTanhRampFunction.h"
+#include "FrCosRampFunction.h"
 
 #endif //FRYDOM_FRRAMPFUNCTIONINC_H

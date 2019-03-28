@@ -17,7 +17,7 @@
 
 namespace frydom {
 
-    void FrCatenaryForce::Update(double time) {
+    void FrCatenaryForce::Compute(double time) {
 
         Position relpos;
         Force ForceInWorld;

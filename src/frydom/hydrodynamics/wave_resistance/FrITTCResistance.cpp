@@ -19,7 +19,7 @@
 
 namespace frydom{
 
-    void FrITTCResistance::Update(double time) {
+    void FrITTCResistance::Compute(double time) {
 
         Velocity cogBodyVel = m_body->GetCOGVelocityInBody(NWU);
         double  ux = cogBodyVel.GetVx();

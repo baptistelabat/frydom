@@ -50,11 +50,15 @@ namespace frydom {
 
         FrMorisonCompositeElement* SetCompositeElementModel(FrBody* body);
 
-        void Update(double time) override;
-
         void Initialize() override;
 
         void StepFinalize() override;
+
+    private:
+
+        /// Compute the Morison force
+        /// \param time Current time of the simulation from beginning, in seconds
+        void Compute(double time) override;
     };
 
     /// Maker of a Morison model force : instantiate and return a FrMorisonForce, based on a Morison element.

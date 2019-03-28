@@ -1,6 +1,13 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 06/02/19.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 
 #ifndef FRYDOM_FRRAMP_H
 #define FRYDOM_FRRAMP_H
@@ -30,7 +37,7 @@ namespace frydom {
 //        double m_x0 = 0.; // TODO : plutot reposer sur l'offset de la fonction de base !
 //        double m_x1 = 1.;
 
-        double m_x0 = 0., m_x1 = 10., m_y0 = 0., m_y1 = 1.;
+        double m_x0 = 0., m_x1 = 1., m_y0 = 0., m_y1 = 1.;
 
     public:
 

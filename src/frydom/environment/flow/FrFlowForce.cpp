@@ -102,7 +102,7 @@ namespace frydom {
         m_table.AddY("coeff", vectL);
     }
 
-    void FrFlowForce::Update(double time) {
+    void FrFlowForce::Compute(double time) {
 
         double alpha = m_fluxVelocityInBody.GetProjectedAngleAroundZ(mathutils::RAD);
         alpha = mathutils::Normalize_0_2PI(alpha);
@@ -132,7 +132,7 @@ namespace frydom {
         FrForce::StepFinalize();
     }
 
-    void FrCurrentForce::Update(double time) {
+    void FrCurrentForce::Compute(double time) {
 
         FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
@@ -140,10 +140,10 @@ namespace frydom {
         m_fluxVelocityInBody =
                 m_body->GetSystem()->GetEnvironment()->GetOcean()->GetCurrent()->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
 
-        FrFlowForce::Update(time);
+        FrFlowForce::Compute(time);
     }
 
-    void FrWindForce::Update(double time) {
+    void FrWindForce::Compute(double time) {
 
         FrFrame FrameAtCOG = m_body->GetFrameAtCOG(NWU);
         Velocity VelocityInWorldAtCOG =  m_body->GetCOGVelocityInWorld(NWU);
@@ -151,7 +151,7 @@ namespace frydom {
         m_fluxVelocityInBody =
                 m_body->GetSystem()->GetEnvironment()->GetAtmosphere()->GetWind()->GetRelativeVelocityInFrame(FrameAtCOG, VelocityInWorldAtCOG, NWU);
 
-        FrFlowForce::Update(time);
+        FrFlowForce::Compute(time);
     }
 
     std::shared_ptr<FrCurrentForce> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody> body){

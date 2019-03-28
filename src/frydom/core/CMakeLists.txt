@@ -70,6 +70,7 @@ list(APPEND SRC_FILES
 
         math/functions/ramp/FrLinearRampFunction.cpp
         math/functions/ramp/FrTanhRampFunction.cpp
+        math/functions/ramp/FrCosRampFunction.cpp
 
         math/functions/lib/FrPowFunction.cpp
         math/functions/lib/FrLinearFunction.cpp

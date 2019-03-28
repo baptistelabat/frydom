@@ -56,7 +56,7 @@ namespace frydom {
         FrForce::Initialize();
     }
 
-    void FrQuadraticDamping::Update(double time) {
+    void FrQuadraticDamping::Compute(double time) {
 
         Velocity cogRelVel;
         if (m_relative2Fluid) {
