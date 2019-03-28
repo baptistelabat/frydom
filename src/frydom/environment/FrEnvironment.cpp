@@ -10,6 +10,7 @@
 // ==========================================================================
 
 
+#include <frydom/core/math/functions/ramp/FrCosRampFunction.h>
 #include "FrEnvironment.h"
 
 #include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
@@ -35,8 +36,9 @@ namespace frydom {
         m_ocean                 = std::make_unique<FrOcean>(this);
         m_atmosphere            = std::make_unique<FrAtmosphere>(this);
 
-        m_timeRamp              = std::make_unique<FrLinearRampFunction>();
+        m_timeRamp              = std::make_unique<FrCosRampFunction>();
         m_timeRamp->SetActive(false);
+        m_timeRamp->SetByTwoPoints(0.,0.,10.,1.);
 
 //        if (not(m_infinite_depth)) m_seabed->SetEnvironment(this); // TODO : voir a porter ca dans seabed...
 
@@ -127,7 +129,9 @@ namespace frydom {
         m_atmosphere->StepFinalize();
     }
 
-    FrLinearRampFunction *FrEnvironment::GetTimeRamp() const { return m_timeRamp.get();}
+    FrCosRampFunction *FrEnvironment::GetTimeRamp() const {
+        return m_timeRamp.get();
+    }
 
 
 }  // end namespace frydom
