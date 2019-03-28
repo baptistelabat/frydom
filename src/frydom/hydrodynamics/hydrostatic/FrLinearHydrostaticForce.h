@@ -67,15 +67,17 @@ namespace frydom {
         /// This function sets the hydrostatic stiffness matrix.
         void SetStiffnessMatrix(mathutils::MatrixMN<double> HydrostaticMatrix);
 
-        /// Update linear hydrostatic force
-        /// \param time Current time of the simulation from begining
-        void Update(double time) override;
-
         /// Intialize the linear hydrostatic force model
         void Initialize() override;
 
         /// Methods to be applied at the end of each time steps
         void StepFinalize() override;
+
+    private:
+
+        /// Compute the linear hydrostatic force
+        /// \param time Current time of the simulation from beginning
+        void Compute(double time) override;
 
     };
 

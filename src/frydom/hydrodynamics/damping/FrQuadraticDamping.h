@@ -74,7 +74,11 @@ namespace frydom {
 
         void StepFinalize() override;
 
-        void Update(double time) override;
+    private:
+
+        /// Compute the quadratic damping
+        /// \param time Current time of the simulation from beginning, in seconds
+        void Compute(double time) override;
 
     };
 

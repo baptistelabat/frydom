@@ -61,7 +61,7 @@ TEST_F(TestQuadraticDamping, TestBodyVelocity) {
 
     system.Initialize();
     body->SetVelocityInBodyNoRotation(bodyVelocity, NWU);
-    force->Update(0.);
+    force->Compute(0.);
 
     auto bodyForce = force->GetForceInBody(NWU);
     EXPECT_NEAR(forceRef.GetFx(), bodyForce.GetFx(), 1e-5);
@@ -83,7 +83,7 @@ TEST_F(TestQuadraticDamping, TestCurrentVelocity) {
     force->SetRelative2Fluid(true);
     system.Initialize();
 
-    force->Update(0.);
+    force->Compute(0.);
 
     auto bodyForce = force->GetForceInBody(NWU);
     EXPECT_NEAR(forceRef.GetFx(), bodyForce.GetFx(), 1e-5);
@@ -106,7 +106,7 @@ TEST_F(TestQuadraticDamping, TestWindVelocity) {
     body->SetVelocityInBodyNoRotation(Velocity(0., 0., 0.1), NWU);
     system.Initialize();
 
-    windDamping->Update(0.);
+    windDamping->Compute(0.);
 
     auto bodyForce = windDamping->GetForceInBody(NWU);
     EXPECT_NEAR(forceRef.GetFx() * 0.001172346640701071, bodyForce.GetFx(), 1e-5);

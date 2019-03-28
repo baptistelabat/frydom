@@ -73,13 +73,15 @@ namespace frydom {
         /// Getter for the boolean : m_relativeVelocity
         bool GetRelativeToFluid();
 
-        void Update(double time) override;
-
         void Initialize() override;
 
         void StepFinalize() override;
 
     private:
+
+        /// Compute the linear damping force
+        /// \param time Current time of the simulation from beginning, in seconds
+        void Compute(double time) override;
 
         void Check() const;
 

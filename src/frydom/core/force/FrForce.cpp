@@ -372,5 +372,18 @@ namespace frydom{
         return m_asset.get();
     }
 
+    bool FrForce::IsActive() const {return m_isActive;}
+
+    void FrForce::SetActive(bool active) { m_isActive = active;}
+
+    void FrForce::Update(double time) {
+
+        if (IsActive())
+            Compute(time);
+        else
+            SetForceTorqueInBodyAtCOG(Force(), Torque(), NWU);
+
+    }
+
 
 }  // end namespace frydom

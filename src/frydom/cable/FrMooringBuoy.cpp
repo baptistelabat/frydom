@@ -19,7 +19,7 @@
 namespace frydom {
 
 
-    void FrMooringBuoy::FrSphereNonLinearHydrostaticForce::Update(double time) {
+    void FrMooringBuoy::FrSphereNonLinearHydrostaticForce::Compute(double time) {
         auto m_buoy = dynamic_cast<FrMooringBuoy*>(m_body);
         Force Gvector(0.,0.,-m_buoy->GetSystem()->GetGravityAcceleration());
         auto rho_water = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetDensity();

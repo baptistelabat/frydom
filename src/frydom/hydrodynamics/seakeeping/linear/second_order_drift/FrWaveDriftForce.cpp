@@ -25,7 +25,7 @@ namespace frydom {
     FrWaveDriftForce::FrWaveDriftForce(std::shared_ptr<FrHydroDB> hdb)
         : m_hdb(hdb) {}
 
-    void FrWaveDriftForce::Update(double time) {
+    void FrWaveDriftForce::Compute(double time) {
 
         auto force = Force();
         auto torque = Torque();

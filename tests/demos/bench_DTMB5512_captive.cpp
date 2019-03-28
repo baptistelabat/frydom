@@ -174,7 +174,7 @@ class SteadyPitchTorque : public FrForce {
 
 public:
 
-    void Update(double time) override {
+    void Compute(double time) override {
 
         auto speed = m_body->GetVelocityInWorld(NWU).GetVx();
         auto torque = 4.332 * std::pow(speed, 6)
@@ -199,7 +199,7 @@ class SteadyHeaveForce : public FrForce {
 
 public:
 
-    void Update(double time) override {
+    void Compute(double time) override {
 
         auto speed = m_body->GetVelocityInWorld(NWU).GetVx();
 

@@ -35,7 +35,7 @@ namespace frydom {
 
     }
 
-    void FrLinearHydrostaticForce::Update(double time) {
+    void FrLinearHydrostaticForce::Compute(double time) {
 
         // This function computes the linear hydrostatic loads.
 
