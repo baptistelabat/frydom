@@ -55,7 +55,7 @@ namespace frydom {
         std::shared_ptr<internal::FrMarker> m_chronoMarker;   ///< Chrono class for nodes/marker.
 
         // Asset for a node
-        bool m_showAsset;
+        bool m_showAsset = false;
         std::shared_ptr<FrNodeAsset> m_asset;
 
     public:
