@@ -360,7 +360,7 @@ TEST_F(TestMorison, SingleElementForce) {
     body->AddExternalForce(force);
     system.Initialize();
 
-    force->Compute(0.);
+    force->Update(0.);
     CheckForce(force.get());
 }
 
@@ -381,7 +381,7 @@ TEST_F(TestMorison, SingleElementForceWithNode) {
     body->AddExternalForce(force);
     system.Initialize();
 
-    force->Compute(0.);
+    force->Update(0.);
     CheckForce(force.get());
 }
 
@@ -398,7 +398,7 @@ TEST_F(TestMorison, CompositeElementWithPositions) {
     body->AddExternalForce(force);
     system.Initialize();
 
-    force->Compute(0.);
+    force->Update(0.);
     CheckForce(force.get());
 }
 
@@ -420,7 +420,7 @@ TEST_F(TestMorison, CompositeElementWithNodes) {
     body->AddExternalForce(force);
     system.Initialize();
 
-    force->Compute(0.);
+    force->Update(0.);
     CheckForce(force.get());
 }
 
@@ -437,7 +437,7 @@ TEST_F(TestMorison, ElementDiscretization) {
     body->AddExternalForce(force);
     system.Initialize();
 
-    force->Compute(0.);
+    force->Update(0.);
     CheckForce(force.get());
 }
 
@@ -455,7 +455,7 @@ TEST_F(TestMorison, TwoElements) {
     body->AddExternalForce(force);
     system.Initialize();
 
-    force->Compute(0.);
+    force->Update(0.);
 
     auto forceWorld = force->GetForceInWorld(NWU);
     auto torqueBody = force->GetTorqueInBodyAtCOG(NWU);
@@ -516,7 +516,7 @@ TEST_F(TestMorison, CompositionElementGeneralProperty) {
     body->AddExternalForce(force);
     system.Initialize();
 
-    force->Compute(0.);
+    force->Update(0.);
     CheckForce(force.get());
 }
 
@@ -543,7 +543,7 @@ TEST_F(TestMorison, CompositionElementGeneralPropertyNode) {
     body->AddExternalForce(force);
     system.Initialize();
 
-    force->Compute(0.);
+    force->Update(0.);
     CheckForce(force.get());
 }
 
