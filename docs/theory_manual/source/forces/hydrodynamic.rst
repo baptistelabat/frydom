@@ -50,7 +50,7 @@ Linear model
 The generalized hydrostatic static force expression for the linear approximation is given by:
 
 .. math::
-    \mathbf{f}_H = -\mathbf{K}_h \mathbf{x}
+    \mathbf{f}_H(t) = -\mathbf{K}_h \mathbf{x}(t)
 
 where
 
@@ -68,14 +68,14 @@ Weakly nonlinear model
 In the linear model, the mesh used for the computation of the hydrostatic stiffness matrix is fixed. In the weakly nonlinear model, the loads are computed by the hydrostatic pressure integration over the body mesh at its real position. The free surface is represented by the plane :math:`z = 0`. Consequently, at every evaluation of the hydrostatic loads, the body mesh is clipped by the plane :math:`z = 0`. The expression of the hydrostatic force is:
 
 .. math::
-    \mathbf{f}_H = -\iint_{S_0} \rho gz \mathbf{n} dS
+    \mathbf{f}_H(t)= -\iint_{S_0} \rho gz \mathbf{n} dS
 
 where
 
 - :math:`\rho` is the water density;
-- :math:`n` denotes the gravity constant;
+- :math:`g` denotes the gravity constant;
 - :math:`\mathbf{n}` is normal vector, pointing outward the body surface;
-- :math:`S_0` representes the wetted body surface delimited by the plane `z = 0`.
+- :math:`S_0` representes the wetted body surface delimited by the plane :math:`z = 0`.
 
 This force, applied at the center of buoyancy, is transport to the center of gravity to evaluate the hydrostatic torque.
 
@@ -85,29 +85,118 @@ Fully nonlinear model
 In the fully nonlinear model, the mesh used for the pressure integration is delimited by the incident wave field :math:`z = \eta_I` and not the plane :math:`z = 0` as in the weakly nonlinear model. Consequently, the expression of the hydrostatic force becomes:
 
 .. math::
-    \mathbf{f}_H = -\iint_{S_I} \rho gz \mathbf{n} dS
+    \mathbf{f}_H(t) = -\iint_{S_I} \rho gz \mathbf{n} dS
 
 where :math:`S_I` is the wetted body surface delimited by the incident wave field :math:`z = \eta_I`.
 
 The computation of the hydrostatic torque follows the same principle as in the weakly nonlinear model.
 
-Excitation force
-----------------
+Froude-Krylov force
+-------------------
 
-The generalized excitation force, given by the linear approximation, is:
+The Froude-Krylov loads are due to the integration of the pressure of the incident wave field over the wetted body surface. Several models are available, following the same decomposition presented for the hydrostatic loads:
+- : a linear model;
+- : a weakly nonlinear model;
+- : a fully nonlinear model.
+
+Linear model
+************
+
+The Froude-Krylov force, given by the linear approximation, is:
 
 .. math::
-    \mathbf{f}_E = \Im \left( \int_0^\infty A_{\omega} \mathbf{f}_e(\omega) \exp\left(jkx - j\omega_e t \right)  d\omega \right)
+    \mathbf{f}_{FK}(t) = \sum_m \sum_n \Im\left(A_{mn} \mathbf{f}_{fk}(\omega_m,\theta_n) e^{j(k_m\bar{x}_n - \omega_m^e t + \Phi_{mn})}\right)
+
+with
+
+- :math:`\omega_m` the wave frequency;
+- :math:`\theta_n` the wave direction;
+- :math:`\bar{x}_n = x \cos(\theta_n) + y \sin(\theta_n)`;
+- :math:`\omega_m^e = \omega_m - k_mU` is the encounter circular frequency, calculated using the steady forward speed;
+- :math:`A_{mn}` the wave amplitude for the wave frequency :math:`\omega_m` and the wave direction :math:`\theta_n`;
+- :math:`\mathbf{f}_{fk}(\omega_m,\theta_n)` is the frequency-domain Froude-Krylov force component (with both the diffraction and Froude-Krylov components) for the wave frequency :math:`\omega` and the wave direction :math:`\theta_n`.
+
+The frequency-domain Froude-Krylov forces are obtained from a linear potential flow-based solver such as *Nemoh* or *WAMIT*.
+
+Weakly nonlinear model
+**********************
+
+Following the same method as for the weakly nonlinear hydrostatics, the computation of the weakly nonlinear Froude-Krylov loads involves the incident pressure integration over the body mesh at its real position. The free surface is represented by the plane :math:`z = 0`. Consequently, at every evaluation of the Froude-Krylov loads, the body mesh is clipped by the plane :math:`z = 0`. The expression of the Froude-Krylov force is:
+
+.. math::
+    \mathbf{f}_{FK}(t)= -\iint_{S_0} P_I \mathbf{n} dS
 
 where
 
-- :math:`\omega_e = \omega - kU` is the encounter circular frequency, calculated using the steady forward speed,
-- :math:`A_{\omega}` is the wave amplitude for the circular frequency :math:`\omega`,
-- :math:`\mathbf{f}_e(\omega)` is the frequency-domain excitation force component for the circular frequency :math:`\omega`.
+- :math:`P_I` is pressure of the incident wave field;
+- :math:`\mathbf{n}` is normal vector, pointing outward the body surface;
+- :math:`S_0` representes the wetted body surface delimited by the plane :math:`z = 0`.
 
-The excitation force components are given by a linear potential flow based solver (Nemoh, WAMIT, etc.). It is the combination of diffraction
-force components and Froude-Krylov force components (integration of the pressure due to incident wave profile on the
-wetted hull).
+The Froude-Krylov torque at the center of gravity of the body is expressed by:
+
+.. math::
+    \mathbf{\Gamma}_{FK}(t)= -\iint_{S_0} P_I (\mathbf{OM}-\mathbf{OG})\times\mathbf{n} dS
+
+with
+
+- :math:`\mathbf{OG}` the position of the center of gravity of the body;
+- :math:`\mathbf{OM}` the position of the centroid of the panel.
+
+Fully nonlinear model
+*********************
+
+In the fully nonlinear model for evaluating the Froude-Krylov loads, the mesh used for the pressure integration is delimited by the incident wave field :math:`z = \eta_I` and not the plane :math:`z = 0` as in the weakly nonlinear model. Consequently, the expression of the Froude-Krylov force and torque become:
+
+.. math::
+    \mathbf{f}_{FK}(t)= -\iint_{S_I} P_I \mathbf{n} dS
+
+.. math::
+    \mathbf{\Gamma}_{FK}(t)= -\iint_{S_I} P_I (\mathbf{OM}-\mathbf{OG})\times\mathbf{n} dS
+
+where :math:`S_I` is the wetted body surface delimited by the incident wave field :math:`z = \eta_I`.
+
+Diffraction force
+-----------------
+
+The diffraction force, given by the linear approximation, is:
+
+.. math::
+    \mathbf{f}_D(t) = \sum_m \sum_n \Im\left(A_{mn} \mathbf{f}_d(\omega_m,\theta_n) e^{j(k_m\bar{x}_n - \omega_m^e t + \Phi_{mn})}\right)
+
+with
+
+- :math:`\omega_m` the wave frequency;
+- :math:`\theta_n` the wave direction;
+- :math:`\bar{x}_n = x \cos(\theta_n) + y \sin(\theta_n)`;
+- :math:`\omega_m^e = \omega_m - k_mU` is the encounter circular frequency, calculated using the steady forward speed;
+- :math:`A_{mn}` the wave amplitude for the wave frequency :math:`\omega_m` and the wave direction :math:`\theta_n`;
+- :math:`\mathbf{f}_D(\omega_m,\theta_n)` is the frequency-domain diffraction force component (with both the diffraction and Froude-Krylov components) for the wave frequency :math:`\omega` and the wave direction :math:`\theta_n`.
+
+The frequency-domain diffraction forces are obtained from a linear potential flow-based solver such as *Nemoh* or *WAMIT*.
+
+Exciting force
+--------------
+
+The excitation loads represent the combinaison of both the diffraction loads and the Froude-Krylov loads. 
+
+.. math::
+    \mathbf{f}_E(t) = \mathbf{f}_D(t) + \mathbf{f}_{FK}(t)
+
+In the case of a linear Froude-Krylov model, the diffraction and Froude-Krylov loads are computed together:
+
+.. math::
+    \mathbf{f}_E(t) = \sum_m \sum_n \Im\left(A_{mn} \mathbf{f}_e(\omega_m,\theta_n) e^{j(k_m\bar{x}_n - \omega_m^e t + \Phi_{mn})}\right)
+
+with
+
+- :math:`\omega_m` the wave frequency;
+- :math:`\theta_n` the wave direction;
+- :math:`\bar{x}_n = x \cos(\theta_n) + y \sin(\theta_n)`;
+- :math:`\omega_m^e = \omega_m - k_mU` is the encounter circular frequency, calculated using the steady forward speed;
+- :math:`A_{mn}` the wave amplitude for the wave frequency :math:`\omega_m` and the wave direction :math:`\theta_n`;
+- :math:`\mathbf{f}_e(\omega_m,\theta_n)` is the frequency-domain excitation force component (with both the diffraction and Froude-Krylov components) for the wave frequency :math:`\omega` and the wave direction :math:`\theta_n`.
+
+The frequency-domain excitation forces are obtained from a linear potential flow-based solver such as *Nemoh* or *WAMIT*.
 
 Radiation force
 ---------------
@@ -115,8 +204,8 @@ Radiation force
 The generalized radiation force, given by the linear approximation, is:
 
 .. math::
-    \mathbf{f}_R = \mathbf{A}_{\infty} (U) \mathbf{\ddot{x}}(t) + \mathbf{B}_{\infty}(U) \mathbf{\dot{x}}(t)
-                    + \int_0^t \mathbf{K}(t-\tau,U) \mathbf{\dot{x}}(\tau) d\tau
+    \mathbf{f}_R(t) = -\mathbf{A}_{\infty} (U) \mathbf{\ddot{x}}(t) - \mathbf{B}_{\infty}(U) \mathbf{\dot{x}}(t)
+                    - \int_0^t \mathbf{K}(t-\tau,U) \mathbf{\dot{x}}(\tau) d\tau
 
 where
 
@@ -145,6 +234,4 @@ where
 - :math:`\omega_e` is the encounter circular frequency, which depends on :math:`(\omega,\theta)`;
 - :math:`\alpha` is the relative angle between the wave direction and body heading;
 - :math:`\mathbf{C}(\omega_e,\alpha)` are the polar wave drift coefficients, which depend on :math:`(\omega_e,\alpha)`.
-
-
 
