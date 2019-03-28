@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
     auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
 
     // The Airy regular wave parameters are its height, period and direction.
-    double waveHeight = 0.;    double wavePeriod = 2.*M_PI;
+    double waveHeight = 2.;    double wavePeriod = 2.*M_PI;
     Direction waveDirection = Direction(SOUTH(fc));
 
     waveField->SetWaveHeight(waveHeight);
@@ -283,15 +283,15 @@ int main(int argc, char* argv[]) {
 //    system.SetNbIterationStatics(-1);
 
     system.SetNbStepsStatics(100);
-    system.SetRelaxationStatics(FrOffshoreSystem::RELAXTYPE::ACCELERATION);
+//    system.SetRelaxationStatics(FrOffshoreSystem::RELAXTYPE::ACCELERATION);
     auto test = system.SolveStaticWithRelaxation();
-    system.Visualize(75.,false);
+//    system.Visualize(75.,false);
 
 //    system.VisualizeStaticAnalysis(75.,false);
 
-//    radiationModel->Clear();
+    radiationModel->Clear();
 //
-//    system.RunInViewer(0, 75, false);
+    system.RunInViewer(0, 75, false);
 
 //    return test;
 }

@@ -9,7 +9,8 @@
 namespace frydom {
 
     FrLinearRampFunction::FrLinearRampFunction() {
-        m_function = clamp_after(clamp_before(FrVarXFunction(), 0), 1).Clone();
+        SetByTwoPoints(m_x0, m_y0, m_x1, m_y1);
+//        m_function = clamp_after(clamp_before(FrVarXFunction(), 0), 1).Clone();
     }
 
     FrLinearRampFunction::FrLinearRampFunction(double x0, double y0, double x1, double y1) : FrFunctionBase() {
@@ -49,9 +50,26 @@ namespace frydom {
 //    }
 //
     void FrLinearRampFunction::SetByTwoPoints(double x0, double y0, double x1, double y1) {
+
+        assert(x0<x1);
+
+        m_x0 = x0;
+        m_x1 = x1;
+        m_y0 = y0;
+        m_y1 = y1;
+
         double slope = (y1-y0) / (x1-x0);
         double intercept = (y0 - slope*x0);
         m_function = clamp_after(clamp_before((slope*FrVarXFunction() + intercept), x0), x1).Clone();
+    }
+
+    void FrLinearRampFunction::GetByTwoPoints(double &x0, double &y0, double &x1, double &y1) {
+
+        x0 = m_x0;
+        x1 = m_x1;
+        y0 = m_y0;
+        y1 = m_y1;
+
     }
 
     void FrLinearRampFunction::Initialize() {

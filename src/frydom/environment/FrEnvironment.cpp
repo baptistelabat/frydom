@@ -37,6 +37,7 @@ namespace frydom {
 
         m_timeRamp              = std::make_unique<FrLinearRampFunction>();
         m_timeRamp->SetActive(false);
+        m_timeRamp->SetByTwoPoints(0.,0.,10.,1.);
 
 //        if (not(m_infinite_depth)) m_seabed->SetEnvironment(this); // TODO : voir a porter ca dans seabed...
 

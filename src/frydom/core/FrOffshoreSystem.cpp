@@ -19,6 +19,8 @@
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/utils/FrIrrApp.h"
 
+#include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
+
 
 namespace frydom {
 
@@ -623,7 +625,11 @@ namespace frydom {
 
         IsInitialized();
 
-        double m_undotime = m_chronoSystem->GetChTime();
+        double x0,y0,x1,y1;
+        GetEnvironment()->GetTimeRamp()->GetByTwoPoints(x0,y0,x1,y1);
+        GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0.,0.,1.,0.);
+
+        double undoTime = m_chronoSystem->GetChTime();
         bool reach_tolerance = false;
         int iter = 0;
 
@@ -633,7 +639,7 @@ namespace frydom {
             // Set no speed and accel. on bodies, meshes and other physics items
             Relax(m_staticParam.m_relax);
 
-            m_chronoSystem->DoFrameDynamics(m_undotime + iter * m_chronoSystem->GetStep() * m_staticParam.m_nSteps);
+            m_chronoSystem->DoFrameDynamics(undoTime + iter * m_chronoSystem->GetStep() * m_staticParam.m_nSteps);
 
              // Get the speed of the bodies to check the convergence
              double bodyVel = 0;
@@ -642,7 +648,7 @@ namespace frydom {
              }
              std::cout<<iter<<", "<<m_chronoSystem->GetChTime()<<", "<<bodyVel<<std::endl;
              // TODO : introduce a tolerance parameter
-             if (bodyVel < m_staticParam.m_tolerance && m_chronoSystem->GetChTime()>m_undotime+m_chronoSystem->GetStep()*m_staticParam.m_nSteps) {
+             if (bodyVel < m_staticParam.m_tolerance && m_chronoSystem->GetChTime()>undoTime+m_chronoSystem->GetStep()*m_staticParam.m_nSteps) {
                  reach_tolerance = true;
              }
 
@@ -653,7 +659,9 @@ namespace frydom {
         // Set no speed and accel. on bodies, meshes and other physics items
         Relax(m_staticParam.m_relax);
 
-        m_chronoSystem->SetChTime(m_undotime);
+        m_chronoSystem->SetChTime(undoTime);
+
+        GetEnvironment()->GetTimeRamp()->SetByTwoPoints(x0,y0,x1,y1);
         return reach_tolerance;
     }
 
