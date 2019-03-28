@@ -97,7 +97,7 @@ TEST_F(TestITTCResistance, test0) {
     system.Initialize();
 
     body->SetVelocityInBodyNoRotation(Velocity(speed, 0, 0), NWU);
-    force->Update(0.);
+    force->Compute(0.);
 
     auto ct = force->GetForceInBody(NWU) / (-0.5 * m_waterDensity * speed * speed * hullWetSurface);
 

@@ -47,7 +47,7 @@ namespace frydom {
 
     }
 
-    void FrLinearExcitationForce::Update(double time) {
+    void FrLinearExcitationForce::Compute(double time) {
 
         // This subroutine computes the linear excitation forces from Nemoh results.
 

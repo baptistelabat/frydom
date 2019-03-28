@@ -107,10 +107,6 @@ namespace frydom {
         /// \param p : exponent for yaw velocity
         void SetN(double val, int m, int n, int p);
 
-        /// Update of the manoeuvring force value
-        /// \param time Current time of the simulation from begining
-        void Update(double time) override;
-
         /// Initialization of the manoeuvring force model
         void Initialize() override;
 
@@ -119,6 +115,12 @@ namespace frydom {
 
         /// Clear all coefficients definition
         void ClearAll();
+
+    private:
+
+        /// Compute the manoeuvring force value
+        /// \param time Current time of the simulation from beginning
+        void Compute(double time) override;
     };
 
 }  // end namespace frydom

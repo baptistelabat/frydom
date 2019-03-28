@@ -69,9 +69,11 @@ namespace frydom {
 
         void Initialize() override;
 
-        void Update(double time) override;
-
         void StepFinalize() override;
+
+    private:
+
+        void Compute(double time) override;
     };
 
 

@@ -32,11 +32,15 @@ namespace frydom {
             /// \return type name of this object
             std::string GetTypeName() const override { return "SphereNonLinearHydrostaticForce"; }
 
-            void Update(double time) override;
-
             void StepFinalize() override {
                 FrForce::StepFinalize();
             }
+
+        private:
+
+            /// Compute the nonlinear hydrostatic force for a sphere
+            /// \param time Current time of the simulation from beginning, in seconds
+            void Compute(double time) override;
         };
 
 

@@ -19,7 +19,7 @@ class FrNullForce : public FrForce {
 
 public :
 
-    void Update(double time) override { }
+    void Compute(double time) override { }
 
     void Initialize() override {}
 

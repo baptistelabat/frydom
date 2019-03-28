@@ -116,7 +116,7 @@ public:
 
 private:
     /// Override pure virtual methods
-    void Update(double time) override {};
+    void Compute(double time) override {};
     void Initialize() override {};
     void StepFinalize() override {};
 };

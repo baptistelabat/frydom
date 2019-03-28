@@ -66,7 +66,11 @@ namespace frydom {
 
         void Initialize() override;
 
-        void Update(double time) override;
+    private:
+
+        /// Compute the radiation force via convolution
+        /// \param time Current time of the simulation from beginning, in seconds
+        void Compute(double time) override;
 
     };
 

@@ -46,7 +46,7 @@ protected:
     void SetUp() override;
 
     void CheckForce(Force forceRef, Torque torqueRef) const {
-        force->Update(0.);
+        force->Compute(0.);
         auto worldForce = force->GetForceInBody(NWU);
         auto bodyTorque = force->GetTorqueInBodyAtCOG(NWU);
         EXPECT_NEAR(forceRef.GetFx(), worldForce.GetFx(), 1E-8);

@@ -28,7 +28,7 @@ protected:
 public:
 
     void CheckForce(Force forceRef, Torque torqueRef) const {
-        force->Update(0.);
+        force->Compute(0.);
         auto worldForce = force->GetForceInWorld(NWU);
         auto bodyTorque = force->GetTorqueInBodyAtCOG(NWU);
         EXPECT_FLOAT_EQ(forceRef.GetFx(), worldForce.GetFx());
