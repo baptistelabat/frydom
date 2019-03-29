@@ -39,7 +39,7 @@ namespace frydom {
      * \class FrLinkBase
      * \brief Pure abstract class for every FRyDoM constraints (FrLink, FrConstraint_, FrActuator_).
      */
-    class FrLinkBase : public FrObject {
+    class FrLinkBase : public FrObject, public FrAssetOwner {
 
     protected:
 

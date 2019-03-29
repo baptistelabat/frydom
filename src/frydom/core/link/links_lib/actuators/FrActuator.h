@@ -60,6 +60,9 @@ namespace frydom {
         virtual bool IsActive() const override;
 
         std::string GetTypeName() const override { return "Actuator"; }
+        
+        // TODO A compléter absolument quand FrMotorBase dérivera d'une classe chrono
+        chrono::ChPhysicsItem* GetChronoItem_ptr() const override {}
 
 
 

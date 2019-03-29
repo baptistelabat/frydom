@@ -338,6 +338,8 @@ namespace frydom {
         /// Get the embedded Chrono object
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
 
+        internal::FrLinkLockBase* GetChronoItem_ptr() const override;
+
         /*
          * Methods allowing child classes to access chrono link forces
          */
