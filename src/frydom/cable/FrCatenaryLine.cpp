@@ -285,7 +285,7 @@ namespace frydom {
         }
     }
 
-    void FrCatenaryLine::Update(double time) {
+    void FrCatenaryLine::Compute(double time) {
         UpdateTime(time);
         UpdateState();
 //        if (is_lineAsset) {

@@ -28,10 +28,6 @@ namespace frydom {
         void FrPhysicsItemBase::SetupInitial() {
         }
 
-        void FrPhysicsItemBase::Update(bool update_assets) {
-            this->Update(ChTime, update_assets);
-        }
-
         void FrPhysicsItemBase::Update(double time, bool update_assets) {
             m_frydomPhysicsItem->Update(time);
             ChPhysicsItem::Update(time, update_assets);
@@ -49,6 +45,18 @@ namespace frydom {
         return m_system;
     }
 
+    bool FrPhysicsItem::IsActive() const {
+        return m_isActive;
+    }
+
+    void FrPhysicsItem::SetActive(bool active) {
+        m_isActive = active;
+    }
+
+    internal::FrPhysicsItemBase *FrPhysicsItem::GetChronoItem() const {
+        return m_chronoPhysicsItem.get();
+    }
+
     std::shared_ptr<internal::FrPhysicsItemBase> FrPhysicsItem::GetChronoPhysicsItem() const {
         return m_chronoPhysicsItem;
     }
@@ -62,6 +70,11 @@ namespace frydom {
 
         FrAssetOwner::UpdateAsset();
 
+    }
+
+    void FrPhysicsItem::Update(double time) {
+        if(IsActive())
+            Compute(time);
     }
 
 }  // end namespace frydom

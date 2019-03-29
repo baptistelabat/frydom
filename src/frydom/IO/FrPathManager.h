@@ -73,6 +73,11 @@ namespace frydom {
         /// \return path to the physics item log file
         std::string BuildPath(FrPhysicsItem *pi, std::string relPath);
 
+        /// Build the path and directories needed for a link log
+        /// \param link link for which a log is declared
+        /// \return path to the link log file
+        std::string BuildPath(FrLinkBase *link, std::string relPath);
+
         /// Build the path and directories needed for a body log
         /// \param body body for which a log is declared
         /// \return path to the body log file

@@ -324,7 +324,7 @@ namespace frydom {
 
         virtual void Initialize() override;
 
-        virtual void Update(double time) override;
+        virtual void Update(double time);
 
         virtual void StepFinalize() override {}
 
