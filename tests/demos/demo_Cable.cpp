@@ -96,6 +96,8 @@ int main(int argc, char* argv[]) {
             // Create the catenary line, using the nodes and line properties previously defined
             auto CatenaryLine = make_catenary_line(sphereNode, worldNode, &system, elastic, YoungModulus,
                                                    sectionArea, unstretchedLength, linearDensity, WATER);
+
+            CatenaryLine->SetActive(false);
             break;
         }
         // This case features a Newton pendulum, consisting of a series of identically sized metal balls suspended in a
@@ -184,8 +186,8 @@ int main(int argc, char* argv[]) {
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 30) and the distance from the camera to the objectif (50).
     // For saving snapshots of the simulation, just turn the boolean to true.
-//    system.RunInViewer(30, 50, false);
+    system.RunInViewer(30, 50, false);
 
-    system.SolveStaticEquilibrium(FrOffshoreSystem::STATICS_METHOD::NONLINEAR);
-    system.Visualize(50,false);
+//    system.SolveStaticEquilibrium(FrOffshoreSystem::STATICS_METHOD::NONLINEAR);
+//    system.Visualize(50,false);
 }

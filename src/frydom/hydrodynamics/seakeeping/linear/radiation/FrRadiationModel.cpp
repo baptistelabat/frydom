@@ -98,7 +98,7 @@ namespace frydom {
         return m_radiationForce.at(BEMBody).GetTorque();
     }
 
-    void FrRadiationModel::Update(double time) {
+    void FrRadiationModel::Compute(double time) {
 
     }
 
@@ -145,7 +145,7 @@ namespace frydom {
 
     }
 
-    void FrRadiationConvolutionModel::Update(double time) {
+    void FrRadiationConvolutionModel::Compute(double time) {
 
         if (std::abs(time - GetSystem()->GetTime()) < 0.1*GetSystem()->GetTimeStep() and
                 time > FLT_EPSILON) return;

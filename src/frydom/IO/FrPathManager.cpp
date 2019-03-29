@@ -129,6 +129,27 @@ namespace frydom{
 
     }
 
+    std::string FrPathManager::BuildPath(FrLinkBase *link, std::string relPath) {
+
+        link->SetLogFrameConvention(m_logFrameConvention);
+
+        auto system = link->GetSystem();
+
+        // Create the path for the Link log
+        auto relLinkLogPath = fmt::format("{}_{}/{}_{}_{}/{}",
+                                        system->GetTypeName(),system->GetShortenUUID(),
+                                        link->GetTypeName(),link->GetName(),link->GetShortenUUID(),
+                                        relPath);
+        cppfs::FilePath LinkLogPath = m_runPath.resolve(relLinkLogPath);
+
+        // Create the directory for the Link logs
+        auto LinkLogDir = cppfs::fs::open(LinkLogPath.directoryPath());
+        LinkLogDir.createDirectory();
+
+        return LinkLogPath.path();
+
+    }
+
     std::string FrPathManager::BuildPath(FrBody *body, std::string relPath){
 
         body->SetLogFrameConvention(m_logFrameConvention);

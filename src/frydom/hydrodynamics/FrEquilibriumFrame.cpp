@@ -126,7 +126,7 @@ namespace frydom {
         m_prevTime = 0.;
     }
 
-    void FrEquilibriumFrame::Update(double time) {
+    void FrEquilibriumFrame::Compute(double time) {
 
         if (std::abs(time - m_prevTime) < FLT_EPSILON) {
             return;
@@ -226,7 +226,7 @@ namespace frydom {
         m_stiffness = m_w0 * m_w0;
     }
 
-    void FrEqFrameSpringDamping::Update(double time) {
+    void FrEqFrameSpringDamping::Compute(double time) {
 
         if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
 
@@ -294,7 +294,7 @@ namespace frydom {
         m_errAngleCoeff = angleCoeff;
     }
 
-    void FrEqFrameMeanMotion::Update(double time) {
+    void FrEqFrameMeanMotion::Compute(double time) {
 
         if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
 

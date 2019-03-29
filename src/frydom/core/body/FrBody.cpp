@@ -95,6 +95,30 @@ namespace frydom {
         m_chronoBody->SetBodyFixed(state);
     }
 
+    void FrBody::SetUseSleeping(bool state) {
+        m_chronoBody->SetUseSleeping(state);
+    }
+
+    bool FrBody::GetUseSleeping() const {
+        return m_chronoBody->GetUseSleeping();
+    }
+
+    void FrBody::SetSleeping(bool state) {
+        m_chronoBody->SetSleeping(state);
+    }
+
+    bool FrBody::GetSleeping() const {
+        return m_chronoBody->GetSleeping();
+    }
+
+    bool FrBody::TrySleeping() {
+        return m_chronoBody->TrySleeping();
+    }
+
+    bool FrBody::IsActive() {
+        return m_chronoBody->IsActive();
+    }
+
     void FrBody::SetupInitial() {
         m_chronoBody->SetupInitial();
         Initialize();
@@ -846,6 +870,7 @@ namespace frydom {
             ("Angular velocity","rad/s", fmt::format("body angular velocity in the world reference frame in {}", c_logFrameConvention),
                     [this]() {return GetAngularVelocityInWorld(c_logFrameConvention);});
 
+
             // Body Acceleration
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
             ("Linear acceleration","m/s²", fmt::format("body linear acceleration in the world reference frame in {}", c_logFrameConvention),
@@ -859,6 +884,7 @@ namespace frydom {
             ("Angular acceleration","rad/s²", fmt::format("body angular acceleration in the world reference frame in {}", c_logFrameConvention),
                     [this]() {return GetAngularAccelerationInWorld(c_logFrameConvention);});
 
+
             // Total External Force
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
                     ("Total external force","N",fmt::format("Total external force, expressed in body reference frame in {}", c_logFrameConvention),
@@ -867,10 +893,6 @@ namespace frydom {
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
                     ("Total external torque at COG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", c_logFrameConvention),
                      [this] () {return GetTotalTorqueInBodyAtCOG(c_logFrameConvention);});
-
-            // Position Vitesse accélération du centre de référence et COG
-            // Somme des efforts ext appliqué surt le corps, dans le repère corps, appliqué au COG
-
 
 
             // Initialize the message
@@ -890,6 +912,14 @@ namespace frydom {
 
         }
 
+    }
+
+    std::shared_ptr<internal::FrBodyBase> FrBody::GetChronoBody() {
+        return m_chronoBody;
+    }
+
+    internal::FrBodyBase *FrBody::GetChronoItem_ptr() const {
+        return m_chronoBody.get();
     }
 
 

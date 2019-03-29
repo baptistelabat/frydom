@@ -46,7 +46,7 @@ protected:
     void SetUp() override;
 
     void CheckForce(Force forceRef, Torque torqueRef) const {
-        force->Compute(0.);
+        force->Update(0.);
         auto worldForce = force->GetForceInBody(NWU);
         auto bodyTorque = force->GetTorqueInBodyAtCOG(NWU);
         EXPECT_NEAR(forceRef.GetFx(), worldForce.GetFx(), 1E-8);
@@ -67,6 +67,7 @@ void TestLinearDamping_::SetUp() {
 
 
     body = system.NewBody();
+    body->SetFixedInWorld(true);
     body->SetPosition(bodyPositionInWorld, NWU);
 
     rotationDirection.normalize();

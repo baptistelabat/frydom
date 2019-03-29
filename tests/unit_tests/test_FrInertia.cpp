@@ -81,6 +81,7 @@ void TestInertia::SetUp() {
     this->LoadData("TNR_database.h5");
 
     body = system.NewBody();
+    body->SetFixedInWorld(true);
     body->SetPosition(m_BodyPositionInWorld, NWU);
     body->SetRotation(FrUnitQuaternion(m_BodyRotationDirection, m_BodyRotationAngle, NWU));
 

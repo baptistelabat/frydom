@@ -95,7 +95,7 @@ TEST_F(TestFrStandardCurrentForce, TestForce) {
         system.GetEnvironment()->GetOcean()->GetCurrent()->GetFieldUniform()
                 ->Set(m_direction(i), m_currentSpeed, DEG, MS, NED, COMEFROM);
 
-        force->Compute(0.);
+        force->Update(0.);
 
         EXPECT_NEAR(m_dragCoefficient(0, i), force->GetForceInWorld(NWU).GetFx() / m_xadim, 1.e-5);
         EXPECT_NEAR(m_dragCoefficient(1, i), force->GetForceInWorld(NWU).GetFy() / m_yadim, 1.e-5);
@@ -118,7 +118,7 @@ TEST_F(TestFrStandardCurrentForce, TestTransport) {
 
     force->SetXCenter(xc);
     force->Initialize();
-    force->Compute(0.);
+    force->Update(0.);
 
     double torqueRef = m_dragCoefficient(2, i) * m_nadim + (xc-0.1) * m_dragCoefficient(1, i) * m_yadim;
     EXPECT_NEAR(torqueRef / m_nadim, force->GetTorqueInWorldAtCOG(NWU).GetMz() / m_nadim, 1.e-5);
