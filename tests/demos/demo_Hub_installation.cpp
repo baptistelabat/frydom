@@ -285,13 +285,13 @@ int main(int argc, char* argv[]) {
     system.SetNbStepsStatics(100);
 //    system.SetRelaxationStatics(FrOffshoreSystem::RELAXTYPE::ACCELERATION);
     auto test = system.SolveStaticWithRelaxation();
-//    system.Visualize(75.,false);
+    system.Visualize(75.,false);
 
 //    system.VisualizeStaticAnalysis(75.,false);
 
-    radiationModel->Clear();
-//
-    system.RunInViewer(0, 75, false);
+//    radiationModel->Clear();
+
+//    system.RunInViewer(0, 75, false);
 
 //    return test;
 }
