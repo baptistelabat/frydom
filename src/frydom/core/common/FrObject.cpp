@@ -13,6 +13,7 @@
 
 
 #include "FrObject.h"
+#include "frydom/utils/FrSerializerFactory.h"
 
 namespace frydom {
 
@@ -27,7 +28,8 @@ namespace frydom {
                 }
 
                 // Add a serializer
-                m_message->AddCSVSerializer(std::move(path));
+                m_message->AddSerializer(
+                     FrSerializerFactory::instance().Create(this, path));
 
                 // Init the message
                 m_message->Initialize();
