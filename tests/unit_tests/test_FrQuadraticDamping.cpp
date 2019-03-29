@@ -43,6 +43,7 @@ protected:
 
 void TestQuadraticDamping::SetUp() {
     body = system.NewBody();
+    body->SetFixedInWorld(true);
     force = std::make_shared<FrQuadraticDamping>(WATER, false);
     body->AddExternalForce(force);
     body->SetPosition(bodyPosition, NWU);
