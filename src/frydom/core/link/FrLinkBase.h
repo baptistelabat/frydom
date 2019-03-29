@@ -73,6 +73,9 @@ namespace frydom {
         /// be not active either because disabled, or broken, or not valid)
         virtual bool IsActive() const = 0;
 
+        /// Return true if the link is included in the static analysis
+        bool IncludedInStaticAnalysis() const {return true;}
+
         // Logging
 
         /// Initialize the log

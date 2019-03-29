@@ -32,6 +32,9 @@ namespace frydom {
             /// \return type name of this object
             std::string GetTypeName() const override { return "SphereNonLinearHydrostaticForce"; }
 
+            /// Return true if the force is included in the static analysis
+            bool IncludedInStaticAnalysis() const override {return true;}
+
             void StepFinalize() override {
                 FrForce::StepFinalize();
             }

@@ -19,7 +19,7 @@
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/utils/FrIrrApp.h"
 
-#include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
+#include "frydom/core/math/functions/ramp/FrCosRampFunction.h"
 
 
 namespace frydom {
@@ -147,9 +147,6 @@ namespace frydom {
 
         // Check compatibility between system contact model, time stepper and constraint solver
         CheckCompatibility();
-
-        // Set different default values
-        m_staticsMethod = NONLINEAR;
 
         // Creating a fixed world body to be able to attach anything to it (anchors...) // TODO: mettre dans une methode privee
         CreateWorldBody();
@@ -296,7 +293,7 @@ namespace frydom {
         }
 
         // Full assembly -computes also forces-
-        m_chronoSystem->DoFullAssembly();
+            m_chronoSystem->DoFullAssembly();
 
         m_chronoSystem->Update();
 
@@ -592,38 +589,30 @@ namespace frydom {
         m_staticParam.m_tolerance = tol;
     }
 
-//    bool FrOffshoreSystem::SolveStaticEquilibrium(FrOffshoreSystem::STATICS_METHOD method) {
-//
-//        IsInitialized();
-//
-//        bool test = false;
-//
-//        switch (method) {
-//            case LINEAR:
-//                m_chronoSystem->DoStaticLinear();
-//                break;
-//            case NONLINEAR:
-//                m_chronoSystem->DoStaticNonlinear(m_nbStepStatics);
-//                break;
-//            case QUASISTATIC:
-////                m_chronoSystem->DoStaticRelaxing(m_nbStepStatics);
-//                if (m_systemType==SMOOTH_CONTACT)
-//                    test = dynamic_cast<internal::FrSystemBaseSMC*>(m_chronoSystem.get())->DoQuasiStatic(m_nbStepStatics,100);
-//                if (m_systemType == NONSMOOTH_CONTACT)
-//                    std::cout<<"QuasiStatic method for NSC not implemented yet !"<<std::endl;
-//                break;
-//        }
-//
-//        // Executes custom processing at the end of step
-//        StepFinalize();
-//        return test;
-//        // FIXME : il semble que les solveurs retournent toujours true...
-//    }
+    void FrOffshoreSystem::InitializeStatic() {
+
+        for (auto& body : m_bodyList) {
+            body->SetSleeping(!body->IncludedInStaticAnalysis());
+            body->InitializeStatic();
+        }
+
+        for (auto& link : m_linkList) {
+            link->SetDisabled(!link->IncludedInStaticAnalysis());
+        }
+
+        for (auto& pi : m_PrePhysicsList) {
+            pi->SetActive(pi->IncludedInStaticAnalysis());
+        }
+
+
+    }
 
 
     bool FrOffshoreSystem::SolveStaticWithRelaxation() {
 
         IsInitialized();
+
+        InitializeStatic();
 
         double x0,y0,x1,y1;
         GetEnvironment()->GetTimeRamp()->GetByTwoPoints(x0,y0,x1,y1);

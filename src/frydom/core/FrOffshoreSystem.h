@@ -151,16 +151,6 @@ namespace frydom {
             SOLVER_SMC,         ///< A solver for problems arising in SMooth Contact (SMC) i.e. penalty formulations.
         };
 
-        /// enum for statics methods, which solve the position of static equilibrium (and the reactions).
-        enum STATICS_METHOD {
-            LINEAR,     ///< This is a one-step only approach that solves the linear equilibrium.
-                        ///< To be used mostly for FEM problems with small deformations.
-            NONLINEAR,  ///< This tries to solve the equilibrium for the nonlinear problem (large displacements).
-                        ///< The larger nsteps, the more the CPU time but the less likely the divergence.
-            QUASISTATIC  ///< Since a truncated iterative method is used, you may need to call this method multiple times
-                        ///< in case of large nonlinearities before coming to the precise static solution.
-        };
-
         /// enum for smooth contact models (SMC)
         enum CONTACT_MODEL {
             HOOKE,      ///< linear Hookean model
@@ -217,7 +207,6 @@ namespace frydom {
 
         int m_nbStepStatics = 10;                           ///< maximum number of iterative steps to find the static
                                                             ///< equilibrium, with the nonlinear and relaxation methods
-        STATICS_METHOD  m_staticsMethod;                    ///< method to find the static equilibrium
 
         FrStaticAnalysisParam m_staticParam;
 
@@ -529,26 +518,38 @@ namespace frydom {
 
         // Statics
 
-        /// Set the maximum number of iterative steps to find the static equilibrium, with the nonlinear and relaxation
-        /// methods.
-        /// \param nSteps maximum number of iterative steps
+        /// Set the number of steps between two relaxations, during static iterations
+        /// \param nSteps number of steps between two relaxations
         void SetNbStepsStatics(int nSteps);
 
+        /// Set the maximum number of iterative steps to find the static equilibrium,
+        /// \param nIter maximum number of iterative steps
         void SetNbIterationStatics(int nIter);
 
+        /// Set the relaxation procedure in the static solving :
+        /// none, only velocities set to null, only accelerations set to null, velocities and accelerations set to null
+        /// \param relax relaxation procedure (NONE, VELOCITY, ACCELERATION, VELOCITYANDACCELERATION)
         void SetRelaxationStatics(RELAXTYPE relax);
 
+        /// Set the tolerance criteria to stop the static solving
+        /// \param tol tolerance criteria to stop the static solving
         void SetToleranceStatics(double tol);
 
-//        /// Solve the static equilibrium with the specified method, default is NONLINEAR.
-//        /// \param method method to find the static equilibrium
-//        /// \return true if the static equilibrium has been reached
-//        // FIXME : il semble que les solveurs retournent toujours true...
-//        bool SolveStaticEquilibrium(STATICS_METHOD method);
-
+        /// Solve the static equilibrium using a dynamic simulation with relaxations (velocities and/or accelerations of
+        /// bodies set to null) every nSteps steps. The maximum number of relaxation is defined by nIter. The solving
+        /// stops if nIter or the static tolerance is reached.
         bool SolveStaticWithRelaxation();
 
+        /// Relax the system, depending of the relaxation procedure specified. See RELAXTYPE documentation
+        /// \param relax relaxation procedure : (NONE, VELOCITY, ACCELERATION, VELOCITYANDACCELERATION)
         void Relax(RELAXTYPE relax);
+
+    private:
+
+        /// Initialize the static by deactivating the bodies/links/physics items not included in the static analysis
+        void InitializeStatic();
+
+    public:
 
 
         // Time Stepping settings

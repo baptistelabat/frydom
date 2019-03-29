@@ -85,6 +85,9 @@ namespace frydom {
         /// Activate or deactivate the force
         void SetActive(bool active);
 
+        /// Return true if the physics item is included in the static analysis
+        virtual bool IncludedInStaticAnalysis() const {return true;}
+
         void Update(double time);
 
         virtual void SetupInitial();
