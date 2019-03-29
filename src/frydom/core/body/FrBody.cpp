@@ -95,6 +95,30 @@ namespace frydom {
         m_chronoBody->SetBodyFixed(state);
     }
 
+    void FrBody::SetUseSleeping(bool state) {
+        m_chronoBody->SetUseSleeping(state);
+    }
+
+    bool FrBody::GetUseSleeping() const {
+        return m_chronoBody->GetUseSleeping();
+    }
+
+    void FrBody::SetSleeping(bool state) {
+        m_chronoBody->SetSleeping(state);
+    }
+
+    bool FrBody::GetSleeping() const {
+        return m_chronoBody->GetSleeping();
+    }
+
+    bool FrBody::TrySleeping() {
+        return m_chronoBody->TrySleeping();
+    }
+
+    bool FrBody::IsActive() {
+        return m_chronoBody->IsActive();
+    }
+
     void FrBody::SetupInitial() {
         m_chronoBody->SetupInitial();
         Initialize();

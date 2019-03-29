@@ -122,6 +122,30 @@ namespace frydom {
         /// \param state true if body is fixed, false otherwise
         void SetFixedInWorld(bool state);
 
+        /// Enable/disable option for setting bodies to "sleep".
+        /// If use sleeping = true, bodies which stay in same place
+        /// for long enough time will be deactivated, for optimization.
+        /// The realism is limited, but the simulation is faster.
+        void SetUseSleeping(bool state);
+
+        /// Return true if 'sleep' mode is activated.
+        bool GetUseSleeping() const;
+
+        /// Force the body in sleeping mode or not (usually this state change is not
+        /// handled by users, anyway, because it is mostly automatic).
+        void SetSleeping(bool state);
+
+        /// Return true if this body is currently in 'sleep' mode.
+        bool GetSleeping() const;
+
+        /// Test if a body could go in sleeping state if requirements are satisfied.
+        /// Return true if state could be changed from no sleep to sleep.
+        bool TrySleeping();
+
+        /// Return true if the body is active; i.e. it is neither fixed to ground
+        /// nor is it in "sleep" mode. Return false otherwise.
+        bool IsActive();
+
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "Body"; }
