@@ -859,14 +859,13 @@ namespace frydom {
         /// \return cartPos cartesian position
         Position GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc);
 
-        // TODO : voir si on a besoin que ce bloc soit protected...
-        std::shared_ptr<chrono::ChBody> GetChronoBody() {
-            return m_chronoBody;
-        }
+        /// Get the shared pointer to the chronoBody attribute
+        /// \return shared pointer to the chronoBody attribute
+        std::shared_ptr<internal::FrBodyBase> GetChronoBody();
 
-        /// Get the chronoBody attribute
-        /// \return chronoBody attribute
-        internal::FrBodyBase* GetChronoItem() const override { return m_chronoBody.get(); }
+        /// Get the chronoBody attribute pointer
+        /// \return Pointer to the chronoBody attribute
+        internal::FrBodyBase* GetChronoItem_ptr() const override;
 
         void InitializeLockedDOF();
 

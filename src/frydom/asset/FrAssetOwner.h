@@ -29,7 +29,7 @@ namespace frydom {
 
         /// Get the internal item, related to chrono::ChPhysicsItem
         /// \return internal item, related to chrono::ChPhysicsItem
-        virtual chrono::ChPhysicsItem* GetChronoItem() const = 0;
+        virtual chrono::ChPhysicsItem* GetChronoItem_ptr() const = 0;
 
     public:
 

@@ -53,7 +53,7 @@ namespace frydom {
         m_isActive = active;
     }
 
-    internal::FrPhysicsItemBase *FrPhysicsItem::GetChronoItem() const {
+    internal::FrPhysicsItemBase *FrPhysicsItem::GetChronoItem_ptr() const {
         return m_chronoPhysicsItem.get();
     }
 

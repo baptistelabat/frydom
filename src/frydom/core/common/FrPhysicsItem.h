@@ -67,7 +67,7 @@ namespace frydom {
 
         /// Get the poitner to the chrono related physics item
         /// \return Chrono related physics item
-        internal::FrPhysicsItemBase* GetChronoItem() const override;
+        internal::FrPhysicsItemBase* GetChronoItem_ptr() const override;
 
         /// Get the shared pointer to the chrono related physics item
         /// \return Chrono related physics item
