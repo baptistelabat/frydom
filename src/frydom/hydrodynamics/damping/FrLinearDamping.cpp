@@ -59,7 +59,7 @@ namespace frydom {
 
     bool FrLinearDamping::GetRelativeToFluid() {return m_relativeToFluid;}
 
-    void FrLinearDamping::Update(double time) {
+    void FrLinearDamping::Compute(double time) {
 
         // Body Velocity at COG in body coordinates
         Velocity cogRelVel;

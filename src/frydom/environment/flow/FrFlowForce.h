@@ -49,15 +49,17 @@ namespace frydom {
         /// \param yamlFile Name of the YAML file containing the polar coefficients
         void ReadTable(const std::string& yamlFile);
 
-        /// Update the state of the flow force
-        /// \param time Current time of the simulation
-        void Update(double time) override;
-
         /// Initialize the state of the flow force
         void Initialize() override;
 
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
+
+    protected:
+
+        /// Update the state of the flow force
+        /// \param time Current time of the simulation
+        void Compute(double time) override;
 
     };
 
@@ -77,7 +79,10 @@ namespace frydom {
 
         explicit FrCurrentForce(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
 
-        void Update(double time) override;
+    private:
+
+        void Compute(double time) override;
+
     };
 
 
@@ -95,7 +100,11 @@ namespace frydom {
 
         explicit FrWindForce(const std::string& yamlFile) : FrFlowForce(yamlFile) { }
 
-        void Update(double time) override;
+    private:
+
+        /// Compute thd wind force
+        /// \param time Current time of the simulation from beginning, in seconds
+        void Compute(double time) override;
 
     };
 

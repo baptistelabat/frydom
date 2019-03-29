@@ -35,7 +35,7 @@ namespace frydom {
     class FrGeographicServices;
     class Velocity;
     class FrFrame;
-    class FrLinearRampFunction;
+    class FrCosRampFunction;
 
 
     /**
@@ -52,7 +52,7 @@ namespace frydom {
         // TODO : faire un service de temps, NEED REFACTO
         std::unique_ptr<FrTimeZone> m_timeZone;     ///< Zoned time conversion service, can give time during simulation in a specified time zone.
 
-        std::unique_ptr<FrLinearRampFunction> m_timeRamp;              ///< Time ramp, can be applied on wave field, current field, wind field, etc.
+        std::unique_ptr<FrCosRampFunction> m_timeRamp;              ///< Time ramp, can be applied on wave field, current field, wind field, etc.
 
         std::unique_ptr<FrOcean> m_ocean;                              ///> Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
 
@@ -85,7 +85,7 @@ namespace frydom {
 
         /// Get the time ramp attached to the environment
         /// \return time ramp
-        FrLinearRampFunction* GetTimeRamp() const;
+        FrCosRampFunction* GetTimeRamp() const;
 
         /// Get the gravity acceleration on the vertical axis
         /// \return gravity acceleration on the vertical axis, in m/s²

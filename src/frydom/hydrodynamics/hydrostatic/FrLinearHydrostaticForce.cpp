@@ -34,7 +34,7 @@ namespace frydom {
         m_stiffnessMatrix.SetData(m_HDB->GetBody(m_body)->GetHydrostaticStiffnessMatrix());
     }
 
-    void FrLinearHydrostaticForce::Update(double time) {
+    void FrLinearHydrostaticForce::Compute(double time) {
 
         /// This subroutine computes the hydrostatic loads.
 

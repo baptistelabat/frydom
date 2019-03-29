@@ -61,7 +61,7 @@ namespace frydom {
         if (m_lpp < FLT_EPSILON) throw  FrException("error value length between perpendicular");
     }
 
-    void FrCurrentStandardForce::Update(double time) {
+    void FrCurrentStandardForce::Compute(double time) {
 
         Force force;
         Torque torque;

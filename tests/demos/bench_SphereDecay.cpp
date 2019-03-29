@@ -17,9 +17,9 @@ using namespace frydom;
 
 class FrNullForce : public FrForce {
 
-public :
+    void Compute(double time) override { }
 
-    void Update(double time) override { }
+public :
 
     void Initialize() override {}
 

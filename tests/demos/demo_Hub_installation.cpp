@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------
 
     system.GetEnvironment()->GetTimeRamp()->SetActive(true);
-    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 30., 1.);
+    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 10., 1.);
 
     auto SeabedGridAsset = system.GetEnvironment()->GetOcean()->GetSeabed()->GetSeabedGridAsset();
     SeabedGridAsset->SetGrid(-150., 150., 3., -150., 150., 3.);

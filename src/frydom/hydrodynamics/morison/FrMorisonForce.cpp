@@ -29,7 +29,7 @@ namespace frydom {
         return dynamic_cast<FrMorisonCompositeElement*>(m_model.get());
     }
 
-    void FrMorisonForce::Update(double time) {
+    void FrMorisonForce::Compute(double time) {
 
         m_model->Update(time);
 

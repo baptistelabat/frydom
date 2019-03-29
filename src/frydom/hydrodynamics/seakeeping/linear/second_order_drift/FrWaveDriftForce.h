@@ -46,9 +46,13 @@ namespace frydom {
 
         void Initialize() override;
 
-        void Update(double time) override;
-
         void StepFinalize() override;
+
+    private:
+
+        /// Compute the wave drift force
+        /// \param time Current time of the simulation from beginning, in seconds
+        void Compute(double time) override;
 
     protected:
 
