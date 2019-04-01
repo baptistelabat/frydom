@@ -11,6 +11,8 @@
 
 #include "frydom/frydom.h"
 
+#include <ctime>
+
 using namespace frydom;
 
 int main(int argc, char* argv[]) {
@@ -23,7 +25,7 @@ int main(int argc, char* argv[]) {
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
-    system.SetName("Hydrostatics_Cylinder");
+    system.SetName("Cylinder_2900_panels");
 
     // --------------------------------------------------
     // Environment
@@ -57,8 +59,9 @@ int main(int argc, char* argv[]) {
     FSAsset->SetUpdateStep(10);
 
     // ----- WaveField
-//    auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
-    auto waveField = FreeSurface->SetAiryRegularWaveField();
+    auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
+//    auto waveField = FreeSurface->SetAiryRegularWaveField();
+//    auto waveField = FreeSurface->SetAiryIrregularOptimWaveField();
 
     // The Airy regular wave parameters are its height, period and direction.
     double waveHeight = 0.;
@@ -70,14 +73,37 @@ int main(int argc, char* argv[]) {
     waveField->SetWaveHeight(waveHeight);
     waveField->SetWavePeriod(wavePeriod);
     waveField->SetDirection(waveDirection, fc, dc);
-    
+
+//    // The Airy irregular wave parameters are based on the wave spectrum chosen : Jonswap or Pierson-Moskowitz.
+//    // Set the JONSWAP wave spectrum : Significant height (Hs) and Peak period (Tp). A default Gamma for the Jonswap
+//    // spectrum is set to 3.3.
+//    double Hs = 0.01;    double Tp = 9;
+//    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
+//
+//    // Define the wave frequency discretization. It is based on a linear discretization within the extrema given and
+//    // using the number of frequency specified. With more frequency, it will be more realist but will take longer to
+//    // simulate.
+//    double w1 = 0.5; double w2 = 2; unsigned int nbFreq = 20;
+//    waveField->SetWaveFrequencies(w1,w2,nbFreq);
+//
+//    // For a uni-directional wave, you just need to set the mean wave direction. You can also choose to set a
+//    // direction angle from North direction (see SetMeanWaveDirectionAngle()).
+//    waveField->SetMeanWaveDirection(Direction(SOUTH(fc)), fc, dc);
+//
+//    // For a directional wave, you also have to specify the spreading factor and the refinement wanted on the
+//    // direction discretization. With more directions, it will be more realist but will take longer to simulate.
+//    // The direction discretization is based on a linear discretization. The extrema are computed automatically
+//    // using the spreading factor and the mean direction.
+//    double spreadingFactor = 10.;    unsigned int nbDir = 10;
+//    waveField->SetDirectionalParameters(nbDir, spreadingFactor);
+
     // --------------------------------------------------
-    // platform
+    // Cylinder
     // --------------------------------------------------
 
     auto cylinder = system.NewBody();
     cylinder->SetName("Cylinder");
-    cylinder->AddMeshAsset("Free_cylinder_Coarse.obj");
+    cylinder->AddMeshAsset("Free_cylinder_2900_panels.obj");
     cylinder->SetColor(Yellow);
 
     // Inertia Tensor
@@ -96,7 +122,7 @@ int main(int argc, char* argv[]) {
     // Inertia
     double Ixx               = 0.5;
     double Iyy               = 0.5;
-    double Izz               = 0.5;
+    double Izz               = 2;
     FrInertiaTensor cylinderInertia(Mass, Ixx, Iyy, Izz, 0., 0., 0.,cylinderCoGFrame, NWU);
 
     cylinder->SetInertiaTensor(cylinderInertia);
@@ -109,72 +135,40 @@ int main(int argc, char* argv[]) {
     AssetNode->SetSize(20);
 
     // Extra linear damping force.
-//    auto LinearDampingForce = make_linear_damping_force(cylinder, WATER, false);
-//    LinearDampingForce->SetDiagonalDamping(10e1,10e1,10e1,10e1,10e0,10e1);
+    auto LinearDampingForce = make_linear_damping_force(cylinder, WATER, false);
+    LinearDampingForce->SetDiagonalDamping(10e0,10e0,10e0,10e0,10e0,10e0);
 
-    // -- Hydrodynamics
-
-//     Create a hydrodynamic database (hdb), load data from the input file and creates and initialize the BEMBody.
-//    auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
-    auto hdb = make_hydrodynamic_database("Platform_HDB_Without_drift.hdb5");
-
-    // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(cylinder.get());
-    system.AddPhysicsItem(eqFrame);
-
-    // Map the equilibrium frame and the body in the hdb mapper
-    hdb->Map(0, cylinder.get(), eqFrame);
+    // -- Hydrodynamic mesh
+    auto CylinderMesh = make_hydro_mesh_nonlinear(&system,cylinder,"Free_cylinder_2900_panels.obj");
+//    auto CylinderMesh = make_hydro_mesh_weakly_nonlinear(&system,cylinder,"Free_cylinder_11600_panels.obj");
+    mathutils::Matrix33<double> Rotation;
+    Rotation.SetIdentity();
+    Position MeshOffset(0,0,0);
+    CylinderMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
+    CylinderMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     // -- Hydrostatics
-    // Create the linear hydrostatic force and add it to the platform
-
-    // Linear hydrostatic loads with a hydrostatic stiffness matrix from the HDB5 file.
-//    auto forceHst = make_linear_hydrostatic_force(hdb, cylinder);
-
-    // Linear hydrostatic loads with a hydrostatic stiffness matrix given in input of frydom.
-//    auto forceHst = make_linear_hydrostatic_force(hdb, cylinder);
-//    FrLinearHydrostaticStiffnessMatrix HydrostaMat;
-//    HydrostaMat.SetK33(100);
-//    forceHst->SetStiffnessMatrix(HydrostaMat);
-
-    // Linear hydrostatic loads with a hydrostatic stiffness matrix computed with FrMesh.
-//    auto forceHst = make_linear_hydrostatic_force(hdb, cylinder,"Platform_GVA7500.obj");
-
-    // Weakly nonlinear hydrostatic loads with the input mesh used for the visualization.
-//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,cylinder,"Platform_GVA7500.obj"); // Visu.
-
-    // Weakly nonlinear hydrostatic loads with the input mesh used for the Nemoh computation.
-//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,cylinder,"mesh_Platform_GVA7500.obj"); // Nemoh.
-
-    // Weakly nonlinear hydrostatic loads with the input mesh used for the Nemoh computation with a symmetry plane.
-//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,cylinder,"mesh_Platform_GVA7500_Sym.obj"); // Nemoh sym.
-
-    // Nonlinear hydrostatic loads with the input mesh used for the visualization.
-    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,cylinder,"Free_cylinder_Coarse.obj");
-
+    auto forceHst = make_nonlinear_hydrostatic_force(&system,cylinder,CylinderMesh);
     forceHst->SetLogged(true);
     forceHst->ShowAsset(true);
     auto ForceHstAsset = forceHst->GetAsset();
     ForceHstAsset->SetSize(0.00000015);
 
-    // -- Excitation
-    // Create the linear excitation force and add it to the platform
-//    auto excitationForce = make_linear_excitation_force(hdb, platform);
-
-    // -- Radiation
-//    auto radiationModel = make_radiation_convolution_model(hdb, &system);
-//    radiationModel->SetImpulseResponseSize(platform.get(), 40., 0.01);
-
-
     // ------------------ Run with Irrlicht ------------------ //
 
     // You can change the dynamical simulation time step using.
     system.SetTimeStep(0.01);
-//    system.SetTimeStep(0.1);
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
     // For saving snapshots of the simulation, just turn the boolean to true.
-    system.RunInViewer(100, 2, false);
+
+    clock_t begin = clock();
+
+    system.RunInViewer(20, 2, false);
+
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    std::cout << elapsed_secs << std::endl;
 
 }

@@ -162,20 +162,11 @@ int main(int argc, char* argv[]) {
     // Linear hydrostatic loads with a hydrostatic stiffness matrix computed with FrMesh.
 //    auto forceHst = make_linear_hydrostatic_force(hdb, platform,"Platform_GVA7500.obj");
 
-    // Weakly nonlinear hydrostatic loads with the input mesh used for the visualization.
-//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj"); // Visu.
-
-    // Weakly nonlinear hydrostatic loads with the input mesh used for the Nemoh computation.
-//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500.obj"); // Nemoh.
-
-    // Weakly nonlinear hydrostatic loads with the input mesh used for the Nemoh computation with a symmetry plane.
-//    auto forceHst = make_weakly_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500_Sym.obj"); // Nemoh sym.
-
     // Nonlinear hydrostatic loads with the input mesh used for the visualization.
-//    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,"Platform_GVA7500.obj");
-//    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,"mesh_Platform_GVA7500_Sym.obj");
+//    auto forceHst = make_nonlinear_hydrostatic_force(&system,platform,"Platform_GVA7500.obj");
+//    auto forceHst = make_nonlinear_hydrostatic_force(&system,platform,"mesh_Platform_GVA7500_Sym.obj");
 
-    auto forceHst = make_nonlinear_hydrostatic_force(&system,hdb,platform,PlatformMesh);
+    auto forceHst = make_nonlinear_hydrostatic_force(&system,platform,PlatformMesh);
 
     forceHst->SetLogged(true);
     forceHst->ShowAsset(true);
