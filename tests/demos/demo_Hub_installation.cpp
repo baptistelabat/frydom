@@ -277,6 +277,8 @@ int main(int argc, char* argv[]) {
     // You can change the dynamical simulation time step using
     system.SetTimeStep(0.01);
 
+    // ------------------ Static equilibrium ------------------ //
+
     // You can solve the static equilibrium first, in order to have the full assembly static before starting the
     // dynamical simulation. The static solving is based on a dynamic simulation with relaxations of the system,
     // performed regularly. You can change the number of time steps between two relaxation :
@@ -292,11 +294,12 @@ int main(int argc, char* argv[]) {
     // Now with the static solving
     system.SolveStaticWithRelaxation();
     // Once the static is reached, you can visualize it
-    system.Visualize(75.,false);
+//    system.Visualize(75.,false);
 
     // The static solving iterations can also be visualized. To do so, just replace the two previous lines with :
 //    system.VisualizeStaticAnalysis(75.,false);
 
+    // ------------------ Dynamic simulation ------------------ //
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 30) and the distance from the camera to the objectif (75m).
