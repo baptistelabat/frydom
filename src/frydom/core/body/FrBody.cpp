@@ -13,8 +13,10 @@
 
 #include "FrBody.h"
 
+
 #include "chrono/assets/ChColorAsset.h"
 #include "chrono/assets/ChTriangleMeshShape.h"
+
 
 #include "frydom/core/math/FrMatrix.h"
 #include "frydom/core/force/FrForce.h"
@@ -475,7 +477,6 @@ namespace frydom {
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
         return cogPos;
     }
-
 
     FrGeographicCoord FrBody::GetGeoPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const {
         return CartToGeo(GetPointPositionInWorld(bodyPos, fc), fc);

@@ -21,6 +21,7 @@
 #include "frydom/core/misc/FrColors.h"
 #include "frydom/core/common/FrNode.h"
 #include "frydom/asset/FrAssetOwner.h"
+#include "frydom/mesh/FrMesh.h"
 
 // TODO : voir si il n'y a pas moyen de passer ces includes
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
@@ -108,7 +109,6 @@ namespace frydom {
 
         std::unique_ptr<FrBodyDOFMask> m_DOFMask;
         std::shared_ptr<FrLink> m_DOFLink;
-
 
     public:
 
@@ -657,6 +657,7 @@ namespace frydom {
         Velocity GetVelocityInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
 
 
+
         /// Get the acceleration expressed in world frame of a body fixed point whose coordinates are given in world frame
         /// \param worldPoint point position in world reference frame, at which the acceleration is requested
         /// \param fc frame convention (NED/NWU)
@@ -834,6 +835,11 @@ namespace frydom {
         FrBodyDOFMask* GetDOFMask();
 
     protected:
+
+//        enum FRAME {
+//            WORLD,
+//            BODY
+//        };
 
         /// Set the COG position in the body reference frame
         /// \param bodyPos COG position in the body reference frame

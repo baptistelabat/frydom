@@ -165,6 +165,13 @@ namespace frydom {
         std::vector<std::unique_ptr<FrBEMBody>>::iterator begin() { return m_bodies.begin(); }
 
         std::vector<std::unique_ptr<FrBEMBody>>::iterator end() { return m_bodies.end(); }
+
+        /// This functions gives the water density.
+        double GetWaterDensity(){return m_waterDensity;};
+
+        /// This functions gives the gravity constant.
+        double GetGravityAcc(){return m_gravityAcc;};
+
     };
 
 

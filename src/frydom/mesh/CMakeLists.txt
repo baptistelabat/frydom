@@ -2,6 +2,12 @@ message(STATUS "    ...mesh")
 
 set(SRC_FILES
         FrTriangleMeshConnected.cpp
+	FrCache.cpp
+	FrMesh.cpp
+	FrTriangleIntegrations.cpp
+	FrHydrostaticsProperties.cpp
+	FrMeshClipper.cpp
+	FrHydroMesh.cpp
         )
 
 set(FRYDOM_MESH_SOURCES "")

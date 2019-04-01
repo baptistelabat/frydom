@@ -85,6 +85,10 @@ namespace frydom {
 
     };
 
+    /// This function creates a quadratic damping force.
+    std::shared_ptr<FrQuadraticDamping>
+    make_quadratic_damping_force(std::shared_ptr<FrBody> body, FLUID_TYPE ft, bool relativeToFluid);
+
 }  // end namespace frydom
 
 

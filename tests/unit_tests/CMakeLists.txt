@@ -28,6 +28,8 @@ set(UNIT_TESTS
         test_FrQuadraticDamping
         #test_FrLinks
 #        test_FrFunction
+	test_edge_splitting
+	test_OpenMesh
         )
 
 #enable_testing()
@@ -57,3 +59,12 @@ endforeach ()
 configure_file(../data/TNR_database.h5 . COPYONLY)
 configure_file(../data/ship/Ship_PolarCurrentCoeffs.yml . COPYONLY)
 configure_file(../data/ship/Ship_PolarWindCoeffs.yml . COPYONLY)
+
+configure_file(../data/Mesh_clipper/MagneViking.obj . COPYONLY)
+configure_file(../data/Mesh_clipper/MagneViking_clip.obj . COPYONLY)
+configure_file(../data/Mesh_clipper/searev.obj . COPYONLY)
+configure_file(../data/Mesh_clipper/searev_clip.obj . COPYONLY)
+configure_file(../data/Mesh_clipper/BARGE.obj . COPYONLY)
+configure_file(../data/platform/Platform_GVA7500.obj . COPY)
+
+
