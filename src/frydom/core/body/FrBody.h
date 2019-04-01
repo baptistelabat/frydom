@@ -149,9 +149,6 @@ namespace frydom {
         /// Return true if the body is included in the static analysis
         bool IncludedInStaticAnalysis() const {return true;}
 
-        /// Initialize the static by deactivating the forces not included in the static analysis
-        void InitializeStatic();
-
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "Body"; }
@@ -265,6 +262,8 @@ namespace frydom {
 
         /// Remove all forces from the body
         void RemoveAllForces();
+
+        ForceContainer GetForceList() const {return m_externalForces;}
 
         // ##CC adding for monitoring force
 

@@ -14,6 +14,8 @@
 #define FRYDOM_FROFFSHORESYSTEM_H
 
 
+#include <map>
+#include <frydom/core/math/functions/ramp/FrCosRampFunction.h>
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/physics/ChSystemNSC.h"
 
@@ -57,7 +59,7 @@ namespace frydom {
 //            /// \return
 //            bool DoQuasiStatic(int niter = 100, int nsteps = 20);
 
-            bool DoStaticLinear();
+            bool DoStaticLinear() override;
 
         };
 
@@ -181,6 +183,8 @@ namespace frydom {
 
         struct FrStaticAnalysisParam {
 
+            bool m_logStatic = false;           ///< Check if the static analysis send data to log files
+
             int m_nIterations = 10;     ///< Number of iterations for the static procedure
                                         /// each iteration contains m_nSteps steps; after each iteration a relaxation is applied
             int m_nSteps = 100;         ///< Relaxation is applied every m_nSteps steps
@@ -188,6 +192,13 @@ namespace frydom {
             double m_tolerance = 1E-3;  ///< tolerance value, to check if the static equilibrium is reached
 
             RELAXTYPE m_relax = VELOCITYANDACCELERATION;    ///< relaxation method used
+
+            std::map<FrObject*, std::pair<bool,bool>> m_map;    ///< Map to keep the activity and log activity of
+                                                                ///< elements before the static analysis
+
+            double m_undoTime = 0.;
+
+            FrCosRampFunction* m_ramp;
 
         };
 
@@ -204,9 +215,6 @@ namespace frydom {
                                                             ///< system state.
         SOLVER          m_solverType;                       ///< solver aimed at solving complementarity problems
                                                             ///< arising from QP optimization problems.
-
-        int m_nbStepStatics = 10;                           ///< maximum number of iterative steps to find the static
-                                                            ///< equilibrium, with the nonlinear and relaxation methods
 
         FrStaticAnalysisParam m_staticParam;
 
@@ -518,6 +526,10 @@ namespace frydom {
 
         // Statics
 
+        /// Set if the static analysis send data to the log files
+        /// \param log true if the static analysis send data to the log files
+        void SetLogStatics(bool log);
+
         /// Set the number of steps between two relaxations, during static iterations
         /// \param nSteps number of steps between two relaxations
         void SetNbStepsStatics(int nSteps);
@@ -548,6 +560,9 @@ namespace frydom {
 
         /// Initialize the static by deactivating the bodies/links/physics items not included in the static analysis
         void InitializeStatic();
+
+        /// Finalize the static analysis by creating a report and setting the elements
+        void FinalizeStatic();
 
     public:
 

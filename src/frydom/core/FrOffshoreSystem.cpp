@@ -16,6 +16,7 @@
 
 #include "frydom/core/link/links_lib/FrLink.h"
 #include "frydom/core/body/FrBody.h"
+#include "frydom/core/force/FrForce.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/utils/FrIrrApp.h"
 
@@ -572,6 +573,10 @@ namespace frydom {
         m_chronoSystem->Set_G_acc(chrono::ChVector<double>(0., 0., -gravityAcceleration));
     }
 
+    void FrOffshoreSystem::SetLogStatics(bool log) {
+        m_staticParam.m_logStatic = log;
+    }
+
     void FrOffshoreSystem::SetNbStepsStatics(int nSteps) {
 //        m_nbStepStatics = nSteps;
         m_staticParam.m_nSteps = nSteps;
@@ -591,19 +596,76 @@ namespace frydom {
 
     void FrOffshoreSystem::InitializeStatic() {
 
+        // Store the starting time of the simulation
+        m_staticParam.m_undoTime= m_chronoSystem->GetChTime();
+        // Store the time ramp before setting it to 1
+        m_staticParam.m_ramp = GetEnvironment()->GetTimeRamp();
+        GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0.,1.,1.,1.);
+
         for (auto& body : m_bodyList) {
+            m_staticParam.m_map.emplace(body.get(),std::make_pair(body->IsActive(),body->IsLogged()));
             body->SetSleeping(!body->IncludedInStaticAnalysis());
-            body->InitializeStatic();
+            body->SetLogged(m_staticParam.m_logStatic);
+            for (auto& force : body->GetForceList()) {
+                m_staticParam.m_map.emplace(force.get(),std::make_pair(force->IsActive(),force->IsLogged()));
+                force->SetActive(force->IncludedInStaticAnalysis());
+                force->SetLogged(m_staticParam.m_logStatic);
+            }
         }
 
         for (auto& link : m_linkList) {
+            m_staticParam.m_map.emplace(link.get(),std::make_pair(link->IsActive(),link->IsLogged()));
             link->SetDisabled(!link->IncludedInStaticAnalysis());
+            link->SetLogged(m_staticParam.m_logStatic);
         }
 
         for (auto& pi : m_PrePhysicsList) {
+            m_staticParam.m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
             pi->SetActive(pi->IncludedInStaticAnalysis());
+            pi->SetLogged(m_staticParam.m_logStatic);
         }
 
+
+    }
+
+    void FrOffshoreSystem::FinalizeStatic() {
+
+        for (auto& body : m_bodyList) {
+
+            body->SetSleeping(!m_staticParam.m_map.find(body.get())->second.first);
+            body->SetLogged(m_staticParam.m_map.find(body.get())->second.second);
+
+            for (auto& force : body->GetForceList()) {
+                force->SetActive(m_staticParam.m_map.find(force.get())->second.first);
+                force->SetLogged(m_staticParam.m_map.find(force.get())->second.second);
+            }
+
+        }
+
+        for (auto& link : m_linkList) {
+
+            link->SetDisabled(!m_staticParam.m_map.find(link.get())->second.first);
+            link->SetLogged(m_staticParam.m_map.find(link.get())->second.second);
+
+        }
+
+        for (auto& pi : m_PrePhysicsList) {
+
+            pi->SetActive(m_staticParam.m_map.find(pi.get())->second.first);
+            pi->SetLogged(m_staticParam.m_map.find(pi.get())->second.second);
+
+        }
+
+        // Set no speed and accel. on bodies, meshes and other physics items
+        Relax(m_staticParam.m_relax);
+
+        // Set the simulation time to its init value
+        m_chronoSystem->SetChTime(m_staticParam.m_undoTime);
+
+        // Set the ramp to its init state
+        double x0,y0,x1,y1;
+        m_staticParam.m_ramp->GetByTwoPoints(x0,y0,x1,y1);
+        GetEnvironment()->GetTimeRamp()->SetByTwoPoints(x0,y0,x1,y1);
 
     }
 
@@ -614,11 +676,6 @@ namespace frydom {
 
         InitializeStatic();
 
-        double x0,y0,x1,y1;
-        GetEnvironment()->GetTimeRamp()->GetByTwoPoints(x0,y0,x1,y1);
-        GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0.,0.,1.,0.);
-
-        double undoTime = m_chronoSystem->GetChTime();
         bool reach_tolerance = false;
         int iter = 0;
 
@@ -628,16 +685,18 @@ namespace frydom {
             // Set no speed and accel. on bodies, meshes and other physics items
             Relax(m_staticParam.m_relax);
 
-            m_chronoSystem->DoFrameDynamics(undoTime + iter * m_chronoSystem->GetStep() * m_staticParam.m_nSteps);
+            m_chronoSystem->DoFrameDynamics(m_staticParam.m_undoTime + iter * m_chronoSystem->GetStep() * m_staticParam.m_nSteps);
 
              // Get the speed of the bodies to check the convergence
              double bodyVel = 0;
              for (auto &body : m_bodyList) {
                  bodyVel += body->GetVelocityInWorld(NWU).norm();
              }
+
              std::cout<<iter<<", "<<m_chronoSystem->GetChTime()<<", "<<bodyVel<<std::endl;
-             // TODO : introduce a tolerance parameter
-             if (bodyVel < m_staticParam.m_tolerance && m_chronoSystem->GetChTime()>undoTime+m_chronoSystem->GetStep()*m_staticParam.m_nSteps) {
+
+             if (bodyVel < m_staticParam.m_tolerance &&
+             m_chronoSystem->GetChTime()>m_staticParam.m_undoTime+m_chronoSystem->GetStep()*m_staticParam.m_nSteps) {
                  reach_tolerance = true;
              }
 
@@ -645,12 +704,8 @@ namespace frydom {
 
         }
 
-        // Set no speed and accel. on bodies, meshes and other physics items
-        Relax(m_staticParam.m_relax);
+        FinalizeStatic();
 
-        m_chronoSystem->SetChTime(undoTime);
-
-        GetEnvironment()->GetTimeRamp()->SetByTwoPoints(x0,y0,x1,y1);
         return reach_tolerance;
     }
 

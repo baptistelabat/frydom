@@ -119,12 +119,6 @@ namespace frydom {
         return m_chronoBody->IsActive();
     }
 
-    void FrBody::InitializeStatic() {
-
-        for (auto& force : m_externalForces)
-            force->SetActive(force->IncludedInStaticAnalysis());
-    }
-
     void FrBody::SetupInitial() {
         m_chronoBody->SetupInitial();
         Initialize();
