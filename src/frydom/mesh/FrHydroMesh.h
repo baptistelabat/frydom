@@ -110,10 +110,6 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "HydroMesh"; }
 
-        /// Update nonlinear hydrostatic force.
-        /// \param time Current time of the simulation from beginning.
-        void Update(double time) override;
-
         /// Intialize the nonlinear hydrostatic force model.
         void Initialize() override;
 
@@ -138,6 +134,12 @@ namespace frydom {
 
         /// This function returns the center of buoyancy of the clipped mesh in the world frame.
         Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);
+
+    private:
+
+        /// Update nonlinear hydrostatic force.
+        /// \param time Current time of the simulation from beginning.
+        void Compute(double time) override;
 
     };
 

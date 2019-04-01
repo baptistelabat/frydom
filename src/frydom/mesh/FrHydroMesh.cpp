@@ -25,7 +25,7 @@ namespace frydom {
 
     }
 
-    void FrHydroMesh::Update(double time) {
+    void FrHydroMesh::Compute(double time) {
 
         // This function computes the nonlinear hydrostatic loads.
 
