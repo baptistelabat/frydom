@@ -105,7 +105,7 @@ namespace frydom {
     std::shared_ptr<FrLinearDamping>
     make_linear_damping_force(std::shared_ptr<FrBody> body, FLUID_TYPE ft, bool relativeToFluid){
 
-        /// This function creates a linear damping force.
+        // This function creates a linear damping force.
 
         // Construction of the linear damping force object.
         auto forceLinearDamping = std::make_shared<FrLinearDamping>(ft, relativeToFluid);
