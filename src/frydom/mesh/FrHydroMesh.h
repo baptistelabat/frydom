@@ -85,7 +85,7 @@ namespace frydom {
             double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
 
             // Clipping surface.
-            if(m_WNL_or_NL = true) { // Incident wave field.
+            if(m_WNL_or_NL == true) { // Incident wave field.
 
                 // Incident free surface.
                 FrFreeSurface *FreeSurface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface();
@@ -130,6 +130,10 @@ namespace frydom {
         /// This function returns the clipped mesh.
         mesh::FrMesh GetClippedMesh(){
             return m_clipped_mesh;
+        }
+
+        mesh::FrMesh GetInitialMesh(){
+            return m_mesh_init;
         }
 
         /// This function returns the center of buoyancy of the clipped mesh in the world frame.
