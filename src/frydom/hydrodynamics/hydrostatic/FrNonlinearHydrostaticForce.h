@@ -15,7 +15,6 @@
 
 #include <frydom/core/force/FrForce.h>
 #include "frydom/core/math/FrVector.h"
-#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 #include "frydom/mesh/FrMesh.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean.h"
@@ -43,9 +42,6 @@ namespace frydom {
         /// Offshore system.
         FrOffshoreSystem* m_system;
 
-        /// Hydrodynamic database.
-        std::shared_ptr<FrHydroDB> m_HDB;
-
         /// Center of buoyancy in world.
         Position m_CoBInWorld;
 
@@ -58,7 +54,7 @@ namespace frydom {
     public:
 
         /// Constructor.
-        FrNonlinearHydrostaticForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrHydroMesh> HydroMesh) : m_HDB(HDB) {
+        FrNonlinearHydrostaticForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroMesh> HydroMesh) {
             m_system = system;
             m_hydro_mesh = HydroMesh;
         }
@@ -66,10 +62,6 @@ namespace frydom {
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "NonlinearHydrostaticForce"; }
-
-        /// Update nonlinear hydrostatic force.
-        /// \param time Current time of the simulation from beginning.
-        void Update(double time) override;
 
         /// Intialize the nonlinear hydrostatic force model.
         void Initialize() override;
@@ -83,11 +75,17 @@ namespace frydom {
         /// This function gives the center of buoyancy in the world frame.
         Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);
 
+    private:
+
+        /// Update nonlinear hydrostatic force.
+        /// \param time Current time of the simulation from beginning.
+        void Compute(double time) override;
+
     };
 
     /// This function creates a (fully or weakly) nonlinear hydrostatic force object.
     std::shared_ptr<FrNonlinearHydrostaticForce>
-    make_nonlinear_hydrostatic_force(FrOffshoreSystem* system,std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
+    make_nonlinear_hydrostatic_force(FrOffshoreSystem* system,std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
 
 }  // end namespace frydom
 

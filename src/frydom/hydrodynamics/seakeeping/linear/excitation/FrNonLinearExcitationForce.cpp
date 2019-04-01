@@ -49,7 +49,7 @@ namespace frydom {
 
     }
 
-    void FrNonLinearExcitationForce::Update(double time) {
+    void FrNonLinearExcitationForce::Compute(double time) {
 
         // This subroutine computes the nonlinear excitation forces (nonlinear RK, linear diffraction) from Nemoh results and pressure integration.
 

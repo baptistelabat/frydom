@@ -79,12 +79,14 @@ namespace frydom {
 
         void Initialize() override;
 
-        void Update(double time) override;
-
         void StepFinalize() override;
 
         /// This function compute the incident pressure integration.
         void CalcIncidentPressureIntegration();
+
+    private:
+
+        void Compute(double time) override;
 
     };
 
