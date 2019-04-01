@@ -73,6 +73,7 @@ namespace frydom{
 
     FrForce::FrForce() {
         m_chronoForce = std::make_shared<internal::FrForceBase>(this);
+        SetLogged(true);
     }
 
     void FrForce::Initialize() {
