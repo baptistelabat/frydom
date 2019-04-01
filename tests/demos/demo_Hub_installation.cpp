@@ -274,24 +274,32 @@ int main(int argc, char* argv[]) {
 
     // ------------------ Run ------------------ //
 
-    // You can change the dynamical simulation time step using.
+    // You can change the dynamical simulation time step using
     system.SetTimeStep(0.01);
+
+    // You can solve the static equilibrium first, in order to have the full assembly static before starting the
+    // dynamical simulation. The static solving is based on a dynamic simulation with relaxations of the system,
+    // performed regularly. You can change the number of time steps between two relaxation :
+    system.SetNbStepsStatics(100);
+    // You can also chose which relaxation method you want to apply
+    // (none, velocity set to null, acceleration, or velocity and acceleration)
+    system.SetRelaxationStatics(FrOffshoreSystem::RELAXTYPE::VELOCITY);
+    // You can set the number of iterations (number of relaxations followed by dynamic solving)
+    system.SetNbIterationStatics(10);
+    // And the tolerance, to check if the static is reached
+    system.SetToleranceStatics(1E-2);
+
+    // Now with the static solving
+    system.SolveStaticWithRelaxation();
+    // Once the static is reached, you can visualize it
+    system.Visualize(75.,false);
+
+    // The static solving iterations can also be visualized. To do so, just replace the two previous lines with :
+//    system.VisualizeStaticAnalysis(75.,false);
+
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 30) and the distance from the camera to the objectif (75m).
     // For saving snapshots of the simulation, just turn the boolean to true.
-//    system.SetNbIterationStatics(-1);
-
-    system.SetNbStepsStatics(100);
-//    system.SetRelaxationStatics(FrOffshoreSystem::RELAXTYPE::ACCELERATION);
-    auto test = system.SolveStaticWithRelaxation();
-    system.Visualize(75.,false);
-
-//    system.VisualizeStaticAnalysis(75.,false);
-
-//    radiationModel->Clear();
-
-//    system.RunInViewer(0, 75, false);
-
-//    return test;
+    system.RunInViewer(0, 75, false);
 }
