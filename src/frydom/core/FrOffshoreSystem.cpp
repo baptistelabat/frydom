@@ -241,6 +241,9 @@ namespace frydom {
             item->Initialize();
         }
 
+        // Full assembly -computes also forces-
+        m_chronoSystem->DoFullAssembly();
+
         m_chronoSystem->Update();
 
         // Init the logs

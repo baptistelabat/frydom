@@ -155,7 +155,7 @@ void TestFrFlowForce::TestForce() {
             system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()->Set(dir(i), speed(i), angleUnit, speedUnit, frame,
                                                                    convention);
         }
-        force->Compute(0.);
+        force->Update(0.);
         force->GetForceInWorld(forceTemp, NWU);
         force->GetTorqueInBodyAtCOG(torqueTemp, NWU);
 

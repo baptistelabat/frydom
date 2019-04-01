@@ -16,7 +16,7 @@ using namespace frydom;
 
 int main() {
 
-    FrOffshoreSystem_ system;
+    FrOffshoreSystem system;
     system.GetEnvironment()->ShowFreeSurface(false);
 
     // Body1 definition

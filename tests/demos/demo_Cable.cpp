@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     enum cableCase{ FixedLine, Pendulum, Newton_Pendulum};
 
     // Chose the one you want to run
-    cableCase Case = Newton_Pendulum;
+    cableCase Case = Pendulum;
 
     switch (Case) {
         // This case features one catenary line, with fixed ending and starting nodes. We can check the line profile and
@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
 
             // Set its initial position and velocity
             sphere->SetPosition(Position(0., 0., 0.), NWU);
-            sphere->SetVelocityInWorldNoRotation(Velocity(0., 20., 0.), NWU);
+            sphere->SetVelocityInWorldNoRotation(Velocity(0., 10., 0.), NWU);
             //        sphere->SetFixedInWorld(true);
 
             // create the nodes from the sphere and the world body.
@@ -93,6 +93,8 @@ int main(int argc, char* argv[]) {
             // Create the catenary line, using the nodes and line properties previously defined
             auto CatenaryLine = make_catenary_line(sphereNode, worldNode, &system, elastic, YoungModulus,
                                                    sectionArea, unstretchedLength, linearDensity, WATER);
+
+            CatenaryLine->SetActive(false);
             break;
         }
         // This case features a Newton pendulum, consisting of a series of identically sized metal balls suspended in a

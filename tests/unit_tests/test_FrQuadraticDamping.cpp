@@ -43,6 +43,7 @@ protected:
 
 void TestQuadraticDamping::SetUp() {
     body = system.NewBody();
+    body->SetFixedInWorld(true);
     force = std::make_shared<FrQuadraticDamping>(WATER, false);
     body->AddExternalForce(force);
     body->SetPosition(bodyPosition, NWU);
@@ -61,7 +62,7 @@ TEST_F(TestQuadraticDamping, TestBodyVelocity) {
 
     system.Initialize();
     body->SetVelocityInBodyNoRotation(bodyVelocity, NWU);
-    force->Compute(0.);
+    force->Update(0.);
 
     auto bodyForce = force->GetForceInBody(NWU);
     EXPECT_NEAR(forceRef.GetFx(), bodyForce.GetFx(), 1e-5);
@@ -83,7 +84,7 @@ TEST_F(TestQuadraticDamping, TestCurrentVelocity) {
     force->SetRelative2Fluid(true);
     system.Initialize();
 
-    force->Compute(0.);
+    force->Update(0.);
 
     auto bodyForce = force->GetForceInBody(NWU);
     EXPECT_NEAR(forceRef.GetFx(), bodyForce.GetFx(), 1e-5);
@@ -106,7 +107,7 @@ TEST_F(TestQuadraticDamping, TestWindVelocity) {
     body->SetVelocityInBodyNoRotation(Velocity(0., 0., 0.1), NWU);
     system.Initialize();
 
-    windDamping->Compute(0.);
+    windDamping->Update(0.);
 
     auto bodyForce = windDamping->GetForceInBody(NWU);
     EXPECT_NEAR(forceRef.GetFx() * 0.001172346640701071, bodyForce.GetFx(), 1e-5);

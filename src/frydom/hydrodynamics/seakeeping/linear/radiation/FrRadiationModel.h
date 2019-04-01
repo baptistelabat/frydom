@@ -46,7 +46,6 @@ namespace frydom {
 
         std::shared_ptr<FrHydroDB> m_HDB;
         std::unordered_map<FrBEMBody*, GeneralizedForce> m_radiationForce;
-        std::shared_ptr<internal::FrAddedMassBase> m_addedMass; // FIXME : a supprimer
 
     public:
 
@@ -72,7 +71,11 @@ namespace frydom {
 
         FrHydroMapper* GetMapper() const;
 
-        void Update(double time) override;
+    private:
+
+        /// Compute the internal states of the Radiation model
+        /// \param time Current time of the simulation from beginning, in seconds
+        void Compute(double time) override;
 
     };
 
@@ -103,8 +106,6 @@ namespace frydom {
 
         void Initialize() override;
 
-        void Update(double time) override;
-
         void StepFinalize() override;
 
         // Logging
@@ -119,6 +120,10 @@ namespace frydom {
         void SetImpulseResponseSize(double Te, double dt);
 
     private:
+
+        /// Compute the radiation convolution.
+        /// \param time Current time of the simulation from beginning, in seconds
+        void Compute(double time) override;
 
         void GetImpulseResponseSize(double& Te, double &dt, unsigned int& N) const;
 
