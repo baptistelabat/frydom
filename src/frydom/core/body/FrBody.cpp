@@ -842,7 +842,7 @@ namespace frydom {
 
             // Add the fields
             m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return GetTime(); });
+                                        [this]() { return m_system->GetTime(); });
 
             // Body Position
             m_message->AddField<Eigen::Matrix<double, 3, 1>>

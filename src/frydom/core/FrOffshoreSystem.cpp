@@ -840,8 +840,8 @@ namespace frydom {
 
             // Add the fields
             // TODO A completer
-//            m_message->AddField<double>("time", "s", "Current time of the simulation",
-//                    [this]() { return m_chronoSystem->GetChTime(); });
+            m_message->AddField<double>("time", "s", "Current time of the simulation",
+                    [this]() { return m_chronoSystem->GetChTime(); });
 
             // Init the message
             FrObject::InitializeLog(logPath);

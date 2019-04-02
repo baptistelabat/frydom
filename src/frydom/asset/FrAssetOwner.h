@@ -33,9 +33,9 @@ namespace frydom {
 
     public:
 
-        /// Gets the simulation time of this object
-        /// \return simulation time of this object
-        double GetTime();
+//        /// Gets the simulation time of this object
+//        /// \return simulation time of this object
+//        double GetTime(); //FIXME : bug in release?
 
         /// Update the assets
         void UpdateAsset();
