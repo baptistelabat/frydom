@@ -127,6 +127,8 @@ int main(int argc, char* argv[]) {
 
     cylinder->SetInertiaTensor(cylinderInertia);
 
+    cylinder->SetPosition(Position(0.,0.,0.02), NWU);
+
     // Node.
     auto Node = cylinder->NewNode();
     Node->ShowAsset(true);
@@ -163,12 +165,19 @@ int main(int argc, char* argv[]) {
     // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
     // For saving snapshots of the simulation, just turn the boolean to true.
 
-    clock_t begin = clock();
+    system.GetStaticAnalysis()->SetNbSteps(10);
+    system.SolveStaticWithRelaxation();
 
-    system.RunInViewer(20, 2, false);
+    system.Visualize(20,false);
 
-    clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    std::cout << elapsed_secs << std::endl;
+
+
+//    clock_t begin = clock();
+//
+//    system.RunInViewer(20, 2, false);
+//
+//    clock_t end = clock();
+//    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+//    std::cout << elapsed_secs << std::endl;
 
 }

@@ -63,6 +63,9 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "NonlinearHydrostaticForce"; }
 
+        /// Return true if the force is included in the static analysis
+        bool IncludedInStaticAnalysis() const override {return true;}
+
         /// Intialize the nonlinear hydrostatic force model.
         void Initialize() override;
 

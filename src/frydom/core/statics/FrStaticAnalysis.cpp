@@ -107,10 +107,10 @@ namespace frydom{
         auto logPath = m_system->GetPathManager()->BuildPath(this,"statics.csv");
 
         // Add the fields to be logged
-        m_message->AddField<double>("iteration", "/", "iteration of the static analysis",
+        m_message->AddField<double>("iteration", "-", "iteration of the static analysis",
                                     [this]() { return c_iter; });
 
-        m_message->AddField<double>("residual", "/", "residual of the static analysis",
+        m_message->AddField<double>("residual", "-", "residual of the static analysis",
                                     [this]() { return c_residual; });
 
         // Initialize the message
