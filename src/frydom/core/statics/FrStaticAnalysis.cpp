@@ -17,17 +17,22 @@
 #include "frydom/core/force/FrForce.h"
 
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/core/math/functions/ramp/FrCosRampFunction.h"
 
 namespace frydom{
 
 
-    void FrStaticAnalysis::SetLog(bool log) {
-        m_logStatic = log;
+    FrStaticAnalysis::FrStaticAnalysis(FrOffshoreSystem *system) : m_system(system) {
+        SetLogged(true);
     }
 
-    bool FrStaticAnalysis::GetLog() const {
-        return m_logStatic;
-    }
+//    void FrStaticAnalysis::SetLog(bool log) {
+//        m_logStatic = log;
+//    }
+//
+//    bool FrStaticAnalysis::GetLog() const {
+//        return m_logStatic;
+//    }
 
     void FrStaticAnalysis::SetNbSteps(int nSteps) {
         m_nSteps = nSteps;
@@ -61,50 +66,70 @@ namespace frydom{
         return m_tolerance;
     }
 
-    void FrStaticAnalysis::InitializeStatic() {
-// Store the starting time of the simulation
+    void FrStaticAnalysis::InitializeLog() {
+
+    }
+
+    void FrStaticAnalysis::Initialize() {
+
+        // Store the starting time of the simulation
         m_undoTime = m_system->GetTime();
         // Store the time ramp before setting it to 1
         m_ramp = m_system->GetEnvironment()->GetTimeRamp();
-        m_system->GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0.,1.,1.,1.);
+        m_system->GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0.,0.,1.,0.);
 
         for (auto& body : m_system->GetBodyList()) {
             m_map.emplace(body.get(),std::make_pair(body->IsActive(),body->IsLogged()));
             body->SetSleeping(!body->IncludedInStaticAnalysis());
-            body->SetLogged(m_logStatic);
+            body->SetLogged(body->IncludedInStaticAnalysis() && body->IsLogged());
             for (auto& force : body->GetForceList()) {
                 m_map.emplace(force.get(),std::make_pair(force->IsActive(),force->IsLogged()));
                 force->SetActive(force->IncludedInStaticAnalysis());
-                force->SetLogged(m_logStatic);
+                force->SetLogged(force->IncludedInStaticAnalysis() && force->IsLogged());
             }
         }
 
         for (auto& link : m_system->GetLinkList()) {
             m_map.emplace(link.get(),std::make_pair(link->IsActive(),link->IsLogged()));
             link->SetDisabled(!link->IncludedInStaticAnalysis());
-            link->SetLogged(m_logStatic);
+            link->SetLogged(link->IncludedInStaticAnalysis() && link->IsLogged());
         }
 
         for (auto& pi : m_system->GetPrePhysiscsItemList()) {
             m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
             pi->SetActive(pi->IncludedInStaticAnalysis());
-            pi->SetLogged(m_logStatic);
+            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
         }
 
         for (auto& pi : m_system->GetMidPhysiscsItemList()) {
             m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
             pi->SetActive(pi->IncludedInStaticAnalysis());
-            pi->SetLogged(m_logStatic);
+            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
         }
 
         for (auto& pi : m_system->GetPostPhysiscsItemList()) {
             m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
             pi->SetActive(pi->IncludedInStaticAnalysis());
-            pi->SetLogged(m_logStatic);
+            pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
         }
+
+        // Logging
+        m_system->InitializeLog("Static");
+
+        auto logPath = m_system->GetPathManager()->BuildPath(this,"statics.csv");
+
+        // Add the fields to be logged
+        m_message->AddField<double>("iteration", "/", "iteration of the static analysis",
+                                    [this]() { return c_iter; });
+
+        m_message->AddField<double>("residual", "/", "residual of the static analysis",
+                                    [this]() { return c_residual; });
+
+        // Initialize the message
+        FrObject::InitializeLog(logPath);
     }
 
-    void FrStaticAnalysis::FinalizeStatic() {
+    void FrStaticAnalysis::StepFinalize() {
 
         for (auto& body : m_system->GetBodyList()) {
 
@@ -157,48 +182,56 @@ namespace frydom{
         m_ramp->GetByTwoPoints(x0,y0,x1,y1);
         m_system->GetEnvironment()->GetTimeRamp()->SetByTwoPoints(x0,y0,x1,y1);
 
+        m_system->InitializeLog();
+
     }
 
     bool FrStaticAnalysis::SolveStatic() {
 
 
-        InitializeStatic();
+        Initialize();
 
         bool reach_tolerance = false;
-        int iter = 0;
+        c_iter = 0;
 
 //        for (int m_iter = 0; m_iter < nIter; m_iter++) {
-        while (!(reach_tolerance || iter==m_nIterations)) {
+        while (!(reach_tolerance || c_iter==m_nIterations)) {
 
             // Set no speed and accel. on bodies, meshes and other physics items
             m_system->Relax(m_relax);
 
-            m_system->AdvanceTo(m_undoTime + iter * m_system->GetTimeStep() * m_nSteps);
+            m_system->AdvanceTo(m_undoTime + c_iter * m_system->GetTimeStep() * m_nSteps);
 
             // Get the speed of the bodies to check the convergence
-            double bodyVel = 0;
+            c_residual = 0;
             for (auto &body : m_system->GetBodyList()) {
-                bodyVel += body->GetVelocityInWorld(NWU).norm();
+                c_residual += body->GetVelocityInWorld(NWU).norm();
             }
 
-            std::cout<<iter<<", "<<m_system->GetTime()<<", "<<bodyVel<<std::endl;
+            FrObject::SendLog();
 
-            if (bodyVel < m_tolerance &&
+            if (c_residual < m_tolerance &&
                 m_system->GetTime()>m_undoTime+m_system->GetTimeStep()*m_nSteps) {
                 reach_tolerance = true;
             }
 
-            iter ++;
+            c_iter ++;
 
         }
 
-        FinalizeStatic();
+        StepFinalize();
 
         return reach_tolerance;
     }
 
     FrOffshoreSystem *FrStaticAnalysis::GetSystem() {
         return m_system;
+    }
+
+    void FrStaticAnalysis::Report() {
+
+
+
     }
 
 

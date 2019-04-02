@@ -58,7 +58,7 @@ namespace frydom{
 
     }
 
-    void FrPathManager::Initialize(FrOffshoreSystem* system) {
+    void FrPathManager::Initialize(FrOffshoreSystem* system, std::string relPath) {
 
         // Open the FRyDom workspace directory
         cppfs::FileHandle workspaceDir = cppfs::fs::open(m_outputPath.path());
@@ -70,8 +70,11 @@ namespace frydom{
         std::stringstream ss;
         ss << std::put_time(std::localtime(&tt), "%Y-%m-%d_%HH%M");
 
-        m_runPath = m_outputPath.resolve(fmt::format("{}_{}",system->GetName(),ss.str()));
-        cppfs::FileHandle runDir = cppfs::fs::open(m_runPath.path());
+        m_runPath = m_outputPath.resolve(fmt::format("{}_{}/{}",system->GetName(),ss.str(),relPath));
+        cppfs::FileHandle runDir = cppfs::fs::open(m_runPath.directoryPath());
+        runDir.createDirectory();
+
+        runDir = cppfs::fs::open(m_runPath.path());
         runDir.createDirectory();
 
     }
@@ -220,10 +223,8 @@ namespace frydom{
         auto system = staticAnalysis->GetSystem();
 
         // Create the path for the statics log
-        auto relStaticsLogPath = fmt::format("{}_{}/{}_{}_{}/{}",
-                                          system->GetTypeName(),system->GetShortenUUID(),
-                                          staticAnalysis->GetTypeName(),staticAnalysis->GetName(),staticAnalysis->GetShortenUUID(),
-                                          relPath);
+        auto relStaticsLogPath = fmt::format("{}_{}_{}/{}", staticAnalysis->GetTypeName(),
+                staticAnalysis->GetName(), staticAnalysis->GetShortenUUID(), relPath);
         cppfs::FilePath staticsLogPath = m_runPath.resolve(relStaticsLogPath);
 
         // Create the directory for the statics logs

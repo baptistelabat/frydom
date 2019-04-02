@@ -132,7 +132,7 @@ namespace frydom {
             BeginScene();
             DrawAll();
 
-            m_system->SetNbIterationStatics(2);
+            m_system->GetStaticAnalysis()->SetNbIteration(2);
             m_system->SolveStaticWithRelaxation();
 
             EndScene();

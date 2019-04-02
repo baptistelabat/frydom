@@ -22,6 +22,7 @@ int main(int argc, char* argv[]) {
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
+    system.SetName("Hub_Installation");
 
     // --------------------------------------------------
     // Environment
@@ -282,14 +283,14 @@ int main(int argc, char* argv[]) {
     // You can solve the static equilibrium first, in order to have the full assembly static before starting the
     // dynamical simulation. The static solving is based on a dynamic simulation with relaxations of the system,
     // performed regularly. You can change the number of time steps between two relaxation :
-    system.SetNbStepsStatics(100);
+    system.GetStaticAnalysis()->SetNbSteps(100);
     // You can also chose which relaxation method you want to apply
     // (none, velocity set to null, acceleration, or velocity and acceleration)
-    system.SetRelaxationStatics(FrOffshoreSystem::RELAXTYPE::VELOCITY);
+    system.GetStaticAnalysis()->SetRelaxation(FrStaticAnalysis::RELAXTYPE::VELOCITY);
     // You can set the number of iterations (number of relaxations followed by dynamic solving)
-    system.SetNbIterationStatics(10);
+    system.GetStaticAnalysis()->SetNbIteration(10);
     // And the tolerance, to check if the static is reached
-    system.SetToleranceStatics(1E-2);
+    system.GetStaticAnalysis()->SetTolerance(1E-2);
 
     // Now with the static solving
     system.SolveStaticWithRelaxation();

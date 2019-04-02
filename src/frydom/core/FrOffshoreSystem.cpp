@@ -827,11 +827,11 @@ namespace frydom {
         return m_linkList.cend();
     }
 
-    void FrOffshoreSystem::InitializeLog() {
+    void FrOffshoreSystem::InitializeLog(std::string simulationType) {
 
         if (IsLogged()) {
 
-            m_pathManager->Initialize(this);
+            m_pathManager->Initialize(this, simulationType);
 
             auto logPath = m_pathManager->BuildPath(this, "system.csv");
 

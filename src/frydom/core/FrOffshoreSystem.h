@@ -350,7 +350,7 @@ namespace frydom {
         FrPathManager* GetPathManager() const;
 
         /// Initialize the logs (log files and folders creation)
-        void InitializeLog();
+        void InitializeLog(std::string simulationType = "Dynamic");
 
         // Constraint solver
 
