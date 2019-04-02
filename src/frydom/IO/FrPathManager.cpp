@@ -58,7 +58,7 @@ namespace frydom{
 
     }
 
-    void FrPathManager::Initialize(FrOffshoreSystem* system, std::string relPath) {
+    void FrPathManager::Initialize(FrOffshoreSystem* system) {
 
         // Open the FRyDom workspace directory
         cppfs::FileHandle workspaceDir = cppfs::fs::open(m_outputPath.path());
@@ -70,13 +70,22 @@ namespace frydom{
         std::stringstream ss;
         ss << std::put_time(std::localtime(&tt), "%Y-%m-%d_%HH%M");
 
-        m_runPath = m_outputPath.resolve(fmt::format("{}_{}/{}",system->GetName(),ss.str(),relPath));
-        cppfs::FileHandle runDir = cppfs::fs::open(m_runPath.directoryPath());
+        m_projectPath = m_outputPath.resolve(fmt::format("{}_{}",system->GetName(),ss.str()));
+        cppfs::FileHandle runDir = cppfs::fs::open(m_projectPath.path());
         runDir.createDirectory();
 
-        runDir = cppfs::fs::open(m_runPath.path());
+    }
+
+    void FrPathManager::SetRunPath(std::string relPath){
+
+        m_runPath = m_projectPath.resolve(relPath);
+        cppfs::FileHandle runDir = cppfs::fs::open(m_runPath.path());
         runDir.createDirectory();
 
+    }
+
+    std::string FrPathManager::GetRunPath() const {
+        return m_runPath.path();
     }
 
     void FrPathManager::SetLogFrameConvention(FRAME_CONVENTION fc) {

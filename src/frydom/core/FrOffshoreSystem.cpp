@@ -302,8 +302,13 @@ namespace frydom {
 
         m_chronoSystem->Update();
 
+
         // Init the logs
-        if (IsLogged()) InitializeLog();
+        if (IsLogged()) {
+            m_pathManager->Initialize(this);
+            m_pathManager->SetRunPath("Dynamic");
+            InitializeLog();
+        }
 
         m_isInitialized = true;
 
@@ -827,11 +832,9 @@ namespace frydom {
         return m_linkList.cend();
     }
 
-    void FrOffshoreSystem::InitializeLog(std::string simulationType) {
+    void FrOffshoreSystem::InitializeLog() {
 
         if (IsLogged()) {
-
-            m_pathManager->Initialize(this, simulationType);
 
             auto logPath = m_pathManager->BuildPath(this, "system.csv");
 

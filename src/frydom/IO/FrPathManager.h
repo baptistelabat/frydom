@@ -36,6 +36,7 @@ namespace frydom {
         FRAME_CONVENTION m_logFrameConvention;
 
         cppfs::FilePath m_outputPath;
+        cppfs::FilePath m_projectPath;
         cppfs::FilePath m_runPath;
 
     public:
@@ -60,9 +61,13 @@ namespace frydom {
         /// \return path for the output directory
         std::string GetLogOutputPath() const;
 
+        void SetRunPath(std::string relPath);
+
+        std::string GetRunPath() const;
+
 
         ///Initialize the log manager serice
-        void Initialize(FrOffshoreSystem* system, std::string relPath);
+        void Initialize(FrOffshoreSystem* system);
 
         /// Build the path and directories needed for the system log
         /// \param system system for which a log is declared
