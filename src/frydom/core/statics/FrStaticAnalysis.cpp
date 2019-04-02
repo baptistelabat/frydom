@@ -26,14 +26,6 @@ namespace frydom{
         SetLogged(true);
     }
 
-//    void FrStaticAnalysis::SetLog(bool log) {
-//        m_logStatic = log;
-//    }
-//
-//    bool FrStaticAnalysis::GetLog() const {
-//        return m_logStatic;
-//    }
-
     void FrStaticAnalysis::SetNbSteps(int nSteps) {
         m_nSteps = nSteps;
     }
@@ -64,10 +56,6 @@ namespace frydom{
 
     double FrStaticAnalysis::GetTolerance() const {
         return m_tolerance;
-    }
-
-    void FrStaticAnalysis::InitializeLog() {
-
     }
 
     void FrStaticAnalysis::Initialize() {
@@ -131,6 +119,7 @@ namespace frydom{
 
     void FrStaticAnalysis::StepFinalize() {
 
+        // loop on bodies, links, etc. to set back the previous values of activity and logging
         for (auto& body : m_system->GetBodyList()) {
 
             body->SetSleeping(!m_map.find(body.get())->second.first);
@@ -182,6 +171,7 @@ namespace frydom{
         m_ramp->GetByTwoPoints(x0,y0,x1,y1);
         m_system->GetEnvironment()->GetTimeRamp()->SetByTwoPoints(x0,y0,x1,y1);
 
+        // Set all the output paths for the logs back to their original paths
         m_system->InitializeLog();
 
     }
@@ -226,12 +216,6 @@ namespace frydom{
 
     FrOffshoreSystem *FrStaticAnalysis::GetSystem() {
         return m_system;
-    }
-
-    void FrStaticAnalysis::Report() {
-
-
-
     }
 
 

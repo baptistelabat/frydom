@@ -36,8 +36,6 @@ namespace frydom{
     private:
         FrOffshoreSystem* m_system;     ///< Pointer to the offshore system, containing this structure
 
-//        bool m_logStatic = true;       ///< Check if the static analysis send data to log files
-
         int m_nIterations = 10;         ///< Number of iterations for the static procedure
                                         /// each iteration contains m_nSteps steps; after each iteration a relaxation is applied
         int m_nSteps = 100;             ///< Relaxation is applied every m_nSteps steps
@@ -64,14 +62,6 @@ namespace frydom{
         std::string GetTypeName() const override { return "StaticAnalysis"; }
 
         FrOffshoreSystem* GetSystem();
-
-//        /// Set if the static analysis send data to the log files
-//        /// \param log true if the static analysis send data to the log files
-//        void SetLog(bool log);
-//
-//        /// Check if the static analysis send data to the log files
-//        /// \return true if the static analysis send data to the log files
-//        bool GetLog() const;
 
         /// Set the number of steps between two relaxations, during static iterations
         /// \param nSteps number of steps between two relaxations
@@ -117,16 +107,10 @@ namespace frydom{
         /// Initialize the static by deactivating the bodies/links/physics items not included in the static analysis
         void Initialize() override;
 
-        void InitializeLog();
-
         /// Finalize the static analysis by creating a report and setting the elements to their previous state
         void StepFinalize() override;
 
-        void Report();
-
     };
-
-
 
 
 } //end namespace frydom

@@ -223,8 +223,7 @@ namespace frydom{
         auto system = staticAnalysis->GetSystem();
 
         // Create the path for the statics log
-        auto relStaticsLogPath = fmt::format("{}_{}_{}/{}", staticAnalysis->GetTypeName(),
-                staticAnalysis->GetName(), staticAnalysis->GetShortenUUID(), relPath);
+        auto relStaticsLogPath = fmt::format("{}", relPath);
         cppfs::FilePath staticsLogPath = m_runPath.resolve(relStaticsLogPath);
 
         // Create the directory for the statics logs
