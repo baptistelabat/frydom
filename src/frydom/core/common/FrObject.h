@@ -60,6 +60,8 @@ namespace frydom {
 
         void SetLogged(bool isLogged) { m_isLogged = isLogged; }
 
+        void ClearMessage() { m_message = std::make_unique<hermes::Message>(); }
+
         std::string GetUUID() const { return m_UUID; }
 
         std::string GetShortenUUID() const { return m_UUID.substr(0,5); };

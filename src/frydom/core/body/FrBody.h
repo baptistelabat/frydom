@@ -263,7 +263,9 @@ namespace frydom {
         /// Remove all forces from the body
         void RemoveAllForces();
 
-        ForceContainer GetForceList() const {return m_externalForces;}
+        /// Get the list of all external forces
+        /// \return List of all external forces
+        ForceContainer GetForceList() const;
 
         // ##CC adding for monitoring force
 
@@ -282,6 +284,10 @@ namespace frydom {
         /// reference frame
         /// \return node created
         std::shared_ptr<FrNode> NewNode();
+
+        /// Get the list of all nodes added to the body
+        /// \return List of all nodes added to the body
+        NodeContainer GetNodeList() const;
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame !
 

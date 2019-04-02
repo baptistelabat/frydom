@@ -872,6 +872,38 @@ namespace frydom {
         }
     }
 
+    void FrOffshoreSystem::ClearLogs() {
+
+        ClearMessage();
+
+        for (auto &item : m_PrePhysicsList) {
+            item->ClearMessage();
+        }
+
+        for (auto &item : m_bodyList) {
+            item->ClearMessage();
+            for (auto& force : item->GetForceList()) {
+                force->ClearMessage();
+            }
+            for (auto& node : item->GetNodeList()) {
+                node->ClearMessage();
+            }
+        }
+
+        for (auto &item : m_MidPhysicsList) {
+            item->ClearMessage();
+        }
+
+        for (auto &item : m_linkList) {
+            item->ClearMessage();
+        }
+
+        for (auto &item : m_PostPhysicsList) {
+            item->ClearMessage();
+        }
+
+    }
+
     FrPathManager *FrOffshoreSystem::GetPathManager() const { return m_pathManager.get(); }
 
 

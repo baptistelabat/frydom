@@ -352,6 +352,9 @@ namespace frydom {
         /// Initialize the logs (log files and folders creation)
         void InitializeLog();
 
+        /// Clear the logging message of every elements
+        void ClearLogs();
+
         // Constraint solver
 
         /// Choose the solver type, to be used for the simultaneous solution of the constraints

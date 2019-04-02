@@ -923,5 +923,9 @@ namespace frydom {
         return m_chronoBody.get();
     }
 
+    FrBody::ForceContainer FrBody::GetForceList() const {return m_externalForces;}
+
+    FrBody::NodeContainer FrBody::GetNodeList() const { return m_nodes; }
+
 
 }  // end namespace frydom

@@ -103,6 +103,7 @@ namespace frydom{
 
         // Logging
         m_system->GetPathManager()->SetRunPath("Static");
+        m_system->ClearLogs();
         m_system->InitializeLog();
 
         auto logPath = m_system->GetPathManager()->BuildPath(this,"statics.csv");
@@ -174,6 +175,7 @@ namespace frydom{
 
         // Set all the output paths for the logs back to their original paths
         m_system->GetPathManager()->SetRunPath("Dynamic");
+        m_system->ClearLogs();
         m_system->InitializeLog();
 
     }
@@ -201,6 +203,8 @@ namespace frydom{
             }
 
             FrObject::SendLog();
+
+            std::cout<<m_system->GetTime()<<std::endl;
 
             if (c_residual < m_tolerance &&
                 m_system->GetTime()>m_undoTime+m_system->GetTimeStep()*m_nSteps) {

@@ -165,8 +165,7 @@ int main(int argc, char* argv[]) {
     // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
     // For saving snapshots of the simulation, just turn the boolean to true.
 
-    system.GetStaticAnalysis()->SetNbIteration(25);
-    system.GetStaticAnalysis()->SetNbSteps(100);
+    system.GetStaticAnalysis()->SetNbSteps(10);
     system.SolveStaticWithRelaxation();
 
 //    system.Visualize(20,false);
