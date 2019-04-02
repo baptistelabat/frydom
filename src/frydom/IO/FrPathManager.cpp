@@ -215,5 +215,23 @@ namespace frydom{
 
     }
 
+    std::string FrPathManager::BuildPath(FrStaticAnalysis *staticAnalysis, std::string relPath) {
+
+        auto system = staticAnalysis->GetSystem();
+
+        // Create the path for the statics log
+        auto relStaticsLogPath = fmt::format("{}_{}/{}_{}_{}/{}",
+                                          system->GetTypeName(),system->GetShortenUUID(),
+                                          staticAnalysis->GetTypeName(),staticAnalysis->GetName(),staticAnalysis->GetShortenUUID(),
+                                          relPath);
+        cppfs::FilePath staticsLogPath = m_runPath.resolve(relStaticsLogPath);
+
+        // Create the directory for the statics logs
+        auto staticsDir = cppfs::fs::open(staticsLogPath.directoryPath());
+        staticsDir.createDirectory();
+
+        return staticsLogPath.path();
+    }
+
 
 }// end namespace frydom

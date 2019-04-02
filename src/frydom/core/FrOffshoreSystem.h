@@ -15,11 +15,11 @@
 
 
 #include <map>
-#include <frydom/core/math/functions/ramp/FrCosRampFunction.h>
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/physics/ChSystemNSC.h"
 
 #include "frydom/core/common/FrObject.h"
+#include "frydom/core/statics/FrStaticAnalysis.h"
 
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
 // vent, vagues, courant, fond...
@@ -173,35 +173,6 @@ namespace frydom {
             MULTI_STEP  ///< use contact history (from contact initiation)
         };
 
-        /// enum for the relaxation methods
-        enum RELAXTYPE {
-            NORELAX,                ///< no relaxation
-            VELOCITY,               ///< velocities are set to null
-            ACCELERATION,           ///< accelelrations are set to null
-            VELOCITYANDACCELERATION ///< velocities and accelerations are set to null
-        };
-
-        struct FrStaticAnalysisParam {
-
-            bool m_logStatic = false;           ///< Check if the static analysis send data to log files
-
-            int m_nIterations = 10;     ///< Number of iterations for the static procedure
-                                        /// each iteration contains m_nSteps steps; after each iteration a relaxation is applied
-            int m_nSteps = 100;         ///< Relaxation is applied every m_nSteps steps
-
-            double m_tolerance = 1E-3;  ///< tolerance value, to check if the static equilibrium is reached
-
-            RELAXTYPE m_relax = VELOCITYANDACCELERATION;    ///< relaxation method used
-
-            std::map<FrObject*, std::pair<bool,bool>> m_map;    ///< Map to keep the activity and log activity of
-                                                                ///< elements before the static analysis
-
-            double m_undoTime = 0.;
-
-            FrCosRampFunction* m_ramp;
-
-        };
-
     private:
 
         std::unique_ptr<chrono::ChSystem> m_chronoSystem;   ///< The real Chrono system (may be SMC or NSC)
@@ -216,7 +187,7 @@ namespace frydom {
         SOLVER          m_solverType;                       ///< solver aimed at solving complementarity problems
                                                             ///< arising from QP optimization problems.
 
-        FrStaticAnalysisParam m_staticParam;
+        std::unique_ptr<FrStaticAnalysis> m_statics;
 
         // Container: definition.
         using BodyContainer = std::vector<std::shared_ptr<FrBody>>;
@@ -281,26 +252,63 @@ namespace frydom {
         /// \param item item to be added to the offshore system
         void Add(std::shared_ptr<FrObject> item); // TODO : faire des dynamic_pointer_cast sur les classes pouvant etre ajoutees...
 
+
+        // ***** Body *****
+
         /// Add a body to the offshore system
         /// \param body body to add
         void AddBody(std::shared_ptr<FrBody> body);
+
+        /// Get the list of bodies added to the system
+        /// \return List of the bodies added to the system
+        BodyContainer GetBodyList() {return m_bodyList;}
+
+
+        // ***** Link *****
 
         /// Add a link between bodies to the offshore system
         /// \param link link to be added
         void AddLink(std::shared_ptr<FrLinkBase> link);
 
+        /// Get the list of links added to the system
+        /// \return List of the links added to the system
+        LinkContainer GetLinkList() {return m_linkList;}
+
+
+        // ***** Pre Physics Item *****
 
         /// Add other physics item to the offshore system
         /// \param otherPhysics other physic item to be added
         void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics);
 
+        /// Get the list of pre physics item added to the system
+        /// \return List of the pre physics item added to the system
+        PrePhysicsContainer GetPrePhysiscsItemList() {return m_PrePhysicsList;}
+
+
+        // ***** Mid Physics Item *****
+
         /// Add other physics item to the offshore system
         /// \param otherPhysics other physic item to be added
         void AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics);
 
+        /// Get the list of mid physics item added to the system
+        /// \return List of the mid physics item added to the system
+        MidPhysicsContainer GetMidPhysiscsItemList() {return m_MidPhysicsList;}
+
+
+        // ***** Post Physics Item *****
+
         /// Add other physics item to the offshore system
         /// \param otherPhysics other physic item to be added
         void AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics);
+
+        /// Get the list of post physics item added to the system
+        /// \return List of the post physics item added to the system
+        PostPhysicsContainer GetPostPhysiscsItemList() {return m_PostPhysicsList;}
+
+
+        // ***** Environment *****
 
         /// Get the environment embedded in the offshore system
         /// \return environment embedded in the offshore system
@@ -526,26 +534,7 @@ namespace frydom {
 
         // Statics
 
-        /// Set if the static analysis send data to the log files
-        /// \param log true if the static analysis send data to the log files
-        void SetLogStatics(bool log);
-
-        /// Set the number of steps between two relaxations, during static iterations
-        /// \param nSteps number of steps between two relaxations
-        void SetNbStepsStatics(int nSteps);
-
-        /// Set the maximum number of iterative steps to find the static equilibrium,
-        /// \param nIter maximum number of iterative steps
-        void SetNbIterationStatics(int nIter);
-
-        /// Set the relaxation procedure in the static solving :
-        /// none, only velocities set to null, only accelerations set to null, velocities and accelerations set to null
-        /// \param relax relaxation procedure (NONE, VELOCITY, ACCELERATION, VELOCITYANDACCELERATION)
-        void SetRelaxationStatics(RELAXTYPE relax);
-
-        /// Set the tolerance criteria to stop the static solving
-        /// \param tol tolerance criteria to stop the static solving
-        void SetToleranceStatics(double tol);
+        FrStaticAnalysis* GetStaticAnalysis() const;
 
         /// Solve the static equilibrium using a dynamic simulation with relaxations (velocities and/or accelerations of
         /// bodies set to null) every nSteps steps. The maximum number of relaxation is defined by nIter. The solving
@@ -554,15 +543,7 @@ namespace frydom {
 
         /// Relax the system, depending of the relaxation procedure specified. See RELAXTYPE documentation
         /// \param relax relaxation procedure : (NONE, VELOCITY, ACCELERATION, VELOCITYANDACCELERATION)
-        void Relax(RELAXTYPE relax);
-
-    private:
-
-        /// Initialize the static by deactivating the bodies/links/physics items not included in the static analysis
-        void InitializeStatic();
-
-        /// Finalize the static analysis by creating a report and setting the elements
-        void FinalizeStatic();
+        void Relax(FrStaticAnalysis::RELAXTYPE relax);
 
     public:
 
@@ -602,6 +583,10 @@ namespace frydom {
         /// Gets the simulation time
         /// \return simulation time
         double GetTime() const;
+
+        /// Sets the simulation time
+        /// \param time simulation time
+        void SetTime(double time);
 
 
         // Dynamics
