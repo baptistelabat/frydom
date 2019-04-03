@@ -307,8 +307,7 @@ namespace frydom {
 
         /// Get the list of mid physics item added to the system
         /// \return List of the mid physics item added to the system
-        MidPhysicsContainer GetMidPhysiscsItemList() {return m_MidPhysicsList;}
-
+        MidPhysicsContainer GetMidPhysicsItemList();
 
         // ***** Post Physics Item *****
 
@@ -318,7 +317,7 @@ namespace frydom {
 
         /// Get the list of post physics item added to the system
         /// \return List of the post physics item added to the system
-        PostPhysicsContainer GetPostPhysiscsItemList() {return m_PostPhysicsList;}
+        PostPhysicsContainer GetPostPhysicsItemList();
 
 
 

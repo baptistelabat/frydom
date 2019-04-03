@@ -282,10 +282,18 @@ namespace frydom {
         m_MidPhysicsList.push_back(otherPhysics);
     }
 
+    FrOffshoreSystem::MidPhysicsContainer FrOffshoreSystem::GetMidPhysicsItemList() {
+        return m_MidPhysicsList;
+    }
+
     void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics) {
         m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
         otherPhysics->m_system = this;
         m_PostPhysicsList.push_back(otherPhysics);
+    }
+
+    FrOffshoreSystem::PostPhysicsContainer FrOffshoreSystem::GetPostPhysicsItemList() {
+        return m_PostPhysicsList;
     }
 
     void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item) {
