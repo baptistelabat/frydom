@@ -199,6 +199,9 @@ namespace frydom {
 
     }
 
+
+    // ***** Body *****
+
     void FrOffshoreSystem::AddBody(std::shared_ptr<FrBody> body) {
 
         if (!CheckBodyContactMethod(body)) { // TODO : voir si on set pas d'autorite le mode de contact a celui du systeme plutot que de faire un if...
@@ -212,16 +215,65 @@ namespace frydom {
 
     }
 
+    FrOffshoreSystem::BodyContainer FrOffshoreSystem::GetBodyList() {
+        return m_bodyList;
+    }
+
+    void FrOffshoreSystem::RemoveBody(std::shared_ptr<FrBody> body) {
+
+        m_chronoSystem->RemoveBody(body->GetChronoBody());
+
+        auto it = std::find(body_begin(),body_end(),body);
+        assert(it != body_end());
+        m_bodyList.erase(it);
+        body->m_system = nullptr;
+
+    }
+
+    void FrOffshoreSystem::RemoveAllBodies() {
+
+        for (auto& body: m_bodyList)
+            RemoveBody(body);
+
+    }
+
+
+    // ***** Link *****
 
     void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link) {
         m_chronoSystem->AddLink(link->GetChronoLink());
         m_linkList.push_back(link);
     }
 
+    void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link) {
+
+        m_chronoSystem->RemoveLink(link->GetChronoLink());
+
+        auto it = std::find(link_begin(),link_end(),link);
+        assert(it != link_end());
+        m_linkList.erase(it);
+        link->m_system = nullptr;
+
+    }
+
+    void FrOffshoreSystem::RemoveAllLinks() {
+
+        for (auto& link: m_linkList)
+            RemoveLink(link);
+
+    }
+
+
+    // ***** Physics Item *****
+
     void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics) {
         m_chronoSystem->AddOtherPhysicsItem(otherPhysics->GetChronoPhysicsItem());
         otherPhysics->m_system = this;
         m_PrePhysicsList.push_back(otherPhysics);
+    }
+
+    FrOffshoreSystem::PrePhysicsContainer FrOffshoreSystem::GetPrePhysicsItemList() {
+        return m_PrePhysicsList;
     }
 
     void FrOffshoreSystem::AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics) {
@@ -235,6 +287,48 @@ namespace frydom {
         otherPhysics->m_system = this;
         m_PostPhysicsList.push_back(otherPhysics);
     }
+
+    void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item) {
+
+        m_chronoSystem->RemoveOtherPhysicsItem(item->GetChronoPhysicsItem());
+
+        auto it = std::find(m_PrePhysicsList.begin(),m_PrePhysicsList.end(),item);
+        if (it!= m_PrePhysicsList.end())
+            m_PrePhysicsList.erase(it);
+        else {
+            auto it = std::find(m_MidPhysicsList.begin(),m_MidPhysicsList.end(),item);
+            if (it!= m_MidPhysicsList.end())
+                m_MidPhysicsList.erase(it);
+            else {
+                auto it = std::find(m_PostPhysicsList.begin(),m_PostPhysicsList.end(),item);
+                if (it!= m_PostPhysicsList.end())
+                    m_PostPhysicsList.erase(it);
+                else {
+                    assert(("physics item can't be found in the list : ",it!= m_PostPhysicsList.end()));
+                }
+            }
+        }
+
+
+        item->m_system = nullptr;
+
+    }
+
+    void FrOffshoreSystem::RemoveAllPhysicsItem() {
+
+        for (auto& item: m_PrePhysicsList)
+            RemovePhysicsItem(item);
+
+        for (auto& item: m_MidPhysicsList)
+            RemovePhysicsItem(item);
+
+        for (auto& item: m_PostPhysicsList)
+            RemovePhysicsItem(item);
+
+    }
+
+
+    // ***** Environment *****
 
     FrEnvironment *FrOffshoreSystem::GetEnvironment() const {
         return m_environment.get();

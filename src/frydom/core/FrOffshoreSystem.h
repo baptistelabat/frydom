@@ -261,7 +261,14 @@ namespace frydom {
 
         /// Get the list of bodies added to the system
         /// \return List of the bodies added to the system
-        BodyContainer GetBodyList() {return m_bodyList;}
+        BodyContainer GetBodyList();
+
+        /// Remove a body from the system
+        /// \param body Body removed from the system
+        void RemoveBody(std::shared_ptr<FrBody> body);
+
+        /// Remove all bodies from the system
+        void RemoveAllBodies();
 
 
         // ***** Link *****
@@ -274,6 +281,13 @@ namespace frydom {
         /// \return List of the links added to the system
         LinkContainer GetLinkList() {return m_linkList;}
 
+        /// Remove a link from the system
+        /// \param link Link removed from the system
+        void RemoveLink(std::shared_ptr<FrLinkBase> link);
+
+        /// Remove all bodies from the system
+        void RemoveAllLinks();
+
 
         // ***** Pre Physics Item *****
 
@@ -283,8 +297,7 @@ namespace frydom {
 
         /// Get the list of pre physics item added to the system
         /// \return List of the pre physics item added to the system
-        PrePhysicsContainer GetPrePhysiscsItemList() {return m_PrePhysicsList;}
-
+        PrePhysicsContainer GetPrePhysicsItemList();
 
         // ***** Mid Physics Item *****
 
@@ -306,6 +319,15 @@ namespace frydom {
         /// Get the list of post physics item added to the system
         /// \return List of the post physics item added to the system
         PostPhysicsContainer GetPostPhysiscsItemList() {return m_PostPhysicsList;}
+
+
+
+        /// Remove a Physics item from the system
+        /// \param item Physics item removed from the system
+        void RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item);
+
+        /// Remove all physics items from the system
+        void RemoveAllPhysicsItem();
 
 
         // ***** Environment *****

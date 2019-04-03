@@ -83,7 +83,7 @@ namespace frydom{
             link->SetLogged(link->IncludedInStaticAnalysis() && link->IsLogged());
         }
 
-        for (auto& pi : m_system->GetPrePhysiscsItemList()) {
+        for (auto& pi : m_system->GetPrePhysicsItemList()) {
             m_map.emplace(pi.get(),std::make_pair(pi->IsActive(),pi->IsLogged()));
             pi->SetActive(pi->IncludedInStaticAnalysis());
             pi->SetLogged(pi->IncludedInStaticAnalysis() && pi->IsLogged());
@@ -141,7 +141,7 @@ namespace frydom{
 
         }
 
-        for (auto& pi : m_system->GetPrePhysiscsItemList()) {
+        for (auto& pi : m_system->GetPrePhysicsItemList()) {
 
             pi->SetActive(m_map.find(pi.get())->second.first);
             pi->SetLogged(m_map.find(pi.get())->second.second);

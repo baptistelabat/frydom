@@ -103,6 +103,7 @@ namespace frydom {
 
 
         friend void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link);
+        friend void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link);
         virtual std::shared_ptr<chrono::ChLink> GetChronoLink() = 0;
 
         std::shared_ptr<chrono::ChBody> GetChronoBody1();
