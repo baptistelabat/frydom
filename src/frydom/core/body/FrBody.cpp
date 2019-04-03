@@ -127,6 +127,10 @@ namespace frydom {
     }
 
     void FrBody::Initialize() {
+        // Check the mass and inertia coefficients
+        for (unsigned int i=0;i<6;i++)
+            assert(("Null mass and inertia are not permitted : ", GetInertiaTensor(NWU).GetMatrix().at(i,i)!=0.));
+
 
         // Initializing forces
         auto forceIter = force_begin();
