@@ -1,16 +1,18 @@
-.. line_theory:
+.. _line_theory:
 
 Line theory
 ***********
 
-Analytic catenary
-=================
+Different line models are available, including quasi-static catenary line and dynamic (FEA) cable.
+
+All models relies on nodes to connect to bodies.
+
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
+    physical_properties
     analytic_catenary
-
-
+    dynamic_cable
 
 

@@ -64,13 +64,13 @@ Line theory
 
    source/line_theory/index
 
-Benchmark
-*********
+Mooring
+*******
 
 .. toctree::
-    :maxdepth: 2
+   :maxdepth: 2
 
-    source/benchmark/index
+   source/mooring/index
 
 Static analysis
 ***************
@@ -78,7 +78,15 @@ Static analysis
 .. toctree::
    :maxdepth: 2
 
-   source/static_analysis/index
+   source/static_analysis/static_analysis
+
+Benchmark
+*********
+
+.. toctree::
+    :maxdepth: 2
+
+    source/benchmark/index
 
 ..
    Dynamic analysis

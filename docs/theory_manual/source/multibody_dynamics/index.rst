@@ -13,7 +13,6 @@ Multibody dynamics
     motors/motors
     constraint_solver
     time_stepper
-    mooring_buoy
 
 
 
