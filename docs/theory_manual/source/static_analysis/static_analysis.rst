@@ -12,7 +12,7 @@ into account all elements that do not provide energy to the system : bodies, lin
 
 .. warning::
     Almost all model forces are not included in the static analysis, including the hydrodynamic forces (radiation damping also).
-    Only the :any:`hydrostatic forces<hydrostatics>` and the :any:`damping forces<damping>` are taken into account.
+    Only the :any:`hydrostatic forces<hydrostatics>` and the :any:`damping forces<other_damping>` are taken into account.
 
 The static equilibrium is solved using a dynamic simulation with relaxation of the system, regularly applied. The relaxation
 consists in setting to null the velocity and/or acceleration of the bodies.
