@@ -298,7 +298,8 @@ namespace frydom {
         }
 
         // Full assembly -computes also forces-
-            m_chronoSystem->DoFullAssembly();
+        m_chronoSystem->Setup(); //FIXME : utile? déjà fait dans DoAssembly
+        m_chronoSystem->DoFullAssembly();
 
         m_chronoSystem->Update();
 
