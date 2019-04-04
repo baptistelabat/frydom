@@ -32,11 +32,11 @@ namespace frydom {
     class FrIrrApp : public chrono::irrlicht::ChIrrApp {
 
     private:
-        chrono::ChSystem* m_system;
+        FrOffshoreSystem* m_system;
 
     public:
 
-        explicit FrIrrApp(chrono::ChSystem* system, double dist=100);
+        explicit FrIrrApp(FrOffshoreSystem* frSystem, chrono::ChSystem* system, double dist=100);
 
         ~FrIrrApp() final;
 
@@ -57,6 +57,8 @@ namespace frydom {
         void Run(double endTime);
 
         void Visualize();
+
+        void VisualizeStaticAnalysis();
 
     };
 

@@ -67,6 +67,7 @@ void TestLinearDamping_::SetUp() {
 
 
     body = system.NewBody();
+    body->SetFixedInWorld(true);
     body->SetPosition(bodyPositionInWorld, NWU);
 
     rotationDirection.normalize();

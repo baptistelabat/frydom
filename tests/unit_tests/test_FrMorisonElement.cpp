@@ -221,8 +221,10 @@ MorisonCoeff TestMorison::ReadMorisonCoeff(FrHDF5Reader& reader, std::string fie
 }
 
 void TestMorison::SetUp() {
-    body = std::make_shared<FrBody>();
-    system.AddBody(body);
+//    body = std::make_shared<FrBody>();
+//    system.AddBody(body);
+    body = system.NewBody();
+    body->SetFixedInWorld(true);
 //    system.GetEnvironment()->GetOcean()->SetInfiniteDepth();
     system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(-41.38,NWU);
 }

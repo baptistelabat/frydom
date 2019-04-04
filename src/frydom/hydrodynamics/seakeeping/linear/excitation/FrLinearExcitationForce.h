@@ -29,8 +29,6 @@ namespace frydom {
     class FrBody;
     class FrEquilibriumFrame;
 
-
-
     /**
      * \class FrLinearExcitationForce
      * \brief Class for computing the linear excitation loads.
@@ -57,6 +55,7 @@ namespace frydom {
 
         void Initialize() override;
 
+        /// This function is called at the end of the time step, after the last step of the integration scheme.
         void StepFinalize() override;
 
     private:

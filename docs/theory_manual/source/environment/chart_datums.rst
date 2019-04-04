@@ -6,7 +6,7 @@ Chart Datums
 The chart datum is defined using the Lowest Astronomical Tide (LAT) : it is the lowest tide level which can be predicted
 to occur under average meteorological conditions and under any combination of astronomical conditions. [LAT]_
 
-Several heights can be given using this chart datum (see :any:`following figure <heights>`):
+The different water height are defined using this chart datum (see :any:`following figure <heights>`):
 
 - :math:`B(x,y)` : bathymetry, varying in space,
 - :math:`H(t)` : tidal height, given by the tidal model,

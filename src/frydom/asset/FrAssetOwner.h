@@ -29,13 +29,13 @@ namespace frydom {
 
         /// Get the internal item, related to chrono::ChPhysicsItem
         /// \return internal item, related to chrono::ChPhysicsItem
-        virtual chrono::ChPhysicsItem* GetChronoItem() const = 0;
+        virtual chrono::ChPhysicsItem* GetChronoItem_ptr() const = 0;
 
     public:
 
-        /// Gets the simulation time of this object
-        /// \return simulation time of this object
-        double GetTime();
+//        /// Gets the simulation time of this object
+//        /// \return simulation time of this object
+//        double GetTime(); //FIXME : bug in release?
 
         /// Update the assets
         void UpdateAsset();

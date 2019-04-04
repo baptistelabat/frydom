@@ -126,7 +126,7 @@ namespace frydom {
         m_prevTime = 0.;
     }
 
-    void FrEquilibriumFrame::Update(double time) {
+    void FrEquilibriumFrame::Compute(double time) {
 
         if (std::abs(time - m_prevTime) < FLT_EPSILON) {
             return;
@@ -156,7 +156,7 @@ namespace frydom {
             // Add the fields to be logged here
             // TODO: A completer
             m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return GetTime(); });
+                                        [this]() { return m_system->GetTime(); });
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
                     ("Position","m", fmt::format("Equilibrium frame position in the world reference frame in {}", c_logFrameConvention),
@@ -226,7 +226,7 @@ namespace frydom {
         m_stiffness = m_w0 * m_w0;
     }
 
-    void FrEqFrameSpringDamping::Update(double time) {
+    void FrEqFrameSpringDamping::Compute(double time) {
 
         if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
 
@@ -294,7 +294,7 @@ namespace frydom {
         m_errAngleCoeff = angleCoeff;
     }
 
-    void FrEqFrameMeanMotion::Update(double time) {
+    void FrEqFrameMeanMotion::Compute(double time) {
 
         if (std::abs(time - m_prevTime) < FLT_EPSILON) return;
 

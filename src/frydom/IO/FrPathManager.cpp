@@ -70,10 +70,22 @@ namespace frydom{
         std::stringstream ss;
         ss << std::put_time(std::localtime(&tt), "%Y-%m-%d_%HH%M");
 
-        m_runPath = m_outputPath.resolve(fmt::format("{}_{}",system->GetName(),ss.str()));
+        m_projectPath = m_outputPath.resolve(fmt::format("{}_{}",system->GetName(),ss.str()));
+        cppfs::FileHandle runDir = cppfs::fs::open(m_projectPath.path());
+        runDir.createDirectory();
+
+    }
+
+    void FrPathManager::SetRunPath(std::string relPath){
+
+        m_runPath = m_projectPath.resolve(relPath);
         cppfs::FileHandle runDir = cppfs::fs::open(m_runPath.path());
         runDir.createDirectory();
 
+    }
+
+    std::string FrPathManager::GetRunPath() const {
+        return m_runPath.path();
     }
 
     void FrPathManager::SetLogFrameConvention(FRAME_CONVENTION fc) {
@@ -126,6 +138,27 @@ namespace frydom{
         PILogDir.createDirectory();
 
         return PILogPath.path();
+
+    }
+
+    std::string FrPathManager::BuildPath(FrLinkBase *link, std::string relPath) {
+
+        link->SetLogFrameConvention(m_logFrameConvention);
+
+        auto system = link->GetSystem();
+
+        // Create the path for the Link log
+        auto relLinkLogPath = fmt::format("{}_{}/{}_{}_{}/{}",
+                                        system->GetTypeName(),system->GetShortenUUID(),
+                                        link->GetTypeName(),link->GetName(),link->GetShortenUUID(),
+                                        relPath);
+        cppfs::FilePath LinkLogPath = m_runPath.resolve(relLinkLogPath);
+
+        // Create the directory for the Link logs
+        auto LinkLogDir = cppfs::fs::open(LinkLogPath.directoryPath());
+        LinkLogDir.createDirectory();
+
+        return LinkLogPath.path();
 
     }
 
@@ -192,6 +225,21 @@ namespace frydom{
 
         return nodeLogPath.path();
 
+    }
+
+    std::string FrPathManager::BuildPath(FrStaticAnalysis *staticAnalysis, std::string relPath) {
+
+        auto system = staticAnalysis->GetSystem();
+
+        // Create the path for the statics log
+        auto relStaticsLogPath = fmt::format("{}", relPath);
+        cppfs::FilePath staticsLogPath = m_runPath.resolve(relStaticsLogPath);
+
+        // Create the directory for the statics logs
+        auto staticsDir = cppfs::fs::open(staticsLogPath.directoryPath());
+        staticsDir.createDirectory();
+
+        return staticsLogPath.path();
     }
 
 

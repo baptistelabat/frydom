@@ -1,5 +1,8 @@
 .. _other_damping:
 
+Damping force
+=============
+
 Linear damping
 --------------
 

@@ -72,7 +72,10 @@ namespace frydom{
     // FrForce methods implementations
 
     FrForce::FrForce() {
+
         m_chronoForce = std::make_shared<internal::FrForceBase>(this);
+        SetLogged(true);
+        
     }
 
     void FrForce::Initialize() {
@@ -303,6 +306,7 @@ namespace frydom{
     }
 
     void FrForce::SetForceInBodyAtPointInBody(const Force& bodyForce, const Position& bodyPos, FRAME_CONVENTION fc) {
+
         SetForceInWorldAtPointInBody(m_body->ProjectVectorInWorld<Force>(bodyForce, fc), bodyPos, fc);
     }
 

@@ -226,10 +226,6 @@ namespace frydom {
         /// Catenary line initialization method
         void Initialize() override;
 
-        /// Catenary line update method
-        /// \param time time of the simulation
-        void Update(double time) override;
-
         /// Update internal time and time step for dynamic behaviour of the cable
         /// \param time time of the simulation
         // TODO: Transfer it to FrCable?
@@ -246,6 +242,11 @@ namespace frydom {
 
         //--------------------------------------------------------------------------------------------------------------
     private :
+
+        /// Catenary line update method
+        /// \param time time of the simulation
+        void Compute(double time) override;
+
         /// Cached function to compute ||t(s)|| - u.t(s)
         /// \param s lagrangian coordinate
         /// \return rho function value

@@ -47,6 +47,9 @@ namespace frydom {
         double GetK35() const;
         double GetK45() const;
 
+        /// This function gives the hydrostatic stiffness matrix.
+        mathutils::Matrix33<double> GetMatrix();
+
         void SetDiagonal(double K33, double K44, double K55);
 
         void SetNonDiagonal(double K34, double K35, double K45);

@@ -157,6 +157,11 @@ namespace frydom {
         return m_chronoLink;
     }
 
+    internal::FrLinkLockBase *FrLink::GetChronoItem_ptr() const {
+        return m_chronoLink.get();
+    }
+
+
     bool FrLink::IsDisabled() const {
         return m_chronoLink->IsDisabled();
     }
@@ -498,8 +503,5 @@ namespace frydom {
     }
 
     void FrLink::UpdateCache() {}
-
-
-
 
 }  // end namespace frydom
