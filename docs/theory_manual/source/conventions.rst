@@ -26,3 +26,5 @@ Two direction conventions are defined: GOTO and COMEFROM. A GOTO North direction
 
 The direction convention is required for setting velocity flow, ship heading, wave direction, etc.
 
+
+[CC : pourquoi cette partie n'est pas dans "Coordinate systems" ?]
