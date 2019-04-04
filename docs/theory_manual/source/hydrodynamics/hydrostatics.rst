@@ -4,9 +4,10 @@ Hydrostatic force
 -----------------
 
 Three models of computation of the hydrostatic loads are present:
-- : a linear model;
-- : a weakly nonlinear model;
-- : a fully nonlinear model.
+
+- a linear model;
+- a weakly nonlinear model;
+- a fully nonlinear model.
 
 .. _linear_hydrostatics:
 

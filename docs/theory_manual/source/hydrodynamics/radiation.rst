@@ -9,14 +9,13 @@ Linear theory
 The generalized radiation force, given by the linear approximation, is:
 
 .. math::
-    \mathbf{f}_R(t) = -\mathbf{A}_{\infty} (U) \mathbf{\ddot{x}}(t) - \mathbf{B}_{\infty}(U) \mathbf{\dot{x}}(t)
-                    - \int_0^t \mathbf{K}(t-\tau,U) \mathbf{\dot{x}}(\tau) d\tau
+    \mathbf{f}_R(t) = -\mathbf{A}_{\infty} \mathbf{\ddot{x}}(t) - \int_0^t \mathbf{K}(t-\tau) \mathbf{\dot{x}}(\tau) d\tau
 
 where
 
-- :math:`\mathbf{x}` is the generalized position vector, in respect to the :any:`equilibrium frame <equilibrium_frame>`;
-- :math:`\mathbf{A}_{\infty} (U)` and :math:`\mathbf{B}_{\infty} (U)` are the infinite added mass and damping coefficient;
-- :math:`\mathbf{K}` is the impulse response function.
+- :math:`\mathbf{x}` is the generalized position vector, with respect to the :any:`equilibrium frame <equilibrium_frame>`;
+- :math:`\mathbf{A}_{\infty}` and :math:`\mathbf{B}_{\infty}` are the infinite added mass and damping coefficient,
+- :math:`\mathbf{K(t)}` is the impulse response function.
 
 The infinite added mass and damping coefficients are given by a linear potential flow based solver. The impulse response can be
 computed from the frequency-domain damping coefficients.
@@ -30,16 +29,14 @@ computed from the frequency-domain damping coefficients.
 Impulse response and convolution
 ================================
 
-Following Cummins method, the added mass and radiation damping loads on a body or group of bodies are computed, in the time
+Following Cummin's method, the added mass and radiation damping loads on a body or group of bodies are computed, in the time
 domain, using the following convolution integral equation:
 
 .. math::
-    \mathbf{f}_{R}(t) = \mathbf{A}_{\infty} (U) \mathbf{\ddot{x}}(t) + \mathbf{B}_{\infty}(U) \mathbf{\dot{x}}(t)
-                    + \int_0^t \mathbf{K}(t-\tau,U) \mathbf{\dot{x}}(\tau) d\tau
+    \mathbf{f}_{R}(t) = \mathbf{A}_{\infty} \mathbf{\ddot{x}}(t) + \int_0^t \mathbf{K}(t-\tau) \mathbf{\dot{x}}(\tau) d\tau
 
 The impulse response function :math`\mathbf{K}` account for the past motion of the body, while the infinite added mass
-:math:`\mathbf{A}_{\infty}(U)` gives the body's instantaneous response to acceleration. :math:`\mathbf{B}_{\infty}(U)`
-is the infinite radiation damping for the steady velocity :math:`U`. All these terms are to be computed using the
+:math:`\mathbf{A}_{\infty}` gives the body's instantaneous response to acceleration. All these terms are to be computed using the
 frequency-dependant added mass and radiation damping coefficients.
 
 Impulse response function (IRF)

@@ -28,9 +28,10 @@ Froude-Krylov force
 -------------------
 
 The Froude-Krylov loads are due to the integration of the pressure of the incident wave field over the wetted body surface. Several models are available, following the same decomposition presented for the hydrostatic loads:
-- : a linear model;
-- : a weakly nonlinear model;
-- : a fully nonlinear model.
+
+- a linear model;
+- a weakly nonlinear model;
+- a fully nonlinear model.
 
 .. _linear_FroudeKrylov:
 
