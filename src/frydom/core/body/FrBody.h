@@ -21,6 +21,7 @@
 #include "frydom/core/misc/FrColors.h"
 #include "frydom/core/common/FrNode.h"
 #include "frydom/asset/FrAssetOwner.h"
+#include "frydom/mesh/FrMesh.h"
 
 // TODO : voir si il n'y a pas moyen de passer ces includes
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
@@ -109,7 +110,6 @@ namespace frydom {
         std::unique_ptr<FrBodyDOFMask> m_DOFMask;
         std::shared_ptr<FrLink> m_DOFLink;
 
-
     public:
 
         /// Default constructor
@@ -145,6 +145,9 @@ namespace frydom {
         /// Return true if the body is active; i.e. it is neither fixed to ground
         /// nor is it in "sleep" mode. Return false otherwise.
         bool IsActive();
+        
+        /// Return true if the body is included in the static analysis
+        bool IncludedInStaticAnalysis() const {return true;}
 
         /// Get the type name of this object
         /// \return type name of this object
@@ -260,6 +263,10 @@ namespace frydom {
         /// Remove all forces from the body
         void RemoveAllForces();
 
+        /// Get the list of all external forces
+        /// \return List of all external forces
+        ForceContainer GetForceList() const;
+
         // ##CC adding for monitoring force
 
         Force GetTotalExtForceInWorld(FRAME_CONVENTION fc) const;
@@ -277,6 +284,10 @@ namespace frydom {
         /// reference frame
         /// \return node created
         std::shared_ptr<FrNode> NewNode();
+
+        /// Get the list of all nodes added to the body
+        /// \return List of all nodes added to the body
+        NodeContainer GetNodeList() const;
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame !
 
@@ -652,6 +663,7 @@ namespace frydom {
         Velocity GetVelocityInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
 
 
+
         /// Get the acceleration expressed in world frame of a body fixed point whose coordinates are given in world frame
         /// \param worldPoint point position in world reference frame, at which the acceleration is requested
         /// \param fc frame convention (NED/NWU)
@@ -830,6 +842,11 @@ namespace frydom {
 
     protected:
 
+//        enum FRAME {
+//            WORLD,
+//            BODY
+//        };
+
         /// Set the COG position in the body reference frame
         /// \param bodyPos COG position in the body reference frame
         /// \param fc frame convention (NED/NWU)
@@ -943,6 +960,7 @@ namespace frydom {
         // This one is made for the FrOffshoreSystem to be able to add the embedded chrono object into the embedded
         // chrono system (ChSystem)
         friend void FrOffshoreSystem::AddBody(std::shared_ptr<frydom::FrBody>);
+        friend void FrOffshoreSystem::RemoveBody(std::shared_ptr<frydom::FrBody>);
 
         friend int internal::FrAddedMassBase::GetBodyOffset(FrBody* body) const;
         friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody* body) const ;

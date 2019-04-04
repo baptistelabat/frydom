@@ -73,6 +73,9 @@ namespace frydom {
         /// be not active either because disabled, or broken, or not valid)
         virtual bool IsActive() const = 0;
 
+        /// Return true if the link is included in the static analysis
+        bool IncludedInStaticAnalysis() const {return true;}
+
         // Logging
 
         /// Initialize the log
@@ -100,6 +103,7 @@ namespace frydom {
 
 
         friend void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link);
+        friend void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link);
         virtual std::shared_ptr<chrono::ChLink> GetChronoLink() = 0;
 
         std::shared_ptr<chrono::ChBody> GetChronoBody1();

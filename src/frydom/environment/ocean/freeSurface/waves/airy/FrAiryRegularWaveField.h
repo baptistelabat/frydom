@@ -9,7 +9,6 @@
 //
 // ==========================================================================
 
-
 #ifndef FRYDOM_FRAIRYREGULARWAVEFIELD_H
 #define FRYDOM_FRAIRYREGULARWAVEFIELD_H
 
@@ -138,6 +137,14 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule acceleration, in m/s²
         Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const final;
+
+        /// Get the pressure at the position (x,y,z) for a regular Airy wave field.
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \param fc frame convention (NED/NWU)
+        /// \return Pressure.
+        double GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
         // -------------------------------------- Wave characteristics -----------------------------
 

@@ -95,6 +95,7 @@ namespace frydom {
         void Initialize() override;
 
         // TODO : boucle de StepFinalize à mettre en place dans FrBody
+        /// This function is called at the end of the time step, after the last step of the integration scheme.
         void StepFinalize() override;
 
         /// Check if the force is active before updating it
@@ -117,10 +118,13 @@ namespace frydom {
         /// Activate or deactivate the force
         void SetActive(bool active);
 
+        /// Return true if the force is included in the static analysis
+        virtual bool IncludedInStaticAnalysis() const {return false;}
+
         // Logging
 
         /// Initialize the log
-        void InitializeLog();
+        virtual void InitializeLog();
 
         // Force Asset
         /// Inquire if a ForceAsset is displayed

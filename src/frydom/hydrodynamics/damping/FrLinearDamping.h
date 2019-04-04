@@ -35,7 +35,11 @@ namespace frydom {
     private:
 
         DampingMatrix m_dampingMatrix;
+
+        /// WATER or AIR.
         FLUID_TYPE m_fluidType;
+
+        /// Velocity to use: fluid felocity (true) or body velocity (false).
         bool m_relativeToFluid = false;  // FIXME : on doit pouvoir aussi appliquer dans l'air !!!!!
 
     public:
@@ -45,6 +49,9 @@ namespace frydom {
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "LinearDamping"; }
+
+        /// Return true if the force is included in the static analysis
+        bool IncludedInStaticAnalysis() const override {return true;}
 
         void SetNull();
 
@@ -82,6 +89,10 @@ namespace frydom {
         void Check() const;
 
     };
+
+    /// This function creates a linear damping force.
+    std::shared_ptr<FrLinearDamping>
+    make_linear_damping_force(std::shared_ptr<FrBody> body, FLUID_TYPE ft, bool relativeToFluid);
 
 }  // end namespace frydom
 

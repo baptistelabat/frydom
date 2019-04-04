@@ -46,6 +46,9 @@ namespace frydom {
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
+        /// Return true if the force is included in the static analysis
+        bool IncludedInStaticAnalysis() const override {return true;}
+
     private:
 
         /// Update the catenary force : get the tension applied by the line on the corresponding node

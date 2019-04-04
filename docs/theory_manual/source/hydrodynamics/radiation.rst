@@ -1,3 +1,30 @@
+.. _radiation:
+
+Radiation force
+***************
+
+Linear theory
+=============
+
+The generalized radiation force, given by the linear approximation, is:
+
+.. math::
+    \mathbf{f}_R(t) = -\mathbf{A}_{\infty} (U) \mathbf{\ddot{x}}(t) - \mathbf{B}_{\infty}(U) \mathbf{\dot{x}}(t)
+                    - \int_0^t \mathbf{K}(t-\tau,U) \mathbf{\dot{x}}(\tau) d\tau
+
+where
+
+- :math:`\mathbf{x}` is the generalized position vector, in respect to the :any:`equilibrium frame <equilibrium_frame>`;
+- :math:`\mathbf{A}_{\infty} (U)` and :math:`\mathbf{B}_{\infty} (U)` are the infinite added mass and damping coefficient;
+- :math:`\mathbf{K}` is the impulse response function.
+
+The infinite added mass and damping coefficients are given by a linear potential flow based solver. The impulse response can be
+computed from the frequency-domain damping coefficients.
+
+.. math::
+    \mathbf{K}(t) = \frac{2}{\pi} \int_0^{\infty} \mathbf{B}(\omega) \cos(\omega t) d\omega
+
+
 .. _impulse_response_and_convolution:
 
 Impulse response and convolution
@@ -50,12 +77,12 @@ where :math:`T_c` is the cutoff time.
 Infinite-frequency added mass
 -----------------------------
 
-
+In construction
 
 
 Infinite-frequency radiation damping
 ------------------------------------
 
-
+In construction
 
 

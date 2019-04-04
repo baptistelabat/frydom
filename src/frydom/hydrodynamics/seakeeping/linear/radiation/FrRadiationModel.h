@@ -57,6 +57,9 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "RadiationModel"; }
 
+        /// Return true if the radiation model is included in the static analysis
+        bool IncludedInStaticAnalysis() const override {return false;}
+
         FrHydroDB* GetHydroDB() const { return m_HDB.get(); }
 
         Force GetRadiationForce(FrBEMBody* BEMBody) const;
@@ -106,6 +109,8 @@ namespace frydom {
 
         void Initialize() override;
 
+        void Clear();
+        
         void StepFinalize() override;
 
         // Logging

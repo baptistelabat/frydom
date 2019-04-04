@@ -156,7 +156,7 @@ namespace frydom {
             // Add the fields to be logged here
             // TODO: A completer
             m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return GetTime(); });
+                                        [this]() { return m_system->GetTime(); });
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
                     ("Position","m", fmt::format("Equilibrium frame position in the world reference frame in {}", c_logFrameConvention),

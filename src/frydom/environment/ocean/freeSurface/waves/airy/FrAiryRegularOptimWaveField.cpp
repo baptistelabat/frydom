@@ -34,7 +34,7 @@ namespace frydom {
         double NWUsign = 1;
         if(IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
         double kdir = x * c_cosTheta + y * c_sinTheta;
-        Complex cmplxElevation = c_expJwt * std::exp(JJ * m_k * kdir) * NWUsign * c_ramp;
+        Complex cmplxElevation = c_expJwt * std::exp(JJ * m_k * kdir) * NWUsign * c_ramp; // m_height is included in c_expJwt.
         return std::vector<std::vector<Complex>>(1, std::vector<Complex>(1, cmplxElevation));
     }
 

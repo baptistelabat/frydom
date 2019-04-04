@@ -266,26 +266,36 @@ namespace frydom{
 
     std::vector<std::vector<Complex>>
     FrAiryIrregularWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
+
+        // This function gets the complex wave elevation at the position (x,y,0), of the irregular Airy wave field.
+
+        // Frame convention.
         double NWUsign = 1;
         if (IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
 
+        // Data structure to store the complex elevation for every frequency and every wave direction.
         std::vector<std::vector<Complex>> ComplexElevation;
         ComplexElevation.reserve(m_nbDir);
         ComplexElevation.clear();
 
+        // Temporary data structure to store the complex elevation for every frequency.
         std::vector<Complex> ComplexElevation_temp;
         ComplexElevation_temp.reserve(m_nbFreq);
         ComplexElevation_temp.clear();
 
-        double aik, ki, phi_ik;
+        double aik, ki, phi_ik,kdir;
         Complex elevation;
 
         std::vector<double> amplitudeTemp;
 
+        // Loop over the wave direction.
         for (unsigned int idir=0; idir<m_nbDir; ++idir) {
-            double kdir = x*cos(m_waveDirections[idir]) + y*sin(m_waveDirections[idir]);
+
+            kdir = x*cos(m_waveDirections[idir]) + y*sin(m_waveDirections[idir]);
             amplitudeTemp = c_amplitude[idir];
             ComplexElevation_temp.clear();
+
+            // Loop over the frequency.
             for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) {
                 ki = m_waveNumbers[ifreq];
                 aik = amplitudeTemp[ifreq];
@@ -293,6 +303,7 @@ namespace frydom{
                 elevation = aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * c_time + phi_ik) ) * NWUsign * c_ramp;
                 ComplexElevation_temp.push_back(elevation);
             }
+
             ComplexElevation.push_back(ComplexElevation_temp);
         }
 
@@ -382,6 +393,43 @@ namespace frydom{
     Direction FrAiryIrregularWaveField::GetMeanWaveDirection(FRAME_CONVENTION fc, DIRECTION_CONVENTION dc) const {
         auto dirAngle = GetMeanWaveDirectionAngle(mathutils::RAD, fc, dc);
         return {cos(dirAngle), sin(dirAngle), 0.};
+    }
+
+    // ------------------------------------- Pressure ----------------------------
+
+    double FrAiryIrregularWaveField::GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const  {
+
+        // This function gets the pressure at the position (x,y,z) for a irregular Airy wave field.
+
+        double Pressure = 0;
+
+        // Frame convention.
+        double NWUsign = 1;
+        if (IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
+
+        double aik, ki, phi_ik;
+        std::vector<double> amplitudeTemp;
+        double kdir,th,Ez;
+
+        // Loop over the frequencies.
+        for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) { // n.
+            ki = m_waveNumbers[ifreq];
+            th = tanh(ki*c_depth);
+            Ez = m_verticalFactor->Eval(x,y,z,ki,c_depth);
+            // Loop over the wave directions.
+            for (unsigned int idir=0; idir<m_nbDir; ++idir) { // m.
+                kdir = x*cos(m_waveDirections[idir]) + y*sin(m_waveDirections[idir]);
+                aik = c_amplitude[idir][ifreq];
+                phi_ik = m_wavePhases->at(idir)[ifreq];
+                Pressure = Pressure + Ez * th * std::imag(aik * exp(JJ * (ki * kdir - m_waveFrequencies[ifreq] * c_time + phi_ik) ) * NWUsign * c_ramp);
+            }
+        }
+
+        // Rho*gravity term.
+        Pressure = Pressure * c_density * c_gravity;
+
+        return Pressure;
+
     }
 
 }  // end namespace frydom

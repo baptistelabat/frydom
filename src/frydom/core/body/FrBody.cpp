@@ -13,8 +13,10 @@
 
 #include "FrBody.h"
 
+
 #include "chrono/assets/ChColorAsset.h"
 #include "chrono/assets/ChTriangleMeshShape.h"
+
 
 #include "frydom/core/math/FrMatrix.h"
 #include "frydom/core/force/FrForce.h"
@@ -125,6 +127,10 @@ namespace frydom {
     }
 
     void FrBody::Initialize() {
+        // Check the mass and inertia coefficients
+        for (unsigned int i=0;i<6;i++)
+            assert(("Null mass and inertia are not permitted : ", GetInertiaTensor(NWU).GetMatrix().at(i,i)!=0.));
+
 
         // Initializing forces
         auto forceIter = force_begin();
@@ -475,7 +481,6 @@ namespace frydom {
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(cogPos);
         return cogPos;
     }
-
 
     FrGeographicCoord FrBody::GetGeoPointPositionInWorld(const Position& bodyPos, FRAME_CONVENTION fc) const {
         return CartToGeo(GetPointPositionInWorld(bodyPos, fc), fc);
@@ -841,7 +846,7 @@ namespace frydom {
 
             // Add the fields
             m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return GetTime(); });
+                                        [this]() { return m_system->GetTime(); });
 
             // Body Position
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
@@ -921,6 +926,10 @@ namespace frydom {
     internal::FrBodyBase *FrBody::GetChronoItem_ptr() const {
         return m_chronoBody.get();
     }
+
+    FrBody::ForceContainer FrBody::GetForceList() const {return m_externalForces;}
+
+    FrBody::NodeContainer FrBody::GetNodeList() const { return m_nodes; }
 
 
 }  // end namespace frydom

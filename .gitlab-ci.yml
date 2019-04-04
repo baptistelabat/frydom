@@ -42,5 +42,5 @@ theory:
         - make html
         - scp -r ./build/html/* frydomusqo@ssh.cluster027.hosting.ovh.net:/homez.363/frydomusqo/theory-guide
     only:
-        - master
+        - develop
 

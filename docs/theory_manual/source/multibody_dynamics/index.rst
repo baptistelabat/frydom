@@ -24,4 +24,3 @@ A multibody dynamics system is composed of different :any:`bodies <body>` or ite
 
 
 
-
