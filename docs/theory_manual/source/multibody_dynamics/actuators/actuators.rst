@@ -1,7 +1,7 @@
-.. _motors:
+.. _actuators:
 
-Motors
-======
+Actuators
+=========
 
 
 ..
