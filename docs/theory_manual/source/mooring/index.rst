@@ -3,7 +3,7 @@
 Mooring
 *******
 
-A mooring system is composed of several components, including :
+A mooring system can be composed of several components, including :
 
 - mooring lines,
 - mooring buoys,
@@ -20,7 +20,7 @@ Line
 
 In construction
 
-A mooring line can connect different kind of elements : floating structures, buoys, anchors, etc.
+A mooring line can connect different kinds of elements : floating structures, buoys, anchors, etc.
 
 
 See :any:`line theory <line_theory>`.
@@ -60,17 +60,17 @@ See :any:`other damping<other_damping>` for more information.
 Clumpweight
 ===========
 
-In construction
+In construction (and development)
 
 Anchor
 ======
 
-In construction
+In construction (and development)
 
 
 Soil Interaction
 ================
 
-In construction
+In construction (and development)
 
 

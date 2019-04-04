@@ -9,6 +9,7 @@ Purpose and method
 
 The static analysis is designed to help find the static equilibrium of any assembly that can be defined in FRyDoM. It takes
 into account all elements that do not provide energy to the system : bodies, links (with no motorization), catenary lines, etc.
+The wave, wind and current field are of course set to null for the static analysis.
 
 .. warning::
     Almost all model forces are not included in the static analysis, including the hydrodynamic forces (radiation damping also).

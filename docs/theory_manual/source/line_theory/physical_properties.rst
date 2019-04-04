@@ -3,8 +3,12 @@
 Physical line properties
 =========================
 
-Common proprieties can be defined for both models:
+Common line proprieties can be defined for the different models:
 
-- Young modulus,
-- section area,
-- unstretched cable length,
+- Young modulus, in Pa
+- section area, in m²
+- unstretched cable length, in m
+
+
+
+In construction
