@@ -65,6 +65,8 @@ int main(int argc, char* argv[]) {
     application.AssetUpdateAll();
     // Mark completion of system construction
     my_system.SetupInitial();
+//    my_system.DoStaticNonlinear(10);
+//    my_system.DoFullAssembly();
     // Change solver settings
     my_system.SetSolverType(ChSolver::Type::MINRES);
     my_system.SetSolverWarmStarting(true);  // this helps a lot to speedup convergence in this class of problems
@@ -83,6 +85,9 @@ int main(int argc, char* argv[]) {
         mystepper->SetMaxiters(2);
         mystepper->SetAbsTolerances(1e-6);
     }
+
+    my_system.DoStaticNonlinear(20);
+    my_system.DoFullAssembly();
     //
     // THE SOFT-REAL-TIME CYCLE
     //

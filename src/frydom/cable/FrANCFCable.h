@@ -45,7 +45,7 @@ namespace frydom {
             std::shared_ptr<chrono::fea::ChBeamSectionCable> m_section;
             FrANCFCable* m_frydomCable;
 
-            FrANCFCableBase(FrANCFCable* cable);
+            explicit FrANCFCableBase(FrANCFCable* cable);
 
             /// Initialize the cable
             void Initialize();
@@ -73,10 +73,10 @@ namespace frydom {
 
 
     class FrANCFCable: public FrCable, public FrFEAMesh {
-
+    public:
+        std::shared_ptr<internal::FrANCFCableBase> m_chronoCable;
     private:
 
-        std::shared_ptr<internal::FrANCFCableBase> m_chronoCable;
 
 
         double m_rayleighDamping;   ///< Rayleigh damping
@@ -106,19 +106,19 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "ANCFCable"; }
 
-        void SetRayleighDamping(const double damping);
+        void SetRayleighDamping(double damping);
 
         double GetRayleighDamping() const;
 
-        void SetNumberOfElements(const unsigned int nbElements);
+        void SetNumberOfElements(unsigned int nbElements);
 
         unsigned int GetNumberOfElements() const;
 
         void SetTargetElementLength();
 
-        void SetDrawRadius(const double radius);
+        void SetDrawRadius(double radius);
 
-        void SetDrawNodeSize(const double size);
+        void SetDrawNodeSize(double size);
 
         double GetDrawNodeSize() const;
 

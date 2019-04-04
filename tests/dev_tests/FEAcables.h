@@ -122,7 +122,7 @@ void model2(ChSystem& system, std::shared_ptr<ChMesh> mesh) {
     // Node A
     auto truc = std::make_shared<ChBodyEasyBox>(0.2, 0.04, 0.04, 1000);
     truc->SetBodyFixed(true);
-    truc->SetPos(ChVector<>(-10,0,0));
+    truc->SetPos(ChVector<>(2,0,0));
 
     auto constraint_hinge1 = std::make_shared<ChLinkPointFrame>();
     constraint_hinge1->Initialize(builder.GetLastBeamNodes().front(), truc, &truc->GetPos());
