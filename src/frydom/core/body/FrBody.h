@@ -21,6 +21,7 @@
 #include "frydom/core/misc/FrColors.h"
 #include "frydom/core/common/FrNode.h"
 #include "frydom/asset/FrAssetOwner.h"
+#include "frydom/mesh/FrMesh.h"
 
 #include "frydom/cable/FrANCFCable.h"
 
@@ -111,7 +112,6 @@ namespace frydom {
         std::unique_ptr<FrBodyDOFMask> m_DOFMask;
         std::shared_ptr<FrLink> m_DOFLink;
 
-
     public:
 
         /// Default constructor
@@ -123,6 +123,33 @@ namespace frydom {
         /// Make the body fixed
         /// \param state true if body is fixed, false otherwise
         void SetFixedInWorld(bool state);
+
+        /// Enable/disable option for setting bodies to "sleep".
+        /// If use sleeping = true, bodies which stay in same place
+        /// for long enough time will be deactivated, for optimization.
+        /// The realism is limited, but the simulation is faster.
+        void SetUseSleeping(bool state);
+
+        /// Return true if 'sleep' mode is activated.
+        bool GetUseSleeping() const;
+
+        /// Force the body in sleeping mode or not (usually this state change is not
+        /// handled by users, anyway, because it is mostly automatic).
+        void SetSleeping(bool state);
+
+        /// Return true if this body is currently in 'sleep' mode.
+        bool GetSleeping() const;
+
+        /// Test if a body could go in sleeping state if requirements are satisfied.
+        /// Return true if state could be changed from no sleep to sleep.
+        bool TrySleeping();
+
+        /// Return true if the body is active; i.e. it is neither fixed to ground
+        /// nor is it in "sleep" mode. Return false otherwise.
+        bool IsActive();
+        
+        /// Return true if the body is included in the static analysis
+        bool IncludedInStaticAnalysis() const {return true;}
 
         /// Get the type name of this object
         /// \return type name of this object
@@ -238,6 +265,10 @@ namespace frydom {
         /// Remove all forces from the body
         void RemoveAllForces();
 
+        /// Get the list of all external forces
+        /// \return List of all external forces
+        ForceContainer GetForceList() const;
+
         // ##CC adding for monitoring force
 
         Force GetTotalExtForceInWorld(FRAME_CONVENTION fc) const;
@@ -255,6 +286,10 @@ namespace frydom {
         /// reference frame
         /// \return node created
         std::shared_ptr<FrNode> NewNode();
+
+        /// Get the list of all nodes added to the body
+        /// \return List of all nodes added to the body
+        NodeContainer GetNodeList() const;
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame !
 
@@ -630,6 +665,7 @@ namespace frydom {
         Velocity GetVelocityInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
 
 
+
         /// Get the acceleration expressed in world frame of a body fixed point whose coordinates are given in world frame
         /// \param worldPoint point position in world reference frame, at which the acceleration is requested
         /// \param fc frame convention (NED/NWU)
@@ -808,6 +844,11 @@ namespace frydom {
 
     protected:
 
+//        enum FRAME {
+//            WORLD,
+//            BODY
+//        };
+
         /// Set the COG position in the body reference frame
         /// \param bodyPos COG position in the body reference frame
         /// \param fc frame convention (NED/NWU)
@@ -861,14 +902,13 @@ namespace frydom {
         /// \return cartPos cartesian position
         Position GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc);
 
-        // TODO : voir si on a besoin que ce bloc soit protected...
-        std::shared_ptr<chrono::ChBody> GetChronoBody() {
-            return m_chronoBody;
-        }
+        /// Get the shared pointer to the chronoBody attribute
+        /// \return shared pointer to the chronoBody attribute
+        std::shared_ptr<internal::FrBodyBase> GetChronoBody();
 
-        /// Get the chronoBody attribute
-        /// \return chronoBody attribute
-        internal::FrBodyBase* GetChronoItem() const override { return m_chronoBody.get(); }
+        /// Get the chronoBody attribute pointer
+        /// \return Pointer to the chronoBody attribute
+        internal::FrBodyBase* GetChronoItem_ptr() const override;
 
         void InitializeLockedDOF();
 
@@ -923,6 +963,7 @@ namespace frydom {
         // chrono system (ChSystem)
         friend void FrOffshoreSystem::AddBody(std::shared_ptr<frydom::FrBody>);
         friend void internal::FrANCFCableBase::InitializeLinks();
+        friend void FrOffshoreSystem::RemoveBody(std::shared_ptr<frydom::FrBody>);
 
         friend int internal::FrAddedMassBase::GetBodyOffset(FrBody* body) const;
         friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody* body) const ;

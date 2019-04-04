@@ -59,7 +59,7 @@ namespace frydom {
 
     bool FrLinearDamping::GetRelativeToFluid() {return m_relativeToFluid;}
 
-    void FrLinearDamping::Update(double time) {
+    void FrLinearDamping::Compute(double time) {
 
         // Body Velocity at COG in body coordinates
         Velocity cogRelVel;
@@ -100,6 +100,20 @@ namespace frydom {
                 }
             }
         }
+    }
+
+    std::shared_ptr<FrLinearDamping>
+    make_linear_damping_force(std::shared_ptr<FrBody> body, FLUID_TYPE ft, bool relativeToFluid){
+
+        // This function creates a linear damping force.
+
+        // Construction of the linear damping force object.
+        auto forceLinearDamping = std::make_shared<FrLinearDamping>(ft, relativeToFluid);
+
+        // Add the linear damping force object as an external force to the body.
+        body->AddExternalForce(forceLinearDamping);
+
+        return forceLinearDamping;
     }
 
 }  // end namespace frydom

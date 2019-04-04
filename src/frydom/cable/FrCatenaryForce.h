@@ -43,12 +43,17 @@ namespace frydom {
         /// \param side side of the line (starting or ending)
         FrCatenaryForce(FrCatenaryLine* line, FrCatenaryLine::LINE_SIDE side) : m_line(line), m_line_side(side) {};
 
+        /// Method called at the send of a time step. Logging may be used here
+        void StepFinalize() override;
+
+        /// Return true if the force is included in the static analysis
+        bool IncludedInStaticAnalysis() const override {return true;}
+
+    private:
+
         /// Update the catenary force : get the tension applied by the line on the corresponding node
         /// \param time time of the simulation
-        void Update(double time) override;
-
-        /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override;;
+        void Compute(double time) override;
 
     };
 

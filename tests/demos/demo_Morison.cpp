@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
-
+    system.SetName("demo_Morison");
 
     // ------------------ Wave Field ------------------ //
 
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
         MorisonForce->SetLogged(true);
 
         // Make the asset (a vector) for the Morison force visible
-        MorisonForce->SetIsForceAsset(true);
+        MorisonForce->ShowAsset(true);
     }
     else
     {
@@ -124,7 +124,7 @@ int main(int argc, char* argv[]) {
         auto MorisonForce = make_morison_force(MorisonModel, Platform);
 
         // Make the asset (a vector) for the Morison force visible
-        MorisonForce->SetIsForceAsset(true);
+        MorisonForce->ShowAsset(true);
     }
 
     // ------------------ Run ------------------ //

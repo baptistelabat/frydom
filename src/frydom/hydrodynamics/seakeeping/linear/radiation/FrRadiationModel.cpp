@@ -98,7 +98,7 @@ namespace frydom {
         return m_radiationForce.at(BEMBody).GetTorque();
     }
 
-    void FrRadiationModel::Update(double time) {
+    void FrRadiationModel::Compute(double time) {
 
     }
 
@@ -137,7 +137,15 @@ namespace frydom {
         }
     }
 
-    void FrRadiationConvolutionModel::Update(double time) {
+    void FrRadiationConvolutionModel::Clear() {
+
+        for (auto &BEMBody : *m_HDB) {
+            m_recorder[BEMBody.get()].Clear();
+        }
+
+    }
+
+    void FrRadiationConvolutionModel::Compute(double time) {
 
         if (std::abs(time - GetSystem()->GetTime()) < 0.1*GetSystem()->GetTimeStep() and
                 time > FLT_EPSILON) return;
@@ -271,7 +279,7 @@ namespace frydom {
             // Add the fields to be logged here
             // TODO: A completer
             m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return GetTime(); });
+                                        [this]() { return m_system->GetTime(); });
 
             // Initialize the message
             FrObject::InitializeLog(logPath);

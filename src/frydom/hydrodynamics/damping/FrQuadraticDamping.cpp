@@ -56,7 +56,7 @@ namespace frydom {
         FrForce::Initialize();
     }
 
-    void FrQuadraticDamping::Update(double time) {
+    void FrQuadraticDamping::Compute(double time) {
 
         Velocity cogRelVel;
         if (m_relative2Fluid) {
@@ -83,6 +83,20 @@ namespace frydom {
 
     void FrQuadraticDamping::StepFinalize() {
         FrForce::StepFinalize();
+    }
+
+    std::shared_ptr<FrQuadraticDamping>
+    make_quadratic_damping_force(std::shared_ptr<FrBody> body, FLUID_TYPE ft, bool relativeToFluid){
+
+        // This function creates a linear damping force.
+
+        // Construction of the linear damping force object.
+        auto forceQuadraticDamping = std::make_shared<FrQuadraticDamping>(ft, relativeToFluid);
+
+        // Add the linear damping force object as an external force to the body.
+        body->AddExternalForce(forceQuadraticDamping);
+
+        return forceQuadraticDamping;
     }
 
 }  // end namespace frydom

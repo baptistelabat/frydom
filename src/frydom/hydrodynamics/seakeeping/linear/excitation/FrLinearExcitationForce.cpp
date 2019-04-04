@@ -9,7 +9,6 @@
 //
 // ==========================================================================
 
-
 #include "FrLinearExcitationForce.h"
 
 #include "frydom/core/body/FrBody.h"
@@ -17,8 +16,6 @@
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOceanInc.h"
-
-
 
 namespace frydom {
 
@@ -47,7 +44,7 @@ namespace frydom {
 
     }
 
-    void FrLinearExcitationForce::Update(double time) {
+    void FrLinearExcitationForce::Compute(double time) {
 
         // This subroutine computes the linear excitation forces from Nemoh results.
 
@@ -102,20 +99,18 @@ namespace frydom {
         this->SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
 
 
-	// Settings: torque is already computed at CoG.
+	    // Settings: torque is already computed at CoG.
         SetForceTorqueInWorldAtCOG(worldForce,worldTorque, NWU);
-
     }
 
     void FrLinearExcitationForce::StepFinalize() {
         FrForce::StepFinalize();
     }
 
-
     std::shared_ptr<FrLinearExcitationForce>
     make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
 
-        /// This subroutine creates the hydrostatic force object for computing the hydrostatic loads.
+        /// This subroutine creates the linear excitation force object.
 
         // Construction of the excitation force object from the HDB.
         auto excitationForce = std::make_shared<FrLinearExcitationForce>(HDB);

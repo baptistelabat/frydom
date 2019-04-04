@@ -155,14 +155,14 @@ public:
 Velocity BodyVelocity(double time, double period, double amplitude, double speed) {
 
     double omega = 2.*M_PI / period;
-    return Velocity(speed, 0., amplitude * cos(omega*time));
+    return {speed, 0., amplitude * cos(omega*time)};
 }
 
 AngularVelocity BodyAngularVelocity(double time, double period, double amplitude) {
 
     double omega = 2.*M_PI / period;
     double ak = amplitude * M_PI / 180.;
-    return AngularVelocity(0., ak* sin(omega*time), 0.);
+    return {0., ak* sin(omega*time), 0.};
 }
 
 
@@ -172,9 +172,7 @@ AngularVelocity BodyAngularVelocity(double time, double period, double amplitude
 
 class SteadyPitchTorque : public FrForce {
 
-public:
-
-    void Update(double time) override {
+    void Compute(double time) override {
 
         auto speed = m_body->GetVelocityInWorld(NWU).GetVx();
         auto torque = 4.332 * std::pow(speed, 6)
@@ -185,8 +183,9 @@ public:
 
         SetTorqueInBodyAtCOG(Torque(0., -torque, 0.), NWU);
 
-        return ;
     }
+
+public:
 
     void StepFinalize() override {};
 };
@@ -197,9 +196,7 @@ public:
 
 class SteadyHeaveForce : public FrForce {
 
-public:
-
-    void Update(double time) override {
+    void Compute(double time) override {
 
         auto speed = m_body->GetVelocityInWorld(NWU).GetVx();
 
@@ -208,8 +205,9 @@ public:
 
         SetForceInWorldAtCOG(Force(0., 0., force), NWU);
 
-        return;
     }
+
+public:
 
     void StepFinalize() override {}
 };

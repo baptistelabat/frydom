@@ -126,7 +126,7 @@ namespace frydom {
 
     void FrBEMBody::Finalize() {
 
-        /// This subroutine runs the interpolators.
+        /// This function runs the interpolators.
 
         BuildWaveExcitationInterpolators();
     }
@@ -308,7 +308,7 @@ namespace frydom {
 
     void FrBEMBody::BuildWaveExcitationInterpolators() {
 
-        /// This subroutine interpolates the excitation loads with respect to the wave direction.
+        // This function interpolates the excitation loads with respect to the wave direction.
 
         auto nbWaveDirections = GetNbWaveDirections();
         auto nbFreq = GetNbFrequencies();
@@ -322,7 +322,7 @@ namespace frydom {
         auto interpolators = std::vector<mathutils::Interp1dLinear<double, std::complex<double>>>();
         interpolators.reserve(nbFreq);
 
-        for (unsigned int imode =0; imode<nbForceModes; ++imode) {
+        for (unsigned int imode = 0; imode<nbForceModes; ++imode) {
 
             interpolators.clear();
 
@@ -392,6 +392,49 @@ namespace frydom {
 
     std::shared_ptr<FrWaveDriftPolarData> FrBEMBody::GetWaveDrift() const {
         return m_waveDrift;
+    }
+
+
+    //
+    // Interpolators for the diffraction force
+    //
+
+    void FrBEMBody::BuildDiffractionInterpolators() {
+
+        // This subroutine interpolates the diffraction loads with respect to the wave direction.
+
+        auto nbWaveDirections = GetNbWaveDirections();
+        auto nbFreq = GetNbFrequencies();
+        auto nbForceModes = GetNbForceMode();
+
+        m_waveDirInterpolators.clear();
+        m_waveDirInterpolators.reserve(nbForceModes);
+
+        auto angles = std::make_shared<std::vector<double>>(GetWaveDirections(mathutils::RAD, NWU));
+
+        auto interpolators = std::vector<mathutils::Interp1dLinear<double, std::complex<double>>>();
+        interpolators.reserve(nbFreq);
+
+        for (unsigned int imode = 0; imode<nbForceModes; ++imode) {
+
+            interpolators.clear();
+
+            for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq) {
+
+                auto coeffs = std::make_shared<std::vector<std::complex<double>>>();
+                coeffs->reserve(nbWaveDirections);
+
+                for (unsigned int iangle=0; iangle<nbWaveDirections; ++iangle) {
+                    auto data = GetDiffraction(iangle);
+                    coeffs->push_back(data(imode, ifreq));
+                }
+
+                auto interpolator = mathutils::Interp1dLinear<double, std::complex<double>>();
+                interpolator.Initialize(angles, coeffs);
+                interpolators.push_back(interpolator);
+            }
+            m_waveDirInterpolators.push_back(interpolators);
+        }
     }
 
 }  // end namespace frydom

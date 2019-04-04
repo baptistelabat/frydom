@@ -50,6 +50,8 @@ namespace frydom {
         double c_time;                        ///< cache value of the time of the simulation
         double c_depth;                       ///< cache value of the depth. (depth = bathymetry + tidal)
         bool m_infinite_depth = false;        ///< Infinite depth boolean (if true, water depth is considered as infinite)
+        double c_density;                     /// Water density (useful for the computation of the nonlinear FK loads).
+        double c_gravity;                     /// Gravity (useful for the computation of the nonlinear FK loads).
 
     public:
 
@@ -65,7 +67,7 @@ namespace frydom {
         WAVE_MODEL GetWaveModel() const;
 
         //
-        // Velocity & Acceleration
+        // Elevation, velocity & acceleration
         //
 
         /// Get the wave elevation on the horizontal position (x,y)
@@ -140,6 +142,19 @@ namespace frydom {
         virtual std::vector<std::vector<std::vector<Velocity>>> GetVelocity(const std::vector<double>& xvect,
                                                                   const std::vector<double>& yvect,
                                                                   const std::vector<double>& zvect, FRAME_CONVENTION fc) const;
+
+        //
+        // Pressure
+        //
+
+        /// Get the pressure at the position (x,y,z).
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \param fc frame convention (NED/NWU)
+        /// \return Pressure.
+        virtual double GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const = 0;
+
         //
         // Wave frequencies and direction
         //
@@ -206,6 +221,14 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule acceleration, in m/s²
         Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const final;
+
+        /// Get the pressure at the position (x,y,z) for a null wave field.
+        /// \param x x position.
+        /// \param y y position.
+        /// \param z z position.
+        /// \param fc frame convention (NED/NWU).
+        /// \return Pressure
+        double GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
         std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit) const override;
 

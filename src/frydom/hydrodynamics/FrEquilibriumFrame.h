@@ -154,10 +154,6 @@ namespace frydom {
         /// \param is_init Boolean True/False
         void InitPositionFromBody(bool is_init) { m_initPositionFromBody = is_init; }
 
-        /// Update the velocity and position of the frame
-        /// \param time Current time of the simulation from the beginning
-        void Update(double time) override;
-
         /// Initialization of the position and velocity of the equilibrium frame
         void Initialize() override;
 
@@ -168,6 +164,12 @@ namespace frydom {
 
         // Initialize the log
         void InitializeLog() override;
+
+    private:
+
+        /// Update the velocity and position of the frame
+        /// \param time Current time of the simulation from the beginning
+        void Compute(double time) override;
 
     };
 
@@ -252,9 +254,11 @@ namespace frydom {
         /// \param stiffness Stiffness coefficient
         void SetStiffness(const double stiffness) { m_stiffness = stiffness; }
 
+    private:
+
         /// Update velocity and position of the equilibrium frame
         /// \param time Current time of the simulation from beginning
-        void Update(double time) override;
+        void Compute(double time) override;
 
     };
 
@@ -328,11 +332,11 @@ namespace frydom {
 
         void SetPositionCorrection(double timePersistence, double timeStep, double posCoeff, double angleCoeff);
 
+    private:
+
         /// Update position and velocity of the equilibrium frame
         /// \param time Current time of the simulation from beginning
-        void Update(double time) override;
-
-    private:
+        void Compute(double time) override;
 
         /// Set the recorder of the body velocity
         /// \param timePersistence Time windows of the recorder

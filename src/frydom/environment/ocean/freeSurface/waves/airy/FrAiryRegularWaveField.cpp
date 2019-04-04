@@ -116,6 +116,8 @@ namespace frydom {
         m_verticalFactor->SetInfDepth(m_infinite_depth);
     }
 
+    // ------------------------------------- Wave elevation, velocity and acceleration ----------------------------
+
     std::vector<std::vector<Complex>> FrAiryRegularWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
         double NWUsign = 1;
         if (IsNED(fc)) {y=-y; NWUsign = -NWUsign;}
@@ -128,6 +130,7 @@ namespace frydom {
         double NWUsign = 1;
         if (IsNED(fc)) {y=-y; z=-z; NWUsign = -NWUsign;}
         auto ComplexElevation = GetComplexElevation(x, y, fc);
+
         auto Vtemp = m_omega * ComplexElevation[0][0] * m_verticalFactor->Eval(x,y,z,m_k,c_depth);
 
         auto Vx = cos(m_dirAngle) * Vtemp * NWUsign;
@@ -150,6 +153,21 @@ namespace frydom {
         auto cplxVel = GetComplexVelocity(x, y, z, fc);
         auto cplxAcc = -JJ * m_omega * cplxVel;
         return {std::imag(cplxAcc.x()),std::imag(cplxAcc.y()),std::imag(cplxAcc.z())};
+
+    }
+
+    // ------------------------------------- Pressure ----------------------------
+
+    double FrAiryRegularWaveField::GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const  {
+
+        // Get the pressure at the position (x,y,z) for a regular Airy wave field.
+
+        double Pressure = 0;
+
+        double Eta = GetElevation(x,y,fc);
+        Pressure = c_density * c_gravity * Eta * m_verticalFactor->Eval(x,y,z,m_k,c_depth) * tanh(m_k*c_depth);
+
+        return Pressure;
 
     }
 

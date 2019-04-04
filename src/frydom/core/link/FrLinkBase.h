@@ -21,8 +21,7 @@
 #include "frydom/core/common/FrConvention.h"
 #include "frydom/core/common/FrFrame.h"
 #include "frydom/core/FrOffshoreSystem.h"
-
-#include "frydom/core/common/FrPhysicsItem.h"
+#include "frydom/asset/FrAssetOwner.h"
 
 
 namespace chrono {
@@ -40,15 +39,21 @@ namespace frydom {
      * \class FrLinkBase
      * \brief Pure abstract class for every FRyDoM constraints (FrLink, FrConstraint_, FrActuator_).
      */
-    class FrLinkBase : public FrPhysicsItem {
+    class FrLinkBase : public FrObject, public FrAssetOwner {
 
     protected:
+
+        FrOffshoreSystem* m_system;     ///< pointer to the system containing this physics item
 
         std::shared_ptr<FrNode> m_node1;   ///< the node on body 1 of the link
         std::shared_ptr<FrNode> m_node2;   ///< the node on body 2 of the link
 
     public:
         FrLinkBase(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);
+
+        /// Get the pointer to the system containing this linkbase item
+        /// \return Pointer to the system containing this linkbase item
+        FrOffshoreSystem* GetSystem();
 
         /// Tells if all constraints of this link are currently turned on or off by the user.
         virtual bool IsDisabled() const = 0;
@@ -68,10 +73,13 @@ namespace frydom {
         /// be not active either because disabled, or broken, or not valid)
         virtual bool IsActive() const = 0;
 
+        /// Return true if the link is included in the static analysis
+        bool IncludedInStaticAnalysis() const {return true;}
+
         // Logging
 
         /// Initialize the log
-        void InitializeLog() override;
+        virtual void InitializeLog();
 
 
 
@@ -95,6 +103,7 @@ namespace frydom {
 
 
         friend void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link);
+        friend void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link);
         virtual std::shared_ptr<chrono::ChLink> GetChronoLink() = 0;
 
         std::shared_ptr<chrono::ChBody> GetChronoBody1();

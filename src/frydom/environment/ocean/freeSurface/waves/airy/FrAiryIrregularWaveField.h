@@ -149,7 +149,7 @@ namespace frydom {
 
         //------------------------------------MAIN GETTERS----------------------------------//
 
-        /// Get the complex wave elevation at the position (x,y,0), of the regular Airy wave field
+        /// Get the complex wave elevation at the position (x,y,0), of the irregular Airy wave field
         /// \param x x position
         /// \param y y position
         /// \param fc frame convention (NED/NWU)
@@ -186,6 +186,14 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         /// \return eulerian fluid particule acceleration, in m/s²
         Acceleration GetAcceleration(double x, double y, double z, FRAME_CONVENTION fc) const override;
+
+        /// Get the pressure at the position (x,y,z) for an irregular Airy wave field.
+        /// \param x x position
+        /// \param y y position
+        /// \param z z position
+        /// \param fc frame convention (NED/NWU)
+        /// \return Pressure.
+        double GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const final;
 
         /// Initialize the state of the wave field
         void Initialize() override;

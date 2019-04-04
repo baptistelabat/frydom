@@ -71,6 +71,7 @@ list(APPEND SRC_FILES
 
         math/functions/ramp/FrLinearRampFunction.cpp
         math/functions/ramp/FrTanhRampFunction.cpp
+        math/functions/ramp/FrCosRampFunction.cpp
 
         math/functions/lib/FrPowFunction.cpp
         math/functions/lib/FrLinearFunction.cpp
@@ -86,6 +87,11 @@ list(APPEND SRC_FILES
 # MISC
 list(APPEND SRC_FILES
         misc/FrColors.cpp
+        )
+
+# STATICS
+list(APPEND SRC_FILES
+        statics/FrStaticAnalysis.cpp
         )
 
 

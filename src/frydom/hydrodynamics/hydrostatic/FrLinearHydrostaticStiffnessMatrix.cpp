@@ -40,6 +40,22 @@ namespace frydom {
 
     double FrLinearHydrostaticStiffnessMatrix::GetK45() const { return m_data.at(1, 2); }
 
+    mathutils::Matrix33<double> FrLinearHydrostaticStiffnessMatrix::GetMatrix(){
+
+        // This function gives the hydrostatic stiffness matrix.
+
+        mathutils::Matrix33<double> mat;
+        mat(0, 0) = this->GetK33();
+        mat(1, 1) = this->GetK44();
+        mat(2, 2) = this->GetK55();
+        mat(0, 1) = mat(1, 0) = this->GetK34();
+        mat(0, 2) = mat(2, 0) = this->GetK35();
+        mat(1, 2) = mat(2, 1) = this->GetK45();
+
+        return mat;
+
+    }
+
     void FrLinearHydrostaticStiffnessMatrix::SetDiagonal(double K33, double K44, double K55) {
         this->SetK33(K33);
         this->SetK44(K44);

@@ -13,7 +13,7 @@
 
 #include "FrFlowBase.h"
 #include "frydom/core/common/FrFrame.h"
-#include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
+#include "frydom/core/math/functions/ramp/FrCosRampFunction.h"
 #include "frydom/environment/FrEnvironment.h"
 
 namespace frydom {

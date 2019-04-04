@@ -3,66 +3,67 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. toctree::
-   :maxdepth: 3
-   :hidden:
-
-..   source/conventions
-   source/dynamics
-   source/environment/environment
-   source/forces
-   source/frame
-   source/rotation
-
 **********************************
 Welcome to FRyDoM's documentation!
 **********************************
 
 .. Contents:
 
-General conventions
-*******************
-
 .. toctree::
-   :maxdepth: 3
+    :maxdepth: 1
 
-   source/general/index
+    source/coordinate_systems
+    source/conventions
 
-Environment Theory
+Environment theory
 ******************
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    source/environment/index
 
-Forces
-******
+Multibody dynamics
+******************
 
 .. toctree::
    :maxdepth: 2
 
-   source/forces/index
+   source/multibody_dynamics/index
 
-
-Dynamics
-********
-
-.. toctree::
-   :maxdepth: 2
-
-   source/dynamics
-
-
-Cables
-********
+Hydrodynamics
+*************
 
 .. toctree::
    :maxdepth: 2
 
-   source/cable/index
+   source/hydrodynamics/index
 
-Benchmark 
+Line theory
+***********
+
+.. toctree::
+   :maxdepth: 2
+
+   source/line_theory/index
+
+Mooring
+*******
+
+.. toctree::
+   :maxdepth: 2
+
+   source/mooring/index
+
+Static analysis
+***************
+
+.. toctree::
+   :maxdepth: 2
+
+   source/static_analysis/static_analysis
+
+Benchmark
 *********
 
 .. toctree::

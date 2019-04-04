@@ -14,15 +14,13 @@
 
 #include "frydom/core/body/FrBody.h"
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
-#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
-
-
+//#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
 
 namespace frydom {
 
     void FrLinearHydrostaticForce::Initialize() {
 
-        /// This subroutine initializes the hydrostatic force object.
+        // This function initializes the hydrostatic force object.
 
         // Initialization of the parent class.
         FrForce::Initialize();
@@ -31,17 +29,20 @@ namespace frydom {
         m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
 
         // 3x3 hydrostatic matrix.
-        m_stiffnessMatrix.SetData(m_HDB->GetBody(m_body)->GetHydrostaticStiffnessMatrix());
+        if(HydrostaticsMatrixHDB5) {
+            m_stiffnessMatrix.SetData(m_HDB->GetBody(m_body)->GetHydrostaticStiffnessMatrix());
+        }
+
     }
 
-    void FrLinearHydrostaticForce::Update(double time) {
+    void FrLinearHydrostaticForce::Compute(double time) {
 
-        /// This subroutine computes the hydrostatic loads.
+        // This function computes the linear hydrostatic loads.
 
         // Body frame.
         auto bodyFrame = m_body->GetFrameAtCOG(NWU);
 
-        // Transformation from the body frame to equilibrium frame/
+        // Transformation from the body frame to equilibrium frame.
         auto deltaFrame = m_equilibriumFrame->GetInverse() * bodyFrame;
 
         // Position of the body frame with respect to the equilibrium frame expressed in the equilibrium frame.
@@ -68,16 +69,62 @@ namespace frydom {
         FrForce::StepFinalize();
     }
 
+    void FrLinearHydrostaticForce::SetStiffnessMatrix(FrLinearHydrostaticStiffnessMatrix HydrostaticMatrix) {
+
+        // This function sets the hydrostatic stiffness matrix.
+
+        m_stiffnessMatrix = HydrostaticMatrix;
+        HydrostaticsMatrixHDB5 = false;
+    };
+
+    void FrLinearHydrostaticForce::SetStiffnessMatrix(mathutils::MatrixMN<double> HydrostaticMatrix) {
+
+        // This function sets the hydrostatic stiffness matrix.
+
+        m_stiffnessMatrix.SetK33(HydrostaticMatrix(0, 0));
+        m_stiffnessMatrix.SetK44(HydrostaticMatrix(1, 1));
+        m_stiffnessMatrix.SetK55(HydrostaticMatrix(2, 2));
+        m_stiffnessMatrix.SetK34(HydrostaticMatrix(0, 1));
+        m_stiffnessMatrix.SetK35(HydrostaticMatrix(0, 2));
+        m_stiffnessMatrix.SetK45(HydrostaticMatrix(1, 2));
+        HydrostaticsMatrixHDB5 = false;
+    };
+
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
 
-        /// This subroutine creates the hydrostatic force object for computing the hydrostatic loads.
+        // This function creates the linear hydrostatic force object for computing the linear hydrostatic loads.
 
         // Construction of the hydrostatic force object from the HDB.
         auto forceHst = std::make_shared<FrLinearHydrostaticForce>(HDB);
 
         // Add the hydrostatic force object as an external force to the body.
         body->AddExternalForce(forceHst);
+
+        return forceHst;
+    }
+
+    std::shared_ptr<FrLinearHydrostaticForce>
+    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile){
+
+        // This function creates the linear hydrostatic force object for computing the linear hydrostatic loads.
+
+        // Construction of the hydrostatic force object from the HDB.
+        auto forceHst = std::make_shared<FrLinearHydrostaticForce>(HDB);
+
+        // Add the hydrostatic force object as an external force to the body.
+        body->AddExternalForce(forceHst);
+
+        // Computation of the hydrostatic stiffness matrix.
+        FrHydrostaticsProperties hsp(HDB->GetWaterDensity(),HDB->GetGravityAcc());
+        mesh::FrMesh mesh(meshfile);
+        Position BodyCoG = body->GetCOGPositionInWorld(NWU);
+        Vector3d<double> cog;
+        cog[0] = BodyCoG[0];
+        cog[1] = BodyCoG[1];
+        cog[2] = BodyCoG[2];
+        hsp.Load(mesh,cog);
+        forceHst->SetStiffnessMatrix(hsp.GetHydrostaticMatrix());
 
         return forceHst;
     }

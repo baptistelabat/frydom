@@ -9,6 +9,7 @@ set(REFACTORING_TESTS
         test_logging
         test_ANCFCable
         test_cable_chrono
+        test_FrLinks
         )
 
 #include(Add_matplotlib-cpp)

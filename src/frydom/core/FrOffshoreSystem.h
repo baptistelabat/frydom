@@ -14,10 +14,12 @@
 #define FRYDOM_FROFFSHORESYSTEM_H
 
 
+#include <map>
 #include "chrono/physics/ChSystemSMC.h"
 #include "chrono/physics/ChSystemNSC.h"
 
 #include "frydom/core/common/FrObject.h"
+#include "frydom/core/statics/FrStaticAnalysis.h"
 
 // TODO: les objets environnement devront etre mis dans une classe environnement qui encapsule tout l'environnement:
 // vent, vagues, courant, fond...
@@ -50,6 +52,14 @@ namespace frydom {
             /// This method overrides a ChSystemSMC method, called by chrono, call StepFinalize of the offshore system
             /// at the end of each step
             void CustomEndOfStep() override;
+
+//            /// Solve the static equilibrium using a relaxation method
+//            /// \param nsteps every nsteps, the velocity and acceleration are reset
+//            /// \param niter number of total iteration
+//            /// \return
+//            bool DoQuasiStatic(int niter = 100, int nsteps = 20);
+
+            bool DoStaticLinear() override;
 
         };
 
@@ -145,16 +155,6 @@ namespace frydom {
             SOLVER_SMC,         ///< A solver for problems arising in SMooth Contact (SMC) i.e. penalty formulations.
         };
 
-        /// enum for statics methods, which solve the position of static equilibrium (and the reactions).
-        enum STATICS_METHOD {
-            LINEAR,     ///< This is a one-step only approach that solves the linear equilibrium.
-                        ///< To be used mostly for FEM problems with small deformations.
-            NONLINEAR,  ///< This tries to solve the equilibrium for the nonlinear problem (large displacements).
-                        ///< The larger nsteps, the more the CPU time but the less likely the divergence.
-            RELAXATION  ///< Since a truncated iterative method is used, you may need to call this method multiple times
-                        ///< in case of large nonlinearities before coming to the precise static solution.
-        };
-
         /// enum for smooth contact models (SMC)
         enum CONTACT_MODEL {
             HOOKE,      ///< linear Hookean model
@@ -175,8 +175,6 @@ namespace frydom {
             MULTI_STEP  ///< use contact history (from contact initiation)
         };
 
-
-
     private:
 
         std::unique_ptr<chrono::ChSystem> m_chronoSystem;   ///< The real Chrono system (may be SMC or NSC)
@@ -191,9 +189,7 @@ namespace frydom {
         SOLVER          m_solverType;                       ///< solver aimed at solving complementarity problems
                                                             ///< arising from QP optimization problems.
 
-        int m_nbStepStatics = 10;                           ///< maximum number of iterative steps to find the static
-                                                            ///< equilibrium, with the nonlinear and relaxation methods
-        STATICS_METHOD  m_staticsMethod;                    ///< method to find the static equilibrium
+        std::unique_ptr<FrStaticAnalysis> m_statics;
 
         // Container: definition.
         using BodyContainer = std::vector<std::shared_ptr<FrBody>>;
@@ -264,13 +260,84 @@ namespace frydom {
         /// \param item item to be added to the offshore system
         void Add(std::shared_ptr<FrObject> item); // TODO : faire des dynamic_pointer_cast sur les classes pouvant etre ajoutees...
 
+
+        // ***** Body *****
+
         /// Add a body to the offshore system
         /// \param body body to add
         void AddBody(std::shared_ptr<FrBody> body);
 
+        /// Get the list of bodies added to the system
+        /// \return List of the bodies added to the system
+        BodyContainer GetBodyList();
+
+        /// Remove a body from the system
+        /// \param body Body removed from the system
+        void RemoveBody(std::shared_ptr<FrBody> body);
+
+        /// Remove all bodies from the system
+        void RemoveAllBodies();
+
+
+        // ***** Link *****
+
         /// Add a link between bodies to the offshore system
         /// \param link link to be added
         void AddLink(std::shared_ptr<FrLinkBase> link);
+
+        /// Get the list of links added to the system
+        /// \return List of the links added to the system
+        LinkContainer GetLinkList() {return m_linkList;}
+
+        /// Remove a link from the system
+        /// \param link Link removed from the system
+        void RemoveLink(std::shared_ptr<FrLinkBase> link);
+
+        /// Remove all bodies from the system
+        void RemoveAllLinks();
+
+
+        // ***** Pre Physics Item *****
+
+        /// Add other physics item to the offshore system
+        /// \param otherPhysics other physic item to be added
+        void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics);
+
+        /// Get the list of pre physics item added to the system
+        /// \return List of the pre physics item added to the system
+        PrePhysicsContainer GetPrePhysicsItemList();
+
+        // ***** Mid Physics Item *****
+
+        /// Add other physics item to the offshore system
+        /// \param otherPhysics other physic item to be added
+        void AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics);
+
+        /// Get the list of mid physics item added to the system
+        /// \return List of the mid physics item added to the system
+        MidPhysicsContainer GetMidPhysicsItemList();
+
+        // ***** Post Physics Item *****
+
+        /// Add other physics item to the offshore system
+        /// \param otherPhysics other physic item to be added
+        void AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics);
+
+        /// Get the list of post physics item added to the system
+        /// \return List of the post physics item added to the system
+        PostPhysicsContainer GetPostPhysicsItemList();
+
+
+
+        /// Remove a Physics item from the system
+        /// \param item Physics item removed from the system
+        void RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item);
+
+        /// Remove all physics items from the system
+        void RemoveAllPhysicsItem();
+
+
+        // ***** FEAMesh *****
 
         /// Add a FEA mesh to the offshore system
         /// \param feaMesh FEA mesh to be added
@@ -278,17 +345,8 @@ namespace frydom {
 
         void AddANCFCable(std::shared_ptr<FrANCFCable> cable);
 
-        /// Add other physics item to the offshore system
-        /// \param otherPhysics other physic item to be added
-        void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics);
 
-        /// Add other physics item to the offshore system
-        /// \param otherPhysics other physic item to be added
-        void AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics);
-
-        /// Add other physics item to the offshore system
-        /// \param otherPhysics other physic item to be added
-        void AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics);
+        // ***** Environment *****
 
         /// Get the environment embedded in the offshore system
         /// \return environment embedded in the offshore system
@@ -331,6 +389,9 @@ namespace frydom {
 
         /// Initialize the logs (log files and folders creation)
         void InitializeLog();
+
+        /// Clear the logging message of every elements
+        void ClearLogs();
 
         // Constraint solver
 
@@ -514,16 +575,18 @@ namespace frydom {
 
         // Statics
 
-        /// Set the maximum number of iterative steps to find the static equilibrium, with the nonlinear and relaxation
-        /// methods.
-        /// \param nSteps maximum number of iterative steps
-        void SetNbStepsStatics(int nSteps);
+        FrStaticAnalysis* GetStaticAnalysis() const;
 
-        /// Solve the static equilibrium with the specified method, default is NONLINEAR.
-        /// \param method method to find the static equilibrium
-        /// \return true if the static equilibrium has been reached
-        // FIXME : il semble que les solveurs retournent toujours true...
-        bool SolveStaticEquilibrium(STATICS_METHOD method=NONLINEAR);
+        /// Solve the static equilibrium using a dynamic simulation with relaxations (velocities and/or accelerations of
+        /// bodies set to null) every nSteps steps. The maximum number of relaxation is defined by nIter. The solving
+        /// stops if nIter or the static tolerance is reached.
+        bool SolveStaticWithRelaxation();
+
+        /// Relax the system, depending of the relaxation procedure specified. See RELAXTYPE documentation
+        /// \param relax relaxation procedure : (NONE, VELOCITY, ACCELERATION, VELOCITYANDACCELERATION)
+        void Relax(FrStaticAnalysis::RELAXTYPE relax);
+
+    public:
 
 
         // Time Stepping settings
@@ -561,6 +624,10 @@ namespace frydom {
         /// Gets the simulation time
         /// \return simulation time
         double GetTime() const;
+
+        /// Sets the simulation time
+        /// \param time simulation time
+        void SetTime(double time);
 
 
         // Dynamics
@@ -610,6 +677,11 @@ namespace frydom {
         /// \param dist distance of the camera from the subject, in the viewer environment
         /// \param recordVideo record snapshots if turned true
         void Visualize(double dist=100, bool recordVideo=false);
+
+        /// Visualize the scene as you set up, no simulation involved
+        /// \param dist distance of the camera from the subject, in the viewer environment
+        /// \param recordVideo record snapshots if turned true
+        void VisualizeStaticAnalysis(double dist=100, bool recordVideo=false);
 
         /// Add an optional asset (it can be used to define visualization shapes, or textures, or custom attached
         /// properties that the user can define by creating his class inherited from FrAssetComponent)

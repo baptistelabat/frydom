@@ -97,16 +97,18 @@ namespace frydom {
         /// Set the appendage resistance coefficient
         /// \param capp appendage resistance coefficient
         void SetAppendageCoefficient(double capp) { m_capp = capp; }
-
-        /// Update the force
-        /// \param time Current time of the simulation from begining
-        void Update(double time) override;
-
         /// Initialization of the force model
         void Initialize() override;
 
         /// Methods to be applied at the end of each time step
         void StepFinalize() override;
+
+    private:
+
+        /// Update the force
+        /// \param time Current time of the simulation from begining
+        void Compute(double time) override;
+
 
     };
 

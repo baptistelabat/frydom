@@ -12,7 +12,7 @@
 
 #include "FrWaveField.h"
 
-#include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
+#include "frydom/core/math/functions/ramp/FrCosRampFunction.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/FrOcean.h"
@@ -60,6 +60,8 @@ namespace frydom {
     void FrWaveField::Initialize() {
         m_infinite_depth = m_freeSurface->GetOcean()->GetSeabed()->GetInfiniteDepth();
         if (!m_infinite_depth) {c_depth = m_freeSurface->GetOcean()->GetDepth(NWU);};
+        c_density = m_freeSurface->GetOcean()->GetDensity();
+        c_gravity = m_freeSurface->GetOcean()->GetEnvironment()->GetGravityAcceleration();
     }
 
     void FrWaveField::StepFinalize() {
@@ -122,6 +124,17 @@ namespace frydom {
         return velocity;
     }
 
+//    Velocity FrWaveField::GetVelocity(double x, double y, double z, bool cutoff, FRAME_CONVENTION fc) const {
+//
+//        if (cutoff) {
+//            auto wave_elevation = GetElevation(x, y, fc);
+//            if (wave_elevation < z) {
+//                return {0.,0.,0.};
+//            }
+//        }
+//        return GetVelocity(x, y, z, fc);
+//    }
+
     void FrWaveField::Update(double time) {
         c_time = time;
         if (m_freeSurface->GetOcean()->GetEnvironment()->GetTimeRamp()->IsActive()) {
@@ -168,6 +181,14 @@ namespace frydom {
 
     std::vector<std::vector<Complex>> FrNullWaveField::GetComplexElevation(double x, double y, FRAME_CONVENTION fc) const {
         return std::vector<std::vector<Complex>>(1, std::vector<Complex>(1, 0.));
+    }
+
+    double FrNullWaveField::GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const  {
+
+        // Get the pressure at the position (x,y,z) for a null wave field.
+
+        return 0.;
+
     }
 
 }  // end namespace frydom

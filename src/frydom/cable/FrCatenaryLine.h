@@ -227,10 +227,6 @@ namespace frydom {
         /// Initialize the log
         void InitializeLog() override;
 
-        /// Catenary line update method
-        /// \param time time of the simulation
-        void Update(double time) override;
-
         /// Update the length of the cable if unrolling speed is defined.
         void UpdateState() override;
 
@@ -239,6 +235,11 @@ namespace frydom {
 
         //--------------------------------------------------------------------------------------------------------------
     private :
+
+        /// Catenary line update method
+        /// \param time time of the simulation
+        void Compute(double time) override;
+
         /// Cached function to compute ||t(s)|| - u.t(s)
         /// \param s lagrangian coordinate
         /// \return rho function value

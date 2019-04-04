@@ -42,7 +42,7 @@ index eda7bbcb1..ce769a003 100644
  #------------------------------------------------------------
  # Defer configuration of all Chrono libraries and programs
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index c3e9d5feb..dffe10c0e 100644
+index c3e9d5feb..b5a049e16 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -273,7 +273,7 @@ if(CUDA_FOUND)
@@ -54,6 +54,19 @@ index c3e9d5feb..dffe10c0e 100644
    SELECT_NVCC_ARCH_FLAGS(NVCC_FLAGS_EXTRA)
    list(APPEND CUDA_NVCC_FLAGS ${NVCC_FLAGS_EXTRA})
 
+diff --git a/src/chrono/fea/ChMesh.h b/src/chrono/fea/ChMesh.h
+index a1d0f90d0..8208fd3e2 100644
+--- a/src/chrono/fea/ChMesh.h
++++ b/src/chrono/fea/ChMesh.h
+@@ -268,7 +268,7 @@ class ChApi ChMesh : public ChIndexedNodes {
+     /// Basically does nothing, but maybe that inherited classes may specialize this.
+     virtual void InjectVariables(ChSystemDescriptor& mdescriptor) override;
+
+-  private:
++  protected:
+     /// Initial setup (before analysis).
+     /// This function is called from ChSystem::SetupInitial, marking a point where system
+     /// construction is completed.
 diff --git a/src/chrono/physics/ChForce.h b/src/chrono/physics/ChForce.h
 index 3ae1ff0e2..49a9226f6 100644
 --- a/src/chrono/physics/ChForce.h
@@ -215,3 +228,16 @@ index 4e533bb49..344d355dc 100644
      virtual void SetupInitial() {}
 
    public:
+diff --git a/src/chrono/physics/ChSystem.h b/src/chrono/physics/ChSystem.h
+index e61891ed9..2432bd241 100644
+--- a/src/chrono/physics/ChSystem.h
++++ b/src/chrono/physics/ChSystem.h
+@@ -758,7 +758,7 @@ class ChApi ChSystem : public ChAssembly, public ChIntegrableIIorder {
+     /// reactions). This is a one-step only approach that solves
+     /// the _linear_ equilibrium. To be used mostly for FEM
+     /// problems with small deformations.
+-    bool DoStaticLinear();
++    virtual bool DoStaticLinear();
+
+     /// Solve the position of static equilibrium (and the
+     /// reactions). This tries to solve the equilibrium for the nonlinear

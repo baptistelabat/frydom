@@ -28,6 +28,7 @@ namespace frydom {
     class FrNode;
     class FrPhysicsItem;
     class FrLinkBase;
+    class FrStaticAnalysis;
 
     class FrPathManager {
     private:
@@ -35,6 +36,7 @@ namespace frydom {
         FRAME_CONVENTION m_logFrameConvention;
 
         cppfs::FilePath m_outputPath;
+        cppfs::FilePath m_projectPath;
         cppfs::FilePath m_runPath;
 
     public:
@@ -59,34 +61,55 @@ namespace frydom {
         /// \return path for the output directory
         std::string GetLogOutputPath() const;
 
+        void SetRunPath(std::string relPath);
+
+        std::string GetRunPath() const;
+
 
         ///Initialize the log manager serice
         void Initialize(FrOffshoreSystem* system);
 
         /// Build the path and directories needed for the system log
         /// \param system system for which a log is declared
+        /// \param relPath relative path, added to the path
         /// \return path to the system log file
         std::string BuildPath(FrOffshoreSystem *system, std::string relPath);
 
         /// Build the path and directories needed for a physics item log
         /// \param pi physics item for which a log is declared
+        /// \param relPath relative path, added to the path
         /// \return path to the physics item log file
         std::string BuildPath(FrPhysicsItem *pi, std::string relPath);
 
+        /// Build the path and directories needed for a link log
+        /// \param link link for which a log is declared
+        /// \param relPath relative path, added to the path
+        /// \return path to the link log file
+        std::string BuildPath(FrLinkBase *link, std::string relPath);
+
         /// Build the path and directories needed for a body log
         /// \param body body for which a log is declared
+        /// \param relPath relative path, added to the path
         /// \return path to the body log file
         std::string BuildPath(FrBody *body, std::string relPath);
 
         /// Build the path and directories needed for a force log
         /// \param force force for which a log is declared
+        /// \param relPath relative path, added to the path
         /// \return path to the force log file
         std::string BuildPath(FrForce *force, std::string relPath);
 
         /// Build the path and directories needed for a node log
         /// \param node node for which a log is declared
+        /// \param relPath relative path, added to the path
         /// \return path to the node log file
         std::string BuildPath(FrNode *node, std::string relPath);
+
+        /// Build the path and directories needed for a static analysis log
+        /// \param staticAnalysis static analysis for which a log is declared
+        /// \param relPath relative path, added to the path
+        /// \return path to the static analysis log file
+        std::string BuildPath(FrStaticAnalysis* staticAnalysis, std::string relPath);
 
 
     private:

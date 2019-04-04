@@ -1,4 +1,4 @@
-.. _heaving_sphere_regular_wave
+.. _heaving_sphere_regular_wave:
 
 Heaving sphere in regular waves
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -8,7 +8,7 @@ This benchmark corresponds to the modelisation of a sphere in heave motion submi
 Description of the test case
 ----------------------------
 
-The sphere considered in this simulation has a radius of :math:`5m` and a total mass of '2,618 .10^5' kg. At equilibrium, the center of the sphere is located on the mean water level and its center of gravity is located :math:`2m`below the water line. Main properties of the sphere are presented in the next table
+The sphere considered in this simulation has a radius of :math:`5m` and a total mass of :math:`2,618 .10^5` kg. At equilibrium, the center of the sphere is located on the mean water level and its center of gravity is located :math:`2m` below the water line. Main properties of the sphere are presented in the next table.
 
 ========================= =======================
 Parameters                Values

@@ -49,6 +49,7 @@ include(Add_fmt)
 include(Add_cppfs)
 include(Add_TimeZone)
 include(Add_hermes)
+include(Add_OpenMesh)
 
 #if (TARGET hermes)
 #    get_target_property(INC hermes INCLUDE_DIRECTORIES)
@@ -72,6 +73,7 @@ target_link_libraries(FRyDoM_Engine
         cppfs
         tz
         hermes
+	OpenMeshCore
         )
 
 target_include_directories(FRyDoM_Engine PUBLIC

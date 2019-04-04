@@ -51,6 +51,9 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "QuadraticDamping"; }
 
+        /// Return true if the force is included in the static analysis
+        bool IncludedInStaticAnalysis() const override {return true;}
+
         /// Setter for the damping coefficients.
         void SetDampingCoefficients(double Cu, double Cv, double Cw);
 
@@ -74,9 +77,17 @@ namespace frydom {
 
         void StepFinalize() override;
 
-        void Update(double time) override;
+    private:
+
+        /// Compute the quadratic damping
+        /// \param time Current time of the simulation from beginning, in seconds
+        void Compute(double time) override;
 
     };
+
+    /// This function creates a quadratic damping force.
+    std::shared_ptr<FrQuadraticDamping>
+    make_quadratic_damping_force(std::shared_ptr<FrBody> body, FLUID_TYPE ft, bool relativeToFluid);
 
 }  // end namespace frydom
 

@@ -84,12 +84,14 @@ void TestInertia::SetUp() {
     body->SetPosition(m_BodyPositionInWorld, NWU);
     body->SetRotation(FrUnitQuaternion(m_BodyRotationDirection, m_BodyRotationAngle, NWU));
 
-    body->SetInertiaTensor(FrInertiaTensor(m_BodyMass,0.,0.,0.,0.,0.,0.,FrFrame(m_COG,FrRotation(),NWU),NWU));
+    body->SetInertiaTensor(FrInertiaTensor(m_BodyMass,1.,0.,1.,0.,0.,0.,FrFrame(m_COG,FrRotation(),NWU),NWU));
 //    body->SetInertiaTensor(FrInertiaTensor(m_BodyMass,m_COG,NWU));
 //    body->SetCOG(m_COG, NWU);
 //    body->SetMass(m_BodyMass);
 
     system.Initialize();
+
+    body->GetFrameAtCOG(NWU);
 
 }
 

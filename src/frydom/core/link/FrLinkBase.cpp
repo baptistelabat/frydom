@@ -16,11 +16,11 @@
 #include "frydom/core/common/FrNode.h"
 
 
+
 namespace frydom {
 
     FrLinkBase::FrLinkBase(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem *system) :
-            m_node1(node1), m_node2(node2) {
-        m_system = system;
+            m_node1(node1), m_node2(node2), m_system(system) {
     }
 
     std::shared_ptr<FrNode> FrLinkBase::GetNode1() {
@@ -65,12 +65,16 @@ namespace frydom {
             // Add the fields to be logged
             // TODO: A completer
             m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return GetTime(); });
+                                        [this]() { return m_system->GetTime(); });
 
             // Initialize the message
             FrObject::InitializeLog(logPath);
         }
 
+    }
+
+    FrOffshoreSystem *FrLinkBase::GetSystem() {
+        return m_system;
     }
 //
 //    FrFrame FrLinkBase::GetTransformFromFrame2ToFrame1() const {

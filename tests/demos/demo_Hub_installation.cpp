@@ -22,13 +22,14 @@ int main(int argc, char* argv[]) {
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
+    system.SetName("Hub_Installation");
 
     // --------------------------------------------------
     // Environment
     // --------------------------------------------------
 
     system.GetEnvironment()->GetTimeRamp()->SetActive(true);
-    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 30., 1.);
+    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 10., 1.);
 
     auto SeabedGridAsset = system.GetEnvironment()->GetOcean()->GetSeabed()->GetSeabedGridAsset();
     SeabedGridAsset->SetGrid(-150., 150., 3., -150., 150., 3.);
@@ -67,6 +68,11 @@ int main(int argc, char* argv[]) {
     makeItBox(barge, 25., 15., 3., (1137.6-180.7)*1000);
 //    barge->AddMeshAsset("barge.obj");
     barge->SetColor(Yellow);
+    barge->SetPosition(Position(0.,0.,1.5),fc);
+
+    auto rev1_barge_node = barge->NewNode();
+    rev1_barge_node->SetPositionInBody(Position(-7.5,0.,2.5), fc);
+
 //    barge->SetFixedInWorld(true);
 
 //    barge->SetInertiaTensor(FrInertiaTensor((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., FrFrame(), NWU));
@@ -111,17 +117,23 @@ int main(int argc, char* argv[]) {
     base_crane->SetColor(Red);
     base_crane->SetPosition(Position(-7.5,0,2.5), fc);
 
-    auto base_crane_1 = system.NewBody();
-    base_crane_1->SetName("Base_Crane_1");
-    makeItBox(base_crane_1,2.5,1.5,2, 10e3);
-    base_crane_1->SetColor(Red);
-    base_crane_1->SetPosition(Position(-7.5,1.75,4.5), fc);
+    auto rev1_base_node = base_crane->NewNode();
 
-    auto base_crane_2 = system.NewBody();
-    base_crane_2->SetName("Base_Crane_2");
-    makeItBox(base_crane_2,2.5,1.5,2, 10e3);
-    base_crane_2->SetColor(Red);
-    base_crane_2->SetPosition(Position(-7.5,-1.75,4.5), fc);
+    auto rev2_base_node = base_crane->NewNode();
+    rev2_base_node->SetPositionInBody(Position(0.,0.,2.), fc);
+    rev2_base_node->RotateAroundXInBody(90*DEG2RAD, NWU);
+
+//    auto base_crane_1 = system.NewBody();
+//    base_crane_1->SetName("Base_Crane_1");
+//    makeItBox(base_crane_1,2.5,1.5,2, 10e3);
+//    base_crane_1->SetColor(Red);
+//    base_crane_1->SetPosition(Position(-7.5,1.75,4.5), fc);
+//
+//    auto base_crane_2 = system.NewBody();
+//    base_crane_2->SetName("Base_Crane_2");
+//    makeItBox(base_crane_2,2.5,1.5,2, 10e3);
+//    base_crane_2->SetColor(Red);
+//    base_crane_2->SetPosition(Position(-7.5,-1.75,4.5), fc);
 
 
     auto arm_crane = system.NewBody();
@@ -134,8 +146,26 @@ int main(int argc, char* argv[]) {
     arm_Rotation.SetCardanAngles_DEGREES(0.,-45.,0., fc);
     arm_crane->RotateAroundPointInBody(arm_Rotation, Position(-9.0,0.,0.), fc);
 
+    auto rev2_crane_node = arm_crane->NewNode();
+    rev2_crane_node->SetPositionInBody(Position(-9.,0.,0.), fc);
+    rev2_crane_node->RotateAroundXInBody(90*DEG2RAD, NWU);
+
     auto crane_node = arm_crane->NewNode();
     crane_node->SetPositionInBody(Position(9.,0.,-0.75), fc);
+
+    // --------------------------------------------------
+    // links definition
+    // --------------------------------------------------
+
+    auto rev1 = make_revolute_link(rev1_barge_node, rev1_base_node, &system);
+    rev1->SetSpringDamper(1e8, 1e8);
+    rev1->SetRestAngle(90*DEG2RAD);
+
+
+    auto rev2 = make_revolute_link(rev2_base_node, rev2_crane_node, &system);
+    rev2->SetSpringDamper(5e8, 1e6);
+    rev2->SetRestAngle(45*DEG2RAD);
+
 
     // --------------------------------------------------
     // hub box model
@@ -245,12 +275,35 @@ int main(int argc, char* argv[]) {
 
     // ------------------ Run ------------------ //
 
-    // You can change the dynamical simulation time step using.
+    // You can change the dynamical simulation time step using
     system.SetTimeStep(0.01);
+
+    // ------------------ Static equilibrium ------------------ //
+
+    // You can solve the static equilibrium first, in order to have the full assembly static before starting the
+    // dynamical simulation. The static solving is based on a dynamic simulation with relaxations of the system,
+    // performed regularly. You can change the number of time steps between two relaxation :
+    system.GetStaticAnalysis()->SetNbSteps(100);
+    // You can also chose which relaxation method you want to apply
+    // (none, velocity set to null, acceleration, or velocity and acceleration)
+    system.GetStaticAnalysis()->SetRelaxation(FrStaticAnalysis::RELAXTYPE::VELOCITY);
+    // You can set the number of iterations (number of relaxations followed by dynamic solving)
+    system.GetStaticAnalysis()->SetNbIteration(10);
+    // And the tolerance, to check if the static is reached
+    system.GetStaticAnalysis()->SetTolerance(1E-2);
+
+    // Now with the static solving
+    system.SolveStaticWithRelaxation();
+    // Once the static is reached, you can visualize it
+//    system.Visualize(75.,false);
+
+    // The static solving iterations can also be visualized. To do so, just replace the two previous lines with :
+//    system.VisualizeStaticAnalysis(75.,false);
+
+    // ------------------ Dynamic simulation ------------------ //
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 30) and the distance from the camera to the objectif (75m).
     // For saving snapshots of the simulation, just turn the boolean to true.
-//    system.Visualize(50.,false);
-    system.RunInViewer(30, 75, false);
+    system.RunInViewer(0, 75, false);
 }

@@ -15,7 +15,6 @@
 
 #include "chrono/physics/ChPhysicsItem.h"
 
-#include "FrObject.h"
 #include "frydom/asset/FrAssetOwner.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/misc/FrColors.h"
@@ -37,8 +36,6 @@ namespace frydom {
 
             void SetupInitial() override;
 
-            void Update(bool update_assets) override;           // TODO : non nécessaire
-
             void Update(double time, bool update_assets) override;
 
             friend class FrPhysicsItem_;
@@ -59,13 +56,24 @@ namespace frydom {
     class FrPhysicsItem: public FrObject, public FrAssetOwner {
 
     protected:
-        std::shared_ptr<internal::FrPhysicsItemBase> m_chronoPhysicsItem;
 
-        FrOffshoreSystem* m_system;
+        std::shared_ptr<internal::FrPhysicsItemBase>
+                m_chronoPhysicsItem;     ///> pointer to the related chrono physics item
 
-        internal::FrPhysicsItemBase* GetChronoItem() const override { return m_chronoPhysicsItem.get(); }
+        FrOffshoreSystem* m_system;     ///< pointer to the system containing this physics item
 
+        bool m_isActive = true;         ///< boolean to check if the physics item is active
+                                        ///< if it's not the case, it is not updated during the simulation
+
+        /// Get the poitner to the chrono related physics item
+        /// \return Chrono related physics item
+        internal::FrPhysicsItemBase* GetChronoItem_ptr() const override;
+
+        /// Get the shared pointer to the chrono related physics item
+        /// \return Chrono related physics item
         virtual std::shared_ptr<internal::FrPhysicsItemBase> GetChronoPhysicsItem() const ;
+
+        friend void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem>);
 
     public:
 
@@ -73,7 +81,16 @@ namespace frydom {
 
         FrOffshoreSystem* GetSystem();
 
-        virtual void Update(double time) = 0;
+        /// Check if the force is active
+        bool IsActive() const;
+
+        /// Activate or deactivate the force
+        void SetActive(bool active);
+
+        /// Return true if the physics item is included in the static analysis
+        virtual bool IncludedInStaticAnalysis() const {return true;}
+
+        void Update(double time);
 
         virtual void SetupInitial();
 
@@ -82,6 +99,12 @@ namespace frydom {
         void Initialize() override {};
 
         void StepFinalize() override;
+
+    private:
+
+        /// Virtual function to allow updating the child object from the solver
+        /// \param time Current time of the simulation from beginning, in seconds
+        virtual void Compute(double time) = 0;
 
     };
 

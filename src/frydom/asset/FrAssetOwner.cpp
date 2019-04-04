@@ -21,22 +21,14 @@
 
 namespace frydom{
 
-    double FrAssetOwner::GetTime() {
-        GetChronoItem()->GetChTime();
-    }
-
-    void FrAssetOwner::SetName(const char *name) {
-        GetChronoItem()->SetName(name);
-    }
-
-    const char* FrAssetOwner::GetName() const {
-        return GetChronoItem()->GetName();
-    }
+//    double FrAssetOwner::GetTime() {
+//        GetChronoItem_ptr()->GetChTime();
+//    }
 
     void FrAssetOwner::AddBoxShape(double xSize, double ySize, double zSize) {
         auto shape = std::make_shared<chrono::ChBoxShape>();
         shape->GetBoxGeometry().SetLengths(chrono::ChVector<double>(xSize, ySize, zSize));
-        GetChronoItem()->AddAsset(shape);
+        GetChronoItem_ptr()->AddAsset(shape);
     }
 
     void FrAssetOwner::AddCylinderShape(double radius, double height) {
@@ -44,18 +36,18 @@ namespace frydom{
         shape->GetCylinderGeometry().p1 = chrono::ChVector<double>(0., -height*0.5, 0.);
         shape->GetCylinderGeometry().p2 = chrono::ChVector<double>(0.,  height*0.5, 0.);
         shape->GetCylinderGeometry().rad = radius;
-        GetChronoItem()->AddAsset(shape);
+        GetChronoItem_ptr()->AddAsset(shape);
     }
 
     void FrAssetOwner::AddSphereShape(double radius) {
         auto shape = std::make_shared<chrono::ChSphereShape>();
         shape->GetSphereGeometry().rad = radius;
-        GetChronoItem()->AddAsset(shape);
+        GetChronoItem_ptr()->AddAsset(shape);
     }
 
     void FrAssetOwner::AddAsset(std::shared_ptr<FrAsset> asset) {
         m_assets.push_back(asset);
-        GetChronoItem()->AddAsset(asset->GetChronoAsset());
+        GetChronoItem_ptr()->AddAsset(asset->GetChronoAsset());
     }
 
     void FrAssetOwner::SetColor(NAMED_COLOR colorName) {
@@ -65,7 +57,7 @@ namespace frydom{
     void FrAssetOwner::SetColor(const FrColor& color) {
         auto colorAsset = std::make_shared<chrono::ChColorAsset>(
                 chrono::ChColor(color.R, color.G, color.B));
-        GetChronoItem()->AddAsset(colorAsset);
+        GetChronoItem_ptr()->AddAsset(colorAsset);
     }
 
     void FrAssetOwner::UpdateAsset() {

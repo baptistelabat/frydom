@@ -1,4 +1,4 @@
-.. dtmb5512_captive_test
+.. dtmb5512_captive_test:
 
 Captive test for the DTMB5512 surface combatant in regular head waves
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

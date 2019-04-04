@@ -104,7 +104,7 @@ namespace frydom {
         m_cn.clear();
     }
 
-    void FrManDampingTaylorExpansion::Update(double time) {
+    void FrManDampingTaylorExpansion::Compute(double time) {
 
         auto force = Force();
         auto torque = Torque();

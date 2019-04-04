@@ -87,7 +87,7 @@ namespace frydom {
 
     protected:
 
-        internal::FrANCFCableBase* GetChronoItem() const override { return m_chronoCable.get(); }
+        internal::FrANCFCableBase* GetChronoItem_ptr() const override { return m_chronoCable.get(); }
 
         std::shared_ptr<chrono::fea::ChMesh> GetChronoMesh() override { return m_chronoCable; }
 

@@ -75,16 +75,16 @@ namespace frydom {
 
         std::shared_ptr<internal::FrForceBase> m_chronoForce;     ///< Pointer to the force chrono object
 
+        bool m_isActive = true;         ///< boolean to check if the force is active
+
         // Force Asset
-        bool m_isForceAsset = false;            ///< A ForceAsset (vector) is displayed if true
-        std::shared_ptr<FrForceAsset> m_forceAsset = nullptr;  ///< pointer to the ForceAsset object.
+        bool m_showAsset = false;                         ///< A ForceAsset (vector) is displayed if true
+        std::shared_ptr<FrForceAsset> m_asset = nullptr;  ///< pointer to the ForceAsset object.
 
         // Limits on forces to stabilize simulation
         bool m_limitForce = false;              ///< Flag equals to true if the maximum force and torque limit are used, false otherwise
         double m_forceLimit  = 1e20;            ///< Taking very high values by default in case we just set limit to true without
         double m_torqueLimit = 1e20;            ///< setting the values individually.
-
-        std::string m_forceType = "force";      ///< type of force (subclass of FrForce), for logging purpose only
 
     public:
 
@@ -95,11 +95,12 @@ namespace frydom {
         void Initialize() override;
 
         // TODO : boucle de StepFinalize à mettre en place dans FrBody
+        /// This function is called at the end of the time step, after the last step of the integration scheme.
         void StepFinalize() override;
 
-        /// Virtual function to allow updating the child object from the solver
-        /// \param time Current time of the simulation from begining, in seconds
-        virtual void Update(double time) = 0;
+        /// Check if the force is active before updating it
+        /// \param time Current time of the simulation from beginning, in seconds
+        void Update(double time);
 
         /// Return the system to which the force is linked
         /// \return Offshore system object pointer
@@ -111,10 +112,19 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "Force"; }
 
+        /// Check if the force is active
+        bool IsActive() const;
+
+        /// Activate or deactivate the force
+        void SetActive(bool active);
+
+        /// Return true if the force is included in the static analysis
+        virtual bool IncludedInStaticAnalysis() const {return false;}
+
         // Logging
 
         /// Initialize the log
-        void InitializeLog();
+        virtual void InitializeLog();
 
         // Force Asset
         /// Inquire if a ForceAsset is displayed
@@ -123,7 +133,11 @@ namespace frydom {
 
         /// Set if a ForceAsset is to be displayed
         /// \param isAsset true if a ForceAsset is to be displayed
-        void SetIsForceAsset(bool isAsset);
+        void ShowAsset(bool isAsset);
+
+        /// Get the asset related to the force
+        /// \return force asset
+        FrForceAsset* GetAsset();
 
         // Force Limits
 
@@ -344,6 +358,10 @@ namespace frydom {
         /// Return the force as a chrono object.
         /// \return Force vector as a chrono object
         std::shared_ptr<chrono::ChForce> GetChronoForce();
+
+        /// Virtual function to allow updating the child object from the solver
+        /// \param time Current time of the simulation from beginning, in seconds
+        virtual void Compute(double time) = 0;
 
 
         friend class FrBody;
