@@ -14,16 +14,16 @@ public:
         return i;
     }
 
-    hermes::Serializer *Create(FrObject *object, const std::string &path) {
+    hermes::Serializer *Create(const FrObject *object, const std::string &path) {
         auto classID = ClassID(object);
         if (creators_.find(classID) == std::end(creators_)) {
-            return new DefaultSerializer(path);
+            return DefaultCreator(object, path);
         }
-        return creators_[classID](path);
+        return creators_[classID](object, path);
     }
 
     template <typename T, typename SerializerType>
-    void Register(std::function<SerializerType*(const std::string &)> creator) {
+    void Register(std::function<SerializerType*(const FrObject*,const std::string &)> creator) {
         creators_[ClassID<T>(nullptr)] = creator;
     }
 
@@ -37,8 +37,10 @@ private:
         return typeid(T).name();
     }
 
-    using DefaultSerializer = hermes::CSVSerializer;
-    using Creator = std::function<hermes::Serializer *(const std::string &)>;
+    hermes::Serializer* DefaultCreator(const FrObject*, const std::string& path) {
+      return new hermes::CSVSerializer(path);
+    }
+    using Creator = std::function<hermes::Serializer *(const FrObject*, const std::string &)>;
     std::map<std::string, Creator> creators_;
 };
 
