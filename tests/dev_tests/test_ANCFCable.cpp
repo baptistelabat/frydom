@@ -5,10 +5,6 @@
 
 #include "frydom/frydom.h"
 
-#include "chrono/fea/ChLinkPointFrame.h"
-#include "chrono/fea/ChElementCableANCF.h"
-#include "FEAcables.h"
-
 using namespace frydom;
 
 int main(int argc, char* argv[]) {
