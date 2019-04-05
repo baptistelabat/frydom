@@ -59,8 +59,8 @@ namespace frydom {
             // Assets for the cable visualisation
             if (m_drawCableElements) {
                 auto elements_assets = std::make_shared<chrono::fea::ChVisualizationFEAmesh>(*this);
-                elements_assets->SetFEMdataType(chrono::fea::ChVisualizationFEAmesh::E_PLOT_ELEM_BEAM_MZ);
-                elements_assets->SetColorscaleMinMax(-0.4, 0.4);
+                elements_assets->SetFEMdataType(chrono::fea::ChVisualizationFEAmesh::E_PLOT_ANCF_BEAM_AX);
+//                elements_assets->SetColorscaleMinMax(-0.4, 0.4);
                 elements_assets->SetSmoothFaces(true);
                 elements_assets->SetWireframe(false);
                 m_section->SetDrawCircularRadius(m_frydomCable->GetDrawNodeSize());
@@ -201,6 +201,30 @@ namespace frydom {
 
         }
 
+        Position FrANCFCableBase::GetAbsPosition(int index, double eta) {
+
+            chrono::ChVector<double> Pos; chrono::ChQuaternion<double> Rot;
+
+            dynamic_cast<chrono::fea::ChElementCableANCF*>(GetElement(index).get())->EvaluateSectionFrame(eta, Pos, Rot);
+
+            return internal::ChVectorToVector3d<Position>(Pos);
+        }
+
+        Force FrANCFCableBase::GetTension(int index, double eta) {
+
+            chrono::ChVector<double> Tension, Torque;
+
+            auto element = dynamic_cast<chrono::fea::ChElementCableANCF*>(GetElement(index).get());
+
+            // FIXME : NEED Chrono to complete this method
+            element->EvaluateSectionForceTorque(eta, Tension, Torque);
+
+            auto dir = internal::ChVectorToVector3d<Position>(element->GetNodeA()->GetD());
+            dir = internal::ChVectorToVector3d<Position>(element->GetNodeB()->GetD());
+
+            return dir * Tension.x();
+        }
+
 
     }
 
@@ -258,44 +282,72 @@ namespace frydom {
 
     void FrANCFCable::Initialize() {
 
-//        m_chronoCable->InitializeSection();
-//
-//        if (m_chronoCable->m_starting_node_fea == nullptr) {
-//
-//            Direction direction = (GetEndingNode()->GetPositionInWorld(NWU) -
-//                                   GetStartingNode()->GetPositionInWorld(NWU));
-//            direction.Normalize();
-//            auto ChDir = internal::Vector3dToChVector(direction);
-//
-//            auto nodeAPos = internal::Vector3dToChVector(GetStartingNode()->GetPositionInWorld(NWU));
-//            auto nodeBPos = nodeAPos + GetUnstretchedLength() * ChDir;
-//
-//            // Shortcut!
-//            // This ChBuilderBeamANCF helper object is very useful because it will
-//            // subdivide 'beams' into sequences of finite elements of beam type, ex.
-//            // one 'beam' could be made of 5 FEM elements of ChElementBeamANCF class.
-//            // If new nodes are needed, it will create them for you.
-//            chrono::fea::ChBuilderBeamANCF builder;
-//
-//            // Now, simply use BuildBeam to create a beam from a point to another:
-//            builder.BuildBeam(
-//                    m_chronoCable,                       // the mesh where to put the created nodes and elements
-//                    m_chronoCable->m_section,                  // the ChBeamSectionCable to use for the ChElementBeamANCF elements
-//                    GetNumberOfElements(),                         // the number of ChElementBeamANCF to create
-//                    nodeAPos,                   // the 'A' point in space (beginning of beam)
-//                    nodeBPos);                  // the 'B' point in space (end of beam)
-//
-//            m_chronoCable->m_starting_node_fea = builder.GetLastBeamNodes().front();
-//            m_chronoCable->m_ending_node_fea = builder.GetLastBeamNodes().back();
-//
-//            m_chronoCable->InitializeLinks();
-//
-//            m_chronoCable->GenerateAssets();
-//
-//        }
-
          m_chronoCable->Initialize();
 
+         GetTension(0.,NWU);
+    }
+
+    Force FrANCFCable::GetTension(double s, FRAME_CONVENTION fc) const {
+
+        assert(s<=GetUnstretchedLength());
+
+        double ds = GetUnstretchedLength() / GetNumberOfElements();
+        double a = s/ds;
+        auto index = int(floor(a));
+        double eta = 2.*(a - index) - 1.;
+
+        if (s == GetUnstretchedLength()) {
+            index = GetNumberOfElements()-1;
+            eta = 1;
+        }
+        Force Tension;
+        // FIXME : NEED Chrono to complete this method
+//        auto Tension = m_chronoCable->GetTension(index, eta);
+
+        if (IsNED(fc)) internal::SwapFrameConvention(Tension);
+
+        return Tension;
+
+
+
+    }
+
+    Position FrANCFCable::GetAbsPosition(double s, FRAME_CONVENTION fc) const {
+
+        assert(s<=GetUnstretchedLength());
+
+        double ds = GetUnstretchedLength() / GetNumberOfElements();
+        double a = s/ds;
+        auto index = int(floor(a));
+        double eta = 2.*(a - index) - 1.;
+
+        if (s == GetUnstretchedLength()) {
+            index = GetNumberOfElements()-1;
+            eta = 1;
+        }
+
+        auto Pos = m_chronoCable->GetAbsPosition(index, eta);
+
+        if (IsNED(fc)) internal::SwapFrameConvention(Pos);
+
+        return Pos;
+
+    }
+
+    double FrANCFCable::GetStretchedLength() const {
+        double cl = 0.;
+        int n = 1000;
+
+        double ds = GetUnstretchedLength() / (n-1);
+        auto pos_prev = GetAbsPosition(0., NWU);
+
+        for (uint i=0; i<n; ++i) {
+            auto s = i*ds;
+            auto pos = GetAbsPosition(s, NWU);
+            cl += (pos - pos_prev).norm();
+            pos_prev = pos;
+        }
+        return cl;
     }
 
 //    void FrANCFCable::StepFinalize() {

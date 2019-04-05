@@ -65,6 +65,10 @@ namespace frydom {
             void SetStartingNode(Position position, Direction direction);
             void SetEndingNode(Position position, Direction direction);
 
+            Position GetAbsPosition(int index, double eta);
+
+            Force GetTension(int index, double eta);
+
         };
 
 
@@ -129,17 +133,17 @@ namespace frydom {
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)
         /// \return inside line tension
-        Force GetTension(double s, FRAME_CONVENTION fc) const override {};
+        Force GetTension(double s, FRAME_CONVENTION fc) const override;;
 
         /// Get the line position at lagrangian coordinate s
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)
         /// \return line position
-        Position GetAbsPosition(double s, FRAME_CONVENTION fc) const override {};
+        Position GetAbsPosition(double s, FRAME_CONVENTION fc) const override;;
 
         /// Get the stretched length of the cable
         /// \return stretched length
-        double GetStretchedLength() const override {};
+        double GetStretchedLength() const override;;
 
 
         //
