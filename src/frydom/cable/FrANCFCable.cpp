@@ -98,13 +98,14 @@ namespace frydom {
 
                 InitializeSection();
 
-                // First, creating a catenary line to initialize finite element mesh node positions
                 // TODO: avoir un constructeur pour juste specifier les parametres du cable, pas les frontieres  -->  degager le constructeur par defaut
                 Position distanceBetweenNodes = (m_frydomCable->GetEndingNode()->GetPositionInWorld(NWU) -
                                                  m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU));
-                // TODO : check if the distance is greater than the length !!
+
+                // check if the distance is greater than the length
                 bool elastic = distanceBetweenNodes.norm() > m_frydomCable->GetUnstretchedLength();
 
+                // First, creating a catenary line to initialize finite element mesh node positions
                 std::shared_ptr<FrCatenaryLine> catenaryLine;
 
                 if (!elastic) { // distance between the nodes is smaller thant the unstretched length of the line
@@ -122,15 +123,15 @@ namespace frydom {
                 double ds = m_frydomCable->GetUnstretchedLength() / m_frydomCable->GetNumberOfElements();
 
                 Direction direction = (m_frydomCable->GetEndingNode()->GetPositionInWorld(NWU) -
-                                           m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU));
+                                       m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU));
                 direction.Normalize();
                 auto position = m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU);
 
-                 if (!elastic) {
-                     position = catenaryLine->GetAbsPosition(s, NWU);
-                     direction = catenaryLine->GetTension(s, NWU);
-                     direction.Normalize();
-                 }
+                if (!elastic) {
+                    position = catenaryLine->GetAbsPosition(s, NWU);
+                    direction = catenaryLine->GetTension(s, NWU);
+                    direction.Normalize();
+                }
 
                 auto ChPos = internal::Vector3dToChVector(position);
                 auto ChDir = internal::Vector3dToChVector(direction);
@@ -147,8 +148,7 @@ namespace frydom {
                     // Get the position and direction of the line for the curvilinear coord s
                     if (elastic) {
                         position = m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU) + s * direction;
-                    }
-                    else{
+                    } else {
                         position = catenaryLine->GetAbsPosition(s, NWU);
                         direction = catenaryLine->GetTension(s, NWU);
                         direction.Normalize();
@@ -174,75 +174,22 @@ namespace frydom {
                 m_ending_node_fea = nodeA; // nodeB is destroyed after the loop
                 AddNode(m_ending_node_fea);
 
-
-
-//                } else {
-//
-//
-//                    double s = 0.;
-//                    double ds = m_frydomCable->GetUnstretchedLength() / m_frydomCable->GetNumberOfElements();
-//
-////            auto direction = catenaryLine->GetTension(s, NWU);
-//                    Direction direction = (m_frydomCable->GetEndingNode()->GetPositionInWorld(NWU) -
-//                                           m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU));
-//                    direction.Normalize();
-//                    auto position = m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU);
-//
-//                    auto ChPos = internal::Vector3dToChVector(position);
-//                    auto ChDir = internal::Vector3dToChVector(direction);
-//                    auto nodeA = std::make_shared<chrono::fea::ChNodeFEAxyzD>(ChPos, ChDir);
-//                    m_starting_node_fea = nodeA;
-//
-//                    // Add the node to the ChMesh
-//                    AddNode(m_starting_node_fea);
-//
-//                    // Creating the specified number of ANCF Cable elements
-//                    for (uint i = 1; i <= m_frydomCable->GetNumberOfElements(); ++i) {
-//                        s += ds;
-//
-//                        // Get the position and direction of the line for the curvilinear coord s
-////                position = catenaryLine->GetAbsPosition(s, NWU);
-//                        position = m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU) + s * direction;
-//                        ChPos = internal::Vector3dToChVector(position);
-////                direction = catenaryLine->GetTension(s, NWU);    direction.Normalize();
-////                ChDir = internal::Vector3dToChVector(direction);
-//
-//                        // Create a node and add it to the ChMesh
-//                        auto nodeB = std::make_shared<chrono::fea::ChNodeFEAxyzD>(ChPos, ChDir);
-//                        AddNode(nodeB);
-//
-//                        // Create a cable element between the nodes A and B, and add it to the ChMesh
-//                        auto element = std::make_shared<chrono::fea::ChElementCableANCF>();
-//                        element->SetNodes(nodeA, nodeB);
-//                        element->SetSection(m_section);
-//                        AddElement(element);
-//
-//                        //
-//                        nodeA = nodeB;
-//
-//                    }
-//                    // Add the ending node to the ChMesh
-//                    m_ending_node_fea = nodeA; // nodeB is destroyed after the loop
-//                    AddNode(m_ending_node_fea);
-//
-//                }
-
                 // Generate constraints between boundaries and bodies
-                // FIXME: suivant qu'on utilise cette methode pour creer les contraintes ou qu'on specifie directement les contraintes directement sur les noeuds, on a une violation des liaisons
                 InitializeLinks();
 
                 // Generate assets for the cable
                 GenerateAssets();
 
-                // Remove the catenary line used for initialization
-                m_frydomCable->GetSystem()->RemovePhysicsItem(catenaryLine);
-                m_frydomCable->GetStartingNode()->GetBody()->RemoveExternalForce(catenaryLine->GetStartingForce());
-                m_frydomCable->GetStartingNode()->GetBody()->RemoveExternalForce(catenaryLine->GetEndingForce());
-
+                if (!elastic) {
+                    // Remove the catenary line used for initialization
+                    m_frydomCable->GetSystem()->RemovePhysicsItem(catenaryLine);
+                    m_frydomCable->GetStartingNode()->GetBody()->RemoveExternalForce(catenaryLine->GetStartingForce());
+                    m_frydomCable->GetStartingNode()->GetBody()->RemoveExternalForce(catenaryLine->GetEndingForce());
+                }
 
             }
 
-
+            // Absolutely necessary for finite elements !
             SetupInitial();
 
         }

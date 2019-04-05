@@ -37,7 +37,7 @@ namespace frydom{
         
         auto index = m_chronoAsset->GetAssets().size();
 
-        while (s1 < m_catenaryLine->GetUnstretchedLength()) {
+        while (s1 < m_catenaryLine->GetUnstretchedLength()-ds) {
 
             p1 = internal::Vector3dToChVector(m_catenaryLine->GetAbsPosition(s1, NWU));
             auto newElement = std::make_shared<chrono::ChLineShape>();
@@ -61,7 +61,7 @@ namespace frydom{
             p1 = internal::Vector3dToChVector(m_catenaryLine->GetEndingNode()->GetPositionInWorld(NWU));
             auto newElement = std::make_shared<chrono::ChLineShape>();
             color = chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetEndingNodeTension(NWU).norm(), 0, m_maxTension, true);
-            
+
             newElement->SetColor(color);
             newElement->SetLineGeometry(std::make_shared<chrono::geometry::ChLineSegment>(p0, p1));
 
