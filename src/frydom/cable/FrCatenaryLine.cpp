@@ -26,7 +26,7 @@ namespace frydom {
                                      FLUID_TYPE fluid) :
                                      m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
                                      FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity),
-                                     FrMidPhysicsItem() {}
+                                     FrMidPhysicsItem() {SetLogged(true);}
 
 //    FrCatenaryLineAsset *FrCatenaryLine::GetLineAsset() const {
 //        return m_lineAsset.get();

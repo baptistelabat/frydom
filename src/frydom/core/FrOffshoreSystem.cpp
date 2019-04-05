@@ -62,6 +62,10 @@ namespace frydom {
                 link->Update(ChTime, update_assets);
             }
 
+            for (auto &mesh : meshlist) {
+                mesh->Update(ChTime, update_assets);
+            }
+
             // Physics items that have to be updated after all
             m_offshoreSystem_->PostPhysicsUpdate(ChTime, update_assets);
 
@@ -424,10 +428,6 @@ namespace frydom {
         for (auto& item : m_PostPhysicsList) {
             item->Initialize();
         }
-
-        // Full assembly -computes also forces-
-        m_chronoSystem->Setup(); //FIXME : utile? déjà fait dans DoAssembly
-        m_chronoSystem->DoFullAssembly();
 
         m_chronoSystem->Update();
 

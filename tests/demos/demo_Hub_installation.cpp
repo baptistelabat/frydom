@@ -293,7 +293,7 @@ int main(int argc, char* argv[]) {
     system.GetStaticAnalysis()->SetTolerance(1E-2);
 
     // Now with the static solving
-    system.SolveStaticWithRelaxation();
+//    system.SolveStaticWithRelaxation();
     // Once the static is reached, you can visualize it
 //    system.Visualize(75.,false);
 

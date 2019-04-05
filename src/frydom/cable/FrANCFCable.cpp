@@ -29,7 +29,6 @@ namespace frydom {
         }
 
         void FrANCFCableBase::InitializeSection() {  // TODO: mettre en private
-            m_section->SetArea(m_frydomCable->GetSectionArea());
             m_section->SetDiameter(m_frydomCable->GetDiameter());
             m_section->SetBeamRaleyghDamping(m_frydomCable->GetRayleighDamping());
             m_section->SetDensity(m_frydomCable->GetDensity());

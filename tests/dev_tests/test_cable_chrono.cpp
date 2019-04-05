@@ -86,8 +86,6 @@ int main(int argc, char* argv[]) {
         mystepper->SetAbsTolerances(1e-6);
     }
 
-    my_system.DoStaticNonlinear(20);
-    my_system.DoFullAssembly();
     //
     // THE SOFT-REAL-TIME CYCLE
     //
