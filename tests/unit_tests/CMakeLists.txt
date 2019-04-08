@@ -26,6 +26,7 @@ set(UNIT_TESTS
         test_FrKinematicStretching
         test_FrWaveSpectrum
         test_FrQuadraticDamping
+        test_FrShape
         #test_FrLinks
 #        test_FrFunction
 	test_edge_splitting
@@ -66,5 +67,3 @@ configure_file(../data/Mesh_clipper/searev.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/searev_clip.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/BARGE.obj . COPYONLY)
 configure_file(../data/platform/Platform_GVA7500.obj . COPY)
-
-
