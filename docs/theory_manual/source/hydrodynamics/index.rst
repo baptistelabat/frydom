@@ -6,11 +6,11 @@ Hydrodynamics
 .. toctree::
     :maxdepth: 2
 
+    linear_potential_flow
     hydrostatics
     wave_excitation
     radiation
     wave_drift
-    linear_potential_flow
     morison
     current_and_wind_loads
     ITTC78
