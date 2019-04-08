@@ -20,6 +20,7 @@ namespace frydom {
     class FrAsset;
     class FrTriangleMeshConnected;
     class FrBoxShape;
+    class FrCylinderShape;
 
     class FrAssetOwner {
 
@@ -29,7 +30,9 @@ namespace frydom {
         AssetContainer m_assets;                    ///< Container of the assets added to the body
 
         using BoxShapeContainer = std::vector<std::shared_ptr<FrBoxShape>>;
+        using CylinderShapeContainer = std::vector<std::shared_ptr<FrCylinderShape>>;
         BoxShapeContainer m_boxShapes;
+        CylinderShapeContainer m_cylinderShapes;
 
         /// Get the internal item, related to chrono::ChPhysicsItem
         /// \return internal item, related to chrono::ChPhysicsItem

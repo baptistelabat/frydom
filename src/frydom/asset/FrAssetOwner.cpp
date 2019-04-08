@@ -11,12 +11,12 @@
 
 #include <chrono/assets/ChTriangleMeshShape.h>
 #include <chrono/assets/ChColorAsset.h>
-#include "chrono/assets/ChCylinderShape.h"
 #include "chrono/assets/ChSphereShape.h"
 #include "chrono/assets/ChTriangleMeshShape.h"
 
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 #include "frydom/shape/FrBoxShape.h"
+#include "frydom/shape/FrCylinderShape.h"
 
 #include "FrAssetOwner.h"
 
@@ -35,10 +35,7 @@ namespace frydom{
     }
 
     void FrAssetOwner::AddCylinderShape(double radius, double height) {
-        auto shape = std::make_shared<chrono::ChCylinderShape>();
-        shape->GetCylinderGeometry().p1 = chrono::ChVector<double>(0., -height*0.5, 0.);
-        shape->GetCylinderGeometry().p2 = chrono::ChVector<double>(0.,  height*0.5, 0.);
-        shape->GetCylinderGeometry().rad = radius;
+        auto shape = std::make_shared<FrCylinderShape>(radius, height);
         GetChronoItem_ptr()->AddAsset(shape);
     }
 
