@@ -13,13 +13,26 @@
 #ifndef FRYDOM_FRSPHERESHAPE_H
 #define FRYDOM_FRSPHERESHAPE_H
 
-#include "chrono/assets/ChSphereShape.h"
+#include <memory>
+#include "frydom/asset/FrAssetOwner.h"
+
+namespace chrono {
+    class ChAsset;
+    class ChSphereShape;
+}  // end namespace chrono
 
 namespace frydom {
 
- class FrSphereShape : public chrono::ChSphereShape {
+    class FrSphereShape {
       public:
         FrSphereShape(double radius);
+
+      protected:
+        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+
+      private:
+        friend void FrAssetOwner::AddSphereShape(double);
+        std::shared_ptr<chrono::ChSphereShape> m_sphere;
     };
 
 }  // end namespace frydom

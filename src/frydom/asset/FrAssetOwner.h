@@ -12,7 +12,12 @@
 #ifndef FRYDOM_FRASSETOWNER_H
 #define FRYDOM_FRASSETOWNER_H
 
+#include <vector>
 #include "frydom/core/misc/FrColors.h"
+
+namespace chrono {
+    class ChPhysicsItem;
+}  // end namespace chrono
 
 namespace frydom {
 

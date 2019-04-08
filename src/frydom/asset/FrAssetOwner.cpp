@@ -31,19 +31,19 @@ namespace frydom{
     void FrAssetOwner::AddBoxShape(double xSize, double ySize, double zSize) {
         auto shape = std::make_shared<FrBoxShape>(xSize, ySize, zSize);
         m_boxShapes.push_back(shape);
-        GetChronoItem_ptr()->AddAsset(shape);
+        GetChronoItem_ptr()->AddAsset(shape->GetChronoAsset());
     }
 
     void FrAssetOwner::AddCylinderShape(double radius, double height) {
         auto shape = std::make_shared<FrCylinderShape>(radius, height);
         m_cylinderShapes.push_back(shape);
-        GetChronoItem_ptr()->AddAsset(shape);
+        GetChronoItem_ptr()->AddAsset(shape->GetChronoAsset());
     }
 
     void FrAssetOwner::AddSphereShape(double radius) {
         auto shape = std::make_shared<FrSphereShape>(radius);
         m_sphereShapes.push_back(shape);
-        GetChronoItem_ptr()->AddAsset(shape);
+        GetChronoItem_ptr()->AddAsset(shape->GetChronoAsset());
     }
 
     void FrAssetOwner::AddMeshAsset(std::string obj_filename) {
@@ -55,7 +55,7 @@ namespace frydom{
     void FrAssetOwner::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh) {
         auto shape = std::make_shared<FrTriangleMeshShape>(mesh);
         m_meshShapes.push_back(shape);
-        GetChronoItem_ptr()->AddAsset(shape);
+        GetChronoItem_ptr()->AddAsset(shape->GetChronoAsset());
     }
 
     void FrAssetOwner::AddAsset(std::shared_ptr<FrAsset> asset) {

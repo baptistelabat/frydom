@@ -13,13 +13,27 @@
 #ifndef FRYDOM_FRCYLINDERSHAPE_H
 #define FRYDOM_FRCYLINDERSHAPE_H
 
-#include "chrono/assets/ChCylinderShape.h"
+#include <memory>
+#include "frydom/asset/FrAssetOwner.h"
+
+namespace chrono {
+    class ChAsset;
+    class ChCylinderShape;
+}  // end namespace chrono
+
 
 namespace frydom {
 
-    class FrCylinderShape : public chrono::ChCylinderShape {
+    class FrCylinderShape {
       public:
         FrCylinderShape(double radius, double height);
+
+      protected:
+        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+
+      private:
+          friend void FrAssetOwner::AddCylinderShape(double, double);
+          std::shared_ptr<chrono::ChCylinderShape> m_cylinder;
     };
 
 }  // end namespace frydom

@@ -13,14 +13,28 @@
 #ifndef FRYDOM_FRTRIANGLEMESHSHAPE_H
 #define FRYDOM_FRTRIANGLEMESHSHAPE_H
 
-#include "chrono/assets/ChTriangleMeshShape.h"
+#include <memory>
+#include "frydom/asset/FrAssetOwner.h"
+
+namespace chrono {
+    class ChAsset;
+    class ChTriangleMeshShape;
+}  // end namespace chrono
+
 
 namespace frydom {
     class FrTriangleMeshConnected;
 
-    class FrTriangleMeshShape : public chrono::ChTriangleMeshShape {
+    class FrTriangleMeshShape {
       public:
         FrTriangleMeshShape(std::shared_ptr<FrTriangleMeshConnected> mesh);
+
+      protected:
+        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+
+      private:
+        friend void FrAssetOwner::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected>);
+        std::shared_ptr<chrono::ChTriangleMeshShape> m_mesh;
     };
 
 }  // end namespace frydom

@@ -1,9 +1,14 @@
 #include "frydom/shape/FrSphereShape.h"
 
+#include "chrono/assets/ChSphereShape.h"
+
 namespace frydom {
 
-    FrSphereShape::FrSphereShape(double radius) : chrono::ChSphereShape() {
-        GetSphereGeometry().rad = radius;
+    FrSphereShape::FrSphereShape(double radius) : m_sphere(std::make_shared<chrono::ChSphereShape>()) {
+        m_sphere->GetSphereGeometry().rad = radius;
+    }
+    std::shared_ptr<chrono::ChAsset> FrSphereShape::GetChronoAsset() {
+        return m_sphere;
     }
 
 }  // end namespace frydom

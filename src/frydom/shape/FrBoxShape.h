@@ -11,13 +11,26 @@
 #ifndef FRYDOM_FRBOXSHAPE_H
 #define FRYDOM_FRBOXSHAPE_H
 
-#include "chrono/assets/ChBoxShape.h"
+#include <memory>
+#include "frydom/asset/FrAssetOwner.h"
+
+namespace chrono {
+    class ChBoxShape;
+    class ChAsset;
+}  // end namespace chrono
 
 namespace frydom {
 
-    class FrBoxShape : public chrono::ChBoxShape {
+    class FrBoxShape {
       public:
         FrBoxShape(double xSize, double ySize, double zSize);
+
+      protected:
+        std::shared_ptr<chrono::ChAsset> GetChronoAsset();
+
+      private:
+        friend void FrAssetOwner::AddBoxShape(double, double, double);
+        std::shared_ptr<chrono::ChBoxShape> m_box;
     };
 
 }  // end namespace frydom
