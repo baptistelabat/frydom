@@ -186,7 +186,7 @@ int main(int argc, char* argv[]) {
 
     auto radiationForce = std::make_shared<FrRadiationConvolutionForce>(radiationModel.get());
     //auto radiationForce = std::make_shared<FrNullForce>();
-    body->AddExternalForce(radiationForce);
+    //body->AddExternalForce(radiationForce);
 
     radiationModel->SetImpulseResponseSize(body.get(), 6., 0.01);
 
