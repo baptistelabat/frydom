@@ -10,6 +10,8 @@
 #include "frydom/core/common/FrFEAMesh.h"
 #include "frydom/core/FrOffshoreSystem.h"
 
+#include <chrono/fea/ChBeamSection.h>
+
 #include <chrono/fea/ChMesh.h>
 //#include <chrono/fea/ChNodeFEAxyzD.h>
 //#include <chrono/fea/ChBeamSection.h>
@@ -17,9 +19,11 @@
 namespace chrono{
     namespace fea {
         class ChNodeFEAxyzD;
+        class ChNodeFEAxyzrot;
         class ChBeamSectionCable;
         class ChLinkPointFrame;
     }
+    class ChLinkMateGeneric;
 }
 
 
@@ -35,14 +39,19 @@ namespace frydom {
             bool m_drawCableElements = true;
             bool m_drawCableNodes = true;
 
-            std::shared_ptr<chrono::fea::ChNodeFEAxyzD> m_starting_node_fea;
-            std::shared_ptr<chrono::fea::ChNodeFEAxyzD> m_ending_node_fea;
+//            std::shared_ptr<chrono::fea::ChNodeFEAxyzD> m_starting_node_fea;
+//            std::shared_ptr<chrono::fea::ChNodeFEAxyzD> m_ending_node_fea;
+            std::shared_ptr<chrono::fea::ChNodeFEAxyzrot> m_starting_node_fea;
+            std::shared_ptr<chrono::fea::ChNodeFEAxyzrot> m_ending_node_fea;
 
             // TODO Passer en FrLink? générer les links entre FEAMesh et bodies en dehors de FEAMesh
-            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_startingHinge;
-            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_endingHinge;
+//            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_startingHinge;
+//            std::shared_ptr<chrono::fea::ChLinkPointFrame> m_endingHinge;
+            std::shared_ptr<chrono::ChLinkMateGeneric> m_startingHinge;
+            std::shared_ptr<chrono::ChLinkMateGeneric> m_endingHinge;
 
-            std::shared_ptr<chrono::fea::ChBeamSectionCable> m_section;
+//            std::shared_ptr<chrono::fea::ChBeamSectionCable> m_section;
+            std::shared_ptr<chrono::fea::ChBeamSectionAdvanced> m_section;
             FrANCFCable* m_frydomCable;
 
             explicit FrANCFCableBase(FrANCFCable* cable);
@@ -153,9 +162,9 @@ namespace frydom {
 
         void Update(double time) override {};
 
-        void InitializeLog() override {};
+        void InitializeLog() override;;
 
-//        void StepFinalize() override;
+        void StepFinalize() override;
 
         friend void FrOffshoreSystem::AddANCFCable(std::shared_ptr<FrANCFCable>);
 

@@ -4,8 +4,11 @@
 
 #include <chrono/fea/ChBeamSection.h>
 #include <chrono/fea/ChLinkPointFrame.h>
+#include <chrono/physics/ChLinkMate.h>
 #include <chrono/fea/ChNodeFEAxyzD.h>
+#include <chrono/fea/ChNodeFEAxyzrot.h>
 #include <chrono/fea/ChElementCableANCF.h>
+#include <chrono/fea/ChElementBeamEuler.h>
 #include <chrono/fea/ChVisualizationFEAmesh.h>
 #include "chrono/fea/ChBuilderBeam.h"
 #include "FrANCFCable.h"
@@ -22,14 +25,18 @@ namespace frydom {
 
         FrANCFCableBase::FrANCFCableBase(FrANCFCable* cable) : chrono::fea::ChMesh(), m_frydomCable(cable) {
 
-            m_startingHinge = std::make_shared<chrono::fea::ChLinkPointFrame>();
-            m_endingHinge = std::make_shared<chrono::fea::ChLinkPointFrame>();
-            m_section = std::make_shared<chrono::fea::ChBeamSectionCable>();  // Voir si on utilise pas directement la classe mere pour avoir de la torsion...
+//            m_startingHinge = std::make_shared<chrono::fea::ChLinkPointFrame>();
+//            m_endingHinge = std::make_shared<chrono::fea::ChLinkPointFrame>();
+            m_startingHinge = std::make_shared<chrono::ChLinkMateGeneric>();
+            m_endingHinge = std::make_shared<chrono::ChLinkMateGeneric>();
+//            m_section = std::make_shared<chrono::fea::ChBeamSectionCable>();  // Voir si on utilise pas directement la classe mere pour avoir de la torsion...
+            m_section = std::make_shared<chrono::fea::ChBeamSectionAdvanced>();  // Voir si on utilise pas directement la classe mere pour avoir de la torsion...
 
         }
 
         void FrANCFCableBase::InitializeSection() {  // TODO: mettre en private
-            m_section->SetDiameter(m_frydomCable->GetDiameter());
+//            m_section->SetDiameter(m_frydomCable->GetDiameter());
+            m_section->SetAsCircularSection(m_frydomCable->GetDiameter());
             m_section->SetBeamRaleyghDamping(m_frydomCable->GetRayleighDamping());
             m_section->SetDensity(m_frydomCable->GetDensity());
             m_section->SetYoungModulus(m_frydomCable->GetYoungModulus());
@@ -43,15 +50,22 @@ namespace frydom {
 
             auto Pos = internal::Vector3dToChVector(m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU));
 
-            m_startingHinge->Initialize(m_starting_node_fea, starting_body, &Pos);
+            chrono::ChFrame<double> frame(Pos);
+
+            m_startingHinge->Initialize(m_starting_node_fea, starting_body, frame);
 
             auto ending_body = m_frydomCable->GetEndingNode()->GetBody()->m_chronoBody;
 
             Pos = internal::Vector3dToChVector(m_frydomCable->GetEndingNode()->GetPositionInWorld(NWU));
 
+            frame.SetPos(Pos);
+
 //            Pos = m_ending_node_fea->GetPos();
 
-            m_endingHinge->Initialize(m_ending_node_fea, ending_body, &Pos);
+            m_endingHinge->Initialize(m_ending_node_fea, ending_body, frame);
+
+            m_startingHinge->SetConstrainedCoords(true, true, true, false, false, false);
+            m_endingHinge->SetConstrainedCoords(true, true, true, false, false, false);
 
         }
 
@@ -83,13 +97,15 @@ namespace frydom {
         void FrANCFCableBase::SetStartingNode(Position position, Direction direction) {
             auto ChPos = internal::Vector3dToChVector(position);
             auto ChDir = internal::Vector3dToChVector(direction);
-            m_starting_node_fea = std::make_shared<chrono::fea::ChNodeFEAxyzD>(ChPos, ChDir);
+//            m_starting_node_fea = std::make_shared<chrono::fea::ChNodeFEAxyzD>(ChPos, ChDir);
+            m_starting_node_fea = std::make_shared<chrono::fea::ChNodeFEAxyzrot>(chrono::ChFrame<double>(ChPos, ChDir));
         }
 
         void FrANCFCableBase::SetEndingNode(Position position, Direction direction) {
             auto ChPos = internal::Vector3dToChVector(position);
             auto ChDir = internal::Vector3dToChVector(direction);
-            m_ending_node_fea = std::make_shared<chrono::fea::ChNodeFEAxyzD>(ChPos, ChDir);
+//            m_ending_node_fea = std::make_shared<chrono::fea::ChNodeFEAxyzD>(ChPos, ChDir);
+            m_ending_node_fea = std::make_shared<chrono::fea::ChNodeFEAxyzrot>(chrono::ChFrame<double>(ChPos, ChDir));
         }
 
         void FrANCFCableBase::Initialize() {
@@ -135,7 +151,8 @@ namespace frydom {
 
                 auto ChPos = internal::Vector3dToChVector(position);
                 auto ChDir = internal::Vector3dToChVector(direction);
-                auto nodeA = std::make_shared<chrono::fea::ChNodeFEAxyzD>(ChPos, ChDir);
+//                auto nodeA = std::make_shared<chrono::fea::ChNodeFEAxyzD>(ChPos, ChDir);
+                auto nodeA = std::make_shared<chrono::fea::ChNodeFEAxyzrot>(chrono::ChFrame<double>(ChPos));
                 m_starting_node_fea = nodeA;
 
                 // Add the node to the ChMesh
@@ -157,11 +174,13 @@ namespace frydom {
                     ChPos = internal::Vector3dToChVector(position);
 
                     // Create a node and add it to the ChMesh
-                    auto nodeB = std::make_shared<chrono::fea::ChNodeFEAxyzD>(ChPos, ChDir);
+//                    auto nodeB = std::make_shared<chrono::fea::ChNodeFEAxyzD>(ChPos, ChDir);
+                    auto nodeB = std::make_shared<chrono::fea::ChNodeFEAxyzrot>(chrono::ChFrame<double>(ChPos));
                     AddNode(nodeB);
 
                     // Create a cable element between the nodes A and B, and add it to the ChMesh
-                    auto element = std::make_shared<chrono::fea::ChElementCableANCF>();
+//                    auto element = std::make_shared<chrono::fea::ChElementCableANCF>();
+                    auto element = std::make_shared<chrono::fea::ChElementBeamEuler>();
                     element->SetNodes(nodeA, nodeB);
                     element->SetSection(m_section);
                     AddElement(element);
@@ -205,7 +224,8 @@ namespace frydom {
 
             chrono::ChVector<double> Pos; chrono::ChQuaternion<double> Rot;
 
-            dynamic_cast<chrono::fea::ChElementCableANCF*>(GetElement(index).get())->EvaluateSectionFrame(eta, Pos, Rot);
+//            dynamic_cast<chrono::fea::ChElementCableANCF*>(GetElement(index).get())->EvaluateSectionFrame(eta, Pos, Rot);
+            dynamic_cast<chrono::fea::ChElementBeamEuler*>(GetElement(index).get())->EvaluateSectionFrame(eta, Pos, Rot);
 
             return internal::ChVectorToVector3d<Position>(Pos);
         }
@@ -214,15 +234,18 @@ namespace frydom {
 
             chrono::ChVector<double> Tension, Torque;
 
-            auto element = dynamic_cast<chrono::fea::ChElementCableANCF*>(GetElement(index).get());
+//            auto element = dynamic_cast<chrono::fea::ChElementCableANCF*>(GetElement(index).get());
+            auto element = dynamic_cast<chrono::fea::ChElementBeamEuler*>(GetElement(index).get());
 
             // FIXME : NEED Chrono to complete this method
             element->EvaluateSectionForceTorque(eta, Tension, Torque);
 
-            auto dir = internal::ChVectorToVector3d<Position>(element->GetNodeA()->GetD());
-            dir = internal::ChVectorToVector3d<Position>(element->GetNodeB()->GetD());
+            return {Tension.x(),0.,0.};
 
-            return dir * Tension.x();
+//            auto dir = internal::ChVectorToVector3d<Position>(element->GetNodeA()->Get());
+//            dir = internal::ChVectorToVector3d<Position>(element->GetNodeB()->GetD());
+
+//            return dir * Tension.x();
         }
 
 
@@ -242,6 +265,7 @@ namespace frydom {
             sectionArea,
             linearDensity), m_rayleighDamping(rayleighDamping), m_nbElements(nbElements) {
             m_chronoCable = std::make_shared<internal::FrANCFCableBase>(this);
+            SetLogged(true);
     }
 
 
@@ -300,9 +324,9 @@ namespace frydom {
             index = GetNumberOfElements()-1;
             eta = 1;
         }
-        Force Tension;
+//        Force Tension;
         // FIXME : NEED Chrono to complete this method
-//        auto Tension = m_chronoCable->GetTension(index, eta);
+        auto Tension = m_chronoCable->GetTension(index, eta);
 
         if (IsNED(fc)) internal::SwapFrameConvention(Tension);
 
@@ -348,6 +372,42 @@ namespace frydom {
             pos_prev = pos;
         }
         return cl;
+    }
+
+    void FrANCFCable::InitializeLog() {
+        if (IsLogged()) {
+
+            // Build the path to the catenary line log
+            auto logPath = m_system->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
+
+            // Add the fields to be logged here
+            m_message->AddField<double>("time", "s", "Current time of the simulation",
+                                        [this]() { return m_system->GetTime(); });
+
+            m_message->AddField<double>("Stretched Length", "m", "Stretched length of the catenary line",
+                                        [this]() { return GetStretchedLength(); });
+
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("Starting Node Tension","N", fmt::format("Starting node tension in world reference frame in {}",c_logFrameConvention),
+                     [this]() {return GetTension(0.,c_logFrameConvention);});
+
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("Ending Node Tension","N", fmt::format("Ending node tension in world reference frame in {}",c_logFrameConvention),
+                     [this]() {return GetTension(GetUnstretchedLength(), c_logFrameConvention);});
+
+            //TODO : logger la position de la ligne pour un ensemble d'abscisses curvilignes?
+
+            // Initialize the message
+            FrObject::InitializeLog(logPath);
+
+        }
+    }
+
+    void FrANCFCable::StepFinalize() {
+        FrFEAMesh::StepFinalize();
+
+        // Serialize and send the log message
+        FrObject::SendLog();
     }
 
 //    void FrANCFCable::StepFinalize() {

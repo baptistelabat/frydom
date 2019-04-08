@@ -49,7 +49,8 @@ int main(int argc, char* argv[]) {
     system.AddANCFCable(ANCFCable);
 
     // Catenary line
-    linearDensity += sectionArea * system.GetEnvironment()->GetFluidDensity(AIR);
+//    linearDensity += sectionArea * system.GetEnvironment()->GetFluidDensity(AIR);
+    linearDensity *= 9.81;
 
     auto CatenaryLine = make_catenary_line(Node1,Node2,&system,true,YoungModulus,sectionArea,unstretchedLength,linearDensity,AIR);
     CatenaryLine->SetAssetElements(50);

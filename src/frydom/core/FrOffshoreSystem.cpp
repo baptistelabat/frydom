@@ -14,6 +14,7 @@
 
 #include "chrono/utils/ChProfiler.h"
 #include "chrono/fea/ChLinkPointFrame.h"
+#include "chrono/physics/ChLinkMate.h"
 
 #include "frydom/core/link/links_lib/FrLink.h"
 #include "frydom/core/body/FrBody.h"
@@ -995,6 +996,10 @@ namespace frydom {
             }
 
             for (auto &item : m_linkList) {
+                item->InitializeLog();
+            }
+
+            for (auto &item : m_feaMeshList) {
                 item->InitializeLog();
             }
 
