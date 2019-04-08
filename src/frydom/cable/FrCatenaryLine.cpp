@@ -26,7 +26,9 @@ namespace frydom {
                                      FLUID_TYPE fluid) :
                                      m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
                                      FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity),
-                                     FrMidPhysicsItem() {SetLogged(true);}
+                                     FrMidPhysicsItem() {
+        SetLogged(true);
+    }
 
 //    FrCatenaryLineAsset *FrCatenaryLine::GetLineAsset() const {
 //        return m_lineAsset.get();
@@ -131,7 +133,7 @@ namespace frydom {
         return Inc;
     }
 
-    Position FrCatenaryLine::GetAbsPosition(double s, FRAME_CONVENTION fc) const {
+    Position FrCatenaryLine::GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const {
 
         Position pos;
         pos += GetStartingNode()->GetPositionInWorld(fc);
@@ -146,11 +148,11 @@ namespace frydom {
         int n = 1000;
 
         double ds = m_cableLength / (n-1);
-        auto pos_prev = GetAbsPosition(0., NWU);
+        auto pos_prev = GetNodePositionInWorld(0., NWU);
 
         for (uint i=0; i<n; ++i) {
             auto s = i*ds;
-            auto pos = GetAbsPosition(s, NWU);
+            auto pos = GetNodePositionInWorld(s, NWU);
             cl += (pos - pos_prev).norm();
             pos_prev = pos;
         }
@@ -158,7 +160,7 @@ namespace frydom {
     }
 
     Position FrCatenaryLine::get_residual(FRAME_CONVENTION fc) const {
-        return GetAbsPosition(m_cableLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
+        return GetNodePositionInWorld(m_cableLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
     }
 
     mathutils::Matrix33<double> FrCatenaryLine::analytical_jacobian() const {
@@ -257,6 +259,7 @@ namespace frydom {
     void FrCatenaryLine::Initialize() {
 
         m_q = GetLinearDensity() - m_sectionArea * GetSystem()->GetEnvironment()->GetFluidDensity(c_fluid);
+        m_q *= GetSystem()->GetGravityAcceleration();
         c_qvec = m_q*m_u;
 
         // Initializing U matrix

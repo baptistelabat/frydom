@@ -51,6 +51,8 @@ namespace frydom {
             // Ending hinge
             auto ending_body = m_frydomCable->GetEndingNode()->GetBody()->m_chronoBody;
 
+            // FYI : Initialize of the hinge with false is supposed to work with ChronoFrame, as for the starting hinge, above.
+            // In practice, there's a bug somewhere inside chrono, so we need to get the relative position of the node anyway...
             ChronoFrame = internal::FrFrame2ChFrame(m_frydomCable->GetEndingNode()->GetFrameInWorld());
             chrono::ChFrame<double> frame(ChronoFrame);
             frame.SetPos(m_ending_node_fea->GetPos() - internal::Vector3dToChVector(m_frydomCable->GetEndingNode()->GetPositionInWorld(NWU)));
@@ -162,7 +164,7 @@ namespace frydom {
                     if (elastic) {
                         ChronoFrame.SetPos(ChronoFrame.GetPos() + ds*AB);
                     } else {
-                        ChronoFrame.SetPos(internal::Vector3dToChVector(catenaryLine->GetAbsPosition(s, NWU)));
+                        ChronoFrame.SetPos(internal::Vector3dToChVector(catenaryLine->GetNodePositionInWorld(s, NWU)));
                         e1 = internal::Vector3dToChVector(catenaryLine->GetTension(s, NWU)); e1.Normalize();
                         e2 = e3.Cross(e1); e2.Normalize();
                         RotMat.Set_A_axis(e1, e2, e3);
@@ -324,7 +326,7 @@ namespace frydom {
 
     }
 
-    Position FrDynamicCable::GetAbsPosition(double s, FRAME_CONVENTION fc) const {
+    Position FrDynamicCable::GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const {
 
         assert(s<=GetUnstretchedLength());
 
@@ -351,11 +353,11 @@ namespace frydom {
         int n = 1000;
 
         double ds = GetUnstretchedLength() / (n-1);
-        auto pos_prev = GetAbsPosition(0., NWU);
+        auto pos_prev = GetNodePositionInWorld(0., NWU);
 
         for (uint i=0; i<n; ++i) {
             auto s = i*ds;
-            auto pos = GetAbsPosition(s, NWU);
+            auto pos = GetNodePositionInWorld(s, NWU);
             cl += (pos - pos_prev).norm();
             pos_prev = pos;
         }

@@ -116,7 +116,7 @@ namespace frydom {
         return m_unrollingSpeed;
     }
 
-    void FrCable::UpdateTime(const double time) {
+    void FrCable::UpdateTime(double time) {
         m_time_step = time - m_time;
         m_time = time;
     }

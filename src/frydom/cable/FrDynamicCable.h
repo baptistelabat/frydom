@@ -138,7 +138,7 @@ namespace frydom {
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)
         /// \return line position
-        Position GetAbsPosition(double s, FRAME_CONVENTION fc) const override;;
+        Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;;
 
         /// Get the stretched length of the cable
         /// \return stretched length

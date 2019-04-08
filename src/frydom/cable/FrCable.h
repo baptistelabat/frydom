@@ -173,7 +173,7 @@ namespace frydom {
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)
         /// \return line position
-        virtual Position GetAbsPosition(double s, FRAME_CONVENTION fc) const = 0;
+        virtual Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const = 0;
 
         /// Get the stretched length of the cable
         /// \return stretched length
@@ -190,7 +190,7 @@ namespace frydom {
 
         /// Update internal time and time step for dynamic behaviour of the cable
         /// \param time time of the simulation
-        virtual void UpdateTime(const double time);
+        virtual void UpdateTime(double time);
 
         /// Update the length of the cable if unrolling speed is defined.
         virtual void UpdateState();

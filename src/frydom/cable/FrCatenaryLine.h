@@ -58,7 +58,7 @@ namespace frydom {
         // Catenary line properties
         bool m_elastic = true;              ///< Is the catenary line elastic
         mathutils::Vector3d<double> m_t0;   ///< Tension vector at the starting node
-        double m_q;                         ///< Uniform distributed load weight (linear density + hydrostatic)
+        double m_q;                         ///< Uniform distributed load, in N/m : (linear density + hydrostatic)*g
         Direction m_u = {0.,0.,-1.};        ///< Uniform distributed load direction
         //--------------------------------------------------------------------------------------------------------------
 
@@ -182,7 +182,7 @@ namespace frydom {
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)
         /// \return line position
-        Position GetAbsPosition(double s, FRAME_CONVENTION fc) const override;
+        Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;
 
         /// Get the current chord at lagrangian coordinate s
         /// This is the position of the line if there is no elasticity.
