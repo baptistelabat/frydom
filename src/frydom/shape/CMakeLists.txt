@@ -4,6 +4,7 @@ set(SRC_FILES
     FrBoxShape.cpp
     FrCylinderShape.cpp
     FrSphereShape.cpp
+    FrTriangleMeshShape.cpp
 )
 
 set(FRYDOM_SHAPE_SOURCES "")

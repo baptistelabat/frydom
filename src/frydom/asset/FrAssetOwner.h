@@ -22,6 +22,7 @@ namespace frydom {
     class FrBoxShape;
     class FrCylinderShape;
     class FrSphereShape;
+    class FrTriangleMeshShape;
 
     class FrAssetOwner {
 
@@ -32,8 +33,12 @@ namespace frydom {
 
         using BoxShapeContainer = std::vector<std::shared_ptr<FrBoxShape>>;
         using CylinderShapeContainer = std::vector<std::shared_ptr<FrCylinderShape>>;
+        using SphereShapeContainer = std::vector<std::shared_ptr<FrSphereShape>>;
+        using TriangleMeshShapeContainer = std::vector<std::shared_ptr<FrTriangleMeshShape>>;
         BoxShapeContainer m_boxShapes;
         CylinderShapeContainer m_cylinderShapes;
+        SphereShapeContainer m_sphereShapes;
+        TriangleMeshShapeContainer m_meshShapes;
 
         /// Get the internal item, related to chrono::ChPhysicsItem
         /// \return internal item, related to chrono::ChPhysicsItem
