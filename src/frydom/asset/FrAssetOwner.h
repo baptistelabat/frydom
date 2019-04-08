@@ -19,6 +19,7 @@ namespace frydom {
     // Forward declarations:
     class FrAsset;
     class FrTriangleMeshConnected;
+    class FrBoxShape;
 
     class FrAssetOwner {
 
@@ -26,6 +27,9 @@ namespace frydom {
 
         using AssetContainer = std::vector<std::shared_ptr<FrAsset>>;
         AssetContainer m_assets;                    ///< Container of the assets added to the body
+
+        using BoxShapeContainer = std::vector<std::shared_ptr<FrBoxShape>>;
+        BoxShapeContainer m_boxShapes;
 
         /// Get the internal item, related to chrono::ChPhysicsItem
         /// \return internal item, related to chrono::ChPhysicsItem

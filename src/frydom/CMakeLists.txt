@@ -17,6 +17,7 @@ set(subdirs
         mesh
         mooring
         utils
+        shape
         )
 
 # TODO: reposer plutot sur target_sources()
@@ -85,5 +86,3 @@ message(STATUS "FRyDoM_INCLUDE_DIRECTORIES : ${INC}")
 
 
 # TODO: voir si on passe ce CMakeLists.txt dans le repertoire parent pour ne pas avoir a faire .. dans l'include
-
-
