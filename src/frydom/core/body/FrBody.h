@@ -208,16 +208,7 @@ namespace frydom {
         // VISUAL ASSETS
         // =============================================================================================================
 
-        // Relative to assets. Function moved to FrAssetOwner
 //        void AssetActive() // TODO
-
-        /// Add a mesh as an asset for visualization given a WaveFront .obj file name
-        /// \param obj_filename filename of the asset to be added
-//        void AddMeshAsset(std::string obj_filename);
-
-        /// Add a mesh as an asset for visualization given a FrTriangleMeshConnected mesh object
-        /// \param mesh mesh of the asset to be added
-//        void AddMeshAsset(std::shared_ptr<FrTriangleMeshConnected> mesh);
 
         // =============================================================================================================
         // SPEED LIMITATIONS TO STABILIZE SIMULATIONS
