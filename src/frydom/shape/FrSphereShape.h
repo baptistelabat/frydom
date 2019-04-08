@@ -26,6 +26,7 @@ namespace frydom {
     class FrSphereShape {
       public:
         FrSphereShape(double radius);
+        double radius() const;
 
       protected:
         std::shared_ptr<chrono::ChAsset> GetChronoAsset();

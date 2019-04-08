@@ -24,6 +24,9 @@ namespace frydom {
     class FrBoxShape {
       public:
         FrBoxShape(double xSize, double ySize, double zSize);
+        double xSize() const;
+        double ySize() const;
+        double zSize() const;
 
       protected:
         std::shared_ptr<chrono::ChAsset> GetChronoAsset();

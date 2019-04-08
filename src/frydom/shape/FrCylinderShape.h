@@ -27,6 +27,8 @@ namespace frydom {
     class FrCylinderShape {
       public:
         FrCylinderShape(double radius, double height);
+        double radius() const;
+        double height() const;
 
       protected:
         std::shared_ptr<chrono::ChAsset> GetChronoAsset();

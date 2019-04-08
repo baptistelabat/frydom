@@ -14,6 +14,9 @@
 #define FRYDOM_FRTRIANGLEMESHSHAPE_H
 
 #include <memory>
+
+#include <Eigen/Core>
+
 #include "frydom/asset/FrAssetOwner.h"
 
 namespace chrono {
@@ -27,7 +30,16 @@ namespace frydom {
 
     class FrTriangleMeshShape {
       public:
+        using Vertex = Eigen::Matrix<double, 3, 1>;
+        using Normal = Eigen::Matrix<double, 3, 1>;
+        using FaceVertexIndex = Eigen::Matrix<int, 3, 1>;
+        using FaceNormalIndex = Eigen::Matrix<int, 3, 1>;
         FrTriangleMeshShape(std::shared_ptr<FrTriangleMeshConnected> mesh);
+
+        std::vector<Vertex> vertices() const;
+        std::vector<Normal> normals() const;
+        std::vector<FaceVertexIndex> faceVertexIndices() const;
+        std::vector<FaceNormalIndex> faceNormalIndices() const;
 
       protected:
         std::shared_ptr<chrono::ChAsset> GetChronoAsset();
