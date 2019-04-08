@@ -3,6 +3,7 @@ message(STATUS "    ...shape")
 set(SRC_FILES
     FrBoxShape.cpp
     FrCylinderShape.cpp
+    FrSphereShape.cpp
 )
 
 set(FRYDOM_SHAPE_SOURCES "")

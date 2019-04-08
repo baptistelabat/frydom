@@ -21,6 +21,7 @@ namespace frydom {
     class FrTriangleMeshConnected;
     class FrBoxShape;
     class FrCylinderShape;
+    class FrSphereShape;
 
     class FrAssetOwner {
 
