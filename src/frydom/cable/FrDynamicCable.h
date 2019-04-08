@@ -1,145 +1,164 @@
-// ==========================================================================
-// FRyDoM - frydom-ce.org
 //
-// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
-// All rights reserved.
+// Created by lletourn on 05/03/19.
 //
-// Use of this source code is governed by a GPLv3 license that can be found
-// in the LICENSE file of FRyDoM.
-//
-// ==========================================================================
 
+#ifndef FRYDOM_FRANCFCABLE_H
+#define FRYDOM_FRANCFCABLE_H
 
-#ifndef FRYDOM_FRDYNAMICCABLE_H
-#define FRYDOM_FRDYNAMICCABLE_H
+#include "FrCable.h"
+#include "frydom/core/math/FrVector.h"
+#include "frydom/core/common/FrFEAMesh.h"
+#include "frydom/core/FrOffshoreSystem.h"
 
-//#include <memory>
-//#include "chrono/physics/ChSystem.h"
-//#include <frydom/core/common/FrNode.h>
-//#include <chrono_fea/ChVisualizationFEAmesh.h>
-//#include <frydom/cable/FrCatenaryLine.h>
-//
-//#include "chrono_fea/ChBeamSection.h"
-//#include "chrono_fea/ChElementCableANCF.h"
-//#include "chrono_fea/ChLinkPointFrame.h"
-//#include "chrono_fea/ChMesh.h"
-//#include "FrCable.h"
+#include <chrono/fea/ChMesh.h>
 
+namespace chrono{
+    namespace fea {
+        class ChNodeFEAxyzrot;
+        class ChBeamSectionAdvanced;
+    }
+    class ChLinkMateGeneric;
+}
 
-
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// TODO : REMETTRE EN PLACE !!!!
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
-
-
-
-// TODO: changer FrDynamicCable en FrANCFCable... --> pouvoir proposer d'autres modeles dynamiques de cable
-
-// TODO: harmoniser entre le cable catenaire et le cable dynamique !!!
-// TODO: faire une classe abstraite de base pour les cables afin d'harmoniser les methodes
-
-// TODO: mettre en place un (de)raffinement automatique...
-
-//using namespace chrono::fea;
 
 namespace frydom {
 
-//    // Forward declaration
-//    class FrBody;
-//
-//    /**
-//     * \class FrDynamicCable
-//     * \brief Class for defining a dynamic cable.
-//     */
-//    class FrDynamicCable : public ChMesh, public FrCable {
-//
-//    private:
-//
-//        std::shared_ptr<ChNodeFEAxyzD> m_starting_node_fea;
-//        std::shared_ptr<ChNodeFEAxyzD> m_ending_node_fea;
-//
-//        std::shared_ptr<ChBeamSectionCable> m_section;
-//
-//        double m_rayleighDamping;   ///< Rayleigh damping
-//        unsigned int m_nbElements;  ///< Number of elements in the finite element cable model
-//
-//        bool m_drawCableElements = true;
-//        bool m_drawCableNodes = true;
-//        double m_drawCableElementRadius = 0.05;
-//        double m_drawCableNodeSize = 0.1;
-//
-//    public:
-//        FrDynamicCable();
-//        // TODO: faire un constructeur prenant uniquement les parametres du cable (pas les frontieres)
-//        // TODO: utiliser l'attribut m_initialized pour eviter de devoir initialiser manuellement (auto lors de l(utilisation
-//        // du cable si m_initialized est false)
-//
-//        // TODO: faire constructeur par copie
-//
-//        void SetRayleighDamping(const double damping);
-//
-//        double GetRayleighDamping() const;
-//
-//        void SetNumberOfElements(const unsigned int nbElements);
-//
-//        unsigned int GetNumberOfElements() const;
-//
-//        void SetTargetElementLength();
-//
-//        std::shared_ptr<FrForce> GetStartingForce() const;  // TODO
-//
-//        std::shared_ptr<FrForce> GetEndingForce() const;  // TODO
-//
-//        chrono::ChVector<double> GetTension(const double s) const;  // TODO
-//
-//        chrono::ChVector<double> GetAbsPosition(const double s) const;  // TODO
-//
-//        chrono::ChVector<double> GetAbsPosition(const int iNode) {
-//            auto Node = dynamic_cast<ChNodeFEAxyz*>(GetNode(iNode).get());
-//            return Node->GetPos();
-//        }
-//
-//        chrono::ChVector<double> GetStartingNodeTension() const;  // TODO
-//
-//        chrono::ChVector<double> GetEndingNodeTension() const;  // TODO
-//
-//        double GetCableLength() {
-//            double Length = 0;
-//            for (int i=0; i<GetNnodes()-1;i++) {
-//                Length += (GetAbsPosition(i+1)-GetAbsPosition(i)).Length();
-//            }
-//        }
-//
-//        std::shared_ptr<ChNodeFEAxyzD> GetStartingNodeFEA() const;
-//        std::shared_ptr<ChNodeFEAxyzD> GetEndingNodeFEA() const;
-//
-//        void SetDrawRadius(const double radius);
-//
-//        void SetDrawNodeSize(const double size);
-//
-//        void GenerateAssets();
-//
-//        void InitializeSection();
-//
-//        void InitializeLinks();
-//
-//        /// Initialize the cable with given data
-//        void Initialize();
-//
-//        virtual void StepFinalize() override;
-//
-//
-//        /// Update internal time and time step for dynamic behaviour of the cable
-//        virtual void UpdateTime(const double time);;
-//
-//        void Update(double time, bool update_assets = true) override;
-//
-//    };
+    // Forward declaration
+    class FrDynamicCable;
 
-}
+    namespace internal{
 
-#endif //FRYDOM_FRDYNAMICCABLE_H
+        struct FrDynamicCableBase : public chrono::fea::ChMesh {
+
+            bool m_drawCableElements = true;
+            bool m_drawCableNodes = true;
+
+            std::shared_ptr<chrono::fea::ChNodeFEAxyzrot> m_starting_node_fea;
+            std::shared_ptr<chrono::fea::ChNodeFEAxyzrot> m_ending_node_fea;
+
+            // TODO Passer en FrLink? générer les links entre FEAMesh et bodies en dehors de FEAMesh
+            std::shared_ptr<chrono::ChLinkMateGeneric> m_startingHinge;
+            std::shared_ptr<chrono::ChLinkMateGeneric> m_endingHinge;
+
+            std::shared_ptr<chrono::fea::ChBeamSectionAdvanced> m_section;
+            FrDynamicCable* m_frydomCable;
+
+            explicit FrDynamicCableBase(FrDynamicCable* cable);
+
+            /// Initialize the cable
+            void Initialize();
+
+            void Update(double time, bool update_assets) override;
+
+            void SetStartingNode(Position position, Direction direction);
+            void SetEndingNode(Position position, Direction direction);
+
+            Position GetAbsPosition(int index, double eta);
+
+            Force GetTension(int index, double eta);
+
+            /// Initialize the links between the cable and the bodies
+            void InitializeLinks();
+
+        private:
+
+            /// Initialize the cable section
+            void InitializeSection();
+
+            /// Generate assets for the cable
+            void GenerateAssets();
+
+        };
+
+
+    }
+
+
+
+    class FrDynamicCable: public FrCable, public FrFEAMesh {
+    public:
+        std::shared_ptr<internal::FrDynamicCableBase> m_chronoCable;
+    private:
+
+
+
+        double m_rayleighDamping;   ///< Rayleigh damping
+        unsigned int m_nbElements;  ///< Number of elements in the finite element cable model
+
+        double m_drawCableElementRadius = 0.05;
+        double m_drawCableNodeSize = 0.1;
+
+    protected:
+
+        internal::FrDynamicCableBase* GetChronoItem_ptr() const override { return m_chronoCable.get(); }
+
+        std::shared_ptr<chrono::fea::ChMesh> GetChronoMesh() override { return m_chronoCable; }
+
+    public:
+
+        FrDynamicCable(const std::shared_ptr<FrNode> startingNode,
+                    const std::shared_ptr<FrNode> endingNode,
+                    double cableLength,
+                    double youngModulus,
+                    double sectionArea,
+                    double linearDensity,
+                    double rayleighDamping,
+                    unsigned int nbElements);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "ANCFCable"; }
+
+        void SetRayleighDamping(double damping);
+
+        double GetRayleighDamping() const;
+
+        void SetNumberOfElements(unsigned int nbElements);
+
+        unsigned int GetNumberOfElements() const;
+
+        void SetTargetElementLength();
+
+        void SetDrawRadius(double radius);
+
+        void SetDrawNodeSize(double size);
+
+        double GetDrawNodeSize() const;
+
+
+        //
+
+        /// Get the inside line tension at the lagrangian coordinate s, from the starting node to the ending node
+        /// \param s lagrangian coordinate
+        /// \param fc frame convention (NED/NWU)
+        /// \return inside line tension
+        Force GetTension(double s, FRAME_CONVENTION fc) const override;;
+
+        /// Get the line position at lagrangian coordinate s
+        /// \param s lagrangian coordinate
+        /// \param fc frame convention (NED/NWU)
+        /// \return line position
+        Position GetAbsPosition(double s, FRAME_CONVENTION fc) const override;;
+
+        /// Get the stretched length of the cable
+        /// \return stretched length
+        double GetStretchedLength() const override;;
+
+
+        //
+
+        /// Initialize the cable with given data
+        void Initialize() override;
+
+        void Update(double time) override {};
+
+        void InitializeLog() override;;
+
+        void StepFinalize() override;
+
+        friend void FrOffshoreSystem::AddANCFCable(std::shared_ptr<FrDynamicCable>);
+
+    };
+
+} // end namespace frydom
+#endif //FRYDOM_FRANCFCABLE_H

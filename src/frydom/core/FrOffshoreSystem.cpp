@@ -19,7 +19,7 @@
 #include "frydom/core/link/links_lib/FrLink.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrFEAMesh.h"
-#include "frydom/cable/FrANCFCable.h"
+#include "frydom/cable/FrDynamicCable.h"
 #include "frydom/core/force/FrForce.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/utils/FrIrrApp.h"
@@ -353,7 +353,7 @@ namespace frydom {
         m_feaMeshList.push_back(feaMesh);
     }
 
-    void FrOffshoreSystem::AddANCFCable(std::shared_ptr<FrANCFCable> cable) {
+    void FrOffshoreSystem::AddANCFCable(std::shared_ptr<FrDynamicCable> cable) {
 
         AddFEAMesh(cable);
 

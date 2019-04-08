@@ -34,16 +34,17 @@ int main(int argc, char* argv[]) {
     // Line properties :
 //    bool elastic = true;                    // non elastic catenary lines are only available for non stretched lines
     auto u = Direction(0., 0., -1.);        // definition of the direction of the uniform load distribution
-    double unstretchedLength = 40.;         // unstretched length
+    double unstretchedLength = 18.;         // unstretched length
     double linearDensity = 616.538;         // linear density of the line
-    double EA = 1.5708e9;                   //
-    double sectionArea = 0.0001;              // section area
+    double EA = 1.5708e7;
+    double diameter = 0.1;                 //
+    double sectionArea = MU_PI * pow((0.5 * diameter), 2);              // section area
     double YoungModulus = EA / sectionArea; // Young modulus of the line
     double rayleighDamping = 0.;
     unsigned int nbElements = 50;
 
     // ANCF cable
-    auto ANCFCable = std::make_shared<FrANCFCable>(Node1, Node2, unstretchedLength, YoungModulus, sectionArea,
+    auto ANCFCable = std::make_shared<FrDynamicCable>(Node1, Node2, unstretchedLength, YoungModulus, sectionArea,
             linearDensity, rayleighDamping, nbElements);
 
     system.AddANCFCable(ANCFCable);

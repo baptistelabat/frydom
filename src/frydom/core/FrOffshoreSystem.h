@@ -84,7 +84,7 @@ namespace frydom {
     class FrFEAMesh;
     class FrEnvironment;
     class FrCable;
-    class FrANCFCable;
+    class FrDynamicCable;
     class FrPathManager;
 
     /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
@@ -343,7 +343,7 @@ namespace frydom {
         /// \param feaMesh FEA mesh to be added
         void AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
 
-        void AddANCFCable(std::shared_ptr<FrANCFCable> cable);
+        void AddANCFCable(std::shared_ptr<FrDynamicCable> cable);
 
 
         // ***** Environment *****
