@@ -14,7 +14,9 @@
 #include "chrono/assets/ChCylinderShape.h"
 #include "chrono/assets/ChBoxShape.h"
 #include "chrono/assets/ChSphereShape.h"
+#include "chrono/assets/ChTriangleMeshShape.h"
 
+#include "frydom/mesh/FrTriangleMeshConnected.h"
 #include "FrAssetOwner.h"
 
 #include "FrAsset.h"
@@ -42,6 +44,19 @@ namespace frydom{
     void FrAssetOwner::AddSphereShape(double radius) {
         auto shape = std::make_shared<chrono::ChSphereShape>();
         shape->GetSphereGeometry().rad = radius;
+        GetChronoItem_ptr()->AddAsset(shape);
+    }
+
+
+    void FrAssetOwner::AddMeshAsset(std::string obj_filename) {
+        auto mesh = std::make_shared<FrTriangleMeshConnected>();
+        mesh->LoadWavefrontMesh(obj_filename);
+        AddMeshAsset(mesh);
+    }
+
+    void FrAssetOwner::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh) {
+        auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
+        shape->SetMesh(mesh);
         GetChronoItem_ptr()->AddAsset(shape);
     }
 

@@ -15,13 +15,11 @@
 
 
 #include "chrono/assets/ChColorAsset.h"
-#include "chrono/assets/ChTriangleMeshShape.h"
 
 
 #include "frydom/core/math/FrMatrix.h"
 #include "frydom/core/force/FrForce.h"
 #include "frydom/asset/FrAsset.h"
-#include "frydom/mesh/FrTriangleMeshConnected.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/geographicServices/FrGeographicServices.h"
 #include "frydom/asset/FrForceAsset.h"
@@ -243,19 +241,6 @@ namespace frydom {
 
     FrBody::ConstNodeIter FrBody::node_end() const {
         return m_nodes.cend();
-    }
-
-    void FrBody::AddMeshAsset(std::string obj_filename) {
-
-        auto mesh = std::make_shared<FrTriangleMeshConnected>();
-        mesh->LoadWavefrontMesh(obj_filename);
-        AddMeshAsset(mesh);
-    }
-
-    void FrBody::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh) {
-        auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
-        shape->SetMesh(mesh);
-        m_chronoBody->AddAsset(shape);
     }
 
     double FrBody::GetMass() const {

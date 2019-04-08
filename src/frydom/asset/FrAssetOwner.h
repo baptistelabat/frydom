@@ -56,6 +56,14 @@ namespace frydom {
         /// \param radius radius of the sphere shape.
         void AddSphereShape(double radius);  // TODO : permettre de definir un centre en coords locales du corps
 
+        /// Add a mesh as an asset for visualization given a WaveFront .obj file name
+        /// \param obj_filename filename of the asset to be added
+        void AddMeshAsset(std::string obj_filename);
+
+        /// Add a mesh as an asset for visualization given a FrTriangleMeshConnected mesh object
+        /// \param mesh mesh of the asset to be added
+        void AddMeshAsset(std::shared_ptr<FrTriangleMeshConnected> mesh);
+
         /// Add an asset for visualization, based on FrAsset, to the asset owner.
         /// Check FrAsset for a list of all its subclasses.
         /// \param asset asset to be added
