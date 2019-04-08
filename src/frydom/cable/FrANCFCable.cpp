@@ -237,15 +237,14 @@ namespace frydom {
 //            auto element = dynamic_cast<chrono::fea::ChElementCableANCF*>(GetElement(index).get());
             auto element = dynamic_cast<chrono::fea::ChElementBeamEuler*>(GetElement(index).get());
 
-            // FIXME : NEED Chrono to complete this method
             element->EvaluateSectionForceTorque(eta, Tension, Torque);
 
-            return {Tension.x(),0.,0.};
+            auto dir = element->GetNodeB()->GetPos() - element->GetNodeA()->GetPos();
+            dir.Normalize();
 
-//            auto dir = internal::ChVectorToVector3d<Position>(element->GetNodeA()->Get());
-//            dir = internal::ChVectorToVector3d<Position>(element->GetNodeB()->GetD());
+            // only the traction is kept (no bending, etc.)
+            return internal::ChVectorToVector3d<Force>(dir * Tension.x());
 
-//            return dir * Tension.x();
         }
 
 
@@ -325,7 +324,6 @@ namespace frydom {
             eta = 1;
         }
 //        Force Tension;
-        // FIXME : NEED Chrono to complete this method
         auto Tension = m_chronoCable->GetTension(index, eta);
 
         if (IsNED(fc)) internal::SwapFrameConvention(Tension);
@@ -393,7 +391,7 @@ namespace frydom {
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
                     ("Ending Node Tension","N", fmt::format("Ending node tension in world reference frame in {}",c_logFrameConvention),
-                     [this]() {return GetTension(GetUnstretchedLength(), c_logFrameConvention);});
+                     [this]() {return -GetTension(GetUnstretchedLength(), c_logFrameConvention);});
 
             //TODO : logger la position de la ligne pour un ensemble d'abscisses curvilignes?
 
