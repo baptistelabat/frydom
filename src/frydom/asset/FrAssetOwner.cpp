@@ -63,6 +63,38 @@ namespace frydom{
         GetChronoItem_ptr()->AddAsset(asset->GetChronoAsset());
     }
 
+    FrAssetOwner::BoxShapeConstContainer FrAssetOwner::GetBoxShapes() const {
+        FrAssetOwner::BoxShapeConstContainer result;
+        for (const auto& shape : m_boxShapes) {
+            result.push_back(std::const_pointer_cast<const FrBoxShape>(shape));
+        }
+        return result;
+    }
+
+    FrAssetOwner::CylinderShapeConstContainer FrAssetOwner::GetCylinderShapes() const {
+        FrAssetOwner::CylinderShapeConstContainer result;
+        for (const auto& shape : m_cylinderShapes) {
+            result.push_back(std::const_pointer_cast<const FrCylinderShape>(shape));
+        }
+        return result;
+    }
+
+    FrAssetOwner::SphereShapeConstContainer FrAssetOwner::GetSphereShapes() const {
+        FrAssetOwner::SphereShapeConstContainer result;
+        for (const auto& shape : m_sphereShapes) {
+            result.push_back(std::const_pointer_cast<const FrSphereShape>(shape));
+        }
+        return result;
+    }
+
+    FrAssetOwner::TriangleMeshShapeConstContainer FrAssetOwner::GetMeshAssets() const {
+        FrAssetOwner::TriangleMeshShapeConstContainer result;
+        for (const auto& shape : m_meshShapes) {
+            result.push_back(std::const_pointer_cast<const FrTriangleMeshShape>(shape));
+        }
+        return result;
+    }
+
     void FrAssetOwner::SetColor(NAMED_COLOR colorName) {
         SetColor(FrColor(colorName));
     }
