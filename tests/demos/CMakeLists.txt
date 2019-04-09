@@ -58,6 +58,10 @@ configure_file(../data/platform/mesh_Platform_GVA7500_Sym.obj . COPYONLY)
 
 configure_file(../data/bench/sphere/sphere_hdb.h5 . COPYONLY)
 configure_file(../data/bench/sphere/bench_sphere_regular.h5 . COPYONLY)
+configure_file(../data/bench/sphere/sphere_7814_faces.obj . COPYONLY)
+configure_file(../data/bench/sphere/Sphere_6200_faces.obj . COPYONLY)
+configure_file(../data/bench/sphere/Sphere_10000_faces.obj . COPYONLY)
+configure_file(../data/bench/sphere/Sphere_14350_faces.obj . COPYONLY)
 
 configure_file(../data/bench/DTMB5512/DTMB5512.obj . COPYONLY)
 configure_file(../data/bench/DTMB5512/DTMB5512.hdb5 . COPYONLY)
