@@ -73,6 +73,12 @@ namespace frydom {
                 m_waterDensity(waterDensity),
                 m_gravityAcceleration(gravityAcceleration) {}
 
+        FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh& clipped_mesh, mathutils::Vector3d<double> cog) :
+                m_waterDensity(waterDensity),
+                m_gravityAcceleration(gravityAcceleration),
+                m_clippedMesh(clipped_mesh),
+                m_centerOfGravity(cog) {}
+
         void Load(const mesh::FrMesh& mesh, mathutils::Vector3d<double> cog);
 
         void Process();

@@ -701,7 +701,6 @@ namespace frydom {
         if (!m_isInitialized) Initialize();
     }
 
-
     // Iterators
 
     FrOffshoreSystem::BodyIter FrOffshoreSystem::body_begin() {
