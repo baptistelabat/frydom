@@ -36,24 +36,17 @@ namespace frydom {
 
                 auto body = HDB->GetBody(BEMBody->get());
 
-                // Mass.
-                mathutils::Matrix66<double> generalizedMass = body->GetInertiaTensor(NWU).GetMatrix();
-                //mathutils::Matrix66<double> invGeneralizedMass = generalizedMass;
-                //invGeneralizedMass.Inverse();
+                for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
-                // Added mass for infinite frequency.
-                mathutils::Matrix66<double> infiniteAddedMass = BEMBody->get()->GetSelfInfiniteAddedMass();
-                //mathutils::Matrix66<double> invInfiniteAddedMass = infiniteAddedMass.inverse();
+                    mathutils::Matrix66<double> AddedMassCorrection = BEMBody->get()->GetSelfInfiniteAddedMass();
 
-                // Sum of all masses.
-                mathutils::Matrix66<double> sumMatrixMass = generalizedMass + infiniteAddedMass;
+                    if (BEMBodyMotion->get() == BEMBody->get()) {
+                        AddedMassCorrection += body->GetInertiaTensor(NWU).GetMatrix();
+                    }
 
-                // Inversion of the sum of all masses.
-                mathutils::Matrix66<double> invSumMatrixMass = sumMatrixMass;
-                invSumMatrixMass.Inverse();
-
-                //m_invAddedMassCorrection[BEMBody->get()] = - invGeneralizedMass * infiniteAddedMass * invSumMatrixMass;
-                m_invAddedMassCorrection[BEMBody->get()] = invSumMatrixMass;
+                    AddedMassCorrection.Inverse();
+                    m_invAddedMassCorrection[std::make_pair(BEMBody->get(), BEMBodyMotion->get())] = AddedMassCorrection;
+                }
             }
         }
 
@@ -65,27 +58,23 @@ namespace frydom {
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
                 auto body = HDB->GetBody(BEMBody->get());
-                auto resultOffset = GetBodyOffset(body);
+                auto qb = GetVariablesQb(body);
 
-                //for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
+                for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
-                    auto BEMBodyMotion = BEMBody;
+                    //auto BEMBodyMotion = BEMBody;
+                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->get());
+                    auto fb = GetVariablesFb(bodyMotion);
 
-                    auto bodyOffset = GetBodyOffset(body);
-
-                    auto fb = GetVariablesFb(body);
-                    auto qb = GetVariablesQb(body);
-
-                    auto invAddedMassCorrection = m_invAddedMassCorrection.at(BEMBody->get());
+                    auto invAddedMassCorrection = m_invAddedMassCorrection.at(std::make_pair(BEMBody->get(), BEMBodyMotion->get()));
 
                     for (int i=0; i<6; i++) {
                         qb(i) = 0.;
                         for (int j=0; j<6; j++) {
-                            //result(resultOffset + i) += invAddedMassCorrection(i, j) * vect(bodyOffset + j);
                            qb(i) += invAddedMassCorrection(i, j) * fb(j);
                         }
                     };
-                //}
+                }
                 this->SetVariables(body, qb, 0);
             }
         }
@@ -98,57 +87,50 @@ namespace frydom {
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
                 auto body = HDB->GetBody(BEMBody->get());
+                auto qb = GetVariablesQb(body);
 
-                auto resultOffset = GetBodyOffset(body);
+                for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
-                //for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
-                    auto BEMBodyMotion = BEMBody;
+                    //auto BEMBodyMotion = BEMBody;
+                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->get());
+                    auto fb = GetVariablesFb(bodyMotion);
 
-                    auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
-
-                    auto fb = GetVariablesFb(body);
-                    auto qb = GetVariablesQb(body);
-
-                    auto invAddedMassCorrection = m_invAddedMassCorrection.at(BEMBody->get());
+                    auto invAddedMassCorrection = m_invAddedMassCorrection.at(std::make_pair(BEMBody->get(), BEMBodyMotion->get()));
 
                     for (int i=0; i<6; i++) {
                         for (int j=0; j<6; j++) {
-                            //result(resultOffset + i) += invAddedMassCorrection(i, j) * vect(bodyOffset + j);
                             qb(i) += invAddedMassCorrection(i, j) * fb(j);
                         }
                     };
-                //}
+                }
                 this->SetVariables(body, qb, 0);
             }
         }
 
         void FrVariablesAddedMassBase::Compute_inc_Mb_v(chrono::ChMatrix<double>& result,
                                                          const chrono::ChMatrix<double>& vect) const {
+
             auto HDB = m_addedMassBase->GetRadiationModel()->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
                 auto body = HDB->GetBody(BEMBody->get());
+                auto qb = GetVariablesQb(body);
 
-                auto resultOffset = GetBodyOffset(body);
+                for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
-                //for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
-                    auto BEMBodyMotion = BEMBody;
-
-                    auto fb = GetVariablesFb(body);
-                    auto qb = GetVariablesQb(body);
-
-                    auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
+                    //auto BEMBodyMotion = BEMBody;
+                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->get());
+                    auto fb = GetVariablesFb(bodyMotion);
 
                     auto generalizedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get());
 
                     for (int i=0; i<6; i++) {
                         for (int j=0; j<6; j++) {
-                            //result(resultOffset + i) += generalizedMass(i, j) * vect(bodyOffset + j);
                             qb(i) += generalizedMass(i, j) * fb(j);
                         }
                     };
-                // };
+                };
                 this->SetVariables(body, qb, 0);
             }
         }
@@ -161,20 +143,22 @@ namespace frydom {
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
                 auto body = HDB->GetBody(BEMBody->get());
-                auto bodyOffset = GetBodyOffset(body);
-
-                auto fb = this->GetVariablesFb(body);
                 auto qb = this->GetVariablesQb(body);
 
-                auto generalizedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
+                for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
-                for (int i=0; i<6; i++) {
-                    for (int j=0; j<6; j++) {
-                        //result(bodyOffset + i) += c_a * generalizedMass(i, j) * vect(bodyOffset + j);
-                        qb(i) += c_a * generalizedMass(i, j) * fb(j);
+                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->get());
+                    auto fb = this->GetVariablesFb(bodyMotion);
+
+                    auto generalizedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get());
+
+                    for (int i = 0; i < 6; i++) {
+                        for (int j = 0; j < 6; j++) {
+                            qb(i) += c_a * generalizedMass(i, j) * fb(j);
+                        }
                     }
+                    this->SetVariables(body, qb, 0);
                 }
-                this->SetVariables(body, qb, 0);
             }
         }
 

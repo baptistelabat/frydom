@@ -86,6 +86,28 @@ namespace frydom {
     }
 
 
+    /// ##CC SandBox for hydrodynamic interactions
+
+    /*
+    class FrAddedMassBase2 {
+
+    private:
+
+        FrRadiationModel* m_frydomRadiationModel;
+
+    public:
+
+        explicit FrAddedMassBase2(FrRadiationModel* radiationModel);
+
+        //
+        // Update
+        //
+
+
+
+    }
+    */
+
 }  // end namespace frydom::internal
 
 

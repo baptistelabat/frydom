@@ -58,8 +58,8 @@ namespace frydom {
 
                 auto residualOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) ); //+off
 
-                    auto BEMBodyMotion = BEMBody;
-
+                for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
+                    //auto BEMBodyMotion = BEMBody;
                     auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) ); //+off
 
                     auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get());
@@ -73,7 +73,7 @@ namespace frydom {
 
                     R.PasteSumVector(Mw, residualOffset, 0);
                     R.PasteSumVector(Iw, residualOffset + 3, 0);
-                //}
+                }
             }
         }
 
@@ -82,6 +82,7 @@ namespace frydom {
                                               const chrono::ChVectorDynamic<>& L, const chrono::ChVectorDynamic<>& Qc) {
 
             // FIXME : Nothing to do since added mass variables encapsulate the body variables
+            /*
             auto HDB = m_frydomRadiationModel->GetHydroDB();
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
@@ -91,6 +92,7 @@ namespace frydom {
                 m_variables->Get_qb().PasteClippedMatrix(v, bodyOffset, 0, 6, 1, 0, 0);
                 m_variables->Get_fb().PasteClippedMatrix(R, bodyOffset, 0, 6, 1, 0, 0);
             }
+            */
         }
 
         void FrAddedMassBase::IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
@@ -120,6 +122,29 @@ namespace frydom {
             auto chronoBody = body->GetChronoBody();
             chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(qb, offset, 0, 6, 1, 0, 0);
         }
+
+        /// ##CC SandBox added mass base 2
+
+        /**
+        FrAddedMassBase2::FrAddedMassBase2(FrRadiationModel *radiationModel) :
+            m_frydomRadiationModel(radiationModel) {
+
+            auto HDB = m_frydomRadiationModel->GetHydroDB();
+
+
+            for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
+
+                auto residualOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
+
+                auto BEMBodyMotion = BEMBody;
+
+                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
+
+                auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get())
+
+            }
+        }
+        **/
 
     }  // end namespace frydom::internal
 
