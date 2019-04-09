@@ -18,28 +18,29 @@ where
 
 - :math:`(C_X, C_Y, C_N)` are the polar flow coefficients, respectively in surge sway and yaw, relatively to :math:`\theta` (no dimension),
 - :math:`\rho_{fluid}` is the fluid density (air or water),
-- :math:`\mathbf{u}` is the relative velocity of the fluid, past the body. [CC: preciser. Est-ce qu'il s'agit de la vitesse relative par rapport à la vitesse instantannée du navire ou est-ce que l'on considère la vitesse stationnaire du navire ?]
-- :math:`\theta` is the angle between the body heading and fluid flow velocity. [CC: attention on utilise \alpha ailleurs pour cet angle (Mean wave drift force)]
+- :math:`\mathbf{u}` is the relative velocity of the fluid, past the body. See the :any:`following figure <fig_relative_flow_velocity>`.
+..  [CC: preciser. Est-ce qu'il s'agit de la vitesse relative par rapport à la vitesse instantannée du navire ou est-ce que l'on considère la vitesse stationnaire du navire ?]
+- :math:`\theta` is the angle between the body heading and fluid flow velocity.
+..  [CC: attention on utilise \alpha ailleurs pour cet angle (Mean wave drift force)]
 - :math:`A_X, A_Y, A_N` are the projected area of the body: above the waterline for the wind, below the waterline for the current, [CC: passer les aires en minuscules pour eviter toute ambiguité avec les amplitudes de houle]
 
-The surge and sway forces are calculated in the body reference frame and projected on the horizontal plane of the world
-reference frame afterwards, so that we do not get any vertical components. The yaw moment is also projected, so that
-the moment acts about the vertical direction only.
+.. note::
+    The surge and sway forces are calculated in the body reference frame and projected on the horizontal plane of the world
+    reference frame afterwards, so that we do not get any vertical components. The yaw moment is also projected, so that
+    the moment acts about the vertical direction only.
 
-[CC : à passer en note..]
-
+.. _fig_relative_flow_velocity:
 .. figure:: _static/flow_velocity.png
     :align: center
     :alt: Relative flow velocity
 
     Relative flow velocity, past the body
+..
+    REFAIRE CETTE FIGURE !!!
 
+..
+    The computations are done within FRyDoM in NWU and GOTO conventions, however you can give polar coefficients in NED or NWU and in GOTO or COMEFROM, convention.
 
-The computations are done within FRyDoM in NWU and GOTO conventions, however you can give polar coefficients in NED or NWU
-and in GOTO or COMEFROM, convention.
-
-[CC: utile ?, c'est une note d'implémentation]
-[CC : Ur n'est pas defini]
 
 References
 __________
