@@ -69,6 +69,7 @@ Features
 Features in development
 -----------------------
 
++ Hydrodynamic interactions
 + Cables/Seabed interactions
 + Actuators control e.g. cranes, winches, etc.
 + Nonsmooth contact
