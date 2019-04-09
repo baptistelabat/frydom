@@ -286,6 +286,9 @@ namespace frydom {
             ending_body->AddExternalForce(m_endingForce);
         }
 
+        // Initialize the breaking tension value, for visualization only
+        InitBreakingTension();
+
         // Generate assets for the cable
         if (is_lineAsset) {
 
@@ -349,6 +352,20 @@ namespace frydom {
         FrObject::SendLog();
 
     }
+
+    void FrCatenaryLine::InitBreakingTension() {
+
+        if (GetBreakingTension()==0){
+            double ds = GetUnstretchedLength()/ GetAssetElements();
+            double max = GetTension(0, NWU).norm();
+            for (int i=1; i< GetAssetElements(); i++){
+                auto LocalTension = GetTension(i*ds, NWU).norm();
+                if (LocalTension > max) max = LocalTension;
+            }
+            SetBreakingTension(1.25*max);  // TODO : affiner le critere...
+        }
+    }
+
 
     std::shared_ptr<FrCatenaryLine>
     make_catenary_line(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,

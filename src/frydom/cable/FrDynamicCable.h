@@ -6,7 +6,6 @@
 #define FRYDOM_FRANCFCABLE_H
 
 #include "FrCable.h"
-#include "frydom/core/math/FrVector.h"
 #include "frydom/core/common/FrFEAMesh.h"
 #include "frydom/core/FrOffshoreSystem.h"
 
@@ -102,6 +101,11 @@ namespace frydom {
      *
      *For more information, refer to : http://www.projectchrono.org/assets/white_papers/FEA/euler_beams.pdf
      */
+     //TODO : Additional linear loads (Morison, hydrostatic, etc.)
+     //TODO : Breaking of cable
+     //TODO : Unrolling
+     //TODO : Contact with seabed or other cable/bodies
+     //TODO : Check for deactivation
     class FrDynamicCable: public FrCable, public FrFEAMesh {
 
     public:
@@ -169,7 +173,11 @@ namespace frydom {
 
         /// Set the radius of the cable elements assets
         /// \param radius Radius of the cable elements assets
-        void SetDrawRadius(double radius);
+        void SetDrawElementRadius(double radius);
+
+        /// Get the radius of the cable elements assets
+        /// \return Radius of the cable elements assets
+        double GetDrawElementRadius();
 
         /// Set the size of the cable nodes assets
         /// \param size Size of the cable nodes assets

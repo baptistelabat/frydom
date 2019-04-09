@@ -34,9 +34,9 @@ int main(int argc, char* argv[]) {
     // Line properties :
 //    bool elastic = true;                    // non elastic catenary lines are only available for non stretched lines
     auto u = Direction(0., 0., -1.);        // definition of the direction of the uniform load distribution
-    double unstretchedLength = 18.;         // unstretched length
+    double unstretchedLength = 25.;         // unstretched length
     double linearDensity = 616.538;         // linear density of the line
-    double EA = 1.5708e7;
+    double EA = 1.5708e6;
     double diameter = 0.1;                 //
     double sectionArea = MU_PI * pow((0.5 * diameter), 2);              // section area
     double YoungModulus = EA / sectionArea; // Young modulus of the line
@@ -47,11 +47,11 @@ int main(int argc, char* argv[]) {
     auto ANCFCable = std::make_shared<FrDynamicCable>(Node1, Node2, unstretchedLength, YoungModulus, sectionArea,
             linearDensity, rayleighDamping, nbElements);
 
+//    ANCFCable->SetBreakingTension(1.8e6);
+
     system.AddANCFCable(ANCFCable);
 
     // Catenary line
-//    linearDensity += sectionArea * system.GetEnvironment()->GetFluidDensity(AIR);
-    linearDensity *= 9.81;
 
     auto CatenaryLine = make_catenary_line(Node1,Node2,&system,true,YoungModulus,sectionArea,unstretchedLength,linearDensity,AIR);
     CatenaryLine->SetAssetElements(50);

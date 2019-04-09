@@ -236,6 +236,8 @@ namespace frydom {
         //--------------------------------------------------------------------------------------------------------------
     private :
 
+        void InitBreakingTension();
+
         /// Catenary line update method
         /// \param time time of the simulation
         void Compute(double time) override;

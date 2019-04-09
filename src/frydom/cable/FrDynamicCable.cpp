@@ -67,11 +67,13 @@ namespace frydom {
             // Assets for the cable visualisation
             if (m_drawCableElements) {
                 auto elements_assets = std::make_shared<chrono::fea::ChVisualizationFEAmesh>(*this);
-                elements_assets->SetFEMdataType(chrono::fea::ChVisualizationFEAmesh::E_PLOT_ANCF_BEAM_AX);
+                elements_assets->SetFEMdataType(chrono::fea::ChVisualizationFEAmesh::E_PLOT_ELEM_BEAM_TX);
+                elements_assets->SetColorscaleMinMax(-m_frydomCable->GetBreakingTension(), m_frydomCable->GetBreakingTension()); //1799620
+//                elements_assets->SetFEMdataType(chrono::fea::ChVisualizationFEAmesh::E_PLOT_ANCF_BEAM_AX);
 //                elements_assets->SetColorscaleMinMax(-0.4, 0.4);
                 elements_assets->SetSmoothFaces(true);
                 elements_assets->SetWireframe(false);
-                m_section->SetDrawCircularRadius(m_frydomCable->GetDrawNodeSize());
+                m_section->SetDrawCircularRadius(m_frydomCable->GetDrawElementRadius());
                 ChMesh::AddAsset(elements_assets);
             }
 
@@ -182,6 +184,17 @@ namespace frydom {
                 // Generate constraints between boundaries and bodies
                 InitializeLinks();
 
+                if (m_frydomCable->GetBreakingTension() == 0.) {
+
+                    if (elastic){
+                        double tensionMax = (distanceBetweenNodes.norm() - m_frydomCable->GetUnstretchedLength()) * m_frydomCable->GetYoungModulus()*m_frydomCable->GetSectionArea()/m_frydomCable->GetUnstretchedLength();
+                        m_frydomCable->SetBreakingTension(1.2*tensionMax);
+                    } else{
+                        m_frydomCable->SetBreakingTension(1.2*catenaryLine->GetBreakingTension());
+                    }
+
+                }
+
                 // Generate assets for the cable
                 GenerateAssets();
 
@@ -273,8 +286,12 @@ namespace frydom {
         m_nbElements = static_cast<unsigned int>(int(floor(GetUnstretchedLength() / elementLength)));
     }
 
-    void FrDynamicCable::SetDrawRadius(double radius) {
+    void FrDynamicCable::SetDrawElementRadius(double radius) {
         m_drawCableElementRadius = radius;
+    }
+
+    double FrDynamicCable::GetDrawElementRadius() {
+        return m_drawCableElementRadius;
     }
 
     void FrDynamicCable::SetDrawNodeSize(double size) {
