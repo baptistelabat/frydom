@@ -88,6 +88,11 @@ list(APPEND SRC_FILES
         misc/FrColors.cpp
         )
 
+# STATICS
+list(APPEND SRC_FILES
+        statics/FrStaticAnalysis.cpp
+        )
+
 
 set(FRYDOM_CORE_SOURCES "")
 foreach(file ${SRC_FILES})

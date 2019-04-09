@@ -137,6 +137,14 @@ namespace frydom {
         }
     }
 
+    void FrRadiationConvolutionModel::Clear() {
+
+        for (auto &BEMBody : *m_HDB) {
+            m_recorder[BEMBody.get()].Clear();
+        }
+
+    }
+
     void FrRadiationConvolutionModel::Compute(double time) {
 
         if (std::abs(time - GetSystem()->GetTime()) < 0.1*GetSystem()->GetTimeStep() and
@@ -271,7 +279,7 @@ namespace frydom {
             // Add the fields to be logged here
             // TODO: A completer
             m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return GetTime(); });
+                                        [this]() { return m_system->GetTime(); });
 
             // Initialize the message
             FrObject::InitializeLog(logPath);

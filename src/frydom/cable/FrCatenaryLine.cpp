@@ -322,7 +322,7 @@ namespace frydom {
 
             // Add the fields to be logged here
             m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return GetTime(); });
+                                        [this]() { return m_system->GetTime(); });
 
             m_message->AddField<double>("Stretched Length", "m", "Stretched length of the catenary line",
                                         [this]() { return GetStretchedLength(); });

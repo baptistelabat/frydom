@@ -3,14 +3,13 @@
 Environment
 ***********
 
-The environment model contains all information about the surrounding of the study.
-
+The environment represent all information related to the sea state, current, atmospheric conditions, topology.
 
 .. toctree::
     :maxdepth: 3
 
-    flow_field_model
     fluid_physical_properties
+    flow_field_model
     waves/linear_wave_theory/index
     chart_datums
     tidal_theory

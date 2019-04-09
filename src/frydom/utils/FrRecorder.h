@@ -66,6 +66,8 @@ namespace frydom {
 
         void Initialize();
 
+        void Clear();
+
         boost::circular_buffer<T> GetData() const;
 
         std::vector<double> GetTime() const;
@@ -112,6 +114,12 @@ namespace frydom {
     void FrTimeRecorder<T>::Initialize() {
         m_size = int(m_timePersistence / m_timeStep);
         m_data.set_capacity(m_size);
+    }
+
+    template <class T>
+    void FrTimeRecorder<T>::Clear() {
+        m_data.clear();
+        Initialize();
     }
 
     template <class T>

@@ -50,6 +50,9 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "LinearDamping"; }
 
+        /// Return true if the force is included in the static analysis
+        bool IncludedInStaticAnalysis() const override {return true;}
+
         void SetNull();
 
         /// Setter for the whole damping matrix. Translations are upper left and rotations are lower right.

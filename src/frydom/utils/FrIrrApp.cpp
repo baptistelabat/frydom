@@ -13,13 +13,14 @@
 
 #include "FrIrrCamera.h"
 
+#include "frydom/core/FrOffshoreSystem.h"
 
 
 #define SQ2_2 (sqrt(2.)/2.)
 
 namespace frydom {
 
-    FrIrrApp::FrIrrApp(chrono::ChSystem* system, double dist)
+    FrIrrApp::FrIrrApp(FrOffshoreSystem* frSystem, chrono::ChSystem* system, double dist)
             : chrono::irrlicht::ChIrrApp(system,
                                          L"FRyDoM viewer",
                                          irr::core::dimension2d<irr::u32>(800, 600),
@@ -27,7 +28,7 @@ namespace frydom {
                                          false,
                                          true,
                                          irr::video::EDT_OPENGL),
-                                         m_system(system)
+                                         m_system(frSystem)
                                          {
 
         SetSkyBox();
@@ -96,7 +97,7 @@ namespace frydom {
 
         // Temporal loop.
         while (GetDevice()->run()) {
-            std::cout << "Time : " << m_system->GetChTime() << std::endl;
+            std::cout << "Time : " << m_system->GetTime() << std::endl;
             BeginScene();
             DrawAll();
             // Time-stepping.
@@ -104,7 +105,7 @@ namespace frydom {
             EndScene();
 
             // Condition to stop the time-domain simulation using the time after time-stepping.
-            if (endTime > 0. && m_system->GetChTime() > endTime) break; // If the endTime given is negative or null, the loop is infinite :)
+            if (endTime > 0. && m_system->GetTime() > endTime) break; // If the endTime given is negative or null, the loop is infinite :)
 
 
         }
@@ -118,6 +119,22 @@ namespace frydom {
         while (GetDevice()->run()) {
             BeginScene();
             DrawAll();
+            EndScene();
+        }
+
+    }
+
+    void FrIrrApp::VisualizeStaticAnalysis(){
+        AssetBindAll();
+        AssetUpdateAll();
+
+        while (GetDevice()->run()) {
+            BeginScene();
+            DrawAll();
+
+            m_system->GetStaticAnalysis()->SetNbIteration(2);
+            m_system->SolveStaticWithRelaxation();
+
             EndScene();
         }
 

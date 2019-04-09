@@ -118,6 +118,9 @@ namespace frydom {
         /// Activate or deactivate the force
         void SetActive(bool active);
 
+        /// Return true if the force is included in the static analysis
+        virtual bool IncludedInStaticAnalysis() const {return false;}
+
         // Logging
 
         /// Initialize the log

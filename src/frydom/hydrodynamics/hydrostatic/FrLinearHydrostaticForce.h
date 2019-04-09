@@ -57,6 +57,9 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "LinearHydrostaticForce"; }
 
+        /// Return true if the force is included in the static analysis
+        bool IncludedInStaticAnalysis() const override {return true;}
+
         /// Get the hydrostatic stiffness matrix of the hydrostatic force
         /// \return Hydrostatic stiffness matrix
         FrLinearHydrostaticStiffnessMatrix* GetStiffnessMatrix() { return &m_stiffnessMatrix; }

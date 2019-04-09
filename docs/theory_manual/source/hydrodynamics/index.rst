@@ -6,10 +6,11 @@ Hydrodynamics
 .. toctree::
     :maxdepth: 2
 
-    body_rotations
-    linear_potential_flow_theory/equilibrium_frame
-    linear_potential_flow_theory/linear_potential_flow
-    linear_potential_flow_theory/impulse_response_and_convolution
+    linear_potential_flow
+    hydrostatics
+    wave_excitation
+    radiation
+    wave_drift
     morison
     current_and_wind_loads
     ITTC78

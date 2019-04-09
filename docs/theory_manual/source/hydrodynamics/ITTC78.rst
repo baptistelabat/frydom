@@ -15,7 +15,9 @@ where
 - :math:`V` is the ship velocity
 - :math:`C_t` is the total resistance coefficient associated
 
-This coefficient is given by
+The total resistance force is aligned with the heading of the ship and opposite to the vessel advance speed.
+
+The total resistance coefficient is given by
 
 .. math::
     C_t = (1+k) C_{f} + C_{r} + C_{a} + C_{aa} + C_{app}

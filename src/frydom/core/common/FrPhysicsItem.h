@@ -73,6 +73,8 @@ namespace frydom {
         /// \return Chrono related physics item
         virtual std::shared_ptr<internal::FrPhysicsItemBase> GetChronoPhysicsItem() const ;
 
+        friend void FrOffshoreSystem::RemovePhysicsItem(std::shared_ptr<FrPhysicsItem>);
+
     public:
 
         FrPhysicsItem();
@@ -84,6 +86,9 @@ namespace frydom {
 
         /// Activate or deactivate the force
         void SetActive(bool active);
+
+        /// Return true if the physics item is included in the static analysis
+        virtual bool IncludedInStaticAnalysis() const {return true;}
 
         void Update(double time);
 
