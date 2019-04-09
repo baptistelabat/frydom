@@ -18,6 +18,7 @@ set(DEMOS
         bench_SphereDecay
         bench_SphereRegular
         bench_DTMB5512_captive
+        bench_Ellipsoid_OMAE2014
         )
 
 
@@ -71,15 +72,28 @@ configure_file(../data/Mesh_clipper/searev.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/searev_clip.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/BARGE.obj . COPYONLY)
 
-configure_file(../data/Cylinder/Free_cylinder_2900_panels.obj . COPY)
-configure_file(../data/Cylinder/Free_cylinder_3800_panels.obj . COPY)
-configure_file(../data/Cylinder/Free_cylinder_5100_panels.obj . COPY)
-configure_file(../data/Cylinder/Free_cylinder_6000_panels.obj . COPY)
-configure_file(../data/Cylinder/Free_cylinder_8000_panels.obj . COPY)
-configure_file(../data/Cylinder/Free_cylinder_9700_panels.obj . COPY)
-configure_file(../data/Cylinder/Free_cylinder_10500_panels.obj . COPY)
-configure_file(../data/Cylinder/Free_cylinder_11600_panels.obj . COPY)
+configure_file(../data/Cylinder/Free_cylinder_2900_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_3800_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_5100_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_6000_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_8000_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_9700_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_10500_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_11600_panels.obj . COPYONLY)
 
-configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPY)
-configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPY)
-configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPY)
+configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPYONLY)
+configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPYONLY)
+configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPYONLY)
+
+configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_2880_faces.obj . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_mean_position.obj . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4200_faces.obj . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2880_faces.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4200_faces.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_634_faces_with_sym.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_1416_faces_with_sym.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2774_faces_with_sym.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2880_faces_with_sym_mean_position.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4500_faces_WAMIT_mesh_sym_mean_position.hdb5 . COPYONLY)
+
+
