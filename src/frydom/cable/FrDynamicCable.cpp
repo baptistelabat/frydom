@@ -17,6 +17,8 @@
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/body/FrBody.h"
 
+#include <type_traits>
+
 namespace frydom {
 
     namespace internal {
@@ -84,18 +86,6 @@ namespace frydom {
                 ChMesh::AddAsset(node_assets);
             }
 
-        }
-
-        void FrDynamicCableBase::SetStartingNode(Position position, Direction direction) {
-            auto ChPos = internal::Vector3dToChVector(position);
-            auto ChDir = internal::Vector3dToChVector(direction);
-            m_starting_node_fea = std::make_shared<chrono::fea::ChNodeFEAxyzrot>(chrono::ChFrame<double>(ChPos, ChDir));
-        }
-
-        void FrDynamicCableBase::SetEndingNode(Position position, Direction direction) {
-            auto ChPos = internal::Vector3dToChVector(position);
-            auto ChDir = internal::Vector3dToChVector(direction);
-            m_ending_node_fea = std::make_shared<chrono::fea::ChNodeFEAxyzrot>(chrono::ChFrame<double>(ChPos, ChDir));
         }
 
         void FrDynamicCableBase::Initialize() {
@@ -216,7 +206,7 @@ namespace frydom {
 
         }
 
-        Position FrDynamicCableBase::GetAbsPosition(int index, double eta) {
+        Position FrDynamicCableBase::GetNodePositionInWorld(int index, double eta) {
 
             chrono::ChVector<double> Pos; chrono::ChQuaternion<double> Rot;
 
@@ -278,9 +268,9 @@ namespace frydom {
         return m_nbElements;
     }
 
-    void FrDynamicCable::SetTargetElementLength() {
-        // TODO: on donne une longueur cible d'element fini et ca calcule une discretisation spatiale basee sur la
-        // longueur du cable ainsi qu'un nombre subsequent d'elements
+    void FrDynamicCable::SetTargetElementLength(double elementLength) {
+        assert(elementLength>0. && elementLength<GetUnstretchedLength());
+        m_nbElements = static_cast<unsigned int>(int(floor(GetUnstretchedLength() / elementLength)));
     }
 
     void FrDynamicCable::SetDrawRadius(double radius) {
@@ -340,7 +330,7 @@ namespace frydom {
             eta = 1;
         }
 
-        auto Pos = m_chronoCable->GetAbsPosition(index, eta);
+        auto Pos = m_chronoCable->GetNodePositionInWorld(index, eta);
 
         if (IsNED(fc)) internal::SwapFrameConvention(Pos);
 

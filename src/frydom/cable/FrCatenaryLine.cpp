@@ -297,6 +297,7 @@ namespace frydom {
     }
 
     void FrCatenaryLine::Compute(double time) {
+
         UpdateTime(time);
         UpdateState();
 

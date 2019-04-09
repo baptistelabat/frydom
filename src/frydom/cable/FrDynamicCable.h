@@ -28,36 +28,55 @@ namespace frydom {
 
     namespace internal{
 
+        /**
+         * /class FrDynamicCableBase
+         * /Brief Base class for the Dynamic Cable
+         * This class contains the Finite Element Analysis (FEA) mesh, starting and ending nodes and hinges, along with
+         * the section properties (linear density, section, inertia, Young modulus, Rayleigh damping, etc.)
+         *
+         * /see FrDynamicCable
+         */
         struct FrDynamicCableBase : public chrono::fea::ChMesh {
 
-            bool m_drawCableElements = true;
-            bool m_drawCableNodes = true;
+            FrDynamicCable* m_frydomCable;      ///< pointer to the Dynamic cable containing this base class
 
-            std::shared_ptr<chrono::fea::ChNodeFEAxyzrot> m_starting_node_fea;
-            std::shared_ptr<chrono::fea::ChNodeFEAxyzrot> m_ending_node_fea;
+            bool m_drawCableElements = true;    ///< Boolean to check if the FEA elements are to be drawnn
+            bool m_drawCableNodes = true;       ///< Boolean to check if the FEA nodes are to be drawnn
 
-            // TODO Passer en FrLink? générer les links entre FEAMesh et bodies en dehors de FEAMesh
-            std::shared_ptr<chrono::ChLinkMateGeneric> m_startingHinge;
-            std::shared_ptr<chrono::ChLinkMateGeneric> m_endingHinge;
+            std::shared_ptr<chrono::fea::ChNodeFEAxyzrot> m_starting_node_fea;  ///< Starting node
+            std::shared_ptr<chrono::fea::ChNodeFEAxyzrot> m_ending_node_fea;    ///< Ending node
 
-            std::shared_ptr<chrono::fea::ChBeamSectionAdvanced> m_section;
-            FrDynamicCable* m_frydomCable;
+            std::shared_ptr<chrono::ChLinkMateGeneric> m_startingHinge;         ///< Starting hinge, to connect to a body
+            std::shared_ptr<chrono::ChLinkMateGeneric> m_endingHinge;           ///< Ending hinge, to connect to a body
 
+            std::shared_ptr<chrono::fea::ChBeamSectionAdvanced> m_section;      ///< Section properties (linear density, section, inertia, Young modulus, Rayleigh damping, etc.)
+
+            /// Constructor of the FrDynamicCableBase
+            /// \param cable pointer to the FrDynamicCable containing this base class
             explicit FrDynamicCableBase(FrDynamicCable* cable);
 
             /// Initialize the cable
             void Initialize();
 
+            /// Update time dependent data, for all elements.
+            /// Updates all [A] coord.systems for all (corotational) elements.
             void Update(double time, bool update_assets) override;
 
-            void SetStartingNode(Position position, Direction direction);
-            void SetEndingNode(Position position, Direction direction);
+            /// Get the position of the dynamic cable at the local position eta in [-1,1], of the indexth element
+            /// \param index index of the cable element
+            /// \param eta Local position on the element, in [-1,1]
+            /// \return Position of the cable, in the world reference frame
+            Position GetNodePositionInWorld(int index, double eta);
 
-            Position GetAbsPosition(int index, double eta);
-
+            /// Get the axial tension (compression only, no bending) of the dynamic cable at the local position
+            /// eta in [-1,1], of the indexth element
+            /// \param index index of the cable element
+            /// \param eta Local position on the element, in [-1,1]
+            /// \return Axial tension of the dynamic cable, in world reference frame
             Force GetTension(int index, double eta);
 
-            /// Initialize the links between the cable and the bodies
+            /// Initialize the links (hinges) between the cable and the bodies
+            //FYI : Can't be changed to private, since it's friend with FrBody (need chronoBody)
             void InitializeLinks();
 
         private:
@@ -75,18 +94,28 @@ namespace frydom {
 
 
 
+    /**
+     * \class FrDynamicCable FrDynamicCable.h
+     * \brief Class for dynamic cable, subclass of FrCable and FrFEAMesh
+     * The dynamic cable is based on a Finite Element Analysis (FEA) cable, with an Euler-Bernoulli formulation on a
+     * simple beam element with two nodes. The section and material properties are assumed constant along the beam.
+     *
+     *For more information, refer to : http://www.projectchrono.org/assets/white_papers/FEA/euler_beams.pdf
+     */
     class FrDynamicCable: public FrCable, public FrFEAMesh {
+
     public:
-        std::shared_ptr<internal::FrDynamicCableBase> m_chronoCable;
+
+        std::shared_ptr<internal::FrDynamicCableBase> m_chronoCable;    ///< pointer to the Chrono cable
+
     private:
 
+        double m_rayleighDamping;               ///< Rayleigh damping
+        unsigned int m_nbElements;              ///< Number of elements in the finite element cable model
 
-
-        double m_rayleighDamping;   ///< Rayleigh damping
-        unsigned int m_nbElements;  ///< Number of elements in the finite element cable model
-
-        double m_drawCableElementRadius = 0.05;
-        double m_drawCableNodeSize = 0.1;
+        // Asset parameters
+        double m_drawCableElementRadius = 0.05; ///< Radius of the cable element assets
+        double m_drawCableNodeSize = 0.1;       ///< Size of the cable node assets
 
     protected:
 
@@ -96,37 +125,62 @@ namespace frydom {
 
     public:
 
-        FrDynamicCable(const std::shared_ptr<FrNode> startingNode,
-                    const std::shared_ptr<FrNode> endingNode,
-                    double cableLength,
-                    double youngModulus,
-                    double sectionArea,
-                    double linearDensity,
-                    double rayleighDamping,
-                    unsigned int nbElements);
+        /// Constructor of the Dynamic Cable
+        /// \param startingNode Starting node
+        /// \param endingNode Ending node
+        /// \param cableLength unstretched length of the cable, in m
+        /// \param youngModulus Young modulus, in Pa
+        /// \param sectionArea Section area, in m²
+        /// \param linearDensity Linear density, in Kg/m
+        /// \param rayleighDamping Rayleigh damping
+        /// \param nbElements Number of elements/discretization
+        FrDynamicCable( std::shared_ptr<FrNode> startingNode,
+                        std::shared_ptr<FrNode> endingNode,
+                        double cableLength,
+                        double youngModulus,
+                        double sectionArea,
+                        double linearDensity,
+                        double rayleighDamping,
+                        unsigned int nbElements );
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "ANCFCable"; }
 
+        /// Set the Rayleigh damping coefficient (only stiffness related coefficient is included in chrono model, as in: R = r * K )
+        /// \param damping Raleigh damping
         void SetRayleighDamping(double damping);
 
+        /// Get the Rayleigh damping coefficient
+        /// \return Raleigh damping
         double GetRayleighDamping() const;
 
+        /// Set the number of elements/discretization of the cable
+        /// \param nbElements Number of elements
         void SetNumberOfElements(unsigned int nbElements);
 
+        /// Get the number of elements of the cable
+        /// \return Number of elements
         unsigned int GetNumberOfElements() const;
 
-        void SetTargetElementLength();
+        /// Set the number of elements based on a target element length
+        /// \param ElementLength Target length of the elements
+        void SetTargetElementLength(double ElementLength);
 
+        /// Set the radius of the cable elements assets
+        /// \param radius Radius of the cable elements assets
         void SetDrawRadius(double radius);
 
+        /// Set the size of the cable nodes assets
+        /// \param size Size of the cable nodes assets
         void SetDrawNodeSize(double size);
 
+        /// Get the size of the cable nodes assets
+        /// \return Size of the cable nodes assets
         double GetDrawNodeSize() const;
 
 
-        //
+        // Virtual methods, from FrCable
 
         /// Get the inside line tension at the lagrangian coordinate s, from the starting node to the ending node
         /// \param s lagrangian coordinate
@@ -145,16 +199,23 @@ namespace frydom {
         double GetStretchedLength() const override;;
 
 
-        //
+        // Virtual methods, from FEAMesh
 
         /// Initialize the cable with given data
         void Initialize() override;
 
+        /// Update the internal parameters of the cable
+        /// \param time time of the simulation
         void Update(double time) override {};
 
+        /// Initialize the log for the dynamic cable
         void InitializeLog() override;;
 
+        /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
+
+
+        // Friend definitions
 
         friend void FrOffshoreSystem::AddANCFCable(std::shared_ptr<FrDynamicCable>);
 
