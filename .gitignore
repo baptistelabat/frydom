@@ -131,3 +131,4 @@ cmake-build-release
 docs/doxygen/html
 docs/doxygen/latex
 docs/doxygen/xml
+tools/docs/_build
