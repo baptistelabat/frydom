@@ -3,12 +3,14 @@
 Bodies
 ======
 
-Bodies are basic object affected by a mass repartition and inertia properties. The position and rotation of the body are represented by a body reference frame fixed to the body. Various external constrains can be applied to a body such as external forces, cable link, motor, body constraints...
+Bodies are basic objects affected by a mass repartition and inertia properties. The position and rotation of the body are
+represented by a body reference frame fixed to the body. Various external constraints can be applied to a body such as
+external forces, cables, kinematic links, motors, body constraints...
 
 Position of the Center of Gravity (COG)
 ---------------------------------------
 
-Position of the center of gravity is defined in body local coordinate system respect to the body frame of reference.
+Position of the center of gravity is defined in body local coordinate system with respect to the body frame of reference.
 
 .. _body_COG:
 .. figure:: _static/body_COG.png
@@ -18,18 +20,20 @@ Position of the center of gravity is defined in body local coordinate system res
 
     Representation of the Center of Gravity position (COG)
 
-External forces and inertia properties can be set directly at the COG position or at arbitrary position. In this last case, transport formula are used to explain such quantities at COG.
+External forces and inertia properties can be set directly at the COG position or at an arbitrary position. In this last
+case, transport formula are used to express such quantities at COG.
 
 
 Mass and inertia
 ----------------
 
-The mass :math:`m` and inertial quantities :math:`\mathbf{I}_G` of the body are defined with a inertia tensor at COG :math:`G`.
+The mass :math:`m` and inertial quantities :math:`\mathbf{I}_G` of the body are defined using an inertia tensor at the
+center of gravity, denoted :math:`G`.
 
 .. math::
     \mathbb{I} = \Biggl \lbrace { m \atop \mathbf{I}_G } \Biggr \rbrace_G
 
-In case the inertia matrix is not defined at COG but in an other point :math:`M` of the body, the generalized Huygens theorem is used to
+In case the inertia matrix is not defined at :math:`G` but in an other point :math:`M` of the body, the generalized Huygens theorem is used to
 express the inertia matrix on an other point:
 
 .. math::
@@ -46,12 +50,13 @@ where :math:`\mathbf{MG} = [a, b, c]`.
 External forces
 ---------------
 
-The external forces represent the force and moment applied on the body. They can be applied at any arbitrary point :math:`P` on the body. It's convenient to represent the force and moment by a force tensor :
+The external forces represent the forces and moments applied on the body. They can be applied at any arbitrary point
+:math:`P` on the body. By convenient, they are represented by a force tensor :
 
 .. math::
     \lbrace \mathcal{T} \rbrace = \Biggl \lbrace { \mathbf{F} \atop \mathbf{M}_P } \Biggr \rbrace_P
 
-where :math:`\mathbf{F}` and :math:`\mathbf{M}_P` are respectively the force and moment applied on the body at :math:`P`.
+where :math:`\mathbf{F}` and :math:`\mathbf{M}_P` are respectively the force and moment applied on the body at position :math:`P`.
 
 To compute the equivalent force tensor at COG, the transport equation is applied on the moment as follows :
 
@@ -62,12 +67,20 @@ To compute the equivalent force tensor at COG, the transport equation is applied
 Degrees of freedom (DOFMask)
 ----------------------------
 
-By default every bodies are free to move in the six degrees of freedom, corresponding to the three translations and three rotations. However, some degrees of freedom of the bodies can be fixed by the user in the world reference frame. This is done by adding constraints on the different degrees of freedom. The six degrees of freedom are still considered in the dynamic solver but fixed by constraints.
+By default, bodies are free to move in the six degrees of freedom, corresponding to the three translations and three rotations.
+However, some of these degrees of freedom can be fixed by the user in the world reference frame, by adding constraints.
 
-Node
-----
+.. note::
+    All degrees of freedom are solved even those fixed by constraints.
 
-The nodes are specific frames, added to the body and fixed in the body reference frame. Their position and rotation are defined in the body coordinate system which remain fixed during the simulation. They can be used to add :any:`links <link>`, :any:`cable <line_theory>` or :any:`motors <motor>` to the body at a specific position. Also, they can be used to monitor a specific position on the body.
+Nodes
+-----
 
-Like a frame transformation and rotation can be applied to a node.
+Nodes are specific frames, added to the body and fixed in the body reference frame. Their position and rotation, defined
+in the body reference frame, remain fixed with respect to this one during the simulation. They can be used to add :any:`links <link>`,
+:any:`cables <line_theory>` or :any:`motors <motor>` to the body at a given position. Also, they can be used to monitor
+a specific quantity on the body.
+
+.. note::
+    Like frames, translations and rotations can be applied on nodes.
 
