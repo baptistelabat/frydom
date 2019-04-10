@@ -253,5 +253,10 @@ namespace frydom {
 
     };
 
+    std::shared_ptr<FrDynamicCable>
+    make_dynamic_cable(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
+                       FrOffshoreSystem *system, double unstretchedLength, double youngModulus, double sectionArea,
+                       double linearDensity, double rayleighDamping, unsigned int nbElements);
+
 } // end namespace frydom
 #endif //FRYDOM_FRANCFCABLE_H

@@ -456,4 +456,17 @@ namespace frydom {
 //
 //    }
 
+    std::shared_ptr<FrDynamicCable>
+    make_dynamic_cable(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
+                       FrOffshoreSystem *system, double unstretchedLength, double youngModulus, double sectionArea,
+                       double linearDensity, double rayleighDamping, unsigned int nbElements) {
+
+        auto Cable = std::make_shared<FrDynamicCable>(startingNode, endingNode, unstretchedLength, youngModulus,
+                                                      sectionArea, linearDensity, rayleighDamping, nbElements);
+
+        system->AddANCFCable(Cable);
+        return Cable;
+
+    }
+
 } // end namespace frydom
