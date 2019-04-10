@@ -106,9 +106,9 @@ namespace frydom {
         FrCatenaryLine(const std::shared_ptr<FrNode>& startingNode,
                         const std::shared_ptr<FrNode>& endingNode,
                         bool elastic,
+                        double unstretchedLength,
                         double youngModulus,
                         double sectionArea,
-                        double unstretchedLength,
                         double linearDensity,
                         FLUID_TYPE fluid
         );
@@ -258,8 +258,8 @@ namespace frydom {
 
     std::shared_ptr<FrCatenaryLine>
     make_catenary_line(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
-                       FrOffshoreSystem *system, bool elastic, double youngModulus, double sectionArea,
-                       double unstretchedLength, double linearDensity, FLUID_TYPE fluid);
+                       FrOffshoreSystem *system, bool elastic, double unstretchedLength, double youngModulus,
+                       double sectionArea, double linearDensity, FLUID_TYPE fluid);
 
 }// end namespace frydom
 

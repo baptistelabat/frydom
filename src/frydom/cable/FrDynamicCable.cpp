@@ -138,8 +138,8 @@ namespace frydom {
                     // equilibrium solution
                     catenaryLine = make_catenary_line(m_frydomCable->GetStartingNode(), m_frydomCable->GetEndingNode(),
                                                       m_frydomCable->GetSystem(), elastic,
-                                                      m_frydomCable->GetYoungModulus(), m_frydomCable->GetSectionArea(),
                                                       m_frydomCable->GetUnstretchedLength(),
+                                                      m_frydomCable->GetYoungModulus(), m_frydomCable->GetSectionArea(),
                                                       m_frydomCable->GetLinearDensity(), AIR);
                     catenaryLine->Initialize();
                 }

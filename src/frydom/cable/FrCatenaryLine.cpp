@@ -20,19 +20,14 @@
 
 namespace frydom {
 
-    FrCatenaryLine::FrCatenaryLine(const std::shared_ptr<FrNode> &startingNode,
-                                     const std::shared_ptr<FrNode> &endingNode, bool elastic, double youngModulus,
-                                     double sectionArea, double unstretchedLength, double linearDensity,
-                                     FLUID_TYPE fluid) :
-                                     m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
-                                     FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity),
-                                     FrMidPhysicsItem() {
+    FrCatenaryLine::FrCatenaryLine(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
+            bool elastic, double unstretchedLength, double youngModulus, double sectionArea, double linearDensity,
+            FLUID_TYPE fluid) :
+            m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
+            FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity),
+            FrMidPhysicsItem() {
         SetLogged(true);
     }
-
-//    FrCatenaryLineAsset *FrCatenaryLine::GetLineAsset() const {
-//        return m_lineAsset.get();
-//    }
 
     void FrCatenaryLine::SetAssetElements(unsigned int n) {
         m_nbDrawnElements = n;
@@ -369,10 +364,10 @@ namespace frydom {
 
     std::shared_ptr<FrCatenaryLine>
     make_catenary_line(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
-                       FrOffshoreSystem *system, bool elastic, double youngModulus, double sectionArea,
-                       double unstretchedLength, double linearDensity, FLUID_TYPE fluid){
-        auto CatenaryLine = std::make_shared<FrCatenaryLine>(startingNode, endingNode, elastic, youngModulus,
-                                                              sectionArea, unstretchedLength, linearDensity, fluid);
+                       FrOffshoreSystem *system, bool elastic, double unstretchedLength, double youngModulus,
+                       double sectionArea, double linearDensity, FLUID_TYPE fluid){
+        auto CatenaryLine = std::make_shared<FrCatenaryLine>(startingNode, endingNode, elastic, unstretchedLength,
+                                                             youngModulus, sectionArea, linearDensity, fluid);
         system->Add(CatenaryLine);
         return CatenaryLine;
 

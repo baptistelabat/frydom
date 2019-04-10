@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
 //    Node2->RotateAroundZInBody(MU_PI, NWU); // needed to set the frame node correctly.
 
     // Catenary line for comparison purpose
-    auto CatenaryLine = make_catenary_line(Node3, Node4, &system, true, YoungModulus, sectionArea, unstretchedLength, linearDensity, AIR);
+    auto CatenaryLine = make_catenary_line(Node3, Node4, &system, true, unstretchedLength, YoungModulus, sectionArea, linearDensity, AIR);
 
     // Change solver settings, for dynamic cable modeling
     system.SetSolverWarmStarting(true);

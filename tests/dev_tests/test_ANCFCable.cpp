@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     auto Node4 = system.GetWorldBody()->NewNode();
     Node4->SetPositionInBody(Position(10., 1., 0.), NWU);
 
-    auto CatenaryLine = make_catenary_line(Node3,Node4,&system,true,YoungModulus,sectionArea,unstretchedLength,linearDensity,AIR);
+    auto CatenaryLine = make_catenary_line(Node3,Node4,&system,true,unstretchedLength,YoungModulus,sectionArea,linearDensity,AIR);
     CatenaryLine->SetAssetElements(50);
 
 
