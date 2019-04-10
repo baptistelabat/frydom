@@ -34,7 +34,7 @@ pages:
         paths:
             - public
     only:
-        - feature/FR_refactoring_open_source # TODO : faire sur master une fois v2 release...
+        - develop # TODO : faire sur master une fois v2 release...
 
 theory:
     script:

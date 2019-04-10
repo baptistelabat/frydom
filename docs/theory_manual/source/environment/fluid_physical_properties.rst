@@ -5,14 +5,18 @@ Fluid physical properties (air and seawater)
 
 In construction
 
-The fluid physical properties modeled in FRyDoM are
+The fluid physical properties modeled in FRyDoM are listed in the following table
 
-- :math:`T` : temperature, in degree Celsius
-- :math:`\rho` : density, in (kg/m³)
-- :math:`\mu` : dynamic viscosity, in (Pa.s)
-- :math:`\nu` : kinematic viscosity, in (m²/s)
-- :math:`S_A` : salinity, in (g/kg)
-- :math:`p` : pressure, in (MPa)
+======================= =========================== ======================
+Name                    Symbol                      Unit
+======================= =========================== ======================
+Temperature             :math:`T`                   degree Celcius
+Density                 :math:`\rho`                kg/m^3
+Dynamic viscosity       :math:`\mu`                 Pa.s
+Kinematic viscosity     :math:`\nu`                 m^2/s
+Salinity                :math:`S_A`                 g/kg
+Pressure                :math:`p`                   MPa
+======================= =========================== ======================
 
 It is possible to get the seawater physical properties, for different temperatures and salinity, in the ITTC
 recommended procedures [ITTC]_.

@@ -29,6 +29,8 @@ By default, this local frame has its third axis :math:`\mathbf{e3}` parallel to 
 the first axis :math:`\mathbf{e1}` is  parallel to the horizontal plane XY and :math:`\mathbf{e2}` is defined such that the frame
 :math:`(\mathbf{e1}, \mathbf{e2}, \mathbf{e3})` is orthonormal direct.
 
+[CC : rajouter la figure pour les conventions d'orientation de frame]
+
 The Morison force in the local frame coordinates is defined as follows:
 
 .. math::

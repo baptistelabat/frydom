@@ -4,46 +4,50 @@ Kinematic stretching
 ~~~~~~~~~~~~~~~~~~~~
 
 The linear wave theory is based on the linearization of the free surface condition on the mean water level :math:`z=0`.
-This means that the velocity potential evaluated above the mean water level can lead to non-realistic values, due to the
-scaling factor :math:`E(z)`, in the velocity potential expression (see :any:`wave theory<wave_theory>`).
+In case of irregular wave profile, the superposition of regular wave components can lead to unrealistic velocity estimation particularly in the crest. Stretching method are applied on the scaling factor :math:`E(z)` to overcome this issue.
 
 .. math::
     E(z) = \frac{\cosh(k(z+H))}{\sinh(kH)}
 
-Stretching methods were developed to overcome this issue, by means of transformation techniques. They are introduced below
-and integrated in FRyDoM.
+The different methods are presented in the following.
 
 Vertical stretching:
 --------------------
 
-The vertical stretching method simply assumes that the scaling factor above the mean water level is constant and equals to
-its value at the mean water level. While :math:`E` is evaluated normally for :math:`z \leq 0`, the scaling factor becomes
-for :math:`z > 0` :
+The vertical stretching method assumes that the scaling factor above the mean water level is constant and equals to
+its value at the mean water level :math:`E(0)`.
 
 .. math::
-	E(t,\mathbf{x},z) = E(t,\mathbf{x},0)
+	E(z) = \Biggl \lbrace {
+        E(0) \text{ if } z \geq 0
+        \atop
+        E(z) \text{ otherwise}
+    }
 
-This method results in an abrupt, non-physical, :math:`E` evolution when crossing the mean water level.
+This method results in an abrupt, non-physical, :math:`E(z)` evolution when crossing the mean water level.
 
 Extrapolation stretching:
 -------------------------
 
-To correct this non-physical evolution, the extrapolation method introduces a correction to the vertical method.
-For :math:`z > 0` :
+To correct this non-physical evolution, the extrapolation stretching method introduces a correction to the vertical method.
 
 .. math::
-	E(\mathbf{x},z,t) = E(\mathbf{x},0,t) + z \frac{\partial E}{\partial z}(\mathbf{x},0,t)
+	E(z) = \Biggl \lbrace { 
+	    E(0) + z \frac{\partial E}{\partial z}(0) \text{ if } z \geq 0
+        \atop
+        E(z) \text{ otherwise}
+    }
 
 Wheeler stretching:
 -------------------
 
-This method stretches the vertical scale, in order to obtain at :math:`z=\eta`, the kinematic given by the linear theory
+This method stretches the vertical scale factor, in order to obtain at :math:`z=\eta`, the kinematic given by the linear theory
 at :math:`z=0`. The corresponding transformation changes :math:`z` into :math:`z'` :
 
 .. math::
     z' = H \frac{z-\eta}{H+\eta}
 
-where :math:`H` is the water depth and :math:`\eta` is the instantaneous wave elevation.
+where :math:`H` is the water depth and :math:`\eta` is the instantaneous wave elevation given by the linear wave model.
 
 The wheeler stretching is defined for : :math:`H < z < \eta`
 
@@ -51,8 +55,7 @@ The wheeler stretching is defined for : :math:`H < z < \eta`
 Chakrabarti stretching:
 -----------------------
 
-In this method, proposed by Chakrabarti [Chakrabarti1971]_, the transformation is applied on the water depth. The term
-scaling factor becomes:
+In this method, proposed by Chakrabarti [Chakrabarti1971]_, the water depth :math:`h` in the denominator is corrected by the wave elevation :math:`\eta` :
 
 .. math::
 	E(z) = \frac{\cosh(k(z+h))}{\sinh(k(h+\eta))}

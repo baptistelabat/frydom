@@ -6,18 +6,20 @@ Wave spectra
 Pierson-Moskowitz spectrum
 --------------------------
 
-The Pierson-Moskowitz spectrum :math:`S_{PM}(\omega)` is given by [DNV]_:
+The Pierson-Moskowitz spectrum :math:`S_{PM}(\omega)` is given by :
 
 .. math::
     S_{PM}(\omega) = \frac{5}{16} \cdot H_S^2 \omega_p^4 \cdot \omega^{-5} \exp\left[-\frac{5}{4}\left(\frac{\omega}{\omega_p}\right)^{-4}\right]
 
 where :math:`\omega_p = 2\pi / T_p` is the angular spectral peak frequency and :math:`H_S` is the significant wave height.
 
+For more details see [DNV]_.
+
 JONSWAP spectrum
 ----------------
 
 The JONSWAP wave spectrum is an extension of the Pierson-Moskovitz wave spectrum, for a developing sea state in a fetch limited situation,
-with an extra peak enhancement factor :math:`\gamma`. The spreading function is given by [DNV]_ [KIM20008]_ [MOLIN2002]_:
+with an extra peak enhancement factor :math:`\gamma`. The spreading function is given by
 
 .. math::
     S_j(\omega) = \alpha_{\gamma} S_{PM}(\omega)  \gamma^{\exp \left[-\frac{(\omega-\omega_p)^2}{2\sigma^2\omega_p^2} \right]}
@@ -34,8 +36,13 @@ where
 
 - :math:`\alpha_{\gamma}= 1 - 0.287\log(\gamma)` is a normalizing factor.
 
-The JONSWAP spectrum is expected to be a reasonable model for :math:`3.6<T_p/H_S<5`.
+The JONSWAP spectrum is expected to be a reasonable model for :math:`3.6 < \frac{T_p}{H_S} < 5`.
 Default value for :math:`\gamma = 3.3` can be changed by the user, but has to be specified between 1 and 10.
+
+For more details see
+ - [DNV]_
+ - [KIM20008]_
+ - [MOLIN2002]_
 
 
 Directional wave spectra
@@ -47,7 +54,7 @@ Directional short-crested wave spectra :math:`S(\omega,\theta)` is expressed in 
     S(\omega,\theta) = S(\omega)D(\theta)
 
 where :math:`D(\theta)` is a directional function, :math:`\theta` is the angle between the direction of elementary wave trains
-and the main wave direction of the short crested wave system. The directional function fulfils the requirement:
+and the main wave direction of the short-crested wave system. The directional function fulfills the requirement:
 
 .. math::
    \int  D(\theta) d\theta = 1

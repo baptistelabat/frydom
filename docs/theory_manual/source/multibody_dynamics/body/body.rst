@@ -3,156 +3,84 @@
 Bodies
 ======
 
-Bodies are basic object within FRyDoM framework, on which can be applied body components :
+Bodies are basic objects affected by a mass repartition and inertia properties. The position and rotation of the body are
+represented by a body reference frame fixed to the body. Various external constraints can be applied to a body such as
+external forces, cables, kinematic links, motors, body constraints...
 
-- forces,
-- links and motors,
-- cables,
-- collisions box, etc.
+Position of the Center of Gravity (COG)
+---------------------------------------
 
+Position of the center of gravity is defined in body local coordinate system with respect to the body frame of reference.
 
-Frames of reference
--------------------
-
-..    définition des repères utilisés pour un corps.
-
-
-Several frames of references can be used when referring to bodies.
-
-
-.. TODO
-.. _fig_reference_frames:
-.. figure:: _static/todo.png
+.. _body_COG:
+.. figure:: _static/body_COG.png
     :align: center
-    :alt: Frames of reference on a body
+    :alt: Body COG
+    :scale: 50%
 
-    Representation of the body and COG reference frames
+    Representation of the Center of Gravity position (COG)
 
-
-Body reference frame
-~~~~~~~~~~~~~~~~~~~~
-
-The body reference plane locates the body relatively to the :any:`world reference frame <frame>`. Its origin is defined arbitrary by
-the user: it can be located at the bow on the keel, at the center of gravity, etc. Its orientation gives the direction of
-the degrees of freedom:
-
-- surge and roll are respectively the translation and rotation related to the x axis of the reference frame,
-- sway and pitch are respectively the translation and rotation related to the y axis of the reference frame,
-- heave and yaw are respectively the translation and rotation related to the z axis of the reference frame.
-
-All body components (nodes, links, forces) are then set up, relatively to this reference frame.
-
-The accessors and mutators  (GetPointPositionInBody, SetGeneralizedVelocityInBody, TranslateInBody, etc.) which name
-contain "InBody", refer to this body reference frame.
-
-The body reference frame is the instantaneous reference frame of the body, which means it follows the body in its motions
-and rotations.
-
-COG reference frame
-~~~~~~~~~~~~~~~~~~~
-
-The COG reference frame is usually based on a similar orientation as the body reference frame, but its origin is located
-at the body center of gravity (COG). Most forces are applied on the COG reference frame.
-
+External forces and inertia properties can be set directly at the COG position or at an arbitrary position. In this last
+case, transport formula are used to express such quantities at COG.
 
 
 Mass and inertia
 ----------------
 
-All bodies must contain mass and inertial quantities (mass :math:`m`, inertia matrix :math:`\mathbf{I}_G`, expressed
-on a point :math:`G`); all three can be grouped in an inertia tensor :math:`\mathbb{I}` :
+The mass :math:`m` and inertial quantities :math:`\mathbf{I}_G` of the body are defined using an inertia tensor at the
+center of gravity, denoted :math:`G`.
 
 .. math::
     \mathbb{I} = \Biggl \lbrace { m \atop \mathbf{I}_G } \Biggr \rbrace_G
 
-The inertia matrix of a body depends on the choice of the reference point. The generalized Huygens theorem can be used to
+In case the inertia matrix is not defined at :math:`G` but in an other point :math:`M` of the body, the generalized Huygens theorem is used to
 express the inertia matrix on an other point:
 
 .. math::
-    \mathbf{I}_O = \mathbf{I}_G + \mathbf{I}(m,\mathbf{OG})
+    \mathbf{I}_M = \mathbf{I}_G + \mathbf{I}(m,\mathbf{MG})
 
-where, for :math:`\mathbf{OG} = \begin{bmatrix} a \\ b \\ c \end{bmatrix}`:
+with:
 
 .. math::
-    \mathbf{I}(m,\mathbf{OG}) = m \begin{bmatrix} b^2 + c^2 & -ab & -ac\\ -ab & a^2 + c^2 & -bc \\ -ac & -bc & a^2 + b^2 \end{bmatrix}
+    \mathbf{I}(m,\mathbf{MG}) = m \begin{bmatrix} b^2 + c^2 & -ab & -ac\\ -ab & a^2 + c^2 & -bc \\ -ac & -bc & a^2 + b^2 \end{bmatrix}
+
+where :math:`\mathbf{MG} = [a, b, c]`.
 
 
+External forces
+---------------
 
-Rotations
----------
+The external forces represent the forces and moments applied on the body. They can be applied at any arbitrary point
+:math:`P` on the body. By convenient, they are represented by a force tensor :
 
-FRyDoM internal body dynamics is based on the use of quaternion to avoid gimbal lock. However FRyDoM allows users to work
-with different rotation formats, including quaternions and Euler angles.
+.. math::
+    \lbrace \mathcal{T} \rbrace = \Biggl \lbrace { \mathbf{F} \atop \mathbf{M}_P } \Biggr \rbrace_P
 
-The direction of the rotation (positive or negative) is given by the direct definition of the frames of reference.
-A :math:`\pi /2`  positive rotation around z axis transforms the x axis into y axis.
+where :math:`\mathbf{F}` and :math:`\mathbf{M}_P` are respectively the force and moment applied on the body at position :math:`P`.
 
-Unit quaternions
-~~~~~~~~~~~~~~~~
+To compute the equivalent force tensor at COG, the transport equation is applied on the moment as follows :
 
-
-.. définition des unit quaternions
-
-Euler angles
-~~~~~~~~~~~~
-
-The Euler angles are a combination of three rotation angles used to represent any rotation or the orientation of a frame
-relatively to another. These angles are elemental rotations around the axis of a frame of reference. They are usually
-called :math:`(\phi,\theta,\psi)` but different sequences exists.
-
-Cardan sequence
-***************
-
-.. Euler Angle Sequence (1,2,3)
-
-The Cardan angles are denoted as yaw, pitch and roll, and correspond to the Euler sequence (1,2,3).
-It consists of three consecutive rotations, as shown in  :any:`this figure <fig_Cardan_angles>` :
-
-- first rotation of an angle :math:`\psi` around the z axis,
-- second rotation of an angle :math:`\theta` around the y''' axis,
-- third rotation of an angle :math:`phi` around the x'' axis.
-
-The body reference frame x axis is defined toward the front of the body for both NED and NWU :any:`frame convention <conventions>`.
-However in NED the y axis is along the starboard while the z axis downward. In NWU, the y axis point to port and the z upward.
-The direct implications on rotation is that a positive change in :math:`\theta` corresponds to pitching downward in NWU,
-and upward in NED.
+.. math::
+    \lbrace \mathcal{T} \rbrace = \Biggl \lbrace { \mathbf{F} \atop \mathbf{M}_P + \mathbf{GP} \wedge \mathbf{F} } \Biggr \rbrace_G
 
 
-.. _fig_Cardan_angles:
-.. figure:: _static/Cardan_angles.png
-    :align: center
-    :alt: Cardan angles
+Degrees of freedom (DOFMask)
+----------------------------
 
-    Representation of the Cardan angles, from Diebel [DIEBEL]_
+By default, bodies are free to move in the six degrees of freedom, corresponding to the three translations and three rotations.
+However, some of these degrees of freedom can be fixed by the user in the world reference frame, by adding constraints.
 
-For more information on rotation matrix, and function thats pas Cardan angles to their corresponding unit quaternion,
-please refer to Diebel [DIEBEL]_.
-
-
-References
-
-.. [DIEBEL] Diebel, J., Representing Attitude: Euler Angles, Unit Quaternions, and Rotation Vectors, 2006, Standford University, https://www.astro.rug.nl/software/kapteyn/_downloads/attitude.pdf
-
-
-Connections to components
--------------------------
-
-Bodies can be connected using :any:`links <links>`, :any:`motors <motors>` or :any:`cables <cables>`. To position bodies
-and their components, FRyDoM relies on nodes, which posses their own reference frame, and defined relatively to the body frame.
-
+.. note::
+    All degrees of freedom are solved even those fixed by constraints.
 
 Nodes
-~~~~~
+-----
 
-..
-    Node descriptions
+Nodes are specific frames, added to the body and fixed in the body reference frame. Their position and rotation, defined
+in the body reference frame, remain fixed with respect to this one during the simulation. They can be used to add :any:`links <link>`,
+:any:`cables <line_theory>` or :any:`motors <motor>` to the body at a given position. Also, they can be used to monitor
+a specific quantity on the body.
 
-Degrees of freedom
-~~~~~~~~~~~~~~~~~
-
-Body's degrees of frydom can be restricted or set free.
-
-..
-    a décrire : world body, DOF Mask, etc...
-
+.. note::
+    Like frames, translations and rotations can be applied on nodes.
 
