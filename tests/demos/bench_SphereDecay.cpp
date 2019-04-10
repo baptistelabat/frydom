@@ -146,6 +146,7 @@ int main(int argc, char* argv[]) {
     // -- Body
 
     auto body = system.NewBody();
+    body->SetName("Sphere");
 
     Position COGPosition(0., 0., -2.);
     FrFrame COGFrame(COGPosition, FrRotation(), NWU);
@@ -209,7 +210,7 @@ int main(int argc, char* argv[]) {
     body->SetPosition(Position(0., 0., 4.99), NWU);
 
     // Nonlinear hydrostatics
-    auto bodyMesh = make_hydro_mesh_nonlinear(body,"Sphere_6200_faces.obj");
+    auto bodyMesh = make_hydro_mesh_nonlinear(body,"Sphere_10000_faces.obj");
     mathutils::Matrix33<double> Rotation;
     Rotation.SetIdentity();
     Position MeshOffset(0,0,0);
