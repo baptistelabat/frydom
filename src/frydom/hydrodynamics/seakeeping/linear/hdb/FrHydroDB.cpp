@@ -113,6 +113,14 @@ namespace frydom {
         m_mapper->Map(m_bodies[iBEMBody].get(), body, eqFrame);
     }
 
+    std::unordered_map<FrBEMBody*, FrBody*>::iterator FrHydroDB::begin() {
+        return m_mapper->begin();
+    };
+
+    std::unordered_map<FrBEMBody*, FrBody*>::iterator FrHydroDB::end() {
+        return m_mapper->end();
+    };
+
     FrHydroDB::FrHydroDB(std::string h5file) {
 
         /// Constructor of the class.

@@ -56,13 +56,13 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto residualOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) ); //+off
+                auto residualOffset = GetBodyOffset( HDB->GetBody(BEMBody->first) ); //+off
 
                 for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
                     //auto BEMBodyMotion = BEMBody;
-                    auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) ); //+off
+                    auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->first) ); //+off
 
-                    auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get());
+                    auto infiniteAddedMass = BEMBody->first->GetInfiniteAddedMass(BEMBodyMotion->first);
 
                     Eigen::VectorXd q(6);
                     for (int i = 0; i < 6; i++) { q(i) = w(bodyOffset + i); }
@@ -122,29 +122,6 @@ namespace frydom {
             auto chronoBody = body->GetChronoBody();
             chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(qb, offset, 0, 6, 1, 0, 0);
         }
-
-        /// ##CC SandBox added mass base 2
-
-        /**
-        FrAddedMassBase2::FrAddedMassBase2(FrRadiationModel *radiationModel) :
-            m_frydomRadiationModel(radiationModel) {
-
-            auto HDB = m_frydomRadiationModel->GetHydroDB();
-
-
-            for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
-
-                auto residualOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
-
-                auto BEMBodyMotion = BEMBody;
-
-                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->get()) );
-
-                auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get())
-
-            }
-        }
-        **/
 
     }  // end namespace frydom::internal
 

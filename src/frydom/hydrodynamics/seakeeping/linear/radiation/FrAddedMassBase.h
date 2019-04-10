@@ -83,32 +83,11 @@ namespace frydom {
 
             FrRadiationModel* GetRadiationModel() const { return m_frydomRadiationModel; }
         };
-    }
 
 
-    /// ##CC SandBox for hydrodynamic interactions
+    } // end namespace internal
 
-    /*
-    class FrAddedMassBase2 {
-
-    private:
-
-        FrRadiationModel* m_frydomRadiationModel;
-
-    public:
-
-        explicit FrAddedMassBase2(FrRadiationModel* radiationModel);
-
-        //
-        // Update
-        //
-
-
-
-    }
-    */
-
-}  // end namespace frydom::internal
+}  // end namespace frydom
 
 
 #endif //FRYDOM_FRADDEDMASSBASE_H

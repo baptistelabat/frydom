@@ -34,18 +34,18 @@ namespace frydom {
             // Loop over the bodies subject to hydrodynamique loads.
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto body = HDB->GetBody(BEMBody->get());
+                auto body = HDB->GetBody(BEMBody->first);
 
                 for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
-                    mathutils::Matrix66<double> AddedMassCorrection = BEMBody->get()->GetSelfInfiniteAddedMass();
+                    mathutils::Matrix66<double> AddedMassCorrection = BEMBody->first->GetSelfInfiniteAddedMass();
 
-                    if (BEMBodyMotion->get() == BEMBody->get()) {
+                    if (BEMBodyMotion->first == BEMBody->first) {
                         AddedMassCorrection += body->GetInertiaTensor(NWU).GetMatrix();
                     }
 
                     AddedMassCorrection.Inverse();
-                    m_invAddedMassCorrection[std::make_pair(BEMBody->get(), BEMBodyMotion->get())] = AddedMassCorrection;
+                    m_invAddedMassCorrection[std::make_pair(BEMBody->first, BEMBodyMotion->first)] = AddedMassCorrection;
                 }
             }
         }
@@ -57,16 +57,16 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto body = HDB->GetBody(BEMBody->get());
+                auto body = HDB->GetBody(BEMBody->first);
                 auto qb = GetVariablesQb(body);
 
                 for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
                     //auto BEMBodyMotion = BEMBody;
-                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->get());
+                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->first);
                     auto fb = GetVariablesFb(bodyMotion);
 
-                    auto invAddedMassCorrection = m_invAddedMassCorrection.at(std::make_pair(BEMBody->get(), BEMBodyMotion->get()));
+                    auto invAddedMassCorrection = m_invAddedMassCorrection.at(std::make_pair(BEMBody->first, BEMBodyMotion->first));
 
                     for (int i=0; i<6; i++) {
                         qb(i) = 0.;
@@ -86,16 +86,16 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto body = HDB->GetBody(BEMBody->get());
+                auto body = HDB->GetBody(BEMBody->first);
                 auto qb = GetVariablesQb(body);
 
                 for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
                     //auto BEMBodyMotion = BEMBody;
-                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->get());
+                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->first);
                     auto fb = GetVariablesFb(bodyMotion);
 
-                    auto invAddedMassCorrection = m_invAddedMassCorrection.at(std::make_pair(BEMBody->get(), BEMBodyMotion->get()));
+                    auto invAddedMassCorrection = m_invAddedMassCorrection.at(std::make_pair(BEMBody->first, BEMBodyMotion->first));
 
                     for (int i=0; i<6; i++) {
                         for (int j=0; j<6; j++) {
@@ -114,16 +114,16 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto body = HDB->GetBody(BEMBody->get());
+                auto body = HDB->GetBody(BEMBody->first);
                 auto qb = GetVariablesQb(body);
 
                 for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
                     //auto BEMBodyMotion = BEMBody;
-                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->get());
+                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->first);
                     auto fb = GetVariablesFb(bodyMotion);
 
-                    auto generalizedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get());
+                    auto generalizedMass = BEMBody->first->GetInfiniteAddedMass(BEMBodyMotion->first);
 
                     for (int i=0; i<6; i++) {
                         for (int j=0; j<6; j++) {
@@ -142,15 +142,15 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto body = HDB->GetBody(BEMBody->get());
+                auto body = HDB->GetBody(BEMBody->first);
                 auto qb = this->GetVariablesQb(body);
 
                 for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
-                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->get());
+                    auto bodyMotion = HDB->GetBody(BEMBodyMotion->first);
                     auto fb = this->GetVariablesFb(bodyMotion);
 
-                    auto generalizedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBodyMotion->get());
+                    auto generalizedMass = BEMBody->first->GetInfiniteAddedMass(BEMBodyMotion->first);
 
                     for (int i = 0; i < 6; i++) {
                         for (int j = 0; j < 6; j++) {
@@ -168,9 +168,9 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
+                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBody->first) );
 
-                auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
+                auto infiniteAddedMass = BEMBody->first->GetInfiniteAddedMass(BEMBody->first);
 
                 result(bodyOffset + 0) += c_a * infiniteAddedMass(0, 0);
                 result(bodyOffset + 1) += c_a * infiniteAddedMass(1, 1);
@@ -179,7 +179,7 @@ namespace frydom {
                 result(bodyOffset + 4) += c_a * infiniteAddedMass(4, 4);
                 result(bodyOffset + 5) += c_a * infiniteAddedMass(5, 5);
 
-                this->SetVariables(HDB->GetBody(BEMBody->get()), result, bodyOffset);
+                this->SetVariables(HDB->GetBody(BEMBody->first), result, bodyOffset);
             }
         }
 
@@ -190,9 +190,9 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBody->get()) );
+                auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBody->first) );
 
-                auto infiniteAddedMass = BEMBody->get()->GetInfiniteAddedMass(BEMBody->get());
+                auto infiniteAddedMass = BEMBody->first->GetInfiniteAddedMass(BEMBody->first);
 
                 for (int i=0; i<6; i++) {
                     for (int j=0; j<6; j++) {

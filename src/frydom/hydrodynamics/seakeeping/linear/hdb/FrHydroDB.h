@@ -14,6 +14,7 @@
 #define FRYDOM_FRHYDRODB_H
 
 #include <vector>
+#include <unordered_map>
 #include <memory>
 
 #include "frydom/core/common/FrConvention.h"
@@ -162,9 +163,13 @@ namespace frydom {
 
         void Map(int iBEMBody, FrBody* body, std::shared_ptr<FrEquilibriumFrame> eqFrame);
 
-        std::vector<std::unique_ptr<FrBEMBody>>::iterator begin() { return m_bodies.begin(); }
+        //std::vector<std::unique_ptr<FrBEMBody>>::iterator begin() { return m_bodies.begin(); }
 
-        std::vector<std::unique_ptr<FrBEMBody>>::iterator end() { return m_bodies.end(); }
+        //std::vector<std::unique_ptr<FrBEMBody>>::iterator end() { return m_bodies.end(); }
+
+        std::unordered_map<FrBEMBody*, FrBody*>::iterator begin();
+
+        std::unordered_map<FrBEMBody*, FrBody*>::iterator end();
 
         /// This functions gives the water density.
         double GetWaterDensity(){return m_waterDensity;};

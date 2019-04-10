@@ -25,6 +25,7 @@
 
 // TODO : voir si il n'y a pas moyen de passer ces includes
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase2.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
 
 
@@ -969,6 +970,11 @@ namespace frydom {
         friend void internal::FrAddedMassBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody *body) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody *body) const;
+
+        // ##CC test hydrodynamic interaction
+        friend int internal::FrAddedMassBase2::GetBodyOffset(FrBody* body) const;
+        friend internal::FrAddedMassBase2::FrAddedMassBase2(FrRadiationModel *radiationModel);
+        // ##CC
 
     };
 
