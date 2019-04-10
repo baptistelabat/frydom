@@ -128,7 +128,7 @@ namespace frydom {
                                                  m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU));
 
                 // check if the distance is greater than the length
-                bool elastic = distanceBetweenNodes.norm() > m_frydomCable->GetUnstretchedLength();
+                bool elastic = distanceBetweenNodes.norm() >= m_frydomCable->GetUnstretchedLength();
 
                 // First, creating a catenary line to initialize finite element mesh node positions
                 std::shared_ptr<FrCatenaryLine> catenaryLine;
