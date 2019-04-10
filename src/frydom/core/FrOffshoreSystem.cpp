@@ -353,10 +353,12 @@ namespace frydom {
         m_feaMeshList.push_back(feaMesh);
     }
 
-    void FrOffshoreSystem::AddANCFCable(std::shared_ptr<FrDynamicCable> cable) {
+    void FrOffshoreSystem::Add(std::shared_ptr<FrDynamicCable> cable) {
 
+        // Add the FEA mesh
         AddFEAMesh(cable);
 
+        // Add the hinges
         m_chronoSystem->Add(cable->GetChronoItem_ptr()->m_startingHinge);
         m_chronoSystem->Add(cable->GetChronoItem_ptr()->m_endingHinge);
 

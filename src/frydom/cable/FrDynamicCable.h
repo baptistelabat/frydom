@@ -249,7 +249,7 @@ namespace frydom {
 
         // Friend definitions
 
-        friend void FrOffshoreSystem::AddANCFCable(std::shared_ptr<FrDynamicCable>);
+        friend void FrOffshoreSystem::Add(std::shared_ptr<FrDynamicCable> cable);
 
     };
 

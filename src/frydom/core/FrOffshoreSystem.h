@@ -343,7 +343,9 @@ namespace frydom {
         /// \param feaMesh FEA mesh to be added
         void AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
 
-        void AddANCFCable(std::shared_ptr<FrDynamicCable> cable);
+        /// Add a Dynamic Cable to the offshore system
+        /// \param cable dynamic cable to be added
+        void Add(std::shared_ptr<FrDynamicCable> cable);
 
 
         // ***** Environment *****

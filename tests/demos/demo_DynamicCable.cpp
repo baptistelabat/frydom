@@ -66,13 +66,13 @@ int main(int argc, char* argv[]) {
     unsigned int nbElements = 50;                           //  number of elements
 
     // Dynamic cable
-    auto DynamicCable = make_dynamic_cable(Node2, Node1, &system, unstretchedLength, YoungModulus, sectionArea,
+    auto DynamicCable = make_dynamic_cable(Node1, Node2, &system, unstretchedLength, YoungModulus, sectionArea,
                                                       linearDensity, rayleighDamping, nbElements);
 
     // To test with constrained hinges, uncomment the following lines.
 //    DynamicCable->SetStartingHingeType(FrDynamicCable::CONSTRAINED);
 //    DynamicCable->SetEndingHingeType(FrDynamicCable::CONSTRAINED);
-//    Node2->RotateAroundZInBody(MU_PI, NWU); // needed to set the frame node correctly.
+//    Node2->RotateAroundZInBody(MU_PI, NWU); // need to set the frame node orientation correctly.
 
     // Catenary line for comparison purpose
     auto CatenaryLine = make_catenary_line(Node3, Node4, &system, true, unstretchedLength, YoungModulus, sectionArea, linearDensity, AIR);

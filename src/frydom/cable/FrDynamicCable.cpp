@@ -464,7 +464,7 @@ namespace frydom {
         auto Cable = std::make_shared<FrDynamicCable>(startingNode, endingNode, unstretchedLength, youngModulus,
                                                       sectionArea, linearDensity, rayleighDamping, nbElements);
 
-        system->AddANCFCable(Cable);
+        system->Add(Cable);
         return Cable;
 
     }

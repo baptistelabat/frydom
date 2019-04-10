@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
     auto ANCFCable = std::make_shared<FrDynamicCable>(Node2, Node1, unstretchedLength, YoungModulus, sectionArea,
             linearDensity, rayleighDamping, nbElements);
 
-    system.AddANCFCable(ANCFCable);
+    system.Add(ANCFCable);
 
     // Catenary line
     auto Node3 = system.GetWorldBody()->NewNode();
