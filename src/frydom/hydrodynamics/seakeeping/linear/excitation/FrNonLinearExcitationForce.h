@@ -92,7 +92,7 @@ namespace frydom {
 
     /// This function creates a (fully or weakly) nonlinear excitation force object.
     std::shared_ptr<FrNonLinearExcitationForce>
-    make_nonlinear_excitation_force(FrOffshoreSystem* system,std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
+    make_nonlinear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
 
 }  // end namespace frydom
 

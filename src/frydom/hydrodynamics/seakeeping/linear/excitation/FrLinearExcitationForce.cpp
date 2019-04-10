@@ -98,7 +98,6 @@ namespace frydom {
 
         this->SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
 
-
 	    // Settings: torque is already computed at CoG.
         SetForceTorqueInWorldAtCOG(worldForce,worldTorque, NWU);
     }
@@ -110,7 +109,7 @@ namespace frydom {
     std::shared_ptr<FrLinearExcitationForce>
     make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
 
-        /// This subroutine creates the linear excitation force object.
+        // This function creates the linear excitation force object.
 
         // Construction of the excitation force object from the HDB.
         auto excitationForce = std::make_shared<FrLinearExcitationForce>(HDB);
