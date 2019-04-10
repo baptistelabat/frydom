@@ -86,6 +86,9 @@ namespace frydom {
             /// Generate assets for the cable
             void GenerateAssets();
 
+            /// Define the constraints in the hinges
+            void HingesConstraints();
+
         };
 
 
@@ -107,15 +110,20 @@ namespace frydom {
      //TODO : Contact with seabed or other cable/bodies
      //TODO : Check for deactivation
     class FrDynamicCable: public FrCable, public FrFEAMesh {
-
     public:
 
-        std::shared_ptr<internal::FrDynamicCableBase> m_chronoCable;    ///< pointer to the Chrono cable
+        enum HingeType { CONSTRAINED, SPHERICAL, NONE};
 
     private:
 
+        std::shared_ptr<internal::FrDynamicCableBase> m_chronoCable;    ///< pointer to the Chrono cable
+
         double m_rayleighDamping;               ///< Rayleigh damping
         unsigned int m_nbElements;              ///< Number of elements in the finite element cable model
+
+        // Hinges types
+        HingeType m_startingHingeType = SPHERICAL;
+        HingeType m_endingHingeType = SPHERICAL;
 
         // Asset parameters
         double m_drawCableElementRadius = 0.05; ///< Radius of the cable element assets
@@ -186,6 +194,22 @@ namespace frydom {
         /// Get the size of the cable nodes assets
         /// \return Size of the cable nodes assets
         double GetDrawNodeSize() const;
+
+        /// Set the starting hinge type (CONSTRAINED, SPHERICAL, NONE)
+        /// \param type starting hinge type (CONSTRAINED, SPHERICAL, NONE)
+        void SetStartingHingeType(HingeType type);
+
+        /// Get the starting hinge type (CONSTRAINED, SPHERICAL, NONE)
+        /// \return starting hinge type (CONSTRAINED, SPHERICAL, NONE)
+        HingeType GetStartingHingeType() const;
+
+        /// Set the ending hinge type (CONSTRAINED, SPHERICAL, NONE)
+        /// \param type ending hinge type (CONSTRAINED, SPHERICAL, NONE)
+        void SetEndingHingeType(HingeType type);
+
+        /// Get the ending hinge type (CONSTRAINED, SPHERICAL, NONE)
+        /// \return ending hinge type (CONSTRAINED, SPHERICAL, NONE)
+        HingeType GetEndingHingeType() const;
 
 
         // Virtual methods, from FrCable

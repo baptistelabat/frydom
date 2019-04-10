@@ -45,21 +45,48 @@ namespace frydom {
 
             // Starting hinge
             auto starting_body = m_frydomCable->GetStartingNode()->GetBody()->m_chronoBody;
+            auto ChronoFrame = internal::FrFrame2ChFrame(m_frydomCable->GetStartingNode()->GetFrameInBody());
 
-            auto ChronoFrame = internal::FrFrame2ChFrame(m_frydomCable->GetStartingNode()->GetFrameInWorld());
-
-            m_startingHinge->Initialize(m_starting_node_fea, starting_body, ChronoFrame);
+            m_startingHinge->Initialize(m_starting_node_fea, starting_body, true, chrono::ChFrame<double>(), ChronoFrame);
 
             // Ending hinge
             auto ending_body = m_frydomCable->GetEndingNode()->GetBody()->m_chronoBody;
 
-            // FYI : Initialize of the hinge with false is supposed to work with ChronoFrame, as for the starting hinge, above.
-            // In practice, there's a bug somewhere inside chrono, so we need to get the relative position of the node anyway...
-            ChronoFrame = internal::FrFrame2ChFrame(m_frydomCable->GetEndingNode()->GetFrameInWorld());
-            chrono::ChFrame<double> frame(ChronoFrame);
-            frame.SetPos(m_ending_node_fea->GetPos() - internal::Vector3dToChVector(m_frydomCable->GetEndingNode()->GetPositionInWorld(NWU)));
+            ChronoFrame = internal::FrFrame2ChFrame(m_frydomCable->GetEndingNode()->GetFrameInBody());
+            FrFrame feaFrame; feaFrame.RotZ_RADIANS(MU_PI, NWU, false); // ending_node_fea comes from the opposite direction
 
-            m_endingHinge->Initialize(m_ending_node_fea, ending_body, false, frame, ChronoFrame);
+            m_endingHinge->Initialize(m_ending_node_fea, ending_body, true, internal::FrFrame2ChFrame(feaFrame), ChronoFrame);
+
+            // Define the constraints on the hinges.
+            HingesConstraints();
+
+        }
+
+        void FrDynamicCableBase::HingesConstraints() {
+
+            switch(m_frydomCable->GetStartingHingeType()) {
+                case FrDynamicCable::NONE:
+                    m_startingHinge->SetConstrainedCoords(false,false,false,false,false,false);
+                    break;
+                case FrDynamicCable::SPHERICAL:
+                    m_startingHinge->SetConstrainedCoords(true,true,true,false,false,false);
+                    break;
+                case FrDynamicCable::CONSTRAINED:
+                    m_startingHinge->SetConstrainedCoords(true,true,true,true,true,true);
+                    break;
+            }
+
+            switch(m_frydomCable->GetEndingHingeType()) {
+                case FrDynamicCable::NONE:
+                    m_endingHinge->SetConstrainedCoords(false,false,false,false,false,false);
+                    break;
+                case FrDynamicCable::SPHERICAL:
+                    m_endingHinge->SetConstrainedCoords(true,true,true,false,false,false);
+                    break;
+                case FrDynamicCable::CONSTRAINED:
+                    m_endingHinge->SetConstrainedCoords(true,true,true,true,true,true);
+                    break;
+            }
 
         }
 
@@ -406,6 +433,22 @@ namespace frydom {
 
         // Serialize and send the log message
         FrObject::SendLog();
+    }
+
+    void FrDynamicCable::SetStartingHingeType(FrDynamicCable::HingeType type) {
+        m_startingHingeType = type;
+    }
+
+    FrDynamicCable::HingeType FrDynamicCable::GetStartingHingeType() const {
+        return m_startingHingeType;
+    }
+
+    void FrDynamicCable::SetEndingHingeType(FrDynamicCable::HingeType type) {
+        m_endingHingeType = type;
+    }
+
+    FrDynamicCable::HingeType FrDynamicCable::GetEndingHingeType() const {
+        return m_endingHingeType;
     }
 
 //    void FrANCFCable::StepFinalize() {

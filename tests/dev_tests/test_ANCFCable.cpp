@@ -27,16 +27,18 @@ int main(int argc, char* argv[]) {
 
     // Create the nodes from the world body (which is fixed)
     auto Node1 = system.GetWorldBody()->NewNode();
-    Node1->SetPositionInBody(Position(-20., 0., 0.), NWU);
+    Node1->SetPositionInBody(Position(-10., 0., 0.), NWU);
+//    Node1->RotateAroundZInBody(MU_PI, NWU);
     auto Node2 = system.GetWorldBody()->NewNode();
-    Node2->SetPositionInBody(Position(0., 0., 0.), NWU);
+    Node2->SetPositionInBody(Position(10., 0., 0.), NWU);
+//    Node2->RotateAroundZInBody(MU_PI, NWU);
 
     // Line properties :
 //    bool elastic = true;                    // non elastic catenary lines are only available for non stretched lines
     auto u = Direction(0., 0., -1.);        // definition of the direction of the uniform load distribution
     double unstretchedLength = 25.;         // unstretched length
     double linearDensity = 616.538;         // linear density of the line
-    double EA = 1.5708e6;
+    double EA = 1.5708e7;
     double diameter = 0.1;                 //
     double sectionArea = MU_PI * pow((0.5 * diameter), 2);              // section area
     double YoungModulus = EA / sectionArea; // Young modulus of the line
@@ -44,16 +46,18 @@ int main(int argc, char* argv[]) {
     unsigned int nbElements = 50;
 
     // ANCF cable
-    auto ANCFCable = std::make_shared<FrDynamicCable>(Node1, Node2, unstretchedLength, YoungModulus, sectionArea,
+    auto ANCFCable = std::make_shared<FrDynamicCable>(Node2, Node1, unstretchedLength, YoungModulus, sectionArea,
             linearDensity, rayleighDamping, nbElements);
-
-//    ANCFCable->SetBreakingTension(1.8e6);
 
     system.AddANCFCable(ANCFCable);
 
     // Catenary line
+    auto Node3 = system.GetWorldBody()->NewNode();
+    Node3->SetPositionInBody(Position(-10., 1., 0.), NWU);
+    auto Node4 = system.GetWorldBody()->NewNode();
+    Node4->SetPositionInBody(Position(10., 1., 0.), NWU);
 
-    auto CatenaryLine = make_catenary_line(Node1,Node2,&system,true,YoungModulus,sectionArea,unstretchedLength,linearDensity,AIR);
+    auto CatenaryLine = make_catenary_line(Node3,Node4,&system,true,YoungModulus,sectionArea,unstretchedLength,linearDensity,AIR);
     CatenaryLine->SetAssetElements(50);
 
 
