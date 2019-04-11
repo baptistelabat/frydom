@@ -25,10 +25,11 @@
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/mesh/FrHydroMesh.h"
+#include "FrExcitationForceBase.h"
 
 namespace frydom {
 
-    // Forward declaration
+    // Forward declarations.
     class FrHydroDB;
     class FrBody;
     class FrEquilibriumFrame;
@@ -37,18 +38,12 @@ namespace frydom {
      * \class FrNonLinearExcitationForce
      * \brief Class for computing the nonlinear excitation loads (nonlinear FK, linear diffraction).
      */
-    class FrNonLinearExcitationForce : public FrForce {
+    class FrNonLinearExcitationForce : public FrExcitationForceBase {
 
     private:
 
         /// Offshore system.
         FrOffshoreSystem* m_system;
-
-        std::shared_ptr<FrHydroDB> m_HDB;
-        //TODO: passed the raw to shared ptr, need some modif in the mapper.
-        FrEquilibriumFrame* m_equilibriumFrame;
-
-        std::vector<Eigen::MatrixXcd> m_Fdiff;
 
         /// Clipped mesh.
         mesh::FrMesh m_clipped_mesh;
@@ -67,7 +62,7 @@ namespace frydom {
 
     public:
 
-        explicit FrNonLinearExcitationForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrHydroMesh> HydroMesh) : m_HDB(HDB) {
+        explicit FrNonLinearExcitationForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrHydroMesh> HydroMesh) : FrExcitationForceBase(HDB) {
             m_system = system;
             m_hydro_mesh = HydroMesh;
             m_free_surface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface(); // Used to evaluate the incident pressure.
@@ -83,6 +78,10 @@ namespace frydom {
 
         /// This function compute the incident pressure integration.
         void CalcIncidentPressureIntegration();
+
+        Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
+
+        Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
 
     private:
 

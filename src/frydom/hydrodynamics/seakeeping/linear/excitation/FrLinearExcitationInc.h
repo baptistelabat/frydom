@@ -7,5 +7,6 @@
 
 #include "FrLinearExcitationForce.h"
 #include "FrNonLinearExcitationForce.h"
+#include "FrExcitationForceBase.h"
 
 #endif //FRYDOM_FRLINEAREXCITATIONINC_H

@@ -208,8 +208,6 @@ namespace frydom {
                 this->HydrostaticReader(reader, ibodyPath + "/Hydrostatic", BEMBody);
             }
 
-            /// Interpolation of the excitation loads with respect to the wave direction.
-            this->GetBody(ibody)->Finalize();
         }
     }
 

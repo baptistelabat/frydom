@@ -148,11 +148,8 @@ namespace frydom {
 
         unsigned int GetNbTimeSamples() const;
 
-        /// This subroutine allocates the arrays for the hdb.
+        /// This function allocates the arrays for the hdb.
         void Initialize();
-
-        /// This subroutine runs the interpolators.
-        void Finalize();
 
         //
         // Generalized modes
@@ -223,19 +220,10 @@ namespace frydom {
         mathutils::Matrix33<double> GetHydrostaticStiffnessMatrix() const { return m_hydrostaticStiffnessMatrix; }
 
         std::shared_ptr<FrWaveDriftPolarData> GetWaveDrift() const;
-        //
-        // Interpolators
-        //
-
-        /// This function interpolates the excitation loads with respect to the wave direction.
-        void BuildWaveExcitationInterpolators();
-
-        std::vector<Eigen::MatrixXcd> GetExcitationInterp(std::vector<double> waveFrequencies,
-                                                          std::vector<double> waveDirections,
-                                                          mathutils::ANGLE_UNIT angleUnit);
 
         /// This function interpolates the diffraction loads with respect to the wave direction.
         void BuildDiffractionInterpolators();
+
 
     };
 

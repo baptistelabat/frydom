@@ -25,27 +25,8 @@ namespace frydom {
 
     void FrNonLinearExcitationForce::Initialize() {
 
-        // Equilibrium frame of the body.
-        m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
-
-        // Wave field.
-        auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
-
-        // BEMBody.
-        auto BEMBody = m_HDB->GetBody(m_body);
-
-        // Frequency and wave direction discretization.
-        auto freqs = waveField->GetWaveFrequencies(RADS);
-        auto directions = waveField->GetWaveDirections(RAD, NWU, GOTO);
-
-        // Interpolation of the diffraction loads if not already done.
-        if (m_Fdiff.empty()) {
-            BEMBody->BuildDiffractionInterpolators();
-            m_Fdiff = BEMBody->GetExcitationInterp(freqs, directions, RAD); // Yes! Excitation even if only the diffraction loads are returned.
-        }
-
         // Initialization of the parent class.
-        FrForce::Initialize();
+        FrExcitationForceBase::Initialize();
 
     }
 
@@ -67,63 +48,18 @@ namespace frydom {
         //                                        Diffraction loads
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // Wave field structure.
-        auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
-
-        // Wave elevation.
-        auto complexElevations = waveField->GetComplexElevation(m_equilibriumFrame->GetX(NWU),
-                                                              m_equilibriumFrame->GetY(NWU),
-                                                              NWU);
-
-        // DOF.
-        auto nbMode = m_HDB->GetBody(m_body)->GetNbForceMode();
-
-        // Number of wave frequencies.
-        auto nbFreq = waveField->GetWaveFrequencies(RADS).size();
-
-        // Number of wave directions.
-        auto nbWaveDir = waveField->GetWaveDirections(RAD, NWU, GOTO).size();
-
-        // Fdiff(t) = eta*Fdiff(Nemoh).
-        Eigen::VectorXd forceMode(nbMode);
-        forceMode.setZero(); // Initialization.
-        for (unsigned int imode=0; imode<nbMode; ++imode) {
-            for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq) {
-                for (unsigned int idir=0; idir<nbWaveDir; ++idir) {
-                    forceMode(imode) += std::imag(complexElevations[idir][ifreq] * m_Fdiff[idir](imode, ifreq));
-                }
-            }
-        }
-
-        // From vector to force and torque structures.
-        auto force = Force();
-        auto torque = Torque();
-
-        for (unsigned int imode=0; imode<nbMode; ++imode) {
-
-            auto mode = m_HDB->GetBody(m_body)->GetForceMode(imode);
-            Direction direction = mode->GetDirection(); // Unit vector for the force direction.
-            switch (mode->GetType()) {
-                case FrBEMMode::LINEAR:
-                    force += direction * forceMode(imode);
-                    break;
-                case FrBEMMode::ANGULAR:
-                    torque += direction * forceMode(imode);
-                    break;
-            }
-        }
-        auto worldForce = m_equilibriumFrame->ProjectVectorFrameInParent(force, NWU);
-        auto worldTorque = m_equilibriumFrame->ProjectVectorFrameInParent(torque, NWU);
+        // Computation of the diffraction loads.
+        Compute_F_HDB();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //                                        Excitation loads
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // Sum of the diffraction and the Froude-Krylov loads.
-        worldForce = worldForce + m_FKforce;
-        worldTorque = worldTorque + m_FKtorque;
+        Force worldForce = m_WorldForce + m_FKforce;
+        Torque worldTorque = m_WorldTorque + m_FKtorque;
 
-        // Setting the nonlinear Froude-Krylov loads in world at the CoG in world.
+        // Setting the nonlinear excitation loads in world at the CoG in world.
         this->SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
 
 	    // Settings: torque is already computed at CoG.
@@ -154,7 +90,7 @@ namespace frydom {
             NormalPos[2] = Normal[2];
 
             // Centroid (where the pressure is evaluated).
-            mesh::FrMeshTraits::Point Centroid = m_clipped_mesh.data(f_iter).Center();
+            mesh::FrMeshTraits::Point Centroid = m_clipped_mesh.data(f_iter).Center(); // Here a warning at the compilation step.
             CentroidPos[0] = Centroid[0];
             CentroidPos[1] = Centroid[1];
             CentroidPos[2] = Centroid[2];
@@ -187,6 +123,22 @@ namespace frydom {
 
     }
 
+    Eigen::MatrixXcd FrNonLinearExcitationForce::GetHDBData(unsigned int iangle) const {
+
+        auto BEMBody = m_HDB->GetBody(m_body);
+
+        return BEMBody->GetDiffraction(iangle);
+
+    }
+
+    Eigen::VectorXcd FrNonLinearExcitationForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
+
+        auto BEMBody = m_HDB->GetBody(m_body);
+
+        return BEMBody->GetDiffraction(iangle,iforce);
+
+    }
+
     void FrNonLinearExcitationForce::StepFinalize() {
         FrForce::StepFinalize();
 
@@ -203,7 +155,7 @@ namespace frydom {
         auto excitationForce = std::make_shared<FrNonLinearExcitationForce>(body->GetSystem(),HDB,HydroMesh);
 
         // Add the excitation force object as an external force to the body.
-        body->AddExternalForce(excitationForce);
+        body->AddExternalForce(excitationForce); // Initialization of m_body.
 
         return excitationForce;
 
