@@ -19,6 +19,7 @@ set(DEMOS
         bench_SphereDecay
         bench_SphereRegular
         bench_DTMB5512_captive
+        bench_Cables
         )
 
 

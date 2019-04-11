@@ -364,6 +364,30 @@ namespace frydom {
 
     }
 
+    FrOffshoreSystem::FEAMeshContainer FrOffshoreSystem::GetFEAMeshList() {
+        return m_feaMeshList;
+    }
+
+    void FrOffshoreSystem::RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feamesh) {
+
+        m_chronoSystem->RemoveMesh(feamesh->GetChronoMesh());
+
+        auto it = std::find(m_feaMeshList.begin(),m_feaMeshList.end(),feamesh);
+        assert(it != m_feaMeshList.end());
+        m_feaMeshList.erase(it);
+        feamesh->m_system = nullptr;
+
+    }
+
+    void FrOffshoreSystem::Remove(std::shared_ptr<FrDynamicCable> cable) {
+
+        RemoveFEAMesh(cable);
+
+        m_chronoSystem->RemoveOtherPhysicsItem(cable->GetChronoItem_ptr()->m_startingHinge);
+        m_chronoSystem->RemoveOtherPhysicsItem(cable->GetChronoItem_ptr()->m_endingHinge);
+
+    }
+
 
     // ***** Environment *****
 
@@ -749,6 +773,10 @@ namespace frydom {
             }
         }
 
+        for (auto &mesh : m_feaMeshList) {
+            mesh->Relax();
+        }
+
     }
 
     void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type, bool checkCompat) {
@@ -869,9 +897,12 @@ namespace frydom {
 
         m_bodyList.clear();
         m_linkList.clear();
+        m_feaMeshList.clear();
         m_PrePhysicsList.clear();
         m_MidPhysicsList.clear();
         m_PostPhysicsList.clear();
+
+        m_isInitialized = false;
     }
 
     chrono::ChSystem* FrOffshoreSystem::GetChronoSystem() {

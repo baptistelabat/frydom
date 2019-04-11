@@ -303,8 +303,8 @@ namespace frydom {
         /// \param otherPhysics other physic item to be added
         void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics);
 
-        /// Get the list of pre physics item added to the system
-        /// \return List of the pre physics item added to the system
+        /// Get the list of pre physics items added to the system
+        /// \return List of the pre physics items added to the system
         PrePhysicsContainer GetPrePhysicsItemList();
 
         // ***** Mid Physics Item *****
@@ -313,8 +313,8 @@ namespace frydom {
         /// \param otherPhysics other physic item to be added
         void AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics);
 
-        /// Get the list of mid physics item added to the system
-        /// \return List of the mid physics item added to the system
+        /// Get the list of mid physics items added to the system
+        /// \return List of the mid physics items added to the system
         MidPhysicsContainer GetMidPhysicsItemList();
 
         // ***** Post Physics Item *****
@@ -323,14 +323,14 @@ namespace frydom {
         /// \param otherPhysics other physic item to be added
         void AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics);
 
-        /// Get the list of post physics item added to the system
-        /// \return List of the post physics item added to the system
+        /// Get the list of post physics items added to the system
+        /// \return List of the post physics items added to the system
         PostPhysicsContainer GetPostPhysicsItemList();
 
 
 
-        /// Remove a Physics item from the system
-        /// \param item Physics item removed from the system
+        /// Remove a Physics items from the system
+        /// \param item Physics items removed from the system
         void RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item);
 
         /// Remove all physics items from the system
@@ -343,9 +343,17 @@ namespace frydom {
         /// \param feaMesh FEA mesh to be added
         void AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
 
+        /// Get the list of fea meshes added to the system
+        /// \return List of the fea meshes added to the system
+        FEAMeshContainer GetFEAMeshList();
+
+        void RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
+
         /// Add a Dynamic Cable to the offshore system
         /// \param cable dynamic cable to be added
         void Add(std::shared_ptr<FrDynamicCable> cable);
+
+        void Remove(std::shared_ptr<FrDynamicCable> cable);
 
 
         // ***** Environment *****

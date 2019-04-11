@@ -44,7 +44,12 @@ namespace frydom {
 
         void StepFinalize() override;
 
+        virtual double GetStaticResidual() = 0;
+
+        virtual void Relax() = 0;
+
         friend void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh>);
+        friend void FrOffshoreSystem::RemoveFEAMesh(std::shared_ptr<FrFEAMesh>);
 
     };
 

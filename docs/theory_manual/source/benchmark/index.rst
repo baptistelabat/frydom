@@ -17,3 +17,10 @@ DTM5512
     :maxdepth: 2
 
     dtmb5512_captive_test
+
+Cables
+~~~~~~
+.. toctree::
+    :maxdepth: 2
+
+    comparisons_catenary_dynamic_cables

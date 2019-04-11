@@ -2,8 +2,8 @@
 // Created by lletourn on 05/03/19.
 //
 
-#ifndef FRYDOM_FRANCFCABLE_H
-#define FRYDOM_FRANCFCABLE_H
+#ifndef FRYDOM_FRDYNAMICCABLE_H
+#define FRYDOM_FRDYNAMICCABLE_H
 
 #include "FrCable.h"
 #include "frydom/core/common/FrFEAMesh.h"
@@ -157,7 +157,7 @@ namespace frydom {
 
         /// Get the type name of this object
         /// \return type name of this object
-        std::string GetTypeName() const override { return "ANCFCable"; }
+        std::string GetTypeName() const override { return "DynamicCable"; }
 
         /// Set the Rayleigh damping coefficient (only stiffness related coefficient is included in chrono model, as in: R = r * K )
         /// \param damping Raleigh damping
@@ -246,10 +246,15 @@ namespace frydom {
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
+        double GetStaticResidual() override;
+
+        void Relax() override;
+
 
         // Friend definitions
 
-        friend void FrOffshoreSystem::Add(std::shared_ptr<FrDynamicCable> cable);
+        friend void FrOffshoreSystem::Add(std::shared_ptr<FrDynamicCable>);
+        friend void FrOffshoreSystem::Remove(std::shared_ptr<FrDynamicCable>);
 
     };
 
@@ -259,4 +264,4 @@ namespace frydom {
                        double linearDensity, double rayleighDamping, unsigned int nbElements);
 
 } // end namespace frydom
-#endif //FRYDOM_FRANCFCABLE_H
+#endif //FRYDOM_FRDYNAMICCABLE_H

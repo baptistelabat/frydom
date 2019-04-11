@@ -175,7 +175,7 @@ namespace frydom {
                 // Add the node to the ChMesh
                 AddNode(m_starting_node_fea);
 
-                // Creating the specified number of ANCF Cable elements
+                // Creating the specified number of Cable elements
                 for (uint i = 1; i <= m_frydomCable->GetNumberOfElements(); ++i) {
                     s += ds;
 
@@ -341,6 +341,8 @@ namespace frydom {
     Force FrDynamicCable::GetTension(double s, FRAME_CONVENTION fc) const {
 
         assert(s<=GetUnstretchedLength());
+        
+        if (s>GetUnstretchedLength()) s = GetUnstretchedLength();
 
         double ds = GetUnstretchedLength() / GetNumberOfElements();
         double a = s/ds;
@@ -451,10 +453,22 @@ namespace frydom {
         return m_endingHingeType;
     }
 
-//    void FrANCFCable::StepFinalize() {
-//
-//
-//    }
+    double FrDynamicCable::GetStaticResidual() {
+
+        double residual = 0;
+
+        for (auto &node : m_chronoCable->GetNodes()) {
+            residual += dynamic_cast<chrono::fea::ChNodeFEAxyzrot*>(node.get())->GetPos_dt().Length();
+        }
+
+        return residual;
+    }
+
+    void FrDynamicCable::Relax() {
+
+        m_chronoCable->SetNoSpeedNoAcceleration();
+
+    }
 
     std::shared_ptr<FrDynamicCable>
     make_dynamic_cable(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
