@@ -15,8 +15,25 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
-    /** This demo presents cable features, either catenary line (quasi-static) alone, bound to the fixed world body, or
-     * within a pendulum/Newton pendulum.
+    /** This demo presents cable features : catenary line and dynamic cable.
+     *
+     * The catenary line is based on a quasi-static model, dedicated to simulate mooring line. This model is suitable for
+     * lines with few or no dynamic, and not meant to work with too much traction. In this model, a uniform distributed
+     * load is integrated on the line. Flexion and torsion cannot be modeled. The quasi-static approach leads to fast
+     * computations, compared to the dynamic cable.
+     *
+     * The dynamic cable is based on Finite Element Analysis (FEA) solving, with an Euler Beam approximation. Flexion and
+     * torsion are integrated. More precise than the catenary line, it is however more time consuming. It is particularly
+     * dedicated for cable with large motions and strains, heavy loads, violent dynamic simulations, etc.
+     *
+     * Three demo are presented in this tutorial, with catenary lines and dynamic cables:
+     *
+     *  * a fixed line : both ends are contrained.
+     *  * a pendulum : a sphere balancing at the end of a line, with its other end fixed.
+     *  * a Newton pendulum : consists of a series of identically sized metal balls suspended in a metal frame so that
+     *      they are just touching each other at rest. Each ball is attached to the frame by two lines of equal length
+     *      angled away from each other. This restricts the pendulums' movements to the same plane.
+     *
      */
 
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
@@ -35,7 +52,7 @@ int main(int argc, char* argv[]) {
     enum cableCase{ FixedLine, Pendulum, Newton_Pendulum};
 
     // Chose the one you want to run
-    cableCase Case = Newton_Pendulum;
+    cableCase Case = FixedLine;
 
     switch (Case) {
         // This case features one catenary line, with fixed ending and starting nodes. We can check the line profile and
@@ -48,17 +65,22 @@ int main(int argc, char* argv[]) {
             Node2->SetPositionInBody(Position(10., 0., 0.), NWU);
 
             // Line properties :
-            bool elastic = true;                    // non elastic catenary lines are only available for non stretched lines
-            auto u = Direction(0., 0., -1.);        // definition of the direction of the uniform load distribution
-            double unstretchedLength = 40.;         // unstretched length
-            double linearDensity = 616.538;         // linear density of the line
-            double EA = 1.5708e9;                   //
-            double sectionArea = 0.05;              // section area
-            double YoungModulus = EA / sectionArea; // Young modulus of the line
+            bool elastic = true;                                    //  non elastic catenary lines are only available for non stretched lines
+            double unstretchedLength = 40.;                         //  unstretched length, in m
+            double linearDensity = 616.538;                         //  linear density of the line, in kg/m
+            double EA = 1.5708e6;                                   //  elasticty
+            double diameter = 0.1;                                  //  diameter of the line, in m
+            double sectionArea = MU_PI * pow((0.5 * diameter), 2);  //  section area, in m²
+            double YoungModulus = EA / sectionArea;                 //  Young modulus of the line, in Pa
+            unsigned int nbElement = 50;                            //  number of elements
+            double RayleighDamping = 0.;                            //  Rayleigh damping
 
             // Create the catenary line, using the nodes and line properties previously defined
-            auto CatenaryLine = make_catenary_line(Node1, Node2, &system, elastic, YoungModulus, unstretchedLength, sectionArea,
+            auto CatenaryLine = make_catenary_line(Node1, Node2, &system, elastic, unstretchedLength, YoungModulus, sectionArea,
                                                    linearDensity, WATER);
+
+            auto DynamicCable = make_dynamic_cable(Node1,Node2, &system, unstretchedLength, YoungModulus, sectionArea,
+                    linearDensity, RayleighDamping, nbElement);
 
             break;
         }
@@ -84,13 +106,15 @@ int main(int argc, char* argv[]) {
             worldNode->SetPositionInBody(Position(-2., 0., 50.), NWU);
 
             // Line properties :
-            bool elastic = true;                                    // non elastic catenary lines are only available for non stretched lines
-            double unstretchedLength = 50.;                         // unstretched length
-            double linearDensity = 616.538;                         // linear density of the line
-            double EA = 1.5708e7;                                   //
+            bool elastic = true;                                    //  non elastic catenary lines are only available for non stretched lines
+            double unstretchedLength = 50.;                         //  unstretched length, in m
+            double linearDensity = 616.538;                         //  linear density of the line, in kg/m
+            double EA = 1.5708e7;                                   //  elasticity
             double diameter = 0.5;                                  //  diameter of the line, in m
             double sectionArea = MU_PI * pow((0.5 * diameter), 2);  //  section area, in m²
-            double YoungModulus = EA / sectionArea;                 // Young modulus of the line
+            double YoungModulus = EA / sectionArea;                 //  Young modulus of the line, in Pa
+            unsigned int nbElement = 50;                            //  number of elements
+            double RayleighDamping = 0.;                            //  Rayleigh damping
 
             // Create the catenary line, using the nodes and line properties previously defined
             auto CatenaryLine = make_catenary_line(sphereNode, worldNode, &system, elastic, unstretchedLength,
@@ -113,8 +137,6 @@ int main(int argc, char* argv[]) {
 
             // Dynamic cable properties :
             unstretchedLength -= 1.;
-            unsigned int nbElement = 50;
-            double RayleighDamping = 0.;
 
             auto DynamicCable = make_dynamic_cable(sphereNode2, worldNode2, &system, unstretchedLength, YoungModulus,
                                                    sectionArea, linearDensity, RayleighDamping, nbElement);
@@ -134,16 +156,15 @@ int main(int argc, char* argv[]) {
             float steelNormalDamping = 1e12;// Normal damping of the sphere (for contact)
 
             // Line properties :
-            bool elastic = true;                            // non elastic catenary lines are only available for non stretched lines
-            auto u = Direction(0., 0., -1.);                // definition of the direction of the uniform load distribution
-            double unstretchedLength = 51.;                 // unstretched length
-            double linearDensity = 61.6538;                 // linear density of the line
-            double EA = 1.5708e7;                           //
+            bool elastic = true;                            //  non elastic catenary lines are only available for non stretched lines
+            double unstretchedLength = 51.;                 //  unstretched length, in m
+            double linearDensity = 61.6538;                 //  linear density of the line, in kg/m
+            double EA = 1.5708e7;                           //  elasticity
             double radius = 0.5;                            //  radius of the line, in m
             double sectionArea = MU_PI * pow((radius), 2);  //  section area, in m²
-            double YoungModulus = EA / sectionArea;         // Young modulus of the line
-            double RayleighDamping = 0.;                    // Rayleigh Damping
-            unsigned int nbElements = 20;                   // Number of elements if the dynamic cable
+            double YoungModulus = EA / sectionArea;         //  Young modulus of the line, in Pa
+            double RayleighDamping = 0.;                    //  Rayleigh damping
+            unsigned int nbElements = 20;                   //  Number of elements of the dynamic cable
 
             double alpha = 15*DEG2RAD;
             double y = unstretchedLength*sin(alpha);
@@ -250,12 +271,6 @@ int main(int argc, char* argv[]) {
 
     // You can modify solver and time stepper parameters :
 //    system.SetSolver(FrOffshoreSystem::SOLVER::MINRES);
-//    system.SetSolverWarmStarting(true);
-//    system.SetSolverMaxIterSpeed(1000);
-//    system.SetSolverMaxIterStab(200);
-//    system.SetSolverForceTolerance(1e-13);
-
-    // Change solver settings, for dynamic cable modeling
     system.SetSolverWarmStarting(true);
     system.SetSolverMaxIterSpeed(200);
     system.SetSolverMaxIterStab(200);
@@ -265,10 +280,8 @@ int main(int argc, char* argv[]) {
 //    system.SetTimeStepper(FrOffshoreSystem::TIME_STEPPER::EULER_IMPLICIT_LINEARIZED);
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
-    // the time length of the simulation (here 30) and the distance from the camera to the objectif (50).
+    // the time length of the simulation (here infinite) and the distance from the camera to the objectif (50).
     // For saving snapshots of the simulation, just turn the boolean to true.
     system.RunInViewer(0., 50, false);
 
-//    system.SolveStaticEquilibrium(FrOffshoreSystem::STATICS_METHOD::NONLINEAR);
-//    system.Visualize(50,false);
 }
