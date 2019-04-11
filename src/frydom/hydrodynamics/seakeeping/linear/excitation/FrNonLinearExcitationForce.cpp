@@ -167,7 +167,7 @@ namespace frydom {
             Area = m_clipped_mesh.GetArea(*f_iter);
 
             // Pressure * Area.
-            PA = Pressure*Area;
+            PA = -Pressure*Area;
 
             // Froude-Krylov force.
             m_FKforce[0] = m_FKforce[0] + PA*Normal[0];
