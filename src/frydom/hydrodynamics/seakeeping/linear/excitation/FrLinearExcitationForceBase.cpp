@@ -9,7 +9,7 @@
 //
 // ==========================================================================
 
-#include "FrExcitationForceBase.h"
+#include "FrLinearExcitationForceBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
@@ -19,7 +19,7 @@
 
 namespace frydom {
 
-    void FrExcitationForceBase::Initialize() {
+    void FrLinearExcitationForceBase::Initialize() {
 
         // Equilibrium frame of the body.
         m_equilibriumFrame = m_HDB->GetMapper()->GetEquilibriumFrame(m_body);
@@ -48,7 +48,7 @@ namespace frydom {
     }
 
     std::vector<Eigen::MatrixXcd>
-    FrExcitationForceBase::GetHDBInterp(std::vector<double> waveFrequencies,
+    FrLinearExcitationForceBase::GetHDBInterp(std::vector<double> waveFrequencies,
                                    std::vector<double> waveDirections,
                                    mathutils::ANGLE_UNIT angleUnit) {
 
@@ -98,7 +98,7 @@ namespace frydom {
         return Fexc;
     }
 
-    void FrExcitationForceBase::BuildHDBInterpolators() {
+    void FrLinearExcitationForceBase::BuildHDBInterpolators() {
 
         // This function creates the interpolator for the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation) with respect to the wave frequencies and directions.
 
@@ -139,7 +139,7 @@ namespace frydom {
         }
     }
 
-    void FrExcitationForceBase::Compute_F_HDB(){
+    void FrLinearExcitationForceBase::Compute_F_HDB(){
 
         // This function computes the excitation loads (linear excitation) or the diffraction loads (nonlinear excitation).
 
@@ -192,6 +192,12 @@ namespace frydom {
         // Projection of the loads in the equilibrium frame.
         m_WorldForce = m_equilibriumFrame->ProjectVectorFrameInParent(force, NWU);
         m_WorldTorque = m_equilibriumFrame->ProjectVectorFrameInParent(torque, NWU);
+
+        // Setting the nonlinear excitation loads in world at the CoG in world.
+        this->SetForceTorqueInWorldAtCOG(m_WorldForce, m_WorldTorque, NWU);
+
+        // Settings: torque is already computed at CoG.
+        SetForceTorqueInWorldAtCOG(m_WorldForce,m_WorldTorque, NWU);
 
     }
 

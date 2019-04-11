@@ -10,8 +10,8 @@
 // ==========================================================================
 
 
-#ifndef FRYDOM_FRLINEAREXCITATIONFORCE_H
-#define FRYDOM_FRLINEAREXCITATIONFORCE_H
+#ifndef FRYDOM_FRLINEARDIFFRACTIONFORCE_H
+#define FRYDOM_FRLINEARDIFFRACTIONFORCE_H
 
 #include <memory>
 #include <vector>
@@ -28,19 +28,19 @@ namespace frydom {
     class FrEquilibriumFrame;
 
     /**
-     * \class FrLinearExcitationForce
-     * \brief Class for computing the linear excitation loads.
+     * \class FrLinearDiffractionForce
+     * \brief Class for computing the linear diffraction loads.
      */
-    class FrLinearExcitationForce : public FrLinearExcitationForceBase {
+    class FrLinearDiffractionForce : public FrLinearExcitationForceBase {
 
     public:
 
         /// Constructor.
-        explicit FrLinearExcitationForce(std::shared_ptr<FrHydroDB> HDB) : FrLinearExcitationForceBase(HDB) {};
+        explicit FrLinearDiffractionForce(std::shared_ptr<FrHydroDB> HDB) : FrLinearExcitationForceBase(HDB) {};
 
         /// Get the type name of this object
         /// \return type name of this object
-        std::string GetTypeName() const override { return "LinearExcitationForce"; }
+        std::string GetTypeName() const override { return "LinearDiffractionForce"; }
 
         void Initialize() override;
 
@@ -53,16 +53,16 @@ namespace frydom {
 
     private:
 
-        /// Compute the linear excitation force
+        /// Compute the linear diffraction force
         /// \param time Current time of the simulation from beginning, in seconds
         void Compute(double time) override;
 
     };
 
-    std::shared_ptr<FrLinearExcitationForce>
-    make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body);
+    std::shared_ptr<FrLinearDiffractionForce>
+    make_linear_diffraction_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body);
 
 
 }  // end namespace frydom
 
-#endif //FRYDOM_FRLINEAREXCITATIONFORCE_H
+#endif //FRYDOM_FRLINEARDIFFRACTIONFORCE_H

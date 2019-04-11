@@ -10,7 +10,7 @@
 // ==========================================================================
 
 
-#include "FrNonLinearExcitationForce.h"
+#include "FrNonLinearFroudeKrylovForce.h"
 
 #include "frydom/core/body/FrBody.h"
 #include "frydom/mesh/FrMeshClipper.h"
@@ -23,20 +23,16 @@
 
 namespace frydom {
 
-    void FrNonLinearExcitationForce::Initialize() {
+    void FrNonLinearFroudeKrylovForce::Initialize() {
 
         // Initialization of the parent class.
-        FrExcitationForceBase::Initialize();
+        FrForce::Initialize();
 
     }
 
-    void FrNonLinearExcitationForce::Compute(double time) {
+    void FrNonLinearFroudeKrylovForce::Compute(double time) {
 
-        // This subroutine computes the nonlinear excitation forces (nonlinear RK, linear diffraction) from Nemoh results and pressure integration.
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //                                      Froude-Krylov loads
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // This function computes the fully or weakly nonlinear Froude-Krylov forces from the pressure integration.
 
         // Clipped mesh.
         m_clipped_mesh = m_hydro_mesh->GetClippedMesh();
@@ -44,30 +40,15 @@ namespace frydom {
         // Computation of the Froude-Krylov force.
         CalcIncidentPressureIntegration();
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //                                        Diffraction loads
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        // Computation of the diffraction loads.
-        Compute_F_HDB();
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //                                        Excitation loads
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        // Sum of the diffraction and the Froude-Krylov loads.
-        Force worldForce = m_WorldForce + m_FKforce;
-        Torque worldTorque = m_WorldTorque + m_FKtorque;
-
         // Setting the nonlinear excitation loads in world at the CoG in world.
-        this->SetForceTorqueInWorldAtCOG(worldForce, worldTorque, NWU);
+        this->SetForceTorqueInWorldAtCOG(m_FKforce, m_FKtorque, NWU);
 
 	    // Settings: torque is already computed at CoG.
-        SetForceTorqueInWorldAtCOG(worldForce,worldTorque, NWU);
+        SetForceTorqueInWorldAtCOG(m_FKforce,m_FKtorque, NWU);
 
     }
 
-    void FrNonLinearExcitationForce::CalcIncidentPressureIntegration(){
+    void FrNonLinearFroudeKrylovForce::CalcIncidentPressureIntegration(){
 
         // This function performs the incident pressure integration.
 
@@ -123,41 +104,25 @@ namespace frydom {
 
     }
 
-    Eigen::MatrixXcd FrNonLinearExcitationForce::GetHDBData(unsigned int iangle) const {
-
-        auto BEMBody = m_HDB->GetBody(m_body);
-
-        return BEMBody->GetDiffraction(iangle);
-
-    }
-
-    Eigen::VectorXcd FrNonLinearExcitationForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
-
-        auto BEMBody = m_HDB->GetBody(m_body);
-
-        return BEMBody->GetDiffraction(iangle,iforce);
-
-    }
-
-    void FrNonLinearExcitationForce::StepFinalize() {
+    void FrNonLinearFroudeKrylovForce::StepFinalize() {
         FrForce::StepFinalize();
 
         // Writing the clipped mesh in an output file.
 //        m_clipped_mesh.Write("Mesh_clipped_Froude_Krylov.obj");
     }
 
-    std::shared_ptr<FrNonLinearExcitationForce>
-    make_nonlinear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh){
+    std::shared_ptr<FrNonLinearFroudeKrylovForce>
+    make_nonlinear_froude_krylov_force(std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh){
 
-        // This subroutine creates a (fully or weakly) nonlinear excitation force object.
+        // This function creates a fully or weakly nonlinear Froude-Krylov force object.
 
-        // Construction of the (fully or weakly) excitation force object from the HDB.
-        auto excitationForce = std::make_shared<FrNonLinearExcitationForce>(body->GetSystem(),HDB,HydroMesh);
+        // Construction of the fully or weakly Froude-Krylov force object from the HDB.
+        auto NonlinFKForce = std::make_shared<FrNonLinearFroudeKrylovForce>(body->GetSystem(),HydroMesh);
 
-        // Add the excitation force object as an external force to the body.
-        body->AddExternalForce(excitationForce); // Initialization of m_body.
+        // Add the Froude-Krylov force object as an external force to the body.
+        body->AddExternalForce(NonlinFKForce); // Initialization of m_body.
 
-        return excitationForce;
+        return NonlinFKForce;
 
     }
 

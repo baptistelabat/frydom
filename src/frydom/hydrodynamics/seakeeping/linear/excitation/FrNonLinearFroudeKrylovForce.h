@@ -10,8 +10,8 @@
 // ==========================================================================
 
 
-#ifndef FRYDOM_FRNONLINEAREXCITATIONFORCE_H
-#define FRYDOM_FRNONLINEAREXCITATIONFORCE_H
+#ifndef FRYDOM_FRNONLINEARFROUDEKRYLOVFORCE_H
+#define FRYDOM_FRNONLINEARFROUDEKRYLOVFORCE_H
 
 #include <memory>
 #include <vector>
@@ -25,7 +25,7 @@
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/mesh/FrHydroMesh.h"
-#include "FrExcitationForceBase.h"
+#include "FrLinearExcitationForceBase.h"
 
 namespace frydom {
 
@@ -38,7 +38,7 @@ namespace frydom {
      * \class FrNonLinearExcitationForce
      * \brief Class for computing the nonlinear excitation loads (nonlinear FK, linear diffraction).
      */
-    class FrNonLinearExcitationForce : public FrExcitationForceBase {
+    class FrNonLinearFroudeKrylovForce : public FrForce {
 
     private:
 
@@ -62,7 +62,7 @@ namespace frydom {
 
     public:
 
-        explicit FrNonLinearExcitationForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrHydroMesh> HydroMesh) : FrExcitationForceBase(HDB) {
+        explicit FrNonLinearFroudeKrylovForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroMesh> HydroMesh) {
             m_system = system;
             m_hydro_mesh = HydroMesh;
             m_free_surface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface(); // Used to evaluate the incident pressure.
@@ -70,7 +70,7 @@ namespace frydom {
 
         /// Get the type name of this object
         /// \return type name of this object
-        std::string GetTypeName() const override { return "NonLinearExcitationForce"; }
+        std::string GetTypeName() const override { return "NonLinearFroudeKrylovForce"; }
 
         void Initialize() override;
 
@@ -79,20 +79,16 @@ namespace frydom {
         /// This function compute the incident pressure integration.
         void CalcIncidentPressureIntegration();
 
-        Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
-
-        Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
-
     private:
 
         void Compute(double time) override;
 
     };
 
-    /// This function creates a (fully or weakly) nonlinear excitation force object.
-    std::shared_ptr<FrNonLinearExcitationForce>
-    make_nonlinear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
+    /// This function creates a (fully or weakly) nonlinear Froude-Krylov force object.
+    std::shared_ptr<FrNonLinearFroudeKrylovForce>
+    make_nonlinear_froude_krylov_force(std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
 
 }  // end namespace frydom
 
-#endif //FRYDOM_FRNONLINEAREXCITATIONFORCE_H
+#endif //FRYDOM_FRNONLINEARFROUDEKRYLOVFORCE_H

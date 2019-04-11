@@ -10,8 +10,8 @@
 // ==========================================================================
 
 
-#ifndef FRYDOM_FREXCITATIONFORCEBASE_H
-#define FRYDOM_FREXCITATIONFORCEBASE_H
+#ifndef FRYDOM_FRLINEAREXCITATIONFORCEBASE_H
+#define FRYDOM_FRLINEAREXCITATIONFORCEBASE_H
 
 #include "frydom/core/math/FrVector.h"
 #include "MathUtils/Interp1d.h"
@@ -24,10 +24,10 @@ namespace frydom {
     class FrEquilibriumFrame;
 
     /**
-     * \class FrExcitationForce
-     * \brief Class for defining an excitation force (linear or nonlinear).
+     * \class FrLinearExcitationForce
+     * \brief Class for defining a linear excitation force (linear or nonlinear).
      */
-    class FrExcitationForceBase : public FrForce {
+    class FrLinearExcitationForceBase : public FrForce {
 
     protected:
 
@@ -53,7 +53,7 @@ namespace frydom {
     public:
 
         /// Constructor.
-        explicit FrExcitationForceBase(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) {};
+        explicit FrLinearExcitationForceBase(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) {};
 
         virtual Eigen::MatrixXcd GetHDBData(const unsigned int iangle) const = 0;
 
@@ -77,4 +77,4 @@ namespace frydom {
 
 } // end namespace frydom
 
-#endif //FRYDOM_FREXCITATIONFORCEBASE_H
+#endif //FRYDOM_FRLINEAREXCITATIONFORCEBASE_H

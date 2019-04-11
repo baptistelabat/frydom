@@ -9,7 +9,8 @@
 //
 // ==========================================================================
 
-#include "FrLinearExcitationForce.h"
+#include "FrLinearFroudeKrylovForce.h"
+
 #include "frydom/core/body/FrBody.h"
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
@@ -18,53 +19,52 @@
 
 namespace frydom {
 
-    void FrLinearExcitationForce::Initialize() {
+    void FrLinearFroudeKrylovForce::Initialize() {
 
         // Initialization of the parent class.
         FrLinearExcitationForceBase::Initialize();
 
     }
 
-    Eigen::MatrixXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle) const {
+    Eigen::MatrixXcd FrLinearFroudeKrylovForce::GetHDBData(unsigned int iangle) const {
 
         auto BEMBody = m_HDB->GetBody(m_body);
 
-        return BEMBody->GetExcitation(iangle);
+        return BEMBody->GetFroudeKrylov(iangle);
 
     }
 
-    Eigen::VectorXcd FrLinearExcitationForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
+    Eigen::VectorXcd FrLinearFroudeKrylovForce::GetHDBData(unsigned int iangle, unsigned int iforce) const {
 
         auto BEMBody = m_HDB->GetBody(m_body);
 
-        return BEMBody->GetExcitation(iangle,iforce);
+        return BEMBody->GetFroudeKrylov(iangle,iforce);
 
     }
 
-    void FrLinearExcitationForce::Compute(double time) {
+    void FrLinearFroudeKrylovForce::Compute(double time) {
 
-        // This function computes the linear excitation forces from Nemoh results.
+        // This function computes the linear Froude-Krylov forces from Nemoh results.
 
         Compute_F_HDB();
-
     }
 
-    void FrLinearExcitationForce::StepFinalize() {
+    void FrLinearFroudeKrylovForce::StepFinalize() {
         FrForce::StepFinalize();
     }
 
-    std::shared_ptr<FrLinearExcitationForce>
-    make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
+    std::shared_ptr<FrLinearFroudeKrylovForce>
+    make_linear_froude_krylov_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
 
-        // This function creates the linear excitation force object.
+        // This function creates the linear Froude-Krylov force object.
 
         // Construction of the excitation force object from the HDB.
-        auto excitationForce = std::make_shared<FrLinearExcitationForce>(HDB);
+        auto LinFKForce = std::make_shared<FrLinearFroudeKrylovForce>(HDB);
 
         // Add the excitation force object as an external force to the body.
-        body->AddExternalForce(excitationForce); // Initialization of m_body.
+        body->AddExternalForce(LinFKForce); // Initialization of m_body.
 
-        return excitationForce;
+        return LinFKForce;
 
     }
 

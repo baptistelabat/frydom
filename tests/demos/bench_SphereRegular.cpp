@@ -142,8 +142,8 @@ int main(int argc, char* argv[]) {
 
     // -- Inertia
 
-//    double mass = 2.618E5; // Theoretical mass.
-    double mass = 2.61299E5; // Mass from mesh with 6200 faces.
+    double mass = 2.618E5; // Theoretical mass.
+//    double mass = 2.61299E5; // Mass from mesh with 6200 faces.
 //    double mass = 2.61488E5; // Mass from mesh with 10000 faces.
 
     double Ixx = 1.690E6;
@@ -165,35 +165,43 @@ int main(int argc, char* argv[]) {
 
     // -- Linear hydrostatics
 
-//    auto forceHst = make_linear_hydrostatic_force(hdb, body);
+    auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
     // -- Radiation
 
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
     radiationModel->SetImpulseResponseSize(body.get(), 6., 0.1);
 
+    // -- Linear diffraction
+
+//    auto diffractionForce = make_linear_diffraction_force(hdb, body);
+
+    // -- Linear Froude-Krylov
+
+//    auto LinFKForce = make_linear_froude_krylov_force(hdb, body);
+
     // -- Linear excitation
 
-//    auto excitationForce = make_linear_excitation_force(hdb, body);
+    auto excitationForce = make_linear_excitation_force(hdb, body);
 
     // -- Hydrodynamic mesh
 
-    auto bodyMesh = make_hydro_mesh_nonlinear(body,"Sphere_6200_faces.obj");
-    mathutils::Matrix33<double> Rotation;
-    Rotation.SetIdentity();
-    Position MeshOffset(0,0,0);
-    bodyMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
-    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
+//    auto bodyMesh = make_hydro_mesh_nonlinear(body,"Sphere_6200_faces.obj");
+//    mathutils::Matrix33<double> Rotation;
+//    Rotation.SetIdentity();
+//    Position MeshOffset(0,0,0);
+//    bodyMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
+//    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     // -- Nonlinear hydrostatics
 
-    auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
-    forceHst->SetLogged(true);
+//    auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
+//    forceHst->SetLogged(true);
 
-    // -- Nonlinear excitation
+    // -- Nonlinear Froude-Krylov
 
-    auto excitationForce = make_nonlinear_excitation_force(hdb, body,bodyMesh);
-    excitationForce->SetLogged(true);
+//    auto NonlinFKForce = make_nonlinear_froude_krylov_force(body,bodyMesh);
+//    NonlinFKForce->SetLogged(true);
 
     // -- Simulation
 
