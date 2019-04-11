@@ -19,15 +19,6 @@ Please contact <a href=mailto:frydom-training@dice-engineering.com>FRyDoM traini
 This work was carried out within the framework of the WEAMEC, West Atlantic Marine Energy Community, 
 and with funding from the Pays de la Loire Region.
 
-Starting with FRyDoM
---------------------
-
-First, you need to add your ssh-key to your GitLab account, in order to be able to clone the 
-present repository. Go to your profile settings, and click on SSH Keys in the panel on the left.
-Follow the instructions provided by GitLab.
-
-You can then follow the installation guide, provided in FRyDoM user guide (see below).
-
 GitLab repository
 -----------------
 

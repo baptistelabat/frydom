@@ -98,7 +98,7 @@ where :math:`x^*_{eq}` and :math:`\Psi^*_{eq}` are the equilibrium frame positio
 Spring-damping system
 ---------------------
 
-In that case the position of the equilibrium frame :math:`x_{eq}` is solution of a second order differential equation equivalent to a mass-spring damping system with unit mass :
+In that case, the position of the equilibrium frame :math:`x_{eq}` is solution of a second order differential equation equivalent to a mass-spring damping system with unit mass :
 
 .. math::
     \ddot{x}_eq + 2\xi\omega_0 (\dot{x}_{eq} - \dot{x}) + \omega_0^2 (x_{eq} - x) = 0
