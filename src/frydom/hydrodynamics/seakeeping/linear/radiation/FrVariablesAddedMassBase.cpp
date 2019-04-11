@@ -31,23 +31,57 @@ namespace frydom {
             // HDB (of all bodies).
             auto HDB = m_addedMassBase->GetRadiationModel()->GetHydroDB();
 
+            auto nbody = HDB->GetMapper()->GetNbMappings();
+
+            mathutils::MatrixMN<double> MassMatrix(6*nbody, 6*nbody);
+
+            int ibody = 0;
+
             // Loop over the bodies subject to hydrodynamique loads.
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
                 auto body = HDB->GetBody(BEMBody->first);
 
+                int jbody = 0;
+
                 for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
-                    mathutils::Matrix66<double> AddedMassCorrection = BEMBody->first->GetSelfInfiniteAddedMass();
+                    mathutils::Matrix66<double> SubMassMatrix = BEMBody->first->GetInfiniteAddedMass(BEMBodyMotion->first);
 
                     if (BEMBodyMotion->first == BEMBody->first) {
-                        AddedMassCorrection += body->GetInertiaTensor(NWU).GetMatrix();
+                        SubMassMatrix += body->GetInertiaTensor(NWU).GetMatrix();
                     }
 
-                    AddedMassCorrection.Inverse();
-                    m_invAddedMassCorrection[std::make_pair(BEMBody->first, BEMBodyMotion->first)] = AddedMassCorrection;
+                    for (int i=0; i<6; i++) {
+                        for (int j=0; j<6; j++) {
+                            MassMatrix(6*ibody + i,6*jbody + j) = SubMassMatrix(i, j);
+                        }
+                    }
+                    jbody += 1;
                 }
+                ibody += 1;
             }
+
+            MassMatrix.Inverse();
+
+            mathutils::Matrix66<double> invMassMatrix;
+
+            ibody = 0;
+            for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
+                auto jbody = 0;
+                for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
+
+                    for (int i=0; i<6; i++) {
+                        for (int j=0; j<6; j++) {
+                            invMassMatrix(i, j) = MassMatrix(6*ibody+i, 6*jbody+j);
+                        }
+                    }
+                    m_invAddedMassCorrection[std::make_pair(BEMBody->first, BEMBodyMotion->first)] = invMassMatrix;
+                    jbody += 1;
+                }
+                ibody += 1;
+            }
+
         }
 
         void FrVariablesAddedMassBase::Compute_invMb_v(chrono::ChMatrix<double>& result,
@@ -60,6 +94,10 @@ namespace frydom {
                 auto body = HDB->GetBody(BEMBody->first);
                 auto qb = GetVariablesQb(body);
 
+                for (int i=0; i<6; i++) {
+                    qb(i) = 0.;
+                }
+
                 for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
 
                     //auto BEMBodyMotion = BEMBody;
@@ -69,7 +107,6 @@ namespace frydom {
                     auto invAddedMassCorrection = m_invAddedMassCorrection.at(std::make_pair(BEMBody->first, BEMBodyMotion->first));
 
                     for (int i=0; i<6; i++) {
-                        qb(i) = 0.;
                         for (int j=0; j<6; j++) {
                            qb(i) += invAddedMassCorrection(i, j) * fb(j);
                         }

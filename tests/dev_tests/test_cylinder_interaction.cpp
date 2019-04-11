@@ -22,6 +22,9 @@ int main(int argc, char* argv[]) {
     waveField->SetWavePeriod(M_PI/4.);
     waveField->SetDirection(0., DEG, NWU, GOTO);
 
+    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 15., 1.);
+    system.GetEnvironment()->GetTimeRamp()->SetActive(true);
+
     // Bodies
 
     auto cyl1 = system.NewBody();
@@ -56,6 +59,8 @@ int main(int argc, char* argv[]) {
     //hdb->Map(1, cyl2.get(), eqFrame2);
 
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
+    radiationModel->SetImpulseResponseSize(cyl1.get(), 8., 0.01);
+    //radiationModel->SetImpulseResponseSize(cyl2.get(), 8., 0.01);
 
     // Hydrostatic
 
