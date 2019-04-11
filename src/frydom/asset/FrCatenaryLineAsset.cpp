@@ -26,7 +26,7 @@ namespace frydom{
     void FrCatenaryLineAsset::Initialize() { // TODO : il semble que ChLine soit capable de rendre des lignes courbes
 
         // Generating line segments
-        double ds = m_catenaryLine->GetUnstretchedLength() / m_catenaryLine->GetNbElements();
+        double ds = m_catenaryLine->GetUnstretchedLength() / m_catenaryLine->GetAssetElements();
 
         chrono::ChVector<double> p0, p1;
         chrono::ChColor color;
@@ -37,9 +37,9 @@ namespace frydom{
         
         auto index = m_chronoAsset->GetAssets().size();
 
-        while (s1 < m_catenaryLine->GetUnstretchedLength()) {
+        while (s1 < m_catenaryLine->GetUnstretchedLength()-ds) {
 
-            p1 = internal::Vector3dToChVector(m_catenaryLine->GetAbsPosition(s1, NWU));
+            p1 = internal::Vector3dToChVector(m_catenaryLine->GetNodePositionInWorld(s1, NWU));
             auto newElement = std::make_shared<chrono::ChLineShape>();
             color = chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetTension(s0, NWU).norm(), 0, m_maxTension, true);
 
@@ -61,7 +61,7 @@ namespace frydom{
             p1 = internal::Vector3dToChVector(m_catenaryLine->GetEndingNode()->GetPositionInWorld(NWU));
             auto newElement = std::make_shared<chrono::ChLineShape>();
             color = chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetEndingNodeTension(NWU).norm(), 0, m_maxTension, true);
-            
+
             newElement->SetColor(color);
             newElement->SetLineGeometry(std::make_shared<chrono::geometry::ChLineSegment>(p0, p1));
 
@@ -87,7 +87,7 @@ namespace frydom{
 
             auto lineSegment = std::dynamic_pointer_cast<chrono::geometry::ChLineSegment>(lineShape->GetLineGeometry());
 
-            p1 = internal::Vector3dToChVector(m_catenaryLine->GetAbsPosition(s1, NWU));
+            p1 = internal::Vector3dToChVector(m_catenaryLine->GetNodePositionInWorld(s1, NWU));
 
             lineSegment->pA = p0;
             lineSegment->pB = p1;
@@ -106,9 +106,9 @@ namespace frydom{
             m_maxTension = breakingTension;
         }
         else{
-            double ds = m_catenaryLine->GetUnstretchedLength()/m_catenaryLine->GetNbElements();
+            double ds = m_catenaryLine->GetUnstretchedLength()/ m_catenaryLine->GetAssetElements();
             double max = m_catenaryLine->GetTension(0, NWU).norm();
-            for (int i=1; i<m_catenaryLine->GetNbElements(); i++){
+            for (int i=1; i< m_catenaryLine->GetAssetElements(); i++){
                 auto LocalTension = m_catenaryLine->GetTension(i*ds, NWU).norm();
                 if (LocalTension > max) max = LocalTension;
             }

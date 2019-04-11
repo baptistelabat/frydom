@@ -33,7 +33,7 @@ namespace frydom {
 
     /**
      * \class FrCatenaryLine FrCatenaryLine.h
-     * \brief Class for catenary line objects, subclass of FrCable
+     * \brief Class for catenary line objects, subclass of FrCable and FrMidPhysicsItem
      * The catenary line can be specified elastic or not. However be careful not to stretch the line if it has been
      * defined as non elastic. Only an elastic line can be stretched !
      * The model for the catenary line is a quasi-static approach, based on uniform distributed load. In water, the
@@ -43,7 +43,7 @@ namespace frydom {
      * International Journal of Solids and Structures,pp 1521-1533, 2014
      */
     //TODO: check that the chrono_objects are deleted correctly, when the frydom objects are deleted (assets included)
-    class FrCatenaryLine : public FrCable {
+    class FrCatenaryLine : public FrCable, public FrMidPhysicsItem {
 
     public:
 
@@ -58,7 +58,7 @@ namespace frydom {
         // Catenary line properties
         bool m_elastic = true;              ///< Is the catenary line elastic
         mathutils::Vector3d<double> m_t0;   ///< Tension vector at the starting node
-        double m_q;                         ///< Uniform distributed load weight (linear density + hydrostatic)
+        double m_q;                         ///< Uniform distributed load, in N/m : (linear density + hydrostatic)*g
         Direction m_u = {0.,0.,-1.};        ///< Uniform distributed load direction
         //--------------------------------------------------------------------------------------------------------------
 
@@ -106,9 +106,9 @@ namespace frydom {
         FrCatenaryLine(const std::shared_ptr<FrNode>& startingNode,
                         const std::shared_ptr<FrNode>& endingNode,
                         bool elastic,
+                        double unstretchedLength,
                         double youngModulus,
                         double sectionArea,
-                        double unstretchedLength,
                         double linearDensity,
                         FLUID_TYPE fluid
         );
@@ -118,18 +118,30 @@ namespace frydom {
         std::string GetTypeName() const override { return "CatenaryLine"; }
 
         //--------------------------------------------------------------------------------------------------------------
-        // Asset
-//        /// Get the catenary line asset, created at the initialization of the catenary line (don't try to get it before initializing the line)
-//        /// \return catenary line asset
-//        FrCatenaryLineAsset* GetLineAsset() const;
+        // Accessors related to the asset
 
         /// Set the number of asset elements depicted
         /// \param n number of asset elements
-        void SetNbElements(unsigned int n);;
+        void SetAssetElements(unsigned int n);;
 
         /// Get the number of asset elements depicted
         /// \return number of asset elements
-        unsigned int GetNbElements();
+        unsigned int GetAssetElements();
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Accessors related to the embedded Newton-Raphson solver
+
+        /// Set the Newton-Raphson solver tolerance
+        /// \param tol solver tolerance
+        void SetSolverTolerance(double tol);
+
+        /// Set the Newton-Raphson solver maximum number of iterations
+        /// \param maxiter maximum number of iterations
+        void SetSolverMaxIter(unsigned int maxiter);
+
+        /// Set the Newton-Raphson initial relaxation factor
+        /// \param relax initial relaxation factor
+        void SetSolverInitialRelaxFactor(double relax);
 
         //--------------------------------------------------------------------------------------------------------------
         // TODO: avoir une methode pour detacher d'un noeud ou d'un corps. Dans ce cas, un nouveau noeud fixe est cree a
@@ -170,7 +182,7 @@ namespace frydom {
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)
         /// \return line position
-        Position GetAbsPosition(double s, FRAME_CONVENTION fc) const override;
+        Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;
 
         /// Get the current chord at lagrangian coordinate s
         /// This is the position of the line if there is no elasticity.
@@ -208,40 +220,23 @@ namespace frydom {
         void guess_tension();
 
         //--------------------------------------------------------------------------------------------------------------
-        // Accessor relative to the embedded Newton-Raphson solver
-        /// Set the Newton-Raphson solver tolerance
-        /// \param tol solver tolerance
-        void SetSolverTolerance(double tol);
-
-        /// Set the Newton-Raphson solver maximum number of iterations
-        /// \param maxiter maximum number of iterations
-        void SetSolverMaxIter(unsigned int maxiter);
-
-        /// Set the Newton-Raphson initial relaxation factor
-        /// \param relax initial relaxation factor
-        void SetSolverInitialRelaxFactor(double relax);
-
-        //--------------------------------------------------------------------------------------------------------------
         // Initialize - Update - Finalize methods
         /// Catenary line initialization method
         void Initialize() override;
 
-        /// Update internal time and time step for dynamic behaviour of the cable
-        /// \param time time of the simulation
-        // TODO: Transfer it to FrCable?
-        void UpdateTime(double time);
+        /// Initialize the log
+        void InitializeLog() override;
 
         /// Update the length of the cable if unrolling speed is defined.
-        virtual void UpdateState();
+        void UpdateState() override;
 
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;
 
-        /// Initialize the log
-        void InitializeLog() override;
-
         //--------------------------------------------------------------------------------------------------------------
     private :
+
+        void InitBreakingTension();
 
         /// Catenary line update method
         /// \param time time of the simulation
@@ -263,8 +258,8 @@ namespace frydom {
 
     std::shared_ptr<FrCatenaryLine>
     make_catenary_line(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
-                       FrOffshoreSystem *system, bool elastic, double youngModulus, double sectionArea,
-                       double unstretchedLength, double linearDensity, FLUID_TYPE fluid);
+                       FrOffshoreSystem *system, bool elastic, double unstretchedLength, double youngModulus,
+                       double sectionArea, double linearDensity, FLUID_TYPE fluid);
 
 }// end namespace frydom
 

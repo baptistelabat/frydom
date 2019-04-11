@@ -201,10 +201,13 @@ namespace frydom{
             for (auto &body : m_system->GetBodyList()) {
                 c_residual += body->GetVelocityInWorld(NWU).norm();
             }
+            for (auto &mesh : m_system->GetFEAMeshList()) {
+                c_residual += mesh->GetStaticResidual();
+            }
 
             FrObject::SendLog();
 
-            std::cout<<m_system->GetTime()<<std::endl;
+            std::cout<<"t = "<<m_system->GetTime()<<", res = "<<c_residual<<std::endl;
 
             if (c_residual < m_tolerance &&
                 m_system->GetTime()>m_undoTime+m_system->GetTimeStep()*m_nSteps) {

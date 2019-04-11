@@ -23,6 +23,8 @@
 #include "frydom/asset/FrAssetOwner.h"
 #include "frydom/mesh/FrMesh.h"
 
+#include "frydom/cable/FrDynamicCable.h"
+
 // TODO : voir si il n'y a pas moyen de passer ces includes
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
@@ -960,6 +962,7 @@ namespace frydom {
         // This one is made for the FrOffshoreSystem to be able to add the embedded chrono object into the embedded
         // chrono system (ChSystem)
         friend void FrOffshoreSystem::AddBody(std::shared_ptr<frydom::FrBody>);
+        friend void internal::FrDynamicCableBase::InitializeLinks();
         friend void FrOffshoreSystem::RemoveBody(std::shared_ptr<frydom::FrBody>);
 
         friend int internal::FrAddedMassBase::GetBodyOffset(FrBody* body) const;

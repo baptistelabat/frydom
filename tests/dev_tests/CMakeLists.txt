@@ -7,6 +7,8 @@ set(REFACTORING_TESTS
         test_radiation_model
         how_to_cppfs
         test_logging
+        test_ANCFCable
+        test_cable_chrono
         test_FrLinks
         )
 

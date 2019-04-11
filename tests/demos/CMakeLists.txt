@@ -12,13 +12,15 @@ set(DEMOS
         demo_Hydrodynamic
         demo_Morison
         demo_Cable
+        demo_DynamicCable
         demo_Hub_installation
 	demo_WNL_and_NL_hydrostatics
 	demo_Cylinder
         bench_SphereDecay
         bench_SphereRegular
         bench_DTMB5512_captive
-        bench_Ellipsoid_OMAE2014
+        bench_Cables
+	bench_Ellipsoid_OMAE2014
         )
 
 

@@ -13,9 +13,13 @@
 #include "FrOffshoreSystem.h"
 
 #include "chrono/utils/ChProfiler.h"
+#include "chrono/fea/ChLinkPointFrame.h"
+#include "chrono/physics/ChLinkMate.h"
 
 #include "frydom/core/link/links_lib/FrLink.h"
 #include "frydom/core/body/FrBody.h"
+#include "frydom/core/common/FrFEAMesh.h"
+#include "frydom/cable/FrDynamicCable.h"
 #include "frydom/core/force/FrForce.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/utils/FrIrrApp.h"
@@ -57,6 +61,10 @@ namespace frydom {
             // Links updates  // FIXME : appeler les updates directement des objets frydom !
             for (auto &link : linklist) {
                 link->Update(ChTime, update_assets);
+            }
+
+            for (auto &mesh : meshlist) {
+                mesh->Update(ChTime, update_assets);
             }
 
             // Physics items that have to be updated after all
@@ -336,6 +344,51 @@ namespace frydom {
     }
 
 
+    // ***** FEAMesh *****
+
+    void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh){
+        m_chronoSystem->AddMesh(feaMesh->GetChronoMesh());  // Authorized because this method is a friend of FrFEAMesh
+
+        feaMesh->m_system = this;
+        m_feaMeshList.push_back(feaMesh);
+    }
+
+    void FrOffshoreSystem::Add(std::shared_ptr<FrDynamicCable> cable) {
+
+        // Add the FEA mesh
+        AddFEAMesh(cable);
+
+        // Add the hinges
+        m_chronoSystem->Add(cable->GetChronoItem_ptr()->m_startingHinge);
+        m_chronoSystem->Add(cable->GetChronoItem_ptr()->m_endingHinge);
+
+    }
+
+    FrOffshoreSystem::FEAMeshContainer FrOffshoreSystem::GetFEAMeshList() {
+        return m_feaMeshList;
+    }
+
+    void FrOffshoreSystem::RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feamesh) {
+
+        m_chronoSystem->RemoveMesh(feamesh->GetChronoMesh());
+
+        auto it = std::find(m_feaMeshList.begin(),m_feaMeshList.end(),feamesh);
+        assert(it != m_feaMeshList.end());
+        m_feaMeshList.erase(it);
+        feamesh->m_system = nullptr;
+
+    }
+
+    void FrOffshoreSystem::Remove(std::shared_ptr<FrDynamicCable> cable) {
+
+        RemoveFEAMesh(cable);
+
+        m_chronoSystem->RemoveOtherPhysicsItem(cable->GetChronoItem_ptr()->m_startingHinge);
+        m_chronoSystem->RemoveOtherPhysicsItem(cable->GetChronoItem_ptr()->m_endingHinge);
+
+    }
+
+
     // ***** Environment *****
 
     FrEnvironment *FrOffshoreSystem::GetEnvironment() const {
@@ -395,13 +448,13 @@ namespace frydom {
             item->Initialize();
         }
 
-        for (auto& item : m_PostPhysicsList) {
+        for (auto& item : m_feaMeshList) {
             item->Initialize();
         }
 
-        // Full assembly -computes also forces-
-        m_chronoSystem->Setup(); //FIXME : utile? déjà fait dans DoAssembly
-        m_chronoSystem->DoFullAssembly();
+        for (auto& item : m_PostPhysicsList) {
+            item->Initialize();
+        }
 
         m_chronoSystem->Update();
 
@@ -433,6 +486,10 @@ namespace frydom {
         }
 
         for (auto& item : m_linkList) {
+            item->StepFinalize();
+        }
+
+        for (auto& item : m_feaMeshList) {
             item->StepFinalize();
         }
 
@@ -716,6 +773,10 @@ namespace frydom {
             }
         }
 
+        for (auto &mesh : m_feaMeshList) {
+            mesh->Relax();
+        }
+
     }
 
     void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type, bool checkCompat) {
@@ -836,9 +897,12 @@ namespace frydom {
 
         m_bodyList.clear();
         m_linkList.clear();
+        m_feaMeshList.clear();
         m_PrePhysicsList.clear();
         m_MidPhysicsList.clear();
         m_PostPhysicsList.clear();
+
+        m_isInitialized = false;
     }
 
     chrono::ChSystem* FrOffshoreSystem::GetChronoSystem() {
@@ -964,6 +1028,10 @@ namespace frydom {
             }
 
             for (auto &item : m_linkList) {
+                item->InitializeLog();
+            }
+
+            for (auto &item : m_feaMeshList) {
                 item->InitializeLog();
             }
 
