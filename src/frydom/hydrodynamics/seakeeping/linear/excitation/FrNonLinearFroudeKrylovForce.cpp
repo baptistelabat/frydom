@@ -62,10 +62,10 @@ namespace frydom {
         Position GMvectNormal;
 
         // Loop over the faces.
-        for (mesh::FrMesh::FaceIter f_iter = m_clipped_mesh.faces_begin(); f_iter != m_clipped_mesh.faces_end(); ++f_iter) {
+        for (auto& f_iter : m_clipped_mesh.faces()) {
 
             // Normal.
-            Normal = m_clipped_mesh.normal(*f_iter);
+            Normal = m_clipped_mesh.normal(f_iter);
             NormalPos[0] = Normal[0];
             NormalPos[1] = Normal[1];
             NormalPos[2] = Normal[2];
@@ -81,7 +81,7 @@ namespace frydom {
             Pressure = m_free_surface->GetPressure(Centroid[0],Centroid[1],Centroid[2],NWU);
 
             // Area.
-            Area = m_clipped_mesh.GetArea(*f_iter);
+            Area = m_clipped_mesh.GetArea(f_iter);
 
             // Pressure * Area.
             PA = -Pressure*Area;
