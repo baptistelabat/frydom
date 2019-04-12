@@ -95,11 +95,11 @@ int main(int argc, char* argv[]) {
 
     // -- Input
 
-    int iPeriod = 0;
-    int iSteepness = 0;
+//    int iPeriod = 0;
+//    int iSteepness = 0;
 
-    if (argv[1]) { iPeriod = atoi(argv[1]); }
-    if (argv[2]) { iSteepness = atoi(argv[2]); }
+//    if (argv[1]) { iPeriod = atoi(argv[1]); }
+//    if (argv[2]) { iSteepness = atoi(argv[2]); }
 
     // -- System
 
@@ -125,7 +125,7 @@ int main(int argc, char* argv[]) {
 
     // -- Wave field
 
-    auto param = ReadParam("bench_sphere_regular.h5", iPeriod, iSteepness);
+//    auto param = ReadParam("bench_sphere_regular.h5", iPeriod, iSteepness);
 
 //    double Hs = param[1];
 //    double Tp = param[0];
