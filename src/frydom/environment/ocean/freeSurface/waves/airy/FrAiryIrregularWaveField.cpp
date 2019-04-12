@@ -129,7 +129,7 @@ namespace frydom{
                 break;
         }
 
-        for (auto& dir:m_waveDirections) {dir = mathutils::Normalize_0_2PI(dir);};
+//        for (auto& dir:m_waveDirections) {dir = mathutils::Normalize_0_2PI(dir);};
 
         if (!m_waveFrequencies.empty()){
             c_amplitude = m_waveSpectrum->GetWaveAmplitudes(m_waveFrequencies, m_waveDirections);
