@@ -84,13 +84,13 @@ namespace frydom {
 
     };
 
-    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads from the HDB5 input file.
+    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic stiffness matrix given by the hdb.
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body);
 
-    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads from FrMesh.
+    /// This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic sitffness matrix computed by FrMesh.
     std::shared_ptr<FrLinearHydrostaticForce>
-    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile);
+    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile,Position MeshOffset, mathutils::Matrix33<double> Rotation);
 
 }  // end namespace frydom
 

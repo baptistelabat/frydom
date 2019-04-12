@@ -20,16 +20,34 @@
 
 namespace frydom {
 
-    FrCatenaryLine::FrCatenaryLine(const std::shared_ptr<FrNode> &startingNode,
-                                     const std::shared_ptr<FrNode> &endingNode, bool elastic, double youngModulus,
-                                     double sectionArea, double unstretchedLength, double linearDensity,
-                                     FLUID_TYPE fluid) :
-                                     m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
-                                     FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity) {}
+    FrCatenaryLine::FrCatenaryLine(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
+            bool elastic, double unstretchedLength, double youngModulus, double sectionArea, double linearDensity,
+            FLUID_TYPE fluid) :
+            m_elastic(elastic), m_q(linearDensity), c_fluid(fluid), m_u(0.,0.,-1.),
+            FrCable(startingNode, endingNode, unstretchedLength, youngModulus, sectionArea, linearDensity),
+            FrMidPhysicsItem() {
+        SetLogged(true);
+    }
 
-//    FrCatenaryLineAsset *FrCatenaryLine::GetLineAsset() const {
-//        return m_lineAsset.get();
-//    }
+    void FrCatenaryLine::SetAssetElements(unsigned int n) {
+        m_nbDrawnElements = n;
+    }
+
+    unsigned int FrCatenaryLine::GetAssetElements() {
+        return m_nbDrawnElements;
+    }
+
+    void FrCatenaryLine::SetSolverTolerance(double tol) {
+        m_tolerance = tol;
+    }
+
+    void FrCatenaryLine::SetSolverMaxIter(unsigned int maxiter) {
+        m_itermax = maxiter;
+    }
+
+    void FrCatenaryLine::SetSolverInitialRelaxFactor(double relax) {
+        m_relax = relax;
+    }
 
     void FrCatenaryLine::guess_tension() {
 
@@ -110,7 +128,7 @@ namespace frydom {
         return Inc;
     }
 
-    Position FrCatenaryLine::GetAbsPosition(double s, FRAME_CONVENTION fc) const {
+    Position FrCatenaryLine::GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const {
 
         Position pos;
         pos += GetStartingNode()->GetPositionInWorld(fc);
@@ -125,11 +143,11 @@ namespace frydom {
         int n = 1000;
 
         double ds = m_cableLength / (n-1);
-        auto pos_prev = GetAbsPosition(0., NWU);
+        auto pos_prev = GetNodePositionInWorld(0., NWU);
 
         for (uint i=0; i<n; ++i) {
             auto s = i*ds;
-            auto pos = GetAbsPosition(s, NWU);
+            auto pos = GetNodePositionInWorld(s, NWU);
             cl += (pos - pos_prev).norm();
             pos_prev = pos;
         }
@@ -137,7 +155,7 @@ namespace frydom {
     }
 
     Position FrCatenaryLine::get_residual(FRAME_CONVENTION fc) const {
-        return GetAbsPosition(m_cableLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
+        return GetNodePositionInWorld(m_cableLength, fc) - GetEndingNode()->GetPositionInWorld(fc);
     }
 
     mathutils::Matrix33<double> FrCatenaryLine::analytical_jacobian() const {
@@ -192,18 +210,6 @@ namespace frydom {
         return jac;
     }
 
-    void FrCatenaryLine::SetSolverTolerance(double tol) {
-        m_tolerance = tol;
-    }
-
-    void FrCatenaryLine::SetSolverMaxIter(unsigned int maxiter) {
-        m_itermax = maxiter;
-    }
-
-    void FrCatenaryLine::SetSolverInitialRelaxFactor(double relax) {
-        m_relax = relax;
-    }
-
     void FrCatenaryLine::solve() {
 
         auto res = get_residual(NWU);
@@ -248,6 +254,7 @@ namespace frydom {
     void FrCatenaryLine::Initialize() {
 
         m_q = GetLinearDensity() - m_sectionArea * GetSystem()->GetEnvironment()->GetFluidDensity(c_fluid);
+        m_q *= GetSystem()->GetGravityAcceleration();
         c_qvec = m_q*m_u;
 
         // Initializing U matrix
@@ -274,43 +281,31 @@ namespace frydom {
             ending_body->AddExternalForce(m_endingForce);
         }
 
+        // Initialize the breaking tension value, for visualization only
+        InitBreakingTension();
+
         // Generate assets for the cable
         if (is_lineAsset) {
 
             auto lineAsset = std::make_shared<FrCatenaryLineAsset>(this);
             lineAsset->Initialize();
             AddAsset(lineAsset);
-//            m_lineAsset = std::make_unique<FrCatenaryLineAsset>(this);
-//            m_lineAsset->Initialize();
+
         }
     }
 
     void FrCatenaryLine::Compute(double time) {
+
         UpdateTime(time);
         UpdateState();
-//        if (is_lineAsset) {
-//            m_lineAsset->Update();
-//        }
-    }
 
-    void FrCatenaryLine::UpdateTime(double time) {
-        m_time_step = time - m_time;
-        m_time = time;
     }
 
     void FrCatenaryLine::UpdateState() {
-        if (std::abs(m_unrollingSpeed) > DBL_EPSILON and std::abs(m_time_step) > DBL_EPSILON) {
-            m_cableLength += m_unrollingSpeed * m_time_step;
-        }
+
+        FrCable::UpdateState();
         solve();
-    }
 
-    void FrCatenaryLine::SetNbElements(unsigned int n) {
-        m_nbDrawnElements = n;
-    }
-
-    unsigned int FrCatenaryLine::GetNbElements() {
-        return m_nbDrawnElements;
     }
 
     void FrCatenaryLine::InitializeLog() {
@@ -353,12 +348,26 @@ namespace frydom {
 
     }
 
+    void FrCatenaryLine::InitBreakingTension() {
+
+        if (GetBreakingTension()==0){
+            double ds = GetUnstretchedLength()/ GetAssetElements();
+            double max = GetTension(0, NWU).norm();
+            for (int i=1; i< GetAssetElements(); i++){
+                auto LocalTension = GetTension(i*ds, NWU).norm();
+                if (LocalTension > max) max = LocalTension;
+            }
+            SetBreakingTension(1.25*max);  // TODO : affiner le critere...
+        }
+    }
+
+
     std::shared_ptr<FrCatenaryLine>
     make_catenary_line(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
-                       FrOffshoreSystem *system, bool elastic, double youngModulus, double sectionArea,
-                       double unstretchedLength, double linearDensity, FLUID_TYPE fluid){
-        auto CatenaryLine = std::make_shared<FrCatenaryLine>(startingNode, endingNode, elastic, youngModulus,
-                                                              sectionArea, unstretchedLength, linearDensity, fluid);
+                       FrOffshoreSystem *system, bool elastic, double unstretchedLength, double youngModulus,
+                       double sectionArea, double linearDensity, FLUID_TYPE fluid){
+        auto CatenaryLine = std::make_shared<FrCatenaryLine>(startingNode, endingNode, elastic, unstretchedLength,
+                                                             youngModulus, sectionArea, linearDensity, fluid);
         system->Add(CatenaryLine);
         return CatenaryLine;
 

@@ -3,7 +3,7 @@
 Heaving sphere in free-decay test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This benchmark corresponds to the modelisation of a sphere in free-decay test. This simulation is presented by the International Energy Agency (IEA) Offshore Energy System (OES) Task 10 [OES10]_ as a benchmark case for model validation and verification regrouping 25 organizations. Description of this test case and results obtained by FRyDoM are sumarized in the following.
+This benchmark corresponds to the simulation of a sphere in free-decay test. This simulation is presented by the International Energy Agency (IEA) Offshore Energy System (OES) Task 10 [OES10]_ as a benchmark case for model validation and verification regrouping 25 organizations. Description of this test case and results obtained by FRyDoM are sumarized in the following.
 
 Description of the test case
 ----------------------------

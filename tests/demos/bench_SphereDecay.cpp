@@ -129,7 +129,6 @@ public:
 }; // ##CC logging
 
 
-
 int main(int argc, char* argv[]) {
 
     std::cout << " ===================================================== \n"
@@ -139,10 +138,15 @@ int main(int argc, char* argv[]) {
     // -- System
 
     FrOffshoreSystem system;
+    system.SetName("Sphere_Decay");
+
+    auto Ocean = system.GetEnvironment()->GetOcean();
+    Ocean->SetDensity(1000);
 
     // -- Body
 
     auto body = system.NewBody();
+    body->SetName("Sphere");
 
     Position COGPosition(0., 0., -2.);
     FrFrame COGFrame(COGPosition, FrRotation(), NWU);
@@ -176,9 +180,9 @@ int main(int argc, char* argv[]) {
 
     hdb->Map(0, body.get(), eqFrame);
 
-    // -- Hydrostatic
+    // -- Linear hydrostatics
 
-    auto forceHst = make_linear_hydrostatic_force(hdb, body);
+//    auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
     // -- Radiation
 
@@ -186,9 +190,9 @@ int main(int argc, char* argv[]) {
 
     auto radiationForce = std::make_shared<FrRadiationConvolutionForce>(radiationModel.get());
     //auto radiationForce = std::make_shared<FrNullForce>();
-    body->AddExternalForce(radiationForce);
+//    body->AddExternalForce(radiationForce);
 
-    radiationModel->SetImpulseResponseSize(body.get(), 6., 0.1);
+    radiationModel->SetImpulseResponseSize(body.get(), 6., 0.01);
 
     // ##CC for monitoring
     auto radiationAddedMassForce = std::make_shared<AddedMassRadiationForce>(hdb.get(), body.get());
@@ -196,12 +200,25 @@ int main(int argc, char* argv[]) {
 
     // -- Simulation
 
-    auto dt = 0.005;
+//    auto dt = 0.005;
+    auto dt = 0.01;
 
     system.SetTimeStep(dt);
     system.Initialize();
 
-    body->SetPosition(Position(0., 0., 1.), NWU);
+    // Decay test position.
+    body->SetPosition(Position(0., 0., 4.99), NWU);
+
+    // Nonlinear hydrostatics
+    auto bodyMesh = make_hydro_mesh_nonlinear(body,"Sphere_10000_faces.obj");
+    mathutils::Matrix33<double> Rotation;
+    Rotation.SetIdentity();
+    Position MeshOffset(0,0,0);
+    bodyMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
+    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
+
+    auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
+    forceHst->SetLogged(true);
 
     auto time = 0.;
 
@@ -209,6 +226,8 @@ int main(int argc, char* argv[]) {
     Logging log;
     log.Open("sphere");
     // ##CC
+
+    clock_t begin = clock();
 
     while (time < 40.) {
 
@@ -233,6 +252,9 @@ int main(int argc, char* argv[]) {
 
     }
 
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    std::cout << elapsed_secs << std::endl;
     std::cout << "============================== End ===================================== " << std::endl;
 
 } // end namespace frydom

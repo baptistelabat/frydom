@@ -115,8 +115,8 @@ namespace frydom {
 
     FrHydroDB::FrHydroDB(std::string h5file) {
 
-        /// Constructor of the class.
-        /// This subroutine generates the FrHydroDB_ object from the *.HDB5 input file.
+        // Constructor of the class.
+        // This function generates the FrHydroDB_ object from the *.HDB5 input file.
 
         /// Object for reading *.HDB5 input file.
         FrHDF5Reader reader;
@@ -208,8 +208,6 @@ namespace frydom {
                 this->HydrostaticReader(reader, ibodyPath + "/Hydrostatic", BEMBody);
             }
 
-            /// Interpolation of the excitation loads with respect to the wave direction.
-            this->GetBody(ibody)->Finalize();
         }
     }
 

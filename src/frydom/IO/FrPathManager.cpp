@@ -141,6 +141,28 @@ namespace frydom{
 
     }
 
+
+    std::string FrPathManager::BuildPath(FrFEAMesh *mesh, std::string relPath) {
+
+        mesh->SetLogFrameConvention(m_logFrameConvention);
+
+        auto system = mesh->GetSystem();
+
+        // Create the path for the mesh log
+        auto relMeshLogPath = fmt::format("{}_{}/{}_{}_{}/{}",
+                                        system->GetTypeName(),system->GetShortenUUID(),
+                                        mesh->GetTypeName(),mesh->GetName(),mesh->GetShortenUUID(),
+                                        relPath);
+        cppfs::FilePath MeshLogPath = m_runPath.resolve(relMeshLogPath);
+
+        // Create the directory for the mesh logs
+        auto MeshLogDir = cppfs::fs::open(MeshLogPath.directoryPath());
+        MeshLogDir.createDirectory();
+
+        return MeshLogPath.path();
+
+    }
+
     std::string FrPathManager::BuildPath(FrLinkBase *link, std::string relPath) {
 
         link->SetLogFrameConvention(m_logFrameConvention);

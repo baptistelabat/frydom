@@ -19,6 +19,7 @@ list(APPEND SRC_FILES
         common/FrNode.cpp
         common/FrObject.cpp
         common/FrPhysicsItem.cpp
+        common/FrFEAMesh.cpp
         common/FrRotation.cpp
         )
 

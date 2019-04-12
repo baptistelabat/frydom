@@ -165,7 +165,13 @@ namespace frydom {
         double Pressure = 0;
 
         double Eta = GetElevation(x,y,fc);
-        Pressure = c_density * c_gravity * Eta * m_verticalFactor->Eval(x,y,z,m_k,c_depth) * tanh(m_k*c_depth);
+        if(m_infinite_depth){ // Infinite water depth.
+            Pressure = c_density * c_gravity * Eta * m_verticalFactor->Eval(x,y,z,m_k,c_depth);
+
+        }
+        else{ // Finite water depth.
+            Pressure = c_density * c_gravity * Eta * m_verticalFactor->Eval(x,y,z,m_k,c_depth) * tanh(m_k*c_depth);
+        }
 
         return Pressure;
 

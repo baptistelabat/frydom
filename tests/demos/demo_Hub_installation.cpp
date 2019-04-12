@@ -192,8 +192,8 @@ int main(int argc, char* argv[]) {
     double YoungModulus = EA / sectionArea;
     double breakTensionAsset = 500000;
 
-    auto CatenaryLine = make_catenary_line(crane_node, hub_node, &system, elastic, YoungModulus, sectionArea,
-                                           unstretchedLength, linearDensity, FLUID_TYPE::AIR);
+    auto CatenaryLine = make_catenary_line(crane_node, hub_node, &system, elastic, unstretchedLength, YoungModulus, sectionArea,
+                                           linearDensity, FLUID_TYPE::AIR);
     CatenaryLine->SetLogged(true);
 
     // --------------------------------------------------
@@ -253,25 +253,25 @@ int main(int argc, char* argv[]) {
     double Lv = 42.5;
     breakTensionAsset = 50000;
 
-    auto mooringLineSE = make_catenary_line(worldNodeSE, buoyNodeSE, &system, elastic, YoungModulus, sectionArea,
-                                            unstretchedLength, linearDensity, WATER);
-    auto tetherLineSE = make_catenary_line(bargeNodeSE, buoyNodeSE, &system, elastic, YoungModulus, sectionArea,
-                                           Lv, linearDensity, WATER);
+    auto mooringLineSE = make_catenary_line(worldNodeSE, buoyNodeSE, &system, elastic, unstretchedLength, YoungModulus, sectionArea,
+                                            linearDensity, WATER);
+    auto tetherLineSE = make_catenary_line(bargeNodeSE, buoyNodeSE, &system, elastic, Lv, YoungModulus, sectionArea,
+                                           linearDensity, WATER);
 
-    auto mooringLineSW = make_catenary_line(worldNodeSW, buoyNodeSW, &system, elastic, YoungModulus, sectionArea,
-                                            unstretchedLength, linearDensity, WATER);
-    auto tetherLineSW = make_catenary_line(bargeNodeSW, buoyNodeSW, &system, elastic, YoungModulus, sectionArea,
-                                           Lv, linearDensity, WATER);
+    auto mooringLineSW = make_catenary_line(worldNodeSW, buoyNodeSW, &system, elastic, unstretchedLength, YoungModulus, sectionArea,
+                                            linearDensity, WATER);
+    auto tetherLineSW = make_catenary_line(bargeNodeSW, buoyNodeSW, &system, elastic, Lv, YoungModulus, sectionArea,
+                                           linearDensity, WATER);
 
-    auto mooringLineNE = make_catenary_line(worldNodeNE, buoyNodeNE, &system, elastic, YoungModulus, sectionArea,
-                                            unstretchedLength, linearDensity, WATER);
-    auto tetherLineNE = make_catenary_line(bargeNodeNE, buoyNodeNE, &system, elastic, YoungModulus, sectionArea,
-                                           Lv, linearDensity, WATER);
+    auto mooringLineNE = make_catenary_line(worldNodeNE, buoyNodeNE, &system, elastic, unstretchedLength, YoungModulus, sectionArea,
+                                            linearDensity, WATER);
+    auto tetherLineNE = make_catenary_line(bargeNodeNE, buoyNodeNE, &system, elastic, Lv, YoungModulus, sectionArea,
+                                           linearDensity, WATER);
 
-    auto mooringLineNW = make_catenary_line(worldNodeNW, buoyNodeNW, &system, elastic, YoungModulus, sectionArea,
-                                            unstretchedLength, linearDensity, WATER);
-    auto tetherLineNW = make_catenary_line(bargeNodeNW, buoyNodeNW, &system, elastic, YoungModulus, sectionArea,
-                                           Lv, linearDensity, WATER);
+    auto mooringLineNW = make_catenary_line(worldNodeNW, buoyNodeNW, &system, elastic, unstretchedLength, YoungModulus, sectionArea,
+                                            linearDensity, WATER);
+    auto tetherLineNW = make_catenary_line(bargeNodeNW, buoyNodeNW, &system, elastic, Lv, YoungModulus, sectionArea,
+                                           linearDensity, WATER);
 
     // ------------------ Run ------------------ //
 
@@ -293,7 +293,7 @@ int main(int argc, char* argv[]) {
     system.GetStaticAnalysis()->SetTolerance(1E-2);
 
     // Now with the static solving
-    system.SolveStaticWithRelaxation();
+//    system.SolveStaticWithRelaxation();
     // Once the static is reached, you can visualize it
 //    system.Visualize(75.,false);
 

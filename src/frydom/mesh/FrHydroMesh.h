@@ -144,10 +144,10 @@ namespace frydom {
     };
 
     /// This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(FrOffshoreSystem* system, std::shared_ptr<FrBody> body, std::string meshfile);
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(std::shared_ptr<FrBody> body, std::string meshfile);
 
     /// This function creates a hydrodynamic mesh for using in the computation of the weakly nonlinear hydrostatic and/or Froude-Krylov loads.
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(FrOffshoreSystem* system, std::shared_ptr<FrBody> body, std::string meshfile);
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(std::shared_ptr<FrBody> body, std::string meshfile);
 
     }  // end namespace frydom
 

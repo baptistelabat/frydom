@@ -14,6 +14,12 @@
 
 #include <vector>
 #include "frydom/core/misc/FrColors.h"
+#include <vector>
+#include <memory>
+
+namespace chrono{
+    class ChPhysicsItem;
+}
 
 namespace chrono {
     class ChPhysicsItem;

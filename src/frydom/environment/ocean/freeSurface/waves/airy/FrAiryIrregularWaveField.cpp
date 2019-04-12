@@ -129,7 +129,7 @@ namespace frydom{
                 break;
         }
 
-        for (auto& dir:m_waveDirections) {dir = mathutils::Normalize_0_2PI(dir);};
+//        for (auto& dir:m_waveDirections) {dir = mathutils::Normalize_0_2PI(dir);};
 
         if (!m_waveFrequencies.empty()){
             c_amplitude = m_waveSpectrum->GetWaveAmplitudes(m_waveFrequencies, m_waveDirections);
@@ -414,7 +414,12 @@ namespace frydom{
         // Loop over the frequencies.
         for (unsigned int ifreq=0; ifreq<m_nbFreq; ++ifreq) { // n.
             ki = m_waveNumbers[ifreq];
-            th = tanh(ki*c_depth);
+            if(m_infinite_depth){ // Infinite water depth.
+                th = 1;
+            }
+            else{ // Finite water depth.
+                th = tanh(ki*c_depth);
+            }
             Ez = m_verticalFactor->Eval(x,y,z,ki,c_depth);
             // Loop over the wave directions.
             for (unsigned int idir=0; idir<m_nbDir; ++idir) { // m.

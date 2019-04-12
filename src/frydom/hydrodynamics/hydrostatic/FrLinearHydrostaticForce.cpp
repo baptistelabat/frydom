@@ -14,6 +14,10 @@
 
 #include "frydom/core/body/FrBody.h"
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
+#include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 //#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
 
 namespace frydom {
@@ -47,7 +51,7 @@ namespace frydom {
 
         // Position of the body frame with respect to the equilibrium frame expressed in the equilibrium frame.
         mathutils::Vector3d<double> state; double temp;
-        state[0] = deltaFrame.GetPosition(NWU).z();
+        state[0] = deltaFrame.GetPosition(NWU).z(); // Vertical position.
 
         // Angular position of the body frame with respect to the equilibrium frame expressed in the equilibrium frame.
         deltaFrame.GetRotation().GetCardanAngles_RADIANS(state[1], state[2], temp, NWU);
@@ -93,7 +97,7 @@ namespace frydom {
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
 
-        // This function creates the linear hydrostatic force object for computing the linear hydrostatic loads.
+        // This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic stiffness matrix given by the hdb.
 
         // Construction of the hydrostatic force object from the HDB.
         auto forceHst = std::make_shared<FrLinearHydrostaticForce>(HDB);
@@ -105,9 +109,9 @@ namespace frydom {
     }
 
     std::shared_ptr<FrLinearHydrostaticForce>
-    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile){
+    make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile,Position MeshOffset, mathutils::Matrix33<double> Rotation){
 
-        // This function creates the linear hydrostatic force object for computing the linear hydrostatic loads.
+        // This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic sitffness matrix computed by FrMesh.
 
         // Construction of the hydrostatic force object from the HDB.
         auto forceHst = std::make_shared<FrLinearHydrostaticForce>(HDB);
@@ -116,15 +120,27 @@ namespace frydom {
         body->AddExternalForce(forceHst);
 
         // Computation of the hydrostatic stiffness matrix.
-        FrHydrostaticsProperties hsp(HDB->GetWaterDensity(),HDB->GetGravityAcc());
-        mesh::FrMesh mesh(meshfile);
+        mesh::FrMesh Mesh_Init = mesh::FrMesh(meshfile);
+        mesh::MeshClipper Mesh_clipper = mesh::MeshClipper();
+        double TidalHeight = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
+        Mesh_clipper.SetPlaneClippingSurface(TidalHeight);
+        Mesh_clipper.SetBody(body.get());
+        Mesh_clipper.SetMeshOffsetRotation(MeshOffset, Rotation);
+        mesh::FrMesh Clipped_mesh = Mesh_clipper.Apply(Mesh_Init);
         Position BodyCoG = body->GetCOGPositionInWorld(NWU);
         Vector3d<double> cog;
         cog[0] = BodyCoG[0];
         cog[1] = BodyCoG[1];
         cog[2] = BodyCoG[2];
-        hsp.Load(mesh,cog);
+        FrHydrostaticsProperties hsp(HDB->GetWaterDensity(),HDB->GetGravityAcc(),Clipped_mesh,cog);
+        hsp.Process();
         forceHst->SetStiffnessMatrix(hsp.GetHydrostaticMatrix());
+        Clipped_mesh.Write("Mesh_used_for_Hydrostatic_stiffness_matrix.obj");
+
+        //FIXME: Si la position du corps est mise a jour, un update des forces sera applique (UpdateAfterMove)
+        // qui engendre un bug car la force n'a pas ete initialisee.
+        // D'ou l'initialize ci-dessous.
+        forceHst->Initialize();
 
         return forceHst;
     }

@@ -19,6 +19,7 @@
 #include "FrNode.h"
 #include "FrObject.h"
 #include "FrPhysicsItem.h"
+#include "FrFEAMesh.h"
 #include "FrRotation.h"
 #include "FrUnits.h"
 
