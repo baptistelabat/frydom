@@ -42,14 +42,8 @@ namespace frydom {
 
     private:
 
-        /// Offshore system.
-        FrOffshoreSystem* m_system;
-
         /// Clipped mesh.
         mesh::FrMesh m_clipped_mesh;
-
-        /// Free surface object.
-        FrFreeSurface* m_free_surface;
 
         /// Froude-Krylov force;
         Force m_FKforce;
@@ -62,10 +56,8 @@ namespace frydom {
 
     public:
 
-        explicit FrNonLinearFroudeKrylovForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroMesh> HydroMesh) {
-            m_system = system;
+        explicit FrNonLinearFroudeKrylovForce(std::shared_ptr<FrHydroMesh> HydroMesh) {
             m_hydro_mesh = HydroMesh;
-            m_free_surface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface(); // Used to evaluate the incident pressure.
         };
 
         /// Get the type name of this object

@@ -62,10 +62,10 @@ namespace frydom {
         Position GMvectNormal;
 
         // Loop over the faces.
-        for (mesh::FrMesh::FaceIter f_iter = m_clipped_mesh.faces_begin(); f_iter != m_clipped_mesh.faces_end(); ++f_iter) {
+        for (auto& f_iter : m_clipped_mesh.faces()) {
 
             // Normal.
-            Normal = m_clipped_mesh.normal(*f_iter);
+            Normal = m_clipped_mesh.normal(f_iter);
             NormalPos[0] = Normal[0];
             NormalPos[1] = Normal[1];
             NormalPos[2] = Normal[2];
@@ -78,10 +78,10 @@ namespace frydom {
 
             // Incident pressure.
             // The pressure is assumed constant over a panel.
-            Pressure = m_free_surface->GetPressure(Centroid[0],Centroid[1],Centroid[2],NWU);
+            Pressure = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetPressure(Centroid[0],Centroid[1],Centroid[2],NWU);
 
             // Area.
-            Area = m_clipped_mesh.GetArea(*f_iter);
+            Area = m_clipped_mesh.GetArea(f_iter);
 
             // Pressure * Area.
             PA = -Pressure*Area;
@@ -117,7 +117,7 @@ namespace frydom {
         // This function creates a fully or weakly nonlinear Froude-Krylov force object.
 
         // Construction of the fully or weakly Froude-Krylov force object from the HDB.
-        auto NonlinFKForce = std::make_shared<FrNonLinearFroudeKrylovForce>(body->GetSystem(),HydroMesh);
+        auto NonlinFKForce = std::make_shared<FrNonLinearFroudeKrylovForce>(HydroMesh);
 
         // Add the Froude-Krylov force object as an external force to the body.
         body->AddExternalForce(NonlinFKForce); // Initialization of m_body.

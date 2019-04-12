@@ -48,8 +48,8 @@ namespace frydom {
         m_clipped_mesh = m_hydro_mesh->GetClippedMesh();
 
         // Computation of the hydrostatic force.
-        NonlinearHydrostatics NLhydrostatics(m_system->GetEnvironment()->GetFluidDensity(WATER),
-                                             m_system->GetGravityAcceleration()); // Creation of the NonlinearHydrostatics structure.
+        NonlinearHydrostatics NLhydrostatics(m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER),
+                                             m_body->GetSystem()->GetGravityAcceleration()); // Creation of the NonlinearHydrostatics structure.
         NLhydrostatics.CalcPressureIntegration(m_clipped_mesh);
 
         // Setting the nonlinear hydrostatic loads in world at the CoB in world.
@@ -88,7 +88,7 @@ namespace frydom {
         // This function creates a (fully or weakly) nonlinear hydrostatic force object.
 
         // Construction of the (fully or weakly) nonlinear hydrostatic force object.
-        auto forceHst = std::make_shared<FrNonlinearHydrostaticForce>(body->GetSystem(),HydroMesh);
+        auto forceHst = std::make_shared<FrNonlinearHydrostaticForce>(HydroMesh);
 
         // Add the (fully or weakly) nonlinear hydrostatic force object as an external force to the body.
         body->AddExternalForce(forceHst);

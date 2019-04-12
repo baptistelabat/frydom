@@ -141,8 +141,8 @@ int main(int argc, char* argv[]) {
     LinearDampingForce->SetDiagonalDamping(10e0,10e0,10e0,10e0,10e0,10e0);
 
     // -- Hydrodynamic mesh
-    auto CylinderMesh = make_hydro_mesh_nonlinear(&system,cylinder,"Free_cylinder_2900_panels.obj");
-//    auto CylinderMesh = make_hydro_mesh_weakly_nonlinear(&system,cylinder,"Free_cylinder_11600_panels.obj");
+    auto CylinderMesh = make_hydro_mesh_nonlinear(cylinder,"Free_cylinder_2900_panels.obj");
+//    auto CylinderMesh = make_hydro_mesh_weakly_nonlinear(cylinder,"Free_cylinder_11600_panels.obj");
     mathutils::Matrix33<double> Rotation;
     Rotation.SetIdentity();
     Position MeshOffset(0,0,0);
@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
     CylinderMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     // -- Hydrostatics
-    auto forceHst = make_nonlinear_hydrostatic_force(&system,cylinder,CylinderMesh);
+    auto forceHst = make_nonlinear_hydrostatic_force(cylinder,CylinderMesh);
     forceHst->SetLogged(true);
     forceHst->ShowAsset(true);
     auto ForceHstAsset = forceHst->GetAsset();
