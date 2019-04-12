@@ -356,11 +356,10 @@ namespace frydom {
 
                 // This function transports the mesh from the mesh frame to the body frame, then applies the rotation of mesh in the world frame.
 
-                // Iterating on vertices to get their place wrt to plane
+                // Iterating on vertices to get their place wrt to plane.
                 VertexHandle vh;
                 Position NodeInBody, NodeInWorld;
                 Position BodyPos = m_body->GetPosition(NWU);
-
 
                 // Loop over the vertices.
                 for (FrMesh::VertexIter vh_iter = m_InitMesh.vertices_begin();

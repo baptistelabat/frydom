@@ -68,6 +68,7 @@ namespace frydom {
 
         // Writing the clipped mesh in an output file.
 //        m_clipped_mesh.Write("Mesh_clipped_Hydrostatics.obj");
+//        std::exit(0);
 
     }
 
@@ -82,12 +83,12 @@ namespace frydom {
     }
 
     std::shared_ptr<FrNonlinearHydrostaticForce>
-    make_nonlinear_hydrostatic_force(FrOffshoreSystem *system, std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh){
+    make_nonlinear_hydrostatic_force(std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh){
 
         // This function creates a (fully or weakly) nonlinear hydrostatic force object.
 
         // Construction of the (fully or weakly) nonlinear hydrostatic force object.
-        auto forceHst = std::make_shared<FrNonlinearHydrostaticForce>(system,HydroMesh);
+        auto forceHst = std::make_shared<FrNonlinearHydrostaticForce>(body->GetSystem(),HydroMesh);
 
         // Add the (fully or weakly) nonlinear hydrostatic force object as an external force to the body.
         body->AddExternalForce(forceHst);

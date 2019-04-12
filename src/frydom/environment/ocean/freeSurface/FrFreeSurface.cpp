@@ -63,7 +63,7 @@ namespace frydom {
 
     double FrFreeSurface::GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const {
 
-        // This function compute the pressure.
+        // This function computes the pressure.
 
         return m_waveField->GetPressure(x,y,z,fc);
 

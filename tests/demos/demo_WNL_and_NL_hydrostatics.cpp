@@ -141,7 +141,7 @@ int main(int argc, char* argv[]) {
     hdb->Map(0, platform.get(), eqFrame);
 
     // -- Hydrodynamic mesh
-    auto PlatformMesh = make_hydro_mesh_nonlinear(&system,platform,"mesh_Platform_GVA7500_Sym.obj");
+    auto PlatformMesh = make_hydro_mesh_nonlinear(platform,"mesh_Platform_GVA7500_Sym.obj");
     mathutils::Matrix33<double> Rotation;
     Rotation.SetIdentity();
     Position MeshOffset(0,0,0);
@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
 //    auto forceHst = make_nonlinear_hydrostatic_force(&system,platform,"Platform_GVA7500.obj");
 //    auto forceHst = make_nonlinear_hydrostatic_force(&system,platform,"mesh_Platform_GVA7500_Sym.obj");
 
-    auto forceHst = make_nonlinear_hydrostatic_force(&system,platform,PlatformMesh);
+    auto forceHst = make_nonlinear_hydrostatic_force(platform,PlatformMesh);
 
     forceHst->SetLogged(true);
     forceHst->ShowAsset(true);
@@ -179,8 +179,8 @@ int main(int argc, char* argv[]) {
 //    excitationForce->SetLogged(true);
 
     // Create the nonlinear excitation force and add it to the platform
-    auto excitationForce = make_nonlinear_excitation_force(&system,hdb, platform,PlatformMesh);
-    excitationForce->SetLogged(true);
+    auto NonlinFKForce = make_nonlinear_froude_krylov_force(platform,PlatformMesh);
+    NonlinFKForce->SetLogged(true);
 
     // -- Radiation
 //    auto radiationModel = make_radiation_convolution_model(hdb, &system);

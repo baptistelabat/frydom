@@ -54,24 +54,24 @@ namespace frydom {
 
     }
 
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(FrOffshoreSystem* system, std::shared_ptr<FrBody> body, std::string meshfile){
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(std::shared_ptr<FrBody> body, std::string meshfile){
 
         // This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.
 
-        auto HydroMesh = std::make_shared<FrHydroMesh>(system,meshfile,body,true);
+        auto HydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(),meshfile,body,true);
 
-        system->Add(HydroMesh);
+        body->GetSystem()->Add(HydroMesh);
 
         return HydroMesh;
     }
 
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(FrOffshoreSystem* system, std::shared_ptr<FrBody> body, std::string meshfile){
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(std::shared_ptr<FrBody> body, std::string meshfile){
 
         // This function creates a hydrodynamic mesh for using in the computation of the weakly nonlinear hydrostatic and/or Froude-Krylov loads.
 
-        auto HydroMesh = std::make_shared<FrHydroMesh>(system,meshfile,body,false);
+        auto HydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(),meshfile,body,false);
 
-        system->Add(HydroMesh);
+        body->GetSystem()->Add(HydroMesh);
 
         return HydroMesh;
     }
