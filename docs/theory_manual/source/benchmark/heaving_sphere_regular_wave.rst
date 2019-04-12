@@ -30,8 +30,8 @@ K55                       :math:`5,126.10^6`
 The sphere is submitted to regular wave propagating positive along the x-axis. The wave periods considered in this test case varies from 3s to 11s with a steepness equal to 0.2%.
 
 
-Results
--------
+Results in RAO
+--------------
 
 The response amplitude operator (RAO) in heave motion obtained from FRyDoM is presented in Fig. <fig_sphere_regular_wave>_. Very good agreement with the results obtained by Nemoh [Nemoh]_ can be observed.
 
@@ -41,17 +41,33 @@ The response amplitude operator (RAO) in heave motion obtained from FRyDoM is pr
     :alt: Heave RAO
 
 
-For illustrative prupose, the restuls obtained from the other numerical models presented in [OES10]_ for the same test case are shown in next figure
+For illustrative prupose, the restuls obtained from the other numerical models presented in [OES10]_ for the same test case are shown in the next figure:
 
 .. _fig_shere_regular_wave_oes:
 .. figure:: _static/sphere_regular_s0_002_oes.png
     :align: center
     :alt: Heave RAO
 
+Effects of a nonlinear hydrostatic and Froude-Krylov approach
+-------------------------------------------------------------
+
+The time series of the same floating heaving sphere in waves are now compared. Two models are considered:
+
+ - a fully linear model;
+ - a weakly nonlinear model: the hydrostatic and Froude-Krylov loads are computed with a fully nonlinear approach.
+
+ A single resular wave of period 3 s and amplitude 0.022 m is present. The two time series are plotted in :numref:`fig_decay_description`. Due to the small steepness of the wave (0.05 %), the two models match perfectly, which validates their mutual implementation.
+
+.. _fig_shere_regular_wave_oes:
+.. figure:: _static/Comparison_Sphere_RW_Lin_Nonlin_hs_fk.png
+    :align: center
+    
+    Comparison of the time series of a floating sphere in a regular wave field using a linear (blue) and fully nonlinear (orange) hydrostatic and Froude-Krylov model
+
 
 References
 ----------
 
-.. [OES10] F. Wendt, Y-H Yu, K. Ruehl, T. Bunnik, I. Touzon, B. W. Nam, J. S. Kim, K-H Kim, C. E. Janson, K-R. Jakobsen, S. Crowley, L. Vega, K. Rajagopalan, T. Mathai, D. Greaves, E. Ransley, P. Lamont-Kane, W. Sheng, R. Costello, B. Kennedy, S. Thomas, P. Heras, H. Bingham, A. Kurniawan, M. M. Kramer, D. Ogden, S. Girardin, A. Babarit, P-Y. Wuillaume, D. Steinke, A. Roy, S. Betty, P. Shofield, J. Jansson and J. Hoffman, "International Energy Agency Ocean Energy Systems Task 10 Wave Energy Converter Modeleing Verification and Validation", European Wave and Tidal Energy Conference, Cork, Ireland, 2017
+.. [OES10] F. Wendt, Y-H Yu, K. Ruehl, T. Bunnik, I. Touzon, B. W. Nam, J. S. Kim, K-H Kim, C. E. Janson, K-R. Jakobsen, S. Crowley, L. Vega, K. Rajagopalan, T. Mathai, D. Greaves, E. Ransley, P. Lamont-Kane, W. Sheng, R. Costello, B. Kennedy, S. Thomas, P. Heras, H. Bingham, A. Kurniawan, M. M. Kramer, D. Ogden, S. Girardin, A. Babarit, P.-Y. Wuillaume, D. Steinke, A. Roy, S. Betty, P. Shofield, J. Jansson and J. Hoffman, "International Energy Agency Ocean Energy Systems Task 10 Wave Energy Converter Modeleing Verification and Validation", European Wave and Tidal Energy Conference, Cork, Ireland, 2017
 
 .. [Nemoh] A. Babarit and G. Delhommeau, "Theoretical and numerical aspects of the open source BEM solver NEMOH", in Proc. of the 11th European Wave and Tidal Energy Conference", Nantes, France, 2015.
