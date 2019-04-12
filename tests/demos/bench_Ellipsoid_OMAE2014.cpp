@@ -164,7 +164,8 @@ int main(int argc, char* argv[]) {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Create a hydrodynamic database (hdb), load data from the input file and creates and initialize the BEMBody.
-    auto hdb = make_hydrodynamic_database("Ellipsoid_4500_faces_WAMIT_mesh_sym_mean_position.hdb5");
+//    auto hdb = make_hydrodynamic_database("Ellipsoid_4500_faces_WAMIT_mesh_sym_mean_position.hdb5");
+    auto hdb = make_hydrodynamic_database("Ellipsoid_2774_faces_with_sym.hdb5");
 
     // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
     // auto eqFrame = std::make_shared<FrEquilibriumFrame>(Position(0.,0.,1.99043),FrRotation(),NWU,Ellipsoid.get()); // 2880 faces.
@@ -211,7 +212,6 @@ int main(int argc, char* argv[]) {
 //    Rotation.SetIdentity();
 //    Position MeshOffset(0,0,0);
 //    EllipsoidMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
-//    EllipsoidMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     // Weakly or fully nonlinear hydrostatics.
 //    auto forceHst = make_nonlinear_hydrostatic_force(Ellipsoid,EllipsoidMesh);

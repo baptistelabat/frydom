@@ -10,6 +10,7 @@
 // ==========================================================================
 
 #include "frydom/frydom.h"
+#include <fstream>
 
 using namespace frydom;
 
@@ -141,6 +142,7 @@ int main(int argc, char* argv[]) {
     waveField->SetMeanWaveDirection(Direction(NORTH(NWU)), NWU, GOTO);
     double spreadingFactor = 10.;    unsigned int nbDir = 10;
     waveField->SetDirectionalParameters(nbDir, spreadingFactor);
+    waveField->GenerateRandomWavePhases(0);
 
     // -- Body
 
@@ -225,7 +227,7 @@ int main(int argc, char* argv[]) {
 
     // -- Simulation
 
-    auto dt = 0.005;
+    auto dt = 0.02;
 
     system.SetTimeStep(dt);
     system.Initialize();
