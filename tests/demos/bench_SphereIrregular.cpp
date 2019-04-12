@@ -90,7 +90,7 @@ std::vector<double> ReadParam(const std::string dbfile, const int iperiod, const
 int main(int argc, char* argv[]) {
 
     std::cout << " ==================================================== \n"
-                 " Benchmark test : Heave motion in regular waves \n"
+                 " Benchmark test : Heave motion in irregular waves \n"
                  " ==================================================== " << std::endl;
 
     // -- Input
@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
     // -- System
 
     FrOffshoreSystem system;
-    system.SetName("Sphere_RW");
+    system.SetName("Sphere_IW");
 
     // -- Ocean
 
@@ -112,22 +112,42 @@ int main(int argc, char* argv[]) {
     ocean->SetInfiniteDepth();
     ocean->SetDensity(1000.);
 
+    // To manipulate the free surface grid asset, you first need to access it, through the free surface object.
+    auto FSAsset = system.GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset();
+
+    // The free surface grid is defined here as a squared one ranging from -100m to 100m (in north and west
+    // directions) with a 2m steps.
+    FSAsset->SetGrid(-100., 100, 2, -100, 100, 2);
+
+    // You have to specify if you want the free surface asset to be updated during the simulation. By default, the
+    // update is not activated.
+    FSAsset->SetUpdateStep(5);
+
     // -- Wave field
 
     auto param = ReadParam("bench_sphere_regular.h5", iPeriod, iSteepness);
 
-    double waveHeight = 0.5*param[1];
-    double wavePeriod = param[0];
+//    double Hs = param[1];
+//    double Tp = param[0];
 
-    auto waveField = ocean->GetFreeSurface()->SetAiryRegularWaveField();
-    waveField->SetWaveHeight(waveHeight);
-    waveField->SetWavePeriod(wavePeriod);
-    waveField->SetDirection(NORTH(NWU), NWU, GOTO);
+    double Hs = 0.5;
+    double Tp = 4.4;
+    double gamma = 1.0;
+
+    auto waveField = ocean->GetFreeSurface()->SetAiryIrregularWaveField();
+    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp, gamma);
+    double w1 = 0.5; double w2 = 2; unsigned int nbFreq = 20;
+    waveField->SetWaveFrequencies(w1,w2,nbFreq);
+    waveField->SetMeanWaveDirection(Direction(NORTH(NWU)), NWU, GOTO);
+    double spreadingFactor = 10.;    unsigned int nbDir = 10;
+    waveField->SetDirectionalParameters(nbDir, spreadingFactor);
 
     // -- Body
 
     auto body = system.NewBody();
     body->SetName("Sphere");
+    body->AddMeshAsset("Sphere_6200_faces.obj");
+    body->SetColor(Yellow);
 
     Position COGPosition(0., 0., -2.);
     FrFrame COGFrame(COGPosition, FrRotation(), NWU);
@@ -217,6 +237,8 @@ int main(int argc, char* argv[]) {
 
     clock_t begin = clock();
 
+//    system.RunInViewer(200,10);
+
     while (time < 200.) {
         time += dt;
         system.AdvanceTo(time);
@@ -239,7 +261,7 @@ int main(int argc, char* argv[]) {
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout << elapsed_secs << std::endl;
 
-    ValidationResults(vtime, heave, iPeriod, iSteepness);
+//    ValidationResults(vtime, heave, iPeriod, iSteepness);
 
     std::cout << " ================================= End ======================= " << std::endl;
 
