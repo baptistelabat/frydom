@@ -35,8 +35,6 @@ set(FRYDOM_VERSION
 #-----------------------------------------------------------------------------
 #set(CMAKE_BUILD_TYPE Debug)
 
-option(frydom_build_tests "Build unit tests" ON)
-
 #-----------------------------------------------------------------------------
 # C++ dialect
 #-----------------------------------------------------------------------------
@@ -63,9 +61,7 @@ add_subdirectory(src/frydom)
 #=============================================================================
 # Adding tests
 #=============================================================================
-if (${frydom_ee_build_tests})
-    enable_testing()
-    include(Add_googletest)
+enable_testing()
+include(Add_googletest)
 
-    add_subdirectory(tests)
-endif()
+add_subdirectory(tests)
