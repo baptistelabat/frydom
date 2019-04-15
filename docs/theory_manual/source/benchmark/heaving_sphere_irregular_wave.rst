@@ -1,9 +1,9 @@
-.. _heaving_sphere_regular_wave:
+.. _heaving_sphere_irregular_wave:
 
-Heaving sphere in regular waves
+Heaving sphere in irregular waves
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This benchmark corresponds to the simulation of a sphere in heave motion submitted to regular waves. This simulation is presented by the International Energy Agency (IEA) Offshore Energy System (OES) Task 10 [OES10]_ as a benchmark case for model validation and verification regrouping 25 organizations. Description of this test case and results obtained by FRyDoM are sumarized in the following.
+This comparison corresponds to the simulation of a sphere in heave motion submitted to irregular waves. The model is presented by the International Energy Agency (IEA) Offshore Energy System (OES) Task 10 [OES10]_ as a benchmark case for model validation and verification regrouping 25 organizations. The goal of this section is to compare the use of a linear and nonlinear approach for the computation of the hydrostatic and Froude-Krylov loads.
 
 Description of the test case
 ----------------------------
@@ -27,42 +27,23 @@ K44                       :math:`5,126.10^6` \\(N.m\\)
 K55                       :math:`5,126.10^6` \\(N.m\\)
 ========================= ==================================
 
-The sphere is submitted to a regular wave field propagating positive along the x-axis. The wave periods considered in this test case varies from :math:`3` \\(s\\) to :math:`11` \\(s\\) with a steepness of :math:`0.2` %.
-
-Results in RAO
---------------
-
-The response amplitude operator (RAO) in heave motion obtained from FRyDoM is presented in Fig. <fig_sphere_regular_wave>_. Very good agreement with the results obtained by Nemoh [Nemoh]_ can be observed.
-
-.. _fig_shere_regular_wave:
-.. figure:: _static/sphere_regular_s0_002.png
-    :align: center
-    :alt: Heave RAO
-
-
-For illustrative prupose, the restuls obtained from the other numerical models presented in [OES10]_ for the same test case are shown in the next figure:
-
-.. _fig_shere_regular_wave_oes:
-.. figure:: _static/sphere_regular_s0_002_oes.png
-    :align: center
-    :alt: Heave RAO
+The sphere is submitted to an irregular wave field propagating positive along the x-axis. A Jonswap wave spectrum is considered with a significant wave height (Hs) of :math:`0.5` \\(m\\), a spectral peak period (Tp) of :math:`4.4` \\(s\\) and a gamma factor (:math:`\gamma`) of :math:`1`.
 
 Effects of a nonlinear hydrostatic and Froude-Krylov approach
 -------------------------------------------------------------
 
-The time series of the same floating heaving sphere in waves are now compared. Two models are considered:
+The time series of the floating heaving sphere in irregular waves are now compared. Two models are considered:
 
  - a fully linear model;
  - a weakly nonlinear model: the hydrostatic and Froude-Krylov loads are computed with a fully nonlinear approach.
 
- A single resular wave of period :math:`3` \\(s\\) and amplitude :math:`0.022` \\(m\\) is present. The two time series are plotted in :numref:`fig_sphere_regular_wave_oes`. Due to the small steepness of the waves (:math:`0.05` %), the two models match perfectly, which validates their mutual implementation in regular waves.
+The two time series are plotted in :numref:`fig_sphere_irregular_wave_oes`. Due to the small steepness of the waves (:math:`0.26` %), the two models match perfectly, which validates their mutual implementation in irregular waves.
 
-.. _fig_sphere_regular_wave_oes:
-.. figure:: _static/Comparison_Sphere_RW_Lin_Nonlin_hs_fk.png
+.. _fig_sphere_irregular_wave_oes:
+.. figure:: _static/Comparison_Sphere_IW_Lin_Nonlin_hs_fk.png
     :align: center
     
-    Comparison of the time series of a floating heaving sphere in a regular wave field using a linear (blue) and fully nonlinear (orange) hydrostatic and Froude-Krylov model
-
+    Comparison of the time series of a floating heaving sphere in an irregular wave field using a linear (blue) and fully nonlinear (orange) hydrostatic and Froude-Krylov model
 
 References
 ----------

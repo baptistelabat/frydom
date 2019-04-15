@@ -8,26 +8,26 @@ This benchmark corresponds to the simulation of a sphere in free-decay test. Thi
 Description of the test case
 ----------------------------
 
-The sphere considered in this simulation has a radius of :math:`5` m and a total mass of :math:'2,618 .10^5' kg. At equilibrium, the center of the sphere is located on the mean water level and its center of gravity is located :math:`2` m below the water line. The main properties of the sphere are presented in the next table.
+The sphere considered in this simulation has a radius of :math:`5` \\(m\\) and a total mass of :math:`2,618 .10^5` \\(kg\\). At equilibrium, the center of the sphere is located on the mean water level and its center of gravity is located :math:`2` \\(m\\) below the water line. The main properties of the sphere are presented in the next table.
 
-========================= =======================
+========================= ==================================
 Parameters                Values
-========================= =======================
-Radius                    5 m
-Initial sphere location   (0, 0, 0)
-Center of gravity         (0, 0, -2)
-Mass	                  :math:`261,8.10^3` kg
-Ixx                       :math:`1,690.10^6`
-Iyy                       :math:`1,690.10^6`
-Izz                       :math:`2,606.10^6`
+========================= ==================================
+Radius                    :math:`5` \\(m\\)
+Initial sphere location   (:math:`0`, :math:`0`, :math:`0`)
+Center of gravity         (:math:`0`, :math:`0`, :math:`-2`)
+Mass	                  :math:`261,8.10^3` \\(kg\\)
+Ixx                       :math:`1,690.10^6` \\(kg.m^2\\) 
+Iyy                       :math:`1,690.10^6` \\(kg.m^2\\)
+Izz                       :math:`2,606.10^6` \\(kg.m^2\\)
 Water detph               Inf
-Water density             :math:`1000 kg/m^3`
-K33                       :math:`7,695.10^5`
-K44                       :math:`5,126.10^6`
-K55                       :math:`5,126.10^6`
-========================= =======================
+Water density             :math:`1000` \\(kg/m^3\\)
+K33                       :math:`7,695.10^5` \\(N/m\\)
+K44                       :math:`5,126.10^6` \\(N.m\\)
+K55                       :math:`5,126.10^6` \\(N.m\\)
+========================= ==================================
 
-At initial time, the sphere is placed at a distance of :math:`1` m, :math:`3` m or :math:`5` m above the mean water level and dropped without velocity (:numref:`fig_decay_description`).
+At initial time, the sphere is placed at a distance of :math:`1` \\(m\\), :math:`3` \\(m\\) or :math:`5` \\(m\\) above the mean water level and dropped without velocity (:numref:`fig_decay_description`).
 
 .. _fig_decay_description:
 .. figure:: _static/sphere_decay_description.png
@@ -36,16 +36,16 @@ At initial time, the sphere is placed at a distance of :math:`1` m, :math:`3` m 
 
     Decription of the heaving sphere test cases
 
-Results for a decay test of :math:`1` m
----------------------------------------
+Results for a decay test of :math:`1` \\(m\\)
+---------------------------------------------
 
-The numerical results of [OES10]_ are displayed in :numref:`fig_deacy_1m_OES`. This figure shows the vertical position of the center of sphere. Various models with different levels of nonlinearities were used, from the linear potential flow theory based numerical tools to CFD solvers. With an initial position of :math:`1` m for the decay test, all these models match. Consequently, nonlinearities are not important in this case. 
+The numerical results of [OES10]_ are displayed in :numref:`fig_deacy_1m_OES`. This figure shows the vertical position of the center of sphere. Various models with different levels of nonlinearities were used, from the linear potential flow theory based numerical tools to CFD solvers. With an initial position of :math:`1` \\(m\\) for the decay test, all these models match. Consequently, nonlinearities are not important in this case. 
 
 .. _fig_deacy_1m_OES:
 .. figure:: _static/sphere_decay_1m_oes.png
     :align: center
     
-    Time series for the heave decay test of a sphere with 1.0 initial displacement from different numerical models
+    Time series for the heave decay test of a sphere with :math:`1.0` \\(m\\) initial displacement from different numerical models
 
 The numerical results of FRyDoM are compared to the results coming from the linear model of Ecole Centrale de Nantes (ECN LIN) based on Nemoh, the frequency-domain potential flow theory based solver [Nemoh]_. The comparison is presented in :numref:`fig_decay_result`. A very good agreement between the two models is observed.
 
@@ -54,12 +54,12 @@ The numerical results of FRyDoM are compared to the results coming from the line
     :align: center
     :alt: Sphere decay test
 
-    Free-decay motion of the sphere for the 1.0 m initial displacement and comparison with ECN LIN
+    Free-decay motion of the sphere for the :math:`1.0` \\(m\\) initial displacement and comparison with ECN LIN
 
-Results for a decay test of :math:`5` m
----------------------------------------
+Results for a decay test of :math:`5` \\(m\\)
+---------------------------------------------
 
-The decay test with an initial position of the sphere of :math:`5` m is now considered. Numerical results of [OES10]_ are presented in :numref:`fig_deacy_1m_OES`. Three groups of models may be distinguished:
+The decay test with an initial position of the sphere of :math:`5` \\(m\\) is now considered. Numerical results of [OES10]_ are presented in :numref:`fig_decay_1m_OES`. Three groups of models may be distinguished:
 
 - linear models without nonlinearities: WavEC, Wave Venture, ECN LIN, MARIN LINS, etc.;
 - weakly nonlinear models which add some nonlinear such as nonlinear hydrostatics, nonlinear Froude-Krylov models: WavEC NLINS, NREL SNL NLIN, etc.;
@@ -67,11 +67,11 @@ The decay test with an initial position of the sphere of :math:`5` m is now cons
 
 The use of a weakly nonlinear approach involves a modification of the period of the decay test compared to the linear models. Results from the fully nonlinear models increase the amplitude of the sphere compared to the results of the weakly nonlinear solvers.
 
-.. _fig_deacy_1m_OES:
+.. _fig_decay_1m_OES:
 .. figure:: _static/Figure_IEA-OES_Decay_test_z_5.png
     :align: center
 
-    Time series for the heave decay test of a sphere with 5.0 initial displacement from different numerical models
+    Time series for the heave decay test of a sphere with :math:`5.0` \\(m\\) initial displacement from different numerical models
 
 The numerical results of FRyDOM obtained with both a fully linear approach and a nonlinear hydrostatics and Froude-Krylov approach are presented in :numref:`fig_decay_result_5m`. These results are compared with the two models of WaveEC which are based on the same two models of FRyDoM. A very good agreement is obtained with the two different approaximations.
 
@@ -80,7 +80,7 @@ The numerical results of FRyDOM obtained with both a fully linear approach and a
     :align: center
     :alt: Sphere decay test
 
-    Free-decay motion of the sphere for the 1.0 m initial displacement and comparison with ECN LIN. Linear models: WavEC in blue, FRyDoM in green, weakly nonlinear models: WavEC in orange, FRyDoM in red.
+    Free-decay motion of the sphere for the :math:`1.0` \\(m\\) initial displacement and comparison with ECN LIN. Linear models: WavEC in blue, FRyDoM in green, weakly nonlinear models: WavEC in orange, FRyDoM in red.
 
 References
 ----------
