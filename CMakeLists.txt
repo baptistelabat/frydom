@@ -63,7 +63,7 @@ add_subdirectory(src/frydom)
 #=============================================================================
 # Adding tests
 #=============================================================================
-if (${frydom_ee_build_tests})
+if (${frydom_build_tests})
     enable_testing()
     include(Add_googletest)
 
