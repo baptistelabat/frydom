@@ -39,9 +39,6 @@ namespace frydom {
 
     private:
 
-        /// Offshore system.
-        FrOffshoreSystem* m_system;
-
         /// Center of buoyancy in world.
         Position m_CoBInWorld;
 
@@ -54,8 +51,7 @@ namespace frydom {
     public:
 
         /// Constructor.
-        FrNonlinearHydrostaticForce(FrOffshoreSystem* system, std::shared_ptr<FrHydroMesh> HydroMesh) {
-            m_system = system;
+        FrNonlinearHydrostaticForce(std::shared_ptr<FrHydroMesh> HydroMesh) {
             m_hydro_mesh = HydroMesh;
         }
 
