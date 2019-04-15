@@ -1,6 +1,8 @@
 FRyDoM-ce: Flexible and Rigid body Dynamics modeling for Marine operations  (Community Edition)
 ===============================================================================================
 
+[![pipeline status](https://frydom-ce.gitlab.host/ce/frydom/badges/master/pipeline.svg)](https://frydom-ce.gitlab.host/ce/frydom/commits/master)
+
 FRyDoM-ce is an open source framework for the simulation of complex systems involved in marine 
 operations for Marine Renewables.
 FRyDoM is a physics-based modeling and simulation framework dedicated to complex marine platforms,
