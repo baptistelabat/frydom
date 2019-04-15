@@ -90,7 +90,7 @@ std::vector<double> ReadParam(const std::string dbfile, const int iperiod, const
 int main(int argc, char* argv[]) {
 
     std::cout << " ==================================================== \n"
-                 " Benchmark test : Heave motion in regular wave \n"
+                 " Benchmark test : Heave motion in regular waves \n"
                  " ==================================================== " << std::endl;
 
     // -- Input

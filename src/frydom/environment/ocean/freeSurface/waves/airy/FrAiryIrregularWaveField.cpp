@@ -188,8 +188,22 @@ namespace frydom{
         m_verticalFactor->SetInfDepth(m_infinite_depth);
     }
 
-
     void FrAiryIrregularWaveField::GenerateRandomWavePhases() {
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        GenerateRandomWavePhases(gen);
+
+    }
+
+    void FrAiryIrregularWaveField::GenerateRandomWavePhases(int seed) {
+
+        std::mt19937 gen(seed);
+        GenerateRandomWavePhases(gen);
+
+    }
+
+    void FrAiryIrregularWaveField::GenerateRandomWavePhases(std::mt19937& seed) {
 
         m_wavePhases = std::make_unique<std::vector<std::vector<double>>>();
         m_wavePhases->clear();
@@ -198,14 +212,12 @@ namespace frydom{
         std::vector<double> phases;
         phases.reserve(m_waveFrequencies.size());
 
-        std::random_device rd;
-        std::mt19937 gen(rd());
         std::uniform_real_distribution<double> dis(0., MU_2PI);
 
         for (double dir: m_waveDirections) {
             phases.clear();
             for (double freq: m_waveFrequencies) {
-                phases.push_back(dis(gen));
+                phases.push_back(dis(seed));
             }
             m_wavePhases->push_back(phases);
         }

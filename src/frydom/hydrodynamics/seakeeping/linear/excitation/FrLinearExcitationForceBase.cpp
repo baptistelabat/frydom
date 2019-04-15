@@ -64,6 +64,9 @@ namespace frydom {
         auto nbDirInterp = waveDirections.size();
         auto nbForceMode = BEMBody->GetNbForceMode();
 
+        // Wave direction is expressed between 0 and 2*pi.
+        for (auto &dir : waveDirections) dir = mathutils::Normalize_0_2PI(dir);
+
         std::vector<Eigen::MatrixXcd> Fexc;
         Fexc.reserve(nbDirInterp);
 

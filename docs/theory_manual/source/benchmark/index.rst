@@ -10,6 +10,7 @@ Heaving sphere
 
     heaving_sphere_decay_test
     heaving_sphere_regular_wave
+    heaving_sphere_irregular_wave
 
 DTM5512
 ~~~~~~~

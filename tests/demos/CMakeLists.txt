@@ -18,6 +18,7 @@ set(DEMOS
 	demo_Cylinder
         bench_SphereDecay
         bench_SphereRegular
+	bench_SphereIrregular
         bench_DTMB5512_captive
         bench_Cables
 	bench_Ellipsoid_OMAE2014

@@ -78,7 +78,7 @@ namespace frydom {
 
             // Incident pressure.
             // The pressure is assumed constant over a panel.
-            Pressure = m_free_surface->GetPressure(Centroid[0],Centroid[1],Centroid[2],NWU);
+            Pressure = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetPressure(Centroid[0],Centroid[1],Centroid[2],NWU);
 
             // Area.
             Area = m_clipped_mesh.GetArea(f_iter);
@@ -117,7 +117,7 @@ namespace frydom {
         // This function creates a fully or weakly nonlinear Froude-Krylov force object.
 
         // Construction of the fully or weakly Froude-Krylov force object from the HDB.
-        auto NonlinFKForce = std::make_shared<FrNonLinearFroudeKrylovForce>(body->GetSystem(),HydroMesh);
+        auto NonlinFKForce = std::make_shared<FrNonLinearFroudeKrylovForce>(HydroMesh);
 
         // Add the Froude-Krylov force object as an external force to the body.
         body->AddExternalForce(NonlinFKForce); // Initialization of m_body.
