@@ -167,7 +167,7 @@ void TestFrFlowForce::TestForce() {
 
 TEST_F(TestFrFlowForce, TestCurrentForce) {
     LoadData("TNR_database.h5", "/current_force/");
-    MakeForce(WATER, "Ship_PolarCurrentCoeffs.yml");
+    MakeForce(WATER, "Ship_PolarCurrentCoeffs.json");
     system.Initialize();
     TestForce();
 };
@@ -175,23 +175,10 @@ TEST_F(TestFrFlowForce, TestCurrentForce) {
 
 TEST_F(TestFrFlowForce, TestWindForce) {
     LoadData("TNR_database.h5", "/wind_force/");
-    MakeForce(FLUID_TYPE::AIR, "Ship_PolarWindCoeffs.yml");
+    MakeForce(FLUID_TYPE::AIR, "Ship_PolarWindCoeffs.json");
     system.Initialize();
     TestForce();
 };
-
-//TEST_F(TestFrFlowForce, TestFlowForce) {
-//    LoadData("TNR_database.h5", "/current_force/");
-//    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM_0_PI.yml"); // OK
-//    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM_0_180.yml"); // OK
-//    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM_0_2PI.yml"); // OK (numerical error)
-//    MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_GOTO_0_PI.yml"); // OK (numerical error)
-//    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NWU_COMEFROM__PI_PI.yml"); // NO
-//    //MakeForce(FLUID_TYPE::WATER, "Ship_polarTest_NED_COMEFROM_0_PI.yml"); // OK (numerical error)
-//    system.Initialize();
-//    TestForce();
-//};
-
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
