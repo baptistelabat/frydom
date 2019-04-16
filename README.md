@@ -1,6 +1,4 @@
-[![pipeline status](https://frydom-ce.org/ce/frydom/badges/master/pipeline.svg)](https://frydom-ce.org/ce/frydom/commits/master)
-
-[![coverage report](https://frydom-ce.org/ce/frydom/badges/master/coverage.svg)](https://frydom-ce.org/ce/frydom/commits/master)
+[![pipeline status](https://frydom-ce.org/ce/frydom/badges/master/pipeline.svg)](https://frydom-ce.org/ce/frydom/commits/master) [![coverage report](https://frydom-ce.org/ce/frydom/badges/master/coverage.svg)](https://frydom-ce.org/ce/frydom/commits/master)
 
 FRyDoM-ce: Flexible and Rigid body Dynamics modeling for Marine operations  (Community Edition)
 ===============================================================================================
