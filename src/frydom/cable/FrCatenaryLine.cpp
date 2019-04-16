@@ -16,6 +16,7 @@
 #include "FrCatenaryForce.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/environment/FrEnvironment.h"
+#include "frydom/asset/FrCatenaryLineAsset.h"
 
 
 namespace frydom {

@@ -14,7 +14,6 @@
 #define FRYDOM_FRCABLE_H
 
 
-#include "frydom/core/common/FrPhysicsItem.h"
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/common/FrConvention.h"
 
@@ -163,6 +162,15 @@ namespace frydom {
 
         //--------------------------------------------------------------------------------------------------------------
         // pure virtual methods
+
+        /// Set the number of asset elements depicted
+        /// \param n number of asset elements
+        virtual void SetAssetElements(unsigned int n) = 0;
+
+        /// Get the number of asset elements depicted
+        /// \return number of asset elements
+        virtual unsigned int GetAssetElements() = 0;
+
         /// Get the inside line tension at the lagrangian coordinate s, from the starting node to the ending node
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)

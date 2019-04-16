@@ -39,7 +39,7 @@ namespace frydom {
 
     private:
 
-        FrCatenaryLine *m_catenaryLine;    ///< Catenary line containing this asset
+        FrCable *m_catenaryLine;    ///< Catenary line containing this asset
 
 //        using Triplet = std::tuple<double, double, std::shared_ptr<chrono::ChLineShape>>;
 //        std::vector<Triplet> m_elements;    ///< container of elements based on ChLineShape
@@ -52,7 +52,7 @@ namespace frydom {
 
         /// Catenary line asset constructor
         /// \param line catenary line containing this asset
-        explicit FrCatenaryLineAsset(FrCatenaryLine * line);
+        explicit FrCatenaryLineAsset(FrCable * line);
 
         /// Initialize the asset by creating the elements
         void Initialize() override;

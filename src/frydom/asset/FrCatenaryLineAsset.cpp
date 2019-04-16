@@ -21,7 +21,7 @@
 
 namespace frydom{
 
-    FrCatenaryLineAsset::FrCatenaryLineAsset(FrCatenaryLine *line) : m_catenaryLine(line), FrAsset() {}
+    FrCatenaryLineAsset::FrCatenaryLineAsset(FrCable *line) : m_catenaryLine(line), FrAsset() {}
 
     void FrCatenaryLineAsset::Initialize() { // TODO : il semble que ChLine soit capable de rendre des lignes courbes
 
@@ -60,7 +60,7 @@ namespace frydom{
         if (std::get<1>(last_ele)<m_catenaryLine->GetUnstretchedLength()){
             p1 = internal::Vector3dToChVector(m_catenaryLine->GetEndingNode()->GetPositionInWorld(NWU));
             auto newElement = std::make_shared<chrono::ChLineShape>();
-            color = chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetEndingNodeTension(NWU).norm(), 0, m_maxTension, true);
+            color = chrono::ChColor::ComputeFalseColor(m_catenaryLine->GetTension(m_catenaryLine->GetUnstretchedLength(),NWU).norm(), 0, m_maxTension, true);
 
             newElement->SetColor(color);
             newElement->SetLineGeometry(std::make_shared<chrono::geometry::ChLineSegment>(p0, p1));

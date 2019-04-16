@@ -11,6 +11,7 @@
 
 
 #include "FrCable.h"
+#include "frydom/core/common/FrObject.h"
 
 
 namespace frydom {

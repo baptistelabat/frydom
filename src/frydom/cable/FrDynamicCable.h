@@ -214,6 +214,14 @@ namespace frydom {
 
         // Virtual methods, from FrCable
 
+        /// Set the number of asset elements depicted
+        /// \param n number of asset elements
+        virtual void SetAssetElements(unsigned int n) {assert(false && "Don't use this !");}
+
+        /// Get the number of asset elements depicted
+        /// \return number of asset elements
+        virtual unsigned int GetAssetElements() { return m_nbElements;}
+
         /// Get the inside line tension at the lagrangian coordinate s, from the starting node to the ending node
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)

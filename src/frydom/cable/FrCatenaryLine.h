@@ -15,9 +15,9 @@
 
 
 #include "FrCable.h"
+#include "frydom/core/common/FrPhysicsItem.h"
 #include "frydom/core/math/FrVector.h"
 #include "frydom/environment/FrFluidType.h"
-#include "frydom/asset/FrCatenaryLineAsset.h"
 
 
 // TODO: prevoir une discretisation automatique pour laquelle on precise la taille cible d'un element
@@ -122,11 +122,11 @@ namespace frydom {
 
         /// Set the number of asset elements depicted
         /// \param n number of asset elements
-        void SetAssetElements(unsigned int n);;
+        void SetAssetElements(unsigned int n) override;
 
         /// Get the number of asset elements depicted
         /// \return number of asset elements
-        unsigned int GetAssetElements();
+        unsigned int GetAssetElements() override;
 
         //--------------------------------------------------------------------------------------------------------------
         // Accessors related to the embedded Newton-Raphson solver
@@ -252,7 +252,7 @@ namespace frydom {
         mathutils::Matrix33<double> analytical_jacobian() const;
 
 
-        friend void FrCatenaryLineAsset::Initialize();
+//        friend void FrCatenaryLineAsset::Initialize();
 
     };
 
