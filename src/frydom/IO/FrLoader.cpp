@@ -15,14 +15,13 @@
 #include "MathUtils/Angles.h"
 #include "MathUtils/LookupTable1D.h"
 
-#include "yaml-cpp/yaml.h"
-
-
+#include <nlohmann/json.hpp>
+using json = nlohmann::json; // for convenience
+#include <fstream>
 
 namespace frydom {
 
-
-    void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
+    void LoadFlowPolarCoeffFromJson(const std::string& jsonFile,
                                     std::vector<double>& angle,
                                     std::vector<double>& cx,
                                     std::vector<double>& cy,
@@ -31,68 +30,71 @@ namespace frydom {
                                     FRAME_CONVENTION& fc,
                                     DIRECTION_CONVENTION& dc) {
 
-        YAML::Node data = YAML::LoadFile(yamlFile);
+        // This function reads the flow polar coefficients from a Json input file.
 
-        if (data["PolarFlowCoeffs"]) {
+        // Loader.
+        std::ifstream ifs(jsonFile);
+        json j = json::parse(ifs);
 
-            auto node = data["PolarFlowCoeffs"];
+        auto node = j["PolarFlowCoeffs"];
 
-            try {
-                angle_unit = mathutils::STRING2ANGLE(node["unit"].as<std::string>());
-            } catch (YAML::BadConversion& err) {
-                std::cout << " warning : unit must be DEG or RAD" << std::endl;
-            }
+        try {
+            angle_unit = mathutils::STRING2ANGLE(node["unit"].get<json::string_t>());
+        } catch (json::parse_error& err) {
+            std::cout << " warning : unit must be DEG or RAD" << std::endl;
+        }
 
-            try {
-                fc = STRING2FRAME(node["FRAME_CONVENTION"].as<std::string>());
-            } catch (YAML::BadConversion& err) {
-                std::cout << " error : reading frame convention. Must be NWU or NED." << std::endl;
-            }
+        try {
+            fc = STRING2FRAME(node["FRAME_CONVENTION"].get<json::string_t>());
+        } catch (json::parse_error& err) {
+            std::cout << " error : reading frame convention. Must be NWU or NED." << std::endl;
+        }
 
-            try {
-                dc = STRING2DIRECTION(node["DIRECTION_CONVENTION"].as<std::string>());
-            } catch (YAML::BadConversion& err) {
-                std::cout << " error : reading direction convention. Must be GOTO or COMEFROM." << std::endl;
-            }
+        try {
+            dc = STRING2DIRECTION(node["DIRECTION_CONVENTION"].get<json::string_t>());
+        } catch (json::parse_error& err) {
+            std::cout << " error : reading direction convention. Must be GOTO or COMEFROM." << std::endl;
+        }
 
-            try {
-                angle = node["angles"].as<std::vector<double>>();
-            } catch (YAML::BadConversion& err) {
-                // TODO : throw exception
-            }
+        try {
+            angle = node["angles"].get<std::vector<double>>();
+        } catch (json::parse_error& err) {
+            // TODO : throw exception
+        }
 
-            try {
-                cx = node["cx"].as<std::vector<double>>();
-            } catch (YAML::BadConversion& err) {
-                // TODO : throw exception
-            }
+        try {
+            cx = node["cx"].get<std::vector<double>>();
+        } catch (json::parse_error& err) {
+            // TODO : throw exception
+        }
 
-            try {
-                cy = node["cy"].as<std::vector<double>>();
-            } catch (YAML::BadConversion& err) {
-                // TODO : throw exception
-            }
+        try {
+            cy = node["cy"].get<std::vector<double>>();
+        } catch (json::parse_error& err) {
+            // TODO : throw exception
+        }
 
-            try {
-                cn = node["cn"].as<std::vector<double>>();
-            } catch (YAML::BadConversion& err) {
-                // TODO : throw exception
-            }
-
+        try {
+            cn = node["cn"].get<std::vector<double>>();
+        } catch (json::parse_error& err) {
+            // TODO : throw exception
         }
 
     }
 
-    void LoadFlowPolarCoeffFromYaml(const std::string& yamlFile,
+    void LoadFlowPolarCoeffFromJson(const std::string& jsonFile,
                                     std::vector<std::pair<double, mathutils::Vector3d<double>>>& polar,
                                     ANGLE_UNIT& unit,
                                     FRAME_CONVENTION& fc,
                                     DIRECTION_CONVENTION& dc) {
 
+        // This function reads the flow polar coefficients from a Json input file.
+
         std::vector<double> angles;
         std::vector<double> cx, cy, cn;
 
-        LoadFlowPolarCoeffFromYaml(yamlFile, angles, cx, cy, cn, unit, fc, dc);
+        // Loading the flow polar coefficients from a json input file.
+        LoadFlowPolarCoeffFromJson(jsonFile, angles, cx, cy, cn, unit, fc, dc);
 
         auto n = angles.size();
         assert(cx.size() == n);

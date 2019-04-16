@@ -219,7 +219,7 @@ void TestFrWindForce_::SetUp() {
     body->SetCOG(COGPosition, NWU);
     system.AddBody(body);
 
-    force = std::make_shared<FrWindForce_>("../Ship_PolarWindCoeffs.yml");
+    force = std::make_shared<FrWindForce_>("../Ship_PolarWindCoeffs.json");
     body->AddExternalForce(force);
 
     system.Initialize();
