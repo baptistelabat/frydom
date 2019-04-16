@@ -384,22 +384,6 @@ namespace frydom {
 
     }
 
-    double FrDynamicCable::GetStretchedLength() const {
-        double cl = 0.;
-        int n = 1000;
-
-        double ds = GetUnstretchedLength() / (n-1);
-        auto pos_prev = GetNodePositionInWorld(0., NWU);
-
-        for (uint i=0; i<n; ++i) {
-            auto s = i*ds;
-            auto pos = GetNodePositionInWorld(s, NWU);
-            cl += (pos - pos_prev).norm();
-            pos_prev = pos;
-        }
-        return cl;
-    }
-
     void FrDynamicCable::InitializeLog() {
         if (IsLogged()) {
 

@@ -232,12 +232,7 @@ namespace frydom {
         /// \param s lagrangian coordinate
         /// \param fc frame convention (NED/NWU)
         /// \return line position
-        Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;;
-
-        /// Get the stretched length of the cable
-        /// \return stretched length
-        double GetStretchedLength() const override;;
-
+        Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;
 
         // Virtual methods, from FEAMesh
 
@@ -249,7 +244,7 @@ namespace frydom {
         void Update(double time) override {};
 
         /// Initialize the log for the dynamic cable
-        void InitializeLog() override;;
+        void InitializeLog() override;
 
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;

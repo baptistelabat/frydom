@@ -198,10 +198,6 @@ namespace frydom {
         /// \return current elastic increment
         Position GetElasticIncrement(double s, FRAME_CONVENTION fc) const;
 
-        /// Returns the current cable length by line discretization
-        /// \return stretched cable length
-        double GetStretchedLength() const override;
-
         /// Get the position residual.
         /// This is the difference between the end line position calculated using catenary equation and the effective
         /// geometrical position (position of the ending node)
@@ -235,8 +231,6 @@ namespace frydom {
 
         //--------------------------------------------------------------------------------------------------------------
     private :
-
-        void InitBreakingTension();
 
         /// Catenary line update method
         /// \param time time of the simulation

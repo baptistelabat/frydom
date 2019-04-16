@@ -185,7 +185,13 @@ namespace frydom {
 
         /// Get the stretched length of the cable
         /// \return stretched length
-        virtual double GetStretchedLength() const = 0;
+        virtual double GetStretchedLength() const;
+
+    protected:
+
+        virtual void InitBreakingTension();
+
+    public:
 
         //--------------------------------------------------------------------------------------------------------------
         /// Set the breaking tension of the cable (for visualization purpose only for now)
