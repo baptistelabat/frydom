@@ -92,8 +92,8 @@ int main(int argc, char* argv[]) {
 
     // Inertia Tensor
 //    double Mass              = 3.22114e7;
-//    double Mass = 68321.544*1025; // Maillage visu.
-    double Mass = 53412.462*1025; // Maillage Nemoh.
+    double Mass = 68321.544*1025; // Maillage visu.
+//    double Mass = 53412.462*1025; // Maillage Nemoh.
 //    Position platformCoG(0.22, 0.22, 2.92);
 //    Position platformCoG(0., 0., 2.92);
     Position platformCoG(0.22, 0.22, 0.);
@@ -193,11 +193,11 @@ int main(int argc, char* argv[]) {
 
     // -- Current model force, based on polar coefficients
     // Create the current model force and add it to the platform
-//    auto currentForce = make_current_force("Platform_PolarCurrentCoeffs_NC.yml", platform);
+//    auto currentForce = make_current_force("Platform_PolarCurrentCoeffs_NC.json", platform);
 
     // -- Wind model force, based on polar coefficients
     // Create the model model force and add it to the platform
-//    auto windForce = make_wind_force("Platform_PolarWindCoeffs_NC.yml", platform);
+//    auto windForce = make_wind_force("Platform_PolarWindCoeffs_NC.json", platform);
 //    windForce->SetIsForceAsset(true);
 
     // ------------------ Run with Irrlicht ------------------ //

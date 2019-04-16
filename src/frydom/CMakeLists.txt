@@ -44,13 +44,13 @@ include(Add_chrono)
 include(Add_MathUtils)
 include(Add_HDF5)
 
-include(Add_yaml-cpp)
 include(Add_GeographicLib)
 include(Add_fmt)
 include(Add_cppfs)
 include(Add_TimeZone)
 include(Add_hermes)
 include(Add_OpenMesh)
+include(Add_json)
 
 #if (TARGET hermes)
 #    get_target_property(INC hermes INCLUDE_DIRECTORIES)
@@ -67,14 +67,14 @@ target_link_libraries(FRyDoM_Engine
         ChronoEngine
         ChronoEngine_irrlicht
         MathUtils::MathUtils
-        yaml-cpp
         HDF5
         GeographicLib
         fmt
         cppfs
         tz
         hermes
-	    OpenMeshCore
+	OpenMeshCore
+	nlohmann_json
         )
 
 target_include_directories(FRyDoM_Engine PUBLIC

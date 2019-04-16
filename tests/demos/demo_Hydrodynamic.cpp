@@ -22,6 +22,7 @@ int main(int argc, char* argv[]) {
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
+    system.SetName("Platform");
 
     // --------------------------------------------------
     // Environment
@@ -131,11 +132,11 @@ int main(int argc, char* argv[]) {
 
     // -- Current model force, based on polar coefficients
     // Create the current model force and add it to the platform
-    auto currentForce = make_current_force("Platform_PolarCurrentCoeffs_NC.yml", platform);
+    auto currentForce = make_current_force("Platform_PolarCurrentCoeffs_NC.json", platform);
 
     // -- Wind model force, based on polar coefficients
     // Create the model model force and add it to the platform
-    auto windForce = make_wind_force("Platform_PolarWindCoeffs_NC.yml", platform);
+    auto windForce = make_wind_force("Platform_PolarWindCoeffs_NC.json", platform);
     windForce->ShowAsset(true);
 
     // ------------------ Run with Irrlicht ------------------ //

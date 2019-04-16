@@ -20,11 +20,11 @@
 
 namespace frydom {
 
-    FrFlowForce::FrFlowForce(const std::string& yamlFile) {
-        this->ReadTable(yamlFile);
+    FrFlowForce::FrFlowForce(const std::string& jsonFile) {
+        this->ReadTable(jsonFile);
     }
 
-    void FrFlowForce::ReadTable(const std::string& yamlFile) {
+    void FrFlowForce::ReadTable(const std::string& jsonFile) {
 
         std::vector<std::pair<double, mathutils::Vector3d<double>>> polar;
         std::pair<double, mathutils::Vector3d<double>> new_element;
@@ -32,7 +32,7 @@ namespace frydom {
         FRAME_CONVENTION fc;
         DIRECTION_CONVENTION dc;
 
-        LoadFlowPolarCoeffFromYaml(yamlFile, polar, angle_unit, fc, dc);
+        LoadFlowPolarCoeffFromJson(jsonFile, polar, angle_unit, fc, dc);
 
         if (angle_unit == mathutils::DEG) {
             for (auto it=polar.begin(); it != polar.end(); ++it) { it->first *= DEG2RAD; }
@@ -154,14 +154,14 @@ namespace frydom {
         FrFlowForce::Compute(time);
     }
 
-    std::shared_ptr<FrCurrentForce> make_current_force(const std::string& yamlFile, std::shared_ptr<FrBody> body){
-        auto currentForce = std::make_shared<FrCurrentForce>(yamlFile);
+    std::shared_ptr<FrCurrentForce> make_current_force(const std::string& jsonFile, std::shared_ptr<FrBody> body){
+        auto currentForce = std::make_shared<FrCurrentForce>(jsonFile);
         body->AddExternalForce(currentForce);
         return currentForce;
     }
 
-    std::shared_ptr<FrWindForce> make_wind_force(const std::string& yamlFile, std::shared_ptr<FrBody> body){
-        auto windForce = std::make_shared<FrWindForce>(yamlFile);
+    std::shared_ptr<FrWindForce> make_wind_force(const std::string& jsonFile, std::shared_ptr<FrBody> body){
+        auto windForce = std::make_shared<FrWindForce>(jsonFile);
         body->AddExternalForce(windForce);
         return windForce;
     }

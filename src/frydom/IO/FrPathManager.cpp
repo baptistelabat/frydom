@@ -13,14 +13,14 @@
 #include <fmt/format.h>
 #include <iomanip>
 
-#include "yaml-cpp/yaml.h"
+#include <nlohmann/json.hpp>
+using json = nlohmann::json; // for convenience
 
 #include "FrPathManager.h"
 #include "frydom/core/FrOffshoreSystem.h"
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/force/FrForce.h"
-
 
 namespace frydom{
 
@@ -37,19 +37,22 @@ namespace frydom{
         cppfs::FilePath configPath = homePath.resolve(".frydom");
 
         // Get the workspace directory path, located in the output_path in the FRyDOM config file.
-        // TODO: change to JSON format
         try {
-            YAML::Node data = YAML::LoadFile(configPath.path());  // TODO: throw exception if not found !
 
-            m_outputPath = data["output_path"].as<std::string>();
+            // Reading the json input file.
+            std::ifstream ifs(configPath.path());
+            json data = json::parse(ifs);
+
+            m_outputPath = data["output_path"].get<json::string_t>();
 
             try {
-                m_logFrameConvention = STRING2FRAME(data["frame_convention"].as<std::string>());
-            } catch (YAML::BadConversion& err) {
+                m_logFrameConvention = STRING2FRAME(data["frame_convention"].get<json::string_t>());
+
+            } catch (json::parse_error& err) {
                 std::cout << " warning : frame convention must be NED or NWU" << std::endl;
             }
         }
-        catch (YAML::BadFile& err){
+        catch (json::parse_error& err){
             std::cout << " warning : no .frydom found in your home. Please add one with:" << std::endl;
             std::cout << " output_path: \"path/wanted\" \n frame_convention: NED " << std::endl;
             m_outputPath = ".";
