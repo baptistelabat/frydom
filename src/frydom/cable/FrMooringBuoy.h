@@ -1,76 +1,91 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by Lucas Letournel on 21/08/18.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 
-#ifndef FRYDOM_FRBUOY_H
-#define FRYDOM_FRBUOY_H
+#ifndef FRYDOM_FRMOORINGBUOY_H
+#define FRYDOM_FRMOORINGBUOY_H
 
-#include "frydom/core/FrBodyEasy.h"
-#include "frydom/hydrodynamics/FrLinearDamping.h"
-
+#include "frydom/core/body/FrBody.h"
+#include "frydom/core/force/FrForce.h"
 
 namespace frydom {
 
-    class FrMooringBuoy : public FrSphere {
-    private:
+    // Forward declaration
+    class FrLinearDamping;
 
-        class FrSphereNonLinearHydrostaticForce : public FrForce{
-        private:
+
+    class FrMooringBuoy : public FrBody {
+
+    private:
+        class FrSphereNonLinearHydrostaticForce : public FrForce {
+
         public:
-            FrSphereNonLinearHydrostaticForce() {
-                force.SetNull();
-                moment.SetNull();
+
+            /// Get the type name of this object
+            /// \return type name of this object
+            std::string GetTypeName() const override { return "SphereNonLinearHydrostaticForce"; }
+
+            /// Return true if the force is included in the static analysis
+            bool IncludedInStaticAnalysis() const override {return true;}
+
+            void StepFinalize() override {
+                FrForce::StepFinalize();
             }
 
-            void UpdateState() override {
-                auto m_buoy = dynamic_cast<FrMooringBuoy*>(GetBody());
-                auto Gvector = m_buoy->GetSystem()->Get_G_acc();
-                auto rho_water = dynamic_cast<FrOffshoreSystem*>(m_buoy->GetSystem())->GetEnvironment()->GetWaterDensity() ;
-                force = -m_buoy->GetVolume()*rho_water*Gvector;
-            };
+        private:
+
+            /// Compute the nonlinear hydrostatic force for a sphere
+            /// \param time Current time of the simulation from beginning, in seconds
+            void Compute(double time) override;
         };
 
-        double m_radius;
-        double m_volume;
+
+        double m_radius = 1.;
+        double c_volume;
         std::shared_ptr<FrSphereNonLinearHydrostaticForce> m_hydrostaticForce;
         std::shared_ptr<FrLinearDamping> m_dampingForce;
 
     public:
-        FrMooringBuoy(double radius, double mass, bool visual_asset = true, double damping=0)
-                :FrSphere(radius, mass, visual_asset){
-            m_radius = radius;
-            m_hydrostaticForce = std::make_shared<FrSphereNonLinearHydrostaticForce>();
-            m_hydrostaticForce->SetBody(this);
-            AddForce(m_hydrostaticForce);
-            m_dampingForce = std::make_shared<FrLinearDamping>();
-            m_dampingForce->SetDiagonalDamping(damping,damping,damping,damping,damping,damping);
-            AddForce(m_dampingForce);
-        };
 
-        double computeDraft(){
-            if (GetPos().z()<-m_radius) { return m_radius;}
-            if (GetPos().z()>m_radius) {return -m_radius;}
-            else {return -GetPos().z();}
-        }
+        FrMooringBuoy(double radius, double mass, bool visual_asset = true, double damping=0);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "MooringBuoy"; }
+
+        double GetVolume() {return c_volume;}
+
+
+        void Update() override;
+
+    private:
+
+        double computeDraft();
 
         double inline computeVolume(){
             auto Zt = computeDraft();
-            m_volume = M_PI/3 * (Zt*(3*m_radius*m_radius - Zt*Zt) + 2*pow(m_radius,3));
+            c_volume = M_PI/3 * (Zt*(3*m_radius*m_radius - Zt*Zt) + 2*std::pow(m_radius,3));
         }
-
-        double GetVolume() {return m_volume;}
-
-
-        void Update(bool update_assets = true) override{
-
-            computeVolume();
-
-            // update parent class
-            chrono::ChBodyAuxRef::Update(update_assets);
-        }
-
 
     };
 
-}
-#endif //FRYDOM_FRBUOY_H
+    /// Maker for the mooring buoy class: instantiate and return a FrMooringBuoy. It also add it to the system provided.
+    /// \param system system in charge of the buoy
+    /// \param radius radius of the buoy
+    /// \param mass mass of the buoy
+    /// \param visual_asset true if an asset is to be viewed
+    /// \param damping damping coefficient affected to the diagonal terms of a linear damping force.
+    /// \return FrMooringBuoy instance
+    std::shared_ptr<FrMooringBuoy>
+    make_mooring_buoy(FrOffshoreSystem* system, double radius, double mass, bool visual_asset = true, double damping=0);
+
+}  //end namespace frydom
+
+#endif //FRYDOM_FRMOORINGBUOY_H

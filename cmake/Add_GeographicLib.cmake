@@ -6,10 +6,9 @@ find_package(GeographicLib QUIET)
 if (NOT GeographicLib_FOUND)
     include(FetchContent)
 
-    set(GeographicLib_URL https://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-1.49.tar.gz/download)
     FetchContent_Declare(GeographicLib
-            URL ${GeographicLib_URL}
-            PATCH_COMMAND patch < "${PROJECT_SOURCE_DIR}/cmake/patches/GeographicLib.patch"
+            URL ${geographiclib_URL}
+            PATCH_COMMAND patch < "${PROJECT_SOURCE_DIR}/cmake/patches/${geographiclib_PATCH}"
             )
 
     FetchContent_GetProperties(GeographicLib)
@@ -24,8 +23,8 @@ if (NOT GeographicLib_FOUND)
         FetchContent_Populate(GeographicLib)
 
         # GeographicLib BUILD OPTIONS
-        set(GEOGRAPHICLIB_LIB_TYPE SHARED)
-        set(GEOGRAPHICLIB_DOCUMENTATION OFF)
+        set(GEOGRAPHICLIB_LIB_TYPE SHARED CACHE BOOL "" FORCE)
+        set(GEOGRAPHICLIB_DOCUMENTATION OFF CACHE BOOL "" FORCE)
 
         add_subdirectory(${geographiclib_SOURCE_DIR} ${geographiclib_BINARY_DIR})
 
@@ -56,6 +55,10 @@ if (NOT GeographicLib_FOUND)
         #set(GEOGRAPHICLIB_DOCUMENTATION OFF)
 
         #add_subdirectory(${magneticmodel_SOURCE_DIR} ${magneticmodel_BINARY_DIR})
+
+#        message(STATUS "Magnetic Field model datasets found in: " ${magneticmodel_SOURCE_DIR})
+        set(ENV{GEOGRAPHICLIB_MAGNETIC_PATH} ${magneticmodel_SOURCE_DIR})
+        message(STATUS "GEOGRAPHICLIB_MAGNETIC_PATH : " $ENV{GEOGRAPHICLIB_MAGNETIC_PATH})
 
     endif()
 

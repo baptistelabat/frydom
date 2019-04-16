@@ -1,14 +1,46 @@
-.frydom:
-    script: &test_script
-    - source /home/dice/anaconda2/bin/activate python2
-    - pip install -e .
-    - python setup.py test
-    - coverage run setup.py test
-    - coverage report
-    - source /home/dice/anaconda2/bin/deactivate python2
+#.frydom:
+#    script: &test_script
+#    - source /home/dice/anaconda2/bin/activate python2
+#    - pip install -e .
+#    - python setup.py test
+#    - coverage run setup.py test
+#    - coverage report
+#    - source /home/dice/anaconda2/bin/deactivate python2
+#
+#frydom:
+#    stage: test
+#    script: *test_script
 
-frydom:
-    stage: test
-    script: *test_script
 
+image: alpine
+
+test:
+    script:
+        - rm -rf build
+        - mkdir build
+        - cd build
+        - cmake ..
+        - make all test -j4
+#    except:
+#        - master
+
+pages:
+#    stage: deploy
+    script:
+        - cd docs/doxygen
+        - doxygen Doxyfile
+        - mv html/ ../../public/
+    artifacts:
+        paths:
+            - public
+    only:
+        - develop # TODO : faire sur master une fois v2 release...
+
+theory:
+    script:
+        - cd docs/theory_manual
+        - make html
+        - scp -r ./build/html/* frydomusqo@ssh.cluster027.hosting.ovh.net:/homez.363/frydomusqo/theory-guide
+    only:
+        - develop
 

@@ -21,7 +21,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+#lib/
 lib64/
 parts/
 sdist/
@@ -126,3 +126,9 @@ cmake-build-release
 /visual/visualFrydom.VC.db
 /visual/.vs
 /thirdparty/eigen_build/
+
+# Doxygen
+docs/doxygen/html
+docs/doxygen/latex
+docs/doxygen/xml
+tools/docs/_build

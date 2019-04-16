@@ -7,19 +7,15 @@ find_package(chrono QUIET)
 if (NOT chrono_FOUND)
     include(FetchContent)
 
-    set(chrono_URL "https://github.com/projectchrono/chrono.git")
     FetchContent_Declare(chrono
             GIT_REPOSITORY ${chrono_URL}
-            GIT_TAG 934064d2ccf8e9690373a0fd03c93e91c7f4b2c8
+            GIT_TAG ${chrono_TAG}
             GIT_PROGRESS 1
-            PATCH_COMMAND git apply "${PROJECT_SOURCE_DIR}/cmake/patches/chrono_934064d2ccf8e9690373a0fd03c93e91c7f4b2c8.patch"
+            PATCH_COMMAND git apply ${PROJECT_SOURCE_DIR}/cmake/patches/${chrono_PATCH}
             )
 
 
     FetchContent_GetProperties(chrono)
-#    message(STATUS ${chrono_POPULATED})
-#    message(STATUS ${chrono_SOURCE_DIR})
-#    message(STATUS ${chrono_BINARY_DIR})
     if(NOT chrono_POPULATED)
 
         message(STATUS "Downloading, Configuring and Generating 'chrono' dependency")
@@ -30,29 +26,31 @@ if (NOT chrono_FOUND)
 
         # chrono BUILD OPTIONS
         set(CMAKE_SOURCE_DIR ${chrono_SOURCE_DIR})
-        set(BUILD_TESTS FALSE)
-        set(BUILD_DEMOS FALSE)
-        set(BUILD_DEMOS_BASE FALSE)
-        set(BUILD_DEMOS_FEA FALSE)
-        set(BUILD_DEMOS_IRRLICHT FALSE)
-        set(BUILD_DEMOS_POSTPROCESS FALSE)
-        set(BUILD_TESTING FALSE)
-        set(BUILD_TESTS_BASE FALSE)
-        set(BUILD_TESTS_FEA FALSE)
+        set(BUILD_TESTS FALSE CACHE BOOL "" FORCE)
+        set(BUILD_DEMOS FALSE CACHE BOOL "" FORCE)
+        set(BUILD_DEMOS_BASE FALSE CACHE BOOL "" FORCE)
+        set(BUILD_DEMOS_FEA FALSE CACHE BOOL "" FORCE)
+        set(BUILD_DEMOS_IRRLICHT FALSE CACHE BOOL "" FORCE)
+        set(BUILD_DEMOS_POSTPROCESS FALSE CACHE BOOL "" FORCE)
+        set(BUILD_TESTING FALSE CACHE BOOL "" FORCE)
+        set(BUILD_TESTS_BASE FALSE CACHE BOOL "" FORCE)
+        set(BUILD_TESTS_FEA FALSE CACHE BOOL "" FORCE)
+        set(BUILD_BENCHMARKING FALSE CACHE BOOL "" FORCE)
 
-        set(ENABLE_MODULE_CASCADE OFF)
-        set(ENABLE_MODULE_COSIMULATION OFF)
-        set(ENABLE_MODULE_FEA ON)
-        set(ENABLE_MODULE_FSI OFF)
-        set(ENABLE_MODULE_IRRLICHT ON)
-        set(ENABLE_MODULE_MATLAB OFF)
-        set(ENABLE_MODULE_MKL OFF)
-        set(ENABLE_MODULE_OPENGL OFF)
-        set(ENABLE_MODULE_PARALLEL OFF)
-        set(ENABLE_MODULE_POSTPROCESS ON)
-        set(ENABLE_MODULE_PYTHON OFF)
-        set(ENABLE_MODULE_VEHICLE OFF)
-        set(ENABLE_OPENMP ON)
+
+        set(ENABLE_MODULE_CASCADE OFF CACHE BOOL "" FORCE)
+        set(ENABLE_MODULE_COSIMULATION OFF CACHE BOOL "" FORCE)
+        set(ENABLE_MODULE_FEA ON CACHE BOOL "" FORCE)
+        set(ENABLE_MODULE_FSI OFF CACHE BOOL "" FORCE)
+        set(ENABLE_MODULE_IRRLICHT ON CACHE BOOL "" FORCE)
+        set(ENABLE_MODULE_MATLAB OFF CACHE BOOL "" FORCE)
+        set(ENABLE_MODULE_MKL OFF CACHE BOOL "" FORCE)
+        set(ENABLE_MODULE_OPENGL OFF CACHE BOOL "" FORCE)
+        set(ENABLE_MODULE_PARALLEL OFF CACHE BOOL "" FORCE)
+        set(ENABLE_MODULE_POSTPROCESS ON CACHE BOOL "" FORCE)
+        set(ENABLE_MODULE_PYTHON OFF CACHE BOOL "" FORCE)
+        set(ENABLE_MODULE_VEHICLE OFF CACHE BOOL "" FORCE)
+        set(ENABLE_OPENMP ON CACHE BOOL "" FORCE)
 
 
         add_subdirectory(${chrono_SOURCE_DIR} ${chrono_BINARY_DIR})

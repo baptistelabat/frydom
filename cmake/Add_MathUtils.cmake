@@ -6,23 +6,18 @@ if (NOT mathutils_FOUND)
 
 #    set(FETCHCONTENT_QUIET OFF)
 
-    set(MathUtils_URL git@frydom-ce.org:ce/mathutils.git) # TODO: pointer vers un depot git distant...
     FetchContent_Declare(mathutils
-            GIT_REPOSITORY ${MathUtils_URL}
-            GIT_TAG v1.0
+            GIT_REPOSITORY ${mathutils_URL}
+            GIT_TAG ${mathutils_TAG}
             )
 
     FetchContent_GetProperties(mathutils)
-#        message(STATUS MATHUTILS)
-#        message(STATUS ${mathutils_POPULATED})
-#        message(STATUS ${mathutils_SOURCE_DIR})
-#        message(STATUS ${mathutils_BINARY_DIR})
     if(NOT mathutils_POPULATED)
         message(STATUS "Downloading, Configuring and Generating 'MathUtils' dependency")
         FetchContent_Populate(mathutils)
 
         # MathUtils BUILD OPTIONS
-        set(MATHUTILS_BUILD_TESTS OFF)
+        set(MATHUTILS_BUILD_TESTS OFF CACHE BOOL "" FORCE)
         set(ADD_MATPLOTLIB_CPP ON CACHE BOOL "" FORCE)
 
         add_subdirectory(${mathutils_SOURCE_DIR} ${mathutils_BINARY_DIR})

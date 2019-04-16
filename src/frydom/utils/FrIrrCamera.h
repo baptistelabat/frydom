@@ -1,21 +1,37 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by Lucas Letournel on 24/08/18.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
+
 
 #ifndef FRYDOM_FRIRRCAMERA_H
 #define FRYDOM_FRIRRCAMERA_H
 
 
-#include <irrlicht.h>
-//#include <chrono_irrlicht/ChIrrCamera.h>
-//#include "chrono_irrlicht/ChApiIrr.h"
+#include "chrono_irrlicht/ChIrrCamera.h"
+#include "chrono_irrlicht/ChApiIrr.h"
+
+
+
+
 namespace frydom {
 
-/// Copied from ChIrrCamera and modified to get UpVector on Z.
-/// Class to create an interactive videocamera in Irrlicht, that is similar to
-/// the Maya camera but hasn't the problems that the Maya camera has in
-/// Irrlicht 1.5.
-/// This code is based on work by "CmdKewin" (from the Irrlicht forum).
+    /// Copied from ChIrrCamera and modified to get UpVector on Z.
+    /// Class to create an interactive videocamera in Irrlicht, that is similar to
+    /// the Maya camera but hasn't the problems that the Maya camera has in
+    /// Irrlicht 1.5.
+    /// This code is based on work by "CmdKewin" (from the Irrlicht forum).
+
+    /**
+     * \class FrIrrCamera
+     * \brief Class for creating an interactive videocamera in Irrlicht.
+     */
     class FrIrrCamera : public irr::scene::ICameraSceneNode {
     public:
 
@@ -24,8 +40,8 @@ namespace frydom {
                     irr::scene::ISceneManager *smgr,
                     irr::s32 id,
                     irr::f32 rotateSpeed = -160.0f,
-                    irr::f32 zoomSpeed = 1.0f,
-                    irr::f32 translationSpeed = 1.0f);
+                    irr::f32 zoomSpeed = 10.0f,
+                    irr::f32 translationSpeed = 10.0f);
 
 
         virtual ~FrIrrCamera() {}
@@ -173,6 +189,7 @@ namespace frydom {
 
 
     };
-}
+
+}  // end namespace frydom
 
 #endif //FRYDOM_FRIRRCAMERA_H

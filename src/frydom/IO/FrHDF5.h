@@ -1,241 +1,100 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 20/10/17.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 
 #ifndef FRYDOM_FRHDF5_H
 #define FRYDOM_FRHDF5_H
 
 
 #include <memory>
-#include <iostream>
+#include <vector>
 #include "H5Cpp.h"
 
-#include "frydom/utils/FrEigen.h"
+#include "MathUtils/Matrix.h"
 
 
-#define R H5F_ACC_RDONLY
-#define RW H5F_ACC_RDWR
 
 using namespace H5;
 
 namespace frydom {
 
-    class FrHDF5Reader {
+    /// Enum for READ and READWRITE modes for HDF5 files
+    enum HDF5_READ_MODE {
+        READ,
+        READWRITE
+    };
 
-        typedef unsigned int MODE;
+    /**
+     * \class FrHDF5Reader
+     * \brief Class for reading HDF5 files.
+     */
+    class FrHDF5Reader {
+        // TODO : use something else than the Eigen container to store data from HDF5. Something like multidimentional
+        // arrays from the std lib / boost ? -> If boost is the only alternative, then keep using Eigen !
 
     private:
 
-        MODE m_mode = R;
+        HDF5_READ_MODE m_mode = READ;    ///> The file opening mode
 
-        std::string m_filename;
-        std::unique_ptr<H5File> m_file;
+        std::string m_filename;          ///> The file path name
+        std::unique_ptr<H5File> m_file;  ///> The HDF5 file object
 
     public:
 
-        FrHDF5Reader() = default;
+        /// Default constructor
+        FrHDF5Reader();
 
-        explicit FrHDF5Reader(const std::string &filename, MODE mode=R)
-                : m_filename(filename), m_file(std::make_unique<H5File>(filename, mode)) {}
+        /// Constructor taking the HDF5 file path and the mode (READ or READWRITE)
+        explicit FrHDF5Reader(const std::string &filename, HDF5_READ_MODE mode=READ);
 
-        ~FrHDF5Reader() {
-            m_file->close();
-//            std::cout << std::endl << "HDF5 file " << m_filename << " has been properly closed" << std::endl;
-        }
+        /// Destructor that closes properly the HDF5 file
+        ~FrHDF5Reader();
 
-        void SetFilename(const std::string& filename, MODE mode=R) {
-            m_filename = filename;
-            m_file.release();
-            try {
-            m_file = std::make_unique<H5File>(filename, mode);
-            } catch (const H5::FileIException& e) {
-                std::cout << "   --- ERROR : HDF5 file '" << filename << "' not found.";
-                throw (e);
-            }
-        }
+        /// Set the file to read/write
+        void SetFilename(const std::string& filename, HDF5_READ_MODE mode=READ);
 
-        void Close() { m_file->close(); }
+        /// Close the HDF5 file properly
+        void Close();
 
-        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ReadDoubleArray(std::string h5Path) const {
+        /// Read a double 2x2 array as an eigen matrix from HDF5 path
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ReadDoubleArray(std::string h5Path) const;
 
-            DataSet dset = m_file->openDataSet(h5Path); // TODO: try
-            DataSpace dspace = dset.getSpace();
-            const int ndims = dspace.getSimpleExtentNdims();
+        /// Read a double 2x2 array as a std::vector<std::vector<double>> from HDF5 path
+        std::vector<std::vector<double>> ReadDoubleArraySTD(std::string h5path) const;
 
-            if (ndims > 2) {
-                throw("Too much dimensions"); // TODO: better error msg
-            }
+        /// Read a int 2x2 array as an eigen matrix from HDF5 path
+        Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> ReadIntArray(std::string h5Path) const;
 
-            // Essai
-            auto dtype = dset.getDataType();
+        /// Read an int 2x2 array as a std::vector<std::vector<double>> from HDF5 path
+        std::vector<std::vector<int>> ReadIntArraySTD(std::string h5path) const;
 
-            hsize_t dims[ndims];
-            dspace.getSimpleExtentDims(dims);
+        /// Read a double value from HDF5 path
+        double ReadDouble(std::string h5Path);
 
-            hsize_t nb_rows = 0;
-            hsize_t nb_cols = 0;
-            hsize_t nb_elt  = 0;
+        /// Read an int value from HDF5 path
+        int ReadInt(std::string h5Path);
 
-            switch (ndims) {
-                case 1:
-                    nb_elt = dims[0];
-                    nb_rows = nb_elt;
-                    nb_cols = 1;
-                    break;
-                case 2:
-                    nb_rows = dims[0];
-                    nb_cols = dims[1];
-                    nb_elt = nb_rows * nb_cols;
-                    break;
-                default:
-                    std::cout << "Cannot read multidimensional array yet..." << std::endl;
+        /// Read a boolean value from HDF5 path
+        hbool_t ReadBool(std::string h5Path);
 
-            }
+        /// Read a string value from HDF5 path
+        std::string ReadString(std::string h5Path);
 
-            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> out(nb_rows, nb_cols);
+        /// Create a group in the HDF5 file given a HDF5 path
+        void CreateGroup(std::string h5Path);
 
-            auto* buffer = new double[nb_elt];
+        /// Create a dataset in the HDF5 file given a HDF5 path
+        void CreateDataset(std::string h5Path); // A rendre polymorphe pour les differents types de donnees
 
-            dset.read(buffer, dtype);
-
-            for (long irow=0; irow<nb_rows; ++irow) {
-                for (long icol=0; icol<nb_cols; ++icol) {
-                    out(irow, icol) = buffer[irow*nb_cols + icol];
-                }
-            }
-
-            delete [] buffer;
-
-            return out;
-        }
-
-        std::vector<std::vector<double>> ReadDoubleArraySTD(std::string h5path) const {
-
-            auto mat = ReadDoubleArray(h5path);
-
-            std::vector<double> vec;
-            std::vector<std::vector<double>> res;
-
-            for (auto i=0; i<mat.cols(); i++) {
-                for (auto j=0; j<mat.rows(); j++) {
-                    vec.push_back(mat(j,i));
-                }
-                res.push_back(vec);
-            }
-
-            return res;
-
-        }
-
-        Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> ReadIntArray(std::string h5Path) const {
-
-            DataSet dset = m_file->openDataSet(h5Path);
-            DataSpace dspace = dset.getSpace();
-            const int ndims = dspace.getSimpleExtentNdims();
-
-            if (ndims > 2) {
-                throw("Too much dimensions"); // TODO: better error msg
-            }
-
-            // Essai
-            auto dtype = dset.getDataType();
-
-            hsize_t dims[ndims];
-            dspace.getSimpleExtentDims(dims);
-
-            hsize_t nb_rows = 0;
-            hsize_t nb_cols = 0;
-            hsize_t nb_elt  = 0;
-
-            switch (ndims) {
-                case 1:
-                    nb_elt = dims[0];
-                    nb_rows = nb_elt;
-                    nb_cols = 1;
-                    break;
-                case 2:
-                    nb_rows = dims[0];
-                    nb_cols = dims[1];
-                    nb_elt = nb_rows * nb_cols;
-                    break;
-                default:
-                    std::cout << "Cannot read multidimensional array yet..." << std::endl;
-
-            }
-
-            Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> out(nb_rows, nb_cols);
-
-            auto* buffer = new int[nb_elt];
-
-            dset.read(buffer, PredType::NATIVE_INT);
-
-            hsize_t ielt;
-            int val;
-            for (long irow=0; irow<nb_rows; ++irow) {
-                for (long icol=0; icol<nb_cols; ++icol) {
-                    out(irow, icol) = buffer[irow*nb_cols + icol];
-                }
-            }
-
-            delete [] buffer;
-
-            return out;
-        }
-
-        std::vector<std::vector<int>> ReadIntArraySTD(std::string h5path) const {
-
-            auto mat = ReadDoubleArray(h5path);
-            std::vector<std::vector<int>> vec(mat.data(), mat.data() + mat.rows() * mat.cols());
-            return vec;
-
-        }
-
-        double ReadDouble(std::string h5Path) {
-            DataSet dset = m_file->openDataSet(h5Path);
-
-            double d[1];
-            dset.read(d, PredType::NATIVE_DOUBLE);
-
-            return d[0];
-        }
-
-        int ReadInt(std::string h5Path) {
-            DataSet dset = m_file->openDataSet(h5Path);
-
-            int i[1];
-            dset.read(i, PredType::NATIVE_INT);
-
-            return i[0];
-        }
-
-        hbool_t ReadBool(std::string h5Path) {
-            DataSet dset = m_file->openDataSet(h5Path);
-
-            hbool_t b[1];
-            dset.read(b, PredType::NATIVE_HBOOL);
-
-            return b[0];
-        }
-
-        std::string ReadString(std::string h5Path) {
-
-            StrType dtype(0, H5T_VARIABLE);
-            DataSpace dspace(H5S_SCALAR);
-            DataSet dset = m_file->openDataSet(h5Path);
-
-            std::string str;
-            dset.read(str,dtype, dspace);
-
-            return str;
-        }
-
-        void CreateGroup(std::string h5Path) {}
-
-        void CreateDataset(std::string h5Path) {} // A rendre polymorphe pour les differents types de donnees
-
-//        void SearchGroup(std::string& h5Path) {}
-
-
+        /// Checks if a group exists in the HDF5 file given a HDF5 path
+        bool GroupExist(const std::string& h5Path) const;
 
     };
 

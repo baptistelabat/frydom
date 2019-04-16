@@ -1,16 +1,19 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 24/11/17.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 
 #ifndef FRYDOM_FRCABLEINC_H
 #define FRYDOM_FRCABLEINC_H
 
 #include "FrCatenaryLine.h"
 #include "FrDynamicCable.h"
-#include "FrCatenaryNode.h"
-#include "FrAssetComponent.h"
-#include "FrAssetBuoy.h"
-#include "FrAssetClumpWeight.h"
 #include "FrMooringBuoy.h"
 
 #endif //FRYDOM_FRCABLEINC_H

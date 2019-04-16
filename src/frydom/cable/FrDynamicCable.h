@@ -1,233 +1,267 @@
 //
-// Created by frongere on 10/10/17.
+// Created by lletourn on 05/03/19.
 //
 
 #ifndef FRYDOM_FRDYNAMICCABLE_H
 #define FRYDOM_FRDYNAMICCABLE_H
 
-#include <memory>
-#include "chrono/physics/ChSystem.h"
-#include <frydom/core/FrNode.h>
-#include <chrono_fea/ChVisualizationFEAmesh.h>
-#include <frydom/cable/FrCatenaryLine.h>
-
-#include "chrono_fea/ChBeamSection.h"
-#include "chrono_fea/ChElementCableANCF.h"
-#include "chrono_fea/ChLinkPointFrame.h"
-#include "chrono_fea/ChMesh.h"
 #include "FrCable.h"
+#include "frydom/core/common/FrFEAMesh.h"
+#include "frydom/core/FrOffshoreSystem.h"
 
-// TODO: changer FrDynamicCable en FrANCFCable... --> pouvoir proposer d'autres modeles dynamiques de cable
+#include <chrono/fea/ChMesh.h>
 
-// TODO: harmoniser entre le cable catenaire et le cable dynamique !!!
-// TODO: faire une classe abstraite de base pour les cables afin d'harmoniser les methodes
+namespace chrono{
+    namespace fea {
+        class ChNodeFEAxyzrot;
+        class ChBeamSectionAdvanced;
+    }
+    class ChLinkMateGeneric;
+}
 
-// TODO: mettre en place un (de)raffinement automatique...
-
-using namespace chrono::fea;
 
 namespace frydom {
 
-    class FrDynamicCable : public ChMesh, public FrCable {
+    // Forward declaration
+    class FrDynamicCable;
+
+    namespace internal{
+
+        /**
+         * /class FrDynamicCableBase
+         * /Brief Base class for the Dynamic Cable
+         * This class contains the Finite Element Analysis (FEA) mesh, starting and ending nodes and hinges, along with
+         * the section properties (linear density, section, inertia, Young modulus, Rayleigh damping, etc.)
+         *
+         * /see FrDynamicCable
+         */
+        struct FrDynamicCableBase : public chrono::fea::ChMesh {
+
+            FrDynamicCable* m_frydomCable;      ///< pointer to the Dynamic cable containing this base class
+
+            bool m_drawCableElements = true;    ///< Boolean to check if the FEA elements are to be drawnn
+            bool m_drawCableNodes = true;       ///< Boolean to check if the FEA nodes are to be drawnn
+
+            std::shared_ptr<chrono::fea::ChNodeFEAxyzrot> m_starting_node_fea;  ///< Starting node
+            std::shared_ptr<chrono::fea::ChNodeFEAxyzrot> m_ending_node_fea;    ///< Ending node
+
+            std::shared_ptr<chrono::ChLinkMateGeneric> m_startingHinge;         ///< Starting hinge, to connect to a body
+            std::shared_ptr<chrono::ChLinkMateGeneric> m_endingHinge;           ///< Ending hinge, to connect to a body
+
+            std::shared_ptr<chrono::fea::ChBeamSectionAdvanced> m_section;      ///< Section properties (linear density, section, inertia, Young modulus, Rayleigh damping, etc.)
+
+            /// Constructor of the FrDynamicCableBase
+            /// \param cable pointer to the FrDynamicCable containing this base class
+            explicit FrDynamicCableBase(FrDynamicCable* cable);
+
+            /// Initialize the cable
+            void Initialize();
+
+            /// Update time dependent data, for all elements.
+            /// Updates all [A] coord.systems for all (corotational) elements.
+            void Update(double time, bool update_assets) override;
+
+            /// Get the position of the dynamic cable at the local position eta in [-1,1], of the indexth element
+            /// \param index index of the cable element
+            /// \param eta Local position on the element, in [-1,1]
+            /// \return Position of the cable, in the world reference frame
+            Position GetNodePositionInWorld(int index, double eta);
+
+            /// Get the axial tension (compression only, no bending) of the dynamic cable at the local position
+            /// eta in [-1,1], of the indexth element
+            /// \param index index of the cable element
+            /// \param eta Local position on the element, in [-1,1]
+            /// \return Axial tension of the dynamic cable, in world reference frame
+            Force GetTension(int index, double eta);
+
+            /// Initialize the links (hinges) between the cable and the bodies
+            //FYI : Can't be changed to private, since it's friend with FrBody (need chronoBody)
+            void InitializeLinks();
+
+        private:
+
+            /// Initialize the cable section
+            void InitializeSection();
+
+            /// Generate assets for the cable
+            void GenerateAssets();
+
+            /// Define the constraints in the hinges
+            void HingesConstraints();
+
+        };
+
+
+    }
+
+
+
+    /**
+     * \class FrDynamicCable FrDynamicCable.h
+     * \brief Class for dynamic cable, subclass of FrCable and FrFEAMesh
+     * The dynamic cable is based on a Finite Element Analysis (FEA) cable, with an Euler-Bernoulli formulation on a
+     * simple beam element with two nodes. The section and material properties are assumed constant along the beam.
+     *
+     *For more information, refer to : http://www.projectchrono.org/assets/white_papers/FEA/euler_beams.pdf
+     */
+     //TODO : Additional linear loads (Morison, hydrostatic, etc.)
+     //TODO : Breaking of cable
+     //TODO : Unrolling
+     //TODO : Contact with seabed or other cable/bodies
+     //TODO : Check for deactivation
+    class FrDynamicCable: public FrCable, public FrFEAMesh {
+    public:
+
+        enum HingeType { CONSTRAINED, SPHERICAL, NONE};
 
     private:
 
-        std::shared_ptr<ChNodeFEAxyzD> m_starting_node_fea;
-        std::shared_ptr<ChNodeFEAxyzD> m_ending_node_fea;
+        std::shared_ptr<internal::FrDynamicCableBase> m_chronoCable;    ///< pointer to the Chrono cable
 
-        std::shared_ptr<ChBeamSectionCable> m_section;
+        double m_rayleighDamping;               ///< Rayleigh damping
+        unsigned int m_nbElements;              ///< Number of elements in the finite element cable model
 
-        double m_rayleighDamping;   ///< Rayleigh damping
-        unsigned int m_nbElements;  ///< Number of elements in the finite element cable model
+        // Hinges types
+        HingeType m_startingHingeType = SPHERICAL;
+        HingeType m_endingHingeType = SPHERICAL;
 
-        bool m_drawCableElements = true;
-        bool m_drawCableNodes = true;
-        double m_drawCableElementRadius = 0.05;
-        double m_drawCableNodeSize = 0.1;
+        // Asset parameters
+        double m_drawCableElementRadius = 0.05; ///< Radius of the cable element assets
+        double m_drawCableNodeSize = 0.1;       ///< Size of the cable node assets
+
+    protected:
+
+        internal::FrDynamicCableBase* GetChronoItem_ptr() const override { return m_chronoCable.get(); }
+
+        std::shared_ptr<chrono::fea::ChMesh> GetChronoMesh() override { return m_chronoCable; }
 
     public:
-        FrDynamicCable() = default;
-        // TODO: faire un constructeur prenant uniquement les parametres du cable (pas les frontieres)
-        // TODO: utiliser l'attribut m_initialized pour eviter de devoir initialiser manuellement (auto lors de l(utilisation
-        // du cable si m_initialized est false)
 
-        // TODO: faire constructeur par copie
+        /// Constructor of the Dynamic Cable
+        /// \param startingNode Starting node
+        /// \param endingNode Ending node
+        /// \param cableLength unstretched length of the cable, in m
+        /// \param youngModulus Young modulus, in Pa
+        /// \param sectionArea Section area, in m²
+        /// \param linearDensity Linear density, in Kg/m
+        /// \param rayleighDamping Rayleigh damping
+        /// \param nbElements Number of elements/discretization
+        FrDynamicCable( std::shared_ptr<FrNode> startingNode,
+                        std::shared_ptr<FrNode> endingNode,
+                        double cableLength,
+                        double youngModulus,
+                        double sectionArea,
+                        double linearDensity,
+                        double rayleighDamping,
+                        unsigned int nbElements );
 
-        void SetRayleighDamping(const double damping) { m_rayleighDamping = damping; }
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "DynamicCable"; }
 
-        double GetRayleighDamping() const { return m_rayleighDamping; }
+        /// Set the Rayleigh damping coefficient (only stiffness related coefficient is included in chrono model, as in: R = r * K )
+        /// \param damping Raleigh damping
+        void SetRayleighDamping(double damping);
 
-        void SetNumberOfElements(const unsigned int nbElements) { m_nbElements = nbElements; }
+        /// Get the Rayleigh damping coefficient
+        /// \return Raleigh damping
+        double GetRayleighDamping() const;
 
-        unsigned int GetNumberOfElements() const {}
+        /// Set the number of elements/discretization of the cable
+        /// \param nbElements Number of elements
+        void SetNumberOfElements(unsigned int nbElements);
 
-        void SetTargetElementLength() {
-            // TODO: on donne une longueur cible d'element fini et ca calcule une discretisation spatiale basee sur la
-            // longueur du cable ainsi qu'un nombre subsequent d'elements
-        }
+        /// Get the number of elements of the cable
+        /// \return Number of elements
+        unsigned int GetNumberOfElements() const;
 
-        std::shared_ptr<FrForce> GetStartingForce() const {}  // TODO
+        /// Set the number of elements based on a target element length
+        /// \param ElementLength Target length of the elements
+        void SetTargetElementLength(double ElementLength);
 
-        std::shared_ptr<FrForce> GetEndingForce() const {}  // TODO
+        /// Set the radius of the cable elements assets
+        /// \param radius Radius of the cable elements assets
+        void SetDrawElementRadius(double radius);
 
-        chrono::ChVector<double> GetTension(const double s) const {}  // TODO
+        /// Get the radius of the cable elements assets
+        /// \return Radius of the cable elements assets
+        double GetDrawElementRadius();
 
-        chrono::ChVector<double> GetAbsPosition(const double s) const {}  // TODO
+        /// Set the size of the cable nodes assets
+        /// \param size Size of the cable nodes assets
+        void SetDrawNodeSize(double size);
 
-        chrono::ChVector<double> GetStartingNodeTension() const {}  // TODO
+        /// Get the size of the cable nodes assets
+        /// \return Size of the cable nodes assets
+        double GetDrawNodeSize() const;
 
-        chrono::ChVector<double> GetEndingNodeTension() const {}  // TODO
+        /// Set the starting hinge type (CONSTRAINED, SPHERICAL, NONE)
+        /// \param type starting hinge type (CONSTRAINED, SPHERICAL, NONE)
+        void SetStartingHingeType(HingeType type);
 
-        std::shared_ptr<ChNodeFEAxyzD> GetStartingNodeFEA() const { return m_starting_node_fea; }
-        std::shared_ptr<ChNodeFEAxyzD> GetEndingNodeFEA() const { return m_ending_node_fea; }
+        /// Get the starting hinge type (CONSTRAINED, SPHERICAL, NONE)
+        /// \return starting hinge type (CONSTRAINED, SPHERICAL, NONE)
+        HingeType GetStartingHingeType() const;
 
-        void SetDrawRadius(const double radius) {
-            m_drawCableElementRadius = radius;
-        }
+        /// Set the ending hinge type (CONSTRAINED, SPHERICAL, NONE)
+        /// \param type ending hinge type (CONSTRAINED, SPHERICAL, NONE)
+        void SetEndingHingeType(HingeType type);
 
-        void SetDrawNodeSize(const double size) {
-            m_drawCableNodeSize = size;
-        }
+        /// Get the ending hinge type (CONSTRAINED, SPHERICAL, NONE)
+        /// \return ending hinge type (CONSTRAINED, SPHERICAL, NONE)
+        HingeType GetEndingHingeType() const;
 
-        void GenerateAssets() {
-            // Assets for the cable visualisation
-            if (m_drawCableElements) {
-                auto elements_assets = std::make_shared<ChVisualizationFEAmesh>(*this);
-                elements_assets->SetFEMdataType(ChVisualizationFEAmesh::E_PLOT_ELEM_BEAM_MZ);
-                elements_assets->SetColorscaleMinMax(-0.4, 0.4);
-                elements_assets->SetSmoothFaces(true);
-                elements_assets->SetWireframe(false);
-                m_section->SetDrawCircularRadius(m_drawCableElementRadius);
-                ChMesh::AddAsset(elements_assets);
-            }
 
-            // Assets for the nodes
-            if (m_drawCableNodes) {
-                auto node_assets = std::make_shared<ChVisualizationFEAmesh>(*this);
-                node_assets->SetFEMglyphType(ChVisualizationFEAmesh::E_GLYPH_NODE_DOT_POS); // E_GLYPH_NODE_CSYS
-                node_assets->SetFEMdataType(ChVisualizationFEAmesh::E_PLOT_NONE);
-                node_assets->SetSymbolsThickness(m_drawCableNodeSize);
-                node_assets->SetSymbolsScale(0.01);
-                node_assets->SetZbufferHide(false);
-                ChMesh::AddAsset(node_assets);
-            }
+        // Virtual methods, from FrCable
 
-        }
+        /// Get the inside line tension at the lagrangian coordinate s, from the starting node to the ending node
+        /// \param s lagrangian coordinate
+        /// \param fc frame convention (NED/NWU)
+        /// \return inside line tension
+        Force GetTension(double s, FRAME_CONVENTION fc) const override;;
 
-        void InitializeSection() {  // TODO: mettre en private
-            m_section = std::make_shared<ChBeamSectionCable>();  // Voir si on utilise pas directement la classe mere pour avoir de la torsion...
-            m_section->SetArea(m_sectionArea);
-            m_section->SetBeamRaleyghDamping(m_rayleighDamping);
-            m_section->SetDensity(GetDensity());
-            m_section->SetYoungModulus(m_youngModulus);
-        }
+        /// Get the line position at lagrangian coordinate s
+        /// \param s lagrangian coordinate
+        /// \param fc frame convention (NED/NWU)
+        /// \return line position
+        Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;;
 
-        void InitializeLinks() {  // TODO: mettre en private
-            auto system = m_startingNode->GetBody()->GetSystem();  // FIXME: il faut que le corps ou le noeud soit deja enregistre...
+        /// Get the stretched length of the cable
+        /// \return stretched length
+        double GetStretchedLength() const override;;
 
-            // Attach starting FEA node to body
-//            chrono::ChCoordsys<double> starting_relative_pos = m_startingNode->GetRelPos();
 
-            auto hinge_starting_node = std::make_shared<chrono::fea::ChLinkPointFrame>();
-            auto starting_body = dynamic_cast<FrBody*>(m_startingNode->GetBody())->GetSharedPtr();
-//            hinge_starting_node->Initialize(m_starting_node_fea, starting_body, &starting_relative_pos.pos);
-            hinge_starting_node->Initialize(m_starting_node_fea, starting_body);
-            system->Add(hinge_starting_node);
-
-            // Attach starting FEA node to body
-//            chrono::ChCoordsys<double> ending_relative_pos = m_endingNode->GetRelPos();
-
-            auto hinge_ending_node = std::make_shared<chrono::fea::ChLinkPointFrame>();
-            auto ending_body = dynamic_cast<FrBody*>(m_endingNode->GetBody())->GetSharedPtr();
-//            hinge_ending_node->Initialize(m_ending_node_fea, ending_body, &ending_relative_pos.pos);
-            hinge_ending_node->Initialize(m_ending_node_fea, ending_body);
-            system->Add(hinge_ending_node);
-
-        }
+        // Virtual methods, from FEAMesh
 
         /// Initialize the cable with given data
-        void Initialize() {
+        void Initialize() override;
 
-            InitializeSection();
+        /// Update the internal parameters of the cable
+        /// \param time time of the simulation
+        void Update(double time) override {};
 
+        /// Initialize the log for the dynamic cable
+        void InitializeLog() override;;
 
-            // First, creating a catenary line to initialize finite element mesh node positions
-            // TODO: comment on definit q ???
-            double q = 600;
+        /// Method called at the send of a time step. Logging may be used here
+        void StepFinalize() override;
 
-            // TODO: avoir un constructeur pour juste specifier les parametres du cable, pas les frontieres  -->  degager le constructeur par defaut
-            auto catenary_line = FrCatenaryLine(m_startingNode,
-                                                m_endingNode,
-                                                true, // Elasticity is set to false to build the finite element model // FIXME: la simu ne fonctionne pas si on met false (objectif) --> absolument regler ca !!!!
-                                                       // at the specified length
-                                                m_youngModulus,
-                                                m_sectionArea,
-                                                m_cableLength,
-                                                q,
-                                                chrono::ChVector<double>(0, 0, -1));
+        double GetStaticResidual() override;
 
-            // Initializing the finite element model so that it fits the catenary line to get close from the
-            // equilibrium solution
-            double s = 0.;
-            double ds = m_cableLength / m_nbElements;
-
-            auto direction = catenary_line.GetTension(s);
-            direction.Normalize();
-            auto position = m_startingNode->GetAbsPos();
-            auto nodeA = std::make_shared<ChNodeFEAxyzD>(position, direction);
-            AddNode(nodeA);
-            m_starting_node_fea = nodeA;
-
-            // Creating the specified number of ANCF Cable elements
-            for (uint i = 1; i<= m_nbElements; ++i) {
-                s += ds;
-
-                direction = catenary_line.GetTension(s);
-                direction.Normalize();
-                position = catenary_line.GetAbsPosition(s);
-
-                auto nodeB = std::make_shared<ChNodeFEAxyzD>(position, direction);
-                AddNode(nodeB);
-
-                auto element = std::make_shared<ChElementCableANCF>();
-                element->SetNodes(nodeA, nodeB);
-                element->SetSection(m_section);
-                AddElement(element);
-
-                nodeA = nodeB;
-
-            }
-            m_ending_node_fea = nodeA;
-
-            // Removing forces from catenary line that have been automatically created at instanciation
-            m_startingNode->GetBody()->RemoveForce(catenary_line.GetStartingForce());
-            m_endingNode->GetBody()->RemoveForce(catenary_line.GetEndingForce());
-
-            // Generate constraints between boundaries and bodies
-            // FIXME: suivant qu'on utilise cette methode pour creer les contraintes ou qu'on specifie directement les contraintes directement sur les noeuds, on a une violation des liaisons
-            InitializeLinks();
-
-            // Generate assets for the cable
-            GenerateAssets();
-
-        }
-
-        virtual void StepFinalize() override {}
+        void Relax() override;
 
 
-        /// Update internal time and time step for dynamic behaviour of the cable
-        virtual void UpdateTime(const double time) {
-            m_time_step = time - m_time;
-            m_time = time;
-        };
+        // Friend definitions
 
-        void Update(double time, bool update_assets = true) override {
-            ChMesh::Update(time, update_assets);
-            UpdateTime(time);
-        }
+        friend void FrOffshoreSystem::Add(std::shared_ptr<FrDynamicCable>);
+        friend void FrOffshoreSystem::Remove(std::shared_ptr<FrDynamicCable>);
 
     };
 
-}
+    std::shared_ptr<FrDynamicCable>
+    make_dynamic_cable(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
+                       FrOffshoreSystem *system, double unstretchedLength, double youngModulus, double sectionArea,
+                       double linearDensity, double rayleighDamping, unsigned int nbElements);
 
+} // end namespace frydom
 #endif //FRYDOM_FRDYNAMICCABLE_H

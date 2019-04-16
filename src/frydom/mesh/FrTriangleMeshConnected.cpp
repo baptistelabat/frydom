@@ -1,6 +1,14 @@
-//
-// Created by frongere on 29/05/17.
-//
+// ==========================================================================
+// FRyDoM - frydom-ce.org
+// 
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
+// 
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+// 
+// ==========================================================================
+
 
 
 #include "FrTriangleMeshConnected.h"
@@ -27,6 +35,26 @@ namespace frydom{
         for (int i = 0; i < triangles.size(); i++) {
             m_face_v_indices.push_back(triangles[i]);
         }
+    }
+
+    unsigned long FrTriangleMeshConnected::GetNbVertices() {
+        return m_vertices.size();
+    }
+
+    FrTriangleMeshConnected::VertexIterator FrTriangleMeshConnected::vertex_begin() {
+        return m_vertices.begin();
+    }
+
+    FrTriangleMeshConnected::VertexIterator FrTriangleMeshConnected::vertex_end() {
+        return m_vertices.end();
+    }
+
+    FrTriangleMeshConnected::VertexConstIterator FrTriangleMeshConnected::vertex_begin() const {
+        return m_vertices.cbegin();
+    }
+
+    FrTriangleMeshConnected::VertexConstIterator FrTriangleMeshConnected::vertex_end() const {
+        return m_vertices.cend();
     }
 
 }  // end namespace frydom

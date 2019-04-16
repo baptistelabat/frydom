@@ -1,23 +1,23 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 13/07/17.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
+
 
 #ifndef FRYDOM_FRCORE_H_H
 #define FRYDOM_FRCORE_H_H
 
-#include "FrObject.h"
-#include "FrNode.h"
-#include "FrBody.h"
-#include "FrHydroBody.h"
-#include "FrConstants.h"
-#include "FrEulerAngles.h"
-#include "FrOffshoreSystem.h"
-#include "FrShip.h"
-#include "FrForce.h"
-#include "FrForceAsset.h"
-#include "FrBodyEasy.h"
-#include "FrKinematicJoint.h"
-#include "FrNodeDynamic.h"
-
+#include "body/FrBodyInc.h"
+#include "common/FrCommonInc.h"
+#include "force/FrForceInc.h"
+#include "link/FrLinkInc.h"
+#include "math/FrMathInc.h"
+#include "misc/FrMiscInc.h"
 
 #endif //FRYDOM_FRCORE_H_H

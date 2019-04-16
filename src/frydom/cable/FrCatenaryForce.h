@@ -1,32 +1,59 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by frongere on 08/09/17.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
+
 
 #ifndef FRYDOM_FRCATENARYFORCE_H
 #define FRYDOM_FRCATENARYFORCE_H
 
-#include "frydom/core/FrForce.h"
+#include "frydom/core/force/FrForce.h"
+#include "frydom/cable/FrCatenaryLine.h"
 
 namespace frydom {
 
-    class FrCatenaryLine;
-
-    enum line_side {
-        LINE_START,
-        LINE_END
-    };
-
+    /**
+     * \class FrCatenaryForce FrCatenaryForce.h
+     * \brief Class for getting the tension from the catenary line, subclass of FrForce.
+     * This class get the tension computed by the catenary line class, to the body on which the force is applied.
+     * A differenciation is done on which side of the cable (starting or ending), the force is applied.
+     * \see FrCatenaryLine_, FrForce
+     */
     class FrCatenaryForce : public FrForce {
 
     private:
+
         FrCatenaryLine* m_line; ///< The parent line
-        line_side m_line_side;  ///< The side of the line where the tension is applied
+        FrCatenaryLine::LINE_SIDE m_line_side;   ///< The side of the line where the tension is applied
 
     public:
 
-        FrCatenaryForce(FrCatenaryLine* p_line, line_side p_side) : m_line(p_line), m_line_side(p_side) {};
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "CatenaryForce"; }
 
-        void UpdateState() override;
+        /// FrCatenaryForce constructor, from a catenary line, and the description of the side of this line
+        /// \param line catenary line applying a tension
+        /// \param side side of the line (starting or ending)
+        FrCatenaryForce(FrCatenaryLine* line, FrCatenaryLine::LINE_SIDE side) : m_line(line), m_line_side(side) {};
+
+        /// Method called at the send of a time step. Logging may be used here
+        void StepFinalize() override;
+
+        /// Return true if the force is included in the static analysis
+        bool IncludedInStaticAnalysis() const override {return true;}
+
+    private:
+
+        /// Update the catenary force : get the tension applied by the line on the corresponding node
+        /// \param time time of the simulation
+        void Compute(double time) override;
 
     };
 
