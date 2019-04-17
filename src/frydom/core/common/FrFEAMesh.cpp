@@ -14,9 +14,3 @@ void frydom::FrFEAMesh::Initialize() {
     // FIXME
 //    GetChronoMesh()->SetupInitial();
 }
-
-void frydom::FrFEAMesh::StepFinalize() {
-
-    FrAssetOwner::UpdateAsset();
-
-}

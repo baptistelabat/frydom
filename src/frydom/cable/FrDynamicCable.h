@@ -128,10 +128,9 @@ namespace frydom {
         // Asset parameters
         double m_drawCableElementRadius = 0.05; ///< Radius of the cable element assets
         double m_drawCableNodeSize = 0.1;       ///< Size of the cable node assets
+        double m_maxTension = 0.;               ///< max tension, for visualization
 
     protected:
-
-        internal::FrDynamicCableBase* GetChronoItem_ptr() const override { return m_chronoCable.get(); }
 
         std::shared_ptr<chrono::fea::ChMesh> GetChronoMesh() override { return m_chronoCable; }
 
@@ -140,18 +139,14 @@ namespace frydom {
         /// Constructor of the Dynamic Cable
         /// \param startingNode Starting node
         /// \param endingNode Ending node
-        /// \param cableLength unstretched length of the cable, in m
-        /// \param youngModulus Young modulus, in Pa
-        /// \param sectionArea Section area, in m²
-        /// \param linearDensity Linear density, in Kg/m
+        /// \param properties cable properties
+        /// \param unstrainedLength unstretched length of the cable, in m
         /// \param rayleighDamping Rayleigh damping
         /// \param nbElements Number of elements/discretization
-        FrDynamicCable( std::shared_ptr<FrNode> startingNode,
-                        std::shared_ptr<FrNode> endingNode,
-                        double cableLength,
-                        double youngModulus,
-                        double sectionArea,
-                        double linearDensity,
+        FrDynamicCable( const std::shared_ptr<FrNode>& startingNode,
+                        const std::shared_ptr<FrNode>& endingNode,
+                        const std::shared_ptr<FrCableProperties>& properties,
+                        double unstrainedLength,
                         double rayleighDamping,
                         unsigned int nbElements );
 
@@ -179,6 +174,17 @@ namespace frydom {
         /// \param ElementLength Target length of the elements
         void SetTargetElementLength(double ElementLength);
 
+        //--------------------------------------------------------------------------------------------------------------
+        //Asset
+
+        /// Set the breaking tension of the cable (for visualization purpose only for now)
+        /// \param tension breaking tension
+        void SetBreakingTension(double tension);
+
+        /// Get the breaking tension of the cable
+        /// \return breaking tension
+        double GetBreakingTension() const;
+
         /// Set the radius of the cable elements assets
         /// \param radius Radius of the cable elements assets
         void SetDrawElementRadius(double radius);
@@ -195,6 +201,8 @@ namespace frydom {
         /// \return Size of the cable nodes assets
         double GetDrawNodeSize() const;
 
+        //--------------------------------------------------------------------------------------------------------------
+        // Hinges
         /// Set the starting hinge type (CONSTRAINED, SPHERICAL, NONE)
         /// \param type starting hinge type (CONSTRAINED, SPHERICAL, NONE)
         void SetStartingHingeType(HingeType type);
@@ -211,16 +219,8 @@ namespace frydom {
         /// \return ending hinge type (CONSTRAINED, SPHERICAL, NONE)
         HingeType GetEndingHingeType() const;
 
-
+        //--------------------------------------------------------------------------------------------------------------
         // Virtual methods, from FrCable
-
-        /// Set the number of asset elements depicted
-        /// \param n number of asset elements
-        virtual void SetAssetElements(unsigned int n) {assert(false && "Don't use this !");}
-
-        /// Get the number of asset elements depicted
-        /// \return number of asset elements
-        virtual unsigned int GetAssetElements() { return m_nbElements;}
 
         /// Get the inside line tension at the lagrangian coordinate s, from the starting node to the ending node
         /// \param s lagrangian coordinate
@@ -262,9 +262,13 @@ namespace frydom {
     };
 
     std::shared_ptr<FrDynamicCable>
-    make_dynamic_cable(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
-                       FrOffshoreSystem *system, double unstretchedLength, double youngModulus, double sectionArea,
-                       double linearDensity, double rayleighDamping, unsigned int nbElements);
+    make_dynamic_cable(const std::shared_ptr<FrNode>& startingNode,
+                       const std::shared_ptr<FrNode>& endingNode,
+                       FrOffshoreSystem *system,
+                       const std::shared_ptr<FrCableProperties>& properties,
+                       double unstrainedLength,
+                       double rayleighDamping,
+                       unsigned int nbElements);
 
 } // end namespace frydom
 #endif //FRYDOM_FRDYNAMICCABLE_H

@@ -19,6 +19,8 @@
 #include "frydom/core/math/FrVector.h"
 #include "frydom/environment/FrFluidType.h"
 
+#include "frydom/asset/FrCatenaryLineAsset.h"
+
 
 // TODO: prevoir une discretisation automatique pour laquelle on precise la taille cible d'un element
 // Servira dans la visu et pour l'application de forces comme Morrison.
@@ -34,8 +36,8 @@ namespace frydom {
     /**
      * \class FrCatenaryLine FrCatenaryLine.h
      * \brief Class for catenary line objects, subclass of FrCable and FrMidPhysicsItem
-     * The catenary line can be specified elastic or not. However be careful not to stretch the line if it has been
-     * defined as non elastic. Only an elastic line can be stretched !
+     * The catenary line can be specified elastic or not. However be careful not to strain the line if it has been
+     * defined as non elastic. Only an elastic line can be strained !
      * The model for the catenary line is a quasi-static approach, based on uniform distributed load. In water, the
      * uniform load consists of the linear density of the cable and the hydrostatic restoring force per length of cable.
      *
@@ -43,7 +45,7 @@ namespace frydom {
      * International Journal of Solids and Structures,pp 1521-1533, 2014
      */
     //TODO: check that the chrono_objects are deleted correctly, when the frydom objects are deleted (assets included)
-    class FrCatenaryLine : public FrCable, public FrMidPhysicsItem {
+    class FrCatenaryLine : public FrCable, public FrMidPhysicsItem, public FrCatenaryAssetOwner {
 
     public:
 
@@ -86,47 +88,29 @@ namespace frydom {
                                                             ///< ending node
         //--------------------------------------------------------------------------------------------------------------
 
-        //--------------------------------------------------------------------------------------------------------------
-        // Asset parameters
-        bool is_lineAsset = true;                           ///< Is the line asset shown
-        unsigned int m_nbDrawnElements = 40;                ///< Numbers of asset elements depicted
-        //--------------------------------------------------------------------------------------------------------------
 
     public:
 
         /// Catenary line constructor, using two nodes and catenary line properties
         /// \param startingNode starting node of the catenary line
         /// \param endingNode ending node of the catenary line
-        /// \param elastic true if the catenary line is elastic (remember only an elastic line can be stretched !)
-        /// \param youngModulus Young modulus of the catenary line
-        /// \param sectionArea Section area of the catenary line
-        /// \param unstretchedLength Unstretched length of the catenary line
-        /// \param linearDensity Uniformly distributed load of the catenary line
+        /// \param properties cable properties
+        /// \param elastic true if the catenary line is elastic (remember only an elastic line can be strained !)
+        /// \param unstrainedLength Unstrained length of the catenary line
         /// \param fluid fluid type in which the catenary line is mostly in
         FrCatenaryLine(const std::shared_ptr<FrNode>& startingNode,
-                        const std::shared_ptr<FrNode>& endingNode,
-                        bool elastic,
-                        double unstretchedLength,
-                        double youngModulus,
-                        double sectionArea,
-                        double linearDensity,
-                        FLUID_TYPE fluid
+                       const std::shared_ptr<FrNode>& endingNode,
+                       const std::shared_ptr<FrCableProperties>& properties,
+                       bool elastic,
+                       double unstrainedLength,
+                       FLUID_TYPE fluid
         );
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "CatenaryLine"; }
 
-        //--------------------------------------------------------------------------------------------------------------
-        // Accessors related to the asset
-
-        /// Set the number of asset elements depicted
-        /// \param n number of asset elements
-        void SetAssetElements(unsigned int n) override;
-
-        /// Get the number of asset elements depicted
-        /// \return number of asset elements
-        unsigned int GetAssetElements() override;
+    public:
 
         //--------------------------------------------------------------------------------------------------------------
         // Accessors related to the embedded Newton-Raphson solver
@@ -184,6 +168,8 @@ namespace frydom {
         /// \return line position
         Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const override;
 
+        double GetUnstrainedLength() const override;
+
         /// Get the current chord at lagrangian coordinate s
         /// This is the position of the line if there is no elasticity.
         /// This is given by the catenary equation
@@ -230,6 +216,14 @@ namespace frydom {
         void StepFinalize() override;
 
         //--------------------------------------------------------------------------------------------------------------
+
+    protected:
+
+        /// Get the pointer to the chrono related physics item
+        /// \return Chrono related physics item
+        internal::FrPhysicsItemBase* GetChronoItem_ptr() const override;
+
+
     private :
 
         /// Catenary line update method
@@ -251,9 +245,13 @@ namespace frydom {
     };
 
     std::shared_ptr<FrCatenaryLine>
-    make_catenary_line(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
-                       FrOffshoreSystem *system, bool elastic, double unstretchedLength, double youngModulus,
-                       double sectionArea, double linearDensity, FLUID_TYPE fluid);
+    make_catenary_line(const std::shared_ptr<FrNode>& startingNode,
+                       const std::shared_ptr<FrNode>& endingNode,
+                       FrOffshoreSystem* system,
+                       const std::shared_ptr<FrCableProperties>& properties,
+                       bool elastic,
+                       double unstrainedLength,
+                       FLUID_TYPE fluid);
 
 }// end namespace frydom
 

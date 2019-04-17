@@ -16,98 +16,143 @@
 
 namespace frydom {
 
+
+    FrCableProperties::FrCableProperties(double diameter, double linearDensity, double youngModulus) :
+            m_youngModulus(youngModulus), m_linearDensity(linearDensity){
+        SetDiameter(diameter);
+    }
+
+    void FrCableProperties::SetYoungModulus(double E) {
+        m_youngModulus = E;
+    }
+
+    double FrCableProperties::GetYoungModulus() const {
+        return m_youngModulus;
+    }
+
+    void FrCableProperties::SetSectionArea(double A) {
+        m_section = A;
+    }
+
+    double FrCableProperties::GetSectionArea() const {
+        return m_section;
+    }
+
+    void FrCableProperties::SetDiameter(double d) {
+        m_section = M_PI * pow(d*0.5, 2);
+    }
+
+    double FrCableProperties::GetDiameter() const {
+        return sqrt(4. * m_section / M_PI);
+    }
+
+    void FrCableProperties::SetEA(double EA) {
+        m_youngModulus = EA / m_section;
+    }
+
+    double FrCableProperties::GetEA() const {
+        return m_youngModulus * m_section;
+    }
+
+    void FrCableProperties::SetLinearDensity(double lambda) {
+        m_linearDensity = lambda;
+    }
+
+    double FrCableProperties::GetLinearDensity() const {
+        return m_linearDensity;
+    }
+
+    void FrCableProperties::SetDensity(double rho) {
+        m_linearDensity = rho * m_section;
+    }
+
+    double FrCableProperties::GetDensity() const {
+        return m_linearDensity / m_section;
+    }
+
+    std::shared_ptr<FrCableProperties> make_cable_properties(){
+        return std::make_shared<FrCableProperties>();
+    }
+
+    std::shared_ptr<FrCableProperties> make_cable_properties(double diameter, double linearDensity, double youngModulus){
+        return std::make_shared<FrCableProperties>(youngModulus,diameter,linearDensity);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // FrCable
+
     FrCable::FrCable() = default;
 
     FrCable::~FrCable() = default;
 
-    FrCable::FrCable(const std::shared_ptr<FrNode> startingNode, const std::shared_ptr<FrNode> endingNode,
-                       double cableLength, double youngModulus, double sectionArea,
-                       double linearDensity)
-            : m_startNode(startingNode),
-              m_endNode(endingNode),
-              m_cableLength(cableLength),
-              m_unrollingSpeed(0.),
-              m_youngModulus(youngModulus),
-              m_sectionArea(sectionArea),
-              m_linearDensity(linearDensity){}
-
-    void FrCable::SetYoungModulus(double E) {
-        m_youngModulus = E;
+    FrCable::FrCable(const std::shared_ptr<FrNode>& startingNode, const std::shared_ptr<FrNode>& endingNode)
+            : m_startingNode(startingNode), m_endingNode(endingNode) {
+        m_properties = std::make_shared<FrCableProperties>();
     }
 
-    double FrCable::GetYoungModulus() const {
-        return m_youngModulus;
+    FrCable::FrCable(const std::shared_ptr<FrNode>& startingNode, const std::shared_ptr<FrNode>& endingNode,
+                     const std::shared_ptr<FrCableProperties>& properties, double unstrainedLength)
+            : m_startingNode(startingNode), m_endingNode(endingNode),
+              m_unstrainedLength(unstrainedLength), m_properties(properties){}
+
+
+
+    void FrCable::SetCableProperties(const std::shared_ptr<FrCableProperties> prop) {
+        m_properties = prop;
     }
 
-    void FrCable::SetSectionArea(double A) {
-        m_sectionArea = A;
+    std::shared_ptr<FrCableProperties> FrCable::GetCableProperties() const {
+        return m_properties;
     }
 
-    double FrCable::GetSectionArea() const {
-        return m_sectionArea;
+    void FrCable::SetUnstrainedLength(double L) {
+        m_unstrainedLength = L;
     }
 
-    void FrCable::SetUnstretchedLength(double L) {
-        m_cableLength = L;
+    double FrCable::GetUnstrainedLength() const {
+        return m_unstrainedLength;
     }
 
-    double FrCable::GetUnstretchedLength() const {
-        return m_cableLength;
-    }
 
-    void FrCable::SetDiameter(double d) {
-        m_sectionArea = M_PI * pow(d*0.5, 2);
-    }
-
-    double FrCable::GetDiameter() const {
-        return sqrt(4. * m_sectionArea / M_PI);
-    }
-
-    double FrCable::GetEA() const {
-        return m_youngModulus * m_sectionArea;
-    }
-
-    void FrCable::SetLinearDensity(double lambda) {
-        m_linearDensity = lambda;
-    }
-
-    double FrCable::GetLinearDensity() const {
-        return m_linearDensity;
-    }
-
-    void FrCable::SetDensity(double rho) {
-        m_linearDensity = rho * m_sectionArea;
-    }
-
-    double FrCable::GetDensity() const {
-        return m_linearDensity / m_sectionArea;
-    }
-
-    void FrCable::SetStartingNode(std::shared_ptr<FrNode> startingNode) {
+    void FrCable::SetStartingNode(const std::shared_ptr<FrNode> startingNode) {
         // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
-        m_startNode = startingNode;
+        m_startingNode = startingNode;
     }
 
     std::shared_ptr<FrNode> FrCable::GetStartingNode() const {
-        return m_startNode;
+        return m_startingNode;
     }
 
-    void FrCable::SetEndingNode(std::shared_ptr<FrNode> endingNode) {
+    void FrCable::SetEndingNode(const std::shared_ptr<FrNode> endingNode) {
         // TODO: permettre de re-attacher le cable a un autre noeud si elle etait deja attachee a un noeud
-        m_endNode = endingNode;
+        m_endingNode = endingNode;
     }
 
     std::shared_ptr<FrNode> FrCable::GetEndingNode() const {
-        return m_endNode;
+        return m_endingNode;
     }
 
-    void FrCable::SetBreakingTension(double tension) {
-        m_breakingTension = tension;
-    }
+//    void FrCable::SetBreakingTension(double tension) {
+//        m_breakingTension = tension;
+//    }
+//
+//    double FrCable::GetBreakingTension() const {
+//        return m_breakingTension;
+//    }
 
-    double FrCable::GetBreakingTension() const {
-        return m_breakingTension;
-    }
+//    void FrCable::InitBreakingTension() {
+//
+//        if (GetBreakingTension()==0){
+//            double ds = GetUnstrainedLength()/ GetAssetElements();
+//            double max = GetTension(0, NWU).norm();
+//            for (int i=1; i< GetAssetElements(); i++){
+//                auto LocalTension = GetTension(i*ds, NWU).norm();
+//                if (LocalTension > max) max = LocalTension;
+//            }
+//            SetBreakingTension(1.25*max);  // TODO : affiner le critere...
+//        }
+//
+//    }
 
     void FrCable::SetUnrollingSpeed(double unrollingSpeed) {
         m_unrollingSpeed = unrollingSpeed;
@@ -124,15 +169,15 @@ namespace frydom {
 
     void FrCable::UpdateState() {
         if (std::abs(m_unrollingSpeed) > DBL_EPSILON and std::abs(m_time_step) > DBL_EPSILON) {
-            m_cableLength += m_unrollingSpeed * m_time_step;
+            m_unstrainedLength += m_unrollingSpeed * m_time_step;
         }
     }
 
-    double FrCable::GetStretchedLength() const {
+    double FrCable::GetStrainedLength() const {
         double cl = 0.;
         int n = 1000;
 
-        double ds = GetUnstretchedLength() / (n-1);
+        double ds = GetUnstrainedLength() / (n-1);
         auto pos_prev = GetNodePositionInWorld(0., NWU);
 
         for (uint i=0; i<n; ++i) {
@@ -142,20 +187,6 @@ namespace frydom {
             pos_prev = pos;
         }
         return cl;
-    }
-
-    void FrCable::InitBreakingTension() {
-
-        if (GetBreakingTension()==0){
-            double ds = GetUnstretchedLength()/ GetAssetElements();
-            double max = GetTension(0, NWU).norm();
-            for (int i=1; i< GetAssetElements(); i++){
-                auto LocalTension = GetTension(i*ds, NWU).norm();
-                if (LocalTension > max) max = LocalTension;
-            }
-            SetBreakingTension(1.25*max);  // TODO : affiner le critere...
-        }
-
     }
 
 }  // end namespace frydom

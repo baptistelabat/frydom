@@ -359,8 +359,8 @@ namespace frydom {
         AddFEAMesh(cable);
 
         // Add the hinges
-        m_chronoSystem->Add(cable->GetChronoItem_ptr()->m_startingHinge);
-        m_chronoSystem->Add(cable->GetChronoItem_ptr()->m_endingHinge);
+        m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_startingHinge);
+        m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_endingHinge);
 
     }
 
@@ -383,8 +383,8 @@ namespace frydom {
 
         RemoveFEAMesh(cable);
 
-        m_chronoSystem->RemoveOtherPhysicsItem(cable->GetChronoItem_ptr()->m_startingHinge);
-        m_chronoSystem->RemoveOtherPhysicsItem(cable->GetChronoItem_ptr()->m_endingHinge);
+        m_chronoSystem->RemoveOtherPhysicsItem(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_startingHinge);
+        m_chronoSystem->RemoveOtherPhysicsItem(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_endingHinge);
 
     }
 

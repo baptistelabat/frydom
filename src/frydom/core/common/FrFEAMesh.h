@@ -20,7 +20,7 @@ namespace frydom {
     // Forward declarations
     class FrOffshoreSystem;
 
-    class FrFEAMesh : public FrObject, public FrAssetOwner {
+    class FrFEAMesh : public FrObject {
 
     protected:
 
@@ -40,9 +40,7 @@ namespace frydom {
 
         virtual void InitializeLog() = 0;
 
-        void Initialize() override;;
-
-        void StepFinalize() override;
+        void Initialize() override;
 
         virtual double GetStaticResidual() = 0;
 

@@ -53,10 +53,6 @@ namespace frydom {
         m_isActive = active;
     }
 
-    internal::FrPhysicsItemBase *FrPhysicsItem::GetChronoItem_ptr() const {
-        return m_chronoPhysicsItem.get();
-    }
-
     std::shared_ptr<internal::FrPhysicsItemBase> FrPhysicsItem::GetChronoPhysicsItem() const {
         return m_chronoPhysicsItem;
     }
@@ -67,8 +63,6 @@ namespace frydom {
     }
 
     void FrPhysicsItem::StepFinalize() {
-
-        FrAssetOwner::UpdateAsset();
 
     }
 
