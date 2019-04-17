@@ -91,7 +91,7 @@ namespace frydom {
     }
 
     Force FrCatenaryLine::GetEndingNodeTension(FRAME_CONVENTION fc) const {
-        return GetTension(GetUnstrainedLength(),fc);
+        return -GetTension(GetUnstrainedLength(),fc);
     }
 
     double FrCatenaryLine::_rho(double s) const {
