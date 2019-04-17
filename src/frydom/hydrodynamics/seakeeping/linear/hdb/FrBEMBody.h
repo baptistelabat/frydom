@@ -18,6 +18,7 @@
 
 #include "MathUtils/LookupTable2D.h"
 #include "MathUtils/Interp1d.h"
+#include "MathUtils/Matrix.h"
 
 
 namespace frydom {
@@ -67,6 +68,28 @@ namespace frydom {
     typedef FrBEMMode FrBEMMotionMode;
 
 
+    class FrDOFMask {
+
+    private:
+        unsigned int m_nbDOF;
+        mathutils::Vector6d<bool> m_mask;
+        mathutils::MatrixMN<double> m_matrix;
+
+    public:
+        FrDOFMask() {}
+
+        void SetMask(mathutils::Vector6d<int> mask);
+
+        mathutils::Vector6d<bool> GetMask() const;
+
+        bool GetMask(unsigned int imode) const { return m_mask[imode]; }
+
+        mathutils::MatrixMN<double> GetMatrix() const;
+
+        unsigned int GetNbMode() const { return m_nbDOF; }
+    };
+
+
     struct FrWaveDriftPolarData {
         std::vector<double> m_angles;
         std::vector<double> m_freqs;
@@ -108,6 +131,9 @@ namespace frydom {
         unsigned int m_id;
         std::string m_name;
         Position m_position;
+
+        FrDOFMask m_forceMask;
+        FrDOFMask m_motionMask;
 
         std::vector<FrBEMForceMode> m_forceModes;
         std::vector<FrBEMMotionMode> m_motionModes;
@@ -155,12 +181,32 @@ namespace frydom {
         void Finalize();
 
         //
+        // Mask
+        //
+
+        void SetForceMask(mathutils::Vector6d<int> mask);
+
+        void SetMotionMask(mathutils::Vector6d<int> mask);
+
+        mathutils::MatrixMN<double> GetForceMaskMatrix() const { return m_forceMask.GetMatrix(); }
+
+        mathutils::MatrixMN<double> GetMotionMaskMatrix() const { return m_motionMask.GetMatrix(); }
+
+        unsigned int GetNbForceMode() const;
+
+        unsigned int GetNbMotionMode() const;
+
+        bool GetMotionMask(unsigned int imotion) const { return m_motionMask.GetMask(imotion); }
+
+        bool GetForceMask(unsigned int iforce) const { return m_forceMask.GetMask(iforce); }
+
+        //
         // Generalized modes
         //
 
-        unsigned int GetNbForceMode() const { return (uint)m_forceModes.size(); }
+        //unsigned int GetNbForceMode() const { return (uint)m_forceModes.size(); }
 
-        unsigned int GetNbMotionMode() const { return (uint)m_motionModes.size(); }
+        //unsigned int GetNbMotionMode() const { return (uint)m_motionModes.size(); }
 
         FrBEMForceMode* GetForceMode(unsigned int imode);
 

@@ -101,6 +101,9 @@ namespace frydom {
         /// Constructor of the class.
         explicit FrHydroDB(std::string h5file);
 
+        /// This subroutine reads the mask of a body
+        void MaskReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody);
+
         /// This subroutine reads the modes of a body.
         void ModeReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody);
 

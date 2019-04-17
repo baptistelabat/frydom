@@ -19,6 +19,42 @@
 namespace frydom {
 
     //
+    // FrDOFMask
+    //
+
+    void FrDOFMask::SetMask(mathutils::Vector6d<int> mask) {
+
+        for (unsigned int i=0; i<6; i++) { assert(mask(i) == 0 or mask(i) == 1); }
+
+        for (unsigned int i=0; i<6; i++) {
+            if (mask(i) == 1) {
+                m_mask(i) = true;
+            } else {
+                m_mask(i) = false;
+            }
+        }
+
+        m_nbDOF = (unsigned int)mask.sum();
+
+        m_matrix = Eigen::MatrixXd::Zero(6, m_nbDOF);
+        unsigned int j=0;
+        for (unsigned int i=0; i<6; i++) {
+            if (mask(i)) {
+                m_matrix(i, j) = 1.;
+                j += 1;
+            }
+        }
+    }
+
+    mathutils::Vector6d<bool> FrDOFMask::GetMask() const {
+        return m_mask;
+    }
+
+    mathutils::MatrixMN<double> FrDOFMask::GetMatrix() const {
+        return m_matrix;
+    }
+
+    //
     // FrWaveDriftPolarCoeff
     //
 
@@ -132,16 +168,36 @@ namespace frydom {
     }
 
     //
+    // Mask
+    //
+
+    void FrBEMBody::SetForceMask(mathutils::Vector6d<int> mask) {
+        m_forceMask.SetMask(mask);
+    }
+
+    void FrBEMBody::SetMotionMask(mathutils::Vector6d<int> mask) {
+        m_motionMask.SetMask(mask);
+    }
+
+    unsigned int FrBEMBody::GetNbForceMode() const {
+        return m_forceMask.GetNbMode();
+    }
+
+    unsigned int FrBEMBody::GetNbMotionMode() const {
+        return m_motionMask.GetNbMode();
+    }
+
+    //
     // Generalized modes
     //
 
     FrBEMForceMode* FrBEMBody::GetForceMode(unsigned int imode) {
-        assert(imode < GetNbForceMode());
+        assert(imode < 6);
         return &m_forceModes[imode];
     }
 
     FrBEMMotionMode* FrBEMBody::GetMotionMode(unsigned int imode) {
-        assert(imode < GetNbMotionMode());
+        assert(imode < 6);
         return &m_motionModes[imode];
     }
 
@@ -159,21 +215,21 @@ namespace frydom {
 
     void FrBEMBody::SetDiffraction(unsigned int iangle, const Eigen::MatrixXcd &diffractionMatrix) {
         assert(iangle < GetNbWaveDirections());
-        assert(diffractionMatrix.rows() == GetNbForceMode());
+        assert(diffractionMatrix.rows() == 6);
         assert(diffractionMatrix.cols() == GetNbFrequencies());
         m_diffraction[iangle] = diffractionMatrix;
     }
 
     void FrBEMBody::SetFroudeKrylov(unsigned int iangle, const Eigen::MatrixXcd& froudeKrylovMatrix) {
         assert(iangle < GetNbWaveDirections());
-        assert(froudeKrylovMatrix.rows() == GetNbForceMode());
+        assert(froudeKrylovMatrix.rows() == 6);
         assert(froudeKrylovMatrix.cols() == GetNbFrequencies());
         m_froudeKrylov[iangle] = froudeKrylovMatrix;
     }
 
     void FrBEMBody::SetExcitation(unsigned int iangle, const Eigen::MatrixXcd& excitationMatrix) {
         assert(iangle < GetNbWaveDirections());
-        assert(excitationMatrix.rows() == GetNbForceMode());
+        assert(excitationMatrix.rows() == 6);
         assert(excitationMatrix.cols() == GetNbFrequencies());
         m_excitation[iangle] = excitationMatrix;
     }
@@ -256,7 +312,7 @@ namespace frydom {
 
     Eigen::VectorXcd FrBEMBody::GetDiffraction(const unsigned int iangle, const unsigned iforce) const {
         assert(iangle < this->GetNbWaveDirections());
-        assert(iforce < this->GetNbForceMode());
+        assert(iforce < 6);
         return m_diffraction[iangle].row(iforce);
     }
 
@@ -267,7 +323,7 @@ namespace frydom {
 
     Eigen::VectorXcd FrBEMBody::GetFroudeKrylov(const unsigned int iangle, const unsigned iforce) const {
         assert(iangle < this->GetNbWaveDirections());
-        assert(iforce < this->GetNbForceMode());
+        assert(iforce < 6);
         return m_froudeKrylov[iangle].row(iforce);
     }
 
@@ -278,7 +334,7 @@ namespace frydom {
 
     Eigen::VectorXcd FrBEMBody::GetExcitation(const unsigned int iangle, const unsigned iforce) const {
         assert(iangle < this->GetNbWaveDirections());
-        assert(iforce < this->GetNbForceMode());
+        assert(iforce < 6);
         return m_excitation[iangle].row(iforce);
     }
 

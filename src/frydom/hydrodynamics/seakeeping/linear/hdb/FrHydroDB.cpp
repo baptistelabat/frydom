@@ -184,8 +184,10 @@ namespace frydom {
             auto ID = reader.ReadInt(ibodyPath + "/ID");
             assert(BEMBody->GetID() == ID);
 
-            /// Reading the modes of a body.
-            this->ModeReader(reader, ibodyPath, BEMBody);
+            // /// Reading the modes of a body.
+            //this->ModeReader(reader, ibodyPath, BEMBody);
+
+            this->MaskReader(reader, ibodyPath, BEMBody);
 
             /// Allocation of the arrays for the hdb.
             BEMBody->Initialize();
@@ -219,6 +221,12 @@ namespace frydom {
             /// Interpolation of the excitation loads with respect to the wave direction.
             this->GetBody(ibody)->Finalize();
         }
+    }
+
+    void FrHydroDB::MaskReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
+        auto maskPath = path + "/Mask";
+        BEMBody->SetForceMask(reader.ReadIntArray(maskPath + "/ForceMask"));
+        BEMBody->SetMotionMask(reader.ReadIntArray(maskPath + "/MotionMask"));
     }
 
     void FrHydroDB::ModeReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
@@ -298,6 +306,8 @@ namespace frydom {
         auto diffractionPath = path + "/Excitation/Diffraction";
         auto froudeKrylovPath = path + "/Excitation/FroudeKrylov/";
 
+        auto forceMaskMatrix = BEMBody->GetForceMaskMatrix();
+
         for (unsigned int iwaveDir=0; iwaveDir < GetNbWaveDirections(); ++iwaveDir) {
 
             sprintf(buffer, "/Angle_%d", iwaveDir);
@@ -309,7 +319,7 @@ namespace frydom {
 
             Eigen::MatrixXcd diffractionCoeffs;
             diffractionCoeffs = diffractionRealCoeffs + MU_JJ * diffractionImagCoeffs; // In complex.
-            BEMBody->SetDiffraction(iwaveDir, diffractionCoeffs);
+            BEMBody->SetDiffraction(iwaveDir, forceMaskMatrix * diffractionCoeffs);
 
             /// -> Froude-Krylov loads.
             auto froudeKrylovWaveDirPath = froudeKrylovPath + buffer;
@@ -318,7 +328,7 @@ namespace frydom {
 
             Eigen::MatrixXcd froudeKrylovCoeffs;
             froudeKrylovCoeffs = froudeKrylovRealCoeffs + MU_JJ * froudeKrylovImagCoeffs; // In complex.
-            BEMBody->SetFroudeKrylov(iwaveDir, froudeKrylovCoeffs);
+            BEMBody->SetFroudeKrylov(iwaveDir, forceMaskMatrix * froudeKrylovCoeffs);
 
         }
 
@@ -334,36 +344,60 @@ namespace frydom {
 
         auto radiationPath = path + "/Radiation";
 
+        auto forceMaskMatrix = BEMBody->GetForceMaskMatrix();
+
+        auto nbTimeSamples = GetNbTimeSamples();
+
         for (unsigned int ibodyMotion=0; ibodyMotion < m_nbody; ++ibodyMotion) {
 
             sprintf(buffer, "/BodyMotion_%d", ibodyMotion);
 
             auto bodyMotion = this->GetBody(ibodyMotion);
 
+            auto motionMaskMatrix = bodyMotion->GetMotionMaskMatrix();
+
             /// Reading the infinite added mass matrix for the body.
             auto infiniteAddedMassPath = radiationPath + buffer + "/InfiniteAddedMass";
-            auto infiniteAddedMass = reader.ReadDoubleArray(infiniteAddedMassPath);
+            auto infiniteAddedMassHDB = reader.ReadDoubleArray(infiniteAddedMassPath);
+            auto infiniteAddedMass = forceMaskMatrix * infiniteAddedMassHDB * motionMaskMatrix.transpose();
             BEMBody->SetInfiniteAddedMass(bodyMotion, infiniteAddedMass);
 
             /// Reading the impulse response functions.
             auto IRFPath = radiationPath + buffer + "/ImpulseResponseFunctionK";
-            auto IRFUPath = radiationPath + buffer + "/ImpulseResponseFunctionKU";
 
             std::vector<Eigen::MatrixXd> impulseResponseFunctionsK;
-            std::vector<Eigen::MatrixXd> impulseResponseFunctionsKU;
 
-            for (unsigned int imotion=0; imotion<bodyMotion->GetNbMotionMode(); ++imotion) {
-                sprintf(buffer, "/DOF_%d", imotion);
-                impulseResponseFunctionsK.push_back(reader.ReadDoubleArray(IRFPath + buffer));
+            unsigned int idof = 0;
+            for (unsigned int imotion=0; imotion<6; ++imotion) {
+                if (bodyMotion->GetMotionMask(imotion)) {
+                    sprintf(buffer, "/DOF_%d", idof);
+                    auto mat = reader.ReadDoubleArray(IRFPath + buffer);
+                    impulseResponseFunctionsK.push_back(forceMaskMatrix * mat);
+                    idof += 1;
+                } else {
+                    impulseResponseFunctionsK.push_back(Eigen::MatrixXd::Zero(6, nbTimeSamples));
+                }
             }
             BEMBody->SetImpulseResponseFunctionK(bodyMotion, impulseResponseFunctionsK);
 
             /// Reading the impulse response functions in case of forward speed.
+
+            auto IRFUPath = radiationPath + buffer + "/ImpulseResponseFunctionKU";
+
             if (reader.GroupExist(IRFUPath)) {
 
-                for (unsigned int imotion=0; imotion<bodyMotion->GetNbMotionMode(); ++imotion) {
-                    sprintf(buffer, "/DOF_%d", imotion);
-                    impulseResponseFunctionsKU.push_back(reader.ReadDoubleArray(IRFUPath + buffer));
+                std::vector<Eigen::MatrixXd> impulseResponseFunctionsKU;
+
+                for (unsigned int imotion=0; imotion<6; ++imotion) {
+
+                    if(bodyMotion->GetMotionMask(imotion)) {
+                        sprintf(buffer, "/DOF_%d", imotion);
+                        auto mat = reader.ReadDoubleArray(IRFUPath + buffer);
+                        impulseResponseFunctionsKU.push_back(forceMaskMatrix * mat);
+                        idof += 1;
+                    } else {
+                        impulseResponseFunctionsKU.push_back(Eigen::MatrixXd::Zero(6, nbTimeSamples));
+                    }
                 }
                 BEMBody->SetImpulseResponseFunctionKu(bodyMotion, impulseResponseFunctionsKU);
             }
