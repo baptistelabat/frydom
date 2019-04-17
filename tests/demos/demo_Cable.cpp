@@ -55,6 +55,7 @@ int main(int argc, char* argv[]) {
     cableCase Case = Newton_Pendulum;
 
     // Line properties :
+    bool elastic = true;                            //  non elastic catenary lines are only available for non strained lines
     auto cableProp = make_cable_properties();
     cableProp->SetDiameter(0.5);
     cableProp->SetEA(1.5708e7);
@@ -71,13 +72,7 @@ int main(int argc, char* argv[]) {
             Node2->SetPositionInBody(Position(10., 0., 0.), NWU);
 
             // Line properties :
-            bool elastic = true;                                    //  non elastic catenary lines are only available for non strained lines
             double unstrainedLength = 40.;                          //  unstrained length, in m
-//            double linearDensity = 616.538;                         //  linear density of the line, in kg/m
-//            double EA = 1.5708e6;                                   //  elasticty
-//            double diameter = 0.1;                                  //  diameter of the line, in m
-//            double sectionArea = MU_PI * pow((0.5 * diameter), 2);  //  section area, in m²
-//            double YoungModulus = EA / sectionArea;                 //  Young modulus of the line, in Pa
             unsigned int nbElement = 50;                            //  number of elements
             double RayleighDamping = 0.;                            //  Rayleigh damping
 
@@ -110,13 +105,7 @@ int main(int argc, char* argv[]) {
             worldNode->SetPositionInBody(Position(-2., 0., 50.), NWU);
 
             // Line properties :
-            bool elastic = true;                                    //  non elastic catenary lines are only available for non strained lines
             double unstrainedLength = 50.;                         //  unstrained length, in m
-//            double linearDensity = 616.538;                         //  linear density of the line, in kg/m
-//            double EA = 1.5708e7;                                   //  elasticity
-//            double diameter = 0.5;                                  //  diameter of the line, in m
-//            double sectionArea = MU_PI * pow((0.5 * diameter), 2);  //  section area, in m²
-//            double YoungModulus = EA / sectionArea;                 //  Young modulus of the line, in Pa
             unsigned int nbElement = 50;                            //  number of elements
             double RayleighDamping = 0.;                            //  Rayleigh damping
 
@@ -158,18 +147,12 @@ int main(int argc, char* argv[]) {
             float steelNormalDamping = 1e12;// Normal damping of the sphere (for contact)
 
             // Line properties :
-            bool elastic = true;                            //  non elastic catenary lines are only available for non strained lines
             double unstrainedLength = 51.;                 //  unstrained length, in m
             cableProp->SetLinearDensity(61.6538);
             cableProp->SetDiameter(1.);
             cableProp->SetEA(1.5708e7);
-//            double linearDensity = 61.6538;                 //  linear density of the line, in kg/m
-//            double EA = 1.5708e7;                           //  elasticity
-//            double radius = 0.5;                            //  radius of the line, in m
-//            double sectionArea = MU_PI * pow((radius), 2);  //  section area, in m²
-//            double YoungModulus = EA / sectionArea;         //  Young modulus of the line, in Pa
-            double RayleighDamping = 0.;                    //  Rayleigh damping
             unsigned int nbElements = 20;                   //  Number of elements of the dynamic cable
+            double RayleighDamping = 0.;                    //  Rayleigh damping
 
             double alpha = 15*DEG2RAD;
             double y = unstrainedLength*sin(alpha);
