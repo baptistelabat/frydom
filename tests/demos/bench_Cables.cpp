@@ -15,13 +15,13 @@ using namespace frydom;
 
 
 bool ValidationResults (const std::shared_ptr<FrCatenaryLine> CatenaryLine, const std::shared_ptr<FrDynamicCable> DynamicCable,
-        double unstretchedLength, unsigned int nbElements, double TargetLenghtRelError, double TargetTensionRelError) {
+        double unstrainedLength, unsigned int nbElements, double TargetLenghtRelError, double TargetTensionRelError) {
 
     //Analyse results
-    double LengthRelError = 100.* abs(DynamicCable->GetStretchedLength() - CatenaryLine->GetStretchedLength()) / CatenaryLine->GetStretchedLength();
+    double LengthRelError = 100.* abs(DynamicCable->GetStrainedLength() - CatenaryLine->GetStrainedLength()) / CatenaryLine->GetStrainedLength();
 
     double TensionRelError = 0;
-    double ds = unstretchedLength/nbElements;
+    double ds = unstrainedLength/nbElements;
     double s = 0;
     for (int i=0; i<nbElements+1; i++) {
 
@@ -34,7 +34,7 @@ bool ValidationResults (const std::shared_ptr<FrCatenaryLine> CatenaryLine, cons
     }
     TensionRelError /= (nbElements+1);
 
-    std::cout<<" Relative error on the stretched length = " << LengthRelError << "%, should be < " << TargetLenghtRelError << "%" << std::endl;
+    std::cout<<" Relative error on the strained length = " << LengthRelError << "%, should be < " << TargetLenghtRelError << "%" << std::endl;
     std::cout<<" Relative error on the tension = " << TensionRelError << "%, should be < " << TargetTensionRelError << "%" << std::endl;
 
     return (LengthRelError < TargetLenghtRelError) && (TensionRelError < TargetTensionRelError);
@@ -67,25 +67,25 @@ int main(int argc, char* argv[]) {
     Position temp = Node2->GetPositionInWorld(NWU) - Node1->GetPositionInWorld(NWU);
     double distanceBetweenNodes = temp.norm();
 
-    // Slack lines
 
     // Line properties :
-    double unstretchedLength = distanceBetweenNodes*1.5;    //  unstretched length
-    double linearDensity = 616.538;                         //  linear density of the line
-    double EA = 5e6;                                   //  elasticity
-    double diameter = 0.1;                                  //  dialeter of the cable
-    double sectionArea = MU_PI * pow((0.5 * diameter), 2);  //  section area
-    double YoungModulus = EA / sectionArea;                 //  Young modulus of the line
+    bool elastic = true;                            //  non elastic catenary lines are only available for non strained lines
+    auto cableProp = make_cable_properties();
+    cableProp->SetDiameter(0.1);
+    cableProp->SetEA(5e6);
+    cableProp->SetLinearDensity(616.538);
+    
+    double unstrainedLength = distanceBetweenNodes*1.5;    //  unstrained length
     double rayleighDamping = 0.;                            //  Rayleigh damping
     unsigned int nbElements = 50;                           //  number of elements
 
+    // Slack lines
     // ANCF cable
-    auto DynamicCable = make_dynamic_cable(Node1, Node2, &system, unstretchedLength, YoungModulus, sectionArea,
-                                                      linearDensity, rayleighDamping, nbElements);
+    auto DynamicCable = make_dynamic_cable(Node1, Node2, &system, cableProp, unstrainedLength, rayleighDamping, nbElements);
 
     // Catenary line
 
-    auto CatenaryLine = make_catenary_line(Node1,Node2,&system,true,unstretchedLength,YoungModulus,sectionArea,linearDensity,AIR);
+    auto CatenaryLine = make_catenary_line(Node1,Node2,&system, cableProp, elastic, unstrainedLength, AIR);
 
 
 //    system.Visualize(20.,false);
@@ -99,34 +99,36 @@ int main(int argc, char* argv[]) {
 
     system.GetStaticAnalysis()->SetNbIteration(20);
     system.GetStaticAnalysis()->SetNbSteps(50);
+
+    std::cout<<"Solve statics for slack case"<<std::endl;
     system.SolveStaticWithRelaxation();
 //    system.Visualize(20.,false);
 
     //Analyse results
-    auto slack_valid = ValidationResults(CatenaryLine, DynamicCable, unstretchedLength, nbElements, 1.e-2, 4.25);
+    auto slack_valid = ValidationResults(CatenaryLine, DynamicCable, unstrainedLength, nbElements, 1.e-2, 4.25);
 
     // Clear the system
     system.Clear();
 
 
     // Taut lines
-    unstretchedLength = distanceBetweenNodes*0.85;
+    unstrainedLength = distanceBetweenNodes*0.85;
 
     // ANCF cable
-    auto DynamicCable2 = make_dynamic_cable(Node1, Node2, &system, unstretchedLength, YoungModulus, sectionArea,
-                                        linearDensity, rayleighDamping, nbElements);
+    auto DynamicCable2 = make_dynamic_cable(Node1, Node2, &system, cableProp, unstrainedLength, rayleighDamping, nbElements);
 
     // Catenary line
 
-    auto CatenaryLine2 = make_catenary_line(Node1,Node2,&system,true,unstretchedLength,YoungModulus,sectionArea,linearDensity,AIR);
+    auto CatenaryLine2 = make_catenary_line(Node1, Node2, &system, cableProp ,elastic, unstrainedLength, AIR);
 
 
+    std::cout<<"Solve statics for taut case"<<std::endl;
 //    system.GetStaticAnalysis()->SetNbIteration(50);
     system.SolveStaticWithRelaxation();
 //    system.Visualize(20.,false);
 
     //Analyse results
-    auto taut_valid = ValidationResults(CatenaryLine2, DynamicCable2, unstretchedLength, nbElements, 1.e-2, 0.25);
+    auto taut_valid = ValidationResults(CatenaryLine2, DynamicCable2, unstrainedLength, nbElements, 1.e-2, 0.25);
 
 
     return !(slack_valid && taut_valid);
