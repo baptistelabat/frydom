@@ -30,7 +30,6 @@ set(UNIT_TESTS
         #test_FrLinks
 #        test_FrFunction
         test_edge_splitting
-        test_OpenMesh
         )
 
 
