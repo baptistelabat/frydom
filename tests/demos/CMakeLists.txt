@@ -13,8 +13,9 @@ set(DEMOS
         demo_Morison
         demo_Cable
         demo_Hub_installation
-	demo_WNL_and_NL_hydrostatics
-	demo_Cylinder
+        demo_WNL_and_NL_hydrostatics
+        demo_Cylinder
+        demo_langlee_FO3F
         bench_SphereDecay
         bench_SphereRegular
         bench_DTMB5512_captive
@@ -83,3 +84,8 @@ configure_file(../data/Cylinder/Free_cylinder_11600_panels.obj . COPY)
 configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPY)
 configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPY)
 configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPY)
+
+configure_file(../data/Langlee/Barge.obj . COPYONLY)
+configure_file(../data/Langlee/Flap1_fuse.obj . COPYONLY)
+configure_file(../data/Langlee/Flap2_fuse.obj . COPYONLY)
+configure_file(../data/Langlee/Langlee.hdb5 . COPYONLY)

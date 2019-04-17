@@ -1235,7 +1235,7 @@ class RadiationDB(_FreqDB):
         cm_diff = np.zeros(cm.shape)
         for j in range(w.size):
             cm_diff[:, j, :] = cm_inf[:, :] - cm[:, j, :]
-
+ 
         cm_diff[:, :, 4] = -cm_diff[:, :, 2]
         cm_diff[:, :, 5] = cm_diff[:, :, 1]
         cm_diff[:, :, 0] = 0.
