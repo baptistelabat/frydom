@@ -137,7 +137,6 @@ namespace frydom {
 
     }  // end namespace frydom::internal
 
-
     /// Default constructor
     /// \param systemType contact method system (SMOOTH_CONTACT/NONSMOOTH_CONTACT)
     /// \param timeStepper time stepper type
