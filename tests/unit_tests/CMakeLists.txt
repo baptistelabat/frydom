@@ -29,14 +29,9 @@ set(UNIT_TESTS
         test_FrShape
         #test_FrLinks
 #        test_FrFunction
-	test_edge_splitting
-	test_OpenMesh
+        test_edge_splitting
+        test_OpenMesh
         )
-
-#enable_testing()
-#include(Add_googletest)il
-#include(URL.conf)
-#include(Add_googletest)
 
 
 foreach(test ${UNIT_TESTS})
