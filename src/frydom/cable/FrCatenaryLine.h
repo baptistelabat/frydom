@@ -45,7 +45,7 @@ namespace frydom {
      * International Journal of Solids and Structures,pp 1521-1533, 2014
      */
     //TODO: check that the chrono_objects are deleted correctly, when the frydom objects are deleted (assets included)
-    class FrCatenaryLine : public FrCable, public FrMidPhysicsItem, public FrCatenaryAssetOwner {
+    class FrCatenaryLine : public FrCable, public FrPrePhysicsItem, public FrCatenaryAssetOwner {
 
     public:
 

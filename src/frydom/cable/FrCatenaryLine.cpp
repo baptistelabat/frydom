@@ -30,7 +30,7 @@ namespace frydom {
                                    m_elastic(elastic),
                                    c_fluid(fluid),
                                    FrCable(startingNode, endingNode, properties, unstrainedLength),
-                                   FrMidPhysicsItem(){
+                                   FrPrePhysicsItem(){
         m_q = properties->GetLinearDensity();
         SetLogged(true);
     };
