@@ -1235,14 +1235,26 @@ class RadiationDB(_FreqDB):
         cm_diff = np.zeros(cm.shape)
         for j in range(w.size):
             cm_diff[:, j, :] = cm_inf[:, :] - cm[:, j, :]
- 
-        cm_diff[:, :, 4] = -cm_diff[:, :, 2]
-        cm_diff[:, :, 5] = cm_diff[:, :, 1]
-        cm_diff[:, :, 0] = 0.
-        cm_diff[:, :, 1] = 0.
-        cm_diff[:, :, 2] = 0.
-        cm_diff[:, :, 3] = 0.
 
+        nb_bodies = self.body_mapper.nb_bodies
+        nb_motion_modes = self.body_mapper.nb_motion_modes
+
+        l_all = np.zeros((6*nb_bodies, 6*nb_bodies))
+        for i_body in range(nb_bodies):
+            l_all[6*i_body + 2, 6*i_body + 4] = -1
+            l_all[6*i_body + 1, 6*i_body + 5] = 1
+
+        p_dof = np.zeros((nb_motion_modes, 6*nb_bodies))
+
+        for i_body in range(nb_bodies):
+
+            for i_motion in range(self.body_mapper.body[i_body].nb_dof):
+                motion_mode = self.body_mapper.get_motion_mode(i_body, i_motion)
+                p_dof[motion_mode.general_index, 6*i_body + motion_mode.sixdof_index] = 1
+
+        l_red = p_dof.dot(l_all.dot(p_dof.transpose()))
+
+        cm_diff = cm_diff.dot(l_red)
         kernel = np.einsum('ijk, jl -> ijkl', cm_diff, cwt)  # is nb_forces x nb_motions x nt
 
         irf_data = (2. / pi) * np.trapz(kernel, x=w, axis=1)
@@ -1955,6 +1967,7 @@ class _Mode(object):
         self.point = np.asarray(point, dtype=np.float)
         self.general_index = general_index
         self.ibody = ibody
+        self.sixdof_index = None
         
         
 class TranslationMode(_Mode):
@@ -1964,6 +1977,15 @@ class TranslationMode(_Mode):
         """
 
         super(TranslationMode, self).__init__(direction, point, general_index, ibody)
+
+        if np.allclose(direction, np.array([1., 0., 0.])):
+            self.sixdof_index = 0
+        elif np.allclose(direction, np.array([0., 1., 0.])):
+            self.sixdof_index = 1
+        elif np.allclose(direction, np.array([0., 0., 1.])):
+            self.sixdof_index = 2
+        else:
+            print("warning : tanslation direction no conventional")
     
     def __str__(self):
         d = self.direction
@@ -1978,6 +2000,15 @@ class RotationMode(_Mode):
         """
 
         super(RotationMode, self).__init__(direction, point, general_index, ibody)
+
+        if np.allclose(direction, np.array([1., 0., 0.])):
+            self.sixdof_index = 3
+        elif np.allclose(direction, np.array([0., 1., 0.])):
+            self.sixdof_index = 4
+        elif np.allclose(direction, np.array([0., 0., 1.])):
+            self.sixdof_index = 5
+        else:
+            print("warning : rotation direction no conventional")
 
     def __str__(self):
         d = self.direction
