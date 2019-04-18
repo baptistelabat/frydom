@@ -50,6 +50,7 @@ class BodyDB(object):
         self._hydrostatic = None
         self.load_data(hdb, i_body)
         self._position = np.zeros(3, dtype=np.float)
+        self.is_write_ku = False
 
     @property
     def name(self):
@@ -551,6 +552,9 @@ class BodyDB(object):
         # Modes Motion
         self.write_mode_motion(writer, body_path + "/Modes")
 
+        # Mask
+        self.write_mask(writer, body_path + "/Mask")
+
         # Mesh file
         self.write_mesh(writer, body_path + "/Mesh")
 
@@ -625,6 +629,58 @@ class BodyDB(object):
             elif isinstance(motion_mode, hydro_db.RotationMode):
                 writer.create_dataset(mode_path + "/Type", data="ANGULAR")
                 writer.create_dataset(mode_path + "/Point", data=motion_mode.point)
+
+        return
+
+    def write_mask(self, writer, mask_path="/Mask"):
+
+        writer.create_group(mask_path)
+
+        motion_mask = np.zeros(6)
+
+        for motion_mode in self.motion_modes:
+
+            direction = motion_mode.direction
+
+            if isinstance(motion_mode, hydro_db.TranslationMode):
+                if np.allclose(direction, np.array([1., 0., 0.])):
+                    motion_mask[0] = 1
+                elif np.allclose(direction, np.array([0., 1., 0.])):
+                    motion_mask[1] = 1
+                elif np.allclose(direction, np.array([0., 0., 1.])):
+                    motion_mask[2] = 1
+            elif isinstance(motion_mode, hydro_db.RotationMode):
+                if np.allclose(direction, np.array([1., 0., 0.])):
+                    motion_mask[3] = 1
+                elif np.allclose(direction, np.array([0., 1., 0.])):
+                    motion_mask[4] = 1
+                elif np.allclose(direction, np.array([0., 0., 1.])):
+                    motion_mask[5] = 1
+
+        writer.create_dataset(mask_path + "/MotionMask", data=motion_mask.astype(int))
+
+        force_mask = np.zeros(6)
+
+        for force_mode in self.force_modes:
+
+            direction = force_mode.direction
+
+            if isinstance(force_mode, hydro_db.ForceMode):
+                if np.allclose(direction, np.array([1., 0., 0.])):
+                    force_mask[0] = 1
+                elif np.allclose(direction, np.array([0., 1., 0.])):
+                    force_mask[1] = 1
+                elif np.allclose(direction, np.array([0., 0., 1.])):
+                    force_mask[2] = 1
+            elif isinstance(force_mode, hydro_db.MomentMode):
+                if np.allclose(direction, np.array([1., 0., 0.])):
+                    force_mask[3] = 1
+                elif np.allclose(direction, np.array([0., 1., 0.])):
+                    force_mask[4] = 1
+                elif np.allclose(direction, np.array([0., 0., 1.])):
+                    force_mask[5] = 1
+
+        writer.create_dataset(mask_path + "/ForceMask", data=force_mask.astype(int))
 
         return
 
@@ -748,10 +804,11 @@ class BodyDB(object):
             dg.attrs['Description'] = "Impulse response function for velocity of body %u that radiates waves " \
                                       "and generates forces on body %u" % (j, self.id)
 
-            irf_ku_path = radiation_body_motion_path + "/ImpulseResponseFunctionKU"
-            dg = writer.create_group(irf_ku_path)
-            dg.attrs['Description'] = "Impulse response function Ku for velocity of body %u that radiates waves " \
-                                      "and generates forces on body %u" % (j, self.id)
+            if self.is_write_ku:
+                irf_ku_path = radiation_body_motion_path + "/ImpulseResponseFunctionKU"
+                dg = writer.create_group(irf_ku_path)
+                dg.attrs['Description'] = "Impulse response function Ku for velocity of body %u that radiates waves " \
+                                          "and generates forces on body %u" % (j, self.id)
 
             dset = writer.create_dataset(radiation_body_motion_path + "/InfiniteAddedMass",
                                          data=self.infinite_added_mass(j))
@@ -761,7 +818,9 @@ class BodyDB(object):
             added_mass = self.added_mass(j)
             radiation_damping = self.radiation_damping(j)
             irf = self.irf_k(j)
-            irf_ku = self.irf_ku(j)
+
+            if self.is_write_ku:
+                irf_ku = self.irf_ku(j)
 
             for imode in range(self.nb_dof):
 
@@ -784,9 +843,10 @@ class BodyDB(object):
                 dset.attrs['Description'] = "Impulse response functions"
 
                 # Impulse response function Ku
-                dset = writer.create_dataset(irf_ku_path + "/DOF_%u" % imode,
-                                        data=irf_ku[:, imode, :])
-                dset.attrs['Description'] = "Impulse response functions Ku"
+                if self.is_write_ku:
+                    dset = writer.create_dataset(irf_ku_path + "/DOF_%u" % imode,
+                                            data=irf_ku[:, imode, :])
+                    dset.attrs['Description'] = "Impulse response functions Ku"
 
         return
 

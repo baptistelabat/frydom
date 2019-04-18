@@ -185,7 +185,7 @@ namespace frydom {
             assert(BEMBody->GetID() == ID);
 
             // /// Reading the modes of a body.
-            //this->ModeReader(reader, ibodyPath, BEMBody);
+            this->ModeReader(reader, ibodyPath, BEMBody);
 
             this->MaskReader(reader, ibodyPath, BEMBody);
 
@@ -381,7 +381,7 @@ namespace frydom {
             BEMBody->SetImpulseResponseFunctionK(bodyMotion, impulseResponseFunctionsK);
 
             /// Reading the impulse response functions in case of forward speed.
-
+            sprintf(buffer, "/BodyMotion_%d", ibodyMotion);
             auto IRFUPath = radiationPath + buffer + "/ImpulseResponseFunctionKU";
 
             if (reader.GroupExist(IRFUPath)) {
@@ -391,7 +391,7 @@ namespace frydom {
                 for (unsigned int imotion=0; imotion<6; ++imotion) {
 
                     if(bodyMotion->GetMotionMask(imotion)) {
-                        sprintf(buffer, "/DOF_%d", imotion);
+                        sprintf(buffer, "/DOF_%d", idof);
                         auto mat = reader.ReadDoubleArray(IRFUPath + buffer);
                         impulseResponseFunctionsKU.push_back(forceMaskMatrix * mat);
                         idof += 1;
