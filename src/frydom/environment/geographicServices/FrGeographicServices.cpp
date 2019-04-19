@@ -125,14 +125,11 @@ namespace frydom {
     double
     FrGeographicServices::GetDeclinationFromGeo(const FrGeographicCoord &geoCoord, double year) const {
 
-        // FIXME : le chemin vers le modèle magnétique est indiqué via la variable d'environnement GEOGRAPHICLIB_MAGNETIC_PATH
-        // A voir si on doit changer ça.
-//        putenv("GEOGRAPHICLIB_MAGNETIC_PATH=/home/d-ice/Documents/DEV/frydom_GPL/cmake-build-debug/_deps/magneticmodel-src");
+        // Magnetic model loaded from _deps directory
+        // GEOGRAPHICLIB_MAGNETIC_PATH is a compilation variable, defined in Add_GeographicLib.cmake, for GeographicLib target only
+        GeographicLib::MagneticModel magneticModel("emm2017", GEOGRAPHICLIB_MAGNETIC_PATH);
 
-        /// Magnetic model loaded from _deps directory
-        GeographicLib::MagneticModel magneticModel("emm2017", "../_deps/magneticmodel-src");
-
-        /// Compute the magnetic declination
+        // Compute the magnetic declination
         double Bx, By, Bz, H, F, D, I;
         magneticModel(year, geoCoord.GetLatitude(), geoCoord.GetLongitude(), geoCoord.GetHeight(), Bx, By, Bz);
         GeographicLib::MagneticModel::FieldComponents(Bx, By, Bz, H, F, D, I);
