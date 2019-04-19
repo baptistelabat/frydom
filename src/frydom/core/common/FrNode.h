@@ -168,6 +168,21 @@ namespace frydom {
         /// \return the node velocity in the node reference frame
         Velocity GetVelocityInNode(FRAME_CONVENTION fc) const;
 
+        /// Get the node angular velocity in world reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return the node angular velocity in world reference frame
+        AngularVelocity GetAngularVelocityInWorld(FRAME_CONVENTION fc) const;
+
+        /// Get the node angular velocity in body reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return the node angular velocity in body reference frame
+        AngularVelocity GetAngularVelocityInBody(FRAME_CONVENTION fc) const;
+
+        /// Get the node angular velocity in node reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return the node angular velocity in node reference frame
+        AngularVelocity GetAngularVelocityInNode(FRAME_CONVENTION fc) const;
+
         /// Get the node acceleration in world reference frame
         /// \param fc Frame convention (NED/NWU)
         /// \return the node acceleration in world reference frame
