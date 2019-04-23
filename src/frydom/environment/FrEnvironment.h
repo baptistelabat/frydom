@@ -28,7 +28,7 @@ namespace GeographicLib {
 namespace frydom {
 
     // Forward declarations
-    class FrTimeZone;
+    class FrTimeServices;
     class FrOffshoreSystem;
     class FrOcean;
     class FrAtmosphere;
@@ -50,9 +50,9 @@ namespace frydom {
 
         //---------------------------- Environment elements ----------------------------//
         // TODO : faire un service de temps, NEED REFACTO
-        std::unique_ptr<FrTimeZone> m_timeZone;     ///< Zoned time conversion service, can give time during simulation in a specified time zone.
+        std::unique_ptr<FrTimeServices> m_timeServices;                 ///< Zoned time conversion service, can give time during simulation in a specified time zone.
 
-        std::unique_ptr<FrCosRampFunction> m_timeRamp;              ///< Time ramp, can be applied on wave field, current field, wind field, etc.
+        std::unique_ptr<FrCosRampFunction> m_timeRamp;                  ///< Time ramp, can be applied on wave field, current field, wind field, etc.
 
         std::unique_ptr<FrOcean> m_ocean;                              ///> Ocean element of the simulation, contains free surface and seabed, current model, water properties, etc.
 
@@ -132,7 +132,7 @@ namespace frydom {
 
         /// Get the zoned time conversion service
         /// \return zoned time conversion service
-        FrTimeZone* GetTimeZone() const;
+        FrTimeServices* GetTimeServices() const;
 
         /// Get the year given by the zoned time conversion service
         /// \return year
