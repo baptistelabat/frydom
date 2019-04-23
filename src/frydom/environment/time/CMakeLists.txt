@@ -2,6 +2,7 @@ message(STATUS "        ...Environment/time")
 
 set(TIME_FILES_LOCAL
         FrTimeZone.cpp
+        FrTimeServices.cpp
         )
 
 set(TIME_FILES "")
