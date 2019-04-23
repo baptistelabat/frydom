@@ -70,6 +70,8 @@ namespace frydom {
 
         boost::circular_buffer<T> GetData() const;
 
+        T GetData(double time) const;
+
         std::vector<double> GetTime() const;
 
         double GetLastTime() const;
@@ -147,6 +149,16 @@ namespace frydom {
             m_lastTime = time;
             m_deltaTime = m_lastTime - m_prevTime;
         }
+    }
+
+    template <class T>
+    T FrTimeRecorder<T>::GetData(double time) const {
+        auto vtime = this->GetTime();
+        auto it = std::lower_bound(vtime.begin(), vtime.end(), time);
+        assert(it < vtime.size());
+        auto c0 = (vtime[it+1] - time) / (vtime[it+1] - vtime[it]);
+        auto c1 = (time - vtime[it]) / (vtime[it+1] - vtime[it]);
+        return m_data[it] * c0 + m_data[it+1] * c1;
     }
 
     template <class T>
