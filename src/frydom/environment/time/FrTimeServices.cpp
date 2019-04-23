@@ -38,6 +38,13 @@ namespace frydom {
         m_initTime = time;
     }
 
+    void FrTimeServices::SetStartingTime(date::zoned_time<std::chrono::milliseconds> time) {
+        auto lt = time.get_local_time();
+        m_initDay = date::floor<date::days>(lt);
+        m_initTime = date::floor<std::chrono::milliseconds>(lt - m_initDay);
+
+    }
+
     void FrTimeServices::SetStartingDay(date::local_days Day) {
         m_initDay = Day;
     }
@@ -51,8 +58,6 @@ namespace frydom {
         int m_secondes = static_cast<int>(floor(time));
         int m_milliseconds = static_cast<int>(floor(1000 * (time - floor(time))));
         c_time = m_initTime + std::chrono::seconds(m_secondes) + std::chrono::milliseconds(m_milliseconds);
-
-        std::cout<<GetTime()<<std::endl;
 
     }
 
