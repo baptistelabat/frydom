@@ -127,10 +127,10 @@ namespace frydom {
 
         // Compute the magnetic declination
         mathutils::Vector3d<double> magComponent;
-        magComponent = GetMagneticComponentsFromGeo(geoCoord, year);
+        magComponent = GetMagneticComponentsFromGeo(geoCoord, year, NWU);
 
         double H, F, D, I;
-        GeographicLib::MagneticModel::FieldComponents(magComponent.x(), magComponent.y(), magComponent.z(), H, F, D, I);
+        GeographicLib::MagneticModel::FieldComponents(-magComponent.y(), magComponent.x(), magComponent.z(), H, F, D, I);
 
         return D;
     }

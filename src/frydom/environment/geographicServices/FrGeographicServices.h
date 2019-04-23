@@ -13,6 +13,7 @@
 #ifndef FRYDOM_FRGEOGRAPHICSERVICES_H
 #define FRYDOM_FRGEOGRAPHICSERVICES_H
 
+#include "MathUtils/Vector3d.h"
 
 #include "frydom/core/common/FrConvention.h"
 #include "GeographicLib/LocalCartesian.hpp"
