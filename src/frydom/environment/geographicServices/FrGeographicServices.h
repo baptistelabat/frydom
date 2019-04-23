@@ -192,6 +192,21 @@ namespace frydom {
         /// \return magnetic declination
         double GetDeclinationFromGeo(double lat, double lon, double h, double year) const;
 
+        /// Get the magnetic field components, in nanotesla, at the geographic coordinates
+        /// \param geoCoord Geographic coordinates on which to get the magnetic field
+        /// \param year year for chich to get the magnetic field
+        /// \param fc frame convention (NED/NWU) for the magnetic field vector
+        /// \return magnetic field components, in nanotesla
+        mathutils::Vector3d<double> GetMagneticComponentsFromGeo(const FrGeographicCoord& geoCoord, double year, FRAME_CONVENTION fc) const;
+
+
+        /// Get the magnetic field components, in nanotesla, at a cartesian position
+        /// \param cartPos cartesian position on which to get the magnetic field
+        /// \param year year for chich to get the magnetic field
+        /// \param fc frame convention (NED/NWU) for the cartesian position and magnetic field vector
+        /// \return magnetic field components, in nanotesla
+        mathutils::Vector3d<double> GetMagneticComponentsFromCart(const Position &cartPos, double year, FRAME_CONVENTION fc) const;
+
     };
 
 

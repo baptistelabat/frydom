@@ -125,14 +125,12 @@ namespace frydom {
     double
     FrGeographicServices::GetDeclinationFromGeo(const FrGeographicCoord &geoCoord, double year) const {
 
-        // Magnetic model loaded from _deps directory
-        // GEOGRAPHICLIB_MAGNETIC_PATH is a compilation variable, defined in Add_GeographicLib.cmake, for GeographicLib target only
-        GeographicLib::MagneticModel magneticModel("emm2017", GEOGRAPHICLIB_MAGNETIC_PATH);
-
         // Compute the magnetic declination
-        double Bx, By, Bz, H, F, D, I;
-        magneticModel(year, geoCoord.GetLatitude(), geoCoord.GetLongitude(), geoCoord.GetHeight(), Bx, By, Bz);
-        GeographicLib::MagneticModel::FieldComponents(Bx, By, Bz, H, F, D, I);
+        mathutils::Vector3d<double> magComponent;
+        magComponent = GetMagneticComponentsFromGeo(geoCoord, year);
+
+        double H, F, D, I;
+        GeographicLib::MagneticModel::FieldComponents(magComponent.x(), magComponent.y(), magComponent.z(), H, F, D, I);
 
         return D;
     }
@@ -140,6 +138,31 @@ namespace frydom {
     double
     FrGeographicServices::GetDeclinationFromGeo(double lat, double lon, double h, double year) const {
         return GetDeclinationFromGeo(FrGeographicCoord(lat,lon,h),year);
+    }
+
+    mathutils::Vector3d<double>
+    FrGeographicServices::GetMagneticComponentsFromGeo(const FrGeographicCoord &geoCoord, double year, FRAME_CONVENTION fc) const {
+
+        // Magnetic model loaded from _deps directory
+        // GEOGRAPHICLIB_MAGNETIC_PATH is a compilation variable, defined in Add_GeographicLib.cmake, for GeographicLib target only
+        GeographicLib::MagneticModel magneticModel("emm2017", GEOGRAPHICLIB_MAGNETIC_PATH);
+
+        // Compute the magnetic declination
+        double Bx, By, Bz;
+        magneticModel(year, geoCoord.GetLatitude(), geoCoord.GetLongitude(), geoCoord.GetHeight(), Bx, By, Bz);
+
+        // return the vector in the specified frame convention
+        mathutils::Vector3d<double> vecNWU = {By,-Bx,Bz};
+        if (IsNED(fc)) internal::SwapFrameConvention(vecNWU);
+
+        return vecNWU;
+
+    }
+
+    mathutils::Vector3d<double>
+    FrGeographicServices::GetMagneticComponentsFromCart(const Position& cartPos, double year, FRAME_CONVENTION fc) const {
+        auto geoCoord = CartToGeo(cartPos, fc);
+        return GetMagneticComponentsFromGeo(geoCoord, year, fc);
     }
 
 
