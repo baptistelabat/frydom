@@ -165,7 +165,7 @@ namespace frydom {
 
                 auto vtime = m_recorder[BEMBodyMotion->first].GetTime();
 
-                for (unsigned int idof = 0; idof < 6; idof++) {
+                for (auto idof : BEMBodyMotion->first->GetListDOF()) {
 
                     auto interpK = BEMBody->first->GetIRFInterpolatorK(BEMBodyMotion->first, idof);
 

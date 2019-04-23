@@ -96,10 +96,12 @@ int main(int argc, char* argv[]) {
 
     hdb->Map(0, flap1.get(), eqFrame1);
     hdb->Map(1, flap2.get(), eqFrame2);
+    hdb->Map(2, barge.get(), eqFrame0);
 
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
-    radiationModel->SetImpulseResponseSize(flap1.get(), 50., 0.005);
-    radiationModel->SetImpulseResponseSize(flap2.get(), 50., 0.005);
+    radiationModel->SetImpulseResponseSize(flap1.get(), 60., 0.005);
+    radiationModel->SetImpulseResponseSize(flap2.get(), 60., 0.005);
+    radiationModel->SetImpulseResponseSize(barge.get(), 60., 0.005);
 
     // Hydrostatic
 

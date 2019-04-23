@@ -18,8 +18,6 @@
 
 namespace frydom {
 
-
-
     /**
      * \class FrPrismaticLink
      * \brief Class for defining a prismatic link.
@@ -53,11 +51,8 @@ namespace frydom {
         /// Get the rest length of the link
         double GetRestLength() const;
 
-
-
         /// Get the direction of the link in world woordinate system
         const Direction GetLinkDirectionInWorld(FRAME_CONVENTION fc) const;
-
 
         /// Get the link position with respect to the rest length
         double GetLinkPosition() const;
@@ -92,7 +87,6 @@ namespace frydom {
         void UpdateCache() override;
 
     };
-
 
     /// Helper function to make it easy to link two nodes by a prismatic link
     std::shared_ptr<FrPrismaticLink> make_prismatic_link(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);

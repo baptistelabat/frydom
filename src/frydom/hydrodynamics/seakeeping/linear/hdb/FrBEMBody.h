@@ -72,6 +72,7 @@ namespace frydom {
 
     private:
         unsigned int m_nbDOF;
+        std::vector<int> m_listDOF;
         mathutils::Vector6d<bool> m_mask;
         mathutils::MatrixMN<double> m_matrix;
 
@@ -87,6 +88,8 @@ namespace frydom {
         mathutils::MatrixMN<double> GetMatrix() const;
 
         unsigned int GetNbMode() const { return m_nbDOF; }
+
+        std::vector<int> GetListDOF() const { return m_listDOF; }
     };
 
 
@@ -199,6 +202,8 @@ namespace frydom {
         bool GetMotionMask(unsigned int imotion) const { return m_motionMask.GetMask(imotion); }
 
         bool GetForceMask(unsigned int iforce) const { return m_forceMask.GetMask(iforce); }
+
+        std::vector<int> GetListDOF() const { return m_motionMask.GetListDOF(); }
 
         //
         // Generalized modes

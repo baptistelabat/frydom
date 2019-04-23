@@ -29,6 +29,7 @@ namespace frydom {
         for (unsigned int i=0; i<6; i++) {
             if (mask(i) == 1) {
                 m_mask(i) = true;
+                m_listDOF.push_back(i);
             } else {
                 m_mask(i) = false;
             }
