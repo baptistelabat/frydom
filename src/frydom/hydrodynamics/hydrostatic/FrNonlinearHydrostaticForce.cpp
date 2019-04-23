@@ -33,7 +33,7 @@ namespace frydom {
         // This function initializes the logger for the nonlinear hydrostatic loads by giving the position of the center of buoyancy in the body frame.
 
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("Center of buoyancy","m", fmt::format("Center of buoyancy in world reference frame in {}", c_logFrameConvention),
+                ("CenterOfBuoyancyInBody","m", fmt::format("Center of buoyancy in world reference frame in {}", c_logFrameConvention),
                  [this]() {return GetCenterOfBuoyancyInBody(c_logFrameConvention);});
 
         FrForce::InitializeLog();

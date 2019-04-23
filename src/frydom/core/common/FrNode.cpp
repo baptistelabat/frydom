@@ -248,19 +248,19 @@ namespace frydom {
                                         [this]() { return m_chronoMarker->GetChTime(); });
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Node Position","m", fmt::format("Node position in world reference frame in {}",c_logFrameConvention),
+            ("PositionInWorld","m", fmt::format("Node position in world reference frame in {}",c_logFrameConvention),
                     [this]() {return GetPositionInWorld(c_logFrameConvention);});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Node Velocity","m/s", fmt::format("Node velocity in world reference frame in {}",c_logFrameConvention),
+            ("VelocityInWorld","m/s", fmt::format("Node velocity in world reference frame in {}",c_logFrameConvention),
                     [this]() {return GetVelocityInWorld(c_logFrameConvention);});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Node Acceleration","m/s²", fmt::format("Node acceleration in world reference frame in {}",c_logFrameConvention),
+            ("AccelerationInWorld","m/s²", fmt::format("Node acceleration in world reference frame in {}",c_logFrameConvention),
                     [this]() {return GetAccelerationInWorld(c_logFrameConvention);});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Node Position in Body","m", fmt::format("Node position in body reference frame in {}",c_logFrameConvention),
+            ("NodePositionInBody","m", fmt::format("Node position in body reference frame in {}",c_logFrameConvention),
                     [this]() {return GetNodePositionInBody(c_logFrameConvention);});
 
             // Initialize the message

@@ -398,15 +398,15 @@ namespace frydom {
             m_message->AddField<double>("time", "s", "Current time of the simulation",
                                         [this]() { return m_system->GetTime(); });
 
-            m_message->AddField<double>("Strained Length", "m", "Strained length of the catenary line",
+            m_message->AddField<double>("StrainedLength", "m", "Strained length of the catenary line",
                                         [this]() { return GetStrainedLength(); });
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("Starting Node Tension","N", fmt::format("Starting node tension in world reference frame in {}",c_logFrameConvention),
+                    ("StartingNodeTension","N", fmt::format("Starting node tension in world reference frame in {}",c_logFrameConvention),
                      [this]() {return GetTension(0.,c_logFrameConvention);});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("Ending Node Tension","N", fmt::format("Ending node tension in world reference frame in {}",c_logFrameConvention),
+                    ("EndingNodeTension","N", fmt::format("Ending node tension in world reference frame in {}",c_logFrameConvention),
                      [this]() { Eigen::Matrix<double, 3, 1> temp = -GetTension(GetUnstrainedLength(), c_logFrameConvention);
                         return temp;});
 

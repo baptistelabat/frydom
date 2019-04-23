@@ -115,19 +115,19 @@ namespace frydom{
                                         [this]() { return m_chronoForce->GetChTime(); });
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Body Force","N", fmt::format("force in body reference frame in {}", c_logFrameConvention),
+            ("ForceInBody","N", fmt::format("force in body reference frame in {}", c_logFrameConvention),
                     [this]() {return GetForceInBody(c_logFrameConvention);});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Body Torque","Nm", fmt::format("torque at COG in body reference frame in {}", c_logFrameConvention),
+            ("TorqueInBodyAtCOG","Nm", fmt::format("torque at COG in body reference frame in {}", c_logFrameConvention),
                     [this]() {return GetTorqueInBodyAtCOG(c_logFrameConvention);});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("World Force","N", fmt::format("force in world reference frame in {}", c_logFrameConvention),
+            ("ForceInWorld","N", fmt::format("force in world reference frame in {}", c_logFrameConvention),
                     [this]() {return GetForceInWorld(c_logFrameConvention);});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("World Torque","Nm", fmt::format("torque at COG in world reference frame in {}", c_logFrameConvention),
+            ("TorqueInWorldAtCOG","Nm", fmt::format("torque at COG in world reference frame in {}", c_logFrameConvention),
                     [this]() {return GetTorqueInWorldAtCOG(c_logFrameConvention);});
 
             // Initialize the message
