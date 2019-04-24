@@ -154,7 +154,8 @@ namespace frydom {
     template <class T>
     T FrTimeRecorder<T>::GetData(double time) const {
         auto vtime = this->GetTime();
-        auto it = std::lower_bound(vtime.begin(), vtime.end(), time);
+        auto upper_time = std::lower_bound(vtime.begin(), vtime.end(), time);
+        auto it = std::distance(vtime.begin(), upper_time)-1;
         assert(it < vtime.size());
         auto c0 = (vtime[it+1] - time) / (vtime[it+1] - vtime[it]);
         auto c1 = (time - vtime[it]) / (vtime[it+1] - vtime[it]);
