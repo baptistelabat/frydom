@@ -23,63 +23,96 @@ namespace frydom {
 
     /**
      * \class FrTimeRecorder
-     * \brief Class for recording the time.
+     * \brief This class is used to record arbitrary data at the different time instant of the simulation
+     * Data are return in the reverse time order from the last stored data.
      */
     template <class T>
     class FrTimeRecorder {
 
-
     private:
 
-        double m_timePersistence = 1800.;
-        double m_timeStep = 0.01;
+        double m_timePersistence = 1800.;       ///< Maximum time-length of the recorder in seconds
+        double m_timeStep = 0.01;               ///< Time step between each records
 
-        unsigned int m_size = 0;
-        unsigned int m_nstep = 0;
+        unsigned int m_size = 0;                ///< Number of elements in the recorder
 
-        double m_lastTime = 0.;
-        double m_prevTime = 0.;
-        double m_deltaTime = 0.;
+        double m_lastTime = 0.;                 ///< Current time in simulation of the last record
+        double m_prevTime = 0.;                 ///< Time in simulation of the penultimate record
+        double m_deltaTime = 0.;                ///< Elapsed time between the two last records
 
-        boost::circular_buffer<T> m_data;
+        boost::circular_buffer<T> m_data;       ///< Buffer with the recordered data
 
     public:
 
+        /// Default constructor of the time recorder
         FrTimeRecorder() = default;
 
+        /// Constructor of the time recorder with specified time persistence
+        /// \param timePersistence Maximum time-length of the recorder in seconds
         explicit FrTimeRecorder(double timePersistence) : m_timePersistence(timePersistence) { }
 
+        /// Constructor of the time recorder with specified time persistence and time-step
+        /// \param timePersistence Maximum time-length of the recorder in seconds
+        /// \param timeStep Time step between each records
         explicit FrTimeRecorder(double timePersistence, double timeStep)
             : m_timePersistence(timePersistence), m_timeStep(timeStep) { }
 
+        /// Set the total time-length of the recorder in seconds
+        /// \param timePersistence Total time-length of the recorder in second
         void SetTimePersistence(const double timePersistence);
 
+        /// Get the maximum time-length of the recorder in seconds
+        /// \return Maximum time-length of the recorder in seconds
         double GetTimePersistence() const;
 
+        /// Effective time-length of the recorder in seconds
+        /// \return Effective time-length of the recorder in seconds
         double GetRecordDuration() const;
 
+        /// Set the time-step of the recorder in seconds
+        /// \param timeStep Time-step of the recorder in seconds
         void SetTimeStep(double timeStep);
 
+        /// Get the time-step of the recorder in seconds
+        /// \return Time-step of the recorder in seconds
         double GetTimeStep() const;
 
+        /// Recordering data
+        /// \param time Current time of the simulation, in seconds
+        /// \param data Data to be recordered
         void Record(const double time, const T& data);
 
+        /// Initialize the size of the recorder
         void Initialize();
 
+        /// Clear stored data
         void Clear();
 
+        /// Return the stored data vector
+        /// \return Recorder data vector
         boost::circular_buffer<T> GetData() const;
 
+        /// Get the data interpolated at a specific time delay from the last time stored in the recorder
+        /// \param time Time delay from the last time stored in the recorder
+        /// \return Data interpolated at the specific time
         T GetData(double time) const;
 
+        /// Get the time vector corresponding to the recordered data in the recorder
         std::vector<double> GetTime() const;
 
+        /// Get the last time stored in the recorder
         double GetLastTime() const;
 
+        /// Get the mean value of the stored data
         T GetMean() const;
 
     private:
 
+        /// Interpolate data bewteen the penultimate stored data and the new data at a given time
+        /// \param time Target time for the interpolation
+        /// \param data Data value at the current time
+        /// \param lastTime Current time
+        /// \return Interpolated data value at the target time
         T Interpolate(const double time, const T& data, const double& lastTime);
 
     };
