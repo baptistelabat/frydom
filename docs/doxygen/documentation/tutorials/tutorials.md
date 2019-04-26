@@ -21,7 +21,12 @@ Demonstration of particular application cases
 =============================================
 
 -   @subpage tutorial_demo_Ballistic
+
 -   @subpage tutorial_demo_Cable
+
+-   @subpage tutorial_demo_Hydrodynamic
+
+-   @subpage tutorial_demo_Morison
 
 Benchmarks
 ==========

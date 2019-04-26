@@ -1,5 +1,5 @@
 Demonstration of cables applications (demo_Cable.cpp) {#tutorial_demo_Cable}
-==========================
+=====================================================
 
 This demo presents cable features : catenary line and dynamic cable.
 
