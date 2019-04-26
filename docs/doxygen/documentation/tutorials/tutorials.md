@@ -26,4 +26,8 @@ Demonstration of particular application cases
 Benchmarks
 ==========
 
+-   @subpage tutorial_bench_cables
 -   @subpage tutorial_bench_DTMB
+-   @subpage tutorial_bench_sphere_decay
+-   @subpage tutorial_bench_sphere_regular
+-   @subpage tutorial_bench_sphere_irregular

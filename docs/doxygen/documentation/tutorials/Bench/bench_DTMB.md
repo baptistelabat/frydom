@@ -1,4 +1,4 @@
-Benchmark for a DTMB (bench_DTMB.cpp) {#tutorial_bench_DTMB}
+Benchmark for a DTMB (bench_DTMB5512_captive.cpp) {#tutorial_bench_DTMB}
 ==========================
 
-TODO
+\include bench_DTMB5512_captive.cpp
