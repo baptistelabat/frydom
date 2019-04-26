@@ -3,8 +3,27 @@ Tutorials {#tutorial_root}
 
 Several tutorials are available, with different purposes:
 
--   @subpage tutorial_illustrations
+Illustration of FRyDoM features and capabilities
+================================================
 
--   @subpage tutorial_demonstrations
+-   @subpage tutorial_demo_Environment
+    
+-   @subpage tutorial_demo_FreeSurface
+    
+-   @subpage tutorial_demo_Body
 
--   @subpage tutorial_benchmarks
+-   @subpage tutorial_demo_Rotation_and_Frame
+    
+-   @subpage tutorial_demo_Morison
+
+
+Demonstration of particular application cases
+=============================================
+
+-   @subpage tutorial_demo_Ballistic
+-   @subpage tutorial_demo_Cable
+
+Benchmarks
+==========
+
+-   @subpage tutorial_bench_DTMB

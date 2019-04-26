@@ -33,7 +33,7 @@ You can then follow the installation guide, provided in FRyDoM user guide (see b
 GitLab repository
 -----------------
 
-https://frydom-ce.org/ce/frydom
+http://frydom-ce.org/ce/frydom
 
 All users must register at http://register.frydom.org to access the code and the forum. 
 If you want to contribute, you will be requested to sign a Contributor License Agreement. 
