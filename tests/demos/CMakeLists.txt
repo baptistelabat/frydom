@@ -14,14 +14,13 @@ set(DEMOS
         demo_Cable
         demo_DynamicCable
         demo_Hub_installation
-	demo_WNL_and_NL_hydrostatics
-	demo_Cylinder
+        demo_WNL_and_NL_hydrostatics
+        demo_Cylinder
         bench_SphereDecay
         bench_SphereRegular
-	bench_SphereIrregular
+        bench_SphereIrregular
         bench_DTMB5512_captive
         bench_Cables
-	bench_Ellipsoid_OMAE2014
         )
 
 
@@ -91,16 +90,5 @@ configure_file(../data/Cylinder/Free_cylinder_11600_panels.obj . COPYONLY)
 configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPYONLY)
 configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPYONLY)
 configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPYONLY)
-
-configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_2880_faces.obj . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_mean_position.obj . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4200_faces.obj . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2880_faces.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4200_faces.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_634_faces_with_sym.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_1416_faces_with_sym.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2774_faces_with_sym.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2880_faces_with_sym_mean_position.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4500_faces_WAMIT_mesh_sym_mean_position.hdb5 . COPYONLY)
 
 
