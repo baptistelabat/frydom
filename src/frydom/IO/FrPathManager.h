@@ -83,7 +83,7 @@ namespace frydom {
         std::string BuildPath(FrPhysicsItem *pi, std::string relPath);
 
         /// Build the path and directories needed for a physics item log
-        /// \param pi physics item for which a log is declared
+        /// \param mesh FEA mesh for which a log is declared
         /// \param relPath relative path, added to the path
         /// \return path to the physics item log file
         std::string BuildPath(FrFEAMesh *mesh, std::string relPath);

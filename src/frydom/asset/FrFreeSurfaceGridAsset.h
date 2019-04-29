@@ -32,7 +32,7 @@ namespace frydom {
 
     public:
         /// Default constructor
-        /// \param body body containing this asset (usually WorldBody)
+        /// \param freeSurface freeSurface containing this asset
         explicit FrFreeSurfaceGridAsset(FrFreeSurface* freeSurface);
 
         /// Update the state of the asset, at the end of a time step

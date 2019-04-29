@@ -241,7 +241,7 @@ namespace frydom {
         /// This is useful in virtual reality and real-time simulations, because
         /// it reduces the risk of bad collision detection.
         /// This speed limit is active only if you set  SetLimitSpeed(true);
-        /// \param maxSpeed maximum angular speed, for the speed limit feature
+        /// \param wMax maximum angular speed, for the speed limit feature
         void SetMaxRotationSpeed(double wMax);
 
         /// [DEBUGGING MODE] Remove the gravity by adding a anti-gravity. This is a debugging method and should not be
@@ -474,7 +474,7 @@ namespace frydom {
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param rot rotation to be applied
-        /// \param worldPos point position around which the body is to be rotated, given in body reference frame
+        /// \param bodyPos point position around which the body is to be rotated, given in body reference frame
         /// \param fc frame convention (NED/NWU)
         void RotateAroundPointInBody(const FrRotation& rot, const Position& bodyPos, FRAME_CONVENTION fc);
 
@@ -499,7 +499,7 @@ namespace frydom {
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param rot rotation to be applied, with a quaternion object
-        /// \param worldPos point position around which the body is to be rotated, given in body reference frame
+        /// \param bodyPos point position around which the body is to be rotated, given in body reference frame
         /// \param fc frame convention (NED/NWU)
         void RotateAroundPointInBody(const FrUnitQuaternion& rot, const Position& bodyPos, FRAME_CONVENTION fc);
 
@@ -817,7 +817,7 @@ namespace frydom {
 
         /// Project a generalized vector given in world reference frame, to the body reference frame
         /// \tparam Vector type of the generalized vector defined in FrVector.h
-        /// \param bodyVector vector given in world reference frame
+        /// \param worldVector vector given in world reference frame
         /// \param fc frame convention (NED/NWU)
         /// \return vector in body reference frame
         template <class Vector>
@@ -827,7 +827,7 @@ namespace frydom {
 
         /// Project in place a generalized vector given in world reference frame, to the body reference frame
         /// \tparam Vector type of the generalized vector defined in FrVector.h
-        /// \param bodyVector vector given in world reference frame
+        /// \param worldVector vector given in world reference frame
         /// \param fc frame convention (NED/NWU)
         /// \return vector in body reference frame
         template <class Vector>

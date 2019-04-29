@@ -136,6 +136,7 @@ namespace frydom {
         /// This function gives the pressure.
         /// \param x x position.
         /// \param y y position.
+        /// \param z z position.
         /// \param fc frame convention (NED/NWU).
         /// \return Pressure at the position (x,y,z) in frame convention.
         double GetPressure(double x, double y, double z, FRAME_CONVENTION fc) const;

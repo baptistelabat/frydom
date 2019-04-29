@@ -1,7 +1,10 @@
-Install FRyDoM {#tutorial_install_frydom}
-==========================
+Quickstart {#tutorial_table_of_content_quickstart}
+==========
 
-Full portability is not operational yet, the cmake was developed for Linux only.
+## Installing/building FRyDoM and its dependencies
+
+Full portability is not operational yet, the cmake was developed for Linux only. All the following steps are then described
+for Linux-based platforms.
 
 ## 1) Install a C++ compiler
 
@@ -60,11 +63,54 @@ Don't forget to add your ssh key to your gitlab account.
 Download FRyDoM by performing a **clone** of the Git repository in a directory on your machine. 
 
     git clone link-to-the-repo
-
     
-## 5) Install the missing dependencies : Irrlicht, Eigen, BLAS, Boost, HDF5
+## 5)Install the missing dependencies : Irrlicht
 
-Installing Irrlicht is detailed in the [Irrlicht module](@ref module_irrlicht_installation).
+Irrlicht is the default visualization system used by Chrono::Engine. It is one of the few dependency that can't be
+managed by cmake. 
+
+It requires several packages:
+
+    sudo apt-get install x11-common 
+    sudo apt-get install libxxf86vm-dev 
+    sudo apt-get install libglu1-mesa-dev 
+    sudo apt-get install freeglut3 
+    sudo apt-get install freeglut3-dev
+    sudo apt-get install xorg-dev
+
+If it is not already done, build-essential needs to be installed:
+
+    sudo apt-get install build-essential
+    
+Then, you have to install Irrlicht on your system
+
+    sudo apt-get install libirrlicht-dev
+
+
+Here are the main features of Irrlicht:
+
+- Irrlicht shapes and textures can be added as _assets_ to Body objects.
+- A default lightweight application framework is provided
+  that can be used for default light/camera managements.
+- The Irrlicht view of the default application supports some 
+  mouse and key interaction:
+	- mouse left button for camera rotation
+	- mouse right button for camera x z motion
+	- mouse wheel rotation for camera forward/backward
+	- mouse wheel button to pick & drag objects (only if they have a collision shape!)
+	- press 'i' to see a setting panel,
+	- press arrows to have x z camera motion, press page up & down for y vertical motion
+	- press spacebar to stop simulation
+	- press 'p' to advance one timestep a time.
+	- press 'print screen' to start saving screenshots to disk
+	- etc. (see the 'i' panel)
+- There are some easy functions to draw grids, lines, springs, plots.
+- Contacts can be optionally drawn with vectors in 3D view
+- Link coordinate systems can be plotted on the 3D view
+- etc.
+    
+    
+## 6) Install the missing dependencies : Eigen, BLAS, Boost, HDF5
 
 All others packages can be installed simply :
 
@@ -74,7 +120,7 @@ All others packages can be installed simply :
     sudo apt-get install libboost-all-dev
 
 
-## 6) Run CMake
+## 7) Run CMake
 
 Create a build directory, and enter it 
     
@@ -86,7 +132,7 @@ run CMake
 
     cmake ..
 
-## 7) Compile the project
+## 8) Compile the project
 
 Still inside your build directory, you then have to build the target you want to execute. Several targets are available,
 as tutorials. Let's just build the demo_environment one.
@@ -95,10 +141,15 @@ as tutorials. Let's just build the demo_environment one.
     
 This will build every libraries needed, mangaged by CMake, from Chrono:Engine to Mathutils.
 
-## 8) Run the demo
+## 9) Run a demo
 
 Go to the directory, where the binaries were built. Here the tutorials are built in 'tests/demos'. 
 Then execute the demo-Environment. 
 
     cd tests/demos
     ./demo_Environment 
+	
+
+
+
+	

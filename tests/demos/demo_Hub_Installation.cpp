@@ -15,6 +15,13 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
+    /**
+     * This demo features the manipulation of a payload by a crane on a floating barge, in a 1m height regular wave field.
+     * Almost all features of FRyDoM are included in this demo : floating body with hydrodynamic load, kinematic links between
+     * bodies, mooring lines, etc. A static analysis can be performed before the dynamic simulation, in order to start with the
+     * complex system at rest, before the incoming of the wave.
+     */
+
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
     FRAME_CONVENTION fc = NWU;
     // Define the wave direction convention (GOTO or COMEFROM), can be used also for current and wind direction definition.
@@ -51,7 +58,7 @@ int main(int argc, char* argv[]) {
     auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
 
     // The Airy regular wave parameters are its height, period and direction.
-    double waveHeight = 1.;    double wavePeriod = 2.*M_PI;
+    double waveHeight = 10.;    double wavePeriod = 2.*M_PI;
     Direction waveDirection = Direction(SOUTH(fc));
 
     waveField->SetWaveHeight(waveHeight);
@@ -186,7 +193,7 @@ int main(int argc, char* argv[]) {
     bool elastic = true;
     double unstretchedLength = crane_node->GetPositionInWorld(fc).GetZ() - hub_node->GetPositionInWorld(fc).GetZ();
     auto u = Direction(0, 0, -1);
-    double linearDensity = 600;
+    double linearDensity = 60;
     double EA = 5e7;
     double sectionArea = 0.05;
     double YoungModulus = EA / sectionArea;
@@ -194,6 +201,10 @@ int main(int argc, char* argv[]) {
 
     auto CatenaryLine = make_catenary_line(crane_node, hub_node, &system, elastic, unstretchedLength, YoungModulus, sectionArea,
                                            linearDensity, FLUID_TYPE::AIR);
+
+//    auto CatenaryLine = make_dynamic_cable(crane_node, hub_node, &system, unstretchedLength, YoungModulus, sectionArea,
+//                                           linearDensity, 0., 10);
+
     CatenaryLine->SetLogged(true);
 
     // --------------------------------------------------
@@ -293,7 +304,7 @@ int main(int argc, char* argv[]) {
     system.GetStaticAnalysis()->SetTolerance(1E-2);
 
     // Now with the static solving
-//    system.SolveStaticWithRelaxation();
+    system.SolveStaticWithRelaxation();
     // Once the static is reached, you can visualize it
 //    system.Visualize(75.,false);
 
