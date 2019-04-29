@@ -1,2 +1,0 @@
-FRyDoM Developer's guide
-========================

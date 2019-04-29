@@ -5,9 +5,9 @@ set(REFACTORING_TESTS
         test_body_mapper
         test_hydrostatic_new_hdb
         test_radiation_model
-        how_to_cppfs
-        test_logging
         test_FrLinks
+        bench_Ellipsoid_OMAE2014
+        demo_WNL_and_NL_hydrostatics
         )
 
 #include(Add_matplotlib-cpp)
@@ -37,3 +37,14 @@ configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
 
 
 configure_file(../data/platform/Platform_HDB.hdb5 . COPYONLY)
+
+configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_2880_faces.obj . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_mean_position.obj . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4200_faces.obj . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2880_faces.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4200_faces.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_634_faces_with_sym.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_1416_faces_with_sym.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2774_faces_with_sym.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2880_faces_with_sym_mean_position.hdb5 . COPYONLY)
+configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4500_faces_WAMIT_mesh_sym_mean_position.hdb5 . COPYONLY)

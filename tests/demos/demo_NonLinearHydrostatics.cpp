@@ -17,6 +17,16 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
+    /** This demo presents two non linear hydrostatic models. In both, the hydrostatic force is computed by integrating
+     * the hydrostatic pressure over the wetted surface. In the weakly non linear hydrostatic model, the wetted surface
+     * is defined by the exact position of the body, clipped by the mean free surface plane (z = 0). In the non linear
+     * hydrostatic model, the wetted surface is still defined by the exact position of the body, but delimited by the
+     * incident wave field.
+     *
+     * This demo considers a cylinder with a mesh of 2900 elements, over which both models can be applied. (select the one
+     * you want to test).
+     */
+
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
     FRAME_CONVENTION fc = NWU;
 
@@ -25,7 +35,7 @@ int main(int argc, char* argv[]) {
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
-    system.SetName("Cylinder_2900_panels");
+    system.SetName("NonLinearHydrostatics");
 
     // --------------------------------------------------
     // Environment
@@ -100,11 +110,13 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------
     // Cylinder
     // --------------------------------------------------
-
+    // Create the body, name it and make it cylinder
     auto cylinder = system.NewBody();
     cylinder->SetName("Cylinder");
     cylinder->AddMeshAsset("Free_cylinder_2900_panels.obj");
     cylinder->SetColor(Yellow);
+
+//    makeItCylinder(cylinder, 0.2, 0.2, MU_PI*0.2*0.2*0.2*system.GetEnvironment()->GetFluidDensity(WATER));
 
     // Inertia Tensor
     double Mass = 12.88; // Maillage visu.
@@ -165,8 +177,8 @@ int main(int argc, char* argv[]) {
     // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
     // For saving snapshots of the simulation, just turn the boolean to true.
 
-    system.GetStaticAnalysis()->SetNbSteps(10);
-    system.SolveStaticWithRelaxation();
+//    system.GetStaticAnalysis()->SetNbSteps(10);
+//    system.SolveStaticWithRelaxation();
 
 //    system.Visualize(20,false);
 

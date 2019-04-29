@@ -15,6 +15,16 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
+    /**
+     * This demo features linear hydrodynamic loads on a semi submersible platform. Based on the linear potential flow
+     * theory, the hydrodynamic loads consists in hydrostatic, wave excitation (wave diffraction and Froude-Krylov) and radiation
+     * damping loads. Wave drift load can also be added, but needs additional parameters.
+     * The linear potential flow theory assumptions (small amplitude of motions of the body and small wave curvature)
+     * requires the introduction of a body equilibrium frame, for expressing the different loads.
+     *
+     * Wind and current loads are also taken into account, based on polar coefficients.
+     */
+
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
     FRAME_CONVENTION fc = NWU;
     // Define the wave direction convention (GOTO or COMEFROM), can be used also for current and wind direction definition.
@@ -22,7 +32,7 @@ int main(int argc, char* argv[]) {
 
     // Create an offshore system, it contains all physical objects : bodies, links, but also environment components
     FrOffshoreSystem system;
-    system.SetName("Platform");
+    system.SetName("Hydrodynamics");
 
     // --------------------------------------------------
     // Environment
@@ -41,7 +51,7 @@ int main(int argc, char* argv[]) {
 
     // Ramp.
     system.GetEnvironment()->GetTimeRamp()->SetActive(true);
-    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0,0,20,1);
+    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0,0,10,1);
 
     // ----- Current
     // A uniform field is also set by default for the current model. In order to set the current characteristics,
@@ -81,18 +91,18 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------
     // platform
     // --------------------------------------------------
-
+    // Create the platform, give it a name, asset, etc.
     auto platform = system.NewBody();
     platform->SetName("platform");
     platform->AddMeshAsset("Platform_GVA7500.obj");
     platform->SetColor(Yellow);
 
-    // Inertia Tensor
+    // Set the inertia tensor
     double Mass              = 3.22114e7;
     Position platformCoG(0.22, 0.22, 2.92);
     FrFrame platformCoGFrame(platformCoG, FrRotation(), NWU);
 
-    // Inertia
+    //      Inertia
     double Ixx               = 2.4e11;
     double Iyy               = 2.3e11;
     double Izz               = 2e12;
@@ -102,8 +112,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamics
 
-//     Create a hydrodynamic database (hdb), load data from the input file and creates and initialize the BEMBody.
-//    auto hdb = make_hydrodynamic_database("Platform_HDB.hdb5");
+//     Create a hydrodynamic database (hdb), load data from the input file and creates and initialize the BEMBodies.
     auto hdb = make_hydrodynamic_database("Platform_HDB_Without_drift.hdb5");
 
     // Create an equilibrium frame for the platform and add it to the system at the position of the body CoG.
@@ -113,15 +122,14 @@ int main(int argc, char* argv[]) {
     // Map the equilibrium frame and the body in the hdb mapper
     hdb->Map(0, platform.get(), eqFrame);
 
-    // -- Hydrostatic
-    // Create the linear hydrostatic force and add it to the platform
+    // -- Add a linear hydrostatic force to the platform
     auto forceHst = make_linear_hydrostatic_force(hdb, platform);
 
-    // -- Excitation
-    // Create the linear excitation force and add it to the platform
+    // -- Add a linear excitation force to the platform
     auto excitationForce = make_linear_excitation_force(hdb, platform);
 
-    // -- Radiation
+    // -- Create a linear radiation model and add it to the system. It is designed to compute the convolution integration
+    // and distribute the radiation force to the different bodies included inside the hydrodynamic data base.
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
     radiationModel->SetImpulseResponseSize(platform.get(), 40., 0.01);
 
@@ -145,9 +153,9 @@ int main(int argc, char* argv[]) {
     system.SetTimeStep(0.01);
 
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
-    // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
+    // the time length of the simulation (0 = infinite) and the distance from the camera to the objectif (200m).
     // For saving snapshots of the simulation, just turn the boolean to true.
 //    system.Visualize(50.,false);
-    system.RunInViewer(100, 200, false);
+    system.RunInViewer(0., 200, false);
 
 }

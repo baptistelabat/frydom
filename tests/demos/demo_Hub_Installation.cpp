@@ -15,6 +15,13 @@ using namespace frydom;
 
 int main(int argc, char* argv[]) {
 
+    /**
+     * This demo features the manipulation of a payload by a crane on a floating barge, in a 1m height regular wave field.
+     * Almost all features of FRyDoM are included in this demo : floating body with hydrodynamic load, kinematic links between
+     * bodies, mooring lines, etc. A static analysis can be performed before the dynamic simulation, in order to start with the
+     * complex system at rest, before the incoming of the wave.
+     */
+
     // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
     FRAME_CONVENTION fc = NWU;
     // Define the wave direction convention (GOTO or COMEFROM), can be used also for current and wind direction definition.
@@ -51,7 +58,7 @@ int main(int argc, char* argv[]) {
     auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
 
     // The Airy regular wave parameters are its height, period and direction.
-    double waveHeight = 1.;    double wavePeriod = 2.*M_PI;
+    double waveHeight = 10.;    double wavePeriod = 2.*M_PI;
     Direction waveDirection = Direction(SOUTH(fc));
 
     waveField->SetWaveHeight(waveHeight);
@@ -281,7 +288,7 @@ int main(int argc, char* argv[]) {
     system.GetStaticAnalysis()->SetTolerance(1E-2);
 
     // Now with the static solving
-//    system.SolveStaticWithRelaxation();
+    system.SolveStaticWithRelaxation();
     // Once the static is reached, you can visualize it
 //    system.Visualize(75.,false);
 

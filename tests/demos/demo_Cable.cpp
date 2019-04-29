@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
      *
      * Three demo are presented in this tutorial, with catenary lines and dynamic cables:
      *
-     *  * a fixed line : both ends are contrained.
+     *  * a fixed line : both ends are constrained.
      *  * a pendulum : a sphere balancing at the end of a line, with its other end fixed.
      *  * a Newton pendulum : consists of a series of identically sized metal balls suspended in a metal frame so that
      *      they are just touching each other at rest. Each ball is attached to the frame by two lines of equal length
