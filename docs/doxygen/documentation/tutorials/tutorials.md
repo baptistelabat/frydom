@@ -15,6 +15,8 @@ Illustration of FRyDoM features and capabilities
 -   @subpage tutorial_demo_Rotation_and_Frame
     
 -   @subpage tutorial_demo_Morison
+    
+-   @subpage tutorial_demo_MooringLines
 
 
 Demonstration of particular application cases
@@ -26,13 +28,17 @@ Demonstration of particular application cases
 
 -   @subpage tutorial_demo_Hydrodynamic
 
--   @subpage tutorial_demo_Morison
+-   @subpage tutorial_demo_Hub_Installation
 
 Benchmarks
 ==========
 
 -   @subpage tutorial_bench_cables
+
 -   @subpage tutorial_bench_DTMB
+
 -   @subpage tutorial_bench_sphere_decay
+
 -   @subpage tutorial_bench_sphere_regular
+
 -   @subpage tutorial_bench_sphere_irregular
