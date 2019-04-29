@@ -12,8 +12,8 @@ set(DEMOS
         demo_Hydrodynamic
         demo_Morison
         demo_Cable
-        demo_DynamicCable
-        demo_Hub_installation
+        demo_MooringLines
+        demo_Hub_Installation
         demo_NonLinearHydrostatics
         bench_SphereDecay
         bench_SphereRegular
