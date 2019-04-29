@@ -116,7 +116,9 @@ int main(int argc, char* argv[]) {
     cylinder->AddMeshAsset("Free_cylinder_2900_panels.obj");
     cylinder->SetColor(Yellow);
 
-//    makeItCylinder(cylinder, 0.2, 0.2, MU_PI*0.2*0.2*0.2*system.GetEnvironment()->GetFluidDensity(WATER));
+//    double mass = MU_PI*0.2*0.2*0.1*system.GetEnvironment()->GetFluidDensity(WATER);
+//
+//    makeItCylinder(cylinder, 0.2, 0.2, mass);
 
     // Inertia Tensor
     double Mass = 12.88; // Maillage visu.
@@ -139,7 +141,11 @@ int main(int argc, char* argv[]) {
 
     cylinder->SetInertiaTensor(cylinderInertia);
 
+//    FrRotation cylRotation;
+//    cylRotation.RotX_DEGREES(90., NWU);
+
     cylinder->SetPosition(Position(0.,0.,0.02), NWU);
+//    cylinder->Rotate(cylRotation);
 
     // Node.
     auto Node = cylinder->NewNode();
@@ -155,7 +161,7 @@ int main(int argc, char* argv[]) {
     // -- Hydrodynamic mesh
     auto CylinderMesh = make_hydro_mesh_nonlinear(cylinder,"Free_cylinder_2900_panels.obj");
 //    auto CylinderMesh = make_hydro_mesh_weakly_nonlinear(cylinder,"Free_cylinder_11600_panels.obj");
-    mathutils::Matrix33<double> Rotation;
+    mathutils::Matrix33<double> Rotation; // = cylRotation.GetRotationMatrix();
     Rotation.SetIdentity();
     Position MeshOffset(0,0,0);
     CylinderMesh->SetMeshOffsetRotation(MeshOffset,Rotation);

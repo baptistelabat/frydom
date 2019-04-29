@@ -15,9 +15,53 @@
 
 namespace frydom {
 
+    FrHydroMesh::FrHydroMesh(FrOffshoreSystem *system, std::string meshfile, std::shared_ptr<FrBody> body,
+                             bool WNL_or_NL) {
+        m_system = system;
+        m_meshfilename = meshfile;
+
+        m_body = body;
+        m_WNL_or_NL = WNL_or_NL;
+
+        // Initialization by default.
+        m_Rotation.SetIdentity();
+        m_MeshOffset = Position(0,0,0);
+
+        // m_clipper.
+        m_clipper = std::make_unique<mesh::MeshClipper>();
+
+    }
+
     void FrHydroMesh::Initialize() {
 
         // This function initializes the hydrostatic force object.
+
+        // Loading the input mesh file.
+        m_mesh_init = mesh::FrMesh(m_meshfilename);
+
+        // Tidal height.
+        double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
+
+        // Clipping surface.
+        if(m_WNL_or_NL) { // Incident wave field.
+
+            // Incident free surface.
+            FrFreeSurface *FreeSurface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface();
+
+            // Setting the free surface.
+            m_clipper->SetWaveClippingSurface(TidalHeight, FreeSurface);
+        }
+        else{ // Plane.
+
+            // Setting the free surface.
+            m_clipper->SetPlaneClippingSurface(TidalHeight);
+        }
+
+        // Body.
+        m_clipper->SetBody(m_body.get());
+
+        // Position and orientation of the mesh frame compared to the body frame.
+        m_clipper->SetMeshOffsetRotation(m_MeshOffset, m_Rotation);
 
         // Initialization of the parent class.
         FrPrePhysicsItem::Initialize();
@@ -52,6 +96,22 @@ namespace frydom {
 
     void FrHydroMesh::InitializeLog() {
 
+    }
+
+    void FrHydroMesh::SetMeshOffsetRotation(const Position& Offset, const mathutils::Matrix33<double>& Rotation) {
+        m_MeshOffset = Offset;
+        m_Rotation = Rotation;
+
+        // Position and orientation of the mesh frame compared to the body frame.
+        m_clipper->SetMeshOffsetRotation(m_MeshOffset, m_Rotation);
+    }
+
+    mesh::FrMesh FrHydroMesh::GetClippedMesh() {
+        return m_clipped_mesh;
+    }
+
+    mesh::FrMesh FrHydroMesh::GetInitialMesh() {
+        return m_mesh_init;
     }
 
     std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(std::shared_ptr<FrBody> body, std::string meshfile){

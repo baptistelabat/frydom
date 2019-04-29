@@ -64,73 +64,26 @@ namespace frydom {
     public:
 
         /// Constructor.
-        FrHydroMesh(FrOffshoreSystem* system, std::string meshfile, std::shared_ptr<FrBody> body, bool WNL_or_NL){
-            m_system = system;
-            m_meshfilename = meshfile;
-
-            m_body = body;
-            m_WNL_or_NL = WNL_or_NL;
-
-            // Initilization by default.
-            m_Rotation.SetIdentity();
-            m_MeshOffset = Position(0,0,0);
-
-            // m_clipper.
-            m_clipper = std::make_unique<mesh::MeshClipper>();
-
-            // Loading the input mesh file.
-            m_mesh_init = mesh::FrMesh(m_meshfilename);
-
-            // Tidal height.
-            double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
-
-            // Clipping surface.
-            if(m_WNL_or_NL == true) { // Incident wave field.
-
-                // Incident free surface.
-                FrFreeSurface *FreeSurface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface();
-
-                // Setting the free surface.
-                m_clipper->SetWaveClippingSurface(TidalHeight, FreeSurface);
-            }
-            else{ // Plane.
-
-                // Setting the free surface.
-                m_clipper->SetPlaneClippingSurface(TidalHeight);
-            }
-
-            // Body.
-            m_clipper->SetBody(m_body.get());
-
-            // Position and orientation of the mesh frame compared to the body frame.
-            m_clipper->SetMeshOffsetRotation(m_MeshOffset, m_Rotation);
-        }
+        FrHydroMesh(FrOffshoreSystem* system, std::string meshfile, std::shared_ptr<FrBody> body, bool WNL_or_NL);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "HydroMesh"; }
 
-        /// Intialize the nonlinear hydrostatic force model.
+        /// Initialize the nonlinear hydrostatic force model.
         void Initialize() override;
 
 
         /// This function sets the offset of the mesh frame in the body frame.
-        void SetMeshOffsetRotation(const Position Offset, const mathutils::Matrix33<double> Rotation){
-            m_MeshOffset = Offset;
-            m_Rotation = Rotation;
-        };
+        void SetMeshOffsetRotation(const Position& Offset, const mathutils::Matrix33<double>& Rotation);;
 
         /// Initialize the log
         void InitializeLog() override;
 
         /// This function returns the clipped mesh.
-        mesh::FrMesh GetClippedMesh(){
-            return m_clipped_mesh;
-        }
+        mesh::FrMesh GetClippedMesh();
 
-        mesh::FrMesh GetInitialMesh(){
-            return m_mesh_init;
-        }
+        mesh::FrMesh GetInitialMesh();
 
         /// This function returns the center of buoyancy of the clipped mesh in the world frame.
         Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);

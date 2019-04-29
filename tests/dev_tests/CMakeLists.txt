@@ -7,7 +7,7 @@ set(REFACTORING_TESTS
         test_radiation_model
         test_FrLinks
         bench_Ellipsoid_OMAE2014
-        demo_WNL_and_NL_hydrostatics
+        test_WNL_and_NL_hydrostatics
         )
 
 #include(Add_matplotlib-cpp)
