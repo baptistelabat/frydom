@@ -167,7 +167,7 @@ namespace frydom {
         m_InitMesh = FrMesh(mesh);
 
         // Transport of the mesh from the mesh frame to the body frame, then applies the rotation of mesh in the world frame.
-        UpdateMeshPositionInWorld();
+//        UpdateMeshPositionInWorld();
 
         // Partition of the mesh.
         Initialize();
@@ -202,42 +202,42 @@ namespace frydom {
         m_body = body;
     }
 
-    void mesh::MeshClipper::UpdateMeshPositionInWorld() {
-
-        // This function transports the mesh from the mesh frame to the body frame, then applies the rotation of mesh in the world frame.
-
-        // Iterating on vertices to get their place wrt to plane.
-        VertexHandle vh;
-        Position NodeInBody, NodeInWorld;
-        Position BodyPos = m_body->GetPosition(NWU);
-
-        // Loop over the vertices.
-        for (FrMesh::VertexIter vh_iter = m_InitMesh.vertices_begin();
-             vh_iter != m_InitMesh.vertices_end(); ++vh_iter) {
-
-            vh = *vh_iter;
-
-            // From the mesh frame to the body frame.
-            m_InitMesh.point(vh) = GetNodePositionInBody(m_InitMesh.point(vh));
-
-            NodeInBody[0] = m_InitMesh.point(vh)[0];
-            NodeInBody[1] = m_InitMesh.point(vh)[1];
-            NodeInBody[2] = m_InitMesh.point(vh)[2];
-
-            // Rotation from the body frame to the world frame (just the rotation and the vertical translation, not the horizontal translation of the mesh at the good position in the world mesh).
-            // The horizontal translation is not done to avoid numerical errors.
-            NodeInWorld = m_body->ProjectVectorInWorld<Position>(NodeInBody, NWU);
-
-            // Vertical translation.
-            NodeInWorld[2] = NodeInWorld[2] + BodyPos[2]; // x.
-
-            m_InitMesh.point(vh)[0] = NodeInWorld[0];
-            m_InitMesh.point(vh)[1] = NodeInWorld[1];
-            m_InitMesh.point(vh)[2] = NodeInWorld[2];
-
-        }
-
-    }
+//    void mesh::MeshClipper::UpdateMeshPositionInWorld() {
+//
+//        // This function transports the mesh from the mesh frame to the body frame, then applies the rotation of mesh in the world frame.
+//
+//        // Iterating on vertices to get their place wrt to plane.
+//        VertexHandle vh;
+//        Position NodeInBody, NodeInWorld;
+//        Position BodyPos = m_body->GetPosition(NWU);
+//
+//        // Loop over the vertices.
+//        for (FrMesh::VertexIter vh_iter = m_InitMesh.vertices_begin();
+//             vh_iter != m_InitMesh.vertices_end(); ++vh_iter) {
+//
+//            vh = *vh_iter;
+//
+//            // From the mesh frame to the body frame.
+//            m_InitMesh.point(vh) = GetNodePositionInBody(m_InitMesh.point(vh));
+//
+//            NodeInBody[0] = m_InitMesh.point(vh)[0];
+//            NodeInBody[1] = m_InitMesh.point(vh)[1];
+//            NodeInBody[2] = m_InitMesh.point(vh)[2];
+//
+//            // Rotation from the body frame to the world frame (just the rotation and the vertical translation, not the horizontal translation of the mesh at the good position in the world mesh).
+//            // The horizontal translation is not done to avoid numerical errors.
+//            NodeInWorld = m_body->ProjectVectorInWorld<Position>(NodeInBody, NWU);
+//
+//            // Vertical translation.
+//            NodeInWorld[2] = NodeInWorld[2] + BodyPos[2]; // x.
+//
+//            m_InitMesh.point(vh)[0] = NodeInWorld[0];
+//            m_InitMesh.point(vh)[1] = NodeInWorld[1];
+//            m_InitMesh.point(vh)[2] = NodeInWorld[2];
+//
+//        }
+//
+//    }
 
     void mesh::MeshClipper::Initialize() {
 
@@ -418,29 +418,29 @@ namespace frydom {
 
     }
 
-    VectorT<double, 3> mesh::MeshClipper::GetNodePositionInBody(VectorT<double, 3> point) const {
-
-        // From the mesh frame to the body frame: OmP = ObOm + bRm*OmP.
-        mathutils::Vector3d<double> NodeInMeshFrameVect;
-        NodeInMeshFrameVect[0] = point[0];
-        NodeInMeshFrameVect[1] = point[1];
-        NodeInMeshFrameVect[2] = point[2];
-
-        mathutils::Vector3d<double> TmpVect;
-        TmpVect = m_Rotation*NodeInMeshFrameVect;
-
-        Position NodeInBodyFrame;
-        NodeInBodyFrame[0] = m_MeshOffset[0] + TmpVect[0];
-        NodeInBodyFrame[1] = m_MeshOffset[1] + TmpVect[1];
-        NodeInBodyFrame[2] = m_MeshOffset[2] + TmpVect[2];
-
-        // Position -> point.
-        FrMesh::Point Pout;
-        Pout[0] = NodeInBodyFrame[0];
-        Pout[1] = NodeInBodyFrame[1];
-        Pout[2] = NodeInBodyFrame[2];
-
-        return Pout;
-
-    }
+//    VectorT<double, 3> mesh::MeshClipper::GetNodePositionInBody(VectorT<double, 3> point) const {
+//
+//        // From the mesh frame to the body frame: OmP = ObOm + bRm*OmP.
+//        mathutils::Vector3d<double> NodeInMeshFrameVect;
+//        NodeInMeshFrameVect[0] = point[0];
+//        NodeInMeshFrameVect[1] = point[1];
+//        NodeInMeshFrameVect[2] = point[2];
+//
+//        mathutils::Vector3d<double> TmpVect;
+//        TmpVect = m_Rotation*NodeInMeshFrameVect;
+//
+//        Position NodeInBodyFrame;
+//        NodeInBodyFrame[0] = m_MeshOffset[0] + TmpVect[0];
+//        NodeInBodyFrame[1] = m_MeshOffset[1] + TmpVect[1];
+//        NodeInBodyFrame[2] = m_MeshOffset[2] + TmpVect[2];
+//
+//        // Position -> point.
+//        FrMesh::Point Pout;
+//        Pout[0] = NodeInBodyFrame[0];
+//        Pout[1] = NodeInBodyFrame[1];
+//        Pout[2] = NodeInBodyFrame[2];
+//
+//        return Pout;
+//
+//    }
 };

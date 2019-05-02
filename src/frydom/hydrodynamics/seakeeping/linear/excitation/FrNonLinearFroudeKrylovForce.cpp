@@ -108,7 +108,7 @@ namespace frydom {
         FrForce::StepFinalize();
 
         // Writing the clipped mesh in an output file.
-//        m_clipped_mesh.Write("Mesh_clipped_Froude_Krylov.obj");
+//        m_clippedMesh.Write("Mesh_clipped_Froude_Krylov.obj");
     }
 
     std::shared_ptr<FrNonLinearFroudeKrylovForce>

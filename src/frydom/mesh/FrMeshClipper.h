@@ -206,7 +206,7 @@ namespace frydom {
             /// This function sets the body in the clipping surface object.
             void SetBody(FrBody* body);
 
-            void UpdateMeshPositionInWorld();
+//            void UpdateMeshPositionInWorld();
 
         private:
 
@@ -563,8 +563,8 @@ namespace frydom {
 
             void Finalize();
 
-            /// This function gives the position in the body frame of a node in the mesh frame.
-            FrMesh::Point GetNodePositionInBody(FrMesh::Point point) const;
+//            /// This function gives the position in the body frame of a node in the mesh frame.
+//            FrMesh::Point GetNodePositionInBody(FrMesh::Point point) const;
 
 
         };

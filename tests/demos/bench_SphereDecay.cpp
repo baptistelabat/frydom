@@ -214,7 +214,7 @@ int main(int argc, char* argv[]) {
     mathutils::Matrix33<double> Rotation;
     Rotation.SetIdentity();
     Position MeshOffset(0,0,0);
-    bodyMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
+    bodyMesh->SetMeshOffset(MeshOffset, Rotation);
     bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);

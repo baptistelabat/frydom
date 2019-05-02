@@ -21,6 +21,8 @@
 #include "frydom/mesh/FrMeshClipper.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
+#include "frydom/core/common/FrFrame.h"
+
 namespace frydom {
 
     class FrOffshoreSystem;
@@ -41,16 +43,18 @@ namespace frydom {
         std::string m_meshfilename; // Input mesh file.
 
         /// Clipped mesh.
-        mesh::FrMesh m_clipped_mesh;
+        mesh::FrMesh m_clippedMesh;
 
         /// Input mesh file.
-        mesh::FrMesh m_mesh_init;
+        mesh::FrMesh m_initMesh;
 
-        /// Mesh frame offset in the body frame.
-        Position m_MeshOffset;
+        FrFrame m_meshOffset;
 
-        /// Rotation of the mesh frame compared to the body frame.
-        mathutils::Matrix33<double> m_Rotation;
+//        /// Mesh frame offset in the body frame.
+//        Position m_MeshOffset;
+//
+//        /// Rotation of the mesh frame compared to the body frame.
+//        mathutils::Matrix33<double> m_Rotation;
 
         /// Boolean to know if the mesh is clipped by a wave (True) or a plane (False).
         bool m_WNL_or_NL;
@@ -75,7 +79,7 @@ namespace frydom {
 
 
         /// This function sets the offset of the mesh frame in the body frame.
-        void SetMeshOffsetRotation(const Position& Offset, const mathutils::Matrix33<double>& Rotation);;
+        void SetMeshOffset(FrFrame meshOffset);
 
         /// Initialize the log
         void InitializeLog() override;
@@ -89,6 +93,11 @@ namespace frydom {
         Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);
 
     private:
+
+        void UpdateMeshPositionInWorld();
+
+        /// This function gives the position in the body frame of a node in the mesh frame.
+        mesh::FrMesh::Point GetNodePositionInBody(mesh::FrMesh::Point point) const;
 
         /// Update nonlinear hydrostatic force.
         /// \param time Current time of the simulation from beginning.

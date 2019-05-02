@@ -141,11 +141,11 @@ int main(int argc, char* argv[]) {
 
     cylinder->SetInertiaTensor(cylinderInertia);
 
-//    FrRotation cylRotation;
-//    cylRotation.RotX_DEGREES(90., NWU);
+    FrRotation cylRotation;
+    cylRotation.RotX_DEGREES(10., NWU);
 
-    cylinder->SetPosition(Position(0.,0.,0.02), NWU);
-//    cylinder->Rotate(cylRotation);
+//    cylinder->SetPosition(Position(0.,0.,0.02), NWU);
+    cylinder->Rotate(cylRotation);
 
     // Node.
     auto Node = cylinder->NewNode();
@@ -155,16 +155,16 @@ int main(int argc, char* argv[]) {
     AssetNode->SetSize(20);
 
     // Extra linear damping force.
-    auto LinearDampingForce = make_linear_damping_force(cylinder, WATER, false);
-    LinearDampingForce->SetDiagonalDamping(10e0,10e0,10e0,10e0,10e0,10e0);
+//    auto LinearDampingForce = make_linear_damping_force(cylinder, WATER, false);
+//    LinearDampingForce->SetDiagonalDamping(10e0,10e0,10e0,10e0,10e0,10e0);
 
     // -- Hydrodynamic mesh
     auto CylinderMesh = make_hydro_mesh_nonlinear(cylinder,"Free_cylinder_2900_panels.obj");
 //    auto CylinderMesh = make_hydro_mesh_weakly_nonlinear(cylinder,"Free_cylinder_11600_panels.obj");
-    mathutils::Matrix33<double> Rotation; // = cylRotation.GetRotationMatrix();
-    Rotation.SetIdentity();
-    Position MeshOffset(0,0,0);
-    CylinderMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
+//    mathutils::Matrix33<double> Rotation; // = cylRotation.GetRotationMatrix();
+//    Rotation.SetIdentity();
+//    Position MeshOffset(0,0,0);
+//    CylinderMesh->SetMeshOffset(MeshOffset, Rotation);
     CylinderMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     // -- Hydrostatics

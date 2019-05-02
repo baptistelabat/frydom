@@ -211,7 +211,7 @@ int main(int argc, char* argv[]) {
 //    mathutils::Matrix33<double> Rotation;
 //    Rotation.SetIdentity();
 //    Position MeshOffset(0,0,0);
-//    EllipsoidMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
+//    EllipsoidMesh->SetMeshOffset(MeshOffset,Rotation);
 
     // Weakly or fully nonlinear hydrostatics.
 //    auto forceHst = make_nonlinear_hydrostatic_force(Ellipsoid,EllipsoidMesh);

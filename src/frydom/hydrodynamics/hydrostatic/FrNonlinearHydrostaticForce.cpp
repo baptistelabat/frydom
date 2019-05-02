@@ -67,7 +67,7 @@ namespace frydom {
         FrForce::StepFinalize();
 
         // Writing the clipped mesh in an output file.
-//        m_clipped_mesh.Write("Mesh_clipped_Hydrostatics.obj");
+//        m_clippedMesh.Write("Mesh_clipped_Hydrostatics.obj");
 //        std::exit(0);
 
     }
