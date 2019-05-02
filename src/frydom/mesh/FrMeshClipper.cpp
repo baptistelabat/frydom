@@ -12,16 +12,6 @@ namespace frydom {
 
     void mesh::ClippingSurface::SetMeanHeight(const double &meanHeight) { m_meanHeight = meanHeight; }
 
-    void
-    mesh::ClippingSurface::SetMeshOffsetRotation(const Position &Offset, const mathutils::Matrix33<double> &Rotation) {
-        m_MeshOffset = Offset;
-        m_Rotation = Rotation;
-    }
-
-    void mesh::ClippingSurface::SetBody(FrBody *body) {
-        m_body = body;
-    }
-
     VectorT<double, 3> mesh::ClippingSurface::GetNodePositionInWorld(VectorT<double, 3> point) const {
 
         mathutils::Vector3d<double> NodeInWorldWithoutTranslation;
@@ -31,7 +21,7 @@ namespace frydom {
 
         // Application of the translation.
         Position NodeInWorldFrame;
-        Position BodyPos = m_body->GetPosition(NWU);
+        Position BodyPos = m_bodyPosition;
         NodeInWorldFrame[0] = BodyPos[0] + NodeInWorldWithoutTranslation[0]; // x.
         NodeInWorldFrame[1] = BodyPos[1] + NodeInWorldWithoutTranslation[1]; // y.
         NodeInWorldFrame[2] = NodeInWorldWithoutTranslation[2]; // z.
@@ -43,6 +33,10 @@ namespace frydom {
 
         return Pout;
 
+    }
+
+    void mesh::ClippingSurface::SetBodyPosition(Position bodyPos) {
+            m_bodyPosition = bodyPos;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -149,13 +143,6 @@ namespace frydom {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-
-    void mesh::MeshClipper::SetMeshOffsetRotation(const Position &Offset, const mathutils::Matrix33<double> &Rotation) {
-        m_clippingSurface->SetMeshOffsetRotation(Offset,Rotation);
-        m_MeshOffset = Offset;
-        m_Rotation = Rotation;
-    }
-
     std::shared_ptr<mesh::ClippingSurface> mesh::MeshClipper::GetClippingSurface() { return m_clippingSurface; }
 
     mesh::FrMesh &mesh::MeshClipper::Apply(const mesh::FrMesh &mesh) {
@@ -195,11 +182,6 @@ namespace frydom {
 
         m_clippingSurface = std::make_shared<ClippingWaveSurface>(meanHeight,FreeSurface);
 
-    }
-
-    void mesh::MeshClipper::SetBody(FrBody *body) {
-        m_clippingSurface->SetBody(body);
-        m_body = body;
     }
 
 //    void mesh::MeshClipper::UpdateMeshPositionInWorld() {

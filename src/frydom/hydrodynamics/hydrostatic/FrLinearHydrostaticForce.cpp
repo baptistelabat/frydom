@@ -111,6 +111,8 @@ namespace frydom {
     std::shared_ptr<FrLinearHydrostaticForce>
     make_linear_hydrostatic_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body, std::string meshfile,Position MeshOffset, mathutils::Matrix33<double> Rotation){
 
+        //FIXME !!!
+
         // This function creates the linear hydrostatic force object for computing the linear hydrostatic loads with a hydrostatic sitffness matrix computed by FrMesh.
 
         // Construction of the hydrostatic force object from the HDB.
@@ -124,8 +126,8 @@ namespace frydom {
         mesh::MeshClipper Mesh_clipper = mesh::MeshClipper();
         double TidalHeight = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
         Mesh_clipper.SetPlaneClippingSurface(TidalHeight);
-        Mesh_clipper.SetBody(body.get());
-        Mesh_clipper.SetMeshOffsetRotation(MeshOffset, Rotation);
+//        Mesh_clipper.SetBody(body.get());
+//        Mesh_clipper.SetMeshOffsetRotation(MeshOffset, Rotation);
         mesh::FrMesh Clipped_mesh = Mesh_clipper.Apply(Mesh_Init);
         Position BodyCoG = body->GetCOGPositionInWorld(NWU);
         Vector3d<double> cog;

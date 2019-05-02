@@ -51,11 +51,8 @@ namespace frydom {
             m_clipper->SetPlaneClippingSurface(TidalHeight);
         }
 
-        // Body.
-        m_clipper->SetBody(m_body.get());
-
-//        // Position and orientation of the mesh frame compared to the body frame.
-//        m_clipper->SetMeshOffsetRotation(m_MeshOffset, m_Rotation);
+        // Set the body position for horizontal correction in the clipping surface
+        m_clipper->GetClippingSurface()->SetBodyPosition(m_body->GetPosition(NWU));
 
         // Initialization of the parent class.
         FrPrePhysicsItem::Initialize();

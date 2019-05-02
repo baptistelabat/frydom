@@ -32,14 +32,7 @@ namespace frydom {
             double m_meanHeight = 0.;
             double m_ThresholdDichotomy = 1e-4;
 
-            /// Body.
-            FrBody* m_body;
-
-            /// Mesh frame offset in the body frame.
-            Position m_MeshOffset;
-
-            /// Rotation of the mesh frame compared to the body frame.
-            mathutils::Matrix33<double> m_Rotation;
+            Position m_bodyPosition;
 
         public:
 
@@ -61,11 +54,7 @@ namespace frydom {
             /// This function gives the intersection node position between an edge and an incident wave field.
             virtual FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) = 0;
 
-            /// This function sets the offset of the mesh frame in the body frame.
-            void SetMeshOffsetRotation(const Position& Offset, const mathutils::Matrix33<double>& Rotation);
-
-            /// This function gives the body.
-            void SetBody(FrBody* body);
+            void SetBodyPosition(Position bodyPos);
 
             /// This function gives the position in the world frame at the good position (with horizontal translation) of a node in the world frame without horizontal translation.
             FrMesh::Point GetNodePositionInWorld(FrMesh::Point point) const;
@@ -170,15 +159,6 @@ namespace frydom {
             /// Vector to store the faces which need to be clipped.
             std::vector<FrMesh::FaceHandle *> c_FacesToUpdate;
 
-            /// Body.
-            FrBody* m_body;
-
-            /// Mesh frame offset in the body frame.
-            Position m_MeshOffset;
-
-            /// Rotation of the mesh frame compared to the body frame.
-            mathutils::Matrix33<double> m_Rotation;
-
 
         public:
 
@@ -199,12 +179,6 @@ namespace frydom {
 
             /// This function sets a clipping wave surface.
             void SetWaveClippingSurface(const double &meanHeight, FrFreeSurface *FreeSurface);
-
-            /// This function sets the offset and the rotation matrix of the mesh frame in the body frame in the clipping surface object.
-            void SetMeshOffsetRotation(const Position& Offset, const mathutils::Matrix33<double>& Rotation);
-
-            /// This function sets the body in the clipping surface object.
-            void SetBody(FrBody* body);
 
 //            void UpdateMeshPositionInWorld();
 
