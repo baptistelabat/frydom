@@ -41,7 +41,6 @@ namespace frydom {
 
         public:
 
-            /// Constructor of the class.
             explicit FrAddedMassBase(FrRadiationModel* radiationModel);
 
             //

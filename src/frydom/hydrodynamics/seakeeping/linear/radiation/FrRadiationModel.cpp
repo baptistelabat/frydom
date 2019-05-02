@@ -107,9 +107,9 @@ namespace frydom {
     // ----------------------------------------------------------------
 
     FrRadiationConvolutionModel::FrRadiationConvolutionModel(std::shared_ptr<FrHydroDB> HDB)
-        : FrRadiationModel(HDB) { /// Initialization of the the parent class FrRadiationModel.
+        : FrRadiationModel(HDB) { // Initialization of the the parent class FrRadiationModel.
 
-        /// Constructor of the class FrRadiationConvolutionModel.
+        // Constructor of the class FrRadiationConvolutionModel.
 
         // FIXME : a passer dans la méthode initialize pour eviter les pb de précédence vis a vis de la HDB
 
@@ -286,7 +286,7 @@ namespace frydom {
     std::shared_ptr<FrRadiationConvolutionModel>
     make_radiation_convolution_model(std::shared_ptr<FrHydroDB> HDB, FrOffshoreSystem* system){
 
-        /// This subroutine creates and adds the radiation convulation model to the offshore system from the HDB.
+        // This subroutine creates and adds the radiation convulation model to the offshore system from the HDB.
 
         // Construction and initialization of the classes dealing with radiation models.
         auto radiationModel = std::make_shared<FrRadiationConvolutionModel>(HDB);

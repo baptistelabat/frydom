@@ -33,19 +33,23 @@ namespace frydom {
     class FrWaveDriftForce : public FrForce {
 
     private:
-        std::shared_ptr<FrHydroDB> m_hdb;
-        std::shared_ptr<FrWaveDriftPolarData> m_table;
+        std::shared_ptr<FrHydroDB> m_hdb;               ///< Hydrodynamic database
+        std::shared_ptr<FrWaveDriftPolarData> m_table;  ///< Wave drift coefficient polar table
 
     public:
 
+        /// Constructor of the wave drift force with specified hydrodynamic database
+        /// \param hdb Hydrodynamic database
         explicit FrWaveDriftForce(std::shared_ptr<FrHydroDB> hdb);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "WaveDriftForce"; }
 
+        /// Method to initialize the wave drift model
         void Initialize() override;
 
+        /// Method to be applied at the end of each time steps
         void StepFinalize() override;
 
     private:
