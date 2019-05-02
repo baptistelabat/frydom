@@ -75,36 +75,25 @@ namespace frydom {
 
     void FrHydroMesh::UpdateMeshPositionInWorld() {
 
-        // This function transports the mesh from the mesh frame to the body frame, then applies the rotation of mesh in the world frame.
-
-        // Iterating on vertices to get their place wrt to plane.
-        VertexHandle vh;
-        Position NodeInBody, NodeInWorld;
-        Position BodyPos = m_body->GetPosition(NWU);
+        // This function transports the mesh from the mesh frame to the body frame, then applies the rotation of mesh
+        // in the world frame. Iterating on vertices to get their place wrt to plane.
 
         // Loop over the vertices.
-        for (mesh::FrMesh::VertexIter vh_iter = m_clippedMesh.vertices_begin();
-             vh_iter != m_clippedMesh.vertices_end(); ++vh_iter) {
-
-            vh = *vh_iter;
+        for (auto vh : m_clippedMesh.vertices()){
 
             // From the mesh frame to the body frame.
             m_clippedMesh.point(vh) = GetNodePositionInBody(m_clippedMesh.point(vh));
 
-            NodeInBody[0] = m_clippedMesh.point(vh)[0];
-            NodeInBody[1] = m_clippedMesh.point(vh)[1];
-            NodeInBody[2] = m_clippedMesh.point(vh)[2];
+            auto NodeInBody = mesh::OpenMeshPointToVector3d<Position>(m_clippedMesh.point(vh));
 
             // Rotation from the body frame to the world frame (just the rotation and the vertical translation, not the horizontal translation of the mesh at the good position in the world mesh).
             // The horizontal translation is not done to avoid numerical errors.
-            NodeInWorld = m_body->ProjectVectorInWorld<Position>(NodeInBody, NWU);
+            auto NodeInWorld = m_body->ProjectVectorInWorld<Position>(NodeInBody, NWU);
 
             // Vertical translation.
-            NodeInWorld[2] = NodeInWorld[2] + BodyPos[2]; // x.
+            NodeInWorld[2] += m_body->GetPosition(NWU)[2];
 
-            m_clippedMesh.point(vh)[0] = NodeInWorld[0];
-            m_clippedMesh.point(vh)[1] = NodeInWorld[1];
-            m_clippedMesh.point(vh)[2] = NodeInWorld[2];
+            m_clippedMesh.point(vh) = mesh::Vector3dToOpenMeshPoint(NodeInWorld);
 
         }
 
@@ -112,27 +101,14 @@ namespace frydom {
 
     VectorT<double, 3> FrHydroMesh::GetNodePositionInBody(VectorT<double, 3> point) const {
 
+
         // From the mesh frame to the body frame: OmP = ObOm + bRm*OmP.
-        mathutils::Vector3d<double> NodeInMeshFrameVect;
-        NodeInMeshFrameVect[0] = point[0];
-        NodeInMeshFrameVect[1] = point[1];
-        NodeInMeshFrameVect[2] = point[2];
+        auto NodeInMeshFrame = mesh::OpenMeshPointToVector3d<Position>(point);
 
-        mathutils::Vector3d<double> TmpVect;
-        TmpVect = m_meshOffset.GetRotation().GetRotationMatrix()*NodeInMeshFrameVect;
+        // Frame transformation, from mesh frame to body frame
+        Position NodeInBodyFrame = m_meshOffset.ProjectVectorFrameInParent(NodeInMeshFrame,NWU) + m_meshOffset.GetPosition(NWU);
 
-        Position NodeInBodyFrame;
-        NodeInBodyFrame[0] = m_meshOffset.GetPosition(NWU)[0] + TmpVect[0];
-        NodeInBodyFrame[1] = m_meshOffset.GetPosition(NWU)[1] + TmpVect[1];
-        NodeInBodyFrame[2] = m_meshOffset.GetPosition(NWU)[2] + TmpVect[2];
-
-        // Position -> point.
-        mesh::FrMesh::Point Pout;
-        Pout[0] = NodeInBodyFrame[0];
-        Pout[1] = NodeInBodyFrame[1];
-        Pout[2] = NodeInBodyFrame[2];
-
-        return Pout;
+        return mesh::Vector3dToOpenMeshPoint(NodeInBodyFrame);
 
     }
 

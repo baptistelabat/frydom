@@ -3,6 +3,7 @@
 //
 
 #include "FrMesh.h"
+#include "frydom/core/math/FrVector.h"
 
 namespace frydom {
     namespace mesh {
@@ -15,7 +16,7 @@ namespace frydom {
             InertialProperties inertialProperties;
 
             inertialProperties.m_mass = density * mesh.GetVolume();
-            inertialProperties.m_cog = OpenMeshPointToMathUtilsVector3d(mesh.GetCOG());
+            inertialProperties.m_cog = OpenMeshPointToVector3d<Position>(mesh.GetCOG());
 
             double intV_x2 = mesh.GetVolumeIntegral(POLY_X2);
             double intV_y2 = mesh.GetVolumeIntegral(POLY_Y2);
@@ -96,11 +97,6 @@ namespace frydom {
 
 
             return inertialProperties;
-        }
-
-        template<typename Scalar=double>
-        mathutils::Vector3d<Scalar> OpenMeshPointToMathUtilsVector3d(const mesh::FrMesh::Point &point) {
-            mathutils::Vector3d<Scalar> vector(point[0], point[1], point[2]);
         }
 
         void meshutils::IncrementalMeshWriter::operator()(const FrMesh &mesh) {

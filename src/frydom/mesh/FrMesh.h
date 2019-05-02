@@ -561,8 +561,16 @@ namespace frydom {
         InertialProperties
         CalcShellInertiaProperties(const FrMesh &mesh, double rho, double thickness);
 
-        template <typename Scalar=double>
-        mathutils::Vector3d<Scalar> OpenMeshPointToMathUtilsVector3d(const mesh::FrMesh::Point &point);
+        /// Convert an OpenMesh point into a FRyDoM Vector
+        template <class Vector>
+        inline Vector OpenMeshPointToVector3d(const mesh::FrMesh::Point &point) {
+            return Vector(point[0], point[1], point[2]); // Always gives a FRyDoM vector expressed in NWU
+        }
+
+        /// Convert a mathutils Vector3d into an OpenMesh point
+        inline mesh::FrMesh::Point Vector3dToOpenMeshPoint(const mathutils::Vector3d<double>& vector3d) {
+            return {vector3d[0], vector3d[1], vector3d[2]};
+        }
 
     }  // end namespace mesh
 
