@@ -19,7 +19,7 @@ namespace frydom {
                              bool WNL_or_NL)
                              : m_system(system), m_meshfilename(meshfile), m_body(body), m_WNL_or_NL(WNL_or_NL) {
         // m_clipper
-        m_clipper = std::make_unique<mesh::MeshClipper>();
+        m_clipper = std::make_unique<mesh::FrMeshClipper>();
 
         m_meshOffset = FrFrame();
 

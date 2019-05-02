@@ -63,7 +63,7 @@ namespace frydom {
         std::shared_ptr<FrBody> m_body;
 
         /// Clipper.
-        std::unique_ptr<mesh::MeshClipper> m_clipper;
+        std::unique_ptr<mesh::FrMeshClipper> m_clipper;
 
     public:
 

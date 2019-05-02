@@ -38,7 +38,7 @@ namespace frydom {
     namespace mesh {
 
 
-        enum VertexPosition {  // N'a a priori de sens que lors de la decoupe... Mettre dans MeshClipper ?
+        enum VertexPosition {  // N'a a priori de sens que lors de la decoupe... Mettre dans FrMeshClipper ?
             // On pourrait du coup plutot utiliser les fonctions d'ajout dynamique de proprietes !!
             VP_ABOVE_SURFACE = 0,
             VP_ON_SURFACE = 1,
@@ -509,7 +509,7 @@ namespace frydom {
 //
 //                // S'il n'y en a aucune (watertight), on retourne false
 //
-//                // Pour chaque polygone, on appelle la methode de verif prenant en entree la ClippingSurface
+//                // Pour chaque polygone, on appelle la methode de verif prenant en entree la FrClippingSurface
 //
 //            }
 

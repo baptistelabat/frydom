@@ -123,7 +123,7 @@ namespace frydom {
 
         // Computation of the hydrostatic stiffness matrix.
         mesh::FrMesh Mesh_Init = mesh::FrMesh(meshfile);
-        mesh::MeshClipper Mesh_clipper = mesh::MeshClipper();
+        mesh::FrMeshClipper Mesh_clipper = mesh::FrMeshClipper();
         double TidalHeight = body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
         Mesh_clipper.SetPlaneClippingSurface(TidalHeight);
 //        Mesh_clipper.SetBody(body.get());

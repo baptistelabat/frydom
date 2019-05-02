@@ -23,10 +23,10 @@ namespace frydom {
     namespace mesh {
 
         /**
-        * \class ClippingSurface
+        * \class FrClippingSurface
         * \brief Class for dealing with the clipping incident wave field.
         */
-        class ClippingSurface {
+        class FrClippingSurface {
 
         protected:
             double m_meanHeight = 0.;
@@ -37,10 +37,10 @@ namespace frydom {
         public:
 
             /// Constructor.
-            ClippingSurface() = default;
+            FrClippingSurface() = default;
 
             /// Constructor and initialization of the mean height.
-            explicit ClippingSurface(double meanHeight);
+            explicit FrClippingSurface(double meanHeight);
 
             /// This function sets the mean height of the incident wave field.
             void SetMeanHeight(const double &meanHeight);
@@ -58,18 +58,18 @@ namespace frydom {
         };
 
         /**
-        * \class ClippingPlane
+        * \class FrClippingPlane
         * \brief Class used when the clipping incident wave field is a HORIZONTAL plane.
         */
-        class ClippingPlane : public ClippingSurface {
+        class FrClippingPlane : public FrClippingSurface {
 
         public:
 
             /// Constructor.
-            ClippingPlane() = default;
+            FrClippingPlane() = default;
 
             /// Constructor.
-            explicit ClippingPlane(double meanHeight);
+            explicit FrClippingPlane(double meanHeight);
 
             /// This function gives the distance to the plane.
             inline double GetDistance(const FrMesh::Point &point) const override {
@@ -98,10 +98,10 @@ namespace frydom {
         };
 
         /**
-        * \class ClippingWavesSurface
+        * \class FrClippingWavesSurface
         * \brief Class for clipping a mesh by an arbitrary incident wave field.
         */
-        class ClippingWaveSurface : public ClippingSurface {
+        class FrClippingWaveSurface : public FrClippingSurface {
 
         private:
 
@@ -111,10 +111,10 @@ namespace frydom {
         public:
 
             /// Constructor.
-            ClippingWaveSurface() = default;
+            FrClippingWaveSurface() = default;
 
             /// Constructor.
-            explicit ClippingWaveSurface(const double &meanHeight, FrFreeSurface* FreeSurface);
+            explicit FrClippingWaveSurface(const double &meanHeight, FrFreeSurface* FreeSurface);
 
             /// This function gives the distance to the incident wave.
             double GetDistance(const FrMesh::Point &point) const override;
@@ -123,7 +123,7 @@ namespace frydom {
             FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) override;
         };
 
-        class MeshClipper {
+        class FrMeshClipper {
 
         private:
 
@@ -132,7 +132,7 @@ namespace frydom {
 
             /// Clipping surface, by default the plane z = 0.
             //TODO: INCORRECT
-            std::unique_ptr<ClippingSurface> m_clippingSurface;
+            std::unique_ptr<FrClippingSurface> m_clippingSurface;
 
             double m_Threshold = 1e-4;
             double m_ProjectionThresholdRatio = 1 / 4.;
@@ -146,15 +146,15 @@ namespace frydom {
 
         public:
 
-            MeshClipper();
+            FrMeshClipper();
 
             /// This function gives the clipping surface.
-            ClippingSurface* GetClippingSurface();
+            FrClippingSurface* GetClippingSurface();
 
             /// This function initializes the MeshClipper object from an input mesh and performs the clipping.
             void Apply(FrMesh* mesh);
 
-            void SetEps(double eps) { m_Threshold = eps; }
+            void SetEps(double eps);
 
             void SetProjectionThresholdRatio(double projectionThresholdRatio);
 
@@ -164,8 +164,6 @@ namespace frydom {
             /// This function sets a clipping wave surface.
             void SetWaveClippingSurface(const double &meanHeight, FrFreeSurface *FreeSurface);
 
-//            void UpdateMeshPositionInWorld();
-
         private:
 
             void Initialize();
@@ -174,348 +172,39 @@ namespace frydom {
 
             void ClassifyVertices();
 
-            inline VertexPosition ClassifyVertex(const FrMesh::VertexHandle &vh) const {
-                double distance = GetVertexDistanceToSurface(vh);
+            VertexPosition ClassifyVertex(const FrMesh::VertexHandle &vh) const;
 
-                // This function computes the distance wrt the incident wave and classifies the nodes.
-
-                // TODO: On peut projeter le vertex si distance est petit (si plus petit que meanEdgeLength * m_threshold)
-
-                VertexPosition vPos;
-
-                if (fabs(distance) < m_Threshold) {
-                    vPos = VP_ON_SURFACE;
-                } else if (distance > 0.) {
-                    vPos = VP_ABOVE_SURFACE;
-                } else {
-                    vPos = VP_UNDER_SURFACE;
-                }
-
-                return vPos;
-            }
-
-            inline FacePositionType ClassifyFace(const FrMesh::FaceHandle &fh) { // TODO: renvoyer le resultat !!
-
-                /// This function classfies faces wrt the incident wave field.
-
-                FacePositionType fPos;
-                unsigned int nbAbove, nbUnder;
-                nbAbove = nbUnder = 0;
-
-                // Counting the number of vertices above and under the plane.
-                FrMesh::FaceVertexIter fv_iter = m_mesh->fv_iter(fh);
-                for (; fv_iter.is_valid(); ++fv_iter) {
-
-                    if (m_mesh->data(*fv_iter).IsAbove()) {
-                        ++nbAbove;
-                    }
-                    if (m_mesh->data(*fv_iter).IsUnder()) {
-                        ++nbUnder;
-                    }
-                }
-
-                // Face under or on the free surface.
-                if (nbAbove == 0) {
-                    if (nbUnder == 0) {
-                        fPos = FPT_030;
-                    } else if (nbUnder == 1) {
-                        fPos = FPT_021;
-                    } else if (nbUnder == 2) {
-                        fPos = FPT_012;
-                    } else {
-                        fPos = FPT_003;
-                    }
-                    // Face crossing the free surface.
-                } else if (nbAbove == 1) {
-                    if (nbUnder == 0) {
-                        fPos = FPT_120;
-                    } else if (nbUnder == 1) {
-                        fPos = FPT_111;
-                    } else {
-                        fPos = FPT_102;
-                    }
-                    // Face crossing the free surface.
-                } else if (nbAbove == 2) {
-                    if (nbUnder == 0) {
-                        fPos = FPT_210;
-                    } else {
-                        fPos = FPT_201;
-                    }
-                    // Face above the free surface.
-                } else {
-                    fPos = FPT_300;
-                }
-
-                return fPos;
-            }
+            FacePositionType ClassifyFace(const FrMesh::FaceHandle &fh);
 
             void Clip();
 
             void UpdateModifiedFaceProperties(FaceHandle fh);
 
-            inline void ProcessFace(const FrMesh::FaceHandle &fh) {
-
-                /// This function performs the clipping or not of a single face.
-
-                // Not clipping a face several time // FIXME: ne resout pas le pb...
-
-                FrMesh::FaceHandle opp_fh;
-                FrMesh::HalfedgeHandle heh, heh_down, heh_up;
-                FrMesh::VertexHandle vh;
-                FrMesh::FaceEdgeIter fe_iter;
-                FrMesh::FaceHandle fh_tmp;
-
-                // Classification of faces wrt the incident wave field.
-                FacePositionType fPos = ClassifyFace(fh);
-
-                switch (fPos) { // Pourquoi ne pas faire tout ici ?
-                    case FPT_003:
-                        // Totally wet, we keep the face
-                        break;
-                    case FPT_012:
-                        // Totally wet, we keep the face
-                        break;
-                    case FPT_021:
-                        // Totally wet, we keep the face
-                        break;
-                    case FPT_030:
-                        // Face on the free surface.
-                        FlagFaceToBeDeleted(fh);
-                        break;
-                    case FPT_102:
-//                    c_FacesToUpdate.emplace_back(new FaceHandle(const_cast<FaceHandle&>(fh)));
-
-                        // If HasProjection = True, some vertices are projected to the intersection nodes and no new face or vertex is added.
-
-                        if (HasProjection(fh)) {
-                            // The function ProcessFase is run again to update the classfication?
-                            ProcessFace(fh);
-                        } else {
-
-                            // Clipping the panel, creation of new nodes on the intersection curve and new faces.
-                            // TODO: avoir une methode qui a la fois ajouter le vertex et plitte l'edge...
-
-                            // Unique half edge oriented downward the intersection curve.
-                            heh_down = FindDowncrossingHalfEdge(fh);
-
-                            // Unique half edge oriented upward the intersection curve.
-                            heh_up = FindUpcrossingHalfEdge(fh);
-
-                            // Clipping of the upward and downward harfedges, creation of new vertices and faces and deletion of the useless ones.
-                            ProcessHalfEdge(heh_down);
-                            ProcessHalfEdge(heh_up);
-
-                        }
-//                    UpdateModifiedFaceProperties(fh);
-                        break;
-
-                    case FPT_111:
-//                    c_FacesToUpdate.emplace_back(new FaceHandle(const_cast<FaceHandle&>(fh)));
-
-                        if (HasProjection(fh)) {
-                            // The function ProcessFase is run again to update the classfication?
-                            ProcessFace(fh);
-                        } else {
-                            fe_iter = m_mesh->fe_iter(fh);
-                            for (; fe_iter.is_valid(); ++fe_iter) {
-                                if (IsEdgeCrossing(*fe_iter)) {
-                                    break;
-                                }
-                            }
-
-                            ProcessHalfEdge(m_mesh->halfedge_handle(*fe_iter, 0));
-                        }
-//                    UpdateModifiedFaceProperties(fh);
-                        break;
-
-                    case FPT_120:
-                        // Face above and on the free surface.
-                        FlagFaceToBeDeleted(fh);
-                        break;
-
-                    case FPT_201:
-//                    c_FacesToUpdate.emplace_back(new FaceHandle(const_cast<FaceHandle&>(fh)));
-
-                        if (HasProjection(fh)) {
-                            // The function ProcessFase is run again to update the classfication?
-                            ProcessFace(fh);
-                        } else {
-
-                            // TODO: avoir une methode qui a la fois ajouter le vertex et plitte l'edge...
-                            heh_down = FindDowncrossingHalfEdge(fh);
-                            heh_up = FindUpcrossingHalfEdge(fh);
-
-                            ProcessHalfEdge(heh_down);
-                            ProcessHalfEdge(heh_up);
-                        }
-//                    UpdateModifiedFaceProperties(fh);
-                        break;
-
-                    case FPT_210:
-                        // Face above and on the free surface.
-                        FlagFaceToBeDeleted(fh);
-                        break;
-
-                    case FPT_300:
-                        // Face above the free surface.
-                        FlagFaceToBeDeleted(fh);
-                        break;
-
-                    case FPT_UNDEFINED:
-                        // TODO: throw exception
-                        break;
-
-                }
-            }
+            void ProcessFace(const FrMesh::FaceHandle &fh);
 
             bool HasProjection(const FrMesh::FaceHandle &fh);
 
-            inline void ProcessHalfEdge(FrMesh::HalfedgeHandle heh) {
+            void ProcessHalfEdge(FrMesh::HalfedgeHandle heh);
 
-                /// This function performs the clipping of a halfedge, the computation of the intersection node, the creation of new panels and the deletion of useless panels and vertices.
+            void FlagFaceToBeDeleted(const FrMesh::FaceHandle &fh);
 
-                FrMesh::VertexHandle vh;  // FIXME: au final, on va juste effectuer l'intersection vu qu'on va projeter les
+            void FlagVertexAdjacentFacesToBeDeleted(const FrMesh::VertexHandle &vh);
 
-                // Intersection node.
-                vh = InsertIntersectionVertex(heh);
+            bool IsEdgeCrossing(const FrMesh::EdgeHandle &eh);
 
-                // Clipping, updating of the mesh, deletion of useless panels and vertices.
-                m_mesh->split(m_mesh->edge_handle(heh), vh);
+            bool IsHalfEdgeCrossing(const FrMesh::HalfedgeHandle &heh);
 
-                // Updating the faces to delete.
-                FlagVertexAdjacentFacesToBeDeleted(vh);
+            bool IsHalfEdgeDownCrossing(const FrMesh::HalfedgeHandle &heh);
 
-            }
+            bool IsHalfEdgeUpCrossing(const FrMesh::HalfedgeHandle &heh);
 
-            inline void FlagFaceToBeDeleted(const FrMesh::FaceHandle &fh) {
+            FrMesh::HalfedgeHandle FindUpcrossingHalfEdge(const FrMesh::FaceHandle &fh);
 
-                /// This function adds a face to the vector which stores the faces to delete.
+            FrMesh::HalfedgeHandle FindDowncrossingHalfEdge(const FrMesh::FaceHandle &fh);
 
-                c_FacesToDelete.push_back(fh);
-            }
+            FrMesh::VertexHandle InsertIntersectionVertex(const FrMesh::HalfedgeHandle &heh);
 
-            inline void FlagVertexAdjacentFacesToBeDeleted(const FrMesh::VertexHandle &vh) {
-
-                FrMesh::VertexFaceIter vf_iter = m_mesh->vf_iter(vh);
-                FacePositionType fPos;
-                for (; vf_iter.is_valid(); ++vf_iter) {
-                    fPos = ClassifyFace(*vf_iter);
-                    if (fPos == FPT_120 || fPos == FPT_210 || fPos == FPT_030) {
-                        FlagFaceToBeDeleted(*vf_iter);
-                    }
-                }
-            }
-
-            inline bool IsEdgeCrossing(const FrMesh::EdgeHandle &eh) {
-
-                /// This function checks if an edge crossed the free surface or not.
-
-                FrMesh::HalfedgeHandle heh = m_mesh->halfedge_handle(eh, 0);
-                double dz_0 = GetVertexDistanceToSurface(m_mesh->from_vertex_handle(heh));
-                double dz_1 = GetVertexDistanceToSurface(m_mesh->to_vertex_handle(heh));
-                double prod = dz_0 * dz_1;
-                bool out;
-
-                if(fabs(dz_0) < m_Threshold || fabs(dz_1) < m_Threshold){
-                    out = false;
-                }
-                else{
-                    // If prof is negative, the two vertices are not on the same side of the free surface.
-                    out = (prod < 0.);
-                }
-
-                return out;
-            }
-
-            inline bool IsHalfEdgeCrossing(const FrMesh::HalfedgeHandle &heh) {
-
-                /// This function checks if a halfedge crossed the free surface or not.
-
-                return IsEdgeCrossing(m_mesh->edge_handle(heh));
-            }
-
-            inline bool IsHalfEdgeDownCrossing(const FrMesh::HalfedgeHandle &heh) {
-
-                /// This function checks if a halfedge crossed the free surface downwardly.
-
-                double dz_from = GetVertexDistanceToSurface(m_mesh->from_vertex_handle(heh));
-                double dz_to = GetVertexDistanceToSurface(m_mesh->to_vertex_handle(heh));
-                bool out;
-                if (fabs(dz_from) < m_Threshold || fabs(dz_to) < m_Threshold) {
-                    out = false;
-                } else {
-                    out = (dz_from > 0. && dz_to < 0.);
-                }
-                return out;
-            }
-
-            inline bool IsHalfEdgeUpCrossing(const FrMesh::HalfedgeHandle &heh) {
-
-                /// This function checks if a halfedge crossed the free surface upwardly.
-
-                double dz_from = GetVertexDistanceToSurface(m_mesh->from_vertex_handle(heh));
-                double dz_to = GetVertexDistanceToSurface(m_mesh->to_vertex_handle(heh));
-                bool out;
-                if (fabs(dz_from) < m_Threshold || fabs(dz_to) < m_Threshold) {
-                    out = false;
-                } else {
-                    out = (dz_from < 0. && dz_to > 0.);
-                }
-                return out;
-            }
-
-            inline FrMesh::HalfedgeHandle FindUpcrossingHalfEdge(const FrMesh::FaceHandle &fh) {
-
-                /// This function tracks the halfedge which crosses the free surface upwardly.
-
-                // TODO: throw error if no upcrossing halfedge is found
-                FrMesh::HalfedgeHandle heh = m_mesh->halfedge_handle(fh);
-                while (!IsHalfEdgeUpCrossing(heh)) {
-                    heh = m_mesh->next_halfedge_handle(heh);
-                }
-                return heh;
-            }
-
-            inline FrMesh::HalfedgeHandle FindDowncrossingHalfEdge(const FrMesh::FaceHandle &fh) {
-
-                /// This function tracks the halfedge which crosses the free surface downwardly.
-
-                // TODO: throw error if no downcrossing halfedge is found
-                FrMesh::HalfedgeHandle heh = m_mesh->halfedge_handle(fh);
-                unsigned int i = 0;
-                while (!IsHalfEdgeDownCrossing(heh) && i < 2) { // TODO: abandonner le i pour le garde fou... --> erreur
-                    i++;
-                    heh = m_mesh->next_halfedge_handle(heh);
-                }
-                return heh;
-            }
-
-            inline FrMesh::VertexHandle InsertIntersectionVertex(const FrMesh::HalfedgeHandle &heh) {
-
-                /// This function adds an intersection node of an edge as a new vertex of the mesh.
-
-                FrMesh::Point p0 = m_mesh->point(m_mesh->from_vertex_handle(heh));
-                FrMesh::Point p1 = m_mesh->point(m_mesh->to_vertex_handle(heh));
-
-                FrMesh::Point p_intersection = m_clippingSurface->GetIntersection(
-                        m_mesh->point(m_mesh->from_vertex_handle(heh)),
-                        m_mesh->point(m_mesh->to_vertex_handle(heh))
-                );
-
-                FrMesh::VertexHandle vh = m_mesh->add_vertex(p_intersection);
-                m_mesh->data(vh).SetOn(); // Vertex has been built on the clipping surface
-
-                return vh;
-            }
-
-            inline double GetVertexDistanceToSurface(
-                    const FrMesh::VertexHandle &vh) const {
-
-                /// This function gives the distance of a node to the incident wave field.
-
-                return m_clippingSurface->GetDistance(m_mesh->point(vh));
-
-            }
+            double GetVertexDistanceToSurface(const FrMesh::VertexHandle &vh) const;
 
             void ApplyFaceDeletion();
 
