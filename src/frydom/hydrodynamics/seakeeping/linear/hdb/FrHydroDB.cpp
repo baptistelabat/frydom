@@ -123,78 +123,78 @@ namespace frydom {
 
     FrHydroDB::FrHydroDB(std::string h5file) {
 
-        /// Constructor of the class.
-        /// This subroutine generates the FrHydroDB_ object from the *.HDB5 input file.
+        // Constructor of the class.
+        // This subroutine generates the FrHydroDB_ object from the *.HDB5 input file.
 
-        /// Object for reading *.HDB5 input file.
+        // Object for reading *.HDB5 input file.
         FrHDF5Reader reader;
         reader.SetFilename(h5file);
 
-        /// Reading environmental data and the number of bodies.
+        // Reading environmental data and the number of bodies.
         m_gravityAcc = reader.ReadDouble("/GravityAcc");
         m_waterDensity = reader.ReadDouble("/WaterDensity");
         m_normalizationLength = reader.ReadDouble("/NormalizationLength");
         m_waterDepth = reader.ReadDouble("/WaterDepth");
         m_nbody = reader.ReadInt("/NbBody");
 
-        /// Creation of the mapper object for hydrodynamic bodies.
+        // Creation of the mapper object for hydrodynamic bodies.
         m_mapper = std::make_unique<FrHydroMapper>();
 
-        /// ----> Reading discretization path
+        // ----> Reading discretization path
         std::string discretization_path = "/Discretizations";
 
-        /// -----------> Reading frequency path
+        // -----------> Reading frequency path
         std::string frequency_discretization_path = discretization_path + "/Frequency";
         auto NbFreq = reader.ReadInt(frequency_discretization_path + "/NbFrequencies"); // Number of frequencies.
         auto MinFreq = reader.ReadDouble(frequency_discretization_path + "/MinFrequency"); // Minimum frequency.
         auto MaxFreq = reader.ReadDouble(frequency_discretization_path + "/MaxFrequency"); // Maximum frequency.
         this->SetFrequencyDiscretization(MinFreq, MaxFreq, (uint)NbFreq); // Settings the frequency discretization.
 
-        /// ------------> Reading waves directions
+        // ------------> Reading waves directions
         std::string wave_direction_discretization_path = discretization_path + "/WaveDirections";
         auto NbWaveDir = reader.ReadInt(wave_direction_discretization_path + "/NbWaveDirections"); // Number of wave directions.
         auto MinWaveDir = reader.ReadDouble(wave_direction_discretization_path + "/MinAngle"); // Minimum wave direction.
         auto MaxWaveDir = reader.ReadDouble(wave_direction_discretization_path + "/MaxAngle"); // Maximum wave direction.
         this->SetWaveDirectionDiscretization(MinWaveDir, MaxWaveDir, (uint)NbWaveDir); // Settings the wave direction discretization.
 
-        /// -------------> Reading time discretization
+        // -------------> Reading time discretization
         std::string time_discretization_path = discretization_path + "/Time";
         auto NbTimeSample = reader.ReadInt(time_discretization_path + "/NbTimeSample"); // Number of time steps.
         auto FinalTime = reader.ReadDouble(time_discretization_path + "/FinalTime"); // Duration.
         this->SetTimeDiscretization(FinalTime, (uint)NbTimeSample); // Settings the time discretization.
 
-        /// -------------> Reading data from Body
+        // -------------> Reading data from Body
         char buffer[20];
         std::string bodyPath = "/Bodies/Body_";
 
-        /// Loop over all the bodies subject to hydrodynamic loads.
+        // Loop over all the bodies subject to hydrodynamic loads.
         for (unsigned int ibody=0; ibody<m_nbody; ++ibody) {
 
             sprintf(buffer, "%d", ibody);
             auto ibodyPath = bodyPath + buffer;
             auto bodyName = reader.ReadString(ibodyPath + "/BodyName");
 
-            /// Creation of a new FrBEMBody.
+            // Creation of a new FrBEMBody.
             auto BEMBody = this->NewBody(bodyName);
 
-            /// Initialization from the *.HDB5 input file.
+            // Initialization from the *.HDB5 input file.
             Position bodyPosition = reader.ReadDoubleArray(ibodyPath + "/BodyPosition");
             BEMBody->SetPosition(bodyPosition);
 
             auto ID = reader.ReadInt(ibodyPath + "/ID");
             assert(BEMBody->GetID() == ID);
 
-            // /// Reading the modes of a body.
+            // Reading the modes of a body.
             this->ModeReader(reader, ibodyPath, BEMBody);
 
             this->MaskReader(reader, ibodyPath, BEMBody);
 
-            /// Allocation of the arrays for the hdb.
+            // Allocation of the arrays for the hdb.
             BEMBody->Initialize();
 
         }
 
-        /// -----------> Reading the hydrodynamic coefficients
+        // -----------> Reading the hydrodynamic coefficients
         for (unsigned int ibody=0; ibody<m_nbody; ++ibody) {
 
             sprintf(buffer, "%d", ibody);
@@ -202,23 +202,23 @@ namespace frydom {
 
             auto BEMBody = this->GetBody(ibody);
 
-            /// Reading of the excitation loads.
+            // Reading of the excitation loads.
             this->ExcitationReader(reader, ibodyPath, BEMBody);
 
-            /// Reading of the radiation coefficients (infinite added mass, impulse response functions).
+            // Reading of the radiation coefficients (infinite added mass, impulse response functions).
             this->RadiationReader(reader, ibodyPath, BEMBody);
 
-            /// Reading the wave drift coefficients.
+            // Reading the wave drift coefficients.
             if (reader.GroupExist(ibodyPath + "/WaveDrift")) {
                 this->WaveDriftReader(reader, ibodyPath + "/WaveDrift", BEMBody);
             }
 
-            /// Reading the hydrostatic matrix.
+            // Reading the hydrostatic matrix.
             if (reader.GroupExist(ibodyPath + "/Hydrostatic")) {
                 this->HydrostaticReader(reader, ibodyPath + "/Hydrostatic", BEMBody);
             }
 
-            /// Interpolation of the excitation loads with respect to the wave direction.
+            // Interpolation of the excitation loads with respect to the wave direction.
             this->GetBody(ibody)->Finalize();
         }
     }
@@ -231,7 +231,7 @@ namespace frydom {
 
     void FrHydroDB::ModeReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
 
-        /// This subroutine reads the modes of a body.
+        // This subroutine reads the modes of a body.
 
         char buffer[20];
 
@@ -299,7 +299,7 @@ namespace frydom {
 
     void FrHydroDB::ExcitationReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
 
-        /// This subroutine reads the excitation loads from the *.HDB5 input file.
+        // This subroutine reads the excitation loads from the *.HDB5 input file.
 
         char buffer[20];
 
@@ -312,7 +312,7 @@ namespace frydom {
 
             sprintf(buffer, "/Angle_%d", iwaveDir);
 
-            /// -> Diffraction loads.
+            // -> Diffraction loads.
             auto diffractionWaveDirPath = diffractionPath + buffer;
             auto diffractionRealCoeffs = reader.ReadDoubleArray(diffractionWaveDirPath + "/RealCoeffs");
             auto diffractionImagCoeffs = reader.ReadDoubleArray(diffractionWaveDirPath + "/ImagCoeffs");
@@ -321,7 +321,7 @@ namespace frydom {
             diffractionCoeffs = diffractionRealCoeffs + MU_JJ * diffractionImagCoeffs; // In complex.
             BEMBody->SetDiffraction(iwaveDir, forceMaskMatrix * diffractionCoeffs);
 
-            /// -> Froude-Krylov loads.
+            // -> Froude-Krylov loads.
             auto froudeKrylovWaveDirPath = froudeKrylovPath + buffer;
             auto froudeKrylovRealCoeffs = reader.ReadDoubleArray(froudeKrylovWaveDirPath + "/RealCoeffs");
             auto froudeKrylovImagCoeffs = reader.ReadDoubleArray(froudeKrylovWaveDirPath + "/ImagCoeffs");
@@ -332,13 +332,13 @@ namespace frydom {
 
         }
 
-        /// Computation of the excitation loads the diffraction and Froude-Krylov loads.
+        // Computation of the excitation loads the diffraction and Froude-Krylov loads.
         BEMBody->ComputeExcitation();
     }
 
     void FrHydroDB::RadiationReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
 
-        /// This subroutine reads the radiation coefficients from the *.HDB5 input file.
+        // This subroutine reads the radiation coefficients from the *.HDB5 input file.
 
         char buffer[20];
 
@@ -356,13 +356,13 @@ namespace frydom {
 
             auto motionMaskMatrix = bodyMotion->GetMotionMaskMatrix();
 
-            /// Reading the infinite added mass matrix for the body.
+            // Reading the infinite added mass matrix for the body.
             auto infiniteAddedMassPath = radiationPath + buffer + "/InfiniteAddedMass";
             auto infiniteAddedMassHDB = reader.ReadDoubleArray(infiniteAddedMassPath);
             auto infiniteAddedMass = forceMaskMatrix * infiniteAddedMassHDB * motionMaskMatrix.transpose();
             BEMBody->SetInfiniteAddedMass(bodyMotion, infiniteAddedMass);
 
-            /// Reading the impulse response functions.
+            // Reading the impulse response functions.
             auto IRFPath = radiationPath + buffer + "/ImpulseResponseFunctionK";
 
             std::vector<Eigen::MatrixXd> impulseResponseFunctionsK;
@@ -380,7 +380,7 @@ namespace frydom {
             }
             BEMBody->SetImpulseResponseFunctionK(bodyMotion, impulseResponseFunctionsK);
 
-            /// Reading the impulse response functions in case of forward speed.
+            // Reading the impulse response functions in case of forward speed.
             sprintf(buffer, "/BodyMotion_%d", ibodyMotion);
             auto IRFUPath = radiationPath + buffer + "/ImpulseResponseFunctionKU";
 
@@ -406,7 +406,7 @@ namespace frydom {
 
     void FrHydroDB::WaveDriftReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
 
-        /// This subroutine reads the wave drift coefficients.
+        // This subroutine reads the wave drift coefficients.
 
         BEMBody->SetWaveDrift();
 
@@ -444,7 +444,7 @@ namespace frydom {
 
     void FrHydroDB::HydrostaticReader(FrHDF5Reader& reader, std::string path, FrBEMBody* BEMBody) {
 
-        /// This subroutine reads the hydrostatic matrix.
+        // This subroutine reads the hydrostatic matrix.
 
         mathutils::Matrix66<double> matrix = reader.ReadDoubleArray(path + "/StiffnessMatrix");
         BEMBody->SetStiffnessMatrix(matrix);
@@ -453,7 +453,7 @@ namespace frydom {
 
     std::shared_ptr<FrHydroDB> make_hydrodynamic_database(std::string h5file) {
 
-        /// This subroutine reads the HDB from the *.HDB5 input file. All the necessary structures (FrHydroDB, FrBEMBody, etc.) are generated and initialized.
+        // This subroutine reads the HDB from the *.HDB5 input file. All the necessary structures (FrHydroDB, FrBEMBody, etc.) are generated and initialized.
 
         return std::make_shared<FrHydroDB>(h5file);
     }

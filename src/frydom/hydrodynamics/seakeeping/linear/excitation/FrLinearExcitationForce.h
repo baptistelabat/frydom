@@ -37,22 +37,23 @@ namespace frydom {
 
     private:
 
-        std::shared_ptr<FrHydroDB> m_HDB;
+        std::shared_ptr<FrHydroDB> m_HDB;               ///< HDB to which the linear excitation force is linked
         //TODO: passed the raw to shared ptr, need some modif in the mapper.
-        FrEquilibriumFrame* m_equilibriumFrame;
-
-        std::vector<Eigen::MatrixXcd> m_Fexc;
-
-        mathutils::Matrix66<std::complex<double>> m_steadyForce;
+        FrEquilibriumFrame* m_equilibriumFrame;         ///< Equilibrium frame linked with the linear excitation model
+        std::vector<Eigen::MatrixXcd> m_Fexc;           ///< Complex excitation force coefficients in frequency domain
+        mathutils::Matrix66<std::complex<double>> m_steadyForce;    ///< Complex steady part of the linear excitation force
 
     public:
 
+        /// Constructor of the linear excitation force with specified HDB
+        /// \param HDB HDB to which the linear excitation force is linked
         explicit FrLinearExcitationForce(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) {};
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "LinearExcitationForce"; }
 
+        /// Method to initialize the linear excitation force
         void Initialize() override;
 
         /// This function is called at the end of the time step, after the last step of the integration scheme.
