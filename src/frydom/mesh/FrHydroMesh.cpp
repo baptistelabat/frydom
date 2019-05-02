@@ -113,17 +113,11 @@ namespace frydom {
     }
 
     Position FrHydroMesh::GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc){
-
+        // FIXME : voir si on a besoin de ressortir dans le monde ou dans le corps et faire les transformations nécessaires
         // This function returns the center of buoyancy of the clipped mesh in the world frame.
 
-        Position CoBInWorld, CoBPos;
-        VectorT<double, 3> CoB = m_clippedMesh.GetCOG(); // Center of gravity of the immersed part (clipped mesh).
-        CoBPos[0] = CoB[0];
-        CoBPos[1] = CoB[1];
-        CoBPos[2] = CoB[2];
-
         // The translation of the body was not done for avoiding numerical errors.
-        CoBInWorld = m_body->GetPosition(NWU) + CoBPos;
+        auto CoBInWorld = m_body->GetPosition(NWU) + mesh::OpenMeshPointToVector3d<Position>(m_clippedMesh.GetCOG());
 
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(CoBInWorld);
 

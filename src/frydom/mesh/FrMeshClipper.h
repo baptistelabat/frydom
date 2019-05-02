@@ -32,7 +32,7 @@ namespace frydom {
             double m_meanHeight = 0.;
             double m_ThresholdDichotomy = 1e-4;
 
-            Position m_bodyPosition;
+            Position m_bodyPosition = {0.,0.,0.};
 
         public:
 
@@ -45,19 +45,15 @@ namespace frydom {
             /// This function sets the mean height of the incident wave field.
             void SetMeanHeight(const double &meanHeight);
 
-            /// This function gives the wave elevation at a point.
-            virtual double GetElevation(const double &x, const double &y) const = 0;
+            /// Set the body position in world reference frame, for correction in ClippingWaveSurface::GetDistance
+            /// \param bodyPos
+            void SetBodyPosition(Position bodyPos);
 
             /// This function gives the distance to the incident wave field.
             virtual double GetDistance(const FrMesh::Point &point) const = 0;
 
             /// This function gives the intersection node position between an edge and an incident wave field.
             virtual FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) = 0;
-
-            void SetBodyPosition(Position bodyPos);
-
-            /// This function gives the position in the world frame at the good position (with horizontal translation) of a node in the world frame without horizontal translation.
-            FrMesh::Point GetNodePositionInWorld(FrMesh::Point point) const;
 
         };
 
@@ -74,9 +70,6 @@ namespace frydom {
 
             /// Constructor.
             explicit ClippingPlane(double meanHeight);
-
-            /// This function gives the elevation of the plane.
-            double GetElevation(const double &x, const double &y) const override;
 
             /// This function gives the distance to the plane.
             inline double GetDistance(const FrMesh::Point &point) const override {
@@ -123,17 +116,8 @@ namespace frydom {
             /// Constructor.
             explicit ClippingWaveSurface(const double &meanHeight, FrFreeSurface* FreeSurface);
 
-            /// This function gives the wave elevation of the incident wave field.
-            double GetElevation(const double &x, const double &y) const override;
-
             /// This function gives the distance to the incident wave.
-            inline double GetDistance(const FrMesh::Point &point) const override{
-
-                // It is necessary to add the horizontal translation to the mesh because of the wave elevation which depends on the node position in the world frame.
-                FrMesh::Point PointInWorld = GetNodePositionInWorld(point);
-                return PointInWorld[2] - GetElevation(PointInWorld[0],PointInWorld[1]);
-
-            }
+            double GetDistance(const FrMesh::Point &point) const override;
 
             /// This function performs a bisection method to track the intersection node.
             FrMesh::Point GetIntersection(const FrMesh::Point &p0, const FrMesh::Point &p1) override;
@@ -148,7 +132,7 @@ namespace frydom {
 
             /// Clipping surface, by default the plane z = 0.
             //TODO: INCORRECT
-            std::shared_ptr<ClippingSurface> m_clippingSurface = std::make_shared<ClippingPlane>(0.);
+            std::unique_ptr<ClippingSurface> m_clippingSurface;
 
             double m_Threshold = 1e-4;
             double m_ProjectionThresholdRatio = 1 / 4.;
@@ -162,10 +146,10 @@ namespace frydom {
 
         public:
 
-            MeshClipper() = default;
+            MeshClipper();
 
             /// This function gives the clipping surface.
-            std::shared_ptr<ClippingSurface> GetClippingSurface();
+            ClippingSurface* GetClippingSurface();
 
             /// This function initializes the MeshClipper object from an input mesh and performs the clipping.
             void Apply(FrMesh* mesh);

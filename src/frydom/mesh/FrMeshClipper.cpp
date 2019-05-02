@@ -10,29 +10,8 @@ namespace frydom {
 
     mesh::ClippingSurface::ClippingSurface(double meanHeight) : m_meanHeight(meanHeight) {}
 
-    void mesh::ClippingSurface::SetMeanHeight(const double &meanHeight) { m_meanHeight = meanHeight; }
-
-    VectorT<double, 3> mesh::ClippingSurface::GetNodePositionInWorld(VectorT<double, 3> point) const {
-
-        mathutils::Vector3d<double> NodeInWorldWithoutTranslation;
-        NodeInWorldWithoutTranslation[0] = point[0];
-        NodeInWorldWithoutTranslation[1] = point[1];
-        NodeInWorldWithoutTranslation[2] = point[2];
-
-        // Application of the translation.
-        Position NodeInWorldFrame;
-        Position BodyPos = m_bodyPosition;
-        NodeInWorldFrame[0] = BodyPos[0] + NodeInWorldWithoutTranslation[0]; // x.
-        NodeInWorldFrame[1] = BodyPos[1] + NodeInWorldWithoutTranslation[1]; // y.
-        NodeInWorldFrame[2] = NodeInWorldWithoutTranslation[2]; // z.
-
-        FrMesh::Point Pout;
-        Pout[0] = NodeInWorldFrame[0];
-        Pout[1] = NodeInWorldFrame[1];
-        Pout[2] = NodeInWorldFrame[2];
-
-        return Pout;
-
+    void mesh::ClippingSurface::SetMeanHeight(const double &meanHeight) {
+        m_meanHeight = meanHeight;
     }
 
     void mesh::ClippingSurface::SetBodyPosition(Position bodyPos) {
@@ -42,11 +21,6 @@ namespace frydom {
     // -----------------------------------------------------------------------------------------------------------------
 
     mesh::ClippingPlane::ClippingPlane(double meanHeight) : ClippingSurface(meanHeight) {}
-
-    double mesh::ClippingPlane::GetElevation(const double &x, const double &y) const {
-
-        return m_meanHeight;
-    }
 
     VectorT<double, 3> mesh::ClippingPlane::GetIntersection(const VectorT<double, 3> &p0, const VectorT<double, 3> &p1) {
 
@@ -63,87 +37,73 @@ namespace frydom {
         m_freesurface = FreeSurface;
     }
 
-    double mesh::ClippingWaveSurface::GetElevation(const double &x, const double &y) const {
-
-        return m_freesurface->GetPosition(x,y,NWU);
-    }
-
     VectorT<double, 3>
     mesh::ClippingWaveSurface::GetIntersection(const VectorT<double, 3> &p0, const VectorT<double, 3> &p1) {
 
         // The good position of the mesh is automatically found by using the function GetDistance.
         // The position of Pout depends on the positions of p0 and p1 so no transformation is required.
 
-        FrMesh::Point Pout;
-        Pout[0] = 0;
-        Pout[1] = 0;
-        Pout[2] = 0;
+        FrMesh::Point Pout = {0.,0.,0.};
 
         // Initializations.
         double z0 = GetDistance(p0); // Distance between p0 and Eta_I.
+        if (fabs(z0)<=m_ThresholdDichotomy) return p0;
+
         double z1 = GetDistance(p1); // Distance between p1 and Eta_I.
-        double d = std::min(fabs(z0),fabs(z1)); // Initialization of the distance beteen the intersection point and Eta_I.
+        if (fabs(z1)<=m_ThresholdDichotomy) return p1;
+
         int n = 0; // Number of iterations in the dichotomy loop.
-        int nmax = 1000; // Maximum number of itarations in the dichotomy loop.
         double s0 = 0.; // Curvilinear abscissa of p0;
         double s1 = 1.; // Curvilinear abscissa of p1;
-        double s = 0;
-        FrMesh::Point P;
-        P[0] = 0;
-        P[1] = 0;
-        P[2] = 0;
-        double deltaz;
 
         // Dichotomy loop.
-        while((d > m_ThresholdDichotomy) && (n <= nmax)){
-            n = n + 1;
-            s = 0.5*(s0+s1);
-            P = s*p1 + (1-s)*p0; // Equation of the straight line between p0 and p1.
-            deltaz = GetDistance(P);
-            if((deltaz > 0. && z1 > 0.) || (deltaz <= 0. && z1 <= 0.)){
+        while(n <= 1000) { // Maximum number of iterations in the dichotomy loop.
+            auto s = 0.5*(s0+s1);
+            auto P = s*p1 + (1-s)*p0; // Equation of the straight line between p0 and p1.
+            auto deltaz = GetDistance(P);
+            if ( (deltaz > 0. && z1 > 0.) || (deltaz <= 0. && z1 <= 0.) ) {
                 s1 = s;
             }
             else{
                 s0 = s;
             }
-            d = fabs(deltaz);
+            if (fabs(deltaz)<=m_ThresholdDichotomy) return P;
+            n++;
         }
 
-        //Result.
-        if(d <= m_ThresholdDichotomy){
-            if(n > 0){
-                // The dichotomy loop was used.
-                Pout = P;
-            }
-            else if(n == 0){
-                // The dichotomy loop was not used.
-                if(std::abs(z0) <= std::abs(z1)){
-                    Pout = p0;
-                }
-                else{
-                    Pout = p1;
-                }
-            }
-        }
-        else{
-            std::cout << "GetIntersection: dichotomy method cannot find the intersection point:" << std::endl;
-            std::cout << "p0 = " << p0[0] << " " << p0[1] << " " << p0[2] << std::endl;
-            std::cout << "p1 = " << p1[0] << " " << p1[1] << " " << p1[2] << std::endl;
-            std::cout << "d = " << d << std::endl;
-            std::cout << "n = " << n << std::endl;
-            if(n != 0){
-                std::cout << "Pout = " << Pout[0] << " " << Pout[1] << " " << Pout[2] << std::endl;
-            }
-        }
+        //If dichotomy fail to converge
+        std::cout << "GetIntersection: dichotomy method cannot find the intersection point:" << std::endl;
+        std::cout << "p0 = " << p0[0] << " " << p0[1] << " " << p0[2] << std::endl;
+        std::cout << "p1 = " << p1[0] << " " << p1[1] << " " << p1[2] << std::endl;
+        std::cout << "n = " << n << std::endl;
+        std::cout << "Pout = " << Pout[0] << " " << Pout[1] << " " << Pout[2] << std::endl;
 
         return Pout;
+    }
+
+    double mesh::ClippingWaveSurface::GetDistance(const VectorT<double, 3> &point) const {
+
+        auto NodeInWorld = mesh::OpenMeshPointToVector3d<Position>(point);
+
+        // Application of the horizontal translation.
+        auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
+        const Position temp = NodeInWorld + BodyPos;
+
+        return temp.GetZ() - m_freesurface->GetPosition(temp,NWU);
+
     }
 
 
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    std::shared_ptr<mesh::ClippingSurface> mesh::MeshClipper::GetClippingSurface() { return m_clippingSurface; }
+    mesh::MeshClipper::MeshClipper() {
+        m_clippingSurface = std::make_unique<ClippingPlane>(0.);
+    }
+
+    mesh::ClippingSurface* mesh::MeshClipper::GetClippingSurface() {
+        return m_clippingSurface.get();
+    }
 
     void mesh::MeshClipper::Apply(mesh::FrMesh* mesh) {
 
@@ -166,13 +126,13 @@ namespace frydom {
 
     void mesh::MeshClipper::SetPlaneClippingSurface(const double &meanHeight) {
 
-        m_clippingSurface = std::make_shared<ClippingPlane>(meanHeight);
+        m_clippingSurface = std::make_unique<ClippingPlane>(meanHeight);
 
     }
 
     void mesh::MeshClipper::SetWaveClippingSurface(const double &meanHeight, FrFreeSurface *FreeSurface) {
 
-        m_clippingSurface = std::make_shared<ClippingWaveSurface>(meanHeight,FreeSurface);
+        m_clippingSurface = std::make_unique<ClippingWaveSurface>(meanHeight,FreeSurface);
 
     }
 
