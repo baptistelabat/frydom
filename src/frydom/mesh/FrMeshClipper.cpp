@@ -178,11 +178,13 @@ namespace frydom {
 
     void mesh::FrMeshClipper::Clip() {
 
-        /// This function performs the clipping of the mesh wrt the incident wave field.
+        // This function performs the clipping of the mesh wrt the incident wave field.
 
         // Loop over faces.
-        for (auto face : m_mesh->faces()) {
-            ProcessFace(face);
+        for (FrMesh::FaceIter fh_iter = m_mesh->faces_begin(); fh_iter != m_mesh->faces_end(); ++fh_iter) {
+            ProcessFace(*fh_iter);
+//        for (auto face : m_mesh->faces()) { // can't be used here; dunno why...
+//            ProcessFace(face);
         }
     }
 
