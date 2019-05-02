@@ -79,7 +79,7 @@ namespace frydom {
                 m_clippedMesh(clipped_mesh),
                 m_centerOfGravity(cog) {}
 
-        void Load(const mesh::FrMesh& mesh, mathutils::Vector3d<double> cog);
+//        void Load(const mesh::FrMesh& mesh, mathutils::Vector3d<double> cog);
 
         void Process();
 

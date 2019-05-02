@@ -144,7 +144,7 @@ namespace frydom {
         private:
 
             /// Initial mesh.
-            FrMesh m_InitMesh;
+            FrMesh* m_mesh;
 
             /// Clipping surface, by default the plane z = 0.
             //TODO: INCORRECT
@@ -168,7 +168,7 @@ namespace frydom {
             std::shared_ptr<ClippingSurface> GetClippingSurface();
 
             /// This function initializes the MeshClipper object from an input mesh and performs the clipping.
-            FrMesh & Apply(const FrMesh &mesh);
+            void Apply(FrMesh* mesh);
 
             void SetEps(double eps) { m_Threshold = eps; }
 
@@ -219,13 +219,13 @@ namespace frydom {
                 nbAbove = nbUnder = 0;
 
                 // Counting the number of vertices above and under the plane.
-                FrMesh::FaceVertexIter fv_iter = m_InitMesh.fv_iter(fh);
+                FrMesh::FaceVertexIter fv_iter = m_mesh->fv_iter(fh);
                 for (; fv_iter.is_valid(); ++fv_iter) {
 
-                    if (m_InitMesh.data(*fv_iter).IsAbove()) {
+                    if (m_mesh->data(*fv_iter).IsAbove()) {
                         ++nbAbove;
                     }
-                    if (m_InitMesh.data(*fv_iter).IsUnder()) {
+                    if (m_mesh->data(*fv_iter).IsUnder()) {
                         ++nbUnder;
                     }
                 }
@@ -332,14 +332,14 @@ namespace frydom {
                             // The function ProcessFase is run again to update the classfication?
                             ProcessFace(fh);
                         } else {
-                            fe_iter = m_InitMesh.fe_iter(fh);
+                            fe_iter = m_mesh->fe_iter(fh);
                             for (; fe_iter.is_valid(); ++fe_iter) {
                                 if (IsEdgeCrossing(*fe_iter)) {
                                     break;
                                 }
                             }
 
-                            ProcessHalfEdge(m_InitMesh.halfedge_handle(*fe_iter, 0));
+                            ProcessHalfEdge(m_mesh->halfedge_handle(*fe_iter, 0));
                         }
 //                    UpdateModifiedFaceProperties(fh);
                         break;
@@ -396,7 +396,7 @@ namespace frydom {
                 vh = InsertIntersectionVertex(heh);
 
                 // Clipping, updating of the mesh, deletion of useless panels and vertices.
-                m_InitMesh.split(m_InitMesh.edge_handle(heh), vh);
+                m_mesh->split(m_mesh->edge_handle(heh), vh);
 
                 // Updating the faces to delete.
                 FlagVertexAdjacentFacesToBeDeleted(vh);
@@ -412,7 +412,7 @@ namespace frydom {
 
             inline void FlagVertexAdjacentFacesToBeDeleted(const FrMesh::VertexHandle &vh) {
 
-                FrMesh::VertexFaceIter vf_iter = m_InitMesh.vf_iter(vh);
+                FrMesh::VertexFaceIter vf_iter = m_mesh->vf_iter(vh);
                 FacePositionType fPos;
                 for (; vf_iter.is_valid(); ++vf_iter) {
                     fPos = ClassifyFace(*vf_iter);
@@ -426,9 +426,9 @@ namespace frydom {
 
                 /// This function checks if an edge crossed the free surface or not.
 
-                FrMesh::HalfedgeHandle heh = m_InitMesh.halfedge_handle(eh, 0);
-                double dz_0 = GetVertexDistanceToSurface(m_InitMesh.from_vertex_handle(heh));
-                double dz_1 = GetVertexDistanceToSurface(m_InitMesh.to_vertex_handle(heh));
+                FrMesh::HalfedgeHandle heh = m_mesh->halfedge_handle(eh, 0);
+                double dz_0 = GetVertexDistanceToSurface(m_mesh->from_vertex_handle(heh));
+                double dz_1 = GetVertexDistanceToSurface(m_mesh->to_vertex_handle(heh));
                 double prod = dz_0 * dz_1;
                 bool out;
 
@@ -447,15 +447,15 @@ namespace frydom {
 
                 /// This function checks if a halfedge crossed the free surface or not.
 
-                return IsEdgeCrossing(m_InitMesh.edge_handle(heh));
+                return IsEdgeCrossing(m_mesh->edge_handle(heh));
             }
 
             inline bool IsHalfEdgeDownCrossing(const FrMesh::HalfedgeHandle &heh) {
 
                 /// This function checks if a halfedge crossed the free surface downwardly.
 
-                double dz_from = GetVertexDistanceToSurface(m_InitMesh.from_vertex_handle(heh));
-                double dz_to = GetVertexDistanceToSurface(m_InitMesh.to_vertex_handle(heh));
+                double dz_from = GetVertexDistanceToSurface(m_mesh->from_vertex_handle(heh));
+                double dz_to = GetVertexDistanceToSurface(m_mesh->to_vertex_handle(heh));
                 bool out;
                 if (fabs(dz_from) < m_Threshold || fabs(dz_to) < m_Threshold) {
                     out = false;
@@ -469,8 +469,8 @@ namespace frydom {
 
                 /// This function checks if a halfedge crossed the free surface upwardly.
 
-                double dz_from = GetVertexDistanceToSurface(m_InitMesh.from_vertex_handle(heh));
-                double dz_to = GetVertexDistanceToSurface(m_InitMesh.to_vertex_handle(heh));
+                double dz_from = GetVertexDistanceToSurface(m_mesh->from_vertex_handle(heh));
+                double dz_to = GetVertexDistanceToSurface(m_mesh->to_vertex_handle(heh));
                 bool out;
                 if (fabs(dz_from) < m_Threshold || fabs(dz_to) < m_Threshold) {
                     out = false;
@@ -485,9 +485,9 @@ namespace frydom {
                 /// This function tracks the halfedge which crosses the free surface upwardly.
 
                 // TODO: throw error if no upcrossing halfedge is found
-                FrMesh::HalfedgeHandle heh = m_InitMesh.halfedge_handle(fh);
+                FrMesh::HalfedgeHandle heh = m_mesh->halfedge_handle(fh);
                 while (!IsHalfEdgeUpCrossing(heh)) {
-                    heh = m_InitMesh.next_halfedge_handle(heh);
+                    heh = m_mesh->next_halfedge_handle(heh);
                 }
                 return heh;
             }
@@ -497,11 +497,11 @@ namespace frydom {
                 /// This function tracks the halfedge which crosses the free surface downwardly.
 
                 // TODO: throw error if no downcrossing halfedge is found
-                FrMesh::HalfedgeHandle heh = m_InitMesh.halfedge_handle(fh);
+                FrMesh::HalfedgeHandle heh = m_mesh->halfedge_handle(fh);
                 unsigned int i = 0;
                 while (!IsHalfEdgeDownCrossing(heh) && i < 2) { // TODO: abandonner le i pour le garde fou... --> erreur
                     i++;
-                    heh = m_InitMesh.next_halfedge_handle(heh);
+                    heh = m_mesh->next_halfedge_handle(heh);
                 }
                 return heh;
             }
@@ -510,16 +510,16 @@ namespace frydom {
 
                 /// This function adds an intersection node of an edge as a new vertex of the mesh.
 
-                FrMesh::Point p0 = m_InitMesh.point(m_InitMesh.from_vertex_handle(heh));
-                FrMesh::Point p1 = m_InitMesh.point(m_InitMesh.to_vertex_handle(heh));
+                FrMesh::Point p0 = m_mesh->point(m_mesh->from_vertex_handle(heh));
+                FrMesh::Point p1 = m_mesh->point(m_mesh->to_vertex_handle(heh));
 
                 FrMesh::Point p_intersection = m_clippingSurface->GetIntersection(
-                        m_InitMesh.point(m_InitMesh.from_vertex_handle(heh)),
-                        m_InitMesh.point(m_InitMesh.to_vertex_handle(heh))
+                        m_mesh->point(m_mesh->from_vertex_handle(heh)),
+                        m_mesh->point(m_mesh->to_vertex_handle(heh))
                 );
 
-                FrMesh::VertexHandle vh = m_InitMesh.add_vertex(p_intersection);
-                m_InitMesh.data(vh).SetOn(); // Vertex has been built on the clipping surface
+                FrMesh::VertexHandle vh = m_mesh->add_vertex(p_intersection);
+                m_mesh->data(vh).SetOn(); // Vertex has been built on the clipping surface
 
                 return vh;
             }
@@ -529,7 +529,7 @@ namespace frydom {
 
                 /// This function gives the distance of a node to the incident wave field.
 
-                return m_clippingSurface->GetDistance(m_InitMesh.point(vh));
+                return m_clippingSurface->GetDistance(m_mesh->point(vh));
 
             }
 

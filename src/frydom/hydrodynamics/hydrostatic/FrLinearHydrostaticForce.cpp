@@ -128,21 +128,21 @@ namespace frydom {
         Mesh_clipper.SetPlaneClippingSurface(TidalHeight);
 //        Mesh_clipper.SetBody(body.get());
 //        Mesh_clipper.SetMeshOffsetRotation(MeshOffset, Rotation);
-        mesh::FrMesh Clipped_mesh = Mesh_clipper.Apply(Mesh_Init);
-        Position BodyCoG = body->GetCOGPositionInWorld(NWU);
-        Vector3d<double> cog;
-        cog[0] = BodyCoG[0];
-        cog[1] = BodyCoG[1];
-        cog[2] = BodyCoG[2];
-        FrHydrostaticsProperties hsp(HDB->GetWaterDensity(),HDB->GetGravityAcc(),Clipped_mesh,cog);
-        hsp.Process();
-        forceHst->SetStiffnessMatrix(hsp.GetHydrostaticMatrix());
-        Clipped_mesh.Write("Mesh_used_for_Hydrostatic_stiffness_matrix.obj");
-
-        //FIXME: Si la position du corps est mise a jour, un update des forces sera applique (UpdateAfterMove)
-        // qui engendre un bug car la force n'a pas ete initialisee.
-        // D'ou l'initialize ci-dessous.
-        forceHst->Initialize();
+//        mesh::FrMesh Clipped_mesh = Mesh_clipper.Apply(Mesh_Init);
+//        Position BodyCoG = body->GetCOGPositionInWorld(NWU);
+//        Vector3d<double> cog;
+//        cog[0] = BodyCoG[0];
+//        cog[1] = BodyCoG[1];
+//        cog[2] = BodyCoG[2];
+//        FrHydrostaticsProperties hsp(HDB->GetWaterDensity(),HDB->GetGravityAcc(),Clipped_mesh,cog);
+//        hsp.Process();
+//        forceHst->SetStiffnessMatrix(hsp.GetHydrostaticMatrix());
+//        Clipped_mesh.Write("Mesh_used_for_Hydrostatic_stiffness_matrix.obj");
+//
+//        //FIXME: Si la position du corps est mise a jour, un update des forces sera applique (UpdateAfterMove)
+//        // qui engendre un bug car la force n'a pas ete initialisee.
+//        // D'ou l'initialize ci-dessous.
+//        forceHst->Initialize();
 
         return forceHst;
     }

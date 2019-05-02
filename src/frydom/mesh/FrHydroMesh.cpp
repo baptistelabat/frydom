@@ -68,9 +68,9 @@ namespace frydom {
         // Adjust the position of the clipped mesh according to the position of the body
         UpdateMeshPositionInWorld();
 
-        // This function computes the nonlinear hydrostatic loads.
+        // Application of the mesh clipper on the updated init mesh to obtain the clipped mesh
+        m_clipper->Apply(&m_clippedMesh);
 
-        m_clippedMesh = m_clipper->Apply(m_clippedMesh);
     }
 
     void FrHydroMesh::UpdateMeshPositionInWorld() {

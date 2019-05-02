@@ -145,16 +145,10 @@ namespace frydom {
 
     std::shared_ptr<mesh::ClippingSurface> mesh::MeshClipper::GetClippingSurface() { return m_clippingSurface; }
 
-    mesh::FrMesh &mesh::MeshClipper::Apply(const mesh::FrMesh &mesh) {
-
-        // Cleaning of the initial mesh structure.
-        Clear();
+    void mesh::MeshClipper::Apply(mesh::FrMesh* mesh) {
 
         // Storage of the input mesh file.
-        m_InitMesh = FrMesh(mesh);
-
-        // Transport of the mesh from the mesh frame to the body frame, then applies the rotation of mesh in the world frame.
-//        UpdateMeshPositionInWorld();
+        m_mesh = mesh;
 
         // Partition of the mesh.
         Initialize();
@@ -164,8 +158,6 @@ namespace frydom {
 
         // Clipped mesh cleaning (deletion of faces, update of every property, etc.).
         Finalize();
-
-        return m_InitMesh;  // TODO: renvoyer un etat...
     }
 
     void mesh::MeshClipper::SetProjectionThresholdRatio(double projectionThresholdRatio) {
@@ -184,49 +176,12 @@ namespace frydom {
 
     }
 
-//    void mesh::MeshClipper::UpdateMeshPositionInWorld() {
-//
-//        // This function transports the mesh from the mesh frame to the body frame, then applies the rotation of mesh in the world frame.
-//
-//        // Iterating on vertices to get their place wrt to plane.
-//        VertexHandle vh;
-//        Position NodeInBody, NodeInWorld;
-//        Position BodyPos = m_body->GetPosition(NWU);
-//
-//        // Loop over the vertices.
-//        for (FrMesh::VertexIter vh_iter = m_InitMesh.vertices_begin();
-//             vh_iter != m_InitMesh.vertices_end(); ++vh_iter) {
-//
-//            vh = *vh_iter;
-//
-//            // From the mesh frame to the body frame.
-//            m_InitMesh.point(vh) = GetNodePositionInBody(m_InitMesh.point(vh));
-//
-//            NodeInBody[0] = m_InitMesh.point(vh)[0];
-//            NodeInBody[1] = m_InitMesh.point(vh)[1];
-//            NodeInBody[2] = m_InitMesh.point(vh)[2];
-//
-//            // Rotation from the body frame to the world frame (just the rotation and the vertical translation, not the horizontal translation of the mesh at the good position in the world mesh).
-//            // The horizontal translation is not done to avoid numerical errors.
-//            NodeInWorld = m_body->ProjectVectorInWorld<Position>(NodeInBody, NWU);
-//
-//            // Vertical translation.
-//            NodeInWorld[2] = NodeInWorld[2] + BodyPos[2]; // x.
-//
-//            m_InitMesh.point(vh)[0] = NodeInWorld[0];
-//            m_InitMesh.point(vh)[1] = NodeInWorld[1];
-//            m_InitMesh.point(vh)[2] = NodeInWorld[2];
-//
-//        }
-//
-//    }
-
     void mesh::MeshClipper::Initialize() {
 
         // This function initializes the clipper.
 
         // Vector to store the faces to delete.
-        c_FacesToDelete.reserve(m_InitMesh.n_faces()); // Worst case (fully under the clipping surface) PYW: above the clipping surface?
+        c_FacesToDelete.reserve(m_mesh->n_faces()); // Worst case (fully under the clipping surface) PYW: above the clipping surface?
 
         // Vector to store the faces to update.
         c_FacesToUpdate.clear();
@@ -244,8 +199,8 @@ namespace frydom {
         VertexHandle vh;
 
         // Loop over the vertices.
-        for (FrMesh::VertexIter vh_iter = m_InitMesh.vertices_begin();
-             vh_iter != m_InitMesh.vertices_end(); ++vh_iter) {
+        for (FrMesh::VertexIter vh_iter = m_mesh->vertices_begin();
+             vh_iter != m_mesh->vertices_end(); ++vh_iter) {
 
             vh = *vh_iter;
 
@@ -253,13 +208,13 @@ namespace frydom {
             vPos = ClassifyVertex(vh);
 
             // Storage of the partition.
-            m_InitMesh.data(vh).SetPositionType(vPos);
+            m_mesh->data(vh).SetPositionType(vPos);
 
         }
     }
 
     void mesh::MeshClipper::Clear() {
-        m_InitMesh.clear();
+        m_mesh->clear();
     }
 
     void mesh::MeshClipper::Clip() {
@@ -267,16 +222,16 @@ namespace frydom {
         /// This function performs the clipping of the mesh wrt the incident wave field.
 
         // Loop over faces.
-        for (FrMesh::FaceIter fh_iter = m_InitMesh.faces_begin(); fh_iter != m_InitMesh.faces_end(); ++fh_iter) {
+        for (FrMesh::FaceIter fh_iter = m_mesh->faces_begin(); fh_iter != m_mesh->faces_end(); ++fh_iter) {
             ProcessFace(*fh_iter);
         }
     }
 
     void mesh::MeshClipper::UpdateModifiedFaceProperties(FaceHandle fh) {
-        FrMesh::FFIter ff_iter = m_InitMesh.ff_iter(fh);
+        FrMesh::FFIter ff_iter = m_mesh->ff_iter(fh);
         for (; ff_iter.is_valid(); ++ff_iter) {
-            m_InitMesh.update_normal(*ff_iter);
-            m_InitMesh.CalcFacePolynomialIntegrals(*ff_iter);
+            m_mesh->update_normal(*ff_iter);
+            m_mesh->CalcFacePolynomialIntegrals(*ff_iter);
         }
     }
 
@@ -294,17 +249,17 @@ namespace frydom {
         FrMesh::VertexOHalfedgeIter voh_iter; // Vertex outgoing halfedge iterator.
 
         // Iterating on vertices of the face to clip.
-        FrMesh::FaceVertexIter fv_iter = m_InitMesh.fv_iter(fh);
+        FrMesh::FaceVertexIter fv_iter = m_mesh->fv_iter(fh);
 
         for (; fv_iter.is_valid(); ++fv_iter) {
 
             // First vertex of the edge.
             vh = *fv_iter;
-            P0 = m_InitMesh.point(vh);
+            P0 = m_mesh->point(vh);
 
             // Iterating on outgoing halfedges to get the shortest edge path.
             // A vertex has several outgoing halfedges, pointing to all its neighbooring vertices.
-            voh_iter = m_InitMesh.voh_iter(vh);
+            voh_iter = m_mesh->voh_iter(vh);
             for (; voh_iter.is_valid(); ++voh_iter) {
 
                 // Hafledge.
@@ -314,7 +269,7 @@ namespace frydom {
                 if (IsHalfEdgeCrossing(oheh)) {
 
                     // Second vertex of the edge.
-                    P1 = m_InitMesh.point(m_InitMesh.to_vertex_handle(oheh));
+                    P1 = m_mesh->point(m_mesh->to_vertex_handle(oheh));
 
                     // Get the intersection node position.
 
@@ -341,8 +296,8 @@ namespace frydom {
             // If the vertex is projected, no new vertex will be created.
             if (anyVertexProjected) {
                 // Placing vh on Pi.
-                m_InitMesh.point(vh) = Pi_final;
-                m_InitMesh.data(vh).SetOn();
+                m_mesh->point(vh) = Pi_final;
+                m_mesh->data(vh).SetOn();
                 break; // We anyVertexProjected only one vertex per face at a time as other will be processed by adjacent faces
             }
         }
@@ -352,8 +307,8 @@ namespace frydom {
 
     void mesh::MeshClipper::ApplyFaceDeletion() {
         for (FrMesh::FaceHandle fh : c_FacesToDelete) {
-            if (!m_InitMesh.status(fh).deleted()) {
-                m_InitMesh.delete_face(fh);
+            if (!m_mesh->status(fh).deleted()) {
+                m_mesh->delete_face(fh);
             }
         }
         c_FacesToDelete.clear();
@@ -368,24 +323,24 @@ namespace frydom {
         std::vector<HalfedgeHandle *> hh_to_update;
 //            std::vector<FaceHandle*> fh_to_update;
 
-        m_InitMesh.garbage_collection(vh_to_update, hh_to_update, c_FacesToUpdate);
+        m_mesh->garbage_collection(vh_to_update, hh_to_update, c_FacesToUpdate);
 
-        m_InitMesh.UpdateAllProperties(); // FIXME: il ne faudrait mettre a jour que les pptes de facettes ayant ete mofifiees ou nouvellement crees
+        m_mesh->UpdateAllProperties(); // FIXME: il ne faudrait mettre a jour que les pptes de facettes ayant ete mofifiees ou nouvellement crees
 
         // We have to update the modified and new faces properties
 //            DMesh::FaceFaceIter ff_iter;
 //            for (FaceHandle* fh_ptr : c_FacesToUpdate) {
 //                if (!fh_ptr->is_valid()) continue;
 //
-//                m_InitMesh.update_normal(*fh_ptr);
+//                m_mesh->update_normal(*fh_ptr);
 //                // TODO: faire l'update aussi des centres !!
-//                m_InitMesh.CalcFacePolynomialIntegrals(*fh_ptr);
+//                m_mesh->CalcFacePolynomialIntegrals(*fh_ptr);
 //
 //                // Updating the surrounding faces too
-//                ff_iter = m_InitMesh.ff_iter(*fh_ptr);
+//                ff_iter = m_mesh->ff_iter(*fh_ptr);
 //                for (; ff_iter.is_valid(); ++ff_iter) {
-//                    m_InitMesh.update_normal(*ff_iter);
-//                    m_InitMesh.CalcFacePolynomialIntegrals(*ff_iter);
+//                    m_mesh->update_normal(*ff_iter);
+//                    m_mesh->CalcFacePolynomialIntegrals(*ff_iter);
 //                }
 //
 //
@@ -394,35 +349,10 @@ namespace frydom {
 //
 //            // Updating the modified and new vertices properties
 //            for (VertexHandle* vh_ptr : vh_to_update) {
-//                m_InitMesh.update_normal(*vh_ptr);
+//                m_mesh->update_normal(*vh_ptr);
 //            }
 
 
     }
 
-//    VectorT<double, 3> mesh::MeshClipper::GetNodePositionInBody(VectorT<double, 3> point) const {
-//
-//        // From the mesh frame to the body frame: OmP = ObOm + bRm*OmP.
-//        mathutils::Vector3d<double> NodeInMeshFrameVect;
-//        NodeInMeshFrameVect[0] = point[0];
-//        NodeInMeshFrameVect[1] = point[1];
-//        NodeInMeshFrameVect[2] = point[2];
-//
-//        mathutils::Vector3d<double> TmpVect;
-//        TmpVect = m_Rotation*NodeInMeshFrameVect;
-//
-//        Position NodeInBodyFrame;
-//        NodeInBodyFrame[0] = m_MeshOffset[0] + TmpVect[0];
-//        NodeInBodyFrame[1] = m_MeshOffset[1] + TmpVect[1];
-//        NodeInBodyFrame[2] = m_MeshOffset[2] + TmpVect[2];
-//
-//        // Position -> point.
-//        FrMesh::Point Pout;
-//        Pout[0] = NodeInBodyFrame[0];
-//        Pout[1] = NodeInBodyFrame[1];
-//        Pout[2] = NodeInBodyFrame[2];
-//
-//        return Pout;
-//
-//    }
 };
