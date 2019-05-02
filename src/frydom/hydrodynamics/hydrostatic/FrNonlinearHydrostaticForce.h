@@ -42,18 +42,13 @@ namespace frydom {
         /// Center of buoyancy in world.
         Position m_CoBInWorld;
 
-        /// Clipped mesh.
-        mesh::FrMesh m_clipped_mesh;
-
         /// Hydrodynamic mesh.
         std::shared_ptr<FrHydroMesh> m_hydro_mesh;
 
     public:
 
         /// Constructor.
-        FrNonlinearHydrostaticForce(std::shared_ptr<FrHydroMesh> HydroMesh) {
-            m_hydro_mesh = HydroMesh;
-        }
+        explicit FrNonlinearHydrostaticForce(const std::shared_ptr<FrHydroMesh>& HydroMesh);
 
         /// Get the type name of this object
         /// \return type name of this object
@@ -71,8 +66,38 @@ namespace frydom {
         /// This function is called at the end of the time step, after the last step of the integration scheme.
         void StepFinalize() override;
 
-        /// This function gives the center of buoyancy in the world frame.
+        /// Get the center of buoyancy position of the clipped mesh in the mesh reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return center of buoyancy position in the mesh reference frame
+        Position GetCenterOfBuoyancyInMesh(FRAME_CONVENTION fc);
+
+        /// Get the center of buoyancy position of the clipped mesh in the body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return center of buoyancy position in the body reference frame
         Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);
+
+        /// Get the center of buoyancy position of the clipped mesh in the world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return center of buoyancy position in the world reference frame
+        Position GetCenterOfBuoyancyInWorld(FRAME_CONVENTION fc);
+
+        /// Get the hydrostatic force (integration of the hydrostatic pressure on the clipped mesh)
+        /// in the mesh reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return hydrostatic force in the mesh reference frame
+        Force GetHydrostaticForceInMesh(FRAME_CONVENTION fc);
+
+        /// Get the hydrostatic force (integration of the hydrostatic pressure on the clipped mesh)
+        /// in the body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return hydrostatic force in the body reference frame
+        Force GetHydrostaticForceInBody(FRAME_CONVENTION fc);
+
+        /// Get the hydrostatic force (integration of the hydrostatic pressure on the clipped mesh)
+        /// in the world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return hydrostatic force in the world reference frame
+        Force GetHydrostaticForceInWorld(FRAME_CONVENTION fc);
 
     private:
 
@@ -84,7 +109,7 @@ namespace frydom {
 
     /// This function creates a (fully or weakly) nonlinear hydrostatic force object.
     std::shared_ptr<FrNonlinearHydrostaticForce>
-    make_nonlinear_hydrostatic_force(std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
+    make_nonlinear_hydrostatic_force(const std::shared_ptr<FrBody>& body, const std::shared_ptr<FrHydroMesh>& HydroMesh);
 
 }  // end namespace frydom
 

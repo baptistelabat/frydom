@@ -211,7 +211,7 @@ namespace frydom {
             void Finalize();
 
 //            /// This function gives the position in the body frame of a node in the mesh frame.
-//            FrMesh::Point GetNodePositionInBody(FrMesh::Point point) const;
+//            FrMesh::Point GetMeshPointPositionInBody(FrMesh::Point point) const;
 
 
         };

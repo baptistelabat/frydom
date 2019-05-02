@@ -36,34 +36,18 @@ namespace frydom {
 
     private:
 
-        /// Offshore system.
-        FrOffshoreSystem* m_system;
+        FrOffshoreSystem* m_system;                     ///< reference to the offshore system
+        std::shared_ptr<FrBody> m_body;                 ///< reference to the body related to this FrHydroMesh
 
-        /// Input mesh file.
-        std::string m_meshfilename; // Input mesh file.
+        std::unique_ptr<mesh::FrMeshClipper> m_clipper; ///< mesh clipper service
 
-        /// Clipped mesh.
-        mesh::FrMesh m_clippedMesh;
+        std::string m_meshfilename;                     ///< Input mesh file.
+        mesh::FrMesh m_initMesh;                        ///< Input mesh file (as defined and read from the input file)
+        mesh::FrMesh m_clippedMesh;                     ///< Clipped mesh (its frame follows the body frame in its motions)
 
-        /// Input mesh file.
-        mesh::FrMesh m_initMesh;
+        FrFrame m_meshOffset;                           ///< Offset frame between mesh and body frame (defined initially)
 
-        FrFrame m_meshOffset;
-
-//        /// Mesh frame offset in the body frame.
-//        Position m_MeshOffset;
-//
-//        /// Rotation of the mesh frame compared to the body frame.
-//        mathutils::Matrix33<double> m_Rotation;
-
-        /// Boolean to know if the mesh is clipped by a wave (True) or a plane (False).
-        bool m_WNL_or_NL;
-
-        /// Body.
-        std::shared_ptr<FrBody> m_body;
-
-        /// Clipper.
-        std::unique_ptr<mesh::FrMeshClipper> m_clipper;
+        bool m_WNL_or_NL;                               ///< Boolean to know if the mesh is clipped by a wave (True) or a plane (False).
 
     public:
 
@@ -77,27 +61,32 @@ namespace frydom {
         /// Initialize the nonlinear hydrostatic force model.
         void Initialize() override;
 
+        /// Initialize the log
+        void InitializeLog() override;
 
         /// This function sets the offset of the mesh frame in the body frame.
         void SetMeshOffset(FrFrame meshOffset);
 
-        /// Initialize the log
-        void InitializeLog() override;
+        FrFrame GetMeshOffset() const;
 
-        /// This function returns the clipped mesh.
-        mesh::FrMesh GetClippedMesh();
+        /// Get a reference to the clipped mesh (its frame is adjusted to the body's motions)
+        /// \return reference to the clipped mesh
+        mesh::FrMesh& GetClippedMesh();
 
-        mesh::FrMesh GetInitialMesh();
+        /// Get a reference to the initial mesh (as defined and read from the input file)
+        /// \return reference to the initial mesh
+        mesh::FrMesh& GetInitialMesh();
 
-        /// This function returns the center of buoyancy of the clipped mesh in the world frame.
-        Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);
 
     private:
 
-        void UpdateMeshPositionInWorld();
+        /// Update the frame of the clipped mesh according to the body's motions
+        void UpdateMeshFrame();
 
-        /// This function gives the position in the body frame of a node in the mesh frame.
-        mesh::FrMesh::Point GetNodePositionInBody(mesh::FrMesh::Point point) const;
+        /// Get the position in the body reference frame of a point which position is specified in the mesh reference frame
+        /// \param point position of a point in the mesh reference frame
+        /// \return point position in the body reference frame
+        mesh::FrMesh::Point GetMeshPointPositionInBody(mesh::FrMesh::Point point) const;
 
         /// Update nonlinear hydrostatic force.
         /// \param time Current time of the simulation from beginning.
@@ -106,10 +95,10 @@ namespace frydom {
     };
 
     /// This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(std::shared_ptr<FrBody> body, std::string meshfile);
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile);
 
     /// This function creates a hydrodynamic mesh for using in the computation of the weakly nonlinear hydrostatic and/or Froude-Krylov loads.
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(std::shared_ptr<FrBody> body, std::string meshfile);
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile);
 
     }  // end namespace frydom
 

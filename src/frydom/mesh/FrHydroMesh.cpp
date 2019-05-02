@@ -60,20 +60,40 @@ namespace frydom {
 
     }
 
+    void FrHydroMesh::InitializeLog() {
+
+    }
+
+    void FrHydroMesh::SetMeshOffset(FrFrame meshOffset) {
+        m_meshOffset = meshOffset;
+    }
+
+    FrFrame FrHydroMesh::GetMeshOffset() const {
+        return m_meshOffset;
+    }
+
+    mesh::FrMesh& FrHydroMesh::GetClippedMesh() {
+        return m_clippedMesh;
+    }
+
+    mesh::FrMesh& FrHydroMesh::GetInitialMesh() {
+        return m_initMesh;
+    }
+
     void FrHydroMesh::Compute(double time) {
 
         m_clippedMesh.clear();
         m_clippedMesh = m_initMesh;
 
         // Adjust the position of the clipped mesh according to the position of the body
-        UpdateMeshPositionInWorld();
+        UpdateMeshFrame();
 
         // Application of the mesh clipper on the updated init mesh to obtain the clipped mesh
         m_clipper->Apply(&m_clippedMesh);
 
     }
 
-    void FrHydroMesh::UpdateMeshPositionInWorld() {
+    void FrHydroMesh::UpdateMeshFrame() {
 
         // This function transports the mesh from the mesh frame to the body frame, then applies the rotation of mesh
         // in the world frame. Iterating on vertices to get their place wrt to plane.
@@ -82,7 +102,7 @@ namespace frydom {
         for (auto vh : m_clippedMesh.vertices()){
 
             // From the mesh frame to the body frame.
-            m_clippedMesh.point(vh) = GetNodePositionInBody(m_clippedMesh.point(vh));
+            m_clippedMesh.point(vh) = GetMeshPointPositionInBody(m_clippedMesh.point(vh));
 
             auto NodeInBody = mesh::OpenMeshPointToVector3d<Position>(m_clippedMesh.point(vh));
 
@@ -99,7 +119,7 @@ namespace frydom {
 
     }
 
-    VectorT<double, 3> FrHydroMesh::GetNodePositionInBody(VectorT<double, 3> point) const {
+    VectorT<double, 3> FrHydroMesh::GetMeshPointPositionInBody(VectorT<double, 3> point) const {
 
 
         // From the mesh frame to the body frame: OmP = ObOm + bRm*OmP.
@@ -112,35 +132,7 @@ namespace frydom {
 
     }
 
-    Position FrHydroMesh::GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc){
-        // FIXME : voir si on a besoin de ressortir dans le monde ou dans le corps et faire les transformations nécessaires
-        // This function returns the center of buoyancy of the clipped mesh in the world frame.
-
-        // The translation of the body was not done for avoiding numerical errors.
-        auto CoBInWorld = m_body->GetPosition(NWU) + mesh::OpenMeshPointToVector3d<Position>(m_clippedMesh.GetCOG());
-
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(CoBInWorld);
-
-        return CoBInWorld;
-    }
-
-    void FrHydroMesh::InitializeLog() {
-
-    }
-
-    void FrHydroMesh::SetMeshOffset(FrFrame meshOffset) {
-        m_meshOffset = meshOffset;
-    }
-
-    mesh::FrMesh FrHydroMesh::GetClippedMesh() {
-        return m_clippedMesh;
-    }
-
-    mesh::FrMesh FrHydroMesh::GetInitialMesh() {
-        return m_initMesh;
-    }
-
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(std::shared_ptr<FrBody> body, std::string meshfile){
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile){
 
         // This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.
 
@@ -151,7 +143,7 @@ namespace frydom {
         return HydroMesh;
     }
 
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(std::shared_ptr<FrBody> body, std::string meshfile){
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile){
 
         // This function creates a hydrodynamic mesh for using in the computation of the weakly nonlinear hydrostatic and/or Froude-Krylov loads.
 

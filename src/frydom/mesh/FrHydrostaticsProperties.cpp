@@ -136,6 +136,8 @@ namespace frydom {
         mesh::FrMesh::Normal Normal;
         double Pressure;
 
+        m_force = {0.,0.,0.};
+
         // Loop over the faces.
         for (mesh::FrMesh::FaceIter f_iter = clipped_mesh.faces_begin(); f_iter != clipped_mesh.faces_end(); ++f_iter) {
 
@@ -154,9 +156,7 @@ namespace frydom {
 
         // Buoyancy center.
         VectorT<double, 3> CoB = clipped_mesh.GetCOG(); // Center of gravity of the immersed part (clipped mesh).
-        m_centerOfBuoyancy[0] = CoB[0];
-        m_centerOfBuoyancy[1] = CoB[1];
-        m_centerOfBuoyancy[2] = CoB[2];
+        m_centerOfBuoyancy = mesh::OpenMeshPointToVector3d<Position>(CoB);
 
         // Adding the rho*g term.
         m_force = m_force*m_waterDensity*m_gravityAcceleration;

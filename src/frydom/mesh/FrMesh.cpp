@@ -474,6 +474,7 @@ namespace frydom {
         const VectorT<double, 3> FrMesh::GetCOG() const {
             Point cog;
             auto volume = GetVolume();
+            assert(volume!=0);
             cog[0] = GetVolumeIntegral(POLY_X) / volume;
             cog[1] = GetVolumeIntegral(POLY_Y) / volume;
             cog[2] = GetVolumeIntegral(POLY_Z) / volume;
