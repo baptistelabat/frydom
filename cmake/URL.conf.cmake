@@ -23,12 +23,12 @@ set(googletest_TAG release-1.8.1)
 
 
 # hermes
-set(hermes_URL git@frydom-ce.org:ce/hermes.git)
+set(hermes_URL git@d-ice.gitlab.host:public-repos/hermes-ce.git)
 set(hermes_TAG master)
 
 
 # MathUtils
-set(mathutils_URL git@frydom-ce.org:ce/mathutils.git)
+set(mathutils_URL git@d-ice.gitlab.host:public-repos/mathutils-ce.git)
 set(mathutils_TAG master)
 
 
