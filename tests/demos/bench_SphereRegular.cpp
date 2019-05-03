@@ -165,7 +165,7 @@ int main(int argc, char* argv[]) {
 
     // -- Linear hydrostatics
 
-    auto forceHst = make_linear_hydrostatic_force(hdb, body);
+//    auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
     // -- Radiation
 
@@ -182,26 +182,22 @@ int main(int argc, char* argv[]) {
 
     // -- Linear excitation
 
-    auto excitationForce = make_linear_excitation_force(hdb, body);
+//    auto excitationForce = make_linear_excitation_force(hdb, body);
 
     // -- Hydrodynamic mesh
 
-//    auto bodyMesh = make_hydro_mesh_nonlinear(body,"Sphere_6200_faces.obj");
-//    mathutils::Matrix33<double> Rotation;
-//    Rotation.SetIdentity();
-//    Position MeshOffset(0,0,0);
-//    bodyMesh->SetMeshOffset(MeshOffset,Rotation);
-//    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
+    auto bodyMesh = make_hydro_mesh(body,"Sphere_6200_faces.obj", FrFrame(), true);
+    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     // -- Nonlinear hydrostatics
 
-//    auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
-//    forceHst->SetLogged(true);
+    auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
+    forceHst->SetLogged(true);
 
     // -- Nonlinear Froude-Krylov
 
-//    auto NonlinFKForce = make_nonlinear_froude_krylov_force(body,bodyMesh);
-//    NonlinFKForce->SetLogged(true);
+    auto NonlinFKForce = make_nonlinear_froude_krylov_force(body,bodyMesh);
+    NonlinFKForce->SetLogged(true);
 
     // -- Simulation
 
