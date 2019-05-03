@@ -115,57 +115,34 @@ int main(int argc, char* argv[]) {
     // Create the body, name it and make it cylinder
     auto cylinder = system.NewBody();
     cylinder->SetName("Cylinder");
-    cylinder->AddMeshAsset("Free_cylinder_2900_panels.obj");
     cylinder->SetColor(Yellow);
 
-//    double mass = MU_PI*0.2*0.2*0.1*system.GetEnvironment()->GetFluidDensity(WATER);
-//
-//    makeItCylinder(cylinder, 0.2, 0.2, mass);
+    double mass = MU_PI*0.2*0.2*0.1*system.GetEnvironment()->GetFluidDensity(WATER);
 
-    // Inertia Tensor
-    double Mass = 12.88; // Maillage visu.
-    Position cylinderCoG(0., 0., 0.);
-    FrFrame cylinderCoGFrame(cylinderCoG, FrRotation(), NWU);
+    makeItCylinder(cylinder, 0.2, 0.2, mass);
 
-    // Dof.
-//    cylinder->GetDOFMask()->SetLock_X(true);
-//    cylinder->GetDOFMask()->SetLock_Y(true);
-//    cylinder->GetDOFMask()->SetLock_Z(true);
-//    cylinder->GetDOFMask()->SetLock_Rx(true);
-//    cylinder->GetDOFMask()->SetLock_Ry(true);
-//    cylinder->GetDOFMask()->SetLock_Rz(true);
-
-    // Inertia
-    double Ixx               = 0.5;
-    double Iyy               = 0.5;
-    double Izz               = 2;
-    FrInertiaTensor cylinderInertia(Mass, Ixx, Iyy, Izz, 0., 0., 0.,cylinderCoGFrame, NWU);
-
-    cylinder->SetInertiaTensor(cylinderInertia);
-
+    // makeItCylinder create a horizontal cylinder. Rotate it 90° to have it vertical
     FrRotation cylRotation;
-    cylRotation.RotX_DEGREES(10., NWU);
+    cylRotation.RotX_DEGREES(90., NWU);
+    cylinder->Rotate(cylRotation);
 
-//    cylinder->SetPosition(Position(0.,0.,0.02), NWU);
-//    cylinder->Rotate(cylRotation);
-
-    // Node.
-    auto Node = cylinder->NewNode();
-    Node->ShowAsset(true);
-    Node->SetLogged(true);
-    auto AssetNode = Node->GetAsset();
-    AssetNode->SetSize(20);
+    // For decay test
+    cylinder->SetPosition(Position(0.,0.,0.02), NWU);
 
     // Extra linear damping force.
-//    auto LinearDampingForce = make_linear_damping_force(cylinder, WATER, false);
-//    LinearDampingForce->SetDiagonalDamping(10e0,10e0,10e0,10e0,10e0,10e0);
+    auto LinearDampingForce = make_linear_damping_force(cylinder, WATER, false);
+    LinearDampingForce->SetDiagonalDamping(10e0,10e0,10e0,10e0,10e0,10e0);
+
+    FrFrame meshOffset;
+    meshOffset.SetRotation(cylRotation);
 
     // -- Hydrodynamic mesh
-    auto CylinderMesh = make_hydro_mesh(cylinder,"Free_cylinder_2900_panels.obj",FrFrame(),true);
+    auto CylinderMesh = make_hydro_mesh(cylinder, "Free_cylinder_2900_panels.obj", meshOffset, true);
 
     CylinderMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
-//    // -- Hydrostatic stiffness matrix, for checking only
+    // -- Hydrostatic stiffness matrix, for checking only
+
 //    auto eqFrame = std::make_shared<FrEquilibriumFrame>(cylinder.get());
 //
 //    auto linearHSForce = make_linear_hydrostatic_force(eqFrame, cylinder, "Free_cylinder_2900_panels.obj", FrFrame());
@@ -173,9 +150,9 @@ int main(int argc, char* argv[]) {
     // -- Hydrostatics NL
     auto forceHst = make_nonlinear_hydrostatic_force(cylinder,CylinderMesh);
     forceHst->SetLogged(true);
-    forceHst->ShowAsset(true);
-    auto ForceHstAsset = forceHst->GetAsset();
-    ForceHstAsset->SetSize(0.00000015);
+//    forceHst->ShowAsset(true);
+//    auto ForceHstAsset = forceHst->GetAsset();
+//    ForceHstAsset->SetSize(0.00000015);
 
 
     // ------------------ Run with Irrlicht ------------------ //
@@ -187,19 +164,11 @@ int main(int argc, char* argv[]) {
     // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
     // For saving snapshots of the simulation, just turn the boolean to true.
 
+    // You can solve the static equilibrium first and visualize it.
 //    system.GetStaticAnalysis()->SetNbSteps(10);
 //    system.SolveStaticWithRelaxation();
-
 //    system.Visualize(20,false);
 
-
-
-//    clock_t begin = clock();
-//
-    system.RunInViewer(20, 2, false);
-//
-//    clock_t end = clock();
-//    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-//    std::cout << elapsed_secs << std::endl;
+    system.RunInViewer(0., 2, false);
 
 }
