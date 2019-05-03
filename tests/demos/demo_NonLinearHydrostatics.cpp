@@ -37,6 +37,8 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
     system.SetName("NonLinearHydrostatics");
 
+    system.GetEnvironment()->GetOcean()->SetDensity(1023.);
+
     // --------------------------------------------------
     // Environment
     // --------------------------------------------------
@@ -145,7 +147,7 @@ int main(int argc, char* argv[]) {
     cylRotation.RotX_DEGREES(10., NWU);
 
 //    cylinder->SetPosition(Position(0.,0.,0.02), NWU);
-    cylinder->Rotate(cylRotation);
+//    cylinder->Rotate(cylRotation);
 
     // Node.
     auto Node = cylinder->NewNode();
@@ -159,20 +161,22 @@ int main(int argc, char* argv[]) {
 //    LinearDampingForce->SetDiagonalDamping(10e0,10e0,10e0,10e0,10e0,10e0);
 
     // -- Hydrodynamic mesh
-    auto CylinderMesh = make_hydro_mesh_nonlinear(cylinder,"Free_cylinder_2900_panels.obj");
-//    auto CylinderMesh = make_hydro_mesh_weakly_nonlinear(cylinder,"Free_cylinder_11600_panels.obj");
-//    mathutils::Matrix33<double> Rotation; // = cylRotation.GetRotationMatrix();
-//    Rotation.SetIdentity();
-//    Position MeshOffset(0,0,0);
-//    CylinderMesh->SetMeshOffset(MeshOffset, Rotation);
+    auto CylinderMesh = make_hydro_mesh(cylinder,"Free_cylinder_2900_panels.obj",FrFrame(),true);
+
     CylinderMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
-    // -- Hydrostatics
+//    // -- Hydrostatic stiffness matrix, for checking only
+//    auto eqFrame = std::make_shared<FrEquilibriumFrame>(cylinder.get());
+//
+//    auto linearHSForce = make_linear_hydrostatic_force(eqFrame, cylinder, "Free_cylinder_2900_panels.obj", FrFrame());
+
+    // -- Hydrostatics NL
     auto forceHst = make_nonlinear_hydrostatic_force(cylinder,CylinderMesh);
     forceHst->SetLogged(true);
     forceHst->ShowAsset(true);
     auto ForceHstAsset = forceHst->GetAsset();
     ForceHstAsset->SetSize(0.00000015);
+
 
     // ------------------ Run with Irrlicht ------------------ //
 

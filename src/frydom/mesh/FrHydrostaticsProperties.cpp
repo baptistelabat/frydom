@@ -129,38 +129,4 @@ namespace frydom {
         return mat;
     }
 
-    void NonlinearHydrostatics::CalcPressureIntegration(const mesh::FrMesh& clipped_mesh){
-
-        // This function performs the hydrostatic pressure integration.
-
-        mesh::FrMesh::Normal Normal;
-        double Pressure;
-
-        m_force = {0.,0.,0.};
-
-        // Loop over the faces.
-        for (mesh::FrMesh::FaceIter f_iter = clipped_mesh.faces_begin(); f_iter != clipped_mesh.faces_end(); ++f_iter) {
-
-            // Normal.
-            Normal = clipped_mesh.normal(*f_iter);
-
-            // Pressure*Area.
-            Pressure = clipped_mesh.data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
-
-            // Hydrostatic force without the term rho*g.
-            m_force[0] = m_force[0] + Pressure*Normal[0];
-            m_force[1] = m_force[1] + Pressure*Normal[1];
-            m_force[2] = m_force[2] + Pressure*Normal[2];
-
-        }
-
-        // Buoyancy center.
-        VectorT<double, 3> CoB = clipped_mesh.GetCOG(); // Center of gravity of the immersed part (clipped mesh).
-        m_centerOfBuoyancy = mesh::OpenMeshPointToVector3d<Position>(CoB);
-
-        // Adding the rho*g term.
-        m_force = m_force*m_waterDensity*m_gravityAcceleration;
-
-    }
-
 }  // end namespace frydom
