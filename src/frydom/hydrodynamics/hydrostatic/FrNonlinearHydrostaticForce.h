@@ -35,7 +35,7 @@ namespace frydom {
     private:
 
         /// Hydrodynamic mesh.
-        std::shared_ptr<FrHydroMesh> m_hydro_mesh;
+        std::shared_ptr<FrHydroMesh> m_hydroMesh;
 
     public:
 

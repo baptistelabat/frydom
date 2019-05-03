@@ -24,7 +24,7 @@
 namespace frydom {
 
     FrNonlinearHydrostaticForce::FrNonlinearHydrostaticForce(const std::shared_ptr<FrHydroMesh> &HydroMesh) {
-        m_hydro_mesh = HydroMesh;
+        m_hydroMesh = HydroMesh;
     }
 
 
@@ -74,7 +74,7 @@ namespace frydom {
     Position FrNonlinearHydrostaticForce::GetCenterOfBuoyancyInWorld(FRAME_CONVENTION fc) {
 
         // clipped mesh is expressed in the world reference frame, but its horizontal position is centered around (0.,0.)
-        auto CoBInWorld = mesh::OpenMeshPointToVector3d<Position>(m_hydro_mesh->GetClippedMesh().GetCOG());
+        auto CoBInWorld = mesh::OpenMeshPointToVector3d<Position>(m_hydroMesh->GetClippedMesh().GetCOG());
 
         // Addition of the horizontal position of the body
         auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetZ() = 0.;
@@ -93,15 +93,17 @@ namespace frydom {
         // This function performs the hydrostatic pressure integration.
 
         Force hydrostaticForce = {0.,0.,0.};
+        
+        auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
 
         // Loop over the faces.
-        for (mesh::FrMesh::FaceIter f_iter = m_hydro_mesh->GetClippedMesh().faces_begin(); f_iter != m_hydro_mesh->GetClippedMesh().faces_end(); ++f_iter) {
+        for (mesh::FrMesh::FaceIter f_iter = clippedMesh->faces_begin(); f_iter != clippedMesh->faces_end(); ++f_iter) {
 
             // Normal.
-            auto normal = m_hydro_mesh->GetClippedMesh().normal(*f_iter);
+            auto normal = clippedMesh->normal(*f_iter);
 
             // Pressure*Area.
-            auto pressure = m_hydro_mesh->GetClippedMesh().data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
+            auto pressure = clippedMesh->data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
 
             // Hydrostatic force without the term rho*g.
             hydrostaticForce[0] += pressure*normal[0];

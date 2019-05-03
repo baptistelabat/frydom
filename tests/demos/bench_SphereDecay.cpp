@@ -210,11 +210,7 @@ int main(int argc, char* argv[]) {
     body->SetPosition(Position(0., 0., 4.99), NWU);
 
     // Nonlinear hydrostatics
-    auto bodyMesh = make_hydro_mesh_nonlinear(body,"Sphere_10000_faces.obj");
-    mathutils::Matrix33<double> Rotation;
-    Rotation.SetIdentity();
-    Position MeshOffset(0,0,0);
-    bodyMesh->SetMeshOffset(MeshOffset, Rotation);
+    auto bodyMesh = make_hydro_mesh(body,"Sphere_10000_faces.obj",FrFrame(),true);
     bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
