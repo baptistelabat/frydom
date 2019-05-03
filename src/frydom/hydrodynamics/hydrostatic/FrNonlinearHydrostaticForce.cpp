@@ -11,10 +11,16 @@
 
 #include "FrNonlinearHydrostaticForce.h"
 
-#include "frydom/core/math/FrVector.h"
 #include "frydom/core/body/FrBody.h"
+
+#include "frydom/mesh/FrMesh.h"
+#include "frydom/mesh/FrHydroMesh.h"
 #include "frydom/mesh/FrMeshClipper.h"
 #include "frydom/mesh/FrHydrostaticsProperties.h"
+
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
 namespace frydom {
@@ -97,7 +103,7 @@ namespace frydom {
         auto COBInBody = GetCenterOfBuoyancyInBody(NWU);
         auto COBInWorld = GetCenterOfBuoyancyInWorld(NWU);
 
-//        SetForceInWorldAtPointInWorld(GetHydrostaticForceInWorld(NWU), GetCenterOfBuoyancyInWorld(NWU), NWU);
+        SetForceInWorldAtPointInWorld(GetHydrostaticForceInWorld(NWU), GetCenterOfBuoyancyInWorld(NWU), NWU);
 //        SetForceInWorldAtPointInWorld(m_dummy, GetCenterOfBuoyancyInBody(NWU), NWU);
 //        SetForceInWorldAtPointInWorld(GetHydrostaticForceInBody(NWU), GetCenterOfBuoyancyInBody(NWU), NWU);
 

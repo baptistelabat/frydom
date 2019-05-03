@@ -15,16 +15,11 @@
 
 #include <frydom/core/force/FrForce.h>
 #include "frydom/core/math/FrVector.h"
-#include "frydom/mesh/FrMesh.h"
-#include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean.h"
-#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
-#include "frydom/mesh/FrHydroMesh.h"
 
 namespace frydom {
 
     class FrBody;
-    class FrOffshoreSystem;
+    class FrHydroMesh;
 
     /// This class defines the nonlinear hydrostatic force applied to a hydrodynamic body.
     /// The force is computed based on the real position of the body with the incident free surface by integeration of the hydrostatic pressure over the body mesh.
