@@ -37,9 +37,33 @@ namespace frydom {
 
         // This function initializes the logger for the nonlinear hydrostatic loads by giving the position of the center of buoyancy in the body frame.
 
+
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("CenterOfBuoyancyInBody","m", fmt::format("Center of buoyancy in world reference frame in {}", c_logFrameConvention),
+                ("CoBInWorld","m", fmt::format("Center of buoyancy in world reference frame in {}", c_logFrameConvention),
+                 [this]() {return m_CoBInWorld;});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("OForceInWorld","N", fmt::format("Hydrostatic force, at CoB, in world reference frame in {}", c_logFrameConvention),
+                 [this]() {return m_dummy;});
+
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("CenterOfBuoyancyInWorld","m", fmt::format("Center of buoyancy in world reference frame in {}", c_logFrameConvention),
+                 [this]() {return GetCenterOfBuoyancyInWorld(c_logFrameConvention);});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("CenterOfBuoyancyInBody","m", fmt::format("Center of buoyancy in body reference frame in {}", c_logFrameConvention),
                  [this]() {return GetCenterOfBuoyancyInBody(c_logFrameConvention);});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("CenterOfBuoyancyInMesh","m", fmt::format("Center of buoyancy in mesh reference frame in {}", c_logFrameConvention),
+                 [this]() {return GetCenterOfBuoyancyInMesh(c_logFrameConvention);});
+
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("ForceInWorld","N", fmt::format("Hydrostatic force, at CoB, in world reference frame in {}", c_logFrameConvention),
+                 [this]() {return GetHydrostaticForceInWorld(c_logFrameConvention);});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("ForceInBody","N", fmt::format("Hydrostatic force, at CoB, in body reference frame in {}", c_logFrameConvention),
+                 [this]() {return GetHydrostaticForceInBody(c_logFrameConvention);});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("ForceInMesh","N", fmt::format("Hydrostatic force, at CoB, in mesh reference frame in {}", c_logFrameConvention),
+                 [this]() {return GetHydrostaticForceInMesh(c_logFrameConvention);});
 
         FrForce::InitializeLog();
 
@@ -57,13 +81,25 @@ namespace frydom {
         NLhydrostatics.CalcPressureIntegration(m_hydro_mesh->GetClippedMesh());
 
         // Setting the nonlinear hydrostatic loads in world at the CoB in world.
-        Force force = NLhydrostatics.GetNonlinearForce();
+        m_dummy = NLhydrostatics.GetNonlinearForce();
 
         // The translation of the body was not done for avoiding numerical errors.
         m_CoBInWorld = m_body->GetPosition(NWU) + NLhydrostatics.GetCenterOfBuoyancy();
 
         // The torque is computed from the hydrostatic force and the center of buoyancy.
-        SetForceInWorldAtPointInWorld(force, m_CoBInWorld, NWU);
+        SetForceInWorldAtPointInWorld(m_dummy, m_CoBInWorld, NWU);
+
+        auto trucInMesh = GetHydrostaticForceInMesh(NWU);
+        auto trucInBody = GetHydrostaticForceInBody(NWU);
+        auto trucInWorld = GetHydrostaticForceInWorld(NWU);
+
+        auto COBInMesh = GetCenterOfBuoyancyInMesh(NWU);
+        auto COBInBody = GetCenterOfBuoyancyInBody(NWU);
+        auto COBInWorld = GetCenterOfBuoyancyInWorld(NWU);
+
+//        SetForceInWorldAtPointInWorld(GetHydrostaticForceInWorld(NWU), GetCenterOfBuoyancyInWorld(NWU), NWU);
+//        SetForceInWorldAtPointInWorld(m_dummy, GetCenterOfBuoyancyInBody(NWU), NWU);
+//        SetForceInWorldAtPointInWorld(GetHydrostaticForceInBody(NWU), GetCenterOfBuoyancyInBody(NWU), NWU);
 
     }
 
@@ -131,7 +167,7 @@ namespace frydom {
 //        std::exit(0);
 
     }
-    
+
     std::shared_ptr<FrNonlinearHydrostaticForce>
     make_nonlinear_hydrostatic_force(const std::shared_ptr<FrBody>& body, const std::shared_ptr<FrHydroMesh>& HydroMesh){
 

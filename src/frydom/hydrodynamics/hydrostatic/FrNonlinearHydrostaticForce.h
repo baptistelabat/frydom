@@ -41,6 +41,7 @@ namespace frydom {
 
         /// Center of buoyancy in world.
         Position m_CoBInWorld;
+        Force m_dummy;
 
         /// Hydrodynamic mesh.
         std::shared_ptr<FrHydroMesh> m_hydro_mesh;
