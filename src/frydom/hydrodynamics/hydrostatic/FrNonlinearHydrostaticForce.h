@@ -34,10 +34,6 @@ namespace frydom {
 
     private:
 
-        /// Center of buoyancy in world.
-        Position m_CoBInWorld;
-        Force m_dummy;
-
         /// Hydrodynamic mesh.
         std::shared_ptr<FrHydroMesh> m_hydro_mesh;
 
@@ -62,11 +58,6 @@ namespace frydom {
         /// This function is called at the end of the time step, after the last step of the integration scheme.
         void StepFinalize() override;
 
-//        /// Get the center of buoyancy position of the clipped mesh in the mesh reference frame
-//        /// \param fc frame convention (NED/NWU)
-//        /// \return center of buoyancy position in the mesh reference frame
-//        Position GetCenterOfBuoyancyInMesh(FRAME_CONVENTION fc);
-
         /// Get the center of buoyancy position of the clipped mesh in the body reference frame
         /// \param fc frame convention (NED/NWU)
         /// \return center of buoyancy position in the body reference frame
@@ -76,12 +67,6 @@ namespace frydom {
         /// \param fc frame convention (NED/NWU)
         /// \return center of buoyancy position in the world reference frame
         Position GetCenterOfBuoyancyInWorld(FRAME_CONVENTION fc);
-
-//        /// Get the hydrostatic force (integration of the hydrostatic pressure on the clipped mesh)
-//        /// in the mesh reference frame
-//        /// \param fc frame convention (NED/NWU)
-//        /// \return hydrostatic force in the mesh reference frame
-//        Force GetHydrostaticForceInMesh(FRAME_CONVENTION fc);
 
         /// Get the hydrostatic force (integration of the hydrostatic pressure on the clipped mesh)
         /// in the body reference frame
