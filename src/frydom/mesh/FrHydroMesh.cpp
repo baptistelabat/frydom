@@ -15,13 +15,22 @@
 
 namespace frydom {
 
-    FrHydroMesh::FrHydroMesh(FrOffshoreSystem *system, std::string meshfile, std::shared_ptr<FrBody> body,
-                             bool WNL_or_NL)
-                             : m_system(system), m_meshfilename(meshfile), m_body(body), m_WNL_or_NL(WNL_or_NL) {
+    FrHydroMesh::FrHydroMesh(FrOffshoreSystem *system, const std::shared_ptr<FrBody>& body, bool WNL_or_NL)
+            : m_system(system), m_body(body), m_WNL_or_NL(WNL_or_NL) {
         // m_clipper
         m_clipper = std::make_unique<mesh::FrMeshClipper>();
 
-        m_meshOffset = FrFrame();
+    }
+
+    FrHydroMesh::FrHydroMesh(FrOffshoreSystem *system, const std::shared_ptr<FrBody>& body, const std::string& meshFile,
+                             FrFrame meshOffset, bool WNL_or_NL)
+                             : m_system(system), m_body(body), m_WNL_or_NL(WNL_or_NL) {
+
+        // Import and transform the initial mesh, into the body reference frame
+        ImportMesh(meshFile, meshOffset);
+
+        // m_clipper
+        m_clipper = std::make_unique<mesh::FrMeshClipper>();
 
     }
 
@@ -29,8 +38,6 @@ namespace frydom {
 
         // This function initializes the hydrostatic force object.
 
-        // Loading the input mesh file.
-        m_initMesh = mesh::FrMesh(m_meshfilename);
         m_clippedMesh = mesh::FrMesh();
 
         // Tidal height.
@@ -64,13 +71,13 @@ namespace frydom {
 
     }
 
-    void FrHydroMesh::SetMeshOffset(FrFrame meshOffset) {
-        m_meshOffset = meshOffset;
-    }
-
-    FrFrame FrHydroMesh::GetMeshOffset() const {
-        return m_meshOffset;
-    }
+//    void FrHydroMesh::SetMeshOffset(FrFrame meshOffset) {
+//        m_meshOffset = meshOffset;
+//    }
+//
+//    FrFrame FrHydroMesh::GetMeshOffset() const {
+//        return m_meshOffset;
+//    }
 
     mesh::FrMesh& FrHydroMesh::GetClippedMesh() {
         return m_clippedMesh;
@@ -85,24 +92,28 @@ namespace frydom {
         m_clippedMesh.clear();
         m_clippedMesh = m_initMesh;
 
-        // Adjust the position of the clipped mesh according to the position of the body
+        // This function rotate the mesh from the body reference frame to the world reference frame, and then translate
+        // it vertically. The resulting mesh horizontal position is kept close to (0.,0.) for the clipping process
         UpdateMeshFrame();
 
         // Application of the mesh clipper on the updated init mesh to obtain the clipped mesh
         m_clipper->Apply(&m_clippedMesh);
 
+        // The clipped mesh obtained at this point is expressed in the world reference frame, but it's horizontal position
+        // does not coincide with the body's and is kept close to (0.,0.).
+
     }
 
     void FrHydroMesh::UpdateMeshFrame() {
 
-        // This function transports the mesh from the mesh frame to the body frame, then applies the rotation of mesh
-        // in the world frame. Iterating on vertices to get their place wrt to plane.
+        // This function rotate the mesh from the body reference frame to the world reference frame, and then translate
+        // it vertically. The resulting mesh horizontal position is kept close to (0.,0.) for the clipping process
 
         // Loop over the vertices.
         for (auto vh : m_clippedMesh.vertices()){
 
-            // From the mesh frame to the body frame.
-            m_clippedMesh.point(vh) = GetMeshPointPositionInBody(m_clippedMesh.point(vh));
+//            // From the mesh frame to the body frame.
+//            m_clippedMesh.point(vh) = GetMeshPointPositionInBody(m_clippedMesh.point(vh));
 
             auto NodeInBody = mesh::OpenMeshPointToVector3d<Position>(m_clippedMesh.point(vh));
 
@@ -132,26 +143,58 @@ namespace frydom {
 
     }
 
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile){
+    mesh::FrMesh &FrHydroMesh::ImportMesh(const std::string &meshFile, FrFrame meshOffset) {
 
-        // This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.
+        m_initMesh = mesh::FrMesh(meshFile);
+        m_initMesh.Translate(mesh::Vector3dToOpenMeshPoint(meshOffset.GetPosition(NWU)));
+        double phi, theta, psi;
+        meshOffset.GetRotation().GetCardanAngles_RADIANS(phi,theta,psi,NWU);
+        m_initMesh.Rotate(phi, theta, psi);
 
-        auto HydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(),meshfile,body,true);
-
-        body->GetSystem()->Add(HydroMesh);
-
-        return HydroMesh;
+        return m_initMesh;
     }
 
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile){
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, bool NL_or_WNL) {
 
-        // This function creates a hydrodynamic mesh for using in the computation of the weakly nonlinear hydrostatic and/or Froude-Krylov loads.
+        auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, NL_or_WNL);
 
-        auto HydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(),meshfile,body,false);
+        body->GetSystem()->Add(hydroMesh);
 
-        body->GetSystem()->Add(HydroMesh);
+        return hydroMesh;
 
-        return HydroMesh;
     }
+
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, const std::string& meshFile,
+            FrFrame meshOffset, bool NL_or_WNL) {
+
+        auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, meshFile, meshOffset, NL_or_WNL);
+
+        body->GetSystem()->Add(hydroMesh);
+
+        return hydroMesh;
+
+    }
+
+//    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile){
+//
+//        // This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.
+//
+//        auto HydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(),meshfile,body,true);
+//
+//        body->GetSystem()->Add(HydroMesh);
+//
+//        return HydroMesh;
+//    }
+//
+//    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile){
+//
+//        // This function creates a hydrodynamic mesh for using in the computation of the weakly nonlinear hydrostatic and/or Froude-Krylov loads.
+//
+//        auto HydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(),meshfile,body,false);
+//
+//        body->GetSystem()->Add(HydroMesh);
+//
+//        return HydroMesh;
+//    }
 
 }  // end namespace frydom
