@@ -181,13 +181,8 @@ int main(int argc, char* argv[]) {
 
     // INFO: The hydrostatic force object is called before this update to compute the hydrostatic stiffness matrix at the equilibrium position.
 
-    // Position and rotation of the mesh frame compared to the body frame.
-    mathutils::Matrix33<double> Rotation;
-    Rotation.SetIdentity();
-    Position MeshOffset(0,0,0);
-
     // Linear.
-    auto forceHst = make_linear_hydrostatic_force(hdb, Ellipsoid,"elipsoid_scaled_mean_position.obj",MeshOffset,Rotation);
+    auto forceHst = make_linear_hydrostatic_force(eqFrame, Ellipsoid,"elipsoid_scaled_mean_position.obj",FrFrame());
     forceHst->SetLogged(true);
     forceHst->ShowAsset(true);
     auto ForceHstAsset = forceHst->GetAsset();
@@ -206,12 +201,8 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamic mesh.
     // auto EllipsoidMesh = make_hydro_mesh_nonlinear(Ellipsoid,"Ellipsoid_2880_faces.obj");
-//    auto EllipsoidMesh = make_hydro_mesh_nonlinear(Ellipsoid,"Ellipsoid_4200_faces.obj");
-//    auto EllipsoidMesh = make_hydro_mesh_weakly_nonlinear(Ellipsoid,"elipsoid_scaled.obj");
-//    mathutils::Matrix33<double> Rotation;
-//    Rotation.SetIdentity();
-//    Position MeshOffset(0,0,0);
-//    EllipsoidMesh->SetMeshOffset(MeshOffset,Rotation);
+//    auto EllipsoidMesh = make_hydro_mesh(Ellipsoid,"Ellipsoid_4200_faces.obj", FrFrame(), true);
+//    auto EllipsoidMesh = make_hydro_mesh(Ellipsoid,"elipsoid_scaled.obj", FrFrame(),false);
 
     // Weakly or fully nonlinear hydrostatics.
 //    auto forceHst = make_nonlinear_hydrostatic_force(Ellipsoid,EllipsoidMesh);
