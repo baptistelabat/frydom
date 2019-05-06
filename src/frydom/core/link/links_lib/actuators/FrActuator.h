@@ -30,7 +30,7 @@ namespace frydom {
     class FrActuator : public FrLinkBase {
 
     protected:
-        std::shared_ptr<internal::FrMotorBase> m_chronoMotor;
+//        std::shared_ptr<internal::FrMotorBase> m_chronoMotor;
 
         FrLink* m_actuatedLink;
 
@@ -62,13 +62,13 @@ namespace frydom {
         std::string GetTypeName() const override { return "Actuator"; }
         
         // TODO A compléter absolument quand FrMotorBase dérivera d'une classe chrono
-        chrono::ChPhysicsItem* GetChronoItem_ptr() const override {}
+//        chrono::ChPhysicsItem* GetChronoItem_ptr() const override {}
 
 
 
     protected:
 
-
+        virtual internal::FrMotorBase* GetChronoActuator() const = 0;
 
 
     };

@@ -8,6 +8,8 @@ set(REFACTORING_TESTS
         test_FrLinks
         bench_Ellipsoid_OMAE2014
         test_WNL_and_NL_hydrostatics
+        test_FrFunction
+        dev_IRR_motors
         )
 
 #include(Add_matplotlib-cpp)

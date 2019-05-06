@@ -57,7 +57,7 @@ namespace frydom {
 
         void SetConstantAngularVelocity(double velocity);
 
-        void SetAngularVelocityFunction(std::shared_ptr<FrFunctionBase> function);
+        void SetAngularVelocityFunction(const FrFunctionBase& function);
 
         void Initialize() override;
 
@@ -74,8 +74,10 @@ namespace frydom {
 
 
     protected:
-        internal::FrLinkMotorRotationSpeed* GetChronoElement();
+
+        internal::FrLinkMotorRotationSpeed* GetChronoActuator() const override;
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
+        chrono::ChPhysicsItem* GetChronoItem_ptr() const override;
 
     };
 

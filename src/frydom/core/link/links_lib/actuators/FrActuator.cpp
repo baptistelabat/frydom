@@ -15,11 +15,11 @@ namespace frydom {
         m_actuatedLink(actuatedLink) {}
 
     bool FrActuator::IsDisabled() const {
-        return m_chronoMotor->GetDisabled(); // TODO : voir si on teste aussi m_actuatedLink
+        return GetChronoActuator()->GetDisabled(); // TODO : voir si on teste aussi m_actuatedLink
     }
 
     void FrActuator::SetDisabled(bool disabled) {
-        m_chronoMotor->MakeDisabled(disabled);
+        GetChronoActuator()->MakeDisabled(disabled);
     }
 
 //    bool FrActuator::IsBroken() const {
