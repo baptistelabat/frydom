@@ -34,13 +34,13 @@ namespace frydom {
             this->frame2 = internal::FrFrame2ChFrame(m_frydomActuator->GetNode2()->GetFrameWRT_COG_InBody());
         }
 
-        bool FrLinkMotorRotationSpeed::GetDisabled() {
-            return IsDisabled();
-        }
-
-        void FrLinkMotorRotationSpeed::MakeDisabled(bool disabled) {
-            SetDisabled(disabled);
-        }
+//        bool FrLinkMotorRotationSpeed::GetDisabled() {
+//            return IsDisabled();
+//        }
+//
+//        void FrLinkMotorRotationSpeed::MakeDisabled(bool disabled) {
+//            SetDisabled(disabled);
+//        }
 
 
     }  // end namespace frydom::internal
@@ -53,7 +53,7 @@ namespace frydom {
     }
 
     void FrAngularActuatorVelocity::SetConstantAngularVelocity(double velocity) {
-        GetChronoActuator()->SetSpeedFunction(std::make_shared<chrono::ChFunction_Const>(velocity));
+        GetChronoItem_ptr()->SetSpeedFunction(std::make_shared<chrono::ChFunction_Const>(velocity));
     }
 
     void FrAngularActuatorVelocity::SetAngularVelocityFunction(const FrFunctionBase& function) {
@@ -61,7 +61,7 @@ namespace frydom {
         // TODO : ici, on definit la fonction de pilotage de la vitesse
         auto chronoFunctionInterface = internal::FrFunctionChronoInterface(function);
 
-        GetChronoActuator()->SetSpeedFunction(chronoFunctionInterface.GetChronoFunction());
+        GetChronoItem_ptr()->SetSpeedFunction(chronoFunctionInterface.GetChronoFunction());
 
 
     }
@@ -79,15 +79,15 @@ namespace frydom {
     }
 
 
-    internal::FrLinkMotorRotationSpeed* FrAngularActuatorVelocity::GetChronoActuator() const {
-        return m_chronoActuator.get();
-    }
+//    internal::FrLinkMotorRotationSpeed* FrAngularActuatorVelocity::GetChronoActuator() const {
+//        return m_chronoActuator.get();
+//    }
 
     std::shared_ptr<chrono::ChLink> FrAngularActuatorVelocity::GetChronoLink() {
         return std::dynamic_pointer_cast<chrono::ChLink>(m_chronoActuator);
     }
 
-    chrono::ChPhysicsItem *FrAngularActuatorVelocity::GetChronoItem_ptr() const {
+    internal::FrLinkMotorRotationSpeed *FrAngularActuatorVelocity::GetChronoItem_ptr() const {
         return m_chronoActuator.get();
     }
 

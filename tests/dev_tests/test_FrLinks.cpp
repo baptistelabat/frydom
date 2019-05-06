@@ -43,10 +43,10 @@ int main() {
 
     auto rev1 = make_revolute_link(node1, nodeWorld, &system);
 
-    auto motor1 = rev1->Motorize(VELOCITY);
+    auto motor1 = rev1->Motorize(POSITION);
 
-    auto theta = new_var("theta");
-    motor1->SetMotorFunction(sin(theta));
+    auto t = new_var("t");
+    motor1->SetMotorFunction(MU_PI * sin(t));
 
 
 //    // Body 2 definition (linked body)

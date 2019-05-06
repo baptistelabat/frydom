@@ -157,7 +157,7 @@ namespace frydom {
 
         switch (control) {
             case POSITION :
-//                m_actuator = std::make_shared<FrAngularActuatorAngle>(this);
+                m_actuator = std::make_shared<FrAngularActuatorAngle>(this);
                 break;
             case VELOCITY :
                 m_actuator = std::make_shared<FrAngularActuatorVelocity>(this);

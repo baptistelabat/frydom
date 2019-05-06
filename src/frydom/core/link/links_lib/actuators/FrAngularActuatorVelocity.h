@@ -19,7 +19,7 @@ namespace frydom {
 
     namespace internal {
 
-        struct FrLinkMotorRotationSpeed : public FrMotorBase, public chrono::ChLinkMotorRotationSpeed {
+        struct FrLinkMotorRotationSpeed : public chrono::ChLinkMotorRotationSpeed {
 
             FrAngularActuatorVelocity* m_frydomActuator;
 
@@ -27,9 +27,9 @@ namespace frydom {
 
             void SetupInitial() override;
 
-            bool GetDisabled() override;
-
-            void MakeDisabled(bool disabled) override;
+//            bool GetDisabled() override;
+//
+//            void MakeDisabled(bool disabled) override;
 
 
         };
@@ -44,8 +44,6 @@ namespace frydom {
 
     private:
         std::shared_ptr<internal::FrLinkMotorRotationSpeed> m_chronoActuator;
-
-//        std::shared_ptr<FrFunctionInterface> m_function;
 
 
     public:
@@ -66,10 +64,6 @@ namespace frydom {
         void StepFinalize() override;
 
 
-
-
-
-
         friend void internal::FrLinkMotorRotationSpeed::SetupInitial();
 
 
@@ -77,9 +71,9 @@ namespace frydom {
 
         void SetMotorFunction(const FrFunctionBase& function) override;
 
-        internal::FrLinkMotorRotationSpeed* GetChronoActuator() const override;
+//        internal::FrLinkMotorRotationSpeed* GetChronoActuator() const override;
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
-        chrono::ChPhysicsItem* GetChronoItem_ptr() const override;
+        internal::FrLinkMotorRotationSpeed* GetChronoItem_ptr() const override;
 
     };
 
