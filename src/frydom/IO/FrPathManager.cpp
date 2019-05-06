@@ -108,8 +108,6 @@ namespace frydom{
     }
 
     std::string FrPathManager::BuildPath(const std::string& rootPath, const std::string& relPath) const {
-
-        //obj->SetLogFrameConvention(m_logFrameConvention); // TODO : faire un get frame convention plutot
         cppfs::FilePath filePath = m_runPath.resolve(fmt::format("{}/{}", rootPath, relPath));
         cppfs::FileHandle fileDir = cppfs::fs::open(filePath.directoryPath());
         fileDir.createDirectory();
