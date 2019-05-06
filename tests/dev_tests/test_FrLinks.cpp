@@ -43,20 +43,11 @@ int main() {
 
     auto rev1 = make_revolute_link(node1, nodeWorld, &system);
 
-    auto theta = new_var("theta");
-
     auto motor1 = std::make_shared<FrAngularActuatorVelocity>(rev1.get());
     system.AddLink(motor1);
 
-    auto AngularVelocityFunction = sin(theta);
-
-    motor1->SetAngularVelocityFunction(AngularVelocityFunction);
-
-//    system.RemoveLink(rev1);
-
-//    auto rotmotor1 = std::make_shared<chrono::ChLinkMotorRotationSpeed>();
-//    rotmotor1->Initialize(body1->GetChronoBody(), system.GetWorldBody()->GetChronoBody(), chrono::ChFrame<>());
-//    system.GetChronoSystem()->Add(rotmotor1);
+    auto theta = new_var("theta");
+    motor1->SetAngularVelocityFunction(sin(theta));
 
 
 //    // Body 2 definition (linked body)
