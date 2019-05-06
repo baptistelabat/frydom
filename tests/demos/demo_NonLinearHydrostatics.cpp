@@ -54,10 +54,6 @@ int main(int argc, char* argv[]) {
     // Set the bathymetry.
     Seabed->SetBathymetry(-5, NWU);
 
-    // Ramp.
-//    system.GetEnvironment()->GetTimeRamp()->SetActive(true);
-//    system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0,0,20,1);
-
     // ----- Free surface
     auto FreeSurface = Ocean->GetFreeSurface();
     // To manipulate the free surface grid asset, you first need to access it, through the free surface object.
@@ -65,49 +61,6 @@ int main(int argc, char* argv[]) {
 
     // Set the size of the free surface grid asset.
     FSAsset->SetGrid(-3., 3, 1, -3, 3, 1);
-
-    // You have to specify if you want the free surface asset to be updated during the simulation. By default, the
-    // update is not activated.
-    FSAsset->SetUpdateStep(10);
-
-    // ----- WaveField
-    auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
-//    auto waveField = FreeSurface->SetAiryRegularWaveField();
-//    auto waveField = FreeSurface->SetAiryIrregularOptimWaveField();
-
-    // The Airy regular wave parameters are its height, period and direction.
-    double waveHeight = 0.;
-//    double waveHeight = 0.005;
-    double wavePeriod = 2*3.14159/8;
-    Direction waveDirection = Direction(SOUTH(fc));
-//    Direction waveDirection = Direction(NORTH(fc));
-
-    waveField->SetWaveHeight(waveHeight);
-    waveField->SetWavePeriod(wavePeriod);
-    waveField->SetDirection(waveDirection, fc, dc);
-
-//    // The Airy irregular wave parameters are based on the wave spectrum chosen : Jonswap or Pierson-Moskowitz.
-//    // Set the JONSWAP wave spectrum : Significant height (Hs) and Peak period (Tp). A default Gamma for the Jonswap
-//    // spectrum is set to 3.3.
-//    double Hs = 0.01;    double Tp = 9;
-//    auto Jonswap = waveField->SetJonswapWaveSpectrum(Hs, Tp);
-//
-//    // Define the wave frequency discretization. It is based on a linear discretization within the extrema given and
-//    // using the number of frequency specified. With more frequency, it will be more realist but will take longer to
-//    // simulate.
-//    double w1 = 0.5; double w2 = 2; unsigned int nbFreq = 20;
-//    waveField->SetWaveFrequencies(w1,w2,nbFreq);
-//
-//    // For a uni-directional wave, you just need to set the mean wave direction. You can also choose to set a
-//    // direction angle from North direction (see SetMeanWaveDirectionAngle()).
-//    waveField->SetMeanWaveDirection(Direction(SOUTH(fc)), fc, dc);
-//
-//    // For a directional wave, you also have to specify the spreading factor and the refinement wanted on the
-//    // direction discretization. With more directions, it will be more realist but will take longer to simulate.
-//    // The direction discretization is based on a linear discretization. The extrema are computed automatically
-//    // using the spreading factor and the mean direction.
-//    double spreadingFactor = 10.;    unsigned int nbDir = 10;
-//    waveField->SetDirectionalParameters(nbDir, spreadingFactor);
 
     // --------------------------------------------------
     // Cylinder
@@ -118,41 +71,36 @@ int main(int argc, char* argv[]) {
     cylinder->SetColor(Yellow);
 
     double mass = MU_PI*0.2*0.2*0.1*system.GetEnvironment()->GetFluidDensity(WATER);
-
     makeItCylinder(cylinder, 0.2, 0.2, mass);
 
     // makeItCylinder create a horizontal cylinder. Rotate it 90° to have it vertical
-    FrRotation cylRotation;
-    cylRotation.RotX_DEGREES(90., NWU);
+    FrRotation cylRotation;    cylRotation.RotX_DEGREES(90., NWU);
     cylinder->Rotate(cylRotation);
 
-    // For decay test
+    // For decay test, offset its vertical position
     cylinder->SetPosition(Position(0.,0.,0.02), NWU);
 
     // Extra linear damping force.
     auto LinearDampingForce = make_linear_damping_force(cylinder, WATER, false);
     LinearDampingForce->SetDiagonalDamping(10e0,10e0,10e0,10e0,10e0,10e0);
 
+    // There is an offset in rotation between the initial orientations of the body and the mesh
     FrFrame meshOffset;
     meshOffset.SetRotation(cylRotation);
 
     // -- Hydrodynamic mesh
     auto CylinderMesh = make_hydro_mesh(cylinder, "Free_cylinder_2900_panels.obj", meshOffset, true);
 
+    // Writing the initial mesh, for checking only
     CylinderMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
-    // -- Hydrostatic stiffness matrix, for checking only
-
+//    // -- Hydrostatic stiffness matrix, for checking only
 //    auto eqFrame = std::make_shared<FrEquilibriumFrame>(cylinder.get());
-//
 //    auto linearHSForce = make_linear_hydrostatic_force(eqFrame, cylinder, "Free_cylinder_2900_panels.obj", FrFrame());
 
     // -- Hydrostatics NL
     auto forceHst = make_nonlinear_hydrostatic_force(cylinder,CylinderMesh);
     forceHst->SetLogged(true);
-//    forceHst->ShowAsset(true);
-//    auto ForceHstAsset = forceHst->GetAsset();
-//    ForceHstAsset->SetSize(0.00000015);
 
 
     // ------------------ Run with Irrlicht ------------------ //
@@ -160,15 +108,14 @@ int main(int argc, char* argv[]) {
     // You can change the dynamical simulation time step using.
     system.SetTimeStep(0.01);
 
-    // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
-    // the time length of the simulation (here 60) and the distance from the camera to the objectif (300m).
-    // For saving snapshots of the simulation, just turn the boolean to true.
-
-    // You can solve the static equilibrium first and visualize it.
+//    // You can solve the static equilibrium first and visualize it.
 //    system.GetStaticAnalysis()->SetNbSteps(10);
 //    system.SolveStaticWithRelaxation();
 //    system.Visualize(20,false);
 
+    // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
+    // the time length of the simulation (here infinite) and the distance from the camera to the objectif (2m).
+    // For saving snapshots of the simulation, just turn the boolean to true.
     system.RunInViewer(0., 2, false);
 
 }
