@@ -106,7 +106,7 @@ namespace frydom{
         m_system->ClearLogs();
         m_system->InitializeLog();
 
-        auto logPath = m_system->GetPathManager()->BuildPath(this,"statics.csv");
+         auto logPath = m_system->GetPathManager()->BuildPath("statics.csv");
 
         // Add the fields to be logged
         m_message->AddField<double>("iteration", "-", "iteration of the static analysis",
