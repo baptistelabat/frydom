@@ -74,8 +74,9 @@ int main() {
 //    prismaticLink->SetSpringDamper(2e3, 1e3);
 //    prismaticLink->SetRestLength(-5);
 
-    auto motor2 = prismaticLink->Motorize(VELOCITY);
-    motor2->SetMotorFunction(10*sin(t));
+    auto motor2 = prismaticLink->Motorize(POSITION);
+//    motor2->SetMotorFunction(10*sin(t));
+    motor2->SetMotorFunction(FrConstantFunction(-10.));
 
 //    system.RemoveLink(prismaticLink);
 

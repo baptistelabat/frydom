@@ -106,7 +106,7 @@ namespace frydom {
     FrLinearActuator *FrPrismaticLink::Motorize(ACTUATOR_CONTROL control) {
         switch (control) {
             case POSITION :
-//                m_actuator = std::make_shared<FrLinearActuatorAngle>(this);
+                m_actuator = std::make_shared<FrLinearActuatorPosition>(this);
                 break;
             case VELOCITY :
                 m_actuator = std::make_shared<FrLinearActuatorVelocity>(this);
