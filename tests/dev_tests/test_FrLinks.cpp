@@ -43,11 +43,10 @@ int main() {
 
     auto rev1 = make_revolute_link(node1, nodeWorld, &system);
 
-    auto motor1 = std::make_shared<FrAngularActuatorVelocity>(rev1.get());
-    system.AddLink(motor1);
+    auto motor1 = rev1->Motorize(VELOCITY);
 
     auto theta = new_var("theta");
-    motor1->SetAngularVelocityFunction(sin(theta));
+    motor1->SetMotorFunction(sin(theta));
 
 
 //    // Body 2 definition (linked body)

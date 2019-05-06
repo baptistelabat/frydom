@@ -75,6 +75,8 @@ namespace frydom {
 
     protected:
 
+        void SetMotorFunction(const FrFunctionBase& function) override;
+
         internal::FrLinkMotorRotationSpeed* GetChronoActuator() const override;
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
         chrono::ChPhysicsItem* GetChronoItem_ptr() const override;

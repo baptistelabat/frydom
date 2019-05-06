@@ -91,5 +91,9 @@ namespace frydom {
         return m_chronoActuator.get();
     }
 
+    void FrAngularActuatorVelocity::SetMotorFunction(const FrFunctionBase &function) {
+        SetAngularVelocityFunction(function);
+    }
+
 
 }  // end namespace frydom

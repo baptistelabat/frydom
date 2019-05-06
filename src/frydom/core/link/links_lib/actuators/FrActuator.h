@@ -26,6 +26,7 @@ namespace frydom {
 
     // Forward declaration
     class FrLink;
+    class FrFunctionBase;
 
     class FrActuator : public FrLinkBase {
 
@@ -64,7 +65,7 @@ namespace frydom {
         // TODO A compléter absolument quand FrMotorBase dérivera d'une classe chrono
 //        chrono::ChPhysicsItem* GetChronoItem_ptr() const override {}
 
-
+        virtual void SetMotorFunction(const FrFunctionBase& function) = 0;
 
     protected:
 

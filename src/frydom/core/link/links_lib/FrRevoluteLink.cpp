@@ -153,12 +153,22 @@ namespace frydom {
         SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
     }
 
-    void FrRevoluteLink::MotorizeSpeed() {
+    FrAngularActuator* FrRevoluteLink::Motorize(ACTUATOR_CONTROL control) {
 
-        // INFO : Pour le moment, je ne permets que de faire de la motorisation en vitesse
-        m_actuator = std::make_shared<FrAngularActuatorVelocity>(this);
+        switch (control) {
+            case POSITION :
+//                m_actuator = std::make_shared<FrAngularActuatorAngle>(this);
+                break;
+            case VELOCITY :
+                m_actuator = std::make_shared<FrAngularActuatorVelocity>(this);
+                break;
+            case FORCE :
+//                m_actuator = std::make_shared<FrAngularActuatorTorque>(this);
+                break;
+        }
 
-
+        GetSystem()->Add(m_actuator);
+        return dynamic_cast<FrAngularActuator*>(m_actuator.get());
     }
 
     double FrRevoluteLink::GetUpdatedRelativeAngle() const {
