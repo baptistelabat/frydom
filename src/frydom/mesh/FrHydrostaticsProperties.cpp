@@ -18,12 +18,12 @@ namespace frydom {
         return tensor;
     }
 
-    void FrHydrostaticsProperties::Load(const mesh::FrMesh& mesh, mathutils::Vector3d<double> cog){
-        m_centerOfGravity = cog;
-        mesh::MeshClipper clipper;
-        m_clippedMesh = clipper.Apply(mesh);
-        Process();
-    }
+//    void FrHydrostaticsProperties::Load(const mesh::FrMesh& mesh, mathutils::Vector3d<double> cog){
+//        m_centerOfGravity = cog;
+//        mesh::FrMeshClipper clipper;
+//        m_clippedMesh = clipper.Apply(mesh);
+//        Process();
+//    }
 
     void FrHydrostaticsProperties::Process() {
         CalcGeometricProperties();
@@ -127,40 +127,6 @@ namespace frydom {
         mat(0, 2) = mat(2, 0) = m_hydrostaticTensor.K35;
         mat(1, 2) = mat(2, 1) = m_hydrostaticTensor.K45;
         return mat;
-    }
-
-    void NonlinearHydrostatics::CalcPressureIntegration(const mesh::FrMesh& clipped_mesh){
-
-        // This function performs the hydrostatic pressure integration.
-
-        mesh::FrMesh::Normal Normal;
-        double Pressure;
-
-        // Loop over the faces.
-        for (mesh::FrMesh::FaceIter f_iter = clipped_mesh.faces_begin(); f_iter != clipped_mesh.faces_end(); ++f_iter) {
-
-            // Normal.
-            Normal = clipped_mesh.normal(*f_iter);
-
-            // Pressure*Area.
-            Pressure = clipped_mesh.data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
-
-            // Hydrostatic force without the term rho*g.
-            m_force[0] = m_force[0] + Pressure*Normal[0];
-            m_force[1] = m_force[1] + Pressure*Normal[1];
-            m_force[2] = m_force[2] + Pressure*Normal[2];
-
-        }
-
-        // Buoyancy center.
-        VectorT<double, 3> CoB = clipped_mesh.GetCOG(); // Center of gravity of the immersed part (clipped mesh).
-        m_centerOfBuoyancy[0] = CoB[0];
-        m_centerOfBuoyancy[1] = CoB[1];
-        m_centerOfBuoyancy[2] = CoB[2];
-
-        // Adding the rho*g term.
-        m_force = m_force*m_waterDensity*m_gravityAcceleration;
-
     }
 
 }  // end namespace frydom

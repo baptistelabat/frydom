@@ -21,6 +21,8 @@
 #include "frydom/mesh/FrMeshClipper.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
+#include "frydom/core/common/FrFrame.h"
+
 namespace frydom {
 
     class FrOffshoreSystem;
@@ -34,108 +36,65 @@ namespace frydom {
 
     private:
 
-        /// Offshore system.
-        FrOffshoreSystem* m_system;
+        FrOffshoreSystem* m_system;                     ///< reference to the offshore system
+        std::shared_ptr<FrBody> m_body;                 ///< reference to the body related to this FrHydroMesh
 
-        /// Input mesh file.
-        std::string m_meshfilename; // Input mesh file.
+        std::unique_ptr<mesh::FrMeshClipper> m_clipper; ///< mesh clipper service
 
-        /// Clipped mesh.
-        mesh::FrMesh m_clipped_mesh;
+        std::string m_meshfilename;                     ///< Input mesh file.
+        mesh::FrMesh m_initMesh;                        ///< Input mesh file (as defined and read from the input file)
+        mesh::FrMesh m_clippedMesh;                     ///< Clipped mesh (its frame follows the body frame in its motions)
 
-        /// Input mesh file.
-        mesh::FrMesh m_mesh_init;
+        FrFrame m_meshOffset;                           ///< Offset frame between mesh and body frame (defined initially)
 
-        /// Mesh frame offset in the body frame.
-        Position m_MeshOffset;
-
-        /// Rotation of the mesh frame compared to the body frame.
-        mathutils::Matrix33<double> m_Rotation;
-
-        /// Boolean to know if the mesh is clipped by a wave (True) or a plane (False).
-        bool m_WNL_or_NL;
-
-        /// Body.
-        std::shared_ptr<FrBody> m_body;
-
-        /// Clipper.
-        std::unique_ptr<mesh::MeshClipper> m_clipper;
+        bool m_WNL_or_NL;                               ///< Boolean to know if the mesh is clipped by a wave (True) or a plane (False).
 
     public:
 
         /// Constructor.
-        FrHydroMesh(FrOffshoreSystem* system, std::string meshfile, std::shared_ptr<FrBody> body, bool WNL_or_NL){
-            m_system = system;
-            m_meshfilename = meshfile;
+        FrHydroMesh(FrOffshoreSystem* system, const std::shared_ptr<FrBody>& body, bool WNL_or_NL);
 
-            m_body = body;
-            m_WNL_or_NL = WNL_or_NL;
-
-            // Initilization by default.
-            m_Rotation.SetIdentity();
-            m_MeshOffset = Position(0,0,0);
-
-            // m_clipper.
-            m_clipper = std::make_unique<mesh::MeshClipper>();
-
-            // Loading the input mesh file.
-            m_mesh_init = mesh::FrMesh(m_meshfilename);
-
-            // Tidal height.
-            double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
-
-            // Clipping surface.
-            if(m_WNL_or_NL == true) { // Incident wave field.
-
-                // Incident free surface.
-                FrFreeSurface *FreeSurface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface();
-
-                // Setting the free surface.
-                m_clipper->SetWaveClippingSurface(TidalHeight, FreeSurface);
-            }
-            else{ // Plane.
-
-                // Setting the free surface.
-                m_clipper->SetPlaneClippingSurface(TidalHeight);
-            }
-
-            // Body.
-            m_clipper->SetBody(m_body.get());
-
-            // Position and orientation of the mesh frame compared to the body frame.
-            m_clipper->SetMeshOffsetRotation(m_MeshOffset, m_Rotation);
-        }
+        FrHydroMesh(FrOffshoreSystem* system, const std::shared_ptr<FrBody>& body, const std::string& meshFile, FrFrame meshOffsset, bool WNL_or_NL);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "HydroMesh"; }
 
-        /// Intialize the nonlinear hydrostatic force model.
+        /// Initialize the nonlinear hydrostatic force model.
         void Initialize() override;
-
-
-        /// This function sets the offset of the mesh frame in the body frame.
-        void SetMeshOffsetRotation(const Position Offset, const mathutils::Matrix33<double> Rotation){
-            m_MeshOffset = Offset;
-            m_Rotation = Rotation;
-        };
 
         /// Initialize the log
         void InitializeLog() override;
 
-        /// This function returns the clipped mesh.
-        mesh::FrMesh GetClippedMesh(){
-            return m_clipped_mesh;
-        }
+        /// Import a mesh and apply the mesh frame offset transformation, so that the mesh can be expressed in the body reference frame
+        /// \param meshFile mesh file name
+        /// \param meshOffset mesh frame offset, relatively to the body reference frame
+        /// \return imported mesh, in body reference frame
+        mesh::FrMesh& ImportMesh(const std::string& meshFile, FrFrame meshOffset);
 
-        mesh::FrMesh GetInitialMesh(){
-            return m_mesh_init;
-        }
+//        /// This function sets the offset of the mesh frame in the body frame.
+//        void SetMeshOffset(FrFrame meshOffset);
+//
+//        FrFrame GetMeshOffset() const;
 
-        /// This function returns the center of buoyancy of the clipped mesh in the world frame.
-        Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);
+        /// Get a reference to the clipped mesh (its frame is adjusted to the body's motions)
+        /// \return reference to the clipped mesh
+        mesh::FrMesh& GetClippedMesh();
+
+        /// Get a reference to the initial mesh (as defined and read from the input file)
+        /// \return reference to the initial mesh
+        mesh::FrMesh& GetInitialMesh();
+
 
     private:
+
+        /// Update the frame of the clipped mesh according to the body's motions
+        void UpdateMeshFrame();
+
+        /// Get the position in the body reference frame of a point which position is specified in the mesh reference frame
+        /// \param point position of a point in the mesh reference frame
+        /// \return point position in the body reference frame
+        mesh::FrMesh::Point GetMeshPointPositionInBody(mesh::FrMesh::Point point) const;
 
         /// Update nonlinear hydrostatic force.
         /// \param time Current time of the simulation from beginning.
@@ -144,10 +103,17 @@ namespace frydom {
     };
 
     /// This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(std::shared_ptr<FrBody> body, std::string meshfile);
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, bool NL_or_WNL);
 
-    /// This function creates a hydrodynamic mesh for using in the computation of the weakly nonlinear hydrostatic and/or Froude-Krylov loads.
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(std::shared_ptr<FrBody> body, std::string meshfile);
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, const std::string& meshFile,
+                                                 FrFrame meshOffset, bool NL_or_WNL);
+
+
+//    /// This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.
+//    std::shared_ptr<FrHydroMesh> make_hydro_mesh_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile);
+//
+//    /// This function creates a hydrodynamic mesh for using in the computation of the weakly nonlinear hydrostatic and/or Froude-Krylov loads.
+//    std::shared_ptr<FrHydroMesh> make_hydro_mesh_weakly_nonlinear(const std::shared_ptr<FrBody>& body, const std::string& meshfile);
 
     }  // end namespace frydom
 

@@ -186,11 +186,7 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrodynamic mesh
 
-//    auto bodyMesh = make_hydro_mesh_nonlinear(body,"Sphere_6200_faces.obj");
-//    mathutils::Matrix33<double> Rotation;
-//    Rotation.SetIdentity();
-//    Position MeshOffset(0,0,0);
-//    bodyMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
+//    auto bodyMesh = make_hydro_mesh(body,"Sphere_6200_faces.obj", FrFrame(), true);
 //    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     // -- Nonlinear hydrostatics

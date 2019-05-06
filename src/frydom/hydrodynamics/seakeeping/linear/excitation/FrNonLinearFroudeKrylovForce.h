@@ -42,9 +42,6 @@ namespace frydom {
 
     private:
 
-        /// Clipped mesh.
-        mesh::FrMesh m_clipped_mesh;
-
         /// Froude-Krylov force;
         Force m_FKforce;
 
@@ -52,12 +49,12 @@ namespace frydom {
         Torque m_FKtorque;
 
         /// Hydrodynamic mesh.
-        std::shared_ptr<FrHydroMesh> m_hydro_mesh;
+        std::shared_ptr<FrHydroMesh> m_hydroMesh;
 
     public:
 
-        explicit FrNonLinearFroudeKrylovForce(std::shared_ptr<FrHydroMesh> HydroMesh) {
-            m_hydro_mesh = HydroMesh;
+        explicit FrNonLinearFroudeKrylovForce(const std::shared_ptr<FrHydroMesh>& HydroMesh) {
+            m_hydroMesh = HydroMesh;
         };
 
         /// Get the type name of this object

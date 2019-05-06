@@ -18,7 +18,6 @@
 #include "FrHydrostaticsProperties.h"
 #include "FrMesh.h"
 #include "FrMeshClipper.h"
-#include "FrTriangleIntegrations.h"
 #include "FrTriangleMeshConnected.h"
 #include "FrHydroMesh.h"
 

@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
     mathutils::Matrix33<double> Rotation;
     Rotation.SetIdentity();
     Position MeshOffset(0,0,0);
-    PlatformMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
+    PlatformMesh->SetMeshOffset(MeshOffset, Rotation);
 
     // -- Hydrostatics
     // Create the linear hydrostatic force and add it to the platform
