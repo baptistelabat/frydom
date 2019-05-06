@@ -47,14 +47,15 @@ int main() {
 
     auto t = new_var("t");
     motor1->SetMotorFunction(MU_PI * sin(t));
+//    motor1->SetMotorFunction(FrConstantFunction(MU_PI_2));
 
 
-//    // Body 2 definition (linked body)
-//    auto body2 = system.NewBody();
-//    body2->SetName("2");
-//    makeItBox(body2, 2, 2, 40, 2000);
-//    body2->SetColor(Black);
-////    body2->TranslateInWorld(10, 5, 0, NWU);
+    // Body 2 definition (linked body)
+    auto body2 = system.NewBody();
+    body2->SetName("2");
+    makeItBox(body2, 2, 2, 40, 2000);
+    body2->SetColor(Black);
+//    body2->TranslateInWorld(10, 5, 0, NWU);
 
 //    // Apply a random translation and rotation to the body to check if the assembly is done correctly
 //    body2->TranslateInWorld(-2.,7.,8, NWU);
@@ -62,19 +63,23 @@ int main() {
 //    randomRotation = FrRotation(randomDir,0.9687,NWU);
 //    body2->Rotate(randomRotation);
 //
-//    // Prismatic link between body1 and body2
-//    auto m1 = body1->NewNode();
-//    m1->TranslateInBody(10, 5, -1, NWU);
-//
-//    auto m2 = body2->NewNode();
-//    m2->TranslateInBody(-1, -1, -20, NWU);
-//
-//    auto prismaticLink = make_prismatic_link(m1, m2, &system);
+    // Prismatic link between body1 and body2
+    auto m1 = body1->NewNode();
+    m1->TranslateInBody(10, 5, -1, NWU);
+
+    auto m2 = body2->NewNode();
+    m2->TranslateInBody(-1, -1, -20, NWU);
+
+    auto prismaticLink = make_prismatic_link(m1, m2, &system);
 //    prismaticLink->SetSpringDamper(2e3, 1e3);
 //    prismaticLink->SetRestLength(-5);
-//
-//
-//
+
+    auto motor2 = prismaticLink->Motorize(VELOCITY);
+    motor2->SetMotorFunction(10*sin(t));
+
+//    system.RemoveLink(prismaticLink);
+
+
 //    // Body 3 definition
 //    auto body3 = system.NewBody();
 //    body3->SetName("3");
