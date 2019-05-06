@@ -23,7 +23,7 @@ namespace frydom {
 
 
 //    // Forward declaration
-//    class FrAngularActuator;
+    class FrAngularActuator;
 
     /// Specialized class for revolute link between two bodies
     class FrRevoluteLink : public FrLink {
@@ -110,7 +110,7 @@ namespace frydom {
         void UpdateForces(double time); // TODO : mettre en abstrait dans FrLink pour que toutes les classes possedent ca
 
         /// Motorize the link to make it driven // TODO : work in progress
-        void MotorizeSpeed();
+        FrAngularActuator* Motorize(ACTUATOR_CONTROL control);
 
 
     private:

@@ -34,13 +34,13 @@ namespace frydom {
             this->frame2 = internal::FrFrame2ChFrame(m_frydomActuator->GetNode2()->GetFrameWRT_COG_InBody());
         }
 
-        bool FrLinkMotorRotationSpeed::GetDisabled() {
-            return IsDisabled();
-        }
-
-        void FrLinkMotorRotationSpeed::MakeDisabled(bool disabled) {
-            SetDisabled(disabled);
-        }
+//        bool FrLinkMotorRotationSpeed::GetDisabled() {
+//            return IsDisabled();
+//        }
+//
+//        void FrLinkMotorRotationSpeed::MakeDisabled(bool disabled) {
+//            SetDisabled(disabled);
+//        }
 
 
     }  // end namespace frydom::internal
@@ -49,33 +49,25 @@ namespace frydom {
 
 
     FrAngularActuatorVelocity::FrAngularActuatorVelocity(FrLink *actuatedLink) : FrAngularActuator(actuatedLink) {
-        m_chronoMotor = std::make_shared<internal::FrLinkMotorRotationSpeed>(this);
+        m_chronoActuator = std::make_shared<internal::FrLinkMotorRotationSpeed>(this);
     }
 
     void FrAngularActuatorVelocity::SetConstantAngularVelocity(double velocity) {
-//        GetChronoElement()->SetMotorFunction()
+        GetChronoItem_ptr()->SetSpeedFunction(std::make_shared<chrono::ChFunction_Const>(velocity));
     }
 
-    void FrAngularActuatorVelocity::SetAngularVelocityFunction(std::shared_ptr<FrFunctionBase> function) {
-//        m_
+    void FrAngularActuatorVelocity::SetAngularVelocityFunction(const FrFunctionBase& function) {
 
         // TODO : ici, on definit la fonction de pilotage de la vitesse
-//        auto chronoFunctionInterface = internal::FrFunctionChronoInterface(*function.get());
+        auto chronoFunctionInterface = internal::FrFunctionChronoInterface(function);
 
-
-
-
-
-
-
-
-
+        GetChronoItem_ptr()->SetSpeedFunction(chronoFunctionInterface.GetChronoFunction());
 
 
     }
 
     void FrAngularActuatorVelocity::Initialize() {
-
+        m_chronoActuator->SetupInitial();
     }
 
     void FrAngularActuatorVelocity::Update(double time) {
@@ -87,14 +79,21 @@ namespace frydom {
     }
 
 
-    internal::FrLinkMotorRotationSpeed* FrAngularActuatorVelocity::GetChronoElement() {
-        return dynamic_cast<internal::FrLinkMotorRotationSpeed*>(m_chronoMotor.get());
-    }
+//    internal::FrLinkMotorRotationSpeed* FrAngularActuatorVelocity::GetChronoActuator() const {
+//        return m_chronoActuator.get();
+//    }
 
     std::shared_ptr<chrono::ChLink> FrAngularActuatorVelocity::GetChronoLink() {
-        return std::dynamic_pointer_cast<chrono::ChLink>(m_chronoMotor);
+        return std::dynamic_pointer_cast<chrono::ChLink>(m_chronoActuator);
     }
 
+    internal::FrLinkMotorRotationSpeed *FrAngularActuatorVelocity::GetChronoItem_ptr() const {
+        return m_chronoActuator.get();
+    }
+
+    void FrAngularActuatorVelocity::SetMotorFunction(const FrFunctionBase &function) {
+        SetAngularVelocityFunction(function);
+    }
 
 
 }  // end namespace frydom

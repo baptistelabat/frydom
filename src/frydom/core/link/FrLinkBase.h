@@ -30,6 +30,8 @@ namespace chrono {
 
 namespace frydom {
 
+    enum ACTUATOR_CONTROL {POSITION, VELOCITY, FORCE};
+
     // Forward declarations
     class FrNode;
     class FrBody;
