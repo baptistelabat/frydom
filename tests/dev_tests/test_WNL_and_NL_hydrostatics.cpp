@@ -141,11 +141,7 @@ int main(int argc, char* argv[]) {
     hdb->Map(0, platform.get(), eqFrame);
 
     // -- Hydrodynamic mesh
-    auto PlatformMesh = make_hydro_mesh_nonlinear(platform,"mesh_Platform_GVA7500_Sym.obj");
-    mathutils::Matrix33<double> Rotation;
-    Rotation.SetIdentity();
-    Position MeshOffset(0,0,0);
-    PlatformMesh->SetMeshOffset(MeshOffset, Rotation);
+    auto PlatformMesh = make_hydro_mesh(platform, "mesh_Platform_GVA7500_Sym.obj", FrFrame(), true);
 
     // -- Hydrostatics
     // Create the linear hydrostatic force and add it to the platform
@@ -154,7 +150,7 @@ int main(int argc, char* argv[]) {
 //    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
 
     // Linear hydrostatic loads with a hydrostatic stiffness matrix given in input of frydom.
-//    auto forceHst = make_linear_hydrostatic_force(hdb, platform);
+//    auto forceHst = make_linear_hydrostatic_force(eqFrame, platform);
 //    FrLinearHydrostaticStiffnessMatrix HydrostaMat;
 //    HydrostaMat.SetK33(100);
 //    forceHst->SetStiffnessMatrix(HydrostaMat);
