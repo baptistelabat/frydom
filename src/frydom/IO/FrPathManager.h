@@ -70,6 +70,8 @@ namespace frydom {
         ///Initialize the log manager serice
         void Initialize(FrOffshoreSystem* system);
 
+        std::string BuildPath(const std::string& rootPath, const std::string& relPath) const;
+
         /// Build the path and directories needed for the system log
         /// \param system system for which a log is declared
         /// \param relPath relative path, added to the path

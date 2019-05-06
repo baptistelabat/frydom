@@ -37,7 +37,7 @@ namespace frydom {
 
     }
 
-    void FrNonlinearHydrostaticForce::InitializeLog(){
+    void FrNonlinearHydrostaticForce::InitializeLog(const std::string& rootPath){
 
         // This function initializes the logger for the nonlinear hydrostatic loads by giving the position of the center of buoyancy in the body frame.
 
@@ -55,7 +55,7 @@ namespace frydom {
 //                ("ForceInBody","N", fmt::format("Hydrostatic force, at CoB, in body reference frame in {}", c_logFrameConvention),
 //                 [this]() {return GetHydrostaticForceInBody(c_logFrameConvention);});
 
-        FrForce::InitializeLog();
+        FrForce::InitializeLog(rootPath);
 
     }
 

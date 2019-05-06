@@ -201,7 +201,7 @@ namespace frydom {
 
         // Logging
 
-        void InitializeLog();
+        void InitializeLog(const std::string& rootPath);
 
 
         // =============================================================================================================

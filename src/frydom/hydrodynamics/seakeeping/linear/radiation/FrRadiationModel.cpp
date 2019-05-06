@@ -269,7 +269,7 @@ namespace frydom {
         m_dt = dt;
     }
 
-    void FrRadiationConvolutionModel::InitializeLog() {
+    void FrRadiationConvolutionModel::InitializeLog(const std::string& rootPath) {
 
         if (IsLogged()) {
 

@@ -1001,7 +1001,10 @@ namespace frydom {
 
         if (IsLogged()) {
 
-            auto logPath = m_pathManager->BuildPath(this, "system.csv");
+            c_logFrameConvention = m_pathManager->GetLogFrameConvention();
+
+            std::string systemPath = fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
+            auto logPath = m_pathManager->BuildPath(systemPath, "system.csv");
 
             // Add the fields
             // TODO A completer
@@ -1015,27 +1018,27 @@ namespace frydom {
 //            m_environment->InitializeLog();
 
             for (auto &item : m_PrePhysicsList) {
-                item->InitializeLog();
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_bodyList) {
-                item->InitializeLog();
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_MidPhysicsList) {
-                item->InitializeLog();
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_linkList) {
-                item->InitializeLog();
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_feaMeshList) {
-                item->InitializeLog();
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_PostPhysicsList) {
-                item->InitializeLog();
+                item->InitializeLog(systemPath);
             }
 
         }

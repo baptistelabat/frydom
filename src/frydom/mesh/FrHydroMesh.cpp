@@ -67,7 +67,7 @@ namespace frydom {
 
     }
 
-    void FrHydroMesh::InitializeLog() {
+    void FrHydroMesh::InitializeLog(const std::string& rootPath) {
 
     }
 

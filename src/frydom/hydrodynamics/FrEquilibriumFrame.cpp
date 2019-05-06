@@ -146,12 +146,13 @@ namespace frydom {
         m_prevTime = time;
     }
 
-    void FrEquilibriumFrame::InitializeLog() {
+    void FrEquilibriumFrame::InitializeLog(const std::string& rootPath) {
 
         if (IsLogged()) {
 
             // Build the log path (the equilibrium frame log is located inside the related body folder)
-            auto logPath = m_system->GetPathManager()->BuildPath(m_body, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
+            std::string bodyPath = fmt::format("{}/{}_{}_{}", rootPath, m_body->GetTypeName(), m_body->GetName(), m_body->GetShortenUUID());
+            auto logPath = m_system->GetPathManager()->BuildPath(bodyPath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
             // TODO: A completer

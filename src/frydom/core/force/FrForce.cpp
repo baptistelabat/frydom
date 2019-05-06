@@ -103,12 +103,15 @@ namespace frydom{
         return m_body->GetSystem();
     }
 
-    void FrForce::InitializeLog() {
+    void FrForce::InitializeLog(const std::string& rootPath) {
 
         if (IsLogged()) {
 
+            c_logFrameConvention = GetSystem()->GetPathManager()->GetLogFrameConvention();
+
             // Build the path to the force log
-            auto logPath = GetSystem()->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
+            std::string forcePath = fmt::format("{}/Forces", rootPath);
+            auto logPath = GetSystem()->GetPathManager()->BuildPath(forcePath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged
             m_message->AddField<double>("time", "s", "Current time of the simulation",

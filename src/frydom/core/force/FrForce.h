@@ -124,7 +124,7 @@ namespace frydom {
         // Logging
 
         /// Initialize the log
-        virtual void InitializeLog();
+        virtual void InitializeLog(const std::string& rootPath);
 
         // Force Asset
         /// Inquire if a ForceAsset is displayed

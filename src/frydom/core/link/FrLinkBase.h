@@ -79,7 +79,7 @@ namespace frydom {
         // Logging
 
         /// Initialize the log
-        virtual void InitializeLog();
+        virtual void InitializeLog(const std::string& rootPath);
 
 
 

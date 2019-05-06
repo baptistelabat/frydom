@@ -207,7 +207,7 @@ namespace frydom {
         void Initialize() override;
 
         /// Initialize the log
-        void InitializeLog() override;
+        void InitializeLog(const std::string& rootPath) override;
 
         /// Update the length of the cable if unrolling speed is defined.
         void UpdateState() override;

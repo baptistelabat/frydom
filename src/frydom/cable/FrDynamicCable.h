@@ -244,7 +244,7 @@ namespace frydom {
         void Update(double time) override {};
 
         /// Initialize the log for the dynamic cable
-        void InitializeLog() override;
+        void InitializeLog(const std::string& rootPath) override;
 
         /// Method called at the send of a time step. Logging may be used here
         void StepFinalize() override;

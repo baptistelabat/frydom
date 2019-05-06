@@ -53,7 +53,7 @@ namespace frydom {
         void Initialize() override;
 
         /// Initialize the log
-        void InitializeLog() override;
+        void InitializeLog(const std::string& rootPath) override;
 
         /// This function is called at the end of the time step, after the last step of the integration scheme.
         void StepFinalize() override;
