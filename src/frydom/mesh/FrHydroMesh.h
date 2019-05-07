@@ -64,7 +64,7 @@ namespace frydom {
         void Initialize() override;
 
         /// Initialize the log
-        void InitializeLog() override;
+        void InitializeLog(const std::string& rootPath) override;
 
         /// Import a mesh and apply the mesh frame offset transformation, so that the mesh can be expressed in the body reference frame
         /// \param meshFile mesh file name

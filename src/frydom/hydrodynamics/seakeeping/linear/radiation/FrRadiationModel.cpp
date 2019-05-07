@@ -269,12 +269,13 @@ namespace frydom {
         m_dt = dt;
     }
 
-    void FrRadiationConvolutionModel::InitializeLog() {
+    void FrRadiationConvolutionModel::InitializeLog(const std::string& rootPath) {
 
         if (IsLogged()) {
 
             // Build the path to the radiation convolution model log
-            auto logPath = m_system->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
+            std::string localPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
+            auto logPath = m_system->GetPathManager()->BuildPath(localPath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
             // TODO: A completer

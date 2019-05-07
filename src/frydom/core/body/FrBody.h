@@ -159,7 +159,7 @@ namespace frydom {
         // LOGGING
         // =============================================================================================================
 
-        void InitializeLog();
+        void InitializeLog(const std::string& rootPath);
 
 
         // =============================================================================================================
@@ -262,14 +262,11 @@ namespace frydom {
         /// \return List of all external forces
         ForceContainer GetForceList() const;
 
-        // ##CC adding for monitoring force
-
         Force GetTotalExtForceInWorld(FRAME_CONVENTION fc) const;
 
         Force GetTotalExtForceInBody(FRAME_CONVENTION fc) const;
 
         Torque GetTotalTorqueInBodyAtCOG(FRAME_CONVENTION fc) const;
-        // ##CC
 
         // =============================================================================================================
         // NODES

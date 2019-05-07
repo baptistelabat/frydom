@@ -823,11 +823,14 @@ namespace frydom {
         return m_DOFMask.get();
     }
 
-    void FrBody::InitializeLog() {
+    void FrBody::InitializeLog(const std::string& rootPath) {
 
         if (IsLogged()) {
 
-            auto logPath = m_system->GetPathManager()->BuildPath(this, "body.csv");
+            c_logFrameConvention = m_system->GetPathManager()->GetLogFrameConvention();
+
+            std::string bodyPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
+            auto logPath = m_system->GetPathManager()->BuildPath(bodyPath, "body.csv");
 
             // Add the fields
             m_message->AddField<double>("time", "s", "Current time of the simulation",
@@ -891,13 +894,13 @@ namespace frydom {
             // Initializing forces
             auto forceIter = force_begin();
             for (; forceIter != force_end(); forceIter++) {
-                (*forceIter)->InitializeLog();
+                (*forceIter)->InitializeLog(bodyPath);
             }
 
             // Initializing nodes
             auto nodeIter = node_begin();
             for (; nodeIter != node_end(); nodeIter++) {
-                (*nodeIter)->InitializeLog();
+                (*nodeIter)->InitializeLog(bodyPath);
             }
 
         }

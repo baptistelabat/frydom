@@ -55,12 +55,13 @@ namespace frydom {
         return GetBody2()->GetChronoBody();
     }
 
-    void FrLinkBase::InitializeLog() {
+    void FrLinkBase::InitializeLog(const std::string& rootPath) {
 
         if (IsLogged()) {
 
             // Build the path to the link log
-            auto logPath = m_system->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
+            std::string linkPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
+            auto logPath = m_system->GetPathManager()->BuildPath(linkPath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged
             // TODO: A completer

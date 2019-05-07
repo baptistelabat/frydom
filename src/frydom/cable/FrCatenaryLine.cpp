@@ -280,12 +280,13 @@ namespace frydom {
 
     }
 
-    void FrCatenaryLine::InitializeLog() {
+    void FrCatenaryLine::InitializeLog(const std::string& rootPath) {
 
         if (IsLogged()) {
 
             // Build the path to the catenary line log
-            auto logPath = m_system->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
+            auto linePath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
+            auto logPath = m_system->GetPathManager()->BuildPath(linePath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
             m_message->AddField<double>("time", "s", "Current time of the simulation",

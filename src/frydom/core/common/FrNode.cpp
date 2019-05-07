@@ -255,12 +255,15 @@ namespace frydom {
 
     }
 
-    void FrNode::InitializeLog(){
+    void FrNode::InitializeLog(const std::string& rootPath){
 
         if (IsLogged()) {
 
+            c_logFrameConvention = m_body->GetSystem()->GetPathManager()->GetLogFrameConvention();
+
             // Build the path for the node log
-            auto logPath = m_body->GetSystem()->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
+            std::string nodePath = fmt::format("{}/Nodes", rootPath);
+            auto logPath = m_body->GetSystem()->GetPathManager()->BuildPath(nodePath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
             m_message->AddField<double>("time", "s", "Current time of the simulation",
