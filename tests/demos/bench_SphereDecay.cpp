@@ -22,8 +22,6 @@ class FrNullForce : public FrForce {
 public :
 
     void Initialize() override {}
-
-    void StepFinalize() override {}
 };
 
 

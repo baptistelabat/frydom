@@ -59,8 +59,6 @@ namespace frydom {
 
         void Initialize() override;
 
-        void StepFinalize() override;
-
     private:
 
         /// Compute the wind force according to the DNV standards

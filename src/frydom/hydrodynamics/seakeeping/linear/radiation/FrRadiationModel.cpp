@@ -195,13 +195,6 @@ namespace frydom {
         }
     }
 
-    void FrRadiationConvolutionModel::StepFinalize() {
-
-        // Serialize and send the message log
-        FrObject::SendLog();
-
-    }
-
     void FrRadiationConvolutionModel::GetImpulseResponseSize(double &Te, double &dt, unsigned int &N) const {
 
         auto timeStep = m_system->GetTimeStep();
@@ -267,26 +260,6 @@ namespace frydom {
         assert(dt > DBL_EPSILON);
         m_Te = Te;
         m_dt = dt;
-    }
-
-    void FrRadiationConvolutionModel::InitializeLog(const std::string& rootPath) {
-
-        if (IsLogged()) {
-
-            // Build the path to the radiation convolution model log
-            std::string localPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
-            auto logPath = m_system->GetPathManager()->BuildPath(localPath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
-
-            // Add the fields to be logged here
-            // TODO: A completer
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return m_system->GetTime(); });
-
-            // Initialize the message
-            FrObject::InitializeLog(logPath);
-
-        }
-
     }
 
     std::shared_ptr<FrRadiationConvolutionModel>

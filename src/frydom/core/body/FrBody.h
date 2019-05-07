@@ -159,7 +159,13 @@ namespace frydom {
         // LOGGING
         // =============================================================================================================
 
-        void InitializeLog(const std::string& rootPath);
+        std::string InitializeLog(const std::string& rootPath) override;
+
+    protected:
+
+        void AddFields() override;
+
+    public:
 
 
         // =============================================================================================================
@@ -946,6 +952,9 @@ namespace frydom {
         NodeIter       node_end();
         ConstNodeIter  node_end() const;
 
+    protected:
+
+        FrPathManager* GetPathManager() const override { return m_system->GetPathManager(); }
 
 
         // friend declarations

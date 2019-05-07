@@ -27,17 +27,9 @@ namespace frydom {
         m_hydroMesh = HydroMesh;
     }
 
+    void FrNonlinearHydrostaticForce::AddFields(){
 
-    void FrNonlinearHydrostaticForce::Initialize() {
-
-        // This function initializes the hydrostatic force object.
-
-        // Initialization of the parent class.
-        FrForce::Initialize();
-
-    }
-
-    void FrNonlinearHydrostaticForce::InitializeLog(const std::string& rootPath){
+        FrForce::AddFields();
 
         // This function initializes the logger for the nonlinear hydrostatic loads by giving the position of the center of buoyancy in the body frame.
 
@@ -54,8 +46,6 @@ namespace frydom {
 //        m_message->AddField<Eigen::Matrix<double, 3, 1>>
 //                ("ForceInBody","N", fmt::format("Hydrostatic force, at CoB, in body reference frame in {}", c_logFrameConvention),
 //                 [this]() {return GetHydrostaticForceInBody(c_logFrameConvention);});
-
-        FrForce::InitializeLog(rootPath);
 
     }
 
@@ -118,15 +108,6 @@ namespace frydom {
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(hydrostaticForce);
 
         return hydrostaticForce;
-    }
-
-    void FrNonlinearHydrostaticForce::StepFinalize() {
-        FrForce::StepFinalize();
-
-        // Writing the clipped mesh in an output file.
-//        m_clippedMesh.Write("Mesh_clipped_Hydrostatics.obj");
-//        std::exit(0);
-
     }
 
     std::shared_ptr<FrNonlinearHydrostaticForce>

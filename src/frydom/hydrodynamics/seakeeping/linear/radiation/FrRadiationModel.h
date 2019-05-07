@@ -110,13 +110,7 @@ namespace frydom {
         void Initialize() override;
 
         void Clear();
-        
-        void StepFinalize() override;
 
-        // Logging
-
-        /// Initialize the log
-        void InitializeLog(const std::string& rootPath) override;
 
         void SetImpulseResponseSize(FrBEMBody* BEMBody, double Te, double dt);
 

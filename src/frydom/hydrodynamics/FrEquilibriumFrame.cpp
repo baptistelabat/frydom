@@ -146,13 +146,9 @@ namespace frydom {
         m_prevTime = time;
     }
 
-    void FrEquilibriumFrame::InitializeLog(const std::string& rootPath) {
+    void FrEquilibriumFrame::AddFields() {
 
         if (IsLogged()) {
-
-            // Build the log path (the equilibrium frame log is located inside the related body folder)
-            std::string bodyPath = fmt::format("{}/{}_{}_{}", rootPath, m_body->GetTypeName(), m_body->GetName(), m_body->GetShortenUUID());
-            auto logPath = m_system->GetPathManager()->BuildPath(bodyPath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
             // TODO: A completer
@@ -185,9 +181,7 @@ namespace frydom {
                      [this]() {double phi, theta, psi;
                      GetPerturbationFrame().GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, c_logFrameConvention);
                      return Vector3d<double>(phi, theta, psi);});
-
-            // Initialize the message
-            FrObject::InitializeLog(logPath);
+            
         }
     }
 

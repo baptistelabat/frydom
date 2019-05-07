@@ -40,9 +40,5 @@ namespace frydom {
 
     }
 
-    void FrCatenaryForce::StepFinalize() {
-        FrForce::StepFinalize();
-    }
-
 
 }  // end namespace frydom

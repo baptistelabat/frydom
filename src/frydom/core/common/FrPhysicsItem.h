@@ -90,11 +90,11 @@ namespace frydom {
 
         virtual void SetupInitial();
 
-        virtual void InitializeLog(const std::string& rootPath) = 0;
-
         void Initialize() override {};
 
-        void StepFinalize() override;
+    protected:
+
+        FrPathManager* GetPathManager() const override { return m_system->GetPathManager(); }
 
     private:
 

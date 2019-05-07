@@ -38,13 +38,15 @@ namespace frydom {
 
 //        virtual void SetupInitial();
 
-        virtual void InitializeLog(const std::string& rootPath) = 0;
-
         void Initialize() override;
 
         virtual double GetStaticResidual() = 0;
 
         virtual void Relax() = 0;
+
+    protected:
+
+        FrPathManager* GetPathManager() const override { return m_system->GetPathManager(); }
 
         friend void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh>);
         friend void FrOffshoreSystem::RemoveFEAMesh(std::shared_ptr<FrFEAMesh>);

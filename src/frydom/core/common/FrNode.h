@@ -196,12 +196,9 @@ namespace frydom {
         /// Initialize method not implemented yet
         void Initialize() override;
 
-        /// StepFinalize method not implemented yet
-        void StepFinalize() override;
-
         // Logging
 
-        void InitializeLog(const std::string& rootPath);
+        void AddFields();
 
 
         // =============================================================================================================
@@ -251,6 +248,10 @@ namespace frydom {
             worldVector = GetFrameInWorld().GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
             return worldVector;
         }
+
+    protected:
+
+        FrPathManager* GetPathManager() const override;
 
     private:
 

@@ -111,10 +111,6 @@ namespace frydom {
         m_table= m_hdb->GetBody(m_body)->GetWaveDrift();
     }
 
-    void FrWaveDriftForce::StepFinalize() {
-        FrForce::StepFinalize();
-    }
-
     std::vector<double> FrWaveDriftForce::GetRelativeWaveDir() const {
 
         auto ocean = m_body->GetSystem()->GetEnvironment()->GetOcean();

@@ -14,12 +14,19 @@
 
 #include "FrObject.h"
 #include "frydom/utils/FrSerializerFactory.h"
+#include "frydom/IO/FrPathManager.h"
 
 namespace frydom {
 
-        void FrObject::InitializeLog(std::string path) {
+        std::string FrObject::InitializeLog(const std::string& path) {
 
             if (IsLogged()) {
+
+                auto logPath = BuildPath(path);
+
+                AddFields();
+
+
                 // Initializing message
                 if (m_message->GetName().empty()) {
                     m_message->SetNameAndDescription(
@@ -27,13 +34,11 @@ namespace frydom {
                             fmt::format("\"Message of a {}", GetTypeName()));
                 }
 
-                // Add a serializer
-                m_message->AddSerializer(
-                     FrSerializerFactory::instance().Create(this, path));
-
                 // Init the message
                 m_message->Initialize();
                 m_message->Send();
+
+                return logPath;
             }
 
         }
@@ -47,6 +52,21 @@ namespace frydom {
 
         }
 
+    std::string FrObject::BuildPath(const std::string &rootPath) {
+        c_logFrameConvention = GetPathManager()->GetLogFrameConvention();
+
+        std::string bodyPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
+        auto logPath = GetPathManager()->BuildPath(bodyPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
+
+        // Add a serializer
+        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
+
+        return logPath;
+    }
+
+    void FrObject::StepFinalize() {
+            SendLog();
+    }
 
 
 }  // end namespace frydom

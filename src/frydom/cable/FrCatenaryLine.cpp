@@ -280,13 +280,9 @@ namespace frydom {
 
     }
 
-    void FrCatenaryLine::InitializeLog(const std::string& rootPath) {
+    void FrCatenaryLine::AddFields() {
 
         if (IsLogged()) {
-
-            // Build the path to the catenary line log
-            auto linePath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
-            auto logPath = m_system->GetPathManager()->BuildPath(linePath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
             m_message->AddField<double>("time", "s", "Current time of the simulation",
@@ -305,9 +301,6 @@ namespace frydom {
 
             //TODO : logger la position de la ligne pour un ensemble d'abscisses curvilignes?
 
-            // Initialize the message
-            FrObject::InitializeLog(logPath);
-
         }
 
     }
@@ -319,7 +312,7 @@ namespace frydom {
         FrPhysicsItem::StepFinalize();
 
         // Serialize and send the log message
-        FrObject::SendLog();
+        FrObject::StepFinalize();
 
     }
 

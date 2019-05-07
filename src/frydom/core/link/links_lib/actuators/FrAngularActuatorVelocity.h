@@ -61,8 +61,6 @@ namespace frydom {
 
         void Update(double time);
 
-        void StepFinalize() override;
-
 
         friend void internal::FrLinkMotorRotationSpeed::SetupInitial();
 

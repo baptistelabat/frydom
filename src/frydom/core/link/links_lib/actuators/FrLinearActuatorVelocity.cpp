@@ -63,9 +63,6 @@ namespace frydom {
 
     }
 
-    void FrLinearActuatorVelocity::StepFinalize() {
-
-    }
 
     void FrLinearActuatorVelocity::SetMotorFunction(const FrFunctionBase &function) {
         SetLinearVelocityFunction(function);

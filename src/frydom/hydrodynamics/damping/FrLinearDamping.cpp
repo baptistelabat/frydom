@@ -87,10 +87,6 @@ namespace frydom {
         Check();
     }
 
-    void FrLinearDamping::StepFinalize() {
-        FrForce::StepFinalize();
-    }
-
     void FrLinearDamping::Check() const {
         // Here we check if every damping coefficient is positive
         for (unsigned int iRow=0; iRow<6; iRow++) {

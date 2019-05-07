@@ -248,22 +248,9 @@ namespace frydom {
 
     }
 
-    void FrNode::StepFinalize() {
-
-        // Send the message to the logging system
-        FrObject::SendLog();
-
-    }
-
-    void FrNode::InitializeLog(const std::string& rootPath){
+    void FrNode::AddFields(){
 
         if (IsLogged()) {
-
-            c_logFrameConvention = m_body->GetSystem()->GetPathManager()->GetLogFrameConvention();
-
-            // Build the path for the node log
-            std::string nodePath = fmt::format("{}/Nodes", rootPath);
-            auto logPath = m_body->GetSystem()->GetPathManager()->BuildPath(nodePath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
             m_message->AddField<double>("time", "s", "Current time of the simulation",
@@ -285,9 +272,6 @@ namespace frydom {
             ("NodePositionInBody","m", fmt::format("Node position in body reference frame in {}",c_logFrameConvention),
                     [this]() {return GetNodePositionInBody(c_logFrameConvention);});
 
-            // Initialize the message
-            FrObject::InitializeLog(logPath);
-
         }
 
     }
@@ -303,5 +287,7 @@ namespace frydom {
     FrNodeAsset *FrNode::GetAsset() {
         return m_asset.get();
     }
+
+    FrPathManager *FrNode::GetPathManager() const { return m_body->GetSystem()->GetPathManager(); }
 
 }  // end namespace frydom

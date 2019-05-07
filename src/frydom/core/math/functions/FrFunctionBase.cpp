@@ -102,8 +102,6 @@ namespace frydom {
 
     void FrFunctionBase::Initialize() {}
 
-    void FrFunctionBase::StepFinalize() {}
-
     double FrFunctionBase::operator()(double x) const {
         return Get_y(x);
     }

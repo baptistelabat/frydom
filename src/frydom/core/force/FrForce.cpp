@@ -88,13 +88,6 @@ namespace frydom{
         }
     }
 
-    void FrForce::StepFinalize() {
-
-        // Send the message to the logging system
-        FrObject::SendLog();
-
-    }
-
     std::shared_ptr<chrono::ChForce> FrForce::GetChronoForce() {
         return m_chronoForce;
     }
@@ -103,15 +96,9 @@ namespace frydom{
         return m_body->GetSystem();
     }
 
-    void FrForce::InitializeLog(const std::string& rootPath) {
+    void FrForce::AddFields() {
 
         if (IsLogged()) {
-
-            c_logFrameConvention = GetSystem()->GetPathManager()->GetLogFrameConvention();
-
-            // Build the path to the force log
-            std::string forcePath = fmt::format("{}/Forces", rootPath);
-            auto logPath = GetSystem()->GetPathManager()->BuildPath(forcePath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged
             m_message->AddField<double>("time", "s", "Current time of the simulation",
@@ -133,8 +120,6 @@ namespace frydom{
             ("TorqueInWorldAtCOG","Nm", fmt::format("torque at COG in world reference frame in {}", c_logFrameConvention),
                     [this]() {return GetTorqueInWorldAtCOG(c_logFrameConvention);});
 
-            // Initialize the message
-            FrObject::InitializeLog(logPath);
         }
     }
 
@@ -390,6 +375,8 @@ namespace frydom{
             SetForceTorqueInBodyAtCOG(Force(), Torque(), NWU);
 
     }
+
+    FrPathManager *FrForce::GetPathManager() const { return m_body->GetSystem()->GetPathManager(); }
 
 
 }  // end namespace frydom

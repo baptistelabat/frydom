@@ -78,10 +78,6 @@ namespace frydom {
 
     }
 
-    void FrAngularActuatorAngle::StepFinalize() {
-
-    }
-
 
 //    internal::FrLinkMotorRotationAngle* FrAngularActuatorAngle::GetChronoActuator() const {
 //        return m_chronoActuator.get();

@@ -62,10 +62,6 @@ namespace frydom {
         Initialize();
     }
 
-    void FrPhysicsItem::StepFinalize() {
-
-    }
-
     void FrPhysicsItem::Update(double time) {
         if(IsActive())
             Compute(time);

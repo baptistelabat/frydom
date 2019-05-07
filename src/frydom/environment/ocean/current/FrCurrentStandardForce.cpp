@@ -107,9 +107,5 @@ namespace frydom {
         SetForceTorqueInWorldAtPointInBody(worldForce, worldTorque, Position(m_xCenter, 0., 0.), NWU);
     }
 
-    void FrCurrentStandardForce::StepFinalize() {
-        FrForce::StepFinalize();
-    }
-
 
 }  // end namespace frydom

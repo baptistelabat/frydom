@@ -25,6 +25,9 @@
 
 namespace frydom {
 
+    // Forward declarations
+    class FrPathManager;
+
     /**
      * \class FrObject
      * \brief Class for defining objects in FRyDoM.
@@ -86,16 +89,22 @@ namespace frydom {
         virtual void Initialize() = 0;
 
         /// This function is called at the end of the time step, after the last step of the integration scheme.
-        virtual void StepFinalize() = 0;
+        virtual void StepFinalize();
 
         // Logging
 
         // Initialize the message log
-        void InitializeLog(std::string path);
+        virtual std::string InitializeLog(const std::string& path);
 
     protected:
         // Serialize and send the message
         void SendLog();
+
+        virtual std::string BuildPath(const std::string& rootPath);
+
+        virtual FrPathManager* GetPathManager() const {};
+
+        virtual void AddFields() {};
     };
 
 }  // end namespace frydom

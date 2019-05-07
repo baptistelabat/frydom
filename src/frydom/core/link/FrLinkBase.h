@@ -78,12 +78,6 @@ namespace frydom {
         /// Return true if the link is included in the static analysis
         bool IncludedInStaticAnalysis() const {return true;}
 
-        // Logging
-
-        /// Initialize the log
-        virtual void InitializeLog(const std::string& rootPath);
-
-
 
         /// Returns the first node of the link
         std::shared_ptr<FrNode> GetNode1();
@@ -102,6 +96,8 @@ namespace frydom {
 //        const  FrBody* GetBody2() const;
 
     protected:  // TODO : voir si on rend cela private
+
+        FrPathManager* GetPathManager() const override { return m_system->GetPathManager(); }
 
 
         friend void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link);

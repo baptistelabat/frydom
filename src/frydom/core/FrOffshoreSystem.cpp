@@ -1001,18 +1001,7 @@ namespace frydom {
 
         if (IsLogged()) {
 
-            c_logFrameConvention = m_pathManager->GetLogFrameConvention();
-
-            std::string systemPath = fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
-            auto logPath = m_pathManager->BuildPath(systemPath, "system.csv");
-
-            // Add the fields
-            // TODO A completer
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                    [this]() { return m_chronoSystem->GetChTime(); });
-
-            // Init the message
-            FrObject::InitializeLog(logPath);
+            auto systemPath = FrObject::InitializeLog("");
 
             // Initializing environment before bodies
 //            m_environment->InitializeLog();

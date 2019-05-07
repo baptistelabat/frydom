@@ -43,9 +43,6 @@ namespace frydom {
         /// \param side side of the line (starting or ending)
         FrCatenaryForce(FrCatenaryLine* line, FrCatenaryLine::LINE_SIDE side) : m_line(line), m_line_side(side) {};
 
-        /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override;
-
         /// Return true if the force is included in the static analysis
         bool IncludedInStaticAnalysis() const override {return true;}
 

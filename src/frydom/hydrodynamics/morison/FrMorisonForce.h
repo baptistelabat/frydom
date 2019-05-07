@@ -52,8 +52,6 @@ namespace frydom {
 
         void Initialize() override;
 
-        void StepFinalize() override;
-
     private:
 
         /// Compute the Morison force
