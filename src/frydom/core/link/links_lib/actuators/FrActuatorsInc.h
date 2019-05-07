@@ -9,5 +9,6 @@
 #include "FrAngularActuatorInc.h"
 
 #include "FrLinActuator.h"
+#include "FrAngActuator.h"
 
 #endif //FRYDOM_FRACTUATORSINC_H

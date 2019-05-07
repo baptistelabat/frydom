@@ -43,11 +43,11 @@ int main() {
 
     auto rev1 = make_revolute_link(node1, nodeWorld, &system);
 
-    auto motor1 = rev1->Motorize(POSITION);
+    auto motor1 = rev1->Motorize2(POSITION);
 
     auto t = new_var("t");
-    motor1->SetMotorFunction(MU_PI * sin(t));
-//    motor1->SetMotorFunction(FrConstantFunction(MU_PI_2));
+//    motor1->SetMotorFunction(MU_PI * sin(t));
+    motor1->SetMotorFunction(FrConstantFunction(MU_PI_2));
 
 
     // Body 2 definition (linked body)
@@ -74,7 +74,7 @@ int main() {
 //    prismaticLink->SetSpringDamper(2e3, 1e3);
 //    prismaticLink->SetRestLength(-5);
 
-    auto motor2 = prismaticLink->Motorize(POSITION);
+    auto motor2 = prismaticLink->Motorize2(POSITION);
 //    motor2->SetMotorFunction(10*sin(t));
     motor2->SetMotorFunction(FrConstantFunction(-10.));
 

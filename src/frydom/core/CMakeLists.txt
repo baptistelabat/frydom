@@ -44,6 +44,7 @@ list(APPEND SRC_FILES
         link/links_lib/actuators/FrLinearActuatorForce.cpp
 
         link/links_lib/actuators/FrLinActuator.cpp
+        link/links_lib/actuators/FrAngActuator.cpp
 
         link/constraints/FrDistanceBetweenPointsConstraint.cpp
         link/constraints/FrParallelConstraint.cpp

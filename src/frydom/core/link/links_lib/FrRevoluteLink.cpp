@@ -16,6 +16,7 @@
 #include "frydom/core/common/FrNode.h"
 
 #include "actuators/FrAngularActuatorInc.h"
+#include "actuators/FrAngActuator.h"
 
 
 namespace frydom {
@@ -169,6 +170,12 @@ namespace frydom {
 
         GetSystem()->Add(m_actuator);
         return dynamic_cast<FrAngularActuator*>(m_actuator.get());
+    }
+
+    FrAngActuator *FrRevoluteLink::Motorize2(ACTUATOR_CONTROL control) {
+        m_actuator = std::make_shared<FrAngActuator>(this, control);
+        GetSystem()->Add(m_actuator);
+        return dynamic_cast<FrAngActuator*>(m_actuator.get());
     }
 
     double FrRevoluteLink::GetUpdatedRelativeAngle() const {
