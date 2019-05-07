@@ -14,6 +14,8 @@
 #include "frydom/core/common/FrNode.h"
 #include "actuators/FrLinearActuatorInc.h"
 
+#include "actuators/FrLinActuator.h"
+
 //#include <chrono/physics/ChLinkLock.h>
 
 
@@ -118,6 +120,14 @@ namespace frydom {
 
         GetSystem()->Add(m_actuator);
         return dynamic_cast<FrLinearActuator*>(m_actuator.get());
+    }
+
+    FrLinActuator* FrPrismaticLink::Motorize2(ACTUATOR_CONTROL control) {
+
+        m_actuator = std::make_shared<FrLinActuator>(this, control);
+        GetSystem()->Add(m_actuator);
+        return dynamic_cast<FrLinActuator*>(m_actuator.get());
+
     }
 
     std::shared_ptr<FrPrismaticLink>

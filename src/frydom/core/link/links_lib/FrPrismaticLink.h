@@ -20,6 +20,7 @@ namespace frydom {
 
     // Forward declarations
     class FrLinearActuator;
+    class FrLinActuator;
 
     /**
      * \class FrPrismaticLink
@@ -89,6 +90,9 @@ namespace frydom {
 
         /// Motorize the link to make it driven // TODO : work in progress
         FrLinearActuator* Motorize(ACTUATOR_CONTROL control);
+
+        /// Motorize the link to make it driven // TODO : work in progress
+        FrLinActuator* Motorize2(ACTUATOR_CONTROL control);
 
     private:
 
