@@ -52,7 +52,7 @@ namespace frydom {
     }
 
     std::shared_ptr<chrono::ChBody> FrLinkBase::GetChronoBody2() {
-        return GetBody1()->GetChronoBody();
+        return GetBody2()->GetChronoBody();
     }
 
     void FrLinkBase::InitializeLog(const std::string& rootPath) {

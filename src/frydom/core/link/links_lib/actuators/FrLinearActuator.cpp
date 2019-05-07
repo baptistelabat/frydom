@@ -3,3 +3,11 @@
 //
 
 #include "FrLinearActuator.h"
+
+namespace frydom {
+
+
+    FrLinearActuator::FrLinearActuator(FrLink *actuatedLink) : FrActuator(actuatedLink) {
+
+    }
+} //end namespace frydom

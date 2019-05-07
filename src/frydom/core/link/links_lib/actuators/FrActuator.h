@@ -12,25 +12,26 @@
 namespace frydom {
 
 
-    namespace internal {
-
-        struct FrMotorBase {
-
-            virtual bool GetDisabled() = 0;
-            virtual void MakeDisabled(bool disabled) = 0;
-
-        };
-
-    }  // end namespace frydom::internal
+//    namespace internal {
+//
+//        struct FrMotorBase {
+//
+//            virtual bool GetDisabled() = 0;
+//            virtual void MakeDisabled(bool disabled) = 0;
+//
+//        };
+//
+//    }  // end namespace frydom::internal
 
 
     // Forward declaration
     class FrLink;
+    class FrFunctionBase;
 
     class FrActuator : public FrLinkBase {
 
     protected:
-        std::shared_ptr<internal::FrMotorBase> m_chronoMotor;
+//        std::shared_ptr<internal::FrMotorBase> m_chronoMotor;
 
         FrLink* m_actuatedLink;
 
@@ -42,10 +43,10 @@ namespace frydom {
         // TODO : ajouter des methodes communes a tous les actuateurs tel que GetPower() ...
 
         /// Tells if all constraints of this link are currently turned on or off by the user.
-        virtual bool IsDisabled() const override;
+        bool IsDisabled() const override;
 
         /// User can use this to enable/disable all the constraint of the link as desired.
-        virtual void SetDisabled(bool disabled) override;
+        void SetDisabled(bool disabled) override;
 
 //        /// Tells if the link is broken, for excess of pulling/pushing.
 //        virtual bool IsBroken() const override;
@@ -57,19 +58,17 @@ namespace frydom {
         /// that is tells if it must be included into the system solver or not.
         /// This method cumulates the effect of various flags (so a link may
         /// be not active either because disabled, or broken, or not valid)
-        virtual bool IsActive() const override;
+        bool IsActive() const override;
 
         std::string GetTypeName() const override { return "Actuator"; }
-        
-        // TODO A compléter absolument quand FrMotorBase dérivera d'une classe chrono
-        chrono::ChPhysicsItem* GetChronoItem_ptr() const override {}
 
-
+        virtual void SetMotorFunction(const FrFunctionBase& function) = 0;
 
     protected:
 
+//        virtual internal::FrMotorBase* GetChronoActuator() const = 0;
 
-
+        chrono::ChLinkBase* GetChronoItem_ptr() const override = 0;
 
     };
 

@@ -176,7 +176,7 @@ namespace frydom {
     FrOffshoreSystem::~FrOffshoreSystem() = default;
     void FrOffshoreSystem::Add(std::shared_ptr<FrObject> newItem) {
         assert(std::dynamic_pointer_cast<FrBody>(newItem) ||
-               std::dynamic_pointer_cast<FrLink>(newItem) ||
+               std::dynamic_pointer_cast<FrLinkBase>(newItem) ||
                std::dynamic_pointer_cast<FrPhysicsItem>(newItem));
 
         if (auto item = std::dynamic_pointer_cast<FrBody>(newItem)) {
@@ -184,7 +184,7 @@ namespace frydom {
             return;
         }
 
-        if (auto item = std::dynamic_pointer_cast<FrLink>(newItem)) {
+        if (auto item = std::dynamic_pointer_cast<FrLinkBase>(newItem)) {
             AddLink(item);
             return;
         }
