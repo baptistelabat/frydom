@@ -55,7 +55,15 @@ namespace frydom {
     std::string FrObject::BuildPath(const std::string &rootPath) {
         c_logFrameConvention = GetPathManager()->GetLogFrameConvention();
 
-        std::string bodyPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
+        std::string bodyPath;
+
+        if (rootPath.empty()) {
+            bodyPath= fmt::format("{}_{}_{}", GetTypeName(), GetName(), GetShortenUUID());
+        }
+        else {
+            bodyPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
+        }
+
         auto logPath = GetPathManager()->BuildPath(bodyPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
 
         // Add a serializer
