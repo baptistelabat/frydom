@@ -823,22 +823,18 @@ namespace frydom {
         return m_DOFMask.get();
     }
 
-    std::string FrBody::InitializeLog(const std::string& rootPath) {
+    void FrBody::InitializeLog_Dependencies(const std::string& bodyPath) {
 
         if (IsLogged()) {
 
-            auto bodyPath = FrObject::InitializeLog(rootPath);
-
             // Initializing forces
-            auto forceIter = force_begin();
-            for (; forceIter != force_end(); forceIter++) {
-                (*forceIter)->InitializeLog(bodyPath);
+            for (const auto& force : m_externalForces){
+                force->InitializeLog(bodyPath);
             }
 
             // Initializing nodes
-            auto nodeIter = node_begin();
-            for (; nodeIter != node_end(); nodeIter++) {
-                (*nodeIter)->InitializeLog(bodyPath);
+            for (const auto &node : m_nodes) {
+                node->InitializeLog(bodyPath);
             }
 
         }

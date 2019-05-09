@@ -94,7 +94,9 @@ namespace frydom {
         // Logging
 
         // Initialize the message log
-        virtual std::string InitializeLog(const std::string& path);
+        virtual void InitializeLog(const std::string& path);
+
+        virtual void InitializeLog_Dependencies(const std::string& path) {};
 
     protected:
         // Serialize and send the message

@@ -159,7 +159,7 @@ namespace frydom {
         // LOGGING
         // =============================================================================================================
 
-        std::string InitializeLog(const std::string& rootPath) override;
+        void InitializeLog_Dependencies(const std::string& bodyPath) override;
 
     protected:
 

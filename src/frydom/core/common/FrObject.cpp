@@ -18,11 +18,11 @@
 
 namespace frydom {
 
-        std::string FrObject::InitializeLog(const std::string& path) {
+        void FrObject::InitializeLog(const std::string& path) {
 
             if (IsLogged()) {
 
-                auto logPath = BuildPath(path);
+                auto objPath = BuildPath(path);
 
                 AddFields();
 
@@ -38,7 +38,8 @@ namespace frydom {
                 m_message->Initialize();
                 m_message->Send();
 
-                return logPath;
+                InitializeLog_Dependencies(objPath);
+
             }
 
         }
@@ -55,14 +56,7 @@ namespace frydom {
     std::string FrObject::BuildPath(const std::string &rootPath) {
         c_logFrameConvention = GetPathManager()->GetLogFrameConvention();
 
-        std::string objPath;
-
-        if (rootPath.empty()) {
-            objPath= fmt::format("{}_{}_{}", GetTypeName(), GetName(), GetShortenUUID());
-        }
-        else {
-            objPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
-        }
+        auto objPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
 
         auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
 

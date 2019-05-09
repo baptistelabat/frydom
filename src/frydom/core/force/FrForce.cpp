@@ -15,6 +15,8 @@
 
 #include "frydom/IO/FrPathManager.h"
 
+#include "frydom/utils/FrSerializerFactory.h"
+
 
 namespace frydom{
 
@@ -377,6 +379,21 @@ namespace frydom{
     }
 
     FrPathManager *FrForce::GetPathManager() const { return m_body->GetSystem()->GetPathManager(); }
+
+    std::string FrForce::BuildPath(const std::string &rootPath) {
+
+        c_logFrameConvention = GetPathManager()->GetLogFrameConvention();
+
+        auto objPath = fmt::format("{}/Forces", rootPath);
+
+        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
+
+        // Add a serializer
+        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
+
+        return objPath;
+
+    }
 
 
 }  // end namespace frydom

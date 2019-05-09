@@ -64,6 +64,9 @@ namespace frydom {
         /// \param body body to which the node belongs
         explicit FrNode(FrBody* body);
 
+        /// Destructor
+//        ~FrNode() = default;
+
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "Node"; }
@@ -119,8 +122,6 @@ namespace frydom {
 
 
 
-        /// Destructor
-        ~FrNode() = default;
 
         /// Get the body pointer
         /// \return the body to which the node belongs
@@ -252,6 +253,8 @@ namespace frydom {
     protected:
 
         FrPathManager* GetPathManager() const override;
+
+        std::string BuildPath(const std::string& rootPath) override;
 
     private:
 

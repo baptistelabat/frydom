@@ -104,7 +104,7 @@ namespace frydom{
         // Logging
         m_system->GetPathManager()->SetRunPath("Static");
         m_system->ClearLogs();
-        m_system->InitializeLog();
+        m_system->InitializeLog("");
 
          auto logPath = m_system->GetPathManager()->BuildPath("statics.csv");
 
@@ -176,7 +176,7 @@ namespace frydom{
         // Set all the output paths for the logs back to their original paths
         m_system->GetPathManager()->SetRunPath("Dynamic");
         m_system->ClearLogs();
-        m_system->InitializeLog();
+        m_system->InitializeLog("");
 
     }
 
