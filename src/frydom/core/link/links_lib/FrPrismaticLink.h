@@ -75,14 +75,8 @@ namespace frydom {
         /// Get the power delivered by the force in the link, along the z axis of the link
         double GetLinkPower() const override;
 
-        /// Initialize the link
-        void Initialize() override;
-
         /// Update the link
         void Update(double time) override;
-
-        /// Called after every time step, only once
-        void StepFinalize() override;
 
         /// Compute the link force. Here this is essentially a torque with a default spring damper.
         void UpdateForces(double time);

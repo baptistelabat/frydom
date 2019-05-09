@@ -78,12 +78,6 @@ namespace frydom {
         /// Return true if the link is included in the static analysis
         bool IncludedInStaticAnalysis() const {return true;}
 
-        // Logging
-
-        /// Initialize the log
-        virtual void InitializeLog(const std::string& rootPath);
-
-
 
         /// Returns the first node of the link
         std::shared_ptr<FrNode> GetNode1();

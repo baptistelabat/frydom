@@ -23,13 +23,6 @@
 
 namespace frydom {
 
-    void FrNonLinearFroudeKrylovForce::Initialize() {
-
-        // Initialization of the parent class.
-        FrForce::Initialize();
-
-    }
-
     void FrNonLinearFroudeKrylovForce::Compute(double time) {
 
         // This function computes the fully or weakly nonlinear Froude-Krylov forces from the pressure integration.
@@ -87,13 +80,6 @@ namespace frydom {
 
         }
 
-    }
-
-    void FrNonLinearFroudeKrylovForce::StepFinalize() {
-        FrForce::StepFinalize();
-
-        // Writing the clipped mesh in an output file.
-//        m_clippedMesh->Write("Mesh_clipped_Froude_Krylov.obj");
     }
 
     std::shared_ptr<FrNonLinearFroudeKrylovForce>

@@ -337,6 +337,9 @@ namespace frydom {
 
     void FrDynamicCable::Initialize() {
 
+        // Log
+        SetPathManager(m_system->GetPathManager());
+
          m_chronoCable->Initialize();
 
          GetTension(0.,NWU);
@@ -388,12 +391,8 @@ namespace frydom {
 
     }
 
-    void FrDynamicCable::InitializeLog(const std::string& rootPath) {
+    void FrDynamicCable::AddFields() {
         if (IsLogged()) {
-
-            // Build the path to the catenary line log
-            auto cablePath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
-            auto logPath = m_system->GetPathManager()->BuildPath(cablePath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
             m_message->AddField<double>("time", "s", "Current time of the simulation",
@@ -403,26 +402,17 @@ namespace frydom {
                                         [this]() { return GetStrainedLength(); });
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("StartingNodeTension","N", fmt::format("Starting node tension in world reference frame in {}",c_logFrameConvention),
-                     [this]() {return GetTension(0.,c_logFrameConvention);});
+                    ("StartingNodeTension","N", fmt::format("Starting node tension in world reference frame in {}",GetLogFrameConvention()),
+                     [this]() {return GetTension(0.,GetLogFrameConvention());});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("EndingNodeTension","N", fmt::format("Ending node tension in world reference frame in {}",c_logFrameConvention),
-                     [this]() { Eigen::Matrix<double, 3, 1> temp = -GetTension(GetUnstrainedLength(), c_logFrameConvention);
+                    ("EndingNodeTension","N", fmt::format("Ending node tension in world reference frame in {}",GetLogFrameConvention()),
+                     [this]() { Eigen::Matrix<double, 3, 1> temp = -GetTension(GetUnstrainedLength(), GetLogFrameConvention());
                         return temp;});
 
             //TODO : logger la position de la ligne pour un ensemble d'abscisses curvilignes?
 
-            // Initialize the message
-            FrObject::InitializeLog(logPath);
-
         }
-    }
-
-    void FrDynamicCable::StepFinalize() {
-
-        // Serialize and send the log message
-        FrObject::SendLog();
     }
 
     void FrDynamicCable::SetStartingHingeType(FrDynamicCable::HingeType type) {

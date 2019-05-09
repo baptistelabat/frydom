@@ -55,25 +55,6 @@ namespace frydom {
         return GetBody2()->GetChronoBody();
     }
 
-    void FrLinkBase::InitializeLog(const std::string& rootPath) {
-
-        if (IsLogged()) {
-
-            // Build the path to the link log
-            std::string linkPath = fmt::format("{}/{}_{}_{}", rootPath, GetTypeName(), GetName(), GetShortenUUID());
-            auto logPath = m_system->GetPathManager()->BuildPath(linkPath, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
-
-            // Add the fields to be logged
-            // TODO: A completer
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return m_system->GetTime(); });
-
-            // Initialize the message
-            FrObject::InitializeLog(logPath);
-        }
-
-    }
-
     FrOffshoreSystem *FrLinkBase::GetSystem() {
         return m_system;
     }

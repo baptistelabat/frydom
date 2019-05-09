@@ -94,10 +94,6 @@ namespace frydom {
         /// This subroutine initializes the object FrForce.
         void Initialize() override;
 
-        // TODO : boucle de StepFinalize à mettre en place dans FrBody
-        /// This function is called at the end of the time step, after the last step of the integration scheme.
-        void StepFinalize() override;
-
         /// Check if the force is active before updating it
         /// \param time Current time of the simulation from beginning, in seconds
         void Update(double time);
@@ -124,7 +120,7 @@ namespace frydom {
         // Logging
 
         /// Initialize the log
-        virtual void InitializeLog(const std::string& rootPath);
+        void AddFields() override;
 
         // Force Asset
         /// Inquire if a ForceAsset is displayed
@@ -362,6 +358,10 @@ namespace frydom {
         /// Virtual function to allow updating the child object from the solver
         /// \param time Current time of the simulation from beginning, in seconds
         virtual void Compute(double time) = 0;
+
+    protected:
+
+        std::string BuildPath(const std::string &rootPath) override;
 
 
         friend class FrBody;

@@ -94,7 +94,6 @@ namespace frydom {
         double Get_y_dxdx(double x) const;
 
         void Initialize() override;
-        void StepFinalize() override;
 
         double operator()(double x) const;
 

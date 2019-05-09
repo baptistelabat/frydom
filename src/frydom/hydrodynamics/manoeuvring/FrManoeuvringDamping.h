@@ -107,12 +107,6 @@ namespace frydom {
         /// \param p : exponent for yaw velocity
         void SetN(double val, int m, int n, int p);
 
-        /// Initialization of the manoeuvring force model
-        void Initialize() override;
-
-        /// Applied method at the end of each time step
-        void StepFinalize() override;
-
         /// Clear all coefficients definition
         void ClearAll();
 

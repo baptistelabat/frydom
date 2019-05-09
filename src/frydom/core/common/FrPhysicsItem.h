@@ -90,11 +90,7 @@ namespace frydom {
 
         virtual void SetupInitial();
 
-        virtual void InitializeLog(const std::string& rootPath) = 0;
-
         void Initialize() override {};
-
-        void StepFinalize() override;
 
     private:
 

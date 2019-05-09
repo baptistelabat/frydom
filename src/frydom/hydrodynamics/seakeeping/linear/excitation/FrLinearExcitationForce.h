@@ -44,9 +44,6 @@ namespace frydom {
 
         void Initialize() override;
 
-        /// This function is called at the end of the time step, after the last step of the integration scheme.
-        void StepFinalize() override;
-
         Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
 
         Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;

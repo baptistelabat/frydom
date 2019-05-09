@@ -185,9 +185,6 @@ class SteadyPitchTorque : public FrForce {
 
     }
 
-public:
-
-    void StepFinalize() override {};
 };
 
 // ----------------------------------------------------------
@@ -207,9 +204,6 @@ class SteadyHeaveForce : public FrForce {
 
     }
 
-public:
-
-    void StepFinalize() override {}
 };
 
 // -----------------------------------------------------------

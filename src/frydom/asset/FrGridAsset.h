@@ -40,7 +40,7 @@ namespace frydom {
 
         /// The grid asset position is updated every m_updateStep simulation steps
         int m_updateStep = 0;
-        int c_currentStep;
+        int c_currentStep = 0;
 
         /// Color of the grid asset
         NAMED_COLOR m_color = Gray;

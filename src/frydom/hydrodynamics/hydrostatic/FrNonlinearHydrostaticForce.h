@@ -49,14 +49,8 @@ namespace frydom {
         /// Return true if the force is included in the static analysis
         bool IncludedInStaticAnalysis() const override {return true;}
 
-        /// Intialize the nonlinear hydrostatic force model.
-        void Initialize() override;
-
         /// Initialize the log
-        void InitializeLog(const std::string& rootPath) override;
-
-        /// This function is called at the end of the time step, after the last step of the integration scheme.
-        void StepFinalize() override;
+        void AddFields() override;
 
         /// Get the center of buoyancy position of the clipped mesh in the body reference frame
         /// \param fc frame convention (NED/NWU)

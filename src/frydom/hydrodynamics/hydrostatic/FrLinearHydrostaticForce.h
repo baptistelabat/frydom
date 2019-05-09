@@ -73,9 +73,6 @@ namespace frydom {
         /// Intialize the linear hydrostatic force model
         void Initialize() override;
 
-        /// Methods to be applied at the end of each time steps
-        void StepFinalize() override;
-
     private:
 
         /// Compute the linear hydrostatic force
