@@ -92,10 +92,6 @@ namespace frydom {
 
         void Initialize() override {};
 
-    protected:
-
-        FrPathManager* GetPathManager() const override { return m_system->GetPathManager(); }
-
     private:
 
         /// Virtual function to allow updating the child object from the solver

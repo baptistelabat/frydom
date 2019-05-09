@@ -110,7 +110,6 @@ int main(int argc, char* argv[]) {
 
     // -- Radiation
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
-    radiationModel->SetLogged(true);
 
     radiationModel->SetImpulseResponseSize(barge.get(), 6., 0.1);
 
@@ -198,7 +197,6 @@ int main(int argc, char* argv[]) {
     cableProp->SetLinearDensity(600);
 
     auto CatenaryLine = make_catenary_line(crane_node, hub_node, &system, cableProp, elastic, unstretchedLength, FLUID_TYPE::AIR);
-    CatenaryLine->SetLogged(true);
 
     // --------------------------------------------------
     // Mooring Lines

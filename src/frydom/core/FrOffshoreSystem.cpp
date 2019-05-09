@@ -165,7 +165,7 @@ namespace frydom {
         m_environment = std::make_unique<FrEnvironment>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
 
         // Creating the log manager service
-        m_pathManager = std::make_unique<FrPathManager>();
+        m_pathManager = std::make_shared<FrPathManager>();
         
         // Create the static analysis 
         m_statics = std::make_unique<FrStaticAnalysis>(this);
@@ -175,6 +175,8 @@ namespace frydom {
     }
 
     FrOffshoreSystem::~FrOffshoreSystem() = default;
+
+
     void FrOffshoreSystem::Add(std::shared_ptr<FrObject> newItem) {
         assert(std::dynamic_pointer_cast<FrBody>(newItem) ||
                std::dynamic_pointer_cast<FrLinkBase>(newItem) ||
@@ -1063,8 +1065,6 @@ namespace frydom {
         }
 
     }
-
-    FrPathManager *FrOffshoreSystem::GetPathManager() const { return m_pathManager.get(); }
 
     std::string FrOffshoreSystem::BuildPath(const std::string &rootPath) {
         c_logFrameConvention = GetPathManager()->GetLogFrameConvention();

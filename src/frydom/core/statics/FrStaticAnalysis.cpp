@@ -60,6 +60,9 @@ namespace frydom{
 
     void FrStaticAnalysis::Initialize() {
 
+        // Log
+        SetPathManager(m_system->GetPathManager());
+
         // Store the starting time of the simulation
         m_undoTime = m_system->GetTime();
         // Store the time ramp before setting it to 1

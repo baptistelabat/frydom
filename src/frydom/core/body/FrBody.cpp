@@ -125,6 +125,10 @@ namespace frydom {
     }
 
     void FrBody::Initialize() {
+
+        // Log
+        SetPathManager(m_system->GetPathManager());
+
         // Check the mass and inertia coefficients
         for (unsigned int i=0;i<6;i++)
             assert(("Null mass and inertia are not permitted : ", GetInertiaTensor(NWU).GetMatrix().at(i,i)!=0.));

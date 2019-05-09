@@ -235,6 +235,9 @@ namespace frydom {
 
     void FrCatenaryLine::Initialize() {
 
+        // Log
+        SetPathManager(m_system->GetPathManager());
+
         m_q = m_properties->GetLinearDensity() - m_properties->GetSectionArea() * GetSystem()->GetEnvironment()->GetFluidDensity(c_fluid);
         m_q *= GetSystem()->GetGravityAcceleration();
         c_qvec = m_q*m_u;

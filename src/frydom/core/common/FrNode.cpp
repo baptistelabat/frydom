@@ -241,6 +241,10 @@ namespace frydom {
     }
 
     void FrNode::Initialize() {
+
+        // Log
+        SetPathManager(m_body->GetPathManager());
+
         m_chronoMarker->UpdateState();
 
         if (m_showAsset) {
@@ -289,8 +293,6 @@ namespace frydom {
     FrNodeAsset *FrNode::GetAsset() {
         return m_asset.get();
     }
-
-    FrPathManager *FrNode::GetPathManager() const { return m_body->GetSystem()->GetPathManager(); }
 
     std::string FrNode::BuildPath(const std::string &rootPath) {
 

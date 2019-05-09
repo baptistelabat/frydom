@@ -86,7 +86,6 @@ int main(int argc, char* argv[]) {
 
         // Instantiate a Morison Force, using a Morison model, and add it to the cylinder
         auto MorisonForce = make_morison_force(MorisonModel, cylinder);
-        MorisonForce->SetLogged(true);
 
         // Make the asset (a vector) for the Morison force visible
         MorisonForce->ShowAsset(true);

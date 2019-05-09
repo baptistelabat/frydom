@@ -363,8 +363,6 @@ namespace frydom {
 
         std::string BuildPath(const std::string &rootPath) override;
 
-        FrPathManager* GetPathManager() const override;
-
 
         friend class FrBody;
 

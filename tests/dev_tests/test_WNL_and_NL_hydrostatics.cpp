@@ -164,7 +164,6 @@ int main(int argc, char* argv[]) {
 
     auto forceHst = make_nonlinear_hydrostatic_force(platform,PlatformMesh);
 
-    forceHst->SetLogged(true);
     forceHst->ShowAsset(true);
     auto ForceHstAsset = forceHst->GetAsset();
     ForceHstAsset->SetSize(0.00000015);
@@ -176,7 +175,6 @@ int main(int argc, char* argv[]) {
 
     // Create the nonlinear excitation force and add it to the platform
     auto NonlinFKForce = make_nonlinear_froude_krylov_force(platform,PlatformMesh);
-    NonlinFKForce->SetLogged(true);
 
     // -- Radiation
 //    auto radiationModel = make_radiation_convolution_model(hdb, &system);

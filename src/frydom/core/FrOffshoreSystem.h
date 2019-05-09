@@ -235,7 +235,7 @@ namespace frydom {
         bool m_isInitialized = false;
 
         // Logs
-        std::unique_ptr<FrPathManager> m_pathManager;
+//        std::unique_ptr<FrPathManager> m_pathManager;
 
 
     public:
@@ -392,10 +392,6 @@ namespace frydom {
         void StepFinalize() override;
 
         // Logging
-
-        /// Get access to the log manager service
-        /// \return log manager service
-        FrPathManager* GetPathManager() const;
 
         /// Initialize the logs (log files and folders creation)
         void InitializeLog_Dependencies(const std::string& path) override;

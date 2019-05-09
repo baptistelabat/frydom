@@ -100,7 +100,6 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrostatics NL
     auto forceHst = make_nonlinear_hydrostatic_force(cylinder,CylinderMesh);
-    forceHst->SetLogged(true);
 
 
     // ------------------ Run with Irrlicht ------------------ //

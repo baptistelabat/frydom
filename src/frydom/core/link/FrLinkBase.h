@@ -97,8 +97,6 @@ namespace frydom {
 
     protected:  // TODO : voir si on rend cela private
 
-        FrPathManager* GetPathManager() const override { return m_system->GetPathManager(); }
-
 
         friend void FrOffshoreSystem::AddLink(std::shared_ptr<FrLinkBase> link);
         friend void FrOffshoreSystem::RemoveLink(std::shared_ptr<FrLinkBase> link);

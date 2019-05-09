@@ -50,6 +50,8 @@ namespace frydom {
 
         std::unique_ptr<hermes::Message> m_message;
 
+        std::shared_ptr<FrPathManager> m_pathManager;
+
     public:
 
         FrObject() : m_UUID(boost::lexical_cast<std::string>(boost::uuids::random_generator()())) {
@@ -59,9 +61,11 @@ namespace frydom {
 
         void SetLogFrameConvention(FRAME_CONVENTION fc) { c_logFrameConvention = fc; }
 
-        bool IsLogged() { return m_isLogged; }
+        bool IsLogged();
 
         void SetLogged(bool isLogged) { m_isLogged = isLogged; }
+
+        void SetPathManager(const std::shared_ptr<FrPathManager> manager);
 
         void ClearMessage() { m_message = std::make_unique<hermes::Message>(); }
 
@@ -98,13 +102,13 @@ namespace frydom {
 
         virtual void InitializeLog_Dependencies(const std::string& path) {};
 
+        std::shared_ptr<FrPathManager> GetPathManager() const;
+
     protected:
         // Serialize and send the message
         void SendLog();
 
         virtual std::string BuildPath(const std::string& rootPath);
-
-        virtual FrPathManager* GetPathManager() const {};
 
         virtual void AddFields() {};
     };

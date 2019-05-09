@@ -44,10 +44,6 @@ namespace frydom {
 
         virtual void Relax() = 0;
 
-    protected:
-
-        FrPathManager* GetPathManager() const override { return m_system->GetPathManager(); }
-
         friend void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh>);
         friend void FrOffshoreSystem::RemoveFEAMesh(std::shared_ptr<FrFEAMesh>);
 

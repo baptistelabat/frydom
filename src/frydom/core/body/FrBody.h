@@ -952,10 +952,6 @@ namespace frydom {
         NodeIter       node_end();
         ConstNodeIter  node_end() const;
 
-    protected:
-
-        FrPathManager* GetPathManager() const override { return m_system->GetPathManager(); }
-
 
         // friend declarations
         // This one is made for the FrOffshoreSystem to be able to add the embedded chrono object into the embedded

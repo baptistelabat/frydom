@@ -84,6 +84,9 @@ namespace frydom{
 
         // This subroutine initializes the object FrForce.
 
+        // Log
+        SetPathManager(m_body->GetPathManager());
+
         if (m_showAsset) {
             m_asset->Initialize();
             m_body->AddAsset(m_asset);
@@ -377,8 +380,6 @@ namespace frydom{
             SetForceTorqueInBodyAtCOG(Force(), Torque(), NWU);
 
     }
-
-    FrPathManager *FrForce::GetPathManager() const { return m_body->GetSystem()->GetPathManager(); }
 
     std::string FrForce::BuildPath(const std::string &rootPath) {
 

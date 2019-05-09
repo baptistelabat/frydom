@@ -252,8 +252,6 @@ namespace frydom {
 
     protected:
 
-        FrPathManager* GetPathManager() const override;
-
         std::string BuildPath(const std::string& rootPath) override;
 
     private:

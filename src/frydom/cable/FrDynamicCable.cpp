@@ -337,6 +337,9 @@ namespace frydom {
 
     void FrDynamicCable::Initialize() {
 
+        // Log
+        SetPathManager(m_system->GetPathManager());
+
          m_chronoCable->Initialize();
 
          GetTension(0.,NWU);

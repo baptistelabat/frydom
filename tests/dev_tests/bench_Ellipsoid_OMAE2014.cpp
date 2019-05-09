@@ -183,7 +183,6 @@ int main(int argc, char* argv[]) {
 
     // Linear.
     auto forceHst = make_linear_hydrostatic_force(eqFrame, Ellipsoid,"elipsoid_scaled_mean_position.obj",FrFrame());
-    forceHst->SetLogged(true);
     forceHst->ShowAsset(true);
     auto ForceHstAsset = forceHst->GetAsset();
     ForceHstAsset->SetSize(0.00000015);
