@@ -110,20 +110,20 @@ namespace frydom{
                                         [this]() { return m_chronoForce->GetChTime(); });
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("ForceInBody","N", fmt::format("force in body reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetForceInBody(c_logFrameConvention);});
+            ("ForceInBody","N", fmt::format("force in body reference frame in {}", GetLogFrameConvention()),
+                    [this]() {return GetForceInBody(GetLogFrameConvention());});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("TorqueInBodyAtCOG","Nm", fmt::format("torque at COG in body reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetTorqueInBodyAtCOG(c_logFrameConvention);});
+            ("TorqueInBodyAtCOG","Nm", fmt::format("torque at COG in body reference frame in {}", GetLogFrameConvention()),
+                    [this]() {return GetTorqueInBodyAtCOG(GetLogFrameConvention());});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("ForceInWorld","N", fmt::format("force in world reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetForceInWorld(c_logFrameConvention);});
+            ("ForceInWorld","N", fmt::format("force in world reference frame in {}", GetLogFrameConvention()),
+                    [this]() {return GetForceInWorld(GetLogFrameConvention());});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("TorqueInWorldAtCOG","Nm", fmt::format("torque at COG in world reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetTorqueInWorldAtCOG(c_logFrameConvention);});
+            ("TorqueInWorldAtCOG","Nm", fmt::format("torque at COG in world reference frame in {}", GetLogFrameConvention()),
+                    [this]() {return GetTorqueInWorldAtCOG(GetLogFrameConvention());});
 
         }
     }
@@ -382,8 +382,6 @@ namespace frydom{
     }
 
     std::string FrForce::BuildPath(const std::string &rootPath) {
-
-        c_logFrameConvention = GetPathManager()->GetLogFrameConvention();
 
         auto objPath = fmt::format("{}/Forces", rootPath);
 

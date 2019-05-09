@@ -34,18 +34,18 @@ namespace frydom {
         // This function initializes the logger for the nonlinear hydrostatic loads by giving the position of the center of buoyancy in the body frame.
 
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("CenterOfBuoyancyInBody","m", fmt::format("Center of buoyancy in body reference frame in {}", c_logFrameConvention),
-                 [this]() {return GetCenterOfBuoyancyInBody(c_logFrameConvention);});
+                ("CenterOfBuoyancyInBody","m", fmt::format("Center of buoyancy in body reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetCenterOfBuoyancyInBody(GetLogFrameConvention());});
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("CenterOfBuoyancyInWorld","m", fmt::format("Center of buoyancy in world reference frame in {}", c_logFrameConvention),
-                 [this]() {return GetCenterOfBuoyancyInWorld(c_logFrameConvention);});
+                ("CenterOfBuoyancyInWorld","m", fmt::format("Center of buoyancy in world reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetCenterOfBuoyancyInWorld(GetLogFrameConvention());});
 
 //        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-//                ("ForceInWorld","N", fmt::format("Hydrostatic force, at CoB, in world reference frame in {}", c_logFrameConvention),
-//                 [this]() {return GetHydrostaticForceInWorld(c_logFrameConvention);});
+//                ("ForceInWorld","N", fmt::format("Hydrostatic force, at CoB, in world reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetHydrostaticForceInWorld(GetLogFrameConvention());});
 //        m_message->AddField<Eigen::Matrix<double, 3, 1>>
-//                ("ForceInBody","N", fmt::format("Hydrostatic force, at CoB, in body reference frame in {}", c_logFrameConvention),
-//                 [this]() {return GetHydrostaticForceInBody(c_logFrameConvention);});
+//                ("ForceInBody","N", fmt::format("Hydrostatic force, at CoB, in body reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetHydrostaticForceInBody(GetLogFrameConvention());});
 
     }
 

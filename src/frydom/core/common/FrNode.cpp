@@ -263,20 +263,20 @@ namespace frydom {
                                         [this]() { return m_chronoMarker->GetChTime(); });
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("PositionInWorld","m", fmt::format("Node position in world reference frame in {}",c_logFrameConvention),
-                    [this]() {return GetPositionInWorld(c_logFrameConvention);});
+            ("PositionInWorld","m", fmt::format("Node position in world reference frame in {}",GetLogFrameConvention()),
+                    [this]() {return GetPositionInWorld(GetLogFrameConvention());});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("VelocityInWorld","m/s", fmt::format("Node velocity in world reference frame in {}",c_logFrameConvention),
-                    [this]() {return GetVelocityInWorld(c_logFrameConvention);});
+            ("VelocityInWorld","m/s", fmt::format("Node velocity in world reference frame in {}",GetLogFrameConvention()),
+                    [this]() {return GetVelocityInWorld(GetLogFrameConvention());});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("AccelerationInWorld","m/s²", fmt::format("Node acceleration in world reference frame in {}",c_logFrameConvention),
-                    [this]() {return GetAccelerationInWorld(c_logFrameConvention);});
+            ("AccelerationInWorld","m/s²", fmt::format("Node acceleration in world reference frame in {}",GetLogFrameConvention()),
+                    [this]() {return GetAccelerationInWorld(GetLogFrameConvention());});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("NodePositionInBody","m", fmt::format("Node position in body reference frame in {}",c_logFrameConvention),
-                    [this]() {return GetNodePositionInBody(c_logFrameConvention);});
+            ("NodePositionInBody","m", fmt::format("Node position in body reference frame in {}",GetLogFrameConvention()),
+                    [this]() {return GetNodePositionInBody(GetLogFrameConvention());});
 
         }
 
@@ -295,8 +295,6 @@ namespace frydom {
     }
 
     std::string FrNode::BuildPath(const std::string &rootPath) {
-
-        c_logFrameConvention = GetPathManager()->GetLogFrameConvention();
 
         auto objPath = fmt::format("{}/Nodes", rootPath);
 

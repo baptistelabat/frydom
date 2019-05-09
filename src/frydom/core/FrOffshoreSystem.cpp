@@ -1067,7 +1067,6 @@ namespace frydom {
     }
 
     std::string FrOffshoreSystem::BuildPath(const std::string &rootPath) {
-        c_logFrameConvention = GetPathManager()->GetLogFrameConvention();
 
         auto objPath= fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
 
