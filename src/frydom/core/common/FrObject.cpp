@@ -76,7 +76,7 @@ namespace frydom {
             SendLog();
     }
 
-    void FrObject::SetPathManager(const std::shared_ptr<FrPathManager> manager) {
+    void FrObject::SetPathManager(const std::shared_ptr<FrPathManager>& manager) {
             m_pathManager = manager;
         }
 

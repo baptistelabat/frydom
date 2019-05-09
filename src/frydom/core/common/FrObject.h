@@ -100,7 +100,7 @@ namespace frydom {
 
         /// Set the pointer to the path manager service, in charge of building the path of every object to be logged
         /// \param manager shared pointer to the path manager service
-        void SetPathManager(const std::shared_ptr<FrPathManager> manager);
+        void SetPathManager(const std::shared_ptr<FrPathManager>& manager);
 
         /// Get the shared pointer to the path manager service
         /// \return shared pointer to the path manager service
