@@ -164,7 +164,7 @@ namespace frydom {
         // Logging
 
         // Initialize the log
-        void InitializeLog(const std::string& rootPath) override;
+        void AddFields() override;
 
     private:
 

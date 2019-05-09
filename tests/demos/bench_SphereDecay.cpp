@@ -22,8 +22,6 @@ class FrNullForce : public FrForce {
 public :
 
     void Initialize() override {}
-
-    void StepFinalize() override {}
 };
 
 
@@ -214,7 +212,6 @@ int main(int argc, char* argv[]) {
     bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
-    forceHst->SetLogged(true);
 
     auto time = 0.;
 

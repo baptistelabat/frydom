@@ -96,7 +96,5 @@ namespace frydom {
 
     void FrUniformField::Initialize() {}
 
-    void FrUniformField::StepFinalize() {}
-
 
 }  // end namespace frydom

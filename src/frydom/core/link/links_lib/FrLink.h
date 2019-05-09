@@ -322,11 +322,9 @@ namespace frydom {
         /// Get the constraint violation of the link (ie the
         FrFrame GetConstraintViolation() const;  // FIXME : verifier que cette violation ne prend pas en compte la position relative normale de la liaison
 
-        virtual void Initialize() override;
+        void Initialize() override;
 
         virtual void Update(double time);
-
-        virtual void StepFinalize() override {}
 
 
     protected:

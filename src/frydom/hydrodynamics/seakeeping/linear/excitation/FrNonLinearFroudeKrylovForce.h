@@ -61,10 +61,6 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "NonLinearFroudeKrylovForce"; }
 
-        void Initialize() override;
-
-        void StepFinalize() override;
-
         /// This function compute the incident pressure integration.
         void CalcIncidentPressureIntegration();
 

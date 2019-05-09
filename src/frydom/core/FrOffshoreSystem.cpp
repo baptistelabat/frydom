@@ -26,6 +26,7 @@
 #include "frydom/core/statics/FrStaticAnalysis.h"
 
 #include "frydom/core/math/functions/ramp/FrCosRampFunction.h"
+#include "frydom/utils/FrSerializerFactory.h"
 
 
 namespace frydom {
@@ -164,7 +165,7 @@ namespace frydom {
         m_environment = std::make_unique<FrEnvironment>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
 
         // Creating the log manager service
-        m_pathManager = std::make_unique<FrPathManager>();
+        m_pathManager = std::make_shared<FrPathManager>();
         
         // Create the static analysis 
         m_statics = std::make_unique<FrStaticAnalysis>(this);
@@ -174,6 +175,8 @@ namespace frydom {
     }
 
     FrOffshoreSystem::~FrOffshoreSystem() = default;
+
+
     void FrOffshoreSystem::Add(std::shared_ptr<FrObject> newItem) {
         assert(std::dynamic_pointer_cast<FrBody>(newItem) ||
                std::dynamic_pointer_cast<FrLinkBase>(newItem) ||
@@ -462,7 +465,7 @@ namespace frydom {
         if (IsLogged()) {
             m_pathManager->Initialize(this);
             m_pathManager->SetRunPath("Dynamic");
-            InitializeLog();
+            InitializeLog("");
         }
 
         m_isInitialized = true;
@@ -997,22 +1000,9 @@ namespace frydom {
         return m_linkList.cend();
     }
 
-    void FrOffshoreSystem::InitializeLog() {
+    void FrOffshoreSystem::InitializeLog_Dependencies(const std::string& systemPath) {
 
         if (IsLogged()) {
-
-            c_logFrameConvention = m_pathManager->GetLogFrameConvention();
-
-            std::string systemPath = fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
-            auto logPath = m_pathManager->BuildPath(systemPath, "system.csv");
-
-            // Add the fields
-            // TODO A completer
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                    [this]() { return m_chronoSystem->GetChTime(); });
-
-            // Init the message
-            FrObject::InitializeLog(logPath);
 
             // Initializing environment before bodies
 //            m_environment->InitializeLog();
@@ -1076,7 +1066,17 @@ namespace frydom {
 
     }
 
-    FrPathManager *FrOffshoreSystem::GetPathManager() const { return m_pathManager.get(); }
+    std::string FrOffshoreSystem::BuildPath(const std::string &rootPath) {
+
+        auto objPath= fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
+
+        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
+
+        // Add a serializer
+        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
+
+        return objPath;
+    }
 
 
 }  // end namespace frydom

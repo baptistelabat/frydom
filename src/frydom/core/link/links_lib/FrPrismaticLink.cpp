@@ -64,15 +64,6 @@ namespace frydom {
         return GetLinkVelocity() * GetLinkForce();
     }
 
-    void FrPrismaticLink::Initialize() {
-        FrLink::Initialize();
-
-        // Initializing the motor part
-        // TODO
-
-        // Initializing the logs
-    }
-
     void FrPrismaticLink::Update(double time) {
         FrLink::Update(time); // It is mandatory to invoke this before all update operations from frydom
 
@@ -83,10 +74,6 @@ namespace frydom {
 
 
         UpdateForces(time);
-
-    }
-
-    void FrPrismaticLink::StepFinalize() {
 
     }
 

@@ -74,10 +74,6 @@ namespace frydom {
 
     }
 
-    void FrAngularActuatorVelocity::StepFinalize() {
-
-    }
-
 
 //    internal::FrLinkMotorRotationSpeed* FrAngularActuatorVelocity::GetChronoActuator() const {
 //        return m_chronoActuator.get();

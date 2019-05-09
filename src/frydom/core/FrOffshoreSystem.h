@@ -235,7 +235,7 @@ namespace frydom {
         bool m_isInitialized = false;
 
         // Logs
-        std::unique_ptr<FrPathManager> m_pathManager;
+//        std::unique_ptr<FrPathManager> m_pathManager;
 
 
     public:
@@ -393,15 +393,17 @@ namespace frydom {
 
         // Logging
 
-        /// Get access to the log manager service
-        /// \return log manager service
-        FrPathManager* GetPathManager() const;
-
         /// Initialize the logs (log files and folders creation)
-        void InitializeLog();
+        void InitializeLog_Dependencies(const std::string& path) override;
 
         /// Clear the logging message of every elements
         void ClearLogs();
+
+    protected:
+
+        std::string BuildPath(const std::string& rootPath) override;
+
+    public:
 
         // Constraint solver
 

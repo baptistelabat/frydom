@@ -50,10 +50,6 @@ namespace frydom {
 
     }
 
-    void FrLinearDiffractionForce::StepFinalize() {
-        FrForce::StepFinalize();
-    }
-
     std::shared_ptr<FrLinearDiffractionForce>
     make_linear_diffraction_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
 

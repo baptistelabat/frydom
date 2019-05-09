@@ -69,10 +69,6 @@ namespace frydom {
         SetTorqueInBodyAtCOG(localTorque, NWU);
     }
 
-    void FrLinearHydrostaticForce::StepFinalize() {
-        FrForce::StepFinalize();
-    }
-
     FrLinearHydrostaticStiffnessMatrix FrLinearHydrostaticForce::GetStiffnessMatrix() const {
         return m_stiffnessMatrix;
     }

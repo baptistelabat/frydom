@@ -64,6 +64,9 @@ namespace frydom {
         /// \param body body to which the node belongs
         explicit FrNode(FrBody* body);
 
+        /// Destructor
+//        ~FrNode() = default;
+
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "Node"; }
@@ -119,8 +122,6 @@ namespace frydom {
 
 
 
-        /// Destructor
-        ~FrNode() = default;
 
         /// Get the body pointer
         /// \return the body to which the node belongs
@@ -196,12 +197,9 @@ namespace frydom {
         /// Initialize method not implemented yet
         void Initialize() override;
 
-        /// StepFinalize method not implemented yet
-        void StepFinalize() override;
-
         // Logging
 
-        void InitializeLog(const std::string& rootPath);
+        void AddFields();
 
 
         // =============================================================================================================
@@ -251,6 +249,10 @@ namespace frydom {
             worldVector = GetFrameInWorld().GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
             return worldVector;
         }
+
+    protected:
+
+        std::string BuildPath(const std::string& rootPath) override;
 
     private:
 

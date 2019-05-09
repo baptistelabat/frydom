@@ -49,12 +49,6 @@ namespace frydom {
         /// \param jsonFile Name of the json file containing the polar coefficients
         void ReadTable(const std::string& jsonFile);
 
-        /// Initialize the state of the flow force
-        void Initialize() override;
-
-        /// Method called at the send of a time step. Logging may be used here
-        void StepFinalize() override;
-
     protected:
 
         /// Update the state of the flow force

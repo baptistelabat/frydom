@@ -67,10 +67,6 @@ namespace frydom {
 
     }
 
-    void FrHydroMesh::InitializeLog(const std::string& rootPath) {
-
-    }
-
 //    void FrHydroMesh::SetMeshOffset(FrFrame meshOffset) {
 //        m_meshOffset = meshOffset;
 //    }
