@@ -208,7 +208,7 @@ int main(int argc, char* argv[]) {
     body->SetPosition(Position(0., 0., 4.99), NWU);
 
     // Nonlinear hydrostatics
-    auto bodyMesh = make_hydro_mesh(body,"Sphere_10000_faces.obj",FrFrame(),true);
+    auto bodyMesh = make_hydro_mesh(body,"Sphere_10000_faces.obj",FrFrame(),FrHydroMesh::ClippingSupport::WAVESURFACE);
     bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
     auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);

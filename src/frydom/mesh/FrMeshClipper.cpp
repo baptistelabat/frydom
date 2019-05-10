@@ -4,16 +4,15 @@
 
 #include "FrMeshClipper.h"
 
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
+#include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
 namespace frydom {
     
     namespace mesh {
 
+        FrClippingSurface::FrClippingSurface(FrFreeSurface *freeSurface) : m_freeSurface(freeSurface) {
 
-        FrClippingSurface::FrClippingSurface(double meanHeight) : m_meanHeight(meanHeight) {}
-
-        void FrClippingSurface::SetMeanHeight(const double &meanHeight) {
-            m_meanHeight = meanHeight;
         }
 
         void FrClippingSurface::SetBodyPosition(Position bodyPos) {
@@ -22,24 +21,37 @@ namespace frydom {
 
         // -----------------------------------------------------------------------------------------------------------------
 
-        FrClippingPlane::FrClippingPlane(double meanHeight) : FrClippingSurface(meanHeight) {}
-
         VectorT<double, 3>
         FrClippingPlane::GetIntersection(const VectorT<double, 3> &p0, const VectorT<double, 3> &p1) {
 
             // It is useless because it does not depend on the horizontal position of the mesh.
 
-            double t = (p0[2] - m_meanHeight) / (p0[2] - p1[2]);
+            double t = (p0[2] - m_freeSurface->GetTidal()->GetHeight(NWU)) / (p0[2] - p1[2]);
             return p0 * (1 - t) + p1 * t;
 
         }
 
-        // -----------------------------------------------------------------------------------------------------------------
+        double FrClippingPlane::GetDistance(const FrMesh::Point &point) const {
 
-        FrClippingWaveSurface::FrClippingWaveSurface(const double &meanHeight, FrFreeSurface *FreeSurface)
-                : FrClippingSurface(meanHeight) {
-            m_freesurface = FreeSurface;
+            // This function gives the distance between the node and the clipping plane.
+
+            /*
+             * TODO: idee, lorsqu'on fait une requete de distance des vertex, on peut deja effectuer des projections !!
+             * Du coup c'est fait en preliminaire avant les decoupes. Ca permet a priori d'epargner pas mal de clip et de
+             * facettes pourries en plus. Si on a projete, la distance est nulle et on renvoie 0...
+             * Si on a pas projete, la distance est on nulle et on classifie le vertex above ou under.
+             * La classification est faite par la methode ClassifyVertex !! elle ne doit pas etre faite ici
+             * Par contre, il semblerait qu'on soit oblige de passer le maillage en argument :/ afin de pouvoir
+            */
+
+            // TODO: projeter !
+
+            // It is useless because it does not depend on the horizontal position of the mesh.
+
+            return point[2] - m_freeSurface->GetTidal()->GetHeight(NWU);
         }
+
+        // -----------------------------------------------------------------------------------------------------------------
 
         VectorT<double, 3>
         FrClippingWaveSurface::GetIntersection(const VectorT<double, 3> &p0, const VectorT<double, 3> &p1) {
@@ -74,7 +86,7 @@ namespace frydom {
                 n++;
             }
 
-            //If dichotomy fail to converge
+            //If dichotomy fails to converge
             std::cout << "GetIntersection: dichotomy method cannot find the intersection point:" << std::endl;
             std::cout << "p0 = " << p0[0] << " " << p0[1] << " " << p0[2] << std::endl;
             std::cout << "p1 = " << p1[0] << " " << p1[1] << " " << p1[2] << std::endl;
@@ -93,17 +105,13 @@ namespace frydom {
             BodyPos.GetZ() = 0.;
             const Position temp = NodeInWorld + BodyPos;
 
-            return temp.GetZ() - m_freesurface->GetPosition(temp, NWU);
+            return temp.GetZ() - m_freeSurface->GetPosition(temp, NWU);
 
         }
 
 
 
         // -----------------------------------------------------------------------------------------------------------------
-
-        FrMeshClipper::FrMeshClipper() {
-            m_clippingSurface = std::make_unique<FrClippingPlane>(0.);
-        }
 
         FrClippingSurface *FrMeshClipper::GetClippingSurface() {
             return m_clippingSurface.get();
@@ -132,16 +140,8 @@ namespace frydom {
             m_Threshold = eps;
         }
 
-        void FrMeshClipper::SetPlaneClippingSurface(const double &meanHeight) {
-
-            m_clippingSurface = std::make_unique<FrClippingPlane>(meanHeight);
-
-        }
-
-        void FrMeshClipper::SetWaveClippingSurface(const double &meanHeight, FrFreeSurface *FreeSurface) {
-
-            m_clippingSurface = std::make_unique<FrClippingWaveSurface>(meanHeight, FreeSurface);
-
+        void FrMeshClipper::SetClippingSurface(std::shared_ptr<FrClippingSurface> clippingSurface) {
+            m_clippingSurface = clippingSurface;
         }
 
         void FrMeshClipper::Initialize() {
@@ -203,7 +203,7 @@ namespace frydom {
 
         bool FrMeshClipper::HasProjection(const FaceHandle &fh) {
 
-            /// This function peforms the clipping of a panel with the incoming wave field.
+            /// This function performs the clipping of a panel with the incoming wave field.
 
             bool anyVertexProjected = false; // Initialization.
             double dist, edge_length;
