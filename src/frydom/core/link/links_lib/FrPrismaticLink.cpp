@@ -12,7 +12,8 @@
 #include "FrPrismaticLink.h"
 
 #include "frydom/core/common/FrNode.h"
-#include "actuators/FrLinearActuatorInc.h"
+
+#include "frydom/core/link/links_lib/actuators/FrLinearActuator.h"
 
 //#include <chrono/physics/ChLinkLock.h>
 
@@ -90,21 +91,12 @@ namespace frydom {
         // FIXME : attention si la liaison n'est pas resolue !!! Ca ne fonctionne pas
     }
 
-    FrLinearActuator *FrPrismaticLink::Motorize(ACTUATOR_CONTROL control) {
-        switch (control) {
-            case POSITION :
-                m_actuator = std::make_shared<FrLinearActuatorPosition>(this);
-                break;
-            case VELOCITY :
-                m_actuator = std::make_shared<FrLinearActuatorVelocity>(this);
-                break;
-            case FORCE :
-//                m_actuator = std::make_shared<FrAngularActuatorTorque>(this);
-                break;
-        }
+    FrLinearActuator* FrPrismaticLink::Motorize(ACTUATOR_CONTROL control) {
 
+        m_actuator = std::make_shared<FrLinearActuator>(this, control);
         GetSystem()->Add(m_actuator);
         return dynamic_cast<FrLinearActuator*>(m_actuator.get());
+
     }
 
     std::shared_ptr<FrPrismaticLink>

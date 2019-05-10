@@ -24,6 +24,7 @@ namespace frydom {
 
 //    // Forward declaration
     class FrAngularActuator;
+    class FrAngularActuator;
 
     /// Specialized class for revolute link between two bodies
     class FrRevoluteLink : public FrLink {
@@ -39,17 +40,6 @@ namespace frydom {
                                        /// Defined on the continuous real line, centered on 0 rad
         double m_linkAngularVelocity = 0.;
         double m_linkAngularAcceleration = 0.;
-
-
-
-
-
-        // LOG
-        hermes::Message l_message;
-        double l_time = 0.;
-        double l_torque = 0.;
-        double l_angleDeg = 0.;
-        // LOG
 
 
     public:
@@ -103,13 +93,9 @@ namespace frydom {
         /// Update the link
         void Update(double time) override;
 
-        /// Called after every time step, only once
-        void StepFinalize() override;
-
         /// Compute the link force. Here this is essentially a torque with a default spring damper.
         void UpdateForces(double time); // TODO : mettre en abstrait dans FrLink pour que toutes les classes possedent ca
 
-        /// Motorize the link to make it driven // TODO : work in progress
         FrAngularActuator* Motorize(ACTUATOR_CONTROL control);
 
 
