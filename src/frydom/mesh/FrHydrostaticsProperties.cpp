@@ -18,13 +18,6 @@ namespace frydom {
         return tensor;
     }
 
-//    void FrHydrostaticsProperties::Load(const mesh::FrMesh& mesh, mathutils::Vector3d<double> cog){
-//        m_centerOfGravity = cog;
-//        mesh::FrMeshClipper clipper;
-//        m_clippedMesh = clipper.Apply(mesh);
-//        Process();
-//    }
-
     void FrHydrostaticsProperties::Process() {
         CalcGeometricProperties();
         CalcHydrostaticProperties();
@@ -50,23 +43,7 @@ namespace frydom {
 
         m_volumeDisplacement = m_clippedMesh.GetVolume();
 
-        // Computing the buoyancy center TODO: faire une fonction !!
-        double xb, yb, zb;
-        xb = yb = zb = 0.;
-        mesh::FrMesh::Normal normal;
-        for (mesh::FrMesh::FaceIter f_iter = m_clippedMesh.faces_begin(); f_iter != m_clippedMesh.faces_end(); ++f_iter) {
-            normal = m_clippedMesh.normal(*f_iter);
-            xb += normal[0] * m_clippedMesh.data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2);
-            yb += normal[1] * m_clippedMesh.data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
-            zb += normal[2] * m_clippedMesh.data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
-        }
-
-        xb /= 2. * m_volumeDisplacement;
-        yb /= 2. * m_volumeDisplacement;
-        zb /= 2. * m_volumeDisplacement; // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
-
-        m_buoyancyCenter = {xb, yb, zb};
-
+        m_buoyancyCenter = m_clippedMesh.GetCOG();
 
         // Computing temporaries
         double rg = m_waterDensity * m_gravityAcceleration;

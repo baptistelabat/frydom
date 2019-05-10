@@ -15,6 +15,7 @@
 
 
 #include <memory>
+#include "frydom/core/common/FrFrame.h"
 #include "frydom/core/force/FrForce.h"
 #include "FrLinearHydrostaticStiffnessMatrix.h"
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
