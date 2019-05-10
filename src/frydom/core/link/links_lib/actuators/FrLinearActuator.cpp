@@ -46,24 +46,6 @@ namespace frydom {
         return m_chronoActuator.get();
     }
 
-    Force FrLinearActuator::GetMotorForceInWorld(FRAME_CONVENTION fc) const {
-
-        auto MotorForce = m_chronoActuator->GetMotorForce();
-
-        return MotorForce * GetNode1()->GetFrameInWorld().GetZAxisInParent(fc);
-
-
-//        auto coordSys = m_chronoActuator->GetLinkRelativeCoords();
-//
-//        m_chronoActuator->GetLinkAbsoluteCoords();
-//
-//        auto ReacForceInworld = internal::ChVectorToVector3d<Force>(coordSys.TransformDirectionLocalToParent(m_chronoActuator->Get_react_force()));
-//
-//        if (IsNED(fc)) internal::SwapFrameConvention(ReacForceInworld);
-//
-//        return ReacForceInworld;
-    }
-
     void FrLinearActuator::Initialize() {
 
         // ChLinkMotorLinear motorized along the x axis, while ChLinkLock::Prismatic is along z axis...
@@ -75,6 +57,18 @@ namespace frydom {
         m_chronoActuator->Initialize(GetChronoBody1(), GetChronoBody2(), true,
                    internal::FrFrame2ChFrame(frame1), internal::FrFrame2ChFrame(frame2));
 
+    }
+
+    double FrLinearActuator::GetMotorPower() const {
+        return m_chronoActuator->GetMotorForce() * m_chronoActuator->GetMotorPos_dt();
+    }
+
+    Force FrLinearActuator::GetMotorForceInMarker(FRAME_CONVENTION fc) const {
+        return {0.,0.,m_chronoActuator->GetMotorForce()};
+    }
+
+    Torque FrLinearActuator::GetMotorTorqueInMarker(FRAME_CONVENTION fc) const {
+        return {};
     }
 
 

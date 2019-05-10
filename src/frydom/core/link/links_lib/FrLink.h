@@ -349,6 +349,8 @@ namespace frydom {
 //        void SetLinkTorqueOtMarker2InFrame2AtOrigin2(const Torque &torque);
         virtual void UpdateCache();
 
+        void AddFields() override;
+
     };
 
 

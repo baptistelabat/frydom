@@ -64,6 +64,39 @@ namespace frydom {
 
         virtual void SetMotorFunction(const FrFunctionBase& function) = 0;
 
+        virtual double GetMotorPower() const = 0;
+
+
+        /// Get the motor force applied on body 1, in the marker reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return motor force applied on Body 1
+        virtual Force GetMotorForceInMarker(FRAME_CONVENTION fc) const = 0;
+
+        /// Get the motor force applied on body 1, in the body 1 reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return motor force applied on Body 1
+        Force GetMotorForceInBody1(FRAME_CONVENTION fc) const;
+
+        /// Get the motor force applied on body 1, in the body 2 reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return motor force applied on Body 1
+        Force GetMotorForceInBody2(FRAME_CONVENTION fc) const;
+
+        /// Get the motor torque applied on body 1 at the marker reference frame origin, in the marker reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return motor torque applied on body 1 at the marker reference frame origin
+        virtual Torque GetMotorTorqueInMarker(FRAME_CONVENTION fc) const = 0;
+
+        /// Get the motor torque applied on body 1 at the body 1 COG, in body 1 reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return motor torque applied on body 1 at the body 1 COG, in body 1 reference frame
+        virtual Torque GetMotorTorqueAtCOGInBody1(FRAME_CONVENTION fc) const;
+
+        /// Get the motor torque applied on body 1 at the body 2 COG, in body 2 reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return motor torque applied on body 1 at the body 2 COG, in body 2 reference frame
+        virtual Torque GetMotorTorqueAtCOGInBody2(FRAME_CONVENTION fc) const;
+
     protected:
 
 //        virtual internal::FrMotorBase* GetChronoActuator() const = 0;

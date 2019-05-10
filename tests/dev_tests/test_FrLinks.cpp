@@ -46,8 +46,8 @@ int main() {
     auto motor1 = rev1->Motorize(POSITION);
 
     auto t = new_var("t");
-//    motor1->SetMotorFunction(MU_PI * sin(t));
-    motor1->SetMotorFunction(FrConstantFunction(MU_PI_2));
+    motor1->SetMotorFunction(MU_PI * sin(t));
+//    motor1->SetMotorFunction(FrConstantFunction(MU_PI_2));
 
 
     // Body 2 definition (linked body)

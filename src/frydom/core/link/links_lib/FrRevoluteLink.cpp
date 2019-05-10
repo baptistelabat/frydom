@@ -80,18 +80,6 @@ namespace frydom {
             m_actuator->Initialize();
         }
 
-        // Log initialization
-        l_message.SetNameAndDescription("RevoluteLink", "");
-        l_message.AddCSVSerializer("RevoluteLink_" + GetUUID());
-        l_message.AddField<double>("time", "s", "", &l_time);
-        l_message.AddField<double>("total_angle", "deg", "", &l_angleDeg);
-        l_message.AddField<double>("angVel", "rad/s", "", &m_linkAngularVelocity);
-        l_message.AddField<double>("AnfAcc", "rad/s2", "", &m_linkAngularAcceleration);
-        l_message.AddField<double>("Torque", "N.m", "", &l_torque);
-
-        l_message.Initialize();
-        l_message.Send();
-
     }
 
     void FrRevoluteLink::Update(double time) {
@@ -120,19 +108,6 @@ namespace frydom {
 
         UpdateForces(time);
 
-    }
-
-    void FrRevoluteLink::StepFinalize() {
-
-        // Log
-        l_time = m_system->GetTime();
-        l_torque = GetLinkTorqueOnBody2InFrame1AtOrigin2(NWU).GetMz();
-        l_angleDeg = m_totalLinkAngle * RAD2DEG;
-
-        l_message.Serialize();
-        l_message.Send();
-
-        // Log
     }
 
     void FrRevoluteLink::UpdateForces(double time) {

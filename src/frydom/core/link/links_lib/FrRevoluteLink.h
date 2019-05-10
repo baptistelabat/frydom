@@ -42,17 +42,6 @@ namespace frydom {
         double m_linkAngularAcceleration = 0.;
 
 
-
-
-
-        // LOG
-        hermes::Message l_message;
-        double l_time = 0.;
-        double l_torque = 0.;
-        double l_angleDeg = 0.;
-        // LOG
-
-
     public:
 
         /// Constructor from two nodes and a pointer to the system.
@@ -103,9 +92,6 @@ namespace frydom {
 
         /// Update the link
         void Update(double time) override;
-
-        /// Called after every time step, only once
-        void StepFinalize() override;
 
         /// Compute the link force. Here this is essentially a torque with a default spring damper.
         void UpdateForces(double time); // TODO : mettre en abstrait dans FrLink pour que toutes les classes possedent ca
