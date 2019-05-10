@@ -68,5 +68,24 @@ namespace frydom {
         return -(torqueAtMarker2_ref + COG_M2_ref.cross(force_ref));
     }
 
+    void FrActuator::AddFields() {
+
+        m_message->AddField<double>
+                ("MotorPower","kW", "power delivered by the motor", [this]() {return GetMotorPower();});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("MotorForceInBody1","N", fmt::format("Force applied by the motor on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+                 [this]() {return GetMotorForceInBody1(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("MotorForceInBody2","N", fmt::format("Force applied by the motor on body 1, in body 2 reference frame {}", GetLogFrameConvention()),
+                 [this]() {return GetMotorForceInBody2(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("MotorTorqueAtCOGInBody1(","N", fmt::format("Torque applied by the motor at COG on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+                 [this]() {return GetMotorTorqueAtCOGInBody1(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("MotorTorqueAtCOGInBody2(","N", fmt::format("Torque applied by the motor at COG on body 2, in body 2 reference frame {}", GetLogFrameConvention()),
+                 [this]() {return GetMotorTorqueAtCOGInBody2(GetLogFrameConvention());});
+
+    }
+
 
 }  // end namespace frydom

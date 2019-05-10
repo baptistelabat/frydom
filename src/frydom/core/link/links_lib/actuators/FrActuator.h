@@ -37,10 +37,9 @@ namespace frydom {
 
 
     public:
-        FrActuator(FrLink* actuatedLink);
 
+        explicit FrActuator(FrLink* actuatedLink);
 
-        // TODO : ajouter des methodes communes a tous les actuateurs tel que GetPower() ...
 
         /// Tells if all constraints of this link are currently turned on or off by the user.
         bool IsDisabled() const override;
@@ -62,8 +61,12 @@ namespace frydom {
 
         std::string GetTypeName() const override { return "Actuator"; }
 
+        /// Set the motor function, to control the motion, velocity or force depending on the control case selected
+        /// \param function motor function
         virtual void SetMotorFunction(const FrFunctionBase& function) = 0;
 
+        /// Get the power delivered by the motor
+        /// \return power delivered by the motor
         virtual double GetMotorPower() const = 0;
 
 
@@ -102,6 +105,9 @@ namespace frydom {
 //        virtual internal::FrMotorBase* GetChronoActuator() const = 0;
 
         chrono::ChLinkBase* GetChronoItem_ptr() const override = 0;
+
+        /// Add the fields to be logged
+        void AddFields() override;
 
     };
 
