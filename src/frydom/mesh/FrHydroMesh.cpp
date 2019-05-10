@@ -11,20 +11,24 @@
 
 #include "FrHydroMesh.h"
 
+#include "FrMeshClipper.h"
+
 #include "frydom/core/body/FrBody.h"
 
 namespace frydom {
 
-    FrHydroMesh::FrHydroMesh(FrOffshoreSystem *system, const std::shared_ptr<FrBody>& body, bool WNL_or_NL)
-            : m_system(system), m_body(body), m_WNL_or_NL(WNL_or_NL) {
+    FrHydroMesh::FrHydroMesh(FrOffshoreSystem *system, const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support)
+            : m_system(system), m_body(body), m_clippingSupport(support) {
         // m_clipper
         m_clipper = std::make_unique<mesh::FrMeshClipper>();
+
+        m_clippedMesh = mesh::FrMesh();
 
     }
 
     FrHydroMesh::FrHydroMesh(FrOffshoreSystem *system, const std::shared_ptr<FrBody>& body, const std::string& meshFile,
-                             FrFrame meshOffset, bool WNL_or_NL)
-                             : m_system(system), m_body(body), m_WNL_or_NL(WNL_or_NL) {
+                             FrFrame meshOffset, FrHydroMesh::ClippingSupport support)
+                             : m_system(system), m_body(body), m_clippingSupport(support) {
 
         // Import and transform the initial mesh, into the body reference frame
         ImportMesh(meshFile, meshOffset);
@@ -32,48 +36,36 @@ namespace frydom {
         // m_clipper
         m_clipper = std::make_unique<mesh::FrMeshClipper>();
 
+        m_clippedMesh = mesh::FrMesh();
+
     }
 
     void FrHydroMesh::Initialize() {
 
         // This function initializes the hydrostatic force object.
 
-        m_clippedMesh = mesh::FrMesh();
-
-        // Tidal height.
-        double TidalHeight = m_system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU);
 
         // Clipping surface.
-        if(m_WNL_or_NL) { // Incident wave field.
-
-            // Incident free surface.
-            FrFreeSurface *FreeSurface = m_system->GetEnvironment()->GetOcean()->GetFreeSurface();
-
-            // Setting the free surface.
-            m_clipper->SetWaveClippingSurface(TidalHeight, FreeSurface);
+        switch (m_clippingSupport) {
+            case ClippingSupport::PLANSURFACE: {
+                auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(
+                        m_system->GetEnvironment()->GetOcean()->GetFreeSurface());
+                m_clipper->SetClippingSurface(clippingSurface);
+                break;
+            }
+            case ClippingSupport::WAVESURFACE: {
+                auto clippingSurface = std::make_shared<mesh::FrClippingWaveSurface>(
+                        m_system->GetEnvironment()->GetOcean()->GetFreeSurface());
+                m_clipper->SetClippingSurface(clippingSurface);
+                break;
+            }
         }
-        else{ // Plane.
-
-            // Setting the free surface.
-            m_clipper->SetPlaneClippingSurface(TidalHeight);
-        }
-
-        // Set the body position for horizontal correction in the clipping surface
-        m_clipper->GetClippingSurface()->SetBodyPosition(m_body->GetPosition(NWU));
 
         // Initialization of the parent class.
         FrPrePhysicsItem::Initialize();
         m_chronoPhysicsItem->SetupInitial();
 
     }
-
-//    void FrHydroMesh::SetMeshOffset(FrFrame meshOffset) {
-//        m_meshOffset = meshOffset;
-//    }
-//
-//    FrFrame FrHydroMesh::GetMeshOffset() const {
-//        return m_meshOffset;
-//    }
 
     mesh::FrMesh& FrHydroMesh::GetClippedMesh() {
         return m_clippedMesh;
@@ -90,7 +82,13 @@ namespace frydom {
 
         // This function rotate the mesh from the body reference frame to the world reference frame, and then translate
         // it vertically. The resulting mesh horizontal position is kept close to (0.,0.) for the clipping process
+        //FIXME: faire ça ici, plutôt que dans la methode
         UpdateMeshFrame();
+
+        //FIXME: refiler la position du corps a clippingSurface pour appliquer la correction
+
+        // Set the body position for horizontal correction in the clipping surface
+        m_clipper->GetClippingSurface()->SetBodyPosition(m_body->GetPosition(NWU));
 
         // Application of the mesh clipper on the updated init mesh to obtain the clipped mesh
         m_clipper->Apply(&m_clippedMesh);
@@ -102,8 +100,20 @@ namespace frydom {
 
     void FrHydroMesh::UpdateMeshFrame() {
 
+        //FIXME : utiliser plutôt les méthodes de FRMesh pour rotation et translation
+
         // This function rotate the mesh from the body reference frame to the world reference frame, and then translate
         // it vertically. The resulting mesh horizontal position is kept close to (0.,0.) for the clipping process
+
+//        // Rotation
+//        double phi, theta, psi;
+//        m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+//        m_clippedMesh.Rotate(phi, theta, psi);
+//
+//        // Translation
+//        auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetX() = 0.; bodyPos.GetY() = 0.;
+//        m_clippedMesh.Translate(mesh::Vector3dToOpenMeshPoint(bodyPos));
+
 
         // Loop over the vertices.
         for (auto vh : m_clippedMesh.vertices()){
@@ -126,19 +136,6 @@ namespace frydom {
 
     }
 
-    VectorT<double, 3> FrHydroMesh::GetMeshPointPositionInBody(VectorT<double, 3> point) const {
-
-
-        // From the mesh frame to the body frame: OmP = ObOm + bRm*OmP.
-        auto NodeInMeshFrame = mesh::OpenMeshPointToVector3d<Position>(point);
-
-        // Frame transformation, from mesh frame to body frame
-        Position NodeInBodyFrame = m_meshOffset.ProjectVectorFrameInParent(NodeInMeshFrame,NWU) + m_meshOffset.GetPosition(NWU);
-
-        return mesh::Vector3dToOpenMeshPoint(NodeInBodyFrame);
-
-    }
-
     mesh::FrMesh &FrHydroMesh::ImportMesh(const std::string &meshFile, FrFrame meshOffset) {
 
         m_initMesh = mesh::FrMesh(meshFile);
@@ -150,9 +147,9 @@ namespace frydom {
         return m_initMesh;
     }
 
-    std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, bool NL_or_WNL) {
+    std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, FrHydroMesh::ClippingSupport support) {
 
-        auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, NL_or_WNL);
+        auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, support);
 
         body->GetSystem()->Add(hydroMesh);
 
@@ -161,9 +158,9 @@ namespace frydom {
     }
 
     std::shared_ptr<FrHydroMesh> make_hydro_mesh(const std::shared_ptr<FrBody>& body, const std::string& meshFile,
-            FrFrame meshOffset, bool NL_or_WNL) {
+            FrFrame meshOffset, FrHydroMesh::ClippingSupport support) {
 
-        auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, meshFile, meshOffset, NL_or_WNL);
+        auto hydroMesh = std::make_shared<FrHydroMesh>(body->GetSystem(), body, meshFile, meshOffset, support);
 
         body->GetSystem()->Add(hydroMesh);
 

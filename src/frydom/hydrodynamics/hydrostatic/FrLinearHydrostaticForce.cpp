@@ -134,7 +134,7 @@ namespace frydom {
         auto forceHst = make_linear_hydrostatic_force(eqFrame, body);
 
         // Create a hydroMesh, to set up the mesh in the body frame and then clip it
-        auto hydroMesh = make_hydro_mesh(body, meshFile, meshOffset, false);
+        auto hydroMesh = make_hydro_mesh(body, meshFile, meshOffset, FrHydroMesh::ClippingSupport::PLANSURFACE);
         hydroMesh->Initialize();
         hydroMesh->Update(0.);
 

@@ -141,7 +141,7 @@ int main(int argc, char* argv[]) {
     hdb->Map(0, platform.get(), eqFrame);
 
     // -- Hydrodynamic mesh
-    auto PlatformMesh = make_hydro_mesh(platform, "mesh_Platform_GVA7500_Sym.obj", FrFrame(), true);
+    auto PlatformMesh = make_hydro_mesh(platform, "mesh_Platform_GVA7500_Sym.obj", FrFrame(), FrHydroMesh::ClippingSupport::WAVESURFACE);
 
     // -- Hydrostatics
     // Create the linear hydrostatic force and add it to the platform

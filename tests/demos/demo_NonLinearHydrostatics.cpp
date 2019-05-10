@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
     meshOffset.SetRotation(cylRotation);
 
     // -- Hydrodynamic mesh
-    auto CylinderMesh = make_hydro_mesh(cylinder, "Free_cylinder_2900_panels.obj", meshOffset, true);
+    auto CylinderMesh = make_hydro_mesh(cylinder, "Free_cylinder_2900_panels.obj", meshOffset, FrHydroMesh::ClippingSupport::WAVESURFACE);
 
     // Writing the initial mesh, for checking only
     CylinderMesh->GetInitialMesh().Write("Mesh_Initial.obj");
