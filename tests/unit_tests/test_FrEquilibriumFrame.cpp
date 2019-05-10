@@ -68,7 +68,7 @@ Vector TestFrEquilibriumFrame::ReadVector(FrHDF5Reader& reader, std::string fiel
 void TestFrEquilibriumFrame::SetUp() {
     LoadData("TNR_database.h5", "/equilibrium_frame/");
 
-    body = std::make_shared<FrBody>();
+    body = system.NewBody();
     body->SetPosition(m_PositionInWorld, NWU);
     body->SetRotation(m_quat);
 
@@ -77,8 +77,9 @@ void TestFrEquilibriumFrame::SetUp() {
     m_eqFrame->SetRotation(m_quat);
     m_eqFrame->SetBody(body.get());
 
-    m_eqFrame->Initialize();
-    body->Initialize();
+    system.Add(m_eqFrame);
+
+    system.Initialize();
 }
 
 void TestFrEquilibriumFrame::CheckVelocity() {

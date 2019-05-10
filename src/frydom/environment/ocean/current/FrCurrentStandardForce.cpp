@@ -53,6 +53,8 @@ namespace frydom {
     }
 
     void FrCurrentStandardForce::Initialize() {
+        FrForce::Initialize();
+
         if (m_transverseArea < FLT_EPSILON and m_draft > FLT_EPSILON and m_breadth > FLT_EPSILON) {
             m_transverseArea = m_draft * m_breadth;
         }
