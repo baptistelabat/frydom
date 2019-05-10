@@ -77,8 +77,10 @@ int main(int argc, char* argv[]) {
     FrRotation cylRotation;    cylRotation.RotX_DEGREES(90., NWU);
     cylinder->Rotate(cylRotation);
 
+    FrRotation decayRot; decayRot.RotX_DEGREES(10., NWU);
     // For decay test, offset its vertical position
     cylinder->SetPosition(Position(0.,0.,0.02), NWU);
+    cylinder->Rotate(decayRot);
 
     // Extra linear damping force.
     auto LinearDampingForce = make_linear_damping_force(cylinder, WATER, false);
