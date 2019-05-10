@@ -16,6 +16,7 @@ set(DEMOS
         demo_WNL_and_NL_hydrostatics
         demo_Cylinder
         demo_langlee_FO3F
+        demo_FOSWEC_FlapDecay
         bench_SphereDecay
         bench_SphereRegular
         bench_DTMB5512_captive
@@ -89,3 +90,7 @@ configure_file(../data/Langlee/Barge.obj . COPYONLY)
 configure_file(../data/Langlee/Flap1_fuse.obj . COPYONLY)
 configure_file(../data/Langlee/Flap2_fuse.obj . COPYONLY)
 configure_file(../data/Langlee/Langlee.hdb5 . COPYONLY)
+
+configure_file(../data/FOSWEC/FOSWEC.hdb5 . COPYONLY)
+configure_file(../data/FOSWEC/FullFlap_mesh.obj . COPYONLY)
+configure_file(../data/FOSWEC/FullPlatform_vizu.obj . COPYONLY)
