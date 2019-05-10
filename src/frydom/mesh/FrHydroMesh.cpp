@@ -44,7 +44,6 @@ namespace frydom {
 
         // This function initializes the hydrostatic force object.
 
-
         // Clipping surface.
         switch (m_clippingSupport) {
             case ClippingSupport::PLANSURFACE: {
@@ -80,31 +79,8 @@ namespace frydom {
         m_clippedMesh.clear();
         m_clippedMesh = m_initMesh;
 
-        // This function rotate the mesh from the body reference frame to the world reference frame, and then translate
+        // Rotating the mesh from the body reference frame to the world reference frame, and then translating
         // it vertically. The resulting mesh horizontal position is kept close to (0.,0.) for the clipping process
-        //FIXME: faire ça ici, plutôt que dans la methode
-        UpdateMeshFrame();
-
-        //FIXME: refiler la position du corps a clippingSurface pour appliquer la correction
-
-        // Set the body position for horizontal correction in the clipping surface
-        m_clipper->GetClippingSurface()->SetBodyPosition(m_body->GetPosition(NWU));
-
-        // Application of the mesh clipper on the updated init mesh to obtain the clipped mesh
-        m_clipper->Apply(&m_clippedMesh);
-
-        // The clipped mesh obtained at this point is expressed in the world reference frame, but it's horizontal position
-        // does not coincide with the body's and is kept close to (0.,0.).
-
-    }
-
-    void FrHydroMesh::UpdateMeshFrame() {
-
-        //FIXME : utiliser plutôt les méthodes de FRMesh pour rotation et translation
-
-        // This function rotate the mesh from the body reference frame to the world reference frame, and then translate
-        // it vertically. The resulting mesh horizontal position is kept close to (0.,0.) for the clipping process
-
         // Rotation
         double phi, theta, psi;
         m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
@@ -114,25 +90,14 @@ namespace frydom {
         auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetX() = 0.; bodyPos.GetY() = 0.;
         m_clippedMesh.Translate(mesh::Vector3dToOpenMeshPoint(bodyPos));
 
+        // Set the body position for horizontal correction in the clipping surface
+        m_clipper->GetClippingSurface()->SetBodyPosition(m_body->GetPosition(NWU));
 
-//        // Loop over the vertices.
-//        for (auto vh : m_clippedMesh.vertices()){
-//
-////            // From the mesh frame to the body frame.
-////            m_clippedMesh.point(vh) = GetMeshPointPositionInBody(m_clippedMesh.point(vh));
-//
-//            auto NodeInBody = mesh::OpenMeshPointToVector3d<Position>(m_clippedMesh.point(vh));
-//
-//            // Rotation from the body frame to the world frame (just the rotation and the vertical translation, not the horizontal translation of the mesh at the good position in the world mesh).
-//            // The horizontal translation is not done to avoid numerical errors.
-//            auto NodeInWorld = m_body->ProjectVectorInWorld<Position>(NodeInBody, NWU);
-//
-//            // Vertical translation.
-//            NodeInWorld[2] += m_body->GetPosition(NWU)[2];
-//
-//            m_clippedMesh.point(vh) = mesh::Vector3dToOpenMeshPoint(NodeInWorld);
-//
-//        }
+        // Application of the mesh clipper on the updated init mesh to obtain the clipped mesh
+        m_clipper->Apply(&m_clippedMesh);
+
+        // The clipped mesh obtained at this point is expressed in the world reference frame, but it's horizontal position
+        // does not coincide with the body's and is kept close to (0.,0.).
 
     }
 

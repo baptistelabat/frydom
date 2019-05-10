@@ -64,7 +64,7 @@ namespace frydom {
     Position FrNonlinearHydrostaticForce::GetCenterOfBuoyancyInWorld(FRAME_CONVENTION fc) {
 
         // clipped mesh is expressed in the world reference frame, but its horizontal position is centered around (0.,0.)
-        auto CoBInWorld = mesh::OpenMeshPointToVector3d<Position>(m_hydroMesh->GetClippedMesh().GetCOG());
+        auto CoBInWorld = m_hydroMesh->GetClippedMesh().GetCOG();
 
         // Addition of the horizontal position of the body
         auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetZ() = 0.;

@@ -24,6 +24,8 @@
 
 #include "MathUtils/MathUtils.h"
 
+#include "frydom/core/math/FrVector.h"
+
 #include "FrCache.h"
 
 
@@ -493,7 +495,7 @@ namespace frydom {
 
             const double GetVolume() const;
 
-            const Point GetCOG() const;
+            const Position GetCOG() const;
 
             bool HasBoundaries() const;
 
@@ -546,6 +548,7 @@ namespace frydom {
 
         };
 
+        //TODO : Merge with FrInertia
         struct InertialProperties {
 
             double m_mass = 0.;

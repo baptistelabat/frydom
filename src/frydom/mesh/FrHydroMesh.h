@@ -70,9 +70,6 @@ namespace frydom {
 
     private:
 
-        /// Update the frame of the clipped mesh according to the body's motions
-        void UpdateMeshFrame();
-
         /// Update nonlinear hydrostatic force.
         /// \param time Current time of the simulation from beginning.
         void Compute(double time) override;

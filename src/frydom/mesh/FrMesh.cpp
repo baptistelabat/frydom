@@ -16,7 +16,7 @@ namespace frydom {
             InertialProperties inertialProperties;
 
             inertialProperties.m_mass = density * mesh.GetVolume();
-            inertialProperties.m_cog = OpenMeshPointToVector3d<Position>(mesh.GetCOG());
+            inertialProperties.m_cog = mesh.GetCOG();
 
             double intV_x2 = mesh.GetVolumeIntegral(POLY_X2);
             double intV_y2 = mesh.GetVolumeIntegral(POLY_Y2);
@@ -471,14 +471,17 @@ namespace frydom {
             return GetVolumeIntegral(POLY_1);
         }
 
-        const VectorT<double, 3> FrMesh::GetCOG() const {
-            //FIXME : ressortir un POSITION
-            Point cog;
+        const Position FrMesh::GetCOG() const {
+
+            Position cog;
+
+            cog.GetX() = GetVolumeIntegral(POLY_X);
+            cog.GetY() = GetVolumeIntegral(POLY_Y);
+            cog.GetZ() = GetVolumeIntegral(POLY_Z);
+
             auto volume = GetVolume();
             assert(volume!=0);
-            cog[0] = GetVolumeIntegral(POLY_X) / volume;
-            cog[1] = GetVolumeIntegral(POLY_Y) / volume;
-            cog[2] = GetVolumeIntegral(POLY_Z) / volume;
+            cog /= volume;
 
             return cog;
         }
