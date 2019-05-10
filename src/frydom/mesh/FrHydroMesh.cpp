@@ -105,34 +105,34 @@ namespace frydom {
         // This function rotate the mesh from the body reference frame to the world reference frame, and then translate
         // it vertically. The resulting mesh horizontal position is kept close to (0.,0.) for the clipping process
 
-//        // Rotation
-//        double phi, theta, psi;
-//        m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
-//        m_clippedMesh.Rotate(phi, theta, psi);
+        // Rotation
+        double phi, theta, psi;
+        m_body->GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, NWU);
+        m_clippedMesh.Rotate(phi, theta, psi);
+
+        // Translation
+        auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetX() = 0.; bodyPos.GetY() = 0.;
+        m_clippedMesh.Translate(mesh::Vector3dToOpenMeshPoint(bodyPos));
+
+
+//        // Loop over the vertices.
+//        for (auto vh : m_clippedMesh.vertices()){
 //
-//        // Translation
-//        auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetX() = 0.; bodyPos.GetY() = 0.;
-//        m_clippedMesh.Translate(mesh::Vector3dToOpenMeshPoint(bodyPos));
-
-
-        // Loop over the vertices.
-        for (auto vh : m_clippedMesh.vertices()){
-
-//            // From the mesh frame to the body frame.
-//            m_clippedMesh.point(vh) = GetMeshPointPositionInBody(m_clippedMesh.point(vh));
-
-            auto NodeInBody = mesh::OpenMeshPointToVector3d<Position>(m_clippedMesh.point(vh));
-
-            // Rotation from the body frame to the world frame (just the rotation and the vertical translation, not the horizontal translation of the mesh at the good position in the world mesh).
-            // The horizontal translation is not done to avoid numerical errors.
-            auto NodeInWorld = m_body->ProjectVectorInWorld<Position>(NodeInBody, NWU);
-
-            // Vertical translation.
-            NodeInWorld[2] += m_body->GetPosition(NWU)[2];
-
-            m_clippedMesh.point(vh) = mesh::Vector3dToOpenMeshPoint(NodeInWorld);
-
-        }
+////            // From the mesh frame to the body frame.
+////            m_clippedMesh.point(vh) = GetMeshPointPositionInBody(m_clippedMesh.point(vh));
+//
+//            auto NodeInBody = mesh::OpenMeshPointToVector3d<Position>(m_clippedMesh.point(vh));
+//
+//            // Rotation from the body frame to the world frame (just the rotation and the vertical translation, not the horizontal translation of the mesh at the good position in the world mesh).
+//            // The horizontal translation is not done to avoid numerical errors.
+//            auto NodeInWorld = m_body->ProjectVectorInWorld<Position>(NodeInBody, NWU);
+//
+//            // Vertical translation.
+//            NodeInWorld[2] += m_body->GetPosition(NWU)[2];
+//
+//            m_clippedMesh.point(vh) = mesh::Vector3dToOpenMeshPoint(NodeInWorld);
+//
+//        }
 
     }
 

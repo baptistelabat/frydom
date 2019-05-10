@@ -472,6 +472,7 @@ namespace frydom {
         }
 
         const VectorT<double, 3> FrMesh::GetCOG() const {
+            //FIXME : ressortir un POSITION
             Point cog;
             auto volume = GetVolume();
             assert(volume!=0);
