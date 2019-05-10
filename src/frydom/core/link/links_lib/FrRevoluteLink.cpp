@@ -15,8 +15,7 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrNode.h"
 
-#include "actuators/FrAngularActuatorInc.h"
-#include "actuators/FrAngActuator.h"
+#include "frydom/core/link/links_lib/actuators/FrAngularActuator.h"
 
 
 namespace frydom {
@@ -154,28 +153,10 @@ namespace frydom {
         SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
     }
 
-    FrAngularActuator* FrRevoluteLink::Motorize(ACTUATOR_CONTROL control) {
-
-        switch (control) {
-            case POSITION :
-                m_actuator = std::make_shared<FrAngularActuatorAngle>(this);
-                break;
-            case VELOCITY :
-                m_actuator = std::make_shared<FrAngularActuatorVelocity>(this);
-                break;
-            case FORCE :
-//                m_actuator = std::make_shared<FrAngularActuatorTorque>(this);
-                break;
-        }
-
+    FrAngularActuator *FrRevoluteLink::Motorize(ACTUATOR_CONTROL control) {
+        m_actuator = std::make_shared<FrAngularActuator>(this, control);
         GetSystem()->Add(m_actuator);
         return dynamic_cast<FrAngularActuator*>(m_actuator.get());
-    }
-
-    FrAngActuator *FrRevoluteLink::Motorize2(ACTUATOR_CONTROL control) {
-        m_actuator = std::make_shared<FrAngActuator>(this, control);
-        GetSystem()->Add(m_actuator);
-        return dynamic_cast<FrAngActuator*>(m_actuator.get());
     }
 
     double FrRevoluteLink::GetUpdatedRelativeAngle() const {

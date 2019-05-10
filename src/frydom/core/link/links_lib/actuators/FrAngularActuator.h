@@ -1,13 +1,14 @@
 //
-// Created by frongere on 06/02/19.
+// Created by lletourn on 07/05/19.
 //
 
-#ifndef FRYDOM_FRANGULARACTUATOR_H
-#define FRYDOM_FRANGULARACTUATOR_H
+#ifndef FRYDOM_FRANGACTUATOR_H
+#define FRYDOM_FRANGACTUATOR_H
 
 
 #include "FrActuator.h"
 
+#include "chrono/physics/ChLinkMotorRotation.h"
 
 namespace frydom {
 
@@ -15,16 +16,28 @@ namespace frydom {
     class FrLink;
 
     class FrAngularActuator : public FrActuator {
+    private:
+        std::shared_ptr<chrono::ChLinkMotorRotation> m_chronoActuator;
 
     public:
-        FrAngularActuator(FrLink* actuatedLink);
+        explicit FrAngularActuator(FrLink *actuatedLink, ACTUATOR_CONTROL control);
 
+        void SetMotorFunction(const FrFunctionBase& function) override;
 
-        // TODO : ajouter des methodes communes a tous les actuateurs angulaires tel que GetRPM()...
+        Torque GetMotorTorqueInWorld(FRAME_CONVENTION fc) const;
+
+        void Initialize() override;
+
+        void StepFinalize() override {};
+
+    protected:
+
+        std::shared_ptr<chrono::ChLink> GetChronoLink() override;
+        chrono::ChLinkMotorRotation* GetChronoItem_ptr() const override;
 
 
     };
 
-}  // end namespace frydom
+} //end namespace frydom
 
-#endif //FRYDOM_FRANGULARACTUATOR_H
+#endif //FRYDOM_FRANGACTUATOR_H

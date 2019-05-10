@@ -34,17 +34,8 @@ list(APPEND SRC_FILES
         link/FrLinkBase.cpp
 
         link/links_lib/actuators/FrActuator.cpp
-        link/links_lib/actuators/FrAngularActuator.cpp
-        link/links_lib/actuators/FrAngularActuatorAngle.cpp
-        link/links_lib/actuators/FrAngularActuatorVelocity.cpp
-        link/links_lib/actuators/FrAngularActuatorTorque.cpp
         link/links_lib/actuators/FrLinearActuator.cpp
-        link/links_lib/actuators/FrLinearActuatorPosition.cpp
-        link/links_lib/actuators/FrLinearActuatorVelocity.cpp
-        link/links_lib/actuators/FrLinearActuatorForce.cpp
-
-        link/links_lib/actuators/FrLinActuator.cpp
-        link/links_lib/actuators/FrAngActuator.cpp
+        link/links_lib/actuators/FrAngularActuator.cpp
 
         link/constraints/FrDistanceBetweenPointsConstraint.cpp
         link/constraints/FrParallelConstraint.cpp

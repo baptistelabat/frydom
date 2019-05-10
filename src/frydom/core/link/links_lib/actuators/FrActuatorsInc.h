@@ -5,10 +5,7 @@
 #ifndef FRYDOM_FRACTUATORSINC_H
 #define FRYDOM_FRACTUATORSINC_H
 
-#include "FrLinearActuatorInc.h"
-#include "FrAngularActuatorInc.h"
-
-#include "FrLinActuator.h"
-#include "FrAngActuator.h"
+#include "FrLinearActuator.h"
+#include "FrAngularActuator.h"
 
 #endif //FRYDOM_FRACTUATORSINC_H
