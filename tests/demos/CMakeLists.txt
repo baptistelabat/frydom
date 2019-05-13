@@ -99,7 +99,7 @@ configure_file(../data/Langlee/Langlee.hdb5 . COPYONLY)
 
 configure_file(../data/FOSWEC/FOSWEC.hdb5 . COPYONLY)
 configure_file(../data/FOSWEC/FullFlap_mesh.obj . COPYONLY)
-configure_file(../data/FOSWEC/FullPlatform_vizu.obj . COPYONLY)
+configure_file(../data/FOSWEC/FullPlatform.obj . COPYONLY)
 configure_file(../data/Cylinder/Free_cylinder_2900_panels.obj . COPYONLY)
 
 configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPYONLY)

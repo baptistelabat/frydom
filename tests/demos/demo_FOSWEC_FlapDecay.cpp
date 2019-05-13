@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 
     auto platform = system.NewBody();
     platform->SetName("platform");
-    platform->AddMeshAsset("FullPlatform_vizu.obj");
+    platform->AddMeshAsset("FullPlatform.obj");
 
     FrFrame COGFrame_b(Position(0., 0., 0.460), FrRotation(), NWU);
     FrInertiaTensor inertia_b(153.8, 37.88, 29.63, 1., 0., 0., 0., COGFrame_b, NWU);
