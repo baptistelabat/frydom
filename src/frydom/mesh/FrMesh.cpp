@@ -473,17 +473,24 @@ namespace frydom {
 
         const Position FrMesh::GetCOG() const {
 
-            Position cog;
+            double xb, yb, zb;
+            xb = yb = zb = 0.;
 
-            cog.GetX() = GetVolumeIntegral(POLY_X);
-            cog.GetY() = GetVolumeIntegral(POLY_Y);
-            cog.GetZ() = GetVolumeIntegral(POLY_Z);
+            mesh::FrMesh::Normal Normal;
 
-            auto volume = GetVolume();
-            assert(volume!=0);
-            cog /= volume;
+            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+                Normal = normal(*f_iter);
+                xb += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2);
+                yb += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
+                zb += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
+            }
 
-            return cog;
+            xb /= 2. * GetVolume();
+            yb /= 2. * GetVolume();
+            zb /= 2. * GetVolume(); // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
+
+            return {xb,yb,zb};
+
         }
 
         bool FrMesh::HasBoundaries() const {  // FIXME: si le maillage est non conforme mais hermetique, HasBoudaries() renvoie true et donc IsWatertight() false, c'est un faux négatif...
