@@ -6,6 +6,9 @@
 #define FRYDOM_FRLINEAREXCITATIONINC_H
 
 #include "FrLinearExcitationForce.h"
-#include "FrNonLinearExcitationForce.h"
+#include "FrNonLinearFroudeKrylovForce.h"
+#include "FrLinearExcitationForceBase.h"
+#include "FrLinearDiffractionForce.h"
+#include "FrLinearFroudeKrylovForce.h"
 
 #endif //FRYDOM_FRLINEAREXCITATIONINC_H

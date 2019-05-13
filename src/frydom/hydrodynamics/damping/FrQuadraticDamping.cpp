@@ -52,10 +52,6 @@ namespace frydom {
 
     bool FrQuadraticDamping::GetRelative2Fluid() {return m_relative2Fluid;}
 
-    void FrQuadraticDamping::Initialize() {
-        FrForce::Initialize();
-    }
-
     void FrQuadraticDamping::Compute(double time) {
 
         Velocity cogRelVel;
@@ -79,10 +75,6 @@ namespace frydom {
                 - 0.5 * rho * m_Sw * m_Cw * w*std::fabs(w)
                 ), NWU);
 
-    }
-
-    void FrQuadraticDamping::StepFinalize() {
-        FrForce::StepFinalize();
     }
 
     std::shared_ptr<FrQuadraticDamping>

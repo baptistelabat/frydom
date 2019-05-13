@@ -59,7 +59,7 @@ namespace frydom {
 //            /// \return
 //            bool DoQuasiStatic(int niter = 100, int nsteps = 20);
 
-            bool DoStaticLinear() override;
+            bool DoStaticLinear() /*override*/;
 
         };
 
@@ -81,8 +81,10 @@ namespace frydom {
     class FrPrePhysicsItem;
     class FrMidPhysicsItem;
     class FrPostPhysicsItem;
+    class FrFEAMesh;
     class FrEnvironment;
     class FrCable;
+    class FrDynamicCable;
     class FrPathManager;
 
     /// Main class for a FRyDoM offshore system. This class is used to represent a multibody physical system,
@@ -197,6 +199,8 @@ namespace frydom {
         using MidPhysicsContainer = std::vector<std::shared_ptr<FrMidPhysicsItem>>;
         using PostPhysicsContainer = std::vector<std::shared_ptr<FrPostPhysicsItem>>;
 
+        using FEAMeshContainer = std::vector<std::shared_ptr<FrFEAMesh>>;
+
         // Iterators.
         // TODO : bouger les iterateurs proches des methodes d'iteration...
         using BodyIter          = BodyContainer::iterator;
@@ -214,12 +218,16 @@ namespace frydom {
         using PostPhysicsIter = PostPhysicsContainer::iterator;
         using ConstPostPhysicsIter = PostPhysicsContainer::const_iterator;
 
+        using FEAMestIter = FEAMeshContainer::iterator;
+        using ConstFEAMestIter = FEAMeshContainer::const_iterator;
+
         // Container: list of objects.
         BodyContainer m_bodyList;   ///< list of bodies managed by this offshore system
         LinkContainer m_linkList;   ///< list of links between bodies managed by this offhsore system
         PrePhysicsContainer m_PrePhysicsList;   ///< list of physics items, updated before the bodies
         MidPhysicsContainer m_MidPhysicsList;   ///< list of physics items, updated between the bodies and links
         PostPhysicsContainer m_PostPhysicsList; ///< list of physics items, updated after the links
+        FEAMeshContainer m_feaMeshList;         ///< list of FEA mesh items, managed by this offshore system
 
 //        using CatenaryCableContainer = std::vector<std::shared_ptr<FrCatway>>;
 //        CatenaryCableContainer m_catenaryCables;
@@ -227,7 +235,7 @@ namespace frydom {
         bool m_isInitialized = false;
 
         // Logs
-        std::unique_ptr<FrPathManager> m_pathManager;
+//        std::unique_ptr<FrPathManager> m_pathManager;
 
 
     public:
@@ -295,8 +303,8 @@ namespace frydom {
         /// \param otherPhysics other physic item to be added
         void AddPhysicsItem(std::shared_ptr<FrPrePhysicsItem> otherPhysics);
 
-        /// Get the list of pre physics item added to the system
-        /// \return List of the pre physics item added to the system
+        /// Get the list of pre physics items added to the system
+        /// \return List of the pre physics items added to the system
         PrePhysicsContainer GetPrePhysicsItemList();
 
         // ***** Mid Physics Item *****
@@ -305,8 +313,8 @@ namespace frydom {
         /// \param otherPhysics other physic item to be added
         void AddPhysicsItem(std::shared_ptr<FrMidPhysicsItem> otherPhysics);
 
-        /// Get the list of mid physics item added to the system
-        /// \return List of the mid physics item added to the system
+        /// Get the list of mid physics items added to the system
+        /// \return List of the mid physics items added to the system
         MidPhysicsContainer GetMidPhysicsItemList();
 
         // ***** Post Physics Item *****
@@ -315,18 +323,37 @@ namespace frydom {
         /// \param otherPhysics other physic item to be added
         void AddPhysicsItem(std::shared_ptr<FrPostPhysicsItem> otherPhysics);
 
-        /// Get the list of post physics item added to the system
-        /// \return List of the post physics item added to the system
+        /// Get the list of post physics items added to the system
+        /// \return List of the post physics items added to the system
         PostPhysicsContainer GetPostPhysicsItemList();
 
 
 
-        /// Remove a Physics item from the system
-        /// \param item Physics item removed from the system
+        /// Remove a Physics items from the system
+        /// \param item Physics items removed from the system
         void RemovePhysicsItem(std::shared_ptr<FrPhysicsItem> item);
 
         /// Remove all physics items from the system
         void RemoveAllPhysicsItem();
+
+
+        // ***** FEAMesh *****
+
+        /// Add a FEA mesh to the offshore system
+        /// \param feaMesh FEA mesh to be added
+        void AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
+
+        /// Get the list of fea meshes added to the system
+        /// \return List of the fea meshes added to the system
+        FEAMeshContainer GetFEAMeshList();
+
+        void RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh);
+
+        /// Add a Dynamic Cable to the offshore system
+        /// \param cable dynamic cable to be added
+        void Add(std::shared_ptr<FrDynamicCable> cable);
+
+        void Remove(std::shared_ptr<FrDynamicCable> cable);
 
 
         // ***** Environment *****
@@ -366,15 +393,17 @@ namespace frydom {
 
         // Logging
 
-        /// Get access to the log manager service
-        /// \return log manager service
-        FrPathManager* GetPathManager() const;
-
         /// Initialize the logs (log files and folders creation)
-        void InitializeLog();
+        void InitializeLog_Dependencies(const std::string& path) override;
 
         /// Clear the logging message of every elements
         void ClearLogs();
+
+    protected:
+
+        std::string BuildPath(const std::string& rootPath) override;
+
+    public:
 
         // Constraint solver
 

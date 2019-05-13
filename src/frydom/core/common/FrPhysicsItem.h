@@ -53,7 +53,7 @@ namespace frydom {
      * \class FrPhysicsItem
      * \brief Class for defining objects which are neither bodies nor links, for instance caterany lines.
      */
-    class FrPhysicsItem: public FrObject, public FrAssetOwner {
+    class FrPhysicsItem: public FrObject {
 
     protected:
 
@@ -64,10 +64,6 @@ namespace frydom {
 
         bool m_isActive = true;         ///< boolean to check if the physics item is active
                                         ///< if it's not the case, it is not updated during the simulation
-
-        /// Get the poitner to the chrono related physics item
-        /// \return Chrono related physics item
-        internal::FrPhysicsItemBase* GetChronoItem_ptr() const override;
 
         /// Get the shared pointer to the chrono related physics item
         /// \return Chrono related physics item
@@ -94,11 +90,7 @@ namespace frydom {
 
         virtual void SetupInitial();
 
-        virtual void InitializeLog() = 0;
-
         void Initialize() override {};
-
-        void StepFinalize() override;
 
     private:
 

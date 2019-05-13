@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "frydom/asset/FrAsset.h"
+#include "frydom/asset/FrAssetOwner.h"
 
 
 // Chrono forward declaration
@@ -28,7 +29,50 @@ namespace chrono {
 namespace frydom {
 
     // Forward declarations:
-    class FrCatenaryLine;
+//    class FrCatenaryLine;
+    class FrNode;
+
+    class FrCatenaryAssetOwner : public FrAssetOwner {
+
+        bool is_lineAsset = true;       ///< Is the line asset shown
+        unsigned int m_nbElements = 40; ///< Numbers of asset elements depicted
+        double m_maxTension = 0;            ///< maximum tension for visualization
+
+    public:
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Pure virtual methods, used in FrCatenaryAsset
+
+        virtual double GetUnstrainedLength() const = 0;
+
+        virtual Position GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const = 0;
+
+        virtual Force GetTension(double s, FRAME_CONVENTION fc) const = 0;
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        void ShowAsset(bool show);
+
+        bool IsAssetShown() const;
+
+        void SetAssetElements(unsigned int nbElements);
+
+        int GetAssetElements() const;
+
+        void SetMaxTension(double max);
+
+        double GetMaxTension() const;
+
+    protected:
+
+        virtual void Initialize();
+
+        virtual void InitMaxTension();
+
+    };
+
+
+
 
     /**
      * \class FrCatenaryLineAsset
@@ -39,7 +83,7 @@ namespace frydom {
 
     private:
 
-        FrCatenaryLine *m_catenaryLine;    ///< Catenary line containing this asset
+        FrCatenaryAssetOwner *m_catenaryLine;    ///< Catenary line containing this asset
 
 //        using Triplet = std::tuple<double, double, std::shared_ptr<chrono::ChLineShape>>;
 //        std::vector<Triplet> m_elements;    ///< container of elements based on ChLineShape
@@ -52,7 +96,7 @@ namespace frydom {
 
         /// Catenary line asset constructor
         /// \param line catenary line containing this asset
-        explicit FrCatenaryLineAsset(FrCatenaryLine * line);
+        explicit FrCatenaryLineAsset(FrCatenaryAssetOwner * line);
 
         /// Initialize the asset by creating the elements
         void Initialize() override;

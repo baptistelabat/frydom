@@ -42,6 +42,7 @@ namespace frydom {
     }
 
     void FrWindStandardForce::Initialize() {
+        FrForce::Initialize();
         if (m_transverseArea < FLT_EPSILON) throw FrException(" error value transverse area");
         if (m_lateralArea < FLT_EPSILON) throw FrException("error value lateral area");
         if (m_lpp < FLT_EPSILON) throw FrException("error value length between perpendicular");
@@ -90,10 +91,6 @@ namespace frydom {
         auto worldTorque = frame.ProjectVectorFrameInParent(torque, NWU);
 
         SetForceTorqueInWorldAtPointInBody(worldForce, worldTorque, Position(m_xCenter, 0., 0.), NWU);
-    }
-
-    void FrWindStandardForce::StepFinalize() {
-        FrForce::StepFinalize();
     }
 
 }  // end namespace frydom

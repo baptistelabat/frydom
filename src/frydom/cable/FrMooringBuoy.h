@@ -35,10 +35,6 @@ namespace frydom {
             /// Return true if the force is included in the static analysis
             bool IncludedInStaticAnalysis() const override {return true;}
 
-            void StepFinalize() override {
-                FrForce::StepFinalize();
-            }
-
         private:
 
             /// Compute the nonlinear hydrostatic force for a sphere

@@ -36,12 +36,15 @@ set(mathutils_TAG master)
 set(timezone_URL https://github.com/HowardHinnant/date.git)
 set(timezone_TAG v2.4.1)
 
-
 # YAML-CPP
-set(yamlcpp_URL https://github.com/jbeder/yaml-cpp.git)
-set(yamlcpp_TAG yaml-cpp-0.6.2)
-set(yamlcpp_PATCH yaml-cpp.patch)
+#-set(yamlcpp_URL https://github.com/jbeder/yaml-cpp.git)
+#-set(yamlcpp_TAG yaml-cpp-0.6.2)
+#-set(yamlcpp_PATCH yaml-cpp.patch)
 
 # CPPFS
 set(cppfs_URL https://github.com/cginternals/cppfs.git)
 set(cppfs_TAG v1.2.0)
+
+# JSON
+set(json_URL https://github.com/nlohmann/json.git)
+set(json_TAG v3.6.1)

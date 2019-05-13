@@ -17,12 +17,13 @@ set(subdirs
         mesh
         mooring
         utils
+        shape
         )
 
 # TODO: reposer plutot sur target_sources()
 # voir crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/
 
-set(FRYDOM_SRC_FILES "" asset/FrAsset.cpp asset/FrAsset.h)
+set(FRYDOM_SRC_FILES "")
 foreach(subdir ${subdirs})
 
     add_subdirectory(${subdir})
@@ -43,13 +44,13 @@ include(Add_chrono)
 include(Add_MathUtils)
 include(Add_HDF5)
 
-include(Add_yaml-cpp)
 include(Add_GeographicLib)
 include(Add_fmt)
 include(Add_cppfs)
 include(Add_TimeZone)
 include(Add_hermes)
 include(Add_OpenMesh)
+include(Add_json)
 
 #if (TARGET hermes)
 #    get_target_property(INC hermes INCLUDE_DIRECTORIES)
@@ -66,7 +67,6 @@ target_link_libraries(FRyDoM_Engine
         ChronoEngine
         ChronoEngine_irrlicht
         MathUtils::MathUtils
-        yaml-cpp
         HDF5
         GeographicLib
         fmt
@@ -74,6 +74,7 @@ target_link_libraries(FRyDoM_Engine
         tz
         hermes
 	OpenMeshCore
+	nlohmann_json
         )
 
 target_include_directories(FRyDoM_Engine PUBLIC
@@ -85,5 +86,3 @@ message(STATUS "FRyDoM_INCLUDE_DIRECTORIES : ${INC}")
 
 
 # TODO: voir si on passe ce CMakeLists.txt dans le repertoire parent pour ne pas avoir a faire .. dans l'include
-
-

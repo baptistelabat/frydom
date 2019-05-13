@@ -13,6 +13,8 @@
 
 #include "frydom/core/common/FrNode.h"
 
+#include "frydom/core/link/links_lib/actuators/FrLinearActuator.h"
+
 //#include <chrono/physics/ChLinkLock.h>
 
 
@@ -61,15 +63,6 @@ namespace frydom {
         return GetLinkVelocity() * GetLinkForce();
     }
 
-    void FrPrismaticLink::Initialize() {
-        FrLink::Initialize();
-
-        // Initializing the motor part
-        // TODO
-
-        // Initializing the logs
-    }
-
     void FrPrismaticLink::Update(double time) {
         FrLink::Update(time); // It is mandatory to invoke this before all update operations from frydom
 
@@ -80,10 +73,6 @@ namespace frydom {
 
 
         UpdateForces(time);
-
-    }
-
-    void FrPrismaticLink::StepFinalize() {
 
     }
 
@@ -100,6 +89,14 @@ namespace frydom {
     void FrPrismaticLink::UpdateCache() {
         m_restLength = m_frame2WRT1_reference.GetZ(NWU);
         // FIXME : attention si la liaison n'est pas resolue !!! Ca ne fonctionne pas
+    }
+
+    FrLinearActuator* FrPrismaticLink::Motorize(ACTUATOR_CONTROL control) {
+
+        m_actuator = std::make_shared<FrLinearActuator>(this, control);
+        GetSystem()->Add(m_actuator);
+        return dynamic_cast<FrLinearActuator*>(m_actuator.get());
+
     }
 
     std::shared_ptr<FrPrismaticLink>

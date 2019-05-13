@@ -13,7 +13,8 @@
 #ifndef FRYDOM_IO_H
 #define FRYDOM_IO_H
 
-#include "yaml-cpp/yaml.h"
+#include <nlohmann/json.hpp>
+using json = nlohmann::json; // for convenience
 
 #include "FrHDF5.h"
 #include "FrLoader.h"

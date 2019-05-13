@@ -146,6 +146,8 @@ namespace frydom {
                      FrLinkBase(node1, node2, system),
                      m_frame2WRT1_reference() {
         m_chronoLink = std::make_shared<internal::FrLinkLockBase>(this);
+        SetLogged(true);
+        m_actuator = nullptr;
     }
 
 
@@ -319,7 +321,7 @@ namespace frydom {
     const Torque FrLink::GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const { // TODO : tester
         auto markerFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
 
-        auto torqueAtMarker1_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionForceOnMarker1(fc), fc);
+        auto torqueAtMarker1_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionTorqueOnMarker1(fc), fc);
         auto COG_M1_ref = markerFrame_WRT_COG.GetPosition(fc);
         auto force_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetLinkReactionForceOnMarker1(fc), fc);
 
@@ -329,7 +331,7 @@ namespace frydom {
     const Torque FrLink::GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const { // TODO : tester
         auto markerFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
 
-        auto torqueAtMarker2_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionForceOnMarker2(fc), fc);
+        auto torqueAtMarker2_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionTorqueOnMarker2(fc), fc);
         auto COG_M2_ref = markerFrame_WRT_COG.GetPosition(fc);
         auto force_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetLinkReactionForceOnMarker2(fc), fc);
 
@@ -337,6 +339,10 @@ namespace frydom {
     }
 
     void FrLink::Initialize() {
+
+        // Log
+        SetPathManager(m_system->GetPathManager());
+
         SetMarkers(m_node1.get(), m_node2.get());
     }
 
@@ -406,6 +412,78 @@ namespace frydom {
     double FrLink::GetLinkPower() const {
         return GetLinkForceOnBody2InFrame1AtOrigin2(NWU).dot(GetVelocityOfMarker2WRTMarker1(NWU))
              + GetLinkTorqueOnBody2InFrame1AtOrigin2(NWU).dot(GetAngularVelocityOfMarker2WRTMarker1(NWU));
+    }
+
+    void FrLink::AddFields() {
+        m_message->AddField<double>("time", "s", "Current time of the simulation",
+                                    [this]() { return m_system->GetTime(); });
+
+        // Marker Position
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("Marker2PositionWRTMarker1","m", fmt::format("Marker 2 position relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetMarker2PositionWRTMarker1(GetLogFrameConvention());});
+        // Marker Velocity
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("VelocityOfMarker2WRTMarker1","m/s", fmt::format("Marker 2 velocity relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetVelocityOfMarker2WRTMarker1(GetLogFrameConvention());});
+        // Marker Acceleration
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("AccelerationOfMarker2WRTMarker1","m/s^2", fmt::format("Marker 2 acceleration relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetAccelerationOfMarker2WRTMarker1(GetLogFrameConvention());});
+
+        // Marker Position
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("Marker2OrientationWRTMarker1","rad", fmt::format("Marker 2 orientation relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {double phi, theta, psi; GetMarker2OrientationWRTMarker1().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
+                    return Position(phi, theta, psi);});
+        // Marker Velocity
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("AngularVelocityOfMarker2WRTMarker1","rad/s", fmt::format("Marker 2 angular velocity relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetAngularVelocityOfMarker2WRTMarker1(GetLogFrameConvention());});
+        // Marker Acceleration
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("AngularAccelerationOfMarker2WRTMarker1","m/s^2", fmt::format("Marker 2 angular acceleration relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetAngularAccelerationOfMarker2WRTMarker1(GetLogFrameConvention());});
+
+
+        // Force
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkReactionForceOnBody1","N", fmt::format("link reaction force applied at marker 1, expressed in body 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetLinkReactionForceOnBody1(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkReactionForceOnBody2","N", fmt::format("link reaction force applied at marker 2, expressed in body 2 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetLinkReactionForceOnBody2(GetLogFrameConvention());});
+        // Torque
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkReactionTorqueOnBody1AtCOG","N", fmt::format("link reaction torque at CoG applied at marker 1, expressed in body 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetLinkReactionTorqueOnBody1AtCOG(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkReactionTorqueOnBody2AtCOG","N", fmt::format("link reaction torque at CoG applied at marker 2, expressed in body 2 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetLinkReactionTorqueOnBody2AtCOG(GetLogFrameConvention());});
+
+        // Power
+        m_message->AddField<double>
+                ("LinkPower","kW", "power delivered in a FrLink", [this]() {return 0.001*GetLinkPower();});
+
+        // Motor
+        if (m_actuator) {
+            m_message->AddField<double>
+                    ("MotorPower","kW", "power delivered by the motor", [this]() {return m_actuator->GetMotorPower();});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("MotorForceInBody1","N", fmt::format("Force applied by the motor on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+                     [this]() {return m_actuator->GetMotorForceInBody1(GetLogFrameConvention());});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("MotorForceInBody2","N", fmt::format("Force applied by the motor on body 1, in body 2 reference frame {}", GetLogFrameConvention()),
+                     [this]() {return m_actuator->GetMotorForceInBody2(GetLogFrameConvention());});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("MotorTorqueAtCOGInBody1(","N", fmt::format("Torque applied by the motor at COG on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+                     [this]() {return m_actuator->GetMotorTorqueAtCOGInBody1(GetLogFrameConvention());});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("MotorTorqueAtCOGInBody2(","N", fmt::format("Torque applied by the motor at COG on body 2, in body 2 reference frame {}", GetLogFrameConvention()),
+                     [this]() {return m_actuator->GetMotorTorqueAtCOGInBody2(GetLogFrameConvention());});
+
+        }
+
     }
 
 

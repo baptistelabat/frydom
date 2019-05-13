@@ -15,7 +15,7 @@
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrNode.h"
 
-#include "actuators/FrAngularActuatorInc.h"
+#include "frydom/core/link/links_lib/actuators/FrAngularActuator.h"
 
 
 namespace frydom {
@@ -80,18 +80,6 @@ namespace frydom {
             m_actuator->Initialize();
         }
 
-        // Log initialization
-        l_message.SetNameAndDescription("RevoluteLink", "");
-        l_message.AddCSVSerializer("RevoluteLink_" + GetUUID());
-        l_message.AddField<double>("time", "s", "", &l_time);
-        l_message.AddField<double>("total_angle", "deg", "", &l_angleDeg);
-        l_message.AddField<double>("angVel", "rad/s", "", &m_linkAngularVelocity);
-        l_message.AddField<double>("AnfAcc", "rad/s2", "", &m_linkAngularAcceleration);
-        l_message.AddField<double>("Torque", "N.m", "", &l_torque);
-
-        l_message.Initialize();
-        l_message.Send();
-
     }
 
     void FrRevoluteLink::Update(double time) {
@@ -122,19 +110,6 @@ namespace frydom {
 
     }
 
-    void FrRevoluteLink::StepFinalize() {
-
-        // Log
-        l_time = m_system->GetTime();
-        l_torque = GetLinkTorqueOnBody2InFrame1AtOrigin2(NWU).GetMz();
-        l_angleDeg = m_totalLinkAngle * RAD2DEG;
-
-        l_message.Serialize();
-        l_message.Send();
-
-        // Log
-    }
-
     void FrRevoluteLink::UpdateForces(double time) {
 
         // Default spring damper force model
@@ -153,12 +128,10 @@ namespace frydom {
         SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
     }
 
-    void FrRevoluteLink::MotorizeSpeed() {
-
-        // INFO : Pour le moment, je ne permets que de faire de la motorisation en vitesse
-        m_actuator = std::make_shared<FrAngularActuatorVelocity>(this);
-
-
+    FrAngularActuator *FrRevoluteLink::Motorize(ACTUATOR_CONTROL control) {
+        m_actuator = std::make_shared<FrAngularActuator>(this, control);
+        GetSystem()->Add(m_actuator);
+        return dynamic_cast<FrAngularActuator*>(m_actuator.get());
     }
 
     double FrRevoluteLink::GetUpdatedRelativeAngle() const {

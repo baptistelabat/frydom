@@ -18,6 +18,10 @@
 
 namespace frydom {
 
+    // Forward declarations
+    class FrLinearActuator;
+    class FrLinearActuator;
+
     /**
      * \class FrPrismaticLink
      * \brief Class for defining a prismatic link.
@@ -69,17 +73,14 @@ namespace frydom {
         /// Get the power delivered by the force in the link, along the z axis of the link
         double GetLinkPower() const override;
 
-        /// Initialize the link
-        void Initialize() override;
-
         /// Update the link
         void Update(double time) override;
 
-        /// Called after every time step, only once
-        void StepFinalize() override;
-
         /// Compute the link force. Here this is essentially a torque with a default spring damper.
         void UpdateForces(double time);
+
+        /// Motorize the link to make it driven
+        FrLinearActuator* Motorize(ACTUATOR_CONTROL control);
 
     private:
 

@@ -31,19 +31,30 @@ void ValidationResults(const std::vector<double> vtime, const std::vector<double
         it += 1;
     }
 
-    auto motion = 0.;
+//    auto motion = -999.;
+//
+//    for (int i=it; i < vtime.size(); i++) {
+//        motion = std::max(motion, heave[i]);
+//    }
 
+    auto motionMax = -999.;
     for (int i=it; i < vtime.size(); i++) {
-        motion = std::max(motion, heave[i]);
+        motionMax = std::max(motionMax, heave[i]);
     }
 
-    auto rao = motion / (0.5 * wave_height);
+    auto motionMin = 999.;
+    for (int i=it; i < vtime.size(); i++) {
+        motionMin = std::min(motionMin, heave[i]);
+    }
+
+//    auto rao = motion / (0.5 * wave_height);
+    auto rao = ((motionMax - motionMin)*0.5) / (0.5 * wave_height);
     auto err_rel = std::abs(rao - rao_bench) / rao_bench;
 
     // Print results
     std::cout << "---------------------------------------------------------" << std::endl;
     std::cout << " T = " << period << " , H = " << wave_height << ", Steepness = " << steepness << std::endl;
-    std::cout << " RAO = " << rao << " bench : " << rao_bench << "error rel. : " << err_rel << std::endl;
+    std::cout << " RAO = " << rao << " Bench : " << rao_bench << " Error rel. : " << err_rel << std::endl;
 
     // Print to file
     std::ofstream myfile;
@@ -79,7 +90,7 @@ std::vector<double> ReadParam(const std::string dbfile, const int iperiod, const
 int main(int argc, char* argv[]) {
 
     std::cout << " ==================================================== \n"
-                 " Benchmark test : Heave motion in regular wave \n"
+                 " Benchmark test : Heave motion in regular waves \n"
                  " ==================================================== " << std::endl;
 
     // -- Input
@@ -93,6 +104,7 @@ int main(int argc, char* argv[]) {
     // -- System
 
     FrOffshoreSystem system;
+    system.SetName("Sphere_RW");
 
     // -- Ocean
 
@@ -115,6 +127,7 @@ int main(int argc, char* argv[]) {
     // -- Body
 
     auto body = system.NewBody();
+    body->SetName("Sphere");
 
     Position COGPosition(0., 0., -2.);
     FrFrame COGFrame(COGPosition, FrRotation(), NWU);
@@ -129,7 +142,9 @@ int main(int argc, char* argv[]) {
 
     // -- Inertia
 
-    double mass = 2.618E5;
+    double mass = 2.618E5; // Theoretical mass.
+//    double mass = 2.61299E5; // Mass from mesh with 6200 faces.
+//    double mass = 2.61488E5; // Mass from mesh with 10000 faces.
 
     double Ixx = 1.690E6;
     double Iyy = 1.690E6;
@@ -148,19 +163,41 @@ int main(int argc, char* argv[]) {
 
     hdb->Map(0, body.get(), eqFrame);
 
-    // -- Hydrostatic
+    // -- Linear hydrostatics
 
     auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
     // -- Radiation
 
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
-
     radiationModel->SetImpulseResponseSize(body.get(), 6., 0.1);
 
-    // -- Excitation
+    // -- Linear diffraction
+
+//    auto diffractionForce = make_linear_diffraction_force(hdb, body);
+
+    // -- Linear Froude-Krylov
+
+//    auto LinFKForce = make_linear_froude_krylov_force(hdb, body);
+
+    // -- Linear excitation
 
     auto excitationForce = make_linear_excitation_force(hdb, body);
+
+    // -- Hydrodynamic mesh
+
+//    auto bodyMesh = make_hydro_mesh(body,"Sphere_6200_faces.obj", FrFrame(), true);
+//    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
+
+    // -- Nonlinear hydrostatics
+
+//    auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
+//    forceHst->SetLogged(true);
+
+    // -- Nonlinear Froude-Krylov
+
+//    auto NonlinFKForce = make_nonlinear_froude_krylov_force(body,bodyMesh);
+//    NonlinFKForce->SetLogged(true);
 
     // -- Simulation
 
@@ -173,6 +210,8 @@ int main(int argc, char* argv[]) {
 
     std::vector<double> vtime;
     std::vector<double> heave;
+
+    clock_t begin = clock();
 
     while (time < 200.) {
         time += dt;
@@ -191,6 +230,10 @@ int main(int argc, char* argv[]) {
         vtime.push_back(time);
         // ##CC
     }
+
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    std::cout << elapsed_secs << std::endl;
 
     ValidationResults(vtime, heave, iPeriod, iSteepness);
 

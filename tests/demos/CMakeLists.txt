@@ -17,9 +17,14 @@ set(DEMOS
         demo_Cylinder
         demo_langlee_FO3F
         demo_FOSWEC_FlapDecay
+        demo_MooringLines
+        demo_Hub_Installation
+        demo_NonLinearHydrostatics
         bench_SphereDecay
         bench_SphereRegular
+        bench_SphereIrregular
         bench_DTMB5512_captive
+        bench_Cables
         )
 
 
@@ -50,8 +55,8 @@ configure_file(../data/ship/Ship.obj . COPYONLY)
 
 configure_file(../data/platform/Platform_GVA7500.obj . COPYONLY)
 configure_file(../data/platform/Platform_HDB.hdb5 . COPYONLY)
-configure_file(../data/platform/Platform_PolarCurrentCoeffs_NC.yml . COPYONLY)
-configure_file(../data/platform/Platform_PolarWindCoeffs_NC.yml . COPYONLY)
+configure_file(../data/platform/Platform_PolarCurrentCoeffs_NC.json . COPYONLY)
+configure_file(../data/platform/Platform_PolarWindCoeffs_NC.json . COPYONLY)
 configure_file(../data/platform/Platform_WaveDriftCoeff.h5 . COPYONLY)
 configure_file(../data/platform/mesh_Platform_GVA7500.nemoh . COPYONLY)
 configure_file(../data/platform/mesh_Platform_GVA7500.obj . COPYONLY)
@@ -59,6 +64,10 @@ configure_file(../data/platform/mesh_Platform_GVA7500_Sym.obj . COPYONLY)
 
 configure_file(../data/bench/sphere/sphere_hdb.h5 . COPYONLY)
 configure_file(../data/bench/sphere/bench_sphere_regular.h5 . COPYONLY)
+configure_file(../data/bench/sphere/sphere_7814_faces.obj . COPYONLY)
+configure_file(../data/bench/sphere/Sphere_6200_faces.obj . COPYONLY)
+configure_file(../data/bench/sphere/Sphere_10000_faces.obj . COPYONLY)
+configure_file(../data/bench/sphere/Sphere_14350_faces.obj . COPYONLY)
 
 configure_file(../data/bench/DTMB5512/DTMB5512.obj . COPYONLY)
 configure_file(../data/bench/DTMB5512/DTMB5512.hdb5 . COPYONLY)
@@ -94,3 +103,9 @@ configure_file(../data/Langlee/Langlee.hdb5 . COPYONLY)
 configure_file(../data/FOSWEC/FOSWEC.hdb5 . COPYONLY)
 configure_file(../data/FOSWEC/FullFlap_mesh.obj . COPYONLY)
 configure_file(../data/FOSWEC/FullPlatform_vizu.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_2900_panels.obj . COPYONLY)
+
+configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPYONLY)
+configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPYONLY)
+configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPYONLY)
+

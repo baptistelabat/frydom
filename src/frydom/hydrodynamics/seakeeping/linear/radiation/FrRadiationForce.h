@@ -47,6 +47,9 @@ namespace frydom {
 
         /// Method to be applied at the end of steps
         void StepFinalize() override;
+
+//        FrRadiationModel* GetRadiationModel() const;
+
     };
 
 

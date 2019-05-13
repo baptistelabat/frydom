@@ -64,6 +64,9 @@ namespace frydom {
         /// \param body body to which the node belongs
         explicit FrNode(FrBody* body);
 
+        /// Destructor
+//        ~FrNode() = default;
+
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "Node"; }
@@ -119,8 +122,6 @@ namespace frydom {
 
 
 
-        /// Destructor
-        ~FrNode() = default;
 
         /// Get the body pointer
         /// \return the body to which the node belongs
@@ -168,6 +169,21 @@ namespace frydom {
         /// \return the node velocity in the node reference frame
         Velocity GetVelocityInNode(FRAME_CONVENTION fc) const;
 
+        /// Get the node angular velocity in world reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return the node angular velocity in world reference frame
+        AngularVelocity GetAngularVelocityInWorld(FRAME_CONVENTION fc) const;
+
+        /// Get the node angular velocity in body reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return the node angular velocity in body reference frame
+        AngularVelocity GetAngularVelocityInBody(FRAME_CONVENTION fc) const;
+
+        /// Get the node angular velocity in node reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return the node angular velocity in node reference frame
+        AngularVelocity GetAngularVelocityInNode(FRAME_CONVENTION fc) const;
+
         /// Get the node acceleration in world reference frame
         /// \param fc Frame convention (NED/NWU)
         /// \return the node acceleration in world reference frame
@@ -181,12 +197,9 @@ namespace frydom {
         /// Initialize method not implemented yet
         void Initialize() override;
 
-        /// StepFinalize method not implemented yet
-        void StepFinalize() override;
-
         // Logging
 
-        void InitializeLog();
+        void AddFields();
 
 
         // =============================================================================================================
@@ -236,6 +249,10 @@ namespace frydom {
             worldVector = GetFrameInWorld().GetQuaternion().GetInverse().Rotate<Vector>(worldVector, fc);
             return worldVector;
         }
+
+    protected:
+
+        std::string BuildPath(const std::string& rootPath) override;
 
     private:
 

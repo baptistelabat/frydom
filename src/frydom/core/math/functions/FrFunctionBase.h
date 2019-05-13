@@ -94,7 +94,6 @@ namespace frydom {
         double Get_y_dxdx(double x) const;
 
         void Initialize() override;
-        void StepFinalize() override;
 
         double operator()(double x) const;
 
@@ -219,16 +218,17 @@ namespace frydom {
 
         /// This class is used internally to add a chrono function object to be added into chrono objects that accept
         /// a ChFunction
-        class FrFunctionChronoInterface : public FrFunctionBase { // TODOD : doit-on heriter de FrFunctionBase ? -> oui !
+        class FrFunctionChronoInterface { // : public FrFunctionBase { // TODOD : doit-on heriter de FrFunctionBase ? -> oui !
 
         private:
             std::shared_ptr<internal::FrChronoFunctionWrapper> m_chronoFunction;
+            FrFunctionBase* m_function; /// The function on which we apply the current function
 
         public:
             explicit FrFunctionChronoInterface(const FrFunctionBase& frydomFunction);
 
 
-        protected:
+//        protected:
             std::shared_ptr<internal::FrChronoFunctionWrapper> GetChronoFunction();
 
         };

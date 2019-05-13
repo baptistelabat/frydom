@@ -322,11 +322,9 @@ namespace frydom {
         /// Get the constraint violation of the link (ie the
         FrFrame GetConstraintViolation() const;  // FIXME : verifier que cette violation ne prend pas en compte la position relative normale de la liaison
 
-        virtual void Initialize() override;
+        void Initialize() override;
 
         virtual void Update(double time);
-
-        virtual void StepFinalize() override {}
 
 
     protected:
@@ -350,6 +348,8 @@ namespace frydom {
 //        /// Set the link torque expressed in marker 1 frame and applied at marker 1
 //        void SetLinkTorqueOtMarker2InFrame2AtOrigin2(const Torque &torque);
         virtual void UpdateCache();
+
+        void AddFields() override;
 
     };
 

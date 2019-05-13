@@ -384,17 +384,9 @@ namespace frydom {
         mathutils::Matrix33<double> GetHydrostaticStiffnessMatrix() const { return m_hydrostaticStiffnessMatrix; }
 
         std::shared_ptr<FrWaveDriftPolarData> GetWaveDrift() const;
-        //
-        // Interpolators
-        //
-
-        void BuildWaveExcitationInterpolators();
-
-        std::vector<Eigen::MatrixXcd> GetExcitationInterp(std::vector<double> waveFrequencies,
-                                                          std::vector<double> waveDirections,
-                                                          mathutils::ANGLE_UNIT angleUnit);
 
         void BuildDiffractionInterpolators();
+
 
     };
 

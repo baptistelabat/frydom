@@ -13,6 +13,7 @@
 #ifndef FRYDOM_FRAIRYIRREGULARWAVEFIELD_H
 #define FRYDOM_FRAIRYIRREGULARWAVEFIELD_H
 
+#include <random>
 
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveSpectrum.h"
 #include "frydom/environment/ocean/freeSurface/waves/FrWaveField.h"
@@ -138,6 +139,16 @@ namespace frydom {
 
         ///Generate random wave phases
         void GenerateRandomWavePhases();
+
+        ///Generate random wave phases
+        void GenerateRandomWavePhases(int seed);
+
+    private:
+
+        ///Generate random wave phases
+        void GenerateRandomWavePhases(std::mt19937& seed);
+
+    public:
 
         std::vector<double> GetWaveFrequencies(FREQUENCY_UNIT unit) const override;
 

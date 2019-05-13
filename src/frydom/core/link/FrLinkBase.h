@@ -30,6 +30,8 @@ namespace chrono {
 
 namespace frydom {
 
+    enum ACTUATOR_CONTROL {POSITION, VELOCITY, FORCE};
+
     // Forward declarations
     class FrNode;
     class FrBody;
@@ -75,12 +77,6 @@ namespace frydom {
 
         /// Return true if the link is included in the static analysis
         bool IncludedInStaticAnalysis() const {return true;}
-
-        // Logging
-
-        /// Initialize the log
-        virtual void InitializeLog();
-
 
 
         /// Returns the first node of the link

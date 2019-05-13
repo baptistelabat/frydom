@@ -113,6 +113,7 @@ namespace frydom {
 
         /// Set angular velocity around Z-direction
         /// \param angularVelocity Angular velocity, in rad/s
+        /// \param fc Frame convention
         void SetAngularVelocityAroundZ(const double& angularVelocity, FRAME_CONVENTION fc);
 
         /// Get the linear velocity of the equilibrium frame in world coordinates
@@ -173,7 +174,7 @@ namespace frydom {
         // Logging
 
         // Initialize the log
-        void InitializeLog() override;
+        void AddFields() override;
 
     private:
 

@@ -24,7 +24,7 @@ namespace frydom {
         Force Gvector(0.,0.,-m_buoy->GetSystem()->GetGravityAcceleration());
         auto rho_water = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
         // FIXME : appliquer la force au centre de poussée et non au centre de gravité : théoriquement aucun effet, mais plus propre.
-        SetForceInBody(-m_buoy->GetVolume()*rho_water*Gvector, NWU);
+        SetForceInWorldAtCOG(-m_buoy->GetVolume()*rho_water*Gvector, NWU);
     }
 
     FrMooringBuoy::FrMooringBuoy(double radius, double mass, bool visual_asset, double damping) {

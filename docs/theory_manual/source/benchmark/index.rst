@@ -10,6 +10,7 @@ Heaving sphere
 
     heaving_sphere_decay_test
     heaving_sphere_regular_wave
+    heaving_sphere_irregular_wave
 
 DTM5512
 ~~~~~~~
@@ -17,3 +18,10 @@ DTM5512
     :maxdepth: 2
 
     dtmb5512_captive_test
+
+Cables
+~~~~~~
+.. toctree::
+    :maxdepth: 2
+
+    comparisons_catenary_dynamic_cables

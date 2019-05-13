@@ -11,32 +11,41 @@
 
 #include "FrNonlinearHydrostaticForce.h"
 
-#include "frydom/core/math/FrVector.h"
 #include "frydom/core/body/FrBody.h"
-#include "frydom/mesh/FrMeshClipper.h"
-#include "frydom/mesh/FrHydrostaticsProperties.h"
+
+#include "frydom/mesh/FrMesh.h"
+#include "frydom/mesh/FrHydroMesh.h"
+
+#include "frydom/environment/FrEnvironment.h"
+#include "frydom/environment/ocean/FrOcean.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
 namespace frydom {
 
-    void FrNonlinearHydrostaticForce::Initialize() {
-
-        // This function initializes the hydrostatic force object.
-
-        // Initialization of the parent class.
-        FrForce::Initialize();
-
+    FrNonlinearHydrostaticForce::FrNonlinearHydrostaticForce(const std::shared_ptr<FrHydroMesh> &HydroMesh) {
+        m_hydroMesh = HydroMesh;
     }
 
-    void FrNonlinearHydrostaticForce::InitializeLog(){
+    void FrNonlinearHydrostaticForce::AddFields(){
+
+        FrForce::AddFields();
 
         // This function initializes the logger for the nonlinear hydrostatic loads by giving the position of the center of buoyancy in the body frame.
 
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("Center of buoyancy","m", fmt::format("Center of buoyancy in world reference frame in {}", c_logFrameConvention),
-                 [this]() {return GetCenterOfBuoyancyInBody(c_logFrameConvention);});
+                ("CenterOfBuoyancyInBody","m", fmt::format("Center of buoyancy in body reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetCenterOfBuoyancyInBody(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("CenterOfBuoyancyInWorld","m", fmt::format("Center of buoyancy in world reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetCenterOfBuoyancyInWorld(GetLogFrameConvention());});
 
-        FrForce::InitializeLog();
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("ForceInWorld","N", fmt::format("Hydrostatic force, at CoB, in world reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetHydrostaticForceInWorld(GetLogFrameConvention());});
+//        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+//                ("ForceInBody","N", fmt::format("Hydrostatic force, at CoB, in body reference frame in {}", GetLogFrameConvention()),
+//                 [this]() {return GetHydrostaticForceInBody(GetLogFrameConvention());});
 
     }
 
@@ -44,50 +53,70 @@ namespace frydom {
 
         // This function computes the nonlinear hydrostatic loads.
 
-        // Clipped mesh.
-        m_clipped_mesh = m_hydro_mesh->GetClippedMesh();
-
-        // Computation of the hydrostatic force.
-        NonlinearHydrostatics NLhydrostatics(m_system->GetEnvironment()->GetFluidDensity(WATER),
-                                             m_system->GetGravityAcceleration()); // Creation of the NonlinearHydrostatics structure.
-        NLhydrostatics.CalcPressureIntegration(m_clipped_mesh);
-
-        // Setting the nonlinear hydrostatic loads in world at the CoB in world.
-        Force force = NLhydrostatics.GetNonlinearForce();
-
-        m_CoBInWorld = m_body->GetPosition(NWU) +
-                       NLhydrostatics.GetCenterOfBuoyancy(); // The translation of the body was not done for avoiding numerical errors.
-
-        this->SetForceInWorldAtPointInWorld(force, m_CoBInWorld,
-                                            NWU); // The torque is computed from the hydrostatic force and the center of buoyancy.
-
-    }
-
-    void FrNonlinearHydrostaticForce::StepFinalize() {
-        FrForce::StepFinalize();
-
-        // Writing the clipped mesh in an output file.
-//        m_clipped_mesh.Write("Mesh_clipped_Hydrostatics.obj");
+        SetForceInWorldAtPointInWorld(GetHydrostaticForceInWorld(NWU), GetCenterOfBuoyancyInWorld(NWU), NWU);
 
     }
 
     Position FrNonlinearHydrostaticForce::GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc){
+        return m_body->GetPointPositionInBody(GetCenterOfBuoyancyInWorld(fc),fc);
+    }
 
-        // This function gives the center of buoyancy in the world frame.
+    Position FrNonlinearHydrostaticForce::GetCenterOfBuoyancyInWorld(FRAME_CONVENTION fc) {
 
-        Position CoBInBody = m_body->GetPointPositionInBody(m_CoBInWorld,fc);
+        // clipped mesh is expressed in the world reference frame, but its horizontal position is centered around (0.,0.)
+        auto CoBInWorld = m_hydroMesh->GetClippedMesh().GetCOG();
 
-        if (IsNED(fc)) internal::SwapFrameConvention<Position>(CoBInBody);
-        return CoBInBody;
+        // Addition of the horizontal position of the body
+        auto bodyPos = m_body->GetPosition(NWU); bodyPos.GetZ() = 0.;
+        CoBInWorld += bodyPos;
+
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(CoBInWorld);
+
+        return CoBInWorld;
+    }
+
+    Force FrNonlinearHydrostaticForce::GetHydrostaticForceInBody(FRAME_CONVENTION fc) {
+        return m_body->ProjectVectorInBody(GetHydrostaticForceInWorld(fc),fc);
+    }
+
+    Force FrNonlinearHydrostaticForce::GetHydrostaticForceInWorld(FRAME_CONVENTION fc) {
+        // This function performs the hydrostatic pressure integration.
+
+        Force hydrostaticForce = {0.,0.,0.};
+        
+        auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
+
+        // Loop over the faces.
+        for (auto f_iter = clippedMesh->faces_begin(); f_iter != clippedMesh->faces_end(); ++f_iter) {
+
+            // Normal.
+            auto normal = clippedMesh->normal(*f_iter);
+
+            // Pressure*Area.
+            auto pressure = clippedMesh->data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
+
+            // Hydrostatic force without the term rho*g.
+            hydrostaticForce[0] += pressure*normal[0];
+            hydrostaticForce[1] += pressure*normal[1];
+            hydrostaticForce[2] += pressure*normal[2];
+
+        }
+
+        // Multiplication by rho*g
+        hydrostaticForce *= m_body->GetSystem()->GetGravityAcceleration() * m_body->GetSystem()->GetEnvironment()->GetFluidDensity(WATER);
+
+        if (IsNED(fc)) internal::SwapFrameConvention<Position>(hydrostaticForce);
+
+        return hydrostaticForce;
     }
 
     std::shared_ptr<FrNonlinearHydrostaticForce>
-    make_nonlinear_hydrostatic_force(FrOffshoreSystem *system, std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh){
+    make_nonlinear_hydrostatic_force(const std::shared_ptr<FrBody>& body, const std::shared_ptr<FrHydroMesh>& HydroMesh){
 
         // This function creates a (fully or weakly) nonlinear hydrostatic force object.
 
         // Construction of the (fully or weakly) nonlinear hydrostatic force object.
-        auto forceHst = std::make_shared<FrNonlinearHydrostaticForce>(system,HydroMesh);
+        auto forceHst = std::make_shared<FrNonlinearHydrostaticForce>(HydroMesh);
 
         // Add the (fully or weakly) nonlinear hydrostatic force object as an external force to the body.
         body->AddExternalForce(forceHst);

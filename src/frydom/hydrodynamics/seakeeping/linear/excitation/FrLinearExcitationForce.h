@@ -17,10 +17,8 @@
 #include <vector>
 
 #include "MathUtils/Matrix66.h"
-
 #include "frydom/core/force/FrForce.h"
-
-
+#include "FrLinearExcitationForceBase.h"
 
 namespace frydom {
 
@@ -33,21 +31,13 @@ namespace frydom {
      * \class FrLinearExcitationForce
      * \brief Class for computing the linear excitation loads.
      */
-    class FrLinearExcitationForce : public FrForce {
 
-    private:
-
-        std::shared_ptr<FrHydroDB> m_HDB;               ///< HDB to which the linear excitation force is linked
-        //TODO: passed the raw to shared ptr, need some modif in the mapper.
-        FrEquilibriumFrame* m_equilibriumFrame;         ///< Equilibrium frame linked with the linear excitation model
-        std::vector<Eigen::MatrixXcd> m_Fexc;           ///< Complex excitation force coefficients in frequency domain
-        mathutils::Matrix66<std::complex<double>> m_steadyForce;    ///< Complex steady part of the linear excitation force
+    class FrLinearExcitationForce : public FrLinearExcitationForceBase {
 
     public:
 
-        /// Constructor of the linear excitation force with specified HDB
-        /// \param HDB HDB to which the linear excitation force is linked
-        explicit FrLinearExcitationForce(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) {};
+        /// Constructor.
+        explicit FrLinearExcitationForce(std::shared_ptr<FrHydroDB> HDB) : FrLinearExcitationForceBase(HDB) {};
 
         /// Get the type name of this object
         /// \return type name of this object
@@ -56,8 +46,9 @@ namespace frydom {
         /// Method to initialize the linear excitation force
         void Initialize() override;
 
-        /// This function is called at the end of the time step, after the last step of the integration scheme.
-        void StepFinalize() override;
+        Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
+
+        Eigen::VectorXcd GetHDBData(unsigned int iangle, unsigned int iforce) const override;
 
     private:
 

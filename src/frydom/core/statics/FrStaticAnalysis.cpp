@@ -60,6 +60,9 @@ namespace frydom{
 
     void FrStaticAnalysis::Initialize() {
 
+        // Log
+        SetPathManager(m_system->GetPathManager());
+
         // Store the starting time of the simulation
         m_undoTime = m_system->GetTime();
         // Store the time ramp before setting it to 1
@@ -104,9 +107,9 @@ namespace frydom{
         // Logging
         m_system->GetPathManager()->SetRunPath("Static");
         m_system->ClearLogs();
-        m_system->InitializeLog();
+        m_system->InitializeLog("");
 
-        auto logPath = m_system->GetPathManager()->BuildPath(this,"statics.csv");
+         auto logPath = m_system->GetPathManager()->BuildPath("statics.csv");
 
         // Add the fields to be logged
         m_message->AddField<double>("iteration", "-", "iteration of the static analysis",
@@ -176,7 +179,7 @@ namespace frydom{
         // Set all the output paths for the logs back to their original paths
         m_system->GetPathManager()->SetRunPath("Dynamic");
         m_system->ClearLogs();
-        m_system->InitializeLog();
+        m_system->InitializeLog("");
 
     }
 
@@ -201,10 +204,13 @@ namespace frydom{
             for (auto &body : m_system->GetBodyList()) {
                 c_residual += body->GetVelocityInWorld(NWU).norm();
             }
+            for (auto &mesh : m_system->GetFEAMeshList()) {
+                c_residual += mesh->GetStaticResidual();
+            }
 
             FrObject::SendLog();
 
-            std::cout<<m_system->GetTime()<<std::endl;
+            std::cout<<"t = "<<m_system->GetTime()<<", res = "<<c_residual<<std::endl;
 
             if (c_residual < m_tolerance &&
                 m_system->GetTime()>m_undoTime+m_system->GetTimeStep()*m_nSteps) {

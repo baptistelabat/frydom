@@ -128,9 +128,6 @@ namespace frydom {
             /// Initialize the field object
             void Initialize() override;
 
-            /// Method of be applied at the end of each time step
-            void StepFinalize() override;
-
         };
 
 

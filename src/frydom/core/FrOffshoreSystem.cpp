@@ -13,15 +13,20 @@
 #include "FrOffshoreSystem.h"
 
 #include "chrono/utils/ChProfiler.h"
+#include "chrono/fea/ChLinkPointFrame.h"
+#include "chrono/physics/ChLinkMate.h"
 
 #include "frydom/core/link/links_lib/FrLink.h"
 #include "frydom/core/body/FrBody.h"
+#include "frydom/core/common/FrFEAMesh.h"
+#include "frydom/cable/FrDynamicCable.h"
 #include "frydom/core/force/FrForce.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/utils/FrIrrApp.h"
 #include "frydom/core/statics/FrStaticAnalysis.h"
 
 #include "frydom/core/math/functions/ramp/FrCosRampFunction.h"
+#include "frydom/utils/FrSerializerFactory.h"
 
 
 namespace frydom {
@@ -57,6 +62,10 @@ namespace frydom {
             // Links updates  // FIXME : appeler les updates directement des objets frydom !
             for (auto &link : linklist) {
                 link->Update(ChTime, update_assets);
+            }
+
+            for (auto &mesh : meshlist) {
+                mesh->Update(ChTime, update_assets);
             }
 
             // Physics items that have to be updated after all
@@ -129,7 +138,6 @@ namespace frydom {
 
     }  // end namespace frydom::internal
 
-
     /// Default constructor
     /// \param systemType contact method system (SMOOTH_CONTACT/NONSMOOTH_CONTACT)
     /// \param timeStepper time stepper type
@@ -157,7 +165,7 @@ namespace frydom {
         m_environment = std::make_unique<FrEnvironment>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
 
         // Creating the log manager service
-        m_pathManager = std::make_unique<FrPathManager>();
+        m_pathManager = std::make_shared<FrPathManager>();
         
         // Create the static analysis 
         m_statics = std::make_unique<FrStaticAnalysis>(this);
@@ -167,9 +175,11 @@ namespace frydom {
     }
 
     FrOffshoreSystem::~FrOffshoreSystem() = default;
+
+
     void FrOffshoreSystem::Add(std::shared_ptr<FrObject> newItem) {
         assert(std::dynamic_pointer_cast<FrBody>(newItem) ||
-               std::dynamic_pointer_cast<FrLink>(newItem) ||
+               std::dynamic_pointer_cast<FrLinkBase>(newItem) ||
                std::dynamic_pointer_cast<FrPhysicsItem>(newItem));
 
         if (auto item = std::dynamic_pointer_cast<FrBody>(newItem)) {
@@ -177,7 +187,7 @@ namespace frydom {
             return;
         }
 
-        if (auto item = std::dynamic_pointer_cast<FrLink>(newItem)) {
+        if (auto item = std::dynamic_pointer_cast<FrLinkBase>(newItem)) {
             AddLink(item);
             return;
         }
@@ -336,6 +346,51 @@ namespace frydom {
     }
 
 
+    // ***** FEAMesh *****
+
+    void FrOffshoreSystem::AddFEAMesh(std::shared_ptr<FrFEAMesh> feaMesh){
+        m_chronoSystem->AddMesh(feaMesh->GetChronoMesh());  // Authorized because this method is a friend of FrFEAMesh
+
+        feaMesh->m_system = this;
+        m_feaMeshList.push_back(feaMesh);
+    }
+
+    void FrOffshoreSystem::Add(std::shared_ptr<FrDynamicCable> cable) {
+
+        // Add the FEA mesh
+        AddFEAMesh(cable);
+
+        // Add the hinges
+        m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_startingHinge);
+        m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_endingHinge);
+
+    }
+
+    FrOffshoreSystem::FEAMeshContainer FrOffshoreSystem::GetFEAMeshList() {
+        return m_feaMeshList;
+    }
+
+    void FrOffshoreSystem::RemoveFEAMesh(std::shared_ptr<FrFEAMesh> feamesh) {
+
+        m_chronoSystem->RemoveMesh(feamesh->GetChronoMesh());
+
+        auto it = std::find(m_feaMeshList.begin(),m_feaMeshList.end(),feamesh);
+        assert(it != m_feaMeshList.end());
+        m_feaMeshList.erase(it);
+        feamesh->m_system = nullptr;
+
+    }
+
+    void FrOffshoreSystem::Remove(std::shared_ptr<FrDynamicCable> cable) {
+
+        RemoveFEAMesh(cable);
+
+        m_chronoSystem->RemoveOtherPhysicsItem(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_startingHinge);
+        m_chronoSystem->RemoveOtherPhysicsItem(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_endingHinge);
+
+    }
+
+
     // ***** Environment *****
 
     FrEnvironment *FrOffshoreSystem::GetEnvironment() const {
@@ -395,13 +450,13 @@ namespace frydom {
             item->Initialize();
         }
 
-        for (auto& item : m_PostPhysicsList) {
+        for (auto& item : m_feaMeshList) {
             item->Initialize();
         }
 
-        // Full assembly -computes also forces-
-        m_chronoSystem->Setup(); //FIXME : utile? déjà fait dans DoAssembly
-        m_chronoSystem->DoFullAssembly();
+        for (auto& item : m_PostPhysicsList) {
+            item->Initialize();
+        }
 
         m_chronoSystem->Update();
 
@@ -410,7 +465,7 @@ namespace frydom {
         if (IsLogged()) {
             m_pathManager->Initialize(this);
             m_pathManager->SetRunPath("Dynamic");
-            InitializeLog();
+            InitializeLog("");
         }
 
         m_isInitialized = true;
@@ -433,6 +488,10 @@ namespace frydom {
         }
 
         for (auto& item : m_linkList) {
+            item->StepFinalize();
+        }
+
+        for (auto& item : m_feaMeshList) {
             item->StepFinalize();
         }
 
@@ -716,6 +775,10 @@ namespace frydom {
             }
         }
 
+        for (auto &mesh : m_feaMeshList) {
+            mesh->Relax();
+        }
+
     }
 
     void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type, bool checkCompat) {
@@ -836,9 +899,12 @@ namespace frydom {
 
         m_bodyList.clear();
         m_linkList.clear();
+        m_feaMeshList.clear();
         m_PrePhysicsList.clear();
         m_MidPhysicsList.clear();
         m_PostPhysicsList.clear();
+
+        m_isInitialized = false;
     }
 
     chrono::ChSystem* FrOffshoreSystem::GetChronoSystem() {
@@ -900,7 +966,6 @@ namespace frydom {
         if (!m_isInitialized) Initialize();
     }
 
-
     // Iterators
 
     FrOffshoreSystem::BodyIter FrOffshoreSystem::body_begin() {
@@ -935,41 +1000,35 @@ namespace frydom {
         return m_linkList.cend();
     }
 
-    void FrOffshoreSystem::InitializeLog() {
+    void FrOffshoreSystem::InitializeLog_Dependencies(const std::string& systemPath) {
 
         if (IsLogged()) {
-
-            auto logPath = m_pathManager->BuildPath(this, "system.csv");
-
-            // Add the fields
-            // TODO A completer
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                    [this]() { return m_chronoSystem->GetChTime(); });
-
-            // Init the message
-            FrObject::InitializeLog(logPath);
 
             // Initializing environment before bodies
 //            m_environment->InitializeLog();
 
             for (auto &item : m_PrePhysicsList) {
-                item->InitializeLog();
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_bodyList) {
-                item->InitializeLog();
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_MidPhysicsList) {
-                item->InitializeLog();
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_linkList) {
-                item->InitializeLog();
+                item->InitializeLog(systemPath);
+            }
+
+            for (auto &item : m_feaMeshList) {
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_PostPhysicsList) {
-                item->InitializeLog();
+                item->InitializeLog(systemPath);
             }
 
         }
@@ -1007,7 +1066,17 @@ namespace frydom {
 
     }
 
-    FrPathManager *FrOffshoreSystem::GetPathManager() const { return m_pathManager.get(); }
+    std::string FrOffshoreSystem::BuildPath(const std::string &rootPath) {
+
+        auto objPath= fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
+
+        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
+
+        // Add a serializer
+        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
+
+        return objPath;
+    }
 
 
 }  // end namespace frydom

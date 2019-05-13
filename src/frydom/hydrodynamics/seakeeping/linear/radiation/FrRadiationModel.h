@@ -136,11 +136,6 @@ namespace frydom {
         /// Method to be applied at the end of each time step
         void StepFinalize() override;
 
-        // Logging
-
-        /// Initialize the log
-        void InitializeLog() override;
-
         /// Set the impulse response function size
         /// \param BEMBody BEM body database corresponding to the body to which the radiation force is applied
         /// \param Te Time length

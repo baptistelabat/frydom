@@ -26,16 +26,11 @@ set(UNIT_TESTS
         test_FrKinematicStretching
         test_FrWaveSpectrum
         test_FrQuadraticDamping
+        test_FrShape
         #test_FrLinks
 #        test_FrFunction
-	test_edge_splitting
-	test_OpenMesh
+        test_edge_splitting
         )
-
-#enable_testing()
-#include(Add_googletest)il
-#include(URL.conf)
-#include(Add_googletest)
 
 
 foreach(test ${UNIT_TESTS})
@@ -57,14 +52,12 @@ foreach (subdir ${subdirs})
 endforeach ()
 
 configure_file(../data/TNR_database.h5 . COPYONLY)
-configure_file(../data/ship/Ship_PolarCurrentCoeffs.yml . COPYONLY)
-configure_file(../data/ship/Ship_PolarWindCoeffs.yml . COPYONLY)
+configure_file(../data/ship/Ship_PolarCurrentCoeffs.json . COPYONLY)
+configure_file(../data/ship/Ship_PolarWindCoeffs.json . COPYONLY)
 
 configure_file(../data/Mesh_clipper/MagneViking.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/MagneViking_clip.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/searev.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/searev_clip.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/BARGE.obj . COPYONLY)
-configure_file(../data/platform/Platform_GVA7500.obj . COPY)
-
-
+configure_file(../data/platform/Platform_GVA7500.obj . COPYONLY)

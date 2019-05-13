@@ -222,7 +222,7 @@ void TestFrCurrentForce_::SetUp() {
     body->SetCOG(COGPosition, NWU);
     system.AddBody(body);
 
-    force = std::make_shared<FrCurrentForce_>("../Ship_PolarCurrentCoeffs.yml");
+    force = std::make_shared<FrCurrentForce_>("../Ship_PolarCurrentCoeffs.json");
     body->AddExternalForce(force);
 
     system.Initialize();

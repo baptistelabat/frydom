@@ -161,12 +161,12 @@ namespace frydom {
 
     }
 
-    void FrBEMBody::Finalize() {
-
-        /// This function runs the interpolators.
-
-        BuildWaveExcitationInterpolators();
-    }
+//    void FrBEMBody::Finalize() {
+//
+//        // This function runs the interpolators.
+//
+//        BuildWaveExcitationInterpolators();
+//    }
 
     //
     // Mask
@@ -358,94 +358,6 @@ namespace frydom {
         assert(idof < 6);
         return m_interpKu[BEMBodyMotion][idof].get();
     };
-
-    //
-    // Interpolators for the excitation force
-    //
-
-    void FrBEMBody::BuildWaveExcitationInterpolators() {
-
-        // This function interpolates the excitation loads with respect to the wave direction.
-
-        auto nbWaveDirections = GetNbWaveDirections();
-        auto nbFreq = GetNbFrequencies();
-        auto nbForceModes = GetNbForceMode();
-
-        m_waveDirInterpolators.clear();
-        m_waveDirInterpolators.reserve(nbForceModes);
-
-        auto angles = std::make_shared<std::vector<double>>(GetWaveDirections(mathutils::RAD, NWU));
-
-        auto interpolators = std::vector<mathutils::Interp1dLinear<double, std::complex<double>>>();
-        interpolators.reserve(nbFreq);
-
-        for (unsigned int imode = 0; imode<nbForceModes; ++imode) {
-
-            interpolators.clear();
-
-            for (unsigned int ifreq=0; ifreq<nbFreq; ++ifreq) {
-
-                auto coeffs = std::make_shared<std::vector<std::complex<double>>>();
-                coeffs->reserve(nbWaveDirections);
-
-                for (unsigned int iangle=0; iangle<nbWaveDirections; ++iangle) {
-                    auto data = GetExcitation(iangle);
-                    coeffs->push_back(data(imode, ifreq));
-                }
-
-                auto interpolator = mathutils::Interp1dLinear<double, std::complex<double>>();
-                interpolator.Initialize(angles, coeffs);
-                interpolators.push_back(interpolator);
-            }
-            m_waveDirInterpolators.push_back(interpolators);
-        }
-    }
-
-    std::vector<Eigen::MatrixXcd>
-    FrBEMBody::GetExcitationInterp(std::vector<double> waveFrequencies,
-                                    std::vector<double> waveDirections,
-                                    mathutils::ANGLE_UNIT angleUnit) {
-
-        // --> Getting sizes
-
-        auto nbFreqInterp = waveFrequencies.size();
-        auto nbFreqBDD = GetNbFrequencies();
-        auto nbDirInterp = waveDirections.size();
-        auto nbForceMode = GetNbForceMode();
-
-        std::vector<Eigen::MatrixXcd> Fexc;
-        Fexc.reserve(nbDirInterp);
-
-        // -> Building interpolator and return vector
-
-        auto freqsBDD = std::make_shared<std::vector<double>>(GetFrequencies());
-
-        auto freqCoeffs = std::make_shared<std::vector<std::complex<double>>>();
-        freqCoeffs->reserve(nbFreqBDD);
-
-        for (auto direction: waveDirections) {
-
-            auto excitationForceDir = Eigen::MatrixXcd(nbForceMode, nbFreqInterp);
-
-            for (unsigned int imode=0; imode<nbForceMode; ++imode) {
-
-                freqCoeffs->clear();
-                for (unsigned int ifreq=0; ifreq<nbFreqBDD; ++ifreq) {
-                    freqCoeffs->push_back(m_waveDirInterpolators[imode][ifreq](direction));
-                }
-
-                auto freqInterpolator = mathutils::Interp1dLinear<double, std::complex<double>>();
-                freqInterpolator.Initialize(freqsBDD, freqCoeffs);
-
-                auto freqCoeffsInterp = freqInterpolator(waveFrequencies);
-                for (unsigned int ifreq=0; ifreq<nbFreqInterp; ++ifreq) {
-                    excitationForceDir(imode, ifreq) = freqCoeffsInterp[ifreq];
-                }
-            }
-            Fexc.push_back(excitationForceDir);
-        }
-        return Fexc;
-    }
 
     std::shared_ptr<FrWaveDriftPolarData> FrBEMBody::GetWaveDrift() const {
         return m_waveDrift;

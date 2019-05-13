@@ -3,7 +3,7 @@
 Captive test for the DTMB5512 surface combatant in regular head waves
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This benchmark corresponds to the modelisation of the surface combatant DTMB5512 in captive motion submitted to regular head wave. The DTMB5512 is a 3.048m geosym of the DTMB5415 which have been chosen by the International Towing Tank Conference (ITTC) as an international benchmark for CFD validation. Description of this test case and comparison of the result with experimental results are summarized in the following.
+This benchmark corresponds to the simulation of the surface combatant DTMB5512 in captive motion submitted to regular head wave. The DTMB5512 is a 3.048m geosym of the DTMB5415 which have been chosen by the International Towing Tank Conference (ITTC) as an international benchmark for CFD validation. Description of this test case and comparison of the result with experimental results are summarized in the following.
 
 Description of the test case
 ----------------------------

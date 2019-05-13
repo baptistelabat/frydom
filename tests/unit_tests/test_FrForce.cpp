@@ -118,7 +118,6 @@ private:
     /// Override pure virtual methods
     void Compute(double time) override {};
     void Initialize() override {};
-    void StepFinalize() override {};
 };
 
 Position TestFrForce_::ReadPosition(FrHDF5Reader& reader, std::string field) {

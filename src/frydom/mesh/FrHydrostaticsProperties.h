@@ -48,10 +48,10 @@ namespace frydom {
 
         double m_hullWetArea = 0.;
 
-        mathutils::Vector3d<double> m_waterPlaneCenter = {0., 0., 0.};
+        Position m_waterPlaneCenter = {0., 0., 0.};
 
-        mathutils::Vector3d<double> m_buoyancyCenter = {0., 0., 0.};
-        mathutils::Vector3d<double> m_centerOfGravity = {0., 0., 0.};
+        Position m_buoyancyCenter = {0., 0., 0.};
+        Position m_centerOfGravity = {0., 0., 0.};
 
         double m_draught = 0.;
         double m_lengthOverallSubmerged = 0.;
@@ -73,7 +73,11 @@ namespace frydom {
                 m_waterDensity(waterDensity),
                 m_gravityAcceleration(gravityAcceleration) {}
 
-        void Load(const mesh::FrMesh& mesh, mathutils::Vector3d<double> cog);
+        FrHydrostaticsProperties(double waterDensity, double gravityAcceleration, mesh::FrMesh& clipped_mesh, Position cog) :
+                m_waterDensity(waterDensity),
+                m_gravityAcceleration(gravityAcceleration),
+                m_clippedMesh(clipped_mesh),
+                m_centerOfGravity(cog) {}
 
         void Process();
 
@@ -166,48 +170,6 @@ namespace frydom {
         }
 
     };
-
-    /**
-     * \class NonlinearHydrostatics
-     * \brief Class for computing the hydrostatic pressure integration over a mesh.
-     */
-    class NonlinearHydrostatics{
-
-    private:
-
-        /// Water density.
-        double m_waterDensity = 1023.;
-
-        /// Gravity constant.
-        double m_gravityAcceleration = 9.81;
-
-        /// Center of buoyancy in world.
-        Position m_centerOfBuoyancy = Position(0.,0.,0.);
-
-        /// Hydrostatic force.
-        Force m_force = Force(0.,0.,0.);
-
-    public:
-
-        /// Constructor.
-        NonlinearHydrostatics() : m_waterDensity(1023.), m_gravityAcceleration(9.81) {}
-
-        /// Constructor.
-        NonlinearHydrostatics(double waterDensity, double gravityAcceleration) :
-                m_waterDensity(waterDensity),
-                m_gravityAcceleration(gravityAcceleration) {}
-
-        /// This function performs the hydrostatic pressure integration.
-        void CalcPressureIntegration(const mesh::FrMesh& clipped_mesh);
-
-        /// This function gives the weakly or fully nonlinear hydrostatic force.
-        Force GetNonlinearForce(){return m_force;};
-
-        /// This function gives the center of buoyancy of the immersed mesh.
-        Position GetCenterOfBuoyancy(){return m_centerOfBuoyancy;};
-
-    };
-
 }
 
 #endif //FRYDOM_DICE_HYDROSTATICSPROPERTIES_H

@@ -264,25 +264,6 @@ namespace frydom {
         m_dt = dt;
     }
 
-    void FrRadiationConvolutionModel::InitializeLog() {
-
-        if (IsLogged()) {
-
-            // Build the path to the radiation convolution model log
-            auto logPath = m_system->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
-
-            // Add the fields to be logged here
-            // TODO: A completer
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return m_system->GetTime(); });
-
-            // Initialize the message
-            FrObject::InitializeLog(logPath);
-
-        }
-
-    }
-
     std::shared_ptr<FrRadiationConvolutionModel>
     make_radiation_convolution_model(std::shared_ptr<FrHydroDB> HDB, FrOffshoreSystem* system){
 
