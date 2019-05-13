@@ -82,7 +82,7 @@ namespace frydom {
     class FrRotation;
     class FrGeographicCoord;
     class FrAsset;
-    class FrBodyDOFMask;
+    class FrDOFMask;
     class FrLink;
     class FrTriangleMeshConnected;
 
@@ -109,7 +109,7 @@ namespace frydom {
         CONTACT_TYPE m_contactType = CONTACT_TYPE::SMOOTH_CONTACT; ///< The contact method that has to be consistent with that of the FrOffshoreSystem
 
 
-        std::unique_ptr<FrBodyDOFMask> m_DOFMask;
+        std::unique_ptr<FrDOFMask> m_DOFMask;
         std::shared_ptr<FrLink> m_DOFLink;
 
     public:
@@ -836,7 +836,7 @@ namespace frydom {
         // CONSTRAINTS ON DOF
         // =============================================================================================================
 
-        FrBodyDOFMask* GetDOFMask();
+        FrDOFMask* GetDOFMask();
 
     protected:
 

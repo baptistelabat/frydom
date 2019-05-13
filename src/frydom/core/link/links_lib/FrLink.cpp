@@ -99,9 +99,11 @@ namespace frydom {
 
         }
 
-        void FrLinkLockBase::SetMask(FrBodyDOFMask* vmask) {
-            chrono::ChLinkMaskLF chronoMask;
-            chronoMask.SetLockMask(
+        void FrLinkLockBase::SetMask(FrDOFMask* vmask) {
+
+            if (vmask->GetLinkType == LINK_TYPE::CUSTOM) {
+                chrono::ChLinkMaskLF chronoMask;
+                chronoMask.SetLockMask(
                     vmask->GetLock_X(),  // x
                     vmask->GetLock_Y(),  // y
                     vmask->GetLock_Z(),  // z
@@ -109,8 +111,12 @@ namespace frydom {
                     vmask->GetLock_Rx(), // e1
                     vmask->GetLock_Ry(), // e2
                     vmask->GetLock_Rz()  // e3
-            );
-            BuildLink(&chronoMask);
+                );
+                BuildLink(&chronoMask);
+            } else {
+                this->SetLinkType(vmask->GetLinkType());
+            }
+
         }
 
         void FrLinkLockBase::SetLinkForceOnBody1InFrame2AtOrigin1(const Force &force) {
@@ -193,6 +199,14 @@ namespace frydom {
         m_chronoLink->SetBroken(broken);
         if (IsMotorized()) {
             m_actuator->SetDisabled(broken);
+        }
+    }
+
+    void FrLink::SetLocked(bool locked) {
+        if (locked) {
+            m_chronoLink->SetLinkType(FIXED_LINK);
+        } else {
+            m_chronoLink->SetMask(&m_dofMask);
         }
     }
 
@@ -486,78 +500,107 @@ namespace frydom {
 
     }
 
+    void FrLink::InitializeWithBodyDOFMask(FrDOFMask *mask) {
+        m_chronoLink->SetMask(mask);
+    }
+
+    FrFrame FrLink::GetConstraintViolation() const {
+        return m_chronoLink->GetConstraintViolation();
+    }
+
+    void FrLink::UpdateCache() {}
 
     /*
-     * FrBodyDOFMask definitions
+     * FrDOFMask definitions
      */
 
-    FrBodyDOFMask::FrBodyDOFMask() = default;
+    FrDOFMask::FrDOFMask() = default;
 
-    void FrBodyDOFMask::SetLock_X(bool lock) { m_xLocked = lock; }
+    void FrDOFMask::SetLock_X(bool lock) {
+        m_xLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::SetLock_Y(bool lock) { m_yLocked = lock; }
+    void FrDOFMask::SetLock_Y(bool lock) {
+        m_yLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::SetLock_Z(bool lock) { m_zLocked = lock; }
+    void FrDOFMask::SetLock_Z(bool lock) {
+        m_zLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::SetLock_Rx(bool lock) { m_RxLocked = lock; }
+    void FrDOFMask::SetLock_Rx(bool lock) {
+        m_RxLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::SetLock_Ry(bool lock) { m_RyLocked = lock; }
+    void FrDOFMask::SetLock_Ry(bool lock) {
+        m_RyLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::SetLock_Rz(bool lock) { m_RzLocked = lock; }
+    void FrDOFMask::SetLock_Rz(bool lock) {
+        m_RzLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::LockXZPlane() {
+    void FrDOFMask::LockXZPlane() {
         MakeItFree();
         SetLock_Y(true);
         SetLock_Rx(true);
         SetLock_Rz(true);
     }
 
-    void FrBodyDOFMask::LockXYPlane() {
+    void FrDOFMask::LockXYPlane() {
         MakeItFree();
         SetLock_Z(true);
         SetLock_Rx(true);
         SetLock_Ry(true);
     }
 
-    bool FrBodyDOFMask::GetLock_X() const { return m_xLocked; }
+    bool FrDOFMask::GetLock_X() const { return m_xLocked; }
 
-    bool FrBodyDOFMask::GetLock_Y() const { return m_yLocked; }
+    bool FrDOFMask::GetLock_Y() const { return m_yLocked; }
 
-    bool FrBodyDOFMask::GetLock_Z() const { return m_zLocked; }
+    bool FrDOFMask::GetLock_Z() const { return m_zLocked; }
 
-    bool FrBodyDOFMask::GetLock_Rx() const { return m_RxLocked; }
+    bool FrDOFMask::GetLock_Rx() const { return m_RxLocked; }
 
-    bool FrBodyDOFMask::GetLock_Ry() const { return m_RyLocked; }
+    bool FrDOFMask::GetLock_Ry() const { return m_RyLocked; }
 
-    bool FrBodyDOFMask::GetLock_Rz() const { return m_RzLocked; }
+    bool FrDOFMask::GetLock_Rz() const { return m_RzLocked; }
 
-    bool FrBodyDOFMask::HasLockedDOF() const {
+    bool FrDOFMask::HasLockedDOF() const {
         return m_xLocked || m_yLocked || m_zLocked || m_RxLocked || m_RyLocked || m_RzLocked;
     }
 
-    bool FrBodyDOFMask::IsFree() const {
+    bool FrDOFMask::IsFree() const {
         return !HasLockedDOF();
     }
 
-    void FrBodyDOFMask::MakeItFree() {
+    void FrDOFMask::MakeItFree() {
         m_xLocked = false;
         m_yLocked = false;
         m_zLocked = false;
         m_RxLocked = false;
         m_RyLocked = false;
         m_RzLocked = false;
+        m_linkType = LINK_TYPE::FREE_LINK;
     }
 
-    void FrBodyDOFMask::MakeItLocked() {
+    void FrDOFMask::MakeItLocked() {
         m_xLocked = true;
         m_yLocked = true;
         m_zLocked = true;
         m_RxLocked = true;
         m_RyLocked = true;
         m_RzLocked = true;
+        m_linkType = LINK_TYPE::FIXED_LINK;
     }
 
-    unsigned int FrBodyDOFMask::GetNbLockedDOF() const {
+    unsigned int FrDOFMask::GetNbLockedDOF() const {
         unsigned int nb = 0;
         if (m_xLocked) nb++;
         if (m_yLocked) nb++;
@@ -568,18 +611,50 @@ namespace frydom {
         return nb;
     }
 
-    unsigned int FrBodyDOFMask::GetNbFreeDOF() const {
+    unsigned int FrDOFMask::GetNbFreeDOF() const {
         return 6 - GetNbLockedDOF();
     }
 
-    void FrLink::InitializeWithBodyDOFMask(FrBodyDOFMask *mask) {
-        m_chronoLink->SetMask(mask);
+    void FrDOFMask::SetLinkType(frydom::LINK_TYPE linkType) {
+        m_linkType = linkType;
+
+        switch(m_linkType) {
+            case LINK_TYPE::FREE_LINK:
+                SetLock(false, false, false, false, false, false);
+                break;
+            case LINK_TYPE::FIXED_LINK:
+                SetLock(true, true, true, true, true, true);
+                break;
+            case LINK_TYPE::REVOLUTE:
+                SetLock(true, true, true, true, true, false);
+                break;
+            case LINK_TYPE::PRISMATIC:
+                SetLock(true, true, false, true, true, true);
+                break;
+            case LINK_TYPE::CYLINDRICAL:
+                SetLock(true, true, false, true, true, false);
+                break;
+            case LINK_TYPE::SPHERICAL:
+                SetLock(true, true, true, false ,false, false);
+                break;
+            default:
+                SetLock(false, false, false, false, false, false);
+                break;
+        }
     }
 
-    FrFrame FrLink::GetConstraintViolation() const {
-        return m_chronoLink->GetConstraintViolation();
+    LINK_TYPE FrDOFMask::GetLinkType() const {
+        return m_linkType;
     }
 
-    void FrLink::UpdateCache() {}
+    void FrDOFMask::SetLock(bool xLocked, bool yLocked, bool zLocked, bool rxLocked, bool ryLocked, bool rzLocked) {
+        m_xLocked = xLocked;
+        m_yLocked = yLocked;
+        m_zLocked = zLocked;
+        m_RxLocked = rxLocked;
+        m_RyLocked = ryLocked;
+        m_RzLocked = rzLocked;
+    }
+
 
 }  // end namespace frydom

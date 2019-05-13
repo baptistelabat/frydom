@@ -45,13 +45,14 @@ namespace frydom {
         PRISMATIC,
         REVOLUTE,
 //        SCREW,
-        SPHERICAL
+        SPHERICAL,
+        CUSTOM
     };
 
 
     // Forward declaration
     class FrLink;
-    class FrBodyDOFMask;
+    class FrDOFMask;
 
     namespace internal {
 
@@ -94,7 +95,7 @@ namespace frydom {
 
             /// Set a mask. Mainly used in the case of body constraints with the world where we do not use specialized
             // classes for the link
-            void SetMask(FrBodyDOFMask* mask);
+            void SetMask(FrDOFMask* mask); // TODO : ne pas avoir de reference a body dof mask ici
 
             /// Set the link force applying on Body 1 (as external) expressed in marker 2 frame and on marker 1 origin
             void SetLinkForceOnBody1InFrame2AtOrigin1(const Force &force);
@@ -121,7 +122,7 @@ namespace frydom {
      */
 
     // Forward declaration
-    class FrBodyDOFMask;
+    class FrDOFMask;
     class FrActuator;
 
     /**
@@ -137,6 +138,7 @@ namespace frydom {
         FrFrame m_frame2WRT1_reference;
         bool m_breakable = false; // TODO : utiliser et permettre de declencher la cassure de la liaison
 
+        FrDOFMask m_dofMask;
 
         // Actuator
         std::shared_ptr<FrActuator> m_actuator;
@@ -166,6 +168,8 @@ namespace frydom {
 
         /// Set the 'broken' status vof this link.
         void SetBroken(bool broken);
+
+        virtual void SetLocked(bool locked);
 
         /// Tells if the link is currently active, in general,
         /// that is tells if it must be included into the system solver or not.
@@ -314,10 +318,10 @@ namespace frydom {
         /// Generic computation of the power delivered in a FrLink
         virtual double GetLinkPower() const;
 
-        /// Initialize a FrLink with a FrBodyDOFMask. Essentially used by the DOF restricting mechanism of bodies
+        /// Initialize a FrLink with a FrDOFMask. Essentially used by the DOF restricting mechanism of bodies
         /// Users should not use this method to make links between bodies but directly use the specialized classes
         /// (FrPrismaticLink, FrRevoluteLink...)
-        void InitializeWithBodyDOFMask(FrBodyDOFMask* mask); // FIXME passer dans une classe dediee specialisee FrBodyCaptive
+        void InitializeWithBodyDOFMask(FrDOFMask* mask); // FIXME passer dans une classe dediee specialisee FrBodyCaptive
 
         /// Get the constraint violation of the link (ie the
         FrFrame GetConstraintViolation() const;  // FIXME : verifier que cette violation ne prend pas en compte la position relative normale de la liaison
@@ -362,13 +366,14 @@ namespace frydom {
     // FrBodyCaptive... --> on mettra le IsMotorized en virtuel pur !
 
     /**
-     * \class FrBodyDOFMask
+     * \class FrDOFMask
      * \brief Class for defining the constraints on bodies with respect to world easier.
      */
-    class FrBodyDOFMask {
+    class FrDOFMask {
 
     private:
 
+        LINK_TYPE m_linkType = FREE_LINK;
         bool m_xLocked = false;
         bool m_yLocked = false;
         bool m_zLocked = false;
@@ -378,7 +383,7 @@ namespace frydom {
 
     public:
 
-        FrBodyDOFMask();
+        FrDOFMask();
 
         // TODO : plutot utiliser ChLinkLockMaskLF en interne et faire des conversions pour les angles vers les coeffs de quaternion
         /*
@@ -444,6 +449,14 @@ namespace frydom {
 
         /// Returns the number of constrained DOF of the body WRT the world
         unsigned int GetNbFreeDOF() const;
+
+        void SetLinkType(LINK_TYPE linkType);
+
+        LINK_TYPE GetLinkType() const;
+
+    private:
+
+        void SetLock(bool xLocked, bool yLocked, bool zLocked, bool rxLocked, bool ryLocked, bool rzLocked) ;
 
     };
 
