@@ -50,7 +50,7 @@ namespace frydom {
         void Initialize() override;
 
         /// Method to be applied at the end of each time steps
-        void StepFinalize() override;
+        //void StepFinalize() override;
 
     private:
 

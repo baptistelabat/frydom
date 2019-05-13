@@ -235,9 +235,6 @@ namespace frydom {
         /// Method to initialize the database
         void Initialize();
 
-        /// Method to finalize the database
-        void Finalize();
-
         //
         // Mask
         //
