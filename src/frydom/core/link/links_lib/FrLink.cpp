@@ -101,7 +101,7 @@ namespace frydom {
 
         void FrLinkLockBase::SetMask(FrDOFMask* vmask) {
 
-            if (vmask->GetLinkType == LINK_TYPE::CUSTOM) {
+            if (vmask->GetLinkType() == LINK_TYPE::CUSTOM) {
                 chrono::ChLinkMaskLF chronoMask;
                 chronoMask.SetLockMask(
                     vmask->GetLock_X(),  // x
