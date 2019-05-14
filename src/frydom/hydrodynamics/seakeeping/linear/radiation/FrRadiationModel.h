@@ -49,8 +49,11 @@ namespace frydom {
 
     public:
 
+        /// Default constructor
         FrRadiationModel();
 
+        /// Constructor with specified hydrodynamic database
+        /// \param HDB Hydrodynamic database
         explicit FrRadiationModel(std::shared_ptr<FrHydroDB> HDB);
 
         /// Get the type name of this object
@@ -60,18 +63,35 @@ namespace frydom {
         /// Return true if the radiation model is included in the static analysis
         bool IncludedInStaticAnalysis() const override {return false;}
 
+        /// Return the hydrodynamic database linked with the radiation model
+        /// \return Hydrodynamic database
         FrHydroDB* GetHydroDB() const { return m_HDB.get(); }
 
+        /// Return the radiation force applied on a body
+        /// \param BEMBody BEM body database
+        /// \return Radiation force
         Force GetRadiationForce(FrBEMBody* BEMBody) const;
 
+        /// Return the radiation force applied on a body
+        /// \param body body (frydom object)
+        /// \return Radiation force
         Force GetRadiationForce(FrBody* body) const;
 
+        /// Return the radiation torque applied on a body
+        /// \param BEMBody BEM body database
+        /// \return Radiation torque
         Torque GetRadiationTorque(FrBEMBody* BEMBody) const;
 
+        /// Return the radiation torque applied on a body
+        /// \param body body (frydom object)
+        /// \return Radiation torque
         Torque GetRadiationTorque(FrBody* body) const;
 
+        /// Method to initialize the radiation model
         void Initialize() override;
 
+        /// Return the mapper between body and BEM body database
+        /// \return Mapper
         FrHydroMapper* GetMapper() const;
 
     private:
@@ -94,28 +114,43 @@ namespace frydom {
     class FrRadiationConvolutionModel : public FrRadiationModel {
 
     private:
-        std::unordered_map<FrBEMBody*, FrTimeRecorder<GeneralizedVelocity> > m_recorder;
-        double m_Te = -9.;
-        double m_dt = -9.;
+        std::unordered_map<FrBEMBody*, FrTimeRecorder<GeneralizedVelocity> > m_recorder;    ///< Recorder of the perturbation velocity of the body at COG
+        double m_Te = -9.;      ///< Persistence time of the recorder
+        double m_dt = -9.;      ///< Time step of the recorder
 
     public:
 
-        // Constructor.
+        /// Default constructor
         FrRadiationConvolutionModel(std::shared_ptr<FrHydroDB> HDB);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "RadiationConvolutionModel"; }
 
+        /// Method to initialize the radiation model
         void Initialize() override;
 
+        /// Clear the recorder
         void Clear();
 
+        /// Method to be applied at the end of each time step
+        void StepFinalize() override;
 
+        /// Set the impulse response function size
+        /// \param BEMBody BEM body database corresponding to the body to which the radiation force is applied
+        /// \param Te Time length
+        /// \param dt Time step
         void SetImpulseResponseSize(FrBEMBody* BEMBody, double Te, double dt);
 
+        /// Set the impulse response function size
+        /// \param body Body to which the radiation force is applied
+        /// \param Te Time length
+        /// \param dt Time step
         void SetImpulseResponseSize(FrBody* body, double Te, double dt);
 
+        /// Set the impulse response function size
+        /// \param Te Time length
+        /// \param dt Time step
         void SetImpulseResponseSize(double Te, double dt);
 
     private:
@@ -124,6 +159,10 @@ namespace frydom {
         /// \param time Current time of the simulation from beginning, in seconds
         void Compute(double time) override;
 
+        /// Return the impulse response function size
+        /// \param Te Time length
+        /// \param dt Time step
+        /// \param N Number of time step
         void GetImpulseResponseSize(double& Te, double &dt, unsigned int& N) const;
 
         GeneralizedForce ConvolutionKu(double meanSpeed) const;

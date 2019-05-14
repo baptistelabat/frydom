@@ -968,7 +968,7 @@ namespace frydom {
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody *body) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody *body) const;
 
-    };
+     };
 
 
 }  // end namespace frydom

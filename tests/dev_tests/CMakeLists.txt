@@ -6,6 +6,7 @@ set(REFACTORING_TESTS
         test_hydrostatic_new_hdb
         test_radiation_model
         test_FrLinks
+        test_cylinder_interaction
         bench_Ellipsoid_OMAE2014
         test_WNL_and_NL_hydrostatics
         test_FrFunction
@@ -30,7 +31,6 @@ foreach (subdir ${subdirs})
     add_subdirectory(${subdir})
 endforeach ()
 
-
 # Adding resource files
 configure_file(../../data/frydom_logo.png . COPYONLY)
 configure_file(../../data/skybox/sky_dn.jpg . COPYONLY)
@@ -39,6 +39,7 @@ configure_file(../../data/skybox/sky_up.jpg . COPYONLY)
 
 
 configure_file(../data/platform/Platform_HDB.hdb5 . COPYONLY)
+configure_file(../data/CylinderInteraction/CylinderInteraction.hdb5 . COPYONLY)
 
 configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_2880_faces.obj . COPYONLY)
 configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_mean_position.obj . COPYONLY)
