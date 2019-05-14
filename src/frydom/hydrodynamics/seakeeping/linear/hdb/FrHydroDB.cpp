@@ -187,7 +187,13 @@ namespace frydom {
             // Reading the modes of a body.
             this->ModeReader(reader, ibodyPath, BEMBody);
 
-            this->MaskReader(reader, ibodyPath, BEMBody);
+            // Reading the mask of a body
+            if (reader.GroupExist(ibodyPath + "/Mask")) {
+                this->MaskReader(reader, ibodyPath, BEMBody);
+            } else {
+                BEMBody->SetMotionMask(mathutils::Vector6d<int>(1, 1, 1, 1, 1, 1));
+                BEMBody->SetForceMask(mathutils::Vector6d<int>(1, 1, 1, 1, 1, 1));
+            }
 
             // Allocation of the arrays for the hdb.
             BEMBody->Initialize();
