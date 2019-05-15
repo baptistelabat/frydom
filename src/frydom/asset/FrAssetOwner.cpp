@@ -18,6 +18,8 @@
 #include "frydom/shape/FrSphereShape.h"
 #include "frydom/shape/FrTriangleMeshShape.h"
 
+#include "frydom/core/common/FrPhysicsItem.h"
+
 #include "FrAssetOwner.h"
 
 #include "FrAsset.h"

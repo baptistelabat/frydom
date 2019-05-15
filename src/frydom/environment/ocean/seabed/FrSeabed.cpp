@@ -14,6 +14,8 @@
 #include "FrSeabed.h"
 
 #include "frydom/asset/FrSeabedGridAsset.h"
+#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/core/body/FrBody.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean.h"
 

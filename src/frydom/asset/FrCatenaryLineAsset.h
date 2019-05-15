@@ -20,6 +20,7 @@
 #include "frydom/asset/FrAsset.h"
 #include "frydom/asset/FrAssetOwner.h"
 
+#include "frydom/core/math/FrVector.h"
 
 // Chrono forward declaration
 namespace chrono {
