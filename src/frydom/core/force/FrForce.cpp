@@ -84,9 +84,6 @@ namespace frydom{
 
         // This subroutine initializes the object FrForce.
 
-        // Log
-        SetPathManager(m_body->GetPathManager());
-
         if (m_showAsset) {
             m_asset->Initialize();
             m_body->AddAsset(m_asset);

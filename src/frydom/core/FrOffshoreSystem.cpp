@@ -1008,26 +1008,32 @@ namespace frydom {
 //            m_environment->InitializeLog();
 
             for (auto &item : m_PrePhysicsList) {
+                item->SetPathManager(GetPathManager());
                 item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_bodyList) {
+                item->SetPathManager(GetPathManager());
                 item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_MidPhysicsList) {
+                item->SetPathManager(GetPathManager());
                 item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_linkList) {
+                item->SetPathManager(GetPathManager());
                 item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_feaMeshList) {
+                item->SetPathManager(GetPathManager());
                 item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_PostPhysicsList) {
+                item->SetPathManager(GetPathManager());
                 item->InitializeLog(systemPath);
             }
 

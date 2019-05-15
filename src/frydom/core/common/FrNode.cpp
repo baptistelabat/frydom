@@ -242,9 +242,6 @@ namespace frydom {
 
     void FrNode::Initialize() {
 
-        // Log
-        SetPathManager(m_body->GetPathManager());
-
         m_chronoMarker->UpdateState();
 
         if (m_showAsset) {
