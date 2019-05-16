@@ -51,7 +51,7 @@ namespace frydom {
 
             FrBody *m_frydomBody;                      ///< pointer to the FrBody containing this bodyBase
 
-            std::unique_ptr<chrono::ChVariables> m_variables_ptr;
+            std::shared_ptr<chrono::ChVariables> m_variables_ptr;
 
             /// Constructor of the bodyBase
             /// \param body body containing this bodyBase
@@ -75,8 +75,6 @@ namespace frydom {
             /// Removes an asset given its shared pointer
             void RemoveAsset(std::shared_ptr<chrono::ChAsset> asset);
 
-            chrono::ChVariables& Variables() override;
-
             //
             // STATE FUNCTION
             //
@@ -96,6 +94,10 @@ namespace frydom {
             //
             // SOLVER FUNCTIONS
             //
+
+            chrono::ChVariables& Variables() override;
+
+            void SetVariables(const std::shared_ptr<chrono::ChVariables> new_variables);
 
             void VariablesFbReset() override;
 
@@ -1005,6 +1007,7 @@ namespace frydom {
         friend void internal::FrVariablesAddedMassBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &result,
                                                                      int offset) const;
         friend void internal::FrRadiationModelBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
+        friend void internal::FrRadiationModelBase::InjectVariablesToBody();
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody *body) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody *body) const;
         friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase::GetVariablesFb(FrBody* body) const;

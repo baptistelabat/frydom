@@ -53,7 +53,6 @@ namespace frydom {
         private:
 
             FrRadiationModel* m_frydomRadiationModel;
-            std::shared_ptr<FrVariablesAddedMassBase> m_variables;
             std::unordered_map<std::pair<FrBEMBody*, FrBEMBody*>, mathutils::Matrix66<double>, pair_hash> m_invGeneralizedMass;
 
         public:
@@ -87,15 +86,21 @@ namespace frydom {
             void IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
                                    const unsigned int off_L, chrono::ChVectorDynamic<>& L) override;
 
-            void InjectVariables(chrono::ChSystemDescriptor& mdescriptor) override;
+            //void InjectVariables(chrono::ChSystemDescriptor& mdescriptor) override;
 
-            void VariablesFbReset() override;
+            //void VariablesFbReset() override;
 
-            void VariablesFbIncrementMq() override;
+            //void VariablesFbIncrementMq() override;
 
             int GetBodyOffset(FrBody* body) const;
 
             void SetVariables(FrBody* body, chrono::ChMatrix<double>& qb, int offset) const;
+
+            void InjectVariablesToBody();
+
+            //
+            // ADDED MASS
+            //
 
             FrRadiationModel* GetRadiationModel() const { return m_frydomRadiationModel; }
 

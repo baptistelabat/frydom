@@ -5,6 +5,7 @@ set(SRC_FILES
         FrRadiationForce.cpp
         FrRadiationModel.cpp
         FrVariablesAddedMassBase.cpp
+        FrVariablesBEMBodyBase.cpp
         FrRadiationModelBase.cpp
         )
 

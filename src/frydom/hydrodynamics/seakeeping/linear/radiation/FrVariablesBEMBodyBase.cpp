@@ -5,18 +5,29 @@
 #include "FrVariablesBEMBodyBase.h"
 
 #include "frydom/core/body/FrBody.h"
-#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrBEMBody.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModel.h"
 
 namespace frydom {
 
     namespace internal {
 
-        FrVariablesBEMBodyBase::FrVariablesBEMBodyBase(frydom::internal::FrRadiationModelBase *radiationModelBase,
+        FrVariablesBEMBodyBase::FrVariablesBEMBodyBase(frydom::internal::FrRadiationModelBase* radiationModelBase,
                 frydom::FrBEMBody* BEMBody)
-            : m_radiationModelBase(radiationModelBase), m_BEMBody(BEMBody) {}
+            : chrono::ChVariables(6), m_radiationModelBase(radiationModelBase), m_BEMBody(BEMBody) {}
 
+        void FrVariablesBEMBodyBase::SetBEMBody(FrBEMBody* BEMBody) {
+            m_BEMBody = BEMBody;
+        }
 
+        void FrVariablesBEMBodyBase::SetRadiationModelBase(FrRadiationModelBase* radiationModelBase) {
+            m_radiationModelBase = radiationModelBase;
+        }
+
+        void FrVariablesBEMBodyBase::SetVariablesBodyOwnMass(chrono::ChVariablesBodyOwnMass* variables) {
+            m_variablesBodyOwnMass = variables;
+        }
 
         void FrVariablesBEMBodyBase::Compute_invMb_v(chrono::ChMatrix<double>& result,
                                                      const chrono::ChMatrix<double>& vect) const {

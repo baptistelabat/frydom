@@ -31,7 +31,15 @@ namespace frydom {
 
         public:
 
-            FrVariablesBEMBodyBase(FrRadiationModelBase* radiationModelBase, FrBEMBody* BEMBody);
+            FrVariablesBEMBodyBase() : ChVariables(6) {}
+
+            explicit FrVariablesBEMBodyBase(FrRadiationModelBase* radiationModelBase, FrBEMBody* BEMBody);
+
+            void SetBEMBody(FrBEMBody* BEMBody);
+
+            void SetRadiationModelBase(FrRadiationModelBase* radiationModelBase);
+
+            void SetVariablesBodyOwnMass(chrono::ChVariablesBodyOwnMass* variables);
 
             void Compute_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
 

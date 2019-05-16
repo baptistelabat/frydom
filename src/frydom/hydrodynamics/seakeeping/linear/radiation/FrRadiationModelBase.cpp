@@ -31,11 +31,12 @@ namespace frydom {
             int nDof = 6*nBodies;
 
             // Creation of a FrVariablesAddedMassBase class.
-            m_variables = std::make_shared<FrVariablesAddedMassBase>(this, nDof);
+            //m_variables = std::make_shared<FrVariablesAddedMassBase>(this, nDof);
         }
 
         void FrRadiationModelBase::SetupInitial() {
-            m_variables->Initialize();
+            //m_variables->Initialize();
+            InjectVariablesToBody();
             BuildGeneralizedMass();
         }
 
@@ -100,17 +101,17 @@ namespace frydom {
             // Nothing to do since added mass variables encapsulate the body variables
         }
 
-        void FrRadiationModelBase::InjectVariables(chrono::ChSystemDescriptor &mdescriptor) {
-            mdescriptor.InsertVariables(m_variables.get());
-        }
+        //void FrRadiationModelBase::InjectVariables(chrono::ChSystemDescriptor &mdescriptor) {
+        //    mdescriptor.InsertVariables(m_variables.get());
+        //}
 
-        void FrRadiationModelBase::VariablesFbReset() {
-            m_variables->Get_fb().FillElem(0.0);
-        }
+        //void FrRadiationModelBase::VariablesFbReset() {
+        //    m_variables->Get_fb().FillElem(0.0);
+        //}
 
-        void FrRadiationModelBase::VariablesFbIncrementMq() {
-            m_variables->Compute_inc_Mb_v(m_variables->Get_fb(), m_variables->Get_qb());
-        }
+        //void FrRadiationModelBase::VariablesFbIncrementMq() {
+        //    m_variables->Compute_inc_Mb_v(m_variables->Get_fb(), m_variables->Get_qb());
+        //}
 
         int FrRadiationModelBase::GetBodyOffset(FrBody* body) const {
             auto chronoBody = body->GetChronoBody();
@@ -120,6 +121,21 @@ namespace frydom {
         void FrRadiationModelBase::SetVariables(FrBody* body, chrono::ChMatrix<double>& qb, int offset) const {
             auto chronoBody = body->GetChronoBody();
             chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(qb, offset, 0, 6, 1, 0, 0);
+        }
+
+        void FrRadiationModelBase::InjectVariablesToBody() {
+
+            auto HDB = GetRadiationModel()->GetHydroDB();
+
+            for (auto body = HDB->begin(); body!=HDB->end(); body++) {
+                auto variable = std::make_shared<FrVariablesBEMBodyBase>(this, body->first);
+                auto chronoBody = body->second->GetChronoBody();
+                variable->SetVariablesBodyOwnMass(&chronoBody->VariablesBody());
+                //variable->SetBEMBody(body->first);
+                //variable->SetRadiationModelBase(this);
+                chronoBody->SetVariables(variable);
+            }
+
         }
 
         void FrRadiationModelBase::BuildGeneralizedMass() {

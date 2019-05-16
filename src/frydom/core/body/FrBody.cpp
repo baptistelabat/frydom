@@ -78,15 +78,6 @@ namespace frydom {
                     std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset));
         }
 
-        chrono::ChVariables& FrBodyBase::Variables() {
-
-            if (m_variables_ptr) {
-                return *m_variables_ptr;
-            } else {
-                return chrono::ChBody::variables;
-            }
-        }
-
         //
         // STATE FUNCTION
         //
@@ -106,6 +97,24 @@ namespace frydom {
                                            const unsigned int off_L,
                                            chrono::ChVectorDynamic<>& L) {
             v.PasteMatrix(Variables().Get_qb(), off_v, 0);
+        }
+
+        //
+        // SOLVER FUNCTIONS
+        //
+
+        chrono::ChVariables& FrBodyBase::Variables() {
+
+            if (m_variables_ptr) {
+                return *m_variables_ptr;
+            } else {
+                return chrono::ChBody::variables;
+            }
+        }
+
+        void FrBodyBase::SetVariables(const std::shared_ptr<chrono::ChVariables> new_variables) {
+            m_variables_ptr = new_variables;
+            variables.SetDisabled(true);
         }
 
         void FrBodyBase::InjectVariables(chrono::ChSystemDescriptor& mdescriptor) {
