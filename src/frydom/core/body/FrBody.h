@@ -77,6 +77,40 @@ namespace frydom {
 
             chrono::ChVariables& Variables() override;
 
+            //
+            // STATE FUNCTION
+            //
+
+            void IntToDescriptor(const unsigned int off_v,
+                                 const chrono::ChStateDelta& v,
+                                 const chrono::ChVectorDynamic<>& R,
+                                 const unsigned int off_L,
+                                 const chrono::ChVectorDynamic<>& L,
+                                 const chrono::ChVectorDynamic<>& Qc) override;
+
+            void IntFromDescriptor(const unsigned int off_v,
+                                   chrono::ChStateDelta& v,
+                                   const unsigned int off_L,
+                                   chrono::ChVectorDynamic<>& L) override;
+
+            //
+            // SOLVER FUNCTIONS
+            //
+
+            void VariablesFbReset() override;
+
+            void VariablesFbLoadForces(double factor = 1) override;
+
+            void VariablesQbLoadSpeed() override;
+
+            void VariablesFbIncrementMq() override;
+
+            void VariablesQbSetSpeed(double step =0) override;
+
+            void VariablesQbIncrementPosition(double step) override;
+
+            void InjectVariables(chrono::ChSystemDescriptor& mdescriptor) override;
+
         };
 
     }  // end namespace internal
@@ -973,7 +1007,7 @@ namespace frydom {
         friend void internal::FrRadiationModelBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody *body) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody *body) const;
-        friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase::GetVariablesFb(FrBody* body);
+        friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase::GetVariablesFb(FrBody* body) const;
 
      };
 
