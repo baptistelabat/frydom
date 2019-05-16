@@ -43,7 +43,7 @@ namespace frydom {
     };
 
 
-    /// Helper function to make it easy to link two nodes by a revolute link
+    /// Helper function to make it easy to link two nodes by a fixed link
     std::shared_ptr<FrFixedLink> make_fixed_link(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
 }  // end namespace frydom
 

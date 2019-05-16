@@ -12,9 +12,6 @@
 
 #include "FrFixedLink.h"
 
-#include "frydom/core/body/FrBody.h"
-#include "frydom/core/common/FrNode.h"
-
 
 namespace frydom {
 
@@ -25,12 +22,8 @@ namespace frydom {
     }
 
     std::shared_ptr<FrFixedLink> make_fixed_link(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system) {
-
         auto link = std::make_shared<FrFixedLink>(node1, node2, system);
-
         system->AddLink(link);
-
         return link;
-
     }
 }  // end namespace frydom
