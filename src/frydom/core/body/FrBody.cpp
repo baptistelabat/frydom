@@ -106,7 +106,7 @@ namespace frydom {
         chrono::ChVariables& FrBodyBase::Variables() {
 
             if (m_variables_ptr) {
-                return *m_variables_ptr;
+                return *m_variables_ptr.get();
             } else {
                 return chrono::ChBody::variables;
             }

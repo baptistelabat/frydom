@@ -15,7 +15,7 @@ namespace frydom {
 
         FrVariablesBEMBodyBase::FrVariablesBEMBodyBase(frydom::internal::FrRadiationModelBase* radiationModelBase,
                 frydom::FrBEMBody* BEMBody)
-            : chrono::ChVariables(6), m_radiationModelBase(radiationModelBase), m_BEMBody(BEMBody) {}
+            : chrono::ChVariablesBody(), m_radiationModelBase(radiationModelBase), m_BEMBody(BEMBody) {}
 
         void FrVariablesBEMBodyBase::SetBEMBody(FrBEMBody* BEMBody) {
             m_BEMBody = BEMBody;
@@ -127,7 +127,7 @@ namespace frydom {
 
         chrono::ChMatrix<double> FrVariablesBEMBodyBase::GetVariablesFb(frydom::FrBody *body) const {
             auto chronoBody = body->GetChronoBody();
-            return chronoBody->GetVariables1()->Get_fb();
+            return chronoBody->Variables().Get_fb();
         }
 
     } // end namespace internal

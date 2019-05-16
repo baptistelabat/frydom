@@ -5,7 +5,7 @@
 #ifndef FRYDOM_FRVARIABLESBEMBODYBASE_H
 #define FRYDOM_FRVARIABLESBEMBODYBASE_H
 
-#include "chrono/solver/ChVariables.h"
+#include "chrono/solver/ChVariablesBody.h"
 #include "chrono/solver/ChVariablesBodyOwnMass.h"
 
 #include "MathUtils/Matrix66.h"
@@ -21,7 +21,7 @@ namespace frydom {
         // Forward declaration
         class FrRadiationModelBase;
 
-        class FrVariablesBEMBodyBase : public chrono::ChVariables {
+        class FrVariablesBEMBodyBase : public chrono::ChVariablesBody {
 
         private:
 
@@ -31,7 +31,7 @@ namespace frydom {
 
         public:
 
-            FrVariablesBEMBodyBase() : ChVariables(6) {}
+            FrVariablesBEMBodyBase() : ChVariablesBody() {}
 
             explicit FrVariablesBEMBodyBase(FrRadiationModelBase* radiationModelBase, FrBEMBody* BEMBody);
 
@@ -56,6 +56,19 @@ namespace frydom {
 
             chrono::ChMatrix<double> GetVariablesFb(FrBody* body) const;
 
+            //
+            // VIRTUAL FUNCTION
+            //
+
+            double GetBodyMass() const override { }
+
+            chrono::ChMatrix33<>& GetBodyInertia() override {}
+
+            const chrono::ChMatrix33<>& GetBodyInertia() const override {}
+
+            chrono::ChMatrix33<>& GetBodyInvInertia() override {}
+
+            const chrono::ChMatrix33<>& GetBodyInvInertia() const override {}
 
         };
 

@@ -151,23 +151,7 @@ int main(int argc, char* argv[]) {
 
     body->SetPosition(Position(0., 0., 0.), NWU);
 
-    body->GetDOFMask()->SetLock_X(true);
-    body->GetDOFMask()->SetLock_Y(true);
-    body->GetDOFMask()->SetLock_Rx(true);
-    body->GetDOFMask()->SetLock_Ry(true);
-    body->GetDOFMask()->SetLock_Rz(true);
 
-    // -- Inertia
-
-    double mass = 2.618E5;
-
-    double Ixx  = 1.690E6;
-    double Iyy  = 1.690E6;
-    double Izz  = 2.606E6;
-
-    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
-
-    body->SetInertiaTensor(InertiaTensor);
 
     // -- Hydrodynamics
 
@@ -201,6 +185,24 @@ int main(int argc, char* argv[]) {
     // ##CC for monitoring
     auto radiationAddedMassForce = std::make_shared<AddedMassRadiationForce>(hdb.get(), body.get());
     // ##CC
+
+    body->GetDOFMask()->SetLock_X(true);
+    body->GetDOFMask()->SetLock_Y(true);
+    body->GetDOFMask()->SetLock_Rx(true);
+    body->GetDOFMask()->SetLock_Ry(true);
+    body->GetDOFMask()->SetLock_Rz(true);
+
+    // -- Inertia
+
+    double mass = 2.618E5;
+
+    double Ixx  = 1.690E6;
+    double Iyy  = 1.690E6;
+    double Izz  = 2.606E6;
+
+    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
+
+    body->SetInertiaTensor(InertiaTensor);
 
     // -- Simulation
 
