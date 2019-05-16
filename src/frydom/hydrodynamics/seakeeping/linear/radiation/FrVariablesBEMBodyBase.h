@@ -19,19 +19,19 @@ namespace frydom {
     namespace internal {
 
         // Forward declaration
-        class FrAddedMassBase;
+        class FrRadiationModelBase;
 
         class FrVariablesBEMBodyBase : public chrono::ChVariables {
 
         private:
 
-            FrAddedMassBase* m_radiationModelBase;
+            FrRadiationModelBase* m_radiationModelBase;
             FrBEMBody* m_BEMBody;
             chrono::ChVariablesBodyOwnMass* m_variablesBodyOwnMass;
 
         public:
 
-            FrVariablesBEMBodyBase(FrAddedMassBase* radiationModelBase, FrBEMBody* BEMBody);
+            FrVariablesBEMBodyBase(FrRadiationModelBase* radiationModelBase, FrBEMBody* BEMBody);
 
             void Compute_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
 

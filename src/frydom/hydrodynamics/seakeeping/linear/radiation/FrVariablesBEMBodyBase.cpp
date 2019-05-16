@@ -12,7 +12,7 @@ namespace frydom {
 
     namespace internal {
 
-        FrVariablesBEMBodyBase::FrVariablesBEMBodyBase(frydom::internal::FrAddedMassBase *radiationModelBase,
+        FrVariablesBEMBodyBase::FrVariablesBEMBodyBase(frydom::internal::FrRadiationModelBase *radiationModelBase,
                 frydom::FrBEMBody* BEMBody)
             : m_radiationModelBase(radiationModelBase), m_BEMBody(BEMBody) {}
 

@@ -21,7 +21,7 @@ namespace frydom {
     namespace internal {
 
         /// Constructor of the class.
-        FrVariablesAddedMassBase::FrVariablesAddedMassBase(FrAddedMassBase* addedMassBase, int ndof)
+        FrVariablesAddedMassBase::FrVariablesAddedMassBase(FrRadiationModelBase* addedMassBase, int ndof)
             : ChVariables(ndof), m_addedMassBase(addedMassBase) { }
 
         void FrVariablesAddedMassBase::Initialize() {

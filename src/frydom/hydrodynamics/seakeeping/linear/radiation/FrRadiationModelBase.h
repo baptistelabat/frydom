@@ -10,8 +10,8 @@
 // ==========================================================================
 
 
-#ifndef FRYDOM_FRADDEDMASSBASE_H
-#define FRYDOM_FRADDEDMASSBASE_H
+#ifndef FRYDOM_FrRadiationModelBase_H
+#define FRYDOM_FrRadiationModelBase_H
 
 #include <memory>
 
@@ -48,7 +48,7 @@ namespace frydom {
             }
         };
 
-        class FrAddedMassBase : public FrPhysicsItemBase {
+        class FrRadiationModelBase : public FrPhysicsItemBase {
 
         private:
 
@@ -58,7 +58,7 @@ namespace frydom {
 
         public:
 
-            explicit FrAddedMassBase(FrRadiationModel* radiationModel);
+            explicit FrRadiationModelBase(FrRadiationModel* radiationModel);
 
             //
             // Update
@@ -112,4 +112,4 @@ namespace frydom {
 }  // end namespace frydom
 
 
-#endif //FRYDOM_FRADDEDMASSBASE_H
+#endif //FRYDOM_FrRadiationModelBase_H

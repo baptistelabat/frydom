@@ -40,18 +40,18 @@ namespace frydom {
 
 
         // Forward declaration
-        class FrAddedMassBase;
+        class FrRadiationModelBase;
 
         class FrVariablesAddedMassBase : public chrono::ChVariables {
 
         private:
 
-            FrAddedMassBase* m_addedMassBase;
+            FrRadiationModelBase* m_addedMassBase;
             std::unordered_map<std::pair<FrBEMBody*, FrBEMBody*>, mathutils::Matrix66<double>, pair_hash> m_invAddedMassCorrection;
 
         public:
 
-            FrVariablesAddedMassBase(FrAddedMassBase* addedMassBase, int ndof);
+            FrVariablesAddedMassBase(FrRadiationModelBase* addedMassBase, int ndof);
 
             void Initialize();
 

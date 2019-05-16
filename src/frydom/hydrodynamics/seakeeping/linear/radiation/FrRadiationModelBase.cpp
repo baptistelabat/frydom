@@ -10,7 +10,7 @@
 // ==========================================================================
 
 
-#include "FrAddedMassBase.h"
+#include "FrRadiationModelBase.h"
 
 #include "frydom/core/body/FrBody.h"
 #include "FrVariablesAddedMassBase.h"
@@ -23,7 +23,7 @@ namespace frydom {
 
     namespace internal {
 
-        FrAddedMassBase::FrAddedMassBase(FrRadiationModel* radiationModel) :
+        FrRadiationModelBase::FrRadiationModelBase(FrRadiationModel* radiationModel) :
                 m_frydomRadiationModel(radiationModel), FrPhysicsItemBase(radiationModel) {
 
 
@@ -34,21 +34,21 @@ namespace frydom {
             m_variables = std::make_shared<FrVariablesAddedMassBase>(this, nDof);
         }
 
-        void FrAddedMassBase::SetupInitial() {
+        void FrRadiationModelBase::SetupInitial() {
             m_variables->Initialize();
             BuildGeneralizedMass();
         }
 
-        void FrAddedMassBase::Update(bool update_assets) {
+        void FrRadiationModelBase::Update(bool update_assets) {
             this->Update(ChTime, update_assets);
         }
 
-        void FrAddedMassBase::Update(double time, bool update_assets) {
+        void FrRadiationModelBase::Update(double time, bool update_assets) {
             m_frydomRadiationModel->Update(time);
             ChPhysicsItem::Update(time, update_assets);
         }
 
-        void FrAddedMassBase::IntLoadResidual_Mv(const unsigned int off, chrono::ChVectorDynamic<> &R,
+        void FrRadiationModelBase::IntLoadResidual_Mv(const unsigned int off, chrono::ChVectorDynamic<> &R,
                                                  const chrono::ChVectorDynamic<> &w, const double c) {
 
             auto HDB = m_frydomRadiationModel->GetHydroDB();
@@ -76,7 +76,7 @@ namespace frydom {
             }
         }
 
-        void FrAddedMassBase::IntToDescriptor(const unsigned int off_v, const chrono::ChStateDelta& v,
+        void FrRadiationModelBase::IntToDescriptor(const unsigned int off_v, const chrono::ChStateDelta& v,
                                               const chrono::ChVectorDynamic<>& R, const unsigned int off_L,
                                               const chrono::ChVectorDynamic<>& L, const chrono::ChVectorDynamic<>& Qc) {
 
@@ -94,35 +94,35 @@ namespace frydom {
             */
         }
 
-        void FrAddedMassBase::IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
+        void FrRadiationModelBase::IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
                                                 const unsigned int off_L, chrono::ChVectorDynamic<>& L) {
 
             // Nothing to do since added mass variables encapsulate the body variables
         }
 
-        void FrAddedMassBase::InjectVariables(chrono::ChSystemDescriptor &mdescriptor) {
+        void FrRadiationModelBase::InjectVariables(chrono::ChSystemDescriptor &mdescriptor) {
             mdescriptor.InsertVariables(m_variables.get());
         }
 
-        void FrAddedMassBase::VariablesFbReset() {
+        void FrRadiationModelBase::VariablesFbReset() {
             m_variables->Get_fb().FillElem(0.0);
         }
 
-        void FrAddedMassBase::VariablesFbIncrementMq() {
+        void FrRadiationModelBase::VariablesFbIncrementMq() {
             m_variables->Compute_inc_Mb_v(m_variables->Get_fb(), m_variables->Get_qb());
         }
 
-        int FrAddedMassBase::GetBodyOffset(FrBody* body) const {
+        int FrRadiationModelBase::GetBodyOffset(FrBody* body) const {
             auto chronoBody = body->GetChronoBody();
             return chronoBody->GetOffset_w();
         }
 
-        void FrAddedMassBase::SetVariables(FrBody* body, chrono::ChMatrix<double>& qb, int offset) const {
+        void FrRadiationModelBase::SetVariables(FrBody* body, chrono::ChMatrix<double>& qb, int offset) const {
             auto chronoBody = body->GetChronoBody();
             chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(qb, offset, 0, 6, 1, 0, 0);
         }
 
-        void FrAddedMassBase::BuildGeneralizedMass() {
+        void FrRadiationModelBase::BuildGeneralizedMass() {
 
             auto HDB = GetRadiationModel()->GetHydroDB();
 
@@ -180,12 +180,12 @@ namespace frydom {
 
 
         mathutils::Matrix66<double>
-                FrAddedMassBase::GetInverseGeneralizedMass(FrBEMBody* BEMBody, FrBEMBody* BEMBodyMotion) const {
+                FrRadiationModelBase::GetInverseGeneralizedMass(FrBEMBody* BEMBody, FrBEMBody* BEMBodyMotion) const {
             return m_invGeneralizedMass.at(std::pair<FrBEMBody*, FrBEMBody*>(BEMBody, BEMBodyMotion));
         }
 
         mathutils::Matrix66<double>
-                FrAddedMassBase::GetGeneralizedMass(FrBEMBody* BEMBody, FrBEMBody* BEMBodyMotion) const {
+                FrRadiationModelBase::GetGeneralizedMass(FrBEMBody* BEMBody, FrBEMBody* BEMBodyMotion) const {
             auto generalizedMass = BEMBody->GetInfiniteAddedMass(BEMBodyMotion);
 
             if (BEMBody == BEMBodyMotion) {
