@@ -13,6 +13,9 @@
 
 #include "FrTriangleMeshConnected.h"
 
+#include "frydom/core/common/FrRotation.h"
+#include "frydom/core/math/FrVector.h"
+
 
 namespace frydom{
 
@@ -55,6 +58,22 @@ namespace frydom{
 
     FrTriangleMeshConnected::VertexConstIterator FrTriangleMeshConnected::vertex_end() const {
         return m_vertices.cend();
+    }
+
+    void FrTriangleMeshConnected::Scale(double scalingFactor) {
+
+        for (int i = 0; i < this->m_vertices.size(); ++i) {
+            m_vertices[i] *= scalingFactor;
+        }
+
+    }
+
+    void FrTriangleMeshConnected::Rotate(const FrRotation &rotation) {
+        Transform(0, internal::Fr2ChQuaternion(rotation.GetQuaternion()));
+    }
+
+    void FrTriangleMeshConnected::Translate(const Direction &direction) {
+        Transform(internal::Vector3dToChVector(direction),chrono::ChQuaternion<>(1,0,0,0));
     }
 
 }  // end namespace frydom
