@@ -12,11 +12,10 @@
 
 #include "FrAddedMassBase.h"
 
-#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrHydroDB.h"
 #include "frydom/core/body/FrBody.h"
 #include "FrVariablesAddedMassBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModel.h"
-#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrBEMBody.h"
+#include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
 
 
 
@@ -37,6 +36,7 @@ namespace frydom {
 
         void FrAddedMassBase::SetupInitial() {
             m_variables->Initialize();
+            BuildGeneralizedMass();
         }
 
         void FrAddedMassBase::Update(bool update_assets) {
@@ -120,6 +120,80 @@ namespace frydom {
         void FrAddedMassBase::SetVariables(FrBody* body, chrono::ChMatrix<double>& qb, int offset) const {
             auto chronoBody = body->GetChronoBody();
             chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(qb, offset, 0, 6, 1, 0, 0);
+        }
+
+        void FrAddedMassBase::BuildGeneralizedMass() {
+
+            auto HDB = GetRadiationModel()->GetHydroDB();
+
+            auto nBody = HDB->GetMapper()->GetNbMappings();
+
+            mathutils::MatrixMN<double> massMatrix(6*nBody, 6*nBody);
+
+            int iBody = 0;
+
+            // Loop over the bodies subject to hydrodynamic loads
+            for (auto body = HDB->begin(); body!=HDB->end(); body++) {
+
+                int jBody = 0;
+
+                // Loop over the bodies subject to motion
+                for (auto bodyMotion = HDB->begin(); bodyMotion!=HDB->end(); bodyMotion++) {
+
+                    mathutils::Matrix66<double> subMatrix = body->first->GetInfiniteAddedMass(bodyMotion->first);
+
+                    if (bodyMotion->first == body->first) {
+                        subMatrix += body->second->GetInertiaTensor(NWU).GetMatrix();
+                    }
+
+                    for (int i=0; i<6; i++) {
+                        for (int j=0; j<6; j++) {
+                            massMatrix(6*iBody + i, 6*jBody + j) = subMatrix(i, j);
+                        }
+                    }
+                    jBody += 1;
+                }
+                iBody += 1;
+            }
+
+            // Inverse the mass matrix
+            massMatrix.Inverse();
+
+            // Save the inverse of mass matrix in map
+            mathutils::Matrix66<double> invMassMatrix;
+            iBody = 0;
+            for (auto body = HDB->begin(); body!=HDB->end(); body++) {
+                int jBody = 0;
+                for (auto bodyMotion = HDB->begin(); bodyMotion!=HDB->end(); bodyMotion++) {
+
+                    for (int i=0; i>6; i++) {
+                        for (int j=0; j>6; j++) {
+                            invMassMatrix(i, j) = massMatrix(6*iBody + i, 6*jBody + j);
+                        }
+                    }
+                    m_invGeneralizedMass[std::make_pair(body->first, bodyMotion->first)] = invMassMatrix;
+                    jBody += 1;
+                }
+                iBody += 1;
+            }
+        }
+
+
+        mathutils::Matrix66<double>
+                FrAddedMassBase::GetInverseGeneralizedMass(FrBEMBody* BEMBody, FrBEMBody* BEMBodyMotion) const {
+            return m_invGeneralizedMass.at(std::pair<FrBEMBody*, FrBEMBody*>(BEMBody, BEMBodyMotion));
+        }
+
+        mathutils::Matrix66<double>
+                FrAddedMassBase::GetGeneralizedMass(FrBEMBody* BEMBody, FrBEMBody* BEMBodyMotion) const {
+            auto generalizedMass = BEMBody->GetInfiniteAddedMass(BEMBodyMotion);
+
+            if (BEMBody == BEMBodyMotion) {
+                auto body = GetRadiationModel()->GetHydroDB()->GetMapper()->GetBody(BEMBody);
+                generalizedMass += body->GetInertiaTensor(NWU).GetMatrix();
+            }
+
+            return generalizedMass;
         }
 
     }  // end namespace frydom::internal

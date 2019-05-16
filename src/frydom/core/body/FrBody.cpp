@@ -74,6 +74,15 @@ namespace frydom {
                     std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset));
         }
 
+        chrono::ChVariables& FrBodyBase::Variables() {
+
+            if (m_variables_ptr) {
+                return *m_variables_ptr;
+            } else {
+                return chrono::ChBody::variables;
+            }
+        }
+
     }  // end namespace frydom::internal
 
     FrBody::FrBody() {
