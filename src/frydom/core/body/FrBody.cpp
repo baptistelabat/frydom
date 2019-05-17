@@ -35,6 +35,11 @@ namespace frydom {
 
         FrBodyBase::FrBodyBase(FrBody *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
 
+        FrBodyBase::FrBodyBase(const FrBodyBase& other) : chrono::ChBodyAuxRef(other) {
+            m_frydomBody = other.m_frydomBody;
+            m_variables_ptr = other.m_variables_ptr;
+        }
+
         void FrBodyBase::SetupInitial() {}
 
         void FrBodyBase::Update(bool update_assets) {

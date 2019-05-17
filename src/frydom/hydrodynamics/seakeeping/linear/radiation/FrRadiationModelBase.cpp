@@ -45,7 +45,7 @@ namespace frydom {
         }
 
         void FrRadiationModelBase::Update(double time, bool update_assets) {
-            m_frydomRadiationModel->Update(time);
+            //m_frydomRadiationModel->Update(time);
             ChPhysicsItem::Update(time, update_assets);
         }
 
@@ -118,21 +118,15 @@ namespace frydom {
             return chronoBody->GetOffset_w();
         }
 
-        void FrRadiationModelBase::SetVariables(FrBody* body, chrono::ChMatrix<double>& qb, int offset) const {
-            auto chronoBody = body->GetChronoBody();
-            chronoBody->GetVariables1()->Get_qb().PasteClippedMatrix(qb, offset, 0, 6, 1, 0, 0);
-        }
+
 
         void FrRadiationModelBase::InjectVariablesToBody() {
 
             auto HDB = GetRadiationModel()->GetHydroDB();
 
             for (auto body = HDB->begin(); body!=HDB->end(); body++) {
-                auto variable = std::make_shared<FrVariablesBEMBodyBase>(this, body->first);
                 auto chronoBody = body->second->GetChronoBody();
-                variable->SetVariablesBodyOwnMass(&chronoBody->VariablesBody());
-                //variable->SetBEMBody(body->first);
-                //variable->SetRadiationModelBase(this);
+                auto variable = std::make_shared<FrVariablesBEMBodyBase>(this, body->first, &chronoBody->VariablesBody());
                 chronoBody->SetVariables(variable);
             }
 

@@ -151,7 +151,17 @@ int main(int argc, char* argv[]) {
 
     body->SetPosition(Position(0., 0., 0.), NWU);
 
+    // -- Inertia
 
+    double mass = 2.618E5;
+
+    double Ixx  = 1.690E6;
+    double Iyy  = 1.690E6;
+    double Izz  = 2.606E6;
+
+    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
+
+    body->SetInertiaTensor(InertiaTensor);
 
     // -- Hydrodynamics
 
@@ -164,13 +174,13 @@ int main(int argc, char* argv[]) {
 
     // -- Linear hydrostatics
 
-    //auto forceHst = make_linear_hydrostatic_force(hdb, body);
+    auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
     // Nonlinear hydrostatics
-    auto bodyMesh = make_hydro_mesh(body,"Sphere_10000_faces.obj",FrFrame(),FrHydroMesh::ClippingSupport::WAVESURFACE);
-    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
+    //auto bodyMesh = make_hydro_mesh(body,"Sphere_10000_faces.obj",FrFrame(),FrHydroMesh::ClippingSupport::WAVESURFACE);
+    //bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
-    auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
+    //auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
 
     // -- Radiation
 
@@ -186,23 +196,11 @@ int main(int argc, char* argv[]) {
     auto radiationAddedMassForce = std::make_shared<AddedMassRadiationForce>(hdb.get(), body.get());
     // ##CC
 
-    body->GetDOFMask()->SetLock_X(true);
+    /*body->GetDOFMask()->SetLock_X(true);
     body->GetDOFMask()->SetLock_Y(true);
     body->GetDOFMask()->SetLock_Rx(true);
     body->GetDOFMask()->SetLock_Ry(true);
-    body->GetDOFMask()->SetLock_Rz(true);
-
-    // -- Inertia
-
-    double mass = 2.618E5;
-
-    double Ixx  = 1.690E6;
-    double Iyy  = 1.690E6;
-    double Izz  = 2.606E6;
-
-    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
-
-    body->SetInertiaTensor(InertiaTensor);
+    body->GetDOFMask()->SetLock_Rz(true);*/
 
     // -- Simulation
 

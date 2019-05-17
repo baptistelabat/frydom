@@ -57,6 +57,8 @@ namespace frydom {
             /// \param body body containing this bodyBase
             explicit FrBodyBase(FrBody *body);
 
+            FrBodyBase(const FrBodyBase& other);
+
             /// Initial setup of the bodyBase, called from chrono, call the Initialize of the body
             void SetupInitial() override;
 
@@ -1008,7 +1010,7 @@ namespace frydom {
         friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody* body) const ;
         friend void internal::FrVariablesAddedMassBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &result,
                                                                      int offset) const;
-        friend void internal::FrRadiationModelBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
+        //friend void internal::FrRadiationModelBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
         friend void internal::FrRadiationModelBase::InjectVariablesToBody();
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody *body) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody *body) const;

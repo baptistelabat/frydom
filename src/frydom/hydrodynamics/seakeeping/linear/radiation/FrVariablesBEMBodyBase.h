@@ -33,7 +33,9 @@ namespace frydom {
 
             FrVariablesBEMBodyBase() : ChVariablesBody() {}
 
-            explicit FrVariablesBEMBodyBase(FrRadiationModelBase* radiationModelBase, FrBEMBody* BEMBody);
+            explicit FrVariablesBEMBodyBase(FrRadiationModelBase* radiationModelBase,
+                                            FrBEMBody* BEMBody,
+                                            chrono::ChVariablesBodyOwnMass* variables);
 
             void SetBEMBody(FrBEMBody* BEMBody);
 
@@ -60,15 +62,15 @@ namespace frydom {
             // VIRTUAL FUNCTION
             //
 
-            double GetBodyMass() const override { }
+            double GetBodyMass() const override { return m_variablesBodyOwnMass->GetBodyMass(); }
 
-            chrono::ChMatrix33<>& GetBodyInertia() override {}
+            chrono::ChMatrix33<>& GetBodyInertia() override { return m_variablesBodyOwnMass->GetBodyInertia(); }
 
-            const chrono::ChMatrix33<>& GetBodyInertia() const override {}
+            const chrono::ChMatrix33<>& GetBodyInertia() const override { return m_variablesBodyOwnMass->GetBodyInertia(); }
 
-            chrono::ChMatrix33<>& GetBodyInvInertia() override {}
+            chrono::ChMatrix33<>& GetBodyInvInertia() override { return m_variablesBodyOwnMass->GetBodyInvInertia(); }
 
-            const chrono::ChMatrix33<>& GetBodyInvInertia() const override {}
+            const chrono::ChMatrix33<>& GetBodyInvInertia() const override { return m_variablesBodyOwnMass->GetBodyInvInertia(); }
 
         };
 
