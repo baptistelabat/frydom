@@ -13,16 +13,32 @@
 #ifndef FRYDOM_FRPLANEONPLANECONSTRAINT_H
 #define FRYDOM_FRPLANEONPLANECONSTRAINT_H
 
+#include "frydom/core/link/links_lib/FrLink.h"
+
 namespace frydom {
 
-
     /**
-     * \class FrPlaneOnPlaneConstraint
-     * \brief Class not used.
-     */
-    class FrPlaneOnPlaneConstraint {
+    * \class FrPlaneOnPlaneConstraint
+    * \brief Class for adding a constraint in which the XY plane of the two nodes are coplanar.
+     * (rotation allowed around Z, translations allowed in the XY plane)
+    */
+    class FrPlaneOnPlaneConstraint : public FrLink {
+
+    public:
+
+        /// Constructor from two nodes and a pointer to the system.
+        /// It automatically adds the link to the system
+        FrPlaneOnPlaneConstraint(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "PlaneOnPlaneConstraint"; }
 
     };
+
+    /// Helper function to make it easy to add a planeOnPlane constraint between two nodes
+    std::shared_ptr<FrPlaneOnPlaneConstraint> make_planeOnPlane_constraint(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
+
 
 }  // end namespace frydom
 

@@ -46,6 +46,27 @@ namespace frydom {
                 case SPHERICAL:
                     ChangeLinkType(ChronoLinkType::SPHERICAL);
                     break;
+                case PERPENDICULAR:
+                    ChangeLinkType(ChronoLinkType::PERPEND);
+                    break;
+                case PARALLEL:
+                    ChangeLinkType(ChronoLinkType::PARALLEL);
+                    break;
+                case PLANEONPLANE:
+                    ChangeLinkType(ChronoLinkType::PLANEPLANE);
+                    break;
+//                case DISTANCETOAXIS:
+//                    ChangeLinkType(ChronoLinkType::);
+//                    break;
+                case POINTONLINE:
+                    ChangeLinkType(ChronoLinkType::POINTLINE);
+                    break;
+                case POINTONPLANE:
+                    ChangeLinkType(ChronoLinkType::POINTPLANE);
+                    break;
+//                case POINTONSPLINE:
+//                    ChangeLinkType(ChronoLinkType::);
+//                    break;
             }
         }
 

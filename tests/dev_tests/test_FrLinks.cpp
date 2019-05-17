@@ -46,7 +46,7 @@ int main() {
     auto motor1 = rev1->Motorize(POSITION);
 
     auto t = new_var("t");
-    motor1->SetMotorFunction(MU_PI * sin(t));
+    motor1->SetMotorFunction(0.1*MU_PI * sin(t));
 //    motor1->SetMotorFunction(FrConstantFunction(MU_PI_2));
 
 
@@ -68,7 +68,7 @@ int main() {
     m1->TranslateInBody(10, 5, -1, NWU);
 
     auto m2 = body2->NewNode();
-    m2->TranslateInBody(-0, -0, -20, NWU);
+    m2->TranslateInBody(0, 0, 0, NWU);
 
 //    auto prismaticLink = make_prismatic_link(m1, m2, &system);
 ////    prismaticLink->SetSpringDamper(2e3, 1e3);
@@ -80,12 +80,20 @@ int main() {
 
 //    auto fixedLink = make_fixed_link(m1, m2, &system);
 
-//    auto cylindricalLink = make_cylindrical_link(nodeWorld, m2, &system);
+//    auto cylindricalLink = make_cylindrical_link(m1, m2, &system);
 
-    auto sphericalLink = make_spherical_link(nodeWorld, m2, &system);
+//    auto sphericalLink = make_spherical_link(m1, m2, &system);
 
 //    system.RemoveLink(prismaticLink);
 
+    auto test = system.GetWorldBody()->NewNode();
+    test->RotateAroundYInBody(45*DEG2RAD, NWU);
+
+//    auto perpendicularConstraint = make_perpendicular_constraint(test, m2, &system);
+//    auto parallelConstraint = make_parallel_constraint(test, m2, &system);
+//    auto planeOnPlaneConstraint = make_planeOnPlane_constraint(test,m2,&system);
+//    auto pointOnPlaneConstraint = make_pointOnPlane_constraint(m2,test,&system);
+    auto pointOnLineConstraint = make_pointOnLine_constraint(m2, test, &system);
 
 //    // Body 3 definition
 //    auto body3 = system.NewBody();
@@ -110,6 +118,9 @@ int main() {
 //    auto revoluteLink = make_revolute_link(m3, m4, &system);
 //    revoluteLink->SetSpringDamper(1e4, 1e1);
 //    revoluteLink->SetRestAngle(180*DEG2RAD);
+
+//    system.Initialize();
+//    system.GetChronoSystem()->DoFullAssembly();
 
     // Run the simulation (or visualize the assembly)
     system.SetTimeStep(0.01);
