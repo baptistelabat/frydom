@@ -55,6 +55,9 @@ namespace frydom {
         /// Get the rest length of the link
         double GetRestLength() const;
 
+        void SetLocked(bool locked) override;
+
+
         /// Get the direction of the link in world woordinate system
         const Direction GetLinkDirectionInWorld(FRAME_CONVENTION fc) const;
 
