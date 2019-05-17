@@ -39,33 +39,60 @@ namespace frydom {
 
             auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
 
-            for (auto bodyMotion = HDB->begin(); bodyMotion!=HDB->end(); bodyMotion++) {
+            if (vect.Equals(GetVariablesFb(HDB->GetBody(m_BEMBody)))) {
 
-                auto fb = GetVariablesFb(bodyMotion->second);
-                auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, bodyMotion->first);
+                for (auto bodyMotion = HDB->begin(); bodyMotion != HDB->end(); bodyMotion++) {
+
+                    auto fb = GetVariablesFb(bodyMotion->second);
+                    auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, bodyMotion->first);
+
+                    for (int i = 0; i < 6; i++) {
+                        for (int j = 0; j < 6; j++) {
+                            result(i) += invGeneralizedMass(i, j) * fb(j);
+                        }
+                    }
+                }
+
+            } else {
+
+                auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, m_BEMBody);
 
                 for (int i=0; i<6; i++) {
                     for (int j=0; j<6; j++) {
-                        result(i) +=  invGeneralizedMass(i, j) * fb(j);
+                        result(i) += invGeneralizedMass(i, j) * vect(j);
                     }
                 }
+
             }
 
         }
 
         void FrVariablesBEMBodyBase::Compute_inc_invMb_v(chrono::ChMatrix<double>& result,
-                                                         const chrono::ChMatrix<double>& vector) const {
+                                                         const chrono::ChMatrix<double>& vect) const {
 
             auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
 
-            for (auto bodyMotion = HDB->begin(); bodyMotion!=HDB->end(); bodyMotion++) {
+            if (vect.Equals(GetVariablesFb(HDB->GetBody(m_BEMBody)))) {
 
-                auto fb = GetVariablesFb(bodyMotion->second);
-                auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, bodyMotion->first);
+                for (auto bodyMotion = HDB->begin(); bodyMotion != HDB->end(); bodyMotion++) {
+
+                    auto fb = GetVariablesFb(bodyMotion->second);
+                    auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, bodyMotion->first);
+
+                    for (int i = 0; i < 6; i++) {
+                        for (int j = 0; j < 6; j++) {
+                            result(i) += invGeneralizedMass(i, j) * fb(j);
+                        }
+                    }
+                }
+
+            } else {
+
+                auto invGeneralizedMass = m_radiationModelBase->GetInverseGeneralizedMass(m_BEMBody, m_BEMBody);
 
                 for (int i=0; i<6; i++) {
                     for (int j=0; j<6; j++) {
-                        result(i) += invGeneralizedMass(i, j) * fb(j);
+                        result(i) += invGeneralizedMass(i, j) * vect(j);
                     }
                 }
             }
@@ -76,14 +103,27 @@ namespace frydom {
 
             auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
 
-            for (auto bodyMotion = HDB->begin(); bodyMotion!=HDB->end(); bodyMotion++) {
+            if (vect.Equals(GetVariablesFb(HDB->GetBody(m_BEMBody)))) {
 
-                auto fb = GetVariablesFb(bodyMotion->second);
-                auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, bodyMotion->first);
+                for (auto bodyMotion = HDB->begin(); bodyMotion != HDB->end(); bodyMotion++) {
 
-                for (int i=0; i<6; i++) {
-                    for (int j=0; j<6; j++) {
-                        result(i) += generalizedMass(i, j) * fb(j);
+                    auto fb = GetVariablesFb(bodyMotion->second);
+                    auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, bodyMotion->first);
+
+                    for (int i = 0; i < 6; i++) {
+                        for (int j = 0; j < 6; j++) {
+                            result(i) += generalizedMass(i, j) * fb(j);
+                        }
+                    }
+                }
+
+            } else {
+
+                auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, m_BEMBody);
+
+                for (int i = 0; i < 6; i++) {
+                    for (int j = 0; j < 6; j++) {
+                        result(i) += generalizedMass(i, j) * vect(j);
                     }
                 }
             }
@@ -94,15 +134,11 @@ namespace frydom {
 
             auto HDB = m_radiationModelBase->GetRadiationModel()->GetHydroDB();
 
-            for (auto bodyMotion = HDB->begin(); bodyMotion!=HDB->end(); bodyMotion++) {
+            auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, m_BEMBody);
 
-                auto fb = GetVariablesFb(bodyMotion->second);
-                auto generalizedMass = m_radiationModelBase->GetGeneralizedMass(m_BEMBody, bodyMotion->first);
-
-                for (int i=0; i<6; i++) {
-                    for (int j=0; j<6; j++) {
-                        result(this->offset + i) += c_a * generalizedMass(i, j) * fb(j);
-                    }
+            for (int i=0; i<6; i++) {
+                for (int j=0; j<6; j++) {
+                    result(this->offset + i) += c_a * generalizedMass(i, j) * vect(j);
                 }
             }
         }

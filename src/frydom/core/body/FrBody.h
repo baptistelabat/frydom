@@ -99,7 +99,7 @@ namespace frydom {
 
             chrono::ChVariables& Variables() override;
 
-            chrono::ChVariables* GetVariables1() override { return m_variables_ptr.get(); }
+            chrono::ChVariables* GetVariables1() override { return &*m_variables_ptr.get(); }
 
             void SetVariables(const std::shared_ptr<chrono::ChVariables> new_variables);
 

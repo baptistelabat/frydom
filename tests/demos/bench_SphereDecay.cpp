@@ -163,6 +163,12 @@ int main(int argc, char* argv[]) {
 
     body->SetInertiaTensor(InertiaTensor);
 
+    body->GetDOFMask()->SetLock_X(true);
+    body->GetDOFMask()->SetLock_Y(true);
+    body->GetDOFMask()->SetLock_Rx(true);
+    body->GetDOFMask()->SetLock_Ry(true);
+    body->GetDOFMask()->SetLock_Rz(true);
+
     // -- Hydrodynamics
 
     auto hdb = make_hydrodynamic_database("sphere_hdb.h5");
@@ -195,12 +201,6 @@ int main(int argc, char* argv[]) {
     // ##CC for monitoring
     auto radiationAddedMassForce = std::make_shared<AddedMassRadiationForce>(hdb.get(), body.get());
     // ##CC
-
-    body->GetDOFMask()->SetLock_X(true);
-    body->GetDOFMask()->SetLock_Y(true);
-    body->GetDOFMask()->SetLock_Rx(true);
-    body->GetDOFMask()->SetLock_Ry(true);
-    body->GetDOFMask()->SetLock_Rz(true);
 
     // -- Simulation
 

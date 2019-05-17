@@ -45,7 +45,7 @@ namespace frydom {
         }
 
         void FrRadiationModelBase::Update(double time, bool update_assets) {
-            //m_frydomRadiationModel->Update(time);
+            m_frydomRadiationModel->Update(time);
             ChPhysicsItem::Update(time, update_assets);
         }
 
