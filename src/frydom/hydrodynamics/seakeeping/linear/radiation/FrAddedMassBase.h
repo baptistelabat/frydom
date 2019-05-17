@@ -41,7 +41,6 @@ namespace frydom {
 
         public:
 
-            /// Constructor of the class.
             explicit FrAddedMassBase(FrRadiationModel* radiationModel);
 
             //
@@ -83,10 +82,11 @@ namespace frydom {
 
             FrRadiationModel* GetRadiationModel() const { return m_frydomRadiationModel; }
         };
-    }
 
 
-}  // end namespace frydom::internal
+    } // end namespace internal
+
+}  // end namespace frydom
 
 
 #endif //FRYDOM_FRADDEDMASSBASE_H

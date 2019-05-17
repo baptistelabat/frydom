@@ -35,10 +35,12 @@ namespace frydom {
 
 
     private:
-        std::shared_ptr<FrMorisonElement> m_model;
+        std::shared_ptr<FrMorisonElement> m_model;      ///< Morison model linked with the morison force
 
     public:
 
+        /// Constructor of the morison force with specified morison model
+        /// \param model Morison model
         explicit FrMorisonForce(std::shared_ptr<FrMorisonElement> model)
             : m_model(model) { }
 
@@ -46,11 +48,21 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "MorisonForce"; }
 
+        /// Define a single element morison model
+        /// \param body Body to which the morison model is applied
+        /// \return Single element morison model
         FrMorisonSingleElement* SetSingleElementModel(FrBody* body);
 
+        /// Define a composite element morison model
+        /// \param body Body to which the morison model is applied
+        /// \return Composite element morison model
         FrMorisonCompositeElement* SetCompositeElementModel(FrBody* body);
 
+        /// Method to initialized the morison force
         void Initialize() override;
+
+        /// Method to be applied at the end of each time step
+        //void StepFinalize() override;
 
     private:
 

@@ -30,15 +30,23 @@ namespace frydom {
 
     protected:
 
-        FrRadiationModel* m_radiationModel;
+        FrRadiationModel* m_radiationModel;     ///< radiation model
 
     public:
 
+        /// Default constructor
         FrRadiationForce() = default;
 
+        /// Constructor with the radiation model
+        /// \param radiationModel Radiation model where the radiation force is applied
         explicit FrRadiationForce(FrRadiationModel* radiationModel);
 
+        /// Define the radiation model where the radiation force is applied
+        /// \param radiationModel Radiation model where the radiation force is applied
         void SetRadiationModel(FrRadiationModel* radiationModel);
+
+        /// Method to be applied at the end of steps
+        //void StepFinalize() override;
 
 //        FrRadiationModel* GetRadiationModel() const;
 
@@ -60,8 +68,11 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "RadiationConvolutionForce"; }
 
+        /// Constructor with the radiation model
+        /// \param radiationModel Radiation model where the radiation force is applied
         explicit FrRadiationConvolutionForce(FrRadiationConvolutionModel* radiationModel);
 
+        /// Method to initialize the radiation convolution force
         void Initialize() override;
 
     private:

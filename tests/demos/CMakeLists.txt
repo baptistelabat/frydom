@@ -12,8 +12,10 @@ set(DEMOS
         demo_Hydrodynamic
         demo_Morison
         demo_Cable
-        demo_MooringLines
         demo_Hub_Installation
+        demo_langlee_FO3F
+        demo_FOSWEC_FlapDecay
+        demo_MooringLines
         demo_NonLinearHydrostatics
         bench_SphereDecay
         bench_SphereRegular
@@ -78,9 +80,29 @@ configure_file(../data/Mesh_clipper/searev_clip.obj . COPYONLY)
 configure_file(../data/Mesh_clipper/BARGE.obj . COPYONLY)
 
 configure_file(../data/Cylinder/Free_cylinder_2900_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_3800_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_5100_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_6000_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_8000_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_9700_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_10500_panels.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_11600_panels.obj . COPYONLY)
 
 configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPYONLY)
 configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPYONLY)
 configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPYONLY)
 
+configure_file(../data/Langlee/Barge.obj . COPYONLY)
+configure_file(../data/Langlee/Flap1_fuse.obj . COPYONLY)
+configure_file(../data/Langlee/Flap2_fuse.obj . COPYONLY)
+configure_file(../data/Langlee/Langlee.hdb5 . COPYONLY)
+
+configure_file(../data/FOSWEC/FOSWEC.hdb5 . COPYONLY)
+configure_file(../data/FOSWEC/FullFlap_mesh.obj . COPYONLY)
+configure_file(../data/FOSWEC/FullPlatform.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_2900_panels.obj . COPYONLY)
+
+configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPYONLY)
+configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPYONLY)
+configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPYONLY)
 

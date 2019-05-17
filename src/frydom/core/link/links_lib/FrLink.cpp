@@ -354,9 +354,6 @@ namespace frydom {
 
     void FrLink::Initialize() {
 
-        // Log
-        SetPathManager(m_system->GetPathManager());
-
         SetMarkers(m_node1.get(), m_node2.get());
     }
 

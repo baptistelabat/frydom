@@ -120,9 +120,6 @@ namespace frydom {
 
         if(!m_body) { throw FrException("error : the body is not defined in equilibrium frame"); }
 
-        // Log
-        SetPathManager(m_system->GetPathManager());
-
         if (m_initPositionFromBody) this->SetPositionToBodyPosition();
         if (m_initSpeedFromBody) this->SetVelocityToBodyVelocity();
 

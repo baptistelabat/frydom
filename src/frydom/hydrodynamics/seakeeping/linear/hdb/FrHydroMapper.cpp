@@ -48,5 +48,4 @@ namespace frydom {
         return m_mapEqFrame.at(BEMBody).get();
     }
 
-
 }  // end namespace frydom

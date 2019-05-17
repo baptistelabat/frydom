@@ -13,6 +13,8 @@
 #ifndef FRYDOM_FRCYLINDRICALLINK_H
 #define FRYDOM_FRCYLINDRICALLINK_H
 
+#include "FrLink.h"
+
 namespace frydom {
 
 
@@ -20,9 +22,22 @@ namespace frydom {
      * \class FrCylindricalLink
      * \brief
      */
-    class FrCylindricalLink {
+    class FrCylindricalLink : public FrLink {
+
+    public:
+
+        /// Constructor from two nodes and a pointer to the system.
+        /// It automatically adds the link to the system
+        FrCylindricalLink(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "CylindricalLink"; }
 
     };
+
+    /// Helper function to make it easy to link two nodes by a cylindrical link
+    std::shared_ptr<FrCylindricalLink> make_cylindrical_link(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
 
 }  // end namespace frydom
 

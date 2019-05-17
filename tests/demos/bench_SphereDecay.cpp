@@ -180,7 +180,13 @@ int main(int argc, char* argv[]) {
 
     // -- Linear hydrostatics
 
-//    auto forceHst = make_linear_hydrostatic_force(hdb, body);
+    //auto forceHst = make_linear_hydrostatic_force(hdb, body);
+
+    // Nonlinear hydrostatics
+    auto bodyMesh = make_hydro_mesh(body,"Sphere_10000_faces.obj",FrFrame(),FrHydroMesh::ClippingSupport::WAVESURFACE);
+    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
+
+    auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
 
     // -- Radiation
 
@@ -207,17 +213,11 @@ int main(int argc, char* argv[]) {
     // Decay test position.
     body->SetPosition(Position(0., 0., 4.99), NWU);
 
-    // Nonlinear hydrostatics
-    auto bodyMesh = make_hydro_mesh(body,"Sphere_10000_faces.obj",FrFrame(),FrHydroMesh::ClippingSupport::WAVESURFACE);
-    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
-
-    auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
-
     auto time = 0.;
 
     // ##CC
-    Logging log;
-    log.Open("sphere");
+    //Logging log;
+    //log.Open("sphere");
     // ##CC
 
     clock_t begin = clock();
@@ -235,13 +235,13 @@ int main(int argc, char* argv[]) {
 
         radiationAddedMassForce->Update(body.get());
 
-        log.Write(time,
-                  body->GetPosition(NWU), body->GetRotation(),
-                  forceHst->GetForceInWorld(NWU),forceHst->GetTorqueInBodyAtCOG(NWU),
-                  radiationForce->GetForceInWorld(NWU), radiationForce->GetTorqueInBodyAtCOG(NWU),
-                  radiationAddedMassForce->GetForceInWorld(), radiationAddedMassForce->GetTorqueInWorldAtCOG(),
-                  body->GetTotalExtForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU)
-        );
+        //log.Write(time,
+        //          body->GetPosition(NWU), body->GetRotation(),
+        //          forceHst->GetForceInWorld(NWU),forceHst->GetTorqueInBodyAtCOG(NWU),
+        //          radiationForce->GetForceInWorld(NWU), radiationForce->GetTorqueInBodyAtCOG(NWU),
+        //          radiationAddedMassForce->GetForceInWorld(), radiationAddedMassForce->GetTorqueInWorldAtCOG(),
+        //          body->GetTotalExtForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU)
+        //);
 
     }
 
