@@ -21,7 +21,7 @@ namespace frydom {
     class FrAngularActuator;
     class FrAngularActuator;
 
-    /// Specialized class for revolute link between two bodies
+    /// Specialized class for revolute link between two bodies : allows rotation around the Z axis
     class FrRevoluteLink : public FrLink {
 
     private:
