@@ -176,8 +176,8 @@ namespace frydom {
                 int jBody = 0;
                 for (auto bodyMotion = HDB->begin(); bodyMotion!=HDB->end(); bodyMotion++) {
 
-                    for (int i=0; i>6; i++) {
-                        for (int j=0; j>6; j++) {
+                    for (int i=0; i<6; i++) {
+                        for (int j=0; j<6; j++) {
                             invMassMatrix(i, j) = massMatrix(6*iBody + i, 6*jBody + j);
                         }
                     }

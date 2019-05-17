@@ -196,11 +196,11 @@ int main(int argc, char* argv[]) {
     auto radiationAddedMassForce = std::make_shared<AddedMassRadiationForce>(hdb.get(), body.get());
     // ##CC
 
-    /*body->GetDOFMask()->SetLock_X(true);
+    body->GetDOFMask()->SetLock_X(true);
     body->GetDOFMask()->SetLock_Y(true);
     body->GetDOFMask()->SetLock_Rx(true);
     body->GetDOFMask()->SetLock_Ry(true);
-    body->GetDOFMask()->SetLock_Rz(true);*/
+    body->GetDOFMask()->SetLock_Rz(true);
 
     // -- Simulation
 
