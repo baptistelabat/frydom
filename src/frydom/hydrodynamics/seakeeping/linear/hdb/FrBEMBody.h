@@ -68,7 +68,7 @@ namespace frydom {
     typedef FrBEMMode FrBEMMotionMode;
 
 
-    class FrDOFMask {
+    class FrBEMDOFMask {
 
     private:
         unsigned int m_nbDOF;                   ///< Number of degree of freedom of the body
@@ -78,7 +78,7 @@ namespace frydom {
 
     public:
         /// Default constructor of the DOF Mask
-        FrDOFMask() {}
+        FrBEMDOFMask() {}
 
         /// Define the DOF mask from vector
         /// \param mask DOF Mask vector
@@ -168,8 +168,8 @@ namespace frydom {
         std::string m_name;     ///< Name of the body
         Position m_position;    ///< Position of the body from HDB
 
-        FrDOFMask m_forceMask;  ///< Mask applied on the force
-        FrDOFMask m_motionMask; ///< Mask applied on the DOF
+        FrBEMDOFMask m_forceMask;  ///< Mask applied on the force
+        FrBEMDOFMask m_motionMask; ///< Mask applied on the DOF
 
         std::vector<FrBEMForceMode> m_forceModes;   ///< List of activated force modes
         std::vector<FrBEMMotionMode> m_motionModes; ///< List of activated motion modes

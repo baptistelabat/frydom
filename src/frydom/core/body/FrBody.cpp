@@ -84,7 +84,7 @@ namespace frydom {
         m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
 
-        m_DOFMask = std::make_unique<FrBodyDOFMask>();
+        m_DOFMask = std::make_unique<FrDOFMask>();
     }
 
     FrOffshoreSystem* FrBody::GetSystem() const {
@@ -820,7 +820,7 @@ namespace frydom {
 
     }
 
-    FrBodyDOFMask* FrBody::GetDOFMask() {
+    FrDOFMask* FrBody::GetDOFMask() {
         return m_DOFMask.get();
     }
 
