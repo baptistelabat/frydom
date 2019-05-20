@@ -113,24 +113,9 @@ namespace frydom {
 
     }
 
-//    void FrPrismaticLink::Brake(double target, double responseTime, bool targetOverResponsePriority) {
-//
-//        // brake motorization instantiation
-//        m_actuator = std::make_shared<FrLinearActuator>(this, POSITION);
-//        m_actuator->Initialize();
-//        GetSystem()->Add(m_actuator);
-//
-//        // brake function definition
-//        auto z0 = GetMarker2PositionWRTMarker1(NWU).GetZ();
-//        auto t0 = GetSystem()->GetTime();
-//
-//        FrCosRampFunction function;
-//        function.SetByTwoPoints(t0,z0,t0+responseTime,z0+target);
-//
-//        m_actuator->SetMotorFunction(function);
-//    }
-
     void FrPrismaticLink::Clamp() {
+
+        if (IsMotorized()) GetSystem()->RemoveLink(m_actuator);
 
         // brake motorization instantiation
         m_actuator = std::make_shared<FrLinearActuator>(this, POSITION);

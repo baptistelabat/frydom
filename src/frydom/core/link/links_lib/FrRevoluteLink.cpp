@@ -107,12 +107,6 @@ namespace frydom {
         m_linkAngularVelocity = GetAngularVelocityOfMarker2WRTMarker1(NWU).GetWz();
         m_linkAngularAcceleration = GetAngularAccelerationOfMarker2WRTMarker1(NWU).GetWzp();
 
-
-        if (time >= 10. && IsMotorized()) {
-            Clamp();
-//            Brake(5., 10., true);
-        }
-
         UpdateForces(time);
 
     }
@@ -136,14 +130,6 @@ namespace frydom {
         GetSystem()->Add(m_actuator);
         return dynamic_cast<FrAngularActuator*>(m_actuator.get());
     }
-
-//    void FrRevoluteLink::SetLocked(bool locked) {
-//        if (locked) {
-//            m_chronoLink->SetLinkType(FIXED_LINK);
-//        } else {
-//            m_chronoLink->SetLinkType(REVOLUTE);
-//        }
-//    }
 
     double FrRevoluteLink::GetUpdatedRelativeAngle() const {
         return mathutils::Normalize__PI_PI(m_chronoLink->c_frame2WRT1.GetRotation().GetRotationVector(NWU)[2]);

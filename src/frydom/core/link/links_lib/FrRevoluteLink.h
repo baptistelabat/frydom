@@ -93,8 +93,7 @@ namespace frydom {
 
         FrAngularActuator* Motorize(ACTUATOR_CONTROL control);
 
-//        void SetLocked(bool locked) override;
-
+        /// Lock the link to its current orientation
         void Clamp();
 
 

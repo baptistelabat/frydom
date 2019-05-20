@@ -717,11 +717,7 @@ namespace frydom {
 
         /// Get the systemBase, embedded in the offshore system
         /// \return systemBase
-
-    public:
         chrono::ChSystem* GetChronoSystem();
-
-    private:
 
         void IsInitialized();
 

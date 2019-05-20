@@ -85,9 +85,7 @@ namespace frydom {
         /// Motorize the link to make it driven
         FrLinearActuator* Motorize(ACTUATOR_CONTROL control);
 
-        //FIXME
-//        void Brake(double target, double responseTime, bool targetOverResponsePriority);
-        
+        /// Lock the link to its current position
         void Clamp();
 
     private:
