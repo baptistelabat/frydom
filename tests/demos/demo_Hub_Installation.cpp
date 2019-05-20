@@ -13,24 +13,6 @@
 
 using namespace frydom;
 
-
-class TestForce : public FrForce {
-
-    std::shared_ptr<FrNode> m_node;
-
-public:
-
-    void SetNode(const std::shared_ptr<FrNode>& node) { m_node = node; };
-
-    void Compute(double time) override {
-        double mass = 120000.;
-        Force truc = {0.,0.,-mass*9.81};
-        truc.GetFz() -= m_node->GetAccelerationInWorld(NWU).GetAccZ() * mass;
-        SetForceInWorldAtPointInBody(truc, m_node->GetNodePositionInBody(NWU), NWU);
-    }
-
-};
-
 int main(int argc, char* argv[]) {
 
     /**
@@ -93,19 +75,14 @@ int main(int argc, char* argv[]) {
 //    makeItBox(barge, 35., 16., 4., (1137.6-180.7)*1000);
     barge->AddMeshAsset("barge.obj");
     barge->SetColor(Yellow);
-//    barge->SetPosition(Position(0.,0.,1.5),fc);
 
     auto rev1_barge_node = barge->NewNode();
     rev1_barge_node->SetPositionInBody(Position(-7.5,0.,3.), fc);
 
-//    barge->SetFixedInWorld(true);
-
-//    barge->GetDOFMask()->MakeItLocked();
-
     FrFrame COGFrame;
 //    COGFrame.SetPosition(-0.83,0.,0., NWU);
 
-    barge->SetInertiaTensor(FrInertiaTensor((1137.6-180.6+120*0)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., COGFrame, NWU));
+    barge->SetInertiaTensor(FrInertiaTensor((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., COGFrame, NWU));
 
 //    float steelYoungModulus = 1e12; // Young modulus (for contact)
 //    float steelNormalDamping = 1e20;// Normal damping (for contact)
@@ -127,7 +104,6 @@ int main(int argc, char* argv[]) {
 
     // -- Hydrostatic
 //    auto hydrostaticForce = make_linear_hydrostatic_force(hdb, barge);
-
     auto bargeMesh = make_hydro_mesh(barge, "barge.obj", FrFrame(), FrHydroMesh::ClippingSupport::WAVESURFACE);
     auto hydrostaticForce = make_nonlinear_hydrostatic_force(barge, bargeMesh);
 
@@ -191,17 +167,18 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------
 
     auto rev1 = make_revolute_link(rev1_barge_node, rev1_base_node, &system);
-//    auto motor1 = rev1->Motorize(POSITION);
-//    FrCosRampFunction function;
-//    function.SetByTwoPoints(0.,0.,10.,90*DEG2RAD);
-
-
-    auto motor1 = rev1->Motorize(VELOCITY);
-    FrCosRampFunction function0;
-    function0.SetByTwoPoints(10.,0.,20.,.3);
+    auto motor1 = rev1->Motorize(POSITION);
     FrCosRampFunction function;
-    function.SetByTwoPoints(20.,.3,30.,0.);
-    motor1->SetMotorFunction(function*function0);
+    function.SetByTwoPoints(10.,0.,20.,90*DEG2RAD);
+
+//    auto motor1 = rev1->Motorize(VELOCITY);
+//    FrCosRampFunction function0;
+//    function0.SetByTwoPoints(10.,0.,20.,.3);
+//    FrCosRampFunction function;
+//    function.SetByTwoPoints(20.,.3,30.,0.);
+//    function *= function0;
+
+    motor1->SetMotorFunction(function);
 
 //    rev1->SetSpringDamper(1e8, 1e8);
 //    rev1->SetRestAngle(90*DEG2RAD);
@@ -241,7 +218,8 @@ int main(int argc, char* argv[]) {
     cableProp->SetEA(5e7);
     cableProp->SetLinearDensity(600);
 
-    auto CatenaryLine = make_catenary_line(crane_node, hub_node, &system, cableProp, elastic, unstretchedLength, FLUID_TYPE::AIR);
+//    auto CatenaryLine = make_catenary_line(crane_node, hub_node, &system, cableProp, elastic, unstretchedLength, FLUID_TYPE::AIR);
+    auto dynamicLine = make_dynamic_cable(crane_node, hub_node, &system, cableProp, unstretchedLength, 0., 10);
 
     // --------------------------------------------------
     // Mooring Lines
@@ -314,7 +292,16 @@ int main(int argc, char* argv[]) {
     // ------------------ Run ------------------ //
 
     // You can change the dynamical simulation time step using
-    system.SetTimeStep(0.01);
+    system.SetTimeStep(0.0075);
+
+//    system.SetTimeStepper(FrOffshoreSystem::TIME_STEPPER::EULER_IMPLICIT);
+
+    // simulation parameters for dynamic cables
+//    system.SetSolver(FrOffshoreSystem::SOLVER::MINRES);
+    system.SetSolverWarmStarting(false);
+    system.SetSolverMaxIterSpeed(200);
+    system.SetSolverMaxIterStab(200);
+    system.SetSolverForceTolerance(1e-13);
 
     // ------------------ Static equilibrium ------------------ //
 
