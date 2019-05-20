@@ -12,6 +12,7 @@
 #include "FrPrismaticLink.h"
 
 #include "frydom/core/common/FrNode.h"
+#include "frydom/core/math/functions/FrFunctionsInc.h"
 
 #include "frydom/core/link/links_lib/actuators/FrLinearActuator.h"
 
@@ -79,17 +80,21 @@ namespace frydom {
         m_linkVelocity = GetVelocityOfMarker2WRTMarker1(NWU).GetVz();
         m_linkAcceleration = GetAccelerationOfMarker2WRTMarker1(NWU).GetAccZ();
 
+        if (time >= 10. && !IsMotorized()) {
+            Brake(5., 10., true);
+        }
 
         UpdateForces(time);
 
     }
 
     void FrPrismaticLink::UpdateForces(double time) {
+
+        if (IsMotorized()) return;
+
         Force force;
         Torque torque;
         force.GetFz() = - m_stiffness * GetLinkPosition() - m_damping * GetLinkVelocity();
-
-        // Using force model from motor
 
         SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
     }
@@ -105,6 +110,23 @@ namespace frydom {
         GetSystem()->Add(m_actuator);
         return dynamic_cast<FrLinearActuator*>(m_actuator.get());
 
+    }
+
+    void FrPrismaticLink::Brake(double target, double responseTime, bool targetOverResponsePriority) {
+
+        // brake motorization instantiation
+        m_actuator = std::make_shared<FrLinearActuator>(this, POSITION);
+        m_actuator->Initialize();
+        GetSystem()->Add(m_actuator);
+
+        // brake function definition
+        auto z0 = GetMarker2PositionWRTMarker1(NWU).GetZ();
+        auto t0 = GetSystem()->GetTime();
+
+        FrCosRampFunction function;
+        function.SetByTwoPoints(t0,z0,t0+responseTime,z0+target);
+
+        m_actuator->SetMotorFunction(function);
     }
 
     std::shared_ptr<FrPrismaticLink>

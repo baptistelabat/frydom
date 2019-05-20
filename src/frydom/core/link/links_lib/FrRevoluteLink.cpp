@@ -112,17 +112,13 @@ namespace frydom {
 
     void FrRevoluteLink::UpdateForces(double time) {
 
+        if (IsMotorized()) return;
+
         // Default spring damper force model
         Force force;
         Torque torque;
 
         torque.GetMz() = - m_stiffness * GetLinkAngle() - m_damping * GetLinkAngularVelocity();
-
-        // Using force model from motor
-        /*
-         * TODO : si on a moteur force, on l'appelle ici et on ne prend pas en compte le spring damper...
-         * Si on a un moteur, faut-il deconnecter le modele spring damper ??
-         */
 
         // Set the link force
         SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);

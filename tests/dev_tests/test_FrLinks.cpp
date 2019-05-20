@@ -18,6 +18,7 @@ int main() {
 
     FrOffshoreSystem system;
     system.GetEnvironment()->ShowFreeSurface(false);
+    system.SetName("Links");
 
     // Body1 definition
     auto body1 = system.NewBody();
@@ -70,9 +71,9 @@ int main() {
     auto m2 = body2->NewNode();
     m2->TranslateInBody(0, 0, 0, NWU);
 
-//    auto prismaticLink = make_prismatic_link(m1, m2, &system);
-////    prismaticLink->SetSpringDamper(2e3, 1e3);
-////    prismaticLink->SetRestLength(-5);
+    auto prismaticLink = make_prismatic_link(m1, m2, &system);
+    prismaticLink->SetSpringDamper(2e3, 1e4);
+    prismaticLink->SetRestLength(0.);
 //
 //    auto motor2 = prismaticLink->Motorize(POSITION);
 ////    motor2->SetMotorFunction(10*sin(t));
@@ -86,14 +87,14 @@ int main() {
 
 //    system.RemoveLink(prismaticLink);
 
-    auto test = system.GetWorldBody()->NewNode();
-    test->RotateAroundYInBody(45*DEG2RAD, NWU);
+//    auto test = system.GetWorldBody()->NewNode();
+//    test->RotateAroundYInBody(45*DEG2RAD, NWU);
 
 //    auto perpendicularConstraint = make_perpendicular_constraint(test, m2, &system);
 //    auto parallelConstraint = make_parallel_constraint(test, m2, &system);
 //    auto planeOnPlaneConstraint = make_planeOnPlane_constraint(test,m2,&system);
 //    auto pointOnPlaneConstraint = make_pointOnPlane_constraint(m2,test,&system);
-    auto pointOnLineConstraint = make_pointOnLine_constraint(m2, test, &system);
+//    auto pointOnLineConstraint = make_pointOnLine_constraint(m2, test, &system);
 
 //    // Body 3 definition
 //    auto body3 = system.NewBody();
@@ -119,8 +120,8 @@ int main() {
 //    revoluteLink->SetSpringDamper(1e4, 1e1);
 //    revoluteLink->SetRestAngle(180*DEG2RAD);
 
-//    system.Initialize();
-//    system.GetChronoSystem()->DoFullAssembly();
+    system.Initialize();
+    system.GetChronoSystem()->DoFullAssembly();
 
     // Run the simulation (or visualize the assembly)
     system.SetTimeStep(0.01);
