@@ -134,6 +134,14 @@ namespace frydom {
         return dynamic_cast<FrAngularActuator*>(m_actuator.get());
     }
 
+    void FrRevoluteLink::SetLocked(bool locked) {
+        if (locked) {
+            m_chronoLink->SetLinkType(FIXED_LINK);
+        } else {
+            m_chronoLink->SetLinkType(REVOLUTE);
+        }
+    }
+
     double FrRevoluteLink::GetUpdatedRelativeAngle() const {
         return mathutils::Normalize__PI_PI(m_chronoLink->c_frame2WRT1.GetRotation().GetRotationVector(NWU)[2]);
 //        return mathutils::Normalize__PI_PI(m_chronoLink->GetRelAngle()); // INFO : fonctionne bien moins bien que ci-dessus !

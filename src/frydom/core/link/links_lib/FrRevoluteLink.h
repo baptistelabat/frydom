@@ -14,11 +14,6 @@
 
 #include "FrLink.h"
 
-
-#include "hermes/hermes.h"
-
-
-
 namespace frydom {
 
 
@@ -97,6 +92,8 @@ namespace frydom {
         void UpdateForces(double time); // TODO : mettre en abstrait dans FrLink pour que toutes les classes possedent ca
 
         FrAngularActuator* Motorize(ACTUATOR_CONTROL control);
+
+        void SetLocked(bool locked) override;
 
 
     private:

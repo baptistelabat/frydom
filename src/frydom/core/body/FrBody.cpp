@@ -206,7 +206,7 @@ namespace frydom {
         m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
 
-        m_DOFMask = std::make_unique<FrBodyDOFMask>();
+        m_DOFMask = std::make_unique<FrDOFMask>();
     }
 
     FrOffshoreSystem* FrBody::GetSystem() const {
@@ -247,9 +247,6 @@ namespace frydom {
     }
 
     void FrBody::Initialize() {
-
-        // Log
-        SetPathManager(m_system->GetPathManager());
 
         // Check the mass and inertia coefficients
         for (unsigned int i=0;i<6;i++)
@@ -945,7 +942,7 @@ namespace frydom {
 
     }
 
-    FrBodyDOFMask* FrBody::GetDOFMask() {
+    FrDOFMask* FrBody::GetDOFMask() {
         return m_DOFMask.get();
     }
 
@@ -955,11 +952,13 @@ namespace frydom {
 
             // Initializing forces
             for (const auto& force : m_externalForces){
+                force->SetPathManager(GetPathManager());
                 force->InitializeLog(bodyPath);
             }
 
             // Initializing nodes
             for (const auto &node : m_nodes) {
+                node->SetPathManager(GetPathManager());
                 node->InitializeLog(bodyPath);
             }
 

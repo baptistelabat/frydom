@@ -68,15 +68,21 @@ int main() {
     m1->TranslateInBody(10, 5, -1, NWU);
 
     auto m2 = body2->NewNode();
-    m2->TranslateInBody(-1, -1, -20, NWU);
+    m2->TranslateInBody(-0, -0, -20, NWU);
 
-    auto prismaticLink = make_prismatic_link(m1, m2, &system);
-//    prismaticLink->SetSpringDamper(2e3, 1e3);
-//    prismaticLink->SetRestLength(-5);
+//    auto prismaticLink = make_prismatic_link(m1, m2, &system);
+////    prismaticLink->SetSpringDamper(2e3, 1e3);
+////    prismaticLink->SetRestLength(-5);
+//
+//    auto motor2 = prismaticLink->Motorize(POSITION);
+////    motor2->SetMotorFunction(10*sin(t));
+//    motor2->SetMotorFunction(FrConstantFunction(-10.));
 
-    auto motor2 = prismaticLink->Motorize(POSITION);
-//    motor2->SetMotorFunction(10*sin(t));
-    motor2->SetMotorFunction(FrConstantFunction(-10.));
+//    auto fixedLink = make_fixed_link(m1, m2, &system);
+
+//    auto cylindricalLink = make_cylindrical_link(nodeWorld, m2, &system);
+
+    auto sphericalLink = make_spherical_link(nodeWorld, m2, &system);
 
 //    system.RemoveLink(prismaticLink);
 

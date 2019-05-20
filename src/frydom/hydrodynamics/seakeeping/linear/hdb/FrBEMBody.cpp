@@ -22,7 +22,7 @@ namespace frydom {
     // FrDOFMask
     //
 
-    void FrDOFMask::SetMask(mathutils::Vector6d<int> mask) {
+    void FrBEMDOFMask::SetMask(mathutils::Vector6d<int> mask) {
 
         for (unsigned int i=0; i<6; i++) { assert(mask(i) == 0 or mask(i) == 1); }
 
@@ -47,11 +47,11 @@ namespace frydom {
         }
     }
 
-    mathutils::Vector6d<bool> FrDOFMask::GetMask() const {
+    mathutils::Vector6d<bool> FrBEMDOFMask::GetMask() const {
         return m_mask;
     }
 
-    mathutils::MatrixMN<double> FrDOFMask::GetMatrix() const {
+    mathutils::MatrixMN<double> FrBEMDOFMask::GetMatrix() const {
         return m_matrix;
     }
 

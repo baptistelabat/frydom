@@ -11,6 +11,7 @@ set(REFACTORING_TESTS
         test_WNL_and_NL_hydrostatics
         test_FrFunction
         dev_IRR_motors
+        test_link_locked
         )
 
 #include(Add_matplotlib-cpp)
