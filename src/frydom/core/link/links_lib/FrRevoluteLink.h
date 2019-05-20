@@ -93,7 +93,9 @@ namespace frydom {
 
         FrAngularActuator* Motorize(ACTUATOR_CONTROL control);
 
-        void SetLocked(bool locked) override;
+//        void SetLocked(bool locked) override;
+
+        void Clamp();
 
 
     private:

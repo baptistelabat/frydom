@@ -81,7 +81,8 @@ namespace frydom {
         m_linkAcceleration = GetAccelerationOfMarker2WRTMarker1(NWU).GetAccZ();
 
         if (time >= 10. && !IsMotorized()) {
-            Brake(5., 10., true);
+            Clamp();
+//            Brake(5., 10., true);
         }
 
         UpdateForces(time);
@@ -112,21 +113,32 @@ namespace frydom {
 
     }
 
-    void FrPrismaticLink::Brake(double target, double responseTime, bool targetOverResponsePriority) {
+//    void FrPrismaticLink::Brake(double target, double responseTime, bool targetOverResponsePriority) {
+//
+//        // brake motorization instantiation
+//        m_actuator = std::make_shared<FrLinearActuator>(this, POSITION);
+//        m_actuator->Initialize();
+//        GetSystem()->Add(m_actuator);
+//
+//        // brake function definition
+//        auto z0 = GetMarker2PositionWRTMarker1(NWU).GetZ();
+//        auto t0 = GetSystem()->GetTime();
+//
+//        FrCosRampFunction function;
+//        function.SetByTwoPoints(t0,z0,t0+responseTime,z0+target);
+//
+//        m_actuator->SetMotorFunction(function);
+//    }
+
+    void FrPrismaticLink::Clamp() {
 
         // brake motorization instantiation
         m_actuator = std::make_shared<FrLinearActuator>(this, POSITION);
         m_actuator->Initialize();
         GetSystem()->Add(m_actuator);
 
-        // brake function definition
-        auto z0 = GetMarker2PositionWRTMarker1(NWU).GetZ();
-        auto t0 = GetSystem()->GetTime();
+        m_actuator->SetMotorFunction(FrConstantFunction(GetMarker2PositionWRTMarker1(NWU).GetZ()));
 
-        FrCosRampFunction function;
-        function.SetByTwoPoints(t0,z0,t0+responseTime,z0+target);
-
-        m_actuator->SetMotorFunction(function);
     }
 
     std::shared_ptr<FrPrismaticLink>
