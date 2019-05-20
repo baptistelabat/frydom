@@ -12,8 +12,9 @@
 
 #include "FrRevoluteLink.h"
 
-#include "frydom/core/body/FrBody.h"
+//#include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrNode.h"
+#include "frydom/core/math/functions/FrFunctionsInc.h"
 
 #include "frydom/core/link/links_lib/actuators/FrAngularActuator.h"
 
@@ -112,17 +113,13 @@ namespace frydom {
 
     void FrRevoluteLink::UpdateForces(double time) {
 
+        if (IsMotorized()) return;
+
         // Default spring damper force model
         Force force;
         Torque torque;
 
         torque.GetMz() = - m_stiffness * GetLinkAngle() - m_damping * GetLinkAngularVelocity();
-
-        // Using force model from motor
-        /*
-         * TODO : si on a moteur force, on l'appelle ici et on ne prend pas en compte le spring damper...
-         * Si on a un moteur, faut-il deconnecter le modele spring damper ??
-         */
 
         // Set the link force
         SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
@@ -132,14 +129,6 @@ namespace frydom {
         m_actuator = std::make_shared<FrAngularActuator>(this, control);
         GetSystem()->Add(m_actuator);
         return dynamic_cast<FrAngularActuator*>(m_actuator.get());
-    }
-
-    void FrRevoluteLink::SetLocked(bool locked) {
-        if (locked) {
-            m_chronoLink->SetLinkType(FIXED_LINK);
-        } else {
-            m_chronoLink->SetLinkType(REVOLUTE);
-        }
     }
 
     double FrRevoluteLink::GetUpdatedRelativeAngle() const {
@@ -160,6 +149,21 @@ namespace frydom {
         auto link = std::make_shared<FrRevoluteLink>(node1, node2, system);
         system->AddLink(link);
         return link;
+    }
+
+    void FrRevoluteLink::Clamp() {
+
+        if (IsMotorized()) GetSystem()->RemoveLink(m_actuator);
+
+        // brake motorization instantiation
+        m_actuator = std::make_shared<FrAngularActuator>(this, POSITION);
+        m_actuator->Initialize();
+        GetSystem()->Add(m_actuator);
+
+        auto angle = GetMarker2OrientationWRTMarker1().GetAngle();
+
+        m_actuator->SetMotorFunction(FrConstantFunction(angle));
+
     }
 
 

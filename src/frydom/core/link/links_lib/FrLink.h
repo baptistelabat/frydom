@@ -44,9 +44,16 @@ namespace frydom {
         FREE_LINK,
         PRISMATIC,
         REVOLUTE,
-//        SCREW,
         SPHERICAL,
+        PERPENDICULAR,
+        PARALLEL,
+        PLANEONPLANE,
+        POINTONLINE,
+        POINTONPLANE,
         CUSTOM
+//        SCREW,
+//        POINTONSPLINE,
+//        DISTANCETOAXIS,
     };
 
  /*

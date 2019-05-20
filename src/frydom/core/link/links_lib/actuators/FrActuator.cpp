@@ -34,7 +34,7 @@ namespace frydom {
 //    }
 
     bool FrActuator::IsActive() const {
-        return false;
+        return true;
     }
 
     Force FrActuator::GetMotorForceInBody1(FRAME_CONVENTION fc) const {

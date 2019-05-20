@@ -24,7 +24,7 @@ namespace frydom {
 
     /**
      * \class FrPrismaticLink
-     * \brief Class for defining a prismatic link.
+     * \brief Class for defining a prismatic link : allows translation along Z axis
      */
     class FrPrismaticLink : public FrLink {
 
@@ -84,6 +84,9 @@ namespace frydom {
 
         /// Motorize the link to make it driven
         FrLinearActuator* Motorize(ACTUATOR_CONTROL control);
+
+        /// Lock the link to its current position
+        void Clamp();
 
     private:
 
