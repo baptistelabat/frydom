@@ -392,6 +392,7 @@ namespace frydom {
 
                 std::vector<Eigen::MatrixXd> impulseResponseFunctionsKU;
 
+                idof = 0;
                 for (unsigned int imotion=0; imotion<6; ++imotion) {
 
                     if(bodyMotion->GetMotionMask(imotion)) {

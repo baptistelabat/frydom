@@ -14,6 +14,7 @@
 #define FRYDOM_FRBODY_H
 
 #include "chrono/physics/ChBodyAuxRef.h"
+#include "chrono/solver/ChVariables.h"
 
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/FrOffshoreSystem.h"
@@ -26,8 +27,9 @@
 #include "frydom/cable/FrDynamicCable.h"
 
 // TODO : voir si il n'y a pas moyen de passer ces includes
-#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModelBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesBEMBodyBase.h"
 
 
 #define DEFAULT_MAX_SPEED (float)10.
@@ -49,9 +51,13 @@ namespace frydom {
 
             FrBody *m_frydomBody;                      ///< pointer to the FrBody containing this bodyBase
 
+            std::shared_ptr<chrono::ChVariables> m_variables_ptr;
+
             /// Constructor of the bodyBase
             /// \param body body containing this bodyBase
             explicit FrBodyBase(FrBody *body);
+
+            FrBodyBase(const FrBodyBase& other);
 
             /// Initial setup of the bodyBase, called from chrono, call the Initialize of the body
             void SetupInitial() override;
@@ -70,6 +76,46 @@ namespace frydom {
 
             /// Removes an asset given its shared pointer
             void RemoveAsset(std::shared_ptr<chrono::ChAsset> asset);
+
+            //
+            // STATE FUNCTION
+            //
+
+            void IntToDescriptor(const unsigned int off_v,
+                                 const chrono::ChStateDelta& v,
+                                 const chrono::ChVectorDynamic<>& R,
+                                 const unsigned int off_L,
+                                 const chrono::ChVectorDynamic<>& L,
+                                 const chrono::ChVectorDynamic<>& Qc) override;
+
+            void IntFromDescriptor(const unsigned int off_v,
+                                   chrono::ChStateDelta& v,
+                                   const unsigned int off_L,
+                                   chrono::ChVectorDynamic<>& L) override;
+
+            //
+            // SOLVER FUNCTIONS
+            //
+
+            chrono::ChVariables& Variables() override;
+
+            chrono::ChVariables* GetVariables1() override { return &*m_variables_ptr.get(); }
+
+            void SetVariables(const std::shared_ptr<chrono::ChVariables> new_variables);
+
+            void VariablesFbReset() override;
+
+            void VariablesFbLoadForces(double factor = 1) override;
+
+            void VariablesQbLoadSpeed() override;
+
+            void VariablesFbIncrementMq() override;
+
+            void VariablesQbSetSpeed(double step =0) override;
+
+            void VariablesQbIncrementPosition(double step) override;
+
+            void InjectVariables(chrono::ChSystemDescriptor& mdescriptor) override;
 
         };
 
@@ -960,13 +1006,15 @@ namespace frydom {
         friend void internal::FrDynamicCableBase::InitializeLinks();
         friend void FrOffshoreSystem::RemoveBody(std::shared_ptr<frydom::FrBody>);
 
-        friend int internal::FrAddedMassBase::GetBodyOffset(FrBody* body) const;
+        friend int internal::FrRadiationModelBase::GetBodyOffset(FrBody* body) const;
         friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody* body) const ;
         friend void internal::FrVariablesAddedMassBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &result,
                                                                      int offset) const;
-        friend void internal::FrAddedMassBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
+        //friend void internal::FrRadiationModelBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
+        friend void internal::FrRadiationModelBase::InjectVariablesToBody();
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody *body) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody *body) const;
+        friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase::GetVariablesFb(FrBody* body) const;
 
      };
 

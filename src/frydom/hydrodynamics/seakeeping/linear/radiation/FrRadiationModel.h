@@ -32,7 +32,7 @@ namespace frydom {
     class FrOffshoreSystem;
 
     namespace internal {
-        class FrAddedMassBase;
+        class FrRadiationModelBase;
     }
 
 

@@ -12,7 +12,7 @@
 
 #include "FrRadiationModel.h"
 
-#include "FrAddedMassBase.h"
+#include "FrRadiationModelBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
@@ -62,13 +62,13 @@ namespace frydom {
     // ----------------------------------------------------------------
 
     FrRadiationModel::FrRadiationModel() {
-        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this);
+        m_chronoPhysicsItem = std::make_shared<internal::FrRadiationModelBase>(this);
     }
 
     FrRadiationModel::FrRadiationModel(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) {
 
         // Creation of an AddedMassBase object.
-        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this); // this = FrRadiationModel
+        m_chronoPhysicsItem = std::make_shared<internal::FrRadiationModelBase>(this); // this = FrRadiationModel
     }
 
     void FrRadiationModel::Initialize() {

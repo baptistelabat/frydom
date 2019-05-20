@@ -29,7 +29,16 @@ namespace frydom {
 
     namespace internal {
 
+        //
+        // FrBodyBase
+        //
+
         FrBodyBase::FrBodyBase(FrBody *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
+
+        FrBodyBase::FrBodyBase(const FrBodyBase& other) : chrono::ChBodyAuxRef(other) {
+            m_frydomBody = other.m_frydomBody;
+            m_variables_ptr = other.m_variables_ptr;
+        }
 
         void FrBodyBase::SetupInitial() {}
 
@@ -73,6 +82,119 @@ namespace frydom {
             assets.erase(
                     std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset));
         }
+
+        //
+        // STATE FUNCTION
+        //
+
+        void FrBodyBase::IntToDescriptor(const unsigned int off_v,
+                                         const chrono::ChStateDelta& v,
+                                         const chrono::ChVectorDynamic<>& R,
+                                         const unsigned int off_L,
+                                         const chrono::ChVectorDynamic<>& L,
+                                         const chrono::ChVectorDynamic<>& Qc) {
+            Variables().Get_qb().PasteClippedMatrix(v, off_v, 0, 6, 1, 0, 0);
+            Variables().Get_fb().PasteClippedMatrix(R, off_v, 0, 6, 1, 0, 0);
+        }
+
+        void FrBodyBase::IntFromDescriptor(const unsigned int off_v,
+                                           chrono::ChStateDelta& v,
+                                           const unsigned int off_L,
+                                           chrono::ChVectorDynamic<>& L) {
+            v.PasteMatrix(Variables().Get_qb(), off_v, 0);
+        }
+
+        //
+        // SOLVER FUNCTIONS
+        //
+
+        chrono::ChVariables& FrBodyBase::Variables() {
+
+            if (m_variables_ptr) {
+                return *m_variables_ptr.get();
+            } else {
+                return chrono::ChBody::variables;
+            }
+        }
+
+        void FrBodyBase::SetVariables(const std::shared_ptr<chrono::ChVariables> new_variables) {
+            m_variables_ptr = new_variables;
+            variables.SetDisabled(true);
+        }
+
+        void FrBodyBase::InjectVariables(chrono::ChSystemDescriptor& mdescriptor) {
+            Variables().SetDisabled(!this->IsActive());
+            mdescriptor.InsertVariables(&this->Variables());
+        }
+
+        void FrBodyBase::VariablesFbReset() {
+            Variables().Get_fb().FillElem(0.0);
+        }
+
+        void FrBodyBase::VariablesFbLoadForces(double factor) {
+            // add applied forces to 'fb' vector
+            this->Variables().Get_fb().PasteSumVector(Xforce * factor, 0, 0);
+
+            // add applied torques to 'fb' vector, including gyroscopic torque
+            if (this->GetNoGyroTorque())
+                this->Variables().Get_fb().PasteSumVector((Xtorque)*factor, 3, 0);
+            else
+                this->Variables().Get_fb().PasteSumVector((Xtorque - gyro) * factor, 3, 0);
+        }
+
+        void FrBodyBase::VariablesFbIncrementMq() {
+            this->Variables().Compute_inc_Mb_v(this->Variables().Get_fb(), this->Variables().Get_qb());
+        }
+
+        void FrBodyBase::VariablesQbLoadSpeed() {
+            this->Variables().Get_qb().PasteVector(GetCoord_dt().pos, 0, 0);
+            this->Variables().Get_qb().PasteVector(GetWvel_loc(), 3, 0);
+        }
+
+        void FrBodyBase::VariablesQbSetSpeed(double step) {
+            chrono::ChCoordsys<> old_coord_dt = this->GetCoord_dt();
+
+            // from 'qb' vector, sets body speed, and updates auxiliary data
+            this->SetPos_dt(this->Variables().Get_qb().ClipVector(0, 0));
+            this->SetWvel_loc(this->Variables().Get_qb().ClipVector(3, 0));
+
+            // apply limits (if in speed clamping mode) to speeds.
+            ClampSpeed();
+
+            // compute auxiliary gyroscopic forces
+            ComputeGyro();
+
+            // Compute accel. by BDF (approximate by differentiation);
+            if (step) {
+                this->SetPos_dtdt((this->GetCoord_dt().pos - old_coord_dt.pos) / step);
+                this->SetRot_dtdt((this->GetCoord_dt().rot - old_coord_dt.rot) / step);
+            }
+        }
+
+        void FrBodyBase::VariablesQbIncrementPosition(double dt_step) {
+            if (!this->IsActive())
+                return;
+
+            // Updates position with incremental action of speed contained in the
+            // 'qb' vector:  pos' = pos + dt * speed   , like in an Eulero step.
+
+            chrono::ChVector<> newspeed = Variables().Get_qb().ClipVector(0, 0);
+            chrono::ChVector<> newwel = Variables().Get_qb().ClipVector(3, 0);
+
+            // ADVANCE POSITION: pos' = pos + dt * vel
+            this->SetPos(this->GetPos() + newspeed * dt_step);
+
+            // ADVANCE ROTATION: rot' = [dt*wwel]%rot  (use quaternion for delta rotation)
+            chrono::ChQuaternion<> mdeltarot;
+            chrono::ChQuaternion<> moldrot = this->GetRot();
+            chrono::ChVector<> newwel_abs = Amatrix * newwel;
+            double mangle = newwel_abs.Length() * dt_step;
+            newwel_abs.Normalize();
+            mdeltarot.Q_from_AngAxis(mangle, newwel_abs);
+            chrono::ChQuaternion<> mnewrot = mdeltarot % moldrot;
+            this->SetRot(mnewrot);
+        }
+
 
     }  // end namespace frydom::internal
 

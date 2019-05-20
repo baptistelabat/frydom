@@ -10,10 +10,12 @@
 // ==========================================================================
 
 
-#ifndef FRYDOM_FRADDEDMASSBASE_H
-#define FRYDOM_FRADDEDMASSBASE_H
+#ifndef FRYDOM_FrRadiationModelBase_H
+#define FRYDOM_FrRadiationModelBase_H
 
 #include <memory>
+
+#include "MathUtils/Matrix66.h"
 
 #include "frydom/core/common/FrPhysicsItem.h"
 
@@ -25,23 +27,37 @@ namespace frydom {
     // Forward declarations
     class FrRadiationModel;
     class FrBody;
+    class FrBEMBody;
 
 
     namespace internal {
 
-
+        // Forward declaration
         class FrVariablesAddedMassBase;
 
-        class FrAddedMassBase : public FrPhysicsItemBase {
+        // hash defition for the map with pair as a key
+        struct pair_hash {
+            template <class T1, class T2>
+            std::size_t operator () (const std::pair<T1,T2> &p) const {
+                auto h1 = std::hash<T1>{}(p.first);
+                auto h2 = std::hash<T2>{}(p.second);
+
+                // Mainly for demonstration purposes, i.e. works but is overly simple
+                // In the real world, use sth. like boost.hash_combine
+                return h1 ^ h2;
+            }
+        };
+
+        class FrRadiationModelBase : public FrPhysicsItemBase {
 
         private:
 
             FrRadiationModel* m_frydomRadiationModel;
-            std::shared_ptr<FrVariablesAddedMassBase> m_variables;
+            std::unordered_map<std::pair<FrBEMBody*, FrBEMBody*>, mathutils::Matrix66<double>, pair_hash> m_invGeneralizedMass;
 
         public:
 
-            explicit FrAddedMassBase(FrRadiationModel* radiationModel);
+            explicit FrRadiationModelBase(FrRadiationModel* radiationModel);
 
             //
             // Update
@@ -70,17 +86,27 @@ namespace frydom {
             void IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
                                    const unsigned int off_L, chrono::ChVectorDynamic<>& L) override;
 
-            void InjectVariables(chrono::ChSystemDescriptor& mdescriptor) override;
+            //void InjectVariables(chrono::ChSystemDescriptor& mdescriptor) override;
 
-            void VariablesFbReset() override;
+            //void VariablesFbReset() override;
 
-            void VariablesFbIncrementMq() override;
+            //void VariablesFbIncrementMq() override;
 
             int GetBodyOffset(FrBody* body) const;
 
-            void SetVariables(FrBody* body, chrono::ChMatrix<double>& qb, int offset) const;
+            void InjectVariablesToBody();
+
+            //
+            // ADDED MASS
+            //
 
             FrRadiationModel* GetRadiationModel() const { return m_frydomRadiationModel; }
+
+            void BuildGeneralizedMass();
+
+            mathutils::Matrix66<double> GetInverseGeneralizedMass(FrBEMBody* BEMBody, FrBEMBody* BEMBodyMotion) const;
+
+            mathutils::Matrix66<double> GetGeneralizedMass(FrBEMBody* BEMBody, FrBEMBody* BEMBodyMotion) const;
         };
 
 
@@ -89,4 +115,4 @@ namespace frydom {
 }  // end namespace frydom
 
 
-#endif //FRYDOM_FRADDEDMASSBASE_H
+#endif //FRYDOM_FrRadiationModelBase_H

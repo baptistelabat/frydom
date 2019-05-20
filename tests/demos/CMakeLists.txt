@@ -70,6 +70,7 @@ configure_file(../data/bench/DTMB5512/DTMB5512.obj . COPYONLY)
 configure_file(../data/bench/DTMB5512/DTMB5512.hdb5 . COPYONLY)
 
 configure_file(../data/barge/Barge_HDB.h5 . COPYONLY)
+configure_file(../data/barge/barge.obj . COPYONLY)
 
 configure_file(../data/platform/Platform_HDB_Without_drift.hdb5 . COPYONLY)
 

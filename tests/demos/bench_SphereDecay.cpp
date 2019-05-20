@@ -151,12 +151,6 @@ int main(int argc, char* argv[]) {
 
     body->SetPosition(Position(0., 0., 0.), NWU);
 
-    body->GetDOFMask()->SetLock_X(true);
-    body->GetDOFMask()->SetLock_Y(true);
-    body->GetDOFMask()->SetLock_Rx(true);
-    body->GetDOFMask()->SetLock_Ry(true);
-    body->GetDOFMask()->SetLock_Rz(true);
-
     // -- Inertia
 
     double mass = 2.618E5;
@@ -169,6 +163,12 @@ int main(int argc, char* argv[]) {
 
     body->SetInertiaTensor(InertiaTensor);
 
+    body->GetDOFMask()->SetLock_X(true);
+    body->GetDOFMask()->SetLock_Y(true);
+    body->GetDOFMask()->SetLock_Rx(true);
+    body->GetDOFMask()->SetLock_Ry(true);
+    body->GetDOFMask()->SetLock_Rz(true);
+
     // -- Hydrodynamics
 
     auto hdb = make_hydrodynamic_database("sphere_hdb.h5");
@@ -180,13 +180,13 @@ int main(int argc, char* argv[]) {
 
     // -- Linear hydrostatics
 
-    //auto forceHst = make_linear_hydrostatic_force(hdb, body);
+    auto forceHst = make_linear_hydrostatic_force(hdb, body);
 
     // Nonlinear hydrostatics
-    auto bodyMesh = make_hydro_mesh(body,"Sphere_10000_faces.obj",FrFrame(),FrHydroMesh::ClippingSupport::WAVESURFACE);
-    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
+    //auto bodyMesh = make_hydro_mesh(body,"Sphere_10000_faces.obj",FrFrame(),FrHydroMesh::ClippingSupport::WAVESURFACE);
+    //bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
 
-    auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
+    //auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
 
     // -- Radiation
 
