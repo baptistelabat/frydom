@@ -13,6 +13,7 @@
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/hydrodynamics/damping/FrLinearDamping.h"
 
 
@@ -62,9 +63,14 @@ namespace frydom {
     }
 
     double FrMooringBuoy::computeDraft() {
-        if (GetPosition(NWU).GetZ()<-m_radius) { return m_radius;}
-        if (GetPosition(NWU).GetZ()>m_radius) {return -m_radius;}
-        else {return -GetPosition(NWU).GetZ();}
+
+        auto eta = GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetPosition(GetPosition(NWU), NWU);
+        auto zh = GetPosition(NWU).GetZ() - eta;
+
+        if (zh<-m_radius) { return m_radius;}
+        if (zh>m_radius) {return -m_radius;}
+        else {return -zh;}
+
     }
 
 

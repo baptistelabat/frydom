@@ -48,9 +48,10 @@ namespace frydom {
 
     void FrAngularActuator::Initialize() {
 
-        m_chronoActuator->Initialize(GetChronoBody1(), GetChronoBody2(), true,
-                                     internal::FrFrame2ChFrame(GetNode1()->GetFrameWRT_COG_InBody()),
-                                     internal::FrFrame2ChFrame(GetNode2()->GetFrameWRT_COG_InBody()));
+        // IMPORTANT : in FRyDoM the first node is the master and the second one the slave, as opposed to Chrono !!!
+        m_chronoActuator->Initialize(GetChronoBody2(), GetChronoBody1(), true,
+                                     internal::FrFrame2ChFrame(GetNode2()->GetFrameWRT_COG_InBody()),
+                                     internal::FrFrame2ChFrame(GetNode1()->GetFrameWRT_COG_InBody()));
 
     }
 

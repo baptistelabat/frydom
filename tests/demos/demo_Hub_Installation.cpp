@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
     auto waveField = FreeSurface->SetAiryRegularOptimWaveField();
 
     // The Airy regular wave parameters are its height, period and direction.
-    double waveHeight = 0.;    double wavePeriod = 2.*M_PI;
+    double waveHeight = 0.25;    double wavePeriod = 2.*M_PI;
     Direction waveDirection = Direction(SOUTH(fc));
 
     waveField->SetWaveHeight(waveHeight);
@@ -134,16 +134,11 @@ int main(int argc, char* argv[]) {
 
 //    // -- Excitation force
 //    auto excitationForce = make_linear_excitation_force(hdb, barge);
-//
+    auto FKForce = make_nonlinear_froude_krylov_force(barge, bargeMesh);
+
     // -- Radiation
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
     radiationModel->SetImpulseResponseSize(barge.get(), 20., 0.025);
-
-    // Test
-
-//    auto test = std::make_shared<TestForce>();
-//    test->SetNode(rev1_barge_node);
-//    barge->AddExternalForce(test);
 
     // --------------------------------------------------
     // Crane model
@@ -178,7 +173,7 @@ int main(int argc, char* argv[]) {
     arm_crane->SetName("Arm_Crane");
     makeItBox(arm_crane,19.,1.5,1.5,20e3);
     arm_crane->SetColor(DarkGreen);
-    arm_crane->SetPositionOfBodyPoint(Position(-9.0,0.,0.), Position(-7.5,0.,6.5), fc);
+    arm_crane->SetPositionOfBodyPoint(Position(-9.0,0.,0.), Position(-7.5,0.,5.), fc);
 
     FrRotation arm_Rotation;
     arm_Rotation.SetCardanAngles_DEGREES(0.,-45.,0., fc);
@@ -196,19 +191,31 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------
 
     auto rev1 = make_revolute_link(rev1_barge_node, rev1_base_node, &system);
-    auto motor1 = rev1->Motorize(POSITION);
-//    auto function = std::make_shared<FrCosRampFunction>();
+//    auto motor1 = rev1->Motorize(POSITION);
+//    FrCosRampFunction function;
+//    function.SetByTwoPoints(0.,0.,10.,90*DEG2RAD);
+
+
+    auto motor1 = rev1->Motorize(VELOCITY);
+    FrCosRampFunction function0;
+    function0.SetByTwoPoints(10.,0.,20.,.3);
     FrCosRampFunction function;
-    function.SetByTwoPoints(0.,0.,10.,90*DEG2RAD);
-    motor1->SetMotorFunction(function);
+    function.SetByTwoPoints(20.,.3,30.,0.);
+    motor1->SetMotorFunction(function*function0);
 
 //    rev1->SetSpringDamper(1e8, 1e8);
 //    rev1->SetRestAngle(90*DEG2RAD);
 
 
     auto rev2 = make_revolute_link(rev2_base_node, rev2_crane_node, &system);
-    rev2->SetSpringDamper(5e8, 1e6);
-    rev2->SetRestAngle(45*DEG2RAD);
+    auto motor2 = rev2->Motorize(POSITION);
+
+    FrCosRampFunction function2;
+    function2.SetByTwoPoints(30.,45*DEG2RAD,40.,0.);
+    motor2->SetMotorFunction(function2);
+
+//    rev2->SetSpringDamper(5e8, 1e6);
+//    rev2->SetRestAngle(45*DEG2RAD);
 
 
     // --------------------------------------------------
