@@ -120,8 +120,8 @@ int main() {
 //    revoluteLink->SetSpringDamper(1e4, 1e1);
 //    revoluteLink->SetRestAngle(180*DEG2RAD);
 
-    system.Initialize();
-    system.GetChronoSystem()->DoFullAssembly();
+//    system.Initialize();
+//    system.GetChronoSystem()->DoFullAssembly();
 
     // Run the simulation (or visualize the assembly)
     system.SetTimeStep(0.01);
