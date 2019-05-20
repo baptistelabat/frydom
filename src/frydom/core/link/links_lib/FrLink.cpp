@@ -487,10 +487,10 @@ namespace frydom {
                  [this]() {return GetLinkReactionForceOnBody2(GetLogFrameConvention());});
         // Torque
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinkReactionTorqueOnBody1AtCOG","N", fmt::format("link reaction torque at CoG applied at marker 1, expressed in body 1 reference frame in {}", GetLogFrameConvention()),
+                ("LinkReactionTorqueOnBody1AtCOG","Nm", fmt::format("link reaction torque at CoG applied at marker 1, expressed in body 1 reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetLinkReactionTorqueOnBody1AtCOG(GetLogFrameConvention());});
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinkReactionTorqueOnBody2AtCOG","N", fmt::format("link reaction torque at CoG applied at marker 2, expressed in body 2 reference frame in {}", GetLogFrameConvention()),
+                ("LinkReactionTorqueOnBody2AtCOG","Nm", fmt::format("link reaction torque at CoG applied at marker 2, expressed in body 2 reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetLinkReactionTorqueOnBody2AtCOG(GetLogFrameConvention());});
 
         // Power
@@ -508,10 +508,10 @@ namespace frydom {
                     ("MotorForceInBody2","N", fmt::format("Force applied by the motor on body 1, in body 2 reference frame {}", GetLogFrameConvention()),
                      [this]() {return m_actuator->GetMotorForceInBody2(GetLogFrameConvention());});
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("MotorTorqueAtCOGInBody1(","N", fmt::format("Torque applied by the motor at COG on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+                    ("MotorTorqueAtCOGInBody1(","Nm", fmt::format("Torque applied by the motor at COG on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
                      [this]() {return m_actuator->GetMotorTorqueAtCOGInBody1(GetLogFrameConvention());});
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("MotorTorqueAtCOGInBody2(","N", fmt::format("Torque applied by the motor at COG on body 2, in body 2 reference frame {}", GetLogFrameConvention()),
+                    ("MotorTorqueAtCOGInBody2(","Nm", fmt::format("Torque applied by the motor at COG on body 2, in body 2 reference frame {}", GetLogFrameConvention()),
                      [this]() {return m_actuator->GetMotorTorqueAtCOGInBody2(GetLogFrameConvention());});
 
         }
