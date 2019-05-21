@@ -22,4 +22,9 @@
 #include "FrSeabedGridAsset.h"
 #include "FrCatenaryLineAsset.h"
 
+#include "shape/FrBoxShape.h"
+#include "shape/FrCylinderShape.h"
+#include "shape/FrSphereShape.h"
+#include "shape/FrTriangleMeshShape.h"
+
 #endif //FRYDOM_FRASSETINC_H

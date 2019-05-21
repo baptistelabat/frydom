@@ -202,7 +202,8 @@ int main(int argc, char* argv[]) {
     auto hub_box = system.NewBody();
     hub_box->SetName("Hub_Box");
     makeItBox(hub_box, 1.5,1.5,1.5, 20.7e3);
-    hub_box->SetPosition(Position(crane_node->GetPositionInWorld(fc).GetX(),0.,4.25), fc);
+    auto hubPos = crane_node->GetPositionInWorld(fc); hubPos.GetZ() = 3.;
+    hub_box->SetPosition(hubPos, fc);
 
     auto hub_node = hub_box->NewNode();
     hub_node->SetPositionInBody(Position(0.,0.,0.75), fc);

@@ -1,4 +1,4 @@
-#include "frydom/shape/FrBoxShape.h"
+#include "FrBoxShape.h"
 
 #include "chrono/assets/ChBoxShape.h"
 

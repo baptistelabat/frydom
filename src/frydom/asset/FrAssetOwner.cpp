@@ -13,10 +13,10 @@
 #include <chrono/assets/ChColorAsset.h>
 
 #include "frydom/mesh/FrTriangleMeshConnected.h"
-#include "frydom/shape/FrBoxShape.h"
-#include "frydom/shape/FrCylinderShape.h"
-#include "frydom/shape/FrSphereShape.h"
-#include "frydom/shape/FrTriangleMeshShape.h"
+#include "shape/FrBoxShape.h"
+#include "shape/FrCylinderShape.h"
+#include "shape/FrSphereShape.h"
+#include "shape/FrTriangleMeshShape.h"
 
 #include "frydom/core/common/FrPhysicsItem.h"
 

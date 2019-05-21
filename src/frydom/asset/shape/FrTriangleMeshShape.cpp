@@ -1,4 +1,4 @@
-#include "frydom/shape/FrTriangleMeshShape.h"
+#include "FrTriangleMeshShape.h"
 
 #include "chrono/assets/ChTriangleMeshShape.h"
 
