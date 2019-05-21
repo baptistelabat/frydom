@@ -45,6 +45,9 @@ namespace frydom {
 
     namespace internal {
 
+        // Forward declarations
+        class FrCollisionModel;
+
         /// Base class inheriting from chrono ChBodyAuxRef
         /// This class must not be used by external FRyDoM users. It is used in composition rule along with the FrBody_ FRyDoM class
         struct FrBodyBase : public chrono::ChBodyAuxRef {
@@ -253,6 +256,8 @@ namespace frydom {
         /// collision with other physical collision enabled items
         /// \param isColliding true if a collision model is to be defined, false otherwise
         void AllowCollision(bool isColliding);
+
+        internal::FrCollisionModel* GetCollisionModel();
 
         std::shared_ptr<chrono::ChMaterialSurfaceSMC> GetMaterialSurface() {return m_chronoBody->GetMaterialSurfaceSMC();}
 

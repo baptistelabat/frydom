@@ -10,6 +10,7 @@ set(FRYDOM_SRC_FILES "")
 set(subdirs
         asset
         cable
+        collision
         core
         environment
         hydrodynamics

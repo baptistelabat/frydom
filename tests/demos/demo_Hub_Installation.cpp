@@ -76,6 +76,12 @@ int main(int argc, char* argv[]) {
     barge->AddMeshAsset("barge.obj");
     barge->SetColor(Yellow);
 
+    auto collisionModel = barge->GetCollisionModel();
+    collisionModel->ClearModel();
+    collisionModel->AddBox(17.5, 8, 2, Position(), FrRotation());
+    collisionModel->BuildModel();
+    barge->AllowCollision(true);
+
     auto rev1_barge_node = barge->NewNode();
     rev1_barge_node->SetPositionInBody(Position(-7.5,0.,3.), fc);
 
@@ -84,13 +90,13 @@ int main(int argc, char* argv[]) {
 
     barge->SetInertiaTensor(FrInertiaTensor((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., COGFrame, NWU));
 
-//    float steelYoungModulus = 1e12; // Young modulus (for contact)
-//    float steelNormalDamping = 1e20;// Normal damping (for contact)
-//    auto steel = barge->GetMaterialSurface();
-//    steel->SetKn(steelYoungModulus);
-//    steel->SetGn(steelNormalDamping);
-//    steel->young_modulus = steelYoungModulus;
-//    steel->restitution = 0;
+    float steelYoungModulus = 1e8; // Young modulus (for contact)
+    float steelNormalDamping = 1e10;// Normal damping (for contact)
+    auto steel = barge->GetMaterialSurface();
+    steel->SetKn(steelYoungModulus);
+    steel->SetGn(steelNormalDamping);
+    steel->young_modulus = steelYoungModulus;
+    steel->restitution = 0;
 
     // -- Hydrodynamics
 
@@ -202,25 +208,32 @@ int main(int argc, char* argv[]) {
     auto hub_box = system.NewBody();
     hub_box->SetName("Hub_Box");
     makeItBox(hub_box, 1.5,1.5,1.5, 20.7e3);
-    auto hubPos = crane_node->GetPositionInWorld(fc); hubPos.GetZ() = 3.;
+    auto hubPos = crane_node->GetPositionInWorld(fc); hubPos.GetZ() = 2.85;
     hub_box->SetPosition(hubPos, fc);
 
     auto hub_node = hub_box->NewNode();
     hub_node->SetPositionInBody(Position(0.,0.,0.75), fc);
+
+
+    auto steel2 = hub_box->GetMaterialSurface();
+    steel2->SetKn(steelYoungModulus);
+    steel2->SetGn(steelNormalDamping);
+    steel2->young_modulus = steelYoungModulus;
+    steel2->restitution = 0;
 
     // --------------------------------------------------
     // Hub Line
     // --------------------------------------------------
     // Line properties
     bool elastic = true;
-    double unstretchedLength = crane_node->GetPositionInWorld(fc).GetZ() - hub_node->GetPositionInWorld(fc).GetZ();
+    double unstretchedLength = crane_node->GetPositionInWorld(fc).GetZ() - hub_node->GetPositionInWorld(fc).GetZ() + 1;
     auto cableProp = make_cable_properties();
     cableProp->SetSectionArea(0.5);
     cableProp->SetEA(5e7);
     cableProp->SetLinearDensity(600);
 
 //    auto CatenaryLine = make_catenary_line(crane_node, hub_node, &system, cableProp, elastic, unstretchedLength, FLUID_TYPE::AIR);
-    auto dynamicLine = make_dynamic_cable(crane_node, hub_node, &system, cableProp, unstretchedLength, 0., 10);
+//    auto dynamicLine = make_dynamic_cable(crane_node, hub_node, &system, cableProp, unstretchedLength, 0., 10);
 
     // --------------------------------------------------
     // Mooring Lines
@@ -332,4 +345,5 @@ int main(int argc, char* argv[]) {
     // the time length of the simulation (here 30) and the distance from the camera to the objectif (75m).
     // For saving snapshots of the simulation, just turn the boolean to true.
     system.RunInViewer(0, 75, false);
+//    system.Visualize(75);
 }
