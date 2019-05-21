@@ -34,16 +34,11 @@ namespace frydom {
         //
 
         FrBodyBase::FrBodyBase(FrBody *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {
-            collision_model = std::make_shared<FrCollisionModel>();
-            collision_model->SetContactable(this);
         }
 
         FrBodyBase::FrBodyBase(const FrBodyBase& other) : chrono::ChBodyAuxRef(other) {
             m_frydomBody = other.m_frydomBody;
             m_variables_ptr = other.m_variables_ptr;
-
-            collision_model = std::make_shared<FrCollisionModel>();
-            collision_model->SetContactable(this);
         }
 
         void FrBodyBase::SetupInitial() {}
@@ -405,8 +400,13 @@ namespace frydom {
         m_chronoBody->SetCollide(isColliding);
     }
 
-    internal::FrCollisionModel *FrBody::GetCollisionModel() {
-        return dynamic_cast<internal::FrCollisionModel*> (m_chronoBody->GetCollisionModel().get());
+    FrCollisionModel *FrBody::GetCollisionModel() {
+        return dynamic_cast<internal::FrCollisionModelBase*> (m_chronoBody->GetCollisionModel().get())->m_frydomCollisionModel;
+    }
+
+    void FrBody::SetCollisionModel(std::shared_ptr<FrCollisionModel> collisionModel) {
+        m_chronoBody->SetCollisionModel(collisionModel->m_chronoCollisionModel);
+        AllowCollision(true);
     }
 
     void FrBody::ActivateSpeedLimits(bool activate) {

@@ -76,11 +76,12 @@ int main(int argc, char* argv[]) {
     barge->AddMeshAsset("barge.obj");
     barge->SetColor(Yellow);
 
-    auto collisionModel = barge->GetCollisionModel();
-    collisionModel->ClearModel();
+//    auto collisionModel = barge->GetCollisionModel();
+
+    auto collisionModel = std::make_shared<FrCollisionModel>();
     collisionModel->AddBox(17.5, 8, 2, Position(), FrRotation());
     collisionModel->BuildModel();
-    barge->AllowCollision(true);
+    barge->SetCollisionModel(collisionModel);
 
     auto rev1_barge_node = barge->NewNode();
     rev1_barge_node->SetPositionInBody(Position(-7.5,0.,3.), fc);
