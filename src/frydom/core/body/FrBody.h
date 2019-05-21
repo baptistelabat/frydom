@@ -257,9 +257,15 @@ namespace frydom {
         /// \param isColliding true if a collision model is to be defined, false otherwise
         void AllowCollision(bool isColliding);
 
+        /// Get the collision model, containing the collision box
+        /// \return collision model
         FrCollisionModel* GetCollisionModel();
 
+        /// Set the collision model, containing the collision box
+        /// \param collisionModel collision model, containing the collision box
         void SetCollisionModel(std::shared_ptr<FrCollisionModel> collisionModel);
+
+        void SetMaterialSurface(const std::shared_ptr<chrono::ChMaterialSurfaceSMC>& materialSurface) {m_chronoBody->SetMaterialSurface(materialSurface);}
 
         std::shared_ptr<chrono::ChMaterialSurfaceSMC> GetMaterialSurface() {return m_chronoBody->GetMaterialSurfaceSMC();}
 

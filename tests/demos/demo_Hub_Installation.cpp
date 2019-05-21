@@ -31,6 +31,12 @@ int main(int argc, char* argv[]) {
     FrOffshoreSystem system;
     system.SetName("Hub_Installation");
 
+    auto steel = std::make_shared<chrono::ChMaterialSurfaceSMC>();
+    steel->SetYoungModulus(1e8);
+    steel->SetKn(1e8);
+    steel->SetGn(1e10);
+    steel->SetRestitution(0);
+
     // --------------------------------------------------
     // Environment
     // --------------------------------------------------
@@ -38,9 +44,18 @@ int main(int argc, char* argv[]) {
     system.GetEnvironment()->GetTimeRamp()->SetActive(true);
     system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 10., 1.);
 
+    double Bathy = -10;
+    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(Bathy,NWU);
+
     auto SeabedGridAsset = system.GetEnvironment()->GetOcean()->GetSeabed()->GetSeabedGridAsset();
     SeabedGridAsset->SetGrid(-150., 150., 3., -150., 150., 3.);
 
+    auto seabedCollision = std::make_shared<FrCollisionModel>();
+    seabedCollision->AddBox(150,150,2,Position(0.,0.,Bathy-2),FrRotation());
+    seabedCollision->BuildModel();
+    system.GetWorldBody()->SetCollisionModel(seabedCollision);
+
+    system.GetWorldBody()->SetMaterialSurface(steel);
 
     auto FreeSurface = system.GetEnvironment()->GetOcean()->GetFreeSurface();
     // To manipulate the free surface grid asset, you first need to access it, through the free surface object.
@@ -91,13 +106,7 @@ int main(int argc, char* argv[]) {
 
     barge->SetInertiaTensor(FrInertiaTensor((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., COGFrame, NWU));
 
-    float steelYoungModulus = 1e8; // Young modulus (for contact)
-    float steelNormalDamping = 1e10;// Normal damping (for contact)
-    auto steel = barge->GetMaterialSurface();
-    steel->SetKn(steelYoungModulus);
-    steel->SetGn(steelNormalDamping);
-    steel->young_modulus = steelYoungModulus;
-    steel->restitution = 0;
+    barge->SetMaterialSurface(steel);
 
     // -- Hydrodynamics
 
@@ -195,7 +204,7 @@ int main(int argc, char* argv[]) {
     auto motor2 = rev2->Motorize(POSITION);
 
     FrCosRampFunction function2;
-    function2.SetByTwoPoints(30.,45*DEG2RAD,40.,0.);
+    function2.SetByTwoPoints(20.,40*DEG2RAD,30.,0.);
     motor2->SetMotorFunction(function2);
 
 //    rev2->SetSpringDamper(5e8, 1e6);
@@ -215,26 +224,21 @@ int main(int argc, char* argv[]) {
     auto hub_node = hub_box->NewNode();
     hub_node->SetPositionInBody(Position(0.,0.,0.75), fc);
 
-
-    auto steel2 = hub_box->GetMaterialSurface();
-    steel2->SetKn(steelYoungModulus);
-    steel2->SetGn(steelNormalDamping);
-    steel2->young_modulus = steelYoungModulus;
-    steel2->restitution = 0;
+    hub_box->SetMaterialSurface(steel);
 
     // --------------------------------------------------
     // Hub Line
     // --------------------------------------------------
     // Line properties
     bool elastic = true;
-    double unstretchedLength = crane_node->GetPositionInWorld(fc).GetZ() - hub_node->GetPositionInWorld(fc).GetZ() + 1;
+    double unstretchedLength = crane_node->GetPositionInWorld(fc).GetZ() - hub_node->GetPositionInWorld(fc).GetZ();
     auto cableProp = make_cable_properties();
     cableProp->SetSectionArea(0.5);
     cableProp->SetEA(5e7);
     cableProp->SetLinearDensity(600);
 
 //    auto CatenaryLine = make_catenary_line(crane_node, hub_node, &system, cableProp, elastic, unstretchedLength, FLUID_TYPE::AIR);
-//    auto dynamicLine = make_dynamic_cable(crane_node, hub_node, &system, cableProp, unstretchedLength, 0., 10);
+    auto dynamicLine = make_dynamic_cable(crane_node, hub_node, &system, cableProp, unstretchedLength, 0., 10);
 
     // --------------------------------------------------
     // Mooring Lines

@@ -875,6 +875,14 @@ namespace frydom {
         m_worldBody->SetFixedInWorld(true);
         m_worldBody->SetName("WorldBody");
         m_worldBody->SetLogged(false);
+        switch (m_systemType) {
+            case SMOOTH_CONTACT:
+                m_worldBody->SetSmoothContact();
+                break;
+            case NONSMOOTH_CONTACT:
+                m_worldBody->SetNonSmoothContact();
+                break;
+        }
         AddBody(m_worldBody);
     }
 
