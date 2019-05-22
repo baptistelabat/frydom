@@ -7,6 +7,9 @@
 
 namespace frydom {
 
+// Forward declaration
+class FrObject;
+
 class FrSerializerFactory {
 public:
     static FrSerializerFactory &instance() {
