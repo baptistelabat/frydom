@@ -13,6 +13,8 @@
 #ifndef FRYDOM_FRLINKINC_H
 #define FRYDOM_FRLINKINC_H
 
+#include "constraint/FrConstraintInc.h"
+
 #include "constraints/FrConstraintsInc.h"
 #include "links_lib/FrLinksLibInc.h"
 
