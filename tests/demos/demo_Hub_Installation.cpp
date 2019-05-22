@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
     system.GetEnvironment()->GetTimeRamp()->SetActive(true);
     system.GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0., 0., 10., 1.);
 
-    double Bathy = -10;
+    double Bathy = -30;
     system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(Bathy,NWU);
 
     auto SeabedGridAsset = system.GetEnvironment()->GetOcean()->GetSeabed()->GetSeabedGridAsset();
@@ -87,11 +87,8 @@ int main(int argc, char* argv[]) {
 
     auto barge = system.NewBody();
     barge->SetName("Barge");
-//    makeItBox(barge, 35., 16., 4., (1137.6-180.7)*1000);
     barge->AddMeshAsset("barge.obj");
     barge->SetColor(Yellow);
-
-//    auto collisionModel = barge->GetCollisionModel();
 
     auto collisionModel = std::make_shared<FrCollisionModel>();
     collisionModel->AddBox(17.5, 8, 2, Position(), FrRotation());
@@ -101,10 +98,7 @@ int main(int argc, char* argv[]) {
     auto rev1_barge_node = barge->NewNode();
     rev1_barge_node->SetPositionInBody(Position(-7.5,0.,3.), fc);
 
-    FrFrame COGFrame;
-//    COGFrame.SetPosition(-0.83,0.,0., NWU);
-
-    barge->SetInertiaTensor(FrInertiaTensor((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., COGFrame, NWU));
+    barge->SetInertiaTensor(FrInertiaTensor((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., FrFrame(), NWU));
 
     barge->SetMaterialSurface(steel);
 
@@ -185,7 +179,7 @@ int main(int argc, char* argv[]) {
     auto rev1 = make_revolute_link(rev1_barge_node, rev1_base_node, &system);
     auto motor1 = rev1->Motorize(POSITION);
     FrCosRampFunction function;
-    function.SetByTwoPoints(10.,0.,20.,90*DEG2RAD);
+    function.SetByTwoPoints(10.,0.,200.,90*DEG2RAD);
 
 //    auto motor1 = rev1->Motorize(VELOCITY);
 //    FrCosRampFunction function0;
@@ -196,19 +190,13 @@ int main(int argc, char* argv[]) {
 
     motor1->SetMotorFunction(function);
 
-//    rev1->SetSpringDamper(1e8, 1e8);
-//    rev1->SetRestAngle(90*DEG2RAD);
-
 
     auto rev2 = make_revolute_link(rev2_base_node, rev2_crane_node, &system);
     auto motor2 = rev2->Motorize(POSITION);
 
     FrCosRampFunction function2;
-    function2.SetByTwoPoints(20.,40*DEG2RAD,30.,0.);
+    function2.SetByTwoPoints(200.,45*DEG2RAD,300.,0.);
     motor2->SetMotorFunction(function2);
-
-//    rev2->SetSpringDamper(5e8, 1e6);
-//    rev2->SetRestAngle(45*DEG2RAD);
 
 
     // --------------------------------------------------
@@ -349,6 +337,5 @@ int main(int argc, char* argv[]) {
     // Now you are ready to perform the simulation and you can watch its progression in the viewer. You can adjust
     // the time length of the simulation (here 30) and the distance from the camera to the objectif (75m).
     // For saving snapshots of the simulation, just turn the boolean to true.
-    system.RunInViewer(0, 75, false);
-//    system.Visualize(75);
+    system.RunInViewer(0, 175, false);
 }
