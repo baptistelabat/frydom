@@ -46,10 +46,14 @@ class pyHDB():
 
         # Kochin parameters.
         self.has_kochin = False
-        self.nb_dir_kochin = 0
-        self.min_dir_kochin = 0.
-        self.max_dir_kochin = 0.
-        self.wave_dir_Kochin = np.array([])
+        self.nb_angle_kochin = 0
+        self.min_angle_kochin = 0.
+        self.max_angle_kochin = 0.
+        self.angle_kochin = np.array([])
+        self.nb_dir_kochin = 0 # Different from self.nb_wave_dir if the symmetry was used.
+        self.min_dir_kochin = 0. # Different from self.min_wave_dir if the symmetry was used.
+        self.max_dir_kochin = 0. # Different from self.max_wave_dir if the symmetry was used.
+        self.wave_dir_kochin = np.array([]) # Different from self.wave_dir if the symmetry was used.
 
         # Bodies.
         self.nb_bodies = 0
@@ -62,7 +66,7 @@ class pyHDB():
         self._has_froude_krylov = False
 
     def set_wave_frequencies(self):
-        """Frequency array of BEM computations in rad/s
+        """Frequency array of BEM computations in rad/s.
 
         Returns
         -------
@@ -93,6 +97,19 @@ class pyHDB():
         """
 
         self.wave_dir = np.radians(np.linspace(self.min_wave_dir, self.max_wave_dir, self.nb_wave_dir, dtype=np.float))
+
+    def set_wave_directions_Kochin(self):
+        """This function initializes the incident wave directions in the diffraction kochin problems.
+
+        Returns
+        -------
+        np.ndarray
+        """
+
+        self.nb_dir_kochin = self.nb_wave_dir
+        self.min_dir_kochin = self.min_wave_dir
+        self.max_dir_kochin = self.max_wave_dir
+        self.wave_dir_kochin = np.radians(np.linspace(self.min_dir_kochin, self.max_dir_kochin, self.nb_dir_kochin, dtype=np.float))
 
     @property
     def wave_dir(self):
@@ -202,3 +219,70 @@ class pyHDB():
                 for i_force in range(0,6):
                     nds = body.get_nds(i_force) # n*ds.
                     body.Froude_Krylov[i_force, :, :] = np.einsum('ijk, i -> jk', pressure, -nds) # Il s'agit de la normale entrante.
+
+    def _initialize_wave_dir(self):
+
+        """This function updates the wave directions by adjusting the convention with the one used in FRyDoM, the FK and diffraction loads are updated accordingly."""
+
+        # Symmetrize
+        if self.min_wave_dir >= -np.float32() and self.max_wave_dir <= 180. + np.float32():
+            self.symetrize()
+
+        # Updating the FK and diffraction loads accordingly.
+        n180 = 0
+        i360 = -9
+        for idir in range(self.wave_dir.size):
+            wave_dir = self.wave_dir[idir]
+
+            if abs(np.degrees(wave_dir)) < 0.01:
+                i360 = idir
+            elif abs(np.degrees(wave_dir) - 180) < 0.01:
+                n180 += 1
+                if n180 == 2:
+                    self.wave_dir[idir] = np.radians(360.)
+                    for body in self.bodies:
+                        body.Froude_Krylov[:, :, idir] = body.Froude_Krylov[:, :, i360]
+                        body.Diffraction[:, :, idir] = body.Diffraction[:, :, i360]
+
+        # Sorting wave directions and creates the final FK and diffraction loads data.
+        sort_dirs = np.argsort(self.wave_dir)
+        self.wave_dir = self.wave_dir[sort_dirs]
+        for body in self.bodies:
+            body.Froude_Krylov = body.Froude_Krylov[:, :, sort_dirs]
+            body.Diffraction = body.Diffraction[:, :, sort_dirs]
+
+        self.min_wave_dir = np.min(self.wave_dir)
+        self.max_wave_dir = np.max(self.wave_dir)
+        self.nb_wave_dir = self.wave_dir.shape[0]
+
+        return
+
+    def symetrize(self):
+
+        """This function updates the hdb due to a modification of the wave direction convention."""
+
+        ndir = self.nb_wave_dir
+        nw = self.nb_wave_freq
+
+        for i in range(ndir):
+
+            if(np.degrees(self.wave_dir[i]) > np.float32(0.)):
+
+                # New wave direction.
+                new_dir = -np.degrees(self.wave_dir[i]) % 360
+                if new_dir < 0:
+                    new_dir += 360.
+
+                # Add corresponding data.
+                self.wave_dir = np.append(self.wave_dir, np.radians(new_dir))
+
+                for body in self.bodies:
+                    fk_db_temp = np.copy(body.Froude_Krylov[:, :, i])
+                    fk_db_temp[(1, 3, 5), :] = -fk_db_temp[(1, 3, 5), :]
+                    body.Froude_Krylov = np.concatenate((body.Froude_Krylov, fk_db_temp.reshape(6, nw, 1)), axis=2) # Axis of the wave directions.
+
+                    diff_db_temp = np.copy(body.Diffraction[:, :, i])
+                    diff_db_temp[(1, 3, 5), :] = -diff_db_temp[(1, 3, 5), :]
+                    body.Diffraction = np.concatenate((body.Diffraction, diff_db_temp.reshape(6, nw, 1)), axis=2) # Axis of the wave directions.
+
+        return

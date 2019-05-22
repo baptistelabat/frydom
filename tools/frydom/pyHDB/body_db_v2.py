@@ -44,7 +44,7 @@ class BodyDB(object):
         self._i_body = None
 
         # Added mass matrices (6 dof so 6 rows x all the columns x all the frequencies).
-        self.Added_mass = np.zeros((6,6*nb_bodies,nw), dtype = np.float)
+        self.Added_mass = np.zeros((6, 6 * nb_bodies, nw), dtype = np.float)
 
         # Damping matrices (6 dof so 6 rows x all the columns x all the frequencies).
         self.Damping = np.zeros((6, 6 * nb_bodies, nw), dtype=np.float)

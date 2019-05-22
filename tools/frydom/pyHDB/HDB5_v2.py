@@ -77,6 +77,9 @@ class HDB5(object):
         # Computing Froude-Krylov loads.
         self._pyHDB.Eval_Froude_Krylov_loads()
 
+        # Updating the wave directions.
+        self._pyHDB._initialize_wave_dir()
+
 
 
 

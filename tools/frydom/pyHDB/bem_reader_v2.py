@@ -489,8 +489,10 @@ class NemohReader(_BEMReader):
             data = f.readline().split()[:3]
             pyHDB.has_kochin = bool(float(data[0]))
             if pyHDB.has_kochin:
-                pyHDB.nb_dir_kochin = int(data[0])
-                pyHDB.min_dir_kochin, pyHDB.max_dir_kochin = map(float, data[1:])
+                pyHDB.nb_angle_kochin = int(data[0])
+                pyHDB.min_angle_kochin, pyHDB.max_angle_kochin = map(float, data[1:])
+                pyHDB.set_wave_directions_Kochin()
+
 
             # # TODO: si ok, lire  -> remettre en place si besoin...
             # # Free surface elevation
@@ -592,7 +594,7 @@ class NemohReader(_BEMReader):
             arr = np.array(data.split(), dtype=np.float).reshape((-1, 3))
             return arr[:, 1] * np.exp(1j * arr[:, 2])
 
-        ntheta = pyHDB.nb_dir_kochin
+        ntheta = pyHDB.nb_angle_kochin
         nw = pyHDB.nb_wave_freq
         nbeta = pyHDB.nb_wave_dir
         nbodies = pyHDB.nb_bodies
