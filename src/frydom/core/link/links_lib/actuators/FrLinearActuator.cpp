@@ -48,14 +48,15 @@ namespace frydom {
 
     void FrLinearActuator::Initialize() {
 
+        // IMPORTANT : in FRyDoM the first node is the master and the second one the slave, as opposed to Chrono !!!
         // ChLinkMotorLinear motorized along the x axis, while ChLinkLock::Prismatic is along z axis...
         auto frame1 = GetNode1()->GetFrameWRT_COG_InBody();
         frame1.RotY_RADIANS(MU_PI_2,NWU,true);
         auto frame2 = GetNode2()->GetFrameWRT_COG_InBody();
         frame2.RotY_RADIANS(MU_PI_2,NWU,true);
 
-        m_chronoActuator->Initialize(GetChronoBody1(), GetChronoBody2(), true,
-                   internal::FrFrame2ChFrame(frame1), internal::FrFrame2ChFrame(frame2));
+        m_chronoActuator->Initialize(GetChronoBody2(), GetChronoBody1(), true,
+                   internal::FrFrame2ChFrame(frame2), internal::FrFrame2ChFrame(frame1));
 
     }
 

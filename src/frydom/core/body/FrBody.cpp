@@ -23,7 +23,7 @@
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/geographicServices/FrGeographicServices.h"
 #include "frydom/asset/FrForceAsset.h"
-
+#include "frydom/collision/FrCollisionModel.h"
 
 namespace frydom {
 
@@ -33,7 +33,8 @@ namespace frydom {
         // FrBodyBase
         //
 
-        FrBodyBase::FrBodyBase(FrBody *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
+        FrBodyBase::FrBodyBase(FrBody *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {
+        }
 
         FrBodyBase::FrBodyBase(const FrBodyBase& other) : chrono::ChBodyAuxRef(other) {
             m_frydomBody = other.m_frydomBody;
@@ -397,6 +398,15 @@ namespace frydom {
 
     void FrBody::AllowCollision(bool isColliding) {
         m_chronoBody->SetCollide(isColliding);
+    }
+
+    FrCollisionModel *FrBody::GetCollisionModel() {
+        return dynamic_cast<internal::FrCollisionModelBase*> (m_chronoBody->GetCollisionModel().get())->m_frydomCollisionModel;
+    }
+
+    void FrBody::SetCollisionModel(std::shared_ptr<FrCollisionModel> collisionModel) {
+        m_chronoBody->SetCollisionModel(collisionModel->m_chronoCollisionModel);
+        AllowCollision(true);
     }
 
     void FrBody::ActivateSpeedLimits(bool activate) {

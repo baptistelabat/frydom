@@ -19,7 +19,7 @@
 
 namespace frydom {
 
-    FrLinkBase::FrLinkBase(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem *system) :
+    FrLinkBase::FrLinkBase(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem *system) :
             m_node1(node1), m_node2(node2), m_system(system) {
     }
 

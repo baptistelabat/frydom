@@ -51,7 +51,7 @@ namespace frydom {
         std::shared_ptr<FrNode> m_node2;   ///< the node on body 2 of the link
 
     public:
-        FrLinkBase(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);
+        FrLinkBase(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
 
         /// Get the pointer to the system containing this linkbase item
         /// \return Pointer to the system containing this linkbase item

@@ -1,4 +1,4 @@
-#include "frydom/shape/FrCylinderShape.h"
+#include "FrCylinderShape.h"
 
 #include "chrono/assets/ChCylinderShape.h"
 

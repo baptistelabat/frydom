@@ -1,4 +1,4 @@
-#include "frydom/shape/FrSphereShape.h"
+#include "FrSphereShape.h"
 
 #include "chrono/assets/ChSphereShape.h"
 

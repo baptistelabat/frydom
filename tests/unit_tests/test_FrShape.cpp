@@ -1,10 +1,5 @@
 #include "frydom/frydom.h"
 
-#include "frydom/shape/FrBoxShape.h"
-#include "frydom/shape/FrCylinderShape.h"
-#include "frydom/shape/FrSphereShape.h"
-#include "frydom/shape/FrTriangleMeshShape.h"
-
 #include "gtest/gtest.h"
 
 using namespace frydom;

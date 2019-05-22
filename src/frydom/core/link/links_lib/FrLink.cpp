@@ -168,7 +168,7 @@ namespace frydom {
      *
      */
 
-    FrLink::FrLink(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2,
+    FrLink::FrLink(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2,
                      FrOffshoreSystem *system) :
                      FrLinkBase(node1, node2, system),
                      m_frame2WRT1_reference() {
@@ -179,7 +179,8 @@ namespace frydom {
 
 
     void FrLink::SetMarkers(FrNode* node1, FrNode* node2) {
-        m_chronoLink->ReferenceMarkers(node1->m_chronoMarker.get(), node2->m_chronoMarker.get());
+        // IMPORTANT : in FRyDoM the first node is the master and the second one the slave, as opposed to Chrono !!!
+        m_chronoLink->ReferenceMarkers(node2->m_chronoMarker.get(), node1->m_chronoMarker.get());
     }
 
     std::shared_ptr<chrono::ChLink> FrLink::GetChronoLink() {

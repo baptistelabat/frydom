@@ -41,7 +41,7 @@ namespace frydom {
 
         /// Constructor from two nodes and a pointer to the system.
         /// It automatically adds the link to the system
-        FrRevoluteLink(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);
+        FrRevoluteLink(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
 
         /// Get the type name of this object
         /// \return type name of this object

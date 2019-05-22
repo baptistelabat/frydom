@@ -10,6 +10,7 @@ set(FRYDOM_SRC_FILES "")
 set(subdirs
         asset
         cable
+        collision
         core
         environment
         hydrodynamics
@@ -17,7 +18,6 @@ set(subdirs
         mesh
         mooring
         utils
-        shape
         )
 
 # TODO: reposer plutot sur target_sources()
