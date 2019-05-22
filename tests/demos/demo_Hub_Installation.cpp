@@ -92,6 +92,7 @@ int main(int argc, char* argv[]) {
 
     auto collisionModel = std::make_shared<FrCollisionModel>();
     collisionModel->AddBox(17.5, 8, 2, Position(), FrRotation());
+//    collisionModel->AddTriangleMesh("barge.obj",Position(),FrRotation());
     collisionModel->BuildModel();
     barge->SetCollisionModel(collisionModel);
 

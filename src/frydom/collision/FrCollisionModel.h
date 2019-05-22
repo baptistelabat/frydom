@@ -80,6 +80,20 @@ namespace frydom {
         /// Note: if possible, for better performance, avoid triangle meshes and prefer simplified
         /// representations as compounds of primitive convex shapes (boxes, sphers, etc).
         bool AddTriangleMesh(                           //
+                const std::string& obj_filename,                    ///< the triangle mesh
+                const Position& pos,                                ///< displacement respect to COG
+                const FrRotation& rot,                              ///< the rotation of the mesh
+                bool is_static = false,                             ///< true if model doesn't move. May improve performance.
+                bool is_convex = true,                              ///< if true, a convex hull is used. May improve robustness.
+                double sphereswept_thickness = 0.0                  ///< outward sphere-swept layer (when supported)
+        );
+
+    protected:
+
+        /// Add a triangle mesh to this model, passing a triangle mesh.
+        /// Note: if possible, for better performance, avoid triangle meshes and prefer simplified
+        /// representations as compounds of primitive convex shapes (boxes, sphers, etc).
+        bool AddTriangleMesh(                           //
                 std::shared_ptr<FrTriangleMeshConnected> trimesh,  ///< the triangle mesh
                 bool is_static,                                     ///< true if model doesn't move. May improve performance.
                 bool is_convex,                                     ///< if true, a convex hull is used. May improve robustness.

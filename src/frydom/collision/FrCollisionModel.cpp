@@ -108,4 +108,14 @@ namespace frydom {
         m_chronoCollisionModel->BuildModel();
     }
 
+    bool FrCollisionModel::AddTriangleMesh(const std::string &obj_filename, const Position &pos, const FrRotation &rot,
+                                           bool is_static, bool is_convex, double sphereswept_thickness) {
+
+        auto mesh = std::make_shared<FrTriangleMeshConnected>();
+        mesh->LoadWavefrontMesh(obj_filename);
+
+        return AddTriangleMesh(mesh,is_static,is_convex,pos,rot,sphereswept_thickness);
+
+    }
+
 } // end namespace frydom
