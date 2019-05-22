@@ -391,7 +391,7 @@ class NemohReader(_BEMReader):
                 # Instantiating BodyDB.
                 body = BodyDB(ibody, pyHDB.nb_bodies, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir , mesh)
 
-                # RADIATION
+                # RADIATION.
                 nb_dof = int(f.readline().split()[0])
                 for idof in xrange(nb_dof):
                     dof = f.readline().split()[:7]
@@ -422,7 +422,7 @@ class NemohReader(_BEMReader):
                     else:
                         raise UnknownMotionMode(motion_type, abspath)
 
-                # INTEGRATION
+                # INTEGRATION.
                 nb_force = int(f.readline().split()[0])
                 for iforce in xrange(nb_force):
                     force = f.readline().split()[:7]
@@ -442,10 +442,13 @@ class NemohReader(_BEMReader):
                     elif force_type == 2:
                         if (direction[0] == 1):
                             body.Force_mask[3] = 1
+                            body.point[0,:] = point
                         elif (direction[1] == 1):
                             body.Force_mask[4] = 1
+                            body.point[1, :] = point
                         elif (direction[2] == 1):
                             body.Force_mask[5] = 1
+                            body.point[2, :] = point
                         else:
                             "The angular motion direction must be a unit vector ex, ey or ez. Generalized modes are not taken into account."
                             exit()

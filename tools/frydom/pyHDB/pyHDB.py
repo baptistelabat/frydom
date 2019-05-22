@@ -13,6 +13,8 @@
 
 import numpy as np
 
+from wave_dispersion_relation_v2 import solve_wave_dispersion_relation
+
 inf = float('inf')  # Definition of infinity for depth
 
 class pyHDB():
@@ -55,6 +57,9 @@ class pyHDB():
 
         # Version.
         self.version = 2.0
+
+        # Froude-Krylov loads.
+        self._has_froude_krylov = False
 
     def set_wave_frequencies(self):
         """Frequency array of BEM computations in rad/s
@@ -143,3 +148,57 @@ class pyHDB():
             n = n + int(body.Motion_mask.sum())
 
         return n
+
+    def Eval_Froude_Krylov_loads(self):
+
+        """ This functions computes the Froude-Krylov loads."""
+
+        if not self._has_froude_krylov:
+
+            """Computes the Froude-Krylov complex coefficients from indident wave field"""
+            # TODO: sortir le potentiel, les pressions et les vitesses normales...
+
+            # Wave numbers.
+            k_wave = solve_wave_dispersion_relation(self.wave_freq, self.depth, self.grav)
+
+            # Computation of the Froude-Krylov loads for each body.
+            for body in self.bodies:
+
+                # Center of every face.
+                centers = body.mesh.faces_centers
+                x = centers[:, 0]
+                y = centers[:, 1]
+                z = centers[:, 2]
+
+                # COMPUTING FIELDS
+                ctheta = np.cos(self.wave_dir) # cos(beta).
+                stheta = np.sin(self.wave_dir) # sin(beta).
+
+                kctheta = np.einsum('i, j -> ij', k_wave, ctheta) # k*cos(beta).
+                kstheta = np.einsum('i, j -> ij', k_wave, stheta) # k*sin(beta).
+
+                kw_bar = np.einsum('i, jk -> ijk', x - self.x_wave_measure, kctheta) # kw = k * (x - xref)*cos(beta).
+                kw_bar += np.einsum('i, jk -> ijk', y - self.y_wave_measure, kstheta) # kw = k * ((x - xref)*cos(beta) + (y - yref)*sin(beta)).
+                exp_jkw_bar = np.exp(1j * kw_bar) # e^(j * k * ((x - xref)*cos(beta) + (y - yref)*sin(beta))).
+
+                if np.isinf(self.depth): # Infinite depth.
+
+                    kxzph = np.einsum('i, j -> ij', z, k_wave) # k*z.
+                    cih = np.exp(kxzph) # e^(kz).
+
+                else: # Finite depth.
+
+                    kxzph = np.einsum('i, j -> ij', z + depth, k_wave) # k*(z+h).
+                    chkh_1 = 1. / np.cosh(k_wave * self.depth) # 1/ch(k*h).
+
+                    cih = np.einsum('ij, j -> ij', np.cosh(kxzph), chkh_1) # ch(k(z+h)) / ch(k*h).
+
+                cih_exp_jkw_bar = np.einsum('ij, ijk -> ijk', cih, exp_jkw_bar) # ch(k(z+h)) / ch(k*h) *  e^(j * k * ((x - xref)*cos(beta) + (y - yref)*sin(beta))).
+
+                # Pressure.
+                pressure = self.rho_water * self.grav * cih_exp_jkw_bar # rho * g * ch(k(z+h)) / ch(k*h) *  e^(j * k * ((x - xref)*cos(beta) + (y - yref)*sin(beta))).
+
+                # Integration of the pressure of the wetted surface.
+                for i_force in range(0,6):
+                    nds = body.get_nds(i_force) # n*ds.
+                    body.Froude_Krylov[i_force, :, :] = np.einsum('ijk, i -> jk', pressure, -nds) # Il s'agit de la normale entrante.

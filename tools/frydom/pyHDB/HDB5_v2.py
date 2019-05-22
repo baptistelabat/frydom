@@ -33,7 +33,7 @@ class HDB5(object):
             Constructor of the class HDB5.
         """
 
-        self._hdb5 = pyHDB()
+        self._pyHDB = pyHDB()
 
         return
 
@@ -66,10 +66,31 @@ class HDB5(object):
             nb_faces_by_wavelength = 10
 
         # Reading *.cal.
-        NemohReader(self._hdb5,cal_file=nemoh_cal_file, test=True, nb_face_by_wave_length=nb_faces_by_wavelength)
+        NemohReader(self._pyHDB,cal_file=nemoh_cal_file, test=True, nb_face_by_wave_length=nb_faces_by_wavelength)
 
         print('-------> Nemoh data successfully loaded from "%s"' % input_directory)
 
     def _initialize(self):
 
         """This function updates and improve the hydrodynamic database (computation of RK and diffraction loads, impulse response functions, interpolation, etc.)."""
+
+        # Computing Froude-Krylov loads.
+        self._pyHDB.Eval_Froude_Krylov_loads()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
