@@ -73,6 +73,12 @@ class BodyDB(object):
         # Point of computation of the moments.
         self.point = np.zeros((3,3),dtype = np.float)
 
+        # Impulse response functions without forward speed.
+        self._irf_db = None
+
+        # Impulse response functions with forward speed.
+        self._irf_ku_db = None
+
     def _compute_nds(self):
         """Computes the term n dS for each force mode of the body."""
 

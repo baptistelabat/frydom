@@ -20,6 +20,7 @@ import numpy as np
 
 from bem_reader_v2 import *
 from pyHDB import *
+from discretization_db_v2 import DiscretizationDB
 
 class HDB5(object):
 
@@ -33,9 +34,40 @@ class HDB5(object):
             Constructor of the class HDB5.
         """
 
+        # HDB.
         self._pyHDB = pyHDB()
 
+        # Discretization parameters.
+        self._discretization = DiscretizationDB()
+
+        # Initialization parameter.
+        self._is_initialized = False
+
         return
+
+    @property
+    def body(self):
+
+        """This subroutine returns all the bodies.
+
+        Returns
+        -------
+        BodyDB
+        """
+
+        return self._pyHDB.bodies
+
+    @property
+    def discretization(self):
+
+        """This subroutine returns the parameters of the discretization.
+
+        Returns
+        -------
+        DiscretizationDB
+        """
+
+        return self._discretization
 
     def nemoh_reader(self, input_directory='.', nb_faces_by_wavelength=None):
 
@@ -69,6 +101,7 @@ class HDB5(object):
         NemohReader(self._pyHDB,cal_file=nemoh_cal_file, test=True, nb_face_by_wave_length=nb_faces_by_wavelength)
 
         print('-------> Nemoh data successfully loaded from "%s"' % input_directory)
+        print("")
 
     def _initialize(self):
 
@@ -77,11 +110,15 @@ class HDB5(object):
         # Computing Froude-Krylov loads.
         self._pyHDB.Eval_Froude_Krylov_loads()
 
+        # Printing input data.
+        self._discretization.initialize(self._pyHDB)
+
+    def Symmetry_HDB(self):
+
+        """This function symmetrizes the HDB."""
+
         # Updating the wave directions.
         self._pyHDB._initialize_wave_dir()
-
-
-
 
 
 
