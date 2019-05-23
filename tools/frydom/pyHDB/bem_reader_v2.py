@@ -604,12 +604,14 @@ class NemohReader(_BEMReader):
         i_bem_problem = 0
         for ifreq in xrange(nw):
 
+            # Diffraction problems.
             for iwave in xrange(nbeta):
-                # Diffraction problem.
                 i_bem_problem += 1
                 pyHDB.kochin_diffraction[iwave, ifreq, :] = read(i_bem_problem)
 
-            for imotion in xrange(6*nbodies):
-                # Radiation problem.
-                i_bem_problem += 1
-                pyHDB.kochin_radiation[imotion, ifreq, :] = read(i_bem_problem)
+            # Radiation problems.
+            for body in pyHDB.bodies:
+                for imotion in range(0,6):
+                    if(body.Motion_mask[imotion] == 1):
+                        i_bem_problem += 1
+                        pyHDB.kochin_radiation[imotion, ifreq, :] = read(i_bem_problem)

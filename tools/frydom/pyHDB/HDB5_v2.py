@@ -124,6 +124,9 @@ class HDB5(object):
         # Impule response functions for advance speed.
         self._pyHDB.eval_impulse_response_function_Ku(tf=tf, dt=dt)
 
+        # Interpolations with respect to the wave directions and the wave frequencies.
+        self._pyHDB.interpolation(self.discretization)
+
     def Symmetry_HDB(self):
 
         """This function symmetrizes the HDB."""

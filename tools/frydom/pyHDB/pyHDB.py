@@ -12,6 +12,7 @@
 # ==========================================================================
 
 import numpy as np
+from scipy import interpolate
 
 from wave_dispersion_relation_v2 import solve_wave_dispersion_relation
 
@@ -453,6 +454,67 @@ class pyHDB():
             irf_data = (2. / np.pi) * np.trapz(kernel, x=w, axis=2) # (2/pi) * int((A(inf) - A(w))*L*cos(wt),dw).
 
             body.irf_ku = irf_data
+
+    def interpolation(self,discretization):
+        """this function interpolates with respect to the wave directions and the wave frequencies."""
+
+        for body in self.bodies:
+
+            # Diffraction loads - Wave directions.
+            f_interp_diffraction_dir = interpolate.interp1d(self.wave_dir, body.Diffraction, axis=2)  # axis = 2 -> wave directions.
+            body.Diffraction = f_interp_diffraction_dir(discretization._wave_dirs)  # Application of the interpolation.
+
+            # Diffraction loads - Wave frequencies.
+            f_interp_diffraction_freq = interpolate.interp1d(self.wave_freq, body.Diffraction, axis=1) # axis = 1 -> wave frequencies.
+            body.Diffraction = f_interp_diffraction_freq(discretization._wave_frequencies)
+
+            # Froude-Krylov loads - Wave directions.
+            f_interp_fk_dir = interpolate.interp1d(self.wave_dir, body.Froude_Krylov, axis=2)  # axis = 2 -> wave directions.
+            body.Froude_Krylov = f_interp_fk_dir(discretization._wave_dirs)  # Application of the interpolation.
+
+            # Froude-Krylov loads - Wave frequencies.
+            f_interp_fk_freq = interpolate.interp1d(self.wave_freq, body.Froude_Krylov, axis=1) # axis = 1 -> wave frequencies.
+            body.Froude_Krylov = f_interp_fk_freq(discretization._wave_frequencies)
+
+            # Added mass - Wave frequencies.
+            f_interp_Added_mass_freq = interpolate.interp1d(self.wave_freq, body.Added_mass, axis=2) # axis = 2 -> wave frequencies.
+            body.Added_mass = f_interp_Added_mass_freq(discretization._wave_frequencies)
+
+            # Damping - Wave frequencies.
+            f_interp_Damping_freq = interpolate.interp1d(self.wave_freq, body.Damping, axis=2)  # axis = 2 -> wave frequencies.
+            body.Damping = f_interp_Damping_freq(discretization._wave_frequencies)
+
+        # Kochin functions.
+        if(self.has_kochin):
+
+            # Diffraction Kochin functions - Wave directions.
+            f_interp_kochin_diffraction_dir = interpolate.interp1d(self.wave_dir, self.kochin_diffraction, axis=0)  # axis = 0 -> wave directions.
+            self.kochin_diffraction = f_interp_kochin_diffraction_dir(discretization._wave_dirs)  # Application of the interpolation.
+
+            # Diffraction Kochin functions - Wave frequencies.
+            f_interp_kochin_diffraction_freq = interpolate.interp1d(self.wave_freq, self.kochin_diffraction, axis=1)  # axis = 1 -> wave frequencies.
+            self.kochin_diffraction = f_interp_kochin_diffraction_freq(discretization._wave_frequencies)  # Application of the interpolation.
+
+            # Radiation Kochin functions - Wave frequencies.
+            f_interp_kochin_radiation_freq = interpolate.interp1d(self.wave_freq, self.kochin_radiation, axis=1)  # axis = 1 -> wave frequencies.
+            self.kochin_radiation = f_interp_kochin_radiation_freq(discretization._wave_frequencies)  # Application of the interpolation.
+
+        # Update wave directions and frequencies vectors.
+        self.min_wave_freq = discretization._min_frequency
+        self.max_wave_freq = discretization._max_frequency
+        self.nb_wave_freq = discretization.nb_frequencies
+        self.wave_freq = discretization._wave_frequencies
+
+        self.min_wave_dir = discretization._min_angle
+        self.max_wave_dir = discretization._max_angle
+        self.nb_wave_dir = discretization._nb_wave_directions
+        self.wave_dir = discretization._wave_dirs
+
+        if (self.has_kochin):
+            self.min_dir_kochin = discretization._min_angle
+            self.max_dir_kochin = discretization._max_angle
+            self.nb_dir_kochin = discretization._nb_wave_directions
+            self.wave_dir_kochin = discretization._wave_dirs
 
     def symetrize(self):
 

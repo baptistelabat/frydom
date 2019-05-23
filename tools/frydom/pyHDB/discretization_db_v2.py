@@ -305,11 +305,11 @@ class DiscretizationDB(object):
 
         self._wave_frequencies = np.linspace(self.min_frequency, self.max_frequency, self.nb_frequencies)
 
-        print(" Max frequency : %16.8f" % self._min_frequency)
-        print(" Min frequency : %16.8f" % self._max_frequency)
-        print(" Nb Wave frequencies : %i" % self._nb_frequencies)
+        print(" Min frequency: %16.8f" % self._min_frequency)
+        print(" Max frequency: %16.8f" % self._max_frequency)
+        print(" Nb Wave frequencies: %i" % self._nb_frequencies)
 
-        # Wave direction.
+        # Wave directions.
         if self.max_angle is None:
             self._max_angle = pyHDB.max_wave_dir
 
@@ -319,12 +319,12 @@ class DiscretizationDB(object):
         if self.nb_wave_directions is None:
             self._nb_wave_directions = pyHDB.nb_wave_dir
 
-        print(" Angle max : %16.8f" % self._max_angle)
-        print(" Angle min : %16.8f" % self._min_angle)
-        print(" Nb Wave direction : %i" % self._nb_wave_directions)
+        print(" Angle min: %16.8f" % self._min_angle)
+        print(" Angle max: %16.8f" % self._max_angle)
+        print(" Nb Wave directions: %i" % self._nb_wave_directions)
         print("")
 
-        self._wave_dirs = np.linspace(self.min_angle, self.max_angle, self.nb_wave_directions)
+        self._wave_dirs = np.radians(np.linspace(self.min_angle, self.max_angle, self.nb_wave_directions))
 
         # Time.
         if self._nb_time_sample is None:
