@@ -322,12 +322,13 @@ class DiscretizationDB(object):
         print(" Angle max : %16.8f" % self._max_angle)
         print(" Angle min : %16.8f" % self._min_angle)
         print(" Nb Wave direction : %i" % self._nb_wave_directions)
+        print("")
 
         self._wave_dirs = np.linspace(self.min_angle, self.max_angle, self.nb_wave_directions)
 
         # Time.
         if self._nb_time_sample is None:
             self._nb_time_sample = int(self.final_time / self._delta_time) + 1
-            self._delta_time = self.final_time / (self.nb_time_sample - 1)
+            self._delta_time = self.final_time / float(self.nb_time_sample - 1)
 
         return

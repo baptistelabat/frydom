@@ -46,6 +46,9 @@ class BodyDB(object):
         # Added mass matrices (6 dof so 6 rows x all the columns x all the frequencies).
         self.Added_mass = np.zeros((6, 6 * nb_bodies, nw), dtype = np.float)
 
+        # Infinite added mass matrices.
+        self.Inf_Added_mass = None
+
         # Damping matrices (6 dof so 6 rows x all the columns x all the frequencies).
         self.Damping = np.zeros((6, 6 * nb_bodies, nw), dtype=np.float)
 
@@ -74,10 +77,13 @@ class BodyDB(object):
         self.point = np.zeros((3,3),dtype = np.float)
 
         # Impulse response functions without forward speed.
-        self._irf_db = None
+        self.irf = None
 
         # Impulse response functions with forward speed.
-        self._irf_ku_db = None
+        self.irf_ku = None
+
+        # Flags.
+        self._flags = np.ones((6, 6*nb_bodies), dtype=np.bool)
 
     def _compute_nds(self):
         """Computes the term n dS for each force mode of the body."""
@@ -120,3 +126,51 @@ class BodyDB(object):
             self._compute_nds()
 
         return self._nds[iforce, :]
+
+    def radiation_damping(self,iwcut):
+
+        """This function gives the damping coefficients.
+
+        Returns
+        -------
+        Array of floats
+            Damping coefficients.
+        """
+
+        if iwcut is None:
+            ca = self.Damping
+        else:
+            ca = self.Damping[:, :, :iwcut]
+
+        return np.einsum('ijk, ij -> ijk', ca, self._flags)
+
+    def added_mass(self,iwcut):
+
+        """This function gives the added-mass coefficients.
+
+        Returns
+        -------
+        Array of floats
+            Added-mass coefficients.
+        """
+
+        if iwcut is None:
+            cm = self.Added_mass
+        else:
+            cm = self.Added_mass[:, :, :iwcut]
+        return np.einsum('ijk, ij -> ijk', cm, self._flags)
+
+    def infinite_added_mass(self):
+
+        """This function gives the infinite-frequency added mass coefficients.
+
+        Returns
+        -------
+        Array of floats
+            Infinite-frequency added mass coefficients.
+        """
+
+        if self.Inf_Added_mass is None:
+            return
+        else:
+            return self.Inf_Added_mass * self._flags

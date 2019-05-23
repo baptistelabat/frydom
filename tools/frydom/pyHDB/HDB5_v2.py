@@ -105,13 +105,18 @@ class HDB5(object):
 
     def _initialize(self):
 
-        """This function updates and improve the hydrodynamic database (computation of RK and diffraction loads, impulse response functions, interpolation, etc.)."""
+        """This function updates the hydrodynamic database (computation of RK and diffraction loads, impulse response functions, interpolations, etc.)."""
 
         # Computing Froude-Krylov loads.
         self._pyHDB.Eval_Froude_Krylov_loads()
 
         # Printing input data.
         self._discretization.initialize(self._pyHDB)
+
+        # Impule response functions for radiation damping.
+        tf = self.discretization.final_time
+        dt = self.discretization.delta_time
+        self._pyHDB.eval_impulse_response_function(tf=tf, dt=dt)
 
     def Symmetry_HDB(self):
 

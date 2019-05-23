@@ -88,6 +88,44 @@ class pyHDB():
         else:
             return self.wave_freq[:self._iwcut]
 
+    def get_full_omega(self):
+        return self.wave_freq
+
+    @property
+    def wcut(self):
+
+        """This function gives the cutting wave frequency.
+
+        Returns
+        -------
+        float
+            Cutting wave frequency.
+        """
+
+        if self._iwcut is None:
+            return None
+        else:
+            w = self.get_full_omega()
+            return w[self._iwcut]
+
+    @wcut.setter
+    def wcut(self, wcut):  # TODO: finir l'implementation
+
+        """This function sets the cutting wave frequency.
+
+        Parameter
+        ----------
+        wcut : float
+            Cutting wave frequency.
+        """
+
+        if wcut is None:
+            self._iwcut = None
+        else:
+            assert self._min_frequency < wcut <= self._max_frequency
+            w = self.get_full_omega()
+            self._iwcut = np.where(w >= wcut)[0][0]  # TODO: a verifier
+
     def set_wave_directions(self):
         """Frequency array of BEM computations in rad/s
 
@@ -256,6 +294,56 @@ class pyHDB():
         self.nb_wave_dir = self.wave_dir.shape[0]
 
         return
+
+    def eval_impulse_response_function(self, tf = 30., dt = None, full=True):
+        """Computes the impulse response functions.
+
+        It uses the Ogilvie formulas based on radiation damping integration (Inverse Fourier Transform).
+
+        Parameters
+        ----------
+        tf : float, optional
+            Final time (seconds). Default is 30.
+        dt : float, optional
+            Time step (seconds). Default is None. If None, a time step is computed according to the max
+            frequency of
+            hydrodynamic coefficients (the Nyquist frequency is taken)
+        full : bool, optional
+            If True (default), it will use the full wave frequency range for computations.
+        """
+
+        # Initialization;
+        irf_data = np.empty(0, dtype=np.float)
+
+        # Time.
+        if dt is None:
+            # Using Shannon theorem.
+            dt = pi / (10 * self.max_frequency)
+        time = np.arange(start=0., stop=tf + dt, step=dt)
+        tf = time[-1]  # It is overwriten !!
+
+        # Wave frequency range.
+        if full:
+            w = self.get_full_omega()
+        else:
+            w = self.omega
+
+        # IRF computation.
+        wt = np.einsum('i, j -> ij', w, time)  # w*t.
+        cwt = np.cos(wt)  # cos(w*t).
+
+        for body in self.bodies:
+
+            if full:
+                ca = np.einsum('ijk, ij -> ijk', body.Damping, body._flags) # Damping.
+            else:
+                ca = body.radiation_damping(self._iwcut) # Damping.
+
+            kernel = np.einsum('ijk, kl -> ijkl', ca, cwt)  # Damping*cos(wt).
+
+            irf_data = (2 / np.pi) * np.trapz(kernel, x=w, axis=2)  # Int(Damping*cos(wt)*dw)
+
+            body.irf = irf_data
 
     def symetrize(self):
 
