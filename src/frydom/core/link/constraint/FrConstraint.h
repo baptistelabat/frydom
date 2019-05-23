@@ -111,9 +111,9 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "ConstraintPlaneOnPlane"; }
 
-        void SetFlipped(bool flip) { GetChronoItem_ptr()->SetFlipped(flip); }
+        void SetFlipped(bool flip);
 
-        void SetDistance(double distance) { GetChronoItem_ptr()->SetSeparation(distance); }
+        void SetDistance(double distance);
 
         void Initialize() override;
 
@@ -121,6 +121,34 @@ namespace frydom {
 
         chrono::ChLinkMatePlane* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMatePlane*>(m_chronoConstraint.get()); }
 
+    };
+
+
+    class FrConstraintPointOnPlane : public FrConstraint {
+
+    private:
+
+        const std::shared_ptr<FrPoint> m_point;
+        const std::shared_ptr<FrPlane> m_plane;
+
+    public:
+
+        FrConstraintPointOnPlane(const std::shared_ptr<FrPoint>& point,
+                const std::shared_ptr<FrPlane>& plane,
+                FrOffshoreSystem* system,
+                double distance = 0.);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "ConstraintDistanceToAxis"; }
+
+        void Initialize() override;
+
+        void SetDistance(double distance);
+
+    protected:
+
+        chrono::ChLinkMateXdistance* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateXdistance*>(m_chronoConstraint.get()); }
 
     };
 

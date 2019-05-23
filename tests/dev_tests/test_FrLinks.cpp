@@ -36,27 +36,41 @@ int main() {
 
     // Revolute link between body1 and world
     auto node1 = body1->NewNode();
-    node1->TranslateInBody(-10, 0, 0, NWU);
+    node1->TranslateInBody(-10, -10, 0, NWU);
 //    node1->RotateAroundXInBody(90*DEG2RAD, NWU);
 //    node1->RotateAroundZInBody(90*DEG2RAD, NWU);
 
 
     auto nodeWorld = system.GetWorldBody()->NewNode();
-    nodeWorld->TranslateInWorld(-10, 0, 0, NWU);
-//    nodeWorld->RotateAroundXInBody(90*DEG2RAD, NWU);
+//    nodeWorld->TranslateInWorld(-10, 10, 0, NWU);
+//    nodeWorld->RotateAroundXInBody(45*DEG2RAD, NWU);
 //    nodeWorld->RotateAroundZInBody(90*DEG2RAD, NWU);
 
+    auto point1 = std::make_shared<FrPoint>(node1);
+    auto pointWorld = std::make_shared<FrPoint>(nodeWorld);
 
-    auto axis1 = std::make_shared<FrAxis>(node1);
-    auto axisWorld = std::make_shared<FrAxis>(nodeWorld,XAXIS);
+    auto axis1 = std::make_shared<FrAxis>(node1,YAXIS);
+    auto axisWorld = std::make_shared<FrAxis>(nodeWorld,ZAXIS);
 
     auto plane1 = std::make_shared<FrPlane>(node1,YAXIS);
     auto planeWorld = std::make_shared<FrPlane>(nodeWorld,ZAXIS);
 
-    auto test = std::make_shared<FrConstraintPlaneOnPlane>(planeWorld, plane1, &system);
-    test->SetFlipped(true);
-    test->SetDistance(5.);
+    auto test = std::make_shared<FrConstraintPointOnPlane>(point1, planeWorld, &system);
+    //test->SetFlipped(true);
+    test->SetDistance(0.);
     system.AddLink(test);
+
+//    auto body2 = system.NewBody();
+//    body2->SetName("1");
+//    makeItBox(body2, 20, 10, 2, 1000);
+//    body2->AllowCollision(false);
+//    body2->SetColor(Green);
+//    body2->SetPosition(Position(10,10,0), NWU);
+//
+//    auto node2 = body2->NewNode();
+//    node2->TranslateInBody(-10,-10,0,NWU);
+//
+//    auto constraintPointOnPlane = make_pointOnPlane_constraint(nodeWorld, node2, &system);
 
 //    auto constraint = std::make_shared<chrono::ChLinkMatePlane>();
 ////    constraint->Initialize(box, floor, true, ChVector<>(0,-.5,0), ChVector<>(0,.5,0), ChVector<>(0,-1,0), ChVector<>(0,1,0));
