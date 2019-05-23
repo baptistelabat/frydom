@@ -15,6 +15,7 @@ import numpy as np
 from scipy import interpolate
 
 from wave_dispersion_relation_v2 import solve_wave_dispersion_relation
+from wave_drift_db_v2 import WaveDriftDB
 
 inf = float('inf')  # Definition of infinity for depth
 
@@ -65,6 +66,9 @@ class pyHDB():
 
         # Froude-Krylov loads.
         self._has_froude_krylov = False
+
+        # Wave drift.
+        self._wave_drift = None
 
     def set_wave_frequencies(self):
         """Frequency array of BEM computations in rad/s.

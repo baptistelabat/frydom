@@ -21,6 +21,7 @@ import numpy as np
 from bem_reader_v2 import *
 from pyHDB import *
 from discretization_db_v2 import DiscretizationDB
+from wave_drift_db_v2 import WaveDriftDB
 
 class HDB5(object):
 
@@ -48,7 +49,7 @@ class HDB5(object):
     @property
     def body(self):
 
-        """This subroutine returns all the bodies.
+        """This function returns all the bodies.
 
         Returns
         -------
@@ -60,7 +61,7 @@ class HDB5(object):
     @property
     def discretization(self):
 
-        """This subroutine returns the parameters of the discretization.
+        """This function returns the parameters of the discretization.
 
         Returns
         -------
@@ -127,13 +128,33 @@ class HDB5(object):
         # Interpolations with respect to the wave directions and the wave frequencies.
         self._pyHDB.interpolation(self.discretization)
 
+        self._is_initialized = True
+
+    @property
+    def wave_drift(self):
+
+        """This function gives the wave drift data of the body.
+
+        Returns
+        -------
+        WaveDriftDB
+            Wave drift data of the body.
+        """
+
+        return self._pyHDB._wave_drift
+
+    def activate_wave_drift(self):
+
+        """This function initializes the wave drift force parameters."""
+
+        self._pyHDB._wave_drift = WaveDriftDB()
+
     def Symmetry_HDB(self):
 
         """This function symmetrizes the HDB."""
 
         # Updating the wave directions.
         self._pyHDB._initialize_wave_dir()
-
 
 
 

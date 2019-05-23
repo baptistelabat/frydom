@@ -15,6 +15,8 @@
 
 import numpy as np
 
+from hydrostatic_db_v2 import HydrostaticDB
+
 class BodyDB(object):
 
     """
@@ -82,8 +84,11 @@ class BodyDB(object):
         # Impulse response functions with forward speed.
         self.irf_ku = None
 
-        # Flags.
+        # Flags (?).
         self._flags = np.ones((6, 6*nb_bodies), dtype=np.bool)
+
+        # Hydrostatics.
+        self._hydrostatic = None
 
     def _compute_nds(self):
         """Computes the term n dS for each force mode of the body."""
@@ -174,3 +179,22 @@ class BodyDB(object):
             return
         else:
             return self.Inf_Added_mass * self._flags
+
+    @property
+    def hydrostatic(self):
+
+        """This function gives the hydrostatic data of the body.
+
+        Returns
+        -------
+        HydrostaticDB
+            Hydrostatic data of the body.
+        """
+
+        return self._hydrostatic
+
+    def activate_hydrostatic(self):
+
+        """This function initializes the hydrostatic parameters."""
+
+        self._hydrostatic = HydrostaticDB()
