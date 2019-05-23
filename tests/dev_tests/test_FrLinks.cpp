@@ -9,6 +9,7 @@
 // 
 // ==========================================================================
 
+#include <chrono/physics/ChBodyEasy.h>
 #include "frydom/frydom.h"
 //#include "gtest/gtest.h"
 
@@ -36,44 +37,68 @@ int main() {
     // Revolute link between body1 and world
     auto node1 = body1->NewNode();
     node1->TranslateInBody(-10, 0, 0, NWU);
-    node1->RotateAroundXInBody(90*DEG2RAD, NWU);
+//    node1->RotateAroundXInBody(90*DEG2RAD, NWU);
+//    node1->RotateAroundZInBody(90*DEG2RAD, NWU);
+
 
     auto nodeWorld = system.GetWorldBody()->NewNode();
     nodeWorld->TranslateInWorld(-10, 0, 0, NWU);
-    nodeWorld->RotateAroundXInBody(90*DEG2RAD, NWU);
+//    nodeWorld->RotateAroundXInBody(90*DEG2RAD, NWU);
+//    nodeWorld->RotateAroundZInBody(90*DEG2RAD, NWU);
 
-    auto rev1 = make_revolute_link(node1, nodeWorld, &system);
 
-    auto motor1 = rev1->Motorize(POSITION);
+    auto axis1 = std::make_shared<FrAxis>(node1);
+    auto axisWorld = std::make_shared<FrAxis>(nodeWorld,XAXIS);
 
-    auto t = new_var("t");
-    motor1->SetMotorFunction(0.1*MU_PI * sin(t));
-//    motor1->SetMotorFunction(FrConstantFunction(MU_PI_2));
+    auto plane1 = std::make_shared<FrPlane>(node1,YAXIS);
+    auto planeWorld = std::make_shared<FrPlane>(nodeWorld,ZAXIS);
+
+    auto test = std::make_shared<FrConstraintPlaneOnPlane>(planeWorld, plane1, &system);
+    test->SetFlipped(true);
+    test->SetDistance(5.);
+    system.AddLink(test);
+
+//    auto constraint = std::make_shared<chrono::ChLinkMatePlane>();
+////    constraint->Initialize(box, floor, true, ChVector<>(0,-.5,0), ChVector<>(0,.5,0), ChVector<>(0,-1,0), ChVector<>(0,1,0));
+//    constraint->Initialize(body1->GetChronoBody(), system.GetWorldBody()->GetChronoBody(), false,
+//            chrono::ChVector<>(0,0,0), chrono::ChVector<>(0,0,5), chrono::ChVector<>(0,0,-1), chrono::ChVector<>(0,0,1));
+//    constraint->SetFlipped(true);
+//    system.GetChronoSystem()->AddLink(constraint);
+
+
+
+//    auto rev1 = make_revolute_link(node1, nodeWorld, &system);
+//
+//    auto motor1 = rev1->Motorize(POSITION);
+//
+//    auto t = new_var("t");
+////    motor1->SetMotorFunction(0.1*MU_PI * sin(t));
+//    motor1->SetMotorFunction(FrConstantFunction(0.));
 
 
     // Body 2 definition (linked body)
-    auto body2 = system.NewBody();
-    body2->SetName("2");
-    makeItBox(body2, 2, 2, 40, 2000);
-    body2->SetColor(Black);
-//    body2->TranslateInWorld(10, 5, 0, NWU);
-
-//    // Apply a random translation and rotation to the body to check if the assembly is done correctly
-//    body2->TranslateInWorld(-2.,7.,8, NWU);
-//    randomDir = Direction(6.,-8.,45); randomDir.normalize();
-//    randomRotation = FrRotation(randomDir,0.9687,NWU);
-//    body2->Rotate(randomRotation);
+//    auto body2 = system.NewBody();
+//    body2->SetName("2");
+//    makeItBox(body2, 2, 2, 40, 2000);
+//    body2->SetColor(Black);
+////    body2->TranslateInWorld(10, 5, 0, NWU);
 //
-    // Prismatic link between body1 and body2
-    auto m1 = body1->NewNode();
-    m1->TranslateInBody(10, 5, -1, NWU);
-
-    auto m2 = body2->NewNode();
-    m2->TranslateInBody(0, 0, 0, NWU);
-
-    auto prismaticLink = make_prismatic_link(m1, m2, &system);
-    prismaticLink->SetSpringDamper(2e3, 1e4);
-    prismaticLink->SetRestLength(0.);
+////    // Apply a random translation and rotation to the body to check if the assembly is done correctly
+////    body2->TranslateInWorld(-2.,7.,8, NWU);
+////    randomDir = Direction(6.,-8.,45); randomDir.normalize();
+////    randomRotation = FrRotation(randomDir,0.9687,NWU);
+////    body2->Rotate(randomRotation);
+////
+//    // Prismatic link between body1 and body2
+//    auto m1 = body1->NewNode();
+//    m1->TranslateInBody(10, 5, -1, NWU);
+//
+//    auto m2 = body2->NewNode();
+//    m2->TranslateInBody(0, 0, 0, NWU);
+//
+//    auto prismaticLink = make_prismatic_link(m1, m2, &system);
+//    prismaticLink->SetSpringDamper(2e3, 1e4);
+//    prismaticLink->SetRestLength(0.);
 //
 //    auto motor2 = prismaticLink->Motorize(POSITION);
 ////    motor2->SetMotorFunction(10*sin(t));
@@ -131,3 +156,86 @@ int main() {
     return 0;
 }
 
+//// Use the namespaces of Chrono
+//using namespace chrono;
+//using namespace chrono::irrlicht;
+//// Use the main namespaces of Irrlicht
+//using namespace irr;
+//using namespace irr::core;
+//using namespace irr::scene;
+//using namespace irr::video;
+//using namespace irr::io;
+//using namespace irr::gui;
+//
+//int main() {
+//
+//    ChSystemSMC system;
+//
+//    auto floor = std::make_shared<ChBodyEasyBox>(10.,1.,10.,1000.);
+//    system.Add(floor);
+//    floor->SetBodyFixed(true);
+//    auto mfloorcolor = std::make_shared<ChColorAsset>();
+//    mfloorcolor->SetColor(ChColor(0.3f, 0.3f, 0.6f));
+//    floor->AddAsset(mfloorcolor);
+//
+//
+//    auto box = std::make_shared<ChBodyEasyBox>(1.,1.,1.,10.);
+//    system.Add(box);
+//    box->SetPos(ChVector<>(0.,5.,0.));
+//
+//    auto mboxcolor = std::make_shared<ChColorAsset>();
+//    mboxcolor->SetColor(ChColor(0.6f, 0.3f, 0.3f));
+//    box->AddAsset(mboxcolor);
+//
+//    auto constraint = std::make_shared<ChLinkMatePlane>();
+////    constraint->Initialize(box, floor, true, ChVector<>(0,-.5,0), ChVector<>(0,.5,0), ChVector<>(0,-1,0), ChVector<>(0,1,0));
+//    constraint->Initialize(floor, box, false, ChVector<>(0,.5,0), ChVector<>(0,4.5,0), ChVector<>(0,1,0), ChVector<>(0,-1,0));
+//    system.AddLink(constraint);
+//
+//    ChIrrApp application(&system, L"PlaneOnPlane test", core::dimension2d<u32>(800, 600), false, true);
+//
+//    // Easy shortcuts to add camera, lights, logo and sky in Irrlicht scene:
+//    ChIrrWizard::add_typical_Logo(application.GetDevice());
+//    ChIrrWizard::add_typical_Sky(application.GetDevice());
+//    ChIrrWizard::add_typical_Lights(application.GetDevice());
+//    ChIrrWizard::add_typical_Camera(application.GetDevice(), core::vector3df(0, 0, -6));
+//    // Bind assets
+//    application.AssetBindAll();
+//    application.AssetUpdateAll();
+//
+////    double fan_radius = 5.3;
+////    IAnimatedMesh* fanMesh = application.GetSceneManager()->getMesh(GetChronoDataFile("fan2.obj").c_str());
+////    IAnimatedMeshSceneNode* fanNode = application.GetSceneManager()->addAnimatedMeshSceneNode(fanMesh);
+////    fanNode->setScale(irr::core::vector3df((irr::f32)fan_radius, (irr::f32)fan_radius, (irr::f32)fan_radius));
+//
+//    while (application.GetDevice()->run()) {
+//        // Irrlicht must prepare frame to draw
+//        application.BeginScene(true, true, SColor(255, 140, 161, 192));
+//        // Irrlicht application draws all 3D objects and all GUI items
+//        application.DrawAll();
+//        // Draw also a grid on the horizontal XZ plane
+//        ChIrrTools::drawGrid(application.GetVideoDriver(), 2, 2, 20, 20,
+//                             ChCoordsys<>(ChVector<>(0, -20, 0), Q_from_AngX(CH_C_PI_2)),
+//                             video::SColor(255, 80, 100, 100), true);
+//        // Update the position of the spinning fan (an Irrlicht
+//        // node, which is here just for aesthetical reasons!)
+////        ChQuaternion<> my_fan_rotation;
+////        my_fan_rotation.Q_from_AngY(system.GetChTime() * -0.5);
+////        ChQuaternion<> my_fan_spin;
+////        my_fan_spin.Q_from_AngZ(system.GetChTime() * 4);
+////        ChCoordsys<> my_fan_coord(ChVector<>(12, -6, 0), my_fan_rotation);
+////        ChFrame<> my_fan_framerotation(my_fan_coord);
+////        ChFrame<> my_fan_framespin(ChCoordsys<>(VNULL, my_fan_spin));
+////        ChCoordsys<> my_fan_coordsys = (my_fan_framespin >> my_fan_framerotation).GetCoord();
+////        ChIrrTools::alignIrrlichtNodeToChronoCsys(fanNode, my_fan_coordsys);
+//        // Apply forces caused by fan & wind if Chrono rigid bodies are
+//        // in front of the fan, using a simple tutorial function (see above):
+////        apply_fan_force(&system, my_fan_coord, fan_radius, 5.2, 0.5);
+//        // HERE CHRONO INTEGRATION IS PERFORMED: THE
+//        // TIME OF THE SIMULATION ADVANCES FOR A SINGLE
+//        // STEP:
+//        application.DoStep();
+//        application.EndScene();
+//    }
+//
+//}

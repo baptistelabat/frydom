@@ -58,7 +58,7 @@ namespace frydom {
     //------------------------------------------------------------------------------------------------------------------
 
     FrConstraintParallel_::FrConstraintParallel_(const std::shared_ptr<FrAxis>& axis1, const std::shared_ptr<FrAxis>& axis2, FrOffshoreSystem* system) :
-            FrConstraint(axis1->GetNode(), axis2->GetNode(), system), m_axis1(axis1), m_axis2( axis2){
+            FrConstraint(axis1->GetNode(), axis2->GetNode(), system), m_axis1(axis1), m_axis2( axis2) {
             m_chronoConstraint = std:: make_shared<chrono::ChLinkMateParallel>();
     }
 
@@ -76,7 +76,7 @@ namespace frydom {
     //------------------------------------------------------------------------------------------------------------------
 
     FrConstraintPerpendicular::FrConstraintPerpendicular(const std::shared_ptr<FrAxis>& axis1, const std::shared_ptr<FrAxis>& axis2, FrOffshoreSystem* system) :
-            FrConstraint(axis1->GetNode(), axis2->GetNode(), system), m_axis1(axis1), m_axis2( axis2){
+            FrConstraint(axis1->GetNode(), axis2->GetNode(), system), m_axis1(axis1), m_axis2( axis2) {
         m_chronoConstraint = std:: make_shared<chrono::ChLinkMateOrthogonal>();
     }
 
@@ -87,7 +87,28 @@ namespace frydom {
         auto chDir1 = internal::Vector3dToChVector(m_axis1->GetDirectionInWorld(NWU));
         auto chDir2 = internal::Vector3dToChVector(m_axis2->GetDirectionInWorld(NWU));
 
-        m_chronoConstraint->Initialize(GetChronoBody1(), GetChronoBody2(), true, chPos1, chPos2, chDir1, chDir2);
+        m_chronoConstraint->Initialize(GetChronoBody1(), GetChronoBody2(), false, chPos1, chPos2, chDir1, chDir2);
 
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    FrConstraintPlaneOnPlane::FrConstraintPlaneOnPlane(const std::shared_ptr<FrPlane> &plane1,
+                                                       const std::shared_ptr<FrPlane> &plane2,
+                                                       FrOffshoreSystem *system) :
+            FrConstraint(plane1->GetNode(), plane2->GetNode(), system), m_plane1(plane1), m_plane2(plane2) {
+        m_chronoConstraint = std::make_shared<chrono::ChLinkMatePlane>();
+    }
+
+    void FrConstraintPlaneOnPlane::Initialize() {
+
+        auto chPos1 = internal::Vector3dToChVector(m_plane1->GetOriginInWorld(NWU));
+        auto chPos2 = internal::Vector3dToChVector(m_plane2->GetOriginInWorld(NWU));
+        auto chDir1 = internal::Vector3dToChVector(m_plane1->GetNormaleInWorld(NWU));
+        auto chDir2 = internal::Vector3dToChVector(m_plane2->GetNormaleInWorld(NWU));
+
+        GetChronoItem_ptr()->Initialize(GetChronoBody1(), GetChronoBody2(), true, chPos1, chPos2, chDir1, chDir2);
+
+//        GetChronoItem_ptr()->SetSeparation(2.);
     }
 }

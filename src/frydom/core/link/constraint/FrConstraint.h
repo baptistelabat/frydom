@@ -96,6 +96,34 @@ namespace frydom {
 
     };
 
+    class FrConstraintPlaneOnPlane : public FrConstraint {
+
+    private:
+
+        const std::shared_ptr<FrPlane> m_plane1;
+        const std::shared_ptr<FrPlane> m_plane2;
+
+    public:
+
+        FrConstraintPlaneOnPlane(const std::shared_ptr<FrPlane>& plane1, const std::shared_ptr<FrPlane>& plane2, FrOffshoreSystem* system);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "ConstraintPlaneOnPlane"; }
+
+        void SetFlipped(bool flip) { GetChronoItem_ptr()->SetFlipped(flip); }
+
+        void SetDistance(double distance) { GetChronoItem_ptr()->SetSeparation(distance); }
+
+        void Initialize() override;
+
+    protected:
+
+        chrono::ChLinkMatePlane* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMatePlane*>(m_chronoConstraint.get()); }
+
+
+    };
+
 
 
 
