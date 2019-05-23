@@ -22,7 +22,7 @@ namespace frydom {
 
     protected:
 
-        std::shared_ptr<chrono::ChLinkMateGeneric> m_chronoConstraint; //TODO passer en ChLink pour avoir acces à ChLinkDistance?
+        std::shared_ptr<chrono::ChLink> m_chronoConstraint; //TODO passer en ChLink pour avoir acces à ChLinkDistance?
 
     public:
 
@@ -53,7 +53,7 @@ namespace frydom {
         /// Get the embedded Chrono object
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
 
-        chrono::ChLinkMateGeneric* GetChronoItem_ptr() const override;
+        chrono::ChLink* GetChronoItem_ptr() const override;
 
     };
 
@@ -74,6 +74,10 @@ namespace frydom {
 
         void Initialize() override;
 
+    protected:
+
+        chrono::ChLinkMateParallel* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateParallel*>(m_chronoConstraint.get()); }
+
     };
 
 
@@ -93,6 +97,10 @@ namespace frydom {
         std::string GetTypeName() const override { return "ConstraintPerpendicular"; }
 
         void Initialize() override;
+
+    protected:
+
+        chrono::ChLinkMateOrthogonal* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateOrthogonal*>(m_chronoConstraint.get()); }
 
     };
 
@@ -140,7 +148,7 @@ namespace frydom {
 
         /// Get the type name of this object
         /// \return type name of this object
-        std::string GetTypeName() const override { return "ConstraintDistanceToAxis"; }
+        std::string GetTypeName() const override { return "ConstraintPointOnPlane"; }
 
         void Initialize() override;
 
@@ -151,6 +159,76 @@ namespace frydom {
         chrono::ChLinkMateXdistance* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateXdistance*>(m_chronoConstraint.get()); }
 
     };
+
+
+    class FrConstraintDistanceToAxis : public FrConstraint {
+
+    private:
+
+        const std::shared_ptr<FrPoint> m_point;
+        const std::shared_ptr<FrAxis> m_axis;
+
+        double m_distance;
+
+    public:
+
+        FrConstraintDistanceToAxis(const std::shared_ptr<FrPoint>& point,
+                                 const std::shared_ptr<FrAxis>& axis,
+                                 FrOffshoreSystem* system,
+                                 double distance = 0.);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "ConstraintDistanceToAxis"; }
+
+        void Initialize() override;
+
+        void SetDistance(double distance);
+
+        double GetDistance() const;
+
+    protected:
+
+        chrono::ChLinkRevoluteSpherical* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkRevoluteSpherical*>(m_chronoConstraint.get()); }
+
+    };
+
+
+    class FrConstraintDistanceBetweenPoints : public FrConstraint {
+
+    private:
+
+        const std::shared_ptr<FrPoint> m_point1;
+        const std::shared_ptr<FrPoint> m_point2;
+
+        double m_distance;
+
+    public:
+
+        FrConstraintDistanceBetweenPoints(const std::shared_ptr<FrPoint>& point1,
+                                   const std::shared_ptr<FrPoint>& point2,
+                                   FrOffshoreSystem* system,
+                                   double distance = 0.);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "ConstraintDistanceBetweenPoints"; }
+
+        void Initialize() override;
+
+        void SetDistance(double distance);
+
+        double GetDistance() const;
+
+    protected:
+
+        chrono::ChLinkDistance* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkDistance*>(m_chronoConstraint.get()); }
+
+    };
+
+
+
+
 
 
 

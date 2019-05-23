@@ -16,13 +16,13 @@ namespace frydom {
     }
 
     Force FrConstraint::GetForceInNode2(FRAME_CONVENTION fc) const {
-        auto force = internal::ChVectorToVector3d<Force>(m_chronoConstraint->Get_react_force());
+        auto force = internal::ChVectorToVector3d<Force>(GetChronoItem_ptr()->Get_react_force());
         if (IsNED(fc)) internal::SwapFrameConvention(force);
         return force;
     }
 
     Torque FrConstraint::GetTorqueInNode2(FRAME_CONVENTION fc) const {
-        auto torque = internal::ChVectorToVector3d<Torque>(m_chronoConstraint->Get_react_torque());
+        auto torque = internal::ChVectorToVector3d<Torque>(GetChronoItem_ptr()->Get_react_torque());
         if (IsNED(fc)) internal::SwapFrameConvention(torque);
         return torque;
     }
@@ -51,7 +51,7 @@ namespace frydom {
         return m_chronoConstraint;
     }
 
-    chrono::ChLinkMateGeneric *FrConstraint::GetChronoItem_ptr() const {
+    chrono::ChLink *FrConstraint::GetChronoItem_ptr() const {
         return m_chronoConstraint.get();
     }
 
@@ -69,7 +69,7 @@ namespace frydom {
         auto chDir1 = internal::Vector3dToChVector(m_axis1->GetDirectionInWorld(NWU));
         auto chDir2 = internal::Vector3dToChVector(m_axis2->GetDirectionInWorld(NWU));
 
-        m_chronoConstraint->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chPos1, chDir2, chDir1);
+        GetChronoItem_ptr()->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chPos1, chDir2, chDir1);
 
     }
 
@@ -87,7 +87,7 @@ namespace frydom {
         auto chDir1 = internal::Vector3dToChVector(m_axis1->GetDirectionInWorld(NWU));
         auto chDir2 = internal::Vector3dToChVector(m_axis2->GetDirectionInWorld(NWU));
 
-        m_chronoConstraint->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chPos1, chDir2, chDir1);
+        GetChronoItem_ptr()->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chPos1, chDir2, chDir1);
 
     }
 
@@ -133,24 +133,69 @@ namespace frydom {
 
     void FrConstraintPointOnPlane::Initialize() {
 
-        auto chPos1 = internal::Vector3dToChVector(m_plane->GetOriginInWorld(NWU));
         auto chPos2 = internal::Vector3dToChVector(m_point->GetPositionInWorld(NWU));
+        auto chPos1 = internal::Vector3dToChVector(m_plane->GetOriginInWorld(NWU));
         auto chDir1 = internal::Vector3dToChVector(m_plane->GetNormaleInWorld(NWU));
 
         GetChronoItem_ptr()->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chPos1, chDir1);
-
-//        auto chDir2 = internal::Vector3dToChVector(m_axis->GetNode()->GetFrameInWorld().GetZAxisInParent(NWU));
-//
-//        m_chronoConstraint->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chPos1, chDir2, chDir1);
-
-//        auto pointFrame = internal::FrFrame2ChFrame(m_point->GetNode()->GetFrameInWorld());
-//        auto axisFrame = internal::FrFrame2ChFrame(m_axis->GetNode()->GetFrameInWorld());
-//
-//        m_chronoConstraint->Initialize(GetChronoBody2(),GetChronoBody1(),true,pointFrame,axisFrame);
-
     }
 
     void FrConstraintPointOnPlane::SetDistance(double distance) {
         GetChronoItem_ptr()->SetDistance(distance);
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    FrConstraintDistanceToAxis::FrConstraintDistanceToAxis(const std::shared_ptr<FrPoint> &point,
+                                                           const std::shared_ptr<FrAxis> &axis,
+                                                           FrOffshoreSystem *system, double distance) :
+         FrConstraint(point->GetNode(), axis->GetNode(), system), m_point(point), m_axis(axis){
+        m_chronoConstraint = std::make_shared<chrono::ChLinkRevoluteSpherical>();
+        SetDistance(distance);
+    }
+
+    void FrConstraintDistanceToAxis::Initialize() {
+
+        auto chPos1 = internal::Vector3dToChVector(m_point->GetPositionInWorld(NWU));
+        auto chPos2 = internal::Vector3dToChVector(m_axis->GetOriginInWorld(NWU));
+        auto chDir2 = internal::Vector3dToChVector(m_axis->GetDirectionInWorld(NWU));
+
+        GetChronoItem_ptr()->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chDir2, chPos1, false, GetDistance());
+
+    }
+
+    void FrConstraintDistanceToAxis::SetDistance(double distance) {
+        m_distance = distance;
+    }
+
+    double FrConstraintDistanceToAxis::GetDistance() const {
+        return m_distance;
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    FrConstraintDistanceBetweenPoints::FrConstraintDistanceBetweenPoints(const std::shared_ptr<FrPoint> &point1,
+                                                                         const std::shared_ptr<FrPoint> &point2,
+                                                           FrOffshoreSystem *system, double distance) :
+            FrConstraint(point1->GetNode(), point2->GetNode(), system), m_point1(point1), m_point2(point2){
+        m_chronoConstraint = std::make_shared<chrono::ChLinkDistance>();
+        SetDistance(distance);
+    }
+
+
+    void FrConstraintDistanceBetweenPoints::SetDistance(double distance) {
+        m_distance = distance;
+    }
+
+    double FrConstraintDistanceBetweenPoints::GetDistance() const {
+        return m_distance;
+    }
+
+    void FrConstraintDistanceBetweenPoints::Initialize() {
+
+        auto chPos1 = internal::Vector3dToChVector(m_point1->GetPositionInWorld(NWU));
+        auto chPos2 = internal::Vector3dToChVector(m_point2->GetPositionInWorld(NWU));
+
+        GetChronoItem_ptr()->Initialize(GetChronoBody1(), GetChronoBody2(), false, chPos1, chPos2, false, GetDistance());
     }
 }
