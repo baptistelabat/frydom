@@ -118,6 +118,9 @@ class HDB5(object):
         dt = self.discretization.delta_time
         self._pyHDB.eval_impulse_response_function(tf=tf, dt=dt)
 
+        # Infinite masses.
+        self._pyHDB.eval_infinite_added_mass(tf=tf, dt=dt)
+
     def Symmetry_HDB(self):
 
         """This function symmetrizes the HDB."""

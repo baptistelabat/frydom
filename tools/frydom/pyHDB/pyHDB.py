@@ -312,8 +312,49 @@ class pyHDB():
             If True (default), it will use the full wave frequency range for computations.
         """
 
-        # Initialization;
-        irf_data = np.empty(0, dtype=np.float)
+        # Time.
+        if dt is None:
+            # Using Shannon theorem.
+            dt = pi / (10 * self.max_frequency)
+        time = np.arange(start=0., stop=tf + dt, step=dt)
+        tf = time[-1]  # It is overwriten !!
+
+        # Wave frequency range.
+        if full:
+            w = self.get_full_omega()
+        else:
+            w = self.omega
+
+        # Computation.
+        wt = np.einsum('i, j -> ij', w, time)  # w*t.
+        cwt = np.cos(wt)  # cos(w*t).
+
+        for body in self.bodies:
+
+            irf_data = np.empty(0, dtype=np.float)
+
+            if full:
+                ca = np.einsum('ijk, ij -> ijk', body.Damping, body._flags) # Damping.
+            else:
+                ca = body.radiation_damping(self._iwcut) # Damping.
+
+            kernel = np.einsum('ijk, kl -> ijkl', ca, cwt)  # Damping*cos(wt).
+
+            irf_data = (2 / np.pi) * np.trapz(kernel, x=w, axis=2)  # Int(Damping*cos(wt)*dw)
+
+            body.irf = irf_data
+
+    def eval_infinite_added_mass(self, tf = 30., dt = None,  full=True):
+        """Evaluates the infinite added mass matrix coefficients using Ogilvie formula.
+
+        Parameters
+        ----------
+        full : bool, optional
+            If True (default), it will use the full frequency range for computations.
+
+         It uses the Ogilvie formula to get the coefficients from the impulse response functions.
+
+        """
 
         # Time.
         if dt is None:
@@ -328,22 +369,29 @@ class pyHDB():
         else:
             w = self.omega
 
-        # IRF computation.
+        # Computation.
         wt = np.einsum('i, j -> ij', w, time)  # w*t.
-        cwt = np.cos(wt)  # cos(w*t).
+        sin_wt = np.sin(wt) # sin(w*t).
 
         for body in self.bodies:
 
+            # Initialization.
+            body.Inf_Added_mass = np.zeros((6, 6*self.nb_bodies), dtype = np.float)
+
+            # IRF.
+            irf = body.irf
+
+            # Added mass.
             if full:
-                ca = np.einsum('ijk, ij -> ijk', body.Damping, body._flags) # Damping.
+                cm = body.Added_mass
             else:
-                ca = body.radiation_damping(self._iwcut) # Damping.
+                cm = body.radiation_added_mass(self._iwcut)
 
-            kernel = np.einsum('ijk, kl -> ijkl', ca, cwt)  # Damping*cos(wt).
+            kernel = np.einsum('ijk, lk -> ijlk', irf, sin_wt)  # irf*sin(w*t)
+            integral = np.einsum('ijk, k -> ijk', np.trapz(kernel, x=time, axis=3), 1. / w)  # 1/w * int(irf*sin(w*t),dt)
 
-            irf_data = (2 / np.pi) * np.trapz(kernel, x=w, axis=2)  # Int(Damping*cos(wt)*dw)
+            body.Inf_Added_mass = (cm + integral).mean(axis=2)  # mean( A(w) + 1/w * int(irf*sin(w*t),dt) ) wrt w.
 
-            body.irf = irf_data
 
     def symetrize(self):
 

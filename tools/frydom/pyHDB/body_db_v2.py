@@ -144,7 +144,7 @@ class BodyDB(object):
 
         return np.einsum('ijk, ij -> ijk', ca, self._flags)
 
-    def added_mass(self,iwcut):
+    def radiation_added_mass(self,iwcut):
 
         """This function gives the added-mass coefficients.
 
