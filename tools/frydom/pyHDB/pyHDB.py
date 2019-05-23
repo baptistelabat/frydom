@@ -340,7 +340,7 @@ class pyHDB():
 
             kernel = np.einsum('ijk, kl -> ijkl', ca, cwt)  # Damping*cos(wt).
 
-            irf_data = (2 / np.pi) * np.trapz(kernel, x=w, axis=2)  # Int(Damping*cos(wt)*dw)
+            irf_data = (2 / np.pi) * np.trapz(kernel, x=w, axis=2)  # Int(Damping*cos(wt)*dw).
 
             body.irf = irf_data
 
@@ -353,7 +353,6 @@ class pyHDB():
             If True (default), it will use the full frequency range for computations.
 
          It uses the Ogilvie formula to get the coefficients from the impulse response functions.
-
         """
 
         # Time.
@@ -387,11 +386,73 @@ class pyHDB():
             else:
                 cm = body.radiation_added_mass(self._iwcut)
 
-            kernel = np.einsum('ijk, lk -> ijlk', irf, sin_wt)  # irf*sin(w*t)
-            integral = np.einsum('ijk, k -> ijk', np.trapz(kernel, x=time, axis=3), 1. / w)  # 1/w * int(irf*sin(w*t),dt)
+            kernel = np.einsum('ijk, lk -> ijlk', irf, sin_wt)  # irf*sin(w*t).
+            integral = np.einsum('ijk, k -> ijk', np.trapz(kernel, x=time, axis=3), 1. / w)  # 1/w * int(irf*sin(w*t),dt).
 
             body.Inf_Added_mass = (cm + integral).mean(axis=2)  # mean( A(w) + 1/w * int(irf*sin(w*t),dt) ) wrt w.
 
+    def eval_impulse_response_function_Ku(self, tf=30., dt=None, full=True):
+        """Computes the impulse response functions relative to the ship advance speed
+
+        ref : F. Rongère et al. (Journées de l'Hydrodynamique 2010 - Nantes).
+
+        Parameters
+        ----------
+        tf : float, optional
+            Final time (seconds). Default is 30.
+        dt : float, optional
+            Time step (seconds). Default is None. If None, a time step is computed according to the max
+            frequency of
+            hydrodynamic coefficients (the Nyquist frequency is taken)
+        full : bool, optional
+            If True (default), it will use the full frequency range for computations.
+        """
+
+        # Time.
+        if dt is None:
+            # Using Shannon theorem.
+            dt = pi / (10 * self.max_frequency)
+        time = np.arange(start=0., stop=tf + dt, step=dt)
+        tf = time[-1]  # It is overwriten !!
+
+        # Wave frequency range.
+        if full:
+            w = self.get_full_omega()
+        else:
+            w = self.omega
+
+        # Computation.
+        wt = np.einsum('i, j ->ij', w, time)  # w*t.
+        cwt = np.cos(wt)  # cos(w*t).
+
+        for body in self.bodies:
+
+            # Initialization.
+            irf_data = np.empty(0, dtype=np.float)
+
+            if full:
+                cm = np.einsum('ijk, ij -> ijk', body.Added_mass, body._flags) # Added mass.
+            else:
+                cm = self.radiation_added_mass(self._iwcut) # Added mass.
+
+            cm_inf = body.Inf_Added_mass
+
+            cm_diff = np.zeros(cm.shape)
+            for j in range(w.size):
+                cm_diff[:, :, j] = cm_inf[:, :] - cm[:, :, j] # A(inf) - A(w).
+
+            cm_diff[:, 4, :] = -cm_diff[:, 2, :]
+            cm_diff[:, 5, :] = cm_diff[:, 1, :]
+            cm_diff[:, 0, :] = 0.
+            cm_diff[:, 1, :] = 0.
+            cm_diff[:, 2, :] = 0.
+            cm_diff[:, 3, :] = 0.
+
+            kernel = np.einsum('ijk, kl -> ijkl', cm_diff, cwt) # int((A(inf) - A(w))*L*cos(wt),dw).
+
+            irf_data = (2. / np.pi) * np.trapz(kernel, x=w, axis=2) # (2/pi) * int((A(inf) - A(w))*L*cos(wt),dw).
+
+            body.irf_ku = irf_data
 
     def symetrize(self):
 
