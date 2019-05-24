@@ -217,6 +217,112 @@ class HDB5(object):
         # Plots.
         plot_irf(data, time, 1, ibody_force, iforce, ibody_motion, idof, **kwargs)
 
+    def Cutoff_scaling_IRF(self, tc, ibody_force, iforce, ibody_motion, idof, auto_apply=False):
+        """This function applies a filter to the impule response functions without forward speed and plot the result.
+
+        Parameters
+        ----------
+        float : tc.
+            Cutting time.
+        ibody_force : int.
+            Index of the body where the radiation force is applied.
+        int : i_force.
+            Index of the index of the force of the current body.
+        int : i_body_motion.
+            Index of the body.
+        int : i_dof.
+            Index of the dof of the moving body.
+        Bool : auto_apply, optional.
+            Automatic application of the filtering, not if flase (default).
+       """
+
+        # Data.
+        data = self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + iforce, :]
+
+        # Time.
+        time = self._pyHDB.time
+
+        # Coeff.
+        try:
+            coeff = np.exp(-9.*time*time / (tc*tc))
+        except:
+            coeff = np.zeros(time.size)
+
+        # Application of the filer.
+        if auto_apply:
+            bool = True
+        else:
+            # Plot.
+            plot_filering(data, time, 0, coeff, ibody_force, iforce, ibody_motion, idof)
+
+            # raw_input returns the empty string for "enter".
+            yes = {'yes', 'y', 'ye', ''}
+            no = {'no', 'n'}
+
+            choice = raw_input("Apply scaling (y/n) ? ").lower()
+            if choice in yes:
+                bool = True
+            elif choice in no:
+                bool = False
+            else:
+                sys.stdout.write("Please respond with 'yes' or 'no'")
+
+        if bool:
+            self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + iforce, :] *= coeff
+
+    def Cutoff_scaling_IRF_speed(self, tc, ibody_force, iforce, ibody_motion, idof, auto_apply=False):
+        """This function applies a filter to the impule response functions with forward speed and plot the result.
+
+        Parameters
+        ----------
+        float : tc.
+            Cutting time.
+        ibody_force : int.
+            Index of the body where the radiation force is applied.
+        int : i_force.
+            Index of the index of the force of the current body.
+        int : i_body_motion.
+            Index of the body.
+        int : i_dof.
+            Index of the dof of the moving body.
+        Bool : auto_apply, optional.
+            Automatic application of the filtering, not if flase (default).
+       """
+
+        # Data.
+        data = self._pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_force + iforce, :]
+
+        # Time.
+        time = self._pyHDB.time
+
+        # Coeff.
+        try:
+            coeff = np.exp(-9.*time*time / (tc*tc))
+        except:
+            coeff = np.zeros(time.size)
+
+        # Application of the filer.
+        if auto_apply:
+            bool = True
+        else:
+            # Plot.
+            plot_filering(data, time, 1, coeff, ibody_force, iforce, ibody_motion, idof)
+
+            # raw_input returns the empty string for "enter".
+            yes = {'yes', 'y', 'ye', ''}
+            no = {'no', 'n'}
+
+            choice = raw_input("Apply scaling (y/n) ? ").lower()
+            if choice in yes:
+                bool = True
+            elif choice in no:
+                bool = False
+            else:
+                sys.stdout.write("Please respond with 'yes' or 'no'")
+
+        if bool:
+            self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + iforce, :] *= coeff
+
 
 
 

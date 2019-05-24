@@ -137,7 +137,7 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, **kwargs):
     plt.show()
 
 def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, **kwargs):
-    """Plots the impulse response function of a given modes set
+    """Plots the impulse response function of a given modes set.
 
     Parameters
     ----------
@@ -187,5 +187,66 @@ def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, **
     else: # With forward speed.
         plt.title('Impulse response function with forward speed of %s on body %u along direction %u for a %s of body %u along direction %u' %
                   (force_str, ibody_force + 1, iforce + 1, motion_str, ibody_motion + 1, idof + 1), fontsize=20)
+    plt.grid()
+    plt.show()
+
+def plot_filering(data, time, SpeedOrNot, coeff, ibody_force, iforce, ibody_motion, idof, **kwargs):
+    """This function plots the filtered impulse response functions.
+
+    Parameters
+    ----------
+    data : Array of floats.
+        Data to plot: impulse response functions with and without filetering.
+    time : Array of floats.
+        Time.
+    SpeedOrNot : int
+        IRF with forward speed (1) or not (0).
+    coeff : Array of floats.
+        Filerting.
+    SpeedOrNot : int
+        IRF with forward speed (1) or not (0).
+    ibody_force : int
+        Index of the body where the radiation force is applied
+    iforce : int
+        Index of the local body's force mode
+    ibody_motion : int
+        Index of the body having a motion
+    idof : int
+        Index of the local body's raditation mode (motion)
+    kwargs: optional
+        Arguments that are to be used by pyplot
+    """
+
+    # Labels.
+    if (iforce <= 2):
+        force_str = 'force'
+        if (idof <= 2):  # Translation.
+            motion_str = 'translation'
+        else:  # Rotation.
+            motion_str = 'rotation'
+    else:
+        force_str = 'moment'
+        if (idof <= 2):  # Translation.
+            motion_str = 'translation'
+        else:  # Rotation.
+            motion_str = 'rotation'
+
+    if (SpeedOrNot == 0): # Without forward speed.
+        ylabel = r'$K_{%s}(t)$' % (str(iforce+1) + str(idof+1))
+    else: # With forward speed.
+        ylabel = r'$Ku_{%s}(t)$' % (str(iforce + 1) + str(idof + 1))
+
+    plt.figure()
+    plt.plot(time, data, label="Without filetering")
+    plt.plot(time, data * coeff, label="With filering")
+    plt.xlabel(r'$t$'+' $(s)$', fontsize=18)
+    plt.ylabel(ylabel, fontsize=18)  # TODO: mettre une unite
+    if (SpeedOrNot == 0):  # Without forward speed.
+        plt.title('Impulse response function of %s on body %u along direction %u for a %s of body %u along direction %u' %
+                  (force_str, ibody_force + 1, iforce + 1, motion_str, ibody_motion + 1, idof + 1), fontsize=20)
+    else:  # With forward speed.
+        plt.title('Impulse response function with forward speed of %s on body %u along direction %u for a %s of body %u along direction %u' %
+                  (force_str, ibody_force + 1, iforce + 1, motion_str, ibody_motion + 1, idof + 1), fontsize=20)
+    plt.legend()
     plt.grid()
     plt.show()

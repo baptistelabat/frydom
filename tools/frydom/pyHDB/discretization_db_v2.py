@@ -38,7 +38,7 @@ class DiscretizationDB(object):
         self._nb_wave_directions = None
 
         # Time discretization for the impulse response functions.
-        self._final_time = 100
+        self._final_time = 30
         self._nb_time_sample = None
         self._delta_time = 0.008
 
