@@ -570,8 +570,8 @@ class NemohReader(_BEMReader):
                     for body_q in pyHDB.bodies:
                         i_motion = 0
                         for q in range(0,6):
-                            if(body_q.Motion_mask[q] == 1): # Motion activated;
-                                body_p.Added_mass[p, q, :] = added_mass_data_v2[i_force,i_motion,:]
+                            if(body_q.Motion_mask[q] == 1): # Motion activated.
+                                body_p.Added_mass[p, q, :] = added_mass_data_v2[i_force, i_motion,:]
                                 body_p.Damping[p, q, :] = radiation_damping_data_v2[i_force, i_motion, :]
                                 i_motion = i_motion + 1
                     i_force = i_force + 1

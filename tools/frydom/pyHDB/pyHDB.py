@@ -238,8 +238,7 @@ class pyHDB():
 
         if not self._has_froude_krylov:
 
-            """Computes the Froude-Krylov complex coefficients from indident wave field"""
-            # TODO: sortir le potentiel, les pressions et les vitesses normales...
+            """Computes the Froude-Krylov complex coefficients from indident wave field."""
 
             # Wave numbers.
             k_wave = solve_wave_dispersion_relation(self.wave_freq, self.depth, self.grav)
@@ -253,7 +252,7 @@ class pyHDB():
                 y = centers[:, 1]
                 z = centers[:, 2]
 
-                # COMPUTING FIELDS
+                # COMPUTING FIELDS.
                 ctheta = np.cos(self.wave_dir) # cos(beta).
                 stheta = np.sin(self.wave_dir) # sin(beta).
 
@@ -593,6 +592,9 @@ class pyHDB():
             if self._wave_drift:
                 self.write_wave_drift(writer, "/WaveDrift")
 
+            # Version.
+            self.write_version(writer)
+
 
     def write_environment(self, writer):
         """This function writes the environmental data into the *.hdb5 file.
@@ -665,11 +667,11 @@ class pyHDB():
         dset = writer.create_dataset(wave_direction_path + "/NbWaveDirections", data=self.nb_wave_dir)
         dset.attrs['Description'] = "Number of wave directions."
 
-        dset = writer.create_dataset(wave_direction_path + "/MinAngle", data=self.min_wave_dir)
+        dset = writer.create_dataset(wave_direction_path + "/MinAngle", data=np.degrees(self.min_wave_dir))
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Minimum wave direction."
 
-        dset = writer.create_dataset(wave_direction_path + "/MaxAngle", data=self.max_wave_dir)
+        dset = writer.create_dataset(wave_direction_path + "/MaxAngle", data=np.degrees(self.max_wave_dir))
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Maximum wave direction."
 
@@ -1007,3 +1009,17 @@ class pyHDB():
         dset.attrs['Description'] = "Symmetry along x"
         dset = dg.create_dataset('sym_y', data=self.wave_drift.sym_y)
         dset.attrs['Description'] = "Symmetry along y"
+
+    def write_version(self, writer):
+        """This function writes the version of the *.hdb5 file.
+
+        Parameter
+        ---------
+        Writer : string
+            *.hdb5 file.
+        """
+
+        # Version.
+        dset = writer.create_dataset('Version', data=self.version)
+        dset.attrs['Description'] = "Version of the hdb5 output file."
+
