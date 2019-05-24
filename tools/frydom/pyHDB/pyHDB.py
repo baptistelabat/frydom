@@ -11,8 +11,10 @@
 #
 # ==========================================================================
 
+import h5py
 import numpy as np
 from scipy import interpolate
+from datetime import datetime
 
 from wave_dispersion_relation_v2 import solve_wave_dispersion_relation
 from wave_drift_db_v2 import WaveDriftDB
@@ -73,6 +75,10 @@ class pyHDB():
         # IRF.
         self.dt = None
         self.time = None
+        self.nb_time_samples = None
+
+        # Normalization length.
+        self.normalization_length = 1.
 
     def set_wave_frequencies(self):
         """Frequency array of BEM computations in rad/s.
@@ -213,6 +219,19 @@ class pyHDB():
 
         return n
 
+    @property
+    def wave_drift(self):
+
+        """This function gives the wave drift data of the body.
+
+        Returns
+        -------
+        WaveDriftDB
+            Wave drift data of the body.
+        """
+
+        return self._wave_drift
+
     def Eval_Froude_Krylov_loads(self):
 
         """ This functions computes the Froude-Krylov loads."""
@@ -331,6 +350,7 @@ class pyHDB():
         # Storage.
         self.dt = dt
         self.time = time
+        self.nb_time_samples = int(tf / self.dt) + 1
 
         # Wave frequency range.
         if full:
@@ -547,3 +567,443 @@ class pyHDB():
                     body.Diffraction = np.concatenate((body.Diffraction, diff_db_temp.reshape(6, nw, 1)), axis=2) # Axis of the wave directions.
 
         return
+
+    def write_hdb5(self, hdb5_file):
+        """This function writes the hydrodynamic database into a *.hdb5 file.
+
+        Parameter
+        ---------
+        output_file : string, optional.
+            Name of the hdf5 output file.
+        """
+
+        with h5py.File(hdb5_file, 'w') as writer:
+
+            # Environment.
+            self.write_environment(writer)
+
+            # Discretization.
+            self.write_discretization(writer)
+
+            # Bodies.
+            for body in self.bodies:
+                self.write_body(writer, body)
+
+            # Wave drift coefficients
+            if self._wave_drift:
+                self.write_wave_drift(writer, "/WaveDrift")
+
+
+    def write_environment(self, writer):
+        """This function writes the environmental data into the *.hdb5 file.
+
+        Parameter
+        ---------
+        writer : string.
+            *.hdb5 file.
+        """
+
+        # Date.
+        dset = writer.create_dataset('CreationDate', data=str(datetime.now()))
+        dset.attrs['Description'] = "Date of the creation of this database."
+
+        # Gravity acceleration.
+        dset = writer.create_dataset('GravityAcc', data=self.grav)
+        dset.attrs['Unit'] = 'm/s**2'
+        dset.attrs['Description'] = "Gravity acceleration."
+
+        # Water density.
+        dset = writer.create_dataset('WaterDensity', data=self.rho_water)
+        dset.attrs['Unit'] = 'kg/m**3'
+        dset.attrs['Description'] = 'Water Density.'
+
+        # Normalisation length.
+        dset = writer.create_dataset('NormalizationLength', data=self.normalization_length)
+        dset.attrs['Unit'] = 'm'
+        dset.attrs['Description'] = 'Normalization length.'
+
+        # Water depth.
+        dset = writer.create_dataset('WaterDepth', data=self.depth)
+        dset.attrs['Unit'] = 'm'
+        dset.attrs['Description'] = 'Water depth: 0 for infinite depth and positive for finite depth.'
+
+        # Number of bodies.
+        dset = writer.create_dataset('NbBody', data=self.nb_bodies)
+        dset.attrs['Description'] = 'Number of hydrodynamic bodies.'
+
+    def write_discretization(self,writer):
+        """This function writes the discretization parameters into the *.hdb5 file.
+
+        Parameter
+        ---------
+        Writer : string.
+            *.hdb5 file.
+        """
+
+        discretization_path = "/Discretizations"
+        writer.create_group(discretization_path)
+
+        # Frequency discretization.
+
+        frequential_path = discretization_path + "/Frequency"
+
+        dset = writer.create_dataset(frequential_path + "/NbFrequencies", data=self.nb_wave_freq)
+        dset.attrs['Description'] = "Number of frequencies"
+
+        dset = writer.create_dataset(frequential_path + "/MinFrequency", data=self.min_wave_freq)
+        dset.attrs['Unit'] = "rad/s"
+        dset.attrs['Description'] = "Minimum frequency."
+
+        dset = writer.create_dataset(frequential_path + "/MaxFrequency", data=self.max_wave_freq)
+        dset.attrs['Unit'] = "rad/s"
+        dset.attrs['Description'] = "Maximum frequency."
+
+        # Wave direction discretization.
+
+        wave_direction_path = discretization_path + "/WaveDirections"
+
+        dset = writer.create_dataset(wave_direction_path + "/NbWaveDirections", data=self.nb_wave_dir)
+        dset.attrs['Description'] = "Number of wave directions."
+
+        dset = writer.create_dataset(wave_direction_path + "/MinAngle", data=self.min_wave_dir)
+        dset.attrs['Unit'] = "deg"
+        dset.attrs['Description'] = "Minimum wave direction."
+
+        dset = writer.create_dataset(wave_direction_path + "/MaxAngle", data=self.max_wave_dir)
+        dset.attrs['Unit'] = "deg"
+        dset.attrs['Description'] = "Maximum wave direction."
+
+        # Time sample.
+
+        time_path = discretization_path + "/Time"
+
+        dset = writer.create_dataset(time_path + "/NbTimeSample", data=self.nb_time_samples)
+        dset.attrs['Description'] = "Number of time samples."
+
+        dset = writer.create_dataset(time_path + "/FinalTime", data=self.time[-1])
+        dset.attrs['Unit'] = "s"
+        dset.attrs['Description'] = "Final time for the evaluation of the impulse response functions."
+
+        dset = writer.create_dataset(time_path + "/TimeStep", data=self.dt)
+        dset.attrs['Unit'] = "s"
+        dset.attrs['Description'] = "Time step."
+
+    def write_mode(self, writer, body, ForceOrMotion, body_modes_path="/Modes"):
+        """This function writes the force modes into the *.hdb5 file.
+
+        Parameters
+        ----------
+        Writer : string
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        ForceOrMotion : int
+            0 for Force, 1 for Motion.
+        body_modes_path : string, optional
+            Path to body modes.
+        """
+
+        if(ForceOrMotion == 0): # Force.
+            dset = writer.create_dataset(body_modes_path + "/NbForceModes", data=6)
+            dset.attrs['Description'] = "Number of force modes for body number %u" % body.i_body
+        else: # Motion.
+            dset = writer.create_dataset(body_modes_path + "/NbMotionModes", data=6)
+            dset.attrs['Description'] = "Number of motion modes for body number %u" % body.i_body
+
+        for iforce in range(0,6):
+
+            if(ForceOrMotion == 0): # Force.
+                mode_path = body_modes_path + "/ForceModes/Mode_%u" % iforce
+            else: # Motion.
+                mode_path = body_modes_path + "/MotionModes/Mode_%u" % iforce
+            writer.create_group(mode_path)
+            if(iforce == 0 or iforce == 3):
+                direction = np.array([1., 0., 0.])
+            elif(iforce == 1 or iforce == 4):
+                direction = np.array([0., 1., 0.])
+            elif(iforce == 2 or iforce == 5):
+                direction = np.array([0., 0., 1.])
+            writer.create_dataset(mode_path + "/Direction", data=direction)
+
+            if (iforce <= 2):
+                writer.create_dataset(mode_path + "/Type", data='LINEAR')
+            elif (iforce >= 3):
+                writer.create_dataset(mode_path + "/Type", data='ANGULAR')
+                writer.create_dataset(mode_path + "/Point", data=body.point)
+
+    def write_mask(self, writer, body, mask_path="/Mask"):
+        """This function writes the Force and Motion masks into the *.hdb5 file.
+
+        Parameters
+        ----------
+        Writer : string
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        ForceOrMotion : int
+            0 for Force, 1 for Motion.
+        body_modes_path : string, optional
+            Path to body modes.
+        """
+
+        writer.create_group(mask_path)
+        writer.create_dataset(mask_path + "/MotionMask", data=body.Motion_mask.astype(int))
+        writer.create_dataset(mask_path + "/ForceMask", data=body.Force_mask.astype(int))
+
+    def write_mesh(self, writer, body, mesh_path="/Mesh"):
+
+        """This function writes the mesh quantities into the *.hdb5 file.
+
+        Parameters
+        ----------
+        Writer : string
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        """
+
+        writer.create_dataset(mesh_path + "/NbVertices", data=body.mesh.nb_vertices)
+        writer.create_dataset(mesh_path + "/Vertices", data=body.mesh.vertices)
+        writer.create_dataset(mesh_path + "/NbFaces", data=body.mesh.nb_faces)
+        writer.create_dataset(mesh_path + "/Faces", data=body.mesh.faces)
+
+    def write_excitation(self, writer, body, excitation_path="/Excitation"):
+
+        """This function writes the diffraction and Froude-Krylov loads into the *.hdb5 file.
+
+        Parameters
+        ----------
+        Writer : string
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        excitation_path : string, optional
+            Path to excitation loads.
+        """
+
+        # Froude-Krylov loads.
+
+        fk_path = excitation_path + "/FroudeKrylov"
+        writer.create_group(fk_path)
+
+        for idir in range(0,self.nb_wave_dir):
+
+            wave_dir_path = fk_path + "/Angle_%u" % idir
+            writer.create_group(wave_dir_path)
+
+            dset = writer.create_dataset(wave_dir_path + "/Angle", data=np.degrees(self.wave_dir[idir]))
+            dset.attrs['Unit'] = 'deg'
+            dset.attrs['Description'] = "Wave direction."
+
+            # Real part.
+            dset = writer.create_dataset(wave_dir_path + "/RealCoeffs", data=body.Froude_Krylov[:, :, idir].real)
+            dset.attrs['Unit'] = ''
+            dset.attrs['Description'] = "Real part of the Froude-Krylov loads " \
+                                        "on body %u for a wave direction of %.1f deg." % \
+                                        (body.i_body, np.degrees(self.wave_dir[idir]))
+
+            dset = writer.create_dataset(wave_dir_path + "/ImagCoeffs", data=body.Froude_Krylov[:, :, idir].imag)
+            dset.attrs['Unit'] = ''
+            dset.attrs['Description'] = "Imaginary part of the Froude-Krylov loads " \
+                                        "on body %u for a wave direction of %.1f deg." % \
+                                        (body.i_body, np.degrees(self.wave_dir[idir]))
+
+        # Diffraction loads.
+
+        diffraction_path = excitation_path + "/Diffraction"
+        writer.create_group(diffraction_path)
+
+        for idir in range(0,self.nb_wave_dir):
+
+            wave_dir_path = diffraction_path + "/Angle_%u" % idir
+            writer.create_group(wave_dir_path)
+
+            dset = writer.create_dataset(wave_dir_path + "/Angle", data=np.degrees(self.wave_dir[idir]))
+            dset.attrs['Unit'] = 'deg'
+            dset.attrs['Description'] = "Wave direction."
+
+            writer.create_dataset(wave_dir_path + "/RealCoeffs", data=body.Diffraction[:, :, idir].real)
+            dset.attrs['Unit'] = ''
+            dset.attrs['Description'] = "Real part of the diffraction loads " \
+                                        "on body %u for a wave direction of %.1f deg." % \
+                                        (body.i_body, np.degrees(self.wave_dir[idir]))
+
+            writer.create_dataset(wave_dir_path + "/ImagCoeffs", data=body.Diffraction[:, :, idir].imag)
+            dset.attrs['Unit'] = ''
+            dset.attrs['Description'] = "Imaginary part of the diffraction loads " \
+                                        "on body %u for a wave direction of %.1f deg." % \
+                                        (body.i_body, np.degrees(self.wave_dir[idir]))
+
+    def write_radiation(self, writer, body, radiation_path="/Radiation"):
+
+        """This function writes the added mass and damping coefficients and the impulse response functions with and without forward speed into the *.hdb5 file.
+
+        Parameters
+        ----------
+        Writer : string
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        radiation_path : string, optional
+            Path to radiation loads.
+        """
+
+        writer.create_group(radiation_path)
+
+        for j in range(self.nb_bodies):
+
+            radiation_body_motion_path = radiation_path + "/BodyMotion_%u" % j
+
+            dg = writer.create_group(radiation_body_motion_path)
+            dg.attrs['Description'] = "Hydrodynamic coefficients for motion of body %u that radiates waves and " \
+                                      " generate force on body %u." % (j, body.i_body)
+
+            added_mass_path = radiation_body_motion_path + "/AddedMass"
+            dg = writer.create_group(added_mass_path)
+            dg.attrs['Description'] = "Added mass coefficients for acceleration of body %u that radiates waves " \
+                                      "and generates forces on body %u." % (j, body.i_body)
+
+            radiation_damping_path = radiation_body_motion_path + "/RadiationDamping"
+            dg = writer.create_group(radiation_damping_path)
+            dg.attrs['Description'] = "Damping coefficients for velocity of body %u that radiates waves " \
+                                      "and generates forces on body %u." % (j, body.i_body)
+
+            irf_path = radiation_body_motion_path + "/ImpulseResponseFunctionK"
+            dg = writer.create_group(irf_path)
+            dg.attrs['Description'] = "Impulse response functions K for velocity of body %u that radiates waves " \
+                                      "and generates forces on body %u." % (j, body.i_body)
+
+            irf_ku_path = radiation_body_motion_path + "/ImpulseResponseFunctionKU"
+            dg = writer.create_group(irf_ku_path)
+            dg.attrs['Description'] = "Impulse response functions Ku for velocity of body %u that radiates waves " \
+                                      "and generates forces on body %u." % (j, body.i_body)
+
+            dset = writer.create_dataset(radiation_body_motion_path + "/InfiniteAddedMass",
+                                         data=body.Inf_Added_mass[:,6*j:6*(j+1)])
+            dset.attrs['Description'] = "Infinite added mass matrix that modifies the apparent mass of body %u from " \
+                                        "acceleration of body %u." % (body.i_body, j)
+
+            for iforce in range(0,6):
+
+                # Added mass.
+                dset = writer.create_dataset(added_mass_path + "/DOF_%u" % iforce, data=body.Added_mass[:, 6*j+iforce, :])
+                dset.attrs['Unit'] = ""
+                dset.attrs['Description'] = "Added mass coefficients for an acceleration of body %u and force on " \
+                                            "body %u." % (j, body.i_body)
+
+                # Damping.
+                dset = writer.create_dataset(radiation_damping_path + "/DOF_%u" % iforce,
+                                        data=body.Damping[:, 6*j+iforce, :])
+                dset.attrs['Unit'] = ""
+                dset.attrs['Description'] = "Wave damping coefficients for an acceleration of body %u and force " \
+                                            "on body %u." % (j, body.i_body)
+
+                # Impulse response function without forward speed.
+                dset = writer.create_dataset(irf_path + "/DOF_%u" % iforce,
+                                        data=body.irf[:, 6*j+iforce, :])
+                dset.attrs['Description'] = "Impulse response functions"
+
+                # Impulse response function Ku
+                dset = writer.create_dataset(irf_ku_path + "/DOF_%u" % iforce,
+                                        data=body.irf_ku[:, 6*j+iforce, :])
+                dset.attrs['Description'] = "Impulse response functions Ku"
+
+    def write_hydrostatic(self, writer, body, hydrostatic_path="/Hydrostatic"):
+
+        """This function writes the hydrostatic stiffness matrix into the *.hdb5 file.
+
+        Parameters
+        ----------
+        Writer : string
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        hydrostatic_path : string, optional
+            Path to hydrostatic stiffness matrix.
+        """
+
+        dg = writer.create_group(hydrostatic_path)
+
+        dset = dg.create_dataset(hydrostatic_path + "/StiffnessMatrix", data=body.hydrostatic.matrix)
+        dset.attrs['Description'] = "Hydrostatic stiffness matrix."
+
+    def write_body(self, writer, body):
+        """This function writes the environmental data into the *.hdb5 file.
+
+        Parameters
+        ----------
+        writer : string.
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        """
+
+        body_path = '/Bodies/Body_%u' % body.i_body
+        dset = writer.create_group(body_path)
+
+        # Index of the body.
+        dset = writer.create_dataset(body_path + "/ID", data=body.i_body)
+        dset.attrs['Description'] = "Body index"
+
+        # Modes Force.
+        self.write_mode(writer, body, 0, body_path + "/Modes")
+
+        # Modes Motion.
+        self.write_mode(writer, body, 1, body_path + "/Modes")
+
+        # Masks.
+        self.write_mask(writer, body, body_path + "/Mask")
+
+        # Mesh file.
+        self.write_mesh(writer, body, body_path + "/Mesh")
+
+        # Diffraction and Froude-Krylov loads.
+        self.write_excitation(writer, body, body_path + "/Excitation")
+
+        # Added mass and damping coefficients.
+        self.write_radiation(writer, body, body_path + "/Radiation")
+
+        # Hydrostatics.
+        if body._hydrostatic:
+            self.write_hydrostatic(writer, body, body_path + "/Hydrostatic")
+
+    def write_wave_drift(self, writer, wave_drift_path="/WaveDrift"):
+
+        """This function writes the wave drift loads into the *.hdb5 file.
+
+        Parameters
+        ----------
+        Writer : string
+            *.hdb5 file.
+        wave_drift_path : string, optional
+            Path to wave drift loads.
+        """
+
+        dg = writer.create_group(wave_drift_path)
+
+        for key, mode in self.wave_drift.modes.items():
+            grp_modes = dg.require_group(mode.name)
+
+            for i_angle, angle in enumerate(mode.heading):
+                grp_dir = grp_modes.require_group("heading_%i" % i_angle)
+
+                # Set heading angle.
+                dset = grp_dir.create_dataset("heading", data=angle)
+                dset.attrs['Unit'] = 'rad'
+                dset.attrs['Description'] = "Heading angle"
+
+                # Set data.
+                dset = grp_dir.create_dataset("data", data=mode.data[i_angle, :])
+                dset.attrs['Description'] = "Wave Drift force coefficients"
+
+        # Set frequency.
+        if(self.wave_drift.discrete_frequency is not None):
+            dset = dg.create_dataset("freq", data=self.wave_drift.discrete_frequency)
+            dset.attrs['Unit'] = "rads"
+            dset.attrs['Description'] = "Time discretization of the data"
+
+        # Set sym.
+        dset = dg.create_dataset("sym_x", data=self.wave_drift.sym_x)
+        dset.attrs['Description'] = "Symmetry along x"
+        dset = dg.create_dataset('sym_y', data=self.wave_drift.sym_y)
+        dset.attrs['Description'] = "Symmetry along y"

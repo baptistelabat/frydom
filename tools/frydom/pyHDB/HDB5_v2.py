@@ -323,6 +323,48 @@ class HDB5(object):
         if bool:
             self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + iforce, :] *= coeff
 
+    def Write_hdb5(self, output_file = None):
+        """This function writes the hydrodynamic database into a *.hdb5 file.
+
+        Parameter
+        ---------
+        output_file : string, optional
+            Name of the hdf5 output file.
+        """
+
+        if not self._is_initialized:
+
+            print('========================')
+            print('Intialize HDB5 database...')
+            print('========================')
+
+            self._initialize()
+
+        print('========================')
+        print('Writing HDB5 database...')
+        print('========================')
+
+        if output_file is None:
+            hdb5_file = os.path.abspath('frydom.hdb5')
+        else:
+            # Verifying that the output file has the extension .hdb5.
+            root, ext = os.path.splitext(output_file)
+            if not ext == '.hdb5':
+                raise IOError('Please register the output file with a .hdb5 extension.')
+
+            hdb5_file = output_file
+
+            if not os.path.isabs(output_file):
+                hdb5_file = os.path.abspath(hdb5_file)
+
+        # Writing all the data from _pyHDB.
+        try:
+            self._pyHDB.write_hdb5(hdb5_file)
+        except IOError:
+            raise IOError('Problem in writing HDB5 file at location %s' % hdb5_file)
+
+        print('-------> "%s" has been written.' % hdb5_file)
+
 
 
 
