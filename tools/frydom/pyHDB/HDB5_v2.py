@@ -22,6 +22,7 @@ from bem_reader_v2 import *
 from pyHDB import *
 from discretization_db_v2 import DiscretizationDB
 from wave_drift_db_v2 import WaveDriftDB
+from plot_db import *
 
 class HDB5(object):
 
@@ -120,10 +121,10 @@ class HDB5(object):
         self._pyHDB.eval_impulse_response_function(tf=tf, dt=dt)
 
         # Infinite masses.
-        self._pyHDB.eval_infinite_added_mass(tf=tf, dt=dt)
+        self._pyHDB.eval_infinite_added_mass()
 
         # Impule response functions for advance speed.
-        self._pyHDB.eval_impulse_response_function_Ku(tf=tf, dt=dt)
+        self._pyHDB.eval_impulse_response_function_Ku()
 
         # Interpolations with respect to the wave directions and the wave frequencies.
         self._pyHDB.interpolation(self.discretization)
@@ -156,6 +157,65 @@ class HDB5(object):
         # Updating the wave directions.
         self._pyHDB._initialize_wave_dir()
 
+    def Plot_Diffraction(self, ibody, iforce, iwave = 0, **kwargs):
+        """This functions plots the diffraction loads."""
+
+        # Data.
+        data = self._pyHDB.bodies[ibody].Diffraction[iforce,:,iwave]
+
+        # Wave direction.
+        beta = np.degrees(self._pyHDB.wave_dir[iwave])
+
+        # Plot.
+        plot_loads(data, self._pyHDB.wave_freq, 0, ibody, iforce, beta, **kwargs)
+
+    def Plot_Froude_Krylov(self, ibody, iforce, iwave = 0, **kwargs):
+        """This functions plots the Froude-Krylov loads."""
+
+        # Data.
+        data = self._pyHDB.bodies[ibody].Froude_Krylov[iforce, :, iwave]
+
+        # Wave direction.
+        beta = np.degrees(self._pyHDB.wave_dir[iwave])
+
+        # Plots.
+        plot_loads(data, self._pyHDB.wave_freq, 1, ibody, iforce, beta, **kwargs)
+
+    def Plot_Radiation_coeff(self, ibody_force, iforce, ibody_motion, idof, **kwargs):
+        """This functions plots the Froude-Krylov loads."""
+
+        # Data.
+        data = np.zeros((self._pyHDB.nb_wave_freq+1,2), dtype = np.float) # 2 for added mass and damping coefficients, +1 for the infinite added mass.
+        data[0:self._pyHDB.nb_wave_freq, 0] = self._pyHDB.bodies[ibody_motion].Added_mass[iforce, 6 * ibody_force + iforce, :]
+        data[self._pyHDB.nb_wave_freq,0] = self._pyHDB.bodies[ibody_motion].Inf_Added_mass[iforce, 6 * ibody_force + iforce]
+        data[0:self._pyHDB.nb_wave_freq, 1] = self._pyHDB.bodies[ibody_motion].Damping[iforce, 6 * ibody_force + iforce, :]
+
+        # Plots.
+        plot_AB(data, self._pyHDB.wave_freq, ibody_force, iforce, ibody_motion, idof, **kwargs)
+
+    def Plot_IRF(self, ibody_force, iforce, ibody_motion, idof, **kwargs):
+        """This function plots the impulse response functions without forward speed."""
+
+        # Data.
+        data = self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + iforce, :]
+
+        # Time.
+        time = self._pyHDB.time
+
+        # Plots.
+        plot_irf(data, time, 0, ibody_force, iforce, ibody_motion, idof, **kwargs)
+
+    def Plot_IRF_speed(self, ibody_force, iforce, ibody_motion, idof, **kwargs):
+        """This function plots the impulse response functions with forward speed."""
+
+        # Data.
+        data = self._pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_force + iforce, :]
+
+        # Time.
+        time = self._pyHDB.time
+
+        # Plots.
+        plot_irf(data, time, 1, ibody_force, iforce, ibody_motion, idof, **kwargs)
 
 
 

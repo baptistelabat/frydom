@@ -70,6 +70,10 @@ class pyHDB():
         # Wave drift.
         self._wave_drift = None
 
+        # IRF.
+        self.dt = None
+        self.time = None
+
     def set_wave_frequencies(self):
         """Frequency array of BEM computations in rad/s.
 
@@ -324,6 +328,10 @@ class pyHDB():
         time = np.arange(start=0., stop=tf + dt, step=dt)
         tf = time[-1]  # It is overwriten !!
 
+        # Storage.
+        self.dt = dt
+        self.time = time
+
         # Wave frequency range.
         if full:
             w = self.get_full_omega()
@@ -349,11 +357,11 @@ class pyHDB():
 
             body.irf = irf_data
 
-    def eval_infinite_added_mass(self, tf = 30., dt = None,  full=True):
+    def eval_infinite_added_mass(self, full=True):
         """Evaluates the infinite added mass matrix coefficients using Ogilvie formula.
 
-        Parameters
-        ----------
+        Parameter
+        ---------
         full : bool, optional
             If True (default), it will use the full frequency range for computations.
 
@@ -361,11 +369,9 @@ class pyHDB():
         """
 
         # Time.
-        if dt is None:
-            # Using Shannon theorem.
-            dt = pi / (10 * self.max_frequency)
-        time = np.arange(start=0., stop=tf + dt, step=dt)
-        tf = time[-1]  # It is overwriten !!
+        dt = self.dt
+        time = self.time
+        tf = time[-1]
 
         # Wave frequency range.
         if full:
@@ -396,29 +402,21 @@ class pyHDB():
 
             body.Inf_Added_mass = (cm + integral).mean(axis=2)  # mean( A(w) + 1/w * int(irf*sin(w*t),dt) ) wrt w.
 
-    def eval_impulse_response_function_Ku(self, tf=30., dt=None, full=True):
+    def eval_impulse_response_function_Ku(self, full=True):
         """Computes the impulse response functions relative to the ship advance speed
 
         ref : F. Rongère et al. (Journées de l'Hydrodynamique 2010 - Nantes).
 
-        Parameters
-        ----------
-        tf : float, optional
-            Final time (seconds). Default is 30.
-        dt : float, optional
-            Time step (seconds). Default is None. If None, a time step is computed according to the max
-            frequency of
-            hydrodynamic coefficients (the Nyquist frequency is taken)
+        Parameter
+        ---------
         full : bool, optional
             If True (default), it will use the full frequency range for computations.
         """
 
         # Time.
-        if dt is None:
-            # Using Shannon theorem.
-            dt = pi / (10 * self.max_frequency)
-        time = np.arange(start=0., stop=tf + dt, step=dt)
-        tf = time[-1]  # It is overwriten !!
+        dt = self.dt
+        time = self.time
+        tf = time[-1]
 
         # Wave frequency range.
         if full:

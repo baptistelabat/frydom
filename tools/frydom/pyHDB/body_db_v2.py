@@ -11,7 +11,7 @@
 #
 # ==========================================================================
 
-"""Module to create a body database for frydom hydrodynamic database"""
+"""Module to create a body database for frydom hydrodynamic database."""
 
 import numpy as np
 
