@@ -102,8 +102,7 @@ namespace frydom {
     }
 
     void FrEnvironment::ShowSeabed(bool show) {
-//        GetOcean()->GetSeabed()->
-        // TODO
+        GetOcean()->ShowSeabed(show);
     }
 
     FrTimeServices *FrEnvironment::GetTimeServices() const {return m_timeServices.get();}

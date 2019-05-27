@@ -17,6 +17,7 @@ set(DEMOS
         demo_FOSWEC_FlapDecay
         demo_MooringLines
         demo_NonLinearHydrostatics
+        demo_Constraints
         bench_SphereDecay
         bench_SphereRegular
         bench_SphereIrregular

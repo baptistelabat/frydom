@@ -19,7 +19,11 @@ int main() {
 
     FrOffshoreSystem system;
     system.GetEnvironment()->ShowFreeSurface(false);
+//    system.GetEnvironment()->GetOcean()->GetSeabed()->SetBathymetry(-50,NWU);
+    system.GetEnvironment()->ShowSeabed(false);
     system.SetName("Links");
+
+//    system.GetWorldBody()->AddSphereShape(10.);
 
     // Body1 definition
     auto body1 = system.NewBody();
@@ -28,7 +32,8 @@ int main() {
     body1->AllowCollision(false);
     body1->SetColor(MediumVioletRed);
 
-    body1->SetPosition(Position(20.,20.,20.),NWU);
+    body1->SetPosition(Position(5.,5.,5.),NWU);
+
 
     // Apply a random translation and rotation to the body to check if the assembly is done correctly
 //    body1->TranslateInWorld(9.,-6.,25, NWU);
@@ -39,25 +44,29 @@ int main() {
     // Revolute link between body1 and world
     auto node1 = body1->NewNode();
     node1->TranslateInBody(10, 5, 0, NWU);
+    node1->ShowAsset(true);
+    node1->GetAsset()->SetSize(10);
 //    node1->RotateAroundXInBody(90*DEG2RAD, NWU);
 //    node1->RotateAroundZInBody(90*DEG2RAD, NWU);
 
 
     auto nodeWorld = system.GetWorldBody()->NewNode();
-//    nodeWorld->TranslateInWorld(-10, 10, 0, NWU);
+    nodeWorld->ShowAsset(true);
+    nodeWorld->GetAsset()->SetSize(10);
+//    nodeWorld->TranslateInWorld(10, 0, 0, NWU);
 //    nodeWorld->RotateAroundXInBody(45*DEG2RAD, NWU);
 //    nodeWorld->RotateAroundZInBody(90*DEG2RAD, NWU);
 
     auto point1 = std::make_shared<FrPoint>(node1);
     auto pointWorld = std::make_shared<FrPoint>(nodeWorld);
 
-    auto axis1 = std::make_shared<FrAxis>(node1,YAXIS);
+    auto axis1 = std::make_shared<FrAxis>(node1,XAXIS);
     auto axisWorld = std::make_shared<FrAxis>(nodeWorld,XAXIS);
 
     auto plane1 = std::make_shared<FrPlane>(node1,YAXIS);
     auto planeWorld = std::make_shared<FrPlane>(nodeWorld,ZAXIS);
 
-    auto test = std::make_shared<FrConstraintDistanceBetweenPoints>(point1, pointWorld, &system, 10.);
+    auto test = std::make_shared<FrConstraintDistanceToAxis>(point1, axisWorld, &system, 10.);
     //test->SetFlipped(true);
 //    test->SetDistance(0.);
     system.AddLink(test);
@@ -70,14 +79,15 @@ int main() {
 //    body2->SetPosition(Position(10,10,0), NWU);
 //
 //    auto node2 = body2->NewNode();
-//    node2->TranslateInBody(-10,-10,0,NWU);
+////    node2->TranslateInBody(-10,-10,0,NWU);
 //
 //    auto constraintPointOnPlane = make_pointOnPlane_constraint(nodeWorld, node2, &system);
 
-//    auto constraint = std::make_shared<chrono::ChLinkRevoluteSpherical>();
+//    auto constraint = std::make_shared<chrono::ChLinkRevoluteTranslational>();
 //////    constraint->Initialize(box, floor, true, ChVector<>(0,-.5,0), ChVector<>(0,.5,0), ChVector<>(0,-1,0), ChVector<>(0,1,0));
 //    constraint->Initialize(system.GetWorldBody()->GetChronoBody(), body1->GetChronoBody(), true,
-//            chrono::ChVector<>(0,0,0), chrono::ChVector<>(0,0,0), chrono::ChVector<>(1,0,0), false, 5.);
+//            chrono::ChVector<>(0,0,0), chrono::ChVector<>(0,1,0),
+//                    chrono::ChVector<>(-10,-5,0), chrono::ChVector<>(1,0,0), chrono::ChVector<>(0,0,1), false, 0.);
 ////    constraint->SetFlipped(true);
 //    system.GetChronoSystem()->AddLink(constraint);
 
@@ -161,12 +171,12 @@ int main() {
 //    revoluteLink->SetSpringDamper(1e4, 1e1);
 //    revoluteLink->SetRestAngle(180*DEG2RAD);
 
-//    system.Initialize();
-//    system.GetChronoSystem()->DoFullAssembly();
+    system.Initialize();
+    system.GetChronoSystem()->DoFullAssembly();
 
     // Run the simulation (or visualize the assembly)
     system.SetTimeStep(0.01);
-    system.RunInViewer(0, 50, false);
+    system.RunInViewer(0, 50, true);
 //    system.Visualize(50, false);
 
     return 0;
@@ -312,5 +322,5 @@ int main() {
 ////        application.DoStep();
 ////        application.EndScene();
 ////    }
-
-}
+//
+//}

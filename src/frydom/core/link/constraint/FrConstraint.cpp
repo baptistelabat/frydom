@@ -6,33 +6,57 @@
 
 #include "frydom/core/common/FrGeometrical.h"
 #include "frydom/core/common/FrNode.h"
+#include "frydom/core/common/FrFrame.h"
 
 namespace frydom {
 
 
     FrConstraint::FrConstraint(const std::shared_ptr<FrNode> &node1, const std::shared_ptr<FrNode> &node2,
                                FrOffshoreSystem *system) : FrLinkBase(node1, node2, system) {
-
+        SetLogged(true);
     }
 
-    Force FrConstraint::GetForceInNode2(FRAME_CONVENTION fc) const {
+    FrFrame FrConstraint::GetLinkReferenceFrameInWorld() const {
+        chrono::ChFrame<> chFrame(m_chronoConstraint->GetLinkAbsoluteCoords());
+        return internal::ChFrame2FrFrame(chFrame);
+    }
+
+    FrFrame FrConstraint::GetLinkReferenceFrameInBody1() const {
+        chrono::ChFrame<> chFrame(m_chronoConstraint->GetLinkRelativeCoords());
+        return internal::ChFrame2FrFrame(chFrame);
+    }
+
+    Force FrConstraint::GetForceInLink(FRAME_CONVENTION fc) const {
         auto force = internal::ChVectorToVector3d<Force>(GetChronoItem_ptr()->Get_react_force());
         if (IsNED(fc)) internal::SwapFrameConvention(force);
         return force;
     }
 
-    Torque FrConstraint::GetTorqueInNode2(FRAME_CONVENTION fc) const {
+    Torque FrConstraint::GetTorqueInLink(FRAME_CONVENTION fc) const {
         auto torque = internal::ChVectorToVector3d<Torque>(GetChronoItem_ptr()->Get_react_torque());
         if (IsNED(fc)) internal::SwapFrameConvention(torque);
         return torque;
     }
 
+    Force FrConstraint::GetForceInBody1(FRAME_CONVENTION fc) const {
+        return GetLinkReferenceFrameInBody1().ProjectVectorFrameInParent(GetForceInLink(fc), fc);
+    }
+
+    Torque FrConstraint::GetTorqueInBody1AtCOG(FRAME_CONVENTION fc) const {
+        auto force = GetForceInBody1(fc);
+        auto torque = GetLinkReferenceFrameInBody1().ProjectVectorFrameInParent(GetTorqueInLink(fc), fc);
+        auto pos = GetLinkReferenceFrameInBody1().GetPosition(fc);
+        return torque + pos.cross(force);
+    }
+
     Force FrConstraint::GetForceInWorld(FRAME_CONVENTION fc) const {
-        return m_node2->ProjectVectorInWorld(GetForceInNode2(fc), fc);
+        return GetLinkReferenceFrameInWorld().ProjectVectorFrameInParent(GetForceInLink(fc), fc);
+//        return m_node1->ProjectVectorInWorld(GetForceInLink(fc), fc);
     }
 
     Torque FrConstraint::GetTorqueInWorldAtLink(FRAME_CONVENTION fc) const {
-        return m_node2->ProjectVectorInWorld(GetTorqueInNode2(fc), fc);
+        return GetLinkReferenceFrameInWorld().ProjectVectorFrameInParent(GetTorqueInLink(fc), fc);
+//        return m_node1->ProjectVectorInWorld(GetTorqueInLink(fc), fc);
     }
 
     bool FrConstraint::IsDisabled() const {
@@ -53,6 +77,35 @@ namespace frydom {
 
     chrono::ChLink *FrConstraint::GetChronoItem_ptr() const {
         return m_chronoConstraint.get();
+    }
+
+    void FrConstraint::AddFields() {
+        m_message->AddField<double>("time", "s", "Current time of the simulation",
+                                    [this]() { return m_system->GetTime(); });
+
+        // Constraint position and orientation
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkPositionInWorld","m", fmt::format("Link reference frame position, relatively to the world reference frame, in {}",GetLogFrameConvention()),
+                 [this]() {return GetLinkReferenceFrameInWorld().GetPosition(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkOrientationInWorld","deg", fmt::format("Link reference frame orientation, relatively to the world reference frame, in {}",GetLogFrameConvention()),
+                 [this]() { double phi, theta, psi; GetLinkReferenceFrameInWorld().GetRotation().GetCardanAngles_DEGREES(phi, theta, psi, GetLogFrameConvention()) ;
+                    return Position(phi, theta, psi);});
+
+        // Constraint reaction force and torque
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("GetForceInWorld","N", fmt::format("Constraint reaction force in world reference frame, in {}",GetLogFrameConvention()),
+                 [this]() {return GetForceInWorld(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("GetTorqueInWorldAtLink","Nm", fmt::format("Constraint reaction torque at link reference frame origin, in world reference frame, in {}",GetLogFrameConvention()),
+                 [this]() {return GetTorqueInWorldAtLink(GetLogFrameConvention());});
+
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("GetForceInBody1","N", fmt::format("Constraint reaction force in first body reference frame, in {}",GetLogFrameConvention()),
+                 [this]() {return GetForceInBody1(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("GetTorqueInBody1AtCOG","Nm", fmt::format("Constraint reaction torque at COG, in first body reference frame, in {}",GetLogFrameConvention()),
+                 [this]() {return GetTorqueInBody1AtCOG(GetLogFrameConvention());});
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -197,5 +250,16 @@ namespace frydom {
         auto chPos2 = internal::Vector3dToChVector(m_point2->GetPositionInWorld(NWU));
 
         GetChronoItem_ptr()->Initialize(GetChronoBody1(), GetChronoBody2(), false, chPos1, chPos2, false, GetDistance());
+    }
+
+    std::shared_ptr<FrConstraintDistanceBetweenPoints>
+    make_constraint_distance_between_points(const std::shared_ptr<FrPoint>& point1,
+                                            const std::shared_ptr<FrPoint>& point2,
+                                            FrOffshoreSystem* system,
+                                            double distance) {
+
+        auto constraint = std::make_shared<FrConstraintDistanceBetweenPoints>(point1, point2, system, distance);
+        system->AddLink(constraint);
+
     }
 }

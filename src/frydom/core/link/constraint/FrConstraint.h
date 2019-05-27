@@ -17,21 +17,64 @@ namespace frydom {
     class FrPlane;
     class Force;
     class Torque;
+    class FrFrame;
 
+    /**
+     * \class FrConstraint
+     * \brief Class to deal with constraints. Derived from FrLinkBase
+     */
     class FrConstraint : public FrLinkBase {
 
     protected:
 
-        std::shared_ptr<chrono::ChLink> m_chronoConstraint; //TODO passer en ChLink pour avoir acces à ChLinkDistance?
+        std::shared_ptr<chrono::ChLink> m_chronoConstraint; ///< Chrono object handling the constraint
 
     public:
 
+        /// Constraint constructor, requires 2 nodes, fixed in their respective body reference frame.
+        /// \param node1 first node
+        /// \param node2 second node
+        /// \param system system in charge of the constraint
         FrConstraint(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem *system);
 
-        Force GetForceInNode2(FRAME_CONVENTION fc) const;
-        Torque GetTorqueInNode2(FRAME_CONVENTION fc) const;
+        /// Get the link reference frame, relatively to the world reference frame
+        /// \return link reference frame, relatively to the world reference frame
+        FrFrame GetLinkReferenceFrameInWorld() const;
 
+        /// Get the link reference frame, relatively to the first body reference frame
+        /// \return link reference frame, relatively to the first body reference frame
+        FrFrame GetLinkReferenceFrameInBody1() const;
+
+        /// Get the constraint reaction force (Body2 on Body1) in the constraint reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return constraint reaction force (Body2 on Body1)
+        Force GetForceInLink(FRAME_CONVENTION fc) const;
+
+        /// Get the constraint reaction torque (Body2 on Body1) in the constraint reference frame at its origin
+        /// \param fc frame convention (NED/NWU)
+        /// \return constraint reaction torque (Body2 on Body1)
+        Torque GetTorqueInLink(FRAME_CONVENTION fc) const;
+
+        /// Get the constraint reaction force (Body2 on Body1) in the first body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return constraint reaction force (Body2 on Body1)
+        Force GetForceInBody1(FRAME_CONVENTION fc) const;
+
+        /// Get the constraint reaction torque (Body2 on Body1) in the first body reference frame at its COG
+        /// \param fc frame convention (NED/NWU)
+        /// \return constraint reaction torque (Body2 on Body1)
+        Torque GetTorqueInBody1AtCOG(FRAME_CONVENTION fc) const;
+
+
+        /// Get the constraint reaction force (Body2 on Body1) in the world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return constraint reaction force (Body2 on Body1)
         Force GetForceInWorld(FRAME_CONVENTION fc) const;
+
+        /// Get the constraint reaction torque (Body2 on Body1) in the world reference frame at constraint reference
+        /// frame origin
+        /// \param fc frame convention (NED/NWU)
+        /// \return constraint reaction torque (Body2 on Body1)
         Torque GetTorqueInWorldAtLink(FRAME_CONVENTION fc) const;
 
         /// Tells if all constraints of this link are currently turned on or off by the user.
@@ -48,6 +91,8 @@ namespace frydom {
         bool IsActive() const override;
 
     protected:
+
+        void AddFields() override;
 
 
         /// Get the embedded Chrono object
@@ -226,11 +271,9 @@ namespace frydom {
 
     };
 
-
-
-
-
-
+    std::shared_ptr<FrConstraintDistanceBetweenPoints>
+            make_constraint_distance_between_points(const std::shared_ptr<FrPoint>& point1,
+                    const std::shared_ptr<FrPoint>& point2, FrOffshoreSystem* system, double distance = 0.);
 
 
 } // end namespace frydom
