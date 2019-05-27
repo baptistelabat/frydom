@@ -136,33 +136,48 @@ namespace frydom {
     void FrConstraintPerpendicular::Initialize() {
 
         auto chPos1 = internal::Vector3dToChVector(m_axis1->GetOriginInWorld(NWU));
-        auto chPos2 = internal::Vector3dToChVector(m_axis2->GetOriginInWorld(NWU));
         auto chDir1 = internal::Vector3dToChVector(m_axis1->GetDirectionInWorld(NWU));
+        auto chPos2 = internal::Vector3dToChVector(m_axis2->GetOriginInWorld(NWU));
         auto chDir2 = internal::Vector3dToChVector(m_axis2->GetDirectionInWorld(NWU));
 
         GetChronoItem_ptr()->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chPos1, chDir2, chDir1);
 
     }
 
+    std::shared_ptr<FrConstraintPerpendicular>
+    make_constraint_perpendicular(
+            const std::shared_ptr<FrAxis>& axis1,
+            const std::shared_ptr<FrAxis>& axis2,
+            FrOffshoreSystem* system) {
+
+        auto constraint = std::make_shared<FrConstraintPerpendicular>(axis1, axis2, system);
+        system->AddLink(constraint);
+
+        return constraint;
+    }
+
     //------------------------------------------------------------------------------------------------------------------
 
     FrConstraintPlaneOnPlane::FrConstraintPlaneOnPlane(const std::shared_ptr<FrPlane> &plane1,
                                                        const std::shared_ptr<FrPlane> &plane2,
-                                                       FrOffshoreSystem *system) :
+                                                       FrOffshoreSystem *system,
+                                                       bool flipped,
+                                                       double distance) :
             FrConstraint(plane1->GetNode(), plane2->GetNode(), system), m_plane1(plane1), m_plane2(plane2) {
         m_chronoConstraint = std::make_shared<chrono::ChLinkMatePlane>();
+        SetFlipped(flipped);
+        SetDistance(distance);
     }
 
     void FrConstraintPlaneOnPlane::Initialize() {
 
         auto chPos1 = internal::Vector3dToChVector(m_plane1->GetOriginInWorld(NWU));
-        auto chPos2 = internal::Vector3dToChVector(m_plane2->GetOriginInWorld(NWU));
         auto chDir1 = internal::Vector3dToChVector(m_plane1->GetNormaleInWorld(NWU));
+        auto chPos2 = internal::Vector3dToChVector(m_plane2->GetOriginInWorld(NWU));
         auto chDir2 = internal::Vector3dToChVector(m_plane2->GetNormaleInWorld(NWU));
 
         GetChronoItem_ptr()->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chPos1, chDir2, chDir1);
 
-//        GetChronoItem_ptr()->SetSeparation(2.);
     }
 
     void FrConstraintPlaneOnPlane::SetFlipped(bool flip) {
@@ -171,6 +186,20 @@ namespace frydom {
 
     void FrConstraintPlaneOnPlane::SetDistance(double distance) {
         GetChronoItem_ptr()->SetSeparation(distance);
+    }
+
+    std::shared_ptr<FrConstraintPlaneOnPlane>
+    make_constraint_plane_on_plane(
+            const std::shared_ptr<FrPlane>& plane1,
+            const std::shared_ptr<FrPlane>& plane2,
+            FrOffshoreSystem* system,
+            bool flipped,
+            double distance) {
+
+        auto constraint = std::make_shared<FrConstraintPlaneOnPlane>(plane1, plane2, system, flipped, distance);
+        system->AddLink(constraint);
+
+        return constraint;
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -206,6 +235,8 @@ namespace frydom {
 
         auto constraint = std::make_shared<FrConstraintPointOnPlane>(plane, point, system, distance);
         system->AddLink(constraint);
+
+        return constraint;
 
     }
 
@@ -250,6 +281,8 @@ namespace frydom {
         auto constraint = std::make_shared<FrConstraintDistanceToAxis>(axis, point, system, autoDistance, distance);
         system->AddLink(constraint);
 
+        return constraint;
+
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -292,6 +325,8 @@ namespace frydom {
 
         auto constraint = std::make_shared<FrConstraintDistanceBetweenPoints>(point1, point2, system, autoDistance, distance);
         system->AddLink(constraint);
+
+        return constraint;
 
     }
 }

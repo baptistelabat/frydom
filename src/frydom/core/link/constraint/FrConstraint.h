@@ -126,56 +126,125 @@ namespace frydom {
     };
 
 
+    //------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * \class FrConstraintPerpendicular
+     * \brief Class implementing a perpendicular constraint between two axis. Derived from FrConstraint
+     * The constraint is defined based on two FrAxis.
+     */
     class FrConstraintPerpendicular : public FrConstraint {
 
     private:
 
-        const std::shared_ptr<FrAxis> m_axis1;
-        const std::shared_ptr<FrAxis> m_axis2;
+        const std::shared_ptr<FrAxis> m_axis1;  ///< first axis to be constrained
+        const std::shared_ptr<FrAxis> m_axis2;  ///< second axis to be constrained
 
     public:
 
+        /// Constructor for a perpendicular constraint between two axis
+        /// \param axis1 first axis to be constrained
+        /// \param axis2 second axis to be constrained
+        /// \param system system to add the constrain
         FrConstraintPerpendicular(const std::shared_ptr<FrAxis>& axis1, const std::shared_ptr<FrAxis>& axis2, FrOffshoreSystem* system);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "ConstraintPerpendicular"; }
 
+        /// Initialize the constraint
         void Initialize() override;
 
     protected:
 
+        /// Get the pointer to the chrono constraint
+        /// \return pointer to the chrono constraint
         chrono::ChLinkMateOrthogonal* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateOrthogonal*>(m_chronoConstraint.get()); }
 
     };
 
+    /// maker for a perpendicular constraint
+    /// \param plane1 first plane
+    /// \param plane2 second plane
+    /// \param system system to add the constraint
+    /// \param flipped if true, the normale of the first plan is flipped
+    /// \return plane on plane constraint
+    std::shared_ptr<FrConstraintPerpendicular>
+    make_constraint_perpendicular(
+            const std::shared_ptr<FrAxis>& axis1,
+            const std::shared_ptr<FrAxis>& axis2,
+            FrOffshoreSystem* system);
+
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * \class FrConstraintPlaneOnPlane
+     * \brief Class implementing a plane on plane constraint. Derived from FrConstraint
+     * The constraint is defined based on two FrPlane.
+     */
     class FrConstraintPlaneOnPlane : public FrConstraint {
 
     private:
 
-        const std::shared_ptr<FrPlane> m_plane1;
-        const std::shared_ptr<FrPlane> m_plane2;
+        const std::shared_ptr<FrPlane> m_plane1;    ///< first plane to constrain
+        const std::shared_ptr<FrPlane> m_plane2;    ///< second plane to constrain
 
     public:
 
-        FrConstraintPlaneOnPlane(const std::shared_ptr<FrPlane>& plane1, const std::shared_ptr<FrPlane>& plane2, FrOffshoreSystem* system);
+        /// Constructor for a plane on plane constraint
+        /// \param plane1 first plane to constrain
+        /// \param plane2 second plane to constrain
+        /// \param system system to add the constraint
+        /// \param flipped if true, the normale of the first plane is flipped
+        /// \param distance distance separating the two planes
+        FrConstraintPlaneOnPlane(
+                const std::shared_ptr<FrPlane>& plane1,
+                const std::shared_ptr<FrPlane>& plane2,
+                FrOffshoreSystem* system,
+                bool flipped = false,
+                double distance = 0.);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "ConstraintPlaneOnPlane"; }
 
+        /// Initialize the constraint
+        void Initialize() override;
+
+        /// Set if the normale of the first plan is to be flipped
+        /// \param flip true if the normale of the first plan is to be flipped
         void SetFlipped(bool flip);
 
+        /// Set the distance between the two planes
+        /// \param distance distance between the two planes, in m
         void SetDistance(double distance);
-
-        void Initialize() override;
 
     protected:
 
+        /// Get the pointer to the chrono constraint
+        /// \return pointer to the chrono constraint
         chrono::ChLinkMatePlane* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMatePlane*>(m_chronoConstraint.get()); }
 
     };
 
+    /// maker for a plane on plane constraint
+    /// \param plane1 first plane
+    /// \param plane2 second plane
+    /// \param system system to add the constraint
+    /// \param flipped if true, the normale of the first plan is flipped
+    /// \param distance distance separating the two planes
+    /// \return plane on plane constraint
+    std::shared_ptr<FrConstraintPlaneOnPlane>
+    make_constraint_plane_on_plane(
+            const std::shared_ptr<FrPlane>& plane1,
+            const std::shared_ptr<FrPlane>& plane2,
+            FrOffshoreSystem* system,
+            bool flipped = false,
+            double distance = 0.);
+
+
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
      * \class FrConstraintPointOnPlane
@@ -208,14 +277,14 @@ namespace frydom {
         /// Initialize the constraint
         void Initialize() override;
 
-        /// Set the distance between the two points
-        /// \param distance distance between the two points, in m
+        /// Set the distance between the point and the plane
+        /// \param distance distance between the point and the plane, in m
         void SetDistance(double distance);
 
     protected:
 
         /// Get the pointer to the chrono constraint
-        /// \return pointer to the chrono contraint
+        /// \return pointer to the chrono constraint
         chrono::ChLinkMateXdistance* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateXdistance*>(m_chronoConstraint.get()); }
 
     };
@@ -234,7 +303,7 @@ namespace frydom {
             double distance = 0.);
 
 
-
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
      * \class FrConstraintDistanceToAxis
@@ -272,18 +341,18 @@ namespace frydom {
         /// Initialize the constraint
         void Initialize() override;
 
-        /// Set the distance between the two points
-        /// \param distance distance between the two points, in m
+        /// Set the distance between the point and the axis
+        /// \param distance distance between the point and the axis, in m
         void SetDistance(double distance);
 
-        /// Get the distance between the two points
-        /// \return distance between the two points, in m
+        /// Get the distance between the point and the axis
+        /// \return distance between the point and the axis, in m
         double GetDistance() const;
 
     protected:
 
         /// Get the pointer to the chrono constraint
-        /// \return pointer to the chrono contraint
+        /// \return pointer to the chrono constraint
         chrono::ChLinkRevoluteSpherical* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkRevoluteSpherical*>(m_chronoConstraint.get()); }
 
     };
@@ -303,6 +372,8 @@ namespace frydom {
             bool autoDistance,
             double distance = 0.);
 
+
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
      * \class FrConstraintDistanceBetweenPoints
