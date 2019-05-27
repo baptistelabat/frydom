@@ -485,7 +485,7 @@ class NemohReader(_BEMReader):
             skip_line()
             # self.has_pressure = bool(int(f.readline().split()[0])) # Enlever le skip_line() ci-dessus si décommenté.
 
-            # Kochin function
+            # Kochin functions.
             data = f.readline().split()[:3]
             pyHDB.has_kochin = bool(float(data[0]))
             if pyHDB.has_kochin:
@@ -594,6 +594,14 @@ class NemohReader(_BEMReader):
             arr = np.array(data.split(), dtype=np.float).reshape((-1, 3))
             return arr[:, 1] * np.exp(1j * arr[:, 2])
 
+        def read_wave_dir(i):
+            # Read the wave direction discretization of a Kochin elementary file.
+            filename = os.path.join(res_dir, 'Kochin.%5u.dat' % i)
+            with open(filename, 'r') as f:
+                data = f.read()
+            arr = np.array(data.split(), dtype=np.float).reshape((-1, 3))
+            return arr[:, 0]
+
         ntheta = pyHDB.nb_angle_kochin
         nw = pyHDB.nb_wave_freq
         nbeta = pyHDB.nb_wave_dir
@@ -601,17 +609,21 @@ class NemohReader(_BEMReader):
         pyHDB.kochin_diffraction = np.zeros((nbeta, nw, ntheta), dtype=np.complex)
         pyHDB.kochin_radiation = np.zeros((6*nbodies, nw, ntheta), dtype=np.complex)
 
+        # Real and imaginary parts of the Kochin functions for every elementary problem.
         i_bem_problem = 0
         for ifreq in xrange(nw):
 
             # Diffraction problems.
             for iwave in xrange(nbeta):
                 i_bem_problem += 1
-                pyHDB.kochin_diffraction[iwave, ifreq, :] = read(i_bem_problem)
+                pyHDB.kochin_diffraction[iwave, ifreq, :] = read(i_bem_problem)*np.exp(1j * pi/2.) # np.exp(1j * pi/2.) due to the Nemoh convention.
 
             # Radiation problems.
             for body in pyHDB.bodies:
                 for imotion in range(0,6):
                     if(body.Motion_mask[imotion] == 1):
                         i_bem_problem += 1
-                        pyHDB.kochin_radiation[imotion, ifreq, :] = read(i_bem_problem)
+                        pyHDB.kochin_radiation[imotion, ifreq, :] = read(i_bem_problem)*np.exp(1j * pi/2.) # np.exp(1j * pi/2.) due to the Nemoh convention.
+
+        # Wave direction discretization of the Kochin functions.
+        pyHDB.angle_kochin = read_wave_dir(1)  # The discretization is the same for every elementary problem, so the first file is used by default.
