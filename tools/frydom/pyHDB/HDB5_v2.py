@@ -150,7 +150,7 @@ class HDB5(object):
 
         self._pyHDB._wave_drift = WaveDriftDB()
 
-    def Symmetry_HDB(self):
+    def symmetry_HDB(self):
 
         """This function symmetrizes the HDB."""
 
@@ -323,7 +323,7 @@ class HDB5(object):
         if bool:
             self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + iforce, :] *= coeff
 
-    def Write_hdb5(self, output_file = None):
+    def export_hdb5(self, output_file = None):
         """This function writes the hydrodynamic database into a *.hdb5 file.
 
         Parameter
