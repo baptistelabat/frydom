@@ -83,7 +83,6 @@ namespace frydom {
         /// User can use this to enable/disable all the constraint of the link as desired.
         void SetDisabled(bool disabled) override;
 
-
         /// Tells if the link is currently active, in general,
         /// that is tells if it must be included into the system solver or not.
         /// This method cumulates the effect of various flags (so a link may
@@ -92,38 +91,65 @@ namespace frydom {
 
     protected:
 
+        /// Add the fields to the Hermes message
         void AddFields() override;
-
 
         /// Get the embedded Chrono object
         std::shared_ptr<chrono::ChLink> GetChronoLink() override;
 
+        /// Get the pointer to the chrono constraint
+        /// \return pointer to the chrono constraint
         chrono::ChLink* GetChronoItem_ptr() const override;
 
     };
 
-    class FrConstraintParallel_ : public FrConstraint {
+    //------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * \class FrConstraintParallel
+     * \brief Class implementing a parallel constraint between two axis. Derived from FrConstraint
+     * The constraint is defined based on two FrAxis.
+     */
+    class FrConstraintParallel : public FrConstraint {
 
     private:
 
-        const std::shared_ptr<FrAxis> m_axis1;
-        const std::shared_ptr<FrAxis> m_axis2;
+        const std::shared_ptr<FrAxis> m_axis1;  ///< first axis to be constrained
+        const std::shared_ptr<FrAxis> m_axis2;  ///< second axis to be constrained
 
     public:
 
-        FrConstraintParallel_(const std::shared_ptr<FrAxis>& axis1, const std::shared_ptr<FrAxis>& axis2, FrOffshoreSystem* system);
+        /// Constructor for a parallel constraint between two axis
+        /// \param axis1 first axis to be constrained
+        /// \param axis2 second axis to be constrained
+        /// \param system system to add the constrain
+        FrConstraintParallel(const std::shared_ptr<FrAxis>& axis1, const std::shared_ptr<FrAxis>& axis2, FrOffshoreSystem* system);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "ConstraintParallel"; }
 
+        /// Initialize the constraint
         void Initialize() override;
 
     protected:
 
+        /// Get the pointer to the chrono constraint
+        /// \return pointer to the chrono constraint
         chrono::ChLinkMateParallel* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateParallel*>(m_chronoConstraint.get()); }
 
     };
+
+    /// maker for a parallel constraint
+    /// \param axis1 first axis
+    /// \param axis2 second axis
+    /// \param system system to add the constraint
+    /// \return parallel constraint
+    std::shared_ptr<FrConstraintParallel>
+    make_constraint_parallel(
+            const std::shared_ptr<FrAxis>& axis1,
+            const std::shared_ptr<FrAxis>& axis2,
+            FrOffshoreSystem* system);
 
 
     //------------------------------------------------------------------------------------------------------------------
@@ -164,11 +190,10 @@ namespace frydom {
     };
 
     /// maker for a perpendicular constraint
-    /// \param plane1 first plane
-    /// \param plane2 second plane
+    /// \param axis1 first axis
+    /// \param axis2 second axis
     /// \param system system to add the constraint
-    /// \param flipped if true, the normale of the first plan is flipped
-    /// \return plane on plane constraint
+    /// \return perpendicular constraint
     std::shared_ptr<FrConstraintPerpendicular>
     make_constraint_perpendicular(
             const std::shared_ptr<FrAxis>& axis1,

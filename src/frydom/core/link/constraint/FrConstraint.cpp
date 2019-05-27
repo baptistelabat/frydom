@@ -110,12 +110,12 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintParallel_::FrConstraintParallel_(const std::shared_ptr<FrAxis>& axis1, const std::shared_ptr<FrAxis>& axis2, FrOffshoreSystem* system) :
+    FrConstraintParallel::FrConstraintParallel(const std::shared_ptr<FrAxis>& axis1, const std::shared_ptr<FrAxis>& axis2, FrOffshoreSystem* system) :
             FrConstraint(axis1->GetNode(), axis2->GetNode(), system), m_axis1(axis1), m_axis2( axis2) {
             m_chronoConstraint = std:: make_shared<chrono::ChLinkMateParallel>();
     }
 
-    void FrConstraintParallel_::Initialize() {
+    void FrConstraintParallel::Initialize() {
 
         auto chPos1 = internal::Vector3dToChVector(m_axis1->GetOriginInWorld(NWU));
         auto chPos2 = internal::Vector3dToChVector(m_axis2->GetOriginInWorld(NWU));
@@ -123,6 +123,18 @@ namespace frydom {
         auto chDir2 = internal::Vector3dToChVector(m_axis2->GetDirectionInWorld(NWU));
 
         GetChronoItem_ptr()->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chPos1, chDir2, chDir1);
+
+    }
+    std::shared_ptr<FrConstraintParallel>
+    make_constraint_parallel(
+            const std::shared_ptr<FrAxis>& axis1,
+            const std::shared_ptr<FrAxis>& axis2,
+            FrOffshoreSystem* system) {
+
+        auto constraint = std::make_shared<FrConstraintParallel>(axis1, axis2, system);
+        system->AddLink(constraint);
+
+        return constraint;
 
     }
 

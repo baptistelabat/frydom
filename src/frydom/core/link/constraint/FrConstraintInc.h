@@ -6,6 +6,5 @@
 #define FRYDOM_FRCONSTRAINTINC_H
 
 #include "FrConstraint.h"
-#include "FrConstraintParallel.h"
 
 #endif //FRYDOM_FRCONSTRAINTINC_H
