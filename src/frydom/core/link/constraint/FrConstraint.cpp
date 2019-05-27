@@ -175,10 +175,10 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintPointOnPlane::FrConstraintPointOnPlane(const std::shared_ptr<FrPoint> &point,
-                                                       const std::shared_ptr<FrPlane>& plane,
-                                                           FrOffshoreSystem *system,
-                                                           double distance):
+    FrConstraintPointOnPlane::FrConstraintPointOnPlane(const std::shared_ptr<FrPlane>& plane,
+                                                       const std::shared_ptr<FrPoint> &point,
+                                                       FrOffshoreSystem *system,
+                                                       double distance):
         FrConstraint(plane->GetNode(), point->GetNode(), system), m_plane(plane), m_point(point){
         m_chronoConstraint = std::make_shared<chrono::ChLinkMateXdistance>();
         SetDistance(distance);
@@ -195,6 +195,18 @@ namespace frydom {
 
     void FrConstraintPointOnPlane::SetDistance(double distance) {
         GetChronoItem_ptr()->SetDistance(distance);
+    }
+
+    std::shared_ptr<FrConstraintPointOnPlane>
+    make_constraint_point_on_plane(
+            const std::shared_ptr<FrPlane>& plane,
+            const std::shared_ptr<FrPoint>& point,
+            FrOffshoreSystem* system,
+            double distance) {
+
+        auto constraint = std::make_shared<FrConstraintPointOnPlane>(plane, point, system, distance);
+        system->AddLink(constraint);
+
     }
 
     //------------------------------------------------------------------------------------------------------------------

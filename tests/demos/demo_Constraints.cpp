@@ -24,8 +24,8 @@ int main() {
     movingBody->SetName("Moving");
     movingBody->SetColor(CornflowerBlue);
 
-    enum demo_cases {DistanceBetweenPoints, DistanceToAxis };
-    demo_cases featuredCase = DistanceToAxis;
+    enum demo_cases {DistanceBetweenPoints, DistanceToAxis, PointOnPlane };
+    demo_cases featuredCase = PointOnPlane;
 
     switch (featuredCase) {
         case DistanceBetweenPoints: {
@@ -85,6 +85,36 @@ int main() {
             // Definition of the constraint of a distance of a point to an axis
             double distance = 10.;
             auto constraint = make_constraint_distance_to_axis(fixedAxis, movingPoint, &system, false, distance);
+
+            break;
+        }
+        case PointOnPlane: {
+
+            // Definition the fixed body, node and point
+            makeItBox(fixedBody, 30, 30, 1, 100);
+            fixedBody->AllowCollision(false);
+
+            auto fixedNode = system.GetWorldBody()->NewNode();
+            fixedNode->ShowAsset(true);
+            fixedNode->GetAsset()->SetSize(10);
+
+            auto fixedPlane = std::make_shared<FrPlane>(fixedNode,ZAXIS);
+
+            // Definition of the moving body, node and point
+            makeItBox(movingBody, 10, 5, 1, 100);
+            movingBody->AllowCollision(false);
+//            movingBody->SetPosition(Position(10,0,0), NWU);
+
+            auto movingNode = movingBody->NewNode();
+            movingNode->TranslateInBody(5,2.5,0.5, NWU);
+            movingNode->ShowAsset(true);
+            movingNode->GetAsset()->SetSize(10);
+
+            auto movingPoint = std::make_shared<FrPoint>(movingNode);
+
+            // Definition of the constraint of a distance of a point to an axis
+            double distance = -0.5;
+            auto constraint = make_constraint_point_on_plane(fixedPlane,movingPoint,  &system, distance);
 
             break;
         }

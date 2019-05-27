@@ -177,39 +177,69 @@ namespace frydom {
     };
 
 
+    /**
+     * \class FrConstraintPointOnPlane
+     * \brief Class implementing a point on plane constraint. Derived from FrConstraint
+     * The constraint is defined based on a FrPlane and a FrPoint and a distance in option
+     */
     class FrConstraintPointOnPlane : public FrConstraint {
 
     private:
 
-        const std::shared_ptr<FrPoint> m_point;
-        const std::shared_ptr<FrPlane> m_plane;
+        const std::shared_ptr<FrPoint> m_point; ///< point constrained to stay on the plane
+        const std::shared_ptr<FrPlane> m_plane; ///< plane on which the point is constrained
 
     public:
 
-        FrConstraintPointOnPlane(const std::shared_ptr<FrPoint>& point,
-                const std::shared_ptr<FrPlane>& plane,
-                FrOffshoreSystem* system,
-                double distance = 0.);
+        /// Constructor of the point on plane constraint
+        /// \param plane plane on which the point is constrained
+        /// \param point point constrained to stay on the plane
+        /// \param system system to add the constraint
+        /// \param distance distance to the plane
+        FrConstraintPointOnPlane(const std::shared_ptr<FrPlane>& plane,
+                                 const std::shared_ptr<FrPoint>& point,
+                                 FrOffshoreSystem* system,
+                                 double distance = 0.);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "ConstraintPointOnPlane"; }
 
+        /// Initialize the constraint
         void Initialize() override;
 
+        /// Set the distance between the two points
+        /// \param distance distance between the two points, in m
         void SetDistance(double distance);
 
     protected:
 
+        /// Get the pointer to the chrono constraint
+        /// \return pointer to the chrono contraint
         chrono::ChLinkMateXdistance* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkMateXdistance*>(m_chronoConstraint.get()); }
 
     };
+
+    /// maker for a point on plane constraint
+    /// \param plane plane
+    /// \param point point
+    /// \param system system to add the constraint
+    /// \param distance distance to be imposed between the two points
+    /// \return point on plane constraint
+    std::shared_ptr<FrConstraintPointOnPlane>
+    make_constraint_point_on_plane(
+            const std::shared_ptr<FrPlane>& plane,
+            const std::shared_ptr<FrPoint>& point,
+            FrOffshoreSystem* system,
+            double distance = 0.);
+
+
 
 
     /**
      * \class FrConstraintDistanceToAxis
      * \brief Class implementing a distance constraint between a point to an axis. Derived from FrConstraint
-     * The constraint is defined based on two FrPoint and a distance.
+     * The constraint is defined based on a FrPoint, an FrAxis around which the point will rotate and a distance.
      */
     class FrConstraintDistanceToAxis : public FrConstraint {
 
@@ -252,6 +282,8 @@ namespace frydom {
 
     protected:
 
+        /// Get the pointer to the chrono constraint
+        /// \return pointer to the chrono contraint
         chrono::ChLinkRevoluteSpherical* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkRevoluteSpherical*>(m_chronoConstraint.get()); }
 
     };
@@ -262,7 +294,7 @@ namespace frydom {
     /// \param system system to add the constraint
     /// \param autoDistance if true, the imposed distance is the distance between the two given points
     /// \param distance distance to be imposed between the two points
-    /// \return distance constraint between two points
+    /// \return distance constraint between a point to an axis
     std::shared_ptr<FrConstraintDistanceToAxis>
     make_constraint_distance_to_axis(
             const std::shared_ptr<FrAxis>& axis,
