@@ -206,30 +206,48 @@ namespace frydom {
     };
 
 
+    /**
+     * \class FrConstraintDistanceToAxis
+     * \brief Class implementing a distance constraint between a point to an axis. Derived from FrConstraint
+     * The constraint is defined based on two FrPoint and a distance.
+     */
     class FrConstraintDistanceToAxis : public FrConstraint {
 
     private:
 
-        const std::shared_ptr<FrPoint> m_point;
-        const std::shared_ptr<FrAxis> m_axis;
-
-        double m_distance;
+        const std::shared_ptr<FrPoint> m_point;     ///< point to constraint
+        const std::shared_ptr<FrAxis> m_axis;       ///< axis around which constraining the point
+        bool m_autoDistance;                        ///< if true, the imposed distance is the distance from the point
+                                                    ///< to the axis as given
+        double m_distance;                          ///< distance to constraint the point around the axis
 
     public:
 
-        FrConstraintDistanceToAxis(const std::shared_ptr<FrPoint>& point,
-                                 const std::shared_ptr<FrAxis>& axis,
-                                 FrOffshoreSystem* system,
+        /// Constructor to a distance constraint from a point to an axis.
+        /// \param axis axis around which to constrain the point
+        /// \param point point to be constrained
+        /// \param system system to add the constraint
+        /// \param autoDistance if true, the imposed distance is the distance from the point to the axis, as given
+        /// \param distance distance to constraint the point around the axis
+        FrConstraintDistanceToAxis(const std::shared_ptr<FrAxis>& axis,
+                                   const std::shared_ptr<FrPoint>& point,
+                                   FrOffshoreSystem* system,
+                                 bool autoDistance,
                                  double distance = 0.);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "ConstraintDistanceToAxis"; }
 
+        /// Initialize the constraint
         void Initialize() override;
 
+        /// Set the distance between the two points
+        /// \param distance distance between the two points, in m
         void SetDistance(double distance);
 
+        /// Get the distance between the two points
+        /// \return distance between the two points, in m
         double GetDistance() const;
 
     protected:
@@ -238,42 +256,86 @@ namespace frydom {
 
     };
 
+    /// maker for a distance constraint between a point to an axis
+    /// \param axis axis
+    /// \param point point
+    /// \param system system to add the constraint
+    /// \param autoDistance if true, the imposed distance is the distance between the two given points
+    /// \param distance distance to be imposed between the two points
+    /// \return distance constraint between two points
+    std::shared_ptr<FrConstraintDistanceToAxis>
+    make_constraint_distance_to_axis(
+            const std::shared_ptr<FrAxis>& axis,
+            const std::shared_ptr<FrPoint>& point,
+            FrOffshoreSystem* system,
+            bool autoDistance,
+            double distance = 0.);
 
+
+    /**
+     * \class FrConstraintDistanceBetweenPoints
+     * \brief Class implementing a distance constraint between two points. Derived from FrConstraint
+     * The constraint is defined based on two FrPoint and a distance.
+     */
     class FrConstraintDistanceBetweenPoints : public FrConstraint {
 
     private:
 
-        const std::shared_ptr<FrPoint> m_point1;
-        const std::shared_ptr<FrPoint> m_point2;
-
-        double m_distance;
+        const std::shared_ptr<FrPoint> m_point1;    ///< first point
+        const std::shared_ptr<FrPoint> m_point2;    ///< second point
+        bool m_autoDistance;                        ///< distance between the points is computed automatically
+        double m_distance;                          ///< distance to be constrained between the points
 
     public:
 
+        /// Constructor of the distance contraint between tow points
+        /// \param point1 first point
+        /// \param point2 second point
+        /// \param system system to add the constrain
+        /// \param autoDistance if true, initializes the imposed distance as the distance between the two points
+        /// \param distance distance between the two points
         FrConstraintDistanceBetweenPoints(const std::shared_ptr<FrPoint>& point1,
                                    const std::shared_ptr<FrPoint>& point2,
                                    FrOffshoreSystem* system,
+                                   bool autoDistance = false,
                                    double distance = 0.);
 
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "ConstraintDistanceBetweenPoints"; }
 
+        /// Initialize the constraint
         void Initialize() override;
 
+        /// Set the distance between the two points
+        /// \param distance distance between the two points, in m
         void SetDistance(double distance);
 
+        /// Get the distance between the two points
+        /// \return distance between the two points, in m
         double GetDistance() const;
 
     protected:
 
+        /// Get the pointer to the chrono constraint
+        /// \return pointer to the chrono constraint
         chrono::ChLinkDistance* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkDistance*>(m_chronoConstraint.get()); }
 
     };
 
-    std::shared_ptr<FrConstraintDistanceBetweenPoints>
-            make_constraint_distance_between_points(const std::shared_ptr<FrPoint>& point1,
-                    const std::shared_ptr<FrPoint>& point2, FrOffshoreSystem* system, double distance = 0.);
+    /// maker for a distance constraint between two points
+    /// \param point1 first point
+    /// \param point2 second point
+    /// \param system system to add the constraint
+    /// \param autoDistance if true, the imposed distance is the distance between the two given points
+    /// \param distance distance to be imposed between the two points
+    /// \return distance constraint between two points
+    std::shared_ptr<FrConstraintDistanceBetweenPoints> make_constraint_distance_between_points(
+                    const std::shared_ptr<FrPoint>& point1,
+                    const std::shared_ptr<FrPoint>& point2,
+                    FrOffshoreSystem* system,
+                    bool autoDistance,
+                    double distance = 0.);
 
 
 } // end namespace frydom

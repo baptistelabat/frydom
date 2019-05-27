@@ -66,10 +66,12 @@ int main() {
     auto plane1 = std::make_shared<FrPlane>(node1,YAXIS);
     auto planeWorld = std::make_shared<FrPlane>(nodeWorld,ZAXIS);
 
-    auto test = std::make_shared<FrConstraintDistanceToAxis>(point1, axisWorld, &system, 10.);
-    //test->SetFlipped(true);
-//    test->SetDistance(0.);
-    system.AddLink(test);
+//    auto test = std::make_shared<FrConstraintDistanceToAxis>(point1, axisWorld, &system, 10.);
+//    //test->SetFlipped(true);
+////    test->SetDistance(0.);
+//    system.AddLink(test);
+
+    auto constraint = make_constraint_distance_to_axis(point1, axisWorld, &system, 10.);
 
 //    auto body2 = system.NewBody();
 //    body2->SetName("1");

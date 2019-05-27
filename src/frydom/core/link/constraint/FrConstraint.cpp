@@ -199,21 +199,23 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintDistanceToAxis::FrConstraintDistanceToAxis(const std::shared_ptr<FrPoint> &point,
-                                                           const std::shared_ptr<FrAxis> &axis,
-                                                           FrOffshoreSystem *system, double distance) :
-         FrConstraint(point->GetNode(), axis->GetNode(), system), m_point(point), m_axis(axis){
+    FrConstraintDistanceToAxis::FrConstraintDistanceToAxis(const std::shared_ptr<FrAxis> &axis,
+                                                           const std::shared_ptr<FrPoint> &point,
+                                                           FrOffshoreSystem *system,
+                                                           bool autoDistance,
+                                                           double distance) :
+         FrConstraint(axis->GetNode(), point->GetNode(), system), m_point(point), m_axis(axis), m_autoDistance(autoDistance){
         m_chronoConstraint = std::make_shared<chrono::ChLinkRevoluteSpherical>();
         SetDistance(distance);
     }
 
     void FrConstraintDistanceToAxis::Initialize() {
 
-        auto chPos1 = internal::Vector3dToChVector(m_point->GetPositionInWorld(NWU));
-        auto chPos2 = internal::Vector3dToChVector(m_axis->GetOriginInWorld(NWU));
-        auto chDir2 = internal::Vector3dToChVector(m_axis->GetDirectionInWorld(NWU));
+        auto chPos2 = internal::Vector3dToChVector(m_point->GetPositionInWorld(NWU));
+        auto chPos1 = internal::Vector3dToChVector(m_axis->GetOriginInWorld(NWU));
+        auto chDir1 = internal::Vector3dToChVector(m_axis->GetDirectionInWorld(NWU));
 
-        GetChronoItem_ptr()->Initialize(GetChronoBody2(), GetChronoBody1(), false, chPos2, chDir2, chPos1, false, GetDistance());
+        GetChronoItem_ptr()->Initialize(GetChronoBody1(), GetChronoBody2(), false, chPos1, chDir1, chPos2, m_autoDistance, GetDistance());
 
     }
 
@@ -225,12 +227,29 @@ namespace frydom {
         return m_distance;
     }
 
+    std::shared_ptr<FrConstraintDistanceToAxis>
+    make_constraint_distance_to_axis(
+            const std::shared_ptr<FrAxis>& axis,
+            const std::shared_ptr<FrPoint>& point,
+            FrOffshoreSystem* system,
+            bool autoDistance,
+            double distance) {
+
+        auto constraint = std::make_shared<FrConstraintDistanceToAxis>(axis, point, system, autoDistance, distance);
+        system->AddLink(constraint);
+
+    }
+
     //------------------------------------------------------------------------------------------------------------------
 
-    FrConstraintDistanceBetweenPoints::FrConstraintDistanceBetweenPoints(const std::shared_ptr<FrPoint> &point1,
-                                                                         const std::shared_ptr<FrPoint> &point2,
-                                                           FrOffshoreSystem *system, double distance) :
-            FrConstraint(point1->GetNode(), point2->GetNode(), system), m_point1(point1), m_point2(point2){
+    FrConstraintDistanceBetweenPoints::FrConstraintDistanceBetweenPoints(
+            const std::shared_ptr<FrPoint> &point1,
+            const std::shared_ptr<FrPoint> &point2,
+            FrOffshoreSystem *system,
+            bool autoDistance,
+            double distance) :
+            FrConstraint(point1->GetNode(), point2->GetNode(), system),
+            m_point1(point1), m_point2(point2), m_autoDistance(autoDistance){
         m_chronoConstraint = std::make_shared<chrono::ChLinkDistance>();
         SetDistance(distance);
     }
@@ -249,16 +268,17 @@ namespace frydom {
         auto chPos1 = internal::Vector3dToChVector(m_point1->GetPositionInWorld(NWU));
         auto chPos2 = internal::Vector3dToChVector(m_point2->GetPositionInWorld(NWU));
 
-        GetChronoItem_ptr()->Initialize(GetChronoBody1(), GetChronoBody2(), false, chPos1, chPos2, false, GetDistance());
+        GetChronoItem_ptr()->Initialize(GetChronoBody1(), GetChronoBody2(), false, chPos1, chPos2, m_autoDistance, GetDistance());
     }
 
     std::shared_ptr<FrConstraintDistanceBetweenPoints>
     make_constraint_distance_between_points(const std::shared_ptr<FrPoint>& point1,
                                             const std::shared_ptr<FrPoint>& point2,
                                             FrOffshoreSystem* system,
+                                            bool autoDistance,
                                             double distance) {
 
-        auto constraint = std::make_shared<FrConstraintDistanceBetweenPoints>(point1, point2, system, distance);
+        auto constraint = std::make_shared<FrConstraintDistanceBetweenPoints>(point1, point2, system, autoDistance, distance);
         system->AddLink(constraint);
 
     }
