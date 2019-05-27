@@ -16,6 +16,7 @@
 import numpy as np
 
 from hydrostatic_db_v2 import HydrostaticDB
+from inertia_v2 import Inertia
 
 class BodyDB(object):
 
@@ -89,6 +90,9 @@ class BodyDB(object):
 
         # Hydrostatics.
         self._hydrostatic = None
+
+        # Inertia matrix.
+        self._inertia = None
 
     def _compute_nds(self):
         """Computes the term n dS for each force mode of the body."""
@@ -203,3 +207,22 @@ class BodyDB(object):
         """This function initializes the hydrostatic parameters."""
 
         self._hydrostatic = HydrostaticDB()
+
+    @property
+    def inertia(self):
+
+        """This function gives the inertia data of the body.
+
+        Returns
+        -------
+        Inertia
+            inertia data of the body.
+        """
+
+        return self._inertia
+
+    def activate_inertia(self):
+
+        """This function initializes the inertia matrix."""
+
+        self._inertia = Inertia()

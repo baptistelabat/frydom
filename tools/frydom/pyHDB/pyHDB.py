@@ -929,6 +929,27 @@ class pyHDB():
         dset = dg.create_dataset(hydrostatic_path + "/StiffnessMatrix", data=body.hydrostatic.matrix)
         dset.attrs['Description'] = "Hydrostatic stiffness matrix."
 
+    def write_mass_matrix(self, writer, body, inertia_path="/Inertia"):
+
+        """This function writes the mass matrix matrix into the *.hdb5 file.
+
+        Parameters
+        ----------
+        Writer : string
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        inertia_path : string, optional
+            Path to inertia matrix.
+        """
+
+        dg = writer.create_group(inertia_path)
+
+        dset = dg.create_dataset(inertia_path + "/InertiaMatrix", data=body.inertia.matrix)
+        dset.attrs['Description'] = "Mass matrix."
+
+        return
+
     def write_body(self, writer, body):
         """This function writes the environmental data into the *.hdb5 file.
 
@@ -968,6 +989,10 @@ class pyHDB():
         # Hydrostatics.
         if body._hydrostatic:
             self.write_hydrostatic(writer, body, body_path + "/Hydrostatic")
+
+        # Mass matrix.
+        if body._inertia:
+            self.write_mass_matrix(writer, body, body_path + "/Inertia")
 
     def write_wave_drift(self, writer, wave_drift_path="/WaveDrift"):
 
