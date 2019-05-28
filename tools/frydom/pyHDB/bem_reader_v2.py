@@ -401,7 +401,7 @@ class NemohReader(_BEMReader):
                     direction = map(float, dof[1:4])
                     point = map(float, dof[4:])
 
-                    if motion_type == 1:  # Translation
+                    if motion_type == 1: # Translation.
                         if(direction[0] == 1):
                             body.Motion_mask[0] = 1
                         elif(direction[1] == 1):
@@ -411,7 +411,7 @@ class NemohReader(_BEMReader):
                         else:
                             "The linear motion direction must be a unit vector ex, ey or ez. Generalized modes are not taken into account."
                             exit()
-                    elif motion_type == 2:  # Rotation
+                    elif motion_type == 2: # Rotation.
                         if (direction[0] == 1):
                             body.Motion_mask[3] = 1
                         elif (direction[1] == 1):

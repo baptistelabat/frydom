@@ -291,8 +291,9 @@ class pyHDB():
 
                 # Integration of the pressure of the wetted surface.
                 for i_force in range(0,6):
-                    nds = body.get_nds(i_force) # n*ds.
-                    body.Froude_Krylov[i_force, :, :] = np.einsum('ijk, i -> jk', pressure, -nds) # Il s'agit de la normale entrante.
+                    if(body.Force_mask[i_force]):
+                        nds = body.get_nds(i_force) # n*ds.
+                        body.Froude_Krylov[i_force, :, :] = np.einsum('ijk, i -> jk', pressure, -nds) # Il s'agit de la normale entrante.
 
     def eval_impulse_response_function(self, tf = 30., dt = None, full=True):
         """Computes the impulse response functions.
