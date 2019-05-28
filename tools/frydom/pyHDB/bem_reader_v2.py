@@ -14,6 +14,8 @@
 from math import pi,sqrt
 import numpy as np
 import os
+from warnings import warn
+
 from meshmagick.mmio import load_MAR
 from meshmagick.mesh import Mesh, Plane
 

@@ -26,6 +26,10 @@ class Inertia(object):
         Constructor of the class Inertia.
         """
 
+        # Mass.
+        self._mass = 0.
+
+        # Inertia matrix.
         self._matrix = np.zeros((3, 3))
 
     @property
