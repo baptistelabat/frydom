@@ -14,8 +14,6 @@
 #define FRYDOM_FRLINKINC_H
 
 #include "constraint/FrConstraintInc.h"
-
-#include "constraints/FrConstraintsInc.h"
 #include "links_lib/FrLinksLibInc.h"
 
 #endif //FRYDOM_FRLINKINC_H
