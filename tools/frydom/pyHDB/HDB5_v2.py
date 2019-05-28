@@ -145,11 +145,45 @@ class HDB5(object):
 
         return self._pyHDB._wave_drift
 
+    @property
+    def wave_drift_force(self):
+
+        """This function gives the wave drift data of the body.
+
+        Returns
+        -------
+        WaveDriftDB
+            Wave drift data of the body.
+        """
+
+        return self._pyHDB.Wave_drift_force
+
     def activate_wave_drift(self):
 
         """This function initializes the wave drift force parameters."""
 
         self._pyHDB._wave_drift = WaveDriftDB()
+
+    @property
+    def omega(self):
+        """Frequency array of BEM computations in rad/s
+
+        Returns
+        -------
+        np.ndarray
+        """
+        return self._pyHDB.omega
+
+    @property
+    def wave_dir(self):
+        """Wave direction angles array of BEM computations in radians
+
+        Returns
+        -------
+        np.ndarray
+            angles array in radians.
+        """
+        return self._pyHDB.wave_dir
 
     def symmetry_HDB(self):
 
