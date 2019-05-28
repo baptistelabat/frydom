@@ -84,7 +84,6 @@ class pyHDB():
 
         # RAO.
         self.has_RAO = False
-        self.RAO = None
 
         # Drift loads from Kochin functions.
         self.has_Drift_Kochin = False
@@ -529,22 +528,24 @@ class pyHDB():
                 # Add corresponding data.
                 self.wave_dir = np.append(self.wave_dir, np.radians(new_dir))
 
-                # Froude-Krylov and diffraction loads
+                # Loop over the bodies.
                 for body in self.bodies:
 
+                    # Froude-Krylov loads.
                     fk_db_temp = np.copy(body.Froude_Krylov[:, :, i])
                     fk_db_temp[(1, 3, 5), :] = -fk_db_temp[(1, 3, 5), :] # 1 = sway, 3 = roll and 5 = yaw.
                     body.Froude_Krylov = np.concatenate((body.Froude_Krylov, fk_db_temp.reshape(6, nw, 1)), axis=2) # Axis of the wave directions.
 
+                    # Diffraction loads.
                     diff_db_temp = np.copy(body.Diffraction[:, :, i])
                     diff_db_temp[(1, 3, 5), :] = -diff_db_temp[(1, 3, 5), :] # 1 = sway, 3 = roll and 5 = yaw.
                     body.Diffraction = np.concatenate((body.Diffraction, diff_db_temp.reshape(6, nw, 1)), axis=2) # Axis of the wave directions.
 
-                # RAO.
-                if(self.has_RAO):
-                    RAO_db_temp = np.copy(self.RAO[:, :, i, :])
-                    RAO_db_temp[(1, 3, 5), :] = -RAO_db_temp[(1, 3, 5), :]  # 1 = sway, 3 = roll and 5 = yaw.
-                    self.RAO = np.concatenate((self.RAO, RAO_db_temp.reshape(6, nw, 1, self.nb_bodies)), axis=2)  # Axis of the wave directions.
+                    # RAO.
+                    if(self.has_RAO):
+                        RAO_db_temp = np.copy(body.RAO[:, :, i])
+                        RAO_db_temp[(1, 3, 5), :] = -RAO_db_temp[(1, 3, 5), :]  # 1 = sway, 3 = roll and 5 = yaw.
+                        body.RAO = np.concatenate((body.RAO, RAO_db_temp.reshape(6, nw, 1)), axis=2)  # Axis of the wave directions.
 
                 # Wave drift loads.
                 if(self.has_Drift_Kochin):
@@ -556,7 +557,7 @@ class pyHDB():
 
         """This function updates the wave directions by adjusting the convention with the one used in FRyDoM, the FK and diffraction loads are updated accordingly."""
 
-        # Symmetrize
+        # Symmetrization.
         if self.min_wave_dir >= -np.float32() and self.max_wave_dir <= 180. + np.float32():
             self.symetrize()
 
@@ -573,14 +574,18 @@ class pyHDB():
                 if n180 == 2:
                     self.wave_dir[idir] = np.radians(360.)
 
-                    # Froude-Krylov and diffraction loads.
+                    # Loop over the bodies.
                     for body in self.bodies:
+
+                        # Froude-Krylov loads.
                         body.Froude_Krylov[:, :, idir] = body.Froude_Krylov[:, :, i360]
+
+                        # Diffraction loads.
                         body.Diffraction[:, :, idir] = body.Diffraction[:, :, i360]
 
-                    # RAO.
-                    if (self.has_RAO):
-                        self.RAO[:, :, idir, :] = self.RAO[:, :, i360, :]
+                        # RAO.
+                        if (self.has_RAO):
+                            body.RAO[:, :, idir] = body.RAO[:, :, i360]
 
                     # Wave drift loads.
                     if (self.has_Drift_Kochin):
@@ -590,14 +595,18 @@ class pyHDB():
         sort_dirs = np.argsort(self.wave_dir)
         self.wave_dir = self.wave_dir[sort_dirs]
 
-        # Froude-Krylov and diffraction loads.
+        # Loop over the bodies.
         for body in self.bodies:
+
+            # Froude-Krylov loads.
             body.Froude_Krylov = body.Froude_Krylov[:, :, sort_dirs]
+
+            # Diffraction loads.
             body.Diffraction = body.Diffraction[:, :, sort_dirs]
 
-        # RAO.
-        if (self.has_RAO):
-            self.RAO = self.RAO[:, :, sort_dirs, :]
+            # RAO.
+            if (self.has_RAO):
+                body.RAO = body.RAO[:, :, sort_dirs]
 
         # Wave drift loads.
         if (self.has_Drift_Kochin):
@@ -1019,14 +1028,14 @@ class pyHDB():
             dset.attrs['Description'] = "Wave direction."
 
             # Amplitude.
-            dset = writer.create_dataset(wave_dir_path + "/Amplitude", data=np.absolute(self.RAO[:, :, idir, body.i_body]))
+            dset = writer.create_dataset(wave_dir_path + "/Amplitude", data=np.absolute(body.RAO[:, :, idir]))
             dset.attrs['Unit'] = ''
             dset.attrs['Description'] = "Amplitude of the RAO of" \
                                         " body %u for a wave direction of %.1f deg." % \
                                         (body.i_body, np.degrees(self.wave_dir[idir]))
 
             # Phase.
-            dset = writer.create_dataset(wave_dir_path + "/Phase", data=np.angle(self.RAO[:, :, idir, body.i_body], deg=True))
+            dset = writer.create_dataset(wave_dir_path + "/Phase", data=np.angle(body.RAO[:, :, idir], deg=True))
             dset.attrs['Unit'] = ''
             dset.attrs['Description'] = "Phase of the RAO of" \
                                         " body %u for a wave direction of %.1f deg." % \

@@ -94,6 +94,9 @@ class BodyDB(object):
         # Inertia matrix.
         self._inertia = None
 
+        # RAO.
+        self.RAO = None
+
     def _compute_nds(self):
         """Computes the term n dS for each force mode of the body."""
 
