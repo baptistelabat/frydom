@@ -53,6 +53,10 @@ namespace frydom {
 
     }
 
+    AXISLABEL FrAxis::GetLabel() const {
+        return m_axis;
+    }
+
 //----------------------------------------------------------------------------------------------------------------------
 
     FrPlane::FrPlane(const std::shared_ptr<FrNode> &node) : FrGeometrical(node) {

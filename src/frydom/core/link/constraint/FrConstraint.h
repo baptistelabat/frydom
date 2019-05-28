@@ -318,7 +318,7 @@ namespace frydom {
     /// \param plane plane
     /// \param point point
     /// \param system system to add the constraint
-    /// \param distance distance to be imposed between the two points
+    /// \param distance distance to the plane
     /// \return point on plane constraint
     std::shared_ptr<FrConstraintPointOnPlane>
     make_constraint_point_on_plane(
@@ -327,6 +327,63 @@ namespace frydom {
             FrOffshoreSystem* system,
             double distance = 0.);
 
+    //------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * \class FrConstraintPointOnLine
+     * \brief Class implementing a point on line constraint. Derived from FrConstraint
+     * The constraint is defined based on a FrAxis and a FrPoint and a distance in option
+     */
+    class FrConstraintPointOnLine : public FrConstraint {
+
+    private:
+
+        const std::shared_ptr<FrPoint> m_point; ///< point constrained to stay on the plane
+        const std::shared_ptr<FrAxis> m_axis; ///< axis on which the point is constrained
+
+    public:
+
+        /// Constructor of the point on plane constraint
+        /// \param line line on which the point is constrained
+        /// \param point point constrained to stay on the line
+        /// \param system system to add the constraint
+        /// \param distance distance to the line
+        FrConstraintPointOnLine(const std::shared_ptr<FrAxis>& line,
+                                 const std::shared_ptr<FrPoint>& point,
+                                 FrOffshoreSystem* system,
+                                 double distance = 0.);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "ConstraintPointOnLine"; }
+
+        /// Initialize the constraint
+        void Initialize() override;
+
+        /// Set the distance between the point and the plane
+        /// \param distance distance between the point and the plane, in m
+        void SetDistance(double distance);
+
+    protected:
+        friend class FrNode; // To make possible to declare SetMarkers friend in FrNode
+
+        /// Get the pointer to the chrono constraint
+        /// \return pointer to the chrono constraint
+        chrono::ChLinkLockPointLine* GetChronoItem_ptr() const override { return dynamic_cast<chrono::ChLinkLockPointLine*>(m_chronoConstraint.get()); }
+
+    };
+
+    /// maker for a point on plane constraint
+    /// \param line line on which the point is constrained
+    /// \param point point constrained to stay on the line
+    /// \param system system to add the constraint
+    /// \param distance distance to the line
+    /// \return point on plane constraint
+    std::shared_ptr<FrConstraintPointOnLine>
+    make_constraint_point_on_line(
+            const std::shared_ptr<FrAxis>& line,
+            const std::shared_ptr<FrPoint>& point,
+            FrOffshoreSystem* system);
 
     //------------------------------------------------------------------------------------------------------------------
 

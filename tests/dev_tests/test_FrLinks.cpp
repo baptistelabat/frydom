@@ -71,7 +71,7 @@ int main() {
 ////    test->SetDistance(0.);
 //    system.AddLink(test);
 
-    auto constraint = make_constraint_distance_to_axis(axisWorld, point1, &system, false, 10.);
+//    auto constraint = make_constraint_distance_to_axis(axisWorld, point1, &system, false, 10.);
 
 //    auto body2 = system.NewBody();
 //    body2->SetName("1");
@@ -105,10 +105,10 @@ int main() {
 
 
     // Body 2 definition (linked body)
-//    auto body2 = system.NewBody();
-//    body2->SetName("2");
-//    makeItBox(body2, 2, 2, 40, 2000);
-//    body2->SetColor(Black);
+    auto body2 = system.NewBody();
+    body2->SetName("2");
+    makeItBox(body2, 2, 2, 40, 2000);
+    body2->SetColor(Black);
 ////    body2->TranslateInWorld(10, 5, 0, NWU);
 //
 ////    // Apply a random translation and rotation to the body to check if the assembly is done correctly
@@ -121,7 +121,7 @@ int main() {
 //    auto m1 = body1->NewNode();
 //    m1->TranslateInBody(10, 5, -1, NWU);
 //
-//    auto m2 = body2->NewNode();
+    auto m2 = body2->NewNode();
 //    m2->TranslateInBody(0, 0, 0, NWU);
 //
 //    auto prismaticLink = make_prismatic_link(m1, m2, &system);
@@ -140,14 +140,14 @@ int main() {
 
 //    system.RemoveLink(prismaticLink);
 
-//    auto test = system.GetWorldBody()->NewNode();
-//    test->RotateAroundYInBody(45*DEG2RAD, NWU);
+    auto test = system.GetWorldBody()->NewNode();
+    test->RotateAroundYInBody(45*DEG2RAD, NWU);
 
 //    auto perpendicularConstraint = make_perpendicular_constraint(test, m2, &system);
 //    auto parallelConstraint = make_parallel_constraint(test, m2, &system);
 //    auto planeOnPlaneConstraint = make_planeOnPlane_constraint(test,m2,&system);
 //    auto pointOnPlaneConstraint = make_pointOnPlane_constraint(m2,test,&system);
-//    auto pointOnLineConstraint = make_pointOnLine_constraint(m2, test, &system);
+    auto pointOnLineConstraint = make_pointOnLine_constraint(test, m2, &system);
 
 //    // Body 3 definition
 //    auto body3 = system.NewBody();

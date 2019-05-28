@@ -11,13 +11,13 @@ int main() {
 
     /** This demo features constraints between bodies, nodes, points, axis and planes. While kinematic links are used to
      * model realistic links between bodies, constraints are more abstract and can be used at a conceptual level.
-     * Six different constraints are defined : DistanceBetweenPoints, DistanceToAxis, PointOnPlane, PlaneOnPlane,
-     * Perpendicular and Parallel. They are based either on points, axis and planes, and can be defined within FRyDoM
-     * using respectively the FrPoint, FrAxis, and FrPlane classes. Those are just plain abstractions of their geometric
-     * counterparts, based on FrNode. Since FrNodes belong to bodies, the constraints are applied in fine on the bodies.
-     * It is however easier to define these constraints using the aforementioned classes rather than the FrBody and
-     * FrNode directly.
-     * The six constraints are illustrated below; for convenience, one of the two body is set fixed in the world
+     * Seven different constraints are defined : DistanceBetweenPoints, DistanceToAxis, PointOnPlane, PointOnline,
+     * PlaneOnPlane, Perpendicular and Parallel. They are based either on points, axis and planes, and can be defined
+     * within FRyDoM using respectively the FrPoint, FrAxis, and FrPlane classes. Those are just plain abstractions of
+     * their geometric counterparts, based on FrNode. Since FrNodes belong to bodies, the constraints are applied in fine
+     * on the bodies. It is however easier to define these constraints using the aforementioned classes rather than the
+     * FrBody and FrNode directly.
+     * The seven constraints are illustrated below; for convenience, one of the two body is set fixed in the world
      * reference frame and the other set free.
     */
 
@@ -36,8 +36,8 @@ int main() {
     movingBody->SetName("Moving");
     movingBody->SetColor(CornflowerBlue);
 
-    enum demo_cases {DistanceBetweenPoints, DistanceToAxis, PointOnPlane, PlaneOnPlane, Perpendicular, Parallel };
-    demo_cases featuredCase = PointOnPlane;
+    enum demo_cases {DistanceBetweenPoints, DistanceToAxis, PointOnPlane, PointOnLine, PlaneOnPlane, Perpendicular, Parallel };
+    demo_cases featuredCase = PointOnLine;
 
     switch (featuredCase) {
         case DistanceBetweenPoints: {
@@ -162,6 +162,40 @@ int main() {
 
             break;
         }
+        case PointOnLine: {
+
+            /**
+             * The PointOnLine constraint illustrated here features a point located at the center of a sphere moving on a
+             * the axis on a fixed cylinder.
+             */
+
+            // Definition the fixed body, node and point
+            makeItCylinder(fixedBody, 1, 80, 100);
+            fixedBody->AllowCollision(false);
+            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(45,NWU);
+            fixedBody->RotateAroundCOG(fixedRotation, NWU);
+
+            auto fixedNode = fixedBody->NewNode();
+            fixedNode->ShowAsset(true);
+            fixedNode->GetAsset()->SetSize(10);
+
+            auto fixedLine = std::make_shared<FrAxis>(fixedNode,YAXIS);
+
+            // Definition of the moving body, node and point
+            makeItSphere(movingBody, 1.5, 100);
+            movingBody->AllowCollision(false);
+
+            auto movingNode = movingBody->NewNode();
+            movingNode->ShowAsset(true);
+            movingNode->GetAsset()->SetSize(10);
+
+            auto movingPoint = std::make_shared<FrPoint>(movingNode);
+
+            // Definition of the point on plane constraint
+            auto constraint = make_constraint_point_on_line(fixedLine, movingPoint, &system);
+
+            break;
+        }
         case PlaneOnPlane: {
 
             /**
@@ -273,12 +307,12 @@ int main() {
 
     // DoFullAssembly helps the bodies to adjust their position according to the constraints applied on them. It requires
     // constraints to be initialized and may not work with external forces, cables, etc. applied on bodies.
-    system.Initialize();
-    system.GetChronoSystem()->DoFullAssembly();
+//    system.Initialize();
+//    system.GetChronoSystem()->DoFullAssembly();
 
     // Run the simulation (or visualize the assembly)
     system.SetTimeStep(0.005);
-    system.RunInViewer(0, 20, true);
+    system.RunInViewer(0, 20, false);
 //    system.Visualize(50, false);
 
     return 0;

@@ -254,6 +254,47 @@ namespace frydom {
 
     //------------------------------------------------------------------------------------------------------------------
 
+    FrConstraintPointOnLine::FrConstraintPointOnLine(const std::shared_ptr<FrAxis>& line,
+                            const std::shared_ptr<FrPoint>& point,
+                            FrOffshoreSystem* system,
+                            double distance):
+        FrConstraint(line->GetNode(), point->GetNode(), system), m_point(point), m_axis(line){
+        m_chronoConstraint = std::make_shared<chrono::ChLinkLockPointLine>();
+    }
+
+    void FrConstraintPointOnLine::Initialize() {
+
+//        auto chPos2 = internal::Vector3dToChVector(m_point->GetPositionInWorld(NWU));
+//        auto chPos1 = internal::Vector3dToChVector(m_axis->GetOriginInWorld(NWU));
+//        auto chDir1 = internal::Vector3dToChVector(m_axis->GetDirectionInWorld(NWU));
+
+        auto axisFrame = m_axis->GetNode()->GetFrameInWorld();
+        if (m_axis->GetLabel() == YAXIS) axisFrame.RotZ_DEGREES(90,NWU,true);
+        if (m_axis->GetLabel() == ZAXIS) axisFrame.RotY_DEGREES(90,NWU,true);
+
+
+        auto chCoordSys1 = internal::FrFrame2ChCoordsys(axisFrame);
+        auto chCoordSys2 = internal::FrFrame2ChCoordsys(m_point->GetNode()->GetFrameInWorld());
+
+        GetChronoItem_ptr()->Initialize(GetChronoBody2(), GetChronoBody1(), false, chCoordSys2, chCoordSys1);
+
+    }
+    std::shared_ptr<FrConstraintPointOnLine>
+    make_constraint_point_on_line(
+            const std::shared_ptr<FrAxis>& line,
+            const std::shared_ptr<FrPoint>& point,
+            FrOffshoreSystem* system) {
+
+        auto constraint = std::make_shared<FrConstraintPointOnLine>(line, point, system);
+        system->AddLink(constraint);
+
+        return constraint;
+
+    }
+
+
+    //------------------------------------------------------------------------------------------------------------------
+
     FrConstraintDistanceToAxis::FrConstraintDistanceToAxis(const std::shared_ptr<FrAxis> &axis,
                                                            const std::shared_ptr<FrPoint> &point,
                                                            FrOffshoreSystem *system,

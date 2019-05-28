@@ -58,6 +58,8 @@ namespace frydom {
 
         Direction GetDirectionInWorld(FRAME_CONVENTION fc) const;
 
+        AXISLABEL GetLabel() const;;
+
     };
 
     class FrPlane : public FrGeometrical {
