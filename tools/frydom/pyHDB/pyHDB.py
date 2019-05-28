@@ -54,6 +54,8 @@ class pyHDB():
         self.min_angle_kochin = 0.
         self.max_angle_kochin = 0.
         self.angle_kochin = np.array([])
+        self.kochin_diffraction = None # Diffraction Kochin functions.
+        self.kochin_radiation = None # Radiation Kochin functions.
         self.nb_dir_kochin = 0 # Different from self.nb_wave_dir if the symmetry was used.
         self.min_dir_kochin = 0. # Different from self.min_wave_dir if the symmetry was used.
         self.max_dir_kochin = 0. # Different from self.max_wave_dir if the symmetry was used.
@@ -69,7 +71,7 @@ class pyHDB():
         # Froude-Krylov loads.
         self._has_froude_krylov = False
 
-        # Wave drift.
+        # Wave drift coeffcients (given in input of Nemoh2HDB).
         self._wave_drift = None
 
         # IRF.
@@ -79,6 +81,14 @@ class pyHDB():
 
         # Normalization length.
         self.normalization_length = 1.
+
+        # RAO.
+        self.has_RAO = False
+        self.RAO = None
+
+        # Drift loads from Kochin functions.
+        self.has_Drift_Kochin = False
+        self.Wave_drift_force = None
 
     def set_wave_frequencies(self):
         """Frequency array of BEM computations in rad/s.
@@ -284,43 +294,6 @@ class pyHDB():
                 for i_force in range(0,6):
                     nds = body.get_nds(i_force) # n*ds.
                     body.Froude_Krylov[i_force, :, :] = np.einsum('ijk, i -> jk', pressure, -nds) # Il s'agit de la normale entrante.
-
-    def _initialize_wave_dir(self):
-
-        """This function updates the wave directions by adjusting the convention with the one used in FRyDoM, the FK and diffraction loads are updated accordingly."""
-
-        # Symmetrize
-        if self.min_wave_dir >= -np.float32() and self.max_wave_dir <= 180. + np.float32():
-            self.symetrize()
-
-        # Updating the FK and diffraction loads accordingly.
-        n180 = 0
-        i360 = -9
-        for idir in range(self.wave_dir.size):
-            wave_dir = self.wave_dir[idir]
-
-            if abs(np.degrees(wave_dir)) < 0.01:
-                i360 = idir
-            elif abs(np.degrees(wave_dir) - 180) < 0.01:
-                n180 += 1
-                if n180 == 2:
-                    self.wave_dir[idir] = np.radians(360.)
-                    for body in self.bodies:
-                        body.Froude_Krylov[:, :, idir] = body.Froude_Krylov[:, :, i360]
-                        body.Diffraction[:, :, idir] = body.Diffraction[:, :, i360]
-
-        # Sorting wave directions and creates the final FK and diffraction loads data.
-        sort_dirs = np.argsort(self.wave_dir)
-        self.wave_dir = self.wave_dir[sort_dirs]
-        for body in self.bodies:
-            body.Froude_Krylov = body.Froude_Krylov[:, :, sort_dirs]
-            body.Diffraction = body.Diffraction[:, :, sort_dirs]
-
-        self.min_wave_dir = np.min(self.wave_dir)
-        self.max_wave_dir = np.max(self.wave_dir)
-        self.nb_wave_dir = self.wave_dir.shape[0]
-
-        return
 
     def eval_impulse_response_function(self, tf = 30., dt = None, full=True):
         """Computes the impulse response functions.
@@ -556,16 +529,69 @@ class pyHDB():
                 # Add corresponding data.
                 self.wave_dir = np.append(self.wave_dir, np.radians(new_dir))
 
+                # Froude-Krylov and diffraction loads
                 for body in self.bodies:
+
                     fk_db_temp = np.copy(body.Froude_Krylov[:, :, i])
-                    fk_db_temp[(1, 3, 5), :] = -fk_db_temp[(1, 3, 5), :]
+                    fk_db_temp[(1, 3, 5), :] = -fk_db_temp[(1, 3, 5), :] # 1 = sway, 3 = roll and 5 = yaw.
                     body.Froude_Krylov = np.concatenate((body.Froude_Krylov, fk_db_temp.reshape(6, nw, 1)), axis=2) # Axis of the wave directions.
 
                     diff_db_temp = np.copy(body.Diffraction[:, :, i])
-                    diff_db_temp[(1, 3, 5), :] = -diff_db_temp[(1, 3, 5), :]
+                    diff_db_temp[(1, 3, 5), :] = -diff_db_temp[(1, 3, 5), :] # 1 = sway, 3 = roll and 5 = yaw.
                     body.Diffraction = np.concatenate((body.Diffraction, diff_db_temp.reshape(6, nw, 1)), axis=2) # Axis of the wave directions.
 
-        return
+                # Wave drift loads.
+                if(self.has_Drift_Kochin):
+                    Drift_db_temp = np.copy(self.Wave_drift_force[:, :, i])
+                    Drift_db_temp[(1, 2), :] = -Drift_db_temp[(1, 2), :] # 1 = sway and 2 = yaw.
+                    self.Wave_drift_force = np.concatenate((self.Wave_drift_force, Drift_db_temp.reshape(3, nw, 1)), axis=2)  # Axis of the wave directions.
+
+    def _initialize_wave_dir(self):
+
+        """This function updates the wave directions by adjusting the convention with the one used in FRyDoM, the FK and diffraction loads are updated accordingly."""
+
+        # Symmetrize
+        if self.min_wave_dir >= -np.float32() and self.max_wave_dir <= 180. + np.float32():
+            self.symetrize()
+
+        # Updating the loads accordingly.
+        n180 = 0
+        i360 = -9
+        for idir in range(self.wave_dir.size):
+            wave_dir = self.wave_dir[idir]
+
+            if abs(np.degrees(wave_dir)) < 0.01:
+                i360 = idir
+            elif abs(np.degrees(wave_dir) - 180) < 0.01:
+                n180 += 1
+                if n180 == 2:
+                    self.wave_dir[idir] = np.radians(360.)
+
+                    # Froude-Krylov and diffraction loads.
+                    for body in self.bodies:
+                        body.Froude_Krylov[:, :, idir] = body.Froude_Krylov[:, :, i360]
+                        body.Diffraction[:, :, idir] = body.Diffraction[:, :, i360]
+
+                    # Wave drift loads.
+                    if (self.has_Drift_Kochin):
+                        self.Wave_drift_force[:, :, idir] = self.Wave_drift_force[:, :, i360]
+
+        # Sorting wave directions and creates the final FK and diffraction loads data.
+        sort_dirs = np.argsort(self.wave_dir)
+        self.wave_dir = self.wave_dir[sort_dirs]
+
+        # Froude-Krylov and diffraction loads.
+        for body in self.bodies:
+            body.Froude_Krylov = body.Froude_Krylov[:, :, sort_dirs]
+            body.Diffraction = body.Diffraction[:, :, sort_dirs]
+
+        # Wave drift loads.
+        if (self.has_Drift_Kochin):
+            self.Wave_drift_force = self.Wave_drift_force[:, :, sort_dirs]
+
+        self.min_wave_dir = np.min(self.wave_dir)
+        self.max_wave_dir = np.max(self.wave_dir)
+        self.nb_wave_dir = self.wave_dir.shape[0]
 
     def write_hdb5(self, hdb5_file):
         """This function writes the hydrodynamic database into a *.hdb5 file.

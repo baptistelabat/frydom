@@ -17,7 +17,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def plot_loads(data, w, DiffOrFK, ibody, iforce, beta, **kwargs):
-    """Plots the diffraction response function of a given modes set
+    """Plots the diffraction or Froude-Krylov response function of a given modes set
 
     Parameters
     ----------

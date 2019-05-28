@@ -129,6 +129,7 @@ class HDB5(object):
         # Interpolations with respect to the wave directions and the wave frequencies.
         self._pyHDB.interpolation(self.discretization)
 
+        # Initialization done.
         self._is_initialized = True
 
     @property
@@ -161,7 +162,7 @@ class HDB5(object):
         """This functions plots the diffraction loads."""
 
         # Data.
-        data = self._pyHDB.bodies[ibody].Diffraction[iforce,:,iwave]
+        data = self._pyHDB.bodies[ibody].Diffraction[iforce, :, iwave]
 
         # Wave direction.
         beta = np.degrees(self._pyHDB.wave_dir[iwave])
@@ -364,6 +365,8 @@ class HDB5(object):
             raise IOError('Problem in writing HDB5 file at location %s' % hdb5_file)
 
         print('-------> "%s" has been written.' % hdb5_file)
+
+
 
 
 
