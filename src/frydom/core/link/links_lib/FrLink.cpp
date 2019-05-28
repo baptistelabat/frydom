@@ -224,14 +224,6 @@ namespace frydom {
         }
     }
 
-    void FrLink::SetLocked(bool locked) {
-        if (locked) {
-            m_chronoLink->SetLinkType(FIXED_LINK);
-        } else {
-            m_chronoLink->SetMask(&m_dofMask);
-        }
-    }
-
     bool FrLink::IsActive() const {
         return m_chronoLink->IsActive();
     }

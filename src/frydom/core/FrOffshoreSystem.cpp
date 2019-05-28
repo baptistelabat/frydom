@@ -938,6 +938,7 @@ namespace frydom {
 
         app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
+        app.SetVideoframeSaveInterval(5);
         app.Run(endTime); // The temporal loop is here.
 
     }

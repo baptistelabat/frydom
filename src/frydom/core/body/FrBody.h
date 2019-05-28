@@ -957,9 +957,12 @@ namespace frydom {
         /// \return cartPos cartesian position
         Position GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc);
 
+    public:
         /// Get the shared pointer to the chronoBody attribute
         /// \return shared pointer to the chronoBody attribute
         std::shared_ptr<internal::FrBodyBase> GetChronoBody();
+
+    protected:
 
         /// Get the chronoBody attribute pointer
         /// \return Pointer to the chronoBody attribute
