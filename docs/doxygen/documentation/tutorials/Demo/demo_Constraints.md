@@ -8,7 +8,7 @@ Six different constraints are defined :
 - DistanceBetweenPoints, 
 - DistanceToAxis, 
 - PointOnPlane, 
-- PlaneOnePlane,
+- PlaneOnPlane,
 - Perpendicular 
 - Parallel. 
 

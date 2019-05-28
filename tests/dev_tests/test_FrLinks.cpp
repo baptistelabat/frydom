@@ -71,7 +71,7 @@ int main() {
 ////    test->SetDistance(0.);
 //    system.AddLink(test);
 
-    auto constraint = make_constraint_distance_to_axis(point1, axisWorld, &system, 10.);
+    auto constraint = make_constraint_distance_to_axis(axisWorld, point1, &system, false, 10.);
 
 //    auto body2 = system.NewBody();
 //    body2->SetName("1");

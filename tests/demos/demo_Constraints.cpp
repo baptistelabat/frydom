@@ -11,7 +11,7 @@ int main() {
 
     /** This demo features constraints between bodies, nodes, points, axis and planes. While kinematic links are used to
      * model realistic links between bodies, constraints are more abstract and can be used at a conceptual level.
-     * Six different constraints are defined : DistanceBetweenPoints, DistanceToAxis, PointOnPlane, PlaneOnePlane,
+     * Six different constraints are defined : DistanceBetweenPoints, DistanceToAxis, PointOnPlane, PlaneOnPlane,
      * Perpendicular and Parallel. They are based either on points, axis and planes, and can be defined within FRyDoM
      * using respectively the FrPoint, FrAxis, and FrPlane classes. Those are just plain abstractions of their geometric
      * counterparts, based on FrNode. Since FrNodes belong to bodies, the constraints are applied in fine on the bodies.
@@ -37,7 +37,7 @@ int main() {
     movingBody->SetColor(CornflowerBlue);
 
     enum demo_cases {DistanceBetweenPoints, DistanceToAxis, PointOnPlane, PlaneOnPlane, Perpendicular, Parallel };
-    demo_cases featuredCase = Parallel;
+    demo_cases featuredCase = PointOnPlane;
 
     switch (featuredCase) {
         case DistanceBetweenPoints: {
@@ -119,17 +119,19 @@ int main() {
         case PointOnPlane: {
 
             /**
-             * The PointOnPlane constraint illustrated here features a point located a the corner of a box moving on a
+             * The PointOnPlane constraint illustrated here features a point located at the bottom of a sphere moving on a
              * fixed plane. Since the plane is defined at the center of the fixed box, a distance corresponding to half
              * the thickness of the fixed box is imposed. It is only for illustration purpose, since it would have been
              * easier to locate the origin of the fixed plane, on the fixed box surface and rather than its center.
-             * The strange behavior of the moving box is due to the contact between the boxes, and can be suppressed by
-             * uncommenting the AllowCollision(false).
+             * The contact on the sphere prevents it to slide on the plane, while the constraint prevents it to roll.
+             * A second sphere without constraint, only contact, is added for comparison.
              */
 
             // Definition the fixed body, node and point
-            makeItBox(fixedBody, 30, 30, 1, 100);
+            makeItBox(fixedBody, 50, 50, 1, 100);
 //            fixedBody->AllowCollision(false);
+            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(45,NWU);
+            fixedBody->RotateAroundCOG(fixedRotation, NWU);
 
             auto fixedNode = fixedBody->NewNode();
             fixedNode->ShowAsset(true);
@@ -138,20 +140,25 @@ int main() {
             auto fixedPlane = std::make_shared<FrPlane>(fixedNode,ZAXIS);
 
             // Definition of the moving body, node and point
-            makeItBox(movingBody, 10, 5, 1, 100);
+            makeItSphere(movingBody, 5, 100);
 //            movingBody->AllowCollision(false);
-//            movingBody->SetPosition(Position(10,0,0), NWU);
+            movingBody->SetPosition(Position(-10,0,10), NWU);
 
             auto movingNode = movingBody->NewNode();
-            movingNode->TranslateInBody(5,2.5,0.5, NWU);
+            movingNode->TranslateInBody(0,0,-5, NWU);
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
             auto movingPoint = std::make_shared<FrPoint>(movingNode);
 
             // Definition of the point on plane constraint
-            double distance = -0.5;
+            double distance = 0.5;
             auto constraint = make_constraint_point_on_plane(fixedPlane, movingPoint, &system, distance);
+
+            auto freeBody = system.NewBody();
+            makeItSphere(freeBody, 5, 100);
+            freeBody->SetPosition(Position(10,0,7.5), NWU);
+            freeBody->SetColor(DarkSeaGreen);
 
             break;
         }
@@ -188,8 +195,8 @@ int main() {
             auto movingPlane = std::make_shared<FrPlane>(movingNode,ZAXIS);
 
             // Definition of the plane on plane constraint
-            bool flipped = true;
-            double distance = -1;
+            bool flipped = false;
+            double distance = 1;
             auto constraint = make_constraint_plane_on_plane(fixedPlane, movingPlane, &system, flipped, distance);
 
             break;
@@ -271,7 +278,7 @@ int main() {
 
     // Run the simulation (or visualize the assembly)
     system.SetTimeStep(0.005);
-    system.RunInViewer(0, 50, true);
+    system.RunInViewer(0, 20, true);
 //    system.Visualize(50, false);
 
     return 0;
