@@ -243,8 +243,6 @@ namespace frydom {
         FrFrame m_frame2WRT1_reference;
         bool m_breakable = false; // TODO : utiliser et permettre de declencher la cassure de la liaison
 
-        FrDOFMask m_dofMask;
-
         // Actuator
         std::shared_ptr<FrActuator> m_actuator;
 
@@ -273,8 +271,6 @@ namespace frydom {
 
         /// Set the 'broken' status vof this link.
         void SetBroken(bool broken);
-
-        virtual void SetLocked(bool locked);
 
         /// Tells if the link is currently active, in general,
         /// that is tells if it must be included into the system solver or not.

@@ -40,15 +40,6 @@ list(APPEND SRC_FILES
 
         link/constraint/FrConstraint.cpp
 
-        link/constraints/FrDistanceBetweenPointsConstraint.cpp
-        link/constraints/FrParallelConstraint.cpp
-        link/constraints/FrPerpendicularConstraint.cpp
-        link/constraints/FrPlaneOnPlaneConstraint.cpp
-        link/constraints/FrPointDistanceToAxisConstraint.cpp
-        link/constraints/FrPointOnLineConstraint.cpp
-        link/constraints/FrPointOnPlaneConstraint.cpp
-        link/constraints/FrPointOnSplineConstraint.cpp
-
         link/links_lib/FrLink.cpp
         link/links_lib/FrCylindricalLink.cpp
         link/links_lib/FrFixedLink.cpp

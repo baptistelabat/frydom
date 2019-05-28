@@ -40,14 +40,6 @@ namespace frydom {
         return m_restLength;
     }
 
-    void FrPrismaticLink::SetLocked(bool locked) {
-        if (locked) {
-            m_chronoLink->SetLinkType(FIXED_LINK);
-        } else {
-            m_chronoLink->SetLinkType(PRISMATIC);
-        }
-    }
-
     const Direction FrPrismaticLink::GetLinkDirectionInWorld(FRAME_CONVENTION fc) const {
         return GetNode1()->GetFrameInWorld().GetZAxisInParent(fc);
     }

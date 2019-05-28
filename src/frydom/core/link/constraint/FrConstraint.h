@@ -339,7 +339,7 @@ namespace frydom {
     private:
 
         const std::shared_ptr<FrPoint> m_point; ///< point constrained to stay on the plane
-        const std::shared_ptr<FrAxis> m_axis; ///< axis on which the point is constrained
+        const std::shared_ptr<FrAxis> m_axis;   ///< axis on which the point is constrained
 
     public:
 
@@ -359,10 +359,6 @@ namespace frydom {
 
         /// Initialize the constraint
         void Initialize() override;
-
-        /// Set the distance between the point and the plane
-        /// \param distance distance between the point and the plane, in m
-        void SetDistance(double distance);
 
     protected:
         friend class FrNode; // To make possible to declare SetMarkers friend in FrNode
