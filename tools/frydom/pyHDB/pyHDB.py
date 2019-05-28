@@ -540,6 +540,12 @@ class pyHDB():
                     diff_db_temp[(1, 3, 5), :] = -diff_db_temp[(1, 3, 5), :] # 1 = sway, 3 = roll and 5 = yaw.
                     body.Diffraction = np.concatenate((body.Diffraction, diff_db_temp.reshape(6, nw, 1)), axis=2) # Axis of the wave directions.
 
+                # RAO.
+                if(self.has_RAO):
+                    RAO_db_temp = np.copy(self.RAO[:, :, i, :])
+                    RAO_db_temp[(1, 3, 5), :] = -RAO_db_temp[(1, 3, 5), :]  # 1 = sway, 3 = roll and 5 = yaw.
+                    self.RAO = np.concatenate((self.RAO, RAO_db_temp.reshape(6, nw, 1, self.nb_bodies)), axis=2)  # Axis of the wave directions.
+
                 # Wave drift loads.
                 if(self.has_Drift_Kochin):
                     Drift_db_temp = np.copy(self.Wave_drift_force[:, :, i])
@@ -572,6 +578,10 @@ class pyHDB():
                         body.Froude_Krylov[:, :, idir] = body.Froude_Krylov[:, :, i360]
                         body.Diffraction[:, :, idir] = body.Diffraction[:, :, i360]
 
+                    # RAO.
+                    if (self.has_RAO):
+                        self.RAO[:, :, idir, :] = self.RAO[:, :, i360, :]
+
                     # Wave drift loads.
                     if (self.has_Drift_Kochin):
                         self.Wave_drift_force[:, :, idir] = self.Wave_drift_force[:, :, i360]
@@ -585,10 +595,15 @@ class pyHDB():
             body.Froude_Krylov = body.Froude_Krylov[:, :, sort_dirs]
             body.Diffraction = body.Diffraction[:, :, sort_dirs]
 
+        # RAO.
+        if (self.has_RAO):
+            self.RAO = self.RAO[:, :, sort_dirs, :]
+
         # Wave drift loads.
         if (self.has_Drift_Kochin):
             self.Wave_drift_force = self.Wave_drift_force[:, :, sort_dirs]
 
+        # Update parameters.
         self.min_wave_dir = np.min(self.wave_dir)
         self.max_wave_dir = np.max(self.wave_dir)
         self.nb_wave_dir = self.wave_dir.shape[0]
@@ -823,13 +838,14 @@ class pyHDB():
             dset.attrs['Unit'] = 'deg'
             dset.attrs['Description'] = "Wave direction."
 
-            # Real part.
+            # Real parts.
             dset = writer.create_dataset(wave_dir_path + "/RealCoeffs", data=body.Froude_Krylov[:, :, idir].real)
             dset.attrs['Unit'] = ''
             dset.attrs['Description'] = "Real part of the Froude-Krylov loads " \
                                         "on body %u for a wave direction of %.1f deg." % \
                                         (body.i_body, np.degrees(self.wave_dir[idir]))
 
+            # Imaginary parts.
             dset = writer.create_dataset(wave_dir_path + "/ImagCoeffs", data=body.Froude_Krylov[:, :, idir].imag)
             dset.attrs['Unit'] = ''
             dset.attrs['Description'] = "Imaginary part of the Froude-Krylov loads " \
@@ -850,12 +866,14 @@ class pyHDB():
             dset.attrs['Unit'] = 'deg'
             dset.attrs['Description'] = "Wave direction."
 
+            # Real parts.
             writer.create_dataset(wave_dir_path + "/RealCoeffs", data=body.Diffraction[:, :, idir].real)
             dset.attrs['Unit'] = ''
             dset.attrs['Description'] = "Real part of the diffraction loads " \
                                         "on body %u for a wave direction of %.1f deg." % \
                                         (body.i_body, np.degrees(self.wave_dir[idir]))
 
+            # Imaginary parts.
             writer.create_dataset(wave_dir_path + "/ImagCoeffs", data=body.Diffraction[:, :, idir].imag)
             dset.attrs['Unit'] = ''
             dset.attrs['Description'] = "Imaginary part of the diffraction loads " \
@@ -974,7 +992,44 @@ class pyHDB():
         dset = dg.create_dataset(inertia_path + "/InertiaMatrix", data=body.inertia.matrix)
         dset.attrs['Description'] = "Mass matrix."
 
-        return
+    def write_RAO(self, writer, body, RAO_path="/RAO"):
+
+        """This function writes the RAO into the *.hdb5 file.
+
+        Parameters
+        ----------
+        Writer : string
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        excitation_path : string, optional
+            Path to excitation loads.
+        """
+
+        writer.create_group(RAO_path)
+
+        for idir in range(0,self.nb_wave_dir):
+
+            wave_dir_path = RAO_path + "/Angle_%u" % idir
+            writer.create_group(wave_dir_path)
+
+            dset = writer.create_dataset(wave_dir_path + "/Angle", data=np.degrees(self.wave_dir[idir]))
+            dset.attrs['Unit'] = 'deg'
+            dset.attrs['Description'] = "Wave direction."
+
+            # Amplitude.
+            dset = writer.create_dataset(wave_dir_path + "/Amplitude", data=np.absolute(self.RAO[:, :, idir, body.i_body]))
+            dset.attrs['Unit'] = ''
+            dset.attrs['Description'] = "Amplitude of the RAO of" \
+                                        " body %u for a wave direction of %.1f deg." % \
+                                        (body.i_body, np.degrees(self.wave_dir[idir]))
+
+            # Phase.
+            dset = writer.create_dataset(wave_dir_path + "/Phase", data=np.angle(self.RAO[:, :, idir, body.i_body], deg=True))
+            dset.attrs['Unit'] = ''
+            dset.attrs['Description'] = "Phase of the RAO of" \
+                                        " body %u for a wave direction of %.1f deg." % \
+                                        (body.i_body, np.degrees(self.wave_dir[idir]))
 
     def write_body(self, writer, body):
         """This function writes the environmental data into the *.hdb5 file.
@@ -1019,6 +1074,10 @@ class pyHDB():
         # Mass matrix.
         if body._inertia:
             self.write_mass_matrix(writer, body, body_path + "/Inertia")
+
+        # RAO.
+        if(self.has_RAO):
+            self.write_RAO(writer, body, body_path + "/RAO")
 
     def write_wave_drift(self, writer, wave_drift_path="/WaveDrift"):
 
