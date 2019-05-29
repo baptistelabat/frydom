@@ -9,7 +9,6 @@
 //
 // ==========================================================================
 
-
 #ifndef FRYDOM_FRCABLEINC_H
 #define FRYDOM_FRCABLEINC_H
 

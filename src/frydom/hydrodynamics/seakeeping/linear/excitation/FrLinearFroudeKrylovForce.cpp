@@ -49,10 +49,6 @@ namespace frydom {
         Compute_F_HDB();
     }
 
-    void FrLinearFroudeKrylovForce::StepFinalize() {
-        FrForce::StepFinalize();
-    }
-
     std::shared_ptr<FrLinearFroudeKrylovForce>
     make_linear_froude_krylov_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
 

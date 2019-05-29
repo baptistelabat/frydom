@@ -11,9 +11,14 @@
 
 #include <chrono/assets/ChTriangleMeshShape.h>
 #include <chrono/assets/ChColorAsset.h>
-#include "chrono/assets/ChCylinderShape.h"
-#include "chrono/assets/ChBoxShape.h"
-#include "chrono/assets/ChSphereShape.h"
+
+#include "frydom/mesh/FrTriangleMeshConnected.h"
+#include "shape/FrBoxShape.h"
+#include "shape/FrCylinderShape.h"
+#include "shape/FrSphereShape.h"
+#include "shape/FrTriangleMeshShape.h"
+
+#include "frydom/core/common/FrPhysicsItem.h"
 
 #include "FrAssetOwner.h"
 
@@ -26,28 +31,70 @@ namespace frydom{
 //    }
 
     void FrAssetOwner::AddBoxShape(double xSize, double ySize, double zSize) {
-        auto shape = std::make_shared<chrono::ChBoxShape>();
-        shape->GetBoxGeometry().SetLengths(chrono::ChVector<double>(xSize, ySize, zSize));
-        GetChronoItem_ptr()->AddAsset(shape);
+        auto shape = std::make_shared<FrBoxShape>(xSize, ySize, zSize);
+        m_boxShapes.push_back(shape);
+        GetChronoItem_ptr()->AddAsset(shape->GetChronoAsset());
     }
 
     void FrAssetOwner::AddCylinderShape(double radius, double height) {
-        auto shape = std::make_shared<chrono::ChCylinderShape>();
-        shape->GetCylinderGeometry().p1 = chrono::ChVector<double>(0., -height*0.5, 0.);
-        shape->GetCylinderGeometry().p2 = chrono::ChVector<double>(0.,  height*0.5, 0.);
-        shape->GetCylinderGeometry().rad = radius;
-        GetChronoItem_ptr()->AddAsset(shape);
+        auto shape = std::make_shared<FrCylinderShape>(radius, height);
+        m_cylinderShapes.push_back(shape);
+        GetChronoItem_ptr()->AddAsset(shape->GetChronoAsset());
     }
 
     void FrAssetOwner::AddSphereShape(double radius) {
-        auto shape = std::make_shared<chrono::ChSphereShape>();
-        shape->GetSphereGeometry().rad = radius;
-        GetChronoItem_ptr()->AddAsset(shape);
+        auto shape = std::make_shared<FrSphereShape>(radius);
+        m_sphereShapes.push_back(shape);
+        GetChronoItem_ptr()->AddAsset(shape->GetChronoAsset());
+    }
+
+    void FrAssetOwner::AddMeshAsset(std::string obj_filename) {
+        auto mesh = std::make_shared<FrTriangleMeshConnected>();
+        mesh->LoadWavefrontMesh(obj_filename);
+        AddMeshAsset(mesh);
+    }
+
+    void FrAssetOwner::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh) {
+        auto shape = std::make_shared<FrTriangleMeshShape>(mesh);
+        m_meshShapes.push_back(shape);
+        GetChronoItem_ptr()->AddAsset(shape->GetChronoAsset());
     }
 
     void FrAssetOwner::AddAsset(std::shared_ptr<FrAsset> asset) {
         m_assets.push_back(asset);
         GetChronoItem_ptr()->AddAsset(asset->GetChronoAsset());
+    }
+
+    FrAssetOwner::BoxShapeConstContainer FrAssetOwner::GetBoxShapes() const {
+        FrAssetOwner::BoxShapeConstContainer result;
+        for (const auto& shape : m_boxShapes) {
+            result.push_back(std::const_pointer_cast<const FrBoxShape>(shape));
+        }
+        return result;
+    }
+
+    FrAssetOwner::CylinderShapeConstContainer FrAssetOwner::GetCylinderShapes() const {
+        FrAssetOwner::CylinderShapeConstContainer result;
+        for (const auto& shape : m_cylinderShapes) {
+            result.push_back(std::const_pointer_cast<const FrCylinderShape>(shape));
+        }
+        return result;
+    }
+
+    FrAssetOwner::SphereShapeConstContainer FrAssetOwner::GetSphereShapes() const {
+        FrAssetOwner::SphereShapeConstContainer result;
+        for (const auto& shape : m_sphereShapes) {
+            result.push_back(std::const_pointer_cast<const FrSphereShape>(shape));
+        }
+        return result;
+    }
+
+    FrAssetOwner::TriangleMeshShapeConstContainer FrAssetOwner::GetMeshAssets() const {
+        FrAssetOwner::TriangleMeshShapeConstContainer result;
+        for (const auto& shape : m_meshShapes) {
+            result.push_back(std::const_pointer_cast<const FrTriangleMeshShape>(shape));
+        }
+        return result;
     }
 
     void FrAssetOwner::SetColor(NAMED_COLOR colorName) {

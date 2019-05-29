@@ -59,7 +59,7 @@ namespace frydom {
 //            /// \return
 //            bool DoQuasiStatic(int niter = 100, int nsteps = 20);
 
-            bool DoStaticLinear() override;
+            bool DoStaticLinear() /*override*/;
 
         };
 
@@ -235,7 +235,7 @@ namespace frydom {
         bool m_isInitialized = false;
 
         // Logs
-        std::unique_ptr<FrPathManager> m_pathManager;
+//        std::unique_ptr<FrPathManager> m_pathManager;
 
 
     public:
@@ -393,15 +393,17 @@ namespace frydom {
 
         // Logging
 
-        /// Get access to the log manager service
-        /// \return log manager service
-        FrPathManager* GetPathManager() const;
-
         /// Initialize the logs (log files and folders creation)
-        void InitializeLog();
+        void InitializeLog_Dependencies(const std::string& path) override;
 
         /// Clear the logging message of every elements
         void ClearLogs();
+
+    protected:
+
+        std::string BuildPath(const std::string& rootPath) override;
+
+    public:
 
         // Constraint solver
 
@@ -713,9 +715,12 @@ namespace frydom {
         /// Check the compatibility between the system contact method and the specified body contact type
         bool CheckBodyContactMethod(std::shared_ptr<FrBody> body);
 
+    public:
         /// Get the systemBase, embedded in the offshore system
         /// \return systemBase
         chrono::ChSystem* GetChronoSystem();
+
+    private:
 
         void IsInitialized();
 

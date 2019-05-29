@@ -21,6 +21,10 @@
 
 namespace frydom {
 
+    // Forward declaration
+    class FrRotation;
+    class Direction;
+
     // FIXME : ne plus reposer sur l'heritage chrono. Proposer une fonction de conversion depuis openmesh vers
     // le format de maillage chrono
 
@@ -47,6 +51,12 @@ namespace frydom {
 
         /// Add a list of faces to the mesh
         void addTriangle(std::vector<chrono::ChVector<int>> faces);
+
+        void Scale(double scalingFactor);
+
+        void Rotate(const FrRotation& rotation);
+
+        void Translate(const Direction& direction);
 
         unsigned long GetNbVertices();
 

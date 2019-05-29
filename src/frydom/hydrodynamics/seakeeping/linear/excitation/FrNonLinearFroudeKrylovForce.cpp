@@ -23,27 +23,14 @@
 
 namespace frydom {
 
-    void FrNonLinearFroudeKrylovForce::Initialize() {
-
-        // Initialization of the parent class.
-        FrForce::Initialize();
-
-    }
-
     void FrNonLinearFroudeKrylovForce::Compute(double time) {
 
         // This function computes the fully or weakly nonlinear Froude-Krylov forces from the pressure integration.
 
-        // Clipped mesh.
-        m_clipped_mesh = m_hydro_mesh->GetClippedMesh();
-
-        // Computation of the Froude-Krylov force.
+        // Computate of the Froude-Krylov force and torque loads at CoG
         CalcIncidentPressureIntegration();
 
-        // Setting the nonlinear excitation loads in world at the CoG in world.
-        this->SetForceTorqueInWorldAtCOG(m_FKforce, m_FKtorque, NWU);
-
-	    // Settings: torque is already computed at CoG.
+        // Set the force and torque loads at CoG
         SetForceTorqueInWorldAtCOG(m_FKforce,m_FKtorque, NWU);
 
     }
@@ -51,64 +38,48 @@ namespace frydom {
     void FrNonLinearFroudeKrylovForce::CalcIncidentPressureIntegration(){
 
         // This function performs the incident pressure integration.
-
-        mesh::FrMesh::Normal Normal;
-        double Pressure,Area,PA;
-        m_FKforce = Force(0.,0.,0.);
-        m_FKtorque = Torque(0.,0.,0.);
+        m_FKforce.setZero();
+        m_FKtorque.setZero();
         Position CoG = m_body->GetCOG(NWU);
-        Position CentroidPos,NormalPos;
-        Position GM;
-        Position GMvectNormal;
+        Position NormalPos;
+
+        auto clippedMesh = &(m_hydroMesh->GetClippedMesh());
+        
+        auto waveField = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetWaveField();
 
         // Loop over the faces.
-        for (auto& f_iter : m_clipped_mesh.faces()) {
+        for (auto& f_iter : clippedMesh->faces()) {
 
-            // Normal.
-            Normal = m_clipped_mesh.normal(f_iter);
-            NormalPos[0] = Normal[0];
-            NormalPos[1] = Normal[1];
-            NormalPos[2] = Normal[2];
+            // Normal
+            NormalPos.GetX() = clippedMesh->normal(f_iter)[0];
+            NormalPos.GetY() = clippedMesh->normal(f_iter)[1];
+            NormalPos.GetZ() = clippedMesh->normal(f_iter)[2];
 
             // Centroid (where the pressure is evaluated).
-            mesh::FrMeshTraits::Point Centroid = m_clipped_mesh.data(f_iter).Center(); // Here a warning at the compilation step.
-            CentroidPos[0] = Centroid[0];
-            CentroidPos[1] = Centroid[1];
-            CentroidPos[2] = Centroid[2];
+            Position Centroid = mesh::OpenMeshPointToVector3d<Position>(clippedMesh->data(f_iter).Center());
 
             // Incident pressure.
             // The pressure is assumed constant over a panel.
-            Pressure = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetPressure(Centroid[0],Centroid[1],Centroid[2],NWU);
+            double Pressure = waveField->GetPressure(Centroid.GetX(),Centroid.GetY(),Centroid.GetZ(),NWU);
 
             // Area.
-            Area = m_clipped_mesh.GetArea(f_iter);
+            double Area = clippedMesh->GetArea(f_iter);
 
             // Pressure * Area.
-            PA = -Pressure*Area;
+            double PA = -Pressure*Area;
 
             // Froude-Krylov force.
-            m_FKforce[0] = m_FKforce[0] + PA*Normal[0];
-            m_FKforce[1] = m_FKforce[1] + PA*Normal[1];
-            m_FKforce[2] = m_FKforce[2] + PA*Normal[2];
+            m_FKforce += PA*NormalPos;
 
             // GM vect n;
-            GM = CentroidPos - CoG;
-            GMvectNormal = GM.cross(NormalPos);
+            auto GM = Centroid - CoG;
+            auto GMvectNormal = GM.cross(NormalPos);
 
             // Froude-Krylov torque.
-            m_FKtorque[0] = m_FKtorque[0] + PA*GMvectNormal[0];
-            m_FKtorque[1] = m_FKtorque[1] + PA*GMvectNormal[1];
-            m_FKtorque[2] = m_FKtorque[2] + PA*GMvectNormal[2];
+            m_FKtorque += PA*GMvectNormal;
 
         }
 
-    }
-
-    void FrNonLinearFroudeKrylovForce::StepFinalize() {
-        FrForce::StepFinalize();
-
-        // Writing the clipped mesh in an output file.
-//        m_clipped_mesh.Write("Mesh_clipped_Froude_Krylov.obj");
     }
 
     std::shared_ptr<FrNonLinearFroudeKrylovForce>

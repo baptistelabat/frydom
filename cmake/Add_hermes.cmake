@@ -7,7 +7,7 @@ if (NOT hermes_FOUND)
 
     FetchContent_Declare(hermes
             GIT_REPOSITORY ${hermes_URL}
-            GIT_TAG ${hermes_TAG}
+            GIT_TAG master
             )
 
     FetchContent_GetProperties(hermes)

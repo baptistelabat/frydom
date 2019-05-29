@@ -26,6 +26,7 @@
 #include "mesh/FrMeshInc.h"
 #include "utils/FrIrrApp.h"
 #include "asset/FrAssetInc.h"
+#include "collision/FrCollisionModel.h"
 
 #include <H5Cpp.h>
 

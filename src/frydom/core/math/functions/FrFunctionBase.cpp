@@ -102,8 +102,6 @@ namespace frydom {
 
     void FrFunctionBase::Initialize() {}
 
-    void FrFunctionBase::StepFinalize() {}
-
     double FrFunctionBase::operator()(double x) const {
         return Get_y(x);
     }
@@ -262,8 +260,8 @@ namespace frydom {
     namespace internal {
 
         FrFunctionChronoInterface::FrFunctionChronoInterface(const frydom::FrFunctionBase &frydomFunction) {
-            m_chronoFunction = std::make_shared<internal::FrChronoFunctionWrapper>(this);
             m_function = frydomFunction.Clone();
+            m_chronoFunction = std::make_shared<internal::FrChronoFunctionWrapper>(m_function);
         }
 
         std::shared_ptr<internal::FrChronoFunctionWrapper> FrFunctionChronoInterface::GetChronoFunction() {

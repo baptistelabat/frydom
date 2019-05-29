@@ -72,11 +72,6 @@ namespace frydom {
         /// Getter for the boolean : m_relativeVelocity
         bool GetRelative2Fluid();
 
-        /// Initialize method checking if projected sections are correctly given, and initializing the logs.
-        void Initialize() override;
-
-        void StepFinalize() override;
-
     private:
 
         /// Compute the quadratic damping

@@ -316,6 +316,11 @@ class DiscretizationDB(object):
         if self.nb_wave_directions is None:
             self._nb_wave_directions = hdb.nb_wave_dir
 
+        if self.nb_wave_directions == 1:
+            self._max_angle = 360.
+            self._min_angle = 0.
+            self._nb_wave_directions = 2
+
         print(" Angle max : %16.8f" % self._max_angle)
         print(" Angle min : %16.8f" % self._min_angle)
         print(" Nb Wave direction : %i" % self._nb_wave_directions)

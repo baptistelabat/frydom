@@ -15,8 +15,6 @@
 
 #include "chrono/assets/ChAssetLevel.h"
 
-#include "frydom/core/body/FrBody.h"
-#include "frydom/core/common/FrPhysicsItem.h"
 #include "frydom/asset/FrAssetOwner.h"
 
 

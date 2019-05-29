@@ -113,23 +113,34 @@ namespace frydom {
 
         /// Set angular velocity around Z-direction
         /// \param angularVelocity Angular velocity, in rad/s
+        /// \param fc Frame convention
         void SetAngularVelocityAroundZ(const double& angularVelocity, FRAME_CONVENTION fc);
 
-        /// Get the velocity vector of the equilibrium frame in world coordinates
+        /// Get the linear velocity of the equilibrium frame in world coordinates
         /// \param fc Frame convention
         /// \return Velocity vector
         Velocity GetVelocityInWorld(FRAME_CONVENTION fc) const;
 
-        /// Get the velocity vector of the equilibrium frame in frame coordinates
+        /// Get the linear velocity of the equilibrium frame in frame coordinates
         /// \return Velocity vector
         Velocity GetVelocityInFrame() const;
 
+        /// Get the perturbation linear velocity of the body around the equilibrium frame
+        /// \param fc Frame convention
+        /// \return Perturbation velocity in world reference frame
         Velocity GetPerturbationVelocityInWorld(FRAME_CONVENTION fc) const;
 
+        /// Get the perturbation linear velocity of the body around the equilibrium frame
+        /// \return Perturbation velocity in local frame
         Velocity GetPerturbationVelocityInFrame() const;
 
+        /// Return the perturbation generalized velocity of the body around the equilibrium frame
+        /// \param fc Frame convention
+        /// \return Perturbation generalized velocity in world
         GeneralizedVelocity GetPerturbationGeneralizedVelocityInWorld(FRAME_CONVENTION fc) const;
 
+        /// Return the perturbation generalized velocity of the body around the equilibrium frame
+        /// \return Perturbation generalized velocity in local frame
         GeneralizedVelocity GetPerturbationGeneralizedVelocityInFrame() const;
 
         /// Get the angular velocity of the equilibrium frame around the Z-axis
@@ -163,7 +174,7 @@ namespace frydom {
         // Logging
 
         // Initialize the log
-        void InitializeLog() override;
+        void AddFields() override;
 
     private:
 
@@ -261,8 +272,6 @@ namespace frydom {
         void Compute(double time) override;
 
     };
-
-
 
     // TODO : il faudrait pouvoir retrancher une difference de position moyenne
 

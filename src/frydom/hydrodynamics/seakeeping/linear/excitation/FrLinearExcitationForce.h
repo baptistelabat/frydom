@@ -31,6 +31,7 @@ namespace frydom {
      * \class FrLinearExcitationForce
      * \brief Class for computing the linear excitation loads.
      */
+
     class FrLinearExcitationForce : public FrLinearExcitationForceBase {
 
     public:
@@ -42,10 +43,8 @@ namespace frydom {
         /// \return type name of this object
         std::string GetTypeName() const override { return "LinearExcitationForce"; }
 
+        /// Method to initialize the linear excitation force
         void Initialize() override;
-
-        /// This function is called at the end of the time step, after the last step of the integration scheme.
-        void StepFinalize() override;
 
         Eigen::MatrixXcd GetHDBData(unsigned int iangle) const override;
 

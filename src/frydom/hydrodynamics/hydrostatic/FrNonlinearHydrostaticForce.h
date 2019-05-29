@@ -15,16 +15,11 @@
 
 #include <frydom/core/force/FrForce.h>
 #include "frydom/core/math/FrVector.h"
-#include "frydom/mesh/FrMesh.h"
-#include "frydom/environment/FrEnvironment.h"
-#include "frydom/environment/ocean/FrOcean.h"
-#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
-#include "frydom/mesh/FrHydroMesh.h"
 
 namespace frydom {
 
     class FrBody;
-    class FrOffshoreSystem;
+    class FrHydroMesh;
 
     /// This class defines the nonlinear hydrostatic force applied to a hydrodynamic body.
     /// The force is computed based on the real position of the body with the incident free surface by integeration of the hydrostatic pressure over the body mesh.
@@ -39,21 +34,13 @@ namespace frydom {
 
     private:
 
-        /// Center of buoyancy in world.
-        Position m_CoBInWorld;
-
-        /// Clipped mesh.
-        mesh::FrMesh m_clipped_mesh;
-
         /// Hydrodynamic mesh.
-        std::shared_ptr<FrHydroMesh> m_hydro_mesh;
+        std::shared_ptr<FrHydroMesh> m_hydroMesh;
 
     public:
 
         /// Constructor.
-        FrNonlinearHydrostaticForce(std::shared_ptr<FrHydroMesh> HydroMesh) {
-            m_hydro_mesh = HydroMesh;
-        }
+        explicit FrNonlinearHydrostaticForce(const std::shared_ptr<FrHydroMesh>& HydroMesh);
 
         /// Get the type name of this object
         /// \return type name of this object
@@ -62,17 +49,30 @@ namespace frydom {
         /// Return true if the force is included in the static analysis
         bool IncludedInStaticAnalysis() const override {return true;}
 
-        /// Intialize the nonlinear hydrostatic force model.
-        void Initialize() override;
-
         /// Initialize the log
-        void InitializeLog() override;
+        void AddFields() override;
 
-        /// This function is called at the end of the time step, after the last step of the integration scheme.
-        void StepFinalize() override;
-
-        /// This function gives the center of buoyancy in the world frame.
+        /// Get the center of buoyancy position of the clipped mesh in the body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return center of buoyancy position in the body reference frame
         Position GetCenterOfBuoyancyInBody(FRAME_CONVENTION fc);
+
+        /// Get the center of buoyancy position of the clipped mesh in the world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return center of buoyancy position in the world reference frame
+        Position GetCenterOfBuoyancyInWorld(FRAME_CONVENTION fc);
+
+        /// Get the hydrostatic force (integration of the hydrostatic pressure on the clipped mesh)
+        /// in the body reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return hydrostatic force in the body reference frame
+        Force GetHydrostaticForceInBody(FRAME_CONVENTION fc);
+
+        /// Get the hydrostatic force (integration of the hydrostatic pressure on the clipped mesh)
+        /// in the world reference frame
+        /// \param fc frame convention (NED/NWU)
+        /// \return hydrostatic force in the world reference frame
+        Force GetHydrostaticForceInWorld(FRAME_CONVENTION fc);
 
     private:
 
@@ -84,7 +84,7 @@ namespace frydom {
 
     /// This function creates a (fully or weakly) nonlinear hydrostatic force object.
     std::shared_ptr<FrNonlinearHydrostaticForce>
-    make_nonlinear_hydrostatic_force(std::shared_ptr<FrBody> body, std::shared_ptr<FrHydroMesh> HydroMesh);
+    make_nonlinear_hydrostatic_force(const std::shared_ptr<FrBody>& body, const std::shared_ptr<FrHydroMesh>& HydroMesh);
 
 }  // end namespace frydom
 

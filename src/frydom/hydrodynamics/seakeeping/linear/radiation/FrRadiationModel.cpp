@@ -12,7 +12,7 @@
 
 #include "FrRadiationModel.h"
 
-#include "FrAddedMassBase.h"
+#include "FrRadiationModelBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/hydrodynamics/FrEquilibriumFrame.h"
@@ -62,13 +62,13 @@ namespace frydom {
     // ----------------------------------------------------------------
 
     FrRadiationModel::FrRadiationModel() {
-        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this);
+        m_chronoPhysicsItem = std::make_shared<internal::FrRadiationModelBase>(this);
     }
 
     FrRadiationModel::FrRadiationModel(std::shared_ptr<FrHydroDB> HDB) : m_HDB(HDB) {
 
         // Creation of an AddedMassBase object.
-        m_chronoPhysicsItem = std::make_shared<internal::FrAddedMassBase>(this); // this = FrRadiationModel
+        m_chronoPhysicsItem = std::make_shared<internal::FrRadiationModelBase>(this); // this = FrRadiationModel
     }
 
     void FrRadiationModel::Initialize() {
@@ -107,15 +107,15 @@ namespace frydom {
     // ----------------------------------------------------------------
 
     FrRadiationConvolutionModel::FrRadiationConvolutionModel(std::shared_ptr<FrHydroDB> HDB)
-        : FrRadiationModel(HDB) { /// Initialization of the the parent class FrRadiationModel.
+        : FrRadiationModel(HDB) { // Initialization of the the parent class FrRadiationModel.
 
-        /// Constructor of the class FrRadiationConvolutionModel.
+        // Constructor of the class FrRadiationConvolutionModel.
 
         // FIXME : a passer dans la méthode initialize pour eviter les pb de précédence vis a vis de la HDB
 
         // Loop over every body subject to hydrodynamic loads.
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
-            auto body = m_HDB->GetBody(BEMBody->get());
+            auto body = m_HDB->GetBody(BEMBody->first);
             body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce>(this)); // Addition of the hydrodynamic loads to every body.
         }
 
@@ -130,19 +130,17 @@ namespace frydom {
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
 
-            if (m_recorder.find(BEMBody->get()) == m_recorder.end()) {
-                m_recorder[BEMBody->get()] = FrTimeRecorder<GeneralizedVelocity>(m_Te, m_dt);
+            if (m_recorder.find(BEMBody->first) == m_recorder.end()) {
+                m_recorder[BEMBody->first] = FrTimeRecorder<GeneralizedVelocity>(m_Te, m_dt);
             }
-            m_recorder[BEMBody->get()].Initialize();
+            m_recorder[BEMBody->first].Initialize();
         }
     }
 
     void FrRadiationConvolutionModel::Clear() {
-
         for (auto &BEMBody : *m_HDB) {
-            m_recorder[BEMBody.get()].Clear();
+            m_recorder[BEMBody.first].Clear();
         }
-
     }
 
     void FrRadiationConvolutionModel::Compute(double time) {
@@ -152,8 +150,8 @@ namespace frydom {
 
         // Update speed recorder
         for (auto BEMBody = m_HDB->begin(); BEMBody != m_HDB->end(); BEMBody++) {
-            auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->get());
-            m_recorder[BEMBody->get()].Record(time, eqFrame->GetPerturbationGeneralizedVelocityInFrame());
+            auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->first);
+            m_recorder[BEMBody->first].Record(time, eqFrame->GetPerturbationGeneralizedVelocityInFrame());
         }
 
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
@@ -163,13 +161,13 @@ namespace frydom {
 
             for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion != m_HDB->end(); ++BEMBodyMotion) {
 
-                auto velocity = m_recorder[BEMBodyMotion->get()].GetData();
+                auto velocity = m_recorder[BEMBodyMotion->first].GetData();
 
-                auto vtime = m_recorder[BEMBodyMotion->get()].GetTime();
+                auto vtime = m_recorder[BEMBodyMotion->first].GetTime();
 
-                for (unsigned int idof = 0; idof < 6; idof++) {
+                for (auto idof : BEMBodyMotion->first->GetListDOF()) {
 
-                    auto interpK = BEMBody->get()->GetIRFInterpolatorK(BEMBodyMotion->get(), idof);
+                    auto interpK = BEMBody->first->GetIRFInterpolatorK(BEMBodyMotion->first, idof);
 
                     std::vector<mathutils::Vector6d<double>> kernel;
                     kernel.reserve(vtime.size());
@@ -177,11 +175,10 @@ namespace frydom {
                         kernel.push_back(interpK->Eval(vtime[it]) * velocity.at(it).at(idof));
                     }
                     radiationForce += TrapzLoc(vtime, kernel);
-
                 }
             }
 
-            auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->get());
+            auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBody->first);
             auto meanSpeed = eqFrame->GetVelocityInFrame();
 
             if (meanSpeed.squaredNorm() > FLT_EPSILON) {
@@ -191,15 +188,13 @@ namespace frydom {
             auto forceInWorld = eqFrame->ProjectVectorFrameInParent(radiationForce.GetForce(), NWU);
             auto TorqueInWorld = eqFrame->ProjectVectorFrameInParent(radiationForce.GetTorque(), NWU);
 
-            m_radiationForce[BEMBody->get()] = - GeneralizedForce(forceInWorld, TorqueInWorld);
+            m_radiationForce[BEMBody->first] = - GeneralizedForce(forceInWorld, TorqueInWorld);
         }
     }
 
     void FrRadiationConvolutionModel::StepFinalize() {
-
         // Serialize and send the message log
         FrObject::SendLog();
-
     }
 
     void FrRadiationConvolutionModel::GetImpulseResponseSize(double &Te, double &dt, unsigned int &N) const {
@@ -222,16 +217,16 @@ namespace frydom {
 
         for (auto BEMBody = m_HDB->begin(); BEMBody != m_HDB->end(); BEMBody++) {
 
-            auto Ainf = BEMBody->get()->GetSelfInfiniteAddedMass();
+            auto Ainf = BEMBody->first->GetSelfInfiniteAddedMass();
 
             for (auto BEMBodyMotion = m_HDB->begin(); BEMBodyMotion != m_HDB->end(); BEMBodyMotion++) {
 
-                auto velocity = m_recorder.at(BEMBodyMotion->get()).GetData();
-                auto vtime = m_recorder.at(BEMBodyMotion->get()).GetTime();
+                auto velocity = m_recorder.at(BEMBodyMotion->first).GetData();
+                auto vtime = m_recorder.at(BEMBodyMotion->first).GetTime();
 
                 for (unsigned int idof=4; idof<6; idof++) {
 
-                    auto interpKu = BEMBody->get()->GetIRFInterpolatorKu(BEMBodyMotion->get(), idof);
+                    auto interpKu = BEMBody->first->GetIRFInterpolatorKu(BEMBodyMotion->first, idof);
 
                     std::vector<mathutils::Vector6d<double>> kernel;
                     for (unsigned int it = 0; it < vtime.size(); ++it) {
@@ -240,7 +235,7 @@ namespace frydom {
                     radiationForce += TrapzLoc(vtime, kernel) * meanSpeed ;
                 }
 
-                auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBodyMotion->get());
+                auto eqFrame = m_HDB->GetMapper()->GetEquilibriumFrame(BEMBodyMotion->first);
                 auto angular = eqFrame->GetAngularPerturbationVelocityInFrame();
 
                 auto damping = Ainf.col(2) * angular.y() - Ainf.col(1) * angular.z();
@@ -269,29 +264,10 @@ namespace frydom {
         m_dt = dt;
     }
 
-    void FrRadiationConvolutionModel::InitializeLog() {
-
-        if (IsLogged()) {
-
-            // Build the path to the radiation convolution model log
-            auto logPath = m_system->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
-
-            // Add the fields to be logged here
-            // TODO: A completer
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return m_system->GetTime(); });
-
-            // Initialize the message
-            FrObject::InitializeLog(logPath);
-
-        }
-
-    }
-
     std::shared_ptr<FrRadiationConvolutionModel>
     make_radiation_convolution_model(std::shared_ptr<FrHydroDB> HDB, FrOffshoreSystem* system){
 
-        /// This subroutine creates and adds the radiation convulation model to the offshore system from the HDB.
+        // This subroutine creates and adds the radiation convulation model to the offshore system from the HDB.
 
         // Construction and initialization of the classes dealing with radiation models.
         auto radiationModel = std::make_shared<FrRadiationConvolutionModel>(HDB);

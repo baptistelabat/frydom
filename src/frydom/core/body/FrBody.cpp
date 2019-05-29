@@ -15,23 +15,31 @@
 
 
 #include "chrono/assets/ChColorAsset.h"
-#include "chrono/assets/ChTriangleMeshShape.h"
 
 
 #include "frydom/core/math/FrMatrix.h"
 #include "frydom/core/force/FrForce.h"
 #include "frydom/asset/FrAsset.h"
-#include "frydom/mesh/FrTriangleMeshConnected.h"
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/geographicServices/FrGeographicServices.h"
 #include "frydom/asset/FrForceAsset.h"
-
+#include "frydom/collision/FrCollisionModel.h"
 
 namespace frydom {
 
     namespace internal {
 
-        FrBodyBase::FrBodyBase(FrBody *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {}
+        //
+        // FrBodyBase
+        //
+
+        FrBodyBase::FrBodyBase(FrBody *body) : chrono::ChBodyAuxRef(), m_frydomBody(body) {
+        }
+
+        FrBodyBase::FrBodyBase(const FrBodyBase& other) : chrono::ChBodyAuxRef(other) {
+            m_frydomBody = other.m_frydomBody;
+            m_variables_ptr = other.m_variables_ptr;
+        }
 
         void FrBodyBase::SetupInitial() {}
 
@@ -76,6 +84,119 @@ namespace frydom {
                     std::find<std::vector<std::shared_ptr<chrono::ChAsset>>::iterator>(assets.begin(), assets.end(), asset));
         }
 
+        //
+        // STATE FUNCTION
+        //
+
+        void FrBodyBase::IntToDescriptor(const unsigned int off_v,
+                                         const chrono::ChStateDelta& v,
+                                         const chrono::ChVectorDynamic<>& R,
+                                         const unsigned int off_L,
+                                         const chrono::ChVectorDynamic<>& L,
+                                         const chrono::ChVectorDynamic<>& Qc) {
+            Variables().Get_qb().PasteClippedMatrix(v, off_v, 0, 6, 1, 0, 0);
+            Variables().Get_fb().PasteClippedMatrix(R, off_v, 0, 6, 1, 0, 0);
+        }
+
+        void FrBodyBase::IntFromDescriptor(const unsigned int off_v,
+                                           chrono::ChStateDelta& v,
+                                           const unsigned int off_L,
+                                           chrono::ChVectorDynamic<>& L) {
+            v.PasteMatrix(Variables().Get_qb(), off_v, 0);
+        }
+
+        //
+        // SOLVER FUNCTIONS
+        //
+
+        chrono::ChVariables& FrBodyBase::Variables() {
+
+            if (m_variables_ptr) {
+                return *m_variables_ptr.get();
+            } else {
+                return chrono::ChBody::variables;
+            }
+        }
+
+        void FrBodyBase::SetVariables(const std::shared_ptr<chrono::ChVariables> new_variables) {
+            m_variables_ptr = new_variables;
+            variables.SetDisabled(true);
+        }
+
+        void FrBodyBase::InjectVariables(chrono::ChSystemDescriptor& mdescriptor) {
+            Variables().SetDisabled(!this->IsActive());
+            mdescriptor.InsertVariables(&this->Variables());
+        }
+
+        void FrBodyBase::VariablesFbReset() {
+            Variables().Get_fb().FillElem(0.0);
+        }
+
+        void FrBodyBase::VariablesFbLoadForces(double factor) {
+            // add applied forces to 'fb' vector
+            this->Variables().Get_fb().PasteSumVector(Xforce * factor, 0, 0);
+
+            // add applied torques to 'fb' vector, including gyroscopic torque
+            if (this->GetNoGyroTorque())
+                this->Variables().Get_fb().PasteSumVector((Xtorque)*factor, 3, 0);
+            else
+                this->Variables().Get_fb().PasteSumVector((Xtorque - gyro) * factor, 3, 0);
+        }
+
+        void FrBodyBase::VariablesFbIncrementMq() {
+            this->Variables().Compute_inc_Mb_v(this->Variables().Get_fb(), this->Variables().Get_qb());
+        }
+
+        void FrBodyBase::VariablesQbLoadSpeed() {
+            this->Variables().Get_qb().PasteVector(GetCoord_dt().pos, 0, 0);
+            this->Variables().Get_qb().PasteVector(GetWvel_loc(), 3, 0);
+        }
+
+        void FrBodyBase::VariablesQbSetSpeed(double step) {
+            chrono::ChCoordsys<> old_coord_dt = this->GetCoord_dt();
+
+            // from 'qb' vector, sets body speed, and updates auxiliary data
+            this->SetPos_dt(this->Variables().Get_qb().ClipVector(0, 0));
+            this->SetWvel_loc(this->Variables().Get_qb().ClipVector(3, 0));
+
+            // apply limits (if in speed clamping mode) to speeds.
+            ClampSpeed();
+
+            // compute auxiliary gyroscopic forces
+            ComputeGyro();
+
+            // Compute accel. by BDF (approximate by differentiation);
+            if (step) {
+                this->SetPos_dtdt((this->GetCoord_dt().pos - old_coord_dt.pos) / step);
+                this->SetRot_dtdt((this->GetCoord_dt().rot - old_coord_dt.rot) / step);
+            }
+        }
+
+        void FrBodyBase::VariablesQbIncrementPosition(double dt_step) {
+            if (!this->IsActive())
+                return;
+
+            // Updates position with incremental action of speed contained in the
+            // 'qb' vector:  pos' = pos + dt * speed   , like in an Eulero step.
+
+            chrono::ChVector<> newspeed = Variables().Get_qb().ClipVector(0, 0);
+            chrono::ChVector<> newwel = Variables().Get_qb().ClipVector(3, 0);
+
+            // ADVANCE POSITION: pos' = pos + dt * vel
+            this->SetPos(this->GetPos() + newspeed * dt_step);
+
+            // ADVANCE ROTATION: rot' = [dt*wwel]%rot  (use quaternion for delta rotation)
+            chrono::ChQuaternion<> mdeltarot;
+            chrono::ChQuaternion<> moldrot = this->GetRot();
+            chrono::ChVector<> newwel_abs = Amatrix * newwel;
+            double mangle = newwel_abs.Length() * dt_step;
+            newwel_abs.Normalize();
+            mdeltarot.Q_from_AngAxis(mangle, newwel_abs);
+            chrono::ChQuaternion<> mnewrot = mdeltarot % moldrot;
+            this->SetRot(mnewrot);
+        }
+
+
     }  // end namespace frydom::internal
 
     FrBody::FrBody() {
@@ -86,7 +207,7 @@ namespace frydom {
         m_chronoBody->SetMaxSpeed(DEFAULT_MAX_SPEED);
         m_chronoBody->SetMaxWvel(DEFAULT_MAX_ROTATION_SPEED);
 
-        m_DOFMask = std::make_unique<FrBodyDOFMask>();
+        m_DOFMask = std::make_unique<FrDOFMask>();
     }
 
     FrOffshoreSystem* FrBody::GetSystem() const {
@@ -127,6 +248,7 @@ namespace frydom {
     }
 
     void FrBody::Initialize() {
+
         // Check the mass and inertia coefficients
         for (unsigned int i=0;i<6;i++)
             assert(("Null mass and inertia are not permitted : ", GetInertiaTensor(NWU).GetMatrix().at(i,i)!=0.));
@@ -175,7 +297,7 @@ namespace frydom {
 //        }
 
         // Send the message to the logging system
-        FrObject::SendLog();
+        FrObject::StepFinalize();
 
     }
 
@@ -245,19 +367,6 @@ namespace frydom {
         return m_nodes.cend();
     }
 
-    void FrBody::AddMeshAsset(std::string obj_filename) {
-
-        auto mesh = std::make_shared<FrTriangleMeshConnected>();
-        mesh->LoadWavefrontMesh(obj_filename);
-        AddMeshAsset(mesh);
-    }
-
-    void FrBody::AddMeshAsset(std::shared_ptr<frydom::FrTriangleMeshConnected> mesh) {
-        auto shape = std::make_shared<chrono::ChTriangleMeshShape>();
-        shape->SetMesh(mesh);
-        m_chronoBody->AddAsset(shape);
-    }
-
     double FrBody::GetMass() const {
         return m_chronoBody->GetMass();
     }
@@ -289,6 +398,15 @@ namespace frydom {
 
     void FrBody::AllowCollision(bool isColliding) {
         m_chronoBody->SetCollide(isColliding);
+    }
+
+    FrCollisionModel *FrBody::GetCollisionModel() {
+        return dynamic_cast<internal::FrCollisionModelBase*> (m_chronoBody->GetCollisionModel().get())->m_frydomCollisionModel;
+    }
+
+    void FrBody::SetCollisionModel(std::shared_ptr<FrCollisionModel> collisionModel) {
+        m_chronoBody->SetCollisionModel(collisionModel->m_chronoCollisionModel);
+        AllowCollision(true);
     }
 
     void FrBody::ActivateSpeedLimits(bool activate) {
@@ -834,88 +952,85 @@ namespace frydom {
 
     }
 
-    FrBodyDOFMask* FrBody::GetDOFMask() {
+    FrDOFMask* FrBody::GetDOFMask() {
         return m_DOFMask.get();
     }
 
-    void FrBody::InitializeLog() {
+    void FrBody::InitializeLog_Dependencies(const std::string& bodyPath) {
 
         if (IsLogged()) {
 
-            auto logPath = m_system->GetPathManager()->BuildPath(this, "body.csv");
-
-            // Add the fields
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                                        [this]() { return m_system->GetTime(); });
-
-            // Body Position
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Position","m", fmt::format("body position in the world reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetPosition(c_logFrameConvention);});
-            // COG Body Position
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("COGPosition","m", fmt::format("COG body position in the world reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetCOGPositionInWorld(c_logFrameConvention);});
-            // Body Orientation
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Orientation","rad", fmt::format("body orientation in the world reference frame in {}", c_logFrameConvention),
-                    [this]() {double phi, theta, psi ; GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, c_logFrameConvention);
-                                                             return Vector3d<double> (phi,theta,psi);});
-
-            // Body Velocity
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Linear velocity","m/s", fmt::format("body linear velocity in the world reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetVelocityInWorld(c_logFrameConvention);});
-            // Body COG Velocity
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("COG Linear velocity","m/s", fmt::format("COG body linear velocity in the world reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetCOGVelocityInWorld(c_logFrameConvention);});
-            // Body Angular Velocity
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Angular velocity","rad/s", fmt::format("body angular velocity in the world reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetAngularVelocityInWorld(c_logFrameConvention);});
-
-
-            // Body Acceleration
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Linear acceleration","m/s²", fmt::format("body linear acceleration in the world reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetAccelerationInWorld(c_logFrameConvention);});
-            // Body COG Acceleration
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("COG Linear acceleration","m/s²", fmt::format("COG body linear acceleration in the world reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetCOGAccelerationInWorld(c_logFrameConvention);});
-            // Body Angular Acceleration
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-            ("Angular acceleration","rad/s²", fmt::format("body angular acceleration in the world reference frame in {}", c_logFrameConvention),
-                    [this]() {return GetAngularAccelerationInWorld(c_logFrameConvention);});
-
-
-            // Total External Force
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("Total external force","N",fmt::format("Total external force, expressed in body reference frame in {}", c_logFrameConvention),
-                     [this] () {return GetTotalExtForceInBody(c_logFrameConvention);});
-            // Total External Torque at COG
-            m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("Total external torque at COG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", c_logFrameConvention),
-                     [this] () {return GetTotalTorqueInBodyAtCOG(c_logFrameConvention);});
-
-
-            // Initialize the message
-            FrObject::InitializeLog(logPath);
-
             // Initializing forces
-            auto forceIter = force_begin();
-            for (; forceIter != force_end(); forceIter++) {
-                (*forceIter)->InitializeLog();
+            for (const auto& force : m_externalForces){
+                force->SetPathManager(GetPathManager());
+                force->InitializeLog(bodyPath);
             }
 
             // Initializing nodes
-            auto nodeIter = node_begin();
-            for (; nodeIter != node_end(); nodeIter++) {
-                (*nodeIter)->InitializeLog();
+            for (const auto &node : m_nodes) {
+                node->SetPathManager(GetPathManager());
+                node->InitializeLog(bodyPath);
             }
 
         }
+
+    }
+
+    void FrBody::AddFields() {
+
+        m_message->AddField<double>("time", "s", "Current time of the simulation",
+                                    [this]() { return m_system->GetTime(); });
+
+        // Body Position
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("Position","m", fmt::format("body position in the world reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetPosition(GetLogFrameConvention());});
+        // COG Body Position
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("COGPositionInWorld","m", fmt::format("COG body position in the world reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetCOGPositionInWorld(GetLogFrameConvention());});
+        // Body Orientation
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("CardanAngles","rad", fmt::format("body orientation in the world reference frame in {}", GetLogFrameConvention()),
+                 [this]() {double phi, theta, psi ; GetRotation().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
+                     return Vector3d<double> (phi,theta,psi);});
+
+        // Body Velocity
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinearVelocityInWorld","m/s", fmt::format("body linear velocity in the world reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetVelocityInWorld(GetLogFrameConvention());});
+        // Body COG Velocity
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinearCOGVelocityInWorld","m/s", fmt::format("COG body linear velocity in the world reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetCOGVelocityInWorld(GetLogFrameConvention());});
+        // Body Angular Velocity
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("AngularVelocityInWorld","rad/s", fmt::format("body angular velocity in the world reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetAngularVelocityInWorld(GetLogFrameConvention());});
+
+
+        // Body Acceleration
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinearAccelerationInWorld","m/s²", fmt::format("body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetAccelerationInWorld(GetLogFrameConvention());});
+        // Body COG Acceleration
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinearCOGAccelerationInWorld","m/s²", fmt::format("COG body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetCOGAccelerationInWorld(GetLogFrameConvention());});
+        // Body Angular Acceleration
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("AngularAccelerationInWorld","rad/s²", fmt::format("body angular acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetAngularAccelerationInWorld(GetLogFrameConvention());});
+
+
+        // Total External Force
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("TotalExtForceInBody","N",fmt::format("Total external force, expressed in body reference frame in {}", GetLogFrameConvention()),
+                 [this] () {return GetTotalExtForceInBody(GetLogFrameConvention());});
+        // Total External Torque at COG
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("TotalTotalTorqueInBodyAtCOG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", GetLogFrameConvention()),
+                 [this] () {return GetTotalTorqueInBodyAtCOG(GetLogFrameConvention());});
 
     }
 

@@ -4,8 +4,7 @@ set(SRC_FILES
         FrTriangleMeshConnected.cpp
 	FrCache.cpp
 	FrMesh.cpp
-	FrTriangleIntegrations.cpp
-	FrHydrostaticsProperties.cpp
+        FrHydrostaticsProperties.cpp
 	FrMeshClipper.cpp
 	FrHydroMesh.cpp
         )

@@ -272,8 +272,10 @@ class HDB5(object):
         fk_db = self._hdb.froude_krylov_db
         diff_db = self._hdb.diffraction_db
 
-        # Symmetrize
-        if self._hdb.min_wave_dir >= -np.float32() and self._hdb.max_wave_dir <= 180. + np.float32():
+        # Symetrize
+        if self._hdb.min_wave_dir >= -np.float32() \
+                and self._hdb.max_wave_dir <= 180. + np.float32()\
+                and self._hdb.nb_wave_dir > 1:
             self._hdb._wave_dirs, fk_db, diff_db = symetrize(self._hdb._wave_dirs, fk_db, diff_db)
 
         # Updating the FK and diffraction loads accordingly.
@@ -386,8 +388,12 @@ class HDB5(object):
         """
 
         # Interpolation of the diffraction loads with respect to the wave directions.
-        f_interp_dir = interpolate.interp1d(self._hdb.wave_dirs, self._hdb._diffraction_db.data, axis=2) # axis = 2 -> wave directions.
-        self._hdb._diffraction_db.data = f_interp_dir(self._discretization.wave_dirs) # Application of the interpolation.
+
+        if self._hdb.nb_wave_dir > 1:
+            f_interp_dir = interpolate.interp1d(self._hdb.wave_dirs, self._hdb._diffraction_db.data, axis=2) # axis = 2 -> wave directions.
+            self._hdb._diffraction_db.data = f_interp_dir(self._discretization.wave_dirs) # Application of the interpolation.
+        else:
+            self._hdb._diffraction_db.data = np.repeat(self._hdb._diffraction_db.data, 2, axis=2)
 
         # Interpolation of the diffraction loads with respect to the wave frequencies.
         f_interp_freq = interpolate.interp1d(self._hdb.omega, self._hdb._diffraction_db.data, axis=1) # axis = 1 -> wave frequencies.
@@ -401,8 +407,11 @@ class HDB5(object):
         """
 
         # Interpolation of the Froude-Krylov loads with respect to the wave directions.
-        f_interp_dir = interpolate.interp1d(self._hdb.wave_dirs, self._hdb.froude_krylov_db.data, axis=2) # axis = 2 -> wave directions.
-        self._hdb.froude_krylov_db.data = f_interp_dir(self._discretization.wave_dirs)
+        if self._hdb.nb_wave_dir > 1:
+            f_interp_dir = interpolate.interp1d(self._hdb.wave_dirs, self._hdb.froude_krylov_db.data, axis=2) # axis = 2 -> wave directions.
+            self._hdb.froude_krylov_db.data = f_interp_dir(self._discretization.wave_dirs)
+        else:
+            self._hdb.froude_krylov_db.data = np.repeat(self._hdb.froude_krylov_db.data, 2, axis=2)
 
         # Interpolation of the Froude-Krylov loads with respect to the wave frequencies.
         f_interp_freq = interpolate.interp1d(self._hdb.omega, self._hdb.froude_krylov_db.data, axis=1) # axis = 1 -> wave frequencies.

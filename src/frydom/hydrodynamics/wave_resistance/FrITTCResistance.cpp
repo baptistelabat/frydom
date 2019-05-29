@@ -52,8 +52,4 @@ namespace frydom{
         m_environment = GetSystem()->GetEnvironment(); // To reduce the number of indirections during update
     }
 
-    void FrITTCResistance::StepFinalize() {
-        FrForce::StepFinalize();
-    }
-
 }  // end namespace frydom

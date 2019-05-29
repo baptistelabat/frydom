@@ -18,6 +18,8 @@
 
 #include "frydom/mesh/FrTriangleMeshConnected.h"
 
+#include <MathUtils/VectorGeneration.h>
+#include <MathUtils/Constants.h>
 
 
 namespace frydom{
@@ -132,13 +134,13 @@ namespace frydom{
 
         auto mesh = std::make_shared<FrTriangleMeshConnected>();
 
-        auto angles = linspace(0., MU_2PI, nbTheta);
+        auto angles = mathutils::linspace(0., MU_2PI, nbTheta);
 
         std::vector<chrono::ChVector<double>> vertices;
         vertices.reserve((nbR-1) * (nbTheta-1) + 1);
 
         double radius = diameter * 0.5;
-        auto distances = linspace<double>(0, radius, nbR);
+        auto distances = mathutils::linspace<double>(0, radius, nbR);
 
         for (const auto& distance : distances) {
             vertices.emplace_back(chrono::ChVector<double>(xc0 + distance, yc0, GetGridHeight()));

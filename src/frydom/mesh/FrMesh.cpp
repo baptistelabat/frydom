@@ -3,6 +3,7 @@
 //
 
 #include "FrMesh.h"
+#include "frydom/core/math/FrVector.h"
 
 namespace frydom {
     namespace mesh {
@@ -15,7 +16,7 @@ namespace frydom {
             InertialProperties inertialProperties;
 
             inertialProperties.m_mass = density * mesh.GetVolume();
-            inertialProperties.m_cog = OpenMeshPointToMathUtilsVector3d(mesh.GetCOG());
+            inertialProperties.m_cog = mesh.GetCOG();
 
             double intV_x2 = mesh.GetVolumeIntegral(POLY_X2);
             double intV_y2 = mesh.GetVolumeIntegral(POLY_Y2);
@@ -96,11 +97,6 @@ namespace frydom {
 
 
             return inertialProperties;
-        }
-
-        template<typename Scalar=double>
-        mathutils::Vector3d<Scalar> OpenMeshPointToMathUtilsVector3d(const mesh::FrMesh::Point &point) {
-            mathutils::Vector3d<Scalar> vector(point[0], point[1], point[2]);
         }
 
         void meshutils::IncrementalMeshWriter::operator()(const FrMesh &mesh) {
@@ -475,14 +471,26 @@ namespace frydom {
             return GetVolumeIntegral(POLY_1);
         }
 
-        const VectorT<double, 3> FrMesh::GetCOG() const {
-            Point cog;
-            auto volume = GetVolume();
-            cog[0] = GetVolumeIntegral(POLY_X) / volume;
-            cog[1] = GetVolumeIntegral(POLY_Y) / volume;
-            cog[2] = GetVolumeIntegral(POLY_Z) / volume;
+        const Position FrMesh::GetCOG() const {
 
-            return cog;
+            double xb, yb, zb;
+            xb = yb = zb = 0.;
+
+            mesh::FrMesh::Normal Normal;
+
+            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+                Normal = normal(*f_iter);
+                xb += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2);
+                yb += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
+                zb += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
+            }
+
+            xb /= 2. * GetVolume();
+            yb /= 2. * GetVolume();
+            zb /= 2. * GetVolume(); // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
+
+            return {xb,yb,zb};
+
         }
 
         bool FrMesh::HasBoundaries() const {  // FIXME: si le maillage est non conforme mais hermetique, HasBoudaries() renvoie true et donc IsWatertight() false, c'est un faux négatif...

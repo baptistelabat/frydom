@@ -1,3 +1,5 @@
+[![pipeline status](https://frydom-ce.org/ce/frydom/badges/master/pipeline.svg)](https://frydom-ce.org/ce/frydom/commits/master) [![coverage report](https://frydom-ce.org/ce/frydom/badges/master/coverage.svg)](https://frydom-ce.org/ce/frydom/commits/master)
+
 FRyDoM-ce: Flexible and Rigid body Dynamics modeling for Marine operations  (Community Edition)
 ===============================================================================================
 
@@ -31,9 +33,9 @@ You can then follow the installation guide, provided in FRyDoM user guide (see b
 GitLab repository
 -----------------
 
-https://frydom-ce.gitlab.host/ce/frydom
+http://frydom-ce.org/ce/frydom
 
-All users must register at https://register.frydom.org to access the code and the forum. 
+All users must register at http://register.frydom.org to access the code and the forum. 
 If you want to contribute, you will be requested to sign a Contributor License Agreement. 
 Please contact <a href=mailto:francois.rongere@dice-engineering.com>François Rongere</a> for more details.
 
@@ -41,9 +43,9 @@ Please contact <a href=mailto:francois.rongere@dice-engineering.com>François Ro
 Documentations
 --------------
 
-+ Theory manual : https://theory.frydom.org
++ Theory manual : http://theory.frydom.org
 
-+ User guide : https://api.frydom.org
++ User guide : http://api.frydom.org
 
 
 Features

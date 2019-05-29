@@ -33,10 +33,10 @@ namespace frydom {
 
         void FrDynamicCableBase::InitializeSection() {
 
-            m_section->SetAsCircularSection(m_frydomCable->GetDiameter());
+            m_section->SetAsCircularSection(m_frydomCable->GetCableProperties()->GetDiameter());
             m_section->SetBeamRaleyghDamping(m_frydomCable->GetRayleighDamping());
-            m_section->SetDensity(m_frydomCable->GetDensity());
-            m_section->SetYoungModulus(m_frydomCable->GetYoungModulus());
+            m_section->SetDensity(m_frydomCable->GetCableProperties()->GetDensity());
+            m_section->SetYoungModulus(m_frydomCable->GetCableProperties()->GetYoungModulus());
         }
 
 
@@ -128,24 +128,22 @@ namespace frydom {
                                                  m_frydomCable->GetStartingNode()->GetPositionInWorld(NWU));
 
                 // check if the distance is greater than the length
-                bool elastic = distanceBetweenNodes.norm() >= m_frydomCable->GetUnstretchedLength();
+                bool elastic = distanceBetweenNodes.norm() >= m_frydomCable->GetUnstrainedLength();
 
                 // First, creating a catenary line to initialize finite element mesh node positions
                 std::shared_ptr<FrCatenaryLine> catenaryLine;
 
-                if (!elastic) { // distance between the nodes is smaller thant the unstretched length of the line
+                if (!elastic) { // distance between the nodes is smaller thant the unstrained length of the line
                     // Initializing the finite element model so that it fits the catenary line to get close from the
                     // equilibrium solution
                     catenaryLine = make_catenary_line(m_frydomCable->GetStartingNode(), m_frydomCable->GetEndingNode(),
-                                                      m_frydomCable->GetSystem(), elastic,
-                                                      m_frydomCable->GetUnstretchedLength(),
-                                                      m_frydomCable->GetYoungModulus(), m_frydomCable->GetSectionArea(),
-                                                      m_frydomCable->GetLinearDensity(), AIR);
+                                                      m_frydomCable->GetSystem(), m_frydomCable->GetCableProperties(), elastic,
+                                                      m_frydomCable->GetUnstrainedLength(), AIR);
                     catenaryLine->Initialize();
                 }
 
                 double s = 0.;
-                double ds = m_frydomCable->GetUnstretchedLength() / m_frydomCable->GetNumberOfElements();
+                double ds = m_frydomCable->GetUnstrainedLength() / m_frydomCable->GetNumberOfElements();
 
                 // Compute the normal to the plan containing the cable
                 auto AB = internal::Vector3dToChVector(m_frydomCable->GetEndingNode()->GetPositionInWorld(NWU) -
@@ -214,10 +212,10 @@ namespace frydom {
                 if (m_frydomCable->GetBreakingTension() == 0.) {
 
                     if (elastic){
-                        double tensionMax = (distanceBetweenNodes.norm() - m_frydomCable->GetUnstretchedLength()) * m_frydomCable->GetYoungModulus()*m_frydomCable->GetSectionArea()/m_frydomCable->GetUnstretchedLength();
+                        double tensionMax = (distanceBetweenNodes.norm() - m_frydomCable->GetUnstrainedLength()) * m_frydomCable->GetCableProperties()->GetEA()/m_frydomCable->GetUnstrainedLength();
                         m_frydomCable->SetBreakingTension(1.2*tensionMax);
                     } else{
-                        m_frydomCable->SetBreakingTension(1.2*catenaryLine->GetBreakingTension());
+                        m_frydomCable->SetBreakingTension(1.2*catenaryLine->GetMaxTension());
                     }
 
                 }
@@ -229,7 +227,7 @@ namespace frydom {
                     // Remove the catenary line used for initialization
                     m_frydomCable->GetSystem()->RemovePhysicsItem(catenaryLine);
                     m_frydomCable->GetStartingNode()->GetBody()->RemoveExternalForce(catenaryLine->GetStartingForce());
-                    m_frydomCable->GetStartingNode()->GetBody()->RemoveExternalForce(catenaryLine->GetEndingForce());
+                    m_frydomCable->GetEndingNode()->GetBody()->RemoveExternalForce(catenaryLine->GetEndingForce());
                 }
 
             }
@@ -277,18 +275,16 @@ namespace frydom {
 
 
 
-    FrDynamicCable::FrDynamicCable(const std::shared_ptr<frydom::FrNode> startingNode,
-                                     const std::shared_ptr<frydom::FrNode> endingNode, double cableLength,
-                                     double youngModulus, double sectionArea, double linearDensity,
-                                     double rayleighDamping, unsigned int nbElements) : FrCable(
-            startingNode,
-            endingNode,
-            cableLength,
-            youngModulus,
-            sectionArea,
-            linearDensity), m_rayleighDamping(rayleighDamping), m_nbElements(nbElements) {
-            m_chronoCable = std::make_shared<internal::FrDynamicCableBase>(this);
-            SetLogged(true);
+    FrDynamicCable::FrDynamicCable(const std::shared_ptr<frydom::FrNode>& startingNode,
+                                     const std::shared_ptr<frydom::FrNode>& endingNode,
+                                     const std::shared_ptr<FrCableProperties>& properties,
+                                     double unstrainedLength, double rayleighDamping, unsigned int nbElements) :
+            FrCable(startingNode, endingNode, properties, unstrainedLength),
+            m_rayleighDamping(rayleighDamping), m_nbElements(nbElements) {
+
+        m_chronoCable = std::make_shared<internal::FrDynamicCableBase>(this);
+        SetLogged(true);
+
     }
 
 
@@ -309,8 +305,16 @@ namespace frydom {
     }
 
     void FrDynamicCable::SetTargetElementLength(double elementLength) {
-        assert(elementLength>0. && elementLength<GetUnstretchedLength());
-        m_nbElements = static_cast<unsigned int>(int(floor(GetUnstretchedLength() / elementLength)));
+        assert(elementLength>0. && elementLength<GetUnstrainedLength());
+        m_nbElements = static_cast<unsigned int>(int(floor(GetUnstrainedLength() / elementLength)));
+    }
+
+    void FrDynamicCable::SetBreakingTension(double tension) {
+        m_maxTension = tension;
+    }
+
+    double FrDynamicCable::GetBreakingTension() const {
+        return m_maxTension;
     }
 
     void FrDynamicCable::SetDrawElementRadius(double radius) {
@@ -340,16 +344,16 @@ namespace frydom {
 
     Force FrDynamicCable::GetTension(double s, FRAME_CONVENTION fc) const {
 
-        assert(s<=GetUnstretchedLength());
+        assert(s<=GetUnstrainedLength());
         
-        if (s>GetUnstretchedLength()) s = GetUnstretchedLength();
+        if (s>GetUnstrainedLength()) s = GetUnstrainedLength();
 
-        double ds = GetUnstretchedLength() / GetNumberOfElements();
+        double ds = GetUnstrainedLength() / GetNumberOfElements();
         double a = s/ds;
         auto index = int(floor(a));
         double eta = 2.*(a - index) - 1.;
 
-        if (s == GetUnstretchedLength()) {
+        if (s == GetUnstrainedLength()) {
             index = GetNumberOfElements()-1;
             eta = 1;
         }
@@ -364,14 +368,14 @@ namespace frydom {
 
     Position FrDynamicCable::GetNodePositionInWorld(double s, FRAME_CONVENTION fc) const {
 
-        assert(s<=GetUnstretchedLength());
+        assert(s<=GetUnstrainedLength());
 
-        double ds = GetUnstretchedLength() / GetNumberOfElements();
+        double ds = GetUnstrainedLength() / GetNumberOfElements();
         double a = s/ds;
         auto index = int(floor(a));
         double eta = 2.*(a - index) - 1.;
 
-        if (s == GetUnstretchedLength()) {
+        if (s == GetUnstrainedLength()) {
             index = GetNumberOfElements()-1;
             eta = 1;
         }
@@ -384,57 +388,28 @@ namespace frydom {
 
     }
 
-    double FrDynamicCable::GetStretchedLength() const {
-        double cl = 0.;
-        int n = 1000;
-
-        double ds = GetUnstretchedLength() / (n-1);
-        auto pos_prev = GetNodePositionInWorld(0., NWU);
-
-        for (uint i=0; i<n; ++i) {
-            auto s = i*ds;
-            auto pos = GetNodePositionInWorld(s, NWU);
-            cl += (pos - pos_prev).norm();
-            pos_prev = pos;
-        }
-        return cl;
-    }
-
-    void FrDynamicCable::InitializeLog() {
+    void FrDynamicCable::AddFields() {
         if (IsLogged()) {
-
-            // Build the path to the catenary line log
-            auto logPath = m_system->GetPathManager()->BuildPath(this, fmt::format("{}_{}.csv",GetTypeName(),GetShortenUUID()));
 
             // Add the fields to be logged here
             m_message->AddField<double>("time", "s", "Current time of the simulation",
                                         [this]() { return m_system->GetTime(); });
 
-            m_message->AddField<double>("Stretched Length", "m", "Stretched length of the catenary line",
-                                        [this]() { return GetStretchedLength(); });
+            m_message->AddField<double>("StrainedLength", "m", "Strained length of the catenary line",
+                                        [this]() { return GetStrainedLength(); });
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("Starting Node Tension","N", fmt::format("Starting node tension in world reference frame in {}",c_logFrameConvention),
-                     [this]() {return GetTension(0.,c_logFrameConvention);});
+                    ("StartingNodeTension","N", fmt::format("Starting node tension in world reference frame in {}",GetLogFrameConvention()),
+                     [this]() {return GetTension(0.,GetLogFrameConvention());});
 
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                    ("Ending Node Tension","N", fmt::format("Ending node tension in world reference frame in {}",c_logFrameConvention),
-                     [this]() { Eigen::Matrix<double, 3, 1> temp = -GetTension(GetUnstretchedLength(), c_logFrameConvention);
+                    ("EndingNodeTension","N", fmt::format("Ending node tension in world reference frame in {}",GetLogFrameConvention()),
+                     [this]() { Eigen::Matrix<double, 3, 1> temp = -GetTension(GetUnstrainedLength(), GetLogFrameConvention());
                         return temp;});
 
             //TODO : logger la position de la ligne pour un ensemble d'abscisses curvilignes?
 
-            // Initialize the message
-            FrObject::InitializeLog(logPath);
-
         }
-    }
-
-    void FrDynamicCable::StepFinalize() {
-        FrFEAMesh::StepFinalize();
-
-        // Serialize and send the log message
-        FrObject::SendLog();
     }
 
     void FrDynamicCable::SetStartingHingeType(FrDynamicCable::HingeType type) {
@@ -471,12 +446,15 @@ namespace frydom {
     }
 
     std::shared_ptr<FrDynamicCable>
-    make_dynamic_cable(const std::shared_ptr<FrNode> &startingNode, const std::shared_ptr<FrNode> &endingNode,
-                       FrOffshoreSystem *system, double unstretchedLength, double youngModulus, double sectionArea,
-                       double linearDensity, double rayleighDamping, unsigned int nbElements) {
+    make_dynamic_cable(const std::shared_ptr<FrNode>& startingNode,
+                       const std::shared_ptr<FrNode>& endingNode,
+                       FrOffshoreSystem *system,
+                       const std::shared_ptr<FrCableProperties>& properties,
+                       double unstrainedLength,
+                       double rayleighDamping,
+                       unsigned int nbElements) {
 
-        auto Cable = std::make_shared<FrDynamicCable>(startingNode, endingNode, unstretchedLength, youngModulus,
-                                                      sectionArea, linearDensity, rayleighDamping, nbElements);
+        auto Cable = std::make_shared<FrDynamicCable>(startingNode, endingNode, properties, unstrainedLength, rayleighDamping, nbElements);
 
         system->Add(Cable);
         return Cable;

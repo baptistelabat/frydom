@@ -18,11 +18,13 @@
 
 namespace frydom {
 
-
+    // Forward declarations
+    class FrLinearActuator;
+    class FrLinearActuator;
 
     /**
      * \class FrPrismaticLink
-     * \brief Class for defining a prismatic link.
+     * \brief Class for defining a prismatic link : allows translation along Z axis
      */
     class FrPrismaticLink : public FrLink {
 
@@ -54,10 +56,8 @@ namespace frydom {
         double GetRestLength() const;
 
 
-
         /// Get the direction of the link in world woordinate system
         const Direction GetLinkDirectionInWorld(FRAME_CONVENTION fc) const;
-
 
         /// Get the link position with respect to the rest length
         double GetLinkPosition() const;
@@ -74,17 +74,17 @@ namespace frydom {
         /// Get the power delivered by the force in the link, along the z axis of the link
         double GetLinkPower() const override;
 
-        /// Initialize the link
-        void Initialize() override;
-
         /// Update the link
         void Update(double time) override;
 
-        /// Called after every time step, only once
-        void StepFinalize() override;
-
         /// Compute the link force. Here this is essentially a torque with a default spring damper.
         void UpdateForces(double time);
+
+        /// Motorize the link to make it driven
+        FrLinearActuator* Motorize(ACTUATOR_CONTROL control);
+
+        /// Lock the link to its current position
+        void Clamp();
 
     private:
 
@@ -92,7 +92,6 @@ namespace frydom {
         void UpdateCache() override;
 
     };
-
 
     /// Helper function to make it easy to link two nodes by a prismatic link
     std::shared_ptr<FrPrismaticLink> make_prismatic_link(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);
