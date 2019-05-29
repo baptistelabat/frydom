@@ -37,7 +37,7 @@ int main() {
     movingBody->SetColor(CornflowerBlue);
 
     enum demo_cases {DistanceBetweenPoints, DistanceToAxis, PointOnPlane, PointOnLine, PlaneOnPlane, Perpendicular, Parallel };
-    demo_cases featuredCase = PointOnLine;
+    demo_cases featuredCase = Perpendicular;
 
     switch (featuredCase) {
         case DistanceBetweenPoints: {
@@ -48,7 +48,7 @@ int main() {
              * of the sphere, so that the point on the box stay on the sphere surface.
              */
 
-            double distance = 10.;
+            double distance = 5.;
 
             // Definition the fixed body, node and point
             makeItSphere(fixedBody, distance, 1000);
@@ -63,7 +63,7 @@ int main() {
             // Definition of the moving body, node and point
             makeItBox(movingBody, 10, 5, 1, 1000);
 //            movingBody->AllowCollision(false);
-            movingBody->SetPosition(Position(-20,0,0), NWU);
+            movingBody->SetPosition(Position(-20,-20,0), NWU);
 
             auto movingNode = movingBody->NewNode();
             movingNode->TranslateInBody(5, 2.5, 0.5, NWU);
@@ -87,7 +87,7 @@ int main() {
              * cylinder is set at the imposed distance in order to visualize easily the constraint.
              */
 
-            double distance = 10.;
+            double distance = 5.;
 
             // Definition the fixed body, node and point
             makeItCylinder(fixedBody, distance, 20, 100);
@@ -130,7 +130,7 @@ int main() {
             // Definition the fixed body, node and point
             makeItBox(fixedBody, 50, 50, 1, 100);
 //            fixedBody->AllowCollision(false);
-            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(45,NWU);
+            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(25,NWU);
             fixedBody->RotateAroundCOG(fixedRotation, NWU);
 
             auto fixedNode = fixedBody->NewNode();
@@ -140,12 +140,12 @@ int main() {
             auto fixedPlane = std::make_shared<FrPlane>(fixedNode,ZAXIS);
 
             // Definition of the moving body, node and point
-            makeItSphere(movingBody, 5, 100);
+            makeItSphere(movingBody, 2.5, 100);
 //            movingBody->AllowCollision(false);
             movingBody->SetPosition(Position(-10,0,10), NWU);
 
             auto movingNode = movingBody->NewNode();
-            movingNode->TranslateInBody(0,0,-5, NWU);
+            movingNode->TranslateInBody(0,0,-2.5, NWU);
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
@@ -156,8 +156,8 @@ int main() {
             auto constraint = make_constraint_point_on_plane(fixedPlane, movingPoint, &system, distance);
 
             auto freeBody = system.NewBody();
-            makeItSphere(freeBody, 5, 100);
-            freeBody->SetPosition(Position(10,0,7.5), NWU);
+            makeItSphere(freeBody, 2.5, 100);
+            freeBody->SetPosition(Position(10,0,3.5), NWU);
             freeBody->SetColor(DarkSeaGreen);
 
             break;
@@ -184,6 +184,7 @@ int main() {
             // Definition of the moving body, node and point
             makeItSphere(movingBody, 1.5, 100);
             movingBody->AllowCollision(false);
+            movingBody->SetPosition(Position(0,15,15),NWU);
 
             auto movingNode = movingBody->NewNode();
             movingNode->ShowAsset(true);
@@ -220,7 +221,7 @@ int main() {
             // Definition of the moving body, node and point
             makeItBox(movingBody, 10, 5, 1, 100);
             movingBody->AllowCollision(false);
-//            movingBody->SetPosition(Position(10,0,0), NWU);
+            movingBody->SetPosition(Position(0,15,0), NWU);
 
             auto movingNode = movingBody->NewNode();
             movingNode->ShowAsset(true);
@@ -307,12 +308,12 @@ int main() {
 
     // DoFullAssembly helps the bodies to adjust their position according to the constraints applied on them. It requires
     // constraints to be initialized and may not work with external forces, cables, etc. applied on bodies.
-//    system.Initialize();
-//    system.GetChronoSystem()->DoFullAssembly();
+    system.Initialize();
+    system.GetChronoSystem()->DoFullAssembly();
 
     // Run the simulation (or visualize the assembly)
     system.SetTimeStep(0.005);
-    system.RunInViewer(0, 20, false);
+    system.RunInViewer(5, 20, false);
 //    system.Visualize(50, false);
 
     return 0;

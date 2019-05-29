@@ -18,6 +18,7 @@ set(DEMOS
         demo_MooringLines
         demo_NonLinearHydrostatics
         demo_Constraints
+        demo_Links
         bench_SphereDecay
         bench_SphereRegular
         bench_SphereIrregular
