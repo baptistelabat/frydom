@@ -100,9 +100,6 @@ namespace frydom {
         /// Initialization of the force model
         void Initialize() override;
 
-        /// Methods to be applied at the end of each time step
-        void StepFinalize() override;
-
     private:
 
         /// Update the force

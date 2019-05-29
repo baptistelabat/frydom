@@ -12,16 +12,17 @@ set(DEMOS
         demo_Hydrodynamic
         demo_Morison
         demo_Cable
-        demo_DynamicCable
-        demo_Hub_installation
-	demo_WNL_and_NL_hydrostatics
-	demo_Cylinder
+        demo_Hub_Installation
+        demo_langlee_FO3F
+        demo_FOSWEC_FlapDecay
+        demo_MooringLines
+        demo_NonLinearHydrostatics
+        demo_Constraints
         bench_SphereDecay
         bench_SphereRegular
-	bench_SphereIrregular
+        bench_SphereIrregular
         bench_DTMB5512_captive
         bench_Cables
-	bench_Ellipsoid_OMAE2014
         )
 
 
@@ -70,6 +71,7 @@ configure_file(../data/bench/DTMB5512/DTMB5512.obj . COPYONLY)
 configure_file(../data/bench/DTMB5512/DTMB5512.hdb5 . COPYONLY)
 
 configure_file(../data/barge/Barge_HDB.h5 . COPYONLY)
+configure_file(../data/barge/barge.obj . COPYONLY)
 
 configure_file(../data/platform/Platform_HDB_Without_drift.hdb5 . COPYONLY)
 
@@ -92,15 +94,17 @@ configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPYONLY)
 configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPYONLY)
 configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPYONLY)
 
-configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_2880_faces.obj . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/elipsoid_scaled_mean_position.obj . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4200_faces.obj . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2880_faces.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4200_faces.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_634_faces_with_sym.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_1416_faces_with_sym.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2774_faces_with_sym.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_2880_faces_with_sym_mean_position.hdb5 . COPYONLY)
-configure_file(../data/bench/Ellipsoid_OMAE2014/Ellipsoid_4500_faces_WAMIT_mesh_sym_mean_position.hdb5 . COPYONLY)
+configure_file(../data/Langlee/Barge.obj . COPYONLY)
+configure_file(../data/Langlee/Flap1_fuse.obj . COPYONLY)
+configure_file(../data/Langlee/Flap2_fuse.obj . COPYONLY)
+configure_file(../data/Langlee/Langlee.hdb5 . COPYONLY)
 
+configure_file(../data/FOSWEC/FOSWEC.hdb5 . COPYONLY)
+configure_file(../data/FOSWEC/FullFlap_mesh.obj . COPYONLY)
+configure_file(../data/FOSWEC/FullPlatform.obj . COPYONLY)
+configure_file(../data/Cylinder/Free_cylinder_2900_panels.obj . COPYONLY)
+
+configure_file(../data/FPSO/fpso_YC_modif_Coarse.obj . COPYONLY)
+configure_file(../data/FPSO/fpso_YC_modif_Medium.obj . COPYONLY)
+configure_file(../data/FPSO/fpso_YC_modif_Fine.obj . COPYONLY)
 

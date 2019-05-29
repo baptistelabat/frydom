@@ -10,6 +10,7 @@ set(FRYDOM_SRC_FILES "")
 set(subdirs
         asset
         cable
+        collision
         core
         environment
         hydrodynamics
@@ -85,5 +86,3 @@ message(STATUS "FRyDoM_INCLUDE_DIRECTORIES : ${INC}")
 
 
 # TODO: voir si on passe ce CMakeLists.txt dans le repertoire parent pour ne pas avoir a faire .. dans l'include
-
-

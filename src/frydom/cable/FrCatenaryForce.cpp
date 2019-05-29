@@ -36,16 +36,8 @@ namespace frydom {
         }
 
         // Set the tension in the world reference frame and NWU frame convention
-        m_chronoForce->SetForceInWorldNWU(ForceInWorld);
+        SetForceTorqueInWorldAtPointInBody(ForceInWorld, Torque(), relpos, NWU);
 
-        // Set the torque in body reference frame and NWU frame convention
-        // FIXME: Calculer le moment par rapport au point de reference du corps ?
-        m_chronoForce->SetTorqueInBodyNWU(relpos.cross(m_body->ProjectVectorInBody(ForceInWorld,NWU)));
-
-    }
-
-    void FrCatenaryForce::StepFinalize() {
-        FrForce::StepFinalize();
     }
 
 

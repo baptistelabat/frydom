@@ -16,6 +16,10 @@ using namespace frydom;
 int main(int argc, char* argv[]) {
 
     /**
+     * This demo features two cases of Morison loads applied on a structure. The first one is a basic horizontal cylinder.
+     * Only one Morison element is needed to represent the Morison loads. The second structure is a semi-submersible platform
+     * which requires the introduction of one element per underwater braces. All coefficients (added mass, drag and friction)
+     * are given for the cylinder, but only drag coefficients are specified for the platform.
      *
      */
 
@@ -82,7 +86,6 @@ int main(int argc, char* argv[]) {
 
         // Instantiate a Morison Force, using a Morison model, and add it to the cylinder
         auto MorisonForce = make_morison_force(MorisonModel, cylinder);
-        MorisonForce->SetLogged(true);
 
         // Make the asset (a vector) for the Morison force visible
         MorisonForce->ShowAsset(true);

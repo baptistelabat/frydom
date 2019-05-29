@@ -46,6 +46,27 @@ namespace frydom {
                 case SPHERICAL:
                     ChangeLinkType(ChronoLinkType::SPHERICAL);
                     break;
+                case PERPENDICULAR:
+                    ChangeLinkType(ChronoLinkType::PERPEND);
+                    break;
+                case PARALLEL:
+                    ChangeLinkType(ChronoLinkType::PARALLEL);
+                    break;
+                case PLANEONPLANE:
+                    ChangeLinkType(ChronoLinkType::PLANEPLANE);
+                    break;
+//                case DISTANCETOAXIS:
+//                    ChangeLinkType(ChronoLinkType::);
+//                    break;
+                case POINTONLINE:
+                    ChangeLinkType(ChronoLinkType::POINTLINE);
+                    break;
+                case POINTONPLANE:
+                    ChangeLinkType(ChronoLinkType::POINTPLANE);
+                    break;
+//                case POINTONSPLINE:
+//                    ChangeLinkType(ChronoLinkType::);
+//                    break;
             }
         }
 
@@ -99,9 +120,11 @@ namespace frydom {
 
         }
 
-        void FrLinkLockBase::SetMask(FrBodyDOFMask* vmask) {
-            chrono::ChLinkMaskLF chronoMask;
-            chronoMask.SetLockMask(
+        void FrLinkLockBase::SetMask(FrDOFMask* vmask) {
+
+            if (vmask->GetLinkType() == LINK_TYPE::CUSTOM) {
+                chrono::ChLinkMaskLF chronoMask;
+                chronoMask.SetLockMask(
                     vmask->GetLock_X(),  // x
                     vmask->GetLock_Y(),  // y
                     vmask->GetLock_Z(),  // z
@@ -109,8 +132,12 @@ namespace frydom {
                     vmask->GetLock_Rx(), // e1
                     vmask->GetLock_Ry(), // e2
                     vmask->GetLock_Rz()  // e3
-            );
-            BuildLink(&chronoMask);
+                );
+                BuildLink(&chronoMask);
+            } else {
+                this->SetLinkType(vmask->GetLinkType());
+            }
+
         }
 
         void FrLinkLockBase::SetLinkForceOnBody1InFrame2AtOrigin1(const Force &force) {
@@ -141,16 +168,19 @@ namespace frydom {
      *
      */
 
-    FrLink::FrLink(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2,
+    FrLink::FrLink(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2,
                      FrOffshoreSystem *system) :
                      FrLinkBase(node1, node2, system),
                      m_frame2WRT1_reference() {
         m_chronoLink = std::make_shared<internal::FrLinkLockBase>(this);
+        SetLogged(true);
+        m_actuator = nullptr;
     }
 
 
     void FrLink::SetMarkers(FrNode* node1, FrNode* node2) {
-        m_chronoLink->ReferenceMarkers(node1->m_chronoMarker.get(), node2->m_chronoMarker.get());
+        // IMPORTANT : in FRyDoM the first node is the master and the second one the slave, as opposed to Chrono !!!
+        m_chronoLink->ReferenceMarkers(node2->m_chronoMarker.get(), node1->m_chronoMarker.get());
     }
 
     std::shared_ptr<chrono::ChLink> FrLink::GetChronoLink() {
@@ -319,7 +349,7 @@ namespace frydom {
     const Torque FrLink::GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const { // TODO : tester
         auto markerFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
 
-        auto torqueAtMarker1_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionForceOnMarker1(fc), fc);
+        auto torqueAtMarker1_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionTorqueOnMarker1(fc), fc);
         auto COG_M1_ref = markerFrame_WRT_COG.GetPosition(fc);
         auto force_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetLinkReactionForceOnMarker1(fc), fc);
 
@@ -329,7 +359,7 @@ namespace frydom {
     const Torque FrLink::GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const { // TODO : tester
         auto markerFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
 
-        auto torqueAtMarker2_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionForceOnMarker2(fc), fc);
+        auto torqueAtMarker2_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionTorqueOnMarker2(fc), fc);
         auto COG_M2_ref = markerFrame_WRT_COG.GetPosition(fc);
         auto force_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetLinkReactionForceOnMarker2(fc), fc);
 
@@ -337,6 +367,7 @@ namespace frydom {
     }
 
     void FrLink::Initialize() {
+
         SetMarkers(m_node1.get(), m_node2.get());
     }
 
@@ -408,78 +439,179 @@ namespace frydom {
              + GetLinkTorqueOnBody2InFrame1AtOrigin2(NWU).dot(GetAngularVelocityOfMarker2WRTMarker1(NWU));
     }
 
+    void FrLink::AddFields() {
+        m_message->AddField<double>("time", "s", "Current time of the simulation",
+                                    [this]() { return m_system->GetTime(); });
+
+        // Marker Position
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("Marker2PositionWRTMarker1","m", fmt::format("Marker 2 position relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetMarker2PositionWRTMarker1(GetLogFrameConvention());});
+        // Marker Velocity
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("VelocityOfMarker2WRTMarker1","m/s", fmt::format("Marker 2 velocity relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetVelocityOfMarker2WRTMarker1(GetLogFrameConvention());});
+        // Marker Acceleration
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("AccelerationOfMarker2WRTMarker1","m/s^2", fmt::format("Marker 2 acceleration relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetAccelerationOfMarker2WRTMarker1(GetLogFrameConvention());});
+
+        // Marker Position
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("Marker2OrientationWRTMarker1","rad", fmt::format("Marker 2 orientation relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {double phi, theta, psi; GetMarker2OrientationWRTMarker1().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
+                    return Position(phi, theta, psi);});
+        // Marker Velocity
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("AngularVelocityOfMarker2WRTMarker1","rad/s", fmt::format("Marker 2 angular velocity relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetAngularVelocityOfMarker2WRTMarker1(GetLogFrameConvention());});
+        // Marker Acceleration
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("AngularAccelerationOfMarker2WRTMarker1","m/s^2", fmt::format("Marker 2 angular acceleration relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetAngularAccelerationOfMarker2WRTMarker1(GetLogFrameConvention());});
+
+
+        // Force
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkReactionForceOnBody1","N", fmt::format("link reaction force applied at marker 1, expressed in body 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetLinkReactionForceOnBody1(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkReactionForceOnBody2","N", fmt::format("link reaction force applied at marker 2, expressed in body 2 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetLinkReactionForceOnBody2(GetLogFrameConvention());});
+        // Torque
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkReactionTorqueOnBody1AtCOG","Nm", fmt::format("link reaction torque at CoG applied at marker 1, expressed in body 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetLinkReactionTorqueOnBody1AtCOG(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkReactionTorqueOnBody2AtCOG","Nm", fmt::format("link reaction torque at CoG applied at marker 2, expressed in body 2 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetLinkReactionTorqueOnBody2AtCOG(GetLogFrameConvention());});
+
+        // Power
+        m_message->AddField<double>
+                ("LinkPower","kW", "power delivered in a FrLink", [this]() {return 0.001*GetLinkPower();});
+
+        // Motor
+        if (m_actuator) {
+            m_message->AddField<double>
+                    ("MotorPower","kW", "power delivered by the motor", [this]() {return m_actuator->GetMotorPower();});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("MotorForceInBody1","N", fmt::format("Force applied by the motor on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+                     [this]() {return m_actuator->GetMotorForceInBody1(GetLogFrameConvention());});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("MotorForceInBody2","N", fmt::format("Force applied by the motor on body 1, in body 2 reference frame {}", GetLogFrameConvention()),
+                     [this]() {return m_actuator->GetMotorForceInBody2(GetLogFrameConvention());});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("MotorTorqueAtCOGInBody1(","Nm", fmt::format("Torque applied by the motor at COG on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+                     [this]() {return m_actuator->GetMotorTorqueAtCOGInBody1(GetLogFrameConvention());});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("MotorTorqueAtCOGInBody2(","Nm", fmt::format("Torque applied by the motor at COG on body 2, in body 2 reference frame {}", GetLogFrameConvention()),
+                     [this]() {return m_actuator->GetMotorTorqueAtCOGInBody2(GetLogFrameConvention());});
+
+        }
+
+    }
+
+    void FrLink::InitializeWithBodyDOFMask(FrDOFMask *mask) {
+        m_chronoLink->SetMask(mask);
+    }
+
+    FrFrame FrLink::GetConstraintViolation() const {
+        return m_chronoLink->GetConstraintViolation();
+    }
+
+    void FrLink::UpdateCache() {}
 
     /*
-     * FrBodyDOFMask definitions
+     * FrDOFMask definitions
      */
 
-    FrBodyDOFMask::FrBodyDOFMask() = default;
+    FrDOFMask::FrDOFMask() = default;
 
-    void FrBodyDOFMask::SetLock_X(bool lock) { m_xLocked = lock; }
+    void FrDOFMask::SetLock_X(bool lock) {
+        m_xLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::SetLock_Y(bool lock) { m_yLocked = lock; }
+    void FrDOFMask::SetLock_Y(bool lock) {
+        m_yLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::SetLock_Z(bool lock) { m_zLocked = lock; }
+    void FrDOFMask::SetLock_Z(bool lock) {
+        m_zLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::SetLock_Rx(bool lock) { m_RxLocked = lock; }
+    void FrDOFMask::SetLock_Rx(bool lock) {
+        m_RxLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::SetLock_Ry(bool lock) { m_RyLocked = lock; }
+    void FrDOFMask::SetLock_Ry(bool lock) {
+        m_RyLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::SetLock_Rz(bool lock) { m_RzLocked = lock; }
+    void FrDOFMask::SetLock_Rz(bool lock) {
+        m_RzLocked = lock;
+        m_linkType = LINK_TYPE::CUSTOM;
+    }
 
-    void FrBodyDOFMask::LockXZPlane() {
+    void FrDOFMask::LockXZPlane() {
         MakeItFree();
         SetLock_Y(true);
         SetLock_Rx(true);
         SetLock_Rz(true);
     }
 
-    void FrBodyDOFMask::LockXYPlane() {
+    void FrDOFMask::LockXYPlane() {
         MakeItFree();
         SetLock_Z(true);
         SetLock_Rx(true);
         SetLock_Ry(true);
     }
 
-    bool FrBodyDOFMask::GetLock_X() const { return m_xLocked; }
+    bool FrDOFMask::GetLock_X() const { return m_xLocked; }
 
-    bool FrBodyDOFMask::GetLock_Y() const { return m_yLocked; }
+    bool FrDOFMask::GetLock_Y() const { return m_yLocked; }
 
-    bool FrBodyDOFMask::GetLock_Z() const { return m_zLocked; }
+    bool FrDOFMask::GetLock_Z() const { return m_zLocked; }
 
-    bool FrBodyDOFMask::GetLock_Rx() const { return m_RxLocked; }
+    bool FrDOFMask::GetLock_Rx() const { return m_RxLocked; }
 
-    bool FrBodyDOFMask::GetLock_Ry() const { return m_RyLocked; }
+    bool FrDOFMask::GetLock_Ry() const { return m_RyLocked; }
 
-    bool FrBodyDOFMask::GetLock_Rz() const { return m_RzLocked; }
+    bool FrDOFMask::GetLock_Rz() const { return m_RzLocked; }
 
-    bool FrBodyDOFMask::HasLockedDOF() const {
+    bool FrDOFMask::HasLockedDOF() const {
         return m_xLocked || m_yLocked || m_zLocked || m_RxLocked || m_RyLocked || m_RzLocked;
     }
 
-    bool FrBodyDOFMask::IsFree() const {
+    bool FrDOFMask::IsFree() const {
         return !HasLockedDOF();
     }
 
-    void FrBodyDOFMask::MakeItFree() {
+    void FrDOFMask::MakeItFree() {
         m_xLocked = false;
         m_yLocked = false;
         m_zLocked = false;
         m_RxLocked = false;
         m_RyLocked = false;
         m_RzLocked = false;
+        m_linkType = LINK_TYPE::FREE_LINK;
     }
 
-    void FrBodyDOFMask::MakeItLocked() {
+    void FrDOFMask::MakeItLocked() {
         m_xLocked = true;
         m_yLocked = true;
         m_zLocked = true;
         m_RxLocked = true;
         m_RyLocked = true;
         m_RzLocked = true;
+        m_linkType = LINK_TYPE::FIXED_LINK;
     }
 
-    unsigned int FrBodyDOFMask::GetNbLockedDOF() const {
+    unsigned int FrDOFMask::GetNbLockedDOF() const {
         unsigned int nb = 0;
         if (m_xLocked) nb++;
         if (m_yLocked) nb++;
@@ -490,18 +622,50 @@ namespace frydom {
         return nb;
     }
 
-    unsigned int FrBodyDOFMask::GetNbFreeDOF() const {
+    unsigned int FrDOFMask::GetNbFreeDOF() const {
         return 6 - GetNbLockedDOF();
     }
 
-    void FrLink::InitializeWithBodyDOFMask(FrBodyDOFMask *mask) {
-        m_chronoLink->SetMask(mask);
+    void FrDOFMask::SetLinkType(frydom::LINK_TYPE linkType) {
+        m_linkType = linkType;
+
+        switch(m_linkType) {
+            case LINK_TYPE::FREE_LINK:
+                SetLock(false, false, false, false, false, false);
+                break;
+            case LINK_TYPE::FIXED_LINK:
+                SetLock(true, true, true, true, true, true);
+                break;
+            case LINK_TYPE::REVOLUTE:
+                SetLock(true, true, true, true, true, false);
+                break;
+            case LINK_TYPE::PRISMATIC:
+                SetLock(true, true, false, true, true, true);
+                break;
+            case LINK_TYPE::CYLINDRICAL:
+                SetLock(true, true, false, true, true, false);
+                break;
+            case LINK_TYPE::SPHERICAL:
+                SetLock(true, true, true, false ,false, false);
+                break;
+            default:
+                SetLock(false, false, false, false, false, false);
+                break;
+        }
     }
 
-    FrFrame FrLink::GetConstraintViolation() const {
-        return m_chronoLink->GetConstraintViolation();
+    LINK_TYPE FrDOFMask::GetLinkType() const {
+        return m_linkType;
     }
 
-    void FrLink::UpdateCache() {}
+    void FrDOFMask::SetLock(bool xLocked, bool yLocked, bool zLocked, bool rxLocked, bool ryLocked, bool rzLocked) {
+        m_xLocked = xLocked;
+        m_yLocked = yLocked;
+        m_zLocked = zLocked;
+        m_RxLocked = rxLocked;
+        m_RyLocked = ryLocked;
+        m_RzLocked = rzLocked;
+    }
+
 
 }  // end namespace frydom

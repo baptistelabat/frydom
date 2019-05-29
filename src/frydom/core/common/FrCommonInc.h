@@ -22,5 +22,6 @@
 #include "FrFEAMesh.h"
 #include "FrRotation.h"
 #include "FrUnits.h"
+#include "FrGeometrical.h"
 
 #endif //FRYDOM_FRCOMMONINC_H

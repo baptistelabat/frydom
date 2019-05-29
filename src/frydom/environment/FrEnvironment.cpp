@@ -15,7 +15,7 @@
 
 #include "frydom/core/math/functions/ramp/FrLinearRampFunction.h"
 #include "frydom/core/FrOffshoreSystem.h"
-#include "time/FrTimeZone.h"
+#include "time/FrTimeServices.h"
 #include "frydom/environment/ocean/FrOcean.h"
 #include "ocean/freeSurface/FrFreeSurface.h"
 #include "ocean/seabed/FrSeabed.h"
@@ -32,7 +32,7 @@ namespace frydom {
         m_system = system;
 
         m_geographicServices    = std::make_unique<FrGeographicServices>();
-        m_timeZone              = std::make_unique<FrTimeZone>();
+        m_timeServices              = std::make_unique<FrTimeServices>();
         m_ocean                 = std::make_unique<FrOcean>(this);
         m_atmosphere            = std::make_unique<FrAtmosphere>(this);
 
@@ -92,7 +92,7 @@ namespace frydom {
 
     int FrEnvironment::GetYear() const {
         /// Get the UTC time to obtain the year
-        auto lt = GetTimeZone()->GetUTCTime();
+        auto lt = GetTimeServices()->GetUTCTime();
         date::year_month_day ymd{date::floor<date::days>(lt)};
         return int(ymd.year());
     }
@@ -102,17 +102,16 @@ namespace frydom {
     }
 
     void FrEnvironment::ShowSeabed(bool show) {
-//        GetOcean()->GetSeabed()->
-        // TODO
+        GetOcean()->ShowSeabed(show);
     }
 
-    FrTimeZone *FrEnvironment::GetTimeZone() const {return m_timeZone.get();}
+    FrTimeServices *FrEnvironment::GetTimeServices() const {return m_timeServices.get();}
 
     void FrEnvironment::Update(double time) {
 //        m_timeRamp->Update(time);
         m_ocean->Update(time);
         m_atmosphere->Update(time);
-        m_timeZone->Update(time);
+        m_timeServices->Update(time);
     }
 
     void FrEnvironment::Initialize() {
@@ -120,7 +119,7 @@ namespace frydom {
 
         m_ocean->Initialize();
         m_atmosphere->Initialize();
-        m_timeZone->Initialize();
+        m_timeServices->Initialize();
     }
 
     void FrEnvironment::StepFinalize() {

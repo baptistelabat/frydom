@@ -14,6 +14,7 @@
 #define FRYDOM_FRBODY_H
 
 #include "chrono/physics/ChBodyAuxRef.h"
+#include "chrono/solver/ChVariables.h"
 
 #include "frydom/core/common/FrObject.h"
 #include "frydom/core/FrOffshoreSystem.h"
@@ -26,8 +27,9 @@
 #include "frydom/cable/FrDynamicCable.h"
 
 // TODO : voir si il n'y a pas moyen de passer ces includes
-#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrAddedMassBase.h"
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModelBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
+#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesBEMBodyBase.h"
 
 
 #define DEFAULT_MAX_SPEED (float)10.
@@ -43,15 +45,21 @@ namespace frydom {
 
     namespace internal {
 
+        // Forward declarations
+
         /// Base class inheriting from chrono ChBodyAuxRef
         /// This class must not be used by external FRyDoM users. It is used in composition rule along with the FrBody_ FRyDoM class
         struct FrBodyBase : public chrono::ChBodyAuxRef {
 
             FrBody *m_frydomBody;                      ///< pointer to the FrBody containing this bodyBase
 
+            std::shared_ptr<chrono::ChVariables> m_variables_ptr;
+
             /// Constructor of the bodyBase
             /// \param body body containing this bodyBase
             explicit FrBodyBase(FrBody *body);
+
+            FrBodyBase(const FrBodyBase& other);
 
             /// Initial setup of the bodyBase, called from chrono, call the Initialize of the body
             void SetupInitial() override;
@@ -71,6 +79,46 @@ namespace frydom {
             /// Removes an asset given its shared pointer
             void RemoveAsset(std::shared_ptr<chrono::ChAsset> asset);
 
+            //
+            // STATE FUNCTION
+            //
+
+            void IntToDescriptor(const unsigned int off_v,
+                                 const chrono::ChStateDelta& v,
+                                 const chrono::ChVectorDynamic<>& R,
+                                 const unsigned int off_L,
+                                 const chrono::ChVectorDynamic<>& L,
+                                 const chrono::ChVectorDynamic<>& Qc) override;
+
+            void IntFromDescriptor(const unsigned int off_v,
+                                   chrono::ChStateDelta& v,
+                                   const unsigned int off_L,
+                                   chrono::ChVectorDynamic<>& L) override;
+
+            //
+            // SOLVER FUNCTIONS
+            //
+
+            chrono::ChVariables& Variables() override;
+
+            chrono::ChVariables* GetVariables1() override { return &*m_variables_ptr.get(); }
+
+            void SetVariables(const std::shared_ptr<chrono::ChVariables> new_variables);
+
+            void VariablesFbReset() override;
+
+            void VariablesFbLoadForces(double factor = 1) override;
+
+            void VariablesQbLoadSpeed() override;
+
+            void VariablesFbIncrementMq() override;
+
+            void VariablesQbSetSpeed(double step =0) override;
+
+            void VariablesQbIncrementPosition(double step) override;
+
+            void InjectVariables(chrono::ChSystemDescriptor& mdescriptor) override;
+
         };
 
     }  // end namespace internal
@@ -82,9 +130,10 @@ namespace frydom {
     class FrRotation;
     class FrGeographicCoord;
     class FrAsset;
-    class FrBodyDOFMask;
+    class FrDOFMask;
     class FrLink;
     class FrTriangleMeshConnected;
+    class FrCollisionModel;
 
     /// Main class for a FRyDoM rigid body
     /**
@@ -109,7 +158,7 @@ namespace frydom {
         CONTACT_TYPE m_contactType = CONTACT_TYPE::SMOOTH_CONTACT; ///< The contact method that has to be consistent with that of the FrOffshoreSystem
 
 
-        std::unique_ptr<FrBodyDOFMask> m_DOFMask;
+        std::unique_ptr<FrDOFMask> m_DOFMask;
         std::shared_ptr<FrLink> m_DOFLink;
 
     public:
@@ -159,7 +208,13 @@ namespace frydom {
         // LOGGING
         // =============================================================================================================
 
-        void InitializeLog();
+        void InitializeLog_Dependencies(const std::string& bodyPath) override;
+
+    protected:
+
+        void AddFields() override;
+
+    public:
 
 
         // =============================================================================================================
@@ -202,6 +257,16 @@ namespace frydom {
         /// \param isColliding true if a collision model is to be defined, false otherwise
         void AllowCollision(bool isColliding);
 
+        /// Get the collision model, containing the collision box
+        /// \return collision model
+        FrCollisionModel* GetCollisionModel();
+
+        /// Set the collision model, containing the collision box
+        /// \param collisionModel collision model, containing the collision box
+        void SetCollisionModel(std::shared_ptr<FrCollisionModel> collisionModel);
+
+        void SetMaterialSurface(const std::shared_ptr<chrono::ChMaterialSurfaceSMC>& materialSurface) {m_chronoBody->SetMaterialSurface(materialSurface);}
+
         std::shared_ptr<chrono::ChMaterialSurfaceSMC> GetMaterialSurface() {return m_chronoBody->GetMaterialSurfaceSMC();}
 
         // TODO : ajouter de quoi definir des shapes de collision !!!
@@ -209,15 +274,8 @@ namespace frydom {
         // =============================================================================================================
         // VISUAL ASSETS
         // =============================================================================================================
+
 //        void AssetActive() // TODO
-
-        /// Add a mesh as an asset for visualization given a WaveFront .obj file name
-        /// \param obj_filename filename of the asset to be added
-        void AddMeshAsset(std::string obj_filename);
-
-        /// Add a mesh as an asset for visualization given a FrTriangleMeshConnected mesh object
-        /// \param mesh mesh of the asset to be added
-        void AddMeshAsset(std::shared_ptr<FrTriangleMeshConnected> mesh);
 
         // =============================================================================================================
         // SPEED LIMITATIONS TO STABILIZE SIMULATIONS
@@ -241,7 +299,7 @@ namespace frydom {
         /// This is useful in virtual reality and real-time simulations, because
         /// it reduces the risk of bad collision detection.
         /// This speed limit is active only if you set  SetLimitSpeed(true);
-        /// \param maxSpeed maximum angular speed, for the speed limit feature
+        /// \param wMax maximum angular speed, for the speed limit feature
         void SetMaxRotationSpeed(double wMax);
 
         /// [DEBUGGING MODE] Remove the gravity by adding a anti-gravity. This is a debugging method and should not be
@@ -269,14 +327,11 @@ namespace frydom {
         /// \return List of all external forces
         ForceContainer GetForceList() const;
 
-        // ##CC adding for monitoring force
-
         Force GetTotalExtForceInWorld(FRAME_CONVENTION fc) const;
 
         Force GetTotalExtForceInBody(FRAME_CONVENTION fc) const;
 
         Torque GetTotalTorqueInBodyAtCOG(FRAME_CONVENTION fc) const;
-        // ##CC
 
         // =============================================================================================================
         // NODES
@@ -474,7 +529,7 @@ namespace frydom {
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param rot rotation to be applied
-        /// \param worldPos point position around which the body is to be rotated, given in body reference frame
+        /// \param bodyPos point position around which the body is to be rotated, given in body reference frame
         /// \param fc frame convention (NED/NWU)
         void RotateAroundPointInBody(const FrRotation& rot, const Position& bodyPos, FRAME_CONVENTION fc);
 
@@ -499,7 +554,7 @@ namespace frydom {
         /// Note that it moves the entire body along with its nodes and other attached elements to the body (nodes...)
         /// which are updated
         /// \param rot rotation to be applied, with a quaternion object
-        /// \param worldPos point position around which the body is to be rotated, given in body reference frame
+        /// \param bodyPos point position around which the body is to be rotated, given in body reference frame
         /// \param fc frame convention (NED/NWU)
         void RotateAroundPointInBody(const FrUnitQuaternion& rot, const Position& bodyPos, FRAME_CONVENTION fc);
 
@@ -817,7 +872,7 @@ namespace frydom {
 
         /// Project a generalized vector given in world reference frame, to the body reference frame
         /// \tparam Vector type of the generalized vector defined in FrVector.h
-        /// \param bodyVector vector given in world reference frame
+        /// \param worldVector vector given in world reference frame
         /// \param fc frame convention (NED/NWU)
         /// \return vector in body reference frame
         template <class Vector>
@@ -827,7 +882,7 @@ namespace frydom {
 
         /// Project in place a generalized vector given in world reference frame, to the body reference frame
         /// \tparam Vector type of the generalized vector defined in FrVector.h
-        /// \param bodyVector vector given in world reference frame
+        /// \param worldVector vector given in world reference frame
         /// \param fc frame convention (NED/NWU)
         /// \return vector in body reference frame
         template <class Vector>
@@ -840,7 +895,7 @@ namespace frydom {
         // CONSTRAINTS ON DOF
         // =============================================================================================================
 
-        FrBodyDOFMask* GetDOFMask();
+        FrDOFMask* GetDOFMask();
 
     protected:
 
@@ -902,9 +957,12 @@ namespace frydom {
         /// \return cartPos cartesian position
         Position GeoToCart(const FrGeographicCoord& geoCoord, FRAME_CONVENTION fc);
 
+    public:
         /// Get the shared pointer to the chronoBody attribute
         /// \return shared pointer to the chronoBody attribute
         std::shared_ptr<internal::FrBodyBase> GetChronoBody();
+
+    protected:
 
         /// Get the chronoBody attribute pointer
         /// \return Pointer to the chronoBody attribute
@@ -957,7 +1015,6 @@ namespace frydom {
         ConstNodeIter  node_end() const;
 
 
-
         // friend declarations
         // This one is made for the FrOffshoreSystem to be able to add the embedded chrono object into the embedded
         // chrono system (ChSystem)
@@ -965,15 +1022,17 @@ namespace frydom {
         friend void internal::FrDynamicCableBase::InitializeLinks();
         friend void FrOffshoreSystem::RemoveBody(std::shared_ptr<frydom::FrBody>);
 
-        friend int internal::FrAddedMassBase::GetBodyOffset(FrBody* body) const;
+        friend int internal::FrRadiationModelBase::GetBodyOffset(FrBody* body) const;
         friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody* body) const ;
         friend void internal::FrVariablesAddedMassBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &result,
                                                                      int offset) const;
-        friend void internal::FrAddedMassBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
+        //friend void internal::FrRadiationModelBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
+        friend void internal::FrRadiationModelBase::InjectVariablesToBody();
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody *body) const;
         friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody *body) const;
+        friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase::GetVariablesFb(FrBody* body) const;
 
-    };
+     };
 
 
 }  // end namespace frydom

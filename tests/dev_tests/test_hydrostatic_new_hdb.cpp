@@ -39,12 +39,12 @@ int main(int argc, char* argv[]) {
     std::cout << "--> Initialize force ..." << std::endl;
     forceHst->Initialize();
 
-    std::cout << "K33 = " << forceHst->GetStiffnessMatrix()->GetK33() << std::endl;
-    std::cout << "K44 = " << forceHst->GetStiffnessMatrix()->GetK44() << std::endl;
-    std::cout << "K55 = " << forceHst->GetStiffnessMatrix()->GetK55() << std::endl;
-    std::cout << "K34 = " << forceHst->GetStiffnessMatrix()->GetK34() << std::endl;
-    std::cout << "K35 = " << forceHst->GetStiffnessMatrix()->GetK35() << std::endl;
-    std::cout << "K45 = " << forceHst->GetStiffnessMatrix()->GetK45() << std::endl;
+    std::cout << "K33 = " << forceHst->GetStiffnessMatrix().GetK33() << std::endl;
+    std::cout << "K44 = " << forceHst->GetStiffnessMatrix().GetK44() << std::endl;
+    std::cout << "K55 = " << forceHst->GetStiffnessMatrix().GetK55() << std::endl;
+    std::cout << "K34 = " << forceHst->GetStiffnessMatrix().GetK34() << std::endl;
+    std::cout << "K35 = " << forceHst->GetStiffnessMatrix().GetK35() << std::endl;
+    std::cout << "K45 = " << forceHst->GetStiffnessMatrix().GetK45() << std::endl;
 
     std::cout << "====================== END =====================" << std::endl;
 }

@@ -49,10 +49,6 @@ namespace frydom {
 
     }
 
-    void FrLinearExcitationForce::StepFinalize() {
-        FrForce::StepFinalize();
-    }
-
     std::shared_ptr<FrLinearExcitationForce>
     make_linear_excitation_force(std::shared_ptr<FrHydroDB> HDB, std::shared_ptr<FrBody> body){
 

@@ -14,18 +14,14 @@
 
 #include "FrLink.h"
 
-
-#include "hermes/hermes.h"
-
-
-
 namespace frydom {
 
 
 //    // Forward declaration
-//    class FrAngularActuator;
+    class FrAngularActuator;
+    class FrAngularActuator;
 
-    /// Specialized class for revolute link between two bodies
+    /// Specialized class for revolute link between two bodies : allows rotation around the Z axis
     class FrRevoluteLink : public FrLink {
 
     private:
@@ -41,22 +37,11 @@ namespace frydom {
         double m_linkAngularAcceleration = 0.;
 
 
-
-
-
-        // LOG
-        hermes::Message l_message;
-        double l_time = 0.;
-        double l_torque = 0.;
-        double l_angleDeg = 0.;
-        // LOG
-
-
     public:
 
         /// Constructor from two nodes and a pointer to the system.
         /// It automatically adds the link to the system
-        FrRevoluteLink(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2, FrOffshoreSystem* system);
+        FrRevoluteLink(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
 
         /// Get the type name of this object
         /// \return type name of this object
@@ -103,14 +88,13 @@ namespace frydom {
         /// Update the link
         void Update(double time) override;
 
-        /// Called after every time step, only once
-        void StepFinalize() override;
-
         /// Compute the link force. Here this is essentially a torque with a default spring damper.
         void UpdateForces(double time); // TODO : mettre en abstrait dans FrLink pour que toutes les classes possedent ca
 
-        /// Motorize the link to make it driven // TODO : work in progress
-        void MotorizeSpeed();
+        FrAngularActuator* Motorize(ACTUATOR_CONTROL control);
+
+        /// Lock the link to its current orientation
+        void Clamp();
 
 
     private:

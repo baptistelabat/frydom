@@ -13,6 +13,7 @@
 
 #include "frydom/environment/FrEnvironment.h"
 #include "frydom/environment/ocean/FrOcean.h"
+#include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/hydrodynamics/damping/FrLinearDamping.h"
 
 
@@ -24,7 +25,7 @@ namespace frydom {
         Force Gvector(0.,0.,-m_buoy->GetSystem()->GetGravityAcceleration());
         auto rho_water = m_body->GetSystem()->GetEnvironment()->GetOcean()->GetDensity();
         // FIXME : appliquer la force au centre de poussée et non au centre de gravité : théoriquement aucun effet, mais plus propre.
-        SetForceInBody(-m_buoy->GetVolume()*rho_water*Gvector, NWU);
+        SetForceInWorldAtCOG(-m_buoy->GetVolume()*rho_water*Gvector, NWU);
     }
 
     FrMooringBuoy::FrMooringBuoy(double radius, double mass, bool visual_asset, double damping) {
@@ -62,9 +63,14 @@ namespace frydom {
     }
 
     double FrMooringBuoy::computeDraft() {
-        if (GetPosition(NWU).GetZ()<-m_radius) { return m_radius;}
-        if (GetPosition(NWU).GetZ()>m_radius) {return -m_radius;}
-        else {return -GetPosition(NWU).GetZ();}
+
+        auto eta = GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetPosition(GetPosition(NWU), NWU);
+        auto zh = GetPosition(NWU).GetZ() - eta;
+
+        if (zh<-m_radius) { return m_radius;}
+        if (zh>m_radius) {return -m_radius;}
+        else {return -zh;}
+
     }
 
 

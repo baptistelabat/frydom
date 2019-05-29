@@ -201,7 +201,7 @@ int main(int argc, char* argv[]) {
         //
         // EXAMPLE 4: Time ramp function, applied to the current, wind and wave field models
         //
-        // This function is for now a linear function.
+        // This function is based on a cosine function.
         // ^ value
         // |
         // + y1                  _________

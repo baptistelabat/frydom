@@ -21,6 +21,7 @@ list(APPEND SRC_FILES
         common/FrPhysicsItem.cpp
         common/FrFEAMesh.cpp
         common/FrRotation.cpp
+        common/FrGeometrical.cpp
         )
 
 # FORCE
@@ -34,23 +35,10 @@ list(APPEND SRC_FILES
         link/FrLinkBase.cpp
 
         link/links_lib/actuators/FrActuator.cpp
-        link/links_lib/actuators/FrAngularActuator.cpp
-        link/links_lib/actuators/FrAngularActuatorAngle.cpp
-        link/links_lib/actuators/FrAngularActuatorVelocity.cpp
-        link/links_lib/actuators/FrAngularActuatorTorque.cpp
         link/links_lib/actuators/FrLinearActuator.cpp
-        link/links_lib/actuators/FrLinearActuatorPosition.cpp
-        link/links_lib/actuators/FrLinearActuatorVelocity.cpp
-        link/links_lib/actuators/FrLinearActuatorForce.cpp
+        link/links_lib/actuators/FrAngularActuator.cpp
 
-        link/constraints/FrDistanceBetweenPointsConstraint.cpp
-        link/constraints/FrParallelConstraint.cpp
-        link/constraints/FrPerpendicularConstraint.cpp
-        link/constraints/FrPlaneOnPlaneConstraint.cpp
-        link/constraints/FrPointDistanceToAxisConstraint.cpp
-        link/constraints/FrPointOnLineConstraint.cpp
-        link/constraints/FrPointOnPlaneConstraint.cpp
-        link/constraints/FrPointOnSplineConstraint.cpp
+        link/constraint/FrConstraint.cpp
 
         link/links_lib/FrLink.cpp
         link/links_lib/FrCylindricalLink.cpp

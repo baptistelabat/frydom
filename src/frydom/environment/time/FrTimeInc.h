@@ -14,5 +14,6 @@
 #define FRYDOM_FRTIMEINC_H
 
 #include "FrTimeZone.h"
+#include "FrTimeServices.h"
 
 #endif //FRYDOM_FRTIMEINC_H

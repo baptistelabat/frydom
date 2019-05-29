@@ -13,15 +13,28 @@
 #ifndef FRYDOM_FRSPHERICALLINK_H
 #define FRYDOM_FRSPHERICALLINK_H
 
+#include "FrLink.h"
+
 namespace frydom {
 
     /**
      * \class FrSphericalLink
      * \brief Class not used.
      */
-    class FrSphericalLink {
+    class FrSphericalLink : public FrLink{
+
+    public:
+
+        FrSphericalLink(const std::shared_ptr<FrNode>& node1,const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
+
+        /// Get the type name of this object
+        /// \return type name of this object
+        std::string GetTypeName() const override { return "SphericalLink"; }
 
     };
+
+    /// Helper function to make it easy to link two nodes by a spherical link
+    std::shared_ptr<FrSphericalLink> make_spherical_link(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem* system);
 
 }  // end namespace frydom
 

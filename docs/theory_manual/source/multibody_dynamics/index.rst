@@ -20,6 +20,7 @@ A multibody dynamics system is composed of different :any:`bodies <body>` or ite
     frame
     body/body
     links/links
+    constraints/constraints
     actuators/actuators
 
 

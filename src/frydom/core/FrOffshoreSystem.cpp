@@ -26,6 +26,7 @@
 #include "frydom/core/statics/FrStaticAnalysis.h"
 
 #include "frydom/core/math/functions/ramp/FrCosRampFunction.h"
+#include "frydom/utils/FrSerializerFactory.h"
 
 
 namespace frydom {
@@ -137,7 +138,6 @@ namespace frydom {
 
     }  // end namespace frydom::internal
 
-
     /// Default constructor
     /// \param systemType contact method system (SMOOTH_CONTACT/NONSMOOTH_CONTACT)
     /// \param timeStepper time stepper type
@@ -165,7 +165,7 @@ namespace frydom {
         m_environment = std::make_unique<FrEnvironment>(this); // FIXME: voir bug dans FrEnvironment pour le reglage du systeme
 
         // Creating the log manager service
-        m_pathManager = std::make_unique<FrPathManager>();
+        m_pathManager = std::make_shared<FrPathManager>();
         
         // Create the static analysis 
         m_statics = std::make_unique<FrStaticAnalysis>(this);
@@ -175,9 +175,11 @@ namespace frydom {
     }
 
     FrOffshoreSystem::~FrOffshoreSystem() = default;
+
+
     void FrOffshoreSystem::Add(std::shared_ptr<FrObject> newItem) {
         assert(std::dynamic_pointer_cast<FrBody>(newItem) ||
-               std::dynamic_pointer_cast<FrLink>(newItem) ||
+               std::dynamic_pointer_cast<FrLinkBase>(newItem) ||
                std::dynamic_pointer_cast<FrPhysicsItem>(newItem));
 
         if (auto item = std::dynamic_pointer_cast<FrBody>(newItem)) {
@@ -185,7 +187,7 @@ namespace frydom {
             return;
         }
 
-        if (auto item = std::dynamic_pointer_cast<FrLink>(newItem)) {
+        if (auto item = std::dynamic_pointer_cast<FrLinkBase>(newItem)) {
             AddLink(item);
             return;
         }
@@ -359,8 +361,8 @@ namespace frydom {
         AddFEAMesh(cable);
 
         // Add the hinges
-        m_chronoSystem->Add(cable->GetChronoItem_ptr()->m_startingHinge);
-        m_chronoSystem->Add(cable->GetChronoItem_ptr()->m_endingHinge);
+        m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_startingHinge);
+        m_chronoSystem->Add(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_endingHinge);
 
     }
 
@@ -383,8 +385,8 @@ namespace frydom {
 
         RemoveFEAMesh(cable);
 
-        m_chronoSystem->RemoveOtherPhysicsItem(cable->GetChronoItem_ptr()->m_startingHinge);
-        m_chronoSystem->RemoveOtherPhysicsItem(cable->GetChronoItem_ptr()->m_endingHinge);
+        m_chronoSystem->RemoveOtherPhysicsItem(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_startingHinge);
+        m_chronoSystem->RemoveOtherPhysicsItem(dynamic_cast<internal::FrDynamicCableBase*>(cable->GetChronoMesh().get())->m_endingHinge);
 
     }
 
@@ -463,7 +465,7 @@ namespace frydom {
         if (IsLogged()) {
             m_pathManager->Initialize(this);
             m_pathManager->SetRunPath("Dynamic");
-            InitializeLog();
+            InitializeLog("");
         }
 
         m_isInitialized = true;
@@ -873,6 +875,14 @@ namespace frydom {
         m_worldBody->SetFixedInWorld(true);
         m_worldBody->SetName("WorldBody");
         m_worldBody->SetLogged(false);
+        switch (m_systemType) {
+            case SMOOTH_CONTACT:
+                m_worldBody->SetSmoothContact();
+                break;
+            case NONSMOOTH_CONTACT:
+                m_worldBody->SetNonSmoothContact();
+                break;
+        }
         AddBody(m_worldBody);
     }
 
@@ -928,6 +938,7 @@ namespace frydom {
 
         app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
+        app.SetVideoframeSaveInterval(5);
         app.Run(endTime); // The temporal loop is here.
 
     }
@@ -998,45 +1009,41 @@ namespace frydom {
         return m_linkList.cend();
     }
 
-    void FrOffshoreSystem::InitializeLog() {
+    void FrOffshoreSystem::InitializeLog_Dependencies(const std::string& systemPath) {
 
         if (IsLogged()) {
-
-            auto logPath = m_pathManager->BuildPath(this, "system.csv");
-
-            // Add the fields
-            // TODO A completer
-            m_message->AddField<double>("time", "s", "Current time of the simulation",
-                    [this]() { return m_chronoSystem->GetChTime(); });
-
-            // Init the message
-            FrObject::InitializeLog(logPath);
 
             // Initializing environment before bodies
 //            m_environment->InitializeLog();
 
             for (auto &item : m_PrePhysicsList) {
-                item->InitializeLog();
+                item->SetPathManager(GetPathManager());
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_bodyList) {
-                item->InitializeLog();
+                item->SetPathManager(GetPathManager());
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_MidPhysicsList) {
-                item->InitializeLog();
+                item->SetPathManager(GetPathManager());
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_linkList) {
-                item->InitializeLog();
+                item->SetPathManager(GetPathManager());
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_feaMeshList) {
-                item->InitializeLog();
+                item->SetPathManager(GetPathManager());
+                item->InitializeLog(systemPath);
             }
 
             for (auto &item : m_PostPhysicsList) {
-                item->InitializeLog();
+                item->SetPathManager(GetPathManager());
+                item->InitializeLog(systemPath);
             }
 
         }
@@ -1074,7 +1081,17 @@ namespace frydom {
 
     }
 
-    FrPathManager *FrOffshoreSystem::GetPathManager() const { return m_pathManager.get(); }
+    std::string FrOffshoreSystem::BuildPath(const std::string &rootPath) {
+
+        auto objPath= fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
+
+        auto logPath = GetPathManager()->BuildPath(objPath, fmt::format("{}_{}.csv", GetTypeName(), GetShortenUUID()));
+
+        // Add a serializer
+        m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
+
+        return objPath;
+    }
 
 
 }  // end namespace frydom

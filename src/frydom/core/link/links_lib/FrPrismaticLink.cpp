@@ -12,6 +12,9 @@
 #include "FrPrismaticLink.h"
 
 #include "frydom/core/common/FrNode.h"
+#include "frydom/core/math/functions/FrFunctionsInc.h"
+
+#include "frydom/core/link/links_lib/actuators/FrLinearActuator.h"
 
 //#include <chrono/physics/ChLinkLock.h>
 
@@ -61,15 +64,6 @@ namespace frydom {
         return GetLinkVelocity() * GetLinkForce();
     }
 
-    void FrPrismaticLink::Initialize() {
-        FrLink::Initialize();
-
-        // Initializing the motor part
-        // TODO
-
-        // Initializing the logs
-    }
-
     void FrPrismaticLink::Update(double time) {
         FrLink::Update(time); // It is mandatory to invoke this before all update operations from frydom
 
@@ -78,21 +72,22 @@ namespace frydom {
         m_linkVelocity = GetVelocityOfMarker2WRTMarker1(NWU).GetVz();
         m_linkAcceleration = GetAccelerationOfMarker2WRTMarker1(NWU).GetAccZ();
 
+        if (time >= 10. && !IsMotorized()) {
+            Clamp();
+//            Brake(5., 10., true);
+        }
 
         UpdateForces(time);
 
     }
 
-    void FrPrismaticLink::StepFinalize() {
-
-    }
-
     void FrPrismaticLink::UpdateForces(double time) {
+
+        if (IsMotorized()) return;
+
         Force force;
         Torque torque;
         force.GetFz() = - m_stiffness * GetLinkPosition() - m_damping * GetLinkVelocity();
-
-        // Using force model from motor
 
         SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
     }
@@ -100,6 +95,27 @@ namespace frydom {
     void FrPrismaticLink::UpdateCache() {
         m_restLength = m_frame2WRT1_reference.GetZ(NWU);
         // FIXME : attention si la liaison n'est pas resolue !!! Ca ne fonctionne pas
+    }
+
+    FrLinearActuator* FrPrismaticLink::Motorize(ACTUATOR_CONTROL control) {
+
+        m_actuator = std::make_shared<FrLinearActuator>(this, control);
+        GetSystem()->Add(m_actuator);
+        return dynamic_cast<FrLinearActuator*>(m_actuator.get());
+
+    }
+
+    void FrPrismaticLink::Clamp() {
+
+        if (IsMotorized()) GetSystem()->RemoveLink(m_actuator);
+
+        // brake motorization instantiation
+        m_actuator = std::make_shared<FrLinearActuator>(this, POSITION);
+        m_actuator->Initialize();
+        GetSystem()->Add(m_actuator);
+
+        m_actuator->SetMotorFunction(FrConstantFunction(GetMarker2PositionWRTMarker1(NWU).GetZ()));
+
     }
 
     std::shared_ptr<FrPrismaticLink>

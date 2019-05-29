@@ -22,8 +22,6 @@ class FrNullForce : public FrForce {
 public :
 
     void Initialize() override {}
-
-    void StepFinalize() override {}
 };
 
 
@@ -153,12 +151,6 @@ int main(int argc, char* argv[]) {
 
     body->SetPosition(Position(0., 0., 0.), NWU);
 
-    body->GetDOFMask()->SetLock_X(true);
-    body->GetDOFMask()->SetLock_Y(true);
-    body->GetDOFMask()->SetLock_Rx(true);
-    body->GetDOFMask()->SetLock_Ry(true);
-    body->GetDOFMask()->SetLock_Rz(true);
-
     // -- Inertia
 
     double mass = 2.618E5;
@@ -171,6 +163,12 @@ int main(int argc, char* argv[]) {
 
     body->SetInertiaTensor(InertiaTensor);
 
+    body->GetDOFMask()->SetLock_X(true);
+    body->GetDOFMask()->SetLock_Y(true);
+    body->GetDOFMask()->SetLock_Rx(true);
+    body->GetDOFMask()->SetLock_Ry(true);
+    body->GetDOFMask()->SetLock_Rz(true);
+
     // -- Hydrodynamics
 
     auto hdb = make_hydrodynamic_database("sphere_hdb.h5");
@@ -182,7 +180,13 @@ int main(int argc, char* argv[]) {
 
     // -- Linear hydrostatics
 
-//    auto forceHst = make_linear_hydrostatic_force(hdb, body);
+    auto forceHst = make_linear_hydrostatic_force(hdb, body);
+
+    // Nonlinear hydrostatics
+    //auto bodyMesh = make_hydro_mesh(body,"Sphere_10000_faces.obj",FrFrame(),FrHydroMesh::ClippingSupport::WAVESURFACE);
+    //bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
+
+    //auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
 
     // -- Radiation
 
@@ -209,22 +213,11 @@ int main(int argc, char* argv[]) {
     // Decay test position.
     body->SetPosition(Position(0., 0., 4.99), NWU);
 
-    // Nonlinear hydrostatics
-    auto bodyMesh = make_hydro_mesh_nonlinear(body,"Sphere_10000_faces.obj");
-    mathutils::Matrix33<double> Rotation;
-    Rotation.SetIdentity();
-    Position MeshOffset(0,0,0);
-    bodyMesh->SetMeshOffsetRotation(MeshOffset,Rotation);
-    bodyMesh->GetInitialMesh().Write("Mesh_Initial.obj");
-
-    auto forceHst = make_nonlinear_hydrostatic_force(body,bodyMesh);
-    forceHst->SetLogged(true);
-
     auto time = 0.;
 
     // ##CC
-    Logging log;
-    log.Open("sphere");
+    //Logging log;
+    //log.Open("sphere");
     // ##CC
 
     clock_t begin = clock();
@@ -242,13 +235,13 @@ int main(int argc, char* argv[]) {
 
         radiationAddedMassForce->Update(body.get());
 
-        log.Write(time,
-                  body->GetPosition(NWU), body->GetRotation(),
-                  forceHst->GetForceInWorld(NWU),forceHst->GetTorqueInBodyAtCOG(NWU),
-                  radiationForce->GetForceInWorld(NWU), radiationForce->GetTorqueInBodyAtCOG(NWU),
-                  radiationAddedMassForce->GetForceInWorld(), radiationAddedMassForce->GetTorqueInWorldAtCOG(),
-                  body->GetTotalExtForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU)
-        );
+        //log.Write(time,
+        //          body->GetPosition(NWU), body->GetRotation(),
+        //          forceHst->GetForceInWorld(NWU),forceHst->GetTorqueInBodyAtCOG(NWU),
+        //          radiationForce->GetForceInWorld(NWU), radiationForce->GetTorqueInBodyAtCOG(NWU),
+        //          radiationAddedMassForce->GetForceInWorld(), radiationAddedMassForce->GetTorqueInWorldAtCOG(),
+        //          body->GetTotalExtForceInWorld(NWU), body->GetTotalTorqueInBodyAtCOG(NWU)
+        //);
 
     }
 

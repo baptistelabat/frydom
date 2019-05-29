@@ -34,7 +34,7 @@ pages:
         paths:
             - public
     only:
-        - develop # TODO : faire sur master une fois v2 release...
+        - master
 
 theory:
     script:

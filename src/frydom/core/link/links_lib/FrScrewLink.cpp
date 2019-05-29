@@ -16,5 +16,8 @@
 namespace frydom {
 
 
-
+//    FrScrewLink::FrScrewLink(const std::shared_ptr<FrNode> &node1, const std::shared_ptr<FrNode> &node2,
+//                             FrOffshoreSystem *system) : FrLink(node1, node2, system) {
+//        m_chronoLink->SetLinkType();
+//    }
 }  // end namespace frydom

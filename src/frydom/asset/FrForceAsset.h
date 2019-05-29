@@ -17,6 +17,8 @@
 
 #include "frydom/asset/FrAsset.h"
 
+#include "frydom/core/body/FrBody.h"
+
 // TODO : Cet asset doit etre ajoute directement au corps qui contient la force
 // On peut faire de telle maniere que quand on ajoute l'asset a la force, c'est au corps de la force qu'il est ajoute...
 

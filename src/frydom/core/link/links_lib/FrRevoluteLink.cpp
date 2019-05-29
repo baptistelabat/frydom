@@ -12,15 +12,16 @@
 
 #include "FrRevoluteLink.h"
 
-#include "frydom/core/body/FrBody.h"
+//#include "frydom/core/body/FrBody.h"
 #include "frydom/core/common/FrNode.h"
+#include "frydom/core/math/functions/FrFunctionsInc.h"
 
-#include "actuators/FrAngularActuatorInc.h"
+#include "frydom/core/link/links_lib/actuators/FrAngularActuator.h"
 
 
 namespace frydom {
 
-    FrRevoluteLink::FrRevoluteLink(std::shared_ptr<FrNode> node1, std::shared_ptr<FrNode> node2,
+    FrRevoluteLink::FrRevoluteLink(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2,
                                    FrOffshoreSystem *system) : FrLink(node1, node2, system) {
         m_chronoLink->SetLinkType(REVOLUTE);
     }
@@ -80,18 +81,6 @@ namespace frydom {
             m_actuator->Initialize();
         }
 
-        // Log initialization
-        l_message.SetNameAndDescription("RevoluteLink", "");
-        l_message.AddCSVSerializer("RevoluteLink_" + GetUUID());
-        l_message.AddField<double>("time", "s", "", &l_time);
-        l_message.AddField<double>("total_angle", "deg", "", &l_angleDeg);
-        l_message.AddField<double>("angVel", "rad/s", "", &m_linkAngularVelocity);
-        l_message.AddField<double>("AnfAcc", "rad/s2", "", &m_linkAngularAcceleration);
-        l_message.AddField<double>("Torque", "N.m", "", &l_torque);
-
-        l_message.Initialize();
-        l_message.Send();
-
     }
 
     void FrRevoluteLink::Update(double time) {
@@ -122,20 +111,9 @@ namespace frydom {
 
     }
 
-    void FrRevoluteLink::StepFinalize() {
-
-        // Log
-        l_time = m_system->GetTime();
-        l_torque = GetLinkTorqueOnBody2InFrame1AtOrigin2(NWU).GetMz();
-        l_angleDeg = m_totalLinkAngle * RAD2DEG;
-
-        l_message.Serialize();
-        l_message.Send();
-
-        // Log
-    }
-
     void FrRevoluteLink::UpdateForces(double time) {
+
+        if (IsMotorized()) return;
 
         // Default spring damper force model
         Force force;
@@ -143,22 +121,14 @@ namespace frydom {
 
         torque.GetMz() = - m_stiffness * GetLinkAngle() - m_damping * GetLinkAngularVelocity();
 
-        // Using force model from motor
-        /*
-         * TODO : si on a moteur force, on l'appelle ici et on ne prend pas en compte le spring damper...
-         * Si on a un moteur, faut-il deconnecter le modele spring damper ??
-         */
-
         // Set the link force
         SetLinkForceTorqueOnBody2InFrame2AtOrigin2(force, torque);
     }
 
-    void FrRevoluteLink::MotorizeSpeed() {
-
-        // INFO : Pour le moment, je ne permets que de faire de la motorisation en vitesse
-        m_actuator = std::make_shared<FrAngularActuatorVelocity>(this);
-
-
+    FrAngularActuator *FrRevoluteLink::Motorize(ACTUATOR_CONTROL control) {
+        m_actuator = std::make_shared<FrAngularActuator>(this, control);
+        GetSystem()->Add(m_actuator);
+        return dynamic_cast<FrAngularActuator*>(m_actuator.get());
     }
 
     double FrRevoluteLink::GetUpdatedRelativeAngle() const {
@@ -179,6 +149,21 @@ namespace frydom {
         auto link = std::make_shared<FrRevoluteLink>(node1, node2, system);
         system->AddLink(link);
         return link;
+    }
+
+    void FrRevoluteLink::Clamp() {
+
+        if (IsMotorized()) GetSystem()->RemoveLink(m_actuator);
+
+        // brake motorization instantiation
+        m_actuator = std::make_shared<FrAngularActuator>(this, POSITION);
+        m_actuator->Initialize();
+        GetSystem()->Add(m_actuator);
+
+        auto angle = GetMarker2OrientationWRTMarker1().GetAngle();
+
+        m_actuator->SetMotorFunction(FrConstantFunction(angle));
+
     }
 
 
