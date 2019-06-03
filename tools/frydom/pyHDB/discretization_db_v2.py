@@ -101,7 +101,7 @@ class DiscretizationDB(object):
     @property
     def final_time(self):
 
-        """This function gives the final time.
+        """This function gives the final time for the computation of the IRF.
 
         Returns
         -------
