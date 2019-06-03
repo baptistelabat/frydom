@@ -27,6 +27,7 @@ namespace frydom {
                 m_chronoActuator = std::make_shared<chrono::ChLinkMotorRotationTorque>();
                 break;
         }
+        m_chronoActuator->SetSpindleConstraint(chrono::ChLinkMotorRotation::SpindleConstraint::FREE);
 
     }
 
