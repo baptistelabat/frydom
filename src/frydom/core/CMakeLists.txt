@@ -48,6 +48,7 @@ list(APPEND SRC_FILES
         link/links_lib/FrRevoluteLink.cpp
         link/links_lib/FrScrewLink.cpp
         link/links_lib/FrSphericalLink.cpp
+        link/links_lib/FrDOFMaskLink.cpp
         )
 
 # MATH

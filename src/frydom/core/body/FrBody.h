@@ -16,15 +16,15 @@
 #include "chrono/physics/ChBodyAuxRef.h"
 #include "chrono/solver/ChVariables.h"
 
-#include "frydom/core/common/FrObject.h"
-#include "frydom/core/FrOffshoreSystem.h"
-#include "FrInertiaTensor.h"
-#include "frydom/core/misc/FrColors.h"
-#include "frydom/core/common/FrNode.h"
 #include "frydom/asset/FrAssetOwner.h"
-#include "frydom/mesh/FrMesh.h"
-
 #include "frydom/cable/FrDynamicCable.h"
+#include "frydom/core/FrOffshoreSystem.h"
+#include "frydom/core/body/FrInertiaTensor.h"
+#include "frydom/core/common/FrNode.h"
+#include "frydom/core/common/FrObject.h"
+#include "frydom/core/link/links_lib/FrDOFMaskLink.h"
+#include "frydom/core/misc/FrColors.h"
+#include "frydom/mesh/FrMesh.h"
 
 // TODO : voir si il n'y a pas moyen de passer ces includes
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModelBase.h"
@@ -130,8 +130,6 @@ namespace frydom {
     class FrRotation;
     class FrGeographicCoord;
     class FrAsset;
-    class FrDOFMask;
-    class FrLink;
     class FrTriangleMeshConnected;
     class FrCollisionModel;
 
@@ -159,7 +157,7 @@ namespace frydom {
 
 
         std::unique_ptr<FrDOFMask> m_DOFMask;
-        std::shared_ptr<FrLink> m_DOFLink;
+//        std::shared_ptr<FrLink> m_DOFLink;
 
     public:
 
