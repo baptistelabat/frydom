@@ -17,28 +17,27 @@ In the previous figure, :math:`b_1` and :math:`b2` are respectively the referenc
 
 Various kinematic links are implemented in FRyDoM (see next table)
 
-.. |cylindrical| image:: _static/cylindrical.png
+.. |cylindrical| image:: _static/cylindrical_lowRes.gif
     :align: middle
-.. |fixe| image:: _static/fixed.png
+.. |fixe| image:: _static/fixed.bmp
     :align: middle
-.. |revolute| image:: _static/revolute.png
+.. |revolute| image:: _static/revolute_lowRes.gif
     :align: middle
-.. |prismatic| image:: _static/prismatic.png
+.. |prismatic| image:: _static/prismatic_lowRes.gif
     :align: middle
-.. |spherical| image:: _static/spherical.png
+.. |spherical| image:: _static/spherical_lowRes.gif
     :align: middle
-.. |screew| image:: _static/screew.png
+.. |screw| image:: _static/screew.png
     :align: middle
 
 =============================== =========================== ==============================
 Name                            Symbol                      Degrees of freedom
 =============================== =========================== ==============================
-Cylindrical                          |cylindrical|          1 translation, 1 rotation
 Fixed                                |fixe|                 0 translation, 0 rotation
+Cylindrical                          |cylindrical|          1 translation, 1 rotation
 Revolute                             |revolute|             0 translation, 1 rotation
 Prismatic                            |prismatic|            1 translation, 0 rotation
 Spherical                            |spherical|            0 translation, 3 rotations
-Screew                               |screew|               1 translation, 1 rotation
 =============================== =========================== ==============================
 
 Motions are constrained with respect to the :math:`x` , :math:`y` and :math:`z` of the first body. The constraints and

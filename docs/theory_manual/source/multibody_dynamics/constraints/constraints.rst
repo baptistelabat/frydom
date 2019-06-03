@@ -12,19 +12,19 @@ to define these constraints using the geometric abstractions rather than the nod
 
 Seven different constraints are implemented in FRyDoM (see next table)
 
-.. |DistanceBetweenPoints| image:: _static/DistanceBetweenPoints.png
+.. |DistanceBetweenPoints| image:: _static/DistanceBetweenPoints_lowRes.gif
     :align: middle
-.. |DistanceToAxis| image:: _static/DistanceToAxis.png
+.. |DistanceToAxis| image:: _static/DistanceToAxis_lowRes.gif
     :align: middle
-.. |PointOnPlane| image:: _static/PointOnPlane.png
+.. |PointOnPlane| image:: _static/PointOnPlane_lowRes.gif
     :align: middle
-.. |PointOnLine| image:: _static/PointOnLine.png
+.. |PointOnLine| image:: _static/PointOnLine_lowRes.gif
     :align: middle
-.. |PlaneOnPlane| image:: _static/PlaneOnPlane.png
+.. |PlaneOnPlane| image:: _static/PlaneOnPlane_lowRes.gif
     :align: middle
-.. |Perpendicular| image:: _static/Perpendicular.png
+.. |Perpendicular| image:: _static/Perpendicular_lowRes.gif
     :align: middle
-.. |Parallel| image:: _static/Parallel.png
+.. |Parallel| image:: _static/Parallel_lowRes.gif
     :align: middle
 
 .. |DistanceBetweenPointsUrl| replace:: ``video`` Distance between points
@@ -50,13 +50,13 @@ Seven different constraints are implemented in FRyDoM (see next table)
 =============================== =========================== ==============================
 Name                            Description                 Constrained degrees of freedom
 =============================== =========================== ==============================
-|DistanceBetweenPointsUrl|_     |DistanceBetweenPoints|         1 translation, 0 rotation
-|DistanceToAxisUrl|_            |DistanceToAxis|                2 translations, 0 rotation
-|PointOnPlaneUrl|_              |PointOnPlane|                  1 translation, 0 rotation
-|PointOnLineUrl|_               |PointOnLine|                   2 translations, 0 rotation
-|PlaneOnPlaneUrl|_              |PlaneOnPlane|                  1 translation, 2 rotations
-|PerpendicularUrl|_             |Perpendicular|                 0 translation, 1 rotation
-|ParallelUrl|_                  |Parallel|                      0 translation, 2 rotations
+Distance between points         |DistanceBetweenPoints|         1 translation, 0 rotation
+Distance to axis                |DistanceToAxis|                2 translations, 0 rotation
+Point on plane                  |PointOnPlane|                  1 translation, 0 rotation
+Point on line                   |PointOnLine|                   2 translations, 0 rotation
+Plane on plane                  |PlaneOnPlane|                  1 translation, 2 rotations
+Perpendicular                   |Perpendicular|                 0 translation, 1 rotation
+Parallel                        |Parallel|                      0 translation, 2 rotations
 =============================== =========================== ==============================
 
 Motions are constrained with respect to the :math:`x` , :math:`y` and :math:`z` of the first body. The constraints and
