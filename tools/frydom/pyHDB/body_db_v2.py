@@ -209,7 +209,8 @@ class BodyDB(object):
 
         """This function initializes the hydrostatic parameters."""
 
-        self._hydrostatic = HydrostaticDB()
+        if(self._hydrostatic is None):
+            self._hydrostatic = HydrostaticDB()
 
     @property
     def inertia(self):
@@ -228,4 +229,5 @@ class BodyDB(object):
 
         """This function initializes the inertia matrix."""
 
-        self._inertia = Inertia()
+        if(self._inertia is None):
+            self._inertia = Inertia()
