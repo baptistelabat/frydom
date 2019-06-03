@@ -114,7 +114,10 @@ namespace frydom {
     };
 
 
-
+    /**
+     * \class FrDOFMaskLink
+     * \brief Class to deal with constraints between bodies and the world, based on FrDOFMask. Derived from FrLink.
+     */
     class FrDOFMaskLink : public FrLink {
 
     public:

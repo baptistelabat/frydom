@@ -19,7 +19,8 @@ namespace frydom {
 
     /**
      * \class FrFixedLink
-     * \brief
+     * \brief Class for implementing a fixed kinematic link, derived from FrLink: no translation or rotation allowed
+     * between the bodies
      */
     class FrFixedLink : public FrLink {
 
@@ -33,12 +34,6 @@ namespace frydom {
         /// Get the type name of this object
         /// \return type name of this object
         std::string GetTypeName() const override { return "FixedLink"; }
-
-//        /// Initialize the link
-//        void Initialize() override;
-//
-//        /// Update the link
-//        void Update(double time) override;
 
     };
 

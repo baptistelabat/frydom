@@ -35,12 +35,12 @@ namespace frydom {
         PRISMATIC,
         REVOLUTE,
         SPHERICAL,
-        PERPENDICULAR,
-        PARALLEL,
-        PLANEONPLANE,
-        POINTONLINE,
-        POINTONPLANE,
         CUSTOM
+//        PERPENDICULAR,
+//        PARALLEL,
+//        PLANEONPLANE,
+//        POINTONLINE,
+//        POINTONPLANE,
 //        SCREW,
 //        POINTONSPLINE,
 //        DISTANCETOAXIS,
@@ -53,6 +53,10 @@ namespace frydom {
 
     namespace internal {
 
+        /**
+         * \class FrLinkLockBase
+         * \brief Class for defining a link, derived from ChLinkLock.
+         */
         struct FrLinkLockBase : public chrono::ChLinkLock {
 
             using ChronoLinkType = chrono::ChLinkLock::LinkType;
@@ -124,7 +128,9 @@ namespace frydom {
 
     /**
      * \class FrLink
-     * \brief Class to deal with links.
+     * \brief Class to deal with links, derived from FrLinkBase, instantiate a FrLinkLockBase. Children of FrLink are
+     * to set the linkType LINK_TYPE for the instance of the FrLinkLockBase.
+     * For one DOF links (REVOLUTE, PRISMATIC ,etc.), a motorisation of the DOF is possible.
      */
     class FrLink : public FrLinkBase {
 

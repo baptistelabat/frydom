@@ -893,6 +893,8 @@ namespace frydom {
         // CONSTRAINTS ON DOF
         // =============================================================================================================
 
+        /// Get the DOF Mask (degree of Freedom) for easily constraining the body motions, relatively to the world
+        /// \return DOF mask
         FrDOFMask* GetDOFMask();
 
     protected:
