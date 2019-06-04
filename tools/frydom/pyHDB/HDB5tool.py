@@ -96,8 +96,8 @@ parser.add_argument('--drift','--Drift', '-d', action="store_true",help="""
             Compute the mean wave drift loads from the Kochin function (FRyDoM EE only).""")
 
 # No symmetrization of the HDB.
-parser.add_argument('--no_sym_hdb','-ns', action="store_true",help="""
-            No symmetrization of the HDB.""")
+parser.add_argument('--sym_hdb','-sym', '-s', action="store_true",help="""
+            Symmetrization of the HDB.""")
 
 # Writing the hdb5 output file.
 parser.add_argument('--write', '--export','-w', action="store",help="""
@@ -147,16 +147,24 @@ parser.add_argument('--plot_kochin_derive', '--plots_kochin_derive', '--plot_kd'
 parser.add_argument('--plot_drift', '--plots_drift','-pdrift', nargs = 2, metavar=('iwave', 'imotion'), action="append",help="""
             Plot the mean wave drift force (0 or 1) or moment (2) for iwave (FRyDoM EE only).""")
 
+# Reading a hdb5 file.
+parser.add_argument('--read','-r', action="store",help="""
+            Reading a hdb5 file with the given name.""")
+
 def main():
 
     ####################################################################################################################
-    #                                               Argparse.
+    #                                                   Argparse
     ####################################################################################################################
 
     if acok:
         argcomplete.autocomplete(parser)
 
     args, unknown = parser.parse_known_args()
+
+    ####################################################################################################################
+    #                                               Version of FRyDoM
+    ####################################################################################################################
 
     # Edition.
     if (args.edition is not None and args.ce is False and args.ee is False):
@@ -184,12 +192,34 @@ def main():
             print("Please check you have access to FRyDoM-EE, and, if yes, if the path to the deposit is in your PATH variable.")
             exit()
 
+    ####################################################################################################################
+    #                               Selection of an input file: Nemoh file or hdb5 file
+    ####################################################################################################################
+
     # BEM reader.
     if(args.path_to_nemoh_cal is not None):
         database = HDB5()
         database.nemoh_reader(args.path_to_nemoh_cal)
+
+    # Reading a hdb5 file.
+    if (args.read is not None):
+        database = HDB5()
+        database.read_hdb5(args.read)
+
+    if(args.path_to_nemoh_cal is None and args.read is None):
+        print("No input file has been defined.")
+        print("Please give a Nemoh.cal file (-cal) or a .hdb5 file (-r) as input.")
+        exit()
+    elif(args.path_to_nemoh_cal is not None and args.read is not None):
+        print("Only one input file may be defined.")
+        print("Please choose between given a Nemoh.cal file (-cal) and a .hdb5 file (-r) as input.")
+        exit()
     else:
-        print("The path to folder including the file Nemoh.cal is required.")
+        has_single_input = True
+
+    ####################################################################################################################
+    #                                             Handling HDB5
+    ####################################################################################################################
 
     # Discretization - Wave directions.
     if(args.discretization_waves is not None):
@@ -203,8 +233,9 @@ def main():
     if (args.activate_hydrostatics is not None):
         database.discretization._final_time = float(args.final_time_irf)
 
-    # Initialize.
-    database._initialize()
+    # Initialize pyHDB.
+    if (args.path_to_nemoh_cal is not None): # _initialize is automatically called when a .cal was read.
+        database._initialize()
 
     # Body - Active hydrostatics (useless).
     if (args.activate_hydrostatics is not None):
@@ -277,17 +308,17 @@ def main():
                                         ibody_motion=int(args.cut_off_irf_speed[j][3]), idof=int(args.cut_off_irf_speed[j][4]))
 
     # Response Amplitude Operators.
-    if(args.RAO is not None and Edition == 'EE'):
+    if(args.RAO is not False and Edition == 'EE'):
         RAO = ResponseAmplitudeOperator(database)
         RAO.computeRAO()
 
     # Mean wave drift loads.
-    if (args.drift is not None and Edition == 'EE'):
+    if (args.drift is not False and Edition == 'EE'):
         Drift = WaveDriftKochin(database)
         Drift.computeDriftForce()
 
     # Symmetry of the HDB.
-    if(args.no_sym_hdb is False):
+    if(args.sym_hdb is True):
         database.symmetry_HDB()
 
     # Writing the hdb5 output file.
@@ -333,7 +364,7 @@ def main():
             database.Plot_IRF_speed(ibody_force=int(args.plot_irf_speed[j][0]), iforce=int(args.plot_irf_speed[j][1]), ibody_motion=int(args.plot_irf_speed[j][2]),
                               idof=int(args.plot_irf_speed[j][3]))
 
-    # Plot excitation loads.
+    # Plot RAO.
     if (args.plot_RAO is not None and Edition == 'EE'):
         nb_plots_RAO = len(args.plot_RAO)
         for j in range(0, nb_plots_RAO):

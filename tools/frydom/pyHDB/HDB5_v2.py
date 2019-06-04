@@ -19,6 +19,7 @@ from math import *
 import numpy as np
 
 from bem_reader_v2 import *
+from HDB5_reader import *
 from pyHDB import *
 from discretization_db_v2 import DiscretizationDB
 from wave_drift_db_v2 import WaveDriftDB
@@ -376,7 +377,7 @@ class HDB5(object):
         Parameter
         ---------
         output_file : string, optional
-            Name of the hdf5 output file.
+            Name of the hdb5 output file.
         """
 
         if not self._is_initialized:
@@ -410,8 +411,41 @@ class HDB5(object):
         except IOError:
             raise IOError('Problem in writing HDB5 file at location %s' % hdb5_file)
 
+        print('')
         print('-------> "%s" has been written.' % hdb5_file)
+        print('')
 
+    def read_hdb5(self, input_file = None):
+        """This function loads a *.hdb5 file.
+
+        Parameter
+        ---------
+        input_file : string, optional
+            Name of the hdb5 input file.
+        """
+
+        if(input_file is None):
+            hdb5_file = os.path.abspath('frydom.hdb5')
+        else:
+            # Verifying that the output file has the extension .hdb5.
+            root, ext = os.path.splitext(input_file)
+            if not ext == '.hdb5':
+                raise IOError('Please register the input file with a .hdb5 extension.')
+
+            hdb5_file = input_file
+
+            if not os.path.isabs(input_file):
+                hdb5_file = os.path.abspath(hdb5_file)
+
+        # Reading all the data from .hdb5 and creating a _pyHDB object.
+        try:
+            HDB5reader(self._pyHDB, hdb5_file)
+        except IOError:
+            raise IOError('Problem in reading HDB5 file at location %s' % hdb5_file)
+
+        print('')
+        print('-------> "%s" has been loaded.' % hdb5_file)
+        print('')
 
 
 

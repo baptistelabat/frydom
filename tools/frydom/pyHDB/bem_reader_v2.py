@@ -183,7 +183,7 @@ class NemohReader(_BEMReader):
         Class NemohReader, derived from _BEMReader, for reading the Nemoh calculation files (*.cal).
     """
 
-    def __init__(self, pyHDB, cal_file=None, test=True, nb_face_by_wave_length=None):  # TODO: ajouter le critere
+    def __init__(self, pyHDB, cal_file=None, test=True, nb_face_by_wave_length=None):
         """ Constructor of the class NemohReader.
 
          Parameters
@@ -378,6 +378,7 @@ class NemohReader(_BEMReader):
                 mesh = Mesh(vertices, faces)
 
                 nb_vertices, nb_faces = map(int, f.readline().split()[:2])
+
                 # Verification of mesh information consistency
                 assert nb_vertices == mesh.nb_vertices
                 assert nb_faces == mesh.nb_faces

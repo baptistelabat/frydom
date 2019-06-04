@@ -19,7 +19,7 @@ from datetime import datetime
 from wave_dispersion_relation_v2 import solve_wave_dispersion_relation
 from wave_drift_db_v2 import WaveDriftDB
 
-inf = float('inf')  # Definition of infinity for depth
+inf = float('inf') # Definition of infinity for depth.
 
 class pyHDB():
     """
@@ -743,7 +743,7 @@ class pyHDB():
         dset.attrs['Description'] = "Time step."
 
     def write_mode(self, writer, body, ForceOrMotion, body_modes_path="/Modes"):
-        """This function writes the force modes into the *.hdb5 file.
+        """This function writes the force and motion modes into the *.hdb5 file.
 
         Parameters
         ----------
@@ -814,6 +814,8 @@ class pyHDB():
             *.hdb5 file.
         body : BodyDB.
             Body.
+        mesh_path : string
+            Path to the mesh folder.
         """
 
         writer.create_dataset(mesh_path + "/NbVertices", data=body.mesh.nb_vertices)
@@ -1043,7 +1045,7 @@ class pyHDB():
                                         (body.i_body, np.degrees(self.wave_dir[idir]))
 
     def write_body(self, writer, body):
-        """This function writes the environmental data into the *.hdb5 file.
+        """This function writes the body data into the *.hdb5 file.
 
         Parameters
         ----------
@@ -1060,10 +1062,10 @@ class pyHDB():
         dset = writer.create_dataset(body_path + "/ID", data=body.i_body)
         dset.attrs['Description'] = "Body index"
 
-        # Modes Force.
+        # Force modes.
         self.write_mode(writer, body, 0, body_path + "/Modes")
 
-        # Modes Motion.
+        # Motion modes.
         self.write_mode(writer, body, 1, body_path + "/Modes")
 
         # Masks.
