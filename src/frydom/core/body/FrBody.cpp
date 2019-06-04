@@ -24,6 +24,7 @@
 #include "frydom/environment/geographicServices/FrGeographicServices.h"
 #include "frydom/asset/FrForceAsset.h"
 #include "frydom/collision/FrCollisionModel.h"
+#include "frydom/core/link/links_lib/FrDOFMaskLink.h"
 
 namespace frydom {
 
@@ -942,13 +943,13 @@ namespace frydom {
         worldNode->SetFrameInBody(bodyNodeFrameInWorld);
 
         // Creating the link
-        m_DOFLink = std::make_shared<FrLink>(worldNode, bodyNode, GetSystem());
+        auto DOFLink = std::make_shared<FrDOFMaskLink>(worldNode, bodyNode, GetSystem());
 
         // Initializing the link with the DOFMask
-        m_DOFLink->InitializeWithBodyDOFMask(m_DOFMask.get());
+        DOFLink->SetDOFMask(m_DOFMask.get());
 
         // Adding the link to the system
-        m_system->AddLink(m_DOFLink);
+        m_system->AddLink(DOFLink);
 
     }
 

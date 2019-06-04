@@ -27,6 +27,7 @@ namespace frydom {
                 m_chronoActuator = std::make_shared<chrono::ChLinkMotorLinearForce>();
                 break;
         }
+        m_chronoActuator->SetGuideConstraint(chrono::ChLinkMotorLinear::GuideConstraint::FREE);
 
     }
 

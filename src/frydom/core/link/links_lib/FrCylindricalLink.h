@@ -20,7 +20,7 @@ namespace frydom {
 
     /**
      * \class FrCylindricalLink
-     * \brief
+     * \brief Class implementing a cylindrical link, derived from FrLink: allows rotation and translation around the Z axis.
      */
     class FrCylindricalLink : public FrLink {
 

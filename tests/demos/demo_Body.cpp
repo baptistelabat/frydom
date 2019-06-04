@@ -47,8 +47,12 @@ int main(int argc, char* argv[]) {
     // By default a body is not fixed.
     body->SetFixedInWorld(true);
 
+    // You can also constraint the body motion to some degree of freedom, a particular plane, etc.
+    // The body is then linked to the world, using a DOF mask.
+    body->GetDOFMask()->MakeItLocked();
+
     // =============================================================================================================
-    // VISUAL ASSETS
+    // VISUAL AND COLLISION ASSETS
     // =============================================================================================================
 
     // Add a visual asset to your body. It is only a matter of visualization, you can have a visual asset which is
@@ -59,6 +63,12 @@ int main(int argc, char* argv[]) {
     body->AddSphereShape(radius); // radius = 20m
 //    body->AddCylinderShape(radius, height); // radius = 10m, height = 20m
 //    body->AddBoxShape(xSize, ySize, zSize); // xSize = 5m, ySize = 10m, zSize = 20m
+
+    // Add a collision asset to your body, it allows the body to collide with other elements. You can add collision mesh
+    // based on triangular mesh as well.
+    auto sphereCollision = std::make_shared<FrCollisionModel>();
+    sphereCollision->AddSphere(radius,Position());
+    body->SetCollisionModel(sphereCollision);
 
     // However you can make your body a sphere, cylinder or box using the following functions :
     // These functions set the inertia parameters, the collision model and the visual asset.

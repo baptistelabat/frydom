@@ -23,4 +23,6 @@
 #include "FrScrewLink.h"
 #include "FrSphericalLink.h"
 
+#include "FrDOFMaskLink.h"
+
 #endif //FRYDOM_FRLINKSLIBINC_H
