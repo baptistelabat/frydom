@@ -900,6 +900,7 @@ class RadiationDB(_FreqDB):
             ca = self._ca
         else:
             ca = self._ca[:, :self._iwcut, :]  # TODO: changer l'ordre des dimensions et avoir (iforce, irad, iw)
+
         return np.einsum('ijk, ik -> ijk', ca, self._flags)
     
     @property
@@ -1157,9 +1158,9 @@ class RadiationDB(_FreqDB):
             ca = np.einsum('ijk, ik -> ijk', self._ca, self._flags)
         else:
             ca = self.radiation_damping
-        
+
         kernel = np.einsum('ijk, jl -> ijkl', ca, cwt)  # is nb_forces x nb_motions x nt
-    
+
         irf_data = (2 / pi) * np.trapz(kernel, x=w, axis=1)  # is nb_forces x nb_motions x nt
     
         irf_db.set_data(tf, dt, irf_data)
@@ -1924,7 +1925,7 @@ class HydroBody(object):
                 am = centers - force_mode.point
                 vel = np.cross(force_mode.direction, am)
                 self._nds[i, :] = areas * (normals * vel).sum(axis=1)
-    
+
     def get_nds(self, iforce):
         """Get the array of ndS . direction vector for the specified force mode
         

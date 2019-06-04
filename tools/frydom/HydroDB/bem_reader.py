@@ -217,6 +217,7 @@ class NemohReader(_BEMReader):
         hydro_db : HydroDB
             The hydrodynamic database.
         """
+
         # Reading nemoh parameters.
         self._read_nemoh_parameters(cal_file, test=test)
         
@@ -224,8 +225,8 @@ class NemohReader(_BEMReader):
         self._read_nemoh_results()
         
         # Loading Kochin function data.
-        if self.hydro_db.has_kochin:
-            self._read_kochin_function_file()
+        # if self.hydro_db.has_kochin:
+        #     self._read_kochin_function_file()
         
         return self.hydro_db
     

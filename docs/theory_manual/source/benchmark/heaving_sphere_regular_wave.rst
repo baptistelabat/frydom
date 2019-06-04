@@ -16,15 +16,15 @@ Parameters                Values
 Radius                    :math:`5` \\(m\\)
 Initial sphere location   (:math:`0`, :math:`0`, :math:`0`)
 Center of gravity         (:math:`0`, :math:`0`, :math:`-2`)
-Mass	                  :math:`261,8.10^3` \\(kg\\)
-Ixx                       :math:`1,690.10^6` \\(kg.m^2\\) 
-Iyy                       :math:`1,690.10^6` \\(kg.m^2\\)
-Izz                       :math:`2,606.10^6` \\(kg.m^2\\)
+Mass	                  :math:`261.8\times10^3` \\(kg\\)
+Ixx                       :math:`1.690\times10^6` \\(kg.m^2\\) 
+Iyy                       :math:`1.690\times10^6` \\(kg.m^2\\)
+Izz                       :math:`2.606\times10^6` \\(kg.m^2\\)
 Water detph               Inf
 Water density             :math:`1000` \\(kg/m^3\\)
-K33                       :math:`7,695.10^5` \\(N/m\\)
-K44                       :math:`5,126.10^6` \\(N.m\\)
-K55                       :math:`5,126.10^6` \\(N.m\\)
+K33                       :math:`7.695\times10^5` \\(N/m\\)
+K44                       :math:`5.126\times10^6` \\(N.m\\)
+K55                       :math:`5.126\times10^6` \\(N.m\\)
 ========================= ==================================
 
 The sphere is submitted to a regular wave field propagating positive along the x-axis. The wave periods considered in this test case varies from :math:`3` \\(s\\) to :math:`11` \\(s\\) with a steepness of :math:`0.2` %.

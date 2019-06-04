@@ -33,12 +33,11 @@ def symetrize(wave_dirs, fk_db, diff_db):
             wave_dirs = np.append(wave_dirs, new_dir)
 
             fk_db_temp = np.copy(fk_db.data[:, :, i])
-            fk_db_temp[(1, 4, 5), :] = -fk_db_temp[(1, 4, 5), :]
-
+            fk_db_temp[(1, 3, 5), :] = -fk_db_temp[(1, 3, 5), :]
             fk_db.data = np.concatenate((fk_db.data, fk_db_temp.reshape(nmode, nbody, 1)), axis=2)
 
             diff_db_temp = np.copy(diff_db.data[:, :, i])
-            diff_db_temp[(1, 4, 5), :] = -diff_db_temp[(1, 4, 5), :]
+            diff_db_temp[(1, 3, 5), :] = -diff_db_temp[(1, 3, 5), :]
             diff_db.data = np.concatenate((diff_db.data, diff_db_temp.reshape(nmode, nbody, 1)), axis=2)
 
     return wave_dirs, fk_db, diff_db
