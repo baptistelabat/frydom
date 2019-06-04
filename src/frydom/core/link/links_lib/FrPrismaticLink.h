@@ -24,7 +24,8 @@ namespace frydom {
 
     /**
      * \class FrPrismaticLink
-     * \brief Class for defining a prismatic link : allows translation along Z axis
+     * \brief Class for defining a prismatic link, derived from FrLink : allows translation along Z axis.
+     * Can be motorized with a control in POSITION, VELOCITY and FORCE (in dev).
      */
     class FrPrismaticLink : public FrLink {
 

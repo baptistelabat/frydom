@@ -72,11 +72,6 @@ namespace frydom {
         m_linkVelocity = GetVelocityOfMarker2WRTMarker1(NWU).GetVz();
         m_linkAcceleration = GetAccelerationOfMarker2WRTMarker1(NWU).GetAccZ();
 
-        if (time >= 10. && !IsMotorized()) {
-            Clamp();
-//            Brake(5., 10., true);
-        }
-
         UpdateForces(time);
 
     }

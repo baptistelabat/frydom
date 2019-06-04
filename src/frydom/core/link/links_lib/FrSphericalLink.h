@@ -19,7 +19,7 @@ namespace frydom {
 
     /**
      * \class FrSphericalLink
-     * \brief Class not used.
+     * \brief Class for defining a spherical link, derived from FrLink : allows all rotations, no translations
      */
     class FrSphericalLink : public FrLink{
 

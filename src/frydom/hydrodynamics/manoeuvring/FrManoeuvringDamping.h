@@ -117,6 +117,11 @@ namespace frydom {
         void Compute(double time) override;
     };
 
+    /// Helper to make a manoeuvring damping model, as described above.
+    /// \param body body to add the force
+    /// \return manoeuvring model to be set up
+    std::shared_ptr<FrManDampingTaylorExpansion> make_manoeuvring_model(const std::shared_ptr<FrBody>& body);
+
 }  // end namespace frydom
 
 #endif //FRYDOM_FRMANOEUVRINGDAMPING_H

@@ -1,13 +1,19 @@
+// ==========================================================================
+// FRyDoM - frydom-ce.org
 //
-// Created by lletourn on 27/05/19.
+// Copyright (c) Ecole Centrale de Nantes (LHEEA lab.) and D-ICE Engineering.
+// All rights reserved.
 //
+// Use of this source code is governed by a GPLv3 license that can be found
+// in the LICENSE file of FRyDoM.
+//
+// ==========================================================================
 
 #include "frydom/frydom.h"
-//#include "gtest/gtest.h"
 
 using namespace frydom;
 
-int main() {
+int main(int argc, char* argv[]) {
 
     /** This demo features constraints between bodies, nodes, points, axis and planes. While kinematic links are used to
      * model realistic links between bodies, constraints are more abstract and can be used at a conceptual level.
@@ -21,6 +27,10 @@ int main() {
      * reference frame and the other set free.
     */
 
+    // Define the frame convention (NWU for North-West-Up or NED for North-East-Down)
+    FRAME_CONVENTION fc = NWU;
+
+    // Create the offshore system and disable the free surface and seabed visualizations
     FrOffshoreSystem system;
     system.GetEnvironment()->ShowFreeSurface(false);
     system.GetEnvironment()->ShowSeabed(false);
@@ -37,7 +47,7 @@ int main() {
     movingBody->SetColor(CornflowerBlue);
 
     enum demo_cases {DistanceBetweenPoints, DistanceToAxis, PointOnPlane, PointOnLine, PlaneOnPlane, Perpendicular, Parallel };
-    demo_cases featuredCase = PointOnLine;
+    demo_cases featuredCase = Perpendicular;
 
     switch (featuredCase) {
         case DistanceBetweenPoints: {
@@ -48,7 +58,7 @@ int main() {
              * of the sphere, so that the point on the box stay on the sphere surface.
              */
 
-            double distance = 10.;
+            double distance = 5.;
 
             // Definition the fixed body, node and point
             makeItSphere(fixedBody, distance, 1000);
@@ -63,10 +73,10 @@ int main() {
             // Definition of the moving body, node and point
             makeItBox(movingBody, 10, 5, 1, 1000);
 //            movingBody->AllowCollision(false);
-            movingBody->SetPosition(Position(-20,0,0), NWU);
+            movingBody->SetPosition(Position(-20,-20,0), fc);
 
             auto movingNode = movingBody->NewNode();
-            movingNode->TranslateInBody(5, 2.5, 0.5, NWU);
+            movingNode->TranslateInBody(5, 2.5, 0.5, fc);
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
@@ -87,7 +97,7 @@ int main() {
              * cylinder is set at the imposed distance in order to visualize easily the constraint.
              */
 
-            double distance = 10.;
+            double distance = 5.;
 
             // Definition the fixed body, node and point
             makeItCylinder(fixedBody, distance, 20, 100);
@@ -102,10 +112,10 @@ int main() {
             // Definition of the moving body, node and point
             makeItBox(movingBody, 10, 5, 1, 100);
 //            movingBody->AllowCollision(false);
-            movingBody->SetPosition(Position(-15,0,0), NWU);
+            movingBody->SetPosition(Position(-15,0,0), fc);
 
             auto movingNode = movingBody->NewNode();
-            movingNode->TranslateInBody(5, 2.5, 0.5, NWU);
+            movingNode->TranslateInBody(5, 2.5, 0.5, fc);
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
@@ -130,8 +140,8 @@ int main() {
             // Definition the fixed body, node and point
             makeItBox(fixedBody, 50, 50, 1, 100);
 //            fixedBody->AllowCollision(false);
-            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(45,NWU);
-            fixedBody->RotateAroundCOG(fixedRotation, NWU);
+            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(25,fc);
+            fixedBody->RotateAroundCOG(fixedRotation, fc);
 
             auto fixedNode = fixedBody->NewNode();
             fixedNode->ShowAsset(true);
@@ -140,12 +150,12 @@ int main() {
             auto fixedPlane = std::make_shared<FrPlane>(fixedNode,ZAXIS);
 
             // Definition of the moving body, node and point
-            makeItSphere(movingBody, 5, 100);
+            makeItSphere(movingBody, 2.5, 100);
 //            movingBody->AllowCollision(false);
-            movingBody->SetPosition(Position(-10,0,10), NWU);
+            movingBody->SetPosition(Position(-10,0,10), fc);
 
             auto movingNode = movingBody->NewNode();
-            movingNode->TranslateInBody(0,0,-5, NWU);
+            movingNode->TranslateInBody(0,0,-2.5, fc);
             movingNode->ShowAsset(true);
             movingNode->GetAsset()->SetSize(10);
 
@@ -156,8 +166,8 @@ int main() {
             auto constraint = make_constraint_point_on_plane(fixedPlane, movingPoint, &system, distance);
 
             auto freeBody = system.NewBody();
-            makeItSphere(freeBody, 5, 100);
-            freeBody->SetPosition(Position(10,0,7.5), NWU);
+            makeItSphere(freeBody, 2.5, 100);
+            freeBody->SetPosition(Position(10,0,3.5), fc);
             freeBody->SetColor(DarkSeaGreen);
 
             break;
@@ -172,8 +182,8 @@ int main() {
             // Definition the fixed body, node and point
             makeItCylinder(fixedBody, 1, 80, 100);
             fixedBody->AllowCollision(false);
-            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(45,NWU);
-            fixedBody->RotateAroundCOG(fixedRotation, NWU);
+            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(45,fc);
+            fixedBody->RotateAroundCOG(fixedRotation, fc);
 
             auto fixedNode = fixedBody->NewNode();
             fixedNode->ShowAsset(true);
@@ -184,6 +194,7 @@ int main() {
             // Definition of the moving body, node and point
             makeItSphere(movingBody, 1.5, 100);
             movingBody->AllowCollision(false);
+            movingBody->SetPosition(Position(0,15,15),fc);
 
             auto movingNode = movingBody->NewNode();
             movingNode->ShowAsset(true);
@@ -208,8 +219,8 @@ int main() {
             // Definition the fixed body, node and point
             makeItBox(fixedBody, 30, 30, 1, 100);
             fixedBody->AllowCollision(false);
-            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(15,NWU);
-            fixedBody->RotateAroundCOG(fixedRotation, NWU);
+            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(15,fc);
+            fixedBody->RotateAroundCOG(fixedRotation, fc);
 
             auto fixedNode = fixedBody->NewNode();
             fixedNode->ShowAsset(true);
@@ -220,7 +231,7 @@ int main() {
             // Definition of the moving body, node and point
             makeItBox(movingBody, 10, 5, 1, 100);
             movingBody->AllowCollision(false);
-//            movingBody->SetPosition(Position(10,0,0), NWU);
+            movingBody->SetPosition(Position(0,15,0), fc);
 
             auto movingNode = movingBody->NewNode();
             movingNode->ShowAsset(true);
@@ -245,8 +256,8 @@ int main() {
             // Definition the fixed body, node and point
             makeItCylinder(fixedBody, 1, 10, 100);
             fixedBody->AllowCollision(false);
-            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(15,NWU);
-            fixedBody->RotateAroundCOG(fixedRotation, NWU);
+            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(15,fc);
+            fixedBody->RotateAroundCOG(fixedRotation, fc);
 
             auto fixedNode = fixedBody->NewNode();
             fixedNode->ShowAsset(true);
@@ -279,8 +290,8 @@ int main() {
             // Definition the fixed body, node and point
             makeItCylinder(fixedBody, 1, 10, 100);
             fixedBody->AllowCollision(false);
-            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(15,NWU);
-            fixedBody->RotateAroundCOG(fixedRotation, NWU);
+            FrRotation fixedRotation; fixedRotation.RotX_DEGREES(15,fc);
+            fixedBody->RotateAroundCOG(fixedRotation, fc);
 
             auto fixedNode = fixedBody->NewNode();
             fixedNode->ShowAsset(true);
@@ -307,12 +318,12 @@ int main() {
 
     // DoFullAssembly helps the bodies to adjust their position according to the constraints applied on them. It requires
     // constraints to be initialized and may not work with external forces, cables, etc. applied on bodies.
-//    system.Initialize();
-//    system.GetChronoSystem()->DoFullAssembly();
+    system.Initialize();
+    system.GetChronoSystem()->DoFullAssembly();
 
     // Run the simulation (or visualize the assembly)
     system.SetTimeStep(0.005);
-    system.RunInViewer(0, 20, false);
+    system.RunInViewer(5, 20, false);
 //    system.Visualize(50, false);
 
     return 0;
