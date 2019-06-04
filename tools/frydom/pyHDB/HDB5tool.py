@@ -127,6 +127,26 @@ parser.add_argument('--plot_irf', '--plots_irf','-pirf', nargs = 4, metavar=('ib
 parser.add_argument('--plot_irf_speed', '--plots_irf_speed', '--plot_irf_ku','-pirfs','-pirfku', '-pirf_speed', nargs = 4, metavar=('ibody_force, iforce, ibody_motion, idof'), action="append",help="""
             Plot the impulse response functions with speed velocity of ibody along iforce for a motion of ibody_motion along idof.""")
 
+# Plot excitation loads.
+parser.add_argument('--plot_RAO', '--plots_RAO', '--plot_rao','-prao', '-pRAO', nargs = 3, metavar=('ibody, iforce, iwave'), action="append",help="""
+            Plot the response amplitude operator of ibody along iforce for iwave (FRyDoM EE only).""")
+
+# Plot elementary Kochin functions.
+parser.add_argument('--plot_kochin_elem', '--plots_kochin_elem', '--plot_ke','-pke', nargs = 5, metavar=('DifforRad', 'iw', 'ibody', 'iforce', 'iwave'), action="append",help="""
+            Plot the diffraction (0) or radiation (1) Kochin function of ibody along iforce for iw and iwave (FRyDoM EE only).""")
+
+# Plot total Kochin functions.
+parser.add_argument('--plot_kochin', '--plots_kochin', '--plot_k','-pk', nargs = 2, metavar=('iw', 'iwave'), action="append",help="""
+            Plot the total Kochin function for iw and iwave (FRyDoM EE only).""")
+
+# Plot angular derivative Kochin functions.
+parser.add_argument('--plot_kochin_derive', '--plots_kochin_derive', '--plot_kd','-pkd', nargs = 2, metavar=('iw', 'iwave'), action="append",help="""
+            Plot the angular differentiation Kochin function for iw and iwave (FRyDoM EE only).""")
+
+# Plot drift loads.
+parser.add_argument('--plot_drift', '--plots_drift','-pdrift', nargs = 2, metavar=('iwave', 'imotion'), action="append",help="""
+            Plot the mean wave drift force (0 or 1) or moment (2) for iwave (FRyDoM EE only).""")
+
 def main():
 
     ####################################################################################################################
@@ -312,6 +332,37 @@ def main():
         for j in range(0, nb_plots_irf_speed):
             database.Plot_IRF_speed(ibody_force=int(args.plot_irf_speed[j][0]), iforce=int(args.plot_irf_speed[j][1]), ibody_motion=int(args.plot_irf_speed[j][2]),
                               idof=int(args.plot_irf_speed[j][3]))
+
+    # Plot excitation loads.
+    if (args.plot_RAO is not None and Edition == 'EE'):
+        nb_plots_RAO = len(args.plot_RAO)
+        for j in range(0, nb_plots_RAO):
+            RAO.Plot_RAO(ibody=int(args.plot_RAO[j][0]), iforce=int(args.plot_RAO[j][1]), iwave=int(args.plot_RAO[j][2]))
+
+    # Plot elementary Kochin functions.
+    if (args.plot_kochin_elem is not None and Edition == 'EE'):
+        nb_plot_kochin_elem = len(args.plot_kochin_elem)
+        for j in range(0, nb_plot_kochin_elem):
+            Drift.Plot_Kochin_Elem(DifforRad=int(args.plot_kochin_elem[j][0]), iw=int(args.plot_kochin_elem[j][1]), ibody=int(args.plot_kochin_elem[j][2]),
+                                        iforce=int(args.plot_kochin_elem[j][3]), iwave=int(args.plot_kochin_elem[j][4]))
+
+    # Plot total Kochin functions.
+    if (args.plot_kochin is not None and Edition == 'EE'):
+        nb_plot_kochin = len(args.plot_kochin)
+        for j in range(0, nb_plot_kochin):
+            Drift.Plot_Kochin(iw=int(args.plot_kochin[j][0]), iwave=int(args.plot_kochin[j][1]))
+
+    # Plot angular derivative Kochin functions.
+    if (args.plot_kochin_derive is not None and Edition == 'EE'):
+        nb_plot_kochin_derive = len(args.plot_kochin_derive)
+        for j in range(0, nb_plot_kochin_derive):
+            Drift.Plot_Kochin_derive(iw=int(args.plot_kochin_derive[j][0]), iwave=int(args.plot_kochin_derive[j][1]))
+
+    # Plot drift loads.
+    if (args.plot_drift is not None and Edition == 'EE'):
+        nb_plot_drift = len(args.plot_drift)
+        for j in range(0, nb_plot_drift):
+            Drift.Plot_drift(iwave=int(args.plot_drift[j][0]), imotion=int(args.plot_drift[j][1]))
 
 if __name__ == '__main__':
     main()
