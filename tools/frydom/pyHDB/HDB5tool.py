@@ -79,6 +79,14 @@ parser.add_argument('--inertia_only', '-io', nargs=7, metavar=('id', 'i44', 'i55
 parser.add_argument('--mass', '--Mass', '-m', nargs=2, metavar=('id', 'mass'), action="append",help="""
             Mass of the body of index given in argument.""")
 
+# Filtering impulse response functions.
+parser.add_argument('--cut_off_irf','-co_irf', '-coirf', nargs = 5, metavar=('tc, ibody_force, iforce, ibody_motion, idof'), action="append",help="""
+            Application of the filter with a cutting time tc to the impulse response functions of ibody along iforce for a motion of ibody_motion along idof and plot the irf.""")
+
+# Filtering impulse response functions with forward speed.
+parser.add_argument('--cut_off_irf_speed','-co_irf_speed', '-coirf_speed', nargs = 5, metavar=('tc, ibody_force, iforce, ibody_motion, idof'), action="append",help="""
+            Application of the filter with a cutting time tc to the impulse response functions of ibody along iforce for a motion of ibody_motion along idof and plot the irf.""")
+
 # Response Amplitude Operators.
 parser.add_argument('--RAO', '-RAO', '--rao', '-rao', action="store_true",help="""
             Compute the response amplitude operators (FRyDoM EE only).""")
@@ -234,6 +242,20 @@ def main():
             database.body[int(args.mass[j][0]) - 1].activate_inertia()
             database.body[int(args.mass[j][0]) - 1].inertia.mass = args.mass[j][1]
 
+    # Filtering impulse response functions.
+    if (args.cut_off_irf is not None):
+        nb_cut_off_irf = len(args.cut_off_irf)
+        for j in range(0, nb_cut_off_irf):
+            database.Cutoff_scaling_IRF(tc = float(args.cut_off_irf[j][0]), ibody_force=int(args.cut_off_irf[j][1]), iforce=int(args.cut_off_irf[j][2]),
+                              ibody_motion=int(args.cut_off_irf[j][3]), idof=int(args.cut_off_irf[j][4]))
+
+    # Filtering impulse response functions with forward speed.
+    if (args.cut_off_irf_speed is not None):
+        nb_cut_off_irf_speed = len(args.cut_off_irf_speed)
+        for j in range(0, nb_cut_off_irf_speed):
+            database.Cutoff_scaling_IRF_speed(tc=float(args.cut_off_irf_speed[j][0]), ibody_force=int(args.cut_off_irf_speed[j][1]), iforce=int(args.cut_off_irf_speed[j][2]),
+                                        ibody_motion=int(args.cut_off_irf_speed[j][3]), idof=int(args.cut_off_irf_speed[j][4]))
+
     # Response Amplitude Operators.
     if(args.RAO is not None and Edition == 'EE'):
         RAO = ResponseAmplitudeOperator(database)
@@ -290,5 +312,6 @@ def main():
         for j in range(0, nb_plots_irf_speed):
             database.Plot_IRF_speed(ibody_force=int(args.plot_irf_speed[j][0]), iforce=int(args.plot_irf_speed[j][1]), ibody_motion=int(args.plot_irf_speed[j][2]),
                               idof=int(args.plot_irf_speed[j][3]))
+
 if __name__ == '__main__':
     main()
