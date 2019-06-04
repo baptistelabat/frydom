@@ -247,7 +247,7 @@ namespace frydom {
         explicit
         FrOffshoreSystem(SYSTEM_TYPE systemType   = SMOOTH_CONTACT,
                           TIME_STEPPER timeStepper = EULER_IMPLICIT_LINEARIZED,
-                          SOLVER solver            = MINRES);
+                          SOLVER solver            = BARZILAIBORWEIN);
 
         /// Destructor
         ~FrOffshoreSystem();
@@ -399,6 +399,8 @@ namespace frydom {
         /// Clear the logging message of every elements
         void ClearLogs();
 
+        void AddFields() override;
+
     protected:
 
         std::string BuildPath(const std::string& rootPath) override;
@@ -421,6 +423,8 @@ namespace frydom {
         /// \param solver solver type to used in the simulation
         /// \param checkCompat if true, compatibility check between contact method, solver and time stepper is performed.
         void SetSolver(SOLVER solver, bool checkCompat=true);
+
+        void SetSolverVerbose(bool verbose);
 
         /// Turn ON/OFF the warm starting feature of both iterative solvers (the one for speed and the other for
         /// pos.stabilization).

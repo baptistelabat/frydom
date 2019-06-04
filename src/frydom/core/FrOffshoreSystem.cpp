@@ -15,6 +15,7 @@
 #include "chrono/utils/ChProfiler.h"
 #include "chrono/fea/ChLinkPointFrame.h"
 #include "chrono/physics/ChLinkMate.h"
+#include "chrono/solver/ChIterativeSolver.h"
 
 #include "frydom/core/link/links_lib/FrLink.h"
 #include "frydom/core/body/FrBody.h"
@@ -1081,6 +1082,28 @@ namespace frydom {
 
     }
 
+    void FrOffshoreSystem::AddFields() {
+        m_message->AddField<double>("time", "s", "Current time of the simulation",
+                                    [this]() { return GetTime(); });
+
+        m_message->AddField<int>("iter", "", "number of total iterations taken by the solver", [this]() {
+            return dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->GetTotalIterations();
+        });
+
+        if (dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->GetRecordViolation()) {
+
+            m_message->AddField<double>("violationResidual", "", "constraint violation", [this]() {
+                return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetViolationHistory().back();
+                                        });
+
+            m_message->AddField<double>("LagrangeResidual", "", "maximum change in Lagrange multipliers", [this]() {
+                return dynamic_cast<chrono::ChIterativeSolver *>(m_chronoSystem->GetSolver().get())->GetDeltalambdaHistory().back();
+            });
+
+        }
+
+    }
+
     std::string FrOffshoreSystem::BuildPath(const std::string &rootPath) {
 
         auto objPath= fmt::format("{}_{}", GetTypeName(), GetShortenUUID());
@@ -1091,6 +1114,11 @@ namespace frydom {
         m_message->AddSerializer(FrSerializerFactory::instance().Create(this, logPath));
 
         return objPath;
+    }
+
+    void FrOffshoreSystem::SetSolverVerbose(bool verbose) {
+        m_chronoSystem->GetSolver()->SetVerbose(verbose);
+        dynamic_cast<chrono::ChIterativeSolver*>(m_chronoSystem->GetSolver().get())->SetRecordViolation(verbose);
     }
 
 

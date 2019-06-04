@@ -70,6 +70,9 @@ namespace frydom {
 
     void FrActuator::AddFields() {
 
+        m_message->AddField<double>("time", "s", "Current time of the simulation",
+                                    [this]() { return m_system->GetTime(); });
+
         m_message->AddField<double>
                 ("MotorPower","kW", "power delivered by the motor", [this]() {return GetMotorPower();});
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
