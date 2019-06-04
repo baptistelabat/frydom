@@ -16,7 +16,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_loads(data, w, DiffOrFK, ibody, iforce, beta, **kwargs):
+def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, **kwargs):
     """Plots the diffraction or Froude-Krylov response function of a given modes set
 
     Parameters
@@ -25,8 +25,8 @@ def plot_loads(data, w, DiffOrFK, ibody, iforce, beta, **kwargs):
         Data to plot: diffraction or Froude-Krylov loads.
     w : Array of floats.
         Wave frequencies.
-    DiffOrFK : int.
-        0 for diffraction loads, 1 for Froude-Krylov loads.
+    DiffOrFKOrExc : int.
+        0 for diffraction loads, 1 for Froude-Krylov loads, 2 for excitation loads.
     ibody : int.
         The index of the body.
     iforce : int.
@@ -39,16 +39,21 @@ def plot_loads(data, w, DiffOrFK, ibody, iforce, beta, **kwargs):
 
     # Labels and title.
     xlabel = r'$\omega$'+' $(rad/s)$'
-    if(DiffOrFK == 0): # Diffraction loads.
+    if(DiffOrFKOrExc == 0): # Diffraction loads.
         ylabel1 = r'$|F_{Diff}(\omega, \beta)|$'
         ylabel2 = r'$Arg\left[F_{Diff}(\omega,\beta)\right] (deg)$'
         title = r'Diffraction loads on body %u along the direction %u for the wave direction %.1f deg' % \
                 (ibody+1, iforce+1, np.degrees(beta))
-    elif(DiffOrFK == 1): # Froude-Krylov loads.
+    elif(DiffOrFKOrExc == 1): # Froude-Krylov loads.
         ylabel1 = r'$|F_{FK}(\omega, \beta)|$'
         ylabel2 = r'$Arg\left[F_{FK}(\omega,\beta)\right] (deg)$'
         title = r'Froude-Krylov loads on body %u along the direction %u for the wave direction %.1f deg' % \
                 (ibody+1, iforce+1, np.degrees(beta))
+    elif(DiffOrFKOrExc == 2): # Excitation loads.
+        ylabel1 = r'$|F_{Exc}(\omega, \beta)|$'
+        ylabel2 = r'$Arg\left[F_{Exc}(\omega,\beta)\right] (deg)$'
+        title = r'Excitation loads on body %u along the direction %u for the wave direction %.1f deg' % \
+                (ibody + 1, iforce + 1, np.degrees(beta))
 
     # Units.
     if (iforce <= 2):

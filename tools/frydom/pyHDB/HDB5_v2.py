@@ -216,8 +216,20 @@ class HDB5(object):
         # Plots.
         plot_loads(data, self._pyHDB.wave_freq, 1, ibody, iforce, beta, **kwargs)
 
+    def Plot_Excitation(self, ibody, iforce, iwave = 0, **kwargs):
+        """This functions plots the excitation loads."""
+
+        # Data.
+        data = self._pyHDB.bodies[ibody].Diffraction[iforce, :, iwave] + self._pyHDB.bodies[ibody].Froude_Krylov[iforce, :, iwave]
+
+        # Wave direction.
+        beta = np.degrees(self._pyHDB.wave_dir[iwave])
+
+        # Plots.
+        plot_loads(data, self._pyHDB.wave_freq, 2, ibody, iforce, beta, **kwargs)
+
     def Plot_Radiation_coeff(self, ibody_force, iforce, ibody_motion, idof, **kwargs):
-        """This functions plots the Froude-Krylov loads."""
+        """This functions plots the added mass and damping coefficients."""
 
         # Data.
         data = np.zeros((self._pyHDB.nb_wave_freq+1,2), dtype = np.float) # 2 for added mass and damping coefficients, +1 for the infinite added mass.
