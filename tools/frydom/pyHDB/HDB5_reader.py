@@ -329,6 +329,46 @@ class HDB5reader():
         except:
             body._inertia = None
 
+    def read_RAO(self, reader, pyHDB, body, RAO_path):
+
+        """This function reads the RAO into the *.hdb5 file.
+
+        Parameters
+        ----------
+        reader : string
+            *.hdb5 file.
+        pyHDB : object
+            pyHDB object for storing the hydrodynamic database.
+        body : BodyDB.
+            Body.
+        excitation_path : string
+            Path to excitation loads.
+        """
+
+        try:
+
+            for idir in range(0, pyHDB.nb_wave_dir):
+
+                wave_dir_path = RAO_path + "/Angle_%u" % idir
+
+                # Definition.
+                body.RAO = np.zeros((6, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir), dtype=np.complex)
+
+                # Check of the wave direction.
+                assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+
+                # Amplitude.
+                Abs_RAO = np.array(reader[wave_dir_path + "/Amplitude"])
+
+                # Phase.
+                Phase_RAO = np.array(reader[wave_dir_path + "/Phase"])
+
+                # RAO.
+                body.RAO[:, :, idir] = Abs_RAO * np.exp(1j * Phase_RAO)
+
+        except:
+            self.RAO = None
+
     def read_bodies(self, reader, pyHDB):
         """This function reads the body data of the *.hdb5 file.
 
@@ -374,6 +414,9 @@ class HDB5reader():
 
             # Mass matrix.
             self.read_mass_matrix(reader, body, body_path + "/Inertia")
+
+            # RAO.
+            self.read_RAO(reader, pyHDB, body, body_path + "/RAO")
 
             # Add body to pyHDB.
             pyHDB.append(body)
