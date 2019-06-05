@@ -183,7 +183,7 @@ class HDB5reader():
             *.hdb5 file.
         body : BodyDB.
             Body.
-        mask_path : string, optional
+        mask_path : string
             Path to the masks.
         """
 
@@ -202,7 +202,7 @@ class HDB5reader():
             pyHDB object for storing the hydrodynamic database.
         body : BodyDB.
             Body.
-        excitation_path : string, optional
+        excitation_path : string
             Path to excitation loads.
         """
 
@@ -252,7 +252,7 @@ class HDB5reader():
             pyHDB object for storing the hydrodynamic database.
         body : BodyDB.
             Body.
-        radiation_path : string, optional
+        radiation_path : string
             Path to radiation loads.
         """
 
@@ -287,6 +287,48 @@ class HDB5reader():
                 # Impulse response functions with forward speed.
                 body.irf_ku[:, 6*j+iforce, :] = np.array(reader[irf_ku_path + "/DOF_%u" % iforce])
 
+    def read_hydrostatic(self, reader, body, hydrostatic_path):
+
+        """This function reads the hydrostatic stiffness matrix into the *.hdb5 file.
+
+        Parameters
+        ----------
+        reader : string
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        hydrostatic_path : string
+            Path to hydrostatic stiffness matrix.
+        """
+
+        try:
+            reader[hydrostatic_path + "/StiffnessMatrix"]
+            body.activate_hydrostatic()
+            body.hydrostatic.matrix = np.array(reader[hydrostatic_path + "/StiffnessMatrix"])
+        except:
+            body._hydrostatic = None
+
+    def read_mass_matrix(self, reader, body, inertia_path):
+
+        """This function reads the mass matrix matrix into the *.hdb5 file.
+
+        Parameters
+        ----------
+        reader : string
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        inertia_path : string
+            Path to inertia matrix.
+        """
+
+        try:
+            reader[inertia_path + "/InertiaMatrix"]
+            body.activate_inertia()
+            body.inertia.matrix = np.array(reader[inertia_path + "/InertiaMatrix"])
+        except:
+            body._inertia = None
+
     def read_bodies(self, reader, pyHDB):
         """This function reads the body data of the *.hdb5 file.
 
@@ -304,6 +346,7 @@ class HDB5reader():
 
             # Index of the body.
             id = np.array(reader[body_path + "/ID"])
+            assert ibody == id
 
             # Mesh.
             mesh = self.read_mesh(reader, body_path + "/Mesh")
@@ -325,6 +368,12 @@ class HDB5reader():
 
             # Added mass and damping coefficients and impulse response functions.
             self.read_radiation(reader, pyHDB, body, body_path + "/Radiation")
+
+            # Hydrostatics.
+            self.read_hydrostatic(reader, body, body_path + "/Hydrostatic")
+
+            # Mass matrix.
+            self.read_mass_matrix(reader, body, body_path + "/Inertia")
 
             # Add body to pyHDB.
             pyHDB.append(body)
