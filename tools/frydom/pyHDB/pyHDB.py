@@ -159,7 +159,6 @@ class pyHDB():
         """
 
         self.wave_dir = np.radians(np.linspace(self.min_wave_dir, self.max_wave_dir, self.nb_wave_dir, dtype=np.float))
-        print self.max_wave_dir
 
     def set_wave_directions_Kochin(self):
         """This function initializes the incident wave directions in the diffraction kochin problems.

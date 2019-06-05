@@ -105,15 +105,7 @@ class HDB5reader():
         pyHDB.nb_wave_freq = np.array(reader[frequential_path + "/NbFrequencies"])
         pyHDB.min_wave_freq = np.array(reader[frequential_path + "/MinFrequency"])
         pyHDB.max_wave_freq = np.array(reader[frequential_path + "/MaxFrequency"])
-
-        print pyHDB.max_wave_freq
-
-        pyHDB.set_wave_directions() # Definition of beta.
-
-        # print pyHDB.nb_wave_freq
-        # print pyHDB.min_wave_freq
-        # print pyHDB.max_wave_freq
-        # print pyHDB.wave_dir
+        pyHDB.set_wave_frequencies()  # Definition of omega.
 
         # Wave direction discretization.
 
@@ -122,7 +114,7 @@ class HDB5reader():
         pyHDB.nb_wave_dir = np.array(reader[wave_direction_path + "/NbWaveDirections"])
         pyHDB.min_wave_dir = np.radians(np.array(reader[wave_direction_path + "/MinAngle"]))
         pyHDB.max_wave_dir = np.radians(np.array(reader[wave_direction_path + "/MaxAngle"]))
-        pyHDB.set_wave_frequencies() # Definition of omega.
+        pyHDB.set_wave_directions()  # Definition of beta.
 
         # Time sample.
 
