@@ -210,6 +210,25 @@ class WaveDriftDB(object):
 
         return self._discrete_frequency
 
+    @discrete_frequency.setter
+    def discrete_frequency(self, value):
+
+        """This function sets the wave frequency vector.
+
+        Parameter
+        ----------
+        Array of floats : value
+            Wave frequency vector for the discretization.
+        """
+
+        if isinstance(value, np.ndarray):
+            if value.ndim == 1:
+                self._discrete_frequency = value
+            else:
+                print("warning : dimension must be equal to 1")
+        else:
+            print("warning : type must be nd array")
+
     def scaling_mode(self, mode, factor):
 
         """This function scales the polar coefficients.

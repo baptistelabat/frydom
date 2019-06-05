@@ -20,6 +20,7 @@ import h5py
 from meshmagick.mesh import Mesh
 
 from body_db_v2 import *
+from wave_drift_db_v2 import WaveDriftDB
 
 class HDB5reader():
     """
@@ -38,8 +39,6 @@ class HDB5reader():
         """
 
         with h5py.File(hdb5_file, 'r') as reader:
-            print ("")
-            print list(reader.keys())
 
             # Version.
             self.read_version(reader, pyHDB)
@@ -54,7 +53,7 @@ class HDB5reader():
             self.read_bodies(reader, pyHDB)
 
             # Wave drift coefficients.
-            # set_wave_directions_Kochin
+            self.read_wave_drift(reader, pyHDB, "/WaveDrift")
 
     def read_environment(self, reader, pyHDB):
         """This function reads the environmental data of the *.hdb5 file.
@@ -306,7 +305,7 @@ class HDB5reader():
             body.activate_hydrostatic()
             body.hydrostatic.matrix = np.array(reader[hydrostatic_path + "/StiffnessMatrix"])
         except:
-            body._hydrostatic = None
+            pass
 
     def read_mass_matrix(self, reader, body, inertia_path):
 
@@ -327,7 +326,7 @@ class HDB5reader():
             body.activate_inertia()
             body.inertia.matrix = np.array(reader[inertia_path + "/InertiaMatrix"])
         except:
-            body._inertia = None
+            pass
 
     def read_RAO(self, reader, pyHDB, body, RAO_path):
 
@@ -367,7 +366,7 @@ class HDB5reader():
                 body.RAO[:, :, idir] = Abs_RAO * np.exp(1j * Phase_RAO)
 
         except:
-            self.RAO = None
+            pass
 
     def read_bodies(self, reader, pyHDB):
         """This function reads the body data of the *.hdb5 file.
@@ -420,6 +419,73 @@ class HDB5reader():
 
             # Add body to pyHDB.
             pyHDB.append(body)
+
+    def read_wave_drift(self, reader, pyHDB, wave_drift_path):
+        """This function writes the wave drift loads into the *.hdb5 file.
+
+        Parameters
+        ----------
+        reader : string
+            *.hdb5 file.
+        pyHDB : object
+            pyHDB object for storing the hydrodynamic database.
+        wave_drift_path : string, optional
+            Path to wave drift loads.
+        """
+
+        try:
+            reader[wave_drift_path]
+            pyHDB.wave_drift = WaveDriftDB()
+
+            # sym_x.
+            if(int(np.array(reader[wave_drift_path + "/sym_x"])) == 0):
+                pyHDB.wave_drift.sym_x = False
+            else:
+                pyHDB.wave_drift.sym_x = True
+
+            # sym_y
+            if (int(np.array(reader[wave_drift_path + "/sym_y"])) == 0):
+                pyHDB.wave_drift.sym_y = False
+            else:
+                pyHDB.wave_drift.sym_y = True
+
+            # Wave frequencies.
+            pyHDB.wave_drift.discrete_frequency = np.array(reader[wave_drift_path + "/freq"])
+
+            # Modes.
+            for mode in ["/surge", "/sway", "/heave", "/roll", "/pitch", "/yaw"]:
+                try:
+                    reader[wave_drift_path + mode]
+
+                    # Loop over the wave directions.
+                    for ibeta in range(0, pyHDB.nb_wave_dir):
+
+                        # Path.
+                        heading_path = wave_drift_path + mode + "/heading_%u" % ibeta
+
+                        # Check wave direction.
+                        assert pyHDB.wave_dir[ibeta] == np.array(reader[heading_path + "/heading"])
+
+                        # Wave drift coefficients.
+                        if(mode == "/surge"):
+                            pyHDB.wave_drift.add_cx(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]),pyHDB.wave_dir[ibeta])
+                        elif(mode == "/sway"):
+                            pyHDB.wave_drift.add_cy(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                        elif(mode == "/heave"):
+                            pyHDB.wave_drift.add_cz(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                        elif(mode == "/roll"):
+                            pyHDB.wave_drift.add_cr(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                        elif(mode == "/pitch"):
+                            pyHDB.wave_drift.add_cm(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                        else:
+                            pyHDB.wave_drift.add_cn(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+
+                except:
+                    pass
+
+        except:
+            pass
+
 
     def read_version(self, reader, pyHDB):
         """This function reads the version of the *.hdb5 file.
