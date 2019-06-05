@@ -909,6 +909,7 @@ class pyHDB():
 
         for j in range(self.nb_bodies):
 
+            # Paths.
             radiation_body_motion_path = radiation_path + "/BodyMotion_%u" % j
 
             dg = writer.create_group(radiation_body_motion_path)
@@ -935,6 +936,7 @@ class pyHDB():
             dg.attrs['Description'] = "Impulse response functions Ku for velocity of body %u that radiates waves " \
                                       "and generates forces on body %u." % (j, body.i_body)
 
+            # Infinite added mass.
             dset = writer.create_dataset(radiation_body_motion_path + "/InfiniteAddedMass",
                                          data=body.Inf_Added_mass[:,6*j:6*(j+1)])
             dset.attrs['Description'] = "Infinite added mass matrix that modifies the apparent mass of body %u from " \
@@ -955,12 +957,12 @@ class pyHDB():
                 dset.attrs['Description'] = "Wave damping coefficients for an acceleration of body %u and force " \
                                             "on body %u." % (j, body.i_body)
 
-                # Impulse response function without forward speed.
+                # Impulse response functions without forward speed.
                 dset = writer.create_dataset(irf_path + "/DOF_%u" % iforce,
                                         data=body.irf[:, 6*j+iforce, :])
                 dset.attrs['Description'] = "Impulse response functions"
 
-                # Impulse response function Ku
+                # Impulse response function with forward speed.
                 dset = writer.create_dataset(irf_ku_path + "/DOF_%u" % iforce,
                                         data=body.irf_ku[:, 6*j+iforce, :])
                 dset.attrs['Description'] = "Impulse response functions Ku"
@@ -1075,7 +1077,7 @@ class pyHDB():
         # Diffraction and Froude-Krylov loads.
         self.write_excitation(writer, body, body_path + "/Excitation")
 
-        # Added mass and damping coefficients.
+        # Added mass and damping coefficients and impulse response functions.
         self.write_radiation(writer, body, body_path + "/Radiation")
 
         # Hydrostatics.

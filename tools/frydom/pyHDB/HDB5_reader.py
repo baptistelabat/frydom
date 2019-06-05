@@ -240,6 +240,52 @@ class HDB5reader():
             # Imaginary parts.
             body.Diffraction[:, :, idir].imag = np.array(reader[wave_dir_path + "/ImagCoeffs"])
 
+    def read_radiation(self, reader, pyHDB, body, radiation_path):
+
+        """This function reads the added mass and damping coefficients and the impulse response functions with and without forward speed of the *.hdb5 file.
+
+        Parameters
+        ----------
+        Writer : string
+            *.hdb5 file.
+        pyHDB : object
+            pyHDB object for storing the hydrodynamic database.
+        body : BodyDB.
+            Body.
+        radiation_path : string, optional
+            Path to radiation loads.
+        """
+
+        # Initializations.
+        body.Inf_Added_mass = np.zeros((6, 6 * pyHDB.nb_bodies), dtype=np.float)
+        body.irf = np.zeros((6, 6 * pyHDB.nb_bodies, pyHDB.nb_time_samples), dtype=np.float)
+        body.irf_ku = np.zeros((6, 6 * pyHDB.nb_bodies, pyHDB.nb_time_samples), dtype=np.float)
+
+        for j in range(pyHDB.nb_bodies):
+
+            # Paths.
+            radiation_body_motion_path = radiation_path + "/BodyMotion_%u" % j
+            added_mass_path = radiation_body_motion_path + "/AddedMass"
+            radiation_damping_path = radiation_body_motion_path + "/RadiationDamping"
+            irf_path = radiation_body_motion_path + "/ImpulseResponseFunctionK"
+            irf_ku_path = radiation_body_motion_path + "/ImpulseResponseFunctionKU"
+
+            # Infinite added mass.
+            body.Inf_Added_mass[:,6*j:6*(j+1)] = np.array(reader[radiation_body_motion_path + "/InfiniteAddedMass"])
+
+            for iforce in range(0, 6):
+
+                # Added mass.
+                body.Added_mass[:, 6*j+iforce, :] = np.array(reader[added_mass_path + "/DOF_%u" % iforce])
+
+                # Damping.
+                body.Damping[:, 6 * j + iforce, :] = np.array(reader[radiation_damping_path + "/DOF_%u" % iforce])
+
+                # Impulse response functions without forward speed.
+                body.irf[:, 6*j+iforce, :] = np.array(reader[irf_path + "/DOF_%u" % iforce])
+
+                # Impulse response functions with forward speed.
+                body.irf_ku[:, 6*j+iforce, :] = np.array(reader[irf_ku_path + "/DOF_%u" % iforce])
 
     def read_bodies(self, reader, pyHDB):
         """This function reads the body data of the *.hdb5 file.
@@ -276,6 +322,9 @@ class HDB5reader():
 
             # Diffraction and Froude-Krylov loads.
             self.read_excitation(reader, pyHDB, body, body_path + "/Excitation")
+
+            # Added mass and damping coefficients and impulse response functions.
+            self.read_radiation(reader, pyHDB, body, body_path + "/Radiation")
 
             # Add body to pyHDB.
             pyHDB.append(body)
