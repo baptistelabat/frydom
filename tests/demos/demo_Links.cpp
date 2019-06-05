@@ -208,7 +208,7 @@ int main(int argc, char* argv[]) {
     // DoFullAssembly helps the bodies to adjust their position according to the constraints applied on them. It requires
     // constraints to be initialized and may not work with external forces, cables, etc. applied on bodies.
     system.Initialize();
-    system.GetChronoSystem()->DoFullAssembly();
+    system.DoAssembly();
 
     // Run the simulation (or visualize the assembly)
     system.SetTimeStep(0.01);

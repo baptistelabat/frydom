@@ -64,7 +64,7 @@ int main() {
     system.SetSolverMaxIterSpeed(10);
 
     system.Initialize();
-    system.GetChronoSystem()->DoFullAssembly();
+    system.DoAssembly();
 
     // Run the simulation (or visualize the assembly)
     system.SetTimeStep(0.01);

@@ -10,6 +10,7 @@ set(REFACTORING_TESTS
         bench_Ellipsoid_OMAE2014
         test_WNL_and_NL_hydrostatics
         test_FrFunction
+        dev_Carriage
         )
 
 #include(Add_matplotlib-cpp)

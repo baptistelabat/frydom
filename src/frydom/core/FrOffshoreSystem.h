@@ -588,6 +588,9 @@ namespace frydom {
         /// \param gravityAcceleration gravity acceleration
         void SetGravityAcceleration(double gravityAcceleration);
 
+        /// Assembly of the body linked with kinematic link and constraints. Not working with assembly containing cables
+        /// \return true if the assembly succeded
+        bool DoAssembly();
 
         // Statics
 
