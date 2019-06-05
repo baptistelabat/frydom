@@ -105,7 +105,15 @@ class HDB5reader():
         pyHDB.nb_wave_freq = np.array(reader[frequential_path + "/NbFrequencies"])
         pyHDB.min_wave_freq = np.array(reader[frequential_path + "/MinFrequency"])
         pyHDB.max_wave_freq = np.array(reader[frequential_path + "/MaxFrequency"])
+
+        print pyHDB.max_wave_freq
+
         pyHDB.set_wave_directions() # Definition of beta.
+
+        # print pyHDB.nb_wave_freq
+        # print pyHDB.min_wave_freq
+        # print pyHDB.max_wave_freq
+        # print pyHDB.wave_dir
 
         # Wave direction discretization.
 
@@ -174,6 +182,50 @@ class HDB5reader():
             if (iforce >= 3):
                 body.point = np.array(reader[mode_path + "/Point"])
 
+    def read_mask(self, reader, body, mask_path):
+        """This function reads the Force and Motion masks into the *.hdb5 file.
+
+        Parameters
+        ----------
+        reader : string
+            *.hdb5 file.
+        body : BodyDB.
+            Body.
+        mask_path : string, optional
+            Path to the masks.
+        """
+
+        body.Motion_mask = np.array(reader[mask_path + "/MotionMask"])
+        body.Force_mask = np.array(reader[mask_path + "/ForceMask"])
+
+    def read_excitation(self, reader, pyHDB, body, excitation_path):
+
+        """This function reads the diffraction and Froude-Krylov loads into the *.hdb5 file.
+
+        Parameters
+        ----------
+        reader : string
+            *.hdb5 file.
+        pyHDB : object
+            pyHDB object for storing the hydrodynamic database.
+        body : BodyDB.
+            Body.
+        excitation_path : string, optional
+            Path to excitation loads.
+        """
+
+        # Froude-Krylov loads;
+
+        fk_path = excitation_path + "/FroudeKrylov"
+
+        for idir in range(0, pyHDB.nb_wave_dir):
+
+            wave_dir_path = fk_path + "/Angle_%u" % idir
+
+            # Check of the wave direction.
+            # print pyHDB.wave_dir
+            # assert pyHDB.wave_dir[idir] == np.array(reader[wave_dir_path + "/Angle"])
+
     def read_bodies(self, reader, pyHDB):
         """This function reads the body data of the *.hdb5 file.
 
@@ -198,10 +250,20 @@ class HDB5reader():
             # Body definition.
             body = BodyDB(id, pyHDB.nb_bodies, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir, mesh)
 
-            # Force mode.
+            # Force modes.
             self.read_mode(reader, body, 0, body_path + "/Modes")
 
-            # pyHDB.append(body)
+            # Motion modes.
+            self.read_mode(reader, body, 1, body_path + "/Modes")
+
+            # Masks.
+            self.read_mask(reader, body, body_path + "/Mask")
+
+            # Diffraction and Froude-Krylov loads.
+            self.read_excitation(reader, pyHDB, body, body_path + "/Excitation")
+
+            # Add body to pyHDB.
+            pyHDB.append(body)
 
     def read_version(self, reader, pyHDB):
         """This function reads the version of the *.hdb5 file.

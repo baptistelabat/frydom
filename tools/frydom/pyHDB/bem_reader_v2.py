@@ -463,6 +463,7 @@ class NemohReader(_BEMReader):
                 for i_add_line in xrange(nb_add_line):
                     skip_line()
 
+                # Add body to pyHDB.
                 pyHDB.append(body)
 
             # Reading discretization.

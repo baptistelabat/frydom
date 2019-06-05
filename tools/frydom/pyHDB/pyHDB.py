@@ -159,6 +159,7 @@ class pyHDB():
         """
 
         self.wave_dir = np.radians(np.linspace(self.min_wave_dir, self.max_wave_dir, self.nb_wave_dir, dtype=np.float))
+        print self.max_wave_dir
 
     def set_wave_directions_Kochin(self):
         """This function initializes the incident wave directions in the diffraction kochin problems.
@@ -794,10 +795,8 @@ class pyHDB():
             *.hdb5 file.
         body : BodyDB.
             Body.
-        ForceOrMotion : int
-            0 for Force, 1 for Motion.
-        body_modes_path : string, optional
-            Path to body modes.
+        mask_path : string, optional
+            Path to the masks.
         """
 
         writer.create_group(mask_path)
