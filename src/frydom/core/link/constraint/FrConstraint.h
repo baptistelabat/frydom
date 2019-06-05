@@ -21,7 +21,7 @@ namespace frydom {
 
     /**
      * \class FrConstraint
-     * \brief Class to deal with constraints. Derived from FrLinkBase
+     * \brief Class to deal with constraints. Derived from FrConstraintBase
      */
     class FrConstraint : public FrLinkBase {
 
@@ -37,23 +37,23 @@ namespace frydom {
         /// \param system system in charge of the constraint
         FrConstraint(const std::shared_ptr<FrNode>& node1, const std::shared_ptr<FrNode>& node2, FrOffshoreSystem *system);
 
-        /// Get the link reference frame, relatively to the world reference frame
-        /// \return link reference frame, relatively to the world reference frame
-        FrFrame GetLinkReferenceFrameInWorld() const;
+        /// Get the constraint reference frame, relatively to the world reference frame
+        /// \return constraint reference frame, relatively to the world reference frame
+        FrFrame GetConstraintReferenceFrameInWorld() const;
 
-        /// Get the link reference frame, relatively to the first body reference frame
-        /// \return link reference frame, relatively to the first body reference frame
-        FrFrame GetLinkReferenceFrameInBody1() const;
+        /// Get the constraint reference frame, relatively to the first body reference frame
+        /// \return constraint reference frame, relatively to the first body reference frame
+        FrFrame GetConstraintReferenceFrameInBody1() const;
 
         /// Get the constraint reaction force (Body2 on Body1) in the constraint reference frame
         /// \param fc frame convention (NED/NWU)
         /// \return constraint reaction force (Body2 on Body1)
-        Force GetForceInLink(FRAME_CONVENTION fc) const;
+        Force GetForceInConstraint(FRAME_CONVENTION fc) const;
 
         /// Get the constraint reaction torque (Body2 on Body1) in the constraint reference frame at its origin
         /// \param fc frame convention (NED/NWU)
         /// \return constraint reaction torque (Body2 on Body1)
-        Torque GetTorqueInLink(FRAME_CONVENTION fc) const;
+        Torque GetTorqueInConstraint(FRAME_CONVENTION fc) const;
 
         /// Get the constraint reaction force (Body2 on Body1) in the first body reference frame
         /// \param fc frame convention (NED/NWU)
@@ -75,17 +75,17 @@ namespace frydom {
         /// frame origin
         /// \param fc frame convention (NED/NWU)
         /// \return constraint reaction torque (Body2 on Body1)
-        Torque GetTorqueInWorldAtLink(FRAME_CONVENTION fc) const;
+        Torque GetTorqueInWorldAtConstraint(FRAME_CONVENTION fc) const;
 
-        /// Tells if all constraints of this link are currently turned on or off by the user.
+        /// Tells if all constraints of this constraint are currently turned on or off by the user.
         bool IsDisabled() const override;;
 
-        /// User can use this to enable/disable all the constraint of the link as desired.
+        /// User can use this to enable/disable all the constraint of the constraint as desired.
         void SetDisabled(bool disabled) override;
 
-        /// Tells if the link is currently active, in general,
+        /// Tells if the constraint is currently active, in general,
         /// that is tells if it must be included into the system solver or not.
-        /// This method cumulates the effect of various flags (so a link may
+        /// This method cumulates the effect of various flags (so a constraint may
         /// be not active either because disabled, or broken, or not valid)
         bool IsActive() const override;
 

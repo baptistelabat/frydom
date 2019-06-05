@@ -35,6 +35,7 @@ namespace frydom {
         PRISMATIC,
         REVOLUTE,
         SPHERICAL,
+        PRISMATICREVOLUTE,
         CUSTOM
 //        PERPENDICULAR,
 //        PARALLEL,

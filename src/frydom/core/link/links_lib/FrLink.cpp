@@ -44,6 +44,9 @@ namespace frydom {
                 case SPHERICAL:
                     ChangeLinkType(ChronoLinkType::SPHERICAL);
                     break;
+                case PRISMATICREVOLUTE:
+                    ChangeLinkType(ChronoLinkType::REVOLUTEPRISMATIC);
+                    break;
                 case CUSTOM:
 
                     break;

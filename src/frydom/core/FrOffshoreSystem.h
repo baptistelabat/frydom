@@ -247,7 +247,7 @@ namespace frydom {
         explicit
         FrOffshoreSystem(SYSTEM_TYPE systemType   = SMOOTH_CONTACT,
                           TIME_STEPPER timeStepper = EULER_IMPLICIT_LINEARIZED,
-                          SOLVER solver            = MINRES);
+                          SOLVER solver            = BARZILAIBORWEIN);
 
         /// Destructor
         ~FrOffshoreSystem();
@@ -399,6 +399,8 @@ namespace frydom {
         /// Clear the logging message of every elements
         void ClearLogs();
 
+        void AddFields() override;
+
     protected:
 
         std::string BuildPath(const std::string& rootPath) override;
@@ -421,6 +423,8 @@ namespace frydom {
         /// \param solver solver type to used in the simulation
         /// \param checkCompat if true, compatibility check between contact method, solver and time stepper is performed.
         void SetSolver(SOLVER solver, bool checkCompat=true);
+
+        void SetSolverVerbose(bool verbose);
 
         /// Turn ON/OFF the warm starting feature of both iterative solvers (the one for speed and the other for
         /// pos.stabilization).
@@ -584,6 +588,9 @@ namespace frydom {
         /// \param gravityAcceleration gravity acceleration
         void SetGravityAcceleration(double gravityAcceleration);
 
+        /// Assembly of the body linked with kinematic link and constraints. Not working with assembly containing cables
+        /// \return true if the assembly succeded
+        bool DoAssembly();
 
         // Statics
 
@@ -715,12 +722,10 @@ namespace frydom {
         /// Check the compatibility between the system contact method and the specified body contact type
         bool CheckBodyContactMethod(std::shared_ptr<FrBody> body);
 
-    public:
         /// Get the systemBase, embedded in the offshore system
         /// \return systemBase
         chrono::ChSystem* GetChronoSystem();
 
-    private:
 
         void IsInitialized();
 

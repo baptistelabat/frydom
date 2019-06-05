@@ -23,52 +23,48 @@ int main() {
     system.GetEnvironment()->ShowSeabed(false);
     system.SetName("Links");
 
+    auto worldBody = system.GetWorldBody();
 //    system.GetWorldBody()->AddSphereShape(10.);
 
     // Body1 definition
-    auto body1 = system.NewBody();
-    body1->SetName("1");
-    makeItBox(body1, 20, 10, 2, 1000);
-    body1->AllowCollision(false);
-    body1->SetColor(MediumVioletRed);
+    auto body = system.NewBody();
+    body->SetName("1");
+    makeItBox(body, 20, 10, 2, 1000);
+    body->AllowCollision(false);
+    body->SetColor(MediumVioletRed);
 
-    body1->SetPosition(Position(5.,5.,5.),NWU);
+    auto leftNode = body->NewNode();
+    leftNode->SetPositionInBody(Position(0,-5,0),NWU);
+    leftNode->RotateAroundYInBody(95*DEG2RAD,NWU);
 
-    // Apply a random translation and rotation to the body to check if the assembly is done correctly
-//    body1->TranslateInWorld(9.,-6.,25, NWU);
-//    Direction randomDir(1.,5.,-9.); randomDir.normalize();
-//    FrRotation randomRotation(randomDir,0.2954,NWU);
-//    body1->Rotate(randomRotation);
+    auto rightNode = body->NewNode();
+    rightNode->SetPositionInBody(Position(0,5,0),NWU);
+    rightNode->RotateAroundYInBody(95*DEG2RAD,NWU);
 
-    // Revolute link between body1 and world
-    auto node1 = body1->NewNode();
-    node1->TranslateInBody(10, 5, 0, NWU);
-    node1->ShowAsset(true);
-    node1->GetAsset()->SetSize(10);
-//    node1->RotateAroundXInBody(90*DEG2RAD, NWU);
-//    node1->RotateAroundZInBody(90*DEG2RAD, NWU);
+    auto leftWBNode = worldBody->NewNode();
+    leftWBNode->SetPositionInBody(Position(0,-5,0),NWU);
+    leftWBNode->RotateAroundYInBody(95*DEG2RAD,NWU);
 
+    auto rightWBNode = worldBody->NewNode();
+    rightWBNode->SetPositionInBody(Position(0,5,0),NWU);
+    rightWBNode->RotateAroundYInBody(95*DEG2RAD,NWU);
 
-    auto nodeWorld = system.GetWorldBody()->NewNode();
-    nodeWorld->ShowAsset(true);
-    nodeWorld->GetAsset()->SetSize(10);
-//    nodeWorld->TranslateInWorld(10, 0, 0, NWU);
-//    nodeWorld->RotateAroundXInBody(45*DEG2RAD, NWU);
-//    nodeWorld->RotateAroundZInBody(90*DEG2RAD, NWU);
+    auto leftLink = make_prismatic_link(leftWBNode, leftNode, &system);
+    leftLink->SetName("left");
 
-    auto point1 = std::make_shared<FrPoint>(node1);
-    auto pointWorld = std::make_shared<FrPoint>(nodeWorld);
+//    auto leftMotor = leftLink->Motorize(POSITION);
+//    leftMotor->SetMotorFunction(FrConstantFunction(0.));
 
-    auto axis1 = std::make_shared<FrAxis>(node1,XAXIS);
-    auto axisWorld = std::make_shared<FrAxis>(nodeWorld,XAXIS);
+    auto rightLink = make_prismatic_link(rightWBNode, rightNode, &system);
+    rightLink->SetName("right");
 
-    auto plane1 = std::make_shared<FrPlane>(node1,YAXIS);
-    auto planeWorld = std::make_shared<FrPlane>(nodeWorld,ZAXIS);
-
-    auto constraint = make_constraint_distance_to_axis(axisWorld, point1, &system, false, 10.);
+    system.SetSolver(FrOffshoreSystem::SOLVER::BARZILAIBORWEIN);
+    system.SetSolverVerbose(true);
+    system.SetSolverWarmStarting(true);
+    system.SetSolverMaxIterSpeed(10);
 
     system.Initialize();
-    system.GetChronoSystem()->DoFullAssembly();
+    system.DoAssembly();
 
     // Run the simulation (or visualize the assembly)
     system.SetTimeStep(0.01);
