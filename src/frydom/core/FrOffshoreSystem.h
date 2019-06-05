@@ -592,7 +592,6 @@ namespace frydom {
         /// \return true if the assembly succeded
         bool DoAssembly();
 
-
         // Statics
 
         FrStaticAnalysis* GetStaticAnalysis() const;

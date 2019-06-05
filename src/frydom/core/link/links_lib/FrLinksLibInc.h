@@ -22,6 +22,7 @@
 #include "FrRevoluteLink.h"
 #include "FrScrewLink.h"
 #include "FrSphericalLink.h"
+#include "FrPrismaticRevoluteLink.h"
 
 #include "FrDOFMaskLink.h"
 
