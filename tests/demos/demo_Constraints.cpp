@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
     movingBody->SetColor(CornflowerBlue);
 
     enum demo_cases {DistanceBetweenPoints, DistanceToAxis, PointOnPlane, PointOnLine, PlaneOnPlane, Perpendicular, Parallel };
-    demo_cases featuredCase = Perpendicular;
+    demo_cases featuredCase = DistanceBetweenPoints;
 
     switch (featuredCase) {
         case DistanceBetweenPoints: {
@@ -322,8 +322,8 @@ int main(int argc, char* argv[]) {
     system.DoAssembly();
 
     // Run the simulation (or visualize the assembly)
-    system.SetTimeStep(0.005);
-    system.RunInViewer(5, 20, false);
+    system.SetTimeStep(0.01);
+    system.RunInViewer(0, 20, false);
 //    system.Visualize(50, false);
 
     return 0;
