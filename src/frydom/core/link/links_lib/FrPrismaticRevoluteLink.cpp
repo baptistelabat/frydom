@@ -10,7 +10,7 @@ namespace frydom {
                                                              const std::shared_ptr<frydom::FrNode> &node2,
                                                              frydom::FrOffshoreSystem *system) : FrLink(node1, node2,
                                                                                                         system) {
-        m_chronoLink->SetLinkType(PRISMATIC);
+        m_chronoLink->SetLinkType(PRISMATICREVOLUTE);
 
     }
 

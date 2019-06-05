@@ -12,8 +12,8 @@ namespace frydom {
 
     /**
      * \class FrPrismaticRevoluteLink
-     * \brief Class for defining a composition between a prismatic link along axis, and a revolute link around axis.
-     * Derived from FrLink : allows translation along Z axis and rotation around axis.
+     * \brief Class for defining a composition between a prismatic link along X axis, and a revolute link around Z axis.
+     * Derived from FrLink : allows translation along X axis and rotation around Z axis.
      */
     class FrPrismaticRevoluteLink : public FrLink {
 
