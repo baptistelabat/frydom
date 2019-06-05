@@ -215,8 +215,31 @@ class HDB5reader():
             wave_dir_path = fk_path + "/Angle_%u" % idir
 
             # Check of the wave direction.
-            # print pyHDB.wave_dir
-            # assert pyHDB.wave_dir[idir] == np.array(reader[wave_dir_path + "/Angle"])
+            assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+
+            # Real parts.
+            body.Froude_Krylov[:, :, idir].real = np.array(reader[wave_dir_path + "/RealCoeffs"])
+
+            # Imaginary parts.
+            body.Froude_Krylov[:, :, idir].imag = np.array(reader[wave_dir_path + "/ImagCoeffs"])
+
+        # Diffraction loads.
+
+        diffraction_path = excitation_path + "/Diffraction"
+
+        for idir in range(0, pyHDB.nb_wave_dir):
+
+            wave_dir_path = diffraction_path + "/Angle_%u" % idir
+
+            # Check of the wave direction.
+            assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
+
+            # Real parts.
+            body.Diffraction[:, :, idir].real = np.array(reader[wave_dir_path + "/RealCoeffs"])
+
+            # Imaginary parts.
+            body.Diffraction[:, :, idir].imag = np.array(reader[wave_dir_path + "/ImagCoeffs"])
+
 
     def read_bodies(self, reader, pyHDB):
         """This function reads the body data of the *.hdb5 file.
