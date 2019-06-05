@@ -112,8 +112,8 @@ class HDB5reader():
         wave_direction_path = discretization_path + "/WaveDirections"
 
         pyHDB.nb_wave_dir = np.array(reader[wave_direction_path + "/NbWaveDirections"])
-        pyHDB.min_wave_dir = np.radians(np.array(reader[wave_direction_path + "/MinAngle"]))
-        pyHDB.max_wave_dir = np.radians(np.array(reader[wave_direction_path + "/MaxAngle"]))
+        pyHDB.min_wave_dir = np.array(reader[wave_direction_path + "/MinAngle"])
+        pyHDB.max_wave_dir = np.array(reader[wave_direction_path + "/MaxAngle"])
         pyHDB.set_wave_directions()  # Definition of beta.
 
         # Time sample.
