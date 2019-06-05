@@ -588,6 +588,10 @@ namespace frydom {
         /// \param gravityAcceleration gravity acceleration
         void SetGravityAcceleration(double gravityAcceleration);
 
+        /// Assembly of the body linked with kinematic link and constraints. Not working with assembly containing cables
+        /// \return true if the assembly succeded
+        bool DoAssembly();
+
 
         // Statics
 
@@ -719,12 +723,10 @@ namespace frydom {
         /// Check the compatibility between the system contact method and the specified body contact type
         bool CheckBodyContactMethod(std::shared_ptr<FrBody> body);
 
-    public:
         /// Get the systemBase, embedded in the offshore system
         /// \return systemBase
         chrono::ChSystem* GetChronoSystem();
 
-    private:
 
         void IsInitialized();
 

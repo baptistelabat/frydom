@@ -745,6 +745,10 @@ namespace frydom {
         m_chronoSystem->Set_G_acc(chrono::ChVector<double>(0., 0., -gravityAcceleration));
     }
 
+    bool FrOffshoreSystem::DoAssembly() {
+        return m_chronoSystem->DoFullAssembly();
+    }
+
     FrStaticAnalysis *FrOffshoreSystem::GetStaticAnalysis() const {
         return m_statics.get();
     }
