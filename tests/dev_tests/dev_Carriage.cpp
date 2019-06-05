@@ -26,10 +26,12 @@ FrLinearActuator* make_carriage(FrOffshoreSystem* system, const std::shared_ptr<
             -0.5*tankWidth, 0.5*tankWidth, 0.01*tankWidth);
     Seabed->SetBathymetry(-tankDepth,fc);
 
-    system->GetEnvironment()->GetOcean()->GetFreeSurface()->GetFreeSurfaceGridAsset()->SetGrid(
+    auto FreeSurface = system->GetEnvironment()->GetOcean()->GetFreeSurface();
+    FreeSurface->GetFreeSurfaceGridAsset()->SetGrid(
             -0.05*tankLength, 0.95*tankLength, 0.01*tankLength,
             -0.5*tankWidth, 0.5*tankWidth, 0.01*tankWidth);
-
+    FreeSurface->GetFreeSurfaceGridAsset()->UpdateAssetON();
+    FreeSurface->GetFreeSurfaceGridAsset()->SetUpdateStep(10);
 
     // --------------------------------------------------
     // Wall definition
@@ -90,8 +92,6 @@ int main() {
     // Ship
     // --------------------------------------------------
 
-    Position shipConnection;
-
     auto ship = system.NewBody();
     ship->SetName("Ship");
     ship->AddMeshAsset("DTMB5512.obj");
@@ -99,23 +99,13 @@ int main() {
 
     // Inertia
     double mass = 86.0; double Ixx = 1.98; double Iyy = 53.88; double Izz = 49.99;
+    Position COGPosition(0., 0., 0.03); // 0.03
+    FrFrame COGFrame(COGPosition, FrRotation(), NWU);
 
-    ship->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., FrFrame(), NWU));
-
-    // Hydrodynamic Database
-//    auto hdb = make_hydrodynamic_database("DTMB5512.h5");
-
-    auto eqFrame = std::make_shared<FrEquilibriumFrame>(ship.get());
-    system.AddPhysicsItem(eqFrame);
-
-//    hdb->Map(0,ship.get(),eqFrame);
-
-    auto hydrostaticForce = make_linear_hydrostatic_force(eqFrame,ship,"DTMB5512.obj",FrFrame());
-
-    shipConnection = ship->GetCOGPositionInWorld(fc);
+    ship->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU));
 
     auto shipNode = ship->NewNode();
-    shipNode->SetPositionInWorld(shipConnection,fc);
+    shipNode->SetPositionInBody(ship->GetCOG(fc),fc);
     shipNode->RotateAroundYInBody(90*DEG2RAD,fc);
     shipNode->RotateAroundXInBody(90*DEG2RAD,fc);
 
@@ -125,7 +115,7 @@ int main() {
 
     auto carriage = make_carriage(&system, shipNode);
 
-    FrCosRampFunction ramp; ramp.SetByTwoPoints(0.,0.,10.,8.);
+    FrCosRampFunction ramp; ramp.SetByTwoPoints(0.,0.,10.,5.);
 
     carriage->SetMotorFunction(ramp);
 
