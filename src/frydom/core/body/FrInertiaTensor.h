@@ -85,6 +85,8 @@ namespace frydom {
         /// Get the inertia matrix of a point mass
         static InertiaMatrix GetPointMassInertiaMatrix(double mass, const Position& PG);
 
+        Matrix66<double> GetInertiaMatrixAtCOG() const;
+
 
     private:
 

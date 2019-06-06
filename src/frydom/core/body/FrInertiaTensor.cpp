@@ -141,5 +141,18 @@ namespace frydom {
         return inertia.cout(os);
     }
 
+    Matrix66<double> FrInertiaTensor::GetInertiaMatrixAtCOG() const {
+
+        auto mat = Matrix66<double>();
+        mat.SetNull();
+
+        mat(0,0) = m_mass;
+        mat(1,1) = m_mass;
+        mat(2,2) = m_mass;
+        mat.block<3,3>(3, 3) = m_inertiaAtCOG;
+
+        return mat;
+    }
+
 
 }  // end namespace frydom
