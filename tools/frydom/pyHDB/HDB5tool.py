@@ -235,7 +235,7 @@ def main():
         database.discretization.nb_frequencies = int(args.discretization_frequencies)
 
     # Discretization - Final time for IRF.
-    if (args.activate_hydrostatics is not None):
+    if (args.final_time_irf is not None):
         database.discretization._final_time = float(args.final_time_irf)
 
     # Initialize pyHDB.
