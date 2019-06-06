@@ -151,6 +151,10 @@ parser.add_argument('--plot_drift', '--plots_drift','-pdrift', nargs = 2, metava
 parser.add_argument('--read','-r', action="store",help="""
             Reading a hdb5 file with the given name.""")
 
+# Reading a hdb5 file.
+parser.add_argument('--initialization','-init', action="store_true",help="""
+            Initialization of the hydrodynamic database: computation of the Froude-Krylov loads, IRF, etc.""")
+
 def main():
 
     ####################################################################################################################
@@ -205,6 +209,7 @@ def main():
     if (args.read is not None):
         database = HDB5()
         database.read_hdb5(args.read)
+        database._is_initialized = True # No initialization except if asked.
 
     if(args.path_to_nemoh_cal is None and args.read is None):
         print("No input file has been defined.")
@@ -234,7 +239,7 @@ def main():
         database.discretization._final_time = float(args.final_time_irf)
 
     # Initialize pyHDB.
-    if (args.path_to_nemoh_cal is not None): # _initialize is automatically called when a .cal was read.
+    if (args.path_to_nemoh_cal is not None or args.initialization is True): # _initialize is automatically called when a .cal is read.
         database._initialize()
 
     # Body - Active hydrostatics (useless).
