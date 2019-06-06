@@ -719,11 +719,11 @@ class pyHDB():
         dset = writer.create_dataset(wave_direction_path + "/NbWaveDirections", data=self.nb_wave_dir)
         dset.attrs['Description'] = "Number of wave directions."
 
-        dset = writer.create_dataset(wave_direction_path + "/MinAngle", data=np.degrees(self.min_wave_dir))
+        dset = writer.create_dataset(wave_direction_path + "/MinAngle", data=self.min_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Minimum wave direction."
 
-        dset = writer.create_dataset(wave_direction_path + "/MaxAngle", data=np.degrees(self.max_wave_dir))
+        dset = writer.create_dataset(wave_direction_path + "/MaxAngle", data=self.max_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Maximum wave direction."
 
@@ -1117,8 +1117,8 @@ class pyHDB():
                 dset.attrs['Unit'] = 'rad'
                 dset.attrs['Description'] = "Heading angle"
 
-                # Set data.
-                dset = grp_dir.create_dataset("data", data=mode.data[i_angle, :])
+                # Set dat
+                dset = grp_dir.create_dataset("data", data=np.array(mode.data)[i_angle, :])
                 dset.attrs['Description'] = "Wave Drift force coefficients"
 
         # Set frequency.

@@ -435,22 +435,22 @@ class HDB5reader():
 
         try:
             reader[wave_drift_path]
-            pyHDB.wave_drift = WaveDriftDB()
+            pyHDB._wave_drift = WaveDriftDB()
 
             # sym_x.
             if(int(np.array(reader[wave_drift_path + "/sym_x"])) == 0):
-                pyHDB.wave_drift.sym_x = False
+                pyHDB._wave_drift.sym_x = False
             else:
-                pyHDB.wave_drift.sym_x = True
+                pyHDB._wave_drift.sym_x = True
 
             # sym_y
             if (int(np.array(reader[wave_drift_path + "/sym_y"])) == 0):
-                pyHDB.wave_drift.sym_y = False
+                pyHDB._wave_drift.sym_y = False
             else:
-                pyHDB.wave_drift.sym_y = True
+                pyHDB._wave_drift.sym_y = True
 
             # Wave frequencies.
-            pyHDB.wave_drift.discrete_frequency = np.array(reader[wave_drift_path + "/freq"])
+            pyHDB._wave_drift.discrete_frequency = np.array(reader[wave_drift_path + "/freq"])
 
             # Modes.
             for mode in ["/surge", "/sway", "/heave", "/roll", "/pitch", "/yaw"]:
@@ -468,24 +468,23 @@ class HDB5reader():
 
                         # Wave drift coefficients.
                         if(mode == "/surge"):
-                            pyHDB.wave_drift.add_cx(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]),pyHDB.wave_dir[ibeta])
+                            pyHDB._wave_drift.add_cx(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
                         elif(mode == "/sway"):
-                            pyHDB.wave_drift.add_cy(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                            pyHDB._wave_drift.add_cy(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
                         elif(mode == "/heave"):
-                            pyHDB.wave_drift.add_cz(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                            pyHDB._wave_drift.add_cz(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
                         elif(mode == "/roll"):
-                            pyHDB.wave_drift.add_cr(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                            pyHDB._wave_drift.add_cr(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
                         elif(mode == "/pitch"):
-                            pyHDB.wave_drift.add_cm(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                            pyHDB._wave_drift.add_cm(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
                         else:
-                            pyHDB.wave_drift.add_cn(pyHDB.wave_drift.discrete_frequency, np.array(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
+                            pyHDB._wave_drift.add_cn(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
 
                 except:
                     pass
 
         except:
             pass
-
 
     def read_version(self, reader, pyHDB):
         """This function reads the version of the *.hdb5 file.
