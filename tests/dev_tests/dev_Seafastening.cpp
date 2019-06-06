@@ -30,7 +30,7 @@ int main() {
 
     double Ixx = 7.9E7, Iyy = 7.7E8, Izz = 8.5E8;
 
-    CB28->SetInertiaTensor(FrInertiaTensor(mass,Ixx,Iyy,Izz,0.,0.,0.,COGFrame,fc));
+    CB28->SetInertiaTensor(FrInertiaTensor(mass,Ixx,Iyy,Izz,0.,0.,0.,COG,fc));
 
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(CB28.get());
     system.AddPhysicsItem(eqFrame);

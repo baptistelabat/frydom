@@ -97,8 +97,6 @@ int main(int argc, char* argv[]) {
 //    Position platformCoG(0.22, 0.22, 2.92);
 //    Position platformCoG(0., 0., 2.92);
     Position platformCoG(0.22, 0.22, 0.);
-//    Position platformCoG(0., 0., 0.);
-    FrFrame platformCoGFrame(platformCoG, FrRotation(), NWU);
 
     // Dof.
 //    platform->GetDOFMask()->SetLock_X(true);
@@ -112,7 +110,7 @@ int main(int argc, char* argv[]) {
     double Ixx               = 2.4e11;
     double Iyy               = 2.3e11;
     double Izz               = 2e12;
-    FrInertiaTensor platformInertia(Mass, Ixx, Iyy, Izz, 0., 0., 0.,platformCoGFrame, NWU);
+    FrInertiaTensor platformInertia(Mass, Ixx, Iyy, Izz, 0., 0., 0.,platformCoG, NWU);
 
     platform->SetInertiaTensor(platformInertia);
 

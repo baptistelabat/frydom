@@ -100,9 +100,8 @@ int main() {
     // Inertia
     double mass = 86.0; double Ixx = 1.98; double Iyy = 53.88; double Izz = 49.99;
     Position COGPosition(0., 0., 0.03); // 0.03
-    FrFrame COGFrame(COGPosition, FrRotation(), NWU);
 
-    ship->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU));
+    ship->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGPosition, NWU));
 
     auto shipNode = ship->NewNode();
     shipNode->SetPositionInBody(ship->GetCOG(fc),fc);

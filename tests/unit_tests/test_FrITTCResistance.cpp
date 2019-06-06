@@ -50,7 +50,7 @@ void TestITTCResistance::SetUp() {
     direction.normalize();
     body->SetRotation(FrUnitQuaternion(direction, M_PI/5., NWU));
 
-    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(Position(0.2, 0.2, 0.1),FrRotation(),NWU),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,Position(0.2, 0.2, 0.1),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     system.GetEnvironment()->GetOcean()->GetCurrent()->MakeFieldUniform();

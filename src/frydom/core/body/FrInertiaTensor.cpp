@@ -47,13 +47,15 @@ namespace frydom {
     }
 
     FrInertiaTensor::FrInertiaTensor(double mass, double Ixx, double Iyy, double Izz, double Ixy, double Ixz,
-                                       double Iyz, const FrFrame &cogFrame, FRAME_CONVENTION fc) {
+                                       double Iyz, const Position& cogPos, FRAME_CONVENTION fc) {
 
         m_inertiaAtCOG << Ixx, Ixy, Ixz,
                           Ixy, Iyy, Iyz,
                           Ixz, Iyz, Izz;
 
-        m_cogPosition = cogFrame.GetPosition(NWU);
+        m_cogPosition = cogPos;
+        if (IsNED(fc)) internal::SwapFrameConvention(m_cogPosition);
+
         m_mass = mass;
 
     }
@@ -69,11 +71,32 @@ namespace frydom {
     }
 
     void
-    FrInertiaTensor::GetInertiaCoeffs(double &Ixx, double &Iyy, double &Izz, double &Ixy, double &Ixz, double &Iyz,
-                                       FRAME_CONVENTION fc) const {
+    FrInertiaTensor::GetInertiaCoeffsAtCOG(double &Ixx, double &Iyy, double &Izz, double &Ixy, double &Ixz, double &Iyz,
+                                           FRAME_CONVENTION fc) const {
         SplitMatrix33IntoCoeffs(m_inertiaAtCOG, Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
 
         if (IsNED(fc)) internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
+    }
+
+    void FrInertiaTensor::GetInertiaCoeffsAtFrame(double &Ixx, double &Iyy, double &Izz,
+                                 double &Ixy, double &Ixz, double &Iyz,
+                                 const FrFrame& frame,
+                                 FRAME_CONVENTION fc) const {
+
+        auto rot_rp = frame.GetRotation().GetInverseRotationMatrix();
+
+        InertiaMatrix tempInertia = m_inertiaAtCOG;
+        Position PG = m_cogPosition - frame.GetPosition(NWU);
+        tempInertia += GetPointMassInertiaMatrix(m_mass, PG);
+
+
+        tempInertia = rot_rp * tempInertia * rot_rp.transpose();
+
+        SplitMatrix33IntoCoeffs(tempInertia, Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
+
+        if (IsNED(fc)) {
+            internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz); // Convert to NWU
+        }
     }
 
     FrInertiaTensor::InertiaMatrix FrInertiaTensor::GetPointMassInertiaMatrix(double mass,

@@ -634,7 +634,7 @@ std::shared_ptr<FrBody> TestBase::NewBody(std::shared_ptr<TestFrForce_> test) {
     auto body = std::make_shared<FrBody>();
     body->SetPosition(test->GetPointREFInWorld(), NWU);
 
-    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(test->GetPointCOGInBody(),FrRotation(),NWU),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,test->GetPointCOGInBody(),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     body->SetRotation(test->GetQuatREF());

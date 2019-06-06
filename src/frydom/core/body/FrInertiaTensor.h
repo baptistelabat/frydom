@@ -49,7 +49,7 @@ namespace frydom {
     public:
 
         /// Constructor from standard inertia parameters. Inertia coefficients are expressed in coeffsFrame that can be
-        /// different from the cogPosition. Both coeffsFrame and corPosition are relative to body reference coordinate
+        /// different from the cogPosition. Both coeffsFrame and cogPosition are relative to body reference coordinate
         /// system. Mass is in kg. The frame convention holds on inertia coefficients and COG Position.
         FrInertiaTensor(double mass,
                          double Ixx, double Iyy, double Izz,
@@ -62,7 +62,7 @@ namespace frydom {
         FrInertiaTensor(double mass,
                          double Ixx, double Iyy, double Izz,
                          double Ixy, double Ixz, double Iyz,
-                         const FrFrame& cogFrame, FRAME_CONVENTION fc);
+                         const Position& cogPos, FRAME_CONVENTION fc);
 
         /// Get the mass in kg
         double GetMass() const;
@@ -71,9 +71,16 @@ namespace frydom {
         const Position GetCOGPosition(FRAME_CONVENTION fc) const;
 
         /// Get the inertia coefficients in the body reference coordinate system and expressed at COG.
-        void GetInertiaCoeffs(double& Ixx, double& Iyy, double& Izz,
-                              double& Ixy, double& Ixz, double& Iyz,
-                              FRAME_CONVENTION fc) const;
+        void GetInertiaCoeffsAtCOG(double &Ixx, double &Iyy, double &Izz,
+                                   double &Ixy, double &Ixz, double &Iyz,
+                                   FRAME_CONVENTION fc) const;
+
+        /// Get the inertia coefficients in the body reference coordinate system and expressed at a specified reference
+        /// frame, relative to the body reference frame.
+        void GetInertiaCoeffsAtFrame(double &Ixx, double &Iyy, double &Izz,
+                                   double &Ixy, double &Ixz, double &Iyz,
+                                   const FrFrame& frame,
+                                   FRAME_CONVENTION fc) const;
 
         /// Get the inertia matrix of a point mass
         static InertiaMatrix GetPointMassInertiaMatrix(double mass, const Position& PG);

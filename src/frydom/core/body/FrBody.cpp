@@ -381,7 +381,7 @@ namespace frydom {
             internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
         }
 
-        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(GetCOG(fc), FrRotation(), fc), fc};
+        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, GetCOG(fc), fc};
     }
 
     void FrBody::SetInertiaTensor(const FrInertiaTensor &inertia) {
@@ -391,7 +391,7 @@ namespace frydom {
         SetCOG(inertia.GetCOGPosition(NWU), NWU);
 
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-        inertia.GetInertiaCoeffs(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
+        inertia.GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
 
         m_chronoBody->SetInertiaXX(chrono::ChVector<double>(Ixx, Iyy, Izz));
         m_chronoBody->SetInertiaXY(chrono::ChVector<double>(Ixy, Ixz, Iyz));
