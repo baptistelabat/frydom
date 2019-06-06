@@ -659,7 +659,8 @@ class pyHDB():
             # Wave drift coefficients.
             if(self.has_Drift_Kochin):
                 self.UpdateDriftObject()
-            self.write_wave_drift(writer, "/WaveDrift")
+            if (self._wave_drift):
+                self.write_wave_drift(writer, "/WaveDrift")
 
             # Version.
             self.write_version(writer)

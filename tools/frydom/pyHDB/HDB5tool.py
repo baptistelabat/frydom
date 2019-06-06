@@ -17,6 +17,8 @@
 import os
 import argparse
 
+from frydom.pyHDB.HDB5_v2 import *
+
 try:
     import argcomplete
 
@@ -26,18 +28,8 @@ except:
 
 parser = argparse.ArgumentParser(
     description="""  --  HDB5tool  --  
-    A Python module and a command line utility to add write HDB5 file from Nemoh output files.\n\n  Example of use:\n\n  hdb5tool -ed CE""",
+    A Python module and a command line utility to add write HDB5 file from Nemoh output files.\n\n  Example of use:\n\n  hdb5tool --help""",
     formatter_class=argparse.RawDescriptionHelpFormatter)
-
-# Edition of FRyDoM.
-parser.add_argument('--edition','-ed', action="store",help="""
-            Edition of FRyDoM: CE or ce for FRyDoM-CE, EE or ee for FRyDoM-EE.""")
-
-parser.add_argument('-ee','-EE', action="store_true",help="""
-            Use of FRyDoM EE.""")
-
-parser.add_argument('-ce','-CE', action="store_true",help="""
-            Use of FRyDoM CE.""")
 
 # Path to Nemoh.cal.
 parser.add_argument('--path_to_nemoh_cal','-cal', action="store",help="""
@@ -87,14 +79,6 @@ parser.add_argument('--cut_off_irf','-co_irf', '-coirf', nargs = 5, metavar=('tc
 parser.add_argument('--cut_off_irf_speed','-co_irf_speed', '-coirf_speed', nargs = 5, metavar=('tc, ibody_force, iforce, ibody_motion, idof'), action="append",help="""
             Application of the filter with a cutting time tc to the impulse response functions of ibody along iforce for a motion of ibody_motion along idof and plot the irf.""")
 
-# Response Amplitude Operators.
-parser.add_argument('--RAO', '-RAO', '--rao', '-rao', action="store_true",help="""
-            Compute the response amplitude operators (FRyDoM EE only).""")
-
-# Mean wave drift loads.
-parser.add_argument('--drift','--Drift', '-d', action="store_true",help="""
-            Compute the mean wave drift loads from the Kochin function (FRyDoM EE only).""")
-
 # No symmetrization of the HDB.
 parser.add_argument('--sym_hdb','-sym', '-s', action="store_true",help="""
             Symmetrization of the HDB.""")
@@ -127,31 +111,11 @@ parser.add_argument('--plot_irf', '--plots_irf','-pirf', nargs = 4, metavar=('ib
 parser.add_argument('--plot_irf_speed', '--plots_irf_speed', '--plot_irf_ku','-pirfs','-pirfku', '-pirf_speed', nargs = 4, metavar=('ibody_force, iforce, ibody_motion, idof'), action="append",help="""
             Plot the impulse response functions with speed velocity of ibody along iforce for a motion of ibody_motion along idof.""")
 
-# Plot excitation loads.
-parser.add_argument('--plot_RAO', '--plots_RAO', '--plot_rao','-prao', '-pRAO', nargs = 3, metavar=('ibody, iforce, iwave'), action="append",help="""
-            Plot the response amplitude operator of ibody along iforce for iwave (FRyDoM EE only).""")
-
-# Plot elementary Kochin functions.
-parser.add_argument('--plot_kochin_elem', '--plots_kochin_elem', '--plot_ke','-pke', nargs = 5, metavar=('DifforRad', 'iw', 'ibody', 'iforce', 'iwave'), action="append",help="""
-            Plot the diffraction (0) or radiation (1) Kochin function of ibody along iforce for iw and iwave (FRyDoM EE only).""")
-
-# Plot total Kochin functions.
-parser.add_argument('--plot_kochin', '--plots_kochin', '--plot_k','-pk', nargs = 2, metavar=('iw', 'iwave'), action="append",help="""
-            Plot the total Kochin function for iw and iwave (FRyDoM EE only).""")
-
-# Plot angular derivative Kochin functions.
-parser.add_argument('--plot_kochin_derive', '--plots_kochin_derive', '--plot_kd','-pkd', nargs = 2, metavar=('iw', 'iwave'), action="append",help="""
-            Plot the angular differentiation Kochin function for iw and iwave (FRyDoM EE only).""")
-
-# Plot drift loads.
-parser.add_argument('--plot_drift', '--plots_drift','-pdrift', nargs = 2, metavar=('iwave', 'imotion'), action="append",help="""
-            Plot the mean wave drift force (0 or 1) or moment (2) for iwave (FRyDoM EE only).""")
-
 # Reading a hdb5 file.
 parser.add_argument('--read','-r', action="store",help="""
             Reading a hdb5 file with the given name.""")
 
-# Reading a hdb5 file.
+# Initialization of the hdb.
 parser.add_argument('--initialization','-init', action="store_true",help="""
             Initialization of the hydrodynamic database: computation of the Froude-Krylov loads, IRF, etc.""")
 
@@ -165,36 +129,6 @@ def main():
         argcomplete.autocomplete(parser)
 
     args, unknown = parser.parse_known_args()
-
-    ####################################################################################################################
-    #                                               Version of FRyDoM
-    ####################################################################################################################
-
-    # Edition.
-    if (args.edition is not None and args.ce is False and args.ee is False):
-        Edition = args.edition
-        if(Edition == 'CE' or Edition == 'GPL' or Edition == 'Community' or Edition == 'community' or Edition == 'ce' or Edition == 'gpl'):
-            Edition = 'CE'
-        elif(Edition == 'EE' or Edition == 'Entreprise' or Edition == 'entreprise' or Edition == 'ee'):
-            Edition = 'EE'
-        else:
-            print("The edition given in input is not known, please choose between CE or EE.")
-    elif(args.edition is None and args.ce is True and args.ee is False):
-        Edition = 'CE'
-    elif(args.edition is None and args.ce is False and args.ee is True):
-        Edition = 'EE'
-    else:
-        print("The edition of FRyDoM is required. Please use --edition or -ed.")
-        exit()
-
-    if(Edition == 'CE'):
-        from frydom.pyHDB.HDB5_v2 import *
-    elif(Edition == 'EE'):
-        try:
-            from frydom_ee.FrHDB_ee_v2 import *
-        except ImportError:
-            print("Please check you have access to FRyDoM-EE, and, if yes, if the path to the deposit is in your PATH variable.")
-            exit()
 
     ####################################################################################################################
     #                               Selection of an input file: Nemoh file or hdb5 file
@@ -312,16 +246,6 @@ def main():
             database.Cutoff_scaling_IRF_speed(tc=float(args.cut_off_irf_speed[j][0]), ibody_force=int(args.cut_off_irf_speed[j][1]), iforce=int(args.cut_off_irf_speed[j][2]),
                                         ibody_motion=int(args.cut_off_irf_speed[j][3]), idof=int(args.cut_off_irf_speed[j][4]))
 
-    # Response Amplitude Operators.
-    if(args.RAO is not False and Edition == 'EE'):
-        RAO = ResponseAmplitudeOperator(database)
-        RAO.computeRAO()
-
-    # Mean wave drift loads.
-    if (args.drift is not False and Edition == 'EE'):
-        Drift = WaveDriftKochin(database)
-        Drift.computeDriftForce()
-
     # Symmetry of the HDB.
     if(args.sym_hdb is True):
         database.symmetry_HDB()
@@ -368,37 +292,6 @@ def main():
         for j in range(0, nb_plots_irf_speed):
             database.Plot_IRF_speed(ibody_force=int(args.plot_irf_speed[j][0]), iforce=int(args.plot_irf_speed[j][1]), ibody_motion=int(args.plot_irf_speed[j][2]),
                               idof=int(args.plot_irf_speed[j][3]))
-
-    # Plot RAO.
-    if (args.plot_RAO is not None and Edition == 'EE'):
-        nb_plots_RAO = len(args.plot_RAO)
-        for j in range(0, nb_plots_RAO):
-            RAO.Plot_RAO(ibody=int(args.plot_RAO[j][0]), iforce=int(args.plot_RAO[j][1]), iwave=int(args.plot_RAO[j][2]))
-
-    # Plot elementary Kochin functions.
-    if (args.plot_kochin_elem is not None and Edition == 'EE'):
-        nb_plot_kochin_elem = len(args.plot_kochin_elem)
-        for j in range(0, nb_plot_kochin_elem):
-            Drift.Plot_Kochin_Elem(DifforRad=int(args.plot_kochin_elem[j][0]), iw=int(args.plot_kochin_elem[j][1]), ibody=int(args.plot_kochin_elem[j][2]),
-                                        iforce=int(args.plot_kochin_elem[j][3]), iwave=int(args.plot_kochin_elem[j][4]))
-
-    # Plot total Kochin functions.
-    if (args.plot_kochin is not None and Edition == 'EE'):
-        nb_plot_kochin = len(args.plot_kochin)
-        for j in range(0, nb_plot_kochin):
-            Drift.Plot_Kochin(iw=int(args.plot_kochin[j][0]), iwave=int(args.plot_kochin[j][1]))
-
-    # Plot angular derivative Kochin functions.
-    if (args.plot_kochin_derive is not None and Edition == 'EE'):
-        nb_plot_kochin_derive = len(args.plot_kochin_derive)
-        for j in range(0, nb_plot_kochin_derive):
-            Drift.Plot_Kochin_derive(iw=int(args.plot_kochin_derive[j][0]), iwave=int(args.plot_kochin_derive[j][1]))
-
-    # Plot drift loads.
-    if (args.plot_drift is not None and Edition == 'EE'):
-        nb_plot_drift = len(args.plot_drift)
-        for j in range(0, nb_plot_drift):
-            Drift.Plot_drift(iwave=int(args.plot_drift[j][0]), imotion=int(args.plot_drift[j][1]))
 
 if __name__ == '__main__':
     main()
