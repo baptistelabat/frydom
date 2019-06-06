@@ -171,7 +171,7 @@ class HDB5reader():
                 mode_path = body_modes_path + "/MotionModes/Mode_%u" % iforce
 
             if (iforce >= 3):
-                body.point = np.array(reader[mode_path + "/Point"])
+                body.point[iforce-3,:] = np.array(reader[mode_path + "/Point"])
 
     def read_mask(self, reader, body, mask_path):
         """This function reads the Force and Motion masks into the *.hdb5 file.

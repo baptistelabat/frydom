@@ -783,7 +783,7 @@ class pyHDB():
                 writer.create_dataset(mode_path + "/Type", data='LINEAR')
             elif (iforce >= 3):
                 writer.create_dataset(mode_path + "/Type", data='ANGULAR')
-                writer.create_dataset(mode_path + "/Point", data=body.point)
+                writer.create_dataset(mode_path + "/Point", data=body.point[iforce-3,:])
 
     def write_mask(self, writer, body, mask_path="/Mask"):
         """This function writes the Force and Motion masks into the *.hdb5 file.
