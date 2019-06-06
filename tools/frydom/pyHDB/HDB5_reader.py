@@ -121,7 +121,10 @@ class HDB5reader():
 
         pyHDB.nb_time_samples = np.array(reader[time_path + "/NbTimeSample"])
         final_time = np.array(reader[time_path + "/FinalTime"])
-        pyHDB.dt = np.array(reader[time_path + "/TimeStep"])
+        try:
+            pyHDB.dt = np.array(reader[time_path + "/TimeStep"])
+        except:
+            pyHDB.dt = final_time / (pyHDB.nb_time_samples - 1)
         pyHDB.time = np.arange(start=0., stop=final_time + pyHDB.dt, step=pyHDB.dt) # Definition of time.
 
     def read_mesh(self, reader, mesh_path):
