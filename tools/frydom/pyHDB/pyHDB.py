@@ -44,9 +44,9 @@ class pyHDB():
 
         # Wave directions.
         self.nb_wave_dir = 0
-        self.min_wave_dir = 0.
-        self.max_wave_dir = 0.
-        self.wave_dir = np.array([])
+        self.min_wave_dir = 0. # deg.
+        self.max_wave_dir = 0. # deg.
+        self.wave_dir = np.array([]) # rad.
 
         # Kochin parameters.
         self.has_kochin = False
@@ -57,9 +57,9 @@ class pyHDB():
         self.kochin_diffraction = None # Diffraction Kochin functions.
         self.kochin_radiation = None # Radiation Kochin functions.
         self.nb_dir_kochin = 0 # Different from self.nb_wave_dir if the symmetry was used.
-        self.min_dir_kochin = 0. # Different from self.min_wave_dir if the symmetry was used.
-        self.max_dir_kochin = 0. # Different from self.max_wave_dir if the symmetry was used.
-        self.wave_dir_kochin = np.array([]) # Different from self.wave_dir if the symmetry was used.
+        self.min_dir_kochin = 0. # Different from self.min_wave_dir if the symmetry was used (deg).
+        self.max_dir_kochin = 0. # Different from self.max_wave_dir if the symmetry was used (deg).
+        self.wave_dir_kochin = np.array([]) # Different from self.wave_dir if the symmetry was used (rad).
 
         # Bodies.
         self.nb_bodies = 0
@@ -614,8 +614,8 @@ class pyHDB():
             self.Wave_drift_force = self.Wave_drift_force[:, :, sort_dirs]
 
         # Update parameters.
-        self.min_wave_dir = np.min(self.wave_dir)
-        self.max_wave_dir = np.max(self.wave_dir)
+        self.min_wave_dir = np.degrees(np.min(self.wave_dir)) # deg.
+        self.max_wave_dir = np.degrees(np.max(self.wave_dir)) # deg.
         self.nb_wave_dir = self.wave_dir.shape[0]
 
     def write_hdb5(self, hdb5_file):
