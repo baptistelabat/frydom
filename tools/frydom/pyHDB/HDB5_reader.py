@@ -344,14 +344,14 @@ class HDB5reader():
             Path to excitation loads.
         """
 
+        # Definition.
+        body.RAO = np.zeros((6, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir), dtype=np.complex)
+
         try:
 
             for idir in range(0, pyHDB.nb_wave_dir):
 
                 wave_dir_path = RAO_path + "/Angle_%u" % idir
-
-                # Definition.
-                body.RAO = np.zeros((6, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir), dtype=np.complex)
 
                 # Check of the wave direction.
                 assert pyHDB.wave_dir[idir] == np.radians(np.array(reader[wave_dir_path + "/Angle"]))
@@ -360,10 +360,11 @@ class HDB5reader():
                 Abs_RAO = np.array(reader[wave_dir_path + "/Amplitude"])
 
                 # Phase.
-                Phase_RAO = np.array(reader[wave_dir_path + "/Phase"])
+                Phase_RAO = np.radians(np.array(reader[wave_dir_path + "/Phase"]))
 
                 # RAO.
                 body.RAO[:, :, idir] = Abs_RAO * np.exp(1j * Phase_RAO)
+                pyHDB.has_RAO = True # Written for each body but it does not matter.
 
         except:
             pass
