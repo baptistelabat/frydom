@@ -151,7 +151,7 @@ class _BEMReader(object):
         if max_edge_from_mesh > max_edge_from_frequency:
             wmax_bem = pyHDB.max_wave_freq
             msg = """
-            \nWARNING:
+            WARNING:
             The maximum wave frequency (%.3f rad/s) chosen for BEM computations impose a maximum mesh's
             edge length of %.3f m, based on the rule that we must have at least %u faces by wave length
             (the lowest wave length corresponding to the highest wave frequency by the dispersion relation).
@@ -166,7 +166,7 @@ class _BEMReader(object):
             warn(msg.upper())
         else:
             msg = """
-            \n-> Mesh discretization is sufficient for the given frequency range for accurate BEM computations.
+            -> Mesh discretization is sufficient for the given frequency range for accurate BEM computations.
             For your information, the maximum allowed frequency was %.3f rad/s. Your max frequency is %.3f rad/s.
             This is based on the assumption of having at least %u faces by wave length corresponding to the higher
             wave frequency.

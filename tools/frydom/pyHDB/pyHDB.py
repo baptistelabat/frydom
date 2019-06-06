@@ -510,6 +510,16 @@ class pyHDB():
             self.nb_dir_kochin = discretization._nb_wave_directions
             self.wave_dir_kochin = discretization._wave_dirs
 
+        print("")
+        print("-- Interpolations --")
+        print(" Min frequency: %16.8f" % self.min_wave_freq)
+        print(" Max frequency: %16.8f" % self.max_wave_freq)
+        print(" Nb Wave frequencies: %i" % self.nb_wave_freq)
+        print(" Angle min: %16.8f" % self.min_wave_dir)
+        print(" Angle max: %16.8f" % self.max_wave_dir)
+        print(" Nb Wave directions: %i" % self.nb_wave_dir)
+        print("")
+
     def symetrize(self):
 
         """This function updates the hdb due to a modification of the wave direction convention."""
@@ -617,6 +627,13 @@ class pyHDB():
         self.min_wave_dir = np.degrees(np.min(self.wave_dir)) # deg.
         self.max_wave_dir = np.degrees(np.max(self.wave_dir)) # deg.
         self.nb_wave_dir = self.wave_dir.shape[0]
+
+        print("")
+        print("-- Symmetrization --")
+        print(" Angle min: %16.8f" % self.min_wave_dir)
+        print(" Angle max: %16.8f" % self.max_wave_dir)
+        print(" Nb Wave directions: %i" % self.nb_wave_dir)
+        print("")
 
     def write_hdb5(self, hdb5_file):
         """This function writes the hydrodynamic database into a *.hdb5 file.

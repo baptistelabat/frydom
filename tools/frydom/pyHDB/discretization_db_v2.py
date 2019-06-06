@@ -94,7 +94,7 @@ class DiscretizationDB(object):
 
         if isinstance(value, int):
             self._nb_frequencies = value
-            print("Warning : Number of wave frequencies sets to %i." % value)
+            # print("Warning : Number of wave frequencies sets to %i." % value)
         else:
             print("Warning : Value must be an integer.")
 
@@ -237,7 +237,7 @@ class DiscretizationDB(object):
 
         if isinstance(value, int):
             self._nb_wave_directions = value
-            print("Warning : Number of wave directions sets to %i." % value)
+            # print("Warning : Number of wave directions sets to %i." % value)
         else:
             print("Warning : Dimension must be an integer.")
 
@@ -291,7 +291,14 @@ class DiscretizationDB(object):
         """
 
         print("")
-        print("-- Initialize --")
+        print("-- Input parameters --")
+        print(" Min frequency: %16.8f" % pyHDB.min_wave_freq)
+        print(" Max frequency: %16.8f" % pyHDB.max_wave_freq)
+        print(" Nb Wave frequencies: %i" % pyHDB.nb_wave_freq)
+        print(" Angle min: %16.8f" % pyHDB.min_wave_dir)
+        print(" Angle max: %16.8f" % pyHDB.max_wave_dir)
+        print(" Nb Wave directions: %i" % pyHDB.nb_wave_dir)
+        print("")
 
         # Wave frequencies.
         if self.max_frequency is None:
@@ -305,10 +312,6 @@ class DiscretizationDB(object):
 
         self._wave_frequencies = np.linspace(self.min_frequency, self.max_frequency, self.nb_frequencies)
 
-        print(" Min frequency: %16.8f" % self._min_frequency)
-        print(" Max frequency: %16.8f" % self._max_frequency)
-        print(" Nb Wave frequencies: %i" % self._nb_frequencies)
-
         # Wave directions.
         if self.max_angle is None:
             self._max_angle = pyHDB.max_wave_dir
@@ -318,11 +321,6 @@ class DiscretizationDB(object):
 
         if self.nb_wave_directions is None:
             self._nb_wave_directions = pyHDB.nb_wave_dir
-
-        print(" Angle min: %16.8f" % self._min_angle)
-        print(" Angle max: %16.8f" % self._max_angle)
-        print(" Nb Wave directions: %i" % self._nb_wave_directions)
-        print("")
 
         self._wave_dirs = np.radians(np.linspace(self.min_angle, self.max_angle, self.nb_wave_directions))
 
