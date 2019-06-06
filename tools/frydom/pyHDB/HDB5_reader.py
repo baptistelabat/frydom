@@ -478,7 +478,7 @@ class HDB5reader():
                             pyHDB._wave_drift.add_cr(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
                         elif(mode == "/pitch"):
                             pyHDB._wave_drift.add_cm(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
-                        else:
+                        else: # Yaw.
                             pyHDB._wave_drift.add_cn(pyHDB._wave_drift.discrete_frequency, list(reader[heading_path + "/data"]), pyHDB.wave_dir[ibeta])
 
                 except:
@@ -503,48 +503,3 @@ class HDB5reader():
             pyHDB.version = np.array(reader['Version'])
         except:
             pyHDB.version = 1.0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
