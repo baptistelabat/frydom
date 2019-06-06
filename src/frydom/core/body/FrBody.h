@@ -267,14 +267,6 @@ namespace frydom {
 
         std::shared_ptr<chrono::ChMaterialSurfaceSMC> GetMaterialSurface() {return m_chronoBody->GetMaterialSurfaceSMC();}
 
-        // TODO : ajouter de quoi definir des shapes de collision !!!
-
-        // =============================================================================================================
-        // VISUAL ASSETS
-        // =============================================================================================================
-
-//        void AssetActive() // TODO
-
         // =============================================================================================================
         // SPEED LIMITATIONS TO STABILIZE SIMULATIONS
         // =============================================================================================================
@@ -345,6 +337,25 @@ namespace frydom {
         NodeContainer GetNodeList() const;
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame !
+
+
+        // =============================================================================================================
+        // BODIES FIXED TO THIS BODY
+        // =============================================================================================================
+
+        /// Create a new body, with a fixed link to this body
+        /// \param linkPosInThisBody position in this body reference frame, of the fixed link marker
+        /// \param linkPosInNewBody position in the new body reference frame, of the fixed link marker
+        /// \param fc frame convention (NED/NWU)
+        /// \return new body created
+        std::shared_ptr<FrBody> NewBody(Position linkPosInThisBody, Position linkPosInNewBody, FRAME_CONVENTION fc);
+
+        /// Create a new body, with a fixed link to this body
+        /// \param linkFrameInThisBody frame in this body reference frame, of the fixed link marker
+        /// \param linkFrameInNewBody frame in the new body reference frame, of the fixed link marker
+        /// \return new body created
+        std::shared_ptr<FrBody> NewBody(FrFrame linkFrameInThisBody, FrFrame linkFrameInNewBody);
+
 
         // =============================================================================================================
         // POSITIONS

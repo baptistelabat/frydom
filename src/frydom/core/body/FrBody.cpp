@@ -25,6 +25,7 @@
 #include "frydom/asset/FrForceAsset.h"
 #include "frydom/collision/FrCollisionModel.h"
 #include "frydom/core/link/links_lib/FrDOFMaskLink.h"
+#include "frydom/core/link/links_lib/FrFixedLink.h"
 
 namespace frydom {
 
@@ -70,7 +71,7 @@ namespace frydom {
 
             for (auto& marker : GetMarkerList()) {
                 position = marker->GetPos() - newCOG;
-                marker->Impose_Rel_Coord(chrono::ChCoordsys<double>(position));
+                marker->Impose_Rel_Coord(chrono::ChCoordsys<double>(position, marker->GetRot()));
             }
             UpdateMarkers(GetChTime());
         }
@@ -507,6 +508,35 @@ namespace frydom {
         auto node = std::make_shared<FrNode>(this);
         m_nodes.push_back(node);
         return node;
+    }
+
+    std::shared_ptr<FrBody> FrBody::NewBody(Position linkPosInThisBody, Position linkPosInNewBody, FRAME_CONVENTION fc) {
+
+        auto thisNode = NewNode();
+        thisNode->SetPositionInBody(linkPosInThisBody, fc);
+
+        auto newBody = GetSystem()->NewBody();
+        auto newNode = newBody->NewNode();
+        newNode->SetPositionInBody(linkPosInNewBody, fc);
+
+        auto fixedLink = make_fixed_link(thisNode, newNode, GetSystem());
+
+        return newBody;
+    }
+
+    std::shared_ptr<FrBody> FrBody::NewBody(FrFrame linkFrameInThisBody, FrFrame linkFrameInNewBody) {
+
+        auto thisNode = NewNode();
+        thisNode->SetFrameInBody(linkFrameInThisBody);
+
+        auto newBody = GetSystem()->NewBody();
+
+        auto newNode = newBody->NewNode();
+        newNode->SetFrameInBody(linkFrameInNewBody);
+
+        auto fixedLink = make_fixed_link(thisNode, newNode, GetSystem());
+
+        return newBody;
     }
 
     void FrBody::SetCOG(const Position& bodyPos, FRAME_CONVENTION fc) {

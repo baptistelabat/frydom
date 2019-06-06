@@ -109,6 +109,16 @@ int main() {
     shipNode->RotateAroundYInBody(90*DEG2RAD,fc);
     shipNode->RotateAroundXInBody(90*DEG2RAD,fc);
 
+    // Hydrodynamic Database
+//    auto hdb = make_hydrodynamic_database("DTMB5512.h5");
+
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(ship.get());
+    system.AddPhysicsItem(eqFrame);
+
+//    hdb->Map(0,ship.get(),eqFrame);
+
+    auto hydrostaticForce = make_linear_hydrostatic_force(eqFrame,ship,"DTMB5512.obj",FrFrame());
+
     // --------------------------------------------------
     // Carriage
     // --------------------------------------------------
