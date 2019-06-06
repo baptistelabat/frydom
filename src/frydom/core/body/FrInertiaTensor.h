@@ -86,15 +86,6 @@ namespace frydom {
         static InertiaMatrix GetPointMassInertiaMatrix(double mass, const Position& PG);
 
 
-        /// Set the mass, in kg
-        void SetMass(double mass_kg);
-
-        /// Set the cog position
-        void SetCOGPosition(const Position& cogPosition, FRAME_CONVENTION fc);
-
-        Matrix66<double> GetMatrix() const;
-
-
     private:
 
         friend std::ostream&operator<<(std::ostream& os, const FrInertiaTensor& inertia);

@@ -28,7 +28,7 @@ namespace frydom {
 
             auto Inertia = body->GetInertiaTensor(fc);
 
-            Inertia.GetPointMassInertiaMatrix()
+//            Inertia.GetPointMassInertiaMatrix()
 
 
         }
