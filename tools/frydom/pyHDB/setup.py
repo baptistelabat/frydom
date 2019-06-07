@@ -18,7 +18,7 @@ setup(
 
     include_package_data=True,
 
-    install_requires=['numpy', 'matplotlib', 'h5py'],
+    install_requires=['numpy', 'matplotlib', 'h5py', 'argcomplete'],
 
     entry_points={
         'console_scripts': ['HDB5tool=HDB5tool:main','hdb5tool=HDB5tool:main']
