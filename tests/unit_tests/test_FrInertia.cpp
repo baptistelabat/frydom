@@ -84,7 +84,7 @@ void TestInertia::SetUp() {
     body->SetPosition(m_BodyPositionInWorld, NWU);
     body->SetRotation(FrUnitQuaternion(m_BodyRotationDirection, m_BodyRotationAngle, NWU));
 
-    body->SetInertiaTensor(FrInertiaTensor(m_BodyMass,1.,0.,1.,0.,0.,0.,m_COG,NWU));
+    body->SetInertiaTensor(FrInertiaTensor(m_BodyMass,1.,1.,1.,0.,0.,0.,m_COG,NWU));
 //    body->SetInertiaTensor(FrInertiaTensor(m_BodyMass,m_COG,NWU));
 //    body->SetCOG(m_COG, NWU);
 //    body->SetMass(m_BodyMass);
@@ -125,7 +125,7 @@ TEST_F(TestInertia, InertiaAtCOG) {
     inertia = std::make_shared<FrInertiaTensor>(m_BodyMass,
        m_InertialInBodyAtCOG(0, 0), m_InertialInBodyAtCOG(1, 1), m_InertialInBodyAtCOG(2, 2),
        m_InertialInBodyAtCOG(0, 1), m_InertialInBodyAtCOG(0, 2), m_InertialInBodyAtCOG(1, 2),
-       body->GetFrameAtCOG(NWU), NWU);
+       body->GetCOG(NWU), NWU);
 
     this->CheckInertiaAtCOG();
 }
