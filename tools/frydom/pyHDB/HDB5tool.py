@@ -250,10 +250,6 @@ def main():
     if(args.sym_hdb is True):
         database.symmetry_HDB()
 
-    # Writing the hdb5 output file.
-    if(args.write is not None):
-        database.export_hdb5(args.write)
-
     # Plot added mass and damping coefficients.
     if (args.plot_radiation is not None):
         nb_plots_radiation = len(args.plot_radiation)
@@ -292,6 +288,10 @@ def main():
         for j in range(0, nb_plots_irf_speed):
             database.Plot_IRF_speed(ibody_force=int(args.plot_irf_speed[j][0]), iforce=int(args.plot_irf_speed[j][1]), ibody_motion=int(args.plot_irf_speed[j][2]),
                               idof=int(args.plot_irf_speed[j][3]))
+
+    # Writing the hdb5 output file.
+    if (args.write is not None):
+        database.export_hdb5(args.write)
 
 if __name__ == '__main__':
     main()
