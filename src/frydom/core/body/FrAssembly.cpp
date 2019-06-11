@@ -29,23 +29,35 @@ namespace frydom {
 
     FrInertiaTensor FrAssembly::GetInertiaTensor(FRAME_CONVENTION fc) const {
 
-//        FrInertiaTensor tensor(0.,0.,0.,0.,0.,0.,0.,Position(),NWU);
+        try {
+            if (m_masterBody == nullptr)
+                throw std::string("no master body set for the assembly");
+            if (m_bodyList.empty())
+                throw std::string("no bodies added to the assembly");
 
-        // frame of the master body at COG
-        auto frameMaster = m_masterBody->GetFrame();
+    //        FrInertiaTensor tensor(0.,0.,0.,0.,0.,0.,0.,Position(),NWU);
 
-        auto tensor = m_masterBody->GetInertiaTensor(fc);
+            // frame of the master body at COG
+            auto frameMaster = m_masterBody->GetFrame();
 
-        for (const auto &body: m_bodyList) {
+            auto tensor = m_masterBody->GetInertiaTensor(fc);
 
-            auto frameBodyToMaster = frameMaster.GetOtherFrameRelativeTransform_WRT_ThisFrame(body->GetFrame());
-//            auto frameBodyToMaster = frameMaster.GetThisFrameRelativeTransform_WRT_OtherFrame(body->GetFrame());
+            for (const auto &body: m_bodyList) {
 
-            tensor.Add(body->GetInertiaTensor(fc), frameBodyToMaster);
+                auto frameBodyToMaster = frameMaster.GetOtherFrameRelativeTransform_WRT_ThisFrame(body->GetFrame());
+    //            auto frameBodyToMaster = frameMaster.GetThisFrameRelativeTransform_WRT_OtherFrame(body->GetFrame());
+
+                tensor.Add(body->GetInertiaTensor(fc), frameBodyToMaster);
+
+            }
+
+            return tensor;
 
         }
-
-        return tensor;
+        catch(std::string const& error_msg)
+        {
+            fmt::print(error_msg);
+        }
     }
 
 } // end namespace frydom
