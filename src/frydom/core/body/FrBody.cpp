@@ -252,9 +252,9 @@ namespace frydom {
     void FrBody::Initialize() {
 
         // Check the mass and inertia coefficients
-        assert(("Null mass not permitted : ", GetInertiaTensor(NWU).GetMass()!=0)) ;
+        assert(("Null mass not permitted : ", GetInertiaTensor().GetMass()!=0)) ;
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-        GetInertiaTensor(NWU).GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
+        GetInertiaTensor().GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
         assert(("Null diagonal inertia not permitted : ", Ixx!=0.&&Iyy!=0.&&Izz!=0.));
 
 
@@ -375,15 +375,12 @@ namespace frydom {
         return m_chronoBody->GetMass();
     }
 
-    FrInertiaTensor FrBody::GetInertiaTensor(FRAME_CONVENTION fc) const {
+    FrInertiaTensor FrBody::GetInertiaTensor() const {
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
         SplitMatrix33IntoCoeffs(internal::ChMatrix33ToMatrix33(m_chronoBody->GetInertia()),
                 Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
-        if (IsNED(fc)) {
-            internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
-        }
 
-        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, GetCOG(fc), fc};
+        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, GetCOG(NWU), NWU};
     }
 
     void FrBody::SetInertiaTensor(const FrInertiaTensor &inertia) {

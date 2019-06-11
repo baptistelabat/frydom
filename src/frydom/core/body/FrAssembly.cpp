@@ -27,7 +27,7 @@ namespace frydom {
                 std::find<std::vector<std::shared_ptr<FrBody>>::iterator>(m_bodyList.begin(), m_bodyList.end(), body));
     }
 
-    FrInertiaTensor FrAssembly::GetInertiaTensor(FRAME_CONVENTION fc) const {
+    FrInertiaTensor FrAssembly::GetInertiaTensor() const {
 
         try {
             if (m_masterBody == nullptr)
@@ -40,14 +40,14 @@ namespace frydom {
             // frame of the master body at COG
             auto frameMaster = m_masterBody->GetFrame();
 
-            auto tensor = m_masterBody->GetInertiaTensor(fc);
+            auto tensor = m_masterBody->GetInertiaTensor();
 
             for (const auto &body: m_bodyList) {
 
                 auto frameBodyToMaster = frameMaster.GetOtherFrameRelativeTransform_WRT_ThisFrame(body->GetFrame());
     //            auto frameBodyToMaster = frameMaster.GetThisFrameRelativeTransform_WRT_OtherFrame(body->GetFrame());
 
-                tensor.Add(body->GetInertiaTensor(fc), frameBodyToMaster);
+                tensor.Add(body->GetInertiaTensor(), frameBodyToMaster);
 
             }
 

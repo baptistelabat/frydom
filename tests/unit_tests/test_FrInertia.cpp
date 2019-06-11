@@ -160,7 +160,7 @@ TEST_F(TestInertia, BodyInertiaAtCOG) {
                                    body->GetCOG(NWU), NWU);
     body->SetInertiaTensor(InertiaTensor);
 
-    inertia = std::make_shared<FrInertiaTensor>(body->GetInertiaTensor(NWU));
+    inertia = std::make_shared<FrInertiaTensor>(body->GetInertiaTensor());
     this->CheckInertiaAtCOG();
 }
 
@@ -176,7 +176,7 @@ TEST_F(TestInertia, BodyInertiaInFrame) {
                                              m_InertialInFrameAtPoint(1, 2),
                                              frame, body->GetCOG(NWU), NWU));
 
-    inertia = std::make_shared<FrInertiaTensor>(body->GetInertiaTensor(NWU));
+    inertia = std::make_shared<FrInertiaTensor>(body->GetInertiaTensor());
     this->CheckInertiaAtCOG();
 
     this->CheckInertiaAtPoint();
@@ -191,7 +191,7 @@ TEST_F(TestInertia, BodyInertia) {
                                             m_InertialInBodyAtCOG(1, 2),
                                             body->GetCOG(NWU), NWU));
 
-    inertia = std::make_shared<FrInertiaTensor>(body->GetInertiaTensor(NWU));
+    inertia = std::make_shared<FrInertiaTensor>(body->GetInertiaTensor());
     this->CheckInertiaAtCOG();
 }
 

@@ -224,7 +224,7 @@ namespace frydom {
 
         /// Get the inertia parameters as a FrInertiaTensor object
         // TODO : gerer la frame convention !
-        FrInertiaTensor GetInertiaTensor(FRAME_CONVENTION fc) const; // TODO : voir pour une methode renvoyant une reference non const
+        FrInertiaTensor GetInertiaTensor() const; // TODO : voir pour une methode renvoyant une reference non const
 
         /// Set the inertia parameters as a FrInertiaTensor object
         void SetInertiaTensor(const FrInertiaTensor &inertia);

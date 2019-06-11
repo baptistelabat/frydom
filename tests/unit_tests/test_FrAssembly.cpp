@@ -102,7 +102,7 @@ TEST(FrAssemblyTest,Add) {
     body1->SetFixedInWorld(true);
     assembly.SetMasterBody(body1);
 
-//    std::cout<<body1->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<body1->GetInertiaTensor()<<std::endl;
 
     if (d1!=0 && d2!=0) {
         auto body2 = system.NewBody();
@@ -112,7 +112,7 @@ TEST(FrAssemblyTest,Add) {
                      Position(-0.5 * L1 * d1, -0.5 * L2 * d2, -0.5 * L3 * (1. - d3)), fc);
         assembly.AddToAssembly(body2);
 
-//        std::cout<<body2->GetInertiaTensor(fc)<<std::endl;
+//        std::cout<<body2->GetInertiaTensor()<<std::endl;
 
         if (d1<1) {
             auto body3 = system.NewBody();
@@ -122,7 +122,7 @@ TEST(FrAssemblyTest,Add) {
                          Position(-0.5 * (1. - d1) * L1, -0.5 * d2 * L2, -0.5 * (1. - d3) * L3), fc);
             assembly.AddToAssembly(body3);
 
-//            std::cout<<body3->GetInertiaTensor(fc)<<std::endl;
+//            std::cout<<body3->GetInertiaTensor()<<std::endl;
         }
 
     }
@@ -133,7 +133,7 @@ TEST(FrAssemblyTest,Add) {
     AttachBodies(body1,body4, Position(0.5*L1,0.5*L2,0.5*d3*L3), Position(0.5*L1, 0.5*(1.-d2)*L2, -0.5*(1.-d3)*L3), fc);
     assembly.AddToAssembly(body4);
 
-//    std::cout<<body4->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<body4->GetInertiaTensor()<<std::endl;
 
     auto bodyFull = system.NewBody();
     bodyFull->SetColor(DarkKhaki);
@@ -148,16 +148,16 @@ TEST(FrAssemblyTest,Add) {
 
 //    system.RunInViewer(0.,30);
 
-//    std::cout<<assembly.GetInertiaTensor(fc)<<std::endl;
-//    std::cout<<bodyFull->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<assembly.GetInertiaTensor()<<std::endl;
+//    std::cout<<bodyFull->GetInertiaTensor()<<std::endl;
 
 
-    EXPECT_NEAR(assembly.GetInertiaTensor(fc).GetMass(), bodyFull->GetInertiaTensor(fc).GetMass(), 1e-08);
+    EXPECT_NEAR(assembly.GetInertiaTensor().GetMass(), bodyFull->GetInertiaTensor().GetMass(), 1e-08);
 
-//    Position testPos = assembly.GetInertiaTensor(fc).GetCOGPosition(fc) - bodyFull->GetInertiaTensor(fc).GetCOGPosition(fc);
+//    Position testPos = assembly.GetInertiaTensor().GetCOGPosition(fc) - bodyFull->GetInertiaTensor().GetCOGPosition(fc);
 //    EXPECT_NEAR(testPos.norm(), 0., 1e-08);
 
-    mathutils::Matrix33<double> testMat = assembly.GetInertiaTensor(fc).GetInertiaMatrixAtCOG(fc) - bodyFull->GetInertiaTensor(fc).GetInertiaMatrixAtCOG(fc);
+    mathutils::Matrix33<double> testMat = assembly.GetInertiaTensor().GetInertiaMatrixAtCOG(fc) - bodyFull->GetInertiaTensor().GetInertiaMatrixAtCOG(fc);
     EXPECT_NEAR(testMat.norm(), 0., 1e-08);
 }
 
@@ -182,7 +182,7 @@ TEST(FrAssemblyTest,AddRotation) {
     body1->SetFixedInWorld(true);
     assembly.SetMasterBody(body1);
 
-//    std::cout<<body1->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<body1->GetInertiaTensor()<<std::endl;
 
     if (d1!=0 && d2!=0) {
         auto body2 = system.NewBody();
@@ -195,7 +195,7 @@ TEST(FrAssemblyTest,AddRotation) {
         AttachBodies(body1, body2, body1Frame,body2Frame);
         assembly.AddToAssembly(body2);
 
-//        std::cout<<body2->GetInertiaTensor(fc)<<std::endl;
+//        std::cout<<body2->GetInertiaTensor()<<std::endl;
 
         if (d1<1) {
             auto body3 = system.NewBody();
@@ -208,7 +208,7 @@ TEST(FrAssemblyTest,AddRotation) {
             AttachBodies(body2, body3, body2Frame, body3Frame);
             assembly.AddToAssembly(body3);
 
-//            std::cout<<body3->GetInertiaTensor(fc)<<std::endl;
+//            std::cout<<body3->GetInertiaTensor()<<std::endl;
         }
 
     }
@@ -223,7 +223,7 @@ TEST(FrAssemblyTest,AddRotation) {
     AttachBodies(body1, body4, body1Frame, body4Frame);
     assembly.AddToAssembly(body4);
 
-//    std::cout<<body4->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<body4->GetInertiaTensor()<<std::endl;
 
     auto bodyFull = system.NewBody();
     bodyFull->SetColor(DarkKhaki);
@@ -238,16 +238,16 @@ TEST(FrAssemblyTest,AddRotation) {
 
 //    system.RunInViewer(0.,30);
 
-//    std::cout<<assembly.GetInertiaTensor(fc)<<std::endl;
-//    std::cout<<bodyFull->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<assembly.GetInertiaTensor()<<std::endl;
+//    std::cout<<bodyFull->GetInertiaTensor()<<std::endl;
 
 
-    EXPECT_NEAR(assembly.GetInertiaTensor(fc).GetMass(), bodyFull->GetInertiaTensor(fc).GetMass(), 1e-08);
+    EXPECT_NEAR(assembly.GetInertiaTensor().GetMass(), bodyFull->GetInertiaTensor().GetMass(), 1e-08);
 
-//    Position testPos = assembly.GetInertiaTensor(fc).GetCOGPosition(fc) - bodyFull->GetInertiaTensor(fc).GetCOGPosition(fc);
+//    Position testPos = assembly.GetInertiaTensor().GetCOGPosition(fc) - bodyFull->GetInertiaTensor().GetCOGPosition(fc);
 //    EXPECT_NEAR(testPos.norm(), 0., 1e-08);
 
-    mathutils::Matrix33<double> testMat = assembly.GetInertiaTensor(fc).GetInertiaMatrixAtCOG(fc) - bodyFull->GetInertiaTensor(fc).GetInertiaMatrixAtCOG(fc);
+    mathutils::Matrix33<double> testMat = assembly.GetInertiaTensor().GetInertiaMatrixAtCOG(fc) - bodyFull->GetInertiaTensor().GetInertiaMatrixAtCOG(fc);
     EXPECT_NEAR(testMat.norm(), 0., 1e-08);
 
 }
@@ -273,7 +273,7 @@ TEST(FrAssemblyTest,AddCOG) {
     body1->SetFixedInWorld(true);
     assembly.SetMasterBody(body1);
 
-//    std::cout<<body1->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<body1->GetInertiaTensor()<<std::endl;
 
     if (d1!=0 && d2!=0) {
         auto body2 = system.NewBody();
@@ -283,7 +283,7 @@ TEST(FrAssemblyTest,AddCOG) {
                      Position(0., 0., 0.), fc);
         assembly.AddToAssembly(body2);
 
-//        std::cout<<body2->GetInertiaTensor(fc)<<std::endl;
+//        std::cout<<body2->GetInertiaTensor()<<std::endl;
 
         if (d1<1) {
             auto body3 = system.NewBody();
@@ -293,7 +293,7 @@ TEST(FrAssemblyTest,AddCOG) {
                          Position(0., 0., 0.), fc);
             assembly.AddToAssembly(body3);
 
-//            std::cout<<body3->GetInertiaTensor(fc)<<std::endl;
+//            std::cout<<body3->GetInertiaTensor()<<std::endl;
         }
 
     }
@@ -304,7 +304,7 @@ TEST(FrAssemblyTest,AddCOG) {
     AttachBodies(body1,body4, Position(L1,L2,d3*L3), Position(L1, (1.-d2)*L2, 0.), fc);
     assembly.AddToAssembly(body4);
 
-//    std::cout<<body4->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<body4->GetInertiaTensor()<<std::endl;
 
     auto bodyFull = system.NewBody();
     bodyFull->SetColor(DarkKhaki);
@@ -319,16 +319,16 @@ TEST(FrAssemblyTest,AddCOG) {
 
 //    system.RunInViewer(0.,30);
 
-//    std::cout<<assembly.GetInertiaTensor(fc)<<std::endl;
-//    std::cout<<bodyFull->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<assembly.GetInertiaTensor()<<std::endl;
+//    std::cout<<bodyFull->GetInertiaTensor()<<std::endl;
 
 
-    EXPECT_NEAR(assembly.GetInertiaTensor(fc).GetMass(), bodyFull->GetInertiaTensor(fc).GetMass(), 1e-08);
+    EXPECT_NEAR(assembly.GetInertiaTensor().GetMass(), bodyFull->GetInertiaTensor().GetMass(), 1e-08);
 
-    Position testPos = assembly.GetInertiaTensor(fc).GetCOGPosition(fc) - bodyFull->GetInertiaTensor(fc).GetCOGPosition(fc);
+    Position testPos = assembly.GetInertiaTensor().GetCOGPosition(fc) - bodyFull->GetInertiaTensor().GetCOGPosition(fc);
     EXPECT_NEAR(testPos.norm(), 0., 1e-08);
 
-    mathutils::Matrix33<double> testMat = assembly.GetInertiaTensor(fc).GetInertiaMatrixAtCOG(fc) - bodyFull->GetInertiaTensor(fc).GetInertiaMatrixAtCOG(fc);
+    mathutils::Matrix33<double> testMat = assembly.GetInertiaTensor().GetInertiaMatrixAtCOG(fc) - bodyFull->GetInertiaTensor().GetInertiaMatrixAtCOG(fc);
     EXPECT_NEAR(testMat.norm(), 0., 1e-08);
 
 }
@@ -353,7 +353,7 @@ TEST(FrAssemblyTest,AddCOGRotation) {
     body1->SetFixedInWorld(true);
     assembly.SetMasterBody(body1);
 
-//    std::cout<<body1->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<body1->GetInertiaTensor()<<std::endl;
 
     if (d1!=0 && d2!=0) {
         auto body2 = system.NewBody();
@@ -366,7 +366,7 @@ TEST(FrAssemblyTest,AddCOGRotation) {
         AttachBodies(body1, body2, body1Frame,body2Frame);
         assembly.AddToAssembly(body2);
 
-//        std::cout<<body2->GetInertiaTensor(fc)<<std::endl;
+//        std::cout<<body2->GetInertiaTensor()<<std::endl;
 
         if (d1<1) {
             auto body3 = system.NewBody();
@@ -379,7 +379,7 @@ TEST(FrAssemblyTest,AddCOGRotation) {
             AttachBodies(body2, body3, body2Frame, body3Frame);
             assembly.AddToAssembly(body3);
 
-//            std::cout<<body3->GetInertiaTensor(fc)<<std::endl;
+//            std::cout<<body3->GetInertiaTensor()<<std::endl;
         }
 
     }
@@ -394,7 +394,7 @@ TEST(FrAssemblyTest,AddCOGRotation) {
     AttachBodies(body1, body4, body1Frame, body4Frame);
     assembly.AddToAssembly(body4);
 
-//    std::cout<<body4->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<body4->GetInertiaTensor()<<std::endl;
 
 
     auto bodyFull = system.NewBody();
@@ -410,15 +410,15 @@ TEST(FrAssemblyTest,AddCOGRotation) {
 
 //    system.RunInViewer(0.,30);
 
-//    std::cout<<assembly.GetInertiaTensor(fc)<<std::endl;
-//    std::cout<<bodyFull->GetInertiaTensor(fc)<<std::endl;
+//    std::cout<<assembly.GetInertiaTensor()<<std::endl;
+//    std::cout<<bodyFull->GetInertiaTensor()<<std::endl;
 
-    EXPECT_NEAR(assembly.GetInertiaTensor(fc).GetMass(), bodyFull->GetInertiaTensor(fc).GetMass(), 1e-08);
+    EXPECT_NEAR(assembly.GetInertiaTensor().GetMass(), bodyFull->GetInertiaTensor().GetMass(), 1e-08);
 
-    Position testPos = assembly.GetInertiaTensor(fc).GetCOGPosition(fc) - bodyFull->GetInertiaTensor(fc).GetCOGPosition(fc);
+    Position testPos = assembly.GetInertiaTensor().GetCOGPosition(fc) - bodyFull->GetInertiaTensor().GetCOGPosition(fc);
     EXPECT_NEAR(testPos.norm(), 0., 1e-08);
 
-    mathutils::Matrix33<double> testMat = assembly.GetInertiaTensor(fc).GetInertiaMatrixAtCOG(fc) - bodyFull->GetInertiaTensor(fc).GetInertiaMatrixAtCOG(fc);
+    mathutils::Matrix33<double> testMat = assembly.GetInertiaTensor().GetInertiaMatrixAtCOG(fc) - bodyFull->GetInertiaTensor().GetInertiaMatrixAtCOG(fc);
     EXPECT_NEAR(testMat.norm(), 0., 1e-08);
 
 }

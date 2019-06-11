@@ -110,8 +110,20 @@ int main() {
 
     AttachBodies(CB28, manifold, Position(-8, -5.6, 4.04), Position(0.,0.,-3), fc);
 
-//    system.Initialize();
-//    system.DoAssembly();
+    //-------------------------------------
+    // Assembly
+    //-------------------------------------
+
+    FrAssembly assembly;
+    assembly.SetMasterBody(CB28);
+    assembly.AddToAssembly(pile);
+    assembly.AddToAssembly(manifold);
+
+
+    system.Initialize();
+    system.DoAssembly();
+
+    std::cout<<assembly.GetInertiaTensor()<<std::endl;
 
     system.SetTimeStep(0.01);
 

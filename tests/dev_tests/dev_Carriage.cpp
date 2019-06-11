@@ -10,7 +10,7 @@ FrLinearActuator* make_carriage(FrOffshoreSystem* system, const std::shared_ptr<
 
     FRAME_CONVENTION fc = NWU;
 
-    auto mass = shipNode->GetBody()->GetInertiaTensor(fc).GetMass();
+    auto mass = shipNode->GetBody()->GetInertiaTensor().GetMass();
 
     double tankLength = 140;
     double tankWidth = 5;

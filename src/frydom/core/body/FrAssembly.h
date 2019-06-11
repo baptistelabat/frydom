@@ -39,7 +39,7 @@ namespace frydom {
 
         void RemoveFromAssembly(const std::shared_ptr<FrBody>& body);
 
-        FrInertiaTensor GetInertiaTensor(FRAME_CONVENTION fc) const;
+        FrInertiaTensor GetInertiaTensor() const;
 
     };
 
