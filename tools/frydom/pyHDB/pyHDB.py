@@ -44,9 +44,9 @@ class pyHDB():
 
         # Wave directions.
         self.nb_wave_dir = 0
-        self.min_wave_dir = 0.
-        self.max_wave_dir = 0.
-        self.wave_dir = np.array([])
+        self.min_wave_dir = 0. # deg.
+        self.max_wave_dir = 0. # deg.
+        self.wave_dir = np.array([]) # rad.
 
         # Kochin parameters.
         self.has_kochin = False
@@ -57,9 +57,9 @@ class pyHDB():
         self.kochin_diffraction = None # Diffraction Kochin functions.
         self.kochin_radiation = None # Radiation Kochin functions.
         self.nb_dir_kochin = 0 # Different from self.nb_wave_dir if the symmetry was used.
-        self.min_dir_kochin = 0. # Different from self.min_wave_dir if the symmetry was used.
-        self.max_dir_kochin = 0. # Different from self.max_wave_dir if the symmetry was used.
-        self.wave_dir_kochin = np.array([]) # Different from self.wave_dir if the symmetry was used.
+        self.min_dir_kochin = 0. # Different from self.min_wave_dir if the symmetry was used (deg).
+        self.max_dir_kochin = 0. # Different from self.max_wave_dir if the symmetry was used (deg).
+        self.wave_dir_kochin = np.array([]) # Different from self.wave_dir if the symmetry was used (rad).
 
         # Bodies.
         self.nb_bodies = 0
@@ -510,6 +510,16 @@ class pyHDB():
             self.nb_dir_kochin = discretization._nb_wave_directions
             self.wave_dir_kochin = discretization._wave_dirs
 
+        print("")
+        print("-- Interpolations --")
+        print(" Min frequency: %16.8f" % self.min_wave_freq)
+        print(" Max frequency: %16.8f" % self.max_wave_freq)
+        print(" Nb Wave frequencies: %i" % self.nb_wave_freq)
+        print(" Angle min: %16.8f" % self.min_wave_dir)
+        print(" Angle max: %16.8f" % self.max_wave_dir)
+        print(" Nb Wave directions: %i" % self.nb_wave_dir)
+        print("")
+
     def symetrize(self):
 
         """This function updates the hdb due to a modification of the wave direction convention."""
@@ -614,9 +624,16 @@ class pyHDB():
             self.Wave_drift_force = self.Wave_drift_force[:, :, sort_dirs]
 
         # Update parameters.
-        self.min_wave_dir = np.min(self.wave_dir)
-        self.max_wave_dir = np.max(self.wave_dir)
+        self.min_wave_dir = np.degrees(np.min(self.wave_dir)) # deg.
+        self.max_wave_dir = np.degrees(np.max(self.wave_dir)) # deg.
         self.nb_wave_dir = self.wave_dir.shape[0]
+
+        print("")
+        print("-- Symmetrization --")
+        print(" Angle min: %16.8f" % self.min_wave_dir)
+        print(" Angle max: %16.8f" % self.max_wave_dir)
+        print(" Nb Wave directions: %i" % self.nb_wave_dir)
+        print("")
 
     def write_hdb5(self, hdb5_file):
         """This function writes the hydrodynamic database into a *.hdb5 file.
@@ -640,10 +657,10 @@ class pyHDB():
                 self.write_body(writer, body)
 
             # Wave drift coefficients.
-            if (self._wave_drift and self.has_Drift_Kochin is False):
+            if(self.has_Drift_Kochin):
+                self.UpdateDriftObject()
+            if (self._wave_drift):
                 self.write_wave_drift(writer, "/WaveDrift")
-            elif(self.has_Drift_Kochin):
-                self.write_wave_drift_Kochin(writer, "/WaveDrift")
 
             # Version.
             self.write_version(writer)
@@ -719,11 +736,11 @@ class pyHDB():
         dset = writer.create_dataset(wave_direction_path + "/NbWaveDirections", data=self.nb_wave_dir)
         dset.attrs['Description'] = "Number of wave directions."
 
-        dset = writer.create_dataset(wave_direction_path + "/MinAngle", data=np.degrees(self.min_wave_dir))
+        dset = writer.create_dataset(wave_direction_path + "/MinAngle", data=self.min_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Minimum wave direction."
 
-        dset = writer.create_dataset(wave_direction_path + "/MaxAngle", data=np.degrees(self.max_wave_dir))
+        dset = writer.create_dataset(wave_direction_path + "/MaxAngle", data=self.max_wave_dir)
         dset.attrs['Unit'] = "deg"
         dset.attrs['Description'] = "Maximum wave direction."
 
@@ -783,7 +800,7 @@ class pyHDB():
                 writer.create_dataset(mode_path + "/Type", data='LINEAR')
             elif (iforce >= 3):
                 writer.create_dataset(mode_path + "/Type", data='ANGULAR')
-                writer.create_dataset(mode_path + "/Point", data=body.point)
+                writer.create_dataset(mode_path + "/Point", data=body.point[iforce-3,:])
 
     def write_mask(self, writer, body, mask_path="/Mask"):
         """This function writes the Force and Motion masks into the *.hdb5 file.
@@ -1117,8 +1134,8 @@ class pyHDB():
                 dset.attrs['Unit'] = 'rad'
                 dset.attrs['Description'] = "Heading angle"
 
-                # Set data.
-                dset = grp_dir.create_dataset("data", data=mode.data[i_angle, :])
+                # Set dat
+                dset = grp_dir.create_dataset("data", data=np.array(mode.data)[i_angle, :])
                 dset.attrs['Description'] = "Wave Drift force coefficients"
 
         # Set frequency.
@@ -1133,90 +1150,29 @@ class pyHDB():
         dset = dg.create_dataset('sym_y', data=self.wave_drift.sym_y)
         dset.attrs['Description'] = "Symmetry along y"
 
-    def write_wave_drift_Kochin(self, writer, wave_drift_path="/WaveDrift"):
+    def UpdateDriftObject(self):
 
-        """This functions writes the wave drift coefficients in the hdb5 ouput file."""
+        """This function creates a WaveDriftDB object when the Kochin functions were used."""
 
-        # Folder "WaveDrift".
-        wave_drift_path = '/WaveDrift'
-        dg = writer.create_group(wave_drift_path)
+        # Initialization.
+        self._wave_drift = WaveDriftDB()
 
-        # Set frequency.
-        dset = dg.create_dataset("freq", data=self.omega)
-        dset.attrs['Unit'] = "rad/s"
-        dset.attrs['Description'] = "Wave frequencies."
+        # Sym x.
+        self.wave_drift.sym_x = False
 
-        # Set sym.
-        dset = dg.create_dataset("sym_x", data=0)
-        dset.attrs['Description'] = "Symmetry along x"
-        dset = dg.create_dataset('sym_y', data=0)
-        dset.attrs['Description'] = "Symmetry along y"
+        # Sym y.
+        self.wave_drift.sym_y = False
 
-        ###################################################"
-        # x-axis - Force.
-        ###################################################"
+        # Frequencies.
+        self.wave_drift.discrete_frequency = self.omega
 
-        # Folder "WaveDrift\surge".
-        grp_modes = dg.require_group("surge")
+        # Drift force coefficients.
 
         # Loop over the wave directions.
         for ibeta in range(0, self.nb_wave_dir):
-
-            # Folder "WaveDrift\surge\heading_i"
-            grp_dir = grp_modes.require_group("heading_%i" % ibeta)
-
-            # Set heading angle
-            dset = grp_dir.create_dataset("heading", data=self.wave_dir[ibeta])
-            dset.attrs['Unit'] = 'rad'
-            dset.attrs['Description'] = "Incident wave directions."
-
-            # Set data
-            dset = grp_dir.create_dataset("data", data=self.Wave_drift_force[0, :, ibeta])
-            dset.attrs['Description'] = "Wave drift force in surge."
-
-        ###################################################"
-        # y-axis - Force.
-        ###################################################"
-
-        # Folder "WaveDrift\surge".
-        grp_modes = dg.require_group("sway")
-
-        # Loop over the wave directions.
-        for ibeta in range(0, self.nb_wave_dir):
-
-            # Folder "WaveDrift\surge\heading_i"
-            grp_dir = grp_modes.require_group("heading_%i" % ibeta)
-
-            # Set heading angle
-            dset = grp_dir.create_dataset("heading", data=self.wave_dir[ibeta])
-            dset.attrs['Unit'] = 'rad'
-            dset.attrs['Description'] = "Heading angle"
-
-            # Set data
-            dset = grp_dir.create_dataset("data", data=self.Wave_drift_force[1, :, ibeta])
-            dset.attrs['Description'] = "Wave drift force in sway"
-
-        ###################################################"
-        # z-axis - Moment.
-        ###################################################"
-
-        # Folder "WaveDrift\surge".
-        grp_modes = dg.require_group("yaw")
-
-        # Loop over the wave directions.
-        for ibeta in range(0, self.nb_wave_dir):
-
-            # Folder "WaveDrift\surge\heading_i"
-            grp_dir = grp_modes.require_group("heading_%i" % ibeta)
-
-            # Set heading angle
-            dset = grp_dir.create_dataset("heading", data=self.wave_dir[ibeta])
-            dset.attrs['Unit'] = 'rad'
-            dset.attrs['Description'] = "Heading angle"
-
-            # Set data
-            dset = grp_dir.create_dataset("data", data=self.Wave_drift_force[2, :, ibeta])
-            dset.attrs['Description'] = "Wave drift moment in yaw."
+            self._wave_drift.add_cx(self.omega, self.Wave_drift_force[0, :, ibeta], self.wave_dir[ibeta]) # Surge.
+            self._wave_drift.add_cy(self.omega, self.Wave_drift_force[1, :, ibeta], self.wave_dir[ibeta]) # Sway.
+            self._wave_drift.add_cn(self.omega, self.Wave_drift_force[2, :, ibeta], self.wave_dir[ibeta]) # Yaw.
 
     def write_version(self, writer):
         """This function writes the version of the *.hdb5 file.

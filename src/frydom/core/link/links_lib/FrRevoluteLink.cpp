@@ -104,8 +104,8 @@ namespace frydom {
 
         m_totalLinkAngle += angleIncrement;
 
-        m_linkAngularVelocity = GetAngularVelocityOfMarker2WRTMarker1(NWU).GetWz();
-        m_linkAngularAcceleration = GetAngularAccelerationOfMarker2WRTMarker1(NWU).GetWzp();
+        m_linkAngularVelocity = GetAngularVelocityOfNode2WRTNode1(NWU).GetWz();
+        m_linkAngularAcceleration = GetAngularAccelerationOfNode2WRTNode1(NWU).GetWzp();
 
         UpdateForces(time);
 
@@ -160,7 +160,7 @@ namespace frydom {
         m_actuator->Initialize();
         GetSystem()->Add(m_actuator);
 
-        auto angle = GetMarker2OrientationWRTMarker1().GetAngle();
+        auto angle = GetNode2OrientationWRTNode1().GetAngle();
 
         m_actuator->SetMotorFunction(FrConstantFunction(angle));
 

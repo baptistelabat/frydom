@@ -93,6 +93,7 @@ class HDB5(object):
             raise AssertionError('Folder %s seems not to be a Nemoh calculation folder as '
                                  'we did not find Nemoh.cal' % input_directory)
 
+        print("")
         print('========================')
         print('Reading Nemoh results...')
         print('========================')
