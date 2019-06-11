@@ -332,13 +332,13 @@ namespace frydom {
     }
 
     const Force FrLink::GetLinkReactionForceOnBody1(FRAME_CONVENTION fc) const { // TODO : tester
-        auto forceOnMarker1 = GetLinkReactionForceOnNode1(fc);
-        return m_node1->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(forceOnMarker1, fc);
+        auto forceOnNode1 = GetLinkReactionForceOnNode1(fc);
+        return m_node1->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(forceOnNode1, fc);
     }
 
     const Force FrLink::GetLinkReactionForceOnBody2(FRAME_CONVENTION fc) const { // TODO : tester
-        auto forceOnMarker2 = GetLinkReactionForceOnNode2(fc);
-        return m_node2->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(forceOnMarker2, fc);
+        auto forceOnNode2 = GetLinkReactionForceOnNode2(fc);
+        return m_node2->GetFrameWRT_COG_InBody().ProjectVectorFrameInParent(forceOnNode2, fc);
     }
 
     const Torque FrLink::GetLinkReactionTorqueOnNode1(FRAME_CONVENTION fc) const { // TODO : tester
@@ -354,23 +354,23 @@ namespace frydom {
     }
 
     const Torque FrLink::GetLinkReactionTorqueOnBody1AtCOG(FRAME_CONVENTION fc) const { // TODO : tester
-        auto markerFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
+        auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
 
-        auto torqueAtMarker1_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionTorqueOnNode1(fc), fc);
-        auto COG_M1_ref = markerFrame_WRT_COG.GetPosition(fc);
-        auto force_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetLinkReactionForceOnNode1(fc), fc);
+        auto torqueAtNode1_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionTorqueOnNode1(fc), fc);
+        auto COG_M1_ref = nodeFrame_WRT_COG.GetPosition(fc);
+        auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetLinkReactionForceOnNode1(fc), fc);
 
-        return torqueAtMarker1_ref + COG_M1_ref.cross(force_ref);
+        return torqueAtNode1_ref + COG_M1_ref.cross(force_ref);
     }
 
     const Torque FrLink::GetLinkReactionTorqueOnBody2AtCOG(FRAME_CONVENTION fc) const { // TODO : tester
-        auto markerFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
+        auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
 
-        auto torqueAtMarker2_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionTorqueOnNode2(fc), fc);
-        auto COG_M2_ref = markerFrame_WRT_COG.GetPosition(fc);
-        auto force_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetLinkReactionForceOnNode2(fc), fc);
+        auto torqueAtNode2_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetLinkReactionTorqueOnNode2(fc), fc);
+        auto COG_M2_ref = nodeFrame_WRT_COG.GetPosition(fc);
+        auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetLinkReactionForceOnNode2(fc), fc);
 
-        return torqueAtMarker2_ref + COG_M2_ref.cross(force_ref);
+        return torqueAtNode2_ref + COG_M2_ref.cross(force_ref);
     }
 
     void FrLink::Initialize() {
@@ -450,31 +450,31 @@ namespace frydom {
         m_message->AddField<double>("time", "s", "Current time of the simulation",
                                     [this]() { return m_system->GetTime(); });
 
-        // Marker Position
+        // Node Position
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("Marker2PositionWRTMarker1","m", fmt::format("Marker 2 position relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                ("PositionOfNode2WRTNode1","m", fmt::format("Node 2 position relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetNode2PositionWRTNode1(GetLogFrameConvention());});
-        // Marker Velocity
+        // Node Velocity
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("VelocityOfMarker2WRTMarker1","m/s", fmt::format("Marker 2 velocity relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                ("VelocityOfNode2WRTNode1","m/s", fmt::format("Node 2 velocity relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetVelocityOfNode2WRTNode1(GetLogFrameConvention());});
-        // Marker Acceleration
+        // Node Acceleration
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("AccelerationOfMarker2WRTMarker1","m/s^2", fmt::format("Marker 2 acceleration relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                ("AccelerationOfNode2WRTNode1","m/s^2", fmt::format("Node 2 acceleration relatively to Node 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetAccelerationOfNode2WRTNode1(GetLogFrameConvention());});
 
-        // Marker Position
+        // Node Orientation
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("Marker2OrientationWRTMarker1","rad", fmt::format("Marker 2 orientation relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                ("OrientationOfNode2WRTNode1","rad", fmt::format("Node 2 orientation relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
                  [this]() {double phi, theta, psi; GetNode2OrientationWRTNode1().GetCardanAngles_RADIANS(phi, theta, psi, GetLogFrameConvention());
                     return Position(phi, theta, psi);});
-        // Marker Velocity
+        // Node Angular Velocity
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("AngularVelocityOfMarker2WRTMarker1","rad/s", fmt::format("Marker 2 angular velocity relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                ("AngularVelocityOfNode2WRTNode1","rad/s", fmt::format("Node 2 angular velocity relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetAngularVelocityOfNode2WRTNode1(GetLogFrameConvention());});
-        // Marker Acceleration
+        // Node Angular Acceleration
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("AngularAccelerationOfMarker2WRTMarker1","m/s^2", fmt::format("Marker 2 angular acceleration relatively to Marker 1, in Marker 1 reference frame in {}", GetLogFrameConvention()),
+                ("AngularAccelerationOfNode2WRTNode1","m/s^2", fmt::format("Node 2 angular acceleration relatively to Node 1, in Node 1 reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetAngularAccelerationOfNode2WRTNode1(GetLogFrameConvention());});
 
 
@@ -486,6 +486,13 @@ namespace frydom {
                 ("LinkReactionForceOnBody2","N", fmt::format("link reaction force applied at marker 2, expressed in body 2 reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetLinkReactionForceOnBody2(GetLogFrameConvention());});
         // Torque
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkReactionTorqueOnBody1","Nm", fmt::format("link reaction torque at Node 1, expressed in Node 1 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetLinkReactionTorqueOnNode1(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("LinkReactionTorqueOnBody2","Nm", fmt::format("link reaction torque at Node 2, expressed in Node 2 reference frame in {}", GetLogFrameConvention()),
+                 [this]() {return GetLinkReactionTorqueOnNode2(GetLogFrameConvention());});
+
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
                 ("LinkReactionTorqueOnBody1AtCOG","Nm", fmt::format("link reaction torque at CoG applied at marker 1, expressed in body 1 reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetLinkReactionTorqueOnBody1AtCOG(GetLogFrameConvention());});
