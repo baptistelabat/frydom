@@ -62,6 +62,11 @@ namespace frydom {
      */
     class FrRadiationConvolutionForce: public FrRadiationForce {
 
+    private:
+
+        Force c_forceInertiaPart;
+        Torque c_torqueInertiaPart;
+
     public:
 
         /// Get the type name of this object
@@ -72,14 +77,28 @@ namespace frydom {
         /// \param radiationModel Radiation model where the radiation force is applied
         explicit FrRadiationConvolutionForce(FrRadiationConvolutionModel* radiationModel);
 
+        void AddFields() override;
+
         /// Method to initialize the radiation convolution force
         void Initialize() override;
+
+        void StepFinalize() override;
 
     private:
 
         /// Compute the radiation force via convolution
         /// \param time Current time of the simulation from beginning, in seconds
         void Compute(double time) override;
+
+        void UpdateForceInertiaPart();
+
+        Force GetForceInertiaPartInBody(FRAME_CONVENTION fc) const;
+
+        Torque GetTorqueInertiaPartInBody(FRAME_CONVENTION fc) const;
+
+        Force GetForceInertiaPartInWorld(FRAME_CONVENTION fc) const;
+
+        Torque GetTorqueInertiaPartInWorld(FRAME_CONVENTION fc) const;
 
     };
 

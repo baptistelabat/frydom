@@ -137,6 +137,22 @@ namespace frydom {
         }
     }
 
+    GeneralizedForce FrRadiationConvolutionModel::GetRadiationInertiaPart(FrBody* body) const {
+
+        auto HDB = GetHydroDB();
+        auto BEMBody = HDB->GetBody(body);
+
+        auto force = GeneralizedForce();
+
+        for (auto BEMBodyMotion=HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
+            auto infiniteAddedMass = BEMBody->GetInfiniteAddedMass(BEMBodyMotion->first);
+            auto acc = GeneralizedAcceleration(BEMBodyMotion->second->GetCOGAccelerationInBody(NWU),
+                    BEMBodyMotion->second->GetAngularAccelerationInBody(NWU));
+            force += -infiniteAddedMass * acc;
+        }
+        return force;
+    }
+
     void FrRadiationConvolutionModel::Clear() {
         for (auto &BEMBody : *m_HDB) {
             m_recorder[BEMBody.first].Clear();

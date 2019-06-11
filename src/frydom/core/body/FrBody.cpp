@@ -1012,15 +1012,15 @@ namespace frydom {
 
         // Body Acceleration
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinearAccelerationInWorld","m/s²", fmt::format("body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                ("LinearAccelerationInWorld","m/s^2", fmt::format("body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetAccelerationInWorld(GetLogFrameConvention());});
         // Body COG Acceleration
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinearCOGAccelerationInWorld","m/s²", fmt::format("COG body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                ("LinearCOGAccelerationInWorld","m/s^2", fmt::format("COG body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetCOGAccelerationInWorld(GetLogFrameConvention());});
         // Body Angular Acceleration
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("AngularAccelerationInWorld","rad/s²", fmt::format("body angular acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                ("AngularAccelerationInWorld","rad/s^2", fmt::format("body angular acceleration in the world reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetAngularAccelerationInWorld(GetLogFrameConvention());});
 
 
@@ -1030,7 +1030,7 @@ namespace frydom {
                  [this] () {return GetTotalExtForceInBody(GetLogFrameConvention());});
         // Total External Torque at COG
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("TotalTotalTorqueInBodyAtCOG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", GetLogFrameConvention()),
+                ("TotalExtTorqueInBodyAtCOG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", GetLogFrameConvention()),
                  [this] () {return GetTotalTorqueInBodyAtCOG(GetLogFrameConvention());});
 
     }

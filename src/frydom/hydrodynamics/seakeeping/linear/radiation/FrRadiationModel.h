@@ -153,6 +153,8 @@ namespace frydom {
         /// \param dt Time step
         void SetImpulseResponseSize(double Te, double dt);
 
+        GeneralizedForce GetRadiationInertiaPart(FrBody* body) const;
+
     private:
 
         /// Compute the radiation convolution.
