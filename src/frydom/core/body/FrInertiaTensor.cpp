@@ -40,7 +40,7 @@ namespace frydom {
 
         m_inertiaAtCOG = rot_rp * m_inertiaAtCOG * rot_rp.transpose();
         Position PG = cogPosTmp - coeffsFrame.GetPosition(NWU);
-        m_inertiaAtCOG -= GetPointMassInertiaMatrix(mass, PG); // Avoir un GetPointMassInertia
+        m_inertiaAtCOG -= GetPointMassInertiaMatrix(mass, PG);
         m_cogPosition = cogPosTmp;
         m_mass = mass;
 
@@ -58,6 +58,12 @@ namespace frydom {
 
         m_mass = mass;
 
+    }
+
+    FrInertiaTensor::FrInertiaTensor(const FrInertiaTensor &other) {
+        m_mass = other.m_mass;
+        m_cogPosition = other.m_cogPosition;
+        m_inertiaAtCOG = other.m_inertiaAtCOG;
     }
 
     double FrInertiaTensor::GetMass() const {
@@ -141,7 +147,7 @@ namespace frydom {
         return inertia.cout(os);
     }
 
-    Matrix66<double> FrInertiaTensor::GetInertiaMatrixAtCOG() const {
+    Matrix66<double> FrInertiaTensor::GetMassMatrixAtCOG() const {
 
         auto mat = Matrix66<double>();
         mat.SetNull();
@@ -152,6 +158,123 @@ namespace frydom {
         mat.block<3,3>(3, 3) = m_inertiaAtCOG;
 
         return mat;
+    }
+
+    FrInertiaTensor FrInertiaTensor::Add(const FrInertiaTensor &tensor, const FrFrame & frame2Toframe1) const {
+
+        FrInertiaTensor tempTensor(*this);
+
+        tempTensor.Add(tensor, frame2Toframe1);
+
+        return tempTensor;
+
+//        double newMass = this->m_mass + tensor.m_mass;
+//
+//        auto tempPos = frame2Toframe1.GetPointPositionInParent(tensor.m_cogPosition, NWU);
+//
+//        Position newCOG = this->m_mass * this->m_cogPosition + tensor.m_mass * frame2Toframe1.GetPointPositionInParent(tensor.m_cogPosition, NWU);
+//        newCOG /= newMass;
+//
+//        auto tempMatrix = tensor.GetInertiaMatrixAtFrame(frame2Toframe1, NWU);
+//
+//        tempMatrix += this->GetInertiaMatrixAtCOG(NWU);
+//
+//        double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+//        SplitMatrix33IntoCoeffs(tempMatrix, Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
+//
+//        return {newMass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, newCOG, NWU};
+    }
+
+    void FrInertiaTensor::Add(const FrInertiaTensor &tensor, const FrFrame & frame2Toframe1) {
+
+        double newMass = this->m_mass + tensor.m_mass;
+
+        Position newCOG = this->m_mass * this->m_cogPosition + tensor.m_mass * frame2Toframe1.GetPointPositionInParent(tensor.m_cogPosition, NWU);
+        newCOG /= newMass;
+
+        auto tempFrame = frame2Toframe1.GetInverse();
+        tempFrame.TranslateInFrame(newCOG, NWU);
+
+
+//        auto rot_rp = tempFrame.GetRotation().GetInverseRotationMatrix();
+//
+//        Matrix33 newMatrix = rot_rp * tensor.m_inertiaAtCOG * rot_rp.transpose();
+//
+//        Position PG = tensor.m_cogPosition - tempFrame.GetPosition(NWU);
+//        newMatrix += GetPointMassInertiaMatrix(m_mass, PG);
+
+
+        auto newMatrix = tensor.GetInertiaMatrixAtFrame(tempFrame, NWU);
+//        newMatrix += m_inertiaAtCOG;
+
+        tempFrame.SetNoRotation(), tempFrame.SetPosition(newCOG, NWU);
+        newMatrix += GetInertiaMatrixAtFrame(tempFrame,NWU);
+
+//        FrFrame frameTemp(newCOG-m_cogPosition, FrRotation(), NWU);
+
+//        SetInertiaTensorAtFrame(newMass, newMatrix, frameTemp, newCOG, NWU);
+
+        SetInertiaTensorAtCOG(newMass, newMatrix, newCOG, NWU);
+
+//        newMatrix = newMatrix.GetInertiaMatrixAtFrame(frameTemp, NWU);
+//
+//        m_mass = newMass;
+//        m_cogPosition = newCOG;
+//        m_inertiaAtCOG += newMatrix;
+
+    }
+
+    FrInertiaTensor::InertiaMatrix FrInertiaTensor::GetInertiaMatrixAtFrame(const FrFrame& frame, FRAME_CONVENTION fc) const {
+        double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+        GetInertiaCoeffsAtFrame(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, frame, fc);
+
+        InertiaMatrix tempMatrix;
+
+        tempMatrix <<   Ixx, Ixy, Ixz,
+                        Ixy, Iyy, Iyz,
+                        Ixz, Iyz, Izz;
+
+        return tempMatrix;
+    }
+
+    FrInertiaTensor::InertiaMatrix FrInertiaTensor::GetInertiaMatrixAtCOG(FRAME_CONVENTION fc) const {
+
+        InertiaMatrix tempMatrix = m_inertiaAtCOG;
+        if (IsNED(fc)) internal::SwapInertiaFrameConvention(tempMatrix);
+        return tempMatrix;
+
+    }
+
+    void
+    FrInertiaTensor::SetInertiaTensorAtCOG(double mass, const FrInertiaTensor::InertiaMatrix &inertia, const Position& cogPos,
+                                           FRAME_CONVENTION fc) {
+        m_mass = mass;
+        m_cogPosition = cogPos;
+        m_inertiaAtCOG = inertia;
+    }
+
+    void
+    FrInertiaTensor::SetInertiaTensorAtFrame(double mass, const InertiaMatrix& inertia,
+                                 const FrFrame& coeffsFrame, const Position& cogPos, FRAME_CONVENTION fc) {
+
+        Position cogPosTmp = cogPos;
+        InertiaMatrix inertiaTmp = inertia;
+        if (IsNED(fc)) {
+            internal::SwapInertiaFrameConvention(inertiaTmp); // Convert to NWU
+            internal::SwapFrameConvention<Position>(cogPosTmp);
+        }
+
+        auto rot_rp = coeffsFrame.GetRotation().GetRotationMatrix();
+
+        m_inertiaAtCOG  = inertiaTmp;
+
+        m_inertiaAtCOG = rot_rp * m_inertiaAtCOG * rot_rp.transpose();
+        Position PG = cogPosTmp - coeffsFrame.GetPosition(NWU);
+        m_inertiaAtCOG -= GetPointMassInertiaMatrix(mass, PG);
+        m_cogPosition = cogPosTmp;
+        m_mass = mass;
+
+
     }
 
 

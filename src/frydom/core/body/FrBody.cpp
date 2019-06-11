@@ -512,35 +512,6 @@ namespace frydom {
         return node;
     }
 
-    std::shared_ptr<FrBody> FrBody::NewBody(Position linkPosInThisBody, Position linkPosInNewBody, FRAME_CONVENTION fc) {
-
-        auto thisNode = NewNode();
-        thisNode->SetPositionInBody(linkPosInThisBody, fc);
-
-        auto newBody = GetSystem()->NewBody();
-        auto newNode = newBody->NewNode();
-        newNode->SetPositionInBody(linkPosInNewBody, fc);
-
-        auto fixedLink = make_fixed_link(thisNode, newNode, GetSystem());
-
-        return newBody;
-    }
-
-    std::shared_ptr<FrBody> FrBody::NewBody(FrFrame linkFrameInThisBody, FrFrame linkFrameInNewBody) {
-
-        auto thisNode = NewNode();
-        thisNode->SetFrameInBody(linkFrameInThisBody);
-
-        auto newBody = GetSystem()->NewBody();
-
-        auto newNode = newBody->NewNode();
-        newNode->SetFrameInBody(linkFrameInNewBody);
-
-        auto fixedLink = make_fixed_link(thisNode, newNode, GetSystem());
-
-        return newBody;
-    }
-
     void FrBody::SetCOG(const Position& bodyPos, FRAME_CONVENTION fc) {
         FrFrame cogFrame;
         cogFrame.SetPosition(bodyPos, fc);

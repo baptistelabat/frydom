@@ -49,7 +49,7 @@ namespace frydom {
                     mathutils::Matrix66<double> SubMassMatrix = BEMBody->first->GetInfiniteAddedMass(BEMBodyMotion->first);
 
                     if (BEMBodyMotion->first == BEMBody->first) {
-                        SubMassMatrix += body->GetInertiaTensor(NWU).GetInertiaMatrixAtCOG();
+                        SubMassMatrix += body->GetInertiaTensor(NWU).GetMassMatrixAtCOG();
                     }
 
                     for (int i=0; i<6; i++) {

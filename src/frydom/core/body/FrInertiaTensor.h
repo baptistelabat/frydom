@@ -64,6 +64,8 @@ namespace frydom {
                          double Ixy, double Ixz, double Iyz,
                          const Position& cogPos, FRAME_CONVENTION fc);
 
+        FrInertiaTensor(const FrInertiaTensor& other);
+
         /// Get the mass in kg
         double GetMass() const;
 
@@ -75,6 +77,8 @@ namespace frydom {
                                    double &Ixy, double &Ixz, double &Iyz,
                                    FRAME_CONVENTION fc) const;
 
+        InertiaMatrix GetInertiaMatrixAtCOG(FRAME_CONVENTION fc) const;
+
         /// Get the inertia coefficients in the body reference coordinate system and expressed at a specified reference
         /// frame, relative to the body reference frame.
         void GetInertiaCoeffsAtFrame(double &Ixx, double &Iyy, double &Izz,
@@ -82,11 +86,23 @@ namespace frydom {
                                    const FrFrame& frame,
                                    FRAME_CONVENTION fc) const;
 
+        InertiaMatrix GetInertiaMatrixAtFrame(const FrFrame& frame, FRAME_CONVENTION fc) const;
+
         /// Get the inertia matrix of a point mass
         static InertiaMatrix GetPointMassInertiaMatrix(double mass, const Position& PG);
 
-        Matrix66<double> GetInertiaMatrixAtCOG() const;
+        Matrix66<double> GetMassMatrixAtCOG() const;
 
+        FrInertiaTensor Add(const FrInertiaTensor& tensor, const FrFrame& frame2Toframe1) const;
+
+        void Add(const FrInertiaTensor& tensor, const FrFrame& frame2Toframe1);
+
+    protected:
+
+        void SetInertiaTensorAtCOG(double mass, const InertiaMatrix& inertia, const Position& cogPos, FRAME_CONVENTION fc);
+
+        void SetInertiaTensorAtFrame(double mass, const InertiaMatrix& inertia,
+                                     const FrFrame& coeffsFrame, const Position& cogPos, FRAME_CONVENTION fc);
 
     private:
 
@@ -103,6 +119,16 @@ namespace frydom {
                                                double& Ixy, double& Ixz, double& Iyz) {
             Ixy = -Ixy;
             Ixz = -Ixz;
+        }
+
+        /// Swap the frame convention (NWU/NED) of inertia coefficients
+        inline void SwapInertiaFrameConvention(mathutils::Matrix33<double>& matrix) {
+
+            matrix.at(0,1) = -matrix.at(0,1);
+            matrix.at(0,2) = -matrix.at(0,2);
+            matrix.at(1,0) = -matrix.at(1,0);
+            matrix.at(2,0) = -matrix.at(2,0);
+
         }
 
     }  // end namespace frydom::internal

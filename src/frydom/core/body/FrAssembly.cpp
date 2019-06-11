@@ -8,6 +8,11 @@
 
 namespace frydom {
 
+
+    void FrAssembly::SetMasterBody(const std::shared_ptr<FrBody>& body) {
+        m_masterBody = body;
+    }
+
     void FrAssembly::AddToAssembly(const std::shared_ptr<frydom::FrBody> &body) {
         m_bodyList.push_back(body);
     }
@@ -24,17 +29,23 @@ namespace frydom {
 
     FrInertiaTensor FrAssembly::GetInertiaTensor(FRAME_CONVENTION fc) const {
 
+//        FrInertiaTensor tensor(0.,0.,0.,0.,0.,0.,0.,Position(),NWU);
+
+        // frame of the master body at COG
+        auto frameMaster = m_masterBody->GetFrame();
+
+        auto tensor = m_masterBody->GetInertiaTensor(fc);
+
         for (const auto &body: m_bodyList) {
 
-            auto Inertia = body->GetInertiaTensor(fc);
+            auto frameBodyToMaster = frameMaster.GetOtherFrameRelativeTransform_WRT_ThisFrame(body->GetFrame());
+//            auto frameBodyToMaster = frameMaster.GetThisFrameRelativeTransform_WRT_OtherFrame(body->GetFrame());
 
-//            Inertia.GetPointMassInertiaMatrix()
-
+            tensor.Add(body->GetInertiaTensor(fc), frameBodyToMaster);
 
         }
 
-
-//        return nullptr;
+        return tensor;
     }
 
 } // end namespace frydom

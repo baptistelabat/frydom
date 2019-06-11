@@ -17,13 +17,23 @@ namespace frydom {
 
     private:
 
+        std::shared_ptr<FrBody> m_masterBody;
+
         std::vector<std::shared_ptr<FrBody>> m_bodyList;
 
     public:
 
+        /// Get the type name of the object
+        /// \return type name of the object
+        std::string GetTypeName() const override { return "Assembly"; };
+        
+        void Initialize() override {};
+
         void Clear() {
             m_bodyList.clear();
         }
+
+        void SetMasterBody(const std::shared_ptr<FrBody>& body);
 
         void AddToAssembly(const std::shared_ptr<FrBody>& body);
 

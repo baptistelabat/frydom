@@ -153,7 +153,7 @@ namespace frydom {
                     mathutils::Matrix66<double> subMatrix = body->first->GetInfiniteAddedMass(bodyMotion->first);
 
                     if (bodyMotion->first == body->first) {
-                        subMatrix += body->second->GetInertiaTensor(NWU).GetInertiaMatrixAtCOG();
+                        subMatrix += body->second->GetInertiaTensor(NWU).GetMassMatrixAtCOG();
                     }
 
                     for (int i=0; i<6; i++) {
@@ -200,7 +200,7 @@ namespace frydom {
 
             if (BEMBody == BEMBodyMotion) {
                 auto body = GetRadiationModel()->GetHydroDB()->GetMapper()->GetBody(BEMBody);
-                generalizedMass += body->GetInertiaTensor(NWU).GetInertiaMatrixAtCOG();
+                generalizedMass += body->GetInertiaTensor(NWU).GetMassMatrixAtCOG();
             }
 
             return generalizedMass;
