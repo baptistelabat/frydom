@@ -60,11 +60,11 @@ namespace frydom {
         return m_chronoActuator->GetMotorTorque() * m_chronoActuator->GetMotorRot_dt();
     }
 
-    Force FrAngularActuator::GetMotorForceInMarker(FRAME_CONVENTION fc) const {
+    Force FrAngularActuator::GetMotorForceInNode(FRAME_CONVENTION fc) const {
         return {};
     }
 
-    Torque FrAngularActuator::GetMotorTorqueInMarker(FRAME_CONVENTION fc) const {
+    Torque FrAngularActuator::GetMotorTorqueInNode(FRAME_CONVENTION fc) const {
         return {0.,0.,m_chronoActuator->GetMotorTorque()};
     }
 

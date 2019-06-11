@@ -38,34 +38,43 @@ namespace frydom {
     }
 
     Force FrActuator::GetMotorForceInBody1(FRAME_CONVENTION fc) const {
-        auto markerFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
-        return markerFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInMarker(fc), fc);
+        auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
+        return nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
     }
 
     Force FrActuator::GetMotorForceInBody2(FRAME_CONVENTION fc) const {
-        auto markerFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
-        return -markerFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInMarker(fc), fc);
+        auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
+        return -nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
     }
 
-
     Torque FrActuator::GetMotorTorqueAtCOGInBody1(FRAME_CONVENTION fc) const {
-        auto markerFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
+        auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
 
-        auto torqueAtMarker1_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetMotorTorqueInMarker(fc), fc);
-        auto COG_M1_ref = markerFrame_WRT_COG.GetPosition(fc);
-        auto force_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInMarker(fc), fc);
+        auto torqueAtNode1_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetMotorTorqueInNode(fc), fc);
+        auto COG_M1_ref = nodeFrame_WRT_COG.GetPosition(fc);
+        auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
 
-        return torqueAtMarker1_ref + COG_M1_ref.cross(force_ref);
+        return torqueAtNode1_ref + COG_M1_ref.cross(force_ref);
+    }
+
+    Torque FrActuator::GetMotorTorqueInBody1(FRAME_CONVENTION fc) const {
+        auto nodeFrame_WRT_COG = m_node1->GetFrameWRT_COG_InBody();
+        return nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetMotorTorqueInNode(fc), fc);
     }
 
     Torque FrActuator::GetMotorTorqueAtCOGInBody2(FRAME_CONVENTION fc) const {
-        auto markerFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
+        auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
 
-        auto torqueAtMarker2_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetMotorTorqueInMarker(fc), fc);
-        auto COG_M2_ref = markerFrame_WRT_COG.GetPosition(fc);
-        auto force_ref = markerFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInMarker(fc), fc);
+        auto torqueAtNode2_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(GetMotorTorqueInNode(fc), fc);
+        auto COG_M2_ref = nodeFrame_WRT_COG.GetPosition(fc);
+        auto force_ref = nodeFrame_WRT_COG.ProjectVectorFrameInParent<Force>(GetMotorForceInNode(fc), fc);
 
-        return -(torqueAtMarker2_ref + COG_M2_ref.cross(force_ref));
+        return -(torqueAtNode2_ref + COG_M2_ref.cross(force_ref));
+    }
+
+    Torque FrActuator::GetMotorTorqueInBody2(FRAME_CONVENTION fc) const {
+        auto nodeFrame_WRT_COG = m_node2->GetFrameWRT_COG_InBody();
+        return nodeFrame_WRT_COG.ProjectVectorFrameInParent<Torque>(-GetMotorTorqueInNode(fc), fc);
     }
 
     void FrActuator::AddFields() {
@@ -81,6 +90,12 @@ namespace frydom {
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
                 ("MotorForceInBody2","N", fmt::format("Force applied by the motor on body 1, in body 2 reference frame {}", GetLogFrameConvention()),
                  [this]() {return GetMotorForceInBody2(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("MotorTorqueInBody1(","N", fmt::format("Torque applied by the motor on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+                 [this]() {return GetMotorTorqueInBody1(GetLogFrameConvention());});
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("MotorTorqueInBody2(","N", fmt::format("Torque applied by the motor on body 2, in body 2 reference frame {}", GetLogFrameConvention()),
+                 [this]() {return GetMotorTorqueInBody2(GetLogFrameConvention());});
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
                 ("MotorTorqueAtCOGInBody1(","N", fmt::format("Torque applied by the motor at COG on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
                  [this]() {return GetMotorTorqueAtCOGInBody1(GetLogFrameConvention());});

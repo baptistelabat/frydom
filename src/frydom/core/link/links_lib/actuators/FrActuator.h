@@ -70,10 +70,10 @@ namespace frydom {
         virtual double GetMotorPower() const = 0;
 
 
-        /// Get the motor force applied on body 1, in the marker reference frame
+        /// Get the motor force applied on body 1, in the node reference frame
         /// \param fc Frame convention (NED/NWU)
         /// \return motor force applied on Body 1
-        virtual Force GetMotorForceInMarker(FRAME_CONVENTION fc) const = 0;
+        virtual Force GetMotorForceInNode(FRAME_CONVENTION fc) const = 0;
 
         /// Get the motor force applied on body 1, in the body 1 reference frame
         /// \param fc Frame convention (NED/NWU)
@@ -85,10 +85,10 @@ namespace frydom {
         /// \return motor force applied on Body 1
         Force GetMotorForceInBody2(FRAME_CONVENTION fc) const;
 
-        /// Get the motor torque applied on body 1 at the marker reference frame origin, in the marker reference frame
+        /// Get the motor torque applied on body 1 at the node reference frame origin, in the node reference frame
         /// \param fc Frame convention (NED/NWU)
-        /// \return motor torque applied on body 1 at the marker reference frame origin
-        virtual Torque GetMotorTorqueInMarker(FRAME_CONVENTION fc) const = 0;
+        /// \return motor torque applied on body 1 at the node reference frame origin
+        virtual Torque GetMotorTorqueInNode(FRAME_CONVENTION fc) const = 0;
 
         /// Get the motor torque applied on body 1 at the body 1 COG, in body 1 reference frame
         /// \param fc Frame convention (NED/NWU)
@@ -99,6 +99,16 @@ namespace frydom {
         /// \param fc Frame convention (NED/NWU)
         /// \return motor torque applied on body 1 at the body 2 COG, in body 2 reference frame
         virtual Torque GetMotorTorqueAtCOGInBody2(FRAME_CONVENTION fc) const;
+
+        /// Get the motor torque applied on body 1 at the the node reference frame origin, in the body 1 reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return motor torque applied on body 1 at the node reference frame origin
+        virtual Torque GetMotorTorqueInBody1(FRAME_CONVENTION fc) const;
+
+        /// Get the motor torque applied on body 2 at the node reference frame origin, in the body 2 reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return motor torque applied on body 2 at the node reference frame origin
+        virtual Torque GetMotorTorqueInBody2(FRAME_CONVENTION fc) const;
 
     protected:
 

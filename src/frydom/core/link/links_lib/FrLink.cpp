@@ -515,6 +515,12 @@ namespace frydom {
                     ("MotorForceInBody2","N", fmt::format("Force applied by the motor on body 1, in body 2 reference frame {}", GetLogFrameConvention()),
                      [this]() {return m_actuator->GetMotorForceInBody2(GetLogFrameConvention());});
             m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("MotorTorqueInBody1(","Nm", fmt::format("Torque applied by the motor on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
+                     [this]() {return m_actuator->GetMotorTorqueInBody1(GetLogFrameConvention());});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                    ("MotorTorqueInBody2(","Nm", fmt::format("Torque applied by the motor on body 2, in body 2 reference frame {}", GetLogFrameConvention()),
+                     [this]() {return m_actuator->GetMotorTorqueInBody2(GetLogFrameConvention());});
+            m_message->AddField<Eigen::Matrix<double, 3, 1>>
                     ("MotorTorqueAtCOGInBody1(","Nm", fmt::format("Torque applied by the motor at COG on body 1, in body 1 reference frame {}", GetLogFrameConvention()),
                      [this]() {return m_actuator->GetMotorTorqueAtCOGInBody1(GetLogFrameConvention());});
             m_message->AddField<Eigen::Matrix<double, 3, 1>>

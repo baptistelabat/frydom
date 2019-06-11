@@ -23,9 +23,9 @@ namespace frydom {
 
         void SetMotorFunction(const FrFunctionBase& function) override;
 
-        Force GetMotorForceInMarker(FRAME_CONVENTION fc) const override;
+        Force GetMotorForceInNode(FRAME_CONVENTION fc) const override;
 
-        Torque GetMotorTorqueInMarker(FRAME_CONVENTION fc) const override;
+        Torque GetMotorTorqueInNode(FRAME_CONVENTION fc) const override;
 
         double GetMotorPower() const override;
 
