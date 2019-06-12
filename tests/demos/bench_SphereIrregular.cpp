@@ -152,7 +152,6 @@ int main(int argc, char* argv[]) {
     body->SetColor(Yellow);
 
     Position COGPosition(0., 0., -2.);
-    FrFrame COGFrame(COGPosition, FrRotation(), NWU);
 
     body->SetPosition(Position(0., 0., 0.), NWU);
 
@@ -172,7 +171,7 @@ int main(int argc, char* argv[]) {
     double Iyy = 1.690E6;
     double Izz = 2.606E6;
 
-    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
+    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGPosition, NWU);
 
     body->SetInertiaTensor(InertiaTensor);
 

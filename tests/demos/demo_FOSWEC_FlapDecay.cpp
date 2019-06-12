@@ -23,8 +23,7 @@ int main(int argc, char* argv[]) {
     platform->SetName("platform");
     platform->AddMeshAsset("FullPlatform.obj");
 
-    FrFrame COGFrame_b(Position(0., 0., 0.460), FrRotation(), NWU);
-    FrInertiaTensor inertia_b(153.8, 37.88, 29.63, 1., 0., 0., 0., COGFrame_b, NWU);
+    FrInertiaTensor inertia_b(153.8, 37.88, 29.63, 1., 0., 0., 0., Position(0., 0., 0.460), NWU);
     platform->SetInertiaTensor(inertia_b);
 
     platform->GetDOFMask()->MakeItLocked();
@@ -44,8 +43,7 @@ int main(int argc, char* argv[]) {
     flap1->AddMeshAsset("FullFlap_mesh.obj");
     flap1->SetPosition(Position(-0.65, 0., -0.29), NWU);
 
-    FrFrame COGFrame_f1(Position(0., 0., 0.), FrRotation(), NWU);
-    FrInertiaTensor inertia_f1(23.1, 1.42, 1.19, 1.99, 0., 0., 0., COGFrame_f1, NWU);
+    FrInertiaTensor inertia_f1(23.1, 1.42, 1.19, 1.99, 0., 0., 0., Position(0., 0., 0.), NWU);
     flap1->SetInertiaTensor(inertia_f1);
 
     auto node_1f = flap1->NewNode();
@@ -61,8 +59,7 @@ int main(int argc, char* argv[]) {
     flap2->AddMeshAsset("FullFlap_mesh.obj");
     flap2->SetPosition(Position(0.65, 0., -0.29), NWU);
 
-    FrFrame COGFrame_f2(Position(0., 0., 0.), FrRotation(), NWU);
-    FrInertiaTensor inertia_f2(23.1, 1.42, 1.19, 1.99, 0., 0., 0., COGFrame_f2, NWU);
+    FrInertiaTensor inertia_f2(23.1, 1.42, 1.19, 1.99, 0., 0., 0., Position(0., 0., 0.), NWU);
     flap2->SetInertiaTensor(inertia_f2);
 
     auto node_2f = flap2->NewNode();

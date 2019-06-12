@@ -48,7 +48,7 @@ void TestQuadraticDamping::SetUp() {
     body->AddExternalForce(force);
     body->SetPosition(bodyPosition, NWU);
 
-    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(cogPosition,FrRotation(),NWU),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,cogPosition,NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     rotationDirection.normalize();

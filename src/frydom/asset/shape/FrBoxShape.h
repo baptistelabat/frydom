@@ -20,6 +20,7 @@ namespace chrono {
 }  // end namespace chrono
 
 namespace frydom {
+    class Position;
 
     class FrBoxShape {
       public:
@@ -27,6 +28,8 @@ namespace frydom {
         double xSize() const;
         double ySize() const;
         double zSize() const;
+
+        void Translate(Position direction) const;
 
       protected:
         std::shared_ptr<chrono::ChAsset> GetChronoAsset();
