@@ -245,6 +245,56 @@ namespace frydom {
         /// \param fc Frame convention
         void GetTorqueInBodyAtCOG(double &mx, double &my, double &mz, FRAME_CONVENTION fc) const;
 
+        /// Return the torque vector in world reference frame, at a point given in world reference frame
+        /// \param torque Torque vector at point
+        /// \param worldPoint point given in world reference frame
+        /// \param fc Frame convention (NED/NWU)
+        void GetTorqueInWorldAtPointInWorld(Torque& torque, const Position& worldPoint, FRAME_CONVENTION fc) const;
+
+        /// Return the torque vector in world reference frame, at a point given in world reference frame
+        /// \param worldPoint point given in world reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return torque vector expressed at point
+        Torque GetTorqueInWorldAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
+
+        /// Return the torque vector in world reference frame, at a point given in body reference frame
+        /// \param torque Torque vector at point
+        /// \param bodyPoint point given in body reference frame
+        /// \param fc Frame convention (NED/NWU)
+        void GetTorqueInWorldAtPointInBody(Torque& torque, const Position& bodyPoint, FRAME_CONVENTION fc) const;
+
+        /// Return the torque vector in world reference frame, at a point given in body reference frame
+        /// \param bodyPoint point given in body reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return torque vector expressed at point
+        Torque GetTorqueInWorldAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
+
+        /// Return the torque vector in body reference frame, at a point given in world reference frame
+        /// \param torque Torque vector at point
+        /// \param worldPoint point given in world reference frame
+        /// \param fc Frame convention (NED/NWU)
+        void GetTorqueInBodyAtPointInWorld(Torque& torque, const Position& worldPoint, FRAME_CONVENTION fc) const;
+
+        /// Return the torque vector in body reference frame, at a point given in world reference frame
+        /// \param worldPoint point given in world reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return torque vector expressed at point
+        Torque GetTorqueInBodyAtPointInWorld(const Position& worldPoint, FRAME_CONVENTION fc) const;
+
+        /// Return the torque vector in body reference frame, at a point given in body reference frame
+        /// \param torque Torque vector at point
+        /// \param bodyPoint point given in body reference frame
+        /// \param fc Frame convention (NED/NWU)
+        void GetTorqueInBodyAtPointInBody(Torque& torque, const Position& bodyPoint, FRAME_CONVENTION fc) const;
+
+        /// Return the torque vector in body reference frame, at a point given in body reference frame
+        /// \param bodyPoint point given in body reference frame
+        /// \param fc Frame convention (NED/NWU)
+        /// \return torque vector expressed at point
+        Torque GetTorqueInBodyAtPointInBody(const Position& bodyPoint, FRAME_CONVENTION fc) const;
+
+
+
         /// Return the amplitude of the force
         /// \return Amplitude of the force, in Newton
         double GetForceNorm() const;
