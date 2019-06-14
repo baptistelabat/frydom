@@ -10,9 +10,10 @@
 // ==========================================================================
 
 
-#ifndef FRYDOM_FRFORCEINC_H
-#define FRYDOM_FRFORCEINC_H
+#ifndef FRYDOM_FRSTATICSINC_H
+#define FRYDOM_FRSTATICSINC_H
 
 #include "FrStaticAnalysis.h"
+#include "FrStability.h"
 
-#endif //FRYDOM_FRFORCEINC_H
+#endif //FRYDOM_FRSTATICSINC_H
