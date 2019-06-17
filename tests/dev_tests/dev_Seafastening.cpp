@@ -156,58 +156,13 @@ int main() {
 
     FrStability stability(CB28, hydrostaticForce);
 
+    FrInertiaTensor newInertia(mass, Ixx, Iyy, Izz, 0., 0., 0., Position(), fc);
+
     for (int i = 1; i<90; i++)
         stability.AddRotation(FrRotation(Direction(1,0,0), i*DEG2RAD, NWU));
 
-    stability.ComputeGZ(Position(), NWU);
+    stability.ComputeGZ(newInertia);
     stability.WriteResults("GZ");
-
-//    // Static equilibrium
-//    system.GetStaticAnalysis()->SetNbSteps(35);
-//    system.GetStaticAnalysis()->SetNbIteration(20);
-//    system.SolveStaticWithRelaxation();
-////    system.VisualizeStaticAnalysis(50);
-//
-//    // Inclination of the assembly
-//
-////    CB28->RotateAroundCOG(FrRotation(Direction(1,0,0), 5.*DEG2RAD, NWU), NWU);
-//    CB28->RotateAroundPointInBody(FrRotation(Direction(1,0,0), 5.*DEG2RAD, NWU), assembly.GetInertiaTensor().GetCOGPosition(NWU), NWU);
-//    auto CBNode = CB28->NewNode();
-//    CBNode->SetPositionInWorld(assembly.GetInertiaTensor().GetCOGPosition(NWU), NWU);
-//
-//    auto worldNode = system.GetWorldBody()->NewNode();
-//    worldNode->SetPositionInWorld(assembly.GetInertiaTensor().GetCOGPosition(NWU), NWU);
-//    auto constraint = make_prismatic_link(worldNode, CBNode, &system);
-//
-//    // Vertical static equilibrium of the inclined assembly
-//    CB28->SetFixedInWorld(true);
-//
-//    system.Initialize();
-//    system.DoAssembly();
-//
-//    CB28->SetFixedInWorld(false);
-//
-//    system.SolveStaticWithRelaxation();
-//
-////    Position BG = CB28->GetCOGPositionInWorld(fc) - hydrostaticForce->GetCenterOfBuoyancyInWorld(fc);
-////    BG.GetZ() = 0.;
-////    double GZ = BG.norm();
-//
-//    std::cout << "Couple de redressement at COG = " << hydrostaticForce->GetTorqueInWorldAtCOG(fc) << std::endl;
-//    std::cout << "GZ at COG = " << hydrostaticForce->GetTorqueNormAtCOG()/hydrostaticForce->GetForceNorm() << std::endl;
-////    std::cout << "GZ at COG = " << GZ << std::endl;
-//
-////    BG = assembly.GetInertiaTensor().GetCOGPosition(fc) - hydrostaticForce->GetCenterOfBuoyancyInWorld(fc);
-////    BG.GetZ() = 0.;
-////    GZ = BG.norm();
-//    auto torqueAtAssemblyCOG = hydrostaticForce->GetTorqueInWorldAtPointInBody(assembly.GetInertiaTensor().GetCOGPosition(fc),fc);
-//
-//    std::cout << "Couple de redressement at assembly COG = " << torqueAtAssemblyCOG << std::endl;
-//    std::cout << "GZ at assembly COG = " << torqueAtAssemblyCOG.norm()/hydrostaticForce->GetForceNorm() << std::endl;
-////    std::cout << "GZ at assembly COG = " << GZ << std::endl;
-//
-//
-//    constraint->SetDisabled(true);
 
 
 //    system.RunInViewer(0., 50, false);

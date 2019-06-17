@@ -6,6 +6,7 @@
 #include "frydom/core/common/FrRotation.h"
 #include "frydom/core/body/FrBody.h"
 #include "frydom/core/body/FrInertiaTensor.h"
+#include "frydom/environment/FrEnvironment.h"
 #include "frydom/hydrodynamics/hydrostatic/FrNonlinearHydrostaticForce.h"
 
 #include "frydom/core/link/links_lib/FrLinksLibInc.h"
@@ -25,24 +26,27 @@ namespace frydom {
         m_rotations.push_back(rotation);
     }
 
-    void FrStability::ComputeGZ(const Position& refPos, FRAME_CONVENTION fc) {
+    void FrStability::CleanRotation() {
+        m_rotations.clear();
+    }
+
+
+    void FrStability::ComputeGZ(const FrInertiaTensor& inertia) {
+
+        FRAME_CONVENTION fc = NWU;
 
         auto bodyOrigFrame = m_body->GetFrame();
 
-        // transport inertia at body reference frame
-        double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-        m_tempInertia.GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, fc);
+        auto COGPos = inertia.GetCOGPosition(fc);
 
-        FrInertiaTensor newInertia(m_tempInertia.GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, refPos, fc);
-
-        m_body->SetInertiaTensor(newInertia);
+        m_body->SetInertiaTensor(inertia);
 
 
         auto CBNode = m_body->NewNode();
-        CBNode->SetPositionInWorld(refPos, fc);
+        CBNode->SetPositionInWorld(COGPos, fc);
 
         auto worldNode = system()->GetWorldBody()->NewNode();
-        worldNode->SetPositionInWorld(refPos, fc);
+        worldNode->SetPositionInWorld(COGPos, fc);
         auto constraint = make_prismatic_link(worldNode, CBNode, system());
 
 
@@ -60,13 +64,13 @@ namespace frydom {
 
         for (const auto &rotation : m_rotations) {
 
-            m_body->RotateAroundPointInBody(rotation, refPos, fc);
+            m_body->RotateAroundPointInBody(rotation, COGPos, fc);
 
             auto CBNode = m_body->NewNode();
-            CBNode->SetPositionInWorld(refPos, fc);
+            CBNode->SetPositionInWorld(COGPos, fc);
 
             auto worldNode = system()->GetWorldBody()->NewNode();
-            worldNode->SetPositionInWorld(refPos, fc);
+            worldNode->SetPositionInWorld(COGPos, fc);
             auto constraint = make_prismatic_link(worldNode, CBNode, system());
 
             // Vertical static equilibrium of the inclined assembly
@@ -123,12 +127,11 @@ namespace frydom {
         double mass = m_body->GetInertiaTensor().GetMass();
         for (unsigned int i = 0; i<m_rotations.size(); i++) {
             m_rotations.at(i).GetCardanAngles_DEGREES(phi, theta, psi, NWU);
-            outfile<<phi<<";"<<theta<<";"<<psi<<";"<<m_GZ.at(i)<<";"<<m_GZ.at(i) * mass<<";"<<std::endl;
+            outfile<<phi<<";"<<theta<<";"<<psi<<";"<<m_GZ.at(i)<<";"<<m_GZ.at(i) * mass * system()->GetEnvironment()->GetGravityAcceleration() <<";"<<std::endl;
         }
 
         outfile.close();
 
     }
-
 
 } // end namespace frydom

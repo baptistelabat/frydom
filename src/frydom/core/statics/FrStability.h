@@ -14,6 +14,7 @@ namespace frydom {
     // Forward declaration
     class Position;
     class FrRotation;
+    class FrInertiaTensor;
     class FrOffshoreSystem;
     class FrBody;
     class FrNonlinearHydrostaticForce;
@@ -28,7 +29,9 @@ namespace frydom {
 
         void AddRotation(const FrRotation& rotation);
 
-        void ComputeGZ(const Position& refPos, FRAME_CONVENTION fc);
+        void CleanRotation();;
+
+        void ComputeGZ(const FrInertiaTensor& inertia);
 
         void WriteResults(const std::string& filename);
 
