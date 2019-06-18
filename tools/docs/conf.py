@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('/home/pierre-yves/Documents/frydom_GPL/tools
 
 # -- Project information -----------------------------------------------------
 
-project = u'Nemoh2HDB'
+project = u'HDB5tool'
 copyright = u'2019, D-ICE Engineering'
 author = u'D-ICE Engineering'
 
@@ -129,7 +129,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Nemoh2HDBdoc'
+htmlhelp_basename = 'HDB5tooldoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -156,7 +156,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Nemoh2HDB.tex', u'Nemoh2HDB Documentation',
+    (master_doc, 'HDB5tool.tex', u'HDB5tool Documentation',
      u'D-ICE Engineering', 'manual'),
 ]
 
@@ -166,7 +166,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'nemoh2hdb', u'Nemoh2HDB Documentation',
+    (master_doc, 'hdb5tool', u'HDB5tool Documentation',
      [author], 1)
 ]
 
@@ -177,8 +177,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Nemoh2HDB', u'Nemoh2HDB Documentation',
-     author, 'Nemoh2HDB', 'One line description of project.',
+    (master_doc, 'HDB5tool', u'HDB5tool Documentation',
+     author, 'HDB5tool', 'One line description of project.',
      'Miscellaneous'),
 ]
 
