@@ -65,13 +65,13 @@ def get_parser(parser):
     parser.add_argument('--activate_inertia', '-active_i', action="append",nargs='+', metavar='Arg',help="""
                 Activate inertia for the body of index given in argument.""")
 
-    # Body - Inertia matrix.
+    # Body - Inertia matrix (inertias and mass).
     parser.add_argument('--inertia', '-i', nargs=8, metavar=('id', 'mass', 'i44', 'i55', 'i66', 'i45', 'i46', 'i56'), action="append",help="""
-                Inertia coefficients (Mass, I44, I55, I66, I45, I46, I56) for the body of index given in first argument.""")
+                Inertia coefficients and mass (Mass, I44, I55, I66, I45, I46, I56) for the body of index given in first argument.""")
 
-    # Body - Inertia matrix.
+    # Body - Inertia matrix (inertia only).
     parser.add_argument('--inertia_only', '-io', nargs=7, metavar=('id', 'i44', 'i55', 'i66', 'i45', 'i46', 'i56'), action="append",help="""
-                Inertia coefficients (I44, I55, I66, I45, I46, I56) for the body of index given in first argument.""")
+                Inertia coefficients only (I44, I55, I66, I45, I46, I56) for the body of index given in first argument.""")
 
     # Body - Mass.
     parser.add_argument('--mass', '--Mass', '-m', nargs=2, metavar=('id', 'mass'), action="append",help="""
@@ -157,15 +157,21 @@ def get_Arg_part_1_CE(args, database):
 
     # Discretization - Wave directions.
     if (args.discretization_waves is not None):
-        database.discretization.nb_wave_directions = int(args.discretization_waves)
+        if(int(args.discretization_waves[0]) <= 1):
+            print("The number of the wave direction discretization must be higher or equal to 2.")
+            exit()
+        database.discretization.nb_wave_directions = int(args.discretization_waves[0])
 
     # Discretization - Wave frequencies.
     if (args.discretization_frequencies is not None):
-        database.discretization.nb_frequencies = int(args.discretization_frequencies)
+        if (int(args.discretization_frequencies[0]) <= 1):
+            print("The number of the wave frequency discretization must be higher or equal to 2.")
+            exit()
+        database.discretization.nb_frequencies = int(args.discretization_frequencies[0])
 
     # Discretization - Final time for IRF.
     if (args.final_time_irf is not None):
-        database.discretization._final_time = float(args.final_time_irf)
+        database.discretization._final_time = float(args.final_time_irf[0])
 
     # Initialize pyHDB.
     if (args.path_to_nemoh_cal is not None or args.initialization is True):  # _initialize is automatically called when a .cal is read.
@@ -210,8 +216,8 @@ def get_Arg_part_1_CE(args, database):
 
     # Body - Inertia matrix.
     if (args.inertia_only is not None):
-        nb_inertia = len(args.inertia_only)
-        for j in range(0, inertia_only):
+        nb_inertia_only = len(args.inertia_only)
+        for j in range(0, nb_inertia_only):
             database.body[int(args.inertia_only[j][0]) - 1].activate_inertia()
             database.body[int(args.inertia_only[j][0]) - 1].inertia.I44 = args.inertia_only[j][1]
             database.body[int(args.inertia_only[j][0]) - 1].inertia.I55 = args.inertia_only[j][2]
