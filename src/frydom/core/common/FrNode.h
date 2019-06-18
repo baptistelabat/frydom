@@ -256,7 +256,7 @@ namespace frydom {
 
     private:
 
-        friend void FrLink::SetMarkers(FrNode*, FrNode*);
+        friend void FrLink::SetNodes(FrNode*, FrNode*);
 
     };
 

@@ -68,9 +68,9 @@ namespace frydom {
         FrLink::Update(time); // It is mandatory to invoke this before all update operations from frydom
 
         // Update total link measure
-        m_linkPosition = GetMarker2PositionWRTMarker1(NWU).GetZ();
-        m_linkVelocity = GetVelocityOfMarker2WRTMarker1(NWU).GetVz();
-        m_linkAcceleration = GetAccelerationOfMarker2WRTMarker1(NWU).GetAccZ();
+        m_linkPosition = GetNode2PositionWRTNode1(NWU).GetZ();
+        m_linkVelocity = GetVelocityOfNode2WRTNode1(NWU).GetVz();
+        m_linkAcceleration = GetAccelerationOfNode2WRTNode1(NWU).GetAccZ();
 
         UpdateForces(time);
 
@@ -109,7 +109,7 @@ namespace frydom {
         m_actuator->Initialize();
         GetSystem()->Add(m_actuator);
 
-        m_actuator->SetMotorFunction(FrConstantFunction(GetMarker2PositionWRTMarker1(NWU).GetZ()));
+        m_actuator->SetMotorFunction(FrConstantFunction(GetNode2PositionWRTNode1(NWU).GetZ()));
 
     }
 
