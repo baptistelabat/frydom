@@ -45,7 +45,7 @@ A cutoff scaling function can be applied when loading results from the linear po
 database, using the python scripts. The cutoff function is based on an exponential function:
 
 .. math::
-    c(t) = exp (-\dfrac{3t}{T_c})
+    c(t) = \exp\left(-\dfrac{3t}{T_c}\right)^2
 
 where :math:`T_c` is the cutoff time.
 
