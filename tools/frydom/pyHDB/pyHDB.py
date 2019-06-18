@@ -454,40 +454,59 @@ class pyHDB():
 
         for body in self.bodies:
 
-            # Diffraction loads - Wave directions.
-            f_interp_diffraction_dir = interpolate.interp1d(self.wave_dir, body.Diffraction, axis=2)  # axis = 2 -> wave directions.
-            body.Diffraction = f_interp_diffraction_dir(discretization._wave_dirs)  # Application of the interpolation.
-
             # Diffraction loads - Wave frequencies.
-            f_interp_diffraction_freq = interpolate.interp1d(self.wave_freq, body.Diffraction, axis=1) # axis = 1 -> wave frequencies.
+            f_interp_diffraction_freq = interpolate.interp1d(self.wave_freq, body.Diffraction, axis=1)  # axis = 1 -> wave frequencies.
             body.Diffraction = f_interp_diffraction_freq(discretization._wave_frequencies)
 
-            # Froude-Krylov loads - Wave directions.
-            f_interp_fk_dir = interpolate.interp1d(self.wave_dir, body.Froude_Krylov, axis=2)  # axis = 2 -> wave directions.
-            body.Froude_Krylov = f_interp_fk_dir(discretization._wave_dirs)  # Application of the interpolation.
-
             # Froude-Krylov loads - Wave frequencies.
-            f_interp_fk_freq = interpolate.interp1d(self.wave_freq, body.Froude_Krylov, axis=1) # axis = 1 -> wave frequencies.
+            f_interp_fk_freq = interpolate.interp1d(self.wave_freq, body.Froude_Krylov, axis=1)  # axis = 1 -> wave frequencies.
             body.Froude_Krylov = f_interp_fk_freq(discretization._wave_frequencies)
 
             # Added mass - Wave frequencies.
-            f_interp_Added_mass_freq = interpolate.interp1d(self.wave_freq, body.Added_mass, axis=2) # axis = 2 -> wave frequencies.
+            f_interp_Added_mass_freq = interpolate.interp1d(self.wave_freq, body.Added_mass, axis=2)  # axis = 2 -> wave frequencies.
             body.Added_mass = f_interp_Added_mass_freq(discretization._wave_frequencies)
 
             # Damping - Wave frequencies.
             f_interp_Damping_freq = interpolate.interp1d(self.wave_freq, body.Damping, axis=2)  # axis = 2 -> wave frequencies.
             body.Damping = f_interp_Damping_freq(discretization._wave_frequencies)
 
+            # Wave directions.
+            if(self.nb_wave_dir > 1): # Several wave directions, so the interpolations are possible.
+
+                # Diffraction loads - Wave directions.
+                f_interp_diffraction_dir = interpolate.interp1d(self.wave_dir, body.Diffraction, axis=2) # axis = 2 -> wave directions.
+                body.Diffraction = f_interp_diffraction_dir(discretization._wave_dirs)  # Application of the interpolation.
+
+                # Froude-Krylov loads - Wave directions.
+                f_interp_fk_dir = interpolate.interp1d(self.wave_dir, body.Froude_Krylov, axis=2) # axis = 2 -> wave directions.
+                body.Froude_Krylov = f_interp_fk_dir(discretization._wave_dirs)  # Application of the interpolation.
+
+            else: # Only one wave direction so the data are copied along a second direction.
+
+                # Diffraction loads - Wave directions.
+                body.Diffraction = np.repeat(body.Diffraction, 2, axis=2) # axis = 2 -> wave directions.
+
+                # Froude-Krylov loads - Wave directions.
+                body.Froude_Krylov = np.repeat(body.Froude_Krylov, 2, axis=2) # axis = 2 -> wave directions.
+
         # Kochin functions.
         if(self.has_kochin):
-
-            # Diffraction Kochin functions - Wave directions.
-            f_interp_kochin_diffraction_dir = interpolate.interp1d(self.wave_dir, self.kochin_diffraction, axis=0)  # axis = 0 -> wave directions.
-            self.kochin_diffraction = f_interp_kochin_diffraction_dir(discretization._wave_dirs)  # Application of the interpolation.
 
             # Diffraction Kochin functions - Wave frequencies.
             f_interp_kochin_diffraction_freq = interpolate.interp1d(self.wave_freq, self.kochin_diffraction, axis=1)  # axis = 1 -> wave frequencies.
             self.kochin_diffraction = f_interp_kochin_diffraction_freq(discretization._wave_frequencies)  # Application of the interpolation.
+
+            # Wave directions.
+            if (self.nb_wave_dir > 1):  # Several wave directions, so the interpolations are possible.
+
+                # Diffraction Kochin functions - Wave directions.
+                f_interp_kochin_diffraction_dir = interpolate.interp1d(self.wave_dir, self.kochin_diffraction, axis=0)  # axis = 0 -> wave directions.
+                self.kochin_diffraction = f_interp_kochin_diffraction_dir(discretization._wave_dirs)  # Application of the interpolation.
+
+            else: # Only one wave direction so the data are copied along a second direction.
+
+                # Diffraction Kochin functions - Wave directions.
+                self.kochin_diffraction = np.repeat(self.kochin_diffraction, 2, axis=0)  # axis = 0 -> wave directions.
 
             # Radiation Kochin functions - Wave frequencies.
             f_interp_kochin_radiation_freq = interpolate.interp1d(self.wave_freq, self.kochin_radiation, axis=1)  # axis = 1 -> wave frequencies.

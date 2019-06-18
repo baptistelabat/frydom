@@ -322,6 +322,12 @@ class DiscretizationDB(object):
         if self.nb_wave_directions is None:
             self._nb_wave_directions = pyHDB.nb_wave_dir
 
+        # If only one wave direction, to make the interpolations possible for the wave directions, the data are repeated along the 0 deg and 360 deg directions, even if the computation was done in another direction.
+        if self.nb_wave_directions == 1:
+            self._max_angle = 360.
+            self._min_angle = 0.
+            self._nb_wave_directions = 2 # And pyHDB.nb_wave_directions = 1.
+
         self._wave_dirs = np.radians(np.linspace(self.min_angle, self.max_angle, self.nb_wave_directions))
 
         # Time.
