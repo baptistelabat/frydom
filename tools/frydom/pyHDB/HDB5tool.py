@@ -132,7 +132,7 @@ def Read_cal_hdb5(args):
     # BEM reader.
     if (args.path_to_nemoh_cal is not None):
         database = HDB5()
-        database.nemoh_reader(args.path_to_nemoh_cal)
+        database.nemoh_reader(args.path_to_nemoh_cal[0])
 
     # Reading a hdb5 file.
     if (args.read is not None):

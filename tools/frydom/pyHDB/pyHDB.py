@@ -279,7 +279,7 @@ class pyHDB():
 
                 else: # Finite depth.
 
-                    kxzph = np.einsum('i, j -> ij', z + depth, k_wave) # k*(z+h).
+                    kxzph = np.einsum('i, j -> ij', z + self.depth, k_wave) # k*(z+h).
                     chkh_1 = 1. / np.cosh(k_wave * self.depth) # 1/ch(k*h).
 
                     cih = np.einsum('ij, j -> ij', np.cosh(kxzph), chkh_1) # ch(k(z+h)) / ch(k*h).
