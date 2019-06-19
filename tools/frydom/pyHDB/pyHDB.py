@@ -1094,6 +1094,11 @@ class pyHDB():
         body_path = '/Bodies/Body_%u' % body.i_body
         dset = writer.create_group(body_path)
 
+        # Body name.
+        dset = writer.create_dataset(body_path + "/BodyName", data=body.name)
+
+        dset.attrs['Description'] = "Body name"
+
         # Index of the body.
         dset = writer.create_dataset(body_path + "/ID", data=body.i_body)
         dset.attrs['Description'] = "Body index"
