@@ -14,6 +14,5 @@
 #define FRYDOM_FRSTATICSINC_H
 
 #include "FrStaticAnalysis.h"
-#include "FrStability.h"
 
 #endif //FRYDOM_FRSTATICSINC_H
