@@ -30,10 +30,12 @@ namespace frydom {
     FrInertiaTensor FrAssembly::GetInertiaTensor() const {
 
         try {
-            if (m_masterBody == nullptr)
+            if (m_masterBody == nullptr) {
                 throw std::string("no master body set for the assembly");
-            if (m_bodyList.empty())
-                throw std::string("no bodies added to the assembly");
+            }
+//            if (m_bodyList.empty()) {
+//                throw std::string("no bodies added to the assembly");
+//            }
 
     //        FrInertiaTensor tensor(0.,0.,0.,0.,0.,0.,0.,Position(),NWU);
 

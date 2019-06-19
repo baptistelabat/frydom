@@ -248,6 +248,68 @@ namespace frydom{
         mz = torque[2];
     }
 
+    void FrForce::GetTorqueInWorldAtPointInWorld(Torque& torque, const Position &worldPoint, FRAME_CONVENTION fc) const {
+
+        Position PG = m_body->GetCOGPositionInWorld(fc) - worldPoint;
+
+        torque = GetTorqueInWorldAtCOG(fc) + PG.cross(GetForceInWorld(fc));
+
+    }
+
+    Torque FrForce::GetTorqueInWorldAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
+
+        Torque torque;
+        GetTorqueInWorldAtPointInWorld(torque, worldPoint, fc);
+        return torque;
+
+    }
+
+    void FrForce::GetTorqueInWorldAtPointInBody(Torque& torque, const Position& bodyPoint, FRAME_CONVENTION fc) const {
+
+        GetTorqueInWorldAtPointInWorld(torque, m_body->GetPointPositionInWorld(bodyPoint, fc), fc);
+
+    }
+
+    Torque FrForce::GetTorqueInWorldAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
+
+        Torque torque;
+        GetTorqueInWorldAtPointInBody(torque, bodyPoint, fc);
+        return torque;
+
+    }
+
+    void FrForce::GetTorqueInBodyAtPointInWorld(Torque& torque, const Position& worldPoint, FRAME_CONVENTION fc) const {
+
+        GetTorqueInWorldAtPointInWorld(torque, worldPoint, fc);
+        m_body->ProjectVectorInBody(torque, fc);
+
+    }
+
+    Torque FrForce::GetTorqueInBodyAtPointInWorld(const Position &worldPoint, FRAME_CONVENTION fc) const {
+
+        Torque torque;
+        GetTorqueInBodyAtPointInWorld(torque, worldPoint, fc);
+        return torque;
+
+    }
+
+    void FrForce::GetTorqueInBodyAtPointInBody(Torque& torque, const Position& bodyPoint, FRAME_CONVENTION fc) const {
+
+        GetTorqueInWorldAtPointInBody(torque, bodyPoint, fc);
+        m_body->ProjectVectorInBody(torque, fc);
+
+    }
+
+    Torque FrForce::GetTorqueInBodyAtPointInBody(const Position &bodyPoint, FRAME_CONVENTION fc) const {
+
+        Torque torque;
+        GetTorqueInBodyAtPointInBody(torque, bodyPoint, fc);
+        return torque;
+
+    }
+
+
+
     double FrForce::GetForceNorm() const {
         return GetForceInWorld(NWU).norm();
     }

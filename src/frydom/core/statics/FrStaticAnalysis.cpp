@@ -66,7 +66,7 @@ namespace frydom{
         // Store the starting time of the simulation
         m_undoTime = m_system->GetTime();
         // Store the time ramp before setting it to 1
-        m_ramp = m_system->GetEnvironment()->GetTimeRamp();
+        m_system->GetEnvironment()->GetTimeRamp()->GetByTwoPoints(m_x0,m_y0,m_x1,m_y1);
         m_system->GetEnvironment()->GetTimeRamp()->SetByTwoPoints(0.,0.,1.,0.);
 
         for (auto& body : m_system->GetBodyList()) {
@@ -172,9 +172,7 @@ namespace frydom{
         m_system->SetTime(m_undoTime);
 
         // Set the ramp to its init state
-        double x0,y0,x1,y1;
-        m_ramp->GetByTwoPoints(x0,y0,x1,y1);
-        m_system->GetEnvironment()->GetTimeRamp()->SetByTwoPoints(x0,y0,x1,y1);
+        m_system->GetEnvironment()->GetTimeRamp()->SetByTwoPoints(m_x0,m_y0,m_x1,m_y1);
 
         // Set all the output paths for the logs back to their original paths
         m_system->GetPathManager()->SetRunPath("Dynamic");
