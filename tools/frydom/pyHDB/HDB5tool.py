@@ -85,9 +85,17 @@ def get_parser(parser):
     parser.add_argument('--cutoff_irf','-co_irf', '-coirf', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
                 Application of the filter with a cutoff time tc to the impulse response functions of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
 
+    # Filtering ALL impulse response functions.
+    parser.add_argument('--cutoff_irf_all', '-co_irf_all', '-coirf_all', nargs=1, metavar=('tc'), action="store", help="""
+                    Application of the filter with a cutoff time tc to ALL impulse response functions.""")
+
     # Filtering impulse response functions with forward speed.
     parser.add_argument('--cutoff_irf_speed','-co_irf_speed', '-coirf_speed', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
-                Application of the filter with a cutoff time tc to the impulse response functions of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
+                Application of the filter with a cutoff time tc to the impulse response functions with forward speed of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
+
+    # Filtering ALL impulse response functions with forward speed.
+    parser.add_argument('--cutoff_irf_all_speed', '-co_irf_all_speed', '-coirf_all_speed', nargs=1, metavar=('tc'), action="append", help="""
+                    Application of the filter with a cutoff time tc to ALL impulse response functions with forward speed .""")
 
     # No symmetrization of the HDB.
     parser.add_argument('--sym_hdb','-sym', '-s', action="store_true",help="""
@@ -248,12 +256,30 @@ def get_Arg_part_1_CE(args, database):
             database.Cutoff_scaling_IRF(tc=float(args.cutoff_irf[j][0]), ibody_force=int(args.cutoff_irf[j][1]), iforce=int(args.cutoff_irf[j][2]),
                                         ibody_motion=int(args.cutoff_irf[j][3]), idof=int(args.cutoff_irf[j][4]))
 
+    # Filtering ALL impulse response functions.
+    if (args.cutoff_irf_all is not None):
+        for body_force in database.body:
+            for iforce in range(0,6):
+                for body_motion in database.body:
+                    for idof in range(0,6):
+                        database.Cutoff_scaling_IRF(tc=float(args.cutoff_irf_all[0]), ibody_force=body_force.i_body, iforce=iforce,
+                                                            ibody_motion=body_motion.i_body, idof=idof, auto_apply = True)
+
     # Filtering impulse response functions with forward speed.
     if (args.cutoff_irf_speed is not None):
         nb_cut_off_irf_speed = len(args.cutoff_irf_speed)
         for j in range(0, nb_cut_off_irf_speed):
             database.Cutoff_scaling_IRF_speed(tc=float(args.cutoff_irf_speed[j][0]), ibody_force=int(args.cutoff_irf_speed[j][1]), iforce=int(args.cutoff_irf_speed[j][2]),
                                               ibody_motion=int(args.cutoff_irf_speed[j][3]), idof=int(args.cutoff_irf_speed[j][4]))
+
+    # Filtering ALL impulse response functions with forward speed.
+    if (args.cutoff_irf_all_speed is not None):
+        for body_force in database.body:
+            for iforce in range(0, 6):
+                for body_motion in database.body:
+                    for idof in range(0, 6):
+                        database.Cutoff_scaling_IRF_speed(tc=float(args.cutoff_irf_all[0]), ibody_force=body_force.i_body, iforce=iforce,
+                                                    ibody_motion=body_motion.i_body, idof=idof, auto_apply=True)
 
     return database
 

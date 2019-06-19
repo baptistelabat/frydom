@@ -104,7 +104,7 @@ To set the time step for evaluating the impulse response functions with and with
 Cutoff scaling function
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-For smoothing the impulse response functions, the following cutoff scaling function is applied:
+For smoothing the impulse response functions, the following cutoff scaling function may be applied:
 
 .. math::
     c(t) = \exp\left(-\dfrac{3t}{t_c}\right)^2
@@ -119,9 +119,17 @@ For example, for a cuttoff time of :math:`10` \\(s\\) of the impulse response fu
 
     >$ hdb5tool -cal path/to/Nemoh/cal/folder -coirf 10 0 2 0 2
 
-Then, if you can to apply this cutoff scaling function and update the impulse response function, write *yes*, otherwise write *no*.
+Then, if you want to apply this cutoff scaling function and update the impulse response function, write *yes*, otherwise write *no*.
 
 For applying the cutoff scaling function to an impulse response function with forward speed, use ``-coirf_speed`` instead of ``-coirf``.
+
+It is also possible to apply automatically the cutoff scaling function to all impulse response functions for all bodies with the same cutoff time by using the following command::
+
+    >$ hdb5tool -cal path/to/Nemoh/cal/folder -coirf_all 10.
+
+And in case of impulse response functions with forward speed::
+
+    >$ hdb5tool -cal path/to/Nemoh/cal/folder -coirf_all_speed 10.
 
 Postprocessing of the hydrodynamic database
 -------------------------------------------
