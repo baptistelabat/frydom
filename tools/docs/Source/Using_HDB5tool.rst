@@ -27,8 +27,8 @@ Reading an input file
  - The output files of **Nemoh**;
  - A *.hdb5* file.
 
-**Nemoh** output files
-~~~~~~~~~~~~~~~~~~~~~~
+From the **Nemoh** output files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Reading the output files of Nemoh is achieved by writing the path to the *folder* including the Nemoh.cal input file of **Nemoh**::
 
@@ -38,8 +38,8 @@ Reading the output files of Nemoh is achieved by writing the path to the *folder
 
     As a folder is asked, no extension is expected.
 
-*.hdb5* file
-~~~~~~~~~~~~
+From a *.hdb5* file
+~~~~~~~~~~~~~~~~~~~
 
 If a *.hdb5* file already exists, it can be downloaded by the following command::
 
@@ -137,7 +137,7 @@ The computation of the Froude-Krylov loads, the infinite added-mass matrices, th
 Hydrostatic matrix
 ------------------
 
-It is possible to define a hydrostatic stiffness matrix for each body, in order to be read by **FRyDoM** or for computing the Response Amplitude Operators thereafter. This matrix is defined by:
+It is possible to define a hydrostatic stiffness matrix for each body, in order to be read by **FRyDoM-CE** or for computing the Response Amplitude Operators thereafter. This matrix is defined by:
 
 .. math::
 
@@ -237,7 +237,7 @@ The command to plot the amplitude and the phase of the excitation loads of the b
 Impulse response functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The command to plot the impulse response function  of the body *ibody_force* along the force *iforce* for a motion of *ibody_motion* along the degree of freedom *idof* is::
+The command to plot the impulse response function of the body *ibody_force* along the force *iforce* for a motion of *ibody_motion* along the degree of freedom *idof* is::
 
     >$ hdb5tool -cal path/to/Nemoh/cal/folder -pirf ibody_force iforce ibody_motion idof
 
