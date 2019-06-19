@@ -20,8 +20,6 @@ You can get command line help by issuing the following command::
 
     >$ hdb5tool -h
 
-The output of this command is reproduced in the :any:`Command Line Interface Reference Guide <CLI_references>`.
-
 Reading an input file
 ---------------------
 

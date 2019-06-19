@@ -28,7 +28,7 @@ Using HDB5tool as a command line utility
 .. toctree::
    :maxdepth: 3
 
-   Source/Command_line
+   Source/Using_HDB5tool
 
 Indices and tables
 ==================
