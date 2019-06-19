@@ -1096,12 +1096,15 @@ class pyHDB():
 
         # Body name.
         dset = writer.create_dataset(body_path + "/BodyName", data=body.name)
-
         dset.attrs['Description'] = "Body name"
 
         # Index of the body.
         dset = writer.create_dataset(body_path + "/ID", data=body.i_body)
         dset.attrs['Description'] = "Body index"
+
+        # Position of the body.
+        dset = writer.create_dataset(body_path + "/BodyPosition", data=body.position)
+        dset.attrs['Description'] = "Position of the body in the absolute frame"
 
         # Force modes.
         self.write_mode(writer, body, 0, body_path + "/Modes")
