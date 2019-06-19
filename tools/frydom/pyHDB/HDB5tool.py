@@ -49,7 +49,7 @@ def get_parser(parser):
     parser.add_argument('--discretization_frequencies','--discretization_freq','--discretization_frequency','-dis_freq','-dis_frequency','-dis_frequencies','-df', action="store", nargs =1, metavar='Arg',help="""
                 Integer for the new discretization of the wave frequencies.""")
 
-    # Discretization - Wave frequencies.
+    # Discretization - Final time.
     parser.add_argument('--final_time_irf','--final_time', '-ft', action="store", nargs = 1, metavar = 'Arg', help="""
                 Final time for the computation of the impulse response functions.""")
 
@@ -78,12 +78,12 @@ def get_parser(parser):
                 Mass of the body of index given in argument.""")
 
     # Filtering impulse response functions.
-    parser.add_argument('--cut_off_irf','-co_irf', '-coirf', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
-                Application of the filter with a cutting time tc to the impulse response functions of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
+    parser.add_argument('--cutoff_irf','-co_irf', '-coirf', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
+                Application of the filter with a cutoff time tc to the impulse response functions of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
 
     # Filtering impulse response functions with forward speed.
-    parser.add_argument('--cut_off_irf_speed','-co_irf_speed', '-coirf_speed', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
-                Application of the filter with a cutting time tc to the impulse response functions of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
+    parser.add_argument('--cutoff_irf_speed','-co_irf_speed', '-coirf_speed', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
+                Application of the filter with a cutoff time tc to the impulse response functions of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
 
     # No symmetrization of the HDB.
     parser.add_argument('--sym_hdb','-sym', '-s', action="store_true",help="""
@@ -234,18 +234,18 @@ def get_Arg_part_1_CE(args, database):
             database.body[int(args.mass[j][0]) - 1].inertia.mass = args.mass[j][1]
 
     # Filtering impulse response functions.
-    if (args.cut_off_irf is not None):
-        nb_cut_off_irf = len(args.cut_off_irf)
+    if (args.cutoff_irf is not None):
+        nb_cut_off_irf = len(args.cutoff_irf)
         for j in range(0, nb_cut_off_irf):
-            database.Cutoff_scaling_IRF(tc=float(args.cut_off_irf[j][0]), ibody_force=int(args.cut_off_irf[j][1]), iforce=int(args.cut_off_irf[j][2]),
-                                        ibody_motion=int(args.cut_off_irf[j][3]), idof=int(args.cut_off_irf[j][4]))
+            database.Cutoff_scaling_IRF(tc=float(args.cutoff_irf[j][0]), ibody_force=int(args.cutoff_irf[j][1]), iforce=int(args.cutoff_irf[j][2]),
+                                        ibody_motion=int(args.cutoff_irf[j][3]), idof=int(args.cutoff_irf[j][4]))
 
     # Filtering impulse response functions with forward speed.
-    if (args.cut_off_irf_speed is not None):
-        nb_cut_off_irf_speed = len(args.cut_off_irf_speed)
+    if (args.cutoff_irf_speed is not None):
+        nb_cut_off_irf_speed = len(args.cutoff_irf_speed)
         for j in range(0, nb_cut_off_irf_speed):
-            database.Cutoff_scaling_IRF_speed(tc=float(args.cut_off_irf_speed[j][0]), ibody_force=int(args.cut_off_irf_speed[j][1]), iforce=int(args.cut_off_irf_speed[j][2]),
-                                              ibody_motion=int(args.cut_off_irf_speed[j][3]), idof=int(args.cut_off_irf_speed[j][4]))
+            database.Cutoff_scaling_IRF_speed(tc=float(args.cutoff_irf_speed[j][0]), ibody_force=int(args.cutoff_irf_speed[j][1]), iforce=int(args.cutoff_irf_speed[j][2]),
+                                              ibody_motion=int(args.cutoff_irf_speed[j][3]), idof=int(args.cutoff_irf_speed[j][4]))
 
     return database
 
