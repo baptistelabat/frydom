@@ -53,6 +53,10 @@ def get_parser(parser):
     parser.add_argument('--final_time_irf','--final_time', '-ft', action="store", nargs = 1, metavar = 'Arg', help="""
                 Final time for the computation of the impulse response functions.""")
 
+    # Discretization - Time step.
+    parser.add_argument('--time_step_irf', '--time_step', '-dt', action="store", nargs=1, metavar='Arg', help="""
+                    Time step for the computation of the impulse response functions.""")
+
     # Body - Activate hydrostatics (useless).
     parser.add_argument('--activate_hydrostatics','--activate_hydrostatic', '-active_hs', '-activate_hs', nargs = '+', metavar = 'Arg', action="append",help="""
                 Activate hydrostatics for the body of index given in argument.""")
@@ -172,6 +176,10 @@ def get_Arg_part_1_CE(args, database):
     # Discretization - Final time for IRF.
     if (args.final_time_irf is not None):
         database.discretization._final_time = float(args.final_time_irf[0])
+
+    # Discretization - Time step for IRF.
+    if (args.time_step_irf is not None):
+        database.discretization._delta_time = float(args.time_step_irf[0])
 
     # Initialize pyHDB.
     if (args.path_to_nemoh_cal is not None or args.initialization is True):  # _initialize is automatically called when a .cal is read.

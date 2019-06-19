@@ -88,7 +88,18 @@ To set the final time for evaluating the impulse response functions with and wit
 
 .. note::
 
-    By default, the final time is :math:`30` \\(s\\). The time step is fixed to :math:`0.008` \\(s\\).
+    By default, the final time is :math:`30` \\(s\\).
+
+Time step
+~~~~~~~~~
+
+To set the time step for evaluating the impulse response functions with and without forward speed (here :math:`0.01` \\(s\\)), use::
+
+    >$ hdb5tool -cal path/to/Nemoh/cal/folder -dt 0.01
+
+.. note::
+
+    By default, the time step is :math:`0.008` \\(s\\).
 
 Cutoff scaling function
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -252,7 +263,6 @@ K44                       :math:`1.699\times10^1` \\(N.m\\)
 K55                       :math:`1.699\times10^1` \\(N.m\\)
 ========================= ==================================
 
-We want to generate the corresponding *.hdb5* file, named *Sphere.hdb5*, after doing a new discretization of the hydrodynamic database for 41 wave directions, 150 wave frequencies, computing the impulse reponse functions with a final time of :math:`100` \\(s\\), providing the hydrostatic and inertia matrices and applying a cutoff scaling function with a cutoff tume of :math:`10` \\(s\\) to :math:`K_{33}` and :math:`{Ku}_{33}`. We also want to plot the following quantities: :math:`A_{33}`, :math:`B_{44}`, :math:`F^{Diff}_{3}`, :math:`F^{Diff}_{4}`, :math:`F^{FK}_{4}`, :math:`F^{Exc}_{3}`, :math:`F^{Exc}_{4}`, :math:`K_{33}` and :math:`{Ku}_{44}`. The command is:: 
+We want to generate the corresponding *.hdb5* file, named *Sphere.hdb5*, after doing a new discretization of the hydrodynamic database for 41 wave directions, 150 wave frequencies, computing the impulse reponse functions with a final time of :math:`100` \\(s\\) and a time step of :math:`0.01` \\(s\\), providing the hydrostatic and inertia matrices and applying a cutoff scaling function with a cutoff tume of :math:`10` \\(s\\) to :math:`K_{33}` and :math:`{Ku}_{33}`. We also want to plot the following quantities: :math:`A_{33}`, :math:`B_{44}`, :math:`F^{Diff}_{3}`, :math:`F^{Diff}_{4}`, :math:`F^{FK}_{4}`, :math:`F^{Exc}_{3}`, :math:`F^{Exc}_{4}`, :math:`K_{33}` and :math:`{Ku}_{44}`. The command is:: 
 
-    hdb5tool -cal . -dw 41 -df 150 -ft 100 -hs 1 3.082e4 1.699e1 1.699e1 0 0 0 -i 1 2094.39 837.76 837.76 837.76 0 0 0 -sym -w Sphere.hdb5 -pab 0 2 0 2 -prad 0 3 0 3 -pd 0 2 0 -pd 0 3 0 -pfk 0 2 0 -pfk 0 3 0 -pe 0 2 0 -pe 0 3 0 -pirf 0 2 0 2 -pirf_speed 0 3 0 3 -coirf 10 0 2 0 2 -coirf_speed 10 0 2 0 2
-
+    hdb5tool -cal . -dw 41 -df 150 -ft 100 -dt 0.01 -hs 1 3.082e4 1.699e1 1.699e1 0 0 0 -i 1 2094.39 837.76 837.76 837.76 0 0 0 -sym -w Sphere.hdb5 -pab 0 2 0 2 -prad 0 3 0 3 -pd 0 2 0 -pd 0 3 0 -pfk 0 2 0 -pfk 0 3 0 -pe 0 2 0 -pe 0 3 0 -pirf 0 2 0 2 -pirf_speed 0 3 0 3 -coirf 10 0 2 0 2 -coirf_speed 10 0 2 0 2
