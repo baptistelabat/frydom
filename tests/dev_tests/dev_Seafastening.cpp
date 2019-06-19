@@ -146,12 +146,12 @@ int main() {
     auto eqFrame = std::make_shared<FrEquilibriumFrame>(CB28.get());
     system.AddPhysicsItem(eqFrame);
 
-    auto hdb = make_hydrodynamic_database("CB28_HDB.h5");
+    auto hdb = make_hydrodynamic_database("CB28.h5");
     hdb->Map(0, CB28.get(), eqFrame);
 
     // hydrostatic
 
-    auto CBMesh = make_hydro_mesh(CB28, "CB28_Full.obj", FrFrame(), FrHydroMesh::ClippingSupport::PLANSURFACE);
+    auto CBMesh = make_hydro_mesh(CB28, "CB28_Full.obj", FrFrame(), FrHydroMesh::ClippingSupport::WAVESURFACE);
 
     auto hydrostaticForce = make_nonlinear_hydrostatic_force(CB28, CBMesh);
 
@@ -179,54 +179,54 @@ int main() {
 //    hydrostaticForce->SetStiffnessMatrix(hydrostaticStiffness);
 
 
-    //-------------------------------------
-    // Pile
-    //-------------------------------------
-
-    auto pile = system.NewBody();
-    pile->SetName("Pile");
-    pile->SetColor(DarkRed);
-    makeItCylinder(pile, 3, 16, 80E3);
-    pile->AllowCollision(false);
-
-    FrFrame pileFrame(Position(0.,-8.,0.), FrRotation(), fc);
-    pileFrame.RotX_DEGREES(-90,fc,true);
-
-    FrFrame CB28Frame(Position(7.6, -4.064, 4.04), FrRotation(), fc);
-
-    AttachBodies(CB28, pile, CB28Frame, pileFrame);
-
-//    auto pile = CB28->NewBody(CB28Frame, pileFrame);
-
-    //-------------------------------------
-    // Manifold
-    //-------------------------------------
-
-    auto manifold = system.NewBody(); // CB28->NewBody(Position(-8, -5.6, 4.04), Position(0.,0.,-3), fc);
-    manifold->SetName("Manifold");
-    manifold->SetColor(DarkGreen);
-    makeItBox(manifold, 16, 9.5, 6, 140E3);
-    manifold->AllowCollision(false);
-
-    AttachBodies(CB28, manifold, Position(-8, -5.6, 4.04), Position(0.,0.,-3), fc);
+//    //-------------------------------------
+//    // Pile
+//    //-------------------------------------
+//
+//    auto pile = system.NewBody();
+//    pile->SetName("Pile");
+//    pile->SetColor(DarkRed);
+//    makeItCylinder(pile, 3, 16, 80E3);
+//    pile->AllowCollision(false);
+//
+//    FrFrame pileFrame(Position(0.,-8.,0.), FrRotation(), fc);
+//    pileFrame.RotX_DEGREES(-90,fc,true);
+//
+//    FrFrame CB28Frame(Position(7.6, -4.064, 4.04), FrRotation(), fc);
+//
+//    AttachBodies(CB28, pile, CB28Frame, pileFrame);
+//
+////    auto pile = CB28->NewBody(CB28Frame, pileFrame);
+//
+//    //-------------------------------------
+//    // Manifold
+//    //-------------------------------------
+//
+//    auto manifold = system.NewBody(); // CB28->NewBody(Position(-8, -5.6, 4.04), Position(0.,0.,-3), fc);
+//    manifold->SetName("Manifold");
+//    manifold->SetColor(DarkGreen);
+//    makeItBox(manifold, 16, 9.5, 6, 140E3);
+//    manifold->AllowCollision(false);
+//
+//    AttachBodies(CB28, manifold, Position(-8, -5.6, 4.04), Position(0.,0.,-3), fc);
 
     //-------------------------------------
     // Assembly
     //-------------------------------------
 
-    FrAssembly assembly;
-    assembly.SetMasterBody(CB28);
-    assembly.AddToAssembly(pile);
-    assembly.AddToAssembly(manifold);
+//    FrAssembly assembly;
+//    assembly.SetMasterBody(CB28);
+//    assembly.AddToAssembly(pile);
+//    assembly.AddToAssembly(manifold);
 
-    CB28->SetFixedInWorld(true);
+//    CB28->SetFixedInWorld(true);
+//
+//    system.Initialize();
+//    system.DoAssembly();
+//
+//    CB28->SetFixedInWorld(false);
 
-    system.Initialize();
-    system.DoAssembly();
-
-    CB28->SetFixedInWorld(false);
-
-    std::cout<<assembly.GetInertiaTensor()<<std::endl;
+//    std::cout<<assembly.GetInertiaTensor()<<std::endl;
 
     system.SetTimeStep(0.01);
 
@@ -236,23 +236,23 @@ int main() {
     //-------------------------------------
     system.GetStaticAnalysis()->SetNbSteps(35);
     system.GetStaticAnalysis()->SetNbIteration(20);
-    system.SolveStaticWithRelaxation();
+//    system.SolveStaticWithRelaxation();
 
-    std::cout<<"cog assembly"<<CB28->GetPointPositionInWorld(assembly.GetInertiaTensor().GetCOGPosition(NWU), NWU)<<std::endl;
-    std::cout<<"rotation"<<CB28->GetRotation()<<std::endl;
+//    std::cout<<"cog assembly"<<CB28->GetPointPositionInWorld(assembly.GetInertiaTensor().GetCOGPosition(NWU), NWU)<<std::endl;
+//    std::cout<<"rotation"<<CB28->GetRotation()<<std::endl;
 
 
-    FrStability stability(CB28, hydrostaticForce);
-
-    FrInertiaTensor newInertia(mass, Ixx, Iyy, Izz, 0., 0., 0., Position(), fc);
-
-    for (int i = 1; i<90; i++)
-        stability.AddRotation(FrRotation(Direction(1,0,0), i*DEG2RAD, NWU));
-
+//    FrStability stability(CB28, hydrostaticForce);
+//
+//    FrInertiaTensor newInertia(mass, Ixx, Iyy, Izz, 0., 0., 0., Position(), fc);
+//
+//    for (int i = 1; i<90; i++)
+//        stability.AddRotation(FrRotation(Direction(1,0,0), i*DEG2RAD, NWU));
+//
 //    stability.ComputeGZ(newInertia);
 //    stability.WriteResults("GZ");
 
 
-//    system.RunInViewer(0., 50, false);
-    system.Visualize(50, false);
+    system.RunInViewer(0., 80, false);
+//    system.Visualize(50, false);
 }
