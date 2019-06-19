@@ -16,5 +16,6 @@
 #include "FrBody.h"
 #include "FrBodyEasy.h"
 #include "FrInertiaTensor.h"
+#include "FrAssembly.h"
 
 #endif //FRYDOM_FRBODYINC_H

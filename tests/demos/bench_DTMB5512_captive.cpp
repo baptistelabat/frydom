@@ -265,7 +265,6 @@ int main(int argc, char* argv[]) {
     auto body = system.NewBody();
 
     Position COGPosition(0., 0., 0.03); // 0.03
-    FrFrame COGFrame(COGPosition, FrRotation(), NWU);
 
     body->SetPosition(Position(0., 0., 0.), NWU);
     body->SetVelocityInBodyNoRotation(Velocity(speed, 0., 0.) ,NWU);
@@ -297,7 +296,7 @@ int main(int argc, char* argv[]) {
     double Iyy = 53.88;
     double Izz = 49.99;
 
-    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU);
+    FrInertiaTensor InertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGPosition, NWU);
 
     body->SetInertiaTensor(InertiaTensor);
 

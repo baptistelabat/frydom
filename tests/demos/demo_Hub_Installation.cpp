@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
     auto rev1_barge_node = barge->NewNode();
     rev1_barge_node->SetPositionInBody(Position(-7.5,0.,3.), fc);
 
-    barge->SetInertiaTensor(FrInertiaTensor((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., FrFrame(), NWU));
+    barge->SetInertiaTensor(FrInertiaTensor((1137.6-180.6)*1000, 2.465e7,1.149e7,1.388e07, 0.,0.,0., Position(), NWU));
 
     barge->SetMaterialSurface(steel);
 

@@ -19,5 +19,6 @@
 #include "link/FrLinkInc.h"
 #include "math/FrMathInc.h"
 #include "misc/FrMiscInc.h"
+#include "statics/FrStatics.h"
 
 #endif //FRYDOM_FRCORE_H_H

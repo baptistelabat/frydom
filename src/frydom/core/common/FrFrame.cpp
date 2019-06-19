@@ -362,5 +362,11 @@ namespace frydom {
         return GetQuaternion().GetZAxis(fc);
     }
 
+    Position FrFrame::GetPointPositionInParent(const Position& framePos, FRAME_CONVENTION fc) const {
+
+        return GetPosition(fc) + ProjectVectorFrameInParent<Position>(framePos, fc);
+
+    }
+
 
 }  // end namespace frydom

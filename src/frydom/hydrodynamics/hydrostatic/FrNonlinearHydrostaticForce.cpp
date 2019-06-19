@@ -96,8 +96,8 @@ namespace frydom {
             auto pressure = clippedMesh->data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
 
             // Hydrostatic force without the term rho*g.
-            hydrostaticForce[0] += pressure*normal[0];
-            hydrostaticForce[1] += pressure*normal[1];
+//            hydrostaticForce[0] += pressure*normal[0];
+//            hydrostaticForce[1] += pressure*normal[1];
             hydrostaticForce[2] += pressure*normal[2];
 
         }

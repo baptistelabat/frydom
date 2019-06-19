@@ -358,6 +358,8 @@ namespace frydom {
             return GetQuaternion().Rotate<Vector>(frameVector, fc);
         }
 
+        Position GetPointPositionInParent(const Position& framePos, FRAME_CONVENTION fc) const;
+
 
         friend std::ostream&operator<<(std::ostream& os, const FrFrame& frame);
 

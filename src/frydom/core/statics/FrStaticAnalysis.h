@@ -19,7 +19,6 @@ namespace frydom{
 
     // Forward declarations
     class FrOffshoreSystem;
-    class FrCosRampFunction;
 
     class FrStaticAnalysis : public FrObject {
 
@@ -50,7 +49,8 @@ namespace frydom{
         // Temporary stored variables
         double m_undoTime = 0.;         ///< simulation time before the static analysis, to be stored
 
-        FrCosRampFunction* m_ramp;      ///< time ramp, as set in the system before the static analysis
+        double m_x0,m_y0,m_x1,m_y1;    ///< time ramp parameters, as set in the system before the static analysis
+//        FrCosRampFunction* m_ramp;      ///< time ramp, as set in the system before the static analysis
 
         double c_residual;
         int c_iter;

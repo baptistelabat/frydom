@@ -1,3 +1,4 @@
+#include <frydom/core/math/FrVector.h>
 #include "FrBoxShape.h"
 
 #include "chrono/assets/ChBoxShape.h"
@@ -21,5 +22,9 @@ namespace frydom {
 
     std::shared_ptr<chrono::ChAsset> FrBoxShape::GetChronoAsset() {
         return m_box;
+    }
+
+    void FrBoxShape::Translate(Position direction) const {
+            m_box->Pos = internal::Vector3dToChVector(direction);
     }
 }  // end namespace frydom

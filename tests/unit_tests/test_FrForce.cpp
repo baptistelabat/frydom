@@ -90,6 +90,7 @@ public:
     void TestGetTorqueInWorldComponent();
     void TestGetTorqueInBodyReference();
     void TestGetTorqueInBodyComponent();
+    void TestGetTorqueAtPoint();
     void TestForceNorm();
     void TestTorqueNorm();
     void TestGetForceNED();
@@ -522,6 +523,54 @@ void TestFrForce_::TestGetTorqueInBodyComponent() {
     EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtCOG_NED.GetMz());
 }
 
+void TestFrForce_::TestGetTorqueAtPoint(){
+
+    SetForceTorqueInWorldAtPointInWorld(m_forceInWorldAtPoint, m_torqueInWorldAtPoint, m_PointInWorld, NWU);
+    m_body->Update();
+
+    Torque torque;
+    GetTorqueInWorldAtPointInWorld(torque, m_PointInWorld, NWU);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInWorldAtPoint.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInWorldAtPoint.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInWorldAtPoint.GetMz());
+
+    torque = GetTorqueInWorldAtPointInWorld(m_PointInWorld, NWU);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInWorldAtPoint.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInWorldAtPoint.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInWorldAtPoint.GetMz());
+
+    GetTorqueInWorldAtPointInBody(torque, m_PointInBody, NWU);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInWorldAtPoint.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInWorldAtPoint.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInWorldAtPoint.GetMz());
+
+    torque = GetTorqueInWorldAtPointInBody(m_PointInBody, NWU);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInWorldAtPoint.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInWorldAtPoint.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInWorldAtPoint.GetMz());
+
+    GetTorqueInBodyAtPointInWorld(torque, m_PointInWorld, NWU);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtPoint.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtPoint.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtPoint.GetMz());
+
+    torque = GetTorqueInBodyAtPointInWorld(m_PointInWorld, NWU);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtPoint.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtPoint.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtPoint.GetMz());
+
+    GetTorqueInBodyAtPointInBody(torque, m_PointInBody, NWU);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtPoint.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtPoint.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtPoint.GetMz());
+
+    torque = GetTorqueInBodyAtPointInBody(m_PointInBody, NWU);
+    EXPECT_FLOAT_EQ(torque.GetMx(), m_torqueInBodyAtPoint.GetMx());
+    EXPECT_FLOAT_EQ(torque.GetMy(), m_torqueInBodyAtPoint.GetMy());
+    EXPECT_FLOAT_EQ(torque.GetMz(), m_torqueInBodyAtPoint.GetMz());
+
+}
+
 void TestFrForce_::TestForceNorm() {
 
     this->SetForceInWorldAtCOG(m_forceInWorldAtCOG, NWU);
@@ -634,7 +683,7 @@ std::shared_ptr<FrBody> TestBase::NewBody(std::shared_ptr<TestFrForce_> test) {
     auto body = std::make_shared<FrBody>();
     body->SetPosition(test->GetPointREFInWorld(), NWU);
 
-    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(test->GetPointCOGInBody(),FrRotation(),NWU),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,test->GetPointCOGInBody(),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     body->SetRotation(test->GetQuatREF());
@@ -757,6 +806,10 @@ TEST_F(TestBase,GetTorqueInBodyComponent) {
 
 TEST_F(TestBase,GetTorqueInWorldComponent) {
     force->TestGetTorqueInWorldComponent();
+}
+
+TEST_F(TestBase,GetTorqueAtPoint) {
+    force->TestGetTorqueAtPoint();
 }
 
 TEST_F(TestBase, ForceNorm) {

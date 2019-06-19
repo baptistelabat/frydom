@@ -36,8 +36,7 @@ int main(int argc, char* argv[]) {
 
     double mass_b = 1.089825e6;
     double Iy_b = 7.63e7;
-    FrFrame COGFrame(Position(0., 0., 0.), FrRotation(), NWU);
-    FrInertiaTensor InertiaTensor(mass_b, 1., Iy_b, 1., 0., 0., 0., COGFrame, NWU);
+    FrInertiaTensor InertiaTensor(mass_b, 1., Iy_b, 1., 0., 0., 0., Position(0., 0., 0.), NWU);
 
     barge->SetInertiaTensor(InertiaTensor);
 
@@ -60,8 +59,7 @@ int main(int argc, char* argv[]) {
 
     double mass_f1 = 1.7925e5;
     double Iy_f1 = 1.3e6;
-    FrFrame COGFrame_flap(Position(0., 0., 3.5), FrRotation(), NWU);
-    FrInertiaTensor InertiaTensor_flap(mass_f1, 1., Iy_f1, 1., 0., 0., 0., COGFrame_flap, NWU);
+    FrInertiaTensor InertiaTensor_flap(mass_f1, 1., Iy_f1, 1., 0., 0., 0., Position(0., 0., 3.5), NWU);
 
     flap1->SetInertiaTensor(InertiaTensor_flap);
 
