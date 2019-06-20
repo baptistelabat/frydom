@@ -500,6 +500,10 @@ namespace frydom {
         return torque;
     }
 
+    Torque FrBody::GetTotalTorqueInWorldAtCOG(FRAME_CONVENTION fc) const {
+        return ProjectVectorInWorld(GetTotalTorqueInBodyAtCOG(fc),fc);
+    }
+
 
     // Nodes
 
@@ -1012,15 +1016,15 @@ namespace frydom {
 
         // Body Acceleration
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinearAccelerationInWorld","m/s^2", fmt::format("body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                ("LinearAccelerationInWorld","m/s2", fmt::format("body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetAccelerationInWorld(GetLogFrameConvention());});
         // Body COG Acceleration
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinearCOGAccelerationInWorld","m/s^2", fmt::format("COG body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                ("LinearCOGAccelerationInWorld","m/s2", fmt::format("COG body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetCOGAccelerationInWorld(GetLogFrameConvention());});
         // Body Angular Acceleration
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("AngularAccelerationInWorld","rad/s^2", fmt::format("body angular acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                ("AngularAccelerationInWorld","rad/s2", fmt::format("body angular acceleration in the world reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetAngularAccelerationInWorld(GetLogFrameConvention());});
 
 
@@ -1032,6 +1036,14 @@ namespace frydom {
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
                 ("TotalTotalTorqueInBodyAtCOG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", GetLogFrameConvention()),
                  [this] () {return GetTotalTorqueInBodyAtCOG(GetLogFrameConvention());});
+        // Total External Force in world
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("TotalExtForceInWorld","N",fmt::format("Total external force, expressed in world reference frame in {}", GetLogFrameConvention()),
+                 [this] () {return GetTotalExtForceInWorld(GetLogFrameConvention());});
+        // Total External Torque at COG in world
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("TotalTotalTorqueInWorldAtCOG","Nm",fmt::format("Total external torque at COG, expressed in world reference frame in {}", GetLogFrameConvention()),
+                 [this] () {return GetTotalTorqueInWorldAtCOG(GetLogFrameConvention());});
 
     }
 
