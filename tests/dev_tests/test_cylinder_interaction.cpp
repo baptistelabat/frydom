@@ -34,8 +34,7 @@ int main(int argc, char* argv[]) {
     //cyl2->SetPosition(Position(0., +0.4, 0.), NWU);
 
     double mass = 12.88;
-    FrFrame COGFrame(Position(0., 0., 0.), FrRotation(), NWU);
-    FrInertiaTensor InertiaTensor(mass, 1., 1., 1.,  0., 0., 0., COGFrame, NWU);
+    FrInertiaTensor InertiaTensor(mass, 1., 1., 1.,  0., 0., 0., Position(0., 0., 0.), NWU);
 
     cyl1->SetInertiaTensor(InertiaTensor);
     //cyl2->SetInertiaTensor(InertiaTensor);

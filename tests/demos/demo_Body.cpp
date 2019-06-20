@@ -95,15 +95,9 @@ int main(int argc, char* argv[]) {
     double mass = 1000.; // in Kg
     double Ixx =1., Iyy = 1., Izz = 1., Ixy = 0., Ixz = 0., Iyz = 0.;
 
-    // You can set the inertia coefficients, given at the COG frame (position and orientation, which may
-    // not be the body orientation).
-
+    // You can set the inertia coefficients, given at the COG position.
     Position COGPos(10.,-5.,-3.);
-    FrRotation COGOrientation;
-    COGOrientation.SetCardanAngles_DEGREES(0.,0.,90.,fc); // COGFrame has a 90 yaw rotation, compared to the body reference frame.
-
-    FrFrame COGFrame(COGPos,COGOrientation,fc); // creating COGFrame, from the COG position and orientation.
-    FrInertiaTensor InertiaTensor(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,COGFrame,fc);
+    FrInertiaTensor InertiaTensor(mass,Ixx,Iyy,Izz,Ixy,Ixz,Iyz,COGPos,fc);
 
     // Or you may got your inertia coefficients expressed in a frame, auxFrame, that can be different from the
     // COGPosition. The inertia are then automatically transported to the CoG Position specified, by this following

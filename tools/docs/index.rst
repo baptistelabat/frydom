@@ -1,39 +1,34 @@
-.. Nemoh2HDB documentation master file, created by
-   sphinx-quickstart on Fri Feb  8 16:23:36 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to **HDB5tool**'s documentation!
+========================================
 
-Welcome to *Nemoh2HDB*'s documentation!
-=======================================
+**HDB5tool** is a command line utility as well as a Python module dedicated to:
+ - the post-processing of linear potential flow based solvers such as **Nemoh**;
+ - the storing of the data into a *.hdb5* file to be used as input of **FRyDoM-CE**.
 
-*Nemoh2HDB* is a Python code dedicated to:
- - the post-processing of the linear potential flow based solver *Nemoh*;
- - the storing of the data into a *.hdb5* file in order to be used by *FRyDoM*.
+**HDB5tool** also enables to change the discretization of the wave frequencies and the wave directions. It computes the Froude-Krylov loads, the infinite added-mass matrices and the impulse response functions. These latter functions may be filtered using a cutoff scaling function. It is also possible to symmetrize the hydrodynamic database if necessary. Every set of data may be plotted. 
 
-This documentation presents:
- - a tutorial for calling *Nemoh2HDB* from Python script;
- - a description of every class and subroutine of the source code.
+**HDB5tool** can read every version of a *.hdb5* file and convert it into another version.
 
 .. toctree::
    :maxdepth: 3
 
 .. Contents:
 
-Tutorial
-========
+Getting HDB5tool
+================
 
 .. toctree::
    :maxdepth: 3
 
-   Source/Tutorials
+   Source/Getting_HDB5tool
 
-Source code documentation
-=========================
+Using HDB5tool as a command line utility
+========================================
 
 .. toctree::
    :maxdepth: 3
 
-   Source/Source_code_doc
+   Source/Using_HDB5tool
 
 Indices and tables
 ==================

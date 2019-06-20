@@ -25,6 +25,7 @@
 #include "frydom/asset/FrForceAsset.h"
 #include "frydom/collision/FrCollisionModel.h"
 #include "frydom/core/link/links_lib/FrDOFMaskLink.h"
+#include "frydom/core/link/links_lib/FrFixedLink.h"
 
 namespace frydom {
 
@@ -70,7 +71,7 @@ namespace frydom {
 
             for (auto& marker : GetMarkerList()) {
                 position = marker->GetPos() - newCOG;
-                marker->Impose_Rel_Coord(chrono::ChCoordsys<double>(position));
+                marker->Impose_Rel_Coord(chrono::ChCoordsys<double>(position, marker->GetRot()));
             }
             UpdateMarkers(GetChTime());
         }
@@ -251,8 +252,10 @@ namespace frydom {
     void FrBody::Initialize() {
 
         // Check the mass and inertia coefficients
-        for (unsigned int i=0;i<6;i++)
-            assert(("Null mass and inertia are not permitted : ", GetInertiaTensor(NWU).GetMatrix().at(i,i)!=0.));
+        assert(("Null mass not permitted : ", GetInertiaTensor().GetMass()!=0)) ;
+        double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+        GetInertiaTensor().GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
+        assert(("Null diagonal inertia not permitted : ", Ixx!=0.&&Iyy!=0.&&Izz!=0.));
 
 
         // Initializing forces
@@ -372,15 +375,12 @@ namespace frydom {
         return m_chronoBody->GetMass();
     }
 
-    FrInertiaTensor FrBody::GetInertiaTensor(FRAME_CONVENTION fc) const {
+    FrInertiaTensor FrBody::GetInertiaTensor() const {
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
         SplitMatrix33IntoCoeffs(internal::ChMatrix33ToMatrix33(m_chronoBody->GetInertia()),
                 Ixx, Ixy, Ixz, Ixy, Iyy, Iyz, Ixz, Iyz, Izz);
-        if (IsNED(fc)) {
-            internal::SwapInertiaFrameConvention(Ixx, Iyy, Izz, Ixy, Ixz, Iyz);
-        }
 
-        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(GetCOG(fc), FrRotation(), fc), fc};
+        return {GetMass(), Ixx, Iyy, Izz, Ixy, Ixz, Iyz, GetCOG(NWU), NWU};
     }
 
     void FrBody::SetInertiaTensor(const FrInertiaTensor &inertia) {
@@ -390,7 +390,7 @@ namespace frydom {
         SetCOG(inertia.GetCOGPosition(NWU), NWU);
 
         double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-        inertia.GetInertiaCoeffs(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
+        inertia.GetInertiaCoeffsAtCOG(Ixx, Iyy, Izz, Ixy, Ixz, Iyz, NWU);
 
         m_chronoBody->SetInertiaXX(chrono::ChVector<double>(Ixx, Iyy, Izz));
         m_chronoBody->SetInertiaXY(chrono::ChVector<double>(Ixy, Ixz, Iyz));
@@ -498,6 +498,10 @@ namespace frydom {
         auto torque = internal::ChVectorToVector3d<Torque>(m_chronoBody->Get_Xtorque());
         if (IsNED(fc)) internal::SwapFrameConvention<Position>(torque);
         return torque;
+    }
+
+    Torque FrBody::GetTotalTorqueInWorldAtCOG(FRAME_CONVENTION fc) const {
+        return ProjectVectorInWorld(GetTotalTorqueInBodyAtCOG(fc),fc);
     }
 
 
@@ -1012,15 +1016,15 @@ namespace frydom {
 
         // Body Acceleration
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinearAccelerationInWorld","m/s^2", fmt::format("body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                ("LinearAccelerationInWorld","m/s2", fmt::format("body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetAccelerationInWorld(GetLogFrameConvention());});
         // Body COG Acceleration
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("LinearCOGAccelerationInWorld","m/s^2", fmt::format("COG body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                ("LinearCOGAccelerationInWorld","m/s2", fmt::format("COG body linear acceleration in the world reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetCOGAccelerationInWorld(GetLogFrameConvention());});
         // Body Angular Acceleration
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
-                ("AngularAccelerationInWorld","rad/s^2", fmt::format("body angular acceleration in the world reference frame in {}", GetLogFrameConvention()),
+                ("AngularAccelerationInWorld","rad/s2", fmt::format("body angular acceleration in the world reference frame in {}", GetLogFrameConvention()),
                  [this]() {return GetAngularAccelerationInWorld(GetLogFrameConvention());});
 
 
@@ -1032,6 +1036,14 @@ namespace frydom {
         m_message->AddField<Eigen::Matrix<double, 3, 1>>
                 ("TotalExtTorqueInBodyAtCOG","Nm",fmt::format("Total external torque at COG, expressed in body reference frame in {}", GetLogFrameConvention()),
                  [this] () {return GetTotalTorqueInBodyAtCOG(GetLogFrameConvention());});
+        // Total External Force in world
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("TotalExtForceInWorld","N",fmt::format("Total external force, expressed in world reference frame in {}", GetLogFrameConvention()),
+                 [this] () {return GetTotalExtForceInWorld(GetLogFrameConvention());});
+        // Total External Torque at COG in world
+        m_message->AddField<Eigen::Matrix<double, 3, 1>>
+                ("TotalTotalTorqueInWorldAtCOG","Nm",fmt::format("Total external torque at COG, expressed in world reference frame in {}", GetLogFrameConvention()),
+                 [this] () {return GetTotalTorqueInWorldAtCOG(GetLogFrameConvention());});
 
     }
 

@@ -130,7 +130,6 @@ int main(int argc, char* argv[]) {
     // double Mass = 273730; // OMAE_2014.
     double Mass = 268344.1458; // Volume*1025.
     Position EllipsoidCoG(0., 0., 2.);
-    FrFrame EllipsoidCoGFrame(EllipsoidCoG, FrRotation(), NWU);
 
     // Dof.
     Ellipsoid->GetDOFMask()->SetLock_X(true);
@@ -144,7 +143,7 @@ int main(int argc, char* argv[]) {
     double Ixx               = 0.5;
     double Iyy               = 0.5;
     double Izz               = 2;
-    FrInertiaTensor EllipsoidInertia(Mass, Ixx, Iyy, Izz, 0., 0., 0.,EllipsoidCoGFrame, NWU);
+    FrInertiaTensor EllipsoidInertia(Mass, Ixx, Iyy, Izz, 0., 0., 0.,EllipsoidCoG, NWU);
     Ellipsoid->SetInertiaTensor(EllipsoidInertia);
 
     // Node.

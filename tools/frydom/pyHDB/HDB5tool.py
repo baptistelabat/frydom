@@ -49,9 +49,13 @@ def get_parser(parser):
     parser.add_argument('--discretization_frequencies','--discretization_freq','--discretization_frequency','-dis_freq','-dis_frequency','-dis_frequencies','-df', action="store", nargs =1, metavar='Arg',help="""
                 Integer for the new discretization of the wave frequencies.""")
 
-    # Discretization - Wave frequencies.
+    # Discretization - Final time.
     parser.add_argument('--final_time_irf','--final_time', '-ft', action="store", nargs = 1, metavar = 'Arg', help="""
                 Final time for the computation of the impulse response functions.""")
+
+    # Discretization - Time step.
+    parser.add_argument('--time_step_irf', '--time_step', '-dt', action="store", nargs=1, metavar='Arg', help="""
+                    Time step for the computation of the impulse response functions.""")
 
     # Body - Activate hydrostatics (useless).
     parser.add_argument('--activate_hydrostatics','--activate_hydrostatic', '-active_hs', '-activate_hs', nargs = '+', metavar = 'Arg', action="append",help="""
@@ -65,25 +69,33 @@ def get_parser(parser):
     parser.add_argument('--activate_inertia', '-active_i', action="append",nargs='+', metavar='Arg',help="""
                 Activate inertia for the body of index given in argument.""")
 
-    # Body - Inertia matrix.
+    # Body - Inertia matrix (inertias and mass).
     parser.add_argument('--inertia', '-i', nargs=8, metavar=('id', 'mass', 'i44', 'i55', 'i66', 'i45', 'i46', 'i56'), action="append",help="""
-                Inertia coefficients (Mass, I44, I55, I66, I45, I46, I56) for the body of index given in first argument.""")
+                Inertia coefficients and mass (Mass, I44, I55, I66, I45, I46, I56) for the body of index given in first argument.""")
 
-    # Body - Inertia matrix.
+    # Body - Inertia matrix (inertia only).
     parser.add_argument('--inertia_only', '-io', nargs=7, metavar=('id', 'i44', 'i55', 'i66', 'i45', 'i46', 'i56'), action="append",help="""
-                Inertia coefficients (I44, I55, I66, I45, I46, I56) for the body of index given in first argument.""")
+                Inertia coefficients only (I44, I55, I66, I45, I46, I56) for the body of index given in first argument.""")
 
     # Body - Mass.
     parser.add_argument('--mass', '--Mass', '-m', nargs=2, metavar=('id', 'mass'), action="append",help="""
                 Mass of the body of index given in argument.""")
 
     # Filtering impulse response functions.
-    parser.add_argument('--cut_off_irf','-co_irf', '-coirf', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
-                Application of the filter with a cutting time tc to the impulse response functions of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
+    parser.add_argument('--cutoff_irf','-co_irf', '-coirf', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
+                Application of the filter with a cutoff time tc to the impulse response functions of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
+
+    # Filtering ALL impulse response functions.
+    parser.add_argument('--cutoff_irf_all', '-co_irf_all', '-coirf_all', nargs=1, metavar=('tc'), action="store", help="""
+                    Application of the filter with a cutoff time tc to ALL impulse response functions.""")
 
     # Filtering impulse response functions with forward speed.
-    parser.add_argument('--cut_off_irf_speed','-co_irf_speed', '-coirf_speed', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
-                Application of the filter with a cutting time tc to the impulse response functions of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
+    parser.add_argument('--cutoff_irf_speed','-co_irf_speed', '-coirf_speed', nargs = 5, metavar=('tc', 'ibody_force', 'iforce', 'ibody_motion', 'idof'), action="append",help="""
+                Application of the filter with a cutoff time tc to the impulse response functions with forward speed of ibody_force along iforce for a motion of ibody_motion along idof and plot the irf.""")
+
+    # Filtering ALL impulse response functions with forward speed.
+    parser.add_argument('--cutoff_irf_all_speed', '-co_irf_all_speed', '-coirf_all_speed', nargs=1, metavar=('tc'), action="append", help="""
+                    Application of the filter with a cutoff time tc to ALL impulse response functions with forward speed .""")
 
     # No symmetrization of the HDB.
     parser.add_argument('--sym_hdb','-sym', '-s', action="store_true",help="""
@@ -132,7 +144,7 @@ def Read_cal_hdb5(args):
     # BEM reader.
     if (args.path_to_nemoh_cal is not None):
         database = HDB5()
-        database.nemoh_reader(args.path_to_nemoh_cal)
+        database.nemoh_reader(args.path_to_nemoh_cal[0])
 
     # Reading a hdb5 file.
     if (args.read is not None):
@@ -157,15 +169,25 @@ def get_Arg_part_1_CE(args, database):
 
     # Discretization - Wave directions.
     if (args.discretization_waves is not None):
-        database.discretization.nb_wave_directions = int(args.discretization_waves)
+        if(int(args.discretization_waves[0]) <= 1):
+            print("The number of the wave direction discretization must be higher or equal to 2.")
+            exit()
+        database.discretization.nb_wave_directions = int(args.discretization_waves[0])
 
     # Discretization - Wave frequencies.
     if (args.discretization_frequencies is not None):
-        database.discretization.nb_frequencies = int(args.discretization_frequencies)
+        if (int(args.discretization_frequencies[0]) <= 1):
+            print("The number of the wave frequency discretization must be higher or equal to 2.")
+            exit()
+        database.discretization.nb_frequencies = int(args.discretization_frequencies[0])
 
     # Discretization - Final time for IRF.
     if (args.final_time_irf is not None):
-        database.discretization._final_time = float(args.final_time_irf)
+        database.discretization._final_time = float(args.final_time_irf[0])
+
+    # Discretization - Time step for IRF.
+    if (args.time_step_irf is not None):
+        database.discretization._delta_time = float(args.time_step_irf[0])
 
     # Initialize pyHDB.
     if (args.path_to_nemoh_cal is not None or args.initialization is True):  # _initialize is automatically called when a .cal is read.
@@ -210,8 +232,8 @@ def get_Arg_part_1_CE(args, database):
 
     # Body - Inertia matrix.
     if (args.inertia_only is not None):
-        nb_inertia = len(args.inertia_only)
-        for j in range(0, inertia_only):
+        nb_inertia_only = len(args.inertia_only)
+        for j in range(0, nb_inertia_only):
             database.body[int(args.inertia_only[j][0]) - 1].activate_inertia()
             database.body[int(args.inertia_only[j][0]) - 1].inertia.I44 = args.inertia_only[j][1]
             database.body[int(args.inertia_only[j][0]) - 1].inertia.I55 = args.inertia_only[j][2]
@@ -228,18 +250,36 @@ def get_Arg_part_1_CE(args, database):
             database.body[int(args.mass[j][0]) - 1].inertia.mass = args.mass[j][1]
 
     # Filtering impulse response functions.
-    if (args.cut_off_irf is not None):
-        nb_cut_off_irf = len(args.cut_off_irf)
+    if (args.cutoff_irf is not None):
+        nb_cut_off_irf = len(args.cutoff_irf)
         for j in range(0, nb_cut_off_irf):
-            database.Cutoff_scaling_IRF(tc=float(args.cut_off_irf[j][0]), ibody_force=int(args.cut_off_irf[j][1]), iforce=int(args.cut_off_irf[j][2]),
-                                        ibody_motion=int(args.cut_off_irf[j][3]), idof=int(args.cut_off_irf[j][4]))
+            database.Cutoff_scaling_IRF(tc=float(args.cutoff_irf[j][0]), ibody_force=int(args.cutoff_irf[j][1]), iforce=int(args.cutoff_irf[j][2]),
+                                        ibody_motion=int(args.cutoff_irf[j][3]), idof=int(args.cutoff_irf[j][4]))
+
+    # Filtering ALL impulse response functions.
+    if (args.cutoff_irf_all is not None):
+        for body_force in database.body:
+            for iforce in range(0,6):
+                for body_motion in database.body:
+                    for idof in range(0,6):
+                        database.Cutoff_scaling_IRF(tc=float(args.cutoff_irf_all[0]), ibody_force=body_force.i_body, iforce=iforce,
+                                                            ibody_motion=body_motion.i_body, idof=idof, auto_apply = True)
 
     # Filtering impulse response functions with forward speed.
-    if (args.cut_off_irf_speed is not None):
-        nb_cut_off_irf_speed = len(args.cut_off_irf_speed)
+    if (args.cutoff_irf_speed is not None):
+        nb_cut_off_irf_speed = len(args.cutoff_irf_speed)
         for j in range(0, nb_cut_off_irf_speed):
-            database.Cutoff_scaling_IRF_speed(tc=float(args.cut_off_irf_speed[j][0]), ibody_force=int(args.cut_off_irf_speed[j][1]), iforce=int(args.cut_off_irf_speed[j][2]),
-                                              ibody_motion=int(args.cut_off_irf_speed[j][3]), idof=int(args.cut_off_irf_speed[j][4]))
+            database.Cutoff_scaling_IRF_speed(tc=float(args.cutoff_irf_speed[j][0]), ibody_force=int(args.cutoff_irf_speed[j][1]), iforce=int(args.cutoff_irf_speed[j][2]),
+                                              ibody_motion=int(args.cutoff_irf_speed[j][3]), idof=int(args.cutoff_irf_speed[j][4]))
+
+    # Filtering ALL impulse response functions with forward speed.
+    if (args.cutoff_irf_all_speed is not None):
+        for body_force in database.body:
+            for iforce in range(0, 6):
+                for body_motion in database.body:
+                    for idof in range(0, 6):
+                        database.Cutoff_scaling_IRF_speed(tc=float(args.cutoff_irf_all[0]), ibody_force=body_force.i_body, iforce=iforce,
+                                                    ibody_motion=body_motion.i_body, idof=idof, auto_apply=True)
 
     return database
 

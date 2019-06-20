@@ -11,7 +11,7 @@
 #
 # ==========================================================================
 
-from math import pi,sqrt
+from math import pi, sqrt, tanh
 import numpy as np
 import os
 from warnings import warn
@@ -271,7 +271,7 @@ class NemohReader(_BEMReader):
             rho_water = float(f.readline().split()[0])
             grav = float(f.readline().split()[0])
             depth = float(f.readline().split()[0])
-            if depth == 0.:
+            if depth == 0.: # Infinite water depth.
                 depth = inf
             xeff, yeff = map(float, f.readline().split()[:2])
 

@@ -30,7 +30,7 @@ namespace frydom {
         double Izz = (1./12.) * mass * (xSize2 + ySize2);
 
         // Building the chrono body
-        body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., FrFrame(), NWU));
+        body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., Position(), NWU));
 
 
         // Collision
@@ -56,7 +56,7 @@ namespace frydom {
         double Izz = Ixx;
 
         // Building the chrono body
-        body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., FrFrame(), NWU));
+        body->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., Position(), NWU));
 
         // Collision
         auto collisionModel = body->m_chronoBody->GetCollisionModel();
@@ -77,7 +77,7 @@ namespace frydom {
         double inertia = (2.0 / 5.0) * mass * radius * radius;
 
         // Building the Chrono body
-        body->SetInertiaTensor(FrInertiaTensor(mass, inertia, inertia, inertia, 0., 0., 0., FrFrame(), NWU));
+        body->SetInertiaTensor(FrInertiaTensor(mass, inertia, inertia, inertia, 0., 0., 0., Position(), NWU));
 
         // Collision
         auto collisionModel = body->m_chronoBody->GetCollisionModel();

@@ -46,6 +46,9 @@ class BodyDB(object):
         # Index.
         self.i_body = i_body
 
+        # Position.
+        self.position = np.zeros(3, dtype = np.float)
+
         # Added mass matrices (6 dof so 6 rows x all the columns x all the frequencies).
         self.Added_mass = np.zeros((6, 6 * nb_bodies, nw), dtype = np.float)
 
@@ -96,6 +99,26 @@ class BodyDB(object):
 
         # RAO.
         self.RAO = None
+
+    @property
+    def name(self):
+
+        """This function gives the name of the mesh of a body.
+
+        Returns
+        -------
+        string
+            Name of the mesh of a body.
+        """
+
+        return self.mesh.name
+
+    @name.setter
+    def name(self, value):
+
+        """This function sets the name of the body mesh."""
+
+        self.mesh.name = value
 
     def _compute_nds(self):
         """Computes the term n dS for each force mode of the body."""

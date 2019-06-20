@@ -72,7 +72,7 @@ void TestFrStandardWindForce::SetUp() {
 
     body = system.NewBody();
 
-    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,Position(),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     body->AddExternalForce(force);
@@ -111,7 +111,7 @@ TEST_F(TestFrStandardWindForce, TestTransport) {
     system.GetEnvironment()->GetAtmosphere()->GetWind()->GetFieldUniform()
             ->Set(m_direction(i), m_windSpeed, DEG, MS, NED, COMEFROM);
 
-    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,FrFrame(Position(0.1, 0., 0.),FrRotation(),NWU),NWU);
+    FrInertiaTensor InertiaTensor(1.,1.,1.,1.,0.,0.,0.,Position(0.1, 0., 0.),NWU);
     body->SetInertiaTensor(InertiaTensor);
 
     body->Initialize();

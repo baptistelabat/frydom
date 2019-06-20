@@ -224,7 +224,7 @@ namespace frydom {
 
         /// Get the inertia parameters as a FrInertiaTensor object
         // TODO : gerer la frame convention !
-        FrInertiaTensor GetInertiaTensor(FRAME_CONVENTION fc) const; // TODO : voir pour une methode renvoyant une reference non const
+        FrInertiaTensor GetInertiaTensor() const; // TODO : voir pour une methode renvoyant une reference non const
 
         /// Set the inertia parameters as a FrInertiaTensor object
         void SetInertiaTensor(const FrInertiaTensor &inertia);
@@ -266,14 +266,6 @@ namespace frydom {
         void SetMaterialSurface(const std::shared_ptr<chrono::ChMaterialSurfaceSMC>& materialSurface) {m_chronoBody->SetMaterialSurface(materialSurface);}
 
         std::shared_ptr<chrono::ChMaterialSurfaceSMC> GetMaterialSurface() {return m_chronoBody->GetMaterialSurfaceSMC();}
-
-        // TODO : ajouter de quoi definir des shapes de collision !!!
-
-        // =============================================================================================================
-        // VISUAL ASSETS
-        // =============================================================================================================
-
-//        void AssetActive() // TODO
 
         // =============================================================================================================
         // SPEED LIMITATIONS TO STABILIZE SIMULATIONS
@@ -331,6 +323,8 @@ namespace frydom {
 
         Torque GetTotalTorqueInBodyAtCOG(FRAME_CONVENTION fc) const;
 
+        Torque GetTotalTorqueInWorldAtCOG(FRAME_CONVENTION fc) const;
+
         // =============================================================================================================
         // NODES
         // =============================================================================================================
@@ -345,6 +339,7 @@ namespace frydom {
         NodeContainer GetNodeList() const;
 
         // TODO : permettre de definir un frame a l'aide des parametres de Denavit-Hartenberg modifies ?? --> dans FrFrame !
+
 
         // =============================================================================================================
         // POSITIONS

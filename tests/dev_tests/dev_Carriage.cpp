@@ -10,7 +10,7 @@ FrLinearActuator* make_carriage(FrOffshoreSystem* system, const std::shared_ptr<
 
     FRAME_CONVENTION fc = NWU;
 
-    auto mass = shipNode->GetBody()->GetInertiaTensor(fc).GetMass();
+    auto mass = shipNode->GetBody()->GetInertiaTensor().GetMass();
 
     double tankLength = 140;
     double tankWidth = 5;
@@ -100,14 +100,23 @@ int main() {
     // Inertia
     double mass = 86.0; double Ixx = 1.98; double Iyy = 53.88; double Izz = 49.99;
     Position COGPosition(0., 0., 0.03); // 0.03
-    FrFrame COGFrame(COGPosition, FrRotation(), NWU);
 
-    ship->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGFrame, NWU));
+    ship->SetInertiaTensor(FrInertiaTensor(mass, Ixx, Iyy, Izz, 0., 0., 0., COGPosition, NWU));
 
     auto shipNode = ship->NewNode();
     shipNode->SetPositionInBody(ship->GetCOG(fc),fc);
     shipNode->RotateAroundYInBody(90*DEG2RAD,fc);
     shipNode->RotateAroundXInBody(90*DEG2RAD,fc);
+
+    // Hydrodynamic Database
+//    auto hdb = make_hydrodynamic_database("DTMB5512.h5");
+
+    auto eqFrame = std::make_shared<FrEquilibriumFrame>(ship.get());
+    system.AddPhysicsItem(eqFrame);
+
+//    hdb->Map(0,ship.get(),eqFrame);
+
+    auto hydrostaticForce = make_linear_hydrostatic_force(eqFrame,ship,"DTMB5512.obj",FrFrame());
 
     // --------------------------------------------------
     // Carriage

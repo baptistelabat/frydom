@@ -10,6 +10,7 @@ list(APPEND SRC_FILES
         body/FrBody.cpp
         body/FrBodyEasy.cpp
         body/FrInertiaTensor.cpp
+        body/FrAssembly.cpp
         )
 
 # COMMON
