@@ -16,3 +16,8 @@ In frydom_GPL/tools/pyHDB, do::
     pip install -e .
 
 Please, do not forget the dot.
+
+It is also necessary to update your Python path with the following paths::
+
+    path/to/frydom/tools/
+    path/to/frydom/tools/frydom/pyHDB/

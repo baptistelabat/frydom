@@ -498,6 +498,12 @@ class HDB5reader_v2(HDB5reader):
             # Body definition.
             body = BodyDB(id, pyHDB.nb_bodies, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir, mesh)
 
+            # Body name.
+            body.name = str(np.array(reader[body_path + "/BodyName"]))
+
+            # Position of the body.
+            body.position = np.array(reader[body_path + "/BodyPosition"])
+
             # Force modes.
             self.read_mode(reader, body, 0, body_path + "/Modes")
 
@@ -765,6 +771,15 @@ class HDB5reader_v1(HDB5reader):
 
             # Body definition.
             body = BodyDB(id, pyHDB.nb_bodies, pyHDB.nb_wave_freq, pyHDB.nb_wave_dir, mesh)
+
+            # Body name.
+            body.name = str(np.array(reader[body_path + "/BodyName"]))
+
+            # Position of the body.
+            try:
+                body.position = np.array(reader[body_path + "/BodyPosition"])
+            except:
+                pass
 
             # Masks.
             self.read_mask(reader, body, body_path + "/Mask")
