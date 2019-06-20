@@ -24,6 +24,7 @@ from pyHDB import *
 from discretization_db_v2 import DiscretizationDB
 from wave_drift_db_v2 import WaveDriftDB
 from plot_db import *
+from Report_generation import *
 
 class HDB5(object):
 
@@ -448,6 +449,26 @@ class HDB5(object):
         print('-------> "%s" has been loaded.' % hdb5_file)
         print('')
 
+    def report_generation(self, output_folder):
+        """This function writes a report about the hydrodynamic database."""
+
+        # Master rst file.
+        Master_rst_file = "index"
+
+        # Creation of the rst object.
+        r = report(output_folder)
+
+        # Setting the title.
+        r.SetRstTitle()
+
+        # Writing the master rst file.
+        r.WriteRst(output_folder, Master_rst_file+".rst") # If you change this name, you need to update conf.py.
+
+        # Building the html file.
+        r.BuildHTML(output_folder)
+
+        # Visualization of the html file.
+        r.OpenHTML(output_folder, Master_rst_file)
 
 
 

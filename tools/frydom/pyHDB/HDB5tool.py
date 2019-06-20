@@ -137,6 +137,10 @@ def get_parser(parser):
     parser.add_argument('--initialization','-init', action="store_true",help="""
                 Initialization of the hydrodynamic database: computation of the Froude-Krylov loads, IRF, etc.""")
 
+    # Report generation.
+    parser.add_argument('--report_generation', '--report', '-rg', action="store", help="""
+                Report generation about the hydrodynamic database in the defined folder.""")
+
     return parser
 
 def Read_cal_hdb5(args):
@@ -335,6 +339,10 @@ def get_Arg_part_3_CE(args, database):
     # Writing the hdb5 output file.
     if (args.write is not None):
         database.export_hdb5(args.write)
+
+    # Report generation.
+    if (args.report_generation is not None):
+        database.report_generation(args.report_generation)
 
     return database
 
