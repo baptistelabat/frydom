@@ -43,7 +43,7 @@ configure_file(../data/bench/DTMB5512/DTMB5512.hdb5 . COPYONLY)
 
 
 configure_file(../data/CB28/CB28_Full.obj . COPYONLY)
-configure_file(../data/CB28/CB28.h5 . COPYONLY)
+configure_file(../data/CB28/CB28.hdb5 . COPYONLY)
 
 configure_file(../data/platform/Platform_HDB.hdb5 . COPYONLY)
 configure_file(../data/CylinderInteraction/CylinderInteraction.hdb5 . COPYONLY)

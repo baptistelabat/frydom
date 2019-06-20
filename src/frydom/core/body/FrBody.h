@@ -323,6 +323,8 @@ namespace frydom {
 
         Torque GetTotalTorqueInBodyAtCOG(FRAME_CONVENTION fc) const;
 
+        Torque GetTotalTorqueInWorldAtCOG(FRAME_CONVENTION fc) const;
+
         // =============================================================================================================
         // NODES
         // =============================================================================================================
