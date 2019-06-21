@@ -978,29 +978,29 @@ class pyHDB():
             dset.attrs['Description'] = "Infinite added mass matrix that modifies the apparent mass of body %u from " \
                                         "acceleration of body %u." % (body.i_body, j)
 
-            for iforce in range(0,6):
+            for idof in range(0,6):
 
                 # Added mass.
-                dset = writer.create_dataset(added_mass_path + "/DOF_%u" % iforce, data=body.Added_mass[:, 6*j+iforce, :])
+                dset = writer.create_dataset(added_mass_path + "/DOF_%u" % iforce, data=body.Added_mass[:, 6*j+idof, :])
                 dset.attrs['Unit'] = ""
                 dset.attrs['Description'] = "Added mass coefficients for an acceleration of body %u and force on " \
                                             "body %u." % (j, body.i_body)
 
                 # Damping.
-                dset = writer.create_dataset(radiation_damping_path + "/DOF_%u" % iforce,
-                                        data=body.Damping[:, 6*j+iforce, :])
+                dset = writer.create_dataset(radiation_damping_path + "/DOF_%u" % idof,
+                                        data=body.Damping[:, 6*j+idof, :])
                 dset.attrs['Unit'] = ""
                 dset.attrs['Description'] = "Wave damping coefficients for an acceleration of body %u and force " \
                                             "on body %u." % (j, body.i_body)
 
                 # Impulse response functions without forward speed.
-                dset = writer.create_dataset(irf_path + "/DOF_%u" % iforce,
-                                        data=body.irf[:, 6*j+iforce, :])
+                dset = writer.create_dataset(irf_path + "/DOF_%u" % idof,
+                                        data=body.irf[:, 6*j+idof, :])
                 dset.attrs['Description'] = "Impulse response functions"
 
                 # Impulse response function with forward speed.
-                dset = writer.create_dataset(irf_ku_path + "/DOF_%u" % iforce,
-                                        data=body.irf_ku[:, 6*j+iforce, :])
+                dset = writer.create_dataset(irf_ku_path + "/DOF_%u" % idof,
+                                        data=body.irf_ku[:, 6*j+idof, :])
                 dset.attrs['Description'] = "Impulse response functions Ku"
 
     def write_hydrostatic(self, writer, body, hydrostatic_path="/Hydrostatic"):
