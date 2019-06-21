@@ -452,23 +452,23 @@ class HDB5(object):
     def report_generation(self, output_folder):
         """This function writes a report about the hydrodynamic database."""
 
-        # Master rst file.
-        Master_rst_file = "index"
-
         # Creation of the rst object.
         r = report(output_folder)
 
-        # Setting the title.
-        r.SetRstTitle()
+        # Description of the report.
+        r.WriteIndex()
 
-        # Writing the master rst file.
-        r.WriteRst(output_folder, Master_rst_file+".rst") # If you change this name, you need to update conf.py.
+        # Input parameters.
+        r.WriteInputParameters(self._pyHDB, output_folder)
+
+        # Writing the rst files.
+        r.WriteRst(output_folder)
 
         # Building the html file.
         r.BuildHTML(output_folder)
 
         # Visualization of the html file.
-        r.OpenHTML(output_folder, Master_rst_file)
+        r.OpenHTML(output_folder)
 
 
 
