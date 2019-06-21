@@ -22,6 +22,7 @@ import copy
 import numpy as np
 
 import meshmagick.MMviewer
+from plot_db import *
 
 class report():
     """
@@ -37,6 +38,14 @@ class report():
         # Input parameters file.
         self._RstInputParam = RstCloth()
         self._InputParamFileName = "Input_parameters"
+
+        # HDB results.
+        self._RstHDB = RstCloth()
+        self._HDBFileName = "HDB_results"
+
+        # Added mass and damping coefficients.
+        self._RstAddedMass = RstCloth()
+        self._AddedMassFileName = "Added_mass_Damping"
 
         # conf.py file for generating the html file.
         my_path = os.path.abspath(os.path.dirname(__file__))
@@ -70,23 +79,12 @@ class report():
         self._RstIndex.newline()
         self._RstIndex.content('Source/'+self._InputParamFileName, indent=3, block='ct2')
         self._RstIndex.newline()
-        # self._RstIndex.h1("Post-processing parameters")
-        # self._RstIndex.newline()
-        # self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
-        # self._RstIndex.newline()
-        # self._RstIndex.h1("Hydrodynamic database results")
-        # self._RstIndex.newline()
-        # self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
-        # self._RstIndex.newline()
-        # self._RstIndex.h2("Added mass coefficients")
-        # self._RstIndex.newline()
-        # self._RstIndex.h2("Damping coefficients")
-        # self._RstIndex.newline()
-        # self._RstIndex.h2("Diffraction loads")
-        # self._RstIndex.newline()
-        # self._RstIndex.h2("Froude-Krylov loads")
-        # self._RstIndex.newline()
-        # self._RstIndex.h2("Impulse response functions")
+        self._RstIndex.h1("Hydrodynamic database results")
+        self._RstIndex.newline()
+        self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
+        self._RstIndex.newline()
+        self._RstIndex.content('Source/' + self._HDBFileName, indent=3, block='ct2')
+        self._RstIndex.newline()
         self._RstIndex.h1("Indices and tables")
         self._RstIndex.newline()
         self._RstIndex.li([':ref:`genindex`'], bullet='*', block='li2')
@@ -109,7 +107,7 @@ class report():
         if(pyHDB.depth == float('inf')):
             self._RstInputParam._add('Water depth                Infinity')
         else:
-            self._RstInputParam._add('Water depth            ' + str(pyHDB.depth) + ' m')
+            self._RstInputParam._add('Water depth                ' + str(pyHDB.depth) + ' m')
         self._RstInputParam._add('Number of bodies           ' + str(pyHDB.nb_bodies))
         self._RstInputParam._add('Number of wave frequencies ' + str(pyHDB.nb_wave_freq))
         self._RstInputParam._add('Number of wave directions  ' + str(pyHDB.nb_wave_dir))
@@ -141,6 +139,8 @@ class report():
             self._RstInputParam.newline()
             self._RstInputParam.directive(name="figure", arg = "/_static/" + mesh_file,  fields=[('align', 'center')])
             self._RstInputParam.newline()
+
+            # Caption.
             self._RstInputParam._add('   Mesh of body ' + str(body.i_body + 1))
             self._RstInputParam.newline()
 
@@ -171,12 +171,71 @@ class report():
         cwd = os.getcwd()
         os.remove(cwd + "/screenshot.png")
 
+    def WriteHDB(self, pyHDB, output_folder):
+        """This function writes the hdb result in HDB_result.rst."""
+
+        self._RstHDB.title("HDB results")
+        self._RstHDB.newline()
+        self._RstHDB._add("This chapter presents the results of the hydrodynamic database.")
+        self._RstHDB.newline()
+        self._RstHDB.directive(name="toctree", fields=[('maxdepth', '3')])
+        self._RstHDB.newline()
+        self._RstHDB.content('../Source/' + self._AddedMassFileName, indent=3, block='ct2')
+        self._RstHDB.newline()
+        self.WriteAddedMassDamping(pyHDB, output_folder)
+
+    def WriteAddedMassDamping(self, pyHDB, output_folder):
+        """ This function writes the added-mass and damping results in Added_mass_Damping.rst."""
+
+        self._RstAddedMass.title("Added mass and damping")
+        self._RstAddedMass.newline()
+        self._RstAddedMass._add("This section presents the added mass and damping results.")
+        self._RstAddedMass.newline()
+
+        for ibody_force in range(0, pyHDB.nb_bodies):
+            for iforce in range(0, 6):
+                for ibody_motion in range(0, pyHDB.nb_bodies):
+                    for idof in range(0, 6):
+
+                        ABfile = "AB_"+str(ibody_force)+str(iforce)+str(ibody_motion)+str(idof)+".png"
+
+                        # Data.
+                        data = np.zeros((pyHDB.nb_wave_freq + 1, 2), dtype=np.float)  # 2 for added mass and damping coefficients, +1 for the infinite added mass.
+                        data[0:pyHDB.nb_wave_freq, 0] = pyHDB.bodies[ibody_motion].Added_mass[iforce, 6 * ibody_force + idof, :]
+                        data[pyHDB.nb_wave_freq, 0] = pyHDB.bodies[ibody_motion].Inf_Added_mass[iforce, 6 * ibody_force + idof]
+                        data[0:pyHDB.nb_wave_freq, 1] = pyHDB.bodies[ibody_motion].Damping[iforce, 6 * ibody_force + idof, :]
+
+                        # Plots.
+                        plot_AB(data, pyHDB.wave_freq, ibody_force, iforce, ibody_motion, idof, show = False, save = True, filename = self.static_folder+ABfile)
+
+                        self._RstAddedMass.directive(name="figure", arg="/_static/" + ABfile, fields=[('align', 'center')])
+                        self._RstAddedMass.newline()
+                        if (iforce <= 2):
+                            force_str = 'force'
+                            if (idof <= 2):  # Translation.
+                                motion_str = 'translation'
+                            else:  # Rotation.
+                                motion_str = 'rotation'
+                        else:
+                            force_str = 'moment'
+                            if (idof <= 2):  # Translation.
+                                motion_str = 'translation'
+                            else:  # Rotation.
+                                motion_str = 'rotation'
+
+                        # Caption.
+                        self._RstAddedMass._add('   Added mass (top) and damping (bottom) coefficients giving '+force_str+' on body ' + str(ibody_force + 1)
+                                                 + " along direction " + str(iforce + 1) + " for a " + motion_str+" of body " + str(ibody_motion + 1)
+                                                 + " along direction " + str(idof + 1) + ". The red cross represents the infinite added mass coefficient.")
+
     def WriteRst(self, output_folder):
         """This functions writes a rst file."""
 
         Ext = '.rst'
         self._RstIndex.write(os.path.join(output_folder, self._IndexFileName + Ext)) # Index.rst.
         self._RstInputParam.write(os.path.join(self.source_folder, self._InputParamFileName + Ext)) # Input_parameters.rst.
+        self._RstHDB.write(os.path.join(self.source_folder, self._HDBFileName + Ext)) # HDB_results.rst.
+        self._RstAddedMass.write(os.path.join(self.source_folder, self._AddedMassFileName + Ext))  # Added_mass_Damping.rst.
 
     def BuildHTML(self, output_folder):
         """This function builds the html file from the rst files."""

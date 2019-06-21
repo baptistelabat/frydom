@@ -76,7 +76,7 @@ def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, **kwargs):
 
     plt.show()
 
-def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, **kwargs):
+def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save = False, filename = "Figure.png"):
     """Plots the radiation coefficients of a given modes set.
 
     Parameters
@@ -93,8 +93,6 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, **kwargs):
         Index of the body having a motion
     idof : int
         Index of the local body's radiation mode (motion)
-    kwargs: optional
-        Arguments that are to be used by pyplot
     """
 
     xlabel = r'$\omega$'+' $(rad/s)$'
@@ -126,11 +124,17 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, **kwargs):
             r"for a %s of body %u along direction %u" \
             % (force_str, ibody_force+1, iforce+1, motion_str, ibody_motion+1, idof+1)
 
+    plt.close()
+    if(save == False): # The size is smaller for the generation of automatic report because the title is not including.
+        plt.figure(num=None, figsize=(16, 8.5))
+    else:
+        plt.figure(num=None, figsize=(10, 6))
     plt.subplot(2, 1, 1)
     plt.plot(w, data[:len(w),0],linestyle="-", linewidth = 2)
     plt.plot(w[-1], data[-1, 0],marker = "+", color= "red", markersize = 10)
     plt.ylabel(ylabel1, fontsize=18)
-    plt.title(title, fontsize = 20)
+    if(save == False): # The title is not necessary for the generation of automatic report.
+        plt.title(title, fontsize = 20)
     plt.grid()
 
     plt.subplot(2, 1, 2)
@@ -139,7 +143,11 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, **kwargs):
     plt.xlabel(xlabel, fontsize=18)
     plt.grid()
 
-    plt.show()
+    if (show == True):
+        plt.show()
+    if(save == True):
+        plt.tight_layout()
+        plt.savefig(filename)
 
 def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, **kwargs):
     """Plots the impulse response function of a given modes set.

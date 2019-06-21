@@ -2,7 +2,7 @@ Installation Instructions
 =========================
 
 
-HDB5tool is packaged for every major OS (Unix, Windows) for both 32/64 bit systems.
+HDB5tool is packaged for every major OS (Unix, Windows) for both 32/64 bit systems. It requires the use of the matplotlib library version 2.0.0 or more. 
 
 .. warning::
 

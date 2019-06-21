@@ -461,6 +461,9 @@ class HDB5(object):
         # Input parameters.
         r.WriteInputParameters(self._pyHDB, output_folder)
 
+        # HDB results.
+        r.WriteHDB(self._pyHDB, output_folder)
+
         # Writing the rst files.
         r.WriteRst(output_folder)
 
