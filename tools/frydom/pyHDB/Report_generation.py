@@ -116,9 +116,18 @@ class report():
         self._RstInputParam._add('========================== ==================================')
         self._RstInputParam.newline()
 
-        self._RstInputParam._add("The main parameters of the bodies are listed below.")
+        if(pyHDB.nb_bodies > 1):
+            self._RstInputParam._add("The main parameters of the bodies are listed below.")
+        else:
+            self._RstInputParam._add("The main parameters of the body are listed below.")
         self._RstInputParam.newline()
+
+        # Loop over the bodies.
         for body in pyHDB.bodies:
+
+            mesh_file = "Mesh_"+str(body.i_body)+".png"
+            self._RstInputParam.h1("Body " + str(body.i_body + 1))
+            self._RstInputParam.newline()
             self._RstInputParam._add('========================== ==================================')
             self._RstInputParam._add('Parameter                  Value')
             self._RstInputParam._add('========================== ==================================')
@@ -130,10 +139,13 @@ class report():
             self._RstInputParam._add('Force mask                 ' + str(body.Force_mask))
             self._RstInputParam._add('========================== ==================================')
             self._RstInputParam.newline()
+            self._RstInputParam.directive(name="figure", arg = "/_static/" + mesh_file,  fields=[('align', 'center')])
+            self._RstInputParam.newline()
+            self._RstInputParam._add('   Mesh of body ' + str(body.i_body + 1))
+            self._RstInputParam.newline()
 
             # Picture of the mesh.
-            self.PlotMesh(body, output_folder, "Mesh_"+str(body.i_body)+".png")
-            exit()
+            self.PlotMesh(body, output_folder, mesh_file)
 
     def PlotMesh(self, body, output_folder, mesh_file):
         """This function plots and saves a picture of the body mesh."""
