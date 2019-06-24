@@ -59,6 +59,14 @@ class report():
         self._RstExcitation = RstCloth()
         self._ExcitationFileName = "Excitation"
 
+        # IRF.
+        self._RstIRF = RstCloth()
+        self._IRFFileName = "IRF"
+
+        # IRF with speed.
+        self._RstIRFspeed = RstCloth()
+        self._IRFspeedFileName = "IRF_speed"
+
         # conf.py file for generating the html file.
         my_path = os.path.abspath(os.path.dirname(__file__))
         self._conf_file = my_path+"/conf.py" # In the frydom-CE deposit.
@@ -175,6 +183,7 @@ class report():
 
         # Screenshot.
         mesh_vizu.viewer.screenshot()
+        print("")
 
         # Copy of the mesh in the _Static folder.
         copyfile("screenshot.png", self.static_folder + mesh_file) # "screenshot.png" is hard codded in the script MMviewer.py of Meshmagick.
@@ -192,18 +201,36 @@ class report():
         self._RstHDB.newline()
         self._RstHDB.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstHDB.newline()
+
+        # Added mass and Damping.
         self._RstHDB.content('../Source/' + self._AddedMassFileName, indent=3, block='ct2')
         self._RstHDB.newline()
         self.WriteAddedMassDamping(pyHDB, output_folder)
+
+        # Diffraction loads.
         self._RstHDB.content('../Source/' + self._DiffractionFileName, indent=3, block='ct2')
         self._RstHDB.newline()
         self.WriteLoads(pyHDB, output_folder, self._RstDiffraction, 0)
+
+        # Froude-Krylov loads.
         self._RstHDB.content('../Source/' + self._FroudeKrylovFileName, indent=3, block='ct2')
         self._RstHDB.newline()
         self.WriteLoads(pyHDB, output_folder, self._RstFroudeKrylov, 1)
+
+        # Excitation loads.
         self._RstHDB.content('../Source/' + self._ExcitationFileName, indent=3, block='ct2')
         self._RstHDB.newline()
         self.WriteLoads(pyHDB, output_folder, self._RstExcitation, 2)
+
+        # IRF.
+        self._RstHDB.content('../Source/' + self._IRFFileName, indent=3, block='ct2')
+        self._RstHDB.newline()
+        self.WriteIRF(pyHDB, output_folder, self._RstIRF, 0)
+
+        # IRF with speed.
+        self._RstHDB.content('../Source/' + self._IRFspeedFileName, indent=3, block='ct2')
+        self._RstHDB.newline()
+        self.WriteIRF(pyHDB, output_folder, self._RstIRFspeed, 1)
 
     def WriteAddedMassDamping(self, pyHDB, output_folder):
         """ This function writes the added-mass and damping results in Added_mass_Damping.rst."""
@@ -231,6 +258,7 @@ class report():
 
                         self._RstAddedMass.directive(name="figure", arg="/_static/" + ABfile, fields=[('align', 'center')])
                         self._RstAddedMass.newline()
+
                         if (iforce <= 2):
                             force_str = 'force'
                             if (idof <= 2):  # Translation.
@@ -308,6 +336,7 @@ class report():
 
                     RSTfile.directive(name="figure", arg="/_static/" + Loadsfile, fields=[('align', 'center')])
                     RSTfile.newline()
+
                     if (iforce <= 2):
                         force_str = 'force'
                     else:
@@ -317,6 +346,73 @@ class report():
                     RSTfile._add('   Amplitude (top) and phase (bottom) of the ' + FilenameMin + ' ' + force_str + ' on body ' + str(body.i_body + 1)
                                             + " along direction " + str(iforce + 1) + " for a wave direction of " + str(beta) + " deg")
                     RSTfile.newline()
+
+    def WriteIRF(self, pyHDB, output_folder, RSTfile, SpeedOrNot):
+        """ This function writes the diffraction or Froude-Krylov or excitation results in a *.rst file.
+
+        Parameters
+        ----------
+        RSTfile : RST object.
+            RST object to write the loads.
+        peedOrNot : int
+            IRF with forward speed (1) or not (0).
+        """
+
+        if (SpeedOrNot == 0): # IRF without forward speed.
+            RSTfile.title("Impulse response functions")
+            RSTfile.newline()
+            RSTfile._add("This section presents the impulse response function results.")
+            Filename = "IRF"
+        else: # IRF with forward speed.
+            RSTfile.title("Impulse response function with forward speed")
+            RSTfile.newline()
+            RSTfile._add("This section presents the impulse response function results with forward speed.")
+            Filename = "IRF_speed"
+        RSTfile.newline()
+
+        for ibody_force in range(0, pyHDB.nb_bodies):
+            for iforce in range(0, 6):
+                for ibody_motion in range(0, pyHDB.nb_bodies):
+                    for idof in range(0, 6):
+
+                        IRFfile = Filename+"_"+str(ibody_force)+str(iforce)+str(ibody_motion)+str(idof)+".png"
+
+                        # Data.
+                        if(SpeedOrNot == 0): # IRF without forward speed.
+                            data = pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_motion + idof, :]
+                        else: # IRF with forward speed.
+                            data = pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_motion + idof, :]
+
+                        # Plots.
+                        plot_irf(data, pyHDB.time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, show = False, save = True, filename = self.static_folder+IRFfile)
+
+                        RSTfile.directive(name="figure", arg="/_static/" + IRFfile, fields=[('align', 'center')])
+                        RSTfile.newline()
+
+                        if (iforce <= 2):
+                            force_str = 'force'
+                            if (idof <= 2):  # Translation.
+                                motion_str = 'translation'
+                            else:  # Rotation.
+                                motion_str = 'rotation'
+                        else:
+                            force_str = 'moment'
+                            if (idof <= 2):  # Translation.
+                                motion_str = 'translation'
+                            else:  # Rotation.
+                                motion_str = 'rotation'
+
+                        # Caption.
+                        if(SpeedOrNot == 0): # IRF without forward speed.
+                            RSTfile._add('   Impulse response function of body ' + str(ibody_force + 1)
+                                                     + " along direction " + str(iforce + 1) + " for a " + motion_str+" of body " + str(ibody_motion + 1)
+                                                     + " along direction " + str(idof + 1))
+                        else: # IRF with forward speed.
+                            RSTfile._add('   Impulse response function with forward speed of body ' + str(ibody_force + 1)
+                                         + " along direction " + str(iforce + 1) + " for a " + motion_str + " of body " + str(ibody_motion + 1)
+                                         + " along direction " + str(idof + 1))
+
+                        RSTfile.newline()
 
     def WriteRst(self, output_folder):
         """This functions writes a rst file."""
@@ -329,6 +425,8 @@ class report():
         self._RstDiffraction.write(os.path.join(self.source_folder, self._DiffractionFileName + Ext))  # Diffraction.rst.
         self._RstFroudeKrylov.write(os.path.join(self.source_folder, self._FroudeKrylovFileName + Ext))  # Froude_Krylov.rst.
         self._RstExcitation.write(os.path.join(self.source_folder, self._ExcitationFileName + Ext))  # Excitation.rst.
+        self._RstIRF.write(os.path.join(self.source_folder, self._IRFFileName + Ext))  # IRF.rst.
+        self._RstIRFspeed.write(os.path.join(self.source_folder, self._IRFspeedFileName + Ext))  # IRF_speed.rst.
 
     def BuildHTML(self, output_folder):
         """This function builds the html file from the rst files."""

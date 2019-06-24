@@ -158,7 +158,7 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save 
         plt.savefig(filename)
         plt.close()
 
-def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, **kwargs):
+def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, show = True, save = False, filename = "IRF.png"):
     """Plots the impulse response function of a given modes set.
 
     Parameters
@@ -177,8 +177,6 @@ def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, **
         Index of the body having a motion
     idof : int
         Index of the local body's raditation mode (motion)
-    kwargs: optional
-        Arguments that are to be used by pyplot
     """
 
     # Labels.
@@ -200,17 +198,29 @@ def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, **
     else: # With forward speed.
         ylabel = r'$Ku_{%s}(t)$' % (str(iforce + 1) + str(idof + 1))
 
-    plt.plot(time, data, **kwargs)
+    # Plots.
+    if (save == False):  # The size is smaller for the generation of automatic report because the title is not including.
+        plt.figure(num=None, figsize=(16, 8.5))
+    else:
+        plt.figure(num=None, figsize=(10, 6))
+    plt.plot(time, data)
     plt.xlabel(r'$t$'+' $(s)$', fontsize=18)
     plt.ylabel(ylabel, fontsize=18)  # TODO: mettre une unite
-    if(SpeedOrNot == 0): # Without forward speed.
-        plt.title('Impulse response function of %s on body %u along direction %u for a %s of body %u along direction %u' %
-              (force_str, ibody_force+1, iforce+1, motion_str, ibody_motion+1, idof+1), fontsize = 20)
-    else: # With forward speed.
-        plt.title('Impulse response function with forward speed of %s on body %u along direction %u for a %s of body %u along direction %u' %
-                  (force_str, ibody_force + 1, iforce + 1, motion_str, ibody_motion + 1, idof + 1), fontsize=20)
+    if (save == False):  # The title is not necessary for the generation of automatic report.
+        if(SpeedOrNot == 0): # Without forward speed.
+            plt.title('Impulse response function of %s on body %u along direction %u for a %s of body %u along direction %u' %
+                  (force_str, ibody_force+1, iforce+1, motion_str, ibody_motion+1, idof+1), fontsize = 20)
+        else: # With forward speed.
+            plt.title('Impulse response function with forward speed of %s on body %u along direction %u for a %s of body %u along direction %u' %
+                      (force_str, ibody_force + 1, iforce + 1, motion_str, ibody_motion + 1, idof + 1), fontsize=20)
     plt.grid()
-    plt.show()
+
+    if (show == True):
+        plt.show()
+    if (save == True):
+        plt.tight_layout()
+        plt.savefig(filename)
+        plt.close()
 
 def plot_filering(data, time, SpeedOrNot, coeff, ibody_force, iforce, ibody_motion, idof, **kwargs):
     """This function plots the filtered impulse response functions.
