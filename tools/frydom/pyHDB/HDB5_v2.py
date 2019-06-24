@@ -195,7 +195,7 @@ class HDB5(object):
         # Updating the wave directions.
         self._pyHDB._initialize_wave_dir()
 
-    def Plot_Diffraction(self, ibody, iforce, iwave = 0, **kwargs):
+    def Plot_Diffraction(self, ibody, iforce, iwave = 0):
         """This functions plots the diffraction loads."""
 
         # Data.
@@ -205,7 +205,7 @@ class HDB5(object):
         beta = np.degrees(self._pyHDB.wave_dir[iwave])
 
         # Plot.
-        plot_loads(data, self._pyHDB.wave_freq, 0, ibody, iforce, beta, **kwargs)
+        plot_loads(data, self._pyHDB.wave_freq, 0, ibody, iforce, beta)
 
     def Plot_Froude_Krylov(self, ibody, iforce, iwave = 0, **kwargs):
         """This functions plots the Froude-Krylov loads."""

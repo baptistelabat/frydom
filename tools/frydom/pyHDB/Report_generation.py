@@ -47,6 +47,18 @@ class report():
         self._RstAddedMass = RstCloth()
         self._AddedMassFileName = "Added_mass_Damping"
 
+        # Diffraction loads.
+        self._RstDiffraction = RstCloth()
+        self._DiffractionFileName = "Diffraction"
+
+        # Froude-Krylov loads.
+        self._RstFroudeKrylov = RstCloth()
+        self._FroudeKrylovFileName = "Froude_Krylov"
+
+        # Excitation loads.
+        self._RstExcitation = RstCloth()
+        self._ExcitationFileName = "Excitation"
+
         # conf.py file for generating the html file.
         my_path = os.path.abspath(os.path.dirname(__file__))
         self._conf_file = my_path+"/conf.py" # In the frydom-CE deposit.
@@ -183,6 +195,15 @@ class report():
         self._RstHDB.content('../Source/' + self._AddedMassFileName, indent=3, block='ct2')
         self._RstHDB.newline()
         self.WriteAddedMassDamping(pyHDB, output_folder)
+        self._RstHDB.content('../Source/' + self._DiffractionFileName, indent=3, block='ct2')
+        self._RstHDB.newline()
+        self.WriteLoads(pyHDB, output_folder, self._RstDiffraction, 0)
+        self._RstHDB.content('../Source/' + self._FroudeKrylovFileName, indent=3, block='ct2')
+        self._RstHDB.newline()
+        self.WriteLoads(pyHDB, output_folder, self._RstFroudeKrylov, 1)
+        self._RstHDB.content('../Source/' + self._ExcitationFileName, indent=3, block='ct2')
+        self._RstHDB.newline()
+        self.WriteLoads(pyHDB, output_folder, self._RstExcitation, 2)
 
     def WriteAddedMassDamping(self, pyHDB, output_folder):
         """ This function writes the added-mass and damping results in Added_mass_Damping.rst."""
@@ -224,9 +245,78 @@ class report():
                                 motion_str = 'rotation'
 
                         # Caption.
-                        self._RstAddedMass._add('   Added mass (top) and damping (bottom) coefficients giving '+force_str+' on body ' + str(ibody_force + 1)
+                        self._RstAddedMass._add('   Added mass (top) and damping (bottom) coefficients giving ' + force_str+' on body ' + str(ibody_force + 1)
                                                  + " along direction " + str(iforce + 1) + " for a " + motion_str+" of body " + str(ibody_motion + 1)
                                                  + " along direction " + str(idof + 1) + ". The red cross represents the infinite added mass coefficient.")
+                        self._RstAddedMass.newline()
+
+    def WriteLoads(self, pyHDB, output_folder, RSTfile, DiffOrFKOrExc):
+        """ This function writes the diffraction or Froude-Krylov or excitation results in a *.rst file.
+
+        Parameters
+        ----------
+        RSTfile : RST object.
+            RST object to write the loads.
+        DiffOrFKOrExc : int.
+            0 for diffraction loads, 1 for Froude-Krylov loads, 2 for excitation loads.
+        """
+
+        if(DiffOrFKOrExc == 0): # Diffraction.
+            RSTfile.title("Diffraction loads")
+            RSTfile.newline()
+            RSTfile._add("This section presents the diffraction results.")
+            FilenameMaj = "Diffraction"
+            FilenameMin = "diffraction"
+        elif (DiffOrFKOrExc == 1): # Froude-Krylov.
+            RSTfile.title("Froude-Krylov loads")
+            RSTfile.newline()
+            RSTfile._add("This section presents the diffraction results.")
+            FilenameMaj = "Froude-Krylov"
+            FilenameMin = "Froude-Krylov"
+        else: # Excitation.
+            RSTfile.title("Excitation loads")
+            RSTfile.newline()
+            RSTfile._add("This section presents the excitation results.")
+            FilenameMaj = "Excitation"
+            FilenameMin = "excitation"
+        RSTfile.newline()
+
+        for body in pyHDB.bodies:
+
+            # Loads.
+            if (DiffOrFKOrExc == 0): # Diffraction.
+                Loads = body.Diffraction
+            elif (DiffOrFKOrExc == 1): # Froude-Krylov.
+                Loads = body.Froude_Krylov
+            else: # Excitation.
+                Loads = Loads = body.Diffraction + body.Froude_Krylov
+
+            for iwave in range(0, pyHDB.nb_wave_dir):
+
+                for iforce in range(0, 6):
+
+                    Loadsfile = FilenameMaj+"_" + str(body.i_body) + str(iwave) + str(iforce) + ".png"
+
+                    # Data.
+                    data = Loads[iforce, :, iwave]
+
+                    # Wave direction.
+                    beta = np.degrees(pyHDB.wave_dir[iwave])
+
+                    # Plot.
+                    plot_loads(data, pyHDB.wave_freq, DiffOrFKOrExc, body.i_body, iforce, beta, show = False, save = True, filename = self.static_folder+Loadsfile)
+
+                    RSTfile.directive(name="figure", arg="/_static/" + Loadsfile, fields=[('align', 'center')])
+                    RSTfile.newline()
+                    if (iforce <= 2):
+                        force_str = 'force'
+                    else:
+                        force_str = 'moment'
+
+                    # Caption.
+                    RSTfile._add('   Amplitude (top) and phase (bottom) of the ' + FilenameMin + ' ' + force_str + ' on body ' + str(body.i_body + 1)
+                                            + " along direction " + str(iforce + 1) + " for a wave direction of " + str(beta) + " deg")
+                    RSTfile.newline()
 
     def WriteRst(self, output_folder):
         """This functions writes a rst file."""
@@ -236,6 +326,9 @@ class report():
         self._RstInputParam.write(os.path.join(self.source_folder, self._InputParamFileName + Ext)) # Input_parameters.rst.
         self._RstHDB.write(os.path.join(self.source_folder, self._HDBFileName + Ext)) # HDB_results.rst.
         self._RstAddedMass.write(os.path.join(self.source_folder, self._AddedMassFileName + Ext))  # Added_mass_Damping.rst.
+        self._RstDiffraction.write(os.path.join(self.source_folder, self._DiffractionFileName + Ext))  # Diffraction.rst.
+        self._RstFroudeKrylov.write(os.path.join(self.source_folder, self._FroudeKrylovFileName + Ext))  # Froude_Krylov.rst.
+        self._RstExcitation.write(os.path.join(self.source_folder, self._ExcitationFileName + Ext))  # Excitation.rst.
 
     def BuildHTML(self, output_folder):
         """This function builds the html file from the rst files."""

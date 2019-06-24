@@ -16,8 +16,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, **kwargs):
-    """Plots the diffraction or Froude-Krylov response function of a given modes set
+def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = True, save = False, filename = "Loads.png"):
+    """Plots the diffraction or Froude-Krylov or excitation response function of a given modes set
 
     Parameters
     ----------
@@ -33,8 +33,6 @@ def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, **kwargs):
         The index of the body's force mode.
     beta : float.
         Wave direction in radians.
-    kwargs: optional.
-        Arguments that are to be used by pyplot
     """
 
     # Labels and title.
@@ -62,10 +60,15 @@ def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, **kwargs):
         ylabel1 += r' $(N)$'
 
     # Plots.
+    if (save == False):  # The size is smaller for the generation of automatic report because the title is not including.
+        plt.figure(num=None, figsize=(16, 8.5))
+    else:
+        plt.figure(num=None, figsize=(10, 6))
     plt.subplot(2, 1, 1)
     plt.plot(w, np.absolute(data),linestyle="-", linewidth = 2)
     plt.ylabel(ylabel1, fontsize=18)
-    plt.title(title, fontsize = 20)
+    if (save == False):  # The title is not necessary for the generation of automatic report.
+        plt.title(title, fontsize=20)
     plt.grid()
 
     plt.subplot(2, 1, 2)
@@ -74,9 +77,14 @@ def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, **kwargs):
     plt.xlabel(xlabel, fontsize=18)
     plt.grid()
 
-    plt.show()
+    if (show == True):
+        plt.show()
+    if (save == True):
+        plt.tight_layout()
+        plt.savefig(filename)
+        plt.close()
 
-def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save = False, filename = "Figure.png"):
+def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save = False, filename = "AB.png"):
     """Plots the radiation coefficients of a given modes set.
 
     Parameters
@@ -148,6 +156,7 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save 
     if(save == True):
         plt.tight_layout()
         plt.savefig(filename)
+        plt.close()
 
 def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, **kwargs):
     """Plots the impulse response function of a given modes set.
