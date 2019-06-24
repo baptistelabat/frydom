@@ -241,6 +241,10 @@ class report():
         self._RstAddedMass.newline()
 
         for ibody_force in range(0, pyHDB.nb_bodies):
+
+            self._RstAddedMass.h1("Body " + str(ibody_force + 1))
+            self._RstAddedMass.newline()
+
             for iforce in range(0, 6):
                 for ibody_motion in range(0, pyHDB.nb_bodies):
                     for idof in range(0, 6):
@@ -261,15 +265,15 @@ class report():
 
                         if (iforce <= 2):
                             force_str = 'force'
-                            if (idof <= 2):  # Translation.
+                            if (idof <= 2): # Translation.
                                 motion_str = 'translation'
-                            else:  # Rotation.
+                            else: # Rotation.
                                 motion_str = 'rotation'
                         else:
                             force_str = 'moment'
-                            if (idof <= 2):  # Translation.
+                            if (idof <= 2): # Translation.
                                 motion_str = 'translation'
-                            else:  # Rotation.
+                            else: # Rotation.
                                 motion_str = 'rotation'
 
                         # Caption.
@@ -310,6 +314,9 @@ class report():
         RSTfile.newline()
 
         for body in pyHDB.bodies:
+
+            RSTfile.h1("Body " + str(body.i_body + 1))
+            RSTfile.newline()
 
             # Loads.
             if (DiffOrFKOrExc == 0): # Diffraction.
@@ -371,6 +378,10 @@ class report():
         RSTfile.newline()
 
         for ibody_force in range(0, pyHDB.nb_bodies):
+
+            RSTfile.h1("Body " + str(ibody_force + 1))
+            RSTfile.newline()
+
             for iforce in range(0, 6):
                 for ibody_motion in range(0, pyHDB.nb_bodies):
                     for idof in range(0, 6):
