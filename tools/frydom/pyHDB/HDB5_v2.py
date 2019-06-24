@@ -236,36 +236,36 @@ class HDB5(object):
 
         # Data.
         data = np.zeros((self._pyHDB.nb_wave_freq+1,2), dtype = np.float) # 2 for added mass and damping coefficients, +1 for the infinite added mass.
-        data[0:self._pyHDB.nb_wave_freq, 0] = self._pyHDB.bodies[ibody_motion].Added_mass[iforce, 6 * ibody_force + idof, :]
-        data[self._pyHDB.nb_wave_freq,0] = self._pyHDB.bodies[ibody_motion].Inf_Added_mass[iforce, 6 * ibody_force + idof]
-        data[0:self._pyHDB.nb_wave_freq, 1] = self._pyHDB.bodies[ibody_motion].Damping[iforce, 6 * ibody_force + idof, :]
+        data[0:self._pyHDB.nb_wave_freq, 0] = self._pyHDB.bodies[ibody_force].Added_mass[iforce, 6 * ibody_motion + idof, :]
+        data[self._pyHDB.nb_wave_freq,0] = self._pyHDB.bodies[ibody_force].Inf_Added_mass[iforce, 6 * ibody_motion + idof]
+        data[0:self._pyHDB.nb_wave_freq, 1] = self._pyHDB.bodies[ibody_force].Damping[iforce, 6 * ibody_motion + idof, :]
 
         # Plots.
         plot_AB(data, self._pyHDB.wave_freq, ibody_force, iforce, ibody_motion, idof)
 
-    def Plot_IRF(self, ibody_force, iforce, ibody_motion, idof, **kwargs):
+    def Plot_IRF(self, ibody_force, iforce, ibody_motion, idof):
         """This function plots the impulse response functions without forward speed."""
 
         # Data.
-        data = self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + idof, :]
+        data = self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_motion + idof, :]
 
         # Time.
         time = self._pyHDB.time
 
         # Plots.
-        plot_irf(data, time, 0, ibody_force, iforce, ibody_motion, idof, **kwargs)
+        plot_irf(data, time, 0, ibody_force, iforce, ibody_motion, idof)
 
-    def Plot_IRF_speed(self, ibody_force, iforce, ibody_motion, idof, **kwargs):
+    def Plot_IRF_speed(self, ibody_force, iforce, ibody_motion, idof):
         """This function plots the impulse response functions with forward speed."""
 
         # Data.
-        data = self._pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_force + idof , :]
+        data = self._pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_motion + idof , :]
 
         # Time.
         time = self._pyHDB.time
 
         # Plots.
-        plot_irf(data, time, 1, ibody_force, iforce, ibody_motion, idof, **kwargs)
+        plot_irf(data, time, 1, ibody_force, iforce, ibody_motion, idof)
 
     def Cutoff_scaling_IRF(self, tc, ibody_force, iforce, ibody_motion, idof, auto_apply=False):
         """This function applies a filter to the impule response functions without forward speed and plot the result.
@@ -287,7 +287,7 @@ class HDB5(object):
        """
 
         # Data.
-        data = self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + idof, :]
+        data = self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_motion + idof, :]
 
         # Time.
         time = self._pyHDB.time
@@ -340,7 +340,7 @@ class HDB5(object):
        """
 
         # Data.
-        data = self._pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_force + idof, :]
+        data = self._pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_motion + idof, :]
 
         # Time.
         time = self._pyHDB.time
