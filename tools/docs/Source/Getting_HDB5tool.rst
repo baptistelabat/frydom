@@ -21,3 +21,11 @@ It is also necessary to update your Python path with the following paths::
 
     path/to/frydom/tools/
     path/to/frydom/tools/frydom/pyHDB/
+
+The version of *matplotlib* needs to be 2.0.0 or higher::
+
+    pip install matplotlib==2.0.0
+
+The package *rstcloth* has to be installed::
+
+    pip install rstcloth

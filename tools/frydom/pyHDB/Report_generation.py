@@ -20,6 +20,7 @@ import webbrowser
 from shutil import copyfile
 import copy
 import numpy as np
+import datetime
 
 import meshmagick.MMviewer
 from plot_db import *
@@ -88,6 +89,9 @@ class report():
         self._RstIndex.newline()
         self._RstIndex._add("This report presents the results of the hydrodynamic database obtained with **Nemoh**."
                            "It remains the input parameters of used in **Nemoh** and the post-processing achieved by **HDB5tool**.")
+        self._RstIndex.newline()
+        now = datetime.datetime.now()
+        self._RstIndex._add("Report generated date: " + str(now.strftime("%Y-%m-%d")))
         self._RstIndex.newline()
         self._RstIndex.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstIndex.newline()
