@@ -675,9 +675,11 @@ class pyHDB():
             for body in self.bodies:
                 self.write_body(writer, body)
 
-            # Wave drift coefficients.
+            # Update the format of the drift coefficients if computed from Kochin functions.
             if(self.has_Drift_Kochin):
                 self.UpdateDriftObject()
+
+            # Wave drift coefficients.
             if (self._wave_drift):
                 self.write_wave_drift(writer, "/WaveDrift")
 
@@ -981,7 +983,7 @@ class pyHDB():
             for idof in range(0,6):
 
                 # Added mass.
-                dset = writer.create_dataset(added_mass_path + "/DOF_%u" % iforce, data=body.Added_mass[:, 6*j+idof, :])
+                dset = writer.create_dataset(added_mass_path + "/DOF_%u" % idof, data=body.Added_mass[:, 6*j+idof, :])
                 dset.attrs['Unit'] = ""
                 dset.attrs['Description'] = "Added mass coefficients for an acceleration of body %u and force on " \
                                             "body %u." % (j, body.i_body)
@@ -1200,6 +1202,9 @@ class pyHDB():
             self._wave_drift.add_cx(self.omega, self.Wave_drift_force[0, :, ibeta], self.wave_dir[ibeta]) # Surge.
             self._wave_drift.add_cy(self.omega, self.Wave_drift_force[1, :, ibeta], self.wave_dir[ibeta]) # Sway.
             self._wave_drift.add_cn(self.omega, self.Wave_drift_force[2, :, ibeta], self.wave_dir[ibeta]) # Yaw.
+
+        # Deletion of the old structure.
+        del self.Wave_drift_force
 
     def write_version(self, writer):
         """This function writes the version of the *.hdb5 file.

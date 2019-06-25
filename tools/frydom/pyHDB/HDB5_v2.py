@@ -47,6 +47,9 @@ class HDB5(object):
         # Initialization parameter.
         self._is_initialized = False
 
+        # Report.
+        self.report = None
+
         return
 
     @property
@@ -449,37 +452,35 @@ class HDB5(object):
         print('-------> "%s" has been loaded.' % hdb5_file)
         print('')
 
-    def report_generation(self, output_folder):
+    def report_writing(self, output_folder):
         """This function writes a report about the hydrodynamic database."""
 
         # Creation of the rst object.
-        r = report(output_folder)
+        self.report = report(output_folder)
 
         # Description of the report.
-        r.WriteIndex()
+        self.report.WriteIndex()
 
         # Input parameters.
-        r.WriteInputParameters(self._pyHDB, output_folder)
+        self.report.WriteInputParameters(self._pyHDB, output_folder)
 
         # HDB results.
-        r.WriteHDB(self._pyHDB, output_folder)
+        self.report.WriteHDB(self._pyHDB, output_folder)
 
-        # Writing the rst files.
-        r.WriteRst(output_folder)
+        # Writing the rst files except HDB_results.rst.
+        self.report.WriteRst(output_folder)
+
+    def report_building_html(self, output_folder):
+        """This function builds a *.html file of the report."""
+
+        # Writing HDB_results.rst.
+        self.report.WriteHDBRst(output_folder)
 
         # Building the html file.
-        r.BuildHTML(output_folder)
+        self.report.BuildHTML(output_folder)
 
         # Visualization of the html file.
-        r.OpenHTML(output_folder)
-
-
-
-
-
-
-
-
+        self.report.OpenHTML(output_folder)
 
 
 

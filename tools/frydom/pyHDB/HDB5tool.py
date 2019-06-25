@@ -340,9 +340,17 @@ def get_Arg_part_3_CE(args, database):
     if (args.write is not None):
         database.export_hdb5(args.write)
 
-    # Report generation.
+    # Report generation - hdb only.
     if (args.report_generation is not None):
-        database.report_generation(args.report_generation)
+        database.report_writing(args.report_generation)
+
+    return database
+
+def get_Arg_part_4_CE(args, database):
+
+    # Report generation - Building the html file.
+    if (args.report_generation is not None):
+        database.report_building_html(args.report_generation)
 
     return database
 
@@ -378,6 +386,9 @@ def main():
 
     # 3rd set of arguments - FRyDoM CE.
     database = get_Arg_part_3_CE(args, database)
+
+    # 4th set of arguments - FRyDoM CE.
+    database = get_Arg_part_4_CE(args, database)
 
 if __name__ == '__main__':
     main()

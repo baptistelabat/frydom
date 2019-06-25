@@ -32,6 +32,9 @@ class report():
 
     def __init__(self, output_folder):
 
+        # Extension.
+        self.Ext = '.rst'
+
         # Index file.
         self._RstIndex = RstCloth()
         self._IndexFileName = "index" # If you change this name, you need to update conf.py.
@@ -430,18 +433,21 @@ class report():
                         RSTfile.newline()
 
     def WriteRst(self, output_folder):
-        """This functions writes a rst file."""
+        """This functions writes the rst files except HDB_result.rst because of the RAO and the drift loads."""
 
-        Ext = '.rst'
-        self._RstIndex.write(os.path.join(output_folder, self._IndexFileName + Ext)) # Index.rst.
-        self._RstInputParam.write(os.path.join(self.source_folder, self._InputParamFileName + Ext)) # Input_parameters.rst.
-        self._RstHDB.write(os.path.join(self.source_folder, self._HDBFileName + Ext)) # HDB_results.rst.
-        self._RstAddedMass.write(os.path.join(self.source_folder, self._AddedMassFileName + Ext))  # Added_mass_Damping.rst.
-        self._RstDiffraction.write(os.path.join(self.source_folder, self._DiffractionFileName + Ext))  # Diffraction.rst.
-        self._RstFroudeKrylov.write(os.path.join(self.source_folder, self._FroudeKrylovFileName + Ext))  # Froude_Krylov.rst.
-        self._RstExcitation.write(os.path.join(self.source_folder, self._ExcitationFileName + Ext))  # Excitation.rst.
-        self._RstIRF.write(os.path.join(self.source_folder, self._IRFFileName + Ext))  # IRF.rst.
-        self._RstIRFspeed.write(os.path.join(self.source_folder, self._IRFspeedFileName + Ext))  # IRF_speed.rst.
+        self._RstIndex.write(os.path.join(output_folder, self._IndexFileName + self.Ext)) # Index.rst.
+        self._RstInputParam.write(os.path.join(self.source_folder, self._InputParamFileName + self.Ext)) # Input_parameters.rst.
+        self._RstAddedMass.write(os.path.join(self.source_folder, self._AddedMassFileName + self.Ext)) # Added_mass_Damping.rst.
+        self._RstDiffraction.write(os.path.join(self.source_folder, self._DiffractionFileName + self.Ext)) # Diffraction.rst.
+        self._RstFroudeKrylov.write(os.path.join(self.source_folder, self._FroudeKrylovFileName + self.Ext)) # Froude_Krylov.rst.
+        self._RstExcitation.write(os.path.join(self.source_folder, self._ExcitationFileName + self.Ext)) # Excitation.rst.
+        self._RstIRF.write(os.path.join(self.source_folder, self._IRFFileName + self.Ext)) # IRF.rst.
+        self._RstIRFspeed.write(os.path.join(self.source_folder, self._IRFspeedFileName + self.Ext)) # IRF_speed.rst.
+
+    def WriteHDBRst(self, output_folder):
+        """This functions writes HDB_results.rst."""
+
+        self._RstHDB.write(os.path.join(self.source_folder, self._HDBFileName + self.Ext)) # HDB_results.rst.
 
     def BuildHTML(self, output_folder):
         """This function builds the html file from the rst files."""
