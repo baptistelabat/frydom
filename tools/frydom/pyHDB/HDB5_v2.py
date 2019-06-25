@@ -205,7 +205,7 @@ class HDB5(object):
         data = self._pyHDB.bodies[ibody].Diffraction[iforce, :, iwave]
 
         # Wave direction.
-        beta = np.degrees(self._pyHDB.wave_dir[iwave])
+        beta = self._pyHDB.wave_dir[iwave]
 
         # Plot.
         plot_loads(data, self._pyHDB.wave_freq, 0, ibody, iforce, beta)
@@ -217,7 +217,7 @@ class HDB5(object):
         data = self._pyHDB.bodies[ibody].Froude_Krylov[iforce, :, iwave]
 
         # Wave direction.
-        beta = np.degrees(self._pyHDB.wave_dir[iwave])
+        beta = self._pyHDB.wave_dir[iwave]
 
         # Plots.
         plot_loads(data, self._pyHDB.wave_freq, 1, ibody, iforce, beta, **kwargs)
@@ -229,7 +229,7 @@ class HDB5(object):
         data = self._pyHDB.bodies[ibody].Diffraction[iforce, :, iwave] + self._pyHDB.bodies[ibody].Froude_Krylov[iforce, :, iwave]
 
         # Wave direction.
-        beta = np.degrees(self._pyHDB.wave_dir[iwave])
+        beta = self._pyHDB.wave_dir[iwave]
 
         # Plots.
         plot_loads(data, self._pyHDB.wave_freq, 2, ibody, iforce, beta, **kwargs)
