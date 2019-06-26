@@ -49,7 +49,19 @@ TEST(FrClippingPlaneTest,GetIntersection) {
 
     auto planeXOY = new FrPlane(node);
     mesh::FrClippingPlane clippingPlaneXOY(planeXOY);
+    clippingPlaneXOY.SetBodyPosition(Position(6,5,4));
 
     std::cout<<clippingPlaneXOY.GetIntersection(p0, p1)<<std::endl;
+
+
+
+    VectorT<double, 3> p2 (1., 5. , 8.);
+    VectorT<double, 3> p3 (1., 8. , 8.);
+
+    auto planeXOZ = new FrPlane(node, YAXIS);
+    mesh::FrClippingPlane clippingPlaneXOZ(planeXOZ);
+    clippingPlaneXOZ.SetBodyPosition(Position(6,5,4));
+
+    std::cout<<clippingPlaneXOZ.GetIntersection(p2, p3)<<std::endl;
 
 }

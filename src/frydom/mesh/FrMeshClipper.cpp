@@ -21,18 +21,36 @@ namespace frydom {
 
         VectorT<double, 3>
         FrClippingPlane::GetIntersection(const VectorT<double, 3> &p0, const VectorT<double, 3> &p1) {
+            // Find the abscissa on [P0P1] of the intersection with the plan :
+            // P_i = P(s_i) = P0 + s_i * P0P1
+            // s_i = n . P0O / n . P0P1
+            // O being a point on the plane
 
             Position P0 = {p0[0],p0[1],p0[2]};
             Position P1 = {p1[0],p1[1],p1[2]};
 
-            Direction line = (P1 - P0); assert(line.norm()>1E-16);
-            assert(line.dot(m_plane->GetNormaleInWorld(NWU))!=0);
+            // Application of the horizontal translation.
+            auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
 
+            P0 += BodyPos;
+            P1 += BodyPos;
+
+            auto n = m_plane->GetNormaleInWorld(NWU);
+
+            // check if P0P1 is parallel to the plan / or P0P1 null
+            Direction line = (P1 - P0); assert(line.norm()>1E-16);
+            assert(line.dot(n)!=0);
+
+            // P0O
             Direction vector = m_plane->GetOriginInWorld(NWU) - P0;
 
-            double s = vector.dot(m_plane->GetNormaleInWorld(NWU)) / line.dot(m_plane->GetNormaleInWorld(NWU));
+            // s_i
+            double s = vector.dot(n) / line.dot(n);
 
-            return p0 + (p1-p0) * s;
+            // P_i
+            Position Intersection = P0 + (P1-P0) * s;
+
+            return {Intersection.GetX(),Intersection.GetY(),Intersection.GetZ()};
 
         }
 
@@ -40,7 +58,13 @@ namespace frydom {
 
             // This function gives the distance between the node and the clipping plane.
 
-            Position vector = mesh::OpenMeshPointToVector3d<Position>(point) - m_plane->GetOriginInWorld(NWU);
+            auto PointInWorld = OpenMeshPointToVector3d<Position>(point);
+
+            // Application of the horizontal translation.
+            auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
+            const Position temp = PointInWorld + BodyPos;
+
+            Position vector = temp - m_plane->GetOriginInWorld(NWU);
 
             return vector.dot(m_plane->GetNormaleInWorld(NWU));
 
