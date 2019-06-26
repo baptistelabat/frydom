@@ -37,7 +37,7 @@ namespace frydom {
     public:
 
         enum class ClippingSupport {    ///< Support for the clipping procedure : can be a horizontal plan
-            PLANSURFACE,                ///< horizontal plan, defined by its elevation corresponding to the tidal height
+            PLANESURFACE,                ///< horizontal plan, defined by its elevation corresponding to the tidal height
             WAVESURFACE                 ///< wave surface, defined by the free surface position at a given (x,y) position
         };
 
