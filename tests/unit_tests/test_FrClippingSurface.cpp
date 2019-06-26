@@ -22,13 +22,13 @@ TEST(FrClippingPlaneTest,GetDistance) {
     auto body = system.NewBody();
     auto node = body->NewNode();
 
-    auto planeXOY = new FrPlane(node);
+    auto planeXOY = std::make_shared<FrPlane>(node);
     mesh::FrClippingPlane clippingPlaneXOY(planeXOY);
 
-    auto planeYOZ = new FrPlane(node, XAXIS);
+    auto planeYOZ = std::make_shared<FrPlane>(node, XAXIS);
     mesh::FrClippingPlane clippingPlaneYOZ(planeYOZ);
 
-    auto planeZOX = new FrPlane(node, YAXIS);
+    auto planeZOX = std::make_shared<FrPlane>(node, YAXIS);
     mesh::FrClippingPlane clippingPlaneZOX(planeZOX);
 
     EXPECT_NEAR(clippingPlaneXOY.GetDistance(mesh::FrMesh::Point(x, y , z)), z, 1E-16);
@@ -47,7 +47,7 @@ TEST(FrClippingPlaneTest,GetIntersection) {
     auto node = body->NewNode();
     node->SetPositionInBody(Position(1,2,-3), NWU);
 
-    auto planeXOY = new FrPlane(node);
+    auto planeXOY = std::make_shared<FrPlane>(node);
     mesh::FrClippingPlane clippingPlaneXOY(planeXOY);
     clippingPlaneXOY.SetBodyPosition(Position(6,5,4));
 
@@ -58,7 +58,7 @@ TEST(FrClippingPlaneTest,GetIntersection) {
     VectorT<double, 3> p2 (1., 5. , 8.);
     VectorT<double, 3> p3 (1., 8. , 8.);
 
-    auto planeXOZ = new FrPlane(node, YAXIS);
+    auto planeXOZ = std::make_shared<FrPlane>(node, YAXIS);
     mesh::FrClippingPlane clippingPlaneXOZ(planeXOZ);
     clippingPlaneXOZ.SetBodyPosition(Position(6,5,4));
 

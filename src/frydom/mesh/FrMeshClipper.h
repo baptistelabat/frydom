@@ -60,11 +60,11 @@ namespace frydom {
 
         private:
 
-            FrPlane* m_plane;
+            std::shared_ptr<FrPlane> m_plane;
 
         public:
 
-            explicit FrClippingPlane(FrPlane* plane) : m_plane(plane) {};
+            explicit FrClippingPlane(const std::shared_ptr<FrPlane>& plane) : m_plane(plane) {};
 
             /// This function gives the distance to the plane.
             double GetDistance(const FrMesh::Point &point) const override;

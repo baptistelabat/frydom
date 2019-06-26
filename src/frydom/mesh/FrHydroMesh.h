@@ -88,6 +88,8 @@ namespace frydom {
 
         ClippingSupport m_clippingSupport;              ///< Support for the clipping procedure
 
+        std::shared_ptr<FrNode> c_nodeForClippingPlane;                   ///< node for defining the FrPlane needed by FrClippingPlane
+
     };
 
     /// This function creates a hydrodynamic mesh for using in the computation of the nonlinear hydrostatic and/or Froude-Krylov loads.

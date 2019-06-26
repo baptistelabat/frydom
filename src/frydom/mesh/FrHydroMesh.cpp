@@ -14,6 +14,7 @@
 #include "FrMeshClipper.h"
 
 #include "frydom/core/body/FrBody.h"
+#include "frydom/core/common/FrGeometrical.h"
 
 namespace frydom {
 
@@ -47,9 +48,14 @@ namespace frydom {
         // Clipping surface.
         switch (m_clippingSupport) {
             case ClippingSupport::PLANSURFACE: {
-//                auto clippingSurface = std::make_shared<mesh::FrClippingPlane>();
-//                        m_system->GetEnvironment()->GetOcean()->GetFreeSurface());
-//                m_clipper->SetClippingSurface(clippingSurface);
+                c_nodeForClippingPlane = m_body->GetSystem()->GetWorldBody()->NewNode();
+                Position Tide(0., 0., m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU));
+                c_nodeForClippingPlane->SetPositionInBody(Tide, NWU);
+
+                auto plane = std::make_shared<FrPlane>(c_nodeForClippingPlane);
+
+                auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(plane);
+                m_clipper->SetClippingSurface(clippingSurface);
                 break;
             }
             case ClippingSupport::WAVESURFACE: {
@@ -92,6 +98,12 @@ namespace frydom {
 
         // Set the body position for horizontal correction in the clipping surface
         m_clipper->GetClippingSurface()->SetBodyPosition(m_body->GetPosition(NWU));
+        
+        // Update the node vertical position for the clippingplane to the position of the tidal height (mean free surface position) 
+        if (m_clippingSupport == ClippingSupport::PLANSURFACE) {
+            Position Tide(0., 0., m_body->GetSystem()->GetEnvironment()->GetOcean()->GetFreeSurface()->GetTidal()->GetHeight(NWU));
+            c_nodeForClippingPlane->SetPositionInBody(Tide, NWU);
+        }
 
         // Application of the mesh clipper on the updated init mesh to obtain the clipped mesh
         m_clipper->Apply(&m_clippedMesh);
