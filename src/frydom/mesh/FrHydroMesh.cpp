@@ -47,9 +47,9 @@ namespace frydom {
         // Clipping surface.
         switch (m_clippingSupport) {
             case ClippingSupport::PLANSURFACE: {
-                auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(
-                        m_system->GetEnvironment()->GetOcean()->GetFreeSurface());
-                m_clipper->SetClippingSurface(clippingSurface);
+//                auto clippingSurface = std::make_shared<mesh::FrClippingPlane>(
+//                        m_system->GetEnvironment()->GetOcean()->GetFreeSurface());
+//                m_clipper->SetClippingSurface(clippingSurface);
                 break;
             }
             case ClippingSupport::WAVESURFACE: {
