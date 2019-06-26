@@ -181,6 +181,37 @@ class report():
             self._RstInputParam._add('   Mesh of body ' + str(body.i_body + 1))
             self._RstInputParam.newline()
 
+            # Hydrostatic stiffness matrix.
+            if(body._hydrostatic is not None):
+                self._RstInputParam._add("The hydrostatic stiffness matrix is:")
+                self._RstInputParam.newline()
+                self._RstInputParam.directive('math', block='d0')
+                self._RstInputParam.newline()
+                self._RstInputParam._add(r"    K_{%u} = \begin{bmatrix}" % body.i_body)
+                self._RstInputParam._add(r"                0 & 0 & 0 & 0 & 0 & 0 \\")
+                self._RstInputParam._add(r"                0 & 0 & 0 & 0 & 0 & 0 \\")
+                self._RstInputParam._add(r"                0 & 0 & %.2f & %.2f & %.2f & 0 \\" % (body.hydrostatic.matrix33[0, 0], body.hydrostatic.matrix33[0, 1], body.hydrostatic.matrix33[0, 2]))
+                self._RstInputParam._add(r"                0 & 0 & %.2f & %.2f & %.2f & 0 \\" % (body.hydrostatic.matrix33[1, 0], body.hydrostatic.matrix33[1, 1], body.hydrostatic.matrix33[1, 2]))
+                self._RstInputParam._add(r"                0 & 0 & %.2f & %.2f & %.2f & 0 \\" % (body.hydrostatic.matrix33[2, 0], body.hydrostatic.matrix33[2, 1], body.hydrostatic.matrix33[2, 2]))
+                self._RstInputParam._add(r"                0 & 0 & 0 & 0 & 0 & 0 \\")
+                self._RstInputParam._add(r"             \end{bmatrix}")
+                self._RstInputParam.newline()
+
+            # Inertia matrix.
+            if (body._inertia is not None):
+                self._RstInputParam._add("The mass matrix is:")
+                self._RstInputParam.newline()
+                self._RstInputParam.directive('math', block='d0')
+                self._RstInputParam.newline()
+                self._RstInputParam._add(r"    M_{%u} = \begin{bmatrix}" % body.i_body)
+                self._RstInputParam._add(r"                %.2f & 0 & 0 & 0 & 0 & 0 \\" % body.inertia.mass)
+                self._RstInputParam._add(r"                0 & %.2f & 0 & 0 & 0 & 0 \\" % body.inertia.mass)
+                self._RstInputParam._add(r"                0 & 0 & %.2f & 0 & 0 & 0 \\" % body.inertia.mass)
+                self._RstInputParam._add(r"                0 & 0 & 0 & %.2f & %.2f & %.2f \\" % (body.inertia.matrix33[0, 0], body.inertia.matrix33[0, 1], body.inertia.matrix33[0, 2]))
+                self._RstInputParam._add(r"                0 & 0 & 0 & %.2f & %.2f & %.2f \\" % (body.inertia.matrix33[1, 0], body.inertia.matrix33[1, 1], body.inertia.matrix33[1, 2]))
+                self._RstInputParam._add(r"                0 & 0 & 0 & %.2f & %.2f & %.2f \\" % (body.inertia.matrix33[2, 0], body.inertia.matrix33[2, 1], body.inertia.matrix33[2, 2]))
+                self._RstInputParam._add(r"             \end{bmatrix}")
+                self._RstInputParam.newline()
             # Picture of the mesh.
             self.PlotMesh(body, output_folder, mesh_file)
 
