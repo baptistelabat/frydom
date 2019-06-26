@@ -617,7 +617,8 @@ namespace frydom {
         ///
         /// \param type time stepper method
         /// \param checkCompat check compatibility between contact method, solver and time stepper, if true
-        void SetTimeStepper(TIME_STEPPER type, bool checkCompat=true);
+        void SetTimeStepper(TIME_STEPPER type, bool checkCompat);
+        void SetTimeStepper(TIME_STEPPER type);
 
         /// Sets the time step used for integration (dynamical simulation).
         /// The lower this value, the more precise the simulation. Usually, values
@@ -690,17 +691,25 @@ namespace frydom {
         /// \param endTime end time of the simulation
         /// \param dist distance of the camera from the subject, in the viewer environment
         /// \param recordVideo record snapshots if turned true
-        void RunInViewer(double endTime, double dist=100, bool recordVideo=false);
+        /// \param videoFrameSaveInterval interval between two frame saves
+        void RunInViewer(double endTime, double dist, bool recordVideo, int videoFrameSaveInterval);
+        void RunInViewer(double endTime, double dist);
+        void RunInViewer(double endTime);
+        void RunInViewer();
 
         /// Visualize the scene as you set up, no simulation involved
         /// \param dist distance of the camera from the subject, in the viewer environment
         /// \param recordVideo record snapshots if turned true
-        void Visualize(double dist=100, bool recordVideo=false);
+        void Visualize(double dist, bool recordVideo);
+        void Visualize(double dist);
+        void Visualize();
 
         /// Visualize the scene as you set up, no simulation involved
         /// \param dist distance of the camera from the subject, in the viewer environment
         /// \param recordVideo record snapshots if turned true
-        void VisualizeStaticAnalysis(double dist=100, bool recordVideo=false);
+        void VisualizeStaticAnalysis(double dist, bool recordVideo);
+        void VisualizeStaticAnalysis(double dist);
+        void VisualizeStaticAnalysis();
 
         /// Add an optional asset (it can be used to define visualization shapes, or textures, or custom attached
         /// properties that the user can define by creating his class inherited from FrAssetComponent)

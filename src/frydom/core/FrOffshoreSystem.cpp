@@ -826,6 +826,10 @@ namespace frydom {
 
     }
 
+    void FrOffshoreSystem::SetTimeStepper(TIME_STEPPER type) {
+        SetTimeStepper(type, true);
+    }
+
     void FrOffshoreSystem::SetTimeStep(double timeStep) {
         m_chronoSystem->SetStep(timeStep);
     }
@@ -927,13 +931,7 @@ namespace frydom {
 
     // Irrlicht visualization
 
-    void FrOffshoreSystem::RunInViewer(double endTime, double dist, bool recordVideo) {
-
-        /// This subroutine runs the numerical simulation.
-
-        /// \param endTime End time.
-        /// \param dist Distance of the video camera.
-        /// \param recordVideo True if the video is recorded, false otherwise.
+    void FrOffshoreSystem::RunInViewer(double endTime, double dist, bool recordVideo, int videoFrameSaveInterval) {
 
         // Initialization of the system if not already done.
         IsInitialized();
@@ -943,9 +941,21 @@ namespace frydom {
 
         app.SetTimestep(m_chronoSystem->GetStep());
         app.SetVideoframeSave(recordVideo);
-        app.SetVideoframeSaveInterval(5);
+        app.SetVideoframeSaveInterval(videoFrameSaveInterval);
         app.Run(endTime); // The temporal loop is here.
 
+    }
+
+    void FrOffshoreSystem::RunInViewer(double endTime, double dist) {
+        RunInViewer(endTime, dist, false, 0);
+    }
+
+    void FrOffshoreSystem::RunInViewer(double endTime) {
+        RunInViewer(endTime, 100);
+    }
+
+    void FrOffshoreSystem::RunInViewer() {
+        RunInViewer(0);
     }
 
     void FrOffshoreSystem::Visualize( double dist, bool recordVideo) {
@@ -960,6 +970,14 @@ namespace frydom {
 
     }
 
+    void FrOffshoreSystem::Visualize( double dist) {
+        Visualize(dist, false);
+    }
+
+    void FrOffshoreSystem::Visualize() {
+        Visualize(100);
+    }
+
     void FrOffshoreSystem::VisualizeStaticAnalysis( double dist, bool recordVideo) {
 
         IsInitialized();  // So that system is automatically initialized when run in viewer mode
@@ -970,6 +988,14 @@ namespace frydom {
         app.SetVideoframeSave(recordVideo);
         app.VisualizeStaticAnalysis();
 
+    }
+
+    void FrOffshoreSystem::VisualizeStaticAnalysis( double dist) {
+        VisualizeStaticAnalysis(dist, false);
+    }
+
+    void FrOffshoreSystem::VisualizeStaticAnalysis() {
+        VisualizeStaticAnalysis(100);
     }
 
     void FrOffshoreSystem::AddAsset(std::shared_ptr<chrono::ChAsset> asset) {
