@@ -693,6 +693,7 @@ namespace frydom {
         /// \param recordVideo record snapshots if turned true
         /// \param videoFrameSaveInterval interval between two frame saves
         void RunInViewer(double endTime, double dist, bool recordVideo, int videoFrameSaveInterval);
+        void RunInViewer(double endTime, double dist, bool recordVideo);
         void RunInViewer(double endTime, double dist);
         void RunInViewer(double endTime);
         void RunInViewer();

@@ -946,8 +946,12 @@ namespace frydom {
 
     }
 
+    void FrOffshoreSystem::RunInViewer(double endTime, double dist, bool recordVideo) {
+        RunInViewer(endTime, dist, recordVideo, 10);
+    }
+
     void FrOffshoreSystem::RunInViewer(double endTime, double dist) {
-        RunInViewer(endTime, dist, false, 0);
+        RunInViewer(endTime, dist, false);
     }
 
     void FrOffshoreSystem::RunInViewer(double endTime) {
