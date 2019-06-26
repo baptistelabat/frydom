@@ -85,6 +85,9 @@ class pyHDB():
         # RAO.
         self.has_RAO = False
 
+        # Eigenfrequencies.
+        self.has_Eigenfrequencies = False
+
         # Drift loads from Kochin functions.
         self.has_Drift_Kochin = False
         self.Wave_drift_force = None
@@ -1152,9 +1155,11 @@ class pyHDB():
 
         dg = writer.create_group(wave_drift_path)
 
+        # Loop over the degrees of freedom.
         for key, mode in self.wave_drift.modes.items():
             grp_modes = dg.require_group(mode.name)
 
+            # Loop over the wave directions.
             for i_angle, angle in enumerate(mode.heading):
                 grp_dir = grp_modes.require_group("heading_%i" % i_angle)
 
