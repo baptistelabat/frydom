@@ -679,7 +679,7 @@ class pyHDB():
                 self.write_body(writer, body)
 
             # Update the format of the drift coefficients if computed from Kochin functions.
-            if(self.has_Drift_Kochin):
+            if(self.has_Drift_Kochin is False and self._wave_drift is None):
                 self.UpdateDriftObject()
 
             # Wave drift coefficients.
@@ -1168,7 +1168,7 @@ class pyHDB():
                 dset.attrs['Unit'] = 'rad'
                 dset.attrs['Description'] = "Heading angle"
 
-                # Set dat
+                # Set data.
                 dset = grp_dir.create_dataset("data", data=np.array(mode.data)[i_angle, :])
                 dset.attrs['Description'] = "Wave Drift force coefficients"
 
@@ -1204,12 +1204,13 @@ class pyHDB():
 
         # Loop over the wave directions.
         for ibeta in range(0, self.nb_wave_dir):
-            self._wave_drift.add_cx(self.omega, self.Wave_drift_force[0, :, ibeta], self.wave_dir[ibeta]) # Surge.
-            self._wave_drift.add_cy(self.omega, self.Wave_drift_force[1, :, ibeta], self.wave_dir[ibeta]) # Sway.
             self._wave_drift.add_cn(self.omega, self.Wave_drift_force[2, :, ibeta], self.wave_dir[ibeta]) # Yaw.
+            self._wave_drift.add_cy(self.omega, self.Wave_drift_force[1, :, ibeta], self.wave_dir[ibeta]) # Sway.
+            self._wave_drift.add_cx(self.omega, self.Wave_drift_force[0, :, ibeta], self.wave_dir[ibeta]) # Surge.
 
         # Deletion of the old structure.
-        del self.Wave_drift_force
+        self.Wave_drift_force = None
+        self.has_Drift_Kochin = False
 
     def write_version(self, writer):
         """This function writes the version of the *.hdb5 file.

@@ -293,6 +293,10 @@ def get_Arg_part_2_CE(args, database):
     if (args.sym_hdb is True):
         database.symmetry_HDB()
 
+    return database
+
+def get_Arg_part_3_CE(args, database):
+
     # Plot added mass and damping coefficients.
     if (args.plot_radiation is not None):
         nb_plots_radiation = len(args.plot_radiation)
@@ -334,7 +338,7 @@ def get_Arg_part_2_CE(args, database):
 
     return database
 
-def get_Arg_part_3_CE(args, database):
+def get_Arg_part_4_CE(args, database):
 
     # Writing the hdb5 output file.
     if (args.write is not None):
@@ -346,7 +350,7 @@ def get_Arg_part_3_CE(args, database):
 
     return database
 
-def get_Arg_part_4_CE(args, database):
+def get_Arg_part_5_CE(args, database):
 
     # Report generation - Building the html file.
     if (args.report_generation is not None):
@@ -389,6 +393,9 @@ def main():
 
     # 4th set of arguments - FRyDoM CE.
     database = get_Arg_part_4_CE(args, database)
+
+    # 5th set of arguments - FRyDoM CE.
+    database = get_Arg_part_5_CE(args, database)
 
 if __name__ == '__main__':
     main()

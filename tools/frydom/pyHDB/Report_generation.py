@@ -239,6 +239,7 @@ class report():
         self._RstHDB.newline()
         self.WriteLoads(pyHDB, output_folder, self._RstExcitation, 2)
 
+        # Post-processing results.
         self._RstPP.title("Post-processing results")
         self._RstPP.newline()
         self._RstPP._add("This chapter presents the post-processing results obtained from the hydrodynamic database.")
@@ -375,7 +376,7 @@ class report():
 
                     # Caption.
                     RSTfile._add('   Amplitude (top) and phase (bottom) of the ' + FilenameMin + ' ' + force_str + ' on body ' + str(body.i_body + 1)
-                                            + " along direction " + str(iforce + 1) + " for a wave direction of " + str(beta) + " deg")
+                                            + " along direction " + str(iforce + 1) + " for a wave direction of %.1f deg" % beta)
                     RSTfile.newline()
 
     def WriteIRF(self, pyHDB, output_folder, RSTfile, SpeedOrNot):

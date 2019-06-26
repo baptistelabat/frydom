@@ -505,7 +505,10 @@ class HDB5reader_v2(HDB5reader):
                 pass
 
             # Position of the body.
-            body.position = np.array(reader[body_path + "/BodyPosition"])
+            try:
+                body.position = np.array(reader[body_path + "/BodyPosition"])
+            except:
+                pass
 
             # Force modes.
             self.read_mode(reader, body, 0, body_path + "/Modes")
@@ -582,7 +585,6 @@ class HDB5reader_v1(HDB5reader):
             if (iforce >= 3):
                 if (ForceOrMotion == 0):  # Force.
                     if(body.Motion_mask[iforce] == 1):
-                        print mode_path + "/Point"
                         body.point[iforce - 3, :] = np.array(reader[mode_path + "/Point"])
                 else: # Motion.
                     if (body.Force_mask[iforce] == 1):
