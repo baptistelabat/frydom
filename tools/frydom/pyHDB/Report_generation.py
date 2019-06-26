@@ -67,6 +67,10 @@ class report():
         self._RstPP = RstCloth()
         self._PPFileName = "PP_results"
 
+        # Infinite added mass matrix.
+        self._RstInfAddedMass = RstCloth()
+        self._InfAddedMassFileName = "Inf_Added_mass"
+
         # IRF.
         self._RstIRF = RstCloth()
         self._IRFFileName = "IRF"
@@ -212,6 +216,7 @@ class report():
                 self._RstInputParam._add(r"                0 & 0 & 0 & %.2f & %.2f & %.2f \\" % (body.inertia.matrix33[2, 0], body.inertia.matrix33[2, 1], body.inertia.matrix33[2, 2]))
                 self._RstInputParam._add(r"             \end{bmatrix}")
                 self._RstInputParam.newline()
+
             # Picture of the mesh.
             self.PlotMesh(body, output_folder, mesh_file)
 
@@ -277,6 +282,11 @@ class report():
         self._RstPP.newline()
         self._RstPP.directive(name="toctree", fields=[('maxdepth', '3')])
         self._RstPP.newline()
+
+        # IRF.
+        self._RstPP.content('../Source/' + self._InfAddedMassFileName, indent=3, block='ct2')
+        self._RstPP.newline()
+        self.WriteInfAddedMass(pyHDB, output_folder, self._RstInfAddedMass)
 
         # IRF.
         self._RstPP.content('../Source/' + self._IRFFileName, indent=3, block='ct2')
@@ -352,19 +362,19 @@ class report():
         if(DiffOrFKOrExc == 0): # Diffraction.
             RSTfile.title("Diffraction loads")
             RSTfile.newline()
-            RSTfile._add("This section presents the diffraction results.")
+            RSTfile._add("This section presents the diffraction load results.")
             FilenameMaj = "Diffraction"
             FilenameMin = "diffraction"
         elif (DiffOrFKOrExc == 1): # Froude-Krylov.
             RSTfile.title("Froude-Krylov loads")
             RSTfile.newline()
-            RSTfile._add("This section presents the diffraction results.")
+            RSTfile._add("This section presents the Froude-Krylov load results.")
             FilenameMaj = "Froude-Krylov"
             FilenameMin = "Froude-Krylov"
         else: # Excitation.
             RSTfile.title("Excitation loads")
             RSTfile.newline()
-            RSTfile._add("This section presents the excitation results.")
+            RSTfile._add("This section presents the excitation load results.")
             FilenameMaj = "Excitation"
             FilenameMin = "excitation"
         RSTfile.newline()
@@ -410,6 +420,43 @@ class report():
                                             + " along direction " + str(iforce + 1) + " for a wave direction of %.1f deg" % beta)
                     RSTfile.newline()
 
+    def WriteInfAddedMass(self, pyHDB, output_folder, RSTfile):
+        """ This function writes the infinite added mass matrix in a *.rst file.
+
+        Parameter
+        ---------
+        RSTfile : RST object.
+            RST object to write the loads.
+        """
+
+        RSTfile.title("Infinite added mass matrices")
+        RSTfile.newline()
+        RSTfile._add("This section presents the infinite added mass matrix for each body.")
+        RSTfile.newline()
+
+        # Loop over the bodies.
+        for body in pyHDB.bodies:
+            if (body.Inf_Added_mass is not None):
+                RSTfile.h1("Body " + str(body.i_body + 1))
+                RSTfile.newline()
+                RSTfile.directive('math', block='d0')
+                RSTfile.newline()
+                RSTfile._add(r"    A_{%u}^{\infty} = \begin{bmatrix}" % body.i_body)
+                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[0, 0], body.Inf_Added_mass[0, 1], body.Inf_Added_mass[0, 2],
+                             body.Inf_Added_mass[0, 3], body.Inf_Added_mass[0, 4], body.Inf_Added_mass[0, 5]))
+                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[1, 0], body.Inf_Added_mass[1, 1], body.Inf_Added_mass[1, 2],
+                             body.Inf_Added_mass[1, 3], body.Inf_Added_mass[1, 4], body.Inf_Added_mass[1, 5]))
+                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[2, 0], body.Inf_Added_mass[2, 1], body.Inf_Added_mass[2, 2],
+                             body.Inf_Added_mass[2, 3], body.Inf_Added_mass[2, 4], body.Inf_Added_mass[2, 5]))
+                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[3, 0], body.Inf_Added_mass[3, 1], body.Inf_Added_mass[3, 2],
+                             body.Inf_Added_mass[3, 3], body.Inf_Added_mass[3, 4], body.Inf_Added_mass[3, 5]))
+                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[4, 0], body.Inf_Added_mass[4, 1], body.Inf_Added_mass[4, 2],
+                             body.Inf_Added_mass[4, 3], body.Inf_Added_mass[4, 4], body.Inf_Added_mass[4, 5]))
+                RSTfile._add(r"                %.2f & %.2f & %.2f & %.2f & %.2f & %.2f \\" % (body.Inf_Added_mass[5, 0], body.Inf_Added_mass[5, 1], body.Inf_Added_mass[5, 2],
+                             body.Inf_Added_mass[5, 3], body.Inf_Added_mass[5, 4], body.Inf_Added_mass[5, 5]))
+                RSTfile._add(r"             \end{bmatrix}")
+                RSTfile.newline()
+
     def WriteIRF(self, pyHDB, output_folder, RSTfile, SpeedOrNot):
         """ This function writes the diffraction or Froude-Krylov or excitation results in a *.rst file.
 
@@ -417,7 +464,7 @@ class report():
         ----------
         RSTfile : RST object.
             RST object to write the loads.
-        peedOrNot : int
+        SpeedOrNot : int
             IRF with forward speed (1) or not (0).
         """
 
@@ -491,6 +538,7 @@ class report():
         self._RstDiffraction.write(os.path.join(self.source_folder, self._DiffractionFileName + self.Ext)) # Diffraction.rst.
         self._RstFroudeKrylov.write(os.path.join(self.source_folder, self._FroudeKrylovFileName + self.Ext)) # Froude_Krylov.rst.
         self._RstExcitation.write(os.path.join(self.source_folder, self._ExcitationFileName + self.Ext)) # Excitation.rst.
+        self._RstInfAddedMass.write(os.path.join(self.source_folder, self._InfAddedMassFileName + self.Ext)) # Inf_Added_mass.rst.
         self._RstIRF.write(os.path.join(self.source_folder, self._IRFFileName + self.Ext)) # IRF.rst.
         self._RstIRFspeed.write(os.path.join(self.source_folder, self._IRFspeedFileName + self.Ext)) # IRF_speed.rst.
 
