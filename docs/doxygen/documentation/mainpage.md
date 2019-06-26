@@ -18,3 +18,9 @@ Examples of how to use FRyDoM features, demo of particular application cases and
 Start here to learn more about FRyDoM.
 
 ---
+
+@subpage logs
+
+Description of the logs philosophy, architecture. Instructions to add logs to new classes. 
+
+---
