@@ -473,8 +473,8 @@ class HDB5(object):
     def report_building_html(self, output_folder):
         """This function builds a *.html file of the report."""
 
-        # Writing HDB_results.rst.
-        self.report.WriteHDBRst(output_folder)
+        # Writing PP_results.rst.
+        self.report.WritePPRst(output_folder)
 
         # Building the html file.
         self.report.BuildHTML(output_folder)
