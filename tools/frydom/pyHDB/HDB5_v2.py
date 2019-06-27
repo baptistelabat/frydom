@@ -459,7 +459,7 @@ class HDB5(object):
         self.report = report(output_folder)
 
         # Description of the report.
-        self.report.WriteIndex()
+        self.report.WriteIndex(self._pyHDB)
 
         # Input parameters.
         self.report.WriteInputParameters(self._pyHDB, output_folder)

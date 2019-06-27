@@ -87,6 +87,12 @@ class HDB5reader():
         # Number of bodies.
         pyHDB.nb_bodies = np.array(reader['NbBody'])
 
+        # Solver.
+        try:
+            pyHDB.solver = np.array(reader['Solver'])
+        except:
+            pyHDB.solver = "Nemoh"
+
     def read_discretization(self, reader, pyHDB):
         """This function reads the discretization parameters of the *.hdb5 file.
 

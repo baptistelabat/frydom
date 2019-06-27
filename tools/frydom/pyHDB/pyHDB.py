@@ -92,6 +92,9 @@ class pyHDB():
         self.has_Drift_Kochin = False
         self.Wave_drift_force = None
 
+        # Solver.
+        self.solver = None
+
     def set_wave_frequencies(self):
         """Frequency array of BEM computations in rad/s.
 
@@ -725,6 +728,10 @@ class pyHDB():
         # Number of bodies.
         dset = writer.create_dataset('NbBody', data=self.nb_bodies)
         dset.attrs['Description'] = 'Number of hydrodynamic bodies.'
+
+        # Solver.
+        dset = writer.create_dataset('Solver', data=self.solver)
+        dset.attrs['Description'] = 'Hydrodynamic solver used for computing the hydrodynamic database.'
 
     def write_discretization(self,writer):
         """This function writes the discretization parameters into the *.hdb5 file.

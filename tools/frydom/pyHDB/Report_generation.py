@@ -93,13 +93,12 @@ class report():
         if not os.path.exists(self.source_folder):
             os.makedirs(self.source_folder)
 
-    def WriteIndex(self):
+    def WriteIndex(self, pyHDB):
         """This function writes the rst file Index.rst."""
 
         self._RstIndex.title("Hydrodynamic database results")
         self._RstIndex.newline()
-        self._RstIndex._add("This report presents the results of the hydrodynamic database obtained with **Nemoh**."
-                           "It remains the input parameters of used in **Nemoh** and the post-processing achieved by **HDB5tool**.")
+        self._RstIndex._add("This report presents the results of the hydrodynamic database obtained with **"+pyHDB.solver+"** and the post-processing results obtained with **HDB5tool**.")
         self._RstIndex.newline()
         now = datetime.datetime.now()
         self._RstIndex._add("Report generated date: " + str(now.strftime("%Y-%m-%d")))
@@ -137,7 +136,7 @@ class report():
 
         self._RstInputParam.title("Input parameters")
         self._RstInputParam.newline()
-        self._RstInputParam._add("This chapter lists the input parameters used in the frequency-domain linear potential flow based solver **Nemoh**."
+        self._RstInputParam._add("This chapter lists the input parameters used in the frequency-domain linear potential flow based solver **"+pyHDB.solver+"**."
                                  " They are listed in the next table:")
         self._RstInputParam.newline()
         self._RstInputParam._add(r'================================= ==================================')
