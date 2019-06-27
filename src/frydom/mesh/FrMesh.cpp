@@ -9,52 +9,48 @@ namespace frydom {
     namespace mesh {
 
 
-        InertialProperties CalcPlainInertiaProperties(const FrMesh &mesh, const double density) {
+        FrInertiaTensor CalcPlainInertiaProperties(const FrMesh &mesh, const double density) {
 
-//            assert(mesh.IsWatertight());
+            auto mass = density * mesh.GetVolume();
+            auto COG = mesh.GetCOG();
 
-            InertialProperties inertialProperties;
-
-            inertialProperties.m_mass = density * mesh.GetVolume();
-            inertialProperties.m_cog = mesh.GetCOG();
+            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
 
             double intV_x2 = mesh.GetVolumeIntegral(POLY_X2);
             double intV_y2 = mesh.GetVolumeIntegral(POLY_Y2);
             double intV_z2 = mesh.GetVolumeIntegral(POLY_Z2);
 
-            inertialProperties.m_inertiaTensor.Ixx = density * (intV_y2 + intV_z2);
-            inertialProperties.m_inertiaTensor.Iyy = density * (intV_x2 + intV_z2);
-            inertialProperties.m_inertiaTensor.Izz = density * (intV_x2 + intV_y2);
+            Ixx = density * (intV_y2 + intV_z2);
+            Iyy = density * (intV_x2 + intV_z2);
+            Izz = density * (intV_x2 + intV_y2);
 
-            inertialProperties.m_inertiaTensor.Iyz = -density * mesh.GetVolumeIntegral(POLY_YZ);
-            inertialProperties.m_inertiaTensor.Ixz = -density * mesh.GetVolumeIntegral(POLY_XZ);
-            inertialProperties.m_inertiaTensor.Ixy = -density * mesh.GetVolumeIntegral(POLY_XY);
+            Iyz = -density * mesh.GetVolumeIntegral(POLY_YZ);
+            Ixz = -density * mesh.GetVolumeIntegral(POLY_XZ);
+            Ixy = -density * mesh.GetVolumeIntegral(POLY_XY);
 
-            // FIXME : appliquer Huygens pour transporter ces coefficients en G !!!!!!!!!!!! (c'est fait pour l'inertie coque !!)
-
-            return inertialProperties;
+            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(), COG, NWU);
         }
 
 
-        InertialProperties CalcShellInertiaProperties(const FrMesh &mesh, double rho, double thickness) {
+        FrInertiaTensor CalcPlainEqInertiaProperties(const FrMesh &mesh, double mass) {
+            return CalcPlainInertiaProperties(mesh, mass/mesh.GetVolume());
+        }
 
-            InertialProperties inertialProperties;
+
+        FrInertiaTensor CalcShellInertiaProperties(const FrMesh &mesh, double density, double thickness) {
+
 
             double area = mesh.GetArea();
 
-            double re = rho * thickness;
+            double re = density * thickness;
 
-            inertialProperties.m_mass = re * area;
+            auto mass = re * area;
 
-            double xg, yg, zg;
-            xg = yg = zg = 0.;
+            auto COG = mesh.GetShellCOG();
+
             double Intx2, Inty2, Intz2, Intyz, Intxz, Intxy;
             Intx2 = Inty2 = Intz2 = Intyz = Intxz = Intxy = 0.;
             for (FrMesh::FaceIter f_iter = mesh.faces_begin(); f_iter != mesh.faces_end(); ++f_iter) {
-
-                xg += mesh.data(*f_iter).GetSurfaceIntegral(POLY_X);
-                yg += mesh.data(*f_iter).GetSurfaceIntegral(POLY_Y);
-                zg += mesh.data(*f_iter).GetSurfaceIntegral(POLY_Z);
 
                 Intx2 += mesh.data(*f_iter).GetSurfaceIntegral(POLY_X2);
                 Inty2 += mesh.data(*f_iter).GetSurfaceIntegral(POLY_Y2);
@@ -64,39 +60,23 @@ namespace frydom {
                 Intxy += mesh.data(*f_iter).GetSurfaceIntegral(POLY_XY);
 
             }
-            xg /= area;
-            yg /= area;
-            zg /= area;
 
-            inertialProperties.m_cog = {xg, yg, zg};
+            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
 
             // The inertia tensor is expressed at the mesh origin (not COG)
-            inertialProperties.m_inertiaTensor.Ixx = re * (Inty2 + Intz2);
-            inertialProperties.m_inertiaTensor.Iyy = re * (Intx2 + Intz2);
-            inertialProperties.m_inertiaTensor.Izz = re * (Intx2 + Inty2);
+            Ixx = re * (Inty2 + Intz2);
+            Iyy = re * (Intx2 + Intz2);
+            Izz = re * (Intx2 + Inty2);
 
-            inertialProperties.m_inertiaTensor.Iyz = -re * Intyz;
-            inertialProperties.m_inertiaTensor.Ixz = -re * Intxz;
-            inertialProperties.m_inertiaTensor.Ixy = -re * Intxy;
+            Iyz = -re * Intyz;
+            Ixz = -re * Intxz;
+            Ixy = -re * Intxy;
 
-            // Transporting from mesh origin to COG (Generalized Huygens theorem)
-            double m = inertialProperties.m_mass;
-            double xg2 = xg * xg;
-            double yg2 = yg * yg;
-            double zg2 = zg * zg;
+            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, FrFrame(), COG, NWU);
+        }
 
-            inertialProperties.m_inertiaTensor.Ixx -= m * (yg2 + zg2);
-            inertialProperties.m_inertiaTensor.Iyy -= m * (xg2 + zg2);
-            inertialProperties.m_inertiaTensor.Izz -= m * (xg2 + yg2);
-
-            inertialProperties.m_inertiaTensor.Iyz -= -m * yg * zg;
-            inertialProperties.m_inertiaTensor.Ixz -= -m * xg * zg;
-            inertialProperties.m_inertiaTensor.Ixy -= -m * xg * yg;
-
-            inertialProperties.m_inertiaTensor.calcPoint = inertialProperties.m_cog;
-
-
-            return inertialProperties;
+        FrInertiaTensor CalcShellEqInertiaProperties(const FrMesh &mesh, double mass, double thickness) {
+            CalcShellInertiaProperties(mesh, mass/(mesh.GetArea()*thickness), thickness);
         }
 
         void meshutils::IncrementalMeshWriter::operator()(const FrMesh &mesh) {
@@ -602,80 +582,80 @@ namespace frydom {
 
         }
 
-        const FrInertiaTensor FrMesh::GetPlainInertiaTensorAtCOG(double density) const {
-
-            auto volume = GetVolume();
-            auto mass = volume * density;
-
-            auto COG = GetCOG();
-
-            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-            Ixx = Iyy = Izz= Ixy= Ixz= Iyz = 0.;
-
-            mesh::FrMesh::Normal Normal;
-
-            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-                Normal = normal(*f_iter);
-                Ixx += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y3) + Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z3);
-                Iyy += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X3) + Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z3);
-                Izz += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X3) + Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y3);
-                Ixy += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2Y);
-                Ixz += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2X);
-                Iyz += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2Z);
-            }
-
-            Ixx *= density/3.;
-            Iyy *= density/3.;
-            Izz *= density/3.;
-            Ixy *= -density/2.;
-            Ixz *= -density/2.;
-            Iyz *= -density/2.;
-
-            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, COG, NWU);
-        }
-
-        const FrInertiaTensor FrMesh::GetPlainEqInertiaTensorAtCOG(double mass) const {
-
-            return GetPlainInertiaTensorAtCOG(mass/GetVolume());
-
-        }
-
-        const FrInertiaTensor FrMesh::GetShellInertiaTensorAtCOG(double density, double thickness) const {
-
-            auto area = GetArea();
-            auto mass = area * thickness * density;
-
-            auto COG = GetShellCOG();
-            auto COGTest = GetCOG();
-
-
-            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
-            Ixx = Iyy = Izz= Ixy= Ixz= Iyz = 0.;
-
-            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-                Ixx += data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
-                Iyy += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
-                Izz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
-                Ixy += data(*f_iter).GetSurfaceIntegral(mesh::POLY_YZ);
-                Ixz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_XZ);
-                Iyz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_XY);
-            }
-
-            Ixx *= density * thickness;
-            Iyy *= density * thickness;
-            Izz *= density * thickness;
-            Ixy *= -density * thickness;
-            Ixz *= -density * thickness;
-            Iyz *= -density * thickness;
-
-            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, COG, NWU);
-        }
-
-        const FrInertiaTensor FrMesh::GetShellEqInertiaTensorAtCOG(double mass, double thickness) const {
-
-            GetShellInertiaTensorAtCOG(GetArea()* thickness / mass, thickness);
-
-        }
+//        const FrInertiaTensor FrMesh::GetPlainInertiaTensorAtCOG(double density) const {
+//
+//            auto volume = GetVolume();
+//            auto mass = volume * density;
+//
+//            auto COG = GetCOG();
+//
+//            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+//            Ixx = Iyy = Izz= Ixy= Ixz= Iyz = 0.;
+//
+//            mesh::FrMesh::Normal Normal;
+//
+//            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+//                Normal = normal(*f_iter);
+//                Ixx += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y3) + Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z3);
+//                Iyy += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X3) + Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z3);
+//                Izz += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X3) + Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y3);
+//                Ixy += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2Y);
+//                Ixz += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2X);
+//                Iyz += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2Z);
+//            }
+//
+//            Ixx *= density/3.;
+//            Iyy *= density/3.;
+//            Izz *= density/3.;
+//            Ixy *= -density/2.;
+//            Ixz *= -density/2.;
+//            Iyz *= -density/2.;
+//
+//            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, COG, NWU);
+//        }
+//
+//        const FrInertiaTensor FrMesh::GetPlainEqInertiaTensorAtCOG(double mass) const {
+//
+//            return GetPlainInertiaTensorAtCOG(mass/GetVolume());
+//
+//        }
+//
+//        const FrInertiaTensor FrMesh::GetShellInertiaTensorAtCOG(double density, double thickness) const {
+//
+//            auto area = GetArea();
+//            auto mass = area * thickness * density;
+//
+//            auto COG = GetShellCOG();
+//            auto COGTest = GetCOG();
+//
+//
+//            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+//            Ixx = Iyy = Izz= Ixy= Ixz= Iyz = 0.;
+//
+//            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+//                Ixx += data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
+//                Iyy += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
+//                Izz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
+//                Ixy += data(*f_iter).GetSurfaceIntegral(mesh::POLY_YZ);
+//                Ixz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_XZ);
+//                Iyz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_XY);
+//            }
+//
+//            Ixx *= density * thickness;
+//            Iyy *= density * thickness;
+//            Izz *= density * thickness;
+//            Ixy *= -density * thickness;
+//            Ixz *= -density * thickness;
+//            Iyz *= -density * thickness;
+//
+//            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, COG, NWU);
+//        }
+//
+//        const FrInertiaTensor FrMesh::GetShellEqInertiaTensorAtCOG(double mass, double thickness) const {
+//
+//            GetShellInertiaTensorAtCOG(GetArea()* thickness / mass, thickness);
+//
+//        }
 
         bool FrMesh::HasBoundaries() const {  // FIXME: si le maillage est non conforme mais hermetique, HasBoudaries() renvoie true et donc IsWatertight() false, c'est un faux négatif...
             for (FaceIter fh = faces_begin(); fh != faces_end(); ++fh) {

@@ -503,13 +503,13 @@ namespace frydom {
 
             const Position GetShellCOG() const;
 
-            const FrInertiaTensor GetPlainInertiaTensorAtCOG(double density) const;
-
-            const FrInertiaTensor GetPlainEqInertiaTensorAtCOG(double mass) const;
-
-            const FrInertiaTensor GetShellInertiaTensorAtCOG(double density, double thickness) const;
-
-            const FrInertiaTensor GetShellEqInertiaTensorAtCOG(double mass, double thickness) const;
+//            const FrInertiaTensor GetPlainInertiaTensorAtCOG(double density) const;
+//
+//            const FrInertiaTensor GetPlainEqInertiaTensorAtCOG(double mass) const;
+//
+//            const FrInertiaTensor GetShellInertiaTensorAtCOG(double density, double thickness) const;
+//
+//            const FrInertiaTensor GetShellEqInertiaTensorAtCOG(double mass, double thickness) const;
 
 
 
@@ -575,10 +575,13 @@ namespace frydom {
 
         };
 
-        InertialProperties CalcPlainInertiaProperties(const FrMesh &mesh, double density);
+        FrInertiaTensor CalcPlainInertiaProperties(const FrMesh &mesh, double density);
 
-        InertialProperties
-        CalcShellInertiaProperties(const FrMesh &mesh, double rho, double thickness);
+        FrInertiaTensor CalcPlainEqInertiaProperties(const FrMesh &mesh, double mass);
+
+        FrInertiaTensor CalcShellInertiaProperties(const FrMesh &mesh, double density, double thickness);
+
+        FrInertiaTensor CalcShellEqInertiaProperties(const FrMesh &mesh, double mass, double thickness);
 
         /// Convert an OpenMesh point into a FRyDoM Vector
         template <class Vector>
