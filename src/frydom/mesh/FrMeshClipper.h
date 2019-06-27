@@ -22,6 +22,7 @@ namespace frydom {
 
     //Forward declarations
     class FrFreeSurface;
+    class FrPlane;
 
     namespace mesh {
 
@@ -33,15 +34,11 @@ namespace frydom {
 
         protected:
 
-            FrFreeSurface* m_freeSurface;
             double m_ThresholdDichotomy = 1e-4;
 
             Position m_bodyPosition = {0.,0.,0.};
 
         public:
-
-            /// Constructor and initialization of the mean height.
-            explicit FrClippingSurface(FrFreeSurface* freeSurface);
 
             /// Set the body position in world reference frame, for correction in ClippingWaveSurface::GetDistance
             /// \param bodyPos
@@ -61,9 +58,13 @@ namespace frydom {
         */
         class FrClippingPlane : public FrClippingSurface {
 
+        private:
+
+            std::shared_ptr<FrPlane> m_plane;
+
         public:
 
-            explicit FrClippingPlane(FrFreeSurface* freeSurface) : FrClippingSurface(freeSurface) {};
+            explicit FrClippingPlane(const std::shared_ptr<FrPlane>& plane) : m_plane(plane) {};
 
             /// This function gives the distance to the plane.
             double GetDistance(const FrMesh::Point &point) const override;
@@ -79,9 +80,13 @@ namespace frydom {
         */
         class FrClippingWaveSurface : public FrClippingSurface {
 
+        private:
+
+            FrFreeSurface* m_freeSurface;
+
         public:
 
-            explicit FrClippingWaveSurface(FrFreeSurface* freeSurface) : FrClippingSurface(freeSurface) {};
+            explicit FrClippingWaveSurface(FrFreeSurface* freeSurface) : m_freeSurface(freeSurface) {};
 
             /// This function gives the distance to the incident wave.
             double GetDistance(const FrMesh::Point &point) const override;

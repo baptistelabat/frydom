@@ -4,16 +4,14 @@
 
 #include "FrMeshClipper.h"
 
+#include "frydom/core/common/FrGeometrical.h"
+
 #include "frydom/environment/ocean/freeSurface/FrFreeSurface.h"
 #include "frydom/environment/ocean/freeSurface/tidal/FrTidalModel.h"
 
 namespace frydom {
     
     namespace mesh {
-
-        FrClippingSurface::FrClippingSurface(FrFreeSurface *freeSurface) : m_freeSurface(freeSurface) {
-
-        }
 
         void FrClippingSurface::SetBodyPosition(Position bodyPos) {
             m_bodyPosition = bodyPos;
@@ -23,11 +21,36 @@ namespace frydom {
 
         VectorT<double, 3>
         FrClippingPlane::GetIntersection(const VectorT<double, 3> &p0, const VectorT<double, 3> &p1) {
+            // Find the abscissa on [P0P1] of the intersection with the plan :
+            // P_i = P(s_i) = P0 + s_i * P0P1
+            // s_i = n . P0O / n . P0P1
+            // O being a point on the plane
 
-            // It is useless because it does not depend on the horizontal position of the mesh.
+            Position P0 = {p0[0],p0[1],p0[2]};
+            Position P1 = {p1[0],p1[1],p1[2]};
 
-            double t = (p0[2] - m_freeSurface->GetTidal()->GetHeight(NWU)) / (p0[2] - p1[2]);
-            return p0 * (1 - t) + p1 * t;
+            // Application of the horizontal translation.
+            auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
+
+            P0 += BodyPos;
+            P1 += BodyPos;
+
+            auto n = m_plane->GetNormaleInWorld(NWU);
+
+            // check if P0P1 is parallel to the plan / or P0P1 null
+            Direction line = (P1 - P0); assert(line.norm()>1E-16);
+            assert(line.dot(n)!=0);
+
+            // P0O
+            Direction vector = m_plane->GetOriginInWorld(NWU) - P0;
+
+            // s_i
+            double s = vector.dot(n) / line.dot(n);
+
+            // P_i
+            Position Intersection = P0 + (P1-P0) * s;
+
+            return {Intersection.GetX(),Intersection.GetY(),Intersection.GetZ()};
 
         }
 
@@ -35,20 +58,16 @@ namespace frydom {
 
             // This function gives the distance between the node and the clipping plane.
 
-            /*
-             * TODO: idee, lorsqu'on fait une requete de distance des vertex, on peut deja effectuer des projections !!
-             * Du coup c'est fait en preliminaire avant les decoupes. Ca permet a priori d'epargner pas mal de clip et de
-             * facettes pourries en plus. Si on a projete, la distance est nulle et on renvoie 0...
-             * Si on a pas projete, la distance est on nulle et on classifie le vertex above ou under.
-             * La classification est faite par la methode ClassifyVertex !! elle ne doit pas etre faite ici
-             * Par contre, il semblerait qu'on soit oblige de passer le maillage en argument :/ afin de pouvoir
-            */
+            auto PointInWorld = OpenMeshPointToVector3d<Position>(point);
 
-            // TODO: projeter !
+            // Application of the horizontal translation.
+            auto BodyPos = m_bodyPosition; BodyPos.GetZ() = 0.;
+            const Position temp = PointInWorld + BodyPos;
 
-            // It is useless because it does not depend on the horizontal position of the mesh.
+            Position vector = temp - m_plane->GetOriginInWorld(NWU);
 
-            return point[2] - m_freeSurface->GetTidal()->GetHeight(NWU);
+            return vector.dot(m_plane->GetNormaleInWorld(NWU));
+
         }
 
         // -----------------------------------------------------------------------------------------------------------------
