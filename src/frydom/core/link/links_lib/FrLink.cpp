@@ -12,10 +12,17 @@
 
 #include "FrLink.h"
 
+#include "chrono/solver/ChSystemDescriptor.h"
+#include "chrono/physics/ChLinkMasked.h"
+
 #include "frydom/core/common/FrNode.h"
 #include "frydom/core/body/FrBody.h"
 #include "actuators/FrActuator.h"
 #include "FrDOFMaskLink.h"
+
+#include "frydom/core/link/FrLinkMaskBase.h"
+#include "frydom/core/link/constraint/FrConstraintTwoBodiesBase.h"
+
 
 
 namespace frydom {
@@ -78,7 +85,7 @@ namespace frydom {
         }
 
         void FrLinkLockBase::SetupInitial() {
-            m_frydomLink->Initialize();
+
         }
 
         void FrLinkLockBase::Update(double time, bool update_assets) {
@@ -130,7 +137,7 @@ namespace frydom {
         void FrLinkLockBase::SetMask(FrDOFMask* vmask) {
 
             if (vmask->GetLinkType() == LINK_TYPE::CUSTOM) {
-                chrono::ChLinkMaskLF chronoMask;
+                FrLinkMaskBase chronoMask;
                 chronoMask.SetLockMask(
                     vmask->GetLock_X(),  // x
                     vmask->GetLock_Y(),  // y
@@ -166,6 +173,64 @@ namespace frydom {
         FrFrame FrLinkLockBase::GetConstraintViolation() { // TODO : voir si c'est bien la violation de 2 par rapport a 1, dans 1 !! sinon, renvoyer l'inverse
             return internal::ChCoordsys2FrFrame(GetRelC());
         }
+
+        void FrLinkLockBase::BuildLinkType(chrono::ChLinkLock::LinkType link_type) {
+
+            type = link_type;
+
+            FrLinkMaskBase m_mask;
+
+            // SetLockMask() sets the constraints for the link coordinates: (X,Y,Z, E0,E1,E2,E3)
+            switch (type) {
+                case LinkType::FREE:
+                    m_mask.SetLockMask(false, false, false, false, false, false, false);
+                    break;
+                case LinkType::LOCK:
+                    m_mask.SetLockMask(true, true, true, false, true, true, true);
+                    break;
+                case LinkType::SPHERICAL:
+                    m_mask.SetLockMask(true, true, true, false, false, false, false);
+                    break;
+                case LinkType::POINTPLANE:
+                    m_mask.SetLockMask(false, false, true, false, false, false, false);
+                    break;
+                case LinkType::POINTLINE:
+                    m_mask.SetLockMask(false, true, true, false, false, false, false);
+                    break;
+                case LinkType::REVOLUTE:
+                    m_mask.SetLockMask(true, true, true, false, true, true, false);
+                    break;
+                case LinkType::CYLINDRICAL:
+                    m_mask.SetLockMask(true, true, false, false, true, true, false);
+                    break;
+                case LinkType::PRISMATIC:
+                    m_mask.SetLockMask(true, true, false, false, true, true, true);
+                    break;
+                case LinkType::PLANEPLANE:
+                    m_mask.SetLockMask(false, false, true, false, true, true, false);
+                    break;
+                case LinkType::OLDHAM:
+                    m_mask.SetLockMask(false, false, true, false, true, true, true);
+                    break;
+                case LinkType::ALIGN:
+                    m_mask.SetLockMask(false, false, false, false, true, true, true);
+                case LinkType::PARALLEL:
+                    m_mask.SetLockMask(false, false, false, false, true, true, false);
+                    break;
+                case LinkType::PERPEND:
+                    m_mask.SetLockMask(false, false, false, false, true, false, true);
+                    break;
+                case LinkType::REVOLUTEPRISMATIC:
+                    m_mask.SetLockMask(false, true, true, false, true, true, false);
+                    break;
+                default:
+                    m_mask.SetLockMask(false, false, false, false, false, false, false);
+                    break;
+            }
+
+            BuildLink(&m_mask);
+        }
+
 
     }  // end namespace frydom::internal
 
@@ -376,6 +441,7 @@ namespace frydom {
     void FrLink::Initialize() {
 
         SetNodes(m_node1.get(), m_node2.get());
+        m_chronoLink->SetupInitial();
     }
 
     void FrLink::Update(double time) {

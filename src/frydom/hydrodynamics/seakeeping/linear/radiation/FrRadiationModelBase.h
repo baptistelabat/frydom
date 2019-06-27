@@ -86,12 +86,6 @@ namespace frydom {
             void IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
                                    const unsigned int off_L, chrono::ChVectorDynamic<>& L) override;
 
-            //void InjectVariables(chrono::ChSystemDescriptor& mdescriptor) override;
-
-            //void VariablesFbReset() override;
-
-            //void VariablesFbIncrementMq() override;
-
             int GetBodyOffset(FrBody* body) const;
 
             void InjectVariablesToBody();

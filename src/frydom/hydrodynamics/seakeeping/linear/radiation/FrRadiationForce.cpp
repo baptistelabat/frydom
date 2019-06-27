@@ -114,6 +114,8 @@ namespace frydom {
         auto torque = m_radiationModel->GetRadiationTorque(m_body);
 
         SetForceTorqueInWorldAtCOG(force, torque, NWU);
+
+        this->UpdateForceInertiaPart();
     }
 
     void FrRadiationConvolutionForce::UpdateForceInertiaPart() {

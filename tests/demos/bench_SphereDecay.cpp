@@ -137,6 +137,7 @@ int main(int argc, char* argv[]) {
 
     FrOffshoreSystem system;
     system.SetName("Sphere_Decay");
+    system.GetPathManager()->SetLogFrameConvention(NWU);
 
     auto Ocean = system.GetEnvironment()->GetOcean();
     Ocean->SetDensity(1000);

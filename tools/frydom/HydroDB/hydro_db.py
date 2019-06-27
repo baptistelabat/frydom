@@ -265,7 +265,8 @@ class HydroDB(_FreqDB):
         RadiationDB
         """
 
-        db = deepcopy(self._radiation_db)
+        #db = deepcopy(self._radiation_db)
+        db = self._radiation_db
         db.set_frequencies(self._min_frequency, self._max_frequency, self._nb_frequencies)
         db.wcut = self.wcut
         db.body_mapper = self.body_mapper

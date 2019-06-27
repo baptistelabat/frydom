@@ -28,7 +28,6 @@
 
 // TODO : voir si il n'y a pas moyen de passer ces includes
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModelBase.h"
-#include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesAddedMassBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrVariablesBEMBodyBase.h"
 
 
@@ -1014,17 +1013,15 @@ namespace frydom {
         // This one is made for the FrOffshoreSystem to be able to add the embedded chrono object into the embedded
         // chrono system (ChSystem)
         friend void FrOffshoreSystem::AddBody(std::shared_ptr<frydom::FrBody>);
+
         friend void internal::FrDynamicCableBase::InitializeLinks();
+
         friend void FrOffshoreSystem::RemoveBody(std::shared_ptr<frydom::FrBody>);
 
         friend int internal::FrRadiationModelBase::GetBodyOffset(FrBody* body) const;
-        friend int internal::FrVariablesAddedMassBase::GetBodyOffset(FrBody* body) const ;
-        friend void internal::FrVariablesAddedMassBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &result,
-                                                                     int offset) const;
-        //friend void internal::FrRadiationModelBase::SetVariables(FrBody *body, chrono::ChMatrix<double> &qb, int offset) const;
+
         friend void internal::FrRadiationModelBase::InjectVariablesToBody();
-        friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesFb(FrBody *body) const;
-        friend chrono::ChMatrix<double> internal::FrVariablesAddedMassBase::GetVariablesQb(FrBody *body) const;
+
         friend chrono::ChMatrix<double> internal::FrVariablesBEMBodyBase::GetVariablesFb(FrBody* body) const;
 
      };

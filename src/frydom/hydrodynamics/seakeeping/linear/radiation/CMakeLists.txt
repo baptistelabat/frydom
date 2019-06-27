@@ -1,10 +1,8 @@
 message(STATUS "    ...radiation")
 
 set(SRC_FILES
-        FrVariablesBEMBodyMass.cpp
         FrRadiationForce.cpp
         FrRadiationModel.cpp
-        FrVariablesAddedMassBase.cpp
         FrVariablesBEMBodyBase.cpp
         FrRadiationModelBase.cpp
         )

@@ -13,7 +13,6 @@
 #include "FrRadiationModelBase.h"
 
 #include "frydom/core/body/FrBody.h"
-#include "FrVariablesAddedMassBase.h"
 #include "frydom/hydrodynamics/seakeeping/linear/radiation/FrRadiationModel.h"
 #include "frydom/hydrodynamics/seakeeping/linear/hdb/FrLinearHDBInc.h"
 
@@ -26,16 +25,9 @@ namespace frydom {
         FrRadiationModelBase::FrRadiationModelBase(FrRadiationModel* radiationModel) :
                 m_frydomRadiationModel(radiationModel), FrPhysicsItemBase(radiationModel) {
 
-
-            auto nBodies = radiationModel->GetHydroDB()->GetNbBodies();
-            int nDof = 6*nBodies;
-
-            // Creation of a FrVariablesAddedMassBase class.
-            //m_variables = std::make_shared<FrVariablesAddedMassBase>(this, nDof);
         }
 
         void FrRadiationModelBase::SetupInitial() {
-            //m_variables->Initialize();
             InjectVariablesToBody();
             BuildGeneralizedMass();
         }
@@ -56,23 +48,29 @@ namespace frydom {
 
             for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
 
-                auto residualOffset = GetBodyOffset( HDB->GetBody(BEMBody->first) ); //+off
+                if (BEMBody->second->IsActive()) {
 
-                for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
-                    //auto BEMBodyMotion = BEMBody;
-                    auto bodyOffset = GetBodyOffset( HDB->GetBody(BEMBodyMotion->first) ); //+off
+                    auto residualOffset = GetBodyOffset(HDB->GetBody(BEMBody->first)); //+off
 
-                    auto infiniteAddedMass = BEMBody->first->GetInfiniteAddedMass(BEMBodyMotion->first);
+                    for (auto BEMBodyMotion = HDB->begin(); BEMBodyMotion != HDB->end(); BEMBodyMotion++) {
 
-                    Eigen::VectorXd q(6);
-                    for (int i = 0; i < 6; i++) { q(i) = w(bodyOffset + i); }
+                        if (BEMBodyMotion->second->IsActive()) {
 
-                    Eigen::VectorXd Mv = c * infiniteAddedMass * q;
-                    auto Mw = chrono::ChVector<>(Mv(0), Mv(1), Mv(2));
-                    auto Iw = chrono::ChVector<>(Mv(3), Mv(4), Mv(5));
+                            auto bodyOffset = GetBodyOffset(HDB->GetBody(BEMBodyMotion->first)); //+off
 
-                    R.PasteSumVector(Mw, residualOffset, 0);
-                    R.PasteSumVector(Iw, residualOffset + 3, 0);
+                            auto infiniteAddedMass = BEMBody->first->GetInfiniteAddedMass(BEMBodyMotion->first);
+
+                            Eigen::VectorXd q(6);
+                            for (int i = 0; i < 6; i++) { q(i) = w(bodyOffset + i); }
+
+                            Eigen::VectorXd Mv = c * infiniteAddedMass * q;
+                            auto Mw = chrono::ChVector<>(Mv(0), Mv(1), Mv(2));
+                            auto Iw = chrono::ChVector<>(Mv(3), Mv(4), Mv(5));
+
+                            R.PasteSumVector(Mw, residualOffset, 0);
+                            R.PasteSumVector(Iw, residualOffset + 3, 0);
+                        }
+                    }
                 }
             }
         }
@@ -81,18 +79,7 @@ namespace frydom {
                                               const chrono::ChVectorDynamic<>& R, const unsigned int off_L,
                                               const chrono::ChVectorDynamic<>& L, const chrono::ChVectorDynamic<>& Qc) {
 
-            // FIXME : Nothing to do since added mass variables encapsulate the body variables
-            /*
-            auto HDB = m_frydomRadiationModel->GetHydroDB();
-
-            for (auto BEMBody = HDB->begin(); BEMBody!=HDB->end(); BEMBody++) {
-
-                auto bodyOffset = off_v - offset_w + GetBodyOffset( HDB->GetBody(BEMBody->get()) );
-
-                m_variables->Get_qb().PasteClippedMatrix(v, bodyOffset, 0, 6, 1, 0, 0);
-                m_variables->Get_fb().PasteClippedMatrix(R, bodyOffset, 0, 6, 1, 0, 0);
-            }
-            */
+            // Nothing to do since added mass variables encapsulate the body variables
         }
 
         void FrRadiationModelBase::IntFromDescriptor(const unsigned int off_v, chrono::ChStateDelta& v,
@@ -101,23 +88,10 @@ namespace frydom {
             // Nothing to do since added mass variables encapsulate the body variables
         }
 
-        //void FrRadiationModelBase::InjectVariables(chrono::ChSystemDescriptor &mdescriptor) {
-        //    mdescriptor.InsertVariables(m_variables.get());
-        //}
-
-        //void FrRadiationModelBase::VariablesFbReset() {
-        //    m_variables->Get_fb().FillElem(0.0);
-        //}
-
-        //void FrRadiationModelBase::VariablesFbIncrementMq() {
-        //    m_variables->Compute_inc_Mb_v(m_variables->Get_fb(), m_variables->Get_qb());
-        //}
-
         int FrRadiationModelBase::GetBodyOffset(FrBody* body) const {
             auto chronoBody = body->GetChronoBody();
             return chronoBody->GetOffset_w();
         }
-
 
 
         void FrRadiationModelBase::InjectVariablesToBody() {

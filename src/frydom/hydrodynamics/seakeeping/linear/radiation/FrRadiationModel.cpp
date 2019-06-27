@@ -22,7 +22,6 @@
 
 namespace frydom {
 
-
     // TODO : generaliser la méthode de mathutils pour les vecteurs Eigen
 
     Vector6d<double> TrapzLoc(std::vector<double>& x, std::vector<Vector6d<double>>& y) {
@@ -109,16 +108,11 @@ namespace frydom {
     FrRadiationConvolutionModel::FrRadiationConvolutionModel(std::shared_ptr<FrHydroDB> HDB)
         : FrRadiationModel(HDB) { // Initialization of the the parent class FrRadiationModel.
 
-        // Constructor of the class FrRadiationConvolutionModel.
-
-        // FIXME : a passer dans la méthode initialize pour eviter les pb de précédence vis a vis de la HDB
-
         // Loop over every body subject to hydrodynamic loads.
         for (auto BEMBody=m_HDB->begin(); BEMBody!=m_HDB->end(); ++BEMBody) {
             auto body = m_HDB->GetBody(BEMBody->first);
             body->AddExternalForce(std::make_shared<FrRadiationConvolutionForce>(this)); // Addition of the hydrodynamic loads to every body.
         }
-
     }
 
     void FrRadiationConvolutionModel::Initialize() {
@@ -145,11 +139,13 @@ namespace frydom {
         auto force = GeneralizedForce();
 
         for (auto BEMBodyMotion=HDB->begin(); BEMBodyMotion!=HDB->end(); BEMBodyMotion++) {
+
             auto infiniteAddedMass = BEMBody->GetInfiniteAddedMass(BEMBodyMotion->first);
             auto acc = GeneralizedAcceleration(BEMBodyMotion->second->GetCOGAccelerationInBody(NWU),
-                    BEMBodyMotion->second->GetAngularAccelerationInBody(NWU));
+                                                   BEMBodyMotion->second->GetAngularAccelerationInBody(NWU));
             force += -infiniteAddedMass * acc;
         }
+
         return force;
     }
 
@@ -259,7 +255,6 @@ namespace frydom {
             }
 
         }
-
         return radiationForce;
 
     }

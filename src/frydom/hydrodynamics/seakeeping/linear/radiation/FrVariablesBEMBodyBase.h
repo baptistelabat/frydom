@@ -39,6 +39,8 @@ namespace frydom {
 
             void SetBEMBody(FrBEMBody* BEMBody);
 
+            FrBEMBody* GetBEMBody() const { return m_BEMBody; }
+
             void SetRadiationModelBase(FrRadiationModelBase* radiationModelBase);
 
             void SetVariablesBodyOwnMass(chrono::ChVariablesBodyOwnMass* variables);
@@ -46,6 +48,9 @@ namespace frydom {
             void Compute_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
 
             void Compute_inc_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
+
+            void Compute_inc_invMb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect,
+                    chrono::ChVariables* variable) const;
 
             void Compute_inc_Mb_v(chrono::ChMatrix<double>& result, const chrono::ChMatrix<double>& vect) const override;
 
@@ -57,6 +62,8 @@ namespace frydom {
             void Build_M(chrono::ChSparseMatrix& storage, int insrow, int inscol, const double c_a) override;
 
             chrono::ChMatrix<double> GetVariablesFb(FrBody* body) const;
+
+            chrono::ChMatrix<double> GetVariablesQb(FrBody* body) const;
 
             //
             // VIRTUAL FUNCTION
