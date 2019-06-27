@@ -146,6 +146,96 @@ namespace frydom {
             UpdateAllProperties();
         }
 
+        void FrMesh::CreateBox(double Lx, double Ly, double Lz) {
+
+            // generate vertices
+            FrMesh::VertexHandle vhandle[8];
+            vhandle[0] = add_vertex(FrMesh::Point(-Lx, -Ly,  Lz)*.5);
+            vhandle[1] = add_vertex(FrMesh::Point( Lx, -Ly,  Lz)*.5);
+            vhandle[2] = add_vertex(FrMesh::Point( Lx,  Ly,  Lz)*.5);
+            vhandle[3] = add_vertex(FrMesh::Point(-Lx,  Ly,  Lz)*.5);
+            vhandle[4] = add_vertex(FrMesh::Point(-Lx, -Ly, -Lz)*.5);
+            vhandle[5] = add_vertex(FrMesh::Point( Lx, -Ly, -Lz)*.5);
+            vhandle[6] = add_vertex(FrMesh::Point( Lx,  Ly, -Lz)*.5);
+            vhandle[7] = add_vertex(FrMesh::Point(-Lx,  Ly, -Lz)*.5);
+
+            // generate (triangular) faces
+            std::vector<FrMesh::VertexHandle>  face_vhandles;
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[0]);
+            face_vhandles.push_back(vhandle[1]);
+            face_vhandles.push_back(vhandle[2]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[2]);
+            face_vhandles.push_back(vhandle[3]);
+            face_vhandles.push_back(vhandle[0]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[0]);
+            face_vhandles.push_back(vhandle[4]);
+            face_vhandles.push_back(vhandle[1]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[1]);
+            face_vhandles.push_back(vhandle[4]);
+            face_vhandles.push_back(vhandle[5]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[1]);
+            face_vhandles.push_back(vhandle[5]);
+            face_vhandles.push_back(vhandle[2]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[2]);
+            face_vhandles.push_back(vhandle[5]);
+            face_vhandles.push_back(vhandle[6]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[2]);
+            face_vhandles.push_back(vhandle[6]);
+            face_vhandles.push_back(vhandle[3]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[3]);
+            face_vhandles.push_back(vhandle[6]);
+            face_vhandles.push_back(vhandle[7]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[3]);
+            face_vhandles.push_back(vhandle[7]);
+            face_vhandles.push_back(vhandle[0]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[0]);
+            face_vhandles.push_back(vhandle[7]);
+            face_vhandles.push_back(vhandle[4]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[6]);
+            face_vhandles.push_back(vhandle[5]);
+            face_vhandles.push_back(vhandle[4]);
+            add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[7]);
+            face_vhandles.push_back(vhandle[6]);
+            face_vhandles.push_back(vhandle[4]);
+            add_face(face_vhandles);
+
+        }
+
         void FrMesh::Translate(const VectorT<double, 3> t) {
 
             // This function translates the mesh.

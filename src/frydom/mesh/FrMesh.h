@@ -459,6 +459,8 @@ namespace frydom {
             /// This function loads the mesh file.
             void Load(std::string meshfile);
 
+            void CreateBox(double Lx, double Ly, double Lz);
+
             /// This function translates the mesh.
             void Translate(const Point t);
 
