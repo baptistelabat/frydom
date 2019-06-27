@@ -25,6 +25,7 @@
 #include "MathUtils/MathUtils.h"
 
 #include "frydom/core/math/FrVector.h"
+#include "frydom/core/body/FrInertiaTensor.h"
 
 #include "FrCache.h"
 
@@ -498,6 +499,18 @@ namespace frydom {
             const double GetVolume() const;
 
             const Position GetCOG() const;
+
+            const Position GetShellCOG() const;
+
+            const FrInertiaTensor GetPlainInertiaTensorAtCOG(double density) const;
+
+            const FrInertiaTensor GetPlainEqInertiaTensorAtCOG(double mass) const;
+
+            const FrInertiaTensor GetShellInertiaTensorAtCOG(double density, double thickness) const;
+
+            const FrInertiaTensor GetShellEqInertiaTensorAtCOG(double mass, double thickness) const;
+
+
 
             bool HasBoundaries() const;
 

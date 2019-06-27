@@ -3,7 +3,6 @@
 //
 
 #include "FrMesh.h"
-#include "frydom/core/math/FrVector.h"
 
 namespace frydom {
     namespace mesh {
@@ -580,6 +579,100 @@ namespace frydom {
             zb /= 2. * GetVolume(); // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
 
             return {xb,yb,zb};
+
+        }
+
+        const Position FrMesh::GetShellCOG() const {
+
+            double xb, yb, zb;
+            xb = yb = zb = 0.;
+
+            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+                xb += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X);
+                yb += data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y);
+                zb += data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
+            }
+
+            xb /= GetArea();
+            yb /= GetArea();
+            zb /= GetArea();
+
+            return {xb,yb,zb};
+
+        }
+
+        const FrInertiaTensor FrMesh::GetPlainInertiaTensorAtCOG(double density) const {
+
+            auto volume = GetVolume();
+            auto mass = volume * density;
+
+            auto COG = GetCOG();
+
+            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+            Ixx = Iyy = Izz= Ixy= Ixz= Iyz = 0.;
+
+            mesh::FrMesh::Normal Normal;
+
+            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+                Normal = normal(*f_iter);
+                Ixx += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y3) + Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z3);
+                Iyy += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X3) + Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z3);
+                Izz += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X3) + Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y3);
+                Ixy += Normal[0] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2Y);
+                Ixz += Normal[2] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2X);
+                Iyz += Normal[1] * data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2Z);
+            }
+
+            Ixx *= density/3.;
+            Iyy *= density/3.;
+            Izz *= density/3.;
+            Ixy *= -density/2.;
+            Ixz *= -density/2.;
+            Iyz *= -density/2.;
+
+            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, COG, NWU);
+        }
+
+        const FrInertiaTensor FrMesh::GetPlainEqInertiaTensorAtCOG(double mass) const {
+
+            return GetPlainInertiaTensorAtCOG(mass/GetVolume());
+
+        }
+
+        const FrInertiaTensor FrMesh::GetShellInertiaTensorAtCOG(double density, double thickness) const {
+
+            auto area = GetArea();
+            auto mass = area * thickness * density;
+
+            auto COG = GetShellCOG();
+            auto COGTest = GetCOG();
+
+
+            double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+            Ixx = Iyy = Izz= Ixy= Ixz= Iyz = 0.;
+
+            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
+                Ixx += data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
+                Iyy += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z2);
+                Izz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X2) + data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y2);
+                Ixy += data(*f_iter).GetSurfaceIntegral(mesh::POLY_YZ);
+                Ixz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_XZ);
+                Iyz += data(*f_iter).GetSurfaceIntegral(mesh::POLY_XY);
+            }
+
+            Ixx *= density * thickness;
+            Iyy *= density * thickness;
+            Izz *= density * thickness;
+            Ixy *= -density * thickness;
+            Ixz *= -density * thickness;
+            Iyz *= -density * thickness;
+
+            return FrInertiaTensor(mass, Ixx, Iyy, Izz, Ixy, Ixz, Iyz, COG, NWU);
+        }
+
+        const FrInertiaTensor FrMesh::GetShellEqInertiaTensorAtCOG(double mass, double thickness) const {
+
+            GetShellInertiaTensorAtCOG(GetArea()* thickness / mass, thickness);
 
         }
 
