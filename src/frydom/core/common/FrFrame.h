@@ -14,6 +14,7 @@
 #define FRYDOM_FRFRAME_H
 
 #include "chrono/core/ChFrame.h"
+#include "chrono/core/ChMatrixDynamic.h"
 
 #include "frydom/core/math/FrVector.h"
 #include "frydom/core/math/FrEulerAngles.h"

@@ -3,6 +3,7 @@
 //
 
 #include "FrMesh.h"
+#include "frydom/core/body/FrInertiaTensor.h"
 
 namespace frydom {
     namespace mesh {

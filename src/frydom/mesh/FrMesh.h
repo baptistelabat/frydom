@@ -25,7 +25,6 @@
 #include "MathUtils/MathUtils.h"
 
 #include "frydom/core/math/FrVector.h"
-#include "frydom/core/body/FrInertiaTensor.h"
 
 #include "FrCache.h"
 
@@ -37,6 +36,8 @@ using namespace OpenMesh;
 
 
 namespace frydom {
+
+    class FrInertiaTensor;
 
     namespace mesh {
 
