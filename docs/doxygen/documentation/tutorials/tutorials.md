@@ -26,6 +26,8 @@ Demonstration of particular application cases
 
 -   @subpage tutorial_demo_Cable
 
+-   @subpage tutorial_demo_Links
+
 -   @subpage tutorial_demo_Constraints
 
 -   @subpage tutorial_demo_Hydrodynamic

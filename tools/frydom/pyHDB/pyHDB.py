@@ -85,6 +85,9 @@ class pyHDB():
         # RAO.
         self.has_RAO = False
 
+        # Eigenfrequencies.
+        self.has_Eigenfrequencies = False
+
         # Drift loads from Kochin functions.
         self.has_Drift_Kochin = False
         self.Wave_drift_force = None
@@ -675,9 +678,11 @@ class pyHDB():
             for body in self.bodies:
                 self.write_body(writer, body)
 
-            # Wave drift coefficients.
-            if(self.has_Drift_Kochin):
+            # Update the format of the drift coefficients if computed from Kochin functions.
+            if(self.has_Drift_Kochin is False and self._wave_drift is None):
                 self.UpdateDriftObject()
+
+            # Wave drift coefficients.
             if (self._wave_drift):
                 self.write_wave_drift(writer, "/WaveDrift")
 
@@ -978,29 +983,29 @@ class pyHDB():
             dset.attrs['Description'] = "Infinite added mass matrix that modifies the apparent mass of body %u from " \
                                         "acceleration of body %u." % (body.i_body, j)
 
-            for iforce in range(0,6):
+            for idof in range(0,6):
 
                 # Added mass.
-                dset = writer.create_dataset(added_mass_path + "/DOF_%u" % iforce, data=body.Added_mass[:, 6*j+iforce, :])
+                dset = writer.create_dataset(added_mass_path + "/DOF_%u" % idof, data=body.Added_mass[:, 6*j+idof, :])
                 dset.attrs['Unit'] = ""
                 dset.attrs['Description'] = "Added mass coefficients for an acceleration of body %u and force on " \
                                             "body %u." % (j, body.i_body)
 
                 # Damping.
-                dset = writer.create_dataset(radiation_damping_path + "/DOF_%u" % iforce,
-                                        data=body.Damping[:, 6*j+iforce, :])
+                dset = writer.create_dataset(radiation_damping_path + "/DOF_%u" % idof,
+                                        data=body.Damping[:, 6*j+idof, :])
                 dset.attrs['Unit'] = ""
                 dset.attrs['Description'] = "Wave damping coefficients for an acceleration of body %u and force " \
                                             "on body %u." % (j, body.i_body)
 
                 # Impulse response functions without forward speed.
-                dset = writer.create_dataset(irf_path + "/DOF_%u" % iforce,
-                                        data=body.irf[:, 6*j+iforce, :])
+                dset = writer.create_dataset(irf_path + "/DOF_%u" % idof,
+                                        data=body.irf[:, 6*j+idof, :])
                 dset.attrs['Description'] = "Impulse response functions"
 
                 # Impulse response function with forward speed.
-                dset = writer.create_dataset(irf_ku_path + "/DOF_%u" % iforce,
-                                        data=body.irf_ku[:, 6*j+iforce, :])
+                dset = writer.create_dataset(irf_ku_path + "/DOF_%u" % idof,
+                                        data=body.irf_ku[:, 6*j+idof, :])
                 dset.attrs['Description'] = "Impulse response functions Ku"
 
     def write_hydrostatic(self, writer, body, hydrostatic_path="/Hydrostatic"):
@@ -1150,9 +1155,11 @@ class pyHDB():
 
         dg = writer.create_group(wave_drift_path)
 
+        # Loop over the degrees of freedom.
         for key, mode in self.wave_drift.modes.items():
             grp_modes = dg.require_group(mode.name)
 
+            # Loop over the wave directions.
             for i_angle, angle in enumerate(mode.heading):
                 grp_dir = grp_modes.require_group("heading_%i" % i_angle)
 
@@ -1161,7 +1168,7 @@ class pyHDB():
                 dset.attrs['Unit'] = 'rad'
                 dset.attrs['Description'] = "Heading angle"
 
-                # Set dat
+                # Set data.
                 dset = grp_dir.create_dataset("data", data=np.array(mode.data)[i_angle, :])
                 dset.attrs['Description'] = "Wave Drift force coefficients"
 
@@ -1197,9 +1204,13 @@ class pyHDB():
 
         # Loop over the wave directions.
         for ibeta in range(0, self.nb_wave_dir):
-            self._wave_drift.add_cx(self.omega, self.Wave_drift_force[0, :, ibeta], self.wave_dir[ibeta]) # Surge.
-            self._wave_drift.add_cy(self.omega, self.Wave_drift_force[1, :, ibeta], self.wave_dir[ibeta]) # Sway.
             self._wave_drift.add_cn(self.omega, self.Wave_drift_force[2, :, ibeta], self.wave_dir[ibeta]) # Yaw.
+            self._wave_drift.add_cy(self.omega, self.Wave_drift_force[1, :, ibeta], self.wave_dir[ibeta]) # Sway.
+            self._wave_drift.add_cx(self.omega, self.Wave_drift_force[0, :, ibeta], self.wave_dir[ibeta]) # Surge.
+
+        # Deletion of the old structure.
+        self.Wave_drift_force = None
+        self.has_Drift_Kochin = False
 
     def write_version(self, writer):
         """This function writes the version of the *.hdb5 file.

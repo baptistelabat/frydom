@@ -41,6 +41,8 @@ namespace frydom {
 
         FrInertiaTensor GetInertiaTensor() const;
 
+        void DoAssembly();
+
     };
 
 } // end namespace frydom

@@ -36,7 +36,7 @@ Reading the output files of Nemoh is achieved by writing the path to the *folder
 
 .. note::
 
-    As a folder is asked, no extension is expected.
+    As a folder is asked, no extension is expected. You can use a relative or absolute path.
 
 From a *.hdb5* file
 ~~~~~~~~~~~~~~~~~~~
@@ -46,6 +46,10 @@ If a *.hdb5* file already exists, it can be downloaded by the following command:
     >$ hdb5tool -r path/to/hdb5/file
 
 The extension of the file is necessary.
+
+.. note::
+
+    You can use a relative or absolute path. 
 
 .. note::
 
@@ -70,7 +74,7 @@ Here, the hydrodynamic database will be rediscretized for 50 wave directions.
 Wave frequencies
 ~~~~~~~~~~~~~~~~
 
-The update of the wave frequency discretization is obtained by writting::
+The update of the wave frequency discretization is obtained by writing::
 
     >$ hdb5tool -cal path/to/Nemoh/cal/folder -df 60
 
@@ -196,7 +200,7 @@ If the frequency-domain solver was run by defining the wave directions between :
 
     >$ hdb5tool -cal path/to/Nemoh/cal/folder -sym
 
-Writting a *.hdb5* file
+Writing a *.hdb5* file
 -----------------------
 
 To write a *.hdb5* file, the command is::
@@ -206,6 +210,19 @@ To write a *.hdb5* file, the command is::
 .. note::
 
     The extension *.hdb5* is mandatory for the ouput file.
+
+Automatic generation of report
+------------------------------
+
+To write an automatic report about the hydrodynamic database, the command is:
+
+    >$ hdb5tool -cal path/to/Nemoh/cal/folder -rg path/to/report/folder
+
+This report is a *.html* file which will be automatically opened in your browser once it is finished. The report folder encompasses the *.rst* source files along with all the figures generated for the report. The output file is *build/index.html*. For information, *rg* means *report generation*.
+
+.. note::
+
+    You can use a relative or absolute path.
 
 Plots
 -----

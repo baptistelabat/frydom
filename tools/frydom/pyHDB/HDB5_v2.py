@@ -24,6 +24,7 @@ from pyHDB import *
 from discretization_db_v2 import DiscretizationDB
 from wave_drift_db_v2 import WaveDriftDB
 from plot_db import *
+from Report_generation import *
 
 class HDB5(object):
 
@@ -45,6 +46,9 @@ class HDB5(object):
 
         # Initialization parameter.
         self._is_initialized = False
+
+        # Report.
+        self.report = None
 
         return
 
@@ -194,17 +198,17 @@ class HDB5(object):
         # Updating the wave directions.
         self._pyHDB._initialize_wave_dir()
 
-    def Plot_Diffraction(self, ibody, iforce, iwave = 0, **kwargs):
+    def Plot_Diffraction(self, ibody, iforce, iwave = 0):
         """This functions plots the diffraction loads."""
 
         # Data.
         data = self._pyHDB.bodies[ibody].Diffraction[iforce, :, iwave]
 
         # Wave direction.
-        beta = np.degrees(self._pyHDB.wave_dir[iwave])
+        beta = self._pyHDB.wave_dir[iwave]
 
         # Plot.
-        plot_loads(data, self._pyHDB.wave_freq, 0, ibody, iforce, beta, **kwargs)
+        plot_loads(data, self._pyHDB.wave_freq, 0, ibody, iforce, beta)
 
     def Plot_Froude_Krylov(self, ibody, iforce, iwave = 0, **kwargs):
         """This functions plots the Froude-Krylov loads."""
@@ -213,7 +217,7 @@ class HDB5(object):
         data = self._pyHDB.bodies[ibody].Froude_Krylov[iforce, :, iwave]
 
         # Wave direction.
-        beta = np.degrees(self._pyHDB.wave_dir[iwave])
+        beta = self._pyHDB.wave_dir[iwave]
 
         # Plots.
         plot_loads(data, self._pyHDB.wave_freq, 1, ibody, iforce, beta, **kwargs)
@@ -225,46 +229,46 @@ class HDB5(object):
         data = self._pyHDB.bodies[ibody].Diffraction[iforce, :, iwave] + self._pyHDB.bodies[ibody].Froude_Krylov[iforce, :, iwave]
 
         # Wave direction.
-        beta = np.degrees(self._pyHDB.wave_dir[iwave])
+        beta = self._pyHDB.wave_dir[iwave]
 
         # Plots.
         plot_loads(data, self._pyHDB.wave_freq, 2, ibody, iforce, beta, **kwargs)
 
-    def Plot_Radiation_coeff(self, ibody_force, iforce, ibody_motion, idof, **kwargs):
+    def Plot_Radiation_coeff(self, ibody_force, iforce, ibody_motion, idof):
         """This functions plots the added mass and damping coefficients."""
 
         # Data.
         data = np.zeros((self._pyHDB.nb_wave_freq+1,2), dtype = np.float) # 2 for added mass and damping coefficients, +1 for the infinite added mass.
-        data[0:self._pyHDB.nb_wave_freq, 0] = self._pyHDB.bodies[ibody_motion].Added_mass[iforce, 6 * ibody_force + iforce, :]
-        data[self._pyHDB.nb_wave_freq,0] = self._pyHDB.bodies[ibody_motion].Inf_Added_mass[iforce, 6 * ibody_force + iforce]
-        data[0:self._pyHDB.nb_wave_freq, 1] = self._pyHDB.bodies[ibody_motion].Damping[iforce, 6 * ibody_force + iforce, :]
+        data[0:self._pyHDB.nb_wave_freq, 0] = self._pyHDB.bodies[ibody_force].Added_mass[iforce, 6 * ibody_motion + idof, :]
+        data[self._pyHDB.nb_wave_freq,0] = self._pyHDB.bodies[ibody_force].Inf_Added_mass[iforce, 6 * ibody_motion + idof]
+        data[0:self._pyHDB.nb_wave_freq, 1] = self._pyHDB.bodies[ibody_force].Damping[iforce, 6 * ibody_motion + idof, :]
 
         # Plots.
-        plot_AB(data, self._pyHDB.wave_freq, ibody_force, iforce, ibody_motion, idof, **kwargs)
+        plot_AB(data, self._pyHDB.wave_freq, ibody_force, iforce, ibody_motion, idof)
 
-    def Plot_IRF(self, ibody_force, iforce, ibody_motion, idof, **kwargs):
+    def Plot_IRF(self, ibody_force, iforce, ibody_motion, idof):
         """This function plots the impulse response functions without forward speed."""
 
         # Data.
-        data = self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + iforce, :]
+        data = self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_motion + idof, :]
 
         # Time.
         time = self._pyHDB.time
 
         # Plots.
-        plot_irf(data, time, 0, ibody_force, iforce, ibody_motion, idof, **kwargs)
+        plot_irf(data, time, 0, ibody_force, iforce, ibody_motion, idof)
 
-    def Plot_IRF_speed(self, ibody_force, iforce, ibody_motion, idof, **kwargs):
+    def Plot_IRF_speed(self, ibody_force, iforce, ibody_motion, idof):
         """This function plots the impulse response functions with forward speed."""
 
         # Data.
-        data = self._pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_force + iforce, :]
+        data = self._pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_motion + idof , :]
 
         # Time.
         time = self._pyHDB.time
 
         # Plots.
-        plot_irf(data, time, 1, ibody_force, iforce, ibody_motion, idof, **kwargs)
+        plot_irf(data, time, 1, ibody_force, iforce, ibody_motion, idof)
 
     def Cutoff_scaling_IRF(self, tc, ibody_force, iforce, ibody_motion, idof, auto_apply=False):
         """This function applies a filter to the impule response functions without forward speed and plot the result.
@@ -286,7 +290,7 @@ class HDB5(object):
        """
 
         # Data.
-        data = self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + iforce, :]
+        data = self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_motion + idof, :]
 
         # Time.
         time = self._pyHDB.time
@@ -317,7 +321,7 @@ class HDB5(object):
                 sys.stdout.write("Please respond with 'yes' or 'no'")
 
         if bool:
-            self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + iforce, :] *= coeff
+            self._pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_force + idof, :] *= coeff
 
     def Cutoff_scaling_IRF_speed(self, tc, ibody_force, iforce, ibody_motion, idof, auto_apply=False):
         """This function applies a filter to the impule response functions with forward speed and plot the result.
@@ -339,7 +343,7 @@ class HDB5(object):
        """
 
         # Data.
-        data = self._pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_force + iforce, :]
+        data = self._pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_motion + idof, :]
 
         # Time.
         time = self._pyHDB.time
@@ -448,14 +452,35 @@ class HDB5(object):
         print('-------> "%s" has been loaded.' % hdb5_file)
         print('')
 
+    def report_writing(self, output_folder):
+        """This function writes a report about the hydrodynamic database."""
 
+        # Creation of the rst object.
+        self.report = report(output_folder)
 
+        # Description of the report.
+        self.report.WriteIndex()
 
+        # Input parameters.
+        self.report.WriteInputParameters(self._pyHDB, output_folder)
 
+        # HDB results.
+        self.report.WriteHDB(self._pyHDB, output_folder)
 
+        # Writing the rst files except HDB_results.rst.
+        self.report.WriteRst(output_folder)
 
+    def report_building_html(self, output_folder):
+        """This function builds a *.html file of the report."""
 
+        # Writing PP_results.rst.
+        self.report.WritePPRst(output_folder)
 
+        # Building the html file.
+        self.report.BuildHTML(output_folder)
+
+        # Visualization of the html file.
+        self.report.OpenHTML(output_folder)
 
 
 

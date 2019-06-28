@@ -37,7 +37,7 @@ namespace frydom {
     public:
 
         enum class ClippingSupport {    ///< Support for the clipping procedure : can be a horizontal plan
-            PLANSURFACE,                ///< horizontal plan, defined by its elevation corresponding to the tidal height
+            PLANESURFACE,                ///< horizontal plan, defined by its elevation corresponding to the tidal height
             WAVESURFACE                 ///< wave surface, defined by the free surface position at a given (x,y) position
         };
 
@@ -87,6 +87,8 @@ namespace frydom {
         FrFrame m_meshOffset;                           ///< Offset frame between mesh and body frame (defined initially)
 
         ClippingSupport m_clippingSupport;              ///< Support for the clipping procedure
+
+        std::shared_ptr<FrNode> c_nodeForClippingPlane;                   ///< node for defining the FrPlane needed by FrClippingPlane
 
     };
 

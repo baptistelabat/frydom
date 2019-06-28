@@ -34,7 +34,7 @@ namespace frydom{
     void FrPathManager::ReadConfig() {
 
         cppfs::FilePath homePath = cppfs::system::homeDir();
-        cppfs::FilePath configPath = homePath.resolve(".frydom");
+        cppfs::FilePath configPath = homePath.resolve(".frydom.json");
 
         // Get the workspace directory path, located in the output_path in the FRyDOM config file.
         try {
@@ -43,10 +43,12 @@ namespace frydom{
             std::ifstream ifs(configPath.path());
             json data = json::parse(ifs);
 
-            m_outputPath = data["output_path"].get<json::string_t>();
+            auto log = data["logs"];
+
+            m_outputPath = log["output_path"].get<json::string_t>();
 
             try {
-                m_logFrameConvention = STRING2FRAME(data["frame_convention"].get<json::string_t>());
+                m_logFrameConvention = STRING2FRAME(log["frame_convention"].get<json::string_t>());
 
             } catch (json::parse_error& err) {
                 std::cout << " warning : frame convention must be NED or NWU" << std::endl;

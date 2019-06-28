@@ -100,6 +100,9 @@ class BodyDB(object):
         # RAO.
         self.RAO = None
 
+        # Eigenfrequencies.
+        self.Eigenfrequencies = None
+
     @property
     def name(self):
 

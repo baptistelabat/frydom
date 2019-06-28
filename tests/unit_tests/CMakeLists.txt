@@ -31,6 +31,7 @@ set(UNIT_TESTS
 #        test_FrFunction
         test_edge_splitting
         test_FrAssembly
+        test_FrClippingSurface
         )
 
 

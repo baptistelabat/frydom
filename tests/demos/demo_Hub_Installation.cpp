@@ -114,14 +114,15 @@ int main(int argc, char* argv[]) {
     hdb->Map(0, barge.get(), eqFrame);
 
     // -- Hydrostatic
-//    auto hydrostaticForce = make_linear_hydrostatic_force(hdb, barge);
-    auto bargeMesh = make_hydro_mesh(barge, "barge.obj", FrFrame(), FrHydroMesh::ClippingSupport::WAVESURFACE);
-    auto hydrostaticForce = make_nonlinear_hydrostatic_force(barge, bargeMesh);
+    auto hydrostaticForce = make_linear_hydrostatic_force(hdb, barge);
+//    auto bargeMesh = make_hydro_mesh(barge, "barge.obj", FrFrame(), FrHydroMesh::ClippingSupport::WAVESURFACE);
+//    auto hydrostaticForce = make_nonlinear_hydrostatic_force(barge, bargeMesh);
 
 
 //    // -- Excitation force
-//    auto excitationForce = make_linear_excitation_force(hdb, barge);
-    auto FKForce = make_nonlinear_froude_krylov_force(barge, bargeMesh);
+    auto excitationForce = make_linear_excitation_force(hdb, barge);
+//    auto FKForce = make_nonlinear_froude_krylov_force(barge, bargeMesh);
+//    auto diffractionForce = make_linear_diffraction_force(hdb, barge);
 
     // -- Radiation
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
@@ -305,7 +306,7 @@ int main(int argc, char* argv[]) {
 //    system.SetTimeStepper(FrOffshoreSystem::TIME_STEPPER::EULER_IMPLICIT);
 
     // simulation parameters for dynamic cables
-//    system.SetSolver(FrOffshoreSystem::SOLVER::MINRES);
+    system.SetSolver(FrOffshoreSystem::SOLVER::MINRES);
     system.SetSolverWarmStarting(false);
     system.SetSolverMaxIterSpeed(200);
     system.SetSolverMaxIterStab(200);
@@ -326,7 +327,7 @@ int main(int argc, char* argv[]) {
     system.GetStaticAnalysis()->SetTolerance(1E-2);
 
     // Now with the static solving
-//    system.SolveStaticWithRelaxation();
+    system.SolveStaticWithRelaxation();
     // Once the static is reached, you can visualize it
 //    system.Visualize(75.,false);
 
