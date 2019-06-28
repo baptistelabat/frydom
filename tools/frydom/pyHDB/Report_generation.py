@@ -563,3 +563,11 @@ class report():
 
         html_file = os.path.join(output_folder,'build/',self._IndexFileName+'.html')
         webbrowser.open(html_file)
+
+    def BuildPDF(self, output_folder):
+        """This function builds the pdf file from the rst files."""
+
+        conf_file = os.path.join(output_folder, 'conf.py')
+        copyfile(self._conf_file, conf_file)
+        build_folder = os.path.join(output_folder, 'build/pdf')
+        os.system('sphinx-build -b pdf ' + str(output_folder) + ' ' + str(build_folder))

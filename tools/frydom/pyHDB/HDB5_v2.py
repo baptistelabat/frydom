@@ -482,6 +482,9 @@ class HDB5(object):
         # Visualization of the html file.
         self.report.OpenHTML(output_folder)
 
+        # Building the pdf file.
+        self.report.BuildPDF(output_folder)
+
 
 
 

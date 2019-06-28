@@ -50,7 +50,7 @@ extensions = [
     # 'sphinxarg.ext',
 #    'sphinxcontrib.programoutput',
 #    'sphinxcontrib.bibtex',
-    'sphinx.ext.autosummary'
+    'rst2pdf.pdfbuilder'
 ]
 
 # Napoleon settings
@@ -196,3 +196,5 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
+
+pdf_documents = [('index', u'rst2pdf', u'HDB report rst2pdf doc', u'D-ice Engineering'),]
