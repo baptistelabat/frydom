@@ -16,6 +16,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+Beta_report = np.array([0., 30., 60., 90., 120., 150., 180.], np.float)
+
 def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = True, save = False, filename = "Loads.png"):
     """Plots the diffraction or Froude-Krylov or excitation response function of a given modes set
 
