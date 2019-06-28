@@ -6,7 +6,6 @@
 
 using namespace frydom;
 
-
 // --------------------------------------------------------------------
 // Buoyancy force
 // --------------------------------------------------------------------
@@ -29,36 +28,9 @@ public:
 
 };
 
-
-// -----------------------------------------------------------------------
-// Radiation force added mass
-// -----------------------------------------------------------------------
-
-class FrAddedMassForce : public FrForce {
-
-private:
-
-    FrRadiationModel* m_radiationModel;
-
-public:
-
-    explicit FrAddedMassForce(FrRadiationModel* radiationModel) : m_radiationModel(radiationModel) {}
-
-    void Compute(double time) override {
-
-        auto radiationModel = dynamic_cast<FrRadiationConvolutionModel*>(m_radiationModel);
-        auto forceInertiaPart = radiationModel->GetRadiationInertiaPart(GetBody());
-
-        auto force = forceInertiaPart.GetForce();
-        auto torque = forceInertiaPart.GetTorque();
-
-        SetForceTorqueInBodyAtCOG(force, torque, NWU);
-    }
-
-    void StepFinalize() override { }
-
-};
-
+// --------------------------------------------------------------------
+// Main
+// --------------------------------------------------------------------
 
 int main(int argc, char* argv[]) {
 
@@ -189,13 +161,6 @@ int main(int argc, char* argv[]) {
     radiationModel->SetImpulseResponseSize(flap2.get(), 30., 0.005);
     //radiationModel->SetImpulseResponseSize(barge.get(), 30., 0.005);
 
-    // ##CC test added mass
-    //auto addedMassForce_flap1 = std::make_shared<FrAddedMassForce>(radiationModel.get());
-    //flap1->AddExternalForce(addedMassForce_flap1);
-    //auto addedMassForce_flap2 = std::make_shared<FrAddedMassForce>(radiationModel.get());
-    //flap2->AddExternalForce(addedMassForce_flap2);
-    // ##CC
-
     // Hydrostatic
 
     // -- Linear
@@ -233,26 +198,16 @@ int main(int argc, char* argv[]) {
 
     flap1->Rotate(FrRotation(Direction(0,1,0), 10.*DEG2RAD, NWU));
 
-    //system.RunInViewer(50, 50, false);
-    //system.Visualize(50, false);
-
     bool is_irrlicht = true;
-    auto time = 0.;
 
     if (is_irrlicht) {
         system.RunInViewer(0, 50, false);
-        //system.Visualize(50, false);
     } else {
         auto time = 0.;
-
         while (time < 300.) {
-
             time += dt;
-
             system.AdvanceTo(time);
-
             std::cout << "Time : " << time << " s" << std::endl;
-
         }
     }
 

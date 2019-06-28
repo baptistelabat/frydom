@@ -481,8 +481,6 @@ namespace frydom {
         m_externalForces.clear();
     }
 
-    // ##CC adding for monitoring load
-
     Force FrBody::GetTotalExtForceInWorld(FRAME_CONVENTION fc) const {
         auto chronoForce = m_chronoBody->Get_Xforce();
         auto force = internal::ChVectorToVector3d<Force>(m_chronoBody->Get_Xforce());

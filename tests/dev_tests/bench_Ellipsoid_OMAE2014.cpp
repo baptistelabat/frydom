@@ -213,9 +213,6 @@ int main(int argc, char* argv[]) {
     auto radiationModel = make_radiation_convolution_model(hdb, &system);
     radiationModel->SetImpulseResponseSize(Ellipsoid.get(), 40., 0.02);
 
-    // ##CC for monitoring
-//    auto radiationAddedMassForce = std::make_shared<AddedMassRadiationForce>(hdb.get(), Ellipsoid.get());
-    // ##CC
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                          Extra linear damping force

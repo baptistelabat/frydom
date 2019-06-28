@@ -147,10 +147,7 @@ public:
     void Close() {
         outfile.close();
     }
-}; // ##CC logging
-
-
-// ##CC impose speed
+};
 
 Velocity BodyVelocity(double time, double period, double amplitude, double speed) {
 
