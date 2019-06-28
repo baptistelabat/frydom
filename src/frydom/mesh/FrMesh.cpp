@@ -46,7 +46,7 @@ namespace frydom {
 
             auto mass = re * area;
 
-            auto COG = mesh.GetShellCOG();
+            auto COG = mesh.GetCOG();
 
             double Intx2, Inty2, Intz2, Intyz, Intxz, Intxy;
             Intx2 = Inty2 = Intz2 = Intyz = Intxz = Intxy = 0.;
@@ -422,18 +422,23 @@ namespace frydom {
             // TODO : mettre en cache avec DCache
             // TODO: faire un check que les integrales de surface ont ete calculees
 
+            // These formulas are only valid for a bounded mesh. Per extension, they can be considered valid for
+            // clipped mesh with plane on z=0 (or x=0 and y=0).
+            auto box = GetBoundingBox();
+            assert(box.xmin==0 || box.xmax==0 || box.ymin==0 || box.ymax==0 || box.zmin==0 || box.zmax==0 );
+
             int in = 0;
             double alpha = 0.;
             IntegrandType surfaceIntegralIntegrandType = UNDEFINED_INTEGRAND;
 
             switch (type) {
                 case POLY_1:
-                    in = 0; // faire moyenne ?
+                    in = 0; // check with POLY_Y and POLY_Z
                     surfaceIntegralIntegrandType = POLY_X;
                     alpha = 1.;
                     break;
                 case POLY_X:
-                    in = 1;
+                    in = 0;
                     alpha = 0.5;
                     surfaceIntegralIntegrandType = POLY_X2;
                     break;
@@ -491,12 +496,14 @@ namespace frydom {
 
             // Volume integration of 1 may be obtained by 3 surface integration in x, y, z. We use the mean of the three.
             if (type == POLY_1) {
+                double valy, valz; valy = valz = 0;
                 for (FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
                     n = normal(*f_iter);
-                    val += n[1] * data(*f_iter).GetSurfaceIntegral(POLY_Y);
-                    val += n[2] * data(*f_iter).GetSurfaceIntegral(POLY_Z);
+                    valy += n[1] * data(*f_iter).GetSurfaceIntegral(POLY_Y);
+                    valz += n[2] * data(*f_iter).GetSurfaceIntegral(POLY_Z);
                 }
-                val /= 3.;
+                assert(val-valy<1E-8);assert(val-valz<1E-8);
+//                val /= 3.;
             }
 
             val *= alpha;
@@ -558,25 +565,6 @@ namespace frydom {
             xb /= 2. * GetVolume();
             yb /= 2. * GetVolume();
             zb /= 2. * GetVolume(); // FIXME: si on prend une cote de surface de clip non nulle, il faut ajouter la quantite ze**2 * Sf
-
-            return {xb,yb,zb};
-
-        }
-
-        const Position FrMesh::GetShellCOG() const {
-
-            double xb, yb, zb;
-            xb = yb = zb = 0.;
-
-            for (mesh::FrMesh::FaceIter f_iter = faces_begin(); f_iter != faces_end(); ++f_iter) {
-                xb += data(*f_iter).GetSurfaceIntegral(mesh::POLY_X);
-                yb += data(*f_iter).GetSurfaceIntegral(mesh::POLY_Y);
-                zb += data(*f_iter).GetSurfaceIntegral(mesh::POLY_Z);
-            }
-
-            xb /= GetArea();
-            yb /= GetArea();
-            zb /= GetArea();
 
             return {xb,yb,zb};
 
@@ -803,38 +791,38 @@ namespace frydom {
             m_polygonSet = polygonSet;
         }
 
-        std::string InertiaTensor::ReportString() const {
-            return fmt::format(
-                    "Inertias expressed at ({}\t{}\t{}):\n\tIxx = {}\n\tIyy = {}\n\tIzz = {}\n\tIyz = {}\n\tIxz = {}\n\tIxy = {}\n",
-                    calcPoint[0], calcPoint[1], calcPoint[2], Ixx, Iyy, Izz, Iyz, Ixz, Ixy);
-        }
-
-        void InertiaTensor::Transport(FrMesh::Point A) {
-            // TODO : mettre en place les procedures de transport auto via Konig Huygens
-
-        }
-
-        const mathutils::MatrixMN<double> InertiaTensor::GetTensorMatrix() const {  // TODO: faire une matrix 33 dans mathutils
-            mathutils::MatrixMN<double> inertiaMatrix(3, 3);
-            inertiaMatrix(0, 0) = Ixx;
-            inertiaMatrix(0, 1) = inertiaMatrix(1, 0) = Ixy;
-            inertiaMatrix(0, 2) = inertiaMatrix(2, 0) = Ixz;
-            inertiaMatrix(1, 1) = Iyy;
-            inertiaMatrix(1, 2) = inertiaMatrix(2, 1) = Iyz;
-            inertiaMatrix(2, 2) = Izz;
-            return inertiaMatrix;
-        }
-
-        std::string InertialProperties::ReportString() const {
-
-            fmt::MemoryWriter mw;
-
-            mw << fmt::format("Mass     : {} tons\n", m_mass / 1e3);
-            mw << fmt::format("COG      : {}\t{}\t{}\n", m_cog[0], m_cog[1], m_cog[2]);
-            mw << m_inertiaTensor.ReportString();
-
-            return mw.str();
-
-        }
+//        std::string InertiaTensor::ReportString() const {
+//            return fmt::format(
+//                    "Inertias expressed at ({}\t{}\t{}):\n\tIxx = {}\n\tIyy = {}\n\tIzz = {}\n\tIyz = {}\n\tIxz = {}\n\tIxy = {}\n",
+//                    calcPoint[0], calcPoint[1], calcPoint[2], Ixx, Iyy, Izz, Iyz, Ixz, Ixy);
+//        }
+//
+//        void InertiaTensor::Transport(FrMesh::Point A) {
+//            // TODO : mettre en place les procedures de transport auto via Konig Huygens
+//
+//        }
+//
+//        const mathutils::MatrixMN<double> InertiaTensor::GetTensorMatrix() const {  // TODO: faire une matrix 33 dans mathutils
+//            mathutils::MatrixMN<double> inertiaMatrix(3, 3);
+//            inertiaMatrix(0, 0) = Ixx;
+//            inertiaMatrix(0, 1) = inertiaMatrix(1, 0) = Ixy;
+//            inertiaMatrix(0, 2) = inertiaMatrix(2, 0) = Ixz;
+//            inertiaMatrix(1, 1) = Iyy;
+//            inertiaMatrix(1, 2) = inertiaMatrix(2, 1) = Iyz;
+//            inertiaMatrix(2, 2) = Izz;
+//            return inertiaMatrix;
+//        }
+//
+//        std::string InertialProperties::ReportString() const {
+//
+//            fmt::MemoryWriter mw;
+//
+//            mw << fmt::format("Mass     : {} tons\n", m_mass / 1e3);
+//            mw << fmt::format("COG      : {}\t{}\t{}\n", m_cog[0], m_cog[1], m_cog[2]);
+//            mw << m_inertiaTensor.ReportString();
+//
+//            return mw.str();
+//
+//        }
     }  // end namespace mesh
 }  // end namespace frydom

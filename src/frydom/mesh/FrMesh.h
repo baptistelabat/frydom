@@ -501,8 +501,6 @@ namespace frydom {
 
             const Position GetCOG() const;
 
-            const Position GetShellCOG() const;
-
 //            const FrInertiaTensor GetPlainInertiaTensorAtCOG(double density) const;
 //
 //            const FrInertiaTensor GetPlainEqInertiaTensorAtCOG(double mass) const;
@@ -544,36 +542,36 @@ namespace frydom {
 
         //TODO: mettre le code portant sur les inerties dans un fichier a part
 
-        struct InertiaTensor {
-            mathutils::Vector3d<double> calcPoint = {0., 0., 0.};
+//        struct InertiaTensor {
+//            mathutils::Vector3d<double> calcPoint = {0., 0., 0.};
+//
+//            double Ixx = 0.;
+//            double Iyy = 0.;
+//            double Izz = 0.;
+//            double Ixy = 0.;
+//            double Ixz = 0.;
+//            double Iyz = 0.;
+//
+//            std::string ReportString() const;
+//
+//            void Transport(FrMesh::Point A);
+//
+//            const mathutils::MatrixMN<double> GetTensorMatrix() const;
+//
+//        private:
+//
+//        };
 
-            double Ixx = 0.;
-            double Iyy = 0.;
-            double Izz = 0.;
-            double Ixy = 0.;
-            double Ixz = 0.;
-            double Iyz = 0.;
-
-            std::string ReportString() const;
-
-            void Transport(FrMesh::Point A);
-
-            const mathutils::MatrixMN<double> GetTensorMatrix() const;
-
-        private:
-
-        };
-
-        //TODO : Merge with FrInertia
-        struct InertialProperties {
-
-            double m_mass = 0.;
-            mathutils::Vector3d<double> m_cog = {0., 0., 0.};
-            InertiaTensor m_inertiaTensor;
-
-            std::string ReportString() const;
-
-        };
+//        //TODO : Merge with FrInertia
+//        struct InertialProperties {
+//
+//            double m_mass = 0.;
+//            mathutils::Vector3d<double> m_cog = {0., 0., 0.};
+//            InertiaTensor m_inertiaTensor;
+//
+//            std::string ReportString() const;
+//
+//        };
 
         FrInertiaTensor CalcPlainInertiaProperties(const FrMesh &mesh, double density);
 
