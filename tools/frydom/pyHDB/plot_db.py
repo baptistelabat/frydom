@@ -63,14 +63,14 @@ def plot_loads(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = True, save = 
         ylabel1 += r' $(N)$'
 
     # Plots.
-    if (save == False):  # The size is smaller for the generation of automatic report because the title is not including.
+    if (save == False): # The size is smaller for the generation of automatic report because the title is not including.
         plt.figure(num=None, figsize=(16, 8.5))
     else:
         plt.figure(num=None, figsize=(10, 6))
     plt.subplot(2, 1, 1)
     plt.plot(w, np.absolute(data),linestyle="-", linewidth = 2)
     plt.ylabel(ylabel1, fontsize=18)
-    if (save == False):  # The title is not necessary for the generation of automatic report.
+    if (save == False): # The title is not necessary for the generation of automatic report.
         plt.title(title, fontsize=20)
     plt.grid()
 
@@ -134,12 +134,12 @@ def plot_loads_all_wave_dir(data, w, DiffOrFKOrExc, ibody, iforce, beta, show = 
     colors = cm.jet(np.linspace(1, 0, beta.shape[0]))
 
     # Plots.
-    if (save == False):  # The size is smaller for the generation of automatic report because the title is not including.
+    if (save == False): # The size is smaller for the generation of automatic report because the title is not including.
         plt.figure(num=None, figsize=(16, 8.5))
     else:
         plt.figure(num=None, figsize=(10, 6))
 
-    # Amplitude
+    # Amplitude.
     plt.subplot(2, 1, 1)
     for ibeta in range(0, beta.shape[0]):
         plt.plot(w, np.absolute(data[:, ibeta]),linestyle="-", linewidth = 2, label = str(beta[ibeta])+" deg", color = colors[ibeta])
@@ -175,13 +175,13 @@ def plot_AB(data, w, ibody_force, iforce, ibody_motion, idof, show = True, save 
     w : Array of floats.
         Wave frequencies.
     ibody_force : int
-        Index of the body where the radiation force is applied
+        Index of the body where the radiation force is applied.
     iforce : int
-        Index of the local body's force mode
+        Index of the local body's force mode.
     ibody_motion : int
-        Index of the body having a motion
+        Index of the body having a motion.
     idof : int
-        Index of the local body's radiation mode (motion)
+        Index of the local body's radiation mode (motion).
     """
 
     xlabel = r'$\omega$'+' $(rad/s)$'
@@ -283,14 +283,14 @@ def plot_AB_multiple_coef(data, w, ibody_force, iforce, ibody_motion, show = Tru
     for idof in range(0, 6):
         unitA = r'$A_{%s}(\omega)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
         if (iforce <= 2):
-            if (idof <= 2):  # Translation.
+            if (idof <= 2): # Translation.
                 unitA += r' $(kg)$'
-            else:  # Rotation.
+            else: # Rotation.
                 unitA += r' $(kg\,m)$'
         else:
-            if (idof <= 2):  # Translation.
+            if (idof <= 2): # Translation.
                 unitA += r' $(kg\,m)$'
-            else:  # Rotation.
+            else: # Rotation.
                 unitA += r' $(kg\,m^2)$'
         plt.plot(w, data[:len(w), idof], linestyle="-", linewidth = 2, label = unitA, color = colors[idof])
         plt.plot(w[-1], data[-1, idof], marker = "+", markersize = 10, mew=3, color = colors[idof])
@@ -304,14 +304,14 @@ def plot_AB_multiple_coef(data, w, ibody_force, iforce, ibody_motion, show = Tru
     for idof in range(0, 6):
         unitB = r'$B_{%s}(\omega)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
         if (iforce <= 2):
-            if (idof <= 2):  # Translation.
+            if (idof <= 2): # Translation.
                 unitB += r' $(kg/s)$'
-            else:  # Rotation.
+            else: # Rotation.
                 unitB += r' $(kg\,m/s)$'
         else:
-            if (idof <= 2):  # Translation.
+            if (idof <= 2): # Translation.
                 unitB += r' $(kg\,m/s)$'
-            else:  # Rotation.
+            else: # Rotation.
                 unitB += r' $(kg\,m^2/s)$'
         plt.plot(w, data[0:len(w),6 + idof], linestyle="-", linewidth = 2, label = unitB, color = colors[idof])
     plt.ylabel(ylabel2, fontsize=18)
@@ -338,13 +338,13 @@ def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, sh
     SpeedOrNot : int
         IRF with forward speed (1) or not (0).
     ibody_force : int
-        Index of the body where the radiation force is applied
+        Index of the body where the radiation force is applied.
     iforce : int
-        Index of the local body's force mode
+        Index of the local body's force mode.
     ibody_motion : int
-        Index of the body having a motion
+        Index of the body having a motion.
     idof : int
-        Index of the local body's raditation mode (motion)
+        Index of the local body's raditation mode (motion).
     """
 
     # Labels.
@@ -374,7 +374,7 @@ def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, sh
     plt.plot(time, data)
     plt.xlabel(r'$t$'+' $(s)$', fontsize=18)
     plt.ylabel(ylabel, fontsize=18)  # TODO: mettre une unite
-    if (save == False):  # The title is not necessary for the generation of automatic report.
+    if (save == False): # The title is not necessary for the generation of automatic report.
         if(SpeedOrNot == 0): # Without forward speed.
             plt.title('Impulse response function of %s on body %u along direction %u for a %s of body %u along direction %u' %
                   (force_str, ibody_force+1, iforce+1, motion_str, ibody_motion+1, idof+1), fontsize = 20)
@@ -382,6 +382,69 @@ def plot_irf(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, sh
             plt.title('Impulse response function with forward speed of %s on body %u along direction %u for a %s of body %u along direction %u' %
                       (force_str, ibody_force + 1, iforce + 1, motion_str, ibody_motion + 1, idof + 1), fontsize=20)
     plt.grid()
+
+    if (show == True):
+        plt.show()
+    if (save == True):
+        plt.tight_layout()
+        plt.savefig(filename)
+        plt.close()
+
+def plot_irf_multiple_coef(data, time, SpeedOrNot, ibody_force, iforce, ibody_motion, show = True, save = False, filename = "IRF.png"):
+    """Plots the impulse response function of a given modes set.
+
+    Parameters
+    ----------
+    data : Array of floats.
+        Data to plot: impulse response functions.
+    time : Array of floats.
+        Time.
+    SpeedOrNot : int
+        IRF with forward speed (1) or not (0).
+    ibody_force : int
+        Index of the body where the radiation force is applied.
+    iforce : int
+        Index of the local body's force mode.
+    ibody_motion : int
+        Index of the body having a motion.
+    """
+
+    # Labels.
+    if (iforce <= 2):
+        force_str = 'force'
+    else:
+        force_str = 'moment'
+
+    if (SpeedOrNot == 0): # Without forward speed.
+        ylabel = r'$K(t)$'
+    else: # With forward speed.
+        ylabel = r'$Ku(t)$'
+
+    # Colors.
+    colors = cm.jet(np.linspace(0.9, 0, 6))
+
+    # Plots.
+    if (save == False): # The size is smaller for the generation of automatic report because the title is not including.
+        plt.figure(num=None, figsize=(16, 8.5))
+    else:
+        plt.figure(num=None, figsize=(10, 6))
+    for idof in range(0, 6):
+        if (SpeedOrNot == 0): # Without forward speed.
+            unit = r'$K_{%s}(t)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
+        else: # With forward speed.
+            unit = r'$Ku_{%s}(t)$' % (str(6 * ibody_force + iforce + 1) + str(6 * ibody_motion + idof + 1))
+        plt.plot(time, data[:, idof], linestyle="-", linewidth=2, label = unit, color = colors[idof])
+    plt.xlabel(r'$t$'+' $(s)$', fontsize=18)
+    plt.ylabel(ylabel, fontsize=18)  # TODO: mettre une unite
+    if (save == False): # The title is not necessary for the generation of automatic report.
+        if(SpeedOrNot == 0): # Without forward speed.
+            plt.title('Impulse response function of %s on body %u along direction %u for a motion of body %u' %
+                  (force_str, ibody_force+1, iforce+1, ibody_motion+1), fontsize = 20)
+        else: # With forward speed.
+            plt.title('Impulse response function with forward speed of %s on body %u along direction %u for a motion of body %u' %
+                      (force_str, ibody_force + 1, iforce + 1, ibody_motion + 1), fontsize=20)
+    plt.grid()
+    plt.legend()
 
     if (show == True):
         plt.show()
@@ -406,29 +469,29 @@ def plot_filering(data, time, SpeedOrNot, coeff, ibody_force, iforce, ibody_moti
     SpeedOrNot : int
         IRF with forward speed (1) or not (0).
     ibody_force : int
-        Index of the body where the radiation force is applied
+        Index of the body where the radiation force is applied.
     iforce : int
-        Index of the local body's force mode
+        Index of the local body's force mode.
     ibody_motion : int
-        Index of the body having a motion
+        Index of the body having a motion.
     idof : int
-        Index of the local body's raditation mode (motion)
+        Index of the local body's raditation mode (motion).
     kwargs: optional
-        Arguments that are to be used by pyplot
+        Arguments that are to be used by pyplot.
     """
 
     # Labels.
     if (iforce <= 2):
         force_str = 'force'
-        if (idof <= 2):  # Translation.
+        if (idof <= 2): # Translation.
             motion_str = 'translation'
-        else:  # Rotation.
+        else: # Rotation.
             motion_str = 'rotation'
     else:
         force_str = 'moment'
-        if (idof <= 2):  # Translation.
+        if (idof <= 2): # Translation.
             motion_str = 'translation'
-        else:  # Rotation.
+        else: # Rotation.
             motion_str = 'rotation'
 
     if (SpeedOrNot == 0): # Without forward speed.
@@ -441,10 +504,10 @@ def plot_filering(data, time, SpeedOrNot, coeff, ibody_force, iforce, ibody_moti
     plt.plot(time, data * coeff, label="With filering")
     plt.xlabel(r'$t$'+' $(s)$', fontsize=18)
     plt.ylabel(ylabel, fontsize=18)  # TODO: mettre une unite
-    if (SpeedOrNot == 0):  # Without forward speed.
+    if (SpeedOrNot == 0): # Without forward speed.
         plt.title('Impulse response function of %s on body %u along direction %u for a %s of body %u along direction %u' %
                   (force_str, ibody_force + 1, iforce + 1, motion_str, ibody_motion + 1, idof + 1), fontsize=20)
-    else:  # With forward speed.
+    else: # With forward speed.
         plt.title('Impulse response function with forward speed of %s on body %u along direction %u for a %s of body %u along direction %u' %
                   (force_str, ibody_force + 1, iforce + 1, motion_str, ibody_motion + 1, idof + 1), fontsize=20)
     plt.legend()

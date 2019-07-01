@@ -487,18 +487,19 @@ class report():
 
             for iforce in range(0, 6):
                 for ibody_motion in range(0, pyHDB.nb_bodies):
-                    for idof in range(0, 6):
 
-                        IRFfile = Filename+"_"+str(ibody_force)+str(iforce)+str(ibody_motion)+str(idof)+".png"
+                        IRFfile = Filename+"_"+str(ibody_force)+str(iforce)+str(ibody_motion)+".png"
 
                         # Data.
-                        if(SpeedOrNot == 0): # IRF without forward speed.
-                            data = pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_motion + idof, :]
-                        else: # IRF with forward speed.
-                            data = pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_motion + idof, :]
+                        data = np.zeros((pyHDB.nb_time_samples, 6), dtype=np.float)
+                        for idof in range(0, 6):
+                            if(SpeedOrNot == 0): # IRF without forward speed.
+                                data[:, idof] = pyHDB.bodies[ibody_force].irf[iforce, 6 * ibody_motion + idof, :]
+                            else: # IRF with forward speed.
+                                data[:, idof] = pyHDB.bodies[ibody_force].irf_ku[iforce, 6 * ibody_motion + idof, :]
 
                         # Plots.
-                        plot_irf(data, pyHDB.time, SpeedOrNot, ibody_force, iforce, ibody_motion, idof, show = False, save = True, filename = self.static_folder+IRFfile)
+                        plot_irf_multiple_coef(data, pyHDB.time, SpeedOrNot, ibody_force, iforce, ibody_motion, show = False, save = True, filename = self.static_folder+IRFfile)
 
                         RSTfile.directive(name="figure", arg="/_static/" + IRFfile, fields=[('align', 'center')])
                         RSTfile.newline()
@@ -519,12 +520,10 @@ class report():
                         # Caption.
                         if(SpeedOrNot == 0): # IRF without forward speed.
                             RSTfile._add('   Impulse response function of body ' + str(ibody_force + 1)
-                                                     + " along direction " + str(iforce + 1) + " for a " + motion_str+" of body " + str(ibody_motion + 1)
-                                                     + " along direction " + str(idof + 1))
+                                                     + " along direction " + str(iforce + 1) + " for a " + motion_str+" of body " + str(ibody_motion + 1))
                         else: # IRF with forward speed.
                             RSTfile._add('   Impulse response function with forward speed of body ' + str(ibody_force + 1)
-                                         + " along direction " + str(iforce + 1) + " for a " + motion_str + " of body " + str(ibody_motion + 1)
-                                         + " along direction " + str(idof + 1))
+                                         + " along direction " + str(iforce + 1) + " for a " + motion_str + " of body " + str(ibody_motion + 1))
 
                         RSTfile.newline()
 
