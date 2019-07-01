@@ -153,7 +153,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'HDBreport.tex', u'HDB report Documentation',
+    (master_doc, 'HDBreport.tex', u'Report about the hydrodynamic database results',
      u'D-ICE Engineering', 'manual'),
 ]
 

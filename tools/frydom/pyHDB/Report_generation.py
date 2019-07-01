@@ -189,12 +189,6 @@ class report():
             self._RstInputParam._add('Force mask                 ' + str(body.Force_mask))
             self._RstInputParam._add('========================== ==================================')
             self._RstInputParam.newline()
-            self._RstInputParam.directive(name="figure", arg = "/_static/" + mesh_file,  fields=[('align', 'center')])
-            self._RstInputParam.newline()
-
-            # Caption.
-            self._RstInputParam._add('   Mesh of body ' + str(body.i_body + 1))
-            self._RstInputParam.newline()
 
             # Hydrostatic stiffness matrix.
             if(body._hydrostatic is not None):
@@ -227,6 +221,14 @@ class report():
                 self._RstInputParam._add(r"                0 & 0 & 0 & %.2f & %.2f & %.2f \\" % (body.inertia.matrix33[2, 0], body.inertia.matrix33[2, 1], body.inertia.matrix33[2, 2]))
                 self._RstInputParam._add(r"             \end{bmatrix}")
                 self._RstInputParam.newline()
+
+            # Screenshot of the mesh.
+            self._RstInputParam.directive(name="figure", arg="/_static/" + mesh_file, fields=[('align', 'center')])
+            self._RstInputParam.newline()
+
+            # Caption.
+            self._RstInputParam._add('   Mesh of body ' + str(body.i_body + 1))
+            self._RstInputParam.newline()
 
             # Picture of the mesh.
             self.PlotMesh(body, output_folder, mesh_file)

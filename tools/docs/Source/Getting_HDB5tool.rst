@@ -26,6 +26,6 @@ The version of *matplotlib* needs to be 2.0.0 or higher::
 
     pip install matplotlib==2.0.0
 
-The package *rstcloth* has to be installed::
+The following package has to be installed::
 
     pip install rstcloth
